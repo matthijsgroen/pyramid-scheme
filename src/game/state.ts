@@ -122,9 +122,11 @@ export const getAnswers = (pyramid: Pyramid): PyramidAnswer[] | undefined => {
   }
 
   // Collect answers for blocks that were missing a value
-  const answers = answersNeeded.map((block) => ({
-    id: block.id,
-    value: blockValues.get(block.id) ?? 0,
-  }));
-  return answers.length > 0 ? answers : undefined;
+  const answers = answersNeeded
+    .map((block) => ({
+      id: block.id,
+      value: blockValues.get(block.id),
+    }))
+    .filter((answer): answer is PyramidAnswer => answer.value !== undefined);
+  return answers.length < answersNeeded.length ? undefined : answers;
 };

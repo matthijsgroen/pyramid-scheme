@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { generateLevel } from "./generateLevel";
 import type { PyramidLevelSettings } from "./types";
 import { mulberry32 } from "./random";
+import { getAnswers } from "./state";
 
 describe(generateLevel, () => {
   it.each([
@@ -17,7 +18,7 @@ describe(generateLevel, () => {
       const settings: PyramidLevelSettings = {
         floorCount,
         operation: "addition",
-        openBlockCount: 1,
+        openBlockCount: 0,
         lowestFloorNumberRange: [4, 15],
         allowNegativeNumbers: false,
       };
@@ -58,4 +59,35 @@ describe(generateLevel, () => {
       expect(maxValue).toBeLessThanOrEqual(range[1]);
     }
   );
+
+  describe("opening blocks", () => {
+    it("will open the correct number of blocks", () => {
+      const settings: PyramidLevelSettings = {
+        floorCount: 5,
+        operation: "addition",
+        openBlockCount: 4,
+        lowestFloorNumberRange: [1, 10],
+        allowNegativeNumbers: false,
+      };
+      const level = generateLevel(settings);
+      const openBlocks = level.pyramid.blocks.filter((block) => block.isOpen);
+      expect(openBlocks.length).toBe(settings.openBlockCount);
+      expect(level.values.length).toBe(settings.openBlockCount);
+    });
+
+    it("will keep the level solveable", () => {
+      const random = mulberry32(12345);
+      const settings: PyramidLevelSettings = {
+        floorCount: 4, // 10 blocks
+        operation: "addition",
+        openBlockCount: 6,
+        lowestFloorNumberRange: [1, 10],
+        allowNegativeNumbers: false,
+      };
+      const level = generateLevel(settings, random);
+
+      const values = getAnswers(level.pyramid);
+      expect(values).toEqual(level.values);
+    });
+  });
 });

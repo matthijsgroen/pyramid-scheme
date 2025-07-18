@@ -12,7 +12,7 @@ export const createPyramid = (
     blocks: blocks.map((value, index) => ({
       id: (index + 1).toString(),
       value: value === "" ? undefined : value,
-      isOpen: value !== "",
+      isOpen: value === "",
     })),
   };
 };

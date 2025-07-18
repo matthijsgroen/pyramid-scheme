@@ -1,5 +1,10 @@
 import { getAnswers } from "./state";
-import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "./types";
+import type {
+  Pyramid,
+  PyramidAnswer,
+  PyramidLevel,
+  PyramidLevelSettings,
+} from "./types";
 
 const createBasePyramid = (
   settings: Pick<
@@ -25,7 +30,7 @@ const createBasePyramid = (
     blocks.push({
       id: (i + 1).toString(),
       value,
-      isOpen: value === undefined,
+      isOpen: value !== undefined,
     });
   }
   return {
@@ -35,8 +40,11 @@ const createBasePyramid = (
   };
 };
 
-export const createPyramid = (
-  settings: PyramidLevelSettings,
+export const createCompletePyramid = (
+  settings: Pick<
+    PyramidLevelSettings,
+    "floorCount" | "operation" | "lowestFloorNumberRange"
+  >,
   random = Math.random
 ): Pyramid => {
   const pyramid = createBasePyramid(settings, random);
@@ -56,13 +64,59 @@ export const createPyramid = (
   };
 };
 
+const openBlocks = (
+  pyramid: Pyramid,
+  openCount: number,
+  random = Math.random
+): PyramidLevel => {
+  const openIndices = new Set<number>();
+  while (openIndices.size < openCount) {
+    const index = Math.floor(random() * pyramid.blocks.length);
+    openIndices.add(index);
+  }
+  const values: PyramidAnswer[] = pyramid.blocks
+    .filter((_block, index) => openIndices.has(index))
+    .map((block) => ({
+      id: block.id,
+      value: block.value ?? 0, // Default to 0 if value is undefined
+    }))
+    .sort((a, b) => Number(a.id) - Number(b.id));
+
+  const updatedPyramid: Pyramid = {
+    ...pyramid,
+    blocks: pyramid.blocks.map((block, index) => ({
+      ...block,
+      isOpen: openIndices.has(index),
+      value: openIndices.has(index) ? undefined : block.value,
+    })),
+  };
+
+  return {
+    pyramid: updatedPyramid,
+    values,
+  };
+};
+
 export const generateLevel = (
   settings: PyramidLevelSettings,
   random = Math.random
 ): PyramidLevel => {
-  const pyramid = createPyramid(settings, random);
-  return {
-    pyramid,
-    values: [],
-  };
+  const { openBlockCount } = settings;
+  const fullPyramid = createCompletePyramid(settings, random);
+  if (openBlockCount === 0) {
+    return {
+      pyramid: fullPyramid,
+      values: [],
+    };
+  }
+  let tryCount = 0;
+  while (tryCount < 100) {
+    const pyramidLevel = openBlocks(fullPyramid, openBlockCount, random);
+    if (getAnswers(pyramidLevel.pyramid)) {
+      return pyramidLevel;
+    }
+    tryCount++;
+  }
+
+  throw new Error("Unsolvable pyramid");
 };
