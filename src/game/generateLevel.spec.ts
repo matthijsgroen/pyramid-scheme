@@ -72,7 +72,7 @@ describe(generateLevel, () => {
       const level = generateLevel(settings);
       const openBlocks = level.pyramid.blocks.filter((block) => block.isOpen);
       expect(openBlocks.length).toBe(settings.openBlockCount);
-      expect(level.values.length).toBe(settings.openBlockCount);
+      expect(Object.values(level.values)).toHaveLength(settings.openBlockCount);
     });
 
     it("will keep the level solveable", () => {
@@ -87,6 +87,8 @@ describe(generateLevel, () => {
       const level = generateLevel(settings, random);
 
       const values = getAnswers(level.pyramid);
+      console.log("Generated values:", values);
+      console.log("Level values:", level.values);
       expect(values).toEqual(level.values);
     });
   });

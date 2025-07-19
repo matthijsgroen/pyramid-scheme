@@ -6,14 +6,9 @@ export type PyramidLevelSettings = {
   allowNegativeNumbers: boolean;
 };
 
-export type PyramidAnswer = {
-  id: string;
-  value: number;
-};
-
 export type PyramidLevel = {
   pyramid: Pyramid;
-  values: PyramidAnswer[];
+  values: Record<string, number>;
 };
 
 export type Pyramid = {

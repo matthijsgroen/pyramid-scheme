@@ -1,18 +1,18 @@
-import type { Pyramid, PyramidAnswer, PyramidLevel } from "./types";
+import type { Pyramid, PyramidLevel } from "./types";
 
 export const isComplete = (state: PyramidLevel): boolean => {
   const openBlocks = state.pyramid.blocks
     .filter((block) => block.isOpen)
     .map((block) => block.id);
   return openBlocks.every((blockId) =>
-    state.values.some((value) => value.id === blockId)
+    Object.keys(state.values).some((id) => id === blockId)
   );
 };
 
 export const isValid = (state: PyramidLevel): boolean => {
   // check for addition if the value above matches the sum of the values below
   const { pyramid, values } = state;
-  const blockValues = new Map(values.map((v) => [v.id, v.value]));
+  const blockValues = new Map(Object.entries(values));
   for (const block of pyramid.blocks) {
     const value = block.value ?? blockValues.get(block.id);
     const childIndices = getBlockChildIndices(pyramid, block.id);
@@ -62,11 +62,13 @@ export const getBlockChildIndices = (
   return children;
 };
 
-export const getAnswers = (pyramid: Pyramid): PyramidAnswer[] | undefined => {
-  const blockValues = new Map<string, number>();
+export const getAnswers = (
+  pyramid: Pyramid
+): Record<string, number> | undefined => {
+  const blockValues: Record<string, number> = {};
   pyramid.blocks.forEach((block) => {
     if (block.value !== undefined) {
-      blockValues.set(block.id, block.value);
+      blockValues[block.id] = block.value;
     }
   });
 
@@ -81,10 +83,10 @@ export const getAnswers = (pyramid: Pyramid): PyramidAnswer[] | undefined => {
   while (updated) {
     updated = false;
     for (const block of pyramid.blocks) {
-      const value = blockValues.get(block.id);
+      const value = blockValues[block.id];
       const childIndices = getBlockChildIndices(pyramid, block.id);
-      const childValues = childIndices.map((index) =>
-        blockValues.get(pyramid.blocks[index].id)
+      const childValues = childIndices.map(
+        (index) => blockValues[pyramid.blocks[index].id]
       );
 
       if (pyramid.operation === "addition") {
@@ -95,7 +97,7 @@ export const getAnswers = (pyramid: Pyramid): PyramidAnswer[] | undefined => {
           childValues.every((v) => v !== undefined)
         ) {
           const sum = childValues.reduce((sum, v) => sum + (v ?? 0), 0);
-          blockValues.set(block.id, sum);
+          blockValues[block.id] = sum;
           updated = true;
         }
         // If one child is missing and block value and other child are known
@@ -110,10 +112,8 @@ export const getAnswers = (pyramid: Pyramid): PyramidAnswer[] | undefined => {
             0
           );
           const missingValue = value - knownSum;
-          blockValues.set(
-            pyramid.blocks[childIndices[missingIdx]].id,
-            missingValue
-          );
+          blockValues[pyramid.blocks[childIndices[missingIdx]].id] =
+            missingValue;
           updated = true;
         }
       }
@@ -122,11 +122,10 @@ export const getAnswers = (pyramid: Pyramid): PyramidAnswer[] | undefined => {
   }
 
   // Collect answers for blocks that were missing a value
-  const answers = answersNeeded
-    .map((block) => ({
-      id: block.id,
-      value: blockValues.get(block.id),
-    }))
-    .filter((answer): answer is PyramidAnswer => answer.value !== undefined);
-  return answers.length < answersNeeded.length ? undefined : answers;
+  const answers: Record<string, number> = {};
+  answersNeeded.forEach((block) => {
+    answers[block.id] = blockValues[block.id];
+  });
+
+  return answers.size < answersNeeded.length ? undefined : answers;
 };

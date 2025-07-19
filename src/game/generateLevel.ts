@@ -1,10 +1,5 @@
 import { getAnswers } from "./state";
-import type {
-  Pyramid,
-  PyramidAnswer,
-  PyramidLevel,
-  PyramidLevelSettings,
-} from "./types";
+import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "./types";
 
 const createBasePyramid = (
   settings: Pick<
@@ -53,8 +48,7 @@ export const createCompletePyramid = (
   return {
     ...pyramid,
     blocks: pyramid.blocks.map((block) => {
-      const value =
-        values?.find((v) => v.id === block.id)?.value ?? block.value;
+      const value = values?.[block.id] ?? block.value;
       return {
         ...block,
         value,
@@ -74,13 +68,12 @@ const openBlocks = (
     const index = Math.floor(random() * pyramid.blocks.length);
     openIndices.add(index);
   }
-  const values: PyramidAnswer[] = pyramid.blocks
+  const values: Record<string, number> = pyramid.blocks
     .filter((_block, index) => openIndices.has(index))
-    .map((block) => ({
-      id: block.id,
-      value: block.value ?? 0, // Default to 0 if value is undefined
-    }))
-    .sort((a, b) => Number(a.id) - Number(b.id));
+    .reduce<Record<string, number>>((acc, block) => {
+      acc[block.id] = block.value ?? 0;
+      return acc;
+    }, {});
 
   const updatedPyramid: Pyramid = {
     ...pyramid,
@@ -106,7 +99,7 @@ export const generateLevel = (
   if (openBlockCount === 0) {
     return {
       pyramid: fullPyramid,
-      values: [],
+      values: {},
     };
   }
   let tryCount = 0;

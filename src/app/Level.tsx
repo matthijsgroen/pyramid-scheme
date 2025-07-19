@@ -8,7 +8,13 @@ export const Level: FC<{ content: PyramidLevel }> = ({ content }) => {
     <div className="level-container">
       <h1 className="text-2xl font-bold">Pyramid Level</h1>
       {/* render the pyramid and answers */}
-      <PyramidDisplay pyramid={content.pyramid} />
+      <PyramidDisplay
+        pyramid={content.pyramid}
+        values={[]}
+        onAnswer={function (blockId: string, value: number): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
     </div>
   );
 };

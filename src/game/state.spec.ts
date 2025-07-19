@@ -15,10 +15,10 @@ describe(isComplete, () => {
           { id: "3", isOpen: true },
         ],
       },
-      values: [
-        { id: "2", value: 5 },
-        { id: "3", value: 10 },
-      ],
+      values: {
+        "2": 5,
+        "3": 10,
+      },
     };
     expect(isComplete(state)).toBe(true);
   });
@@ -34,7 +34,7 @@ describe(isComplete, () => {
           { id: "3", isOpen: true },
         ],
       },
-      values: [{ id: "2", value: 5 }],
+      values: { "2": 5 },
     };
     expect(isComplete(state)).toBe(false);
   });
@@ -99,24 +99,24 @@ describe(isValid, () => {
         "", "", 9, 15, 17,
         15, 12, "", "", 10, "",
       ]),
-      values: [
-        { id: "2", value: 117 },
-        { id: "3", value: 105 },
+      values: {
+        "2": 117,
+        "3": 105,
 
-        { id: "4", value: 68 },
-        { id: "6", value: 56 },
+        "4": 68,
+        "6": 56,
 
-        { id: "7", value: 43 },
-        { id: "8", value: 25 },
-        { id: "10", value: 32 },
+        "7": 43,
+        "8": 25,
+        "10": 32,
 
-        { id: "11", value: 27 },
-        { id: "12", value: 16 },
+        "11": 27,
+        "12": 16,
 
-        { id: "18", value: 4 },
-        { id: "19", value: 5 },
-        { id: "21", value: 7 },
-      ],
+        "18": 4,
+        "19": 5,
+        "21": 7,
+      },
     };
     expect(state.pyramid.floorCount).toBe(6);
     expect(isValid(state)).toBe(true);
@@ -133,24 +133,24 @@ describe(isValid, () => {
         "", "", 9, 15, 17,
         15, 12, "", "", 10, "",
       ]),
-      values: [
-        { id: "2", value: 117 },
-        { id: "3", value: 105 },
+      values: {
+        "2": 117,
+        "3": 105,
 
-        { id: "4", value: 68 },
-        { id: "6", value: 56 },
+        "4": 68,
+        "6": 56,
 
-        { id: "7", value: 43 },
-        { id: "8", value: 23 },
-        { id: "10", value: 32 },
+        "7": 43,
+        "8": 23,
+        "10": 32,
 
-        { id: "11", value: 27 },
-        { id: "12", value: 15 },
+        "11": 27,
+        "12": 15,
 
-        { id: "18", value: 4 },
-        { id: "19", value: 5 },
-        { id: "21", value: 7 },
-      ],
+        "18": 4,
+        "19": 5,
+        "21": 7,
+      },
     };
     expect(isValid(state)).toBe(false);
   });
@@ -169,23 +169,19 @@ describe(getAnswers, () => {
     ]);
 
     const result = getAnswers(pyramid);
-    expect(result).toEqual([
-      { id: "2", value: 117 },
-      { id: "3", value: 105 },
-
-      { id: "4", value: 68 },
-      { id: "6", value: 56 },
-
-      { id: "7", value: 43 },
-      { id: "8", value: 25 },
-      { id: "10", value: 32 },
-
-      { id: "11", value: 27 },
-      { id: "12", value: 16 },
-
-      { id: "18", value: 4 },
-      { id: "19", value: 5 },
-      { id: "21", value: 7 },
-    ]);
+    expect(result).toEqual({
+      "2": 117,
+      "3": 105,
+      "4": 68,
+      "6": 56,
+      "7": 43,
+      "8": 25,
+      "10": 32,
+      "11": 27,
+      "12": 16,
+      "18": 4,
+      "19": 5,
+      "21": 7,
+    });
   });
 });

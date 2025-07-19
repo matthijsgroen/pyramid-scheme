@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { Pyramid } from "../game/types";
+import type { Pyramid, PyramidAnswer } from "../game/types";
 import { Block } from "./Block";
 import { InputBlock } from "./InputBlock";
 
@@ -13,7 +13,11 @@ const createFloorStartIndices = (floorCount: number): number[] => {
   return indices;
 };
 
-export const PyramidDisplay: FC<{ pyramid: Pyramid }> = ({ pyramid }) => {
+export const PyramidDisplay: FC<{
+  pyramid: Pyramid;
+  values: PyramidAnswer[];
+  onAnswer: (blockId: string, value: number) => void;
+}> = ({ pyramid, values, onAnswer }) => {
   const { blocks } = pyramid;
 
   // Render the pyramid blocks
@@ -28,7 +32,11 @@ export const PyramidDisplay: FC<{ pyramid: Pyramid }> = ({ pyramid }) => {
             const blockIndex = startIndex + index;
             const block = blocks[blockIndex];
             return block.isOpen ? (
-              <InputBlock key={block.id} />
+              <InputBlock
+                key={block.id}
+                value={values[block.id]}
+                onChange={(value) => onAnswer(block.id, value)}
+              />
             ) : (
               <Block key={block.id}>
                 {block.value !== undefined ? block.value : ""}
