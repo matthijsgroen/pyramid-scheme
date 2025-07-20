@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
+import type { PyramidBlock } from "../game/types";
 
-export function usePyramidNavigation(
+export const usePyramidNavigation = (
   floorStartIndices: number[],
   floorCount: number,
-  blocks: any,
-  onAnswer: (blockId: string, value: number | undefined) => void
-) {
+  blocks: PyramidBlock[],
+  onAnswer: (blockId: string, value: number | undefined) => void,
+) => {
   const [selectedBlockIndex, setSelectedBlockIndex] = useState<number>(0);
   const [focusInput, setFocusInput] = useState(false);
 
@@ -20,7 +21,7 @@ export function usePyramidNavigation(
       }
       return { floor: 0, index: 0 };
     },
-    [floorStartIndices]
+    [floorStartIndices],
   );
 
   const handleKeyDown = useCallback(
@@ -64,7 +65,7 @@ export function usePyramidNavigation(
       blocks,
       onAnswer,
       getFloorAndIndex,
-    ]
+    ],
   );
 
   return {
@@ -74,4 +75,4 @@ export function usePyramidNavigation(
     setFocusInput,
     handleKeyDown,
   };
-}
+};

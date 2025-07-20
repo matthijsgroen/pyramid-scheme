@@ -10,7 +10,13 @@ export type PyramidLevel = {
   values: Record<string, number | undefined>;
 };
 
+export type PyramidBlock = {
+  id: string;
+  value?: number;
+  isOpen: boolean;
+};
+
 export type Pyramid = {
   floorCount: number;
-  blocks: { id: string; value?: number; isOpen: boolean }[];
+  blocks: PyramidBlock[];
 };

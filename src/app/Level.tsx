@@ -9,7 +9,7 @@ export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
   onComplete,
 }) => {
   const [answers, setAnswers] = useState<Record<string, number | undefined>>(
-    {}
+    {},
   );
 
   const completed = isValid({ pyramid: content.pyramid, values: answers });

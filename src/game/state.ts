@@ -6,8 +6,8 @@ export const isComplete = (state: PyramidLevel): boolean => {
     .map((block) => block.id);
   return openBlocks.every((blockId) =>
     Object.entries(state.values).some(
-      ([id, value]) => id === blockId && value !== undefined
-    )
+      ([id, value]) => id === blockId && value !== undefined,
+    ),
   );
 };
 
@@ -23,7 +23,7 @@ export const isValid = (state: PyramidLevel): boolean => {
       (index) =>
         pyramid.blocks[index].value ??
         blockValues.get(pyramid.blocks[index].id) ??
-        0
+        0,
     );
     const expectedValue = childValues.reduce((sum, val) => sum + (val ?? 0), 0);
     if (value !== expectedValue) return false;
@@ -34,7 +34,7 @@ export const isValid = (state: PyramidLevel): boolean => {
 
 export const getBlockChildIndices = (
   pyramid: PyramidLevel["pyramid"],
-  blockId: string
+  blockId: string,
 ): number[] => {
   // 1. get the floor number of the block
   const blockIndex = pyramid.blocks.findIndex((b) => b.id === blockId);
@@ -60,7 +60,7 @@ export const getBlockChildIndices = (
 };
 
 export const getAnswers = (
-  pyramid: Pyramid
+  pyramid: Pyramid,
 ): Record<string, number> | undefined => {
   const blockValues: Record<string, number> = {};
   pyramid.blocks.forEach((block) => {
@@ -71,7 +71,7 @@ export const getAnswers = (
 
   // Find blocks with missing value at themselves or their children
   const answersNeeded = pyramid.blocks.filter(
-    (block) => block.value === undefined
+    (block) => block.value === undefined,
   );
   if (answersNeeded.length === 0) return undefined;
 
@@ -83,7 +83,7 @@ export const getAnswers = (
       const value = blockValues[block.id];
       const childIndices = getBlockChildIndices(pyramid, block.id);
       const childValues = childIndices.map(
-        (index) => blockValues[pyramid.blocks[index].id]
+        (index) => blockValues[pyramid.blocks[index].id],
       );
 
       // If block value is missing and children are known
@@ -105,7 +105,7 @@ export const getAnswers = (
         const missingIdx = childValues.findIndex((v) => v === undefined);
         const knownSum = childValues.reduce(
           (sum: number, v) => sum + (v ?? 0),
-          0
+          0,
         );
         const missingValue = value - knownSum;
         blockValues[pyramid.blocks[childIndices[missingIdx]].id] = missingValue;

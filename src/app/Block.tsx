@@ -12,7 +12,7 @@ export const Block: FC<
           "border-2": selected,
           border: !selected,
         },
-        className
+        className,
       )}
       style={{
         boxShadow: "16px 0px 0px 0px #9b623e",

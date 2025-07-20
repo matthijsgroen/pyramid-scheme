@@ -3,7 +3,7 @@ import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "./types";
 
 const createBasePyramid = (
   settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange">,
-  random = Math.random
+  random = Math.random,
 ): Pyramid => {
   const { floorCount, lowestFloorNumberRange } = settings;
 
@@ -33,7 +33,7 @@ const createBasePyramid = (
 
 export const createCompletePyramid = (
   settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange">,
-  random = Math.random
+  random = Math.random,
 ): Pyramid => {
   const pyramid = createBasePyramid(settings, random);
   const values = getAnswers(pyramid);
@@ -54,7 +54,7 @@ export const createCompletePyramid = (
 const openBlocks = (
   pyramid: Pyramid,
   openCount: number,
-  random = Math.random
+  random = Math.random,
 ): PyramidLevel => {
   const openIndices = new Set<number>();
   while (openIndices.size < openCount) {
@@ -85,7 +85,7 @@ const openBlocks = (
 
 export const generateLevel = (
   settings: PyramidLevelSettings,
-  random = Math.random
+  random = Math.random,
 ): PyramidLevel => {
   const { openBlockCount } = settings;
   const fullPyramid = createCompletePyramid(settings, random);
@@ -102,7 +102,7 @@ export const generateLevel = (
     if (answers) {
       // check if it are the same answers as the values
       const valuesMatch = Object.keys(answers).every(
-        (key) => answers[key] === pyramidLevel.values[key]
+        (key) => answers[key] === pyramidLevel.values[key],
       );
       if (valuesMatch) {
         return pyramidLevel;

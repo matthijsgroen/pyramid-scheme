@@ -7,7 +7,7 @@ import { generateNewSeed, mulberry32 } from "./game/random";
 const gameSeed = 12345;
 
 function App() {
-  const [levelNr, setLevelNr] = useState(1);
+  const [levelNr] = useState(1);
 
   const levelSeed = generateNewSeed(gameSeed, levelNr);
   const random = mulberry32(levelSeed);

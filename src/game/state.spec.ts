@@ -83,7 +83,7 @@ describe(getBlockChildIndices, () => {
         ],
       };
       expect(getBlockChildIndices(pyramid, blockId)).toEqual(expectedChildIds);
-    }
+    },
   );
 
   it("returns an empty array if the block ID does not exist", () => {
@@ -102,7 +102,7 @@ describe(isValid, () => {
   it("returns true for a valid addition pyramid", () => {
     const state: PyramidLevel = {
       // prettier-ignore
-      pyramid: createPyramid("addition", [
+      pyramid: createPyramid( [
         222,
         "", "",
         "", 49, "",
@@ -136,7 +136,7 @@ describe(isValid, () => {
   it("returns false for an invalid addition pyramid", () => {
     const state: PyramidLevel = {
       // prettier-ignore
-      pyramid: createPyramid("addition", [
+      pyramid: createPyramid( [
         222,
         "", "",
         "", 49, "",
@@ -170,7 +170,7 @@ describe(isValid, () => {
 describe(getAnswers, () => {
   it("returns answers for open blocks with values", () => {
     // prettier-ignore
-    const pyramid = createPyramid("addition", [
+    const pyramid = createPyramid( [
       222,
       "", "",
       "", 49, "",

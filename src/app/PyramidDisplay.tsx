@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FC } from "react";
+import { useMemo, useRef, type FC } from "react";
 import { usePyramidNavigation } from "./usePyramidNavigation";
 import type { Pyramid } from "../game/types";
 import { Block } from "./Block";
@@ -84,7 +84,7 @@ export const PyramidDisplay: FC<{
             <div
               className={clsx(
                 "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold",
-                !complete && "opacity-0"
+                !complete && "opacity-0",
               )}
             >
               {isCorrect ? "✔️" : "❌"}
