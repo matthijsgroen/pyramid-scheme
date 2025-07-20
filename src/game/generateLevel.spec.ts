@@ -17,7 +17,6 @@ describe(generateLevel, () => {
     ({ floorCount, expectedBlockCount }) => {
       const settings: PyramidLevelSettings = {
         floorCount,
-        operation: "addition",
         openBlockCount: 0,
         lowestFloorNumberRange: [4, 15],
         allowNegativeNumbers: false,
@@ -38,7 +37,6 @@ describe(generateLevel, () => {
       const floorCount = 3;
       const settings: PyramidLevelSettings = {
         floorCount,
-        operation: "addition",
         openBlockCount: 0,
         lowestFloorNumberRange: range,
         allowNegativeNumbers: false,
@@ -64,7 +62,6 @@ describe(generateLevel, () => {
     it("will open the correct number of blocks", () => {
       const settings: PyramidLevelSettings = {
         floorCount: 5,
-        operation: "addition",
         openBlockCount: 4,
         lowestFloorNumberRange: [1, 10],
         allowNegativeNumbers: false,
@@ -79,7 +76,6 @@ describe(generateLevel, () => {
       const random = mulberry32(12345);
       const settings: PyramidLevelSettings = {
         floorCount: 4, // 10 blocks
-        operation: "addition",
         openBlockCount: 6,
         lowestFloorNumberRange: [1, 10],
         allowNegativeNumbers: false,

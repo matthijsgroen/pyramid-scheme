@@ -8,7 +8,7 @@ export const LevelCompletedOverlay = () => {
   }, []);
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+      className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none"
       style={{
         background: "rgba(255,255,255,0.1)",
       }}

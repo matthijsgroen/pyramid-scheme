@@ -2,13 +2,10 @@ import { getAnswers } from "./state";
 import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "./types";
 
 const createBasePyramid = (
-  settings: Pick<
-    PyramidLevelSettings,
-    "floorCount" | "operation" | "lowestFloorNumberRange"
-  >,
+  settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange">,
   random = Math.random
 ): Pyramid => {
-  const { floorCount, operation, lowestFloorNumberRange } = settings;
+  const { floorCount, lowestFloorNumberRange } = settings;
 
   const totalBlocks = (floorCount * (floorCount + 1)) / 2;
   const bottomFloorIndex = ((floorCount - 1) * floorCount) / 2;
@@ -30,16 +27,12 @@ const createBasePyramid = (
   }
   return {
     floorCount,
-    operation,
     blocks,
   };
 };
 
 export const createCompletePyramid = (
-  settings: Pick<
-    PyramidLevelSettings,
-    "floorCount" | "operation" | "lowestFloorNumberRange"
-  >,
+  settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange">,
   random = Math.random
 ): Pyramid => {
   const pyramid = createBasePyramid(settings, random);

@@ -5,7 +5,9 @@ export const isComplete = (state: PyramidLevel): boolean => {
     .filter((block) => block.isOpen)
     .map((block) => block.id);
   return openBlocks.every((blockId) =>
-    Object.keys(state.values).some((id) => id === blockId)
+    Object.entries(state.values).some(
+      ([id, value]) => id === blockId && value !== undefined
+    )
   );
 };
 
@@ -23,13 +25,8 @@ export const isValid = (state: PyramidLevel): boolean => {
         blockValues.get(pyramid.blocks[index].id) ??
         0
     );
-    if (state.pyramid.operation === "addition") {
-      const expectedValue = childValues.reduce(
-        (sum, val) => sum + (val ?? 0),
-        0
-      );
-      if (value !== expectedValue) return false;
-    }
+    const expectedValue = childValues.reduce((sum, val) => sum + (val ?? 0), 0);
+    if (value !== expectedValue) return false;
   }
 
   return true;
@@ -89,35 +86,31 @@ export const getAnswers = (
         (index) => blockValues[pyramid.blocks[index].id]
       );
 
-      if (pyramid.operation === "addition") {
-        // If block value is missing and children are known
-        if (
-          value === undefined &&
-          childValues.length > 0 &&
-          childValues.every((v) => v !== undefined)
-        ) {
-          const sum = childValues.reduce((sum, v) => sum + (v ?? 0), 0);
-          blockValues[block.id] = sum;
-          updated = true;
-        }
-        // If one child is missing and block value and other child are known
-        if (
-          value !== undefined &&
-          childValues.length > 0 &&
-          childValues.filter((v) => v === undefined).length === 1
-        ) {
-          const missingIdx = childValues.findIndex((v) => v === undefined);
-          const knownSum = childValues.reduce(
-            (sum: number, v) => sum + (v ?? 0),
-            0
-          );
-          const missingValue = value - knownSum;
-          blockValues[pyramid.blocks[childIndices[missingIdx]].id] =
-            missingValue;
-          updated = true;
-        }
+      // If block value is missing and children are known
+      if (
+        value === undefined &&
+        childValues.length > 0 &&
+        childValues.every((v) => v !== undefined)
+      ) {
+        const sum = childValues.reduce((sum, v) => sum + (v ?? 0), 0);
+        blockValues[block.id] = sum;
+        updated = true;
       }
-      // Other operations can be added here
+      // If one child is missing and block value and other child are known
+      if (
+        value !== undefined &&
+        childValues.length > 0 &&
+        childValues.filter((v) => v === undefined).length === 1
+      ) {
+        const missingIdx = childValues.findIndex((v) => v === undefined);
+        const knownSum = childValues.reduce(
+          (sum: number, v) => sum + (v ?? 0),
+          0
+        );
+        const missingValue = value - knownSum;
+        blockValues[pyramid.blocks[childIndices[missingIdx]].id] = missingValue;
+        updated = true;
+      }
     }
   }
 

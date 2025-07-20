@@ -8,7 +8,6 @@ describe(isComplete, () => {
     const state: PyramidLevel = {
       pyramid: {
         floorCount: 2,
-        operation: "addition",
         blocks: [
           { id: "1", isOpen: false },
           { id: "2", isOpen: true },
@@ -27,7 +26,6 @@ describe(isComplete, () => {
     const state: PyramidLevel = {
       pyramid: {
         floorCount: 2,
-        operation: "subtraction",
         blocks: [
           { id: "1", isOpen: false },
           { id: "2", isOpen: true },
@@ -35,6 +33,21 @@ describe(isComplete, () => {
         ],
       },
       values: { "2": 5 },
+    };
+    expect(isComplete(state)).toBe(false);
+  });
+
+  it("returns false when not values are undefined", () => {
+    const state: PyramidLevel = {
+      pyramid: {
+        floorCount: 2,
+        blocks: [
+          { id: "1", isOpen: false },
+          { id: "2", isOpen: true },
+          { id: "3", isOpen: true },
+        ],
+      },
+      values: { "2": 5, "3": undefined },
     };
     expect(isComplete(state)).toBe(false);
   });
@@ -53,7 +66,6 @@ describe(getBlockChildIndices, () => {
     (blockId, expectedChildIds) => {
       const pyramid: PyramidLevel["pyramid"] = {
         floorCount: 4,
-        operation: "subtraction",
         blocks: [
           { id: "1", isOpen: false },
 
@@ -77,7 +89,6 @@ describe(getBlockChildIndices, () => {
   it("returns an empty array if the block ID does not exist", () => {
     const pyramid: PyramidLevel["pyramid"] = {
       floorCount: 2,
-      operation: "subtraction",
       blocks: [
         { id: "1", isOpen: false },
         { id: "2", isOpen: true },

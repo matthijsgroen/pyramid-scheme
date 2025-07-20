@@ -6,10 +6,19 @@ export const InputBlock: FC<{
   value?: number;
   selected?: boolean;
   shouldFocus?: boolean;
+  disabled?: boolean;
   onSelect?: () => void;
   onBlur?: () => void;
   onChange: (value: number | undefined) => void;
-}> = ({ value, selected, shouldFocus, onChange, onSelect, onBlur }) => {
+}> = ({
+  value,
+  selected,
+  disabled,
+  shouldFocus,
+  onChange,
+  onSelect,
+  onBlur,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!selected && inputRef.current) {
@@ -32,6 +41,7 @@ export const InputBlock: FC<{
       <input
         ref={inputRef}
         type="number"
+        disabled={disabled}
         value={value ?? ""}
         pattern="[0-9]*"
         onBlur={(e) => {
@@ -39,6 +49,9 @@ export const InputBlock: FC<{
           if (e.target.value === "") {
             onChange(undefined);
           }
+        }}
+        onClick={() => {
+          inputRef.current?.focus();
         }}
         onFocus={onSelect}
         onChange={(e) =>
