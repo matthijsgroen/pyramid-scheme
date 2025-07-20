@@ -14,6 +14,9 @@ export const Block: FC<
         },
         className
       )}
+      style={{
+        boxShadow: "16px 0px 0px 0px #9b623e",
+      }}
     >
       {children}
     </div>

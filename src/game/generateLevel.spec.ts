@@ -87,8 +87,6 @@ describe(generateLevel, () => {
       const level = generateLevel(settings, random);
 
       const values = getAnswers(level.pyramid);
-      console.log("Generated values:", values);
-      console.log("Level values:", level.values);
       expect(values).toEqual(level.values);
     });
   });
