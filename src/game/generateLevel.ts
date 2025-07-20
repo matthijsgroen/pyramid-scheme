@@ -105,8 +105,15 @@ export const generateLevel = (
   let tryCount = 0;
   while (tryCount < 100) {
     const pyramidLevel = openBlocks(fullPyramid, openBlockCount, random);
-    if (getAnswers(pyramidLevel.pyramid)) {
-      return pyramidLevel;
+    const answers = getAnswers(pyramidLevel.pyramid);
+    if (answers) {
+      // check if it are the same answers as the values
+      const valuesMatch = Object.keys(answers).every(
+        (key) => answers[key] === pyramidLevel.values[key]
+      );
+      if (valuesMatch) {
+        return pyramidLevel;
+      }
     }
     tryCount++;
   }

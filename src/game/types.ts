@@ -8,7 +8,7 @@ export type PyramidLevelSettings = {
 
 export type PyramidLevel = {
   pyramid: Pyramid;
-  values: Record<string, number>;
+  values: Record<string, number | undefined>;
 };
 
 export type Pyramid = {

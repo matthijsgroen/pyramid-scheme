@@ -7,10 +7,10 @@ const random = mulberry32(12345);
 
 function App() {
   const settings: PyramidLevelSettings = {
-    floorCount: 7,
+    floorCount: 4,
     operation: "addition",
-    openBlockCount: 15,
-    lowestFloorNumberRange: [1, 10],
+    openBlockCount: 6,
+    lowestFloorNumberRange: [5, 40],
     allowNegativeNumbers: false,
   };
 
