@@ -3,6 +3,7 @@ import {
   generateLevelSettings,
   percentageWithinFloor,
 } from "./generateLevelSettings";
+import { generateLevel } from "./generateLevel";
 
 describe(percentageWithinFloor, () => {
   it.each([
@@ -39,7 +40,52 @@ describe(generateLevelSettings, () => {
         for (let level = startLevel; level <= endLevel; level++)
           expect(generateLevelSettings(level).floorCount).toBe(height);
         expect(generateLevelSettings(endLevel + 1).floorCount).not.toBe(height);
-      },
+      }
+    );
+  });
+
+  describe.only("the number of open blocks increases", () => {
+    it.each([
+      { level: 1, openBlockCount: 1 },
+      { level: 2, openBlockCount: 3 },
+      { level: 3, openBlockCount: 2 },
+      { level: 4, openBlockCount: 3 },
+      { level: 5, openBlockCount: 3 },
+      { level: 9, openBlockCount: 5 },
+    ])(
+      "generates $openBlockCount open blocks for level $level",
+      ({ level, openBlockCount }) => {
+        expect(generateLevelSettings(level).openBlockCount).toBe(
+          openBlockCount
+        );
+      }
+    );
+  });
+
+  describe("open block boundaries", () => {
+    it.each([
+      { floorCount: 3, openBlockCount: (3 * 4) / 2 - 3 },
+      { floorCount: 4, openBlockCount: (4 * 5) / 2 - 4 },
+      { floorCount: 5, openBlockCount: (5 * 6) / 2 - 5 },
+      { floorCount: 8, openBlockCount: (8 * 9) / 2 - 8 },
+    ])(
+      "generates $openBlockCount open blocks in a pyramid with $floorCount floors",
+      ({ floorCount, openBlockCount }) => {
+        expect(() =>
+          generateLevel({
+            floorCount,
+            openBlockCount,
+            lowestFloorNumberRange: [1, 10],
+          })
+        ).not.toThrow();
+        expect(() =>
+          generateLevel({
+            floorCount,
+            openBlockCount: openBlockCount + 1,
+            lowestFloorNumberRange: [1, 10],
+          })
+        ).toThrow();
+      }
     );
   });
 });

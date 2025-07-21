@@ -15,7 +15,7 @@ export const percentageWithinFloor = (levelNr: number): number => {
 };
 
 export const generateLevelSettings = (
-  levelNr: number,
+  levelNr: number
 ): PyramidLevelSettings => {
   const floorCount =
     4 + pyramidHeights.findIndex((height) => height * 10 >= levelNr);
@@ -34,10 +34,19 @@ export const generateLevelSettings = (
       lowestFloorNumberRange: [1, 4],
     };
   }
+  const maxBlocksToOpen = (floorCount * (floorCount + 1)) / 2 - floorCount;
+  const openBlockCount = Math.floor(
+    maxBlocksToOpen * (0.2 + percentageWithinFloor(levelNr) * 0.8)
+  );
+
+  const lowestFloorNumberRange = [
+    Math.floor(1 + percentageWithinFloor(levelNr) * 2),
+    Math.floor(2 + percentageWithinFloor(levelNr) * 8),
+  ] as [number, number];
 
   return {
     floorCount,
-    openBlockCount: 2,
-    lowestFloorNumberRange: [1, 2],
+    openBlockCount,
+    lowestFloorNumberRange,
   };
 };
