@@ -66,6 +66,9 @@ export const InputBlock: FC<{
           if (e.key === "ArrowUp" || e.key === "ArrowDown") {
             e.preventDefault()
           }
+          if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+            e.stopPropagation()
+          }
         }}
         className="w-full h-full text-center bg-transparent outline-none peer"
         placeholder="..."

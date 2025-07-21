@@ -36,7 +36,7 @@ export const generateLevelSettings = (
   }
   const maxBlocksToOpen = (floorCount * (floorCount + 1)) / 2 - floorCount
   const openBlockCount = Math.floor(
-    maxBlocksToOpen * (0.2 + percentageWithinFloor(levelNr) * 0.8)
+    maxBlocksToOpen * (0.5 + percentageWithinFloor(levelNr) * 0.5)
   )
 
   const lowestFloorNumberRange = [

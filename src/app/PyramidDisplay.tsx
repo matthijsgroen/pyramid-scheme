@@ -34,7 +34,7 @@ export const PyramidDisplay: FC<{
     setFocusInput,
     handleKeyDown,
   } = usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-  const complete = isComplete({ pyramid, values })
+  const complete = !focusInput && isComplete({ pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
 
   return (
@@ -51,7 +51,7 @@ export const PyramidDisplay: FC<{
           .slice(startIndex, startIndex + floor + 1)
           .every((block) => values[block.id] === correctAnswers?.[block.id])
         return (
-          <div key={floor} className="flex justify-center -mb-[1px]">
+          <div key={floor} className="flex justify-center mb-[-1px]">
             {Array.from({ length: floor + 1 }, (_, index) => {
               const blockIndex = startIndex + index
               const block = blocks[blockIndex]
@@ -83,8 +83,8 @@ export const PyramidDisplay: FC<{
             })}
             <div
               className={clsx(
-                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold",
-                !complete && "opacity-0"
+                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold transition-opacity delay-200",
+                complete ? "opacity-100" : "opacity-0"
               )}
             >
               {isCorrect ? "✔️" : "❌"}
