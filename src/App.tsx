@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { Level } from "./app/Level";
-import { generateLevel } from "./game/generateLevel";
-import { generateNewSeed, mulberry32 } from "./game/random";
-import { generateLevelSettings } from "./game/generateLevelSettings";
+import { useState } from "react"
+import { Level } from "./app/Level"
+import { generateLevel } from "./game/generateLevel"
+import { generateNewSeed, mulberry32 } from "./game/random"
+import { generateLevelSettings } from "./game/generateLevelSettings"
 
-const gameSeed = 12345;
+const gameSeed = 12345
 
 function App() {
-  const [levelNr, setLevelNr] = useState(1);
+  const [levelNr, setLevelNr] = useState(1)
 
-  const levelSeed = generateNewSeed(gameSeed, levelNr);
-  const random = mulberry32(levelSeed);
+  const levelSeed = generateNewSeed(gameSeed, levelNr)
+  const random = mulberry32(levelSeed)
 
-  const settings = generateLevelSettings(levelNr);
-  const levelContent = generateLevel(settings, random);
+  const settings = generateLevelSettings(levelNr)
+  const levelContent = generateLevel(settings, random)
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-blue-200 to-blue-100">
@@ -33,14 +33,14 @@ function App() {
             content={levelContent}
             onComplete={() => {
               setTimeout(() => {
-                setLevelNr((prev) => prev + 1);
-              }, 1000);
+                setLevelNr((prev) => prev + 1)
+              }, 1000)
             }}
           />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

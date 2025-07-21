@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { generateLevel } from "./generateLevel";
-import type { PyramidLevelSettings } from "./types";
-import { mulberry32 } from "./random";
-import { getAnswers } from "./state";
+import { describe, expect, it } from "vitest"
+import { generateLevel } from "./generateLevel"
+import type { PyramidLevelSettings } from "./types"
+import { mulberry32 } from "./random"
+import { getAnswers } from "./state"
 
 describe(generateLevel, () => {
   it.each([
@@ -19,11 +19,11 @@ describe(generateLevel, () => {
         floorCount,
         openBlockCount: 0,
         lowestFloorNumberRange: [4, 15],
-      };
-      const level = generateLevel(settings);
-      expect(level.pyramid.blocks.length).toBe(expectedBlockCount);
-    },
-  );
+      }
+      const level = generateLevel(settings)
+      expect(level.pyramid.blocks.length).toBe(expectedBlockCount)
+    }
+  )
 
   it.each<{ range: [min: number, max: number] }>([
     { range: [1, 10] },
@@ -32,29 +32,29 @@ describe(generateLevel, () => {
   ])(
     "generates a level with the correct range of values (range: $range)",
     ({ range }) => {
-      const random = mulberry32(12345);
-      const floorCount = 3;
+      const random = mulberry32(12345)
+      const floorCount = 3
       const settings: PyramidLevelSettings = {
         floorCount,
         openBlockCount: 0,
         lowestFloorNumberRange: range,
-      };
-      const bottomFloorIndex = ((floorCount - 1) * floorCount) / 2;
-      const level = generateLevel(settings, random);
+      }
+      const bottomFloorIndex = ((floorCount - 1) * floorCount) / 2
+      const level = generateLevel(settings, random)
 
       const lowestLevelValues = level.pyramid.blocks
         .slice(bottomFloorIndex)
         .map((block) => block.value)
-        .filter((value): value is number => value !== undefined);
+        .filter((value): value is number => value !== undefined)
 
-      expect(lowestLevelValues.length).toBeGreaterThanOrEqual(2);
+      expect(lowestLevelValues.length).toBeGreaterThanOrEqual(2)
 
-      const minValue = Math.min(...lowestLevelValues);
-      const maxValue = Math.max(...lowestLevelValues);
-      expect(minValue).toBeGreaterThanOrEqual(range[0]);
-      expect(maxValue).toBeLessThanOrEqual(range[1]);
-    },
-  );
+      const minValue = Math.min(...lowestLevelValues)
+      const maxValue = Math.max(...lowestLevelValues)
+      expect(minValue).toBeGreaterThanOrEqual(range[0])
+      expect(maxValue).toBeLessThanOrEqual(range[1])
+    }
+  )
 
   describe("opening blocks", () => {
     it("will open the correct number of blocks", () => {
@@ -62,24 +62,24 @@ describe(generateLevel, () => {
         floorCount: 5,
         openBlockCount: 4,
         lowestFloorNumberRange: [1, 10],
-      };
-      const level = generateLevel(settings);
-      const openBlocks = level.pyramid.blocks.filter((block) => block.isOpen);
-      expect(openBlocks.length).toBe(settings.openBlockCount);
-      expect(Object.values(level.values)).toHaveLength(settings.openBlockCount);
-    });
+      }
+      const level = generateLevel(settings)
+      const openBlocks = level.pyramid.blocks.filter((block) => block.isOpen)
+      expect(openBlocks.length).toBe(settings.openBlockCount)
+      expect(Object.values(level.values)).toHaveLength(settings.openBlockCount)
+    })
 
     it("will keep the level solveable", () => {
-      const random = mulberry32(12345);
+      const random = mulberry32(12345)
       const settings: PyramidLevelSettings = {
         floorCount: 4, // 10 blocks
         openBlockCount: 6,
         lowestFloorNumberRange: [1, 10],
-      };
-      const level = generateLevel(settings, random);
+      }
+      const level = generateLevel(settings, random)
 
-      const values = getAnswers(level.pyramid);
-      expect(values).toEqual(level.values);
-    });
-  });
-});
+      const values = getAnswers(level.pyramid)
+      expect(values).toEqual(level.values)
+    })
+  })
+})

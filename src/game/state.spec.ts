@@ -1,7 +1,7 @@
-import { getAnswers, getBlockChildIndices, isComplete, isValid } from "./state";
-import { describe, it, expect } from "vitest";
-import type { PyramidLevel } from "./types";
-import { createPyramid } from "./test-utils/pyramidfactory";
+import { getAnswers, getBlockChildIndices, isComplete, isValid } from "./state"
+import { describe, it, expect } from "vitest"
+import type { PyramidLevel } from "./types"
+import { createPyramid } from "./test-utils/pyramidfactory"
 
 describe(isComplete, () => {
   it("returns true when all open blocks have corresponding values", () => {
@@ -18,9 +18,9 @@ describe(isComplete, () => {
         "2": 5,
         "3": 10,
       },
-    };
-    expect(isComplete(state)).toBe(true);
-  });
+    }
+    expect(isComplete(state)).toBe(true)
+  })
 
   it("returns false when not all open blocks have corresponding values", () => {
     const state: PyramidLevel = {
@@ -33,9 +33,9 @@ describe(isComplete, () => {
         ],
       },
       values: { "2": 5 },
-    };
-    expect(isComplete(state)).toBe(false);
-  });
+    }
+    expect(isComplete(state)).toBe(false)
+  })
 
   it("returns false when not values are undefined", () => {
     const state: PyramidLevel = {
@@ -48,10 +48,10 @@ describe(isComplete, () => {
         ],
       },
       values: { "2": 5, "3": undefined },
-    };
-    expect(isComplete(state)).toBe(false);
-  });
-});
+    }
+    expect(isComplete(state)).toBe(false)
+  })
+})
 
 describe(getBlockChildIndices, () => {
   it.each([
@@ -81,10 +81,10 @@ describe(getBlockChildIndices, () => {
           { id: "9", isOpen: false },
           { id: "10", isOpen: false },
         ],
-      };
-      expect(getBlockChildIndices(pyramid, blockId)).toEqual(expectedChildIds);
-    },
-  );
+      }
+      expect(getBlockChildIndices(pyramid, blockId)).toEqual(expectedChildIds)
+    }
+  )
 
   it("returns an empty array if the block ID does not exist", () => {
     const pyramid: PyramidLevel["pyramid"] = {
@@ -93,10 +93,10 @@ describe(getBlockChildIndices, () => {
         { id: "1", isOpen: false },
         { id: "2", isOpen: true },
       ],
-    };
-    expect(getBlockChildIndices(pyramid, "nonexistent")).toEqual([]);
-  });
-});
+    }
+    expect(getBlockChildIndices(pyramid, "nonexistent")).toEqual([])
+  })
+})
 
 describe(isValid, () => {
   it("returns true for a valid addition pyramid", () => {
@@ -128,10 +128,10 @@ describe(isValid, () => {
         "19": 5,
         "21": 7,
       },
-    };
-    expect(state.pyramid.floorCount).toBe(6);
-    expect(isValid(state)).toBe(true);
-  });
+    }
+    expect(state.pyramid.floorCount).toBe(6)
+    expect(isValid(state)).toBe(true)
+  })
 
   it("returns false for an invalid addition pyramid", () => {
     const state: PyramidLevel = {
@@ -162,10 +162,10 @@ describe(isValid, () => {
         "19": 5,
         "21": 7,
       },
-    };
-    expect(isValid(state)).toBe(false);
-  });
-});
+    }
+    expect(isValid(state)).toBe(false)
+  })
+})
 
 describe(getAnswers, () => {
   it("returns answers for open blocks with values", () => {
@@ -179,7 +179,7 @@ describe(getAnswers, () => {
       15, 12, "", "", 10, "",
     ]);
 
-    const result = getAnswers(pyramid);
+    const result = getAnswers(pyramid)
     expect(result).toEqual({
       "2": 117,
       "3": 105,
@@ -193,6 +193,6 @@ describe(getAnswers, () => {
       "18": 4,
       "19": 5,
       "21": 7,
-    });
-  });
-});
+    })
+  })
+})

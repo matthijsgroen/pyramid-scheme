@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "vitest"
 import {
   generateLevelSettings,
   percentageWithinFloor,
-} from "./generateLevelSettings";
-import { generateLevel } from "./generateLevel";
+} from "./generateLevelSettings"
+import { generateLevel } from "./generateLevel"
 
 describe(percentageWithinFloor, () => {
   it.each([
@@ -16,9 +16,9 @@ describe(percentageWithinFloor, () => {
     { level: 30, expected: 1 },
     { level: 40, expected: 0.5 },
   ])("returns $expected for level $level", ({ level, expected }) => {
-    expect(percentageWithinFloor(level)).toBe(expected);
-  });
-});
+    expect(percentageWithinFloor(level)).toBe(expected)
+  })
+})
 
 describe(generateLevelSettings, () => {
   describe("the pyramid getting larger", () => {
@@ -38,11 +38,11 @@ describe(generateLevelSettings, () => {
       "generates a height of $height starting from level $startLevel",
       ({ startLevel, endLevel, height }) => {
         for (let level = startLevel; level <= endLevel; level++)
-          expect(generateLevelSettings(level).floorCount).toBe(height);
-        expect(generateLevelSettings(endLevel + 1).floorCount).not.toBe(height);
+          expect(generateLevelSettings(level).floorCount).toBe(height)
+        expect(generateLevelSettings(endLevel + 1).floorCount).not.toBe(height)
       }
-    );
-  });
+    )
+  })
 
   describe.only("the number of open blocks increases", () => {
     it.each([
@@ -55,12 +55,10 @@ describe(generateLevelSettings, () => {
     ])(
       "generates $openBlockCount open blocks for level $level",
       ({ level, openBlockCount }) => {
-        expect(generateLevelSettings(level).openBlockCount).toBe(
-          openBlockCount
-        );
+        expect(generateLevelSettings(level).openBlockCount).toBe(openBlockCount)
       }
-    );
-  });
+    )
+  })
 
   describe("open block boundaries", () => {
     it.each([
@@ -77,15 +75,15 @@ describe(generateLevelSettings, () => {
             openBlockCount,
             lowestFloorNumberRange: [1, 10],
           })
-        ).not.toThrow();
+        ).not.toThrow()
         expect(() =>
           generateLevel({
             floorCount,
             openBlockCount: openBlockCount + 1,
             lowestFloorNumberRange: [1, 10],
           })
-        ).toThrow();
+        ).toThrow()
       }
-    );
-  });
-});
+    )
+  })
+})
