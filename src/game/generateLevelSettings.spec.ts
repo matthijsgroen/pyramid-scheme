@@ -48,9 +48,9 @@ describe(generateLevelSettings, () => {
     it.each([
       { level: 1, openBlockCount: 1 },
       { level: 2, openBlockCount: 3 },
-      { level: 3, openBlockCount: 2 },
-      { level: 4, openBlockCount: 3 },
-      { level: 5, openBlockCount: 3 },
+      { level: 3, openBlockCount: 3 },
+      { level: 4, openBlockCount: 4 },
+      { level: 5, openBlockCount: 4 },
       { level: 9, openBlockCount: 5 },
     ])(
       "generates $openBlockCount open blocks for level $level",

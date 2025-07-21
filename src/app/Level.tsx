@@ -14,12 +14,15 @@ export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
   // Placeholder for Level component logic
   useEffect(() => {
     if (completed) {
-      onComplete?.()
+      const stopTimeout = setTimeout(() => {
+        onComplete?.()
+      }, 1000)
+      return () => clearTimeout(stopTimeout)
     }
   }, [completed, onComplete])
 
   return (
-    <div className="relative level-container flex flex-col h-screen w-full">
+    <div className="relative level-container flex flex-col w-full">
       <div className="flex-1 flex items-center justify-center">
         <PyramidDisplay
           pyramid={content.pyramid}
