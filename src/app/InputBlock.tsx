@@ -1,15 +1,15 @@
-import type { FC } from "react";
-import { useRef, useEffect } from "react";
-import { Block } from "./Block";
+import type { FC } from "react"
+import { useRef, useEffect } from "react"
+import { Block } from "./Block"
 
 export const InputBlock: FC<{
-  value?: number;
-  selected?: boolean;
-  shouldFocus?: boolean;
-  disabled?: boolean;
-  onSelect?: () => void;
-  onBlur?: () => void;
-  onChange: (value: number | undefined) => void;
+  value?: number
+  selected?: boolean
+  shouldFocus?: boolean
+  disabled?: boolean
+  onSelect?: () => void
+  onBlur?: () => void
+  onChange: (value: number | undefined) => void
 }> = ({
   value,
   selected,
@@ -19,17 +19,17 @@ export const InputBlock: FC<{
   onSelect,
   onBlur,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (!selected && inputRef.current) {
-      inputRef.current.blur();
+      inputRef.current.blur()
     }
-  }, [selected]);
+  }, [selected])
   useEffect(() => {
     if (shouldFocus && selected && inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
-  }, [shouldFocus, selected]);
+  }, [shouldFocus, selected])
 
   return (
     <Block
@@ -45,13 +45,13 @@ export const InputBlock: FC<{
         value={value ?? ""}
         pattern="[0-9]*"
         onBlur={(e) => {
-          onBlur?.();
+          onBlur?.()
           if (e.target.value === "") {
-            onChange(undefined);
+            onChange(undefined)
           }
         }}
         onClick={() => {
-          inputRef.current?.focus();
+          inputRef.current?.focus()
         }}
         onFocus={onSelect}
         onChange={(e) =>
@@ -61,15 +61,15 @@ export const InputBlock: FC<{
         }
         onKeyDown={(e) => {
           if (e.key === "Escape" || e.key === "Enter") {
-            (e.target as HTMLInputElement).blur();
+            ;(e.target as HTMLInputElement).blur()
           }
           if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-            e.preventDefault();
+            e.preventDefault()
           }
         }}
         className="w-full h-full text-center bg-transparent outline-none peer"
         placeholder="..."
       />
     </Block>
-  );
-};
+  )
+}
