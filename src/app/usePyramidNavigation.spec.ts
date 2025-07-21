@@ -19,7 +19,7 @@ describe.only(usePyramidNavigation, () => {
 
   it("initializes with selectedBlockIndex 0 and focusInput false", () => {
     const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
+      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer),
     );
     expect(result.current.selectedBlockIndex).toBe(0);
     expect(result.current.focusInput).toBe(false);
@@ -27,7 +27,7 @@ describe.only(usePyramidNavigation, () => {
 
   it("moves selection with arrow keys", () => {
     const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
+      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer),
     );
     act(() => {
       result.current.handleKeyDown({
@@ -47,7 +47,7 @@ describe.only(usePyramidNavigation, () => {
 
   it("sets focusInput true on Enter", () => {
     const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
+      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer),
     );
     act(() => {
       result.current.handleKeyDown({
@@ -60,7 +60,7 @@ describe.only(usePyramidNavigation, () => {
 
   it("calls onAnswer and sets focusInput true on number key", () => {
     const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
+      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer),
     );
     act(() => {
       result.current.handleKeyDown({
@@ -74,7 +74,7 @@ describe.only(usePyramidNavigation, () => {
 
   it.only("moves selection up and down floors", () => {
     const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
+      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer),
     );
     act(() => {
       result.current.setSelectedBlockIndex(1); // Select block on floor 1

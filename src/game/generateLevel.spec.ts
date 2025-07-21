@@ -22,7 +22,7 @@ describe(generateLevel, () => {
       };
       const level = generateLevel(settings);
       expect(level.pyramid.blocks.length).toBe(expectedBlockCount);
-    }
+    },
   );
 
   it.each<{ range: [min: number, max: number] }>([
@@ -53,7 +53,7 @@ describe(generateLevel, () => {
       const maxValue = Math.max(...lowestLevelValues);
       expect(minValue).toBeGreaterThanOrEqual(range[0]);
       expect(maxValue).toBeLessThanOrEqual(range[1]);
-    }
+    },
   );
 
   describe("opening blocks", () => {

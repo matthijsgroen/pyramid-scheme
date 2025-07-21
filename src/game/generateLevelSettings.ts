@@ -15,7 +15,7 @@ export const percentageWithinFloor = (levelNr: number): number => {
 };
 
 export const generateLevelSettings = (
-  levelNr: number
+  levelNr: number,
 ): PyramidLevelSettings => {
   const floorCount =
     4 + pyramidHeights.findIndex((height) => height * 10 >= levelNr);
