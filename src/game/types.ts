@@ -2,7 +2,6 @@ export type PyramidLevelSettings = {
   floorCount: number;
   openBlockCount: number;
   lowestFloorNumberRange: [min: number, max: number];
-  allowNegativeNumbers: boolean;
 };
 
 export type PyramidLevel = {

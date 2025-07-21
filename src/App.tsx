@@ -1,24 +1,18 @@
 import { useState } from "react";
 import { Level } from "./app/Level";
 import { generateLevel } from "./game/generateLevel";
-import type { PyramidLevelSettings } from "./game/types";
 import { generateNewSeed, mulberry32 } from "./game/random";
+import { generateLevelSettings } from "./game/generateLevelSettings";
 
 const gameSeed = 12345;
 
 function App() {
-  const [levelNr] = useState(1);
+  const [levelNr, setLevelNr] = useState(1);
 
   const levelSeed = generateNewSeed(gameSeed, levelNr);
   const random = mulberry32(levelSeed);
 
-  const settings: PyramidLevelSettings = {
-    floorCount: 3,
-    openBlockCount: 3,
-    lowestFloorNumberRange: [1, 1],
-    allowNegativeNumbers: false,
-  };
-
+  const settings = generateLevelSettings(levelNr);
   const levelContent = generateLevel(settings, random);
 
   return (
@@ -35,9 +29,12 @@ function App() {
         </h1>
         <div className="flex-1 w-full">
           <Level
+            key={levelNr}
             content={levelContent}
             onComplete={() => {
-              console.log("Level completed!");
+              setTimeout(() => {
+                setLevelNr((prev) => prev + 1);
+              }, 1000);
             }}
           />
         </div>

@@ -19,11 +19,10 @@ describe(generateLevel, () => {
         floorCount,
         openBlockCount: 0,
         lowestFloorNumberRange: [4, 15],
-        allowNegativeNumbers: false,
       };
       const level = generateLevel(settings);
       expect(level.pyramid.blocks.length).toBe(expectedBlockCount);
-    },
+    }
   );
 
   it.each<{ range: [min: number, max: number] }>([
@@ -39,7 +38,6 @@ describe(generateLevel, () => {
         floorCount,
         openBlockCount: 0,
         lowestFloorNumberRange: range,
-        allowNegativeNumbers: false,
       };
       const bottomFloorIndex = ((floorCount - 1) * floorCount) / 2;
       const level = generateLevel(settings, random);
@@ -55,7 +53,7 @@ describe(generateLevel, () => {
       const maxValue = Math.max(...lowestLevelValues);
       expect(minValue).toBeGreaterThanOrEqual(range[0]);
       expect(maxValue).toBeLessThanOrEqual(range[1]);
-    },
+    }
   );
 
   describe("opening blocks", () => {
@@ -64,7 +62,6 @@ describe(generateLevel, () => {
         floorCount: 5,
         openBlockCount: 4,
         lowestFloorNumberRange: [1, 10],
-        allowNegativeNumbers: false,
       };
       const level = generateLevel(settings);
       const openBlocks = level.pyramid.blocks.filter((block) => block.isOpen);
@@ -78,7 +75,6 @@ describe(generateLevel, () => {
         floorCount: 4, // 10 blocks
         openBlockCount: 6,
         lowestFloorNumberRange: [1, 10],
-        allowNegativeNumbers: false,
       };
       const level = generateLevel(settings, random);
 
