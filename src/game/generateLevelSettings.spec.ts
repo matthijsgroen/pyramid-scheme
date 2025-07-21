@@ -44,7 +44,7 @@ describe(generateLevelSettings, () => {
     )
   })
 
-  describe.only("the number of open blocks increases", () => {
+  describe("the number of open blocks increases", () => {
     it.each([
       { level: 1, openBlockCount: 1 },
       { level: 2, openBlockCount: 3 },
