@@ -39,7 +39,7 @@ describe(generateLevelSettings, () => {
         for (let level = startLevel; level <= endLevel; level++)
           expect(generateLevelSettings(level).floorCount).toBe(height);
         expect(generateLevelSettings(endLevel + 1).floorCount).not.toBe(height);
-      }
+      },
     );
   });
 });
