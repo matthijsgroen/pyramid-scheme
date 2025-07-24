@@ -8,7 +8,13 @@
   }
 }
 
+@font-face {
+  font-family: "LimeLight";
+  src: url(./assets/LimeLight-Regular.ttf) format("truetype");
+}
+
 @theme {
+  --font-pyramid: "LimeLight", "serif";
   --animate-fade-in: fade-in 1s 1s forwards ease-in-out;
   @keyframes fade-in {
     0% {
