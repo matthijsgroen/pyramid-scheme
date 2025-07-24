@@ -5,7 +5,7 @@ import { generateNewSeed, mulberry32 } from "./game/random"
 import { generateLevelSettings } from "./game/generateLevelSettings"
 import { clsx } from "clsx"
 import { useGameStorage } from "./support/useGameStorage"
-import { Backdrop } from "./ui/backdrop"
+import { Backdrop } from "./ui/Backdrop"
 
 const gameSeed = 12345
 
