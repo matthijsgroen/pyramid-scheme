@@ -45,12 +45,6 @@ function App() {
     <Backdrop levelNr={levelNr}>
       <h1 className="text-3xl font-bold flex-none mt-0 font-pyramid pt-4">
         Pyramid Level {levelNr}
-        <button
-          onClick={onComplete}
-          className="ml-4 text-sm border rounded p-2"
-        >
-          Complete Level
-        </button>
       </h1>
       <div className="flex-1 w-full flex relative">
         <div
