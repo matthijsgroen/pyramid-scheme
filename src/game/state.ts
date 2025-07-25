@@ -14,19 +14,12 @@ export const isComplete = (state: PyramidLevel): boolean => {
 export const isValid = (state: PyramidLevel): boolean => {
   // check for addition if the value above matches the sum of the values below
   const { pyramid, values } = state
-  const blockValues = new Map(Object.entries(values))
-  for (const block of pyramid.blocks) {
-    const value = block.value ?? blockValues.get(block.id)
-    const childIndices = getBlockChildIndices(pyramid, block.id)
-    if (childIndices.length === 0) continue // no children, nothing to validate
-    const childValues: number[] = childIndices.map(
-      (index) =>
-        pyramid.blocks[index].value ??
-        blockValues.get(pyramid.blocks[index].id) ??
-        0
-    )
-    const expectedValue = childValues.reduce((sum, val) => sum + (val ?? 0), 0)
-    if (value !== expectedValue) return false
+  const expectedValues = getAnswers(pyramid, { ignoreOpen: true })
+  if (!expectedValues) return false
+  // check if values match expectedValues
+  for (const [id, value] of Object.entries(expectedValues)) {
+    if (values[id] !== value && pyramid.blocks.find((b) => b.id === id)?.isOpen)
+      return false
   }
 
   return true
@@ -60,7 +53,8 @@ export const getBlockChildIndices = (
 }
 
 export const getAnswers = (
-  pyramid: Pyramid
+  pyramid: Pyramid,
+  { ignoreOpen = false } = {}
 ): Record<string, number> | undefined => {
   const blockValues: Record<string, number> = {}
   pyramid.blocks.forEach((block) => {
@@ -71,7 +65,7 @@ export const getAnswers = (
 
   // Find blocks with missing value at themselves or their children
   const answersNeeded = pyramid.blocks.filter(
-    (block) => block.value === undefined
+    (block) => block.value === undefined && (block.isOpen || ignoreOpen)
   )
   if (answersNeeded.length === 0) return undefined
 
@@ -108,7 +102,8 @@ export const getAnswers = (
           0
         )
         const missingValue = value - knownSum
-        blockValues[pyramid.blocks[childIndices[missingIdx]].id] = missingValue
+        const missingBlock = pyramid.blocks[childIndices[missingIdx]]
+        blockValues[missingBlock.id] = missingValue
         updated = true
       }
     }

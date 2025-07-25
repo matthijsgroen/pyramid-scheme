@@ -6,6 +6,7 @@ import { createPyramid } from "./test-utils/pyramidfactory"
 describe(isComplete, () => {
   it("returns true when all open blocks have corresponding values", () => {
     const state: PyramidLevel = {
+      levelNr: 1,
       pyramid: {
         floorCount: 2,
         blocks: [
@@ -24,6 +25,7 @@ describe(isComplete, () => {
 
   it("returns false when not all open blocks have corresponding values", () => {
     const state: PyramidLevel = {
+      levelNr: 1,
       pyramid: {
         floorCount: 2,
         blocks: [
@@ -39,6 +41,7 @@ describe(isComplete, () => {
 
   it("returns false when not values are undefined", () => {
     const state: PyramidLevel = {
+      levelNr: 1,
       pyramid: {
         floorCount: 2,
         blocks: [
@@ -101,6 +104,7 @@ describe(getBlockChildIndices, () => {
 describe(isValid, () => {
   it("returns true for a valid addition pyramid", () => {
     const state: PyramidLevel = {
+      levelNr: 1,
       // prettier-ignore
       pyramid: createPyramid( [
         222,
@@ -135,6 +139,7 @@ describe(isValid, () => {
 
   it("returns false for an invalid addition pyramid", () => {
     const state: PyramidLevel = {
+      levelNr: 1,
       // prettier-ignore
       pyramid: createPyramid( [
         222,

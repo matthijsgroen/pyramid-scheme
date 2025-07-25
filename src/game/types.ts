@@ -1,10 +1,12 @@
 export type PyramidLevelSettings = {
   floorCount: number
   openBlockCount: number
+  blockedBlockCount: number
   lowestFloorNumberRange: [min: number, max: number]
 }
 
 export type PyramidLevel = {
+  levelNr: number
   pyramid: Pyramid
   values: Record<string, number | undefined>
 }

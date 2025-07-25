@@ -5,6 +5,7 @@ import { Block } from "../ui/Block"
 import { InputBlock } from "../ui/InputBlock"
 import { getAnswers, isComplete } from "../game/state"
 import clsx from "clsx"
+import { mulberry32 } from "../game/random"
 
 const createFloorStartIndices = (floorCount: number): number[] => {
   const indices: number[] = []
@@ -16,11 +17,30 @@ const createFloorStartIndices = (floorCount: number): number[] => {
   return indices
 }
 
+// prettier-ignore
+const hyroglyphs = [
+  "𓂀", "𓃭", "𓁼", "𓃗", "𓇡", "𓊑", "𓆣", "𓀀",
+  "𓃾", "𓅓", "𓆑", "𓏏", "𓎛", "𓋴", "𓈖", "𓊃",
+  "𓉔", "𓄿", "𓂝", "𓃀", "𓅱", "𓆷", "𓎡", "𓎼",
+  "𓏲", "𓏤", "𓏇", "𓏭", "𓏴", "𓐍", "𓐏", "𓏡", "𓏢", "𓏣",
+]
+
+const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
+
+const getPosition = (
+  levelNr: number
+): "left" | "left-mirror" | "right" | "right-mirror" => {
+  return ["left", "left-mirror", "right", "right-mirror"][
+    Math.floor(mulberry32(levelNr)() * 4)
+  ] as "left" | "left-mirror" | "right" | "right-mirror"
+}
+
 export const PyramidDisplay: FC<{
+  levelNr: number
   pyramid: Pyramid
   values: Record<string, number | undefined>
   onAnswer: (blockId: string, value: number | undefined) => void
-}> = ({ pyramid, values, onAnswer }) => {
+}> = ({ pyramid, values, onAnswer, levelNr }) => {
   const { blocks } = pyramid
 
   // Render the pyramid blocks
@@ -34,13 +54,14 @@ export const PyramidDisplay: FC<{
     setFocusInput,
     handleKeyDown,
   } = usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-  const complete = !focusInput && isComplete({ pyramid, values })
+  const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
+  const position = getPosition(levelNr)
 
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center focus:outline-none"
+      className="flex flex-col items-center focus:outline-none relative"
       tabIndex={0}
       autoFocus
       onKeyDown={handleKeyDown}
@@ -49,7 +70,9 @@ export const PyramidDisplay: FC<{
         // if complete, check if all answers of this row are correct
         const isCorrect = blocks
           .slice(startIndex, startIndex + floor + 1)
+          .filter((block) => block.isOpen)
           .every((block) => values[block.id] === correctAnswers?.[block.id])
+
         return (
           <div key={floor} className="flex justify-center mb-[-1px]">
             {Array.from({ length: floor + 1 }, (_, index) => {
@@ -77,13 +100,19 @@ export const PyramidDisplay: FC<{
                   selected={selectedBlockIndex === startIndex + index}
                   className="bg-yellow-200 border-yellow-600"
                 >
-                  {block.value !== undefined ? block.value : ""}
+                  {block.value !== undefined ? (
+                    block.value
+                  ) : (
+                    <span className="text-yellow-600 text-xl">
+                      {hyroglyphs[(startIndex + index) % hyroglyphs.length]}
+                    </span>
+                  )}
                 </Block>
               )
             })}
             <div
               className={clsx(
-                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold transition-opacity delay-200",
+                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold transition-opacity delay-200 text-shadow-md text-shadow-amber-200",
                 complete ? "opacity-100" : "opacity-0"
               )}
             >
@@ -92,6 +121,17 @@ export const PyramidDisplay: FC<{
           </div>
         )
       })}
+      <div
+        className={clsx(
+          "absolute bottom-0 pb-5 text-5xl -z-10",
+          position === "right" && "right-0",
+          position === "right-mirror" && "rotate-y-180 right-0",
+          position === "left" && "left-[-10%]",
+          position === "left-mirror" && "rotate-y-180 left-[-10%]"
+        )}
+      >
+        {decorationEmoji[levelNr % decorationEmoji.length]}
+      </div>
     </div>
   )
 }

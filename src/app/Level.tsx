@@ -10,13 +10,17 @@ export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
 }) => {
   const [answers, setAnswers] = useState<Record<string, number | undefined>>({})
 
-  const completed = isValid({ pyramid: content.pyramid, values: answers })
+  const completed = isValid({
+    levelNr: content.levelNr,
+    pyramid: content.pyramid,
+    values: answers,
+  })
   // Placeholder for Level component logic
   useEffect(() => {
     if (completed) {
       const stopTimeout = setTimeout(() => {
         onComplete?.()
-      }, 1000)
+      }, 2000)
       return () => clearTimeout(stopTimeout)
     }
   }, [completed, onComplete])
@@ -25,6 +29,7 @@ export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
     <div className="relative level-container flex flex-col w-full">
       <div className="flex-1 flex items-center justify-center py-8 w-full">
         <PyramidDisplay
+          levelNr={content.levelNr}
           pyramid={content.pyramid}
           values={answers}
           onAnswer={(blockId: string, value: number | undefined) => {
