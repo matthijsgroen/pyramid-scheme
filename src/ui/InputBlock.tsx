@@ -53,7 +53,10 @@ export const InputBlock: FC<{
         onClick={() => {
           inputRef.current?.focus()
         }}
-        onFocus={onSelect}
+        onFocus={() => {
+          onSelect?.()
+          inputRef.current?.select()
+        }}
         onChange={(e) =>
           e.target.value === ""
             ? onChange(undefined)

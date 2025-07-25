@@ -99,7 +99,6 @@ const blockBlocks = (
     }
     blockedIndices.add(index)
   }
-  console.log("Blocked indices:", blockedIndices)
 
   return {
     ...pyramidLevel,
@@ -129,7 +128,7 @@ export const generateLevel = (
     }
   }
   let tryCount = 0
-  while (tryCount < 100) {
+  while (tryCount < 50) {
     const pyramidLevel = blockBlocks(
       openBlocks(levelNr, fullPyramid, openBlockCount, random),
       blockedBlockCount,

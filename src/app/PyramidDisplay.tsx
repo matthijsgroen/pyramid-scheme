@@ -5,6 +5,7 @@ import { Block } from "../ui/Block"
 import { InputBlock } from "../ui/InputBlock"
 import { getAnswers, isComplete } from "../game/state"
 import clsx from "clsx"
+import { mulberry32 } from "../game/random"
 
 const createFloorStartIndices = (floorCount: number): number[] => {
   const indices: number[] = []
@@ -24,11 +25,22 @@ const hyroglyphs = [
   "𓏲", "𓏤", "𓏇", "𓏭", "𓏴", "𓐍", "𓐏", "𓏡", "𓏢", "𓏣",
 ]
 
+const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
+
+const getPosition = (
+  levelNr: number
+): "left" | "left-mirror" | "right" | "right-mirror" => {
+  return ["left", "left-mirror", "right", "right-mirror"][
+    Math.floor(mulberry32(levelNr)() * 4)
+  ] as "left" | "left-mirror" | "right" | "right-mirror"
+}
+
 export const PyramidDisplay: FC<{
+  levelNr: number
   pyramid: Pyramid
   values: Record<string, number | undefined>
   onAnswer: (blockId: string, value: number | undefined) => void
-}> = ({ pyramid, values, onAnswer }) => {
+}> = ({ pyramid, values, onAnswer, levelNr }) => {
   const { blocks } = pyramid
 
   // Render the pyramid blocks
@@ -44,11 +56,12 @@ export const PyramidDisplay: FC<{
   } = usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
+  const position = getPosition(levelNr)
 
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center focus:outline-none"
+      className="flex flex-col items-center focus:outline-none relative"
       tabIndex={0}
       autoFocus
       onKeyDown={handleKeyDown}
@@ -90,7 +103,7 @@ export const PyramidDisplay: FC<{
                   {block.value !== undefined ? (
                     block.value
                   ) : (
-                    <span className="text-yellow-400">
+                    <span className="text-yellow-600 text-xl">
                       {hyroglyphs[(startIndex + index) % hyroglyphs.length]}
                     </span>
                   )}
@@ -108,6 +121,17 @@ export const PyramidDisplay: FC<{
           </div>
         )
       })}
+      <div
+        className={clsx(
+          "absolute bottom-0 pb-5 text-5xl -z-10",
+          position === "right" && "right-0",
+          position === "right-mirror" && "rotate-y-180 right-0",
+          position === "left" && "left-[-10%]",
+          position === "left-mirror" && "rotate-y-180 left-[-10%]"
+        )}
+      >
+        {decorationEmoji[levelNr % decorationEmoji.length]}
+      </div>
     </div>
   )
 }

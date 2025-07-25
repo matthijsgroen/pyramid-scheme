@@ -4,7 +4,7 @@ import {
   percentageWithinFloor,
 } from "./generateLevelSettings"
 import { generateLevel } from "./generateLevel"
-import { mulberry32 } from "./random"
+import { generateNewSeed, mulberry32 } from "./random"
 
 describe(percentageWithinFloor, () => {
   it.each([
@@ -97,5 +97,18 @@ describe(generateLevelSettings, () => {
         ).toThrow()
       }
     )
+  })
+
+  describe("generating all levels", () => {
+    it("generates levels 1 to 1000 without errors", () => {
+      for (let levelNr = 1; levelNr <= 1000; levelNr++) {
+        const levelSeed = generateNewSeed(12345, levelNr)
+        const random = mulberry32(levelSeed)
+        expect(
+          () => generateLevel(levelNr, generateLevelSettings(levelNr), random),
+          `level ${levelNr}`
+        ).not.toThrow()
+      }
+    })
   })
 })

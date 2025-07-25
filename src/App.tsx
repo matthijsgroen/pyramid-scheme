@@ -7,6 +7,7 @@ import { clsx } from "clsx"
 import { useGameStorage } from "./support/useGameStorage"
 import { Backdrop } from "./ui/Backdrop"
 import { getLevelWidth } from "./game/state"
+import { dayNightCycleStep } from "./ui/backdropSelection"
 
 const gameSeed = 12345
 
@@ -50,7 +51,7 @@ function App() {
       <h1
         className={clsx(
           " absolute top-0 left-0 right-0 text-3xl font-bold flex-none mt-0 font-pyramid pt-4 text-center pointer-events-none",
-          levelNr % 11 < 6 ? "text-black" : "text-white"
+          dayNightCycleStep(levelNr) < 6 ? "text-black" : "text-white"
         )}
       >
         Pyramid Level {levelNr}{" "}
@@ -70,7 +71,7 @@ function App() {
               "absolute inset-0 flex-1 flex items-center justify-center pointer-events-none transition-transform duration-1000 ease-in-out",
               startNextLevel
                 ? "scale-20 translate-x-[25%] blur-xs"
-                : "scale-0 translate-x-[40%] blur-sm"
+                : "scale-0 translate-x-[35%] blur-sm"
             )}
           >
             <Level key={levelNr + 2} content={nextNextLevelContent} />

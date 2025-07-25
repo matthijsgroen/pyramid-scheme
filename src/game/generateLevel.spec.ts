@@ -74,6 +74,7 @@ describe(generateLevel, () => {
 
     it("will keep the level solveable", () => {
       const random = mulberry32(12345)
+
       const settings: PyramidLevelSettings = {
         floorCount: 4, // 10 blocks
         openBlockCount: 6,
