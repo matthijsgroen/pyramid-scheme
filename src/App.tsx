@@ -18,7 +18,7 @@ const contentForLevel = (levelNr: number) => {
   const settings = generateLevelSettings(levelNr)
   return generateLevel(levelNr, settings, random)
 }
-const debug = true
+const debug = false
 
 function App() {
   const [levelNr, setLevelNr] = useGameStorage("levelNr", 1)
@@ -56,7 +56,12 @@ function App() {
       >
         Pyramid Level {levelNr}{" "}
       </h1>
-      {debug && <button onClick={() => setLevelNr((x) => x + 1)}>Next</button>}
+      {debug && (
+        <div className="flex flex-row gap-2 text-slate-400">
+          <button onClick={() => setLevelNr((x) => x - 1)}>Previous</button>
+          <button onClick={() => setLevelNr((x) => x + 1)}>Next</button>
+        </div>
+      )}
       <div className="flex-1 w-full flex overflow-scroll overscroll-contain">
         <div
           className="relative min-w-(--level-width) w-full h-full min-h-(--level-height)"

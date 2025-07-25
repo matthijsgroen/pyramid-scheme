@@ -25,15 +25,30 @@ export const colors: Record<string, string> = {
 }
 
 // prettier-ignore
-export const skyTop = ["sky-300", "sky-300", "sky-400", "sky-400", "sky-500", "sky-500", "sky-600", "sky-700", "sky-800", "sky-900", "sky-950"];
+export const skyTop = [
+  "sky-300", "sky-300", "sky-400", "sky-400", "sky-500", "sky-500", "sky-600", "sky-700", 
+  "sky-800", "sky-900", "sky-950", "sky-950", "sky-950", "sky-950", "sky-900", "sky-900",
+];
 // prettier-ignore
-export const skyMiddle = ["sky-100", "sky-200", "sky-200", "sky-300", "sky-300", "sky-400", "sky-400", "sky-500", "sky-600", "sky-700", "sky-800"];
+export const skyMiddle = [
+  "sky-100", "sky-200", "sky-200", "sky-300", "sky-300", "sky-400", "sky-400", "sky-500", 
+  "sky-600", "sky-700", "sky-800", "sky-900", "sky-950", "sky-950", "sky-950", "sky-950",
+];
 // prettier-ignore
-export const skyBottom = ["sky-100", "sky-200", "sky-200", "sky-300", "sky-300", "sky-400", "sand-300", "sand-400", "sand-500", "sand-400", "sky-800"];
+export const skyBottom = [
+  "sky-100", "sky-200", "sky-200", "sky-300", "sky-300", "sky-400", "sand-300", "sand-400", 
+  "sand-500", "sand-400", "sky-800", "sky-900", "sky-950", "sky-950", "sky-950", "sky-950",
+];
 // prettier-ignore
-export const sandTop = ["sand-100", "sand-100", "sand-200", "sand-200", "sand-300", "sand-300", "sand-400", "sand-400", "sand-500", "sand-500", "sand-600"];
+export const sandTop = [
+  "sand-100", "sand-100", "sand-200", "sand-200", "sand-300", "sand-300", "sand-400", "sand-400", 
+  "sand-500", "sand-500", "sand-600", "sand-800", "sky-900", "sky-700", "sky-500", "sky-400",
+];
 // prettier-ignore
-export const sandBottom = ["sand-300", "sand-400", "sand-400", "sand-500", "sand-500", "sand-600", "sand-600", "sand-700", "sand-700", "sand-800", "sand-900"];
+export const sandBottom = [
+  "sand-300", "sand-400", "sand-400", "sand-500", "sand-500", "sand-600", "sand-600", "sand-700", 
+  "sand-700", "sand-800", "sand-900", "sky-950", "sky-950", "sky-950", "sky-900", "sky-900",
+];
 
 export const dayNightCycleStep = (levelNr: number): number => {
   const step = levelNr % (2 * skyTop.length)
