@@ -122,3 +122,10 @@ export const getAnswers = (
 
   return answers.size < answersNeeded.length ? undefined : answers
 }
+
+export const getLevelWidth = (floorCount: number): number => {
+  // The width of the pyramid is the number of blocks in the last floor
+  return (
+    (floorCount * (floorCount + 1)) / 2 - (floorCount * (floorCount - 1)) / 2
+  )
+}
