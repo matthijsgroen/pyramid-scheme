@@ -24,6 +24,7 @@ export const generateLevelSettings = (
     return {
       floorCount: 3,
       openBlockCount: 1,
+      blockedBlockCount: 0,
       lowestFloorNumberRange: [1, 3],
     }
   }
@@ -31,12 +32,22 @@ export const generateLevelSettings = (
     return {
       floorCount: 3,
       openBlockCount: 3,
+      blockedBlockCount: 0,
       lowestFloorNumberRange: [1, 4],
     }
   }
-  const maxBlocksToOpen = (floorCount * (floorCount + 1)) / 2 - floorCount
+  const maxBlocks = (floorCount * (floorCount + 1)) / 2
+  const maxBlocksToOpen = maxBlocks - floorCount
   const openBlockCount = Math.floor(
     maxBlocksToOpen * (0.5 + percentageWithinFloor(levelNr) * 0.5)
+  )
+  const potentialToBlock = maxBlocks - openBlockCount
+  const maxPerc = levelNr / 100
+  const blockedBlockCount = Math.max(
+    Math.floor(
+      potentialToBlock * (0.3 * maxPerc - percentageWithinFloor(levelNr) * 0.2)
+    ),
+    0
   )
 
   const lowestFloorNumberRange = [
@@ -47,6 +58,7 @@ export const generateLevelSettings = (
   return {
     floorCount,
     openBlockCount,
+    blockedBlockCount,
     lowestFloorNumberRange,
   }
 }

@@ -4,6 +4,7 @@ import {
   percentageWithinFloor,
 } from "./generateLevelSettings"
 import { generateLevel } from "./generateLevel"
+import { mulberry32 } from "./random"
 
 describe(percentageWithinFloor, () => {
   it.each([
@@ -69,19 +70,30 @@ describe(generateLevelSettings, () => {
     ])(
       "generates $openBlockCount open blocks in a pyramid with $floorCount floors",
       ({ floorCount, openBlockCount }) => {
+        const random = mulberry32(12345)
         expect(() =>
-          generateLevel({
-            floorCount,
-            openBlockCount,
-            lowestFloorNumberRange: [1, 10],
-          })
+          generateLevel(
+            1,
+            {
+              floorCount,
+              openBlockCount,
+              blockedBlockCount: 0,
+              lowestFloorNumberRange: [1, 10],
+            },
+            random
+          )
         ).not.toThrow()
         expect(() =>
-          generateLevel({
-            floorCount,
-            openBlockCount: openBlockCount + 1,
-            lowestFloorNumberRange: [1, 10],
-          })
+          generateLevel(
+            1,
+            {
+              floorCount,
+              openBlockCount: openBlockCount + 1,
+              blockedBlockCount: 0,
+              lowestFloorNumberRange: [1, 10],
+            },
+            random
+          )
         ).toThrow()
       }
     )

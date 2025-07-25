@@ -16,6 +16,14 @@ const createFloorStartIndices = (floorCount: number): number[] => {
   return indices
 }
 
+// prettier-ignore
+const hyroglyphs = [
+  "𓂀", "𓃭", "𓁼", "𓃗", "𓇡", "𓊑", "𓆣", "𓀀",
+  "𓃾", "𓅓", "𓆑", "𓏏", "𓎛", "𓋴", "𓈖", "𓊃",
+  "𓉔", "𓄿", "𓂝", "𓃀", "𓅱", "𓆷", "𓎡", "𓎼",
+  "𓏲", "𓏤", "𓏇", "𓏭", "𓏴", "𓐍", "𓐏", "𓏡", "𓏢", "𓏣",
+]
+
 export const PyramidDisplay: FC<{
   pyramid: Pyramid
   values: Record<string, number | undefined>
@@ -34,7 +42,7 @@ export const PyramidDisplay: FC<{
     setFocusInput,
     handleKeyDown,
   } = usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-  const complete = !focusInput && isComplete({ pyramid, values })
+  const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
 
   return (
@@ -49,7 +57,9 @@ export const PyramidDisplay: FC<{
         // if complete, check if all answers of this row are correct
         const isCorrect = blocks
           .slice(startIndex, startIndex + floor + 1)
+          .filter((block) => block.isOpen)
           .every((block) => values[block.id] === correctAnswers?.[block.id])
+
         return (
           <div key={floor} className="flex justify-center mb-[-1px]">
             {Array.from({ length: floor + 1 }, (_, index) => {
@@ -77,13 +87,19 @@ export const PyramidDisplay: FC<{
                   selected={selectedBlockIndex === startIndex + index}
                   className="bg-yellow-200 border-yellow-600"
                 >
-                  {block.value !== undefined ? block.value : ""}
+                  {block.value !== undefined ? (
+                    block.value
+                  ) : (
+                    <span className="text-yellow-400">
+                      {hyroglyphs[(startIndex + index) % hyroglyphs.length]}
+                    </span>
+                  )}
                 </Block>
               )
             })}
             <div
               className={clsx(
-                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold transition-opacity delay-200",
+                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold transition-opacity delay-200 text-shadow-md text-shadow-amber-200",
                 complete ? "opacity-100" : "opacity-0"
               )}
             >

@@ -36,7 +36,7 @@ export const createCompletePyramid = (
   random = Math.random
 ): Pyramid => {
   const pyramid = createBasePyramid(settings, random)
-  const values = getAnswers(pyramid)
+  const values = getAnswers(pyramid, { ignoreOpen: true })
 
   return {
     ...pyramid,
@@ -85,12 +85,41 @@ const openBlocks = (
   }
 }
 
+const blockBlocks = (
+  pyramidLevel: PyramidLevel,
+  blockedCount: number,
+  random = Math.random
+): PyramidLevel => {
+  if (blockedCount === 0) return pyramidLevel
+  const blockedIndices = new Set<number>()
+  while (blockedIndices.size < blockedCount) {
+    const index = Math.floor(random() * pyramidLevel.pyramid.blocks.length)
+    if (pyramidLevel.pyramid.blocks[index].isOpen) {
+      continue // Skip if the block is already open
+    }
+    blockedIndices.add(index)
+  }
+  console.log("Blocked indices:", blockedIndices)
+
+  return {
+    ...pyramidLevel,
+    pyramid: {
+      ...pyramidLevel.pyramid,
+      blocks: pyramidLevel.pyramid.blocks.map((block, index) => ({
+        ...block,
+        isOpen: blockedIndices.has(index) ? false : block.isOpen,
+        value: blockedIndices.has(index) ? undefined : block.value,
+      })),
+    },
+  }
+}
+
 export const generateLevel = (
   levelNr: number,
   settings: PyramidLevelSettings,
   random = Math.random
 ): PyramidLevel => {
-  const { openBlockCount } = settings
+  const { openBlockCount, blockedBlockCount } = settings
   const fullPyramid = createCompletePyramid(settings, random)
   if (openBlockCount === 0) {
     return {
@@ -101,12 +130,12 @@ export const generateLevel = (
   }
   let tryCount = 0
   while (tryCount < 100) {
-    const pyramidLevel = openBlocks(
-      levelNr,
-      fullPyramid,
-      openBlockCount,
+    const pyramidLevel = blockBlocks(
+      openBlocks(levelNr, fullPyramid, openBlockCount, random),
+      blockedBlockCount,
       random
     )
+
     const answers = getAnswers(pyramidLevel.pyramid)
     if (answers) {
       // check if it are the same answers as the values
@@ -120,5 +149,7 @@ export const generateLevel = (
     tryCount++
   }
 
-  throw new Error("Unsolvable pyramid")
+  throw new Error(
+    `Unsolvable pyramid, tried ${tryCount} times. Settings: ${JSON.stringify(settings)}`
+  )
 }
