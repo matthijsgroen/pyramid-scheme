@@ -19,8 +19,7 @@ const contentForLevel = (levelNr: number) => {
 }
 
 function App() {
-  const [levelNrTemp, setLevelNr] = useGameStorage("levelNr", 1)
-  const levelNr = levelNrTemp * 4
+  const [levelNr, setLevelNr] = useGameStorage("levelNr", 1)
   const [startNextLevel, setStartNextLevel] = useState(false)
 
   const levelContent = contentForLevel(levelNr)
