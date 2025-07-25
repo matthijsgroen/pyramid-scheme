@@ -23,7 +23,7 @@ export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
 
   return (
     <div className="relative level-container flex flex-col w-full">
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center py-8 w-full">
         <PyramidDisplay
           pyramid={content.pyramid}
           values={answers}

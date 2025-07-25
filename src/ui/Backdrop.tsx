@@ -46,7 +46,7 @@ export const Backdrop: FC<PropsWithChildren<{ levelNr: number }>> = ({
 
   return (
     <div
-      className="relative flex flex-col h-screen bg-gradient-to-b from-0% via-40% to-55% from-(--sky-top) via-(--sky-middle) to-(--sky-bottom) transition-colors duration-6000 [container-type:size]"
+      className="relative flex flex-col h-dvh bg-gradient-to-b from-0% via-40% to-55% from-(--sky-top) via-(--sky-middle) to-(--sky-bottom) transition-colors duration-6000 [container-type:size]"
       style={{
         "--sky-top": colors[skyTop[actualStep]],
         "--sky-middle": colors[skyMiddle[actualStep]],

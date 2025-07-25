@@ -8,6 +8,11 @@
   }
 }
 
+html, body { 
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
 @font-face {
   font-family: "Limelight";
   src: url(./assets/Limelight-Regular.ttf) format("truetype");
