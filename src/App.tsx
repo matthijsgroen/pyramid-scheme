@@ -15,7 +15,7 @@ const contentForLevel = (levelNr: number) => {
   const random = mulberry32(levelSeed)
 
   const settings = generateLevelSettings(levelNr)
-  return generateLevel(settings, random)
+  return generateLevel(levelNr, settings, random)
 }
 
 function App() {
@@ -46,7 +46,12 @@ function App() {
 
   return (
     <Backdrop levelNr={levelNr}>
-      <h1 className="text-3xl font-bold flex-none mt-0 font-pyramid pt-4">
+      <h1
+        className={clsx(
+          " absolute top-0 left-0 right-0 text-3xl font-bold flex-none mt-0 font-pyramid pt-4 text-center pointer-events-none",
+          levelNr % 11 < 6 ? "text-black" : "text-white"
+        )}
+      >
         Pyramid Level {levelNr}
       </h1>
       <div className="flex-1 w-full flex overflow-scroll overscroll-contain">
@@ -62,8 +67,8 @@ function App() {
             className={clsx(
               "absolute inset-0 flex-1 flex items-center justify-center pointer-events-none transition-transform duration-1000 ease-in-out",
               startNextLevel
-                ? "scale-20 translate-x-[25%]"
-                : "scale-0 translate-x-[40%]"
+                ? "scale-20 translate-x-[25%] blur-xs"
+                : "scale-0 translate-x-[40%] blur-sm"
             )}
           >
             <Level key={levelNr + 2} content={nextNextLevelContent} />
@@ -73,8 +78,8 @@ function App() {
             className={clsx(
               "absolute inset-0 flex-1 flex items-center justify-center pointer-events-none transition-transform duration-1000 ease-in-out",
               startNextLevel
-                ? "scale-100 translate-x-0"
-                : "scale-20 translate-x-[25%]"
+                ? "scale-100 translate-x-0 blur-none"
+                : "scale-20 translate-x-[25%] blur-xs"
             )}
           >
             <Level key={levelNr + 1} content={nextLevelContent} />

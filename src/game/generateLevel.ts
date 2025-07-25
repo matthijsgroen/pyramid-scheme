@@ -52,6 +52,7 @@ export const createCompletePyramid = (
 }
 
 const openBlocks = (
+  levelNr: number,
   pyramid: Pyramid,
   openCount: number,
   random = Math.random
@@ -78,12 +79,14 @@ const openBlocks = (
   }
 
   return {
+    levelNr,
     pyramid: updatedPyramid,
     values,
   }
 }
 
 export const generateLevel = (
+  levelNr: number,
   settings: PyramidLevelSettings,
   random = Math.random
 ): PyramidLevel => {
@@ -91,13 +94,19 @@ export const generateLevel = (
   const fullPyramid = createCompletePyramid(settings, random)
   if (openBlockCount === 0) {
     return {
+      levelNr,
       pyramid: fullPyramid,
       values: {},
     }
   }
   let tryCount = 0
   while (tryCount < 100) {
-    const pyramidLevel = openBlocks(fullPyramid, openBlockCount, random)
+    const pyramidLevel = openBlocks(
+      levelNr,
+      fullPyramid,
+      openBlockCount,
+      random
+    )
     const answers = getAnswers(pyramidLevel.pyramid)
     if (answers) {
       // check if it are the same answers as the values

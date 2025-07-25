@@ -5,6 +5,7 @@ export type PyramidLevelSettings = {
 }
 
 export type PyramidLevel = {
+  levelNr: number
   pyramid: Pyramid
   values: Record<string, number | undefined>
 }
