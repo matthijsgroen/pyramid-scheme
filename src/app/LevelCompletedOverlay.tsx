@@ -7,9 +7,9 @@ export const LevelCompletedOverlay = () => {
     return `rotate(${deg}deg)`
   }, [])
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none delay-0 animate-fade-in opacity-0">
+    <div className="pointer-events-none absolute inset-0 z-50 flex animate-fade-in items-center justify-center opacity-0 delay-0">
       <span
-        className="text-green-400 text-[6vw] font-extrabold text-shadow-lg text-shadow-black select-none font-pyramid"
+        className="font-pyramid text-[6vw] font-extrabold text-green-400 select-none text-shadow-black text-shadow-lg"
         style={{ transform: rotation }}
       >
         Level Completed!

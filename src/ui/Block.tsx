@@ -7,7 +7,7 @@ export const Block: FC<
   return (
     <div
       className={clsx(
-        "ml-[-1px] w-15 h-10 rounded text-center center flex items-center justify-center",
+        "ml-[-1px] flex h-10 w-15 items-center justify-center rounded text-center",
         {
           "border-2": selected,
           border: !selected,

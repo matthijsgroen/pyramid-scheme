@@ -61,7 +61,7 @@ export const PyramidDisplay: FC<{
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center focus:outline-none relative"
+      className="relative flex flex-col items-center focus:outline-none"
       tabIndex={0}
       autoFocus
       onKeyDown={handleKeyDown}
@@ -74,7 +74,7 @@ export const PyramidDisplay: FC<{
           .every((block) => values[block.id] === correctAnswers?.[block.id])
 
         return (
-          <div key={floor} className="flex justify-center mb-[-1px]">
+          <div key={floor} className="mb-[-1px] flex justify-center">
             {Array.from({ length: floor + 1 }, (_, index) => {
               const blockIndex = startIndex + index
               const block = blocks[blockIndex]
@@ -98,12 +98,12 @@ export const PyramidDisplay: FC<{
                 <Block
                   key={block.id}
                   selected={selectedBlockIndex === startIndex + index}
-                  className="bg-yellow-200 border-yellow-600"
+                  className="border-yellow-600 bg-yellow-200"
                 >
                   {block.value !== undefined ? (
                     block.value
                   ) : (
-                    <span className="text-yellow-600 text-xl">
+                    <span className="text-xl text-yellow-600">
                       {hyroglyphs[(startIndex + index) % hyroglyphs.length]}
                     </span>
                   )}
@@ -112,7 +112,7 @@ export const PyramidDisplay: FC<{
             })}
             <div
               className={clsx(
-                "ml-6 w-10 h-10 flex items-center justify-center text-lg font-bold transition-opacity delay-200 text-shadow-md text-shadow-amber-200",
+                "ml-6 flex h-10 w-10 items-center justify-center text-lg font-bold transition-opacity delay-200 text-shadow-amber-200 text-shadow-md",
                 complete ? "opacity-100" : "opacity-0"
               )}
             >
@@ -123,11 +123,11 @@ export const PyramidDisplay: FC<{
       })}
       <div
         className={clsx(
-          "absolute bottom-0 pb-5 text-5xl -z-10",
+          "absolute bottom-0 -z-10 pb-5 text-5xl",
           position === "right" && "right-0",
-          position === "right-mirror" && "rotate-y-180 right-0",
+          position === "right-mirror" && "right-0 rotate-y-180",
           position === "left" && "left-[-10%]",
-          position === "left-mirror" && "rotate-y-180 left-[-10%]"
+          position === "left-mirror" && "left-[-10%] rotate-y-180"
         )}
       >
         {decorationEmoji[levelNr % decorationEmoji.length]}

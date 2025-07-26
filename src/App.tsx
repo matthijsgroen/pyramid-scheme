@@ -50,7 +50,7 @@ function App() {
     <Backdrop levelNr={levelNr}>
       <h1
         className={clsx(
-          " absolute top-0 left-0 right-0 text-3xl font-bold flex-none mt-0 font-pyramid pt-4 text-center pointer-events-none",
+          " pointer-events-none absolute top-0 right-0 left-0 mt-0 flex-none pt-4 text-center font-pyramid text-3xl font-bold",
           dayNightCycleStep(levelNr) < 6 ? "text-black" : "text-white"
         )}
       >
@@ -62,9 +62,9 @@ function App() {
           <button onClick={() => setLevelNr((x) => x + 1)}>Next</button>
         </div>
       )}
-      <div className="flex-1 w-full flex overflow-scroll overscroll-contain">
+      <div className="flex w-full flex-1 overflow-scroll overscroll-contain">
         <div
-          className="relative min-w-(--level-width) w-full h-full min-h-(--level-height)"
+          className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
           style={{
             "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
             "--level-height": `calc(var(--spacing) * 10 * ${levelContent.pyramid.floorCount + 2})`,
@@ -73,10 +73,10 @@ function App() {
           <div
             key={levelNr + 2}
             className={clsx(
-              "absolute inset-0 flex-1 flex items-center justify-center pointer-events-none transition-transform duration-1000 ease-in-out",
+              "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
               startNextLevel
-                ? "scale-20 translate-x-[25%] blur-xs"
-                : "scale-0 translate-x-[35%] blur-sm"
+                ? "translate-x-[25%] scale-20 blur-xs"
+                : "translate-x-[35%] scale-0 blur-sm"
             )}
           >
             <Level key={levelNr + 2} content={nextNextLevelContent} />
@@ -84,10 +84,10 @@ function App() {
           <div
             key={levelNr + 1}
             className={clsx(
-              "absolute inset-0 flex-1 flex items-center justify-center pointer-events-none transition-transform duration-1000 ease-in-out",
+              "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
               startNextLevel
-                ? "scale-100 translate-x-0 blur-none"
-                : "scale-20 translate-x-[25%] blur-xs"
+                ? "translate-x-0 scale-100 blur-none"
+                : "translate-x-[25%] scale-20 blur-xs"
             )}
           >
             <Level key={levelNr + 1} content={nextLevelContent} />
@@ -95,8 +95,8 @@ function App() {
           <div
             key={levelNr}
             className={clsx(
-              "absolute inset-0 flex-1 flex items-center justify-center transition-transform duration-1000 ease-in-out",
-              startNextLevel ? "scale-300 translate-x-[-200%]" : "scale-100"
+              "absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
+              startNextLevel ? "translate-x-[-200%] scale-300" : "scale-100"
             )}
           >
             <Level
