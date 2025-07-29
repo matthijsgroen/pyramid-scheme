@@ -1,3 +1,6 @@
+import { hieroglyphs } from "../data/hieroglyphs"
+import { shuffle } from "./random"
+
 type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
 
 /**
@@ -7,6 +10,8 @@ type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
  */
 export type RewardCalculationSettings = {
   amountSymbols: number
+  symbolOffset: number
+  numberRange: [min: number, max: number]
   operations: Operation[]
 }
 
@@ -19,8 +24,10 @@ export type Formula = {
 
 export type RewardCalculation = {
   pickedNumbers: number[]
+  symbolMapping: Record<number, string>
+  symbolCounts: Record<string, number>
   mainFormula: Formula
-  hintFormula: Formula[]
+  hintFormulas: Formula[]
 }
 
 export const generateRewardCalculation = (
@@ -30,11 +37,22 @@ export const generateRewardCalculation = (
   // Step 1: Pick random numbers for each symbol, without duplicates
   const pickedNumbers: number[] = []
   while (pickedNumbers.length < settings.amountSymbols) {
-    const number = Math.floor(random() * 10) + 1 // Random numbers between 1 and 10
+    const number =
+      Math.floor(
+        random() * (settings.numberRange[1] - settings.numberRange[0] + 1)
+      ) + settings.numberRange[0]
     if (!pickedNumbers.includes(number)) {
       pickedNumbers.push(number)
     }
   }
+
+  const symbolMapping: Record<number, string> = pickedNumbers.reduce(
+    (acc, num, index) => {
+      acc[num] = hieroglyphs[index + settings.symbolOffset]
+      return acc
+    },
+    {} as Record<number, string>
+  )
 
   // Step 2: Generate a formula where all symbols occur (maybe multiple times)
   const mainFormula = createVerifiedFormula(
@@ -43,7 +61,57 @@ export const generateRewardCalculation = (
     random
   )
 
-  return { pickedNumbers, mainFormula, hintFormula: [] }
+  // make a list of hint formulas
+  // first make a list of numbers to use in the hint formulas
+  // first hint formula uses all symbols, second hint formula uses all but one symbol, etc.
+  const hintFormulas: Formula[] = []
+  for (let i = 0; i < pickedNumbers.length; i++) {
+    const hintNumbers = pickedNumbers.filter((_, index) => index <= i)
+    const known = pickedNumbers.slice(0, i)
+    const newNumbers = pickedNumbers.slice(i, i + 1)
+
+    const operators: Operation[] =
+      hintNumbers.length === 1 ? ["+", "*"] : settings.operations
+
+    const calcNumbers = hintNumbers.flatMap<number>((num) => {
+      if (known.length > 0 && newNumbers.includes(num)) {
+        return [num] // new numbers should occur only once
+      }
+
+      const amount =
+        Math.floor(random() * (2 - hintNumbers.length / 4)) +
+        1 +
+        (hintNumbers.length === 1 ? 1 : 0)
+      return Array(amount).fill(num)
+    })
+
+    const hintFormula = createSmallestVerifiedFormula(
+      calcNumbers,
+      operators,
+      mainFormula,
+      random
+    )
+    hintFormulas.push(hintFormula)
+  }
+
+  // count how many times each symbol occurs in the hint and main formulas
+  const symbolCounts: Record<string, number> = {}
+  const allFormulas = [mainFormula, ...hintFormulas]
+  allFormulas.forEach((formula) => {
+    const symbols = extractSymbols(formula)
+    symbols.forEach((symbol) => {
+      const symbolName = symbolMapping[parseInt(symbol, 10)]
+      symbolCounts[symbolName] = (symbolCounts[symbolName] || 0) + 1
+    })
+  })
+
+  return {
+    pickedNumbers,
+    mainFormula,
+    hintFormulas,
+    symbolMapping,
+    symbolCounts,
+  }
 }
 
 const evaluateFormula = (
@@ -70,6 +138,23 @@ const evaluateFormula = (
       throw new Error(`Unknown operation: ${operation}`)
   }
 }
+
+const createSmallestVerifiedFormula = (
+  pickedNumbers: number[],
+  operations: Operation[],
+  mainFormula: Formula,
+  random: () => number
+): Formula =>
+  [
+    createVerifiedFormula(pickedNumbers, operations, random),
+    createVerifiedFormula(pickedNumbers, operations, random),
+    createVerifiedFormula(pickedNumbers, operations, random),
+    createVerifiedFormula(pickedNumbers, operations, random),
+  ]
+    .filter(
+      (formula) => formulaToString(formula) !== formulaToString(mainFormula)
+    )
+    .sort((a, b) => a.result - b.result)[0]
 
 const createVerifiedFormula = (
   pickedNumbers: number[],
@@ -106,8 +191,10 @@ const createFormula = (
 
   // Randomly split the pickedNumbers into two non-empty groups
   const splitIndex = Math.floor(random() * (pickedNumbers.length - 1)) + 1
-  const leftNumbers = pickedNumbers.slice(0, splitIndex)
-  const rightNumbers = pickedNumbers.slice(splitIndex)
+  const shuffledNumbers = pickedNumbers.slice()
+  shuffle(shuffledNumbers, random)
+  const leftNumbers = shuffledNumbers.slice(0, splitIndex)
+  const rightNumbers = shuffledNumbers.slice(splitIndex)
 
   // Recursively create formulas for each group
   const leftFormula =
@@ -137,8 +224,12 @@ const createFormula = (
   }
 }
 
-export const formulaToString = (formula: Formula): string => {
-  return `${formulaPartToString(formula)} = ${formula.result}`
+export const formulaToString = (
+  formula: Formula,
+  mapping: Record<number, string> = {},
+  showAnswer = true
+): string => {
+  return `${formulaPartToString(formula, mapping)} = ${showAnswer ? formula.result : "?"}`
 }
 
 const getOperatorPrecedence = (operation: Operation): number => {
@@ -160,6 +251,7 @@ const getOperatorPrecedence = (operation: Operation): number => {
 
 const formulaPartToString = (
   formula: Formula,
+  mapping: Record<number, string>,
   parentPrecedence: number = 0
 ): string => {
   const currentPrecedence = getOperatorPrecedence(formula.operation)
@@ -167,15 +259,31 @@ const formulaPartToString = (
 
   const leftStr =
     typeof formula.left === "number"
-      ? formula.left.toString()
-      : formulaPartToString(formula.left, currentPrecedence)
+      ? (mapping[formula.left] ?? formula.left.toString())
+      : formulaPartToString(formula.left, mapping, currentPrecedence)
 
   const rightStr =
     typeof formula.right === "number"
-      ? formula.right.toString()
-      : formulaPartToString(formula.right, currentPrecedence)
+      ? (mapping[formula.right] ?? formula.right.toString())
+      : formulaPartToString(formula.right, mapping, currentPrecedence)
 
   const result = `${leftStr} ${formula.operation} ${rightStr}`
 
   return needsParentheses ? `(${result})` : result
+}
+
+const extractSymbols = (formula: Formula): string[] => {
+  const symbols: string[] = []
+
+  const traverse = (node: number | Formula) => {
+    if (typeof node === "number") {
+      symbols.push(node.toString())
+    } else {
+      traverse(node.left)
+      traverse(node.right)
+    }
+  }
+
+  traverse(formula)
+  return symbols
 }

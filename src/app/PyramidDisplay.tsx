@@ -6,6 +6,7 @@ import { InputBlock } from "../ui/InputBlock"
 import { getAnswers, isComplete } from "../game/state"
 import clsx from "clsx"
 import { mulberry32 } from "../game/random"
+import { hieroglyphs } from "../data/hieroglyphs"
 
 const createFloorStartIndices = (floorCount: number): number[] => {
   const indices: number[] = []
@@ -16,14 +17,6 @@ const createFloorStartIndices = (floorCount: number): number[] => {
   }
   return indices
 }
-
-// prettier-ignore
-const hyroglyphs = [
-  "𓂀", "𓃭", "𓁼", "𓃗", "𓇡", "𓊑", "𓆣", "𓀀",
-  "𓃾", "𓅓", "𓆑", "𓏏", "𓎛", "𓋴", "𓈖", "𓊃",
-  "𓉔", "𓄿", "𓂝", "𓃀", "𓅱", "𓆷", "𓎡", "𓎼",
-  "𓏲", "𓏤", "𓏇", "𓏭", "𓏴", "𓐍", "𓐏", "𓏡", "𓏢", "𓏣",
-]
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 
@@ -104,7 +97,7 @@ export const PyramidDisplay: FC<{
                     block.value
                   ) : (
                     <span className="text-xl text-yellow-600">
-                      {hyroglyphs[(startIndex + index) % hyroglyphs.length]}
+                      {hieroglyphs[(startIndex + index) % hieroglyphs.length]}
                     </span>
                   )}
                 </Block>
