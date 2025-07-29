@@ -75,7 +75,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("6 * 9 - 7 = 47")
+    expect(textFormula).toBe("(6 * 9) - 7 = 47")
   })
 
   it("respects the operations order", () => {
