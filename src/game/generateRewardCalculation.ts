@@ -200,11 +200,11 @@ const createFormula = (
   const leftFormula =
     leftNumbers.length === 1
       ? leftNumbers[0]
-      : createFormula(leftNumbers, operations, random)
+      : createVerifiedFormula(leftNumbers, operations, random)
   const rightFormula =
     rightNumbers.length === 1
       ? rightNumbers[0]
-      : createFormula(rightNumbers, operations, random)
+      : createVerifiedFormula(rightNumbers, operations, random)
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]
@@ -267,7 +267,12 @@ const formulaPartToString = (
       ? (mapping[formula.right] ?? formula.right.toString())
       : formulaPartToString(formula.right, mapping, currentPrecedence)
 
-  const result = `${leftStr} ${formula.operation} ${rightStr}`
+  const result =
+    formula.operation === "-"
+      ? `${typeof formula.left === "number" ? leftStr : "(" + leftStr + ")"} ${formula.operation} ${
+          typeof formula.right === "number" ? rightStr : "(" + rightStr + ")"
+        }`
+      : `${leftStr} ${formula.operation} ${rightStr}`
 
   return needsParentheses ? `(${result})` : result
 }
