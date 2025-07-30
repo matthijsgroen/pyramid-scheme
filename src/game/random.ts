@@ -19,8 +19,9 @@ export const generateNewSeed = (seed: number, index: number) => {
 export const shuffle = <T>(
   array: T[],
   random: () => number = Math.random
-): void => {
-  let currentIndex = array.length
+): T[] => {
+  const newList = array.slice()
+  let currentIndex = newList.length
 
   // While there remain elements to shuffle...
   while (currentIndex != 0) {
@@ -29,9 +30,10 @@ export const shuffle = <T>(
     currentIndex--
 
     // And swap it with the current element.
-    ;[array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    ;[newList[currentIndex], newList[randomIndex]] = [
+      newList[randomIndex],
+      newList[currentIndex],
     ]
   }
+  return newList
 }

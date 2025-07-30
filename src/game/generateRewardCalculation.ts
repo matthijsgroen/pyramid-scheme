@@ -55,8 +55,14 @@ export const generateRewardCalculation = (
   )
 
   // Step 2: Generate a formula where all symbols occur (maybe multiple times)
-  const mainFormula = createVerifiedFormula(
+  const mainFormulaNumbers = generateCalculationNumbers(
     pickedNumbers,
+    pickedNumbers,
+    [],
+    random
+  )
+  const mainFormula = createVerifiedFormula(
+    mainFormulaNumbers,
     settings.operations,
     random
   )
@@ -71,21 +77,20 @@ export const generateRewardCalculation = (
     const newNumbers = pickedNumbers.slice(i, i + 1)
 
     const operators: Operation[] =
-      hintNumbers.length === 1 ? ["+", "*"] : settings.operations
+      hintNumbers.length === 1
+        ? settings.operations.filter((o) => o === "+" || o === "*")
+        : settings.operations
 
-    const hintNumbersCapped = known.slice(-2).concat(newNumbers)
+    const hintNumbersCapped = shuffle(known, random)
+      .slice(-2)
+      .concat(newNumbers)
 
-    const calcNumbers = hintNumbersCapped.flatMap<number>((num) => {
-      if (known.length > 0 && newNumbers.includes(num)) {
-        return [num] // new numbers should occur only once
-      }
-
-      const amount =
-        Math.floor(random() * (2 - hintNumbersCapped.length / 3)) +
-        1 +
-        (hintNumbersCapped.length === 1 ? 1 : 0)
-      return Array(amount).fill(num)
-    })
+    const calcNumbers = generateCalculationNumbers(
+      hintNumbersCapped,
+      known,
+      newNumbers,
+      random
+    )
 
     const hintFormula = createSmallestVerifiedFormula(
       calcNumbers,
@@ -141,6 +146,28 @@ const evaluateFormula = (
   }
 }
 
+const generateCalculationNumbers = (
+  hintNumbersCapped: number[],
+  known: number[],
+  newNumbers: number[],
+  random: () => number
+): number[] => {
+  return shuffle(
+    hintNumbersCapped.flatMap<number>((num) => {
+      if (known.length > 0 && newNumbers.includes(num)) {
+        return [num] // new numbers should occur only once
+      }
+
+      const amount =
+        Math.floor(random() * (2 - hintNumbersCapped.length / 3)) +
+        1 +
+        (hintNumbersCapped.length === 1 ? 1 : 0)
+      return Array(amount).fill(num)
+    }),
+    random
+  )
+}
+
 const createSmallestVerifiedFormula = (
   pickedNumbers: number[],
   operations: Operation[],
@@ -193,8 +220,7 @@ const createFormula = (
 
   // Randomly split the pickedNumbers into two non-empty groups
   const splitIndex = Math.floor(random() * (pickedNumbers.length - 1)) + 1
-  const shuffledNumbers = pickedNumbers.slice()
-  shuffle(shuffledNumbers, random)
+  const shuffledNumbers = shuffle(pickedNumbers, random)
   const leftNumbers = shuffledNumbers.slice(0, splitIndex)
   const rightNumbers = shuffledNumbers.slice(splitIndex)
 

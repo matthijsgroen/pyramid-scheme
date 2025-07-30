@@ -33,7 +33,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("5 * 10 * 4 = 200")
+    expect(textFormula).toBe("(5 * 10) - 4 = 46")
   })
 
   it("guarantees a positive number > 0 result", () => {
@@ -47,7 +47,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("7 * 6 * 1 = 42")
+    expect(textFormula).toBe("(6 + 7) * 1 = 13")
   })
 
   it("prevents broken numbers", () => {
@@ -61,7 +61,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("7 * 6 * 1 = 42")
+    expect(textFormula).toBe("(6 + 7) * 1 = 13")
   })
 
   it("can have multiple operators in a formula", () => {
@@ -75,7 +75,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("(6 * 9) - 7 = 47")
+    expect(textFormula).toBe("6 * (9 - 7) = 12")
   })
 
   it("respects the operations order", () => {
@@ -89,7 +89,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("2 * 9 * 1 = 18")
+    expect(textFormula).toBe("(2 - 1) * 9 = 9")
   })
 
   describe("hint formulas", () => {
@@ -104,10 +104,10 @@ describe(generateRewardCalculation, () => {
       const result = generateRewardCalculation(settings, random)
 
       expect(result.hintFormulas.length).toBe(3)
-      expect(formulaToString(result.hintFormulas[0])).toBe("10 + 10 + 10 = 30")
-      expect(formulaToString(result.hintFormulas[1])).toBe("10 + 4 = 14")
-      expect(formulaToString(result.hintFormulas[2])).toBe("4 + 10 - 5 = 9")
-      expect(formulaToString(result.mainFormula)).toBe("5 * 10 * 4 = 200")
+      expect(formulaToString(result.hintFormulas[0])).toBe("10 * 10 = 100")
+      expect(formulaToString(result.hintFormulas[1])).toBe("4 + 10 = 14")
+      expect(formulaToString(result.hintFormulas[2])).toBe("(5 + 10) - 4 = 11")
+      expect(formulaToString(result.mainFormula)).toBe("(5 * 10) - 4 = 46")
     })
   })
 
@@ -128,7 +128,7 @@ describe(generateRewardCalculation, () => {
     })
     expect(symbolCounts).toEqual({
       "𓁼": 2,
-      "𓂀": 6,
+      "𓂀": 5,
       "𓃭": 3,
     })
   })
@@ -150,10 +150,10 @@ describe(generateRewardCalculation, () => {
       formulaToString(result.mainFormula, symbolMapping, false),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓂀 + 𓂀 + 𓂀 = 30
-      𓂀 + 𓃭 = 14
-      𓃭 + 𓂀 - 𓁼 = 9
-      𓁼 * 𓂀 * 𓃭 = ?"
+      "𓂀 * 𓂀 = 100
+      𓃭 + 𓂀 = 14
+      (𓁼 + 𓂀) - 𓃭 = 11
+      (𓁼 * 𓂀) - 𓃭 = ?"
     `)
   })
 
@@ -183,11 +183,6 @@ describe(generateRewardCalculation, () => {
         "9": "𓃗",
       }
     `)
-    // oog1 = 𓂀 = 6
-    // tijger = 𓃭 = 8
-    // oog2 = 𓁼 = 4
-    // paard = 𓃗 = 1
-    // slang = 𓇡 = 18
     const numberFormulas = [
       ...result.hintFormulas.map((formula) =>
         formulaToString(formula, undefined, true)
@@ -196,14 +191,14 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
-        "left": 8,
+        "left": 4,
         "operation": "+",
-        "result": 13,
+        "result": 5,
         "right": {
           "left": 9,
           "operation": "-",
-          "result": 5,
-          "right": 4,
+          "result": 1,
+          "right": 8,
         },
       }
     `)
@@ -211,19 +206,19 @@ describe(generateRewardCalculation, () => {
     expect(numberFormulas).toMatchInlineSnapshot(`
       "6 + 6 = 12
       6 + 8 = 14
-      8 + 4 + 6 = 18
-      8 + 9 - 4 = 13
-      10 + 9 - 4 = 15
-      4 + (6 + 9 * 10) / 8 = 16"
+      6 - 4 + 8 = 10
+      4 + 9 - 8 = 5
+      (10 - 6) / 4 = 1
+      6 * (9 + 10) * 8 + 4 = 916"
     `)
 
     expect(puzzle).toMatchInlineSnapshot(`
       "𓂀 + 𓂀 = 12
       𓂀 + 𓃭 = 14
-      𓃭 + 𓁼 + 𓂀 = 18
-      𓃭 + 𓃗 - 𓁼 = 13
-      𓇡 + 𓃗 - 𓁼 = 15
-      𓁼 + (𓂀 + 𓃗 * 𓇡) / 𓃭 = ?"
+      𓂀 - 𓁼 + 𓃭 = 10
+      𓁼 + 𓃗 - 𓃭 = 5
+      (𓇡 - 𓂀) / 𓁼 = 1
+      𓂀 * (𓃗 + 𓇡) * 𓃭 + 𓁼 = ?"
     `)
   })
 
@@ -246,7 +241,7 @@ describe(generateRewardCalculation, () => {
     expect(puzzle).toMatchInlineSnapshot(`
       "𓂀 + 𓂀 + 𓂀 = 12
       𓂀 + 𓃭 + 𓂀 = 10
-      𓂀 + 𓃭 = ?"
+      𓃭 + 𓂀 + 𓃭 = ?"
     `)
   })
 })
