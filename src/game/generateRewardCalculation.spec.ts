@@ -122,14 +122,14 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const { symbolCounts, symbolMapping } = result
     expect(symbolMapping).toEqual({
-      10: "𓂀",
-      4: "𓃭",
-      5: "𓁼",
+      "10": "𓁧",
+      "4": "𓃯",
+      "5": "𓁝",
     })
     expect(symbolCounts).toEqual({
-      "𓁼": 2,
-      "𓂀": 5,
-      "𓃭": 3,
+      "𓁝": 2,
+      "𓁧": 5,
+      "𓃯": 3,
     })
   })
 
@@ -150,10 +150,10 @@ describe(generateRewardCalculation, () => {
       formulaToString(result.mainFormula, symbolMapping, false),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓂀 * 𓂀 = 100
-      𓃭 + 𓂀 = 14
-      (𓁼 + 𓂀) - 𓃭 = 11
-      (𓁼 * 𓂀) - 𓃭 = ?"
+      "𓁧 * 𓁧 = 100
+      𓃯 + 𓁧 = 14
+      (𓁝 + 𓁧) - 𓃯 = 11
+      (𓁝 * 𓁧) - 𓃯 = ?"
     `)
   })
 
@@ -176,11 +176,11 @@ describe(generateRewardCalculation, () => {
     expect(result.pickedNumbers).toEqual([6, 8, 4, 9, 10])
     expect(result.symbolMapping).toMatchInlineSnapshot(`
       {
-        "10": "𓇡",
-        "4": "𓁼",
-        "6": "𓂀",
-        "8": "𓃭",
-        "9": "𓃗",
+        "10": "𓆆",
+        "4": "𓁝",
+        "6": "𓁧",
+        "8": "𓃯",
+        "9": "𓁾",
       }
     `)
     const numberFormulas = [
@@ -213,12 +213,12 @@ describe(generateRewardCalculation, () => {
     `)
 
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓂀 + 𓂀 = 12
-      𓂀 + 𓃭 = 14
-      𓂀 - 𓁼 + 𓃭 = 10
-      𓁼 + 𓃗 - 𓃭 = 5
-      (𓇡 - 𓂀) / 𓁼 = 1
-      𓂀 * (𓃗 + 𓇡) * 𓃭 + 𓁼 = ?"
+      "𓁧 + 𓁧 = 12
+      𓁧 + 𓃯 = 14
+      𓁧 - 𓁝 + 𓃯 = 10
+      𓁝 + 𓁾 - 𓃯 = 5
+      (𓆆 - 𓁧) / 𓁝 = 1
+      𓁧 * (𓁾 + 𓆆) * 𓃯 + 𓁝 = ?"
     `)
   })
 
@@ -239,9 +239,9 @@ describe(generateRewardCalculation, () => {
       formulaToString(result.mainFormula, symbolMapping, false),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓂀 + 𓂀 + 𓂀 = 12
-      𓂀 + 𓃭 + 𓂀 = 10
-      𓃭 + 𓂀 + 𓃭 = ?"
+      "𓁧 + 𓁧 + 𓁧 = 12
+      𓁧 + 𓃯 + 𓁧 = 10
+      𓃯 + 𓁧 + 𓃯 = ?"
     `)
   })
 })
