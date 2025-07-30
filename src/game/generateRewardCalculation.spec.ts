@@ -196,17 +196,12 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
-        "left": 6,
-        "operation": "-",
-        "result": 1,
+        "left": 8,
+        "operation": "+",
+        "result": 13,
         "right": {
-          "left": {
-            "left": 9,
-            "operation": "-",
-            "result": 1,
-            "right": 8,
-          },
-          "operation": "+",
+          "left": 9,
+          "operation": "-",
           "result": 5,
           "right": 4,
         },
@@ -217,8 +212,8 @@ describe(generateRewardCalculation, () => {
       "6 + 6 = 12
       6 + 8 = 14
       8 + 4 + 6 = 18
-      6 - (9 - 8 + 4) = 1
-      4 + 9 + 6 + 10 + 8 = 37
+      8 + 9 - 4 = 13
+      10 + 9 - 4 = 15
       4 + (6 + 9 * 10) / 8 = 16"
     `)
 
@@ -226,8 +221,8 @@ describe(generateRewardCalculation, () => {
       "𓂀 + 𓂀 = 12
       𓂀 + 𓃭 = 14
       𓃭 + 𓁼 + 𓂀 = 18
-      𓂀 - (𓃗 - 𓃭 + 𓁼) = 1
-      𓁼 + 𓃗 + 𓂀 + 𓇡 + 𓃭 = 37
+      𓃭 + 𓃗 - 𓁼 = 13
+      𓇡 + 𓃗 - 𓁼 = 15
       𓁼 + (𓂀 + 𓃗 * 𓇡) / 𓃭 = ?"
     `)
   })

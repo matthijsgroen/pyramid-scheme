@@ -73,15 +73,17 @@ export const generateRewardCalculation = (
     const operators: Operation[] =
       hintNumbers.length === 1 ? ["+", "*"] : settings.operations
 
-    const calcNumbers = hintNumbers.flatMap<number>((num) => {
+    const hintNumbersCapped = known.slice(-2).concat(newNumbers)
+
+    const calcNumbers = hintNumbersCapped.flatMap<number>((num) => {
       if (known.length > 0 && newNumbers.includes(num)) {
         return [num] // new numbers should occur only once
       }
 
       const amount =
-        Math.floor(random() * (2 - hintNumbers.length / 4)) +
+        Math.floor(random() * (2 - hintNumbersCapped.length / 3)) +
         1 +
-        (hintNumbers.length === 1 ? 1 : 0)
+        (hintNumbersCapped.length === 1 ? 1 : 0)
       return Array(amount).fill(num)
     })
 
