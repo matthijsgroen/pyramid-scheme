@@ -201,7 +201,7 @@ export const egyptianProfessions = [
   {
     id: "p14",
     name: "Mason",
-    symbol: "𓉶",
+    symbol: "𓍇",
     description:
       "Stone worker who carved hieroglyphs and built the great monuments of Egypt.",
   },
@@ -361,7 +361,7 @@ export const egyptianArtifacts = [
   {
     id: "art6",
     name: "Canopic Jar",
-    symbol: "𓏠",
+    symbol: "𓎼",
     description:
       "Sacred vessel used to store the organs of the deceased during mummification.",
   },
@@ -382,7 +382,7 @@ export const egyptianArtifacts = [
   {
     id: "art10",
     name: "Solar Barque",
-    symbol: "𓂝",
+    symbol: "𓂧",
     description:
       "Sacred boat that carries the sun god Ra across the sky from dawn to dusk.",
   },
@@ -410,7 +410,7 @@ export const egyptianArtifacts = [
   {
     id: "art15",
     name: "Uraeus Crown",
-    symbol: "𓇯",
+    symbol: "𓆓",
     description:
       "Royal headdress featuring the protective cobra, worn by pharaohs as divine protection.",
   },
