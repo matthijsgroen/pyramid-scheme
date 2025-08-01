@@ -16,7 +16,7 @@ i18n
     },
 
     backend: {
-      loadPath: "/locales/{{lng}}/{{ns}}.json",
+      loadPath: "/pyramid-scheme/locales/{{lng}}/{{ns}}.json",
     },
 
     detection: {
