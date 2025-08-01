@@ -1,12 +1,12 @@
 import { useMemo, useRef, type FC } from "react"
 import { usePyramidNavigation } from "./usePyramidNavigation"
-import type { Pyramid } from "../game/types"
-import { Block } from "../ui/Block"
-import { InputBlock } from "../ui/InputBlock"
-import { getAnswers, isComplete } from "../game/state"
+import type { Pyramid } from "../../game/types"
+import { Block } from "../../ui/Block"
+import { InputBlock } from "../../ui/InputBlock"
+import { getAnswers, isComplete } from "../../game/state"
 import clsx from "clsx"
-import { mulberry32 } from "../game/random"
-import { hieroglyphs } from "../data/hieroglyphs"
+import { mulberry32 } from "../../game/random"
+import { hieroglyphs } from "../../data/hieroglyphs"
 
 const createFloorStartIndices = (floorCount: number): number[] => {
   const indices: number[] = []

@@ -1,7 +1,7 @@
 import { useEffect, useState, type FC } from "react"
-import type { PyramidLevel } from "../game/types"
+import type { PyramidLevel } from "../../game/types"
 import { PyramidDisplay } from "./PyramidDisplay"
-import { isValid } from "../game/state"
+import { isValid } from "../../game/state"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
 
 export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({

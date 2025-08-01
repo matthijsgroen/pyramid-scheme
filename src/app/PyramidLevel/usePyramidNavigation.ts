@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import type { PyramidBlock } from "../game/types"
+import type { PyramidBlock } from "../../game/types"
 
 export const usePyramidNavigation = (
   floorStartIndices: number[],

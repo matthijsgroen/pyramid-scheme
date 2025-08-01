@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FC } from "react"
-import { Level } from "./Level"
+import { Level } from "./PyramidLevel/Level"
 import { generateLevel } from "../game/generateLevel"
 import { generateNewSeed, mulberry32 } from "../game/random"
 import { generateLevelSettings } from "../game/generateLevelSettings"
