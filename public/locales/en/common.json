@@ -1,0 +1,33 @@
+{
+  "language": "English",
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "journeyLength": {
+    "short": "Short",
+    "medium": "Medium",
+    "long": "Long"
+  },
+  "time": {
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "night": "Night"
+  },
+  "ui": {
+    "level": "Level",
+    "symbols": "symbols",
+    "journey": "Journey",
+    "tableau": "Tableau",
+    "difficulty": "Difficulty",
+    "length": "Length",
+    "time": "Time",
+    "requiredPrestige": "Required Prestige Level",
+    "rewards": "Rewards",
+    "coins": "Coins",
+    "pieces": "Pieces",
+    "description": "Description"
+  }
+}

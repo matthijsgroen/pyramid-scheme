@@ -1,0 +1,50 @@
+{
+  "easy_1": {
+    "name": "Dawn at the Sphinx",
+    "description": "Begin your adventure with the Great Sphinx as the morning sun illuminates its ancient face. A gentle introduction to the mysteries of Egypt."
+  },
+  "easy_2": {
+    "name": "Papyrus Merchant's Route",
+    "description": "Follow the trade routes of ancient papyrus merchants along the peaceful banks of the Nile. Discover the secrets of Egyptian commerce."
+  },
+  "easy_3": {
+    "name": "Temple of Bastet",
+    "description": "Visit the sacred temple of the cat goddess Bastet, where faithful worshippers bring offerings and seek protection from evil spirits."
+  },
+  "easy_4": {
+    "name": "Scribe's Academy",
+    "description": "Learn the art of hieroglyphic writing in the prestigious scribe's academy, where knowledge is more valuable than gold."
+  },
+  "medium_1": {
+    "name": "Valley of the Kings",
+    "description": "Explore the royal necropolis where pharaohs rest for eternity. Navigate through elaborate tomb chambers filled with ancient puzzles."
+  },
+  "medium_2": {
+    "name": "Karnak Temple Complex",
+    "description": "Venture through the vast temple complex of Karnak, dedicated to Amun-Ra. Solve the riddles left by high priests across centuries."
+  },
+  "medium_3": {
+    "name": "Nile Delta Expedition",
+    "description": "Journey through the fertile Nile Delta, encountering crocodile gods and solving the mysteries of the river's annual flood."
+  },
+  "medium_4": {
+    "name": "Pyramid of Djoser",
+    "description": "Ascend the step pyramid of Djoser, the first pyramid ever built. Face the challenges that have protected this monument for millennia."
+  },
+  "hard_1": {
+    "name": "Great Pyramid of Giza",
+    "description": "Enter the most magnificent pyramid ever built. Face the ultimate test as you navigate the Grand Gallery and reach the King's Chamber."
+  },
+  "hard_2": {
+    "name": "Book of the Dead",
+    "description": "Unravel the mysteries of the afterlife by collecting and deciphering the sacred texts that guide souls through the underworld."
+  },
+  "hard_3": {
+    "name": "Curse of the Pharaohs",
+    "description": "Break the ancient curse that has plagued tomb raiders for centuries. Face supernatural challenges and divine retribution."
+  },
+  "hard_4": {
+    "name": "Ra's Solar Journey",
+    "description": "Accompany Ra on his perilous nightly journey through the underworld, battling the serpent Apep and ensuring the sun rises again."
+  }
+}

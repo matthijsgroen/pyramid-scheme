@@ -1,0 +1,242 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "Koning van de goden en heerser van de zon, die elke dag over de hemel vaart in zijn zonnebarque."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Jakhalshoofige god van mummificatie en het hiernamaals, beschermer van de doden."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Valkhoofige hemelse god en beschermer van farao's, zoon van Osiris en Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Ibishoofige god van wijsheid, geschrift en kennis, bewaker van goddelijke archieven."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Kattengodin van bescherming, vreugde en vruchtbaarheid, verdediger tegen boze geesten."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Krokodilgod van de Nijl, vruchtbaarheid en militaire moed."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Scarabeegod van wedergeboorte en vernieuwing, die de zon over de hemel rolt."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Cobragodin en beschermster van Neder-Egypte, symbool van koninklijke macht."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Godin van magie, moederschap en genezing, toegewijde echtgenote van Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "God van de onderwereld, dood en opstanding, rechter van de doden."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "God van chaos, stormen en de woestijn, broer en rivaal van Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Godin van rouw en bescherming van de doden, zuster van Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Scheppergod en beschermheer van ambachtslieden en architecten, schepper door het gesproken woord."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Leeuwengodin van oorlog en genezing, felle beschermster met de macht om ziektes te genezen."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Koeiengodin van liefde, muziek en moederschap, voedster van farao's."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Farao",
+      "description": "Goddelijke heerser van Egypte, beschouwd als een levende god en brug tussen stervelingen en goden."
+    },
+    "p2": {
+      "name": "Hogepriester",
+      "description": "Hoogste religieuze leider van tempels, uitvoerder van heilige rituelen en handhaver van goddelijke orde."
+    },
+    "p3": {
+      "name": "Schrijver",
+      "description": "Opgeleide professional die kon lezen en schrijven, bewaker van archieven en kennis."
+    },
+    "p4": {
+      "name": "Architect",
+      "description": "Meesterbouwer die piramides, tempels en monumenten ontwierp voor de eeuwigheid."
+    },
+    "p5": {
+      "name": "Generaal",
+      "description": "Militaire commandant die legers leidde om Egypte's grenzen te beschermen en het rijk uit te breiden."
+    },
+    "p6": {
+      "name": "Geneesheer",
+      "description": "Genezer die medische kennis combineerde met magische praktijken om zieken te genezen."
+    },
+    "p7": {
+      "name": "Balsemer",
+      "description": "Heilige ambachtsman die de doden voorbereidde voor het hiernamaals door mummificatie."
+    },
+    "p8": {
+      "name": "Boer",
+      "description": "Voedselvoorziener van Egypte, werkend op de vruchtbare Nijldelta's om het koninkrijk te voeden."
+    },
+    "p9": {
+      "name": "Ambachtsman",
+      "description": "Vaardige ambachtspersoon die mooie objecten, juwelen en kunstwerken maakte voor edelen en goden."
+    },
+    "p10": {
+      "name": "Koopman",
+      "description": "Handelaar die exotische goederen uit verre landen bracht via handelsroutes."
+    },
+    "p11": {
+      "name": "Vizier",
+      "description": "Eerste minister en adviseur van de Farao, toezichthouder van de regeringsadministratie."
+    },
+    "p12": {
+      "name": "Orakel",
+      "description": "Heilige profeet die goddelijke boodschappen interpreteerde en de toekomst voorspelde."
+    },
+    "p13": {
+      "name": "Zeeman",
+      "description": "Navigator van de Nijl en Middellandse Zee, essentieel voor handel en transport."
+    },
+    "p14": {
+      "name": "Steenhouwer",
+      "description": "Steenbewerker die hiërogliefen uitsneed en de grote monumenten van Egypte bouwde."
+    },
+    "p15": {
+      "name": "Bewaker",
+      "description": "Beschermer van heilige plaatsen en graven, verzekeraars van de eeuwige rust van de doden."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Nijlpaard",
+      "description": "Krachtig rivierdier van de Nijl, gevreesd om zijn kracht en territoriale aard."
+    },
+    "a2": {
+      "name": "Leeuw",
+      "description": "Koning der dieren, symbool van koninklijke macht en goddelijke kracht in de woestijn."
+    },
+    "a3": {
+      "name": "Olifant",
+      "description": "Massief wezen uit de zuidelijke landen, vereerd om zijn wijsheid en geheugen."
+    },
+    "a4": {
+      "name": "Gazelle",
+      "description": "Snelle en gracieuze woestijnbewoner, symbool van snelheid en elegantie."
+    },
+    "a5": {
+      "name": "Aap",
+      "description": "Slimme primaat geassocieerd met Thoth, vertegenwoordiger van intelligentie en ondeugendheid."
+    },
+    "a6": {
+      "name": "Vis",
+      "description": "Heilige wezens van de Nijl, leveranciers van voedsel en vruchtbaarheidssymbolen."
+    },
+    "a7": {
+      "name": "Gans",
+      "description": "Heilige vogel van de Nijlmoerassen, geassocieerd met scheppingsmythen en de ziel."
+    },
+    "a8": {
+      "name": "Bij",
+      "description": "Symbool van Neder-Egypte en koninklijk gezag, maker van kostbare honing."
+    },
+    "a9": {
+      "name": "Schildpad",
+      "description": "Oud wezen van wijsheid, dragend het gewicht van de wereld op zijn schild."
+    },
+    "a10": {
+      "name": "Kikker",
+      "description": "Symbool van wedergeboorte en vruchtbaarheid, opkomend uit de levengevende overstromingen van de Nijl."
+    },
+    "a11": {
+      "name": "Gier",
+      "description": "Heilige vogel van Opper-Egypte, aardse vorm van beschermgodin Nekhbet."
+    },
+    "a12": {
+      "name": "Uil",
+      "description": "Wijze nachtjager, bewaker van verborgen kennis en oude geheimen."
+    },
+    "a13": {
+      "name": "Ram",
+      "description": "Heilig dier van Amun-Ra, symbool van goddelijke macht en leiderschap."
+    },
+    "a14": {
+      "name": "Giraffe",
+      "description": "Lang en gracieus wezen uit de zuidelijke landen, reikend naar de hemel met zijn lange nek."
+    },
+    "a15": {
+      "name": "Jakhals",
+      "description": "Woestijnaasetier en gids naar het hiernamaals, dienaar van Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Symbool van leven en onsterfelijkheid, vaak vastgehouden door goden en farao's."
+    },
+    "art2": {
+      "name": "Oog van Horus",
+      "description": "Symbool van bescherming, koninklijke macht en goede gezondheid, geassocieerd met hemelgod Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Muziekinstrument gebruikt in religieuze ceremonies, geassocieerd met godin Hathor."
+    },
+    "art4": {
+      "name": "Djed Pilaar",
+      "description": "Symbool van stabiliteit en opstanding, vaak geassocieerd met Osiris."
+    },
+    "art5": {
+      "name": "Cartouche",
+      "description": "Ovale omhulling met de hiëroglyfische naam van een farao, beschermend hun identiteit voor de eeuwigheid."
+    },
+    "art6": {
+      "name": "Canopische Jar",
+      "description": "Heilig vat gebruikt om de organen van overledenen te bewaren tijdens mummificatie."
+    },
+    "art7": {
+      "name": "Scepter",
+      "description": "Staf van macht en autoriteit gedragen door goden en farao's als symbool van goddelijk bestuur."
+    },
+    "art9": {
+      "name": "Piramide",
+      "description": "Eeuwig graf en toegangspoort tot het hiernamaals, gebouwd om voor altijd te duren voor de farao's."
+    },
+    "art10": {
+      "name": "Zonnebarque",
+      "description": "Heilige boot die zonnegod Ra draagt over de hemel van dageraad tot schemering."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Hoge stenen pilaar getopt met een piramide, reikend naar de hemel om de goden te eren."
+    },
+    "art12": {
+      "name": "Krummstaf en Dorsvlegel",
+      "description": "Koninklijke regalia die de rol van de farao als herder en beschermer van Egypte symboliseert."
+    },
+    "art14": {
+      "name": "Lotusbloem",
+      "description": "Symbool van wedergeboorte en de zon, zuiver opkomend uit het modderige water van de Nijl."
+    },
+    "art15": {
+      "name": "Uraeuskroon",
+      "description": "Koninklijke hoofdtooi met de beschermende cobra, gedragen door farao's als goddelijke bescherming."
+    }
+  }
+}

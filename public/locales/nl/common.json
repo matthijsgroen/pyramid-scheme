@@ -1,0 +1,33 @@
+{
+  "language": "Nederlands",
+  "difficulty": {
+    "easy": "Makkelijk",
+    "medium": "Gemiddeld",
+    "hard": "Moeilijk"
+  },
+  "journeyLength": {
+    "short": "Kort",
+    "medium": "Gemiddeld",
+    "long": "Lang"
+  },
+  "time": {
+    "morning": "Ochtend",
+    "afternoon": "Middag",
+    "evening": "Avond",
+    "night": "Nacht"
+  },
+  "ui": {
+    "level": "Niveau",
+    "symbols": "symbolen",
+    "journey": "Reis",
+    "tableau": "Tableau",
+    "difficulty": "Moeilijkheid",
+    "length": "Lengte",
+    "time": "Tijd",
+    "requiredPrestige": "Vereist Prestige Niveau",
+    "rewards": "Beloningen",
+    "coins": "Munten",
+    "pieces": "Stukken",
+    "description": "Beschrijving"
+  }
+}

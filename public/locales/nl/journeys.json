@@ -1,0 +1,50 @@
+{
+  "easy_1": {
+    "name": "Dageraad bij de Sfinx",
+    "description": "Begin je avontuur bij de Grote Sfinx terwijl de ochtendzon zijn oude gezicht verlicht. Een zachte introductie tot de mysteries van Egypte."
+  },
+  "easy_2": {
+    "name": "Papyruskoopman Route",
+    "description": "Volg de handelsroutes van oude papyruskooplieden langs de vreedzame oevers van de Nijl. Ontdek de geheimen van de Egyptische handel."
+  },
+  "easy_3": {
+    "name": "Tempel van Bastet",
+    "description": "Bezoek de heilige tempel van kattengodin Bastet, waar trouwe aanbidders offers brengen en bescherming zoeken tegen boze geesten."
+  },
+  "easy_4": {
+    "name": "Schrijversacademie",
+    "description": "Leer de kunst van hiëroglyfisch schrijven in de prestigieuze schrijversacademie, waar kennis waardevoller is dan goud."
+  },
+  "medium_1": {
+    "name": "Vallei der Koningen",
+    "description": "Verken de koninklijke necropolis waar farao's voor de eeuwigheid rusten. Navigeer door uitgebreide grafkamers vol oude puzzels."
+  },
+  "medium_2": {
+    "name": "Karnak Tempelcomplex",
+    "description": "Waag je door het uitgestrekte tempelcomplex van Karnak, gewijd aan Amun-Ra. Los de raadsels op die door hogepriesters door de eeuwen heen zijn achtergelaten."
+  },
+  "medium_3": {
+    "name": "Nijldelta Expeditie",
+    "description": "Reis door de vruchtbare Nijldelta, ontmoet krokodilgoden en los de mysteries op van de jaarlijkse overstroming van de rivier."
+  },
+  "medium_4": {
+    "name": "Piramide van Djoser",
+    "description": "Beklim de trappenpiramide van Djoser, de eerste piramide ooit gebouwd. Ga de uitdagingen aan die dit monument millennia lang hebben beschermd."
+  },
+  "hard_1": {
+    "name": "Grote Piramide van Gizeh",
+    "description": "Betreed de meest magnifieke piramide ooit gebouwd. Ga de ultieme test aan terwijl je door de Grote Galerij navigeert en de Koningskamer bereikt."
+  },
+  "hard_2": {
+    "name": "Boek der Doden",
+    "description": "Ontrafel de mysteries van het hiernamaals door het verzamelen en ontcijferen van de heilige teksten die zielen door de onderwereld leiden."
+  },
+  "hard_3": {
+    "name": "Vloek van de Farao's",
+    "description": "Breek de oude vloek die grafrovers eeuwenlang heeft geplaagd. Ga bovennatuurlijke uitdagingen en goddelijke vergelding aan."
+  },
+  "hard_4": {
+    "name": "Ra's Zonnereis",
+    "description": "Vergezeld Ra op zijn gevaarlijke nachtelijke reis door de onderwereld, vecht tegen de slang Apep en zorg ervoor dat de zon weer opkomt."
+  }
+}
