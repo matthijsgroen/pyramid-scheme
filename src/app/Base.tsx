@@ -1,5 +1,3 @@
-import { useState } from "react"
-import { JourneySelection } from "./JourneySelection"
 import { BaseHeader } from "../components/BaseHeader"
 import { TravelPage } from "./pages/Travel"
 import { WorkshopPage } from "./pages/Workshop"

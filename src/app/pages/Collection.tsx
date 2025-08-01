@@ -4,6 +4,7 @@ import { Page } from "../../ui/Page"
 import { useInventoryCategory } from "../../data/useInventoryTranslations"
 import { getItemFirstLevel } from "../../data/itemLevelLookup"
 import { useInventory } from "../Inventory/useInventory"
+import { hieroglyphLevelColors } from "../../data/hieroglyphLevelColors"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -19,29 +20,6 @@ const categoryLabels: Record<InventoryCategory, string> = {
   professions: "⚱️ Professions",
   animals: "🐾 Animals",
   artifacts: "💎 Artifacts",
-}
-
-const levelColors: Record<number, string> = {
-  1: "bg-stone-100",
-  2: "bg-amber-50",
-  3: "bg-yellow-50",
-  4: "bg-orange-50",
-  5: "bg-red-50",
-  6: "bg-stone-200",
-  7: "bg-amber-100",
-  8: "bg-yellow-100",
-  9: "bg-orange-100",
-  10: "bg-red-100",
-  11: "bg-stone-300",
-  12: "bg-amber-200",
-  13: "bg-yellow-200",
-  14: "bg-orange-200",
-  15: "bg-red-200",
-  16: "bg-stone-400",
-  17: "bg-amber-300",
-  18: "bg-yellow-300",
-  19: "bg-orange-300",
-  20: "bg-red-300",
 }
 
 const CategorySection: FC<{
@@ -61,7 +39,7 @@ const CategorySection: FC<{
         {items.map((item) => {
           const itemLevel = getItemFirstLevel(item.id)
           const bgColor = itemLevel
-            ? levelColors[itemLevel] || "bg-white/80"
+            ? hieroglyphLevelColors[itemLevel] || "bg-white/80"
             : "bg-white/80"
           const isSelected = selectedItem?.id === item.id
           const borderClass = isSelected
