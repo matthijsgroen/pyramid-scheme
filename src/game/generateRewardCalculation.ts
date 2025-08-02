@@ -1,5 +1,5 @@
-import { hieroglyphs } from "../data/hieroglyphs"
-import { shuffle } from "./random"
+import { hieroglyphs } from "@/data/hieroglyphs"
+import { shuffle } from "@/game/random"
 
 type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
 

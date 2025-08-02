@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from "react"
-import type { ActiveJourney } from "../../game/generateJourney"
-import { useGameStorage } from "../../support/useGameStorage"
-import { startJourney as dataStartJourney } from "../../game/generateJourney"
-import type { Journey } from "../../data/journeys"
-import { generateNewSeed } from "../../game/random"
+import type { ActiveJourney } from "@/game/generateJourney"
+import { useGameStorage } from "@/support/useGameStorage"
+import { startJourney as dataStartJourney } from "@/game/generateJourney"
+import type { Journey } from "@/data/journeys"
+import { generateNewSeed } from "@/game/random"
 import {
   useJourneyTranslations,
   type TranslatedJourney,
-} from "../../data/useJourneyTranslations"
+} from "@/data/useJourneyTranslations"
 
 const baseJourneySeed = 987654321
 

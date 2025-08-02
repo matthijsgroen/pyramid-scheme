@@ -1,15 +1,15 @@
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { Page } from "../../ui/Page"
-import { MapButton } from "../../ui/MapButton"
-import { JourneyCard } from "../../ui/JourneyCard"
-import { type Journey } from "../../data/journeys"
-import { useJourneys } from "../state/useJourneys"
-import type { ActiveJourney } from "../../game/generateJourney"
+import { Page } from "@/ui/Page"
+import { MapButton } from "@/ui/MapButton"
+import { JourneyCard } from "@/ui/JourneyCard"
+import { type Journey } from "@/data/journeys"
+import { useJourneys } from "@/app/state/useJourneys"
+import type { ActiveJourney } from "@/game/generateJourney"
 import {
   useJourneyTranslations,
   type TranslatedJourney,
-} from "../../data/useJourneyTranslations"
+} from "@/data/useJourneyTranslations"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,

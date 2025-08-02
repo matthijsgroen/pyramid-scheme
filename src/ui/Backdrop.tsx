@@ -7,7 +7,7 @@ import {
   skyBottom,
   skyMiddle,
   skyTop,
-} from "./backdropSelection"
+} from "@/ui/backdropSelection"
 
 export const Backdrop: FC<PropsWithChildren<{ levelNr: number }>> = ({
   children,

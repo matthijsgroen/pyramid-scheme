@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
-import type { TranslatedJourney } from "../data/useJourneyTranslations"
+import type { TranslatedJourney } from "@/data/useJourneyTranslations"
 
 interface JourneyCardProps {
   journey: TranslatedJourney

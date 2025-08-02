@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { Journey } from "./app/Journey"
-import { Base } from "./app/Base"
-import { useJourneys } from "./app/state/useJourneys"
+import { Journey } from "@/app/Journey"
+import { Base } from "@/app/Base"
+import { useJourneys } from "@/app/state/useJourneys"
 
 function App() {
   const [inGame, setInGame] = useState(false)

@@ -1,5 +1,5 @@
-import { getAnswers } from "./state"
-import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "./types"
+import { getAnswers } from "@/game/state"
+import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
 const createBasePyramid = (
   settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange">,

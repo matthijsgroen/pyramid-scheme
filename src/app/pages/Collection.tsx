@@ -1,10 +1,10 @@
 import type { FC } from "react"
 import { useState } from "react"
-import { Page } from "../../ui/Page"
-import { useInventoryCategory } from "../../data/useInventoryTranslations"
-import { getItemFirstLevel } from "../../data/itemLevelLookup"
-import { useInventory } from "../Inventory/useInventory"
-import { hieroglyphLevelColors } from "../../data/hieroglyphLevelColors"
+import { Page } from "@/ui/Page"
+import { useInventoryCategory } from "@/data/useInventoryTranslations"
+import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { useInventory } from "@/app/Inventory/useInventory"
+import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 

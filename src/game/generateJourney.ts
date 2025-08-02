@@ -1,7 +1,7 @@
-import { journeys } from "../data/journeys"
-import { generateLevel } from "./generateLevel"
-import { generateNewSeed, mulberry32 } from "./random"
-import type { PyramidLevel, PyramidLevelSettings } from "./types"
+import { journeys } from "@/data/journeys"
+import { generateLevel } from "@/game/generateLevel"
+import { generateNewSeed, mulberry32 } from "@/game/random"
+import type { PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
 export type Item = {
   type: "hieroglyph" | "tablet" | "coins"

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { tableauLevels } from "./tableaus"
+import { tableauLevels } from "@/data/tableaus"
 
 export const useTableauTranslations = () => {
   const { t } = useTranslation("tableaus")

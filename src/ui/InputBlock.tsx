@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { useRef, useEffect } from "react"
-import { Block } from "./Block"
+import { Block } from "@/ui/Block"
 
 export const InputBlock: FC<{
   value?: number

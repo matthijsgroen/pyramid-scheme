@@ -1,9 +1,9 @@
 import { useEffect, type FC } from "react"
-import type { PyramidLevel } from "../../game/types"
-import { PyramidDisplay } from "./PyramidDisplay"
-import { isValid } from "../../game/state"
-import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
-import { useGameStorage } from "../../support/useGameStorage"
+import type { PyramidLevel } from "@/game/types"
+import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
+import { isValid } from "@/game/state"
+import { LevelCompletedOverlay } from "@/app/PyramidLevel/LevelCompletedOverlay"
+import { useGameStorage } from "@/support/useGameStorage"
 
 export const Level: FC<{
   content: PyramidLevel

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { Level } from "./PyramidLevel/Level"
+import { Level } from "@/app/PyramidLevel/Level"
 import { clsx } from "clsx"
-import { Backdrop } from "../ui/Backdrop"
-import { getLevelWidth } from "../game/state"
-import { dayNightCycleStep } from "../ui/backdropSelection"
-import { generateJourneyLevel } from "../game/generateJourney"
-import type { JourneyState } from "./state/useJourneys"
+import { Backdrop } from "@/ui/Backdrop"
+import { getLevelWidth } from "@/game/state"
+import { dayNightCycleStep } from "@/ui/backdropSelection"
+import { generateJourneyLevel } from "@/game/generateJourney"
+import type { JourneyState } from "@/app/state/useJourneys"
 
 export const Journey: FC<{
   activeJourney: JourneyState

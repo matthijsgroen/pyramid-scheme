@@ -1,4 +1,4 @@
-import { mulberry32, shuffle } from "../game/random"
+import { mulberry32, shuffle } from "@/game/random"
 
 const random = mulberry32(87654321)
 

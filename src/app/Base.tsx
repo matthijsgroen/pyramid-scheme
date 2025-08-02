@@ -1,8 +1,8 @@
-import { BaseHeader } from "../components/BaseHeader"
-import { TravelPage } from "./pages/Travel"
-import { WorkshopPage } from "./pages/Workshop"
-import { CollectionPage } from "./pages/Collection"
-import { isBeta } from "../config/constants"
+import { BaseHeader } from "@/components/BaseHeader"
+import { TravelPage } from "@/app/pages/Travel"
+import { WorkshopPage } from "@/app/pages/Workshop"
+import { CollectionPage } from "@/app/pages/Collection"
+import { isBeta } from "@/config/constants"
 
 export const Base = ({ startGame }: { startGame: () => void }) => {
   return (

@@ -4,7 +4,7 @@ import {
   egyptianProfessions,
   egyptianAnimals,
   egyptianArtifacts,
-} from "./inventory"
+} from "@/data/inventory"
 
 // Hook to get translated inventory item
 export const useInventoryItem = (id: string) => {

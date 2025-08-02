@@ -1,4 +1,4 @@
-import { tableauLevels } from "./tableaus"
+import { tableauLevels } from "@/data/tableaus"
 
 /**
  * Lookup function that returns all tableau levels where the given inventory item ID appears

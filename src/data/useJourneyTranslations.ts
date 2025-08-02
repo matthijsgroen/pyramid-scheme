@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { journeys, type Journey } from "./journeys"
+import { journeys, type Journey } from "@/data/journeys"
 
 export type TranslatedJourney = Journey & {
   name: string

@@ -1,4 +1,4 @@
-import type { Pyramid, PyramidLevel } from "./types"
+import type { Pyramid, PyramidLevel } from "@/game/types"
 
 export const isComplete = (state: PyramidLevel): boolean => {
   const openBlocks = state.pyramid.blocks

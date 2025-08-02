@@ -1,4 +1,4 @@
-import { isBeta } from "../config/constants"
+import { isBeta } from "@/config/constants"
 
 export const BaseHeader = () => {
   return (

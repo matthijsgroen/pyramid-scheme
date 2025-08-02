@@ -1,4 +1,4 @@
-import type { Pyramid } from "../types"
+import type { Pyramid } from "@/game/types"
 
 export const createPyramid = (blocks: (number | "")[]): Pyramid => {
   // get amount of floors based on the number of blocks

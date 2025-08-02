@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useGameStorage } from "../../support/useGameStorage"
+import { useGameStorage } from "@/support/useGameStorage"
 
 export const useInventory = () => {
   // store inventory items in the offline storage
