@@ -1,0 +1,52 @@
+{
+  "language": "English",
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard"
+  },
+  "journeyLength": {
+    "short": "Short",
+    "medium": "Medium",
+    "long": "Long"
+  },
+  "time": {
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "night": "Night"
+  },
+  "ui": {
+    "level": "Level",
+    "symbols": "symbols",
+    "journey": "Journey",
+    "tableau": "Tableau",
+    "difficulty": "Difficulty",
+    "length": "Length",
+    "time": "Time",
+    "requiredPrestige": "Required Prestige Level",
+    "rewards": "Rewards",
+    "coins": "Coins",
+    "pieces": "Pieces",
+    "description": "Description",
+    "expedition": "Expedition",
+    "expeditionCompleted": "Expedition Completed!",
+    "goBackToBase": "Go back to base",
+    "backArrow": "←",
+    "timesSingular": "time",
+    "timesPlural": "times",
+    "travel": "Travel",
+    "chooseYourJourney": "Choose Your Journey",
+    "backToMap": "Back to Map",
+    "startAdventure": "Start your adventure by exploring pyramids.",
+    "continueExploration": "Continue your exploration of the pyramids.",
+    "continueExpedition": "Continue Expedition",
+    "startExpedition": "Start Expedition",
+    "planExpedition": "Plan Expedition",
+    "or": "Or",
+    "selectAnotherExpedition": "Select another expedition",
+    "abortExpedition": "Abort expedition",
+    "confirmAbortExpedition": "Are you sure you want to abort this expedition? All progress will be lost!",
+    "cancel": "Cancel"
+  }
+}

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
-import { generateLevel } from "./generateLevel"
-import type { PyramidLevelSettings } from "./types"
-import { mulberry32 } from "./random"
-import { getAnswers } from "./state"
+import { generateLevel } from "@/game/generateLevel"
+import type { PyramidLevelSettings } from "@/game/types"
+import { mulberry32 } from "@/game/random"
+import { getAnswers } from "@/game/state"
 
 describe(generateLevel, () => {
   it.each([

@@ -1,4 +1,4 @@
-import { useOfflineStorage } from "./useOfflineStorage"
+import { useOfflineStorage } from "@/support/useOfflineStorage"
 
 const GAME_STORE = "pyramid-scheme-store"
 

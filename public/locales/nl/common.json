@@ -1,0 +1,52 @@
+{
+  "language": "Nederlands",
+  "difficulty": {
+    "easy": "Makkelijk",
+    "medium": "Gemiddeld",
+    "hard": "Moeilijk"
+  },
+  "journeyLength": {
+    "short": "Kort",
+    "medium": "Gemiddeld",
+    "long": "Lang"
+  },
+  "time": {
+    "morning": "Ochtend",
+    "afternoon": "Middag",
+    "evening": "Avond",
+    "night": "Nacht"
+  },
+  "ui": {
+    "level": "Niveau",
+    "symbols": "symbolen",
+    "journey": "Reis",
+    "tableau": "Tableau",
+    "difficulty": "Moeilijkheid",
+    "length": "Lengte",
+    "time": "Tijd",
+    "requiredPrestige": "Vereist Prestige Niveau",
+    "rewards": "Beloningen",
+    "coins": "Munten",
+    "pieces": "Stukken",
+    "description": "Beschrijving",
+    "expedition": "Expeditie",
+    "expeditionCompleted": "Expeditie Voltooid!",
+    "goBackToBase": "Terug naar basis",
+    "backArrow": "←",
+    "timesSingular": "keer",
+    "timesPlural": "keer",
+    "travel": "Reizen",
+    "chooseYourJourney": "Kies je Reis",
+    "backToMap": "Terug naar Kaart",
+    "startAdventure": "Begin je avontuur door piramides te verkennen.",
+    "continueExploration": "Ga door met het verkennen van de piramides.",
+    "continueExpedition": "Ga door met Expeditie",
+    "startExpedition": "Start Expeditie",
+    "planExpedition": "Plan Expeditie",
+    "or": "Of",
+    "selectAnotherExpedition": "Selecteer een andere expeditie",
+    "abortExpedition": "Breek expeditie af",
+    "confirmAbortExpedition": "Weet je zeker dat je deze expeditie wilt afbreken? Alle voortgang gaat verloren!",
+    "cancel": "Annuleren"
+  }
+}

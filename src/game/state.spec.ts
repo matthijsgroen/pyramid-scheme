@@ -1,7 +1,12 @@
-import { getAnswers, getBlockChildIndices, isComplete, isValid } from "./state"
+import {
+  getAnswers,
+  getBlockChildIndices,
+  isComplete,
+  isValid,
+} from "@/game/state"
 import { describe, it, expect } from "vitest"
-import type { PyramidLevel } from "./types"
-import { createPyramid } from "./test-utils/pyramidfactory"
+import type { PyramidLevel } from "@/game/types"
+import { createPyramid } from "@/game/test-utils/pyramidfactory"
 
 describe(isComplete, () => {
   it("returns true when all open blocks have corresponding values", () => {

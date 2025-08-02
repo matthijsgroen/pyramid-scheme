@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { useRef, useEffect } from "react"
-import { Block } from "./Block"
+import { Block } from "@/ui/Block"
 
 export const InputBlock: FC<{
   value?: number
@@ -73,7 +73,7 @@ export const InputBlock: FC<{
             e.stopPropagation()
           }
         }}
-        className="w-full h-full text-center bg-transparent outline-none peer"
+        className="h-full w-full bg-transparent text-center outline-none"
         placeholder="..."
       />
     </Block>

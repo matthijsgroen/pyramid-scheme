@@ -14,3 +14,26 @@ export const generateNewSeed = (seed: number, index: number) => {
   }
   return Math.round(random() * 10e15)
 }
+
+// https://stackoverflow.com/a/2450976
+export const shuffle = <T>(
+  array: T[],
+  random: () => number = Math.random
+): T[] => {
+  const newList = array.slice()
+  let currentIndex = newList.length
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+    // Pick a remaining element...
+    const randomIndex = Math.floor(random() * currentIndex)
+    currentIndex--
+
+    // And swap it with the current element.
+    ;[newList[currentIndex], newList[randomIndex]] = [
+      newList[randomIndex],
+      newList[currentIndex],
+    ]
+  }
+  return newList
+}

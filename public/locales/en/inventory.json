@@ -1,0 +1,242 @@
+{
+  "deities": {
+    "d1": {
+      "name": "Ra",
+      "description": "King of the gods and ruler of the sun, sailing across the sky in his solar barque each day."
+    },
+    "d2": {
+      "name": "Anubis",
+      "description": "Jackal-headed god of mummification and the afterlife, protector of the dead."
+    },
+    "d3": {
+      "name": "Horus",
+      "description": "Falcon-headed sky god and protector of pharaohs, son of Osiris and Isis."
+    },
+    "d4": {
+      "name": "Thoth",
+      "description": "Ibis-headed god of wisdom, writing, and knowledge, keeper of divine records."
+    },
+    "d5": {
+      "name": "Bastet",
+      "description": "Cat goddess of protection, joy, and fertility, defender against evil spirits."
+    },
+    "d6": {
+      "name": "Sobek",
+      "description": "Crocodile god of the Nile River, fertility, and military prowess."
+    },
+    "d7": {
+      "name": "Khepri",
+      "description": "Scarab beetle god of rebirth and renewal, rolling the sun across the sky."
+    },
+    "d8": {
+      "name": "Wadjet",
+      "description": "Cobra goddess and protector of Lower Egypt, symbol of royal power."
+    },
+    "d9": {
+      "name": "Isis",
+      "description": "Goddess of magic, motherhood, and healing, devoted wife of Osiris."
+    },
+    "d10": {
+      "name": "Osiris",
+      "description": "God of the underworld, death, and resurrection, judge of the dead."
+    },
+    "d11": {
+      "name": "Seth",
+      "description": "God of chaos, storms, and the desert, brother and rival of Osiris."
+    },
+    "d12": {
+      "name": "Nephthys",
+      "description": "Goddess of mourning and protection of the dead, sister of Isis."
+    },
+    "d13": {
+      "name": "Ptah",
+      "description": "Creator god and patron of craftsmen and architects, creator through spoken word."
+    },
+    "d14": {
+      "name": "Sekhmet",
+      "description": "Lion goddess of war and healing, fierce protector with the power to cure diseases."
+    },
+    "d15": {
+      "name": "Hathor",
+      "description": "Cow goddess of love, music, and motherhood, nurturer of pharaohs."
+    }
+  },
+  "professions": {
+    "p1": {
+      "name": "Pharaoh",
+      "description": "Divine ruler of Egypt, considered a living god and bridge between mortals and deities."
+    },
+    "p2": {
+      "name": "High Priest",
+      "description": "Chief religious leader of temples, performing sacred rituals and maintaining divine order."
+    },
+    "p3": {
+      "name": "Scribe",
+      "description": "Educated professional who could read and write, keeper of records and knowledge."
+    },
+    "p4": {
+      "name": "Architect",
+      "description": "Master builder who designed pyramids, temples, and monuments for eternity."
+    },
+    "p5": {
+      "name": "General",
+      "description": "Military commander leading armies to protect Egypt's borders and expand the empire."
+    },
+    "p6": {
+      "name": "Physician",
+      "description": "Healer combining medical knowledge with magical practices to cure the sick."
+    },
+    "p7": {
+      "name": "Embalmer",
+      "description": "Sacred craftsman who prepared the dead for the afterlife through mummification."
+    },
+    "p8": {
+      "name": "Farmer",
+      "description": "Provider of food for Egypt, working the fertile Nile floodplains to feed the kingdom."
+    },
+    "p9": {
+      "name": "Artisan",
+      "description": "Skilled craftsperson creating beautiful objects, jewelry, and artwork for nobles and gods."
+    },
+    "p10": {
+      "name": "Merchant",
+      "description": "Trader who brought exotic goods from distant lands along trade routes."
+    },
+    "p11": {
+      "name": "Vizier",
+      "description": "Chief minister and advisor to the Pharaoh, overseeing government administration."
+    },
+    "p12": {
+      "name": "Oracle",
+      "description": "Sacred prophet who interpreted divine messages and foretold the future."
+    },
+    "p13": {
+      "name": "Sailor",
+      "description": "Navigator of the Nile and Mediterranean, essential for trade and transportation."
+    },
+    "p14": {
+      "name": "Mason",
+      "description": "Stone worker who carved hieroglyphs and built the great monuments of Egypt."
+    },
+    "p15": {
+      "name": "Guardian",
+      "description": "Protector of sacred places and tombs, ensuring the eternal rest of the dead."
+    }
+  },
+  "animals": {
+    "a1": {
+      "name": "Hippopotamus",
+      "description": "Powerful river beast of the Nile, feared for its strength and territorial nature."
+    },
+    "a2": {
+      "name": "Lion",
+      "description": "King of beasts, symbol of royal power and divine strength in the desert."
+    },
+    "a3": {
+      "name": "Elephant",
+      "description": "Massive creature from the southern lands, revered for its wisdom and memory."
+    },
+    "a4": {
+      "name": "Gazelle",
+      "description": "Swift and graceful desert dweller, symbol of speed and elegance."
+    },
+    "a5": {
+      "name": "Monkey",
+      "description": "Clever primate associated with Thoth, representing intelligence and mischief."
+    },
+    "a6": {
+      "name": "Fish",
+      "description": "Sacred creatures of the Nile, providers of sustenance and fertility symbols."
+    },
+    "a7": {
+      "name": "Goose",
+      "description": "Sacred bird of the Nile marshes, associated with creation myths and the soul."
+    },
+    "a8": {
+      "name": "Bee",
+      "description": "Symbol of Lower Egypt and royal authority, creator of precious honey."
+    },
+    "a9": {
+      "name": "Turtle",
+      "description": "Ancient creature of wisdom, carrying the weight of the world on its shell."
+    },
+    "a10": {
+      "name": "Frog",
+      "description": "Symbol of rebirth and fertility, emerging from the Nile's life-giving floods."
+    },
+    "a11": {
+      "name": "Vulture",
+      "description": "Sacred bird of Upper Egypt, protector goddess Nekhbet's earthly form."
+    },
+    "a12": {
+      "name": "Owl",
+      "description": "Wise night hunter, guardian of hidden knowledge and ancient secrets."
+    },
+    "a13": {
+      "name": "Ram",
+      "description": "Sacred animal of Amun-Ra, symbol of divine power and leadership."
+    },
+    "a14": {
+      "name": "Giraffe",
+      "description": "Tall and graceful creature from the southern lands, reaching the heavens with its long neck."
+    },
+    "a15": {
+      "name": "Jackal",
+      "description": "Desert scavenger and guide to the afterlife, servant of Anubis."
+    }
+  },
+  "artifacts": {
+    "art1": {
+      "name": "Ankh",
+      "description": "Symbol of life and immortality, often held by gods and pharaohs."
+    },
+    "art2": {
+      "name": "Eye of Horus",
+      "description": "Symbol of protection, royal power, and good health, associated with the sky god Horus."
+    },
+    "art3": {
+      "name": "Sistrum",
+      "description": "Musical instrument used in religious ceremonies, associated with the goddess Hathor."
+    },
+    "art4": {
+      "name": "Djed Pillar",
+      "description": "Symbol of stability and resurrection, often associated with Osiris."
+    },
+    "art5": {
+      "name": "Cartouche",
+      "description": "Oval enclosure containing the hieroglyphic name of a pharaoh, protecting their identity for eternity."
+    },
+    "art6": {
+      "name": "Canopic Jar",
+      "description": "Sacred vessel used to store the organs of the deceased during mummification."
+    },
+    "art7": {
+      "name": "Scepter",
+      "description": "Rod of power and authority carried by gods and pharaohs as a symbol of divine rule."
+    },
+    "art9": {
+      "name": "Pyramid",
+      "description": "Eternal tomb and gateway to the afterlife, built to last forever for the pharaohs."
+    },
+    "art10": {
+      "name": "Solar Barque",
+      "description": "Sacred boat that carries the sun god Ra across the sky from dawn to dusk."
+    },
+    "art11": {
+      "name": "Obelisk",
+      "description": "Tall stone pillar topped with a pyramid, reaching toward the heavens to honor the gods."
+    },
+    "art12": {
+      "name": "Crook and Flail",
+      "description": "Royal regalia symbolizing the pharaoh's role as shepherd and protector of Egypt."
+    },
+    "art14": {
+      "name": "Lotus Flower",
+      "description": "Symbol of rebirth and the sun, emerging pure from the muddy waters of the Nile."
+    },
+    "art15": {
+      "name": "Uraeus Crown",
+      "description": "Royal headdress featuring the protective cobra, worn by pharaohs as divine protection."
+    }
+  }
+}

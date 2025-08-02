@@ -1,4 +1,4 @@
-import type { PyramidLevelSettings } from "./types"
+import type { PyramidLevelSettings } from "@/game/types"
 
 const pyramidHeights = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 

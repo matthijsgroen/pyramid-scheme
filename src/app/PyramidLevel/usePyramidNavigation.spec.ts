@@ -1,8 +1,8 @@
 import { renderHook, act } from "@testing-library/react"
-import { usePyramidNavigation } from "./usePyramidNavigation"
+import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import { describe, expect, it, vi } from "vitest"
 import type { KeyboardEvent } from "react"
-import type { PyramidBlock } from "../game/types"
+import type { PyramidBlock } from "@/game/types"
 
 describe(usePyramidNavigation, () => {
   const floorStartIndices = [0, 1, 3] // Example for 3 floors
