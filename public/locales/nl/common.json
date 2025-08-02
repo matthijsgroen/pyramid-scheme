@@ -47,6 +47,10 @@
     "selectAnotherExpedition": "Selecteer een andere expeditie",
     "abortExpedition": "Breek expeditie af",
     "confirmAbortExpedition": "Weet je zeker dat je deze expeditie wilt afbreken? Alle voortgang gaat verloren!",
-    "cancel": "Annuleren"
+    "cancel": "Annuleren",
+    "settings": "Instellingen",
+    "language": "Taal",
+    "close": "Sluiten",
+    "done": "Klaar"
   }
 }
