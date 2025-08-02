@@ -1,41 +1,141 @@
 import type { FC } from "react"
 
-// Calculate position along the curved path
-const getPositionOnPath = (t: number) => {
-  // Quadratic Bézier curve: M 17 75 Q 30 30, 50 40 Q 70 50, 83 17
-  // Split into two curves for easier calculation
-  if (t <= 0.5) {
-    // First curve: M 17 75 Q 30 30, 50 40
-    const localT = t * 2 // Scale t to 0-1 for this segment
-    const p0 = { x: 17, y: 75 }
-    const p1 = { x: 30, y: 30 }
-    const p2 = { x: 50, y: 40 }
+// Calculate position along the curved path based on arc length
+const getPositionOnPath = (progress: number, pathConfig: { path: string }) => {
+  // For better accuracy, we'll sample more points and find the position
+  // that corresponds to the actual arc length progress
+  const totalSamples = 100
+  let totalLength = 0
+  const points = []
+
+  // Calculate total path length by sampling points
+  for (let i = 0; i <= totalSamples; i++) {
+    const t = i / totalSamples
+    const point = getParametricPosition(t, pathConfig)
+    points.push(point)
+
+    if (i > 0) {
+      const prevPoint = points[i - 1]
+      const distance = Math.sqrt(
+        Math.pow(point.x - prevPoint.x, 2) + Math.pow(point.y - prevPoint.y, 2)
+      )
+      totalLength += distance
+    }
+  }
+
+  // Find the point at the desired progress along the arc length
+  const targetLength = totalLength * progress
+  let currentLength = 0
+
+  for (let i = 1; i < points.length; i++) {
+    const prevPoint = points[i - 1]
+    const currentPoint = points[i]
+    const segmentLength = Math.sqrt(
+      Math.pow(currentPoint.x - prevPoint.x, 2) +
+        Math.pow(currentPoint.y - prevPoint.y, 2)
+    )
+
+    if (currentLength + segmentLength >= targetLength) {
+      // Interpolate between the two points
+      const ratio = (targetLength - currentLength) / segmentLength
+      return {
+        x: prevPoint.x + (currentPoint.x - prevPoint.x) * ratio,
+        y: prevPoint.y + (currentPoint.y - prevPoint.y) * ratio,
+      }
+    }
+
+    currentLength += segmentLength
+  }
+
+  // Fallback to the last point
+  return points[points.length - 1]
+}
+
+// Helper function for parametric position calculation
+const getParametricPosition = (t: number, pathConfig: { path: string }) => {
+  // Parse the path string to extract control points
+  // For now, we'll handle the three predefined path types
+  if (pathConfig.path === "M 30 65 Q 45 45, 60 55") {
+    // Short path - single quadratic curve
+    const p0 = { x: 30, y: 65 }
+    const p1 = { x: 45, y: 45 }
+    const p2 = { x: 60, y: 55 }
 
     const x =
-      Math.pow(1 - localT, 2) * p0.x +
-      2 * (1 - localT) * localT * p1.x +
-      Math.pow(localT, 2) * p2.x
+      Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x
     const y =
-      Math.pow(1 - localT, 2) * p0.y +
-      2 * (1 - localT) * localT * p1.y +
-      Math.pow(localT, 2) * p2.y
+      Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y
     return { x, y }
+  } else if (pathConfig.path === "M 25 70 Q 40 35, 65 40 Q 75 50, 75 25") {
+    // Medium path - two quadratic curves
+    if (t <= 0.5) {
+      // First curve: M 25 70 Q 40 35, 65 40
+      const localT = t * 2
+      const p0 = { x: 25, y: 70 }
+      const p1 = { x: 40, y: 35 }
+      const p2 = { x: 65, y: 40 }
+
+      const x =
+        Math.pow(1 - localT, 2) * p0.x +
+        2 * (1 - localT) * localT * p1.x +
+        Math.pow(localT, 2) * p2.x
+      const y =
+        Math.pow(1 - localT, 2) * p0.y +
+        2 * (1 - localT) * localT * p1.y +
+        Math.pow(localT, 2) * p2.y
+      return { x, y }
+    } else {
+      // Second curve: M 65 40 Q 75 50, 75 25
+      const localT = (t - 0.5) * 2
+      const p0 = { x: 65, y: 40 }
+      const p1 = { x: 75, y: 50 }
+      const p2 = { x: 75, y: 25 }
+
+      const x =
+        Math.pow(1 - localT, 2) * p0.x +
+        2 * (1 - localT) * localT * p1.x +
+        Math.pow(localT, 2) * p2.x
+      const y =
+        Math.pow(1 - localT, 2) * p0.y +
+        2 * (1 - localT) * localT * p1.y +
+        Math.pow(localT, 2) * p2.y
+      return { x, y }
+    }
   } else {
-    // Second curve: M 50 40 Q 70 50, 83 17
-    const localT = (t - 0.5) * 2 // Scale t to 0-1 for this segment
-    const p0 = { x: 50, y: 40 }
-    const p1 = { x: 70, y: 50 }
-    const p2 = { x: 83, y: 17 }
+    // Long path (default) - two quadratic curves: M 17 75 Q 30 30, 50 40 Q 70 50, 83 17
+    if (t <= 0.5) {
+      // First curve: M 17 75 Q 30 30, 50 40
+      const localT = t * 2
+      const p0 = { x: 17, y: 75 }
+      const p1 = { x: 30, y: 30 }
+      const p2 = { x: 50, y: 40 }
 
-    const x =
-      Math.pow(1 - localT, 2) * p0.x +
-      2 * (1 - localT) * localT * p1.x +
-      Math.pow(localT, 2) * p2.x
-    const y =
-      Math.pow(1 - localT, 2) * p0.y +
-      2 * (1 - localT) * localT * p1.y +
-      Math.pow(localT, 2) * p2.y
-    return { x, y }
+      const x =
+        Math.pow(1 - localT, 2) * p0.x +
+        2 * (1 - localT) * localT * p1.x +
+        Math.pow(localT, 2) * p2.x
+      const y =
+        Math.pow(1 - localT, 2) * p0.y +
+        2 * (1 - localT) * localT * p1.y +
+        Math.pow(localT, 2) * p2.y
+      return { x, y }
+    } else {
+      // Second curve: M 50 40 Q 70 50, 83 17
+      const localT = (t - 0.5) * 2
+      const p0 = { x: 50, y: 40 }
+      const p1 = { x: 70, y: 50 }
+      const p2 = { x: 83, y: 17 }
+
+      const x =
+        Math.pow(1 - localT, 2) * p0.x +
+        2 * (1 - localT) * localT * p1.x +
+        Math.pow(localT, 2) * p2.x
+      const y =
+        Math.pow(1 - localT, 2) * p0.y +
+        2 * (1 - localT) * localT * p1.y +
+        Math.pow(localT, 2) * p2.y
+      return { x, y }
+    }
   }
 }
 
@@ -44,6 +144,32 @@ interface MapButtonProps {
   inJourney: boolean
   label: string
   journeyProgress: number
+  pathRotation?: number // Rotation in degrees (0, 90, 180, 270)
+  pathLength?: "short" | "medium" | "long" // Journey distance
+}
+
+const getPathConfig = (length: "short" | "medium" | "long") => {
+  switch (length) {
+    case "short":
+      return {
+        path: "M 30 65 Q 45 45, 60 55", // Shorter, simpler path
+        startPos: { top: "65%", left: "30%" },
+        endPos: { top: "55%", right: "40%" },
+      }
+    case "medium":
+      return {
+        path: "M 25 70 Q 40 35, 65 40 Q 75 50, 75 25", // Medium complexity
+        startPos: { top: "70%", left: "25%" },
+        endPos: { top: "25%", right: "25%" },
+      }
+    case "long":
+    default:
+      return {
+        path: "M 17 75 Q 30 30, 50 40 Q 70 50, 83 17", // Original long path
+        startPos: { top: "75%", left: "17%" },
+        endPos: { top: "17%", right: "17%" },
+      }
+  }
 }
 
 export const MapButton: FC<MapButtonProps> = ({
@@ -51,8 +177,38 @@ export const MapButton: FC<MapButtonProps> = ({
   inJourney,
   label,
   journeyProgress,
+  pathRotation = 0,
+  pathLength = "long",
 }) => {
-  const travelerPosition = getPositionOnPath(journeyProgress)
+  const pathConfig = getPathConfig(pathLength)
+
+  // Calculate the actual path length for accurate stroke-dashoffset
+  const getActualPathLength = (pathConfig: { path: string }) => {
+    const totalSamples = 100
+    let totalLength = 0
+
+    for (let i = 1; i <= totalSamples; i++) {
+      const prevT = (i - 1) / totalSamples
+      const currentT = i / totalSamples
+      const prevPoint = getParametricPosition(prevT, pathConfig)
+      const currentPoint = getParametricPosition(currentT, pathConfig)
+
+      const distance = Math.sqrt(
+        Math.pow(currentPoint.x - prevPoint.x, 2) +
+          Math.pow(currentPoint.y - prevPoint.y, 2)
+      )
+      totalLength += distance
+    }
+
+    return totalLength
+  }
+
+  const actualPathLength = getActualPathLength(pathConfig)
+
+  // Ensure the traveler position matches the visual progress of the colored line
+  // Clamp the progress to ensure it's between 0 and 1
+  const clampedProgress = Math.max(0, Math.min(1, journeyProgress))
+  const travelerPosition = getPositionOnPath(clampedProgress, pathConfig)
 
   return (
     <button
@@ -90,14 +246,26 @@ export const MapButton: FC<MapButtonProps> = ({
 
       {/* Journey Path */}
       {inJourney && (
-        <>
+        <div
+          className="absolute inset-0"
+          style={{
+            transform: `rotate(${pathRotation}deg)`,
+            transformOrigin: "center",
+          }}
+        >
           {/* Start Point */}
-          <div className="absolute top-3/4 left-1/6 mx-[-2%] flex size-1/24 items-center justify-center rounded-full bg-blue-500 shadow-lg">
+          <div
+            className="absolute mx-[-2%] flex size-1/24 items-center justify-center rounded-full bg-blue-500 shadow-lg"
+            style={pathConfig.startPos}
+          >
             <div className="h-4/5 rounded-full bg-white"></div>
           </div>
 
           {/* End Point */}
-          <div className="absolute top-1/6 right-1/6 mx-[-2%] mt-[-2%] flex size-1/24 items-center justify-center rounded-full bg-red-600 shadow-lg">
+          <div
+            className="absolute mx-[-2%] mt-[-2%] flex size-1/24 items-center justify-center rounded-full bg-red-600 shadow-lg"
+            style={pathConfig.endPos}
+          >
             <div className="size-4/5 rounded-full bg-white"></div>
           </div>
 
@@ -109,7 +277,7 @@ export const MapButton: FC<MapButtonProps> = ({
           >
             {/* Full path (gray) */}
             <path
-              d="M 17 75 Q 30 30, 50 40 Q 70 50, 83 17"
+              d={pathConfig.path}
               stroke="rgba(107, 114, 128, 0.4)"
               strokeWidth="2"
               fill="none"
@@ -117,13 +285,15 @@ export const MapButton: FC<MapButtonProps> = ({
             />
             {/* Progress path (colored) */}
             <path
-              d="M 17 75 Q 30 30, 50 40 Q 70 50, 83 17"
+              d={pathConfig.path}
               stroke="rgb(59, 130, 246)"
               strokeWidth="2"
               fill="none"
               strokeLinecap="round"
-              strokeDasharray="100"
-              strokeDashoffset={100 - journeyProgress * 100}
+              strokeDasharray={actualPathLength}
+              strokeDashoffset={
+                actualPathLength - clampedProgress * actualPathLength
+              }
               className="transition-all duration-1000 ease-in-out"
             />
             {/* Traveler dot */}
@@ -135,7 +305,7 @@ export const MapButton: FC<MapButtonProps> = ({
               className="transition-all duration-1000 ease-in-out"
             />
           </svg>
-        </>
+        </div>
       )}
       {/* Button text */}
       <span className="relative z-10 font-bold text-amber-900 transition-colors duration-300 group-hover:text-amber-800">

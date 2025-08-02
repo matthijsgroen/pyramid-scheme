@@ -1,3 +1,5 @@
+import type { DayNightCycleStep } from "@/ui/backdropSelection"
+
 export type Journey = {
   id: string
   name: string
@@ -5,7 +7,7 @@ export type Journey = {
   difficulty: "easy" | "medium" | "hard"
   journeyLength: "short" | "medium" | "long"
   levelCount: number
-  time: "morning" | "afternoon" | "evening" | "night"
+  time: DayNightCycleStep
   requiredPrestigeLevel: number
   levelSettings: {
     startFloorCount: number

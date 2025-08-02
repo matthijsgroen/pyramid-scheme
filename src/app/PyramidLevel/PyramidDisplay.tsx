@@ -31,9 +31,10 @@ const getPosition = (
 export const PyramidDisplay: FC<{
   levelNr: number
   pyramid: Pyramid
+  decorationOffset?: number
   values: Record<string, number | undefined>
   onAnswer?: (blockId: string, value: number | undefined) => void
-}> = ({ pyramid, values, onAnswer, levelNr }) => {
+}> = ({ pyramid, values, onAnswer, levelNr, decorationOffset = 0 }) => {
   const { blocks } = pyramid
 
   // Render the pyramid blocks
@@ -49,7 +50,8 @@ export const PyramidDisplay: FC<{
   } = usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
-  const position = getPosition(levelNr)
+  const decorationNumber = levelNr + decorationOffset
+  const position = getPosition(decorationNumber)
 
   return (
     <div
@@ -123,7 +125,7 @@ export const PyramidDisplay: FC<{
           position === "left-mirror" && "left-[-10%] rotate-y-180"
         )}
       >
-        {decorationEmoji[levelNr % decorationEmoji.length]}
+        {decorationEmoji[decorationNumber % decorationEmoji.length]}
       </div>
     </div>
   )

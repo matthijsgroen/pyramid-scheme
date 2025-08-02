@@ -7,13 +7,16 @@ import {
   skyBottom,
   skyMiddle,
   skyTop,
+  type DayNightCycleStep,
 } from "@/ui/backdropSelection"
 
-export const Backdrop: FC<PropsWithChildren<{ levelNr: number }>> = ({
-  children,
-  levelNr,
-}) => {
-  const step = dayNightCycleStep(levelNr)
+export const Backdrop: FC<
+  PropsWithChildren<{
+    levelNr: number
+    start: DayNightCycleStep
+  }>
+> = ({ children, levelNr, start }) => {
+  const step = dayNightCycleStep(levelNr, start)
 
   return (
     <div

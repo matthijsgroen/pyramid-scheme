@@ -62,7 +62,10 @@ export const Journey: FC<{
     activeJourney.levelNr > activeJourney.journey.levelCount
 
   return (
-    <Backdrop levelNr={activeJourney.levelNr}>
+    <Backdrop
+      levelNr={activeJourney.levelNr}
+      start={activeJourney.journey.time}
+    >
       <div className="flex w-full flex-1 overflow-scroll overscroll-contain">
         <div
           className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
@@ -84,6 +87,7 @@ export const Journey: FC<{
               <Level
                 key={activeJourney.levelNr + 2}
                 content={nextNextLevelContent}
+                decorationOffset={activeJourney.randomSeed}
               />
             )}
           </div>
@@ -100,6 +104,7 @@ export const Journey: FC<{
               <Level
                 key={activeJourney.levelNr + 1}
                 content={nextLevelContent}
+                decorationOffset={activeJourney.randomSeed}
               />
             )}
           </div>
@@ -115,6 +120,7 @@ export const Journey: FC<{
                 key={activeJourney.levelNr}
                 storageKey={storageKey}
                 content={levelContent}
+                decorationOffset={activeJourney.randomSeed}
                 onComplete={onComplete}
               />
             )}
@@ -137,21 +143,25 @@ export const Journey: FC<{
         </div>
       </div>
       <div className="absolute top-0 right-0 left-0">
-        <div className="flex w-full items-center justify-between px-4 py-2">
+        <div
+          className={clsx(
+            "flex w-full items-center justify-between px-4 py-2",
+
+            dayNightCycleStep(
+              activeJourney.levelNr,
+              activeJourney.journey.time
+            ) < 6
+              ? "text-black"
+              : "text-white"
+          )}
+        >
           <button
             onClick={onClose}
             className="cursor-pointer text-lg font-bold focus:outline-none"
           >
             {t("ui.backArrow")}
           </button>
-          <h1
-            className={clsx(
-              "pointer-events-none mt-0  inline-block pt-4 font-pyramid text-2xl font-bold",
-              dayNightCycleStep(activeJourney.levelNr) < 6
-                ? "text-black"
-                : "text-white"
-            )}
-          >
+          <h1 className="pointer-events-none mt-0  inline-block pt-4 font-pyramid text-2xl font-bold">
             {expeditionCompleted
               ? t("ui.expeditionCompleted")
               : t("ui.expedition") +

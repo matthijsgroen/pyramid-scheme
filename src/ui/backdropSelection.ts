@@ -50,7 +50,18 @@ export const sandBottom = [
   "sand-700", "sand-800", "sand-900", "sky-950", "sky-950", "sky-950", "sky-900", "sky-900",
 ];
 
-export const dayNightCycleStep = (levelNr: number): number => {
-  const step = levelNr % (2 * skyTop.length)
+export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
+
+export const dayNightCycleStep = (
+  levelNr: number,
+  start: DayNightCycleStep
+): number => {
+  const startIndex = {
+    afternoon: 0,
+    night: skyTop.length - 2,
+    evening: Math.floor(skyTop.length / 2) - 2,
+    morning: Math.floor(skyTop.length / 2) + skyTop.length - 2,
+  }[start]
+  const step = (levelNr + startIndex) % (2 * skyTop.length)
   return step < skyTop.length ? step : 2 * skyTop.length - step - 1
 }
