@@ -9,7 +9,8 @@ export const Level: FC<{
   content: PyramidLevel
   storageKey?: string
   onComplete?: () => void
-}> = ({ content, storageKey, onComplete }) => {
+  decorationOffset?: number
+}> = ({ content, storageKey, onComplete, decorationOffset = 0 }) => {
   const [storedAnswers, setAnswers] = useGameStorage<{
     key: string
     values: Record<string, number | undefined>
@@ -39,6 +40,7 @@ export const Level: FC<{
         <PyramidDisplay
           levelNr={content.levelNr}
           pyramid={content.pyramid}
+          decorationOffset={decorationOffset}
           values={answers}
           onAnswer={
             storageKey
