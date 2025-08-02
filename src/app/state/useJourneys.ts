@@ -71,8 +71,6 @@ export const useJourneys = (): {
 
   const completeLevel = useCallback(() => {
     if (!activeJourney) return
-    console.log("Completing level", activeJourney.levelNr)
-
     setJourneys((prev) =>
       prev.map((j) =>
         j.journeyId === activeJourney.journeyId
