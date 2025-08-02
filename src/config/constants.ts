@@ -1,1 +1,1 @@
-export const isBeta = process.env.NODE_ENV !== "development"
+export const isBeta = process.env.NODE_ENV === "development"
