@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
 import { JourneyCard } from "@/ui/JourneyCard"
+import { ConfirmModal } from "@/ui/ConfirmModal"
 import { type Journey } from "@/data/journeys"
 import { useJourneys } from "@/app/state/useJourneys"
 import type { ActiveJourney } from "@/game/generateJourney"
@@ -26,10 +27,12 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [prestige] = useState(0)
   const journeys = useJourneyTranslations()
 
-  const { activeJourney, startJourney, journeyLog } = useJourneys()
+  const { activeJourney, startJourney, journeyLog, cancelJourney } =
+    useJourneys()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
+  const [showAbortModal, setShowAbortModal] = useState(false)
   const journeyProgress = getJourneyProgress(activeJourney, journeys)
 
   const journey = activeJourney?.journey ?? selectedJourney
@@ -52,6 +55,15 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
   const handleBackToMap = () => {
     setShowJourneySelection(false)
+  }
+
+  const handleAbortExpedition = () => {
+    setShowAbortModal(false)
+    cancelJourney()
+  }
+
+  const handleCancelAbort = () => {
+    setShowAbortModal(false)
   }
 
   return (
@@ -108,9 +120,20 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                       setSelectedJourney(null)
                       setShowJourneySelection(true)
                     }}
-                    className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 hover:text-blue-700"
+                    className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 lowercase hover:text-blue-700"
                   >
                     {t("ui.selectAnotherExpedition")}
+                  </button>
+                </div>
+              )}
+              {activeJourney && (
+                <div className="mt-4 text-center text-sm">
+                  {t("ui.or")}{" "}
+                  <button
+                    onClick={() => setShowAbortModal(true)}
+                    className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 lowercase hover:text-blue-700"
+                  >
+                    {t("ui.abortExpedition")}
                   </button>
                 </div>
               )}
@@ -164,6 +187,16 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showAbortModal}
+        title={t("ui.abortExpedition")}
+        message={t("ui.confirmAbortExpedition")}
+        confirmText={t("ui.abortExpedition")}
+        cancelText={t("ui.cancel")}
+        onConfirm={handleAbortExpedition}
+        onCancel={handleCancelAbort}
+      />
     </Page>
   )
 }
