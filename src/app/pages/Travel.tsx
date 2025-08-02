@@ -142,6 +142,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 onClick={handleMapClick}
                 inJourney={!!journey}
                 pathRotation={mapRotation}
+                pathLength={journey?.journeyLength ?? "long"}
                 label={
                   activeJourney
                     ? t("ui.continueExpedition")
