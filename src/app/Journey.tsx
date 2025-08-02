@@ -1,4 +1,4 @@
-import { act, useCallback, useEffect, useState, type FC } from "react"
+import { useCallback, useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { clsx } from "clsx"
@@ -143,24 +143,25 @@ export const Journey: FC<{
         </div>
       </div>
       <div className="absolute top-0 right-0 left-0">
-        <div className="flex w-full items-center justify-between px-4 py-2">
+        <div
+          className={clsx(
+            "flex w-full items-center justify-between px-4 py-2",
+
+            dayNightCycleStep(
+              activeJourney.levelNr,
+              activeJourney.journey.time
+            ) < 6
+              ? "text-black"
+              : "text-white"
+          )}
+        >
           <button
             onClick={onClose}
             className="cursor-pointer text-lg font-bold focus:outline-none"
           >
             {t("ui.backArrow")}
           </button>
-          <h1
-            className={clsx(
-              "pointer-events-none mt-0  inline-block pt-4 font-pyramid text-2xl font-bold",
-              dayNightCycleStep(
-                activeJourney.levelNr,
-                activeJourney.journey.time
-              ) < 6
-                ? "text-black"
-                : "text-white"
-            )}
-          >
+          <h1 className="pointer-events-none mt-0  inline-block pt-4 font-pyramid text-2xl font-bold">
             {expeditionCompleted
               ? t("ui.expeditionCompleted")
               : t("ui.expedition") +

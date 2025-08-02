@@ -182,6 +182,29 @@ export const MapButton: FC<MapButtonProps> = ({
 }) => {
   const pathConfig = getPathConfig(pathLength)
 
+  // Calculate the actual path length for accurate stroke-dashoffset
+  const getActualPathLength = (pathConfig: { path: string }) => {
+    const totalSamples = 100
+    let totalLength = 0
+
+    for (let i = 1; i <= totalSamples; i++) {
+      const prevT = (i - 1) / totalSamples
+      const currentT = i / totalSamples
+      const prevPoint = getParametricPosition(prevT, pathConfig)
+      const currentPoint = getParametricPosition(currentT, pathConfig)
+
+      const distance = Math.sqrt(
+        Math.pow(currentPoint.x - prevPoint.x, 2) +
+          Math.pow(currentPoint.y - prevPoint.y, 2)
+      )
+      totalLength += distance
+    }
+
+    return totalLength
+  }
+
+  const actualPathLength = getActualPathLength(pathConfig)
+
   // Ensure the traveler position matches the visual progress of the colored line
   // Clamp the progress to ensure it's between 0 and 1
   const clampedProgress = Math.max(0, Math.min(1, journeyProgress))
@@ -267,8 +290,10 @@ export const MapButton: FC<MapButtonProps> = ({
               strokeWidth="2"
               fill="none"
               strokeLinecap="round"
-              strokeDasharray="100"
-              strokeDashoffset={100 - clampedProgress * 100}
+              strokeDasharray={actualPathLength}
+              strokeDashoffset={
+                actualPathLength - clampedProgress * actualPathLength
+              }
               className="transition-all duration-1000 ease-in-out"
             />
             {/* Traveler dot */}
