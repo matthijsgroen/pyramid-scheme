@@ -66,108 +66,110 @@ export const Journey: FC<{
       levelNr={activeJourney.levelNr}
       start={activeJourney.journey.time}
     >
-      <div className="flex w-full flex-1 overflow-scroll overscroll-contain">
-        <div
-          className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
-          style={{
-            "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
-            "--level-height": `calc(var(--spacing) * 10 * ${(levelContent?.pyramid.floorCount ?? 0) + 2})`,
-          }}
-        >
+      <div className="flex h-full w-full flex-col">
+        <div className="flex-shrink-0 backdrop-blur-sm">
           <div
-            key={activeJourney.levelNr + 2}
             className={clsx(
-              "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
-              startNextLevel
-                ? "translate-x-[25%] scale-20 blur-xs"
-                : "translate-x-[35%] scale-0 blur-sm"
+              "flex w-full items-center justify-between px-4 py-2",
+              dayNightCycleStep(
+                activeJourney.levelNr,
+                activeJourney.journey.time
+              ) < 6
+                ? "text-black"
+                : "text-white"
             )}
           >
-            {nextNextLevelContent && (
-              <Level
-                key={activeJourney.levelNr + 2}
-                content={nextNextLevelContent}
-                decorationOffset={activeJourney.randomSeed}
-              />
-            )}
+            <button
+              onClick={onClose}
+              className="cursor-pointer text-lg font-bold focus:outline-none"
+            >
+              {t("ui.backArrow")}
+            </button>
+            <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">
+              {expeditionCompleted
+                ? t("ui.expeditionCompleted")
+                : t("ui.expedition") +
+                  ` ${t("ui.level")} ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
+            </h1>
+            <span></span>
           </div>
-          <div
-            key={activeJourney.levelNr + 1}
-            className={clsx(
-              "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
-              startNextLevel
-                ? "translate-x-0 scale-100 blur-none"
-                : "translate-x-[25%] scale-20 blur-xs"
-            )}
-          >
-            {nextLevelContent && (
-              <Level
-                key={activeJourney.levelNr + 1}
-                content={nextLevelContent}
-                decorationOffset={activeJourney.randomSeed}
-              />
-            )}
-          </div>
-          <div
-            key={activeJourney.levelNr}
-            className={clsx(
-              "absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
-              startNextLevel ? "translate-x-[-200%] scale-300" : "scale-100"
-            )}
-          >
-            {levelContent && (
-              <Level
-                key={activeJourney.levelNr}
-                storageKey={storageKey}
-                content={levelContent}
-                decorationOffset={activeJourney.randomSeed}
-                onComplete={onComplete}
-              />
-            )}
-          </div>
-          {expeditionCompleted && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex flex-col rounded-lg bg-white/80 p-4 backdrop-blur-md">
-                <span className="font-pyramid text-2xl font-bold text-green-500">
-                  {t("ui.expeditionCompleted")}
-                </span>
-                <button
-                  className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                  onClick={onJourneyComplete}
-                >
-                  {t("ui.goBackToBase")}
-                </button>
-              </div>
-            </div>
-          )}
         </div>
-      </div>
-      <div className="absolute top-0 right-0 left-0">
-        <div
-          className={clsx(
-            "flex w-full items-center justify-between px-4 py-2",
 
-            dayNightCycleStep(
-              activeJourney.levelNr,
-              activeJourney.journey.time
-            ) < 6
-              ? "text-black"
-              : "text-white"
-          )}
-        >
-          <button
-            onClick={onClose}
-            className="cursor-pointer text-lg font-bold focus:outline-none"
+        <div className="flex flex-1 overflow-scroll overscroll-contain">
+          <div
+            className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
+            style={{
+              "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
+              "--level-height": `calc(var(--spacing) * 10 * ${(levelContent?.pyramid.floorCount ?? 0) + 2})`,
+            }}
           >
-            {t("ui.backArrow")}
-          </button>
-          <h1 className="pointer-events-none mt-0  inline-block pt-4 font-pyramid text-2xl font-bold">
-            {expeditionCompleted
-              ? t("ui.expeditionCompleted")
-              : t("ui.expedition") +
-                ` ${t("ui.level")} ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
-          </h1>
-          <span></span>
+            <div
+              key={activeJourney.levelNr + 2}
+              className={clsx(
+                "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
+                startNextLevel
+                  ? "translate-x-[25%] scale-20 blur-xs"
+                  : "translate-x-[35%] scale-0 blur-sm"
+              )}
+            >
+              {nextNextLevelContent && (
+                <Level
+                  key={activeJourney.levelNr + 2}
+                  content={nextNextLevelContent}
+                  decorationOffset={activeJourney.randomSeed}
+                />
+              )}
+            </div>
+            <div
+              key={activeJourney.levelNr + 1}
+              className={clsx(
+                "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
+                startNextLevel
+                  ? "translate-x-0 scale-100 blur-none"
+                  : "translate-x-[25%] scale-20 blur-xs"
+              )}
+            >
+              {nextLevelContent && (
+                <Level
+                  key={activeJourney.levelNr + 1}
+                  content={nextLevelContent}
+                  decorationOffset={activeJourney.randomSeed}
+                />
+              )}
+            </div>
+            <div
+              key={activeJourney.levelNr}
+              className={clsx(
+                "absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
+                startNextLevel ? "translate-x-[-200%] scale-300" : "scale-100"
+              )}
+            >
+              {levelContent && (
+                <Level
+                  key={activeJourney.levelNr}
+                  storageKey={storageKey}
+                  content={levelContent}
+                  decorationOffset={activeJourney.randomSeed}
+                  onComplete={onComplete}
+                />
+              )}
+            </div>
+            {expeditionCompleted && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="flex flex-col rounded-lg bg-white/80 p-4 backdrop-blur-md">
+                  <span className="font-pyramid text-2xl font-bold text-green-500">
+                    {t("ui.expeditionCompleted")}
+                  </span>
+                  <button
+                    className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                    onClick={onJourneyComplete}
+                  >
+                    {t("ui.goBackToBase")}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Backdrop>
