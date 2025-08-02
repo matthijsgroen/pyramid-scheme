@@ -74,7 +74,7 @@ export const Journey: FC<{
           ? baseTransform
           : `translate(${scrollX * 0.25}px, ${scrollY * 0.25}px) ${baseTransform}`
       }
-      
+
       if (nextLevelRef.current) {
         const baseTransform = startNextLevel
           ? "translateX(0) scale(1)"
@@ -83,7 +83,7 @@ export const Journey: FC<{
           ? baseTransform
           : `translate(${scrollX * 0.5}px, ${scrollY * 0.5}px) ${baseTransform}`
       }
-      
+
       if (currentLevelRef.current) {
         const baseTransform = startNextLevel
           ? "translateX(-200%) scale(3)"
@@ -95,10 +95,10 @@ export const Journey: FC<{
     }
 
     scrollContainer.addEventListener("scroll", handleScroll, { passive: true })
-    
+
     // Initial call to set transforms
     handleScroll()
-    
+
     return () => scrollContainer.removeEventListener("scroll", handleScroll)
   }, [startNextLevel])
 
