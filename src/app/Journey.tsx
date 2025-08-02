@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FC } from "react"
+import { useCallback, useEffect, useState, useRef, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { clsx } from "clsx"
@@ -21,6 +21,10 @@ export const Journey: FC<{
 }) => {
   const { t } = useTranslation("common")
   const [startNextLevel, setStartNextLevel] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const currentLevelRef = useRef<HTMLDivElement>(null)
+  const nextLevelRef = useRef<HTMLDivElement>(null)
+  const futureLevelRef = useRef<HTMLDivElement>(null)
 
   const levelContent = generateJourneyLevel(
     activeJourney,
@@ -50,6 +54,53 @@ export const Journey: FC<{
       return () => clearTimeout(stopTimeout)
     }
   }, [startNextLevel, onNextLevel, activeJourney.levelNr])
+
+  // Handle scroll for parallax effect with direct DOM manipulation
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    const handleScroll = () => {
+      const scrollX = scrollContainer.scrollLeft
+      const scrollY = scrollContainer.scrollTop
+
+      // Update transforms directly via refs for better performance
+      // Only apply parallax when not transitioning levels
+      if (futureLevelRef.current) {
+        const baseTransform = startNextLevel
+          ? "translateX(25%) scale(0.2)"
+          : "translateX(35%) scale(0)"
+        futureLevelRef.current.style.transform = startNextLevel
+          ? baseTransform
+          : `translate(${scrollX * 0.25}px, ${scrollY * 0.25}px) ${baseTransform}`
+      }
+      
+      if (nextLevelRef.current) {
+        const baseTransform = startNextLevel
+          ? "translateX(0) scale(1)"
+          : "translateX(25%) scale(0.2)"
+        nextLevelRef.current.style.transform = startNextLevel
+          ? baseTransform
+          : `translate(${scrollX * 0.5}px, ${scrollY * 0.5}px) ${baseTransform}`
+      }
+      
+      if (currentLevelRef.current) {
+        const baseTransform = startNextLevel
+          ? "translateX(-200%) scale(3)"
+          : "scale(1)"
+        currentLevelRef.current.style.transform = startNextLevel
+          ? baseTransform
+          : `translate(${scrollX * -0.1}px, ${scrollY * -0.1}px) ${baseTransform}`
+      }
+    }
+
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true })
+    
+    // Initial call to set transforms
+    handleScroll()
+    
+    return () => scrollContainer.removeEventListener("scroll", handleScroll)
+  }, [startNextLevel])
 
   const onComplete = useCallback(() => {
     if (startNextLevel) return
@@ -95,22 +146,31 @@ export const Journey: FC<{
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-scroll overscroll-contain">
+        <div
+          ref={scrollContainerRef}
+          className="flex flex-1 overflow-auto overscroll-contain"
+          style={{ minHeight: "100vh" }}
+        >
           <div
-            className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
+            className="relative w-full min-w-(--level-width)"
             style={{
               "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
-              "--level-height": `calc(var(--spacing) * 10 * ${(levelContent?.pyramid.floorCount ?? 0) + 2})`,
+              minHeight: `max(100vh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
             }}
           >
             <div
+              ref={futureLevelRef}
               key={activeJourney.levelNr + 2}
-              className={clsx(
-                "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
-                startNextLevel
-                  ? "translate-x-[25%] scale-20 blur-xs"
-                  : "translate-x-[35%] scale-0 blur-sm"
-              )}
+              className="pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
+              style={{
+                transform: startNextLevel
+                  ? "translateX(25%) scale(0.2)"
+                  : "translateX(35%) scale(0)",
+                filter: startNextLevel ? "blur(1px)" : "blur(2px)",
+                transition: startNextLevel
+                  ? "transform 1000ms ease-in-out, filter 1000ms ease-in-out"
+                  : "none",
+              }}
             >
               {nextNextLevelContent && (
                 <Level
@@ -121,13 +181,18 @@ export const Journey: FC<{
               )}
             </div>
             <div
+              ref={nextLevelRef}
               key={activeJourney.levelNr + 1}
-              className={clsx(
-                "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
-                startNextLevel
-                  ? "translate-x-0 scale-100 blur-none"
-                  : "translate-x-[25%] scale-20 blur-xs"
-              )}
+              className="pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
+              style={{
+                transform: startNextLevel
+                  ? "translateX(0) scale(1)"
+                  : "translateX(25%) scale(0.2)",
+                filter: startNextLevel ? "blur(0px)" : "blur(1px)",
+                transition: startNextLevel
+                  ? "transform 1000ms ease-in-out, filter 1000ms ease-in-out"
+                  : "none",
+              }}
             >
               {nextLevelContent && (
                 <Level
@@ -138,11 +203,17 @@ export const Journey: FC<{
               )}
             </div>
             <div
+              ref={currentLevelRef}
               key={activeJourney.levelNr}
-              className={clsx(
-                "absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
-                startNextLevel ? "translate-x-[-200%] scale-300" : "scale-100"
-              )}
+              className="absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
+              style={{
+                transform: startNextLevel
+                  ? "translateX(-200%) scale(3)"
+                  : "scale(1)",
+                transition: startNextLevel
+                  ? "transform 1000ms ease-in-out"
+                  : "none",
+              }}
             >
               {levelContent && (
                 <Level
