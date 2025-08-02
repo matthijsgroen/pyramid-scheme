@@ -2,6 +2,7 @@ import { BaseHeader } from "../components/BaseHeader"
 import { TravelPage } from "./pages/Travel"
 import { WorkshopPage } from "./pages/Workshop"
 import { CollectionPage } from "./pages/Collection"
+import { isBeta } from "../config/constants"
 
 export const Base = ({ startGame }: { startGame: () => void }) => {
   return (
@@ -9,10 +10,10 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
       <div className="w-full shrink-0 grid-flow-dense auto-rows-min grid-cols-1">
         <BaseHeader />
       </div>
-      <div className="flex w-full flex-1 snap-x snap-mandatory flex-row overflow-x-scroll overscroll-contain">
+      <div className="flex w-full flex-1 snap-x snap-mandatory flex-row justify-around overflow-x-scroll overscroll-contain bg-gradient-to-b from-blue-100 to-blue-300">
         <TravelPage startGame={startGame} />
-        <WorkshopPage />
-        <CollectionPage />
+        {isBeta && <WorkshopPage />}
+        {isBeta && <CollectionPage />}
       </div>
     </div>
   )

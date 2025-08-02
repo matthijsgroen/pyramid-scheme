@@ -118,16 +118,20 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
             <div className="flex-1 overflow-y-auto p-6">
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {journeys.map((journey, index) => (
-                  <JourneyCard
-                    key={journey.id}
-                    journey={journey}
-                    disabled={prestige < journey.requiredPrestigeLevel}
-                    index={index}
-                    showAnimation={showJourneySelection}
-                    onClick={handleJourneySelect}
-                  />
-                ))}
+                {journeys
+                  .filter(
+                    (journey) => journey.requiredPrestigeLevel <= prestige
+                  )
+                  .map((journey, index) => (
+                    <JourneyCard
+                      key={journey.id}
+                      journey={journey}
+                      disabled={prestige < journey.requiredPrestigeLevel}
+                      index={index}
+                      showAnimation={showJourneySelection}
+                      onClick={handleJourneySelect}
+                    />
+                  ))}
               </div>
             </div>
           </div>
