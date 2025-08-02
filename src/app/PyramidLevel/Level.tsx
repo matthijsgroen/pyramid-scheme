@@ -36,7 +36,7 @@ export const Level: FC<{
 
   return (
     <div className="relative flex h-full w-full flex-col">
-      <div className="flex w-full flex-1 items-center justify-center py-8">
+      <div className="flex w-full flex-1 items-center justify-center">
         <PyramidDisplay
           levelNr={content.levelNr}
           pyramid={content.pyramid}
