@@ -1,5 +1,13 @@
 import { useTranslation } from "react-i18next"
-import { journeys } from "./journeys"
+import { journeys, type Journey } from "./journeys"
+
+export type TranslatedJourney = Journey & {
+  name: string
+  description: string
+  difficultyLabel: string
+  lengthLabel: string
+  timeLabel: string
+}
 
 export const useJourneyTranslations = () => {
   const { t } = useTranslation("journeys")

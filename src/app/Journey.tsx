@@ -11,7 +11,13 @@ export const Journey: FC<{
   activeJourney: JourneyState
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
-}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete }) => {
+  onClose?: () => void
+}> = ({
+  activeJourney,
+  onLevelComplete: onNextLevel,
+  onJourneyComplete,
+  onClose,
+}) => {
   const [startNextLevel, setStartNextLevel] = useState(false)
 
   const levelContent = generateJourneyLevel(
@@ -31,6 +37,8 @@ export const Journey: FC<{
     ? getLevelWidth(levelContent.pyramid.floorCount)
     : 0
 
+  const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
+
   useEffect(() => {
     if (startNextLevel) {
       const stopTimeout = setTimeout(() => {
@@ -49,22 +57,10 @@ export const Journey: FC<{
   }, [startNextLevel])
 
   const expeditionCompleted =
-    activeJourney.levelNr >= activeJourney.journey.levelCount
+    activeJourney.levelNr > activeJourney.journey.levelCount
 
   return (
     <Backdrop levelNr={activeJourney.levelNr}>
-      <h1
-        className={clsx(
-          " pointer-events-none absolute top-0 right-0 left-0 mt-0 flex-none pt-4 text-center font-pyramid text-3xl font-bold",
-          dayNightCycleStep(activeJourney.levelNr) < 6
-            ? "text-black"
-            : "text-white"
-        )}
-      >
-        {expeditionCompleted
-          ? "Expedition Completed!"
-          : `Expedition Level ${activeJourney.levelNr}`}
-      </h1>
       <div className="flex w-full flex-1 overflow-scroll overscroll-contain">
         <div
           className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
@@ -115,6 +111,7 @@ export const Journey: FC<{
             {levelContent && (
               <Level
                 key={activeJourney.levelNr}
+                storageKey={storageKey}
                 content={levelContent}
                 onComplete={onComplete}
               />
@@ -135,6 +132,29 @@ export const Journey: FC<{
               </div>
             </div>
           )}
+        </div>
+      </div>
+      <div className="absolute top-0 right-0 left-0">
+        <div className="flex w-full items-center justify-between px-4 py-2">
+          <button
+            onClick={onClose}
+            className="cursor-pointer text-lg font-bold focus:outline-none"
+          >
+            ←
+          </button>
+          <h1
+            className={clsx(
+              "pointer-events-none mt-0  inline-block pt-4 font-pyramid text-2xl font-bold",
+              dayNightCycleStep(activeJourney.levelNr) < 6
+                ? "text-black"
+                : "text-white"
+            )}
+          >
+            {expeditionCompleted
+              ? "Expedition Completed!"
+              : `Expedition Level ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
+          </h1>
+          <span></span>
         </div>
       </div>
     </Backdrop>

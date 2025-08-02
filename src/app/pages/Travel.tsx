@@ -2,9 +2,13 @@ import { useState, type FC } from "react"
 import { Page } from "../../ui/Page"
 import { MapButton } from "../../ui/MapButton"
 import { JourneyCard } from "../../ui/JourneyCard"
-import { journeys, type Journey } from "../../data/journeys"
+import { type Journey } from "../../data/journeys"
 import { useJourneys } from "../state/useJourneys"
 import type { ActiveJourney } from "../../game/generateJourney"
+import {
+  useJourneyTranslations,
+  type TranslatedJourney,
+} from "../../data/useJourneyTranslations"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -18,13 +22,15 @@ const getJourneyProgress = (
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [prestige] = useState(0)
+  const journeys = useJourneyTranslations()
 
-  const { activeJourney, startJourney } = useJourneys()
+  const { activeJourney, startJourney, journeyLog } = useJourneys()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
-  const [selectedJourney, setSelectedJourney] = useState<Journey | null>(null)
+  const [selectedJourney, setSelectedJourney] =
+    useState<TranslatedJourney | null>(null)
   const journeyProgress = getJourneyProgress(activeJourney, journeys)
 
-  const journey = activeJourney?.journey
+  const journey = activeJourney?.journey ?? selectedJourney
 
   const handleMapClick = () => {
     if (activeJourney) {
@@ -37,7 +43,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     }
   }
 
-  const handleJourneySelect = (journey: Journey) => {
+  const handleJourneySelect = (journey: TranslatedJourney) => {
     setShowJourneySelection(false)
     setSelectedJourney(journey)
   }
@@ -72,9 +78,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     {journey.name}
                   </h3>
                   <p className="mb-4 max-w-md">{journey.description}</p>
-                  <p className="mb-4 max-w-md">
-                    Length: {journey.journeyLength}
-                  </p>
+                  <p className="mb-4 max-w-md">Length: {journey.lengthLabel}</p>
                 </>
               )}
               {!journey && (
@@ -137,16 +141,22 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   .filter(
                     (journey) => journey.requiredPrestigeLevel <= prestige
                   )
-                  .map((journey, index) => (
-                    <JourneyCard
-                      key={journey.id}
-                      journey={journey}
-                      disabled={prestige < journey.requiredPrestigeLevel}
-                      index={index}
-                      showAnimation={showJourneySelection}
-                      onClick={handleJourneySelect}
-                    />
-                  ))}
+                  .map((journey, index) => {
+                    const completionCount = journeyLog.filter(
+                      (j) => j.journeyId === journey.id && j.completed
+                    ).length
+                    return (
+                      <JourneyCard
+                        key={journey.id}
+                        journey={journey}
+                        completionCount={completionCount}
+                        disabled={prestige < journey.requiredPrestigeLevel}
+                        index={index}
+                        showAnimation={showJourneySelection}
+                        onClick={handleJourneySelect}
+                      />
+                    )
+                  })}
               </div>
             </div>
           </div>

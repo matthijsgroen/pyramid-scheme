@@ -4,12 +4,15 @@ import { useGameStorage } from "../../support/useGameStorage"
 import { startJourney as dataStartJourney } from "../../game/generateJourney"
 import type { Journey } from "../../data/journeys"
 import { generateNewSeed } from "../../game/random"
-import { journeys as journeyData } from "../../data/journeys"
+import {
+  useJourneyTranslations,
+  type TranslatedJourney,
+} from "../../data/useJourneyTranslations"
 
 const baseJourneySeed = 987654321
 
 export type JourneyState = ActiveJourney & {
-  journey: Journey
+  journey: TranslatedJourney
 }
 
 export const useJourneys = (): {
@@ -20,6 +23,7 @@ export const useJourneys = (): {
   cancelJourney: () => void
   completeLevel: () => void
 } => {
+  const journeyData = useJourneyTranslations()
   const [journeys, setJourneys] = useGameStorage<ActiveJourney[]>(
     "journeys",
     []
@@ -80,7 +84,7 @@ export const useJourneys = (): {
       return undefined
     }
     return { ...activeJourney, journey }
-  }, [activeJourney])
+  }, [activeJourney, journeyData])
 
   const journeyStates = useMemo(
     (): JourneyState[] =>
@@ -98,7 +102,7 @@ export const useJourneys = (): {
           (journeyState): journeyState is JourneyState =>
             journeyState !== undefined
         ),
-    [journeys]
+    [journeys, journeyData]
   )
 
   return {

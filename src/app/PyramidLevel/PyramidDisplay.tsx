@@ -32,7 +32,7 @@ export const PyramidDisplay: FC<{
   levelNr: number
   pyramid: Pyramid
   values: Record<string, number | undefined>
-  onAnswer: (blockId: string, value: number | undefined) => void
+  onAnswer?: (blockId: string, value: number | undefined) => void
 }> = ({ pyramid, values, onAnswer, levelNr }) => {
   const { blocks } = pyramid
 
@@ -85,7 +85,7 @@ export const PyramidDisplay: FC<{
                     setFocusInput(false)
                     containerRef.current?.focus()
                   }}
-                  onChange={(value) => onAnswer(block.id, value)}
+                  onChange={(value) => onAnswer?.(block.id, value)}
                 />
               ) : (
                 <Block

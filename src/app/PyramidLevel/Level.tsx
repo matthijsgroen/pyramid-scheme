@@ -1,14 +1,22 @@
-import { useEffect, useState, type FC } from "react"
+import { useEffect, type FC } from "react"
 import type { PyramidLevel } from "../../game/types"
 import { PyramidDisplay } from "./PyramidDisplay"
 import { isValid } from "../../game/state"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
+import { useGameStorage } from "../../support/useGameStorage"
 
-export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
-  content,
-  onComplete,
-}) => {
-  const [answers, setAnswers] = useState<Record<string, number | undefined>>({})
+export const Level: FC<{
+  content: PyramidLevel
+  storageKey?: string
+  onComplete?: () => void
+}> = ({ content, storageKey, onComplete }) => {
+  const [storedAnswers, setAnswers] = useGameStorage<{
+    key: string
+    values: Record<string, number | undefined>
+  }>("levelAnswers", { key: storageKey ?? "dummy", values: {} })
+
+  const answers =
+    storedAnswers.key === storageKey && storageKey ? storedAnswers.values : {}
 
   const completed = isValid({
     levelNr: content.levelNr,
@@ -32,9 +40,16 @@ export const Level: FC<{ content: PyramidLevel; onComplete?: () => void }> = ({
           levelNr={content.levelNr}
           pyramid={content.pyramid}
           values={answers}
-          onAnswer={(blockId: string, value: number | undefined) => {
-            setAnswers((prev) => ({ ...prev, [blockId]: value }))
-          }}
+          onAnswer={
+            storageKey
+              ? (blockId: string, value: number | undefined) => {
+                  setAnswers((prev) => ({
+                    key: storageKey,
+                    values: { ...prev.values, [blockId]: value },
+                  }))
+                }
+              : undefined
+          }
         />
       </div>
       {completed && <LevelCompletedOverlay />}

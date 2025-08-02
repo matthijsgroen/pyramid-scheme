@@ -5,7 +5,7 @@ export const usePyramidNavigation = (
   floorStartIndices: number[],
   floorCount: number,
   blocks: PyramidBlock[],
-  onAnswer: (blockId: string, value: number | undefined) => void
+  onAnswer?: (blockId: string, value: number | undefined) => void
 ) => {
   const [selectedBlockIndex, setSelectedBlockIndex] = useState<number>(0)
   const [focusInput, setFocusInput] = useState(false)
@@ -52,7 +52,7 @@ export const usePyramidNavigation = (
         e.preventDefault()
       } else if (/^\d$/.test(e.key) && !focusInput) {
         const value = parseInt(e.key, 10)
-        onAnswer(blocks[selectedBlockIndex].id, value)
+        onAnswer?.(blocks[selectedBlockIndex].id, value)
         setFocusInput(true)
         e.preventDefault()
       }

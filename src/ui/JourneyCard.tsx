@@ -1,18 +1,20 @@
 import type { FC } from "react"
-import type { Journey } from "../data/journeys"
+import type { TranslatedJourney } from "../data/useJourneyTranslations"
 
 interface JourneyCardProps {
-  journey: Journey
+  journey: TranslatedJourney
   index: number
   showAnimation: boolean
+  completionCount?: number
   disabled?: boolean
-  onClick: (journey: Journey) => void
+  onClick: (journey: TranslatedJourney) => void
 }
 
 export const JourneyCard: FC<JourneyCardProps> = ({
   journey,
   index,
   showAnimation,
+  completionCount = 0,
   disabled = false,
   onClick,
 }) => {
@@ -70,6 +72,14 @@ export const JourneyCard: FC<JourneyCardProps> = ({
         {disabled && (
           <span className="font-bold">
             Prestige required: {journey.requiredPrestigeLevel}
+          </span>
+        )}
+        {completionCount > 0 && (
+          <span className="inline-flex items-center font-bold text-amber-800">
+            <span className="inline-flex size-5 items-center justify-center rounded-full bg-green-800 p-0.5 text-sm text-white">
+              ✔︎
+            </span>
+            : {completionCount} {completionCount > 1 ? "times" : "time"}
           </span>
         )}
       </div>

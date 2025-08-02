@@ -18,6 +18,7 @@ function App() {
             completeJourney()
             setInGame(false)
           }}
+          onClose={() => setInGame(false)}
         />
       )}
     </>
