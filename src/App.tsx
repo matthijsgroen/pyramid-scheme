@@ -1,15 +1,25 @@
 import { useState } from "react"
 import { Journey } from "./app/Journey"
 import { Base } from "./app/Base"
-
-const gameSeed = 12345
+import { useJourneys } from "./app/state/useJourneys"
 
 function App() {
   const [inGame, setInGame] = useState(false)
+  const { activeJourney, completeLevel, completeJourney } = useJourneys()
+
   return (
     <>
       {!inGame && <Base startGame={() => setInGame(true)} />}
-      {inGame && <Journey gameSeed={gameSeed} />}
+      {inGame && activeJourney && (
+        <Journey
+          activeJourney={activeJourney}
+          onLevelComplete={completeLevel}
+          onJourneyComplete={() => {
+            completeJourney()
+            setInGame(false)
+          }}
+        />
+      )}
     </>
   )
 }

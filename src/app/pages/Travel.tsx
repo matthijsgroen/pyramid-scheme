@@ -3,17 +3,34 @@ import { Page } from "../../ui/Page"
 import { MapButton } from "../../ui/MapButton"
 import { JourneyCard } from "../../ui/JourneyCard"
 import { journeys, type Journey } from "../../data/journeys"
+import { useJourneys } from "../state/useJourneys"
+import type { ActiveJourney } from "../../game/generateJourney"
+
+const getJourneyProgress = (
+  activeJourney: ActiveJourney | undefined,
+  journeys: Journey[]
+) => {
+  if (!activeJourney) return 0
+  const jny: ActiveJourney = activeJourney
+  const data = journeys.find((j) => j.id === jny.journeyId)
+  return Math.min(jny.levelNr / (data?.levelCount ?? 1), 1)
+}
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
-  const [journeyProgress] = useState(0.1)
   const [prestige] = useState(0)
-  const [inJourney] = useState(false)
+
+  const { activeJourney, startJourney } = useJourneys()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<Journey | null>(null)
-  // This could be passed as a prop or come from game state
+  const journeyProgress = getJourneyProgress(activeJourney, journeys)
+
+  const journey = activeJourney?.journey
 
   const handleMapClick = () => {
-    if (selectedJourney) {
+    if (activeJourney) {
+      startGame()
+    } else if (selectedJourney && !activeJourney) {
+      startJourney(selectedJourney)
       startGame()
     } else {
       setShowJourneySelection(true)
@@ -21,10 +38,8 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   }
 
   const handleJourneySelect = (journey: Journey) => {
-    // Here you would navigate to the selected journey
     setShowJourneySelection(false)
     setSelectedJourney(journey)
-    // startGame() // For now, just start the game
   }
 
   const handleBackToMap = () => {
@@ -51,35 +66,35 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
             }`}
           >
             <div className="w-full max-w-md">
-              {selectedJourney && (
+              {journey && (
                 <>
                   <h3 className="mb-4 text-center font-pyramid text-xl">
-                    {selectedJourney.name}
+                    {journey.name}
                   </h3>
-                  <p className="mb-4 max-w-md">{selectedJourney.description}</p>
+                  <p className="mb-4 max-w-md">{journey.description}</p>
                   <p className="mb-4 max-w-md">
-                    Length: {selectedJourney.journeyLength}
+                    Length: {journey.journeyLength}
                   </p>
                 </>
               )}
-              {!selectedJourney && (
+              {!journey && (
                 <p className="mb-4 text-center">
                   Start your adventure by exploring pyramids.
                 </p>
               )}
               <MapButton
                 onClick={handleMapClick}
-                inJourney={inJourney}
+                inJourney={!!journey}
                 label={
-                  inJourney
-                    ? "Continue Journey"
+                  activeJourney
+                    ? "Continue Expedition"
                     : selectedJourney
-                      ? "Start Journey"
-                      : "Plan Journey"
+                      ? "Start Expedition"
+                      : "Plan Expedition"
                 }
                 journeyProgress={journeyProgress}
               />
-              {!inJourney && selectedJourney && (
+              {!activeJourney && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
                   Or{" "}
                   <button
@@ -89,7 +104,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     }}
                     className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 hover:text-blue-700"
                   >
-                    select another journey
+                    select another expedition
                   </button>
                 </div>
               )}
@@ -106,7 +121,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
           >
             <div className="mb-4 flex w-full items-center justify-between px-8">
               <h2 className="font-pyramid text-xl font-bold">
-                Choose Your Journey
+                Choose Your Expedition
               </h2>
               <button
                 onClick={handleBackToMap}

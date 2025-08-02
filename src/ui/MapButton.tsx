@@ -52,7 +52,7 @@ export const MapButton: FC<MapButtonProps> = ({
   label,
   journeyProgress,
 }) => {
-  const travelerPosition = getPositionOnPath(journeyProgress - 0.04)
+  const travelerPosition = getPositionOnPath(journeyProgress)
 
   return (
     <button

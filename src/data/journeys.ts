@@ -7,6 +7,12 @@ export type Journey = {
   levelCount: number
   time: "morning" | "afternoon" | "evening" | "night"
   requiredPrestigeLevel: number
+  levelSettings: {
+    startFloorCount: number
+    endFloorCount?: number
+    startNumberRange: [min: number, max: number]
+    endNumberRange?: [min: number, max: number]
+  }
   rewards: {
     perLevel: {
       coinsPerLevel: [min: number, max: number]
@@ -30,6 +36,10 @@ export const journeys: Journey[] = [
     levelCount: 5,
     time: "morning",
     requiredPrestigeLevel: 0,
+    levelSettings: {
+      startFloorCount: 3,
+      startNumberRange: [1, 3],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [10, 25],
@@ -50,6 +60,12 @@ export const journeys: Journey[] = [
     levelCount: 6,
     time: "afternoon",
     requiredPrestigeLevel: 1,
+    levelSettings: {
+      startFloorCount: 3,
+      endFloorCount: 4,
+      startNumberRange: [1, 4],
+      endNumberRange: [2, 5],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [15, 30],
@@ -70,6 +86,12 @@ export const journeys: Journey[] = [
     levelCount: 8,
     time: "evening",
     requiredPrestigeLevel: 2,
+    levelSettings: {
+      startFloorCount: 3,
+      endFloorCount: 4,
+      startNumberRange: [1, 4],
+      endNumberRange: [3, 10],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [20, 35],
@@ -90,6 +112,12 @@ export const journeys: Journey[] = [
     levelCount: 10,
     time: "morning",
     requiredPrestigeLevel: 3,
+    levelSettings: {
+      startFloorCount: 4,
+      endFloorCount: 5,
+      startNumberRange: [1, 4],
+      endNumberRange: [3, 10],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [25, 40],
@@ -112,6 +140,12 @@ export const journeys: Journey[] = [
     levelCount: 12,
     time: "afternoon",
     requiredPrestigeLevel: 0,
+    levelSettings: {
+      startFloorCount: 6,
+      endFloorCount: 6,
+      startNumberRange: [1, 4],
+      endNumberRange: [2, 6],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [30, 50],
@@ -132,6 +166,12 @@ export const journeys: Journey[] = [
     levelCount: 15,
     time: "morning",
     requiredPrestigeLevel: 4,
+    levelSettings: {
+      startFloorCount: 6,
+      endFloorCount: 7,
+      startNumberRange: [1, 4],
+      endNumberRange: [3, 10],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [40, 60],
@@ -152,6 +192,12 @@ export const journeys: Journey[] = [
     levelCount: 18,
     time: "evening",
     requiredPrestigeLevel: 6,
+    levelSettings: {
+      startFloorCount: 7,
+      endFloorCount: 8,
+      startNumberRange: [1, 4],
+      endNumberRange: [4, 12],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [50, 70],
@@ -172,6 +218,12 @@ export const journeys: Journey[] = [
     levelCount: 20,
     time: "night",
     requiredPrestigeLevel: 8,
+    levelSettings: {
+      startFloorCount: 8,
+      endFloorCount: 10,
+      startNumberRange: [1, 4],
+      endNumberRange: [4, 12],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [60, 80],
@@ -194,6 +246,12 @@ export const journeys: Journey[] = [
     levelCount: 25,
     time: "night",
     requiredPrestigeLevel: 0,
+    levelSettings: {
+      startFloorCount: 10,
+      endFloorCount: 11,
+      startNumberRange: [1, 10],
+      endNumberRange: [4, 14],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [70, 100],
@@ -214,6 +272,12 @@ export const journeys: Journey[] = [
     levelCount: 30,
     time: "night",
     requiredPrestigeLevel: 10,
+    levelSettings: {
+      startFloorCount: 11,
+      endFloorCount: 12,
+      startNumberRange: [1, 10],
+      endNumberRange: [4, 14],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [90, 120],
@@ -234,6 +298,12 @@ export const journeys: Journey[] = [
     levelCount: 35,
     time: "night",
     requiredPrestigeLevel: 15,
+    levelSettings: {
+      startFloorCount: 12,
+      endFloorCount: 13,
+      startNumberRange: [3, 10],
+      endNumberRange: [4, 14],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [110, 150],
@@ -254,6 +324,12 @@ export const journeys: Journey[] = [
     levelCount: 40,
     time: "night",
     requiredPrestigeLevel: 20,
+    levelSettings: {
+      startFloorCount: 12,
+      endFloorCount: 14,
+      startNumberRange: [3, 10],
+      endNumberRange: [5, 20],
+    },
     rewards: {
       perLevel: {
         coinsPerLevel: [130, 180],

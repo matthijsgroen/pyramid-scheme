@@ -1,43 +1,46 @@
 import { useCallback, useEffect, useState, type FC } from "react"
 import { Level } from "./PyramidLevel/Level"
-import { generateLevel } from "../game/generateLevel"
-import { generateNewSeed, mulberry32 } from "../game/random"
-import { generateLevelSettings } from "../game/generateLevelSettings"
 import { clsx } from "clsx"
 import { Backdrop } from "../ui/Backdrop"
 import { getLevelWidth } from "../game/state"
 import { dayNightCycleStep } from "../ui/backdropSelection"
-import { useGameStorage } from "../support/useGameStorage"
+import { generateJourneyLevel } from "../game/generateJourney"
+import type { JourneyState } from "./state/useJourneys"
 
-const contentForLevel = (gameSeed: number, levelNr: number) => {
-  const levelSeed = generateNewSeed(gameSeed, levelNr)
-  const random = mulberry32(levelSeed)
-
-  const settings = generateLevelSettings(levelNr)
-  return generateLevel(levelNr, settings, random)
-}
-const debug = false
-
-export const Journey: FC<{ gameSeed: number }> = ({ gameSeed }) => {
-  const [levelNr, setLevelNr] = useGameStorage("levelNr", 1)
-
+export const Journey: FC<{
+  activeJourney: JourneyState
+  onLevelComplete?: () => void
+  onJourneyComplete?: () => void
+}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete }) => {
   const [startNextLevel, setStartNextLevel] = useState(false)
 
-  const levelContent = contentForLevel(gameSeed, levelNr)
-  const nextLevelContent = contentForLevel(gameSeed, levelNr + 1)
-  const nextNextLevelContent = contentForLevel(gameSeed, levelNr + 2)
+  const levelContent = generateJourneyLevel(
+    activeJourney,
+    activeJourney.levelNr
+  )
+  const nextLevelContent = generateJourneyLevel(
+    activeJourney,
+    activeJourney.levelNr + 1
+  )
+  const nextNextLevelContent = generateJourneyLevel(
+    activeJourney,
+    activeJourney.levelNr + 2
+  )
 
-  const width = getLevelWidth(levelContent.pyramid.floorCount)
+  const width = levelContent
+    ? getLevelWidth(levelContent.pyramid.floorCount)
+    : 0
 
   useEffect(() => {
     if (startNextLevel) {
       const stopTimeout = setTimeout(() => {
         setStartNextLevel(false)
-        setLevelNr((prev) => prev + 1)
+        onNextLevel?.()
       }, 1000)
       return () => clearTimeout(stopTimeout)
     }
-  }, [startNextLevel, setLevelNr])
+  }, [startNextLevel, onNextLevel, activeJourney.levelNr])
+
   const onComplete = useCallback(() => {
     if (startNextLevel) return
     setTimeout(() => {
@@ -45,32 +48,33 @@ export const Journey: FC<{ gameSeed: number }> = ({ gameSeed }) => {
     }, 1000)
   }, [startNextLevel])
 
+  const expeditionCompleted =
+    activeJourney.levelNr >= activeJourney.journey.levelCount
+
   return (
-    <Backdrop levelNr={levelNr}>
+    <Backdrop levelNr={activeJourney.levelNr}>
       <h1
         className={clsx(
           " pointer-events-none absolute top-0 right-0 left-0 mt-0 flex-none pt-4 text-center font-pyramid text-3xl font-bold",
-          dayNightCycleStep(levelNr) < 6 ? "text-black" : "text-white"
+          dayNightCycleStep(activeJourney.levelNr) < 6
+            ? "text-black"
+            : "text-white"
         )}
       >
-        Pyramid Level {levelNr}{" "}
+        {expeditionCompleted
+          ? "Expedition Completed!"
+          : `Expedition Level ${activeJourney.levelNr}`}
       </h1>
-      {debug && (
-        <div className="flex flex-row gap-2 text-slate-400">
-          <button onClick={() => setLevelNr((x) => x - 1)}>Previous</button>
-          <button onClick={() => setLevelNr((x) => x + 1)}>Next</button>
-        </div>
-      )}
       <div className="flex w-full flex-1 overflow-scroll overscroll-contain">
         <div
           className="relative h-full min-h-(--level-height) w-full min-w-(--level-width)"
           style={{
             "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
-            "--level-height": `calc(var(--spacing) * 10 * ${levelContent.pyramid.floorCount + 2})`,
+            "--level-height": `calc(var(--spacing) * 10 * ${(levelContent?.pyramid.floorCount ?? 0) + 2})`,
           }}
         >
           <div
-            key={levelNr + 2}
+            key={activeJourney.levelNr + 2}
             className={clsx(
               "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
               startNextLevel
@@ -78,10 +82,15 @@ export const Journey: FC<{ gameSeed: number }> = ({ gameSeed }) => {
                 : "translate-x-[35%] scale-0 blur-sm"
             )}
           >
-            <Level key={levelNr + 2} content={nextNextLevelContent} />
+            {nextNextLevelContent && (
+              <Level
+                key={activeJourney.levelNr + 2}
+                content={nextNextLevelContent}
+              />
+            )}
           </div>
           <div
-            key={levelNr + 1}
+            key={activeJourney.levelNr + 1}
             className={clsx(
               "pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
               startNextLevel
@@ -89,21 +98,43 @@ export const Journey: FC<{ gameSeed: number }> = ({ gameSeed }) => {
                 : "translate-x-[25%] scale-20 blur-xs"
             )}
           >
-            <Level key={levelNr + 1} content={nextLevelContent} />
+            {nextLevelContent && (
+              <Level
+                key={activeJourney.levelNr + 1}
+                content={nextLevelContent}
+              />
+            )}
           </div>
           <div
-            key={levelNr}
+            key={activeJourney.levelNr}
             className={clsx(
               "absolute inset-0 flex flex-1 items-center justify-center transition-transform duration-1000 ease-in-out",
               startNextLevel ? "translate-x-[-200%] scale-300" : "scale-100"
             )}
           >
-            <Level
-              key={levelNr}
-              content={levelContent}
-              onComplete={onComplete}
-            />
+            {levelContent && (
+              <Level
+                key={activeJourney.levelNr}
+                content={levelContent}
+                onComplete={onComplete}
+              />
+            )}
           </div>
+          {expeditionCompleted && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex flex-col rounded-lg bg-white/80 p-4 backdrop-blur-md">
+                <span className="font-pyramid text-2xl font-bold text-green-500">
+                  Expedition Completed!
+                </span>
+                <button
+                  className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                  onClick={onJourneyComplete}
+                >
+                  Go back to base
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Backdrop>

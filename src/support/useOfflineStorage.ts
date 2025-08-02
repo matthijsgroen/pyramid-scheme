@@ -98,7 +98,12 @@ export const useOfflineStorage = <T>(
   useEffect(() => {
     store.getItem<T>(key).then((value) => {
       if (value !== null) {
-        setLocalState(value)
+        setLocalState((current) => {
+          if (JSON.stringify(current) === JSON.stringify(value)) {
+            return current // No change needed
+          }
+          return value
+        })
       } else {
         if (initialValue !== null) {
           store.setItem<T>(
