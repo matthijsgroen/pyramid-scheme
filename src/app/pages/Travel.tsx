@@ -68,24 +68,30 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
   return (
     <Page
-      className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-300"
+      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300"
       snap="start"
     >
-      <div className="flex w-full flex-1 flex-col overflow-y-auto py-6 md:px-16">
-        <h1 className="mb-6 text-center font-pyramid text-2xl font-bold">
-          {t("ui.travel")}
-        </h1>
+      <div className="relative flex h-full w-full overflow-x-hidden">
+        <div
+          className={`absolute inset-0 flex w-full flex-1 flex-col py-6 transition-all duration-700 ease-in-out md:px-16 ${
+            showJourneySelection
+              ? "translate-x-[-100%] opacity-0"
+              : "translate-x-0 opacity-100"
+          }`}
+        >
+          <p className="mb-4 text-center text-sm text-gray-600">
+            This is an early alpha version.{" "}
+            <span className="font-bold">
+              Expect bugs, missing features and losing progress!
+            </span>
+          </p>
+          <h1 className="mb-6 text-center font-pyramid text-2xl font-bold">
+            {t("ui.travel")}
+          </h1>
 
-        <div className="relative flex flex-1 flex-col gap-6 overflow-hidden lg:flex-row">
           {/* Map Section */}
-          <div
-            className={`absolute inset-0 flex w-full flex-col items-center px-8 transition-all duration-700 ease-in-out ${
-              showJourneySelection
-                ? "translate-x-[-100%] opacity-0"
-                : "translate-x-0 opacity-100"
-            } overflow-y-auto`}
-          >
-            <div className="w-full max-w-md ">
+          <div className={`flex w-full flex-col items-center px-8 `}>
+            <div className="mb-6 w-full max-w-md">
               {journey && (
                 <>
                   <h3 className="mb-4 text-center font-pyramid text-xl">
@@ -139,50 +145,47 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               )}
             </div>
           </div>
+        </div>
+        {/* Journey Selection Section */}
+        <div
+          className={`absolute inset-0 flex w-full flex-col transition-all duration-700 ease-in-out ${
+            showJourneySelection
+              ? "translate-x-0 opacity-100"
+              : "translate-x-[100%] opacity-0"
+          }`}
+        >
+          <div className="flex w-full items-center justify-between px-8 py-4">
+            <h2 className="font-pyramid text-xl font-bold">
+              {t("ui.chooseYourJourney")}
+            </h2>
+            <button
+              onClick={handleBackToMap}
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1 text-sm font-bold text-white transition-colors hover:bg-blue-700"
+            >
+              {t("ui.backArrow")} {t("ui.backToMap")}
+            </button>
+          </div>
 
-          {/* Journey Selection Section */}
-          <div
-            className={`absolute inset-0 flex w-full flex-col transition-all duration-700 ease-in-out ${
-              showJourneySelection
-                ? "translate-x-0 opacity-100"
-                : "translate-x-[100%] opacity-0"
-            }`}
-          >
-            <div className="mb-4 flex w-full items-center justify-between px-8">
-              <h2 className="font-pyramid text-xl font-bold">
-                {t("ui.chooseYourJourney")}
-              </h2>
-              <button
-                onClick={handleBackToMap}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1 text-sm font-bold text-white transition-colors hover:bg-blue-700"
-              >
-                {t("ui.backArrow")} {t("ui.backToMap")}
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {journeys
-                  .filter(
-                    (journey) => journey.requiredPrestigeLevel <= prestige
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {journeys
+                // .filter((journey) => journey.requiredPrestigeLevel <= prestige)
+                .map((journey, index) => {
+                  const completionCount = journeyLog.filter(
+                    (j) => j.journeyId === journey.id && j.completed
+                  ).length
+                  return (
+                    <JourneyCard
+                      key={journey.id}
+                      journey={journey}
+                      completionCount={completionCount}
+                      disabled={prestige < journey.requiredPrestigeLevel}
+                      index={index}
+                      showAnimation={showJourneySelection}
+                      onClick={handleJourneySelect}
+                    />
                   )
-                  .map((journey, index) => {
-                    const completionCount = journeyLog.filter(
-                      (j) => j.journeyId === journey.id && j.completed
-                    ).length
-                    return (
-                      <JourneyCard
-                        key={journey.id}
-                        journey={journey}
-                        completionCount={completionCount}
-                        disabled={prestige < journey.requiredPrestigeLevel}
-                        index={index}
-                        showAnimation={showJourneySelection}
-                        onClick={handleJourneySelect}
-                      />
-                    )
-                  })}
-              </div>
+                })}
             </div>
           </div>
         </div>

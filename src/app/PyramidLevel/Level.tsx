@@ -43,10 +43,15 @@ export const Level: FC<{
           onAnswer={
             storageKey
               ? (blockId: string, value: number | undefined) => {
-                  setAnswers((prev) => ({
-                    key: storageKey,
-                    values: { ...prev.values, [blockId]: value },
-                  }))
+                  setAnswers((prev) => {
+                    if (prev.key !== storageKey) {
+                      return { key: storageKey, values: { [blockId]: value } }
+                    }
+                    return {
+                      key: storageKey,
+                      values: { ...prev.values, [blockId]: value },
+                    }
+                  })
                 }
               : undefined
           }
