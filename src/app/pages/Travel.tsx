@@ -1,4 +1,5 @@
 import { useState, type FC } from "react"
+import { useTranslation } from "react-i18next"
 import { Page } from "../../ui/Page"
 import { MapButton } from "../../ui/MapButton"
 import { JourneyCard } from "../../ui/JourneyCard"
@@ -21,6 +22,7 @@ const getJourneyProgress = (
 }
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
+  const { t } = useTranslation("common")
   const [prestige] = useState(0)
   const journeys = useJourneyTranslations()
 
@@ -59,7 +61,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     >
       <div className="flex w-full flex-1 flex-col overflow-y-auto py-6 md:px-16">
         <h1 className="mb-6 text-center font-pyramid text-2xl font-bold">
-          Travel
+          {t("ui.travel")}
         </h1>
 
         <div className="relative flex flex-1 flex-col gap-6 overflow-hidden lg:flex-row">
@@ -78,29 +80,29 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     {journey.name}
                   </h3>
                   <p className="mb-4 max-w-md">{journey.description}</p>
-                  <p className="mb-4 max-w-md">Length: {journey.lengthLabel}</p>
+                  <p className="mb-4 max-w-md">
+                    {t("ui.length")}: {journey.lengthLabel}
+                  </p>
                 </>
               )}
               {!journey && (
-                <p className="mb-4 text-center">
-                  Start your adventure by exploring pyramids.
-                </p>
+                <p className="mb-4 text-center">{t("ui.startAdventure")}</p>
               )}
               <MapButton
                 onClick={handleMapClick}
                 inJourney={!!journey}
                 label={
                   activeJourney
-                    ? "Continue Expedition"
+                    ? t("ui.continueExpedition")
                     : selectedJourney
-                      ? "Start Expedition"
-                      : "Plan Expedition"
+                      ? t("ui.startExpedition")
+                      : t("ui.planExpedition")
                 }
                 journeyProgress={journeyProgress}
               />
               {!activeJourney && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
-                  Or{" "}
+                  {t("ui.or")}{" "}
                   <button
                     onClick={() => {
                       setSelectedJourney(null)
@@ -108,7 +110,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     }}
                     className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 hover:text-blue-700"
                   >
-                    select another expedition
+                    {t("ui.selectAnotherExpedition")}
                   </button>
                 </div>
               )}
@@ -125,13 +127,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
           >
             <div className="mb-4 flex w-full items-center justify-between px-8">
               <h2 className="font-pyramid text-xl font-bold">
-                Choose Your Expedition
+                {t("ui.chooseYourJourney")}
               </h2>
               <button
                 onClick={handleBackToMap}
                 className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1 text-sm font-bold text-white transition-colors hover:bg-blue-700"
               >
-                ← Back to Map
+                {t("ui.backArrow")} {t("ui.backToMap")}
               </button>
             </div>
 

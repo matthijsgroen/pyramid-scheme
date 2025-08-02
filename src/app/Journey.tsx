@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FC } from "react"
+import { useTranslation } from "react-i18next"
 import { Level } from "./PyramidLevel/Level"
 import { clsx } from "clsx"
 import { Backdrop } from "../ui/Backdrop"
@@ -18,6 +19,7 @@ export const Journey: FC<{
   onJourneyComplete,
   onClose,
 }) => {
+  const { t } = useTranslation("common")
   const [startNextLevel, setStartNextLevel] = useState(false)
 
   const levelContent = generateJourneyLevel(
@@ -121,13 +123,13 @@ export const Journey: FC<{
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="flex flex-col rounded-lg bg-white/80 p-4 backdrop-blur-md">
                 <span className="font-pyramid text-2xl font-bold text-green-500">
-                  Expedition Completed!
+                  {t("ui.expeditionCompleted")}
                 </span>
                 <button
                   className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                   onClick={onJourneyComplete}
                 >
-                  Go back to base
+                  {t("ui.goBackToBase")}
                 </button>
               </div>
             </div>
@@ -140,7 +142,7 @@ export const Journey: FC<{
             onClick={onClose}
             className="cursor-pointer text-lg font-bold focus:outline-none"
           >
-            ←
+            {t("ui.backArrow")}
           </button>
           <h1
             className={clsx(
@@ -151,8 +153,9 @@ export const Journey: FC<{
             )}
           >
             {expeditionCompleted
-              ? "Expedition Completed!"
-              : `Expedition Level ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
+              ? t("ui.expeditionCompleted")
+              : t("ui.expedition") +
+                ` ${t("ui.level")} ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
           </h1>
           <span></span>
         </div>

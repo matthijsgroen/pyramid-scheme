@@ -28,6 +28,22 @@
     "rewards": "Beloningen",
     "coins": "Munten",
     "pieces": "Stukken",
-    "description": "Beschrijving"
+    "description": "Beschrijving",
+    "expedition": "Expeditie",
+    "expeditionCompleted": "Expeditie Voltooid!",
+    "goBackToBase": "Terug naar basis",
+    "backArrow": "←",
+    "timesSingular": "keer",
+    "timesPlural": "keer",
+    "travel": "Reizen",
+    "chooseYourJourney": "Kies je Reis",
+    "backToMap": "Terug naar Kaart",
+    "startAdventure": "Begin je avontuur door piramides te verkennen.",
+    "continueExploration": "Ga door met het verkennen van de piramides.",
+    "continueExpedition": "Ga door met Expeditie",
+    "startExpedition": "Start Expeditie",
+    "planExpedition": "Plan Expeditie",
+    "or": "Of",
+    "selectAnotherExpedition": "selecteer een andere expeditie"
   }
 }

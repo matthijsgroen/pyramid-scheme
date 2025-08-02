@@ -28,6 +28,22 @@
     "rewards": "Rewards",
     "coins": "Coins",
     "pieces": "Pieces",
-    "description": "Description"
+    "description": "Description",
+    "expedition": "Expedition",
+    "expeditionCompleted": "Expedition Completed!",
+    "goBackToBase": "Go back to base",
+    "backArrow": "←",
+    "timesSingular": "time",
+    "timesPlural": "times",
+    "travel": "Travel",
+    "chooseYourJourney": "Choose Your Journey",
+    "backToMap": "Back to Map",
+    "startAdventure": "Start your adventure by exploring pyramids.",
+    "continueExploration": "Continue your exploration of the pyramids.",
+    "continueExpedition": "Continue Expedition",
+    "startExpedition": "Start Expedition",
+    "planExpedition": "Plan Expedition",
+    "or": "Or",
+    "selectAnotherExpedition": "select another expedition"
   }
 }

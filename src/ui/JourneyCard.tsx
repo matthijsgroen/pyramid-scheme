@@ -1,4 +1,5 @@
 import type { FC } from "react"
+import { useTranslation } from "react-i18next"
 import type { TranslatedJourney } from "../data/useJourneyTranslations"
 
 interface JourneyCardProps {
@@ -18,6 +19,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
   disabled = false,
   onClick,
 }) => {
+  const { t } = useTranslation("common")
   const difficultyColors = {
     easy: "bg-green-100 border-green-300 text-green-800",
     medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
@@ -59,7 +61,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
               : difficultyColors[journey.difficulty]
           }`}
         >
-          {journey.difficulty.toUpperCase()}
+          {journey.difficultyLabel.toUpperCase()}
         </span>
       </div>
 
@@ -68,10 +70,12 @@ export const JourneyCard: FC<JourneyCardProps> = ({
           disabled ? "text-gray-500" : "text-amber-700"
         }`}
       >
-        <span>Length: {journey.journeyLength}</span>
+        <span>
+          {t("ui.length")}: {journey.lengthLabel}
+        </span>
         {disabled && (
           <span className="font-bold">
-            Prestige required: {journey.requiredPrestigeLevel}
+            {t("ui.requiredPrestige")}: {journey.requiredPrestigeLevel}
           </span>
         )}
         {completionCount > 0 && (
@@ -79,7 +83,8 @@ export const JourneyCard: FC<JourneyCardProps> = ({
             <span className="inline-flex size-5 items-center justify-center rounded-full bg-green-800 p-0.5 text-sm text-white">
               ✔︎
             </span>
-            : {completionCount} {completionCount > 1 ? "times" : "time"}
+            : {completionCount}{" "}
+            {completionCount > 1 ? t("ui.timesPlural") : t("ui.timesSingular")}
           </span>
         )}
       </div>
