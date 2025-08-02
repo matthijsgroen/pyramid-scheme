@@ -1,7 +1,58 @@
 import type { FC } from "react"
 
-// Calculate position along the curved path
-const getPositionOnPath = (t: number) => {
+// Calculate position along the curved path based on arc length
+const getPositionOnPath = (progress: number) => {
+  // For better accuracy, we'll sample more points and find the position
+  // that corresponds to the actual arc length progress
+  const totalSamples = 100
+  let totalLength = 0
+  const points = []
+
+  // Calculate total path length by sampling points
+  for (let i = 0; i <= totalSamples; i++) {
+    const t = i / totalSamples
+    const point = getParametricPosition(t)
+    points.push(point)
+
+    if (i > 0) {
+      const prevPoint = points[i - 1]
+      const distance = Math.sqrt(
+        Math.pow(point.x - prevPoint.x, 2) + Math.pow(point.y - prevPoint.y, 2)
+      )
+      totalLength += distance
+    }
+  }
+
+  // Find the point at the desired progress along the arc length
+  const targetLength = totalLength * progress
+  let currentLength = 0
+
+  for (let i = 1; i < points.length; i++) {
+    const prevPoint = points[i - 1]
+    const currentPoint = points[i]
+    const segmentLength = Math.sqrt(
+      Math.pow(currentPoint.x - prevPoint.x, 2) +
+        Math.pow(currentPoint.y - prevPoint.y, 2)
+    )
+
+    if (currentLength + segmentLength >= targetLength) {
+      // Interpolate between the two points
+      const ratio = (targetLength - currentLength) / segmentLength
+      return {
+        x: prevPoint.x + (currentPoint.x - prevPoint.x) * ratio,
+        y: prevPoint.y + (currentPoint.y - prevPoint.y) * ratio,
+      }
+    }
+
+    currentLength += segmentLength
+  }
+
+  // Fallback to the last point
+  return points[points.length - 1]
+}
+
+// Helper function for parametric position calculation
+const getParametricPosition = (t: number) => {
   // Quadratic Bézier curve: M 17 75 Q 30 30, 50 40 Q 70 50, 83 17
   // Split into two curves for easier calculation
   if (t <= 0.5) {
@@ -44,6 +95,7 @@ interface MapButtonProps {
   inJourney: boolean
   label: string
   journeyProgress: number
+  pathRotation?: number // Rotation in degrees (0, 90, 180, 270)
 }
 
 export const MapButton: FC<MapButtonProps> = ({
@@ -51,8 +103,12 @@ export const MapButton: FC<MapButtonProps> = ({
   inJourney,
   label,
   journeyProgress,
+  pathRotation = 0,
 }) => {
-  const travelerPosition = getPositionOnPath(journeyProgress)
+  // Ensure the traveler position matches the visual progress of the colored line
+  // Clamp the progress to ensure it's between 0 and 1
+  const clampedProgress = Math.max(0, Math.min(1, journeyProgress))
+  const travelerPosition = getPositionOnPath(clampedProgress)
 
   return (
     <button
@@ -90,7 +146,13 @@ export const MapButton: FC<MapButtonProps> = ({
 
       {/* Journey Path */}
       {inJourney && (
-        <>
+        <div
+          className="absolute inset-0"
+          style={{
+            transform: `rotate(${pathRotation}deg)`,
+            transformOrigin: "center",
+          }}
+        >
           {/* Start Point */}
           <div className="absolute top-3/4 left-1/6 mx-[-2%] flex size-1/24 items-center justify-center rounded-full bg-blue-500 shadow-lg">
             <div className="h-4/5 rounded-full bg-white"></div>
@@ -123,7 +185,7 @@ export const MapButton: FC<MapButtonProps> = ({
               fill="none"
               strokeLinecap="round"
               strokeDasharray="100"
-              strokeDashoffset={100 - journeyProgress * 100}
+              strokeDashoffset={100 - clampedProgress * 100}
               className="transition-all duration-1000 ease-in-out"
             />
             {/* Traveler dot */}
@@ -135,7 +197,7 @@ export const MapButton: FC<MapButtonProps> = ({
               className="transition-all duration-1000 ease-in-out"
             />
           </svg>
-        </>
+        </div>
       )}
       {/* Button text */}
       <span className="relative z-10 font-bold text-amber-900 transition-colors duration-300 group-hover:text-amber-800">

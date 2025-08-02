@@ -1,4 +1,4 @@
-import { useState, type FC } from "react"
+import { useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
@@ -11,6 +11,19 @@ import {
   useJourneyTranslations,
   type TranslatedJourney,
 } from "@/data/useJourneyTranslations"
+import { DifficultyPill } from "@/ui/DifficultyPill"
+import { mulberry32 } from "@/game/random"
+
+// Simple string hash function to convert string to number
+const hashString = (str: string): number => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash // Convert to 32-bit integer
+  }
+  return Math.abs(hash)
+}
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -27,8 +40,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [prestige] = useState(0)
   const journeys = useJourneyTranslations()
 
-  const { activeJourney, startJourney, journeyLog, cancelJourney } =
-    useJourneys()
+  const {
+    activeJourney,
+    startJourney,
+    journeyLog,
+    cancelJourney,
+    nextJourneySeed,
+  } = useJourneys()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
@@ -36,6 +54,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const journeyProgress = getJourneyProgress(activeJourney, journeys)
 
   const journey = activeJourney?.journey ?? selectedJourney
+  const mapRotation = useMemo(() => {
+    const journeySeed =
+      (activeJourney?.randomSeed ?? nextJourneySeed()) +
+      (journey?.id ? hashString(journey.id) : 0)
+    const random = mulberry32(journeySeed)
+    return Math.round(random() * 360)
+  }, [activeJourney, nextJourneySeed, journey?.id])
 
   const handleMapClick = () => {
     if (activeJourney) {
@@ -98,9 +123,16 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     {journey.name}
                   </h3>
                   <p className="mb-4 max-w-md">{journey.description}</p>
-                  <p className="mb-4 max-w-md">
-                    {t("ui.length")}: {journey.lengthLabel}
-                  </p>
+                  <div className="mb-4 flex items-center justify-between gap-2">
+                    <p>
+                      {t("ui.length")}: {journey.lengthLabel}
+                    </p>
+                    {/* show difficulty pill */}
+                    <DifficultyPill
+                      difficulty={journey.difficulty}
+                      label={journey.difficultyLabel}
+                    />
+                  </div>
                 </>
               )}
               {!journey && (
@@ -109,6 +141,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               <MapButton
                 onClick={handleMapClick}
                 inJourney={!!journey}
+                pathRotation={mapRotation}
                 label={
                   activeJourney
                     ? t("ui.continueExpedition")
@@ -169,7 +202,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
           <div className="flex-1 overflow-y-auto p-6">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
               {journeys
-                // .filter((journey) => journey.requiredPrestigeLevel <= prestige)
+                .filter((journey) => journey.requiredPrestigeLevel <= prestige)
                 .map((journey, index) => {
                   const completionCount = journeyLog.filter(
                     (j) => j.journeyId === journey.id && j.completed

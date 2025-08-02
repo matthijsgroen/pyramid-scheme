@@ -1,6 +1,7 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
+import { DifficultyPill } from "@/ui/DifficultyPill"
 
 interface JourneyCardProps {
   journey: TranslatedJourney
@@ -20,11 +21,6 @@ export const JourneyCard: FC<JourneyCardProps> = ({
   onClick,
 }) => {
   const { t } = useTranslation("common")
-  const difficultyColors = {
-    easy: "bg-green-100 border-green-300 text-green-800",
-    medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
-    hard: "bg-red-100 border-red-300 text-red-800",
-  }
 
   const timeEmojis = {
     morning: "🌅",
@@ -54,15 +50,11 @@ export const JourneyCard: FC<JourneyCardProps> = ({
         >
           {timeEmojis[journey.time]} {journey.name}
         </span>
-        <span
-          className={`rounded-full border px-2 py-1 text-xs font-bold ${
-            disabled
-              ? "border-gray-400 bg-gray-200 text-gray-600"
-              : difficultyColors[journey.difficulty]
-          }`}
-        >
-          {journey.difficultyLabel.toUpperCase()}
-        </span>
+        <DifficultyPill
+          difficulty={journey.difficulty}
+          label={journey.difficultyLabel}
+          disabled={disabled}
+        />
       </div>
 
       <div

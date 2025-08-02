@@ -19,6 +19,7 @@ export const useJourneys = (): {
   activeJourney: JourneyState | undefined
   journeyLog: JourneyState[]
   startJourney: (journey: Journey) => void
+  nextJourneySeed: () => number
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
@@ -30,15 +31,18 @@ export const useJourneys = (): {
   )
 
   const activeJourney = journeys.find((j) => !j.endTime)
+  const nextJourneySeed = useCallback(() => {
+    return generateNewSeed(baseJourneySeed, journeys.length + 1)
+  }, [journeys.length])
 
   const startJourney = useCallback(
     (journey: Journey) => {
-      const seed = generateNewSeed(baseJourneySeed, journeys.length + 1)
+      const seed = nextJourneySeed()
       const activeJourney = dataStartJourney(journey.id, seed)
 
       setJourneys((prev) => [...prev, activeJourney])
     },
-    [setJourneys, journeys.length]
+    [setJourneys, nextJourneySeed]
   )
 
   const finishJourney = useCallback(() => {
@@ -108,6 +112,7 @@ export const useJourneys = (): {
   return {
     activeJourney: completeJourney,
     journeyLog: journeyStates,
+    nextJourneySeed,
     startJourney,
     completeJourney: finishJourney,
     cancelJourney,
