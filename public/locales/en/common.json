@@ -47,6 +47,10 @@
     "selectAnotherExpedition": "Select another expedition",
     "abortExpedition": "Abort expedition",
     "confirmAbortExpedition": "Are you sure you want to abort this expedition? All progress will be lost!",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "settings": "Settings",
+    "language": "Language",
+    "close": "Close",
+    "done": "Done"
   }
 }
