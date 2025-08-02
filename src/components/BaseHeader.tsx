@@ -5,9 +5,17 @@ export const BaseHeader = () => {
     <>
       <div className="flex w-full flex-row justify-between border bg-gray-100 px-4 py-2 sm:col-span-6">
         <p>Shop</p>
-        <h1 className="text-center font-pyramid text-2xl font-bold">
-          Pyramid Scheme
-        </h1>
+        <div className="flex flex-col items-center gap-2">
+          <h1 className="text-center font-pyramid text-2xl font-bold">
+            Pyramid Scheme
+          </h1>
+          <p className="text-sm text-gray-600">
+            This is an early alpha version.{" "}
+            <span className="font-bold">
+              Expect bugs, missing features and losing progress!
+            </span>
+          </p>
+        </div>
         <p>Settings</p>
       </div>
       {isBeta && (

@@ -83,9 +83,9 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               showJourneySelection
                 ? "translate-x-[-100%] opacity-0"
                 : "translate-x-0 opacity-100"
-            }`}
+            } overflow-y-auto`}
           >
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md ">
               {journey && (
                 <>
                   <h3 className="mb-4 text-center font-pyramid text-xl">
