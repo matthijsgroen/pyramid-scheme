@@ -1,9 +1,11 @@
 {
   "language": "Nederlands",
   "difficulty": {
-    "easy": "Makkelijk",
-    "medium": "Gemiddeld",
-    "hard": "Moeilijk"
+    "starter": "Beginner",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Meester",
+    "wizard": "Tovenaar"
   },
   "journeyLength": {
     "short": "Kort",

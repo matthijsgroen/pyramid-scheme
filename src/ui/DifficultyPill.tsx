@@ -1,7 +1,7 @@
 import type { FC } from "react"
 
 interface DifficultyPillProps {
-  difficulty: "easy" | "medium" | "hard"
+  difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
   label: string
   disabled?: boolean
 }
@@ -12,9 +12,11 @@ export const DifficultyPill: FC<DifficultyPillProps> = ({
   disabled = false,
 }) => {
   const difficultyColors = {
-    easy: "bg-green-100 border-green-300 text-green-800",
-    medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
-    hard: "bg-red-100 border-red-300 text-red-800",
+    starter: "bg-green-100 border-green-300 text-green-800",
+    junior: "bg-blue-100 border-blue-300 text-blue-800",
+    expert: "bg-yellow-100 border-yellow-300 text-yellow-800",
+    master: "bg-orange-100 border-orange-300 text-orange-800",
+    wizard: "bg-purple-100 border-purple-300 text-purple-800",
   }
 
   return (

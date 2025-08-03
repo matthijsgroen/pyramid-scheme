@@ -37,7 +37,6 @@ const getJourneyProgress = (
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const { t } = useTranslation("common")
-  const [prestige] = useState(0)
   const journeys = useJourneyTranslations()
 
   const {
@@ -202,24 +201,21 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
           <div className="flex-1 overflow-y-auto p-6">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {journeys
-                .filter((journey) => journey.requiredPrestigeLevel <= prestige)
-                .map((journey, index) => {
-                  const completionCount = journeyLog.filter(
-                    (j) => j.journeyId === journey.id && j.completed
-                  ).length
-                  return (
-                    <JourneyCard
-                      key={journey.id}
-                      journey={journey}
-                      completionCount={completionCount}
-                      disabled={prestige < journey.requiredPrestigeLevel}
-                      index={index}
-                      showAnimation={showJourneySelection}
-                      onClick={handleJourneySelect}
-                    />
-                  )
-                })}
+              {journeys.map((journey, index) => {
+                const completionCount = journeyLog.filter(
+                  (j) => j.journeyId === journey.id && j.completed
+                ).length
+                return (
+                  <JourneyCard
+                    key={journey.id}
+                    journey={journey}
+                    completionCount={completionCount}
+                    index={index}
+                    showAnimation={showJourneySelection}
+                    onClick={handleJourneySelect}
+                  />
+                )
+              })}
             </div>
           </div>
         </div>

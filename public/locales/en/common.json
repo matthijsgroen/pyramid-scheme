@@ -1,9 +1,11 @@
 {
   "language": "English",
   "difficulty": {
-    "easy": "Easy",
-    "medium": "Medium",
-    "hard": "Hard"
+    "starter": "Starter",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Master",
+    "wizard": "Wizard"
   },
   "journeyLength": {
     "short": "Short",
