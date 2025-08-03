@@ -55,5 +55,23 @@
     "language": "Language",
     "close": "Close",
     "done": "Done"
+  },
+  "collection": {
+    "title": "Collection",
+    "clickForDetails": "Click a tile for details",
+    "categories": {
+      "deities": "🏺 Deities",
+      "professions": "⚱️ Professions",
+      "animals": "🐾 Animals",
+      "artifacts": "💎 Artifacts",
+      "treasures": "💰 Treasures"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Merchant Cache",
+      "nobleVault": "👑 Noble Vault",
+      "templeSecrets": "🏛️ Temple Secrets",
+      "ancientRelics": "🏺 Ancient Relics",
+      "mythicalArtifacts": "✨ Mythical Artifacts"
+    }
   }
 }

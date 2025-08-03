@@ -55,5 +55,23 @@
     "language": "Taal",
     "close": "Sluiten",
     "done": "Klaar"
+  },
+  "collection": {
+    "title": "Collectie",
+    "clickForDetails": "Klik op een tegel voor details",
+    "categories": {
+      "deities": "🏺 Goden",
+      "professions": "⚱️ Beroepen",
+      "animals": "🐾 Dieren",
+      "artifacts": "💎 Artefacten",
+      "treasures": "💰 Schatten"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Handelaars Cache",
+      "nobleVault": "👑 Adellijke Kluis",
+      "templeSecrets": "🏛️ Tempel Geheimen",
+      "ancientRelics": "🏺 Oude Relieken",
+      "mythicalArtifacts": "✨ Mythische Artefacten"
+    }
   }
 }

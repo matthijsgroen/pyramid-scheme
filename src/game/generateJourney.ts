@@ -10,7 +10,7 @@ export type Item = {
 }
 
 export type ActiveJourney = {
-  journeyId: string
+  journeyId: (typeof journeys)[number]["id"]
   randomSeed: number
   levelNr: number
   startTime: number
