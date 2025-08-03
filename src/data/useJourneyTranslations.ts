@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next"
-import { journeys, type Journey } from "@/data/journeys"
+import { journeys, type Journey, type PyramidJourney } from "@/data/journeys"
 
 export type TranslatedJourney = Journey & {
   name: string
   description: string
   difficultyLabel: string
   lengthLabel: string
-  timeLabel: string
+  timeLabel?: string
 }
 
 export const useJourneyTranslations = () => {
@@ -19,7 +19,9 @@ export const useJourneyTranslations = () => {
     description: t(`${journey.id}.description`),
     difficultyLabel: tCommon(`difficulty.${journey.difficulty}`),
     lengthLabel: tCommon(`journeyLength.${journey.journeyLength}`),
-    timeLabel: tCommon(`time.${journey.time}`),
+    ...(journey.type === "pyramid" && {
+      timeLabel: tCommon(`time.${(journey as PyramidJourney).time}`),
+    }),
   }))
 }
 
@@ -39,6 +41,8 @@ export const useJourneyTranslation = (id: string) => {
     description: t(`${journey.id}.description`),
     difficultyLabel: tCommon(`difficulty.${journey.difficulty}`),
     lengthLabel: tCommon(`journeyLength.${journey.journeyLength}`),
-    timeLabel: tCommon(`time.${journey.time}`),
+    ...(journey.type === "pyramid" && {
+      timeLabel: tCommon(`time.${(journey as PyramidJourney).time}`),
+    }),
   }
 }

@@ -7,8 +7,9 @@ import { getLevelWidth } from "@/game/state"
 import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourney"
 import type { JourneyState } from "@/app/state/useJourneys"
+import type { PyramidJourney } from "@/data/journeys"
 
-export const Journey: FC<{
+export const PyramidExpedition: FC<{
   activeJourney: JourneyState
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
@@ -109,23 +110,24 @@ export const Journey: FC<{
     }, 1000)
   }, [startNextLevel])
 
-  const expeditionCompleted =
-    activeJourney.levelNr > activeJourney.journey.levelCount
+  // Early return if not a pyramid journey
+  if (activeJourney.journey.type !== "pyramid") {
+    return null
+  }
+
+  // Cast to PyramidJourney since we've confirmed the type
+  const pyramidJourney = activeJourney.journey as PyramidJourney
+
+  const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
   return (
-    <Backdrop
-      levelNr={activeJourney.levelNr}
-      start={activeJourney.journey.time}
-    >
+    <Backdrop levelNr={activeJourney.levelNr} start={pyramidJourney.time}>
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
           <div
             className={clsx(
               "flex w-full items-center justify-between px-4 py-2",
-              dayNightCycleStep(
-                activeJourney.levelNr,
-                activeJourney.journey.time
-              ) < 6
+              dayNightCycleStep(activeJourney.levelNr, pyramidJourney.time) < 6
                 ? "text-black"
                 : "text-white"
             )}
@@ -140,7 +142,7 @@ export const Journey: FC<{
               {expeditionCompleted
                 ? t("ui.expeditionCompleted")
                 : t("ui.expedition") +
-                  ` ${t("ui.level")} ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
+                  ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
             </h1>
             <span></span>
           </div>

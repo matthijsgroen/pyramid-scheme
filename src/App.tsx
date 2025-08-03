@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Journey } from "@/app/Journey"
+import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
 
@@ -11,7 +11,7 @@ function App() {
     <>
       {!inGame && <Base startGame={() => setInGame(true)} />}
       {inGame && activeJourney && (
-        <Journey
+        <PyramidExpedition
           activeJourney={activeJourney}
           onLevelComplete={completeLevel}
           onJourneyComplete={() => {

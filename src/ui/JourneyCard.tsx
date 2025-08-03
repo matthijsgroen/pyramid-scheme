@@ -82,7 +82,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
         </span>
         {journey.type === "treasure_tomb" && (
           <span>
-            {t("ui.chambers")}: {journey.chamberCount}
+            {t("ui.chambers")}: {journey.levelCount}
           </span>
         )}
         {completionCount > 0 && (

@@ -60,6 +60,9 @@ export const generateJourneyLevel = (
   if (!journey) {
     throw new Error(`Journey with id ${activeJourney.journeyId} not found`)
   }
+  if (journey.type !== "pyramid") {
+    return null
+  }
   if (levelNr > journey.levelCount) {
     return null
   }
