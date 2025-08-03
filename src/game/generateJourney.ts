@@ -16,6 +16,7 @@ export type ActiveJourney = {
   startTime: number
   endTime?: number
   completed: boolean
+  foundMapPiece?: boolean
   canceled?: boolean
   plannedLoot?: Record<number, Item[]>
   completionTreasures?: Item[]

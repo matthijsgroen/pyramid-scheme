@@ -9,6 +9,8 @@ interface JourneyCardProps {
   index: number
   showAnimation: boolean
   completionCount?: number
+  hasMapPiece?: boolean
+  showDetails?: boolean
   disabled?: boolean
   onClick: (journey: TranslatedJourney) => void
 }
@@ -17,8 +19,10 @@ export const JourneyCard: FC<JourneyCardProps> = ({
   journey,
   index,
   showAnimation,
+  showDetails = false,
   completionCount = 0,
   disabled = false,
+  hasMapPiece = false,
   onClick,
 }) => {
   const { t } = useTranslation("common")
@@ -85,16 +89,32 @@ export const JourneyCard: FC<JourneyCardProps> = ({
             {t("ui.chambers")}: {journey.levelCount}
           </span>
         )}
-        {completionCount > 0 && (
+        {(completionCount > 0 || hasMapPiece) && (
           <span className="inline-flex items-center font-bold text-amber-800">
-            <span className="inline-flex size-5 items-center justify-center rounded-full bg-green-800 p-0.5 text-sm text-white">
-              ✔︎
-            </span>
-            : {completionCount}{" "}
-            {completionCount > 1 ? t("ui.timesPlural") : t("ui.timesSingular")}
+            {hasMapPiece && (
+              <span className="ml-1 inline-flex items-center bg-green-800 bg-clip-text text-transparent">
+                📜
+              </span>
+            )}{" "}
+            {completionCount > 0 && (
+              <>
+                <span className="inline-flex size-5 scale-75 items-center justify-center rounded-full bg-green-800 p-0.5 text-xs text-white">
+                  ✔︎
+                </span>
+                : {completionCount}{" "}
+                {completionCount > 1
+                  ? t("ui.timesPlural")
+                  : t("ui.timesSingular")}
+              </>
+            )}
           </span>
         )}
       </div>
+      {showDetails && (
+        <div className="mt-2">
+          <p className="text-sm text-gray-600">{journey.description}</p>
+        </div>
+      )}
     </button>
   )
 }

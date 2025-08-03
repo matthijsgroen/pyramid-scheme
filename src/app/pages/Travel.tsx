@@ -90,6 +90,29 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     setShowAbortModal(false)
   }
 
+  const unlocked = useMemo(() => {
+    return journeys.findIndex((j, journeyIndex) => {
+      if (j.type === "treasure_tomb") {
+        // Treasure Tombs are unlocked if all map pieces are found
+        const pyramidJourneys = journeys.filter(
+          (exp) => exp.difficulty === j.difficulty && exp.type === "pyramid"
+        )
+        const hasAllMapPieces = pyramidJourneys.every((journey) =>
+          journeyLog.some(
+            (log) => log.journeyId === journey.id && log.foundMapPiece
+          )
+        )
+        return !hasAllMapPieces
+      }
+      if (journeyIndex === 0) return false // Always unlock the first journey
+      const previousJourneyId = journeys[journeyIndex - 1]?.id
+      const hasPreviousCompleted = journeyLog.some(
+        (log) => log.journeyId === previousJourneyId && log.completed
+      )
+      return !hasPreviousCompleted
+    })
+  }, [journeys, journeyLog])
+
   return (
     <Page
       className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300"
@@ -201,17 +224,23 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
           <div className="flex-1 overflow-y-auto p-6">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {journeys.map((journey, index) => {
+              {journeys.slice(0, unlocked).map((journey, index) => {
                 const completionCount = journeyLog.filter(
                   (j) => j.journeyId === journey.id && j.completed
                 ).length
+                const hasMapPiece =
+                  journeyLog.filter(
+                    (j) => j.journeyId === journey.id && j.foundMapPiece
+                  ).length > 0
                 return (
                   <JourneyCard
                     key={journey.id}
+                    showDetails={index === unlocked - 1}
                     journey={journey}
                     completionCount={completionCount}
                     index={index}
                     showAnimation={showJourneySelection}
+                    hasMapPiece={hasMapPiece}
                     onClick={handleJourneySelect}
                   />
                 )
