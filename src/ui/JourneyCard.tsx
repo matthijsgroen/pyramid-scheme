@@ -9,6 +9,7 @@ interface JourneyCardProps {
   index: number
   showAnimation: boolean
   completionCount?: number
+  progressLevelNr?: number
   hasMapPiece?: boolean
   showDetails?: boolean
   disabled?: boolean
@@ -19,6 +20,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
   journey,
   index,
   showAnimation,
+  progressLevelNr = 0,
   showDetails = false,
   completionCount = 0,
   disabled = false,
@@ -87,6 +89,19 @@ export const JourneyCard: FC<JourneyCardProps> = ({
         {journey.type === "treasure_tomb" && (
           <span>
             {t("ui.chambers")}: {journey.levelCount}
+          </span>
+        )}
+        {progressLevelNr > 0 && (
+          <span className="font-bold">
+            {t("ui.progressLevel")}:{" "}
+            {Math.min(
+              Math.max(
+                Math.round(((progressLevelNr - 1) / journey.levelCount) * 100),
+                0
+              ),
+              100
+            )}
+            %
           </span>
         )}
         {(completionCount > 0 || hasMapPiece) && (

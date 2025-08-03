@@ -32,7 +32,7 @@ const getJourneyProgress = (
   if (!activeJourney) return 0
   const jny: ActiveJourney = activeJourney
   const data = journeys.find((j) => j.id === jny.journeyId)
-  return Math.min(jny.levelNr / (data?.levelCount ?? 1), 1)
+  return Math.min((jny.levelNr - 1) / (data?.levelCount ?? 1), 1)
 }
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
@@ -50,16 +50,31 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
   const [showAbortModal, setShowAbortModal] = useState(false)
-  const journeyProgress = getJourneyProgress(activeJourney, journeys)
+
+  const canceledJourney = useMemo(() => {
+    return journeyLog.find(
+      (j) => j.journeyId === selectedJourney?.id && j.canceled && !j.completed
+    )
+  }, [selectedJourney, journeyLog])
+  const journeyProgress = getJourneyProgress(
+    activeJourney ?? canceledJourney,
+    journeys
+  )
 
   const journey = activeJourney?.journey ?? selectedJourney
   const mapRotation = useMemo(() => {
     const journeySeed =
-      (activeJourney?.randomSeed ?? nextJourneySeed()) +
-      (journey?.id ? hashString(journey.id) : 0)
+      (activeJourney?.randomSeed ??
+        canceledJourney?.randomSeed ??
+        nextJourneySeed()) + (journey?.id ? hashString(journey.id) : 0)
     const random = mulberry32(journeySeed)
     return Math.round(random() * 360)
-  }, [activeJourney, nextJourneySeed, journey?.id])
+  }, [
+    activeJourney?.randomSeed,
+    canceledJourney?.randomSeed,
+    nextJourneySeed,
+    journey?.id,
+  ])
 
   const handleMapClick = () => {
     if (activeJourney) {
@@ -166,7 +181,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 pathRotation={mapRotation}
                 pathLength={journey?.journeyLength ?? "long"}
                 label={
-                  activeJourney
+                  (activeJourney ?? canceledJourney)
                     ? t("ui.continueExpedition")
                     : selectedJourney
                       ? t("ui.startExpedition")
@@ -232,12 +247,18 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   journeyLog.filter(
                     (j) => j.journeyId === journey.id && j.foundMapPiece
                   ).length > 0
+                const progressLevelNr =
+                  journeyLog.find(
+                    (j) =>
+                      j.journeyId === journey.id && j.canceled && !j.completed
+                  )?.levelNr ?? 0
                 return (
                   <JourneyCard
                     key={journey.id}
                     showDetails={index === unlocked - 1}
                     journey={journey}
                     completionCount={completionCount}
+                    progressLevelNr={progressLevelNr}
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}

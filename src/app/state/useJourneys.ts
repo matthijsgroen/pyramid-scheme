@@ -37,12 +37,25 @@ export const useJourneys = (): {
 
   const startJourney = useCallback(
     (journey: Journey) => {
+      const canceledJourney = journeys.find(
+        (j) => j.journeyId === journey.id && j.canceled && !j.completed
+      )
+      if (canceledJourney) {
+        setJourneys((prev) =>
+          prev.map((j) =>
+            j.journeyId === journey.id && j.canceled && !j.completed
+              ? { ...j, completed: false, canceled: false, endTime: 0 }
+              : j
+          )
+        )
+        return
+      }
       const seed = nextJourneySeed()
       const activeJourney = dataStartJourney(journey.id, seed)
 
       setJourneys((prev) => [...prev, activeJourney])
     },
-    [setJourneys, nextJourneySeed]
+    [setJourneys, nextJourneySeed, journeys]
   )
 
   const finishJourney = useCallback(() => {
@@ -51,7 +64,7 @@ export const useJourneys = (): {
     setJourneys((prev) =>
       prev.map((j) =>
         j.journeyId === activeJourney.journeyId
-          ? { ...j, completed: true, endTime: Date.now() }
+          ? { ...j, completed: true, canceled: false, endTime: Date.now() }
           : j
       )
     )
