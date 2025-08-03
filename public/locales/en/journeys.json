@@ -15,6 +15,10 @@
     "name": "Scribe's Academy",
     "description": "Learn the art of hieroglyphic writing in the prestigious scribe's academy, where knowledge is more valuable than gold."
   },
+  "starter_treasure_tomb": {
+    "name": "Forgotten Merchant's Cache",
+    "description": "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting."
+  },
   "junior_1": {
     "name": "Sacred Ibis Migration",
     "description": "Follow the sacred ibis birds on their annual migration along the Nile. Learn the patterns that ancient Egyptians used to predict the flood."
@@ -30,6 +34,10 @@
   "junior_4": {
     "name": "Lighthouse of Alexandria",
     "description": "Climb the legendary lighthouse of Alexandria, one of the Seven Wonders. Navigate the mathematical principles that made this marvel possible."
+  },
+  "junior_treasure_tomb": {
+    "name": "Noble's Hidden Vault",
+    "description": "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers."
   },
   "expert_1": {
     "name": "Valley of the Kings",
@@ -47,6 +55,10 @@
     "name": "Pyramid of Djoser",
     "description": "Ascend the step pyramid of Djoser, the first pyramid ever built. Face the challenges that have protected this monument for millennia."
   },
+  "expert_treasure_tomb": {
+    "name": "High Priest's Treasury",
+    "description": "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy."
+  },
   "master_1": {
     "name": "Great Pyramid of Giza",
     "description": "Enter the most magnificent pyramid ever built. Face the ultimate test as you navigate the Grand Gallery and reach the King's Chamber."
@@ -63,6 +75,10 @@
     "name": "Tomb of Nefertari",
     "description": "Enter the most beautifully decorated tomb in the Valley of the Queens. Solve puzzles based on the stunning wall paintings and hieroglyphs."
   },
+  "master_treasure_tomb": {
+    "name": "Pharaoh's Secret Hoard",
+    "description": "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses."
+  },
   "wizard_1": {
     "name": "Ra's Solar Journey",
     "description": "Accompany Ra on his perilous nightly journey through the underworld, battling the serpent Apep and ensuring the sun rises again."
@@ -78,5 +94,9 @@
   "wizard_4": {
     "name": "Eternal Pyramid",
     "description": "Ascend the mythical Eternal Pyramid that exists beyond time and space. Master the ultimate mathematical mysteries of creation itself."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Vault of the Gods",
+    "description": "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt."
   }
 }

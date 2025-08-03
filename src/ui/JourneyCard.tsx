@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
+import clsx from "clsx"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/DifficultyPill"
 
@@ -29,26 +30,38 @@ export const JourneyCard: FC<JourneyCardProps> = ({
     night: "🌙",
   }
 
+  const isTreasureTomb = journey.type === "treasure_tomb"
+
   return (
     <button
       onClick={() => !disabled && onClick(journey)}
       disabled={disabled}
-      className={`group flex flex-col rounded-lg border-2 p-4 text-left transition-all duration-300 ${
-        disabled
-          ? "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale"
-          : "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl"
-      } ${showAnimation ? "animate-slide-in-up" : ""}`}
+      className={clsx(
+        "group flex flex-col rounded-lg border-2 p-4 text-left transition-all duration-300",
+        {
+          "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale":
+            disabled,
+          "border-gray-400 bg-gray-100 shadow-lg hover:scale-105 hover:border-gray-500 hover:shadow-xl":
+            !disabled && isTreasureTomb,
+          "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
+            !disabled && !isTreasureTomb,
+          "animate-slide-in-up": showAnimation,
+        }
+      )}
       style={{
         animationDelay: showAnimation ? `${index * 100}ms` : "0ms",
       }}
     >
       <div className="mb-2 flex items-center justify-between">
         <span
-          className={`font-pyramid text-lg font-bold ${
-            disabled ? "text-gray-500" : "text-amber-900"
-          }`}
+          className={clsx("font-pyramid text-lg font-bold", {
+            "text-gray-500": disabled,
+            "text-gray-700": !disabled && isTreasureTomb,
+            "text-amber-900": !disabled && !isTreasureTomb,
+          })}
         >
-          {timeEmojis[journey.time]} {journey.name}
+          {journey.type === "pyramid" && timeEmojis[journey.time]}{" "}
+          {journey.name}
         </span>
         <DifficultyPill
           difficulty={journey.difficulty}
@@ -58,16 +71,18 @@ export const JourneyCard: FC<JourneyCardProps> = ({
       </div>
 
       <div
-        className={`flex items-center justify-between text-xs ${
-          disabled ? "text-gray-500" : "text-amber-700"
-        }`}
+        className={clsx("flex items-center justify-between text-xs", {
+          "text-gray-500": disabled,
+          "text-gray-600": !disabled && isTreasureTomb,
+          "text-amber-700": !disabled && !isTreasureTomb,
+        })}
       >
         <span>
           {t("ui.length")}: {journey.lengthLabel}
         </span>
-        {disabled && (
-          <span className="font-bold">
-            {t("ui.requiredPrestige")}: {journey.requiredPrestigeLevel}
+        {journey.type === "treasure_tomb" && (
+          <span>
+            {t("ui.chambers")}: {journey.chamberCount}
           </span>
         )}
         {completionCount > 0 && (

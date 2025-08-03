@@ -15,6 +15,10 @@
     "name": "Schrijversacademie",
     "description": "Leer de kunst van hiëroglyfisch schrijven in de prestigieuze schrijversacademie, waar kennis waardevoller is dan goud."
   },
+  "starter_treasure_tomb": {
+    "name": "Vergeten Koopman's Voorraad",
+    "description": "Ontdek een kleine ondergrondse kamer waar een oude koopman zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten."
+  },
   "junior_1": {
     "name": "Heilige Ibis Migratie",
     "description": "Volg de heilige ibis vogels op hun jaarlijkse migratie langs de Nijl. Leer de patronen die oude Egyptenaren gebruikten om de overstroming te voorspellen."
@@ -30,6 +34,10 @@
   "junior_4": {
     "name": "Vuurtoren van Alexandrië",
     "description": "Beklim de legendarische vuurtoren van Alexandrië, een van de Zeven Wereldwonderen. Navigeer door de wiskundige principes die dit wonder mogelijk maakten."
+  },
+  "junior_treasure_tomb": {
+    "name": "Edelmanns Verborgen Kluis",
+    "description": "Verken de geheime kluis van een rijke Egyptische edelman, gevuld met gouden artefacten en kostbare edelstenen verstopt voor grafrovers."
   },
   "expert_1": {
     "name": "Vallei der Koningen",
@@ -47,6 +55,10 @@
     "name": "Piramide van Djoser",
     "description": "Beklim de trappenpiramide van Djoser, de eerste piramide ooit gebouwd. Ga de uitdagingen aan die dit monument millennia lang hebben beschermd."
   },
+  "expert_treasure_tomb": {
+    "name": "Hogepriester's Schatkamer",
+    "description": "Infiltreer de uitgebreide ondergrondse schatkamer van een machtige hogepriester, waar heilige relieken en goddelijke artefacten wachten op de waardigen."
+  },
   "master_1": {
     "name": "Grote Piramide van Gizeh",
     "description": "Betreed de meest magnifieke piramide ooit gebouwd. Ga de ultieme test aan terwijl je door de Grote Galerij navigeert en de Koningskamer bereikt."
@@ -63,6 +75,10 @@
     "name": "Graf van Nefertari",
     "description": "Betreed het meest prachtig gedecoreerde graf in de Vallei der Koninginnen. Los puzzels op gebaseerd op de verbluffende muurschilderingen en hiërogliefen."
   },
+  "master_treasure_tomb": {
+    "name": "Farao's Geheime Schat",
+    "description": "Onthul de legendarische geheime schatkamer van een grote farao, verborgen onder het woestijnzand en beschermd door oude vloeken."
+  },
   "wizard_1": {
     "name": "Ra's Zonnereis",
     "description": "Vergezeld Ra op zijn gevaarlijke nachtelijke reis door de onderwereld, vecht tegen de slang Apep en zorg ervoor dat de zon weer opkomt."
@@ -78,5 +94,9 @@
   "wizard_4": {
     "name": "Eeuwige Piramide",
     "description": "Beklim de mythische Eeuwige Piramide die bestaat buiten tijd en ruimte. Beheers de ultieme wiskundige mysteries van de schepping zelf."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Kluis van de Goden",
+    "description": "Betreed de mythische schatkamer waar de goden zelf hun kostbaarste artefacten bewaarden. Alleen de meest vaardige avonturiers durven deze ultieme schattenjacht te proberen."
   }
 }

@@ -7,9 +7,12 @@ import type { DayNightCycleStep } from "@/ui/backdropSelection"
  * - long: 7-10 levels
  */
 
-export type Journey = {
+export type Journey = PyramidJourney | TreasureTombJourney
+
+export type PyramidJourney = {
   id: string
   name: string
+  type: "pyramid"
   description: string
   difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
   journeyLength: "short" | "medium" | "long"
@@ -29,11 +32,22 @@ export type Journey = {
   }
 }
 
+export type TreasureTombJourney = {
+  id: string
+  name: string
+  type: "treasure_tomb"
+  description: string
+  difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
+  journeyLength: "short" | "medium" | "long"
+  chamberCount: number
+}
+
 export const journeys: Journey[] = [
   // Starter Difficulty Journeys
   {
     id: "starter_1",
     name: "Dawn at the Sphinx",
+    type: "pyramid",
     description:
       "Begin your adventure with the Great Sphinx as the morning sun illuminates its ancient face. A gentle introduction to the mysteries of Egypt.",
     difficulty: "starter",
@@ -54,6 +68,7 @@ export const journeys: Journey[] = [
   {
     id: "starter_2",
     name: "Papyrus Merchant's Route",
+    type: "pyramid",
     description:
       "Follow the trade routes of ancient papyrus merchants along the peaceful banks of the Nile. Discover the secrets of Egyptian commerce.",
     difficulty: "starter",
@@ -76,6 +91,7 @@ export const journeys: Journey[] = [
   {
     id: "starter_3",
     name: "Temple of Bastet",
+    type: "pyramid",
     description:
       "Visit the sacred temple of the cat goddess Bastet, where faithful worshippers bring offerings and seek protection from evil spirits.",
     difficulty: "starter",
@@ -98,6 +114,7 @@ export const journeys: Journey[] = [
   {
     id: "starter_4",
     name: "Scribe's Academy",
+    type: "pyramid",
     description:
       "Learn the art of hieroglyphic writing in the prestigious scribe's academy, where knowledge is more valuable than gold.",
     difficulty: "starter",
@@ -118,10 +135,23 @@ export const journeys: Journey[] = [
     },
   },
 
+  // Starter Treasure Tomb Journey
+  {
+    id: "starter_treasure_tomb",
+    name: "Forgotten Merchant's Cache",
+    type: "treasure_tomb",
+    description:
+      "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting.",
+    difficulty: "starter",
+    journeyLength: "short",
+    chamberCount: 4,
+  },
+
   // Junior Difficulty Journeys
   {
     id: "junior_1",
     name: "Sacred Ibis Migration",
+    type: "pyramid",
     description:
       "Follow the sacred ibis birds on their annual migration along the Nile. Learn the patterns that ancient Egyptians used to predict the flood.",
     difficulty: "junior",
@@ -144,6 +174,7 @@ export const journeys: Journey[] = [
   {
     id: "junior_2",
     name: "Valley of the Artisans",
+    type: "pyramid",
     description:
       "Explore the village where skilled craftsmen created treasures for the pharaohs. Master the ancient techniques of metalwork and jewelry.",
     difficulty: "junior",
@@ -166,6 +197,7 @@ export const journeys: Journey[] = [
   {
     id: "junior_3",
     name: "Temple of Thoth",
+    type: "pyramid",
     description:
       "Enter the temple of Thoth, god of wisdom and writing. Solve mathematical puzzles that test your understanding of ancient Egyptian numbers.",
     difficulty: "junior",
@@ -188,6 +220,7 @@ export const journeys: Journey[] = [
   {
     id: "junior_4",
     name: "Lighthouse of Alexandria",
+    type: "pyramid",
     description:
       "Climb the legendary lighthouse of Alexandria, one of the Seven Wonders. Navigate the mathematical principles that made this marvel possible.",
     difficulty: "junior",
@@ -208,10 +241,23 @@ export const journeys: Journey[] = [
     },
   },
 
+  // Junior Treasure Tomb Journey
+  {
+    id: "junior_treasure_tomb",
+    name: "Noble's Hidden Vault",
+    type: "treasure_tomb",
+    description:
+      "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers.",
+    difficulty: "junior",
+    journeyLength: "medium",
+    chamberCount: 6,
+  },
+
   // Expert Difficulty Journeys
   {
     id: "expert_1",
     name: "Valley of the Kings",
+    type: "pyramid",
     description:
       "Explore the royal necropolis where pharaohs rest for eternity. Navigate through elaborate tomb chambers filled with ancient puzzles.",
     difficulty: "expert",
@@ -234,6 +280,7 @@ export const journeys: Journey[] = [
   {
     id: "expert_2",
     name: "Karnak Temple Complex",
+    type: "pyramid",
     description:
       "Venture through the vast temple complex of Karnak, dedicated to Amun-Ra. Solve the riddles left by high priests across centuries.",
     difficulty: "expert",
@@ -256,6 +303,7 @@ export const journeys: Journey[] = [
   {
     id: "expert_3",
     name: "Nile Delta Expedition",
+    type: "pyramid",
     description:
       "Journey through the fertile Nile Delta, encountering crocodile gods and solving the mysteries of the river's annual flood.",
     difficulty: "expert",
@@ -278,6 +326,7 @@ export const journeys: Journey[] = [
   {
     id: "expert_4",
     name: "Pyramid of Djoser",
+    type: "pyramid",
     description:
       "Ascend the step pyramid of Djoser, the first pyramid ever built. Face the challenges that have protected this monument for millennia.",
     difficulty: "expert",
@@ -298,10 +347,23 @@ export const journeys: Journey[] = [
     },
   },
 
+  // Expert Treasure Tomb Journey
+  {
+    id: "expert_treasure_tomb",
+    name: "High Priest's Treasury",
+    type: "treasure_tomb",
+    description:
+      "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy.",
+    difficulty: "expert",
+    journeyLength: "medium",
+    chamberCount: 8,
+  },
+
   // Master Difficulty Journeys
   {
     id: "master_1",
     name: "Great Pyramid of Giza",
+    type: "pyramid",
     description:
       "Enter the most magnificent pyramid ever built. Face the ultimate test as you navigate the Grand Gallery and reach the King's Chamber.",
     difficulty: "master",
@@ -324,6 +386,7 @@ export const journeys: Journey[] = [
   {
     id: "master_2",
     name: "Book of the Dead",
+    type: "pyramid",
     description:
       "Unravel the mysteries of the afterlife by collecting and deciphering the sacred texts that guide souls through the underworld.",
     difficulty: "master",
@@ -346,6 +409,7 @@ export const journeys: Journey[] = [
   {
     id: "master_3",
     name: "Curse of the Pharaohs",
+    type: "pyramid",
     description:
       "Break the ancient curse that has plagued tomb raiders for centuries. Face supernatural challenges and divine retribution.",
     difficulty: "master",
@@ -368,6 +432,7 @@ export const journeys: Journey[] = [
   {
     id: "master_4",
     name: "Tomb of Nefertari",
+    type: "pyramid",
     description:
       "Enter the most beautifully decorated tomb in the Valley of the Queens. Solve puzzles based on the stunning wall paintings and hieroglyphs.",
     difficulty: "master",
@@ -381,9 +446,6 @@ export const journeys: Journey[] = [
       endNumberRange: [9, 20],
     },
     rewards: {
-      perLevel: {
-        coinsPerLevel: [130, 170],
-      },
       completed: {
         pieces: [7, 11],
         pieceLevels: [10, 15],
@@ -391,10 +453,23 @@ export const journeys: Journey[] = [
     },
   },
 
+  // Master Treasure Tomb Journey
+  {
+    id: "master_treasure_tomb",
+    name: "Pharaoh's Secret Hoard",
+    type: "treasure_tomb",
+    description:
+      "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses.",
+    difficulty: "master",
+    journeyLength: "long",
+    chamberCount: 10,
+  },
+
   // Wizard Difficulty Journeys
   {
     id: "wizard_1",
     name: "Ra's Solar Journey",
+    type: "pyramid",
     description:
       "Accompany Ra on his perilous nightly journey through the underworld, battling the serpent Apep and ensuring the sun rises again.",
     difficulty: "wizard",
@@ -417,6 +492,7 @@ export const journeys: Journey[] = [
   {
     id: "wizard_2",
     name: "Secrets of the Sphinx",
+    type: "pyramid",
     description:
       "Unlock the deepest mysteries hidden within the Great Sphinx. Face riddles that have challenged the greatest minds for millennia.",
     difficulty: "wizard",
@@ -430,9 +506,6 @@ export const journeys: Journey[] = [
       endNumberRange: [12, 28],
     },
     rewards: {
-      perLevel: {
-        coinsPerLevel: [180, 240],
-      },
       completed: {
         pieces: [12, 18],
         pieceLevels: [14, 20],
@@ -442,6 +515,7 @@ export const journeys: Journey[] = [
   {
     id: "wizard_3",
     name: "Chamber of Ma'at",
+    type: "pyramid",
     description:
       "Enter the cosmic chamber where Ma'at weighs the hearts of the dead. Balance divine mathematics in the realm of perfect justice.",
     difficulty: "wizard",
@@ -464,6 +538,7 @@ export const journeys: Journey[] = [
   {
     id: "wizard_4",
     name: "Eternal Pyramid",
+    type: "pyramid",
     description:
       "Ascend the mythical Eternal Pyramid that exists beyond time and space. Master the ultimate mathematical mysteries of creation itself.",
     difficulty: "wizard",
@@ -482,5 +557,17 @@ export const journeys: Journey[] = [
         pieceLevels: [18, 30],
       },
     },
+  },
+
+  // Wizard Treasure Tomb Journey
+  {
+    id: "wizard_treasure_tomb",
+    name: "Vault of the Gods",
+    type: "treasure_tomb",
+    description:
+      "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt.",
+    difficulty: "wizard",
+    journeyLength: "long",
+    chamberCount: 12,
   },
 ]
