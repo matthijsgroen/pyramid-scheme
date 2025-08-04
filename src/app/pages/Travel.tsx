@@ -13,6 +13,7 @@ import {
 } from "@/data/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/DifficultyPill"
 import { mulberry32 } from "@/game/random"
+import { TombMapButton } from "@/ui/TombMapButton"
 
 // Simple string hash function to convert string to number
 const hashString = (str: string): number => {
@@ -175,20 +176,30 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               {!journey && (
                 <p className="mb-4 text-center">{t("ui.startAdventure")}</p>
               )}
-              <MapButton
-                onClick={handleMapClick}
-                inJourney={!!journey}
-                pathRotation={mapRotation}
-                pathLength={journey?.journeyLength ?? "long"}
-                label={
-                  (activeJourney ?? canceledJourney)
-                    ? t("ui.continueExpedition")
-                    : selectedJourney
-                      ? t("ui.startExpedition")
-                      : t("ui.planExpedition")
-                }
-                journeyProgress={journeyProgress}
-              />
+              {journey?.type === "treasure_tomb" ? (
+                <TombMapButton
+                  onClick={handleMapClick}
+                  inJourney={!!journey}
+                  corridorComplexity={journey?.journeyLength ?? "long"}
+                  label={journey?.name ?? ""}
+                  journeyProgress={journeyProgress}
+                />
+              ) : (
+                <MapButton
+                  onClick={handleMapClick}
+                  inJourney={!!journey}
+                  pathRotation={mapRotation}
+                  pathLength={journey?.journeyLength ?? "long"}
+                  label={
+                    (activeJourney ?? canceledJourney)
+                      ? t("ui.continueExpedition")
+                      : selectedJourney
+                        ? t("ui.startExpedition")
+                        : t("ui.planExpedition")
+                  }
+                  journeyProgress={journeyProgress}
+                />
+              )}
               {!activeJourney && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}

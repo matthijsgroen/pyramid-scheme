@@ -55,7 +55,7 @@ export const InProgress: Story = {
 export const ShortPath: Story = {
   args: {
     label: "Short Journey",
-    inJourney: false,
+    inJourney: true,
     journeyProgress: 0,
     pathLength: "short",
     onClick: () => console.log("Map button clicked"),
@@ -65,7 +65,7 @@ export const ShortPath: Story = {
 export const MediumPath: Story = {
   args: {
     label: "Medium Journey",
-    inJourney: false,
+    inJourney: true,
     journeyProgress: 0,
     pathLength: "medium",
     onClick: () => console.log("Map button clicked"),
@@ -75,7 +75,7 @@ export const MediumPath: Story = {
 export const LongPath: Story = {
   args: {
     label: "Long Journey",
-    inJourney: false,
+    inJourney: true,
     journeyProgress: 0,
     pathLength: "long",
     onClick: () => console.log("Map button clicked"),
@@ -85,7 +85,7 @@ export const LongPath: Story = {
 export const RotatedPath: Story = {
   args: {
     label: "Rotated Journey",
-    inJourney: false,
+    inJourney: true,
     journeyProgress: 0,
     pathLength: "medium",
     pathRotation: 90,
