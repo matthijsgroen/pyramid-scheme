@@ -12,7 +12,7 @@ import { useJourneys } from "../state/useJourneys"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
-interface InventoryItem {
+type InventoryItem = {
   id: string
   symbol: string
   name: string
