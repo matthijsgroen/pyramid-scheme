@@ -11,7 +11,7 @@ import {
   type DayNightCycleStep,
 } from "@/ui/backdropSelection"
 
-export const Backdrop: FC<
+export const DesertBackdrop: FC<
   PropsWithChildren<{
     levelNr: number
     start: DayNightCycleStep
@@ -23,7 +23,7 @@ export const Backdrop: FC<
   return (
     <div
       className={clsx(
-        "[container-type:size] relative flex h-screen flex-col bg-gradient-to-b from-(--sky-top) from-0% via-(--sky-middle) via-40% to-(--sky-bottom) to-55% transition-colors",
+        "[container-type:size] relative flex h-dvh flex-col bg-gradient-to-b from-(--sky-top) from-0% via-(--sky-middle) via-40% to-(--sky-bottom) to-55% transition-colors",
         transitionDuration
       )}
       style={{

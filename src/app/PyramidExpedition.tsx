@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
 import { clsx } from "clsx"
-import { Backdrop } from "@/ui/Backdrop"
+import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourney"
@@ -128,7 +128,7 @@ export const PyramidExpedition: FC<{
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
   return (
-    <Backdrop levelNr={activeJourney.levelNr} start={pyramidJourney.time}>
+    <DesertBackdrop levelNr={activeJourney.levelNr} start={pyramidJourney.time}>
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
           <div
@@ -261,6 +261,6 @@ export const PyramidExpedition: FC<{
           activeJourney={activeJourney}
         />
       )}
-    </Backdrop>
+    </DesertBackdrop>
   )
 }

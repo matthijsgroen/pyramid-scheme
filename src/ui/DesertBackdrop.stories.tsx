@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import { Backdrop } from "./Backdrop"
+import { DesertBackdrop } from "./DesertBackdrop"
 import type { DayNightCycleStep } from "./backdropSelection"
 
 const meta = {
-  title: "UI/Backdrop",
-  component: Backdrop,
+  title: "UI/DesertBackdrop",
+  component: DesertBackdrop,
   parameters: {
     layout: "fullscreen",
   },
@@ -23,7 +23,7 @@ const meta = {
       ] as DayNightCycleStep[],
     },
   },
-} satisfies Meta<typeof Backdrop>
+} satisfies Meta<typeof DesertBackdrop>
 
 export default meta
 type Story = StoryObj<typeof meta>
