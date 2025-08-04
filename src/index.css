@@ -41,4 +41,24 @@ html, body {
       opacity: 1;
     }
   }
+
+  --animate-subtle-glow: subtle-glow 3s ease-in-out infinite;
+  @keyframes subtle-glow {
+    0%, 100% {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    50% {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  --animate-gentle-bounce: gentle-bounce 1s ease-in-out infinite;
+  @keyframes gentle-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
 }

@@ -1,0 +1,5 @@
+/* Storybook-specific CSS that includes story file patterns */
+@import "tailwindcss";
+@source "../src/**/*.{js,ts,jsx,tsx}";
+@source "../src/**/*.stories.{js,ts,jsx,tsx}";
+@source "./*.{js,ts,jsx,tsx}";
