@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useRef, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
+import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
 import { clsx } from "clsx"
 import { Backdrop } from "@/ui/Backdrop"
 import { getLevelWidth } from "@/game/state"
@@ -22,6 +23,7 @@ export const PyramidExpedition: FC<{
 }) => {
   const { t } = useTranslation("common")
   const [startNextLevel, setStartNextLevel] = useState(false)
+  const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
@@ -105,10 +107,15 @@ export const PyramidExpedition: FC<{
 
   const onComplete = useCallback(() => {
     if (startNextLevel) return
+    setLevelCompleted(true)
+  }, [startNextLevel])
+
+  const onCompletionFinished = useCallback(() => {
+    setLevelCompleted(false)
     setTimeout(() => {
       setStartNextLevel(true)
     }, 1000)
-  }, [startNextLevel])
+  }, [])
 
   // Early return if not a pyramid journey
   if (activeJourney.journey.type !== "pyramid") {
@@ -245,6 +252,15 @@ export const PyramidExpedition: FC<{
           </div>
         </div>
       </div>
+
+      {/* Level Completion Handler */}
+      {levelContent && (
+        <LevelCompletionHandler
+          isCompleted={levelCompleted}
+          onCompletionFinished={onCompletionFinished}
+          activeJourney={activeJourney}
+        />
+      )}
     </Backdrop>
   )
 }

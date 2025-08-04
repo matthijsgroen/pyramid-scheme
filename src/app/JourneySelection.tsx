@@ -1,6 +1,6 @@
 import type { FC } from "react"
 
-interface JourneySelectionProps {
+type JourneySelectionProps = {
   onStart: () => void
   onCancel: () => void
 }

@@ -1,7 +1,7 @@
 import { type FC, type ReactNode, useEffect, useState } from "react"
 import clsx from "clsx"
 
-interface LootPopupProps {
+type LootPopupProps = {
   isOpen: boolean
   itemName: string
   itemDescription?: string

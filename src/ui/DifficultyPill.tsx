@@ -1,6 +1,6 @@
 import type { FC } from "react"
 
-interface DifficultyPillProps {
+type DifficultyPillProps = {
   difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
   label: string
   disabled?: boolean

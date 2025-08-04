@@ -1,7 +1,7 @@
 import { type FC, useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
-interface SettingsModalProps {
+type SettingsModalProps = {
   isOpen: boolean
   onClose: () => void
 }

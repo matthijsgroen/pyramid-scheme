@@ -20,7 +20,7 @@ html, body {
 
 @theme {
   --font-pyramid: "Limelight", "serif";
-  --animate-fade-in: fade-in 1s 1s forwards ease-in-out;
+  --animate-fade-in: fade-in 1s forwards ease-in-out;
   @keyframes fade-in {
     0% {
       opacity: 0;

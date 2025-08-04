@@ -4,7 +4,7 @@ import clsx from "clsx"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/DifficultyPill"
 
-interface JourneyCardProps {
+type JourneyCardProps = {
   journey: TranslatedJourney
   index: number
   showAnimation: boolean
