@@ -23,6 +23,7 @@ export const useJourneys = (): {
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
+  findMapPiece: () => void
 } => {
   const journeyData = useJourneyTranslations()
   const [journeys, setJourneys] = useGameStorage<ActiveJourney[]>(
@@ -120,10 +121,23 @@ export const useJourneys = (): {
     [journeys, journeyData]
   )
 
+  const findMapPiece = useCallback(() => {
+    if (!activeJourney) return
+
+    setJourneys((prev) =>
+      prev.map((j) =>
+        j.journeyId === activeJourney.journeyId
+          ? { ...j, foundMapPiece: true }
+          : j
+      )
+    )
+  }, [activeJourney, setJourneys])
+
   return {
     activeJourney: completeJourney,
     journeyLog: journeyStates,
     nextJourneySeed,
+    findMapPiece,
     startJourney,
     completeJourney: finishJourney,
     cancelJourney,

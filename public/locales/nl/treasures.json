@@ -168,5 +168,15 @@
       "name": "Piramide Sluitsteen",
       "description": "De gouden sluitsteen van de Grote Piramide, bevattend de geconcentreerde kracht van alle farao's."
     }
+  },
+  "mapPieces": {
+    "name": "Kaartstuk",
+    "descriptions": {
+      "starter": "Oud kaartfragment naar de Vergeten Koopmanscache.",
+      "junior": "Ontdekkingsreizigers kaart naar de Verborgen Kluis van de Edelman.",
+      "expert": "Meester-cartograaf's kaart naar de Schatbewaarplaats van de Hogepriester.",
+      "master": "Legendarisch kaartfragment naar de Geheime Schat van de Farao.",
+      "wizard": "Goddelijk kaartstuk naar de Kluis van de Goden."
+    }
   }
 }

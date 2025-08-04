@@ -27,7 +27,7 @@ export type PyramidJourney = {
   rewards: {
     mapPiece: {
       startChance: number
-      changeIncrease: number
+      chanceIncrease: number
     }
     completed: {
       pieces: [min: number, max: number]
@@ -65,7 +65,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0,
-        changeIncrease: 1,
+        chanceIncrease: 1,
       },
       completed: {
         pieces: [1, 2],
@@ -92,7 +92,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.4,
-        changeIncrease: 0.2,
+        chanceIncrease: 0.2,
       },
       completed: {
         pieces: [1, 2],
@@ -119,7 +119,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.5,
-        changeIncrease: 0.25,
+        chanceIncrease: 0.25,
       },
       completed: {
         pieces: [2, 3],
@@ -146,7 +146,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.29,
-        changeIncrease: 0.12,
+        chanceIncrease: 0.12,
       },
       completed: {
         pieces: [2, 4],
@@ -187,7 +187,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.4,
-        changeIncrease: 0.18,
+        chanceIncrease: 0.18,
       },
       completed: {
         pieces: [2, 3],
@@ -214,7 +214,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.33,
-        changeIncrease: 0.15,
+        chanceIncrease: 0.15,
       },
       completed: {
         pieces: [3, 4],
@@ -241,7 +241,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.33,
-        changeIncrease: 0.15,
+        chanceIncrease: 0.15,
       },
       completed: {
         pieces: [3, 5],
@@ -268,7 +268,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.4,
-        changeIncrease: 0.18,
+        chanceIncrease: 0.18,
       },
       completed: {
         pieces: [3, 5],
@@ -309,7 +309,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.5,
-        changeIncrease: 0.25,
+        chanceIncrease: 0.25,
       },
       completed: {
         pieces: [4, 6],
@@ -336,7 +336,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.33,
-        changeIncrease: 0.15,
+        chanceIncrease: 0.15,
       },
       completed: {
         pieces: [4, 7],
@@ -363,7 +363,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.22,
-        changeIncrease: 0.1,
+        chanceIncrease: 0.1,
       },
       completed: {
         pieces: [5, 8],
@@ -390,7 +390,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.29,
-        changeIncrease: 0.12,
+        chanceIncrease: 0.12,
       },
       completed: {
         pieces: [5, 8],
@@ -431,7 +431,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.5,
-        changeIncrease: 0.25,
+        chanceIncrease: 0.25,
       },
       completed: {
         pieces: [6, 9],
@@ -458,7 +458,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.33,
-        changeIncrease: 0.15,
+        chanceIncrease: 0.15,
       },
       completed: {
         pieces: [7, 11],
@@ -485,7 +485,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.25,
-        changeIncrease: 0.12,
+        chanceIncrease: 0.12,
       },
       completed: {
         pieces: [8, 12],
@@ -512,7 +512,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.4,
-        changeIncrease: 0.18,
+        chanceIncrease: 0.18,
       },
       completed: {
         pieces: [7, 11],
@@ -553,7 +553,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.67,
-        changeIncrease: 0.2,
+        chanceIncrease: 0.2,
       },
       completed: {
         pieces: [10, 15],
@@ -580,7 +580,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.29,
-        changeIncrease: 0.12,
+        chanceIncrease: 0.12,
       },
       completed: {
         pieces: [12, 18],
@@ -607,7 +607,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.2,
-        changeIncrease: 0.1,
+        chanceIncrease: 0.1,
       },
       completed: {
         pieces: [15, 22],
@@ -634,7 +634,7 @@ export const journeys: Journey[] = [
     rewards: {
       mapPiece: {
         startChance: 0.25,
-        changeIncrease: 0.12,
+        chanceIncrease: 0.12,
       },
       completed: {
         pieces: [18, 25],

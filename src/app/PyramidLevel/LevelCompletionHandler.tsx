@@ -23,7 +23,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Use the loot determination hook
-  const loot: Loot | null = useLootDetermination(activeJourney)
+  const { loot, collectLoot } = useLootDetermination(activeJourney)
 
   useEffect(() => {
     if (isCompleted && completionPhase === "hidden") {
@@ -74,6 +74,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
   const handleLootDismiss = () => {
     setShowLoot(false)
     setCompletionPhase("finished")
+    collectLoot()
 
     // Small delay before calling completion to allow loot popup to close
     setTimeout(() => {

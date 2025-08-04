@@ -20,7 +20,7 @@ const mockPyramidJourney: TranslatedJourney = {
   rewards: {
     mapPiece: {
       startChance: 0.67,
-      changeIncrease: 0.2,
+      chanceIncrease: 0.2,
     },
     completed: {
       pieces: [1, 2],

@@ -168,5 +168,15 @@
       "name": "Pyramid Capstone",
       "description": "The golden capstone of the Great Pyramid, containing the concentrated power of all pharaohs."
     }
+  },
+  "mapPieces": {
+    "name": "Map Piece",
+    "descriptions": {
+      "starter": "Ancient map fragment to the Forgotten Merchant's Cache.",
+      "junior": "Explorer's map piece to the Noble's Hidden Vault.",
+      "expert": "Master cartographer's map to the High Priest's Treasury.",
+      "master": "Legendary map fragment to the Pharaoh's Secret Hoard.",
+      "wizard": "Divine map piece to the Vault of the Gods."
+    }
   }
 }

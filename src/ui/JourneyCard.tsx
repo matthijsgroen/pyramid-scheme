@@ -27,7 +27,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
   hasMapPiece = false,
   onClick,
 }) => {
-  const { t } = useTranslation("common")
+  const { t, i18n } = useTranslation("common")
 
   const timeEmojis = {
     morning: "🌅",
@@ -58,22 +58,29 @@ export const JourneyCard: FC<JourneyCardProps> = ({
         animationDelay: showAnimation ? `${index * 100}ms` : "0ms",
       }}
     >
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2">
+        <div className="float-right ml-2">
+          <DifficultyPill
+            difficulty={journey.difficulty}
+            label={journey.difficultyLabel}
+            disabled={disabled}
+          />
+        </div>
         <span
-          className={clsx("font-pyramid text-lg font-bold", {
-            "text-gray-500": disabled,
-            "text-gray-700": !disabled && isTreasureTomb,
-            "text-amber-900": !disabled && !isTreasureTomb,
-          })}
+          className={clsx(
+            "font-pyramid text-lg font-bold leading-tight break-words hyphens-auto",
+            {
+              "text-gray-500": disabled,
+              "text-gray-700": !disabled && isTreasureTomb,
+              "text-amber-900": !disabled && !isTreasureTomb,
+            }
+          )}
+          lang={i18n.language}
         >
           {journey.type === "pyramid" && timeEmojis[journey.time]}{" "}
           {journey.name}
         </span>
-        <DifficultyPill
-          difficulty={journey.difficulty}
-          label={journey.difficultyLabel}
-          disabled={disabled}
-        />
+        <div className="clear-both"></div>
       </div>
 
       <div
