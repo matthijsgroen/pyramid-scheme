@@ -54,7 +54,8 @@ export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
 
 export const dayNightCycleStep = (
   levelNr: number,
-  start: DayNightCycleStep
+  start: DayNightCycleStep,
+  stepSize = 3
 ): number => {
   const startIndex = {
     afternoon: 0,
@@ -62,6 +63,7 @@ export const dayNightCycleStep = (
     evening: Math.floor(skyTop.length / 2) - 2,
     morning: Math.floor(skyTop.length / 2) + skyTop.length - 2,
   }[start]
-  const step = (levelNr + startIndex) % (2 * skyTop.length)
+  const step =
+    (Math.ceil(levelNr / stepSize) + startIndex) % (2 * skyTop.length)
   return step < skyTop.length ? step : 2 * skyTop.length - step - 1
 }
