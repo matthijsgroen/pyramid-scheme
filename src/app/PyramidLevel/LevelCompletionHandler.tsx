@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, type FC } from "react"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
 import { LootPopup } from "@/ui/LootPopup"
 import type { JourneyState } from "@/app/state/useJourneys"
-import { useLootDetermination, type Loot } from "./useLootDetermination"
+import { useLootDetermination } from "./useLootDetermination"
 
 type LevelCompletionHandlerProps = {
   isCompleted: boolean
