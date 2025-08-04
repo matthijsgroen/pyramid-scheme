@@ -1,4 +1,3 @@
-import { hieroglyphs } from "@/data/hieroglyphs"
 import { shuffle } from "@/game/random"
 
 type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
@@ -10,7 +9,7 @@ type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
  */
 export type RewardCalculationSettings = {
   amountSymbols: number
-  symbolOffset: number
+  hieroglyphIds: string[]
   numberRange: [min: number, max: number]
   operations: Operation[]
 }
@@ -45,10 +44,11 @@ export const generateRewardCalculation = (
       pickedNumbers.push(number)
     }
   }
+  const symbolIds = shuffle(settings.hieroglyphIds, random)
 
   const symbolMapping: Record<number, string> = pickedNumbers.reduce(
     (acc, num, index) => {
-      acc[num] = hieroglyphs[index + settings.symbolOffset]
+      acc[num] = symbolIds[index]
       return acc
     },
     {} as Record<number, string>
@@ -181,7 +181,9 @@ const createSmallestVerifiedFormula = (
     createVerifiedFormula(pickedNumbers, operations, random),
   ]
     .filter(
-      (formula) => formulaToString(formula) !== formulaToString(mainFormula)
+      (formula) =>
+        formulaToString(formula) !== formulaToString(mainFormula) &&
+        formula.result !== mainFormula.result
     )
     .sort((a, b) => a.result - b.result)[0]
 

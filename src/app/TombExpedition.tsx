@@ -8,8 +8,11 @@ export const TombExpedition: FC<{
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
-}> = ({ onClose }) => {
+}> = ({ onClose, activeJourney }) => {
   const { t } = useTranslation("common")
+  const journey = activeJourney.journey
+  console.log("TombExpedition", journey)
+
   return (
     <div
       className={
@@ -35,6 +38,9 @@ export const TombExpedition: FC<{
             </h1>
             <span></span>
           </div>
+        </div>
+        <div className="text-white flex-1 flex flex-col items-center justify-center">
+          <p>Puzzle!</p>
         </div>
       </div>
     </div>
