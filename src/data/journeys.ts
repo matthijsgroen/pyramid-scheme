@@ -164,7 +164,7 @@ export const journeys: Journey[] = [
       "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting.",
     difficulty: "starter",
     journeyLength: "short",
-    levelCount: 4,
+    levelCount: 2,
   },
 
   // Junior Difficulty Journeys
@@ -286,7 +286,7 @@ export const journeys: Journey[] = [
       "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers.",
     difficulty: "junior",
     journeyLength: "medium",
-    levelCount: 6,
+    levelCount: 3,
   },
 
   // Expert Difficulty Journeys
@@ -408,7 +408,7 @@ export const journeys: Journey[] = [
       "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy.",
     difficulty: "expert",
     journeyLength: "medium",
-    levelCount: 8,
+    levelCount: 4,
   },
 
   // Master Difficulty Journeys
@@ -530,7 +530,7 @@ export const journeys: Journey[] = [
       "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses.",
     difficulty: "master",
     journeyLength: "long",
-    levelCount: 10,
+    levelCount: 5,
   },
 
   // Wizard Difficulty Journeys
@@ -652,6 +652,6 @@ export const journeys: Journey[] = [
       "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt.",
     difficulty: "wizard",
     journeyLength: "long",
-    levelCount: 12,
+    levelCount: 6,
   },
 ]
