@@ -68,7 +68,11 @@ export const TombExpedition: FC<{
             <span></span>
           </div>
         </div>
-        <TombPuzzle tableau={tableau} calculation={calculation} />
+        <TombPuzzle
+          tableau={tableau}
+          calculation={calculation}
+          difficulty={journey.difficulty}
+        />
       </div>
     </div>
   )

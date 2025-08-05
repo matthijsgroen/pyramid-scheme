@@ -1,5 +1,6 @@
 import type { Operation } from "@/game/generateRewardCalculation"
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
+import type { Difficulty } from "./difficultyLevels"
 
 /**
  * JourneyLength:
@@ -42,7 +43,7 @@ export type TreasureTombJourney = {
   name: string
   type: "treasure_tomb"
   description: string
-  difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
+  difficulty: Difficulty
   journeyLength: "short" | "medium" | "long"
   levelCount: number
   levelSettings: {
