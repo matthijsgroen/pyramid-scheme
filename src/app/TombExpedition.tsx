@@ -1,6 +1,6 @@
 import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
-import { act, type FC } from "react"
+import { type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
