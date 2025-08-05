@@ -2,7 +2,6 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
 import {
-  formulaToString,
   type Formula,
   type RewardCalculation,
 } from "@/game/generateRewardCalculation"

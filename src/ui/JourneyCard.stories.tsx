@@ -43,6 +43,10 @@ const mockTreasureTombJourney: TranslatedJourney = {
   levelCount: 4,
   difficultyLabel: "Starter",
   lengthLabel: "Short",
+  levelSettings: {
+    numberRange: [1, 10],
+    operators: ["+", "-", "*"],
+  },
 }
 
 const meta = {
