@@ -14,6 +14,7 @@ import {
 } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { FormulaPart, type FilledTileState } from "./FormulaPart"
 import { clsx } from "clsx"
 import { useState, useMemo, type FC } from "react"
 import { useTranslation } from "react-i18next"
@@ -43,11 +44,6 @@ const getInventoryItemById = (id: string) => {
     ...egyptianArtifacts,
   ]
   return allItems.find((item) => item.id === id)
-}
-
-type FilledTileState = {
-  symbolCounts: Record<string, number> // How many of each symbol the user has placed
-  filledPositions: Record<string, number> // Track which positions are filled for each symbol
 }
 
 const obfuscate = (text: string, percentage: number): string => {
@@ -82,90 +78,6 @@ const obfuscate = (text: string, percentage: number): string => {
     return char
   })
   return obfuscatedText.join("")
-}
-
-const FormulaPart: FC<{
-  formula: Formula
-  difficulty: Difficulty
-  symbolMapping: Record<number, string>
-  filledState: FilledTileState
-  onTileClick: (symbolId: string, position: string) => void
-  positionPrefix: string
-}> = ({
-  formula,
-  difficulty,
-  symbolMapping,
-  filledState,
-  onTileClick,
-  positionPrefix,
-}) => {
-  return (
-    <span>
-      {typeof formula.left === "number" ? (
-        (() => {
-          const symbolId = symbolMapping[formula.left]
-          const position = `${positionPrefix}-left`
-          const isFilled = filledState.filledPositions[position] > 0
-          const inventoryItem = getInventoryItemById(symbolId)
-          const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-
-          return (
-            <HieroglyphTile
-              empty={!isFilled}
-              symbol={
-                isFilled && inventoryItem ? inventoryItem.symbol : undefined
-              }
-              difficulty={itemDifficulty}
-              size="sm"
-              className="inline-block cursor-pointer align-middle"
-              onClick={() => onTileClick(symbolId, position)}
-            />
-          )
-        })()
-      ) : (
-        <FormulaPart
-          formula={formula.left}
-          difficulty={difficulty}
-          symbolMapping={symbolMapping}
-          filledState={filledState}
-          onTileClick={onTileClick}
-          positionPrefix={`${positionPrefix}-left`}
-        />
-      )}
-      <span> {formula.operation} </span>
-      {typeof formula.right === "number" ? (
-        (() => {
-          const symbolId = symbolMapping[formula.right]
-          const position = `${positionPrefix}-right`
-          const isFilled = filledState.filledPositions[position] > 0
-          const inventoryItem = getInventoryItemById(symbolId)
-          const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-
-          return (
-            <HieroglyphTile
-              empty={!isFilled}
-              symbol={
-                isFilled && inventoryItem ? inventoryItem.symbol : undefined
-              }
-              difficulty={itemDifficulty}
-              size="sm"
-              className="inline-block cursor-pointer align-middle"
-              onClick={() => onTileClick(symbolId, position)}
-            />
-          )
-        })()
-      ) : (
-        <FormulaPart
-          formula={formula.right}
-          difficulty={difficulty}
-          symbolMapping={symbolMapping}
-          filledState={filledState}
-          onTileClick={onTileClick}
-          positionPrefix={`${positionPrefix}-right`}
-        />
-      )}
-    </span>
-  )
 }
 
 const Formula: FC<{
