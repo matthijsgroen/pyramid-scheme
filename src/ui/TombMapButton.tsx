@@ -180,7 +180,7 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
       }}
     >
       {/* Ancient scroll edge effect */}
-      <div className="absolute -top-4 -right-8 h-12 w-24 rotate-45 border-b-2 border-l-2 border-amber-600 bg-amber-100 shadow-lg opacity-80"></div>
+      <div className="absolute -top-4 -right-8 h-12 w-24 rotate-45 border-b-2 border-l-2 border-amber-600 bg-amber-100 opacity-80 shadow-lg"></div>
 
       {/* Stone texture lines */}
       <div className="absolute inset-0 opacity-20">

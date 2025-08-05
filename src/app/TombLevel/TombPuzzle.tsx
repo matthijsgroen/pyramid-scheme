@@ -46,7 +46,7 @@ const FormulaPart: FC<{ formula: Formula }> = ({ formula }) => {
   return (
     <span>
       {typeof formula.left === "number" ? (
-        <span className="inline-block p-2 bg-black/70 rounded">
+        <span className="inline-block rounded bg-black/70 p-2">
           ?{/* {formula.left} */}
         </span>
       ) : (
@@ -54,7 +54,7 @@ const FormulaPart: FC<{ formula: Formula }> = ({ formula }) => {
       )}
       <span> {formula.operation} </span>
       {typeof formula.right === "number" ? (
-        <span className="inline-block p-2 bg-black/70 rounded">
+        <span className="inline-block rounded bg-black/70 p-2">
           ?{/* {formula.right} */}
         </span>
       ) : (
@@ -84,14 +84,14 @@ export const TombPuzzle: FC<{
   const [solvedPercentage, setSolvedPercentage] = useState(0.0) // Example percentage, adjust as needed
 
   return (
-    <div className="text-white flex-1 flex flex-col items-center justify-center">
+    <div className="flex flex-1 flex-col items-center justify-center text-white">
       <div
         className={clsx(
-          "p-4 rounded-lg shadow-lg text-slate-500 flex flex-col gap-4",
+          "flex flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
           hieroglyphLevelColors[difficulty]
         )}
       >
-        <h1 className="text-2xl text-center">
+        <h1 className="text-center text-2xl">
           {obfuscate(tableau.name, solvedPercentage)}
         </h1>
         {calculation.hintFormulas.map((formula, index) => (

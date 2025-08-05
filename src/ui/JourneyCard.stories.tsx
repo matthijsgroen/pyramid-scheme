@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { JourneyCard } from "./JourneyCard"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
 

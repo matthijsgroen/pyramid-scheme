@@ -70,5 +70,5 @@ export const useLootDetermination = (
     }
 
     return { loot: null, collectLoot: () => {} }
-  }, [activeJourney, journeyLog, t])
+  }, [activeJourney, journeyLog, t, findMapPiece])
 }

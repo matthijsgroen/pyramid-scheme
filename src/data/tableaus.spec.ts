@@ -587,6 +587,7 @@ describe("Tableau System", () => {
     // Create translation function that looks up keys in the loaded translations
     const t = (key: string) => {
       const keys = key.split(".")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any = tableausTranslations
       for (const k of keys) {
         value = value?.[k]

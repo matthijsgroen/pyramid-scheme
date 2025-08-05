@@ -68,7 +68,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
         </div>
         <span
           className={clsx(
-            "font-pyramid text-lg font-bold leading-tight break-words hyphens-auto",
+            "font-pyramid text-lg leading-tight font-bold break-words hyphens-auto",
             {
               "text-gray-500": disabled,
               "text-gray-700": !disabled && isTreasureTomb,

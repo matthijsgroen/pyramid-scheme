@@ -119,7 +119,7 @@ export const LootPopup: FC<LootPopupProps> = ({
       {/* Main popup */}
       <div
         className={clsx(
-          "relative z-10 mx-4 w-full max-w-md transition-all duration-500 pointer-events-none",
+          "pointer-events-none relative z-10 mx-4 w-full max-w-md transition-all duration-500",
           {
             "scale-0 opacity-0": animationPhase === "hidden",
             "scale-75 opacity-30": animationPhase === "burst",
@@ -145,13 +145,13 @@ export const LootPopup: FC<LootPopupProps> = ({
               <div className="absolute -top-2 -left-2 h-4 w-4 animate-bounce text-yellow-300">
                 ✨
               </div>
-              <div className="absolute -top-1 -right-3 h-3 w-3 animate-bounce delay-100 text-yellow-300">
+              <div className="absolute -top-1 -right-3 h-3 w-3 animate-bounce text-yellow-300 delay-100">
                 ⭐
               </div>
-              <div className="absolute -bottom-2 -left-3 h-3 w-3 animate-bounce delay-200 text-yellow-300">
+              <div className="absolute -bottom-2 -left-3 h-3 w-3 animate-bounce text-yellow-300 delay-200">
                 💫
               </div>
-              <div className="absolute -bottom-1 -right-2 h-4 w-4 animate-bounce delay-300 text-yellow-300">
+              <div className="absolute -right-2 -bottom-1 h-4 w-4 animate-bounce text-yellow-300 delay-300">
                 ✨
               </div>
             </>
@@ -176,7 +176,7 @@ export const LootPopup: FC<LootPopupProps> = ({
               {/* Item display area */}
               <div
                 className={clsx(
-                  "mb-6 flex justify-center transition-all duration-500 delay-200",
+                  "mb-6 flex justify-center transition-all delay-200 duration-500",
                   {
                     "scale-50 opacity-0": animationPhase === "reveal",
                     "scale-100 opacity-100": animationPhase === "visible",
@@ -208,7 +208,7 @@ export const LootPopup: FC<LootPopupProps> = ({
               {/* Item name */}
               <h3
                 className={clsx(
-                  "mb-4 font-pyramid text-xl font-bold transition-all duration-500 delay-300",
+                  "mb-4 font-pyramid text-xl font-bold transition-all delay-300 duration-500",
                   colors.accent,
                   {
                     "translate-y-4 opacity-0": animationPhase === "reveal",
@@ -223,7 +223,7 @@ export const LootPopup: FC<LootPopupProps> = ({
               {itemDescription && (
                 <p
                   className={clsx(
-                    "mb-6 text-sm leading-relaxed transition-all duration-500 delay-400",
+                    "mb-6 text-sm leading-relaxed transition-all delay-400 duration-500",
                     colors.text,
                     {
                       "translate-y-4 opacity-0": animationPhase === "reveal",

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { DesertBackdrop } from "./DesertBackdrop"
 import type { DayNightCycleStep } from "./backdropSelection"
 
@@ -34,7 +34,7 @@ export const Morning: Story = {
     start: "morning",
     children: (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">Morning</h1>
+        <h1 className="mb-4 text-4xl font-bold text-white">Morning</h1>
         <p className="text-xl text-white">Beautiful sunrise scene</p>
       </div>
     ),
@@ -47,7 +47,7 @@ export const Afternoon: Story = {
     start: "afternoon",
     children: (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">Afternoon</h1>
+        <h1 className="mb-4 text-4xl font-bold text-white">Afternoon</h1>
         <p className="text-xl text-white">Bright sunny day</p>
       </div>
     ),
@@ -60,7 +60,7 @@ export const Evening: Story = {
     start: "evening",
     children: (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">Evening</h1>
+        <h1 className="mb-4 text-4xl font-bold text-white">Evening</h1>
         <p className="text-xl text-white">Golden sunset</p>
       </div>
     ),
@@ -73,7 +73,7 @@ export const Night: Story = {
     start: "night",
     children: (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">Night</h1>
+        <h1 className="mb-4 text-4xl font-bold text-white">Night</h1>
         <p className="text-xl text-white">Starry night with crescent moon</p>
       </div>
     ),
@@ -86,7 +86,7 @@ export const CycleProgression: Story = {
     start: "morning",
     children: (
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">Level 10</h1>
+        <h1 className="mb-4 text-4xl font-bold text-white">Level 10</h1>
         <p className="text-xl text-white">Day/night cycle progression</p>
       </div>
     ),
@@ -99,8 +99,8 @@ export const WithGameContent: Story = {
     start: "afternoon",
     children: (
       <div className="flex flex-col items-center justify-center">
-        <div className="bg-white/90 rounded-lg p-8 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Pyramid Game</h2>
+        <div className="rounded-lg bg-white/90 p-8 shadow-lg">
+          <h2 className="mb-4 text-2xl font-bold">Pyramid Game</h2>
           <p className="mb-4">
             This is how game content would appear over the backdrop
           </p>
@@ -108,7 +108,7 @@ export const WithGameContent: Story = {
             {Array.from({ length: 9 }, (_, i) => (
               <div
                 key={i}
-                className="w-12 h-12 bg-amber-200 border-2 border-amber-400 rounded flex items-center justify-center"
+                className="flex h-12 w-12 items-center justify-center rounded border-2 border-amber-400 bg-amber-200"
               >
                 {i + 1}
               </div>

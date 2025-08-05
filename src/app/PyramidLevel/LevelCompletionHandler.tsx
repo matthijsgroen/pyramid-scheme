@@ -98,12 +98,12 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
       {showOverlay && (
         <div
           onClick={handleOverlayClick}
-          className="absolute inset-0 z-40 pointer-events-auto cursor-pointer"
+          className="pointer-events-auto absolute inset-0 z-40 cursor-pointer"
         >
           <LevelCompletedOverlay />
           {!loot && completionPhase === "overlay" && (
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-              <p className="text-white text-sm font-medium animate-pulse">
+            <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
+              <p className="animate-pulse text-sm font-medium text-white">
                 Click anywhere to continue
               </p>
             </div>

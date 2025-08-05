@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { LootPopup } from "./LootPopup"
-import { useState } from "react"
+import { useState, type ComponentProps } from "react"
 
 // Mock treasure/item components
 const TreasureItem = ({
@@ -12,7 +12,7 @@ const TreasureItem = ({
 }) => (
   <div className="flex flex-col items-center">
     <div
-      className={`text-6xl mb-2 ${
+      className={`mb-2 text-6xl ${
         rarity === "legendary" ? "animate-pulse" : ""
       }`}
     >
@@ -23,31 +23,31 @@ const TreasureItem = ({
 
 const MapPieceItem = () => (
   <div className="flex flex-col items-center">
-    <div className="text-6xl mb-2">📜</div>
+    <div className="mb-2 text-6xl">📜</div>
   </div>
 )
 
 const CoinItem = ({ amount }: { amount: number }) => (
   <div className="flex flex-col items-center">
-    <div className="text-5xl mb-2 text-yellow-400">🪙</div>
+    <div className="mb-2 text-5xl text-yellow-400">🪙</div>
     <div className="text-sm font-bold text-white">+{amount}</div>
   </div>
 )
 
 // Interactive wrapper component
-const InteractiveLootPopup = (args: any) => {
+const InteractiveLootPopup = (args: ComponentProps<typeof LootPopup>) => {
   const [isOpen, setIsOpen] = useState(args.isOpen)
 
   return (
     <div className="relative">
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 p-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4 text-amber-900">
+          <h2 className="mb-4 text-2xl font-bold text-amber-900">
             Loot Popup Demo
           </h2>
           <button
             onClick={() => setIsOpen(true)}
-            className="px-6 py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition-colors shadow-lg"
+            className="rounded-lg bg-amber-600 px-6 py-3 font-bold text-white shadow-lg transition-colors hover:bg-amber-700"
           >
             Trigger Loot Discovery!
           </button>
@@ -230,22 +230,22 @@ export const AllRarities: Story = {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 p-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-6 text-amber-900">
+          <h2 className="mb-6 text-2xl font-bold text-amber-900">
             All Rarity Types
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+          <div className="mx-auto grid max-w-2xl grid-cols-2 gap-4 md:grid-cols-4">
             {Object.entries(rarityData).map(([key, data]) => (
               <button
                 key={key}
-                onClick={() => showLoot(key as any)}
-                className={`px-4 py-3 font-bold rounded-lg transition-all shadow-lg ${
+                onClick={() => showLoot(key as keyof typeof rarityData)}
+                className={`rounded-lg px-4 py-3 font-bold shadow-lg transition-all ${
                   key === "common"
-                    ? "bg-gray-500 hover:bg-gray-600 text-white"
+                    ? "bg-gray-500 text-white hover:bg-gray-600"
                     : key === "rare"
-                      ? "bg-blue-500 hover:bg-blue-600 text-white"
+                      ? "bg-blue-500 text-white hover:bg-blue-600"
                       : key === "epic"
-                        ? "bg-purple-500 hover:bg-purple-600 text-white"
-                        : "bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white"
+                        ? "bg-purple-500 text-white hover:bg-purple-600"
+                        : "bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600"
                 }`}
               >
                 {data.name}

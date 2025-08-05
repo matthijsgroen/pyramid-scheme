@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import { DifficultyPill } from "./DifficultyPill"
 
 const meta = {
@@ -74,7 +74,7 @@ export const AllDifficulties: Story = {
     label: "starter",
   },
   render: () => (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex flex-wrap gap-2">
       <DifficultyPill difficulty="starter" label="starter" />
       <DifficultyPill difficulty="junior" label="junior" />
       <DifficultyPill difficulty="expert" label="expert" />
