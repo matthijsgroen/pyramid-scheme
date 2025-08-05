@@ -1,69 +1,204 @@
-# React + TypeScript + Vite
+# 🏺 Pyramid Scheme
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An ancient Egyptian-themed puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.
 
-Currently, two official plugins are available:
+![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)
+![Status](https://img.shields.io/badge/status-early%20alpha-orange.svg)
+![Tech](https://img.shields.io/badge/tech-React%20+%20TypeScript%20+%20Vite-green.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎮 Game Overview
 
-## Expanding the ESLint configuration
+**Pyramid Scheme** is a mathematical puzzle game set in ancient Egypt. Players embark on expeditions through pyramids of increasing difficulty, solving symbolic puzzles that unlock the secrets of forgotten treasures.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🎯 Core Gameplay
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Explore Pyramids**: Journey through 5 difficulty levels from Starter to Wizard
+- **Solve Puzzles**: Decode hieroglyphic symbols using mathematical formulas
+- **Collect Treasures**: Gather ancient artifacts and build your collection
+- **Progressive Unlocking**: Complete expeditions to unlock treasure tombs
+- **Map Pieces**: Find fragments that reveal the locations of hidden treasure vaults
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🗺️ Journey Types
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 🔺 Pyramid Expeditions
+Explore ancient pyramids across different times of day:
+- **Morning** 🌅 - Fresh start expeditions
+- **Afternoon** ☀️ - Peak exploration hours  
+- **Evening** 🌇 - Twilight adventures
+- **Night** 🌙 - Mysterious nocturnal quests
+
+**Difficulty Progression:**
+- 🟢 **Starter** - Learn the basics (2 symbols)
+- 🔵 **Junior** - Build confidence (3 symbols)
+- 🟡 **Expert** - Test your skills (4 symbols)
+- 🟠 **Master** - Challenge yourself (5 symbols)
+- 🔴 **Wizard** - Ultimate mastery (6 symbols)
+
+### 🗝️ Treasure Tombs
+Hidden vaults unlocked by collecting map pieces:
+- **Forgotten Merchant's Cache** - Ancient trading post treasures
+- **Noble's Hidden Vault** - Aristocratic riches
+- **High Priest's Treasury** - Sacred temple wealth
+- **Pharaoh's Secret Hoard** - Royal burial treasures
+- **Vault of the Gods** - Divine mythical artifacts
+
+## 🧩 Puzzle Mechanics
+
+### Tableau System
+Each level presents a **tableau** - a themed story puzzle with:
+- **Symbolic Formula**: Mathematical equations using hieroglyphic symbols
+- **Progressive Revelation**: Text becomes clearer as you progress
+- **Thematic Narratives**: Rich Egyptian mythology and culture
+
+### Symbol Categories
+- **👑 Professions** (p1-p15) - Merchants, priests, scribes, farmers
+- **🐾 Animals** (a1-a15) - Sacred creatures like cats, crocodiles, ibis
+- **💎 Artifacts** (art1-art15) - Tools, vessels, ceremonial objects  
+- **🏺 Deities** (d1-d15) - Egyptian gods and goddesses
+
+### Difficulty Scaling
+- **Symbol Count**: Higher difficulties use more symbols per puzzle
+- **Number Ranges**: Larger numbers in advanced levels
+- **Floor Count**: More pyramid floors to explore
+
+## 🏛️ Features
+
+### 🌍 Internationalization
+- **English** 🇺🇸 - Full game experience
+- **Dutch** 🇳🇱 - Complete Nederlandse vertaling
+
+### 🎨 Rich Theming
+- **Egyptian Aesthetics**: Authentic hieroglyphic symbols and desert backdrops
+- **Dynamic Time Cycles**: Day/night progression affects gameplay atmosphere
+- **Responsive Design**: Seamless experience across desktop and mobile
+
+### 📊 Progress Tracking
+- **Journey Logs**: Track completed expeditions and found treasures
+- **Collection System**: Catalog of discovered artifacts organized by category
+- **Map Piece Progress**: Visual tracking of treasure tomb unlock requirements
+
+### 🔧 Technical Features
+- **Deterministic Randomization**: Consistent puzzle generation using seeded algorithms
+- **Local Storage**: Progress persistence across sessions
+- **Storybook Integration**: Component documentation and testing
+- **Type Safety**: Full TypeScript implementation
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- Yarn package manager
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/matthijsgroen/pyramid-scheme.git
+
+# Navigate to project directory
+cd pyramid-scheme
+
+# Install dependencies
+yarn install
+
+# Start development server
+yarn dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The game will be available at `http://localhost:9164`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Development Commands
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Development server
+yarn dev
+
+# Run tests
+yarn test
+
+# Type checking
+yarn check-types
+
+# Linting
+yarn lint
+
+# Build for production
+yarn build
+
+# Storybook component documentation
+yarn storybook
 ```
+
+## 🏗️ Project Structure
+
+```
+src/
+├── app/                 # Main application components
+│   ├── pages/          # Page components (Travel, Collection, etc.)
+│   ├── state/          # Game state management
+│   └── PyramidLevel/   # Level gameplay components
+├── data/               # Game data and configuration
+│   ├── journeys.ts     # Expedition definitions
+│   ├── tableaus.ts     # Puzzle generation system
+│   └── difficultyLevels.ts
+├── game/               # Core game logic
+│   ├── generateJourney.ts
+│   ├── generateRewardCalculation.ts
+│   └── random.ts
+├── ui/                 # Reusable UI components
+└── i18n/              # Internationalization setup
+
+public/locales/         # Translation files
+├── en/                # English translations
+└── nl/                # Dutch translations
+```
+
+## 🎲 Game Mathematics
+
+The puzzle system uses carefully balanced mathematical formulas:
+
+- **Linear Progression**: Difficulty scales predictably across levels
+- **Symbol Distribution**: Each difficulty tier introduces new symbol sets
+- **Formula Complexity**: Operations range from simple addition to complex multi-step calculations
+- **Deterministic Generation**: Same seed always produces same puzzles for consistency
+
+## 🎮 Gameplay Tips
+
+1. **Start Small**: Begin with Starter pyramids to learn the symbol system
+2. **Pattern Recognition**: Look for recurring symbol combinations
+3. **Progressive Learning**: Each difficulty builds on previous knowledge
+4. **Map Collection**: Focus on completing expeditions to unlock treasure tombs
+5. **Time Management**: Different times of day offer varied experiences
+
+## ⚠️ Development Status
+
+**This is an early alpha version!**
+- Expect bugs and missing features
+- Progress may be lost between updates
+- Core gameplay mechanics are functional
+- UI and balance are still being refined
+
+## 🤝 Contributing
+
+This is a personal project, but feedback and suggestions are welcome! Please feel free to:
+- Report bugs via GitHub issues
+- Suggest gameplay improvements
+- Contribute translations for additional languages
+
+## 📄 License
+
+This project is private and for personal use.
+
+## 🎯 Roadmap
+
+- [ ] Enhanced puzzle variations
+- [ ] Additional symbol categories  
+- [ ] Prestige system implementation
+- [ ] Sound effects and music
+- [ ] Achievement system
+- [ ] Expanded treasure tomb content
+- [ ] Mobile app versions
+
+---
+
+*Embark on your journey through the mysteries of ancient Egypt! 🏺✨*
