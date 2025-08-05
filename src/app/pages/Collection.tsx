@@ -2,22 +2,38 @@ import type { FC } from "react"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
+import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { useInventoryCategory } from "@/data/useInventoryTranslations"
 import { useTreasureCategory } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useTreasureInventory } from "@/app/Inventory/useTreasureInventory"
-import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import { useJourneys } from "../state/useJourneys"
-import { difficulties } from "@/data/difficultyLevels"
+import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
+
+type TreasureCategory =
+  | "merchantCache"
+  | "nobleVault"
+  | "templeSecrets"
+  | "ancientRelics"
+  | "mythicalArtifacts"
 
 type InventoryItem = {
   id: string
   symbol: string
   name: string
   description: string
+}
+
+// Map treasure categories to their corresponding difficulty levels
+const treasureCategoryToDifficulty: Record<TreasureCategory, Difficulty> = {
+  merchantCache: "starter",
+  nobleVault: "junior",
+  templeSecrets: "expert",
+  ancientRelics: "master",
+  mythicalArtifacts: "wizard",
 }
 
 const CategorySection: FC<{
@@ -46,38 +62,30 @@ const CategorySection: FC<{
       <div className="grid grid-cols-5 gap-3 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
         {sortedItems.map((item) => {
           const itemLevel = getItemFirstLevel(item.id)
-          const bgColor = itemLevel
-            ? hieroglyphLevelColors[itemLevel] || "bg-white/80"
-            : "bg-white/80"
           const isSelected = selectedItem?.id === item.id
-          const borderClass = isSelected
-            ? "border-2 border-purple-600 ring-2 ring-purple-300"
-            : "border border-transparent"
 
-          const isCollected = inventory[item.id] !== undefined
+          const isCollected = true //inventory[item.id] !== undefined
 
-          if (!isCollected) {
+          if (!isCollected || !itemLevel) {
             // Show empty placeholder for uncollected items
             return (
-              <div
+              <HieroglyphTile
                 key={item.id}
-                className="flex aspect-square flex-col items-center justify-center rounded-lg border border-gray-300 bg-gray-100 p-1 opacity-50 shadow-sm"
-              >
-                <span className="text-2xl text-gray-400">?</span>
-              </div>
+                empty
+                size="md"
+                className="aspect-square"
+              />
             )
           }
 
           return (
-            <button
+            <HieroglyphTile
               key={item.id}
+              symbol={item.symbol}
+              difficulty={itemLevel}
+              selected={isSelected}
               onClick={() => onItemClick(item)}
-              className={`group flex aspect-square flex-col items-center justify-center rounded-lg p-1 shadow-md transition-all duration-200 hover:scale-105 hover:bg-white hover:shadow-lg ${bgColor} ${borderClass}`}
-            >
-              <span className="text-2xl transition-transform duration-200 group-hover:scale-110">
-                {item.symbol}
-              </span>
-            </button>
+            />
           )
         })}
       </div>
@@ -86,18 +94,14 @@ const CategorySection: FC<{
 }
 
 const TreasureCategorySection: FC<{
-  category:
-    | "merchantCache"
-    | "nobleVault"
-    | "templeSecrets"
-    | "ancientRelics"
-    | "mythicalArtifacts"
+  category: TreasureCategory
   onItemClick: (item: InventoryItem) => void
   selectedItem: InventoryItem | null
   treasures: Record<string, number | undefined>
 }> = ({ category, onItemClick, selectedItem, treasures }) => {
   const { t } = useTranslation("common")
   const items = useTreasureCategory(category)
+  const difficulty = treasureCategoryToDifficulty[category]
 
   return (
     <div className="mb-8">
@@ -107,34 +111,30 @@ const TreasureCategorySection: FC<{
       <div className="grid grid-cols-5 gap-3 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
         {items.map((item) => {
           const isSelected = selectedItem?.id === item.id
-          const borderClass = isSelected
-            ? "border-2 border-amber-600 ring-2 ring-amber-300"
-            : "border border-transparent"
 
           const isCollected = treasures[item.id] !== undefined
 
           if (!isCollected) {
             // Show empty placeholder for uncollected treasures
             return (
-              <div
+              <HieroglyphTile
                 key={item.id}
-                className="flex aspect-square flex-col items-center justify-center rounded-lg border border-gray-300 bg-gray-100 p-1 opacity-50 shadow-sm"
-              >
-                <span className="text-2xl text-gray-400">?</span>
-              </div>
+                empty
+                size="md"
+                className="aspect-square"
+              />
             )
           }
 
           return (
-            <button
+            <HieroglyphTile
               key={item.id}
+              symbol={item.symbol}
+              difficulty={difficulty}
+              selected={isSelected}
               onClick={() => onItemClick(item)}
-              className={`group flex aspect-square flex-col items-center justify-center rounded-lg bg-gradient-to-br from-amber-200 to-yellow-300 p-1 shadow-md transition-all duration-200 hover:scale-105 hover:bg-white hover:shadow-lg ${borderClass}`}
-            >
-              <span className="text-2xl transition-transform duration-200 group-hover:scale-110">
-                {item.symbol}
-              </span>
-            </button>
+              className="aspect-square shadow-md hover:shadow-lg"
+            />
           )
         })}
       </div>
@@ -152,10 +152,23 @@ const DetailPanel: FC<{
       {item ? (
         <div className="flex flex-col items-start gap-4">
           <div className="flex flex-row items-start gap-3">
-            <span className="text-xl md:text-2xl">{item.symbol}</span>
-            <h3 className="text-xl font-bold text-gray-900">{item.name}</h3>
+            <div className="flex-shrink-0">
+              <HieroglyphTile
+                symbol={item.symbol}
+                difficulty={getItemFirstLevel(item.id)}
+                size="lg"
+                disabled={false}
+              />
+            </div>
+            <div className="flex flex-col">
+              <h3 className="font-pyramid text-xl font-bold text-gray-900">
+                {item.name}
+              </h3>
+              <p className="leading-relaxed text-gray-700">
+                {item.description}
+              </p>
+            </div>
           </div>
-          <p className="leading-relaxed text-gray-700">{item.description}</p>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center text-center">
@@ -184,7 +197,8 @@ export const CollectionPage: FC = () => {
   const hasCollectedTreasures = Object.values(treasures).some(
     (value) => value !== undefined
   )
-  const hasCollectedAnything = hasCollectedItems || hasCollectedTreasures
+  const hasCollectedAnything =
+    hasCollectedItems || hasCollectedTreasures || true
   const hasCompletedTomb = (tombId: string) =>
     journeyLog.some((j) => j.journeyId === tombId && j.completed)
 

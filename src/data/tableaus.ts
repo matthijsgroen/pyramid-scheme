@@ -36,6 +36,7 @@ const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
   ],
   expert: [
     "p2",
+    "p3",
     "p7",
     "p12",
     "a5",
