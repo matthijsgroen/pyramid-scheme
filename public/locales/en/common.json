@@ -55,7 +55,12 @@
     "language": "Language",
     "close": "Close",
     "done": "Done",
-    "progressLevel": "In Progress"
+    "progressLevel": "In Progress",
+    "treasureTomb": "Treasure Tomb",
+    "requiresMapPieces": "Requires map pieces",
+    "mapPieces": "Map Pieces",
+    "collected": "collected",
+    "completeExpeditionsToUnlock": "Complete expeditions to unlock"
   },
   "collection": {
     "title": "Collection",

@@ -55,7 +55,12 @@
     "language": "Taal",
     "close": "Sluiten",
     "done": "Klaar",
-    "progressLevel": "Voortgang"
+    "progressLevel": "Voortgang",
+    "treasureTomb": "Schatgraf",
+    "requiresMapPieces": "Vereist kaartdelen",
+    "mapPieces": "Kaartdelen",
+    "collected": "verzameld",
+    "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen"
   },
   "collection": {
     "title": "Collectie",

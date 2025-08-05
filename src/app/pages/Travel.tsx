@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
 import { JourneyCard } from "@/ui/JourneyCard"
+import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
 import { type Journey } from "@/data/journeys"
 import { useJourneys } from "@/app/state/useJourneys"
@@ -109,16 +110,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const unlocked = useMemo(() => {
     return journeys.findIndex((j, journeyIndex) => {
       if (j.type === "treasure_tomb") {
-        // Treasure Tombs are unlocked if all map pieces are found
-        const pyramidJourneys = journeys.filter(
-          (exp) => exp.difficulty === j.difficulty && exp.type === "pyramid"
-        )
-        const hasAllMapPieces = pyramidJourneys.every((journey) =>
-          journeyLog.some(
-            (log) => log.journeyId === journey.id && log.foundMapPiece
-          )
-        )
-        return !hasAllMapPieces
+        return false
       }
       if (journeyIndex === 0) return false // Always unlock the first journey
       const previousJourneyId = journeys[journeyIndex - 1]?.id
@@ -263,6 +255,31 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     (j) =>
                       j.journeyId === journey.id && j.canceled && !j.completed
                   )?.levelNr ?? 0
+
+                if (journey.type === "treasure_tomb") {
+                  // Treasure Tombs are unlocked if all map pieces are found
+                  const pyramidJourneys = journeys.filter(
+                    (exp) =>
+                      exp.difficulty === journey.difficulty &&
+                      exp.type === "pyramid"
+                  )
+                  const piecesFound = pyramidJourneys.filter((journey) =>
+                    journeyLog.some(
+                      (log) => log.journeyId === journey.id && log.foundMapPiece
+                    )
+                  ).length
+
+                  if (piecesFound < pyramidJourneys.length) {
+                    return (
+                      <MapPiecePlaceholder
+                        key={journey.id}
+                        piecesFound={piecesFound}
+                        name={journey.name}
+                        piecesNeeded={pyramidJourneys.length}
+                      />
+                    )
+                  }
+                }
                 return (
                   <JourneyCard
                     key={journey.id}
