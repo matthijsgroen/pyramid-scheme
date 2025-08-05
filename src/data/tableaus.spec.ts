@@ -627,7 +627,7 @@ describe("Tableau System", () => {
       expect(usedSymbols).toEqual(["𓇳", "𓋹"])
     })
 
-    it.only("creates a representative tableau for the junior tomb", () => {
+    it("creates a representative tableau for the junior tomb", () => {
       const juniorTableaux = translatedTableauLevels.filter(
         (t: TableauLevel) =>
           t.tombJourneyId === "junior_treasure_tomb" && t.runNumber === 1
