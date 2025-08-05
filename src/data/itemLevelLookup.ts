@@ -1,23 +1,10 @@
-import { tableauLevels } from "@/data/tableaus"
-
-/**
- * Lookup function that returns all tableau levels where the given inventory item ID appears
- * @param itemId - The inventory item ID (e.g., "d1", "p5", "a3", "art10")
- * @returns Array of level numbers where the item appears, or empty array if not found
- */
-export const getItemLevels = (itemId: string): number[] => {
-  return tableauLevels
-    .filter((level) => level.inventoryIds.includes(itemId))
-    .map((level) => level.levelNr)
-    .sort((a, b) => a - b) // Sort levels in ascending order
-}
+import { TOMB_SYMBOLS } from "@/data/tableaus"
+import { difficulties, type Difficulty } from "./difficultyLevels"
 
 /**
  * Get the first (lowest) level where an item appears
  * @param itemId - The inventory item ID
  * @returns The lowest level number where the item appears, or null if not found
  */
-export const getItemFirstLevel = (itemId: string): number | null => {
-  const levels = getItemLevels(itemId)
-  return levels.length > 0 ? levels[0] : null
-}
+export const getItemFirstLevel = (itemId: string): Difficulty =>
+  difficulties.find((key) => TOMB_SYMBOLS[key].some((item) => item === itemId))!

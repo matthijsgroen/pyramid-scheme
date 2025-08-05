@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { generateTableaus, type TableauLevel } from "./tableaus"
+import { generateTableaus, type TableauLevel, tableauLevels } from "./tableaus"
 import tableausTranslations from "../../public/locales/en/tableaus.json"
 import {
   egyptianAnimals,
@@ -10,7 +10,6 @@ import {
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests
-  const tableauLevels = generateTableaus()
 
   describe("Basic Structure", () => {
     it("should generate exactly 180 tableaux", () => {
@@ -595,10 +594,10 @@ describe("Tableau System", () => {
       return value || key
     }
 
-    const tableauLevels = generateTableaus(t)
+    const translatedTableauLevels = generateTableaus(t)
 
     it("creates a representative tableau for the starter tomb", () => {
-      const starterTableaux = tableauLevels.filter(
+      const starterTableaux = translatedTableauLevels.filter(
         (t: TableauLevel) =>
           t.tombJourneyId === "starter_treasure_tomb" && t.runNumber === 1
       )
@@ -628,7 +627,7 @@ describe("Tableau System", () => {
     })
 
     it.only("creates a representative tableau for the junior tomb", () => {
-      const juniorTableaux = tableauLevels.filter(
+      const juniorTableaux = translatedTableauLevels.filter(
         (t: TableauLevel) =>
           t.tombJourneyId === "junior_treasure_tomb" && t.runNumber === 1
       )
@@ -659,7 +658,7 @@ describe("Tableau System", () => {
     })
 
     it("creates a representative tableau for the expert tomb", () => {
-      const expertTableaux = tableauLevels.filter(
+      const expertTableaux = translatedTableauLevels.filter(
         (t: TableauLevel) =>
           t.tombJourneyId === "expert_treasure_tomb" && t.runNumber === 1
       )
@@ -691,7 +690,7 @@ describe("Tableau System", () => {
     })
 
     it("creates a representative tableau for the wizard tomb", () => {
-      const wizardTableaux = tableauLevels.filter(
+      const wizardTableaux = translatedTableauLevels.filter(
         (t: TableauLevel) =>
           t.tombJourneyId === "wizard_treasure_tomb" && t.runNumber === 12
       )

@@ -1,22 +1,9 @@
-export const hieroglyphLevelColors: Record<number, string> = {
-  1: "bg-stone-100",
-  2: "bg-amber-50",
-  3: "bg-yellow-50",
-  4: "bg-orange-50",
-  5: "bg-red-50",
-  6: "bg-stone-200",
-  7: "bg-amber-100",
-  8: "bg-yellow-100",
-  9: "bg-orange-100",
-  10: "bg-red-100",
-  11: "bg-stone-300",
-  12: "bg-amber-200",
-  13: "bg-yellow-200",
-  14: "bg-orange-200",
-  15: "bg-red-200",
-  16: "bg-stone-400",
-  17: "bg-amber-300",
-  18: "bg-yellow-300",
-  19: "bg-orange-300",
-  20: "bg-red-300",
+import type { Difficulty } from "./difficultyLevels"
+
+export const hieroglyphLevelColors: Record<Difficulty, string> = {
+  starter: "bg-stone-100",
+  junior: "bg-amber-100",
+  expert: "bg-yellow-100",
+  master: "bg-orange-100",
+  wizard: "bg-red-100",
 }

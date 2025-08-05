@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { useInventoryCategory } from "@/data/useInventoryTranslations"
@@ -9,6 +9,7 @@ import { useInventory } from "@/app/Inventory/useInventory"
 import { useTreasureInventory } from "@/app/Inventory/useTreasureInventory"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import { useJourneys } from "../state/useJourneys"
+import { difficulties } from "@/data/difficultyLevels"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -27,6 +28,15 @@ const CategorySection: FC<{
 }> = ({ category, onItemClick, selectedItem, inventory }) => {
   const { t } = useTranslation("common")
   const items = useInventoryCategory(category)
+  const sortedItems = useMemo(
+    () =>
+      items.slice().sort((a, b) => {
+        const levelA = difficulties.indexOf(getItemFirstLevel(a.id))
+        const levelB = difficulties.indexOf(getItemFirstLevel(b.id))
+        return (levelA || 0) - (levelB || 0)
+      }),
+    [items]
+  )
 
   return (
     <div className="mb-8">
@@ -34,7 +44,7 @@ const CategorySection: FC<{
         {t(`collection.categories.${category}`)}
       </h2>
       <div className="grid grid-cols-5 gap-3 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
-        {items.map((item) => {
+        {sortedItems.map((item) => {
           const itemLevel = getItemFirstLevel(item.id)
           const bgColor = itemLevel
             ? hieroglyphLevelColors[itemLevel] || "bg-white/80"

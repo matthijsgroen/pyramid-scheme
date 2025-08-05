@@ -1,6 +1,6 @@
 import { shuffle } from "@/game/random"
 
-type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
+export type Operation = "+" | "-" | "*" | "/"
 
 /**
  * Describe a reward calculation.
@@ -135,12 +135,6 @@ const evaluateFormula = (
       return left * right
     case "/":
       return right !== 0 ? left / right : NaN
-    case "mod":
-      return right !== 0 ? left % right : NaN
-    case "div":
-      return right !== 0 ? Math.floor(left / right) : NaN
-    case "pow":
-      return Math.pow(left, right)
     default:
       throw new Error(`Unknown operation: ${operation}`)
   }
@@ -269,11 +263,6 @@ const getOperatorPrecedence = (operation: Operation): number => {
       return 1
     case "*":
     case "/":
-    case "mod":
-    case "div":
-      return 2
-    case "pow":
-      return 3
     default:
       return 0
   }

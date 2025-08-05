@@ -4,6 +4,8 @@
  * Symbols are assigned progressively - each tomb gets new symbols plus access to previous tomb symbols.
  */
 
+import type { Difficulty } from "./difficultyLevels"
+
 export type TableauLevel = {
   levelNr: number
   symbolCount: number
@@ -15,10 +17,10 @@ export type TableauLevel = {
 }
 
 // Translation function type
-type TranslationFunction = (key: string) => string;
+type TranslationFunction = (key: string) => string
 
 // Symbol inventory for each tomb level
-const TOMB_SYMBOLS = {
+const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
   starter: ["p10", "p8", "a6", "a8", "art1", "art5", "d1"],
   junior: [
     "p1",
@@ -337,46 +339,55 @@ const STORY_TEMPLATE_KEYS = {
 // Get translated tomb name
 export function getTombName(tombId: string, t?: TranslationFunction): string {
   if (t) {
-    return t(`tombNames.${tombId}`);
+    return t(`tombNames.${tombId}`)
   }
-  
+
   // Fallback for when translation function is not available
   switch (tombId) {
     case "starter_treasure_tomb":
-      return "Forgotten Merchant's Cache";
+      return "Forgotten Merchant's Cache"
     case "junior_treasure_tomb":
-      return "Noble's Hidden Vault";
+      return "Noble's Hidden Vault"
     case "expert_treasure_tomb":
-      return "High Priest's Treasury";
+      return "High Priest's Treasury"
     case "master_treasure_tomb":
-      return "Pharaoh's Secret Hoard";
+      return "Pharaoh's Secret Hoard"
     case "wizard_treasure_tomb":
-      return "Vault of the Gods";
+      return "Vault of the Gods"
     default:
-      return "Unknown Tomb";
+      return "Unknown Tomb"
   }
 }
 
 // Get translated story template name
-function getStoryTemplateName(tombId: string, templateKey: string, t?: TranslationFunction): string {
+function getStoryTemplateName(
+  tombId: string,
+  templateKey: string,
+  t?: TranslationFunction
+): string {
   if (t) {
-    return t(`storyTemplates.${tombId}.${templateKey}`);
+    return t(`storyTemplates.${tombId}.${templateKey}`)
   }
-  
+
   // Fallback - capitalize and replace underscores
-  return templateKey.split('_').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(' ');
+  return templateKey
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
 }
 
 // Get translated description
-function getTableauDescription(tombId: string, descriptionKey: string, t?: TranslationFunction): string {
+function getTableauDescription(
+  tombId: string,
+  descriptionKey: string,
+  t?: TranslationFunction
+): string {
   if (t) {
-    return t(`descriptions.${tombId}.${descriptionKey}`);
+    return t(`descriptions.${tombId}.${descriptionKey}`)
   }
-  
+
   // Fallback description
-  return `Sacred tableau from ${getTombName(tombId)}`;
+  return `Sacred tableau from ${getTombName(tombId)}`
 }
 
 /**
@@ -405,19 +416,19 @@ function deterministicShuffle<T>(array: T[], seed: number): T[] {
  * Generate description keys for tableaux
  */
 function generateDescriptionKeys(tombId: string, count: number): string[] {
-  const keys: string[] = [];
-  
+  const keys: string[] = []
+
   if (tombId === "starter_treasure_tomb") {
     return [
       "merchant_trade_blessing",
-      "sacred_marketplace", 
+      "sacred_marketplace",
       "ankh_blessing",
       "sacred_cartouche",
       "farmer_honey_offering",
       "divine_fish",
       "blessed_honey",
-      "ra_protection"
-    ];
+      "ra_protection",
+    ]
   } else if (tombId === "junior_treasure_tomb") {
     return [
       "pharaoh_blessing",
@@ -437,26 +448,26 @@ function generateDescriptionKeys(tombId: string, count: number): string[] {
       "eye_protection",
       "farmer_blessing",
       "vizier_fish",
-      "noble_assembly"
-    ];
+      "noble_assembly",
+    ]
   } else if (tombId === "expert_treasure_tomb") {
     // Generate numbered ceremony keys
     for (let i = 1; i <= count; i++) {
-      keys.push(`temple_ceremony_${i}`);
+      keys.push(`temple_ceremony_${i}`)
     }
   } else if (tombId === "master_treasure_tomb") {
     // Generate numbered construction project keys
     for (let i = 1; i <= count; i++) {
-      keys.push(`construction_project_${i}`);
+      keys.push(`construction_project_${i}`)
     }
   } else if (tombId === "wizard_treasure_tomb") {
     // Generate numbered cosmic ritual keys
     for (let i = 1; i <= count; i++) {
-      keys.push(`cosmic_ritual_${i}`);
+      keys.push(`cosmic_ritual_${i}`)
     }
   }
-  
-  return keys;
+
+  return keys
 }
 
 // Generate all tableau levels with i18n support
@@ -467,24 +478,31 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   TOMB_CONFIG.forEach((tomb) => {
     const symbols = getSymbolsForTomb(tomb.id)
     const totalTableaux = tomb.treasures * tomb.levels
-    const storyTemplateKeys = STORY_TEMPLATE_KEYS[tomb.id as keyof typeof STORY_TEMPLATE_KEYS]
+    const storyTemplateKeys =
+      STORY_TEMPLATE_KEYS[tomb.id as keyof typeof STORY_TEMPLATE_KEYS]
     const descriptionKeys = generateDescriptionKeys(tomb.id, totalTableaux)
 
     // Create a combined seed from tomb ID for consistent shuffling
-    const tombSeed = tomb.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    
+    const tombSeed = tomb.id
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0)
+
     // Shuffle symbols and story templates deterministically
     const shuffledSymbols = deterministicShuffle(symbols, tombSeed)
-    const shuffledStoryKeys = deterministicShuffle([...storyTemplateKeys], tombSeed + 1)
+    const shuffledStoryKeys = deterministicShuffle(
+      [...storyTemplateKeys],
+      tombSeed + 1
+    )
 
     for (let treasure = 1; treasure <= tomb.treasures; treasure++) {
       for (let level = 1; level <= tomb.levels; level++) {
         const tableauIndex = (treasure - 1) * tomb.levels + (level - 1)
         const storyKeyIndex = tableauIndex % shuffledStoryKeys.length
         const descKeyIndex = tableauIndex % descriptionKeys.length
-        
+
         // Get symbols for this tableau
-        const startSymbolIndex = (tableauIndex * tomb.symbolCount) % shuffledSymbols.length
+        const startSymbolIndex =
+          (tableauIndex * tomb.symbolCount) % shuffledSymbols.length
         const tableauSymbols = []
         for (let s = 0; s < tomb.symbolCount; s++) {
           const symbolIndex = (startSymbolIndex + s) % shuffledSymbols.length
@@ -510,5 +528,7 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   return tableaus
 }
 
+const tableauLevels = generateTableaus()
+
 // Export tomb configuration for other modules
-export { TOMB_CONFIG, TOMB_SYMBOLS }
+export { TOMB_CONFIG, TOMB_SYMBOLS, tableauLevels }
