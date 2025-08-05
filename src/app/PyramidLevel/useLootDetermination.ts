@@ -1,8 +1,7 @@
 import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
-import type { Journey } from "@/data/journeys"
-import { generateNewSeed, mulberry32 } from "@/game/random"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
+import { determineMapPieceLoot } from "./mapPieceLogic"
 
 export type Loot = {
   itemId: string
@@ -10,15 +9,6 @@ export type Loot = {
   itemDescription?: string
   itemComponent: React.ReactNode
   rarity?: "common" | "rare" | "epic" | "legendary"
-}
-const getMapPieceChance = (journey: Journey, journeyCount: number): number => {
-  if (journey.type !== "pyramid") {
-    return 0
-  }
-  return (
-    journey.rewards.mapPiece.startChance +
-    journeyCount * journey.rewards.mapPiece.chanceIncrease
-  )
 }
 
 export const useLootDetermination = (
@@ -31,30 +21,10 @@ export const useLootDetermination = (
     loot: Loot | null
     collectLoot: () => void
   } => {
-    const journeyCount = journeyLog.filter(
-      (journey) =>
-        journey.journeyId === activeJourney.journeyId && journey.completed
-    ).length
+    const mapPieceResult = determineMapPieceLoot(activeJourney, journeyLog)
 
-    const lootSeed = generateNewSeed(
-      activeJourney.randomSeed,
-      activeJourney.levelNr
-    )
-    const random = mulberry32(lootSeed)
-
-    const foundMapPiece = journeyLog.some(
-      (journey) =>
-        journey.journeyId === activeJourney.journeyId && journey.foundMapPiece
-    )
-
-    const journey = activeJourney.journey
-
-    const mapPieceChance = foundMapPiece
-      ? 0
-      : getMapPieceChance(journey, journeyCount)
-
-    const mapPieceLoot = random() < mapPieceChance
-    if (mapPieceLoot) {
+    if (mapPieceResult.shouldAwardMapPiece) {
+      const journey = activeJourney.journey
       return {
         loot: {
           itemId: "mapPiece",
