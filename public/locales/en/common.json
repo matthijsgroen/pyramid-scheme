@@ -64,6 +64,10 @@
     "availableSymbols": "Available Symbols:",
     "need": "need"
   },
+  "loot": {
+    "youFound": "You found",
+    "clickToContinue": "Click anywhere to continue"
+  },
   "collection": {
     "title": "Collection",
     "clickForDetails": "Click a tile for details",

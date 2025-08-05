@@ -64,6 +64,10 @@
     "availableSymbols": "Beschikbare Symbolen:",
     "need": "nodig"
   },
+  "loot": {
+    "youFound": "Je hebt gevonden",
+    "clickToContinue": "Klik ergens om door te gaan"
+  },
   "collection": {
     "title": "Collectie",
     "clickForDetails": "Klik op een tegel voor details",

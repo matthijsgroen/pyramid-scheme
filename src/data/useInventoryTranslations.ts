@@ -36,6 +36,9 @@ export const useInventoryItem = (id: string) => {
     symbol: item.symbol,
     name: t(`${category}.${id}.name`),
     description: t(`${category}.${id}.description`),
+    // Add fallbacks in case translation fails
+    fallbackName: item.name,
+    fallbackDescription: item.description,
   }
 }
 

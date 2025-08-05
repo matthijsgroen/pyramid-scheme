@@ -1,5 +1,6 @@
 import { type FC, type ReactNode, useEffect, useState } from "react"
 import clsx from "clsx"
+import { useTranslation } from "react-i18next"
 
 type LootPopupProps = {
   isOpen: boolean
@@ -18,6 +19,7 @@ export const LootPopup: FC<LootPopupProps> = ({
   onDismiss,
   rarity = "common",
 }) => {
+  const { t } = useTranslation("common")
   const [showContent, setShowContent] = useState(false)
   const [animationPhase, setAnimationPhase] = useState<
     "hidden" | "burst" | "reveal" | "visible"
@@ -170,7 +172,7 @@ export const LootPopup: FC<LootPopupProps> = ({
                   }
                 )}
               >
-                You found
+                {t("loot.youFound")}
               </h2>
 
               {/* Item display area */}
@@ -243,7 +245,7 @@ export const LootPopup: FC<LootPopupProps> = ({
                     colors.text
                   )}
                 >
-                  Click anywhere to continue
+                  {t("loot.clickToContinue")}
                 </p>
               )}
             </div>
