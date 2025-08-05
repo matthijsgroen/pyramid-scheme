@@ -71,21 +71,28 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   if (empty) {
     return (
       <div
+        onClick={onClick}
         className={clsx(
           // Base empty tile styling - looks like a recessed hole
-          "flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300",
-          "bg-gray-100 text-gray-400 opacity-50 shadow-inner",
+          "flex items-center justify-center rounded-lg",
+          "bg-gray-100 text-gray-400 opacity-50",
           "transition-all duration-200",
 
-          // Size variations
+          // Make clickable if onClick is provided
+          onClick && "cursor-pointer hover:bg-gray-200",
+
+          // Size variations - EXACT same as filled tiles
           sizeClasses[size],
 
           className
         )}
         style={{
-          // Inset shadow to create hole effect
+          // Simple inset shadow to create hole effect - no complex backgrounds
           boxShadow:
-            "inset 2px 2px 4px rgba(0, 0, 0, 0.1), inset -1px -1px 2px rgba(255, 255, 255, 0.5)",
+            "inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -1px -1px 2px rgba(255, 255, 255, 0.5)",
+          // Simple outline to suggest dashed border without affecting dimensions
+          outline: "1px dashed rgba(156, 163, 175, 0.4)",
+          outlineOffset: "-1px",
         }}
       >
         <span
@@ -237,7 +244,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
 
       {/* Stone surface with hieroglyph */}
       <span
-        className="relative font-mono leading-none select-none"
+        className="relative flex h-full w-full items-center justify-center font-mono select-none"
         style={{
           // Symbol color matches the darker tile background
           color: disabled
