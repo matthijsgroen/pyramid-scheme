@@ -5,6 +5,7 @@ import {
   type Formula,
   type RewardCalculation,
 } from "@/game/generateRewardCalculation"
+import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { clsx } from "clsx"
 import { useState, type FC } from "react"
 
@@ -42,36 +43,46 @@ const obfuscate = (text: string, percentage: number): string => {
   return obfuscatedText.join("")
 }
 
-const FormulaPart: FC<{ formula: Formula }> = ({ formula }) => {
+const FormulaPart: FC<{ formula: Formula; difficulty: Difficulty }> = ({
+  formula,
+  difficulty,
+}) => {
   return (
     <span>
       {typeof formula.left === "number" ? (
-        <span className="inline-block rounded bg-black/70 p-2">
-          ?{/* {formula.left} */}
-        </span>
+        <HieroglyphTile
+          empty
+          difficulty={difficulty}
+          size="sm"
+          className="inline-block align-middle"
+        />
       ) : (
-        <FormulaPart formula={formula.left} />
+        <FormulaPart formula={formula.left} difficulty={difficulty} />
       )}
       <span> {formula.operation} </span>
       {typeof formula.right === "number" ? (
-        <span className="inline-block rounded bg-black/70 p-2">
-          ?{/* {formula.right} */}
-        </span>
+        <HieroglyphTile
+          empty
+          difficulty={difficulty}
+          size="sm"
+          className="inline-block align-middle"
+        />
       ) : (
-        <FormulaPart formula={formula.right} />
+        <FormulaPart formula={formula.right} difficulty={difficulty} />
       )}
     </span>
   )
 }
 
-const Formula: FC<{ formula: Formula; showResult: boolean }> = ({
-  formula,
-  showResult,
-}) => {
+const Formula: FC<{
+  formula: Formula
+  showResult: boolean
+  difficulty: Difficulty
+}> = ({ formula, showResult, difficulty }) => {
   return (
     <div>
-      <FormulaPart formula={formula} /> ={" "}
-      {showResult ? <span>{formula.result}</span> : <span>???</span>}
+      <FormulaPart formula={formula} difficulty={difficulty} /> ={" "}
+      {showResult ? <span>{formula.result}</span> : "??"}
     </div>
   )
 }
@@ -96,12 +107,20 @@ export const TombPuzzle: FC<{
         </h1>
         {calculation.hintFormulas.map((formula, index) => (
           <div key={index} className="text-lg">
-            <Formula formula={formula} showResult={true} />
+            <Formula
+              formula={formula}
+              showResult={true}
+              difficulty={difficulty}
+            />
           </div>
         ))}
         <div>
           <span className="text-2xl">
-            <Formula formula={calculation.mainFormula} showResult={false} />
+            <Formula
+              formula={calculation.mainFormula}
+              showResult={false}
+              difficulty={difficulty}
+            />
           </span>
         </div>
         <div>{obfuscate(tableau.description, solvedPercentage)}</div>

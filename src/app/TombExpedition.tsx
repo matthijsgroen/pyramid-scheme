@@ -52,7 +52,7 @@ export const TombExpedition: FC<{
         <div className="flex-shrink-0 backdrop-blur-sm">
           <div
             className={clsx(
-              "flex w-full items-center justify-between px-4 py-2",
+              "flex w-full items-center justify-between gap-4 px-4 py-2",
               "text-white"
             )}
           >

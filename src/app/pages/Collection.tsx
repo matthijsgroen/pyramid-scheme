@@ -64,7 +64,7 @@ const CategorySection: FC<{
           const itemLevel = getItemFirstLevel(item.id)
           const isSelected = selectedItem?.id === item.id
 
-          const isCollected = true //inventory[item.id] !== undefined
+          const isCollected = inventory[item.id] !== undefined
 
           if (!isCollected || !itemLevel) {
             // Show empty placeholder for uncollected items
@@ -197,8 +197,7 @@ export const CollectionPage: FC = () => {
   const hasCollectedTreasures = Object.values(treasures).some(
     (value) => value !== undefined
   )
-  const hasCollectedAnything =
-    hasCollectedItems || hasCollectedTreasures || true
+  const hasCollectedAnything = hasCollectedItems || hasCollectedTreasures
   const hasCompletedTomb = (tombId: string) =>
     journeyLog.some((j) => j.journeyId === tombId && j.completed)
 

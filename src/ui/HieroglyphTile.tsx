@@ -88,7 +88,14 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
             "inset 2px 2px 4px rgba(0, 0, 0, 0.1), inset -1px -1px 2px rgba(255, 255, 255, 0.5)",
         }}
       >
-        <span className="font-mono text-2xl leading-none select-none">?</span>
+        <span
+          className={clsx(
+            "flex h-full w-full items-center justify-center font-mono select-none",
+            size === "sm" ? "text-xs" : size === "md" ? "text-lg" : "text-2xl"
+          )}
+        >
+          ?
+        </span>
       </div>
     )
   }
