@@ -84,22 +84,22 @@ export const JourneyCard: FC<JourneyCardProps> = ({
       </div>
 
       <div
-        className={clsx("flex items-center justify-between text-xs", {
+        className={clsx("flex flex-wrap items-center gap-x-2 gap-y-1 text-xs", {
           "text-gray-500": disabled,
           "text-gray-600": !disabled && isTreasureTomb,
           "text-amber-700": !disabled && !isTreasureTomb,
         })}
       >
-        <span>
+        <span className="flex-shrink-0">
           {t("ui.length")}: {journey.lengthLabel}
         </span>
         {journey.type === "treasure_tomb" && (
-          <span>
+          <span className="flex-shrink-0">
             {t("ui.chambers")}: {journey.levelCount}
           </span>
         )}
         {progressLevelNr > 0 && (
-          <span className="font-bold">
+          <span className="flex-shrink-0 font-bold">
             {t("ui.progressLevel")}:{" "}
             {Math.min(
               Math.max(
@@ -112,7 +112,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
           </span>
         )}
         {(completionCount > 0 || hasMapPiece) && (
-          <span className="inline-flex items-center font-bold text-amber-800">
+          <span className="ml-auto inline-flex items-center font-bold text-amber-800">
             {hasMapPiece && (
               <span className="ml-1 inline-flex items-center bg-green-800 bg-clip-text text-transparent">
                 📜

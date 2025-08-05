@@ -13,8 +13,10 @@ import {
   egyptianArtifacts,
 } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { useInventory } from "@/app/Inventory/useInventory"
 import { clsx } from "clsx"
 import { useState, useMemo, type FC } from "react"
+import { useTranslation } from "react-i18next"
 
 // Helper function to count total number slots in a formula
 const countFormulaSlots = (formula: Formula): number => {
@@ -203,11 +205,21 @@ export const TombPuzzle: FC<{
   calculation: RewardCalculation
   difficulty: Difficulty
 }> = ({ tableau, calculation, difficulty }) => {
+  const { t } = useTranslation("common")
+
+  // Get player's actual inventory
+  const { inventory } = useInventory()
+
   // State for managing which tiles are filled
   const [filledState, setFilledState] = useState<FilledTileState>({
     symbolCounts: {},
     filledPositions: {},
   })
+
+  // State for tracking how many inventory items are used in the puzzle
+  const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>(
+    {}
+  )
 
   // Calculate solved percentage based on filled tiles
   const solvedPercentage = useMemo(() => {
@@ -236,20 +248,35 @@ export const TombPuzzle: FC<{
           ...newState.symbolCounts,
           [symbolId]: Math.max(0, (newState.symbolCounts[symbolId] || 0) - 1),
         }
-      } else {
-        // Fill the position if we have available symbols
-        const currentCount = newState.symbolCounts[symbolId] || 0
-        const maxCount = calculation.symbolCounts[symbolId] || 0
 
-        if (currentCount < maxCount) {
+        // Decrease inventory usage
+        setInventoryUsage((prevUsage) => ({
+          ...prevUsage,
+          [symbolId]: Math.max(0, (prevUsage[symbolId] || 0) - 1),
+        }))
+      } else {
+        // Check if we have available inventory items to use
+        const currentUsage = inventoryUsage[symbolId] || 0
+        const availableInInventory = inventory[symbolId] || 0
+        const currentPlaced = newState.symbolCounts[symbolId] || 0
+        const maxNeeded = calculation.symbolCounts[symbolId] || 0
+
+        // Only place if we have inventory available and haven't exceeded puzzle requirements
+        if (availableInInventory > currentUsage && currentPlaced < maxNeeded) {
           newState.filledPositions = {
             ...newState.filledPositions,
             [position]: 1,
           }
           newState.symbolCounts = {
             ...newState.symbolCounts,
-            [symbolId]: currentCount + 1,
+            [symbolId]: currentPlaced + 1,
           }
+
+          // Increase inventory usage
+          setInventoryUsage((prevUsage) => ({
+            ...prevUsage,
+            [symbolId]: currentUsage + 1,
+          }))
         }
       }
 
@@ -298,11 +325,13 @@ export const TombPuzzle: FC<{
   }
 
   const handleInventoryClick = (symbolId: string) => {
-    const currentCount = filledState.symbolCounts[symbolId] || 0
-    const maxCount = calculation.symbolCounts[symbolId] || 0
+    const currentUsage = inventoryUsage[symbolId] || 0
+    const availableInInventory = inventory[symbolId] || 0
+    const currentPlaced = filledState.symbolCounts[symbolId] || 0
+    const maxNeeded = calculation.symbolCounts[symbolId] || 0
 
-    // Check if we have available symbols to place
-    if (currentCount < maxCount) {
+    // Check if we have available inventory items and haven't exceeded puzzle requirements
+    if (availableInInventory > currentUsage && currentPlaced < maxNeeded) {
       // Find the first empty position for this symbol
       const emptyPositions = findEmptyPositionsForSymbol(symbolId)
 
@@ -356,15 +385,18 @@ export const TombPuzzle: FC<{
 
       {/* Available symbols inventory */}
       <div className="mb-4 rounded bg-black/20 p-2">
-        <h3 className="mb-2 text-sm font-bold">Available Symbols:</h3>
+        <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
         <div className="flex flex-wrap gap-2">
           {Object.entries(calculation.symbolCounts).map(
-            ([symbolId, maxCount]) => {
-              const usedCount = filledState.symbolCounts[symbolId] || 0
-              const availableCount = maxCount - usedCount
+            ([symbolId, maxNeeded]) => {
+              const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+              const usedFromInventory = inventoryUsage[symbolId] || 0
+              const availableInInventory = inventory[symbolId] || 0
               const inventoryItem = getInventoryItemById(symbolId)
               const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-              const canPlace = availableCount > 0
+              const canPlace =
+                availableInInventory > usedFromInventory &&
+                usedInPuzzle < maxNeeded
 
               return (
                 <div
@@ -384,9 +416,15 @@ export const TombPuzzle: FC<{
                     disabled={!canPlace}
                     className="pointer-events-none"
                   />
-                  <span className="text-xs">
-                    {availableCount}/{maxCount}
-                  </span>
+                  <div className="flex flex-col text-xs">
+                    <span>
+                      {availableInInventory - usedFromInventory}/
+                      {availableInInventory}
+                    </span>
+                    <span className="text-gray-400">
+                      {t("ui.need")}: {maxNeeded}
+                    </span>
+                  </div>
                 </div>
               )
             }

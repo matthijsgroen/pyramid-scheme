@@ -60,7 +60,9 @@
     "requiresMapPieces": "Vereist kaartdelen",
     "mapPieces": "Kaartdelen",
     "collected": "verzameld",
-    "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen"
+    "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen",
+    "availableSymbols": "Beschikbare Symbolen:",
+    "need": "nodig"
   },
   "collection": {
     "title": "Collectie",
