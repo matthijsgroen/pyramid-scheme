@@ -1,0 +1,182 @@
+{
+  "merchantCache": {
+    "t1": {
+      "name": "Silver Deben",
+      "description": "An ancient Egyptian silver coin used by merchants for trade along the Nile."
+    },
+    "t2": {
+      "name": "Papyrus Scroll",
+      "description": "A merchant's record scroll detailing trade routes and precious cargo manifests."
+    },
+    "t3": {
+      "name": "Ivory Comb",
+      "description": "An intricately carved ivory comb, a luxury item traded from distant lands."
+    },
+    "t4": {
+      "name": "Ceramic Oil Lamp",
+      "description": "A simple yet elegant oil lamp used to light the merchant's quarters."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Golden Bracelet",
+      "description": "An ornate golden bracelet adorned with precious stones, worn by Egyptian nobility."
+    },
+    "t6": {
+      "name": "Ceremonial Dagger",
+      "description": "A ritual dagger with a jeweled handle, used in noble ceremonies."
+    },
+    "t7": {
+      "name": "Jade Scarab",
+      "description": "A protective jade scarab amulet, symbol of rebirth and eternal life."
+    },
+    "t8": {
+      "name": "Alabaster Canopic Jar",
+      "description": "An elegant alabaster jar used to store precious oils and perfumes."
+    },
+    "t9": {
+      "name": "Ebony Walking Stick",
+      "description": "A polished ebony walking stick topped with a golden ankh symbol."
+    },
+    "t10": {
+      "name": "Lapis Lazuli Necklace",
+      "description": "A stunning necklace made from rare lapis lazuli stones, prized by the wealthy."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Sacred Ankh",
+      "description": "A golden ankh symbol representing eternal life, blessed by the temple priests."
+    },
+    "t12": {
+      "name": "Copper Mirror",
+      "description": "A polished copper mirror used for ritual purification ceremonies."
+    },
+    "t13": {
+      "name": "Incense Burner",
+      "description": "An ornate bronze incense burner used in temple worship rituals."
+    },
+    "t14": {
+      "name": "Ritual Chalice",
+      "description": "A sacred silver chalice used for libation offerings to the gods."
+    },
+    "t15": {
+      "name": "Ceremonial Fan",
+      "description": "An ornate feathered fan used by priests during temple ceremonies."
+    },
+    "t16": {
+      "name": "Prayer Beads",
+      "description": "A string of blessed prayer beads used for meditation and worship."
+    },
+    "t17": {
+      "name": "Holy Water Vessel",
+      "description": "A vessel containing blessed water from the sacred temple well."
+    },
+    "t18": {
+      "name": "Temple Bell",
+      "description": "A bronze bell used to call the faithful to prayer and announce ceremonies."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Pharaoh's Seal",
+      "description": "An ancient royal seal bearing the cartouche of a forgotten pharaoh."
+    },
+    "t20": {
+      "name": "Crystal Orb",
+      "description": "A mystical crystal orb said to reveal visions of the past and future."
+    },
+    "t21": {
+      "name": "Hieroglyphic Tablet",
+      "description": "An ancient stone tablet inscribed with mysterious hieroglyphic prophecies."
+    },
+    "t22": {
+      "name": "Golden Scepter",
+      "description": "A magnificent golden scepter topped with the eye of Horus."
+    },
+    "t23": {
+      "name": "Obsidian Knife",
+      "description": "A razor-sharp obsidian ceremonial knife used in ancient rituals."
+    },
+    "t24": {
+      "name": "Meteorite Fragment",
+      "description": "A piece of sacred meteorite believed to contain divine power."
+    },
+    "t25": {
+      "name": "Ancient Compass",
+      "description": "A mystical navigation device that always points toward hidden treasures."
+    },
+    "t26": {
+      "name": "Time Crystal",
+      "description": "A legendary crystal that glows with the power of ages past."
+    },
+    "t27": {
+      "name": "Ritual Mask",
+      "description": "An ornate golden mask worn by high priests during sacred ceremonies."
+    },
+    "t28": {
+      "name": "Eternal Flame Torch",
+      "description": "A torch that burns with an eternal flame, never extinguished since ancient times."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Crown of Ra",
+      "description": "The legendary crown of the sun god Ra, radiating divine light and power."
+    },
+    "t30": {
+      "name": "Staff of Thoth",
+      "description": "The wisdom staff of Thoth, god of knowledge, containing all ancient secrets."
+    },
+    "t31": {
+      "name": "Feather of Ma'at",
+      "description": "The sacred feather of Ma'at, goddess of truth, used to weigh souls in the afterlife."
+    },
+    "t32": {
+      "name": "Tears of Isis",
+      "description": "Crystallized tears of the goddess Isis, said to grant eternal protection."
+    },
+    "t33": {
+      "name": "Heart of Osiris",
+      "description": "The preserved heart of Osiris, lord of the underworld, pulsing with life force."
+    },
+    "t34": {
+      "name": "Eye of Horus Amulet",
+      "description": "The ultimate protective amulet containing the complete power of Horus."
+    },
+    "t35": {
+      "name": "Serpent of Apep",
+      "description": "A bound fragment of the chaos serpent Apep, contained within a sacred vessel."
+    },
+    "t36": {
+      "name": "Breath of Shu",
+      "description": "A vial containing the breath of Shu, god of air, granting power over the winds."
+    },
+    "t37": {
+      "name": "Scale of Sobek",
+      "description": "A single scale from the crocodile god Sobek, providing protection in water."
+    },
+    "t38": {
+      "name": "Anubis Guardian Statue",
+      "description": "A miniature statue of Anubis that comes alive to guard its owner's treasures."
+    },
+    "t39": {
+      "name": "Book of the Dead",
+      "description": "The complete Book of the Dead, containing all spells needed for the afterlife journey."
+    },
+    "t40": {
+      "name": "Pyramid Capstone",
+      "description": "The golden capstone of the Great Pyramid, containing the concentrated power of all pharaohs."
+    }
+  },
+  "mapPieces": {
+    "name": "Map Piece",
+    "descriptions": {
+      "starter": "Ancient map fragment to the Forgotten Merchant's Cache.",
+      "junior": "Explorer's map piece to the Noble's Hidden Vault.",
+      "expert": "Master cartographer's map to the High Priest's Treasury.",
+      "master": "Legendary map fragment to the Pharaoh's Secret Hoard.",
+      "wizard": "Divine map piece to the Vault of the Gods."
+    }
+  }
+}

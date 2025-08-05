@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook"
+
 import js from "@eslint/js"
 import globals from "globals"
 import reactHooks from "eslint-plugin-react-hooks"
@@ -8,38 +11,41 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import tailwind from "eslint-plugin-tailwindcss"
 import { join } from "node:path"
 
-export default tseslint.config([
-  globalIgnores(["dist", ".yarn", "node_modules"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommended,
-      reactHooks.configs["recommended-latest"],
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
-    rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
+export default tseslint.config(
+  [
+    globalIgnores(["dist", ".yarn", "node_modules"]),
+    {
+      files: ["**/*.{ts,tsx}"],
+      extends: [
+        js.configs.recommended,
+        tseslint.configs.recommended,
+        reactHooks.configs["recommended-latest"],
+        reactRefresh.configs.vite,
       ],
-    },
-  },
-  ...tailwind.configs["flat/recommended"],
-  {
-    settings: {
-      tailwindcss: {
-        config: join(process.cwd(), "src", "index.css"),
+      languageOptions: {
+        ecmaVersion: 2020,
+        globals: globals.browser,
+      },
+      rules: {
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            argsIgnorePattern: "^_",
+            varsIgnorePattern: "^_",
+            caughtErrorsIgnorePattern: "^_",
+          },
+        ],
       },
     },
-  },
-  eslintPluginPrettierRecommended,
-])
+    ...tailwind.configs["flat/recommended"],
+    {
+      settings: {
+        tailwindcss: {
+          config: join(process.cwd(), "src", "index.css"),
+        },
+      },
+    },
+    eslintPluginPrettierRecommended,
+  ],
+  storybook.configs["flat/recommended"]
+)

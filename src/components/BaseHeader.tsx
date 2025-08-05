@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { SettingsModal } from "@/ui/SettingsModal"
+import { SettingsModal } from "@/app/SettingsModal"
 
 export const BaseHeader = () => {
   const { t } = useTranslation("common")
@@ -9,7 +9,7 @@ export const BaseHeader = () => {
   return (
     <>
       <div className="flex w-full flex-row justify-between border bg-gray-100 px-4 py-2 sm:col-span-6">
-        <p>Shop</p>
+        <span></span>
         <h1 className="text-center font-pyramid text-2xl font-bold">
           Pyramid Scheme
         </h1>

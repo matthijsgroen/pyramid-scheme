@@ -139,7 +139,7 @@ const getParametricPosition = (t: number, pathConfig: { path: string }) => {
   }
 }
 
-interface MapButtonProps {
+type MapButtonProps = {
   onClick: () => void
   inJourney: boolean
   label: string

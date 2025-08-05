@@ -1,14 +1,15 @@
 import { useTranslation } from "react-i18next"
-import { tableauLevels } from "@/data/tableaus"
+import {
+  generateTableaus,
+  tableauLevels,
+  type TableauLevel,
+} from "@/data/tableaus"
+import { useMemo } from "react"
 
-export const useTableauTranslations = () => {
+export const useTableauTranslations = (): TableauLevel[] => {
   const { t } = useTranslation("tableaus")
 
-  return tableauLevels.map((tableau) => ({
-    ...tableau,
-    name: t(`${tableau.levelNr}.name`),
-    description: t(`${tableau.levelNr}.description`),
-  }))
+  return useMemo(() => generateTableaus(t), [t])
 }
 
 export const useTableauTranslation = (levelNr: number) => {

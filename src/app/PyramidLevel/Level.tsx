@@ -1,8 +1,7 @@
-import { useEffect, type FC } from "react"
+import { type FC, useEffect, useRef } from "react"
 import type { PyramidLevel } from "@/game/types"
 import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
 import { isValid } from "@/game/state"
-import { LevelCompletedOverlay } from "@/app/PyramidLevel/LevelCompletedOverlay"
 import { useGameStorage } from "@/support/useGameStorage"
 
 export const Level: FC<{
@@ -24,14 +23,16 @@ export const Level: FC<{
     pyramid: content.pyramid,
     values: answers,
   })
-  // Placeholder for Level component logic
+
+  // Track previous completion state to only trigger when it changes
+  const prevCompletedRef = useRef(false)
+
+  // Trigger completion callback when level is completed
   useEffect(() => {
-    if (completed) {
-      const stopTimeout = setTimeout(() => {
-        onComplete?.()
-      }, 2000)
-      return () => clearTimeout(stopTimeout)
+    if (completed && !prevCompletedRef.current && onComplete) {
+      onComplete()
     }
+    prevCompletedRef.current = completed
   }, [completed, onComplete])
 
   return (
@@ -59,7 +60,6 @@ export const Level: FC<{
           }
         />
       </div>
-      {completed && <LevelCompletedOverlay />}
     </div>
   )
 }

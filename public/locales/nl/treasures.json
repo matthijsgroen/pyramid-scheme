@@ -1,0 +1,182 @@
+{
+  "merchantCache": {
+    "t1": {
+      "name": "Zilveren Deben",
+      "description": "Een oude Egyptische zilveren munt gebruikt door handelaren voor handel langs de Nijl."
+    },
+    "t2": {
+      "name": "Papyrusrol",
+      "description": "Een handelsrol met details over handelsroutes en kostbare vracht manifesten."
+    },
+    "t3": {
+      "name": "Ivoren Kam",
+      "description": "Een ingewikkeld gesneden ivoren kam, een luxe-item verhandeld uit verre landen."
+    },
+    "t4": {
+      "name": "Keramische Olielamp",
+      "description": "Een eenvoudige maar elegante olielamp gebruikt om de handelaarskwartieren te verlichten."
+    }
+  },
+  "nobleVault": {
+    "t5": {
+      "name": "Gouden Armband",
+      "description": "Een sierlijke gouden armband versierd met edelstenen, gedragen door Egyptische adel."
+    },
+    "t6": {
+      "name": "Ceremoniële Dolk",
+      "description": "Een rituele dolk met een gebeeldhouwde handvat, gebruikt in adellijke ceremonies."
+    },
+    "t7": {
+      "name": "Jade Scarabee",
+      "description": "Een beschermende jade scarabee amulet, symbool van wedergeboorte en eeuwig leven."
+    },
+    "t8": {
+      "name": "Albast Canopische Pot",
+      "description": "Een elegante albast pot gebruikt om kostbare oliën en parfums te bewaren."
+    },
+    "t9": {
+      "name": "Ebbenhouten Wandelstok",
+      "description": "Een gepolijste ebbenhouten wandelstok bekroond met een gouden ankh symbool."
+    },
+    "t10": {
+      "name": "Lapis Lazuli Halsketting",
+      "description": "Een prachtige halsketting gemaakt van zeldzame lapis lazuli stenen, gewaardeerd door de rijken."
+    }
+  },
+  "templeSecrets": {
+    "t11": {
+      "name": "Heilige Ankh",
+      "description": "Een gouden ankh symbool dat eeuwig leven voorstelt, gezegend door de tempelpriesters."
+    },
+    "t12": {
+      "name": "Koperen Spiegel",
+      "description": "Een gepolijste koperen spiegel gebruikt voor rituele zuiveringsceremonies."
+    },
+    "t13": {
+      "name": "Wierookbrander",
+      "description": "Een sierlijke bronzen wierookbrander gebruikt in tempelverering rituelen."
+    },
+    "t14": {
+      "name": "Rituele Kelk",
+      "description": "Een heilige zilveren kelk gebruikt voor plengoffer aan de goden."
+    },
+    "t15": {
+      "name": "Ceremoniële Waaier",
+      "description": "Een sierlijke geveerde waaier gebruikt door priesters tijdens tempelceremonies."
+    },
+    "t16": {
+      "name": "Gebedskralen",
+      "description": "Een snoer van gezegende gebedskralen gebruikt voor meditatie en aanbidding."
+    },
+    "t17": {
+      "name": "Heilig Water Vat",
+      "description": "Een vat met gezegend water uit de heilige tempelput."
+    },
+    "t18": {
+      "name": "Tempelklok",
+      "description": "Een bronzen klok gebruikt om de gelovigen te roepen voor gebed en ceremonies aan te kondigen."
+    }
+  },
+  "ancientRelics": {
+    "t19": {
+      "name": "Farao's Zegel",
+      "description": "Een oud koninklijk zegel met de cartouche van een vergeten farao."
+    },
+    "t20": {
+      "name": "Kristallen Bol",
+      "description": "Een mystieke kristallen bol waarvan wordt gezegd dat hij visioenen van verleden en toekomst toont."
+    },
+    "t21": {
+      "name": "Hiëroglifische Tablet",
+      "description": "Een oude stenen tablet beschreven met mysterieuze hiëroglifische profetieën."
+    },
+    "t22": {
+      "name": "Gouden Scepter",
+      "description": "Een prachtige gouden scepter bekroond met het oog van Horus."
+    },
+    "t23": {
+      "name": "Obsidiaan Mes",
+      "description": "Een scheerscherp obsidiaan ceremonieel mes gebruikt in oude rituelen."
+    },
+    "t24": {
+      "name": "Meteoriet Fragment",
+      "description": "Een stuk heilige meteoriet waarvan wordt geloofd dat het goddelijke kracht bevat."
+    },
+    "t25": {
+      "name": "Oud Kompas",
+      "description": "Een mystiek navigatie-instrument dat altijd wijst naar verborgen schatten."
+    },
+    "t26": {
+      "name": "Tijd Kristal",
+      "description": "Een legendarisch kristal dat gloeit met de kracht van vervlogen tijden."
+    },
+    "t27": {
+      "name": "Ritueel Masker",
+      "description": "Een sierlijk gouden masker gedragen door hogepriester tijdens heilige ceremonies."
+    },
+    "t28": {
+      "name": "Eeuwige Vlam Fakkel",
+      "description": "Een fakkel die brandt met een eeuwige vlam, nooit gedoofd sinds oude tijden."
+    }
+  },
+  "mythicalArtifacts": {
+    "t29": {
+      "name": "Kroon van Ra",
+      "description": "De legendarische kroon van de zonnegod Ra, uitstralend goddelijk licht en kracht."
+    },
+    "t30": {
+      "name": "Staf van Thoth",
+      "description": "De wijsheidsstaf van Thoth, god van kennis, bevattend alle oude geheimen."
+    },
+    "t31": {
+      "name": "Veer van Ma'at",
+      "description": "De heilige veer van Ma'at, godin van waarheid, gebruikt om zielen te wegen in het hiernamaals."
+    },
+    "t32": {
+      "name": "Tranen van Isis",
+      "description": "Gekristalliseerde tranen van de godin Isis, waarvan wordt gezegd dat ze eeuwige bescherming verlenen."
+    },
+    "t33": {
+      "name": "Hart van Osiris",
+      "description": "Het geconserveerde hart van Osiris, heer van de onderwereld, pulserend met levenskracht."
+    },
+    "t34": {
+      "name": "Oog van Horus Amulet",
+      "description": "De ultieme beschermende amulet met de volledige kracht van Horus."
+    },
+    "t35": {
+      "name": "Slang van Apep",
+      "description": "Een gebonden fragment van de chaos slang Apep, bevat in een heilig vat."
+    },
+    "t36": {
+      "name": "Adem van Shu",
+      "description": "Een flesje met de adem van Shu, god van lucht, verlening macht over de winden."
+    },
+    "t37": {
+      "name": "Schub van Sobek",
+      "description": "Een enkele schub van de krokodilgod Sobek, biedend bescherming in water."
+    },
+    "t38": {
+      "name": "Anubis Bewaker Standbeeld",
+      "description": "Een miniatuur standbeeld van Anubis dat tot leven komt om de schatten van zijn eigenaar te bewaken."
+    },
+    "t39": {
+      "name": "Dodenboek",
+      "description": "Het volledige Dodenboek, bevattend alle spreuken nodig voor de hiernamaals reis."
+    },
+    "t40": {
+      "name": "Piramide Sluitsteen",
+      "description": "De gouden sluitsteen van de Grote Piramide, bevattend de geconcentreerde kracht van alle farao's."
+    }
+  },
+  "mapPieces": {
+    "name": "Kaartstuk",
+    "descriptions": {
+      "starter": "Oud kaartfragment naar de Vergeten Koopmanscache.",
+      "junior": "Ontdekkingsreizigers kaart naar de Verborgen Kluis van de Edelman.",
+      "expert": "Meester-cartograaf's kaart naar de Schatbewaarplaats van de Hogepriester.",
+      "master": "Legendarisch kaartfragment naar de Geheime Schat van de Farao.",
+      "wizard": "Goddelijk kaartstuk naar de Kluis van de Goden."
+    }
+  }
+}

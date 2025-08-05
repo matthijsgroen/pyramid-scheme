@@ -1,6 +1,6 @@
 import { type FC, type ReactNode } from "react"
 
-interface ConfirmModalProps {
+type ConfirmModalProps = {
   isOpen: boolean
   title: string
   message: string | ReactNode

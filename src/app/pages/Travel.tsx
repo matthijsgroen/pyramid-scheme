@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
 import { JourneyCard } from "@/ui/JourneyCard"
+import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
 import { type Journey } from "@/data/journeys"
 import { useJourneys } from "@/app/state/useJourneys"
@@ -13,6 +14,7 @@ import {
 } from "@/data/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/DifficultyPill"
 import { mulberry32 } from "@/game/random"
+import { TombMapButton } from "@/ui/TombMapButton"
 
 // Simple string hash function to convert string to number
 const hashString = (str: string): number => {
@@ -32,12 +34,11 @@ const getJourneyProgress = (
   if (!activeJourney) return 0
   const jny: ActiveJourney = activeJourney
   const data = journeys.find((j) => j.id === jny.journeyId)
-  return Math.min(jny.levelNr / (data?.levelCount ?? 1), 1)
+  return Math.min((jny.levelNr - 1) / (data?.levelCount ?? 1), 1)
 }
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const { t } = useTranslation("common")
-  const [prestige] = useState(0)
   const journeys = useJourneyTranslations()
 
   const {
@@ -51,16 +52,31 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
   const [showAbortModal, setShowAbortModal] = useState(false)
-  const journeyProgress = getJourneyProgress(activeJourney, journeys)
+
+  const canceledJourney = useMemo(() => {
+    return journeyLog.find(
+      (j) => j.journeyId === selectedJourney?.id && j.canceled && !j.completed
+    )
+  }, [selectedJourney, journeyLog])
+  const journeyProgress = getJourneyProgress(
+    activeJourney ?? canceledJourney,
+    journeys
+  )
 
   const journey = activeJourney?.journey ?? selectedJourney
   const mapRotation = useMemo(() => {
     const journeySeed =
-      (activeJourney?.randomSeed ?? nextJourneySeed()) +
-      (journey?.id ? hashString(journey.id) : 0)
+      (activeJourney?.randomSeed ??
+        canceledJourney?.randomSeed ??
+        nextJourneySeed()) + (journey?.id ? hashString(journey.id) : 0)
     const random = mulberry32(journeySeed)
     return Math.round(random() * 360)
-  }, [activeJourney, nextJourneySeed, journey?.id])
+  }, [
+    activeJourney?.randomSeed,
+    canceledJourney?.randomSeed,
+    nextJourneySeed,
+    journey?.id,
+  ])
 
   const handleMapClick = () => {
     if (activeJourney) {
@@ -90,6 +106,20 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const handleCancelAbort = () => {
     setShowAbortModal(false)
   }
+
+  const unlocked = useMemo(() => {
+    return journeys.findIndex((j, journeyIndex) => {
+      if (j.type === "treasure_tomb") {
+        return false
+      }
+      if (journeyIndex === 0) return false // Always unlock the first journey
+      const previousJourneyId = journeys[journeyIndex - 1]?.id
+      const hasPreviousCompleted = journeyLog.some(
+        (log) => log.journeyId === previousJourneyId && log.completed
+      )
+      return !hasPreviousCompleted
+    })
+  }, [journeys, journeyLog])
 
   return (
     <Page
@@ -138,20 +168,30 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               {!journey && (
                 <p className="mb-4 text-center">{t("ui.startAdventure")}</p>
               )}
-              <MapButton
-                onClick={handleMapClick}
-                inJourney={!!journey}
-                pathRotation={mapRotation}
-                pathLength={journey?.journeyLength ?? "long"}
-                label={
-                  activeJourney
-                    ? t("ui.continueExpedition")
-                    : selectedJourney
-                      ? t("ui.startExpedition")
-                      : t("ui.planExpedition")
-                }
-                journeyProgress={journeyProgress}
-              />
+              {journey?.type === "treasure_tomb" ? (
+                <TombMapButton
+                  onClick={handleMapClick}
+                  inJourney={!!journey}
+                  corridorComplexity={journey?.journeyLength ?? "long"}
+                  label={journey?.name ?? ""}
+                  journeyProgress={journeyProgress}
+                />
+              ) : (
+                <MapButton
+                  onClick={handleMapClick}
+                  inJourney={!!journey}
+                  pathRotation={mapRotation}
+                  pathLength={journey?.journeyLength ?? "long"}
+                  label={
+                    (activeJourney ?? canceledJourney)
+                      ? t("ui.continueExpedition")
+                      : selectedJourney
+                        ? t("ui.startExpedition")
+                        : t("ui.planExpedition")
+                  }
+                  journeyProgress={journeyProgress}
+                />
+              )}
               {!activeJourney && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
@@ -202,24 +242,58 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
           <div className="flex-1 overflow-y-auto p-6">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {journeys
-                .filter((journey) => journey.requiredPrestigeLevel <= prestige)
-                .map((journey, index) => {
-                  const completionCount = journeyLog.filter(
-                    (j) => j.journeyId === journey.id && j.completed
-                  ).length
-                  return (
-                    <JourneyCard
-                      key={journey.id}
-                      journey={journey}
-                      completionCount={completionCount}
-                      disabled={prestige < journey.requiredPrestigeLevel}
-                      index={index}
-                      showAnimation={showJourneySelection}
-                      onClick={handleJourneySelect}
-                    />
+              {journeys.slice(0, unlocked).map((journey, index) => {
+                const completionCount = journeyLog.filter(
+                  (j) => j.journeyId === journey.id && j.completed
+                ).length
+                const hasMapPiece =
+                  journeyLog.filter(
+                    (j) => j.journeyId === journey.id && j.foundMapPiece
+                  ).length > 0
+                const progressLevelNr =
+                  journeyLog.find(
+                    (j) =>
+                      j.journeyId === journey.id && j.canceled && !j.completed
+                  )?.levelNr ?? 0
+
+                if (journey.type === "treasure_tomb") {
+                  // Treasure Tombs are unlocked if all map pieces are found
+                  const pyramidJourneys = journeys.filter(
+                    (exp) =>
+                      exp.difficulty === journey.difficulty &&
+                      exp.type === "pyramid"
                   )
-                })}
+                  const piecesFound = pyramidJourneys.filter((journey) =>
+                    journeyLog.some(
+                      (log) => log.journeyId === journey.id && log.foundMapPiece
+                    )
+                  ).length
+
+                  if (piecesFound < pyramidJourneys.length) {
+                    return (
+                      <MapPiecePlaceholder
+                        key={journey.id}
+                        piecesFound={piecesFound}
+                        name={journey.name}
+                        piecesNeeded={pyramidJourneys.length}
+                      />
+                    )
+                  }
+                }
+                return (
+                  <JourneyCard
+                    key={journey.id}
+                    showDetails={index === unlocked - 1}
+                    journey={journey}
+                    completionCount={completionCount}
+                    progressLevelNr={progressLevelNr}
+                    index={index}
+                    showAnimation={showJourneySelection}
+                    hasMapPiece={hasMapPiece}
+                    onClick={handleJourneySelect}
+                  />
+                )
+              })}
             </div>
           </div>
         </div>

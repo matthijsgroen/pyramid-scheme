@@ -10,12 +10,13 @@ export type Item = {
 }
 
 export type ActiveJourney = {
-  journeyId: string
+  journeyId: (typeof journeys)[number]["id"]
   randomSeed: number
   levelNr: number
   startTime: number
   endTime?: number
   completed: boolean
+  foundMapPiece?: boolean
   canceled?: boolean
   plannedLoot?: Record<number, Item[]>
   completionTreasures?: Item[]
@@ -59,6 +60,9 @@ export const generateJourneyLevel = (
   const journey = journeys.find((j) => j.id === activeJourney.journeyId)
   if (!journey) {
     throw new Error(`Journey with id ${activeJourney.journeyId} not found`)
+  }
+  if (journey.type !== "pyramid") {
+    return null
   }
   if (levelNr > journey.levelCount) {
     return null

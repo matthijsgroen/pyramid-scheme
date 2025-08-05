@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState, useRef, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
+import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
 import { clsx } from "clsx"
-import { Backdrop } from "@/ui/Backdrop"
+import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourney"
 import type { JourneyState } from "@/app/state/useJourneys"
+import type { PyramidJourney } from "@/data/journeys"
 
-export const Journey: FC<{
+export const PyramidExpedition: FC<{
   activeJourney: JourneyState
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
@@ -21,6 +23,7 @@ export const Journey: FC<{
 }) => {
   const { t } = useTranslation("common")
   const [startNextLevel, setStartNextLevel] = useState(false)
+  const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
@@ -104,28 +107,34 @@ export const Journey: FC<{
 
   const onComplete = useCallback(() => {
     if (startNextLevel) return
+    setLevelCompleted(true)
+  }, [startNextLevel])
+
+  const onCompletionFinished = useCallback(() => {
+    setLevelCompleted(false)
     setTimeout(() => {
       setStartNextLevel(true)
     }, 1000)
-  }, [startNextLevel])
+  }, [])
 
-  const expeditionCompleted =
-    activeJourney.levelNr > activeJourney.journey.levelCount
+  // Early return if not a pyramid journey
+  if (activeJourney.journey.type !== "pyramid") {
+    return null
+  }
+
+  // Cast to PyramidJourney since we've confirmed the type
+  const pyramidJourney = activeJourney.journey as PyramidJourney
+
+  const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
   return (
-    <Backdrop
-      levelNr={activeJourney.levelNr}
-      start={activeJourney.journey.time}
-    >
+    <DesertBackdrop levelNr={activeJourney.levelNr} start={pyramidJourney.time}>
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
           <div
             className={clsx(
               "flex w-full items-center justify-between px-4 py-2",
-              dayNightCycleStep(
-                activeJourney.levelNr,
-                activeJourney.journey.time
-              ) < 6
+              dayNightCycleStep(activeJourney.levelNr, pyramidJourney.time) < 6
                 ? "text-black"
                 : "text-white"
             )}
@@ -140,7 +149,7 @@ export const Journey: FC<{
               {expeditionCompleted
                 ? t("ui.expeditionCompleted")
                 : t("ui.expedition") +
-                  ` ${t("ui.level")} ${activeJourney.levelNr}/${activeJourney.journey.levelCount}`}
+                  ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
             </h1>
             <span></span>
           </div>
@@ -243,6 +252,15 @@ export const Journey: FC<{
           </div>
         </div>
       </div>
-    </Backdrop>
+
+      {/* Level Completion Handler */}
+      {levelContent && (
+        <LevelCompletionHandler
+          isCompleted={levelCompleted}
+          onCompletionFinished={onCompletionFinished}
+          activeJourney={activeJourney}
+        />
+      )}
+    </DesertBackdrop>
   )
 }

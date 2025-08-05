@@ -1,9 +1,11 @@
 {
   "language": "English",
   "difficulty": {
-    "easy": "Easy",
-    "medium": "Medium",
-    "hard": "Hard"
+    "starter": "Starter",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Master",
+    "wizard": "Wizard"
   },
   "journeyLength": {
     "short": "Short",
@@ -23,6 +25,7 @@
     "tableau": "Tableau",
     "difficulty": "Difficulty",
     "length": "Length",
+    "chambers": "Chambers",
     "time": "Time",
     "requiredPrestige": "Required Prestige Level",
     "rewards": "Rewards",
@@ -46,11 +49,35 @@
     "or": "Or",
     "selectAnotherExpedition": "Select another expedition",
     "abortExpedition": "Abort expedition",
-    "confirmAbortExpedition": "Are you sure you want to abort this expedition? All progress will be lost!",
+    "confirmAbortExpedition": "Are you sure you want to abort this expedition? Journey progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
     "settings": "Settings",
     "language": "Language",
     "close": "Close",
-    "done": "Done"
+    "done": "Done",
+    "progressLevel": "In Progress",
+    "treasureTomb": "Treasure Tomb",
+    "requiresMapPieces": "Requires map pieces",
+    "mapPieces": "Map Pieces",
+    "collected": "collected",
+    "completeExpeditionsToUnlock": "Complete expeditions to unlock"
+  },
+  "collection": {
+    "title": "Collection",
+    "clickForDetails": "Click a tile for details",
+    "categories": {
+      "deities": "🏺 Deities",
+      "professions": "⚱️ Professions",
+      "animals": "🐾 Animals",
+      "artifacts": "💎 Artifacts",
+      "treasures": "💰 Treasures"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Merchant Cache",
+      "nobleVault": "👑 Noble Vault",
+      "templeSecrets": "🏛️ Temple Secrets",
+      "ancientRelics": "🏺 Ancient Relics",
+      "mythicalArtifacts": "✨ Mythical Artifacts"
+    }
   }
 }

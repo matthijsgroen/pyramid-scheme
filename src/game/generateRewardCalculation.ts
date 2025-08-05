@@ -1,7 +1,6 @@
-import { hieroglyphs } from "@/data/hieroglyphs"
 import { shuffle } from "@/game/random"
 
-type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
+export type Operation = "+" | "-" | "*" | "/"
 
 /**
  * Describe a reward calculation.
@@ -10,7 +9,7 @@ type Operation = "+" | "-" | "*" | "/" | "mod" | "div" | "pow"
  */
 export type RewardCalculationSettings = {
   amountSymbols: number
-  symbolOffset: number
+  hieroglyphIds: string[]
   numberRange: [min: number, max: number]
   operations: Operation[]
 }
@@ -45,10 +44,11 @@ export const generateRewardCalculation = (
       pickedNumbers.push(number)
     }
   }
+  const symbolIds = shuffle(settings.hieroglyphIds, random)
 
   const symbolMapping: Record<number, string> = pickedNumbers.reduce(
     (acc, num, index) => {
-      acc[num] = hieroglyphs[index + settings.symbolOffset]
+      acc[num] = symbolIds[index]
       return acc
     },
     {} as Record<number, string>
@@ -135,12 +135,6 @@ const evaluateFormula = (
       return left * right
     case "/":
       return right !== 0 ? left / right : NaN
-    case "mod":
-      return right !== 0 ? left % right : NaN
-    case "div":
-      return right !== 0 ? Math.floor(left / right) : NaN
-    case "pow":
-      return Math.pow(left, right)
     default:
       throw new Error(`Unknown operation: ${operation}`)
   }
@@ -181,7 +175,9 @@ const createSmallestVerifiedFormula = (
     createVerifiedFormula(pickedNumbers, operations, random),
   ]
     .filter(
-      (formula) => formulaToString(formula) !== formulaToString(mainFormula)
+      (formula) =>
+        formulaToString(formula) !== formulaToString(mainFormula) &&
+        formula.result !== mainFormula.result
     )
     .sort((a, b) => a.result - b.result)[0]
 
@@ -267,11 +263,7 @@ const getOperatorPrecedence = (operation: Operation): number => {
       return 1
     case "*":
     case "/":
-    case "mod":
-    case "div":
       return 2
-    case "pow":
-      return 3
     default:
       return 0
   }

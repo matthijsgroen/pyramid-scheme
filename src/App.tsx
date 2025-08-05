@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { Journey } from "@/app/Journey"
+import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
+import { TombExpedition } from "./app/TombExpedition"
 
 function App() {
   const [inGame, setInGame] = useState(false)
@@ -10,8 +11,8 @@ function App() {
   return (
     <>
       {!inGame && <Base startGame={() => setInGame(true)} />}
-      {inGame && activeJourney && (
-        <Journey
+      {inGame && activeJourney && activeJourney.journey.type === "pyramid" && (
+        <PyramidExpedition
           activeJourney={activeJourney}
           onLevelComplete={completeLevel}
           onJourneyComplete={() => {
@@ -21,6 +22,19 @@ function App() {
           onClose={() => setInGame(false)}
         />
       )}
+      {inGame &&
+        activeJourney &&
+        activeJourney.journey.type === "treasure_tomb" && (
+          <TombExpedition
+            activeJourney={activeJourney}
+            onLevelComplete={completeLevel}
+            onJourneyComplete={() => {
+              completeJourney()
+              setInGame(false)
+            }}
+            onClose={() => setInGame(false)}
+          />
+        )}
     </>
   )
 }

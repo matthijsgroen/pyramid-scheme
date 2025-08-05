@@ -1,50 +1,102 @@
 {
-  "easy_1": {
+  "starter_1": {
     "name": "Dageraad bij de Sfinx",
     "description": "Begin je avontuur bij de Grote Sfinx terwijl de ochtendzon zijn oude gezicht verlicht. Een zachte introductie tot de mysteries van Egypte."
   },
-  "easy_2": {
+  "starter_2": {
     "name": "Papyruskoopman Route",
     "description": "Volg de handelsroutes van oude papyruskooplieden langs de vreedzame oevers van de Nijl. Ontdek de geheimen van de Egyptische handel."
   },
-  "easy_3": {
+  "starter_3": {
     "name": "Tempel van Bastet",
     "description": "Bezoek de heilige tempel van kattengodin Bastet, waar trouwe aanbidders offers brengen en bescherming zoeken tegen boze geesten."
   },
-  "easy_4": {
+  "starter_4": {
     "name": "Schrijversacademie",
     "description": "Leer de kunst van hiëroglyfisch schrijven in de prestigieuze schrijversacademie, waar kennis waardevoller is dan goud."
   },
-  "medium_1": {
+  "starter_treasure_tomb": {
+    "name": "Vergeten Koopman's Voorraad",
+    "description": "Ontdek een kleine ondergrondse kamer waar een oude koopman zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten."
+  },
+  "junior_1": {
+    "name": "Heilige Ibis Migratie",
+    "description": "Volg de heilige ibis vogels op hun jaarlijkse migratie langs de Nijl. Leer de patronen die oude Egyptenaren gebruikten om de overstroming te voorspellen."
+  },
+  "junior_2": {
+    "name": "Vallei van de Ambachtslieden",
+    "description": "Verken het dorp waar vaardige ambachtslieden schatten creëerden voor de farao's. Beheers de oude technieken van metaalbewerking en juwelen maken."
+  },
+  "junior_3": {
+    "name": "Tempel van Thoth",
+    "description": "Betreed de tempel van Thoth, god van wijsheid en schrijven. Los wiskundige puzzels op die je begrip van oude Egyptische getallen testen."
+  },
+  "junior_4": {
+    "name": "Vuurtoren van Alexandrië",
+    "description": "Beklim de legendarische vuurtoren van Alexandrië, een van de Zeven Wereldwonderen. Navigeer door de wiskundige principes die dit wonder mogelijk maakten."
+  },
+  "junior_treasure_tomb": {
+    "name": "Edelmanns Verborgen Kluis",
+    "description": "Verken de geheime kluis van een rijke Egyptische edelman, gevuld met gouden artefacten en kostbare edelstenen verstopt voor grafrovers."
+  },
+  "expert_1": {
     "name": "Vallei der Koningen",
     "description": "Verken de koninklijke necropolis waar farao's voor de eeuwigheid rusten. Navigeer door uitgebreide grafkamers vol oude puzzels."
   },
-  "medium_2": {
+  "expert_2": {
     "name": "Karnak Tempelcomplex",
     "description": "Waag je door het uitgestrekte tempelcomplex van Karnak, gewijd aan Amun-Ra. Los de raadsels op die door hogepriesters door de eeuwen heen zijn achtergelaten."
   },
-  "medium_3": {
+  "expert_3": {
     "name": "Nijldelta Expeditie",
     "description": "Reis door de vruchtbare Nijldelta, ontmoet krokodilgoden en los de mysteries op van de jaarlijkse overstroming van de rivier."
   },
-  "medium_4": {
+  "expert_4": {
     "name": "Piramide van Djoser",
     "description": "Beklim de trappenpiramide van Djoser, de eerste piramide ooit gebouwd. Ga de uitdagingen aan die dit monument millennia lang hebben beschermd."
   },
-  "hard_1": {
+  "expert_treasure_tomb": {
+    "name": "Hogepriester's Schatkamer",
+    "description": "Infiltreer de uitgebreide ondergrondse schatkamer van een machtige hogepriester, waar heilige relieken en goddelijke artefacten wachten op de waardigen."
+  },
+  "master_1": {
     "name": "Grote Piramide van Gizeh",
     "description": "Betreed de meest magnifieke piramide ooit gebouwd. Ga de ultieme test aan terwijl je door de Grote Galerij navigeert en de Koningskamer bereikt."
   },
-  "hard_2": {
+  "master_2": {
     "name": "Boek der Doden",
     "description": "Ontrafel de mysteries van het hiernamaals door het verzamelen en ontcijferen van de heilige teksten die zielen door de onderwereld leiden."
   },
-  "hard_3": {
+  "master_3": {
     "name": "Vloek van de Farao's",
     "description": "Breek de oude vloek die grafrovers eeuwenlang heeft geplaagd. Ga bovennatuurlijke uitdagingen en goddelijke vergelding aan."
   },
-  "hard_4": {
+  "master_4": {
+    "name": "Graf van Nefertari",
+    "description": "Betreed het meest prachtig gedecoreerde graf in de Vallei der Koninginnen. Los puzzels op gebaseerd op de verbluffende muurschilderingen en hiërogliefen."
+  },
+  "master_treasure_tomb": {
+    "name": "Farao's Geheime Schat",
+    "description": "Onthul de legendarische geheime schatkamer van een grote farao, verborgen onder het woestijnzand en beschermd door oude vloeken."
+  },
+  "wizard_1": {
     "name": "Ra's Zonnereis",
     "description": "Vergezeld Ra op zijn gevaarlijke nachtelijke reis door de onderwereld, vecht tegen de slang Apep en zorg ervoor dat de zon weer opkomt."
+  },
+  "wizard_2": {
+    "name": "Geheimen van de Sfinx",
+    "description": "Ontgrendel de diepste mysteries verborgen in de Grote Sfinx. Ga raadsels aan die de grootste geesten millennia lang hebben uitgedaagd."
+  },
+  "wizard_3": {
+    "name": "Kamer van Ma'at",
+    "description": "Betreed de kosmische kamer waar Ma'at de harten van de doden weegt. Balanceer goddelijke wiskunde in het rijk van perfecte gerechtigheid."
+  },
+  "wizard_4": {
+    "name": "Eeuwige Piramide",
+    "description": "Beklim de mythische Eeuwige Piramide die bestaat buiten tijd en ruimte. Beheers de ultieme wiskundige mysteries van de schepping zelf."
+  },
+  "wizard_treasure_tomb": {
+    "name": "Kluis van de Goden",
+    "description": "Betreed de mythische schatkamer waar de goden zelf hun kostbaarste artefacten bewaarden. Alleen de meest vaardige avonturiers durven deze ultieme schattenjacht te proberen."
   }
 }

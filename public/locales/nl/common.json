@@ -1,9 +1,11 @@
 {
   "language": "Nederlands",
   "difficulty": {
-    "easy": "Makkelijk",
-    "medium": "Gemiddeld",
-    "hard": "Moeilijk"
+    "starter": "Beginner",
+    "junior": "Junior",
+    "expert": "Expert",
+    "master": "Meester",
+    "wizard": "Tovenaar"
   },
   "journeyLength": {
     "short": "Kort",
@@ -23,6 +25,7 @@
     "tableau": "Tableau",
     "difficulty": "Moeilijkheid",
     "length": "Lengte",
+    "chambers": "Kamers",
     "time": "Tijd",
     "requiredPrestige": "Vereist Prestige Niveau",
     "rewards": "Beloningen",
@@ -46,11 +49,35 @@
     "or": "Of",
     "selectAnotherExpedition": "Selecteer een andere expeditie",
     "abortExpedition": "Breek expeditie af",
-    "confirmAbortExpedition": "Weet je zeker dat je deze expeditie wilt afbreken? Alle voortgang gaat verloren!",
+    "confirmAbortExpedition": "Weet je zeker dat je deze expeditie wilt afbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",
     "cancel": "Annuleren",
     "settings": "Instellingen",
     "language": "Taal",
     "close": "Sluiten",
-    "done": "Klaar"
+    "done": "Klaar",
+    "progressLevel": "Voortgang",
+    "treasureTomb": "Schatgraf",
+    "requiresMapPieces": "Vereist kaartdelen",
+    "mapPieces": "Kaartdelen",
+    "collected": "verzameld",
+    "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen"
+  },
+  "collection": {
+    "title": "Collectie",
+    "clickForDetails": "Klik op een tegel voor details",
+    "categories": {
+      "deities": "🏺 Goden",
+      "professions": "⚱️ Beroepen",
+      "animals": "🐾 Dieren",
+      "artifacts": "💎 Artefacten",
+      "treasures": "💰 Schatten"
+    },
+    "treasureCategories": {
+      "merchantCache": "💰 Handelaars Cache",
+      "nobleVault": "👑 Adellijke Kluis",
+      "templeSecrets": "🏛️ Tempel Geheimen",
+      "ancientRelics": "🏺 Oude Relieken",
+      "mythicalArtifacts": "✨ Mythische Artefacten"
+    }
   }
 }
