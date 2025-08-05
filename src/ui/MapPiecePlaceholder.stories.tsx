@@ -32,6 +32,7 @@ export const NoProgress: Story = {
     piecesFound: 0,
     piecesNeeded: 3,
     showAnimation: false,
+    name: "Merchants hideout",
     index: 0,
   },
 }
@@ -41,6 +42,7 @@ export const PartialProgress: Story = {
     piecesFound: 1,
     piecesNeeded: 3,
     showAnimation: false,
+    name: "Merchants hideout",
     index: 0,
   },
 }
@@ -50,6 +52,7 @@ export const AlmostComplete: Story = {
     piecesFound: 2,
     piecesNeeded: 3,
     showAnimation: false,
+    name: "Merchants hideout",
     index: 0,
   },
 }
@@ -59,6 +62,7 @@ export const FourPieces: Story = {
     piecesFound: 1,
     piecesNeeded: 4,
     showAnimation: false,
+    name: "Merchants hideout",
     index: 0,
   },
 }
@@ -68,6 +72,7 @@ export const WithAnimation: Story = {
     piecesFound: 1,
     piecesNeeded: 3,
     showAnimation: true,
+    name: "Merchants hideout",
     index: 1,
   },
 }
