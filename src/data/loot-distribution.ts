@@ -13,6 +13,7 @@ export type TombRunLoot = {
   levelCount: number
   symbolsPerTableau: number
   requiredSymbols: string[]
+  symbolCounts: Record<string, number> // NEW: track how many times each symbol is used
   tableauRange: {
     start: number
     end: number
@@ -80,9 +81,13 @@ function generateLootDistribution(): TombLootDistribution[] {
 
       // Collect all unique symbols required for this run
       const allSymbols = new Set<string>()
+      const symbolCounts = new Map<string, number>()
+      
       runTableaux.forEach((tableau) => {
         tableau.inventoryIds.forEach((symbolId) => {
           allSymbols.add(symbolId)
+          // Count how many times each symbol is used in this run
+          symbolCounts.set(symbolId, (symbolCounts.get(symbolId) || 0) + 1)
         })
       })
 
@@ -99,6 +104,7 @@ function generateLootDistribution(): TombLootDistribution[] {
         levelCount: tomb.levelsPerRun,
         symbolsPerTableau: tomb.symbolsPerTableau,
         requiredSymbols: Array.from(allSymbols).sort(),
+        symbolCounts: Object.fromEntries(symbolCounts),
         tableauRange: {
           start: tombTableaux[startIndex].levelNr,
           end: tombTableaux[endIndex].levelNr,

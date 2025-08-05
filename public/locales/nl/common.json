@@ -68,6 +68,9 @@
     "youFound": "Je hebt gevonden",
     "clickToContinue": "Klik ergens om door te gaan"
   },
+  "level": {
+    "completed": "Niveau Voltooid!"
+  },
   "collection": {
     "title": "Collectie",
     "clickForDetails": "Klik op een tegel voor details",

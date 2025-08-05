@@ -28,17 +28,14 @@ export const useInventoryItem = (id: string) => {
   let category = ""
   if (id.startsWith("d")) category = "deities"
   else if (id.startsWith("p")) category = "professions"
-  else if (id.startsWith("a")) category = "animals"
   else if (id.startsWith("art")) category = "artifacts"
+  else if (id.startsWith("a")) category = "animals"
 
   return {
     id: item.id,
     symbol: item.symbol,
     name: t(`${category}.${id}.name`),
     description: t(`${category}.${id}.description`),
-    // Add fallbacks in case translation fails
-    fallbackName: item.name,
-    fallbackDescription: item.description,
   }
 }
 

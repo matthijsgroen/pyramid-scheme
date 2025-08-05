@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest"
 import {
   analyzeInventoryNeeds,
   determineInventoryLoot,
+  determineInventoryLootForCurrentRuns,
 } from "./inventoryLootLogic"
 import type { JourneyState } from "@/app/state/useJourneys"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -161,5 +162,36 @@ describe("determineInventoryLoot", () => {
       expect(typeof result.adjustedChance).toBe("number")
       expect(typeof result.needMultiplier).toBe("number")
     })
+  })
+
+  it("should only award items available at the current expedition difficulty", () => {
+    const starterJourney = createMockJourney("starter")
+    const journeyLog: Array<{ journeyId: string; completed: boolean }> = [
+      // Player has completed some expert tomb runs, making expert symbols "needed"
+      { journeyId: "expert_treasure_tomb", completed: true },
+      { journeyId: "expert_treasure_tomb", completed: true },
+    ]
+    const inventory = {} // No inventory
+
+    // Run multiple times to test different seeds
+    for (let i = 0; i < 20; i++) {
+      const testJourney = {
+        ...starterJourney,
+        randomSeed: 12345 + i,
+        levelNr: i + 1,
+      }
+
+      const result = determineInventoryLootForCurrentRuns(
+        testJourney,
+        journeyLog,
+        inventory
+      )
+
+      // If an item is awarded, it should only be from starter difficulty
+      if (result.shouldAwardInventoryItem && result.itemId) {
+        const starterSymbols = ["p10", "p8", "a6", "a8", "art1", "art5", "d1"]
+        expect(starterSymbols).toContain(result.itemId)
+      }
+    }
   })
 })

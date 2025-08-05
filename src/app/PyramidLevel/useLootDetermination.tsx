@@ -2,7 +2,7 @@ import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { determineMapPieceLoot } from "./mapPieceLogic"
-import { determineInventoryLoot } from "./inventoryLootLogic"
+import { determineInventoryLootForCurrentRuns } from "./inventoryLootLogic"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
@@ -25,7 +25,11 @@ export const useLootDetermination = (
 
   // Pre-calculate loot determination outside of useMemo
   const mapPieceResult = determineMapPieceLoot(activeJourney, journeyLog)
-  const inventoryResult = determineInventoryLoot(activeJourney, inventory)
+  const inventoryResult = determineInventoryLootForCurrentRuns(
+    activeJourney,
+    journeyLog,
+    inventory
+  )
 
   // Always call the hook, but with a fallback value when no item ID
   const inventoryItemHook = useInventoryItem(inventoryResult.itemId || "")
@@ -59,33 +63,11 @@ export const useLootDetermination = (
     ) {
       const itemDifficulty = getItemFirstLevel(inventoryResult.itemId)
 
-      // Determine category and create translation keys
-      let category = ""
-      if (inventoryResult.itemId.startsWith("d")) category = "deities"
-      else if (inventoryResult.itemId.startsWith("p")) category = "professions"
-      else if (inventoryResult.itemId.startsWith("a")) category = "animals"
-      else if (inventoryResult.itemId.startsWith("art")) category = "artifacts"
-
-      const nameKey = `${category}.${inventoryResult.itemId}.name`
-      const descriptionKey = `${category}.${inventoryResult.itemId}.description`
-
-      // Check if translation failed by comparing key with result
-      const itemName =
-        inventoryItemHook.name === nameKey
-          ? inventoryItemHook.fallbackName || inventoryItemHook.name
-          : inventoryItemHook.name
-
-      const itemDescription =
-        inventoryItemHook.description === descriptionKey
-          ? inventoryItemHook.fallbackDescription ||
-            inventoryItemHook.description
-          : inventoryItemHook.description
-
       return {
         loot: {
           itemId: inventoryResult.itemId,
-          itemName,
-          itemDescription,
+          itemName: inventoryItemHook.name,
+          itemDescription: inventoryItemHook.description,
           itemComponent: (
             <HieroglyphTile
               symbol={inventoryItemHook.symbol}

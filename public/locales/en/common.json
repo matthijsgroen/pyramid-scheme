@@ -68,6 +68,9 @@
     "youFound": "You found",
     "clickToContinue": "Click anywhere to continue"
   },
+  "level": {
+    "completed": "Level Completed!"
+  },
   "collection": {
     "title": "Collection",
     "clickForDetails": "Click a tile for details",
