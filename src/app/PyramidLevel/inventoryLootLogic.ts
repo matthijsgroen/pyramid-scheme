@@ -41,6 +41,7 @@ export const determineInventoryLootForCurrentRuns = (
     )
     .map((j) => j.id)
   const itemsRequired: Record<string, number> = {}
+  const itemsInteresting: string[] = []
 
   tombIds.forEach((tombId) => {
     const tombInfo = journeys.find(
@@ -57,6 +58,21 @@ export const determineInventoryLootForCurrentRuns = (
     const tableau = tableauLevels.find(
       (t) => t.tombJourneyId === tombId && t.runNumber === currentRun
     )
+
+    // collect all interesting items in this run for this tomb
+    tableauLevels.forEach((tableau) => {
+      if (
+        tableau.tombJourneyId === tombId &&
+        tableau.runNumber === currentRun
+      ) {
+        tableau.inventoryIds.forEach((itemId) => {
+          if (!itemsInteresting.includes(itemId)) {
+            itemsInteresting.push(itemId)
+          }
+        })
+      }
+    })
+
     if (!tableau || !tombInfo) return
     const seed = journeySeedGenerator(journeyLog)(tombId)
     const random = mulberry32(generateNewSeed(seed, currentLevel))
@@ -125,18 +141,39 @@ export const determineInventoryLootForCurrentRuns = (
   urgencyScores.sort((a, b) => b.urgencyScore - a.urgencyScore)
 
   // Select up to maxItemsToAward items with positive urgency scores
-  const selectedItems = urgencyScores
+  let selectedItems = urgencyScores
     .filter((item) => item.urgencyScore > 0)
     .slice(0, maxItemsToAward)
 
+  // If no urgent items, fall back to interesting items (filtered by difficulty)
   if (selectedItems.length === 0) {
-    return {
-      shouldAwardInventoryItem: false,
-      itemIds: [],
-      baseChance: baseInventoryChance,
-      adjustedChance: 0,
-      needMultiplier: 0,
+    const filteredInterestingItems = itemsInteresting.filter((itemId) => {
+      const itemDifficulty = getItemFirstLevel(itemId)
+      return difficultyCompare(itemDifficulty, difficulty) <= 0
+    })
+
+    if (filteredInterestingItems.length === 0) {
+      return {
+        shouldAwardInventoryItem: false,
+        itemIds: [],
+        baseChance: baseInventoryChance,
+        adjustedChance: 0,
+        needMultiplier: 0,
+      }
     }
+
+    // Pick random items from the interesting list
+    const shuffledInteresting = [...filteredInterestingItems].sort(
+      () => Math.random() - 0.5
+    )
+    const fallbackItems = shuffledInteresting.slice(0, maxItemsToAward)
+
+    selectedItems = fallbackItems.map((itemId) => ({
+      itemId,
+      needed: 1, // Default to 1 for interesting items
+      urgencyScore: 1, // Low urgency for fallback items
+      deficit: 1,
+    }))
   }
 
   // Calculate overall urgency from all selected items
