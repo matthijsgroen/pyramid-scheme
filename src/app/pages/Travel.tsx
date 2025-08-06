@@ -15,17 +15,7 @@ import {
 import { DifficultyPill } from "@/ui/DifficultyPill"
 import { mulberry32 } from "@/game/random"
 import { TombMapButton } from "@/ui/TombMapButton"
-
-// Simple string hash function to convert string to number
-const hashString = (str: string): number => {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = (hash << 5) - hash + char
-    hash = hash & hash // Convert to 32-bit integer
-  }
-  return Math.abs(hash)
-}
+import { hashString } from "@/support/hashString"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -51,7 +41,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
-  const [showAbortModal, setShowAbortModal] = useState(false)
+  const [showInterruptModal, setShowInterruptModal] = useState(false)
 
   const canceledJourney = useMemo(() => {
     return journeyLog.find(
@@ -68,7 +58,8 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     const journeySeed =
       (activeJourney?.randomSeed ??
         canceledJourney?.randomSeed ??
-        nextJourneySeed()) + (journey?.id ? hashString(journey.id) : 0)
+        nextJourneySeed(journey?.id ?? "none")) +
+      (journey?.id ? hashString(journey.id) : 0)
     const random = mulberry32(journeySeed)
     return Math.round(random() * 360)
   }, [
@@ -98,13 +89,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     setShowJourneySelection(false)
   }
 
-  const handleAbortExpedition = () => {
-    setShowAbortModal(false)
+  const handleInterruptExpedition = () => {
+    setShowInterruptModal(false)
     cancelJourney()
   }
 
-  const handleCancelAbort = () => {
-    setShowAbortModal(false)
+  const handleCancelInterrupt = () => {
+    setShowInterruptModal(false)
   }
 
   const unlocked = useMemo(() => {
@@ -134,13 +125,15 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               : "translate-x-0 opacity-100"
           }`}
         >
-          <p className="mb-4 text-center text-sm text-gray-600">
-            This is an early alpha version.{" "}
-            <span className="font-bold">
-              Expect bugs, missing features and losing progress!
-            </span>
+          <p className="mb-4 border-b-2 border-red-200 pb-2 text-center text-sm text-red-600">
+            This is an early <strong className="font-bold">alpha</strong>{" "}
+            version. Expect an{" "}
+            <strong className="font-bold">
+              unbalanced experience, bugs, missing features and losing progress
+            </strong>
+            !
           </p>
-          <h1 className="mb-6 text-center font-pyramid text-2xl font-bold">
+          <h1 className="mb-4 text-center font-pyramid text-xl font-bold">
             {t("ui.travel")}
           </h1>
 
@@ -210,10 +203,10 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
-                    onClick={() => setShowAbortModal(true)}
+                    onClick={() => setShowInterruptModal(true)}
                     className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 lowercase hover:text-blue-700"
                   >
-                    {t("ui.abortExpedition")}
+                    {t("ui.interruptExpedition")}
                   </button>
                 </div>
               )}
@@ -300,13 +293,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
       </div>
 
       <ConfirmModal
-        isOpen={showAbortModal}
-        title={t("ui.abortExpedition")}
-        message={t("ui.confirmAbortExpedition")}
-        confirmText={t("ui.abortExpedition")}
+        isOpen={showInterruptModal}
+        title={t("ui.interruptExpedition")}
+        message={t("ui.confirmInterruptExpedition")}
+        confirmText={t("ui.interruptExpedition")}
         cancelText={t("ui.cancel")}
-        onConfirm={handleAbortExpedition}
-        onCancel={handleCancelAbort}
+        onConfirm={handleInterruptExpedition}
+        onCancel={handleCancelInterrupt}
       />
     </Page>
   )

@@ -33,5 +33,30 @@ export const useInventory = () => {
       },
       [setInventory]
     ),
+    addItems: useCallback(
+      (items: Record<string, number>) => {
+        setInventory((prev) => {
+          const newInventory = { ...prev }
+          Object.entries(items).forEach(([id, count]) => {
+            newInventory[id] = (newInventory[id] || 0) + count
+          })
+          return newInventory
+        })
+      },
+      [setInventory]
+    ),
+    removeItems: useCallback(
+      (items: Record<string, number>) => {
+        setInventory((prev) => {
+          const newInventory = { ...prev }
+          Object.entries(items).forEach(([id, count]) => {
+            const currentCount = newInventory[id] || 0
+            newInventory[id] = Math.max(0, currentCount - count)
+          })
+          return newInventory
+        })
+      },
+      [setInventory]
+    ),
   }
 }

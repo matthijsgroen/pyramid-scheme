@@ -7,6 +7,7 @@
 import type { Difficulty } from "./difficultyLevels"
 
 export type TableauLevel = {
+  id: string
   levelNr: number
   symbolCount: number
   inventoryIds: string[]
@@ -36,6 +37,7 @@ const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
   ],
   expert: [
     "p2",
+    "p3",
     "p7",
     "p12",
     "a5",
@@ -473,7 +475,7 @@ function generateDescriptionKeys(tombId: string, count: number): string[] {
 // Generate all tableau levels with i18n support
 export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   const tableaus: TableauLevel[] = []
-  let levelCounter = 1
+  let expectedLevelNr = 1
 
   TOMB_CONFIG.forEach((tomb) => {
     const symbols = getSymbolsForTomb(tomb.id)
@@ -511,9 +513,11 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
 
         const storyKey = shuffledStoryKeys[storyKeyIndex]
         const descKey = descriptionKeys[descKeyIndex]
+        expectedLevelNr++
 
         tableaus.push({
-          levelNr: levelCounter++,
+          id: `tab${expectedLevelNr}`,
+          levelNr: level,
           symbolCount: tomb.symbolCount,
           inventoryIds: tableauSymbols,
           tombJourneyId: tomb.id,

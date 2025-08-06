@@ -1,6 +1,14 @@
 import type { Operation } from "@/game/generateRewardCalculation"
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
+import {
+  ancientRelicsTreasures,
+  merchantCacheTreasures,
+  mythicalArtifactsTreasures,
+  nobleVaultTreasures,
+  templeSecretsTreasures,
+  type Treasure,
+} from "./treasures"
 
 /**
  * JourneyLength:
@@ -33,7 +41,6 @@ export type PyramidJourney = {
     }
     completed: {
       pieces: [min: number, max: number]
-      pieceLevels: [min: number, max: number]
     }
   }
 }
@@ -46,6 +53,7 @@ export type TreasureTombJourney = {
   difficulty: Difficulty
   journeyLength: "short" | "medium" | "long"
   levelCount: number
+  treasures: Treasure[]
   levelSettings: {
     numberRange: [min: number, max: number]
     operators: Operation[]
@@ -75,7 +83,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [1, 2],
-        pieceLevels: [1, 2],
       },
     },
   },
@@ -102,7 +109,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [1, 2],
-        pieceLevels: [1, 3],
       },
     },
   },
@@ -129,7 +135,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [2, 3],
-        pieceLevels: [2, 4],
       },
     },
   },
@@ -156,7 +161,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [2, 4],
-        pieceLevels: [2, 5],
       },
     },
   },
@@ -171,6 +175,7 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "short",
     levelCount: 2,
+    treasures: merchantCacheTreasures,
     levelSettings: {
       numberRange: [1, 5],
       operators: ["+"],
@@ -201,7 +206,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [2, 3],
-        pieceLevels: [3, 5],
       },
     },
   },
@@ -228,7 +232,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [3, 4],
-        pieceLevels: [3, 6],
       },
     },
   },
@@ -255,7 +258,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [3, 5],
-        pieceLevels: [4, 7],
       },
     },
   },
@@ -282,7 +284,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [3, 5],
-        pieceLevels: [4, 6],
       },
     },
   },
@@ -297,6 +298,7 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "medium",
     levelCount: 3,
+    treasures: nobleVaultTreasures,
     levelSettings: {
       numberRange: [1, 9],
       operators: ["+", "-"],
@@ -327,7 +329,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [4, 6],
-        pieceLevels: [5, 8],
       },
     },
   },
@@ -354,7 +355,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [4, 7],
-        pieceLevels: [6, 9],
       },
     },
   },
@@ -381,7 +381,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [5, 8],
-        pieceLevels: [7, 11],
       },
     },
   },
@@ -408,7 +407,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [5, 8],
-        pieceLevels: [7, 10],
       },
     },
   },
@@ -423,6 +421,7 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "medium",
     levelCount: 4,
+    treasures: templeSecretsTreasures,
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*"],
@@ -453,7 +452,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [6, 9],
-        pieceLevels: [8, 12],
       },
     },
   },
@@ -480,7 +478,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [7, 11],
-        pieceLevels: [9, 14],
       },
     },
   },
@@ -507,7 +504,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [8, 12],
-        pieceLevels: [10, 16],
       },
     },
   },
@@ -534,7 +530,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [7, 11],
-        pieceLevels: [10, 15],
       },
     },
   },
@@ -549,6 +544,7 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "long",
     levelCount: 5,
+    treasures: ancientRelicsTreasures,
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
@@ -579,7 +575,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [10, 15],
-        pieceLevels: [12, 18],
       },
     },
   },
@@ -606,7 +601,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [12, 18],
-        pieceLevels: [14, 20],
       },
     },
   },
@@ -633,7 +627,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [15, 22],
-        pieceLevels: [16, 25],
       },
     },
   },
@@ -660,7 +653,6 @@ export const journeys: Journey[] = [
       },
       completed: {
         pieces: [18, 25],
-        pieceLevels: [18, 30],
       },
     },
   },
@@ -675,6 +667,7 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "long",
     levelCount: 6,
+    treasures: mythicalArtifactsTreasures,
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],

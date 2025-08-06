@@ -1,6 +1,9 @@
 import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 
 export const LevelCompletedOverlay = () => {
+  const { t } = useTranslation("common")
+
   // Random rotation between -20deg and +20deg
   const rotation = useMemo(() => {
     const deg = Math.random() * 40 - 20
@@ -12,7 +15,7 @@ export const LevelCompletedOverlay = () => {
         className="font-pyramid text-[6vw] font-extrabold text-green-400 select-none text-shadow-black text-shadow-lg"
         style={{ transform: rotation }}
       >
-        Level Completed!
+        {t("level.completed")}
       </span>
     </div>
   )

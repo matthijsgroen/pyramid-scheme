@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState, useRef, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
+import { ExpeditionCompletionOverlay } from "@/app/PyramidExpedition/ExpeditionCompletionOverlay"
+import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
@@ -12,11 +14,13 @@ import type { PyramidJourney } from "@/data/journeys"
 
 export const PyramidExpedition: FC<{
   activeJourney: JourneyState
+  runNr: number
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
 }> = ({
   activeJourney,
+  runNr,
   onLevelComplete: onNextLevel,
   onJourneyComplete,
   onClose,
@@ -127,6 +131,12 @@ export const PyramidExpedition: FC<{
 
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
+  // Check if a new pyramid journey is unlocked
+  const nextPyramidJourneyId =
+    runNr === 0
+      ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId)
+      : undefined
+
   return (
     <DesertBackdrop levelNr={activeJourney.levelNr} start={pyramidJourney.time}>
       <div className="flex h-full w-full flex-col">
@@ -235,19 +245,11 @@ export const PyramidExpedition: FC<{
               )}
             </div>
             {expeditionCompleted && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex flex-col rounded-lg bg-white/80 p-4 backdrop-blur-md">
-                  <span className="font-pyramid text-2xl font-bold text-green-500">
-                    {t("ui.expeditionCompleted")}
-                  </span>
-                  <button
-                    className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                    onClick={onJourneyComplete}
-                  >
-                    {t("ui.goBackToBase")}
-                  </button>
-                </div>
-              </div>
+              <ExpeditionCompletionOverlay
+                onJourneyComplete={onJourneyComplete}
+                newPyramidJourneyId={nextPyramidJourneyId}
+                activeJourney={activeJourney}
+              />
             )}
           </div>
         </div>

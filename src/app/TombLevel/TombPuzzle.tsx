@@ -2,16 +2,55 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
 import {
-  type Formula,
+  type Formula as FormulaType,
   type RewardCalculation,
 } from "@/game/generateRewardCalculation"
+import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { NumberLock } from "@/ui/NumberLock"
+import {
+  egyptianDeities,
+  egyptianProfessions,
+  egyptianAnimals,
+  egyptianArtifacts,
+} from "@/data/inventory"
+import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { useInventory } from "@/app/Inventory/useInventory"
+import { FormulaPart, type FilledTileState } from "./FormulaPart"
 import { clsx } from "clsx"
-import { useState, type FC } from "react"
+import { useState, useMemo, type FC } from "react"
+import { useTranslation } from "react-i18next"
 
-const obfuscate = (text: string, percentage: number): string => {
+// Helper function to count total number slots in a formula
+const countFormulaSlots = (formula: FormulaType): number => {
+  let count = 0
+  if (typeof formula.left === "number") {
+    count += 1
+  } else {
+    count += countFormulaSlots(formula.left)
+  }
+  if (typeof formula.right === "number") {
+    count += 1
+  } else {
+    count += countFormulaSlots(formula.right)
+  }
+  return count
+}
+
+// Helper function to get inventory item by ID
+const getInventoryItemById = (id: string) => {
+  const allItems = [
+    ...egyptianDeities,
+    ...egyptianProfessions,
+    ...egyptianAnimals,
+    ...egyptianArtifacts,
+  ]
+  return allItems.find((item) => item.id === id)
+}
+
+const revealText = (text: string, percentage?: number): string => {
   // replace characters with ? based on a noise pattern for natural reveal
   if (percentage === undefined || percentage <= 0) {
-    return text.replace(/[a-zA-Z]/g, "?")
+    return text.replace(/[a-zA-Z0-9]/g, "?")
   }
   if (percentage >= 1) {
     return text
@@ -42,36 +81,39 @@ const obfuscate = (text: string, percentage: number): string => {
   return obfuscatedText.join("")
 }
 
-const FormulaPart: FC<{ formula: Formula }> = ({ formula }) => {
-  return (
-    <span>
-      {typeof formula.left === "number" ? (
-        <span className="inline-block rounded bg-black/70 p-2">
-          ?{/* {formula.left} */}
-        </span>
-      ) : (
-        <FormulaPart formula={formula.left} />
-      )}
-      <span> {formula.operation} </span>
-      {typeof formula.right === "number" ? (
-        <span className="inline-block rounded bg-black/70 p-2">
-          ?{/* {formula.right} */}
-        </span>
-      ) : (
-        <FormulaPart formula={formula.right} />
-      )}
-    </span>
-  )
-}
-
-const Formula: FC<{ formula: Formula; showResult: boolean }> = ({
+const Formula: FC<{
+  formula: FormulaType
+  showResult: boolean
+  difficulty: Difficulty
+  symbolMapping: Record<number, string>
+  filledState: FilledTileState
+  onTileClick: (symbolId: string, position: string) => void
+  formulaIndex: number
+}> = ({
   formula,
   showResult,
+  difficulty,
+  symbolMapping,
+  filledState,
+  onTileClick,
+  formulaIndex,
 }) => {
   return (
     <div>
-      <FormulaPart formula={formula} /> ={" "}
-      {showResult ? <span>{formula.result}</span> : <span>???</span>}
+      <FormulaPart
+        formula={formula}
+        difficulty={difficulty}
+        symbolMapping={symbolMapping}
+        filledState={filledState}
+        onTileClick={onTileClick}
+        positionPrefix={`formula-${formulaIndex}`}
+      />{" "}
+      ={" "}
+      {showResult ? (
+        <span>{formula.result}</span>
+      ) : (
+        revealText(formula.result.toString(), 0)
+      )}
     </div>
   )
 }
@@ -80,33 +122,324 @@ export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
   difficulty: Difficulty
-}> = ({ tableau, calculation, difficulty }) => {
-  const [solvedPercentage, setSolvedPercentage] = useState(0.0) // Example percentage, adjust as needed
+  onComplete?: () => void
+}> = ({ tableau, calculation, difficulty, onComplete }) => {
+  const { t } = useTranslation("common")
+
+  // Get player's actual inventory
+  const { inventory, removeItems } = useInventory()
+
+  // State for managing which tiles are filled
+  const [filledState, setFilledState] = useState<FilledTileState>({
+    symbolCounts: {},
+    filledPositions: {},
+  })
+
+  // State for tracking how many inventory items are used in the puzzle
+  const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>(
+    {}
+  )
+
+  // State for NumberLock
+  const [lockCode, setLockCode] = useState("")
+  const [lockState, setLockState] = useState<"empty" | "error" | "open">(
+    "empty"
+  )
+  const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
+
+  // Calculate solved percentage based on filled tiles
+  const solvedPercentage = useMemo(() => {
+    // Count total slots across all formulas
+    const totalSlots =
+      calculation.hintFormulas.reduce(
+        (sum, formula) => sum + countFormulaSlots(formula),
+        0
+      ) + countFormulaSlots(calculation.mainFormula)
+
+    // Count filled slots
+    const filledSlots = Object.keys(filledState.filledPositions).length
+
+    return totalSlots > 0 ? filledSlots / totalSlots : 0
+  }, [calculation, filledState.filledPositions])
+
+  // Check if puzzle is completely solved (all symbols placed)
+  const isPuzzleCompleted = useMemo(() => {
+    return Object.entries(calculation.symbolCounts).every(
+      ([symbolId, maxNeeded]) => {
+        const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+        return usedInPuzzle === maxNeeded
+      }
+    )
+  }, [calculation.symbolCounts, filledState.symbolCounts])
+
+  const handleTileClick = (symbolId: string, position: string) => {
+    setFilledState((prev) => {
+      const newState = { ...prev }
+
+      // If position is already filled, remove the tile (only if puzzle is not completed)
+      if (newState.filledPositions[position] > 0) {
+        // Don't allow removal if puzzle is completed
+        if (isPuzzleCompleted) {
+          return prev
+        }
+
+        newState.filledPositions = { ...newState.filledPositions }
+        delete newState.filledPositions[position]
+        newState.symbolCounts = {
+          ...newState.symbolCounts,
+          [symbolId]: Math.max(0, (newState.symbolCounts[symbolId] || 0) - 1),
+        }
+
+        // Decrease inventory usage
+        setInventoryUsage((prevUsage) => ({
+          ...prevUsage,
+          [symbolId]: Math.max(0, (prevUsage[symbolId] || 0) - 1),
+        }))
+      } else {
+        // Check if we have available inventory items to use
+        const currentUsage = inventoryUsage[symbolId] || 0
+        const availableInInventory = inventory[symbolId] || 0
+        const currentPlaced = newState.symbolCounts[symbolId] || 0
+        const maxNeeded = calculation.symbolCounts[symbolId] || 0
+
+        // Only place if we have inventory available and haven't exceeded puzzle requirements
+        if (availableInInventory > currentUsage && currentPlaced < maxNeeded) {
+          newState.filledPositions = {
+            ...newState.filledPositions,
+            [position]: 1,
+          }
+          newState.symbolCounts = {
+            ...newState.symbolCounts,
+            [symbolId]: currentPlaced + 1,
+          }
+
+          // Increase inventory usage
+          setInventoryUsage((prevUsage) => ({
+            ...prevUsage,
+            [symbolId]: currentUsage + 1,
+          }))
+        }
+      }
+
+      return newState
+    })
+  }
+
+  // Helper function to find all empty positions for a given symbol
+  const findEmptyPositionsForSymbol = (symbolId: string): string[] => {
+    const positions: string[] = []
+
+    // Check all formulas (hints + main)
+    const allFormulas = [...calculation.hintFormulas, calculation.mainFormula]
+
+    allFormulas.forEach((formula, formulaIndex) => {
+      const checkFormulaPart = (part: FormulaType, prefix: string) => {
+        if (
+          typeof part.left === "number" &&
+          calculation.symbolMapping[part.left] === symbolId
+        ) {
+          const position = `${prefix}-left`
+          if (!filledState.filledPositions[position]) {
+            positions.push(position)
+          }
+        } else if (typeof part.left !== "number") {
+          checkFormulaPart(part.left, `${prefix}-left`)
+        }
+
+        if (
+          typeof part.right === "number" &&
+          calculation.symbolMapping[part.right] === symbolId
+        ) {
+          const position = `${prefix}-right`
+          if (!filledState.filledPositions[position]) {
+            positions.push(position)
+          }
+        } else if (typeof part.right !== "number") {
+          checkFormulaPart(part.right, `${prefix}-right`)
+        }
+      }
+
+      checkFormulaPart(formula, `formula-${formulaIndex}`)
+    })
+
+    return positions
+  }
+
+  const handleInventoryClick = (symbolId: string) => {
+    const currentUsage = inventoryUsage[symbolId] || 0
+    const availableInInventory = inventory[symbolId] || 0
+    const currentPlaced = filledState.symbolCounts[symbolId] || 0
+    const maxNeeded = calculation.symbolCounts[symbolId] || 0
+
+    // Check if we have available inventory items and haven't exceeded puzzle requirements
+    if (availableInInventory > currentUsage && currentPlaced < maxNeeded) {
+      // Find the first empty position for this symbol
+      const emptyPositions = findEmptyPositionsForSymbol(symbolId)
+
+      if (emptyPositions.length > 0) {
+        // Fill the first available position
+        handleTileClick(symbolId, emptyPositions[0])
+      }
+    }
+  }
+
+  // NumberLock handlers
+  const handleLockSubmit = (code: string) => {
+    // Prevent multiple submissions during processing
+    if (isProcessingCompletion) {
+      return
+    }
+
+    if (code === calculation.mainFormula.result.toString()) {
+      setLockState("open")
+      setIsProcessingCompletion(true)
+
+      // After 2 seconds, remove used inventory items and call onComplete
+      setTimeout(() => {
+        // Remove used inventory items in a single batch operation
+        const itemsToRemove = Object.fromEntries(
+          Object.entries(inventoryUsage).filter(
+            ([, usedCount]) => usedCount > 0
+          )
+        )
+        if (Object.keys(itemsToRemove).length > 0) {
+          removeItems(itemsToRemove)
+        }
+
+        // Call completion handler
+        onComplete?.()
+        setIsProcessingCompletion(false)
+      }, 2000)
+    } else {
+      setLockState("error")
+      // Reset to empty state after a delay
+      setTimeout(() => {
+        setLockState("empty")
+        setLockCode("")
+      }, 2000)
+    }
+  }
+
+  const handleLockChange = (code: string) => {
+    setLockCode(code)
+    if (lockState === "error") {
+      setLockState("empty")
+    }
+  }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center text-white">
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 px-4 text-white">
       <div
         className={clsx(
-          "flex flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
+          "flex w-full max-w-md flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
           hieroglyphLevelColors[difficulty]
         )}
       >
-        <h1 className="text-center text-2xl">
-          {obfuscate(tableau.name, solvedPercentage)}
+        <h1 className="text-center font-pyramid text-2xl">
+          {revealText(tableau.name, solvedPercentage)}
         </h1>
+
         {calculation.hintFormulas.map((formula, index) => (
           <div key={index} className="text-lg">
-            <Formula formula={formula} showResult={true} />
+            <Formula
+              formula={formula}
+              showResult={true}
+              difficulty={difficulty}
+              symbolMapping={calculation.symbolMapping}
+              filledState={filledState}
+              onTileClick={handleTileClick}
+              formulaIndex={index}
+            />
           </div>
         ))}
         <div>
           <span className="text-2xl">
-            <Formula formula={calculation.mainFormula} showResult={false} />
+            <Formula
+              formula={calculation.mainFormula}
+              showResult={false}
+              difficulty={difficulty}
+              symbolMapping={calculation.symbolMapping}
+              filledState={filledState}
+              onTileClick={handleTileClick}
+              formulaIndex={calculation.hintFormulas.length}
+            />
           </span>
         </div>
-        <div>{obfuscate(tableau.description, solvedPercentage)}</div>
+        <div>{revealText(tableau.description, solvedPercentage)}</div>
       </div>
-      <button onClick={() => setSolvedPercentage((p) => p + 0.1)}>Solve</button>
+
+      {/* Available symbols inventory - hide when puzzle is completed */}
+      {!isPuzzleCompleted && (
+        <div className="mb-4 rounded bg-black/20 p-2">
+          <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(calculation.symbolCounts).map(
+              ([symbolId, maxNeeded]) => {
+                const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+                const usedFromInventory = inventoryUsage[symbolId] || 0
+                const availableInInventory = inventory[symbolId] || 0
+                const inventoryItem = getInventoryItemById(symbolId)
+                const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
+                const canPlace =
+                  availableInInventory > usedFromInventory &&
+                  usedInPuzzle < maxNeeded
+
+                return (
+                  <div
+                    key={symbolId}
+                    className={clsx(
+                      "flex items-center gap-1 rounded p-1 transition-colors",
+                      canPlace
+                        ? "cursor-pointer bg-white/10 hover:bg-white/20"
+                        : "cursor-not-allowed opacity-50"
+                    )}
+                    onClick={() => canPlace && handleInventoryClick(symbolId)}
+                  >
+                    <HieroglyphTile
+                      symbol={inventoryItem?.symbol || symbolId}
+                      difficulty={itemDifficulty}
+                      size="sm"
+                      disabled={!canPlace}
+                      className="pointer-events-none"
+                    />
+                    <div className="flex flex-col text-xs">
+                      <span>
+                        {availableInInventory - usedFromInventory}/
+                        {availableInInventory}
+                      </span>
+                      <span className="text-gray-400">
+                        {t("ui.need")}: {maxNeeded}
+                      </span>
+                    </div>
+                  </div>
+                )
+              }
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* NumberLock appears when puzzle is completed */}
+      {isPuzzleCompleted && (
+        <div className="flex flex-col items-center gap-4">
+          <h3 className="text-lg font-bold text-amber-200">
+            {t("ui.puzzleComplete")}
+          </h3>
+          <NumberLock
+            state={lockState}
+            variant="muted"
+            value={lockCode}
+            onChange={handleLockChange}
+            onSubmit={handleLockSubmit}
+            disabled={isProcessingCompletion}
+            placeholder={revealText(
+              calculation.mainFormula.result.toString(),
+              0
+            )}
+            maxLength={4}
+          />
+        </div>
+      )}
     </div>
   )
 }

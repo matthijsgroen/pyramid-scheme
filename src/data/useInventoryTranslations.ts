@@ -7,7 +7,7 @@ import {
 } from "@/data/inventory"
 
 // Hook to get translated inventory item
-export const useInventoryItem = (id: string) => {
+export const useInventoryItem = () => {
   const { t } = useTranslation("inventory")
 
   // Find the item in all collections
@@ -18,24 +18,26 @@ export const useInventoryItem = (id: string) => {
     ...egyptianArtifacts,
   ]
 
-  const item = allItems.find((item) => item.id === id)
+  return (id: string) => {
+    const item = allItems.find((item) => item.id === id)
 
-  if (!item) {
-    return null
-  }
+    if (!item) {
+      return null
+    }
 
-  // Determine the category based on ID prefix
-  let category = ""
-  if (id.startsWith("d")) category = "deities"
-  else if (id.startsWith("p")) category = "professions"
-  else if (id.startsWith("a")) category = "animals"
-  else if (id.startsWith("art")) category = "artifacts"
+    // Determine the category based on ID prefix
+    let category = ""
+    if (id.startsWith("d")) category = "deities"
+    else if (id.startsWith("p")) category = "professions"
+    else if (id.startsWith("art")) category = "artifacts"
+    else if (id.startsWith("a")) category = "animals"
 
-  return {
-    id: item.id,
-    symbol: item.symbol,
-    name: t(`${category}.${id}.name`),
-    description: t(`${category}.${id}.description`),
+    return {
+      id: item.id,
+      symbol: item.symbol,
+      name: t(`${category}.${id}.name`),
+      description: t(`${category}.${id}.description`),
+    }
   }
 }
 

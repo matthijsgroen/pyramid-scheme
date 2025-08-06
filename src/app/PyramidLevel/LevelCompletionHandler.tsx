@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, type FC } from "react"
+import { useTranslation } from "react-i18next"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
 import { LootPopup } from "@/ui/LootPopup"
 import type { JourneyState } from "@/app/state/useJourneys"
@@ -15,6 +16,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
   onCompletionFinished,
   activeJourney,
 }) => {
+  const { t } = useTranslation("common")
   const [showOverlay, setShowOverlay] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const [completionPhase, setCompletionPhase] = useState<
@@ -104,7 +106,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
           {!loot && completionPhase === "overlay" && (
             <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
               <p className="animate-pulse text-sm font-medium text-white">
-                Click anywhere to continue
+                {t("loot.clickToContinue")}
               </p>
             </div>
           )}

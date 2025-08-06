@@ -4,8 +4,8 @@
     "description": "Begin je avontuur bij de Grote Sfinx terwijl de ochtendzon zijn oude gezicht verlicht. Een zachte introductie tot de mysteries van Egypte."
   },
   "starter_2": {
-    "name": "Papyruskoopman Route",
-    "description": "Volg de handelsroutes van oude papyruskooplieden langs de vreedzame oevers van de Nijl. Ontdek de geheimen van de Egyptische handel."
+    "name": "Papyrushandelaar Route",
+    "description": "Volg de handelsroutes van oude papyrushandelaren langs de vreedzame oevers van de Nijl. Ontdek de geheimen van de Egyptische handel."
   },
   "starter_3": {
     "name": "Tempel van Bastet",
@@ -16,8 +16,8 @@
     "description": "Leer de kunst van hiëroglyfisch schrijven in de prestigieuze schrijversacademie, waar kennis waardevoller is dan goud."
   },
   "starter_treasure_tomb": {
-    "name": "Vergeten Koopman's Voorraad",
-    "description": "Ontdek een kleine ondergrondse kamer waar een oude koopman zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten."
+    "name": "Vergeten Handelaars Voorraad",
+    "description": "Ontdek een kleine ondergrondse kamer waar een oude handelaar zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten."
   },
   "junior_1": {
     "name": "Heilige Ibis Migratie",
@@ -36,7 +36,7 @@
     "description": "Beklim de legendarische vuurtoren van Alexandrië, een van de Zeven Wereldwonderen. Navigeer door de wiskundige principes die dit wonder mogelijk maakten."
   },
   "junior_treasure_tomb": {
-    "name": "Edelmanns Verborgen Kluis",
+    "name": "Edelman's Verborgen Kluis",
     "description": "Verken de geheime kluis van een rijke Egyptische edelman, gevuld met gouden artefacten en kostbare edelstenen verstopt voor grafrovers."
   },
   "expert_1": {

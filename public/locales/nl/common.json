@@ -48,8 +48,8 @@
     "planExpedition": "Plan Expeditie",
     "or": "Of",
     "selectAnotherExpedition": "Selecteer een andere expeditie",
-    "abortExpedition": "Breek expeditie af",
-    "confirmAbortExpedition": "Weet je zeker dat je deze expeditie wilt afbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",
+    "interruptExpedition": "Onderbreek expeditie",
+    "confirmInterruptExpedition": "Weet je zeker dat je deze expeditie wilt onderbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",
     "cancel": "Annuleren",
     "settings": "Instellingen",
     "language": "Taal",
@@ -60,7 +60,23 @@
     "requiresMapPieces": "Vereist kaartdelen",
     "mapPieces": "Kaartdelen",
     "collected": "verzameld",
-    "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen"
+    "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen",
+    "availableSymbols": "Beschikbare Symbolen:",
+    "need": "nodig",
+    "puzzleComplete": "Het antwoord is:",
+    "spiritsRejectCode": "De geesten verwerpen deze code",
+    "sacredSealBroken": "Het heilige zegel is verbroken",
+    "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
+    "crocodileAlways": "Welk cijfer at de krokodil altijd?",
+    "crocodileNever": "Welk cijfer at de krokodil nooit?",
+    "answerNow": "Het antwoord is: "
+  },
+  "loot": {
+    "youFound": "Je hebt gevonden",
+    "clickToContinue": "Klik ergens om door te gaan"
+  },
+  "level": {
+    "completed": "Niveau Voltooid!"
   },
   "collection": {
     "title": "Collectie",
@@ -73,8 +89,8 @@
       "treasures": "💰 Schatten"
     },
     "treasureCategories": {
-      "merchantCache": "💰 Handelaars Cache",
-      "nobleVault": "👑 Adellijke Kluis",
+      "merchantCache": "💰 Handelaars Voorraad",
+      "nobleVault": "👑 Edelman's Verborgen Kluis",
       "templeSecrets": "🏛️ Tempel Geheimen",
       "ancientRelics": "🏺 Oude Relieken",
       "mythicalArtifacts": "✨ Mythische Artefacten"
