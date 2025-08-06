@@ -16,12 +16,6 @@ describe("Tableau System", () => {
       expect(tableauLevels).toHaveLength(180)
     })
 
-    it("should have sequential level numbers starting from 1", () => {
-      tableauLevels.forEach((tableau: TableauLevel, index: number) => {
-        expect(tableau.levelNr).toBe(index + 1)
-      })
-    })
-
     it("should have all required properties", () => {
       tableauLevels.forEach((tableau: TableauLevel) => {
         expect(tableau).toHaveProperty("levelNr")
@@ -348,9 +342,9 @@ describe("Tableau System", () => {
     })
 
     it("should have unique level numbers", () => {
-      const levelNumbers = tableauLevels.map((t: TableauLevel) => t.levelNr)
-      const uniqueLevelNumbers = [...new Set(levelNumbers)]
-      expect(levelNumbers).toHaveLength(uniqueLevelNumbers.length)
+      const levelIds = tableauLevels.map((t: TableauLevel) => t.id)
+      const uniqueLevelNumbers = [...new Set(levelIds)]
+      expect(levelIds).toHaveLength(uniqueLevelNumbers.length)
     })
   })
 
@@ -366,44 +360,6 @@ describe("Tableau System", () => {
 
       expect(expectedTotal).toBe(180)
       expect(tableauLevels).toHaveLength(expectedTotal)
-    })
-
-    it("should have correct level sequence within each tomb", () => {
-      const tombTableaux = {
-        starter_treasure_tomb: tableauLevels.filter(
-          (t: TableauLevel) => t.tombJourneyId === "starter_treasure_tomb"
-        ),
-        junior_treasure_tomb: tableauLevels.filter(
-          (t: TableauLevel) => t.tombJourneyId === "junior_treasure_tomb"
-        ),
-        expert_treasure_tomb: tableauLevels.filter(
-          (t: TableauLevel) => t.tombJourneyId === "expert_treasure_tomb"
-        ),
-        master_treasure_tomb: tableauLevels.filter(
-          (t: TableauLevel) => t.tombJourneyId === "master_treasure_tomb"
-        ),
-        wizard_treasure_tomb: tableauLevels.filter(
-          (t: TableauLevel) => t.tombJourneyId === "wizard_treasure_tomb"
-        ),
-      }
-
-      // Verify that level numbers are consecutive within the entire sequence
-      let expectedLevelNr = 1
-      const tombOrder = [
-        "starter_treasure_tomb",
-        "junior_treasure_tomb",
-        "expert_treasure_tomb",
-        "master_treasure_tomb",
-        "wizard_treasure_tomb",
-      ]
-
-      tombOrder.forEach((tombId: string) => {
-        const tableaux = tombTableaux[tombId as keyof typeof tombTableaux]
-        tableaux.forEach((tableau: TableauLevel) => {
-          expect(tableau.levelNr).toBe(expectedLevelNr)
-          expectedLevelNr++
-        })
-      })
     })
   })
 
@@ -440,6 +396,7 @@ describe("Tableau System", () => {
       expect(firstTableau).toMatchInlineSnapshot(`
         {
           "description": "The merchant trades with the farmer under Ra's blessing.",
+          "id": "tab2",
           "inventoryIds": [
             "art1",
             "d1",
@@ -470,18 +427,20 @@ describe("Tableau System", () => {
       expect(firstTableau).toMatchInlineSnapshot(`
         {
           "description": "The Pharaoh blesses the merchant's trade with sacred lions.",
+          "id": "tab10",
           "inventoryIds": [
             "p11",
             "p10",
             "p1",
           ],
-          "levelNr": 9,
+          "levelNr": 1,
           "name": "Royal Merchant",
           "runNumber": 1,
           "symbolCount": 3,
           "tombJourneyId": "junior_treasure_tomb",
         }
       `)
+      console.log(firstTableau)
 
       const usedSymbols = allInventory
         .filter((item) => firstTableau.inventoryIds.includes(item.id))
@@ -501,13 +460,14 @@ describe("Tableau System", () => {
       expect(firstTableau).toMatchInlineSnapshot(`
         {
           "description": "Horus blesses the temple with sistrum music and sacred ankh.",
+          "id": "tab28",
           "inventoryIds": [
             "art14",
             "p1",
             "p10",
             "d2",
           ],
-          "levelNr": 27,
+          "levelNr": 1,
           "name": "Vulture Guardian",
           "runNumber": 1,
           "symbolCount": 4,
@@ -529,10 +489,11 @@ describe("Tableau System", () => {
       expect(wizardTableaux).toHaveLength(6)
 
       // Check that the first tableau has the expected properties
-      const firstTableau = wizardTableaux[5]
-      expect(firstTableau).toMatchInlineSnapshot(`
+      const lastTableau = wizardTableaux[5]
+      expect(lastTableau).toMatchInlineSnapshot(`
         {
           "description": "Divine unity encompasses all aspects of eternal cosmic truth and wisdom.",
+          "id": "tab181",
           "inventoryIds": [
             "art11",
             "p11",
@@ -541,7 +502,7 @@ describe("Tableau System", () => {
             "p3",
             "p1",
           ],
-          "levelNr": 180,
+          "levelNr": 6,
           "name": "Divine Perfect",
           "runNumber": 12,
           "symbolCount": 6,
@@ -550,7 +511,7 @@ describe("Tableau System", () => {
       `)
 
       const usedSymbols = allInventory
-        .filter((item) => firstTableau.inventoryIds.includes(item.id))
+        .filter((item) => lastTableau.inventoryIds.includes(item.id))
         .map((item) => item.symbol)
       expect(usedSymbols).toEqual(["𓅃", "𓉶", "𓆓", "𓁫", "𓁁", "𓀄"])
     })

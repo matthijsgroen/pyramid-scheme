@@ -1,6 +1,8 @@
 // Treasures found in treasure tomb journeys
 // Each treasure corresponds to a specific treasure tomb journey
 
+import type { Difficulty } from "./difficultyLevels"
+
 export const merchantCacheTreasures = [
   {
     id: "t1",
@@ -303,3 +305,11 @@ export const allTreasures = [
 ]
 
 export type Treasure = (typeof allTreasures)[0]
+
+export const difficultyTreasures: Record<Difficulty, Treasure[]> = {
+  starter: merchantCacheTreasures,
+  junior: nobleVaultTreasures,
+  expert: templeSecretsTreasures,
+  master: ancientRelicsTreasures,
+  wizard: mythicalArtifactsTreasures,
+}
