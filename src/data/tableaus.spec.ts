@@ -7,7 +7,7 @@ import {
   egyptianDeities,
   egyptianProfessions,
 } from "./inventory"
-import { getAllSymbolsForTomb } from "./loot-distribution"
+import { getAllSymbolsForTomb } from "./loot-by-run"
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests

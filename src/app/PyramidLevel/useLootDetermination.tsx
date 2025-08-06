@@ -31,8 +31,10 @@ export const useLootDetermination = (
     inventory
   )
 
-  // Always call the hook, but with a fallback value when no item ID
-  const inventoryItemHook = useInventoryItem(inventoryResult.itemId || "")
+  // Always call the hook, but with a fallback value when no item IDs
+  // For multiple items, we'll use the first item for the hook and handle the rest differently
+  const firstItemId = inventoryResult.itemIds[0] || ""
+  const inventoryItemHook = useInventoryItem(firstItemId)
 
   return useMemo((): {
     loot: Loot | null
@@ -58,14 +60,15 @@ export const useLootDetermination = (
     // If no map piece, check for inventory items
     if (
       inventoryResult.shouldAwardInventoryItem &&
-      inventoryResult.itemId &&
+      inventoryResult.itemIds.length > 0 &&
       inventoryItemHook
     ) {
-      const itemDifficulty = getItemFirstLevel(inventoryResult.itemId)
+      const firstItemId = inventoryResult.itemIds[0]
+      const itemDifficulty = getItemFirstLevel(firstItemId)
 
       return {
         loot: {
-          itemId: inventoryResult.itemId,
+          itemId: firstItemId,
           itemName: inventoryItemHook.name,
           itemDescription: inventoryItemHook.description,
           itemComponent: (
@@ -78,9 +81,10 @@ export const useLootDetermination = (
           rarity: "common",
         },
         collectLoot: () => {
-          if (inventoryResult.itemId) {
-            addItem(inventoryResult.itemId, 1)
-          }
+          // Award all items from the result
+          inventoryResult.itemIds.forEach((itemId) => {
+            addItem(itemId, 1)
+          })
         },
       }
     }

@@ -150,10 +150,10 @@ describe(generateRewardCalculation, () => {
       formulaToString(result.mainFormula, symbolMapping, false),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓁧 + 𓁧 * 𓁧 = 110
-      𓃯 + 𓁧 = 14
-      (𓁧 + 𓃯) - 𓁝 = 9
-      (𓃯 + 𓁧) * 𓁝 = ?"
+      "𓁧 + 𓁧 + 𓁧 = 30
+      (𓁧 + 𓃯) - 𓁧 = 4
+      (𓁧 - 𓃯) - 𓁝 = 1
+      𓁝 + 𓁧 + 𓁧 + 𓃯 = ?"
     `)
   })
 
@@ -191,34 +191,34 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
-        "left": 4,
-        "operation": "+",
-        "result": 19,
-        "right": {
-          "left": 9,
+        "left": {
+          "left": 8,
           "operation": "+",
-          "result": 15,
-          "right": 6,
+          "result": 12,
+          "right": 4,
         },
+        "operation": "-",
+        "result": 3,
+        "right": 9,
       }
     `)
 
     expect(numberFormulas).toMatchInlineSnapshot(`
-      "6 + 6 = 12
-      6 + 8 = 14
-      8 - 4 + 6 = 10
-      4 + 9 + 6 = 19
-      (9 + 4) - 10 = 3
-      (10 + 8 - 4 + 6) - 9 = 11"
+      "6 + 6 + 6 = 18
+      8 - 6 = 2
+      8 + 6 - 4 = 10
+      (8 + 4) - 9 = 3
+      6 + 10 - 9 = 7
+      9 - 4 + 8 + 9 * (10 - 6) = 49"
     `)
 
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓆆 + 𓆆 = 12
-      𓆆 + 𓁝 = 14
-      𓁝 - 𓁧 + 𓆆 = 10
-      𓁧 + 𓁾 + 𓆆 = 19
-      (𓁾 + 𓁧) - 𓃯 = 3
-      (𓃯 + 𓁝 - 𓁧 + 𓆆) - 𓁾 = ?"
+      "𓆆 + 𓆆 + 𓆆 = 18
+      𓁝 - 𓆆 = 2
+      𓁝 + 𓆆 - 𓁧 = 10
+      (𓁝 + 𓁧) - 𓁾 = 3
+      𓆆 + 𓃯 - 𓁾 = 7
+      𓁾 - 𓁧 + 𓁝 + 𓁾 * (𓃯 - 𓆆) = ?"
     `)
   })
 

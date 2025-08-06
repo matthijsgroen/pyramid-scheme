@@ -3,9 +3,9 @@ import {
   getSymbolsForTombRun,
   getAllRunsForTomb,
   generateLootByRun,
+  getAllSymbolsForTomb,
 } from "./loot-by-run"
 import { generateTableaus } from "./tableaus"
-import { getAllSymbolsForTomb } from "./loot-distribution"
 
 const tableauLevels = generateTableaus()
 

@@ -3,7 +3,7 @@
  * Format: { tombId: [[run1_symbols], [run2_symbols], ...] }
  */
 
-import { type TableauLevel } from "./tableaus"
+import { type TableauLevel, tableauLevels } from "./tableaus"
 
 export type LootByRun = Record<string, string[][]>
 
@@ -65,4 +65,18 @@ export function getAllRunsForTomb(
 ): string[][] {
   const lootData = generateLootByRun(tableauLevels)
   return lootData[tombId] || []
+}
+
+export function getAllSymbolsForTomb(tombId: string): string[] {
+  // Get all unique symbols used across all runs for this tomb
+  const tombTableaux = tableauLevels.filter((t) => t.tombJourneyId === tombId)
+  const allSymbols = new Set<string>()
+
+  tombTableaux.forEach((tableau) => {
+    tableau.inventoryIds.forEach((symbolId) => {
+      allSymbols.add(symbolId)
+    })
+  })
+
+  return Array.from(allSymbols).sort()
 }
