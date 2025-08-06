@@ -148,12 +148,27 @@ export const TombPuzzle: FC<{
     return totalSlots > 0 ? filledSlots / totalSlots : 0
   }, [calculation, filledState.filledPositions])
 
+  // Check if puzzle is completely solved (all symbols placed)
+  const isPuzzleCompleted = useMemo(() => {
+    return Object.entries(calculation.symbolCounts).every(
+      ([symbolId, maxNeeded]) => {
+        const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+        return usedInPuzzle === maxNeeded
+      }
+    )
+  }, [calculation.symbolCounts, filledState.symbolCounts])
+
   const handleTileClick = (symbolId: string, position: string) => {
     setFilledState((prev) => {
       const newState = { ...prev }
 
-      // If position is already filled, remove the tile
+      // If position is already filled, remove the tile (only if puzzle is not completed)
       if (newState.filledPositions[position] > 0) {
+        // Don't allow removal if puzzle is completed
+        if (isPuzzleCompleted) {
+          return prev
+        }
+
         newState.filledPositions = { ...newState.filledPositions }
         delete newState.filledPositions[position]
         newState.symbolCounts = {
@@ -258,11 +273,11 @@ export const TombPuzzle: FC<{
     <div className="flex flex-1 flex-col items-center justify-center gap-8 px-4 text-white">
       <div
         className={clsx(
-          "flex w-full flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
+          "flex w-full max-w-md flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
           hieroglyphLevelColors[difficulty]
         )}
       >
-        <h1 className="text-center text-2xl">
+        <h1 className="text-center font-pyramid text-2xl">
           {obfuscate(tableau.name, solvedPercentage)}
         </h1>
 
@@ -295,54 +310,56 @@ export const TombPuzzle: FC<{
         <div>{obfuscate(tableau.description, solvedPercentage)}</div>
       </div>
 
-      {/* Available symbols inventory */}
-      <div className="mb-4 rounded bg-black/20 p-2">
-        <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(calculation.symbolCounts).map(
-            ([symbolId, maxNeeded]) => {
-              const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-              const usedFromInventory = inventoryUsage[symbolId] || 0
-              const availableInInventory = inventory[symbolId] || 0
-              const inventoryItem = getInventoryItemById(symbolId)
-              const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-              const canPlace =
-                availableInInventory > usedFromInventory &&
-                usedInPuzzle < maxNeeded
+      {/* Available symbols inventory - hide when puzzle is completed */}
+      {!isPuzzleCompleted && (
+        <div className="mb-4 rounded bg-black/20 p-2">
+          <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(calculation.symbolCounts).map(
+              ([symbolId, maxNeeded]) => {
+                const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+                const usedFromInventory = inventoryUsage[symbolId] || 0
+                const availableInInventory = inventory[symbolId] || 0
+                const inventoryItem = getInventoryItemById(symbolId)
+                const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
+                const canPlace =
+                  availableInInventory > usedFromInventory &&
+                  usedInPuzzle < maxNeeded
 
-              return (
-                <div
-                  key={symbolId}
-                  className={clsx(
-                    "flex items-center gap-1 rounded p-1 transition-colors",
-                    canPlace
-                      ? "cursor-pointer bg-white/10 hover:bg-white/20"
-                      : "cursor-not-allowed opacity-50"
-                  )}
-                  onClick={() => canPlace && handleInventoryClick(symbolId)}
-                >
-                  <HieroglyphTile
-                    symbol={inventoryItem?.symbol || symbolId}
-                    difficulty={itemDifficulty}
-                    size="sm"
-                    disabled={!canPlace}
-                    className="pointer-events-none"
-                  />
-                  <div className="flex flex-col text-xs">
-                    <span>
-                      {availableInInventory - usedFromInventory}/
-                      {availableInInventory}
-                    </span>
-                    <span className="text-gray-400">
-                      {t("ui.need")}: {maxNeeded}
-                    </span>
+                return (
+                  <div
+                    key={symbolId}
+                    className={clsx(
+                      "flex items-center gap-1 rounded p-1 transition-colors",
+                      canPlace
+                        ? "cursor-pointer bg-white/10 hover:bg-white/20"
+                        : "cursor-not-allowed opacity-50"
+                    )}
+                    onClick={() => canPlace && handleInventoryClick(symbolId)}
+                  >
+                    <HieroglyphTile
+                      symbol={inventoryItem?.symbol || symbolId}
+                      difficulty={itemDifficulty}
+                      size="sm"
+                      disabled={!canPlace}
+                      className="pointer-events-none"
+                    />
+                    <div className="flex flex-col text-xs">
+                      <span>
+                        {availableInInventory - usedFromInventory}/
+                        {availableInInventory}
+                      </span>
+                      <span className="text-gray-400">
+                        {t("ui.need")}: {maxNeeded}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )
-            }
-          )}
+                )
+              }
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

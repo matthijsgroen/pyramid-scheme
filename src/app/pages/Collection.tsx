@@ -79,13 +79,20 @@ const CategorySection: FC<{
           }
 
           return (
-            <HieroglyphTile
-              key={item.id}
-              symbol={item.symbol}
-              difficulty={itemLevel}
-              selected={isSelected}
-              onClick={() => onItemClick(item)}
-            />
+            <div key={item.id} className="relative w-fit">
+              <HieroglyphTile
+                symbol={item.symbol}
+                difficulty={itemLevel}
+                selected={isSelected}
+                onClick={() => onItemClick(item)}
+              />
+              {/* Inventory count badge */}
+              {inventory[item.id] && inventory[item.id]! > 0 && (
+                <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-sm">
+                  {inventory[item.id]}
+                </div>
+              )}
+            </div>
           )
         })}
       </div>
