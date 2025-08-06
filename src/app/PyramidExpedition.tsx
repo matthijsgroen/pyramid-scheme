@@ -75,7 +75,7 @@ export const PyramidExpedition: FC<{
           : "translateX(35%) scale(0)"
         futureLevelRef.current.style.transform = startNextLevel
           ? baseTransform
-          : `translate(${scrollX * 0.25}px, ${scrollY * 0.25}px) ${baseTransform}`
+          : `translate(${scrollX * 0.7}px, ${scrollY * 0.7}px) ${baseTransform}`
       }
 
       if (nextLevelRef.current) {
@@ -84,7 +84,7 @@ export const PyramidExpedition: FC<{
           : "translateX(25%) scale(0.2)"
         nextLevelRef.current.style.transform = startNextLevel
           ? baseTransform
-          : `translate(${scrollX * 0.5}px, ${scrollY * 0.5}px) ${baseTransform}`
+          : `translate(${scrollX * 1.2}px, ${scrollY * 1.2}px) ${baseTransform}`
       }
 
       if (currentLevelRef.current) {
@@ -93,7 +93,7 @@ export const PyramidExpedition: FC<{
           : "scale(1)"
         currentLevelRef.current.style.transform = startNextLevel
           ? baseTransform
-          : `translate(${scrollX * -0.1}px, ${scrollY * -0.1}px) ${baseTransform}`
+          : `translate(${scrollX * -0.3}px, ${scrollY * -0.3}px) ${baseTransform}`
       }
     }
 
