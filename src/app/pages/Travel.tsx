@@ -15,17 +15,7 @@ import {
 import { DifficultyPill } from "@/ui/DifficultyPill"
 import { mulberry32 } from "@/game/random"
 import { TombMapButton } from "@/ui/TombMapButton"
-
-// Simple string hash function to convert string to number
-const hashString = (str: string): number => {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = (hash << 5) - hash + char
-    hash = hash & hash // Convert to 32-bit integer
-  }
-  return Math.abs(hash)
-}
+import { hashString } from "@/support/hashString"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -68,7 +58,8 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     const journeySeed =
       (activeJourney?.randomSeed ??
         canceledJourney?.randomSeed ??
-        nextJourneySeed()) + (journey?.id ? hashString(journey.id) : 0)
+        nextJourneySeed(journey?.id ?? "none")) +
+      (journey?.id ? hashString(journey.id) : 0)
     const random = mulberry32(journeySeed)
     return Math.round(random() * 360)
   }, [

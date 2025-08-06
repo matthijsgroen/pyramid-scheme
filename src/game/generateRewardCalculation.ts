@@ -53,10 +53,11 @@ export const generateRewardCalculation = (
     },
     {} as Record<number, string>
   )
+  const bonus = pickedNumbers[Math.floor(random() * pickedNumbers.length)]
 
   // Step 2: Generate a formula where all symbols occur (maybe multiple times)
   const mainFormulaNumbers = generateCalculationNumbers(
-    pickedNumbers,
+    pickedNumbers.concat(bonus),
     pickedNumbers,
     [],
     random
@@ -98,6 +99,13 @@ export const generateRewardCalculation = (
       mainFormula,
       random
     )
+    console.log(
+      "hintFormula",
+      hintFormula,
+      known,
+      newNumbers,
+      hintNumbersCapped
+    )
     hintFormulas.push(hintFormula)
   }
 
@@ -105,6 +113,7 @@ export const generateRewardCalculation = (
   const symbolCounts: Record<string, number> = {}
   const allFormulas = [mainFormula, ...hintFormulas]
   allFormulas.forEach((formula) => {
+    console.log("formula", formula)
     const symbols = extractSymbols(formula)
     symbols.forEach((symbol) => {
       const symbolName = symbolMapping[parseInt(symbol, 10)]

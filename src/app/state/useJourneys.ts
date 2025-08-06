@@ -8,18 +8,26 @@ import {
   useJourneyTranslations,
   type TranslatedJourney,
 } from "@/data/useJourneyTranslations"
-
-const baseJourneySeed = 987654321
+import { hashString } from "@/support/hashString"
 
 export type JourneyState = ActiveJourney & {
   journey: TranslatedJourney
 }
 
+export const journeySeedGenerator =
+  (journeys: { journeyId: string; completed: boolean }[]) =>
+  (journeyId: string): number => {
+    const journeyRun = journeys.filter(
+      (j) => j.journeyId === journeyId && j.completed
+    ).length
+    return generateNewSeed(hashString(journeyId), journeyRun + 1)
+  }
+
 export const useJourneys = (): {
   activeJourney: JourneyState | undefined
   journeyLog: JourneyState[]
   startJourney: (journey: Journey) => void
-  nextJourneySeed: () => number
+  nextJourneySeed: (journeyId: string) => number
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
@@ -32,9 +40,13 @@ export const useJourneys = (): {
   )
 
   const activeJourney = journeys.find((j) => !j.endTime)
-  const nextJourneySeed = useCallback(() => {
-    return generateNewSeed(baseJourneySeed, journeys.length + 1)
-  }, [journeys.length])
+  const nextJourneySeed = useCallback(
+    (journeyId: string) => {
+      const generateNewSeed = journeySeedGenerator(journeys)
+      return generateNewSeed(journeyId)
+    },
+    [journeys]
+  )
 
   const startJourney = useCallback(
     (journey: Journey) => {
@@ -51,7 +63,7 @@ export const useJourneys = (): {
         )
         return
       }
-      const seed = nextJourneySeed()
+      const seed = nextJourneySeed(journey.id)
       const activeJourney = dataStartJourney(journey.id, seed)
 
       setJourneys((prev) => [...prev, activeJourney])
