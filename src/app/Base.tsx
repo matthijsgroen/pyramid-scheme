@@ -1,7 +1,6 @@
 import { BaseHeader } from "@/components/BaseHeader"
 import { TravelPage } from "@/app/pages/Travel"
 import { CollectionPage } from "@/app/pages/Collection"
-import { isBeta } from "@/config/constants"
 
 export const Base = ({ startGame }: { startGame: () => void }) => {
   return (
@@ -11,7 +10,7 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
       </div>
       <div className="flex w-full flex-1 snap-x snap-mandatory flex-row justify-around overflow-x-scroll overscroll-contain bg-gradient-to-b from-blue-100 to-blue-300">
         <TravelPage startGame={startGame} />
-        {isBeta && <CollectionPage />}
+        <CollectionPage />
       </div>
     </div>
   )
