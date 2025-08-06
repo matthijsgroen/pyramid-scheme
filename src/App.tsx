@@ -6,7 +6,12 @@ import { TombExpedition } from "./app/TombExpedition"
 
 function App() {
   const [inGame, setInGame] = useState(false)
-  const { activeJourney, completeLevel, completeJourney } = useJourneys()
+  const { activeJourney, journeyLog, completeLevel, completeJourney } =
+    useJourneys()
+
+  const runNr = journeyLog.filter(
+    (log) => log.journeyId === activeJourney?.journeyId && log.completed
+  ).length
 
   return (
     <>
@@ -14,6 +19,7 @@ function App() {
       {inGame && activeJourney && activeJourney.journey.type === "pyramid" && (
         <PyramidExpedition
           activeJourney={activeJourney}
+          runNr={runNr}
           onLevelComplete={completeLevel}
           onJourneyComplete={() => {
             completeJourney()

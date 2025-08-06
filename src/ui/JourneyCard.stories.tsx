@@ -24,7 +24,6 @@ const mockPyramidJourney: TranslatedJourney = {
     },
     completed: {
       pieces: [1, 2],
-      pieceLevels: [1, 2],
     },
   },
   difficultyLabel: "Starter",

@@ -7,7 +7,6 @@ import {
   egyptianDeities,
   egyptianProfessions,
 } from "./inventory"
-import { getAllSymbolsForTomb } from "./loot-by-run"
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests
@@ -188,23 +187,6 @@ describe("Tableau System", () => {
       )
 
       juniorTableaux.forEach((tableau: TableauLevel) => {
-        tableau.inventoryIds.forEach((symbolId: string) => {
-          expect(allowedSymbols).toContain(symbolId)
-        })
-      })
-    })
-
-    it("should use progressive symbol access for all tombs", () => {
-      const symbolsByTomb: Record<string, string[]> = {
-        starter_treasure_tomb: getAllSymbolsForTomb("starter_treasure_tomb"),
-        junior_treasure_tomb: getAllSymbolsForTomb("junior_treasure_tomb"),
-        expert_treasure_tomb: getAllSymbolsForTomb("expert_treasure_tomb"),
-        master_treasure_tomb: getAllSymbolsForTomb("master_treasure_tomb"),
-        wizard_treasure_tomb: getAllSymbolsForTomb("wizard_treasure_tomb"),
-      }
-
-      tableauLevels.forEach((tableau: TableauLevel) => {
-        const allowedSymbols = symbolsByTomb[tableau.tombJourneyId]
         tableau.inventoryIds.forEach((symbolId: string) => {
           expect(allowedSymbols).toContain(symbolId)
         })

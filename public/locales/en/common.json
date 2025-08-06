@@ -65,7 +65,8 @@
     "need": "need",
     "puzzleComplete": "The answer is:",
     "spiritsRejectCode": "The spirits reject this code",
-    "sacredSealBroken": "The sacred seal is broken"
+    "sacredSealBroken": "The sacred seal is broken",
+    "newExpeditionUnlocked": "A new expedition is now unlocked"
   },
   "loot": {
     "youFound": "You found",
