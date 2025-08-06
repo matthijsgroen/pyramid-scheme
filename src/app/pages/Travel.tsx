@@ -125,13 +125,15 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
               : "translate-x-0 opacity-100"
           }`}
         >
-          <p className="mb-4 text-center text-sm text-gray-600">
-            This is an early alpha version.{" "}
-            <span className="font-bold">
-              Expect bugs, missing features and losing progress!
-            </span>
+          <p className="mb-4 border-b-2 border-red-200 pb-2 text-center text-sm text-red-600">
+            This is an early <strong className="font-bold">alpha</strong>{" "}
+            version. Expect an{" "}
+            <strong className="font-bold">
+              unbalanced experience, bugs, missing features and losing progress
+            </strong>
+            !
           </p>
-          <h1 className="mb-6 text-center font-pyramid text-2xl font-bold">
+          <h1 className="mb-4 text-center font-pyramid text-xl font-bold">
             {t("ui.travel")}
           </h1>
 

@@ -5,6 +5,13 @@
  */
 
 import type { Difficulty } from "./difficultyLevels"
+import {
+  ancientRelicsTreasures,
+  merchantCacheTreasures,
+  mythicalArtifactsTreasures,
+  nobleVaultTreasures,
+  templeSecretsTreasures,
+} from "./treasures"
 
 export type TableauLevel = {
   levelNr: number
@@ -21,7 +28,9 @@ type TranslationFunction = (key: string) => string
 
 // Symbol inventory for each tomb level
 const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
-  starter: ["p10", "p8", "a6", "a8", "art1", "art5", "d1"],
+  starter: ["p10", "p8", "a6", "a8", "art1", "art5", "d1"].concat(
+    merchantCacheTreasures.map((t) => t.id)
+  ),
   junior: [
     "p1",
     "p11",
@@ -33,7 +42,7 @@ const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
     "art12",
     "d2",
     "d15",
-  ],
+  ].concat(nobleVaultTreasures.map((t) => t.id)),
   expert: [
     "p2",
     "p3",
@@ -49,7 +58,7 @@ const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
     "d3",
     "d4",
     "d9",
-  ],
+  ].concat(templeSecretsTreasures.map((t) => t.id)),
   master: [
     "p4",
     "p5",
@@ -66,7 +75,7 @@ const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
     "d5",
     "d6",
     "d10",
-  ],
+  ].concat(ancientRelicsTreasures.map((t) => t.id)),
   wizard: [
     "p6",
     "p13",
@@ -80,7 +89,7 @@ const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
     "d12",
     "d13",
     "d14",
-  ],
+  ].concat(mythicalArtifactsTreasures.map((t) => t.id)),
 }
 
 // Get available symbols for a tomb (including all previous tomb symbols)
@@ -474,7 +483,6 @@ function generateDescriptionKeys(tombId: string, count: number): string[] {
 // Generate all tableau levels with i18n support
 export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   const tableaus: TableauLevel[] = []
-  let levelCounter = 1
 
   TOMB_CONFIG.forEach((tomb) => {
     const symbols = getSymbolsForTomb(tomb.id)
@@ -514,7 +522,7 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
         const descKey = descriptionKeys[descKeyIndex]
 
         tableaus.push({
-          levelNr: levelCounter++,
+          levelNr: level,
           symbolCount: tomb.symbolCount,
           inventoryIds: tableauSymbols,
           tombJourneyId: tomb.id,

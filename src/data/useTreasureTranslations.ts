@@ -8,7 +8,7 @@ import {
 } from "@/data/treasures"
 
 // Hook to get translated treasure item
-export const useTreasureItem = (id: string) => {
+export const useTreasureItem = () => {
   const { t } = useTranslation("treasures")
 
   // Find the item in all collections
@@ -19,28 +19,29 @@ export const useTreasureItem = (id: string) => {
     ...ancientRelicsTreasures,
     ...mythicalArtifactsTreasures,
   ]
+  return (id: string) => {
+    const treasure = allTreasures.find((treasure) => treasure.id === id)
 
-  const treasure = allTreasures.find((treasure) => treasure.id === id)
+    if (!treasure) {
+      return null
+    }
 
-  if (!treasure) {
-    return null
-  }
+    // Determine the category based on treasure ID range
+    let category = ""
+    const treasureNum = parseInt(id.substring(1))
+    if (treasureNum >= 1 && treasureNum <= 4) category = "merchantCache"
+    else if (treasureNum >= 5 && treasureNum <= 10) category = "nobleVault"
+    else if (treasureNum >= 11 && treasureNum <= 18) category = "templeSecrets"
+    else if (treasureNum >= 19 && treasureNum <= 28) category = "ancientRelics"
+    else if (treasureNum >= 29 && treasureNum <= 40)
+      category = "mythicalArtifacts"
 
-  // Determine the category based on treasure ID range
-  let category = ""
-  const treasureNum = parseInt(id.substring(1))
-  if (treasureNum >= 1 && treasureNum <= 4) category = "merchantCache"
-  else if (treasureNum >= 5 && treasureNum <= 10) category = "nobleVault"
-  else if (treasureNum >= 11 && treasureNum <= 18) category = "templeSecrets"
-  else if (treasureNum >= 19 && treasureNum <= 28) category = "ancientRelics"
-  else if (treasureNum >= 29 && treasureNum <= 40)
-    category = "mythicalArtifacts"
-
-  return {
-    id: treasure.id,
-    symbol: treasure.symbol,
-    name: t(`${category}.${id}.name`),
-    description: t(`${category}.${id}.description`),
+    return {
+      id: treasure.id,
+      symbol: treasure.symbol,
+      name: t(`${category}.${id}.name`),
+      description: t(`${category}.${id}.description`),
+    }
   }
 }
 

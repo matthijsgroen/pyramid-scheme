@@ -7,7 +7,6 @@ import { useInventoryCategory } from "@/data/useInventoryTranslations"
 import { useTreasureCategory } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useTreasureInventory } from "@/app/Inventory/useTreasureInventory"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 
@@ -192,7 +191,6 @@ export const CollectionPage: FC = () => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const { journeyLog } = useJourneys()
   const { inventory } = useInventory()
-  const { treasures } = useTreasureInventory()
 
   const handleItemClick = (item: InventoryItem) => {
     setSelectedItem(item)
@@ -201,10 +199,6 @@ export const CollectionPage: FC = () => {
   const hasCollectedItems = Object.values(inventory).some(
     (value) => value !== undefined
   )
-  const hasCollectedTreasures = Object.values(treasures).some(
-    (value) => value !== undefined
-  )
-  const hasCollectedAnything = hasCollectedItems || hasCollectedTreasures
   const hasCompletedTomb = (tombId: string) =>
     journeyLog.some((j) => j.journeyId === tombId && j.completed)
 
@@ -225,7 +219,7 @@ export const CollectionPage: FC = () => {
               category="merchantCache"
               onItemClick={handleItemClick}
               selectedItem={selectedItem}
-              treasures={treasures}
+              treasures={inventory}
             />
           )}
           {hasCompletedTomb("junior_treasure_tomb") && (
@@ -233,7 +227,7 @@ export const CollectionPage: FC = () => {
               category="nobleVault"
               onItemClick={handleItemClick}
               selectedItem={selectedItem}
-              treasures={treasures}
+              treasures={inventory}
             />
           )}
           {hasCompletedTomb("expert_treasure_tomb") && (
@@ -241,7 +235,7 @@ export const CollectionPage: FC = () => {
               category="templeSecrets"
               onItemClick={handleItemClick}
               selectedItem={selectedItem}
-              treasures={treasures}
+              treasures={inventory}
             />
           )}
           {hasCompletedTomb("master_treasure_tomb") && (
@@ -249,7 +243,7 @@ export const CollectionPage: FC = () => {
               category="ancientRelics"
               onItemClick={handleItemClick}
               selectedItem={selectedItem}
-              treasures={treasures}
+              treasures={inventory}
             />
           )}
           {hasCompletedTomb("wizard_treasure_tomb") && (
@@ -257,7 +251,7 @@ export const CollectionPage: FC = () => {
               category="mythicalArtifacts"
               onItemClick={handleItemClick}
               selectedItem={selectedItem}
-              treasures={treasures}
+              treasures={inventory}
             />
           )}
 
@@ -287,7 +281,7 @@ export const CollectionPage: FC = () => {
             inventory={inventory}
           />
         </div>
-        {hasCollectedAnything && <DetailPanel item={selectedItem} />}
+        {hasCollectedItems && <DetailPanel item={selectedItem} />}
       </div>
     </Page>
   )

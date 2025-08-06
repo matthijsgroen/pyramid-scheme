@@ -7,13 +7,14 @@ import { useTableauTranslations } from "@/data/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
+import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 
 export const TombExpedition: FC<{
   activeJourney: JourneyState
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
-}> = ({ onClose, activeJourney, onLevelComplete }) => {
+}> = ({ onClose, activeJourney, onLevelComplete, onJourneyComplete }) => {
   const { t } = useTranslation("common")
   const tableaux = useTableauTranslations()
 
@@ -31,6 +32,42 @@ export const TombExpedition: FC<{
   const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const random = mulberry32(seed)
   const tableau = runTableaus[activeJourney.levelNr - 1]
+  if (tableau === undefined) {
+    return (
+      <div
+        className={
+          "[container-type:size] relative flex h-dvh flex-col bg-slate-700"
+        }
+      >
+        <div className="flex h-full w-full flex-col">
+          <div className="flex-shrink-0 backdrop-blur-sm">
+            <div
+              className={clsx(
+                "flex w-full items-center justify-between gap-4 px-4 py-2",
+                "text-white"
+              )}
+            >
+              <button
+                onClick={onClose}
+                className="cursor-pointer text-lg font-bold focus:outline-none"
+              >
+                {t("ui.backArrow")}
+              </button>
+              <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">
+                {journey.name}
+              </h1>
+              <span></span>
+            </div>
+          </div>
+          {/* final puzzle for treasure */}
+          <ComparePuzzle
+            activeJourney={activeJourney}
+            onComplete={onJourneyComplete}
+          />
+        </div>
+      </div>
+    )
+  }
 
   const calculation = generateRewardCalculation(
     {

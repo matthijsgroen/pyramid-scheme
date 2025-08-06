@@ -1,6 +1,14 @@
 import type { Operation } from "@/game/generateRewardCalculation"
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
+import {
+  ancientRelicsTreasures,
+  merchantCacheTreasures,
+  mythicalArtifactsTreasures,
+  nobleVaultTreasures,
+  templeSecretsTreasures,
+  type Treasure,
+} from "./treasures"
 
 /**
  * JourneyLength:
@@ -45,6 +53,7 @@ export type TreasureTombJourney = {
   difficulty: Difficulty
   journeyLength: "short" | "medium" | "long"
   levelCount: number
+  treasures: Treasure[]
   levelSettings: {
     numberRange: [min: number, max: number]
     operators: Operation[]
@@ -166,6 +175,7 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "short",
     levelCount: 2,
+    treasures: merchantCacheTreasures,
     levelSettings: {
       numberRange: [1, 5],
       operators: ["+"],
@@ -288,6 +298,7 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "medium",
     levelCount: 3,
+    treasures: nobleVaultTreasures,
     levelSettings: {
       numberRange: [1, 9],
       operators: ["+", "-"],
@@ -410,6 +421,7 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "medium",
     levelCount: 4,
+    treasures: templeSecretsTreasures,
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*"],
@@ -532,6 +544,7 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "long",
     levelCount: 5,
+    treasures: ancientRelicsTreasures,
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
@@ -654,6 +667,7 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "long",
     levelCount: 6,
+    treasures: mythicalArtifactsTreasures,
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],

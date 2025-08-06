@@ -66,7 +66,10 @@
     "puzzleComplete": "Het antwoord is:",
     "spiritsRejectCode": "De geesten verwerpen deze code",
     "sacredSealBroken": "Het heilige zegel is verbroken",
-    "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld"
+    "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
+    "crocodileAlways": "Welk cijfer at de krokodil altijd?",
+    "crocodileNever": "Welk cijfer at de krokodil nooit?",
+    "answerNow": "Het antwoord is: "
   },
   "loot": {
     "youFound": "Je hebt gevonden",

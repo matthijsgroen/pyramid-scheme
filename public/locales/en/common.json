@@ -66,7 +66,10 @@
     "puzzleComplete": "The answer is:",
     "spiritsRejectCode": "The spirits reject this code",
     "sacredSealBroken": "The sacred seal is broken",
-    "newExpeditionUnlocked": "A new expedition is now unlocked"
+    "newExpeditionUnlocked": "A new expedition is now unlocked",
+    "crocodileAlways": "What digit did the crocodile always eat?",
+    "crocodileNever": "What digit did the crocodile never eat?",
+    "answerNow": "The answer is: "
   },
   "loot": {
     "youFound": "You found",
