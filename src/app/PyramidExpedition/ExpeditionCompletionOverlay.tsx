@@ -60,7 +60,7 @@ export const ExpeditionCompletionOverlay: FC<{
             <h3 className="mt-2 text-center text-yellow-700">
               {t("loot.youFound")}:
             </h3>
-            <div className="mt-2 flex flex-row flex-wrap justify-center gap-2">
+            <div className="mt-2 flex flex-row flex-wrap justify-center gap-4">
               {lootResult.itemIds.map((itemId, index) => {
                 const translatedItem = getTranslatedItem(itemId)
                 const itemDifficulty = getItemFirstLevel(itemId)

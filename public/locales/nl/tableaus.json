@@ -8,7 +8,7 @@
   },
   "storyTemplates": {
     "starter_treasure_tomb": {
-      "merchants_trade": "Koopman's Handel",
+      "merchants_trade": "Handelaars Voorraad",
       "sacred_market": "Heilige Markt",
       "blessed_commerce": "Gezegende Handel",
       "divine_cartouche": "Goddelijke Cartouche",
@@ -18,7 +18,7 @@
       "ras_protection": "Ra's Bescherming"
     },
     "junior_treasure_tomb": {
-      "royal_merchant": "Koninklijke Koopman",
+      "royal_merchant": "Koninklijke Handelaar",
       "viziers_wisdom": "Vizier's Wijsheid",
       "noble_rams": "Edele Rammen",
       "lions_court": "Leeuwenhof",
@@ -210,7 +210,7 @@
     "starter_treasure_tomb": {
       "merchant_trade_blessing": "De koopman handelt met de boer onder Ra's zegen.",
       "sacred_marketplace": "Vis en bijen worden uitgewisseld op de heilige marktplaats.",
-      "ankh_blessing": "De ankh zegent alle koopmanstransacties.",
+      "ankh_blessing": "De ankh zegent alle handelstransacties.",
       "sacred_cartouche": "Heilige namen worden geschreven in beschermende cartouches.",
       "farmer_honey_offering": "De boer biedt honing aan Ra's ochtendlicht.",
       "divine_fish": "Heilige vissen zwemmen gezegend door goddelijke cartouches.",
@@ -218,7 +218,7 @@
       "ra_protection": "Ra beschermt alle kooplieden met goddelijke macht."
     },
     "junior_treasure_tomb": {
-      "pharaoh_blessing": "De Farao zegent de handel van de koopman met heilige leeuwen.",
+      "pharaoh_blessing": "De Farao zegent de handel van de handelaar met heilige leeuwen.",
       "vizier_guidance": "De vizier begeleidt ambachtslieden met het Oog van Horus.",
       "sacred_rams": "Heilige rammen dragen koninklijke regalia gezegend door Hathor.",
       "lion_court": "Leeuwen verzamelen zich in het koninklijke hof beschermd door Anubis.",
@@ -228,7 +228,7 @@
       "farmer_rams": "De boer verzorgt heilige rammen beschermd door Hathor.",
       "noble_pools": "Vissen zwemmen in edele vijvers bewaakt door leeuwen.",
       "vizier_protection": "De vizier beschermt de ankh met goddelijke scepters.",
-      "merchant_service": "De koopman dient de Farao onder Anubis' bescherming.",
+      "merchant_service": "De handelaar dient de Farao onder Anubis' bescherming.",
       "artisan_rams": "Ambachtslieden werken met rammen onder Ra's zegen.",
       "lion_regalia": "Leeuwen bewaken de koninklijke regalia gezegend door Hathor.",
       "pharaoh_name": "De naam van de Farao is geschreven in goddelijke cartouches.",

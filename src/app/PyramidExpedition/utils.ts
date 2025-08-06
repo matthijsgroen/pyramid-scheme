@@ -5,10 +5,7 @@ export function getNextUnlockedPyramidJourneyId(
 ): string | undefined {
   const idx = journeys.findIndex((j) => j.id === journeyId)
   if (idx === -1) return undefined
-  for (let i = idx + 1; i < journeys.length; i++) {
-    if (journeys[i].type === "pyramid") {
-      return journeys[i].id
-    }
-  }
-  return undefined
+  const journey = journeys[idx + 1]
+  if (!journey || journey.type !== "pyramid") return undefined
+  return journey.id
 }

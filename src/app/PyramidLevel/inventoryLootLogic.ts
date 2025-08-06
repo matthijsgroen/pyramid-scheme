@@ -56,7 +56,10 @@ export const determineInventoryLootForCurrentRuns = (
       1
 
     const tableau = tableauLevels.find(
-      (t) => t.tombJourneyId === tombId && t.runNumber === currentRun
+      (t) =>
+        t.tombJourneyId === tombId &&
+        t.runNumber === currentRun &&
+        t.levelNr === currentLevel
     )
 
     // collect all interesting items in this run for this tomb
@@ -103,16 +106,6 @@ export const determineInventoryLootForCurrentRuns = (
     }
   })
 
-  if (Object.keys(filteredItemsRequired).length === 0) {
-    return {
-      shouldAwardInventoryItem: false,
-      itemIds: [],
-      baseChance: baseInventoryChance,
-      adjustedChance: 0,
-      needMultiplier: 0,
-    }
-  }
-
   // Calculate urgency scores for each needed item
   const urgencyScores = Object.entries(filteredItemsRequired).map(
     ([itemId, needed]) => {
@@ -125,7 +118,7 @@ export const determineInventoryLootForCurrentRuns = (
       }
       // Lower urgency if player already has plenty
       else if (currentInventory >= needed) {
-        urgencyScore = Math.max(0, urgencyScore - 3)
+        urgencyScore = 0
       }
 
       return {
@@ -184,14 +177,18 @@ export const determineInventoryLootForCurrentRuns = (
   const avgUrgency = totalUrgency / selectedItems.length
 
   // Calculate adjusted chance based on average urgency
-  const needMultiplier = Math.min(3, avgUrgency / 5) // Cap at 3x multiplier
-  const adjustedChance = Math.min(0.8, baseInventoryChance * needMultiplier) // Cap at 80%
+  const needMultiplier = Math.max(Math.min(3, avgUrgency / 5), 1) // Cap at 3x multiplier
+  const adjustedChance = Math.min(
+    Math.max(0.8, baseInventoryChance),
+    baseInventoryChance * needMultiplier
+  ) // Cap at 80% by default, but can be higher for high base chance
 
   // Generate deterministic random number based on journey state
   const lootSeed = generateNewSeed(
     pyramidExpedition.randomSeed,
     pyramidExpedition.levelNr + 1000 // Offset to avoid collision with map piece seed
   )
+
   const random = mulberry32(lootSeed)
   const shouldAward = random() < adjustedChance
 
