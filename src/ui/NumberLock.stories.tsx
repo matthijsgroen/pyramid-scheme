@@ -22,6 +22,11 @@ const meta = {
       options: ["empty", "error", "open"],
       description: "Visual state of the lock",
     },
+    variant: {
+      control: "select",
+      options: ["vibrant", "muted"],
+      description: "Visual style variant",
+    },
     value: {
       control: "text",
       description: "Current value in the input",
@@ -92,6 +97,25 @@ export const CustomLength: Story = {
     state: "empty",
     placeholder: "6-digit code",
     maxLength: 6,
+  },
+}
+
+export const MutedVariant: Story = {
+  args: {
+    state: "empty",
+    variant: "muted",
+    placeholder: "Ancient code",
+    maxLength: 4,
+  },
+}
+
+export const MutedOpen: Story = {
+  args: {
+    state: "open",
+    variant: "muted",
+    value: "1337",
+    placeholder: "Ancient code",
+    maxLength: 4,
   },
 }
 
@@ -173,6 +197,58 @@ export const StatesShowcase: Story = {
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Disabled</span>
         <NumberLock state="empty" disabled placeholder="Enter code" />
+      </div>
+    </div>
+  ),
+}
+
+// Different variants showcase
+export const VariantComparison: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-8 p-4">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">Vibrant Empty</span>
+        <NumberLock state="empty" variant="vibrant" placeholder="Enter code" />
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">Muted Empty</span>
+        <NumberLock state="empty" variant="muted" placeholder="Enter code" />
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">Vibrant Error</span>
+        <NumberLock
+          state="error"
+          variant="vibrant"
+          value="9999"
+          placeholder="Enter code"
+        />
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">Muted Error</span>
+        <NumberLock
+          state="error"
+          variant="muted"
+          value="9999"
+          placeholder="Enter code"
+        />
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">Vibrant Open</span>
+        <NumberLock
+          state="open"
+          variant="vibrant"
+          value="1337"
+          placeholder="Enter code"
+        />
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">Muted Open</span>
+        <NumberLock
+          state="open"
+          variant="muted"
+          value="1337"
+          placeholder="Enter code"
+        />
       </div>
     </div>
   ),

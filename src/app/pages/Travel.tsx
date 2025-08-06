@@ -41,7 +41,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
-  const [showAbortModal, setShowAbortModal] = useState(false)
+  const [showInterruptModal, setShowInterruptModal] = useState(false)
 
   const canceledJourney = useMemo(() => {
     return journeyLog.find(
@@ -89,13 +89,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     setShowJourneySelection(false)
   }
 
-  const handleAbortExpedition = () => {
-    setShowAbortModal(false)
+  const handleInterruptExpedition = () => {
+    setShowInterruptModal(false)
     cancelJourney()
   }
 
-  const handleCancelAbort = () => {
-    setShowAbortModal(false)
+  const handleCancelInterrupt = () => {
+    setShowInterruptModal(false)
   }
 
   const unlocked = useMemo(() => {
@@ -201,10 +201,10 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
-                    onClick={() => setShowAbortModal(true)}
+                    onClick={() => setShowInterruptModal(true)}
                     className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 lowercase hover:text-blue-700"
                   >
-                    {t("ui.abortExpedition")}
+                    {t("ui.interruptExpedition")}
                   </button>
                 </div>
               )}
@@ -291,13 +291,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
       </div>
 
       <ConfirmModal
-        isOpen={showAbortModal}
-        title={t("ui.abortExpedition")}
-        message={t("ui.confirmAbortExpedition")}
-        confirmText={t("ui.abortExpedition")}
+        isOpen={showInterruptModal}
+        title={t("ui.interruptExpedition")}
+        message={t("ui.confirmInterruptExpedition")}
+        confirmText={t("ui.interruptExpedition")}
         cancelText={t("ui.cancel")}
-        onConfirm={handleAbortExpedition}
-        onCancel={handleCancelAbort}
+        onConfirm={handleInterruptExpedition}
+        onCancel={handleCancelInterrupt}
       />
     </Page>
   )

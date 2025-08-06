@@ -20,7 +20,7 @@ export const useLootDetermination = (
   activeJourney: JourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
   const { journeyLog, findMapPiece } = useJourneys()
-  const { inventory, addItem } = useInventory()
+  const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 
   // Pre-calculate loot determination outside of useMemo
@@ -81,10 +81,17 @@ export const useLootDetermination = (
           rarity: "common",
         },
         collectLoot: () => {
-          // Award all items from the result
-          inventoryResult.itemIds.forEach((itemId) => {
-            addItem(itemId, 1)
-          })
+          // Award all items from the result in a single batch operation
+          if (inventoryResult.itemIds.length > 0) {
+            const itemsToAdd = inventoryResult.itemIds.reduce(
+              (acc, itemId) => {
+                acc[itemId] = (acc[itemId] || 0) + 1
+                return acc
+              },
+              {} as Record<string, number>
+            )
+            addItems(itemsToAdd)
+          }
         },
       }
     }
@@ -97,6 +104,6 @@ export const useLootDetermination = (
     activeJourney.journey,
     t,
     findMapPiece,
-    addItem,
+    addItems,
   ])
 }

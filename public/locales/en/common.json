@@ -48,8 +48,8 @@
     "planExpedition": "Plan Expedition",
     "or": "Or",
     "selectAnotherExpedition": "Select another expedition",
-    "abortExpedition": "Abort expedition",
-    "confirmAbortExpedition": "Are you sure you want to abort this expedition? Journey progress will be kept, but level progress will be lost!",
+    "interruptExpedition": "Interrupt expedition",
+    "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Journey progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
     "settings": "Settings",
     "language": "Language",
@@ -62,7 +62,10 @@
     "collected": "collected",
     "completeExpeditionsToUnlock": "Complete expeditions to unlock",
     "availableSymbols": "Available Symbols:",
-    "need": "need"
+    "need": "need",
+    "puzzleComplete": "The answer is:",
+    "spiritsRejectCode": "The spirits reject this code",
+    "sacredSealBroken": "The sacred seal is broken"
   },
   "loot": {
     "youFound": "You found",

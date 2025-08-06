@@ -2,10 +2,11 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
 import {
-  type Formula,
+  type Formula as FormulaType,
   type RewardCalculation,
 } from "@/game/generateRewardCalculation"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { NumberLock } from "@/ui/NumberLock"
 import {
   egyptianDeities,
   egyptianProfessions,
@@ -20,7 +21,7 @@ import { useState, useMemo, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
 // Helper function to count total number slots in a formula
-const countFormulaSlots = (formula: Formula): number => {
+const countFormulaSlots = (formula: FormulaType): number => {
   let count = 0
   if (typeof formula.left === "number") {
     count += 1
@@ -46,10 +47,10 @@ const getInventoryItemById = (id: string) => {
   return allItems.find((item) => item.id === id)
 }
 
-const obfuscate = (text: string, percentage: number): string => {
+const revealText = (text: string, percentage?: number): string => {
   // replace characters with ? based on a noise pattern for natural reveal
   if (percentage === undefined || percentage <= 0) {
-    return text.replace(/[a-zA-Z]/g, "?")
+    return text.replace(/[a-zA-Z0-9]/g, "?")
   }
   if (percentage >= 1) {
     return text
@@ -81,7 +82,7 @@ const obfuscate = (text: string, percentage: number): string => {
 }
 
 const Formula: FC<{
-  formula: Formula
+  formula: FormulaType
   showResult: boolean
   difficulty: Difficulty
   symbolMapping: Record<number, string>
@@ -107,7 +108,12 @@ const Formula: FC<{
         onTileClick={onTileClick}
         positionPrefix={`formula-${formulaIndex}`}
       />{" "}
-      = {showResult ? <span>{formula.result}</span> : "??"}
+      ={" "}
+      {showResult ? (
+        <span>{formula.result}</span>
+      ) : (
+        revealText(formula.result.toString(), 0)
+      )}
     </div>
   )
 }
@@ -116,11 +122,12 @@ export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
   difficulty: Difficulty
-}> = ({ tableau, calculation, difficulty }) => {
+  onComplete?: () => void
+}> = ({ tableau, calculation, difficulty, onComplete }) => {
   const { t } = useTranslation("common")
 
   // Get player's actual inventory
-  const { inventory } = useInventory()
+  const { inventory, removeItems } = useInventory()
 
   // State for managing which tiles are filled
   const [filledState, setFilledState] = useState<FilledTileState>({
@@ -132,6 +139,13 @@ export const TombPuzzle: FC<{
   const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>(
     {}
   )
+
+  // State for NumberLock
+  const [lockCode, setLockCode] = useState("")
+  const [lockState, setLockState] = useState<"empty" | "error" | "open">(
+    "empty"
+  )
+  const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
 
   // Calculate solved percentage based on filled tiles
   const solvedPercentage = useMemo(() => {
@@ -219,7 +233,7 @@ export const TombPuzzle: FC<{
     const allFormulas = [...calculation.hintFormulas, calculation.mainFormula]
 
     allFormulas.forEach((formula, formulaIndex) => {
-      const checkFormulaPart = (part: Formula, prefix: string) => {
+      const checkFormulaPart = (part: FormulaType, prefix: string) => {
         if (
           typeof part.left === "number" &&
           calculation.symbolMapping[part.left] === symbolId
@@ -269,6 +283,50 @@ export const TombPuzzle: FC<{
     }
   }
 
+  // NumberLock handlers
+  const handleLockSubmit = (code: string) => {
+    // Prevent multiple submissions during processing
+    if (isProcessingCompletion) {
+      return
+    }
+
+    if (code === calculation.mainFormula.result.toString()) {
+      setLockState("open")
+      setIsProcessingCompletion(true)
+
+      // After 2 seconds, remove used inventory items and call onComplete
+      setTimeout(() => {
+        // Remove used inventory items in a single batch operation
+        const itemsToRemove = Object.fromEntries(
+          Object.entries(inventoryUsage).filter(
+            ([, usedCount]) => usedCount > 0
+          )
+        )
+        if (Object.keys(itemsToRemove).length > 0) {
+          removeItems(itemsToRemove)
+        }
+
+        // Call completion handler
+        onComplete?.()
+        setIsProcessingCompletion(false)
+      }, 2000)
+    } else {
+      setLockState("error")
+      // Reset to empty state after a delay
+      setTimeout(() => {
+        setLockState("empty")
+        setLockCode("")
+      }, 2000)
+    }
+  }
+
+  const handleLockChange = (code: string) => {
+    setLockCode(code)
+    if (lockState === "error") {
+      setLockState("empty")
+    }
+  }
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-8 px-4 text-white">
       <div
@@ -278,7 +336,7 @@ export const TombPuzzle: FC<{
         )}
       >
         <h1 className="text-center font-pyramid text-2xl">
-          {obfuscate(tableau.name, solvedPercentage)}
+          {revealText(tableau.name, solvedPercentage)}
         </h1>
 
         {calculation.hintFormulas.map((formula, index) => (
@@ -307,7 +365,7 @@ export const TombPuzzle: FC<{
             />
           </span>
         </div>
-        <div>{obfuscate(tableau.description, solvedPercentage)}</div>
+        <div>{revealText(tableau.description, solvedPercentage)}</div>
       </div>
 
       {/* Available symbols inventory - hide when puzzle is completed */}
@@ -358,6 +416,28 @@ export const TombPuzzle: FC<{
               }
             )}
           </div>
+        </div>
+      )}
+
+      {/* NumberLock appears when puzzle is completed */}
+      {isPuzzleCompleted && (
+        <div className="flex flex-col items-center gap-4">
+          <h3 className="text-lg font-bold text-amber-200">
+            {t("ui.puzzleComplete")}
+          </h3>
+          <NumberLock
+            state={lockState}
+            variant="muted"
+            value={lockCode}
+            onChange={handleLockChange}
+            onSubmit={handleLockSubmit}
+            disabled={isProcessingCompletion}
+            placeholder={revealText(
+              calculation.mainFormula.result.toString(),
+              0
+            )}
+            maxLength={4}
+          />
         </div>
       )}
     </div>
