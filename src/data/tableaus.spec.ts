@@ -440,7 +440,6 @@ describe("Tableau System", () => {
           "tombJourneyId": "junior_treasure_tomb",
         }
       `)
-      console.log(firstTableau)
 
       const usedSymbols = allInventory
         .filter((item) => firstTableau.inventoryIds.includes(item.id))

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef, type FC } from "react"
+import { useCallback, useEffect, useState, useRef, type FC, use } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -11,6 +11,7 @@ import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourney"
 import type { JourneyState } from "@/app/state/useJourneys"
 import type { PyramidJourney } from "@/data/journeys"
+import { FezContext } from "./fez/context"
 
 export const PyramidExpedition: FC<{
   activeJourney: JourneyState
@@ -51,6 +52,11 @@ export const PyramidExpedition: FC<{
     : 0
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    showConversation("pyramidIntro")
+  }, [showConversation])
 
   useEffect(() => {
     if (startNextLevel) {

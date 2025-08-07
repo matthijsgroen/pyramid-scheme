@@ -1,4 +1,4 @@
-import { useMemo, useState, type FC } from "react"
+import { use, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
@@ -16,6 +16,7 @@ import { DifficultyPill } from "@/ui/DifficultyPill"
 import { mulberry32 } from "@/game/random"
 import { TombMapButton } from "@/ui/TombMapButton"
 import { hashString } from "@/support/hashString"
+import { FezContext } from "../fez/context"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -52,6 +53,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     activeJourney ?? canceledJourney,
     journeys
   )
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    if (showJourneySelection) {
+      showConversation("chooseExpedition")
+    }
+  }, [showJourneySelection, showConversation])
 
   const journey = activeJourney?.journey ?? selectedJourney
   const mapRotation = useMemo(() => {
@@ -203,7 +211,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
-                    onClick={() => setShowInterruptModal(true)}
+                    onClick={() => {
+                      if (activeJourney.journey.type === "treasure_tomb") {
+                        handleInterruptExpedition()
+                        return
+                      }
+                      setShowInterruptModal(true)
+                    }}
                     className="mt-4 cursor-pointer bg-transparent py-2 font-bold text-blue-600 lowercase hover:text-blue-700"
                   >
                     {t("ui.interruptExpedition")}

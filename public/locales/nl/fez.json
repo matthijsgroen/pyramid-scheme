@@ -1,3 +1,13 @@
 {
-  "welcome": "Welkom bij Pyramid Scheme!"
+  "not-found": "Sorry het gesprek dat je zoekt bestaat niet.",
+  "welcome": "Welkom bij Pyramid Scheme!",
+  "welcome2": "Verken de wonderen van het oude Egypte en ontdek haar geheimen.",
+  "welcome3": "Laten we beginnen met een expeditie plannen door op de kaart te klikken!",
+  "chooseExpedition": "Hier kun je je expeditie kiezen. Laten we beginnen met een korte reis.",
+  "pyramidIntro": "In onze expeditie zullen we piramides verkennen.",
+  "pyramidIntro2": "In deze piramides ontbreken getallen.",
+  "pyramidIntro3": "Vul de ontbrekende getallen in om de puzzel op te lossen.",
+  "pyramidIntro4": "Elk getal is de som van de twee getallen eronder.",
+  "pyramidIntro5": "Heel veel success!",
+  "levelCompleted": "Goed gedaan!"
 }

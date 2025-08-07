@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef, type FC } from "react"
+import { useEffect, useState, useRef, type FC, use } from "react"
 import { useTranslation } from "react-i18next"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
 import { LootPopup } from "@/ui/LootPopup"
 import type { JourneyState } from "@/app/state/useJourneys"
 import { useLootDetermination } from "./useLootDetermination"
+import { FezContext } from "../fez/context"
 
 type LevelCompletionHandlerProps = {
   isCompleted: boolean
@@ -18,6 +19,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
 }) => {
   const { t } = useTranslation("common")
   const [showOverlay, setShowOverlay] = useState(false)
+  const [showFez, setShowFez] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const [completionPhase, setCompletionPhase] = useState<
     "hidden" | "overlay" | "loot" | "finished"
@@ -32,6 +34,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
       // Start the completion sequence only when level is completed
       setCompletionPhase("overlay")
       setShowOverlay(true)
+      setShowFez(true)
     }
   }, [isCompleted, completionPhase])
 
@@ -48,9 +51,19 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
     }
   }, [isCompleted])
 
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    if (showFez) {
+      showConversation("levelCompleted", () => {
+        setShowFez(false)
+      })
+    }
+  }, [showFez, showConversation])
+
   // Separate effect for handling the timer when in overlay phase
   useEffect(() => {
-    if (completionPhase === "overlay") {
+    if (completionPhase === "overlay" && !showFez) {
       const timer = setTimeout(() => {
         if (loot) {
           setCompletionPhase("loot")
@@ -71,7 +84,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
         }
       }
     }
-  }, [completionPhase, loot, onCompletionFinished])
+  }, [completionPhase, loot, onCompletionFinished, showFez])
 
   const handleLootDismiss = () => {
     setShowLoot(false)

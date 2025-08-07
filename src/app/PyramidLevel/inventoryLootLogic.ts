@@ -6,7 +6,7 @@ import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { tableauLevels } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
-import { generateNewSeed, mulberry32 } from "@/game/random"
+import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 
 const difficultyCompare = (a: Difficulty, b: Difficulty): number =>
@@ -42,6 +42,12 @@ export const determineInventoryLootForCurrentRuns = (
     .map((j) => j.id)
   const itemsRequired: Record<string, number> = {}
   const itemsInteresting: string[] = []
+  const lootSeed = generateNewSeed(
+    pyramidExpedition.randomSeed,
+    pyramidExpedition.levelNr + 1000 // Offset to avoid collision with map piece seed
+  )
+
+  const random = mulberry32(lootSeed)
 
   tombIds.forEach((tombId) => {
     const tombInfo = journeys.find(
@@ -74,18 +80,30 @@ export const determineInventoryLootForCurrentRuns = (
           }
         })
       }
+      if (
+        currentLevel === tombInfo?.levelCount &&
+        tableau.tombJourneyId === tombId &&
+        tableau.runNumber === currentRun + 1 &&
+        tableau.levelNr === 1
+      ) {
+        tableau.inventoryIds.forEach((itemId) => {
+          if (!itemsInteresting.includes(itemId)) {
+            itemsInteresting.push(itemId)
+          }
+        })
+      }
     })
 
     if (!tableau || !tombInfo) return
     const seed = journeySeedGenerator(journeyLog)(tombId)
-    const random = mulberry32(generateNewSeed(seed, currentLevel))
+    const tableauRandom = mulberry32(generateNewSeed(seed, currentLevel))
     const settings = {
       amountSymbols: tableau.symbolCount,
       hieroglyphIds: tableau.inventoryIds,
       numberRange: tombInfo.levelSettings.numberRange,
       operations: tombInfo.levelSettings.operators,
     }
-    const calculation = generateRewardCalculation(settings, random)
+    const calculation = generateRewardCalculation(settings, tableauRandom)
 
     // add all symbols to itemsRequired
     Object.entries(calculation.symbolCounts).forEach(([symbol, count]) => {
@@ -142,6 +160,8 @@ export const determineInventoryLootForCurrentRuns = (
   if (selectedItems.length === 0) {
     const filteredInterestingItems = itemsInteresting.filter((itemId) => {
       const itemDifficulty = getItemFirstLevel(itemId)
+      const currentInventory = playerInventory[itemId] || 0
+      if (currentInventory > 5) return false // Skip if player has too many)
       return difficultyCompare(itemDifficulty, difficulty) <= 0
     })
 
@@ -156,9 +176,7 @@ export const determineInventoryLootForCurrentRuns = (
     }
 
     // Pick random items from the interesting list
-    const shuffledInteresting = [...filteredInterestingItems].sort(
-      () => Math.random() - 0.5
-    )
+    const shuffledInteresting = shuffle(filteredInterestingItems, random)
     const fallbackItems = shuffledInteresting.slice(0, maxItemsToAward)
 
     selectedItems = fallbackItems.map((itemId) => ({
@@ -184,12 +202,6 @@ export const determineInventoryLootForCurrentRuns = (
   ) // Cap at 80% by default, but can be higher for high base chance
 
   // Generate deterministic random number based on journey state
-  const lootSeed = generateNewSeed(
-    pyramidExpedition.randomSeed,
-    pyramidExpedition.levelNr + 1000 // Offset to avoid collision with map piece seed
-  )
-
-  const random = mulberry32(lootSeed)
   const shouldAward = random() < adjustedChance
 
   return {

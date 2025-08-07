@@ -1,3 +1,14 @@
 {
-  "welcome": "Welcome to Pyramid Scheme!"
+  "not-found": "Sorry the conversation you are looking for does not exist.",
+  "welcome": "Welcome to Pyramid Scheme!",
+  "welcome2": "Explore the wonders of ancient Egypt and uncover its secrets.",
+  "welcome3": "Let's start planning an expedition by clicking on the map!",
+  "chooseExpedition": "Here you can choose your expedition. Let's start with a short journey.",
+  "pyramidIntro": "In our expedition we will explore pyramids.",
+  "pyramidIntro2": "In these pyramids, numbers are missing.",
+  "pyramidIntro3": "Fill in the missing numbers to solve the puzzle.",
+  "pyramidIntro4": "Each number is the sum of the two numbers below it.",
+  "pyramidIntro5": "Good luck!",
+
+  "levelCompleted": "Well done!"
 }

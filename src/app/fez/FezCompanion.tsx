@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Fez } from "./Fez"
 import { useGameStorage } from "@/support/useGameStorage"
-import { FezContext } from "./context"
+import { FezContext, type FezConversationResult } from "./context"
 
 export const FezCompanion: React.FC<{
   children: React.ReactNode
@@ -10,27 +10,55 @@ export const FezCompanion: React.FC<{
   const [activeConversation, setActiveConversation] = useState<string | null>(
     null
   )
-  const resolver = useRef<() => void>(() => {})
+  const conversationQueue = useRef<
+    {
+      conversation: string
+      onComplete: (result: FezConversationResult) => void
+    }[]
+  >([])
   const [conversations, setConversations, loaded] = useGameStorage<
     Record<string, boolean>
   >("conversations", {})
 
   const contextValue = useMemo(
     () => ({
-      showConversation: async (conversationId: string) => {
+      showConversation: (
+        conversationId: string,
+        onComplete?: (result: FezConversationResult) => void
+      ) => {
         if (!loaded) {
-          return Promise.resolve()
+          return onComplete?.("not-loaded")
         }
         if (conversations[conversationId]) {
-          return Promise.resolve()
+          return onComplete?.("seen-earlier")
         }
-        return new Promise<void>((resolve) => {
-          resolver.current = resolve
+        const entry = {
+          conversation: conversationId,
+          onComplete: (result: FezConversationResult) => {
+            setConversations((prev) => ({
+              ...prev,
+              [conversationId]: true,
+            })).then(() => {
+              // remove from queue
+              conversationQueue.current = conversationQueue.current.filter(
+                (item) => item !== entry
+              )
+              onComplete?.(result)
+              if (conversationQueue.current.length > 0) {
+                setActiveConversation(conversationQueue.current[0].conversation)
+              } else {
+                setActiveConversation(null)
+              }
+            })
+          },
+        }
+        conversationQueue.current.push(entry)
+        if (conversationQueue.current.length === 1) {
           setActiveConversation(conversationId)
-        })
+        }
       },
     }),
-    [conversations, loaded]
+    [conversations, loaded, setConversations]
   )
 
   return (
@@ -39,15 +67,10 @@ export const FezCompanion: React.FC<{
       {createPortal(
         activeConversation && (
           <Fez
+            key={activeConversation}
             conversation={activeConversation}
-            onComplete={() => {
-              setConversations((prev) => ({
-                ...prev,
-                [activeConversation]: true,
-              })).then(() => {
-                setActiveConversation(null)
-                resolver.current()
-              })
+            onComplete={(result) => {
+              conversationQueue.current[0].onComplete(result)
             }}
           />
         ),
