@@ -62,15 +62,14 @@ html, body {
     }
   }
 
-  --animate-show-balloon: show-balloon 0.3s ease-in-out forwards;
-  @keyframes show-balloon {
-    0% {
-      opacity: 0;
-      transform: rotate(12deg);
+  --animate-subtle-bounce: gentle-bounce 3s ease-in-out infinite;
+  @keyframes gentle-bounce {
+    0%, 100% {
+      transform: translateY(0);
     }
-    100% {
-      opacity: 1;
-      transform: rotate(0);
+    50% {
+      transform: translateY(-2px);
     }
   }
+
 }

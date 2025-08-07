@@ -1,9 +1,18 @@
 import { createContext } from "react"
 
+export type FezConversationResult =
+  | "not-loaded"
+  | "complete"
+  | "skipped"
+  | "seen-earlier"
+
 export const FezContext = createContext<{
-  showConversation: (conversationId: string) => Promise<void>
+  showConversation: (
+    conversationId: string,
+    onComplete?: (result: FezConversationResult) => void
+  ) => void
 }>({
-  showConversation: async (_conversationId) => {
-    // Implementation for showing the conversation
+  showConversation: () => {
+    throw new Error("FezContext not provided")
   },
 })
