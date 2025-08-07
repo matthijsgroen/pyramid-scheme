@@ -328,7 +328,7 @@ export const TombPuzzle: FC<{
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-8 px-4 text-white">
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 overflow-y-auto px-4 text-white">
       <div
         className={clsx(
           "flex w-full max-w-md flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
@@ -405,10 +405,14 @@ export const TombPuzzle: FC<{
                     <div className="flex flex-col text-xs">
                       <span>
                         {availableInInventory - usedFromInventory}/
-                        {availableInInventory}
-                      </span>
-                      <span className="text-gray-400">
-                        {t("ui.need")}: {maxNeeded}
+                        <span
+                          className={clsx(
+                            maxNeeded > availableInInventory &&
+                              "font-bold text-red-400"
+                          )}
+                        >
+                          {maxNeeded}
+                        </span>
                       </span>
                     </div>
                   </div>
