@@ -26,7 +26,6 @@ export const FezCompanion: React.FC<{
         conversationId: string,
         onComplete?: (result: FezConversationResult) => void
       ) => {
-        console.log("Showing conversation:", conversationId, conversations)
         if (!loaded) {
           return onComplete?.("not-loaded")
         }
@@ -36,7 +35,6 @@ export const FezCompanion: React.FC<{
         const entry = {
           conversation: conversationId,
           onComplete: (result: FezConversationResult) => {
-            console.log("completing conversation:", conversationId, result)
             setConversations((prev) => ({
               ...prev,
               [conversationId]: true,
