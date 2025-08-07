@@ -3,6 +3,7 @@ import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
 import { TombExpedition } from "./app/TombExpedition"
+import { FezCompanion } from "./app/fez/FezCompanion"
 
 function App() {
   const [inGame, setInGame] = useState(false)
@@ -14,7 +15,7 @@ function App() {
   ).length
 
   return (
-    <>
+    <FezCompanion>
       {!inGame && <Base startGame={() => setInGame(true)} />}
       {inGame && activeJourney && activeJourney.journey.type === "pyramid" && (
         <PyramidExpedition
@@ -41,7 +42,7 @@ function App() {
             onClose={() => setInGame(false)}
           />
         )}
-    </>
+    </FezCompanion>
   )
 }
 

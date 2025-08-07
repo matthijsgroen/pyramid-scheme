@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react"
+import type { SetStateAction } from "react"
 import { useCallback, useEffect, useState } from "react"
 import localForage from "localforage"
 
@@ -85,9 +85,11 @@ export const useOfflineStorage = <T>(
   storeName = "defaultStore"
 ): [
   value: T,
-  setValue: Dispatch<SetStateAction<T>>,
+  setValue: (value: SetStateAction<T>) => Promise<void>,
+  loaded: boolean,
   deleteValue: (optimistic?: boolean) => Promise<void>,
 ] => {
+  const [loaded, setLoaded] = useState(false)
   const [localState, setLocalState] = useState(
     typeof initialValue === "function"
       ? (initialValue as () => T)()
@@ -96,25 +98,30 @@ export const useOfflineStorage = <T>(
   const store = getStore(storeName)
 
   useEffect(() => {
-    store.getItem<T>(key).then((value) => {
-      if (value !== null) {
-        setLocalState((current) => {
-          if (JSON.stringify(current) === JSON.stringify(value)) {
-            return current // No change needed
+    store
+      .getItem<T>(key)
+      .then((value) => {
+        if (value !== null) {
+          setLocalState((current) => {
+            if (JSON.stringify(current) === JSON.stringify(value)) {
+              return current // No change needed
+            }
+            return value
+          })
+        } else {
+          if (initialValue !== null) {
+            store.setItem<T>(
+              key,
+              typeof initialValue === "function"
+                ? (initialValue as () => T)()
+                : initialValue
+            )
           }
-          return value
-        })
-      } else {
-        if (initialValue !== null) {
-          store.setItem<T>(
-            key,
-            typeof initialValue === "function"
-              ? (initialValue as () => T)()
-              : initialValue
-          )
         }
-      }
-    })
+      })
+      .then(() => {
+        setLoaded(true)
+      })
     return store.subscribe<T>(key, setLocalState)
   }, [initialValue, key, store])
 
@@ -149,5 +156,5 @@ export const useOfflineStorage = <T>(
     [key, initialValue, store]
   )
 
-  return [localState, setValue, deleteValue]
+  return [localState, setValue, loaded, deleteValue]
 }

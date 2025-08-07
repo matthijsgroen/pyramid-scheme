@@ -61,4 +61,16 @@ html, body {
       transform: translateY(-2px);
     }
   }
+
+  --animate-show-balloon: show-balloon 0.3s ease-in-out forwards;
+  @keyframes show-balloon {
+    0% {
+      opacity: 0;
+      transform: rotate(12deg);
+    }
+    100% {
+      opacity: 1;
+      transform: rotate(0);
+    }
+  }
 }
