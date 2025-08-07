@@ -1,9 +1,8 @@
-import fez from "@/assets/fez.png"
+import fez from "@/assets/fez-250.png"
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 
 export const Fez: FC<{ conversation: string; onComplete: () => void }> = ({
-  conversation,
   onComplete,
 }) => {
   const { t } = useTranslation("fez")
