@@ -2,15 +2,12 @@ import {
   journeySeedGenerator,
   type JourneyState,
 } from "@/app/state/useJourneys"
-import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { tableauLevels } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-
-const difficultyCompare = (a: Difficulty, b: Difficulty): number =>
-  difficulties.indexOf(a) - difficulties.indexOf(b)
+import { difficultyCompare } from "@/data/difficultyLevels"
 
 export type InventoryLootResult = {
   shouldAwardInventoryItem: boolean

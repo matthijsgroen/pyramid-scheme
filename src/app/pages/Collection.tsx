@@ -59,7 +59,7 @@ const CategorySection: FC<{
       <h2 className="mb-4 border-2 border-b-purple-800 bg-purple-800 bg-clip-text font-pyramid text-xl font-semibold text-transparent">
         {t(`collection.categories.${category}`)}
       </h2>
-      <div className="grid grid-cols-5 gap-3 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
+      <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-15">
         {sortedItems.map((item) => {
           const itemLevel = getItemFirstLevel(item.id)
           const isSelected = selectedItem?.id === item.id

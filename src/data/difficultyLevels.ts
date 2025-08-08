@@ -7,3 +7,6 @@ export const difficulties = [
 ] as const
 
 export type Difficulty = (typeof difficulties)[number]
+
+export const difficultyCompare = (a: Difficulty, b: Difficulty): number =>
+  difficulties.indexOf(a) - difficulties.indexOf(b)

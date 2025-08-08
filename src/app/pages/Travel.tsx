@@ -17,6 +17,7 @@ import { mulberry32 } from "@/game/random"
 import { TombMapButton } from "@/ui/TombMapButton"
 import { hashString } from "@/support/hashString"
 import { FezContext } from "../fez/context"
+import { type Difficulty } from "@/data/difficultyLevels"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -107,10 +108,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   }
 
   const unlocked = useMemo(() => {
-    return journeys.findIndex((j, journeyIndex) => {
-      if (j.type === "treasure_tomb") {
-        return false
-      }
+    return journeys.findIndex((_j, journeyIndex) => {
       if (journeyIndex === 0) return false // Always unlock the first journey
       const previousJourneyId = journeys[journeyIndex - 1]?.id
       const hasPreviousCompleted = journeyLog.some(
@@ -119,6 +117,19 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
       return !hasPreviousCompleted
     })
   }, [journeys, journeyLog])
+
+  const showTombExpeditionsAhead = useMemo(() => {
+    return journeyLog.reduce<Difficulty[]>((difficulties, journey) => {
+      if (
+        journey.journey.type === "pyramid" &&
+        journey.foundMapPiece &&
+        !difficulties.includes(journey.journey.difficulty)
+      ) {
+        return difficulties.concat(journey.journey.difficulty)
+      }
+      return difficulties
+    }, [])
+  }, [journeyLog])
 
   return (
     <Page
@@ -249,7 +260,18 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
           <div className="flex-1 overflow-y-auto p-6">
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-              {journeys.slice(0, unlocked).map((journey, index) => {
+              {journeys.map((journey, index) => {
+                if (journey.type === "pyramid" && index >= unlocked) {
+                  // Skip pyramid journeys that are not yet unlocked
+                  return null
+                }
+                if (
+                  journey.type === "treasure_tomb" &&
+                  index >= unlocked &&
+                  !showTombExpeditionsAhead.includes(journey.difficulty)
+                ) {
+                  return null
+                }
                 const completionCount = journeyLog.filter(
                   (j) => j.journeyId === journey.id && j.completed
                 ).length
