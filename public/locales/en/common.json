@@ -68,10 +68,12 @@
     "newExpeditionUnlocked": "A new expedition is now unlocked",
     "crocodileAlways": "What digit did the crocodile always eat?",
     "crocodileNever": "What digit did the crocodile never eat?",
+    "noCrocodilePuzzle": "Secret treasure room found!",
     "answerNow": "The answer is: "
   },
   "loot": {
     "youFound": "You found",
+    "expeditionReward": "Extra reward for completing the expedition",
     "clickToContinue": "Click anywhere to continue"
   },
   "level": {

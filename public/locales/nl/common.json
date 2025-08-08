@@ -68,10 +68,12 @@
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
     "crocodileAlways": "Welk cijfer at de krokodil altijd?",
     "crocodileNever": "Welk cijfer at de krokodil nooit?",
+    "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
     "answerNow": "Het antwoord is: "
   },
   "loot": {
     "youFound": "Je hebt gevonden",
+    "expeditionReward": "Extra beloning voor het voltooien van de expeditie",
     "clickToContinue": "Klik ergens om door te gaan"
   },
   "level": {

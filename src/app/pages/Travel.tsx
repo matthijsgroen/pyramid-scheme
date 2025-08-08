@@ -90,8 +90,8 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   }
 
   const handleJourneySelect = (journey: TranslatedJourney) => {
-    setShowJourneySelection(false)
-    setSelectedJourney(journey)
+    startJourney(journey)
+    startGame()
   }
 
   const handleBackToMap = () => {

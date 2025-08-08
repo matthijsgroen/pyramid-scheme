@@ -1,5 +1,4 @@
 import { LootPopup } from "@/ui/LootPopup"
-import { NumberLock } from "@/ui/NumberLock"
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { JourneyState } from "../state/useJourneys"
@@ -7,13 +6,13 @@ import type { TreasureTombJourney } from "@/data/journeys"
 import { mulberry32 } from "@/game/random"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
 import { useInventory } from "../Inventory/useInventory"
+import { Chest } from "@/ui/Chest"
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
   activeJourney: JourneyState
 }> = ({ onComplete, activeJourney }) => {
   const { t } = useTranslation("common")
-  const [lockCode, setLockCode] = useState("")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">(
     "empty"
   )
@@ -21,8 +20,6 @@ export const ComparePuzzle: FC<{
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const { inventory, addItem } = useInventory()
-
-  const number = "7"
 
   const journey = activeJourney.journey as TreasureTombJourney
 
@@ -47,53 +44,30 @@ export const ComparePuzzle: FC<{
     }, 300)
   }
 
-  const handleLockSubmit = (code: string) => {
+  const handleLockSubmit = () => {
     // Prevent multiple submissions during processing
     if (isProcessingCompletion) {
       return
     }
 
-    if (code === number) {
-      setLockState("open")
-      setIsProcessingCompletion(true)
+    setLockState("open")
+    setIsProcessingCompletion(true)
 
-      setShowLoot(true)
-      setIsProcessingCompletion(false)
-    } else {
-      setLockState("error")
-      // Reset to empty state after a delay
-      setTimeout(() => {
-        setLockState("empty")
-        setLockCode("")
-      }, 2000)
-    }
-  }
-
-  const handleLockChange = (code: string) => {
-    setLockCode(code)
-    if (lockState === "error") {
-      setLockState("empty")
-    }
+    setShowLoot(true)
+    setIsProcessingCompletion(false)
   }
 
   return (
     <div className="flex flex-col items-center gap-4">
       <h3 className="text-lg font-bold text-amber-200">
-        {t("ui.crocodileAlways")}
+        {t("ui.noCrocodilePuzzle")}
       </h3>
-      <NumberLock
+      <Chest
         state={lockState}
-        variant="muted"
-        value={lockCode}
-        onChange={handleLockChange}
-        onSubmit={handleLockSubmit}
-        disabled={isProcessingCompletion}
-        placeholder={"?"}
-        maxLength={1}
+        variant="vibrant"
+        onClick={handleLockSubmit}
+        allowInteraction={!isProcessingCompletion && lockState !== "open"}
       />
-      <h3 className="text-lg font-bold text-amber-200">
-        {t("ui.answerNow")}: {number}
-      </h3>
       {loot && (
         <>
           <LootPopup

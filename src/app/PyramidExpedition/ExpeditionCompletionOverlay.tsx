@@ -64,7 +64,7 @@ export const ExpeditionCompletionOverlay: FC<{
         {lootResult.itemIds.length > 0 && (
           <>
             <h3 className="mt-2 text-center text-yellow-700">
-              {t("loot.youFound")}:
+              {t("loot.expeditionReward")}:
             </h3>
             <div className="mt-2 flex flex-row flex-wrap justify-center gap-4">
               {lootResult.itemIds.map((itemId, index) => {
