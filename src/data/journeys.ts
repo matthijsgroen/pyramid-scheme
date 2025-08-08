@@ -61,6 +61,7 @@ export type TreasureTombJourney = {
   levelSettings: {
     numberRange: [min: number, max: number]
     operators: Operation[]
+    compareAmount: number
   }
 }
 
@@ -186,6 +187,7 @@ export const journeys: Journey[] = [
     levelSettings: {
       numberRange: [1, 5],
       operators: ["+"],
+      compareAmount: 0,
     },
   },
 
@@ -309,6 +311,7 @@ export const journeys: Journey[] = [
     levelSettings: {
       numberRange: [1, 9],
       operators: ["+", "-"],
+      compareAmount: 2,
     },
   },
 
@@ -432,6 +435,7 @@ export const journeys: Journey[] = [
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*"],
+      compareAmount: 3,
     },
   },
 
@@ -555,6 +559,7 @@ export const journeys: Journey[] = [
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
+      compareAmount: 4,
     },
   },
 
@@ -678,6 +683,7 @@ export const journeys: Journey[] = [
     levelSettings: {
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
+      compareAmount: 5,
     },
   },
 ]
