@@ -308,7 +308,7 @@ export const MapButton: FC<MapButtonProps> = ({
         </div>
       )}
       {/* Button text */}
-      <span className="relative z-10 font-bold text-amber-900 transition-colors duration-300 group-hover:text-amber-800">
+      <span className="relative z-10 text-2xl font-bold text-amber-900 transition-colors duration-300 group-hover:text-amber-800">
         🗺️ {label}
       </span>
 

@@ -47,6 +47,7 @@ const mockTreasureTombJourney: TranslatedJourney = {
   levelSettings: {
     numberRange: [1, 10],
     operators: ["+", "-", "*"],
+    compareAmount: 0,
   },
 }
 
