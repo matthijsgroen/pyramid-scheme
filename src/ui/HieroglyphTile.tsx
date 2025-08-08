@@ -142,7 +142,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
         clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
 
         // Realistic 3D stone tile appearance with subtle texture overlay (darker for carved effect)
-        background: disabled
+        backgroundImage: disabled
           ? "linear-gradient(145deg, #9ca3af, #6b7280)"
           : difficulty === "starter"
             ? `
