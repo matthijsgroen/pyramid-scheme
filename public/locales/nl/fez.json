@@ -9,5 +9,7 @@
   "pyramidIntro3": "Vul de ontbrekende getallen in om de puzzel op te lossen.",
   "pyramidIntro4": "Elk getal is de som van de twee getallen eronder.",
   "pyramidIntro5": "Heel veel success!",
-  "levelCompleted": "Goed gedaan!"
+  "levelCompleted": "Goed gedaan!",
+  "expeditionCompleted": "Gefeliciteerd met het voltooien van de expeditie!",
+  "expeditionCompleted2": "Een nieuwe expeditie is nu beschikbaar."
 }

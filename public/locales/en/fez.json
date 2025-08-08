@@ -9,6 +9,7 @@
   "pyramidIntro3": "Fill in the missing numbers to solve the puzzle.",
   "pyramidIntro4": "Each number is the sum of the two numbers below it.",
   "pyramidIntro5": "Good luck!",
-
-  "levelCompleted": "Well done!"
+  "levelCompleted": "Well done!",
+  "expeditionCompleted": "Congratulations on completing the expedition!",
+  "expeditionCompleted2": "A new expedition is now available."
 }

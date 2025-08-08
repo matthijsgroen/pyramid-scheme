@@ -1,6 +1,5 @@
-import { journeys } from "@/data/journeys"
+import { journeys, type PyramidJourney } from "@/data/journeys"
 import { generateLevel } from "@/game/generateLevel"
-import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
 export type Item = {
@@ -55,19 +54,10 @@ const scaleNumber = (
 ): number => numbers[0] + (numbers[1] - numbers[0]) * progress
 
 export const generateJourneyLevel = (
-  activeJourney: ActiveJourney,
-  levelNr: number
+  journey: PyramidJourney,
+  levelNr: number,
+  random = Math.random
 ): PyramidLevel | null => {
-  const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
-  const random = mulberry32(randomSeed)
-
-  const journey = journeys.find((j) => j.id === activeJourney.journeyId)
-  if (!journey) {
-    throw new Error(`Journey with id ${activeJourney.journeyId} not found`)
-  }
-  if (journey.type !== "pyramid") {
-    return null
-  }
   if (levelNr > journey.levelCount) {
     return null
   }
@@ -111,7 +101,6 @@ export const generateJourneyLevel = (
       journeyProgress
     ),
   }
-  console.log(settings)
 
   return generateLevel(levelNr, settings, random)
 }

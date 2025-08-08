@@ -10,8 +10,24 @@ import { getLevelWidth } from "@/game/state"
 import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourney"
 import type { JourneyState } from "@/app/state/useJourneys"
-import type { PyramidJourney } from "@/data/journeys"
+import { type PyramidJourney } from "@/data/journeys"
 import { FezContext } from "./fez/context"
+import { generateNewSeed, mulberry32 } from "@/game/random"
+import type { PyramidLevel } from "@/game/types"
+
+const generateExpeditionLevel = (
+  activeJourney: JourneyState,
+  levelNr: number
+): PyramidLevel | null => {
+  const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
+  const random = mulberry32(randomSeed)
+
+  const journey = activeJourney.journey
+  if (journey.type !== "pyramid") {
+    return null
+  }
+  return generateJourneyLevel(journey, levelNr, random)
+}
 
 export const PyramidExpedition: FC<{
   activeJourney: JourneyState
@@ -34,15 +50,15 @@ export const PyramidExpedition: FC<{
   const nextLevelRef = useRef<HTMLDivElement>(null)
   const futureLevelRef = useRef<HTMLDivElement>(null)
 
-  const levelContent = generateJourneyLevel(
+  const levelContent = generateExpeditionLevel(
     activeJourney,
     activeJourney.levelNr
   )
-  const nextLevelContent = generateJourneyLevel(
+  const nextLevelContent = generateExpeditionLevel(
     activeJourney,
     activeJourney.levelNr + 1
   )
-  const nextNextLevelContent = generateJourneyLevel(
+  const nextNextLevelContent = generateExpeditionLevel(
     activeJourney,
     activeJourney.levelNr + 2
   )

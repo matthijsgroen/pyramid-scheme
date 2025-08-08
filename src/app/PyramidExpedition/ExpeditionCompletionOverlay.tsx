@@ -1,5 +1,5 @@
 import { useJourneyTranslation } from "@/data/useJourneyTranslations"
-import { type FC } from "react"
+import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { determineInventoryLootForCurrentRuns } from "@/app/PyramidLevel/inventoryLootLogic"
@@ -9,6 +9,7 @@ import { mulberry32 } from "@/game/random"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { FezContext } from "../fez/context"
 
 export const ExpeditionCompletionOverlay: FC<{
   onJourneyComplete?: () => void
@@ -30,6 +31,11 @@ export const ExpeditionCompletionOverlay: FC<{
     1.0,
     itemCount
   )
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    showConversation("expeditionCompleted")
+  }, [showConversation])
 
   const newJourneyName = useJourneyTranslation(
     newPyramidJourneyId ?? "id"
