@@ -29,6 +29,11 @@ const conversations: Record<string, PoseChat[]> = {
     "expeditionCompleted",
     "expeditionCompleted2",
   ]),
+  collectionIntro: pose("default", [
+    "collectionIntro",
+    "collectionIntro2",
+    "collectionIntro3",
+  ]),
 }
 
 const NOT_FOUND = pose("default", ["not-found"])

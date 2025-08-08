@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { useMemo, useState } from "react"
+import { use, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/Page"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
@@ -9,6 +9,7 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import { FezContext } from "../fez/context"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -191,6 +192,14 @@ export const CollectionPage: FC = () => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const { journeyLog } = useJourneys()
   const { inventory } = useInventory()
+
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    if (inventory && Object.keys(inventory).length > 0) {
+      showConversation("collectionIntro")
+    }
+  }, [inventory, showConversation])
 
   const handleItemClick = (item: InventoryItem) => {
     setSelectedItem(item)

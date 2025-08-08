@@ -11,5 +11,8 @@
   "pyramidIntro5": "Good luck!",
   "levelCompleted": "Well done!",
   "expeditionCompleted": "Congratulations on completing the expedition!",
-  "expeditionCompleted2": "A new expedition is now available."
+  "expeditionCompleted2": "A new expedition is now available.",
+  "collectionIntro": "During our expeditions we found some items!",
+  "collectionIntro2": "You can inspect them in your Collection screen.",
+  "collectionIntro3": "Swipe/scroll the screen to the right to see your collection."
 }
