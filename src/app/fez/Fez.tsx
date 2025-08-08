@@ -25,6 +25,15 @@ const conversations: Record<string, PoseChat[]> = {
     ...pose("pointUp", ["pyramidIntro5"]),
   ],
   levelCompleted: pose("pointUp", ["levelCompleted"]),
+  expeditionCompleted: pose("glassesPoint", [
+    "expeditionCompleted",
+    "expeditionCompleted2",
+  ]),
+  collectionIntro: pose("default", [
+    "collectionIntro",
+    "collectionIntro2",
+    "collectionIntro3",
+  ]),
 }
 
 const NOT_FOUND = pose("default", ["not-found"])
