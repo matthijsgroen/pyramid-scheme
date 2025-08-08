@@ -1,3 +1,7 @@
+import {
+  createFloorStartIndices,
+  getFloorAndIndex,
+} from "@/app/PyramidLevel/support"
 import { getAnswers } from "@/game/state"
 import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
@@ -55,11 +59,18 @@ const openBlocks = (
   levelNr: number,
   pyramid: Pyramid,
   openCount: number,
+  restrictedOpenFloors: number[] = [],
   random = Math.random
 ): PyramidLevel => {
   const openIndices = new Set<number>()
+  const floorStartIndices = createFloorStartIndices(pyramid.floorCount)
   while (openIndices.size < openCount) {
     const index = Math.floor(random() * pyramid.blocks.length)
+    const { floor } = getFloorAndIndex(index, floorStartIndices)
+    // Skip if the block is already open or if it is in a restricted floor
+    if (restrictedOpenFloors.includes(pyramid.floorCount - 1 - floor)) {
+      continue
+    }
     openIndices.add(index)
   }
   const values: Record<string, number> = pyramid.blocks
@@ -130,7 +141,13 @@ export const generateLevel = (
   let tryCount = 0
   while (tryCount < 50) {
     const pyramidLevel = blockBlocks(
-      openBlocks(levelNr, fullPyramid, openBlockCount, random),
+      openBlocks(
+        levelNr,
+        fullPyramid,
+        openBlockCount,
+        settings.restrictedOpenFloors,
+        random
+      ),
       blockedBlockCount,
       random
     )

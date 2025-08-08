@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react"
 import type { PyramidBlock } from "@/game/types"
+import { getFloorAndIndex } from "./support"
 
 export const usePyramidNavigation = (
   floorStartIndices: number[],
@@ -10,23 +11,12 @@ export const usePyramidNavigation = (
   const [selectedBlockIndex, setSelectedBlockIndex] = useState<number>(0)
   const [focusInput, setFocusInput] = useState(false)
 
-  const getFloorAndIndex = useCallback(
-    (blockIndex: number) => {
-      for (let floor = 0; floor < floorStartIndices.length; floor++) {
-        const start = floorStartIndices[floor]
-        const end = start + floor + 1
-        if (blockIndex >= start && blockIndex < end) {
-          return { floor, index: blockIndex - start }
-        }
-      }
-      return { floor: 0, index: 0 }
-    },
-    [floorStartIndices]
-  )
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const { floor, index } = getFloorAndIndex(selectedBlockIndex)
+      const { floor, index } = getFloorAndIndex(
+        selectedBlockIndex,
+        floorStartIndices
+      )
       if (e.key === "ArrowLeft" && index > 0) {
         setSelectedBlockIndex(selectedBlockIndex - 1)
         setFocusInput(false)
@@ -64,7 +54,6 @@ export const usePyramidNavigation = (
       floorCount,
       blocks,
       onAnswer,
-      getFloorAndIndex,
     ]
   )
 

@@ -7,16 +7,7 @@ import { getAnswers, isComplete } from "@/game/state"
 import clsx from "clsx"
 import { mulberry32 } from "@/game/random"
 import { hieroglyphs } from "@/data/hieroglyphs"
-
-const createFloorStartIndices = (floorCount: number): number[] => {
-  const indices: number[] = []
-  let index = 0
-  for (let i = 1; i <= floorCount; i++) {
-    indices.push(index)
-    index += i
-  }
-  return indices
-}
+import { createFloorStartIndices } from "./support"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 

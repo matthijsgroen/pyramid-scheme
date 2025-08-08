@@ -31,6 +31,10 @@ export type PyramidJourney = {
   levelSettings: {
     startFloorCount: number
     endFloorCount?: number
+    blocksOpen?: [minPercentage: number, maxPercentage: number]
+    blocksOpenRestricted?: number[] // Blocking of specific floors for opening blocks
+    blocksBlocked?: [minPercentage: number, maxPercentage: number]
+    blocksBlockedRestricted?: number[] // Blocking of specific floors for blocking blocks
     startNumberRange: [min: number, max: number]
     endNumberRange?: [min: number, max: number]
   }
@@ -74,6 +78,8 @@ export const journeys: Journey[] = [
     time: "morning",
     levelSettings: {
       startFloorCount: 3,
+      blocksOpenRestricted: [0], // no blocks opening at bottom floor
+      blocksOpen: [0.5, 1],
       startNumberRange: [1, 3],
     },
     rewards: {
