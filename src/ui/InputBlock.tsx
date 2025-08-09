@@ -58,7 +58,7 @@ export const InputBlock: FC<{
           inputRef.current?.select()
           setTimeout(() => {
             inputRef.current?.scrollIntoView({ block: "nearest" })
-          }, 2)
+          }, 100) // virtual keyboard on mobile can take a moment to appear
         }}
         onChange={(e) =>
           e.target.value === ""
