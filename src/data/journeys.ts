@@ -330,8 +330,9 @@ export const journeys: Journey[] = [
     levelCount: 4,
     time: "morning",
     levelSettings: {
-      startFloorCount: 7,
-      endFloorCount: 8,
+      startFloorCount: 5,
+      endFloorCount: 6,
+      blocksOpen: [0.8, 1],
       startNumberRange: [2, 7],
       endNumberRange: [4, 12],
     },
@@ -356,10 +357,11 @@ export const journeys: Journey[] = [
     levelCount: 6,
     time: "afternoon",
     levelSettings: {
-      startFloorCount: 8,
-      endFloorCount: 9,
-      startNumberRange: [3, 8],
-      endNumberRange: [5, 14],
+      startFloorCount: 6,
+      blocksOpen: [0.4, 0.8],
+      blocksBlocked: [0.3, 0.5],
+      startNumberRange: [2, 7],
+      endNumberRange: [4, 12],
     },
     rewards: {
       mapPiece: {
@@ -382,8 +384,10 @@ export const journeys: Journey[] = [
     levelCount: 9,
     time: "evening",
     levelSettings: {
-      startFloorCount: 8,
-      endFloorCount: 10,
+      startFloorCount: 6,
+      endFloorCount: 7,
+      blocksOpen: [0.6, 0.8],
+      blocksBlocked: [0.3, 0.5],
       startNumberRange: [3, 8],
       endNumberRange: [5, 15],
     },
@@ -408,10 +412,11 @@ export const journeys: Journey[] = [
     levelCount: 7,
     time: "night",
     levelSettings: {
-      startFloorCount: 9,
-      endFloorCount: 10,
+      startFloorCount: 7,
+      blocksOpen: [0.6, 0.8],
+      blocksBlocked: [0.3, 0.5],
       startNumberRange: [3, 8],
-      endNumberRange: [6, 16],
+      endNumberRange: [5, 15],
     },
     rewards: {
       mapPiece: {

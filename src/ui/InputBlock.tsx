@@ -56,6 +56,9 @@ export const InputBlock: FC<{
         onFocus={() => {
           onSelect?.()
           inputRef.current?.select()
+          setTimeout(() => {
+            inputRef.current?.scrollIntoView({ block: "nearest" })
+          }, 2)
         }}
         onChange={(e) =>
           e.target.value === ""

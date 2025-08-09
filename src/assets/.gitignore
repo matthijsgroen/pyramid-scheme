@@ -1,5 +1,3 @@
-cocktail-*
-glasses-*
-point-fez.png
+*.png
 *.xcf
 !*-250.png

@@ -45,28 +45,28 @@ export const nobleVaultTreasures = [
   {
     id: "t6",
     name: "Ceremonial Dagger",
-    symbol: "𓈞",
+    symbol: "𓌑",
     description:
       "A ritual dagger with a jeweled handle, used in noble ceremonies.",
   },
   {
     id: "t7",
     name: "Jade Scarab",
-    symbol: "𓍸",
+    symbol: "𓆣",
     description:
       "A protective jade scarab amulet, symbol of rebirth and eternal life.",
   },
   {
     id: "t8",
     name: "Alabaster Canopic Jar",
-    symbol: "𓋴",
+    symbol: "𓎯",
     description:
       "An elegant alabaster jar used to store precious oils and perfumes.",
   },
   {
     id: "t9",
     name: "Ebony Walking Stick",
-    symbol: "𓎻",
+    symbol: "𓋴",
     description:
       "A polished ebony walking stick topped with a golden ankh symbol.",
   },
@@ -83,7 +83,7 @@ export const templeSecretsTreasures = [
   {
     id: "t11",
     name: "Sacred Ankh",
-    symbol: "𓍢",
+    symbol: "𓎬",
     description:
       "A golden ankh symbol representing eternal life, blessed by the temple priests.",
   },
@@ -163,7 +163,7 @@ export const ancientRelicsTreasures = [
   {
     id: "t22",
     name: "Golden Scepter",
-    symbol: "𓍯",
+    symbol: "𓌂",
     description: "A magnificent golden scepter topped with the eye of Horus.",
   },
   {
@@ -220,7 +220,7 @@ export const mythicalArtifactsTreasures = [
   {
     id: "t30",
     name: "Staff of Thoth",
-    symbol: "𓍱",
+    symbol: "𓎘",
     description:
       "The wisdom staff of Thoth, god of knowledge, containing all ancient secrets.",
   },
