@@ -30,6 +30,9 @@ export const TombExpedition: FC<{
       tab.tombJourneyId === activeJourney.journeyId &&
       tab.runNumber === runNr + 1
   )
+
+  // if there are no run Tableaus, that means there is nothing to discover at this tomb anymore!
+
   const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const random = mulberry32(seed)
   const tableau = runTableaus[activeJourney.levelNr - 1]
