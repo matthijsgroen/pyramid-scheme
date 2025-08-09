@@ -7,7 +7,7 @@ type NumberLockProps = {
   variant?: ChestVariant
   value?: string
   onChange?: (value: string) => void
-  onSubmit?: (value: string) => void
+  onSubmit?: () => void
   disabled?: boolean
   placeholder?: string
   maxLength?: number
@@ -36,7 +36,7 @@ export const NumberLock: FC<NumberLockProps> = ({
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && value) {
-      onSubmit?.(value)
+      onSubmit?.()
     }
   }
 
