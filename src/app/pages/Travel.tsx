@@ -310,11 +310,16 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     )
                   }
                 }
+                const disabled =
+                  journey.type === "treasure_tomb" &&
+                  journey.treasures.length <= completionCount
+
                 return (
                   <JourneyCard
                     key={journey.id}
                     showDetails={index === unlocked - 1}
                     journey={journey}
+                    disabled={disabled}
                     completionCount={completionCount}
                     progressLevelNr={progressLevelNr}
                     index={index}

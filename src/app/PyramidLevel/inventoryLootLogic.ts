@@ -116,7 +116,7 @@ export const determineInventoryLootForCurrentRuns = (
   const filteredItemsRequired: Record<string, number> = {}
   Object.entries(itemsRequired).forEach(([itemId, count]) => {
     const itemDifficulty = getItemFirstLevel(itemId)
-    if (difficultyCompare(itemDifficulty, difficulty) <= 0) {
+    if (difficultyCompare(itemDifficulty, difficulty) === 0) {
       filteredItemsRequired[itemId] = count
     }
   })
@@ -159,7 +159,7 @@ export const determineInventoryLootForCurrentRuns = (
       const itemDifficulty = getItemFirstLevel(itemId)
       const currentInventory = playerInventory[itemId] || 0
       if (currentInventory > 5) return false // Skip if player has too many)
-      return difficultyCompare(itemDifficulty, difficulty) <= 0
+      return difficultyCompare(itemDifficulty, difficulty) === 0
     })
 
     if (filteredInterestingItems.length === 0) {
