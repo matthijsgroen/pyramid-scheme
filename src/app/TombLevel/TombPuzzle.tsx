@@ -12,7 +12,7 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { FormulaPart, type FilledTileState } from "./FormulaPart"
 import { clsx } from "clsx"
-import { useState, useMemo, type FC } from "react"
+import { useState, useMemo, type FC, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
 
 // Helper function to count total number slots in a formula
@@ -268,13 +268,14 @@ export const TombPuzzle: FC<{
   }
 
   // NumberLock handlers
-  const handleLockSubmit = (code: string) => {
+  const handleLockSubmit = (e?: FormEvent) => {
+    e?.preventDefault()
     // Prevent multiple submissions during processing
     if (isProcessingCompletion) {
       return
     }
 
-    if (code === calculation.mainFormula.result.toString()) {
+    if (lockCode === calculation.mainFormula.result.toString()) {
       setLockState("open")
       setIsProcessingCompletion(true)
 
@@ -413,19 +414,21 @@ export const TombPuzzle: FC<{
           <h3 className="text-lg font-bold text-amber-200">
             {t("ui.puzzleComplete")}
           </h3>
-          <NumberLock
-            state={lockState}
-            variant="muted"
-            value={lockCode}
-            onChange={handleLockChange}
-            onSubmit={handleLockSubmit}
-            disabled={isProcessingCompletion}
-            placeholder={revealText(
-              calculation.mainFormula.result.toString(),
-              0
-            )}
-            maxLength={4}
-          />
+          <form onSubmit={handleLockSubmit}>
+            <NumberLock
+              state={lockState}
+              variant="muted"
+              value={lockCode}
+              onChange={handleLockChange}
+              onSubmit={handleLockSubmit}
+              disabled={isProcessingCompletion}
+              placeholder={revealText(
+                calculation.mainFormula.result.toString(),
+                0
+              )}
+              maxLength={4}
+            />
+          </form>
         </div>
       )}
     </div>
