@@ -18,6 +18,7 @@ import { TombMapButton } from "@/ui/TombMapButton"
 import { hashString } from "@/support/hashString"
 import { FezContext } from "../fez/context"
 import { type Difficulty } from "@/data/difficultyLevels"
+import { TableauInventory } from "./TableauInventory"
 
 const getJourneyProgress = (
   activeJourney: ActiveJourney | undefined,
@@ -279,11 +280,11 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   journeyLog.filter(
                     (j) => j.journeyId === journey.id && j.foundMapPiece
                   ).length > 0
-                const progressLevelNr =
-                  journeyLog.find(
-                    (j) =>
-                      j.journeyId === journey.id && j.canceled && !j.completed
-                  )?.levelNr ?? 0
+                const activeJourney = journeyLog.find(
+                  (j) =>
+                    j.journeyId === journey.id && j.canceled && !j.completed
+                )
+                const progressLevelNr = activeJourney?.levelNr ?? 0
 
                 if (journey.type === "treasure_tomb") {
                   // Treasure Tombs are unlocked if all map pieces are found
@@ -320,7 +321,11 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
                     onClick={handleJourneySelect}
-                  />
+                  >
+                    {journey.type === "treasure_tomb" && activeJourney ? (
+                      <TableauInventory activeJourney={activeJourney} />
+                    ) : null}
+                  </JourneyCard>
                 )
               })}
             </div>

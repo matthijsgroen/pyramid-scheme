@@ -8,6 +8,7 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
+import { TombBackdrop } from "@/ui/TombBackdrop"
 
 export const TombExpedition: FC<{
   activeJourney: JourneyState
@@ -34,13 +35,9 @@ export const TombExpedition: FC<{
   const tableau = runTableaus[activeJourney.levelNr - 1]
   if (tableau === undefined) {
     return (
-      <div
-        className={
-          "[container-type:size] relative flex h-dvh flex-col bg-slate-700"
-        }
-      >
+      <TombBackdrop>
         <div className="flex h-full w-full flex-col">
-          <div className="flex-shrink-0 backdrop-blur-sm">
+          <div className="flex-shrink-0 backdrop-blur-xs">
             <div
               className={clsx(
                 "flex w-full items-center justify-between gap-4 px-4 py-2",
@@ -65,7 +62,7 @@ export const TombExpedition: FC<{
             onComplete={onJourneyComplete}
           />
         </div>
-      </div>
+      </TombBackdrop>
     )
   }
 
@@ -88,13 +85,9 @@ export const TombExpedition: FC<{
   }
 
   return (
-    <div
-      className={
-        "[container-type:size] relative flex h-dvh flex-col bg-slate-700"
-      }
-    >
+    <TombBackdrop>
       <div className="flex h-full w-full flex-col">
-        <div className="flex-shrink-0 backdrop-blur-sm">
+        <div className="flex-shrink-0 backdrop-blur-xs">
           <div
             className={clsx(
               "flex w-full items-center justify-between gap-4 px-4 py-2",
@@ -121,6 +114,6 @@ export const TombExpedition: FC<{
           onComplete={handleLevelComplete}
         />
       </div>
-    </div>
+    </TombBackdrop>
   )
 }

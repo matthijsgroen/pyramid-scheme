@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { NumberLock } from "./NumberLock"
+import { NumberChest } from "./NumberChest"
 import { useState } from "react"
 
 const meta = {
   title: "UI/NumberLock",
-  component: NumberLock,
+  component: NumberChest,
   parameters: {
     layout: "centered",
     backgrounds: {
@@ -52,7 +52,7 @@ const meta = {
       description: "Called when Enter is pressed",
     },
   },
-} satisfies Meta<typeof NumberLock>
+} satisfies Meta<typeof NumberChest>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -153,7 +153,7 @@ export const Interactive: Story = {
 
       return (
         <div className="flex flex-col items-center gap-4">
-          <NumberLock
+          <NumberChest
             {...args}
             value={value}
             state={state}
@@ -180,23 +180,23 @@ export const StatesShowcase: Story = {
     <div className="flex flex-wrap gap-8 p-4">
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Empty</span>
-        <NumberLock state="empty" placeholder="Enter code" />
+        <NumberChest state="empty" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">With Value</span>
-        <NumberLock state="empty" value="123" placeholder="Enter code" />
+        <NumberChest state="empty" value="123" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Error</span>
-        <NumberLock state="error" value="9999" placeholder="Enter code" />
+        <NumberChest state="error" value="9999" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Open</span>
-        <NumberLock state="open" value="1337" placeholder="Enter code" />
+        <NumberChest state="open" value="1337" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Disabled</span>
-        <NumberLock state="empty" disabled placeholder="Enter code" />
+        <NumberChest state="empty" disabled placeholder="Enter code" />
       </div>
     </div>
   ),
@@ -208,15 +208,15 @@ export const VariantComparison: Story = {
     <div className="flex flex-wrap gap-8 p-4">
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Vibrant Empty</span>
-        <NumberLock state="empty" variant="vibrant" placeholder="Enter code" />
+        <NumberChest state="empty" variant="vibrant" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Muted Empty</span>
-        <NumberLock state="empty" variant="muted" placeholder="Enter code" />
+        <NumberChest state="empty" variant="muted" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Vibrant Error</span>
-        <NumberLock
+        <NumberChest
           state="error"
           variant="vibrant"
           value="9999"
@@ -225,7 +225,7 @@ export const VariantComparison: Story = {
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Muted Error</span>
-        <NumberLock
+        <NumberChest
           state="error"
           variant="muted"
           value="9999"
@@ -234,7 +234,7 @@ export const VariantComparison: Story = {
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Vibrant Open</span>
-        <NumberLock
+        <NumberChest
           state="open"
           variant="vibrant"
           value="1337"
@@ -243,7 +243,7 @@ export const VariantComparison: Story = {
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Muted Open</span>
-        <NumberLock
+        <NumberChest
           state="open"
           variant="muted"
           value="1337"
@@ -260,19 +260,19 @@ export const LengthVariations: Story = {
     <div className="flex flex-wrap gap-8 p-4">
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">3 digits</span>
-        <NumberLock state="empty" maxLength={3} placeholder="PIN" />
+        <NumberChest state="empty" maxLength={3} placeholder="PIN" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">4 digits</span>
-        <NumberLock state="empty" maxLength={4} placeholder="Code" />
+        <NumberChest state="empty" maxLength={4} placeholder="Code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">6 digits</span>
-        <NumberLock state="empty" maxLength={6} placeholder="Security" />
+        <NumberChest state="empty" maxLength={6} placeholder="Security" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">8 digits</span>
-        <NumberLock state="empty" maxLength={8} placeholder="Password" />
+        <NumberChest state="empty" maxLength={8} placeholder="Password" />
       </div>
     </div>
   ),

@@ -1,4 +1,4 @@
-import type { FC } from "react"
+import type { FC, PropsWithChildren } from "react"
 import { useTranslation } from "react-i18next"
 import clsx from "clsx"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
@@ -16,7 +16,8 @@ type JourneyCardProps = {
   onClick: (journey: TranslatedJourney) => void
 }
 
-export const JourneyCard: FC<JourneyCardProps> = ({
+export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
+  children,
   journey,
   index,
   showAnimation,
@@ -137,6 +138,7 @@ export const JourneyCard: FC<JourneyCardProps> = ({
           <p className="text-sm text-gray-600">{journey.description}</p>
         </div>
       )}
+      {children}
     </button>
   )
 }
