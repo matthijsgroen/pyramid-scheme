@@ -7,13 +7,7 @@ import {
 } from "@/game/generateRewardCalculation"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { NumberLock } from "@/ui/NumberLock"
-import {
-  egyptianDeities,
-  egyptianProfessions,
-  egyptianAnimals,
-  egyptianArtifacts,
-  getInventoryItemById,
-} from "@/data/inventory"
+import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { FormulaPart, type FilledTileState } from "./FormulaPart"

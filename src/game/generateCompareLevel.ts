@@ -20,7 +20,7 @@ export type CompareLevel = {
 }
 
 export const generateCompareLevel = (
-  compareSettings: CompareLevelSettings,
-  requirements: Requirements,
-  random = Math.random
+  _compareSettings: CompareLevelSettings,
+  _requirements: Requirements,
+  _random = Math.random
 ) => {}
