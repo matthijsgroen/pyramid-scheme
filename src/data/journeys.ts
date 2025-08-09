@@ -154,8 +154,8 @@ export const journeys: Journey[] = [
     description:
       "Learn the art of hieroglyphic writing in the prestigious scribe's academy, where knowledge is more valuable than gold.",
     difficulty: "starter",
-    journeyLength: "long",
-    levelCount: 7,
+    journeyLength: "medium",
+    levelCount: 5,
     time: "night",
     levelSettings: {
       startFloorCount: 4,
@@ -168,7 +168,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [2, 4],
+        pieces: [2, 3],
       },
     },
   },
@@ -207,6 +207,7 @@ export const journeys: Journey[] = [
       endFloorCount: 5,
       startNumberRange: [1, 5],
       endNumberRange: [2, 8],
+      blocksOpen: [0.5, 0.5],
     },
     rewards: {
       mapPiece: {
@@ -229,10 +230,11 @@ export const journeys: Journey[] = [
     levelCount: 6,
     time: "afternoon",
     levelSettings: {
-      startFloorCount: 5,
+      startFloorCount: 4,
       endFloorCount: 6,
       startNumberRange: [1, 5],
       endNumberRange: [3, 10],
+      blocksOpen: [0.8, 0.5],
     },
     rewards: {
       mapPiece: {
@@ -256,9 +258,9 @@ export const journeys: Journey[] = [
     time: "evening",
     levelSettings: {
       startFloorCount: 5,
-      endFloorCount: 7,
+      blocksOpen: [0.8, 1],
       startNumberRange: [2, 6],
-      endNumberRange: [4, 12],
+      endNumberRange: [4, 10],
     },
     rewards: {
       mapPiece: {
@@ -282,9 +284,10 @@ export const journeys: Journey[] = [
     time: "night",
     levelSettings: {
       startFloorCount: 6,
-      endFloorCount: 7,
-      startNumberRange: [2, 6],
-      endNumberRange: [3, 10],
+      endFloorCount: 5,
+      blocksOpen: [0.8, 1],
+      startNumberRange: [2, 10],
+      endNumberRange: [5, 20],
     },
     rewards: {
       mapPiece: {
@@ -309,7 +312,7 @@ export const journeys: Journey[] = [
     levelCount: 3,
     treasures: nobleVaultTreasures,
     levelSettings: {
-      numberRange: [1, 9],
+      numberRange: [1, 10],
       operators: ["+", "-"],
       compareAmount: 2,
     },

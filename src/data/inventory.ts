@@ -415,3 +415,14 @@ export const egyptianArtifacts = [
       "Royal headdress featuring the protective cobra, worn by pharaohs as divine protection.",
   },
 ]
+
+const allItems = [
+  ...egyptianDeities,
+  ...egyptianProfessions,
+  ...egyptianAnimals,
+  ...egyptianArtifacts,
+]
+// Helper function to get inventory item by ID
+export const getInventoryItemById = (id: string) => {
+  return allItems.find((item) => item.id === id)
+}
