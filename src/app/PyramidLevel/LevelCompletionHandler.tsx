@@ -7,13 +7,11 @@ import { useLootDetermination } from "./useLootDetermination"
 import { FezContext } from "../fez/context"
 
 type LevelCompletionHandlerProps = {
-  isCompleted: boolean
   onCompletionFinished: () => void
   activeJourney: JourneyState
 }
 
 export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
-  isCompleted,
   onCompletionFinished,
   activeJourney,
 }) => {
@@ -30,26 +28,23 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
   const { loot, collectLoot } = useLootDetermination(activeJourney)
 
   useEffect(() => {
-    if (isCompleted && completionPhase === "hidden") {
+    if (completionPhase === "hidden") {
       // Start the completion sequence only when level is completed
       setCompletionPhase("overlay")
       setShowOverlay(true)
       setShowFez(true)
     }
-  }, [isCompleted, completionPhase])
+  }, [completionPhase])
 
   // Reset state when level completion is no longer active
   useEffect(() => {
-    if (!isCompleted) {
-      setCompletionPhase("hidden")
-      setShowOverlay(false)
-      setShowLoot(false)
+    return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current)
         timerRef.current = null
       }
     }
-  }, [isCompleted])
+  }, [])
 
   const { showConversation } = use(FezContext)
 
@@ -104,8 +99,6 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
       onCompletionFinished()
     }
   }
-
-  if (!isCompleted) return null
 
   return (
     <>

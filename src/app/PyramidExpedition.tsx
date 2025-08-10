@@ -278,9 +278,8 @@ export const PyramidExpedition: FC<{
       </div>
 
       {/* Level Completion Handler */}
-      {levelContent && (
+      {levelContent && levelCompleted && (
         <LevelCompletionHandler
-          isCompleted={levelCompleted}
           onCompletionFinished={onCompletionFinished}
           activeJourney={activeJourney}
         />
