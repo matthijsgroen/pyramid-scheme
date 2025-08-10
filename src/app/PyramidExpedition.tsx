@@ -43,12 +43,15 @@ export const PyramidExpedition: FC<{
   onClose,
 }) => {
   const { t } = useTranslation("common")
-  const [startNextLevel, setStartNextLevel] = useState(false)
+  const [transitionToLevel, setTransitionToLevel] = useState(
+    activeJourney.levelNr
+  )
   const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
   const futureLevelRef = useRef<HTMLDivElement>(null)
+  const startNextLevel = transitionToLevel > activeJourney.levelNr
 
   const levelContent = generateExpeditionLevel(
     activeJourney,
@@ -73,16 +76,6 @@ export const PyramidExpedition: FC<{
   useEffect(() => {
     showConversation("pyramidIntro")
   }, [showConversation])
-
-  useEffect(() => {
-    if (startNextLevel) {
-      const stopTimeout = setTimeout(() => {
-        setStartNextLevel(false)
-        onNextLevel?.()
-      }, 1000)
-      return () => clearTimeout(stopTimeout)
-    }
-  }, [startNextLevel, onNextLevel, activeJourney.levelNr])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {
@@ -139,9 +132,16 @@ export const PyramidExpedition: FC<{
   const onCompletionFinished = useCallback(() => {
     setLevelCompleted(false)
     setTimeout(() => {
-      setStartNextLevel(true)
+      // setStartNextLevel(true)
+      setTransitionToLevel(activeJourney.levelNr + 1)
     }, 1000)
-  }, [])
+    setTimeout(() => {
+      // setStartNextLevel(false)
+    }, 2000)
+    setTimeout(() => {
+      onNextLevel?.()
+    }, 1995)
+  }, [onNextLevel, activeJourney.levelNr])
 
   // Early return if not a pyramid journey
   if (activeJourney.journey.type !== "pyramid") {
