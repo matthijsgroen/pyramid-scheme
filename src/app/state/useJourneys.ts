@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react"
 import type { ActiveJourney } from "@/game/generateJourney"
 import { useGameStorage } from "@/support/useGameStorage"
 import { startJourney as dataStartJourney } from "@/game/generateJourney"
-import type { Journey } from "@/data/journeys"
+import { journeys, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
 import {
   useJourneyTranslations,
@@ -23,6 +23,8 @@ export const journeySeedGenerator =
     return generateNewSeed(hashString(journeyId), journeyRun + 1)
   }
 
+const journeyIds = journeys.map((j) => j.id)
+
 export const useJourneys = (): {
   activeJourney: JourneyState | undefined
   journeyLog: JourneyState[]
@@ -39,7 +41,10 @@ export const useJourneys = (): {
     []
   )
 
-  const activeJourney = journeys.find((j) => !j.endTime)
+  const activeJourney = useMemo(() => {
+    return journeys.find((j) => !j.endTime && journeyIds.includes(j.journeyId))
+  }, [journeys])
+
   const nextJourneySeed = useCallback(
     (journeyId: string) => {
       const generateNewSeed = journeySeedGenerator(journeys)
