@@ -313,7 +313,7 @@ export const TombPuzzle: FC<{
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-8 overflow-y-auto px-4 text-white">
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 overflow-y-auto px-4 py-6 text-white">
       <div
         className={clsx(
           "flex w-full max-w-md flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
