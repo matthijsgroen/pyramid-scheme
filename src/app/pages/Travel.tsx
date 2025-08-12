@@ -7,7 +7,7 @@ import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
 import { type Journey } from "@/data/journeys"
 import { useJourneys } from "@/app/state/useJourneys"
-import type { ActiveJourney } from "@/game/generateJourney"
+import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import {
   useJourneyTranslations,
   type TranslatedJourney,

@@ -1,4 +1,4 @@
-import type { ActiveJourney } from "@/game/generateJourney"
+import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import type { FC } from "react"
 import { useJourneys } from "../state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
@@ -10,6 +10,7 @@ import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import clsx from "clsx"
+import { difficultyCompare } from "@/data/difficultyLevels"
 
 export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
   activeJourney,
@@ -51,8 +52,11 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
   return (
     <div className="mt-2 flex justify-center">
       <div className="flex flex-wrap gap-2 rounded bg-black/15 p-1">
-        {Object.entries(calculation.symbolCounts).map(
-          ([symbolId, maxNeeded]) => {
+        {Object.entries(calculation.symbolCounts)
+          .sort((a, b) =>
+            difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0]))
+          )
+          .map(([symbolId, maxNeeded]) => {
             const availableInInventory = inventory[symbolId] || 0
             const inventoryItem = getInventoryItemById(symbolId)
             const itemDifficulty =
@@ -93,8 +97,7 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
                 </div>
               </div>
             )
-          }
-        )}
+          })}
       </div>
     </div>
   )

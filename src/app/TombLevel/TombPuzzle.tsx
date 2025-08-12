@@ -1,4 +1,4 @@
-import type { Difficulty } from "@/data/difficultyLevels"
+import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
 import {
@@ -313,10 +313,35 @@ export const TombPuzzle: FC<{
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-8 overflow-y-auto px-4 text-white">
+    <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
+      {/* NumberLock appears when puzzle is completed */}
+      {isPuzzleCompleted && (
+        <div
+          className={clsx(
+            "order-2 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
+            hieroglyphLevelColors[difficulty]
+          )}
+        >
+          <form onSubmit={handleLockSubmit}>
+            <NumberLock
+              state={lockState}
+              variant="muted"
+              value={lockCode}
+              onChange={handleLockChange}
+              onSubmit={handleLockSubmit}
+              disabled={isProcessingCompletion}
+              placeholder={revealText(
+                calculation.mainFormula.result.toString(),
+                0
+              )}
+              maxLength={4}
+            />
+          </form>
+        </div>
+      )}
       <div
         className={clsx(
-          "flex w-full max-w-md flex-col gap-4 rounded-lg p-4 text-slate-500 shadow-lg",
+          "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-500 shadow-lg",
           hieroglyphLevelColors[difficulty]
         )}
       >
@@ -355,11 +380,17 @@ export const TombPuzzle: FC<{
 
       {/* Available symbols inventory - hide when puzzle is completed */}
       {!isPuzzleCompleted && (
-        <div className="mb-4 rounded bg-black/20 p-2">
+        <div className="mt-8 mb-4 rounded bg-black/20 p-2">
           <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(calculation.symbolCounts).map(
-              ([symbolId, maxNeeded]) => {
+            {Object.entries(calculation.symbolCounts)
+              .sort((a, b) =>
+                difficultyCompare(
+                  getItemFirstLevel(a[0]),
+                  getItemFirstLevel(b[0])
+                )
+              )
+              .map(([symbolId, maxNeeded]) => {
                 const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
                 const usedFromInventory = inventoryUsage[symbolId] || 0
                 const availableInInventory = inventory[symbolId] || 0
@@ -402,33 +433,8 @@ export const TombPuzzle: FC<{
                     </div>
                   </div>
                 )
-              }
-            )}
+              })}
           </div>
-        </div>
-      )}
-
-      {/* NumberLock appears when puzzle is completed */}
-      {isPuzzleCompleted && (
-        <div className="flex flex-col items-center gap-4">
-          <h3 className="text-lg font-bold text-amber-200">
-            {t("ui.puzzleComplete")}
-          </h3>
-          <form onSubmit={handleLockSubmit}>
-            <NumberLock
-              state={lockState}
-              variant="muted"
-              value={lockCode}
-              onChange={handleLockChange}
-              onSubmit={handleLockSubmit}
-              disabled={isProcessingCompletion}
-              placeholder={revealText(
-                calculation.mainFormula.result.toString(),
-                0
-              )}
-              maxLength={4}
-            />
-          </form>
         </div>
       )}
     </div>

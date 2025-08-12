@@ -83,9 +83,9 @@ export const generateJourneyLevel = (
   )
   const blockedBlockPercentage = scaleNumber(blocksToBlock, journeyProgress)
 
-  const potentialToBlock = maxBlocks - openBlockCount
+  const potentialToBlock = maxBlocksToOpen - openBlockCount
   const blockedBlockCount = Math.min(
-    Math.max(Math.floor(potentialToBlock * (0.25 * blockedBlockPercentage)), 0),
+    Math.max(Math.floor(potentialToBlock * (0.8 * blockedBlockPercentage)), 0),
     8
   )
   const settings: PyramidLevelSettings = {

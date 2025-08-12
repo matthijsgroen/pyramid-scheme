@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { journeys } from "./journeys"
 import { mulberry32 } from "@/game/random"
-import { generateJourneyLevel } from "@/game/generateJourney"
+import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 
 describe("Testing journeys", () => {
   describe("Pyramid journeys", () => {
