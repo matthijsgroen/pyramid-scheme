@@ -7,7 +7,7 @@ import { tableauLevels } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { difficultyCompare } from "@/data/difficultyLevels"
+import { type Difficulty, difficultyCompare } from "@/data/difficultyLevels"
 
 export type InventoryLootResult = {
   shouldAwardInventoryItem: boolean
@@ -28,13 +28,20 @@ export const determineInventoryLootForCurrentRuns = (
   baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
   maxItemsToAward: number = 1
 ): InventoryLootResult => {
-  const difficulty = pyramidExpedition.journey.difficulty
+  const currentDifficulty = pyramidExpedition.journey.difficulty
+  const maxDifficulty = journeyLog.reduce<Difficulty>((difficulty, item) => {
+    const j = journeys.find((j) => j.id === item.journeyId)
+    if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
+      return j.difficulty
+    }
+    return difficulty
+  }, "starter")
+
   const tombIds = journeys
     .filter(
       (j) =>
         j.type === "treasure_tomb" &&
-        // same or higher difficulty
-        difficultyCompare(j.difficulty, difficulty) <= 0
+        difficultyCompare(j.difficulty, maxDifficulty) <= 0
     )
     .map((j) => j.id)
   const itemsRequired: Record<string, number> = {}
@@ -65,6 +72,7 @@ export const determineInventoryLootForCurrentRuns = (
         t.levelNr === currentLevel
     )
 
+    if (!tableau || !tombInfo) return
     // collect all interesting items in this run for this tomb
     tableauLevels.forEach((tableau) => {
       if (
@@ -91,7 +99,6 @@ export const determineInventoryLootForCurrentRuns = (
       }
     })
 
-    if (!tableau || !tombInfo) return
     const seed = journeySeedGenerator(journeyLog)(tombId)
     const tableauRandom = mulberry32(generateNewSeed(seed, currentLevel))
     const settings = {
@@ -116,7 +123,7 @@ export const determineInventoryLootForCurrentRuns = (
   const filteredItemsRequired: Record<string, number> = {}
   Object.entries(itemsRequired).forEach(([itemId, count]) => {
     const itemDifficulty = getItemFirstLevel(itemId)
-    if (difficultyCompare(itemDifficulty, difficulty) === 0) {
+    if (difficultyCompare(itemDifficulty, currentDifficulty) === 0) {
       filteredItemsRequired[itemId] = count
     }
   })
@@ -159,7 +166,7 @@ export const determineInventoryLootForCurrentRuns = (
       const itemDifficulty = getItemFirstLevel(itemId)
       const currentInventory = playerInventory[itemId] || 0
       if (currentInventory > 5) return false // Skip if player has too many)
-      return difficultyCompare(itemDifficulty, difficulty) === 0
+      return difficultyCompare(itemDifficulty, currentDifficulty) === 0
     })
 
     if (filteredInterestingItems.length === 0) {
