@@ -151,7 +151,9 @@ const TreasureCategorySection: FC<{
 
 const DetailPanel: FC<{
   item: InventoryItem | null
-}> = ({ item }) => {
+  debug?: boolean
+  onAdd?: () => void
+}> = ({ item, debug = false, onAdd }) => {
   const { t } = useTranslation("common")
 
   return (
@@ -174,6 +176,16 @@ const DetailPanel: FC<{
               <p className="leading-relaxed text-gray-700">
                 {item.description}
               </p>
+              {debug && (
+                <div>
+                  <button
+                    onClick={onAdd}
+                    className="rounded-md bg-red-600 p-2 text-white"
+                  >
+                    Add Item
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -191,7 +203,8 @@ export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const { journeyLog } = useJourneys()
-  const { inventory } = useInventory()
+  const { inventory, addItem } = useInventory()
+  const [debug] = useState(true)
 
   const { showConversation } = use(FezContext)
 
@@ -213,7 +226,7 @@ export const CollectionPage: FC = () => {
 
   return (
     <Page
-      className="flex bg-gradient-to-b from-purple-100 to-purple-300"
+      className="flex bg-gradient-to-b from-blue-100 to-blue-300"
       snap="end"
     >
       <div className="relative flex-1 overflow-y-auto p-6">
@@ -290,7 +303,13 @@ export const CollectionPage: FC = () => {
             inventory={inventory}
           />
         </div>
-        {hasCollectedItems && <DetailPanel item={selectedItem} />}
+        {hasCollectedItems && (
+          <DetailPanel
+            item={selectedItem}
+            debug={debug}
+            onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
+          />
+        )}
       </div>
     </Page>
   )

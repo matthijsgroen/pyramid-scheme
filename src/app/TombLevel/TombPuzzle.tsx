@@ -14,6 +14,7 @@ import { useState, useMemo, type FC, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
 import { revealText } from "@/support/revealText"
 import { TombTableau } from "./TombTableau"
+import { TombDoor } from "@/ui/TombDoor"
 
 export const TombPuzzle: FC<{
   tableau: TableauLevel
@@ -176,16 +177,19 @@ export const TombPuzzle: FC<{
     if (lockCode === calculation.mainFormula.result.toString()) {
       setLockState("open")
       setIsProcessingCompletion(true)
-      // Remove used inventory items in a single batch operation
-      const itemsToRemove = Object.fromEntries(
-        Object.entries(inventoryUsage).filter(([, usedCount]) => usedCount > 0)
-      )
-      if (Object.keys(itemsToRemove).length > 0) {
-        removeItems(itemsToRemove)
-      }
 
       // After 2 seconds, call onComplete
       setTimeout(() => {
+        // Remove used inventory items in a single batch operation
+        const itemsToRemove = Object.fromEntries(
+          Object.entries(inventoryUsage).filter(
+            ([, usedCount]) => usedCount > 0
+          )
+        )
+        if (Object.keys(itemsToRemove).length > 0) {
+          removeItems(itemsToRemove)
+        }
+        console.log("call OnComplete from handleLockSubmit")
         // Call completion handler
         onComplete?.()
         setIsProcessingCompletion(false)
@@ -208,99 +212,114 @@ export const TombPuzzle: FC<{
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
-      {/* NumberLock appears when puzzle is completed */}
-      {isPuzzleCompleted && (
-        <div
-          className={clsx(
-            "order-2 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
-            hieroglyphLevelColors[difficulty]
-          )}
+    <div className="flex flex-1 flex-row">
+      <div className="flex flex-1">{/** left side */}</div>
+      <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
+        <div className="flex flex-1">{/** top side */}</div>
+        <TombDoor
+          className="flex flex-2 flex-col items-center justify-center"
+          open={lockState === "open"}
         >
-          <form onSubmit={handleLockSubmit}>
-            <NumberLock
-              state={lockState}
-              variant="muted"
-              value={lockCode}
-              onChange={handleLockChange}
-              onSubmit={handleLockSubmit}
-              disabled={isProcessingCompletion}
-              placeholder={revealText(
-                calculation.mainFormula.result.toString(),
-                0
+          {/* NumberLock appears when puzzle is completed */}
+          {isPuzzleCompleted && (
+            <div
+              className={clsx(
+                "order-2 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
+                hieroglyphLevelColors[difficulty]
               )}
-              maxLength={4}
-            />
-          </form>
-        </div>
-      )}
-      <TombTableau
-        difficulty={difficulty}
-        tableau={tableau}
-        calculation={calculation}
-        filledState={filledState}
-        onTileClick={handleTileClick}
-      />
+            >
+              <form onSubmit={handleLockSubmit}>
+                <NumberLock
+                  state={lockState}
+                  variant="muted"
+                  value={lockCode}
+                  onChange={handleLockChange}
+                  onSubmit={handleLockSubmit}
+                  disabled={isProcessingCompletion}
+                  placeholder={revealText(
+                    calculation.mainFormula.result.toString(),
+                    0
+                  )}
+                  maxLength={4}
+                />
+              </form>
+            </div>
+          )}
+          <TombTableau
+            difficulty={difficulty}
+            tableau={tableau}
+            calculation={calculation}
+            filledState={filledState}
+            onTileClick={handleTileClick}
+          />
 
-      {/* Available symbols inventory - hide when puzzle is completed */}
-      {!isPuzzleCompleted && (
-        <div className="mt-8 mb-4 rounded bg-black/20 p-2">
-          <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(calculation.symbolCounts)
-              .sort((a, b) =>
-                difficultyCompare(
-                  getItemFirstLevel(a[0]),
-                  getItemFirstLevel(b[0])
-                )
-              )
-              .map(([symbolId, maxNeeded]) => {
-                const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-                const usedFromInventory = inventoryUsage[symbolId] || 0
-                const availableInInventory = inventory[symbolId] || 0
-                const inventoryItem = getInventoryItemById(symbolId)
-                const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-                const canPlace =
-                  availableInInventory > usedFromInventory &&
-                  usedInPuzzle < maxNeeded
+          {/* Available symbols inventory - hide when puzzle is completed */}
+          {!isPuzzleCompleted && (
+            <div className="mt-8 mb-4 w-fit rounded bg-black/20 p-2">
+              <h3 className="mb-2 text-sm font-bold">
+                {t("ui.availableSymbols")}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(calculation.symbolCounts)
+                  .sort((a, b) =>
+                    difficultyCompare(
+                      getItemFirstLevel(a[0]),
+                      getItemFirstLevel(b[0])
+                    )
+                  )
+                  .map(([symbolId, maxNeeded]) => {
+                    const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+                    const usedFromInventory = inventoryUsage[symbolId] || 0
+                    const availableInInventory = inventory[symbolId] || 0
+                    const inventoryItem = getInventoryItemById(symbolId)
+                    const itemDifficulty =
+                      getItemFirstLevel(symbolId) || difficulty
+                    const canPlace =
+                      availableInInventory > usedFromInventory &&
+                      usedInPuzzle < maxNeeded
 
-                return (
-                  <div
-                    key={symbolId}
-                    className={clsx(
-                      "flex items-center gap-1 rounded p-1 transition-colors",
-                      canPlace
-                        ? "cursor-pointer bg-white/10 hover:bg-white/20"
-                        : "cursor-not-allowed opacity-50"
-                    )}
-                    onClick={() => canPlace && handleInventoryClick(symbolId)}
-                  >
-                    <HieroglyphTile
-                      symbol={inventoryItem?.symbol || symbolId}
-                      difficulty={itemDifficulty}
-                      size="sm"
-                      disabled={!canPlace}
-                      className="pointer-events-none"
-                    />
-                    <div className="flex flex-col text-xs">
-                      <span>
-                        {availableInInventory - usedFromInventory}/
-                        <span
-                          className={clsx(
-                            maxNeeded > availableInInventory &&
-                              "font-bold text-red-400"
-                          )}
-                        >
-                          {maxNeeded}
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                )
-              })}
-          </div>
-        </div>
-      )}
+                    return (
+                      <div
+                        key={symbolId}
+                        className={clsx(
+                          "flex items-center gap-1 rounded p-1 transition-colors",
+                          canPlace
+                            ? "cursor-pointer bg-white/10 hover:bg-white/20"
+                            : "cursor-not-allowed opacity-50"
+                        )}
+                        onClick={() =>
+                          canPlace && handleInventoryClick(symbolId)
+                        }
+                      >
+                        <HieroglyphTile
+                          symbol={inventoryItem?.symbol || symbolId}
+                          difficulty={itemDifficulty}
+                          size="sm"
+                          disabled={!canPlace}
+                          className="pointer-events-none"
+                        />
+                        <div className="flex flex-col text-xs">
+                          <span>
+                            {availableInInventory - usedFromInventory}/
+                            <span
+                              className={clsx(
+                                maxNeeded > availableInInventory &&
+                                  "font-bold text-red-400"
+                              )}
+                            >
+                              {maxNeeded}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+              </div>
+            </div>
+          )}
+        </TombDoor>
+      </div>
+      <div className="flex flex-1">{/** right side */}</div>
     </div>
   )
 }

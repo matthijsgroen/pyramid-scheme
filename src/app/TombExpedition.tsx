@@ -1,6 +1,6 @@
 import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
-import { type FC } from "react"
+import { useCallback, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -32,6 +32,17 @@ export const TombExpedition: FC<{
   )
 
   // if there are no run Tableaus, that means there is nothing to discover at this tomb anymore!
+
+  const handleLevelComplete = useCallback(() => {
+    console.log("handle level complete")
+    // Complete the level in the journey system
+    console.log("calling completeLevel")
+    completeLevel()
+
+    // Call the external level complete handler
+    console.log("calling onLevelComplete")
+    onLevelComplete?.()
+  }, [completeLevel, onLevelComplete])
 
   const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const random = mulberry32(seed)
@@ -79,16 +90,8 @@ export const TombExpedition: FC<{
     random
   )
 
-  const handleLevelComplete = () => {
-    // Complete the level in the journey system
-    completeLevel()
-
-    // Call the external level complete handler
-    onLevelComplete?.()
-  }
-
   return (
-    <TombBackdrop>
+    <TombBackdrop className="relative flex h-dvh flex-col">
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-xs">
           <div

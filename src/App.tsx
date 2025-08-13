@@ -34,7 +34,6 @@ function App() {
         activeJourney.journey.type === "treasure_tomb" && (
           <TombExpedition
             activeJourney={activeJourney}
-            onLevelComplete={completeLevel}
             onJourneyComplete={() => {
               completeJourney()
               setInGame(false)
