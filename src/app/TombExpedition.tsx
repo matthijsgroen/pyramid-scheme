@@ -1,6 +1,6 @@
 import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
-import { useCallback, type FC } from "react"
+import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -30,26 +30,45 @@ export const TombExpedition: FC<{
       tab.tombJourneyId === activeJourney.journeyId &&
       tab.runNumber === runNr + 1
   )
-
-  // if there are no run Tableaus, that means there is nothing to discover at this tomb anymore!
+  const [completing, setCompleting] = useState(false)
 
   const handleLevelComplete = useCallback(() => {
-    console.log("handle level complete")
+    if (completing) return
     // Complete the level in the journey system
-    console.log("calling completeLevel")
-    completeLevel()
+    setCompleting(true)
 
-    // Call the external level complete handler
-    console.log("calling onLevelComplete")
-    onLevelComplete?.()
-  }, [completeLevel, onLevelComplete])
+    setTimeout(() => {
+      completeLevel()
+      // Call the external level complete handler
+      onLevelComplete?.()
+      setCompleting(false)
+    }, 500)
+  }, [completeLevel, onLevelComplete, completing])
 
   const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
-  const random = mulberry32(seed)
   const tableau = runTableaus[activeJourney.levelNr - 1]
-  if (tableau === undefined) {
+
+  const calculation = useMemo(() => {
+    const random = mulberry32(seed)
+    if (!tableau) return null
+    const settings = {
+      amountSymbols: tableau.symbolCount,
+      hieroglyphIds: tableau.inventoryIds,
+      numberRange: journey.levelSettings.numberRange,
+      operations: journey.levelSettings.operators,
+    }
+    const calc = generateRewardCalculation(settings, random)
+    return calc
+  }, [seed, tableau, journey.levelSettings])
+
+  // if there are no run Tableaus, that means there is nothing to discover at this tomb anymore!
+  if (tableau === undefined || calculation === null) {
     return (
-      <TombBackdrop>
+      <TombBackdrop
+        className="relative flex h-dvh flex-col"
+        zoom={completing}
+        fade={completing}
+      >
         <div className="flex h-full w-full flex-col">
           <div className="flex-shrink-0 backdrop-blur-xs">
             <div
@@ -80,18 +99,12 @@ export const TombExpedition: FC<{
     )
   }
 
-  const calculation = generateRewardCalculation(
-    {
-      amountSymbols: tableau.symbolCount,
-      hieroglyphIds: tableau.inventoryIds,
-      numberRange: journey.levelSettings.numberRange,
-      operations: journey.levelSettings.operators,
-    },
-    random
-  )
-
   return (
-    <TombBackdrop className="relative flex h-dvh flex-col">
+    <TombBackdrop
+      className="relative flex h-dvh flex-col"
+      zoom={completing}
+      fade={completing}
+    >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-xs">
           <div

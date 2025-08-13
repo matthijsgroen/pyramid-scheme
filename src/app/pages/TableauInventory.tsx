@@ -1,5 +1,5 @@
 import type { ActiveJourney } from "@/game/generateJourneyLevel"
-import type { FC } from "react"
+import { useMemo, type FC } from "react"
 import { useJourneys } from "../state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -23,12 +23,9 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
   const tableaux = useTableauTranslations()
   const { inventory } = useInventory()
 
-  if (!journey) {
-    return null
-  }
-
+  const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const runNr = journeyLog.filter(
-    (log) => log.journeyId === journey.id && log.completed
+    (log) => log.journeyId === journey?.id && log.completed
   ).length
 
   const runTableaus = tableaux.filter(
@@ -36,18 +33,24 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
       tab.tombJourneyId === activeJourney.journeyId &&
       tab.runNumber === runNr + 1
   )
-  const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
-  const random = mulberry32(seed)
   const tableau = runTableaus[activeJourney.levelNr - 1]
-  const calculation = generateRewardCalculation(
-    {
-      amountSymbols: tableau.symbolCount,
-      hieroglyphIds: tableau.inventoryIds,
-      numberRange: journey.levelSettings.numberRange,
-      operations: journey.levelSettings.operators,
-    },
-    random
-  )
+  const calculation = useMemo(() => {
+    const random = mulberry32(seed)
+    if (!journey || !tableau) return null
+    return generateRewardCalculation(
+      {
+        amountSymbols: tableau.symbolCount,
+        hieroglyphIds: tableau.inventoryIds,
+        numberRange: journey.levelSettings.numberRange,
+        operations: journey.levelSettings.operators,
+      },
+      random
+    )
+  }, [journey, seed, tableau])
+
+  if (!journey || !calculation) {
+    return null
+  }
 
   return (
     <div className="mt-2 flex justify-center">

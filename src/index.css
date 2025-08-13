@@ -10,7 +10,7 @@
 
 html, body { 
   overscroll-behavior: none;
-  @apply bg-black overflow-hidden
+  @apply bg-black overflow-hidden text-white
 }
 
 @font-face {

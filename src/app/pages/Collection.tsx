@@ -10,6 +10,8 @@ import { useInventory } from "@/app/Inventory/useInventory"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/DeveloperButton"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -178,12 +180,7 @@ const DetailPanel: FC<{
               </p>
               {debug && (
                 <div>
-                  <button
-                    onClick={onAdd}
-                    className="rounded-md bg-red-600 p-2 text-white"
-                  >
-                    Add Item
-                  </button>
+                  <DeveloperButton onClick={onAdd} label="Add Item" />
                 </div>
               )}
             </div>
@@ -204,7 +201,7 @@ export const CollectionPage: FC = () => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const { journeyLog } = useJourneys()
   const { inventory, addItem } = useInventory()
-  const [debug] = useState(true)
+  const { isDevelopMode } = use(DevelopContext)
 
   const { showConversation } = use(FezContext)
 
@@ -306,7 +303,7 @@ export const CollectionPage: FC = () => {
         {hasCollectedItems && (
           <DetailPanel
             item={selectedItem}
-            debug={debug}
+            debug={isDevelopMode}
             onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
           />
         )}

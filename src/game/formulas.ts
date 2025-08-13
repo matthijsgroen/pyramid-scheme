@@ -85,11 +85,17 @@ export const createVerifiedFormula = (
 ): Formula => {
   let formula = createFormula(pickedNumbers, operations, random)
   // Ensure the result is positive and greater than 0
+  let iteration = 0
   while (
     formula.result <= 0 ||
     !Number.isInteger(formula.result) ||
     isNaN(formula.result)
   ) {
+    iteration++
+    if (iteration > 100) {
+      console.log("formula", formula, pickedNumbers)
+      throw new Error("could not create verified formula")
+    }
     formula = createFormula(pickedNumbers, operations, random)
   }
   return formula

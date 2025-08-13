@@ -32,6 +32,7 @@ export const generateRewardCalculation = (
 ): RewardCalculation => {
   // Step 1: Pick random numbers for each symbol, without duplicates
   const pickedNumbers: number[] = []
+  let iteration = 0
   while (pickedNumbers.length < settings.amountSymbols) {
     const number =
       Math.floor(
@@ -39,6 +40,10 @@ export const generateRewardCalculation = (
       ) + settings.numberRange[0]
     if (!pickedNumbers.includes(number)) {
       pickedNumbers.push(number)
+    }
+    iteration++
+    if (iteration > 1000) {
+      throw new Error("could not pick numbers for reward calculation")
     }
   }
   const symbolIds = shuffle(settings.hieroglyphIds, random)
@@ -81,11 +86,16 @@ export const generateRewardCalculation = (
         : settings.operations
 
     const hintNumbersCapped = shuffle(known, random)
-      .slice(-2)
+      .slice(known.length > 1 ? -2 : undefined)
       .concat(newNumbers)
 
     let finished = false
+    let loopIteration = 0
     while (!finished) {
+      loopIteration++
+      if (loopIteration > 100) {
+        throw new Error("could not create hint formula")
+      }
       const calcNumbers = generateCalculationNumbers(
         hintNumbersCapped,
         known,
@@ -103,7 +113,9 @@ export const generateRewardCalculation = (
         hintFormulas.push(hintFormula)
         finished = true
       }
-      hintNumbersCapped.push(known[0])
+      if (known[0] !== undefined) {
+        hintNumbersCapped.push(known[0])
+      }
     }
   }
 

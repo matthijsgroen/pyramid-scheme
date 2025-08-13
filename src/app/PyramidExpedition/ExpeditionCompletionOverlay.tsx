@@ -83,7 +83,7 @@ export const ExpeditionCompletionOverlay: FC<{
                       difficulty={itemDifficulty}
                       size="md"
                     />
-                    <div className="text-center text-xs">
+                    <div className="text-center text-xs text-amber-700">
                       {translatedItem.name}
                     </div>
                   </div>

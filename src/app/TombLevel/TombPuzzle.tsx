@@ -178,7 +178,7 @@ export const TombPuzzle: FC<{
       setLockState("open")
       setIsProcessingCompletion(true)
 
-      // After 2 seconds, call onComplete
+      // After 2 seconds, remove used inventory items and call onComplete
       setTimeout(() => {
         // Remove used inventory items in a single batch operation
         const itemsToRemove = Object.fromEntries(
@@ -214,7 +214,7 @@ export const TombPuzzle: FC<{
   return (
     <div className="flex flex-1 flex-row">
       <div className="flex flex-1">{/** left side */}</div>
-      <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
+      <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
         <div className="flex flex-1">{/** top side */}</div>
         <TombDoor
           className="flex flex-2 flex-col items-center justify-center"
@@ -282,7 +282,7 @@ export const TombPuzzle: FC<{
                       <div
                         key={symbolId}
                         className={clsx(
-                          "flex items-center gap-1 rounded p-1 transition-colors",
+                          "flex items-center gap-1 rounded p-1 transition-colors select-auto",
                           canPlace
                             ? "cursor-pointer bg-white/10 hover:bg-white/20"
                             : "cursor-not-allowed opacity-50"

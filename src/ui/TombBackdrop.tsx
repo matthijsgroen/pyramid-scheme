@@ -4,13 +4,13 @@ import clsx from "clsx"
 
 export const TombBackdrop: FC<
   PropsWithChildren<{ className?: string; zoom?: boolean; fade?: boolean }>
-> = ({ children, className, zoom, fade }) => {
+> = ({ children, className, zoom = false, fade = false }) => {
   return (
     <div
       className={clsx(
-        " bg-yellow-800 transition-transform duration-1000 ease-in-out",
-        zoom ? "scale-200" : "scale-100",
-        fade ? "opacity-0" : "opacity-100",
+        " bg-yellow-800 transition-all ease-in-out",
+        zoom ? "scale-200 duration-1000" : "scale-100 duration-0",
+        fade ? "opacity-0 duration-1000" : "opacity-100 duration-500",
         className
       )}
       style={{

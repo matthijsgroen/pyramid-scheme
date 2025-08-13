@@ -14,6 +14,8 @@ import { type PyramidJourney } from "@/data/journeys"
 import { FezContext } from "./fez/context"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/DeveloperButton"
 
 const generateExpeditionLevel = (
   activeJourney: JourneyState,
@@ -43,6 +45,7 @@ export const PyramidExpedition: FC<{
   onClose,
 }) => {
   const { t } = useTranslation("common")
+  const { isDevelopMode } = use(DevelopContext)
   const [transitionToLevel, setTransitionToLevel] = useState(
     activeJourney.levelNr
   )
@@ -183,7 +186,16 @@ export const PyramidExpedition: FC<{
                 : t("ui.expedition") +
                   ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
             </h1>
-            <span></span>
+            <span>
+              {isDevelopMode && (
+                <DeveloperButton
+                  onClick={() => {
+                    onComplete()
+                  }}
+                  label="Complete Level"
+                />
+              )}
+            </span>
           </div>
         </div>
 
