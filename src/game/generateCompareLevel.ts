@@ -1,6 +1,7 @@
-import type { Formula, Operation } from "./generateRewardCalculation"
+import { createVerifiedFormula, type Formula, type Operation } from "./formulas"
 
 export type FormulaSettings = {
+  numberOfSymbols: number
   numberRange: [min: number, max: number]
   operators: Operation[]
 }
@@ -22,23 +23,63 @@ export type CompareLevel = {
   }[]
 }
 
+const generateFormula = (
+  settings: FormulaSettings,
+  random: () => number = Math.random
+) => {
+  const numbers = new Array(settings.numberOfSymbols)
+    .fill(0)
+    .map(
+      () =>
+        settings.numberRange[0] +
+        Math.floor(
+          random() * (settings.numberRange[1] - settings.numberRange[0] + 1)
+        )
+    )
+  return createVerifiedFormula(numbers, settings.operators, random)
+}
+
 const createCompare = (
   settings: FormulaSettings,
   requirements: Requirements,
   random: () => number
 ) => {
-  const left: Formula = {
-    left: 10,
-    right: 5,
-    operation: "+",
-    result: 15,
+  const biggerSide = random() < 0.5 ? "left" : "right"
+  // Create the left and right formulas
+  let left = generateFormula(settings, random)
+  let right = generateFormula(settings, random)
+
+  const metRequirements = () => {
+    let largestAsString = String(left.result)
+    let smallestAsString = String(right.result)
+    if (biggerSide === "left") {
+      if (left.result <= right.result) return false
+    } else {
+      if (right.result <= left.result) return false
+      largestAsString = String(right.result)
+      smallestAsString = String(left.result)
+    }
+    if (requirements.largest === "always") {
+      return (
+        largestAsString.includes(String(requirements.digit)) &&
+        !smallestAsString.includes(String(requirements.digit))
+      )
+    }
+    return (
+      smallestAsString.includes(String(requirements.digit)) &&
+      !largestAsString.includes(String(requirements.digit))
+    )
   }
-  const right: Formula = {
-    left: 10,
-    right: 5,
-    operation: "-",
-    result: 5,
+  let iteration = 0
+  while (!metRequirements()) {
+    left = generateFormula(settings, random)
+    right = generateFormula(settings, random)
+    iteration++
+    if (iteration > 100) {
+      throw new Error("Failed to generate valid comparison")
+    }
   }
+
   return { left, right }
 }
 

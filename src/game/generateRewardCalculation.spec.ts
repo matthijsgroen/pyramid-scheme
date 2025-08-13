@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
 import {
-  formulaToString,
   generateRewardCalculation,
   type RewardCalculationSettings,
 } from "./generateRewardCalculation"
 import { mulberry32 } from "./random"
+import { formulaToString } from "./formulas"
 
 describe(generateRewardCalculation, () => {
   it("generates a reward calculation with unique symbols", () => {
