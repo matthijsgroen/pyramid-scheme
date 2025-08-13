@@ -35,7 +35,7 @@ const getInventoryItemById = (id: string) => {
   return allItems.find((item) => item.id === id)
 }
 
-type FilledTileState = {
+export type FilledTileState = {
   symbolCounts: Record<string, number>
   filledPositions: Record<string, number>
 }
@@ -137,5 +137,3 @@ export const FormulaPart: FC<FormulaPartProps> = (props) => {
     </span>
   )
 }
-
-export type { FilledTileState, FormulaPartProps }

@@ -8,97 +8,12 @@ import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { FormulaPart, type FilledTileState } from "./FormulaPart"
+import { type FilledTileState } from "./FormulaPart"
 import { clsx } from "clsx"
 import { useState, useMemo, type FC, type FormEvent } from "react"
 import { useTranslation } from "react-i18next"
-
-// Helper function to count total number slots in a formula
-const countFormulaSlots = (formula: FormulaType): number => {
-  let count = 0
-  if (typeof formula.left === "number") {
-    count += 1
-  } else {
-    count += countFormulaSlots(formula.left)
-  }
-  if (typeof formula.right === "number") {
-    count += 1
-  } else {
-    count += countFormulaSlots(formula.right)
-  }
-  return count
-}
-
-const revealText = (text: string, percentage?: number): string => {
-  // replace characters with ? based on a noise pattern for natural reveal
-  if (percentage === undefined || percentage <= 0) {
-    return text.replace(/[a-zA-Z0-9]/g, "?")
-  }
-  if (percentage >= 1) {
-    return text
-  }
-
-  // Simple pseudo-random number generator for consistent results
-  const seededRandom = (seed: number) => {
-    const x = Math.sin(seed) * 10000
-    return x - Math.floor(x)
-  }
-
-  // Create a seed based on the text content for consistency
-  const textSeed = text.split("").reduce((acc, char, index) => {
-    return acc + char.charCodeAt(0) * (index + 1)
-  }, 0)
-
-  let letterIndex = 0
-  const obfuscatedText = text.split("").map((char, charIndex) => {
-    if (/[a-zA-Z]/.test(char)) {
-      // Generate a consistent pseudo-random value for this letter position
-      const randomValue = seededRandom(textSeed + letterIndex + charIndex)
-      const shouldObfuscate = randomValue > percentage
-      letterIndex++
-      return shouldObfuscate ? "?" : char
-    }
-    return char
-  })
-  return obfuscatedText.join("")
-}
-
-const Formula: FC<{
-  formula: FormulaType
-  showResult: boolean
-  difficulty: Difficulty
-  symbolMapping: Record<number, string>
-  filledState: FilledTileState
-  onTileClick: (symbolId: string, position: string) => void
-  formulaIndex: number
-}> = ({
-  formula,
-  showResult,
-  difficulty,
-  symbolMapping,
-  filledState,
-  onTileClick,
-  formulaIndex,
-}) => {
-  return (
-    <div>
-      <FormulaPart
-        formula={formula}
-        difficulty={difficulty}
-        symbolMapping={symbolMapping}
-        filledState={filledState}
-        onTileClick={onTileClick}
-        positionPrefix={`formula-${formulaIndex}`}
-      />{" "}
-      ={" "}
-      {showResult ? (
-        <span>{formula.result}</span>
-      ) : (
-        revealText(formula.result.toString(), 0)
-      )}
-    </div>
-  )
-}
+import { revealText } from "@/support/revealText"
+import { TombTableau } from "./TombTableau"
 
 export const TombPuzzle: FC<{
   tableau: TableauLevel
@@ -128,21 +43,6 @@ export const TombPuzzle: FC<{
     "empty"
   )
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
-
-  // Calculate solved percentage based on filled tiles
-  const solvedPercentage = useMemo(() => {
-    // Count total slots across all formulas
-    const totalSlots =
-      calculation.hintFormulas.reduce(
-        (sum, formula) => sum + countFormulaSlots(formula),
-        0
-      ) + countFormulaSlots(calculation.mainFormula)
-
-    // Count filled slots
-    const filledSlots = Object.keys(filledState.filledPositions).length
-
-    return totalSlots > 0 ? filledSlots / totalSlots : 0
-  }, [calculation, filledState.filledPositions])
 
   // Check if puzzle is completely solved (all symbols placed)
   const isPuzzleCompleted = useMemo(() => {
@@ -276,19 +176,16 @@ export const TombPuzzle: FC<{
     if (lockCode === calculation.mainFormula.result.toString()) {
       setLockState("open")
       setIsProcessingCompletion(true)
+      // Remove used inventory items in a single batch operation
+      const itemsToRemove = Object.fromEntries(
+        Object.entries(inventoryUsage).filter(([, usedCount]) => usedCount > 0)
+      )
+      if (Object.keys(itemsToRemove).length > 0) {
+        removeItems(itemsToRemove)
+      }
 
-      // After 2 seconds, remove used inventory items and call onComplete
+      // After 2 seconds, call onComplete
       setTimeout(() => {
-        // Remove used inventory items in a single batch operation
-        const itemsToRemove = Object.fromEntries(
-          Object.entries(inventoryUsage).filter(
-            ([, usedCount]) => usedCount > 0
-          )
-        )
-        if (Object.keys(itemsToRemove).length > 0) {
-          removeItems(itemsToRemove)
-        }
-
         // Call completion handler
         onComplete?.()
         setIsProcessingCompletion(false)
@@ -337,44 +234,13 @@ export const TombPuzzle: FC<{
           </form>
         </div>
       )}
-      <div
-        className={clsx(
-          "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-500 shadow-lg",
-          hieroglyphLevelColors[difficulty]
-        )}
-      >
-        <h1 className="text-center font-pyramid text-2xl">
-          {revealText(tableau.name, solvedPercentage)}
-        </h1>
-        <div>{revealText(tableau.description, solvedPercentage)}</div>
-
-        {calculation.hintFormulas.map((formula, index) => (
-          <div key={index} className="text-3xl">
-            <Formula
-              formula={formula}
-              showResult={true}
-              difficulty={difficulty}
-              symbolMapping={calculation.symbolMapping}
-              filledState={filledState}
-              onTileClick={handleTileClick}
-              formulaIndex={index}
-            />
-          </div>
-        ))}
-        <div>
-          <span className="text-4xl">
-            <Formula
-              formula={calculation.mainFormula}
-              showResult={false}
-              difficulty={difficulty}
-              symbolMapping={calculation.symbolMapping}
-              filledState={filledState}
-              onTileClick={handleTileClick}
-              formulaIndex={calculation.hintFormulas.length}
-            />
-          </span>
-        </div>
-      </div>
+      <TombTableau
+        difficulty={difficulty}
+        tableau={tableau}
+        calculation={calculation}
+        filledState={filledState}
+        onTileClick={handleTileClick}
+      />
 
       {/* Available symbols inventory - hide when puzzle is completed */}
       {!isPuzzleCompleted && (
