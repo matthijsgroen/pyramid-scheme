@@ -1,5 +1,5 @@
 import { LootPopup } from "@/ui/LootPopup"
-import { useState, type FC } from "react"
+import { useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { JourneyState } from "../state/useJourneys"
 import type { TreasureTombJourney } from "@/data/journeys"
@@ -7,11 +7,14 @@ import { mulberry32 } from "@/game/random"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
 import { useInventory } from "../Inventory/useInventory"
 import { Chest } from "@/ui/Chest"
+import { generateCompareLevel } from "@/game/generateCompareLevel"
+import { tableauLevels } from "@/data/tableaus"
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
   activeJourney: JourneyState
-}> = ({ onComplete, activeJourney }) => {
+  runNumber: number
+}> = ({ onComplete, activeJourney, runNumber }) => {
   const { t } = useTranslation("common")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">(
     "empty"
@@ -58,6 +61,36 @@ export const ComparePuzzle: FC<{
       setIsProcessingCompletion(false)
     }, 1500)
   }
+
+  const levelSeed = activeJourney.randomSeed + runNumber * 3210
+
+  const levelData = useMemo(() => {
+    const random = mulberry32(levelSeed)
+    const tableau = tableauLevels.find(
+      (t) => t.tombJourneyId === journey.id && t.runNumber === runNumber
+    )
+    const digit = Math.round(random() * 9)
+    const always = random() > 0.5
+
+    const result = generateCompareLevel(
+      {
+        compareAmount: journey.levelSettings.compareAmount,
+        numberOfSymbols: tableau?.symbolCount ?? 2,
+        numberRange: journey.levelSettings.numberRange,
+        operators: journey.levelSettings.operators,
+      },
+      { digit, largest: always ? "always" : "never" }
+    )
+    return result
+  }, [
+    journey.id,
+    journey.levelSettings.compareAmount,
+    journey.levelSettings.numberRange,
+    journey.levelSettings.operators,
+    runNumber,
+    levelSeed,
+  ])
+  console.log(levelData)
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">

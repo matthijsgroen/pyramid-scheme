@@ -224,7 +224,7 @@ export const TombPuzzle: FC<{
           {isPuzzleCompleted && (
             <div
               className={clsx(
-                "order-2 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
+                "order-2 mb-6 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
                 hieroglyphLevelColors[difficulty]
               )}
             >

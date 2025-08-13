@@ -93,6 +93,7 @@ export const TombExpedition: FC<{
           <ComparePuzzle
             activeJourney={activeJourney}
             onComplete={onJourneyComplete}
+            runNumber={runNr}
           />
         </div>
       </TombBackdrop>
