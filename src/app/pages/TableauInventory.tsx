@@ -1,5 +1,5 @@
-import type { ActiveJourney } from "@/game/generateJourney"
-import type { FC } from "react"
+import type { ActiveJourney } from "@/game/generateJourneyLevel"
+import { useMemo, type FC } from "react"
 import { useJourneys } from "../state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -10,6 +10,7 @@ import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import clsx from "clsx"
+import { difficultyCompare } from "@/data/difficultyLevels"
 
 export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
   activeJourney,
@@ -22,12 +23,9 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
   const tableaux = useTableauTranslations()
   const { inventory } = useInventory()
 
-  if (!journey) {
-    return null
-  }
-
+  const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const runNr = journeyLog.filter(
-    (log) => log.journeyId === journey.id && log.completed
+    (log) => log.journeyId === journey?.id && log.completed
   ).length
 
   const runTableaus = tableaux.filter(
@@ -35,24 +33,33 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
       tab.tombJourneyId === activeJourney.journeyId &&
       tab.runNumber === runNr + 1
   )
-  const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
-  const random = mulberry32(seed)
   const tableau = runTableaus[activeJourney.levelNr - 1]
-  const calculation = generateRewardCalculation(
-    {
-      amountSymbols: tableau.symbolCount,
-      hieroglyphIds: tableau.inventoryIds,
-      numberRange: journey.levelSettings.numberRange,
-      operations: journey.levelSettings.operators,
-    },
-    random
-  )
+  const calculation = useMemo(() => {
+    const random = mulberry32(seed)
+    if (!journey || !tableau) return null
+    return generateRewardCalculation(
+      {
+        amountSymbols: tableau.symbolCount,
+        hieroglyphIds: tableau.inventoryIds,
+        numberRange: journey.levelSettings.numberRange,
+        operations: journey.levelSettings.operators,
+      },
+      random
+    )
+  }, [journey, seed, tableau])
+
+  if (!journey || !calculation) {
+    return null
+  }
 
   return (
     <div className="mt-2 flex justify-center">
       <div className="flex flex-wrap gap-2 rounded bg-black/15 p-1">
-        {Object.entries(calculation.symbolCounts).map(
-          ([symbolId, maxNeeded]) => {
+        {Object.entries(calculation.symbolCounts)
+          .sort((a, b) =>
+            difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0]))
+          )
+          .map(([symbolId, maxNeeded]) => {
             const availableInInventory = inventory[symbolId] || 0
             const inventoryItem = getInventoryItemById(symbolId)
             const itemDifficulty =
@@ -93,8 +100,7 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
                 </div>
               </div>
             )
-          }
-        )}
+          })}
       </div>
     </div>
   )

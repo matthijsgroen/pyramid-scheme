@@ -84,7 +84,7 @@ export const PyramidDisplay: FC<{
                 <Block
                   key={block.id}
                   selected={selectedBlockIndex === startIndex + index}
-                  className="border-yellow-600 bg-yellow-200"
+                  className="border-yellow-600 bg-yellow-200 text-yellow-900"
                 >
                   {block.value !== undefined ? (
                     block.value

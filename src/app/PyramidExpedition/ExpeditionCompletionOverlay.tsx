@@ -76,14 +76,14 @@ export const ExpeditionCompletionOverlay: FC<{
                 return (
                   <div
                     key={itemId + index}
-                    className="flex shrink-0 flex-col gap-2"
+                    className="flex flex-col items-center gap-2"
                   >
                     <HieroglyphTile
                       symbol={translatedItem.symbol}
                       difficulty={itemDifficulty}
                       size="md"
                     />
-                    <div className="text-center text-xs">
+                    <div className="text-center text-xs text-amber-700">
                       {translatedItem.name}
                     </div>
                   </div>

@@ -36,7 +36,6 @@ export const determineInventoryLootForCurrentRuns = (
     }
     return difficulty
   }, "starter")
-  console.log(maxDifficulty, "difficulty")
 
   const tombIds = journeys
     .filter(
@@ -128,8 +127,6 @@ export const determineInventoryLootForCurrentRuns = (
       filteredItemsRequired[itemId] = count
     }
   })
-
-  console.log(itemsRequired, "itemsRequired")
 
   // Calculate urgency scores for each needed item
   const urgencyScores = Object.entries(filteredItemsRequired).map(

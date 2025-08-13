@@ -7,7 +7,7 @@ import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
 import { type Journey } from "@/data/journeys"
 import { useJourneys } from "@/app/state/useJourneys"
-import type { ActiveJourney } from "@/game/generateJourney"
+import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import {
   useJourneyTranslations,
   type TranslatedJourney,
@@ -134,7 +134,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
   return (
     <Page
-      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300"
+      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
       snap="start"
     >
       <div className="relative flex h-full w-full overflow-x-hidden">

@@ -4,6 +4,7 @@ import { Base } from "@/app/Base"
 import { useJourneys } from "@/app/state/useJourneys"
 import { TombExpedition } from "./app/TombExpedition"
 import { FezCompanion } from "./app/fez/FezCompanion"
+import { DevelopModeProvider } from "./contexts/DevelopMode"
 
 function App() {
   const [inGame, setInGame] = useState(false)
@@ -15,34 +16,38 @@ function App() {
   ).length
 
   return (
-    <FezCompanion>
-      {!inGame && <Base startGame={() => setInGame(true)} />}
-      {inGame && activeJourney && activeJourney.journey.type === "pyramid" && (
-        <PyramidExpedition
-          activeJourney={activeJourney}
-          runNr={runNr}
-          onLevelComplete={completeLevel}
-          onJourneyComplete={() => {
-            completeJourney()
-            setInGame(false)
-          }}
-          onClose={() => setInGame(false)}
-        />
-      )}
-      {inGame &&
-        activeJourney &&
-        activeJourney.journey.type === "treasure_tomb" && (
-          <TombExpedition
-            activeJourney={activeJourney}
-            onLevelComplete={completeLevel}
-            onJourneyComplete={() => {
-              completeJourney()
-              setInGame(false)
-            }}
-            onClose={() => setInGame(false)}
-          />
-        )}
-    </FezCompanion>
+    <DevelopModeProvider>
+      <FezCompanion>
+        {!inGame && <Base startGame={() => setInGame(true)} />}
+        {inGame &&
+          activeJourney &&
+          activeJourney.journey.type === "pyramid" && (
+            <PyramidExpedition
+              activeJourney={activeJourney}
+              runNr={runNr}
+              onLevelComplete={completeLevel}
+              onJourneyComplete={() => {
+                completeJourney()
+                setInGame(false)
+              }}
+              onClose={() => setInGame(false)}
+            />
+          )}
+        {inGame &&
+          activeJourney &&
+          activeJourney.journey.type === "treasure_tomb" && (
+            <TombExpedition
+              activeJourney={activeJourney}
+              onLevelComplete={completeLevel}
+              onJourneyComplete={() => {
+                completeJourney()
+                setInGame(false)
+              }}
+              onClose={() => setInGame(false)}
+            />
+          )}
+      </FezCompanion>
+    </DevelopModeProvider>
   )
 }
 

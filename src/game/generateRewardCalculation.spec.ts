@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
 import {
-  formulaToString,
   generateRewardCalculation,
   type RewardCalculationSettings,
 } from "./generateRewardCalculation"
 import { mulberry32 } from "./random"
+import { formulaToString } from "./formulas"
 
 describe(generateRewardCalculation, () => {
   it("generates a reward calculation with unique symbols", () => {
@@ -47,7 +47,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("6 * 1 * 7 * 6 = 252")
+    expect(textFormula).toBe("(6 + 6 * 1) - 7 = 5")
   })
 
   it("prevents broken numbers", () => {
@@ -61,7 +61,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("6 * 1 * 7 / 6 = 7")
+    expect(textFormula).toBe("(6 - 1) - (7 - 6) = 4")
   })
 
   it("can have multiple operators in a formula", () => {
@@ -89,7 +89,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("8 * 2 * (2 + 6) = 128")
+    expect(textFormula).toBe("6 - ((2 + 8) / 2) = 1")
   })
 
   describe("hint formulas", () => {
@@ -104,9 +104,9 @@ describe(generateRewardCalculation, () => {
       const result = generateRewardCalculation(settings, random)
 
       expect(result.hintFormulas.length).toBe(3)
-      expect(formulaToString(result.hintFormulas[0])).toBe("6 + 6 + 6 = 18")
+      expect(formulaToString(result.hintFormulas[0])).toBe("6 + 6 = 12")
       expect(formulaToString(result.hintFormulas[1])).toBe("(7 - 6) * 6 = 6")
-      expect(formulaToString(result.hintFormulas[2])).toBe("(9 - 7) * 6 = 12")
+      expect(formulaToString(result.hintFormulas[2])).toBe("(7 + 6) - 9 = 4")
       expect(formulaToString(result.mainFormula)).toBe("(9 + 7) - (7 + 6) = 3")
     })
   })
@@ -128,7 +128,7 @@ describe(generateRewardCalculation, () => {
     })
     expect(symbolCounts).toEqual({
       "𓁝": 2,
-      "𓁧": 8,
+      "𓁧": 6,
       "𓃯": 3,
     })
   })
@@ -150,9 +150,9 @@ describe(generateRewardCalculation, () => {
       formulaToString(result.mainFormula, symbolMapping, false),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓁧 + 𓁧 + 𓁧 = 30
-      (𓁧 + 𓃯) - 𓁧 = 4
-      (𓁧 - 𓃯) - 𓁝 = 1
+      "𓁧 + 𓁧 = 20
+      𓃯 + 𓁧 = 14
+      𓁧 + 𓃯 + 𓁝 = 19
       𓁝 + 𓁧 + 𓁧 + 𓃯 = ?"
     `)
   })
@@ -191,33 +191,33 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
-        "left": {
-          "left": 8,
-          "operation": "+",
-          "result": 12,
-          "right": 4,
+        "left": 4,
+        "operation": "*",
+        "result": 4,
+        "right": {
+          "left": 9,
+          "operation": "-",
+          "result": 1,
+          "right": 8,
         },
-        "operation": "-",
-        "result": 3,
-        "right": 9,
       }
     `)
 
     expect(numberFormulas).toMatchInlineSnapshot(`
-      "6 + 6 + 6 = 18
-      8 - 6 = 2
-      8 + 6 - 4 = 10
-      (8 + 4) - 9 = 3
-      6 + 10 - 9 = 7
+      "6 * 6 = 36
+      6 + 8 + 6 = 20
+      6 - (8 - 4) = 2
+      4 * (9 - 8) = 4
+      10 + 6 + 4 = 20
       9 - 4 + 8 + 9 * (10 - 6) = 49"
     `)
 
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓆆 + 𓆆 + 𓆆 = 18
-      𓁝 - 𓆆 = 2
-      𓁝 + 𓆆 - 𓁧 = 10
-      (𓁝 + 𓁧) - 𓁾 = 3
-      𓆆 + 𓃯 - 𓁾 = 7
+      "𓆆 * 𓆆 = 36
+      𓆆 + 𓁝 + 𓆆 = 20
+      𓆆 - (𓁝 - 𓁧) = 2
+      𓁧 * (𓁾 - 𓁝) = 4
+      𓃯 + 𓆆 + 𓁧 = 20
       𓁾 - 𓁧 + 𓁝 + 𓁾 * (𓃯 - 𓆆) = ?"
     `)
   })
@@ -239,8 +239,8 @@ describe(generateRewardCalculation, () => {
       formulaToString(result.mainFormula, symbolMapping, false),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
-      "𓁧 + 𓁧 + 𓁧 = 12
-      𓁧 + 𓁧 + 𓁝 + 𓁧 = 14
+      "𓁧 + 𓁧 = 8
+      𓁧 + 𓁝 = 6
       𓁝 + 𓁧 + 𓁧 = ?"
     `)
   })

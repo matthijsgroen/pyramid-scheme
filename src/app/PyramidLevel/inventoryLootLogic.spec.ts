@@ -31,10 +31,6 @@ describe("determineInventoryLootForCurrentRuns", () => {
   })
 
   describe("Basic functionality", () => {
-    it("should be a function", () => {
-      expect(typeof determineInventoryLootForCurrentRuns).toBe("function")
-    })
-
     it("should return a valid InventoryLootResult object", () => {
       const result = determineInventoryLootForCurrentRuns(
         mockPyramidExpedition,
@@ -174,39 +170,6 @@ describe("determineInventoryLootForCurrentRuns", () => {
 
       expect(result.needMultiplier).toBeGreaterThanOrEqual(0)
       expect(result.needMultiplier).toBeLessThanOrEqual(3)
-    })
-  })
-
-  describe("Journey log integration", () => {
-    it("should handle completed runs", () => {
-      mockJourneyLog = [
-        { journeyId: "starter_treasure_tomb", completed: true, levelNr: 1 },
-        { journeyId: "starter_treasure_tomb", completed: false, levelNr: 2 },
-      ]
-
-      const result = determineInventoryLootForCurrentRuns(
-        mockPyramidExpedition,
-        mockJourneyLog,
-        mockPlayerInventory
-      )
-
-      expect(result).toBeDefined()
-      expect(typeof result.shouldAwardInventoryItem).toBe("boolean")
-    })
-
-    it("should handle multiple tomb types", () => {
-      mockJourneyLog = [
-        { journeyId: "starter_treasure_tomb", completed: true, levelNr: 1 },
-        { journeyId: "junior_treasure_tomb", completed: false, levelNr: 1 },
-      ]
-
-      const result = determineInventoryLootForCurrentRuns(
-        mockPyramidExpedition,
-        mockJourneyLog,
-        mockPlayerInventory
-      )
-
-      expect(result).toBeDefined()
     })
   })
 

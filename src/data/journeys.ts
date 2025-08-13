@@ -1,4 +1,3 @@
-import type { Operation } from "@/game/generateRewardCalculation"
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
 import {
@@ -9,6 +8,7 @@ import {
   templeSecretsTreasures,
   type Treasure,
 } from "./treasures"
+import type { Operation } from "@/game/formulas"
 
 /**
  * JourneyLength:

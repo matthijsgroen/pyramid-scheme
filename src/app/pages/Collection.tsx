@@ -10,6 +10,8 @@ import { useInventory } from "@/app/Inventory/useInventory"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/DeveloperButton"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -151,7 +153,9 @@ const TreasureCategorySection: FC<{
 
 const DetailPanel: FC<{
   item: InventoryItem | null
-}> = ({ item }) => {
+  debug?: boolean
+  onAdd?: () => void
+}> = ({ item, debug = false, onAdd }) => {
   const { t } = useTranslation("common")
 
   return (
@@ -174,6 +178,11 @@ const DetailPanel: FC<{
               <p className="leading-relaxed text-gray-700">
                 {item.description}
               </p>
+              {debug && (
+                <div>
+                  <DeveloperButton onClick={onAdd} label="Add Item" />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -191,7 +200,8 @@ export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const { journeyLog } = useJourneys()
-  const { inventory } = useInventory()
+  const { inventory, addItem } = useInventory()
+  const { isDevelopMode } = use(DevelopContext)
 
   const { showConversation } = use(FezContext)
 
@@ -213,7 +223,7 @@ export const CollectionPage: FC = () => {
 
   return (
     <Page
-      className="flex bg-gradient-to-b from-purple-100 to-purple-300"
+      className="flex bg-gradient-to-b from-blue-100 to-blue-300"
       snap="end"
     >
       <div className="relative flex-1 overflow-y-auto p-6">
@@ -290,7 +300,13 @@ export const CollectionPage: FC = () => {
             inventory={inventory}
           />
         </div>
-        {hasCollectedItems && <DetailPanel item={selectedItem} />}
+        {hasCollectedItems && (
+          <DetailPanel
+            item={selectedItem}
+            debug={isDevelopMode}
+            onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
+          />
+        )}
       </div>
     </Page>
   )

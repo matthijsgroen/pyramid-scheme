@@ -1,6 +1,5 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { Formula, Operation } from "@/game/generateRewardCalculation"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import {
@@ -9,6 +8,7 @@ import {
   egyptianAnimals,
   egyptianArtifacts,
 } from "@/data/inventory"
+import type { Formula, Operation } from "@/game/formulas"
 
 // Helper function to get operator precedence for parentheses
 const getOperatorPrecedence = (operation: Operation): number => {
@@ -35,7 +35,7 @@ const getInventoryItemById = (id: string) => {
   return allItems.find((item) => item.id === id)
 }
 
-type FilledTileState = {
+export type FilledTileState = {
   symbolCounts: Record<string, number>
   filledPositions: Record<string, number>
 }
@@ -137,5 +137,3 @@ export const FormulaPart: FC<FormulaPartProps> = (props) => {
     </span>
   )
 }
-
-export type { FilledTileState, FormulaPartProps }

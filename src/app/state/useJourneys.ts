@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react"
-import type { ActiveJourney } from "@/game/generateJourney"
+import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import { useGameStorage } from "@/support/useGameStorage"
-import { startJourney as dataStartJourney } from "@/game/generateJourney"
+import { startJourney as dataStartJourney } from "@/game/generateJourneyLevel"
 import { journeys, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
 import {

@@ -53,12 +53,14 @@ export const ComparePuzzle: FC<{
     setLockState("open")
     setIsProcessingCompletion(true)
 
-    setShowLoot(true)
-    setIsProcessingCompletion(false)
+    setTimeout(() => {
+      setShowLoot(true)
+      setIsProcessingCompletion(false)
+    }, 1500)
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <h3 className="text-lg font-bold text-amber-200">
         {t("ui.noCrocodilePuzzle")}
       </h3>
