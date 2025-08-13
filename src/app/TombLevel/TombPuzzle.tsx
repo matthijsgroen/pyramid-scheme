@@ -1,10 +1,8 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
-import {
-  type Formula as FormulaType,
-  type RewardCalculation,
-} from "@/game/generateRewardCalculation"
+import type { Formula as FormulaType } from "@/game/formulas"
+import { type RewardCalculation } from "@/game/generateRewardCalculation"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
