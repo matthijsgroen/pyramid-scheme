@@ -18,6 +18,12 @@
     "evening": "Avond",
     "night": "Nacht"
   },
+  "tomb": {
+    "crocodilePuzzleAlways": "Welk cijfer at de krokodil altijd?",
+    "crocodilePuzzleNever": "Welk cijfer at de krokodil nooit?",
+    "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
+    "crocodilePuzzlePrompt": "Laat de krokodil het grootste resultaat eten"
+  },
   "ui": {
     "level": "Niveau",
     "symbols": "symbolen",
@@ -66,9 +72,6 @@
     "spiritsRejectCode": "De geesten verwerpen deze code",
     "sacredSealBroken": "Het heilige zegel is verbroken",
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
-    "crocodileAlways": "Welk cijfer at de krokodil altijd?",
-    "crocodileNever": "Welk cijfer at de krokodil nooit?",
-    "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
     "answerNow": "Het antwoord is: "
   },
   "loot": {

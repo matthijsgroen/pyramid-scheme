@@ -45,9 +45,10 @@ const createCompare = (
   random: () => number
 ) => {
   const biggerSide = random() < 0.5 ? "left" : "right"
+  const generateSettings = { ...settings }
   // Create the left and right formulas
-  let left = generateFormula(settings, random)
-  let right = generateFormula(settings, random)
+  let left = generateFormula(generateSettings, random)
+  let right = generateFormula(generateSettings, random)
 
   const metRequirements = () => {
     let largestAsString = String(left.result)
@@ -72,9 +73,13 @@ const createCompare = (
   }
   let iteration = 0
   while (!metRequirements()) {
-    left = generateFormula(settings, random)
-    right = generateFormula(settings, random)
+    left = generateFormula(generateSettings, random)
+    right = generateFormula(generateSettings, random)
     iteration++
+    if (iteration > 50) {
+      generateSettings.numberOfSymbols =
+        settings.numberOfSymbols + Math.ceil((iteration - 40) / 10)
+    }
     if (iteration > 100) {
       throw new Error("Failed to generate valid comparison")
     }

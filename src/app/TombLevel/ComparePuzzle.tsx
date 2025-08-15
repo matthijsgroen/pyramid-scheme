@@ -9,6 +9,13 @@ import { useInventory } from "../Inventory/useInventory"
 import { Chest } from "@/ui/Chest"
 import { generateCompareLevel } from "@/game/generateCompareLevel"
 import { tableauLevels } from "@/data/tableaus"
+import { NumberChest } from "@/ui/NumberChest"
+import crocodile from "@/assets/crocodile-250.png"
+import clsx from "clsx"
+import { formulaPartToString } from "@/game/formulas"
+import { DeveloperButton } from "@/ui/DeveloperButton"
+
+const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
@@ -23,6 +30,7 @@ export const ComparePuzzle: FC<{
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const { inventory, addItem } = useInventory()
+  const [lockValue, setLockValue] = useState("")
 
   const journey = activeJourney.journey as TreasureTombJourney
 
@@ -79,7 +87,8 @@ export const ComparePuzzle: FC<{
         numberRange: journey.levelSettings.numberRange,
         operators: journey.levelSettings.operators,
       },
-      { digit, largest: always ? "always" : "never" }
+      { digit, largest: always ? "always" : "never" },
+      random
     )
     return result
   }, [
@@ -90,19 +99,121 @@ export const ComparePuzzle: FC<{
     runNumber,
     levelSeed,
   ])
-  console.log(levelData)
+
+  const hasComparison = levelData.comparisons.length > 0
+
+  const [focus, setFocus] = useState(0)
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <h3 className="text-lg font-bold text-amber-200">
-        {t("ui.noCrocodilePuzzle")}
-      </h3>
-      <Chest
-        state={lockState}
-        variant="vibrant"
-        onClick={handleLockSubmit}
-        allowInteraction={!isProcessingCompletion && lockState !== "open"}
-      />
+    <div
+      className={clsx(
+        "relative flex flex-1  flex-col-reverse items-center justify-center gap-4",
+        hasComparison &&
+          "bg-gradient-to-b from-transparent from-50% via-blue-200 via-51% to-blue-100"
+      )}
+    >
+      <div className="absolute top-0">
+        {focus === 0 && (
+          <p className="mx-8 mt-4 text-center text-xl font-bold">
+            {t("tomb.crocodilePuzzlePrompt")}
+          </p>
+        )}
+      </div>
+      <div
+        className="absolute scale-100 transition-transform duration-200"
+        style={{
+          "--tw-scale-x": `${Math.max(100 + (levelData.comparisons.length - focus) * -20, 0)}%`,
+          "--tw-scale-y": `${Math.max(100 + (levelData.comparisons.length - focus) * -20, 0)}%`,
+        }}
+      >
+        <h3
+          className={clsx(
+            "text-lg font-bold text-amber-200 transition-opacity duration-200",
+            focus !== levelData.comparisons.length && "opacity-0"
+          )}
+        >
+          {hasComparison
+            ? t(
+                `tomb.crocodilePuzzle${levelData.requirements.largest === "always" ? "Always" : "Never"}`
+              )
+            : t("tomb.noCrocodilePuzzle")}
+        </h3>
+        {hasComparison ? (
+          <div className="grid grid-rows-[100px_1fr]">
+            <div className="col-start-1 row-start-2 rounded-t-[50%] rounded-b-[30%] bg-amber-700"></div>
+            <div className="col-start-1 row-span-2 row-start-1 px-4 pb-8">
+              <NumberChest
+                state={lockState}
+                variant="vibrant"
+                onSubmit={handleLockSubmit}
+                value={lockValue}
+                placeholder="1-9"
+                onChange={setLockValue}
+                disabled={focus !== levelData.comparisons.length}
+              />
+            </div>
+          </div>
+        ) : (
+          <Chest
+            state={lockState}
+            variant="muted"
+            onClick={handleLockSubmit}
+            allowInteraction={!isProcessingCompletion && lockState !== "open"}
+          />
+        )}
+      </div>
+      {levelData.comparisons
+        .slice()
+        .reverse()
+        .map((comparison, reversedIndex) => {
+          const index = levelData.comparisons.length - 1 - reversedIndex
+          const distanceFocus = index - focus
+          return (
+            <div
+              className={clsx(
+                "absolute bottom-0 flex w-dvw max-w-md translate-y-0 scale-100 flex-col items-center transition-transform duration-200",
+                index - focus < 0 && "blur-xs"
+              )}
+              style={{
+                "--tw-translate-y": `calc(var(--spacing) * ${-scaleDistance(distanceFocus)})`,
+                "--tw-scale-x": `${Math.max(Math.min(100 + distanceFocus * -20, 120), 0)}%`,
+                "--tw-scale-y": `${Math.max(Math.min(100 + distanceFocus * -20, 120), 0)}%`,
+              }}
+              key={index}
+            >
+              <div className="flex w-full flex-1 flex-row justify-between gap-16 px-4">
+                <p
+                  className={clsx(
+                    "animate-bounce text-shadow-amber-800 text-shadow-md",
+                    focus !== index && "opacity-0"
+                  )}
+                >
+                  {formulaPartToString(comparison.left)}
+                </p>
+                <p
+                  className={clsx(
+                    "animate-bounce text-shadow-amber-800 text-shadow-md",
+                    focus !== index && "opacity-0"
+                  )}
+                >
+                  {formulaPartToString(comparison.right)}
+                </p>
+              </div>
+              <div className="flex-1">
+                <img
+                  src={crocodile}
+                  alt="crocodile"
+                  className={clsx(
+                    "transition-all duration-200",
+                    focus === index
+                      ? "brightness-100 saturate-100"
+                      : "brightness-110 saturate-30"
+                  )}
+                />
+              </div>
+            </div>
+          )
+        })}
       {loot && (
         <>
           <LootPopup

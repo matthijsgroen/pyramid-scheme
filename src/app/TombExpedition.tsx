@@ -21,14 +21,13 @@ export const TombExpedition: FC<{
 
   const journey = activeJourney.journey as TreasureTombJourney
   const { journeyLog, completeLevel } = useJourneys()
-  const runNr = journeyLog.filter(
-    (log) => log.journeyId === journey.id && log.completed
-  ).length
+  const runNr =
+    journeyLog.filter((log) => log.journeyId === journey.id && log.completed)
+      .length + 1
 
   const runTableaus = tableaux.filter(
     (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId &&
-      tab.runNumber === runNr + 1
+      tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === runNr
   )
   const [completing, setCompleting] = useState(false)
 
