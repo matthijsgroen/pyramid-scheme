@@ -1,19 +1,15 @@
 import { LootPopup } from "@/ui/LootPopup"
-import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { JourneyState } from "../state/useJourneys"
-import type { TreasureTombJourney } from "@/data/journeys"
-import { mulberry32 } from "@/game/random"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
-import { useInventory } from "../Inventory/useInventory"
 import { Chest } from "@/ui/Chest"
-import { generateCompareLevel } from "@/game/generateCompareLevel"
-import { tableauLevels } from "@/data/tableaus"
 import { NumberChest } from "@/ui/NumberChest"
 import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { formulaPartToString } from "@/game/formulas"
+import { useCrocodilePuzzleControls } from "./useCrocodilePuzzleControls"
+import type { FC } from "react"
 
 const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
 
@@ -23,201 +19,32 @@ export const ComparePuzzle: FC<{
   runNumber: number
 }> = ({ onComplete, activeJourney, runNumber }) => {
   const { t } = useTranslation("common")
-  const [lockState, setLockState] = useState<"empty" | "error" | "open">(
-    "empty"
-  )
   const getTreasureItem = useTreasureItem()
-  const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
-  const [showLoot, setShowLoot] = useState(false)
-  const { inventory, addItem } = useInventory()
-  const [lockValue, setLockValue] = useState("")
-  const [answers, setAnswers] = useState<{
-    [key: number]: "left" | "right" | "noneLeft" | "noneRight"
-  }>({})
 
-  const journey = activeJourney.journey as TreasureTombJourney
-
-  const collectedTreasures = Object.keys(inventory)
-
-  const eligibleTreasures = journey.treasures.filter(
-    (t) => !collectedTreasures.includes(t.id)
-  )
-  const random = mulberry32(activeJourney.randomSeed + 12345)
-  const lootId =
-    eligibleTreasures[Math.floor(random() * eligibleTreasures.length)]?.id
-
-  const loot = getTreasureItem(lootId)
-
-  const handleLootDismiss = () => {
-    setShowLoot(false)
-
-    // Small delay before calling completion to allow loot popup to close
-    setTimeout(() => {
-      addItem(lootId, 1)
-      onComplete?.()
-    }, 300)
-  }
-
-  const handleChestOpen = () => {
-    // Prevent multiple submissions during processing
-    if (isProcessingCompletion) {
-      return
-    }
-
-    setLockState("open")
-    setIsProcessingCompletion(true)
-
-    setTimeout(() => {
-      setShowLoot(true)
-      setIsProcessingCompletion(false)
-    }, 1500)
-  }
-
-  const levelSeed = activeJourney.randomSeed + runNumber * 3210
-
-  const levelData = useMemo(() => {
-    const random = mulberry32(levelSeed)
-    const tableau = tableauLevels.find(
-      (t) => t.tombJourneyId === journey.id && t.runNumber === runNumber
-    )
-    const digit = Math.round(random() * 9)
-    const always = random() > 0.5
-
-    const result = generateCompareLevel(
-      {
-        compareAmount: journey.levelSettings.compareAmount,
-        numberOfSymbols: tableau?.symbolCount ?? 2,
-        numberRange: journey.levelSettings.numberRange,
-        operators: journey.levelSettings.operators,
-      },
-      { digit, largest: always ? "always" : "never" },
-      random
-    )
-    return result
-  }, [
-    journey.id,
-    journey.levelSettings.compareAmount,
-    journey.levelSettings.numberRange,
-    journey.levelSettings.operators,
+  const {
+    answers,
+    focus,
+    handleChestOpen,
+    handleLeftClick,
+    handleLockSubmit,
+    handleLootDismiss,
+    handleMouseOverLeft,
+    handleMouseOverRight,
+    handleRightClick,
+    hasComparison,
+    isProcessingCompletion,
+    levelData,
+    lockState,
+    lockValue,
+    lootId,
+    setLockValue,
+    showLoot,
+  } = useCrocodilePuzzleControls({
+    activeJourney,
     runNumber,
-    levelSeed,
-  ])
-
-  const hasComparison = levelData.comparisons.length > 0
-
-  const [focus, setFocus] = useState(0)
-
-  const handleLockSubmit = (value: string) => {
-    // Prevent multiple submissions during processing
-    if (isProcessingCompletion) {
-      return
-    }
-    if (levelData.requirements.digit.toString() !== value) {
-      setLockState("error")
-      setIsProcessingCompletion(false)
-      setFocus(0)
-      setAnswers({})
-      return
-    }
-
-    setLockState("open")
-    setIsProcessingCompletion(true)
-
-    setTimeout(() => {
-      setShowLoot(true)
-      setIsProcessingCompletion(false)
-    }, 1500)
-  }
-
-  const handleMouseOverLeft = useCallback(() => {
-    setAnswers((answers) => {
-      const currentAnswer = answers[focus] ?? "noneRight"
-      if (!currentAnswer.startsWith("none")) {
-        return answers
-      }
-
-      return {
-        ...answers,
-        [focus]: "noneLeft",
-      }
-    })
-  }, [focus])
-
-  const handleMouseOverRight = useCallback(() => {
-    setAnswers((answers) => {
-      const currentAnswer = answers[focus] ?? "noneLeft"
-      if (!currentAnswer.startsWith("none")) {
-        return answers
-      }
-
-      return {
-        ...answers,
-        [focus]: "noneRight",
-      }
-    })
-  }, [focus])
-
-  const handleLeftClick = useCallback(() => {
-    const activeCompare = levelData.comparisons[focus]
-    if (!activeCompare) return
-    const isLeftLargest = activeCompare.left.result > activeCompare.right.result
-    if (!isLeftLargest) return
-    const currentAnswer = answers[focus] ?? "noneLeft"
-    if (!currentAnswer.startsWith("none")) return
-    const needsTurn = currentAnswer !== "noneLeft"
-
-    setAnswers((answers) => ({
-      ...answers,
-      [focus]: needsTurn ? "noneLeft" : "left",
-    }))
-    if (needsTurn) {
-      setTimeout(() => {
-        setAnswers((answers) => ({
-          ...answers,
-          [focus]: "left",
-        }))
-      }, 400)
-    }
-
-    setTimeout(
-      () => {
-        setFocus((prev) => prev + 1)
-      },
-      needsTurn ? 600 : 200
-    )
-  }, [focus, levelData.comparisons, answers])
-
-  const handleRightClick = useCallback(() => {
-    const activeCompare = levelData.comparisons[focus]
-    if (!activeCompare) return
-    const isRightLargest =
-      activeCompare.right.result > activeCompare.left.result
-    if (!isRightLargest) return
-
-    const currentAnswer = answers[focus] ?? "noneRight"
-    if (!currentAnswer.startsWith("none")) return
-    const needsTurn = currentAnswer !== "noneRight"
-    setAnswers((answers) => ({
-      ...answers,
-      [focus]: needsTurn ? "noneRight" : "right",
-    }))
-
-    if (needsTurn) {
-      setTimeout(() => {
-        setAnswers((answers) => ({
-          ...answers,
-          [focus]: "right",
-        }))
-      }, 400)
-    }
-
-    setTimeout(
-      () => {
-        setFocus((prev) => prev + 1)
-      },
-      needsTurn ? 600 : 200
-    )
-  }, [focus, levelData.comparisons, answers])
+    onComplete,
+  })
+  const loot = getTreasureItem(lootId)
 
   return (
     <div
