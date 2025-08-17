@@ -22,7 +22,7 @@
     "crocodilePuzzleAlways": "What digit did the crocodile always eat?",
     "crocodilePuzzleNever": "What digit did the crocodile never eat?",
     "noCrocodilePuzzle": "Secret treasure room found!",
-    "crocodilePuzzlePrompt": "Let the crocodile eat the largest result"
+    "crocodilePuzzlePrompt": "Tap the largest result for the crocodile to eat"
   },
   "ui": {
     "level": "Level",
