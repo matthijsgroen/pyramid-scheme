@@ -154,7 +154,6 @@ export const useCrocodilePuzzleControls = ({
     const currentAnswer = answers[focus] ?? "noneRight"
     if (!currentAnswer.startsWith("none")) return
     const needsTurn = currentAnswer !== "noneLeft"
-    console.log(currentAnswer, needsTurn)
 
     setAnswers((answers) => ({
       ...answers,
