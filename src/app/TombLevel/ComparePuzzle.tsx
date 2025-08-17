@@ -8,7 +8,7 @@ import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { formulaPartToString } from "@/game/formulas"
-import { useCrocodilePuzzleControls } from "./useCrocodilePuzzleControls"
+import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
 import type { FC } from "react"
 
 const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
@@ -56,9 +56,9 @@ export const ComparePuzzle: FC<{
     >
       <div className="absolute top-0">
         {focus === 0 && (
-          <p className="mx-8 mt-4 text-center text-xl font-bold">
+          <h3 className="mx-8 mt-4 text-center text-lg font-bold text-amber-200">
             {t("tomb.crocodilePuzzlePrompt")}
-          </p>
+          </h3>
         )}
       </div>
       <div
@@ -80,8 +80,20 @@ export const ComparePuzzle: FC<{
               )
             : t("tomb.noCrocodilePuzzle")}
         </h3>
+        {hasComparison && (
+          <p className="text-sm text-amber-500 italic">
+            {t("tomb.crocodileDigitHint")}
+          </p>
+        )}
         {hasComparison ? (
-          <div className="grid grid-rows-[100px_1fr]">
+          <div
+            className={clsx(
+              "grid grid-rows-[100px_1fr]",
+              focus === levelData.comparisons.length
+                ? "brightness-100 saturate-100"
+                : "brightness-110 saturate-30"
+            )}
+          >
             <div className="col-start-1 row-start-2 rounded-t-[50%] rounded-b-[30%] bg-amber-700"></div>
             <div className="col-start-1 row-span-2 row-start-1 px-4 pb-8">
               <NumberChest

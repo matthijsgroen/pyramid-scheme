@@ -151,9 +151,10 @@ export const useCrocodilePuzzleControls = ({
     if (!activeCompare) return
     const isLeftLargest = activeCompare.left.result > activeCompare.right.result
     if (!isLeftLargest) return
-    const currentAnswer = answers[focus] ?? "noneLeft"
+    const currentAnswer = answers[focus] ?? "noneRight"
     if (!currentAnswer.startsWith("none")) return
     const needsTurn = currentAnswer !== "noneLeft"
+    console.log(currentAnswer, needsTurn)
 
     setAnswers((answers) => ({
       ...answers,
@@ -165,14 +166,14 @@ export const useCrocodilePuzzleControls = ({
           ...answers,
           [focus]: "left",
         }))
-      }, 400)
+      }, 500)
     }
 
     setTimeout(
       () => {
         setFocus((prev) => prev + 1)
       },
-      needsTurn ? 600 : 200
+      needsTurn ? 800 : 200
     )
   }, [focus, levelData.comparisons, answers])
 
@@ -197,14 +198,14 @@ export const useCrocodilePuzzleControls = ({
           ...answers,
           [focus]: "right",
         }))
-      }, 400)
+      }, 500)
     }
 
     setTimeout(
       () => {
         setFocus((prev) => prev + 1)
       },
-      needsTurn ? 600 : 200
+      needsTurn ? 800 : 200
     )
   }, [focus, levelData.comparisons, answers])
 

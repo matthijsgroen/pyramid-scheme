@@ -21,8 +21,9 @@
   "tomb": {
     "crocodilePuzzleAlways": "Welk cijfer at de krokodil altijd?",
     "crocodilePuzzleNever": "Welk cijfer at de krokodil nooit?",
+    "crocodileDigitHint": "Hint: In het getal 25 zijn de cijfers 2 en 5",
     "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
-    "crocodilePuzzlePrompt": "Tik op het grootste resultaat voor de krokodil om te eten"
+    "crocodilePuzzlePrompt": "Tik op de som met het grootste resultaat voor de krokodil om te eten"
   },
   "ui": {
     "level": "Niveau",
