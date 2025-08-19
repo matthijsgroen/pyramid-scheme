@@ -18,6 +18,14 @@
     "evening": "Avond",
     "night": "Nacht"
   },
+  "tomb": {
+    "crocodilePuzzleAlways": "Welk _cijfer_ at de krokodil _altijd_?",
+    "crocodilePuzzleNever": "Welk _cijfer_ at de krokodil _nooit_?",
+    "crocodileDigitHint": "Tip: In het getal 25 zijn de cijfers 2 en 5",
+    "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
+    "crocodilePuzzlePrompt": "Tik op de som met het grootste resultaat voor de krokodil om te eten",
+    "iDontKnow": "Ik weet het niet"
+  },
   "ui": {
     "level": "Niveau",
     "symbols": "symbolen",
@@ -66,9 +74,6 @@
     "spiritsRejectCode": "De geesten verwerpen deze code",
     "sacredSealBroken": "Het heilige zegel is verbroken",
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
-    "crocodileAlways": "Welk cijfer at de krokodil altijd?",
-    "crocodileNever": "Welk cijfer at de krokodil nooit?",
-    "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
     "answerNow": "Het antwoord is: "
   },
   "loot": {

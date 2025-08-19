@@ -689,7 +689,7 @@ export const journeys: Journey[] = [
     levelCount: 6,
     treasures: mythicalArtifactsTreasures,
     levelSettings: {
-      numberRange: [1, 10],
+      numberRange: [1, 15],
       operators: ["+", "-", "*", "/"],
       compareAmount: 5,
     },

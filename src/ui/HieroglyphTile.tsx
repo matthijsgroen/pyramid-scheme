@@ -149,34 +149,34 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
               radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
               radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
               radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
-              linear-gradient(145deg, #d6d3d1 0%, #a8a29e 25%, #78716c 75%, #57534e 100%)
+              linear-gradient(145deg, var(--color-stone-300) 0%, var(--color-stone-400) 25%, var(--color-stone-500) 75%, var(--color-stone-800) 100%)
             `
             : difficulty === "junior"
               ? `
                 radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
                 radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
                 radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
-                linear-gradient(145deg, #fcd34d 0%, #f59e0b 25%, #d97706 75%, #92400e 100%)
+                linear-gradient(145deg, var(--color-orange-300) 0%, var(--color-orange-400) 25%, var(--color-orange-500) 75%, var(--color-orange-800) 100%)
               `
               : difficulty === "expert"
                 ? `
                   radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
                   radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
                   radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
-                  linear-gradient(145deg, #fde68a 0%, #facc15 25%, #eab308 75%, #a16207 100%)
+                  linear-gradient(145deg, var(--color-slate-300) 0%, var(--color-slate-400) 25%, var(--color-slate-500) 75%, var(--color-slate-800) 100%)
                 `
                 : difficulty === "master"
                   ? `
                     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
                     radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
                     radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
-                    linear-gradient(145deg, #fb923c 0%, #f97316 25%, #ea580c 75%, #c2410c 100%)
+                    linear-gradient(145deg, var(--color-yellow-300) 0%, var(--color-yellow-400) 25%, var(--color-yellow-500) 75%, var(--color-yellow-800) 100%)
                   `
                   : `
                     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
                     radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
                     radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
-                    linear-gradient(145deg, #f87171 0%, #ef4444 25%, #dc2626 75%, #b91c1c 100%)
+                    linear-gradient(145deg, var(--color-emerald-300) 0%, var(--color-emerald-500) 25%, var(--color-emerald-600) 75%, var(--color-emerald-800) 100%)
                   `,
         backgroundSize: disabled
           ? "auto"
@@ -204,34 +204,34 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
                 radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
                 radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
                 radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                linear-gradient(145deg, #f8f8f7 0%, #f1f0ef 25%, #e8e6e3 75%, #d6d3d1 100%)
+                linear-gradient(145deg, var(--color-stone-100) 0%, var(--color-stone-200) 25%, var(--color-stone-400) 75%, var(--color-stone-600) 100%)
               `
               : difficulty === "junior"
                 ? `
                   radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
                   radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
                   radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                  linear-gradient(145deg, #fefbf3 0%, #fef7e6 25%, #fdecc8 75%, #fcd34d 100%)
+                  linear-gradient(145deg, var(--color-orange-50) 0%, var(--color-orange-100) 25%, var(--color-orange-300) 75%, var(--color-orange-500) 100%)
                 `
                 : difficulty === "expert"
                   ? `
                     radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
                     radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
                     radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                    linear-gradient(145deg, #fffef0 0%, #fefce8 25%, #fef3c7 75%, #fde68a 100%)
+                    linear-gradient(145deg, var(--color-slate-50) 0%, var(--color-slate-100) 25%, var(--color-slate-300) 75%, var(--color-slate-500) 100%)
                   `
                   : difficulty === "master"
                     ? `
                       radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
                       radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
                       radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                      linear-gradient(145deg, #fef7ed 0%, #fed7aa 25%, #fdba74 75%, #fb923c 100%)
+                      linear-gradient(145deg, var(--color-yellow-50) 0%, var(--color-yellow-100) 25%, var(--color-yellow-200) 75%, var(--color-yellow-300) 100%)
                     `
                     : `
                       radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
                       radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
                       radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                      linear-gradient(145deg, #fef5f5 0%, #fecaca 25%, #fca5a5 75%, #f87171 100%)
+                      linear-gradient(145deg, var(--color-emerald-100) 0%, var(--color-emerald-200) 25%, var(--color-emerald-400) 75%, var(--color-emerald-500) 100%)
                     `,
           // Offset the shadow
           transform: disabled ? "translate(2px, 2px)" : "translate(3px, 4px)",

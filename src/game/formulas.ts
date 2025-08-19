@@ -122,9 +122,9 @@ const getOperatorPrecedence = (operation: Operation): number => {
   }
 }
 
-const formulaPartToString = (
+export const formulaPartToString = (
   formula: Formula,
-  mapping: Record<number, string>,
+  mapping: Record<number, string> = {},
   parentPrecedence: number = 0
 ): string => {
   const currentPrecedence = getOperatorPrecedence(formula.operation)

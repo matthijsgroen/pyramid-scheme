@@ -1,3 +1,4 @@
 *.png
 *.xcf
 !*-250.png
+!masonry*.png

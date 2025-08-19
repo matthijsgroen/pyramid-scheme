@@ -18,6 +18,14 @@
     "evening": "Evening",
     "night": "Night"
   },
+  "tomb": {
+    "crocodilePuzzleAlways": "What _digit_ did the crocodile _always_ eat?",
+    "crocodilePuzzleNever": "What _digit_ did the crocodile _never_ eat?",
+    "crocodileDigitHint": "Tip: In the number 25, the digits are 2 and 5",
+    "noCrocodilePuzzle": "Secret treasure room found!",
+    "crocodilePuzzlePrompt": "Tap the sum with the largest result for the crocodile to eat",
+    "iDontKnow": "I don't know"
+  },
   "ui": {
     "level": "Level",
     "symbols": "symbols",
@@ -66,9 +74,6 @@
     "spiritsRejectCode": "The spirits reject this code",
     "sacredSealBroken": "The sacred seal is broken",
     "newExpeditionUnlocked": "A new expedition is now unlocked",
-    "crocodileAlways": "What digit did the crocodile always eat?",
-    "crocodileNever": "What digit did the crocodile never eat?",
-    "noCrocodilePuzzle": "Secret treasure room found!",
     "answerNow": "The answer is: "
   },
   "loot": {

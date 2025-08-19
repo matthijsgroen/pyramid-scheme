@@ -109,7 +109,7 @@ describe(generateCompareLevel, () => {
       expect(stringifyCompare(level)).toMatchInlineSnapshot(`
         [
           "4 + 5 + 9 = 18 < 4 + 8 + 9 = 21",
-          "4 + 5 + 7 = 16 > 5 + 1 + 2 = 8",
+          "9 + 4 + 1 + 6 + 5 + 6 = 31 > (2 + 6 + 10 + 1) - (2 + 9) = 8",
           "8 + 3 + 8 = 19 > 10 - (1 + 1) = 8",
         ]
       `)

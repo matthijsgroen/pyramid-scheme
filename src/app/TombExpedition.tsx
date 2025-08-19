@@ -21,14 +21,13 @@ export const TombExpedition: FC<{
 
   const journey = activeJourney.journey as TreasureTombJourney
   const { journeyLog, completeLevel } = useJourneys()
-  const runNr = journeyLog.filter(
-    (log) => log.journeyId === journey.id && log.completed
-  ).length
+  const runNr =
+    journeyLog.filter((log) => log.journeyId === journey.id && log.completed)
+      .length + 1
 
   const runTableaus = tableaux.filter(
     (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId &&
-      tab.runNumber === runNr + 1
+      tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === runNr
   )
   const [completing, setCompleting] = useState(false)
 
@@ -66,8 +65,10 @@ export const TombExpedition: FC<{
     return (
       <TombBackdrop
         className="relative flex h-dvh flex-col"
+        scale="small"
         zoom={completing}
         fade={completing}
+        difficulty={journey.difficulty}
       >
         <div className="flex h-full w-full flex-col">
           <div className="flex-shrink-0 backdrop-blur-xs">
@@ -93,6 +94,7 @@ export const TombExpedition: FC<{
           <ComparePuzzle
             activeJourney={activeJourney}
             onComplete={onJourneyComplete}
+            runNumber={runNr}
           />
         </div>
       </TombBackdrop>
@@ -104,6 +106,7 @@ export const TombExpedition: FC<{
       className="relative flex h-dvh flex-col"
       zoom={completing}
       fade={completing}
+      difficulty={journey.difficulty}
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-xs">

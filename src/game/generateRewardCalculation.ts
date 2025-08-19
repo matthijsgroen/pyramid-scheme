@@ -28,7 +28,7 @@ export type RewardCalculation = {
 
 export const generateRewardCalculation = (
   settings: RewardCalculationSettings,
-  random: () => number
+  random: () => number = Math.random
 ): RewardCalculation => {
   // Step 1: Pick random numbers for each symbol, without duplicates
   const pickedNumbers: number[] = []
@@ -144,22 +144,21 @@ const generateCalculationNumbers = (
   known: number[],
   newNumbers: number[],
   random: () => number
-): number[] => {
-  return shuffle(
+): number[] =>
+  shuffle(
     hintNumbersCapped.flatMap<number>((num) => {
       if (known.length > 0 && newNumbers.includes(num)) {
         return [num] // new numbers should occur only once
       }
 
       const amount =
-        Math.floor(random() * (2 - hintNumbersCapped.length / 3)) +
+        Math.max(Math.floor(random() * (2 - hintNumbersCapped.length / 3)), 0) +
         1 +
         (hintNumbersCapped.length === 1 ? 1 : 0)
       return Array(amount).fill(num)
     }),
     random
   )
-}
 
 const createSmallestVerifiedFormula = (
   pickedNumbers: number[],

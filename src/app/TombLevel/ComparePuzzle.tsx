@@ -1,75 +1,219 @@
 import { LootPopup } from "@/ui/LootPopup"
-import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { JourneyState } from "../state/useJourneys"
-import type { TreasureTombJourney } from "@/data/journeys"
-import { mulberry32 } from "@/game/random"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
-import { useInventory } from "../Inventory/useInventory"
 import { Chest } from "@/ui/Chest"
+import { NumberChest } from "@/ui/NumberChest"
+import crocodileOpen from "@/assets/crocodile-250.png"
+import crocodileClosed from "@/assets/crocodile-closed-250.png"
+import clsx from "clsx"
+import { formulaPartToString } from "@/game/formulas"
+import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
+import type { FC, ReactNode } from "react"
+
+const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
+
+const handleInlineMarkup = (text: string): ReactNode => {
+  const parts = text.split(/(_[^_]+_)/g)
+  return parts.map((part, index) => {
+    if (part.startsWith("_") && part.endsWith("_")) {
+      return (
+        <span key={index} className="underline">
+          {part.slice(1, -1)}
+        </span>
+      )
+    }
+    return part
+  })
+}
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
   activeJourney: JourneyState
-}> = ({ onComplete, activeJourney }) => {
+  runNumber: number
+}> = ({ onComplete, activeJourney, runNumber }) => {
   const { t } = useTranslation("common")
-  const [lockState, setLockState] = useState<"empty" | "error" | "open">(
-    "empty"
-  )
   const getTreasureItem = useTreasureItem()
-  const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
-  const [showLoot, setShowLoot] = useState(false)
-  const { inventory, addItem } = useInventory()
 
-  const journey = activeJourney.journey as TreasureTombJourney
-
-  const collectedTreasures = Object.keys(inventory)
-
-  const eligibleTreasures = journey.treasures.filter(
-    (t) => !collectedTreasures.includes(t.id)
-  )
-  const random = mulberry32(activeJourney.randomSeed + 12345)
-  const lootId =
-    eligibleTreasures[Math.floor(random() * eligibleTreasures.length)]?.id
-
+  const {
+    answers,
+    focus,
+    handleChestOpen,
+    handleLeftClick,
+    handleLockSubmit,
+    handleLootDismiss,
+    handleMouseOverLeft,
+    handleMouseOverRight,
+    handleRightClick,
+    handleIDontKnow,
+    hasComparison,
+    isProcessingCompletion,
+    levelData,
+    lockState,
+    lockValue,
+    lootId,
+    setLockValue,
+    showLoot,
+  } = useCrocodilePuzzleControls({
+    activeJourney,
+    runNumber,
+    onComplete,
+  })
   const loot = getTreasureItem(lootId)
 
-  const handleLootDismiss = () => {
-    setShowLoot(false)
-
-    // Small delay before calling completion to allow loot popup to close
-    setTimeout(() => {
-      addItem(lootId, 1)
-      onComplete?.()
-    }, 300)
-  }
-
-  const handleLockSubmit = () => {
-    // Prevent multiple submissions during processing
-    if (isProcessingCompletion) {
-      return
-    }
-
-    setLockState("open")
-    setIsProcessingCompletion(true)
-
-    setTimeout(() => {
-      setShowLoot(true)
-      setIsProcessingCompletion(false)
-    }, 1500)
-  }
-
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <h3 className="text-lg font-bold text-amber-200">
-        {t("ui.noCrocodilePuzzle")}
-      </h3>
-      <Chest
-        state={lockState}
-        variant="vibrant"
-        onClick={handleLockSubmit}
-        allowInteraction={!isProcessingCompletion && lockState !== "open"}
-      />
+    <div
+      className={clsx(
+        "relative flex flex-1  flex-col-reverse items-center justify-center gap-4",
+        hasComparison &&
+          "bg-gradient-to-b from-transparent from-50% via-blue-200 via-51% to-blue-100"
+      )}
+    >
+      <div className="absolute top-0">
+        {focus === 0 && (
+          <h3 className="mx-8 mt-4 text-center text-lg font-bold text-amber-200">
+            {t("tomb.crocodilePuzzlePrompt")}
+          </h3>
+        )}
+      </div>
+      <div
+        className="absolute scale-100 transition-transform duration-400"
+        style={{
+          "--tw-scale-x": `${Math.max(100 + (levelData.comparisons.length - focus) * -20, 0)}%`,
+          "--tw-scale-y": `${Math.max(100 + (levelData.comparisons.length - focus) * -20, 0)}%`,
+        }}
+      >
+        <h3
+          className={clsx(
+            "mb-2 text-lg font-bold text-amber-200 transition-opacity duration-400",
+            focus !== levelData.comparisons.length && "opacity-0"
+          )}
+        >
+          {hasComparison
+            ? handleInlineMarkup(
+                t(
+                  `tomb.crocodilePuzzle${levelData.requirements.largest === "always" ? "Always" : "Never"}`
+                )
+              )
+            : t("tomb.noCrocodilePuzzle")}
+        </h3>
+        {hasComparison && (
+          <p
+            className={clsx(
+              "text-sm text-amber-500 italic",
+              focus !== levelData.comparisons.length && "opacity-0"
+            )}
+          >
+            {t("tomb.crocodileDigitHint")}
+          </p>
+        )}
+        {hasComparison && (
+          <button
+            className={clsx(
+              "my-4 rounded-md border-2 border-amber-500 p-2 text-sm text-amber-500 active:scale-95",
+              focus !== levelData.comparisons.length && "opacity-0"
+            )}
+            onClick={handleIDontKnow}
+          >
+            {t("tomb.iDontKnow")}
+          </button>
+        )}
+        {hasComparison ? (
+          <div
+            className={clsx(
+              "grid grid-rows-[100px_1fr]",
+              focus === levelData.comparisons.length
+                ? "brightness-100 saturate-100"
+                : "brightness-110 saturate-30"
+            )}
+          >
+            <div className="col-start-1 row-start-2 rounded-t-[50%] rounded-b-[30%] bg-amber-700"></div>
+            <div className="col-start-1 row-span-2 row-start-1 px-4 pb-8">
+              <NumberChest
+                state={lockState}
+                variant="vibrant"
+                onSubmit={handleLockSubmit}
+                value={lockValue}
+                placeholder="1-9"
+                onChange={setLockValue}
+                disabled={focus !== levelData.comparisons.length}
+              />
+            </div>
+          </div>
+        ) : (
+          <Chest
+            state={lockState}
+            variant="muted"
+            onClick={handleChestOpen}
+            allowInteraction={!isProcessingCompletion && lockState !== "open"}
+          />
+        )}
+      </div>
+      {levelData.comparisons
+        .slice()
+        .reverse()
+        .map((comparison, reversedIndex) => {
+          const index = levelData.comparisons.length - 1 - reversedIndex
+          const distanceFocus = index - focus
+          const answered = answers[index] || "noneRight"
+          const isMirrored = answered.endsWith("eft")
+          const isClosed = !answered.startsWith("none")
+
+          return (
+            <div
+              className={clsx(
+                "absolute bottom-0 flex w-dvw max-w-md translate-y-0 scale-100 flex-col items-center transition-transform duration-400",
+                index - focus < 0 && "blur-xs"
+              )}
+              style={{
+                "--tw-translate-y": `calc(var(--spacing) * ${-scaleDistance(distanceFocus)})`,
+                "--tw-scale-x": `${Math.max(Math.min(100 + distanceFocus * -20, 120), 0)}%`,
+                "--tw-scale-y": `${Math.max(Math.min(100 + distanceFocus * -20, 120), 0)}%`,
+              }}
+              key={index}
+            >
+              <div className="flex w-full flex-1 flex-row justify-between gap-16 px-4">
+                <button
+                  className={clsx(
+                    "animate-bounce cursor-pointer text-shadow-amber-800 text-shadow-md",
+                    focus !== index && "opacity-0"
+                  )}
+                  onClick={focus === index ? handleLeftClick : undefined}
+                  onMouseEnter={
+                    focus === index ? handleMouseOverLeft : undefined
+                  }
+                >
+                  {formulaPartToString(comparison.left)}
+                </button>
+                <button
+                  className={clsx(
+                    "animate-bounce cursor-pointer text-shadow-amber-800 text-shadow-md",
+                    focus !== index && "opacity-0"
+                  )}
+                  onMouseEnter={
+                    focus === index ? handleMouseOverRight : undefined
+                  }
+                  onClick={focus === index ? handleRightClick : undefined}
+                >
+                  {formulaPartToString(comparison.right)}
+                </button>
+              </div>
+              <div className="flex-1">
+                <img
+                  src={isClosed ? crocodileClosed : crocodileOpen}
+                  alt="crocodile"
+                  className={clsx(
+                    "animate-subtle-bounce transition-all delay-100 duration-200",
+                    focus === index
+                      ? "brightness-100 saturate-100"
+                      : "brightness-110 saturate-30",
+                    isMirrored ? "-scale-x-100" : "scale-x-100"
+                  )}
+                />
+              </div>
+            </div>
+          )
+        })}
       {loot && (
         <>
           <LootPopup
