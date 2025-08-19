@@ -7,6 +7,11 @@ import {
   egyptianDeities,
   egyptianProfessions,
 } from "./inventory"
+import { generateRewardCalculation } from "@/game/generateRewardCalculation"
+import { journeys, type TreasureTombJourney } from "./journeys"
+import { hashString } from "@/support/hashString"
+import { generateNewSeed, mulberry32 } from "@/game/random"
+import { difficulties } from "./difficultyLevels"
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests
@@ -513,6 +518,42 @@ describe("Tableau System", () => {
         .filter((item) => lastTableau.inventoryIds.includes(item.id))
         .map((item) => item.symbol)
       expect(usedSymbols).toEqual(["𓅃", "𓉶", "𓆓", "𓁫", "𓁁", "𓀄"])
+    })
+  })
+
+  describe("test all tableau formula's", () => {
+    const tableauLevels = generateTableaus()
+
+    describe.each(difficulties)("%s difficulty tableaus", (difficulty) => {
+      const journey = journeys.find(
+        (j): j is TreasureTombJourney =>
+          j.type === "treasure_tomb" && j.difficulty === difficulty
+      )!
+
+      it.each(tableauLevels.filter((t) => t.tombJourneyId === journey.id))(
+        "creates solvable formulas for: $name",
+        (tableau) => {
+          expect(journey).toBeDefined()
+          if (!journey) return
+
+          const journeySeed = generateNewSeed(
+            hashString(tableau.tombJourneyId),
+            tableau.runNumber
+          )
+          const tableauSeed = generateNewSeed(journeySeed, tableau.levelNr)
+          const random = mulberry32(tableauSeed)
+
+          const settings = {
+            amountSymbols: tableau.symbolCount,
+            hieroglyphIds: tableau.inventoryIds,
+            numberRange: journey.levelSettings.numberRange,
+            operations: journey.levelSettings.operators,
+          }
+          expect(() =>
+            generateRewardCalculation(settings, random)
+          ).not.toThrow()
+        }
+      )
     })
   })
 })
