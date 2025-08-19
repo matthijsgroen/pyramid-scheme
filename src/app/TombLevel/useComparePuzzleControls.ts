@@ -96,6 +96,11 @@ export const useCrocodilePuzzleControls = ({
 
   const [focus, setFocus] = useState(0)
 
+  const handleIDontKnow = useCallback(() => {
+    setFocus(0)
+    setAnswers({})
+  }, [setFocus, setAnswers])
+
   const handleLockSubmit = (value: string) => {
     // Prevent multiple submissions during processing
     if (isProcessingCompletion) {
@@ -226,5 +231,6 @@ export const useCrocodilePuzzleControls = ({
     handleLootDismiss,
     handleMouseOverLeft,
     handleMouseOverRight,
+    handleIDontKnow,
   }
 }

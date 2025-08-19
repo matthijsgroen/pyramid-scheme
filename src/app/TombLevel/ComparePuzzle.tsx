@@ -9,9 +9,23 @@ import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { formulaPartToString } from "@/game/formulas"
 import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
 
 const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
+
+const handleInlineMarkup = (text: string): ReactNode => {
+  const parts = text.split(/(_[^_]+_)/g)
+  return parts.map((part, index) => {
+    if (part.startsWith("_") && part.endsWith("_")) {
+      return (
+        <span key={index} className="underline">
+          {part.slice(1, -1)}
+        </span>
+      )
+    }
+    return part
+  })
+}
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
@@ -31,6 +45,7 @@ export const ComparePuzzle: FC<{
     handleMouseOverLeft,
     handleMouseOverRight,
     handleRightClick,
+    handleIDontKnow,
     hasComparison,
     isProcessingCompletion,
     levelData,
@@ -70,13 +85,15 @@ export const ComparePuzzle: FC<{
       >
         <h3
           className={clsx(
-            "text-lg font-bold text-amber-200 transition-opacity duration-400",
+            "mb-2 text-lg font-bold text-amber-200 transition-opacity duration-400",
             focus !== levelData.comparisons.length && "opacity-0"
           )}
         >
           {hasComparison
-            ? t(
-                `tomb.crocodilePuzzle${levelData.requirements.largest === "always" ? "Always" : "Never"}`
+            ? handleInlineMarkup(
+                t(
+                  `tomb.crocodilePuzzle${levelData.requirements.largest === "always" ? "Always" : "Never"}`
+                )
               )
             : t("tomb.noCrocodilePuzzle")}
         </h3>
@@ -89,6 +106,17 @@ export const ComparePuzzle: FC<{
           >
             {t("tomb.crocodileDigitHint")}
           </p>
+        )}
+        {hasComparison && (
+          <button
+            className={clsx(
+              "my-4 rounded-md border-2 border-amber-500 p-2 text-sm text-amber-500 active:scale-95",
+              focus !== levelData.comparisons.length && "opacity-0"
+            )}
+            onClick={handleIDontKnow}
+          >
+            {t("tomb.iDontKnow")}
+          </button>
         )}
         {hasComparison ? (
           <div

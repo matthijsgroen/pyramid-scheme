@@ -68,6 +68,7 @@ export const TombExpedition: FC<{
         scale="small"
         zoom={completing}
         fade={completing}
+        difficulty={journey.difficulty}
       >
         <div className="flex h-full w-full flex-col">
           <div className="flex-shrink-0 backdrop-blur-xs">
@@ -105,6 +106,7 @@ export const TombExpedition: FC<{
       className="relative flex h-dvh flex-col"
       zoom={completing}
       fade={completing}
+      difficulty={journey.difficulty}
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-xs">

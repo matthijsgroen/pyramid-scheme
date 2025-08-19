@@ -12,6 +12,7 @@ import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
+import { DifficultyPill } from "@/ui/DifficultyPill"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -157,6 +158,7 @@ const DetailPanel: FC<{
   onAdd?: () => void
 }> = ({ item, debug = false, onAdd }) => {
   const { t } = useTranslation("common")
+  const difficulty = item ? getItemFirstLevel(item.id) : null
 
   return (
     <div className="sticky bottom-0 h-48 rounded-lg bg-white/70 p-4 shadow-lg backdrop-blur-sm">
@@ -175,6 +177,14 @@ const DetailPanel: FC<{
               <h3 className="font-pyramid text-xl font-bold text-gray-900">
                 {item.name}
               </h3>
+              {difficulty && (
+                <p>
+                  <DifficultyPill
+                    difficulty={difficulty}
+                    label={t(`difficulty.${difficulty}`)}
+                  />
+                </p>
+              )}
               <p className="leading-relaxed text-gray-700">
                 {item.description}
               </p>

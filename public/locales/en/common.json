@@ -19,11 +19,12 @@
     "night": "Night"
   },
   "tomb": {
-    "crocodilePuzzleAlways": "What digit did the crocodile always eat?",
-    "crocodilePuzzleNever": "What digit did the crocodile never eat?",
-    "crocodileDigitHint": "Hint: In the number 25, the digits are 2 and 5",
+    "crocodilePuzzleAlways": "What _digit_ did the crocodile _always_ eat?",
+    "crocodilePuzzleNever": "What _digit_ did the crocodile _never_ eat?",
+    "crocodileDigitHint": "Tip: In the number 25, the digits are 2 and 5",
     "noCrocodilePuzzle": "Secret treasure room found!",
-    "crocodilePuzzlePrompt": "Tap the sum with the largest result for the crocodile to eat"
+    "crocodilePuzzlePrompt": "Tap the sum with the largest result for the crocodile to eat",
+    "iDontKnow": "I don't know"
   },
   "ui": {
     "level": "Level",
