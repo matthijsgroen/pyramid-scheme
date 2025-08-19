@@ -81,7 +81,12 @@ export const ComparePuzzle: FC<{
             : t("tomb.noCrocodilePuzzle")}
         </h3>
         {hasComparison && (
-          <p className="text-sm text-amber-500 italic">
+          <p
+            className={clsx(
+              "text-sm text-amber-500 italic",
+              focus !== levelData.comparisons.length && "opacity-0"
+            )}
+          >
             {t("tomb.crocodileDigitHint")}
           </p>
         )}

@@ -65,6 +65,7 @@ export const TombExpedition: FC<{
     return (
       <TombBackdrop
         className="relative flex h-dvh flex-col"
+        scale="small"
         zoom={completing}
         fade={completing}
       >
