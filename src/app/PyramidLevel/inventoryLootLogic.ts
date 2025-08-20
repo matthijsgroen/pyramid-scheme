@@ -1,4 +1,5 @@
 import {
+  getJourneyCompletionCount,
   journeySeedGenerator,
   type JourneyState,
 } from "@/app/state/useJourneys"
@@ -23,7 +24,7 @@ export type InventoryLootResult = {
  */
 export const determineInventoryLootForCurrentRuns = (
   pyramidExpedition: JourneyState,
-  journeyLog: Array<{ journeyId: string; completed: boolean; levelNr: number }>,
+  journeyLog: JourneyState[],
   playerInventory: Record<string, number>,
   baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
   maxItemsToAward: number = 1
@@ -59,8 +60,7 @@ export const determineInventoryLootForCurrentRuns = (
         j.id === tombId && j.type === "treasure_tomb"
     )
     // get current run for tomb
-    const currentRun =
-      journeyLog.filter((j) => j.journeyId === tombId && j.completed).length + 1
+    const currentRun = getJourneyCompletionCount(tombId, journeyLog) + 1
     const currentLevel =
       journeyLog.find((j) => j.journeyId === tombId && !j.completed)?.levelNr ??
       1
@@ -99,7 +99,7 @@ export const determineInventoryLootForCurrentRuns = (
       }
     })
 
-    const seed = journeySeedGenerator(journeyLog)(tombId)
+    const seed = journeySeedGenerator(tombId, journeyLog)
     const tableauRandom = mulberry32(generateNewSeed(seed, currentLevel))
     const settings = {
       amountSymbols: tableau.symbolCount,

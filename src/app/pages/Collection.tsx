@@ -7,7 +7,7 @@ import { useInventoryCategory } from "@/data/useInventoryTranslations"
 import { useTreasureCategory } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useJourneys } from "../state/useJourneys"
+import { getJourneyCompletionCount, useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
@@ -229,7 +229,7 @@ export const CollectionPage: FC = () => {
     (value) => value !== undefined
   )
   const hasCompletedTomb = (tombId: string) =>
-    journeyLog.some((j) => j.journeyId === tombId && j.completed)
+    getJourneyCompletionCount(tombId, journeyLog) > 0
 
   return (
     <Page

@@ -1,6 +1,6 @@
 import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import { useMemo, type FC } from "react"
-import { useJourneys } from "../state/useJourneys"
+import { getJourneyCompletionCount, useJourneys } from "../state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
@@ -24,14 +24,11 @@ export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
   const { inventory } = useInventory()
 
   const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
-  const runNr = journeyLog.filter(
-    (log) => log.journeyId === journey?.id && log.completed
-  ).length
+  const runNr = getJourneyCompletionCount(journey?.id, journeyLog) + 1
 
   const runTableaus = tableaux.filter(
     (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId &&
-      tab.runNumber === runNr + 1
+      tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === runNr
   )
   const tableau = runTableaus[activeJourney.levelNr - 1]
   const calculation = useMemo(() => {

@@ -1,5 +1,9 @@
 import type { Journey } from "@/data/journeys"
-import type { JourneyState } from "@/app/state/useJourneys"
+import {
+  getJourneyCompletionCount,
+  hasFoundMapPiece,
+  type JourneyState,
+} from "@/app/state/useJourneys"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 
 export type MapPieceResult = {
@@ -19,28 +23,19 @@ const getMapPieceChance = (journey: Journey, journeyCount: number): number => {
 
 export const determineMapPieceLoot = (
   activeJourney: JourneyState,
-  journeyLog: Array<{
-    journeyId: string
-    completed: boolean
-    foundMapPiece?: boolean
-  }>
+  journeyLog: JourneyState[]
 ): MapPieceResult => {
-  const journeyCount = journeyLog.filter(
-    (journey) =>
-      journey.journeyId === activeJourney.journeyId && journey.completed
-  ).length
+  const journeyCount = getJourneyCompletionCount(
+    activeJourney.journeyId,
+    journeyLog
+  )
 
   const lootSeed = generateNewSeed(
     activeJourney.randomSeed,
     activeJourney.levelNr
   )
   const random = mulberry32(lootSeed)
-
-  const foundMapPiece = journeyLog.some(
-    (journey) =>
-      journey.journeyId === activeJourney.journeyId &&
-      journey.foundMapPiece === true
-  )
+  const foundMapPiece = hasFoundMapPiece(activeJourney.journeyId, journeyLog)
 
   const journey = activeJourney.journey
 

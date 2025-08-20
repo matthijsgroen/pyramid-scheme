@@ -6,7 +6,11 @@ import { JourneyCard } from "@/ui/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
 import { type Journey } from "@/data/journeys"
-import { useJourneys } from "@/app/state/useJourneys"
+import {
+  getJourneyCompletionCount,
+  hasFoundMapPiece,
+  useJourneys,
+} from "@/app/state/useJourneys"
 import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import {
   useJourneyTranslations,
@@ -273,13 +277,11 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 ) {
                   return null
                 }
-                const completionCount = journeyLog.filter(
-                  (j) => j.journeyId === journey.id && j.completed
-                ).length
-                const hasMapPiece =
-                  journeyLog.filter(
-                    (j) => j.journeyId === journey.id && j.foundMapPiece
-                  ).length > 0
+                const completionCount = getJourneyCompletionCount(
+                  journey.id,
+                  journeyLog
+                )
+                const hasMapPiece = hasFoundMapPiece(journey.id, journeyLog)
                 const activeJourney = journeyLog.find(
                   (j) =>
                     j.journeyId === journey.id && j.canceled && !j.completed
@@ -294,9 +296,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                       exp.type === "pyramid"
                   )
                   const piecesFound = pyramidJourneys.filter((journey) =>
-                    journeyLog.some(
-                      (log) => log.journeyId === journey.id && log.foundMapPiece
-                    )
+                    hasFoundMapPiece(journey.id, journeyLog)
                   ).length
 
                   if (piecesFound < pyramidJourneys.length) {

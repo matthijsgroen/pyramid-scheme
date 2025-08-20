@@ -14,16 +14,31 @@ export type JourneyState = ActiveJourney & {
   journey: TranslatedJourney
 }
 
-export const journeySeedGenerator =
-  (journeys: { journeyId: string; completed: boolean }[]) =>
-  (journeyId: string): number => {
-    const journeyRun = journeys.filter(
-      (j) => j.journeyId === journeyId && j.completed
-    ).length
-    return generateNewSeed(hashString(journeyId), journeyRun + 1)
-  }
+export const getJourneyCompletionCount = (
+  journeyId: string | undefined | null,
+  journeyLog: JourneyState[]
+) => {
+  if (!journeyId) return 0
+  return journeyLog.filter((j) => j.journeyId === journeyId && j.completed)
+    .length
+}
+
+export const journeySeedGenerator = (
+  journeyId: string,
+  journeyLog: JourneyState[]
+): number => {
+  const journeyRun = getJourneyCompletionCount(journeyId, journeyLog) + 1
+  return generateNewSeed(hashString(journeyId), journeyRun)
+}
 
 const journeyIds = journeys.map((j) => j.id)
+
+export const hasFoundMapPiece = (
+  journeyId: string,
+  journeyLog: JourneyState[]
+) => {
+  return journeyLog.some((j) => j.journeyId === journeyId && j.foundMapPiece)
+}
 
 export const useJourneys = (): {
   activeJourney: JourneyState | undefined
@@ -45,12 +60,30 @@ export const useJourneys = (): {
     return journeys.find((j) => !j.endTime && journeyIds.includes(j.journeyId))
   }, [journeys])
 
+  const journeyStates = useMemo(
+    (): JourneyState[] =>
+      journeys
+        .map((journeyState) => {
+          const journey = journeyData.find(
+            (j) => j.id === journeyState.journeyId
+          )
+          if (!journey || !journeyState) {
+            return undefined
+          }
+          return { ...journeyState, journey }
+        })
+        .filter(
+          (journeyState): journeyState is JourneyState =>
+            journeyState !== undefined
+        ),
+    [journeys, journeyData]
+  )
+
   const nextJourneySeed = useCallback(
     (journeyId: string) => {
-      const generateNewSeed = journeySeedGenerator(journeys)
-      return generateNewSeed(journeyId)
+      return journeySeedGenerator(journeyId, journeyStates)
     },
-    [journeys]
+    [journeyStates]
   )
 
   const startJourney = useCallback(
@@ -118,25 +151,6 @@ export const useJourneys = (): {
     }
     return { ...activeJourney, journey }
   }, [activeJourney, journeyData])
-
-  const journeyStates = useMemo(
-    (): JourneyState[] =>
-      journeys
-        .map((journeyState) => {
-          const journey = journeyData.find(
-            (j) => j.id === journeyState.journeyId
-          )
-          if (!journey || !journeyState) {
-            return undefined
-          }
-          return { ...journeyState, journey }
-        })
-        .filter(
-          (journeyState): journeyState is JourneyState =>
-            journeyState !== undefined
-        ),
-    [journeys, journeyData]
-  )
 
   const findMapPiece = useCallback(() => {
     if (!activeJourney) return
