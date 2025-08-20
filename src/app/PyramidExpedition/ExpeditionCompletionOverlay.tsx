@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { determineInventoryLootForCurrentRuns } from "@/app/PyramidLevel/inventoryLootLogic"
 import type { PyramidJourney } from "@/data/journeys"
-import { useJourneys, type JourneyState } from "../state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
 import { mulberry32 } from "@/game/random"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
@@ -14,7 +14,7 @@ import { FezContext } from "../fez/context"
 export const ExpeditionCompletionOverlay: FC<{
   onJourneyComplete?: () => void
   newPyramidJourneyId?: string
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
 }> = ({ onJourneyComplete, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const getTranslatedItem = useInventoryItem()

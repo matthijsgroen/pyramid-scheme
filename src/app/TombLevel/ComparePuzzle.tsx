@@ -1,6 +1,6 @@
 import { LootPopup } from "@/ui/LootPopup"
 import { useTranslation } from "react-i18next"
-import type { JourneyState } from "../state/useJourneys"
+import type { CombinedJourneyState } from "../state/useJourneys"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
 import { Chest } from "@/ui/Chest"
 import { NumberChest } from "@/ui/NumberChest"
@@ -29,9 +29,8 @@ const handleInlineMarkup = (text: string): ReactNode => {
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
-  activeJourney: JourneyState
-  runNumber: number
-}> = ({ onComplete, activeJourney, runNumber }) => {
+  activeJourney: CombinedJourneyState
+}> = ({ onComplete, activeJourney }) => {
   const { t } = useTranslation("common")
   const getTreasureItem = useTreasureItem()
 
@@ -56,7 +55,6 @@ export const ComparePuzzle: FC<{
     showLoot,
   } = useCrocodilePuzzleControls({
     activeJourney,
-    runNumber,
     onComplete,
   })
   const loot = getTreasureItem(lootId)

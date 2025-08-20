@@ -21,9 +21,9 @@ export type JourneyState = ActiveJourney & {
 
 export type CombinedJourneyState = {
   journeyId: (typeof journeys)[number]["id"]
-  randomSeed?: number
+  randomSeed: number
 
-  levelNr: number | null
+  levelNr: number
   completionCount: number
   foundMapPiece: boolean
   inProgress: boolean
@@ -50,7 +50,7 @@ const journeySeedGenerator = (
 const journeyIds = journeyData.map((j) => j.id)
 
 export const useJourneys = (): {
-  activeJourney: JourneyState | undefined
+  activeJourneyId: string | undefined
   maxDifficulty: Difficulty
   startJourney: (journey: Journey) => void
   nextJourneySeed: (journeyId: string) => number
@@ -205,19 +205,19 @@ export const useJourneys = (): {
       return {
         journey: journeyInfo,
         journeyId,
-        levelNr: journeyInProgress?.levelNr ?? null,
-        randomSeed: journeyInProgress?.randomSeed,
+        levelNr: journeyInProgress?.levelNr ?? 1,
+        randomSeed: journeyInProgress?.randomSeed ?? nextJourneySeed(journeyId),
         inProgress: journeyInProgress ? true : false,
         progressPercentage,
         completionCount: journeys.filter((j) => j.completed).length,
         foundMapPiece: journeys.some((j) => j.foundMapPiece),
       }
     },
-    [journeyData, journeyStates]
+    [journeyData, journeyStates, nextJourneySeed]
   )
 
   return {
-    activeJourney: completeJourney,
+    activeJourneyId: completeJourney?.journeyId,
     maxDifficulty,
     getJourney,
     nextJourneySeed,

@@ -2,13 +2,13 @@ import { useEffect, useState, useRef, type FC, use } from "react"
 import { useTranslation } from "react-i18next"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
 import { LootPopup } from "@/ui/LootPopup"
-import type { JourneyState } from "@/app/state/useJourneys"
+import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { useLootDetermination } from "./useLootDetermination"
 import { FezContext } from "../fez/context"
 
 type LevelCompletionHandlerProps = {
   onCompletionFinished: () => void
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
 }
 
 export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({

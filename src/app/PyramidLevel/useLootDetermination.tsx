@@ -1,4 +1,4 @@
-import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { determineMapPieceLoot } from "./mapPieceLogic"
@@ -17,7 +17,7 @@ export type Loot = {
 }
 
 export const useLootDetermination = (
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
   const { findMapPiece, getJourney, nextJourneySeed, maxDifficulty } =
     useJourneys()

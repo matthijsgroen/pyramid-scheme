@@ -1,7 +1,4 @@
-import {
-  type CombinedJourneyState,
-  type JourneyState,
-} from "@/app/state/useJourneys"
+import { type CombinedJourneyState } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { tableauLevels } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
@@ -22,7 +19,7 @@ export type InventoryLootResult = {
  * This focuses on items needed for the next available runs of each treasure tomb.
  */
 export const determineInventoryLootForCurrentRuns = (
-  pyramidExpedition: JourneyState,
+  pyramidExpedition: CombinedJourneyState,
   maxDifficulty: Difficulty,
   playerInventory: Record<string, number>,
   getJourney: (journeyId: string) => CombinedJourneyState | undefined,

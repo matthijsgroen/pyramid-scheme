@@ -9,7 +9,7 @@ import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
-import type { JourneyState } from "@/app/state/useJourneys"
+import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { type PyramidJourney } from "@/data/journeys"
 import { FezContext } from "./fez/context"
 import { generateNewSeed, mulberry32 } from "@/game/random"
@@ -18,7 +18,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 
 const generateExpeditionLevel = (
-  activeJourney: JourneyState,
+  activeJourney: CombinedJourneyState,
   levelNr: number
 ): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
@@ -32,7 +32,7 @@ const generateExpeditionLevel = (
 }
 
 export const PyramidExpedition: FC<{
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
   runNr: number
   onLevelComplete?: () => void
   onJourneyComplete?: () => void

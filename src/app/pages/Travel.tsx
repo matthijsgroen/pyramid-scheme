@@ -23,7 +23,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const journeys = useJourneyTranslations()
 
   const {
-    activeJourney,
+    activeJourneyId,
     maxDifficulty,
     startJourney,
     cancelJourney,
@@ -34,7 +34,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
-  const journeyId = activeJourney?.journeyId ?? selectedJourney?.id
+  const journeyId = activeJourneyId ?? selectedJourney?.id
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
   const journeyProgress = activeJourneyInfo?.progressPercentage ?? 0
@@ -46,7 +46,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     }
   }, [showJourneySelection, showConversation])
 
-  const journey = activeJourney?.journey ?? selectedJourney
+  const journey = activeJourneyInfo?.journey ?? selectedJourney
   const mapRotation = useMemo(() => {
     const journeySeed =
       (activeJourneyInfo?.randomSeed ??
@@ -57,9 +57,9 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   }, [activeJourneyInfo?.randomSeed, nextJourneySeed, journey?.id])
 
   const handleMapClick = () => {
-    if (activeJourney) {
+    if (activeJourneyInfo) {
       startGame()
-    } else if (selectedJourney && !activeJourney) {
+    } else if (selectedJourney && !activeJourneyInfo) {
       startJourney(selectedJourney)
       startGame()
     } else {
@@ -178,7 +178,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   journeyProgress={journeyProgress}
                 />
               )}
-              {!activeJourney && selectedJourney && (
+              {!activeJourneyInfo && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
@@ -192,12 +192,12 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   </button>
                 </div>
               )}
-              {activeJourney && (
+              {activeJourneyInfo && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
                     onClick={() => {
-                      if (activeJourney.journey.type === "treasure_tomb") {
+                      if (activeJourneyInfo.journey.type === "treasure_tomb") {
                         handleInterruptExpedition()
                         return
                       }

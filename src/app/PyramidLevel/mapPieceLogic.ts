@@ -1,8 +1,5 @@
 import type { Journey } from "@/data/journeys"
-import {
-  type CombinedJourneyState,
-  type JourneyState,
-} from "@/app/state/useJourneys"
+import { type CombinedJourneyState } from "@/app/state/useJourneys"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 
 export type MapPieceResult = {
@@ -21,7 +18,7 @@ const getMapPieceChance = (journey: Journey, journeyCount: number): number => {
 }
 
 export const determineMapPieceLoot = (
-  activeJourney: JourneyState,
+  activeJourney: CombinedJourneyState,
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
 ): MapPieceResult => {
   const journeyInfo = getJourney(activeJourney.journeyId)

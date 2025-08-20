@@ -1,4 +1,4 @@
-import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
@@ -11,7 +11,7 @@ import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 import { TombBackdrop } from "@/ui/TombBackdrop"
 
 export const TombExpedition: FC<{
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
@@ -20,12 +20,12 @@ export const TombExpedition: FC<{
   const tableaux = useTableauTranslations()
 
   const journey = activeJourney.journey as TreasureTombJourney
-  const { completeLevel, getJourney } = useJourneys()
-  const runNr = (getJourney(journey.id)?.completionCount ?? 0) + 1
+  const { completeLevel } = useJourneys()
 
   const runTableaus = tableaux.filter(
     (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === runNr
+      tab.tombJourneyId === activeJourney.journeyId &&
+      tab.runNumber === activeJourney.completionCount + 1
   )
   const [completing, setCompleting] = useState(false)
 
@@ -92,7 +92,6 @@ export const TombExpedition: FC<{
           <ComparePuzzle
             activeJourney={activeJourney}
             onComplete={onJourneyComplete}
-            runNumber={runNr}
           />
         </div>
       </TombBackdrop>
