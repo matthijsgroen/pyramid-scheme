@@ -19,15 +19,17 @@ export const ExpeditionCompletionOverlay: FC<{
   const { t } = useTranslation("common")
   const getTranslatedItem = useInventoryItem()
   const { addItems, inventory } = useInventory()
-  const { journeyLog } = useJourneys()
+  const { getJourney, maxDifficulty, nextJourneySeed } = useJourneys()
   const journey = activeJourney.journey as PyramidJourney
   const random = mulberry32(activeJourney.randomSeed + 10000)
   const [min, max] = journey.rewards.completed.pieces
   const itemCount = Math.floor(random() * (max - min + 1)) + min
   const lootResult = determineInventoryLootForCurrentRuns(
     activeJourney,
-    journeyLog,
+    maxDifficulty,
     inventory,
+    getJourney,
+    nextJourneySeed,
     1.0,
     itemCount
   )

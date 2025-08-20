@@ -19,16 +19,19 @@ export type Loot = {
 export const useLootDetermination = (
   activeJourney: JourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
-  const { journeyLog, findMapPiece } = useJourneys()
+  const { findMapPiece, getJourney, nextJourneySeed, maxDifficulty } =
+    useJourneys()
   const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 
   // Pre-calculate loot determination outside of useMemo
-  const mapPieceResult = determineMapPieceLoot(activeJourney, journeyLog)
+  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney)
   const inventoryResult = determineInventoryLootForCurrentRuns(
     activeJourney,
-    journeyLog,
-    inventory
+    maxDifficulty,
+    inventory,
+    getJourney,
+    nextJourneySeed
   )
 
   const inventoryItemHook = useInventoryItem()

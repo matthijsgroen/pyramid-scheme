@@ -1,18 +1,19 @@
 import { useState } from "react"
 import { PyramidExpedition } from "@/app/PyramidExpedition"
 import { Base } from "@/app/Base"
-import { getJourneyCompletionCount, useJourneys } from "@/app/state/useJourneys"
+import { useJourneys } from "@/app/state/useJourneys"
 import { TombExpedition } from "./app/TombExpedition"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 
 function App() {
   const [inGame, setInGame] = useState(false)
-  const { activeJourney, journeyLog, completeLevel, completeJourney } =
+  const { activeJourney, getJourney, completeLevel, completeJourney } =
     useJourneys()
 
-  const runNr =
-    getJourneyCompletionCount(activeJourney?.journeyId, journeyLog) + 1
+  const runNr = activeJourney
+    ? (getJourney(activeJourney.journeyId)?.completionCount ?? 0) + 1
+    : 1
 
   return (
     <DevelopModeProvider>

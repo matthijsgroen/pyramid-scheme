@@ -1,6 +1,5 @@
-import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import { useMemo, type FC } from "react"
-import { getJourneyCompletionCount, useJourneys } from "../state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
@@ -12,25 +11,28 @@ import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import clsx from "clsx"
 import { difficultyCompare } from "@/data/difficultyLevels"
 
-export const TableauInventory: FC<{ activeJourney: ActiveJourney }> = ({
-  activeJourney,
+export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({
+  journeyInfo,
 }) => {
   const journey = journeys.find(
     (j): j is TreasureTombJourney =>
-      j.id === activeJourney.journeyId && j.type === "treasure_tomb"
+      j.id === journeyInfo.journeyId && j.type === "treasure_tomb"
   )
-  const { journeyLog } = useJourneys()
+  const { getJourney } = useJourneys()
   const tableaux = useTableauTranslations()
   const { inventory } = useInventory()
 
-  const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
-  const runNr = getJourneyCompletionCount(journey?.id, journeyLog) + 1
+  const seed = generateNewSeed(
+    journeyInfo.randomSeed!,
+    journeyInfo.levelNr ?? 1
+  )
+  const runNr = journey ? (getJourney(journey.id)?.completionCount ?? 0) + 1 : 1
 
   const runTableaus = tableaux.filter(
     (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === runNr
+      tab.tombJourneyId === journeyInfo.journeyId && tab.runNumber === runNr
   )
-  const tableau = runTableaus[activeJourney.levelNr - 1]
+  const tableau = runTableaus[(journeyInfo.levelNr ?? 1) - 1]
   const calculation = useMemo(() => {
     const random = mulberry32(seed)
     if (!journey || !tableau) return null

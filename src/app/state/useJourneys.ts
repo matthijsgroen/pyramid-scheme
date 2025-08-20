@@ -2,49 +2,59 @@ import { useCallback, useMemo } from "react"
 import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import { useGameStorage } from "@/support/useGameStorage"
 import { startJourney as dataStartJourney } from "@/game/generateJourneyLevel"
-import { journeys, type Journey } from "@/data/journeys"
+import {
+  journeys as journeyData,
+  journeys,
+  type Journey,
+} from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
 import {
   useJourneyTranslations,
   type TranslatedJourney,
 } from "@/data/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
+import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 
 export type JourneyState = ActiveJourney & {
   journey: TranslatedJourney
 }
 
-export const getJourneyCompletionCount = (
-  journeyId: string | undefined | null,
-  journeyLog: JourneyState[]
-) => {
-  if (!journeyId) return 0
-  return journeyLog.filter((j) => j.journeyId === journeyId && j.completed)
-    .length
+export type CombinedJourneyState = {
+  journeyId: (typeof journeys)[number]["id"]
+  randomSeed?: number
+
+  levelNr: number | null
+  completionCount: number
+  foundMapPiece: boolean
+  inProgress: boolean
+  progressPercentage: number
+
+  journey: TranslatedJourney
 }
 
-export const journeySeedGenerator = (
+const getJourneyCompletionCount =
+  (journeyLog: JourneyState[]) => (journeyId: string | undefined | null) => {
+    if (!journeyId) return 0
+    return journeyLog.filter((j) => j.journeyId === journeyId && j.completed)
+      .length
+  }
+
+const journeySeedGenerator = (
   journeyId: string,
   journeyLog: JourneyState[]
 ): number => {
-  const journeyRun = getJourneyCompletionCount(journeyId, journeyLog) + 1
+  const journeyRun = getJourneyCompletionCount(journeyLog)(journeyId) + 1
   return generateNewSeed(hashString(journeyId), journeyRun)
 }
 
-const journeyIds = journeys.map((j) => j.id)
-
-export const hasFoundMapPiece = (
-  journeyId: string,
-  journeyLog: JourneyState[]
-) => {
-  return journeyLog.some((j) => j.journeyId === journeyId && j.foundMapPiece)
-}
+const journeyIds = journeyData.map((j) => j.id)
 
 export const useJourneys = (): {
   activeJourney: JourneyState | undefined
-  journeyLog: JourneyState[]
+  maxDifficulty: Difficulty
   startJourney: (journey: Journey) => void
   nextJourneySeed: (journeyId: string) => number
+  getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
@@ -57,7 +67,9 @@ export const useJourneys = (): {
   )
 
   const activeJourney = useMemo(() => {
-    return journeys.find((j) => !j.endTime && journeyIds.includes(j.journeyId))
+    return journeys.find(
+      (j) => !j.completed && !j.canceled && journeyIds.includes(j.journeyId)
+    )
   }, [journeys])
 
   const journeyStates = useMemo(
@@ -78,7 +90,6 @@ export const useJourneys = (): {
         ),
     [journeys, journeyData]
   )
-
   const nextJourneySeed = useCallback(
     (journeyId: string) => {
       return journeySeedGenerator(journeyId, journeyStates)
@@ -164,9 +175,51 @@ export const useJourneys = (): {
     )
   }, [activeJourney, setJourneys])
 
+  const maxDifficulty = journeyStates.reduce<Difficulty>((difficulty, item) => {
+    const j = journeyData.find((j) => j.id === item.journeyId)
+    if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
+      return j.difficulty
+    }
+    return difficulty
+  }, "starter")
+
+  const getJourney = useCallback(
+    (journeyId: string): CombinedJourneyState | undefined => {
+      // return journeyStates.find((j) => j.journeyId === journeyId)
+      const journeys = journeyStates.filter((j) => j.journeyId === journeyId)
+      if (journeys.length === 0) return undefined
+      const journeyInfo = journeyData.find(
+        (j): j is TranslatedJourney => j.id === journeyId
+      )
+      if (!journeyInfo) return undefined
+
+      const journeyInProgress = journeys.find(
+        (j) => !j.completed && j.journeyId === journeyId
+      )
+
+      const progressPercentage = Math.min(
+        ((journeyInProgress?.levelNr ?? 1) - 1) / journeyInfo.levelCount,
+        1
+      )
+
+      return {
+        journey: journeyInfo,
+        journeyId,
+        levelNr: journeyInProgress?.levelNr ?? null,
+        randomSeed: journeyInProgress?.randomSeed,
+        inProgress: journeyInProgress ? true : false,
+        progressPercentage,
+        completionCount: journeys.filter((j) => j.completed).length,
+        foundMapPiece: journeys.some((j) => j.foundMapPiece),
+      }
+    },
+    [journeyData, journeyStates]
+  )
+
   return {
     activeJourney: completeJourney,
-    journeyLog: journeyStates,
+    maxDifficulty,
+    getJourney,
     nextJourneySeed,
     findMapPiece,
     startJourney,

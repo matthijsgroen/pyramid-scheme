@@ -1,6 +1,5 @@
 import {
-  getJourneyCompletionCount,
-  journeySeedGenerator,
+  type CombinedJourneyState,
   type JourneyState,
 } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
@@ -24,19 +23,14 @@ export type InventoryLootResult = {
  */
 export const determineInventoryLootForCurrentRuns = (
   pyramidExpedition: JourneyState,
-  journeyLog: JourneyState[],
+  maxDifficulty: Difficulty,
   playerInventory: Record<string, number>,
+  getJourney: (journeyId: string) => CombinedJourneyState | undefined,
+  journeySeedGenerator: (journeyId: string) => number,
   baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
   maxItemsToAward: number = 1
 ): InventoryLootResult => {
   const currentDifficulty = pyramidExpedition.journey.difficulty
-  const maxDifficulty = journeyLog.reduce<Difficulty>((difficulty, item) => {
-    const j = journeys.find((j) => j.id === item.journeyId)
-    if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
-      return j.difficulty
-    }
-    return difficulty
-  }, "starter")
 
   const tombIds = journeys
     .filter(
@@ -59,11 +53,10 @@ export const determineInventoryLootForCurrentRuns = (
       (j): j is TreasureTombJourney =>
         j.id === tombId && j.type === "treasure_tomb"
     )
+    const tombState = getJourney(tombId)
     // get current run for tomb
-    const currentRun = getJourneyCompletionCount(tombId, journeyLog) + 1
-    const currentLevel =
-      journeyLog.find((j) => j.journeyId === tombId && !j.completed)?.levelNr ??
-      1
+    const currentRun = (tombState?.completionCount ?? 0) + 1
+    const currentLevel = tombState?.levelNr ?? 1
 
     const tableau = tableauLevels.find(
       (t) =>
@@ -99,7 +92,7 @@ export const determineInventoryLootForCurrentRuns = (
       }
     })
 
-    const seed = journeySeedGenerator(tombId, journeyLog)
+    const seed = journeySeedGenerator(tombId)
     const tableauRandom = mulberry32(generateNewSeed(seed, currentLevel))
     const settings = {
       amountSymbols: tableau.symbolCount,

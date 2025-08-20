@@ -1,8 +1,4 @@
-import {
-  getJourneyCompletionCount,
-  useJourneys,
-  type JourneyState,
-} from "@/app/state/useJourneys"
+import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
@@ -24,8 +20,8 @@ export const TombExpedition: FC<{
   const tableaux = useTableauTranslations()
 
   const journey = activeJourney.journey as TreasureTombJourney
-  const { journeyLog, completeLevel } = useJourneys()
-  const runNr = getJourneyCompletionCount(journey.id, journeyLog) + 1
+  const { completeLevel, getJourney } = useJourneys()
+  const runNr = (getJourney(journey.id)?.completionCount ?? 0) + 1
 
   const runTableaus = tableaux.filter(
     (tab) =>

@@ -7,7 +7,7 @@ import { useInventoryCategory } from "@/data/useInventoryTranslations"
 import { useTreasureCategory } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { getJourneyCompletionCount, useJourneys } from "../state/useJourneys"
+import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
@@ -209,7 +209,7 @@ const DetailPanel: FC<{
 export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
-  const { journeyLog } = useJourneys()
+  const { getJourney } = useJourneys()
   const { inventory, addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
 
@@ -229,7 +229,7 @@ export const CollectionPage: FC = () => {
     (value) => value !== undefined
   )
   const hasCompletedTomb = (tombId: string) =>
-    getJourneyCompletionCount(tombId, journeyLog) > 0
+    (getJourney(tombId)?.completionCount ?? 0) > 0
 
   return (
     <Page

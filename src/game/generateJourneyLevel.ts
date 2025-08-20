@@ -12,13 +12,9 @@ export type ActiveJourney = {
   journeyId: (typeof journeys)[number]["id"]
   randomSeed: number
   levelNr: number
-  startTime: number
-  endTime?: number
   completed: boolean
   foundMapPiece?: boolean
   canceled?: boolean
-  plannedLoot?: Record<number, Item[]>
-  completionTreasures?: Item[]
 }
 
 export const startJourney = (
@@ -29,7 +25,6 @@ export const startJourney = (
     journeyId,
     randomSeed,
     levelNr: 1,
-    startTime: Date.now(),
     completed: false,
   }
 }
