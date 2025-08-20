@@ -28,6 +28,7 @@ export type PyramidJourney = {
   journeyLength: "short" | "medium" | "long"
   levelCount: number
   time: DayNightCycleStep
+  timeStepSize?: number
   levelSettings: {
     startFloorCount: number
     endFloorCount?: number
@@ -356,9 +357,11 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 6,
     time: "afternoon",
+    timeStepSize: 2,
     levelSettings: {
-      startFloorCount: 6,
-      blocksOpen: [0.4, 0.8],
+      startFloorCount: 5,
+      endFloorCount: 6,
+      blocksOpen: [0.9, 0.5],
       blocksBlocked: [0.3, 0.5],
       startNumberRange: [2, 7],
       endNumberRange: [4, 12],
@@ -383,6 +386,7 @@ export const journeys: Journey[] = [
     journeyLength: "long",
     levelCount: 9,
     time: "evening",
+    timeStepSize: 1,
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 7,
@@ -413,7 +417,7 @@ export const journeys: Journey[] = [
     time: "night",
     levelSettings: {
       startFloorCount: 7,
-      blocksOpen: [0.6, 0.8],
+      blocksOpen: [0.6, 0.6],
       blocksBlocked: [0.3, 0.5],
       startNumberRange: [3, 8],
       endNumberRange: [5, 15],
