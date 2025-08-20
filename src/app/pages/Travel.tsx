@@ -284,7 +284,9 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     journey={journey}
                     disabled={disabled}
                     completionCount={completionCount}
-                    progressLevelNr={progressLevelNr}
+                    progressLevelNr={
+                      journeyInfo?.inProgress ? progressLevelNr : undefined
+                    }
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
