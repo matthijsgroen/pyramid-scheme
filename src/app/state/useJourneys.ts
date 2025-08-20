@@ -43,81 +43,109 @@ export const useJourneys = (): {
   findMapPiece: () => void
 } => {
   const journeyData = useJourneyTranslations()
-  const [journeys, setJourneys] = useGameStorage<ActiveJourney[]>(
-    "journeys",
-    []
-  )
+  const [unCastedJourneys, setJourneys, journeysLoaded] = useGameStorage<
+    (ActiveJourney | CombinedJourneyState)[]
+  >("journeys", [])
+  const [storageVersions, _setStorageVersion, versionLoaded] = useGameStorage<{
+    journeys: number
+    inventory: number
+    answers: number
+  }>("storageVersions", {
+    journeys: 1,
+    inventory: 1,
+    answers: 1,
+  })
 
-  const activeJourney = useMemo(() => {
-    return journeys.find(
-      (j) => !j.completed && !j.canceled && journeyIds.includes(j.journeyId)
-    )
-  }, [journeys])
+  const activeJourneys: ActiveJourney[] = useMemo(() => {
+    if (versionLoaded && journeysLoaded && storageVersions.journeys === 1) {
+      return unCastedJourneys as ActiveJourney[]
+    }
+    return []
+  }, [unCastedJourneys, versionLoaded, journeysLoaded, storageVersions])
+
+  const combinedJourneys: CombinedJourneyState[] = useMemo(() => {
+    if (versionLoaded && journeysLoaded && storageVersions.journeys === 2) {
+      return unCastedJourneys as CombinedJourneyState[]
+    }
+    return []
+  }, [unCastedJourneys, versionLoaded, journeysLoaded, storageVersions])
+
+  const activeJourneyId = useMemo(() => {
+    if (storageVersions.journeys === 1) {
+      return activeJourneys.find(
+        (j) => !j.completed && !j.canceled && journeyIds.includes(j.journeyId)
+      )?.journeyId
+    }
+    if (storageVersions.journeys === 2) {
+      return combinedJourneys.find((j) => !j.active)?.journeyId
+    }
+  }, [activeJourneys, combinedJourneys, storageVersions])
 
   const finishJourney = useCallback(() => {
-    if (!activeJourney) return
+    if (!activeJourneyId) return
 
     setJourneys((prev) =>
       prev.map((j) =>
-        j.journeyId === activeJourney.journeyId
+        j.journeyId === activeJourneyId
           ? { ...j, completed: true, canceled: false }
           : j
       )
     )
-  }, [activeJourney, setJourneys])
+  }, [activeJourneyId, setJourneys])
 
   const cancelJourney = useCallback(() => {
-    if (!activeJourney) return
+    if (!activeJourneyId) return
 
     setJourneys((prev) =>
       prev.map((j) =>
-        j.journeyId === activeJourney.journeyId ? { ...j, canceled: true } : j
+        j.journeyId === activeJourneyId ? { ...j, canceled: true } : j
       )
     )
-  }, [activeJourney, setJourneys])
+  }, [activeJourneyId, setJourneys])
 
   const completeLevel = useCallback(() => {
-    if (!activeJourney) return
+    if (!activeJourneyId) return
     setJourneys((prev) =>
       prev.map((j) =>
-        j.journeyId === activeJourney.journeyId
-          ? { ...j, levelNr: j.levelNr + 1 }
-          : j
+        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1 } : j
       )
     )
-  }, [activeJourney, setJourneys])
+  }, [activeJourneyId, setJourneys])
 
   const findMapPiece = useCallback(() => {
-    if (!activeJourney) return
+    if (!activeJourneyId) return
 
     setJourneys((prev) =>
       prev.map((j) =>
-        j.journeyId === activeJourney.journeyId
-          ? { ...j, foundMapPiece: true }
-          : j
+        j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j
       )
     )
-  }, [activeJourney, setJourneys])
+  }, [activeJourneyId, setJourneys])
 
-  const maxDifficulty = journeys.reduce<Difficulty>((difficulty, item) => {
-    const j = journeyData.find((j) => j.id === item.journeyId)
-    if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
-      return j.difficulty
-    }
-    return difficulty
-  }, "starter")
+  const maxDifficulty = activeJourneys.reduce<Difficulty>(
+    (difficulty, item) => {
+      const j = journeyData.find((j) => j.id === item.journeyId)
+      if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
+        return j.difficulty
+      }
+      return difficulty
+    },
+    "starter"
+  )
 
   const getJourney = useCallback(
     (journeyId: string): CombinedJourneyState | undefined => {
       // return journeyStates.find((j) => j.journeyId === journeyId)
-      const journeyStates = journeys.filter((j) => j.journeyId === journeyId)
+      const journeyStates = activeJourneys.filter(
+        (j) => j.journeyId === journeyId
+      )
       if (journeyStates.length === 0) return undefined
       const journeyInfo = journeyData.find(
         (j): j is TranslatedJourney => j.id === journeyId
       )
       if (!journeyInfo) return undefined
 
-      const journeyInProgress = journeys.find(
+      const journeyInProgress = activeJourneys.find(
         (j) => !j.completed && j.journeyId === journeyId
       )
       const isActive = journeyStates.some((j) => !j.canceled && !j.completed)
@@ -139,10 +167,10 @@ export const useJourneys = (): {
         inProgress: journeyInProgress ? true : false,
         progressPercentage,
         completionCount,
-        foundMapPiece: journeys.some((j) => j.foundMapPiece),
+        foundMapPiece: activeJourneys.some((j) => j.foundMapPiece),
       }
     },
-    [journeyData, journeys]
+    [journeyData, activeJourneys]
   )
 
   const nextJourneySeed = useCallback(
@@ -161,7 +189,7 @@ export const useJourneys = (): {
       const journeyInfo = getJourney(journey.id)
       if (journeyInfo && journeyInfo.inProgress && !journeyInfo.active) {
         setJourneys((prev) =>
-          prev.map<ActiveJourney>((j) =>
+          (prev as ActiveJourney[]).map<ActiveJourney>((j) =>
             j.journeyId === journey.id && j.canceled && !j.completed
               ? { ...j, completed: false, canceled: false }
               : j
@@ -178,7 +206,7 @@ export const useJourneys = (): {
   )
 
   return {
-    activeJourneyId: activeJourney?.journeyId,
+    activeJourneyId,
     maxDifficulty,
     getJourney,
     nextJourneySeed,
