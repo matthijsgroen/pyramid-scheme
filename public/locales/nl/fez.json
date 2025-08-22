@@ -14,5 +14,15 @@
   "expeditionCompleted2": "Een nieuwe expeditie is nu beschikbaar.",
   "collectionIntro": "Tijdens onze expedities hebben we enkele items gevonden!",
   "collectionIntro2": "Je kunt ze nader inspecteren op je Collectie scherm.",
-  "collectionIntro3": "Veeg/scroll naar rechts om je collectie te zien."
+  "collectionIntro3": "Veeg/scroll naar rechts om je collectie te zien.",
+
+  "tombIntro": "Dit is een binnen expeditie, waar we oude tombes zullen verkennen.",
+  "tombIntro2": "Het voltooien van een tombe zoals deze zal je belonen met unieke schatten.",
+  "tombIntro3": "Laten we kijken of we de puzzels binnenin kunnen oplossen.",
+
+  "notEnoughHieroglyphs": "Je kunt deze expeditie altijd stoppen door terug te keren naar het reis scherm.",
+  "notEnoughHieroglyphs2": "We kunnen dan ervoor kiezen om de expeditie te onderbreken om elders naar extra hiërogliefen te zoeken.",
+
+  "tombLoot": "Wauw, onze eerste schat! Goed bezig!",
+  "tombLoot2": "Proost! Dat we er nog vele mogen vinden!"
 }

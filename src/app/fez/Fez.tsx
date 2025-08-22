@@ -1,11 +1,12 @@
 import fez from "@/assets/fez-250.png"
 import fezPoint from "@/assets/point-fez-250.png"
 import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
+import fezCocktail from "@/assets/cocktail-fez-250.png"
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
-type Pose = "default" | "pointUp" | "glassesPoint"
+type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
 
 type PoseChat = [pose: Pose, translationKey: string]
 
@@ -34,6 +35,12 @@ const conversations: Record<string, PoseChat[]> = {
     "collectionIntro2",
     "collectionIntro3",
   ]),
+  tombIntro: pose("default", ["tombIntro", "tombIntro2", "tombIntro3"]),
+  notEnoughHieroglyphs: [
+    ...pose("default", ["notEnoughHieroglyphs"]),
+    ...pose("pointUp", ["notEnoughHieroglyphs2"]),
+  ],
+  tombLoot: pose("glassesPoint", ["tombLoot", "tombLoot2"]),
 }
 
 const NOT_FOUND = pose("default", ["not-found"])
@@ -75,19 +82,17 @@ export const Fez: FC<{
   useEffect(() => {
     if (!showMessage && visible) {
       const timer = setTimeout(() => {
-        setMessageIndex((p) => {
-          if (p >= messages.length) {
-            setVisible(false)
-            return p // No more messages, just return current index
-          }
-          setShowMessage(true)
-          return p + 1
-        })
+        if (messageIndex >= messages.length) {
+          setVisible(false)
+          return
+        }
+        setShowMessage(true)
+        setMessageIndex(messageIndex + 1)
         // next message? show
       }, 400) // Reset message index after 400 milliseconds
       return () => clearTimeout(timer)
     }
-  }, [messages.length, onComplete, showMessage, visible])
+  }, [messages.length, onComplete, showMessage, visible, messageIndex])
 
   const onNextMessage = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
@@ -133,6 +138,16 @@ export const Fez: FC<{
           <img
             src={fezGlassesPoint}
             alt="Happy companion lizard wearing a fez and glasses"
+            className={clsx(
+              "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
+              visible ? "translate-y-0" : "translate-y-1/1"
+            )}
+          />
+        )}
+        {pose === "cocktail" && (
+          <img
+            src={fezCocktail}
+            alt="Happy companion lizard wearing a fez and holding a cocktail"
             className={clsx(
               "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
               visible ? "translate-y-0" : "translate-y-1/1"

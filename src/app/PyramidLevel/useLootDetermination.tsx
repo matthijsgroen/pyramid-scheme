@@ -1,4 +1,4 @@
-import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { determineMapPieceLoot } from "./mapPieceLogic"
@@ -17,18 +17,21 @@ export type Loot = {
 }
 
 export const useLootDetermination = (
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
-  const { journeyLog, findMapPiece } = useJourneys()
+  const { findMapPiece, getJourney, nextJourneySeed, maxDifficulty } =
+    useJourneys()
   const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 
   // Pre-calculate loot determination outside of useMemo
-  const mapPieceResult = determineMapPieceLoot(activeJourney, journeyLog)
+  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney)
   const inventoryResult = determineInventoryLootForCurrentRuns(
     activeJourney,
-    journeyLog,
-    inventory
+    maxDifficulty,
+    inventory,
+    getJourney,
+    nextJourneySeed
   )
 
   const inventoryItemHook = useInventoryItem()

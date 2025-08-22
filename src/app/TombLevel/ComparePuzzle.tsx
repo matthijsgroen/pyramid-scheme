@@ -1,6 +1,6 @@
 import { LootPopup } from "@/ui/LootPopup"
 import { useTranslation } from "react-i18next"
-import type { JourneyState } from "../state/useJourneys"
+import type { CombinedJourneyState } from "../state/useJourneys"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
 import { Chest } from "@/ui/Chest"
 import { NumberChest } from "@/ui/NumberChest"
@@ -9,7 +9,8 @@ import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { formulaPartToString } from "@/game/formulas"
 import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
-import type { FC, ReactNode } from "react"
+import { use, useEffect, type FC, type ReactNode } from "react"
+import { FezContext } from "../fez/context"
 
 const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
 
@@ -29,9 +30,8 @@ const handleInlineMarkup = (text: string): ReactNode => {
 
 export const ComparePuzzle: FC<{
   onComplete?: () => void
-  activeJourney: JourneyState
-  runNumber: number
-}> = ({ onComplete, activeJourney, runNumber }) => {
+  activeJourney: CombinedJourneyState
+}> = ({ onComplete, activeJourney }) => {
   const { t } = useTranslation("common")
   const getTreasureItem = useTreasureItem()
 
@@ -56,10 +56,17 @@ export const ComparePuzzle: FC<{
     showLoot,
   } = useCrocodilePuzzleControls({
     activeJourney,
-    runNumber,
     onComplete,
   })
   const loot = getTreasureItem(lootId)
+
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    if (showLoot) {
+      showConversation("tombLoot")
+    }
+  }, [showConversation, showLoot])
 
   return (
     <div
@@ -70,7 +77,7 @@ export const ComparePuzzle: FC<{
       )}
     >
       <div className="absolute top-0">
-        {focus === 0 && (
+        {focus === 0 && hasComparison && (
           <h3 className="mx-8 mt-4 text-center text-lg font-bold text-amber-200">
             {t("tomb.crocodilePuzzlePrompt")}
           </h3>
@@ -141,12 +148,14 @@ export const ComparePuzzle: FC<{
             </div>
           </div>
         ) : (
-          <Chest
-            state={lockState}
-            variant="muted"
-            onClick={handleChestOpen}
-            allowInteraction={!isProcessingCompletion && lockState !== "open"}
-          />
+          <div className="flex flex-col items-center gap-6">
+            <Chest
+              state={lockState}
+              variant="muted"
+              onClick={handleChestOpen}
+              allowInteraction={!isProcessingCompletion && lockState !== "open"}
+            />
+          </div>
         )}
       </div>
       {levelData.comparisons

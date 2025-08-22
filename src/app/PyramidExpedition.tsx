@@ -9,7 +9,7 @@ import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
-import type { JourneyState } from "@/app/state/useJourneys"
+import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { type PyramidJourney } from "@/data/journeys"
 import { FezContext } from "./fez/context"
 import { generateNewSeed, mulberry32 } from "@/game/random"
@@ -18,7 +18,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 
 const generateExpeditionLevel = (
-  activeJourney: JourneyState,
+  activeJourney: CombinedJourneyState,
   levelNr: number
 ): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
@@ -32,7 +32,7 @@ const generateExpeditionLevel = (
 }
 
 export const PyramidExpedition: FC<{
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
   runNr: number
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
@@ -163,13 +163,21 @@ export const PyramidExpedition: FC<{
       : undefined
 
   return (
-    <DesertBackdrop levelNr={activeJourney.levelNr} start={pyramidJourney.time}>
+    <DesertBackdrop
+      levelNr={activeJourney.levelNr}
+      start={pyramidJourney.time}
+      timeStepSize={activeJourney.journey.timeStepSize}
+    >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
           <div
             className={clsx(
               "flex w-full items-center justify-between px-4 py-2",
-              dayNightCycleStep(activeJourney.levelNr, pyramidJourney.time) < 6
+              dayNightCycleStep(
+                activeJourney.levelNr,
+                pyramidJourney.time,
+                activeJourney.journey.timeStepSize
+              ) < 6
                 ? "text-black"
                 : "text-white"
             )}

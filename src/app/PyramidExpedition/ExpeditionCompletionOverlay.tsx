@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { determineInventoryLootForCurrentRuns } from "@/app/PyramidLevel/inventoryLootLogic"
 import type { PyramidJourney } from "@/data/journeys"
-import { useJourneys, type JourneyState } from "../state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
 import { mulberry32 } from "@/game/random"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
@@ -14,20 +14,22 @@ import { FezContext } from "../fez/context"
 export const ExpeditionCompletionOverlay: FC<{
   onJourneyComplete?: () => void
   newPyramidJourneyId?: string
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
 }> = ({ onJourneyComplete, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const getTranslatedItem = useInventoryItem()
   const { addItems, inventory } = useInventory()
-  const { journeyLog } = useJourneys()
+  const { getJourney, maxDifficulty, nextJourneySeed } = useJourneys()
   const journey = activeJourney.journey as PyramidJourney
   const random = mulberry32(activeJourney.randomSeed + 10000)
   const [min, max] = journey.rewards.completed.pieces
   const itemCount = Math.floor(random() * (max - min + 1)) + min
   const lootResult = determineInventoryLootForCurrentRuns(
     activeJourney,
-    journeyLog,
+    maxDifficulty,
     inventory,
+    getJourney,
+    nextJourneySeed,
     1.0,
     itemCount
   )

@@ -15,9 +15,10 @@ export const DesertBackdrop: FC<
   PropsWithChildren<{
     levelNr: number
     start: DayNightCycleStep
+    timeStepSize?: number
   }>
-> = ({ children, levelNr, start }) => {
-  const step = dayNightCycleStep(levelNr, start)
+> = ({ children, levelNr, start, timeStepSize = 3 }) => {
+  const step = dayNightCycleStep(levelNr, start, timeStepSize)
   const transitionDuration = "duration-12000"
 
   return (

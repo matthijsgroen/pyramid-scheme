@@ -1,18 +1,16 @@
 import { useCallback, useMemo, useState } from "react"
 import { useInventory } from "../Inventory/useInventory"
 import type { TreasureTombJourney } from "@/data/journeys"
-import type { JourneyState } from "../state/useJourneys"
+import type { CombinedJourneyState } from "../state/useJourneys"
 import { mulberry32 } from "@/game/random"
 import { tableauLevels } from "@/data/tableaus"
 import { generateCompareLevel } from "@/game/generateCompareLevel"
 
 export const useCrocodilePuzzleControls = ({
   activeJourney,
-  runNumber,
   onComplete,
 }: {
-  activeJourney: JourneyState
-  runNumber: number
+  activeJourney: CombinedJourneyState
   onComplete?: () => void
 }) => {
   const [lockState, setLockState] = useState<"empty" | "error" | "open">(
@@ -61,6 +59,7 @@ export const useCrocodilePuzzleControls = ({
       setIsProcessingCompletion(false)
     }, 1500)
   }, [isProcessingCompletion])
+  const runNumber = (activeJourney.completionCount ?? 0) + 1
 
   const levelSeed = activeJourney.randomSeed + runNumber * 3210
 

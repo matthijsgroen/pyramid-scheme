@@ -5,9 +5,7 @@ import { MapButton } from "@/ui/MapButton"
 import { JourneyCard } from "@/ui/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
-import { type Journey } from "@/data/journeys"
 import { useJourneys } from "@/app/state/useJourneys"
-import type { ActiveJourney } from "@/game/generateJourneyLevel"
 import {
   useJourneyTranslations,
   type TranslatedJourney,
@@ -17,44 +15,29 @@ import { mulberry32 } from "@/game/random"
 import { TombMapButton } from "@/ui/TombMapButton"
 import { hashString } from "@/support/hashString"
 import { FezContext } from "../fez/context"
-import { type Difficulty } from "@/data/difficultyLevels"
+import { difficultyCompare } from "@/data/difficultyLevels"
 import { TableauInventory } from "./TableauInventory"
-
-const getJourneyProgress = (
-  activeJourney: ActiveJourney | undefined,
-  journeys: Journey[]
-) => {
-  if (!activeJourney) return 0
-  const jny: ActiveJourney = activeJourney
-  const data = journeys.find((j) => j.id === jny.journeyId)
-  return Math.min((jny.levelNr - 1) / (data?.levelCount ?? 1), 1)
-}
 
 export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
   const { t } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
   const {
-    activeJourney,
+    activeJourneyId,
+    maxDifficulty,
     startJourney,
-    journeyLog,
     cancelJourney,
     nextJourneySeed,
+    getJourney,
   } = useJourneys()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] =
     useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
+  const journeyId = activeJourneyId ?? selectedJourney?.id
+  const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
-  const canceledJourney = useMemo(() => {
-    return journeyLog.find(
-      (j) => j.journeyId === selectedJourney?.id && j.canceled && !j.completed
-    )
-  }, [selectedJourney, journeyLog])
-  const journeyProgress = getJourneyProgress(
-    activeJourney ?? canceledJourney,
-    journeys
-  )
+  const journeyProgress = activeJourneyInfo?.progressPercentage ?? 0
   const { showConversation } = use(FezContext)
 
   useEffect(() => {
@@ -63,26 +46,20 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     }
   }, [showJourneySelection, showConversation])
 
-  const journey = activeJourney?.journey ?? selectedJourney
+  const journey = activeJourneyInfo?.journey ?? selectedJourney
   const mapRotation = useMemo(() => {
     const journeySeed =
-      (activeJourney?.randomSeed ??
-        canceledJourney?.randomSeed ??
+      (activeJourneyInfo?.randomSeed ??
         nextJourneySeed(journey?.id ?? "none")) +
       (journey?.id ? hashString(journey.id) : 0)
     const random = mulberry32(journeySeed)
     return Math.round(random() * 360)
-  }, [
-    activeJourney?.randomSeed,
-    canceledJourney?.randomSeed,
-    nextJourneySeed,
-    journey?.id,
-  ])
+  }, [activeJourneyInfo?.randomSeed, nextJourneySeed, journey?.id])
 
   const handleMapClick = () => {
-    if (activeJourney) {
+    if (activeJourneyInfo) {
       startGame()
-    } else if (selectedJourney && !activeJourney) {
+    } else if (selectedJourney && !activeJourneyInfo) {
       startJourney(selectedJourney)
       startGame()
     } else {
@@ -112,25 +89,21 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     return journeys.findIndex((_j, journeyIndex) => {
       if (journeyIndex === 0) return false // Always unlock the first journey
       const previousJourneyId = journeys[journeyIndex - 1]?.id
-      const hasPreviousCompleted = journeyLog.some(
-        (log) => log.journeyId === previousJourneyId && log.completed
-      )
+      const hasPreviousCompleted =
+        (getJourney(previousJourneyId)?.completionCount ?? 0) > 0
       return !hasPreviousCompleted
     })
-  }, [journeys, journeyLog])
+  }, [journeys, getJourney])
 
   const showTombExpeditionsAhead = useMemo(() => {
-    return journeyLog.reduce<Difficulty[]>((difficulties, journey) => {
-      if (
-        journey.journey.type === "pyramid" &&
-        journey.foundMapPiece &&
-        !difficulties.includes(journey.journey.difficulty)
-      ) {
-        return difficulties.concat(journey.journey.difficulty)
-      }
-      return difficulties
-    }, [])
-  }, [journeyLog])
+    return journeys
+      .filter(
+        (j) =>
+          difficultyCompare(j.difficulty, maxDifficulty) <= 0 &&
+          getJourney(j.id)?.foundMapPiece
+      )
+      .map((j) => j.difficulty)
+  }, [getJourney, journeys, maxDifficulty])
 
   return (
     <Page
@@ -196,7 +169,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   pathRotation={mapRotation}
                   pathLength={journey?.journeyLength ?? "long"}
                   label={
-                    (activeJourney ?? canceledJourney)
+                    activeJourneyInfo?.inProgress
                       ? t("ui.continueExpedition")
                       : selectedJourney
                         ? t("ui.startExpedition")
@@ -205,7 +178,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   journeyProgress={journeyProgress}
                 />
               )}
-              {!activeJourney && selectedJourney && (
+              {!activeJourneyInfo && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
@@ -219,12 +192,12 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                   </button>
                 </div>
               )}
-              {activeJourney && (
+              {activeJourneyInfo && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
                     onClick={() => {
-                      if (activeJourney.journey.type === "treasure_tomb") {
+                      if (activeJourneyInfo.journey.type === "treasure_tomb") {
                         handleInterruptExpedition()
                         return
                       }
@@ -273,18 +246,10 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                 ) {
                   return null
                 }
-                const completionCount = journeyLog.filter(
-                  (j) => j.journeyId === journey.id && j.completed
-                ).length
-                const hasMapPiece =
-                  journeyLog.filter(
-                    (j) => j.journeyId === journey.id && j.foundMapPiece
-                  ).length > 0
-                const activeJourney = journeyLog.find(
-                  (j) =>
-                    j.journeyId === journey.id && j.canceled && !j.completed
-                )
-                const progressLevelNr = activeJourney?.levelNr ?? 0
+                const journeyInfo = getJourney(journey.id)
+                const completionCount = journeyInfo?.completionCount ?? 0
+                const hasMapPiece = journeyInfo?.foundMapPiece ?? false
+                const progressLevelNr = journeyInfo?.levelNr ?? 0
 
                 if (journey.type === "treasure_tomb") {
                   // Treasure Tombs are unlocked if all map pieces are found
@@ -293,10 +258,8 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                       exp.difficulty === journey.difficulty &&
                       exp.type === "pyramid"
                   )
-                  const piecesFound = pyramidJourneys.filter((journey) =>
-                    journeyLog.some(
-                      (log) => log.journeyId === journey.id && log.foundMapPiece
-                    )
+                  const piecesFound = pyramidJourneys.filter(
+                    (journey) => getJourney(journey.id)?.foundMapPiece
                   ).length
 
                   if (piecesFound < pyramidJourneys.length) {
@@ -321,14 +284,17 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     journey={journey}
                     disabled={disabled}
                     completionCount={completionCount}
-                    progressLevelNr={progressLevelNr}
+                    progressLevelNr={
+                      journeyInfo?.inProgress ? progressLevelNr : undefined
+                    }
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
                     onClick={handleJourneySelect}
                   >
-                    {journey.type === "treasure_tomb" && activeJourney ? (
-                      <TableauInventory activeJourney={activeJourney} />
+                    {journey.type === "treasure_tomb" &&
+                    journeyInfo?.inProgress ? (
+                      <TableauInventory journeyInfo={journeyInfo} />
                     ) : null}
                   </JourneyCard>
                 )

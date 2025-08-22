@@ -8,36 +8,34 @@ import { DevelopModeProvider } from "./contexts/DevelopMode"
 
 function App() {
   const [inGame, setInGame] = useState(false)
-  const { activeJourney, journeyLog, completeLevel, completeJourney } =
+  const { activeJourneyId, getJourney, completeLevel, completeJourney } =
     useJourneys()
 
-  const runNr = journeyLog.filter(
-    (log) => log.journeyId === activeJourney?.journeyId && log.completed
-  ).length
+  const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
+
+  const runNr = (journeyInfo?.completionCount ?? 0) + 1
 
   return (
     <DevelopModeProvider>
       <FezCompanion>
         {!inGame && <Base startGame={() => setInGame(true)} />}
+        {inGame && journeyInfo && journeyInfo.journey.type === "pyramid" && (
+          <PyramidExpedition
+            activeJourney={journeyInfo}
+            runNr={runNr}
+            onLevelComplete={completeLevel}
+            onJourneyComplete={() => {
+              completeJourney()
+              setInGame(false)
+            }}
+            onClose={() => setInGame(false)}
+          />
+        )}
         {inGame &&
-          activeJourney &&
-          activeJourney.journey.type === "pyramid" && (
-            <PyramidExpedition
-              activeJourney={activeJourney}
-              runNr={runNr}
-              onLevelComplete={completeLevel}
-              onJourneyComplete={() => {
-                completeJourney()
-                setInGame(false)
-              }}
-              onClose={() => setInGame(false)}
-            />
-          )}
-        {inGame &&
-          activeJourney &&
-          activeJourney.journey.type === "treasure_tomb" && (
+          journeyInfo &&
+          journeyInfo.journey.type === "treasure_tomb" && (
             <TombExpedition
-              activeJourney={activeJourney}
+              activeJourney={journeyInfo}
               onLevelComplete={completeLevel}
               onJourneyComplete={() => {
                 completeJourney()

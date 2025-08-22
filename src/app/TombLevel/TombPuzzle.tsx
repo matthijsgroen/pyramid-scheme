@@ -10,11 +10,19 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { type FilledTileState } from "./FormulaPart"
 import { clsx } from "clsx"
-import { useState, useMemo, type FC, type FormEvent } from "react"
+import {
+  useState,
+  useMemo,
+  type FC,
+  type FormEvent,
+  useEffect,
+  use,
+} from "react"
 import { useTranslation } from "react-i18next"
 import { revealText } from "@/support/revealText"
 import { TombTableau } from "./TombTableau"
 import { TombDoor } from "@/ui/TombDoor"
+import { FezContext } from "../fez/context"
 
 export const TombPuzzle: FC<{
   tableau: TableauLevel
@@ -37,7 +45,6 @@ export const TombPuzzle: FC<{
   const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>(
     {}
   )
-
   // State for NumberLock
   const [lockCode, setLockCode] = useState("")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">(
@@ -54,6 +61,34 @@ export const TombPuzzle: FC<{
       }
     )
   }, [calculation.symbolCounts, filledState.symbolCounts])
+
+  const { showConversation } = use(FezContext)
+  useEffect(() => {
+    if (Object.keys(inventory).length === 0) return
+    // if inventory - inventory usage is empty, and puzzle is not filled in, trigger conversation
+    const spentAllHieroGlyphs = Object.entries(calculation.symbolCounts).every(
+      ([symbolId, maxNeeded]) => {
+        const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+        const usedFromInventory = inventoryUsage[symbolId] || 0
+        const availableInInventory = inventory[symbolId] || 0
+        return (
+          availableInInventory - usedFromInventory <= 0 &&
+          usedInPuzzle < maxNeeded
+        )
+      }
+    )
+
+    if (!isPuzzleCompleted && spentAllHieroGlyphs) {
+      showConversation("notEnoughHieroglyphs")
+    }
+  }, [
+    calculation.symbolCounts,
+    filledState.symbolCounts,
+    inventory,
+    inventoryUsage,
+    isPuzzleCompleted,
+    showConversation,
+  ])
 
   const handleTileClick = (symbolId: string, position: string) => {
     setFilledState((prev) => {
@@ -189,7 +224,6 @@ export const TombPuzzle: FC<{
         if (Object.keys(itemsToRemove).length > 0) {
           removeItems(itemsToRemove)
         }
-        console.log("call OnComplete from handleLockSubmit")
         // Call completion handler
         onComplete?.()
         setIsProcessingCompletion(false)

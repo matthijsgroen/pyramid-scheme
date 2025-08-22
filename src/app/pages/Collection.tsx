@@ -209,7 +209,7 @@ const DetailPanel: FC<{
 export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
-  const { journeyLog } = useJourneys()
+  const { getJourney } = useJourneys()
   const { inventory, addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
 
@@ -229,7 +229,7 @@ export const CollectionPage: FC = () => {
     (value) => value !== undefined
   )
   const hasCompletedTomb = (tombId: string) =>
-    journeyLog.some((j) => j.journeyId === tombId && j.completed)
+    (getJourney(tombId)?.completionCount ?? 0) > 0
 
   return (
     <Page

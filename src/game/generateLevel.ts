@@ -99,14 +99,23 @@ const openBlocks = (
 const blockBlocks = (
   pyramidLevel: PyramidLevel,
   blockedCount: number,
+  restrictedBlockedFloors: number[],
   random = Math.random
 ): PyramidLevel => {
   if (blockedCount === 0) return pyramidLevel
+  const pyramid = pyramidLevel.pyramid
+  const floorStartIndices = createFloorStartIndices(pyramid.floorCount)
   const blockedIndices = new Set<number>()
-  while (blockedIndices.size < blockedCount) {
-    const index = Math.floor(random() * pyramidLevel.pyramid.blocks.length)
-    if (pyramidLevel.pyramid.blocks[index].isOpen) {
+  let iterationCount = 0
+  while (blockedIndices.size < blockedCount && iterationCount < 100) {
+    const index = Math.floor(random() * pyramid.blocks.length)
+    iterationCount++
+    if (pyramid.blocks[index].isOpen) {
       continue // Skip if the block is already open
+    }
+    const { floor } = getFloorAndIndex(index, floorStartIndices)
+    if (restrictedBlockedFloors.includes(pyramid.floorCount - 1 - floor)) {
+      continue
     }
     blockedIndices.add(index)
   }
@@ -149,6 +158,7 @@ export const generateLevel = (
         random
       ),
       blockedBlockCount,
+      settings.restrictedBlockedFloors || [],
       random
     )
 

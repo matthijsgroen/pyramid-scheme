@@ -1,6 +1,6 @@
-import { useJourneys, type JourneyState } from "@/app/state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
-import { useCallback, useMemo, useState, type FC } from "react"
+import { use, useCallback, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -9,9 +9,10 @@ import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 import { TombBackdrop } from "@/ui/TombBackdrop"
+import { FezContext } from "./fez/context"
 
 export const TombExpedition: FC<{
-  activeJourney: JourneyState
+  activeJourney: CombinedJourneyState
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
@@ -20,14 +21,18 @@ export const TombExpedition: FC<{
   const tableaux = useTableauTranslations()
 
   const journey = activeJourney.journey as TreasureTombJourney
-  const { journeyLog, completeLevel } = useJourneys()
-  const runNr =
-    journeyLog.filter((log) => log.journeyId === journey.id && log.completed)
-      .length + 1
+  const { completeLevel } = useJourneys()
+
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    showConversation("tombIntro")
+  }, [showConversation])
 
   const runTableaus = tableaux.filter(
     (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === runNr
+      tab.tombJourneyId === activeJourney.journeyId &&
+      tab.runNumber === activeJourney.completionCount + 1
   )
   const [completing, setCompleting] = useState(false)
 
@@ -94,7 +99,6 @@ export const TombExpedition: FC<{
           <ComparePuzzle
             activeJourney={activeJourney}
             onComplete={onJourneyComplete}
-            runNumber={runNr}
           />
         </div>
       </TombBackdrop>

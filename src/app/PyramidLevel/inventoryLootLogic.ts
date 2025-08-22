@@ -1,7 +1,4 @@
-import {
-  journeySeedGenerator,
-  type JourneyState,
-} from "@/app/state/useJourneys"
+import { type CombinedJourneyState } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { tableauLevels } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
@@ -22,20 +19,15 @@ export type InventoryLootResult = {
  * This focuses on items needed for the next available runs of each treasure tomb.
  */
 export const determineInventoryLootForCurrentRuns = (
-  pyramidExpedition: JourneyState,
-  journeyLog: Array<{ journeyId: string; completed: boolean; levelNr: number }>,
+  pyramidExpedition: CombinedJourneyState,
+  maxDifficulty: Difficulty,
   playerInventory: Record<string, number>,
+  getJourney: (journeyId: string) => CombinedJourneyState | undefined,
+  journeySeedGenerator: (journeyId: string) => number,
   baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
   maxItemsToAward: number = 1
 ): InventoryLootResult => {
   const currentDifficulty = pyramidExpedition.journey.difficulty
-  const maxDifficulty = journeyLog.reduce<Difficulty>((difficulty, item) => {
-    const j = journeys.find((j) => j.id === item.journeyId)
-    if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
-      return j.difficulty
-    }
-    return difficulty
-  }, "starter")
 
   const tombIds = journeys
     .filter(
@@ -58,12 +50,10 @@ export const determineInventoryLootForCurrentRuns = (
       (j): j is TreasureTombJourney =>
         j.id === tombId && j.type === "treasure_tomb"
     )
+    const tombState = getJourney(tombId)
     // get current run for tomb
-    const currentRun =
-      journeyLog.filter((j) => j.journeyId === tombId && j.completed).length + 1
-    const currentLevel =
-      journeyLog.find((j) => j.journeyId === tombId && !j.completed)?.levelNr ??
-      1
+    const currentRun = (tombState?.completionCount ?? 0) + 1
+    const currentLevel = tombState?.levelNr ?? 1
 
     const tableau = tableauLevels.find(
       (t) =>
@@ -99,7 +89,7 @@ export const determineInventoryLootForCurrentRuns = (
       }
     })
 
-    const seed = journeySeedGenerator(journeyLog)(tombId)
+    const seed = journeySeedGenerator(tombId)
     const tableauRandom = mulberry32(generateNewSeed(seed, currentLevel))
     const settings = {
       amountSymbols: tableau.symbolCount,
