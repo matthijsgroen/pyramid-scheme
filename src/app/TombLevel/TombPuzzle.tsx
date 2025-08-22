@@ -189,7 +189,6 @@ export const TombPuzzle: FC<{
         if (Object.keys(itemsToRemove).length > 0) {
           removeItems(itemsToRemove)
         }
-        console.log("call OnComplete from handleLockSubmit")
         // Call completion handler
         onComplete?.()
         setIsProcessingCompletion(false)
