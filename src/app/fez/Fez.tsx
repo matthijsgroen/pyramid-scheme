@@ -75,19 +75,17 @@ export const Fez: FC<{
   useEffect(() => {
     if (!showMessage && visible) {
       const timer = setTimeout(() => {
-        setMessageIndex((p) => {
-          if (p >= messages.length) {
-            setVisible(false)
-            return p // No more messages, just return current index
-          }
-          setShowMessage(true)
-          return p + 1
-        })
+        if (messageIndex >= messages.length) {
+          setVisible(false)
+          return
+        }
+        setShowMessage(true)
+        setMessageIndex(messageIndex + 1)
         // next message? show
       }, 400) // Reset message index after 400 milliseconds
       return () => clearTimeout(timer)
     }
-  }, [messages.length, onComplete, showMessage, visible])
+  }, [messages.length, onComplete, showMessage, visible, messageIndex])
 
   const onNextMessage = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()

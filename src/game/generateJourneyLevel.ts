@@ -1,4 +1,4 @@
-import { journeys, type PyramidJourney } from "@/data/journeys"
+import { type PyramidJourney } from "@/data/journeys"
 import { generateLevel } from "@/game/generateLevel"
 import type { PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
@@ -6,27 +6,6 @@ export type Item = {
   type: "hieroglyph" | "tablet" | "coins"
   id: string
   quantity: number
-}
-
-export type ActiveJourney = {
-  journeyId: (typeof journeys)[number]["id"]
-  randomSeed: number
-  levelNr: number
-  completed: boolean
-  foundMapPiece?: boolean
-  canceled?: boolean
-}
-
-export const startJourney = (
-  journeyId: string,
-  randomSeed: number
-): ActiveJourney => {
-  return {
-    journeyId,
-    randomSeed,
-    levelNr: 1,
-    completed: false,
-  }
 }
 
 const scaleIntRange = (
