@@ -369,20 +369,10 @@ export const createJourneysV2Api = ({
   const startJourney = (journey: Journey) => {
     const journeyInfo = getJourney(journey.id)
 
-    const seed = nextJourneySeed(journey.id)
-
     if (journeyInfo && journeyInfo.inProgress && !journeyInfo.active) {
       setJourneys((prev) =>
         prev.map((j) =>
-          j.journeyId === journey.id
-            ? {
-                ...j,
-                active: true,
-                inProgress: true,
-                levelNr: 1,
-                randomSeed: seed,
-              }
-            : j
+          j.journeyId === journey.id ? { ...j, active: true } : j
         )
       )
       return

@@ -9,7 +9,8 @@ import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { formulaPartToString } from "@/game/formulas"
 import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
-import type { FC, ReactNode } from "react"
+import { use, useEffect, type FC, type ReactNode } from "react"
+import { FezContext } from "../fez/context"
 
 const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
 
@@ -58,6 +59,14 @@ export const ComparePuzzle: FC<{
     onComplete,
   })
   const loot = getTreasureItem(lootId)
+
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    if (showLoot) {
+      showConversation("tombLoot")
+    }
+  }, [showConversation, showLoot])
 
   return (
     <div
