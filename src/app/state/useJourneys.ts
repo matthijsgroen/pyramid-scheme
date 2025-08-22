@@ -286,6 +286,7 @@ export const createJourneysV2Api = ({
               active: false,
               completionCount: j.completionCount + 1,
               inProgress: false,
+              levelNr: 1,
             } satisfies StoredJourneyStateV2)
           : j
       )
@@ -304,16 +305,12 @@ export const createJourneysV2Api = ({
 
   const completeLevel = () => {
     if (!activeJourneyId) return
-    const journeyInfo = journeyData.find((j) => j.id === activeJourneyId)
     setJourneys((prev) =>
       prev.map((j) =>
         j.journeyId === activeJourneyId
           ? {
               ...j,
               levelNr: j.levelNr + 1,
-              progressPercentage: journeyInfo?.levelCount
-                ? Math.min(j.levelNr / journeyInfo.levelCount, 1)
-                : 1,
             }
           : j
       )
@@ -382,7 +379,7 @@ export const createJourneysV2Api = ({
                 ...j,
                 active: true,
                 inProgress: true,
-                progressPercentage: 0,
+                levelNr: 1,
                 randomSeed: seed,
               }
             : j
@@ -393,15 +390,15 @@ export const createJourneysV2Api = ({
     const activeJourney: StoredJourneyStateV2 = {
       journeyId: journey.id,
       levelNr: 1,
-      completionCount: 0,
-      foundMapPiece: false,
+      completionCount: journeyInfo?.completionCount ?? 0,
+      foundMapPiece: journeyInfo?.foundMapPiece ?? false,
 
       inProgress: true,
       active: true,
     }
 
     setJourneys((prev) => {
-      return [...prev, activeJourney]
+      return [...prev.filter((j) => j.journeyId !== journey.id), activeJourney]
     })
   }
 

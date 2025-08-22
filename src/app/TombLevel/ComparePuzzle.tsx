@@ -68,7 +68,7 @@ export const ComparePuzzle: FC<{
       )}
     >
       <div className="absolute top-0">
-        {focus === 0 && (
+        {focus === 0 && hasComparison && (
           <h3 className="mx-8 mt-4 text-center text-lg font-bold text-amber-200">
             {t("tomb.crocodilePuzzlePrompt")}
           </h3>
@@ -139,12 +139,14 @@ export const ComparePuzzle: FC<{
             </div>
           </div>
         ) : (
-          <Chest
-            state={lockState}
-            variant="muted"
-            onClick={handleChestOpen}
-            allowInteraction={!isProcessingCompletion && lockState !== "open"}
-          />
+          <div className="flex flex-col items-center gap-6">
+            <Chest
+              state={lockState}
+              variant="muted"
+              onClick={handleChestOpen}
+              allowInteraction={!isProcessingCompletion && lockState !== "open"}
+            />
+          </div>
         )}
       </div>
       {levelData.comparisons

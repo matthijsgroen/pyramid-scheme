@@ -4,15 +4,24 @@
   "welcome2": "Explore the wonders of ancient Egypt and uncover its secrets.",
   "welcome3": "Let's start planning an expedition by clicking on the map!",
   "chooseExpedition": "Here you can choose your expedition. Let's start with a short journey.",
+
   "pyramidIntro": "In our expedition we will explore pyramids.",
   "pyramidIntro2": "In these pyramids, numbers are missing.",
   "pyramidIntro3": "Fill in the missing numbers to solve the puzzle.",
   "pyramidIntro4": "Each number is the sum of the two numbers below it.",
   "pyramidIntro5": "Good luck!",
+
   "levelCompleted": "Well done!",
   "expeditionCompleted": "Congratulations on completing the expedition!",
   "expeditionCompleted2": "A new expedition is now available.",
   "collectionIntro": "During our expeditions we found some items!",
   "collectionIntro2": "You can inspect them in your Collection screen.",
-  "collectionIntro3": "Swipe/scroll the screen to the right to see your collection."
+  "collectionIntro3": "Swipe/scroll the screen to the right to see your collection.",
+
+  "tombIntro": "This is an indoor expedition, where we will explore ancient tombs.",
+  "tombIntro2": "Completing a tomb like this will reward you with unique treasures.",
+  "tombIntro3": "Let's see if we can solve the puzzles inside.",
+
+  "notEnoughHieroglyphs": "You can always stop this expedition by returning to the travel screen.",
+  "notEnoughHieroglyphs2": "We can choose to interrupt the expedition to search for extra hieroglyphs elsewhere."
 }

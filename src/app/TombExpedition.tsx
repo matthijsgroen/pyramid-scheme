@@ -1,6 +1,6 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import clsx from "clsx"
-import { useCallback, useMemo, useState, type FC } from "react"
+import { use, useCallback, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -9,6 +9,7 @@ import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 import { TombBackdrop } from "@/ui/TombBackdrop"
+import { FezContext } from "./fez/context"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState
@@ -21,6 +22,12 @@ export const TombExpedition: FC<{
 
   const journey = activeJourney.journey as TreasureTombJourney
   const { completeLevel } = useJourneys()
+
+  const { showConversation } = use(FezContext)
+
+  useEffect(() => {
+    showConversation("tombIntro")
+  }, [showConversation])
 
   const runTableaus = tableaux.filter(
     (tab) =>
