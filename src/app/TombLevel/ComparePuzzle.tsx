@@ -12,7 +12,7 @@ import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
 import { use, useEffect, type FC, type ReactNode } from "react"
 import { FezContext } from "../fez/context"
 
-const scaleDistance = (initialStep: numer, n: number) =>
+const scaleDistance = (initialStep: number, n: number) =>
   initialStep * (1 - Math.pow(0.5, n))
 
 const handleInlineMarkup = (text: string): ReactNode => {
