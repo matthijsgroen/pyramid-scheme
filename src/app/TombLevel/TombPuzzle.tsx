@@ -246,7 +246,7 @@ export const TombPuzzle: FC<{
   }
 
   return (
-    <div className="flex flex-1 flex-row">
+    <div className="flex flex-1 flex-row overflow-y-auto">
       <div className="flex flex-1">{/** left side */}</div>
       <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
         <div className="flex flex-1">{/** top side */}</div>

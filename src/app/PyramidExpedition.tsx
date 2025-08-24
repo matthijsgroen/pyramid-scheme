@@ -184,11 +184,11 @@ export const PyramidExpedition: FC<{
           >
             <button
               onClick={onClose}
-              className="cursor-pointer text-lg font-bold focus:outline-none"
+              className="mr-3 cursor-pointer text-lg font-bold focus:outline-none"
             >
               {t("ui.backArrow")}
             </button>
-            <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">
+            <h1 className="pointer-events-none mt-0 inline-block pt-4 text-center font-pyramid text-2xl font-bold">
               {expeditionCompleted
                 ? t("ui.expeditionCompleted")
                 : t("ui.expedition") +
