@@ -12,7 +12,8 @@ import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
 import { use, useEffect, type FC, type ReactNode } from "react"
 import { FezContext } from "../fez/context"
 
-const scaleDistance = (n: number) => 64 * (1 - Math.pow(0.5, n))
+const scaleDistance = (initialStep: number, n: number) =>
+  initialStep * (1 - Math.pow(0.5, n))
 
 const handleInlineMarkup = (text: string): ReactNode => {
   const parts = text.split(/(_[^_]+_)/g)
@@ -84,10 +85,11 @@ export const ComparePuzzle: FC<{
         )}
       </div>
       <div
-        className="absolute scale-100 transition-transform duration-400"
+        className="absolute translate-y-0 scale-100 transition-transform duration-400"
         style={{
           "--tw-scale-x": `${Math.max(100 + (levelData.comparisons.length - focus) * -20, 0)}%`,
           "--tw-scale-y": `${Math.max(100 + (levelData.comparisons.length - focus) * -20, 0)}%`,
+          "--tw-translate-y": `calc(1vh * ${-scaleDistance(8, levelData.comparisons.length - focus)})`,
         }}
       >
         <h3
@@ -175,7 +177,7 @@ export const ComparePuzzle: FC<{
                 index - focus < 0 && "blur-xs"
               )}
               style={{
-                "--tw-translate-y": `calc(var(--spacing) * ${-scaleDistance(distanceFocus)})`,
+                "--tw-translate-y": `calc(1vh * ${-scaleDistance(18, distanceFocus)})`,
                 "--tw-scale-x": `${Math.max(Math.min(100 + distanceFocus * -20, 120), 0)}%`,
                 "--tw-scale-y": `${Math.max(Math.min(100 + distanceFocus * -20, 120), 0)}%`,
               }}

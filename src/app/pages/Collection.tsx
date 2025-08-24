@@ -13,6 +13,7 @@ import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { DifficultyPill } from "@/ui/DifficultyPill"
+import { Badge } from "@/ui/Badge"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -82,20 +83,14 @@ const CategorySection: FC<{
           }
 
           return (
-            <div key={item.id} className="relative w-fit">
+            <Badge key={item.id} count={inventory[item.id] || 0}>
               <HieroglyphTile
                 symbol={item.symbol}
                 difficulty={itemLevel}
                 selected={isSelected}
                 onClick={() => onItemClick(item)}
               />
-              {/* Inventory count badge */}
-              {inventory[item.id] && inventory[item.id]! > 0 ? (
-                <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-sm">
-                  {inventory[item.id]}
-                </div>
-              ) : null}
-            </div>
+            </Badge>
           )
         })}
       </div>

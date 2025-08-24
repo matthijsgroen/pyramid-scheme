@@ -15,7 +15,7 @@ export const TombDoor: FC<
     >
       <div
         className={clsx(
-          "relative flex h-full w-full origin-left flex-col items-center justify-start bg-yellow-800 transition-transform duration-2000 ease-in-out   transform-3d",
+          "relative flex h-full w-full origin-left flex-col items-center justify-start bg-yellow-800 pb-4 transition-transform duration-2000 ease-in-out transform-3d",
           open && "rotate-y-90"
         )}
         style={{

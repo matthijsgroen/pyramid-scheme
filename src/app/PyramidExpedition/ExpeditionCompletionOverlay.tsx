@@ -10,6 +10,7 @@ import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { FezContext } from "../fez/context"
+import { Badge } from "@/ui/Badge"
 
 export const ExpeditionCompletionOverlay: FC<{
   onJourneyComplete?: () => void
@@ -69,28 +70,32 @@ export const ExpeditionCompletionOverlay: FC<{
               {t("loot.expeditionReward")}:
             </h3>
             <div className="mt-2 flex flex-row flex-wrap justify-center gap-4">
-              {lootResult.itemIds.map((itemId, index) => {
-                const translatedItem = getTranslatedItem(itemId)
-                const itemDifficulty = getItemFirstLevel(itemId)
-                if (!translatedItem) {
-                  return null
-                }
-                return (
-                  <div
-                    key={itemId + index}
-                    className="flex flex-col items-center gap-2"
-                  >
-                    <HieroglyphTile
-                      symbol={translatedItem.symbol}
-                      difficulty={itemDifficulty}
-                      size="md"
-                    />
-                    <div className="text-center text-xs text-amber-700">
-                      {translatedItem.name}
+              {Object.entries(lootResult.itemsWithCounts || {}).map(
+                ([itemId, count], index) => {
+                  const translatedItem = getTranslatedItem(itemId)
+                  const itemDifficulty = getItemFirstLevel(itemId)
+                  if (!translatedItem) {
+                    return null
+                  }
+                  return (
+                    <div
+                      key={itemId + index}
+                      className="flex flex-col items-center gap-2"
+                    >
+                      <Badge count={count}>
+                        <HieroglyphTile
+                          symbol={translatedItem.symbol}
+                          difficulty={itemDifficulty}
+                          size="md"
+                        />
+                      </Badge>
+                      <div className="text-center text-xs text-amber-700">
+                        {translatedItem.name}
+                      </div>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                }
+              )}
             </div>
           </>
         )}

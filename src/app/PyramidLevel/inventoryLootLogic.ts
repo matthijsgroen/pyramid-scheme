@@ -12,6 +12,7 @@ export type InventoryLootResult = {
   baseChance: number
   adjustedChance: number
   needMultiplier: number
+  itemsWithCounts?: Record<string, number>
 }
 
 /**
@@ -25,7 +26,8 @@ export const determineInventoryLootForCurrentRuns = (
   getJourney: (journeyId: string) => CombinedJourneyState | undefined,
   journeySeedGenerator: (journeyId: string) => number,
   baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
-  maxItemsToAward: number = 1
+  maxItemsToAward: number = 1,
+  maxPerItem: number = 3 // NEW: configurable max per item
 ): InventoryLootResult => {
   const currentDifficulty = pyramidExpedition.journey.difficulty
 
@@ -155,7 +157,7 @@ export const determineInventoryLootForCurrentRuns = (
     const filteredInterestingItems = itemsInteresting.filter((itemId) => {
       const itemDifficulty = getItemFirstLevel(itemId)
       const currentInventory = playerInventory[itemId] || 0
-      if (currentInventory > 5) return false // Skip if player has too many)
+      if (currentInventory > 5) return false // Skip if player has too many
       return difficultyCompare(itemDifficulty, currentDifficulty) === 0
     })
 
@@ -166,6 +168,7 @@ export const determineInventoryLootForCurrentRuns = (
         baseChance: baseInventoryChance,
         adjustedChance: 0,
         needMultiplier: 0,
+        itemsWithCounts: {},
       }
     }
 
@@ -173,12 +176,31 @@ export const determineInventoryLootForCurrentRuns = (
     const shuffledInteresting = shuffle(filteredInterestingItems, random)
     const fallbackItems = shuffledInteresting.slice(0, maxItemsToAward)
 
+    // Award up to maxPerItem for each interesting item
     selectedItems = fallbackItems.map((itemId) => ({
       itemId,
-      needed: 1, // Default to 1 for interesting items
-      urgencyScore: 1, // Low urgency for fallback items
-      deficit: 1,
+      needed: maxPerItem,
+      urgencyScore: 1,
+      deficit: maxPerItem,
     }))
+  }
+
+  // Calculate how many of each item to award (up to deficit, but cap at maxPerItem)
+  // Ensure that the total awarded items does not exceed maxItemsToAward
+  const itemsToAward: Record<string, number> = {}
+  let itemsLeft = maxItemsToAward
+
+  for (const item of selectedItems) {
+    if (itemsLeft <= 0) break
+    const count = Math.min(
+      item.deficit || item.needed || 1,
+      maxPerItem,
+      itemsLeft
+    )
+    if (count > 0) {
+      itemsToAward[item.itemId] = count
+      itemsLeft -= count
+    }
   }
 
   // Calculate overall urgency from all selected items
@@ -186,7 +208,7 @@ export const determineInventoryLootForCurrentRuns = (
     (sum, item) => sum + item.urgencyScore,
     0
   )
-  const avgUrgency = totalUrgency / selectedItems.length
+  const avgUrgency = totalUrgency / (selectedItems.length || 1)
 
   // Calculate adjusted chance based on average urgency
   const needMultiplier = Math.max(Math.min(3, avgUrgency / 5), 1) // Cap at 3x multiplier
@@ -200,9 +222,14 @@ export const determineInventoryLootForCurrentRuns = (
 
   return {
     shouldAwardInventoryItem: shouldAward,
-    itemIds: shouldAward ? selectedItems.map((item) => item.itemId) : [],
+    itemIds: shouldAward
+      ? Object.entries(itemsToAward).flatMap(([itemId, count]) =>
+          Array(count).fill(itemId)
+        )
+      : [],
     baseChance: baseInventoryChance,
     adjustedChance,
     needMultiplier,
+    itemsWithCounts: shouldAward ? itemsToAward : {},
   }
 }

@@ -416,7 +416,7 @@ export const egyptianArtifacts = [
   },
 ]
 
-const allItems = [
+export const allItems = [
   ...egyptianDeities,
   ...egyptianProfessions,
   ...egyptianAnimals,

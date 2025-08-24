@@ -144,7 +144,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.25,
       },
       completed: {
-        pieces: [2, 3],
+        pieces: [2, 2],
       },
     },
   },
@@ -169,7 +169,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [2, 3],
+        pieces: [2, 2],
       },
     },
   },
@@ -243,7 +243,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.15,
       },
       completed: {
-        pieces: [3, 4],
+        pieces: [3, 3],
       },
     },
   },
@@ -269,7 +269,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.15,
       },
       completed: {
-        pieces: [3, 5],
+        pieces: [3, 4],
       },
     },
   },
@@ -295,7 +295,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.18,
       },
       completed: {
-        pieces: [3, 5],
+        pieces: [3, 3],
       },
     },
   },
@@ -343,7 +343,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.25,
       },
       completed: {
-        pieces: [4, 6],
+        pieces: [3, 4],
       },
     },
   },
@@ -372,7 +372,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.15,
       },
       completed: {
-        pieces: [4, 7],
+        pieces: [4, 4],
       },
     },
   },
@@ -401,7 +401,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.1,
       },
       completed: {
-        pieces: [5, 8],
+        pieces: [4, 5],
       },
     },
   },
@@ -428,7 +428,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [5, 8],
+        pieces: [4, 4],
       },
     },
   },
@@ -475,7 +475,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.25,
       },
       completed: {
-        pieces: [6, 9],
+        pieces: [4, 5],
       },
     },
   },
@@ -486,9 +486,10 @@ export const journeys: Journey[] = [
     description:
       "Unravel the mysteries of the afterlife by collecting and deciphering the sacred texts that guide souls through the underworld.",
     difficulty: "master",
-    journeyLength: "medium",
-    levelCount: 6,
-    time: "afternoon",
+    journeyLength: "long",
+    levelCount: 9,
+    time: "evening",
+    timeStepSize: 1,
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 6,
@@ -502,7 +503,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.15,
       },
       completed: {
-        pieces: [7, 11],
+        pieces: [5, 6],
       },
     },
   },
@@ -515,7 +516,7 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "long",
     levelCount: 8,
-    time: "evening",
+    time: "night",
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 7,
@@ -529,7 +530,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [8, 12],
+        pieces: [5, 6],
       },
     },
   },
@@ -543,6 +544,7 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 5,
     time: "night",
+    timeStepSize: 1,
     levelSettings: {
       startFloorCount: 7,
       endFloorCount: 7,
@@ -556,7 +558,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.18,
       },
       completed: {
-        pieces: [7, 11],
+        pieces: [5, 5],
       },
     },
   },
@@ -606,7 +608,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.2,
       },
       completed: {
-        pieces: [10, 15],
+        pieces: [5, 6],
       },
     },
   },
@@ -636,7 +638,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [12, 18],
+        pieces: [6, 6],
       },
     },
   },
@@ -664,7 +666,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.1,
       },
       completed: {
-        pieces: [15, 22],
+        pieces: [6, 7],
       },
     },
   },
@@ -693,7 +695,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [18, 25],
+        pieces: [6, 7],
       },
     },
   },
