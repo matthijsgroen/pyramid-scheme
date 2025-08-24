@@ -486,9 +486,10 @@ export const journeys: Journey[] = [
     description:
       "Unravel the mysteries of the afterlife by collecting and deciphering the sacred texts that guide souls through the underworld.",
     difficulty: "master",
-    journeyLength: "medium",
-    levelCount: 6,
-    time: "afternoon",
+    journeyLength: "long",
+    levelCount: 9,
+    time: "evening",
+    timeStepSize: 1,
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 6,
@@ -515,7 +516,7 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "long",
     levelCount: 8,
-    time: "evening",
+    time: "night",
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 7,
@@ -543,6 +544,7 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 5,
     time: "night",
+    timeStepSize: 1,
     levelSettings: {
       startFloorCount: 7,
       endFloorCount: 7,
