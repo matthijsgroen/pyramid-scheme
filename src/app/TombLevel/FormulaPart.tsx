@@ -45,7 +45,7 @@ type FormulaPartProps = {
   difficulty: Difficulty
   symbolMapping: Record<number, string>
   filledState: FilledTileState
-  onTileClick: (symbolId: string, position: string) => void
+  onTileClick?: (symbolId: string, position: string) => void
   positionPrefix: string
   parentPrecedence?: number
 }
@@ -53,10 +53,10 @@ type FormulaPartProps = {
 const renderTile = (
   symbolMapping: Record<number, string>,
   filledState: FilledTileState,
-  onTileClick: (symbolId: string, position: string) => void,
   difficulty: Difficulty,
   operand: number,
-  position: string
+  position: string,
+  onTileClick?: (symbolId: string, position: string) => void
 ) => {
   const symbolId = symbolMapping[operand]
   const isFilled = filledState.filledPositions[position] > 0
@@ -70,7 +70,7 @@ const renderTile = (
       difficulty={itemDifficulty}
       size="sm"
       className="inline-block cursor-pointer align-middle"
-      onClick={() => onTileClick(symbolId, position)}
+      onClick={() => onTileClick?.(symbolId, position)}
     />
   )
 }
@@ -96,10 +96,10 @@ const renderOperand = (
     return renderTile(
       symbolMapping,
       filledState,
-      onTileClick,
       difficulty,
       operand,
-      position
+      position,
+      onTileClick
     )
   }
 
@@ -117,6 +117,13 @@ const renderOperand = (
   return needsSubtractionParens ? <span>({content})</span> : content
 }
 
+const operationMap = {
+  "+": "+",
+  "-": "-",
+  "*": "⨉",
+  "/": "÷",
+}
+
 export const FormulaPart: FC<FormulaPartProps> = (props) => {
   const { formula, parentPrecedence = 0 } = props
 
@@ -126,7 +133,7 @@ export const FormulaPart: FC<FormulaPartProps> = (props) => {
   const formulaContent = (
     <>
       {renderOperand(formula.left, "left", props, currentPrecedence)}
-      <span> {formula.operation} </span>
+      <span> {operationMap[formula.operation]} </span>
       {renderOperand(formula.right, "right", props, currentPrecedence)}
     </>
   )

@@ -30,7 +30,7 @@ export const TombTableau: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
   filledState: FilledTileState
-  onTileClick: (symbolId: string, position: string) => void
+  onTileClick?: (symbolId: string, position: string) => void
 }> = ({ difficulty, tableau, calculation, filledState, onTileClick }) => {
   // Calculate solved percentage based on filled tiles
   const solvedPercentage = useMemo(() => {

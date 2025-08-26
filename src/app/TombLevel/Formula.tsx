@@ -10,7 +10,7 @@ export const Formula: FC<{
   difficulty: Difficulty
   symbolMapping: Record<number, string>
   filledState: FilledTileState
-  onTileClick: (symbolId: string, position: string) => void
+  onTileClick?: (symbolId: string, position: string) => void
   formulaIndex: number
 }> = ({
   formula,
