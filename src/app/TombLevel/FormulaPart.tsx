@@ -104,7 +104,7 @@ const renderOperand = (
   }
 
   // For subtraction, wrap complex operands in parentheses
-  const needsSubtractionParens = formula.operation === "-"
+  const needsSubtractionParens = formula.operation === "-" && side === "left"
   const content = (
     <FormulaPart
       {...props}

@@ -142,7 +142,7 @@ export const formulaPartToString = (
 
   const result =
     formula.operation === "-"
-      ? `${typeof formula.left === "number" ? leftStr : "(" + leftStr + ")"} ${formula.operation} ${
+      ? `${leftStr} ${formula.operation} ${
           typeof formula.right === "number" ? rightStr : "(" + rightStr + ")"
         }`
       : `${leftStr} ${formula.operation} ${rightStr}`
