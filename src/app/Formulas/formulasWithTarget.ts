@@ -195,23 +195,44 @@ const buildFormulaForTargetAllowReuse = (
     for (let i = 0; i < pool.length; i++) {
       for (let j = 0; j < pool.length; j++) {
         if (i === j) continue
+        // Symmetry pruning for commutative operations: skip (b, a) if (a, b) already considered
+        if (j < i) continue
         const a = pool[i]
         const b = pool[j]
         const rest = pool.filter((_, idx) => idx !== i && idx !== j)
         for (const op of allowedOps) {
           let result: number | undefined
+          // Operation feasibility checks
           switch (op) {
             case "+":
+              // For addition, skip if a + b is much larger than target (unless target is negative)
+              if (target >= 0 && a + b > target * 2) continue
               result = a + b
               break
             case "*":
+              // For multiplication, skip if a or b is 0 (unless target is 0), or if target is not divisible by a or b
+              if ((a === 0 || b === 0) && target !== 0) continue
+              if (
+                a !== 0 &&
+                b !== 0 &&
+                target !== 0 &&
+                target % a !== 0 &&
+                target % b !== 0
+              )
+                continue
               result = a * b
               break
             case "-":
+              // For subtraction, skip if result is far from target
+              if (Math.abs(a - b) > Math.abs(target) * 2) continue
               result = a - b
               break
             case "/":
-              if (b !== 0 && Number.isInteger(a / b)) result = a / b
+              // For division, skip if b is 0, or a / b is not integer, or target is not divisible by b
+              if (b === 0) continue
+              if (!Number.isInteger(a / b)) continue
+              if (target !== 0 && a % b !== 0 && target % b !== 0) continue
+              result = a / b
               break
           }
           if (result === target) {
