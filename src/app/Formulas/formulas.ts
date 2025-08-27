@@ -18,10 +18,13 @@ const getNumberValue = (
 }
 
 export const createFormula = (
-  pickedNumbers: number[],
-  operations: Operation[],
+  settings: {
+    pickedNumbers: number[]
+    operations: Operation[]
+  },
   random: () => number
 ): Formula => {
+  const { pickedNumbers, operations } = settings
   // Base case: if only one number left, return it as a formula node
   if (pickedNumbers.length === 2) {
     const operation = operations[Math.floor(random() * operations.length)]
@@ -43,11 +46,17 @@ export const createFormula = (
   const leftFormula =
     leftNumbers.length === 1
       ? { symbol: leftNumbers[0] }
-      : createVerifiedFormula(leftNumbers, operations, random)
+      : createVerifiedFormula(
+          { pickedNumbers: leftNumbers, operations },
+          random
+        )
   const rightFormula =
     rightNumbers.length === 1
       ? { symbol: rightNumbers[0] }
-      : createVerifiedFormula(rightNumbers, operations, random)
+      : createVerifiedFormula(
+          { pickedNumbers: rightNumbers, operations },
+          random
+        )
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]
@@ -85,11 +94,13 @@ const evaluateFormula = (
 }
 
 export const createVerifiedFormula = (
-  pickedNumbers: number[],
-  operations: Operation[],
+  settings: {
+    pickedNumbers: number[]
+    operations: Operation[]
+  },
   random: () => number = Math.random
 ): Formula => {
-  let formula = createFormula(pickedNumbers, operations, random)
+  let formula = createFormula(settings, random)
   // Ensure the result is positive and greater than 0
   let iteration = 0
 
@@ -107,10 +118,10 @@ export const createVerifiedFormula = (
   ) {
     iteration++
     if (iteration > 100) {
-      console.log("formula", formula, pickedNumbers)
+      console.log("formula", formula, settings)
       throw new Error("could not create verified formula")
     }
-    formula = createFormula(pickedNumbers, operations, random)
+    formula = createFormula(settings, random)
   }
   return formula
 }

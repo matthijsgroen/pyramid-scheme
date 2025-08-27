@@ -65,8 +65,7 @@ export const generateRewardCalculation = (
     random
   )
   const mainFormula = createSmallestVerifiedFormula(
-    mainFormulaNumbers,
-    settings.operations,
+    { pickedNumbers: mainFormulaNumbers, operations: settings.operations },
     undefined, // no main formula yet
     random
   )
@@ -104,8 +103,10 @@ export const generateRewardCalculation = (
       )
 
       const hintFormula = createSmallestVerifiedFormula(
-        calcNumbers,
-        operators,
+        {
+          pickedNumbers: calcNumbers,
+          operations: operators,
+        },
         mainFormula,
         random
       )
@@ -161,16 +162,15 @@ const generateCalculationNumbers = (
   )
 
 const createSmallestVerifiedFormula = (
-  pickedNumbers: number[],
-  operations: Operation[],
+  settings: { pickedNumbers: number[]; operations: Operation[] },
   mainFormula?: Formula,
   random: () => number = Math.random
 ): Formula =>
   [
-    createVerifiedFormula(pickedNumbers, operations, random),
-    createVerifiedFormula(pickedNumbers, operations, random),
-    createVerifiedFormula(pickedNumbers, operations, random),
-    createVerifiedFormula(pickedNumbers, operations, random),
+    createVerifiedFormula(settings, random),
+    createVerifiedFormula(settings, random),
+    createVerifiedFormula(settings, random),
+    createVerifiedFormula(settings, random),
   ]
     .filter((formula) =>
       mainFormula

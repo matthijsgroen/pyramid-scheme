@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { formulaToString, type Formula } from "./formulas"
+import { createFormula, formulaToString, type Formula } from "./formulas"
+import { mulberry32 } from "@/game/random"
 
 describe(formulaToString, () => {
   it("convert a formula to a string numbers only", () => {
@@ -22,5 +23,21 @@ describe(formulaToString, () => {
     }
     const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
     expect(result).toBe("A + B = C")
+  })
+})
+
+describe(createFormula, () => {
+  it("only adds single number at most", () => {
+    const random = mulberry32(123123132124)
+    const formula = createFormula(
+      { pickedNumbers: [1, 2], operations: ["+"] },
+      random
+    )
+    expect(formula).toEqual({
+      left: { symbol: 1 },
+      right: { symbol: 2 },
+      operation: "+",
+      result: 3,
+    })
   })
 })

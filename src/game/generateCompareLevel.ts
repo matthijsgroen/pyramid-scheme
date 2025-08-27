@@ -40,7 +40,10 @@ const generateFormula = (
           random() * (settings.numberRange[1] - settings.numberRange[0] + 1)
         )
     )
-  return createVerifiedFormula(numbers, settings.operators, random)
+  return createVerifiedFormula(
+    { pickedNumbers: numbers, operations: settings.operators },
+    random
+  )
 }
 
 const createCompare = (
