@@ -8,6 +8,7 @@ import clsx from "clsx"
 import { mulberry32 } from "@/game/random"
 import { hieroglyphs } from "@/data/hieroglyphs"
 import { createFloorStartIndices } from "./support"
+import type { DayNightCycleStep } from "@/ui/backdropSelection"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 
@@ -19,13 +20,37 @@ const getPosition = (
   ] as "left" | "left-mirror" | "right" | "right-mirror"
 }
 
+const dayTimeBlockColors: Record<DayNightCycleStep, string> = {
+  night: "border-blue-600 bg-blue-200 text-blue-900",
+  morning: "border-orange-600 bg-orange-200 text-orange-900",
+  afternoon: "border-yellow-600 bg-yellow-200 text-yellow-900",
+  evening: "border-orange-600 bg-orange-200 text-orange-900",
+}
+
+const dayTimeHieroglyphColors: Record<DayNightCycleStep, string> = {
+  night: "text-blue-600",
+  morning: "text-orange-600",
+  afternoon: "text-yellow-600",
+  evening: "text-orange-600",
+}
+
 export const PyramidDisplay: FC<{
   levelNr: number
   pyramid: Pyramid
   decorationOffset?: number
   values: Record<string, number | undefined>
+  completed?: boolean
+  dayTime?: DayNightCycleStep
   onAnswer?: (blockId: string, value: number | undefined) => void
-}> = ({ pyramid, values, onAnswer, levelNr, decorationOffset = 0 }) => {
+}> = ({
+  pyramid,
+  values,
+  completed = false,
+  onAnswer,
+  levelNr,
+  decorationOffset = 0,
+  dayTime = "afternoon",
+}) => {
   const { blocks } = pyramid
 
   // Render the pyramid blocks
@@ -68,7 +93,9 @@ export const PyramidDisplay: FC<{
                 <InputBlock
                   key={block.id}
                   value={values[block.id]}
-                  selected={selectedBlockIndex === startIndex + index}
+                  selected={
+                    selectedBlockIndex === startIndex + index && !completed
+                  }
                   disabled={complete && isCorrect}
                   shouldFocus={
                     selectedBlockIndex === startIndex + index && focusInput
@@ -84,12 +111,20 @@ export const PyramidDisplay: FC<{
                 <Block
                   key={block.id}
                   selected={selectedBlockIndex === startIndex + index}
-                  className="border-yellow-600 bg-yellow-200 text-yellow-900"
+                  className={clsx(
+                    dayTimeBlockColors[dayTime],
+                    "transition-colors duration-1000"
+                  )}
                 >
                   {block.value !== undefined ? (
                     block.value
                   ) : (
-                    <span className="text-xl text-yellow-600">
+                    <span
+                      className={clsx(
+                        "text-xl",
+                        dayTimeHieroglyphColors[dayTime]
+                      )}
+                    >
                       {hieroglyphs[(startIndex + index) % hieroglyphs.length]}
                     </span>
                   )}

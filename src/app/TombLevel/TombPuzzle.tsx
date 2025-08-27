@@ -287,7 +287,7 @@ export const TombPuzzle: FC<{
                       usedInPuzzle < maxNeeded
 
                     return (
-                      <div
+                      <button
                         key={symbolId}
                         className={clsx(
                           "flex items-center gap-1 rounded p-1 transition-colors select-auto",
@@ -319,7 +319,7 @@ export const TombPuzzle: FC<{
                             </span>
                           </span>
                         </div>
-                      </div>
+                      </button>
                     )
                   })}
               </div>
