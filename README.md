@@ -2,8 +2,8 @@
 
 An ancient Egyptian-themed puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.
 
-![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)
-![Status](https://img.shields.io/badge/status-early%20alpha-orange.svg)
+![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)
+![Status](https://img.shields.io/badge/status-alpha-orange.svg)
 ![Tech](https://img.shields.io/badge/tech-React%20+%20TypeScript%20+%20Vite-green.svg)
 
 ## 🎮 Game Overview
@@ -28,11 +28,11 @@ Explore ancient pyramids across different times of day:
 - **Night** 🌙 - Mysterious nocturnal quests
 
 **Difficulty Progression:**
-- 🟢 **Starter** - Learn the basics (2 symbols)
-- 🔵 **Junior** - Build confidence (3 symbols)
-- 🟡 **Expert** - Test your skills (4 symbols)
-- 🟠 **Master** - Challenge yourself (5 symbols)
-- 🔴 **Wizard** - Ultimate mastery (6 symbols)
+- 🟢 **Starter** - Learn the basics
+- 🔵 **Junior** - Build confidence 
+- 🟡 **Expert** - Test your skills 
+- 🟠 **Master** - Challenge yourself
+- 🔴 **Wizard** - Ultimate mastery
 
 ### 🗝️ Treasure Tombs
 Hidden vaults unlocked by collecting map pieces:
@@ -133,22 +133,13 @@ yarn storybook
 
 ```
 src/
-├── app/                 # Main application components
-│   ├── pages/          # Page components (Travel, Collection, etc.)
-│   ├── state/          # Game state management
-│   └── PyramidLevel/   # Level gameplay components
-├── data/               # Game data and configuration
-│   ├── journeys.ts     # Expedition definitions
-│   ├── tableaus.ts     # Puzzle generation system
-│   └── difficultyLevels.ts
-├── game/               # Core game logic
-│   ├── generateJourney.ts
-│   ├── generateRewardCalculation.ts
-│   └── random.ts
-├── ui/                 # Reusable UI components
+├── app/               # Main application components
+├── data/              # Game data and configuration
+├── game/              # Core game logic
+├── ui/                # Reusable UI components
 └── i18n/              # Internationalization setup
 
-public/locales/         # Translation files
+public/locales/        # Translation files
 ├── en/                # English translations
 └── nl/                # Dutch translations
 ```
@@ -189,14 +180,13 @@ This is a personal project, but feedback and suggestions are welcome! Please fee
 
 This project is private and for personal use.
 
+## Interesting sources
+
+- https://www.youtube.com/watch?v=90An1dnvwyc
+
 ## 🎯 Roadmap
 
-- [ ] Enhanced puzzle variations
-- [ ] Additional symbol categories  
-- [ ] Prestige system implementation
 - [ ] Sound effects and music
-- [ ] Achievement system
-- [ ] Expanded treasure tomb content
 - [ ] Mobile app versions
 
 ---
