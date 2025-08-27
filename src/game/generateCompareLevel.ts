@@ -1,4 +1,8 @@
-import { createVerifiedFormula, type Formula, type Operation } from "./formulas"
+import {
+  createVerifiedFormula,
+  type Formula,
+  type Operation,
+} from "../app/Formulas/formulas"
 
 export type FormulaSettings = {
   numberOfSymbols: number

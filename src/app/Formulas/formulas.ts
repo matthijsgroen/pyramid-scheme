@@ -1,12 +1,20 @@
-import { shuffle } from "./random"
+import { shuffle } from "../../game/random"
 
 export type Operation = "+" | "-" | "*" | "/"
 
 export type Formula = {
-  left: number | Formula
-  right: number | Formula
+  left: number | Formula | { symbol: number }
+  right: number | Formula | { symbol: number }
   operation: Operation
-  result: number
+  result: number | { symbol: number }
+}
+
+const getNumberValue = (
+  value: number | { symbol: number } | Formula
+): number => {
+  if (typeof value === "number") return value
+  if ("symbol" in value) return value.symbol
+  return getNumberValue(value.result)
 }
 
 export const createFormula = (
@@ -18,8 +26,8 @@ export const createFormula = (
   if (pickedNumbers.length === 2) {
     const operation = operations[Math.floor(random() * operations.length)]
     return {
-      left: pickedNumbers[0],
-      right: pickedNumbers[1],
+      left: { symbol: pickedNumbers[0] },
+      right: { symbol: pickedNumbers[1] },
       operation,
       result: evaluateFormula(pickedNumbers[0], pickedNumbers[1], operation),
     }
@@ -34,21 +42,19 @@ export const createFormula = (
   // Recursively create formulas for each group
   const leftFormula =
     leftNumbers.length === 1
-      ? leftNumbers[0]
+      ? { symbol: leftNumbers[0] }
       : createVerifiedFormula(leftNumbers, operations, random)
   const rightFormula =
     rightNumbers.length === 1
-      ? rightNumbers[0]
+      ? { symbol: rightNumbers[0] }
       : createVerifiedFormula(rightNumbers, operations, random)
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]
 
   // Evaluate the result
-  const leftValue =
-    typeof leftFormula === "number" ? leftFormula : leftFormula.result
-  const rightValue =
-    typeof rightFormula === "number" ? rightFormula : rightFormula.result
+  const leftValue = getNumberValue(leftFormula)
+  const rightValue = getNumberValue(rightFormula)
   const result = evaluateFormula(leftValue, rightValue, operation)
 
   return {
@@ -87,9 +93,9 @@ export const createVerifiedFormula = (
   // Ensure the result is positive and greater than 0
   let iteration = 0
   while (
-    formula.result <= 0 ||
+    getNumberValue(formula.result) <= 0 ||
     !Number.isInteger(formula.result) ||
-    isNaN(formula.result)
+    isNaN(getNumberValue(formula.result))
   ) {
     iteration++
     if (iteration > 100) {
@@ -132,18 +138,24 @@ export const formulaPartToString = (
 
   const leftStr =
     typeof formula.left === "number"
-      ? (mapping[formula.left] ?? formula.left.toString())
-      : formulaPartToString(formula.left, mapping, currentPrecedence)
+      ? formula.left.toString()
+      : "symbol" in formula.left
+        ? (mapping[formula.left.symbol] ?? formula.left.symbol.toString())
+        : formulaPartToString(formula.left, mapping, currentPrecedence)
 
   const rightStr =
     typeof formula.right === "number"
-      ? (mapping[formula.right] ?? formula.right.toString())
-      : formulaPartToString(formula.right, mapping, currentPrecedence)
+      ? formula.right.toString()
+      : "symbol" in formula.right
+        ? (mapping[formula.right.symbol] ?? formula.right.symbol.toString())
+        : formulaPartToString(formula.right, mapping, currentPrecedence)
 
   const result =
     formula.operation === "-"
       ? `${leftStr} ${formula.operation} ${
-          typeof formula.right === "number" ? rightStr : "(" + rightStr + ")"
+          typeof formula.right === "number" || "symbol" in formula.right
+            ? rightStr
+            : "(" + rightStr + ")"
         }`
       : `${leftStr} ${formula.operation} ${rightStr}`
 

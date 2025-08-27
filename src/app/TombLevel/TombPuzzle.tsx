@@ -1,14 +1,14 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
-import type { Formula as FormulaType } from "@/game/formulas"
+import type { Formula as FormulaType } from "@/app/Formulas/formulas"
 import { type RewardCalculation } from "@/game/generateRewardCalculation"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { type FilledTileState } from "./FormulaPart"
+import { type FilledTileState } from "../Formulas/FormulaPart"
 import { clsx } from "clsx"
 import {
   useState,

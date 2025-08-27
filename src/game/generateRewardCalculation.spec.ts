@@ -4,7 +4,7 @@ import {
   type RewardCalculationSettings,
 } from "./generateRewardCalculation"
 import { mulberry32 } from "./random"
-import { formulaToString } from "./formulas"
+import { formulaToString } from "../app/Formulas/formulas"
 
 describe(generateRewardCalculation, () => {
   it("generates a reward calculation with unique symbols", () => {
@@ -191,14 +191,20 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
-        "left": 4,
+        "left": {
+          "symbol": 4,
+        },
         "operation": "*",
         "result": 4,
         "right": {
-          "left": 9,
+          "left": {
+            "symbol": 9,
+          },
           "operation": "-",
           "result": 1,
-          "right": 8,
+          "right": {
+            "symbol": 8,
+          },
         },
       }
     `)

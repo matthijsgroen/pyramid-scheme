@@ -5,19 +5,23 @@ import type { RewardCalculation } from "@/game/generateRewardCalculation"
 import { revealText } from "@/support/revealText"
 import clsx from "clsx"
 import { useMemo, type FC } from "react"
-import type { Formula as FormulaType } from "@/game/formulas"
-import { Formula } from "./Formula"
-import type { FilledTileState } from "./FormulaPart"
+import type { Formula as FormulaType } from "@/app/Formulas/formulas"
+import { Formula } from "../Formulas/Formula"
+import type { FilledTileState } from "../Formulas/FormulaPart"
 
 // Helper function to count total number slots in a formula
 const countFormulaSlots = (formula: FormulaType): number => {
   let count = 0
   if (typeof formula.left === "number") {
+    // nothing to do
+  } else if ("symbol" in formula.left) {
     count += 1
   } else {
     count += countFormulaSlots(formula.left)
   }
   if (typeof formula.right === "number") {
+    // nothing to do
+  } else if ("symbol" in formula.right) {
     count += 1
   } else {
     count += countFormulaSlots(formula.right)

@@ -3,62 +3,30 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
 import { generateTableaus } from "@/data/tableaus"
-import {
-  generateRewardCalculation,
-  type RewardCalculation,
-} from "@/game/generateRewardCalculation"
+import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
-import type { Formula } from "@/game/formulas"
+import { createFilledPositions } from "../Formulas/filledPositions"
 
 type TombLevelArgs = {
   runNr: number
   levelNr: number
   journey: TreasureTombJourney
+  filled: number
 }
 
 const tableaus = generateTableaus()
 
-const createFormulaFilledPositions = (
+const fillPositions = (
   filledPositions: Record<string, number>,
-  positionPrefix: string,
-  formula: Formula
+  value: number
 ) => {
-  if (typeof formula.left === "number") {
-    filledPositions[`${positionPrefix}-left`] = 1
-  } else {
-    createFormulaFilledPositions(
-      filledPositions,
-      `${positionPrefix}-left`,
-      formula.left
-    )
-  }
-
-  if (typeof formula.right === "number") {
-    filledPositions[`${positionPrefix}-right`] = 1
-  } else {
-    createFormulaFilledPositions(
-      filledPositions,
-      `${positionPrefix}-right`,
-      formula.right
-    )
-  }
-}
-
-const createFilledPositions = (
-  calculation: RewardCalculation
-): Record<string, number> => {
-  const filledPositions: Record<string, number> = {}
-  calculation.hintFormulas.forEach((formula, index) => {
-    createFormulaFilledPositions(filledPositions, `formula-${index}`, formula)
+  const keys = Object.keys(filledPositions)
+  const copy = { ...filledPositions }
+  keys.forEach((key, index) => {
+    copy[key] = value > index / keys.length ? 1 : 0
   })
-  createFormulaFilledPositions(
-    filledPositions,
-    `formula-${calculation.hintFormulas.length}`,
-    calculation.mainFormula
-  )
-
-  return filledPositions
+  return copy
 }
 
 const tombJourneys = journeys.filter((j) => j.type === "treasure_tomb")
@@ -78,10 +46,14 @@ const meta = {
     runNr: 1,
     levelNr: 1,
     journey: tombJourneys[0],
+    filled: 1,
   },
   argTypes: {
     runNr: { control: { type: "number", min: 1 } },
     levelNr: { control: { type: "number", min: 1 } },
+    filled: {
+      control: { type: "range", min: 0, max: 1, step: 0.1 },
+    },
     journey: {
       control: {
         type: "select",
@@ -104,7 +76,7 @@ const meta = {
     },
   },
   tags: ["autodocs"],
-  render: ({ runNr, levelNr, journey }) => {
+  render: ({ runNr, levelNr, journey, filled }) => {
     const tableau = tableaus.filter(
       (tab) => tab.tombJourneyId === journey.id && tab.runNumber === runNr
     )[levelNr - 1]
@@ -129,8 +101,10 @@ const meta = {
     }, [seed, tableau, journey.levelSettings])
     if (!calculation) return <p>No calculation</p>
 
-    const filledPositions: Record<string, number> =
-      createFilledPositions(calculation)
+    const filledPositions: Record<string, number> = fillPositions(
+      createFilledPositions(calculation),
+      filled
+    )
 
     return (
       <TombTableau

@@ -4,7 +4,7 @@ import {
   formulaToString,
   type Formula,
   type Operation,
-} from "./formulas"
+} from "../app/Formulas/formulas"
 
 /**
  * Describe a reward calculation.
@@ -178,17 +178,24 @@ const createSmallestVerifiedFormula = (
           formula.result !== mainFormula.result
         : true
     )
-    .sort((a, b) => a.result - b.result)[0]
+    .sort(
+      (a, b) =>
+        (typeof a.result === "number" ? a.result : a.result.symbol) -
+        (typeof b.result === "number" ? b.result : b.result.symbol)
+    )[0]
 
 const extractSymbols = (formula: Formula): string[] => {
   const symbols: string[] = []
 
-  const traverse = (node: number | Formula) => {
-    if (typeof node === "number") {
-      symbols.push(node.toString())
-    } else {
-      traverse(node.left)
-      traverse(node.right)
+  const traverse = (node: number | Formula | { symbol: number }) => {
+    if (typeof node !== "number") {
+      if ("symbol" in node) {
+        symbols.push(node.symbol.toString())
+      } else {
+        traverse(node.left)
+        traverse(node.right)
+        traverse(node.result)
+      }
     }
   }
 

@@ -5,7 +5,7 @@ import {
   type CompareLevelSettings,
 } from "./generateCompareLevel"
 import { mulberry32 } from "./random"
-import { formulaToString } from "./formulas"
+import { formulaToString } from "../app/Formulas/formulas"
 
 describe(generateCompareLevel, () => {
   const stringifyCompare = (level: CompareLevel) =>
