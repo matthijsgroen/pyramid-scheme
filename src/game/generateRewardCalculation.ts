@@ -107,6 +107,7 @@ export const generateRewardCalculation = (
         {
           pickedNumbers: calcNumbers,
           operations: operators,
+          useResult: "allow",
         },
         mainFormula,
         random

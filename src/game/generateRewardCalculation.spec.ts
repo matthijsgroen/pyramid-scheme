@@ -103,10 +103,15 @@ describe(generateRewardCalculation, () => {
       const random = mulberry32(12344) // Fixed seed for reproducibility
       const result = generateRewardCalculation(settings, random)
 
+      expect(result.symbolMapping).toEqual({
+        "6": "𓁧",
+        "7": "𓁝",
+        "9": "𓃯",
+      })
       expect(result.hintFormulas.length).toBe(3)
       expect(formulaToString(result.hintFormulas[0])).toBe("6 + 6 = 12")
-      expect(formulaToString(result.hintFormulas[1])).toBe("(7 - 6) * 6 = 6")
-      expect(formulaToString(result.hintFormulas[2])).toBe("7 + 6 - 9 = 4")
+      expect(formulaToString(result.hintFormulas[1])).toBe("6 + 1 = 7")
+      expect(formulaToString(result.hintFormulas[2])).toBe("7 + 6 - 4 = 9")
       expect(formulaToString(result.mainFormula, {})).toBe(
         "9 + 7 - (7 + 6) = 3"
       )
@@ -131,7 +136,7 @@ describe(generateRewardCalculation, () => {
     expect(symbolCounts).toEqual({
       "𓁝": 2,
       "𓁧": 6,
-      "𓃯": 3,
+      "𓃯": 4,
     })
   })
 
@@ -153,8 +158,8 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
       "𓁧 + 𓁧 = 20
-      𓃯 + 𓁧 = 14
-      𓁧 + 𓃯 + 𓁝 = 19
+      𓃯 + 𓃯 + 2 = 𓁧
+      𓁝 + 𓃯 + 1 = 𓁧
       𓁝 + 𓁧 + 𓁧 + 𓃯 = ?"
     `)
   })
@@ -194,38 +199,40 @@ describe(generateRewardCalculation, () => {
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
         "left": {
-          "symbol": 4,
-        },
-        "operation": "*",
-        "result": 4,
-        "right": {
           "left": {
-            "symbol": 9,
+            "symbol": 6,
           },
-          "operation": "-",
+          "operation": "/",
           "result": 1,
           "right": {
-            "symbol": 8,
+            "symbol": 6,
           },
+        },
+        "operation": "+",
+        "result": {
+          "symbol": 9,
+        },
+        "right": {
+          "symbol": 8,
         },
       }
     `)
 
     expect(numberFormulas).toMatchInlineSnapshot(`
       "6 * 6 = 36
-      6 + 8 + 6 = 20
-      6 - (8 - 4) = 2
-      4 * (9 - 8) = 4
-      10 + 6 + 4 = 20
+      6 + 2 = 8
+      6 - 4 + 6 = 8
+      6 / 6 + 8 = 9
+      6 / 6 + 9 = 10
       9 - 4 + 8 + 9 * (10 - 6) = 49"
     `)
 
     expect(puzzle).toMatchInlineSnapshot(`
       "𓆆 * 𓆆 = 36
-      𓆆 + 𓁝 + 𓆆 = 20
-      𓆆 - (𓁝 - 𓁧) = 2
-      𓁧 * (𓁾 - 𓁝) = 4
-      𓃯 + 𓆆 + 𓁧 = 20
+      𓆆 + 2 = 𓁝
+      𓆆 - 𓁧 + 𓆆 = 𓁝
+      𓆆 / 𓆆 + 𓁝 = 𓁾
+      𓆆 / 𓆆 + 𓁾 = 𓃯
       𓁾 - 𓁧 + 𓁝 + 𓁾 * (𓃯 - 𓆆) = ?"
     `)
   })
@@ -248,7 +255,7 @@ describe(generateRewardCalculation, () => {
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
       "𓁧 + 𓁧 = 8
-      𓁧 + 𓁝 = 6
+      𓁝 + 𓁝 = 𓁧
       𓁝 + 𓁧 + 𓁧 = ?"
     `)
   })

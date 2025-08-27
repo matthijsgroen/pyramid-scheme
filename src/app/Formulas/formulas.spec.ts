@@ -40,4 +40,26 @@ describe(createFormula, () => {
       result: 3,
     })
   })
+
+  it("returns a Formula using the largest picked number as result if it fits", () => {
+    const random = mulberry32(123123132124)
+    const formula = createFormula(
+      { pickedNumbers: [1, 2, 3], operations: ["+"], useResult: "allow" },
+      random
+    )
+    expect(formula).toMatchInlineSnapshot(`
+      {
+        "left": {
+          "symbol": 1,
+        },
+        "operation": "+",
+        "result": {
+          "symbol": 3,
+        },
+        "right": {
+          "symbol": 2,
+        },
+      }
+    `)
+  })
 })

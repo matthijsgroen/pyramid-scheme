@@ -1,4 +1,5 @@
 import { shuffle } from "../../game/random"
+import { findFormulaWithOptionalExtra } from "./formulasWithTarget"
 
 export type Operation = "+" | "-" | "*" | "/"
 
@@ -12,6 +13,7 @@ export type Formula = {
 export type FormulaSettings = {
   pickedNumbers: number[]
   operations: Operation[]
+  useResult?: "avoid" | "force" | "allow"
 }
 
 const getNumberValue = (
@@ -26,10 +28,24 @@ export const createFormula = (
   settings: FormulaSettings,
   random: () => number
 ): Formula => {
-  const { pickedNumbers, operations } = settings
+  const { pickedNumbers, operations, useResult = "avoid" } = settings
+
+  if (useResult === "allow" || useResult === "force") {
+    // take largest result from picked numbers and remove it from the pool
+    const largest = Math.max(...pickedNumbers)
+    const formula = findFormulaWithOptionalExtra(
+      pickedNumbers.filter((n) => n !== largest),
+      operations,
+      [largest],
+      random
+    )
+    if (formula) return formula
+  }
+
   // Base case: if only one number left, return it as a formula node
   if (pickedNumbers.length === 2) {
     const operation = operations[Math.floor(random() * operations.length)]
+
     return {
       left: { symbol: pickedNumbers[0] },
       right: { symbol: pickedNumbers[1] },
