@@ -9,7 +9,7 @@ const createFormulaFilledPositions = (
   if (typeof formula.left === "number") {
     // nothing to do
   } else if ("symbol" in formula.left) {
-    filledPositions[`${positionPrefix}-left`] = 0
+    filledPositions[`${positionPrefix}-left`] = formula.left.symbol
   } else {
     createFormulaFilledPositions(
       filledPositions,
@@ -21,7 +21,7 @@ const createFormulaFilledPositions = (
   if (typeof formula.right === "number") {
     // nothing to do
   } else if ("symbol" in formula.right) {
-    filledPositions[`${positionPrefix}-right`] = 0
+    filledPositions[`${positionPrefix}-right`] = formula.right.symbol
   } else {
     createFormulaFilledPositions(
       filledPositions,
@@ -29,9 +29,14 @@ const createFormulaFilledPositions = (
       formula.right
     )
   }
+  if (typeof formula.result === "number") {
+    // nothing to do
+  } else if ("symbol" in formula.result) {
+    filledPositions[`${positionPrefix}-result`] = formula.result.symbol
+  }
 }
 
-export const createFilledPositions = (
+export const createPositionOverview = (
   calculation: RewardCalculation
 ): Record<string, number> => {
   const filledPositions: Record<string, number> = {}

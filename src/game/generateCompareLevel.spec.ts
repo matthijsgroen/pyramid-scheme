@@ -14,14 +14,19 @@ describe(generateCompareLevel, () => {
         `${formulaToString(f.left)} ${f.left.result > f.right.result ? ">" : "<"} ${formulaToString(f.right)}`
     )
 
+  const resultToValue = (result: number | { symbol: number }) =>
+    typeof result === "number" ? result : result.symbol
+
   const collectAnswers = (
     side: "largest" | "smallest",
     level: CompareLevel
   ) => {
     return level.comparisons.map((c) => {
-      const formulas = [c.left, c.right].sort((a, b) => a.result - b.result)
+      const formulas = [c.left, c.right].sort(
+        (a, b) => resultToValue(a.result) - resultToValue(b.result)
+      )
       const formula = side === "largest" ? formulas[1] : formulas[0]
-      return formula.result
+      return resultToValue(formula.result)
     })
   }
 

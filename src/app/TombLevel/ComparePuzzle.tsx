@@ -7,7 +7,7 @@ import { NumberChest } from "@/ui/NumberChest"
 import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
-import { formulaPartToString } from "@/app/Formulas/formulas"
+import { formulaToString } from "@/app/Formulas/formulas"
 import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
 import { use, useEffect, type FC, type ReactNode } from "react"
 import { FezContext } from "../fez/context"
@@ -194,7 +194,7 @@ export const ComparePuzzle: FC<{
                     focus === index ? handleMouseOverLeft : undefined
                   }
                 >
-                  {formulaPartToString(comparison.left)}
+                  {formulaToString(comparison.left)}
                 </button>
                 <button
                   className={clsx(
@@ -206,7 +206,7 @@ export const ComparePuzzle: FC<{
                   }
                   onClick={focus === index ? handleRightClick : undefined}
                 >
-                  {formulaPartToString(comparison.right)}
+                  {formulaToString(comparison.right)}
                 </button>
               </div>
               <div className="flex-1">

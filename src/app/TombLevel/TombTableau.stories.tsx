@@ -6,7 +6,7 @@ import { generateTableaus } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
-import { createFilledPositions } from "../Formulas/filledPositions"
+import { createPositionOverview } from "../Formulas/filledPositions"
 
 type TombLevelArgs = {
   runNr: number
@@ -17,16 +17,12 @@ type TombLevelArgs = {
 
 const tableaus = generateTableaus()
 
-const fillPositions = (
-  filledPositions: Record<string, number>,
-  value: number
-) => {
-  const keys = Object.keys(filledPositions)
-  const copy = { ...filledPositions }
+const fillPositions = (keys: string[], value: number) => {
+  const result: Record<string, number> = {}
   keys.forEach((key, index) => {
-    copy[key] = value > index / keys.length ? 1 : 0
+    result[key] = value > index / keys.length ? 1 : 0
   })
-  return copy
+  return result
 }
 
 const tombJourneys = journeys.filter((j) => j.type === "treasure_tomb")
@@ -102,7 +98,7 @@ const meta = {
     if (!calculation) return <p>No calculation</p>
 
     const filledPositions: Record<string, number> = fillPositions(
-      createFilledPositions(calculation),
+      Object.keys(createPositionOverview(calculation)),
       filled
     )
 

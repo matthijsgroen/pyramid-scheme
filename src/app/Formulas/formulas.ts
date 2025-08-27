@@ -92,10 +92,18 @@ export const createVerifiedFormula = (
   let formula = createFormula(pickedNumbers, operations, random)
   // Ensure the result is positive and greater than 0
   let iteration = 0
+
+  const verifyOperand = (
+    operand: number | { symbol: number } | Formula
+  ): boolean => {
+    const value = getNumberValue(operand)
+    return value > 0 && Number.isInteger(value) && !isNaN(value)
+  }
+
   while (
-    getNumberValue(formula.result) <= 0 ||
-    !Number.isInteger(formula.result) ||
-    isNaN(getNumberValue(formula.result))
+    !verifyOperand(formula.result) ||
+    !verifyOperand(formula.left) ||
+    !verifyOperand(formula.right)
   ) {
     iteration++
     if (iteration > 100) {
@@ -110,10 +118,9 @@ export const createVerifiedFormula = (
 export const formulaToString = (
   formula: Formula,
   mapping: Record<number, string> = {},
-  showAnswer = true
-): string => {
-  return `${formulaPartToString(formula, mapping)} = ${showAnswer ? formula.result : "?"}`
-}
+  showAnswer: "no" | "yes" | "obfuscated" = "yes"
+): string =>
+  `${formulaPartToString(formula, mapping)} = ${showAnswer === "yes" ? showValue(formula.result, mapping) : showAnswer === "obfuscated" ? "?" : ""}`
 
 const getOperatorPrecedence = (operation: Operation): number => {
   switch (operation) {
@@ -128,7 +135,17 @@ const getOperatorPrecedence = (operation: Operation): number => {
   }
 }
 
-export const formulaPartToString = (
+const showValue = (
+  value: number | { symbol: number },
+  mapping: Record<number, string>
+) => {
+  if (typeof value === "number") {
+    return value.toString()
+  }
+  return mapping[value.symbol] ?? value.symbol.toString()
+}
+
+const formulaPartToString = (
   formula: Formula,
   mapping: Record<number, string> = {},
   parentPrecedence: number = 0
@@ -137,18 +154,14 @@ export const formulaPartToString = (
   const needsParentheses = currentPrecedence < parentPrecedence
 
   const leftStr =
-    typeof formula.left === "number"
-      ? formula.left.toString()
-      : "symbol" in formula.left
-        ? (mapping[formula.left.symbol] ?? formula.left.symbol.toString())
-        : formulaPartToString(formula.left, mapping, currentPrecedence)
+    typeof formula.left === "number" || "symbol" in formula.left
+      ? showValue(formula.left, mapping)
+      : formulaPartToString(formula.left, mapping, currentPrecedence)
 
   const rightStr =
-    typeof formula.right === "number"
-      ? formula.right.toString()
-      : "symbol" in formula.right
-        ? (mapping[formula.right.symbol] ?? formula.right.symbol.toString())
-        : formulaPartToString(formula.right, mapping, currentPrecedence)
+    typeof formula.right === "number" || "symbol" in formula.right
+      ? showValue(formula.right, mapping)
+      : formulaPartToString(formula.right, mapping, currentPrecedence)
 
   const result =
     formula.operation === "-"
