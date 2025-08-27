@@ -3,6 +3,7 @@ import {
   createVerifiedFormula,
   formulaToString,
   type Formula,
+  type FormulaSettings,
   type Operation,
 } from "../app/Formulas/formulas"
 
@@ -162,7 +163,7 @@ const generateCalculationNumbers = (
   )
 
 const createSmallestVerifiedFormula = (
-  settings: { pickedNumbers: number[]; operations: Operation[] },
+  settings: FormulaSettings,
   mainFormula?: Formula,
   random: () => number = Math.random
 ): Formula =>

@@ -9,6 +9,11 @@ export type Formula = {
   result: number | { symbol: number }
 }
 
+export type FormulaSettings = {
+  pickedNumbers: number[]
+  operations: Operation[]
+}
+
 const getNumberValue = (
   value: number | { symbol: number } | Formula
 ): number => {
@@ -18,10 +23,7 @@ const getNumberValue = (
 }
 
 export const createFormula = (
-  settings: {
-    pickedNumbers: number[]
-    operations: Operation[]
-  },
+  settings: FormulaSettings,
   random: () => number
 ): Formula => {
   const { pickedNumbers, operations } = settings
@@ -94,10 +96,7 @@ const evaluateFormula = (
 }
 
 export const createVerifiedFormula = (
-  settings: {
-    pickedNumbers: number[]
-    operations: Operation[]
-  },
+  settings: FormulaSettings,
   random: () => number = Math.random
 ): Formula => {
   let formula = createFormula(settings, random)

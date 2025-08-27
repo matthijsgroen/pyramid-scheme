@@ -4,13 +4,13 @@ import {
   type Operation,
 } from "../app/Formulas/formulas"
 
-export type FormulaSettings = {
+export type CompareFormulaSettings = {
   numberOfSymbols: number
   numberRange: [min: number, max: number]
   operators: Operation[]
 }
 
-export type CompareLevelSettings = FormulaSettings & {
+export type CompareLevelSettings = CompareFormulaSettings & {
   compareAmount: number
 }
 
@@ -27,8 +27,8 @@ export type CompareLevel = {
   }[]
 }
 
-const generateFormula = (
-  settings: FormulaSettings,
+const generateCompareFormula = (
+  settings: CompareFormulaSettings,
   random: () => number = Math.random
 ) => {
   const numbers = new Array(settings.numberOfSymbols)
@@ -47,15 +47,15 @@ const generateFormula = (
 }
 
 const createCompare = (
-  settings: FormulaSettings,
+  settings: CompareFormulaSettings,
   requirements: Requirements,
   random: () => number
 ) => {
   const biggerSide = random() < 0.5 ? "left" : "right"
   const generateSettings = { ...settings }
   // Create the left and right formulas
-  let left = generateFormula(generateSettings, random)
-  let right = generateFormula(generateSettings, random)
+  let left = generateCompareFormula(generateSettings, random)
+  let right = generateCompareFormula(generateSettings, random)
 
   const metRequirements = () => {
     let largestAsString = String(left.result)
@@ -80,8 +80,8 @@ const createCompare = (
   }
   let iteration = 0
   while (!metRequirements()) {
-    left = generateFormula(generateSettings, random)
-    right = generateFormula(generateSettings, random)
+    left = generateCompareFormula(generateSettings, random)
+    right = generateCompareFormula(generateSettings, random)
     iteration++
     if (iteration > 50) {
       generateSettings.numberOfSymbols =
