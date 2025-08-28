@@ -212,7 +212,7 @@ export const journeys: Journey[] = [
     },
     rewards: {
       mapPiece: {
-        startChance: 0.4,
+        startChance: 0.2,
         chanceIncrease: 0.18,
       },
       completed: {
@@ -291,7 +291,7 @@ export const journeys: Journey[] = [
     },
     rewards: {
       mapPiece: {
-        startChance: 0.4,
+        startChance: 0.3,
         chanceIncrease: 0.18,
       },
       completed: {
@@ -471,7 +471,7 @@ export const journeys: Journey[] = [
     },
     rewards: {
       mapPiece: {
-        startChance: 0.5,
+        startChance: 0.1,
         chanceIncrease: 0.25,
       },
       completed: {
@@ -499,7 +499,7 @@ export const journeys: Journey[] = [
     },
     rewards: {
       mapPiece: {
-        startChance: 0.33,
+        startChance: 0.13,
         chanceIncrease: 0.15,
       },
       completed: {
@@ -526,7 +526,7 @@ export const journeys: Journey[] = [
     },
     rewards: {
       mapPiece: {
-        startChance: 0.25,
+        startChance: 0.15,
         chanceIncrease: 0.12,
       },
       completed: {
@@ -554,7 +554,7 @@ export const journeys: Journey[] = [
     },
     rewards: {
       mapPiece: {
-        startChance: 0.4,
+        startChance: 0.1,
         chanceIncrease: 0.18,
       },
       completed: {
