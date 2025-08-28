@@ -589,8 +589,8 @@ export const journeys: Journey[] = [
     description:
       "Accompany Ra on his perilous nightly journey through the underworld, battling the serpent Apep and ensuring the sun rises again.",
     difficulty: "wizard",
-    journeyLength: "short",
-    levelCount: 3,
+    journeyLength: "long",
+    levelCount: 9,
     time: "morning",
     levelSettings: {
       startFloorCount: 7,
@@ -619,8 +619,8 @@ export const journeys: Journey[] = [
     description:
       "Unlock the deepest mysteries hidden within the Great Sphinx. Face riddles that have challenged the greatest minds for millennia.",
     difficulty: "wizard",
-    journeyLength: "medium",
-    levelCount: 7,
+    journeyLength: "long",
+    levelCount: 11,
     time: "afternoon",
     levelSettings: {
       startFloorCount: 5,
