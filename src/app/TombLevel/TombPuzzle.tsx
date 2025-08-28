@@ -230,13 +230,15 @@ export const TombPuzzle: FC<{
         >
           {/* NumberLock appears when puzzle is completed */}
           {isPuzzleCompleted && (
-            <div
-              className={clsx(
-                "order-2 mb-6 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
-                hieroglyphLevelColors[difficulty]
-              )}
-            >
-              <form onSubmit={handleLockSubmit}>
+            <div className={clsx("order-2 mb-6 animate-slide-down")}>
+              <form
+                onSubmit={handleLockSubmit}
+                className={clsx(
+                  "flex flex-col items-center rounded-b-lg p-4",
+                  hieroglyphLevelColors[difficulty],
+                  lockState === "error" && "animate-shake"
+                )}
+              >
                 <NumberLock
                   state={lockState}
                   variant="muted"
