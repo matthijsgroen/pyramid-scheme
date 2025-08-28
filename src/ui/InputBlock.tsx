@@ -21,7 +21,7 @@ export const InputBlock: FC<{
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const hasFocus = useRef(false)
-  const focusInterval = useRef<ReturnType<typeof setInterval> | null>(null)
+  const focusTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
     if (!selected && inputRef.current) {
       inputRef.current.blur()
@@ -34,8 +34,8 @@ export const InputBlock: FC<{
   }, [shouldFocus, selected])
   useEffect(() => {
     return () => {
-      if (focusInterval.current) {
-        clearInterval(focusInterval.current)
+      if (focusTimeout.current) {
+        clearTimeout(focusTimeout.current)
       }
     }
   }, [])
@@ -55,7 +55,7 @@ export const InputBlock: FC<{
         pattern="[0-9]*"
         onBlur={(e) => {
           hasFocus.current = false
-          clearInterval(focusInterval.current!)
+          clearTimeout(focusTimeout.current!)
           onBlur?.()
           if (e.target.value === "") {
             onChange(undefined)
@@ -66,14 +66,11 @@ export const InputBlock: FC<{
         }}
         onFocus={() => {
           hasFocus.current = true
-          inputRef.current?.scrollIntoView({ block: "nearest" })
           onSelect?.()
           inputRef.current?.select()
-          focusInterval.current = setInterval(() => {
-            if (hasFocus.current) {
-              inputRef.current?.scrollIntoView({ block: "nearest" })
-            }
-          }, 200) // virtual keyboard on mobile can take a moment to appear
+          focusTimeout.current = setTimeout(() => {
+            inputRef.current?.scrollIntoView({ block: "nearest" })
+          }, 300) // virtual keyboard on mobile can take a moment to appear
         }}
         onChange={(e) =>
           e.target.value === ""
