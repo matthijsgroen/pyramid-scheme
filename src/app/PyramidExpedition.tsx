@@ -7,7 +7,7 @@ import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
-import { dayNightCycleStep } from "@/ui/backdropSelection"
+import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { type PyramidJourney } from "@/data/journeys"
@@ -161,6 +161,11 @@ export const PyramidExpedition: FC<{
     runNr === 0
       ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId)
       : undefined
+  const dayTime = dayNightCycleDayTime(
+    activeJourney.levelNr,
+    pyramidJourney.time,
+    pyramidJourney.timeStepSize
+  )
 
   return (
     <DesertBackdrop
@@ -209,14 +214,13 @@ export const PyramidExpedition: FC<{
 
         <div
           ref={scrollContainerRef}
-          className="flex flex-1 overflow-auto overscroll-contain"
-          style={{ minHeight: "100vh" }}
+          className="flex max-h-dvh flex-1 overflow-auto overscroll-contain"
         >
           <div
             className="relative w-full min-w-(--level-width)"
             style={{
               "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
-              minHeight: `max(100vh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
+              minHeight: `max(100dvh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
             }}
           >
             <div
@@ -235,6 +239,7 @@ export const PyramidExpedition: FC<{
             >
               {nextNextLevelContent && (
                 <Level
+                  dayTime={dayTime}
                   key={activeJourney.levelNr + 2}
                   content={nextNextLevelContent}
                   decorationOffset={activeJourney.randomSeed}
@@ -258,6 +263,7 @@ export const PyramidExpedition: FC<{
               {nextLevelContent && (
                 <Level
                   key={activeJourney.levelNr + 1}
+                  dayTime={dayTime}
                   content={nextLevelContent}
                   decorationOffset={activeJourney.randomSeed}
                 />
@@ -283,6 +289,7 @@ export const PyramidExpedition: FC<{
                   content={levelContent}
                   decorationOffset={activeJourney.randomSeed}
                   onComplete={onComplete}
+                  dayTime={dayTime}
                 />
               )}
             </div>

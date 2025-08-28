@@ -8,7 +8,7 @@ import {
   templeSecretsTreasures,
   type Treasure,
 } from "./treasures"
-import type { Operation } from "@/game/formulas"
+import type { Operation } from "@/app/Formulas/formulas"
 
 /**
  * JourneyLength:

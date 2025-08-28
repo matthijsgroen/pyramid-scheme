@@ -4,7 +4,7 @@ import {
   type RewardCalculationSettings,
 } from "./generateRewardCalculation"
 import { mulberry32 } from "./random"
-import { formulaToString } from "./formulas"
+import { formulaToString } from "../app/Formulas/formulas"
 
 describe(generateRewardCalculation, () => {
   it("generates a reward calculation with unique symbols", () => {
@@ -46,8 +46,8 @@ describe(generateRewardCalculation, () => {
     const random = mulberry32(6) // Fixed seed that would produce a 0 result
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
-    const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("(6 + 6 * 1) - 7 = 5")
+    const textFormula = formulaToString(formula, undefined, "yes")
+    expect(textFormula).toBe("6 + 6 * 1 - 7 = 5")
   })
 
   it("prevents broken numbers", () => {
@@ -60,8 +60,8 @@ describe(generateRewardCalculation, () => {
     const random = mulberry32(6) // Fixed seed that would produce a 6.142857142857140 result
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
-    const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("(6 - 1) - (7 - 6) = 4")
+    const textFormula = formulaToString(formula, undefined, "yes")
+    expect(textFormula).toBe("6 - 1 - (7 - 6) = 4")
   })
 
   it("can have multiple operators in a formula", () => {
@@ -103,11 +103,18 @@ describe(generateRewardCalculation, () => {
       const random = mulberry32(12344) // Fixed seed for reproducibility
       const result = generateRewardCalculation(settings, random)
 
+      expect(result.symbolMapping).toEqual({
+        "6": "𓁧",
+        "7": "𓁝",
+        "9": "𓃯",
+      })
       expect(result.hintFormulas.length).toBe(3)
       expect(formulaToString(result.hintFormulas[0])).toBe("6 + 6 = 12")
-      expect(formulaToString(result.hintFormulas[1])).toBe("(7 - 6) * 6 = 6")
-      expect(formulaToString(result.hintFormulas[2])).toBe("(7 + 6) - 9 = 4")
-      expect(formulaToString(result.mainFormula)).toBe("(9 + 7) - (7 + 6) = 3")
+      expect(formulaToString(result.hintFormulas[1])).toBe("6 + 1 = 7")
+      expect(formulaToString(result.hintFormulas[2])).toBe("7 + 6 - 4 = 9")
+      expect(formulaToString(result.mainFormula, {})).toBe(
+        "9 + 7 - (7 + 6) = 3"
+      )
     })
   })
 
@@ -129,7 +136,7 @@ describe(generateRewardCalculation, () => {
     expect(symbolCounts).toEqual({
       "𓁝": 2,
       "𓁧": 6,
-      "𓃯": 3,
+      "𓃯": 4,
     })
   })
 
@@ -145,14 +152,14 @@ describe(generateRewardCalculation, () => {
     const { symbolMapping } = result
     const puzzle = [
       ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, symbolMapping, true)
+        formulaToString(formula, symbolMapping, "yes")
       ),
-      formulaToString(result.mainFormula, symbolMapping, false),
+      formulaToString(result.mainFormula, symbolMapping, "obfuscated"),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
       "𓁧 + 𓁧 = 20
-      𓃯 + 𓁧 = 14
-      𓁧 + 𓃯 + 𓁝 = 19
+      𓃯 + 𓃯 + 2 = 𓁧
+      𓁝 + 𓃯 + 1 = 𓁧
       𓁝 + 𓁧 + 𓁧 + 𓃯 = ?"
     `)
   })
@@ -169,9 +176,9 @@ describe(generateRewardCalculation, () => {
     const { symbolMapping } = result
     const puzzle = [
       ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, symbolMapping, true)
+        formulaToString(formula, symbolMapping, "yes")
       ),
-      formulaToString(result.mainFormula, symbolMapping, false),
+      formulaToString(result.mainFormula, symbolMapping, "obfuscated"),
     ].join("\n")
     expect(result.pickedNumbers).toEqual([6, 8, 4, 9, 10])
     expect(result.symbolMapping).toMatchInlineSnapshot(`
@@ -185,39 +192,47 @@ describe(generateRewardCalculation, () => {
     `)
     const numberFormulas = [
       ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, undefined, true)
+        formulaToString(formula, undefined, "yes")
       ),
-      formulaToString(result.mainFormula, undefined, true),
+      formulaToString(result.mainFormula, undefined, "yes"),
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
       {
-        "left": 4,
-        "operation": "*",
-        "result": 4,
-        "right": {
-          "left": 9,
-          "operation": "-",
+        "left": {
+          "left": {
+            "symbol": 6,
+          },
+          "operation": "/",
           "result": 1,
-          "right": 8,
+          "right": {
+            "symbol": 6,
+          },
+        },
+        "operation": "+",
+        "result": {
+          "symbol": 9,
+        },
+        "right": {
+          "symbol": 8,
         },
       }
     `)
 
     expect(numberFormulas).toMatchInlineSnapshot(`
       "6 * 6 = 36
-      6 + 8 + 6 = 20
-      6 - (8 - 4) = 2
-      4 * (9 - 8) = 4
-      10 + 6 + 4 = 20
+      6 + 2 = 8
+      6 - 4 + 6 = 8
+      6 / 6 + 8 = 9
+      6 / 6 + 9 = 10
       9 - 4 + 8 + 9 * (10 - 6) = 49"
     `)
 
     expect(puzzle).toMatchInlineSnapshot(`
       "𓆆 * 𓆆 = 36
-      𓆆 + 𓁝 + 𓆆 = 20
-      𓆆 - (𓁝 - 𓁧) = 2
-      𓁧 * (𓁾 - 𓁝) = 4
-      𓃯 + 𓆆 + 𓁧 = 20
+      𓆆 + 2 = 𓁝
+      𓆆 - 𓁧 + 𓆆 = 𓁝
+      𓆆 / 𓆆 + 𓁝 = 𓁾
+      𓆆 / 𓆆 + 𓁾 = 𓃯
       𓁾 - 𓁧 + 𓁝 + 𓁾 * (𓃯 - 𓆆) = ?"
     `)
   })
@@ -234,13 +249,13 @@ describe(generateRewardCalculation, () => {
     const { symbolMapping } = result
     const puzzle = [
       ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, symbolMapping, true)
+        formulaToString(formula, symbolMapping, "yes")
       ),
-      formulaToString(result.mainFormula, symbolMapping, false),
+      formulaToString(result.mainFormula, symbolMapping, "obfuscated"),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
       "𓁧 + 𓁧 = 8
-      𓁧 + 𓁝 = 6
+      𓁝 + 𓁝 = 𓁧
       𓁝 + 𓁧 + 𓁧 = ?"
     `)
   })

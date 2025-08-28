@@ -5,7 +5,7 @@ import {
   type CompareLevelSettings,
 } from "./generateCompareLevel"
 import { mulberry32 } from "./random"
-import { formulaToString } from "./formulas"
+import { formulaToString } from "../app/Formulas/formulas"
 
 describe(generateCompareLevel, () => {
   const stringifyCompare = (level: CompareLevel) =>
@@ -14,14 +14,19 @@ describe(generateCompareLevel, () => {
         `${formulaToString(f.left)} ${f.left.result > f.right.result ? ">" : "<"} ${formulaToString(f.right)}`
     )
 
+  const resultToValue = (result: number | { symbol: number }) =>
+    typeof result === "number" ? result : result.symbol
+
   const collectAnswers = (
     side: "largest" | "smallest",
     level: CompareLevel
   ) => {
     return level.comparisons.map((c) => {
-      const formulas = [c.left, c.right].sort((a, b) => a.result - b.result)
+      const formulas = [c.left, c.right].sort(
+        (a, b) => resultToValue(a.result) - resultToValue(b.result)
+      )
       const formula = side === "largest" ? formulas[1] : formulas[0]
-      return formula.result
+      return resultToValue(formula.result)
     })
   }
 
@@ -78,9 +83,9 @@ describe(generateCompareLevel, () => {
       })
       expect(stringifyCompare(level)).toMatchInlineSnapshot(`
         [
-          "(5 + 6) - 8 = 3 < 3 + 7 + 5 = 15",
-          "(8 - 2) - 3 = 3 < (10 + 9) - 4 = 15",
-          "(1 + 8) - 1 = 8 < 5 + 10 + 10 = 25",
+          "5 + 6 - 8 = 3 < 3 + 7 + 5 = 15",
+          "8 - 2 - 3 = 3 < 10 + 9 - 4 = 15",
+          "1 + 8 - 1 = 8 < 5 + 10 + 10 = 25",
         ]
       `)
 
@@ -109,7 +114,7 @@ describe(generateCompareLevel, () => {
       expect(stringifyCompare(level)).toMatchInlineSnapshot(`
         [
           "4 + 5 + 9 = 18 < 4 + 8 + 9 = 21",
-          "9 + 4 + 1 + 6 + 5 + 6 = 31 > (2 + 6 + 10 + 1) - (2 + 9) = 8",
+          "9 + 4 + 1 + 6 + 5 + 6 = 31 > 2 + 6 + 10 + 1 - (2 + 9) = 8",
           "8 + 3 + 8 = 19 > 10 - (1 + 1) = 8",
         ]
       `)

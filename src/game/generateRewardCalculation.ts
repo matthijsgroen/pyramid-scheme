@@ -3,8 +3,9 @@ import {
   createVerifiedFormula,
   formulaToString,
   type Formula,
+  type FormulaSettings,
   type Operation,
-} from "./formulas"
+} from "../app/Formulas/formulas"
 
 /**
  * Describe a reward calculation.
@@ -65,8 +66,7 @@ export const generateRewardCalculation = (
     random
   )
   const mainFormula = createSmallestVerifiedFormula(
-    mainFormulaNumbers,
-    settings.operations,
+    { pickedNumbers: mainFormulaNumbers, operations: settings.operations },
     undefined, // no main formula yet
     random
   )
@@ -104,8 +104,11 @@ export const generateRewardCalculation = (
       )
 
       const hintFormula = createSmallestVerifiedFormula(
-        calcNumbers,
-        operators,
+        {
+          pickedNumbers: calcNumbers,
+          operations: operators,
+          useResult: "allow",
+        },
         mainFormula,
         random
       )
@@ -161,16 +164,15 @@ const generateCalculationNumbers = (
   )
 
 const createSmallestVerifiedFormula = (
-  pickedNumbers: number[],
-  operations: Operation[],
+  settings: FormulaSettings,
   mainFormula?: Formula,
   random: () => number = Math.random
 ): Formula =>
   [
-    createVerifiedFormula(pickedNumbers, operations, random),
-    createVerifiedFormula(pickedNumbers, operations, random),
-    createVerifiedFormula(pickedNumbers, operations, random),
-    createVerifiedFormula(pickedNumbers, operations, random),
+    createVerifiedFormula(settings, random),
+    createVerifiedFormula(settings, random),
+    createVerifiedFormula(settings, random),
+    createVerifiedFormula(settings, random),
   ]
     .filter((formula) =>
       mainFormula
@@ -178,17 +180,24 @@ const createSmallestVerifiedFormula = (
           formula.result !== mainFormula.result
         : true
     )
-    .sort((a, b) => a.result - b.result)[0]
+    .sort(
+      (a, b) =>
+        (typeof a.result === "number" ? a.result : a.result.symbol) -
+        (typeof b.result === "number" ? b.result : b.result.symbol)
+    )[0]
 
 const extractSymbols = (formula: Formula): string[] => {
   const symbols: string[] = []
 
-  const traverse = (node: number | Formula) => {
-    if (typeof node === "number") {
-      symbols.push(node.toString())
-    } else {
-      traverse(node.left)
-      traverse(node.right)
+  const traverse = (node: number | Formula | { symbol: number }) => {
+    if (typeof node !== "number") {
+      if ("symbol" in node) {
+        symbols.push(node.symbol.toString())
+      } else {
+        traverse(node.left)
+        traverse(node.right)
+        traverse(node.result)
+      }
     }
   }
 

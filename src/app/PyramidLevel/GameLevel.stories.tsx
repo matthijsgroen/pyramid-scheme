@@ -5,6 +5,7 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type PyramidJourney } from "@/data/journeys"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { hashString } from "@/support/hashString"
+import { dayNightCycleDayTime } from "@/ui/backdropSelection"
 
 type PyramidLevelArgs = {
   levelNr: number
@@ -58,17 +59,27 @@ const meta = {
 
     const content = generateJourneyLevel(journey, levelNr, random)
     if (!content) return <div>Error creating level</div>
+    const dayTime = dayNightCycleDayTime(
+      levelNr,
+      journey.time,
+      journey.timeStepSize
+    )
     return (
-      <DesertBackdrop levelNr={1} start="morning">
+      <DesertBackdrop
+        levelNr={levelNr}
+        start={journey.time}
+        timeStepSize={journey.timeStepSize}
+      >
         <div className="relative flex h-full w-full flex-col">
           <h1 className="pointer-events-none mt-0 inline-block pt-4 text-center font-pyramid text-2xl font-bold">
-            Level {levelNr}/{journey.levelCount}
+            Level {levelNr}/{journey.levelCount} ({dayTime})
           </h1>
           <div className="flex w-full flex-1 items-center justify-center">
             <PyramidDisplay
               levelNr={levelNr}
               pyramid={content.pyramid}
               decorationOffset={0}
+              dayTime={dayTime}
               values={{}}
             />
           </div>

@@ -1,14 +1,13 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
-import type { Formula as FormulaType } from "@/game/formulas"
 import { type RewardCalculation } from "@/game/generateRewardCalculation"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { type FilledTileState } from "./FormulaPart"
+import { type FilledTileState } from "../Formulas/FormulaPart"
 import { clsx } from "clsx"
 import {
   useState,
@@ -23,6 +22,7 @@ import { revealText } from "@/support/revealText"
 import { TombTableau } from "./TombTableau"
 import { TombDoor } from "@/ui/TombDoor"
 import { FezContext } from "../fez/context"
+import { createPositionOverview } from "../Formulas/filledPositions"
 
 export const TombPuzzle: FC<{
   tableau: TableauLevel
@@ -146,38 +146,12 @@ export const TombPuzzle: FC<{
   // Helper function to find all empty positions for a given symbol
   const findEmptyPositionsForSymbol = (symbolId: string): string[] => {
     const positions: string[] = []
-
-    // Check all formulas (hints + main)
-    const allFormulas = [...calculation.hintFormulas, calculation.mainFormula]
-
-    allFormulas.forEach((formula, formulaIndex) => {
-      const checkFormulaPart = (part: FormulaType, prefix: string) => {
-        if (
-          typeof part.left === "number" &&
-          calculation.symbolMapping[part.left] === symbolId
-        ) {
-          const position = `${prefix}-left`
-          if (!filledState.filledPositions[position]) {
-            positions.push(position)
-          }
-        } else if (typeof part.left !== "number") {
-          checkFormulaPart(part.left, `${prefix}-left`)
-        }
-
-        if (
-          typeof part.right === "number" &&
-          calculation.symbolMapping[part.right] === symbolId
-        ) {
-          const position = `${prefix}-right`
-          if (!filledState.filledPositions[position]) {
-            positions.push(position)
-          }
-        } else if (typeof part.right !== "number") {
-          checkFormulaPart(part.right, `${prefix}-right`)
-        }
+    const positionsObject = createPositionOverview(calculation)
+    Object.entries(positionsObject).forEach(([position, value]) => {
+      const symId = calculation.symbolMapping[value]
+      if (symId === symbolId && !filledState.filledPositions[position]) {
+        positions.push(position)
       }
-
-      checkFormulaPart(formula, `formula-${formulaIndex}`)
     })
 
     return positions
@@ -313,7 +287,7 @@ export const TombPuzzle: FC<{
                       usedInPuzzle < maxNeeded
 
                     return (
-                      <div
+                      <button
                         key={symbolId}
                         className={clsx(
                           "flex items-center gap-1 rounded p-1 transition-colors select-auto",
@@ -345,7 +319,7 @@ export const TombPuzzle: FC<{
                             </span>
                           </span>
                         </div>
-                      </div>
+                      </button>
                     )
                   })}
               </div>

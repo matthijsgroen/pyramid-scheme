@@ -66,13 +66,14 @@ export const InputBlock: FC<{
         }}
         onFocus={() => {
           hasFocus.current = true
+          inputRef.current?.scrollIntoView({ block: "nearest" })
           onSelect?.()
           inputRef.current?.select()
           focusInterval.current = setInterval(() => {
             if (hasFocus.current) {
               inputRef.current?.scrollIntoView({ block: "nearest" })
             }
-          }, 100) // virtual keyboard on mobile can take a moment to appear
+          }, 200) // virtual keyboard on mobile can take a moment to appear
         }}
         onChange={(e) =>
           e.target.value === ""

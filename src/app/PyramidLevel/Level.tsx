@@ -3,13 +3,15 @@ import type { PyramidLevel } from "@/game/types"
 import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
 import { isValid } from "@/game/state"
 import { useGameStorage } from "@/support/useGameStorage"
+import type { DayNightCycleStep } from "@/ui/backdropSelection"
 
 export const Level: FC<{
   content: PyramidLevel
   storageKey?: string
   onComplete?: () => void
   decorationOffset?: number
-}> = ({ content, storageKey, onComplete, decorationOffset = 0 }) => {
+  dayTime?: DayNightCycleStep
+}> = ({ content, storageKey, onComplete, decorationOffset = 0, dayTime }) => {
   const [storedAnswers, setAnswers] = useGameStorage<{
     key: string
     values: Record<string, number | undefined>
@@ -41,8 +43,10 @@ export const Level: FC<{
         <PyramidDisplay
           levelNr={content.levelNr}
           pyramid={content.pyramid}
+          dayTime={dayTime}
           decorationOffset={decorationOffset}
           values={answers}
+          completed={completed}
           onAnswer={
             storageKey
               ? (blockId: string, value: number | undefined) => {

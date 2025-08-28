@@ -8,7 +8,8 @@ import {
   egyptianAnimals,
   egyptianArtifacts,
 } from "@/data/inventory"
-import type { Formula, Operation } from "@/game/formulas"
+import type { Formula, Operation } from "@/app/Formulas/formulas"
+import { revealText } from "@/support/revealText"
 
 // Helper function to get operator precedence for parentheses
 const getOperatorPrecedence = (operation: Operation): number => {
@@ -42,10 +43,12 @@ export type FilledTileState = {
 
 type FormulaPartProps = {
   formula: Formula
+  showResult: boolean
+  obfuscateResult: boolean
   difficulty: Difficulty
   symbolMapping: Record<number, string>
   filledState: FilledTileState
-  onTileClick: (symbolId: string, position: string) => void
+  onTileClick?: (symbolId: string, position: string) => void
   positionPrefix: string
   parentPrecedence?: number
 }
@@ -53,12 +56,13 @@ type FormulaPartProps = {
 const renderTile = (
   symbolMapping: Record<number, string>,
   filledState: FilledTileState,
-  onTileClick: (symbolId: string, position: string) => void,
   difficulty: Difficulty,
-  operand: number,
-  position: string
+  operand: { symbol: number },
+  position: string,
+  onTileClick?: (symbolId: string, position: string) => void
 ) => {
-  const symbolId = symbolMapping[operand]
+  const symbolId = symbolMapping[operand.symbol]
+
   const isFilled = filledState.filledPositions[position] > 0
   const inventoryItem = getInventoryItemById(symbolId)
   const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
@@ -70,16 +74,16 @@ const renderTile = (
       difficulty={itemDifficulty}
       size="sm"
       className="inline-block cursor-pointer align-middle"
-      onClick={() => onTileClick(symbolId, position)}
+      onClick={() => onTileClick?.(symbolId, position)}
     />
   )
 }
 
 const renderOperand = (
-  operand: number | Formula,
-  side: "left" | "right",
+  operand: number | Formula | { symbol: number },
+  side: "left" | "right" | "result",
   props: FormulaPartProps,
-  currentPrecedence: number
+  currentPrecedence = 0
 ) => {
   const {
     symbolMapping,
@@ -91,20 +95,23 @@ const renderOperand = (
   } = props
 
   const position = `${positionPrefix}-${side}`
-
   if (typeof operand === "number") {
+    return <span>{operand}</span>
+  }
+
+  if ("symbol" in operand) {
     return renderTile(
       symbolMapping,
       filledState,
-      onTileClick,
       difficulty,
       operand,
-      position
+      position,
+      onTileClick
     )
   }
 
   // For subtraction, wrap complex operands in parentheses
-  const needsSubtractionParens = formula.operation === "-"
+  const needsSubtractionParens = formula.operation === "-" && side === "left"
   const content = (
     <FormulaPart
       {...props}
@@ -117,23 +124,48 @@ const renderOperand = (
   return needsSubtractionParens ? <span>({content})</span> : content
 }
 
+const operationMap = {
+  "+": "+",
+  "-": "-",
+  "*": "⨉",
+  "/": "÷",
+}
+
 export const FormulaPart: FC<FormulaPartProps> = (props) => {
-  const { formula, parentPrecedence = 0 } = props
+  const { formula, parentPrecedence = 0, showResult = false } = props
 
   const currentPrecedence = getOperatorPrecedence(formula.operation)
   const needsParentheses = currentPrecedence < parentPrecedence
 
   const formulaContent = (
     <>
-      {renderOperand(formula.left, "left", props, currentPrecedence)}
-      <span> {formula.operation} </span>
-      {renderOperand(formula.right, "right", props, currentPrecedence)}
+      {renderOperand(
+        formula.left,
+        "left",
+        { ...props, showResult: false },
+        currentPrecedence
+      )}
+      <span> {operationMap[formula.operation]} </span>
+      {renderOperand(
+        formula.right,
+        "right",
+        { ...props, showResult: false },
+        currentPrecedence
+      )}
     </>
   )
 
   return (
     <span>
       {needsParentheses ? <span>({formulaContent})</span> : formulaContent}
+      {showResult && (
+        <>
+          {" = "}
+          {props.obfuscateResult
+            ? revealText(formula.result.toString(), 0)
+            : renderOperand(formula.result, "result", props)}
+        </>
+      )}
     </span>
   )
 }
