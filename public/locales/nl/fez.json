@@ -23,5 +23,8 @@
   "notEnoughHieroglyphs": "Je kunt deze expeditie altijd stoppen door terug te keren naar het reis scherm.",
   "notEnoughHieroglyphs2": "We kunnen dan ervoor kiezen om de expeditie te onderbreken om elders naar extra hiërogliefen te zoeken.",
 
-  "tombLoot": "Wauw, onze eerste schat! Goed bezig!"
+  "tombLoot": "Wauw, onze eerste schat! Goed bezig!",
+  "mapPiece": "We hebben een kaartdeel gevonden! Naar een verborgen schatlocatie.",
+  "mapPiece2": "Het lijkt erop dat we nog 3 stukken nodig hebben om de kaart te voltooien.",
+  "mapPiece3": "We zouden er één in elke expeditie moeten kunnen vinden."
 }

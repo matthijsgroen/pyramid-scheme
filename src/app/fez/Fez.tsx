@@ -41,6 +41,10 @@ const conversations: Record<string, PoseChat[]> = {
     ...pose("pointUp", ["notEnoughHieroglyphs2"]),
   ],
   tombLoot: pose("glassesPoint", ["tombLoot"]),
+  mapPiece: [
+    ...pose("default", ["mapPiece", "mapPiece2"]),
+    ...pose("pointUp", ["mapPiece3"]),
+  ],
 }
 
 const NOT_FOUND = pose("default", ["not-found"])

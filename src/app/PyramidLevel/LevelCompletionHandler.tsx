@@ -81,6 +81,17 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
     }
   }, [completionPhase, loot, onCompletionFinished, showFez])
 
+  useEffect(() => {
+    if (loot?.itemId === "mapPiece") {
+      const timeout = setTimeout(() => {
+        // Show the map piece conversation
+        showConversation("mapPiece")
+      }, 150) // Delay for 150ms before showing conversation
+
+      return () => clearTimeout(timeout)
+    }
+  }, [loot, showConversation])
+
   const handleLootDismiss = () => {
     setShowLoot(false)
     setCompletionPhase("finished")
