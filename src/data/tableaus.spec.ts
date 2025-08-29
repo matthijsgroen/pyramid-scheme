@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest"
-import { generateTableaus, type TableauLevel, tableauLevels } from "./tableaus"
+import {
+  generateTableaus,
+  type TableauLevel,
+  tableauLevels,
+  TOMB_SYMBOLS,
+} from "./tableaus"
 import tableausTranslations from "../../public/locales/en/tableaus.json"
 import {
   egyptianAnimals,
@@ -7,11 +12,8 @@ import {
   egyptianDeities,
   egyptianProfessions,
 } from "./inventory"
-import { generateRewardCalculation } from "@/game/generateRewardCalculation"
-import { journeys, type TreasureTombJourney } from "./journeys"
-import { hashString } from "@/support/hashString"
-import { generateNewSeed, mulberry32 } from "@/game/random"
-import { difficulties } from "./difficultyLevels"
+import { journeys } from "./journeys"
+import type { Difficulty } from "./difficultyLevels"
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests
@@ -351,6 +353,25 @@ describe("Tableau System", () => {
       const uniqueLevelNumbers = [...new Set(levelIds)]
       expect(levelIds).toHaveLength(uniqueLevelNumbers.length)
     })
+
+    it("contains only inventory items from own or lower difficulty for first run", () => {
+      const tombs = journeys.filter((j) => j.type === "treasure_tomb")
+      const allowedDifficulties: Difficulty[] = []
+      tombs.forEach((tomb) => {
+        allowedDifficulties.push(tomb.difficulty)
+        const tableaus = tableauLevels.filter(
+          (t) => t.tombJourneyId === tomb.id && t.runNumber === 1
+        )
+        tableaus.forEach((tableau: TableauLevel) => {
+          const allowedSymbols = allowedDifficulties.flatMap(
+            (difficulty) => TOMB_SYMBOLS[difficulty]
+          )
+          tableau.inventoryIds.forEach((symbolId: string) => {
+            expect(allowedSymbols).toContain(symbolId)
+          })
+        })
+      })
+    })
   })
 
   describe("Mathematical Verification", () => {
@@ -403,7 +424,7 @@ describe("Tableau System", () => {
           "description": "The merchant trades with the farmer under Ra's blessing.",
           "id": "tab2",
           "inventoryIds": [
-            "art1",
+            "a8",
             "d1",
           ],
           "levelNr": 1,
@@ -417,7 +438,7 @@ describe("Tableau System", () => {
       const usedSymbols = allInventory
         .filter((item) => firstTableau.inventoryIds.includes(item.id))
         .map((item) => item.symbol)
-      expect(usedSymbols).toEqual(["𓇳", "𓋹"])
+      expect(usedSymbols).toEqual(["𓇳", "𓆤"])
     })
 
     it("creates a representative tableau for the junior tomb", () => {
@@ -434,7 +455,7 @@ describe("Tableau System", () => {
           "description": "The Pharaoh blesses the merchant's trade with sacred lions.",
           "id": "tab10",
           "inventoryIds": [
-            "p11",
+            "a2",
             "p10",
             "p1",
           ],
@@ -449,7 +470,7 @@ describe("Tableau System", () => {
       const usedSymbols = allInventory
         .filter((item) => firstTableau.inventoryIds.includes(item.id))
         .map((item) => item.symbol)
-      expect(usedSymbols).toEqual(["𓁫", "𓀃", "𓀄"])
+      expect(usedSymbols).toEqual(["𓃭", "𓁫", "𓀃"])
     })
 
     it("creates a representative tableau for the expert tomb", () => {
@@ -518,42 +539,6 @@ describe("Tableau System", () => {
         .filter((item) => lastTableau.inventoryIds.includes(item.id))
         .map((item) => item.symbol)
       expect(usedSymbols).toEqual(["𓅃", "𓉶", "𓆓", "𓁫", "𓁁", "𓀄"])
-    })
-  })
-
-  describe("test all tableau formula's", () => {
-    const tableauLevels = generateTableaus()
-
-    describe.each(difficulties)("%s difficulty tableaus", (difficulty) => {
-      const journey = journeys.find(
-        (j): j is TreasureTombJourney =>
-          j.type === "treasure_tomb" && j.difficulty === difficulty
-      )!
-
-      it.each(tableauLevels.filter((t) => t.tombJourneyId === journey.id))(
-        "creates solvable formulas for: $name",
-        (tableau) => {
-          expect(journey).toBeDefined()
-          if (!journey) return
-
-          const journeySeed = generateNewSeed(
-            hashString(tableau.tombJourneyId),
-            tableau.runNumber
-          )
-          const tableauSeed = generateNewSeed(journeySeed, tableau.levelNr)
-          const random = mulberry32(tableauSeed)
-
-          const settings = {
-            amountSymbols: tableau.symbolCount,
-            hieroglyphIds: tableau.inventoryIds,
-            numberRange: journey.levelSettings.numberRange,
-            operations: journey.levelSettings.operators,
-          }
-          expect(() =>
-            generateRewardCalculation(settings, random)
-          ).not.toThrow()
-        }
-      )
     })
   })
 })

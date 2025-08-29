@@ -649,7 +649,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.2,
       },
       completed: {
-        pieces: [5, 6],
+        pieces: [6, 7],
       },
     },
   },
@@ -681,7 +681,7 @@ export const journeys: Journey[] = [
         chanceIncrease: 0.12,
       },
       completed: {
-        pieces: [6, 6],
+        pieces: [6, 7],
       },
     },
   },

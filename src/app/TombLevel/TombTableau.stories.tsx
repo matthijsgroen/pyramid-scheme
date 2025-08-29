@@ -2,11 +2,12 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
-import { generateTableaus } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
 import { createPositionOverview } from "../Formulas/filledPositions"
+import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { useTranslation } from "react-i18next"
 
 type TombLevelArgs = {
   runNr: number
@@ -14,8 +15,6 @@ type TombLevelArgs = {
   journey: TreasureTombJourney
   filled: number
 }
-
-const tableaus = generateTableaus()
 
 const fillPositions = (keys: string[], value: number) => {
   const result: Record<string, number> = {}
@@ -73,13 +72,13 @@ const meta = {
   },
   tags: ["autodocs"],
   render: ({ runNr, levelNr, journey, filled }) => {
+    const { t } = useTranslation("fez")
+    console.log(t("tombIntro"))
+    const tableaus = useTableauTranslations()
     const tableau = tableaus.filter(
       (tab) => tab.tombJourneyId === journey.id && tab.runNumber === runNr
     )[levelNr - 1]
 
-    if (!tableau) {
-      return <p>No tableau</p>
-    }
     const journeySeed = generateNewSeed(hashString(journey.id), runNr)
     const seed = generateNewSeed(journeySeed, levelNr)
 
@@ -95,6 +94,9 @@ const meta = {
       const calc = generateRewardCalculation(settings, random)
       return calc
     }, [seed, tableau, journey.levelSettings])
+    if (!tableau) {
+      return <p>No tableau</p>
+    }
     if (!calculation) return <p>No calculation</p>
 
     const filledPositions: Record<string, number> = fillPositions(
