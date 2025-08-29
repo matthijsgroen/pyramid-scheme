@@ -85,7 +85,7 @@ export const useOfflineStorage = <T>(
   storeName = "defaultStore"
 ): [
   value: T,
-  setValue: (value: SetStateAction<T>) => Promise<void>,
+  setValue: (value: SetStateAction<T>) => Promise<T>,
   loaded: boolean,
   deleteValue: (optimistic?: boolean) => Promise<void>,
 ] => {
@@ -133,10 +133,12 @@ export const useOfflineStorage = <T>(
         setLocalState(nextValue) // Optimistic
         await store.setItem<T>(key, nextValue)
         setLocalState(nextValue)
+        return nextValue
       } else {
         setLocalState(value) // Optimistic
         await store.setItem<T>(key, value)
         setLocalState(value)
+        return value
       }
     },
     [key, localState, store]

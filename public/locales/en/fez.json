@@ -18,9 +18,9 @@
   "collectionIntro2": "You can inspect them in your Collection screen.",
   "collectionIntro3": "Swipe/scroll the screen to the right to see your collection.",
 
-  "tombIntro": "This is an indoor expedition, where we will explore ancient tombs.",
-  "tombIntro2": "Completing a tomb like this will reward you with unique treasures.",
-  "tombIntro3": "Let's see if we can solve the puzzles inside.",
+  "tombIntro": "We found the hidden tomb!",
+  "tombIntro2": "Maybe we can translate the text using the hieroglyphs we found.",
+  "tombIntro3": "We could even find a treasure here.",
 
   "notEnoughHieroglyphs": "You can always stop this expedition by returning to the travel screen.",
   "notEnoughHieroglyphs2": "We can choose to interrupt the expedition to search for extra hieroglyphs elsewhere.",

@@ -20,7 +20,7 @@ export const useJourneyTranslations = () => {
     difficultyLabel: tCommon(`difficulty.${journey.difficulty}`),
     lengthLabel: tCommon(`journeyLength.${journey.journeyLength}`),
     ...(journey.type === "pyramid" && {
-      timeLabel: tCommon(`time.${(journey as PyramidJourney).time}`),
+      timeLabel: tCommon(`time.${(journey as PyramidJourney).background.time}`),
     }),
   }))
 }
@@ -42,7 +42,7 @@ export const useJourneyTranslation = (id: string) => {
     difficultyLabel: tCommon(`difficulty.${journey.difficulty}`),
     lengthLabel: tCommon(`journeyLength.${journey.journeyLength}`),
     ...(journey.type === "pyramid" && {
-      timeLabel: tCommon(`time.${(journey as PyramidJourney).time}`),
+      timeLabel: tCommon(`time.${(journey as PyramidJourney).background.time}`),
     }),
   }
 }

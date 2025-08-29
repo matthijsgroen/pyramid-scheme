@@ -10,41 +10,43 @@ type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
 
 type PoseChat = [pose: Pose, translationKey: string]
 
-const pose = (pose: Pose, keys: string[]): PoseChat[] =>
-  keys.map((key) => [pose, key])
+const pose = (...args: (Pose | string[])[]): PoseChat[] => {
+  let currentPose: Pose = "default"
+
+  const result = args.flatMap<PoseChat>((key) => {
+    if (Array.isArray(key)) {
+      return key.map<PoseChat>((k) => [currentPose, k])
+    }
+    currentPose = key
+    return []
+  })
+  return result
+}
 
 const conversations: Record<string, PoseChat[]> = {
-  welcome: pose("default", ["welcome", "welcome2", "welcome3"]),
-  chooseExpedition: pose("default", ["chooseExpedition"]),
-  pyramidIntro: [
-    ...pose("default", [
-      "pyramidIntro",
-      "pyramidIntro2",
-      "pyramidIntro3",
-      "pyramidIntro4",
-    ]),
-    ...pose("pointUp", ["pyramidIntro5"]),
-  ],
+  welcome: pose(["welcome", "welcome2", "welcome3"]),
+  chooseExpedition: pose(["chooseExpedition"]),
+  pyramidIntro: pose(
+    ["pyramidIntro", "pyramidIntro2", "pyramidIntro3", "pyramidIntro4"],
+    "pointUp",
+    ["pyramidIntro5"]
+  ),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", [
     "expeditionCompleted",
     "expeditionCompleted2",
   ]),
-  collectionIntro: pose("default", [
+  collectionIntro: pose([
     "collectionIntro",
     "collectionIntro2",
     "collectionIntro3",
   ]),
-  tombIntro: pose("default", ["tombIntro", "tombIntro2", "tombIntro3"]),
-  notEnoughHieroglyphs: [
-    ...pose("default", ["notEnoughHieroglyphs"]),
-    ...pose("pointUp", ["notEnoughHieroglyphs2"]),
-  ],
+  tombIntro: pose(["tombIntro", "tombIntro2"], "pointUp", ["tombIntro3"]),
+  notEnoughHieroglyphs: pose(["notEnoughHieroglyphs"], "pointUp", [
+    "notEnoughHieroglyphs2",
+  ]),
   tombLoot: pose("glassesPoint", ["tombLoot"]),
-  mapPiece: [
-    ...pose("default", ["mapPiece", "mapPiece2"]),
-    ...pose("pointUp", ["mapPiece3"]),
-  ],
+  mapPiece: pose(["mapPiece", "mapPiece2"], "pointUp", ["mapPiece3"]),
 }
 
 const NOT_FOUND = pose("default", ["not-found"])
@@ -72,14 +74,14 @@ export const Fez: FC<{
       if (messageIndex >= messages.length) {
         const timer = setTimeout(() => {
           onComplete("complete")
-        }, 500) // complete
+        }, 300) // complete
         return () => clearTimeout(timer) // Cleanup timer
       }
       return
     }
     const timer = setTimeout(() => {
       setShowMessage(true)
-    }, 1000) // Show after 1 second
+    }, 600) // Show after 600 milliseconds
     return () => clearTimeout(timer)
   }, [visible, messageIndex, messages.length, onComplete])
 

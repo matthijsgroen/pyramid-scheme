@@ -38,14 +38,19 @@ export const FezCompanion: React.FC<{
             setConversations((prev) => ({
               ...prev,
               [conversationId]: true,
-            })).then(() => {
+            })).then((v) => {
               // remove from queue
               conversationQueue.current = conversationQueue.current.filter(
                 (item) => item !== entry
               )
               onComplete?.(result)
               if (conversationQueue.current.length > 0) {
-                setActiveConversation(conversationQueue.current[0].conversation)
+                const nextConversation = conversationQueue.current[0]
+                if (v[nextConversation.conversation]) {
+                  nextConversation.onComplete("seen-earlier")
+                } else {
+                  setActiveConversation(nextConversation.conversation)
+                }
               } else {
                 setActiveConversation(null)
               }
