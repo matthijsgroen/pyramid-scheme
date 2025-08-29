@@ -27,8 +27,11 @@ export type PyramidJourney = {
   difficulty: "starter" | "junior" | "expert" | "master" | "wizard"
   journeyLength: "short" | "medium" | "long"
   levelCount: number
-  time: DayNightCycleStep
-  timeStepSize?: number
+  background: {
+    time: DayNightCycleStep
+    timeStepSize?: number
+    showNile?: boolean
+  }
   levelSettings: {
     startFloorCount: number
     endFloorCount?: number
@@ -77,7 +80,9 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "short",
     levelCount: 3,
-    time: "morning",
+    background: {
+      time: "morning",
+    },
     levelSettings: {
       startFloorCount: 3,
       blocksOpenRestricted: [0], // no blocks opening at bottom floor
@@ -103,7 +108,10 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "short",
     levelCount: 4,
-    time: "afternoon",
+    background: {
+      time: "afternoon",
+      showNile: true,
+    },
     levelSettings: {
       startFloorCount: 3,
       blocksOpenRestricted: [3], // never open top of pyramid
@@ -130,7 +138,9 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "medium",
     levelCount: 5,
-    time: "evening",
+    background: {
+      time: "evening",
+    },
     levelSettings: {
       startFloorCount: 3,
       endFloorCount: 4,
@@ -157,7 +167,9 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "medium",
     levelCount: 5,
-    time: "night",
+    background: {
+      time: "night",
+    },
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 4],
@@ -202,7 +214,10 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "short",
     levelCount: 3,
-    time: "morning",
+    background: {
+      time: "morning",
+      showNile: true,
+    },
     levelSettings: {
       startFloorCount: 4,
       endFloorCount: 5,
@@ -229,7 +244,9 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "medium",
     levelCount: 6,
-    time: "afternoon",
+    background: {
+      time: "afternoon",
+    },
     levelSettings: {
       startFloorCount: 4,
       endFloorCount: 5,
@@ -256,7 +273,9 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "long",
     levelCount: 8,
-    time: "evening",
+    background: {
+      time: "evening",
+    },
     levelSettings: {
       startFloorCount: 5,
       blocksOpen: [0.8, 1],
@@ -282,7 +301,10 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "medium",
     levelCount: 5,
-    time: "night",
+    background: {
+      time: "night",
+      showNile: true,
+    },
     levelSettings: {
       startFloorCount: 5,
       blocksOpen: [0.8, 1],
@@ -328,7 +350,9 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "short",
     levelCount: 4,
-    time: "morning",
+    background: {
+      time: "morning",
+    },
     levelSettings: {
       startFloorCount: 5,
       endFloorCount: 6,
@@ -356,8 +380,10 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "medium",
     levelCount: 6,
-    time: "afternoon",
-    timeStepSize: 2,
+    background: {
+      time: "afternoon",
+      timeStepSize: 2,
+    },
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 5,
@@ -385,8 +411,11 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "long",
     levelCount: 9,
-    time: "evening",
-    timeStepSize: 1,
+    background: {
+      time: "evening",
+      timeStepSize: 1,
+      showNile: true,
+    },
     levelSettings: {
       startFloorCount: 5,
       endFloorCount: 6,
@@ -414,7 +443,9 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "medium",
     levelCount: 7,
-    time: "night",
+    background: {
+      time: "night",
+    },
     levelSettings: {
       startFloorCount: 6,
       blocksOpen: [0.6, 0.6],
@@ -461,7 +492,9 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "short",
     levelCount: 4,
-    time: "morning",
+    background: {
+      time: "morning",
+    },
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 7,
@@ -488,8 +521,10 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "long",
     levelCount: 9,
-    time: "evening",
-    timeStepSize: 1,
+    background: {
+      time: "evening",
+      timeStepSize: 1,
+    },
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 6,
@@ -516,7 +551,9 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "long",
     levelCount: 8,
-    time: "night",
+    background: {
+      time: "night",
+    },
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 7,
@@ -543,8 +580,10 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "medium",
     levelCount: 5,
-    time: "night",
-    timeStepSize: 1,
+    background: {
+      time: "night",
+      timeStepSize: 1,
+    },
     levelSettings: {
       startFloorCount: 7,
       endFloorCount: 7,
@@ -591,7 +630,9 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "long",
     levelCount: 9,
-    time: "morning",
+    background: {
+      time: "morning",
+    },
     levelSettings: {
       startFloorCount: 7,
       endFloorCount: 8,
@@ -621,7 +662,9 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "long",
     levelCount: 11,
-    time: "afternoon",
+    background: {
+      time: "afternoon",
+    },
     levelSettings: {
       startFloorCount: 5,
       endFloorCount: 10,
@@ -651,7 +694,9 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "long",
     levelCount: 10,
-    time: "evening",
+    background: {
+      time: "evening",
+    },
     levelSettings: {
       startFloorCount: 6,
       endFloorCount: 8,
@@ -679,7 +724,9 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "long",
     levelCount: 8,
-    time: "night",
+    background: {
+      time: "night",
+    },
     levelSettings: {
       startFloorCount: 10,
       endFloorCount: 10,

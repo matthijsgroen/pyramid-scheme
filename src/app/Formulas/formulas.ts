@@ -146,7 +146,9 @@ export const formulaToString = (
   mapping: Record<number, string> = {},
   showAnswer: "no" | "yes" | "obfuscated" = "yes"
 ): string =>
-  `${formulaPartToString(formula, mapping)} = ${showAnswer === "yes" ? showValue(formula.result, mapping) : showAnswer === "obfuscated" ? "?" : ""}`
+  showAnswer === "no"
+    ? formulaPartToString(formula, mapping)
+    : `${formulaPartToString(formula, mapping)} = ${showAnswer === "yes" ? showValue(formula.result, mapping) : showAnswer === "obfuscated" ? "?" : ""}`
 
 const getOperatorPrecedence = (operation: Operation): number => {
   switch (operation) {

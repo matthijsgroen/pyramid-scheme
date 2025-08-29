@@ -61,19 +61,24 @@ const meta = {
     if (!content) return <div>Error creating level</div>
     const dayTime = dayNightCycleDayTime(
       levelNr,
-      journey.time,
-      journey.timeStepSize
+      journey.background.time,
+      journey.background.timeStepSize
     )
     return (
       <DesertBackdrop
         levelNr={levelNr}
-        start={journey.time}
-        timeStepSize={journey.timeStepSize}
+        start={journey.background.time}
+        timeStepSize={journey.background.timeStepSize}
+        showNile={journey.background.showNile}
       >
         <div className="relative flex h-full w-full flex-col">
           <h1 className="pointer-events-none mt-0 inline-block pt-4 text-center font-pyramid text-2xl font-bold">
             Level {levelNr}/{journey.levelCount} ({dayTime})
           </h1>
+          <div className="flex w-full flex-col items-center justify-center">
+            <h1 className="w-md font-extrabold">{journey.name}</h1>
+            <p className="w-md">{journey.description}</p>
+          </div>
           <div className="flex w-full flex-1 items-center justify-center">
             <PyramidDisplay
               levelNr={levelNr}

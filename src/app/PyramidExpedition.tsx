@@ -163,15 +163,16 @@ export const PyramidExpedition: FC<{
       : undefined
   const dayTime = dayNightCycleDayTime(
     activeJourney.levelNr,
-    pyramidJourney.time,
-    pyramidJourney.timeStepSize
+    pyramidJourney.background.time,
+    pyramidJourney.background.timeStepSize
   )
 
   return (
     <DesertBackdrop
       levelNr={activeJourney.levelNr}
-      start={pyramidJourney.time}
-      timeStepSize={activeJourney.journey.timeStepSize}
+      start={pyramidJourney.background.time}
+      timeStepSize={pyramidJourney.background.timeStepSize}
+      showNile={pyramidJourney.background.showNile}
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
@@ -180,8 +181,8 @@ export const PyramidExpedition: FC<{
               "flex w-full items-center justify-between px-4 py-2",
               dayNightCycleStep(
                 activeJourney.levelNr,
-                pyramidJourney.time,
-                activeJourney.journey.timeStepSize
+                pyramidJourney.background.time,
+                activeJourney.journey.background.timeStepSize
               ) < 6
                 ? "text-black"
                 : "text-white"

@@ -112,13 +112,13 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     >
       <div className="relative flex h-full w-full overflow-x-hidden">
         <div
-          className={`absolute inset-0 flex w-full flex-1 flex-col py-6 transition-all duration-700 ease-in-out md:px-16 ${
+          className={`absolute inset-0 flex w-full flex-1 flex-col pb-6 transition-all duration-700 ease-in-out md:px-16 ${
             showJourneySelection
               ? "translate-x-[-100%] opacity-0"
               : "translate-x-0 opacity-100"
           }`}
         >
-          <p className="mb-4 border-b-2 border-red-200 pb-2 text-center text-sm text-red-600">
+          <p className="sticky top-0 mb-4 border-b-2 border-red-200 bg-amber-50 py-1 text-center text-sm text-red-600">
             This is an early <strong className="font-bold">alpha</strong>{" "}
             version. Expect an{" "}
             <strong className="font-bold">
