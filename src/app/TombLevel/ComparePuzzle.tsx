@@ -194,7 +194,7 @@ export const ComparePuzzle: FC<{
                     focus === index ? handleMouseOverLeft : undefined
                   }
                 >
-                  {formulaToString(comparison.left)}
+                  {formulaToString(comparison.left, undefined, "no")}
                 </button>
                 <button
                   className={clsx(
@@ -206,7 +206,7 @@ export const ComparePuzzle: FC<{
                   }
                   onClick={focus === index ? handleRightClick : undefined}
                 >
-                  {formulaToString(comparison.right)}
+                  {formulaToString(comparison.right, undefined, "no")}
                 </button>
               </div>
               <div className="flex-1">
