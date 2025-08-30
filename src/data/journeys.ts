@@ -63,6 +63,7 @@ export type TreasureTombJourney = {
   levelCount: number
   treasures: Treasure[]
   levelSettings: {
+    symbolCount: number
     numberRange: [min: number, max: number]
     operators: Operation[]
     compareAmount: number
@@ -198,6 +199,7 @@ export const journeys: Journey[] = [
     levelCount: 2,
     treasures: merchantCacheTreasures,
     levelSettings: {
+      symbolCount: 2,
       numberRange: [1, 5],
       operators: ["+"],
       compareAmount: 0,
@@ -334,6 +336,7 @@ export const journeys: Journey[] = [
     levelCount: 3,
     treasures: nobleVaultTreasures,
     levelSettings: {
+      symbolCount: 3,
       numberRange: [1, 10],
       operators: ["+", "-"],
       compareAmount: 2,
@@ -476,6 +479,7 @@ export const journeys: Journey[] = [
     levelCount: 4,
     treasures: templeSecretsTreasures,
     levelSettings: {
+      symbolCount: 4,
       numberRange: [1, 10],
       operators: ["+", "-", "*"],
       compareAmount: 3,
@@ -614,6 +618,7 @@ export const journeys: Journey[] = [
     levelCount: 5,
     treasures: ancientRelicsTreasures,
     levelSettings: {
+      symbolCount: 4,
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
       compareAmount: 4,
@@ -759,6 +764,7 @@ export const journeys: Journey[] = [
     levelCount: 6,
     treasures: mythicalArtifactsTreasures,
     levelSettings: {
+      symbolCount: 5,
       numberRange: [1, 15],
       operators: ["+", "-", "*", "/"],
       compareAmount: 5,

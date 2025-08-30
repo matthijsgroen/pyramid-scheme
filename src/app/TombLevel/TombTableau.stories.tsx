@@ -7,11 +7,9 @@ import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
 import { createPositionOverview } from "../Formulas/filledPositions"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
-import { useTranslation } from "react-i18next"
 
 type TombLevelArgs = {
-  runNr: number
-  levelNr: number
+  tableauNr: number
   journey: TreasureTombJourney
   filled: number
 }
@@ -38,14 +36,12 @@ const meta = {
     },
   },
   args: {
-    runNr: 1,
-    levelNr: 1,
+    tableauNr: 1,
     journey: tombJourneys[0],
     filled: 1,
   },
   argTypes: {
-    runNr: { control: { type: "number", min: 1 } },
-    levelNr: { control: { type: "number", min: 1 } },
+    tableauNr: { control: { type: "number", min: 1 } },
     filled: {
       control: { type: "range", min: 0, max: 1, step: 0.1 },
     },
@@ -71,13 +67,13 @@ const meta = {
     },
   },
   tags: ["autodocs"],
-  render: ({ runNr, levelNr, journey, filled }) => {
-    const { t } = useTranslation("fez")
-    console.log(t("tombIntro"))
+  render: ({ tableauNr, journey, filled }) => {
     const tableaus = useTableauTranslations()
-    const tableau = tableaus.filter(
-      (tab) => tab.tombJourneyId === journey.id && tab.runNumber === runNr
-    )[levelNr - 1]
+    const tableau = tableaus.filter((tab) => tab.tombJourneyId === journey.id)[
+      tableauNr - 1
+    ]
+    const runNr = tableau?.runNumber
+    const levelNr = tableau?.levelNr
 
     const journeySeed = generateNewSeed(hashString(journey.id), runNr)
     const seed = generateNewSeed(journeySeed, levelNr)
@@ -105,15 +101,20 @@ const meta = {
     )
 
     return (
-      <TombTableau
-        difficulty={journey.difficulty}
-        tableau={tableau}
-        calculation={calculation}
-        filledState={{
-          symbolCounts: calculation.symbolCounts,
-          filledPositions,
-        }}
-      />
+      <div>
+        <h1 className="font-pyramid">
+          Run {runNr} - Level {levelNr}
+        </h1>
+        <TombTableau
+          difficulty={journey.difficulty}
+          tableau={tableau}
+          calculation={calculation}
+          filledState={{
+            symbolCounts: calculation.symbolCounts,
+            filledPositions,
+          }}
+        />
+      </div>
     )
   },
 } satisfies Meta<TombLevelArgs>

@@ -5,7 +5,7 @@ import { allItems } from "./inventory"
 describe("inventory", () => {
   const tableaus = generateTableaus()
 
-  it("uses all inventory items in tableaus", () => {
+  it.only("uses all inventory items in tableaus", () => {
     const items = new Set<string>()
     tableaus.forEach((tableau) => {
       tableau.inventoryIds.forEach((id) => items.add(id))
