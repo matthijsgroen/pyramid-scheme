@@ -7,6 +7,7 @@
 import { mulberry32, shuffle } from "@/game/random"
 import { difficulties, type Difficulty } from "./difficultyLevels"
 import { journeys, type TreasureTombJourney } from "./journeys"
+import { allItems } from "./inventory"
 
 export type TableauLevel = {
   id: string
@@ -110,7 +111,7 @@ export function getTombName(tombId: string, t?: TranslationFunction): string {
 }
 
 // Get translated story template name
-function getStoryTemplateName(
+function getTableauTitle(
   tombId: string,
   runNr: number,
   levelNr: number,
@@ -121,7 +122,7 @@ function getStoryTemplateName(
   }
 
   // Fallback - capitalize and replace underscores
-  return `a cryptic text about ${getTombName(tombId)}`
+  return `Sacred tableau from ${getTombName(tombId)}`
 }
 
 // Get translated description
@@ -129,6 +130,7 @@ function getTableauDescription(
   tombId: string,
   runNr: number,
   levelNr: number,
+  tableauSymbols: string[],
   t?: TranslationFunction
 ): string {
   if (t) {
@@ -136,7 +138,11 @@ function getTableauDescription(
   }
 
   // Fallback description
-  return `Sacred tableau from ${getTombName(tombId)}`
+  return (
+    tableauSymbols
+      .map((symbol) => allItems.find((item) => item.id === symbol)?.name)
+      .join(", ") || "Unknown symbols."
+  )
 }
 
 const random = mulberry32(9248529837592)
@@ -172,8 +178,9 @@ const tableauInventory: Record<string, string[]> = difficulties.reduce(
             tableauSymbols.push(shuffledSymbols[symbolIndex])
           }
 
-          innerAcc[`tab_${difficulty}_r${treasureIndex + 1}_l${level}`] =
-            tableauSymbols
+          innerAcc[
+            `${difficulty}_treasure_tomb.run${treasureIndex + 1}_level${level}`
+          ] = tableauSymbols
         }
 
         return innerAcc
@@ -183,6 +190,17 @@ const tableauInventory: Record<string, string[]> = difficulties.reduce(
   {} as Record<string, string[]>
 )
 
+const tableauSymbols = Object.entries(tableauInventory).reduce<string[]>(
+  (acc, [key, symbols]) => {
+    acc[key] = symbols.map(
+      (symbol) => allItems.find((item) => item.id === symbol)?.name
+    )
+    return acc
+  },
+  {} as Record<string, string[]>
+)
+console.log(tableauSymbols)
+
 // Generate all tableau levels with i18n support
 export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   const tableaus: TableauLevel[] = []
@@ -191,7 +209,9 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
     for (let treasure = 1; treasure <= tomb.treasures.length; treasure++) {
       for (let level = 1; level <= tomb.levelCount; level++) {
         const tableauSymbols =
-          tableauInventory[`tab_${tomb.difficulty}_r${treasure}_l${level}`]
+          tableauInventory[
+            `${tomb.difficulty}_treasure_tomb.run${treasure}_level${level}`
+          ]
 
         tableaus.push({
           id: `tab_${tomb.difficulty}_r${treasure}_l${level}`,
@@ -200,8 +220,14 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
           inventoryIds: tableauSymbols,
           tombJourneyId: tomb.id,
           runNumber: treasure,
-          name: getStoryTemplateName(tomb.id, treasure, level, t),
-          description: getTableauDescription(tomb.id, treasure, level, t),
+          name: getTableauTitle(tomb.id, treasure, level, t),
+          description: getTableauDescription(
+            tomb.id,
+            treasure,
+            level,
+            tableauSymbols,
+            t
+          ),
         })
       }
     }
