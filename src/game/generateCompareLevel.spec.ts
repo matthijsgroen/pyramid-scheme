@@ -1,40 +1,27 @@
 import { describe, expect, it } from "vitest"
-import {
-  generateCompareLevel,
-  type CompareLevel,
-  type CompareLevelSettings,
-} from "./generateCompareLevel"
+import { generateCompareLevel, type CompareLevel, type CompareLevelSettings } from "./generateCompareLevel"
 import { mulberry32 } from "./random"
 import { formulaToString } from "../app/Formulas/formulas"
 
 describe(generateCompareLevel, () => {
   const stringifyCompare = (level: CompareLevel) =>
     level.comparisons.map(
-      (f) =>
-        `${formulaToString(f.left)} ${f.left.result > f.right.result ? ">" : "<"} ${formulaToString(f.right)}`
+      f => `${formulaToString(f.left)} ${f.left.result > f.right.result ? ">" : "<"} ${formulaToString(f.right)}`
     )
 
-  const resultToValue = (result: number | { symbol: number }) =>
-    typeof result === "number" ? result : result.symbol
+  const resultToValue = (result: number | { symbol: number }) => (typeof result === "number" ? result : result.symbol)
 
-  const collectAnswers = (
-    side: "largest" | "smallest",
-    level: CompareLevel
-  ) => {
-    return level.comparisons.map((c) => {
-      const formulas = [c.left, c.right].sort(
-        (a, b) => resultToValue(a.result) - resultToValue(b.result)
-      )
+  const collectAnswers = (side: "largest" | "smallest", level: CompareLevel) => {
+    return level.comparisons.map(c => {
+      const formulas = [c.left, c.right].sort((a, b) => resultToValue(a.result) - resultToValue(b.result))
       const formula = side === "largest" ? formulas[1] : formulas[0]
       return resultToValue(formula.result)
     })
   }
 
-  const allContain = (answers: number[], digit: number) =>
-    answers.every((x) => String(x).includes(String(digit)))
+  const allContain = (answers: number[], digit: number) => answers.every(x => String(x).includes(String(digit)))
 
-  const neverContain = (answers: number[], digit: number) =>
-    !answers.some((x) => String(x).includes(String(digit)))
+  const neverContain = (answers: number[], digit: number) => !answers.some(x => String(x).includes(String(digit)))
 
   it("generates a set of compare formulas", () => {
     const random = mulberry32(12345)
@@ -44,11 +31,7 @@ describe(generateCompareLevel, () => {
       operators: ["+", "-"],
       compareAmount: 3,
     }
-    const level = generateCompareLevel(
-      settings,
-      { digit: 5, largest: "always" },
-      random
-    )
+    const level = generateCompareLevel(settings, { digit: 5, largest: "always" }, random)
     expect(level.requirements).toEqual({
       digit: 5,
       largest: "always",
@@ -71,11 +54,7 @@ describe(generateCompareLevel, () => {
         operators: ["+", "-"],
         compareAmount: 3,
       }
-      const level = generateCompareLevel(
-        settings,
-        { digit: 5, largest: "always" },
-        random
-      )
+      const level = generateCompareLevel(settings, { digit: 5, largest: "always" }, random)
 
       expect(level.requirements).toEqual({
         digit: 5,
@@ -101,11 +80,7 @@ describe(generateCompareLevel, () => {
         operators: ["+", "-"],
         compareAmount: 3,
       }
-      const level = generateCompareLevel(
-        settings,
-        { digit: 8, largest: "never" },
-        random
-      )
+      const level = generateCompareLevel(settings, { digit: 8, largest: "never" }, random)
 
       expect(level.requirements).toEqual({
         digit: 8,

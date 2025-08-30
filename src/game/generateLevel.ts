@@ -1,7 +1,4 @@
-import {
-  createFloorStartIndices,
-  getFloorAndIndex,
-} from "@/app/PyramidLevel/support"
+import { createFloorStartIndices, getFloorAndIndex } from "@/app/PyramidLevel/support"
 import { getAnswers } from "@/game/state"
 import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
@@ -44,7 +41,7 @@ export const createCompletePyramid = (
 
   return {
     ...pyramid,
-    blocks: pyramid.blocks.map((block) => {
+    blocks: pyramid.blocks.map(block => {
       const value = values?.[block.id] ?? block.value
       return {
         ...block,
@@ -133,11 +130,7 @@ const blockBlocks = (
   }
 }
 
-export const generateLevel = (
-  levelNr: number,
-  settings: PyramidLevelSettings,
-  random = Math.random
-): PyramidLevel => {
+export const generateLevel = (levelNr: number, settings: PyramidLevelSettings, random = Math.random): PyramidLevel => {
   const { openBlockCount, blockedBlockCount } = settings
   const fullPyramid = createCompletePyramid(settings, random)
   if (openBlockCount === 0) {
@@ -150,13 +143,7 @@ export const generateLevel = (
   let tryCount = 0
   while (tryCount < 50) {
     const pyramidLevel = blockBlocks(
-      openBlocks(
-        levelNr,
-        fullPyramid,
-        openBlockCount,
-        settings.restrictedOpenFloors,
-        random
-      ),
+      openBlocks(levelNr, fullPyramid, openBlockCount, settings.restrictedOpenFloors, random),
       blockedBlockCount,
       settings.restrictedBlockedFloors || [],
       random
@@ -165,9 +152,7 @@ export const generateLevel = (
     const answers = getAnswers(pyramidLevel.pyramid)
     if (answers) {
       // check if it are the same answers as the values
-      const valuesMatch = Object.keys(answers).every(
-        (key) => answers[key] === pyramidLevel.values[key]
-      )
+      const valuesMatch = Object.keys(answers).every(key => answers[key] === pyramidLevel.values[key])
       if (valuesMatch) {
         return pyramidLevel
       }
@@ -175,7 +160,5 @@ export const generateLevel = (
     tryCount++
   }
 
-  throw new Error(
-    `Unsolvable pyramid, tried ${tryCount} times. Settings: ${JSON.stringify(settings)}`
-  )
+  throw new Error(`Unsolvable pyramid, tried ${tryCount} times. Settings: ${JSON.stringify(settings)}`)
 }

@@ -12,9 +12,7 @@ export const LanguageSwitcher = () => {
       <button
         onClick={() => changeLanguage("en")}
         className={`rounded px-3 py-1 text-sm ${
-          i18n.language === "en"
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          i18n.language === "en" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
         }`}
       >
         English
@@ -22,9 +20,7 @@ export const LanguageSwitcher = () => {
       <button
         onClick={() => changeLanguage("nl")}
         className={`rounded px-3 py-1 text-sm ${
-          i18n.language === "nl"
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          i18n.language === "nl" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
         }`}
       >
         Nederlands

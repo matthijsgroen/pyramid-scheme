@@ -22,8 +22,8 @@ export const InApp: Story = {
       <div className="p-8">
         <h2 className="mb-4 text-2xl font-bold">App Content</h2>
         <p className="text-gray-600">
-          This shows how the header looks in the context of the full
-          application. Click the settings button to see the modal interaction.
+          This shows how the header looks in the context of the full application. Click the settings button to see the
+          modal interaction.
         </p>
       </div>
     </div>

@@ -1,15 +1,8 @@
 import { useEffect, useMemo, type SetStateAction } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import {
-  journeys as journeyData,
-  journeys,
-  type Journey,
-} from "@/data/journeys"
+import { journeys as journeyData, journeys, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
-import {
-  useJourneyTranslations,
-  type TranslatedJourney,
-} from "@/data/useJourneyTranslations"
+import { useJourneyTranslations, type TranslatedJourney } from "@/data/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 
@@ -54,7 +47,7 @@ export type JourneyAPI = {
   findMapPiece: () => void
 }
 
-const journeyIds = journeyData.map((j) => j.id)
+const journeyIds = journeyData.map(j => j.id)
 
 export const useJourneys = (): JourneyAPI => {
   const [storageVersions, setStorageVersion, versionLoaded] = useGameStorage<{
@@ -67,26 +60,16 @@ export const useJourneys = (): JourneyAPI => {
     answers: 1,
   })
   const journeyData = useJourneyTranslations()
-  const [journeys, setJourneys] = useGameStorage<
-    StoredJourneyStateV1[] | StoredJourneyStateV2[]
-  >("journeys", [])
+  const [journeys, setJourneys] = useGameStorage<StoredJourneyStateV1[] | StoredJourneyStateV2[]>("journeys", [])
 
   useEffect(() => {
     if (versionLoaded && storageVersions.journeys === 1) {
-      const updatedJourneys = migrateJourneys(
-        journeys as StoredJourneyStateV1[]
-      )
-      setStorageVersion((prev) => ({ ...prev, journeys: 2 })).then(() => {
+      const updatedJourneys = migrateJourneys(journeys as StoredJourneyStateV1[])
+      setStorageVersion(prev => ({ ...prev, journeys: 2 })).then(() => {
         setJourneys(updatedJourneys)
       })
     }
-  }, [
-    journeys,
-    setJourneys,
-    setStorageVersion,
-    storageVersions.journeys,
-    versionLoaded,
-  ])
+  }, [journeys, setJourneys, setStorageVersion, storageVersions.journeys, versionLoaded])
 
   return useMemo(
     () =>
@@ -96,36 +79,29 @@ export const useJourneys = (): JourneyAPI => {
             journeyData: TranslatedJourney[]
             setJourneys: (
               value: SetStateAction<StoredJourneyStateV1[]>
-            ) => Promise<void>
+            ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
           })
         : createJourneysV2Api({ journeys, setJourneys, journeyData } as {
             journeys: StoredJourneyStateV2[]
             journeyData: TranslatedJourney[]
             setJourneys: (
               value: SetStateAction<StoredJourneyStateV2[]>
-            ) => Promise<void>
+            ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
           }),
     [journeyData, journeys, setJourneys, storageVersions.journeys]
   )
 }
 
-const getJourneyV1 = (
-  journeys: StoredJourneyStateV1[],
-  journeyId: string
-): StoredJourneyStateV2 | undefined => {
-  const journeyStates = journeys.filter((j) => j.journeyId === journeyId)
+const getJourneyV1 = (journeys: StoredJourneyStateV1[], journeyId: string): StoredJourneyStateV2 | undefined => {
+  const journeyStates = journeys.filter(j => j.journeyId === journeyId)
   if (journeyStates.length === 0) return undefined
-  const journeyInfo = journeyData.find(
-    (j): j is TranslatedJourney => j.id === journeyId
-  )
+  const journeyInfo = journeyData.find((j): j is TranslatedJourney => j.id === journeyId)
   if (!journeyInfo) return undefined
 
-  const journeyInProgress = journeys.find(
-    (j) => !j.completed && j.journeyId === journeyId
-  )
-  const isActive = journeyStates.some((j) => !j.canceled && !j.completed)
+  const journeyInProgress = journeys.find(j => !j.completed && j.journeyId === journeyId)
+  const isActive = journeyStates.some(j => !j.canceled && !j.completed)
 
-  const completionCount = journeyStates.filter((j) => j.completed).length
+  const completionCount = journeyStates.filter(j => j.completed).length
 
   return {
     journeyId,
@@ -133,7 +109,7 @@ const getJourneyV1 = (
     active: isActive,
     inProgress: journeyInProgress ? true : false,
     completionCount,
-    foundMapPiece: journeys.some((j) => j.foundMapPiece),
+    foundMapPiece: journeys.some(j => j.foundMapPiece),
   }
 }
 
@@ -144,55 +120,39 @@ export const createJourneysV1Api = ({
 }: {
   journeys: StoredJourneyStateV1[]
   journeyData: TranslatedJourney[]
-  setJourneys: (value: SetStateAction<StoredJourneyStateV1[]>) => Promise<void>
+  setJourneys: (
+    value: SetStateAction<StoredJourneyStateV1[]>
+  ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
 }): JourneyAPI => {
-  const activeJourneyId = journeys.find(
-    (j) => !j.completed && !j.canceled && journeyIds.includes(j.journeyId)
-  )?.journeyId
+  const activeJourneyId = journeys.find(j => !j.completed && !j.canceled && journeyIds.includes(j.journeyId))?.journeyId
 
   const finishJourney = () => {
     if (!activeJourneyId) return
 
-    setJourneys((prev) =>
-      prev.map((j) =>
-        j.journeyId === activeJourneyId
-          ? { ...j, completed: true, canceled: false }
-          : j
-      )
+    setJourneys(prev =>
+      prev.map(j => (j.journeyId === activeJourneyId ? { ...j, completed: true, canceled: false } : j))
     )
   }
 
   const cancelJourney = () => {
     if (!activeJourneyId) return
 
-    setJourneys((prev) =>
-      prev.map((j) =>
-        j.journeyId === activeJourneyId ? { ...j, canceled: true } : j
-      )
-    )
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, canceled: true } : j)))
   }
 
   const completeLevel = () => {
     if (!activeJourneyId) return
-    setJourneys((prev) =>
-      prev.map((j) =>
-        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1 } : j
-      )
-    )
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1 } : j)))
   }
 
   const findMapPiece = () => {
     if (!activeJourneyId) return
 
-    setJourneys((prev) =>
-      prev.map((j) =>
-        j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j
-      )
-    )
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j)))
   }
 
   const maxDifficulty = journeys.reduce<Difficulty>((difficulty, item) => {
-    const j = journeyData.find((j) => j.id === item.journeyId)
+    const j = journeyData.find(j => j.id === item.journeyId)
     if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
       return j.difficulty
     }
@@ -200,16 +160,11 @@ export const createJourneysV1Api = ({
   }, "starter")
 
   const getJourney = (journeyId: string): CombinedJourneyState | undefined => {
-    const journeyInfo = journeyData.find(
-      (j): j is TranslatedJourney => j.id === journeyId
-    )
+    const journeyInfo = journeyData.find((j): j is TranslatedJourney => j.id === journeyId)
     if (!journeyInfo) return undefined
     const j = getJourneyV1(journeys, journeyId)
     if (!j) return undefined
-    const progressPercentage = Math.min(
-      ((j.levelNr ?? 1) - 1) / journeyInfo.levelCount,
-      1
-    )
+    const progressPercentage = Math.min(((j.levelNr ?? 1) - 1) / journeyInfo.levelCount, 1)
     return {
       ...j,
       journey: journeyInfo,
@@ -220,20 +175,15 @@ export const createJourneysV1Api = ({
 
   const nextJourneySeed = (journeyId: string) => {
     const info = getJourney(journeyId)
-    return generateNewSeed(
-      hashString(journeyId),
-      (info?.completionCount ?? 0) + 1
-    )
+    return generateNewSeed(hashString(journeyId), (info?.completionCount ?? 0) + 1)
   }
 
   const startJourney = (journey: Journey) => {
     const journeyInfo = getJourney(journey.id)
     if (journeyInfo && journeyInfo.inProgress && !journeyInfo.active) {
-      setJourneys((prev) =>
-        prev.map((j) =>
-          j.journeyId === journey.id && j.canceled && !j.completed
-            ? { ...j, completed: false, canceled: false }
-            : j
+      setJourneys(prev =>
+        prev.map(j =>
+          j.journeyId === journey.id && j.canceled && !j.completed ? { ...j, completed: false, canceled: false } : j
         )
       )
       return
@@ -246,7 +196,7 @@ export const createJourneysV1Api = ({
       completed: false,
     }
 
-    setJourneys((prev) => [...prev, activeJourney])
+    setJourneys(prev => [...prev, activeJourney])
   }
 
   return {
@@ -269,17 +219,17 @@ export const createJourneysV2Api = ({
 }: {
   journeys: StoredJourneyStateV2[]
   journeyData: TranslatedJourney[]
-  setJourneys: (value: SetStateAction<StoredJourneyStateV2[]>) => Promise<void>
+  setJourneys: (
+    value: SetStateAction<StoredJourneyStateV2[]>
+  ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
 }): JourneyAPI => {
-  const activeJourneyId = journeys.find(
-    (j) => j.active && journeyIds.includes(j.journeyId)
-  )?.journeyId
+  const activeJourneyId = journeys.find(j => j.active && journeyIds.includes(j.journeyId))?.journeyId
 
   const finishJourney = () => {
     if (!activeJourneyId) return
 
-    setJourneys((prev) =>
-      prev.map((j) =>
+    setJourneys(prev =>
+      prev.map(j =>
         j.journeyId === activeJourneyId
           ? ({
               ...j,
@@ -296,17 +246,13 @@ export const createJourneysV2Api = ({
   const cancelJourney = () => {
     if (!activeJourneyId) return
 
-    setJourneys((prev) =>
-      prev.map((j) =>
-        j.journeyId === activeJourneyId ? { ...j, active: false } : j
-      )
-    )
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, active: false } : j)))
   }
 
   const completeLevel = () => {
     if (!activeJourneyId) return
-    setJourneys((prev) =>
-      prev.map((j) =>
+    setJourneys(prev =>
+      prev.map(j =>
         j.journeyId === activeJourneyId
           ? {
               ...j,
@@ -320,15 +266,11 @@ export const createJourneysV2Api = ({
   const findMapPiece = () => {
     if (!activeJourneyId) return
 
-    setJourneys((prev) =>
-      prev.map((j) =>
-        j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j
-      )
-    )
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j)))
   }
 
   const maxDifficulty = journeys.reduce<Difficulty>((difficulty, item) => {
-    const j = journeyData.find((j) => j.id === item.journeyId)
+    const j = journeyData.find(j => j.id === item.journeyId)
     if (j && difficultyCompare(j.difficulty, difficulty) > 0) {
       return j.difficulty
     }
@@ -336,45 +278,30 @@ export const createJourneysV2Api = ({
   }, "starter")
 
   const getJourney = (journeyId: string): CombinedJourneyState | undefined => {
-    const journeyState = journeys.find((j) => j.journeyId === journeyId)
+    const journeyState = journeys.find(j => j.journeyId === journeyId)
     if (!journeyState) return undefined
-    const journeyInfo = journeyData.find(
-      (j): j is TranslatedJourney => j.id === journeyId
-    )
+    const journeyInfo = journeyData.find((j): j is TranslatedJourney => j.id === journeyId)
     if (!journeyInfo) return undefined
 
-    const progressPercentage = Math.min(
-      ((journeyState.levelNr ?? 1) - 1) / journeyInfo.levelCount,
-      1
-    )
+    const progressPercentage = Math.min(((journeyState.levelNr ?? 1) - 1) / journeyInfo.levelCount, 1)
     return {
       ...journeyState,
       journey: journeyInfo,
-      randomSeed: generateNewSeed(
-        hashString(journeyId),
-        journeyState.completionCount + 1
-      ),
+      randomSeed: generateNewSeed(hashString(journeyId), journeyState.completionCount + 1),
       progressPercentage,
     }
   }
 
   const nextJourneySeed = (journeyId: string) => {
     const info = getJourney(journeyId)
-    return generateNewSeed(
-      hashString(journeyId),
-      (info?.completionCount ?? 0) + 1
-    )
+    return generateNewSeed(hashString(journeyId), (info?.completionCount ?? 0) + 1)
   }
 
   const startJourney = (journey: Journey) => {
     const journeyInfo = getJourney(journey.id)
 
     if (journeyInfo && journeyInfo.inProgress && !journeyInfo.active) {
-      setJourneys((prev) =>
-        prev.map((j) =>
-          j.journeyId === journey.id ? { ...j, active: true } : j
-        )
-      )
+      setJourneys(prev => prev.map(j => (j.journeyId === journey.id ? { ...j, active: true } : j)))
       return
     }
     const activeJourney: StoredJourneyStateV2 = {
@@ -387,8 +314,8 @@ export const createJourneysV2Api = ({
       active: true,
     }
 
-    setJourneys((prev) => {
-      return [...prev.filter((j) => j.journeyId !== journey.id), activeJourney]
+    setJourneys(prev => {
+      return [...prev.filter(j => j.journeyId !== journey.id), activeJourney]
     })
   }
 
@@ -405,14 +332,8 @@ export const createJourneysV2Api = ({
   }
 }
 
-const migrateJourneys = (
-  journeys: StoredJourneyStateV1[]
-): StoredJourneyStateV2[] => {
-  const journeyIds = journeys
-    .map((j) => j.journeyId)
-    .filter((v, i, a) => a.indexOf(v) === i)
+const migrateJourneys = (journeys: StoredJourneyStateV1[]): StoredJourneyStateV2[] => {
+  const journeyIds = journeys.map(j => j.journeyId).filter((v, i, a) => a.indexOf(v) === i)
 
-  return journeyIds
-    .map((id) => getJourneyV1(journeys, id))
-    .filter((j): j is CombinedJourneyState => !!j)
+  return journeyIds.map(id => getJourneyV1(journeys, id)).filter((j): j is CombinedJourneyState => !!j)
 }

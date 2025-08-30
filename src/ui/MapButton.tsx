@@ -16,9 +16,7 @@ const getPositionOnPath = (progress: number, pathConfig: { path: string }) => {
 
     if (i > 0) {
       const prevPoint = points[i - 1]
-      const distance = Math.sqrt(
-        Math.pow(point.x - prevPoint.x, 2) + Math.pow(point.y - prevPoint.y, 2)
-      )
+      const distance = Math.sqrt(Math.pow(point.x - prevPoint.x, 2) + Math.pow(point.y - prevPoint.y, 2))
       totalLength += distance
     }
   }
@@ -31,8 +29,7 @@ const getPositionOnPath = (progress: number, pathConfig: { path: string }) => {
     const prevPoint = points[i - 1]
     const currentPoint = points[i]
     const segmentLength = Math.sqrt(
-      Math.pow(currentPoint.x - prevPoint.x, 2) +
-        Math.pow(currentPoint.y - prevPoint.y, 2)
+      Math.pow(currentPoint.x - prevPoint.x, 2) + Math.pow(currentPoint.y - prevPoint.y, 2)
     )
 
     if (currentLength + segmentLength >= targetLength) {
@@ -61,10 +58,8 @@ const getParametricPosition = (t: number, pathConfig: { path: string }) => {
     const p1 = { x: 45, y: 45 }
     const p2 = { x: 60, y: 55 }
 
-    const x =
-      Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x
-    const y =
-      Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y
+    const x = Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x
+    const y = Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y
     return { x, y }
   } else if (pathConfig.path === "M 25 70 Q 40 35, 65 40 Q 75 50, 75 25") {
     // Medium path - two quadratic curves
@@ -75,14 +70,8 @@ const getParametricPosition = (t: number, pathConfig: { path: string }) => {
       const p1 = { x: 40, y: 35 }
       const p2 = { x: 65, y: 40 }
 
-      const x =
-        Math.pow(1 - localT, 2) * p0.x +
-        2 * (1 - localT) * localT * p1.x +
-        Math.pow(localT, 2) * p2.x
-      const y =
-        Math.pow(1 - localT, 2) * p0.y +
-        2 * (1 - localT) * localT * p1.y +
-        Math.pow(localT, 2) * p2.y
+      const x = Math.pow(1 - localT, 2) * p0.x + 2 * (1 - localT) * localT * p1.x + Math.pow(localT, 2) * p2.x
+      const y = Math.pow(1 - localT, 2) * p0.y + 2 * (1 - localT) * localT * p1.y + Math.pow(localT, 2) * p2.y
       return { x, y }
     } else {
       // Second curve: M 65 40 Q 75 50, 75 25
@@ -91,14 +80,8 @@ const getParametricPosition = (t: number, pathConfig: { path: string }) => {
       const p1 = { x: 75, y: 50 }
       const p2 = { x: 75, y: 25 }
 
-      const x =
-        Math.pow(1 - localT, 2) * p0.x +
-        2 * (1 - localT) * localT * p1.x +
-        Math.pow(localT, 2) * p2.x
-      const y =
-        Math.pow(1 - localT, 2) * p0.y +
-        2 * (1 - localT) * localT * p1.y +
-        Math.pow(localT, 2) * p2.y
+      const x = Math.pow(1 - localT, 2) * p0.x + 2 * (1 - localT) * localT * p1.x + Math.pow(localT, 2) * p2.x
+      const y = Math.pow(1 - localT, 2) * p0.y + 2 * (1 - localT) * localT * p1.y + Math.pow(localT, 2) * p2.y
       return { x, y }
     }
   } else {
@@ -110,14 +93,8 @@ const getParametricPosition = (t: number, pathConfig: { path: string }) => {
       const p1 = { x: 30, y: 30 }
       const p2 = { x: 50, y: 40 }
 
-      const x =
-        Math.pow(1 - localT, 2) * p0.x +
-        2 * (1 - localT) * localT * p1.x +
-        Math.pow(localT, 2) * p2.x
-      const y =
-        Math.pow(1 - localT, 2) * p0.y +
-        2 * (1 - localT) * localT * p1.y +
-        Math.pow(localT, 2) * p2.y
+      const x = Math.pow(1 - localT, 2) * p0.x + 2 * (1 - localT) * localT * p1.x + Math.pow(localT, 2) * p2.x
+      const y = Math.pow(1 - localT, 2) * p0.y + 2 * (1 - localT) * localT * p1.y + Math.pow(localT, 2) * p2.y
       return { x, y }
     } else {
       // Second curve: M 50 40 Q 70 50, 83 17
@@ -126,14 +103,8 @@ const getParametricPosition = (t: number, pathConfig: { path: string }) => {
       const p1 = { x: 70, y: 50 }
       const p2 = { x: 83, y: 17 }
 
-      const x =
-        Math.pow(1 - localT, 2) * p0.x +
-        2 * (1 - localT) * localT * p1.x +
-        Math.pow(localT, 2) * p2.x
-      const y =
-        Math.pow(1 - localT, 2) * p0.y +
-        2 * (1 - localT) * localT * p1.y +
-        Math.pow(localT, 2) * p2.y
+      const x = Math.pow(1 - localT, 2) * p0.x + 2 * (1 - localT) * localT * p1.x + Math.pow(localT, 2) * p2.x
+      const y = Math.pow(1 - localT, 2) * p0.y + 2 * (1 - localT) * localT * p1.y + Math.pow(localT, 2) * p2.y
       return { x, y }
     }
   }
@@ -193,10 +164,7 @@ export const MapButton: FC<MapButtonProps> = ({
       const prevPoint = getParametricPosition(prevT, pathConfig)
       const currentPoint = getParametricPosition(currentT, pathConfig)
 
-      const distance = Math.sqrt(
-        Math.pow(currentPoint.x - prevPoint.x, 2) +
-          Math.pow(currentPoint.y - prevPoint.y, 2)
-      )
+      const distance = Math.sqrt(Math.pow(currentPoint.x - prevPoint.x, 2) + Math.pow(currentPoint.y - prevPoint.y, 2))
       totalLength += distance
     }
 
@@ -224,8 +192,7 @@ export const MapButton: FC<MapButtonProps> = ({
           radial-gradient(circle at 70% 80%, rgba(239,68,68,0.2) 8%, transparent 8%),
           linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #f59e0b 100%)
         `,
-        backgroundSize:
-          "20px 20px, 20px 20px, 20px 20px, 20px 20px, 100px 100px, 80px 80px, 100% 100%",
+        backgroundSize: "20px 20px, 20px 20px, 20px 20px, 20px 20px, 100px 100px, 80px 80px, 100% 100%",
       }}
     >
       {/* Fold effect - top right corner */}
@@ -270,11 +237,7 @@ export const MapButton: FC<MapButtonProps> = ({
           </div>
 
           {/* Journey Path Line */}
-          <svg
-            className="absolute inset-0 h-full w-full"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Full path (gray) */}
             <path
               d={pathConfig.path}
@@ -291,9 +254,7 @@ export const MapButton: FC<MapButtonProps> = ({
               fill="none"
               strokeLinecap="round"
               strokeDasharray={actualPathLength}
-              strokeDashoffset={
-                actualPathLength - clampedProgress * actualPathLength
-              }
+              strokeDashoffset={actualPathLength - clampedProgress * actualPathLength}
               className="transition-all duration-1000 ease-in-out"
             />
             {/* Traveler dot */}

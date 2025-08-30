@@ -13,7 +13,9 @@ const mockPyramidJourney: TranslatedJourney = {
   difficulty: "starter",
   journeyLength: "short",
   levelCount: 3,
-  time: "morning",
+  background: {
+    time: "morning",
+  },
   levelSettings: {
     startFloorCount: 3,
     startNumberRange: [1, 3],
@@ -45,6 +47,7 @@ const mockTreasureTombJourney: TranslatedJourney = {
   lengthLabel: "Short",
   treasures: merchantCacheTreasures,
   levelSettings: {
+    symbolCount: 2,
     numberRange: [1, 10],
     operators: ["+", "-", "*"],
     compareAmount: 0,
@@ -91,7 +94,7 @@ export const PyramidJourney: Story = {
     journey: mockPyramidJourney,
     index: 0,
     showAnimation: false,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }
 
@@ -100,7 +103,7 @@ export const TreasureTombJourney: Story = {
     journey: mockTreasureTombJourney,
     index: 0,
     showAnimation: false,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }
 
@@ -110,7 +113,7 @@ export const WithProgress: Story = {
     index: 0,
     showAnimation: false,
     progressLevelNr: 2,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }
 
@@ -121,7 +124,7 @@ export const Completed: Story = {
     showAnimation: false,
     completionCount: 3,
     hasMapPiece: true,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }
 
@@ -131,7 +134,7 @@ export const WithDetails: Story = {
     index: 0,
     showAnimation: false,
     showDetails: true,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }
 
@@ -141,7 +144,7 @@ export const Disabled: Story = {
     index: 0,
     showAnimation: false,
     disabled: true,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }
 
@@ -150,6 +153,6 @@ export const WithAnimation: Story = {
     journey: mockPyramidJourney,
     index: 2,
     showAnimation: true,
-    onClick: (journey) => console.log("Journey clicked:", journey.name),
+    onClick: journey => console.log("Journey clicked:", journey.name),
   },
 }

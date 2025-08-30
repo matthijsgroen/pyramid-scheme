@@ -3,21 +3,9 @@ import { LootPopup } from "./LootPopup"
 import { useState, type ComponentProps } from "react"
 
 // Mock treasure/item components
-const TreasureItem = ({
-  symbol,
-  rarity,
-}: {
-  symbol: string
-  rarity: string
-}) => (
+const TreasureItem = ({ symbol, rarity }: { symbol: string; rarity: string }) => (
   <div className="flex flex-col items-center">
-    <div
-      className={`mb-2 text-6xl ${
-        rarity === "legendary" ? "animate-pulse" : ""
-      }`}
-    >
-      {symbol}
-    </div>
+    <div className={`mb-2 text-6xl ${rarity === "legendary" ? "animate-pulse" : ""}`}>{symbol}</div>
   </div>
 )
 
@@ -42,9 +30,7 @@ const InteractiveLootPopup = (args: ComponentProps<typeof LootPopup>) => {
     <div className="relative">
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 p-8">
         <div className="text-center">
-          <h2 className="mb-4 text-2xl font-bold text-amber-900">
-            Loot Popup Demo
-          </h2>
+          <h2 className="mb-4 text-2xl font-bold text-amber-900">Loot Popup Demo</h2>
           <button
             onClick={() => setIsOpen(true)}
             className="rounded-lg bg-amber-600 px-6 py-3 font-bold text-white shadow-lg transition-colors hover:bg-amber-700"
@@ -53,11 +39,7 @@ const InteractiveLootPopup = (args: ComponentProps<typeof LootPopup>) => {
           </button>
         </div>
 
-        <LootPopup
-          {...args}
-          isOpen={isOpen}
-          onDismiss={() => setIsOpen(false)}
-        />
+        <LootPopup {...args} isOpen={isOpen} onDismiss={() => setIsOpen(false)} />
       </div>
     </div>
   )
@@ -88,7 +70,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const CommonTreasure: Story = {
-  render: (args) => <InteractiveLootPopup {...args} />,
+  render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
     itemName: "Ancient Pottery Shard",
@@ -101,7 +83,7 @@ export const CommonTreasure: Story = {
 }
 
 export const RareTreasure: Story = {
-  render: (args) => <InteractiveLootPopup {...args} />,
+  render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
     itemName: "Sacred Ankh",
@@ -114,7 +96,7 @@ export const RareTreasure: Story = {
 }
 
 export const EpicTreasure: Story = {
-  render: (args) => <InteractiveLootPopup {...args} />,
+  render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
     itemName: "Eye of Horus Amulet",
@@ -127,7 +109,7 @@ export const EpicTreasure: Story = {
 }
 
 export const LegendaryTreasure: Story = {
-  render: (args) => <InteractiveLootPopup {...args} />,
+  render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
     itemName: "Crown of the Pharaoh",
@@ -140,7 +122,7 @@ export const LegendaryTreasure: Story = {
 }
 
 export const MapPiece: Story = {
-  render: (args) => <InteractiveLootPopup {...args} />,
+  render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
     itemName: "Pyramid Map Piece",
@@ -153,7 +135,7 @@ export const MapPiece: Story = {
 }
 
 export const Coins: Story = {
-  render: (args) => <InteractiveLootPopup {...args} />,
+  render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
     itemName: "Gold Coins",
@@ -186,9 +168,7 @@ export const AllRarities: Story = {
     onDismiss: () => console.log("Popup dismissed"),
   },
   render: () => {
-    const [currentRarity, setCurrentRarity] = useState<
-      "common" | "rare" | "epic" | "legendary"
-    >("common")
+    const [currentRarity, setCurrentRarity] = useState<"common" | "rare" | "epic" | "legendary">("common")
     const [isOpen, setIsOpen] = useState(false)
 
     const rarityData = {
@@ -230,9 +210,7 @@ export const AllRarities: Story = {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 p-8">
         <div className="text-center">
-          <h2 className="mb-6 text-2xl font-bold text-amber-900">
-            All Rarity Types
-          </h2>
+          <h2 className="mb-6 text-2xl font-bold text-amber-900">All Rarity Types</h2>
           <div className="mx-auto grid max-w-2xl grid-cols-2 gap-4 md:grid-cols-4">
             {Object.entries(rarityData).map(([key, data]) => (
               <button
@@ -259,12 +237,7 @@ export const AllRarities: Story = {
           itemName={rarityData[currentRarity].name}
           itemDescription={rarityData[currentRarity].description}
           rarity={currentRarity}
-          itemComponent={
-            <TreasureItem
-              symbol={rarityData[currentRarity].symbol}
-              rarity={currentRarity}
-            />
-          }
+          itemComponent={<TreasureItem symbol={rarityData[currentRarity].symbol} rarity={currentRarity} />}
           onDismiss={() => setIsOpen(false)}
         />
       </div>

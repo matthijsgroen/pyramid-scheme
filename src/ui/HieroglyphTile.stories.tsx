@@ -231,12 +231,7 @@ export const InteractiveStates: Story = {
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Selected</span>
-        <HieroglyphTile
-          symbol="𓃯"
-          difficulty="junior"
-          selected
-          onClick={() => {}}
-        />
+        <HieroglyphTile symbol="𓃯" difficulty="junior" selected onClick={() => {}} />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Disabled</span>

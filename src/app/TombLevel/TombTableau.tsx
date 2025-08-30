@@ -8,6 +8,8 @@ import { useMemo, type FC } from "react"
 import type { Formula as FormulaType } from "@/app/Formulas/formulas"
 import { Formula } from "../Formulas/Formula"
 import type { FilledTileState } from "../Formulas/FormulaPart"
+import { mulberry32, shuffle } from "@/game/random"
+import { hashString } from "@/support/hashString"
 
 // Helper function to count total number slots in a formula
 const countFormulaSlots = (formula: FormulaType): number => {
@@ -40,10 +42,8 @@ export const TombTableau: FC<{
   const solvedPercentage = useMemo(() => {
     // Count total slots across all formulas
     const totalSlots =
-      calculation.hintFormulas.reduce(
-        (sum, formula) => sum + countFormulaSlots(formula),
-        0
-      ) + countFormulaSlots(calculation.mainFormula)
+      calculation.hintFormulas.reduce((sum, formula) => sum + countFormulaSlots(formula), 0) +
+      countFormulaSlots(calculation.mainFormula)
 
     // Count filled slots
     const filledSlots = Object.keys(filledState.filledPositions).length
@@ -51,6 +51,15 @@ export const TombTableau: FC<{
     return totalSlots > 0 ? filledSlots / totalSlots : 0
   }, [calculation, filledState.filledPositions])
 
+  const random = mulberry32(hashString(tableau.name))
+
+  const hintFormulas =
+    difficulty === "starter" || difficulty === "junior"
+      ? calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))
+      : shuffle(
+          calculation.hintFormulas.map((f, i) => ({ formula: f, index: i })),
+          random
+        )
   return (
     <div
       className={clsx(
@@ -58,13 +67,11 @@ export const TombTableau: FC<{
         hieroglyphLevelColors[difficulty]
       )}
     >
-      <h1 className="text-center font-pyramid text-2xl">
-        {revealText(tableau.name, solvedPercentage)}
-      </h1>
+      <h1 className="text-center font-pyramid text-2xl">{revealText(tableau.name, solvedPercentage)}</h1>
       <div>{revealText(tableau.description, solvedPercentage)}</div>
 
-      {calculation.hintFormulas.map((formula, index) => (
-        <div key={index} className="text-3xl">
+      {hintFormulas.map(({ formula, index }, key) => (
+        <div key={key} className="text-2xl">
           <Formula
             formula={formula}
             showResult={true}
@@ -76,8 +83,8 @@ export const TombTableau: FC<{
           />
         </div>
       ))}
-      <div>
-        <span className="text-4xl">
+      <div className="border-t border-black/20 pt-2">
+        <span className="text-2xl">
           <Formula
             formula={calculation.mainFormula}
             showResult={false}

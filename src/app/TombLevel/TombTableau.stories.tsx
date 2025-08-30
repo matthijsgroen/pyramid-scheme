@@ -2,20 +2,17 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
-import { generateTableaus } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
 import { createPositionOverview } from "../Formulas/filledPositions"
+import { useTableauTranslations } from "@/data/useTableauTranslations"
 
 type TombLevelArgs = {
-  runNr: number
-  levelNr: number
+  tableauNr: number
   journey: TreasureTombJourney
   filled: number
 }
-
-const tableaus = generateTableaus()
 
 const fillPositions = (keys: string[], value: number) => {
   const result: Record<string, number> = {}
@@ -25,7 +22,7 @@ const fillPositions = (keys: string[], value: number) => {
   return result
 }
 
-const tombJourneys = journeys.filter((j) => j.type === "treasure_tomb")
+const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
 const meta = {
   title: "Levels/TombLevel",
   parameters: {
@@ -39,14 +36,12 @@ const meta = {
     },
   },
   args: {
-    runNr: 1,
-    levelNr: 1,
+    tableauNr: 1,
     journey: tombJourneys[0],
     filled: 1,
   },
   argTypes: {
-    runNr: { control: { type: "number", min: 1 } },
-    levelNr: { control: { type: "number", min: 1 } },
+    tableauNr: { control: { type: "number", min: 1 } },
     filled: {
       control: { type: "range", min: 0, max: 1, step: 0.1 },
     },
@@ -68,18 +63,16 @@ const meta = {
         },
         {} as Record<string, TreasureTombJourney>
       ),
-      options: tombJourneys.map((j) => j.id),
+      options: tombJourneys.map(j => j.id),
     },
   },
   tags: ["autodocs"],
-  render: ({ runNr, levelNr, journey, filled }) => {
-    const tableau = tableaus.filter(
-      (tab) => tab.tombJourneyId === journey.id && tab.runNumber === runNr
-    )[levelNr - 1]
+  render: ({ tableauNr, journey, filled }) => {
+    const tableaus = useTableauTranslations()
+    const tableau = tableaus.filter(tab => tab.tombJourneyId === journey.id)[tableauNr - 1]
+    const runNr = tableau?.runNumber
+    const levelNr = tableau?.levelNr
 
-    if (!tableau) {
-      return <p>No tableau</p>
-    }
     const journeySeed = generateNewSeed(hashString(journey.id), runNr)
     const seed = generateNewSeed(journeySeed, levelNr)
 
@@ -95,6 +88,9 @@ const meta = {
       const calc = generateRewardCalculation(settings, random)
       return calc
     }, [seed, tableau, journey.levelSettings])
+    if (!tableau) {
+      return <p>No tableau</p>
+    }
     if (!calculation) return <p>No calculation</p>
 
     const filledPositions: Record<string, number> = fillPositions(
@@ -103,15 +99,20 @@ const meta = {
     )
 
     return (
-      <TombTableau
-        difficulty={journey.difficulty}
-        tableau={tableau}
-        calculation={calculation}
-        filledState={{
-          symbolCounts: calculation.symbolCounts,
-          filledPositions,
-        }}
-      />
+      <div>
+        <h1 className="font-pyramid">
+          Run {runNr} - Level {levelNr}
+        </h1>
+        <TombTableau
+          difficulty={journey.difficulty}
+          tableau={tableau}
+          calculation={calculation}
+          filledState={{
+            symbolCounts: calculation.symbolCounts,
+            filledPositions,
+          }}
+        />
+      </div>
     )
   },
 } satisfies Meta<TombLevelArgs>

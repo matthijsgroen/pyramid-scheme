@@ -26,11 +26,7 @@ describe(generateLevel, () => {
     }
   )
 
-  it.each<{ range: [min: number, max: number] }>([
-    { range: [1, 10] },
-    { range: [10, 20] },
-    { range: [12, 12] },
-  ])(
+  it.each<{ range: [min: number, max: number] }>([{ range: [1, 10] }, { range: [10, 20] }, { range: [12, 12] }])(
     "generates a level with the correct range of values (range: $range)",
     ({ range }) => {
       const random = mulberry32(12345)
@@ -46,7 +42,7 @@ describe(generateLevel, () => {
 
       const lowestLevelValues = level.pyramid.blocks
         .slice(bottomFloorIndex)
-        .map((block) => block.value)
+        .map(block => block.value)
         .filter((value): value is number => value !== undefined)
 
       expect(lowestLevelValues.length).toBeGreaterThanOrEqual(2)
@@ -67,7 +63,7 @@ describe(generateLevel, () => {
         lowestFloorNumberRange: [1, 10],
       }
       const level = generateLevel(1, settings)
-      const openBlocks = level.pyramid.blocks.filter((block) => block.isOpen)
+      const openBlocks = level.pyramid.blocks.filter(block => block.isOpen)
       expect(openBlocks.length).toBe(settings.openBlockCount)
       expect(Object.values(level.values)).toHaveLength(settings.openBlockCount)
     })

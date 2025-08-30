@@ -88,8 +88,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
         )}
         style={{
           // Simple inset shadow to create hole effect - no complex backgrounds
-          boxShadow:
-            "inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -1px -1px 2px rgba(255, 255, 255, 0.5)",
+          boxShadow: "inset 2px 2px 4px rgba(0, 0, 0, 0.2), inset -1px -1px 2px rgba(255, 255, 255, 0.5)",
           // Simple outline to suggest dashed border without affecting dimensions
           outline: "1px dashed rgba(156, 163, 175, 0.4)",
           outlineOffset: "-1px",
@@ -109,9 +108,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
 
   // Regular tile requires symbol and difficulty
   if (!symbol || !difficulty) {
-    throw new Error(
-      "HieroglyphTile requires both symbol and difficulty when not empty"
-    )
+    throw new Error("HieroglyphTile requires both symbol and difficulty when not empty")
   }
 
   const edgeVariation = getEdgeVariation(symbol, difficulty)
@@ -178,9 +175,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
                     radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
                     linear-gradient(145deg, var(--color-emerald-300) 0%, var(--color-emerald-500) 25%, var(--color-emerald-600) 75%, var(--color-emerald-800) 100%)
                   `,
-        backgroundSize: disabled
-          ? "auto"
-          : "12px 12px, 16px 16px, 8px 8px, 100% 100%",
+        backgroundSize: disabled ? "auto" : "12px 12px, 16px 16px, 8px 8px, 100% 100%",
 
         // Inset shadows for 3D depth effect only
         boxShadow: disabled
@@ -259,9 +254,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
                     ? "#c2410c"
                     : "#b91c1c",
           // Subtle engraved effect for the symbol
-          textShadow: disabled
-            ? "none"
-            : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
+          textShadow: disabled ? "none" : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
           filter: selected ? "brightness(1.1)" : "none",
         }}
       >

@@ -16,8 +16,9 @@ export const DesertBackdrop: FC<
     levelNr: number
     start: DayNightCycleStep
     timeStepSize?: number
+    showNile?: boolean
   }>
-> = ({ children, levelNr, start, timeStepSize = 3 }) => {
+> = ({ children, levelNr, start, timeStepSize = 3, showNile = false }) => {
   const step = dayNightCycleStep(levelNr, start, timeStepSize)
   const transitionDuration = "duration-12000"
 
@@ -33,6 +34,8 @@ export const DesertBackdrop: FC<
         "--sky-bottom": colors[skyBottom[step]],
         "--sun-offset": `${5 + 5 * step}cqh`,
         "--moon-offset": `${100 - 6 * step}cqh`,
+        "--sand-top": colors[sandTop[step]],
+        "--sand-bottom": colors[sandBottom[step]],
       }}
     >
       <div
@@ -56,11 +59,15 @@ export const DesertBackdrop: FC<
           "absolute inset-0 z-10 flex flex-1 flex-col items-center justify-center bg-gradient-to-b from-transparent from-49% via-(--sand-top) via-50% to-(--sand-bottom) transition-colors",
           transitionDuration
         )}
-        style={{
-          "--sand-top": colors[sandTop[step]],
-          "--sand-bottom": colors[sandBottom[step]],
-        }}
       >
+        {showNile && (
+          <div
+            className={clsx(
+              "absolute top-1/2 right-1/2 bottom-1/3 left-0 bg-gradient-to-b from-(--sky-bottom) to-(--sky-top) bg-clip-content transition-colors [clip-path:polygon(93%_0,_0_17%,_0_67%)]",
+              transitionDuration
+            )}
+          ></div>
+        )}
         {children}
       </div>
     </div>

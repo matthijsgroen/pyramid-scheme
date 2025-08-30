@@ -45,10 +45,7 @@ export const findFormulaWithOptionalExtra = (
   }
 
   // Helper to check if all picked numbers are used at least once
-  const usesAllPicked = (
-    formula: Formula | { symbol: number } | undefined,
-    picked: number[]
-  ): boolean => {
+  const usesAllPicked = (formula: Formula | { symbol: number } | undefined, picked: number[]): boolean => {
     if (!formula) return false
     const used: number[] = []
     const visit = (node: Formula | { symbol: number } | number) => {
@@ -62,14 +59,11 @@ export const findFormulaWithOptionalExtra = (
       }
     }
     visit(formula)
-    return picked.every((num) => used.includes(num))
+    return picked.every(num => used.includes(num))
   }
 
   // Helper to check if picked numbers are used at least once and at most 3 times
-  const usesPickedAtMost3 = (
-    formula: Formula | { symbol: number } | undefined,
-    picked: number[]
-  ): boolean => {
+  const usesPickedAtMost3 = (formula: Formula | { symbol: number } | undefined, picked: number[]): boolean => {
     if (!formula) return false
     const used: number[] = []
     const visit = (node: Formula | { symbol: number } | number) => {
@@ -84,16 +78,11 @@ export const findFormulaWithOptionalExtra = (
     }
     visit(formula)
     const usedCount = countOccurrences(used)
-    return picked.every(
-      (num) => usedCount[num] && usedCount[num] >= 1 && usedCount[num] <= 3
-    )
+    return picked.every(num => usedCount[num] && usedCount[num] >= 1 && usedCount[num] <= 3)
   }
 
   // Instead of generating all, sample a reasonable number of random pools
-  const sampleCount = Math.max(
-    10,
-    Math.min({ low: 20, medium: 50, high: 100 }[sampleSize], picked.length * 5)
-  )
+  const sampleCount = Math.max(10, Math.min({ low: 20, medium: 50, high: 100 }[sampleSize], picked.length * 5))
   const generateRandomNumberPools = (): number[][] => {
     const pools: number[][] = []
     for (let s = 0; s < sampleCount; ++s) {
@@ -125,16 +114,9 @@ export const findFormulaWithOptionalExtra = (
           target, // pass target for symbol marking
           maxDepth
         )
-        if (
-          formula &&
-          usesAllPicked(formula, picked) &&
-          usesPickedAtMost3(formula, picked)
-        ) {
+        if (formula && usesAllPicked(formula, picked) && usesPickedAtMost3(formula, picked)) {
           // If extra was used, ensure it appears in the formula
-          if (
-            !tryExtra ||
-            (formula && JSON.stringify(formula).includes(tryExtra.toString()))
-          ) {
+          if (!tryExtra || (formula && JSON.stringify(formula).includes(tryExtra.toString()))) {
             return formula
           }
         }
@@ -159,29 +141,20 @@ const buildFormulaForTargetAllowReuse = (
   // Helper to check if a number is from picked or target
   const isSymbol = (n: number): boolean => {
     if (picked && picked.includes(n)) return true
-    if (typeof targetForSymbol === "number" && n === targetForSymbol)
-      return true
-    if (Array.isArray(targetForSymbol) && targetForSymbol.includes(n))
-      return true
+    if (typeof targetForSymbol === "number" && n === targetForSymbol) return true
+    if (Array.isArray(targetForSymbol) && targetForSymbol.includes(n)) return true
     return false
   }
 
   function makeLeaf(n: number): { symbol: number } | number {
-    if (
-      extra !== undefined &&
-      n === extra &&
-      (!picked || !picked.includes(n))
-    ) {
+    if (extra !== undefined && n === extra && (!picked || !picked.includes(n))) {
       return n
     }
     if (isSymbol(n)) return { symbol: n }
     return n
   }
 
-  const helper = (
-    pool: number[],
-    currentDepth: number = 0
-  ): Formula | undefined => {
+  const helper = (pool: number[], currentDepth: number = 0): Formula | undefined => {
     if (currentDepth >= maxDepth) return undefined
     if (pool.length < 2) return undefined
     const key =
@@ -212,14 +185,7 @@ const buildFormulaForTargetAllowReuse = (
             case "*":
               // For multiplication, skip if a or b is 0 (unless target is 0), or if target is not divisible by a or b
               if ((a === 0 || b === 0) && target !== 0) continue
-              if (
-                a !== 0 &&
-                b !== 0 &&
-                target !== 0 &&
-                target % a !== 0 &&
-                target % b !== 0
-              )
-                continue
+              if (a !== 0 && b !== 0 && target !== 0 && target % a !== 0 && target % b !== 0) continue
               result = a * b
               break
             case "-":

@@ -36,9 +36,7 @@ export const generateRewardCalculation = (
   let iteration = 0
   while (pickedNumbers.length < settings.amountSymbols) {
     const number =
-      Math.floor(
-        random() * (settings.numberRange[1] - settings.numberRange[0] + 1)
-      ) + settings.numberRange[0]
+      Math.floor(random() * (settings.numberRange[1] - settings.numberRange[0] + 1)) + settings.numberRange[0]
     if (!pickedNumbers.includes(number)) {
       pickedNumbers.push(number)
     }
@@ -59,12 +57,7 @@ export const generateRewardCalculation = (
   const bonus = pickedNumbers[Math.floor(random() * pickedNumbers.length)]
 
   // Step 2: Generate a formula where all symbols occur (maybe multiple times)
-  const mainFormulaNumbers = generateCalculationNumbers(
-    pickedNumbers.concat(bonus),
-    pickedNumbers,
-    [],
-    random
-  )
+  const mainFormulaNumbers = generateCalculationNumbers(pickedNumbers.concat(bonus), pickedNumbers, [], random)
   const mainFormula = createSmallestVerifiedFormula(
     { pickedNumbers: mainFormulaNumbers, operations: settings.operations },
     undefined, // no main formula yet
@@ -81,9 +74,7 @@ export const generateRewardCalculation = (
     const newNumbers = pickedNumbers.slice(i, i + 1)
 
     const operators: Operation[] =
-      hintNumbers.length === 1
-        ? settings.operations.filter((o) => o === "+" || o === "*")
-        : settings.operations
+      hintNumbers.length === 1 ? settings.operations.filter(o => o === "+" || o === "*") : settings.operations
 
     const hintNumbersCapped = shuffle(known, random)
       .slice(known.length > 1 ? -2 : undefined)
@@ -96,12 +87,7 @@ export const generateRewardCalculation = (
       if (loopIteration > 100) {
         throw new Error("could not create hint formula")
       }
-      const calcNumbers = generateCalculationNumbers(
-        hintNumbersCapped,
-        known,
-        newNumbers,
-        random
-      )
+      const calcNumbers = generateCalculationNumbers(hintNumbersCapped, known, newNumbers, random)
 
       const hintFormula = createSmallestVerifiedFormula(
         {
@@ -125,9 +111,9 @@ export const generateRewardCalculation = (
   // count how many times each symbol occurs in the hint and main formulas
   const symbolCounts: Record<string, number> = {}
   const allFormulas = [mainFormula, ...hintFormulas]
-  allFormulas.forEach((formula) => {
+  allFormulas.forEach(formula => {
     const symbols = extractSymbols(formula)
-    symbols.forEach((symbol) => {
+    symbols.forEach(symbol => {
       const symbolName = symbolMapping[parseInt(symbol, 10)]
       symbolCounts[symbolName] = (symbolCounts[symbolName] || 0) + 1
     })
@@ -149,7 +135,7 @@ const generateCalculationNumbers = (
   random: () => number
 ): number[] =>
   shuffle(
-    hintNumbersCapped.flatMap<number>((num) => {
+    hintNumbersCapped.flatMap<number>(num => {
       if (known.length > 0 && newNumbers.includes(num)) {
         return [num] // new numbers should occur only once
       }
@@ -174,10 +160,9 @@ const createSmallestVerifiedFormula = (
     createVerifiedFormula(settings, random),
     createVerifiedFormula(settings, random),
   ]
-    .filter((formula) =>
+    .filter(formula =>
       mainFormula
-        ? formulaToString(formula) !== formulaToString(mainFormula) &&
-          formula.result !== mainFormula.result
+        ? formulaToString(formula) !== formulaToString(mainFormula) && formula.result !== mainFormula.result
         : true
     )
     .sort(

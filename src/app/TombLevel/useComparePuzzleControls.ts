@@ -13,9 +13,7 @@ export const useCrocodilePuzzleControls = ({
   activeJourney: CombinedJourneyState
   onComplete?: () => void
 }) => {
-  const [lockState, setLockState] = useState<"empty" | "error" | "open">(
-    "empty"
-  )
+  const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const { inventory, addItem } = useInventory()
@@ -28,12 +26,9 @@ export const useCrocodilePuzzleControls = ({
 
   const collectedTreasures = Object.keys(inventory)
 
-  const eligibleTreasures = journey.treasures.filter(
-    (t) => !collectedTreasures.includes(t.id)
-  )
+  const eligibleTreasures = journey.treasures.filter(t => !collectedTreasures.includes(t.id))
   const random = mulberry32(activeJourney.randomSeed + 12345)
-  const lootId =
-    eligibleTreasures[Math.floor(random() * eligibleTreasures.length)]?.id
+  const lootId = eligibleTreasures[Math.floor(random() * eligibleTreasures.length)]?.id
 
   const handleLootDismiss = useCallback(() => {
     setShowLoot(false)
@@ -65,9 +60,7 @@ export const useCrocodilePuzzleControls = ({
 
   const levelData = useMemo(() => {
     const random = mulberry32(levelSeed)
-    const tableau = tableauLevels.find(
-      (t) => t.tombJourneyId === journey.id && t.runNumber === runNumber
-    )
+    const tableau = tableauLevels.find(t => t.tombJourneyId === journey.id && t.runNumber === runNumber)
     const digit = Math.round(random() * 9)
     const always = random() > 0.5
 
@@ -123,7 +116,7 @@ export const useCrocodilePuzzleControls = ({
   }
 
   const handleMouseOverLeft = useCallback(() => {
-    setAnswers((answers) => {
+    setAnswers(answers => {
       const currentAnswer = answers[focus] ?? "noneRight"
       if (!currentAnswer.startsWith("none")) {
         return answers
@@ -137,7 +130,7 @@ export const useCrocodilePuzzleControls = ({
   }, [focus])
 
   const handleMouseOverRight = useCallback(() => {
-    setAnswers((answers) => {
+    setAnswers(answers => {
       const currentAnswer = answers[focus] ?? "noneLeft"
       if (!currentAnswer.startsWith("none")) {
         return answers
@@ -159,13 +152,13 @@ export const useCrocodilePuzzleControls = ({
     if (!currentAnswer.startsWith("none")) return
     const needsTurn = currentAnswer !== "noneLeft"
 
-    setAnswers((answers) => ({
+    setAnswers(answers => ({
       ...answers,
       [focus]: needsTurn ? "noneLeft" : "left",
     }))
     if (needsTurn) {
       setTimeout(() => {
-        setAnswers((answers) => ({
+        setAnswers(answers => ({
           ...answers,
           [focus]: "left",
         }))
@@ -174,7 +167,7 @@ export const useCrocodilePuzzleControls = ({
 
     setTimeout(
       () => {
-        setFocus((prev) => prev + 1)
+        setFocus(prev => prev + 1)
       },
       needsTurn ? 800 : 200
     )
@@ -183,21 +176,20 @@ export const useCrocodilePuzzleControls = ({
   const handleRightClick = useCallback(() => {
     const activeCompare = levelData.comparisons[focus]
     if (!activeCompare) return
-    const isRightLargest =
-      activeCompare.right.result > activeCompare.left.result
+    const isRightLargest = activeCompare.right.result > activeCompare.left.result
     if (!isRightLargest) return
 
     const currentAnswer = answers[focus] ?? "noneRight"
     if (!currentAnswer.startsWith("none")) return
     const needsTurn = currentAnswer !== "noneRight"
-    setAnswers((answers) => ({
+    setAnswers(answers => ({
       ...answers,
       [focus]: needsTurn ? "noneRight" : "right",
     }))
 
     if (needsTurn) {
       setTimeout(() => {
-        setAnswers((answers) => ({
+        setAnswers(answers => ({
           ...answers,
           [focus]: "right",
         }))
@@ -206,7 +198,7 @@ export const useCrocodilePuzzleControls = ({
 
     setTimeout(
       () => {
-        setFocus((prev) => prev + 1)
+        setFocus(prev => prev + 1)
       },
       needsTurn ? 800 : 200
     )

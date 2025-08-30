@@ -1,25 +1,15 @@
 import { useTranslation } from "react-i18next"
-import {
-  egyptianDeities,
-  egyptianProfessions,
-  egyptianAnimals,
-  egyptianArtifacts,
-} from "@/data/inventory"
+import { egyptianDeities, egyptianProfessions, egyptianAnimals, egyptianArtifacts } from "@/data/inventory"
 
 // Hook to get translated inventory item
 export const useInventoryItem = () => {
   const { t } = useTranslation("inventory")
 
   // Find the item in all collections
-  const allItems = [
-    ...egyptianDeities,
-    ...egyptianProfessions,
-    ...egyptianAnimals,
-    ...egyptianArtifacts,
-  ]
+  const allItems = [...egyptianDeities, ...egyptianProfessions, ...egyptianAnimals, ...egyptianArtifacts]
 
   return (id: string) => {
-    const item = allItems.find((item) => item.id === id)
+    const item = allItems.find(item => item.id === id)
 
     if (!item) {
       return null
@@ -42,9 +32,7 @@ export const useInventoryItem = () => {
 }
 
 // Function to get all items from a category with translations
-export const useInventoryCategory = (
-  category: "deities" | "professions" | "animals" | "artifacts"
-) => {
+export const useInventoryCategory = (category: "deities" | "professions" | "animals" | "artifacts") => {
   const { t } = useTranslation("inventory")
 
   let items
@@ -63,7 +51,7 @@ export const useInventoryCategory = (
       break
   }
 
-  return items.map((item) => ({
+  return items.map(item => ({
     id: item.id,
     symbol: item.symbol,
     name: t(`${category}.${item.id}.name`),

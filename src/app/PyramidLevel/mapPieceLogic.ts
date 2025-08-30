@@ -11,10 +11,7 @@ const getMapPieceChance = (journey: Journey, journeyCount: number): number => {
   if (journey.type !== "pyramid") {
     return 0
   }
-  return (
-    journey.rewards.mapPiece.startChance +
-    journeyCount * journey.rewards.mapPiece.chanceIncrease
-  )
+  return journey.rewards.mapPiece.startChance + journeyCount * journey.rewards.mapPiece.chanceIncrease
 }
 
 export const determineMapPieceLoot = (
@@ -24,18 +21,13 @@ export const determineMapPieceLoot = (
   const journeyInfo = getJourney(activeJourney.journeyId)
   const journeyCount = journeyInfo?.completionCount || 0
 
-  const lootSeed = generateNewSeed(
-    activeJourney.randomSeed,
-    activeJourney.levelNr
-  )
+  const lootSeed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const random = mulberry32(lootSeed)
   const foundMapPiece = journeyInfo?.foundMapPiece || false
 
   const journey = activeJourney.journey
 
-  const mapPieceChance = foundMapPiece
-    ? 0
-    : getMapPieceChance(journey, journeyCount)
+  const mapPieceChance = foundMapPiece ? 0 : getMapPieceChance(journey, journeyCount)
 
   const shouldAwardMapPiece = random() < mapPieceChance
 

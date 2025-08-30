@@ -9,7 +9,5 @@ import { difficultyTreasures } from "./treasures"
  */
 export const getItemFirstLevel = (itemId: string): Difficulty =>
   difficulties.find(
-    (key) =>
-      TOMB_SYMBOLS[key].some((item) => item === itemId) ||
-      difficultyTreasures[key].some((item) => item.id === itemId)
+    key => TOMB_SYMBOLS[key].some(item => item === itemId) || difficultyTreasures[key].some(item => item.id === itemId)
   )!

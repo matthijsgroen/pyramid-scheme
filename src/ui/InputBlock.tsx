@@ -10,18 +10,9 @@ export const InputBlock: FC<{
   onSelect?: () => void
   onBlur?: () => void
   onChange: (value: number | undefined) => void
-}> = ({
-  value,
-  selected,
-  disabled,
-  shouldFocus,
-  onChange,
-  onSelect,
-  onBlur,
-}) => {
+}> = ({ value, selected, disabled, shouldFocus, onChange, onSelect, onBlur }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const hasFocus = useRef(false)
-  const focusInterval = useRef<ReturnType<typeof setInterval> | null>(null)
   useEffect(() => {
     if (!selected && inputRef.current) {
       inputRef.current.blur()
@@ -32,13 +23,6 @@ export const InputBlock: FC<{
       inputRef.current.focus()
     }
   }, [shouldFocus, selected])
-  useEffect(() => {
-    return () => {
-      if (focusInterval.current) {
-        clearInterval(focusInterval.current)
-      }
-    }
-  }, [])
 
   return (
     <Block
@@ -53,9 +37,8 @@ export const InputBlock: FC<{
         disabled={disabled}
         value={value ?? ""}
         pattern="[0-9]*"
-        onBlur={(e) => {
+        onBlur={e => {
           hasFocus.current = false
-          clearInterval(focusInterval.current!)
           onBlur?.()
           if (e.target.value === "") {
             onChange(undefined)
@@ -69,18 +52,9 @@ export const InputBlock: FC<{
           inputRef.current?.scrollIntoView({ block: "nearest" })
           onSelect?.()
           inputRef.current?.select()
-          focusInterval.current = setInterval(() => {
-            if (hasFocus.current) {
-              inputRef.current?.scrollIntoView({ block: "nearest" })
-            }
-          }, 200) // virtual keyboard on mobile can take a moment to appear
         }}
-        onChange={(e) =>
-          e.target.value === ""
-            ? onChange(undefined)
-            : onChange(Number(e.target.value))
-        }
-        onKeyDown={(e) => {
+        onChange={e => (e.target.value === "" ? onChange(undefined) : onChange(Number(e.target.value)))}
+        onKeyDown={e => {
           if (e.key === "Escape" || e.key === "Enter") {
             ;(e.target as HTMLInputElement).blur()
           }

@@ -40,9 +40,7 @@ export const ExpeditionCompletionOverlay: FC<{
     showConversation("expeditionCompleted")
   }, [showConversation])
 
-  const newJourneyName = useJourneyTranslation(
-    newPyramidJourneyId ?? "id"
-  )?.name
+  const newJourneyName = useJourneyTranslation(newPyramidJourneyId ?? "id")?.name
 
   const onCollectLoot = () => {
     if (lootResult.shouldAwardInventoryItem && lootResult.itemIds.length > 0) {
@@ -66,49 +64,32 @@ export const ExpeditionCompletionOverlay: FC<{
         </span>
         {lootResult.itemIds.length > 0 && (
           <>
-            <h3 className="mt-2 text-center text-yellow-700">
-              {t("loot.expeditionReward")}:
-            </h3>
+            <h3 className="mt-2 text-center text-yellow-700">{t("loot.expeditionReward")}:</h3>
             <div className="mt-2 flex flex-row flex-wrap justify-center gap-4">
-              {Object.entries(lootResult.itemsWithCounts || {}).map(
-                ([itemId, count], index) => {
-                  const translatedItem = getTranslatedItem(itemId)
-                  const itemDifficulty = getItemFirstLevel(itemId)
-                  if (!translatedItem) {
-                    return null
-                  }
-                  return (
-                    <div
-                      key={itemId + index}
-                      className="flex flex-col items-center gap-2"
-                    >
-                      <Badge count={count}>
-                        <HieroglyphTile
-                          symbol={translatedItem.symbol}
-                          difficulty={itemDifficulty}
-                          size="md"
-                        />
-                      </Badge>
-                      <div className="text-center text-xs text-amber-700">
-                        {translatedItem.name}
-                      </div>
-                    </div>
-                  )
+              {Object.entries(lootResult.itemsWithCounts || {}).map(([itemId, count], index) => {
+                const translatedItem = getTranslatedItem(itemId)
+                const itemDifficulty = getItemFirstLevel(itemId)
+                if (!translatedItem) {
+                  return null
                 }
-              )}
+                return (
+                  <div key={itemId + index} className="flex flex-col items-center gap-2">
+                    <Badge count={count}>
+                      <HieroglyphTile symbol={translatedItem.symbol} difficulty={itemDifficulty} size="md" />
+                    </Badge>
+                    <div className="text-center text-xs text-amber-700">{translatedItem.name}</div>
+                  </div>
+                )
+              })}
             </div>
           </>
         )}
         {newPyramidJourneyId && (
           <span className="mt-2 text-center text-yellow-700">
-            {t("ui.newExpeditionUnlocked")}:{" "}
-            <strong className="font-semibold">{newJourneyName}</strong>
+            {t("ui.newExpeditionUnlocked")}: <strong className="font-semibold">{newJourneyName}</strong>
           </span>
         )}
-        <button
-          className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-          onClick={onCollectLoot}
-        >
+        <button className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" onClick={onCollectLoot}>
           {t("ui.goBackToBase")}
         </button>
       </div>

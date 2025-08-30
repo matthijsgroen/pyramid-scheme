@@ -2,12 +2,7 @@ import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import {
-  egyptianDeities,
-  egyptianProfessions,
-  egyptianAnimals,
-  egyptianArtifacts,
-} from "@/data/inventory"
+import { egyptianDeities, egyptianProfessions, egyptianAnimals, egyptianArtifacts } from "@/data/inventory"
 import type { Formula, Operation } from "@/app/Formulas/formulas"
 import { revealText } from "@/support/revealText"
 
@@ -27,13 +22,8 @@ const getOperatorPrecedence = (operation: Operation): number => {
 
 // Helper function to get inventory item by ID
 const getInventoryItemById = (id: string) => {
-  const allItems = [
-    ...egyptianDeities,
-    ...egyptianProfessions,
-    ...egyptianAnimals,
-    ...egyptianArtifacts,
-  ]
-  return allItems.find((item) => item.id === id)
+  const allItems = [...egyptianDeities, ...egyptianProfessions, ...egyptianAnimals, ...egyptianArtifacts]
+  return allItems.find(item => item.id === id)
 }
 
 export type FilledTileState = {
@@ -85,14 +75,7 @@ const renderOperand = (
   props: FormulaPartProps,
   currentPrecedence = 0
 ) => {
-  const {
-    symbolMapping,
-    filledState,
-    onTileClick,
-    difficulty,
-    positionPrefix,
-    formula,
-  } = props
+  const { symbolMapping, filledState, onTileClick, difficulty, positionPrefix, formula } = props
 
   const position = `${positionPrefix}-${side}`
   if (typeof operand === "number") {
@@ -100,25 +83,13 @@ const renderOperand = (
   }
 
   if ("symbol" in operand) {
-    return renderTile(
-      symbolMapping,
-      filledState,
-      difficulty,
-      operand,
-      position,
-      onTileClick
-    )
+    return renderTile(symbolMapping, filledState, difficulty, operand, position, onTileClick)
   }
 
   // For subtraction, wrap complex operands in parentheses
   const needsSubtractionParens = formula.operation === "-" && side === "left"
   const content = (
-    <FormulaPart
-      {...props}
-      formula={operand}
-      positionPrefix={position}
-      parentPrecedence={currentPrecedence}
-    />
+    <FormulaPart {...props} formula={operand} positionPrefix={position} parentPrecedence={currentPrecedence} />
   )
 
   return needsSubtractionParens ? <span>({content})</span> : content
@@ -131,7 +102,7 @@ const operationMap = {
   "/": "÷",
 }
 
-export const FormulaPart: FC<FormulaPartProps> = (props) => {
+export const FormulaPart: FC<FormulaPartProps> = props => {
   const { formula, parentPrecedence = 0, showResult = false } = props
 
   const currentPrecedence = getOperatorPrecedence(formula.operation)
@@ -139,19 +110,9 @@ export const FormulaPart: FC<FormulaPartProps> = (props) => {
 
   const formulaContent = (
     <>
-      {renderOperand(
-        formula.left,
-        "left",
-        { ...props, showResult: false },
-        currentPrecedence
-      )}
+      {renderOperand(formula.left, "left", { ...props, showResult: false }, currentPrecedence)}
       <span> {operationMap[formula.operation]} </span>
-      {renderOperand(
-        formula.right,
-        "right",
-        { ...props, showResult: false },
-        currentPrecedence
-      )}
+      {renderOperand(formula.right, "right", { ...props, showResult: false }, currentPrecedence)}
     </>
   )
 

@@ -49,8 +49,7 @@ export const DeleteAction: Story = {
   args: {
     isOpen: true,
     title: "Delete Item",
-    message:
-      "Are you sure you want to delete this item? This action cannot be undone.",
+    message: "Are you sure you want to delete this item? This action cannot be undone.",
     confirmText: "Delete",
     cancelText: "Cancel",
     confirmButtonClass: "bg-red-600 hover:bg-red-700",

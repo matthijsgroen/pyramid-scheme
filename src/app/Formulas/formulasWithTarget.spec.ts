@@ -6,12 +6,7 @@ import { mulberry32 } from "@/game/random"
 describe("findFormulaWithOptionalExtra", () => {
   it("finds a formula for a target using all picked numbers at least once, up to 3 times", () => {
     const random = mulberry32(12345)
-    const formula = findFormulaWithOptionalExtra(
-      [2, 3],
-      ["+", "*"],
-      [8],
-      random
-    )
+    const formula = findFormulaWithOptionalExtra([2, 3], ["+", "*"], [8], random)
     expect(formula).toBeTruthy()
     if (!formula) return
 
@@ -72,22 +67,14 @@ describe("findFormulaWithOptionalExtra", () => {
       targets: [9],
       expectedResult: "2 + 3 + 4 = 9",
     },
-  ])(
-    "finds a formula for one of multiple targets",
-    ({ picked, allowedOps, targets, expectedResult }) => {
-      const random = mulberry32(12345)
-      const formula = findFormulaWithOptionalExtra(
-        picked,
-        allowedOps,
-        targets,
-        random
-      )
-      expect(formula).toBeTruthy()
-      if (!formula) return
+  ])("finds a formula for one of multiple targets", ({ picked, allowedOps, targets, expectedResult }) => {
+    const random = mulberry32(12345)
+    const formula = findFormulaWithOptionalExtra(picked, allowedOps, targets, random)
+    expect(formula).toBeTruthy()
+    if (!formula) return
 
-      expect(formulaToString(formula, undefined, "yes")).toEqual(expectedResult)
-    }
-  )
+    expect(formulaToString(formula, undefined, "yes")).toEqual(expectedResult)
+  })
 
   it("can use an extra number if needed", () => {
     // [2, 3], target 11, allowed + only. 2+3+3+3=11 if we add 3 as extra, but must use both 2 and 3 at least once

@@ -1,9 +1,5 @@
 import { useTranslation } from "react-i18next"
-import {
-  generateTableaus,
-  tableauLevels,
-  type TableauLevel,
-} from "@/data/tableaus"
+import { generateTableaus, tableauLevels, type TableauLevel } from "@/data/tableaus"
 import { useMemo } from "react"
 
 export const useTableauTranslations = (): TableauLevel[] => {
@@ -15,7 +11,7 @@ export const useTableauTranslations = (): TableauLevel[] => {
 export const useTableauTranslation = (levelNr: number) => {
   const { t } = useTranslation("tableaus")
 
-  const tableau = tableauLevels.find((tab) => tab.levelNr === levelNr)
+  const tableau = tableauLevels.find(tab => tab.levelNr === levelNr)
 
   if (!tableau) {
     return null

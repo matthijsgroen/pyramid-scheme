@@ -59,25 +59,15 @@ const dayCycleIndices: Record<DayNightCycleStep, number> = {
   night: skyTop.length - 2,
 }
 
-export const dayNightCycleStep = (
-  levelNr: number,
-  start: DayNightCycleStep,
-  stepSize = 3
-): number => {
+export const dayNightCycleStep = (levelNr: number, start: DayNightCycleStep, stepSize = 3): number => {
   const startIndex = dayCycleIndices[start]
-  const step =
-    (Math.ceil(levelNr / stepSize) + startIndex) % (2 * skyTop.length)
+  const step = (Math.ceil(levelNr / stepSize) + startIndex) % (2 * skyTop.length)
   return step < skyTop.length ? step : 2 * skyTop.length - step - 1
 }
 
-export const dayNightCycleDayTime = (
-  levelNr: number,
-  start: DayNightCycleStep,
-  stepSize = 3
-): DayNightCycleStep => {
+export const dayNightCycleDayTime = (levelNr: number, start: DayNightCycleStep, stepSize = 3): DayNightCycleStep => {
   const startIndex = dayCycleIndices[start]
-  const step =
-    (Math.ceil(levelNr / stepSize) + startIndex) % (2 * skyTop.length)
+  const step = (Math.ceil(levelNr / stepSize) + startIndex) % (2 * skyTop.length)
   if (step < dayCycleIndices["evening"] + 2) return "afternoon"
   if (step < dayCycleIndices["night"] - 2) return "evening"
   if (step < dayCycleIndices["morning"] - 3) return "night"

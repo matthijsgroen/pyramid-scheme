@@ -46,9 +46,7 @@ export const MapPiecePlaceholder: FC<MapPiecePlaceholderProps> = ({
       {/* Map Pieces Progress */}
       <div className="mt-3 flex flex-col gap-2">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-gray-600">
-            📜 {t("ui.mapPieces")}
-          </span>
+          <span className="font-medium text-gray-600">📜 {t("ui.mapPieces")}</span>
           <span className="font-bold text-gray-700">
             {piecesFound}/{piecesNeeded}
           </span>
@@ -68,9 +66,7 @@ export const MapPiecePlaceholder: FC<MapPiecePlaceholderProps> = ({
       </div>
 
       {piecesFound < piecesNeeded && (
-        <div className="mt-2 text-center text-xs text-gray-500">
-          {t("ui.completeExpeditionsToUnlock")}
-        </div>
+        <div className="mt-2 text-center text-xs text-gray-500">{t("ui.completeExpeditionsToUnlock")}</div>
       )}
     </div>
   )

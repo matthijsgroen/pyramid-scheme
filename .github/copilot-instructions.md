@@ -41,11 +41,18 @@
 - `.github/workflows/` — CI/CD workflows
 
 ## Example Patterns
-- **Puzzle Generation**: See `TombExpedition.tsx` for how tableaus and seeds are used to generate puzzles.
-- **Reward Calculation**: See `generateRewardCalculation.ts` and inventory hooks for loot logic.
-- **Backdrop Usage**: See `TombBackdrop.tsx` for Egyptian-themed backgrounds.
-- **Storybook**: See `TombBackdrop.stories.tsx` for component documentation.
 
----
 
+## Microstory Titles & Localization Workflow (2025 Update)
+
+**Microstory Titles**: For all tableau microstories (especially starter), titles must be short, narrative, and reference the story/description more than the symbols. Titles should fit the ancient Egyptian setting and be evocative of the description. Use the run/level key format (e.g., `run1_level1`).
+
+**Localization Sync**: Always update both English and Dutch translation files in sync, ensuring keys and values match in both languages. Titles and descriptions must be narrative-driven and in sync across languages.
+
+**Microstory Title Update Workflow**:
+1. When updating or adding tableau microstories, generate titles that are short, narrative, and reference the story/description (not just the symbols).
+2. Ensure all titles fit the ancient Egyptian theme and are evocative of the description.
+3. Use the run/level key format for all tableau keys.
+4. Update both `en/tableaus.json` and `nl/tableaus.json` in sync, keeping order and meaning consistent.
+5. Validate that all keys and values are in sync and narrative-driven after any manual or automated edit.
 If any conventions or workflows are unclear, please ask for clarification or examples from the codebase. Iterate and update this file as new patterns emerge.

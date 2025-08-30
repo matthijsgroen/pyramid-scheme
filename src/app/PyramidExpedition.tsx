@@ -17,10 +17,7 @@ import type { PyramidLevel } from "@/game/types"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 
-const generateExpeditionLevel = (
-  activeJourney: CombinedJourneyState,
-  levelNr: number
-): PyramidLevel | null => {
+const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
   const random = mulberry32(randomSeed)
 
@@ -37,18 +34,10 @@ export const PyramidExpedition: FC<{
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
-}> = ({
-  activeJourney,
-  runNr,
-  onLevelComplete: onNextLevel,
-  onJourneyComplete,
-  onClose,
-}) => {
+}> = ({ activeJourney, runNr, onLevelComplete: onNextLevel, onJourneyComplete, onClose }) => {
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
-  const [transitionToLevel, setTransitionToLevel] = useState(
-    activeJourney.levelNr
-  )
+  const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
@@ -56,22 +45,11 @@ export const PyramidExpedition: FC<{
   const futureLevelRef = useRef<HTMLDivElement>(null)
   const startNextLevel = transitionToLevel > activeJourney.levelNr
 
-  const levelContent = generateExpeditionLevel(
-    activeJourney,
-    activeJourney.levelNr
-  )
-  const nextLevelContent = generateExpeditionLevel(
-    activeJourney,
-    activeJourney.levelNr + 1
-  )
-  const nextNextLevelContent = generateExpeditionLevel(
-    activeJourney,
-    activeJourney.levelNr + 2
-  )
+  const levelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr)
+  const nextLevelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr + 1)
+  const nextNextLevelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr + 2)
 
-  const width = levelContent
-    ? getLevelWidth(levelContent.pyramid.floorCount)
-    : 0
+  const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
@@ -92,27 +70,21 @@ export const PyramidExpedition: FC<{
       // Update transforms directly via refs for better performance
       // Only apply parallax when not transitioning levels
       if (futureLevelRef.current) {
-        const baseTransform = startNextLevel
-          ? "translateX(25%) scale(0.2)"
-          : "translateX(35%) scale(0)"
+        const baseTransform = startNextLevel ? "translateX(25%) scale(0.2)" : "translateX(35%) scale(0)"
         futureLevelRef.current.style.transform = startNextLevel
           ? baseTransform
           : `translate(${scrollX * 0.25}px, ${scrollY * 0.25}px) ${baseTransform}`
       }
 
       if (nextLevelRef.current) {
-        const baseTransform = startNextLevel
-          ? "translateX(0) scale(1)"
-          : "translateX(25%) scale(0.2)"
+        const baseTransform = startNextLevel ? "translateX(0) scale(1)" : "translateX(25%) scale(0.2)"
         nextLevelRef.current.style.transform = startNextLevel
           ? baseTransform
           : `translate(${scrollX * 0.5}px, ${scrollY * 0.5}px) ${baseTransform}`
       }
 
       if (currentLevelRef.current) {
-        const baseTransform = startNextLevel
-          ? "translateX(-200%) scale(3)"
-          : "scale(1)"
+        const baseTransform = startNextLevel ? "translateX(-200%) scale(3)" : "scale(1)"
         currentLevelRef.current.style.transform = startNextLevel
           ? baseTransform
           : `translate(${scrollX * -0.1}px, ${scrollY * -0.1}px) ${baseTransform}`
@@ -157,21 +129,19 @@ export const PyramidExpedition: FC<{
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
   // Check if a new pyramid journey is unlocked
-  const nextPyramidJourneyId =
-    runNr === 0
-      ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId)
-      : undefined
+  const nextPyramidJourneyId = runNr === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId) : undefined
   const dayTime = dayNightCycleDayTime(
     activeJourney.levelNr,
-    pyramidJourney.time,
-    pyramidJourney.timeStepSize
+    pyramidJourney.background.time,
+    pyramidJourney.background.timeStepSize
   )
 
   return (
     <DesertBackdrop
       levelNr={activeJourney.levelNr}
-      start={pyramidJourney.time}
-      timeStepSize={activeJourney.journey.timeStepSize}
+      start={pyramidJourney.background.time}
+      timeStepSize={pyramidJourney.background.timeStepSize}
+      showNile={pyramidJourney.background.showNile}
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
@@ -180,24 +150,20 @@ export const PyramidExpedition: FC<{
               "flex w-full items-center justify-between px-4 py-2",
               dayNightCycleStep(
                 activeJourney.levelNr,
-                pyramidJourney.time,
-                activeJourney.journey.timeStepSize
+                pyramidJourney.background.time,
+                activeJourney.journey.background.timeStepSize
               ) < 6
                 ? "text-black"
                 : "text-white"
             )}
           >
-            <button
-              onClick={onClose}
-              className="mr-3 cursor-pointer text-lg font-bold focus:outline-none"
-            >
+            <button onClick={onClose} className="mr-3 cursor-pointer text-lg font-bold focus:outline-none">
               {t("ui.backArrow")}
             </button>
             <h1 className="pointer-events-none mt-0 inline-block pt-4 text-center font-pyramid text-2xl font-bold">
               {expeditionCompleted
                 ? t("ui.expeditionCompleted")
-                : t("ui.expedition") +
-                  ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
+                : t("ui.expedition") + ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
             </h1>
             <span>
               {isDevelopMode && (
@@ -212,10 +178,7 @@ export const PyramidExpedition: FC<{
           </div>
         </div>
 
-        <div
-          ref={scrollContainerRef}
-          className="flex max-h-dvh flex-1 overflow-auto overscroll-contain"
-        >
+        <div ref={scrollContainerRef} className="flex max-h-dvh flex-1 overflow-auto overscroll-contain">
           <div
             className="relative w-full min-w-(--level-width)"
             style={{
@@ -228,13 +191,9 @@ export const PyramidExpedition: FC<{
               key={activeJourney.levelNr + 2}
               className="pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
               style={{
-                transform: startNextLevel
-                  ? "translateX(25%) scale(0.2)"
-                  : "translateX(35%) scale(0)",
+                transform: startNextLevel ? "translateX(25%) scale(0.2)" : "translateX(35%) scale(0)",
                 filter: startNextLevel ? "blur(1px)" : "blur(2px)",
-                transition: startNextLevel
-                  ? "transform 1000ms ease-in-out, filter 1000ms ease-in-out"
-                  : "none",
+                transition: startNextLevel ? "transform 1000ms ease-in-out, filter 1000ms ease-in-out" : "none",
               }}
             >
               {nextNextLevelContent && (
@@ -251,13 +210,9 @@ export const PyramidExpedition: FC<{
               key={activeJourney.levelNr + 1}
               className="pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
               style={{
-                transform: startNextLevel
-                  ? "translateX(0) scale(1)"
-                  : "translateX(25%) scale(0.2)",
+                transform: startNextLevel ? "translateX(0) scale(1)" : "translateX(25%) scale(0.2)",
                 filter: startNextLevel ? "blur(0px)" : "blur(1px)",
-                transition: startNextLevel
-                  ? "transform 1000ms ease-in-out, filter 1000ms ease-in-out"
-                  : "none",
+                transition: startNextLevel ? "transform 1000ms ease-in-out, filter 1000ms ease-in-out" : "none",
               }}
             >
               {nextLevelContent && (
@@ -274,12 +229,8 @@ export const PyramidExpedition: FC<{
               key={activeJourney.levelNr}
               className="absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
               style={{
-                transform: startNextLevel
-                  ? "translateX(-200%) scale(3)"
-                  : "scale(1)",
-                transition: startNextLevel
-                  ? "transform 1000ms ease-in-out"
-                  : "none",
+                transform: startNextLevel ? "translateX(-200%) scale(3)" : "scale(1)",
+                transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
               }}
             >
               {levelContent && (
@@ -306,10 +257,7 @@ export const PyramidExpedition: FC<{
 
       {/* Level Completion Handler */}
       {levelContent && levelCompleted && (
-        <LevelCompletionHandler
-          onCompletionFinished={onCompletionFinished}
-          activeJourney={activeJourney}
-        />
+        <LevelCompletionHandler onCompletionFinished={onCompletionFinished} activeJourney={activeJourney} />
       )}
     </DesertBackdrop>
   )

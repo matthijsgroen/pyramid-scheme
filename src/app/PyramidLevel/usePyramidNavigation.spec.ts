@@ -18,17 +18,13 @@ describe(usePyramidNavigation, () => {
   const onAnswer = vi.fn()
 
   it("initializes with selectedBlockIndex 0 and focusInput false", () => {
-    const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-    )
+    const { result } = renderHook(() => usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer))
     expect(result.current.selectedBlockIndex).toBe(0)
     expect(result.current.focusInput).toBe(false)
   })
 
   it("moves selection with arrow keys", () => {
-    const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-    )
+    const { result } = renderHook(() => usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer))
     act(() => {
       result.current.handleKeyDown({
         key: "ArrowDown",
@@ -46,9 +42,7 @@ describe(usePyramidNavigation, () => {
   })
 
   it("sets focusInput true on Enter", () => {
-    const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-    )
+    const { result } = renderHook(() => usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer))
     act(() => {
       result.current.handleKeyDown({
         key: "Enter",
@@ -59,9 +53,7 @@ describe(usePyramidNavigation, () => {
   })
 
   it("calls onAnswer and sets focusInput true on number key", () => {
-    const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-    )
+    const { result } = renderHook(() => usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer))
     act(() => {
       result.current.handleKeyDown({
         key: "5",
@@ -73,9 +65,7 @@ describe(usePyramidNavigation, () => {
   })
 
   it("moves selection up and down floors", () => {
-    const { result } = renderHook(() =>
-      usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
-    )
+    const { result } = renderHook(() => usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer))
     act(() => {
       result.current.setSelectedBlockIndex(1) // Select block on floor 1
     })

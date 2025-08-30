@@ -9,14 +9,7 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { type FilledTileState } from "../Formulas/FormulaPart"
 import { clsx } from "clsx"
-import {
-  useState,
-  useMemo,
-  type FC,
-  type FormEvent,
-  useEffect,
-  use,
-} from "react"
+import { useState, useMemo, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
 import { revealText } from "@/support/revealText"
 import { TombTableau } from "./TombTableau"
@@ -42,41 +35,30 @@ export const TombPuzzle: FC<{
   })
 
   // State for tracking how many inventory items are used in the puzzle
-  const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>(
-    {}
-  )
+  const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>({})
   // State for NumberLock
   const [lockCode, setLockCode] = useState("")
-  const [lockState, setLockState] = useState<"empty" | "error" | "open">(
-    "empty"
-  )
+  const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
 
   // Check if puzzle is completely solved (all symbols placed)
   const isPuzzleCompleted = useMemo(() => {
-    return Object.entries(calculation.symbolCounts).every(
-      ([symbolId, maxNeeded]) => {
-        const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-        return usedInPuzzle === maxNeeded
-      }
-    )
+    return Object.entries(calculation.symbolCounts).every(([symbolId, maxNeeded]) => {
+      const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+      return usedInPuzzle === maxNeeded
+    })
   }, [calculation.symbolCounts, filledState.symbolCounts])
 
   const { showConversation } = use(FezContext)
   useEffect(() => {
     if (Object.keys(inventory).length === 0) return
     // if inventory - inventory usage is empty, and puzzle is not filled in, trigger conversation
-    const spentAllHieroGlyphs = Object.entries(calculation.symbolCounts).every(
-      ([symbolId, maxNeeded]) => {
-        const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-        const usedFromInventory = inventoryUsage[symbolId] || 0
-        const availableInInventory = inventory[symbolId] || 0
-        return (
-          availableInInventory - usedFromInventory <= 0 &&
-          usedInPuzzle < maxNeeded
-        )
-      }
-    )
+    const spentAllHieroGlyphs = Object.entries(calculation.symbolCounts).every(([symbolId, maxNeeded]) => {
+      const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+      const usedFromInventory = inventoryUsage[symbolId] || 0
+      const availableInInventory = inventory[symbolId] || 0
+      return availableInInventory - usedFromInventory <= 0 && usedInPuzzle < maxNeeded
+    })
 
     if (!isPuzzleCompleted && spentAllHieroGlyphs) {
       showConversation("notEnoughHieroglyphs")
@@ -91,7 +73,7 @@ export const TombPuzzle: FC<{
   ])
 
   const handleTileClick = (symbolId: string, position: string) => {
-    setFilledState((prev) => {
+    setFilledState(prev => {
       const newState = { ...prev }
 
       // If position is already filled, remove the tile (only if puzzle is not completed)
@@ -109,7 +91,7 @@ export const TombPuzzle: FC<{
         }
 
         // Decrease inventory usage
-        setInventoryUsage((prevUsage) => ({
+        setInventoryUsage(prevUsage => ({
           ...prevUsage,
           [symbolId]: Math.max(0, (prevUsage[symbolId] || 0) - 1),
         }))
@@ -132,7 +114,7 @@ export const TombPuzzle: FC<{
           }
 
           // Increase inventory usage
-          setInventoryUsage((prevUsage) => ({
+          setInventoryUsage(prevUsage => ({
             ...prevUsage,
             [symbolId]: currentUsage + 1,
           }))
@@ -191,9 +173,7 @@ export const TombPuzzle: FC<{
       setTimeout(() => {
         // Remove used inventory items in a single batch operation
         const itemsToRemove = Object.fromEntries(
-          Object.entries(inventoryUsage).filter(
-            ([, usedCount]) => usedCount > 0
-          )
+          Object.entries(inventoryUsage).filter(([, usedCount]) => usedCount > 0)
         )
         if (Object.keys(itemsToRemove).length > 0) {
           removeItems(itemsToRemove)
@@ -224,19 +204,18 @@ export const TombPuzzle: FC<{
       <div className="flex flex-1">{/** left side */}</div>
       <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
         <div className="flex flex-1">{/** top side */}</div>
-        <TombDoor
-          className="flex flex-2 flex-col items-center justify-center"
-          open={lockState === "open"}
-        >
+        <TombDoor className="flex flex-2 flex-col items-center justify-center" open={lockState === "open"}>
           {/* NumberLock appears when puzzle is completed */}
           {isPuzzleCompleted && (
-            <div
-              className={clsx(
-                "order-2 mb-6 flex animate-slide-down flex-col items-center rounded-b-lg p-4",
-                hieroglyphLevelColors[difficulty]
-              )}
-            >
-              <form onSubmit={handleLockSubmit}>
+            <div className={clsx("order-2 mb-6 animate-slide-down")}>
+              <form
+                onSubmit={handleLockSubmit}
+                className={clsx(
+                  "flex flex-col items-center rounded-b-lg p-4",
+                  hieroglyphLevelColors[difficulty],
+                  lockState === "error" && "animate-shake"
+                )}
+              >
                 <NumberLock
                   state={lockState}
                   variant="muted"
@@ -244,10 +223,7 @@ export const TombPuzzle: FC<{
                   onChange={handleLockChange}
                   onSubmit={handleLockSubmit}
                   disabled={isProcessingCompletion}
-                  placeholder={revealText(
-                    calculation.mainFormula.result.toString(),
-                    0
-                  )}
+                  placeholder={revealText(calculation.mainFormula.result.toString(), 0)}
                   maxLength={4}
                 />
               </form>
@@ -264,40 +240,26 @@ export const TombPuzzle: FC<{
           {/* Available symbols inventory - hide when puzzle is completed */}
           {!isPuzzleCompleted && (
             <div className="mt-8 mb-4 w-fit rounded bg-black/20 p-2">
-              <h3 className="mb-2 text-sm font-bold">
-                {t("ui.availableSymbols")}
-              </h3>
+              <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(calculation.symbolCounts)
-                  .sort((a, b) =>
-                    difficultyCompare(
-                      getItemFirstLevel(a[0]),
-                      getItemFirstLevel(b[0])
-                    )
-                  )
+                  .sort((a, b) => difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0])))
                   .map(([symbolId, maxNeeded]) => {
                     const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
                     const usedFromInventory = inventoryUsage[symbolId] || 0
                     const availableInInventory = inventory[symbolId] || 0
                     const inventoryItem = getInventoryItemById(symbolId)
-                    const itemDifficulty =
-                      getItemFirstLevel(symbolId) || difficulty
-                    const canPlace =
-                      availableInInventory > usedFromInventory &&
-                      usedInPuzzle < maxNeeded
+                    const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
+                    const canPlace = availableInInventory > usedFromInventory && usedInPuzzle < maxNeeded
 
                     return (
                       <button
                         key={symbolId}
                         className={clsx(
                           "flex items-center gap-1 rounded p-1 transition-colors select-auto",
-                          canPlace
-                            ? "cursor-pointer bg-white/10 hover:bg-white/20"
-                            : "cursor-not-allowed opacity-50"
+                          canPlace ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed opacity-50"
                         )}
-                        onClick={() =>
-                          canPlace && handleInventoryClick(symbolId)
-                        }
+                        onClick={() => canPlace && handleInventoryClick(symbolId)}
                       >
                         <HieroglyphTile
                           symbol={inventoryItem?.symbol || symbolId}
@@ -309,12 +271,7 @@ export const TombPuzzle: FC<{
                         <div className="flex flex-col text-xs">
                           <span>
                             {availableInInventory - usedFromInventory}/
-                            <span
-                              className={clsx(
-                                maxNeeded > availableInInventory &&
-                                  "font-bold text-red-400"
-                              )}
-                            >
+                            <span className={clsx(maxNeeded > availableInInventory && "font-bold text-red-400")}>
                               {maxNeeded}
                             </span>
                           </span>

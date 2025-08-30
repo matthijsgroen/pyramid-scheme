@@ -22,11 +22,8 @@ const getPositionOnCorridor = (
   let totalLength = 0
   const segmentLengths: number[] = []
 
-  pathConfig.segments.forEach((segment) => {
-    const length = Math.sqrt(
-      Math.pow(segment.x2 - segment.x1, 2) +
-        Math.pow(segment.y2 - segment.y1, 2)
-    )
+  pathConfig.segments.forEach(segment => {
+    const length = Math.sqrt(Math.pow(segment.x2 - segment.x1, 2) + Math.pow(segment.y2 - segment.y1, 2))
     segmentLengths.push(length)
     totalLength += length
   })
@@ -144,22 +141,13 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
     segments: Array<{ x1: number; y1: number; x2: number; y2: number }>
   }) => {
     return corridorConfig.segments.reduce((total, segment) => {
-      return (
-        total +
-        Math.sqrt(
-          Math.pow(segment.x2 - segment.x1, 2) +
-            Math.pow(segment.y2 - segment.y1, 2)
-        )
-      )
+      return total + Math.sqrt(Math.pow(segment.x2 - segment.x1, 2) + Math.pow(segment.y2 - segment.y1, 2))
     }, 0)
   }
 
   const actualCorridorLength = getActualCorridorLength(corridorConfig)
   const clampedProgress = Math.max(0, Math.min(1, journeyProgress))
-  const travelerPosition = getPositionOnCorridor(
-    clampedProgress,
-    corridorConfig
-  )
+  const travelerPosition = getPositionOnCorridor(clampedProgress, corridorConfig)
 
   return (
     <button
@@ -175,8 +163,7 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
           radial-gradient(circle at 80% 70%, rgba(217,119,6,0.15) 6%, transparent 6%),
           linear-gradient(135deg, #1c1917 0%, #292524 50%, #44403c 100%)
         `,
-        backgroundSize:
-          "15px 15px, 15px 15px, 15px 15px, 15px 15px, 60px 60px, 40px 40px, 100% 100%",
+        backgroundSize: "15px 15px, 15px 15px, 15px 15px, 15px 15px, 60px 60px, 40px 40px, 100% 100%",
       }}
     >
       {/* Ancient scroll edge effect */}
@@ -208,15 +195,9 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
       ))}
 
       {/* Hieroglyphic symbols */}
-      <div className="absolute top-1/5 left-1/5 text-amber-600 opacity-60">
-        𓂀
-      </div>
-      <div className="absolute top-3/5 right-1/4 text-amber-600 opacity-60">
-        𓃾
-      </div>
-      <div className="absolute bottom-1/5 left-3/5 text-amber-600 opacity-60">
-        𓊖
-      </div>
+      <div className="absolute top-1/5 left-1/5 text-amber-600 opacity-60">𓂀</div>
+      <div className="absolute top-3/5 right-1/4 text-amber-600 opacity-60">𓃾</div>
+      <div className="absolute bottom-1/5 left-3/5 text-amber-600 opacity-60">𓊖</div>
 
       {/* Journey Path */}
       {inJourney && (
@@ -238,11 +219,7 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
           </div>
 
           {/* Corridor Path Lines */}
-          <svg
-            className="absolute inset-0 h-full w-full"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Full corridors (gray) */}
             {corridorConfig.segments.map((segment, index) => (
               <line
@@ -267,22 +244,13 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
               // Calculate progress ranges for each segment
               for (let i = 0; i <= index; i++) {
                 const segLength = Math.sqrt(
-                  Math.pow(
-                    corridorConfig.segments[i].x2 -
-                      corridorConfig.segments[i].x1,
-                    2
-                  ) +
-                    Math.pow(
-                      corridorConfig.segments[i].y2 -
-                        corridorConfig.segments[i].y1,
-                      2
-                    )
+                  Math.pow(corridorConfig.segments[i].x2 - corridorConfig.segments[i].x1, 2) +
+                    Math.pow(corridorConfig.segments[i].y2 - corridorConfig.segments[i].y1, 2)
                 )
 
                 if (i === index) {
                   segmentStartProgress = currentLength / actualCorridorLength
-                  segmentEndProgress =
-                    (currentLength + segLength) / actualCorridorLength
+                  segmentEndProgress = (currentLength + segLength) / actualCorridorLength
                 }
                 currentLength += segLength
               }
@@ -290,15 +258,12 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
               // Only draw if progress reaches this segment
               if (clampedProgress > segmentStartProgress) {
                 const segmentProgress = Math.min(
-                  (clampedProgress - segmentStartProgress) /
-                    (segmentEndProgress - segmentStartProgress),
+                  (clampedProgress - segmentStartProgress) / (segmentEndProgress - segmentStartProgress),
                   1
                 )
 
-                const endX =
-                  segment.x1 + (segment.x2 - segment.x1) * segmentProgress
-                const endY =
-                  segment.y1 + (segment.y2 - segment.y1) * segmentProgress
+                const endX = segment.x1 + (segment.x2 - segment.x1) * segmentProgress
+                const endY = segment.y1 + (segment.y2 - segment.y1) * segmentProgress
 
                 return (
                   <line

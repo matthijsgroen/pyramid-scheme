@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useState,
-  type Dispatch,
-  type FC,
-  type PropsWithChildren,
-  type SetStateAction,
-} from "react"
+import { createContext, useState, type Dispatch, type FC, type PropsWithChildren, type SetStateAction } from "react"
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const DevelopContext = createContext<{
@@ -19,9 +12,5 @@ export const DevelopContext = createContext<{
 export const DevelopModeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isDevelopMode, setDevelopMode] = useState(false)
 
-  return (
-    <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode }}>
-      {children}
-    </DevelopContext.Provider>
-  )
+  return <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode }}>{children}</DevelopContext.Provider>
 }
