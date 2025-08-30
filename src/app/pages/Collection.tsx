@@ -17,12 +17,7 @@ import { Badge } from "@/ui/Badge"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
-type TreasureCategory =
-  | "merchantCache"
-  | "nobleVault"
-  | "templeSecrets"
-  | "ancientRelics"
-  | "mythicalArtifacts"
+type TreasureCategory = "merchantCache" | "nobleVault" | "templeSecrets" | "ancientRelics" | "mythicalArtifacts"
 
 type InventoryItem = {
   id: string
@@ -64,7 +59,7 @@ const CategorySection: FC<{
         {t(`collection.categories.${category}`)}
       </h2>
       <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-15">
-        {sortedItems.map((item) => {
+        {sortedItems.map(item => {
           const itemLevel = getItemFirstLevel(item.id)
           const isSelected = selectedItem?.id === item.id
 
@@ -72,14 +67,7 @@ const CategorySection: FC<{
 
           if (!isCollected || !itemLevel) {
             // Show empty placeholder for uncollected items
-            return (
-              <HieroglyphTile
-                key={item.id}
-                empty
-                size="md"
-                className="aspect-square"
-              />
-            )
+            return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
           }
 
           return (
@@ -114,21 +102,14 @@ const TreasureCategorySection: FC<{
         {t(`collection.treasureCategories.${category}`)}
       </h2>
       <div className="grid grid-cols-5 gap-3 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
-        {items.map((item) => {
+        {items.map(item => {
           const isSelected = selectedItem?.id === item.id
 
           const isCollected = treasures[item.id] !== undefined
 
           if (!isCollected) {
             // Show empty placeholder for uncollected treasures
-            return (
-              <HieroglyphTile
-                key={item.id}
-                empty
-                size="md"
-                className="aspect-square"
-              />
-            )
+            return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
           }
 
           return (
@@ -161,28 +142,16 @@ const DetailPanel: FC<{
         <div className="flex flex-col items-start gap-4">
           <div className="flex flex-row items-start gap-3">
             <div className="flex-shrink-0">
-              <HieroglyphTile
-                symbol={item.symbol}
-                difficulty={getItemFirstLevel(item.id)}
-                size="lg"
-                disabled={false}
-              />
+              <HieroglyphTile symbol={item.symbol} difficulty={getItemFirstLevel(item.id)} size="lg" disabled={false} />
             </div>
             <div className="flex flex-col">
-              <h3 className="font-pyramid text-xl font-bold text-gray-900">
-                {item.name}
-              </h3>
+              <h3 className="font-pyramid text-xl font-bold text-gray-900">{item.name}</h3>
               {difficulty && (
                 <p>
-                  <DifficultyPill
-                    difficulty={difficulty}
-                    label={t(`difficulty.${difficulty}`)}
-                  />
+                  <DifficultyPill difficulty={difficulty} label={t(`difficulty.${difficulty}`)} />
                 </p>
               )}
-              <p className="leading-relaxed text-gray-700">
-                {item.description}
-              </p>
+              <p className="leading-relaxed text-gray-700">{item.description}</p>
               {debug && (
                 <div>
                   <DeveloperButton onClick={onAdd} label="Add Item" />
@@ -220,21 +189,13 @@ export const CollectionPage: FC = () => {
     setSelectedItem(item)
   }
 
-  const hasCollectedItems = Object.values(inventory).some(
-    (value) => value !== undefined
-  )
-  const hasCompletedTomb = (tombId: string) =>
-    (getJourney(tombId)?.completionCount ?? 0) > 0
+  const hasCollectedItems = Object.values(inventory).some(value => value !== undefined)
+  const hasCompletedTomb = (tombId: string) => (getJourney(tombId)?.completionCount ?? 0) > 0
 
   return (
-    <Page
-      className="flex bg-gradient-to-b from-blue-100 to-blue-300"
-      snap="end"
-    >
+    <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="end">
       <div className="relative flex-1 overflow-y-auto p-6">
-        <h1 className="mb-6 text-center font-pyramid text-3xl font-bold text-purple-900">
-          {t("collection.title")}
-        </h1>
+        <h1 className="mb-6 text-center font-pyramid text-3xl font-bold text-purple-900">{t("collection.title")}</h1>
 
         <div className="space-y-6">
           {/* Treasure Categories */}

@@ -7,10 +7,7 @@ export const createFloorStartIndices = (floorCount: number): number[] => {
   }
   return indices
 }
-export const getFloorAndIndex = (
-  blockIndex: number,
-  startFloorIndices: number[]
-) => {
+export const getFloorAndIndex = (blockIndex: number, startFloorIndices: number[]) => {
   for (let floor = 0; floor < startFloorIndices.length; floor++) {
     const start = startFloorIndices[floor]
     const end = start + floor + 1

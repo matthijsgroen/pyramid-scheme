@@ -17,8 +17,7 @@ export const Level: FC<{
     values: Record<string, number | undefined>
   }>("levelAnswers", { key: storageKey ?? "dummy", values: {} })
 
-  const answers =
-    storedAnswers.key === storageKey && storageKey ? storedAnswers.values : {}
+  const answers = storedAnswers.key === storageKey && storageKey ? storedAnswers.values : {}
 
   const completed = isValid({
     levelNr: content.levelNr,
@@ -50,7 +49,7 @@ export const Level: FC<{
           onAnswer={
             storageKey
               ? (blockId: string, value: number | undefined) => {
-                  setAnswers((prev) => {
+                  setAnswers(prev => {
                     if (prev.key !== storageKey) {
                       return { key: storageKey, values: { [blockId]: value } }
                     }

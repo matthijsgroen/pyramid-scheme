@@ -1,9 +1,6 @@
 import type { FC, PropsWithChildren } from "react"
 
-export const Badge: FC<PropsWithChildren<{ count: number }>> = ({
-  count,
-  children,
-}) => {
+export const Badge: FC<PropsWithChildren<{ count: number }>> = ({ count, children }) => {
   return (
     <div className="relative inline-block w-fit">
       {children}

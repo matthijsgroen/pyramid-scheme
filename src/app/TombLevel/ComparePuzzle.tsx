@@ -12,8 +12,7 @@ import { useCrocodilePuzzleControls } from "./useComparePuzzleControls"
 import { use, useEffect, type FC, type ReactNode } from "react"
 import { FezContext } from "../fez/context"
 
-const scaleDistance = (initialStep: number, n: number) =>
-  initialStep * (1 - Math.pow(0.5, n))
+const scaleDistance = (initialStep: number, n: number) => initialStep * (1 - Math.pow(0.5, n))
 
 const handleInlineMarkup = (text: string): ReactNode => {
   const parts = text.split(/(_[^_]+_)/g)
@@ -73,15 +72,12 @@ export const ComparePuzzle: FC<{
     <div
       className={clsx(
         "relative flex flex-1  flex-col-reverse items-center justify-center gap-4",
-        hasComparison &&
-          "bg-gradient-to-b from-transparent from-50% via-blue-200 via-51% to-blue-100"
+        hasComparison && "bg-gradient-to-b from-transparent from-50% via-blue-200 via-51% to-blue-100"
       )}
     >
       <div className="absolute top-0">
         {focus === 0 && hasComparison && (
-          <h3 className="mx-8 mt-4 text-center text-lg font-bold text-amber-200">
-            {t("tomb.crocodilePuzzlePrompt")}
-          </h3>
+          <h3 className="mx-8 mt-4 text-center text-lg font-bold text-amber-200">{t("tomb.crocodilePuzzlePrompt")}</h3>
         )}
       </div>
       <div
@@ -100,19 +96,12 @@ export const ComparePuzzle: FC<{
         >
           {hasComparison
             ? handleInlineMarkup(
-                t(
-                  `tomb.crocodilePuzzle${levelData.requirements.largest === "always" ? "Always" : "Never"}`
-                )
+                t(`tomb.crocodilePuzzle${levelData.requirements.largest === "always" ? "Always" : "Never"}`)
               )
             : t("tomb.noCrocodilePuzzle")}
         </h3>
         {hasComparison && (
-          <p
-            className={clsx(
-              "text-sm text-amber-500 italic",
-              focus !== levelData.comparisons.length && "opacity-0"
-            )}
-          >
+          <p className={clsx("text-sm text-amber-500 italic", focus !== levelData.comparisons.length && "opacity-0")}>
             {t("tomb.crocodileDigitHint")}
           </p>
         )}
@@ -131,9 +120,7 @@ export const ComparePuzzle: FC<{
           <div
             className={clsx(
               "grid grid-rows-[100px_1fr]",
-              focus === levelData.comparisons.length
-                ? "brightness-100 saturate-100"
-                : "brightness-110 saturate-30"
+              focus === levelData.comparisons.length ? "brightness-100 saturate-100" : "brightness-110 saturate-30"
             )}
           >
             <div className="col-start-1 row-start-2 rounded-t-[50%] rounded-b-[30%] bg-amber-700"></div>
@@ -190,9 +177,7 @@ export const ComparePuzzle: FC<{
                     focus !== index && "opacity-0"
                   )}
                   onClick={focus === index ? handleLeftClick : undefined}
-                  onMouseEnter={
-                    focus === index ? handleMouseOverLeft : undefined
-                  }
+                  onMouseEnter={focus === index ? handleMouseOverLeft : undefined}
                 >
                   {formulaToString(comparison.left, undefined, "no")}
                 </button>
@@ -201,9 +186,7 @@ export const ComparePuzzle: FC<{
                     "animate-bounce cursor-pointer text-shadow-amber-800 text-shadow-md",
                     focus !== index && "opacity-0"
                   )}
-                  onMouseEnter={
-                    focus === index ? handleMouseOverRight : undefined
-                  }
+                  onMouseEnter={focus === index ? handleMouseOverRight : undefined}
                   onClick={focus === index ? handleRightClick : undefined}
                 >
                   {formulaToString(comparison.right, undefined, "no")}
@@ -215,9 +198,7 @@ export const ComparePuzzle: FC<{
                   alt="crocodile"
                   className={clsx(
                     "animate-subtle-bounce transition-all delay-100 duration-200",
-                    focus === index
-                      ? "brightness-100 saturate-100"
-                      : "brightness-110 saturate-30",
+                    focus === index ? "brightness-100 saturate-100" : "brightness-110 saturate-30",
                     isMirrored ? "-scale-x-100" : "scale-x-100"
                   )}
                 />

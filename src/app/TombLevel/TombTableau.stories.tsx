@@ -22,7 +22,7 @@ const fillPositions = (keys: string[], value: number) => {
   return result
 }
 
-const tombJourneys = journeys.filter((j) => j.type === "treasure_tomb")
+const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
 const meta = {
   title: "Levels/TombLevel",
   parameters: {
@@ -63,15 +63,13 @@ const meta = {
         },
         {} as Record<string, TreasureTombJourney>
       ),
-      options: tombJourneys.map((j) => j.id),
+      options: tombJourneys.map(j => j.id),
     },
   },
   tags: ["autodocs"],
   render: ({ tableauNr, journey, filled }) => {
     const tableaus = useTableauTranslations()
-    const tableau = tableaus.filter((tab) => tab.tombJourneyId === journey.id)[
-      tableauNr - 1
-    ]
+    const tableau = tableaus.filter(tab => tab.tombJourneyId === journey.id)[tableauNr - 1]
     const runNr = tableau?.runNumber
     const levelNr = tableau?.levelNr
 

@@ -19,8 +19,7 @@ export type Loot = {
 export const useLootDetermination = (
   activeJourney: CombinedJourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
-  const { findMapPiece, getJourney, nextJourneySeed, maxDifficulty } =
-    useJourneys()
+  const { findMapPiece, getJourney, nextJourneySeed, maxDifficulty } = useJourneys()
   const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 
@@ -60,11 +59,7 @@ export const useLootDetermination = (
     // If no map piece, check for inventory items
     const firstItemId = inventoryResult.itemIds[0]
     const inventoryItem = inventoryItemHook(firstItemId)
-    if (
-      inventoryResult.shouldAwardInventoryItem &&
-      inventoryResult.itemIds.length > 0 &&
-      inventoryItem
-    ) {
+    if (inventoryResult.shouldAwardInventoryItem && inventoryResult.itemIds.length > 0 && inventoryItem) {
       const itemDifficulty = getItemFirstLevel(firstItemId)
 
       return {
@@ -72,13 +67,7 @@ export const useLootDetermination = (
           itemId: firstItemId,
           itemName: inventoryItem?.name,
           itemDescription: inventoryItem?.description,
-          itemComponent: (
-            <HieroglyphTile
-              symbol={inventoryItem?.symbol}
-              difficulty={itemDifficulty}
-              size="md"
-            />
-          ),
+          itemComponent: <HieroglyphTile symbol={inventoryItem?.symbol} difficulty={itemDifficulty} size="md" />,
           rarity: "common",
         },
         collectLoot: () => {
@@ -98,13 +87,5 @@ export const useLootDetermination = (
     }
 
     return { loot: null, collectLoot: () => {} }
-  }, [
-    mapPieceResult,
-    inventoryResult,
-    inventoryItemHook,
-    activeJourney.journey,
-    t,
-    findMapPiece,
-    addItems,
-  ])
+  }, [mapPieceResult, inventoryResult, inventoryItemHook, activeJourney.journey, t, findMapPiece, addItems])
 }

@@ -12,7 +12,7 @@ type PyramidLevelArgs = {
   journey: PyramidJourney
 }
 
-const pyramidJourneys = journeys.filter((j) => j.type === "pyramid")
+const pyramidJourneys = journeys.filter(j => j.type === "pyramid")
 const meta = {
   title: "Levels/GameLevel",
   parameters: {
@@ -49,7 +49,7 @@ const meta = {
         },
         {} as Record<string, PyramidJourney>
       ),
-      options: pyramidJourneys.map((j) => j.id),
+      options: pyramidJourneys.map(j => j.id),
     },
   },
   tags: ["autodocs"],
@@ -59,11 +59,7 @@ const meta = {
 
     const content = generateJourneyLevel(journey, levelNr, random)
     if (!content) return <div>Error creating level</div>
-    const dayTime = dayNightCycleDayTime(
-      levelNr,
-      journey.background.time,
-      journey.background.timeStepSize
-    )
+    const dayTime = dayNightCycleDayTime(levelNr, journey.background.time, journey.background.timeStepSize)
     return (
       <DesertBackdrop
         levelNr={levelNr}

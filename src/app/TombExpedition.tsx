@@ -30,9 +30,7 @@ export const TombExpedition: FC<{
   }, [showConversation])
 
   const runTableaus = tableaux.filter(
-    (tab) =>
-      tab.tombJourneyId === activeJourney.journeyId &&
-      tab.runNumber === activeJourney.completionCount + 1
+    tab => tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === activeJourney.completionCount + 1
   )
   const [completing, setCompleting] = useState(false)
 
@@ -77,16 +75,8 @@ export const TombExpedition: FC<{
       >
         <div className="flex h-full w-full flex-col">
           <div className="flex-shrink-0 backdrop-blur-xs">
-            <div
-              className={clsx(
-                "flex w-full items-center justify-between gap-4 px-4 py-2",
-                "text-white"
-              )}
-            >
-              <button
-                onClick={onClose}
-                className="cursor-pointer text-lg font-bold focus:outline-none"
-              >
+            <div className={clsx("flex w-full items-center justify-between gap-4 px-4 py-2", "text-white")}>
+              <button onClick={onClose} className="cursor-pointer text-lg font-bold focus:outline-none">
                 {t("ui.backArrow")}
               </button>
               <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">
@@ -96,10 +86,7 @@ export const TombExpedition: FC<{
             </div>
           </div>
           {/* final puzzle for treasure */}
-          <ComparePuzzle
-            activeJourney={activeJourney}
-            onComplete={onJourneyComplete}
-          />
+          <ComparePuzzle activeJourney={activeJourney} onComplete={onJourneyComplete} />
         </div>
       </TombBackdrop>
     )
@@ -114,16 +101,8 @@ export const TombExpedition: FC<{
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-xs">
-          <div
-            className={clsx(
-              "flex w-full items-center justify-between gap-4 px-4 py-2",
-              "text-white"
-            )}
-          >
-            <button
-              onClick={onClose}
-              className="cursor-pointer text-lg font-bold focus:outline-none"
-            >
+          <div className={clsx("flex w-full items-center justify-between gap-4 px-4 py-2", "text-white")}>
+            <button onClick={onClose} className="cursor-pointer text-lg font-bold focus:outline-none">
               {t("ui.backArrow")}
             </button>
             <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">

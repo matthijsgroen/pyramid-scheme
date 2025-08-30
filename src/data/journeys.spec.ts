@@ -8,7 +8,7 @@ describe("Pyramid journeys", () => {
   it("generates playable levels", () => {
     const random = mulberry32(1234567)
 
-    journeys.forEach((journey) => {
+    journeys.forEach(journey => {
       if (journey.type !== "pyramid") return
       expect(journey.levelCount).toBeGreaterThan(0)
       for (let levelNr = 1; levelNr <= journey.levelCount; levelNr++) {
@@ -18,16 +18,12 @@ describe("Pyramid journeys", () => {
     })
   })
 
-  describe.each(difficulties)("%s", (difficulty) => {
+  describe.each(difficulties)("%s", difficulty => {
     const diffJourneys = journeys.filter(
-      (j): j is PyramidJourney =>
-        j.difficulty === difficulty && j.type === "pyramid"
+      (j): j is PyramidJourney => j.difficulty === difficulty && j.type === "pyramid"
     )
 
-    const map: Record<
-      Difficulty,
-      Record<PyramidJourney["journeyLength"], [number, number]>
-    > = {
+    const map: Record<Difficulty, Record<PyramidJourney["journeyLength"], [number, number]>> = {
       starter: {
         short: [1, 2],
         medium: [2, 2],
@@ -57,18 +53,13 @@ describe("Pyramid journeys", () => {
 
     it("rewards the proper range of items, related to journey length", () => {
       const ranges = map[difficulty]
-      diffJourneys.forEach((journey) => {
+      diffJourneys.forEach(journey => {
         const [min, max] = ranges[journey.journeyLength]
         expect(journey.rewards.completed.pieces, journey.id).toEqual([min, max])
       })
     })
 
-    const longJourneysFor: Difficulty[] = [
-      "junior",
-      "expert",
-      "master",
-      "wizard",
-    ]
+    const longJourneysFor: Difficulty[] = ["junior", "expert", "master", "wizard"]
 
     const blockedBlocksFor: Difficulty[] = ["expert", "master", "wizard"]
 
@@ -90,51 +81,38 @@ describe("Pyramid journeys", () => {
 
     it("respects a number max for difficulty", () => {
       const max = numberRangeMax[difficulty]
-      diffJourneys.forEach((journey) => {
-        expect(journey.levelSettings.startNumberRange[1]).toBeLessThanOrEqual(
-          max
-        )
+      diffJourneys.forEach(journey => {
+        expect(journey.levelSettings.startNumberRange[1]).toBeLessThanOrEqual(max)
       })
     })
 
     it("respects the max amount of floors", () => {
       const max = maxNumberFloors[difficulty]
-      diffJourneys.forEach((journey) => {
-        expect(
-          journey.levelSettings.endFloorCount ??
-            journey.levelSettings.startFloorCount
-        ).toBeLessThanOrEqual(max)
+      diffJourneys.forEach(journey => {
+        expect(journey.levelSettings.endFloorCount ?? journey.levelSettings.startFloorCount).toBeLessThanOrEqual(max)
       })
     })
 
     if (longJourneysFor.includes(difficulty)) {
       it("has 'long' journeys", () => {
-        const longJourneyCount = diffJourneys.filter(
-          (j) => j.journeyLength === "long"
-        ).length
+        const longJourneyCount = diffJourneys.filter(j => j.journeyLength === "long").length
         expect(longJourneyCount).toBeGreaterThan(0)
       })
     } else {
       it("has no 'long' journeys", () => {
-        const longJourneyCount = diffJourneys.filter(
-          (j) => j.journeyLength === "long"
-        ).length
+        const longJourneyCount = diffJourneys.filter(j => j.journeyLength === "long").length
         expect(longJourneyCount).toEqual(0)
       })
     }
 
     if (blockedBlocksFor.includes(difficulty)) {
       it("has blocked blocks", () => {
-        const blockedJourneyCount = diffJourneys.filter(
-          (j) => j.levelSettings.blocksBlocked
-        ).length
+        const blockedJourneyCount = diffJourneys.filter(j => j.levelSettings.blocksBlocked).length
         expect(blockedJourneyCount).toBeGreaterThan(0)
       })
     } else {
       it("has no blocked blocks", () => {
-        const blockedJourneyCount = diffJourneys.filter(
-          (j) => j.levelSettings.blocksBlocked
-        ).length
+        const blockedJourneyCount = diffJourneys.filter(j => j.levelSettings.blocksBlocked).length
         expect(blockedJourneyCount).toEqual(0)
       })
     }

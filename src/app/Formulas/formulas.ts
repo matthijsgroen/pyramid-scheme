@@ -16,25 +16,20 @@ export type FormulaSettings = {
   useResult?: "avoid" | "force" | "allow"
 }
 
-const getNumberValue = (
-  value: number | { symbol: number } | Formula
-): number => {
+const getNumberValue = (value: number | { symbol: number } | Formula): number => {
   if (typeof value === "number") return value
   if ("symbol" in value) return value.symbol
   return getNumberValue(value.result)
 }
 
-export const createFormula = (
-  settings: FormulaSettings,
-  random: () => number
-): Formula => {
+export const createFormula = (settings: FormulaSettings, random: () => number): Formula => {
   const { pickedNumbers, operations, useResult = "avoid" } = settings
 
   if (useResult === "allow" || useResult === "force") {
     // take largest result from picked numbers and remove it from the pool
     const largest = Math.max(...pickedNumbers)
     const formula = findFormulaWithOptionalExtra(
-      pickedNumbers.filter((n) => n !== largest),
+      pickedNumbers.filter(n => n !== largest),
       operations,
       [largest],
       random
@@ -64,17 +59,11 @@ export const createFormula = (
   const leftFormula =
     leftNumbers.length === 1
       ? { symbol: leftNumbers[0] }
-      : createVerifiedFormula(
-          { pickedNumbers: leftNumbers, operations },
-          random
-        )
+      : createVerifiedFormula({ pickedNumbers: leftNumbers, operations }, random)
   const rightFormula =
     rightNumbers.length === 1
       ? { symbol: rightNumbers[0] }
-      : createVerifiedFormula(
-          { pickedNumbers: rightNumbers, operations },
-          random
-        )
+      : createVerifiedFormula({ pickedNumbers: rightNumbers, operations }, random)
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]
@@ -92,11 +81,7 @@ export const createFormula = (
   }
 }
 
-const evaluateFormula = (
-  left: number,
-  right: number,
-  operation: Operation
-): number => {
+const evaluateFormula = (left: number, right: number, operation: Operation): number => {
   switch (operation) {
     case "+":
       return left + right
@@ -111,26 +96,17 @@ const evaluateFormula = (
   }
 }
 
-export const createVerifiedFormula = (
-  settings: FormulaSettings,
-  random: () => number = Math.random
-): Formula => {
+export const createVerifiedFormula = (settings: FormulaSettings, random: () => number = Math.random): Formula => {
   let formula = createFormula(settings, random)
   // Ensure the result is positive and greater than 0
   let iteration = 0
 
-  const verifyOperand = (
-    operand: number | { symbol: number } | Formula
-  ): boolean => {
+  const verifyOperand = (operand: number | { symbol: number } | Formula): boolean => {
     const value = getNumberValue(operand)
     return value > 0 && Number.isInteger(value) && !isNaN(value)
   }
 
-  while (
-    !verifyOperand(formula.result) ||
-    !verifyOperand(formula.left) ||
-    !verifyOperand(formula.right)
-  ) {
+  while (!verifyOperand(formula.result) || !verifyOperand(formula.left) || !verifyOperand(formula.right)) {
     iteration++
     if (iteration > 100) {
       console.log("formula", formula, settings)
@@ -163,10 +139,7 @@ const getOperatorPrecedence = (operation: Operation): number => {
   }
 }
 
-const showValue = (
-  value: number | { symbol: number },
-  mapping: Record<number, string>
-) => {
+const showValue = (value: number | { symbol: number }, mapping: Record<number, string>) => {
   if (typeof value === "number") {
     return value.toString()
   }
@@ -194,9 +167,7 @@ const formulaPartToString = (
   const result =
     formula.operation === "-"
       ? `${leftStr} ${formula.operation} ${
-          typeof formula.right === "number" || "symbol" in formula.right
-            ? rightStr
-            : "(" + rightStr + ")"
+          typeof formula.right === "number" || "symbol" in formula.right ? rightStr : "(" + rightStr + ")"
         }`
       : `${leftStr} ${formula.operation} ${rightStr}`
 

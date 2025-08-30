@@ -12,12 +12,12 @@ import type { DayNightCycleStep } from "@/ui/backdropSelection"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 
-const getPosition = (
-  levelNr: number
-): "left" | "left-mirror" | "right" | "right-mirror" => {
-  return ["left", "left-mirror", "right", "right-mirror"][
-    Math.floor(mulberry32(levelNr)() * 4)
-  ] as "left" | "left-mirror" | "right" | "right-mirror"
+const getPosition = (levelNr: number): "left" | "left-mirror" | "right" | "right-mirror" => {
+  return ["left", "left-mirror", "right", "right-mirror"][Math.floor(mulberry32(levelNr)() * 4)] as
+    | "left"
+    | "left-mirror"
+    | "right"
+    | "right-mirror"
 }
 
 const dayTimeBlockColors: Record<DayNightCycleStep, string> = {
@@ -42,28 +42,19 @@ export const PyramidDisplay: FC<{
   completed?: boolean
   dayTime?: DayNightCycleStep
   onAnswer?: (blockId: string, value: number | undefined) => void
-}> = ({
-  pyramid,
-  values,
-  completed = false,
-  onAnswer,
-  levelNr,
-  decorationOffset = 0,
-  dayTime = "afternoon",
-}) => {
+}> = ({ pyramid, values, completed = false, onAnswer, levelNr, decorationOffset = 0, dayTime = "afternoon" }) => {
   const { blocks } = pyramid
 
   // Render the pyramid blocks
   const floorCount = pyramid.floorCount
   const floorStartIndices = createFloorStartIndices(floorCount)
   const containerRef = useRef<HTMLDivElement>(null)
-  const {
-    selectedBlockIndex,
-    setSelectedBlockIndex,
-    focusInput,
-    setFocusInput,
-    handleKeyDown,
-  } = usePyramidNavigation(floorStartIndices, floorCount, blocks, onAnswer)
+  const { selectedBlockIndex, setSelectedBlockIndex, focusInput, setFocusInput, handleKeyDown } = usePyramidNavigation(
+    floorStartIndices,
+    floorCount,
+    blocks,
+    onAnswer
+  )
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset
@@ -81,8 +72,8 @@ export const PyramidDisplay: FC<{
         // if complete, check if all answers of this row are correct
         const isCorrect = blocks
           .slice(startIndex, startIndex + floor + 1)
-          .filter((block) => block.isOpen)
-          .every((block) => values[block.id] === correctAnswers?.[block.id])
+          .filter(block => block.isOpen)
+          .every(block => values[block.id] === correctAnswers?.[block.id])
 
         return (
           <div key={floor} className="mb-[-1px] flex justify-center">
@@ -93,38 +84,26 @@ export const PyramidDisplay: FC<{
                 <InputBlock
                   key={block.id}
                   value={values[block.id]}
-                  selected={
-                    selectedBlockIndex === startIndex + index && !completed
-                  }
+                  selected={selectedBlockIndex === startIndex + index && !completed}
                   disabled={complete && isCorrect}
-                  shouldFocus={
-                    selectedBlockIndex === startIndex + index && focusInput
-                  }
+                  shouldFocus={selectedBlockIndex === startIndex + index && focusInput}
                   onSelect={() => setSelectedBlockIndex(startIndex + index)}
                   onBlur={() => {
                     setFocusInput(false)
                     containerRef.current?.focus()
                   }}
-                  onChange={(value) => onAnswer?.(block.id, value)}
+                  onChange={value => onAnswer?.(block.id, value)}
                 />
               ) : (
                 <Block
                   key={block.id}
                   selected={selectedBlockIndex === startIndex + index}
-                  className={clsx(
-                    dayTimeBlockColors[dayTime],
-                    "transition-colors duration-1000"
-                  )}
+                  className={clsx(dayTimeBlockColors[dayTime], "transition-colors duration-1000")}
                 >
                   {block.value !== undefined ? (
                     block.value
                   ) : (
-                    <span
-                      className={clsx(
-                        "text-xl",
-                        dayTimeHieroglyphColors[dayTime]
-                      )}
-                    >
+                    <span className={clsx("text-xl", dayTimeHieroglyphColors[dayTime])}>
                       {hieroglyphs[(startIndex + index) % hieroglyphs.length]}
                     </span>
                   )}

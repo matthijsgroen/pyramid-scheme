@@ -15,47 +15,32 @@ export const TombBackdrop: FC<
     difficulty?: Difficulty
     scale?: "large" | "small"
   }>
-> = ({
-  children,
-  className,
-  difficulty = "starter",
-  zoom = false,
-  fade = false,
-  scale = "large",
-}) => {
-  const imageMap: Record<
-    Difficulty,
-    { color: string; gradient: string; image: string }
-  > = {
+> = ({ children, className, difficulty = "starter", zoom = false, fade = false, scale = "large" }) => {
+  const imageMap: Record<Difficulty, { color: string; gradient: string; image: string }> = {
     starter: {
       image: masonryStone,
       color: "bg-yellow-800",
-      gradient:
-        "bg-gradient-to-t from-yellow-900 from-50% to-yellow-800 to-100%",
+      gradient: "bg-gradient-to-t from-yellow-900 from-50% to-yellow-800 to-100%",
     },
     junior: {
       image: masonry,
       color: "bg-yellow-800",
-      gradient:
-        "bg-gradient-to-t from-yellow-900 from-50% to-yellow-800 to-100%",
+      gradient: "bg-gradient-to-t from-yellow-900 from-50% to-yellow-800 to-100%",
     },
     expert: {
       image: masonryClean,
       color: "bg-yellow-800",
-      gradient:
-        "bg-gradient-to-t from-yellow-900 from-50% to-yellow-800 to-100%",
+      gradient: "bg-gradient-to-t from-yellow-900 from-50% to-yellow-800 to-100%",
     },
     master: {
       image: masonryDetailed,
       color: "bg-yellow-600",
-      gradient:
-        "bg-gradient-to-t from-yellow-800 from-50% to-yellow-600 to-100%",
+      gradient: "bg-gradient-to-t from-yellow-800 from-50% to-yellow-600 to-100%",
     },
     wizard: {
       image: masonryEmerald,
       color: "bg-emerald-800",
-      gradient:
-        "bg-gradient-to-t from-emerald-950 from-50% to-emerald-800 to-100%",
+      gradient: "bg-gradient-to-t from-emerald-950 from-50% to-emerald-800 to-100%",
     },
   }
   const settings = imageMap[difficulty]
@@ -76,8 +61,7 @@ export const TombBackdrop: FC<
           scale === "large"
             ? `url(${settings.image})`
             : `url(${settings.image}), linear-gradient(var(--tw-gradient-stops))`,
-        backgroundSize:
-          scale === "large" ? "140px 140px" : "40px 40px, 100% 100%",
+        backgroundSize: scale === "large" ? "140px 140px" : "40px 40px, 100% 100%",
         backgroundPosition: "bottom center",
         backgroundAttachment: "fixed",
       }}

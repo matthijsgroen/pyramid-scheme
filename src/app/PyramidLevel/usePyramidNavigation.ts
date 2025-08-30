@@ -13,10 +13,7 @@ export const usePyramidNavigation = (
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const { floor, index } = getFloorAndIndex(
-        selectedBlockIndex,
-        floorStartIndices
-      )
+      const { floor, index } = getFloorAndIndex(selectedBlockIndex, floorStartIndices)
       if (e.key === "ArrowLeft" && index > 0) {
         setSelectedBlockIndex(selectedBlockIndex - 1)
         setFocusInput(false)
@@ -47,14 +44,7 @@ export const usePyramidNavigation = (
         e.preventDefault()
       }
     },
-    [
-      selectedBlockIndex,
-      focusInput,
-      floorStartIndices,
-      floorCount,
-      blocks,
-      onAnswer,
-    ]
+    [selectedBlockIndex, focusInput, floorStartIndices, floorCount, blocks, onAnswer]
   )
 
   return {

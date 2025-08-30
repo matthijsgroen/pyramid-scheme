@@ -32,12 +32,8 @@ export const determineInventoryLootForCurrentRuns = (
   const currentDifficulty = pyramidExpedition.journey.difficulty
 
   const tombIds = journeys
-    .filter(
-      (j) =>
-        j.type === "treasure_tomb" &&
-        difficultyCompare(j.difficulty, maxDifficulty) <= 0
-    )
-    .map((j) => j.id)
+    .filter(j => j.type === "treasure_tomb" && difficultyCompare(j.difficulty, maxDifficulty) <= 0)
+    .map(j => j.id)
   const itemsRequired: Record<string, number> = {}
   const itemsInteresting: string[] = []
   const lootSeed = generateNewSeed(
@@ -47,31 +43,22 @@ export const determineInventoryLootForCurrentRuns = (
 
   const random = mulberry32(lootSeed)
 
-  tombIds.forEach((tombId) => {
-    const tombInfo = journeys.find(
-      (j): j is TreasureTombJourney =>
-        j.id === tombId && j.type === "treasure_tomb"
-    )
+  tombIds.forEach(tombId => {
+    const tombInfo = journeys.find((j): j is TreasureTombJourney => j.id === tombId && j.type === "treasure_tomb")
     const tombState = getJourney(tombId)
     // get current run for tomb
     const currentRun = (tombState?.completionCount ?? 0) + 1
     const currentLevel = tombState?.levelNr ?? 1
 
     const tableau = tableauLevels.find(
-      (t) =>
-        t.tombJourneyId === tombId &&
-        t.runNumber === currentRun &&
-        t.levelNr === currentLevel
+      t => t.tombJourneyId === tombId && t.runNumber === currentRun && t.levelNr === currentLevel
     )
 
     if (!tableau || !tombInfo) return
     // collect all interesting items in this run for this tomb
-    tableauLevels.forEach((tableau) => {
-      if (
-        tableau.tombJourneyId === tombId &&
-        tableau.runNumber === currentRun
-      ) {
-        tableau.inventoryIds.forEach((itemId) => {
+    tableauLevels.forEach(tableau => {
+      if (tableau.tombJourneyId === tombId && tableau.runNumber === currentRun) {
+        tableau.inventoryIds.forEach(itemId => {
           if (!itemsInteresting.includes(itemId)) {
             itemsInteresting.push(itemId)
           }
@@ -83,7 +70,7 @@ export const determineInventoryLootForCurrentRuns = (
         tableau.runNumber === currentRun + 1 &&
         tableau.levelNr === 1
       ) {
-        tableau.inventoryIds.forEach((itemId) => {
+        tableau.inventoryIds.forEach(itemId => {
           if (!itemsInteresting.includes(itemId)) {
             itemsInteresting.push(itemId)
           }
@@ -121,40 +108,36 @@ export const determineInventoryLootForCurrentRuns = (
   })
 
   // Calculate urgency scores for each needed item
-  const urgencyScores = Object.entries(filteredItemsRequired).map(
-    ([itemId, needed]) => {
-      const currentInventory = playerInventory[itemId] || 0
-      let urgencyScore = needed // Base score from how much is needed
+  const urgencyScores = Object.entries(filteredItemsRequired).map(([itemId, needed]) => {
+    const currentInventory = playerInventory[itemId] || 0
+    let urgencyScore = needed // Base score from how much is needed
 
-      // Higher urgency if player has none of this item
-      if (currentInventory === 0) {
-        urgencyScore += 5
-      }
-      // Lower urgency if player already has plenty
-      else if (currentInventory >= needed) {
-        urgencyScore = 0
-      }
-
-      return {
-        itemId,
-        needed,
-        urgencyScore,
-        deficit: Math.max(0, needed - currentInventory),
-      }
+    // Higher urgency if player has none of this item
+    if (currentInventory === 0) {
+      urgencyScore += 5
     }
-  )
+    // Lower urgency if player already has plenty
+    else if (currentInventory >= needed) {
+      urgencyScore = 0
+    }
+
+    return {
+      itemId,
+      needed,
+      urgencyScore,
+      deficit: Math.max(0, needed - currentInventory),
+    }
+  })
 
   // Sort by urgency score and select the most needed items
   urgencyScores.sort((a, b) => b.urgencyScore - a.urgencyScore)
 
   // Select up to maxItemsToAward items with positive urgency scores
-  let selectedItems = urgencyScores
-    .filter((item) => item.urgencyScore > 0)
-    .slice(0, maxItemsToAward)
+  let selectedItems = urgencyScores.filter(item => item.urgencyScore > 0).slice(0, maxItemsToAward)
 
   // If no urgent items, fall back to interesting items (filtered by difficulty)
   if (selectedItems.length === 0) {
-    const filteredInterestingItems = itemsInteresting.filter((itemId) => {
+    const filteredInterestingItems = itemsInteresting.filter(itemId => {
       const itemDifficulty = getItemFirstLevel(itemId)
       const currentInventory = playerInventory[itemId] || 0
       if (currentInventory > 5) return false // Skip if player has too many
@@ -177,7 +160,7 @@ export const determineInventoryLootForCurrentRuns = (
     const fallbackItems = shuffledInteresting.slice(0, maxItemsToAward)
 
     // Award up to maxPerItem for each interesting item
-    selectedItems = fallbackItems.map((itemId) => ({
+    selectedItems = fallbackItems.map(itemId => ({
       itemId,
       needed: maxPerItem,
       urgencyScore: 1,
@@ -192,11 +175,7 @@ export const determineInventoryLootForCurrentRuns = (
 
   for (const item of selectedItems) {
     if (itemsLeft <= 0) break
-    const count = Math.min(
-      item.deficit || item.needed || 1,
-      maxPerItem,
-      itemsLeft
-    )
+    const count = Math.min(item.deficit || item.needed || 1, maxPerItem, itemsLeft)
     if (count > 0) {
       itemsToAward[item.itemId] = count
       itemsLeft -= count
@@ -204,29 +183,19 @@ export const determineInventoryLootForCurrentRuns = (
   }
 
   // Calculate overall urgency from all selected items
-  const totalUrgency = selectedItems.reduce(
-    (sum, item) => sum + item.urgencyScore,
-    0
-  )
+  const totalUrgency = selectedItems.reduce((sum, item) => sum + item.urgencyScore, 0)
   const avgUrgency = totalUrgency / (selectedItems.length || 1)
 
   // Calculate adjusted chance based on average urgency
   const needMultiplier = Math.max(Math.min(3, avgUrgency / 5), 1) // Cap at 3x multiplier
-  const adjustedChance = Math.min(
-    Math.max(0.8, baseInventoryChance),
-    baseInventoryChance * needMultiplier
-  ) // Cap at 80% by default, but can be higher for high base chance
+  const adjustedChance = Math.min(Math.max(0.8, baseInventoryChance), baseInventoryChance * needMultiplier) // Cap at 80% by default, but can be higher for high base chance
 
   // Generate deterministic random number based on journey state
   const shouldAward = random() < adjustedChance
 
   return {
     shouldAwardInventoryItem: shouldAward,
-    itemIds: shouldAward
-      ? Object.entries(itemsToAward).flatMap(([itemId, count]) =>
-          Array(count).fill(itemId)
-        )
-      : [],
+    itemIds: shouldAward ? Object.entries(itemsToAward).flatMap(([itemId, count]) => Array(count).fill(itemId)) : [],
     baseChance: baseInventoryChance,
     adjustedChance,
     needMultiplier,

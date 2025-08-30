@@ -41,28 +41,14 @@ const meta = {
     maxNumber: { control: { type: "number", min: 0, max: 30 } },
   },
   tags: ["autodocs"],
-  render: ({
-    levelNr,
-    floorCount,
-    openBlockPercentage,
-    blockedBlockPercentage,
-    minNumber,
-    maxNumber,
-  }) => {
+  render: ({ levelNr, floorCount, openBlockPercentage, blockedBlockPercentage, minNumber, maxNumber }) => {
     const random = mulberry32(1234567)
     const maxBlocks = (floorCount * (floorCount + 1)) / 2
-    const maxBlocksToOpen =
-      maxBlocks - floorCount - (floorCount > 8 ? floorCount - 8 : 0)
+    const maxBlocksToOpen = maxBlocks - floorCount - (floorCount > 8 ? floorCount - 8 : 0)
     const openBlockCount = maxBlocksToOpen * openBlockPercentage
 
     const potentialToBlock = maxBlocksToOpen - openBlockCount
-    const blockedBlockCount = Math.min(
-      Math.max(
-        Math.floor(potentialToBlock * (0.8 * blockedBlockPercentage)),
-        0
-      ),
-      8
-    )
+    const blockedBlockCount = Math.min(Math.max(Math.floor(potentialToBlock * (0.8 * blockedBlockPercentage)), 0), 8)
 
     const content = generateLevel(
       levelNr,
@@ -78,12 +64,7 @@ const meta = {
       <DesertBackdrop levelNr={1} start="morning">
         <div className="relative flex h-full w-full flex-col">
           <div className="flex w-full flex-1 items-center justify-center">
-            <PyramidDisplay
-              levelNr={levelNr}
-              pyramid={content.pyramid}
-              decorationOffset={0}
-              values={{}}
-            />
+            <PyramidDisplay levelNr={levelNr} pyramid={content.pyramid} decorationOffset={0} values={{}} />
           </div>
         </div>
       </DesertBackdrop>

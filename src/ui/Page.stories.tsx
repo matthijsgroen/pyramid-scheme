@@ -28,9 +28,7 @@ export const Default: Story = {
     children: (
       <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300">
         <div className="text-center">
-          <h1 className="mb-4 text-4xl font-bold text-blue-900">
-            Page Content
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold text-blue-900">Page Content</h1>
           <p className="text-xl text-blue-700">This is a snap-start page</p>
         </div>
       </div>
@@ -44,9 +42,7 @@ export const SnapCenter: Story = {
     children: (
       <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-green-100 to-green-300">
         <div className="text-center">
-          <h1 className="mb-4 text-4xl font-bold text-green-900">
-            Centered Page
-          </h1>
+          <h1 className="mb-4 text-4xl font-bold text-green-900">Centered Page</h1>
           <p className="text-xl text-green-700">This page snaps to center</p>
         </div>
       </div>
@@ -75,12 +71,8 @@ export const WithCustomClass: Story = {
     children: (
       <div className="flex h-screen w-full items-center justify-center bg-gradient-to-br from-red-100 to-red-300">
         <div className="text-center">
-          <h1 className="mb-4 text-4xl font-bold text-red-900">
-            Custom Styled Page
-          </h1>
-          <p className="text-xl text-red-700">
-            This page has a custom red border
-          </p>
+          <h1 className="mb-4 text-4xl font-bold text-red-900">Custom Styled Page</h1>
+          <p className="text-xl text-red-700">This page has a custom red border</p>
         </div>
       </div>
     ),
@@ -94,9 +86,7 @@ export const GameLayout: Story = {
       <div className="flex h-screen w-full flex-col bg-amber-50">
         {/* Header */}
         <div className="border-b-2 border-amber-400 bg-amber-200 p-4">
-          <h1 className="text-center text-2xl font-bold text-amber-900">
-            Pyramid Game
-          </h1>
+          <h1 className="text-center text-2xl font-bold text-amber-900">Pyramid Game</h1>
         </div>
 
         {/* Game Content */}
@@ -118,9 +108,7 @@ export const GameLayout: Story = {
 
         {/* Footer */}
         <div className="border-t-2 border-amber-400 bg-amber-200 p-4">
-          <p className="text-center text-amber-800">
-            Game controls would go here
-          </p>
+          <p className="text-center text-amber-800">Game controls would go here</p>
         </div>
       </div>
     ),

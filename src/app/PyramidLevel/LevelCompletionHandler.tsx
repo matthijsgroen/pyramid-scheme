@@ -11,17 +11,12 @@ type LevelCompletionHandlerProps = {
   activeJourney: CombinedJourneyState
 }
 
-export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
-  onCompletionFinished,
-  activeJourney,
-}) => {
+export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onCompletionFinished, activeJourney }) => {
   const { t } = useTranslation("common")
   const [showOverlay, setShowOverlay] = useState(false)
   const [showFez, setShowFez] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
-  const [completionPhase, setCompletionPhase] = useState<
-    "hidden" | "overlay" | "loot" | "finished"
-  >("hidden")
+  const [completionPhase, setCompletionPhase] = useState<"hidden" | "overlay" | "loot" | "finished">("hidden")
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Use the loot determination hook
@@ -115,16 +110,11 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
     <>
       {/* Level Completed Overlay */}
       {showOverlay && (
-        <div
-          onClick={handleOverlayClick}
-          className="pointer-events-auto absolute inset-0 z-40 cursor-pointer"
-        >
+        <div onClick={handleOverlayClick} className="pointer-events-auto absolute inset-0 z-40 cursor-pointer">
           <LevelCompletedOverlay />
           {!loot && completionPhase === "overlay" && (
             <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
-              <p className="animate-pulse text-sm font-medium text-white">
-                {t("loot.clickToContinue")}
-              </p>
+              <p className="animate-pulse text-sm font-medium text-white">{t("loot.clickToContinue")}</p>
             </div>
           )}
         </div>

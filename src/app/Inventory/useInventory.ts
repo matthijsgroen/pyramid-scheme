@@ -3,16 +3,13 @@ import { useGameStorage } from "@/support/useGameStorage"
 
 export const useInventory = () => {
   // store inventory items in the offline storage
-  const [inventory, setInventory] = useGameStorage<Record<string, number>>(
-    "inventory",
-    {}
-  )
+  const [inventory, setInventory] = useGameStorage<Record<string, number>>("inventory", {})
 
   return {
     inventory,
     addItem: useCallback(
       (id: string, count: number) => {
-        setInventory((prev) => ({
+        setInventory(prev => ({
           ...prev,
           [id]: (prev[id] || 0) + count,
         }))
@@ -21,7 +18,7 @@ export const useInventory = () => {
     ),
     removeItem: useCallback(
       (id: string, count: number) => {
-        setInventory((prev) => {
+        setInventory(prev => {
           const currentCount = prev[id] || 0
           const newCount = Math.max(0, currentCount - count)
 
@@ -35,7 +32,7 @@ export const useInventory = () => {
     ),
     addItems: useCallback(
       (items: Record<string, number>) => {
-        setInventory((prev) => {
+        setInventory(prev => {
           const newInventory = { ...prev }
           Object.entries(items).forEach(([id, count]) => {
             newInventory[id] = (newInventory[id] || 0) + count
@@ -47,7 +44,7 @@ export const useInventory = () => {
     ),
     removeItems: useCallback(
       (items: Record<string, number>) => {
-        setInventory((prev) => {
+        setInventory(prev => {
           const newInventory = { ...prev }
           Object.entries(items).forEach(([id, count]) => {
             const currentCount = newInventory[id] || 0

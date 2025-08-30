@@ -42,10 +42,8 @@ export const TombTableau: FC<{
   const solvedPercentage = useMemo(() => {
     // Count total slots across all formulas
     const totalSlots =
-      calculation.hintFormulas.reduce(
-        (sum, formula) => sum + countFormulaSlots(formula),
-        0
-      ) + countFormulaSlots(calculation.mainFormula)
+      calculation.hintFormulas.reduce((sum, formula) => sum + countFormulaSlots(formula), 0) +
+      countFormulaSlots(calculation.mainFormula)
 
     // Count filled slots
     const filledSlots = Object.keys(filledState.filledPositions).length
@@ -69,9 +67,7 @@ export const TombTableau: FC<{
         hieroglyphLevelColors[difficulty]
       )}
     >
-      <h1 className="text-center font-pyramid text-2xl">
-        {revealText(tableau.name, solvedPercentage)}
-      </h1>
+      <h1 className="text-center font-pyramid text-2xl">{revealText(tableau.name, solvedPercentage)}</h1>
       <div>{revealText(tableau.description, solvedPercentage)}</div>
 
       {hintFormulas.map(({ formula, index }, key) => (

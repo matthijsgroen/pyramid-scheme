@@ -16,7 +16,7 @@ export const BaseHeader = () => {
           className="text-center font-pyramid text-2xl font-bold"
           onClick={() => {
             if (process.env.NODE_ENV === "development") {
-              setDevelopMode((prev) => !prev)
+              setDevelopMode(prev => !prev)
             }
           }}
         >
@@ -30,10 +30,7 @@ export const BaseHeader = () => {
         </button>
       </div>
 
-      <SettingsModal
-        isOpen={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-      />
+      <SettingsModal isOpen={showSettingsModal} onClose={() => setShowSettingsModal(false)} />
     </>
   )
 }

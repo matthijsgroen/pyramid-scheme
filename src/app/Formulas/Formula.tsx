@@ -11,15 +11,7 @@ export const Formula: FC<{
   filledState: FilledTileState
   onTileClick?: (symbolId: string, position: string) => void
   formulaIndex: number
-}> = ({
-  formula,
-  showResult,
-  difficulty,
-  symbolMapping,
-  filledState,
-  onTileClick,
-  formulaIndex,
-}) => (
+}> = ({ formula, showResult, difficulty, symbolMapping, filledState, onTileClick, formulaIndex }) => (
   <FormulaPart
     formula={formula}
     showResult={true}

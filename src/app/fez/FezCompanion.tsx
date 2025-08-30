@@ -7,25 +7,18 @@ import { FezContext, type FezConversationResult } from "./context"
 export const FezCompanion: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  const [activeConversation, setActiveConversation] = useState<string | null>(
-    null
-  )
+  const [activeConversation, setActiveConversation] = useState<string | null>(null)
   const conversationQueue = useRef<
     {
       conversation: string
       onComplete: (result: FezConversationResult) => void
     }[]
   >([])
-  const [conversations, setConversations, loaded] = useGameStorage<
-    Record<string, boolean>
-  >("conversations", {})
+  const [conversations, setConversations, loaded] = useGameStorage<Record<string, boolean>>("conversations", {})
 
   const contextValue = useMemo(
     () => ({
-      showConversation: (
-        conversationId: string,
-        onComplete?: (result: FezConversationResult) => void
-      ) => {
+      showConversation: (conversationId: string, onComplete?: (result: FezConversationResult) => void) => {
         if (!loaded) {
           return onComplete?.("not-loaded")
         }
@@ -35,14 +28,12 @@ export const FezCompanion: React.FC<{
         const entry = {
           conversation: conversationId,
           onComplete: (result: FezConversationResult) => {
-            setConversations((prev) => ({
+            setConversations(prev => ({
               ...prev,
               [conversationId]: true,
-            })).then((v) => {
+            })).then(v => {
               // remove from queue
-              conversationQueue.current = conversationQueue.current.filter(
-                (item) => item !== entry
-              )
+              conversationQueue.current = conversationQueue.current.filter(item => item !== entry)
               onComplete?.(result)
               if (conversationQueue.current.length > 0) {
                 const nextConversation = conversationQueue.current[0]
@@ -74,7 +65,7 @@ export const FezCompanion: React.FC<{
           <Fez
             key={activeConversation}
             conversation={activeConversation}
-            onComplete={(result) => {
+            onComplete={result => {
               conversationQueue.current[0].onComplete(result)
             }}
           />

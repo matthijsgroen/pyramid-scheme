@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest"
-import {
-  generateRewardCalculation,
-  type RewardCalculationSettings,
-} from "./generateRewardCalculation"
+import { generateRewardCalculation, type RewardCalculationSettings } from "./generateRewardCalculation"
 import { mulberry32 } from "./random"
 import { formulaToString } from "../app/Formulas/formulas"
 
@@ -112,9 +109,7 @@ describe(generateRewardCalculation, () => {
       expect(formulaToString(result.hintFormulas[0])).toBe("6 + 6 = 12")
       expect(formulaToString(result.hintFormulas[1])).toBe("6 + 1 = 7")
       expect(formulaToString(result.hintFormulas[2])).toBe("7 + 6 - 4 = 9")
-      expect(formulaToString(result.mainFormula, {})).toBe(
-        "9 + 7 - (7 + 6) = 3"
-      )
+      expect(formulaToString(result.mainFormula, {})).toBe("9 + 7 - (7 + 6) = 3")
     })
   })
 
@@ -151,9 +146,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const { symbolMapping } = result
     const puzzle = [
-      ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, symbolMapping, "yes")
-      ),
+      ...result.hintFormulas.map(formula => formulaToString(formula, symbolMapping, "yes")),
       formulaToString(result.mainFormula, symbolMapping, "obfuscated"),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`
@@ -175,9 +168,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const { symbolMapping } = result
     const puzzle = [
-      ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, symbolMapping, "yes")
-      ),
+      ...result.hintFormulas.map(formula => formulaToString(formula, symbolMapping, "yes")),
       formulaToString(result.mainFormula, symbolMapping, "obfuscated"),
     ].join("\n")
     expect(result.pickedNumbers).toEqual([6, 8, 4, 9, 10])
@@ -191,9 +182,7 @@ describe(generateRewardCalculation, () => {
       }
     `)
     const numberFormulas = [
-      ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, undefined, "yes")
-      ),
+      ...result.hintFormulas.map(formula => formulaToString(formula, undefined, "yes")),
       formulaToString(result.mainFormula, undefined, "yes"),
     ].join("\n")
     expect(result.hintFormulas[3]).toMatchInlineSnapshot(`
@@ -248,9 +237,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const { symbolMapping } = result
     const puzzle = [
-      ...result.hintFormulas.map((formula) =>
-        formulaToString(formula, symbolMapping, "yes")
-      ),
+      ...result.hintFormulas.map(formula => formulaToString(formula, symbolMapping, "yes")),
       formulaToString(result.mainFormula, symbolMapping, "obfuscated"),
     ].join("\n")
     expect(puzzle).toMatchInlineSnapshot(`

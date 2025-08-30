@@ -11,22 +11,18 @@ describe("Tableau System", () => {
   describe("test all tableau formula's", () => {
     const tableauLevels = generateTableaus()
 
-    describe.each(difficulties)("%s difficulty tableaus", (difficulty) => {
+    describe.each(difficulties)("%s difficulty tableaus", difficulty => {
       const journey = journeys.find(
-        (j): j is TreasureTombJourney =>
-          j.type === "treasure_tomb" && j.difficulty === difficulty
+        (j): j is TreasureTombJourney => j.type === "treasure_tomb" && j.difficulty === difficulty
       )!
 
-      it.each(tableauLevels.filter((t) => t.tombJourneyId === journey.id))(
+      it.each(tableauLevels.filter(t => t.tombJourneyId === journey.id))(
         "creates solvable formulas for: $name",
-        (tableau) => {
+        tableau => {
           expect(journey).toBeDefined()
           if (!journey) return
 
-          const journeySeed = generateNewSeed(
-            hashString(tableau.tombJourneyId),
-            tableau.runNumber
-          )
+          const journeySeed = generateNewSeed(hashString(tableau.tombJourneyId), tableau.runNumber)
           const tableauSeed = generateNewSeed(journeySeed, tableau.levelNr)
           const random = mulberry32(tableauSeed)
 
@@ -36,9 +32,7 @@ describe("Tableau System", () => {
             numberRange: journey.levelSettings.numberRange,
             operations: journey.levelSettings.operators,
           }
-          expect(() =>
-            generateRewardCalculation(settings, random)
-          ).not.toThrow()
+          expect(() => generateRewardCalculation(settings, random)).not.toThrow()
         }
       )
     })

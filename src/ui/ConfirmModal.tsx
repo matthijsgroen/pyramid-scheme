@@ -32,9 +32,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
       <div className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <h2 className="mb-4 text-xl font-bold text-gray-900">{title}</h2>
 
-        <div className="mb-6 text-gray-700">
-          {typeof message === "string" ? <p>{message}</p> : message}
-        </div>
+        <div className="mb-6 text-gray-700">{typeof message === "string" ? <p>{message}</p> : message}</div>
 
         <div className="flex justify-end gap-3">
           <button

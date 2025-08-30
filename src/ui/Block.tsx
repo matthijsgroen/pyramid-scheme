@@ -1,9 +1,11 @@
 import clsx from "clsx"
 import type { FC, PropsWithChildren } from "react"
 
-export const Block: FC<
-  PropsWithChildren<{ className?: string; selected?: boolean }>
-> = ({ children, selected, className = "" }) => {
+export const Block: FC<PropsWithChildren<{ className?: string; selected?: boolean }>> = ({
+  children,
+  selected,
+  className = "",
+}) => {
   return (
     <div
       className={clsx(

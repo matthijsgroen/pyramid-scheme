@@ -21,12 +21,7 @@ const meta = {
     },
     start: {
       control: "select",
-      options: [
-        "morning",
-        "afternoon",
-        "evening",
-        "night",
-      ] as DayNightCycleStep[],
+      options: ["morning", "afternoon", "evening", "night"] as DayNightCycleStep[],
     },
   },
 } satisfies Meta<typeof DesertBackdrop>
@@ -39,7 +34,7 @@ export const Morning: Story = {
     levelNr: 1,
     start: "morning",
   },
-  render: (args) => (
+  render: args => (
     <DesertBackdrop {...args}>
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold text-white">Morning</h1>
@@ -54,7 +49,7 @@ export const Afternoon: Story = {
     levelNr: 1,
     start: "afternoon",
   },
-  render: (args) => (
+  render: args => (
     <DesertBackdrop {...args}>
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold text-white">Afternoon</h1>
@@ -69,7 +64,7 @@ export const Evening: Story = {
     levelNr: 1,
     start: "evening",
   },
-  render: (args) => (
+  render: args => (
     <DesertBackdrop {...args}>
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold text-white">Evening</h1>
@@ -84,7 +79,7 @@ export const Night: Story = {
     levelNr: 1,
     start: "night",
   },
-  render: (args) => (
+  render: args => (
     <DesertBackdrop {...args}>
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold text-white">Night</h1>
@@ -99,7 +94,7 @@ export const CycleProgression: Story = {
     levelNr: 10,
     start: "morning",
   },
-  render: (args) => (
+  render: args => (
     <DesertBackdrop {...args}>
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold text-white">Level 10</h1>
@@ -114,14 +109,12 @@ export const WithGameContent: Story = {
     levelNr: 1,
     start: "afternoon",
   },
-  render: (args) => (
+  render: args => (
     <DesertBackdrop {...args}>
       <div className="flex flex-col items-center justify-center">
         <div className="rounded-lg bg-white/90 p-8 shadow-lg">
           <h2 className="mb-4 text-2xl font-bold">Pyramid Game</h2>
-          <p className="mb-4">
-            This is how game content would appear over the backdrop
-          </p>
+          <p className="mb-4">This is how game content would appear over the backdrop</p>
           <div className="grid grid-cols-3 gap-2">
             {Array.from({ length: 9 }, (_, i) => (
               <div

@@ -20,7 +20,7 @@ export const useTreasureItem = () => {
     ...mythicalArtifactsTreasures,
   ]
   return (id: string) => {
-    const treasure = allTreasures.find((treasure) => treasure.id === id)
+    const treasure = allTreasures.find(treasure => treasure.id === id)
 
     if (!treasure) {
       return null
@@ -33,8 +33,7 @@ export const useTreasureItem = () => {
     else if (treasureNum >= 5 && treasureNum <= 10) category = "nobleVault"
     else if (treasureNum >= 11 && treasureNum <= 18) category = "templeSecrets"
     else if (treasureNum >= 19 && treasureNum <= 28) category = "ancientRelics"
-    else if (treasureNum >= 29 && treasureNum <= 40)
-      category = "mythicalArtifacts"
+    else if (treasureNum >= 29 && treasureNum <= 40) category = "mythicalArtifacts"
 
     return {
       id: treasure.id,
@@ -47,12 +46,7 @@ export const useTreasureItem = () => {
 
 // Function to get all treasures from a category with translations
 export const useTreasureCategory = (
-  category:
-    | "merchantCache"
-    | "nobleVault"
-    | "templeSecrets"
-    | "ancientRelics"
-    | "mythicalArtifacts"
+  category: "merchantCache" | "nobleVault" | "templeSecrets" | "ancientRelics" | "mythicalArtifacts"
 ) => {
   const { t } = useTranslation("treasures")
 
@@ -75,7 +69,7 @@ export const useTreasureCategory = (
       break
   }
 
-  return treasures.map((treasure) => ({
+  return treasures.map(treasure => ({
     id: treasure.id,
     symbol: treasure.symbol,
     name: t(`${category}.${treasure.id}.name`),

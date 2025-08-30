@@ -8,8 +8,7 @@ import { DevelopModeProvider } from "./contexts/DevelopMode"
 
 function App() {
   const [inGame, setInGame] = useState(false)
-  const { activeJourneyId, getJourney, completeLevel, completeJourney } =
-    useJourneys()
+  const { activeJourneyId, getJourney, completeLevel, completeJourney } = useJourneys()
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 
@@ -31,19 +30,17 @@ function App() {
             onClose={() => setInGame(false)}
           />
         )}
-        {inGame &&
-          journeyInfo &&
-          journeyInfo.journey.type === "treasure_tomb" && (
-            <TombExpedition
-              activeJourney={journeyInfo}
-              onLevelComplete={completeLevel}
-              onJourneyComplete={() => {
-                completeJourney()
-                setInGame(false)
-              }}
-              onClose={() => setInGame(false)}
-            />
-          )}
+        {inGame && journeyInfo && journeyInfo.journey.type === "treasure_tomb" && (
+          <TombExpedition
+            activeJourney={journeyInfo}
+            onLevelComplete={completeLevel}
+            onJourneyComplete={() => {
+              completeJourney()
+              setInGame(false)
+            }}
+            onClose={() => setInGame(false)}
+          />
+        )}
       </FezCompanion>
     </DevelopModeProvider>
   )

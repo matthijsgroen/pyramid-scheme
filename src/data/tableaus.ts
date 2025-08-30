@@ -26,65 +26,10 @@ type TranslationFunction = (key: string) => string
 // Symbol inventory for each tomb level
 const TOMB_SYMBOLS: Record<Difficulty, string[]> = {
   starter: ["p10", "p8", "art1", "a6", "a8", "art5", "d1"],
-  junior: [
-    "p1",
-    "p11",
-    "p9",
-    "a2",
-    "a13",
-    "art2",
-    "art7",
-    "art12",
-    "d2",
-    "d15",
-  ],
-  expert: [
-    "p2",
-    "p3",
-    "p7",
-    "p12",
-    "a5",
-    "a7",
-    "a11",
-    "art3",
-    "art4",
-    "art6",
-    "art14",
-    "d3",
-    "d4",
-    "d9",
-  ],
-  master: [
-    "p4",
-    "p5",
-    "p14",
-    "p15",
-    "a1",
-    "a3",
-    "a14",
-    "a15",
-    "art9",
-    "art10",
-    "art11",
-    "art15",
-    "d5",
-    "d6",
-    "d10",
-  ],
-  wizard: [
-    "p6",
-    "p13",
-    "a4",
-    "a9",
-    "a10",
-    "a12",
-    "d7",
-    "d8",
-    "d11",
-    "d12",
-    "d13",
-    "d14",
-  ],
+  junior: ["p1", "p11", "p9", "a2", "a13", "art2", "art7", "art12", "d2", "d15"],
+  expert: ["p2", "p3", "p7", "p12", "a5", "a7", "a11", "art3", "art4", "art6", "art14", "d3", "d4", "d9"],
+  master: ["p4", "p5", "p14", "p15", "a1", "a3", "a14", "a15", "art9", "art10", "art11", "art15", "d5", "d6", "d10"],
+  wizard: ["p6", "p13", "a4", "a9", "a10", "a12", "d7", "d8", "d11", "d12", "d13", "d14"],
 }
 
 // Get translated tomb name
@@ -111,12 +56,7 @@ export function getTombName(tombId: string, t?: TranslationFunction): string {
 }
 
 // Get translated story template name
-function getTableauTitle(
-  tombId: string,
-  runNr: number,
-  levelNr: number,
-  t?: TranslationFunction
-): string {
+function getTableauTitle(tombId: string, runNr: number, levelNr: number, t?: TranslationFunction): string {
   if (t) {
     return t(`storyTemplates.${tombId}.run${runNr}_level${levelNr}`)
   }
@@ -138,25 +78,19 @@ function getTableauDescription(
   }
 
   // Fallback description
-  return (
-    tableauSymbols
-      .map((symbol) => allItems.find((item) => item.id === symbol)?.name)
-      .join(", ") || "Unknown symbols."
-  )
+  return tableauSymbols.map(symbol => allItems.find(item => item.id === symbol)?.name).join(", ") || "Unknown symbols."
 }
 
 const random = mulberry32(9248529837592)
 
-const tombJourneys = journeys.filter(
-  (j): j is TreasureTombJourney => j.type === "treasure_tomb"
-)
+const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
 
 const collectAllAvailableSymbols = (difficulties: Difficulty[]) =>
-  difficulties.flatMap((difficulty) => TOMB_SYMBOLS[difficulty] || [])
+  difficulties.flatMap(difficulty => TOMB_SYMBOLS[difficulty] || [])
 
 const tableauInventory: Record<string, string[]> = difficulties.reduce(
   (acc, difficulty, i, list) => {
-    const tombInfo = tombJourneys.find((j) => j.difficulty === difficulty)
+    const tombInfo = tombJourneys.find(j => j.difficulty === difficulty)
     if (!tombInfo) throw new Error("no tomb info for difficulty " + difficulty)
     const symbols = collectAllAvailableSymbols(list.slice(0, i + 1))
 
@@ -166,9 +100,7 @@ const tableauInventory: Record<string, string[]> = difficulties.reduce(
       tombInfo?.treasures.reduce((innerAcc, _treasure, treasureIndex) => {
         for (let level = 1; level <= tombInfo.levelCount; level++) {
           const startSymbolIndex =
-            treasureIndex *
-              tombInfo.levelCount *
-              tombInfo.levelSettings.symbolCount +
+            treasureIndex * tombInfo.levelCount * tombInfo.levelSettings.symbolCount +
             level * tombInfo.levelSettings.symbolCount -
             1
 
@@ -178,9 +110,7 @@ const tableauInventory: Record<string, string[]> = difficulties.reduce(
             tableauSymbols.push(shuffledSymbols[symbolIndex])
           }
 
-          innerAcc[
-            `${difficulty}_treasure_tomb.run${treasureIndex + 1}_level${level}`
-          ] = tableauSymbols
+          innerAcc[`${difficulty}_treasure_tomb.run${treasureIndex + 1}_level${level}`] = tableauSymbols
         }
 
         return innerAcc
@@ -194,13 +124,10 @@ const tableauInventory: Record<string, string[]> = difficulties.reduce(
 export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   const tableaus: TableauLevel[] = []
 
-  tombJourneys.forEach((tomb) => {
+  tombJourneys.forEach(tomb => {
     for (let treasure = 1; treasure <= tomb.treasures.length; treasure++) {
       for (let level = 1; level <= tomb.levelCount; level++) {
-        const tableauSymbols =
-          tableauInventory[
-            `${tomb.difficulty}_treasure_tomb.run${treasure}_level${level}`
-          ]
+        const tableauSymbols = tableauInventory[`${tomb.difficulty}_treasure_tomb.run${treasure}_level${level}`]
 
         tableaus.push({
           id: `tab_${tomb.difficulty}_r${treasure}_l${level}`,
@@ -210,13 +137,7 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
           tombJourneyId: tomb.id,
           runNumber: treasure,
           name: getTableauTitle(tomb.id, treasure, level, t),
-          description: getTableauDescription(
-            tomb.id,
-            treasure,
-            level,
-            tableauSymbols,
-            t
-          ),
+          description: getTableauDescription(tomb.id, treasure, level, tableauSymbols, t),
         })
       }
     }

@@ -1,9 +1,4 @@
-import {
-  getAnswers,
-  getBlockChildIndices,
-  isComplete,
-  isValid,
-} from "@/game/state"
+import { getAnswers, getBlockChildIndices, isComplete, isValid } from "@/game/state"
 import { describe, it, expect } from "vitest"
 import type { PyramidLevel } from "@/game/types"
 import { createPyramid } from "@/game/test-utils/pyramidfactory"
@@ -69,30 +64,27 @@ describe(getBlockChildIndices, () => {
     ["4", [6, 7]],
     ["5", [7, 8]],
     ["6", [8, 9]],
-  ])(
-    "returns child IDs for a given block ID %s",
-    (blockId, expectedChildIds) => {
-      const pyramid: PyramidLevel["pyramid"] = {
-        floorCount: 4,
-        blocks: [
-          { id: "1", isOpen: false },
+  ])("returns child IDs for a given block ID %s", (blockId, expectedChildIds) => {
+    const pyramid: PyramidLevel["pyramid"] = {
+      floorCount: 4,
+      blocks: [
+        { id: "1", isOpen: false },
 
-          { id: "2", isOpen: true },
-          { id: "3", isOpen: true },
+        { id: "2", isOpen: true },
+        { id: "3", isOpen: true },
 
-          { id: "4", isOpen: false },
-          { id: "5", isOpen: true },
-          { id: "6", isOpen: true },
+        { id: "4", isOpen: false },
+        { id: "5", isOpen: true },
+        { id: "6", isOpen: true },
 
-          { id: "7", isOpen: false },
-          { id: "8", isOpen: false },
-          { id: "9", isOpen: false },
-          { id: "10", isOpen: false },
-        ],
-      }
-      expect(getBlockChildIndices(pyramid, blockId)).toEqual(expectedChildIds)
+        { id: "7", isOpen: false },
+        { id: "8", isOpen: false },
+        { id: "9", isOpen: false },
+        { id: "10", isOpen: false },
+      ],
     }
-  )
+    expect(getBlockChildIndices(pyramid, blockId)).toEqual(expectedChildIds)
+  })
 
   it("returns an empty array if the block ID does not exist", () => {
     const pyramid: PyramidLevel["pyramid"] = {

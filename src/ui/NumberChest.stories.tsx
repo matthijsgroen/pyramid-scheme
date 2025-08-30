@@ -125,7 +125,7 @@ export const Interactive: Story = {
     placeholder: "Try 1337",
     maxLength: 4,
   },
-  render: (args) => {
+  render: args => {
     const InteractiveNumberLock = () => {
       const [value, setValue] = useState("")
       const [state, setState] = useState<"empty" | "error" | "open">("empty")
@@ -153,13 +153,7 @@ export const Interactive: Story = {
 
       return (
         <div className="flex flex-col items-center gap-4">
-          <NumberChest
-            {...args}
-            value={value}
-            state={state}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-          />
+          <NumberChest {...args} value={value} state={state} onChange={handleChange} onSubmit={handleSubmit} />
           <div className="text-center text-sm text-gray-600">
             <p>
               Try entering the code: <strong>1337</strong>
@@ -216,39 +210,19 @@ export const VariantComparison: Story = {
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Vibrant Error</span>
-        <NumberChest
-          state="error"
-          variant="vibrant"
-          value="9999"
-          placeholder="Enter code"
-        />
+        <NumberChest state="error" variant="vibrant" value="9999" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Muted Error</span>
-        <NumberChest
-          state="error"
-          variant="muted"
-          value="9999"
-          placeholder="Enter code"
-        />
+        <NumberChest state="error" variant="muted" value="9999" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Vibrant Open</span>
-        <NumberChest
-          state="open"
-          variant="vibrant"
-          value="1337"
-          placeholder="Enter code"
-        />
+        <NumberChest state="open" variant="vibrant" value="1337" placeholder="Enter code" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm font-medium text-gray-600">Muted Open</span>
-        <NumberChest
-          state="open"
-          variant="muted"
-          value="1337"
-          placeholder="Enter code"
-        />
+        <NumberChest state="open" variant="muted" value="1337" placeholder="Enter code" />
       </div>
     </div>
   ),

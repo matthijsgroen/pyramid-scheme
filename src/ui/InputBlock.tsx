@@ -10,15 +10,7 @@ export const InputBlock: FC<{
   onSelect?: () => void
   onBlur?: () => void
   onChange: (value: number | undefined) => void
-}> = ({
-  value,
-  selected,
-  disabled,
-  shouldFocus,
-  onChange,
-  onSelect,
-  onBlur,
-}) => {
+}> = ({ value, selected, disabled, shouldFocus, onChange, onSelect, onBlur }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const hasFocus = useRef(false)
   useEffect(() => {
@@ -45,7 +37,7 @@ export const InputBlock: FC<{
         disabled={disabled}
         value={value ?? ""}
         pattern="[0-9]*"
-        onBlur={(e) => {
+        onBlur={e => {
           hasFocus.current = false
           onBlur?.()
           if (e.target.value === "") {
@@ -61,12 +53,8 @@ export const InputBlock: FC<{
           onSelect?.()
           inputRef.current?.select()
         }}
-        onChange={(e) =>
-          e.target.value === ""
-            ? onChange(undefined)
-            : onChange(Number(e.target.value))
-        }
-        onKeyDown={(e) => {
+        onChange={e => (e.target.value === "" ? onChange(undefined) : onChange(Number(e.target.value)))}
+        onKeyDown={e => {
           if (e.key === "Escape" || e.key === "Enter") {
             ;(e.target as HTMLInputElement).blur()
           }

@@ -11,11 +11,7 @@ const createFormulaFilledPositions = (
   } else if ("symbol" in formula.left) {
     filledPositions[`${positionPrefix}-left`] = formula.left.symbol
   } else {
-    createFormulaFilledPositions(
-      filledPositions,
-      `${positionPrefix}-left`,
-      formula.left
-    )
+    createFormulaFilledPositions(filledPositions, `${positionPrefix}-left`, formula.left)
   }
 
   if (typeof formula.right === "number") {
@@ -23,11 +19,7 @@ const createFormulaFilledPositions = (
   } else if ("symbol" in formula.right) {
     filledPositions[`${positionPrefix}-right`] = formula.right.symbol
   } else {
-    createFormulaFilledPositions(
-      filledPositions,
-      `${positionPrefix}-right`,
-      formula.right
-    )
+    createFormulaFilledPositions(filledPositions, `${positionPrefix}-right`, formula.right)
   }
   if (typeof formula.result === "number") {
     // nothing to do
@@ -36,18 +28,12 @@ const createFormulaFilledPositions = (
   }
 }
 
-export const createPositionOverview = (
-  calculation: RewardCalculation
-): Record<string, number> => {
+export const createPositionOverview = (calculation: RewardCalculation): Record<string, number> => {
   const filledPositions: Record<string, number> = {}
   calculation.hintFormulas.forEach((formula, index) => {
     createFormulaFilledPositions(filledPositions, `formula-${index}`, formula)
   })
-  createFormulaFilledPositions(
-    filledPositions,
-    `formula-${calculation.hintFormulas.length}`,
-    calculation.mainFormula
-  )
+  createFormulaFilledPositions(filledPositions, `formula-${calculation.hintFormulas.length}`, calculation.mainFormula)
 
   return filledPositions
 }

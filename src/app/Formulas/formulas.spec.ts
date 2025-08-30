@@ -29,10 +29,7 @@ describe(formulaToString, () => {
 describe(createFormula, () => {
   it("only adds single number at most", () => {
     const random = mulberry32(123123132124)
-    const formula = createFormula(
-      { pickedNumbers: [1, 2], operations: ["+"] },
-      random
-    )
+    const formula = createFormula({ pickedNumbers: [1, 2], operations: ["+"] }, random)
     expect(formula).toEqual({
       left: { symbol: 1 },
       right: { symbol: 2 },
@@ -43,10 +40,7 @@ describe(createFormula, () => {
 
   it("returns a Formula using the largest picked number as result if it fits", () => {
     const random = mulberry32(123123132124)
-    const formula = createFormula(
-      { pickedNumbers: [1, 2, 3], operations: ["+"], useResult: "allow" },
-      random
-    )
+    const formula = createFormula({ pickedNumbers: [1, 2, 3], operations: ["+"], useResult: "allow" }, random)
     expect(formula).toMatchInlineSnapshot(`
       {
         "left": {

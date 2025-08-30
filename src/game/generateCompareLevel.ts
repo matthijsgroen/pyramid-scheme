@@ -1,8 +1,4 @@
-import {
-  createVerifiedFormula,
-  type Formula,
-  type Operation,
-} from "../app/Formulas/formulas"
+import { createVerifiedFormula, type Formula, type Operation } from "../app/Formulas/formulas"
 
 export type CompareFormulaSettings = {
   numberOfSymbols: number
@@ -27,30 +23,14 @@ export type CompareLevel = {
   }[]
 }
 
-const generateCompareFormula = (
-  settings: CompareFormulaSettings,
-  random: () => number = Math.random
-) => {
+const generateCompareFormula = (settings: CompareFormulaSettings, random: () => number = Math.random) => {
   const numbers = new Array(settings.numberOfSymbols)
     .fill(0)
-    .map(
-      () =>
-        settings.numberRange[0] +
-        Math.floor(
-          random() * (settings.numberRange[1] - settings.numberRange[0] + 1)
-        )
-    )
-  return createVerifiedFormula(
-    { pickedNumbers: numbers, operations: settings.operators },
-    random
-  )
+    .map(() => settings.numberRange[0] + Math.floor(random() * (settings.numberRange[1] - settings.numberRange[0] + 1)))
+  return createVerifiedFormula({ pickedNumbers: numbers, operations: settings.operators }, random)
 }
 
-const createCompare = (
-  settings: CompareFormulaSettings,
-  requirements: Requirements,
-  random: () => number
-) => {
+const createCompare = (settings: CompareFormulaSettings, requirements: Requirements, random: () => number) => {
   const biggerSide = random() < 0.5 ? "left" : "right"
   const generateSettings = { ...settings }
   // Create the left and right formulas
@@ -69,13 +49,11 @@ const createCompare = (
     }
     if (requirements.largest === "always") {
       return (
-        largestAsString.includes(String(requirements.digit)) &&
-        !smallestAsString.includes(String(requirements.digit))
+        largestAsString.includes(String(requirements.digit)) && !smallestAsString.includes(String(requirements.digit))
       )
     }
     return (
-      smallestAsString.includes(String(requirements.digit)) &&
-      !largestAsString.includes(String(requirements.digit))
+      smallestAsString.includes(String(requirements.digit)) && !largestAsString.includes(String(requirements.digit))
     )
   }
   let iteration = 0
@@ -84,8 +62,7 @@ const createCompare = (
     right = generateCompareFormula(generateSettings, random)
     iteration++
     if (iteration > 50) {
-      generateSettings.numberOfSymbols =
-        settings.numberOfSymbols + Math.ceil((iteration - 40) / 10)
+      generateSettings.numberOfSymbols = settings.numberOfSymbols + Math.ceil((iteration - 40) / 10)
     }
     if (iteration > 100) {
       throw new Error("Failed to generate valid comparison")
