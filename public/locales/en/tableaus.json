@@ -8,14 +8,14 @@
   },
   "storyTemplates": {
     "starter_treasure_tomb": {
-      "run1_level1": "Merchant's Stock",
-      "run1_level2": "Sacred Market",
-      "run2_level1": "Blessed Trade",
-      "run2_level2": "Divine Cartouche",
-      "run3_level1": "Farmer's Offering",
-      "run3_level2": "River Blessing",
-      "run4_level1": "Golden Honey",
-      "run4_level2": "Ra's Protection"
+      "run1_level1": "Divine Ledger",
+      "run1_level2": "Bazaar Deal",
+      "run2_level1": "Afterlife Vessel",
+      "run2_level2": "Woven Fate",
+      "run3_level1": "Temple Harvest",
+      "run3_level2": "Spice Toll",
+      "run4_level1": "Dawn Net",
+      "run4_level2": "Market Whisper"
     },
     "junior_treasure_tomb": {
       "run1_level1": "Royal Merchant",
@@ -208,14 +208,14 @@
   },
   "descriptions": {
     "starter_treasure_tomb": {
-      "run1_level1": "The merchant stocks his wares for trade.",
-      "run1_level2": "Goods and fish are exchanged at the sacred market.",
-      "run2_level1": "The ankh blesses every trade.",
-      "run2_level2": "A divine cartouche protects the goods.",
-      "run3_level1": "The farmer offers honey to the gods.",
-      "run3_level2": "Fish swim in the blessed river.",
-      "run4_level1": "Golden honey is gathered with care.",
-      "run4_level2": "Ra protects the merchant's journey."
+      "run1_level1": "The merchant receives the ankh as a sign of prosperous trade.",
+      "run1_level2": "Ra inscribes a cartouche to protect the merchant's goods.",
+      "run2_level1": "The farmer brings fresh fish to the bustling market.",
+      "run2_level2": "A bee strikes a bargain with the merchant for golden honey.",
+      "run3_level1": "The ankh shines under the blessing of Ra at the market.",
+      "run3_level2": "A cartouche is exchanged for a basket of fish.",
+      "run4_level1": "The farmer harvests honey with the help of the bees.",
+      "run4_level2": "The merchant offers the ankh to ensure fair trade."
     },
     "junior_treasure_tomb": {
       "run1_level1": "A noble merchant brings rare goods to the estate.",

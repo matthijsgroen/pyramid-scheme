@@ -8,14 +8,14 @@
   },
   "storyTemplates": {
     "starter_treasure_tomb": {
-      "run1_level1": "Handelaars Voorraad",
-      "run1_level2": "Heilige Markt",
-      "run2_level1": "Gezegende Handel",
-      "run2_level2": "Goddelijke Cartouche",
-      "run3_level1": "Boer's Offer",
-      "run3_level2": "Rivier Zegen",
-      "run4_level1": "Gouden Honing",
-      "run4_level2": "Ra's Bescherming"
+      "run1_level1": "Goddelijke boekrol",
+      "run1_level2": "Bazaar deal",
+      "run2_level1": "Hiernamaals vat",
+      "run2_level2": "Geweven lot",
+      "run3_level1": "Tempeloogst",
+      "run3_level2": "Specerijentol",
+      "run4_level1": "Dageraadnet",
+      "run4_level2": "Marktfluistering"
     },
     "junior_treasure_tomb": {
       "run1_level1": "Edele Handelaar",
@@ -208,14 +208,14 @@
   },
   "descriptions": {
     "starter_treasure_tomb": {
-      "run1_level1": "De koopman handelt met de boer onder Ra's zegen.",
-      "run1_level2": "Vis en bijen worden uitgewisseld op de heilige marktplaats.",
-      "run2_level1": "De ankh zegent alle handelstransacties.",
-      "run2_level2": "Heilige namen worden geschreven in beschermende cartouches.",
-      "run3_level1": "De boer biedt honing aan Ra's ochtendlicht.",
-      "run3_level2": "Heilige vissen zwemmen gezegend door goddelijke cartouches.",
-      "run4_level1": "Bijen maken gouden honing gezegend met de ankh.",
-      "run4_level2": "Ra beschermt alle kooplieden met goddelijke macht."
+      "run1_level1": "De handelaar ontvangt de ankh als teken van voorspoedige handel.",
+      "run1_level2": "Ra schrijft een cartouche om de goederen van de handelaar te beschermen.",
+      "run2_level1": "De boer brengt verse vis naar de drukke markt.",
+      "run2_level2": "Een bij sluit een deal met de handelaar voor gouden honing.",
+      "run3_level1": "De ankh schittert onder de zegen van Ra op de markt.",
+      "run3_level2": "Een cartouche wordt geruild voor een mand vis.",
+      "run4_level1": "De boer oogst honing met hulp van de bijen.",
+      "run4_level2": "De handelaar biedt de ankh aan voor eerlijke handel."
     },
     "junior_treasure_tomb": {
       "run1_level1": "Een edele handelaar brengt zeldzame goederen naar het landgoed.",
