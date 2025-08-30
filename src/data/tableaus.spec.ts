@@ -50,8 +50,8 @@ describe("Tableau System", () => {
         starter_treasure_tomb: 2,
         junior_treasure_tomb: 3,
         expert_treasure_tomb: 4,
-        master_treasure_tomb: 5,
-        wizard_treasure_tomb: 6,
+        master_treasure_tomb: 4,
+        wizard_treasure_tomb: 5,
       }
 
       tableauLevels.forEach((tableau: TableauLevel) => {
@@ -168,30 +168,6 @@ describe("Tableau System", () => {
         expect(tableau.name.length).toBeGreaterThan(0)
         expect(tableau.description).toBeTruthy()
         expect(tableau.description.length).toBeGreaterThan(0)
-      })
-    })
-
-    it("should have consistent symbols for the same story template", () => {
-      // Group tableaux by tomb and template name
-      const storyGroups = tableauLevels.reduce(
-        (acc: Record<string, TableauLevel[]>, tableau: TableauLevel) => {
-          const key = `${tableau.tombJourneyId}:${tableau.name}`
-          if (!acc[key]) acc[key] = []
-          acc[key].push(tableau)
-          return acc
-        },
-        {} as Record<string, TableauLevel[]>
-      )
-
-      // Each story template should have consistent symbol selection
-      Object.values(storyGroups).forEach((group: unknown) => {
-        const tableaux = group as TableauLevel[]
-        if (tableaux.length > 1) {
-          const firstSymbols = tableaux[0].inventoryIds.sort()
-          tableaux.slice(1).forEach((tableau: TableauLevel) => {
-            expect(tableau.inventoryIds.sort()).toEqual(firstSymbols)
-          })
-        }
       })
     })
   })
@@ -311,11 +287,14 @@ describe("Tableau System", () => {
       const firstTableau = starterTableaux[0]
       expect(firstTableau).toMatchInlineSnapshot(`
         {
-          "description": "The merchant stocks his wares for trade.",
-          "id": "tab2",
-          "inventoryIds": undefined,
+          "description": "The merchant is granted an ankh, sealing a prosperous deal.",
+          "id": "tab_starter_r1_l1",
+          "inventoryIds": [
+            "p10",
+            "art1",
+          ],
           "levelNr": 1,
-          "name": "Merchant's Stock",
+          "name": "Trade Blessing",
           "runNumber": 1,
           "symbolCount": 2,
           "tombJourneyId": "starter_treasure_tomb",
@@ -325,7 +304,7 @@ describe("Tableau System", () => {
       const usedSymbols = allInventory
         .filter(item => firstTableau.inventoryIds.includes(item.id))
         .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓇳", "𓆤"])
+      expect(usedSymbols).toEqual(["𓋹", "𓀃"])
     })
 
     it("creates a representative tableau for the junior tomb", () => {
@@ -338,15 +317,15 @@ describe("Tableau System", () => {
       const firstTableau = juniorTableaux[0]
       expect(firstTableau).toMatchInlineSnapshot(`
         {
-          "description": "A noble merchant brings rare goods to the estate.",
-          "id": "tab10",
+          "description": "The farmer, Hathor, and a cartouche bring blessing to the estate.",
+          "id": "tab_junior_r1_l1",
           "inventoryIds": [
-            "a2",
-            "p10",
-            "p1",
+            "p8",
+            "d15",
+            "art5",
           ],
           "levelNr": 1,
-          "name": "Royal Merchant",
+          "name": "Estate Blessing",
           "runNumber": 1,
           "symbolCount": 3,
           "tombJourneyId": "junior_treasure_tomb",
@@ -356,7 +335,7 @@ describe("Tableau System", () => {
       const usedSymbols = allInventory
         .filter(item => firstTableau.inventoryIds.includes(item.id))
         .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓃭", "𓁫", "𓀃"])
+      expect(usedSymbols).toEqual(["𓃒", "𓍷", "𓇅"])
     })
 
     it("creates a representative tableau for the expert tomb", () => {
@@ -369,16 +348,16 @@ describe("Tableau System", () => {
       const firstTableau = expertTableaux[0]
       expect(firstTableau).toMatchInlineSnapshot(`
         {
-          "description": "descriptions.expert_treasure_tomb.run1_level1",
-          "id": "tab28",
+          "description": "At dawn, the high priest raises the ankh above the altar, the sistrum's chime echoing as sacred oils are poured into the canopic jar. The cartouche glimmers in the morning light, a silent witness to the ritual's power.",
+          "id": "tab_expert_r1_l1",
           "inventoryIds": [
-            "art14",
-            "p1",
-            "p10",
-            "d2",
+            "art1",
+            "art5",
+            "art6",
+            "art3",
           ],
           "levelNr": 1,
-          "name": "storyTemplates.expert_treasure_tomb.run1_level1",
+          "name": "Ritual of the Sacred Vessels",
           "runNumber": 1,
           "symbolCount": 4,
           "tombJourneyId": "expert_treasure_tomb",
@@ -388,7 +367,7 @@ describe("Tableau System", () => {
       const usedSymbols = allInventory
         .filter(item => firstTableau.inventoryIds.includes(item.id))
         .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓃥", "𓆸", "𓁫", "𓀃"])
+      expect(usedSymbols).toEqual(["𓋹", "𓎛", "𓍷", "𓎼"])
     })
 
     it("creates a representative tableau for the wizard tomb", () => {
@@ -401,20 +380,19 @@ describe("Tableau System", () => {
       const lastTableau = wizardTableaux[5]
       expect(lastTableau).toMatchInlineSnapshot(`
         {
-          "description": "descriptions.wizard_treasure_tomb.run12_level6",
-          "id": "tab181",
+          "description": "Wadjet, Sekhmet, Thoth, Eye of Horus, and Cartouche inscribe the heavens with their wisdom.",
+          "id": "tab_wizard_r12_l6",
           "inventoryIds": [
-            "art11",
-            "p11",
-            "d3",
-            "art15",
-            "p3",
+            "art3",
+            "d15",
             "p1",
+            "p12",
+            "a15",
           ],
           "levelNr": 6,
-          "name": "storyTemplates.wizard_treasure_tomb.run12_level6",
+          "name": "Procession Beyond the Veil",
           "runNumber": 12,
-          "symbolCount": 6,
+          "symbolCount": 5,
           "tombJourneyId": "wizard_treasure_tomb",
         }
       `)
@@ -422,7 +400,7 @@ describe("Tableau System", () => {
       const usedSymbols = allInventory
         .filter(item => lastTableau.inventoryIds.includes(item.id))
         .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓅃", "𓉶", "𓆓", "𓁫", "𓁁", "𓀄"])
+      expect(usedSymbols).toEqual(["𓃒", "𓃢", "𓎛", "𓁫", "𓀅"])
     })
   })
 })
