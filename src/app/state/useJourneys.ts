@@ -96,14 +96,14 @@ export const useJourneys = (): JourneyAPI => {
             journeyData: TranslatedJourney[]
             setJourneys: (
               value: SetStateAction<StoredJourneyStateV1[]>
-            ) => Promise<void>
+            ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
           })
         : createJourneysV2Api({ journeys, setJourneys, journeyData } as {
             journeys: StoredJourneyStateV2[]
             journeyData: TranslatedJourney[]
             setJourneys: (
               value: SetStateAction<StoredJourneyStateV2[]>
-            ) => Promise<void>
+            ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
           }),
     [journeyData, journeys, setJourneys, storageVersions.journeys]
   )
@@ -144,7 +144,9 @@ export const createJourneysV1Api = ({
 }: {
   journeys: StoredJourneyStateV1[]
   journeyData: TranslatedJourney[]
-  setJourneys: (value: SetStateAction<StoredJourneyStateV1[]>) => Promise<void>
+  setJourneys: (
+    value: SetStateAction<StoredJourneyStateV1[]>
+  ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(
     (j) => !j.completed && !j.canceled && journeyIds.includes(j.journeyId)
@@ -269,7 +271,9 @@ export const createJourneysV2Api = ({
 }: {
   journeys: StoredJourneyStateV2[]
   journeyData: TranslatedJourney[]
-  setJourneys: (value: SetStateAction<StoredJourneyStateV2[]>) => Promise<void>
+  setJourneys: (
+    value: SetStateAction<StoredJourneyStateV2[]>
+  ) => Promise<StoredJourneyStateV1[] | StoredJourneyStateV2[]>
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(
     (j) => j.active && journeyIds.includes(j.journeyId)

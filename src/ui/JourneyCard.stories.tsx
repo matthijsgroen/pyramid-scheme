@@ -13,7 +13,9 @@ const mockPyramidJourney: TranslatedJourney = {
   difficulty: "starter",
   journeyLength: "short",
   levelCount: 3,
-  time: "morning",
+  background: {
+    time: "morning",
+  },
   levelSettings: {
     startFloorCount: 3,
     startNumberRange: [1, 3],
@@ -45,6 +47,7 @@ const mockTreasureTombJourney: TranslatedJourney = {
   lengthLabel: "Short",
   treasures: merchantCacheTreasures,
   levelSettings: {
+    symbolCount: 2,
     numberRange: [1, 10],
     operators: ["+", "-", "*"],
     compareAmount: 0,

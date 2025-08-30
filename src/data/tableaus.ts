@@ -190,17 +190,6 @@ const tableauInventory: Record<string, string[]> = difficulties.reduce(
   {} as Record<string, string[]>
 )
 
-const tableauSymbols = Object.entries(tableauInventory).reduce<string[]>(
-  (acc, [key, symbols]) => {
-    acc[key] = symbols.map(
-      (symbol) => allItems.find((item) => item.id === symbol)?.name
-    )
-    return acc
-  },
-  {} as Record<string, string[]>
-)
-console.log(tableauSymbols)
-
 // Generate all tableau levels with i18n support
 export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   const tableaus: TableauLevel[] = []

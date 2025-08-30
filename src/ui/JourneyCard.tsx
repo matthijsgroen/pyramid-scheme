@@ -78,7 +78,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
           )}
           lang={i18n.language}
         >
-          {journey.type === "pyramid" && timeEmojis[journey.time]}{" "}
+          {journey.type === "pyramid" && timeEmojis[journey.background.time]}{" "}
           {journey.name}
         </span>
         <div className="clear-both"></div>
