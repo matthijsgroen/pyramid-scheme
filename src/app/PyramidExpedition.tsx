@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef, type FC, use } from "react"
+import { useCallback, useEffect, useState, useRef, type FC, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -53,10 +53,16 @@ export const PyramidExpedition: FC<{
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
+  const hasBlockedBlocks = useMemo(() => {
+    return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
+  }, [levelContent])
 
   useEffect(() => {
     showConversation("pyramidIntro")
-  }, [showConversation])
+    if (hasBlockedBlocks) {
+      showConversation("pyramidBlockedBlocks")
+    }
+  }, [showConversation, hasBlockedBlocks])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {
