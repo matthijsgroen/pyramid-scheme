@@ -75,7 +75,7 @@ const renderOperand = (
   props: FormulaPartProps,
   currentPrecedence = 0
 ) => {
-  const { symbolMapping, filledState, onTileClick, difficulty, positionPrefix, formula } = props
+  const { symbolMapping, filledState, onTileClick, difficulty, positionPrefix } = props
 
   const position = `${positionPrefix}-${side}`
   if (typeof operand === "number") {
