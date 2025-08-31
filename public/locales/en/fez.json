@@ -11,6 +11,11 @@
   "pyramidIntro4": "Each number is the sum of the two numbers below it.",
   "pyramidIntro5": "Good luck!",
 
+  "pyramidBlockedBlocks": "Some blocks are blocked. They do not reveal their value.",
+  "pyramidBlockedBlocks2": "We can try to calculate their value based on blocks around it.",
+  "pyramidBlockedBlocks3": "And then use that number from memory.",
+  "pyramidBlockedBlocks4": "You made it this far, you can do it!",
+
   "levelCompleted": "Well done!",
   "expeditionCompleted": "Congratulations on completing the expedition!",
   "expeditionCompleted2": "A new expedition is now available.",

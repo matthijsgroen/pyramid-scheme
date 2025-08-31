@@ -123,6 +123,9 @@ export const PyramidDisplay: FC<{
       })}
       <div
         className={clsx(
+          dayTime === "night" && "brightness-50 saturate-80",
+          dayTime === "morning" && "brightness-40 saturate-125",
+          dayTime === "evening" && "brightness-20 saturate-125",
           "absolute bottom-0 -z-10 pb-5 text-5xl",
           position === "right" && "right-0",
           position === "right-mirror" && "right-0 rotate-y-180",
@@ -131,6 +134,21 @@ export const PyramidDisplay: FC<{
         )}
       >
         {decorationEmoji[decorationNumber % decorationEmoji.length]}
+        <span
+          className={clsx(
+            "absolute inline-block origin-bottom rotate-x-180 opacity-20 brightness-0",
+            dayTime === "morning" && "bottom-6 scale-y-100 -skew-x-45",
+            dayTime === "afternoon" && "bottom-6 scale-y-25",
+            dayTime === "night" && "bottom-6 scale-y-25 skew-x-45",
+            dayTime === "evening" && "bottom-6 scale-y-50 skew-x-45",
+            position === "right" && "right-0",
+            position === "right-mirror" && "right-0 rotate-y-180",
+            position === "left" && "left-[-10%]",
+            position === "left-mirror" && "left-[-10%]"
+          )}
+        >
+          {decorationEmoji[decorationNumber % decorationEmoji.length]}
+        </span>
       </div>
     </div>
   )

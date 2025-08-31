@@ -637,6 +637,7 @@ export const journeys: Journey[] = [
     levelCount: 9,
     background: {
       time: "morning",
+      timeStepSize: 1,
     },
     levelSettings: {
       startFloorCount: 7,
@@ -669,6 +670,7 @@ export const journeys: Journey[] = [
     levelCount: 11,
     background: {
       time: "afternoon",
+      timeStepSize: 1,
     },
     levelSettings: {
       startFloorCount: 5,
@@ -701,6 +703,7 @@ export const journeys: Journey[] = [
     levelCount: 10,
     background: {
       time: "evening",
+      timeStepSize: 1,
     },
     levelSettings: {
       startFloorCount: 6,
@@ -731,6 +734,7 @@ export const journeys: Journey[] = [
     levelCount: 8,
     background: {
       time: "night",
+      timeStepSize: 1,
     },
     levelSettings: {
       startFloorCount: 10,

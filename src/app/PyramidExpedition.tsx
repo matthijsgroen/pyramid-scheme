@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef, type FC, use } from "react"
+import { useCallback, useEffect, useState, useRef, type FC, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -53,10 +53,16 @@ export const PyramidExpedition: FC<{
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
+  const hasBlockedBlocks = useMemo(() => {
+    return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
+  }, [levelContent])
 
   useEffect(() => {
     showConversation("pyramidIntro")
-  }, [showConversation])
+    if (hasBlockedBlocks) {
+      showConversation("pyramidBlockedBlocks")
+    }
+  }, [showConversation, hasBlockedBlocks])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {
@@ -135,6 +141,14 @@ export const PyramidExpedition: FC<{
     pyramidJourney.background.time,
     pyramidJourney.background.timeStepSize
   )
+  const textColor =
+    dayNightCycleStep(
+      activeJourney.levelNr,
+      pyramidJourney.background.time,
+      activeJourney.journey.background.timeStepSize
+    ) < 6
+      ? "text-black"
+      : "text-white"
 
   return (
     <DesertBackdrop
@@ -145,18 +159,7 @@ export const PyramidExpedition: FC<{
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-sm">
-          <div
-            className={clsx(
-              "flex w-full items-center justify-between px-4 py-2",
-              dayNightCycleStep(
-                activeJourney.levelNr,
-                pyramidJourney.background.time,
-                activeJourney.journey.background.timeStepSize
-              ) < 6
-                ? "text-black"
-                : "text-white"
-            )}
-          >
+          <div className={clsx("flex w-full items-center justify-between px-4 py-2", textColor)}>
             <button onClick={onClose} className="mr-3 cursor-pointer text-lg font-bold focus:outline-none">
               {t("ui.backArrow")}
             </button>
@@ -179,6 +182,12 @@ export const PyramidExpedition: FC<{
         </div>
 
         <div ref={scrollContainerRef} className="flex max-h-dvh flex-1 overflow-auto overscroll-contain">
+          <div
+            className={clsx("absolute bottom-10 left-10 hidden w-sm rounded-lg bg-black/10 p-4 mdh:block", textColor)}
+          >
+            <h3 className="font-pyramid text-lg">{activeJourney.journey.name}</h3>
+            <p>{activeJourney.journey.description}</p>
+          </div>
           <div
             className="relative w-full min-w-(--level-width)"
             style={{
