@@ -105,8 +105,29 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
     const value = getNumberValue(operand)
     return value > 0 && Number.isInteger(value) && !isNaN(value)
   }
+  const verifySelfDivision = (formula: Formula): boolean => {
+    if (formula.operation === "/" && getNumberValue(formula.right) === 1) {
+      return false
+    }
+    if (
+      formula.operation === "/" &&
+      typeof formula.left === "object" &&
+      typeof formula.right === "object" &&
+      "symbol" in formula.left &&
+      "symbol" in formula.right &&
+      formula.left.symbol === formula.right.symbol
+    ) {
+      return false
+    }
+    return true
+  }
 
-  while (!verifyOperand(formula.result) || !verifyOperand(formula.left) || !verifyOperand(formula.right)) {
+  while (
+    !verifyOperand(formula.result) ||
+    !verifyOperand(formula.left) ||
+    !verifyOperand(formula.right) ||
+    !verifySelfDivision(formula)
+  ) {
     iteration++
     if (iteration > 100) {
       console.log("formula", formula, settings)

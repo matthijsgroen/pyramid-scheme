@@ -204,7 +204,11 @@ export const TombPuzzle: FC<{
       <div className="flex flex-1">{/** left side */}</div>
       <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
         <div className="flex flex-1">{/** top side */}</div>
-        <TombDoor className="flex flex-2 flex-col items-center justify-center" open={lockState === "open"}>
+        <TombDoor
+          className="flex flex-2 flex-col items-center justify-center"
+          open={lockState === "open"}
+          difficulty={difficulty}
+        >
           {/* NumberLock appears when puzzle is completed */}
           {isPuzzleCompleted && (
             <div className={clsx("order-2 mb-6 animate-slide-down")}>
