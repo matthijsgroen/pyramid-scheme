@@ -107,12 +107,16 @@ export const FormulaPart: FC<FormulaPartProps> = props => {
 
   const currentPrecedence = getOperatorPrecedence(formula.operation)
   const needsParentheses = currentPrecedence < parentPrecedence
+  const needsParenthesesRight =
+    formula.operation === "-" && typeof formula.right !== "number" && !("symbol" in formula.right)
 
   const formulaContent = (
     <>
       {renderOperand(formula.left, "left", { ...props, showResult: false }, currentPrecedence)}
       <span> {operationMap[formula.operation]} </span>
+      {needsParenthesesRight && "("}
       {renderOperand(formula.right, "right", { ...props, showResult: false }, currentPrecedence)}
+      {needsParenthesesRight && ")"}
     </>
   )
 

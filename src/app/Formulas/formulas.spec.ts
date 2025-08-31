@@ -24,6 +24,82 @@ describe(formulaToString, () => {
     const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
     expect(result).toBe("A + B = C")
   })
+
+  describe("adding parenthesis", () => {
+    describe("for subtractions", () => {
+      it("does not add parenthesis when simple symbols", () => {
+        const formula: Formula = {
+          left: { symbol: 3 },
+          right: { symbol: 2 },
+          operation: "-",
+          result: { symbol: 1 },
+        }
+        const result = formulaToString(formula, { 1: "C", 2: "B", 3: "A" }, "yes")
+        expect(result).toBe("A - B = C")
+      })
+
+      it("does not add parenthesis when simple numbers", () => {
+        const formula: Formula = {
+          left: 3,
+          right: 2,
+          operation: "-",
+          result: 1,
+        }
+        const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
+        expect(result).toBe("3 - 2 = 1")
+      })
+
+      it("does add parenthesis when subcalculations are involved", () => {
+        const formula: Formula = {
+          left: 20,
+          right: {
+            left: 15,
+            right: 4,
+            operation: "-",
+            result: 11,
+          },
+          operation: "-",
+          result: 9,
+        }
+        const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
+        expect(result).toBe("20 - (15 - 4) = 9")
+      })
+    })
+
+    describe("operator precedence", () => {
+      it("does not add parenthesis when not needed", () => {
+        const formula: Formula = {
+          left: {
+            left: 3,
+            right: 5,
+            operation: "*",
+            result: 15,
+          },
+          right: 2,
+          operation: "+",
+          result: 17,
+        }
+        const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
+        expect(result).toBe("3 * 5 + 2 = 17")
+      })
+
+      it("does add parenthesis when needed", () => {
+        const formula: Formula = {
+          left: {
+            left: 2,
+            right: 3,
+            operation: "+",
+            result: 5,
+          },
+          right: 5,
+          operation: "*",
+          result: 25,
+        }
+        const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
+        expect(result).toBe("(2 + 3) * 5 = 25")
+      })
+    })
+  })
 })
 
 describe(createFormula, () => {
