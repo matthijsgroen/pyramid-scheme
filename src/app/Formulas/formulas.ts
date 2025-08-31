@@ -185,12 +185,10 @@ const formulaPartToString = (
       ? showValue(formula.right, mapping)
       : formulaPartToString(formula.right, mapping, currentPrecedence)
 
-  const result =
-    formula.operation === "-"
-      ? `${leftStr} ${formula.operation} ${
-          typeof formula.right === "number" || "symbol" in formula.right ? rightStr : "(" + rightStr + ")"
-        }`
-      : `${leftStr} ${formula.operation} ${rightStr}`
+  const needsParenthesesRight =
+    formula.operation === "-" && typeof formula.right !== "number" && !("symbol" in formula.right)
+
+  const result = `${leftStr} ${formula.operation} ${needsParenthesesRight ? `(${rightStr})` : rightStr}`
 
   return needsParentheses ? `(${result})` : result
 }
