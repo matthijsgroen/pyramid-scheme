@@ -71,5 +71,6 @@ export const dayNightCycleDayTime = (levelNr: number, start: DayNightCycleStep, 
   if (step < dayCycleIndices["evening"] + 2) return "afternoon"
   if (step < dayCycleIndices["night"] - 2) return "evening"
   if (step < dayCycleIndices["morning"] - 3) return "night"
+  if (step > dayCycleIndices["morning"] + 2) return "afternoon"
   return "morning"
 }
