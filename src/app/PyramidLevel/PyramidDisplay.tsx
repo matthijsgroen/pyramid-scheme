@@ -138,11 +138,11 @@ export const PyramidDisplay: FC<{
           className={clsx(
             "absolute inline-block origin-bottom rotate-x-180 opacity-20 brightness-0",
             dayTime === "morning" && "bottom-6 scale-y-100 -skew-x-45",
-            dayTime === "afternoon" && "bottom-6 scale-y-25",
+            dayTime === "afternoon" && "bottom-6 scale-y-45",
             dayTime === "night" && "bottom-6 scale-y-25 skew-x-45",
             dayTime === "evening" && "bottom-6 scale-y-50 skew-x-45",
             position === "right" && "right-0",
-            position === "right-mirror" && "right-0 rotate-y-180",
+            position === "right-mirror" && "right-0",
             position === "left" && "left-[-10%]",
             position === "left-mirror" && "left-[-10%]"
           )}

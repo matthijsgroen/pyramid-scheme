@@ -27,8 +27,8 @@ export const InputBlock: FC<{
   return (
     <Block
       selected={selected}
-      className={`bg-blue-100 text-blue-800 focus-within:bg-orange-300 focus-within:text-orange-800 ${
-        value !== undefined ? "bg-orange-200 text-orange-800" : ""
+      className={`bg-blue-100 text-blue-800 focus-within:bg-orange-300 focus-within:font-bold focus-within:text-orange-800 ${
+        value !== undefined ? "bg-orange-300 text-orange-800" : ""
       }`}
     >
       <input

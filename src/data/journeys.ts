@@ -636,7 +636,7 @@ export const journeys: Journey[] = [
     journeyLength: "long",
     levelCount: 9,
     background: {
-      time: "morning",
+      time: "night",
       timeStepSize: 1,
     },
     levelSettings: {
