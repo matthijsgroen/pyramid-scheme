@@ -98,6 +98,9 @@ html, body {
       transform: translateX(-4px);
     }
   }
-
-
+}
+@custom-variant mdh {
+  @media (height >= 48rem /* 768px */) {
+    @slot;
+  }
 }
