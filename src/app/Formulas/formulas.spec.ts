@@ -67,7 +67,7 @@ describe(formulaToString, () => {
     })
 
     describe("operator precedence", () => {
-      it("does not add parenthesis when not needed", () => {
+      it("does not add parenthesis when not needed multiplication", () => {
         const formula: Formula = {
           left: {
             left: 3,
@@ -81,6 +81,22 @@ describe(formulaToString, () => {
         }
         const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
         expect(result).toBe("3 * 5 + 2 = 17")
+      })
+
+      it("does not add parenthesis when not needed addition / subtraction", () => {
+        const formula: Formula = {
+          left: {
+            left: 3,
+            right: 5,
+            operation: "+",
+            result: 8,
+          },
+          right: 2,
+          operation: "-",
+          result: 6,
+        }
+        const result = formulaToString(formula, { 1: "A", 2: "B", 3: "C" }, "yes")
+        expect(result).toBe("3 + 5 - 2 = 6")
       })
 
       it("does add parenthesis when needed", () => {

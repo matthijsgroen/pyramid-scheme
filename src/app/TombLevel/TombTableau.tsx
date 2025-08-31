@@ -63,7 +63,7 @@ export const TombTableau: FC<{
   return (
     <div
       className={clsx(
-        "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-500 shadow-lg",
+        "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-600 shadow-lg",
         hieroglyphLevelColors[difficulty]
       )}
     >

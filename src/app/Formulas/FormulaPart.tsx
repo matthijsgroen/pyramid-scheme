@@ -75,7 +75,7 @@ const renderOperand = (
   props: FormulaPartProps,
   currentPrecedence = 0
 ) => {
-  const { symbolMapping, filledState, onTileClick, difficulty, positionPrefix, formula } = props
+  const { symbolMapping, filledState, onTileClick, difficulty, positionPrefix } = props
 
   const position = `${positionPrefix}-${side}`
   if (typeof operand === "number") {
@@ -86,13 +86,7 @@ const renderOperand = (
     return renderTile(symbolMapping, filledState, difficulty, operand, position, onTileClick)
   }
 
-  // For subtraction, wrap complex operands in parentheses
-  const needsSubtractionParens = formula.operation === "-" && side === "left"
-  const content = (
-    <FormulaPart {...props} formula={operand} positionPrefix={position} parentPrecedence={currentPrecedence} />
-  )
-
-  return needsSubtractionParens ? <span>({content})</span> : content
+  return <FormulaPart {...props} formula={operand} positionPrefix={position} parentPrecedence={currentPrecedence} />
 }
 
 const operationMap = {

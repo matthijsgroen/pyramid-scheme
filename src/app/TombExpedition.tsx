@@ -105,7 +105,7 @@ export const TombExpedition: FC<{
             <button onClick={onClose} className="cursor-pointer text-lg font-bold focus:outline-none">
               {t("ui.backArrow")}
             </button>
-            <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">
+            <h1 className="pointer-events-none mt-0 inline-block font-pyramid font-bold lg:text-2xl">
               {journey.name} {activeJourney.levelNr}/{journey.levelCount}
             </h1>
             <span></span>
