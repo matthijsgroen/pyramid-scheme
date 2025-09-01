@@ -40,6 +40,7 @@ export type PyramidJourney = {
     blocksBlocked?: [minPercentage: number, maxPercentage: number]
     blocksBlockedRestricted?: number[] // Blocking of specific floors for blocking blocks
     startNumberRange: [min: number, max: number]
+    useMultiplesOf?: [min: number, max: number]
     endNumberRange?: [min: number, max: number]
   }
   rewards: {
@@ -173,8 +174,9 @@ export const journeys: Journey[] = [
     },
     levelSettings: {
       startFloorCount: 4,
-      startNumberRange: [1, 4],
-      endNumberRange: [2, 7],
+      startNumberRange: [1, 7],
+      endNumberRange: [2, 9],
+      useMultiplesOf: [2, 3],
     },
     rewards: {
       mapPiece: {
@@ -252,8 +254,9 @@ export const journeys: Journey[] = [
     levelSettings: {
       startFloorCount: 4,
       endFloorCount: 5,
-      startNumberRange: [1, 5],
-      endNumberRange: [3, 10],
+      startNumberRange: [1, 15],
+      endNumberRange: [3, 20],
+      useMultiplesOf: [2, 5],
       blocksOpen: [0.8, 0.5],
     },
     rewards: {
@@ -392,8 +395,9 @@ export const journeys: Journey[] = [
       endFloorCount: 5,
       blocksOpen: [0.9, 0.5],
       blocksBlocked: [0.3, 0.5],
-      startNumberRange: [2, 7],
-      endNumberRange: [4, 12],
+      startNumberRange: [2, 16],
+      endNumberRange: [4, 16],
+      useMultiplesOf: [3, 7],
     },
     rewards: {
       mapPiece: {

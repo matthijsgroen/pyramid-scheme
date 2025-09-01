@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { generateLevel } from "@/game/generateLevel"
+import { createCompletePyramid, generateLevel } from "@/game/generateLevel"
 import type { PyramidLevelSettings } from "@/game/types"
 import { mulberry32 } from "@/game/random"
 import { getAnswers } from "@/game/state"
@@ -81,6 +81,49 @@ describe(generateLevel, () => {
 
       const values = getAnswers(level.pyramid)
       expect(values).toEqual(level.values)
+    })
+  })
+
+  describe("blocking blocks", () => {
+    it("will block the correct number of blocks", () => {
+      const random = mulberry32(12345)
+      const settings: PyramidLevelSettings = {
+        floorCount: 6,
+        openBlockCount: 4,
+        blockedBlockCount: 8,
+        lowestFloorNumberRange: [1, 10],
+      }
+      const level = generateLevel(1, settings, random)
+      const blockedBlocks = level.pyramid.blocks.filter(block => block.value === undefined && !block.isOpen)
+      expect(blockedBlocks.length).toBe(settings.blockedBlockCount)
+    })
+  })
+})
+
+describe(createCompletePyramid, () => {
+  describe("multiples", () => {
+    it.each([2, 3, 4, 5, 6, 7])("can create multiples of %d", multiple => {
+      const random = mulberry32(12345)
+      const floorCount = 6
+      const settings: PyramidLevelSettings = {
+        floorCount,
+        openBlockCount: 4,
+        blockedBlockCount: 0,
+        lowestFloorNumberRange: [1, 10],
+        useMultiplesOf: [multiple, multiple],
+      }
+      const bottomFloorIndex = ((floorCount - 1) * floorCount) / 2
+      const pyramid = createCompletePyramid(settings, random)
+
+      const lowestLevelValues = pyramid.blocks
+        .slice(bottomFloorIndex)
+        .map(block => block.value)
+        .filter((value): value is number => value !== undefined)
+
+      expect(
+        lowestLevelValues.every(value => value % multiple === 0),
+        `${lowestLevelValues} should all be divisible by ${multiple}`
+      ).toBe(true)
     })
   })
 })
