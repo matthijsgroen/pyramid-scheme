@@ -121,6 +121,14 @@ export const PyramidDisplay: FC<{
           </div>
         )
       })}
+      <div className="absolute top-full right-12 left-0 h-0 overflow-visible">
+        <div
+          className={clsx(
+            "w-full bg-black/10 [clip-path:polygon(0_0,46%_100%,100%_0)]",
+            dayTime === "night" || dayTime === "afternoon" ? "h-10" : "h-20"
+          )}
+        />
+      </div>
       <div
         className={clsx(
           dayTime === "night" && "brightness-50 saturate-80",
