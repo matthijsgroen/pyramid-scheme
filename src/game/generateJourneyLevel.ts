@@ -62,6 +62,7 @@ export const generateJourneyLevel = (
       journey.levelSettings.endNumberRange ?? journey.levelSettings.startNumberRange,
       journeyProgress
     ),
+    useMultiplesOf: journey.levelSettings.useMultiplesOf,
   }
 
   return generateLevel(levelNr, settings, random)

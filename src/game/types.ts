@@ -5,6 +5,7 @@ export type PyramidLevelSettings = {
   blockedBlockCount: number
   restrictedBlockedFloors?: number[]
   lowestFloorNumberRange: [min: number, max: number]
+  useMultiplesOf?: [min: number, max: number]
 }
 
 export type PyramidLevel = {

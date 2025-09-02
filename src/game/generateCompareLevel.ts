@@ -62,9 +62,9 @@ const createCompare = (settings: CompareFormulaSettings, requirements: Requireme
     right = generateCompareFormula(generateSettings, random)
     iteration++
     if (iteration > 50) {
-      generateSettings.numberOfSymbols = settings.numberOfSymbols + Math.ceil((iteration - 40) / 10)
+      generateSettings.numberOfSymbols = settings.numberOfSymbols + Math.ceil((iteration - 20) / 30)
     }
-    if (iteration > 100) {
+    if (iteration > 200) {
       throw new Error("Failed to generate valid comparison")
     }
   }

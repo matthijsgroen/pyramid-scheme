@@ -57,6 +57,9 @@ const meta = {
     const seed = generateNewSeed(hashString(journey.id), levelNr)
     const random = mulberry32(seed)
 
+    if (levelNr > journey.levelCount) {
+      return <div>Journey has only {journey.levelCount} levels</div>
+    }
     const content = generateJourneyLevel(journey, levelNr, random)
     if (!content) return <div>Error creating level</div>
     const dayTime = dayNightCycleDayTime(levelNr, journey.background.time, journey.background.timeStepSize)

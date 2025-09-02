@@ -79,9 +79,10 @@ describe("Pyramid journeys", () => {
       wizard: 10,
     }
 
-    it("respects a number max for difficulty", () => {
+    it("respects a number max for difficulty if not multipleOf", () => {
       const max = numberRangeMax[difficulty]
       diffJourneys.forEach(journey => {
+        if (journey.levelSettings.useMultiplesOf) return
         expect(journey.levelSettings.startNumberRange[1]).toBeLessThanOrEqual(max)
       })
     })

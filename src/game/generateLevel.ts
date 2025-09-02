@@ -3,7 +3,7 @@ import { getAnswers } from "@/game/state"
 import type { Pyramid, PyramidLevel, PyramidLevelSettings } from "@/game/types"
 
 const createBasePyramid = (
-  settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange">,
+  settings: Pick<PyramidLevelSettings, "floorCount" | "lowestFloorNumberRange" | "useMultiplesOf">,
   random = Math.random
 ): Pyramid => {
   const { floorCount, lowestFloorNumberRange } = settings
@@ -11,14 +11,26 @@ const createBasePyramid = (
   const totalBlocks = (floorCount * (floorCount + 1)) / 2
   const bottomFloorIndex = ((floorCount - 1) * floorCount) / 2
 
+  const multiplier: number | undefined =
+    settings.useMultiplesOf === undefined
+      ? undefined
+      : Math.floor(random() * (settings.useMultiplesOf[1] - settings.useMultiplesOf[0] + 1)) +
+        settings.useMultiplesOf[0]
+
+  const [min, max] =
+    multiplier === undefined
+      ? lowestFloorNumberRange
+      : [Math.ceil(lowestFloorNumberRange[0] / multiplier), Math.floor(lowestFloorNumberRange[1] / multiplier)]
+
   const blocks: Pyramid["blocks"] = []
   for (let i = 0; i < totalBlocks; i++) {
     let value: number | undefined = undefined
     if (i >= bottomFloorIndex) {
       // Generate values for the bottom floor blocks
-      const min = lowestFloorNumberRange[0]
-      const max = lowestFloorNumberRange[1]
       value = Math.floor(random() * (max - min + 1)) + min
+      if (multiplier !== undefined) {
+        value *= multiplier
+      }
     }
     blocks.push({
       id: (i + 1).toString(),

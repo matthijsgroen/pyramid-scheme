@@ -10,6 +10,8 @@ import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 import { TombBackdrop } from "@/ui/TombBackdrop"
 import { FezContext } from "./fez/context"
+import { DeveloperButton } from "@/ui/DeveloperButton"
+import { DevelopContext } from "@/contexts/DevelopMode"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState
@@ -24,6 +26,7 @@ export const TombExpedition: FC<{
   const { completeLevel } = useJourneys()
 
   const { showConversation } = use(FezContext)
+  const { isDevelopMode } = use(DevelopContext)
 
   useEffect(() => {
     showConversation("tombIntro")
@@ -79,7 +82,7 @@ export const TombExpedition: FC<{
               <button onClick={onClose} className="cursor-pointer text-lg font-bold focus:outline-none">
                 {t("ui.backArrow")}
               </button>
-              <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid text-2xl font-bold">
+              <h1 className="pointer-events-none mt-0 inline-block pt-4 font-pyramid font-bold lg:text-2xl">
                 {journey.name}
               </h1>
               <span></span>
@@ -108,7 +111,16 @@ export const TombExpedition: FC<{
             <h1 className="pointer-events-none mt-0 inline-block font-pyramid font-bold lg:text-2xl">
               {journey.name} {activeJourney.levelNr}/{journey.levelCount}
             </h1>
-            <span></span>
+            <span>
+              {isDevelopMode && (
+                <DeveloperButton
+                  onClick={() => {
+                    handleLevelComplete()
+                  }}
+                  label="Complete Level"
+                />
+              )}
+            </span>
           </div>
         </div>
         <TombPuzzle
