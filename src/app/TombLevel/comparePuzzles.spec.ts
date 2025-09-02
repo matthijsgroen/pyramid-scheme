@@ -7,7 +7,7 @@ import { hashString } from "@/support/hashString"
 import { describe, expect, it } from "vitest"
 
 describe("comparePuzzles", () => {
-  describe.each(["junior"])("%s", difficulty => {
+  describe.each(difficulties)("%s", difficulty => {
     const tombPuzzle = journeys.find(
       (j): j is TreasureTombJourney => j.type === "treasure_tomb" && j.difficulty === difficulty
     )!
