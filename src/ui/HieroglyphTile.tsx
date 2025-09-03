@@ -57,6 +57,12 @@ const getEdgeVariation = (symbol?: string, difficulty?: string): string => {
   return edgeVariations[Math.abs(hash) % edgeVariations.length]
 }
 
+const backgroundTexture = `
+  radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+  radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
+  radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+`
+
 export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   symbol,
   difficulty,
@@ -142,37 +148,22 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
         backgroundImage: disabled
           ? "linear-gradient(145deg, #9ca3af, #6b7280)"
           : difficulty === "starter"
-            ? `
-              radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-              radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
-              radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+            ? `${backgroundTexture}
               linear-gradient(145deg, var(--color-stone-300) 0%, var(--color-stone-400) 25%, var(--color-stone-500) 75%, var(--color-stone-800) 100%)
             `
             : difficulty === "junior"
-              ? `
-                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
-                radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+              ? `${backgroundTexture}
                 linear-gradient(145deg, var(--color-orange-300) 0%, var(--color-orange-400) 25%, var(--color-orange-500) 75%, var(--color-orange-800) 100%)
               `
               : difficulty === "expert"
-                ? `
-                  radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                  radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
-                  radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+                ? `${backgroundTexture}
                   linear-gradient(145deg, var(--color-slate-300) 0%, var(--color-slate-400) 25%, var(--color-slate-500) 75%, var(--color-slate-800) 100%)
                 `
                 : difficulty === "master"
-                  ? `
-                    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
-                    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+                  ? `${backgroundTexture}
                     linear-gradient(145deg, var(--color-yellow-300) 0%, var(--color-yellow-400) 25%, var(--color-yellow-500) 75%, var(--color-yellow-800) 100%)
                   `
-                  : `
-                    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.15) 1px, transparent 1px),
-                    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
+                  : `${backgroundTexture}
                     linear-gradient(145deg, var(--color-emerald-300) 0%, var(--color-emerald-500) 25%, var(--color-emerald-600) 75%, var(--color-emerald-800) 100%)
                   `,
         backgroundSize: disabled ? "auto" : "12px 12px, 16px 16px, 8px 8px, 100% 100%",
