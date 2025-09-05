@@ -5,6 +5,7 @@ import { useJourneys } from "@/app/state/useJourneys"
 import { TombExpedition } from "./app/TombExpedition"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
+import PWABadge from "./PWABadge"
 
 function App() {
   const [inGame, setInGame] = useState(false)
@@ -41,6 +42,7 @@ function App() {
             onClose={() => setInGame(false)}
           />
         )}
+        <PWABadge />
       </FezCompanion>
     </DevelopModeProvider>
   )

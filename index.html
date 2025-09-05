@@ -30,5 +30,44 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Pyramid Scheme",
+        "url": "https://matthijsgroen.github.io/pyramid-scheme/",
+        "description": "An ancient Egyptian-themed math puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.",
+        "image": "https://matthijsgroen.github.io/pyramid-scheme/og-image.jpg",
+        "applicationCategory": "Game",
+        "applicationSubCategory": "Puzzle",
+        "operatingSystem": "Web",
+        "softwareVersion": "APP_VERSION",
+        "storageRequirements": "22MB",
+        "releaseNotes": "https://github.com/matthijsgroen/pyramid-scheme/blob/main/CHANGELOG.md",
+        "license": "https://github.com/matthijsgroen/pyramid-scheme/blob/main/LICENSE",
+        "creator": {
+          "@type": "Person",
+          "name": "Matthijs Groen",
+          "url": "https://github.com/matthijsgroen/",
+          "image": "https://gravatar.com/avatar/990b740fdf7c52fb94b7a8a42362bfa806abdd7e15a05736e3562ad6e759b02a?s=600"
+        },
+        "featureList": ["Offline capable", "Easy to very hard difficulty"],
+        "offers": {
+          "@type": "Offer",
+          "description": "Free",
+          "price": 0.0,
+          "priceCurrency": "USD"
+        },
+        "potentialAction": {
+          "@type": "PlayGameAction",
+          "gameAvailabilityType": "FullGameAvailability",
+          "target": {
+            "@type": "EntryPoint",
+            "actionPlatform": ["GenericWebPlatform", "MobileWebPlatform", "DesktopWebPlatform"],
+            "urlTemplate": "https://matthijsgroen.github.io/pyramid-scheme/"
+          }
+        }
+      }
+    </script>
   </body>
 </html>
