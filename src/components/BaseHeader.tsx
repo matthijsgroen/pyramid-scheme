@@ -14,7 +14,7 @@ export const BaseHeader = () => {
       <Header className="bg-amber-800 text-yellow-400">
         <button
           onClick={() => setShowSettingsModal(true)}
-          className="cursor-pointer bg-transparent font-medium hover:text-gray-600"
+          className="cursor-pointer bg-transparent font-medium hover:text-yellow-300"
         >
           {t("ui.settings")}
         </button>
