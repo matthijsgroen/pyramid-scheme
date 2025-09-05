@@ -16,6 +16,7 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
+import { Header } from "@/ui/Header"
 
 const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
@@ -158,8 +159,8 @@ export const PyramidExpedition: FC<{
       showNile={pyramidJourney.background.showNile}
     >
       <div className="flex h-full w-full flex-col">
-        <div className="flex-shrink-0 backdrop-blur-sm">
-          <div className={clsx("flex w-full items-center justify-between px-4 py-2", textColor)}>
+        <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">
+          <Header className={textColor}>
             <button onClick={onClose} className="mr-3 cursor-pointer text-lg font-bold focus:outline-none">
               {t("ui.backArrow")}
             </button>
@@ -178,7 +179,7 @@ export const PyramidExpedition: FC<{
                 />
               )}
             </span>
-          </div>
+          </Header>
         </div>
 
         <div ref={scrollContainerRef} className="flex max-h-dvh flex-1 overflow-auto overscroll-contain">
