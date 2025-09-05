@@ -1,4 +1,8 @@
 *.png
 *.xcf
 !*-250.png
+!*-logo.png
+!apple*
+!pwa*
+!maskable*
 !masonry*.png

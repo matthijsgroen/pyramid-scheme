@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "check-types": "tsc -b",
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "generate-pwa-assets": "pwa-assets-generator"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
@@ -38,6 +39,7 @@
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "eslint": "^9.30.1",
