@@ -57,7 +57,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
     >
       <div
         className={clsx(
-          "w-4 flex-shrink-0",
+          "h-full w-4 flex-shrink-0",
           journey.difficulty === "starter" && "bg-stone-500",
           journey.difficulty === "junior" && "bg-gradient-to-b from-orange-300 to-orange-400",
           journey.difficulty === "expert" && "bg-gradient-to-b from-slate-200 to-slate-400",
@@ -66,7 +66,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
         )}
       ></div>
       <div
-        className={clsx("flex-1 flex-col rounded-r-lg border-2 border-l-0 py-3 pr-3 pl-2", {
+        className={clsx("flex-1 flex-col rounded-r-lg border-2 border-l-0 py-3 pr-3 pl-1", {
           "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
           "border-gray-400 bg-gray-100 shadow-lg hover:border-gray-500 hover:shadow-xl": !disabled && isTreasureTomb,
           "border-amber-300 bg-amber-50 shadow-lg hover:border-amber-400 hover:shadow-xl": !disabled && !isTreasureTomb,

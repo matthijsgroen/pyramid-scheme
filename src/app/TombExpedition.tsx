@@ -1,5 +1,4 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import clsx from "clsx"
 import { use, useCallback, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
@@ -12,6 +11,7 @@ import { TombBackdrop } from "@/ui/TombBackdrop"
 import { FezContext } from "./fez/context"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { DevelopContext } from "@/contexts/DevelopMode"
+import { Header } from "@/ui/Header"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState
@@ -78,7 +78,7 @@ export const TombExpedition: FC<{
       >
         <div className="flex h-full w-full flex-col">
           <div className="flex-shrink-0 backdrop-blur-xs">
-            <div className={clsx("flex w-full items-center justify-between gap-4 px-4 py-2", "text-white")}>
+            <Header className="text-white">
               <button onClick={onClose} className="cursor-pointer text-lg font-bold focus:outline-none">
                 {t("ui.backArrow")}
               </button>
@@ -86,7 +86,7 @@ export const TombExpedition: FC<{
                 {journey.name}
               </h1>
               <span></span>
-            </div>
+            </Header>
           </div>
           {/* final puzzle for treasure */}
           <ComparePuzzle activeJourney={activeJourney} onComplete={onJourneyComplete} />
@@ -104,7 +104,7 @@ export const TombExpedition: FC<{
     >
       <div className="flex h-full w-full flex-col">
         <div className="flex-shrink-0 backdrop-blur-xs">
-          <div className={clsx("flex w-full items-center justify-between gap-4 px-4 py-2", "text-white")}>
+          <Header className="text-white">
             <button onClick={onClose} className="cursor-pointer text-lg font-bold focus:outline-none">
               {t("ui.backArrow")}
             </button>
@@ -121,7 +121,7 @@ export const TombExpedition: FC<{
                 />
               )}
             </span>
-          </div>
+          </Header>
         </div>
         <TombPuzzle
           key={activeJourney.journeyId + activeJourney.levelNr}
