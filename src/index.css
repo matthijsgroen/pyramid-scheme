@@ -16,6 +16,7 @@ html, body {
 :root,
 html {
   height: 100dvh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
 }
 
