@@ -20,6 +20,12 @@ html {
   overflow: hidden;
 }
 
+@media all and (display-mode: standalone) {
+  html {
+    height: 100lvh;
+  }
+}
+
 body,
 #root {
   height: 100%;
