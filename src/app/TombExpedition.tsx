@@ -1,5 +1,4 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import clsx from "clsx"
 import { use, useCallback, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
