@@ -13,6 +13,18 @@ html, body {
   @apply bg-black overflow-hidden text-white
 }
 
+:root,
+html {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 @font-face {
   font-family: "Limelight";
   src: url(./assets/Limelight-Regular.ttf) format("truetype");
