@@ -15,13 +15,14 @@ html, body {
 
 :root,
 html {
-  height: 100dvh;
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   min-height: -webkit-fill-available;
   overflow: hidden;
 }
 
 @media all and (display-mode: standalone) {
-  html {
+  :root, html {
     height: 100lvh;
   }
 }
