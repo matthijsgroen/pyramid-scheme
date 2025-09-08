@@ -22,7 +22,7 @@ export default defineConfig({
         // by default:
         // <link rel="apple-touch-startup-image" href="..." media="screen and ...">
         addMediaScreen: true,
-        basePath: "/", // base path for href attribute
+        basePath: "/pyramid-scheme/", // base path for href attribute
         // add closing link tag?
         // by default:
         // <link rel="apple-touch-startup-image" href="..." media="...">
