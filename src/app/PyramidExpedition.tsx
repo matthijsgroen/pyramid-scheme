@@ -196,7 +196,7 @@ export const PyramidExpedition: FC<{
             className="relative w-full min-w-(--level-width)"
             style={{
               "--level-width": `calc(var(--spacing) * 15 * ${width + 2})`,
-              minHeight: `max(100dvh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
+              minHeight: `min(100dvh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
             }}
           >
             <div
