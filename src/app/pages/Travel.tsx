@@ -186,18 +186,17 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
             showJourneySelection ? "translate-x-0 opacity-100" : "translate-x-[100%] opacity-0"
           }`}
         >
-          <div className="flex w-full items-center justify-between px-8 py-4">
-            <h2 className="font-pyramid text-xl font-bold">{t("ui.chooseYourJourney")}</h2>
-            <button
-              onClick={handleBackToMap}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1 text-sm font-bold text-white transition-colors hover:bg-blue-700"
-            >
-              {t("ui.backArrow")} {t("ui.backToMap")}
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="grid grid-cols-1 gap-4 pb-safe-bottom xl:grid-cols-2">
+          <div className="flex-1 overflow-y-auto pb-8">
+            <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-blue-100/70 px-8 py-4 backdrop-blur-sm">
+              <h2 className="font-pyramid text-xl font-bold">{t("ui.chooseYourJourney")}</h2>
+              <button
+                onClick={handleBackToMap}
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1 text-sm font-bold text-white transition-colors hover:bg-blue-700"
+              >
+                {t("ui.backArrow")} {t("ui.backToMap")}
+              </button>
+            </div>
+            <div className="grid grid-cols-1 gap-4 px-6 pb-safe-bottom xl:grid-cols-2">
               {journeys.map((journey, index) => {
                 if (journey.type === "pyramid" && index >= unlocked) {
                   // Skip pyramid journeys that are not yet unlocked
