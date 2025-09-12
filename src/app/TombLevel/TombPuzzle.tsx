@@ -53,14 +53,12 @@ export const TombPuzzle: FC<{
   useEffect(() => {
     if (Object.keys(inventory).length === 0) return
     // if inventory - inventory usage is empty, and puzzle is not filled in, trigger conversation
-    const spentAllHieroGlyphs = Object.entries(calculation.symbolCounts).every(([symbolId, maxNeeded]) => {
-      const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-      const usedFromInventory = inventoryUsage[symbolId] || 0
+    const notEnough = Object.entries(calculation.symbolCounts).some(([symbolId, maxNeeded]) => {
       const availableInInventory = inventory[symbolId] || 0
-      return availableInInventory - usedFromInventory <= 0 && usedInPuzzle < maxNeeded
+      return availableInInventory < maxNeeded
     })
 
-    if (!isPuzzleCompleted && spentAllHieroGlyphs) {
+    if (notEnough) {
       showConversation("notEnoughHieroglyphs")
     }
   }, [

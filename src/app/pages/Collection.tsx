@@ -197,7 +197,7 @@ export const CollectionPage: FC = () => {
       <div className="relative flex-1 overflow-y-auto p-6">
         <h1 className="mb-6 text-center font-pyramid text-3xl font-bold text-purple-900">{t("collection.title")}</h1>
 
-        <div className="space-y-6">
+        <div className="space-y-6 pb-safe-bottom">
           {/* Treasure Categories */}
           {hasCompletedTomb("starter_treasure_tomb") && (
             <TreasureCategorySection
