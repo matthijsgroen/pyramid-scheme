@@ -25,7 +25,7 @@ export const DesertBackdrop: FC<
   return (
     <div
       className={clsx(
-        "[container-type:size] relative flex h-dvh flex-col bg-gradient-to-b from-(--sky-top) from-0% via-(--sky-middle) via-40% to-(--sky-bottom) to-55% transition-colors",
+        "[container-type:size] relative flex h-full flex-col bg-gradient-to-b from-(--sky-top) from-0% via-(--sky-middle) via-40% to-(--sky-bottom) to-55% transition-colors",
         transitionDuration
       )}
       style={{

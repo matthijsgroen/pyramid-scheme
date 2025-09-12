@@ -90,7 +90,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
   return (
     <Page
-      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
+      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 pb-safe-bottom text-black"
       snap="start"
     >
       <div className="relative flex h-full w-full overflow-x-hidden">
