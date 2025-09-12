@@ -90,7 +90,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
 
   return (
     <Page
-      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 pb-safe-bottom text-black"
+      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
       snap="start"
     >
       <div className="relative flex h-full w-full overflow-x-hidden">
@@ -106,7 +106,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
           <h1 className="mb-4 text-center font-pyramid text-xl font-bold">{t("ui.travel")}</h1>
 
           {/* Map Section */}
-          <div className={`flex w-full flex-col items-center px-8 `}>
+          <div className={`flex w-full flex-col items-center px-8 pb-safe-bottom`}>
             <div className="mb-6 w-full max-w-md">
               {journey && (
                 <>
@@ -197,7 +197,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
-            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 pb-safe-bottom xl:grid-cols-2">
               {journeys.map((journey, index) => {
                 if (journey.type === "pyramid" && index >= unlocked) {
                   // Skip pyramid journeys that are not yet unlocked
