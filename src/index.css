@@ -9,14 +9,14 @@
 }
 
 html, body { 
-  overscroll-behavior: none;
-  @apply bg-black overflow-hidden text-white
+  @apply bg-black overflow-hidden text-white overscroll-none
 }
 
 :root,
-html {
+html, body {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
+  height: 100lvh;
   min-height: -webkit-fill-available;
   overflow: hidden;
 }
@@ -26,15 +26,9 @@ html {
 }
 
 @media all and (display-mode: standalone) {
-  :root, html {
+  :root, html, body {
     height: 100lvh;
   }
-}
-
-body,
-#root {
-  height: 100%;
-  overflow: hidden;
 }
 
 @font-face {
