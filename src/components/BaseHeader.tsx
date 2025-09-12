@@ -15,8 +15,9 @@ export const BaseHeader = () => {
         <button
           onClick={() => setShowSettingsModal(true)}
           className="cursor-pointer bg-transparent font-medium hover:text-yellow-300"
+          aria-label={t("ui.settings")}
         >
-          {t("ui.settings")}
+          <span className="material-icons ml-[-2px] text-center align-middle !text-xl">settings</span>
         </button>
         <h1
           className="text-center font-pyramid text-2xl font-bold"
