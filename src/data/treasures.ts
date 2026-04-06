@@ -3,7 +3,24 @@
 
 import type { Difficulty } from "./difficultyLevels"
 
-export const merchantCacheTreasures = [
+export type Treasure = {
+  id: string
+  name: string
+  symbol: string
+  description: string
+  effects?: {
+    language?: number
+    dailyReward?: number
+    dailyRewardLevel?: number
+    mapFragmentChance?: number
+    higherLootChance?: number
+    errorHighlight?: number
+    earlyFeedback?: number
+    moreLootChance?: number
+  }
+}
+
+export const merchantCacheTreasures: Treasure[] = [
   {
     id: "t1",
     name: "Silver Deben",
@@ -30,7 +47,7 @@ export const merchantCacheTreasures = [
   },
 ]
 
-export const nobleVaultTreasures = [
+export const nobleVaultTreasures: Treasure[] = [
   {
     id: "t5",
     name: "Golden Bracelet",
@@ -69,7 +86,7 @@ export const nobleVaultTreasures = [
   },
 ]
 
-export const templeSecretsTreasures = [
+export const templeSecretsTreasures: Treasure[] = [
   {
     id: "t11",
     name: "Sacred Ankh",
@@ -120,7 +137,7 @@ export const templeSecretsTreasures = [
   },
 ]
 
-export const ancientRelicsTreasures = [
+export const ancientRelicsTreasures: Treasure[] = [
   {
     id: "t19",
     name: "Pharaoh's Seal",
@@ -183,7 +200,7 @@ export const ancientRelicsTreasures = [
   },
 ]
 
-export const mythicalArtifactsTreasures = [
+export const mythicalArtifactsTreasures: Treasure[] = [
   {
     id: "t29",
     name: "Crown of Ra",
@@ -265,8 +282,6 @@ export const allTreasures = [
   ...ancientRelicsTreasures,
   ...mythicalArtifactsTreasures,
 ]
-
-export type Treasure = (typeof allTreasures)[0]
 
 export const difficultyTreasures: Record<Difficulty, Treasure[]> = {
   starter: merchantCacheTreasures,
