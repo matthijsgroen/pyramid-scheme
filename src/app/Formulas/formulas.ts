@@ -14,6 +14,7 @@ export type FormulaSettings = {
   pickedNumbers: number[]
   operations: Operation[]
   useResult?: "avoid" | "force" | "allow"
+  maxMultiplications?: number
 }
 
 const getNumberValue = (value: number | { symbol: number } | Formula): number => {
@@ -23,7 +24,7 @@ const getNumberValue = (value: number | { symbol: number } | Formula): number =>
 }
 
 export const createFormula = (settings: FormulaSettings, random: () => number): Formula => {
-  const { pickedNumbers, operations, useResult = "avoid" } = settings
+  const { pickedNumbers, operations, useResult = "avoid", maxMultiplications } = settings
 
   if (useResult === "allow" || useResult === "force") {
     // take largest result from picked numbers and remove it from the pool
@@ -55,15 +56,16 @@ export const createFormula = (settings: FormulaSettings, random: () => number): 
   const leftNumbers = shuffledNumbers.slice(0, splitIndex)
   const rightNumbers = shuffledNumbers.slice(splitIndex)
 
-  // Recursively create formulas for each group
+  // Recursively create formulas for each group, forwarding maxMultiplications so
+  // sub-expressions respect the same budget and don't inflate outer retry pressure
   const leftFormula =
     leftNumbers.length === 1
       ? { symbol: leftNumbers[0] }
-      : createVerifiedFormula({ pickedNumbers: leftNumbers, operations }, random)
+      : createVerifiedFormula({ pickedNumbers: leftNumbers, operations, maxMultiplications }, random)
   const rightFormula =
     rightNumbers.length === 1
       ? { symbol: rightNumbers[0] }
-      : createVerifiedFormula({ pickedNumbers: rightNumbers, operations }, random)
+      : createVerifiedFormula({ pickedNumbers: rightNumbers, operations, maxMultiplications }, random)
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]
@@ -96,6 +98,15 @@ const evaluateFormula = (left: number, right: number, operation: Operation): num
   }
 }
 
+export const countMultiplicativeOps = (formula: Formula): number => {
+  const isMultiplicative = formula.operation === "*" || formula.operation === "/"
+  const leftCount =
+    typeof formula.left !== "number" && !("symbol" in formula.left) ? countMultiplicativeOps(formula.left) : 0
+  const rightCount =
+    typeof formula.right !== "number" && !("symbol" in formula.right) ? countMultiplicativeOps(formula.right) : 0
+  return (isMultiplicative ? 1 : 0) + leftCount + rightCount
+}
+
 export const createVerifiedFormula = (settings: FormulaSettings, random: () => number = Math.random): Formula => {
   let formula = createFormula(settings, random)
   // Ensure the result is positive and greater than 0
@@ -126,7 +137,8 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
     !verifyOperand(formula.result) ||
     !verifyOperand(formula.left) ||
     !verifyOperand(formula.right) ||
-    !verifySelfDivision(formula)
+    !verifySelfDivision(formula) ||
+    (settings.maxMultiplications !== undefined && countMultiplicativeOps(formula) > settings.maxMultiplications)
   ) {
     iteration++
     if (iteration > 100) {
@@ -145,7 +157,9 @@ export const formulaToString = (
 ): string =>
   showAnswer === "no"
     ? formulaPartToString(formula, mapping)
-    : `${formulaPartToString(formula, mapping)} = ${showAnswer === "yes" ? showValue(formula.result, mapping) : showAnswer === "obfuscated" ? "?" : ""}`
+    : `${formulaPartToString(formula, mapping)} = ${
+        showAnswer === "yes" ? showValue(formula.result, mapping) : showAnswer === "obfuscated" ? "?" : ""
+      }`
 
 const getOperatorPrecedence = (operation: Operation): number => {
   switch (operation) {

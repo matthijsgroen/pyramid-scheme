@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { generateCompareLevel, type CompareLevel, type CompareLevelSettings } from "./generateCompareLevel"
 import { mulberry32 } from "./random"
-import { formulaToString } from "../app/Formulas/formulas"
+import { countMultiplicativeOps, formulaToString } from "../app/Formulas/formulas"
 
 describe(generateCompareLevel, () => {
   const stringifyCompare = (level: CompareLevel) =>
@@ -96,6 +96,51 @@ describe(generateCompareLevel, () => {
 
       expect(allContain(collectAnswers("smallest", level), 8)).toBe(true)
       expect(neverContain(collectAnswers("largest", level), 8)).toBe(true)
+    })
+  })
+
+  describe("multiplication limit", () => {
+    it("limits to at most 1 multiplicative op per side when * is in operators", () => {
+      const random = mulberry32(12345)
+      const settings: CompareLevelSettings = {
+        numberOfSymbols: 4,
+        numberRange: [1, 10],
+        operators: ["+", "-", "*"],
+        compareAmount: 5,
+      }
+      const level = generateCompareLevel(settings, { digit: 5, largest: "always" }, random)
+      for (const { left, right } of level.comparisons) {
+        expect(countMultiplicativeOps(left)).toBeLessThanOrEqual(1)
+        expect(countMultiplicativeOps(right)).toBeLessThanOrEqual(1)
+      }
+    })
+
+    it("limits to at most 1 multiplicative op per side when / is in operators", () => {
+      const random = mulberry32(54321)
+      const settings: CompareLevelSettings = {
+        numberOfSymbols: 4,
+        numberRange: [1, 10],
+        operators: ["+", "-", "*", "/"],
+        compareAmount: 5,
+      }
+      const level = generateCompareLevel(settings, { digit: 3, largest: "never" }, random)
+      for (const { left, right } of level.comparisons) {
+        expect(countMultiplicativeOps(left)).toBeLessThanOrEqual(1)
+        expect(countMultiplicativeOps(right)).toBeLessThanOrEqual(1)
+      }
+    })
+
+    it("does not apply a limit when only + and - operators are used", () => {
+      // Should still generate fine — just verifying no regressions
+      const random = mulberry32(12345)
+      const settings: CompareLevelSettings = {
+        numberOfSymbols: 3,
+        numberRange: [1, 10],
+        operators: ["+", "-"],
+        compareAmount: 3,
+      }
+      const level = generateCompareLevel(settings, { digit: 5, largest: "always" }, random)
+      expect(level.comparisons).toHaveLength(3)
     })
   })
 })

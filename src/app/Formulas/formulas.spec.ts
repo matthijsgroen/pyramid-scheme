@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { createFormula, formulaToString, type Formula } from "./formulas"
+import { countMultiplicativeOps, createFormula, createVerifiedFormula, formulaToString, type Formula } from "./formulas"
 import { mulberry32 } from "@/game/random"
 
 describe(formulaToString, () => {
@@ -147,5 +147,66 @@ describe(createFormula, () => {
         },
       }
     `)
+  })
+})
+
+describe(countMultiplicativeOps, () => {
+  it("returns 0 for a flat addition formula", () => {
+    const formula: Formula = { left: 3, right: 5, operation: "+", result: 8 }
+    expect(countMultiplicativeOps(formula)).toBe(0)
+  })
+
+  it("returns 1 for a formula with a single multiplication at the root", () => {
+    const formula: Formula = { left: 3, right: 5, operation: "*", result: 15 }
+    expect(countMultiplicativeOps(formula)).toBe(1)
+  })
+
+  it("returns 1 for a formula with a single division at the root", () => {
+    const formula: Formula = { left: 6, right: 3, operation: "/", result: 2 }
+    expect(countMultiplicativeOps(formula)).toBe(1)
+  })
+
+  it("returns 2 for a nested formula with two multiplications", () => {
+    const formula: Formula = {
+      left: { left: 2, right: 3, operation: "*", result: 6 },
+      right: 4,
+      operation: "*",
+      result: 24,
+    }
+    expect(countMultiplicativeOps(formula)).toBe(2)
+  })
+
+  it("returns 1 for a formula where only a sub-expression is multiplicative", () => {
+    const formula: Formula = {
+      left: { left: 2, right: 3, operation: "*", result: 6 },
+      right: 4,
+      operation: "+",
+      result: 10,
+    }
+    expect(countMultiplicativeOps(formula)).toBe(1)
+  })
+})
+
+describe(createVerifiedFormula, () => {
+  it("respects maxMultiplications: 1 — never produces more than one * or / in the tree", () => {
+    const random = mulberry32(12345)
+    for (let i = 0; i < 20; i++) {
+      const formula = createVerifiedFormula(
+        { pickedNumbers: [3, 4, 5, 6], operations: ["+", "-", "*", "/"], maxMultiplications: 1 },
+        random
+      )
+      expect(countMultiplicativeOps(formula)).toBeLessThanOrEqual(1)
+    }
+  })
+
+  it("respects maxMultiplications: 0 — produces only + and - operations", () => {
+    const random = mulberry32(99999)
+    for (let i = 0; i < 20; i++) {
+      const formula = createVerifiedFormula(
+        { pickedNumbers: [2, 3, 5], operations: ["+", "-", "*"], maxMultiplications: 0 },
+        random
+      )
+      expect(countMultiplicativeOps(formula)).toBe(0)
+    }
   })
 })
