@@ -27,7 +27,11 @@ const generateCompareFormula = (settings: CompareFormulaSettings, random: () => 
   const numbers = new Array(settings.numberOfSymbols)
     .fill(0)
     .map(() => settings.numberRange[0] + Math.floor(random() * (settings.numberRange[1] - settings.numberRange[0] + 1)))
-  return createVerifiedFormula({ pickedNumbers: numbers, operations: settings.operators }, random)
+
+  // Limit to at most 1 multiplicative op (* or /) per formula side when those operators are present
+  const maxMultiplications = settings.operators.some(op => op === "*" || op === "/") ? 1 : undefined
+
+  return createVerifiedFormula({ pickedNumbers: numbers, operations: settings.operators, maxMultiplications }, random)
 }
 
 const createCompare = (settings: CompareFormulaSettings, requirements: Requirements, random: () => number) => {
