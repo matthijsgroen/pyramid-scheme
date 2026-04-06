@@ -9,7 +9,8 @@ type TombLevelArgs = {
   journey: TreasureTombJourney
 }
 
-const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
+const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
+
 const meta = {
   title: "Levels/TombTreasures",
   parameters: {
@@ -24,7 +25,7 @@ const meta = {
   },
   args: {
     runNr: 1,
-    journey: tombJourneys[0],
+    journey: tombJourneys[0]!,
   },
   argTypes: {
     runNr: { control: { type: "number", min: 1 } },
@@ -51,16 +52,41 @@ const meta = {
   },
   tags: ["autodocs"],
   render: ({ runNr, journey }) => {
-    const collectedTreasureIds: string[] = []
+    const getEligibleTreasures = (excludedTreasureIds: string[]) => {
+      const eligible = journey.treasures.filter(t => !excludedTreasureIds.includes(t.id))
+      return eligible.length > 0 ? eligible : journey.treasures
+    }
 
-    const treasureForRun = (tombRun: number): string => {
+    const getCollectedTreasureIds = (upToRun: number): string[] => {
+      const collectedIds: string[] = []
+
+      for (let previousRun = 1; previousRun < upToRun; previousRun++) {
+        const journeySeed = generateNewSeed(hashString(journey.id), previousRun)
+        const seed = journeySeed + 12345
+        const random = mulberry32(seed)
+        const eligible = getEligibleTreasures(collectedIds)
+        const lootId = eligible[Math.floor(random() * eligible.length)]?.id
+
+        if (lootId && !collectedIds.includes(lootId)) {
+          collectedIds.push(lootId)
+        }
+      }
+
+      return collectedIds
+    }
+
+    const treasureForRun = (tombRun: number): string | undefined => {
       const journeySeed = generateNewSeed(hashString(journey.id), tombRun)
       const seed = journeySeed + 12345
       const random = mulberry32(seed)
-      const eligibleTreasures = journey.treasures.filter(t => !collectedTreasureIds.includes(t.id))
-      const lootId = eligibleTreasures[Math.floor(random() * eligibleTreasures.length)]?.id
+      const collectedTreasureIds = getCollectedTreasureIds(tombRun)
+      const eligible = getEligibleTreasures(collectedTreasureIds)
 
-      return lootId
+      if (eligible.length === 0) {
+        return undefined
+      }
+
+      return eligible[Math.floor(random() * eligible.length)].id
     }
 
     const treasureId = treasureForRun(runNr)
