@@ -62,11 +62,17 @@ export const createFormula = (settings: FormulaSettings, random: () => number): 
   const leftFormula =
     leftNumbers.length === 1
       ? { symbol: leftNumbers[0] }
-      : createVerifiedFormula({ pickedNumbers: leftNumbers, operations, maxMultiplications, maxMultiplyOperandResult }, random)
+      : createVerifiedFormula(
+          { pickedNumbers: leftNumbers, operations, maxMultiplications, maxMultiplyOperandResult },
+          random
+        )
   const rightFormula =
     rightNumbers.length === 1
       ? { symbol: rightNumbers[0] }
-      : createVerifiedFormula({ pickedNumbers: rightNumbers, operations, maxMultiplications, maxMultiplyOperandResult }, random)
+      : createVerifiedFormula(
+          { pickedNumbers: rightNumbers, operations, maxMultiplications, maxMultiplyOperandResult },
+          random
+        )
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]

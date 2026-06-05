@@ -33,7 +33,12 @@ const generateCompareFormula = (settings: CompareFormulaSettings, random: () => 
   const maxMultiplications = settings.operators.some(op => op === "*" || op === "/") ? 1 : undefined
 
   return createVerifiedFormula(
-    { pickedNumbers: numbers, operations: settings.operators, maxMultiplications, maxMultiplyOperandResult: settings.maxMultiplyOperandResult },
+    {
+      pickedNumbers: numbers,
+      operations: settings.operators,
+      maxMultiplications,
+      maxMultiplyOperandResult: settings.maxMultiplyOperandResult,
+    },
     random
   )
 }

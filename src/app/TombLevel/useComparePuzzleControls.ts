@@ -79,6 +79,8 @@ export const useCrocodilePuzzleControls = ({
   }, [
     journey.id,
     journey.levelSettings.compareAmount,
+    journey.levelSettings.compareOperators,
+    journey.levelSettings.maxMultiplyOperandResult,
     journey.levelSettings.numberRange,
     journey.levelSettings.operators,
     runNumber,
