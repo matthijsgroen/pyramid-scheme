@@ -67,7 +67,9 @@ export type TreasureTombJourney = {
     symbolCount: number
     numberRange: [min: number, max: number]
     operators: Operation[]
+    compareOperators?: Operation[]
     compareAmount: number
+    maxMultiplyOperandResult?: number
   }
 }
 
@@ -487,6 +489,7 @@ export const journeys: Journey[] = [
       numberRange: [1, 10],
       operators: ["+", "-", "*"],
       compareAmount: 3,
+      maxMultiplyOperandResult: 5,
     },
   },
 
@@ -625,7 +628,9 @@ export const journeys: Journey[] = [
       symbolCount: 4,
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
+      compareOperators: ["+", "-", "*"],
       compareAmount: 4,
+      maxMultiplyOperandResult: 10,
     },
   },
 
@@ -775,7 +780,9 @@ export const journeys: Journey[] = [
       symbolCount: 5,
       numberRange: [1, 15],
       operators: ["+", "-", "*", "/"],
+      compareOperators: ["+", "-", "*"],
       compareAmount: 5,
+      maxMultiplyOperandResult: 12,
     },
   },
 ]

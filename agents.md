@@ -88,12 +88,15 @@ The project uses strict TypeScript. Avoid `any` types; define proper interfaces 
 
 ```bash
 yarn dev          # Dev server at http://localhost:9164
-yarn test         # Run tests (Vitest)
+yarn test         # Run all tests (Vitest)
+yarn test <file>  # Run a single test file
 yarn check-types  # TypeScript type checking
 yarn lint         # ESLint (includes Tailwind class order)
 yarn build        # Production build
 yarn storybook    # Component docs at http://localhost:6006
 ```
+
+Always run `yarn check-types` and `yarn lint` before considering a change complete.
 
 ### Adding a New Journey or Tableau
 
@@ -148,6 +151,16 @@ Run all tests: `yarn test`
 - ❌ Skipping the Dutch translation when adding English strings
 - ❌ Committing without running `yarn check-types` and `yarn lint`
 - ❌ Managing game state locally in components (use state hooks instead)
+
+---
+
+## Feature Documentation
+
+Deeper design docs live in `docs/`:
+
+| Document | Topic |
+|----------|-------|
+| [`docs/crocodile-puzzle.md`](docs/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
 
 ---
 
