@@ -69,7 +69,8 @@ export const useCrocodilePuzzleControls = ({
         compareAmount: journey.levelSettings.compareAmount,
         numberOfSymbols: tableau?.symbolCount ?? 2,
         numberRange: journey.levelSettings.numberRange,
-        operators: journey.levelSettings.operators,
+        operators: journey.levelSettings.compareOperators ?? journey.levelSettings.operators,
+        maxMultiplyOperandResult: journey.levelSettings.maxMultiplyOperandResult,
       },
       { digit, largest: always ? "always" : "never" },
       random

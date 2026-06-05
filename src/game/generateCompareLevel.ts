@@ -4,6 +4,7 @@ export type CompareFormulaSettings = {
   numberOfSymbols: number
   numberRange: [min: number, max: number]
   operators: Operation[]
+  maxMultiplyOperandResult?: number
 }
 
 export type CompareLevelSettings = CompareFormulaSettings & {
@@ -31,7 +32,10 @@ const generateCompareFormula = (settings: CompareFormulaSettings, random: () => 
   // Limit to at most 1 multiplicative op (* or /) per formula side when those operators are present
   const maxMultiplications = settings.operators.some(op => op === "*" || op === "/") ? 1 : undefined
 
-  return createVerifiedFormula({ pickedNumbers: numbers, operations: settings.operators, maxMultiplications }, random)
+  return createVerifiedFormula(
+    { pickedNumbers: numbers, operations: settings.operators, maxMultiplications, maxMultiplyOperandResult: settings.maxMultiplyOperandResult },
+    random
+  )
 }
 
 const createCompare = (settings: CompareFormulaSettings, requirements: Requirements, random: () => number) => {

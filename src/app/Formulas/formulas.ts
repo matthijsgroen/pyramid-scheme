@@ -15,6 +15,7 @@ export type FormulaSettings = {
   operations: Operation[]
   useResult?: "avoid" | "force" | "allow"
   maxMultiplications?: number
+  maxMultiplyOperandResult?: number
 }
 
 const getNumberValue = (value: number | { symbol: number } | Formula): number => {
@@ -24,7 +25,7 @@ const getNumberValue = (value: number | { symbol: number } | Formula): number =>
 }
 
 export const createFormula = (settings: FormulaSettings, random: () => number): Formula => {
-  const { pickedNumbers, operations, useResult = "avoid", maxMultiplications } = settings
+  const { pickedNumbers, operations, useResult = "avoid", maxMultiplications, maxMultiplyOperandResult } = settings
 
   if (useResult === "allow" || useResult === "force") {
     // take largest result from picked numbers and remove it from the pool
@@ -61,11 +62,11 @@ export const createFormula = (settings: FormulaSettings, random: () => number): 
   const leftFormula =
     leftNumbers.length === 1
       ? { symbol: leftNumbers[0] }
-      : createVerifiedFormula({ pickedNumbers: leftNumbers, operations, maxMultiplications }, random)
+      : createVerifiedFormula({ pickedNumbers: leftNumbers, operations, maxMultiplications, maxMultiplyOperandResult }, random)
   const rightFormula =
     rightNumbers.length === 1
       ? { symbol: rightNumbers[0] }
-      : createVerifiedFormula({ pickedNumbers: rightNumbers, operations, maxMultiplications }, random)
+      : createVerifiedFormula({ pickedNumbers: rightNumbers, operations, maxMultiplications, maxMultiplyOperandResult }, random)
 
   // Pick a random operation
   const operation = operations[Math.floor(random() * operations.length)]
@@ -132,12 +133,25 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
     }
     return true
   }
+  const verifyMultiplyOperands = (formula: Formula): boolean => {
+    if (settings.maxMultiplyOperandResult === undefined) return true
+    if (formula.operation === "*") {
+      if (getNumberValue(formula.left) > settings.maxMultiplyOperandResult) return false
+      if (getNumberValue(formula.right) > settings.maxMultiplyOperandResult) return false
+    }
+    const leftOk =
+      typeof formula.left !== "number" && !("symbol" in formula.left) ? verifyMultiplyOperands(formula.left) : true
+    const rightOk =
+      typeof formula.right !== "number" && !("symbol" in formula.right) ? verifyMultiplyOperands(formula.right) : true
+    return leftOk && rightOk
+  }
 
   while (
     !verifyOperand(formula.result) ||
     !verifyOperand(formula.left) ||
     !verifyOperand(formula.right) ||
     !verifySelfDivision(formula) ||
+    !verifyMultiplyOperands(formula) ||
     (settings.maxMultiplications !== undefined && countMultiplicativeOps(formula) > settings.maxMultiplications)
   ) {
     iteration++
