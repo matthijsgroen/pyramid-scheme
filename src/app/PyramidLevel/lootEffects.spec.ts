@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { determineInventoryLootForCurrentRuns } from "./inventoryLootLogic"
+import { determineExpeditionBonus } from "./expeditionBonusLogic"
+import { TOMB_SYMBOLS } from "@/data/tableaus"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import type { Treasure } from "@/data/treasures"
 
@@ -153,6 +155,68 @@ describe("moreLootChance treasure effects", () => {
     const result2 = determineInventoryLootForCurrentRuns(...args)
     expect(result1.itemIds).toEqual(result2.itemIds)
     expect(result1.shouldAwardInventoryItem).toBe(result2.shouldAwardInventoryItem)
+  })
+})
+
+describe("expeditionBonus treasure effects", () => {
+  const lastLevelJourney = makeJourney(3) // levelNr 3 = levelCount 3 → last level
+
+  it("not on last level → no bonus items", () => {
+    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
+    expect(determineExpeditionBonus(makeJourney(1), [treasure])).toHaveLength(0)
+    expect(determineExpeditionBonus(makeJourney(2), [treasure])).toHaveLength(0)
+  })
+
+  it("last level, no treasures with expeditionBonus → no bonus items", () => {
+    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 1.0 } })
+    expect(determineExpeditionBonus(lastLevelJourney, [treasure])).toHaveLength(0)
+    expect(determineExpeditionBonus(lastLevelJourney, [])).toHaveLength(0)
+  })
+
+  it("last level with one expedition bonus treasure awards one item", () => {
+    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
+    const items = determineExpeditionBonus(lastLevelJourney, [treasure])
+    expect(items).toHaveLength(1)
+    expect(TOMB_SYMBOLS["starter"]).toContain(items[0])
+  })
+
+  it("two treasures with same tier stack — awards two items of that tier", () => {
+    const treasures = [
+      makeTreasure("t1", { expeditionBonus: { amount: 1, tier: "stone" } }),
+      makeTreasure("t2", { expeditionBonus: { amount: 1, tier: "stone" } }),
+    ]
+    const items = determineExpeditionBonus(lastLevelJourney, treasures)
+    expect(items).toHaveLength(2)
+    items.forEach(id => expect(TOMB_SYMBOLS["starter"]).toContain(id))
+  })
+
+  it("two treasures with different tiers each award one item of their own tier", () => {
+    const treasures = [
+      makeTreasure("t1", { expeditionBonus: { amount: 1, tier: "stone" } }),
+      makeTreasure("t2", { expeditionBonus: { amount: 1, tier: "bronze" } }),
+    ]
+    const items = determineExpeditionBonus(lastLevelJourney, treasures)
+    expect(items).toHaveLength(2)
+    const stoneItems = items.filter(id => TOMB_SYMBOLS["starter"].includes(id))
+    const bronzeItems = items.filter(id => TOMB_SYMBOLS["junior"].includes(id))
+    expect(stoneItems).toHaveLength(1)
+    expect(bronzeItems).toHaveLength(1)
+  })
+
+  it("result is deterministic for the same seed and level", () => {
+    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
+    const result1 = determineExpeditionBonus(lastLevelJourney, [treasure])
+    const result2 = determineExpeditionBonus(lastLevelJourney, [treasure])
+    expect(result1).toEqual(result2)
+  })
+
+  it("different seeds produce independent results", () => {
+    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
+    const results = new Set(
+      Array.from({ length: 10 }, (_, i) => determineExpeditionBonus(makeJourney(3, i * 1000 + 1), [treasure])[0])
+    )
+    // With 7 possible stone items and 10 different seeds, expect more than one distinct item
+    expect(results.size).toBeGreaterThan(1)
   })
 })
 
