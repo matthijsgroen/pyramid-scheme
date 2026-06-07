@@ -12,6 +12,10 @@ const meta = {
     selected: {
       control: "boolean",
     },
+    feedback: {
+      control: "select",
+      options: [undefined, "pending", "correct", "incorrect"],
+    },
     className: {
       control: "text",
     },
@@ -50,5 +54,28 @@ export const Empty: Story = {
 export const LongText: Story = {
   args: {
     children: "1000",
+  },
+}
+
+// earlyFeedback states
+
+export const FeedbackPending: Story = {
+  args: {
+    children: "?",
+    feedback: "pending",
+  },
+}
+
+export const FeedbackCorrect: Story = {
+  args: {
+    children: "42",
+    feedback: "correct",
+  },
+}
+
+export const FeedbackIncorrect: Story = {
+  args: {
+    children: "99",
+    feedback: "incorrect",
   },
 }
