@@ -11,8 +11,8 @@ import { hieroglyphs } from "@/data/hieroglyphs"
 import { createFloorStartIndices } from "./support"
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { allTreasures } from "@/data/treasures"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { getUnlockArtifactId } from "./hieroglyphUnlockLogic"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 
@@ -80,8 +80,7 @@ export const PyramidDisplay: FC<{
   const [pendingUnlockBlockId, setPendingUnlockBlockId] = useState<string | null>(null)
   const remainingCharges = hieroglyphUnlockCount - unlockedBlocks.size
   const { inventory } = useInventory()
-  const ownedUnlockArtifacts = allTreasures.filter(t => (inventory[t.id] ?? 0) > 0 && t.effects?.hieroglyphUnlock)
-  const artifactId = (ownedUnlockArtifacts[unlockedBlocks.size] ?? ownedUnlockArtifacts[0])?.id ?? ""
+  const artifactId = getUnlockArtifactId(inventory, unlockedBlocks.size)
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset
