@@ -42,6 +42,7 @@ export const PyramidDisplay: FC<{
   completed?: boolean
   dayTime?: DayNightCycleStep
   errorHighlightCount?: number
+  earlyFeedbackBlockIds?: string[]
   onAnswer?: (blockId: string, value: number | undefined) => void
 }> = ({
   pyramid,
@@ -52,6 +53,7 @@ export const PyramidDisplay: FC<{
   decorationOffset = 0,
   dayTime = "afternoon",
   errorHighlightCount = 0,
+  earlyFeedbackBlockIds = [],
 }) => {
   const { blocks } = pyramid
 
@@ -92,12 +94,19 @@ export const PyramidDisplay: FC<{
               const blockIndex = startIndex + index
               const block = blocks[blockIndex]
               const blockValue = values[block.id]
+              const isEarlyFeedback = earlyFeedbackBlockIds.includes(block.id)
               const isChecked = checkedBlocks.has(block.id)
-              const blockFeedback = isChecked
-                ? blockValue === correctAnswers?.[block.id]
-                  ? "correct"
-                  : "incorrect"
-                : undefined
+              const blockFeedback = isEarlyFeedback
+                ? blockValue === undefined
+                  ? "pending"
+                  : blockValue === correctAnswers?.[block.id]
+                    ? "correct"
+                    : "incorrect"
+                : isChecked
+                  ? blockValue === correctAnswers?.[block.id]
+                    ? "correct"
+                    : "incorrect"
+                  : undefined
 
               return block.isOpen ? (
                 <InputBlock
@@ -109,9 +118,9 @@ export const PyramidDisplay: FC<{
                   feedback={blockFeedback}
                   onSelect={() => setSelectedBlockIndex(startIndex + index)}
                   onBlur={() => {
-                    // earlyFeedback blocks will not consume a slot (handled when earlyFeedback is implemented)
                     if (
                       errorHighlightCount > 0 &&
+                      !isEarlyFeedback &&
                       blockValue !== undefined &&
                       blockValue !== correctAnswers?.[block.id] &&
                       !isChecked &&

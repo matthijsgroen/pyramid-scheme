@@ -23,7 +23,7 @@ const meta = {
     },
     feedback: {
       control: "select",
-      options: [undefined, "correct", "incorrect"],
+      options: [undefined, "pending", "correct", "incorrect"],
     },
   },
 } satisfies Meta<typeof InputBlock>
@@ -72,6 +72,14 @@ export const Interactive: Story = {
     onChange: value => console.log("Value changed:", value),
     onSelect: () => console.log("Selected"),
     onBlur: () => console.log("Blurred"),
+  },
+}
+
+// earlyFeedback pending state — shown from level start, glows to signal live feedback incoming
+export const FeedbackPending: Story = {
+  args: {
+    feedback: "pending",
+    onChange: value => console.log("Value changed:", value),
   },
 }
 

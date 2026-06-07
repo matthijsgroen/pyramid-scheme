@@ -19,6 +19,7 @@ import { DeveloperButton } from "@/ui/DeveloperButton"
 import { Header } from "@/ui/Header"
 import { allTreasures } from "@/data/treasures"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { computeEarlyFeedbackBlockIds } from "@/app/PyramidLevel/earlyFeedbackLogic"
 
 const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
@@ -44,6 +45,7 @@ export const PyramidExpedition: FC<{
   const errorHighlightCount = allTreasures.filter(
     tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.errorHighlight
   ).length
+  const earlyFeedbackCount = allTreasures.filter(tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.earlyFeedback).length
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -57,6 +59,14 @@ export const PyramidExpedition: FC<{
   const nextNextLevelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr + 2)
 
   const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
+  const earlyFeedbackBlockIds = levelContent
+    ? computeEarlyFeedbackBlockIds(
+        levelContent.pyramid,
+        activeJourney.randomSeed,
+        activeJourney.levelNr,
+        earlyFeedbackCount
+      )
+    : []
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
@@ -261,6 +271,7 @@ export const PyramidExpedition: FC<{
                   onComplete={onComplete}
                   dayTime={dayTime}
                   errorHighlightCount={errorHighlightCount}
+                  earlyFeedbackBlockIds={earlyFeedbackBlockIds}
                 />
               )}
             </div>

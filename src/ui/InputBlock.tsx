@@ -9,7 +9,7 @@ export const InputBlock: FC<{
   selected?: boolean
   shouldFocus?: boolean
   disabled?: boolean
-  feedback?: Exclude<BlockFeedback, "pending">
+  feedback?: BlockFeedback
   onSelect?: () => void
   onBlur?: () => void
   onChange: (value: number | undefined) => void
