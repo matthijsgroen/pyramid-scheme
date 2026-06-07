@@ -13,6 +13,8 @@ export const Level: FC<{
   dayTime?: DayNightCycleStep
   errorHighlightCount?: number
   earlyFeedbackBlockIds?: string[]
+  hieroglyphUnlockCount?: number
+  pyramidDifficulty?: import("@/data/difficultyLevels").Difficulty
 }> = ({
   content,
   storageKey,
@@ -21,6 +23,8 @@ export const Level: FC<{
   dayTime,
   errorHighlightCount,
   earlyFeedbackBlockIds,
+  hieroglyphUnlockCount,
+  pyramidDifficulty,
 }) => {
   const [storedAnswers, setAnswers] = useGameStorage<{
     key: string
@@ -58,6 +62,8 @@ export const Level: FC<{
           completed={completed}
           errorHighlightCount={errorHighlightCount}
           earlyFeedbackBlockIds={earlyFeedbackBlockIds}
+          hieroglyphUnlockCount={hieroglyphUnlockCount}
+          pyramidDifficulty={pyramidDifficulty}
           onAnswer={
             storageKey
               ? (blockId: string, value: number | undefined) => {

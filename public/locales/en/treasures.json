@@ -1,4 +1,7 @@
 {
+  "hieroglyphUnlockPanel": {
+    "instruction": "Slide the artifact onto the stone to unlock it"
+  },
   "effects": {
     "mapFragmentChance": "+{{chance}}% map fragment chance",
     "higherLootChance": "+{{chance}}% loot drop chance",

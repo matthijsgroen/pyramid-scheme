@@ -46,6 +46,9 @@ export const PyramidExpedition: FC<{
     tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.errorHighlight
   ).length
   const earlyFeedbackCount = allTreasures.filter(tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.earlyFeedback).length
+  const hieroglyphUnlockCount = allTreasures.filter(
+    tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.hieroglyphUnlock
+  ).length
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -272,6 +275,8 @@ export const PyramidExpedition: FC<{
                   dayTime={dayTime}
                   errorHighlightCount={errorHighlightCount}
                   earlyFeedbackBlockIds={earlyFeedbackBlockIds}
+                  hieroglyphUnlockCount={hieroglyphUnlockCount}
+                  pyramidDifficulty={activeJourney.journey.difficulty}
                 />
               )}
             </div>

@@ -12,6 +12,9 @@ const meta = {
     selected: {
       control: "boolean",
     },
+    unlockable: {
+      control: "boolean",
+    },
     feedback: {
       control: "select",
       options: [undefined, "pending", "correct", "incorrect"],
@@ -58,6 +61,13 @@ export const LongText: Story = {
 }
 
 // earlyFeedback states
+
+export const Unlockable: Story = {
+  args: {
+    children: "𓆕",
+    unlockable: true,
+  },
+}
 
 export const FeedbackPending: Story = {
   args: {
