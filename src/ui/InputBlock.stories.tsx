@@ -21,6 +21,10 @@ const meta = {
     disabled: {
       control: "boolean",
     },
+    feedback: {
+      control: "select",
+      options: [undefined, "pending", "correct", "incorrect"],
+    },
   },
 } satisfies Meta<typeof InputBlock>
 
@@ -68,5 +72,30 @@ export const Interactive: Story = {
     onChange: value => console.log("Value changed:", value),
     onSelect: () => console.log("Selected"),
     onBlur: () => console.log("Blurred"),
+  },
+}
+
+// earlyFeedback pending state — shown from level start, glows to signal live feedback incoming
+export const FeedbackPending: Story = {
+  args: {
+    feedback: "pending",
+    onChange: value => console.log("Value changed:", value),
+  },
+}
+
+// errorHighlight state — shown when a wrong value has been entered
+export const ErrorHighlight: Story = {
+  args: {
+    value: 99,
+    feedback: "incorrect",
+    onChange: value => console.log("Value changed:", value),
+  },
+}
+
+export const FeedbackCorrect: Story = {
+  args: {
+    value: 42,
+    feedback: "correct",
+    onChange: value => console.log("Value changed:", value),
   },
 }

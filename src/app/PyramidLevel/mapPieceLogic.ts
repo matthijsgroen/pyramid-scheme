@@ -16,7 +16,8 @@ const getMapPieceChance = (journey: Journey, journeyCount: number): number => {
 
 export const determineMapPieceLoot = (
   activeJourney: CombinedJourneyState,
-  getJourney: (journeyId: string) => CombinedJourneyState | undefined
+  getJourney: (journeyId: string) => CombinedJourneyState | undefined,
+  bonusMapFragmentChance: number = 0
 ): MapPieceResult => {
   const journeyInfo = getJourney(activeJourney.journeyId)
   const journeyCount = journeyInfo?.completionCount || 0
@@ -27,7 +28,7 @@ export const determineMapPieceLoot = (
 
   const journey = activeJourney.journey
 
-  const mapPieceChance = foundMapPiece ? 0 : getMapPieceChance(journey, journeyCount)
+  const mapPieceChance = foundMapPiece ? 0 : getMapPieceChance(journey, journeyCount) + bonusMapFragmentChance
 
   const shouldAwardMapPiece = random() < mapPieceChance
 

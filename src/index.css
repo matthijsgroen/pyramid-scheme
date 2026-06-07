@@ -100,6 +100,20 @@ html, body {
     }
   }
 
+  --animate-unlock-glow: unlock-glow 2s ease-in-out infinite;
+  @keyframes unlock-glow {
+    0%, 100% { border-color: rgb(245, 158, 11); }
+    50%       { border-color: rgb(234, 179, 8); }
+  }
+
+  --animate-magic-flow: magic-flow 2s linear infinite;
+  @keyframes magic-flow {
+    0%   { border-color: rgb(168, 85, 247); }
+    33%  { border-color: rgb(6, 182, 212); }
+    66%  { border-color: rgb(245, 158, 11); }
+    100% { border-color: rgb(168, 85, 247); }
+  }
+
   --animate-shake: shake 0.5s ease-in-out 2;
   @keyframes shake {
     0%,
