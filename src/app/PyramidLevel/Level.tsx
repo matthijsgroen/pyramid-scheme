@@ -11,7 +11,8 @@ export const Level: FC<{
   onComplete?: () => void
   decorationOffset?: number
   dayTime?: DayNightCycleStep
-}> = ({ content, storageKey, onComplete, decorationOffset = 0, dayTime }) => {
+  errorHighlightCount?: number
+}> = ({ content, storageKey, onComplete, decorationOffset = 0, dayTime, errorHighlightCount }) => {
   const [storedAnswers, setAnswers] = useGameStorage<{
     key: string
     values: Record<string, number | undefined>
@@ -46,6 +47,7 @@ export const Level: FC<{
           decorationOffset={decorationOffset}
           values={answers}
           completed={completed}
+          errorHighlightCount={errorHighlightCount}
           onAnswer={
             storageKey
               ? (blockId: string, value: number | undefined) => {

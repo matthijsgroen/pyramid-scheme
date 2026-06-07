@@ -17,6 +17,8 @@ import type { PyramidLevel } from "@/game/types"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { Header } from "@/ui/Header"
+import { allTreasures } from "@/data/treasures"
+import { useInventory } from "@/app/Inventory/useInventory"
 
 const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
@@ -38,6 +40,10 @@ export const PyramidExpedition: FC<{
 }> = ({ activeJourney, runNr, onLevelComplete: onNextLevel, onJourneyComplete, onClose }) => {
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
+  const { inventory } = useInventory()
+  const errorHighlightCount = allTreasures.filter(
+    tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.errorHighlight
+  ).length
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -254,6 +260,7 @@ export const PyramidExpedition: FC<{
                   decorationOffset={activeJourney.randomSeed}
                   onComplete={onComplete}
                   dayTime={dayTime}
+                  errorHighlightCount={errorHighlightCount}
                 />
               )}
             </div>

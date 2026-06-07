@@ -21,8 +21,9 @@ const meta = {
     disabled: {
       control: "boolean",
     },
-    hasError: {
-      control: "boolean",
+    feedback: {
+      control: "select",
+      options: [undefined, "correct", "incorrect"],
     },
   },
 } satisfies Meta<typeof InputBlock>
@@ -75,11 +76,18 @@ export const Interactive: Story = {
 }
 
 // errorHighlight state — shown when a wrong value has been entered
-
 export const ErrorHighlight: Story = {
   args: {
     value: 99,
-    hasError: true,
+    feedback: "incorrect",
+    onChange: value => console.log("Value changed:", value),
+  },
+}
+
+export const FeedbackCorrect: Story = {
+  args: {
+    value: 42,
+    feedback: "correct",
     onChange: value => console.log("Value changed:", value),
   },
 }

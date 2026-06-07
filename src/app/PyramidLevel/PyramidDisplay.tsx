@@ -1,4 +1,4 @@
-import { useMemo, useRef, type FC } from "react"
+import { useMemo, useRef, useState, type FC } from "react"
 import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import type { Pyramid } from "@/game/types"
 import { Block } from "@/ui/Block"
@@ -41,8 +41,18 @@ export const PyramidDisplay: FC<{
   values: Record<string, number | undefined>
   completed?: boolean
   dayTime?: DayNightCycleStep
+  errorHighlightCount?: number
   onAnswer?: (blockId: string, value: number | undefined) => void
-}> = ({ pyramid, values, completed = false, onAnswer, levelNr, decorationOffset = 0, dayTime = "afternoon" }) => {
+}> = ({
+  pyramid,
+  values,
+  completed = false,
+  onAnswer,
+  levelNr,
+  decorationOffset = 0,
+  dayTime = "afternoon",
+  errorHighlightCount = 0,
+}) => {
   const { blocks } = pyramid
 
   // Render the pyramid blocks
@@ -55,6 +65,7 @@ export const PyramidDisplay: FC<{
     blocks,
     onAnswer
   )
+  const [checkedBlocks, setCheckedBlocks] = useState<Set<string>>(new Set())
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset
@@ -80,15 +91,34 @@ export const PyramidDisplay: FC<{
             {Array.from({ length: floor + 1 }, (_, index) => {
               const blockIndex = startIndex + index
               const block = blocks[blockIndex]
+              const blockValue = values[block.id]
+              const isChecked = checkedBlocks.has(block.id)
+              const blockFeedback = isChecked
+                ? blockValue === correctAnswers?.[block.id]
+                  ? "correct"
+                  : "incorrect"
+                : undefined
+
               return block.isOpen ? (
                 <InputBlock
                   key={block.id}
-                  value={values[block.id]}
+                  value={blockValue}
                   selected={selectedBlockIndex === startIndex + index && !completed}
                   disabled={complete && isCorrect}
                   shouldFocus={selectedBlockIndex === startIndex + index && focusInput}
+                  feedback={blockFeedback}
                   onSelect={() => setSelectedBlockIndex(startIndex + index)}
                   onBlur={() => {
+                    // earlyFeedback blocks will not consume a slot (handled when earlyFeedback is implemented)
+                    if (
+                      errorHighlightCount > 0 &&
+                      blockValue !== undefined &&
+                      blockValue !== correctAnswers?.[block.id] &&
+                      !isChecked &&
+                      checkedBlocks.size < errorHighlightCount
+                    ) {
+                      setCheckedBlocks(prev => new Set([...prev, block.id]))
+                    }
                     setFocusInput(false)
                     containerRef.current?.focus()
                   }}
