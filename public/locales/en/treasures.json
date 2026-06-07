@@ -1,4 +1,21 @@
 {
+  "effects": {
+    "mapFragmentChance": "+{{chance}}% map fragment chance",
+    "higherLootChance": "+{{chance}}% loot drop chance",
+    "moreLootChanceTier": "{{chance}}% chance of a bonus {{tier}} hieroglyph per pyramid",
+    "moreLootChanceAdaptive": "{{chance}}% chance of a bonus hieroglyph per pyramid (adapts to current difficulty)",
+    "expeditionBonus": "+{{amount}} {{tier}} hieroglyph on expedition completion",
+    "errorHighlight": "Highlights one wrong block while solving",
+    "earlyFeedback": "Shows live feedback on checkpoint blocks",
+    "hieroglyphUnlock": "Unlock one hidden block per pyramid to write your value"
+  },
+  "tiers": {
+    "stone": "Stone",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "divine": "Divine"
+  },
   "merchantCache": {
     "t1": {
       "name": "Silver Deben",

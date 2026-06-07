@@ -24,6 +24,7 @@ type InventoryItem = {
   symbol: string
   name: string
   description: string
+  effectDescription?: string
 }
 
 // Map treasure categories to their corresponding difficulty levels
@@ -152,6 +153,9 @@ const DetailPanel: FC<{
                 </p>
               )}
               <p className="leading-relaxed text-gray-700">{item.description}</p>
+              {item.effectDescription && (
+                <p className="mt-1 font-serif text-sm text-amber-700 italic">{item.effectDescription}</p>
+              )}
               {debug && (
                 <div>
                   <DeveloperButton onClick={onAdd} label="Add Item" />

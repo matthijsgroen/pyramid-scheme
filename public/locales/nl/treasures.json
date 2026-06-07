@@ -1,4 +1,21 @@
 {
+  "effects": {
+    "mapFragmentChance": "+{{chance}}% kans op kaartfragment",
+    "higherLootChance": "+{{chance}}% kans op buit",
+    "moreLootChanceTier": "{{chance}}% kans op een extra {{tier}} hieroglyph per piramide",
+    "moreLootChanceAdaptive": "{{chance}}% kans op een extra hieroglyph per piramide (past aan bij huidige moeilijkheid)",
+    "expeditionBonus": "+{{amount}} {{tier}} hieroglyph bij voltooiing van expeditie",
+    "errorHighlight": "Markeert één fout blok tijdens het oplossen",
+    "earlyFeedback": "Toont directe feedback op controlepunt-blokken",
+    "hieroglyphUnlock": "Ontgrendel één verborgen blok per piramide om je waarde op te schrijven"
+  },
+  "tiers": {
+    "stone": "stenen",
+    "bronze": "bronzen",
+    "silver": "zilveren",
+    "gold": "gouden",
+    "divine": "goddelijke"
+  },
   "merchantCache": {
     "t1": {
       "name": "Zilveren Deben",

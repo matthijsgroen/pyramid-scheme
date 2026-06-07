@@ -1,11 +1,40 @@
 import { useTranslation } from "react-i18next"
+import type { TFunction } from "i18next"
 import {
   merchantCacheTreasures,
   nobleVaultTreasures,
   templeSecretsTreasures,
   ancientRelicsTreasures,
   mythicalArtifactsTreasures,
+  type TreasureEffects,
 } from "@/data/treasures"
+
+const getEffectDescription = (effects: TreasureEffects | undefined, t: TFunction): string | undefined => {
+  if (!effects) return undefined
+  if (effects.mapFragmentChance !== undefined) {
+    return t("effects.mapFragmentChance", { chance: Math.round(effects.mapFragmentChance * 100) })
+  }
+  if (effects.higherLootChance !== undefined) {
+    return t("effects.higherLootChance", { chance: Math.round(effects.higherLootChance * 100) })
+  }
+  if (effects.moreLootChance !== undefined) {
+    const { chance, tier } = effects.moreLootChance
+    if (tier) {
+      return t("effects.moreLootChanceTier", { chance: Math.round(chance * 100), tier: t(`tiers.${tier}`) })
+    }
+    return t("effects.moreLootChanceAdaptive", { chance: Math.round(chance * 100) })
+  }
+  if (effects.expeditionBonus !== undefined) {
+    return t("effects.expeditionBonus", {
+      amount: effects.expeditionBonus.amount,
+      tier: t(`tiers.${effects.expeditionBonus.tier}`),
+    })
+  }
+  if (effects.errorHighlight) return t("effects.errorHighlight")
+  if (effects.earlyFeedback) return t("effects.earlyFeedback")
+  if (effects.hieroglyphUnlock) return t("effects.hieroglyphUnlock")
+  return undefined
+}
 
 // Hook to get translated treasure item
 export const useTreasureItem = () => {
@@ -40,6 +69,7 @@ export const useTreasureItem = () => {
       symbol: treasure.symbol,
       name: t(`${category}.${id}.name`),
       description: t(`${category}.${id}.description`),
+      effectDescription: getEffectDescription(treasure.effects, t),
     }
   }
 }
@@ -74,5 +104,6 @@ export const useTreasureCategory = (
     symbol: treasure.symbol,
     name: t(`${category}.${treasure.id}.name`),
     description: t(`${category}.${treasure.id}.description`),
+    effectDescription: getEffectDescription(treasure.effects, t),
   }))
 }

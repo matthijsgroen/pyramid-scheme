@@ -1,10 +1,11 @@
 import { type CombinedJourneyState } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
-import { tableauLevels } from "@/data/tableaus"
+import { tableauLevels, TOMB_SYMBOLS } from "@/data/tableaus"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { type Difficulty, difficultyCompare } from "@/data/difficultyLevels"
+import { type Treasure, materialTierByDifficulty, difficultyByMaterialTier, type MaterialTier } from "@/data/treasures"
 
 export type InventoryLootResult = {
   shouldAwardInventoryItem: boolean
@@ -27,9 +28,37 @@ export const determineInventoryLootForCurrentRuns = (
   journeySeedGenerator: (journeyId: string) => number,
   baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
   maxItemsToAward: number = 1,
-  maxPerItem: number = 3 // NEW: configurable max per item
+  maxPerItem: number = 3, // configurable max per item
+  ownedTreasures: Treasure[] = []
 ): InventoryLootResult => {
   const currentDifficulty = pyramidExpedition.journey.difficulty
+
+  // Apply higherLootChance bonus from owned treasures
+  const higherLootBonus = ownedTreasures.reduce((sum, t) => sum + (t.effects?.higherLootChance ?? 0), 0)
+  const effectiveBaseChance = baseInventoryChance + higherLootBonus
+
+  // Compute moreLootChance bonus items (grouped by resolved tier)
+  const moreLootGroups: Partial<Record<MaterialTier, number>> = {}
+  for (const t of ownedTreasures) {
+    const effect = t.effects?.moreLootChance
+    if (!effect) continue
+    const tier = effect.tier ?? materialTierByDifficulty[currentDifficulty]
+    moreLootGroups[tier] = (moreLootGroups[tier] ?? 0) + effect.chance
+  }
+
+  // Seeded roll for each tier group (offset 2000 to avoid collision with main loot seed)
+  const bonusSeed = generateNewSeed(pyramidExpedition.randomSeed, pyramidExpedition.levelNr + 2000)
+  const bonusRandom = mulberry32(bonusSeed)
+  const bonusItemIds: string[] = []
+
+  for (const [tier, totalChance] of Object.entries(moreLootGroups) as [MaterialTier, number][]) {
+    if (bonusRandom() < totalChance) {
+      const tierDifficulty = difficultyByMaterialTier[tier]
+      const tierItems = TOMB_SYMBOLS[tierDifficulty]
+      const shuffledTierItems = shuffle(tierItems, bonusRandom)
+      bonusItemIds.push(shuffledTierItems[0])
+    }
+  }
 
   const tombIds = journeys
     .filter(j => j.type === "treasure_tomb" && difficultyCompare(j.difficulty, maxDifficulty) <= 0)
@@ -146,9 +175,9 @@ export const determineInventoryLootForCurrentRuns = (
 
     if (filteredInterestingItems.length === 0) {
       return {
-        shouldAwardInventoryItem: false,
-        itemIds: [],
-        baseChance: baseInventoryChance,
+        shouldAwardInventoryItem: bonusItemIds.length > 0,
+        itemIds: bonusItemIds,
+        baseChance: effectiveBaseChance,
         adjustedChance: 0,
         needMultiplier: 0,
         itemsWithCounts: {},
@@ -188,15 +217,19 @@ export const determineInventoryLootForCurrentRuns = (
 
   // Calculate adjusted chance based on average urgency
   const needMultiplier = Math.max(Math.min(3, avgUrgency / 5), 1) // Cap at 3x multiplier
-  const adjustedChance = Math.min(Math.max(0.8, baseInventoryChance), baseInventoryChance * needMultiplier) // Cap at 80% by default, but can be higher for high base chance
+  const adjustedChance = Math.min(Math.max(0.8, effectiveBaseChance), effectiveBaseChance * needMultiplier) // Cap at 80% by default, but can be higher for high base chance
 
   // Generate deterministic random number based on journey state
   const shouldAward = random() < adjustedChance
 
+  const mainItemIds = shouldAward
+    ? Object.entries(itemsToAward).flatMap(([itemId, count]) => Array(count).fill(itemId))
+    : []
+
   return {
-    shouldAwardInventoryItem: shouldAward,
-    itemIds: shouldAward ? Object.entries(itemsToAward).flatMap(([itemId, count]) => Array(count).fill(itemId)) : [],
-    baseChance: baseInventoryChance,
+    shouldAwardInventoryItem: shouldAward || bonusItemIds.length > 0,
+    itemIds: [...mainItemIds, ...bonusItemIds],
+    baseChance: effectiveBaseChance,
     adjustedChance,
     needMultiplier,
     itemsWithCounts: shouldAward ? itemsToAward : {},
