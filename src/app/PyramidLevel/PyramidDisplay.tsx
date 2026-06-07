@@ -80,7 +80,8 @@ export const PyramidDisplay: FC<{
   const [pendingUnlockBlockId, setPendingUnlockBlockId] = useState<string | null>(null)
   const remainingCharges = hieroglyphUnlockCount - unlockedBlocks.size
   const { inventory } = useInventory()
-  const artifactId = allTreasures.find(t => (inventory[t.id] ?? 0) > 0 && t.effects?.hieroglyphUnlock)?.id ?? ""
+  const ownedUnlockArtifacts = allTreasures.filter(t => (inventory[t.id] ?? 0) > 0 && t.effects?.hieroglyphUnlock)
+  const artifactId = (ownedUnlockArtifacts[unlockedBlocks.size] ?? ownedUnlockArtifacts[0])?.id ?? ""
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset
