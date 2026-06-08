@@ -62,9 +62,9 @@ describe(generateCompareLevel, () => {
       })
       expect(stringifyCompare(level)).toMatchInlineSnapshot(`
         [
+          "4 + 8 - 5 = 7 < 8 + 8 - 1 = 15",
           "5 + 6 - 8 = 3 < 3 + 7 + 5 = 15",
-          "8 - 2 - 3 = 3 < 10 + 9 - 4 = 15",
-          "1 + 8 - 1 = 8 < 5 + 10 + 10 = 25",
+          "8 - (7 - 1) = 2 < 9 + 7 - 1 = 15",
         ]
       `)
 
@@ -89,8 +89,8 @@ describe(generateCompareLevel, () => {
       expect(stringifyCompare(level)).toMatchInlineSnapshot(`
         [
           "4 + 5 + 9 = 18 < 4 + 8 + 9 = 21",
-          "10 + 6 + 9 + 4 - 6 = 23 > 4 + 6 + 9 - (4 - 3) = 18",
-          "1 + 7 + 10 = 18 < 6 + 7 + 10 = 23",
+          "5 + 4 + 1 + 4 + 8 = 22 > 8 - 7 + 5 + 4 + 8 = 18",
+          "4 + 7 + 7 = 18 < 5 + 6 + 10 = 21",
         ]
       `)
 

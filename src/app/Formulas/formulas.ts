@@ -123,6 +123,22 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
     const value = getNumberValue(operand)
     return value > 0 && Number.isInteger(value) && !isNaN(value)
   }
+  const collectAdditiveSymbolSigns = (
+    node: number | { symbol: number } | Formula,
+    sign: 1 | -1,
+    signs: Map<number, Set<1 | -1>>
+  ): void => {
+    if (typeof node === "number") return
+    if ("symbol" in node) {
+      if (!signs.has(node.symbol)) signs.set(node.symbol, new Set())
+      signs.get(node.symbol)!.add(sign)
+      return
+    }
+    if (node.operation === "+" || node.operation === "-") {
+      collectAdditiveSymbolSigns(node.left, sign, signs)
+      collectAdditiveSymbolSigns(node.right, node.operation === "-" ? ((sign * -1) as 1 | -1) : sign, signs)
+    }
+  }
   const verifySelfDivision = (formula: Formula): boolean => {
     if (formula.operation === "/" && getNumberValue(formula.right) === 1) {
       return false
@@ -136,6 +152,14 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
       formula.left.symbol === formula.right.symbol
     ) {
       return false
+    }
+    return true
+  }
+  const verifyNoAdditiveCancellation = (formula: Formula): boolean => {
+    const signs = new Map<number, Set<1 | -1>>()
+    collectAdditiveSymbolSigns(formula, 1, signs)
+    for (const symbolSigns of signs.values()) {
+      if (symbolSigns.has(1) && symbolSigns.has(-1)) return false
     }
     return true
   }
@@ -157,6 +181,7 @@ export const createVerifiedFormula = (settings: FormulaSettings, random: () => n
     !verifyOperand(formula.left) ||
     !verifyOperand(formula.right) ||
     !verifySelfDivision(formula) ||
+    !verifyNoAdditiveCancellation(formula) ||
     !verifyMultiplyOperands(formula) ||
     (settings.maxMultiplications !== undefined && countMultiplicativeOps(formula) > settings.maxMultiplications)
   ) {

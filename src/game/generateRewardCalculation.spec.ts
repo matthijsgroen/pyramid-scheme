@@ -44,7 +44,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula, undefined, "yes")
-    expect(textFormula).toBe("6 + 6 * 1 - 7 = 5")
+    expect(textFormula).toBe("6 + 6 + 1 + 7 = 20")
   })
 
   it("prevents broken numbers", () => {
@@ -72,7 +72,7 @@ describe(generateRewardCalculation, () => {
     const result = generateRewardCalculation(settings, random)
     const formula = result.mainFormula
     const textFormula = formulaToString(formula)
-    expect(textFormula).toBe("5 + 9 - (9 - 1) = 6")
+    expect(textFormula).toBe("1 + 5 * 9 + 9 = 55")
   })
 
   it("respects the operations order", () => {
@@ -109,7 +109,7 @@ describe(generateRewardCalculation, () => {
       expect(formulaToString(result.hintFormulas[0])).toBe("6 + 6 = 12")
       expect(formulaToString(result.hintFormulas[1])).toBe("6 + 1 = 7")
       expect(formulaToString(result.hintFormulas[2])).toBe("7 + 6 - 4 = 9")
-      expect(formulaToString(result.mainFormula, {})).toBe("9 + 7 - (7 + 6) = 3")
+      expect(formulaToString(result.mainFormula, {})).toBe("7 + 9 + 7 + 6 = 29")
     })
   })
 

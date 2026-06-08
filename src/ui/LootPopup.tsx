@@ -6,6 +6,7 @@ type LootPopupProps = {
   isOpen: boolean
   itemName: string
   itemDescription?: string
+  itemEffectDescription?: string
   itemComponent: ReactNode
   onDismiss: () => void
   rarity?: "common" | "rare" | "epic" | "legendary"
@@ -15,6 +16,7 @@ export const LootPopup: FC<LootPopupProps> = ({
   isOpen,
   itemName,
   itemDescription,
+  itemEffectDescription,
   itemComponent,
   onDismiss,
   rarity = "common",
@@ -193,15 +195,18 @@ export const LootPopup: FC<LootPopupProps> = ({
               </h3>
 
               {/* Item description */}
-              {itemDescription && (
-                <p
-                  className={clsx("mb-6 text-sm leading-relaxed transition-all delay-400 duration-500", colors.text, {
+              {(itemDescription || itemEffectDescription) && (
+                <div
+                  className={clsx("mb-6 transition-all delay-400 duration-500", {
                     "translate-y-4 opacity-0": animationPhase === "reveal",
                     "translate-y-0 opacity-100": animationPhase === "visible",
                   })}
                 >
-                  {itemDescription}
-                </p>
+                  {itemDescription && <p className={clsx("text-sm leading-relaxed", colors.text)}>{itemDescription}</p>}
+                  {itemEffectDescription && (
+                    <p className={clsx("mt-1 text-sm font-medium italic", colors.accent)}>{itemEffectDescription}</p>
+                  )}
+                </div>
               )}
 
               {/* Dismiss instruction */}

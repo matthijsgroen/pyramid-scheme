@@ -1,6 +1,6 @@
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import type { Treasure, MaterialTier } from "@/data/treasures"
-import { difficultyByMaterialTier } from "@/data/treasures"
+import { difficultyByMaterialTier, materialTierByDifficulty } from "@/data/treasures"
 import { TOMB_SYMBOLS } from "@/data/tableaus"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 
@@ -8,10 +8,12 @@ export const determineExpeditionBonus = (activeJourney: CombinedJourneyState, ow
   const isLastLevel = activeJourney.levelNr >= activeJourney.journey.levelCount
   if (!isLastLevel) return []
 
+  const expeditionTier = materialTierByDifficulty[activeJourney.journey.difficulty]
+
   const bonusByTier: Partial<Record<MaterialTier, number>> = {}
   for (const treasure of ownedTreasures) {
     const effect = treasure.effects?.expeditionBonus
-    if (!effect) continue
+    if (!effect || effect.tier !== expeditionTier) continue
     bonusByTier[effect.tier] = (bonusByTier[effect.tier] ?? 0) + effect.amount
   }
 

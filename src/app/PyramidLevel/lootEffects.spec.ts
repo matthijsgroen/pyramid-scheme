@@ -190,17 +190,15 @@ describe("expeditionBonus treasure effects", () => {
     items.forEach(id => expect(TOMB_SYMBOLS["starter"]).toContain(id))
   })
 
-  it("two treasures with different tiers each award one item of their own tier", () => {
+  it("only awards items for the tier matching the current expedition", () => {
     const treasures = [
       makeTreasure("t1", { expeditionBonus: { amount: 1, tier: "stone" } }),
       makeTreasure("t2", { expeditionBonus: { amount: 1, tier: "bronze" } }),
     ]
+    // lastLevelJourney is starter (stone tier), so only the stone bonus fires
     const items = determineExpeditionBonus(lastLevelJourney, treasures)
-    expect(items).toHaveLength(2)
-    const stoneItems = items.filter(id => TOMB_SYMBOLS["starter"].includes(id))
-    const bronzeItems = items.filter(id => TOMB_SYMBOLS["junior"].includes(id))
-    expect(stoneItems).toHaveLength(1)
-    expect(bronzeItems).toHaveLength(1)
+    expect(items).toHaveLength(1)
+    expect(TOMB_SYMBOLS["starter"]).toContain(items[0])
   })
 
   it("result is deterministic for the same seed and level", () => {
