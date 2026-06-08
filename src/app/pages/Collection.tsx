@@ -138,7 +138,7 @@ const DetailPanel: FC<{
   const difficulty = item ? getItemFirstLevel(item.id) : null
 
   return (
-    <div className="sticky bottom-0 h-48 rounded-lg bg-white/70 p-4 shadow-lg backdrop-blur-sm">
+    <div className="sticky bottom-0 min-h-fit rounded-lg bg-white/70 p-4 shadow-lg backdrop-blur-sm">
       {item ? (
         <div className="flex flex-col items-start gap-4">
           <div className="flex flex-row items-start gap-3">

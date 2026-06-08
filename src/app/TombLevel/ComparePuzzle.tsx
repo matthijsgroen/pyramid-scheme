@@ -212,6 +212,7 @@ export const ComparePuzzle: FC<{
             isOpen={showLoot}
             itemName={loot.name}
             itemDescription={loot.description}
+            itemEffectDescription={loot.effectDescription}
             itemComponent={loot.symbol}
             rarity={"legendary"}
             onDismiss={handleLootDismiss}

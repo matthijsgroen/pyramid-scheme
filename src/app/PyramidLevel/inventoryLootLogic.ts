@@ -52,11 +52,16 @@ export const determineInventoryLootForCurrentRuns = (
   const bonusItemIds: string[] = []
 
   for (const [tier, totalChance] of Object.entries(moreLootGroups) as [MaterialTier, number][]) {
-    if (bonusRandom() < totalChance) {
+    const guaranteed = Math.floor(totalChance)
+    const remainder = totalChance - guaranteed
+    const count = guaranteed + (bonusRandom() < remainder ? 1 : 0)
+    if (count > 0) {
       const tierDifficulty = difficultyByMaterialTier[tier]
       const tierItems = TOMB_SYMBOLS[tierDifficulty]
       const shuffledTierItems = shuffle(tierItems, bonusRandom)
-      bonusItemIds.push(shuffledTierItems[0])
+      for (let i = 0; i < count; i++) {
+        bonusItemIds.push(shuffledTierItems[i % shuffledTierItems.length])
+      }
     }
   }
 
