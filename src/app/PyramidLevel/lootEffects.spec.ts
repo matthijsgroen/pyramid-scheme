@@ -103,6 +103,98 @@ describe("moreLootChance treasure effects", () => {
     expect(result.itemIds.length).toBeGreaterThan(0)
   })
 
+  // Helper: run the same treasure set across N seeds and collect item counts
+  const bonusCountsAcrossSeeds = (treasures: ReturnType<typeof makeTreasure>[], seedCount = 30): number[] =>
+    Array.from(
+      { length: seedCount },
+      (_, i) =>
+        determineInventoryLootForCurrentRuns(
+          makeJourney(1, (i + 1) * 1000),
+          "starter",
+          {},
+          () => undefined,
+          () => 0,
+          0,
+          1,
+          3,
+          treasures
+        ).itemIds.length
+    )
+
+  it("totalChance = 1.0 always awards exactly 1 item", () => {
+    const treasures = [makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } })]
+    const counts = bonusCountsAcrossSeeds(treasures)
+    expect(Math.min(...counts)).toBe(1)
+    expect(Math.max(...counts)).toBe(1)
+  })
+
+  it("totalChance = 1.5 always awards 1 or 2 items, never 0 or 3", () => {
+    const treasures = [
+      makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } }),
+      makeTreasure("t2", { moreLootChance: { chance: 0.5, tier: "stone" } }),
+    ]
+    const counts = bonusCountsAcrossSeeds(treasures)
+    expect(Math.min(...counts)).toBe(1)
+    expect(Math.max(...counts)).toBe(2)
+  })
+
+  it("totalChance = 2.0 always awards exactly 2 items", () => {
+    const treasures = [
+      makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } }),
+      makeTreasure("t2", { moreLootChance: { chance: 1.0, tier: "stone" } }),
+    ]
+    const counts = bonusCountsAcrossSeeds(treasures)
+    expect(Math.min(...counts)).toBe(2)
+    expect(Math.max(...counts)).toBe(2)
+  })
+
+  it("totalChance = 2.5 always awards 2 or 3 items, never 1 or 4", () => {
+    const treasures = [
+      makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } }),
+      makeTreasure("t2", { moreLootChance: { chance: 1.0, tier: "stone" } }),
+      makeTreasure("t3", { moreLootChance: { chance: 0.5, tier: "stone" } }),
+    ]
+    const counts = bonusCountsAcrossSeeds(treasures)
+    expect(Math.min(...counts)).toBe(2)
+    expect(Math.max(...counts)).toBe(3)
+  })
+
+  it("totalChance = 3.0 always awards exactly 3 items", () => {
+    const treasures = Array.from({ length: 3 }, (_, i) =>
+      makeTreasure(`t${i}`, { moreLootChance: { chance: 1.0, tier: "stone" } })
+    )
+    const counts = bonusCountsAcrossSeeds(treasures)
+    expect(Math.min(...counts)).toBe(3)
+    expect(Math.max(...counts)).toBe(3)
+  })
+
+  it("totalChance = 3.2 (fully stacked at 0.4) awards 3 or 4 items, never fewer", () => {
+    // 8 × 0.4 = 3.2: floor(3) guaranteed + 20% chance of 4th
+    const treasures = Array.from({ length: 8 }, (_, i) =>
+      makeTreasure(`t${i}`, { moreLootChance: { chance: 0.4, tier: "stone" } })
+    )
+    const counts = bonusCountsAcrossSeeds(treasures)
+    expect(Math.min(...counts)).toBe(3)
+    expect(Math.max(...counts)).toBe(4)
+  })
+
+  it("bonus items come from the correct tier pool", () => {
+    const treasure = makeTreasure("t1", { moreLootChance: { chance: 3.0, tier: "stone" } })
+    const result = determineInventoryLootForCurrentRuns(
+      makeJourney(),
+      "starter",
+      {},
+      () => undefined,
+      () => 0,
+      0,
+      1,
+      3,
+      [treasure]
+    )
+    expect(result.itemIds).toHaveLength(3)
+    result.itemIds.forEach(id => expect(TOMB_SYMBOLS["starter"]).toContain(id))
+  })
+
   it("tier-specific treasure awards item from that tier regardless of current pyramid difficulty", () => {
     // Bronze-tier treasure played on a starter (stone) pyramid
     const treasure = makeTreasure("t_test", { moreLootChance: { chance: 1.0, tier: "bronze" } })

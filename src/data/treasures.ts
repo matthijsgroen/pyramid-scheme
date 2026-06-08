@@ -55,8 +55,8 @@ export type TreasureEffects = {
    * If tier is specified, the bonus item is from that material tier.
    * If tier is omitted, the bonus item matches the current pyramid's difficulty tier.
    * Multiple treasures with this effect stack additively on the chance.
-   * E.g. { chance: 0.2, tier: "stone" } = 20% chance of an extra Stone item per level.
-   * E.g. { chance: 0.2 } = 20% chance of an extra item matching the current pyramid tier.
+   * E.g. { chance: 0.4, tier: "stone" } = 20% chance of an extra Stone item per level.
+   * E.g. { chance: 0.4 } = 20% chance of an extra item matching the current pyramid tier.
    */
   moreLootChance?: { chance: number; tier?: MaterialTier }
   /**
@@ -103,7 +103,7 @@ export const merchantCacheTreasures: Treasure[] = [
     name: "Ivory Comb",
     symbol: "𓌴",
     description: "An intricately carved ivory comb, a luxury item traded from distant lands.",
-    effects: { moreLootChance: { chance: 0.2, tier: "stone" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "stone" } },
   },
   {
     id: "t4",
@@ -120,7 +120,7 @@ export const nobleVaultTreasures: Treasure[] = [
     name: "Golden Bracelet",
     symbol: "𓈾",
     description: "An ornate golden bracelet adorned with precious stones, worn by Egyptian nobility.",
-    effects: { moreLootChance: { chance: 0.2, tier: "stone" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "stone" } },
   },
   {
     id: "t6",
@@ -148,7 +148,7 @@ export const nobleVaultTreasures: Treasure[] = [
     name: "Ebony Walking Stick",
     symbol: "𓋴",
     description: "A polished ebony walking stick topped with a golden ankh symbol.",
-    effects: { moreLootChance: { chance: 0.2, tier: "bronze" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "bronze" } },
   },
   {
     id: "t10",
@@ -186,7 +186,7 @@ export const templeSecretsTreasures: Treasure[] = [
     name: "Ritual Chalice",
     symbol: "𓊃",
     description: "A sacred silver chalice used for libation offerings to the gods.",
-    effects: { moreLootChance: { chance: 0.2, tier: "bronze" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "bronze" } },
   },
   {
     id: "t15",
@@ -200,7 +200,7 @@ export const templeSecretsTreasures: Treasure[] = [
     name: "Prayer Beads",
     symbol: "𓏓",
     description: "A string of blessed prayer beads used for meditation and worship.",
-    effects: { moreLootChance: { chance: 0.2, tier: "silver" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "silver" } },
   },
   {
     id: "t17",
@@ -224,7 +224,7 @@ export const ancientRelicsTreasures: Treasure[] = [
     name: "Pharaoh's Seal",
     symbol: "𓈯",
     description: "An ancient royal seal bearing the cartouche of a forgotten pharaoh.",
-    effects: { moreLootChance: { chance: 0.2, tier: "silver" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "silver" } },
   },
   {
     id: "t20",
@@ -238,7 +238,7 @@ export const ancientRelicsTreasures: Treasure[] = [
     name: "Hieroglyphic Tablet",
     symbol: "𓁷",
     description: "An ancient stone tablet inscribed with mysterious hieroglyphic prophecies.",
-    effects: { moreLootChance: { chance: 0.2, tier: "gold" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "gold" } },
   },
   {
     id: "t22",
@@ -266,7 +266,7 @@ export const ancientRelicsTreasures: Treasure[] = [
     name: "Ancient Compass",
     symbol: "𓌻",
     description: "A mystical navigation device that always points toward hidden treasures.",
-    effects: { moreLootChance: { chance: 0.2, tier: "gold" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "gold" } },
   },
   {
     id: "t26",
@@ -297,7 +297,7 @@ export const mythicalArtifactsTreasures: Treasure[] = [
     name: "Crown of Ra",
     symbol: "𓆰",
     description: "The legendary crown of the sun god Ra, radiating divine light and power.",
-    effects: { moreLootChance: { chance: 0.2, tier: "divine" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "divine" } },
   },
   {
     id: "t30",
@@ -311,49 +311,49 @@ export const mythicalArtifactsTreasures: Treasure[] = [
     name: "Feather of Ma'at",
     symbol: "𓆃",
     description: "The sacred feather of Ma'at, goddess of truth, used to weigh souls in the afterlife.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t32",
     name: "Tears of Isis",
     symbol: "𓁺",
     description: "Crystallized tears of the goddess Isis, said to grant eternal protection.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t33",
     name: "Heart of Osiris",
     symbol: "𓇺",
     description: "The preserved heart of Osiris, lord of the underworld, pulsing with life force.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t34",
     name: "Eye of Horus Amulet",
     symbol: "𓃮",
     description: "The ultimate protective amulet containing the complete power of Horus.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t35",
     name: "Serpent of Apep",
     symbol: "𓍝",
     description: "A bound fragment of the chaos serpent Apep, contained within a sacred vessel.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t36",
     name: "Breath of Shu",
     symbol: "𓊪",
     description: "A vial containing the breath of Shu, god of air, granting power over the winds.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t37",
     name: "Scale of Sobek",
     symbol: "𓆎",
     description: "A single scale from the crocodile god Sobek, providing protection in water.",
-    effects: { moreLootChance: { chance: 0.2, tier: "divine" } },
+    effects: { moreLootChance: { chance: 0.4, tier: "divine" } },
   },
   {
     id: "t38",
@@ -367,14 +367,14 @@ export const mythicalArtifactsTreasures: Treasure[] = [
     name: "Book of the Dead",
     symbol: "𓆲",
     description: "The complete Book of the Dead, containing all spells needed for the afterlife journey.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
   {
     id: "t40",
     name: "Pyramid Capstone",
     symbol: "𓂻",
     description: "The golden capstone of the Great Pyramid, containing the concentrated power of all pharaohs.",
-    effects: { moreLootChance: { chance: 0.2 } },
+    effects: { moreLootChance: { chance: 0.4 } },
   },
 ]
 
