@@ -32,6 +32,7 @@ function App() {
         )}
         {inGame && journeyInfo && journeyInfo.journey.type === "pyramid" && (
           <PyramidExpedition
+            key={activeJourneyId}
             activeJourney={journeyInfo}
             runNr={runNr}
             onLevelComplete={completeLevel}
