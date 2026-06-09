@@ -13,14 +13,11 @@ Principle: **Fez for one-time teaching, UI for tracking during play.**
 
 ## High priority
 
-### 1. Tomb tableau — first-entry onboarding
+### 1. Tomb tableau — first-entry onboarding ✅
 The core puzzle contract (hieroglyphs as variables, hints validate assignments, number lock = final answer) is never explained. Biggest drop-off risk in the game.
 
-- [ ] Add 3 Fez messages to `tombIntro` that fire only on the player's **very first tomb entry ever** (one-time flag):
-  - Message: place hieroglyphs into slots
-  - Message: hint formulas show if your assignments are correct
-  - Message: when all slots filled, enter the result of the main formula in the lock
-- [ ] Add a **?** button to the TombPuzzle header that replays the tombIntro Fez conversation
+- [x] Add 3 Fez messages (`tombTutorial`) that fire only on the player's **very first tomb entry ever** (one-time flag via `tombTutorialSeen` in game storage)
+- [x] Add a **?** button to the TombExpedition header that replays `tombTutorial`
 - [ ] Note: the **?** button may become a reusable UI pattern across pyramid, tomb, crocodile — revisit during a UI consistency pass
 
 ### 2. Hieroglyph unlock charges — invisible capability

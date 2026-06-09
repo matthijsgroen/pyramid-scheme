@@ -1,5 +1,6 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import { use, useCallback, useEffect, useMemo, useState, type FC } from "react"
+import { use, useCallback, useEffect, useMemo, useRef, useState, type FC } from "react"
+import { useGameStorage } from "@/support/useGameStorage"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
@@ -28,10 +29,19 @@ export const TombExpedition: FC<{
 
   const { showConversation } = use(FezContext)
   const { isDevelopMode } = use(DevelopContext)
+  const [tombTutorialSeen, setTombTutorialSeen] = useGameStorage<boolean>("tombTutorialSeen", false)
+  const tutorialSeenAtMount = useRef(tombTutorialSeen)
 
   useEffect(() => {
-    showConversation("tombIntro")
-  }, [showConversation])
+    if (!tutorialSeenAtMount.current) {
+      showConversation("tombIntro", () => {
+        setTombTutorialSeen(true)
+        showConversation("tombTutorial")
+      })
+    } else {
+      showConversation("tombIntro")
+    }
+  }, [showConversation, setTombTutorialSeen])
 
   const runTableaus = tableaux.filter(
     tab => tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === activeJourney.completionCount + 1
@@ -112,7 +122,14 @@ export const TombExpedition: FC<{
             <h1 className="pointer-events-none mt-0 inline-block font-pyramid font-bold lg:text-2xl">
               {journey.name} {activeJourney.levelNr}/{journey.levelCount}
             </h1>
-            <span>
+            <span className="flex items-center gap-2">
+              <button
+                onClick={() => showConversation("tombTutorial")}
+                className="flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white hover:bg-white/30"
+                aria-label={t("ui.howToPlay")}
+              >
+                ?
+              </button>
               {isDevelopMode && (
                 <DeveloperButton
                   onClick={() => {

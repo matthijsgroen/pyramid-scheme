@@ -31,6 +31,7 @@ const conversations: Record<string, PoseChat[]> = {
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
   collectionIntro: pose(["collectionIntro", "collectionIntro2", "collectionIntro3"]),
   tombIntro: pose(["tombIntro", "tombIntro2"], "pointUp", ["tombIntro3"]),
+  tombTutorial: pose(["tombTutorial", "tombTutorial2"], "pointUp", ["tombTutorial3"]),
   notEnoughHieroglyphs: pose(["notEnoughHieroglyphs"], "pointUp", ["notEnoughHieroglyphs2"]),
   tombLoot: pose("glassesPoint", ["tombLoot"]),
   mapPiece: pose(["mapPiece", "mapPiece2"], "pointUp", ["mapPiece3"]),

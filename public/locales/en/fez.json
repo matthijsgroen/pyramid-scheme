@@ -25,6 +25,10 @@
   "tombIntro2": "Maybe we can translate the text using the hieroglyphs we found.",
   "tombIntro3": "We could even find a treasure here.",
 
+  "tombTutorial": "See those symbol slots in the formulas? Place hieroglyphs from your collection below to fill them in.",
+  "tombTutorial2": "The hint formulas will confirm when your assignments are correct — use them to find the right combination.",
+  "tombTutorial3": "Once every slot is filled, a number lock appears. Solve the main formula to find the code and open the tomb!",
+
   "notEnoughHieroglyphs": "You can always stop this expedition by returning to the travel screen.",
   "notEnoughHieroglyphs2": "We can choose to interrupt the expedition to search for extra hieroglyphs elsewhere.",
 
