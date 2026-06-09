@@ -29,6 +29,9 @@
   "tombTutorial2": "The hint formulas will confirm when your assignments are correct — use them to find the right combination.",
   "tombTutorial3": "Once every slot is filled, a number lock appears. Solve the main formula to find the code and open the tomb!",
 
+  "hieroglyphUnlock": "We have a special artifact — it lets us write on one of those sealed blocks!",
+  "hieroglyphUnlock2": "Tap a glowing stone, then drag the artifact onto it to unlock it. One block per pyramid.",
+
   "notEnoughHieroglyphs": "You can always stop this expedition by returning to the travel screen.",
   "notEnoughHieroglyphs2": "We can choose to interrupt the expedition to search for extra hieroglyphs elsewhere.",
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useRef, type FC, use, useMemo } from "react"
+import { useGameStorage } from "@/support/useGameStorage"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -77,13 +78,28 @@ export const PyramidExpedition: FC<{
   const hasBlockedBlocks = useMemo(() => {
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
+  const [hieroglyphUnlockTutorialSeen, setHieroglyphUnlockTutorialSeen] = useGameStorage<boolean>(
+    "hieroglyphUnlockTutorialSeen",
+    false
+  )
+  const hieroglyphUnlockTutorialSeenAtMount = useRef(hieroglyphUnlockTutorialSeen)
 
   useEffect(() => {
-    showConversation("pyramidIntro")
-    if (hasBlockedBlocks) {
-      showConversation("pyramidBlockedBlocks")
+    if (hieroglyphUnlockCount > 0 && !hieroglyphUnlockTutorialSeenAtMount.current) {
+      showConversation("pyramidIntro", () => {
+        setHieroglyphUnlockTutorialSeen(true)
+        showConversation("hieroglyphUnlock")
+        if (hasBlockedBlocks) {
+          showConversation("pyramidBlockedBlocks")
+        }
+      })
+    } else {
+      showConversation("pyramidIntro")
+      if (hasBlockedBlocks) {
+        showConversation("pyramidBlockedBlocks")
+      }
     }
-  }, [showConversation, hasBlockedBlocks])
+  }, [showConversation, hasBlockedBlocks, hieroglyphUnlockCount, setHieroglyphUnlockTutorialSeen])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {

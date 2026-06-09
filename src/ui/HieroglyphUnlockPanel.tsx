@@ -9,6 +9,7 @@ type HieroglyphUnlockPanelProps = {
   hieroglyphSymbol: string
   hieroglyphDifficulty: Difficulty
   artifactId: string
+  remainingArtifactIds?: string[]
   onUnlock: () => void
   onDismiss: () => void
 }
@@ -21,6 +22,7 @@ export const HieroglyphUnlockPanel: FC<HieroglyphUnlockPanelProps> = ({
   hieroglyphSymbol,
   hieroglyphDifficulty,
   artifactId,
+  remainingArtifactIds = [],
   onUnlock,
   onDismiss,
 }) => {
@@ -107,6 +109,22 @@ export const HieroglyphUnlockPanel: FC<HieroglyphUnlockPanelProps> = ({
 
           {/* Instruction */}
           <p className="text-center text-sm text-gray-500">{t("hieroglyphUnlockPanel.instruction")}</p>
+
+          {/* Remaining artifacts */}
+          {remainingArtifactIds.length > 0 && (
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs text-gray-400">{t("hieroglyphUnlockPanel.alsoAvailable")}</p>
+              <div className="flex gap-2">
+                {remainingArtifactIds.map(id => {
+                  const remaining = getTreasureItem(id)
+                  if (!remaining) return null
+                  return (
+                    <HieroglyphTile key={id} symbol={remaining.symbol} difficulty={getItemFirstLevel(id)} size="sm" />
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Dismiss button */}
           <button onClick={onDismiss} className="mt-2 rounded-lg px-6 py-2 text-sm text-gray-400 hover:text-gray-600">

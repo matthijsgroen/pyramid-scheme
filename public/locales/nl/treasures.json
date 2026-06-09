@@ -1,6 +1,7 @@
 {
   "hieroglyphUnlockPanel": {
-    "instruction": "Schuif het artefact op de steen om het te ontgrendelen"
+    "instruction": "Schuif het artefact op de steen om het te ontgrendelen",
+    "alsoAvailable": "Ook beschikbaar:"
   },
   "effects": {
     "mapFragmentChance": "+{{chance}}% kans op kaartfragment",
