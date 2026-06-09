@@ -6,10 +6,13 @@ import { TombExpedition } from "./app/TombExpedition"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
+import type { Difficulty } from "@/data/difficultyLevels"
+import type { TreasureTombJourney } from "@/data/journeys"
 
 function App() {
   const [inGame, setInGame] = useState(false)
-  const { activeJourneyId, getJourney, completeLevel, completeJourney } = useJourneys()
+  const [pendingHieroglyphSearch, setPendingHieroglyphSearch] = useState<Difficulty | null>(null)
+  const { activeJourneyId, getJourney, completeLevel, completeJourney, cancelJourney } = useJourneys()
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 
@@ -18,7 +21,15 @@ function App() {
   return (
     <DevelopModeProvider>
       <FezCompanion>
-        {!inGame && <Base startGame={() => setInGame(true)} />}
+        {!inGame && (
+          <Base
+            startGame={() => {
+              setInGame(true)
+              setPendingHieroglyphSearch(null)
+            }}
+            pendingHieroglyphSearch={pendingHieroglyphSearch}
+          />
+        )}
         {inGame && journeyInfo && journeyInfo.journey.type === "pyramid" && (
           <PyramidExpedition
             activeJourney={journeyInfo}
@@ -40,6 +51,12 @@ function App() {
               setInGame(false)
             }}
             onClose={() => setInGame(false)}
+            onFindHieroglyphs={() => {
+              const difficulty = (journeyInfo.journey as TreasureTombJourney).difficulty
+              cancelJourney()
+              setPendingHieroglyphSearch(difficulty)
+              setInGame(false)
+            }}
           />
         )}
         <PWABadge />

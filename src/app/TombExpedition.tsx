@@ -18,7 +18,8 @@ export const TombExpedition: FC<{
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
-}> = ({ onClose, activeJourney, onLevelComplete, onJourneyComplete }) => {
+  onFindHieroglyphs?: () => void
+}> = ({ onClose, activeJourney, onLevelComplete, onJourneyComplete, onFindHieroglyphs }) => {
   const { t } = useTranslation("common")
   const tableaux = useTableauTranslations()
 
@@ -129,6 +130,7 @@ export const TombExpedition: FC<{
           calculation={calculation}
           difficulty={journey.difficulty}
           onComplete={handleLevelComplete}
+          onFindHieroglyphs={onFindHieroglyphs}
         />
       </div>
     </TombBackdrop>

@@ -1,5 +1,6 @@
-import { use, useEffect, useMemo, useState, type FC } from "react"
+import { use, useEffect, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import type { Difficulty } from "@/data/difficultyLevels"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
 import { JourneyCard } from "@/ui/JourneyCard"
@@ -15,7 +16,10 @@ import { FezContext } from "../fez/context"
 import { difficultyCompare } from "@/data/difficultyLevels"
 import { TableauInventory } from "./TableauInventory"
 
-export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
+export const TravelPage: FC<{
+  startGame: () => void
+  pendingHieroglyphSearch?: Difficulty | null
+}> = ({ startGame, pendingHieroglyphSearch }) => {
   const { t } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
@@ -81,6 +85,23 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
       return !hasPreviousCompleted
     })
   }, [journeys, getJourney])
+
+  const searchHandled = useRef(false)
+  useEffect(() => {
+    if (pendingHieroglyphSearch && !searchHandled.current) {
+      searchHandled.current = true
+      setShowJourneySelection(true)
+    }
+  }, [pendingHieroglyphSearch])
+
+  const suggestedJourneyId = useMemo(() => {
+    if (!pendingHieroglyphSearch) return null
+    const effectiveUnlocked = unlocked === -1 ? journeys.length : unlocked
+    const candidates = journeys
+      .filter((j, idx) => j.type === "pyramid" && j.difficulty === pendingHieroglyphSearch && idx < effectiveUnlocked)
+      .sort((a, b) => (getJourney(a.id)?.completionCount ?? 0) - (getJourney(b.id)?.completionCount ?? 0))
+    return candidates[0]?.id ?? null
+  }, [pendingHieroglyphSearch, journeys, unlocked, getJourney])
 
   const showTombExpeditionsAhead = useMemo(() => {
     return journeys
@@ -245,6 +266,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
+                    suggested={journey.id === suggestedJourneyId}
                     onClick={handleJourneySelect}
                   >
                     {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
