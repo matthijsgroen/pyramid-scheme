@@ -37,8 +37,9 @@ export const PyramidExpedition: FC<{
   runNr: number
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
+  onStartJourney?: (journeyId: string) => void
   onClose?: () => void
-}> = ({ activeJourney, runNr, onLevelComplete: onNextLevel, onJourneyComplete, onClose }) => {
+}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
   const { inventory } = useInventory()
@@ -154,8 +155,9 @@ export const PyramidExpedition: FC<{
 
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
-  // Check if a new pyramid journey is unlocked
-  const nextPyramidJourneyId = runNr === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId) : undefined
+  // Check if a new pyramid journey is unlocked (first time completing this journey)
+  const nextPyramidJourneyId =
+    activeJourney.completionCount === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId) : undefined
   const dayTime = dayNightCycleDayTime(
     activeJourney.levelNr,
     pyramidJourney.background.time,
@@ -283,6 +285,7 @@ export const PyramidExpedition: FC<{
             {expeditionCompleted && (
               <ExpeditionCompletionOverlay
                 onJourneyComplete={onJourneyComplete}
+                onStartJourney={onStartJourney}
                 newPyramidJourneyId={nextPyramidJourneyId}
                 activeJourney={activeJourney}
               />

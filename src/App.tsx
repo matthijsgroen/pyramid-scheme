@@ -7,12 +7,12 @@ import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { TreasureTombJourney } from "@/data/journeys"
+import { journeys as allJourneys, type TreasureTombJourney } from "@/data/journeys"
 
 function App() {
   const [inGame, setInGame] = useState(false)
   const [pendingHieroglyphSearch, setPendingHieroglyphSearch] = useState<Difficulty | null>(null)
-  const { activeJourneyId, getJourney, completeLevel, completeJourney, cancelJourney } = useJourneys()
+  const { activeJourneyId, getJourney, completeLevel, completeJourney, cancelJourney, startJourney } = useJourneys()
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 
@@ -38,6 +38,12 @@ function App() {
             onJourneyComplete={() => {
               completeJourney()
               setInGame(false)
+            }}
+            onStartJourney={journeyId => {
+              const journey = allJourneys.find(j => j.id === journeyId)
+              if (!journey) return
+              completeJourney()
+              startJourney(journey)
             }}
             onClose={() => setInGame(false)}
           />

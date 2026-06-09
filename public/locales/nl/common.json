@@ -76,6 +76,8 @@
     "spiritsRejectCode": "De geesten verwerpen deze code",
     "sacredSealBroken": "Het heilige zegel is verbroken",
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
+    "newTombUnlocked": "Een nieuw graf is nu ontgrendeld",
+    "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
   },
