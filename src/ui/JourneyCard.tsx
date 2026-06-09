@@ -13,6 +13,7 @@ type JourneyCardProps = {
   hasMapPiece?: boolean
   showDetails?: boolean
   disabled?: boolean
+  suggested?: boolean
   onClick: (journey: TranslatedJourney) => void
 }
 
@@ -26,6 +27,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
   completionCount = 0,
   disabled = false,
   hasMapPiece = false,
+  suggested = false,
   onClick,
 }) => {
   const { t, i18n } = useTranslation("common")
@@ -50,6 +52,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
         "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
           !disabled && !isTreasureTomb,
         "animate-slide-in-up": showAnimation,
+        "ring-2 ring-blue-400 ring-offset-2": suggested,
       })}
       style={{
         animationDelay: showAnimation ? `${index * 100}ms` : "0ms",
@@ -72,6 +75,9 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
           "border-amber-300 bg-amber-50 shadow-lg hover:border-amber-400 hover:shadow-xl": !disabled && !isTreasureTomb,
         })}
       >
+        {suggested && (
+          <div className="mb-1 animate-pulse text-xs font-bold text-blue-600">★ {t("ui.suggestedExpedition")}</div>
+        )}
         <div className="mb-2">
           <div className="float-right ml-2">
             <DifficultyPill difficulty={journey.difficulty} label={journey.difficultyLabel} disabled={disabled} />

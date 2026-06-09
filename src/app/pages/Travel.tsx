@@ -1,5 +1,6 @@
-import { use, useEffect, useMemo, useState, type FC } from "react"
+import { use, useEffect, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import type { Difficulty } from "@/data/difficultyLevels"
 import { Page } from "@/ui/Page"
 import { MapButton } from "@/ui/MapButton"
 import { JourneyCard } from "@/ui/JourneyCard"
@@ -15,7 +16,10 @@ import { FezContext } from "../fez/context"
 import { difficultyCompare } from "@/data/difficultyLevels"
 import { TableauInventory } from "./TableauInventory"
 
-export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
+export const TravelPage: FC<{
+  startGame: () => void
+  pendingHieroglyphSearch?: Difficulty | null
+}> = ({ startGame, pendingHieroglyphSearch }) => {
   const { t } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
@@ -82,11 +86,37 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
     })
   }, [journeys, getJourney])
 
+  const searchHandled = useRef(false)
+  useEffect(() => {
+    if (pendingHieroglyphSearch && !searchHandled.current) {
+      searchHandled.current = true
+      setShowJourneySelection(true)
+    }
+  }, [pendingHieroglyphSearch])
+
+  const suggestedJourneyId = useMemo(() => {
+    if (!pendingHieroglyphSearch) return null
+    const effectiveUnlocked = unlocked === -1 ? journeys.length : unlocked
+    const candidates = journeys
+      .filter((j, idx) => j.type === "pyramid" && j.difficulty === pendingHieroglyphSearch && idx < effectiveUnlocked)
+      .sort((a, b) => (getJourney(a.id)?.completionCount ?? 0) - (getJourney(b.id)?.completionCount ?? 0))
+    return candidates[0]?.id ?? null
+  }, [pendingHieroglyphSearch, journeys, unlocked, getJourney])
+
   const showTombExpeditionsAhead = useMemo(() => {
     return journeys
       .filter(j => difficultyCompare(j.difficulty, maxDifficulty) <= 0 && getJourney(j.id)?.foundMapPiece)
       .map(j => j.difficulty)
   }, [getJourney, journeys, maxDifficulty])
+
+  const hasPendingMapPieceProgress = useMemo(() => {
+    const tombDifficulties = journeys.filter(j => j.type === "treasure_tomb").map(j => j.difficulty)
+    return tombDifficulties.some(difficulty => {
+      const pyramidJourneys = journeys.filter(p => p.type === "pyramid" && p.difficulty === difficulty)
+      const piecesFound = pyramidJourneys.filter(p => getJourney(p.id)?.foundMapPiece).length
+      return piecesFound > 0 && piecesFound < pyramidJourneys.length
+    })
+  }, [journeys, getJourney])
 
   return (
     <Page
@@ -144,6 +174,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                         : t("ui.planExpedition")
                   }
                   journeyProgress={journeyProgress}
+                  nudge={!journey && hasPendingMapPieceProgress}
                 />
               )}
               {!activeJourneyInfo && selectedJourney && (
@@ -245,6 +276,7 @@ export const TravelPage: FC<{ startGame: () => void }> = ({ startGame }) => {
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
+                    suggested={journey.id === suggestedJourneyId}
                     onClick={handleJourneySelect}
                   >
                     {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (

@@ -4,11 +4,9 @@
   "welcome2": "Verken de wonderen van het oude Egypte en ontdek haar geheimen.",
   "welcome3": "Laten we beginnen met een expeditie plannen door op de kaart te klikken!",
   "chooseExpedition": "Hier kun je je expeditie kiezen. Laten we beginnen met een korte reis.",
-  "pyramidIntro": "In onze expeditie zullen we piramides verkennen.",
-  "pyramidIntro2": "In deze piramides ontbreken getallen.",
-  "pyramidIntro3": "Vul de ontbrekende getallen in om de puzzel op te lossen.",
-  "pyramidIntro4": "Elk getal is de som van de twee getallen eronder.",
-  "pyramidIntro5": "Heel veel success!",
+  "pyramidIntro": "Kijk naar deze muren — zo veel getallen ontbreken!",
+  "pyramidIntro2": "Het geheim: elk getal is de som van de twee eronder.",
+  "pyramidIntro3": "Gebruik dat, en we ontdekken wat de oude bouwers hier verborgen hielden. Veel succes!",
   "pyramidBlockedBlocks": "Sommige blokken zijn geblokkeerd. Ze onthullen hun waarde niet.",
   "pyramidBlockedBlocks2": "We kunnen proberen hun waarde te berekenen op basis van de blokken eromheen.",
   "pyramidBlockedBlocks3": "En dan dat nummer uit het geheugen gebruiken.",
@@ -24,11 +22,24 @@
   "tombIntro2": "Misschien kunnen we de tekst vertalen met behulp van de hiërogliefen die we hebben gevonden.",
   "tombIntro3": "We zouden hier zelfs een schat kunnen vinden.",
 
+  "tombTutorial": "Zie je die symboolplaatsen in de formules? Plaats hiëroglieven uit je verzameling hieronder om ze te vullen.",
+  "tombTutorial2": "De aanwijzingsformules bevestigen wanneer je toewijzingen kloppen — gebruik ze om de juiste combinatie te vinden.",
+  "tombTutorial3": "Als alle plaatsen gevuld zijn, verschijnt een cijferslot. Los de hoofdformule op om de code te vinden en de tombe te openen!",
+
+  "hieroglyphUnlock": "We hebben een speciaal artefact — daarmee kunnen we op één van die verzegelde blokken schrijven!",
+  "hieroglyphUnlock2": "Tik op een glinsterende steen en sleep het artefact erop om hem te ontgrendelen. Één blok per piramide.",
+
+  "errorHighlightTutorial": "Dat artefact dat we vonden heeft een handige truc — vul een fout antwoord in en één fout blok gloeit rood op!",
+  "errorHighlightTutorial2": "Maar slechts één blok tegelijk, dus het blijft een uitdaging. Het helpt wel om het te versmallen!",
+
+  "earlyFeedbackTutorial": "Zie je die controlepunt-blokken? Ze kleuren groen of rood terwijl je invult — directe feedback!",
+  "earlyFeedbackTutorial2": "Gebruik ze als ankers tijdens het oplossen. Als er een rood wordt, zit er iets fout in de buurt.",
+
   "notEnoughHieroglyphs": "Je kunt deze expeditie altijd stoppen door terug te keren naar het reis scherm.",
   "notEnoughHieroglyphs2": "We kunnen dan ervoor kiezen om de expeditie te onderbreken om elders naar extra hiërogliefen te zoeken.",
 
   "tombLoot": "Wauw, onze eerste schat! Goed bezig!",
-  "mapPiece": "We hebben een kaartdeel gevonden! Naar een verborgen schatlocatie.",
-  "mapPiece2": "Het lijkt erop dat we nog 3 stukken nodig hebben om de kaart te voltooien.",
-  "mapPiece3": "We zouden er één in elke expeditie moeten kunnen vinden."
+  "mapPiece": "We hebben een kaartdeel gevonden! Samen leiden ze naar een verborgen tombe.",
+  "mapPiece2": "Er zit één in elke expeditie op dit niveau — laten we ze allemaal vinden!",
+  "mapPiece3": "Bekijk de reislijst om te zien hoeveel we al verzameld hebben."
 }

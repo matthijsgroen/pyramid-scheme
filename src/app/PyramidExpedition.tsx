@@ -37,8 +37,9 @@ export const PyramidExpedition: FC<{
   runNr: number
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
+  onStartJourney?: (journeyId: string) => void
   onClose?: () => void
-}> = ({ activeJourney, runNr, onLevelComplete: onNextLevel, onJourneyComplete, onClose }) => {
+}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
   const { inventory } = useInventory()
@@ -76,13 +77,15 @@ export const PyramidExpedition: FC<{
   const hasBlockedBlocks = useMemo(() => {
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
+  const hasEarlyFeedback = earlyFeedbackBlockIds.length > 0
 
   useEffect(() => {
     showConversation("pyramidIntro")
-    if (hasBlockedBlocks) {
-      showConversation("pyramidBlockedBlocks")
-    }
-  }, [showConversation, hasBlockedBlocks])
+    if (hieroglyphUnlockCount > 0) showConversation("hieroglyphUnlock")
+    if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
+    if (errorHighlightCount > 0) showConversation("errorHighlightTutorial")
+    if (hasEarlyFeedback) showConversation("earlyFeedbackTutorial")
+  }, [showConversation, hasBlockedBlocks, hieroglyphUnlockCount, errorHighlightCount, hasEarlyFeedback])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {
@@ -154,8 +157,9 @@ export const PyramidExpedition: FC<{
 
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
-  // Check if a new pyramid journey is unlocked
-  const nextPyramidJourneyId = runNr === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId) : undefined
+  // Check if a new pyramid journey is unlocked (first time completing this journey)
+  const nextPyramidJourneyId =
+    activeJourney.completionCount === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId) : undefined
   const dayTime = dayNightCycleDayTime(
     activeJourney.levelNr,
     pyramidJourney.background.time,
@@ -283,6 +287,7 @@ export const PyramidExpedition: FC<{
             {expeditionCompleted && (
               <ExpeditionCompletionOverlay
                 onJourneyComplete={onJourneyComplete}
+                onStartJourney={onStartJourney}
                 newPyramidJourneyId={nextPyramidJourneyId}
                 activeJourney={activeJourney}
               />

@@ -3,7 +3,7 @@ import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { determineInventoryLootForCurrentRuns } from "@/app/PyramidLevel/inventoryLootLogic"
-import type { PyramidJourney } from "@/data/journeys"
+import { journeys as allJourneys, type PyramidJourney } from "@/data/journeys"
 import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
 import { mulberry32 } from "@/game/random"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
@@ -14,9 +14,10 @@ import { Badge } from "@/ui/Badge"
 
 export const ExpeditionCompletionOverlay: FC<{
   onJourneyComplete?: () => void
+  onStartJourney?: (journeyId: string) => void
   newPyramidJourneyId?: string
   activeJourney: CombinedJourneyState
-}> = ({ onJourneyComplete, newPyramidJourneyId, activeJourney }) => {
+}> = ({ onJourneyComplete, onStartJourney, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const getTranslatedItem = useInventoryItem()
   const { addItems, inventory } = useInventory()
@@ -40,9 +41,20 @@ export const ExpeditionCompletionOverlay: FC<{
     showConversation("expeditionCompleted")
   }, [showConversation])
 
-  const newJourneyName = useJourneyTranslation(newPyramidJourneyId ?? "id")?.name
+  const newPyramidJourneyName = useJourneyTranslation(newPyramidJourneyId ?? "id")?.name
 
-  const onCollectLoot = () => {
+  // Detect if a tomb just became unlocked (all map pieces for this difficulty collected, tomb never completed)
+  const tombJourney = allJourneys.find(j => j.type === "treasure_tomb" && j.difficulty === journey.difficulty)
+  const pyramidJourneysForDifficulty = allJourneys.filter(
+    j => j.type === "pyramid" && j.difficulty === journey.difficulty
+  )
+  const allMapPiecesFound = pyramidJourneysForDifficulty.every(j => getJourney(j.id)?.foundMapPiece === true)
+  const tombState = tombJourney ? getJourney(tombJourney.id) : undefined
+  const newTombJourneyId =
+    allMapPiecesFound && tombJourney && (tombState?.completionCount ?? 0) === 0 ? tombJourney.id : undefined
+  const newTombJourneyName = useJourneyTranslation(newTombJourneyId ?? "id")?.name
+
+  const collectLoot = () => {
     if (lootResult.shouldAwardInventoryItem && lootResult.itemIds.length > 0) {
       const itemsToAdd = lootResult.itemIds.reduce(
         (acc, itemId) => {
@@ -53,7 +65,16 @@ export const ExpeditionCompletionOverlay: FC<{
       )
       addItems(itemsToAdd)
     }
+  }
+
+  const onCollectLoot = () => {
+    collectLoot()
     onJourneyComplete?.()
+  }
+
+  const handleStartJourney = (journeyId: string) => {
+    collectLoot()
+    onStartJourney?.(journeyId)
   }
 
   return (
@@ -86,12 +107,35 @@ export const ExpeditionCompletionOverlay: FC<{
         )}
         {newPyramidJourneyId && (
           <span className="mt-2 text-center text-yellow-700">
-            {t("ui.newExpeditionUnlocked")}: <strong className="font-semibold">{newJourneyName}</strong>
+            {t("ui.newExpeditionUnlocked")}: <strong className="font-semibold">{newPyramidJourneyName}</strong>
           </span>
         )}
-        <button className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" onClick={onCollectLoot}>
-          {t("ui.goBackToBase")}
-        </button>
+        {newTombJourneyId && (
+          <span className="mt-2 text-center text-yellow-700">
+            {t("ui.newTombUnlocked")}: <strong className="font-semibold">{newTombJourneyName}</strong>
+          </span>
+        )}
+        <div className="mt-2 flex flex-col gap-2">
+          {newPyramidJourneyId && (
+            <button
+              className="rounded bg-amber-500 px-4 py-2 font-semibold text-white hover:bg-amber-600"
+              onClick={() => handleStartJourney(newPyramidJourneyId)}
+            >
+              {t("ui.startJourney", { name: newPyramidJourneyName })}
+            </button>
+          )}
+          {newTombJourneyId && (
+            <button
+              className="rounded bg-stone-600 px-4 py-2 font-semibold text-white hover:bg-stone-700"
+              onClick={() => handleStartJourney(newTombJourneyId)}
+            >
+              {t("ui.startJourney", { name: newTombJourneyName })}
+            </button>
+          )}
+          <button className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" onClick={onCollectLoot}>
+            {t("ui.goBackToBase")}
+          </button>
+        </div>
       </div>
     </div>
   )

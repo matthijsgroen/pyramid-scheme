@@ -5,11 +5,9 @@
   "welcome3": "Let's start planning an expedition by clicking on the map!",
   "chooseExpedition": "Here you can choose your expedition. Let's start with a short journey.",
 
-  "pyramidIntro": "In our expedition we will explore pyramids.",
-  "pyramidIntro2": "In these pyramids, numbers are missing.",
-  "pyramidIntro3": "Fill in the missing numbers to solve the puzzle.",
-  "pyramidIntro4": "Each number is the sum of the two numbers below it.",
-  "pyramidIntro5": "Good luck!",
+  "pyramidIntro": "Look at these walls — so many numbers are missing!",
+  "pyramidIntro2": "The secret: every number is the sum of the two below it.",
+  "pyramidIntro3": "Use that, and we'll uncover what the ancient builders hid here. Good luck!",
 
   "pyramidBlockedBlocks": "Some blocks are blocked. They do not reveal their value.",
   "pyramidBlockedBlocks2": "We can try to calculate their value based on blocks around it.",
@@ -27,11 +25,24 @@
   "tombIntro2": "Maybe we can translate the text using the hieroglyphs we found.",
   "tombIntro3": "We could even find a treasure here.",
 
+  "tombTutorial": "See those symbol slots in the formulas? Place hieroglyphs from your collection below to fill them in.",
+  "tombTutorial2": "The hint formulas will confirm when your assignments are correct — use them to find the right combination.",
+  "tombTutorial3": "Once every slot is filled, a number lock appears. Solve the main formula to find the code and open the tomb!",
+
+  "hieroglyphUnlock": "We have a special artifact — it lets us write on one of those sealed blocks!",
+  "hieroglyphUnlock2": "Tap a glowing stone, then drag the artifact onto it to unlock it. One block per pyramid.",
+
+  "errorHighlightTutorial": "That treasure we found has a handy trick — fill in a wrong answer and one mistake will glow red!",
+  "errorHighlightTutorial2": "Only one block glows at a time, so it's still a challenge. But it helps narrow things down!",
+
+  "earlyFeedbackTutorial": "See those checkpoint blocks? They turn green or red as you fill them in — live feedback!",
+  "earlyFeedbackTutorial2": "Use them as anchors while solving. If one turns red, something nearby needs fixing.",
+
   "notEnoughHieroglyphs": "You can always stop this expedition by returning to the travel screen.",
   "notEnoughHieroglyphs2": "We can choose to interrupt the expedition to search for extra hieroglyphs elsewhere.",
 
   "tombLoot": "Wow, our first treasure! Well done!",
-  "mapPiece": "We found a map piece! To a hidden treasure location.",
-  "mapPiece2": "It looks like we need 3 more pieces to complete the map.",
-  "mapPiece3": "We should be able to find one in each expedition."
+  "mapPiece": "We found a map piece! Together they lead to a hidden tomb.",
+  "mapPiece2": "There's one waiting in each expedition at this difficulty — let's find them all!",
+  "mapPiece3": "Check the journey list to see how many we've collected so far."
 }

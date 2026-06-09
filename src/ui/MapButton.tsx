@@ -115,8 +115,9 @@ type MapButtonProps = {
   inJourney: boolean
   label: string
   journeyProgress: number
-  pathRotation?: number // Rotation in degrees (0, 90, 180, 270)
-  pathLength?: "short" | "medium" | "long" // Journey distance
+  pathRotation?: number
+  pathLength?: "short" | "medium" | "long"
+  nudge?: boolean
 }
 
 const getPathConfig = (length: "short" | "medium" | "long") => {
@@ -150,6 +151,7 @@ export const MapButton: FC<MapButtonProps> = ({
   journeyProgress,
   pathRotation = 0,
   pathLength = "long",
+  nudge = false,
 }) => {
   const pathConfig = getPathConfig(pathLength)
 
@@ -197,6 +199,14 @@ export const MapButton: FC<MapButtonProps> = ({
     >
       {/* Fold effect - top right corner */}
       <div className="absolute -top-6 -right-12 h-16 w-36 rotate-45 border-b-2 border-l-2 border-amber-700 bg-amber-200 shadow-lg"></div>
+
+      {/* Map piece progress nudge */}
+      {nudge && (
+        <span className="absolute top-3 left-3 flex h-4 w-4 items-center justify-center">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
+        </span>
+      )}
 
       {/* Map grid lines */}
       <div className="absolute inset-0 opacity-30">

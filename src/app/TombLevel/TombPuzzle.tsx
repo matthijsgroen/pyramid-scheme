@@ -22,7 +22,8 @@ export const TombPuzzle: FC<{
   calculation: RewardCalculation
   difficulty: Difficulty
   onComplete?: () => void
-}> = ({ tableau, calculation, difficulty, onComplete }) => {
+  onFindHieroglyphs?: () => void
+}> = ({ tableau, calculation, difficulty, onComplete, onFindHieroglyphs }) => {
   const { t } = useTranslation("common")
 
   // Get player's actual inventory
@@ -49,26 +50,20 @@ export const TombPuzzle: FC<{
     })
   }, [calculation.symbolCounts, filledState.symbolCounts])
 
-  const { showConversation } = use(FezContext)
-  useEffect(() => {
-    if (Object.keys(inventory).length === 0) return
-    // if inventory - inventory usage is empty, and puzzle is not filled in, trigger conversation
-    const notEnough = Object.entries(calculation.symbolCounts).some(([symbolId, maxNeeded]) => {
+  const notEnough = useMemo(() => {
+    if (Object.keys(inventory).length === 0) return false
+    return Object.entries(calculation.symbolCounts).some(([symbolId, maxNeeded]) => {
       const availableInInventory = inventory[symbolId] || 0
       return availableInInventory < maxNeeded
     })
+  }, [calculation.symbolCounts, inventory])
 
+  const { showConversation } = use(FezContext)
+  useEffect(() => {
     if (notEnough) {
       showConversation("notEnoughHieroglyphs")
     }
-  }, [
-    calculation.symbolCounts,
-    filledState.symbolCounts,
-    inventory,
-    inventoryUsage,
-    isPuzzleCompleted,
-    showConversation,
-  ])
+  }, [notEnough, showConversation])
 
   const handleTileClick = (symbolId: string, position: string) => {
     setFilledState(prev => {
@@ -202,6 +197,14 @@ export const TombPuzzle: FC<{
       <div className="flex flex-1">{/** left side */}</div>
       <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
         <div className="flex flex-1">{/** top side */}</div>
+        {notEnough && !isPuzzleCompleted && onFindHieroglyphs && (
+          <button
+            onClick={onFindHieroglyphs}
+            className="mb-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition-colors hover:bg-blue-700"
+          >
+            {t("ui.findMissingHieroglyphs")}
+          </button>
+        )}
         <TombDoor
           className="flex flex-2 flex-col items-center justify-center"
           open={lockState === "open"}
