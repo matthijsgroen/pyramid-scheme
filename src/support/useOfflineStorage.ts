@@ -1,5 +1,5 @@
 import type { SetStateAction } from "react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import localForage from "localforage"
 
 const isSetFunction = <T>(v: SetStateAction<T>): v is (prevValue: T) => T => typeof v === "function"
@@ -83,6 +83,10 @@ export const useOfflineStorage = <T>(
     typeof initialValue === "function" ? (initialValue as () => T)() : initialValue
   )
   const store = getStore(storeName)
+  // Ref always holds the latest value so multiple synchronous setValue(fn)
+  // calls chain correctly without waiting for a re-render or async DB read.
+  const localStateRef = useRef(localState)
+  localStateRef.current = localState
 
   useEffect(() => {
     store
@@ -110,20 +114,21 @@ export const useOfflineStorage = <T>(
   const setValue = useCallback(
     async (value: SetStateAction<T>) => {
       if (isSetFunction(value)) {
-        const previousValue = await store.getItem<T>(key)
-        const nextValue = value(previousValue ?? localState)
-        setLocalState(nextValue) // Optimistic
-        await store.setItem<T>(key, nextValue)
+        // Compute next value from the ref (always up-to-date) and update the
+        // ref synchronously so chained calls each see the previous result.
+        const nextValue = value(localStateRef.current)
+        localStateRef.current = nextValue
         setLocalState(nextValue)
+        await store.setItem<T>(key, nextValue)
         return nextValue
       } else {
-        setLocalState(value) // Optimistic
-        await store.setItem<T>(key, value)
+        localStateRef.current = value as T
         setLocalState(value)
+        await store.setItem<T>(key, value)
         return value
       }
     },
-    [key, localState, store]
+    [key, store]
   )
 
   const deleteValue = useCallback(
