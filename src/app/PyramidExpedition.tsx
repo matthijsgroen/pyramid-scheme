@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState, useRef, type FC, use, useMemo } from "react"
-import { useGameStorage } from "@/support/useGameStorage"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -78,28 +77,15 @@ export const PyramidExpedition: FC<{
   const hasBlockedBlocks = useMemo(() => {
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
-  const [hieroglyphUnlockTutorialSeen, setHieroglyphUnlockTutorialSeen] = useGameStorage<boolean>(
-    "hieroglyphUnlockTutorialSeen",
-    false
-  )
-  const hieroglyphUnlockTutorialSeenAtMount = useRef(hieroglyphUnlockTutorialSeen)
+  const hasEarlyFeedback = earlyFeedbackBlockIds.length > 0
 
   useEffect(() => {
-    if (hieroglyphUnlockCount > 0 && !hieroglyphUnlockTutorialSeenAtMount.current) {
-      showConversation("pyramidIntro", () => {
-        setHieroglyphUnlockTutorialSeen(true)
-        showConversation("hieroglyphUnlock")
-        if (hasBlockedBlocks) {
-          showConversation("pyramidBlockedBlocks")
-        }
-      })
-    } else {
-      showConversation("pyramidIntro")
-      if (hasBlockedBlocks) {
-        showConversation("pyramidBlockedBlocks")
-      }
-    }
-  }, [showConversation, hasBlockedBlocks, hieroglyphUnlockCount, setHieroglyphUnlockTutorialSeen])
+    showConversation("pyramidIntro")
+    if (hieroglyphUnlockCount > 0) showConversation("hieroglyphUnlock")
+    if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
+    if (errorHighlightCount > 0) showConversation("errorHighlightTutorial")
+    if (hasEarlyFeedback) showConversation("earlyFeedbackTutorial")
+  }, [showConversation, hasBlockedBlocks, hieroglyphUnlockCount, errorHighlightCount, hasEarlyFeedback])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {

@@ -20,18 +20,18 @@ The core puzzle contract (hieroglyphs as variables, hints validate assignments, 
 - [x] Add a **?** button to the TombExpedition header that replays `tombTutorial`
 - [ ] Note: the **?** button may become a reusable UI pattern across pyramid, tomb, crocodile — revisit during a UI consistency pass
 
-### 2. Hieroglyph unlock charges — invisible capability
+### 2. Hieroglyph unlock charges — invisible capability ✅
 When a player owns the unlock artifact, blocked blocks become tappable, but there's no signal that this is happening or that they have charges.
 
-- [ ] Confirm blocked blocks have a visible glow when unlock charges are available
-- [ ] Glow disappears automatically when all charges for this expedition are spent
-- [ ] Add one-time Fez message on **first expedition entry** while owning the unlock artifact: introduces the mechanic
-- [ ] In the **HieroglyphUnlockPanel**, show which artifact is being used and list any other available unlock artifacts
+- [x] Confirm blocked blocks have a visible glow when unlock charges are available
+- [x] Glow disappears automatically when all charges for this expedition are spent
+- [x] Add one-time Fez message on **first expedition entry** while owning the unlock artifact: introduces the mechanic
+- [x] In the **HieroglyphUnlockPanel**, show which artifact is being used and list any other available unlock artifacts
 
-### 3. Treasure effects — silent gameplay changes
+### 3. Treasure effects — silent gameplay changes ✅
 Owning a treasure changes how the pyramid plays (error highlight, early feedback, hieroglyph unlock), but there's no signal during play that something is different.
 
-- [ ] Add one-time Fez message **per treasure effect**, firing the first time that effect is actually active in an expedition (not just owned — e.g. early feedback only fires on pyramids large enough for it to apply)
+- [x] Add one-time Fez message **per treasure effect**, firing the first time that effect is actually active in an expedition (not just owned — e.g. early feedback only fires on pyramids large enough for it to apply)
 
 ---
 
