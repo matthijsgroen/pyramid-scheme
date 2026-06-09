@@ -5,11 +5,9 @@
   "welcome3": "Let's start planning an expedition by clicking on the map!",
   "chooseExpedition": "Here you can choose your expedition. Let's start with a short journey.",
 
-  "pyramidIntro": "In our expedition we will explore pyramids.",
-  "pyramidIntro2": "In these pyramids, numbers are missing.",
-  "pyramidIntro3": "Fill in the missing numbers to solve the puzzle.",
-  "pyramidIntro4": "Each number is the sum of the two numbers below it.",
-  "pyramidIntro5": "Good luck!",
+  "pyramidIntro": "Look at these walls — so many numbers are missing!",
+  "pyramidIntro2": "The secret: every number is the sum of the two below it.",
+  "pyramidIntro3": "Use that, and we'll uncover what the ancient builders hid here. Good luck!",
 
   "pyramidBlockedBlocks": "Some blocks are blocked. They do not reveal their value.",
   "pyramidBlockedBlocks2": "We can try to calculate their value based on blocks around it.",

@@ -26,7 +26,7 @@ const pose = (...args: (Pose | string[])[]): PoseChat[] => {
 const conversations: Record<string, PoseChat[]> = {
   welcome: pose(["welcome", "welcome2", "welcome3"]),
   chooseExpedition: pose(["chooseExpedition"]),
-  pyramidIntro: pose(["pyramidIntro", "pyramidIntro2", "pyramidIntro3", "pyramidIntro4"], "pointUp", ["pyramidIntro5"]),
+  pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
   collectionIntro: pose(["collectionIntro", "collectionIntro2", "collectionIntro3"]),
