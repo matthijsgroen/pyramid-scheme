@@ -109,6 +109,15 @@ export const TravelPage: FC<{
       .map(j => j.difficulty)
   }, [getJourney, journeys, maxDifficulty])
 
+  const hasPendingMapPieceProgress = useMemo(() => {
+    const tombDifficulties = journeys.filter(j => j.type === "treasure_tomb").map(j => j.difficulty)
+    return tombDifficulties.some(difficulty => {
+      const pyramidJourneys = journeys.filter(p => p.type === "pyramid" && p.difficulty === difficulty)
+      const piecesFound = pyramidJourneys.filter(p => getJourney(p.id)?.foundMapPiece).length
+      return piecesFound > 0 && piecesFound < pyramidJourneys.length
+    })
+  }, [journeys, getJourney])
+
   return (
     <Page
       className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
@@ -165,6 +174,7 @@ export const TravelPage: FC<{
                         : t("ui.planExpedition")
                   }
                   journeyProgress={journeyProgress}
+                  nudge={!journey && hasPendingMapPieceProgress}
                 />
               )}
               {!activeJourneyInfo && selectedJourney && (

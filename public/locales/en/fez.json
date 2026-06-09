@@ -42,7 +42,7 @@
   "notEnoughHieroglyphs2": "We can choose to interrupt the expedition to search for extra hieroglyphs elsewhere.",
 
   "tombLoot": "Wow, our first treasure! Well done!",
-  "mapPiece": "We found a map piece! To a hidden treasure location.",
-  "mapPiece2": "It looks like we need 3 more pieces to complete the map.",
-  "mapPiece3": "We should be able to find one in each expedition."
+  "mapPiece": "We found a map piece! Together they lead to a hidden tomb.",
+  "mapPiece2": "There's one waiting in each expedition at this difficulty — let's find them all!",
+  "mapPiece3": "Check the journey list to see how many we've collected so far."
 }

@@ -37,12 +37,12 @@ Owning a treasure changes how the pyramid plays (error highlight, early feedback
 
 ## Medium priority
 
-### 4. Map pieces — thin link to tomb unlock
+### 4. Map pieces — thin link to tomb unlock ✅
 Players collect map pieces but don't know where to see progress or what they're building toward.
 
-- [ ] Update `mapPiece` Fez conversation to end with: "Check the journey list to see your progress."
-- [ ] Add a **persistent visual nudge** (pulsing indicator or badge) on the journey selection button on the Travel screen whenever map piece progress exists for a difficulty but the tomb isn't yet unlocked. Disappears when the tomb unlocks.
-- [ ] Make the "X more pieces" count in the mapPiece Fez message dynamic (currently hardcoded — 4 pieces per difficulty, one per expedition, so currently correct but fragile)
+- [x] Update `mapPiece` Fez conversation to end with: "Check the journey list to see your progress." — messages rewritten to remove hardcoded count and direct players to the journey list
+- [x] Add a **persistent visual nudge** (pulsing indicator or badge) on the journey selection button on the Travel screen whenever map piece progress exists for a difficulty but the tomb isn't yet unlocked. Disappears when the tomb unlocks.
+- [x] Made "X more pieces" count non-specific — messages now say "one in each expedition" rather than a hardcoded number
 
 ---
 
