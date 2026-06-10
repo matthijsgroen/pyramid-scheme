@@ -18,11 +18,15 @@ export const FezCompanion: React.FC<{
 
   const contextValue = useMemo(
     () => ({
-      showConversation: (conversationId: string, onComplete?: (result: FezConversationResult) => void) => {
+      showConversation: (
+        conversationId: string,
+        onComplete?: (result: FezConversationResult) => void,
+        options?: { forceReplay?: boolean }
+      ) => {
         if (!loaded) {
           return onComplete?.("not-loaded")
         }
-        if (conversations[conversationId]) {
+        if (conversations[conversationId] && !options?.forceReplay) {
           return onComplete?.("seen-earlier")
         }
         const entry = {
