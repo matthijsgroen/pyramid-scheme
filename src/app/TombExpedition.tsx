@@ -124,7 +124,7 @@ export const TombExpedition: FC<{
             </h1>
             <span className="flex items-center gap-2">
               <button
-                onClick={() => showConversation("tombTutorial")}
+                onClick={() => showConversation("tombTutorial", undefined, { forceReplay: true })}
                 className="flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/20 text-sm font-bold text-white hover:bg-white/30"
                 aria-label={t("ui.howToPlay")}
               >
