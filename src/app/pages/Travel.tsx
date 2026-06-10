@@ -118,6 +118,17 @@ export const TravelPage: FC<{
     })
   }, [journeys, getJourney])
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const suggestedCardRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!showJourneySelection || !suggestedJourneyId) return
+    const timer = setTimeout(() => {
+      suggestedCardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+    }, 750)
+    return () => clearTimeout(timer)
+  }, [showJourneySelection, suggestedJourneyId])
+
   return (
     <Page
       className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
@@ -217,7 +228,7 @@ export const TravelPage: FC<{
             showJourneySelection ? "translate-x-0 opacity-100" : "translate-x-[100%] opacity-0"
           }`}
         >
-          <div className="flex-1 overflow-y-auto pb-8">
+          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto pb-8">
             <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-blue-100/70 px-8 py-4 backdrop-blur-sm">
               <h2 className="font-pyramid text-xl font-bold">{t("ui.chooseYourJourney")}</h2>
               <button
@@ -265,24 +276,26 @@ export const TravelPage: FC<{
                 }
                 const disabled = journey.type === "treasure_tomb" && journey.treasures.length <= completionCount
 
+                const isSuggested = journey.id === suggestedJourneyId
                 return (
-                  <JourneyCard
-                    key={journey.id}
-                    showDetails={index === unlocked - 1}
-                    journey={journey}
-                    disabled={disabled}
-                    completionCount={completionCount}
-                    progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
-                    index={index}
-                    showAnimation={showJourneySelection}
-                    hasMapPiece={hasMapPiece}
-                    suggested={journey.id === suggestedJourneyId}
-                    onClick={handleJourneySelect}
-                  >
-                    {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
-                      <TableauInventory journeyInfo={journeyInfo} />
-                    ) : null}
-                  </JourneyCard>
+                  <div key={journey.id} ref={isSuggested ? suggestedCardRef : undefined}>
+                    <JourneyCard
+                      showDetails={index === unlocked - 1}
+                      journey={journey}
+                      disabled={disabled}
+                      completionCount={completionCount}
+                      progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
+                      index={index}
+                      showAnimation={showJourneySelection}
+                      hasMapPiece={hasMapPiece}
+                      suggested={isSuggested}
+                      onClick={handleJourneySelect}
+                    >
+                      {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
+                        <TableauInventory journeyInfo={journeyInfo} />
+                      ) : null}
+                    </JourneyCard>
+                  </div>
                 )
               })}
             </div>
