@@ -72,6 +72,7 @@ export const TombExpedition: FC<{
       hieroglyphIds: tableau.inventoryIds,
       numberRange: journey.levelSettings.numberRange,
       operations: journey.levelSettings.operators,
+      maxMultiplyOperandResult: journey.levelSettings.maxMultiplyOperandResult,
     }
     const calc = generateRewardCalculation(settings, random)
     return calc
