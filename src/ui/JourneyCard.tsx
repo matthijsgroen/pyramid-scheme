@@ -45,15 +45,18 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
     <button
       onClick={() => !disabled && onClick(journey)}
       disabled={disabled}
-      className={clsx("group flex flex-row rounded-lg border-l-0 text-left transition-all duration-300 contain-paint", {
-        "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
-        "border-gray-400 bg-gray-100 shadow-lg hover:scale-105 hover:border-gray-500 hover:shadow-xl":
-          !disabled && isTreasureTomb,
-        "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
-          !disabled && !isTreasureTomb,
-        "animate-slide-in-up": showAnimation,
-        "ring-2 ring-blue-400 ring-offset-2": suggested,
-      })}
+      className={clsx(
+        "group flex w-full flex-row rounded-lg border-l-0 text-left transition-all duration-300 contain-paint",
+        {
+          "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
+          "border-gray-400 bg-gray-100 shadow-lg hover:scale-105 hover:border-gray-500 hover:shadow-xl":
+            !disabled && isTreasureTomb,
+          "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
+            !disabled && !isTreasureTomb,
+          "animate-slide-in-up": showAnimation,
+          "ring-2 ring-blue-400 ring-offset-2": suggested,
+        }
+      )}
       style={{
         animationDelay: showAnimation ? `${index * 100}ms` : "0ms",
       }}
