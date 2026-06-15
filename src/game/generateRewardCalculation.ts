@@ -17,6 +17,7 @@ export type RewardCalculationSettings = {
   hieroglyphIds: string[]
   numberRange: [min: number, max: number]
   operations: Operation[]
+  maxMultiplyOperandResult?: number
 }
 
 export type RewardCalculation = {
@@ -59,7 +60,11 @@ export const generateRewardCalculation = (
   // Step 2: Generate a formula where all symbols occur (maybe multiple times)
   const mainFormulaNumbers = generateCalculationNumbers(pickedNumbers.concat(bonus), pickedNumbers, [], random)
   const mainFormula = createSmallestVerifiedFormula(
-    { pickedNumbers: mainFormulaNumbers, operations: settings.operations },
+    {
+      pickedNumbers: mainFormulaNumbers,
+      operations: settings.operations,
+      maxMultiplyOperandResult: settings.maxMultiplyOperandResult,
+    },
     undefined, // no main formula yet
     random
   )
@@ -94,6 +99,7 @@ export const generateRewardCalculation = (
           pickedNumbers: calcNumbers,
           operations: operators,
           useResult: "allow",
+          maxMultiplyOperandResult: settings.maxMultiplyOperandResult,
         },
         mainFormula,
         random

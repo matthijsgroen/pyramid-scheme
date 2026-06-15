@@ -45,22 +45,25 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
     <button
       onClick={() => !disabled && onClick(journey)}
       disabled={disabled}
-      className={clsx("group flex flex-row rounded-lg border-l-0 text-left transition-all duration-300 contain-paint", {
-        "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
-        "border-gray-400 bg-gray-100 shadow-lg hover:scale-105 hover:border-gray-500 hover:shadow-xl":
-          !disabled && isTreasureTomb,
-        "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
-          !disabled && !isTreasureTomb,
-        "animate-slide-in-up": showAnimation,
-        "ring-2 ring-blue-400 ring-offset-2": suggested,
-      })}
+      className={clsx(
+        "group flex w-full flex-row rounded-lg border-l-0 text-left transition-all duration-300 contain-paint",
+        {
+          "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
+          "border-gray-400 bg-gray-100 shadow-lg hover:scale-105 hover:border-gray-500 hover:shadow-xl":
+            !disabled && isTreasureTomb,
+          "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
+            !disabled && !isTreasureTomb,
+          "animate-slide-in-up": showAnimation,
+          "ring-2 ring-blue-400 ring-offset-2": suggested,
+        }
+      )}
       style={{
         animationDelay: showAnimation ? `${index * 100}ms` : "0ms",
       }}
     >
       <div
         className={clsx(
-          "h-full w-4 flex-shrink-0",
+          "w-4 flex-shrink-0 self-stretch",
           journey.difficulty === "starter" && "bg-stone-500",
           journey.difficulty === "junior" && "bg-gradient-to-b from-orange-300 to-orange-400",
           journey.difficulty === "expert" && "bg-gradient-to-b from-slate-200 to-slate-400",
@@ -69,10 +72,15 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
         )}
       ></div>
       <div
-        className={clsx("flex-1 flex-col rounded-r-lg border-2 border-l-0 py-3 pr-3 pl-1", {
+        className={clsx("flex-1 flex-col rounded-r-lg py-3 pr-3 pl-1", {
+          "border-2 border-l-0": !suggested,
           "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
-          "border-gray-400 bg-gray-100 shadow-lg hover:border-gray-500 hover:shadow-xl": !disabled && isTreasureTomb,
-          "border-amber-300 bg-amber-50 shadow-lg hover:border-amber-400 hover:shadow-xl": !disabled && !isTreasureTomb,
+          "border-gray-400 bg-gray-100 shadow-lg hover:border-gray-500 hover:shadow-xl":
+            !disabled && isTreasureTomb && !suggested,
+          "border-amber-300 bg-amber-50 shadow-lg hover:border-amber-400 hover:shadow-xl":
+            !disabled && !isTreasureTomb && !suggested,
+          "bg-gray-100 shadow-lg": !disabled && isTreasureTomb && suggested,
+          "bg-amber-50 shadow-lg": !disabled && !isTreasureTomb && suggested,
         })}
       >
         {suggested && (
