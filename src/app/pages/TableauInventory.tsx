@@ -33,6 +33,7 @@ export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ jo
         hieroglyphIds: tableau.inventoryIds,
         numberRange: journey.levelSettings.numberRange,
         operations: journey.levelSettings.operators,
+        maxMultiplyOperandResult: journey.levelSettings.maxMultiplyOperandResult,
       },
       random
     )
