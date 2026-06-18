@@ -233,8 +233,16 @@ describe(generateRewardCalculation, () => {
         if (typeof node === "number" || "symbol" in node) return
         if (node.operation === "*") {
           results.push(
-            typeof node.left === "number" ? node.left : "symbol" in node.left ? node.left.symbol : (visit(node.left), 0),
-            typeof node.right === "number" ? node.right : "symbol" in node.right ? node.right.symbol : (visit(node.right), 0)
+            typeof node.left === "number"
+              ? node.left
+              : "symbol" in node.left
+                ? node.left.symbol
+                : (visit(node.left), 0),
+            typeof node.right === "number"
+              ? node.right
+              : "symbol" in node.right
+                ? node.right.symbol
+                : (visit(node.right), 0)
           )
         }
         visit(node.left)
