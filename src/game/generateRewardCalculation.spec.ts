@@ -226,6 +226,53 @@ describe(generateRewardCalculation, () => {
     `)
   })
 
+  describe("maxMultiplyOperandResult", () => {
+    const collectMultiplyOperands = (formula: import("../app/Formulas/formulas").Formula): number[] => {
+      const results: number[] = []
+      const visit = (node: number | import("../app/Formulas/formulas").Formula | { symbol: number }) => {
+        if (typeof node === "number" || "symbol" in node) return
+        if (node.operation === "*") {
+          results.push(
+            typeof node.left === "number" ? node.left : "symbol" in node.left ? node.left.symbol : (visit(node.left), 0),
+            typeof node.right === "number" ? node.right : "symbol" in node.right ? node.right.symbol : (visit(node.right), 0)
+          )
+        }
+        visit(node.left)
+        visit(node.right)
+      }
+      visit(formula)
+      return results
+    }
+
+    it("constrains multiply operands across all formulas", () => {
+      const max = 5
+      const settings: RewardCalculationSettings = {
+        amountSymbols: 3,
+        numberRange: [1, 10],
+        hieroglyphIds: ["𓁧", "𓃯", "𓁝"],
+        operations: ["+", "*"],
+        maxMultiplyOperandResult: max,
+      }
+      const random = mulberry32(12345)
+      const result = generateRewardCalculation(settings, random)
+      const allFormulas = [result.mainFormula, ...result.hintFormulas]
+      const operands = allFormulas.flatMap(collectMultiplyOperands)
+      expect(operands.every(v => v <= max)).toBe(true)
+    })
+
+    it("produces different symbolCounts without the constraint", () => {
+      const base: RewardCalculationSettings = {
+        amountSymbols: 3,
+        numberRange: [1, 10],
+        hieroglyphIds: ["𓁧", "𓃯", "𓁝"],
+        operations: ["+", "*"],
+      }
+      const withConstraint = generateRewardCalculation({ ...base, maxMultiplyOperandResult: 5 }, mulberry32(12345))
+      const withoutConstraint = generateRewardCalculation(base, mulberry32(12345))
+      expect(withConstraint.symbolCounts).not.toEqual(withoutConstraint.symbolCounts)
+    })
+  })
+
   it("can generate a puzzle with low difficulty", () => {
     const settings: RewardCalculationSettings = {
       amountSymbols: 2,
