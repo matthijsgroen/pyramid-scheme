@@ -3,7 +3,7 @@ import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
-import { generateRewardCalculation } from "@/game/generateRewardCalculation"
+import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { useInventory } from "../Inventory/useInventory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
@@ -27,16 +27,7 @@ export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ jo
   const calculation = useMemo(() => {
     const random = mulberry32(seed)
     if (!journey || !tableau) return null
-    return generateRewardCalculation(
-      {
-        amountSymbols: tableau.symbolCount,
-        hieroglyphIds: tableau.inventoryIds,
-        numberRange: journey.levelSettings.numberRange,
-        operations: journey.levelSettings.operators,
-        maxMultiplyOperandResult: journey.levelSettings.maxMultiplyOperandResult,
-      },
-      random
-    )
+    return generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, tableau), random)
   }, [journey, seed, tableau])
 
   if (!journey || !calculation) {
