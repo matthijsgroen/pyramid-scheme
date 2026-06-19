@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest"
-import { generateRewardCalculation, type RewardCalculationSettings } from "./generateRewardCalculation"
+import {
+  buildTombCalculationSettings,
+  generateRewardCalculation,
+  type RewardCalculationSettings,
+} from "./generateRewardCalculation"
 import { mulberry32 } from "./random"
 import { formulaToString } from "../app/Formulas/formulas"
 
@@ -278,6 +282,34 @@ describe(generateRewardCalculation, () => {
       const withConstraint = generateRewardCalculation({ ...base, maxMultiplyOperandResult: 5 }, mulberry32(12345))
       const withoutConstraint = generateRewardCalculation(base, mulberry32(12345))
       expect(withConstraint.symbolCounts).not.toEqual(withoutConstraint.symbolCounts)
+    })
+  })
+
+  describe("buildTombCalculationSettings", () => {
+    it("maps journey levelSettings and tableau to RewardCalculationSettings", () => {
+      const levelSettings = {
+        numberRange: [1, 10] as [number, number],
+        operators: ["+", "*"] as RewardCalculationSettings["operations"],
+        maxMultiplyOperandResult: 5,
+      }
+      const tableau = { symbolCount: 3, inventoryIds: ["𓁧", "𓃯", "𓁝"] }
+      expect(buildTombCalculationSettings(levelSettings, tableau)).toEqual({
+        amountSymbols: 3,
+        hieroglyphIds: ["𓁧", "𓃯", "𓁝"],
+        numberRange: [1, 10],
+        operations: ["+", "*"],
+        maxMultiplyOperandResult: 5,
+      })
+    })
+
+    it("forwards undefined maxMultiplyOperandResult", () => {
+      const levelSettings = {
+        numberRange: [1, 10] as [number, number],
+        operators: ["+"] as RewardCalculationSettings["operations"],
+      }
+      const tableau = { symbolCount: 2, inventoryIds: ["𓁧", "𓃯"] }
+      const settings = buildTombCalculationSettings(levelSettings, tableau)
+      expect(settings.maxMultiplyOperandResult).toBeUndefined()
     })
   })
 

@@ -20,6 +20,28 @@ export type RewardCalculationSettings = {
   maxMultiplyOperandResult?: number
 }
 
+export type TombLevelSettings = {
+  numberRange: [min: number, max: number]
+  operators: Operation[]
+  maxMultiplyOperandResult?: number
+}
+
+export type TombTableauSettings = {
+  symbolCount: number
+  inventoryIds: string[]
+}
+
+export const buildTombCalculationSettings = (
+  levelSettings: TombLevelSettings,
+  tableau: TombTableauSettings
+): RewardCalculationSettings => ({
+  amountSymbols: tableau.symbolCount,
+  hieroglyphIds: tableau.inventoryIds,
+  numberRange: levelSettings.numberRange,
+  operations: levelSettings.operators,
+  maxMultiplyOperandResult: levelSettings.maxMultiplyOperandResult,
+})
+
 export type RewardCalculation = {
   pickedNumbers: number[]
   symbolMapping: Record<number, string>

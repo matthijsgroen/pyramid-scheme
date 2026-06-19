@@ -1,7 +1,7 @@
 import { type CombinedJourneyState } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { tableauLevels, TOMB_SYMBOLS } from "@/data/tableaus"
-import { generateRewardCalculation } from "@/game/generateRewardCalculation"
+import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { type Difficulty, difficultyCompare } from "@/data/difficultyLevels"
@@ -114,13 +114,10 @@ export const determineInventoryLootForCurrentRuns = (
 
     const seed = journeySeedGenerator(tombId)
     const tableauRandom = mulberry32(generateNewSeed(seed, currentLevel))
-    const settings = {
-      amountSymbols: tableau.symbolCount,
-      hieroglyphIds: tableau.inventoryIds,
-      numberRange: tombInfo.levelSettings.numberRange,
-      operations: tombInfo.levelSettings.operators,
-    }
-    const calculation = generateRewardCalculation(settings, tableauRandom)
+    const calculation = generateRewardCalculation(
+      buildTombCalculationSettings(tombInfo.levelSettings, tableau),
+      tableauRandom
+    )
 
     // add all symbols to itemsRequired
     Object.entries(calculation.symbolCounts).forEach(([symbol, count]) => {

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
-import { generateRewardCalculation } from "@/game/generateRewardCalculation"
+import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 import { TombBackdrop } from "@/ui/TombBackdrop"
@@ -67,14 +67,7 @@ export const TombExpedition: FC<{
   const calculation = useMemo(() => {
     const random = mulberry32(seed)
     if (!tableau) return null
-    const settings = {
-      amountSymbols: tableau.symbolCount,
-      hieroglyphIds: tableau.inventoryIds,
-      numberRange: journey.levelSettings.numberRange,
-      operations: journey.levelSettings.operators,
-      maxMultiplyOperandResult: journey.levelSettings.maxMultiplyOperandResult,
-    }
-    const calc = generateRewardCalculation(settings, random)
+    const calc = generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, tableau), random)
     return calc
   }, [seed, tableau, journey.levelSettings])
 
