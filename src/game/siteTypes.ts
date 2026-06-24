@@ -1,5 +1,5 @@
 export type PuzzleFamily = "sumplete"
-export type RoomType = "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+export type RoomType = "entrance" | "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece" }

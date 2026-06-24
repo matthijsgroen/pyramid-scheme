@@ -11,25 +11,34 @@ const CELL = 44
 const CORRIDOR_W = 8
 const CORRIDOR_INNER = 3
 
-// ─── Entrance marker ─────────────────────────────────────────────────────────
+const entranceFill: Record<CellState, string> = {
+  fogged: "#1a1208",
+  visible: "#281c08",
+  reachable: "#2a2010",
+  completed: "#2a2010",
+}
+const entranceStroke: Record<CellState, string> = {
+  fogged: "#2e2010",
+  visible: "#c09030",
+  reachable: "#d0a840",
+  completed: "#d0a840",
+}
 
-const EntranceMarker = ({ r }: { r: number }) => (
-  <g>
-    <rect
-      x={-r - 7}
-      y={-r - 7}
-      width={(r + 7) * 2}
-      height={(r + 7) * 2}
-      rx={4}
-      fill="none"
-      stroke="#c08820"
-      strokeWidth={2}
-      opacity={0.7}
-    />
-    <line x1={0} y1={-r - 10} x2={0} y2={-r - 24} stroke="#c08820" strokeWidth={2} opacity={0.8} />
-    <polygon points={`0,${-r - 7} -5,${-r - 14} 5,${-r - 14}`} fill="#c08820" opacity={0.9} />
-  </g>
-)
+const EntranceShape = ({ state }: ShapeProps) => {
+  const r = 12
+  const fill = entranceFill[state]
+  const stroke = entranceStroke[state]
+  // arch: flat bottom, semicircle top
+  const archPath = `M ${-r},${r} L ${-r},0 A ${r},${r} 0 0,1 ${r},0 L ${r},${r} Z`
+  return (
+    <>
+      <path d={archPath} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && (
+        <polygon points={`0,${-r + 4} 5,0 3,0 3,${r - 4} -3,${r - 4} -3,0 -5,0`} fill={entranceStroke[state]} />
+      )}
+    </>
+  )
+}
 
 // ─── Completed overlay ────────────────────────────────────────────────────────
 
@@ -169,6 +178,7 @@ const ExitShape = ({ state }: ShapeProps) => {
 }
 
 const nodeRadius: Record<RoomType, number> = {
+  entrance: 12,
   puzzle: 13,
   fork: 7,
   gate: 12,
@@ -181,6 +191,10 @@ const NodeBackground = ({ type }: { type: RoomType }) => {
   const bg = "#110d08"
   const r = nodeRadius[type]
   switch (type) {
+    case "entrance": {
+      const archPath = `M ${-r},${r} L ${-r},0 A ${r},${r} 0 0,1 ${r},0 L ${r},${r} Z`
+      return <path d={archPath} fill={bg} />
+    }
     case "puzzle":
     case "gate":
       return <rect x={-r} y={-r} width={r * 2} height={r * 2} fill={bg} />
@@ -210,6 +224,8 @@ const NodeBackground = ({ type }: { type: RoomType }) => {
 const NodeShape = ({ type, state }: ShapeProps & { type: RoomType }) => {
   const p = { state }
   switch (type) {
+    case "entrance":
+      return <EntranceShape {...p} />
     case "puzzle":
       return <PuzzleShape {...p} />
     case "fork":
@@ -316,18 +332,16 @@ const exitIcon: Record<CellState, string> = {
   completed: "#d0d850",
 }
 
-// ─── Corridor cell shape ──────────────────────────────────────────────────────
+// ─── Corridor arms (shared by corridor cells and room cells) ──────────────────
 
-const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => {
-  if (cell.state === "fogged") return null
+type ArmSet = ReadonlySet<"n" | "s" | "e" | "w">
+
+const ConnectionStubs = ({ dirs, state }: { dirs: ArmSet; state: CellState }) => {
+  if (state === "fogged") return null
   const HALF = CELL / 2
   const HW = CORRIDOR_W / 2
   const HI = CORRIDOR_INNER / 2
-
-  const armDefs: Record<
-    string,
-    { ox: number; oy: number; ow: number; oh: number; ix: number; iy: number; iw: number; ih: number }
-  > = {
+  const armDefs = {
     n: { ox: -HW, oy: -HALF, ow: CORRIDOR_W, oh: HALF + HW, ix: -HI, iy: -HALF, iw: CORRIDOR_INNER, ih: HALF + HI },
     s: { ox: -HW, oy: -HW, ow: CORRIDOR_W, oh: HALF + HW, ix: -HI, iy: -HI, iw: CORRIDOR_INNER, ih: HALF + HI },
     e: { ox: -HW, oy: -HW, ow: HALF + HW, oh: CORRIDOR_W, ix: -HI, iy: -HI, iw: HALF + HI, ih: CORRIDOR_INNER },
@@ -342,11 +356,10 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => {
       ih: CORRIDOR_INNER,
     },
   }
-
   return (
     <>
       {(["n", "s", "e", "w"] as const)
-        .filter(d => cell.dirs.has(d))
+        .filter(d => dirs.has(d))
         .map(dir => {
           const a = armDefs[dir]
           return (
@@ -359,6 +372,8 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => {
     </>
   )
 }
+
+const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs dirs={cell.dirs} state={cell.state} />
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -404,7 +419,6 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
           }
 
           // room cell
-          const isEntrance = r === grid.entrancePos[0] && c === grid.entrancePos[1]
           const state = cell.state
           const isCompleted = state === "completed"
           const clickable = onCellClick && (state === "reachable" || state === "completed")
@@ -417,8 +431,8 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
               onClick={clickable ? () => onCellClick(r, c) : undefined}
               style={{ cursor: clickable ? "pointer" : "default" }}
             >
+              <ConnectionStubs dirs={cell.dirs} state={state} />
               <NodeBackground type={cell.roomType} />
-              {isEntrance && state !== "fogged" && <EntranceMarker r={roomR} />}
               <g opacity={isCompleted ? 0.45 : 1}>
                 <NodeShape type={cell.roomType} state={state} />
               </g>

@@ -269,7 +269,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     for (let mi = 0; mi < mainNodeCells.length; mi++) {
       const [r, c] = mainNodeCells[mi]
       if (mi === 0) {
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle" })
+        roomSpecs.set(posKey(r, c), { roomType: "entrance" })
       } else if (mi === mainNodeCells.length - 1) {
         roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "mosaicPiece" } })
       } else {

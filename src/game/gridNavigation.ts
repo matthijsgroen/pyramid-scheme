@@ -176,6 +176,7 @@ export const renderAscii = (grid: FloorGrid): string => {
       }
       const upper = cell.state === "reachable"
       const letters: Record<string, string> = {
+        entrance: "e",
         puzzle: "p",
         gate: "g",
         treasure: "t",
@@ -183,7 +184,7 @@ export const renderAscii = (grid: FloorGrid): string => {
         exit: "x",
         fork: "f",
       }
-      const base = isEntrance ? "e" : (letters[cell.roomType] ?? "?")
+      const base = letters[cell.roomType] ?? "?"
       line += upper ? base.toUpperCase() : base
     }
     rows.push(line)
