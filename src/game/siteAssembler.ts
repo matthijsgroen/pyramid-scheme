@@ -110,6 +110,15 @@ const extendPath = (
   return dfs(startR, startC, count) ? result : null
 }
 
+const buildIntermediateTypes = (pathPuzzles: number, chestEvery: number): Array<"puzzle" | "chest"> => {
+  const types: Array<"puzzle" | "chest"> = []
+  for (let p = 1; p <= pathPuzzles; p++) {
+    types.push("puzzle")
+    if (chestEvery > 0 && p % chestEvery === 0) types.push("chest")
+  }
+  return types
+}
+
 export const assembleFloor = (siteId: string, config: FloorConfig, seed: number): AssemblerResult => {
   const hasGatedFloorKey = config.sideSections.some(s => s.gate?.type === "floor-key")
   const hasUngated = config.sideSections.some(s => !s.gate)
@@ -123,13 +132,19 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
   const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate)
 
+  // Build the ordered sequence of intermediate main-path node types
+  const intermediateTypes = buildIntermediateTypes(config.pathPuzzles, config.chestEvery ?? 0)
+
   // Minimum cells needed (nodes only, sections may need extra for branching)
   const minCells =
     1 + // entrance
-    config.pathPuzzles +
+    intermediateTypes.length +
     1 + // goal
     1 + // exit/stairhead
-    sideSections.reduce((sum, sec) => sum + sec.pathPuzzles + 1 + (sec.gate ? 1 : 0), 0)
+    sideSections.reduce((sum, sec) => {
+      const si = buildIntermediateTypes(sec.pathPuzzles, sec.chestEvery ?? 0)
+      return sum + si.length + 1 + (sec.gate ? 1 : 0)
+    }, 0)
 
   // Derive odd grid size: enough cells + padding for layout freedom
   let N = 3
@@ -158,15 +173,15 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
-    // Need at least entrance + pathPuzzles + goal distinct cells on the main path
-    if (mainPath.length < config.pathPuzzles + 2) continue
+    // Need at least entrance + all intermediate nodes + goal distinct cells on the main path
+    if (mainPath.length < intermediateTypes.length + 2) continue
 
     const mainPathSet = new Set(mainPath.map(([r, c]) => `${r},${c}`))
 
-    // Select which main path cells become nodes (entrance, evenly-spaced puzzles, goal)
+    // Select which main path cells become nodes (entrance, evenly-spaced intermediates, goal)
     const nodeIndices = [0]
-    for (let p = 1; p <= config.pathPuzzles; p++) {
-      nodeIndices.push(Math.round((p * (mainPath.length - 1)) / (config.pathPuzzles + 1)))
+    for (let i = 0; i < intermediateTypes.length; i++) {
+      nodeIndices.push(Math.round(((i + 1) * (mainPath.length - 1)) / (intermediateTypes.length + 1)))
     }
     nodeIndices.push(mainPath.length - 1)
     const mainNodeCells = nodeIndices.map(i => mainPath[i])
@@ -191,6 +206,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     type SectionGroup = {
       sectionIdx: number
       cells: Array<[number, number]>
+      intermediate: Array<"puzzle" | "chest">
     }
     const sectionGroups: SectionGroup[] = []
     let failed = false
@@ -207,7 +223,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     for (let si = 0; si < sideSections.length; si++) {
       const section = sideSections[si]
-      const needed = section.pathPuzzles + 1 + (section.gate ? 1 : 0)
+      const secIntermediate = buildIntermediateTypes(section.pathPuzzles, section.chestEvery ?? 0)
+      const needed = secIntermediate.length + 1 + (section.gate ? 1 : 0)
       let placed = false
 
       for (const {
@@ -226,7 +243,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
         const cells: Array<[number, number]> = [[startR, startC], ...rest]
         cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-        sectionGroups.push({ sectionIdx: si, cells })
+        sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate })
         placed = true
         break
       }
@@ -276,6 +293,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(r, c), { roomType: "entrance" })
       } else if (mi === mainNodeCells.length - 1) {
         roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "mosaicPiece" } })
+      } else if (intermediateTypes[mi - 1] === "chest") {
+        roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
       } else {
         roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
       }
@@ -289,7 +308,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     // Section nodes
     for (const group of sectionGroups) {
-      const { sectionIdx, cells } = group
+      const { sectionIdx, cells, intermediate } = group
       const section = sideSections[sectionIdx]
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
@@ -313,10 +332,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
-      // Puzzle nodes within section
-      for (let pi = 0; pi < section.pathPuzzles; pi++) {
+      // Intermediate nodes within section (puzzles + chests)
+      for (let pi = 0; pi < intermediate.length; pi++) {
         const [r, c] = cells[contentStart + pi]
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
+        if (intermediate[pi] === "chest") {
+          roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+        } else {
+          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
+        }
       }
 
       // End node

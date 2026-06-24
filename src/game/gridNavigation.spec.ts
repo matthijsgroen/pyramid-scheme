@@ -99,6 +99,64 @@ describe(completeCell, () => {
     expect(gate.type).toBe("room")
     if (gate.type === "room") expect(gate.state).toBe("visible")
   })
+
+  it("gate becomes reachable after completing the key room", () => {
+    // layout: entrance(0,0) -e- key-chest(0,1) -s- corridor(1,1) -w- gate(1,0)
+    const grid: FloorGrid = {
+      siteId: "test",
+      rows: 2,
+      cols: 2,
+      entrancePos: [0, 0],
+      exitPos: [1, 0],
+      cells: [
+        [
+          { type: "room", roomType: "entrance", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          {
+            type: "room",
+            roomType: "treasure",
+            dirs: new Set<Direction>(["w", "s"]),
+            state: "reachable",
+            reward: { type: "tombKey", keyId: "the-key" },
+          },
+        ],
+        [
+          {
+            type: "room",
+            roomType: "gate",
+            dirs: new Set<Direction>(["e"]),
+            state: "visible",
+            requiredKeyId: "the-key",
+          },
+          { type: "corridor", dirs: new Set<Direction>(["n", "w"]), state: "visible" },
+        ],
+      ],
+    }
+    const updated = completeCell(grid, 0, 1) // complete the key chest
+    const gate = updated.cells[1][0]
+    expect(gate.type).toBe("room")
+    if (gate.type === "room") expect(gate.state).toBe("reachable")
+  })
+
+  it("completing a corridor marks it completed and reveals the next room", () => {
+    const grid = makeLinearGrid()
+    // first reveal the corridor
+    const afterEntrance = completeCell(grid, 0, 0)
+    // now complete the corridor itself
+    const updated = completeCell(afterEntrance, 0, 1)
+    const corridor = updated.cells[0][1]
+    expect(corridor.type).toBe("corridor")
+    if (corridor.type === "corridor") expect(corridor.state).toBe("completed")
+  })
+
+  it("completing an already-completed cell is a no-op for other cells", () => {
+    const grid = makeLinearGrid()
+    const once = completeCell(grid, 0, 0)
+    const twice = completeCell(once, 0, 0)
+    // exit room should still be reachable either way
+    const exit = twice.cells[0][2]
+    expect(exit.type).toBe("room")
+    if (exit.type === "room") expect(exit.state).toBe("reachable")
+  })
 })
 
 describe(revealAll, () => {

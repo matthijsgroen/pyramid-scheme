@@ -118,6 +118,64 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("exitOrStaircase: staircase produces a stairhead on the main path", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "easy",
+      end: "treasure",
+      exitOrStaircase: "staircase",
+      sideSections: [],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(findRoom(result.grid, c => c.roomType === "stairhead")).not.toBeNull()
+      expect(findRoom(result.grid, c => c.roomType === "exit")).toBeNull()
+    }
+  })
+
+  it("tomb-key gated section produces gate with gateVariant tomb-key and no floor key", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "easy",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "easy", end: "treasure", gate: { type: "tomb-key" } }],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const gate = findRoom(result.grid, c => c.roomType === "gate")
+      expect(gate).not.toBeNull()
+      expect(gate!.cell.gateVariant).toBe("tomb-key")
+      // tomb-key gates don't place a key on the floor
+      expect(findRoom(result.grid, c => c.reward?.type === "tombKey")).toBeNull()
+    }
+  })
+
+  it("chestEvery: places hieroglyphs chests between puzzles on the main path", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 4,
+      chestEvery: 2,
+      difficulty: "easy",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const hieroglyphChests = result.grid.cells
+        .flat()
+        .filter(c => c.type === "room" && c.roomType === "treasure" && (c as RoomCell).reward?.type === "hieroglyphs")
+      // 4 puzzles, chestEvery 2 → 2 chests (after puzzle 2 and after puzzle 4)
+      expect(hieroglyphChests.length).toBe(2)
+      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+      expect(puzzles.length).toBe(4)
+      expect(validateSite(result.grid)).toEqual({ valid: true })
+    }
+  })
+
   it("property: 100 seeds × basic config all pass validation", () => {
     for (let seed = 0; seed < 100; seed++) {
       const result = assembleFloor(`site-${seed}`, basicConfig(), seed)

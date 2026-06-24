@@ -146,6 +146,67 @@ describe(validateSite, () => {
     )
     expect(validateSite(grid)).toEqual({ valid: true })
   })
+
+  it("noAllBlandFork: passes when a fork has a gate branch", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, room("gate", ["n"], { requiredKeyId: "tomb-key-external", gateVariant: "tomb-key" })],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
+  it("noAllBlandFork: passes when a fork has a stairhead branch", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, room("stairhead", ["n"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
+  it("keyBeforeGate: tomb-key gate is not validated (key lives off-floor)", () => {
+    // tomb-key gate with no matching key on this floor — should still pass
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "tomb-key-external", gateVariant: "tomb-key" })],
+        [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
+        [0, 3, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 3]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
+  it("mosaicReachable: fails when mosaic is unreachable even with all keys", () => {
+    // mosaic is in a disconnected cell — not reachable via any path
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("exit", ["w"])],
+        [0, 2, room("treasure", [], { reward: { type: "mosaicPiece" } })],
+      ],
+      [0, 0],
+      [0, 1]
+    )
+    const result = validateSite(grid)
+    expect(result.valid).toBe(false)
+    if (!result.valid) {
+      expect(result.reasons.some(r => r.type === "mosaicMissing")).toBe(true)
+    }
+  })
 })
 
 // ─── validateJourney ──────────────────────────────────────────────────────────

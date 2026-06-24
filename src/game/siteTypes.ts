@@ -37,12 +37,14 @@ export type GateConfig = { type: "floor-key" } | { type: "tomb-key" }
 export type Difficulty = "easy" | "medium" | "hard"
 export type SideSection = {
   pathPuzzles: number
+  chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase"
   gate?: GateConfig
 }
 export type FloorConfig = {
   pathPuzzles: number
+  chestEvery?: number
   difficulty: Difficulty
   end: "treasure"
   exitOrStaircase: "exit" | "staircase"
