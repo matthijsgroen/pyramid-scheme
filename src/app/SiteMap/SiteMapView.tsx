@@ -1,31 +1,18 @@
-import { useMemo } from "react"
-import type { NodeType, SiteLayout } from "../../game/siteTypes"
-import { computeNavState, type NodeState } from "./useSiteNavigation"
-
-type Point = { x: number; y: number }
+import type { CellState, CorridorCell, FloorGrid, RoomType } from "../../game/siteTypes"
+import { revealAll } from "../../game/gridNavigation"
 
 type Props = {
-  layout: SiteLayout
-  completedNodeIds?: string[]
-  currentNodeId?: string | null
-  onNodeClick?: (nodeId: string) => void
+  grid: FloorGrid
+  onCellClick?: (row: number, col: number) => void
+  revealAllCells?: boolean
 }
 
-const CELL = 90
-const FLOOR_H = 80
-const CORRIDOR_W = 14
-const CORRIDOR_INNER = 6
-
-const corridorPath = (p1: Point, p2: Point): string => {
-  if (p1.y === p2.y) return `M ${p1.x},${p1.y} H ${p2.x}`
-  if (p1.x === p2.x) return `M ${p1.x},${p1.y} V ${p2.y}`
-  const mid = Math.round((p1.x + p2.x) / 2)
-  return `M ${p1.x},${p1.y} H ${mid} V ${p2.y} H ${p2.x}`
-}
+const CELL = 44
+const CORRIDOR_W = 8
+const CORRIDOR_INNER = 3
 
 // ─── Entrance marker ─────────────────────────────────────────────────────────
 
-// Drawn behind the node: golden frame + downward arrow pointer above
 const EntranceMarker = ({ r }: { r: number }) => (
   <g>
     <rect
@@ -39,16 +26,13 @@ const EntranceMarker = ({ r }: { r: number }) => (
       strokeWidth={2}
       opacity={0.7}
     />
-    {/* arrow shaft */}
     <line x1={0} y1={-r - 10} x2={0} y2={-r - 24} stroke="#c08820" strokeWidth={2} opacity={0.8} />
-    {/* arrowhead pointing down toward entrance */}
     <polygon points={`0,${-r - 7} -5,${-r - 14} 5,${-r - 14}`} fill="#c08820" opacity={0.9} />
   </g>
 )
 
 // ─── Completed overlay ────────────────────────────────────────────────────────
 
-// Small checkmark badge at bottom-right of node, size matched to node radius
 const CompletedBadge = ({ r }: { r: number }) => (
   <g transform={`translate(${r - 7}, ${r - 7})`}>
     <circle r={7} fill="#0e1e14" stroke="#3a8858" strokeWidth={1.5} />
@@ -60,19 +44,15 @@ const CompletedBadge = ({ r }: { r: number }) => (
 
 // ─── Node shape geometry ──────────────────────────────────────────────────────
 
-type ShapeProps = { state: NodeState; isCurrent: boolean }
+type ShapeProps = { state: CellState }
 
-const PuzzleShape = ({ state, isCurrent }: ShapeProps) => {
-  const r = 24
+const PuzzleShape = ({ state }: ShapeProps) => {
+  const r = 13
   const fill = puzzleFill[state]
-  const stroke = isCurrent ? "#7ab0f0" : puzzleStroke[state]
-  const sw = isCurrent ? 2.5 : 1.5
+  const stroke = puzzleStroke[state]
   return (
     <>
-      {isCurrent && (
-        <rect x={-r - 5} y={-r - 5} width={(r + 5) * 2} height={(r + 5) * 2} rx={3} fill="#2050a0" opacity={0.35} />
-      )}
-      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={1.5} />
       {state !== "fogged" && (
         <>
           <circle cx={-r + 4} cy={-r + 4} r={2} fill={stroke} opacity={0.7} />
@@ -81,44 +61,38 @@ const PuzzleShape = ({ state, isCurrent }: ShapeProps) => {
           <circle cx={r - 4} cy={r - 4} r={2} fill={stroke} opacity={0.7} />
         </>
       )}
-      <text
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={18}
-        fill={puzzleIcon[state]}
-        style={{ userSelect: "none" }}
-      >
-        {state === "fogged" ? "" : "𓂀"}
-      </text>
+      {state !== "fogged" && (
+        <g fill={puzzleIcon[state]}>
+          {(
+            [
+              [-8, -8],
+              [2, -8],
+              [-8, 2],
+              [2, 2],
+            ] as const
+          ).map(([x, y]) => (
+            <rect key={`${x},${y}`} x={x} y={y} width={6} height={6} rx={1} />
+          ))}
+        </g>
+      )}
     </>
   )
 }
 
-const ForkShape = ({ state, isCurrent }: ShapeProps) => {
-  const r = 10
-  const stroke = isCurrent ? "#7ab0f0" : state === "fogged" ? "#2e2018" : "#5a4a30"
-  return (
-    <polygon
-      points={`0,${-r} ${r},0 0,${r} ${-r},0`}
-      fill="#1e160e"
-      stroke={stroke}
-      strokeWidth={isCurrent ? 2 : 1.5}
-    />
-  )
+const ForkShape = ({ state }: ShapeProps) => {
+  const r = 7
+  const stroke = state === "fogged" ? "#2e2018" : "#5a4a30"
+  return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
-const GateNodeShape = ({ state, isCurrent }: ShapeProps) => {
-  const r = 22
+const GateNodeShape = ({ state }: ShapeProps) => {
+  const r = 12
   const fill = gateFill[state]
-  const stroke = isCurrent ? "#f0c040" : gateStroke[state]
-  const sw = isCurrent ? 2.5 : 1.5
-  const barColor = state === "fogged" ? "#3a2a10" : state === "revealed-unreachable" ? "#c04020" : "#c09020"
+  const stroke = gateStroke[state]
+  const barColor = state === "fogged" ? "#3a2a10" : state === "visible" ? "#c04020" : "#c09020"
   return (
     <>
-      {isCurrent && (
-        <rect x={-r - 5} y={-r - 5} width={(r + 5) * 2} height={(r + 5) * 2} rx={2} fill="#806010" opacity={0.3} />
-      )}
-      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={1} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={1} fill={fill} stroke={stroke} strokeWidth={1.5} />
       {state !== "fogged" &&
         [-r / 3, 0, r / 3].map(bx => (
           <line
@@ -139,34 +113,28 @@ const GateNodeShape = ({ state, isCurrent }: ShapeProps) => {
   )
 }
 
-const TreasureShape = ({ state, isCurrent }: ShapeProps) => {
-  const r = 22
+const TreasureShape = ({ state }: ShapeProps) => {
+  const r = 12
   const fill = treasureFill[state]
-  const stroke = isCurrent ? "#f0d060" : treasureStroke[state]
-  const sw = isCurrent ? 2.5 : 1.5
+  const stroke = treasureStroke[state]
   return (
     <>
-      {isCurrent && <polygon points={`0,${-r - 6} ${r + 6},0 0,${r + 6} ${-r - 6},0`} fill="#806010" opacity={0.3} />}
-      <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={fill} stroke={stroke} strokeWidth={sw} />
-      <text
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={15}
-        fill={treasureIcon[state]}
-        style={{ userSelect: "none" }}
-      >
-        {state === "fogged" ? "" : "𓋴"}
-      </text>
+      <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && (
+        <polygon
+          points="0,-9 2.4,-3.2 8.6,-2.8 3.8,1.2 5.3,7.3 0,4 -5.3,7.3 -3.8,1.2 -8.6,-2.8 -2.4,-3.2"
+          fill={treasureIcon[state]}
+        />
+      )}
     </>
   )
 }
 
-const StairheadShape = ({ state, isCurrent }: ShapeProps) => {
-  const r = 22
-  const cut = 8
+const StairheadShape = ({ state }: ShapeProps) => {
+  const r = 12
+  const cut = 5
   const fill = stairFill[state]
-  const stroke = isCurrent ? "#a080f0" : stairStroke[state]
-  const sw = isCurrent ? 2.5 : 1.5
+  const stroke = stairStroke[state]
   const pts = [
     `-${r - cut},-${r}`,
     `${r - cut},-${r}`,
@@ -179,63 +147,37 @@ const StairheadShape = ({ state, isCurrent }: ShapeProps) => {
   ].join(" ")
   return (
     <>
-      {isCurrent && (
-        <polygon
-          points={pts.replace(/-(\d)/g, (_, d) => `-${+d + 5}`).replace(/(\d),/g, (_, d) => `${+d + 5},`)}
-          fill="#402080"
-          opacity={0.3}
-        />
+      <polygon points={pts} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && (
+        <path d="M -9,-7 L -3,-7 L -3,-2 L 3,-2 L 3,3 L 9,3 L 9,9 L -9,9 Z" fill={stairIcon[state]} />
       )}
-      <polygon points={pts} fill={fill} stroke={stroke} strokeWidth={sw} />
-      <text
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={15}
-        fill={stairIcon[state]}
-        style={{ userSelect: "none" }}
-      >
-        {state === "fogged" ? "" : "𓏤"}
-      </text>
     </>
   )
 }
 
-const ExitShape = ({ state, isCurrent }: ShapeProps) => {
-  const r = 22
+const ExitShape = ({ state }: ShapeProps) => {
+  const r = 12
   const fill = exitFill[state]
-  const stroke = isCurrent ? "#f0f0b0" : exitStroke[state]
-  const sw = isCurrent ? 2.5 : 1.5
+  const stroke = exitStroke[state]
   return (
     <>
-      {isCurrent && <circle r={r + 6} fill="#606010" opacity={0.3} />}
-      <circle r={r} fill={fill} stroke={stroke} strokeWidth={sw} />
+      <circle r={r} fill={fill} stroke={stroke} strokeWidth={1.5} />
       {state !== "fogged" && <circle r={r - 6} fill="none" stroke={stroke} strokeWidth={1} opacity={0.4} />}
-      <text
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={15}
-        fill={exitIcon[state]}
-        style={{ userSelect: "none" }}
-      >
-        {state === "fogged" ? "" : "𓇼"}
-      </text>
+      {state !== "fogged" && <polygon points="0,-9 6,-3 3,-3 3,8 -3,8 -3,-3 -6,-3" fill={exitIcon[state]} />}
     </>
   )
 }
 
-const nodeRadius: Record<NodeType, number> = {
-  puzzle: 24,
-  fork: 10,
-  gate: 22,
-  treasure: 22,
-  stairhead: 22,
-  exit: 22,
+const nodeRadius: Record<RoomType, number> = {
+  puzzle: 13,
+  fork: 7,
+  gate: 12,
+  treasure: 12,
+  stairhead: 12,
+  exit: 12,
 }
 
-// Solid background blocker drawn at full opacity before the node shape.
-// Occludes any corridor passing through the node position, so corridors
-// don't bleed through when the node group is dimmed (e.g. completed opacity).
-const NodeBackground = ({ type }: { type: NodeType }) => {
+const NodeBackground = ({ type }: { type: RoomType }) => {
   const bg = "#110d08"
   const r = nodeRadius[type]
   switch (type) {
@@ -247,7 +189,7 @@ const NodeBackground = ({ type }: { type: NodeType }) => {
     case "treasure":
       return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={bg} />
     case "stairhead": {
-      const cut = 8
+      const cut = 5
       const pts = [
         `-${r - cut},-${r}`,
         `${r - cut},-${r}`,
@@ -265,8 +207,8 @@ const NodeBackground = ({ type }: { type: NodeType }) => {
   }
 }
 
-const NodeShape = ({ type, state, isCurrent }: ShapeProps & { type: NodeType }) => {
-  const p = { state, isCurrent }
+const NodeShape = ({ type, state }: ShapeProps & { type: RoomType }) => {
+  const p = { state }
   switch (type) {
     case "puzzle":
       return <PuzzleShape {...p} />
@@ -283,130 +225,149 @@ const NodeShape = ({ type, state, isCurrent }: ShapeProps & { type: NodeType }) 
   }
 }
 
-// ─── Color palettes per node type ─────────────────────────────────────────────
+// ─── Color palettes per room type ─────────────────────────────────────────────
 
-const puzzleFill: Record<NodeState, string> = {
+const puzzleFill: Record<CellState, string> = {
   fogged: "#1a1208",
-  "revealed-unreachable": "#2a1e08",
+  visible: "#2a1e08",
   reachable: "#1a2a10",
   completed: "#1a2a10",
 }
-const puzzleStroke: Record<NodeState, string> = {
+const puzzleStroke: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#7a5010",
+  visible: "#7a5010",
   reachable: "#507030",
   completed: "#507030",
 }
-const puzzleIcon: Record<NodeState, string> = {
+const puzzleIcon: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#d09030",
+  visible: "#d09030",
   reachable: "#90c060",
   completed: "#90c060",
 }
 
-const gateFill: Record<NodeState, string> = {
+const gateFill: Record<CellState, string> = {
   fogged: "#1a1208",
-  "revealed-unreachable": "#281408",
+  visible: "#281408",
   reachable: "#1e1a08",
   completed: "#1e1a08",
 }
-const gateStroke: Record<NodeState, string> = {
+const gateStroke: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#883010",
+  visible: "#883010",
   reachable: "#887020",
   completed: "#887020",
 }
 
-const treasureFill: Record<NodeState, string> = {
+const treasureFill: Record<CellState, string> = {
   fogged: "#1a1208",
-  "revealed-unreachable": "#281808",
+  visible: "#281808",
   reachable: "#221808",
   completed: "#221808",
 }
-const treasureStroke: Record<NodeState, string> = {
+const treasureStroke: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#986020",
+  visible: "#986020",
   reachable: "#b08030",
   completed: "#b08030",
 }
-const treasureIcon: Record<NodeState, string> = {
+const treasureIcon: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#c08030",
+  visible: "#c08030",
   reachable: "#d0a040",
   completed: "#d0a040",
 }
 
-const stairFill: Record<NodeState, string> = {
+const stairFill: Record<CellState, string> = {
   fogged: "#1a1208",
-  "revealed-unreachable": "#181020",
+  visible: "#181020",
   reachable: "#141028",
   completed: "#141028",
 }
-const stairStroke: Record<NodeState, string> = {
+const stairStroke: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#604880",
+  visible: "#604880",
   reachable: "#7060b0",
   completed: "#7060b0",
 }
-const stairIcon: Record<NodeState, string> = {
+const stairIcon: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#9070c0",
+  visible: "#9070c0",
   reachable: "#a090d0",
   completed: "#a090d0",
 }
 
-const exitFill: Record<NodeState, string> = {
+const exitFill: Record<CellState, string> = {
   fogged: "#1a1208",
-  "revealed-unreachable": "#201c08",
+  visible: "#201c08",
   reachable: "#1c2008",
   completed: "#1c2008",
 }
-const exitStroke: Record<NodeState, string> = {
+const exitStroke: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#909020",
+  visible: "#909020",
   reachable: "#a0b020",
   completed: "#a0b020",
 }
-const exitIcon: Record<NodeState, string> = {
+const exitIcon: Record<CellState, string> = {
   fogged: "#2e2010",
-  "revealed-unreachable": "#c0c030",
+  visible: "#c0c030",
   reachable: "#d0d850",
   completed: "#d0d850",
 }
 
-// ─── Edge visibility + gate state ─────────────────────────────────────────────
+// ─── Corridor cell shape ──────────────────────────────────────────────────────
 
-const edgeRevealState = (
-  navState: ReturnType<typeof computeNavState>,
-  fromId: string,
-  toId: string
-): "hidden" | "visible" | "locked" | "unlocked" => {
-  const s1 = navState.nodeStates[fromId] ?? "fogged"
-  const s2 = navState.nodeStates[toId] ?? "fogged"
-  if (s1 === "fogged" && s2 === "fogged") return "hidden"
-  if (s2 === "revealed-unreachable") return "locked"
-  if (s2 === "reachable" || s2 === "completed") return "unlocked"
-  return "visible"
+const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => {
+  if (cell.state === "fogged") return null
+  const HALF = CELL / 2
+  const HW = CORRIDOR_W / 2
+  const HI = CORRIDOR_INNER / 2
+
+  const armDefs: Record<
+    string,
+    { ox: number; oy: number; ow: number; oh: number; ix: number; iy: number; iw: number; ih: number }
+  > = {
+    n: { ox: -HW, oy: -HALF, ow: CORRIDOR_W, oh: HALF + HW, ix: -HI, iy: -HALF, iw: CORRIDOR_INNER, ih: HALF + HI },
+    s: { ox: -HW, oy: -HW, ow: CORRIDOR_W, oh: HALF + HW, ix: -HI, iy: -HI, iw: CORRIDOR_INNER, ih: HALF + HI },
+    e: { ox: -HW, oy: -HW, ow: HALF + HW, oh: CORRIDOR_W, ix: -HI, iy: -HI, iw: HALF + HI, ih: CORRIDOR_INNER },
+    w: {
+      ox: -HALF - HW,
+      oy: -HW,
+      ow: HALF + HW,
+      oh: CORRIDOR_W,
+      ix: -HALF - HI,
+      iy: -HI,
+      iw: HALF + HI,
+      ih: CORRIDOR_INNER,
+    },
+  }
+
+  return (
+    <>
+      {(["n", "s", "e", "w"] as const)
+        .filter(d => cell.dirs.has(d))
+        .map(dir => {
+          const a = armDefs[dir]
+          return (
+            <g key={dir}>
+              <rect x={a.ox} y={a.oy} width={a.ow} height={a.oh} fill="#2a1e12" />
+              <rect x={a.ix} y={a.iy} width={a.iw} height={a.ih} fill="#3a2a18" />
+            </g>
+          )
+        })}
+    </>
+  )
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const SiteMapView = ({ layout, completedNodeIds = [], currentNodeId = null, onNodeClick }: Props) => {
-  const navState = useMemo(
-    () => computeNavState(layout, completedNodeIds, currentNodeId),
-    [layout, completedNodeIds, currentNodeId]
-  )
+export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false }: Props) => {
+  const grid = revealAllCells ? revealAll(gridProp) : gridProp
 
-  const maxGridX = Math.max(...layout.nodes.map(n => n.gridX))
-  const maxFloor = Math.max(...layout.nodes.map(n => n.floor))
-  const PAD = 54
-  const svgWidth = maxGridX * CELL + PAD * 2
-  const svgHeight = maxFloor * FLOOR_H + PAD * 2
-
-  const pos = (gridX: number, floor: number): Point => ({
-    x: PAD + gridX * CELL,
-    y: PAD + floor * FLOOR_H,
-  })
+  const PAD = 30
+  const svgWidth = grid.cols * CELL + PAD * 2
+  const svgHeight = grid.rows * CELL + PAD * 2
 
   return (
     <svg
@@ -426,109 +387,46 @@ export const SiteMapView = ({ layout, completedNodeIds = [], currentNodeId = nul
       </defs>
       <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
 
-      {/* corridors — all the same neutral stone floor, gate icons on top */}
-      {layout.edges.map(edge => {
-        const fromNode = layout.nodes.find(n => n.id === edge.fromNodeId)
-        const toNode = layout.nodes.find(n => n.id === edge.toNodeId)
-        if (!fromNode || !toNode) return null
+      {Array.from({ length: grid.rows }, (_, r) =>
+        Array.from({ length: grid.cols }, (_, c) => {
+          const cell = grid.cells[r][c]
+          if (cell.type === "empty") return null
 
-        const reveal = edgeRevealState(navState, edge.fromNodeId, edge.toNodeId)
-        if (reveal === "hidden") return null
+          const cx = PAD + c * CELL + CELL / 2
+          const cy = PAD + r * CELL + CELL / 2
 
-        const p1 = pos(fromNode.gridX, fromNode.floor)
-        const p2 = pos(toNode.gridX, toNode.floor)
-        const d = corridorPath(p1, p2)
-        const isLocked = reveal === "locked"
-        const isWard = edge.gateType === "ward"
+          if (cell.type === "corridor") {
+            return (
+              <g key={`${r},${c}`} transform={`translate(${cx}, ${cy})`}>
+                <CorridorCellShape cell={cell} />
+              </g>
+            )
+          }
 
-        return (
-          <g key={edge.id}>
-            {/* wall (outer) */}
-            <path d={d} fill="none" stroke="#2a1e12" strokeWidth={CORRIDOR_W} strokeLinecap="square" />
-            {/* floor — always neutral stone, no color coding */}
-            <path d={d} fill="none" stroke="#3a2a18" strokeWidth={CORRIDOR_INNER} strokeLinecap="square" />
-            {/* gate icon at midpoint of the corridor */}
-            {edge.gateType &&
-              (() => {
-                const mx = Math.round((p1.x + p2.x) / 2)
-                const my = Math.round((p1.y + p2.y) / 2)
-                const isH = p1.y === p2.y
-                const hw = CORRIDOR_W / 2 + 2
-                // locked: red/orange portcullis bars   unlocked: faint open frame
-                const gateColor = isLocked ? (isWard ? "#e05010" : "#e09010") : isWard ? "#40a830" : "#90b020"
-                // bars run perpendicular to the corridor
-                const barOffsets = [-4, 0, 4]
-                return (
-                  <g>
-                    {/* dark backing so bars are legible */}
-                    <rect
-                      x={isH ? mx - hw : mx - hw}
-                      y={isH ? my - hw : my - hw}
-                      width={hw * 2}
-                      height={hw * 2}
-                      fill="#110d08"
-                    />
-                    {barOffsets.map(o => (
-                      <line
-                        key={o}
-                        x1={isH ? mx + o : mx - hw}
-                        y1={isH ? my - hw : my + o}
-                        x2={isH ? mx + o : mx + hw}
-                        y2={isH ? my + hw : my + o}
-                        stroke={gateColor}
-                        strokeWidth={isLocked ? 2 : 1}
-                        opacity={isLocked ? 1 : 0.5}
-                      />
-                    ))}
-                    {/* horizontal crossbar on locked gates */}
-                    {isLocked && (
-                      <line
-                        x1={isH ? mx - hw : mx - hw + 2}
-                        y1={isH ? my - hw + 2 : my}
-                        x2={isH ? mx + hw : mx + hw - 2}
-                        y2={isH ? my + hw - 2 : my}
-                        stroke={gateColor}
-                        strokeWidth={1}
-                        opacity={0.6}
-                      />
-                    )}
-                  </g>
-                )
-              })()}
-          </g>
-        )
-      })}
+          // room cell
+          const isEntrance = r === grid.entrancePos[0] && c === grid.entrancePos[1]
+          const state = cell.state
+          const isCompleted = state === "completed"
+          const clickable = onCellClick && (state === "reachable" || state === "completed")
+          const roomR = nodeRadius[cell.roomType]
 
-      {/* nodes */}
-      {layout.nodes.map(node => {
-        const state = navState.nodeStates[node.id] ?? "fogged"
-        const p = pos(node.gridX, node.floor)
-        const isCurrent = node.id === currentNodeId
-        const isEntrance = node.id === layout.entranceNodeId
-        const isCompleted = state === "completed"
-        const clickable = onNodeClick && (state === "reachable" || state === "completed")
-        const r = nodeRadius[node.type]
-
-        return (
-          <g
-            key={node.id}
-            transform={`translate(${p.x}, ${p.y})`}
-            onClick={clickable ? () => onNodeClick(node.id) : undefined}
-            style={{ cursor: clickable ? "pointer" : "default" }}
-          >
-            {/* solid background covers any corridor passing through this node */}
-            <NodeBackground type={node.type} />
-            {/* entrance marker drawn behind the node */}
-            {isEntrance && state !== "fogged" && <EntranceMarker r={r} />}
-            {/* dim completed nodes so they read as "spent" */}
-            <g opacity={isCompleted ? 0.45 : 1}>
-              <NodeShape type={node.type} state={state} isCurrent={isCurrent} />
+          return (
+            <g
+              key={`${r},${c}`}
+              transform={`translate(${cx}, ${cy})`}
+              onClick={clickable ? () => onCellClick(r, c) : undefined}
+              style={{ cursor: clickable ? "pointer" : "default" }}
+            >
+              <NodeBackground type={cell.roomType} />
+              {isEntrance && state !== "fogged" && <EntranceMarker r={roomR} />}
+              <g opacity={isCompleted ? 0.45 : 1}>
+                <NodeShape type={cell.roomType} state={state} />
+              </g>
+              {isCompleted && cell.roomType !== "fork" && <CompletedBadge r={roomR} />}
             </g>
-            {/* checkmark badge on completed non-fork nodes */}
-            {isCompleted && node.type !== "fork" && <CompletedBadge r={r} />}
-          </g>
-        )
-      })}
+          )
+        })
+      )}
     </svg>
   )
 }

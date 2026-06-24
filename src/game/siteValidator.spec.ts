@@ -1,82 +1,96 @@
 import { describe, expect, it } from "vitest"
 import { validateJourney, validateSite } from "./siteValidator"
-import type { SiteEdge, SiteLayout, SiteNode } from "./siteTypes"
+import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
-// ─── Layout builders ────────────────────────────────────────────────────────
+// ─── Grid builders ────────────────────────────────────────────────────────────
 
-const node = (partial: Partial<SiteNode> & { id: string; type: SiteNode["type"] }): SiteNode => ({
-  floor: 0,
-  gridX: 0,
-  ...partial,
+const room = (
+  roomType: RoomCell["roomType"],
+  dirs: Direction[],
+  opts?: Partial<Omit<RoomCell, "type" | "roomType" | "dirs" | "state">>
+): RoomCell => ({
+  type: "room",
+  roomType,
+  dirs: new Set(dirs),
+  state: "reachable",
+  ...opts,
 })
 
-const edge = (id: string, fromNodeId: string, toNodeId: string, extra?: Partial<SiteEdge>): SiteEdge => ({
-  id,
-  fromNodeId,
-  toNodeId,
-  ...extra,
+const corridor = (dirs: Direction[], state: CellState = "reachable"): CorridorCell => ({
+  type: "corridor",
+  dirs: new Set(dirs),
+  state,
 })
 
-const linearLayout = (siteId = "site-1"): SiteLayout => ({
-  siteId,
-  nodes: [
-    node({ id: "entrance", type: "puzzle", gridX: 0 }),
-    node({ id: "puzzle-1", type: "puzzle", gridX: 1 }),
-    node({ id: "treasure-mosaic", type: "treasure", gridX: 2, reward: { type: "mosaicPiece" } }),
-    node({ id: "exit", type: "exit", gridX: 3 }),
-  ],
-  edges: [
-    edge("e0", "entrance", "puzzle-1"),
-    edge("e1", "puzzle-1", "treasure-mosaic"),
-    edge("e2", "treasure-mosaic", "exit"),
-  ],
-  entranceNodeId: "entrance",
-  exitNodeId: "exit",
-  criticalPath: ["entrance", "puzzle-1", "treasure-mosaic", "exit"],
-})
+const buildGrid = (
+  spec: [number, number, GridCell][],
+  entrancePos: [number, number],
+  exitPos: [number, number],
+  siteId = "test"
+): FloorGrid => {
+  const rows = Math.max(...spec.map(([r]) => r), entrancePos[0], exitPos[0]) + 1
+  const cols = Math.max(...spec.map(([, c]) => c), entrancePos[1], exitPos[1]) + 1
 
-// ─── validateSite ────────────────────────────────────────────────────────────
+  const cells: GridCell[][] = Array.from({ length: rows }, () =>
+    Array.from({ length: cols }, (): GridCell => ({ type: "empty" }))
+  )
+
+  for (const [r, c, cell] of spec) {
+    cells[r][c] = cell
+  }
+
+  return { cells, rows, cols, entrancePos, exitPos, siteId }
+}
+
+// ─── validateSite ─────────────────────────────────────────────────────────────
 
 describe(validateSite, () => {
-  it("passes a valid linear layout", () => {
-    expect(validateSite(linearLayout())).toEqual({ valid: true })
+  it("passes a valid linear grid", () => {
+    // entrance(0,0) -e- corridor(0,1) -e- treasure(0,2) mosaic -e- exit(0,3)
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, corridor(["w", "e"])],
+        [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
+        [0, 3, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 3]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
   })
 
-  it("completable: fails when critical path is blocked by a seal with no key", () => {
-    const layout: SiteLayout = {
-      siteId: "site-1",
-      nodes: [node({ id: "entrance", type: "puzzle", gridX: 0 }), node({ id: "exit", type: "exit", gridX: 1 })],
-      edges: [edge("e0", "entrance", "exit", { gateType: "seal", requiredKeyId: "key-chest" })],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "exit"],
-    }
-    const result = validateSite(layout)
+  it("keyBeforeGate: fails when gate's key doesn't exist in the grid", () => {
+    // entrance -e- gate(requiredKeyId="nonexistent") -e- exit
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "nonexistent-key" })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
     expect(result.valid).toBe(false)
     if (!result.valid) {
-      expect(result.reasons.some(r => r.type === "criticalPathBlocked")).toBe(true)
+      expect(result.reasons.some(r => r.type === "keyAfterGate")).toBe(true)
     }
   })
 
   it("keyBeforeGate: fails when key node is behind the gate it unlocks", () => {
-    // entrance → [seal gate needing key-chest] → key-chest → exit
-    // key is unreachable without traversing the gate it opens
-    const layout: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "puzzle", gridX: 0 }),
-        node({ id: "key-chest", type: "treasure", gridX: 1, reward: { type: "hieroglyphs" } }),
-        node({ id: "exit", type: "exit", gridX: 2 }),
+    // entrance -e- gate(requiredKeyId="key-chest") -e- key-chest(tombKey keyId="key-chest") -e- exit
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "key-chest" })],
+        [0, 2, room("treasure", ["w", "e"], { reward: { type: "tombKey", keyId: "key-chest" } })],
+        [0, 3, room("exit", ["w"])],
       ],
-      edges: [
-        edge("e0", "entrance", "key-chest", { gateType: "seal", requiredKeyId: "key-chest" }),
-        edge("e1", "key-chest", "exit"),
-      ],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "key-chest", "exit"],
-    }
-    const result = validateSite(layout)
+      [0, 0],
+      [0, 3]
+    )
+    const result = validateSite(grid)
     expect(result.valid).toBe(false)
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "keyAfterGate")).toBe(true)
@@ -84,49 +98,35 @@ describe(validateSite, () => {
   })
 
   it("keyBeforeGate: passes when key is reachable on a branch before the gate", () => {
-    // entrance → key-branch (no gate)
-    //          ↘ [seal] → gated-room → exit
-    const layout: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "fork", gridX: 0 }),
-        node({ id: "key-branch", type: "treasure", gridX: 0, floor: 1, reward: { type: "hieroglyphs" } }),
-        node({ id: "gated-room", type: "puzzle", gridX: 1 }),
-        node({ id: "exit", type: "exit", gridX: 2 }),
+    // entrance(0,0) has dirs ["e","s"]
+    // key-branch(1,0): tombKey, dirs ["n"]
+    // gate(0,1): requiredKeyId="key-branch", dirs ["w","e"]
+    // exit(0,2): dirs ["w"]
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e", "s"])],
+        [1, 0, room("treasure", ["n"], { reward: { type: "tombKey", keyId: "key-branch" } })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "key-branch" })],
+        [0, 2, room("exit", ["w"])],
       ],
-      edges: [
-        edge("e0", "entrance", "key-branch"),
-        edge("e1", "entrance", "gated-room", { gateType: "seal", requiredKeyId: "key-branch" }),
-        edge("e2", "gated-room", "exit"),
-      ],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "gated-room", "exit"],
-    }
-    expect(validateSite(layout)).toEqual({ valid: true })
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
   })
 
   it("noAllBlandFork: fails when a fork leads only to puzzle nodes", () => {
-    const layout: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "puzzle", gridX: 0 }),
-        node({ id: "fork", type: "fork", gridX: 1 }),
-        node({ id: "branch-a", type: "puzzle", gridX: 2 }),
-        node({ id: "branch-b", type: "puzzle", gridX: 2, floor: 1 }),
-        node({ id: "exit", type: "exit", gridX: 3 }),
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, room("puzzle", ["n"])],
       ],
-      edges: [
-        edge("e0", "entrance", "fork"),
-        edge("e1", "fork", "branch-a"),
-        edge("e2", "fork", "branch-b"),
-        edge("e3", "branch-a", "exit"),
-      ],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "fork", "branch-a", "exit"],
-    }
-    const result = validateSite(layout)
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
     expect(result.valid).toBe(false)
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "allBlandFork")).toBe(true)
@@ -134,80 +134,57 @@ describe(validateSite, () => {
   })
 
   it("noAllBlandFork: passes when a fork has at least one treasure branch", () => {
-    const layout: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "puzzle", gridX: 0 }),
-        node({ id: "fork", type: "fork", gridX: 1 }),
-        node({ id: "branch-puzzle", type: "puzzle", gridX: 2 }),
-        node({ id: "branch-treasure", type: "treasure", gridX: 2, floor: 1, reward: { type: "hieroglyphs" } }),
-        node({ id: "exit", type: "exit", gridX: 3 }),
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, room("treasure", ["n"], { reward: { type: "hieroglyphs" } })],
       ],
-      edges: [
-        edge("e0", "entrance", "fork"),
-        edge("e1", "fork", "branch-puzzle"),
-        edge("e2", "fork", "branch-treasure"),
-        edge("e3", "branch-puzzle", "exit"),
-      ],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "fork", "branch-puzzle", "exit"],
-    }
-    expect(validateSite(layout)).toEqual({ valid: true })
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
   })
 })
 
-// ─── validateJourney ─────────────────────────────────────────────────────────
+// ─── validateJourney ──────────────────────────────────────────────────────────
 
 describe(validateJourney, () => {
-  const layoutWithMapPiece = (siteId: string): SiteLayout => ({
-    siteId,
-    nodes: [
-      node({ id: `${siteId}-entrance`, type: "puzzle", gridX: 0 }),
-      node({
-        id: `${siteId}-map`,
-        type: "treasure",
-        gridX: 1,
-        reward: { type: "mapPiece" },
-      }),
-      node({ id: `${siteId}-mosaic`, type: "treasure", gridX: 2, reward: { type: "mosaicPiece" } }),
-      node({ id: `${siteId}-exit`, type: "exit", gridX: 3 }),
-    ],
-    edges: [
-      edge(`${siteId}-e0`, `${siteId}-entrance`, `${siteId}-map`),
-      edge(`${siteId}-e1`, `${siteId}-map`, `${siteId}-mosaic`),
-      edge(`${siteId}-e2`, `${siteId}-mosaic`, `${siteId}-exit`),
-    ],
-    entranceNodeId: `${siteId}-entrance`,
-    exitNodeId: `${siteId}-exit`,
-    criticalPath: [`${siteId}-entrance`, `${siteId}-map`, `${siteId}-mosaic`, `${siteId}-exit`],
-  })
+  const gridWithMapPiece = (siteId: string): FloorGrid =>
+    buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
+        [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
+        [0, 3, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 3],
+      siteId
+    )
 
-  const layoutWithoutMapPiece = (siteId: string): SiteLayout => {
-    const l = linearLayout(siteId)
-    return {
-      ...l,
-      nodes: l.nodes.map(n => ({
-        ...n,
-        id: n.id.startsWith("entrance")
-          ? `${siteId}-entrance`
-          : n.id.startsWith("exit")
-            ? `${siteId}-exit`
-            : `${siteId}-${n.id}`,
-      })),
-      entranceNodeId: `${siteId}-entrance`,
-      exitNodeId: `${siteId}-exit`,
-    }
-  }
+  const gridWithoutMapPiece = (siteId: string): FloorGrid =>
+    buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("puzzle", ["w", "e"])],
+        [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
+        [0, 3, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 3],
+      siteId
+    )
 
   it("passes when exactly one site has a map piece and all have mosaic", () => {
-    const layouts = [layoutWithMapPiece("site-1"), layoutWithoutMapPiece("site-2")]
-    expect(validateJourney(layouts)).toEqual({ valid: true })
+    const grids = [gridWithMapPiece("site-1"), gridWithoutMapPiece("site-2")]
+    expect(validateJourney(grids)).toEqual({ valid: true })
   })
 
   it("mapPieceMissing: fails when no site has a map piece", () => {
-    const layouts = [layoutWithoutMapPiece("site-1"), layoutWithoutMapPiece("site-2")]
-    const result = validateJourney(layouts)
+    const grids = [gridWithoutMapPiece("site-1"), gridWithoutMapPiece("site-2")]
+    const result = validateJourney(grids)
     expect(result.valid).toBe(false)
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "mapPieceMissing")).toBe(true)
@@ -215,52 +192,45 @@ describe(validateJourney, () => {
   })
 
   it("mapPieceDuplicate: fails when two sites have a map piece", () => {
-    const layouts = [layoutWithMapPiece("site-1"), layoutWithMapPiece("site-2")]
-    const result = validateJourney(layouts)
+    const grids = [gridWithMapPiece("site-1"), gridWithMapPiece("site-2")]
+    const result = validateJourney(grids)
     expect(result.valid).toBe(false)
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "mapPieceDuplicate")).toBe(true)
     }
   })
 
-  it("mapPieceNotSealReachable: fails when map piece is behind a ward", () => {
-    const layout: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "puzzle", gridX: 0 }),
-        node({ id: "map", type: "treasure", gridX: 1, reward: { type: "mapPiece" } }),
-        node({ id: "mosaic", type: "treasure", gridX: 0, floor: 1, reward: { type: "mosaicPiece" } }),
-        node({ id: "exit", type: "exit", gridX: 2 }),
+  it("mapPieceNotSealReachable: fails when map piece is behind a gate", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e", "s"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "tomb-key" })],
+        [0, 2, room("treasure", ["w"], { reward: { type: "mapPiece" } })],
+        [1, 0, room("treasure", ["n", "e"], { reward: { type: "mosaicPiece" } })],
+        [1, 1, room("exit", ["w"])],
       ],
-      edges: [
-        edge("e0", "entrance", "map", { gateType: "ward", requiredKeyId: "tomb-key" }),
-        edge("e1", "entrance", "mosaic"),
-        edge("e2", "mosaic", "exit"),
-      ],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "mosaic", "exit"],
-    }
-    const result = validateJourney([layout])
+      [0, 0],
+      [1, 1],
+      "site-1"
+    )
+    const result = validateJourney([grid])
     expect(result.valid).toBe(false)
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "mapPieceNotSealReachable")).toBe(true)
     }
   })
 
-  it("mosaicMissing: fails when a site has no mosaic node", () => {
-    const noMosaic: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "puzzle", gridX: 0 }),
-        node({ id: "map", type: "treasure", gridX: 1, reward: { type: "mapPiece" } }),
-        node({ id: "exit", type: "exit", gridX: 2 }),
+  it("mosaicMissing: fails when a site has no mosaic room", () => {
+    const noMosaic = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
+        [0, 2, room("exit", ["w"])],
       ],
-      edges: [edge("e0", "entrance", "map"), edge("e1", "map", "exit")],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "map", "exit"],
-    }
+      [0, 0],
+      [0, 2],
+      "site-1"
+    )
     const result = validateJourney([noMosaic])
     expect(result.valid).toBe(false)
     if (!result.valid) {
@@ -268,26 +238,19 @@ describe(validateJourney, () => {
     }
   })
 
-  it("mosaicDuplicate: fails when a site has two mosaic nodes", () => {
-    const twoMosaics: SiteLayout = {
-      siteId: "site-1",
-      nodes: [
-        node({ id: "entrance", type: "puzzle", gridX: 0 }),
-        node({ id: "map", type: "treasure", gridX: 1, reward: { type: "mapPiece" } }),
-        node({ id: "mosaic-1", type: "treasure", gridX: 2, reward: { type: "mosaicPiece" } }),
-        node({ id: "mosaic-2", type: "treasure", gridX: 3, reward: { type: "mosaicPiece" } }),
-        node({ id: "exit", type: "exit", gridX: 4 }),
+  it("mosaicDuplicate: fails when a site has two mosaic rooms", () => {
+    const twoMosaics = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
+        [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
+        [0, 3, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
+        [0, 4, room("exit", ["w"])],
       ],
-      edges: [
-        edge("e0", "entrance", "map"),
-        edge("e1", "map", "mosaic-1"),
-        edge("e2", "mosaic-1", "mosaic-2"),
-        edge("e3", "mosaic-2", "exit"),
-      ],
-      entranceNodeId: "entrance",
-      exitNodeId: "exit",
-      criticalPath: ["entrance", "map", "mosaic-1", "mosaic-2", "exit"],
-    }
+      [0, 0],
+      [0, 4],
+      "site-1"
+    )
     const result = validateJourney([twoMosaics])
     expect(result.valid).toBe(false)
     if (!result.valid) {

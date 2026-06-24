@@ -1,107 +1,138 @@
-import type { SiteLayout, SiteNode, ValidationReason, ValidationResult } from "./siteTypes"
+import type { FloorGrid, ValidationReason, ValidationResult } from "./siteTypes"
 
-// BFS from startId, traversing only edges that pass the gate check.
-// excludeEdgeId lets the caller hypothetically remove one edge (for keyBeforeGate).
+type Pos = readonly [number, number]
+
+const posKey = (r: number, c: number) => `${r},${c}`
+
+const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+// BFS through grid. Gates require their key to be in ownedKeys.
+// blockedPos: skip this cell (for keyBeforeGate check).
 const reachableFrom = (
-  layout: SiteLayout,
-  startId: string,
-  availableKeys: { tombKeys: Record<string, number>; sealKeys: string[] } = { tombKeys: {}, sealKeys: [] },
-  excludeEdgeId?: string
+  grid: FloorGrid,
+  startPos: Pos,
+  ownedKeys: ReadonlySet<string> = new Set(),
+  blockedPos?: Pos
 ): Set<string> => {
-  const visited = new Set<string>([startId])
-  const queue = [startId]
+  const [sr, sc] = startPos
+  const startKey = posKey(sr, sc)
+  const visited = new Set<string>([startKey])
+  const queue: Pos[] = [[sr, sc]]
 
   while (queue.length > 0) {
-    const current = queue.shift()!
-    for (const edge of layout.edges) {
-      if (edge.fromNodeId !== current) continue
-      if (edge.id === excludeEdgeId) continue
-      if (visited.has(edge.toNodeId)) continue
+    const [r, c] = queue.shift()!
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
 
-      if (edge.gateType === "seal" && edge.requiredKeyId && !availableKeys.sealKeys.includes(edge.requiredKeyId)) {
-        continue
-      }
-      if (edge.gateType === "ward" && edge.requiredKeyId && (availableKeys.tombKeys[edge.requiredKeyId] ?? 0) <= 0) {
-        continue
-      }
+    const dirs = cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set()
 
-      visited.add(edge.toNodeId)
-      queue.push(edge.toNodeId)
+    for (const d of dirs) {
+      const [dr, dc] = MOVES[d as string]
+      const nr = r + dr,
+        nc = c + dc
+      const nkey = posKey(nr, nc)
+      if (visited.has(nkey)) continue
+      if (blockedPos && nr === blockedPos[0] && nc === blockedPos[1]) continue
+
+      const ncell = grid.cells[nr]?.[nc]
+      if (!ncell || ncell.type === "empty") continue
+
+      // Gate: only passable if we own the key
+      if (
+        ncell.type === "room" &&
+        ncell.roomType === "gate" &&
+        ncell.requiredKeyId &&
+        !ownedKeys.has(ncell.requiredKeyId)
+      )
+        continue
+
+      visited.add(nkey)
+      queue.push([nr, nc])
     }
   }
 
   return visited
 }
 
-// Find the treasure node that grants a given seal key (by searching onComplete / reward conventions).
-// A seal key treasure node is a treasure node whose id matches the requiredKeyId convention:
-// requiredKeyId === node.id (the node IS the key).
-const findKeyNode = (layout: SiteLayout, keyId: string): SiteNode | undefined =>
-  layout.nodes.find(n => n.type === "treasure" && n.id === keyId)
-
-// Per-site invariant checks.
-export const validateSite = (layout: SiteLayout): ValidationResult => {
+export const validateSite = (grid: FloorGrid): ValidationResult => {
   const reasons: ValidationReason[] = []
 
-  // completable: for each seal gate on the critical path, the key must be reachable without
-  // traversing that gate (player can collect keys on free branches first).
-  for (let i = 0; i < layout.criticalPath.length - 1; i++) {
-    const fromId = layout.criticalPath[i]
-    const toId = layout.criticalPath[i + 1]
-    const gateEdge = layout.edges.find(
-      e => e.fromNodeId === fromId && e.toNodeId === toId && e.gateType === "seal" && e.requiredKeyId
-    )
-    if (!gateEdge?.requiredKeyId) continue
-    const reachableWithoutGate = reachableFrom(
-      layout,
-      layout.entranceNodeId,
-      { tombKeys: {}, sealKeys: [] },
-      gateEdge.id
-    )
-    if (!reachableWithoutGate.has(gateEdge.requiredKeyId)) {
-      reasons.push({ type: "criticalPathBlocked", nodeId: toId, missingKeyId: gateEdge.requiredKeyId })
+  // Collect gate rooms and their positions
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room") continue
+
+      if (cell.roomType === "gate" && cell.requiredKeyId) {
+        const gatePos: Pos = [r, c]
+        const keyId = cell.requiredKeyId
+
+        // Find the key room (treasure with tombKey reward where keyId matches)
+        let keyPos: Pos | null = null
+        for (let kr = 0; kr < grid.rows; kr++) {
+          for (let kc = 0; kc < grid.cols; kc++) {
+            const kcCell = grid.cells[kr][kc]
+            if (
+              kcCell.type === "room" &&
+              kcCell.roomType === "treasure" &&
+              kcCell.reward?.type === "tombKey" &&
+              kcCell.reward.keyId === keyId
+            ) {
+              keyPos = [kr, kc]
+            }
+          }
+        }
+
+        if (!keyPos) {
+          reasons.push({ type: "keyAfterGate", gatePos, keyPos: gatePos })
+          continue
+        }
+
+        // Check key is reachable without traversing the gate
+        const reachableWithoutGate = reachableFrom(grid, grid.entrancePos, new Set(), gatePos)
+        if (!reachableWithoutGate.has(posKey(keyPos[0], keyPos[1]))) {
+          reasons.push({ type: "keyAfterGate", gatePos, keyPos })
+        }
+      }
+
+      if (cell.roomType === "fork") {
+        const forkPos: Pos = [r, c]
+        const interestingTypes = new Set(["treasure", "gate", "stairhead"])
+        let hasInteresting = false
+
+        for (const d of cell.dirs) {
+          const [dr, dc] = MOVES[d as string]
+          const nr = r + dr,
+            nc = c + dc
+          const neighbor = grid.cells[nr]?.[nc]
+          if (neighbor?.type === "room" && interestingTypes.has(neighbor.roomType)) {
+            hasInteresting = true
+            break
+          }
+        }
+
+        if (!hasInteresting) {
+          reasons.push({ type: "allBlandFork", forkPos })
+        }
+      }
     }
   }
 
-  // keyBeforeGate: for every seal gate edge, the key node must be reachable WITHOUT traversing that edge.
-  for (const edge of layout.edges) {
-    if (edge.gateType !== "seal" || !edge.requiredKeyId) continue
-    const keyNode = findKeyNode(layout, edge.requiredKeyId)
-    if (!keyNode) continue
-
-    const reachableWithoutGate = reachableFrom(layout, layout.entranceNodeId, { tombKeys: {}, sealKeys: [] }, edge.id)
-    if (!reachableWithoutGate.has(keyNode.id)) {
-      reasons.push({ type: "keyAfterGate", gateEdgeId: edge.id, keyNodeId: keyNode.id })
+  // mosaicReachable: mosaic must be reachable when all gate keys are hypothetically owned
+  let mosaicPos: Pos | null = null
+  const allKeyIds = new Set<string>()
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room") continue
+      if (cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
+      if (cell.roomType === "gate" && cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
     }
   }
 
-  // noAllBlandFork: every fork node must have ≥1 branch end that is treasure, gate, or stairhead.
-  const interestingTypes = new Set(["treasure", "gate", "stairhead"])
-  for (const node of layout.nodes) {
-    if (node.type !== "fork") continue
-    const branchEdges = layout.edges.filter(e => e.fromNodeId === node.id)
-    const hasBranchWithInterest = branchEdges.some(edge => {
-      const target = layout.nodes.find(n => n.id === edge.toNodeId)
-      return target && interestingTypes.has(target.type)
-    })
-    if (!hasBranchWithInterest) {
-      reasons.push({ type: "allBlandFork", forkNodeId: node.id })
-    }
-  }
-
-  // mosaicReachable: if a mosaic node exists, it must be reachable (possibly behind wards — ok).
-  // We check reachability with all keys hypothetically available (wards are always eventually openable).
-  const mosaicNode = layout.nodes.find(n => n.type === "treasure" && n.reward?.type === "mosaicPiece")
-  if (mosaicNode) {
-    // Reachable with no keys = also reachable with ward keys (wards only gate optional branches).
-    // If not reachable even with no non-ward gates, something is wrong with the graph structure.
-    const allReachable = reachableFrom(layout, layout.entranceNodeId, {
-      tombKeys: Object.fromEntries(
-        layout.edges.filter(e => e.gateType === "ward" && e.requiredKeyId).map(e => [e.requiredKeyId!, 1])
-      ),
-      sealKeys: layout.edges.filter(e => e.gateType === "seal" && e.requiredKeyId).map(e => e.requiredKeyId!),
-    })
-    if (!allReachable.has(mosaicNode.id)) {
+  if (mosaicPos) {
+    const allReachable = reachableFrom(grid, grid.entrancePos, allKeyIds)
+    if (!allReachable.has(posKey(mosaicPos[0], mosaicPos[1]))) {
       reasons.push({ type: "mosaicMissing" })
     }
   }
@@ -109,39 +140,44 @@ export const validateSite = (layout: SiteLayout): ValidationResult => {
   return reasons.length === 0 ? { valid: true } : { valid: false, reasons }
 }
 
-// Journey-level checks across all site layouts.
-export const validateJourney = (layouts: SiteLayout[]): ValidationResult => {
+export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
   const reasons: ValidationReason[] = []
 
-  // mapPieceCoverage: exactly one layout must have a mapPiece treasure node,
-  // and that node must be seal-reachable (not behind a ward).
-  const mapPieceSites = layouts.filter(l => l.nodes.some(n => n.type === "treasure" && n.reward?.type === "mapPiece"))
+  const mapPieceSites = grids.filter(g => {
+    for (const row of g.cells)
+      for (const cell of row)
+        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mapPiece") return true
+    return false
+  })
 
   if (mapPieceSites.length === 0) {
     reasons.push({ type: "mapPieceMissing" })
   } else if (mapPieceSites.length > 1) {
-    reasons.push({ type: "mapPieceDuplicate", siteIds: mapPieceSites.map(l => l.siteId) })
+    reasons.push({ type: "mapPieceDuplicate", siteIds: mapPieceSites.map(g => g.siteId) })
   } else {
-    const site = mapPieceSites[0]
-    const mapPieceNode = site.nodes.find(n => n.type === "treasure" && n.reward?.type === "mapPiece")!
-    // Must be reachable WITHOUT any ward keys (seal-reachable only).
-    const sealReachable = reachableFrom(site, site.entranceNodeId, {
-      tombKeys: {},
-      sealKeys: site.edges.filter(e => e.gateType === "seal" && e.requiredKeyId).map(e => e.requiredKeyId!),
-    })
-    if (!sealReachable.has(mapPieceNode.id)) {
-      reasons.push({ type: "mapPieceNotSealReachable", nodeId: mapPieceNode.id })
+    const g = mapPieceSites[0]
+    let mapPiecePos: readonly [number, number] | null = null
+    for (let r = 0; r < g.rows; r++)
+      for (let c = 0; c < g.cols; c++) {
+        const cell = g.cells[r][c]
+        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mapPiece")
+          mapPiecePos = [r, c]
+      }
+    if (mapPiecePos) {
+      const sealReachable = reachableFrom(g, g.entrancePos, new Set())
+      if (!sealReachable.has(`${mapPiecePos[0]},${mapPiecePos[1]}`)) {
+        reasons.push({ type: "mapPieceNotSealReachable", pos: mapPiecePos })
+      }
     }
   }
 
-  // mosaicCoverage: every layout must have exactly one mosaicPiece treasure node.
-  for (const layout of layouts) {
-    const mosaicNodes = layout.nodes.filter(n => n.type === "treasure" && n.reward?.type === "mosaicPiece")
-    if (mosaicNodes.length === 0) {
-      reasons.push({ type: "mosaicMissing" })
-    } else if (mosaicNodes.length > 1) {
-      reasons.push({ type: "mosaicDuplicate", siteId: layout.siteId })
-    }
+  for (const g of grids) {
+    let mosaicCount = 0
+    for (const row of g.cells)
+      for (const cell of row)
+        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") mosaicCount++
+    if (mosaicCount === 0) reasons.push({ type: "mosaicMissing" })
+    else if (mosaicCount > 1) reasons.push({ type: "mosaicDuplicate", siteId: g.siteId })
   }
 
   return reasons.length === 0 ? { valid: true } : { valid: false, reasons }

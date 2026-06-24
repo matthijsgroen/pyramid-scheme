@@ -1,82 +1,124 @@
 import { describe, expect, it } from "vitest"
-import { assembleSite } from "./siteAssembler"
-import type { SiteConfig } from "./siteTypes"
+import { assembleFloor } from "./siteAssembler"
+import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
-const linearConfig = (puzzleBudget = 3, mapPiece = false): SiteConfig => ({
-  floors: 1,
-  maxBranchFactor: 0,
-  gates: "none",
-  puzzleBudget,
-  puzzlePlacement: "spine-heavy",
-  allowedNodeTypes: ["puzzle", "treasure", "exit"],
-  mapPiece,
-  rewards: { hieroglyphNodes: 0, mosaicDepth: 1 },
+const basicConfig = (): FloorConfig => ({
+  pathPuzzles: 1,
+  difficulty: "easy",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
 })
 
-describe(assembleSite, () => {
-  it("succeeds for a basic linear config", () => {
-    const result = assembleSite("site-1", linearConfig(), 42)
+const firstPyramid = (): FloorConfig => ({
+  pathPuzzles: 0,
+  difficulty: "easy",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [
+    { pathPuzzles: 0, difficulty: "easy", end: "treasure" },
+    { pathPuzzles: 1, difficulty: "medium", end: "staircase", gate: { type: "floor-key" } },
+  ],
+})
+
+const findRoom = (grid: FloorGrid, predicate: (cell: RoomCell) => boolean) => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && predicate(cell)) return { r, c, cell }
+    }
+  return null
+}
+
+describe(assembleFloor, () => {
+  it("succeeds for a basic config with no sections", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
     expect(result.success).toBe(true)
   })
 
-  it("produces a layout that passes validateSite", () => {
-    const result = assembleSite("site-1", linearConfig(), 42)
+  it("produces a grid that passes validateSite", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    expect(validateSite(result.layout)).toEqual({ valid: true })
+    expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("layout has entrance, puzzles, mosaic, and exit in order", () => {
-    const result = assembleSite("site-1", linearConfig(3), 42)
+  it("places goal (mosaicPiece) at grid center", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const { nodes } = result.layout
-    expect(nodes[0].type).toBe("puzzle") // entrance
-    expect(nodes.slice(1, -2).every(n => n.type === "puzzle")).toBe(true)
-    const mosaicNode = nodes.find(n => n.reward?.type === "mosaicPiece")
-    expect(mosaicNode).toBeDefined()
-    expect(nodes[nodes.length - 1].type).toBe("exit")
+    const goal = findRoom(result.grid, c => c.reward?.type === "mosaicPiece")
+    expect(goal).not.toBeNull()
+    const mid = Math.floor(result.grid.rows / 2)
+    expect(goal!.r).toBe(mid)
+    expect(goal!.c).toBe(mid)
   })
 
-  it("includes a mapPiece node when config.mapPiece is true", () => {
-    const result = assembleSite("site-1", linearConfig(3, true), 42)
+  it("has an entrance node on the grid edge", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    expect(result.layout.nodes.some(n => n.reward?.type === "mapPiece")).toBe(true)
+    const [entR, entC] = result.grid.entrancePos
+    const N = result.grid.rows
+    const onEdge = entR === 0 || entR === N - 1 || entC === 0 || entC === N - 1
+    expect(onEdge).toBe(true)
   })
 
-  it("is deterministic: same seed produces same layout", () => {
-    const a = assembleSite("site-1", linearConfig(), 12345)
-    const b = assembleSite("site-1", linearConfig(), 12345)
+  it("is deterministic: same seed produces same grid", () => {
+    const a = assembleFloor("site-1", basicConfig(), 12345)
+    const b = assembleFloor("site-1", basicConfig(), 12345)
     expect(a).toEqual(b)
   })
 
-  it("produces cosmetically different layouts for different seeds", () => {
-    // With phase-1 linear config there's no variation yet, so just assert structure is valid
-    const a = assembleSite("site-1", linearConfig(), 1)
-    const b = assembleSite("site-2", linearConfig(), 2)
-    expect(a.success).toBe(true)
-    expect(b.success).toBe(true)
+  it("succeeds for the first pyramid config (0 main puzzles, 2 sections)", () => {
+    const result = assembleFloor("site-1", firstPyramid(), 42)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(findRoom(result.grid, c => c.roomType === "stairhead")).not.toBeNull()
+      expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
+    }
   })
 
-  it("property: 200 seeds × linear config all pass validation", () => {
-    for (let seed = 0; seed < 200; seed++) {
-      const result = assembleSite(`site-${seed}`, linearConfig(), seed)
+  it("key is reachable before the gate (validates keyBeforeGate)", () => {
+    const result = assembleFloor("site-1", firstPyramid(), 42)
+    if (!result.success) throw new Error("assembly failed")
+    expect(validateSite(result.grid)).toEqual({ valid: true })
+  })
+
+  it("auto-injects an ungated section when all sections are gated with floor-key", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "easy",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "easy", end: "treasure", gate: { type: "floor-key" } }],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
+      expect(findRoom(result.grid, c => c.reward?.type === "tombKey")).not.toBeNull()
+      expect(validateSite(result.grid)).toEqual({ valid: true })
+    }
+  })
+
+  it("property: 100 seeds × basic config all pass validation", () => {
+    for (let seed = 0; seed < 100; seed++) {
+      const result = assembleFloor(`site-${seed}`, basicConfig(), seed)
       expect(result.success, `seed ${seed} failed assembly`).toBe(true)
       if (result.success) {
-        const v = validateSite(result.layout)
-        expect(v.valid, `seed ${seed} failed validation`).toBe(true)
+        const v = validateSite(result.grid)
+        expect(v.valid, `seed ${seed} failed validation: ${JSON.stringify(v)}`).toBe(true)
       }
     }
   })
 
-  it("fails for unsupported config (multi-floor)", () => {
-    const multiFloor = { ...linearConfig(), floors: 2 }
-    const result = assembleSite("site-1", multiFloor, 42)
-    expect(result.success).toBe(false)
-  })
-
-  it("fails for unsupported config (with gates)", () => {
-    const withGates = { ...linearConfig(), gates: "seal-only" as const }
-    const result = assembleSite("site-1", withGates, 42)
-    expect(result.success).toBe(false)
+  it("property: 50 seeds × first pyramid config all pass validation", () => {
+    for (let seed = 0; seed < 50; seed++) {
+      const result = assembleFloor(`site-${seed}`, firstPyramid(), seed)
+      expect(result.success, `seed ${seed} failed assembly`).toBe(true)
+      if (result.success) {
+        const v = validateSite(result.grid)
+        expect(v.valid, `seed ${seed} failed validation: ${JSON.stringify(v)}`).toBe(true)
+      }
+    }
   })
 })
