@@ -333,7 +333,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (const [dr, dc, d] of DIRMAP) {
         const nr = r + dr,
           nc = c + dc
-        if (nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc))) {
+        if (nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc)) && usedCells.has(`${nr},${nc}`)) {
           dirs.add(d)
         }
       }
