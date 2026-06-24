@@ -1,4 +1,4 @@
-import type { CellState, CorridorCell, FloorGrid, RoomType } from "../../game/siteTypes"
+import type { CellState, CorridorCell, FloorGrid, GateVariant, RoomType } from "../../game/siteTypes"
 import { revealAll } from "../../game/gridNavigation"
 
 type Props = {
@@ -53,7 +53,7 @@ const CompletedBadge = ({ r }: { r: number }) => (
 
 // ─── Node shape geometry ──────────────────────────────────────────────────────
 
-type ShapeProps = { state: CellState }
+type ShapeProps = { state: CellState; gateVariant?: GateVariant }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
   const r = 13
@@ -94,11 +94,21 @@ const ForkShape = ({ state }: ShapeProps) => {
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
-const GateNodeShape = ({ state }: ShapeProps) => {
+const GateNodeShape = ({ state, gateVariant }: ShapeProps) => {
   const r = 12
-  const fill = gateFill[state]
-  const stroke = gateStroke[state]
-  const barColor = state === "fogged" ? "#3a2a10" : state === "visible" ? "#c04020" : "#c09020"
+  const isTomb = gateVariant === "tomb-key"
+  const fill = isTomb ? tombGateFill[state] : gateFill[state]
+  const stroke = isTomb ? tombGateStroke[state] : gateStroke[state]
+  const barColor =
+    state === "fogged"
+      ? "#3a2a10"
+      : isTomb
+        ? state === "visible"
+          ? "#8040c0"
+          : "#9060e0"
+        : state === "visible"
+          ? "#c04020"
+          : "#c09020"
   return (
     <>
       <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={1} fill={fill} stroke={stroke} strokeWidth={1.5} />
@@ -221,8 +231,8 @@ const NodeBackground = ({ type }: { type: RoomType }) => {
   }
 }
 
-const NodeShape = ({ type, state }: ShapeProps & { type: RoomType }) => {
-  const p = { state }
+const NodeShape = ({ type, state, gateVariant }: ShapeProps & { type: RoomType }) => {
+  const p = { state, gateVariant }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -273,6 +283,19 @@ const gateStroke: Record<CellState, string> = {
   visible: "#883010",
   reachable: "#887020",
   completed: "#887020",
+}
+
+const tombGateFill: Record<CellState, string> = {
+  fogged: "#1a1208",
+  visible: "#140820",
+  reachable: "#10102a",
+  completed: "#10102a",
+}
+const tombGateStroke: Record<CellState, string> = {
+  fogged: "#2e2010",
+  visible: "#604898",
+  reachable: "#7060c0",
+  completed: "#7060c0",
 }
 
 const treasureFill: Record<CellState, string> = {
@@ -434,7 +457,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
               <ConnectionStubs dirs={cell.dirs} state={state} />
               <NodeBackground type={cell.roomType} />
               <g opacity={isCompleted ? 0.45 : 1}>
-                <NodeShape type={cell.roomType} state={state} />
+                <NodeShape type={cell.roomType} state={state} gateVariant={cell.gateVariant} />
               </g>
               {isCompleted && cell.roomType !== "fork" && <CompletedBadge r={roomR} />}
             </g>

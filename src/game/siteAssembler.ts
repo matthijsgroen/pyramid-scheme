@@ -292,6 +292,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const { sectionIdx, cells } = group
       const section = sideSections[sectionIdx]
       const isFloorKeyGate = section.gate?.type === "floor-key"
+      const isTombKeyGate = section.gate?.type === "tomb-key"
       const keyNodeId = isFloorKeyGate ? keyNodeIdMap.get(sectionIdx) : undefined
       const isKeyHost = keyHostIdxs.has(sectionIdx)
 
@@ -300,7 +301,15 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // Gate node occupies cells[0] for gated sections
       if (isFloorKeyGate && keyNodeId) {
         const [gr, gc] = cells[0]
-        roomSpecs.set(posKey(gr, gc), { roomType: "gate", requiredKeyId: keyNodeId })
+        roomSpecs.set(posKey(gr, gc), { roomType: "gate", requiredKeyId: keyNodeId, gateVariant: "floor-key" })
+        contentStart = 1
+      } else if (isTombKeyGate) {
+        const [gr, gc] = cells[0]
+        roomSpecs.set(posKey(gr, gc), {
+          roomType: "gate",
+          requiredKeyId: `tomb-key-${siteId}-${sectionIdx}`,
+          gateVariant: "tomb-key",
+        })
         contentStart = 1
       }
 

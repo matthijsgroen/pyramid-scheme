@@ -11,6 +11,7 @@ export type CellState = "fogged" | "visible" | "reachable" | "completed"
 
 export type EmptyCell = { type: "empty" }
 export type CorridorCell = { type: "corridor"; dirs: ReadonlySet<Direction>; state: CellState }
+export type GateVariant = "floor-key" | "tomb-key"
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -18,6 +19,7 @@ export type RoomCell = {
   state: CellState
   reward?: TreasureReward
   requiredKeyId?: string
+  gateVariant?: GateVariant
   family?: PuzzleFamily
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
@@ -31,7 +33,7 @@ export type FloorGrid = {
   readonly siteId: string
 }
 
-export type GateConfig = { type: "floor-key" }
+export type GateConfig = { type: "floor-key" } | { type: "tomb-key" }
 export type Difficulty = "easy" | "medium" | "hard"
 export type SideSection = {
   pathPuzzles: number

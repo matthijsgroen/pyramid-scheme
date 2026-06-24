@@ -63,7 +63,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
-      if (cell.roomType === "gate" && cell.requiredKeyId) {
+      if (cell.roomType === "gate" && cell.requiredKeyId && cell.gateVariant === "floor-key") {
         const gatePos: Pos = [r, c]
         const keyId = cell.requiredKeyId
 

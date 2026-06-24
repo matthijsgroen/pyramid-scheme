@@ -2,8 +2,10 @@ import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell } from "../../game/gridNavigation"
-import type { FloorConfig, FloorGrid, SideSection } from "../../game/siteTypes"
+import type { FloorConfig, FloorGrid, GateConfig, SideSection } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
+
+type GateOption = "none" | GateConfig["type"]
 
 type Props = {
   seed: number
@@ -12,11 +14,11 @@ type Props = {
   section1: boolean
   section1Puzzles: number
   section1End: SideSection["end"]
-  section1Gated: boolean
+  section1Gate: GateOption
   section2: boolean
   section2Puzzles: number
   section2End: SideSection["end"]
-  section2Gated: boolean
+  section2Gate: GateOption
 }
 
 const SiteMapBuilder = ({
@@ -26,26 +28,29 @@ const SiteMapBuilder = ({
   section1,
   section1Puzzles,
   section1End,
-  section1Gated,
+  section1Gate,
   section2,
   section2Puzzles,
   section2End,
-  section2Gated,
+  section2Gate,
 }: Props) => {
+  const toGate = (opt: GateOption): GateConfig | undefined =>
+    opt === "none" ? undefined : { type: opt }
+
   const sideSections: SideSection[] = []
   if (section1)
     sideSections.push({
       pathPuzzles: section1Puzzles,
       difficulty: "easy",
       end: section1End,
-      ...(section1Gated ? { gate: { type: "floor-key" as const } } : {}),
+      gate: toGate(section1Gate),
     })
   if (section2)
     sideSections.push({
       pathPuzzles: section2Puzzles,
       difficulty: "medium",
       end: section2End,
-      ...(section2Gated ? { gate: { type: "floor-key" as const } } : {}),
+      gate: toGate(section2Gate),
     })
 
   const config: FloorConfig = {
@@ -83,11 +88,11 @@ const meta = {
     section1: { control: "boolean" },
     section1Puzzles: { control: { type: "range", min: 0, max: 4, step: 1 } },
     section1End: { control: "select", options: ["treasure", "staircase"] },
-    section1Gated: { control: "boolean" },
+    section1Gate: { control: "select", options: ["none", "floor-key", "tomb-key"] },
     section2: { control: "boolean" },
     section2Puzzles: { control: { type: "range", min: 0, max: 4, step: 1 } },
     section2End: { control: "select", options: ["treasure", "staircase"] },
-    section2Gated: { control: "boolean" },
+    section2Gate: { control: "select", options: ["none", "floor-key", "tomb-key"] },
   },
 } satisfies Meta<typeof SiteMapBuilder>
 
@@ -102,11 +107,11 @@ export const Builder: Story = {
     section1: true,
     section1Puzzles: 0,
     section1End: "treasure",
-    section1Gated: false,
+    section1Gate: "none",
     section2: true,
     section2Puzzles: 1,
     section2End: "staircase",
-    section2Gated: true,
+    section2Gate: "floor-key",
   },
 }
 
@@ -118,11 +123,11 @@ export const FirstPyramid: Story = {
     section1: true,
     section1Puzzles: 0,
     section1End: "treasure",
-    section1Gated: false,
+    section1Gate: "none",
     section2: true,
     section2Puzzles: 1,
     section2End: "staircase",
-    section2Gated: true,
+    section2Gate: "floor-key",
   },
 }
 

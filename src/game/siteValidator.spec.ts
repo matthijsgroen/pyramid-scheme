@@ -65,7 +65,7 @@ describe(validateSite, () => {
     const grid = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "nonexistent-key" })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "nonexistent-key", gateVariant: "floor-key" })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],
@@ -83,7 +83,7 @@ describe(validateSite, () => {
     const grid = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "key-chest" })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "key-chest", gateVariant: "floor-key" })],
         [0, 2, room("treasure", ["w", "e"], { reward: { type: "tombKey", keyId: "key-chest" } })],
         [0, 3, room("exit", ["w"])],
       ],
@@ -106,7 +106,7 @@ describe(validateSite, () => {
       [
         [0, 0, room("puzzle", ["e", "s"])],
         [1, 0, room("treasure", ["n"], { reward: { type: "tombKey", keyId: "key-branch" } })],
-        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "key-branch" })],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "key-branch", gateVariant: "floor-key" })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],
