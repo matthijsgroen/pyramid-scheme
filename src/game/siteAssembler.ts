@@ -157,6 +157,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const [entR, entC] = edgeCells[Math.floor(rand() * edgeCells.length)]
 
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
+
+    // Need at least entrance + pathPuzzles + goal distinct cells on the main path
+    if (mainPath.length < config.pathPuzzles + 2) continue
+
     const mainPathSet = new Set(mainPath.map(([r, c]) => `${r},${c}`))
 
     // Select which main path cells become nodes (entrance, evenly-spaced puzzles, goal)
@@ -333,7 +337,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (const [dr, dc, d] of DIRMAP) {
         const nr = r + dr,
           nc = c + dc
-        if (nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc)) && usedCells.has(`${nr},${nc}`)) {
+        if (
+          nr >= 0 &&
+          nr < N &&
+          nc >= 0 &&
+          nc < N &&
+          passages.has(pkey(r, c, nr, nc)) &&
+          usedCells.has(`${nr},${nc}`)
+        ) {
           dirs.add(d)
         }
       }

@@ -100,6 +100,24 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("places exactly pathPuzzles puzzle rooms on the main path", () => {
+    for (const pathPuzzles of [0, 1, 2, 3]) {
+      const config: FloorConfig = {
+        pathPuzzles,
+        difficulty: "easy",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [],
+      }
+      const result = assembleFloor("site-1", config, 42)
+      expect(result.success, `pathPuzzles=${pathPuzzles} failed`).toBe(true)
+      if (result.success) {
+        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+        expect(puzzles.length, `pathPuzzles=${pathPuzzles} wrong count`).toBe(pathPuzzles)
+      }
+    }
+  })
+
   it("property: 100 seeds × basic config all pass validation", () => {
     for (let seed = 0; seed < 100; seed++) {
       const result = assembleFloor(`site-${seed}`, basicConfig(), seed)
