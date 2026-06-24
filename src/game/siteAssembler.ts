@@ -367,6 +367,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           state: "fogged",
           ...(spec.reward ? { reward: spec.reward } : {}),
           ...(spec.requiredKeyId ? { requiredKeyId: spec.requiredKeyId } : {}),
+          ...(spec.gateVariant ? { gateVariant: spec.gateVariant } : {}),
           ...(spec.family ? { family: spec.family } : {}),
         }
         cells2D[r][c] = roomCell
