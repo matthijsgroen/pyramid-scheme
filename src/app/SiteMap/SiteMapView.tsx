@@ -1,10 +1,12 @@
 import type { CellState, CorridorCell, FloorGrid, GateVariant, RoomType } from "../../game/siteTypes"
 import { revealAll } from "../../game/gridNavigation"
+import { ExplorerDot } from "./ExplorerDot"
 
 type Props = {
   grid: FloorGrid
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
+  explorerPos?: readonly [number, number]
 }
 
 const CELL = 44
@@ -400,7 +402,7 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false }: Props) => {
+export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false, explorerPos }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
 
   const PAD = 30
@@ -464,6 +466,8 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
           )
         })
       )}
+
+      {explorerPos && <ExplorerDot grid={grid} pos={explorerPos} />}
     </svg>
   )
 }

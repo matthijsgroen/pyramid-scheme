@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { completeCell, getOwnedKeys, revealAll } from "./gridNavigation"
+import { completeCell, findPath, getOwnedKeys, revealAll } from "./gridNavigation"
 import type { Direction, FloorGrid } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
@@ -156,6 +156,20 @@ describe(completeCell, () => {
     const exit = twice.cells[0][2]
     expect(exit.type).toBe("room")
     if (exit.type === "room") expect(exit.state).toBe("reachable")
+  })
+})
+
+describe(findPath, () => {
+  it("returns single-element path when from === to", () => {
+    const grid = makeLinearGrid()
+    const path = findPath(grid, [0, 0], [0, 0])
+    expect(path).toEqual([[0, 0]])
+  })
+
+  it("returns path through corridor cells between two rooms", () => {
+    const grid = makeLinearGrid() // entrance(0,0) -e- corridor(0,1) -e- exit(0,2)
+    const path = findPath(grid, [0, 0], [0, 2])
+    expect(path).toEqual([[0, 0], [0, 1], [0, 2]])
   })
 })
 

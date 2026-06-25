@@ -88,6 +88,44 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   return { ...grid, cells: newCells }
 }
 
+export const findPath = (
+  grid: FloorGrid,
+  from: readonly [number, number],
+  to: readonly [number, number]
+): Array<readonly [number, number]> => {
+  const [fr, fc] = from
+  const [tr, tc] = to
+  if (fr === tr && fc === tc) return [[fr, fc]]
+
+  const key = (r: number, c: number) => `${r},${c}`
+  const parent = new Map<string, string | null>([[key(fr, fc), null]])
+  const queue: Array<readonly [number, number]> = [[fr, fc]]
+
+  outer: while (queue.length > 0) {
+    const [r, c] = queue.shift()!
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const d of cell.dirs) {
+      const [dr, dc] = MOVES[d]
+      const nr = r + dr, nc = c + dc
+      const nk = key(nr, nc)
+      if (parent.has(nk)) continue
+      parent.set(nk, key(r, c))
+      if (nr === tr && nc === tc) break outer
+      queue.push([nr, nc])
+    }
+  }
+
+  const path: Array<readonly [number, number]> = []
+  let cur: string | null = key(tr, tc)
+  while (cur !== null) {
+    const [r, c] = cur.split(",").map(Number)
+    path.unshift([r, c])
+    cur = parent.get(cur) ?? null
+  }
+  return path.length > 1 ? path : [from, to]
+}
+
 export const revealAll = (grid: FloorGrid): FloorGrid => {
   const newCells = grid.cells.map(row =>
     row.map(cell => {

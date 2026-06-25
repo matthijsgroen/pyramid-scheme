@@ -82,11 +82,61 @@ export const FirstPyramidRevealAll: Story = {
 export const Interactive: Story = {
   args: { grid: linearGrid },
   render: () => {
-    const [grid, setGrid] = useState<FloorGrid>(linearGrid)
+    const initial = (() => {
+      const [r, c] = linearGrid.entrancePos
+      return completeCell(linearGrid, r, c)
+    })()
+    const [grid, setGrid] = useState<FloorGrid>(initial)
+    const [explorerPos, setExplorerPos] = useState<readonly [number, number]>(linearGrid.entrancePos)
     return (
       <div>
-        <SiteMapView grid={grid} onCellClick={(r, c) => setGrid(prev => completeCell(prev, r, c))} />
+        <SiteMapView
+          grid={grid}
+          explorerPos={explorerPos}
+          onCellClick={(r, c) => {
+            setGrid(prev => completeCell(prev, r, c))
+            setExplorerPos([r, c])
+          }}
+        />
         <p className="mt-2 text-sm text-gray-500">Click reachable rooms to complete them</p>
+      </div>
+    )
+  },
+}
+
+const firstPyramidGrid = getFirstPyramidGrid()
+const firstPyramidInitial = (() => {
+  const [r, c] = firstPyramidGrid.entrancePos
+  return completeCell(firstPyramidGrid, r, c)
+})()
+
+export const InteractiveFirstPyramid: Story = {
+  args: { grid: firstPyramidInitial },
+  render: () => {
+    const [grid, setGrid] = useState<FloorGrid>(firstPyramidInitial)
+    const [explorerPos, setExplorerPos] = useState<readonly [number, number]>(firstPyramidGrid.entrancePos)
+    return (
+      <div className="flex flex-col gap-3">
+        <SiteMapView
+          grid={grid}
+          explorerPos={explorerPos}
+          onCellClick={(r, c) => {
+            setGrid(prev => completeCell(prev, r, c))
+            setExplorerPos([r, c])
+          }}
+        />
+        <div className="flex items-center justify-between text-xs text-amber-600/70">
+          <span>Click reachable rooms to explore. Find the key to unlock the gate.</span>
+          <button
+            className="rounded border border-amber-900/50 px-2 py-1 hover:bg-amber-900/20"
+            onClick={() => {
+              setGrid(firstPyramidInitial)
+              setExplorerPos(firstPyramidGrid.entrancePos)
+            }}
+          >
+            Reset
+          </button>
+        </div>
       </div>
     )
   },
