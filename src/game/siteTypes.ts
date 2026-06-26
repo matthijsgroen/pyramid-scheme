@@ -4,6 +4,7 @@ export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece" }
   | { type: "hieroglyphs" }
+  | { type: "hieroglyphFragment"; hieroglyphId: string }
   | { type: "tombKey"; keyId: string }
 
 export type Direction = "n" | "s" | "e" | "w"
@@ -49,6 +50,8 @@ export type FloorConfig = {
   end: "treasure"
   exitOrStaircase: "exit" | "staircase"
   sideSections: SideSection[]
+  mainEndReward?: TreasureReward
+  chestRewards?: TreasureReward[]
 }
 
 export type ValidationReason =

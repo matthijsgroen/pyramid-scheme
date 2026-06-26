@@ -172,11 +172,15 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
   }
 
   for (const g of grids) {
+    let primaryCount = 0
     let mosaicCount = 0
     for (const row of g.cells)
-      for (const cell of row)
-        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") mosaicCount++
-    if (mosaicCount === 0) reasons.push({ type: "mosaicMissing" })
+      for (const cell of row) {
+        if (cell.type !== "room" || cell.roomType !== "treasure") continue
+        if (cell.reward?.type === "mosaicPiece" || cell.reward?.type === "mapPiece") primaryCount++
+        if (cell.reward?.type === "mosaicPiece") mosaicCount++
+      }
+    if (primaryCount === 0) reasons.push({ type: "mosaicMissing" })
     else if (mosaicCount > 1) reasons.push({ type: "mosaicDuplicate", siteId: g.siteId })
   }
 

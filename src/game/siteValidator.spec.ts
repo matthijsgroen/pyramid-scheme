@@ -281,8 +281,26 @@ describe(validateJourney, () => {
     }
   })
 
-  it("mosaicMissing: fails when a site has no mosaic room", () => {
-    const noMosaic = buildGrid(
+  it("mosaicMissing: fails when a site has no primary reward (neither mosaicPiece nor mapPiece)", () => {
+    const noPrimary = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "hieroglyphs" } })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2],
+      "site-1"
+    )
+    const result = validateJourney([noPrimary])
+    expect(result.valid).toBe(false)
+    if (!result.valid) {
+      expect(result.reasons.some(r => r.type === "mosaicMissing")).toBe(true)
+    }
+  })
+
+  it("mapPiece is valid as a primary reward (no mosaicMissing)", () => {
+    const mapPieceOnly = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
         [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
@@ -292,10 +310,11 @@ describe(validateJourney, () => {
       [0, 2],
       "site-1"
     )
-    const result = validateJourney([noMosaic])
-    expect(result.valid).toBe(false)
+    const result = validateJourney([mapPieceOnly])
+    // mapPiece counts as a primary reward — mosaicMissing should NOT fire
+    // (mapPieceMissing will fire since there's no mosaicPiece journey-wide, but that's separate)
     if (!result.valid) {
-      expect(result.reasons.some(r => r.type === "mosaicMissing")).toBe(true)
+      expect(result.reasons.some(r => r.type === "mosaicMissing")).toBe(false)
     }
   })
 

@@ -12,7 +12,9 @@
     "check-types": "tsc -b",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
-    "generate-pwa-assets": "pwa-assets-generator"
+    "generate-pwa-assets": "pwa-assets-generator",
+    "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
+    "validate-world": "tsx scripts/generateWorld.ts --validate-only"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",

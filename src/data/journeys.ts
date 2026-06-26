@@ -1,7 +1,7 @@
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
 import type { FloorConfig } from "@/game/siteTypes"
-import { pyramidSiteConfigs } from "./siteConfigs"
+import { generatedWorldConfigs } from "./generatedWorld"
 import {
   merchantCacheTreasures,
   nobleVaultTreasures,
@@ -872,7 +872,7 @@ export const journeys: Journey[] = [
 // Apply site configs to pyramid journeys — avoids touching 20 inline objects
 for (const journey of journeys) {
   if (journey.type === "pyramid") {
-    const config = pyramidSiteConfigs[journey.id]
+    const config = generatedWorldConfigs[journey.id]
     if (config) (journey as PyramidJourney).siteConfig = config
   }
 }

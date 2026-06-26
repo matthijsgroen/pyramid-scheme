@@ -287,14 +287,21 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const posKey = (r: number, c: number) => `${r},${c}`
 
     // Main path nodes
+    let mainChestIdx = 0
     for (let mi = 0; mi < mainNodeCells.length; mi++) {
       const [r, c] = mainNodeCells[mi]
       if (mi === 0) {
         roomSpecs.set(posKey(r, c), { roomType: "entrance" })
       } else if (mi === mainNodeCells.length - 1) {
-        roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "mosaicPiece" } })
+        roomSpecs.set(posKey(r, c), {
+          roomType: "treasure",
+          reward: config.mainEndReward ?? { type: "mosaicPiece" },
+        })
       } else if (intermediateTypes[mi - 1] === "chest") {
-        roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+        roomSpecs.set(posKey(r, c), {
+          roomType: "treasure",
+          reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
+        })
       } else {
         roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
       }
