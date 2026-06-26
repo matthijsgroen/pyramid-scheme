@@ -21,6 +21,7 @@ export type ProgressionAPI = {
   hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
+  tombKeyIds: ReadonlySet<string>
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
   collectMosaicPiece: (pyramidJourneyId: string) => void
@@ -50,6 +51,7 @@ export const useProgression = (): ProgressionAPI => {
       }),
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
+      tombKeyIds: new Set(Object.keys(state.tombKeys)),
       isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
       discoverTomb: tombJourneyId =>
         setState(prev => ({

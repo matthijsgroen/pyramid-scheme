@@ -8,6 +8,7 @@ import { SiteMapView } from "./SiteMapView"
 import { ExplorerDot } from "./ExplorerDot"
 import { SumpleteBoard } from "@/app/PuzzleFamilies/Sumplete/SumpleteBoard"
 import { useJourneys } from "@/app/state/useJourneys"
+import { useProgression } from "@/app/state/useProgression"
 
 type Props = {
   journeyId: string
@@ -29,18 +30,20 @@ const decodeEdge = (edgeId: string): [floor: number, row: number, col: number] =
   return [0, r, c]
 }
 
-const applyEdges = (grid: FloorGrid, floor: number, allEdges: string[]): FloorGrid =>
+const applyEdges = (grid: FloorGrid, floor: number, allEdges: string[], wardKeys?: ReadonlySet<string>): FloorGrid =>
   allEdges
     .filter(e => decodeEdge(e)[0] === floor)
     .reduce((g, edgeId) => {
       const [, r, c] = decodeEdge(edgeId)
-      return completeCell(g, r, c)
+      return completeCell(g, r, c, wardKeys)
     }, grid)
 
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel }: Props) => {
   const journeys = useJourneys()
+  const progression = useProgression()
   const allEdges = journeys.getSolvedEdges(journeyId)
   const journeyState = journeys.getJourney(journeyId)
+  const wardKeys = progression.tombKeyIds
 
   const [currentFloor, setCurrentFloor] = useState(0)
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
@@ -52,8 +55,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   }, [journeyId, floorConfig, seed, currentFloor])
 
   const grid = useMemo(
-    () => (baseGrid ? applyEdges(baseGrid, currentFloor, allEdges) : null),
-    [baseGrid, currentFloor, allEdges]
+    () => (baseGrid ? applyEdges(baseGrid, currentFloor, allEdges, wardKeys) : null),
+    [baseGrid, currentFloor, allEdges, wardKeys]
   )
 
   const explorerPos: readonly [number, number] = useMemo(() => {
