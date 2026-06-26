@@ -104,9 +104,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       } else if (cell.roomType === "exit") {
         onSiteComplete()
       } else if (cell.roomType === "treasure") {
-        // Phase 6 wires treasure rewards; for now just collect
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
+        if (cell.reward?.type === "hieroglyphFragment") {
+          progression.addFragment(cell.reward.hieroglyphId)
+        } else if (cell.reward?.type === "mosaicPiece") {
+          progression.collectMosaicPiece(journeyId)
+        } else if (cell.reward?.type === "mapPiece") {
+          journeys.findMapPiece()
+        } else if (cell.reward?.type === "tombKey") {
+          progression.addTombKey(cell.reward.keyId)
+        }
       }
     },
     [grid, journeys, journeyId, onSiteComplete, currentFloor]
