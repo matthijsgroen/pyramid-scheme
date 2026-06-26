@@ -4,12 +4,27 @@
  *
  * Run: yarn generate-world
  *
- * Design rules applied:
- * - Every pyramid journey's main goal is a mapPiece (one per tier's first tomb, one per journey)
+ * Map piece distribution (Phase 4 / linear sites):
+ * - 20 surface map pieces: one per pyramid journey, one per tier's FIRST tomb.
+ *   starter_1–4 → starter_treasure_tomb (4 pieces)
+ *   junior_1–4  → junior_treasure_tomb  (4 pieces)
+ *   expert_1–4  → expert_treasure_tomb  (4 pieces)
+ *   master_1–4  → master_treasure_tomb  (4 pieces)
+ *   wizard_1–4  → wizard_treasure_tomb  (4 pieces)
+ * - 10 gated map pieces for extra tombs (NOT placed here — deferred to Phase 5c):
+ *   expert_b (2), master_b (3), wizard_b (3), wizard_c (2) — gated on deep floors.
+ *   See docs/pyramid-interior-design.md §5 for the full distribution rules.
+ *
+ * Phase 4 compromise: linear sites have no branches, so map pieces sit at the main
+ * goal (replacing mosaicPiece). Phase 5 restores mosaicPiece to main goal when
+ * branch endpoints become available.
+ *
+ * Fragment distribution:
  * - Intermediate chest nodes hold hieroglyphFragment rewards (specific inventory item IDs)
- * - Fragment spread: starter fragments in starter+junior; junior in junior+expert; etc.
+ * - Spread: starter fragments in starter+junior; junior in junior+expert; etc.
  * - No two fragments of the same hieroglyph in the same journey
- * - Fragment distribution is deterministic (fixed WORLD_SEED)
+ * - 47/157 fragments placed on linear sites; remaining 110 go on Phase 5 branches
+ * - Distribution is deterministic (fixed WORLD_SEED)
  */
 
 import { writeFileSync } from "fs"
