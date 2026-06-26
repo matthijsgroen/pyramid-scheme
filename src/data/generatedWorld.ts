@@ -99,7 +99,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "p10" },
@@ -112,7 +116,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "p11" },
@@ -125,7 +133,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "p9" },
@@ -139,7 +151,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "d2" },
@@ -152,7 +168,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "a2" },
@@ -165,7 +185,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "art12" },
@@ -179,7 +203,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "p1" },
@@ -193,7 +221,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "medium",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "medium", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "a2" },
@@ -207,7 +239,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "hard",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "art7" },
@@ -222,7 +258,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "hard",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "a11" },
@@ -237,7 +277,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "hard",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "a11" },
@@ -252,7 +296,11 @@ export const generatedWorldConfigs: Record<string, FloorConfig> = {
     difficulty: "hard",
     end: "treasure",
     exitOrStaircase: "exit",
-    sideSections: [{ pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } }],
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", endReward: { type: "mapPiece" } },
+      { pathPuzzles: 0, difficulty: "hard", end: "treasure", gate: { type: "floor-key" } },
+    ],
     mainEndReward: { type: "mosaicPiece" },
     chestRewards: [
       { type: "hieroglyphFragment", hieroglyphId: "p2" },

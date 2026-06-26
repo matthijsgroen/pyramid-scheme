@@ -4,9 +4,11 @@
  *
  * Run: yarn generate-world
  *
- * Map piece distribution (Phase 5a / branched sites):
- * - Starter journeys: linear (no branch), mapPiece at main end goal (4 pieces).
- * - Junior+ journeys: one branch with endReward: mapPiece; main end → mosaicPiece (16 pieces).
+ * Map piece distribution (Phase 5a–5b / branched + sealed sites):
+ * - Starter journeys: linear, mapPiece at main end goal (4 pieces).
+ * - Junior journeys: 1 ungated branch (endReward: mapPiece); main end → mosaicPiece (4 pieces).
+ * - Expert+ journeys: 2 ungated branches (one tombKey key-holder auto-assigned, one mapPiece)
+ *   + 1 gated floor-key branch (seal gate mechanic); main end → mosaicPiece (12 pieces).
  * - Total: 20 surface map pieces, one per pyramid journey.
  * - 10 gated map pieces for extra tombs (NOT placed here — deferred to Phase 5c):
  *   expert_b (2), master_b (3), wizard_b (3), wizard_c (2) — gated on deep floors.
@@ -288,26 +290,36 @@ const buildConfigs = (): Record<string, FloorConfig> => {
       id ? ({ type: "hieroglyphFragment", hieroglyphId: id } as TreasureReward) : { type: "hieroglyphs" }
     )
 
-    // Starter: linear, mapPiece at main end (no branches until Phase 5c)
-    // Junior+: one treasure branch with mapPiece; main end → mosaicPiece
-    const hasBranch = j.tier !== "starter"
-    const branchSection: SideSection | null = hasBranch
-      ? {
-          pathPuzzles: 0,
-          difficulty: TIER_DIFFICULTY[j.tier],
-          end: "treasure",
-          endReward: { type: "mapPiece" },
-        }
-      : null
+    // Starter: linear, mapPiece at main end (no branches)
+    // Junior: one ungated branch (mapPiece); main end → mosaicPiece
+    // Expert+: key-holder branch (auto-becomes tombKey) + mapPiece branch + 1 gated (floor-key); main end → mosaicPiece
+    const diff = TIER_DIFFICULTY[j.tier]
+    const hasGatedSection = j.tier === "expert" || j.tier === "master" || j.tier === "wizard"
+    const sideSections: SideSection[] =
+      j.tier === "starter"
+        ? []
+        : hasGatedSection
+          ? [
+              // Section 0: ungated key-holder (tombKey assigned by assembler auto-inject logic)
+              { pathPuzzles: 0, difficulty: diff, end: "treasure" },
+              // Section 1: ungated mapPiece branch
+              { pathPuzzles: 0, difficulty: diff, end: "treasure", endReward: { type: "mapPiece" } },
+              // Section 2: gated — unlocked by tombKey from section 0
+              { pathPuzzles: 0, difficulty: diff, end: "treasure", gate: { type: "floor-key" } },
+            ]
+          : [
+              // Junior: just one ungated mapPiece branch
+              { pathPuzzles: 0, difficulty: diff, end: "treasure", endReward: { type: "mapPiece" } },
+            ]
 
     configs[j.id] = {
       pathPuzzles: pp,
       chestEvery: ce,
-      difficulty: TIER_DIFFICULTY[j.tier],
+      difficulty: diff,
       end: "treasure",
       exitOrStaircase: "exit",
-      sideSections: branchSection ? [branchSection] : [],
-      mainEndReward: hasBranch ? { type: "mosaicPiece" } : { type: "mapPiece" },
+      sideSections,
+      mainEndReward: j.tier !== "starter" ? { type: "mosaicPiece" } : { type: "mapPiece" },
       chestRewards,
     }
   }
