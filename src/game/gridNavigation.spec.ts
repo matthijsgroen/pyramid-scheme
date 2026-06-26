@@ -169,7 +169,11 @@ describe(findPath, () => {
   it("returns path through corridor cells between two rooms", () => {
     const grid = makeLinearGrid() // entrance(0,0) -e- corridor(0,1) -e- exit(0,2)
     const path = findPath(grid, [0, 0], [0, 2])
-    expect(path).toEqual([[0, 0], [0, 1], [0, 2]])
+    expect(path).toEqual([
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ])
   })
 })
 

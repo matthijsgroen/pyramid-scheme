@@ -15,6 +15,7 @@ export const Level: FC<{
   earlyFeedbackBlockIds?: string[]
   hieroglyphUnlockCount?: number
   pyramidDifficulty?: import("@/data/difficultyLevels").Difficulty
+  entranceBlockId?: string
 }> = ({
   content,
   storageKey,
@@ -25,6 +26,7 @@ export const Level: FC<{
   earlyFeedbackBlockIds,
   hieroglyphUnlockCount,
   pyramidDifficulty,
+  entranceBlockId,
 }) => {
   const [storedAnswers, setAnswers] = useGameStorage<{
     key: string
@@ -64,6 +66,7 @@ export const Level: FC<{
           earlyFeedbackBlockIds={earlyFeedbackBlockIds}
           hieroglyphUnlockCount={hieroglyphUnlockCount}
           pyramidDifficulty={pyramidDifficulty}
+          entranceBlockId={entranceBlockId}
           onAnswer={
             storageKey
               ? (blockId: string, value: number | undefined) => {

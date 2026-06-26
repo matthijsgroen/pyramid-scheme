@@ -107,7 +107,8 @@ export const findPath = (
     if (!cell || cell.type === "empty") continue
     for (const d of cell.dirs) {
       const [dr, dc] = MOVES[d]
-      const nr = r + dr, nc = c + dc
+      const nr = r + dr,
+        nc = c + dc
       const nk = key(nr, nc)
       if (parent.has(nk)) continue
       parent.set(nk, key(r, c))

@@ -14,6 +14,7 @@ import { type PyramidJourney } from "@/data/journeys"
 import { FezContext } from "./fez/context"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
+import { createFloorStartIndices } from "@/app/PyramidLevel/support"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { Header } from "@/ui/Header"
@@ -52,6 +53,7 @@ export const PyramidExpedition: FC<{
   ).length
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
+  const [entering, setEntering] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
@@ -71,6 +73,19 @@ export const PyramidExpedition: FC<{
         earlyFeedbackCount
       )
     : []
+
+  const entranceBlockId = useMemo(() => {
+    if (!levelContent) return undefined
+    const { floorCount, blocks } = levelContent.pyramid
+    const starts = createFloorStartIndices(floorCount)
+    return blocks[starts[floorCount - 1] + Math.floor(floorCount / 2)]?.id
+  }, [levelContent])
+
+  useEffect(() => {
+    if (!entering) return
+    const t = setTimeout(() => setEntering(false), 900)
+    return () => clearTimeout(t)
+  }, [entering])
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
@@ -263,7 +278,10 @@ export const PyramidExpedition: FC<{
             <div
               ref={currentLevelRef}
               key={activeJourney.levelNr}
-              className="absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
+              className={clsx(
+                "absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out",
+                entering && "pointer-events-none"
+              )}
               style={{
                 transform: startNextLevel ? "translateX(-200%) scale(3)" : "scale(1)",
                 transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
@@ -281,6 +299,7 @@ export const PyramidExpedition: FC<{
                   earlyFeedbackBlockIds={earlyFeedbackBlockIds}
                   hieroglyphUnlockCount={hieroglyphUnlockCount}
                   pyramidDifficulty={activeJourney.journey.difficulty}
+                  entranceBlockId={entering ? entranceBlockId : undefined}
                 />
               )}
             </div>

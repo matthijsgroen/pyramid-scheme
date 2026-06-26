@@ -2,7 +2,7 @@
 
 An ancient Egyptian-themed puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.
 
-![Version](https://img.shields.io/badge/version-0.11.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.23.3-blue.svg)
 ![Status](https://img.shields.io/badge/status-alpha-orange.svg)
 ![Tech](https://img.shields.io/badge/tech-React%20+%20TypeScript%20+%20Vite-green.svg)
 

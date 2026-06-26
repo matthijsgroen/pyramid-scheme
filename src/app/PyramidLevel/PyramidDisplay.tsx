@@ -49,6 +49,7 @@ export const PyramidDisplay: FC<{
   earlyFeedbackBlockIds?: string[]
   hieroglyphUnlockCount?: number
   pyramidDifficulty?: Difficulty
+  entranceBlockId?: string
   onAnswer?: (blockId: string, value: number | undefined) => void
 }> = ({
   pyramid,
@@ -62,6 +63,7 @@ export const PyramidDisplay: FC<{
   earlyFeedbackBlockIds = [],
   hieroglyphUnlockCount = 0,
   pyramidDifficulty = "starter",
+  entranceBlockId,
 }) => {
   const { blocks } = pyramid
 
@@ -123,9 +125,8 @@ export const PyramidDisplay: FC<{
                     : "incorrect"
                   : undefined
 
-              return block.isOpen ? (
+              const blockEl = block.isOpen ? (
                 <InputBlock
-                  key={block.id}
                   value={blockValue}
                   selected={selectedBlockIndex === startIndex + index && !completed}
                   disabled={complete && isCorrect}
@@ -151,7 +152,6 @@ export const PyramidDisplay: FC<{
               ) : block.value === undefined && unlockedBlocks.has(block.id) ? (
                 // Hieroglyph block that has been unlocked — behaves as InputBlock
                 <InputBlock
-                  key={block.id}
                   value={blockValue}
                   selected={selectedBlockIndex === startIndex + index && !completed}
                   disabled={complete && isCorrect}
@@ -178,7 +178,6 @@ export const PyramidDisplay: FC<{
                 />
               ) : (
                 <Block
-                  key={block.id}
                   selected={selectedBlockIndex === startIndex + index}
                   unlockable={block.value === undefined && remainingCharges > 0}
                   onClick={
@@ -196,6 +195,14 @@ export const PyramidDisplay: FC<{
                     </span>
                   )}
                 </Block>
+              )
+
+              return entranceBlockId === block.id ? (
+                <div key={block.id} className="animate-stone-bg rounded">
+                  <div className="animate-stone-entrance">{blockEl}</div>
+                </div>
+              ) : (
+                <span key={block.id}>{blockEl}</span>
               )
             })}
             <div
@@ -225,7 +232,7 @@ export const PyramidDisplay: FC<{
         />
       )}
 
-      <div className="absolute top-full right-12 left-0 h-0 overflow-visible">
+      <div className="absolute top-full right-12 left-0 z-[-1] h-0 overflow-visible">
         <div
           className={clsx(
             "w-full bg-black/10 [clip-path:polygon(0_0,46%_100%,100%_0)]",

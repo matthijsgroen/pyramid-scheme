@@ -24,11 +24,11 @@ Status: active plan · decisions resolved via grilling session 2026-06-23
 
 ---
 
-## Phase 1 — Site Map Generator, Renderer, and Interaction Shell
+## Phase 1 — Site Map Generator, Renderer, and Interaction Shell ✅
 
 **Goal:** A standalone, fully testable site map system — types, seeded generator, validator, SVG renderer, and interaction hook — with no connection to the live game yet. Validated through unit tests and Storybook stories. This is the foundation everything else plugs into.
 
-### 1a — Types (`src/game/siteTypes.ts`)
+### 1a — Types (`src/game/siteTypes.ts`) ✅
 
 Pure data shapes, no React. Keep it minimal — no carry-forward fields, no shortcut-gate fields.
 
@@ -93,7 +93,7 @@ export type AssemblerFailure = {
 export type AssemblerResult = { success: true; layout: SiteLayout } | AssemblerFailure
 ```
 
-### 1b — Validator (`src/game/siteValidator.ts` + `siteValidator.spec.ts`)
+### 1b — Validator (`src/game/siteValidator.ts` + `siteValidator.spec.ts`) ✅
 
 Pure function — takes a layout + journey context, returns pass/fail with structured reasons. No side effects, no React.
 
@@ -126,7 +126,7 @@ export type ValidationResult = { valid: true } | { valid: false; reasons: Valida
 - Journey-level: 0 map pieces → fail; 2 map pieces → fail; 1 behind ward → fail; 1 seal-reachable → pass
 - Negative: manually constructed invalid layouts for each check
 
-### 1c — Assembler (`src/game/siteAssembler.ts` + `siteAssembler.spec.ts`)
+### 1c — Assembler (`src/game/siteAssembler.ts` + `siteAssembler.spec.ts`) ✅
 
 Seeded generator. Takes `SiteConfig + seed → AssemblerResult`. Calls `validateSite` on every candidate; bad seeds return `AssemblerFailure` with reasons attached — never throws.
 
@@ -146,7 +146,7 @@ export const assembleSite = (config: SiteConfig, seed: number): AssemblerResult
 - Cosmetic variation: different seeds → different layouts
 - Config with impossible budget returns `AssemblerFailure` with legible reason
 
-### 1d — Navigation hook (`src/app/SiteMap/useSiteNavigation.ts` + spec)
+### 1d — Navigation hook (`src/app/SiteMap/useSiteNavigation.ts` + spec) ✅
 
 Pure computation over `SiteLayout + solvedEdges`. No React context, no storage — fully unit-testable.
 
@@ -174,7 +174,7 @@ export const useSiteNavigation = (
 - Node behind an unsatisfied seal is `revealed-unreachable`
 - Node with no path from entrance is `fogged`
 
-### 1e — SVG map component (`src/app/SiteMap/SiteMapView.tsx` + Storybook)
+### 1e — SVG map component (`src/app/SiteMap/SiteMapView.tsx` + Storybook) ✅
 
 SVG for edges/corridors, DOM nodes for POIs, CSS transitions for fog states. Grid layout: `gridX` × `floor` → SVG coordinates. Floor 0 = widest; each deeper floor tapers (pyramid shape).
 
@@ -196,7 +196,7 @@ type SiteMapViewProps = {
 - Multi-floor (2 floors, stairhead visible)
 - All node types visible
 
-### 1f — Explorer dot (`src/app/SiteMap/ExplorerDot.tsx` + Storybook)
+### 1f — Explorer dot (`src/app/SiteMap/ExplorerDot.tsx` + Storybook) ✅
 
 Follows node taps with ~250ms glide along the SVG edge path. Tap mid-glide → snap. Never blocks interaction.
 
@@ -215,7 +215,7 @@ type ExplorerDotProps = {
 
 ---
 
-## Phase 2 — Sumplete Puzzle
+## Phase 2 — Sumplete Puzzle ✅
 
 **Goal:** A complete, standalone Sumplete puzzle — generator, board component, and Storybook stories — before it gets wired into the site map. Built as a self-contained unit.
 
@@ -241,7 +241,7 @@ type ExplorerDotProps = {
 
 ---
 
-## Phase 3 — V3 State + Wire Sumplete into Site Map
+## Phase 3 — V3 State + Wire Sumplete into Site Map 🔜
 
 **Goal:** New state shapes defined, Sumplete puzzle nodes live inside the site map shell. No connection to real journeys yet — tested via a new `SiteMapScreen` component that can be driven from Storybook or a dev route.
 

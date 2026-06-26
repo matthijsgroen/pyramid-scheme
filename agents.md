@@ -80,6 +80,24 @@ All new components in `src/ui/` should have a corresponding Storybook story. Use
 
 The project uses strict TypeScript. Avoid `any` types; define proper interfaces and types, preferably co-located with the code they describe.
 
+### 8. Domain / App / Design-System Layer Boundaries
+
+Code is split into three layers with strict one-way dependencies (domain ← app ← ui):
+
+| Layer | Location | Rule |
+|-------|----------|------|
+| **Domain** | `src/game/` | Pure TypeScript — data types, generation functions, validation functions. No React, no DOM, no rendering. |
+| **App** | `src/app/` | Stateful React — pages, state hooks, orchestration. May import from domain and design system. |
+| **Design system** | `src/ui/` | Stateless React components. Props in, JSX out. No game state, no domain imports. |
+
+Concretely for the site map system:
+- `src/game/siteTypes.ts` — `FloorConfig`, `SiteLayout`, all data types
+- `src/game/siteAssembler.ts` — `assembleFloor()` pure function
+- `src/game/siteValidator.ts` — `validateSite()` / `validateJourney()` pure functions
+- `src/app/SiteMap/SiteMapView.tsx` — SVG renderer, receives layout + nav state as props
+- `src/app/SiteMap/useSiteNavigation.ts` — pure nav-state computation hook (no storage)
+- `src/app/SiteMap/SiteMapScreen.tsx` — stateful page that wires storage → hooks → view
+
 ---
 
 ## Common Workflows
@@ -161,6 +179,8 @@ Deeper design docs live in `docs/`:
 | Document | Topic |
 |----------|-------|
 | [`docs/crocodile-puzzle.md`](docs/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
+| [`docs/treasure-effects.md`](docs/treasure-effects.md) | Treasure passive effects system — material tiers, all effect types, implementation notes |
+| [`docs/handover-treasure-effects-implementation.md`](docs/handover-treasure-effects-implementation.md) | Implementation handover — what's done, what to build, order of work, code patterns |
 
 ---
 
