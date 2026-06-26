@@ -364,12 +364,12 @@ Replace `MapButton` with `JourneyMapView` for V3 journeys.
 |-------|------------|--------|------------|
 | 1 | Site types, validator, assembler, nav hook, SVG, explorer dot | ✅ | `siteTypes.ts`, `siteValidator.ts`, `siteAssembler.ts`, `useSiteNavigation.ts`, `SiteMapView.tsx` |
 | 2 | Sumplete generator + board | ✅ | `generateSumplete.ts`, `SumpleteBoard.tsx` |
-| 3 | V3 state (fragments, tomb keys, mosaic), `SiteMapScreen` | 🔜 | `useProgression.ts`, `useJourneys.ts` V3, `SiteMapScreen.tsx` |
-| 4 | Entrance seal, feature-flag fork, 20 linear `siteConfig` entries | 🔜 | `siteConfigs.ts`, `PyramidExpedition.tsx` fork |
-| 5a | Forks | 🔜 | Assembler + nav hook + stories updated |
-| 5b | Seals | 🔜 | Per-site seal key state |
-| 5c | Floors + stairheads | 🔜 | Multi-floor assembler + camera pan |
-| 5d | Wards | 🔜 | Ward gate traversal via `tombKeys` |
+| 3 | V3 state (fragments, tomb keys, mosaic), `SiteMapScreen` | ✅ | `useProgression.ts`, `useJourneys.ts` V3, `SiteMapScreen.tsx` |
+| 4 | Entrance seal, feature-flag fork, 20 linear `siteConfig` entries | ✅ | `generatedWorld.ts` (replaced `siteConfigs.ts`), `PyramidExpedition.tsx` fork |
+| 5a | Forks — fork nodes at branch junctions; junior+ journeys get branches | ✅ | Assembler tracks `attachedAt`, corridor junctions → fork; `SideSection.endReward`; generator adds branches |
+| 5b | Seals — floor-key gates for expert+ pyramids | ✅ | Generator: key-holder + mapPiece + gated section per expert+ journey |
+| 5c | Floors + stairheads — SiteConfig = FloorConfig[], floor-aware edge IDs | ✅ | SiteMapScreen multi-floor state; stairhead tap advances floor; expert+ get floor 2 |
+| 5d | Wards — tombKeys wired into gridNavigation | ✅ | completeCell externalKeys param; SiteMapScreen passes wardKeys; tombKeyIds on ProgressionAPI |
 | 6 | Pyramid reward economies | 🔜 | Fragment nodes, mosaic tiles, map pieces deterministic, ward key wiring; remove `inventoryLootLogic.ts` + `mapPieceLogic.ts` |
 | 7 | Tomb interiors as site maps | 🔜 | `tombSiteConfigs.ts`, tableau node type, location key treasure, `useProgression.discoverTomb` |
 | 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb, map pieces on deep floors, tomb discovery flow |
