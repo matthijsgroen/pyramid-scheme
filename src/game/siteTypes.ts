@@ -42,6 +42,7 @@ export type SideSection = {
   difficulty: Difficulty
   end: "treasure" | "staircase"
   gate?: GateConfig
+  endReward?: TreasureReward
 }
 export type FloorConfig = {
   pathPuzzles: number

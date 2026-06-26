@@ -4,20 +4,13 @@
  *
  * Run: yarn generate-world
  *
- * Map piece distribution (Phase 4 / linear sites):
- * - 20 surface map pieces: one per pyramid journey, one per tier's FIRST tomb.
- *   starter_1–4 → starter_treasure_tomb (4 pieces)
- *   junior_1–4  → junior_treasure_tomb  (4 pieces)
- *   expert_1–4  → expert_treasure_tomb  (4 pieces)
- *   master_1–4  → master_treasure_tomb  (4 pieces)
- *   wizard_1–4  → wizard_treasure_tomb  (4 pieces)
+ * Map piece distribution (Phase 5a / branched sites):
+ * - Starter journeys: linear (no branch), mapPiece at main end goal (4 pieces).
+ * - Junior+ journeys: one branch with endReward: mapPiece; main end → mosaicPiece (16 pieces).
+ * - Total: 20 surface map pieces, one per pyramid journey.
  * - 10 gated map pieces for extra tombs (NOT placed here — deferred to Phase 5c):
  *   expert_b (2), master_b (3), wizard_b (3), wizard_c (2) — gated on deep floors.
  *   See docs/pyramid-interior-design.md §5 for the full distribution rules.
- *
- * Phase 4 compromise: linear sites have no branches, so map pieces sit at the main
- * goal (replacing mosaicPiece). Phase 5 restores mosaicPiece to main goal when
- * branch endpoints become available.
  *
  * Fragment distribution:
  * - Intermediate chest nodes hold hieroglyphFragment rewards (specific inventory item IDs)
@@ -251,6 +244,7 @@ type SideSection = {
   difficulty: Difficulty
   end: "treasure" | "staircase"
   gate?: { type: "floor-key" } | { type: "tomb-key" }
+  endReward?: TreasureReward
 }
 
 type FloorConfig = {
@@ -294,14 +288,26 @@ const buildConfigs = (): Record<string, FloorConfig> => {
       id ? ({ type: "hieroglyphFragment", hieroglyphId: id } as TreasureReward) : { type: "hieroglyphs" }
     )
 
+    // Starter: linear, mapPiece at main end (no branches until Phase 5c)
+    // Junior+: one treasure branch with mapPiece; main end → mosaicPiece
+    const hasBranch = j.tier !== "starter"
+    const branchSection: SideSection | null = hasBranch
+      ? {
+          pathPuzzles: 0,
+          difficulty: TIER_DIFFICULTY[j.tier],
+          end: "treasure",
+          endReward: { type: "mapPiece" },
+        }
+      : null
+
     configs[j.id] = {
       pathPuzzles: pp,
       chestEvery: ce,
       difficulty: TIER_DIFFICULTY[j.tier],
       end: "treasure",
       exitOrStaircase: "exit",
-      sideSections: [],
-      mainEndReward: { type: "mapPiece" },
+      sideSections: branchSection ? [branchSection] : [],
+      mainEndReward: hasBranch ? { type: "mosaicPiece" } : { type: "mapPiece" },
       chestRewards,
     }
   }
@@ -322,14 +328,26 @@ const serializeReward = (r: TreasureReward): string => {
   }
 }
 
+const serializeSideSection = (s: SideSection): string => {
+  const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: "${s.end}"`]
+  if (s.chestEvery !== undefined) parts.push(`chestEvery: ${s.chestEvery}`)
+  if (s.gate) parts.push(`gate: { type: "${s.gate.type}" }`)
+  if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
+  return `{ ${parts.join(", ")} }`
+}
+
 const serializeConfig = (c: FloorConfig): string => {
+  const sideSectionsStr =
+    c.sideSections.length === 0
+      ? "[]"
+      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`
   const lines: string[] = [
     `    pathPuzzles: ${c.pathPuzzles},`,
     `    chestEvery: ${c.chestEvery ?? 0},`,
     `    difficulty: "${c.difficulty}",`,
     `    end: "treasure",`,
     `    exitOrStaircase: "${c.exitOrStaircase}",`,
-    `    sideSections: [],`,
+    `    sideSections: ${sideSectionsStr},`,
   ]
   if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
   if (c.chestRewards && c.chestRewards.length > 0) {
@@ -367,6 +385,9 @@ const printStats = (configs: Record<string, FloorConfig>) => {
   for (const cfg of Object.values(configs)) {
     if (cfg.mainEndReward?.type === "mapPiece") totalMapPieces++
     if (cfg.mainEndReward?.type === "mosaicPiece") totalMosaicPieces++
+    for (const s of cfg.sideSections) {
+      if (s.endReward?.type === "mapPiece") totalMapPieces++
+    }
     for (const r of cfg.chestRewards ?? []) {
       if (r.type === "hieroglyphFragment") {
         totalFragments++

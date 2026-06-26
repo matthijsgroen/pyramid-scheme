@@ -207,6 +207,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       sectionIdx: number
       cells: Array<[number, number]>
       intermediate: Array<"puzzle" | "chest">
+      attachedAt: [number, number]
     }
     const sectionGroups: SectionGroup[] = []
     let failed = false
@@ -243,7 +244,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
         const cells: Array<[number, number]> = [[startR, startC], ...rest]
         cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-        sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate })
+        sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate, attachedAt: [pcr, pcc] })
         placed = true
         break
       }
@@ -286,6 +287,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const posKey = (r: number, c: number) => `${r},${c}`
 
+    // Collect branch junction cells (become fork nodes)
+    const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
+
     // Main path nodes
     let mainChestIdx = 0
     for (let mi = 0; mi < mainNodeCells.length; mi++) {
@@ -302,9 +306,16 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           roomType: "treasure",
           reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
         })
+      } else if (forkPositions.has(posKey(r, c))) {
+        roomSpecs.set(posKey(r, c), { roomType: "fork" })
       } else {
         roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
       }
+    }
+
+    // Corridor cells that are branch junctions become fork nodes too
+    for (const pk of forkPositions) {
+      if (!roomSpecs.has(pk)) roomSpecs.set(pk, { roomType: "fork" })
     }
 
     // Exit / stairhead
@@ -359,7 +370,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       } else if (section.end === "staircase") {
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })
       } else {
-        roomSpecs.set(posKey(er, ec), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+        roomSpecs.set(posKey(er, ec), {
+          roomType: "treasure",
+          reward: section.endReward ?? { type: "hieroglyphs" },
+        })
       }
     }
 

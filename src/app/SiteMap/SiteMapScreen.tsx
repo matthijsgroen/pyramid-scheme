@@ -72,6 +72,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "puzzle") {
         setActivePuzzlePos([row, col])
+      } else if (cell.roomType === "fork") {
+        // Fork is a free branch point — completing it reveals adjacent branches
+        const edgeId = encodePos(row, col)
+        journeys.markEdgeSolved(edgeId)
+        journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "exit") {
         onSiteComplete()
       } else if (cell.roomType === "treasure") {
