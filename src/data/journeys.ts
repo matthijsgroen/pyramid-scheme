@@ -1,6 +1,6 @@
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
-import type { FloorConfig } from "@/game/siteTypes"
+import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"
 import {
   merchantCacheTreasures,
@@ -58,7 +58,7 @@ export type PyramidJourney = {
       pieces: [min: number, max: number]
     }
   }
-  siteConfig?: FloorConfig
+  siteConfig?: SiteConfig
 }
 
 export type TreasureTombJourney = {
@@ -873,6 +873,6 @@ export const journeys: Journey[] = [
 for (const journey of journeys) {
   if (journey.type === "pyramid") {
     const config = generatedWorldConfigs[journey.id]
-    if (config) (journey as PyramidJourney).siteConfig = config
+    if (config) (journey as PyramidJourney).siteConfig = config  // already SiteConfig (FloorConfig[])
   }
 }

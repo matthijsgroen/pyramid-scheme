@@ -3,7 +3,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, getCell } from "@/game/gridNavigation"
 import { generateSumplete } from "@/game/generateSumplete"
 import { hashString } from "@/support/hashString"
-import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { ExplorerDot } from "./ExplorerDot"
 import { SumpleteBoard } from "@/app/PuzzleFamilies/Sumplete/SumpleteBoard"
@@ -11,52 +11,68 @@ import { useJourneys } from "@/app/state/useJourneys"
 
 type Props = {
   journeyId: string
-  siteConfig: FloorConfig
+  siteConfig: SiteConfig
   seed: number
   onSiteComplete: () => void
   onCancel: () => void
 }
 
-const parsePos = (s: string): readonly [number, number] => {
-  const [r, c] = s.split(",").map(Number)
-  return [r, c]
+// Edge IDs are "floorIdx:row,col". Backward compat: no colon prefix = floor 0.
+const encodeEdge = (floor: number, row: number, col: number): string => `${floor}:${row},${col}`
+const decodeEdge = (edgeId: string): [floor: number, row: number, col: number] => {
+  if (edgeId.includes(":")) {
+    const [f, pos] = edgeId.split(":")
+    const [r, c] = pos.split(",").map(Number)
+    return [Number(f), r, c]
+  }
+  const [r, c] = edgeId.split(",").map(Number)
+  return [0, r, c]
 }
-const encodePos = (row: number, col: number): string => `${row},${col}`
 
-const applyEdges = (grid: FloorGrid, solvedEdges: string[]): FloorGrid =>
-  solvedEdges.reduce((g, edgeId) => {
-    const [r, c] = parsePos(edgeId)
-    return completeCell(g, r, c)
-  }, grid)
+const applyEdges = (grid: FloorGrid, floor: number, allEdges: string[]): FloorGrid =>
+  allEdges
+    .filter(e => decodeEdge(e)[0] === floor)
+    .reduce((g, edgeId) => {
+      const [, r, c] = decodeEdge(edgeId)
+      return completeCell(g, r, c)
+    }, grid)
 
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel }: Props) => {
   const journeys = useJourneys()
-  const solvedEdges = journeys.getSolvedEdges(journeyId)
+  const allEdges = journeys.getSolvedEdges(journeyId)
   const journeyState = journeys.getJourney(journeyId)
 
-  // ponytail: assemble once per seed; solved edges reconstruct completed state on top
-  const baseGrid = useMemo(() => {
-    const result = assembleFloor(journeyId, siteConfig, seed)
-    return result.success ? result.grid : null
-  }, [journeyId, siteConfig, seed])
+  const [currentFloor, setCurrentFloor] = useState(0)
+  const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
-  const grid = useMemo(() => (baseGrid ? applyEdges(baseGrid, solvedEdges) : null), [baseGrid, solvedEdges])
+  // ponytail: assemble once per floor+seed; edges reconstruct completed state
+  const baseGrid = useMemo(() => {
+    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor)
+    return result.success ? result.grid : null
+  }, [journeyId, floorConfig, seed, currentFloor])
+
+  const grid = useMemo(
+    () => (baseGrid ? applyEdges(baseGrid, currentFloor, allEdges) : null),
+    [baseGrid, currentFloor, allEdges]
+  )
 
   const explorerPos: readonly [number, number] = useMemo(() => {
     if (!grid) return [0, 0]
     const pos = journeyState?.position
-    return pos ? parsePos(pos) : grid.entrancePos
-  }, [grid, journeyState?.position])
+    if (!pos) return grid.entrancePos
+    const [posFloor, r, c] = decodeEdge(pos)
+    return posFloor === currentFloor ? [r, c] : grid.entrancePos
+  }, [grid, journeyState?.position, currentFloor])
 
   // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
 
   const activePuzzle = useMemo(() => {
     if (!activePuzzlePos) return null
-    const edgeId = encodePos(activePuzzlePos[0], activePuzzlePos[1])
+    const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
     // ponytail: fixed 3×3 sumplete for all puzzle rooms; difficulty scaling in Phase 6
     return generateSumplete(3, hashString(journeyId + edgeId))
-  }, [activePuzzlePos, journeyId])
+  }, [activePuzzlePos, journeyId, currentFloor])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -65,37 +81,41 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       if (!cell || cell.type !== "room") return
       if (cell.state !== "reachable") return
 
+      const edgeId = encodeEdge(currentFloor, row, col)
+
       if (cell.roomType === "entrance") {
         // Phase 4 adds the entrance seal; for now just complete it
-        const edgeId = encodePos(row, col)
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "puzzle") {
         setActivePuzzlePos([row, col])
       } else if (cell.roomType === "fork") {
         // Fork is a free branch point — completing it reveals adjacent branches
-        const edgeId = encodePos(row, col)
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
+      } else if (cell.roomType === "stairhead") {
+        // Descend to next floor
+        journeys.markEdgeSolved(edgeId)
+        journeys.updatePosition(journeyId, edgeId)
+        setCurrentFloor(f => f + 1)
       } else if (cell.roomType === "exit") {
         onSiteComplete()
       } else if (cell.roomType === "treasure") {
         // Phase 6 wires treasure rewards; for now just collect
-        const edgeId = encodePos(row, col)
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
       }
     },
-    [grid, journeys, journeyId, onSiteComplete]
+    [grid, journeys, journeyId, onSiteComplete, currentFloor]
   )
 
   const handlePuzzleSolved = useCallback(() => {
     if (!activePuzzlePos) return
-    const edgeId = encodePos(activePuzzlePos[0], activePuzzlePos[1])
+    const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
     journeys.markEdgeSolved(edgeId)
     journeys.updatePosition(journeyId, edgeId)
     setActivePuzzlePos(null)
-  }, [activePuzzlePos, journeys, journeyId])
+  }, [activePuzzlePos, journeys, journeyId, currentFloor])
 
   if (!grid) {
     return <div className="p-4 text-red-400">Site layout unavailable.</div>
@@ -109,6 +129,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       >
         ← Back
       </button>
+      {currentFloor > 0 && (
+        <div className="absolute top-2 right-2 z-10 rounded bg-stone-800 px-3 py-1 text-sm text-amber-200">
+          Floor {currentFloor + 1}
+        </div>
+      )}
       <div className="relative">
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
         <ExplorerDot grid={grid} pos={explorerPos} />

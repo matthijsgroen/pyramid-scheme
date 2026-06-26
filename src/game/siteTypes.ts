@@ -55,6 +55,9 @@ export type FloorConfig = {
   chestRewards?: TreasureReward[]
 }
 
+// A site is one or more floors. Index 0 = surface.
+export type SiteConfig = FloorConfig[]
+
 export type ValidationReason =
   | { type: "keyAfterGate"; gatePos: readonly [number, number]; keyPos: readonly [number, number] }
   | { type: "allBlandFork"; forkPos: readonly [number, number] }

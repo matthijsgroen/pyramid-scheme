@@ -260,6 +260,8 @@ type FloorConfig = {
   chestRewards?: TreasureReward[]
 }
 
+type SiteConfig = FloorConfig[]
+
 const TIER_DIFFICULTY: Record<Tier, Difficulty> = {
   starter: "easy",
   junior: "easy",
@@ -268,7 +270,7 @@ const TIER_DIFFICULTY: Record<Tier, Difficulty> = {
   wizard: "hard",
 }
 
-const buildConfigs = (): Record<string, FloorConfig> => {
+const buildConfigs = (): Record<string, SiteConfig> => {
   const assignments = computeFragmentAssignments()
 
   // Group assignments by journeyId → sorted by slotIndex
@@ -304,15 +306,15 @@ const buildConfigs = (): Record<string, FloorConfig> => {
               { pathPuzzles: 0, difficulty: diff, end: "treasure" },
               // Section 1: ungated mapPiece branch
               { pathPuzzles: 0, difficulty: diff, end: "treasure", endReward: { type: "mapPiece" } },
-              // Section 2: gated — unlocked by tombKey from section 0
-              { pathPuzzles: 0, difficulty: diff, end: "treasure", gate: { type: "floor-key" } },
+              // Section 2: gated stairhead — unlocked by tombKey from section 0 → leads to floor 2
+              { pathPuzzles: 0, difficulty: diff, end: "staircase", gate: { type: "floor-key" } },
             ]
           : [
               // Junior: just one ungated mapPiece branch
               { pathPuzzles: 0, difficulty: diff, end: "treasure", endReward: { type: "mapPiece" } },
             ]
 
-    configs[j.id] = {
+    const floor1: FloorConfig = {
       pathPuzzles: pp,
       chestEvery: ce,
       difficulty: diff,
@@ -322,6 +324,23 @@ const buildConfigs = (): Record<string, FloorConfig> => {
       mainEndReward: j.tier !== "starter" ? { type: "mosaicPiece" } : { type: "mapPiece" },
       chestRewards,
     }
+
+    // Expert+: add a floor 2 accessible via stairhead in section 2 (gated)
+    // Floor 2 is a short linear floor with a mosaicPiece at the end
+    const floor2: FloorConfig | null = hasGatedSection
+      ? {
+          pathPuzzles: 2,
+          chestEvery: 2,
+          difficulty: diff,
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [],
+          mainEndReward: { type: "mosaicPiece" },
+          chestRewards: [{ type: "hieroglyphs" }],
+        }
+      : null
+
+    configs[j.id] = floor2 ? [floor1, floor2] : [floor1]
   }
   return configs
 }
@@ -369,17 +388,23 @@ const serializeConfig = (c: FloorConfig): string => {
   return `  {\n${lines.join("\n")}\n  }`
 }
 
-const generateFile = (configs: Record<string, FloorConfig>): string => {
+const serializeSiteConfig = (floors: SiteConfig): string => {
+  if (floors.length === 1) return `[${serializeConfig(floors[0]).trimStart()}]`
+  const inner = floors.map(f => `    ${serializeConfig(f).trimStart()}`).join(",\n")
+  return `[\n${inner},\n  ]`
+}
+
+const generateFile = (configs: Record<string, SiteConfig>): string => {
   const entries = Object.entries(configs)
-    .map(([id, cfg]) => `  ${id}: ${serializeConfig(cfg).trimStart()}`)
+    .map(([id, floors]) => `  ${id}: ${serializeSiteConfig(floors)}`)
     .join(",\n")
 
   return `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY.
 // Run: yarn generate-world
 // World seed: ${WORLD_SEED}
-import type { FloorConfig } from "@/game/siteTypes"
+import type { SiteConfig } from "@/game/siteTypes"
 
-export const generatedWorldConfigs: Record<string, FloorConfig> = {
+export const generatedWorldConfigs: Record<string, SiteConfig> = {
 ${entries},
 }
 `
@@ -388,22 +413,24 @@ ${entries},
 // ---------------------------------------------------------------------------
 // Validation summary
 // ---------------------------------------------------------------------------
-const printStats = (configs: Record<string, FloorConfig>) => {
+const printStats = (configs: Record<string, SiteConfig>) => {
   let totalFragments = 0
   let totalMapPieces = 0
   let totalMosaicPieces = 0
   const fragCoverage = new Map<string, number>()
 
-  for (const cfg of Object.values(configs)) {
-    if (cfg.mainEndReward?.type === "mapPiece") totalMapPieces++
-    if (cfg.mainEndReward?.type === "mosaicPiece") totalMosaicPieces++
-    for (const s of cfg.sideSections) {
-      if (s.endReward?.type === "mapPiece") totalMapPieces++
-    }
-    for (const r of cfg.chestRewards ?? []) {
-      if (r.type === "hieroglyphFragment") {
-        totalFragments++
-        fragCoverage.set(r.hieroglyphId, (fragCoverage.get(r.hieroglyphId) ?? 0) + 1)
+  for (const floors of Object.values(configs)) {
+    for (const cfg of floors) {
+      if (cfg.mainEndReward?.type === "mapPiece") totalMapPieces++
+      if (cfg.mainEndReward?.type === "mosaicPiece") totalMosaicPieces++
+      for (const s of cfg.sideSections) {
+        if (s.endReward?.type === "mapPiece") totalMapPieces++
+      }
+      for (const r of cfg.chestRewards ?? []) {
+        if (r.type === "hieroglyphFragment") {
+          totalFragments++
+          fragCoverage.set(r.hieroglyphId, (fragCoverage.get(r.hieroglyphId) ?? 0) + 1)
+        }
       }
     }
   }
