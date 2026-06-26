@@ -4,6 +4,7 @@ import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
 import { ExpeditionCompletionOverlay } from "@/app/PyramidExpedition/ExpeditionCompletionOverlay"
 import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
+import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
@@ -54,6 +55,7 @@ export const PyramidExpedition: FC<{
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const [entering, setEntering] = useState(true)
+  const [siteCompleted, setSiteCompleted] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
@@ -188,6 +190,35 @@ export const PyramidExpedition: FC<{
     ) < 6
       ? "text-black"
       : "text-white"
+
+  // Feature flag: V3 site map path
+  if (pyramidJourney.siteConfig) {
+    return (
+      <DesertBackdrop
+        levelNr={1}
+        start={pyramidJourney.background.time}
+        timeStepSize={pyramidJourney.background.timeStepSize}
+        showNile={pyramidJourney.background.showNile}
+      >
+        {!siteCompleted ? (
+          <SiteMapScreen
+            journeyId={activeJourney.journeyId}
+            siteConfig={pyramidJourney.siteConfig}
+            seed={activeJourney.randomSeed}
+            onSiteComplete={() => setSiteCompleted(true)}
+            onCancel={() => onClose?.()}
+          />
+        ) : (
+          <ExpeditionCompletionOverlay
+            onJourneyComplete={onJourneyComplete}
+            onStartJourney={onStartJourney}
+            newPyramidJourneyId={nextPyramidJourneyId}
+            activeJourney={activeJourney}
+          />
+        )}
+      </DesertBackdrop>
+    )
+  }
 
   return (
     <DesertBackdrop

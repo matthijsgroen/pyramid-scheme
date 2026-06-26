@@ -181,6 +181,8 @@ Deeper design docs live in `docs/`:
 | [`docs/crocodile-puzzle.md`](docs/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
 | [`docs/treasure-effects.md`](docs/treasure-effects.md) | Treasure passive effects system — material tiers, all effect types, implementation notes |
 | [`docs/handover-treasure-effects-implementation.md`](docs/handover-treasure-effects-implementation.md) | Implementation handover — what's done, what to build, order of work, code patterns |
+| [`docs/game-loop.md`](docs/game-loop.md) | Three nested loops, level counts, conflict checks against EXPEDITION_REDESIGN and other docs |
+| [`docs/pyramid-interior-design.md`](docs/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, per-tier templates |
 
 ---
 

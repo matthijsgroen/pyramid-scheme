@@ -1,11 +1,17 @@
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
+import type { FloorConfig } from "@/game/siteTypes"
+import { pyramidSiteConfigs } from "./siteConfigs"
 import {
-  ancientRelicsTreasures,
   merchantCacheTreasures,
-  mythicalArtifactsTreasures,
   nobleVaultTreasures,
-  templeSecretsTreasures,
+  templeOuterTreasures,
+  templeInnerTreasures,
+  hallOfMaatTreasures,
+  hallOfOsirisTreasures,
+  vaultOfGodsATreasures,
+  vaultOfGodsBTreasures,
+  vaultOfGodsCTreasures,
   type Treasure,
 } from "./treasures"
 import type { Operation } from "@/app/Formulas/formulas"
@@ -52,6 +58,7 @@ export type PyramidJourney = {
       pieces: [min: number, max: number]
     }
   }
+  siteConfig?: FloorConfig
 }
 
 export type TreasureTombJourney = {
@@ -473,7 +480,7 @@ export const journeys: Journey[] = [
     },
   },
 
-  // Expert Treasure Tomb Journey
+  // Expert Treasure Tomb Journeys
   {
     id: "expert_treasure_tomb",
     name: "High Priest's Treasury",
@@ -481,15 +488,33 @@ export const journeys: Journey[] = [
     description:
       "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy.",
     difficulty: "expert",
-    journeyLength: "medium",
+    journeyLength: "short",
     levelCount: 4,
-    treasures: templeSecretsTreasures,
+    treasures: templeOuterTreasures,
     levelSettings: {
       symbolCount: 4,
       numberRange: [1, 10],
       operators: ["+", "-", "*"],
       compareAmount: 3,
       maxMultiplyOperandResult: 5,
+    },
+  },
+  {
+    id: "expert_treasure_tomb_b",
+    name: "Inner Sanctum",
+    type: "treasure_tomb",
+    description:
+      "Breach the sealed inner sanctum where only the highest priests dared tread, guarding the most sacred artifacts of the temple.",
+    difficulty: "expert",
+    journeyLength: "short",
+    levelCount: 4,
+    treasures: templeInnerTreasures,
+    levelSettings: {
+      symbolCount: 4,
+      numberRange: [2, 12],
+      operators: ["+", "-", "*"],
+      compareAmount: 4,
+      maxMultiplyOperandResult: 6,
     },
   },
 
@@ -613,23 +638,42 @@ export const journeys: Journey[] = [
     },
   },
 
-  // Master Treasure Tomb Journey
+  // Master Treasure Tomb Journeys
   {
     id: "master_treasure_tomb",
-    name: "Pharaoh's Secret Hoard",
+    name: "Hall of Ma'at",
     type: "treasure_tomb",
     description:
-      "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses.",
+      "Enter the hall where the goddess Ma'at weighs the hearts of the dead. Prove your worth through perfect balance and divine justice.",
     difficulty: "master",
-    journeyLength: "long",
+    journeyLength: "medium",
     levelCount: 5,
-    treasures: ancientRelicsTreasures,
+    treasures: hallOfMaatTreasures,
     levelSettings: {
       symbolCount: 4,
       numberRange: [1, 10],
       operators: ["+", "-", "*", "/"],
       compareOperators: ["+", "-", "*"],
       compareAmount: 4,
+      maxMultiplyOperandResult: 10,
+    },
+  },
+  {
+    id: "master_treasure_tomb_b",
+    name: "Hall of Osiris",
+    type: "treasure_tomb",
+    description:
+      "Descend into the deeper hall ruled by Osiris, lord of the underworld. Face the mysteries of death and rebirth to claim his ancient relics.",
+    difficulty: "master",
+    journeyLength: "medium",
+    levelCount: 5,
+    treasures: hallOfOsirisTreasures,
+    levelSettings: {
+      symbolCount: 5,
+      numberRange: [1, 12],
+      operators: ["+", "-", "*", "/"],
+      compareOperators: ["+", "-", "*"],
+      compareAmount: 5,
       maxMultiplyOperandResult: 10,
     },
   },
@@ -765,7 +809,7 @@ export const journeys: Journey[] = [
     },
   },
 
-  // Wizard Treasure Tomb Journey
+  // Wizard Treasure Tomb Journeys
   {
     id: "wizard_treasure_tomb",
     name: "Vault of the Gods",
@@ -773,9 +817,9 @@ export const journeys: Journey[] = [
     description:
       "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt.",
     difficulty: "wizard",
-    journeyLength: "long",
+    journeyLength: "medium",
     levelCount: 6,
-    treasures: mythicalArtifactsTreasures,
+    treasures: vaultOfGodsATreasures,
     levelSettings: {
       symbolCount: 5,
       numberRange: [1, 15],
@@ -785,4 +829,50 @@ export const journeys: Journey[] = [
       maxMultiplyOperandResult: 12,
     },
   },
+  {
+    id: "wizard_treasure_tomb_b",
+    name: "Realm of Cosmic Forces",
+    type: "treasure_tomb",
+    description:
+      "Venture deeper into the divine realm where cosmic forces of life, death, chaos, and wind manifest as ancient relics of immeasurable power.",
+    difficulty: "wizard",
+    journeyLength: "medium",
+    levelCount: 6,
+    treasures: vaultOfGodsBTreasures,
+    levelSettings: {
+      symbolCount: 5,
+      numberRange: [2, 18],
+      operators: ["+", "-", "*", "/"],
+      compareOperators: ["+", "-", "*"],
+      compareAmount: 5,
+      maxMultiplyOperandResult: 14,
+    },
+  },
+  {
+    id: "wizard_treasure_tomb_c",
+    name: "Throne of Eternity",
+    type: "treasure_tomb",
+    description:
+      "Reach the innermost sanctum of the divine realm — the Throne of Eternity where the gods themselves rest. Only the greatest mathematicians of all time have stood here.",
+    difficulty: "wizard",
+    journeyLength: "medium",
+    levelCount: 6,
+    treasures: vaultOfGodsCTreasures,
+    levelSettings: {
+      symbolCount: 5,
+      numberRange: [3, 20],
+      operators: ["+", "-", "*", "/"],
+      compareOperators: ["+", "-", "*"],
+      compareAmount: 6,
+      maxMultiplyOperandResult: 15,
+    },
+  },
 ]
+
+// Apply site configs to pyramid journeys — avoids touching 20 inline objects
+for (const journey of journeys) {
+  if (journey.type === "pyramid") {
+    const config = pyramidSiteConfigs[journey.id]
+    if (config) (journey as PyramidJourney).siteConfig = config
+  }
+}

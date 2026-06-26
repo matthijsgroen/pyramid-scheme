@@ -1,7 +1,7 @@
 # Expedition Redesign — Implementation Plan
 
-Companion to: `EXPEDITION_REDESIGN.md` (design), `PUZZLE_FAMILIES.md` (puzzle families)  
-Status: active plan · decisions resolved via grilling session 2026-06-23
+Companion to: `EXPEDITION_REDESIGN.md`, `PUZZLE_FAMILIES.md`, `docs/game-loop.md`, `docs/pyramid-interior-design.md`  
+Status: active plan · design session 2026-06-26
 
 ---
 
@@ -10,404 +10,368 @@ Status: active plan · decisions resolved via grilling session 2026-06-23
 | Decision | Resolution |
 |----------|-----------|
 | Save migration | Hard reset on V3 version bump — no migration code |
-| Hieroglyphs | Existing `useInventory` — no duplicate state |
-| Map pieces | Existing per-journey `foundMapPiece: boolean` — unchanged semantics |
-| Tomb keys | New global `useProgression` hook — separate from inventory |
-| Mosaic pieces | Same `useProgression` hook — permanent collectibles keyed by pyramid journey ID |
-| Exploration state | `solvedEdges: string[]` per journey in `useJourneys` V3 |
+| Hieroglyphs | **Fragment model** — `hieroglyphFragments: Record<id, count>` in `useProgression`; completion derived from count ≥ tier threshold (2 for starter/junior, 3 for expert/master/wizard) |
+| Map pieces | Per-journey `foundMapPiece: boolean` stays; multi-tomb mapping authored in site config (Phase 8) |
+| Tomb keys (ward keys) | `tombKeys: Record<treasureId, true>` in `useProgression` — boolean, not count (each treasure is unique) |
+| Mosaic pieces | `mosaicPieces: string[]` in `useProgression` — pyramid journey IDs |
+| Exploration state | `solvedEdges: string[]` per site in `useJourneys` V3 |
 | Entrance seal | Number-grid re-solved every visit — no seal state needed |
 | Puzzle family | Sumplete only for initial build |
-| Site map scope | Pyramids only — tombs keep existing system for now |
+| Site map scope | Pyramids first; tombs as site maps in Phase 7 |
 | Rollout | All 20 pyramid journeys at once |
-| Carry-forward | Dropped entirely — reintroduce only if a time-based family needs it |
+| Carry-forward | Dropped — reintroduce only if a time-based family needs it |
 | Shortcut gates | Deferred — `maxBranchFactor` tree-only for now |
+| World generation | Fixed seed, dev-time script → `src/data/generatedWorld.ts`; authored rules + seeded generator + global reachability solver |
+| Tomb count | 9 total (1+1+2+2+3); later tombs revealed by location key treasure |
+| Tomb interiors | Site map system (same as pyramids) — Phase 7 |
 
 ---
 
 ## Phase 1 — Site Map Generator, Renderer, and Interaction Shell ✅
 
-**Goal:** A standalone, fully testable site map system — types, seeded generator, validator, SVG renderer, and interaction hook — with no connection to the live game yet. Validated through unit tests and Storybook stories. This is the foundation everything else plugs into.
+Types, validator, assembler, nav hook, SVG renderer, explorer dot. Foundation for everything else.
 
-### 1a — Types (`src/game/siteTypes.ts`) ✅
-
-Pure data shapes, no React. Keep it minimal — no carry-forward fields, no shortcut-gate fields.
-
-```typescript
-export type NodeType = "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
-
-export type PuzzleFamily = "sumplete"  // extend when new families are added
-
-export type SiteNode = {
-  id: string
-  type: NodeType
-  floor: number          // 0 = ground floor (entrance level)
-  gridX: number          // column in the floor grid for layout
-  family?: PuzzleFamily  // only when type === "puzzle"
-}
-
-export type GateType = "seal" | "ward"
-
-export type SiteEdge = {
-  id: string
-  fromNodeId: string
-  toNodeId: string
-  gateType?: GateType
-  requiredKeyId?: string  // seal: chest key ID; ward: tomb key ID
-}
-
-export type SiteLayout = {
-  siteId: string
-  nodes: SiteNode[]
-  edges: SiteEdge[]
-  entranceNodeId: string
-  exitNodeId: string
-  criticalPath: string[]  // ordered node IDs entrance → exit
-}
-
-export type SiteConfig = {
-  floors: number
-  allowedNodeTypes: NodeType[]
-  maxBranchFactor: number    // 0 = linear spine only
-  gates: "none" | "seal-only" | "seal+ward"
-  puzzleBudget: number       // number of puzzle nodes
-  puzzlePlacement: "spine-heavy" | "balanced" | "branch-heavy"
-  mapPiece: boolean          // exactly one site per journey has this true
-  rewards: {
-    hieroglyphNodes: number  // treasure nodes that grant hieroglyphs
-    mosaicDepth: number      // floor depth of the mosaic piece node (0 = entrance floor)
-  }
-  pins?: NodePin[]
-}
-
-export type NodePin = {
-  nodeType: NodeType
-  floor?: number
-  gridX?: number
-}
-
-export type AssemblerFailure = {
-  success: false
-  reasons: ValidationReason[]
-}
-
-export type AssemblerResult = { success: true; layout: SiteLayout } | AssemblerFailure
-```
-
-### 1b — Validator (`src/game/siteValidator.ts` + `siteValidator.spec.ts`) ✅
-
-Pure function — takes a layout + journey context, returns pass/fail with structured reasons. No side effects, no React.
-
-**Per-site checks:**
-- `completable` — critical path openable with keys available at this journey position
-- `keyBeforeGate` — every seal's chest-key node is reachable before its locked edge
-- `noAllBlandFork` — every fork has ≥1 branch end that is treasure/gate/special (not just corridor)
-- `mosaicReachable` — mosaic piece node exists and is reachable (may be behind wards — that's fine)
-
-**Journey-level checks (`validateJourney`):**
-- `mapPieceCoverage` — exactly one site has `mapPiece: true`; that site's piece is seal-reachable (never behind a ward)
-- `mosaicCoverage` — every pyramid index has exactly one mosaic piece node across the journey
-
-```typescript
-export type ValidationReason =
-  | { type: "criticalPathBlocked"; nodeId: string; missingKeyId: string }
-  | { type: "keyAfterGate"; gateEdgeId: string; keyNodeId: string }
-  | { type: "allBlandFork"; forkNodeId: string }
-  | { type: "mapPieceNotSealReachable"; nodeId: string }
-  | { type: "mapPieceMissing" }
-  | { type: "mapPieceDuplicate"; siteIds: string[] }
-  | { type: "mosaicMissing"; pyramidIndex: number }
-  | { type: "mosaicDuplicate"; pyramidIndex: number }
-
-export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }
-```
-
-**Tests (`siteValidator.spec.ts`):**
-- Each invariant: pass case + targeted fail case with correct `ValidationReason` variant
-- Journey-level: 0 map pieces → fail; 2 map pieces → fail; 1 behind ward → fail; 1 seal-reachable → pass
-- Negative: manually constructed invalid layouts for each check
-
-### 1c — Assembler (`src/game/siteAssembler.ts` + `siteAssembler.spec.ts`) ✅
-
-Seeded generator. Takes `SiteConfig + seed → AssemblerResult`. Calls `validateSite` on every candidate; bad seeds return `AssemblerFailure` with reasons attached — never throws.
-
-**Phase 1 scope** (expand in Phase 4):
-- `floors: 1` only
-- `maxBranchFactor: 0` only (linear spine)
-- `gates: "none"` only
-- Solvable-by-construction: generate reachability order first, then place each lock in the already-reachable subtree
-
-```typescript
-export const assembleSite = (config: SiteConfig, seed: number): AssemblerResult
-```
-
-**Tests (`siteAssembler.spec.ts`):**
-- Every output passes `validateSite` (property test: 200 seeds × stone-tier linear config)
-- Determinism: same seed → identical layout
-- Cosmetic variation: different seeds → different layouts
-- Config with impossible budget returns `AssemblerFailure` with legible reason
-
-### 1d — Navigation hook (`src/app/SiteMap/useSiteNavigation.ts` + spec) ✅
-
-Pure computation over `SiteLayout + solvedEdges`. No React context, no storage — fully unit-testable.
-
-```typescript
-type NodeState = "fogged" | "revealed-unreachable" | "reachable" | "completed"
-
-export const useSiteNavigation = (
-  layout: SiteLayout,
-  solvedEdges: string[],
-  inventory: { tombKeys: Record<string, number>; sealKeys: string[] }
-) => ({
-  nodeState: (nodeId: string) => NodeState,
-  canTraverse: (edgeId: string) => boolean,
-  reachableNodes: string[],
-  currentFloor: number,
-})
-```
-
-**Reveal grammar** (§13): completing a node reveals the **type** (not details) of the next node one step ahead. Branch endpoints at a fork show as silhouettes.
-
-**Tests (`useSiteNavigation.spec.ts`):**
-- Entrance is always `reachable` on empty `solvedEdges`
-- Completing a node makes the next node `reachable`
-- Node behind an unsatisfied ward is `revealed-unreachable`
-- Node behind an unsatisfied seal is `revealed-unreachable`
-- Node with no path from entrance is `fogged`
-
-### 1e — SVG map component (`src/app/SiteMap/SiteMapView.tsx` + Storybook) ✅
-
-SVG for edges/corridors, DOM nodes for POIs, CSS transitions for fog states. Grid layout: `gridX` × `floor` → SVG coordinates. Floor 0 = widest; each deeper floor tapers (pyramid shape).
-
-**Props:**
-```typescript
-type SiteMapViewProps = {
-  layout: SiteLayout
-  solvedEdges: string[]
-  currentNodeId: string | null
-  onNodeTap: (nodeId: string) => void
-  inventory: { tombKeys: Record<string, number>; sealKeys: string[] }
-}
-```
-
-**Storybook stories:**
-- Linear 3-node path — all fogged except entrance
-- Linear 3-node path — entrance completed, second node revealed
-- Fork — one branch silhouetted behind ward
-- Multi-floor (2 floors, stairhead visible)
-- All node types visible
-
-### 1f — Explorer dot (`src/app/SiteMap/ExplorerDot.tsx` + Storybook) ✅
-
-Follows node taps with ~250ms glide along the SVG edge path. Tap mid-glide → snap. Never blocks interaction.
-
-**Props:**
-```typescript
-type ExplorerDotProps = {
-  currentNodeId: string
-  layout: SiteLayout
-  // derives SVG coordinates from node gridX + floor
-}
-```
-
-**Storybook stories:**
-- Dot at entrance
-- Dot mid-glide (use Storybook play function to simulate tap)
+See original plan for full spec. No changes.
 
 ---
 
 ## Phase 2 — Sumplete Puzzle ✅
 
-**Goal:** A complete, standalone Sumplete puzzle — generator, board component, and Storybook stories — before it gets wired into the site map. Built as a self-contained unit.
+Seeded generator, uniqueness verifier, board component with Storybook stories.
 
-### Files
-
-**`src/game/generateSumplete.ts` + `generateSumplete.spec.ts`**
-- Input: `{ gridSize: number; seed: number }`
-- Output: `{ grid: number[][]; rowTargets: number[]; colTargets: number[]; solution: boolean[][] }`
-- Uses `mulberry32` seeded RNG — never `Math.random()`
-- Calls `uniquenessVerifier` to confirm exactly one solution
-- Tests: determinism, uniqueness, all targets satisfied by solution
-
-**`src/game/uniquenessVerifier.ts` + spec**
-- Shared by all grid-family generators
-- Returns solution count (capped at 2 — we only need "0", "1", or "2+")
-- Tests: known-unique → 1; known-ambiguous → 2
-
-**`src/app/PuzzleFamilies/Sumplete/SumpleteBoard.tsx` + Storybook**
-- 3-state tap-cycle per cell: included → excluded → included
-- Row/column target clue lights green when sum matches
-- Props: `grid`, `rowTargets`, `colTargets`, `onSolved: () => void`
-- Storybook stories: unsolved, partially solved, solved state
+See original plan for full spec. No changes.
 
 ---
 
 ## Phase 3 — V3 State + Wire Sumplete into Site Map 🔜
 
-**Goal:** New state shapes defined, Sumplete puzzle nodes live inside the site map shell. No connection to real journeys yet — tested via a new `SiteMapScreen` component that can be driven from Storybook or a dev route.
+**Goal:** New state shapes live. Sumplete puzzle nodes work inside the site map shell. Tested via `SiteMapScreen` in Storybook / dev route.
 
-### Files to create
+### `src/app/state/useProgression.ts` (new)
 
-**`src/app/state/useProgression.ts`**
 ```typescript
-// Global permanent progression — tomb keys and mosaic pieces
 type ProgressionState = {
-  tombKeys: Record<string, number>  // keyId → count
-  mosaicPieces: string[]            // pyramid journey IDs collected
+  hieroglyphFragments: Record<string, number>  // hieroglyphId → fragments found
+  tombKeys: Record<string, true>               // treasureId → collected (ward keys)
+  discoveredTombs: string[]                    // tombJourneyIds revealed by location keys
+  mosaicPieces: string[]                       // pyramid journey IDs
 }
-// Actions: addTombKey, hasTombKey, spendTombKey, collectMosaicPiece, hasMosaicPiece
 ```
-Backed by `useGameStorage` under a new key `"pyramid-scheme-progression"`.
 
-### Files to modify
+Key derived queries:
+```typescript
+// Fragment threshold: starter/junior = 2, expert/master/wizard = 3
+isHieroglyphComplete(hieroglyphId: string): boolean
+hieroglyphProgress(hieroglyphId: string): { found: number; required: number }
+hasTombKey(treasureId: string): boolean
+isTombDiscovered(tombJourneyId: string): boolean
+```
 
-**`src/app/state/useJourneys.ts`** — V3 shape
+Backed by `useGameStorage` under `"pyramid-scheme-progression"`.
+
+### `src/app/state/useJourneys.ts` — V3 shape
+
 ```typescript
 type StoredJourneyStateV3 = {
   journeyId: string
   completionCount: number
   foundMapPiece: boolean
   active: boolean
-  // NEW
-  solvedEdges: string[]   // edge IDs solved in the site map
-  position: string | null // current node ID
-  siteConfig?: SiteConfig // authored per pyramid journey
+  solvedEdges: string[]    // edge IDs solved in the site map — permanent
+  position: string | null  // current node ID
 }
 ```
-- Version bump: `storageVersion === 3`
-- On version mismatch: **hard reset** to initial state (no migration code)
-- New API: `markEdgeSolved(edgeId)`, `getSolvedEdges(): string[]`, `updatePosition(nodeId)`
 
-**`src/data/journeys.ts`** — extend `PyramidJourney`
-- Add `siteConfig?: SiteConfig` (additive, backward compatible)
-- Add `mapPiecePyramidIndex?: number` at journey level (which pyramid in the tier carries the map piece — authored, not shown to player)
+- Version bump to `storageVersion === 3`
+- On version mismatch: hard reset (no migration)
+- New API: `markEdgeSolved(edgeId)`, `getSolvedEdges(journeyId)`, `updatePosition(journeyId, nodeId)`
 
-**`src/app/SiteMap/SiteMapScreen.tsx`** (new)
-- Combines `SiteMapView` + `ExplorerDot` + puzzle launch
-- When current node is a `puzzle` node: launch `SumpleteBoard`
-- When current node is `exit`: call `onSiteComplete`
-- On puzzle solve: call `markEdgeSolved` + advance dot to next node
-- On treasure node: dispatch reward effect (hieroglyphs → `addItems`, mosaic → `collectMosaicPiece`, tomb key → `addTombKey`)
+### `src/data/journeys.ts` — extend `PyramidJourney`
+
+Add `siteConfig?: SiteConfig` (additive, backward compatible).
+
+### `src/app/SiteMap/SiteMapScreen.tsx` (new)
+
+- Wires `SiteMapView` + `ExplorerDot` + puzzle launch
+- Puzzle node → launch `SumpleteBoard`
+- Exit node → `onSiteComplete`
+- On puzzle solve: `markEdgeSolved` + advance dot
+- Treasure node dispatch: hieroglyph fragment → `addFragment`, mosaic → `collectMosaicPiece`, ward key → `addTombKey`
 
 ---
 
 ## Phase 4 — Entrance Seal + Feature-Flag Seam
 
-**Goal:** A real pyramid journey runs the entrance seal (existing number-grid) then opens the site map. The feature-flag fork in `PyramidExpedition.tsx` connects everything.
+**Goal:** A real pyramid journey runs the entrance seal then opens the site map.
 
 ### Flow
+
 1. Player taps pyramid → `PyramidExpedition`
-2. If `journey.siteConfig !== undefined`: run number-grid puzzle as entrance seal (existing `Level` component, re-solved every visit)
-3. On seal solved: render `SiteMapScreen` with the journey's generated layout
-4. On site complete: call existing `completeLevel()` / `onJourneyComplete`
+2. If `journey.siteConfig` set: run number-grid as entrance seal
+3. On seal solved: render `SiteMapScreen` with generated layout
+4. On site complete: call `completeLevel()` / `onJourneyComplete`
 
-### Files to modify
+### `src/data/siteConfigs.ts` (new)
 
-**`src/app/PyramidExpedition.tsx`** — feature-flag fork
-- `if (journey.siteConfig) → SiteMapScreen` path
-- `else → existing flat-level loop` (kept intact until all 20 journeys have `siteConfig`)
+Authored `SiteConfig` entries for all 20 pyramid journeys. For Phase 4, every config is `floors: 1`, `maxBranchFactor: 0` (linear spine). Ward gate entries left empty — filled in Phase 5d.
 
-**`src/data/siteConfigs.ts`** (new) — authored `SiteConfig` entries for all 20 pyramid journeys
-- Author all 20 at once before this phase ships
-- Stone-tier first authored and smoke-tested; remaining tiers follow
-- Each config specifies `floors`, `puzzleBudget`, `puzzlePlacement`, `mapPiece`, `rewards`, and optional `pins`
+**Note:** these configs will eventually be replaced by `src/data/generatedWorld.ts` output (Phase 9). Author them manually now; the generator will reproduce them deterministically later.
+
+### `src/app/PyramidExpedition.tsx` — feature-flag fork
+
+```typescript
+if (journey.siteConfig) → SiteMapScreen path
+else → existing flat-level loop  // kept intact until all 20 have siteConfig
+```
 
 ---
 
 ## Phase 5 — Structural Complexity
 
-Each structural verb debuts in **easy-math territory** — the first pyramid that uses it has trivial Sumplete difficulty. Sub-phases are individually shippable.
+Each structural verb debuts in easy-math territory. Sub-phases are individually shippable.
 
 ### 5a — Forks
+
 - Assembler handles `maxBranchFactor > 0`
-- `useSiteNavigation` computes branch silhouettes on fork completion
-- `SiteMapView` renders silhouette node types (greyed-out icons)
+- `useSiteNavigation` computes branch silhouettes at fork nodes
+- `SiteMapView` renders silhouette node types
 - Property test: all outputs satisfy `noAllBlandFork`
+- Update `siteConfigs.ts`: enable forks for junior+ pyramids
 
 ### 5b — Seals (local chest keys)
-- Assembler places seal locks using solvable-by-construction (key in reachable subtree before lock)
-- `useSiteNavigation` checks `sealKeys` inventory for gate traversal
-- `useJourneys` V3: `collectSealKey(keyId)` / `hasSealKey(keyId)` — seal keys are per-site, not global
+
+- Assembler places seal locks solvable-by-construction (key always reachable before gate)
+- `useSiteNavigation` checks `sealKeys` (per-site inventory) for gate traversal
+- `useJourneys` V3: `collectSealKey(siteId, keyId)` / `hasSealKey(siteId, keyId)` — seal keys are per-site, discarded on exit
+- Update `siteConfigs.ts`: enable seal gates for expert+ pyramids
 
 ### 5c — Floors and Stairheads
+
 - Assembler handles `floors > 1`; stairhead nodes connect floors
 - `SiteMapScreen` animates camera pan downward on stairhead tap
-- Validator: no carry-forward (field doesn't exist — enforced by types)
+- Update `siteConfigs.ts`: enable multi-floor for expert+ pyramids
 
 ### 5d — Wards (cross-site keys)
-- `SiteEdge.gateType: "ward"` + `requiredKeyId` points to a tomb key ID in `useProgression`
+
+- `SiteEdge.gateType: "ward"` + `requiredKeyId` points to a `treasureId` in `useProgression.tombKeys`
 - `useSiteNavigation` checks `tombKeys` from `useProgression` for ward traversal
-- `SiteMapView` renders ward silhouette at fork branch ends (§13: "warded door that way")
-- Validator `wardSatisfiability` property-tested against multi-site journey sequences
+- `SiteMapView` renders ward gate with locked-door icon + category label
+- Ward visibility rule: category shown always; specific treasure name shown when player is within one tier
+- Validator `wardSatisfiability` property-tested across multi-site sequences
+- Update `siteConfigs.ts`: add ward gates to branch endpoints for junior+ pyramids
 
 ---
 
-## Phase 6 — Reward Economies
+## Phase 6 — Pyramid Reward Economies
 
-**Goal:** The three economies (room / journey / game) are live and correct.
+**Goal:** All three pyramid reward types live and correct. Fragment system replaces probabilistic hieroglyph drops.
 
-| Reward | Scope | Source | State |
-|--------|-------|--------|-------|
-| Hieroglyphs | Room | Treasure node `onComplete` | `useInventory.addItems()` |
-| Map piece | Journey | Authored pyramid, seal-reachable treasure node | `useJourneys.findMapPiece()` (existing) |
-| Mosaic piece | Game | Deepest reachable node per pyramid | `useProgression.collectMosaicPiece(pyramidId)` |
+### Hieroglyph fragment nodes
 
-**`src/data/journeys.ts`** — `mapPiecePyramidIndex` is read here to wire the right pyramid's treasure node as the map piece source. The validator enforces it is seal-reachable.
+Treasure node variant `{ type: "treasure", reward: { fragment: { hieroglyphId: string } } }`.
 
-**`src/app/PyramidLevel/mapPieceLogic.ts`** — replace probabilistic drop with authored lookup:
+`SiteMapScreen` on treasure collect: `useProgression.addFragment(hieroglyphId)`. If `isHieroglyphComplete(id)` becomes true → show completion moment in UI.
+
+Remove `src/app/PyramidLevel/inventoryLootLogic.ts` — fully replaced by authored fragments.
+
+### Map pieces
+
+`PyramidExpedition` on site complete: check if this site is the authored map-piece carrier for the journey (`siteConfig.mapPiece === true`). If so, `useJourneys.findMapPiece(journeyId)`.
+
+Remove `src/app/PyramidLevel/mapPieceLogic.ts` — probabilistic system replaced.
+
+### Mosaic tiles
+
+`SiteMapScreen` on treasure collect: `{ reward: { mosaicTiles: number } }` → `useProgression.collectMosaicTiles(pyramidJourneyId, count)`.
+
+Critical path always ends in a mosaic tile node. Branch endpoints without fragments or seal keys get mosaic tile nodes.
+
+### Ward keys
+
+`SiteMapScreen` on treasure collect: `{ reward: { wardKey: treasureId } }` → `useProgression.addTombKey(treasureId)`.
+
+**Note:** ward key treasures are in tombs, not pyramids. This wiring is used in Phase 7 when tomb interiors ship.
+
+---
+
+## Phase 7 — Tomb Interiors as Site Maps
+
+**Goal:** Tomb journeys use the same `SiteLayout` system as pyramids. Tableau puzzle rooms are puzzle nodes. Treasure rooms are treasure nodes.
+
+### Site map for tombs
+
+Tomb site maps differ from pyramid site maps:
+- No entrance seal (tomb is opened by map pieces, not a puzzle)
+- `puzzle` nodes run tableau formula puzzles (existing `TombLevel` system), not Sumplete
+- `puzzle` node locked if required hieroglyph is incomplete → `NodeState: "revealed-unreachable"` with reason `"incomplete-hieroglyph"`
+- `treasure` nodes grant tomb treasures (ward keys or location keys)
+- Sections map to linear branches; internal seal gates connect sections
+
+### New node/treasure types
+
 ```typescript
-// Old: random chance per level
-// New: deterministic — this pyramid has the piece or it doesn't
-export const pyramidHasMapPiece = (journeyId: string, journeys: Journey[]): boolean =>
-  journeys.some(j => j.type === "pyramid" && j.mapPiecePyramidIndex !== undefined && j.id === journeyId)
+// Add to NodeType
+export type NodeType = "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit" | "tableau"
+
+// Treasure reward variant
+type TreasureReward =
+  | { fragment: { hieroglyphId: string } }
+  | { mosaicTiles: number }
+  | { mapPiece: true }
+  | { wardKey: string }       // treasureId — opens a pyramid floor
+  | { locationKey: string }   // tombJourneyId — reveals a new tomb
+
+// Tableau node requires hieroglyphs to be complete
+type TableauNode = SiteNode & {
+  type: "tableau"
+  requiredHieroglyphs: string[]  // hieroglyphIds
+}
 ```
 
+### `src/data/tombSiteConfigs.ts` (new)
+
+Authored `SiteConfig` entries for all 9 tombs. Each config specifies sections (as branch structure), tableau counts per section, gating type, and which treasure is the location key (if any).
+
+### State
+
+Tomb sites use the same `solvedEdges` + `position` tracking as pyramid sites — already in `useJourneys` V3.
+
+`useProgression.isTombDiscovered(tombJourneyId)` controls whether the tomb appears on the Travel screen. Starter/junior tombs start as `discovered`. Expert/master/wizard second and third tombs start undiscovered.
+
+### Tomb entry gate
+
+Tomb entry check: `mapPiecesFound >= piecesRequired`. `piecesRequired` authored on `TreasureTombJourney`. Currently the same 4-piece logic, but now per-tomb.
+
 ---
 
-## Phase 7 — Journey Map + Hub + Fast-Travel
+## Phase 8 — Multi-Tomb Progression + Location Keys
 
-**Goal:** The journey map is the same `SiteMapView` primitive one zoom out. First run: linear march (one site live at a time). Post-completion: full hub with direct fast-travel to any site.
+**Goal:** Location key treasures reveal new tombs. Map pieces for later tombs appear on deep floors. `piecesRequired` is flexible per tomb.
 
-### Files to create
+### Location keys
 
-**`src/app/JourneyMap/JourneyMapView.tsx`**
-- Sites as nodes, expedition path as edges — reuses `SiteMapView`
+When `SiteMapScreen` collects a `{ locationKey: tombJourneyId }` treasure:
+- `useProgression.discoverTomb(tombJourneyId)`
+- Travel screen updates to show the new tomb (with a "discovered" reveal animation)
+
+### Map pieces on deep floors
+
+`SiteConfig` treasure nodes can carry `{ mapPiece: { forTomb: tombJourneyId } }`.
+
+`useProgression` tracks map pieces per tomb: `mapPiecesFound: Record<tombJourneyId, number>`.
+
+Tomb entry check becomes: `useProgression.mapPiecesFound[tombId] >= tomb.piecesRequired`.
+
+### `TreasureTombJourney.piecesRequired`
+
+Field already exists in `journeys.ts` semantically; make it explicit in the type:
+
+```typescript
+export type TreasureTombJourney = {
+  // ... existing fields
+  piecesRequired: number   // new — defaults to 4 if absent
+}
+```
+
+Starter/junior tombs: `piecesRequired: 4`. Later tombs in expert/master/wizard: `piecesRequired: 2–3`.
+
+---
+
+## Phase 9 — World Generator
+
+**Goal:** Replace hand-authored `siteConfigs.ts` and `tombSiteConfigs.ts` with a deterministic, validated generated world.
+
+### `scripts/generateWorld.ts`
+
+```
+yarn generate-world
+  → reads TIER_TEMPLATES, FRAGMENT_SPREAD, WARD_MIX, TOMB_TEMPLATES (authored rule files)
+  → generates: site layouts, fragment placements, ward assignments, map piece placements
+  → runs global reachability solver (forward-pass BFS from initial state)
+  → if solver fails: reports broken constraint + tries next seed
+  → writes src/data/generatedWorld.ts
+```
+
+### Authored rule files
+
+**`src/data/generatorRules.ts`** — single file containing:
+- `TIER_TEMPLATES`: spine ratio, fork count range, branch depth, allowed gates, max floors per tier
+- `FRAGMENT_SPREAD`: fragments per hieroglyph by tier, allowed pyramid tiers, max per journey/site
+- `WARD_MIX`: treasure tier → target pyramid tier distribution (totals must sum to 36 ward keys)
+
+**`src/data/tombTemplates.ts`** — tomb section structure:
+- Section count, tableau count per section, gating type per section
+- `piecesRequired` per tomb
+- Hieroglyph pool read from existing `TOMB_SYMBOLS` in `tableaus.ts` — not duplicated here
+
+### `src/data/generatedWorld.ts` (generated file)
+
+```typescript
+// Generated by scripts/generateWorld.ts — do not edit by hand
+// Seed: 0x4E696C65 · Generated: <date>
+export const SITE_LAYOUTS: Record<string, SiteLayout> = { ... }
+export const FRAGMENT_PLACEMENTS: FragmentPlacement[] = [ ... ]
+export const WARD_ASSIGNMENTS: WardAssignment[] = [ ... ]
+export const MAP_PIECE_PLACEMENTS: MapPiecePlacement[] = [ ... ]
+```
+
+### Global reachability solver
+
+```typescript
+// src/game/worldValidator.ts
+export const validateWorld = (world: GeneratedWorld): ValidationResult
+// Forward-pass BFS: start from initial state, collect all reachable content,
+// assert: all fragments reachable, no circular unlock chains, no dead ends
+```
+
+**CI:** `yarn validate-world` re-runs the solver against the committed `generatedWorld.ts`. Fails if rules changed without regenerating.
+
+---
+
+## Phase 10 — Journey Map + Hub + Fast-Travel
+
+**Goal:** The journey map is the full exploration hub. New-paths badge surfaces when a newly acquired tomb key unlocks previously blocked ward gates.
+
+### `src/app/JourneyMap/JourneyMapView.tsx`
+
+Sites as nodes, expedition path as edges — reuses `SiteMapView` primitive at one zoom out.
 - First run: only next site is `reachable`
-- After `completionCount > 0`: all sites `reachable` (hub mode)
+- After `completionCount > 0`: hub mode — all sites directly reachable
 
-**`src/app/JourneyMap/NewPathsBadge.tsx`**
-- Per-journey badge: "new paths reachable" when a newly acquired tomb key satisfies a previously blocked ward
-- Data: `validateJourney` forward pass diffed before/after key acquisition — free byproduct of the validator
+### `src/app/JourneyMap/NewPathsBadge.tsx`
 
-**`src/app/JourneyMap/useFastTravel.ts`**
-- Only active when `completionCount > 0`
-- Reconstructs destination state from `solvedEdges` (works because save is site-addressable)
+Per-journey badge when a newly acquired tomb key satisfies a previously blocked ward in that journey. Data: validator forward-pass diffed before/after key acquisition.
 
-### Files to modify
+### `src/app/pages/Travel.tsx`
 
-**`src/app/pages/Travel.tsx`** — replace `MapButton` with `JourneyMapView` for V3 journeys
-
-**`src/app/state/useJourneys.ts`** — `isHubMode(journeyId): boolean` (`completionCount > 0`)
+Replace `MapButton` with `JourneyMapView` for V3 journeys.
 
 ---
 
 ## What's explicitly out of scope for this build
 
-- **Tombs as site maps** — tombs keep the existing flat tableau system until a follow-up
 - **Carry-forward** — dropped; reintroduce only if a time-based puzzle family genuinely needs it
 - **Shortcut gates** — `maxBranchFactor` generates trees only; reconnecting branches deferred
-- **Additional puzzle families** — Sumplete only; balance scale, nonogram, sundial etc. are a separate future track
-- **Puzzle family difficulty scaling** — Sumplete difficulty parameters authored per siteConfig; no dynamic curve
+- **Additional puzzle families** — Sumplete only for pyramid puzzles; balance scale, nonogram, etc. are a separate future track
+- **Puzzle family difficulty scaling** — Sumplete parameters authored per `siteConfig`; no dynamic curve
+- **Treasure passive effects redesign** — effects currently use old loot model; redesign to theme-based effects deferred (see `docs/pyramid-interior-design.md` §11 Q8)
 
 ---
 
 ## Build order summary
 
-| Phase | Deliverable | Tests | Storybook |
-|-------|------------|-------|-----------|
-| 1 | Site types, validator, assembler, nav hook, SVG map, explorer dot | `siteValidator.spec.ts`, `siteAssembler.spec.ts`, `useSiteNavigation.spec.ts` | `SiteMapView.stories`, `ExplorerDot.stories` |
-| 2 | Sumplete generator + board | `generateSumplete.spec.ts`, `uniquenessVerifier.spec.ts` | `SumpleteBoard.stories` |
-| 3 | V3 state, `useProgression`, `SiteMapScreen` | `useJourneys.spec.ts` | `SiteMapScreen.stories` |
-| 4 | Entrance seal flow, feature-flag fork, all 20 `siteConfig` entries | Integration smoke test | — |
-| 5a–d | Forks, seals, floors, wards | Property tests per sub-phase | Updated `SiteMapView.stories` |
-| 6 | Reward economies | Validator coverage tests | — |
-| 7 | Journey map, hub, fast-travel, new-paths badge | `useFastTravel.spec.ts` | `JourneyMapView.stories` |
+| Phase | Deliverable | Status | Key output |
+|-------|------------|--------|------------|
+| 1 | Site types, validator, assembler, nav hook, SVG, explorer dot | ✅ | `siteTypes.ts`, `siteValidator.ts`, `siteAssembler.ts`, `useSiteNavigation.ts`, `SiteMapView.tsx` |
+| 2 | Sumplete generator + board | ✅ | `generateSumplete.ts`, `SumpleteBoard.tsx` |
+| 3 | V3 state (fragments, tomb keys, mosaic), `SiteMapScreen` | 🔜 | `useProgression.ts`, `useJourneys.ts` V3, `SiteMapScreen.tsx` |
+| 4 | Entrance seal, feature-flag fork, 20 linear `siteConfig` entries | 🔜 | `siteConfigs.ts`, `PyramidExpedition.tsx` fork |
+| 5a | Forks | 🔜 | Assembler + nav hook + stories updated |
+| 5b | Seals | 🔜 | Per-site seal key state |
+| 5c | Floors + stairheads | 🔜 | Multi-floor assembler + camera pan |
+| 5d | Wards | 🔜 | Ward gate traversal via `tombKeys` |
+| 6 | Pyramid reward economies | 🔜 | Fragment nodes, mosaic tiles, map pieces deterministic, ward key wiring; remove `inventoryLootLogic.ts` + `mapPieceLogic.ts` |
+| 7 | Tomb interiors as site maps | 🔜 | `tombSiteConfigs.ts`, tableau node type, location key treasure, `useProgression.discoverTomb` |
+| 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb, map pieces on deep floors, tomb discovery flow |
+| 9 | World generator | 🔜 | `scripts/generateWorld.ts`, `generatorRules.ts`, `worldValidator.ts`, `generatedWorld.ts` |
+| 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |
