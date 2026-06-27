@@ -208,6 +208,27 @@ export const PyramidExpedition: FC<{
             seed={activeJourney.randomSeed}
             onSiteComplete={() => setSiteCompleted(true)}
             onCancel={() => onClose?.()}
+            renderPuzzle={(floor, onSolved, onCancel) => {
+              const pyramidLevel = generateExpeditionLevel(activeJourney, activeJourney.levelNr + floor)
+              if (!pyramidLevel) return null
+              return (
+                <div className="fixed inset-0 z-20 flex flex-col overflow-auto bg-stone-950">
+                  <button
+                    onClick={onCancel}
+                    className="sticky top-2 left-2 z-10 w-fit rounded bg-stone-800 px-3 py-1 text-sm text-amber-200"
+                  >
+                    ← Back
+                  </button>
+                  <Level
+                    content={pyramidLevel}
+                    storageKey={`v3-${activeJourney.journeyId}-${activeJourney.levelNr}-${floor}`}
+                    onComplete={onSolved}
+                    decorationOffset={activeJourney.randomSeed}
+                    pyramidDifficulty={pyramidJourney.difficulty}
+                  />
+                </div>
+              )
+            }}
           />
         ) : (
           <ExpeditionCompletionOverlay
