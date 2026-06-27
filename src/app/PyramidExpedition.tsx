@@ -55,7 +55,7 @@ export const PyramidExpedition: FC<{
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const [entering, setEntering] = useState(true)
-  const [siteCompleted, setSiteCompleted] = useState(false)
+  const [showingInterior, setShowingInterior] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
@@ -152,17 +152,19 @@ export const PyramidExpedition: FC<{
 
   const onCompletionFinished = useCallback(() => {
     setLevelCompleted(false)
-    setTimeout(() => {
-      // setStartNextLevel(true)
-      setTransitionToLevel(activeJourney.levelNr + 1)
-    }, 1000)
-    setTimeout(() => {
-      // setStartNextLevel(false)
-    }, 2000)
-    setTimeout(() => {
-      onNextLevel?.()
-    }, 1995)
-  }, [onNextLevel, activeJourney.levelNr])
+    const journey = activeJourney.journey as PyramidJourney
+    if (journey.siteConfigs?.length) {
+      // V3: show interior instead of advancing to next pyramid
+      setShowingInterior(true)
+    } else {
+      setTimeout(() => {
+        setTransitionToLevel(activeJourney.levelNr + 1)
+      }, 1000)
+      setTimeout(() => {
+        onNextLevel?.()
+      }, 1995)
+    }
+  }, [onNextLevel, activeJourney.levelNr, activeJourney.journey])
 
   // Early return if not a pyramid journey
   if (activeJourney.journey.type !== "pyramid") {
@@ -190,57 +192,6 @@ export const PyramidExpedition: FC<{
     ) < 6
       ? "text-black"
       : "text-white"
-
-  // Feature flag: V3 site map path
-  if (pyramidJourney.siteConfigs) {
-    return (
-      <DesertBackdrop
-        levelNr={1}
-        start={pyramidJourney.background.time}
-        timeStepSize={pyramidJourney.background.timeStepSize}
-        showNile={pyramidJourney.background.showNile}
-      >
-        {!siteCompleted ? (
-          <SiteMapScreen
-            key={`${activeJourney.journeyId}-${activeJourney.completionCount}`}
-            journeyId={activeJourney.journeyId}
-            siteConfig={pyramidJourney.siteConfigs[0]}
-            seed={activeJourney.randomSeed}
-            onSiteComplete={() => setSiteCompleted(true)}
-            onCancel={() => onClose?.()}
-            renderPuzzle={(floor, onSolved, onCancel) => {
-              const pyramidLevel = generateExpeditionLevel(activeJourney, activeJourney.levelNr + floor)
-              if (!pyramidLevel) return null
-              return (
-                <div className="fixed inset-0 z-20 flex flex-col overflow-auto bg-stone-950">
-                  <button
-                    onClick={onCancel}
-                    className="sticky top-2 left-2 z-10 w-fit rounded bg-stone-800 px-3 py-1 text-sm text-amber-200"
-                  >
-                    ← Back
-                  </button>
-                  <Level
-                    content={pyramidLevel}
-                    storageKey={`v3-${activeJourney.journeyId}-${activeJourney.levelNr}-${floor}`}
-                    onComplete={onSolved}
-                    decorationOffset={activeJourney.randomSeed}
-                    pyramidDifficulty={pyramidJourney.difficulty}
-                  />
-                </div>
-              )
-            }}
-          />
-        ) : (
-          <ExpeditionCompletionOverlay
-            onJourneyComplete={onJourneyComplete}
-            onStartJourney={onStartJourney}
-            newPyramidJourneyId={nextPyramidJourneyId}
-            activeJourney={activeJourney}
-          />
-        )}
-      </DesertBackdrop>
-    )
-  }
 
   return (
     <DesertBackdrop
@@ -370,7 +321,28 @@ export const PyramidExpedition: FC<{
 
       {/* Level Completion Handler */}
       {levelContent && levelCompleted && (
-        <LevelCompletionHandler onCompletionFinished={onCompletionFinished} activeJourney={activeJourney} />
+        <LevelCompletionHandler
+          onCompletionFinished={onCompletionFinished}
+          activeJourney={activeJourney}
+          skipLoot={!!pyramidJourney.siteConfigs?.length}
+        />
+      )}
+
+      {/* Interior: shown after pyramid is solved for V3 journeys */}
+      {showingInterior && pyramidJourney.siteConfigs && (
+        <div className="absolute inset-0 z-30 bg-stone-950">
+          <SiteMapScreen
+            key={`${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.completionCount}`}
+            journeyId={activeJourney.journeyId}
+            siteConfig={pyramidJourney.siteConfigs[activeJourney.levelNr - 1] ?? pyramidJourney.siteConfigs[0]}
+            seed={activeJourney.randomSeed + activeJourney.levelNr}
+            onSiteComplete={() => {
+              setShowingInterior(false)
+              onNextLevel?.()
+            }}
+            onCancel={() => setShowingInterior(false)}
+          />
+        </div>
       )}
     </DesertBackdrop>
   )

@@ -9,9 +9,14 @@ import { FezContext } from "../fez/context"
 type LevelCompletionHandlerProps = {
   onCompletionFinished: () => void
   activeJourney: CombinedJourneyState
+  skipLoot?: boolean
 }
 
-export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onCompletionFinished, activeJourney }) => {
+export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
+  onCompletionFinished,
+  activeJourney,
+  skipLoot = false,
+}) => {
   const { t } = useTranslation("common")
   const [showOverlay, setShowOverlay] = useState(false)
   const [showFez, setShowFez] = useState(false)
@@ -20,7 +25,8 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onComp
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Use the loot determination hook
-  const { loot, collectLoot } = useLootDetermination(activeJourney)
+  const { loot: rawLoot, collectLoot } = useLootDetermination(activeJourney)
+  const loot = skipLoot ? null : rawLoot
 
   useEffect(() => {
     if (completionPhase === "hidden") {
