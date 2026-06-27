@@ -1,7 +1,7 @@
 # Expedition Redesign — Implementation Plan
 
 Companion to: `EXPEDITION_REDESIGN.md`, `PUZZLE_FAMILIES.md`, `docs/game-loop.md`, `docs/pyramid-interior-design.md`  
-Status: active plan · design session 2026-06-26
+Status: active plan · updated 2026-06-27
 
 ---
 
@@ -27,6 +27,21 @@ Status: active plan · design session 2026-06-26
 
 ---
 
+## World Builder Gaps (audit 2026-06-27)
+
+Gaps found between what the DSL can express, what the world generator produces, and what the game actually uses.
+
+| Gap | Severity | Status | Notes |
+|-----|----------|--------|-------|
+| Ward key never placed in any tomb site config | **Blocker** | 🔜 | Gates exist in junior+ pyramids requiring `starter_ward` etc., but no tomb chest rewards `{ type: "tombKey", keyId: "starter_ward" }`. Add to tomb site configs in Phase 7/8. |
+| `puzzleFamily` field ignored by assembler | **Blocker** | 🔜 | 200+ floor configs set `puzzleFamily: "tableau"` but `siteAssembler` always emits `family: "sumplete"`. Fixed by puzzle plugin system (Phase 2b). |
+| Floor-key gate type dormant | Minor | 🔜 | `{ type: "floor-key" }` in `GateConfig` type, zero uses in world data. Keep or remove — currently dead code. |
+| Staircase no exit-on-final-floor guardrail | Minor | 🔜 | Validator should assert last floor of every site uses `exitOrStaircase: "exit"`. Add to `siteValidator.ts`. |
+| Gated section silent `hieroglyphs` default | Minor | ✅ | Assembler fallback is intentional; documented. |
+| Tomb ID references unvalidated | Design debt | 🔜 | `mapPiece.tombId` strings not cross-checked against `journeys.ts` at generation time. Add to `scripts/worldGen` validation pass. |
+
+---
+
 ## Phase 1 — Site Map Generator, Renderer, and Interaction Shell ✅
 
 Types, validator, assembler, nav hook, SVG renderer, explorer dot. Foundation for everything else.
@@ -40,6 +55,80 @@ See original plan for full spec. No changes.
 Seeded generator, uniqueness verifier, board component with Storybook stories.
 
 See original plan for full spec. No changes.
+
+---
+
+## Phase 2b — Puzzle Plugin System 🔜
+
+**Goal:** Replace the hardcoded `SumpleteBoard` + `renderPuzzle` escape hatch with a typed plugin registry. Adding a new puzzle type = one self-contained file. No changes to `SiteMapScreen`.
+
+### Problem
+
+Currently `SiteMapScreen` hardcodes sumplete generation and rendering, with a `renderPuzzle?: (floor, onSolved, onCancel) => ReactNode` prop as an escape hatch for tomb tableau puzzles. This is already messy with two puzzle types; it won't scale.
+
+### Design
+
+Each puzzle family is a self-contained plugin object:
+
+```typescript
+// src/game/puzzlePlugin.ts
+export type PuzzlePlugin<TPuzzle> = {
+  family: string
+  generate: (seed: number) => TPuzzle
+  Component: FC<{ puzzle: TPuzzle; onSolved: () => void }>
+}
+```
+
+A central registry maps family name → plugin:
+
+```typescript
+// src/game/puzzleRegistry.ts
+const registry = new Map<string, PuzzlePlugin<unknown>>()
+export const registerPuzzle = <T>(plugin: PuzzlePlugin<T>) => registry.set(plugin.family, plugin)
+export const getPuzzlePlugin = (family: string) => registry.get(family)
+```
+
+Each family registers itself at module load:
+
+```typescript
+// src/app/PuzzleFamilies/Sumplete/plugin.ts
+registerPuzzle({
+  family: "sumplete",
+  generate: seed => generateSumplete(3, seed, { allowZeroTargets: false }),
+  Component: SumpleteBoard,
+})
+```
+
+```typescript
+// src/app/PuzzleFamilies/Tableau/plugin.ts
+registerPuzzle({
+  family: "tableau",
+  generate: seed => generateTableau(seed),   // existing logic
+  Component: TableauBoard,
+})
+```
+
+### `SiteMapScreen` changes
+
+Remove `renderPuzzle` prop entirely. Replace hardcoded sumplete call with:
+
+```typescript
+const plugin = getPuzzlePlugin(floorConfig.puzzleFamily ?? "sumplete")
+const puzzle = useMemo(() => plugin?.generate(hashString(journeyId + edgeId)), [plugin, journeyId, edgeId])
+// render: <plugin.Component puzzle={puzzle} onSolved={handlePuzzleComplete} />
+```
+
+### `siteAssembler.ts` fix
+
+Pass `config.puzzleFamily` through to room specs (fixes the DSL gap where `puzzleFamily` was ignored).
+
+### Build sequence
+
+1. Define `PuzzlePlugin<T>` type and registry (`src/game/puzzleRegistry.ts`)
+2. Create `src/app/PuzzleFamilies/Sumplete/plugin.ts` — wraps existing generator + board
+3. Remove `renderPuzzle` prop from `SiteMapScreen`; use registry lookup instead
+4. Fix `siteAssembler` to pass `config.puzzleFamily` to puzzle room nodes
+5. Phase 7 adds `src/app/PuzzleFamilies/Tableau/plugin.ts` — tableau registers itself, no other files change
 
 ---
 
@@ -392,6 +481,7 @@ Replace `MapButton` with `JourneyMapView` for V3 journeys.
 |-------|------------|--------|------------|
 | 1 | Site types, validator, assembler, nav hook, SVG, explorer dot | ✅ | `siteTypes.ts`, `siteValidator.ts`, `siteAssembler.ts`, `useSiteNavigation.ts`, `SiteMapView.tsx` |
 | 2 | Sumplete generator + board | ✅ | `generateSumplete.ts`, `SumpleteBoard.tsx` |
+| 2b | Puzzle plugin system | 🔜 | `puzzleRegistry.ts`, `Sumplete/plugin.ts`; removes `renderPuzzle` prop; fixes assembler ignoring `puzzleFamily` |
 | 3 | V3 state (fragments, tomb keys, mosaic), `SiteMapScreen` | ✅ | `useProgression.ts`, `useJourneys.ts` V3, `SiteMapScreen.tsx` |
 | 4 | Entrance seal, feature-flag fork, 20 linear `siteConfig` entries | ✅ | `generatedWorld.ts` (replaced `siteConfigs.ts`), `PyramidExpedition.tsx` fork |
 | 5a | Forks — fork nodes at branch junctions; junior+ journeys get branches | ✅ | Assembler tracks `attachedAt`, corridor junctions → fork; `SideSection.endReward`; generator adds branches |
@@ -399,8 +489,8 @@ Replace `MapButton` with `JourneyMapView` for V3 journeys.
 | 5c | Floors + stairheads — SiteConfig = FloorConfig[], floor-aware edge IDs | ✅ | SiteMapScreen multi-floor state; stairhead tap advances floor; expert+ get floor 2 |
 | 5d | Wards — tombKeys wired into gridNavigation | ✅ | completeCell externalKeys param; SiteMapScreen passes wardKeys; tombKeyIds on ProgressionAPI |
 | 6 | Pyramid reward economies | ✅ | Fragment nodes, mosaic tiles, map pieces (tombId), ward key wiring; `inventoryLootLogic.ts`+`mapPieceLogic.ts` still present for legacy flat-level fallback |
-| 7 | Tomb interiors as site maps | ✅ | `journeyStructure.ts` (single source of truth), `buildTombConfigs()`, `renderPuzzle` prop on SiteMapScreen, TombExpedition V3 fork; 9 tombs in generatedWorld |
+| 7 | Tomb interiors as site maps | ✅ | `journeyStructure.ts` (single source of truth), `buildTombConfigs()`, `renderPuzzle` prop on SiteMapScreen → replaced by plugin registry in 2b; TombExpedition V3 fork; 9 tombs in generatedWorld; **add ward key chest rewards to tomb site configs** |
 | 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb (done), map pieces on deep floors, tomb discovery flow |
-| 9 | World generator | ✅ | `scripts/worldGen/` DSL+constraintResolver+worldSpec+configBuilder+fragmentAssigner; `generatedWorld.ts` (20 map pieces, 20 mosaic, 157 fragments); WORLD_TARGETS in worldSpec |
+| 9 | World generator | ✅ | `scripts/worldGen/` DSL+constraintResolver+worldSpec+configBuilder+fragmentAssigner; `generatedWorld.ts` (20 map pieces, 20 mosaic, 157 fragments); WORLD_TARGETS in worldSpec; **add tomb ID cross-validation + staircase exit guardrail** |
 | 10a | Exterior journey path map (bezier curve) | 🔜 | `JourneyPathView.tsx`, `WorldMapView.tsx`, bezier-spaced site nodes, explorer dot interpolation |
 | 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |
