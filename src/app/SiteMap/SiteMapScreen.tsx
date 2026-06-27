@@ -89,6 +89,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
   // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
+  const [puzzleSolved, setPuzzleSolved] = useState(false)
   const puzzleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // chest → loot popup flow
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
@@ -159,9 +160,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     if (!activePuzzlePos) return
     const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
     journeys.markEdgeSolved(edgeId)
-    journeys.updatePosition(journeyId, edgeId)
     setActivePuzzlePos(null)
-  }, [activePuzzlePos, journeys, journeyId, currentFloor])
+    setPuzzleSolved(false)
+  }, [activePuzzlePos, journeys, currentFloor])
+
+  const handlePuzzleComplete = useCallback(() => {
+    setPuzzleSolved(true)
+    setTimeout(handlePuzzleSolved, 1500)
+  }, [handlePuzzleSolved])
 
   if (!grid) {
     return <div className="p-4 text-red-400">Site layout unavailable.</div>
@@ -188,16 +194,23 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         renderPuzzle(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
       {activePuzzle && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
-          <div className="flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">
+          <div className="relative flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">
             <SumpleteBoard
               grid={activePuzzle.grid}
               rowTargets={activePuzzle.rowTargets}
               colTargets={activePuzzle.colTargets}
-              onSolved={handlePuzzleSolved}
+              onSolved={handlePuzzleComplete}
             />
-            <button onClick={() => setActivePuzzlePos(null)} className="text-sm text-stone-400 hover:text-stone-200">
-              Cancel
-            </button>
+            {!puzzleSolved && (
+              <button onClick={() => setActivePuzzlePos(null)} className="text-sm text-stone-400 hover:text-stone-200">
+                {t("ui.cancel")}
+              </button>
+            )}
+            {puzzleSolved && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/90">
+                <p className="font-pyramid text-xl text-amber-300">{t("ui.sacredSealBroken")}</p>
+              </div>
+            )}
           </div>
         </div>
       )}
