@@ -21,7 +21,12 @@ const serializeReward = (r: TreasureReward): string => {
 const serializeSideSection = (s: SideSection): string => {
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: "${s.end}"`]
   if (s.chestEvery !== undefined) parts.push(`chestEvery: ${s.chestEvery}`)
-  if (s.gate) parts.push(`gate: { type: "${s.gate.type}" }`)
+  if (s.gate)
+    parts.push(
+      s.gate.type === "tomb-key"
+        ? `gate: { type: "tomb-key", wardKeyId: "${s.gate.wardKeyId}" }`
+        : `gate: { type: "floor-key" }`
+    )
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
   return `{ ${parts.join(", ")} }`
 }

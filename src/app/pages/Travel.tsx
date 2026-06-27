@@ -13,8 +13,9 @@ import { mulberry32 } from "@/game/random"
 import { TombMapButton } from "@/ui/TombMapButton"
 import { hashString } from "@/support/hashString"
 import { FezContext } from "../fez/context"
-import { difficultyCompare } from "@/data/difficultyLevels"
+
 import { TableauInventory } from "./TableauInventory"
+import { useProgression } from "@/app/state/useProgression"
 
 export const TravelPage: FC<{
   startGame: () => void
@@ -23,7 +24,8 @@ export const TravelPage: FC<{
   const { t } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
-  const { activeJourneyId, maxDifficulty, startJourney, cancelJourney, nextJourneySeed, getJourney } = useJourneys()
+  const { activeJourneyId, startJourney, cancelJourney, nextJourneySeed, getJourney } = useJourneys()
+  const { isTombDiscovered, mapPieceCount } = useProgression()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
@@ -103,20 +105,15 @@ export const TravelPage: FC<{
     return candidates[0]?.id ?? null
   }, [pendingHieroglyphSearch, journeys, unlocked, getJourney])
 
-  const showTombExpeditionsAhead = useMemo(() => {
-    return journeys
-      .filter(j => difficultyCompare(j.difficulty, maxDifficulty) <= 0 && getJourney(j.id)?.foundMapPiece)
-      .map(j => j.difficulty)
-  }, [getJourney, journeys, maxDifficulty])
-
   const hasPendingMapPieceProgress = useMemo(() => {
-    const tombDifficulties = journeys.filter(j => j.type === "treasure_tomb").map(j => j.difficulty)
-    return tombDifficulties.some(difficulty => {
-      const pyramidJourneys = journeys.filter(p => p.type === "pyramid" && p.difficulty === difficulty)
-      const piecesFound = pyramidJourneys.filter(p => getJourney(p.id)?.foundMapPiece).length
-      return piecesFound > 0 && piecesFound < pyramidJourneys.length
-    })
-  }, [journeys, getJourney])
+    return journeys
+      .filter(j => j.type === "treasure_tomb" && isTombDiscovered(j.id))
+      .some(j => {
+        const found = mapPieceCount(j.id)
+        const needed = j.type === "treasure_tomb" ? j.piecesRequired : 4
+        return found > 0 && found < needed
+      })
+  }, [journeys, isTombDiscovered, mapPieceCount])
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const suggestedCardRef = useRef<HTMLDivElement>(null)
@@ -244,11 +241,7 @@ export const TravelPage: FC<{
                   // Skip pyramid journeys that are not yet unlocked
                   return null
                 }
-                if (
-                  journey.type === "treasure_tomb" &&
-                  index >= unlocked &&
-                  !showTombExpeditionsAhead.includes(journey.difficulty)
-                ) {
+                if (journey.type === "treasure_tomb" && !isTombDiscovered(journey.id)) {
                   return null
                 }
                 const journeyInfo = getJourney(journey.id)
@@ -257,19 +250,16 @@ export const TravelPage: FC<{
                 const progressLevelNr = journeyInfo?.levelNr ?? 0
 
                 if (journey.type === "treasure_tomb") {
-                  // Treasure Tombs are unlocked if all map pieces are found
-                  const pyramidJourneys = journeys.filter(
-                    exp => exp.difficulty === journey.difficulty && exp.type === "pyramid"
-                  )
-                  const piecesFound = pyramidJourneys.filter(journey => getJourney(journey.id)?.foundMapPiece).length
+                  const piecesFound = mapPieceCount(journey.id)
+                  const piecesNeeded = journey.piecesRequired
 
-                  if (piecesFound < pyramidJourneys.length) {
+                  if (piecesFound < piecesNeeded) {
                     return (
                       <MapPiecePlaceholder
                         key={journey.id}
                         piecesFound={piecesFound}
                         name={journey.name}
-                        piecesNeeded={pyramidJourneys.length}
+                        piecesNeeded={piecesNeeded}
                       />
                     )
                   }

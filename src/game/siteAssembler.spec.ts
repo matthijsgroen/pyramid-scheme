@@ -140,7 +140,9 @@ describe(assembleFloor, () => {
       difficulty: "easy",
       end: "treasure",
       exitOrStaircase: "exit",
-      sideSections: [{ pathPuzzles: 0, difficulty: "easy", end: "treasure", gate: { type: "tomb-key" } }],
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "easy", end: "treasure", gate: { type: "tomb-key", wardKeyId: "test_ward" } },
+      ],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)

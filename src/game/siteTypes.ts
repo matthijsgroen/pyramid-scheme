@@ -34,7 +34,7 @@ export type FloorGrid = {
   readonly siteId: string
 }
 
-export type GateConfig = { type: "floor-key" } | { type: "tomb-key" }
+export type GateConfig = { type: "floor-key" } | { type: "tomb-key"; wardKeyId: string }
 export type Difficulty = "easy" | "medium" | "hard"
 export type SideSection = {
   pathPuzzles: number

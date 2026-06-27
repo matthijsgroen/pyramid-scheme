@@ -2,10 +2,11 @@ import { global, tier, journey, rules } from "./dsl"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mosaicPieceRewards: one per pyramid journey (4 journeys × 5 tiers = 20).
-// mapPieceRewards:    one per pyramid journey (starter via mainEndReward, others via side branch = 20).
+// mapPieceRewards:    20 primary (1 per pyramid journey) + 16 secondary
+//                    (4 journeys × 4 secondary tombs, each on last or last-1 pyramid)
 export const WORLD_TARGETS = {
   mosaicPieceRewards: 20,
-  mapPieceRewards: 20,
+  mapPieceRewards: 36,
 }
 
 /**
@@ -46,4 +47,54 @@ export const worldSpec = rules([
   journey("wizard_treasure_tomb", { puzzleFamily: "tableau", difficulty: "hard" }),
   journey("wizard_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "hard" }),
   journey("wizard_treasure_tomb_c", { puzzleFamily: "tableau", difficulty: "hard" }),
+
+  // ── Secondary tombs: override tier "last → mosaicPiece" rule (tombs don't give mosaic) ──
+  journey("expert_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphs" }),
+  journey("master_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphs" }),
+  journey("wizard_treasure_tomb_c").pyramid("last", { mainEndReward: "hieroglyphs" }),
+
+  // ── Primary tombs: last floor drops a ward key (unlocks gated pyramid content) ──
+  journey("starter_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "starter_ward" } }),
+  journey("junior_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "junior_ward" } }),
+  journey("expert_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "expert_ward" } }),
+  journey("master_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "master_ward" } }),
+  journey("wizard_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "wizard_ward" } }),
+  // wizard_b drops its own key so wizard_c can be unlocked via a separate ward gate
+  journey("wizard_treasure_tomb_b").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "wizard_b_ward" } }),
+
+  // ── Secondary tomb unlock chain: map pieces behind tier ward gates ──────────
+  // Requires the primary tomb's ward key to access — enforces tomb ordering.
+  // 4 journeys × 1 piece each = 4 available per secondary tomb (piecesRequired ≤ 3).
+  tier("expert").pyramid("last", {
+    sideSections: [
+      {
+        gate: { type: "tomb-key", wardKeyId: "expert_ward" },
+        endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
+      },
+    ],
+  }),
+  tier("master").pyramid("last", {
+    sideSections: [
+      {
+        gate: { type: "tomb-key", wardKeyId: "master_ward" },
+        endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
+      },
+    ],
+  }),
+  tier("wizard").pyramid("last", {
+    sideSections: [
+      {
+        gate: { type: "tomb-key", wardKeyId: "wizard_ward" },
+        endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
+      },
+    ],
+  }),
+  tier("wizard").pyramid("last-1", {
+    sideSections: [
+      {
+        gate: { type: "tomb-key", wardKeyId: "wizard_b_ward" },
+        endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
+      },
+    ],
+  }),
 ])

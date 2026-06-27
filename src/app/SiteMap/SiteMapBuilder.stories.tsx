@@ -40,7 +40,12 @@ const SiteMapBuilder = ({
   section2End,
   section2Gate,
 }: Props) => {
-  const toGate = (opt: GateOption): GateConfig | undefined => (opt === "none" ? undefined : { type: opt })
+  const toGate = (opt: GateOption): GateConfig | undefined =>
+    opt === "none"
+      ? undefined
+      : opt === "floor-key"
+        ? { type: "floor-key" }
+        : { type: "tomb-key", wardKeyId: "preview_ward" }
 
   const sideSections: SideSection[] = []
   if (section1)

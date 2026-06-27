@@ -9,10 +9,19 @@ type ProgressionState = {
   collectedMapPieces: Record<string, number>
 }
 
+// First tomb of each tier is visible from the start; secondary tombs appear on first map piece
+const AUTO_DISCOVERED_TOMBS = [
+  "starter_treasure_tomb",
+  "junior_treasure_tomb",
+  "expert_treasure_tomb",
+  "master_treasure_tomb",
+  "wizard_treasure_tomb",
+]
+
 const initialState: ProgressionState = {
   hieroglyphFragments: {},
   tombKeys: {},
-  discoveredTombs: [],
+  discoveredTombs: AUTO_DISCOVERED_TOMBS,
   mosaicPieces: [],
   collectedMapPieces: {},
 }
@@ -73,13 +82,18 @@ export const useProgression = (): ProgressionAPI => {
         })),
       hasMosaicPiece: pyramidJourneyId => state.mosaicPieces.includes(pyramidJourneyId),
       collectMapPiece: tombId =>
-        setState(prev => ({
-          ...prev,
-          collectedMapPieces: {
-            ...prev.collectedMapPieces,
-            [tombId]: (prev.collectedMapPieces[tombId] ?? 0) + 1,
-          },
-        })),
+        setState(prev => {
+          const prevCount = prev.collectedMapPieces[tombId] ?? 0
+          return {
+            ...prev,
+            collectedMapPieces: { ...prev.collectedMapPieces, [tombId]: prevCount + 1 },
+            // First map piece for a tomb reveals it on the travel screen
+            discoveredTombs:
+              prevCount === 0 && !prev.discoveredTombs.includes(tombId)
+                ? [...prev.discoveredTombs, tombId]
+                : prev.discoveredTombs,
+          }
+        }),
       mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
     }),
     [state, setState]

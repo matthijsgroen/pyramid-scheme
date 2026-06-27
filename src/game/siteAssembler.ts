@@ -342,9 +342,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       } else if (isTombKeyGate) {
         const [gr, gc] = cells[0]
+        const tombGate = section.gate as { type: "tomb-key"; wardKeyId: string }
         roomSpecs.set(posKey(gr, gc), {
           roomType: "gate",
-          requiredKeyId: `tomb-key-${siteId}-${sectionIdx}`,
+          requiredKeyId: tombGate.wardKeyId,
           gateVariant: "tomb-key",
         })
         contentStart = 1

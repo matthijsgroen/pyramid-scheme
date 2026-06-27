@@ -6,17 +6,22 @@ export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "sparse" | "normal" | "dense"
 export type GateType = "floor-key" | "tomb-key"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
+// Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
+export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
+// Structured gate — tomb-key requires a wardKeyId; string "tomb-key" is ambiguous (no keyId)
+export type GateSpec = GateType | null | { type: "tomb-key"; wardKeyId: string }
+
 export type PuzzleFamily = "sumplete" | "tableau"
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
 export type PyramidSelector = number | "first" | "last" | "middle" | `${number}-${number}` | `last-${number}`
 
 export type SideSectionConstraint = {
-  gate?: GateType | null
+  gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
-  endReward?: RewardHint
+  endReward?: RewardSpec
 }
 
 export type FloorConstraint = {
@@ -37,7 +42,7 @@ export type PyramidConstraint = {
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   theme?: Theme
-  mainEndReward?: RewardHint
+  mainEndReward?: RewardSpec
   gateHint?: GateType
   floors?: (FloorConstraint | null)[]
 }

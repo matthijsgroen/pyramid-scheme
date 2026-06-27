@@ -3,7 +3,7 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEve
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "./worldSpec"
-import type { PyramidConstraint, RewardHint } from "./dsl"
+import type { PyramidConstraint, RewardHint, RewardSpec, GateSpec, SideSectionConstraint } from "./dsl"
 import type { Assignment } from "./types"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -14,6 +14,14 @@ const NEXT_TIER: Record<string, string | null> = {
   expert: "master",
   master: "wizard",
   wizard: null,
+}
+
+// Ward key required by back-half pyramids of each tier (key comes from prev tier's tomb)
+const PREV_TIER: Partial<Record<string, string>> = {
+  junior: "starter",
+  expert: "junior",
+  master: "expert",
+  wizard: "master",
 }
 
 // ── Path puzzle scaling ───────────────────────────────────────────────────────
@@ -42,6 +50,21 @@ const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
   }
 }
 
+// Translates a RewardSpec (string hint or structured object) to a TreasureReward
+const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
+  if (typeof spec === "string") return hintToReward(spec, tier)
+  return spec as TreasureReward
+}
+
+// Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
+const specToGate = (
+  spec: GateSpec | undefined
+): { type: "floor-key" } | { type: "tomb-key"; wardKeyId: string } | undefined => {
+  if (spec == null) return undefined
+  if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key" } : undefined
+  return spec as { type: "tomb-key"; wardKeyId: string }
+}
+
 // ── Chest rewards ─────────────────────────────────────────────────────────────
 
 const buildChestRewards = (
@@ -68,7 +91,8 @@ const buildSideSections = (
   difficulty: Difficulty,
   hasMapPieceBranch: boolean,
   hasWardGate: boolean,
-  nextTier: string | null
+  nextTier: string | null,
+  constraintSections?: SideSectionConstraint[]
 ): SideSection[] => {
   const sections: SideSection[] = []
 
@@ -78,7 +102,28 @@ const buildSideSections = (
   }
 
   if (hasWardGate && nextTier) {
-    sections.push({ pathPuzzles: 0, difficulty, end: "treasure", gate: { type: "tomb-key" } })
+    const prevTierKey = PREV_TIER[tier]
+    if (prevTierKey) {
+      sections.push({
+        pathPuzzles: 0,
+        difficulty,
+        end: "treasure",
+        gate: { type: "tomb-key", wardKeyId: `${prevTierKey}_ward` },
+      })
+    }
+  }
+
+  // DSL-specified additional sections (appended after hardcoded ones)
+  for (const cs of constraintSections ?? []) {
+    const gate = specToGate(cs.gate)
+    const endReward = cs.endReward ? specToReward(cs.endReward, tier as Tier) : undefined
+    sections.push({
+      pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
+      difficulty: cs.difficulty ?? difficulty,
+      end: "treasure" as const,
+      ...(gate ? { gate } : {}),
+      ...(endReward ? { endReward } : {}),
+    })
   }
 
   return sections
@@ -170,10 +215,20 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
       const hasWardGate = i >= Math.ceil(levelCount / 2) && nextTier !== null
 
       const mainEndReward: TreasureReward = constraint.mainEndReward
-        ? hintToReward(constraint.mainEndReward, tier)
+        ? specToReward(constraint.mainEndReward, tier)
         : { type: "hieroglyphs" }
 
-      const sideSections = buildSideSections(tier, difficulty, hasMapPieceBranch, hasWardGate, nextTier)
+      const constraintSections = Array.isArray(constraint.sideSections)
+        ? (constraint.sideSections as SideSectionConstraint[])
+        : undefined
+      const sideSections = buildSideSections(
+        tier,
+        difficulty,
+        hasMapPieceBranch,
+        hasWardGate,
+        nextTier,
+        constraintSections
+      )
       const chestRewards = buildChestRewards(journeyId, chestOffset, pp, assignments)
       chestOffset += chestCountFor(pp)
 
@@ -243,15 +298,23 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const difficulty: Difficulty = constraint.difficulty ?? "easy"
     const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
 
-    const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => ({
-      pathPuzzles: 1,
-      chestEvery: 0, // tomb floors have no chests; the puzzle node is the reward
-      difficulty,
-      end: "treasure" as const,
-      exitOrStaircase: i < tomb.levelCount - 1 ? ("staircase" as const) : ("exit" as const),
-      sideSections: [],
-      puzzleFamily,
-    }))
+    const lastFloorReward: TreasureReward | undefined = constraint.mainEndReward
+      ? specToReward(constraint.mainEndReward, tomb.tier as Tier)
+      : undefined
+
+    const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => {
+      const isLast = i === tomb.levelCount - 1
+      return {
+        pathPuzzles: 1,
+        chestEvery: 0, // tomb floors have no chests; the puzzle node is the reward
+        difficulty,
+        end: "treasure" as const,
+        exitOrStaircase: isLast ? ("exit" as const) : ("staircase" as const),
+        sideSections: [],
+        puzzleFamily,
+        ...(isLast && lastFloorReward ? { mainEndReward: lastFloorReward } : {}),
+      }
+    })
 
     configs[tomb.id] = [floors]
   }
