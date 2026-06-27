@@ -78,7 +78,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        maximumFileSizeToCacheInBytes: 6_000_000,
+        maximumFileSizeToCacheInBytes: 7_000_000,
       },
       includeAssets: ["/og-image.png"],
 
