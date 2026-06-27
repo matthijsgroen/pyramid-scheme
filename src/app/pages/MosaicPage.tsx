@@ -1,4 +1,4 @@
-import { type FC, useEffect, useMemo } from "react"
+import { type FC, useEffect, useMemo, useRef } from "react"
 import { Page } from "@/ui/Page"
 import { StainedGlassMosaic } from "@/ui/StainedGlassMosaic"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/mosaicRevealOrder"
@@ -8,6 +8,7 @@ import { useJourneys } from "@/app/state/useJourneys"
 export const MosaicPage: FC = () => {
   const { getJourney } = useJourneys()
   const { mosaicSeenCount, markMosaicViewed } = useProgression()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const { revealedPieceIds, newPieceIds, totalRevealedSteps } = useMemo(() => {
     const revealed = new Set<string>()
@@ -31,14 +32,32 @@ export const MosaicPage: FC = () => {
   }, [getJourney, mosaicSeenCount])
 
   useEffect(() => {
-    // Mark all current pieces as seen after a short delay so the highlight is visible first
-    const timer = setTimeout(() => markMosaicViewed(totalRevealedSteps), 3000)
-    return () => clearTimeout(timer)
+    const el = containerRef.current
+    if (!el) return
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // ponytail: only start timer when page is actually visible (not off-screen in swipeable panel)
+          timer = setTimeout(() => markMosaicViewed(totalRevealedSteps), 3000)
+        } else {
+          if (timer) clearTimeout(timer)
+        }
+      },
+      { threshold: 0.5 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      if (timer) clearTimeout(timer)
+    }
   }, [markMosaicViewed, totalRevealedSteps])
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">
-      <StainedGlassMosaic className="h-full w-full" revealedPieces={revealedPieceIds} newPieces={newPieceIds} />
+      <div ref={containerRef} className="h-full w-full">
+        <StainedGlassMosaic className="h-full w-full" revealedPieces={revealedPieceIds} newPieces={newPieceIds} />
+      </div>
     </Page>
   )
 }

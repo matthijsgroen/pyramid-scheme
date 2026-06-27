@@ -338,7 +338,8 @@ export const PyramidExpedition: FC<{
             seed={activeJourney.randomSeed + activeJourney.levelNr}
             onSiteComplete={() => {
               setShowingInterior(false)
-              onNextLevel?.()
+              setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 300)
+              setTimeout(() => onNextLevel?.(), 2000)
             }}
             onCancel={() => setShowingInterior(false)}
           />

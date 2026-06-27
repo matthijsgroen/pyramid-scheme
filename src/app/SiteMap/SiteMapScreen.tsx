@@ -1,14 +1,17 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react"
+import { useTranslation } from "react-i18next"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, getCell } from "@/game/gridNavigation"
 import { generateSumplete } from "@/game/generateSumplete"
 import { hashString } from "@/support/hashString"
-import type { FloorGrid, SiteConfig } from "@/game/siteTypes"
+import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { ExplorerDot } from "./ExplorerDot"
 import { SumpleteBoard } from "@/app/PuzzleFamilies/Sumplete/SumpleteBoard"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
+import { Chest } from "@/ui/Chest"
+import { LootPopup } from "@/ui/LootPopup"
 
 type Props = {
   journeyId: string
@@ -18,6 +21,14 @@ type Props = {
   onCancel: () => void
   /** Called when a puzzle room is tapped on a non-sumplete floor. Return null to use default SumpleteBoard. */
   renderPuzzle?: (floor: number, onSolved: () => void, onCancel: () => void) => ReactNode
+}
+
+const rewardEmoji = (type: string) => {
+  if (type === "mapPiece") return "🗺"
+  if (type === "hieroglyphFragment") return "𓂀"
+  if (type === "tombKey") return "🗝"
+  if (type === "hieroglyphs") return "📜"
+  return "🔷"
 }
 
 // Edge IDs are "floorIdx:row,col". Backward compat: no colon prefix = floor 0.
@@ -41,6 +52,7 @@ const applyEdges = (grid: FloorGrid, floor: number, allEdges: string[], wardKeys
     }, grid)
 
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
+  const { t } = useTranslation("common")
   const journeys = useJourneys()
   const progression = useProgression()
   const allEdges = journeys.getSolvedEdges(journeyId)
@@ -71,6 +83,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
   // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
+  // chest → loot popup flow
+  const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
+  const [chestOpened, setChestOpened] = useState(false)
+  const [showLoot, setShowLoot] = useState(false)
 
   const useCustomPuzzle = floorConfig.puzzleFamily === "tableau" && renderPuzzle != null
 
@@ -110,12 +126,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       } else if (cell.roomType === "treasure") {
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
-        if (cell.reward?.type === "hieroglyphFragment") {
-          progression.addFragment(cell.reward.hieroglyphId)
-        } else if (cell.reward?.type === "mapPiece") {
-          progression.collectMapPiece(cell.reward.tombId)
-        } else if (cell.reward?.type === "tombKey") {
-          progression.addTombKey(cell.reward.keyId)
+        const reward = cell.reward
+        if (reward) {
+          setChestOpened(false)
+          setPendingReward({
+            reward,
+            onCollect: () => {
+              if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId)
+              else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
+              else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
+            },
+          })
         }
       }
     },
@@ -168,6 +189,38 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             </button>
           </div>
         </div>
+      )}
+
+      {/* Step 1: Chest overlay — tap to open */}
+      {pendingReward && !showLoot && (
+        <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-black/85">
+          <Chest
+            state={chestOpened ? "open" : "empty"}
+            allowInteraction={!chestOpened}
+            onClick={() => {
+              if (!chestOpened) {
+                setChestOpened(true)
+                pendingReward.onCollect()
+                setTimeout(() => setShowLoot(true), 600)
+              }
+            }}
+          />
+          {!chestOpened && <p className="mt-6 animate-pulse text-sm text-amber-300">{t("chest.tapToOpen")}</p>}
+        </div>
+      )}
+
+      {/* Step 2: LootPopup — shows reward after chest opens */}
+      {pendingReward && (
+        <LootPopup
+          isOpen={showLoot}
+          itemName={t(`chest.${pendingReward.reward.type}`)}
+          itemComponent={<span className="text-6xl">{rewardEmoji(pendingReward.reward.type)}</span>}
+          onDismiss={() => {
+            setShowLoot(false)
+            setPendingReward(null)
+            setChestOpened(false)
+          }}
+        />
       )}
     </div>
   )
