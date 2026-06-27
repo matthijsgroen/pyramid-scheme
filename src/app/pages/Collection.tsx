@@ -72,7 +72,7 @@ const CategorySection: FC<{
           }
 
           return (
-            <Badge key={item.id} count={inventory[item.id] || 0}>
+            <Badge key={item.id}>
               <HieroglyphTile
                 symbol={item.symbol}
                 difficulty={itemLevel}
