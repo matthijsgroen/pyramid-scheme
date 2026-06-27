@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc"
 import tailwindcss from "@tailwindcss/vite"
 import babel from "vite-plugin-babel"
 import { VitePWA } from "vite-plugin-pwa"
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
 import path from "node:path"
 
 import info from "./package.json"
@@ -76,9 +77,9 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
+        globIgnores: ["**/stained-glass*.png"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        maximumFileSizeToCacheInBytes: 6_000_000,
       },
       includeAssets: ["/og-image.png"],
 
@@ -88,6 +89,10 @@ export default defineConfig({
         suppressWarnings: true,
         type: "module",
       },
+    }),
+    ViteImageOptimizer({
+      png: { quality: 80 },
+      webp: { lossless: false, quality: 80 },
     }),
   ],
   base: "/pyramid-scheme/",

@@ -159,7 +159,7 @@ export const nobleVaultTreasures: Treasure[] = [
   },
 ]
 
-export const templeSecretsTreasures: Treasure[] = [
+export const templeOuterTreasures: Treasure[] = [
   {
     id: "t11",
     name: "Sacred Ankh",
@@ -188,6 +188,9 @@ export const templeSecretsTreasures: Treasure[] = [
     description: "A sacred silver chalice used for libation offerings to the gods.",
     effects: { moreLootChance: { chance: 0.4, tier: "bronze" } },
   },
+]
+
+export const templeInnerTreasures: Treasure[] = [
   {
     id: "t15",
     name: "Ceremonial Fan",
@@ -218,7 +221,10 @@ export const templeSecretsTreasures: Treasure[] = [
   },
 ]
 
-export const ancientRelicsTreasures: Treasure[] = [
+// Combined alias — kept for backward compatibility
+export const templeSecretsTreasures: Treasure[] = [...templeOuterTreasures, ...templeInnerTreasures]
+
+export const hallOfMaatTreasures: Treasure[] = [
   {
     id: "t19",
     name: "Pharaoh's Seal",
@@ -254,6 +260,9 @@ export const ancientRelicsTreasures: Treasure[] = [
     description: "A razor-sharp obsidian ceremonial knife used in ancient rituals.",
     effects: { errorHighlight: true },
   },
+]
+
+export const hallOfOsirisTreasures: Treasure[] = [
   {
     id: "t24",
     name: "Meteorite Fragment",
@@ -291,7 +300,10 @@ export const ancientRelicsTreasures: Treasure[] = [
   },
 ]
 
-export const mythicalArtifactsTreasures: Treasure[] = [
+// Combined alias — kept for backward compatibility
+export const ancientRelicsTreasures: Treasure[] = [...hallOfMaatTreasures, ...hallOfOsirisTreasures]
+
+export const vaultOfGodsATreasures: Treasure[] = [
   {
     id: "t29",
     name: "Crown of Ra",
@@ -320,6 +332,9 @@ export const mythicalArtifactsTreasures: Treasure[] = [
     description: "Crystallized tears of the goddess Isis, said to grant eternal protection.",
     effects: { moreLootChance: { chance: 0.4 } },
   },
+]
+
+export const vaultOfGodsBTreasures: Treasure[] = [
   {
     id: "t33",
     name: "Heart of Osiris",
@@ -348,6 +363,9 @@ export const mythicalArtifactsTreasures: Treasure[] = [
     description: "A vial containing the breath of Shu, god of air, granting power over the winds.",
     effects: { moreLootChance: { chance: 0.4 } },
   },
+]
+
+export const vaultOfGodsCTreasures: Treasure[] = [
   {
     id: "t37",
     name: "Scale of Sobek",
@@ -376,6 +394,13 @@ export const mythicalArtifactsTreasures: Treasure[] = [
     description: "The golden capstone of the Great Pyramid, containing the concentrated power of all pharaohs.",
     effects: { moreLootChance: { chance: 0.4 } },
   },
+]
+
+// Combined aliases — kept for backward compatibility
+export const mythicalArtifactsTreasures: Treasure[] = [
+  ...vaultOfGodsATreasures,
+  ...vaultOfGodsBTreasures,
+  ...vaultOfGodsCTreasures,
 ]
 
 export const allTreasures = [

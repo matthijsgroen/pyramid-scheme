@@ -43,6 +43,7 @@ const mockTreasureTombJourney: TranslatedJourney = {
   difficulty: "starter",
   journeyLength: "short",
   levelCount: 4,
+  piecesRequired: 4,
   difficultyLabel: "Starter",
   lengthLabel: "Short",
   treasures: merchantCacheTreasures,

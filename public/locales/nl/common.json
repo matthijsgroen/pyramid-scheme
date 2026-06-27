@@ -74,6 +74,7 @@
     "howToPlay": "Hoe te spelen",
     "suggestedExpedition": "Aanbevolen",
     "puzzleComplete": "Het antwoord is:",
+    "puzzleCompleted": "Puzzel Voltooid",
     "spiritsRejectCode": "De geesten verwerpen deze code",
     "sacredSealBroken": "Het heilige zegel is verbroken",
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
@@ -81,6 +82,14 @@
     "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+  },
+  "chest": {
+    "tapToOpen": "Tik om te openen",
+    "mapPiece": "Kaartdeel",
+    "hieroglyphFragment": "Hiërogliefenfragment",
+    "tombKey": "Tombesleutel",
+    "hieroglyphs": "Hiëroglieven",
+    "mosaicPiece": "Mozaïekstuk"
   },
   "loot": {
     "youFound": "Je hebt gevonden",

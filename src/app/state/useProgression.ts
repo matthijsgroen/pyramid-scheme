@@ -1,0 +1,102 @@
+import { useMemo } from "react"
+import { useGameStorage } from "@/support/useGameStorage"
+
+type ProgressionState = {
+  hieroglyphFragments: Record<string, number>
+  tombKeys: Record<string, true>
+  discoveredTombs: string[]
+  mosaicSeenCount: number
+  mosaicPieceCount: number
+  collectedMapPieces: Record<string, number>
+}
+
+// First tomb of each tier is visible from the start; secondary tombs appear on first map piece
+const AUTO_DISCOVERED_TOMBS = [
+  "starter_treasure_tomb",
+  "junior_treasure_tomb",
+  "expert_treasure_tomb",
+  "master_treasure_tomb",
+  "wizard_treasure_tomb",
+]
+
+const initialState: ProgressionState = {
+  hieroglyphFragments: {},
+  tombKeys: {},
+  discoveredTombs: AUTO_DISCOVERED_TOMBS,
+  mosaicSeenCount: 0,
+  mosaicPieceCount: 0,
+  collectedMapPieces: {},
+}
+
+export type ProgressionAPI = {
+  addFragment: (hieroglyphId: string) => void
+  isHieroglyphComplete: (hieroglyphId: string) => boolean
+  hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
+  hasTombKey: (treasureId: string) => boolean
+  addTombKey: (treasureId: string) => void
+  tombKeyIds: ReadonlySet<string>
+  isTombDiscovered: (tombJourneyId: string) => boolean
+  discoverTomb: (tombJourneyId: string) => void
+  mosaicSeenCount: number
+  mosaicPieceCount: number
+  collectMosaicPiece: () => void
+  markMosaicViewed: (count: number) => void
+  collectMapPiece: (tombId: string) => void
+  mapPieceCount: (tombId: string) => number
+}
+
+// ponytail: fixed threshold; refine per-tier in Phase 6 when fragment authored data ships
+const FRAGMENT_THRESHOLD = 3
+
+export const useProgression = (): ProgressionAPI => {
+  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v2", initialState)
+
+  return useMemo(
+    () => ({
+      addFragment: hieroglyphId =>
+        setState(prev => ({
+          ...prev,
+          hieroglyphFragments: {
+            ...prev.hieroglyphFragments,
+            [hieroglyphId]: (prev.hieroglyphFragments[hieroglyphId] ?? 0) + 1,
+          },
+        })),
+      isHieroglyphComplete: hieroglyphId => (state.hieroglyphFragments[hieroglyphId] ?? 0) >= FRAGMENT_THRESHOLD,
+      hieroglyphProgress: hieroglyphId => ({
+        found: state.hieroglyphFragments[hieroglyphId] ?? 0,
+        required: FRAGMENT_THRESHOLD,
+      }),
+      hasTombKey: treasureId => !!state.tombKeys[treasureId],
+      addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
+      tombKeyIds: new Set(Object.keys(state.tombKeys)),
+      isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
+      discoverTomb: tombJourneyId =>
+        setState(prev => ({
+          ...prev,
+          discoveredTombs: prev.discoveredTombs.includes(tombJourneyId)
+            ? prev.discoveredTombs
+            : [...prev.discoveredTombs, tombJourneyId],
+        })),
+      mosaicSeenCount: state.mosaicSeenCount,
+      mosaicPieceCount: state.mosaicPieceCount ?? 0,
+      collectMosaicPiece: () => setState(prev => ({ ...prev, mosaicPieceCount: (prev.mosaicPieceCount ?? 0) + 1 })),
+      markMosaicViewed: count =>
+        setState(prev => ({ ...prev, mosaicSeenCount: Math.max(prev.mosaicSeenCount, count) })),
+      collectMapPiece: tombId =>
+        setState(prev => {
+          const prevCount = prev.collectedMapPieces[tombId] ?? 0
+          return {
+            ...prev,
+            collectedMapPieces: { ...prev.collectedMapPieces, [tombId]: prevCount + 1 },
+            // First map piece for a tomb reveals it on the travel screen
+            discoveredTombs:
+              prevCount === 0 && !prev.discoveredTombs.includes(tombId)
+                ? [...prev.discoveredTombs, tombId]
+                : prev.discoveredTombs,
+          }
+        }),
+      mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
+    }),
+    [state, setState]
+  )
+}

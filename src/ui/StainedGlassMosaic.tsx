@@ -1,0 +1,103 @@
+import type { FC } from "react"
+import clsx from "clsx"
+import { MOSAIC_PIECES, type MosaicPieceDef } from "./mosaicPieces.generated"
+import stainedGlassUrl from "../assets/stained-glass.png"
+import stainedGlassMaskUrl from "../assets/stained-glass-mask.png"
+
+// ViewBox matches stained-glass.png aspect ratio (1372×2352 → 200×343)
+const VB_W = 200
+const VB_H = 343
+
+const LEAD = "#120800"
+const DARK = "#000000"
+
+// Render top bands first so lower-band lead lines draw on top
+const sortedPieces = [...MOSAIC_PIECES].sort((a, b) => a.zoneId.localeCompare(b.zoneId))
+
+export const StainedGlassMosaic: FC<{
+  revealedPieces?: ReadonlySet<string>
+  newPieces?: ReadonlySet<string>
+  onPieceClick?: (piece: MosaicPieceDef) => void
+  className?: string
+}> = ({ revealedPieces = new Set(), newPieces, onPieceClick, className }) => (
+  <svg viewBox={`0 0 ${VB_W} ${VB_H}`} xmlns="http://www.w3.org/2000/svg" className={clsx("w-full", className)}>
+    <defs>
+      {/* Clips dark overlay to glass area only — stone frame (transparent in mask PNG) stays visible */}
+      <mask id="glass-area-mask" style={{ maskType: "alpha" }}>
+        <image href={stainedGlassMaskUrl} width={VB_W} height={VB_H} preserveAspectRatio="none" />
+      </mask>
+      {newPieces && newPieces.size > 0 && (
+        <>
+          <style>{`
+            @keyframes new-piece-reveal {
+              0%   { opacity: 0; }
+              8%   { opacity: 1; }
+              22%  { opacity: 0.4; }
+              36%  { opacity: 1; }
+              50%  { opacity: 0.4; }
+              64%  { opacity: 1; }
+              78%  { opacity: 0.5; }
+              100% { opacity: 0; }
+            }
+          `}</style>
+          <filter id="new-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </>
+      )}
+      {/* Mask: white = dark overlay visible, black = cut out (image shows through) */}
+      <mask id="reveal-mask">
+        <rect width={VB_W} height={VB_H} fill="white" />
+        {sortedPieces
+          .filter(p => revealedPieces.has(p.id))
+          .map(piece => (
+            <polygon key={piece.id} points={piece.points} fill="black" stroke="black" strokeWidth="1" />
+          ))}
+      </mask>
+    </defs>
+
+    {/* Real image always underneath */}
+    <image href={stainedGlassUrl} width={VB_W} height={VB_H} preserveAspectRatio="none" />
+
+    {/* Dark overlay: clipped to glass area so stone frame stays visible, then piece-reveal holes cut out */}
+    <g mask="url(#glass-area-mask)">
+      <rect width={VB_W} height={VB_H} fill={DARK} mask="url(#reveal-mask)" />
+    </g>
+
+    {/* Amber pulse for newly revealed pieces */}
+    {newPieces && newPieces.size > 0 && (
+      <g style={{ animation: "new-piece-reveal 5s ease-in-out forwards" }} filter="url(#new-glow)">
+        {sortedPieces
+          .filter(p => newPieces.has(p.id))
+          .map(piece => (
+            <polygon
+              key={`new-${piece.id}`}
+              points={piece.points}
+              fill="rgba(251,191,36,0.35)"
+              stroke="rgba(251,191,36,0.9)"
+              strokeWidth="1"
+              strokeLinejoin="round"
+            />
+          ))}
+      </g>
+    )}
+
+    {/* Lead lines and click targets on top */}
+    {sortedPieces.map(piece => (
+      <polygon
+        key={piece.id}
+        points={piece.points}
+        fill="transparent"
+        stroke={LEAD}
+        strokeWidth="0.4"
+        strokeLinejoin="round"
+        style={{ cursor: onPieceClick ? "pointer" : undefined }}
+        onClick={onPieceClick ? () => onPieceClick(piece) : undefined}
+      />
+    ))}
+  </svg>
+)
