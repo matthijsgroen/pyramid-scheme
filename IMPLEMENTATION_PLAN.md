@@ -328,6 +328,34 @@ export const validateWorld = (world: GeneratedWorld): ValidationResult
 
 ---
 
+## Phase 10a — Exterior Journey Path Map (Bezier Curve)
+
+**Goal:** Each journey (pyramid or tomb) is displayed as a bezier curve with site nodes along it. Replaces or supplements the current tile-based journey progress display.
+
+### Concept
+
+A bezier path represents the physical route of a journey through the landscape. Individual sites (pyramids/tomb floors) appear as nodes along the curve. The explorer dot follows the curve between sites as levels are completed.
+
+### `src/app/JourneyMap/JourneyPathView.tsx` (new)
+
+- SVG component: renders a cubic bezier path for a single journey
+- Control points: authored per journey (or procedurally derived from tier/index)
+- Site nodes: spaced along the curve by `t` parameter
+- Explorer dot: interpolated `t` value between `completionCount` and `completionCount+1`
+- Current node: highlighted; completed nodes: filled; future nodes: faded
+
+### Data
+
+Control points for each journey path can be authored as `[p0, p1, p2, p3]` in `journeyStructure.ts` or as a separate authored data file. No worldGen involvement needed — these are layout-only.
+
+### `src/app/JourneyMap/WorldMapView.tsx` (new)
+
+- All journey paths rendered simultaneously on a shared canvas/SVG
+- Pan + zoom for navigation between tiers
+- Tapping a site node on a completed/active journey launches that expedition
+
+---
+
 ## Phase 10 — Journey Map + Hub + Fast-Travel
 
 **Goal:** The journey map is the full exploration hub. New-paths badge surfaces when a newly acquired tomb key unlocks previously blocked ward gates.
@@ -371,7 +399,8 @@ Replace `MapButton` with `JourneyMapView` for V3 journeys.
 | 5c | Floors + stairheads — SiteConfig = FloorConfig[], floor-aware edge IDs | ✅ | SiteMapScreen multi-floor state; stairhead tap advances floor; expert+ get floor 2 |
 | 5d | Wards — tombKeys wired into gridNavigation | ✅ | completeCell externalKeys param; SiteMapScreen passes wardKeys; tombKeyIds on ProgressionAPI |
 | 6 | Pyramid reward economies | ✅ | Fragment nodes, mosaic tiles, map pieces (tombId), ward key wiring; `inventoryLootLogic.ts`+`mapPieceLogic.ts` still present for legacy flat-level fallback |
-| 7 | Tomb interiors as site maps | 🔜 | `tombSiteConfigs.ts`, tableau node type, location key treasure, `useProgression.discoverTomb` |
+| 7 | Tomb interiors as site maps | ✅ | `journeyStructure.ts` (single source of truth), `buildTombConfigs()`, `renderPuzzle` prop on SiteMapScreen, TombExpedition V3 fork; 9 tombs in generatedWorld |
 | 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb (done), map pieces on deep floors, tomb discovery flow |
 | 9 | World generator | ✅ | `scripts/worldGen/` DSL+constraintResolver+worldSpec+configBuilder+fragmentAssigner; `generatedWorld.ts` (20 map pieces, 20 mosaic, 157 fragments); WORLD_TARGETS in worldSpec |
+| 10a | Exterior journey path map (bezier curve) | 🔜 | `JourneyPathView.tsx`, `WorldMapView.tsx`, bezier-spaced site nodes, explorer dot interpolation |
 | 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |
