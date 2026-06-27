@@ -175,8 +175,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   }, [activePuzzlePos, journeys, currentFloor])
 
   const handlePuzzleComplete = useCallback(() => {
-    setPuzzleSolved(true)
-    setTimeout(handlePuzzleSolved, 1500)
+    setTimeout(() => {
+      setPuzzleSolved(true)
+      setTimeout(handlePuzzleSolved, 1500)
+    }, 800)
   }, [handlePuzzleSolved])
 
   if (!grid) {
