@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react"
+import { useCallback, useMemo, useRef, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { assembleFloor } from "@/game/siteAssembler"
-import { completeCell, getCell } from "@/game/gridNavigation"
+import { completeCell, findPath, getCell } from "@/game/gridNavigation"
 import { generateSumplete } from "@/game/generateSumplete"
 import { hashString } from "@/support/hashString"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
@@ -89,6 +89,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
   // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
+  const puzzleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // chest → loot popup flow
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
   const [chestOpened, setChestOpened] = useState(false)
@@ -117,7 +118,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "puzzle") {
-        setActivePuzzlePos([row, col])
+        // Move dot first, show puzzle when it arrives
+        journeys.updatePosition(journeyId, edgeId)
+        const path = findPath(grid, explorerPos, [row, col])
+        const delay = Math.max(0, path.length - 1) * 120
+        if (puzzleTimerRef.current) clearTimeout(puzzleTimerRef.current)
+        puzzleTimerRef.current = setTimeout(() => setActivePuzzlePos([row, col]), delay)
       } else if (cell.roomType === "fork") {
         // Fork is a free branch point — completing it reveals adjacent branches
         journeys.markEdgeSolved(edgeId)
@@ -146,7 +152,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         }
       }
     },
-    [grid, journeys, journeyId, onSiteComplete, currentFloor, progression]
+    [grid, journeys, journeyId, onSiteComplete, currentFloor, progression, explorerPos]
   )
 
   const handlePuzzleSolved = useCallback(() => {
