@@ -37,7 +37,7 @@ export const MosaicPage: FC = () => {
           if (timer) clearTimeout(timer)
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.85 }
     )
     observer.observe(el)
     return () => {
