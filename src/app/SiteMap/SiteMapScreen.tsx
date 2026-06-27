@@ -11,6 +11,7 @@ import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { Chest } from "@/ui/Chest"
 import { LootPopup } from "@/ui/LootPopup"
+import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
 
 type Props = {
   journeyId: string
@@ -95,6 +96,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
   const [chestOpened, setChestOpened] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
+  const [exiting, setExiting] = useState(false)
 
   const scheduleArrival = useCallback(
     (path: readonly (readonly [number, number])[], cb: () => void) => {
@@ -139,7 +141,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
         setCurrentFloor(f => f + 1)
       } else if (cell.roomType === "exit") {
-        onSiteComplete()
+        journeys.updatePosition(journeyId, edgeId)
+        scheduleArrival(findPath(grid, explorerPos, [row, col]), () => setExiting(true))
       } else if (cell.roomType === "treasure") {
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
@@ -196,6 +199,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       <div className="relative">
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
       </div>
+      {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
       {activePuzzlePos &&
         useCustomPuzzle &&
         renderPuzzle(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
