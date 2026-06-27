@@ -39,6 +39,7 @@ const serializeFloor = (c: FloorConfig): string => {
     `    exitOrStaircase: "${c.exitOrStaircase}",`,
     `    sideSections: ${sideSectionsStr},`,
   ]
+  if (c.puzzleFamily) lines.push(`    puzzleFamily: "${c.puzzleFamily}",`)
   if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
   if (c.chestRewards && c.chestRewards.length > 0) {
     const rewards = c.chestRewards.map(r => `      ${serializeReward(r)}`).join(",\n")

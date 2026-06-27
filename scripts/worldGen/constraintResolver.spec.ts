@@ -86,10 +86,7 @@ describe("specificity cascade", () => {
   })
 
   it("journey scope overrides tier scope at same level (later wins)", () => {
-    const r = rules([
-      tier("starter", { difficulty: "easy" }),
-      journey("j1", { difficulty: "hard" }),
-    ])
+    const r = rules([tier("starter", { difficulty: "easy" }), journey("j1", { difficulty: "hard" })])
     expect(resolve(r, "j1", 0, 3).difficulty).toBe("hard")
     // different journey → tier rule applies
     expect(resolve(r, "j2", 0, 3).difficulty).toBe("easy")

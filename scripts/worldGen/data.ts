@@ -1,36 +1,39 @@
-import type { JourneyDef, Tier } from "./types"
+import type { JourneyDef, TombJourneyDef, Tier } from "./types"
+import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "../../src/data/journeyStructure"
 
 export const WORLD_SEED = 42_195_837
 
-// Pyramid journey catalogue — matches journeys.ts tier/id + siteConfigs.ts pathPuzzles
-// Must be kept in sync with levelCount in src/data/journeys.ts
-export const PYRAMID_JOURNEYS: JourneyDef[] = [
-  // Starter
-  { id: "starter_1", tier: "starter", pathPuzzles: 2, levelCount: 3 },
-  { id: "starter_2", tier: "starter", pathPuzzles: 2, levelCount: 4 },
-  { id: "starter_3", tier: "starter", pathPuzzles: 3, levelCount: 5 },
-  { id: "starter_4", tier: "starter", pathPuzzles: 3, levelCount: 5 },
-  // Junior
-  { id: "junior_1", tier: "junior", pathPuzzles: 3, levelCount: 3 },
-  { id: "junior_2", tier: "junior", pathPuzzles: 4, levelCount: 6 },
-  { id: "junior_3", tier: "junior", pathPuzzles: 5, levelCount: 8 },
-  { id: "junior_4", tier: "junior", pathPuzzles: 4, levelCount: 5 },
-  // Expert
-  { id: "expert_1", tier: "expert", pathPuzzles: 4, levelCount: 4 },
-  { id: "expert_2", tier: "expert", pathPuzzles: 5, levelCount: 6 },
-  { id: "expert_3", tier: "expert", pathPuzzles: 6, levelCount: 9 },
-  { id: "expert_4", tier: "expert", pathPuzzles: 5, levelCount: 7 },
-  // Master
-  { id: "master_1", tier: "master", pathPuzzles: 5, levelCount: 4 },
-  { id: "master_2", tier: "master", pathPuzzles: 7, levelCount: 9 },
-  { id: "master_3", tier: "master", pathPuzzles: 7, levelCount: 8 },
-  { id: "master_4", tier: "master", pathPuzzles: 6, levelCount: 5 },
-  // Wizard
-  { id: "wizard_1", tier: "wizard", pathPuzzles: 8, levelCount: 9 },
-  { id: "wizard_2", tier: "wizard", pathPuzzles: 8, levelCount: 11 },
-  { id: "wizard_3", tier: "wizard", pathPuzzles: 8, levelCount: 10 },
-  { id: "wizard_4", tier: "wizard", pathPuzzles: 8, levelCount: 8 },
-]
+// pathPuzzles is worldGen-only; merged with PYRAMID_STRUCTURES (single source of truth for id/tier/levelCount)
+const PYRAMID_PATH_PUZZLES: Record<string, number> = {
+  starter_1: 2,
+  starter_2: 2,
+  starter_3: 3,
+  starter_4: 3,
+  junior_1: 3,
+  junior_2: 4,
+  junior_3: 5,
+  junior_4: 4,
+  expert_1: 4,
+  expert_2: 5,
+  expert_3: 6,
+  expert_4: 5,
+  master_1: 5,
+  master_2: 7,
+  master_3: 7,
+  master_4: 6,
+  wizard_1: 8,
+  wizard_2: 8,
+  wizard_3: 8,
+  wizard_4: 8,
+}
+
+export const PYRAMID_JOURNEYS: JourneyDef[] = PYRAMID_STRUCTURES.map(s => ({
+  ...s,
+  tier: s.tier as Tier,
+  pathPuzzles: PYRAMID_PATH_PUZZLES[s.id] ?? 3,
+}))
+
+export const TOMB_JOURNEYS: TombJourneyDef[] = TOMB_STRUCTURES.map(s => ({ ...s, tier: s.tier as Tier }))
 
 // Hieroglyph IDs per tier — mirrors TOMB_SYMBOLS in tableaus.ts; these are inventory item IDs
 export const TOMB_SYMBOLS: Record<Tier, string[]> = {

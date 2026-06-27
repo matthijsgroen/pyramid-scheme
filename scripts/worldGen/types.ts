@@ -27,6 +27,7 @@ export type FloorConfig = {
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]
+  puzzleFamily?: "sumplete" | "tableau"
 }
 
 export type SiteConfig = FloorConfig[]
@@ -36,3 +37,5 @@ export type Assignment = { journeyId: string; slotIndex: number; hieroglyphId: s
 
 // Per-pyramid plan: resolved pathPuzzles after worldSpec constraints + scaling + auto-correction
 export type ChestSlotPlan = { journeyId: string; tier: Tier; pathPuzzles: number }
+
+export type TombJourneyDef = { id: string; tier: Tier; levelCount: number }

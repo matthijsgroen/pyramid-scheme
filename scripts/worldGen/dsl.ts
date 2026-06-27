@@ -6,7 +6,8 @@ export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "sparse" | "normal" | "dense"
 export type GateType = "floor-key" | "tomb-key"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
-export type PuzzleFamily = "sumplete"
+export type PuzzleFamily = "sumplete" | "tableau"
+export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
 export type PyramidSelector = number | "first" | "last" | "middle" | `${number}-${number}` | `last-${number}`
 
@@ -14,14 +15,14 @@ export type SideSectionConstraint = {
   gate?: GateType | null
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily
+  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   endReward?: RewardHint
 }
 
 export type FloorConstraint = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily
+  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   mainEndReward?: RewardHint
   chestReward?: RewardHint
   sideSections?: SideIntensity | number | SideSectionConstraint[]
@@ -34,7 +35,8 @@ export type PyramidConstraint = {
   maxFloors?: number
   sideSections?: SideIntensity | number | SideSectionConstraint[]
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily
+  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  theme?: Theme
   mainEndReward?: RewardHint
   gateHint?: GateType
   floors?: (FloorConstraint | null)[]

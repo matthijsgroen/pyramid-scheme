@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useState, type ReactNode } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, getCell } from "@/game/gridNavigation"
 import { generateSumplete } from "@/game/generateSumplete"
@@ -16,6 +16,8 @@ type Props = {
   seed: number
   onSiteComplete: () => void
   onCancel: () => void
+  /** Called when a puzzle room is tapped on a non-sumplete floor. Return null to use default SumpleteBoard. */
+  renderPuzzle?: (floor: number, onSolved: () => void, onCancel: () => void) => ReactNode
 }
 
 // Edge IDs are "floorIdx:row,col". Backward compat: no colon prefix = floor 0.
@@ -38,7 +40,7 @@ const applyEdges = (grid: FloorGrid, floor: number, allEdges: string[], wardKeys
       return completeCell(g, r, c, wardKeys)
     }, grid)
 
-export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel }: Props) => {
+export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
   const journeys = useJourneys()
   const progression = useProgression()
   const allEdges = journeys.getSolvedEdges(journeyId)
@@ -70,12 +72,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
 
+  const useCustomPuzzle = floorConfig.puzzleFamily === "tableau" && renderPuzzle != null
+
   const activePuzzle = useMemo(() => {
-    if (!activePuzzlePos) return null
+    if (!activePuzzlePos || useCustomPuzzle) return null
     const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
     // ponytail: fixed 3×3 sumplete for all puzzle rooms; difficulty scaling in Phase 6
     return generateSumplete(3, hashString(journeyId + edgeId))
-  }, [activePuzzlePos, journeyId, currentFloor])
+  }, [activePuzzlePos, journeyId, currentFloor, useCustomPuzzle])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -149,6 +153,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
         <ExplorerDot grid={grid} pos={explorerPos} />
       </div>
+      {activePuzzlePos &&
+        useCustomPuzzle &&
+        renderPuzzle(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
       {activePuzzle && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
           <div className="flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">

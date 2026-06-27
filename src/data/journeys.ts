@@ -2,6 +2,7 @@ import type { DayNightCycleStep } from "@/ui/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
 import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"
+import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
 import {
   merchantCacheTreasures,
   nobleVaultTreasures,
@@ -71,6 +72,7 @@ export type TreasureTombJourney = {
   levelCount: number
   piecesRequired: number
   treasures: Treasure[]
+  siteConfigs?: SiteConfig[]
   levelSettings: {
     symbolCount: number
     numberRange: [min: number, max: number]
@@ -879,10 +881,14 @@ export const journeys: Journey[] = [
   },
 ]
 
-// Apply site configs to pyramid journeys — avoids touching 20 inline objects
+// Apply generated site configs + enforce levelCounts from journeyStructure (single source of truth)
+const allStructures = [...PYRAMID_STRUCTURES, ...TOMB_STRUCTURES]
 for (const journey of journeys) {
-  if (journey.type === "pyramid") {
-    const config = generatedWorldConfigs[journey.id]
-    if (config) (journey as PyramidJourney).siteConfigs = config
+  const structure = allStructures.find(s => s.id === journey.id)
+  if (structure) journey.levelCount = structure.levelCount
+  const config = generatedWorldConfigs[journey.id]
+  if (config) {
+    if (journey.type === "pyramid") (journey as PyramidJourney).siteConfigs = config
+    else (journey as TreasureTombJourney).siteConfigs = config
   }
 }

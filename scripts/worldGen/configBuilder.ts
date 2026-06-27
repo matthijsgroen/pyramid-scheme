@@ -1,5 +1,5 @@
 import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward, ChestSlotPlan } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "./worldSpec"
@@ -232,6 +232,29 @@ const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
   }
 }
 
+// ── Tomb configs ──────────────────────────────────────────────────────────────
+
+const buildTombConfigs = (): Record<string, SiteConfig[]> => {
+  const configs: Record<string, SiteConfig[]> = {}
+  for (const tomb of TOMB_JOURNEYS) {
+    const constraint = resolvePyramidConstraint(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
+    const difficulty: Difficulty = constraint.difficulty ?? "easy"
+    const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
+
+    const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => ({
+      pathPuzzles: 1,
+      difficulty,
+      end: "treasure" as const,
+      exitOrStaircase: i < tomb.levelCount - 1 ? ("staircase" as const) : ("exit" as const),
+      sideSections: [],
+      puzzleFamily,
+    }))
+
+    configs[tomb.id] = [floors]
+  }
+  return configs
+}
+
 // ── Main entry point ──────────────────────────────────────────────────────────
 
 export const buildConfigs = (): Record<string, SiteConfig[]> => {
@@ -244,11 +267,14 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   // Phase 3: Assign fragments to chest slots using the corrected plan
   const assignments = computeFragmentAssignments(adjustedPlan)
 
-  // Phase 4: Build SiteConfigs
-  const configs = buildSiteConfigs(adjustedPlan, assignments)
+  // Phase 4: Build SiteConfigs for pyramids
+  const pyramidConfigs = buildSiteConfigs(adjustedPlan, assignments)
 
   // Phase 5: Validate structural rewards (fail hard on violations)
-  validateRewardCounts(configs)
+  validateRewardCounts(pyramidConfigs)
 
-  return configs
+  // Phase 6: Build tomb site configs
+  const tombConfigs = buildTombConfigs()
+
+  return { ...pyramidConfigs, ...tombConfigs }
 }

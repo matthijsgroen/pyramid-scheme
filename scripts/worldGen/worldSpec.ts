@@ -1,4 +1,4 @@
-import { global, tier, rules } from "./dsl"
+import { global, tier, journey, rules } from "./dsl"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mosaicPieceRewards: one per pyramid journey (4 journeys × 5 tiers = 20).
@@ -35,4 +35,15 @@ export const worldSpec = rules([
   tier("expert").pyramid("last", { mainEndReward: "mosaicPiece" }),
   tier("master").pyramid("last", { mainEndReward: "mosaicPiece" }),
   tier("wizard").pyramid("last", { mainEndReward: "mosaicPiece" }),
+
+  // ── Tomb journeys: tableau puzzles, one floor per levelCount ──────────────
+  journey("starter_treasure_tomb", { puzzleFamily: "tableau", difficulty: "easy" }),
+  journey("junior_treasure_tomb", { puzzleFamily: "tableau", difficulty: "easy" }),
+  journey("expert_treasure_tomb", { puzzleFamily: "tableau", difficulty: "medium" }),
+  journey("expert_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "medium" }),
+  journey("master_treasure_tomb", { puzzleFamily: "tableau", difficulty: "medium" }),
+  journey("master_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "medium" }),
+  journey("wizard_treasure_tomb", { puzzleFamily: "tableau", difficulty: "hard" }),
+  journey("wizard_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "hard" }),
+  journey("wizard_treasure_tomb_c", { puzzleFamily: "tableau", difficulty: "hard" }),
 ])
