@@ -45,7 +45,7 @@ export type ProgressionAPI = {
 const FRAGMENT_THRESHOLD = 3
 
 export const useProgression = (): ProgressionAPI => {
-  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression", initialState)
+  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v2", initialState)
 
   return useMemo(
     () => ({

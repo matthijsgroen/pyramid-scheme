@@ -1,7 +1,6 @@
 import { type FC, useEffect, useMemo } from "react"
 import { Page } from "@/ui/Page"
 import { StainedGlassMosaic } from "@/ui/StainedGlassMosaic"
-import { MOSAIC_PIECES } from "@/ui/mosaicPieces.generated"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/mosaicRevealOrder"
 import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "@/app/state/useJourneys"
@@ -38,18 +37,8 @@ export const MosaicPage: FC = () => {
   }, [markMosaicViewed, totalRevealedSteps])
 
   return (
-    <Page className="flex flex-col items-center justify-center bg-stone-950" snap="end">
-      <div className="w-full max-w-xs px-8">
-        <StainedGlassMosaic revealedPieces={revealedPieceIds} newPieces={newPieceIds} />
-      </div>
-      {newPieceIds.size > 0 && (
-        <p className="mt-4 text-sm text-amber-400">
-          {newPieceIds.size} newly revealed {newPieceIds.size === 1 ? "section" : "sections"}
-        </p>
-      )}
-      <p className="mt-2 text-xs text-stone-500">
-        {revealedPieceIds.size} / {MOSAIC_PIECES.length} pieces
-      </p>
+    <Page className="flex flex-col bg-stone-950" snap="end">
+      <StainedGlassMosaic className="h-full w-full" revealedPieces={revealedPieceIds} newPieces={newPieceIds} />
     </Page>
   )
 }
