@@ -97,11 +97,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
     setShowLoot(false)
     setCompletionPhase("finished")
     collectLoot()
-
-    // Small delay before calling completion to allow loot popup to close
-    setTimeout(() => {
-      onCompletionFinished()
-    }, 300)
+    timerRef.current = setTimeout(() => onCompletionFinished(), 300)
   }
 
   const handleOverlayClick = () => {

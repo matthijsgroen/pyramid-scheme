@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, getCell } from "@/game/gridNavigation"
@@ -93,6 +93,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
   const [puzzleSolved, setPuzzleSolved] = useState(false)
   const arrivalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const puzzleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lootTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (puzzleTimerRef.current) clearTimeout(puzzleTimerRef.current)
+      if (lootTimerRef.current) clearTimeout(lootTimerRef.current)
+    },
+    []
+  )
   // chest → loot popup flow
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
   const [chestOpened, setChestOpened] = useState(false)
@@ -183,9 +192,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   }, [activePuzzlePos, journeys, currentFloor])
 
   const handlePuzzleComplete = useCallback(() => {
-    setTimeout(() => {
+    puzzleTimerRef.current = setTimeout(() => {
       setPuzzleSolved(true)
-      setTimeout(handlePuzzleSolved, 1500)
+      puzzleTimerRef.current = setTimeout(handlePuzzleSolved, 1500)
     }, 800)
   }, [handlePuzzleSolved])
 
@@ -223,7 +232,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
               onSolved={handlePuzzleComplete}
             />
             {!puzzleSolved && (
-              <button onClick={() => setActivePuzzlePos(null)} className="text-sm text-stone-400 hover:text-stone-200">
+              <button
+                onClick={() => {
+                  if (puzzleTimerRef.current) clearTimeout(puzzleTimerRef.current)
+                  setActivePuzzlePos(null)
+                }}
+                className="text-sm text-stone-400 hover:text-stone-200"
+              >
                 {t("ui.cancel")}
               </button>
             )}
@@ -247,7 +262,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
               if (!chestOpened) {
                 setChestOpened(true)
                 pendingReward.onCollect()
-                setTimeout(() => setShowLoot(true), 600)
+                lootTimerRef.current = setTimeout(() => setShowLoot(true), 600)
               }
             }}
           />

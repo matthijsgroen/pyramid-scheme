@@ -48,15 +48,19 @@ export const TombExpedition: FC<{
     tab => tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === activeJourney.completionCount + 1
   )
   const [completing, setCompleting] = useState(false)
+  const completingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (completingTimerRef.current) clearTimeout(completingTimerRef.current)
+    },
+    []
+  )
 
   const handleLevelComplete = useCallback(() => {
     if (completing) return
-    // Complete the level in the journey system
     setCompleting(true)
-
-    setTimeout(() => {
+    completingTimerRef.current = setTimeout(() => {
       completeLevel()
-      // Call the external level complete handler
       onLevelComplete?.()
       setCompleting(false)
     }, 500)

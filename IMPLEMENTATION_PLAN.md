@@ -485,6 +485,57 @@ Replace `MapButton` with `JourneyMapView` for V3 journeys.
 
 ---
 
+## SiteMapScreen Refactor Plan
+
+`SiteMapScreen` currently handles six concerns in one component (~280 lines). As Phase 8 adds tomb discovery flow and Phase 10 adds journey-map entry, these will grow the file further. This plan decomposes it into focused units.
+
+### Current responsibilities
+
+| Concern | Lines | Proposed home |
+|---------|-------|---------------|
+| Floor assembly + edge replay | 67–83 | `useAssembledFloor(journeyId, floorConfig, seed, floor, allEdges, wardKeys)` |
+| Explorer position derivation | 84–91 | Inline → input to `useArrival` |
+| Arrival scheduling | 95–108 | `useArrival(explorerPos, grid)` → `scheduleArrival(path, cb)` |
+| Puzzle plugin lookup + generate | 110–124 | `usePuzzle(grid, activePuzzlePos, journeyId, floor, floorConfig)` |
+| Cell-click routing | 126–175 | Keep in screen; calls hooks above |
+| Chest/loot 3-state machine | 97–99, 239–270 | `<ChestRewardFlow reward onDismiss />` sub-component |
+| Exit iris transition | 100, 214 | Stays inline (two lines) |
+
+### Proposed hooks
+
+```
+useAssembledFloor(journeyId, floorConfig, seed, floor, allEdges, wardKeys)
+  → { grid, explorerPos }
+
+useArrival(explorerPos, grid)
+  → scheduleArrival(path, cb)   // owns arrivalTimerRef
+
+usePuzzle(grid, activePuzzlePos, journeyId, floor, floorConfig)
+  → { puzzlePlugin, activePuzzle, ActivePuzzleComponent, useRenderPuzzleFallback }
+```
+
+### Proposed sub-component
+
+```tsx
+<ChestRewardFlow
+  reward={pendingReward}         // null = hidden
+  onDismiss={() => setPendingReward(null)}
+/>
+```
+Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine from the screen.
+
+### Migration order
+
+1. Extract `useAssembledFloor` — pure derivation, no side effects, easy to test.
+2. Extract `<ChestRewardFlow>` — self-contained, reduces screen JSX by ~35 lines.
+3. Extract `usePuzzle` — depends on grid from step 1.
+4. Extract `useArrival` — wraps `arrivalTimerRef`; migration is mechanical.
+5. Screen body becomes ~120 lines of routing + JSX wiring.
+
+**Do this before Phase 10** — journey-map entry will add a sixth panel to the screen and is much easier to slot in after step 5.
+
+---
+
 ## What's explicitly out of scope for this build
 
 - **Carry-forward** — dropped; reintroduce only if a time-based puzzle family genuinely needs it

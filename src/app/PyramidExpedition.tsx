@@ -66,6 +66,8 @@ export const PyramidExpedition: FC<{
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
   const futureLevelRef = useRef<HTMLDivElement>(null)
+  const transitionTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+  useEffect(() => () => transitionTimersRef.current.forEach(clearTimeout), [])
   const startNextLevel = transitionToLevel > activeJourney.levelNr
 
   const levelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr)
@@ -156,6 +158,16 @@ export const PyramidExpedition: FC<{
     setLevelCompleted(true)
   }, [startNextLevel])
 
+  const handleInteriorSiteComplete = useCallback(() => {
+    setInteriorLevel(activeJourney.journeyId, null)
+    setShowingInterior(false)
+    transitionTimersRef.current.forEach(clearTimeout)
+    transitionTimersRef.current = [
+      setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 300),
+      setTimeout(() => onNextLevel?.(), 2000),
+    ]
+  }, [setInteriorLevel, activeJourney.journeyId, activeJourney.levelNr, onNextLevel])
+
   const onCompletionFinished = useCallback(() => {
     setLevelCompleted(false)
     const journey = activeJourney.journey as PyramidJourney
@@ -164,12 +176,11 @@ export const PyramidExpedition: FC<{
       setInteriorLevel(activeJourney.journeyId, activeJourney.levelNr)
       setShowingInterior(true)
     } else {
-      setTimeout(() => {
-        setTransitionToLevel(activeJourney.levelNr + 1)
-      }, 1000)
-      setTimeout(() => {
-        onNextLevel?.()
-      }, 1995)
+      transitionTimersRef.current.forEach(clearTimeout)
+      transitionTimersRef.current = [
+        setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 1000),
+        setTimeout(() => onNextLevel?.(), 1995),
+      ]
     }
   }, [onNextLevel, activeJourney.levelNr, activeJourney.journey, activeJourney.journeyId, setInteriorLevel])
 
@@ -343,12 +354,7 @@ export const PyramidExpedition: FC<{
             journeyId={activeJourney.journeyId}
             siteConfig={pyramidJourney.siteConfigs[activeJourney.levelNr - 1] ?? pyramidJourney.siteConfigs[0]}
             seed={activeJourney.randomSeed + activeJourney.levelNr}
-            onSiteComplete={() => {
-              setInteriorLevel(activeJourney.journeyId, null)
-              setShowingInterior(false)
-              setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 300)
-              setTimeout(() => onNextLevel?.(), 2000)
-            }}
+            onSiteComplete={handleInteriorSiteComplete}
             onCancel={() => {
               // Back from interior → go to map (2 levels up); interiorLevelNr stays set for re-entry
               setShowingInterior(false)
