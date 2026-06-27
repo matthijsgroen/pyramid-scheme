@@ -135,7 +135,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   }
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="relative flex h-full flex-col items-center justify-center">
       <button
         onClick={onCancel}
         className="absolute top-2 left-2 z-10 rounded bg-stone-800 px-3 py-1 text-sm text-amber-200"

@@ -1,22 +1,34 @@
-import { useMemo } from "react"
-import { useTranslation } from "react-i18next"
+export const LevelCompletedOverlay = () => (
+  <div className="pointer-events-none absolute inset-0 z-50 overflow-hidden">
+    <style>{`
+      @keyframes stone-top {
+        0%, 5%  { transform: translateY(0); }
+        70%, 100% { transform: translateY(-100%); }
+      }
+      @keyframes stone-bottom {
+        0%, 5%  { transform: translateY(0); }
+        70%, 100% { transform: translateY(100%); }
+      }
+      @keyframes iris-in {
+        0%, 20% { clip-path: circle(0% at 50% 50%); }
+        100%    { clip-path: circle(150% at 50% 50%); }
+      }
+    `}</style>
 
-export const LevelCompletedOverlay = () => {
-  const { t } = useTranslation("common")
+    {/* Black iris — expands from center to fill screen */}
+    <div
+      className="absolute inset-0 bg-black"
+      style={{ animation: "iris-in 2s cubic-bezier(0.4,0,0.2,1) forwards" }}
+    />
 
-  // Random rotation between -20deg and +20deg
-  const rotation = useMemo(() => {
-    const deg = Math.random() * 40 - 20
-    return `rotate(${deg}deg)`
-  }, [])
-  return (
-    <div className="pointer-events-none absolute inset-0 z-50 flex animate-fade-in items-center justify-center delay-0">
-      <span
-        className="font-pyramid text-[6vw] font-extrabold text-green-400 select-none text-shadow-black text-shadow-sm lg:text-shadow-lg"
-        style={{ transform: rotation }}
-      >
-        {t("level.completed")}
-      </span>
-    </div>
-  )
-}
+    {/* Stone panels slide apart, revealing the iris behind */}
+    <div
+      className="absolute inset-x-0 top-0 z-10 h-1/2 bg-stone-700"
+      style={{ animation: "stone-top 1.4s cubic-bezier(0.4,0,0.6,1) forwards" }}
+    />
+    <div
+      className="absolute inset-x-0 bottom-0 z-10 h-1/2 bg-stone-700"
+      style={{ animation: "stone-bottom 1.4s cubic-bezier(0.4,0,0.6,1) forwards" }}
+    />
+  </div>
+)
