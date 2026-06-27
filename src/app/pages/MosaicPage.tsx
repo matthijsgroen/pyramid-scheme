@@ -2,50 +2,9 @@ import { type FC, useEffect, useMemo } from "react"
 import { Page } from "@/ui/Page"
 import { StainedGlassMosaic } from "@/ui/StainedGlassMosaic"
 import { MOSAIC_PIECES } from "@/ui/mosaicPieces.generated"
+import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/mosaicRevealOrder"
 import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "@/app/state/useJourneys"
-
-// Canonical pyramid journey order (matches Storybook JOURNEY_ORDER, tombs excluded)
-const PYRAMID_JOURNEY_ORDER = [
-  "starter_1",
-  "starter_2",
-  "starter_3",
-  "starter_4",
-  "junior_1",
-  "junior_2",
-  "junior_3",
-  "junior_4",
-  "expert_1",
-  "expert_2",
-  "expert_3",
-  "expert_4",
-  "master_1",
-  "master_2",
-  "master_3",
-  "master_4",
-  "wizard_1",
-  "wizard_2",
-  "wizard_3",
-  "wizard_4",
-]
-
-// Pre-build ordered reveal steps and piece lookup at module load
-const LEVEL_STEPS: Array<{ journeyId: string; levelIndex: number }> = (() => {
-  const steps: Array<{ journeyId: string; levelIndex: number }> = []
-  for (const jId of PYRAMID_JOURNEY_ORDER) {
-    const max = MOSAIC_PIECES.filter(p => p.journeyId === jId).reduce((m, p) => Math.max(m, p.levelIndex), -1)
-    for (let l = 0; l <= max; l++) steps.push({ journeyId: jId, levelIndex: l })
-  }
-  return steps
-})()
-
-const PIECES_BY_STEP = new Map<string, string[]>()
-for (const p of MOSAIC_PIECES) {
-  const key = `${p.journeyId}:${p.levelIndex}`
-  const arr = PIECES_BY_STEP.get(key) ?? []
-  arr.push(p.id)
-  PIECES_BY_STEP.set(key, arr)
-}
 
 export const MosaicPage: FC = () => {
   const { getJourney } = useJourneys()

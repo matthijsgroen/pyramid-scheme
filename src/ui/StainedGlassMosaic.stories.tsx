@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { StainedGlassMosaic } from "./StainedGlassMosaic"
 import { MOSAIC_PIECES } from "./mosaicPieces.generated"
+import { LEVEL_STEPS } from "./mosaicRevealOrder"
 
 const meta = {
   title: "UI/StainedGlassMosaic",
@@ -35,48 +36,26 @@ export const FullyRevealed: Story = {
   ],
 }
 
-const JOURNEY_ORDER = [
-  "starter_1",
-  "starter_2",
-  "starter_3",
-  "starter_4",
-  "starter_treasure_tomb",
-  "junior_1",
-  "junior_2",
-  "junior_3",
-  "junior_4",
-  "junior_treasure_tomb",
-  "expert_1",
-  "expert_2",
-  "expert_3",
-  "expert_4",
-  "expert_treasure_tomb",
-  "master_1",
-  "master_2",
-  "master_3",
-  "master_4",
-  "master_treasure_tomb",
-  "wizard_1",
-  "wizard_2",
-  "wizard_3",
-  "wizard_4",
-  "wizard_treasure_tomb",
-]
+// First step's pieces used as the "new" highlight demo
+const FIRST_STEP_PIECES = new Set(
+  MOSAIC_PIECES.filter(p => p.journeyId === "starter_1" && p.levelIndex === 0).map(p => p.id)
+)
 
-// Pre-build ordered level steps: each step = one (journeyId, levelIndex) group
-const LEVEL_STEPS = (() => {
-  const steps: Array<{ journeyId: string; levelIndex: number }> = []
-  for (const journeyId of JOURNEY_ORDER) {
-    const maxLevel = MOSAIC_PIECES.filter(p => p.journeyId === journeyId).reduce(
-      (m, p) => Math.max(m, p.levelIndex),
-      -1
-    )
-    for (let l = 0; l <= maxLevel; l++) steps.push({ journeyId, levelIndex: l })
-  }
-  return steps
-})()
+export const NewPiecesGlow: Story = {
+  args: {
+    revealedPieces: FIRST_STEP_PIECES,
+    newPieces: FIRST_STEP_PIECES,
+  },
+  decorators: [
+    Story => (
+      <div className="w-96 bg-black p-4">
+        <Story />
+      </div>
+    ),
+  ],
+}
 
-// Map piece id → step index for O(1) reveal lookup
+// Map piece id → step index for O(1) reveal lookup (using spatially-ordered steps)
 const PIECE_STEP = new Map(
   MOSAIC_PIECES.map(p => [
     p.id,

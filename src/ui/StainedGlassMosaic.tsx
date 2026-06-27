@@ -26,6 +26,29 @@ export const StainedGlassMosaic: FC<{
       <mask id="glass-area-mask" style={{ maskType: "alpha" }}>
         <image href={stainedGlassMaskUrl} width={VB_W} height={VB_H} preserveAspectRatio="none" />
       </mask>
+      {newPieces && newPieces.size > 0 && (
+        <>
+          <style>{`
+            @keyframes new-piece-reveal {
+              0%   { opacity: 0; }
+              8%   { opacity: 1; }
+              22%  { opacity: 0.4; }
+              36%  { opacity: 1; }
+              50%  { opacity: 0.4; }
+              64%  { opacity: 1; }
+              78%  { opacity: 0.5; }
+              100% { opacity: 0; }
+            }
+          `}</style>
+          <filter id="new-glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </>
+      )}
       {/* Mask: white = dark overlay visible, black = cut out (image shows through) */}
       <mask id="reveal-mask">
         <rect width={VB_W} height={VB_H} fill="white" />
@@ -47,11 +70,18 @@ export const StainedGlassMosaic: FC<{
 
     {/* Amber pulse for newly revealed pieces */}
     {newPieces && newPieces.size > 0 && (
-      <g className="animate-pulse">
+      <g style={{ animation: "new-piece-reveal 5s ease-in-out forwards" }} filter="url(#new-glow)">
         {sortedPieces
           .filter(p => newPieces.has(p.id))
           .map(piece => (
-            <polygon key={`new-${piece.id}`} points={piece.points} fill="rgba(251,191,36,0.45)" />
+            <polygon
+              key={`new-${piece.id}`}
+              points={piece.points}
+              fill="rgba(251,191,36,0.35)"
+              stroke="rgba(251,191,36,0.9)"
+              strokeWidth="1"
+              strokeLinejoin="round"
+            />
           ))}
       </g>
     )}
