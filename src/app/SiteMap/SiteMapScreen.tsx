@@ -6,7 +6,6 @@ import { generateSumplete } from "@/game/generateSumplete"
 import { hashString } from "@/support/hashString"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
-import { ExplorerDot } from "./ExplorerDot"
 import { SumpleteBoard } from "@/app/PuzzleFamilies/Sumplete/SumpleteBoard"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
@@ -170,7 +169,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       )}
       <div className="relative">
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
-        <ExplorerDot grid={grid} pos={explorerPos} />
       </div>
       {activePuzzlePos &&
         useCustomPuzzle &&

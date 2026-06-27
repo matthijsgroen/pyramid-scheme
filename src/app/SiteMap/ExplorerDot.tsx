@@ -34,12 +34,21 @@ export const ExplorerDot = ({
   const prevPosRef = useRef<readonly [number, number]>(pos)
   const animatingRef = useRef(false)
   const rafRef = useRef<number | null>(null)
+  // ponytail: skip animation on first render so stale saved position doesn't slide into view
+  const mountedRef = useRef(false)
 
   useEffect(() => {
     const from = prevPosRef.current
     prevPosRef.current = pos
 
     if (from[0] === pos[0] && from[1] === pos[1]) return
+
+    if (!mountedRef.current) {
+      mountedRef.current = true
+      setSvgPos(toPixel(pos))
+      return
+    }
+    mountedRef.current = true
 
     const waypoints = findPath(grid, from, pos).map(toPixel)
     const dest = waypoints[waypoints.length - 1]
