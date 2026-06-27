@@ -2,16 +2,17 @@ import { useCallback, useMemo, useRef, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, getCell } from "@/game/gridNavigation"
-import { generateSumplete } from "@/game/generateSumplete"
 import { hashString } from "@/support/hashString"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import { getPuzzlePlugin } from "@/game/puzzleRegistry"
 import { SiteMapView } from "./SiteMapView"
-import { SumpleteBoard } from "@/app/PuzzleFamilies/Sumplete/SumpleteBoard"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { Chest } from "@/ui/Chest"
 import { LootPopup } from "@/ui/LootPopup"
 import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
+// Side-effect: registers puzzle plugins
+import "@/app/PuzzleFamilies/Sumplete/plugin"
 
 type Props = {
   journeyId: string
@@ -106,14 +107,21 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     []
   )
 
-  const useCustomPuzzle = floorConfig.puzzleFamily === "tableau" && renderPuzzle != null
+  const puzzlePlugin = useMemo(() => {
+    if (!activePuzzlePos || !grid) return null
+    const cell = getCell(grid, activePuzzlePos[0], activePuzzlePos[1])
+    const family = cell?.type === "room" ? (cell.family ?? "sumplete") : "sumplete"
+    return getPuzzlePlugin(family) ?? null
+  }, [activePuzzlePos, grid])
+
+  // Fall back to renderPuzzle for families without a registered plugin (e.g. tableau until Phase 7)
+  const useRenderPuzzleFallback = activePuzzlePos != null && puzzlePlugin == null && renderPuzzle != null
 
   const activePuzzle = useMemo(() => {
-    if (!activePuzzlePos || useCustomPuzzle) return null
+    if (!activePuzzlePos || !puzzlePlugin) return null
     const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
-    // ponytail: fixed 3×3 sumplete for all puzzle rooms; difficulty scaling in Phase 6
-    return generateSumplete(3, hashString(journeyId + edgeId), { allowZeroTargets: false })
-  }, [activePuzzlePos, journeyId, currentFloor, useCustomPuzzle])
+    return puzzlePlugin.generate(hashString(journeyId + edgeId), { difficulty: floorConfig.difficulty })
+  }, [activePuzzlePos, puzzlePlugin, journeyId, currentFloor, floorConfig.difficulty])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -181,6 +189,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     }, 800)
   }, [handlePuzzleSolved])
 
+  const ActivePuzzleComponent = puzzlePlugin?.Component ?? null
+
   if (!grid) {
     return <div className="p-4 text-red-400">Site layout unavailable.</div>
   }
@@ -202,16 +212,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
       </div>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
-      {activePuzzlePos &&
-        useCustomPuzzle &&
-        renderPuzzle(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
-      {activePuzzle && (
+      {useRenderPuzzleFallback &&
+        renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
+      {!!activePuzzle && ActivePuzzleComponent && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
           <div className="relative flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">
-            <SumpleteBoard
-              grid={activePuzzle.grid}
-              rowTargets={activePuzzle.rowTargets}
-              colTargets={activePuzzle.colTargets}
+            <ActivePuzzleComponent
+              puzzle={activePuzzle}
+              settings={{ difficulty: floorConfig.difficulty }}
               onSolved={handlePuzzleComplete}
             />
             {!puzzleSolved && (

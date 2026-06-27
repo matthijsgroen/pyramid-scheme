@@ -309,7 +309,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       } else if (forkPositions.has(posKey(r, c))) {
         roomSpecs.set(posKey(r, c), { roomType: "fork" })
       } else {
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
+        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
       }
     }
 
@@ -357,7 +357,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
         } else {
-          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: "sumplete" })
+          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
         }
       }
 
