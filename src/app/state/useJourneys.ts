@@ -16,6 +16,7 @@ export type StoredJourneyStateV3 = {
   active: boolean
   solvedEdges: string[] // cell positions "row,col" solved in the site map — permanent per run
   position: string | null // current node ID "row,col" or null (entrance)
+  interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -38,6 +39,7 @@ export type JourneyAPI = {
   markEdgeSolved: (edgeId: string) => void
   getSolvedEdges: (journeyId: string) => string[]
   updatePosition: (journeyId: string, nodeId: string) => void
+  setInteriorLevel: (journeyId: string, levelNr: number | null) => void
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -115,6 +117,7 @@ export const createJourneysV3Api = ({
       active: true,
       solvedEdges: [],
       position: null,
+      interiorLevelNr: null,
     }
     setJourneys(prev => [...prev, newJourney])
   }
@@ -124,7 +127,7 @@ export const createJourneysV3Api = ({
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
-          ? { ...j, active: false, completionCount: j.completionCount + 1, levelNr: 1, solvedEdges: [], position: null }
+          ? { ...j, active: false, completionCount: j.completionCount + 1, levelNr: 1, solvedEdges: [], position: null, interiorLevelNr: null }
           : j
       )
     )
@@ -132,7 +135,7 @@ export const createJourneysV3Api = ({
 
   const cancelJourney = () => {
     if (!activeJourneyId) return
-    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, active: false } : j)))
+    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, active: false, interiorLevelNr: null } : j)))
   }
 
   const completeLevel = () => {
@@ -163,6 +166,10 @@ export const createJourneysV3Api = ({
     setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId } : j)))
   }
 
+  const setInteriorLevel = (journeyId: string, levelNr: number | null) => {
+    setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, interiorLevelNr: levelNr } : j)))
+  }
+
   const maxDifficulty = journeys.reduce<Difficulty>((difficulty, item) => {
     const j = journeyData.find(j => j.id === item.journeyId)
     if (j && difficultyCompare(j.difficulty, difficulty) > 0) return j.difficulty
@@ -182,5 +189,6 @@ export const createJourneysV3Api = ({
     markEdgeSolved,
     getSolvedEdges,
     updatePosition,
+    setInteriorLevel,
   }
 }
