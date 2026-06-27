@@ -208,7 +208,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             )}
             {puzzleSolved && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/90">
-                <p className="font-pyramid text-xl text-amber-300">{t("ui.sacredSealBroken")}</p>
+                <p className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</p>
               </div>
             )}
           </div>
