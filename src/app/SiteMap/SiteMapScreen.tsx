@@ -90,11 +90,19 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
   const [puzzleSolved, setPuzzleSolved] = useState(false)
-  const puzzleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const arrivalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // chest → loot popup flow
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
   const [chestOpened, setChestOpened] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
+
+  const scheduleArrival = useCallback(
+    (path: readonly (readonly [number, number])[], cb: () => void) => {
+      if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current)
+      arrivalTimerRef.current = setTimeout(cb, Math.max(0, path.length - 1) * 120 + 100)
+    },
+    []
+  )
 
   const useCustomPuzzle = floorConfig.puzzleFamily === "tableau" && renderPuzzle != null
 
@@ -119,12 +127,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "puzzle") {
-        // Move dot first, show puzzle when it arrives
         journeys.updatePosition(journeyId, edgeId)
-        const path = findPath(grid, explorerPos, [row, col])
-        const delay = Math.max(0, path.length - 1) * 120
-        if (puzzleTimerRef.current) clearTimeout(puzzleTimerRef.current)
-        puzzleTimerRef.current = setTimeout(() => setActivePuzzlePos([row, col]), delay)
+        scheduleArrival(findPath(grid, explorerPos, [row, col]), () => setActivePuzzlePos([row, col]))
       } else if (cell.roomType === "fork") {
         // Fork is a free branch point — completing it reveals adjacent branches
         journeys.markEdgeSolved(edgeId)
@@ -141,20 +145,22 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
         const reward = cell.reward
         if (reward) {
-          setChestOpened(false)
-          setPendingReward({
-            reward,
-            onCollect: () => {
-              if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId)
-              else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
-              else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
-              else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-            },
+          scheduleArrival(findPath(grid, explorerPos, [row, col]), () => {
+            setChestOpened(false)
+            setPendingReward({
+              reward,
+              onCollect: () => {
+                if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId)
+                else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
+                else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
+                else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
+              },
+            })
           })
         }
       }
     },
-    [grid, journeys, journeyId, onSiteComplete, currentFloor, progression, explorerPos]
+    [grid, journeys, journeyId, onSiteComplete, currentFloor, progression, explorerPos, scheduleArrival]
   )
 
   const handlePuzzleSolved = useCallback(() => {
