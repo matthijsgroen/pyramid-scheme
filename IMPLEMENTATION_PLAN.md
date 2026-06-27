@@ -370,8 +370,8 @@ Replace `MapButton` with `JourneyMapView` for V3 journeys.
 | 5b | Seals — floor-key gates for expert+ pyramids | ✅ | Generator: key-holder + mapPiece + gated section per expert+ journey |
 | 5c | Floors + stairheads — SiteConfig = FloorConfig[], floor-aware edge IDs | ✅ | SiteMapScreen multi-floor state; stairhead tap advances floor; expert+ get floor 2 |
 | 5d | Wards — tombKeys wired into gridNavigation | ✅ | completeCell externalKeys param; SiteMapScreen passes wardKeys; tombKeyIds on ProgressionAPI |
-| 6 | Pyramid reward economies | 🔜 | Fragment nodes, mosaic tiles, map pieces deterministic, ward key wiring; remove `inventoryLootLogic.ts` + `mapPieceLogic.ts` |
+| 6 | Pyramid reward economies | ✅ | Fragment nodes, mosaic tiles, map pieces (tombId), ward key wiring; `inventoryLootLogic.ts`+`mapPieceLogic.ts` still present for legacy flat-level fallback |
 | 7 | Tomb interiors as site maps | 🔜 | `tombSiteConfigs.ts`, tableau node type, location key treasure, `useProgression.discoverTomb` |
-| 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb, map pieces on deep floors, tomb discovery flow |
-| 9 | World generator | 🔜 | `scripts/generateWorld.ts`, `generatorRules.ts`, `worldValidator.ts`, `generatedWorld.ts` |
+| 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb (done), map pieces on deep floors, tomb discovery flow |
+| 9 | World generator | ✅ | `scripts/worldGen/` DSL+constraintResolver+worldSpec+configBuilder+fragmentAssigner; `generatedWorld.ts` (20 map pieces, 20 mosaic, 157 fragments); WORLD_TARGETS in worldSpec |
 | 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |
