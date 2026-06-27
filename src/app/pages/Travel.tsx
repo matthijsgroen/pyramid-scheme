@@ -2,16 +2,13 @@ import { use, useEffect, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { Page } from "@/ui/Page"
-import { MapButton } from "@/ui/MapButton"
+import { JourneyPathView } from "@/ui/JourneyPathView"
 import { JourneyCard } from "@/ui/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useJourneyTranslations, type TranslatedJourney } from "@/data/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/DifficultyPill"
-import { mulberry32 } from "@/game/random"
-import { TombMapButton } from "@/ui/TombMapButton"
-import { hashString } from "@/support/hashString"
 import { FezContext } from "../fez/context"
 
 import { TableauInventory } from "./TableauInventory"
@@ -24,7 +21,7 @@ export const TravelPage: FC<{
   const { t } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
-  const { activeJourneyId, startJourney, cancelJourney, nextJourneySeed, getJourney } = useJourneys()
+  const { activeJourneyId, startJourney, cancelJourney, getJourney } = useJourneys()
   const { isTombDiscovered, mapPieceCount } = useProgression()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
@@ -32,7 +29,6 @@ export const TravelPage: FC<{
   const journeyId = activeJourneyId ?? selectedJourney?.id
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
-  const journeyProgress = activeJourneyInfo?.progressPercentage ?? 0
   const { showConversation } = use(FezContext)
 
   useEffect(() => {
@@ -42,13 +38,6 @@ export const TravelPage: FC<{
   }, [showJourneySelection, showConversation])
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
-  const mapRotation = useMemo(() => {
-    const journeySeed =
-      (activeJourneyInfo?.randomSeed ?? nextJourneySeed(journey?.id ?? "none")) +
-      (journey?.id ? hashString(journey.id) : 0)
-    const random = mulberry32(journeySeed)
-    return Math.round(random() * 360)
-  }, [activeJourneyInfo?.randomSeed, nextJourneySeed, journey?.id])
 
   const handleMapClick = () => {
     if (activeJourneyInfo) {
@@ -160,31 +149,22 @@ export const TravelPage: FC<{
                 </>
               )}
               {!journey && <p className="mb-4 text-center">{t("ui.startAdventure")}</p>}
-              {journey?.type === "treasure_tomb" ? (
-                <TombMapButton
-                  onClick={handleMapClick}
-                  inJourney={!!journey}
-                  corridorComplexity={journey?.journeyLength ?? "long"}
-                  label={journey?.name ?? ""}
-                  journeyProgress={journeyProgress}
-                />
-              ) : (
-                <MapButton
-                  onClick={handleMapClick}
-                  inJourney={!!journey}
-                  pathRotation={mapRotation}
-                  pathLength={journey?.journeyLength ?? "long"}
-                  label={
-                    activeJourneyInfo?.inProgress
-                      ? t("ui.continueExpedition")
-                      : selectedJourney
-                        ? t("ui.startExpedition")
-                        : t("ui.planExpedition")
-                  }
-                  journeyProgress={journeyProgress}
-                  nudge={!journey && hasPendingMapPieceProgress}
-                />
-              )}
+              <JourneyPathView
+                onClick={handleMapClick}
+                inJourney={!!journey}
+                levelCount={journey?.levelCount ?? 1}
+                levelNr={activeJourneyInfo?.levelNr ?? 1}
+                journeyLength={journey?.journeyLength ?? "long"}
+                type={journey?.type ?? "pyramid"}
+                label={
+                  activeJourneyInfo?.inProgress
+                    ? t("ui.continueExpedition")
+                    : selectedJourney
+                      ? t("ui.startExpedition")
+                      : t("ui.planExpedition")
+                }
+                nudge={!journey && hasPendingMapPieceProgress}
+              />
               {!activeJourneyInfo && selectedJourney && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
