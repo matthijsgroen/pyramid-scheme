@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { type FC } from "react"
 import { registerPuzzle } from "@/game/puzzleRegistry"
 import { generateSumplete, type SumpleteGrid } from "@/game/generateSumplete"
@@ -8,12 +9,7 @@ const SumpleteComponent: FC<{ puzzle: SumpleteGrid; settings: PuzzleSettings; on
   puzzle,
   onSolved,
 }) => (
-  <SumpleteBoard
-    grid={puzzle.grid}
-    rowTargets={puzzle.rowTargets}
-    colTargets={puzzle.colTargets}
-    onSolved={onSolved}
-  />
+  <SumpleteBoard grid={puzzle.grid} rowTargets={puzzle.rowTargets} colTargets={puzzle.colTargets} onSolved={onSolved} />
 )
 
 registerPuzzle({

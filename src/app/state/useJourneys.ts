@@ -127,7 +127,15 @@ export const createJourneysV3Api = ({
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
-          ? { ...j, active: false, completionCount: j.completionCount + 1, levelNr: 1, solvedEdges: [], position: null, interiorLevelNr: null }
+          ? {
+              ...j,
+              active: false,
+              completionCount: j.completionCount + 1,
+              levelNr: 1,
+              solvedEdges: [],
+              position: null,
+              interiorLevelNr: null,
+            }
           : j
       )
     )
@@ -135,16 +143,16 @@ export const createJourneysV3Api = ({
 
   const cancelJourney = () => {
     if (!activeJourneyId) return
-    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, active: false, interiorLevelNr: null } : j)))
+    setJourneys(prev =>
+      prev.map(j => (j.journeyId === activeJourneyId ? { ...j, active: false, interiorLevelNr: null } : j))
+    )
   }
 
   const completeLevel = () => {
     if (!activeJourneyId) return
     setJourneys(prev =>
       prev.map(j =>
-        j.journeyId === activeJourneyId
-          ? { ...j, levelNr: j.levelNr + 1, solvedEdges: [], position: null }
-          : j
+        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, solvedEdges: [], position: null } : j
       )
     )
   }

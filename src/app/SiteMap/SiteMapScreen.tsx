@@ -108,13 +108,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [showLoot, setShowLoot] = useState(false)
   const [exiting, setExiting] = useState(false)
 
-  const scheduleArrival = useCallback(
-    (path: readonly (readonly [number, number])[], cb: () => void) => {
-      if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current)
-      arrivalTimerRef.current = setTimeout(cb, Math.max(0, path.length - 1) * 120 + 100)
-    },
-    []
-  )
+  const scheduleArrival = useCallback((path: readonly (readonly [number, number])[], cb: () => void) => {
+    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current)
+    arrivalTimerRef.current = setTimeout(cb, Math.max(0, path.length - 1) * 120 + 100)
+  }, [])
 
   const puzzlePlugin = useMemo(() => {
     if (!activePuzzlePos || !grid) return null
@@ -221,8 +218,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
       </div>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
-      {useRenderPuzzleFallback &&
-        renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
+      {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
       {!!activePuzzle && ActivePuzzleComponent && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
           <div className="relative flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">

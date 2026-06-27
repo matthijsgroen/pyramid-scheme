@@ -221,7 +221,10 @@ export const TravelPage: FC<{
                   // Skip pyramid journeys that are not yet unlocked
                   return null
                 }
-                if (journey.type === "treasure_tomb" && (!isTombDiscovered(journey.id) || mapPieceCount(journey.id) === 0)) {
+                if (
+                  journey.type === "treasure_tomb" &&
+                  (!isTombDiscovered(journey.id) || mapPieceCount(journey.id) === 0)
+                ) {
                   return null
                 }
                 const journeyInfo = getJourney(journey.id)

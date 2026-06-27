@@ -35,13 +35,13 @@ function isLeadLine(r: number, g: number, b: number): boolean {
   return r < 40 && g < 40 && b < 40
 }
 
-function colorKey(r: number, g: number, b: number): string {
+function _colorKey(r: number, g: number, b: number): string {
   // Quantise to nearest 16 to merge slight anti-aliasing variants
   const q = (v: number) => Math.round(v / 16) * 16
   return `${q(r)},${q(g)},${q(b)}`
 }
 
-function colorDist(a: RGB, b: RGB): number {
+function _colorDist(a: RGB, b: RGB): number {
   return Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
 }
 
@@ -131,9 +131,9 @@ function floodFill(
 // ---------------------------------------------------------------------------
 function getBoundaryPixels(
   region: number[],
-  labels: Int32Array,
+  _labels: Int32Array,
   width: number,
-  height: number
+  _height: number
 ): Array<[number, number]> {
   const set = new Set(region)
   const boundary: Array<[number, number]> = []
@@ -260,8 +260,8 @@ for (let y = 0; y < height; y++) {
 console.log(`Found ${regionData.length} colored regions`)
 
 // Scale factor: image pixels → viewbox units
-const scaleX = VB_W / width
-const scaleY = VB_H / height
+const _scaleX = VB_W / width
+const _scaleY = VB_H / height
 
 // ---------------------------------------------------------------------------
 // For each region: extract convex hull boundary → simplify → scale to viewbox
@@ -319,7 +319,7 @@ function assignZone(
   // Blue torso / arms
   if (avgColor[2] > 150 && avgColor[2] > avgColor[0] * 1.5 && avgColor[1] < avgColor[2] * 0.6) {
     // Distinguish torso_top vs torso vs arm_l/arm_r by position and brightness
-    const brightness = (avgColor[0] + avgColor[1] + avgColor[2]) / 3
+    const _brightness = (avgColor[0] + avgColor[1] + avgColor[2]) / 3
     if (cx < cx_img * 0.55) return { zoneId: "arm_l", journeyId: "wizard_2", cssColor: "#1d4ed8" }
     if (cx > cx_img * 1.45) return { zoneId: "arm_r", journeyId: "wizard_3", cssColor: "#1d4ed8" }
     // Torso top vs torso: vertical split
@@ -346,7 +346,7 @@ function assignZone(
     }
 
     // Head zones by vertical position
-    const HEAD_TOP = height * 0.04
+    const _HEAD_TOP = height * 0.04
     const HEAD_EAR_B = height * 0.22
     const HEAD_FACE_B = height * 0.42
     const HEAD_JAW_B = height * 0.5
