@@ -66,12 +66,13 @@ export const TombExpedition: FC<{
   const [showComparePuzzle, setShowComparePuzzle] = useState(false)
 
   const handleSiteComplete = useCallback(() => {
+    completeLevel()
     if (journey.levelSettings.compareAmount > 0) {
       setShowComparePuzzle(true)
     } else {
       onLevelComplete?.()
     }
-  }, [journey.levelSettings.compareAmount, onLevelComplete])
+  }, [completeLevel, journey.levelSettings.compareAmount, onLevelComplete])
 
   // ── V1 (legacy): hooks must be unconditional, computed regardless of path ──
   const legacySeed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)

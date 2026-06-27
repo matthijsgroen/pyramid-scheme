@@ -885,7 +885,8 @@ export const journeys: Journey[] = [
 const allStructures = [...PYRAMID_STRUCTURES, ...TOMB_STRUCTURES]
 for (const journey of journeys) {
   const structure = allStructures.find(s => s.id === journey.id)
-  if (structure) journey.levelCount = structure.levelCount
+  if (!structure) throw new Error(`Journey "${journey.id}" not found in journeyStructure — update journeyStructure.ts`)
+  journey.levelCount = structure.levelCount
   const config = generatedWorldConfigs[journey.id]
   if (config) {
     if (journey.type === "pyramid") (journey as PyramidJourney).siteConfigs = config
