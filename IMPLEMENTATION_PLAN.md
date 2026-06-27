@@ -68,14 +68,25 @@ Currently `SiteMapScreen` hardcodes sumplete generation and rendering, with a `r
 
 ### Design
 
-Each puzzle family is a self-contained plugin object:
+Per-room puzzle settings live in the site config and flow through to the plugin:
+
+```typescript
+// src/game/siteTypes.ts — extend RoomSpec / FloorConfig
+export type PuzzleSettings = {
+  difficulty?: "easy" | "medium" | "hard"   // controls generator parameters
+  theme?: string                             // passed to Component for visual styling
+  // family-specific overrides can be added here without changing the plugin contract
+}
+```
+
+Each puzzle family is a self-contained plugin object typed on its own puzzle format and settings:
 
 ```typescript
 // src/game/puzzlePlugin.ts
-export type PuzzlePlugin<TPuzzle> = {
+export type PuzzlePlugin<TPuzzle, TSettings extends PuzzleSettings = PuzzleSettings> = {
   family: string
-  generate: (seed: number) => TPuzzle
-  Component: FC<{ puzzle: TPuzzle; onSolved: () => void }>
+  generate: (seed: number, settings: TSettings) => TPuzzle
+  Component: FC<{ puzzle: TPuzzle; settings: TSettings; onSolved: () => void }>
 }
 ```
 
@@ -83,8 +94,9 @@ A central registry maps family name → plugin:
 
 ```typescript
 // src/game/puzzleRegistry.ts
-const registry = new Map<string, PuzzlePlugin<unknown>>()
-export const registerPuzzle = <T>(plugin: PuzzlePlugin<T>) => registry.set(plugin.family, plugin)
+const registry = new Map<string, PuzzlePlugin<unknown, PuzzleSettings>>()
+export const registerPuzzle = <T, S extends PuzzleSettings>(plugin: PuzzlePlugin<T, S>) =>
+  registry.set(plugin.family, plugin as PuzzlePlugin<unknown, PuzzleSettings>)
 export const getPuzzlePlugin = (family: string) => registry.get(family)
 ```
 
@@ -94,8 +106,12 @@ Each family registers itself at module load:
 // src/app/PuzzleFamilies/Sumplete/plugin.ts
 registerPuzzle({
   family: "sumplete",
-  generate: seed => generateSumplete(3, seed, { allowZeroTargets: false }),
-  Component: SumpleteBoard,
+  generate: (seed, settings) => generateSumplete(
+    settings.difficulty === "hard" ? 4 : 3,
+    seed,
+    { allowZeroTargets: false }
+  ),
+  Component: ({ puzzle, onSolved }) => <SumpleteBoard {...puzzle} onSolved={onSolved} />,
 })
 ```
 
@@ -103,8 +119,8 @@ registerPuzzle({
 // src/app/PuzzleFamilies/Tableau/plugin.ts
 registerPuzzle({
   family: "tableau",
-  generate: seed => generateTableau(seed),   // existing logic
-  Component: TableauBoard,
+  generate: (seed, settings) => generateTableau(seed, settings),
+  Component: ({ puzzle, settings, onSolved }) => <TableauBoard {...puzzle} theme={settings.theme} onSolved={onSolved} />,
 })
 ```
 
@@ -114,8 +130,12 @@ Remove `renderPuzzle` prop entirely. Replace hardcoded sumplete call with:
 
 ```typescript
 const plugin = getPuzzlePlugin(floorConfig.puzzleFamily ?? "sumplete")
-const puzzle = useMemo(() => plugin?.generate(hashString(journeyId + edgeId)), [plugin, journeyId, edgeId])
-// render: <plugin.Component puzzle={puzzle} onSolved={handlePuzzleComplete} />
+const settings = activePuzzlePos ? getPuzzleSettings(grid, activePuzzlePos) : null
+const puzzle = useMemo(
+  () => plugin?.generate(hashString(journeyId + edgeId), settings ?? {}),
+  [plugin, journeyId, edgeId, settings]
+)
+// render: <plugin.Component puzzle={puzzle} settings={settings} onSolved={handlePuzzleComplete} />
 ```
 
 ### `siteAssembler.ts` fix
