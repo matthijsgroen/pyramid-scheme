@@ -59,7 +59,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
 
   // Separate effect for handling the timer when in overlay phase
   useEffect(() => {
-    if (completionPhase === "overlay" && !showFez) {
+    if (completionPhase === "overlay" && !showFez && !skipLoot) {
       const timer = setTimeout(() => {
         if (loot) {
           setCompletionPhase("loot")
@@ -117,7 +117,16 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
       {/* Level Completed Overlay */}
       {showOverlay && (
         <div onClick={handleOverlayClick} className="pointer-events-auto absolute inset-0 z-40 cursor-pointer">
-          <LevelCompletedOverlay />
+          <LevelCompletedOverlay
+            onComplete={
+              skipLoot
+                ? () => {
+                    setCompletionPhase("finished")
+                    onCompletionFinished()
+                  }
+                : undefined
+            }
+          />
           {!loot && completionPhase === "overlay" && (
             <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
               <p className="animate-pulse text-sm font-medium text-white">{t("loot.clickToContinue")}</p>
