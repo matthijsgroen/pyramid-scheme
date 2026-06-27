@@ -112,7 +112,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     if (!activePuzzlePos || useCustomPuzzle) return null
     const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
     // ponytail: fixed 3×3 sumplete for all puzzle rooms; difficulty scaling in Phase 6
-    return generateSumplete(3, hashString(journeyId + edgeId))
+    return generateSumplete(3, hashString(journeyId + edgeId), { allowZeroTargets: false })
   }, [activePuzzlePos, journeyId, currentFloor, useCustomPuzzle])
 
   const handleCellClick = useCallback(
@@ -232,6 +232,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       {pendingReward && !showLoot && (
         <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-black/85">
           <Chest
+            variant="wooden"
             state={chestOpened ? "open" : "empty"}
             allowInteraction={!chestOpened}
             onClick={() => {
