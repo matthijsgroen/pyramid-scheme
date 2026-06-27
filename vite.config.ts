@@ -77,9 +77,9 @@ export default defineConfig({
 
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
+        globIgnores: ["**/stained-glass*.png"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        maximumFileSizeToCacheInBytes: 2_000_000,
       },
       includeAssets: ["/og-image.png"],
 
