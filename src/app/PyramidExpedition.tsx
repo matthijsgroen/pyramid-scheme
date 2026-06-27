@@ -192,7 +192,7 @@ export const PyramidExpedition: FC<{
       : "text-white"
 
   // Feature flag: V3 site map path
-  if (pyramidJourney.siteConfig) {
+  if (pyramidJourney.siteConfigs) {
     return (
       <DesertBackdrop
         levelNr={1}
@@ -202,8 +202,9 @@ export const PyramidExpedition: FC<{
       >
         {!siteCompleted ? (
           <SiteMapScreen
+            key={`${activeJourney.journeyId}-${activeJourney.completionCount}`}
             journeyId={activeJourney.journeyId}
-            siteConfig={pyramidJourney.siteConfig}
+            siteConfig={pyramidJourney.siteConfigs[0]}
             seed={activeJourney.randomSeed}
             onSiteComplete={() => setSiteCompleted(true)}
             onCancel={() => onClose?.()}

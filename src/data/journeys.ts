@@ -58,7 +58,7 @@ export type PyramidJourney = {
       pieces: [min: number, max: number]
     }
   }
-  siteConfig?: SiteConfig
+  siteConfigs?: SiteConfig[]
 }
 
 export type TreasureTombJourney = {
@@ -69,6 +69,7 @@ export type TreasureTombJourney = {
   difficulty: Difficulty
   journeyLength: "short" | "medium" | "long"
   levelCount: number
+  piecesRequired: number
   treasures: Treasure[]
   levelSettings: {
     symbolCount: number
@@ -208,6 +209,7 @@ export const journeys: Journey[] = [
     difficulty: "starter",
     journeyLength: "short",
     levelCount: 2,
+    piecesRequired: 4,
     treasures: merchantCacheTreasures,
     levelSettings: {
       symbolCount: 2,
@@ -346,6 +348,7 @@ export const journeys: Journey[] = [
     difficulty: "junior",
     journeyLength: "medium",
     levelCount: 3,
+    piecesRequired: 4,
     treasures: nobleVaultTreasures,
     levelSettings: {
       symbolCount: 3,
@@ -490,6 +493,7 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "short",
     levelCount: 4,
+    piecesRequired: 4,
     treasures: templeOuterTreasures,
     levelSettings: {
       symbolCount: 4,
@@ -508,6 +512,7 @@ export const journeys: Journey[] = [
     difficulty: "expert",
     journeyLength: "short",
     levelCount: 4,
+    piecesRequired: 3,
     treasures: templeInnerTreasures,
     levelSettings: {
       symbolCount: 4,
@@ -648,6 +653,7 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "medium",
     levelCount: 5,
+    piecesRequired: 4,
     treasures: hallOfMaatTreasures,
     levelSettings: {
       symbolCount: 4,
@@ -667,6 +673,7 @@ export const journeys: Journey[] = [
     difficulty: "master",
     journeyLength: "medium",
     levelCount: 5,
+    piecesRequired: 3,
     treasures: hallOfOsirisTreasures,
     levelSettings: {
       symbolCount: 5,
@@ -819,6 +826,7 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     levelCount: 6,
+    piecesRequired: 4,
     treasures: vaultOfGodsATreasures,
     levelSettings: {
       symbolCount: 5,
@@ -838,6 +846,7 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     levelCount: 6,
+    piecesRequired: 3,
     treasures: vaultOfGodsBTreasures,
     levelSettings: {
       symbolCount: 5,
@@ -857,6 +866,7 @@ export const journeys: Journey[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     levelCount: 6,
+    piecesRequired: 2,
     treasures: vaultOfGodsCTreasures,
     levelSettings: {
       symbolCount: 5,
@@ -873,6 +883,6 @@ export const journeys: Journey[] = [
 for (const journey of journeys) {
   if (journey.type === "pyramid") {
     const config = generatedWorldConfigs[journey.id]
-    if (config) (journey as PyramidJourney).siteConfig = config  // already SiteConfig (FloorConfig[])
+    if (config) (journey as PyramidJourney).siteConfigs = config
   }
 }

@@ -2,7 +2,7 @@ export type PuzzleFamily = "sumplete"
 export type RoomType = "entrance" | "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 export type TreasureReward =
   | { type: "mosaicPiece" }
-  | { type: "mapPiece" }
+  | { type: "mapPiece"; tombId: string }
   | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string }
   | { type: "tombKey"; keyId: string }
@@ -65,6 +65,7 @@ export type ValidationReason =
   | { type: "mapPieceMissing" }
   | { type: "mapPieceDuplicate"; siteIds: string[] }
   | { type: "mosaicMissing" }
+  | { type: "mosaicNotReachable" }
   | { type: "mosaicDuplicate"; siteId: string }
 
 export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }

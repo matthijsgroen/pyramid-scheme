@@ -98,16 +98,31 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       if (cell.roomType === "fork") {
         const forkPos: Pos = [r, c]
         const interestingTypes = new Set(["treasure", "gate", "stairhead"])
+        // BFS through corridors from each fork direction to find an interesting room
+        const forkKey = posKey(r, c)
         let hasInteresting = false
-
+        const bfsVisited = new Set<string>([forkKey])
+        const bfsQueue: Pos[] = []
         for (const d of cell.dirs) {
           const [dr, dc] = MOVES[d as string]
-          const nr = r + dr,
-            nc = c + dc
-          const neighbor = grid.cells[nr]?.[nc]
-          if (neighbor?.type === "room" && interestingTypes.has(neighbor.roomType)) {
-            hasInteresting = true
-            break
+          bfsQueue.push([r + dr, c + dc])
+        }
+        while (bfsQueue.length > 0 && !hasInteresting) {
+          const [br, bc] = bfsQueue.shift()!
+          const bkey = posKey(br, bc)
+          if (bfsVisited.has(bkey)) continue
+          bfsVisited.add(bkey)
+          const bcell = grid.cells[br]?.[bc]
+          if (!bcell || bcell.type === "empty") continue
+          if (bcell.type === "room") {
+            if (interestingTypes.has(bcell.roomType)) hasInteresting = true
+            // Don't traverse through rooms
+          } else {
+            // corridor: continue BFS
+            for (const d of bcell.dirs) {
+              const [dr, dc] = MOVES[d as string]
+              bfsQueue.push([br + dr, bc + dc])
+            }
           }
         }
 
@@ -133,7 +148,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
   if (mosaicPos) {
     const allReachable = reachableFrom(grid, grid.entrancePos, allKeyIds)
     if (!allReachable.has(posKey(mosaicPos[0], mosaicPos[1]))) {
-      reasons.push({ type: "mosaicMissing" })
+      reasons.push({ type: "mosaicNotReachable" })
     }
   }
 

@@ -204,7 +204,7 @@ describe(validateSite, () => {
     const result = validateSite(grid)
     expect(result.valid).toBe(false)
     if (!result.valid) {
-      expect(result.reasons.some(r => r.type === "mosaicMissing")).toBe(true)
+      expect(result.reasons.some(r => r.type === "mosaicNotReachable")).toBe(true)
     }
   })
 })
@@ -216,7 +216,7 @@ describe(validateJourney, () => {
     buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece", tombId: "test_tomb" } })],
         [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
         [0, 3, room("exit", ["w"])],
       ],
@@ -266,7 +266,7 @@ describe(validateJourney, () => {
       [
         [0, 0, room("puzzle", ["e", "s"])],
         [0, 1, room("gate", ["w", "e"], { requiredKeyId: "tomb-key" })],
-        [0, 2, room("treasure", ["w"], { reward: { type: "mapPiece" } })],
+        [0, 2, room("treasure", ["w"], { reward: { type: "mapPiece", tombId: "test_tomb" } })],
         [1, 0, room("treasure", ["n", "e"], { reward: { type: "mosaicPiece" } })],
         [1, 1, room("exit", ["w"])],
       ],
@@ -303,7 +303,7 @@ describe(validateJourney, () => {
     const mapPieceOnly = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece", tombId: "test_tomb" } })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],
@@ -322,7 +322,7 @@ describe(validateJourney, () => {
     const twoMosaics = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece" } })],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "mapPiece", tombId: "test_tomb" } })],
         [0, 2, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
         [0, 3, room("treasure", ["w", "e"], { reward: { type: "mosaicPiece" } })],
         [0, 4, room("exit", ["w"])],

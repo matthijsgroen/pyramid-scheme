@@ -6,6 +6,7 @@ type ProgressionState = {
   tombKeys: Record<string, true>
   discoveredTombs: string[]
   mosaicPieces: string[]
+  collectedMapPieces: Record<string, number>
 }
 
 const initialState: ProgressionState = {
@@ -13,6 +14,7 @@ const initialState: ProgressionState = {
   tombKeys: {},
   discoveredTombs: [],
   mosaicPieces: [],
+  collectedMapPieces: {},
 }
 
 export type ProgressionAPI = {
@@ -26,6 +28,8 @@ export type ProgressionAPI = {
   discoverTomb: (tombJourneyId: string) => void
   collectMosaicPiece: (pyramidJourneyId: string) => void
   hasMosaicPiece: (pyramidJourneyId: string) => boolean
+  collectMapPiece: (tombId: string) => void
+  mapPieceCount: (tombId: string) => number
 }
 
 // ponytail: fixed threshold; refine per-tier in Phase 6 when fragment authored data ships
@@ -68,6 +72,15 @@ export const useProgression = (): ProgressionAPI => {
             : [...prev.mosaicPieces, pyramidJourneyId],
         })),
       hasMosaicPiece: pyramidJourneyId => state.mosaicPieces.includes(pyramidJourneyId),
+      collectMapPiece: tombId =>
+        setState(prev => ({
+          ...prev,
+          collectedMapPieces: {
+            ...prev.collectedMapPieces,
+            [tombId]: (prev.collectedMapPieces[tombId] ?? 0) + 1,
+          },
+        })),
+      mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
     }),
     [state, setState]
   )

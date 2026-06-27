@@ -14,7 +14,12 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   return keys
 }
 
-export const completeCell = (grid: FloorGrid, row: number, col: number, externalKeys?: ReadonlySet<string>): FloorGrid => {
+export const completeCell = (
+  grid: FloorGrid,
+  row: number,
+  col: number,
+  externalKeys?: ReadonlySet<string>
+): FloorGrid => {
   // 1. Shallow-copy cells (immutable update)
   const newCells: GridCell[][] = grid.cells.map(r => [...r])
 
@@ -29,9 +34,7 @@ export const completeCell = (grid: FloorGrid, row: number, col: number, external
   // 3. Compute ownedKeys from updated cells + any external keys (ward keys from useProgression)
   const updatedGrid = { ...grid, cells: newCells }
   const localKeys = getOwnedKeys(updatedGrid)
-  const ownedKeys: ReadonlySet<string> = externalKeys
-    ? new Set([...localKeys, ...externalKeys])
-    : localKeys
+  const ownedKeys: ReadonlySet<string> = externalKeys ? new Set([...localKeys, ...externalKeys]) : localKeys
 
   // 4. BFS through corridors and rooms from (row,col)
   const cell = newCells[row][col]

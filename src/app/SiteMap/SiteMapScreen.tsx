@@ -111,13 +111,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         } else if (cell.reward?.type === "mosaicPiece") {
           progression.collectMosaicPiece(journeyId)
         } else if (cell.reward?.type === "mapPiece") {
-          journeys.findMapPiece()
+          progression.collectMapPiece(cell.reward.tombId)
         } else if (cell.reward?.type === "tombKey") {
           progression.addTombKey(cell.reward.keyId)
         }
       }
     },
-    [grid, journeys, journeyId, onSiteComplete, currentFloor]
+    [grid, journeys, journeyId, onSiteComplete, currentFloor, progression]
   )
 
   const handlePuzzleSolved = useCallback(() => {
