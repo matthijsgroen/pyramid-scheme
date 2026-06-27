@@ -310,7 +310,7 @@ export const PyramidExpedition: FC<{
                   earlyFeedbackBlockIds={earlyFeedbackBlockIds}
                   hieroglyphUnlockCount={hieroglyphUnlockCount}
                   pyramidDifficulty={activeJourney.journey.difficulty}
-                  entranceBlockId={entering ? entranceBlockId : undefined}
+                  entranceBlockId={entering || levelCompleted ? entranceBlockId : undefined}
                 />
               )}
             </div>

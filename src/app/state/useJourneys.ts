@@ -140,7 +140,13 @@ export const createJourneysV3Api = ({
 
   const completeLevel = () => {
     if (!activeJourneyId) return
-    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1 } : j)))
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === activeJourneyId
+          ? { ...j, levelNr: j.levelNr + 1, solvedEdges: [], position: null }
+          : j
+      )
+    )
   }
 
   const findMapPiece = () => {
