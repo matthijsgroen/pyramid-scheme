@@ -197,7 +197,7 @@ export const CollectionPage: FC = () => {
   const hasCompletedTomb = (tombId: string) => (getJourney(tombId)?.completionCount ?? 0) > 0
 
   return (
-    <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="end">
+    <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="center">
       <div className="relative flex-1 overflow-y-auto p-6">
         <h1 className="mb-6 text-center font-pyramid text-3xl font-bold text-purple-900">{t("collection.title")}</h1>
 

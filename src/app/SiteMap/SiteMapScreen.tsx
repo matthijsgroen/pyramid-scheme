@@ -112,8 +112,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
         if (cell.reward?.type === "hieroglyphFragment") {
           progression.addFragment(cell.reward.hieroglyphId)
-        } else if (cell.reward?.type === "mosaicPiece") {
-          progression.collectMosaicPiece(journeyId)
         } else if (cell.reward?.type === "mapPiece") {
           progression.collectMapPiece(cell.reward.tombId)
         } else if (cell.reward?.type === "tombKey") {
