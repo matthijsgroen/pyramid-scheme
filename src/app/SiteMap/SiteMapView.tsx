@@ -461,7 +461,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
               <g opacity={isCompleted ? 0.45 : 1}>
                 <NodeShape type={cell.roomType} state={state} gateVariant={cell.gateVariant} />
               </g>
-              {isCompleted && cell.roomType !== "fork" && <CompletedBadge r={roomR} />}
+              {isCompleted && cell.roomType !== "fork" && cell.roomType !== "entrance" && <CompletedBadge r={roomR} />}
             </g>
           )
         })

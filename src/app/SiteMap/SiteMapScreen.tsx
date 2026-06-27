@@ -67,9 +67,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor])
 
+  // Always treat the entrance as completed so its corridor is visible from the start
+  const effectiveEdges = useMemo(() => {
+    if (!baseGrid) return allEdges
+    const entranceEdge = encodeEdge(currentFloor, baseGrid.entrancePos[0], baseGrid.entrancePos[1])
+    return allEdges.includes(entranceEdge) ? allEdges : [...allEdges, entranceEdge]
+  }, [baseGrid, allEdges, currentFloor])
+
   const grid = useMemo(
-    () => (baseGrid ? applyEdges(baseGrid, currentFloor, allEdges, wardKeys) : null),
-    [baseGrid, currentFloor, allEdges, wardKeys]
+    () => (baseGrid ? applyEdges(baseGrid, currentFloor, effectiveEdges, wardKeys) : null),
+    [baseGrid, currentFloor, effectiveEdges, wardKeys]
   )
 
   const explorerPos: readonly [number, number] = useMemo(() => {
