@@ -3,33 +3,26 @@ import { Page } from "@/ui/Page"
 import { StainedGlassMosaic } from "@/ui/StainedGlassMosaic"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/mosaicRevealOrder"
 import { useProgression } from "@/app/state/useProgression"
-import { useJourneys } from "@/app/state/useJourneys"
 
 export const MosaicPage: FC = () => {
-  const { getJourney } = useJourneys()
-  const { mosaicSeenCount, markMosaicViewed } = useProgression()
+  const { mosaicSeenCount, mosaicPieceCount, markMosaicViewed } = useProgression()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const { revealedPieceIds, newPieceIds, totalRevealedSteps } = useMemo(() => {
+  const { revealedPieceIds, newPieceIds } = useMemo(() => {
     const revealed = new Set<string>()
     const newSet = new Set<string>()
-    let revealedCount = 0
 
-    for (const step of LEVEL_STEPS) {
-      const info = getJourney(step.journeyId)
-      const completed = info ? info.completionCount * info.journey.levelCount + (info.levelNr - 1) : 0
-      if (completed > step.levelIndex) {
-        revealedCount++
-        const pieceIds = PIECES_BY_STEP.get(`${step.journeyId}:${step.levelIndex}`) ?? []
-        for (const id of pieceIds) {
-          revealed.add(id)
-          if (revealedCount > mosaicSeenCount) newSet.add(id)
-        }
+    for (let i = 0; i < Math.min(mosaicPieceCount, LEVEL_STEPS.length); i++) {
+      const step = LEVEL_STEPS[i]
+      const pieceIds = PIECES_BY_STEP.get(`${step.journeyId}:${step.levelIndex}`) ?? []
+      for (const id of pieceIds) {
+        revealed.add(id)
+        if (i >= mosaicSeenCount) newSet.add(id)
       }
     }
 
-    return { revealedPieceIds: revealed, newPieceIds: newSet, totalRevealedSteps: revealedCount }
-  }, [getJourney, mosaicSeenCount])
+    return { revealedPieceIds: revealed, newPieceIds: newSet }
+  }, [mosaicPieceCount, mosaicSeenCount])
 
   useEffect(() => {
     const el = containerRef.current
@@ -39,7 +32,7 @@ export const MosaicPage: FC = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           // ponytail: only start timer when page is actually visible (not off-screen in swipeable panel)
-          timer = setTimeout(() => markMosaicViewed(totalRevealedSteps), 3000)
+          timer = setTimeout(() => markMosaicViewed(mosaicPieceCount), 3000)
         } else {
           if (timer) clearTimeout(timer)
         }
@@ -51,7 +44,7 @@ export const MosaicPage: FC = () => {
       observer.disconnect()
       if (timer) clearTimeout(timer)
     }
-  }, [markMosaicViewed, totalRevealedSteps])
+  }, [markMosaicViewed, mosaicPieceCount])
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">

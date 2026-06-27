@@ -6,6 +6,7 @@ type ProgressionState = {
   tombKeys: Record<string, true>
   discoveredTombs: string[]
   mosaicSeenCount: number
+  mosaicPieceCount: number
   collectedMapPieces: Record<string, number>
 }
 
@@ -23,6 +24,7 @@ const initialState: ProgressionState = {
   tombKeys: {},
   discoveredTombs: AUTO_DISCOVERED_TOMBS,
   mosaicSeenCount: 0,
+  mosaicPieceCount: 0,
   collectedMapPieces: {},
 }
 
@@ -36,6 +38,8 @@ export type ProgressionAPI = {
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
   mosaicSeenCount: number
+  mosaicPieceCount: number
+  collectMosaicPiece: () => void
   markMosaicViewed: (count: number) => void
   collectMapPiece: (tombId: string) => void
   mapPieceCount: (tombId: string) => number
@@ -74,6 +78,8 @@ export const useProgression = (): ProgressionAPI => {
             : [...prev.discoveredTombs, tombJourneyId],
         })),
       mosaicSeenCount: state.mosaicSeenCount,
+      mosaicPieceCount: state.mosaicPieceCount ?? 0,
+      collectMosaicPiece: () => setState(prev => ({ ...prev, mosaicPieceCount: (prev.mosaicPieceCount ?? 0) + 1 })),
       markMosaicViewed: count =>
         setState(prev => ({ ...prev, mosaicSeenCount: Math.max(prev.mosaicSeenCount, count) })),
       collectMapPiece: tombId =>
