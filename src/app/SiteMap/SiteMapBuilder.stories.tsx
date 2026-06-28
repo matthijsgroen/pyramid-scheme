@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { assembleFloor } from "../../game/siteAssembler"
-import { completeCell } from "../../game/gridNavigation"
-import type { FloorConfig, FloorGrid, GateConfig, SideSection } from "../../game/siteTypes"
+import { completeCell, getCell } from "../../game/gridNavigation"
+import type { FloorConfig, FloorGrid, GateConfig, SideSection, SiteConfig } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 
 type GateOption = "none" | GateConfig["type"]
@@ -192,5 +192,110 @@ const InteractiveFirstPyramid = () => {
 
 export const Interactive: StoryObj = {
   render: () => <InteractiveFirstPyramid />,
+  parameters: { layout: "centered" },
+}
+
+// ── Multi-floor explorer ───────────────────────────────────────────────────────
+
+const MultiFloorExplorer = ({ siteConfig, seed }: { siteConfig: SiteConfig; seed: number }) => {
+  const [floorIdx, setFloorIdx] = useState(0)
+  const [edges, setEdges] = useState<string[]>([])
+
+  const baseGrid = useMemo(
+    () => assembleFloor("story", siteConfig[floorIdx], seed + floorIdx),
+    [siteConfig, floorIdx, seed]
+  )
+
+  const grid = useMemo(() => {
+    if (!baseGrid.success) return null
+    return edges
+      .filter(e => e.startsWith(`${floorIdx}:`))
+      .reduce((g, e) => {
+        const [, rc] = e.split(":")
+        const [r, c] = rc.split(",").map(Number)
+        return completeCell(g, r, c)
+      }, baseGrid.grid)
+  }, [baseGrid, edges, floorIdx])
+
+  const handleClick = (row: number, col: number) => {
+    const edge = `${floorIdx}:${row},${col}`
+    setEdges(prev => (prev.includes(edge) ? prev : [...prev, edge]))
+    const cell = grid && getCell(grid, row, col)
+    if (cell?.type === "room" && cell.roomType === "stairhead" && floorIdx < siteConfig.length - 1)
+      setFloorIdx(f => f + 1)
+  }
+
+  if (!baseGrid.success)
+    return <div className="p-4 font-mono text-sm text-red-400">Assembly failed: {JSON.stringify(baseGrid.reasons)}</div>
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div className="flex items-center gap-4 font-mono text-sm text-amber-300">
+        <button
+          className="rounded bg-amber-900 px-3 py-1 text-amber-200 hover:bg-amber-800 disabled:opacity-30"
+          disabled={floorIdx === 0}
+          onClick={() => setFloorIdx(f => f - 1)}
+        >
+          ↑ Up
+        </button>
+        <span>
+          Floor {floorIdx + 1} / {siteConfig.length}
+        </span>
+        <button
+          className="rounded bg-amber-900 px-3 py-1 text-amber-200 hover:bg-amber-800 disabled:opacity-30"
+          disabled={floorIdx === siteConfig.length - 1}
+          onClick={() => setFloorIdx(f => f + 1)}
+        >
+          ↓ Down
+        </button>
+        <button
+          className="rounded bg-stone-800 px-3 py-1 text-stone-400 hover:bg-stone-700"
+          onClick={() => {
+            setEdges([])
+            setFloorIdx(0)
+          }}
+        >
+          Reset
+        </button>
+      </div>
+      {grid && <SiteMapView grid={grid} onCellClick={handleClick} />}
+    </div>
+  )
+}
+
+export const TwoFloorLayout: StoryObj = {
+  render: () => (
+    <MultiFloorExplorer
+      seed={42}
+      siteConfig={[
+        {
+          // Floor 1: direct path to treasure, junior-key gate to staircase (floor 2)
+          pathPuzzles: 0,
+          difficulty: "easy",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [
+            {
+              gate: { type: "tomb-key", wardKeyId: "junior_ward" },
+              pathPuzzles: 0,
+              difficulty: "easy",
+              end: "staircase",
+            },
+          ],
+        },
+        {
+          // Floor 2: puzzles + two side branches ending in chests
+          pathPuzzles: 4,
+          difficulty: "easy",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [
+            { pathPuzzles: 2, difficulty: "easy", end: "treasure" },
+            { pathPuzzles: 2, difficulty: "easy", end: "treasure" },
+          ],
+        },
+      ]}
+    />
+  ),
   parameters: { layout: "centered" },
 }

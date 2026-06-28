@@ -128,6 +128,11 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 
   for (const p of plan) {
     const key = `${p.journeyId}:${p.pyramidIndex}`
+    // Multi-floor pyramids with explicit floors[] are fully specified — exclude from auto-distribution
+    if (p.constraint.floors?.length) {
+      explicitPaths.set(key, 0)
+      continue
+    }
     const sd = p.constraint.sideSections
     if (typeof sd === "string") {
       // SideIntensity → all side paths are mosaic, not an auto-candidate
@@ -319,35 +324,60 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
         ? specToReward(constraint.mainEndReward, tier)
         : { type: "hieroglyphFragment", hieroglyphId: tierSymbols[i % tierSymbols.length] }
 
-      const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
-      const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
-      const sideSections = buildSideSections(
-        tier,
-        difficulty,
-        hasMapPieceBranch,
-        hasWardGate,
-        nextTier,
-        constraintSections,
-        mosaicPathCount,
-        pp,
-        constraint.keyDensity,
-        constraint.keyColors
-      )
-      const chestRewards = buildChestRewards(journeyId, tier, chestOffset, pp, assignments)
-      chestOffset += chestCountFor(pp)
-
-      pyramidConfigs.push([
-        {
-          pathPuzzles: pp,
-          chestEvery: chestEveryFor(pp),
+      if (constraint.floors?.length) {
+        // Multi-floor: build one FloorConfig per floors[] entry
+        const floorConfigs: FloorConfig[] = []
+        for (let fi = 0; fi < constraint.floors.length; fi++) {
+          const fc = constraint.floors[fi] ?? {}
+          const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
+          const floorDiff: Difficulty = fc.difficulty ?? difficulty
+          const isLast = fi === constraint.floors.length - 1
+          const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
+          const floorSideSections = buildSideSections(tier, floorDiff, false, false, null, floorSections, 0, floorPP)
+          const floorChests = buildChestRewards(journeyId, tier, chestOffset, floorPP, assignments)
+          chestOffset += chestCountFor(floorPP)
+          floorConfigs.push({
+            pathPuzzles: floorPP,
+            chestEvery: chestEveryFor(floorPP),
+            difficulty: floorDiff,
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections: floorSideSections,
+            ...(isLast ? { mainEndReward } : {}),
+            ...(floorChests.length > 0 ? { chestRewards: floorChests } : {}),
+          } satisfies FloorConfig)
+        }
+        pyramidConfigs.push(floorConfigs)
+      } else {
+        const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
+        const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
+        const sideSections = buildSideSections(
+          tier,
           difficulty,
-          end: "treasure",
-          exitOrStaircase: "exit",
-          sideSections,
-          mainEndReward,
-          chestRewards,
-        } satisfies FloorConfig,
-      ])
+          hasMapPieceBranch,
+          hasWardGate,
+          nextTier,
+          constraintSections,
+          mosaicPathCount,
+          pp,
+          constraint.keyDensity,
+          constraint.keyColors
+        )
+        const chestRewards = buildChestRewards(journeyId, tier, chestOffset, pp, assignments)
+        chestOffset += chestCountFor(pp)
+        pyramidConfigs.push([
+          {
+            pathPuzzles: pp,
+            chestEvery: chestEveryFor(pp),
+            difficulty,
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections,
+            mainEndReward,
+            chestRewards,
+          } satisfies FloorConfig,
+        ])
+      }
     }
 
     configs[journeyId] = pyramidConfigs

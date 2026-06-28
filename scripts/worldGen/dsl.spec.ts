@@ -73,8 +73,8 @@ describe("specToGate", () => {
     expect(specToGate(undefined)).toBeUndefined()
   })
 
-  it('"floor-key" → { type: "floor-key" }', () => {
-    expect(specToGate("floor-key")).toEqual({ type: "floor-key" })
+  it('"floor-key" → { type: "floor-key", color: "blue" }', () => {
+    expect(specToGate("floor-key")).toEqual({ type: "floor-key", color: "blue" })
   })
 
   it('"tomb-key" string (ambiguous) → undefined (no keyId resolvable)', () => {
