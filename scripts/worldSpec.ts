@@ -24,26 +24,26 @@ export const worldSpec = rules([
   global({ floorDepth: 1 }),
 
   // ── Difficulty per tier ───────────────────────────────────────────────────
-  tier("starter", { difficulty: "easy" }),
-  tier("junior", { difficulty: "easy" }),
-  tier("expert", { difficulty: "medium" }),
-  tier("master", { difficulty: "medium" }),
-  tier("wizard", { difficulty: "hard" }),
+  tier("starter", { difficulty: "starter" }),
+  tier("junior", { difficulty: "junior" }),
+  tier("expert", { difficulty: "expert" }),
+  tier("master", { difficulty: "master" }),
+  tier("wizard", { difficulty: "wizard" }),
 
   // ── Starter tier ──────────────────────────────────────────────────────────
   // First pyramid is the map piece entry-point for the starter tomb.
   tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
 
   // ── Tomb journeys: tableau puzzles, one floor per levelCount ──────────────
-  journey("starter_treasure_tomb", { puzzleFamily: "tableau", difficulty: "easy" }),
-  journey("junior_treasure_tomb", { puzzleFamily: "tableau", difficulty: "easy" }),
-  journey("expert_treasure_tomb", { puzzleFamily: "tableau", difficulty: "medium" }),
-  journey("expert_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "medium" }),
-  journey("master_treasure_tomb", { puzzleFamily: "tableau", difficulty: "medium" }),
-  journey("master_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "medium" }),
-  journey("wizard_treasure_tomb", { puzzleFamily: "tableau", difficulty: "hard" }),
-  journey("wizard_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "hard" }),
-  journey("wizard_treasure_tomb_c", { puzzleFamily: "tableau", difficulty: "hard" }),
+  journey("starter_treasure_tomb", { puzzleFamily: "tableau", difficulty: "starter" }),
+  journey("junior_treasure_tomb", { puzzleFamily: "tableau", difficulty: "junior" }),
+  journey("expert_treasure_tomb", { puzzleFamily: "tableau", difficulty: "expert" }),
+  journey("expert_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "expert" }),
+  journey("master_treasure_tomb", { puzzleFamily: "tableau", difficulty: "master" }),
+  journey("master_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "master" }),
+  journey("wizard_treasure_tomb", { puzzleFamily: "tableau", difficulty: "wizard" }),
+  journey("wizard_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "wizard" }),
+  journey("wizard_treasure_tomb_c", { puzzleFamily: "tableau", difficulty: "wizard" }),
 
   // ── Secondary tombs: override tier "last → mosaicPiece" rule (tombs don't give mosaic) ──
   journey("expert_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphFragment" }),

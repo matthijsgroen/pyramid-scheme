@@ -1,7 +1,7 @@
 import type { FC } from "react"
 
 export type PuzzleSettings = {
-  difficulty?: "easy" | "medium" | "hard"
+  difficulty?: "starter" | "junior" | "expert" | "master" | "wizard"
   theme?: string
 }
 

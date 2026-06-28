@@ -52,7 +52,7 @@ const SiteMapBuilder = ({
     sideSections.push({
       pathPuzzles: section1Puzzles,
       ...(section1ChestEvery > 0 ? { chestEvery: section1ChestEvery } : {}),
-      difficulty: "easy",
+      difficulty: "starter",
       end: section1End,
       gate: toGate(section1Gate),
     })
@@ -60,7 +60,7 @@ const SiteMapBuilder = ({
     sideSections.push({
       pathPuzzles: section2Puzzles,
       ...(section2ChestEvery > 0 ? { chestEvery: section2ChestEvery } : {}),
-      difficulty: "medium",
+      difficulty: "junior",
       end: section2End,
       gate: toGate(section2Gate),
     })
@@ -68,7 +68,7 @@ const SiteMapBuilder = ({
   const config: FloorConfig = {
     pathPuzzles,
     ...(chestEvery > 0 ? { chestEvery } : {}),
-    difficulty: "easy",
+    difficulty: "starter",
     end: "treasure",
     exitOrStaircase,
     sideSections,
@@ -157,12 +157,12 @@ export const FirstPyramid: Story = {
 const InteractiveFirstPyramid = () => {
   const config: FloorConfig = {
     pathPuzzles: 0,
-    difficulty: "easy",
+    difficulty: "starter",
     end: "treasure",
     exitOrStaircase: "exit",
     sideSections: [
-      { pathPuzzles: 0, difficulty: "easy", end: "treasure" },
-      { pathPuzzles: 1, difficulty: "medium", end: "staircase", gate: { type: "floor-key" } },
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
     ],
   }
   const result = assembleFloor("demo", config, 42)
@@ -266,32 +266,32 @@ const MultiFloorExplorer = ({ siteConfig, seed }: { siteConfig: SiteConfig; seed
 export const TwoFloorLayout: StoryObj = {
   render: () => (
     <MultiFloorExplorer
-      seed={42}
+      seed={1}
       siteConfig={[
         {
           // Floor 1: direct path to treasure, junior-key gate to staircase (floor 2)
           pathPuzzles: 0,
-          difficulty: "easy",
+          difficulty: "starter",
           end: "treasure",
           exitOrStaircase: "exit",
           sideSections: [
             {
               gate: { type: "tomb-key", wardKeyId: "junior_ward" },
               pathPuzzles: 0,
-              difficulty: "easy",
+              difficulty: "starter",
               end: "staircase",
             },
           ],
         },
         {
-          // Floor 2: puzzles + two side branches ending in chests
-          pathPuzzles: 4,
-          difficulty: "easy",
+          // Floor 2: junior puzzles + two side branches (one with puzzle, one direct chest)
+          pathPuzzles: 3,
+          difficulty: "junior",
           end: "treasure",
           exitOrStaircase: "exit",
           sideSections: [
-            { pathPuzzles: 2, difficulty: "easy", end: "treasure" },
-            { pathPuzzles: 2, difficulty: "easy", end: "treasure" },
+            { pathPuzzles: 1, difficulty: "junior", end: "treasure" },
+            { pathPuzzles: 0, difficulty: "junior", end: "treasure" },
           ],
         },
       ]}

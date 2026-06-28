@@ -314,7 +314,7 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
 
     for (const p of pyramids) {
       const { pyramidIndex: i, pathPuzzles: pp, constraint } = p
-      const difficulty: Difficulty = constraint.difficulty ?? "medium"
+      const difficulty: Difficulty = constraint.difficulty ?? "expert"
 
       const hasMapPieceBranch = i === mapPiecePyramid && tier !== "starter"
       const hasWardGate = i >= Math.ceil(levelCount / 2) && nextTier !== null
@@ -419,7 +419,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match;
     // constraint.mainEndReward is intentionally ignored here — tombs don't use pyramid end rewards
     const constraint = resolvePyramidConstraint(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
-    const difficulty: Difficulty = constraint.difficulty ?? "easy"
+    const difficulty: Difficulty = constraint.difficulty ?? "starter"
     const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
 
     const lastFloorReward: TreasureReward | undefined = constraint.mainEndReward

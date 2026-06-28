@@ -15,6 +15,8 @@ const SumpleteComponent: FC<{ puzzle: SumpleteGrid; settings: PuzzleSettings; on
 registerPuzzle({
   family: "sumplete",
   generate: (seed, settings): SumpleteGrid =>
-    generateSumplete(settings.difficulty === "hard" ? 4 : 3, seed, { allowZeroTargets: false }),
+    generateSumplete(["expert", "master", "wizard"].includes(settings.difficulty ?? "starter") ? 4 : 3, seed, {
+      allowZeroTargets: settings.difficulty === "wizard",
+    }),
   Component: SumpleteComponent as FC<{ puzzle: unknown; settings: PuzzleSettings; onSolved: () => void }>,
 })

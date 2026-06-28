@@ -37,7 +37,8 @@ export type FloorGrid = {
 }
 
 export type GateConfig = { type: "floor-key"; color?: KeyColor } | { type: "tomb-key"; wardKeyId: string }
-export type Difficulty = "easy" | "medium" | "hard"
+export type { Difficulty } from "@/data/difficultyLevels"
+import type { Difficulty } from "@/data/difficultyLevels"
 export type SideSection = {
   pathPuzzles: number
   chestEvery?: number

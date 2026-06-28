@@ -1,6 +1,6 @@
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number; levelCount: number }
-export type Difficulty = "easy" | "medium" | "hard"
+export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 export type TreasureReward =
   | { type: "mosaicPiece" }

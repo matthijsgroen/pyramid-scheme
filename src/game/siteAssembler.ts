@@ -135,7 +135,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
   // Auto-inject a minimal ungated treasure section as key-holder when all sections are gated
   const sideSections =
     hasGatedFloorKey && !hasUngated
-      ? [...config.sideSections, { pathPuzzles: 0, difficulty: "easy" as const, end: "treasure" as const }]
+      ? [...config.sideSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
       : config.sideSections
 
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")

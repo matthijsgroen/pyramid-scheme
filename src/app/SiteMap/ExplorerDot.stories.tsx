@@ -9,7 +9,7 @@ import { SiteMapView } from "./SiteMapView"
 const getGrid = (): FloorGrid => {
   const result = assembleFloor(
     "dot-story",
-    { pathPuzzles: 2, difficulty: "easy", end: "treasure", exitOrStaircase: "exit", sideSections: [] },
+    { pathPuzzles: 2, difficulty: "starter", end: "treasure", exitOrStaircase: "exit", sideSections: [] },
     7
   )
   if (!result.success) throw new Error("assembly failed")

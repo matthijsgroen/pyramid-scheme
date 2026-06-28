@@ -12,41 +12,41 @@ const resolve = (ruleList: Rule[], journeyId: string, pyramidIndex: number, leve
 
 describe("pyramid selector matching", () => {
   it("matches 'first' → index 0", () => {
-    const r = rules([tier("starter").pyramid("first", { difficulty: "easy" })])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("easy")
+    const r = rules([tier("starter").pyramid("first", { difficulty: "starter" })])
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("starter")
     expect(resolve(r, "j1", 1, 3).difficulty).toBeUndefined()
   })
 
   it("matches 'last' → last index", () => {
-    const r = rules([tier("starter").pyramid("last", { difficulty: "hard" })])
-    expect(resolve(r, "j1", 2, 3).difficulty).toBe("hard")
+    const r = rules([tier("starter").pyramid("last", { difficulty: "expert" })])
+    expect(resolve(r, "j1", 2, 3).difficulty).toBe("expert")
     expect(resolve(r, "j1", 0, 3).difficulty).toBeUndefined()
   })
 
   it("matches 'middle' → floor(levelCount/2)", () => {
-    const r = rules([tier("starter").pyramid("middle", { difficulty: "medium" })])
+    const r = rules([tier("starter").pyramid("middle", { difficulty: "junior" })])
     // levelCount=5 → middle=2
-    expect(resolve(r, "j1", 2, 5).difficulty).toBe("medium")
+    expect(resolve(r, "j1", 2, 5).difficulty).toBe("junior")
     expect(resolve(r, "j1", 1, 5).difficulty).toBeUndefined()
   })
 
   it("matches 'last-N' → levelCount-1-N", () => {
-    const r = rules([tier("starter").pyramid("last-1", { difficulty: "hard" })])
+    const r = rules([tier("starter").pyramid("last-1", { difficulty: "expert" })])
     // levelCount=4 → last-1 = index 2
-    expect(resolve(r, "j1", 2, 4).difficulty).toBe("hard")
+    expect(resolve(r, "j1", 2, 4).difficulty).toBe("expert")
     expect(resolve(r, "j1", 3, 4).difficulty).toBeUndefined()
   })
 
   it("matches numeric selector (1-based)", () => {
-    const r = rules([tier("starter").pyramid(2, { difficulty: "medium" })])
-    expect(resolve(r, "j1", 1, 4).difficulty).toBe("medium")
+    const r = rules([tier("starter").pyramid(2, { difficulty: "junior" })])
+    expect(resolve(r, "j1", 1, 4).difficulty).toBe("junior")
     expect(resolve(r, "j1", 0, 4).difficulty).toBeUndefined()
   })
 
   it("matches range selector (1-based, inclusive)", () => {
-    const r = rules([tier("starter").pyramid("2-4", { difficulty: "hard" })])
-    expect(resolve(r, "j1", 1, 5).difficulty).toBe("hard") // index 1 = pyramid 2
-    expect(resolve(r, "j1", 3, 5).difficulty).toBe("hard") // index 3 = pyramid 4
+    const r = rules([tier("starter").pyramid("2-4", { difficulty: "expert" })])
+    expect(resolve(r, "j1", 1, 5).difficulty).toBe("expert") // index 1 = pyramid 2
+    expect(resolve(r, "j1", 3, 5).difficulty).toBe("expert") // index 3 = pyramid 4
     expect(resolve(r, "j1", 0, 5).difficulty).toBeUndefined()
     expect(resolve(r, "j1", 4, 5).difficulty).toBeUndefined()
   })
@@ -57,43 +57,43 @@ describe("pyramid selector matching", () => {
 describe("specificity cascade", () => {
   it("pyramid-level overrides tier-level overrides global", () => {
     const r = rules([
-      global({ difficulty: "easy" }),
-      tier("starter", { difficulty: "medium" }),
-      tier("starter").pyramid("first", { difficulty: "hard" }),
+      global({ difficulty: "starter" }),
+      tier("starter", { difficulty: "junior" }),
+      tier("starter").pyramid("first", { difficulty: "expert" }),
     ])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("hard")
-    expect(resolve(r, "j1", 1, 3).difficulty).toBe("medium")
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("expert")
+    expect(resolve(r, "j1", 1, 3).difficulty).toBe("junior")
   })
 
   it("journey-pyramid overrides tier-pyramid at same specificity (later wins)", () => {
     const r = rules([
-      tier("starter").pyramid("first", { difficulty: "medium" }),
-      journey("j1").pyramid("first", { difficulty: "hard" }),
+      tier("starter").pyramid("first", { difficulty: "junior" }),
+      journey("j1").pyramid("first", { difficulty: "expert" }),
     ])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("hard")
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("expert")
   })
 
   it("merges non-conflicting fields from multiple rules", () => {
     const r = rules([
       global({ floorDepth: 1 }),
-      tier("starter", { difficulty: "easy" }),
+      tier("starter", { difficulty: "starter" }),
       tier("starter").pyramid("last", { mainEndReward: "mosaicPiece" }),
     ])
     const last = resolve(r, "j1", 2, 3)
     expect(last.floorDepth).toBe(1)
-    expect(last.difficulty).toBe("easy")
+    expect(last.difficulty).toBe("starter")
     expect(last.mainEndReward).toBe("mosaicPiece")
   })
 
   it("journey scope overrides tier scope at same level (later wins)", () => {
-    const r = rules([tier("starter", { difficulty: "easy" }), journey("j1", { difficulty: "hard" })])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("hard")
+    const r = rules([tier("starter", { difficulty: "starter" }), journey("j1", { difficulty: "expert" })])
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("expert")
     // different journey → tier rule applies
-    expect(resolve(r, "j2", 0, 3).difficulty).toBe("easy")
+    expect(resolve(r, "j2", 0, 3).difficulty).toBe("starter")
   })
 
   it("does not match tier rule to wrong tier", () => {
-    const r = rules([tier("junior", { difficulty: "easy" })])
+    const r = rules([tier("junior", { difficulty: "starter" })])
     expect(resolve(r, "j1", 0, 3).difficulty).toBeUndefined()
   })
 })
@@ -134,16 +134,16 @@ const resolveFloor = (
 
 describe("resolveFloorConstraint", () => {
   it("falls back to pyramid floors[] array entry", () => {
-    const pyramidC = { floors: [{ difficulty: "hard" as const }, null] }
+    const pyramidC = { floors: [{ difficulty: "expert" as const }, null] }
     const result = resolveFloorConstraint([], pyramidC, "j1", "starter", 0, 3, 0)
-    expect(result.difficulty).toBe("hard")
+    expect(result.difficulty).toBe("expert")
   })
 
   it("explicit floor-scope rule overrides floors[] entry", () => {
-    const pyramidC = { floors: [{ difficulty: "easy" as const }] }
-    const r = rules([journey("j1").pyramid("first").floor(0, { difficulty: "medium" })])
+    const pyramidC = { floors: [{ difficulty: "starter" as const }] }
+    const r = rules([journey("j1").pyramid("first").floor(0, { difficulty: "junior" })])
     const result = resolveFloorConstraint(r, pyramidC, "j1", "starter", 0, 3, 0)
-    expect(result.difficulty).toBe("medium")
+    expect(result.difficulty).toBe("junior")
   })
 
   it("returns empty object when no rules or floors[] entry", () => {
@@ -152,15 +152,15 @@ describe("resolveFloorConstraint", () => {
   })
 
   it("global-floor applies to all pyramids at that floor index", () => {
-    const r = rules([global().floor(0, { difficulty: "easy" })])
-    expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("easy") // pyramid 1, floor 0
-    expect(resolveFloor(r, 2, 3, 0).difficulty).toBe("easy") // pyramid 3, floor 0
+    const r = rules([global().floor(0, { difficulty: "starter" })])
+    expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("starter") // pyramid 1, floor 0
+    expect(resolveFloor(r, 2, 3, 0).difficulty).toBe("starter") // pyramid 3, floor 0
     expect(resolveFloor(r, 0, 3, 1).difficulty).toBeUndefined() // floor 1 → no match
   })
 
   it("tier-floor applies to matching tier at that floor index", () => {
-    const r = rules([tier("starter").floor(1, { difficulty: "medium" })])
-    expect(resolveFloor(r, 0, 3, 1).difficulty).toBe("medium")
+    const r = rules([tier("starter").floor(1, { difficulty: "junior" })])
+    expect(resolveFloor(r, 0, 3, 1).difficulty).toBe("junior")
     expect(resolveFloor(r, 0, 3, 0).difficulty).toBeUndefined() // wrong floor
     // wrong tier
     const result = resolveFloorConstraint(r, {}, "j1", "junior", 0, 3, 1)
@@ -168,36 +168,36 @@ describe("resolveFloorConstraint", () => {
   })
 
   it("journey-floor applies to matching journey at that floor index", () => {
-    const r = rules([journey("j1").floor(0, { difficulty: "hard" })])
-    expect(resolveFloor(r, 0, 3, 0, "j1").difficulty).toBe("hard")
+    const r = rules([journey("j1").floor(0, { difficulty: "expert" })])
+    expect(resolveFloor(r, 0, 3, 0, "j1").difficulty).toBe("expert")
     expect(resolveFloor(r, 0, 3, 0, "j2").difficulty).toBeUndefined() // wrong journey
   })
 
   it("floor-scope specificity: journey-floor > tier-floor > global-floor", () => {
     const r = rules([
-      global().floor(0, { difficulty: "easy" }),
-      tier("starter").floor(0, { difficulty: "medium" }),
-      journey("j1").floor(0, { difficulty: "hard" }),
+      global().floor(0, { difficulty: "starter" }),
+      tier("starter").floor(0, { difficulty: "junior" }),
+      journey("j1").floor(0, { difficulty: "expert" }),
     ])
-    expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("hard")
+    expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("expert")
     // remove journey rule → tier-floor wins
-    const r2 = rules([global().floor(0, { difficulty: "easy" }), tier("starter").floor(0, { difficulty: "medium" })])
-    expect(resolveFloor(r2, 0, 3, 0).difficulty).toBe("medium")
+    const r2 = rules([global().floor(0, { difficulty: "starter" }), tier("starter").floor(0, { difficulty: "junior" })])
+    expect(resolveFloor(r2, 0, 3, 0).difficulty).toBe("junior")
   })
 
   it("journey-pyramid-floor > journey-floor > tier-pyramid-floor > tier-floor", () => {
     const r = rules([
-      tier("starter").floor(0, { difficulty: "easy" }),
-      tier("starter").pyramid("first").floor(0, { difficulty: "medium" }),
-      journey("j1").floor(0, { difficulty: "hard" }),
-      journey("j1").pyramid("first").floor(0, { difficulty: "hard" }),
+      tier("starter").floor(0, { difficulty: "starter" }),
+      tier("starter").pyramid("first").floor(0, { difficulty: "junior" }),
+      journey("j1").floor(0, { difficulty: "expert" }),
+      journey("j1").pyramid("first").floor(0, { difficulty: "expert" }),
     ])
     // journey-pyramid-floor (rank 9) wins
-    expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("hard")
+    expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("expert")
   })
 
   it("floor-scope rules do not bleed into pyramid resolution", () => {
-    const r = rules([global().floor(0, { difficulty: "hard" })])
+    const r = rules([global().floor(0, { difficulty: "expert" })])
     // pyramid resolution should not pick up floor-scoped rules
     expect(resolve(r, "j1", 0, 3).difficulty).toBeUndefined()
   })
@@ -207,20 +207,20 @@ describe("resolveFloorConstraint", () => {
 
 describe("specificity ordering", () => {
   it("journey (rank 4) beats tier (rank 2) at pyramid level", () => {
-    const r = rules([tier("starter", { difficulty: "easy" }), journey("j1", { difficulty: "hard" })])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("hard")
+    const r = rules([tier("starter", { difficulty: "starter" }), journey("j1", { difficulty: "expert" })])
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("expert")
   })
 
   it("tier (rank 2) applies when no journey rule matches", () => {
-    const r = rules([tier("starter", { difficulty: "easy" }), journey("j2", { difficulty: "hard" })])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("easy")
+    const r = rules([tier("starter", { difficulty: "starter" }), journey("j2", { difficulty: "expert" })])
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("starter")
   })
 
   it("journey-pyramid (rank 8) beats tier-pyramid (rank 6)", () => {
     const r = rules([
-      tier("starter").pyramid("first", { difficulty: "easy" }),
-      journey("j1").pyramid("first", { difficulty: "hard" }),
+      tier("starter").pyramid("first", { difficulty: "starter" }),
+      journey("j1").pyramid("first", { difficulty: "expert" }),
     ])
-    expect(resolve(r, "j1", 0, 3).difficulty).toBe("hard")
+    expect(resolve(r, "j1", 0, 3).difficulty).toBe("expert")
   })
 })

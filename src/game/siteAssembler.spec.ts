@@ -5,7 +5,7 @@ import { validateSite } from "./siteValidator"
 
 const basicConfig = (): FloorConfig => ({
   pathPuzzles: 1,
-  difficulty: "easy",
+  difficulty: "starter",
   end: "treasure",
   exitOrStaircase: "exit",
   sideSections: [],
@@ -13,12 +13,12 @@ const basicConfig = (): FloorConfig => ({
 
 const firstPyramid = (): FloorConfig => ({
   pathPuzzles: 0,
-  difficulty: "easy",
+  difficulty: "starter",
   end: "treasure",
   exitOrStaircase: "exit",
   sideSections: [
-    { pathPuzzles: 0, difficulty: "easy", end: "treasure" },
-    { pathPuzzles: 1, difficulty: "medium", end: "staircase", gate: { type: "floor-key" } },
+    { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+    { pathPuzzles: 1, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
   ],
 })
 
@@ -86,10 +86,10 @@ describe(assembleFloor, () => {
   it("auto-injects an ungated section when all sections are gated with floor-key", () => {
     const config: FloorConfig = {
       pathPuzzles: 1,
-      difficulty: "easy",
+      difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
-      sideSections: [{ pathPuzzles: 0, difficulty: "easy", end: "treasure", gate: { type: "floor-key" } }],
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } }],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
@@ -104,7 +104,7 @@ describe(assembleFloor, () => {
     for (const pathPuzzles of [0, 1, 2, 3]) {
       const config: FloorConfig = {
         pathPuzzles,
-        difficulty: "easy",
+        difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [],
@@ -121,7 +121,7 @@ describe(assembleFloor, () => {
   it("exitOrStaircase: staircase produces a stairhead on the main path", () => {
     const config: FloorConfig = {
       pathPuzzles: 1,
-      difficulty: "easy",
+      difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "staircase",
       sideSections: [],
@@ -137,11 +137,11 @@ describe(assembleFloor, () => {
   it("tomb-key gated section produces gate with gateVariant tomb-key and no floor key", () => {
     const config: FloorConfig = {
       pathPuzzles: 1,
-      difficulty: "easy",
+      difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [
-        { pathPuzzles: 0, difficulty: "easy", end: "treasure", gate: { type: "tomb-key", wardKeyId: "test_ward" } },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "tomb-key", wardKeyId: "test_ward" } },
       ],
     }
     const result = assembleFloor("site-1", config, 42)
@@ -159,7 +159,7 @@ describe(assembleFloor, () => {
     const config: FloorConfig = {
       pathPuzzles: 4,
       chestEvery: 2,
-      difficulty: "easy",
+      difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [],
