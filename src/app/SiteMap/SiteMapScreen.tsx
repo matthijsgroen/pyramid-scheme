@@ -28,10 +28,10 @@ type Props = {
 }
 
 const rewardEmoji = (type: string) => {
-  if (type === "mapPiece") return "🗺"
+  if (type === "mapPiece") return "📜"
   if (type === "hieroglyphFragment") return "𓂀"
   if (type === "tombKey") return "🗝"
-  if (type === "hieroglyphs") return "📜"
+  if (type === "hieroglyphs") return "𓂀"
   return "🔷"
 }
 
@@ -305,10 +305,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
               />
             )
           }
+          const descKey = `chest.${reward.type}Description`
           return (
             <LootPopup
               isOpen={showLoot}
               itemName={t(`chest.${reward.type}`)}
+              itemDescription={t(descKey, "") || undefined}
               itemComponent={<span className="text-6xl">{rewardEmoji(reward.type)}</span>}
               onDismiss={onDismiss}
             />

@@ -86,10 +86,12 @@
   "chest": {
     "tapToOpen": "Tap to open",
     "mapPiece": "Map Piece",
+    "mapPieceDescription": "A fragment of an ancient map. Collect enough pieces to reveal the location of a hidden treasure tomb.",
     "hieroglyphFragment": "Hieroglyph Fragment",
     "fragmentProgress": "{{found}} of {{required}} fragments found",
     "tombKey": "Tomb Key",
-    "hieroglyphs": "Hieroglyphs",
+    "hieroglyphs": "Ancient Hieroglyphs",
+    "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
     "mosaicPiece": "Mosaic Piece"
   },
   "loot": {
