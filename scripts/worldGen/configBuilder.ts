@@ -2,7 +2,7 @@ import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureRe
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"
-import { worldSpec, WORLD_TARGETS } from "./worldSpec"
+import { worldSpec, WORLD_TARGETS } from "../worldSpec"
 import type { PyramidConstraint, RewardHint, RewardSpec, GateSpec, SideSectionConstraint } from "./dsl"
 import type { Assignment } from "./types"
 

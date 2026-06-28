@@ -129,9 +129,20 @@ yarn build
 yarn storybook
 ```
 
+## 🌍 World Shaping
+
+The entire level structure — puzzle counts, floor depths, reward distribution, and gate types — is controlled by a single authoring file:
+
+**[`scripts/worldSpec.ts`](scripts/worldSpec.ts)**
+
+Edit this file to shape the world: set difficulty constraints per tier or per journey, control how many puzzle floors a pyramid has, place tomb-key gates, and tune loot cadence. After editing, run the world builder to regenerate `src/data/` and inspect the results in Storybook (`yarn storybook` → *SiteMap/JourneyInspector*).
+
 ## 🏗️ Project Structure
 
 ```
+scripts/
+└── worldSpec.ts       # ← World authoring: rules, constraints, reward layout
+
 src/
 ├── app/               # Main application components
 ├── data/              # Game data and configuration
