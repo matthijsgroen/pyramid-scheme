@@ -3,7 +3,7 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEve
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "../worldSpec"
-import type { PyramidConstraint, RewardHint, RewardSpec, GateSpec, SideSectionConstraint } from "./dsl"
+import type { PyramidConstraint, RewardHint, RewardSpec, GateSpec, SideSectionConstraint, SideIntensity } from "./dsl"
 import type { Assignment } from "./types"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -103,6 +103,52 @@ const buildChestRewards = (
   return slots as TreasureReward[]
 }
 
+// ── Mosaic path distribution ──────────────────────────────────────────────────
+
+const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, sparse: 1, normal: 2, dense: 4 }
+
+const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
+  // Count mosaicPiece already committed via mainEndReward constraints
+  let committed = 0
+  for (const p of plan) {
+    if (p.constraint.mainEndReward === "mosaicPiece") committed++
+  }
+
+  const explicitPaths = new Map<string, number>()
+  const autoCandidates: PyramidPlan[] = []
+  let explicitTotal = 0
+
+  for (const p of plan) {
+    const key = `${p.journeyId}:${p.pyramidIndex}`
+    const mp = p.constraint.mosaicPaths
+    if (typeof mp === "string") {
+      const count = INTENSITY_PATHS[mp as SideIntensity] ?? 0
+      explicitPaths.set(key, count)
+      explicitTotal += count
+    } else if (typeof mp === "number") {
+      explicitPaths.set(key, mp)
+      explicitTotal += mp
+    } else {
+      autoCandidates.push(p)
+    }
+  }
+
+  const remaining = WORLD_TARGETS.mosaicPieceRewards - committed - explicitTotal
+  const result = new Map(explicitPaths)
+
+  if (remaining > 0 && autoCandidates.length > 0) {
+    // Distribute weighted by pathPuzzles: sort descending, round-robin
+    const sorted = [...autoCandidates].sort((a, b) => b.pathPuzzles - a.pathPuzzles)
+    for (let rem = remaining, i = 0; rem > 0; rem--, i++) {
+      const p = sorted[i % sorted.length]
+      const key = `${p.journeyId}:${p.pyramidIndex}`
+      result.set(key, (result.get(key) ?? 0) + 1)
+    }
+  }
+
+  return result
+}
+
 // ── Side sections ─────────────────────────────────────────────────────────────
 
 const buildSideSections = (
@@ -111,7 +157,9 @@ const buildSideSections = (
   hasMapPieceBranch: boolean,
   hasWardGate: boolean,
   nextTier: string | null,
-  constraintSections?: SideSectionConstraint[]
+  constraintSections: SideSectionConstraint[] | undefined,
+  mosaicPathCount: number,
+  mainPathPuzzles: number
 ): SideSection[] => {
   const sections: SideSection[] = []
 
@@ -143,6 +191,12 @@ const buildSideSections = (
       ...(gate ? { gate } : {}),
       ...(endReward ? { endReward } : {}),
     })
+  }
+
+  // Auto/density mosaic side paths
+  const mosaicPP = Math.max(1, Math.round(mainPathPuzzles / 3))
+  for (let j = 0; j < mosaicPathCount; j++) {
+    sections.push({ pathPuzzles: mosaicPP, difficulty, end: "treasure", endReward: { type: "mosaicPiece" } })
   }
 
   return sections
@@ -209,6 +263,7 @@ const autoCorrectPlan = (plan: PyramidPlan[]): PyramidPlan[] => {
 
 const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
+  const mosaicPaths = computeMosaicPaths(plan)
 
   // Group plan entries by journey
   const byJourney = new Map<string, PyramidPlan[]>()
@@ -238,16 +293,17 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
         ? specToReward(constraint.mainEndReward, tier)
         : { type: "hieroglyphFragment", hieroglyphId: tierSymbols[i % tierSymbols.length] }
 
-      const constraintSections = Array.isArray(constraint.sideSections)
-        ? (constraint.sideSections as SideSectionConstraint[])
-        : undefined
+      const constraintSections = constraint.sideSections
+      const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
       const sideSections = buildSideSections(
         tier,
         difficulty,
         hasMapPieceBranch,
         hasWardGate,
         nextTier,
-        constraintSections
+        constraintSections,
+        mosaicPathCount,
+        pp
       )
       const chestRewards = buildChestRewards(journeyId, tier, chestOffset, pp, assignments)
       chestOffset += chestCountFor(pp)
@@ -275,22 +331,17 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
 // ── Phase 5: Validate structural rewards ──────────────────────────────────────
 
 const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
-  const tierByJourney = Object.fromEntries(PYRAMID_JOURNEYS.map(j => [j.id, j.tier as Tier]))
-  const mosaicByTier: Record<Tier, number> = { starter: 0, junior: 0, expert: 0, master: 0, wizard: 0 }
   let mapPieces = 0
   let mosaicPieces = 0
 
-  for (const [journeyId, siteConfigs] of Object.entries(configs)) {
-    const tier = tierByJourney[journeyId]
+  for (const siteConfigs of Object.values(configs)) {
     for (const floors of siteConfigs) {
       for (const floor of floors) {
         if (floor.mainEndReward?.type === "mapPiece") mapPieces++
-        if (floor.mainEndReward?.type === "mosaicPiece") {
-          mosaicPieces++
-          mosaicByTier[tier]++
-        }
+        if (floor.mainEndReward?.type === "mosaicPiece") mosaicPieces++
         for (const s of floor.sideSections) {
           if (s.endReward?.type === "mapPiece") mapPieces++
+          if (s.endReward?.type === "mosaicPiece") mosaicPieces++
         }
       }
     }
@@ -300,11 +351,6 @@ const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
   if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mosaicPieceRewards} mosaic pieces, got ${mosaicPieces}`)
-  const mosaicPerTier = WORLD_TARGETS.mosaicPieceRewards / Object.keys(mosaicByTier).length
-  for (const [t, count] of Object.entries(mosaicByTier) as [Tier, number][]) {
-    if (count !== mosaicPerTier)
-      throw new Error(`[worldSpec] Expected ${mosaicPerTier} mosaic pieces for ${t} tier, got ${count}`)
-  }
 }
 
 // ── Tomb configs ──────────────────────────────────────────────────────────────

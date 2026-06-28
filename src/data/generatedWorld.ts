@@ -12,7 +12,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
       },
@@ -24,7 +27,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p8" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "d1" }],
       },
@@ -36,8 +42,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
-        mainEndReward: { type: "mosaicPiece" },
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "a8" }],
       },
     ],
@@ -50,7 +59,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
       },
@@ -62,7 +74,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p8" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
       },
@@ -74,7 +89,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p8" }],
       },
@@ -86,8 +104,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
-        mainEndReward: { type: "mosaicPiece" },
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a6" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "d1" }],
       },
     ],
@@ -100,7 +121,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "art5" }],
       },
@@ -112,7 +136,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p8" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p8" }],
       },
@@ -124,7 +151,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "a6" }],
       },
@@ -136,7 +166,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a6" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p10" },
@@ -151,8 +184,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
-        mainEndReward: { type: "mosaicPiece" },
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art1" },
           { type: "hieroglyphFragment", hieroglyphId: "d1" },
@@ -168,7 +204,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
       },
@@ -180,7 +219,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p8" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p8" }],
       },
@@ -192,7 +234,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "art5" }],
       },
@@ -204,7 +249,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a6" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art1" },
@@ -219,8 +267,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
-        mainEndReward: { type: "mosaicPiece" },
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p8" },
           { type: "hieroglyphFragment", hieroglyphId: "a6" },
@@ -236,7 +287,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "d2" }],
       },
@@ -255,6 +309,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "junior_treasure_tomb" },
           },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "a2" }],
@@ -274,8 +330,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p9" },
           { type: "hieroglyphFragment", hieroglyphId: "a2" },
@@ -291,7 +349,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "art12" }],
       },
@@ -303,7 +364,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p11" }],
       },
@@ -315,7 +379,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p9" },
@@ -343,6 +410,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2" },
         chestRewards: [
@@ -365,6 +434,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a13" },
         chestRewards: [
@@ -387,8 +458,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d2" },
           { type: "hieroglyphFragment", hieroglyphId: "d15" },
@@ -404,7 +477,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p1" },
@@ -419,7 +495,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p9" },
@@ -434,7 +513,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p1" },
@@ -449,7 +531,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art7" },
@@ -477,6 +562,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a13" },
         chestRewards: [
@@ -499,6 +586,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2" },
         chestRewards: [
@@ -521,6 +610,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7" },
         chestRewards: [
@@ -544,8 +635,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p11" },
           { type: "hieroglyphFragment", hieroglyphId: "art7" },
@@ -562,7 +655,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p1" }],
       },
@@ -574,7 +670,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "easy",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p11" },
@@ -596,6 +695,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "junior_treasure_tomb" },
           },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9" },
         chestRewards: [
@@ -618,6 +719,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2" },
         chestRewards: [
@@ -640,8 +743,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_ward" },
           },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "easy", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a13" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p11" },
           { type: "hieroglyphFragment", hieroglyphId: "art7" },
@@ -657,7 +762,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2" },
         chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "art6" }],
       },
@@ -669,7 +777,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p3" },
@@ -697,6 +808,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p7" },
         chestRewards: [
@@ -726,8 +839,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
             endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a7" },
           { type: "hieroglyphFragment", hieroglyphId: "art3" },
@@ -743,7 +858,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p12" },
@@ -758,7 +876,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art14" },
@@ -773,7 +894,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d4" },
@@ -801,6 +925,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12" },
         chestRewards: [
@@ -823,6 +949,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a5" },
         chestRewards: [
@@ -853,8 +981,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
             endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d9" },
           { type: "hieroglyphFragment", hieroglyphId: "art4" },
@@ -871,7 +1001,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p2" },
@@ -886,7 +1019,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d9" },
@@ -901,7 +1037,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art4" },
@@ -917,7 +1056,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art3" },
@@ -940,6 +1082,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "expert_treasure_tomb" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a5" },
         chestRewards: [
@@ -963,6 +1107,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a7" },
         chestRewards: [
@@ -986,6 +1132,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11" },
         chestRewards: [
@@ -1009,6 +1158,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3" },
         chestRewards: [
@@ -1039,8 +1191,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
             endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art4" },
           { type: "hieroglyphFragment", hieroglyphId: "p7" },
@@ -1057,7 +1212,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art3" },
@@ -1072,7 +1230,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a11" },
@@ -1087,7 +1248,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a5" },
@@ -1109,6 +1273,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "expert_treasure_tomb" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12" },
         chestRewards: [
@@ -1131,6 +1297,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a5" },
         chestRewards: [
@@ -1153,6 +1321,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a7" },
         chestRewards: [
@@ -1183,8 +1353,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
             endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p3" },
           { type: "hieroglyphFragment", hieroglyphId: "a5" },
@@ -1201,7 +1373,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 1, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p4" },
@@ -1216,7 +1391,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p14" },
@@ -1244,6 +1422,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14" },
         chestRewards: [
@@ -1273,8 +1453,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_ward" },
             endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p14" },
           { type: "hieroglyphFragment", hieroglyphId: "art10" },
@@ -1291,7 +1473,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a15" },
@@ -1307,7 +1492,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p15" },
@@ -1323,7 +1511,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a14" },
@@ -1339,7 +1531,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p14" },
@@ -1362,6 +1558,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "master_treasure_tomb" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a1" },
         chestRewards: [
@@ -1385,6 +1584,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a3" },
         chestRewards: [
@@ -1408,6 +1610,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a14" },
         chestRewards: [
@@ -1432,6 +1637,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a15" },
         chestRewards: [
@@ -1463,8 +1671,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_ward" },
             endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
           },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d10" },
           { type: "hieroglyphFragment", hieroglyphId: "d5" },
@@ -1482,7 +1693,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p4" },
@@ -1498,7 +1712,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p15" },
@@ -1514,7 +1731,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art9" },
@@ -1530,7 +1750,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d6" },
@@ -1559,6 +1782,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a1" },
         chestRewards: [
@@ -1582,6 +1807,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a3" },
         chestRewards: [
@@ -1605,6 +1832,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a14" },
         chestRewards: [
@@ -1636,8 +1866,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_ward" },
             endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
           },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a15" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a15" },
           { type: "hieroglyphFragment", hieroglyphId: "a14" },
@@ -1655,7 +1888,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a3" },
@@ -1670,7 +1906,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "medium",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art15" },
@@ -1693,6 +1932,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "master_treasure_tomb" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14" },
         chestRewards: [
@@ -1716,6 +1957,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_ward" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15" },
         chestRewards: [
@@ -1746,8 +1989,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_ward" },
             endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
           },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "medium", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a1" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p15" },
           { type: "hieroglyphFragment", hieroglyphId: "a15" },
@@ -1764,7 +2009,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p6" },
@@ -1780,7 +2028,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d7" },
@@ -1796,7 +2047,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d7" },
@@ -1813,7 +2068,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d13" },
@@ -1837,6 +2096,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10" },
         chestRewards: [
@@ -1854,7 +2116,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d7" },
@@ -1871,7 +2137,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a4" },
@@ -1896,6 +2166,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_b_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8" },
         chestRewards: [
@@ -1921,8 +2194,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d11" },
           { type: "hieroglyphFragment", hieroglyphId: "d8" },
@@ -1940,7 +2216,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p6" },
@@ -1956,7 +2235,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a12" },
@@ -1972,7 +2254,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d13" },
@@ -1988,7 +2273,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d12" },
@@ -2005,7 +2294,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p13" },
@@ -2029,6 +2322,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12" },
         chestRewards: [
@@ -2046,7 +2342,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d12" },
@@ -2063,7 +2363,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p13" },
@@ -2080,7 +2384,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a12" },
@@ -2105,6 +2413,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_b_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12" },
         chestRewards: [
@@ -2130,8 +2441,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p13" },
           { type: "hieroglyphFragment", hieroglyphId: "a4" },
@@ -2149,7 +2463,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p6" },
@@ -2165,7 +2482,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a9" },
@@ -2181,7 +2501,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d7" },
@@ -2197,7 +2520,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d8" },
@@ -2214,7 +2541,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d11" },
@@ -2238,6 +2569,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12" },
         chestRewards: [
@@ -2255,7 +2589,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d12" },
@@ -2272,7 +2610,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p13" },
@@ -2297,6 +2639,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_b_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11" },
         chestRewards: [
@@ -2322,8 +2667,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d12" },
           { type: "hieroglyphFragment", hieroglyphId: "d7" },
@@ -2341,7 +2689,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p6" },
@@ -2357,7 +2708,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 2, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p13" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a12" },
@@ -2373,7 +2727,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d7" },
@@ -2390,7 +2748,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d13" },
@@ -2414,6 +2776,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10" },
         chestRewards: [
@@ -2431,7 +2796,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         difficulty: "hard",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [],
+        sideSections: [
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+        ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "p6" },
@@ -2456,6 +2825,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_b_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7" },
         chestRewards: [
@@ -2481,8 +2853,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_ward" },
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
           },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 3, difficulty: "hard", end: "treasure", endReward: { type: "mosaicPiece" } },
         ],
-        mainEndReward: { type: "mosaicPiece" },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8" },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "a4" },
           { type: "hieroglyphFragment", hieroglyphId: "a9" },

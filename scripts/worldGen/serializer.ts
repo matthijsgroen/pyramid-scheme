@@ -84,24 +84,37 @@ ${entries},
 
 export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   let totalFragments = 0
+  let uniqueAssignedFragments = 0
   let totalMapPieces = 0
   let totalMosaicPieces = 0
-  let totalPyramids = 0
+  let pyramidJourneys = 0
+  let tombJourneys = 0
+  let pyramidLevels = 0
+  let tombFloors = 0
   const fragCoverage = new Map<string, number>()
 
-  for (const siteConfigs of Object.values(configs)) {
-    totalPyramids += siteConfigs.length
+  for (const [journeyId, siteConfigs] of Object.entries(configs)) {
+    const isTomb = journeyId.includes("tomb")
+    if (isTomb) {
+      tombJourneys++
+      for (const floors of siteConfigs) tombFloors += floors.length
+    } else {
+      pyramidJourneys++
+      pyramidLevels += siteConfigs.length
+    }
     for (const floors of siteConfigs) {
       for (const cfg of floors) {
         if (cfg.mainEndReward?.type === "mapPiece") totalMapPieces++
         if (cfg.mainEndReward?.type === "mosaicPiece") totalMosaicPieces++
         for (const s of cfg.sideSections) {
           if (s.endReward?.type === "mapPiece") totalMapPieces++
+          if (s.endReward?.type === "mosaicPiece") totalMosaicPieces++
         }
         for (const r of cfg.chestRewards ?? []) {
           if (r.type === "hieroglyphFragment") {
             totalFragments++
-            fragCoverage.set(r.hieroglyphId, (fragCoverage.get(r.hieroglyphId) ?? 0) + 1)
+            const prev = fragCoverage.get(r.hieroglyphId) ?? 0
+            fragCoverage.set(r.hieroglyphId, prev + 1)
           }
         }
       }
@@ -109,6 +122,20 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   }
 
   const allHieroglyphs = Object.values(TOMB_SYMBOLS).flat()
+  const totalUnique = allHieroglyphs.reduce(
+    (s, id) =>
+      s + FRAGMENT_COUNT[(Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]).find(([, ids]) => ids.includes(id))![0]],
+    0
+  )
+  uniqueAssignedFragments = allHieroglyphs.reduce(
+    (s, id) =>
+      s +
+      Math.min(
+        fragCoverage.get(id) ?? 0,
+        FRAGMENT_COUNT[(Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]).find(([, ids]) => ids.includes(id))![0]]
+      ),
+    0
+  )
   const uncovered = allHieroglyphs.filter(id => !fragCoverage.has(id))
   const under2 = allHieroglyphs.filter(id => {
     const count = fragCoverage.get(id) ?? 0
@@ -116,10 +143,14 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
     return tier ? count < FRAGMENT_COUNT[tier] : false
   })
 
-  console.log(`✓ Configs generated: ${Object.keys(configs).length} pyramid journeys, ${totalPyramids} total pyramids`)
+  console.log(
+    `✓ Configs generated: ${pyramidJourneys} pyramid journeys (${pyramidLevels} levels), ${tombJourneys} tombs (${tombFloors} floors)`
+  )
   console.log(`  Map pieces placed: ${totalMapPieces}`)
   console.log(`  Mosaic pieces placed: ${totalMosaicPieces}`)
-  console.log(`  Hieroglyph fragments placed: ${totalFragments} / 157`)
+  console.log(
+    `  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} unique + ${totalFragments - uniqueAssignedFragments} repeats (${totalFragments} total chest slots)`
+  )
   if (uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${uncovered.join(", ")}`)
   if (under2.length > 0) console.warn(`  ⚠ Hieroglyphs under target count: ${under2.join(", ")}`)
 }

@@ -1,11 +1,12 @@
 import { global, tier, journey, rules } from "./worldGen/dsl"
 
 // Expected reward counts — validated by configBuilder after generation.
-// mosaicPieceRewards: one per pyramid journey (4 journeys × 5 tiers = 20).
+// mosaicPieceRewards: 298 = number of unique journeyId:levelIndex steps in mosaicPieces.generated.ts
+//                    distributed as extra side paths (density controlled by mosaicPaths DSL field).
 // mapPieceRewards:    20 primary (1 per pyramid journey) + 16 secondary
 //                    (4 journeys × 4 secondary tombs, each on last or last-1 pyramid)
 export const WORLD_TARGETS = {
-  mosaicPieceRewards: 20,
+  mosaicPieceRewards: 298,
   mapPieceRewards: 36,
 }
 
@@ -17,7 +18,9 @@ export const WORLD_TARGETS = {
  */
 export const worldSpec = rules([
   // ── Defaults ──────────────────────────────────────────────────────────────
-  global({ floorDepth: 1, sideSections: "sparse" }),
+  // mosaicPaths: "auto" = world builder distributes 298 mosaic side paths evenly by pathPuzzles weight.
+  // Override per tier or pyramid: mosaicPaths: "sparse"|"normal"|"dense"|number
+  global({ floorDepth: 1 }),
 
   // ── Difficulty per tier ───────────────────────────────────────────────────
   tier("starter", { difficulty: "easy" }),
@@ -29,13 +32,6 @@ export const worldSpec = rules([
   // ── Starter tier ──────────────────────────────────────────────────────────
   // First pyramid is the map piece entry-point for the starter tomb.
   tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
-
-  // ── All tiers: last pyramid yields the journey's mosaic piece ─────────────
-  tier("starter").pyramid("last", { mainEndReward: "mosaicPiece" }),
-  tier("junior").pyramid("last", { mainEndReward: "mosaicPiece" }),
-  tier("expert").pyramid("last", { mainEndReward: "mosaicPiece" }),
-  tier("master").pyramid("last", { mainEndReward: "mosaicPiece" }),
-  tier("wizard").pyramid("last", { mainEndReward: "mosaicPiece" }),
 
   // ── Tomb journeys: tableau puzzles, one floor per levelCount ──────────────
   journey("starter_treasure_tomb", { puzzleFamily: "tableau", difficulty: "easy" }),
