@@ -30,10 +30,13 @@ export type FloorConstraint = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   mainEndReward?: RewardHint
   chestReward?: RewardHint
-  /** Explicit additional side branches (gated routes, special rewards). */
-  sideSections?: SideSectionConstraint[]
-  /** How many extra mosaic-piece side paths to add. "auto" = world builder distributes evenly. */
-  mosaicPaths?: SideIntensity | number
+  /**
+   * Side paths for this pyramid.
+   * - SideIntensity | number: that many auto mosaic-piece paths, no explicit sections.
+   * - SideSectionConstraint[]: explicit sections; auto-distributor still appends mosaic paths.
+   * - undefined: auto-distributor decides.
+   */
+  sideSections?: SideIntensity | number | SideSectionConstraint[]
 }
 
 export type PyramidConstraint = {
@@ -41,10 +44,13 @@ export type PyramidConstraint = {
   floorDepth?: number
   minFloors?: number
   maxFloors?: number
-  /** Explicit additional side branches (gated routes, special rewards). */
-  sideSections?: SideSectionConstraint[]
-  /** How many extra mosaic-piece side paths to add. "auto" = world builder distributes evenly. */
-  mosaicPaths?: SideIntensity | number
+  /**
+   * Side paths for this pyramid.
+   * - SideIntensity | number: that many auto mosaic-piece paths, no explicit sections.
+   * - SideSectionConstraint[]: explicit sections; auto-distributor still appends mosaic paths.
+   * - undefined: auto-distributor decides.
+   */
+  sideSections?: SideIntensity | number | SideSectionConstraint[]
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   theme?: Theme

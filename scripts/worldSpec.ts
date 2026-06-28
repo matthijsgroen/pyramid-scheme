@@ -18,8 +18,9 @@ export const WORLD_TARGETS = {
  */
 export const worldSpec = rules([
   // ── Defaults ──────────────────────────────────────────────────────────────
-  // mosaicPaths: "auto" = world builder distributes 298 mosaic side paths evenly by pathPuzzles weight.
-  // Override per tier or pyramid: mosaicPaths: "sparse"|"normal"|"dense"|number
+  // sideSections: "sparse"|"normal"|"dense"|number = that many auto mosaic-piece side paths, no explicit sections.
+  // sideSections: [...] = explicit sections; auto-distributor still appends mosaic paths on top.
+  // undefined (default) = auto-distributor decides mosaic path count.
   global({ floorDepth: 1 }),
 
   // ── Difficulty per tier ───────────────────────────────────────────────────

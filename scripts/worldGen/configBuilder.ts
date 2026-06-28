@@ -108,7 +108,6 @@ const buildChestRewards = (
 const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, sparse: 1, normal: 2, dense: 4 }
 
 const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
-  // Count mosaicPiece already committed via mainEndReward constraints
   let committed = 0
   for (const p of plan) {
     if (p.constraint.mainEndReward === "mosaicPiece") committed++
@@ -120,15 +119,20 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 
   for (const p of plan) {
     const key = `${p.journeyId}:${p.pyramidIndex}`
-    const mp = p.constraint.mosaicPaths
-    if (typeof mp === "string") {
-      const count = INTENSITY_PATHS[mp as SideIntensity] ?? 0
+    const sd = p.constraint.sideSections
+    if (typeof sd === "string") {
+      // SideIntensity → all side paths are mosaic, not an auto-candidate
+      const count = INTENSITY_PATHS[sd as SideIntensity] ?? 0
       explicitPaths.set(key, count)
       explicitTotal += count
-    } else if (typeof mp === "number") {
-      explicitPaths.set(key, mp)
-      explicitTotal += mp
+    } else if (typeof sd === "number") {
+      explicitPaths.set(key, sd)
+      explicitTotal += sd
     } else {
+      // Array or undefined → auto-candidate; count explicitly specified mosaicPiece sections
+      if (Array.isArray(sd)) {
+        committed += sd.filter(s => s.endReward === "mosaicPiece").length
+      }
       autoCandidates.push(p)
     }
   }
@@ -137,7 +141,6 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
   const result = new Map(explicitPaths)
 
   if (remaining > 0 && autoCandidates.length > 0) {
-    // Distribute weighted by pathPuzzles: sort descending, round-robin
     const sorted = [...autoCandidates].sort((a, b) => b.pathPuzzles - a.pathPuzzles)
     for (let rem = remaining, i = 0; rem > 0; rem--, i++) {
       const p = sorted[i % sorted.length]
@@ -293,7 +296,7 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
         ? specToReward(constraint.mainEndReward, tier)
         : { type: "hieroglyphFragment", hieroglyphId: tierSymbols[i % tierSymbols.length] }
 
-      const constraintSections = constraint.sideSections
+      const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
       const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
       const sideSections = buildSideSections(
         tier,
