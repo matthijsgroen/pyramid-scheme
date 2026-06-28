@@ -263,6 +263,46 @@ const MultiFloorExplorer = ({ siteConfig, seed }: { siteConfig: SiteConfig; seed
   )
 }
 
+// Dense floor: 6 main puzzles, 5 keyed side paths + 1 key-holder path
+const DenseFloorDemo = () => {
+  const config: FloorConfig = {
+    pathPuzzles: 6,
+    difficulty: "wizard",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 0, difficulty: "wizard", end: "treasure" }, // ungated: holds all keys
+      { pathPuzzles: 3, difficulty: "wizard", end: "treasure", gate: { type: "floor-key", color: "blue" } },
+      { pathPuzzles: 3, difficulty: "wizard", end: "treasure", gate: { type: "floor-key", color: "red" } },
+      { pathPuzzles: 3, difficulty: "wizard", end: "treasure", gate: { type: "floor-key", color: "green" } },
+      { pathPuzzles: 2, difficulty: "wizard", end: "treasure", gate: { type: "floor-key", color: "yellow" } },
+      { pathPuzzles: 2, difficulty: "wizard", end: "treasure", gate: { type: "floor-key", color: "purple" } },
+    ],
+  }
+  const result = useMemo(() => assembleFloor("dense", config, 2), [])
+  const [grid, setGrid] = useState<FloorGrid | null>(result.success ? result.grid : null)
+
+  if (!grid)
+    return <div className="p-4 text-red-400">Assembly failed: {JSON.stringify(!result.success && result.reasons)}</div>
+
+  return (
+    <div className="flex flex-col gap-2">
+      <SiteMapView grid={grid} onCellClick={(r, c) => setGrid(prev => (prev ? completeCell(prev, r, c) : prev))} />
+      <button
+        className="rounded bg-amber-900 px-3 py-1 text-xs text-amber-200 hover:bg-amber-800"
+        onClick={() => result.success && setGrid(result.grid)}
+      >
+        Reset
+      </button>
+    </div>
+  )
+}
+
+export const DensePuzzlesAndKeys: StoryObj = {
+  render: () => <DenseFloorDemo />,
+  parameters: { layout: "centered" },
+}
+
 export const TwoFloorLayout: StoryObj = {
   render: () => (
     <MultiFloorExplorer

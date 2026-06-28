@@ -116,7 +116,13 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
           if (!bcell || bcell.type === "empty") continue
           if (bcell.type === "room") {
             if (interestingTypes.has(bcell.roomType)) hasInteresting = true
-            // Don't traverse through rooms
+            else if (bcell.roomType === "puzzle" || bcell.roomType === "fork") {
+              // traverse through puzzles/forks to find what's at the end of the branch
+              for (const d of bcell.dirs) {
+                const [dr, dc] = MOVES[d as string]
+                bfsQueue.push([br + dr, bc + dc])
+              }
+            }
           } else {
             // corridor: continue BFS
             for (const d of bcell.dirs) {

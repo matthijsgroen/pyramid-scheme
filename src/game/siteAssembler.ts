@@ -240,22 +240,25 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (const {
         pathCell: [pcr, pcc],
       } of shuffledCandidates) {
-        const freeAdj = neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
+        const freeAdj = neighbors(pcr, pcc)
+          .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
+          .sort(() => rand() - 0.5)
         if (freeAdj.length === 0) continue
 
-        const [startR, startC] = freeAdj[Math.floor(rand() * freeAdj.length)]
-        usedCells.add(`${startR},${startC}`)
-        const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand)
-        if (rest === null) {
-          usedCells.delete(`${startR},${startC}`)
-          continue
+        for (const [startR, startC] of freeAdj) {
+          usedCells.add(`${startR},${startC}`)
+          const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand)
+          if (rest === null) {
+            usedCells.delete(`${startR},${startC}`)
+            continue
+          }
+          const cells: Array<[number, number]> = [[startR, startC], ...rest]
+          cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
+          sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate, attachedAt: [pcr, pcc] })
+          placed = true
+          break
         }
-
-        const cells: Array<[number, number]> = [[startR, startC], ...rest]
-        cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-        sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate, attachedAt: [pcr, pcc] })
-        placed = true
-        break
+        if (placed) break
       }
 
       if (!placed) {
