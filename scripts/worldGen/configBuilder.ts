@@ -3,7 +3,15 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEve
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "../worldSpec"
-import type { PyramidConstraint, RewardHint, RewardSpec, GateSpec, SideSectionConstraint, SideIntensity } from "./dsl"
+import type {
+  PyramidConstraint,
+  RewardHint,
+  RewardSpec,
+  GateSpec,
+  SideSectionConstraint,
+  SideIntensity,
+  KeyColor,
+} from "./dsl"
 import type { Assignment } from "./types"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -68,9 +76,10 @@ const TOMB_WARD_KEYS: Record<string, string> = {
 // Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
 export const specToGate = (
   spec: GateSpec | undefined
-): { type: "floor-key" } | { type: "tomb-key"; wardKeyId: string } | undefined => {
+): { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string } | undefined => {
   if (spec == null) return undefined
-  if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key" } : undefined
+  if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
+  if (spec.type === "floor-key") return { type: "floor-key", color: spec.color ?? "blue" }
   const wardKeyId = TOMB_WARD_KEYS[spec.tombId]
   if (!wardKeyId) throw new Error(`[worldSpec] No ward key found for tombId "${spec.tombId}"`)
   return { type: "tomb-key", wardKeyId }
@@ -154,6 +163,9 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 
 // ── Side sections ─────────────────────────────────────────────────────────────
 
+const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
+const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, sparse: 0.33, normal: 0.5, dense: 1.0 }
+
 const buildSideSections = (
   tier: string,
   difficulty: Difficulty,
@@ -162,7 +174,9 @@ const buildSideSections = (
   nextTier: string | null,
   constraintSections: SideSectionConstraint[] | undefined,
   mosaicPathCount: number,
-  mainPathPuzzles: number
+  mainPathPuzzles: number,
+  keyDensity?: SideIntensity,
+  keyColors?: number
 ): SideSection[] => {
   const sections: SideSection[] = []
 
@@ -196,10 +210,19 @@ const buildSideSections = (
     })
   }
 
-  // Auto/density mosaic side paths
+  // Auto/density mosaic side paths — apply key gating by density + color count
+  const gatedCount = keyDensity ? Math.round(mosaicPathCount * DENSITY_FRACTION[keyDensity]) : 0
+  const colorCount = Math.min(keyColors ?? 1, 5)
   const mosaicPP = Math.max(1, Math.round(mainPathPuzzles / 3))
   for (let j = 0; j < mosaicPathCount; j++) {
-    sections.push({ pathPuzzles: mosaicPP, difficulty, end: "treasure", endReward: { type: "mosaicPiece" } })
+    const gate = j < gatedCount ? { type: "floor-key" as const, color: ALL_KEY_COLORS[j % colorCount] } : undefined
+    sections.push({
+      pathPuzzles: mosaicPP,
+      difficulty,
+      end: "treasure",
+      endReward: { type: "mosaicPiece" },
+      ...(gate ? { gate } : {}),
+    })
   }
 
   return sections
@@ -306,7 +329,9 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
         nextTier,
         constraintSections,
         mosaicPathCount,
-        pp
+        pp,
+        constraint.keyDensity,
+        constraint.keyColors
       )
       const chestRewards = buildChestRewards(journeyId, tier, chestOffset, pp, assignments)
       chestOffset += chestCountFor(pp)

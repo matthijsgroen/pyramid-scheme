@@ -25,7 +25,9 @@ const serializeSideSection = (s: SideSection): string => {
     parts.push(
       s.gate.type === "tomb-key"
         ? `gate: { type: "tomb-key", wardKeyId: "${s.gate.wardKeyId}" }`
-        : `gate: { type: "floor-key" }`
+        : s.gate.color
+          ? `gate: { type: "floor-key", color: "${s.gate.color}" }`
+          : `gate: { type: "floor-key" }`
     )
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
   return `{ ${parts.join(", ")} }`

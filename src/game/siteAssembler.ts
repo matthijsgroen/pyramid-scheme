@@ -1,5 +1,14 @@
 import { mulberry32 } from "./random"
-import type { AssemblerResult, FloorConfig, FloorGrid, GridCell, Direction, CorridorCell, RoomCell } from "./siteTypes"
+import type {
+  AssemblerResult,
+  FloorConfig,
+  FloorGrid,
+  GridCell,
+  Direction,
+  CorridorCell,
+  RoomCell,
+  KeyColor,
+} from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
 const DIRS: Array<[number, number]> = [
@@ -257,29 +266,34 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     if (failed) continue
 
-    // Pre-compute key node IDs (end cell of each key-host ungated section)
+    // Pre-compute key node IDs — group gated floor-key sections by color, one host per color
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
-    for (let gi = 0; gi < gatedFloorKeyIdxs.length; gi++) {
-      const gatedIdx = gatedFloorKeyIdxs[gi]
-      const hostIdx = ungatedIdxs[gi % ungatedIdxs.length]
+    const keyHostColorMap = new Map<number, KeyColor>() // ungated section idx → key color it hosts
+
+    const colorOrder: KeyColor[] = []
+    const gatedByColor = new Map<KeyColor, number[]>()
+    for (const gatedIdx of gatedFloorKeyIdxs) {
+      const gate = sideSections[gatedIdx].gate as { type: "floor-key"; color?: KeyColor }
+      const color: KeyColor = gate.color ?? "blue"
+      if (!gatedByColor.has(color)) {
+        gatedByColor.set(color, [])
+        colorOrder.push(color)
+      }
+      gatedByColor.get(color)!.push(gatedIdx)
+    }
+    for (let ci = 0; ci < colorOrder.length; ci++) {
+      const color = colorOrder[ci]
+      const hostIdx = ungatedIdxs[ci % ungatedIdxs.length]
       const hostGroup = sectionGroups.find(g => g.sectionIdx === hostIdx)
       if (!hostGroup) continue
       const [er, ec] = hostGroup.cells[hostGroup.cells.length - 1]
-      keyNodeIdMap.set(gatedIdx, nid(er, ec))
+      const keyId = nid(er, ec)
+      keyHostColorMap.set(hostIdx, color)
+      for (const gatedIdx of gatedByColor.get(color)!) keyNodeIdMap.set(gatedIdx, keyId)
     }
 
     // Determine which section indices are key hosts
-    const keyHostIdxs = new Set(
-      [...keyNodeIdMap.entries()]
-        .map(([, kid]) => {
-          const g = sectionGroups.find(g => {
-            const [er, ec] = g.cells[g.cells.length - 1]
-            return nid(er, ec) === kid
-          })
-          return g?.sectionIdx
-        })
-        .filter((x): x is number => x !== undefined)
-    )
+    const keyHostIdxs = new Set(keyHostColorMap.keys())
 
     // Build room cell specs: posKey -> room properties
     type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state">
@@ -338,7 +352,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // Gate node occupies cells[0] for gated sections
       if (isFloorKeyGate && keyNodeId) {
         const [gr, gc] = cells[0]
-        roomSpecs.set(posKey(gr, gc), { roomType: "gate", requiredKeyId: keyNodeId, gateVariant: "floor-key" })
+        const floorKeyGate = section.gate as { type: "floor-key"; color?: KeyColor }
+        roomSpecs.set(posKey(gr, gc), {
+          roomType: "gate",
+          requiredKeyId: keyNodeId,
+          gateVariant: "floor-key",
+          keyColor: floorKeyGate.color ?? "blue",
+        })
         contentStart = 1
       } else if (isTombKeyGate) {
         const [gr, gc] = cells[0]
@@ -364,9 +384,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // End node
       const [er, ec] = cells[cells.length - 1]
       if (isKeyHost) {
+        const hostColor = keyHostColorMap.get(sectionIdx)
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: { type: "tombKey", keyId: nid(er, ec) },
+          ...(hostColor ? { keyColor: hostColor } : {}),
         })
       } else if (section.end === "staircase") {
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })

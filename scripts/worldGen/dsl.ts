@@ -5,11 +5,12 @@ import type { Tier, Difficulty } from "./types"
 export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "sparse" | "normal" | "dense"
 export type GateType = "floor-key" | "tomb-key"
+export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a tombId; resolver picks the ward key from that tomb's reward
-export type GateSpec = GateType | null | { type: "tomb-key"; tombId: string }
+export type GateSpec = GateType | null | { type: "tomb-key"; tombId: string } | { type: "floor-key"; color?: KeyColor }
 
 export type PuzzleFamily = "sumplete" | "tableau"
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
@@ -37,6 +38,10 @@ export type FloorConstraint = {
    * - undefined: auto-distributor decides.
    */
   sideSections?: SideIntensity | number | SideSectionConstraint[]
+  /** Fraction of auto side paths gated with a floor key. "dense" = all gated. */
+  keyDensity?: SideIntensity
+  /** How many distinct key colors to use (1–5). Fewer colors → one key opens more doors. */
+  keyColors?: number
 }
 
 export type PyramidConstraint = {
@@ -51,6 +56,10 @@ export type PyramidConstraint = {
    * - undefined: auto-distributor decides.
    */
   sideSections?: SideIntensity | number | SideSectionConstraint[]
+  /** Fraction of auto side paths gated with a floor key. "dense" = all gated. */
+  keyDensity?: SideIntensity
+  /** How many distinct key colors to use (1–5). Fewer colors → one key opens more doors. */
+  keyColors?: number
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   theme?: Theme

@@ -1,4 +1,4 @@
-import type { CellState, CorridorCell, FloorGrid, GateVariant, RoomType } from "../../game/siteTypes"
+import type { CellState, CorridorCell, FloorGrid, GateVariant, KeyColor, RoomType } from "../../game/siteTypes"
 import { revealAll } from "../../game/gridNavigation"
 import { ExplorerDot } from "./ExplorerDot"
 
@@ -55,7 +55,15 @@ const CompletedBadge = ({ r }: { r: number }) => (
 
 // ─── Node shape geometry ──────────────────────────────────────────────────────
 
-type ShapeProps = { state: CellState; gateVariant?: GateVariant }
+type ShapeProps = { state: CellState; gateVariant?: GateVariant; keyColor?: KeyColor }
+
+const KEY_COLOR_HEX: Record<KeyColor, { visible: string; reachable: string }> = {
+  blue: { visible: "#2060c0", reachable: "#4090e0" },
+  red: { visible: "#c04020", reachable: "#e06040" },
+  green: { visible: "#208040", reachable: "#30b060" },
+  yellow: { visible: "#b09010", reachable: "#d0c030" },
+  purple: { visible: "#7030b0", reachable: "#9050d0" },
+}
 
 const PuzzleShape = ({ state }: ShapeProps) => {
   const r = 13
@@ -96,7 +104,7 @@ const ForkShape = ({ state }: ShapeProps) => {
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
-const GateNodeShape = ({ state, gateVariant }: ShapeProps) => {
+const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
   const r = 12
   const isTomb = gateVariant === "tomb-key"
   const fill = isTomb ? tombGateFill[state] : gateFill[state]
@@ -108,9 +116,11 @@ const GateNodeShape = ({ state, gateVariant }: ShapeProps) => {
         ? state === "visible"
           ? "#8040c0"
           : "#9060e0"
-        : state === "visible"
-          ? "#c04020"
-          : "#c09020"
+        : keyColor
+          ? KEY_COLOR_HEX[keyColor][state === "visible" ? "visible" : "reachable"]
+          : state === "visible"
+            ? "#c04020"
+            : "#c09020"
   return (
     <>
       <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={1} fill={fill} stroke={stroke} strokeWidth={1.5} />
@@ -134,7 +144,7 @@ const GateNodeShape = ({ state, gateVariant }: ShapeProps) => {
   )
 }
 
-const TreasureShape = ({ state }: ShapeProps) => {
+const TreasureShape = ({ state, keyColor }: ShapeProps) => {
   const r = 12
   const fill = treasureFill[state]
   const stroke = treasureStroke[state]
@@ -146,6 +156,9 @@ const TreasureShape = ({ state }: ShapeProps) => {
           points="0,-9 2.4,-3.2 8.6,-2.8 3.8,1.2 5.3,7.3 0,4 -5.3,7.3 -3.8,1.2 -8.6,-2.8 -2.4,-3.2"
           fill={treasureIcon[state]}
         />
+      )}
+      {state !== "fogged" && keyColor && (
+        <circle cx={9} cy={-9} r={4} fill={KEY_COLOR_HEX[keyColor][state === "visible" ? "visible" : "reachable"]} />
       )}
     </>
   )
@@ -233,8 +246,8 @@ const NodeBackground = ({ type }: { type: RoomType }) => {
   }
 }
 
-const NodeShape = ({ type, state, gateVariant }: ShapeProps & { type: RoomType }) => {
-  const p = { state, gateVariant }
+const NodeShape = ({ type, state, gateVariant, keyColor }: ShapeProps & { type: RoomType }) => {
+  const p = { state, gateVariant, keyColor }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -459,7 +472,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
               <ConnectionStubs dirs={cell.dirs} state={state} />
               <NodeBackground type={cell.roomType} />
               <g opacity={isCompleted ? 0.45 : 1}>
-                <NodeShape type={cell.roomType} state={state} gateVariant={cell.gateVariant} />
+                <NodeShape type={cell.roomType} state={state} gateVariant={cell.gateVariant} keyColor={cell.keyColor} />
               </g>
               {isCompleted && cell.roomType !== "fork" && cell.roomType !== "entrance" && <CompletedBadge r={roomR} />}
             </g>

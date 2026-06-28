@@ -14,7 +14,7 @@ export type SideSection = {
   chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase"
-  gate?: { type: "floor-key" } | { type: "tomb-key"; wardKeyId: string }
+  gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
 }
 
