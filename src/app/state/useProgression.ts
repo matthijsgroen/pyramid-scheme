@@ -32,6 +32,7 @@ export type ProgressionAPI = {
   addFragment: (hieroglyphId: string) => void
   isHieroglyphComplete: (hieroglyphId: string) => boolean
   hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
+  hieroglyphFragments: Record<string, number>
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
   tombKeyIds: ReadonlySet<string>
@@ -66,6 +67,7 @@ export const useProgression = (): ProgressionAPI => {
         found: state.hieroglyphFragments[hieroglyphId] ?? 0,
         required: FRAGMENT_THRESHOLD,
       }),
+      hieroglyphFragments: state.hieroglyphFragments,
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
       tombKeyIds: new Set(Object.keys(state.tombKeys)),

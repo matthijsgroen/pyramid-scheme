@@ -68,7 +68,7 @@ export const worldSpec = rules([
   tier("expert").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "expert_ward" },
+        gate: { type: "tomb-key", tombId: "expert_treasure_tomb" },
         endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
       },
     ],
@@ -76,7 +76,7 @@ export const worldSpec = rules([
   tier("master").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "master_ward" },
+        gate: { type: "tomb-key", tombId: "master_treasure_tomb" },
         endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
       },
     ],
@@ -84,7 +84,7 @@ export const worldSpec = rules([
   tier("wizard").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "wizard_ward" },
+        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb" },
         endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
       },
     ],
@@ -92,7 +92,7 @@ export const worldSpec = rules([
   tier("wizard").pyramid("last-1", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "wizard_b_ward" },
+        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb_b" },
         endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
       },
     ],

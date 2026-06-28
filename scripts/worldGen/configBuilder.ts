@@ -56,13 +56,25 @@ const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   return spec as TreasureReward
 }
 
+// tombId → wardKeyId: primary tombs each yield a ward key on their last floor
+const TOMB_WARD_KEYS: Record<string, string> = {
+  starter_treasure_tomb: "starter_ward",
+  junior_treasure_tomb: "junior_ward",
+  expert_treasure_tomb: "expert_ward",
+  master_treasure_tomb: "master_ward",
+  wizard_treasure_tomb: "wizard_ward",
+  wizard_treasure_tomb_b: "wizard_b_ward",
+}
+
 // Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
-const specToGate = (
+export const specToGate = (
   spec: GateSpec | undefined
 ): { type: "floor-key" } | { type: "tomb-key"; wardKeyId: string } | undefined => {
   if (spec == null) return undefined
   if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key" } : undefined
-  return spec as { type: "tomb-key"; wardKeyId: string }
+  const wardKeyId = TOMB_WARD_KEYS[spec.tombId]
+  if (!wardKeyId) throw new Error(`[worldSpec] No ward key found for tombId "${spec.tombId}"`)
+  return { type: "tomb-key", wardKeyId }
 }
 
 // ── Chest rewards ─────────────────────────────────────────────────────────────

@@ -87,6 +87,7 @@
     "tapToOpen": "Tap to open",
     "mapPiece": "Map Piece",
     "hieroglyphFragment": "Hieroglyph Fragment",
+    "fragmentProgress": "{{found}} of {{required}} fragments found",
     "tombKey": "Tomb Key",
     "hieroglyphs": "Hieroglyphs",
     "mosaicPiece": "Mosaic Piece"

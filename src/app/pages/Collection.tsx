@@ -7,6 +7,7 @@ import { useInventoryCategory } from "@/data/useInventoryTranslations"
 import { useTreasureCategory } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
@@ -41,7 +42,8 @@ const CategorySection: FC<{
   onItemClick: (item: InventoryItem) => void
   selectedItem: InventoryItem | null
   inventory: Record<string, number | undefined>
-}> = ({ category, onItemClick, selectedItem, inventory }) => {
+  hieroglyphFragments: Record<string, number>
+}> = ({ category, onItemClick, selectedItem, inventory, hieroglyphFragments }) => {
   const { t } = useTranslation("common")
   const items = useInventoryCategory(category)
   const sortedItems = useMemo(
@@ -63,24 +65,38 @@ const CategorySection: FC<{
         {sortedItems.map(item => {
           const itemLevel = getItemFirstLevel(item.id)
           const isSelected = selectedItem?.id === item.id
-
           const isCollected = inventory[item.id] !== undefined
+          const fragmentsFound = hieroglyphFragments[item.id] ?? 0
 
-          if (!isCollected || !itemLevel) {
-            // Show empty placeholder for uncollected items
-            return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
+          if (isCollected && itemLevel) {
+            return (
+              <Badge key={item.id}>
+                <HieroglyphTile
+                  symbol={item.symbol}
+                  difficulty={itemLevel}
+                  selected={isSelected}
+                  onClick={() => onItemClick(item)}
+                />
+              </Badge>
+            )
           }
 
-          return (
-            <Badge key={item.id}>
-              <HieroglyphTile
-                symbol={item.symbol}
-                difficulty={itemLevel}
-                selected={isSelected}
-                onClick={() => onItemClick(item)}
-              />
-            </Badge>
-          )
+          if (fragmentsFound > 0 && itemLevel) {
+            // Partially collected — show progress tile with a badge showing "X/3"
+            return (
+              <Badge key={item.id} label={`${fragmentsFound}/3`}>
+                <HieroglyphTile
+                  symbol={item.symbol}
+                  difficulty={itemLevel}
+                  fragmentProgress={{ found: fragmentsFound, required: 3 }}
+                  size="md"
+                  className="aspect-square"
+                />
+              </Badge>
+            )
+          }
+
+          return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
         })}
       </div>
     </div>
@@ -179,6 +195,7 @@ export const CollectionPage: FC = () => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const { getJourney } = useJourneys()
   const { inventory, addItem } = useInventory()
+  const { hieroglyphFragments } = useProgression()
   const { isDevelopMode } = use(DevelopContext)
 
   const { showConversation } = use(FezContext)
@@ -250,24 +267,28 @@ export const CollectionPage: FC = () => {
             onItemClick={handleItemClick}
             selectedItem={selectedItem}
             inventory={inventory}
+            hieroglyphFragments={hieroglyphFragments}
           />
           <CategorySection
             category="professions"
             onItemClick={handleItemClick}
             selectedItem={selectedItem}
             inventory={inventory}
+            hieroglyphFragments={hieroglyphFragments}
           />
           <CategorySection
             category="animals"
             onItemClick={handleItemClick}
             selectedItem={selectedItem}
             inventory={inventory}
+            hieroglyphFragments={hieroglyphFragments}
           />
           <CategorySection
             category="artifacts"
             onItemClick={handleItemClick}
             selectedItem={selectedItem}
             inventory={inventory}
+            hieroglyphFragments={hieroglyphFragments}
           />
         </div>
         {hasCollectedItems && (

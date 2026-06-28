@@ -5,12 +5,15 @@ import type { Rule, RuleScope, PyramidConstraint, FloorConstraint, PyramidSelect
 
 const SPECIFICITY: Record<RuleScope["level"], number> = {
   global: 0,
-  tier: 1,
-  journey: 1,
-  "tier-pyramid": 2,
-  "journey-pyramid": 2,
-  "tier-pyramid-floor": 3,
-  "journey-pyramid-floor": 3,
+  "global-floor": 1,
+  tier: 2,
+  "tier-floor": 3,
+  journey: 4,
+  "journey-floor": 5,
+  "tier-pyramid": 6,
+  "tier-pyramid-floor": 7,
+  "journey-pyramid": 8,
+  "journey-pyramid-floor": 9,
 }
 
 // ── Selector matching ─────────────────────────────────────────────────────────
@@ -46,7 +49,7 @@ const matchesPyramidScope = (
     case "journey-pyramid":
       return scope.journey === journeyId && matchesPyramidSelector(scope.pyramid, pyramidIndex, levelCount)
     default:
-      return false
+      return false // floor-scoped rules don't apply at pyramid level
   }
 }
 
@@ -59,6 +62,12 @@ const matchesFloorScope = (
   floorIndex: number
 ): boolean => {
   switch (scope.level) {
+    case "global-floor":
+      return scope.floor === floorIndex
+    case "tier-floor":
+      return scope.tier === tier && scope.floor === floorIndex
+    case "journey-floor":
+      return scope.journey === journeyId && scope.floor === floorIndex
     case "tier-pyramid-floor":
       return (
         scope.tier === tier &&

@@ -4,6 +4,9 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, getCell } from "@/game/gridNavigation"
 import { hashString } from "@/support/hashString"
 import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import { getInventoryItemById } from "@/data/inventory"
+import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { getPuzzlePlugin } from "@/game/puzzleRegistry"
 import { SiteMapView } from "./SiteMapView"
 import { useJourneys } from "@/app/state/useJourneys"
@@ -267,18 +270,50 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       )}
 
       {/* Step 2: LootPopup — shows reward after chest opens */}
-      {pendingReward && (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={t(`chest.${pendingReward.reward.type}`)}
-          itemComponent={<span className="text-6xl">{rewardEmoji(pendingReward.reward.type)}</span>}
-          onDismiss={() => {
+      {pendingReward &&
+        (() => {
+          const reward = pendingReward.reward
+          const onDismiss = () => {
             setShowLoot(false)
             setPendingReward(null)
             setChestOpened(false)
-          }}
-        />
-      )}
+          }
+          if (reward.type === "hieroglyphFragment") {
+            const item = getInventoryItemById(reward.hieroglyphId)
+            const difficulty = getItemFirstLevel(reward.hieroglyphId)
+            const progress = progression.hieroglyphProgress(reward.hieroglyphId)
+            const rarity = progress.found >= progress.required ? "legendary" : progress.found >= 2 ? "rare" : "common"
+            return (
+              <LootPopup
+                isOpen={showLoot}
+                itemName={item ? `${item.name} — ${t("chest.hieroglyphFragment")}` : t("chest.hieroglyphFragment")}
+                itemDescription={`${item?.description ?? ""}\n\n${t("chest.fragmentProgress", { found: progress.found, required: progress.required })}`}
+                rarity={rarity}
+                itemComponent={
+                  item && difficulty ? (
+                    <HieroglyphTile
+                      symbol={item.symbol}
+                      difficulty={difficulty}
+                      size="lg"
+                      fragmentProgress={progress.found < progress.required ? progress : undefined}
+                    />
+                  ) : (
+                    <span className="text-6xl">𓂀</span>
+                  )
+                }
+                onDismiss={onDismiss}
+              />
+            )
+          }
+          return (
+            <LootPopup
+              isOpen={showLoot}
+              itemName={t(`chest.${reward.type}`)}
+              itemComponent={<span className="text-6xl">{rewardEmoji(reward.type)}</span>}
+              onDismiss={onDismiss}
+            />
+          )
+        })()}
     </div>
   )
 }
