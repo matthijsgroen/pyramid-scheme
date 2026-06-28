@@ -45,8 +45,7 @@ const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
     case "tombKey":
       return { type: "tombKey", keyId: `${tier}_ward` }
     case "hieroglyphFragment":
-      // ponytail: type hint only; actual hieroglyphId comes from fragmentAssigner
-      return { type: "hieroglyphs" }
+      return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
   }
 }
 
@@ -81,19 +80,27 @@ export const specToGate = (
 
 const buildChestRewards = (
   journeyId: string,
+  tier: Tier,
   slotOffset: number,
   pathPuzzles: number,
   assignments: Assignment[]
 ): TreasureReward[] => {
   const count = chestCountFor(pathPuzzles)
-  const slots: TreasureReward[] = Array(count).fill({ type: "hieroglyphs" } as TreasureReward)
+  const slots: TreasureReward[] = Array(count).fill(null)
   for (const a of assignments.filter(a => a.journeyId === journeyId)) {
     const localIdx = a.slotIndex - slotOffset
     if (localIdx >= 0 && localIdx < count) {
       slots[localIdx] = { type: "hieroglyphFragment", hieroglyphId: a.hieroglyphId }
     }
   }
-  return slots
+  // Fill any unassigned slots with tier symbols (deterministic cycle by absolute slot index)
+  const tierSymbols = TOMB_SYMBOLS[tier]
+  for (let i = 0; i < count; i++) {
+    if (!slots[i]) {
+      slots[i] = { type: "hieroglyphFragment", hieroglyphId: tierSymbols[(slotOffset + i) % tierSymbols.length] }
+    }
+  }
+  return slots as TreasureReward[]
 }
 
 // ── Side sections ─────────────────────────────────────────────────────────────
@@ -226,9 +233,10 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
       const hasMapPieceBranch = i === mapPiecePyramid && tier !== "starter"
       const hasWardGate = i >= Math.ceil(levelCount / 2) && nextTier !== null
 
+      const tierSymbols = TOMB_SYMBOLS[tier]
       const mainEndReward: TreasureReward = constraint.mainEndReward
         ? specToReward(constraint.mainEndReward, tier)
-        : { type: "hieroglyphs" }
+        : { type: "hieroglyphFragment", hieroglyphId: tierSymbols[i % tierSymbols.length] }
 
       const constraintSections = Array.isArray(constraint.sideSections)
         ? (constraint.sideSections as SideSectionConstraint[])
@@ -241,7 +249,7 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
         nextTier,
         constraintSections
       )
-      const chestRewards = buildChestRewards(journeyId, chestOffset, pp, assignments)
+      const chestRewards = buildChestRewards(journeyId, tier, chestOffset, pp, assignments)
       chestOffset += chestCountFor(pp)
 
       pyramidConfigs.push([

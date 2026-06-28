@@ -1,4 +1,4 @@
-import { global, tier, journey, rules } from "./dsl"
+import { global, tier, journey, rules } from "./worldGen/dsl"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mosaicPieceRewards: one per pyramid journey (4 journeys × 5 tiers = 20).
@@ -49,9 +49,9 @@ export const worldSpec = rules([
   journey("wizard_treasure_tomb_c", { puzzleFamily: "tableau", difficulty: "hard" }),
 
   // ── Secondary tombs: override tier "last → mosaicPiece" rule (tombs don't give mosaic) ──
-  journey("expert_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphs" }),
-  journey("master_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphs" }),
-  journey("wizard_treasure_tomb_c").pyramid("last", { mainEndReward: "hieroglyphs" }),
+  journey("expert_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
+  journey("master_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
+  journey("wizard_treasure_tomb_c").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
 
   // ── Primary tombs: last floor drops a ward key (unlocks gated pyramid content) ──
   journey("starter_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "starter_ward" } }),
