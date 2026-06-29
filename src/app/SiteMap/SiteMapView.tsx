@@ -497,7 +497,10 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
             const cy = PAD + r * CELL + CELL / 2
 
             if (cell.type === "corridor") {
-              const corridorClickable = onCellClick && cell.state === "reachable"
+              const isCorner =
+                cell.dirs.size !== 2 ||
+                !((cell.dirs.has("n") && cell.dirs.has("s")) || (cell.dirs.has("e") && cell.dirs.has("w")))
+              const corridorClickable = onCellClick && cell.state === "reachable" && isCorner
               return (
                 <g
                   key={`${r},${c}`}
@@ -506,7 +509,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
                   style={{ cursor: corridorClickable ? "pointer" : "default" }}
                 >
                   <CorridorCellShape cell={cell} />
-                  {cell.state === "reachable" && <circle r={3} fill="#d0a840" opacity={0.85} />}
+                  {cell.state === "reachable" && isCorner && <circle r={3} fill="#d0a840" opacity={0.85} />}
                 </g>
               )
             }
