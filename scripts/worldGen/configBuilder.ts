@@ -428,14 +428,15 @@ const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
 const buildTombConfigs = (): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
   for (const tomb of TOMB_JOURNEYS) {
-    // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match;
-    // constraint.mainEndReward is intentionally ignored here — tombs don't use pyramid end rewards
+    // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match
     const constraint = resolvePyramidConstraint(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
     const difficulty: Difficulty = constraint.difficulty ?? "starter"
     const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
 
-    const lastFloorReward: TreasureReward | undefined = constraint.mainEndReward
-      ? specToReward(constraint.mainEndReward, tomb.tier as Tier)
+    // Last floor always rewards the tomb's ward key so pyramid ward gates can be unlocked
+    const wardKeyId = TOMB_WARD_KEYS[tomb.id]
+    const lastFloorReward: TreasureReward | undefined = wardKeyId
+      ? { type: "tombKey", keyId: wardKeyId }
       : undefined
 
     const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => {

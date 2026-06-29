@@ -1,7 +1,7 @@
 # Expedition Redesign — Implementation Plan
 
 Companion to: `EXPEDITION_REDESIGN.md`, `PUZZLE_FAMILIES.md`, `docs/game-loop.md`, `docs/pyramid-interior-design.md`  
-Status: active plan · updated 2026-06-27
+Status: active plan · updated 2026-06-29
 
 ---
 
@@ -27,16 +27,34 @@ Status: active plan · updated 2026-06-27
 
 ---
 
-## World Builder Gaps (audit 2026-06-27)
+## Gameplay Completeness Audit (2026-06-29)
+
+Full end-to-end audit of what a player can actually do.
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Pyramid start → site map → puzzles → exit → complete | ✅ | Full flow works |
+| Tomb discovery via map pieces | ✅ | First tomb of each tier auto-discovered; later via location keys (Phase 8) |
+| Tomb site map flow (V3) | ✅ | Multi-floor, stairheads, exit all wired |
+| Ward gates (tomb keys gate pyramid sections) | ✅ | `completeCell` checks `wardKeys` from `useProgression` |
+| Ward key delivery from completed tomb | ✅ | Fixed 2026-06-29 — `buildTombConfigs` now sets `mainEndReward: { type: "tombKey" }` on last floor |
+| Multi-floor descent (stairheads) | ✅ | Works; no floor transition animation yet |
+| Hieroglyph fragments, mosaic pieces, map pieces tracked | ✅ | All collected and persisted |
+| Interior re-entry after back-out | ✅ | `interiorLevelNr` persists through `completeLevel`; re-entry check works |
+| Location keys → discover later tombs | ❌ | Phase 8 — not implemented; expert/master/wizard second+third tombs unreachable |
+| Map pieces on deep pyramid floors | ❌ | Phase 8 — all map pieces currently from loot drops, not authored site nodes |
+| Floor-key gates used in world data | ❌ | Phase 8+ — `floor-key` gate type exists and fully implemented in assembler/gameplay but world generator doesn't emit any yet; used only in Storybook |
+
+## World Builder Gaps (audit 2026-06-27, updated 2026-06-29)
 
 Gaps found between what the DSL can express, what the world generator produces, and what the game actually uses.
 
 | Gap | Severity | Status | Notes |
 |-----|----------|--------|-------|
-| Ward key never placed in any tomb site config | **Blocker** | 🔜 | Gates exist in junior+ pyramids requiring `starter_ward` etc., but no tomb chest rewards `{ type: "tombKey", keyId: "starter_ward" }`. Add to tomb site configs in Phase 7/8. |
-| `puzzleFamily` field ignored by assembler | **Blocker** | 🔜 | 200+ floor configs set `puzzleFamily: "tableau"` but `siteAssembler` always emits `family: "sumplete"`. Fixed by puzzle plugin system (Phase 2b). |
-| Floor-key gate type dormant | Minor | 🔜 | `{ type: "floor-key" }` in `GateConfig` type, zero uses in world data. Keep or remove — currently dead code. |
-| Staircase no exit-on-final-floor guardrail | Minor | 🔜 | Validator should assert last floor of every site uses `exitOrStaircase: "exit"`. Add to `siteValidator.ts`. |
+| Ward key never placed in any tomb site config | **Blocker** | ✅ | Fixed 2026-06-29: `buildTombConfigs` now places `{ type: "tombKey", keyId }` as `mainEndReward` on last floor |
+| `puzzleFamily` field ignored by assembler | **Blocker** | ✅ | Fixed in Phase 2b — assembler passes `config.puzzleFamily` through to room nodes |
+| Floor-key gate type dormant in world data | Minor | 🔜 | Fully implemented in engine; zero uses in generated world. Add to expert+ pyramid configs in Phase 8+. |
+| Staircase no exit-on-final-floor guardrail | Minor | 🔜 | Validator should assert last floor uses `exitOrStaircase: "exit"`. Add to `siteValidator.ts`. |
 | Gated section silent `hieroglyphs` default | Minor | ✅ | Assembler fallback is intentional; documented. |
 | Tomb ID references unvalidated | Design debt | 🔜 | `mapPiece.tombId` strings not cross-checked against `journeys.ts` at generation time. Add to `scripts/worldGen` validation pass. |
 
