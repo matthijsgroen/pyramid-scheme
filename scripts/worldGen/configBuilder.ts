@@ -1,12 +1,4 @@
-import type {
-  Difficulty,
-  FloorConfig,
-  SideSection,
-  SiteConfig,
-  Tier,
-  TreasureReward,
-  ChestSlotPlan,
-} from "./types"
+import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward, ChestSlotPlan } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"

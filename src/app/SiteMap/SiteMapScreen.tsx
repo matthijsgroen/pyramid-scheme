@@ -217,8 +217,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           Floor {currentFloor + 1}
         </div>
       )}
-      <div className="relative">
-        <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} />
+      <div className="relative h-screen w-screen">
+        <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} className="h-full w-full" />
       </div>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
       {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}

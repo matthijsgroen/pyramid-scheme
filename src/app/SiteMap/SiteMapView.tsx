@@ -7,6 +7,7 @@ type Props = {
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
   explorerPos?: readonly [number, number]
+  className?: string
 }
 
 const CELL = 44
@@ -415,7 +416,7 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false, explorerPos }: Props) => {
+export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false, explorerPos, className }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
 
   const PAD = 30
@@ -423,64 +424,73 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
   const svgHeight = grid.rows * CELL + PAD * 2
 
   return (
-    <svg
-      width={svgWidth}
-      height={svgHeight}
-      viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-      role="img"
-      aria-label="site map"
-      style={{ background: "#110d08" }}
-    >
-      <defs>
-        <pattern id="stone" width={20} height={20} patternUnits="userSpaceOnUse">
-          <rect width={20} height={20} fill="#110d08" />
-          <rect x={0} y={0} width={10} height={10} fill="#130f09" />
-          <rect x={10} y={10} width={10} height={10} fill="#130f09" />
-        </pattern>
-      </defs>
-      <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
+    <div className={`overflow-auto${className ? ` ${className}` : ""}`}>
+      <svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        role="img"
+        aria-label="site map"
+        style={{ background: "#110d08" }}
+      >
+        <defs>
+          <pattern id="stone" width={20} height={20} patternUnits="userSpaceOnUse">
+            <rect width={20} height={20} fill="#110d08" />
+            <rect x={0} y={0} width={10} height={10} fill="#130f09" />
+            <rect x={10} y={10} width={10} height={10} fill="#130f09" />
+          </pattern>
+        </defs>
+        <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
 
-      {Array.from({ length: grid.rows }, (_, r) =>
-        Array.from({ length: grid.cols }, (_, c) => {
-          const cell = grid.cells[r][c]
-          if (cell.type === "empty") return null
+        {Array.from({ length: grid.rows }, (_, r) =>
+          Array.from({ length: grid.cols }, (_, c) => {
+            const cell = grid.cells[r][c]
+            if (cell.type === "empty") return null
 
-          const cx = PAD + c * CELL + CELL / 2
-          const cy = PAD + r * CELL + CELL / 2
+            const cx = PAD + c * CELL + CELL / 2
+            const cy = PAD + r * CELL + CELL / 2
 
-          if (cell.type === "corridor") {
+            if (cell.type === "corridor") {
+              return (
+                <g key={`${r},${c}`} transform={`translate(${cx}, ${cy})`}>
+                  <CorridorCellShape cell={cell} />
+                </g>
+              )
+            }
+
+            // room cell
+            const state = cell.state
+            const isCompleted = state === "completed"
+            const clickable = onCellClick && (state === "reachable" || state === "completed")
+            const roomR = nodeRadius[cell.roomType]
+
             return (
-              <g key={`${r},${c}`} transform={`translate(${cx}, ${cy})`}>
-                <CorridorCellShape cell={cell} />
+              <g
+                key={`${r},${c}`}
+                transform={`translate(${cx}, ${cy})`}
+                onClick={clickable ? () => onCellClick(r, c) : undefined}
+                style={{ cursor: clickable ? "pointer" : "default" }}
+              >
+                <ConnectionStubs dirs={cell.dirs} state={state} />
+                <NodeBackground type={cell.roomType} />
+                <g opacity={isCompleted ? 0.45 : 1}>
+                  <NodeShape
+                    type={cell.roomType}
+                    state={state}
+                    gateVariant={cell.gateVariant}
+                    keyColor={cell.keyColor}
+                  />
+                </g>
+                {isCompleted && cell.roomType !== "fork" && cell.roomType !== "entrance" && (
+                  <CompletedBadge r={roomR} />
+                )}
               </g>
             )
-          }
+          })
+        )}
 
-          // room cell
-          const state = cell.state
-          const isCompleted = state === "completed"
-          const clickable = onCellClick && (state === "reachable" || state === "completed")
-          const roomR = nodeRadius[cell.roomType]
-
-          return (
-            <g
-              key={`${r},${c}`}
-              transform={`translate(${cx}, ${cy})`}
-              onClick={clickable ? () => onCellClick(r, c) : undefined}
-              style={{ cursor: clickable ? "pointer" : "default" }}
-            >
-              <ConnectionStubs dirs={cell.dirs} state={state} />
-              <NodeBackground type={cell.roomType} />
-              <g opacity={isCompleted ? 0.45 : 1}>
-                <NodeShape type={cell.roomType} state={state} gateVariant={cell.gateVariant} keyColor={cell.keyColor} />
-              </g>
-              {isCompleted && cell.roomType !== "fork" && cell.roomType !== "entrance" && <CompletedBadge r={roomR} />}
-            </g>
-          )
-        })
-      )}
-
-      {explorerPos && <ExplorerDot grid={grid} pos={explorerPos} />}
-    </svg>
+        {explorerPos && <ExplorerDot grid={grid} pos={explorerPos} />}
+      </svg>
+    </div>
   )
 }

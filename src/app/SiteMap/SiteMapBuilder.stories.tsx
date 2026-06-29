@@ -258,7 +258,7 @@ const MultiFloorExplorer = ({ siteConfig, seed }: { siteConfig: SiteConfig; seed
           Reset
         </button>
       </div>
-      {grid && <SiteMapView grid={grid} onCellClick={handleClick} />}
+      {grid && <SiteMapView grid={grid} onCellClick={handleClick} className="max-h-[80vh] max-w-[90vw]" />}
     </div>
   )
 }
@@ -283,12 +283,12 @@ const DenseFloorDemo = () => {
 
   if (!result.success) return <div className="p-4 text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
 
-  return <SiteMapView grid={result.grid} revealAllCells />
+  return <SiteMapView grid={result.grid} revealAllCells className="max-h-[90vh] max-w-[90vw]" />
 }
 
 export const DensePuzzlesAndKeys: StoryObj = {
   render: () => <DenseFloorDemo />,
-  parameters: { layout: "centered" },
+  parameters: { layout: "fullscreen" },
 }
 
 export const TwoFloorLayout: StoryObj = {
