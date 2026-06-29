@@ -497,9 +497,16 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
             const cy = PAD + r * CELL + CELL / 2
 
             if (cell.type === "corridor") {
+              const corridorClickable = onCellClick && cell.state === "reachable"
               return (
-                <g key={`${r},${c}`} transform={`translate(${cx}, ${cy})`}>
+                <g
+                  key={`${r},${c}`}
+                  transform={`translate(${cx}, ${cy})`}
+                  onClick={corridorClickable ? () => onCellClick(r, c) : undefined}
+                  style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                >
                   <CorridorCellShape cell={cell} />
+                  {cell.state === "reachable" && <circle r={3} fill="#d0a840" opacity={0.85} />}
                 </g>
               )
             }

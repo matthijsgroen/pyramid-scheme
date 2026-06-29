@@ -136,10 +136,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     (row: number, col: number) => {
       if (!grid) return
       const cell = getCell(grid, row, col)
-      if (!cell || cell.type !== "room") return
-      if (cell.state !== "reachable") return
+      if (!cell || cell.type === "empty" || cell.state !== "reachable") return
 
       const edgeId = encodeEdge(currentFloor, row, col)
+
+      if (cell.type === "corridor") {
+        // Clicking a corner/junction corridor reveals around the bend
+        journeys.markEdgeSolved(edgeId)
+        journeys.updatePosition(journeyId, edgeId)
+        return
+      }
+
+      if (cell.type !== "room") return
 
       if (cell.roomType === "entrance") {
         // Phase 4 adds the entrance seal; for now just complete it

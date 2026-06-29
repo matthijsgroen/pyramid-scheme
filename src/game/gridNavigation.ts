@@ -61,19 +61,27 @@ export const completeCell = (
     if (!neighbor || neighbor.type === "empty") continue
 
     if (neighbor.type === "corridor") {
-      // Mark visible if fogged
-      if (neighbor.state === "fogged") {
-        newCells[r][c] = { ...neighbor, state: "visible" }
-      }
-      // Add all dirs except opposite of fromDir
-      const oppDir = fromDir ? opposite[fromDir] : null
-      for (const d of neighbor.dirs) {
-        if (d === oppDir) continue
-        const [dr, dc] = MOVES[d]
-        const nr = r + dr,
-          nc = c + dc
-        if (!visited.has(`${nr},${nc}`)) {
-          queue.push({ r: nr, c: nc, fromDir: d })
+      // Straight-through: corridor continues in the same direction we arrived from, no branches.
+      // Anything else (corner, T-junction) is a blind spot the player must click to reveal.
+      const isStraight = fromDir !== null && neighbor.dirs.has(fromDir) && neighbor.dirs.size === 2
+      if (isStraight) {
+        if (neighbor.state === "fogged") {
+          newCells[r][c] = { ...neighbor, state: "visible" }
+        }
+        const oppDir = opposite[fromDir]
+        for (const d of neighbor.dirs) {
+          if (d === oppDir) continue
+          const [dr, dc] = MOVES[d]
+          const nr = r + dr,
+            nc = c + dc
+          if (!visited.has(`${nr},${nc}`)) {
+            queue.push({ r: nr, c: nc, fromDir: d })
+          }
+        }
+      } else {
+        // Corner/junction: mark reachable so player can click to look around it
+        if (neighbor.state === "fogged") {
+          newCells[r][c] = { ...neighbor, state: "reachable" }
         }
       }
     } else if (neighbor.type === "room") {

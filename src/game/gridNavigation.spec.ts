@@ -100,8 +100,10 @@ describe(completeCell, () => {
     if (gate.type === "room") expect(gate.state).toBe("visible")
   })
 
-  it("gate becomes reachable after completing the key room", () => {
+  it("gate becomes reachable after completing the key room then clicking the corner", () => {
     // layout: entrance(0,0) -e- key-chest(0,1) -s- corridor(1,1) -w- gate(1,0)
+    // The corridor at (1,1) is a corner {n,w}, so it becomes "reachable" after the chest.
+    // Clicking the corner then reveals the gate (now that we own the key).
     const grid: FloorGrid = {
       siteId: "test",
       rows: 2,
@@ -124,15 +126,22 @@ describe(completeCell, () => {
             type: "room",
             roomType: "gate",
             dirs: new Set<Direction>(["e"]),
-            state: "visible",
+            state: "fogged",
             requiredKeyId: "the-key",
           },
-          { type: "corridor", dirs: new Set<Direction>(["n", "w"]), state: "visible" },
+          { type: "corridor", dirs: new Set<Direction>(["n", "w"]), state: "fogged" },
         ],
       ],
     }
-    const updated = completeCell(grid, 0, 1) // complete the key chest
-    const gate = updated.cells[1][0]
+    const afterChest = completeCell(grid, 0, 1)
+    // Corner corridor becomes reachable (player can see it, must click to look around)
+    expect((afterChest.cells[1][1] as { state: string }).state).toBe("reachable")
+    // Gate still fogged (around the corner)
+    expect((afterChest.cells[1][0] as { state: string }).state).toBe("fogged")
+
+    // Player clicks the corner
+    const afterCorner = completeCell(afterChest, 1, 1)
+    const gate = afterCorner.cells[1][0]
     expect(gate.type).toBe("room")
     if (gate.type === "room") expect(gate.state).toBe("reachable")
   })
