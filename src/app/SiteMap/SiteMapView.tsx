@@ -168,20 +168,22 @@ const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
 
 const TreasureShape = ({ state, keyColor }: ShapeProps) => {
   const r = 12
+  const colorKey = state === "visible" ? "visible" : "reachable"
   const fill = treasureFill[state]
-  const stroke = treasureStroke[state]
+  const stroke = state !== "fogged" && keyColor ? KEY_COLOR_HEX[keyColor][colorKey] : treasureStroke[state]
   return (
     <>
       <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && keyColor && (
+        <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={KEY_COLOR_HEX[keyColor][colorKey]} fillOpacity={0.18} />
+      )}
       {state !== "fogged" && (
         <polygon
           points="0,-9 2.4,-3.2 8.6,-2.8 3.8,1.2 5.3,7.3 0,4 -5.3,7.3 -3.8,1.2 -8.6,-2.8 -2.4,-3.2"
           fill={treasureIcon[state]}
         />
       )}
-      {state !== "fogged" && keyColor && (
-        <circle cx={9} cy={-9} r={4} fill={KEY_COLOR_HEX[keyColor][state === "visible" ? "visible" : "reachable"]} />
-      )}
+      {state !== "fogged" && keyColor && <circle cx={9} cy={-9} r={4} fill={KEY_COLOR_HEX[keyColor][colorKey]} />}
     </>
   )
 }
