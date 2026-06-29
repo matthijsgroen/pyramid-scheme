@@ -278,11 +278,16 @@ describe(describeScope, () => {
     expect(describeScope({ level: "journey-pyramid", journey: "j1", pyramid: "first" })).toBe(
       "journey('j1').pyramid('first')"
     ))
-  it("formats floor scopes", () => {
-    expect(describeScope({ level: "global-floor", floor: 2 })).toBe("global.floor(2)")
-    expect(describeScope({ level: "tier-floor", tier: "expert", floor: 1 })).toBe("tier('expert').floor(1)")
+  it("formats global-floor scope", () => expect(describeScope({ level: "global-floor", floor: 2 })).toBe("global.floor(2)"))
+  it("formats tier-floor scope", () => expect(describeScope({ level: "tier-floor", tier: "expert", floor: 1 })).toBe("tier('expert').floor(1)"))
+  it("formats journey-floor scope", () =>
+    expect(describeScope({ level: "journey-floor", journey: "j1", floor: 0 })).toBe("journey('j1').floor(0)"))
+  it("formats tier-pyramid-floor scope", () =>
+    expect(describeScope({ level: "tier-pyramid-floor", tier: "expert", pyramid: "last", floor: 1 })).toBe(
+      "tier('expert').pyramid('last').floor(1)"
+    ))
+  it("formats journey-pyramid-floor scope", () =>
     expect(describeScope({ level: "journey-pyramid-floor", journey: "j1", pyramid: "last", floor: 0 })).toBe(
       "journey('j1').pyramid('last').floor(0)"
-    )
-  })
+    ))
 })
