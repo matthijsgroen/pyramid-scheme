@@ -410,23 +410,44 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
 
 // ── Phase 5: Validate structural rewards ──────────────────────────────────────
 
+const KNOWN_JOURNEY_IDS = new Set([
+  ...PYRAMID_JOURNEYS.map(j => j.id),
+  ...TOMB_JOURNEYS.map(j => j.id),
+])
+
 const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
   let mapPieces = 0
   let mosaicPieces = 0
+  const unknownTombIds: string[] = []
 
-  for (const siteConfigs of Object.values(configs)) {
+  const checkReward = (r: TreasureReward | undefined) => {
+    if (!r) return
+    if (r.type === "mapPiece") {
+      mapPieces++
+      if (!KNOWN_JOURNEY_IDS.has(r.tombId)) unknownTombIds.push(r.tombId)
+    }
+    if (r.type === "mosaicPiece") mosaicPieces++
+  }
+
+  for (const [siteId, siteConfigs] of Object.entries(configs)) {
     for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        if (floor.mainEndReward?.type === "mapPiece") mapPieces++
-        if (floor.mainEndReward?.type === "mosaicPiece") mosaicPieces++
+      for (let fi = 0; fi < floors.length; fi++) {
+        const floor = floors[fi]
+        const isLast = fi === floors.length - 1
+        if (isLast && floor.exitOrStaircase !== "exit")
+          throw new Error(`[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`)
+        checkReward(floor.mainEndReward)
+        for (const r of floor.chestRewards ?? []) checkReward(r)
         for (const s of floor.sideSections) {
-          if (s.endReward?.type === "mapPiece") mapPieces++
-          if (s.endReward?.type === "mosaicPiece") mosaicPieces++
+          checkReward(s.endReward)
+          for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
         }
       }
     }
   }
 
+  if (unknownTombIds.length > 0)
+    throw new Error(`[worldSpec] mapPiece rewards reference unknown journey IDs: ${[...new Set(unknownTombIds)].join(", ")}`)
   if (mapPieces !== WORLD_TARGETS.mapPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
   if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
@@ -537,14 +558,13 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   // Phase 4: Build SiteConfigs for pyramids
   const pyramidConfigs = buildSiteConfigs(adjustedPlan, assignments)
 
-  // Phase 5: Validate structural rewards (fail hard on violations)
-  validateRewardCounts(pyramidConfigs)
-
   // Phase 6: Build tomb site configs
   const tombConfigs = buildTombConfigs()
 
-  // Phase 7: Validate discovery graph — all secondary tombs reachable via mapPiece, no cycles
+  // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
+  // tomb ID references, and discovery graph solvability
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+  validateRewardCounts(allConfigs)
   validateDiscovery(allConfigs)
 
   return allConfigs

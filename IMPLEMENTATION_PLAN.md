@@ -41,8 +41,8 @@ Full end-to-end audit of what a player can actually do.
 | Multi-floor descent (stairheads) | ✅ | Works; no floor transition animation yet |
 | Hieroglyph fragments, mosaic pieces, map pieces tracked | ✅ | All collected and persisted |
 | Interior re-entry after back-out | ✅ | `interiorLevelNr` persists through `completeLevel`; re-entry check works |
-| Location keys → discover later tombs | ❌ | Phase 8 — not implemented; expert/master/wizard second+third tombs unreachable |
-| Map pieces on deep pyramid floors | ❌ | Phase 8 — all map pieces currently from loot drops, not authored site nodes |
+| Location keys → discover later tombs | ✅ | Works via mapPiece — first collection triggers discoverTomb; all secondary tombs covered in worldSpec |
+| Map pieces on deep pyramid floors | ✅ | Map pieces authored as site nodes in worldSpec (not loot drops); gated behind ward keys |
 | Floor-key gates used in world data | ❌ | Phase 8+ — `floor-key` gate type exists and fully implemented in assembler/gameplay but world generator doesn't emit any yet; used only in Storybook |
 
 ## World Builder Gaps (audit 2026-06-27, updated 2026-06-29)
@@ -54,9 +54,9 @@ Gaps found between what the DSL can express, what the world generator produces, 
 | Ward key never placed in any tomb site config | **Blocker** | ✅ | Fixed 2026-06-29: `buildTombConfigs` now places `{ type: "tombKey", keyId }` as `mainEndReward` on last floor |
 | `puzzleFamily` field ignored by assembler | **Blocker** | ✅ | Fixed in Phase 2b — assembler passes `config.puzzleFamily` through to room nodes |
 | Floor-key gate type dormant in world data | Minor | 🔜 | Fully implemented in engine; zero uses in generated world. Add to expert+ pyramid configs in Phase 8+. |
-| Staircase no exit-on-final-floor guardrail | Minor | 🔜 | Validator should assert last floor uses `exitOrStaircase: "exit"`. Add to `siteValidator.ts`. |
+| Staircase no exit-on-final-floor guardrail | Minor | ✅ | `validateRewardCounts` now asserts last floor of every site uses `exitOrStaircase: "exit"` |
 | Gated section silent `hieroglyphs` default | Minor | ✅ | Assembler fallback is intentional; documented. |
-| Tomb ID references unvalidated | Design debt | 🔜 | `mapPiece.tombId` strings not cross-checked against `journeys.ts` at generation time. Add to `scripts/worldGen` validation pass. |
+| Tomb ID references unvalidated | Design debt | ✅ | `validateRewardCounts` cross-checks every `mapPiece.tombId` against known journey IDs |
 
 ---
 
