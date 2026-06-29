@@ -280,22 +280,10 @@ const DenseFloorDemo = () => {
     ],
   }
   const result = useMemo(() => assembleFloor("dense", config, 2), [])
-  const [grid, setGrid] = useState<FloorGrid | null>(result.success ? result.grid : null)
 
-  if (!grid)
-    return <div className="p-4 text-red-400">Assembly failed: {JSON.stringify(!result.success && result.reasons)}</div>
+  if (!result.success) return <div className="p-4 text-red-400">Assembly failed: {JSON.stringify(result.reasons)}</div>
 
-  return (
-    <div className="flex flex-col gap-2">
-      <SiteMapView grid={grid} onCellClick={(r, c) => setGrid(prev => (prev ? completeCell(prev, r, c) : prev))} />
-      <button
-        className="rounded bg-amber-900 px-3 py-1 text-xs text-amber-200 hover:bg-amber-800"
-        onClick={() => result.success && setGrid(result.grid)}
-      >
-        Reset
-      </button>
-    </div>
-  )
+  return <SiteMapView grid={result.grid} revealAllCells />
 }
 
 export const DensePuzzlesAndKeys: StoryObj = {
