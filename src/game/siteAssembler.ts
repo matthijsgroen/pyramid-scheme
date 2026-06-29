@@ -378,35 +378,38 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     if (failed) continue
 
-    // Pre-compute key node IDs — group gated floor-key sections by color, one host per color
+    // Build a random key chain: treasure-end gated sections first (they relay the next key),
+    // staircase-end sections last (they're terminal and can't hold a relay key).
+    // chain[0]'s key → ungated section end; chain[i]'s key → chain[i-1]'s end room.
+    const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
+    const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")
+    const chain = [
+      ...[...gatedTreasureIdxs].sort(() => rand() - 0.5),
+      ...[...gatedStaircaseIdxs].sort(() => rand() - 0.5),
+    ]
+
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
-    const keyHostColorsMap = new Map<number, KeyColor[]>() // ungated section idx → all key colors it hosts
+    const chainKeyColorMap = new Map<number, KeyColor>() // section idx → key color its end room holds
 
-    const colorOrder: KeyColor[] = []
-    const gatedByColor = new Map<KeyColor, number[]>()
-    for (const gatedIdx of gatedFloorKeyIdxs) {
-      const gate = sideSections[gatedIdx].gate as { type: "floor-key"; color?: KeyColor }
-      const color: KeyColor = gate.color ?? "blue"
-      if (!gatedByColor.has(color)) {
-        gatedByColor.set(color, [])
-        colorOrder.push(color)
+    if (chain.length > 0 && ungatedIdxs.length > 0) {
+      const hostGroup = sectionGroups.find(g => g.sectionIdx === ungatedIdxs[0])
+      if (hostGroup) {
+        const [er, ec] = hostGroup.cells[hostGroup.cells.length - 1]
+        keyNodeIdMap.set(chain[0], nid(er, ec))
+        const gate0 = sideSections[chain[0]].gate as { type: "floor-key"; color?: KeyColor }
+        chainKeyColorMap.set(ungatedIdxs[0], gate0.color ?? "blue")
       }
-      gatedByColor.get(color)!.push(gatedIdx)
-    }
-    for (let ci = 0; ci < colorOrder.length; ci++) {
-      const color = colorOrder[ci]
-      const hostIdx = ungatedIdxs[ci % ungatedIdxs.length]
-      const hostGroup = sectionGroups.find(g => g.sectionIdx === hostIdx)
-      if (!hostGroup) continue
-      const [er, ec] = hostGroup.cells[hostGroup.cells.length - 1]
-      const keyId = nid(er, ec)
-      if (!keyHostColorsMap.has(hostIdx)) keyHostColorsMap.set(hostIdx, [])
-      keyHostColorsMap.get(hostIdx)!.push(color)
-      for (const gatedIdx of gatedByColor.get(color)!) keyNodeIdMap.set(gatedIdx, keyId)
+      for (let ci = 1; ci < chain.length; ci++) {
+        const prevGroup = sectionGroups.find(g => g.sectionIdx === chain[ci - 1])
+        if (!prevGroup) continue
+        const [er, ec] = prevGroup.cells[prevGroup.cells.length - 1]
+        keyNodeIdMap.set(chain[ci], nid(er, ec))
+        const gateI = sideSections[chain[ci]].gate as { type: "floor-key"; color?: KeyColor }
+        chainKeyColorMap.set(chain[ci - 1], gateI.color ?? "blue")
+      }
     }
 
-    // Determine which section indices are key hosts
-    const keyHostIdxs = new Set(keyHostColorsMap.keys())
+    const chainKeyHostIdxs = new Set(chainKeyColorMap.keys())
 
     // Build room cell specs: posKey -> room properties
     type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state">
@@ -462,7 +465,6 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
       const keyNodeId = isFloorKeyGate ? keyNodeIdMap.get(sectionIdx) : undefined
-      const isKeyHost = keyHostIdxs.has(sectionIdx)
 
       let contentStart = 0
 
@@ -500,13 +502,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
       // End node
       const [er, ec] = cells[cells.length - 1]
-      if (isKeyHost) {
-        const hostColors = keyHostColorsMap.get(sectionIdx) ?? []
+      if (chainKeyHostIdxs.has(sectionIdx)) {
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: { type: "tombKey", keyId: nid(er, ec) },
-          ...(hostColors.length === 1 ? { keyColor: hostColors[0] } : {}),
-          ...(hostColors.length > 1 ? { keyColors: hostColors } : {}),
+          keyColor: chainKeyColorMap.get(sectionIdx),
         })
       } else if (section.end === "staircase") {
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })

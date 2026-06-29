@@ -57,40 +57,52 @@ const reachableFrom = (
 export const validateSite = (grid: FloorGrid): ValidationResult => {
   const reasons: ValidationReason[] = []
 
-  // Collect gate rooms and their positions
+  // Iterative key collection: simulate exploration. BFS → collect reachable keys →
+  // unlock new gates → repeat. Correctly handles key chains (key behind a gate).
+  const collectedKeys = new Set<string>()
+  let changed = true
+  while (changed) {
+    changed = false
+    const reachable = reachableFrom(grid, grid.entrancePos, collectedKeys)
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (
+          cell.type === "room" &&
+          cell.roomType === "treasure" &&
+          cell.reward?.type === "tombKey" &&
+          reachable.has(posKey(r, c)) &&
+          !collectedKeys.has(cell.reward.keyId)
+        ) {
+          collectedKeys.add(cell.reward.keyId)
+          changed = true
+        }
+      }
+    }
+  }
+
+  // All floor-key gates must have a collectible key
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
       if (cell.roomType === "gate" && cell.requiredKeyId && cell.gateVariant === "floor-key") {
-        const gatePos: Pos = [r, c]
-        const keyId = cell.requiredKeyId
-
-        // Find the key room (treasure with tombKey reward where keyId matches)
-        let keyPos: Pos | null = null
-        for (let kr = 0; kr < grid.rows; kr++) {
-          for (let kc = 0; kc < grid.cols; kc++) {
-            const kcCell = grid.cells[kr][kc]
-            if (
-              kcCell.type === "room" &&
-              kcCell.roomType === "treasure" &&
-              kcCell.reward?.type === "tombKey" &&
-              kcCell.reward.keyId === keyId
-            ) {
-              keyPos = [kr, kc]
+        if (!collectedKeys.has(cell.requiredKeyId)) {
+          const gatePos: Pos = [r, c]
+          let keyPos: Pos = gatePos
+          for (let kr = 0; kr < grid.rows; kr++) {
+            for (let kc = 0; kc < grid.cols; kc++) {
+              const kcell = grid.cells[kr][kc]
+              if (
+                kcell.type === "room" &&
+                kcell.roomType === "treasure" &&
+                kcell.reward?.type === "tombKey" &&
+                kcell.reward.keyId === cell.requiredKeyId
+              )
+                keyPos = [kr, kc]
             }
           }
-        }
-
-        if (!keyPos) {
-          reasons.push({ type: "keyAfterGate", gatePos, keyPos: gatePos })
-          continue
-        }
-
-        // Check key is reachable without traversing the gate
-        const reachableWithoutGate = reachableFrom(grid, grid.entrancePos, new Set(), gatePos)
-        if (!reachableWithoutGate.has(posKey(keyPos[0], keyPos[1]))) {
           reasons.push({ type: "keyAfterGate", gatePos, keyPos })
         }
       }
