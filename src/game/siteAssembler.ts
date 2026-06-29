@@ -33,7 +33,7 @@ const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number)
 }
 
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
-// Returns adjacency function, BFS shortest path from entrance to center, and passages set.
+// Returns adjacency function, BFS path from entrance to farthest cell, and passages set.
 const buildMaze = (N: number, entR: number, entC: number, rand: () => number) => {
   const passages = new Set<string>()
   const visited = new Set<string>()
@@ -62,23 +62,27 @@ const buildMaze = (N: number, entR: number, entC: number, rand: () => number) =>
       ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc))
     )
 
-  // BFS from entrance to center
-  const mid = Math.floor(N / 2)
+  // BFS from entrance to find farthest reachable cell (deepest dead-end in spanning tree)
   const par = new Map<string, string | null>([[`${entR},${entC}`, null]])
-  const q: Array<[number, number]> = [[entR, entC]]
-  outer: while (q.length > 0) {
-    const [r, c] = q.shift()!
+  const q: Array<[number, number, number]> = [[entR, entC, 0]]
+  let farthest: [number, number] = [entR, entC]
+  let maxDist = 0
+  while (q.length > 0) {
+    const [r, c, d] = q.shift()!
+    if (d > maxDist) {
+      maxDist = d
+      farthest = [r, c]
+    }
     for (const [nr, nc] of neighbors(r, c)) {
       if (!par.has(`${nr},${nc}`)) {
         par.set(`${nr},${nc}`, `${r},${c}`)
-        q.push([nr, nc])
-        if (nr === mid && nc === mid) break outer
+        q.push([nr, nc, d + 1])
       }
     }
   }
 
   const mainPath: Array<[number, number]> = []
-  let cur: string | null = `${mid},${mid}`
+  let cur: string | null = `${farthest[0]},${farthest[1]}`
   while (cur) {
     const [r, c] = cur.split(",").map(Number)
     mainPath.unshift([r, c])
@@ -189,43 +193,18 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
-    // At least 1 corridor between each room node; goal stays at center (mainPath end).
-    // Rooms spread evenly between position 2 and mainPath.length-3,
-    // guaranteeing 1 corridor after entrance and 1 before goal. Goal stays at center.
+    // Stride-2 spacing: 1 corridor between each room; exit placed one step past the goal
     const interLen = intermediateTypes.length
-    const minPathLen = interLen > 0 ? interLen * 2 + 3 : 2
-    if (mainPath.length < minPathLen) continue
-
-    const mainPathSet = new Set(mainPath.map(([r, c]) => `${r},${c}`))
+    const minPathLen = interLen * 2 + 3
+    if (mainPath.length < minPathLen + 1) continue
 
     const mainNodeCells: Array<[number, number]> = [mainPath[0]]
-    if (interLen > 0) {
-      const first = 2
-      const last = mainPath.length - 3
-      for (let i = 0; i < interLen; i++) {
-        const pos =
-          interLen === 1 ? Math.round((first + last) / 2) : Math.round(first + (i * (last - first)) / (interLen - 1))
-        mainNodeCells.push(mainPath[pos])
-      }
-    }
-    mainNodeCells.push(mainPath[mainPath.length - 1])
+    for (let i = 0; i < interLen; i++) mainNodeCells.push(mainPath[(i + 1) * 2])
+    mainNodeCells.push(mainPath[minPathLen - 1])
 
-    const usedCells = new Set<string>(mainPathSet)
-
-    // Exit/stairhead: free cell adjacent to center (end of full mainPath) — same as before
-    const mid = Math.floor(N / 2)
-    const adjFree = neighbors(mid, mid).filter(([nr, nc]) => !usedCells.has(`${nr},${nc}`))
-    const onEntranceCorridor = (nr: number, nc: number): boolean => {
-      if (entR === mid) return nr === mid
-      if (entC === mid) return nc === mid
-      return nr === entR || nc === mid
-    }
-    const pool = adjFree.filter(([nr, nc]) => !onEntranceCorridor(nr, nc))
-    if (pool.length === 0) continue
-    const deadEnds = pool.filter(([nr, nc]) => neighbors(nr, nc).length === 1)
-    const exitCandidates = deadEnds.length > 0 ? deadEnds : pool
-    const exitCell = exitCandidates[Math.floor(rand() * exitCandidates.length)]
-    usedCells.add(`${exitCell[0]},${exitCell[1]}`)
+    // Full mainPath as corridor so sections can branch from anywhere along it
+    const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
+    const [exR, exC] = mainPath[minPathLen]
 
     // Assign each section to cells branching from any main path cell (excluding center).
     type SectionGroup = {
@@ -461,7 +440,6 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     }
 
     // Exit / stairhead
-    const [exR, exC] = exitCell
     roomSpecs.set(posKey(exR, exC), {
       roomType: config.exitOrStaircase === "exit" ? "exit" : "stairhead",
     })

@@ -43,14 +43,11 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("places goal (mosaicPiece) at grid center", () => {
+  it("places goal (mosaicPiece) somewhere on the grid", () => {
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
     const goal = findRoom(result.grid, c => c.reward?.type === "mosaicPiece")
     expect(goal).not.toBeNull()
-    const mid = Math.floor(result.grid.rows / 2)
-    expect(goal!.r).toBe(mid)
-    expect(goal!.c).toBe(mid)
   })
 
   it("has an entrance node on the grid edge", () => {
