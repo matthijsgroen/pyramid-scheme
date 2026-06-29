@@ -23,6 +23,7 @@ export type SideSectionConstraint = {
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   endReward?: RewardSpec
+  sideSections?: SideSectionConstraint[]
 }
 
 export type FloorConstraint = {

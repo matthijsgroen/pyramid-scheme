@@ -1,4 +1,12 @@
-import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward, ChestSlotPlan } from "./types"
+import type {
+  Difficulty,
+  FloorConfig,
+  SideSection,
+  SiteConfig,
+  Tier,
+  TreasureReward,
+  ChestSlotPlan,
+} from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraint } from "./constraintResolver"
@@ -206,12 +214,24 @@ const buildSideSections = (
   for (const cs of constraintSections ?? []) {
     const gate = specToGate(cs.gate)
     const endReward = cs.endReward ? specToReward(cs.endReward, tier as Tier) : undefined
+    const subSections = cs.sideSections?.map(sub => {
+      const subGate = specToGate(sub.gate)
+      const subEndReward = sub.endReward ? specToReward(sub.endReward, tier as Tier) : undefined
+      return {
+        pathPuzzles: typeof sub.pathPuzzles === "number" ? sub.pathPuzzles : 0,
+        difficulty: sub.difficulty ?? difficulty,
+        end: "treasure" as const,
+        ...(subGate ? { gate: subGate } : {}),
+        ...(subEndReward ? { endReward: subEndReward } : {}),
+      }
+    })
     sections.push({
       pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
       difficulty: cs.difficulty ?? difficulty,
       end: "treasure" as const,
       ...(gate ? { gate } : {}),
       ...(endReward ? { endReward } : {}),
+      ...(subSections?.length ? { sideSections: subSections } : {}),
     })
   }
 

@@ -39,13 +39,16 @@ export type FloorGrid = {
 export type GateConfig = { type: "floor-key"; color?: KeyColor } | { type: "tomb-key"; wardKeyId: string }
 export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
-export type SideSection = {
+export type SubSection = {
   pathPuzzles: number
   chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase"
   gate?: GateConfig
   endReward?: TreasureReward
+}
+export type SideSection = SubSection & {
+  sideSections?: SubSection[]
 }
 export type FloorConfig = {
   pathPuzzles: number

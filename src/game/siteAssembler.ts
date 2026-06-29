@@ -8,6 +8,7 @@ import type {
   CorridorCell,
   RoomCell,
   KeyColor,
+  SubSection,
 } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
@@ -152,7 +153,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     1 + // exit/stairhead
     sideSections.reduce((sum, sec) => {
       const si = buildIntermediateTypes(sec.pathPuzzles, sec.chestEvery ?? 0)
-      return sum + si.length + 1 + (sec.gate ? 1 : 0)
+      const rc = si.length + 1 + (sec.gate ? 1 : 0)
+      const secCells = rc <= 1 ? rc : (rc - 1) * 2 + 1
+      const subCells = (sec.sideSections ?? []).reduce((s2, sub) => {
+        const subI = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
+        const subRc = subI.length + 1 + (sub.gate ? 1 : 0)
+        return s2 + (subRc <= 1 ? subRc : (subRc - 1) * 2 + 1)
+      }, 0)
+      return sum + secCells + subCells
     }, 0)
 
   // Derive odd grid size: enough cells + padding for layout freedom
@@ -233,7 +241,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     for (let si = 0; si < sideSections.length; si++) {
       const section = sideSections[si]
       const secIntermediate = buildIntermediateTypes(section.pathPuzzles, section.chestEvery ?? 0)
-      const needed = secIntermediate.length + 1 + (section.gate ? 1 : 0)
+      const roomCount = secIntermediate.length + 1 + (section.gate ? 1 : 0)
+      const needed = roomCount <= 1 ? roomCount : (roomCount - 1) * 2 + 1
       let placed = false
 
       for (const {
@@ -263,6 +272,116 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (!placed) {
         failed = true
         break
+      }
+    }
+
+    // ── Sub-sections: branch from cells of parent sections ─────────────────
+    type SubSectionGroup = {
+      subSection: SubSection
+      cells: Array<[number, number]>
+      intermediate: Array<"puzzle" | "chest">
+      keyNodeId?: string
+      isKeyHost: boolean
+      keyHostColor?: KeyColor
+    }
+    const subSectionGroups: SubSectionGroup[] = []
+
+    for (const group of sectionGroups) {
+      if (failed) break
+      const parentSection = sideSections[group.sectionIdx]
+      if (!parentSection.sideSections?.length) continue
+
+      let subSects = parentSection.sideSections
+      // Auto-inject ungated key-holder if all sub-sections are floor-key gated
+      const allSubGated = subSects.every(s => s.gate?.type === "floor-key")
+      const anySubUngated = subSects.some(s => !s.gate)
+      if (allSubGated && !anySubUngated)
+        subSects = [...subSects, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
+
+      const subGatedIdxs = subSects.map((_, i) => i).filter(i => subSects[i].gate?.type === "floor-key")
+      const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate)
+
+      // Branch candidates: parent section cells (excluding end cell)
+      const subBranchCandidates = group.cells
+        .slice(0, -1)
+        .filter(([pr, pc]) => neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)))
+        .sort(() => rand() - 0.5)
+
+      const placedSubs: Array<{
+        idx: number
+        cells: Array<[number, number]>
+        intermediate: Array<"puzzle" | "chest">
+      }> = []
+
+      for (let si = 0; si < subSects.length; si++) {
+        const sub = subSects[si]
+        const subIntermediate = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
+        const subRoomCount = subIntermediate.length + 1 + (sub.gate ? 1 : 0)
+        const subNeeded = subRoomCount <= 1 ? subRoomCount : (subRoomCount - 1) * 2 + 1
+        let placed = false
+
+        for (const [pcr, pcc] of subBranchCandidates) {
+          const freeAdj = neighbors(pcr, pcc)
+            .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
+            .sort(() => rand() - 0.5)
+          if (freeAdj.length === 0) continue
+          for (const [startR, startC] of freeAdj) {
+            usedCells.add(`${startR},${startC}`)
+            const rest = extendPath(startR, startC, subNeeded - 1, neighbors, usedCells, rand)
+            if (rest === null) {
+              usedCells.delete(`${startR},${startC}`)
+              continue
+            }
+            const cells: Array<[number, number]> = [[startR, startC], ...rest]
+            cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
+            placedSubs.push({ idx: si, cells, intermediate: subIntermediate })
+            placed = true
+            break
+          }
+          if (placed) break
+        }
+        if (!placed) {
+          failed = true
+          break
+        }
+      }
+      if (failed) break
+
+      // Key distribution for this parent's sub-sections
+      const subColorOrder: KeyColor[] = []
+      const subGatedByColor = new Map<KeyColor, number[]>()
+      for (const gatedIdx of subGatedIdxs) {
+        const gate = subSects[gatedIdx].gate as { type: "floor-key"; color?: KeyColor }
+        const color: KeyColor = gate.color ?? "blue"
+        if (!subGatedByColor.has(color)) {
+          subGatedByColor.set(color, [])
+          subColorOrder.push(color)
+        }
+        subGatedByColor.get(color)!.push(gatedIdx)
+      }
+      const subKeyNodeIdMap = new Map<number, string>()
+      const subKeyHostColorMap = new Map<number, KeyColor>()
+      for (let ci = 0; ci < subColorOrder.length; ci++) {
+        const color = subColorOrder[ci]
+        const hostIdx = subUngatedIdxs[ci % subUngatedIdxs.length]
+        const hostPlaced = placedSubs.find(g => g.idx === hostIdx)
+        if (!hostPlaced) continue
+        const [er, ec] = hostPlaced.cells[hostPlaced.cells.length - 1]
+        const keyId = nid(er, ec)
+        subKeyHostColorMap.set(hostIdx, color)
+        for (const gatedIdx of subGatedByColor.get(color)!) subKeyNodeIdMap.set(gatedIdx, keyId)
+      }
+      const subKeyHostIdxs = new Set(subKeyHostColorMap.keys())
+
+      for (const { idx, cells, intermediate } of placedSubs) {
+        subSectionGroups.push({
+          subSection: subSects[idx],
+          cells,
+          intermediate,
+          keyNodeId: subKeyNodeIdMap.get(idx),
+          isKeyHost: subKeyHostIdxs.has(idx),
+          keyHostColor: subKeyHostColorMap.get(idx),
+        })
       }
     }
 
@@ -371,9 +490,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
-      // Intermediate nodes within section (puzzles + chests)
+      // Intermediate nodes within section (puzzles + chests), stride-2 to leave corridors
       for (let pi = 0; pi < intermediate.length; pi++) {
-        const [r, c] = cells[contentStart + pi]
+        const [r, c] = cells[(contentStart + pi) * 2]
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
         } else {
@@ -396,6 +515,59 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: section.endReward ?? { type: "hieroglyphs" },
+        })
+      }
+    }
+
+    // Sub-section nodes
+    for (const { subSection, cells, intermediate, keyNodeId, isKeyHost, keyHostColor } of subSectionGroups) {
+      const isFloorKeyGate = subSection.gate?.type === "floor-key"
+      const isTombKeyGate = subSection.gate?.type === "tomb-key"
+      let contentStart = 0
+
+      if (isFloorKeyGate && keyNodeId) {
+        const [gr, gc] = cells[0]
+        const floorKeyGate = subSection.gate as { type: "floor-key"; color?: KeyColor }
+        roomSpecs.set(posKey(gr, gc), {
+          roomType: "gate",
+          requiredKeyId: keyNodeId,
+          gateVariant: "floor-key",
+          keyColor: floorKeyGate.color ?? "blue",
+        })
+        contentStart = 1
+      } else if (isTombKeyGate) {
+        const [gr, gc] = cells[0]
+        const tombGate = subSection.gate as { type: "tomb-key"; wardKeyId: string }
+        roomSpecs.set(posKey(gr, gc), {
+          roomType: "gate",
+          requiredKeyId: tombGate.wardKeyId,
+          gateVariant: "tomb-key",
+        })
+        contentStart = 1
+      }
+
+      for (let pi = 0; pi < intermediate.length; pi++) {
+        const [r, c] = cells[(contentStart + pi) * 2]
+        if (intermediate[pi] === "chest") {
+          roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+        } else {
+          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
+        }
+      }
+
+      const [er, ec] = cells[cells.length - 1]
+      if (isKeyHost) {
+        roomSpecs.set(posKey(er, ec), {
+          roomType: "treasure",
+          reward: { type: "tombKey", keyId: nid(er, ec) },
+          ...(keyHostColor ? { keyColor: keyHostColor } : {}),
+        })
+      } else if (subSection.end === "staircase") {
+        roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })
+      } else {
+        roomSpecs.set(posKey(er, ec), {
+          roomType: "treasure",
+          reward: subSection.endReward ?? { type: "hieroglyphs" },
         })
       }
     }

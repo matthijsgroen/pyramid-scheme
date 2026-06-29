@@ -9,13 +9,16 @@ export type TreasureReward =
   | { type: "hieroglyphFragment"; hieroglyphId: string }
   | { type: "tombKey"; keyId: string }
 
-export type SideSection = {
+export type SubSection = {
   pathPuzzles: number
   chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase"
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
+}
+export type SideSection = SubSection & {
+  sideSections?: SubSection[]
 }
 
 export type FloorConfig = {
