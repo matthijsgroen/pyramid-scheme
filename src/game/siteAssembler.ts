@@ -165,7 +165,6 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     if (attempt > 0 && attempt % 4 === 0) N += 2
 
     const rand = mulberry32(seed + attempt * 7919)
-    const mid = Math.floor(N / 2)
     const pkey = makePkey(N)
 
     // Pick entrance from edge cells (non-corner preferred for more connections)
@@ -183,21 +182,19 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
     // Need at least entrance + all intermediate nodes + goal distinct cells on the main path
-    if (mainPath.length < intermediateTypes.length + 2) continue
+    const minLen = intermediateTypes.length + 2
+    if (mainPath.length < minLen) continue
 
     const mainPathSet = new Set(mainPath.map(([r, c]) => `${r},${c}`))
 
-    // Select which main path cells become nodes (entrance, evenly-spaced intermediates, goal)
-    const nodeIndices = [0]
-    for (let i = 0; i < intermediateTypes.length; i++) {
-      nodeIndices.push(Math.round(((i + 1) * (mainPath.length - 1)) / (intermediateTypes.length + 1)))
-    }
-    nodeIndices.push(mainPath.length - 1)
-    const mainNodeCells = nodeIndices.map(i => mainPath[i])
+    // Pack rooms at the START of mainPath (zero corridor between rooms on the spine).
+    // Remaining mainPath cells are corridor, still available for section branching.
+    const mainNodeCells = mainPath.slice(0, minLen)
 
     const usedCells = new Set<string>(mainPathSet)
 
-    // Exit/stairhead: prefer dead-end cells adjacent to center
+    // Exit/stairhead: free cell adjacent to center (end of full mainPath) — same as before
+    const mid = Math.floor(N / 2)
     const adjFree = neighbors(mid, mid).filter(([nr, nc]) => !usedCells.has(`${nr},${nc}`))
     const onEntranceCorridor = (nr: number, nc: number): boolean => {
       if (entR === mid) return nr === mid
@@ -323,8 +320,6 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           roomType: "treasure",
           reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
         })
-      } else if (forkPositions.has(posKey(r, c))) {
-        roomSpecs.set(posKey(r, c), { roomType: "fork" })
       } else {
         roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
       }
