@@ -271,6 +271,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       keyNodeId?: string
       isKeyHost: boolean
       keyHostColor?: KeyColor
+      keyHostColors?: KeyColor[]
     }
     const subSectionGroups: SubSectionGroup[] = []
 
@@ -348,7 +349,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         subGatedByColor.get(color)!.push(gatedIdx)
       }
       const subKeyNodeIdMap = new Map<number, string>()
-      const subKeyHostColorMap = new Map<number, KeyColor>()
+      const subKeyHostColorsMap = new Map<number, KeyColor[]>()
       for (let ci = 0; ci < subColorOrder.length; ci++) {
         const color = subColorOrder[ci]
         const hostIdx = subUngatedIdxs[ci % subUngatedIdxs.length]
@@ -356,10 +357,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         if (!hostPlaced) continue
         const [er, ec] = hostPlaced.cells[hostPlaced.cells.length - 1]
         const keyId = nid(er, ec)
-        subKeyHostColorMap.set(hostIdx, color)
+        if (!subKeyHostColorsMap.has(hostIdx)) subKeyHostColorsMap.set(hostIdx, [])
+        subKeyHostColorsMap.get(hostIdx)!.push(color)
         for (const gatedIdx of subGatedByColor.get(color)!) subKeyNodeIdMap.set(gatedIdx, keyId)
       }
-      const subKeyHostIdxs = new Set(subKeyHostColorMap.keys())
+      const subKeyHostIdxs = new Set(subKeyHostColorsMap.keys())
 
       for (const { idx, cells, intermediate } of placedSubs) {
         subSectionGroups.push({
@@ -368,7 +370,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           intermediate,
           keyNodeId: subKeyNodeIdMap.get(idx),
           isKeyHost: subKeyHostIdxs.has(idx),
-          keyHostColor: subKeyHostColorMap.get(idx),
+          keyHostColor: subKeyHostColorsMap.get(idx)?.[0],
+          keyHostColors: subKeyHostColorsMap.get(idx),
         })
       }
     }
@@ -377,7 +380,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     // Pre-compute key node IDs — group gated floor-key sections by color, one host per color
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
-    const keyHostColorMap = new Map<number, KeyColor>() // ungated section idx → key color it hosts
+    const keyHostColorsMap = new Map<number, KeyColor[]>() // ungated section idx → all key colors it hosts
 
     const colorOrder: KeyColor[] = []
     const gatedByColor = new Map<KeyColor, number[]>()
@@ -397,12 +400,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (!hostGroup) continue
       const [er, ec] = hostGroup.cells[hostGroup.cells.length - 1]
       const keyId = nid(er, ec)
-      keyHostColorMap.set(hostIdx, color)
+      if (!keyHostColorsMap.has(hostIdx)) keyHostColorsMap.set(hostIdx, [])
+      keyHostColorsMap.get(hostIdx)!.push(color)
       for (const gatedIdx of gatedByColor.get(color)!) keyNodeIdMap.set(gatedIdx, keyId)
     }
 
     // Determine which section indices are key hosts
-    const keyHostIdxs = new Set(keyHostColorMap.keys())
+    const keyHostIdxs = new Set(keyHostColorsMap.keys())
 
     // Build room cell specs: posKey -> room properties
     type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state">
@@ -497,11 +501,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // End node
       const [er, ec] = cells[cells.length - 1]
       if (isKeyHost) {
-        const hostColor = keyHostColorMap.get(sectionIdx)
+        const hostColors = keyHostColorsMap.get(sectionIdx) ?? []
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: { type: "tombKey", keyId: nid(er, ec) },
-          ...(hostColor ? { keyColor: hostColor } : {}),
+          ...(hostColors.length === 1 ? { keyColor: hostColors[0] } : {}),
+          ...(hostColors.length > 1 ? { keyColors: hostColors } : {}),
         })
       } else if (section.end === "staircase") {
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })
@@ -514,7 +519,15 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     }
 
     // Sub-section nodes
-    for (const { subSection, cells, intermediate, keyNodeId, isKeyHost, keyHostColor } of subSectionGroups) {
+    for (const {
+      subSection,
+      cells,
+      intermediate,
+      keyNodeId,
+      isKeyHost,
+      keyHostColor,
+      keyHostColors,
+    } of subSectionGroups) {
       const isFloorKeyGate = subSection.gate?.type === "floor-key"
       const isTombKeyGate = subSection.gate?.type === "tomb-key"
       let contentStart = 0
@@ -551,10 +564,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
       const [er, ec] = cells[cells.length - 1]
       if (isKeyHost) {
+        const hColors = keyHostColors ?? (keyHostColor ? [keyHostColor] : [])
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: { type: "tombKey", keyId: nid(er, ec) },
-          ...(keyHostColor ? { keyColor: keyHostColor } : {}),
+          ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
+          ...(hColors.length > 1 ? { keyColors: hColors } : {}),
         })
       } else if (subSection.end === "staircase") {
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })
@@ -602,6 +617,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           ...(spec.requiredKeyId ? { requiredKeyId: spec.requiredKeyId } : {}),
           ...(spec.gateVariant ? { gateVariant: spec.gateVariant } : {}),
           ...(spec.keyColor ? { keyColor: spec.keyColor } : {}),
+          ...(spec.keyColors ? { keyColors: spec.keyColors } : {}),
           ...(spec.family ? { family: spec.family } : {}),
         }
         cells2D[r][c] = roomCell

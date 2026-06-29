@@ -56,7 +56,7 @@ const CompletedBadge = ({ r }: { r: number }) => (
 
 // ─── Node shape geometry ──────────────────────────────────────────────────────
 
-type ShapeProps = { state: CellState; gateVariant?: GateVariant; keyColor?: KeyColor }
+type ShapeProps = { state: CellState; gateVariant?: GateVariant; keyColor?: KeyColor; keyColors?: KeyColor[] }
 
 const KEY_COLOR_HEX: Record<KeyColor, { visible: string; reachable: string }> = {
   blue: { visible: "#2060c0", reachable: "#4090e0" },
@@ -166,16 +166,30 @@ const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
   )
 }
 
-const TreasureShape = ({ state, keyColor }: ShapeProps) => {
+const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
   const r = 12
   const colorKey = state === "visible" ? "visible" : "reachable"
+  const badges = keyColors && keyColors.length > 0 ? keyColors : keyColor ? [keyColor] : []
+  const primaryColor = badges[0]
   const fill = treasureFill[state]
-  const stroke = state !== "fogged" && keyColor ? KEY_COLOR_HEX[keyColor][colorKey] : treasureStroke[state]
+  const stroke = state !== "fogged" && primaryColor ? KEY_COLOR_HEX[primaryColor][colorKey] : treasureStroke[state]
+  // Badge positions: single circle at top-right; multiple stacked in a column, 2-col for 4+
+  const badgePositions = (n: number): [number, number][] => {
+    if (n === 1) return [[9, -9]]
+    if (n <= 3) return Array.from({ length: n }, (_, i) => [9, -12 + i * 6] as [number, number])
+    return Array.from({ length: n }, (_, i) => [i % 2 === 0 ? 6 : 12, -12 + Math.floor(i / 2) * 6] as [number, number])
+  }
+  const positions = badgePositions(badges.length)
+  const badgeR = badges.length === 1 ? 4 : 3
   return (
     <>
       <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={fill} stroke={stroke} strokeWidth={1.5} />
-      {state !== "fogged" && keyColor && (
-        <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={KEY_COLOR_HEX[keyColor][colorKey]} fillOpacity={0.18} />
+      {state !== "fogged" && primaryColor && (
+        <polygon
+          points={`0,${-r} ${r},0 0,${r} ${-r},0`}
+          fill={KEY_COLOR_HEX[primaryColor][colorKey]}
+          fillOpacity={0.18}
+        />
       )}
       {state !== "fogged" && (
         <polygon
@@ -183,7 +197,16 @@ const TreasureShape = ({ state, keyColor }: ShapeProps) => {
           fill={treasureIcon[state]}
         />
       )}
-      {state !== "fogged" && keyColor && <circle cx={9} cy={-9} r={4} fill={KEY_COLOR_HEX[keyColor][colorKey]} />}
+      {state !== "fogged" &&
+        badges.map((color, i) => (
+          <circle
+            key={color}
+            cx={positions[i][0]}
+            cy={positions[i][1]}
+            r={badgeR}
+            fill={KEY_COLOR_HEX[color][colorKey]}
+          />
+        ))}
     </>
   )
 }
@@ -270,8 +293,8 @@ const NodeBackground = ({ type }: { type: RoomType }) => {
   }
 }
 
-const NodeShape = ({ type, state, gateVariant, keyColor }: ShapeProps & { type: RoomType }) => {
-  const p = { state, gateVariant, keyColor }
+const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: RoomType }) => {
+  const p = { state, gateVariant, keyColor, keyColors }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -502,6 +525,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
                     state={state}
                     gateVariant={cell.gateVariant}
                     keyColor={cell.keyColor}
+                    keyColors={cell.keyColors}
                   />
                 </g>
                 {isCompleted && cell.roomType !== "fork" && cell.roomType !== "entrance" && (

@@ -23,6 +23,7 @@ export type RoomCell = {
   requiredKeyId?: string
   gateVariant?: GateVariant
   keyColor?: KeyColor
+  keyColors?: KeyColor[]
   family?: PuzzleFamily
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
