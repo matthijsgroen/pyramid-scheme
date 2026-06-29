@@ -1,7 +1,8 @@
 import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward, ChestSlotPlan } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
 import { computeFragmentAssignments } from "./fragmentAssigner"
-import { resolvePyramidConstraint } from "./constraintResolver"
+import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
+import type { Provenance } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "../worldSpec"
 import type {
   PyramidConstraint,
@@ -257,16 +258,23 @@ const buildSideSections = (
 
 // ── Phase 1: Build initial plan ───────────────────────────────────────────────
 
-type PyramidPlan = ChestSlotPlan & {
+export type PyramidPlan = ChestSlotPlan & {
   pyramidIndex: number
   levelCount: number
   constraint: PyramidConstraint
+  provenance: Provenance
 }
 
 const buildPlan = (): PyramidPlan[] =>
   PYRAMID_JOURNEYS.flatMap(j =>
     Array.from({ length: j.levelCount }, (_, i) => {
-      const constraint = resolvePyramidConstraint(worldSpec, j.id, j.tier as Tier, i, j.levelCount)
+      const { constraint, provenance } = resolvePyramidConstraintWithProvenance(
+        worldSpec,
+        j.id,
+        j.tier as Tier,
+        i,
+        j.levelCount
+      )
       const basePP =
         constraint.pathPuzzles !== undefined && typeof constraint.pathPuzzles === "number"
           ? constraint.pathPuzzles
@@ -278,37 +286,51 @@ const buildPlan = (): PyramidPlan[] =>
         levelCount: j.levelCount,
         pathPuzzles: scalePP(basePP, i, j.levelCount),
         constraint,
+        provenance,
       }
     })
   )
 
-// ── Phase 2: Auto-correct for fragment chest coverage ─────────────────────────
+// ── Phase 2: Assert chest capacity for fragment coverage ──────────────────────
 
 const TOTAL_FRAGMENTS = (Object.keys(TOMB_SYMBOLS) as Tier[]).reduce(
   (sum, tier) => sum + TOMB_SYMBOLS[tier].length * FRAGMENT_COUNT[tier],
   0
 )
 
-const autoCorrectPlan = (plan: PyramidPlan[]): PyramidPlan[] => {
-  const slots = () => plan.reduce((s, p) => s + chestCountFor(p.pathPuzzles), 0)
-  if (slots() >= TOTAL_FRAGMENTS) return plan
+// Exported for testing. Throws if a pyramid with an explicit pathPuzzles constraint is too
+// small; silently bumps unconstrained pyramids (those with no provenance on pathPuzzles).
+export const assertChestCapacity = (plan: PyramidPlan[]): PyramidPlan[] => {
+  const totalSlots = (p: PyramidPlan[]) => p.reduce((s, e) => s + chestCountFor(e.pathPuzzles), 0)
+  if (totalSlots(plan) >= TOTAL_FRAGMENTS) return plan
 
-  console.log(`  ⚙ Auto-correct: need ${TOTAL_FRAGMENTS - slots()} more chest slots — expanding smallest pyramids`)
   const mutable = plan.map(p => ({ ...p }))
 
-  while (mutable.reduce((s, p) => s + chestCountFor(p.pathPuzzles), 0) < TOTAL_FRAGMENTS) {
-    // Bump the pyramid that gains the most chests per +1 PP, breaking ties by current PP
+  while (totalSlots(mutable) < TOTAL_FRAGMENTS) {
+    // Bump the pyramid that gains the most chests per +1 PP (ties broken by lowest PP)
     mutable.sort(
       (a, b) =>
         chestCountFor(a.pathPuzzles + 1) -
           chestCountFor(a.pathPuzzles) -
-          (chestCountFor(b.pathPuzzles + 1) - chestCountFor(b.pathPuzzles)) || a.pathPuzzles - b.pathPuzzles
+          (chestCountFor(b.pathPuzzles + 1) - chestCountFor(b.pathPuzzles)) ||
+        a.pathPuzzles - b.pathPuzzles ||
+        // prefer unconstrained (no provenance) — keep explicit constraints at front, auto-correct at back
+        (b.provenance.pathPuzzles ? 1 : 0) - (a.provenance.pathPuzzles ? 1 : 0)
     )
-    mutable[mutable.length - 1].pathPuzzles++
+    const target = mutable[mutable.length - 1]
+    if (target.provenance.pathPuzzles) {
+      throw new Error(
+        `[worldSpec] Not enough chest slots for all hieroglyph fragments.\n` +
+          `  Pyramid journey='${target.journeyId}' index=${target.pyramidIndex + 1} has pathPuzzles=${target.pathPuzzles}\n` +
+          `  explicitly set by ${describeScope(target.provenance.pathPuzzles)} — cannot auto-correct.\n` +
+          `  Increase pathPuzzles in that rule or remove it to allow auto-correction.`
+      )
+    }
+    target.pathPuzzles++
   }
 
   const expanded = mutable.filter((p, i) => p.pathPuzzles !== plan[i].pathPuzzles).length
-  console.log(`  ✓ Expanded ${expanded} pyramid(s)`)
+  if (expanded > 0) console.log(`  ⚙ Auto-corrected: expanded ${expanded} unconstrained pyramid(s) for chest coverage`)
   return mutable
 }
 
@@ -410,10 +432,7 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
 
 // ── Phase 5: Validate structural rewards ──────────────────────────────────────
 
-const KNOWN_JOURNEY_IDS = new Set([
-  ...PYRAMID_JOURNEYS.map(j => j.id),
-  ...TOMB_JOURNEYS.map(j => j.id),
-])
+const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
 const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
   let mapPieces = 0
@@ -435,7 +454,9 @@ const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
         const floor = floors[fi]
         const isLast = fi === floors.length - 1
         if (isLast && floor.exitOrStaircase !== "exit")
-          throw new Error(`[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`)
+          throw new Error(
+            `[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
+          )
         checkReward(floor.mainEndReward)
         for (const r of floor.chestRewards ?? []) checkReward(r)
         for (const s of floor.sideSections) {
@@ -447,7 +468,9 @@ const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
   }
 
   if (unknownTombIds.length > 0)
-    throw new Error(`[worldSpec] mapPiece rewards reference unknown journey IDs: ${[...new Set(unknownTombIds)].join(", ")}`)
+    throw new Error(
+      `[worldSpec] mapPiece rewards reference unknown journey IDs: ${[...new Set(unknownTombIds)].join(", ")}`
+    )
   if (mapPieces !== WORLD_TARGETS.mapPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
   if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
@@ -460,7 +483,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
   for (const tomb of TOMB_JOURNEYS) {
     // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match
-    const constraint = resolvePyramidConstraint(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
+    const { constraint } = resolvePyramidConstraintWithProvenance(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
     const difficulty: Difficulty = constraint.difficulty ?? "starter"
     const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
 
@@ -549,8 +572,8 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
 
-  // Phase 2: Ensure enough chest slots for all hieroglyph fragments
-  const adjustedPlan = autoCorrectPlan(plan)
+  // Phase 2: Ensure enough chest slots — throws if an explicit pathPuzzles constraint is too small
+  const adjustedPlan = assertChestCapacity(plan)
 
   // Phase 3: Assign fragments to chest slots using the corrected plan
   const assignments = computeFragmentAssignments(adjustedPlan)

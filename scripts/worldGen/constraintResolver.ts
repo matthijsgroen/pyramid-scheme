@@ -1,6 +1,33 @@
 import type { Tier } from "./types"
 import type { Rule, RuleScope, PyramidConstraint, FloorConstraint, PyramidSelector } from "./dsl"
 
+export type Provenance = Partial<Record<keyof PyramidConstraint, RuleScope>>
+
+export const describeScope = (scope: RuleScope): string => {
+  switch (scope.level) {
+    case "global":
+      return "global"
+    case "global-floor":
+      return `global.floor(${scope.floor})`
+    case "tier":
+      return `tier('${scope.tier}')`
+    case "tier-floor":
+      return `tier('${scope.tier}').floor(${scope.floor})`
+    case "journey":
+      return `journey('${scope.journey}')`
+    case "journey-floor":
+      return `journey('${scope.journey}').floor(${scope.floor})`
+    case "tier-pyramid":
+      return `tier('${scope.tier}').pyramid('${scope.pyramid}')`
+    case "tier-pyramid-floor":
+      return `tier('${scope.tier}').pyramid('${scope.pyramid}').floor(${scope.floor})`
+    case "journey-pyramid":
+      return `journey('${scope.journey}').pyramid('${scope.pyramid}')`
+    case "journey-pyramid-floor":
+      return `journey('${scope.journey}').pyramid('${scope.pyramid}').floor(${scope.floor})`
+  }
+}
+
 // ── Specificity ───────────────────────────────────────────────────────────────
 
 const SPECIFICITY: Record<RuleScope["level"], number> = {
@@ -103,21 +130,41 @@ const validatePyramidConstraint = (c: PyramidConstraint, context: string): void 
 
 // ── Resolution ────────────────────────────────────────────────────────────────
 
+export const resolvePyramidConstraintWithProvenance = (
+  rules: Rule[],
+  journeyId: string,
+  tier: Tier,
+  pyramidIndex: number,
+  levelCount: number
+): { constraint: PyramidConstraint; provenance: Provenance } => {
+  const matching = rules
+    .filter(r => matchesPyramidScope(r.scope, journeyId, tier, pyramidIndex, levelCount))
+    .sort((a, b) => SPECIFICITY[a.scope.level] - SPECIFICITY[b.scope.level])
+
+  const constraint: PyramidConstraint = {}
+  const provenance: Provenance = {}
+  for (const rule of matching) {
+    const c = rule.constraints as PyramidConstraint
+    for (const key of Object.keys(c) as (keyof PyramidConstraint)[]) {
+      if (c[key] !== undefined) {
+        ;(constraint as Record<string, unknown>)[key] = c[key]
+        provenance[key] = rule.scope
+      }
+    }
+  }
+
+  validatePyramidConstraint(constraint, `journey=${journeyId} pyramid=${pyramidIndex + 1}`)
+  return { constraint, provenance }
+}
+
 export const resolvePyramidConstraint = (
   rules: Rule[],
   journeyId: string,
   tier: Tier,
   pyramidIndex: number,
   levelCount: number
-): PyramidConstraint => {
-  const merged = rules
-    .filter(r => matchesPyramidScope(r.scope, journeyId, tier, pyramidIndex, levelCount))
-    .sort((a, b) => SPECIFICITY[a.scope.level] - SPECIFICITY[b.scope.level])
-    .reduce<PyramidConstraint>((acc, rule) => mergeConstraints(acc, rule.constraints as PyramidConstraint), {})
-
-  validatePyramidConstraint(merged, `journey=${journeyId} pyramid=${pyramidIndex + 1}`)
-  return merged
-}
+): PyramidConstraint =>
+  resolvePyramidConstraintWithProvenance(rules, journeyId, tier, pyramidIndex, levelCount).constraint
 
 export const resolveFloorConstraint = (
   rules: Rule[],

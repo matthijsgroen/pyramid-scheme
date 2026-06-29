@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { resolvePyramidConstraint, resolveFloorConstraint } from "./constraintResolver"
+import {
+  resolvePyramidConstraint,
+  resolveFloorConstraint,
+  resolvePyramidConstraintWithProvenance,
+  describeScope,
+} from "./constraintResolver"
 import { global, tier, journey, rules } from "./dsl"
 import type { Rule } from "./dsl"
 
@@ -222,5 +227,62 @@ describe("specificity ordering", () => {
       journey("j1").pyramid("first", { difficulty: "expert" }),
     ])
     expect(resolve(r, "j1", 0, 3).difficulty).toBe("expert")
+  })
+})
+
+// ── Provenance tracking ───────────────────────────────────────────────────────
+
+describe(resolvePyramidConstraintWithProvenance, () => {
+  it("returns empty provenance when no rules match", () => {
+    const { provenance } = resolvePyramidConstraintWithProvenance([], "j1", "starter", 0, 1)
+    expect(Object.keys(provenance)).toHaveLength(0)
+  })
+
+  it("attributes field to the matching rule scope", () => {
+    const r = rules([tier("expert", { pathPuzzles: 3 })])
+    const { constraint, provenance } = resolvePyramidConstraintWithProvenance(r, "j1", "expert", 0, 1)
+    expect(constraint.pathPuzzles).toBe(3)
+    expect(provenance.pathPuzzles).toEqual({ level: "tier", tier: "expert" })
+  })
+
+  it("higher specificity rule wins — provenance reflects winner", () => {
+    const r = rules([tier("expert", { pathPuzzles: 3 }), journey("j1", { pathPuzzles: 5 })])
+    const { constraint, provenance } = resolvePyramidConstraintWithProvenance(r, "j1", "expert", 0, 1)
+    expect(constraint.pathPuzzles).toBe(5)
+    expect(provenance.pathPuzzles).toEqual({ level: "journey", journey: "j1" })
+  })
+
+  it("tracks each field independently", () => {
+    const r = rules([tier("expert", { pathPuzzles: 3, difficulty: "expert" }), journey("j1", { pathPuzzles: 5 })])
+    const { provenance } = resolvePyramidConstraintWithProvenance(r, "j1", "expert", 0, 1)
+    expect(provenance.pathPuzzles).toEqual({ level: "journey", journey: "j1" })
+    expect(provenance.difficulty).toEqual({ level: "tier", tier: "expert" })
+  })
+
+  it("non-matching rules leave no provenance", () => {
+    const r = rules([tier("expert", { pathPuzzles: 3 })])
+    const { provenance } = resolvePyramidConstraintWithProvenance(r, "j1", "starter", 0, 1)
+    expect(provenance.pathPuzzles).toBeUndefined()
+  })
+})
+
+describe(describeScope, () => {
+  it("formats global scope", () => expect(describeScope({ level: "global" })).toBe("global"))
+  it("formats tier scope", () => expect(describeScope({ level: "tier", tier: "expert" })).toBe("tier('expert')"))
+  it("formats journey scope", () => expect(describeScope({ level: "journey", journey: "j1" })).toBe("journey('j1')"))
+  it("formats tier-pyramid scope", () =>
+    expect(describeScope({ level: "tier-pyramid", tier: "expert", pyramid: "last" })).toBe(
+      "tier('expert').pyramid('last')"
+    ))
+  it("formats journey-pyramid scope", () =>
+    expect(describeScope({ level: "journey-pyramid", journey: "j1", pyramid: "first" })).toBe(
+      "journey('j1').pyramid('first')"
+    ))
+  it("formats floor scopes", () => {
+    expect(describeScope({ level: "global-floor", floor: 2 })).toBe("global.floor(2)")
+    expect(describeScope({ level: "tier-floor", tier: "expert", floor: 1 })).toBe("tier('expert').floor(1)")
+    expect(describeScope({ level: "journey-pyramid-floor", journey: "j1", pyramid: "last", floor: 0 })).toBe(
+      "journey('j1').pyramid('last').floor(0)"
+    )
   })
 })
