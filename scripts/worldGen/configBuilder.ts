@@ -70,7 +70,6 @@ const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
 // Translates a RewardSpec (string hint or structured object) to a TreasureReward
 const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   if (typeof spec === "string") return hintToReward(spec, tier)
-  if (spec.type === "locationKey") return { type: "locationKey", tombJourneyId: spec.tombJourneyId }
   return spec as TreasureReward
 }
 
@@ -467,22 +466,19 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
   return configs
 }
 
-// ── Phase 7: Auto-inject location keys + validate discovery graph ─────────────
+// ── Phase 7: Validate discovery graph ────────────────────────────────────────
 
-// Collect all tombJourneyIds that have a mapPiece or locationKey in any config OTHER than their own site
+// Collect all tombIds that have a mapPiece reward in any config OTHER than their own site
 const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string, Set<string>> => {
-  // discovered.get(tombId) = set of siteIds that carry a discovery reward for it
   const discovered = new Map<string, Set<string>>()
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
     for (const floors of siteConfigs) {
       for (const floor of floors) {
         const checkReward = (r: TreasureReward | undefined) => {
-          if (!r) return
-          const tombId = r.type === "mapPiece" ? r.tombId : r.type === "locationKey" ? r.tombJourneyId : null
-          if (!tombId || tombId === siteId) return
-          const set = discovered.get(tombId) ?? new Set()
+          if (r?.type !== "mapPiece" || r.tombId === siteId) return
+          const set = discovered.get(r.tombId) ?? new Set()
           set.add(siteId)
-          discovered.set(tombId, set)
+          discovered.set(r.tombId, set)
         }
         checkReward(floor.mainEndReward)
         for (const s of floor.sideSections) {
@@ -496,41 +492,14 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
   return discovered
 }
 
-const autoInjectLocationKeys = (allConfigs: Record<string, SiteConfig[]>): void => {
-  const discoveredBy = collectDiscoveredBy(allConfigs)
-  for (const [primaryId, secondaryIds] of Object.entries(SECONDARY_TOMBS)) {
-    for (const secId of secondaryIds) {
-      if (discoveredBy.has(secId)) continue
-      const tombSite = allConfigs[primaryId]
-      if (!tombSite?.[0]?.length) {
-        console.warn(`  ⚠ Cannot auto-inject locationKey for ${secId}: primary ${primaryId} not found`)
-        continue
-      }
-      const lastFloor = tombSite[0][tombSite[0].length - 1]
-      lastFloor.sideSections = [
-        ...lastFloor.sideSections,
-        {
-          pathPuzzles: 0,
-          difficulty: lastFloor.difficulty,
-          end: "treasure" as const,
-          endReward: { type: "locationKey" as const, tombJourneyId: secId },
-        },
-      ]
-      console.log(`  ✓ Auto-injected locationKey for ${secId} on last floor of ${primaryId}`)
-    }
-  }
-}
-
-// Validate that every secondary tomb is discoverable and there are no cycles.
-// A cycle would mean tombA's only discovery is inside tombA itself or a tomb only reachable via tombA.
+// Validate that every secondary tomb has a mapPiece reward reachable before it's needed.
+// Throws with a clear message listing any unreachable secondary tombs (missing or circular).
 const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
-  // AUTO_DISCOVERED = primary tombs (always visible)
   const allSecondary = new Set(Object.values(SECONDARY_TOMBS).flat())
   const discoveredBy = collectDiscoveredBy(allConfigs)
 
-  // BFS: start from auto-discovered, expand via secondary tombs whose hosts are reachable
+  // BFS: start from non-secondary sites (auto-discovered), expand when mapPiece host is reachable
   const reachable = new Set(Object.keys(allConfigs).filter(id => !allSecondary.has(id)))
-
   let changed = true
   while (changed) {
     changed = false
@@ -548,7 +517,7 @@ const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
   if (unreachable.length > 0) {
     throw new Error(
       `[worldSpec] Unsolvable discovery graph — these secondary tombs are unreachable:\n` +
-        unreachable.map(id => `  - ${id} (no locationKey/mapPiece found in a reachable site)`).join("\n")
+        unreachable.map(id => `  - ${id} (no mapPiece found in a reachable site)`).join("\n")
     )
   }
 }
@@ -574,11 +543,8 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   // Phase 6: Build tomb site configs
   const tombConfigs = buildTombConfigs()
 
-  // Phase 7: Auto-inject locationKey for any secondary tomb with no authored discovery
+  // Phase 7: Validate discovery graph — all secondary tombs reachable via mapPiece, no cycles
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  autoInjectLocationKeys(allConfigs)
-
-  // Phase 8: Validate discovery graph — all secondary tombs reachable, no cycles
   validateDiscovery(allConfigs)
 
   return allConfigs

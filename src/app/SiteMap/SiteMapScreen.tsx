@@ -29,7 +29,6 @@ type Props = {
 
 const rewardEmoji = (type: string) => {
   if (type === "mapPiece") return "📜"
-  if (type === "locationKey") return "🗺"
   if (type === "hieroglyphFragment") return "𓂀"
   if (type === "tombKey") return "🗝"
   if (type === "hieroglyphs") return "𓂀"
@@ -182,7 +181,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                 if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId)
                 else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
                 else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
-                else if (reward.type === "locationKey") progression.discoverTomb(reward.tombJourneyId)
                 else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
               },
             })
