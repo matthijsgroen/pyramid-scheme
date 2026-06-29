@@ -610,7 +610,7 @@ Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine f
 | 7 | Tomb interiors as site maps | ✅ | `journeyStructure.ts` (single source of truth), `buildTombConfigs()`, `renderPuzzle` prop on SiteMapScreen → replaced by plugin registry in 2b; TombExpedition V3 fork; 9 tombs in generatedWorld; **add ward key chest rewards to tomb site configs** |
 | 8 | Multi-tomb progression + map piece discovery | ✅ | map pieces on deep pyramid floors (worldSpec), tomb discovery via mapPiece, ward keys from tombs |
 | 9a | DSL full orthogonality | ✅ | `global().floor()`, `tier().floor()`, `journey().floor()` all implemented; specificity rank 0–9 in constraintResolver; gate spec uses `tombId` |
-| 9b | Solver hard constraints + error reporting | 🔜 | autoCorrect still runs silently; no provenance tracking per resolved value |
+| 9b | Solver hard constraints + error reporting | ✅ | Provenance per field; assertChestCapacity throws citing rule scope when explicit pathPuzzles is too small |
 | 9c | Density → branch count | ✅ | `"sparse"\|"normal"\|"dense"` → branch count via `INTENSITY_PATHS` in configBuilder |
 | 9d | Crocodiles plugin + tomb chest node | 🔜 | Not yet built |
 | 9e | Re-run world gen + reachability check | ✅ | `yarn validate-world` exists; `yarn generate-world` runs all validators and writes `generatedWorld.ts` |
