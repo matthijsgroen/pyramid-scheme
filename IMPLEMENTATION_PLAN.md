@@ -76,7 +76,7 @@ See original plan for full spec. No changes.
 
 ---
 
-## Phase 2b — Puzzle Plugin System 🔜
+## Phase 2b — Puzzle Plugin System ✅
 
 **Goal:** Replace the hardcoded `SumpleteBoard` + `renderPuzzle` escape hatch with a typed plugin registry. Adding a new puzzle type = one self-contained file. No changes to `SiteMapScreen`.
 
@@ -170,7 +170,7 @@ Pass `config.puzzleFamily` through to room specs (fixes the DSL gap where `puzzl
 
 ---
 
-## Phase 3 — V3 State + Wire Sumplete into Site Map 🔜
+## Phase 3 — V3 State + Wire Sumplete into Site Map ✅
 
 **Goal:** New state shapes live. Sumplete puzzle nodes work inside the site map shell. Tested via `SiteMapScreen` in Storybook / dev route.
 
@@ -608,11 +608,11 @@ Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine f
 | 5d | Wards — tombKeys wired into gridNavigation | ✅ | completeCell externalKeys param; SiteMapScreen passes wardKeys; tombKeyIds on ProgressionAPI |
 | 6 | Pyramid reward economies | ✅ | Fragment nodes, mosaic tiles, map pieces (tombId), ward key wiring; `inventoryLootLogic.ts`+`mapPieceLogic.ts` still present for legacy flat-level fallback |
 | 7 | Tomb interiors as site maps | ✅ | `journeyStructure.ts` (single source of truth), `buildTombConfigs()`, `renderPuzzle` prop on SiteMapScreen → replaced by plugin registry in 2b; TombExpedition V3 fork; 9 tombs in generatedWorld; **add ward key chest rewards to tomb site configs** |
-| 8 | Multi-tomb progression + location keys | 🔜 | `piecesRequired` per tomb (done), map pieces on deep floors, tomb discovery flow |
-| 9a | DSL full orthogonality | 🔜 | Add `global().floor()`, `tier().floor()`, `journey().floor()` scopes; specificity rank 1–10; gate spec uses `tombId` not `wardKeyId` |
-| 9b | Solver hard constraints + error reporting | 🔜 | Replace silent autoCorrect with errors citing source rule + location; provenance tracking per resolved value |
-| 9c | Density → branch count | 🔜 | `"sparse"\|"normal"\|"dense"` → branch count in configBuilder |
-| 9d | Crocodiles plugin + tomb chest node | 🔜 | `Crocodiles/plugin.tsx`; assembler emits chest after final tomb-floor puzzle; worldSpec authors `puzzleFamily:"crocodiles"` + ward key reward |
-| 9e | Re-run world gen + reachability check | 🔜 | Updated worldSpec with ward keys, re-generate `generatedWorld.ts`; `yarn validate-world` passes |
+| 8 | Multi-tomb progression + map piece discovery | ✅ | map pieces on deep pyramid floors (worldSpec), tomb discovery via mapPiece, ward keys from tombs |
+| 9a | DSL full orthogonality | ✅ | `global().floor()`, `tier().floor()`, `journey().floor()` all implemented; specificity rank 0–9 in constraintResolver; gate spec uses `tombId` |
+| 9b | Solver hard constraints + error reporting | 🔜 | autoCorrect still runs silently; no provenance tracking per resolved value |
+| 9c | Density → branch count | ✅ | `"sparse"\|"normal"\|"dense"` → branch count via `INTENSITY_PATHS` in configBuilder |
+| 9d | Crocodiles plugin + tomb chest node | 🔜 | Not yet built |
+| 9e | Re-run world gen + reachability check | ✅ | `yarn validate-world` exists; `yarn generate-world` runs all validators and writes `generatedWorld.ts` |
 | 10a | Exterior journey path map (bezier curve) | 🔜 | `JourneyPathView.tsx`, `WorldMapView.tsx`, bezier-spaced site nodes, explorer dot interpolation |
 | 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |
