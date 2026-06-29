@@ -108,23 +108,44 @@ const ForkShape = ({ state }: ShapeProps) => {
 const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
   const r = 12
   const isTomb = gateVariant === "tomb-key"
+  const colorKey = state === "visible" ? "visible" : "reachable"
   const fill = isTomb ? tombGateFill[state] : gateFill[state]
-  const stroke = isTomb ? tombGateStroke[state] : gateStroke[state]
+  const stroke =
+    state === "fogged"
+      ? isTomb
+        ? tombGateStroke[state]
+        : gateStroke[state]
+      : isTomb
+        ? tombGateStroke[state]
+        : keyColor
+          ? KEY_COLOR_HEX[keyColor][colorKey]
+          : gateStroke[state]
   const barColor =
     state === "fogged"
       ? "#3a2a10"
       : isTomb
-        ? state === "visible"
+        ? colorKey === "visible"
           ? "#8040c0"
           : "#9060e0"
         : keyColor
-          ? KEY_COLOR_HEX[keyColor][state === "visible" ? "visible" : "reachable"]
-          : state === "visible"
+          ? KEY_COLOR_HEX[keyColor][colorKey]
+          : colorKey === "visible"
             ? "#c04020"
             : "#c09020"
   return (
     <>
       <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={1} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && keyColor && !isTomb && (
+        <rect
+          x={-r}
+          y={-r}
+          width={r * 2}
+          height={r * 2}
+          rx={1}
+          fill={KEY_COLOR_HEX[keyColor][colorKey]}
+          fillOpacity={0.18}
+        />
+      )}
       {state !== "fogged" &&
         [-r / 3, 0, r / 3].map(bx => (
           <line
