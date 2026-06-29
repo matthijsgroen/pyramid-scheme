@@ -1,7 +1,7 @@
 # Expedition Redesign — Implementation Plan
 
 Companion to: `EXPEDITION_REDESIGN.md`, `PUZZLE_FAMILIES.md`, `docs/game-loop.md`, `docs/pyramid-interior-design.md`  
-Status: active plan · updated 2026-06-29
+Status: active plan · updated 2026-06-30
 
 ---
 
@@ -34,7 +34,7 @@ Full end-to-end audit of what a player can actually do.
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Pyramid start → site map → puzzles → exit → complete | ✅ | Full flow works |
-| Tomb discovery via map pieces | ✅ | First tomb of each tier auto-discovered; later via location keys (Phase 8) |
+| Tomb discovery via map pieces | ✅ | First tomb of each tier auto-discovered; later via mapPiece rewards gated behind ward keys |
 | Tomb site map flow (V3) | ✅ | Multi-floor, stairheads, exit all wired |
 | Ward gates (tomb keys gate pyramid sections) | ✅ | `completeCell` checks `wardKeys` from `useProgression` |
 | Ward key delivery from completed tomb | ✅ | Fixed 2026-06-29 — `buildTombConfigs` now sets `mainEndReward: { type: "tombKey" }` on last floor |
