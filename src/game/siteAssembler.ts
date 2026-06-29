@@ -190,7 +190,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
     // At least 1 corridor between each room node; goal stays at center (mainPath end).
-    // interLen nodes at positions 2, 4, ..., 2*interLen; goal at mainPath.last.
+    // Rooms spread evenly between position 2 and mainPath.length-3,
+    // guaranteeing 1 corridor after entrance and 1 before goal. Goal stays at center.
     const interLen = intermediateTypes.length
     const minPathLen = interLen > 0 ? interLen * 2 + 3 : 2
     if (mainPath.length < minPathLen) continue
@@ -198,7 +199,15 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const mainPathSet = new Set(mainPath.map(([r, c]) => `${r},${c}`))
 
     const mainNodeCells: Array<[number, number]> = [mainPath[0]]
-    for (let i = 0; i < interLen; i++) mainNodeCells.push(mainPath[(i + 1) * 2])
+    if (interLen > 0) {
+      const first = 2
+      const last = mainPath.length - 3
+      for (let i = 0; i < interLen; i++) {
+        const pos =
+          interLen === 1 ? Math.round((first + last) / 2) : Math.round(first + (i * (last - first)) / (interLen - 1))
+        mainNodeCells.push(mainPath[pos])
+      }
+    }
     mainNodeCells.push(mainPath[mainPath.length - 1])
 
     const usedCells = new Set<string>(mainPathSet)
