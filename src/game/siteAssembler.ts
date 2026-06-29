@@ -193,7 +193,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
-    // Stride-2 spacing: 1 corridor between each room; exit placed one step past the goal
+    // Stride-2 spacing: 1 corridor between each room.
+    // Exit placed at the farthest dead-end (degree-1) so no corridor passes through it.
     const interLen = intermediateTypes.length
     const minPathLen = interLen * 2 + 3
     if (mainPath.length < minPathLen + 1) continue
@@ -204,7 +205,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
-    const [exR, exC] = mainPath[minPathLen]
+    const [exR, exC] = mainPath[mainPath.length - 1]
 
     // Assign each section to cells branching from any main path cell (excluding center).
     type SectionGroup = {
