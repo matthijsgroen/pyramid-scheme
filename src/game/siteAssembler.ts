@@ -444,6 +444,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       roomType: config.exitOrStaircase === "exit" ? "exit" : "stairhead",
     })
 
+    // The farthest mainPath cell has degree 1 (no free adjacents) so no section can branch from it.
+    // Give it a small treasure so it renders as a room rather than a dead-end corridor.
+    const [farthestR, farthestC] = mainPath[mainPath.length - 1]
+    if (!roomSpecs.has(posKey(farthestR, farthestC))) {
+      roomSpecs.set(posKey(farthestR, farthestC), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+    }
+
     // Section nodes
     for (const group of sectionGroups) {
       const { sectionIdx, cells, intermediate } = group
