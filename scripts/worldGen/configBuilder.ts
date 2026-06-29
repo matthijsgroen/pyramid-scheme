@@ -24,6 +24,16 @@ const NEXT_TIER: Record<string, string | null> = {
   wizard: null,
 }
 
+// Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.
+// If a secondary tomb has no mapPiece/locationKey in any authored config, a locationKey
+// is auto-injected as a side section on the primary tomb's last floor.
+const SECONDARY_TOMBS: Record<string, string[]> = {
+  expert_treasure_tomb: ["expert_treasure_tomb_b"],
+  master_treasure_tomb: ["master_treasure_tomb_b"],
+  wizard_treasure_tomb: ["wizard_treasure_tomb_b"],
+  wizard_treasure_tomb_b: ["wizard_treasure_tomb_c"],
+}
+
 // Ward key required by back-half pyramids of each tier (key comes from prev tier's tomb)
 const PREV_TIER: Partial<Record<string, string>> = {
   junior: "starter",
@@ -60,6 +70,7 @@ const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
 // Translates a RewardSpec (string hint or structured object) to a TreasureReward
 const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   if (typeof spec === "string") return hintToReward(spec, tier)
+  if (spec.type === "locationKey") return { type: "locationKey", tombJourneyId: spec.tombJourneyId }
   return spec as TreasureReward
 }
 
@@ -435,9 +446,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 
     // Last floor always rewards the tomb's ward key so pyramid ward gates can be unlocked
     const wardKeyId = TOMB_WARD_KEYS[tomb.id]
-    const lastFloorReward: TreasureReward | undefined = wardKeyId
-      ? { type: "tombKey", keyId: wardKeyId }
-      : undefined
+    const lastFloorReward: TreasureReward | undefined = wardKeyId ? { type: "tombKey", keyId: wardKeyId } : undefined
 
     const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => {
       const isLast = i === tomb.levelCount - 1
@@ -456,6 +465,92 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     configs[tomb.id] = [floors]
   }
   return configs
+}
+
+// ── Phase 7: Auto-inject location keys + validate discovery graph ─────────────
+
+// Collect all tombJourneyIds that have a mapPiece or locationKey in any config OTHER than their own site
+const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string, Set<string>> => {
+  // discovered.get(tombId) = set of siteIds that carry a discovery reward for it
+  const discovered = new Map<string, Set<string>>()
+  for (const [siteId, siteConfigs] of Object.entries(configs)) {
+    for (const floors of siteConfigs) {
+      for (const floor of floors) {
+        const checkReward = (r: TreasureReward | undefined) => {
+          if (!r) return
+          const tombId = r.type === "mapPiece" ? r.tombId : r.type === "locationKey" ? r.tombJourneyId : null
+          if (!tombId || tombId === siteId) return
+          const set = discovered.get(tombId) ?? new Set()
+          set.add(siteId)
+          discovered.set(tombId, set)
+        }
+        checkReward(floor.mainEndReward)
+        for (const s of floor.sideSections) {
+          checkReward(s.endReward)
+          for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
+        }
+        for (const r of floor.chestRewards ?? []) checkReward(r)
+      }
+    }
+  }
+  return discovered
+}
+
+const autoInjectLocationKeys = (allConfigs: Record<string, SiteConfig[]>): void => {
+  const discoveredBy = collectDiscoveredBy(allConfigs)
+  for (const [primaryId, secondaryIds] of Object.entries(SECONDARY_TOMBS)) {
+    for (const secId of secondaryIds) {
+      if (discoveredBy.has(secId)) continue
+      const tombSite = allConfigs[primaryId]
+      if (!tombSite?.[0]?.length) {
+        console.warn(`  ⚠ Cannot auto-inject locationKey for ${secId}: primary ${primaryId} not found`)
+        continue
+      }
+      const lastFloor = tombSite[0][tombSite[0].length - 1]
+      lastFloor.sideSections = [
+        ...lastFloor.sideSections,
+        {
+          pathPuzzles: 0,
+          difficulty: lastFloor.difficulty,
+          end: "treasure" as const,
+          endReward: { type: "locationKey" as const, tombJourneyId: secId },
+        },
+      ]
+      console.log(`  ✓ Auto-injected locationKey for ${secId} on last floor of ${primaryId}`)
+    }
+  }
+}
+
+// Validate that every secondary tomb is discoverable and there are no cycles.
+// A cycle would mean tombA's only discovery is inside tombA itself or a tomb only reachable via tombA.
+const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
+  // AUTO_DISCOVERED = primary tombs (always visible)
+  const allSecondary = new Set(Object.values(SECONDARY_TOMBS).flat())
+  const discoveredBy = collectDiscoveredBy(allConfigs)
+
+  // BFS: start from auto-discovered, expand via secondary tombs whose hosts are reachable
+  const reachable = new Set(Object.keys(allConfigs).filter(id => !allSecondary.has(id)))
+
+  let changed = true
+  while (changed) {
+    changed = false
+    for (const secId of allSecondary) {
+      if (reachable.has(secId)) continue
+      const hosts = discoveredBy.get(secId)
+      if (hosts && [...hosts].some(h => reachable.has(h))) {
+        reachable.add(secId)
+        changed = true
+      }
+    }
+  }
+
+  const unreachable = [...allSecondary].filter(id => !reachable.has(id))
+  if (unreachable.length > 0) {
+    throw new Error(
+      `[worldSpec] Unsolvable discovery graph — these secondary tombs are unreachable:\n` +
+        unreachable.map(id => `  - ${id} (no locationKey/mapPiece found in a reachable site)`).join("\n")
+    )
+  }
 }
 
 // ── Main entry point ──────────────────────────────────────────────────────────
@@ -479,5 +574,12 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   // Phase 6: Build tomb site configs
   const tombConfigs = buildTombConfigs()
 
-  return { ...pyramidConfigs, ...tombConfigs }
+  // Phase 7: Auto-inject locationKey for any secondary tomb with no authored discovery
+  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+  autoInjectLocationKeys(allConfigs)
+
+  // Phase 8: Validate discovery graph — all secondary tombs reachable, no cycles
+  validateDiscovery(allConfigs)
+
+  return allConfigs
 }

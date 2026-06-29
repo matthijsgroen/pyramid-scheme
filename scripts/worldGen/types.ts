@@ -5,6 +5,7 @@ export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
+  | { type: "locationKey"; tombJourneyId: string }
   | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string }
   | { type: "tombKey"; keyId: string }

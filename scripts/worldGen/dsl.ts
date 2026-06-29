@@ -8,7 +8,11 @@ export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
-export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
+export type RewardSpec =
+  | RewardHint
+  | { type: "mapPiece"; tombId: string }
+  | { type: "tombKey"; keyId: string }
+  | { type: "locationKey"; tombJourneyId: string }
 // Structured gate — tomb-key references a tombId; resolver picks the ward key from that tomb's reward
 export type GateSpec = GateType | null | { type: "tomb-key"; tombId: string } | { type: "floor-key"; color?: KeyColor }
 

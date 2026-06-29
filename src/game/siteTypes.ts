@@ -3,6 +3,7 @@ export type RoomType = "entrance" | "puzzle" | "fork" | "gate" | "treasure" | "s
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
+  | { type: "locationKey"; tombJourneyId: string }
   | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string }
   | { type: "tombKey"; keyId: string }
