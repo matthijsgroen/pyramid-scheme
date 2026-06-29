@@ -181,15 +181,17 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
-    // Need at least entrance + all intermediate nodes + goal distinct cells on the main path
-    const minLen = intermediateTypes.length + 2
-    if (mainPath.length < minLen) continue
+    // At least 1 corridor between each room node; goal stays at center (mainPath end).
+    // interLen nodes at positions 2, 4, ..., 2*interLen; goal at mainPath.last.
+    const interLen = intermediateTypes.length
+    const minPathLen = interLen > 0 ? interLen * 2 + 3 : 2
+    if (mainPath.length < minPathLen) continue
 
     const mainPathSet = new Set(mainPath.map(([r, c]) => `${r},${c}`))
 
-    // Pack rooms at the START of mainPath (zero corridor between rooms on the spine).
-    // Remaining mainPath cells are corridor, still available for section branching.
-    const mainNodeCells = mainPath.slice(0, minLen)
+    const mainNodeCells: Array<[number, number]> = [mainPath[0]]
+    for (let i = 0; i < interLen; i++) mainNodeCells.push(mainPath[(i + 1) * 2])
+    mainNodeCells.push(mainPath[mainPath.length - 1])
 
     const usedCells = new Set<string>(mainPathSet)
 
