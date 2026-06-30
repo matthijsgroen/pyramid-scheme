@@ -1,0 +1,846 @@
+<title>Pyramid Scheme — Rich World Redesign</title>
+<meta name="description" content="Feature delta from the flat expedition loop to the navigable multi-scale world design.">
+
+<style>
+  :root {
+    --bg:           #0C1A2B;
+    --surface:      #122030;
+    --surface-alt:  #0E1B29;
+    --gold:         #C8A020;
+    --gold-dim:     #7A6214;
+    --teal:         #3A9898;
+    --teal-dim:     #285E5E;
+    --text:         #D4C49E;
+    --text-mid:     #8898A8;
+    --text-faint:   #465666;
+    --rule:         #1A2E42;
+    --dp: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+    --bd: Georgia, 'Times New Roman', serif;
+    --ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--bd);
+    font-size: 1rem;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Masthead ─────────────────────────────── */
+  .masthead {
+    padding: 4.5rem 2rem 3.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .game-eyebrow {
+    font-family: var(--ui);
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1rem;
+  }
+
+  .game-title {
+    font-family: var(--dp);
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    font-weight: normal;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .game-tagline {
+    font-family: var(--dp);
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    font-weight: normal;
+    font-style: italic;
+    color: var(--text-mid);
+    margin-top: 0.9rem;
+    letter-spacing: 0.04em;
+  }
+
+  .masthead-intro {
+    max-width: 52ch;
+    margin: 2rem auto 0;
+    font-size: 0.98rem;
+    color: var(--text);
+    text-align: left;
+  }
+
+  /* ── Shared layout ────────────────────────── */
+  .content {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── Ornamental divider ───────────────────── */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin: 0;
+    padding: 2.5rem 0;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .divider-gem {
+    width: 6px;
+    height: 6px;
+    background: var(--gold-dim);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── Contrast panels ──────────────────────── */
+  .contrast-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+  }
+
+  .contrast-panel {
+    padding: 1.6rem 1.4rem;
+    background: var(--surface);
+    border-top: 2px solid;
+  }
+
+  .contrast-panel.old  { border-color: var(--text-faint); }
+  .contrast-panel.new  { border-color: var(--gold); }
+
+  .contrast-tag {
+    font-family: var(--ui);
+    font-size: 0.62rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.75rem;
+  }
+
+  .contrast-panel.new .contrast-tag { color: var(--gold-dim); }
+
+  .contrast-text {
+    font-family: var(--bd);
+    font-size: 0.97rem;
+    line-height: 1.65;
+    color: var(--text-mid);
+  }
+
+  .contrast-panel.new .contrast-text { color: var(--text); }
+
+  /* ── Sections ─────────────────────────────── */
+  .section {
+    padding: 0.25rem 0 2rem;
+  }
+
+  .section-eyebrow {
+    font-family: var(--ui);
+    font-size: 0.62rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.55rem;
+  }
+
+  .section-heading {
+    font-family: var(--dp);
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-weight: normal;
+    color: #EAD8B0;
+    line-height: 1.28;
+    text-wrap: balance;
+    margin-bottom: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+
+  .section-lead {
+    font-size: 0.97rem;
+    color: var(--text);
+    max-width: 60ch;
+    margin-bottom: 1.4rem;
+  }
+
+  /* ── Feature list ─────────────────────────── */
+  .features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .features li {
+    padding-left: 1.4rem;
+    position: relative;
+    font-size: 0.93rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .features li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold-dim);
+    font-family: var(--ui);
+  }
+
+  .features li strong {
+    color: #EAD8B0;
+    font-family: var(--dp);
+    font-weight: normal;
+    font-style: italic;
+  }
+
+  /* ── Delta note ───────────────────────────── */
+  .delta {
+    margin-top: 1.25rem;
+    padding: 0.7rem 1rem 0.7rem 0.9rem;
+    background: var(--surface-alt);
+    border-left: 2px solid var(--text-faint);
+    font-family: var(--ui);
+    font-size: 0.82rem;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+
+  .delta-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ── Scale diagram ────────────────────────── */
+  .scale-diagram {
+    margin: 1.4rem 0;
+    border: 1px solid var(--rule);
+  }
+
+  .scale-row {
+    display: grid;
+    grid-template-columns: 2rem 1fr 1fr;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--ui);
+    font-size: 0.85rem;
+  }
+
+  .scale-row:last-child { border-bottom: none; }
+
+  .scale-num {
+    font-family: var(--dp);
+    font-size: 0.95rem;
+    color: var(--gold-dim);
+    font-style: italic;
+    text-align: center;
+  }
+
+  .scale-name {
+    color: #EAD8B0;
+    font-size: 0.88rem;
+  }
+
+  .scale-desc {
+    color: var(--text-mid);
+    font-size: 0.8rem;
+  }
+
+  /* ── Two-col ──────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1.4rem;
+  }
+
+  .col-head {
+    font-family: var(--ui);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.75rem;
+  }
+
+  /* ── Gate type table ──────────────────────── */
+  .gate-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--ui);
+    font-size: 0.85rem;
+    margin-top: 1.25rem;
+  }
+
+  .gate-table th {
+    text-align: left;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 0 0.75rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 400;
+  }
+
+  .gate-table th:first-child { padding-left: 0; }
+
+  .gate-table td {
+    padding: 0.6rem 0.75rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .gate-table td:first-child { padding-left: 0; }
+
+  .gate-table tr:last-child td { border-bottom: none; }
+
+  .gate-name {
+    font-family: var(--dp);
+    font-style: italic;
+    color: #EAD8B0;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .gate-ward { color: var(--gold); }
+
+  /* ── Stat grid ────────────────────────────── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 2rem 0;
+  }
+
+  .stat {
+    background: var(--surface);
+    padding: 1.4rem 1rem;
+    text-align: center;
+  }
+
+  .stat-n {
+    font-family: var(--dp);
+    font-size: 2.1rem;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    display: block;
+    letter-spacing: 0.02em;
+  }
+
+  .stat-n.secondary { color: var(--teal); }
+
+  .stat-l {
+    font-family: var(--ui);
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    margin-top: 0.35rem;
+    display: block;
+  }
+
+  /* ── Economy table ────────────────────────── */
+  .economy {
+    margin-top: 1.4rem;
+    border: 1px solid var(--rule);
+    font-family: var(--ui);
+    font-size: 0.85rem;
+  }
+
+  .economy-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .economy-row:last-child { border-bottom: none; }
+
+  .economy-cell {
+    padding: 0.8rem 1rem;
+    line-height: 1.5;
+  }
+
+  .economy-name {
+    color: #EAD8B0;
+    font-family: var(--dp);
+    font-style: italic;
+    font-size: 0.92rem;
+  }
+
+  .economy-scope {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.8rem 0.5rem;
+  }
+
+  .economy-desc {
+    color: var(--text-mid);
+    font-size: 0.82rem;
+  }
+
+  /* ── Puzzle family list ───────────────────── */
+  .puzzle-families {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-top: 1.4rem;
+  }
+
+  .pf-cell {
+    background: var(--surface);
+    padding: 1rem 1.1rem;
+  }
+
+  .pf-name {
+    font-family: var(--dp);
+    font-style: italic;
+    color: #EAD8B0;
+    font-size: 0.92rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .pf-desc {
+    font-family: var(--ui);
+    font-size: 0.78rem;
+    color: var(--text-mid);
+    line-height: 1.45;
+  }
+
+  /* ── Perk categories ──────────────────────── */
+  .perks {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 1.4rem;
+    border: 1px solid var(--rule);
+  }
+
+  .perk-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--ui);
+    font-size: 0.84rem;
+  }
+
+  .perk-row:last-child { border-bottom: none; }
+
+  .perk-name {
+    padding: 0.7rem 1rem;
+    color: #EAD8B0;
+    border-right: 1px solid var(--rule);
+    line-height: 1.45;
+  }
+
+  .perk-detail {
+    padding: 0.7rem 1rem;
+    color: var(--text-mid);
+    line-height: 1.45;
+  }
+
+  /* ── Footer ───────────────────────────────── */
+  .footer {
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border-top: 1px solid var(--rule);
+    font-family: var(--ui);
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Responsive ───────────────────────────── */
+  @media (max-width: 580px) {
+    .contrast-box     { grid-template-columns: 1fr; }
+    .two-col          { grid-template-columns: 1fr; }
+    .stat-grid        { grid-template-columns: repeat(2, 1fr); }
+    .puzzle-families  { grid-template-columns: 1fr; }
+    .scale-row        { grid-template-columns: 2rem 1fr; }
+    .scale-desc       { display: none; }
+    .economy-row      { grid-template-columns: 1fr; }
+    .economy-scope    { border: none; border-top: 1px solid var(--rule); justify-content: flex-start; padding: 0.4rem 1rem; }
+    .perk-row         { grid-template-columns: 1fr; }
+    .perk-name        { border-right: none; border-bottom: 1px solid var(--rule); }
+    .gate-table       { font-size: 0.78rem; }
+  }
+</style>
+
+<header class="masthead">
+  <p class="game-eyebrow">Feature Delta — Rich World Redesign</p>
+  <h1 class="game-title">Pyramid Scheme</h1>
+  <p class="game-tagline">One map primitive, three nested scales — and at every scale you reveal a hidden picture by doing math.</p>
+  <p class="masthead-intro content">The redesign replaces a flat sequence of puzzle tableaux with a navigable world: every pyramid becomes a place you return to, every tomb a source of power that reshapes the map behind you. What follows describes what changed and why it matters.</p>
+</header>
+
+<main class="content">
+
+  <!-- Old vs new -->
+  <div class="contrast-box">
+    <div class="contrast-panel old">
+      <span class="contrast-tag">Was — the flat loop</span>
+      <p class="contrast-text">An expedition is a linear queue of pyramid levels. Each level is one tableau puzzle followed by another. Loot drops are probabilistic; tomb access is a threshold check. Visiting a site once uses it up.</p>
+    </div>
+    <div class="contrast-panel new">
+      <span class="contrast-tag">Now — the rich world</span>
+      <p class="contrast-text">Each pyramid is a navigable interior — corridors, fog, branches. Every site holds dormant content waiting for a key you haven't found yet. The world grows backward as you push forward.</p>
+    </div>
+  </div>
+
+  <!-- ── Section 1 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">World Structure</p>
+    <h2 class="section-heading">One primitive, three nested scales</h2>
+    <p class="section-lead">The same underlying model — nodes connected by corridors, fog burning back on entry, an explorer dot as wayfinding — runs at every zoom level. Build it once.</p>
+
+    <div class="scale-diagram">
+      <div class="scale-row">
+        <span class="scale-num">I</span>
+        <span class="scale-name">Journey map</span>
+        <span class="scale-desc">Pyramid and tomb sites as nodes along a linear path — fog reveals the next site on completion</span>
+      </div>
+      <div class="scale-row">
+        <span class="scale-num">II</span>
+        <span class="scale-name">Pyramid interior</span>
+        <span class="scale-desc">A node graph of rooms and corridors — puzzle, fork, gate, treasure, stairhead, exit, warning</span>
+      </div>
+      <div class="scale-row">
+        <span class="scale-num">III</span>
+        <span class="scale-name">Tableau puzzle</span>
+        <span class="scale-desc">The math encounter itself — unchanged engine, six families now, time-of-day chooses the instrument</span>
+      </div>
+    </div>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      Three distinct, unrelated screens — expedition list, level picker, tableau — with no shared visual language between them.
+    </div>
+  </section>
+
+  <!-- ── Section 2 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Pyramid Interiors</p>
+    <h2 class="section-heading">Fog, corridors, and a map that is its own progress bar</h2>
+    <p class="section-lead">The interior is an SVG/DOM node graph laid on a grid. Fog burns back as you navigate. The map is the only progress indicator needed.</p>
+
+    <ul class="features">
+      <li><strong>Seven node types</strong> — all configs of one primitive: puzzle, fork (free branch reveal), seal gate, ward gate, treasure, stairhead, exit. A warning node precedes every trap corridor so entering is always a choice.</li>
+      <li><strong>Three cell states</strong> — fogged / revealed-but-locked (visible through a gate, not yet reachable) / reachable. The glint of a treasure behind a locked gate is an invitation, not an accident.</li>
+      <li><strong>Explorer dot as camera</strong> — it follows your taps along the corridor route (~250ms), never blocking input. It anchors the viewport on large floors and makes exploration feel directional: the corridor extends from where you stand.</li>
+      <li><strong>Stairheads descend, not cut</strong> — the dot drops to the floor below and the camera follows. A floor change is a move.</li>
+      <li><strong>Multi-floor pyramids</strong> — deeper floors unlock gradually; each floor is a self-contained math-band zone so a dormant lower floor can be revisited independently.</li>
+    </ul>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      Each level was a full-screen tableau with a progress bar and a "next" button. No interior space, no navigation.
+    </div>
+  </section>
+
+  <!-- ── Section 3 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Non-Linear Time</p>
+    <h2 class="section-heading">Nothing is spent — sites stay dormant until the right key arrives</h2>
+    <p class="section-lead">Two gate types create two rhythms: one that resolves in a single visit, one that forces a return trip weeks later.</p>
+
+    <div style="overflow-x: auto;">
+      <table class="gate-table">
+        <thead>
+          <tr>
+            <th>Gate type</th>
+            <th>Key source</th>
+            <th>What it gates</th>
+            <th>Effect on the world</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="gate-name">Seal</span></td>
+            <td>A chest inside this same site</td>
+            <td>Optional branch within one visit</td>
+            <td>Fully solvable on first contact; no revisit needed</td>
+          </tr>
+          <tr>
+            <td><span class="gate-name gate-ward">Ward</span></td>
+            <td>A tomb treasure from another tier</td>
+            <td>A floor or branch locked until that tomb is cleared</td>
+            <td>Makes early sites dormant — alive again when the key arrives later</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="features" style="margin-top: 1.4rem;">
+      <li><strong>Ward etiquette</strong> — every ward announces itself at the fork (a silhouette: "tomb-warded corridor that way") so committing to a branch is always an informed choice.</li>
+      <li><strong>Critical path always open</strong> — wards may gate optional branches; the main path through any site is completable with keys available at that point in the journey.</li>
+      <li><strong>"What just opened" badges</strong> — when a tomb key lands, a per-journey badge lists which dormant rooms across all sites are newly reachable. The data is a free byproduct of the validator's forward pass.</li>
+      <li><strong>Journey hub after first completion</strong> — complete a journey once and it becomes a fast-travel hub: every site a direct tap-target. The completion flag is the switch; first-run pacing is never compromised.</li>
+    </ul>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      No revisits. Completing a level marked it done. Expeditions were one-way; there was no reason to return to an earlier pyramid.
+    </div>
+  </section>
+
+  <!-- ── Section 4 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Reward Economies</p>
+    <h2 class="section-heading">Three economies at three scopes — all deterministic</h2>
+    <p class="section-lead">Loot is authored, not rolled. Each economy operates at a distinct scale and never collapses into a single priority chain.</p>
+
+    <div class="economy">
+      <div class="economy-row">
+        <div class="economy-cell">
+          <span class="economy-name">Hieroglyph fragment</span>
+        </div>
+        <div class="economy-scope">Room</div>
+        <div class="economy-cell economy-desc">308 fragments across the game; 2–8 per hieroglyph (scaled by tier and tomb section). Completing a hieroglyph unlocks a tomb tableau room. Permanent once found. No two fragments of the same glyph in the same journey.</div>
+      </div>
+      <div class="economy-row">
+        <div class="economy-cell">
+          <span class="economy-name">Map piece</span>
+        </div>
+        <div class="economy-scope">Journey</div>
+        <div class="economy-cell economy-desc">One authored placement per tomb per journey — not a random drop. Surface floors feed the first tomb; deep floors (opened by earlier ward keys) feed later tombs. Collecting enough pieces opens the tomb gate.</div>
+      </div>
+      <div class="economy-row">
+        <div class="economy-cell">
+          <span class="economy-name">Mosaic tile</span>
+        </div>
+        <div class="economy-scope">Game</div>
+        <div class="economy-cell economy-desc">298 tiles, one stained-glass picture. The critical path through any pyramid always awards tiles; optional branches add more. A half-built mosaic is a to-do list. The completed picture is the natural ending.</div>
+      </div>
+    </div>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      A single priority chain: map piece chance → hieroglyph chance → expedition bonus. Probabilistic drops via <code>startChance + chanceIncrease</code> per level. Hieroglyphs were consumable inventory items, not permanent completions.
+    </div>
+  </section>
+
+  <!-- ── Scope numbers ─── -->
+  <div class="stat-grid">
+    <div class="stat">
+      <span class="stat-n">104</span>
+      <span class="stat-l">Pyramid sites</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n">9</span>
+      <span class="stat-l">Treasure tombs</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n secondary">308</span>
+      <span class="stat-l">Hieroglyph fragments</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n secondary">298</span>
+      <span class="stat-l">Mosaic tiles</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n">40</span>
+      <span class="stat-l">Tomb treasures</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n">36</span>
+      <span class="stat-l">Ward keys</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n secondary">6</span>
+      <span class="stat-l">Puzzle families</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n secondary">5</span>
+      <span class="stat-l">Difficulty tiers</span>
+    </div>
+  </div>
+
+  <!-- ── Section 5 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Math System</p>
+    <h2 class="section-heading">Six puzzle families — time of day chooses the instrument</h2>
+    <p class="section-lead">All families share the same DNA: hidden values recovered by deduction. What changes is which Egyptian instrument dresses the puzzle — and that choice is mechanical, not cosmetic.</p>
+
+    <div class="puzzle-families">
+      <div class="pf-cell">
+        <span class="pf-name">Cross-sum</span>
+        <span class="pf-desc">Addition and substitution. The pyramid tableau. Present from tier 1, deepens throughout.</span>
+      </div>
+      <div class="pf-cell">
+        <span class="pf-name">Balance scale</span>
+        <span class="pf-desc">Equality and solve-for-x. The weighing of the heart against Ma'at's feather.</span>
+      </div>
+      <div class="pf-cell">
+        <span class="pf-name">Sundial</span>
+        <span class="pf-desc">Reading analog time. A value <em>source</em> — its answer flows downstream as a known symbol. Day expeditions only.</span>
+      </div>
+      <div class="pf-cell">
+        <span class="pf-name">Water-clock</span>
+        <span class="pf-desc">Elapsed time, duration, boundary-crossing subtraction. The clepsydra draining between marks.</span>
+      </div>
+      <div class="pf-cell">
+        <span class="pf-name">Eye of Horus fractions</span>
+        <span class="pf-desc">Unit fractions (½ to 1/64). The Wedjat eye parts as the fraction system.</span>
+      </div>
+      <div class="pf-cell">
+        <span class="pf-name">Clock arithmetic</span>
+        <span class="pf-desc">Modular arithmetic mod 12/24. Ritual durations wrapping the day. Higher tiers and decoy rooms.</span>
+      </div>
+    </div>
+
+    <ul class="features" style="margin-top: 1.4rem;">
+      <li><strong>Carry-forward is mechanical</strong> — a sundial reading made upstream may be consumed downstream as a known symbol. Carry-forward never crosses a stairhead, so each floor is a self-contained dependency zone.</li>
+      <li><strong>Time of day picks the family</strong> — morning/afternoon/evening/night selects which instruments appear. A night expedition swaps the sundial for the decan star-clock variant.</li>
+      <li><strong>Family is orthogonal to position</strong> — which math runs inside a puzzle node and where that node sits on the map are separate dimensions. A hard floor can contain a simple water-clock; an easy branch can hold fractions.</li>
+    </ul>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      Cross-sum only, with time-of-day as a cosmetic theme (background art) rather than a mechanical choice. No carry-forward between rooms.
+    </div>
+  </section>
+
+  <!-- ── Section 6 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Survival Layer — Expert tier and above</p>
+    <h2 class="section-heading">Traps, health, and the decision to press on</h2>
+    <p class="section-lead">Trap corridors introduce a second kind of encounter: opt-in, time-pressured, and consequential without being punishing.</p>
+
+    <ul class="features">
+      <li><strong>Warning node</strong> — a free node placed before every trapped corridor. The player sees the trap ahead and may turn back. Entering is always a deliberate choice.</li>
+      <li><strong>Timed math encounter</strong> — moving through a trapped corridor triggers a timed question in the current puzzle family. Pass to proceed; fail to take health damage. The clock matches the family (sundial questions have a longer window; fractions a shorter one).</li>
+      <li><strong>Health is session-persistent</strong> — 3 base hearts, expandable to 6 with tomb upgrades. Depleted health blocks further trap attempts until restored.</li>
+      <li><strong>Consumables in normal chests</strong> — mummy bandages (restore ½ heart), healing oils (restore 1 heart), trap tools (bypass a trap without answering). ~147 consumables authored across the game.</li>
+      <li><strong>Trap corridor as optional branch</strong> — the reward behind the trap is always an optional branch endpoint (mosaic tiles, deep map piece). The critical path is never trapped.</li>
+    </ul>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      No health system. Every puzzle was equivalent — no optional risk/reward decision, no consequence for errors beyond blocking progression on that tableau.
+    </div>
+  </section>
+
+  <!-- ── Section 7 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Tombs &amp; Permanent Power</p>
+    <h2 class="section-heading">Nine tombs, forty treasures, a player who grows across the whole game</h2>
+    <p class="section-lead">Every tomb treasure does two things: it opens a specific dormant pyramid floor somewhere in the world, and it permanently changes how the player experiences future content.</p>
+
+    <div class="two-col">
+      <div>
+        <p class="col-head">Tomb count by tier</p>
+        <ul class="features">
+          <li>Starter — 1 tomb, 4 treasures</li>
+          <li>Junior — 1 tomb, 6 treasures</li>
+          <li>Expert — 2 tombs, 4 + 4 treasures</li>
+          <li>Master — 2 tombs, 5 + 5 treasures</li>
+          <li>Wizard — 3 tombs, 4 + 4 + 4 treasures</li>
+        </ul>
+      </div>
+      <div>
+        <p class="col-head">Treasure types</p>
+        <ul class="features">
+          <li>36 ward keys — each opens one specific pyramid floor</li>
+          <li>4 location keys — reveal the next tomb in the same tier</li>
+          <li>17 of 40 carry a passive perk; the remaining 23 are pure keys (the floor they unlock is the reward)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="perks" style="margin-top: 1.4rem;">
+      <div class="perk-row">
+        <div class="perk-name">Max health +½ heart</div>
+        <div class="perk-detail">Raises the health ceiling; 6 half-heart upgrades total. Caps at 6 hearts.</div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-name">Armor / protection</div>
+        <div class="perk-detail">Reduces trap damage by 1 half-heart per stack. 2 upgrades; caps at 1 full heart reduction.</div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-name">Trap insight +1s</div>
+        <div class="perk-detail">Adds 1 second to every trap time limit. 2 upgrades; caps at +2s total.</div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-name">Hieroglyph compass L1–3</div>
+        <div class="perk-detail">L1: which pyramid holds a tracked fragment · L2: proximity signal inside the site · L3: exact path to the chest.</div>
+      </div>
+      <div class="perk-row">
+        <div class="perk-name">Hidden path detection L1–4</div>
+        <div class="perk-detail">L1: hidden corridors pulse during exploration · L2: floor indicator · L3: pyramid marker · L4: journey list marker.</div>
+      </div>
+    </div>
+
+    <p style="font-family: var(--ui); font-size: 0.82rem; color: var(--text-mid); margin-top: 1rem;">Early tombs grant health upgrades (immediate, universal power). Higher-tier tombs grant compass and detection (situational utility that reshapes navigation). Hard caps across all categories prevent snowballing.</p>
+
+    <div class="delta">
+      <span class="delta-label">Was</span>
+      5 tombs (one per tier). Treasure effects were passive modifiers to the probabilistic loot system — two of the five effect types (<code>higherLootChance</code>, <code>mapFragmentChance</code>) become vacuous once the redesign's deterministic rewards land.
+    </div>
+  </section>
+
+  <!-- ── Section 8 ─── -->
+  <div class="divider"><div class="divider-gem"></div></div>
+  <section class="section">
+    <p class="section-eyebrow">Generation &amp; Authoring</p>
+    <h2 class="section-heading">Authored constraints, seeded decoration</h2>
+    <p class="section-lead">The generator assembles from authored budgets; the seed only decides cosmetic variation within those bounds. Difficulty is never an accident of which seed ran.</p>
+
+    <ul class="features">
+      <li><strong>Budgets-plus-pins authoring</strong> — specify puzzle count, branch factor, gate types, and reward placement as a budget. Pin specific nodes that must sit in a specific position. Stone-tier pyramids need zero pins; complex late sites need three or four.</li>
+      <li><strong>Solvable by construction</strong> — the assembler generates a reachability order first, then places each lock on an edge and drops its key anywhere in the already-reachable subtree. A generated layout cannot be unsolvable.</li>
+      <li><strong>Machine-discarded bad seeds</strong> — a forward-pass validator runs on every candidate. Seeds that fail (gate before key, mosaic stranded behind a ward, all-bland fork) are discarded automatically, never by eye. Failure is always explained, never a silent re-roll.</li>
+      <li><strong>Staggered ramps</strong> — structural complexity and math difficulty climb independently. Every new structural verb (first fork, first gate, first second floor) debuts in easy-math territory. Early pyramids are the tutorial, diegetically.</li>
+    </ul>
+  </section>
+
+  <div class="divider"><div class="divider-gem"></div></div>
+
+</main>
+
+<footer class="footer">
+  Pyramid Scheme · feature/game-redesign · design draft 2026-06-30
+</footer>
