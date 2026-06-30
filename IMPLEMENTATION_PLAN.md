@@ -60,531 +60,9 @@ Gaps found between what the DSL can express, what the world generator produces, 
 
 ---
 
-## Phase 1 — Site Map Generator, Renderer, and Interaction Shell ✅
+## Phases 1–9f — Completed ✅
 
-Types, validator, assembler, nav hook, SVG renderer, explorer dot. Foundation for everything else.
-
-See original plan for full spec. No changes.
-
----
-
-## Phase 2 — Sumplete Puzzle ✅
-
-Seeded generator, uniqueness verifier, board component with Storybook stories.
-
-See original plan for full spec. No changes.
-
----
-
-## Phase 2b — Puzzle Plugin System ✅
-
-**Goal:** Replace the hardcoded `SumpleteBoard` + `renderPuzzle` escape hatch with a typed plugin registry. Adding a new puzzle type = one self-contained file. No changes to `SiteMapScreen`.
-
-### Problem
-
-Currently `SiteMapScreen` hardcodes sumplete generation and rendering, with a `renderPuzzle?: (floor, onSolved, onCancel) => ReactNode` prop as an escape hatch for tomb tableau puzzles. This is already messy with two puzzle types; it won't scale.
-
-### Design
-
-Per-room puzzle settings live in the site config and flow through to the plugin:
-
-```typescript
-// src/game/siteTypes.ts — extend RoomSpec / FloorConfig
-export type PuzzleSettings = {
-  difficulty?: "easy" | "medium" | "hard"   // controls generator parameters
-  theme?: string                             // passed to Component for visual styling
-  // family-specific overrides can be added here without changing the plugin contract
-}
-```
-
-Each puzzle family is a self-contained plugin object typed on its own puzzle format and settings:
-
-```typescript
-// src/game/puzzlePlugin.ts
-export type PuzzlePlugin<TPuzzle, TSettings extends PuzzleSettings = PuzzleSettings> = {
-  family: string
-  generate: (seed: number, settings: TSettings) => TPuzzle
-  Component: FC<{ puzzle: TPuzzle; settings: TSettings; onSolved: () => void }>
-}
-```
-
-A central registry maps family name → plugin:
-
-```typescript
-// src/game/puzzleRegistry.ts
-const registry = new Map<string, PuzzlePlugin<unknown, PuzzleSettings>>()
-export const registerPuzzle = <T, S extends PuzzleSettings>(plugin: PuzzlePlugin<T, S>) =>
-  registry.set(plugin.family, plugin as PuzzlePlugin<unknown, PuzzleSettings>)
-export const getPuzzlePlugin = (family: string) => registry.get(family)
-```
-
-Each family registers itself at module load:
-
-```typescript
-// src/app/PuzzleFamilies/Sumplete/plugin.ts
-registerPuzzle({
-  family: "sumplete",
-  generate: (seed, settings) => generateSumplete(
-    settings.difficulty === "hard" ? 4 : 3,
-    seed,
-    { allowZeroTargets: false }
-  ),
-  Component: ({ puzzle, onSolved }) => <SumpleteBoard {...puzzle} onSolved={onSolved} />,
-})
-```
-
-```typescript
-// src/app/PuzzleFamilies/Tableau/plugin.ts
-registerPuzzle({
-  family: "tableau",
-  generate: (seed, settings) => generateTableau(seed, settings),
-  Component: ({ puzzle, settings, onSolved }) => <TableauBoard {...puzzle} theme={settings.theme} onSolved={onSolved} />,
-})
-```
-
-### `SiteMapScreen` changes
-
-Remove `renderPuzzle` prop entirely. Replace hardcoded sumplete call with:
-
-```typescript
-const plugin = getPuzzlePlugin(floorConfig.puzzleFamily ?? "sumplete")
-const settings = activePuzzlePos ? getPuzzleSettings(grid, activePuzzlePos) : null
-const puzzle = useMemo(
-  () => plugin?.generate(hashString(journeyId + edgeId), settings ?? {}),
-  [plugin, journeyId, edgeId, settings]
-)
-// render: <plugin.Component puzzle={puzzle} settings={settings} onSolved={handlePuzzleComplete} />
-```
-
-### `siteAssembler.ts` fix
-
-Pass `config.puzzleFamily` through to room specs (fixes the DSL gap where `puzzleFamily` was ignored).
-
-### Build sequence
-
-1. Define `PuzzlePlugin<T>` type and registry (`src/game/puzzleRegistry.ts`)
-2. Create `src/app/PuzzleFamilies/Sumplete/plugin.ts` — wraps existing generator + board
-3. Remove `renderPuzzle` prop from `SiteMapScreen`; use registry lookup instead
-4. Fix `siteAssembler` to pass `config.puzzleFamily` to puzzle room nodes
-5. Phase 7 adds `src/app/PuzzleFamilies/Tableau/plugin.ts` — tableau registers itself, no other files change
-
----
-
-## Phase 3 — V3 State + Wire Sumplete into Site Map ✅
-
-**Goal:** New state shapes live. Sumplete puzzle nodes work inside the site map shell. Tested via `SiteMapScreen` in Storybook / dev route.
-
-### `src/app/state/useProgression.ts` (new)
-
-```typescript
-type ProgressionState = {
-  hieroglyphFragments: Record<string, number>  // hieroglyphId → fragments found
-  tombKeys: Record<string, true>               // treasureId → collected (ward keys)
-  discoveredTombs: string[]                    // tombJourneyIds revealed by location keys
-  mosaicPieces: string[]                       // pyramid journey IDs
-}
-```
-
-Key derived queries:
-```typescript
-// Fragment threshold: per-hieroglyph (2–8), authored in generatedWorld.ts (tier × first-blocking section matrix)
-isHieroglyphComplete(hieroglyphId: string): boolean
-hieroglyphProgress(hieroglyphId: string): { found: number; required: number }
-hasTombKey(treasureId: string): boolean
-isTombDiscovered(tombJourneyId: string): boolean
-```
-
-Backed by `useGameStorage` under `"pyramid-scheme-progression"`.
-
-### `src/app/state/useJourneys.ts` — V3 shape
-
-```typescript
-type StoredJourneyStateV3 = {
-  journeyId: string
-  completionCount: number
-  foundMapPiece: boolean
-  active: boolean
-  solvedEdges: string[]    // edge IDs solved in the site map — permanent
-  position: string | null  // current node ID
-}
-```
-
-- Version bump to `storageVersion === 3`
-- On version mismatch: hard reset (no migration)
-- New API: `markEdgeSolved(edgeId)`, `getSolvedEdges(journeyId)`, `updatePosition(journeyId, nodeId)`
-
-### `src/data/journeys.ts` — extend `PyramidJourney`
-
-Add `siteConfig?: SiteConfig` (additive, backward compatible).
-
-### `src/app/SiteMap/SiteMapScreen.tsx` (new)
-
-- Wires `SiteMapView` + `ExplorerDot` + puzzle launch
-- Puzzle node → launch `SumpleteBoard`
-- Exit node → `onSiteComplete`
-- On puzzle solve: `markEdgeSolved` + advance dot
-- Treasure node dispatch: hieroglyph fragment → `addFragment`, mosaic → `collectMosaicPiece`, ward key → `addTombKey`
-
----
-
-## Phase 4 — Entrance Seal + Feature-Flag Seam
-
-**Goal:** A real pyramid journey runs the entrance seal then opens the site map.
-
-### Flow
-
-1. Player taps pyramid → `PyramidExpedition`
-2. If `journey.siteConfig` set: run number-grid as entrance seal
-3. On seal solved: render `SiteMapScreen` with generated layout
-4. On site complete: call `completeLevel()` / `onJourneyComplete`
-
-### `src/data/siteConfigs.ts` (new)
-
-Authored `SiteConfig` entries for all 20 pyramid journeys. For Phase 4, every config is `floors: 1`, `maxBranchFactor: 0` (linear spine). Ward gate entries left empty — filled in Phase 5d.
-
-**Note:** these configs will eventually be replaced by `src/data/generatedWorld.ts` output (Phase 9). Author them manually now; the generator will reproduce them deterministically later.
-
-### `src/app/PyramidExpedition.tsx` — feature-flag fork
-
-```typescript
-if (journey.siteConfig) → SiteMapScreen path
-else → existing flat-level loop  // kept intact until all 20 have siteConfig
-```
-
----
-
-## Phase 5 — Structural Complexity
-
-Each structural verb debuts in easy-math territory. Sub-phases are individually shippable.
-
-### 5a — Forks
-
-- Assembler handles `maxBranchFactor > 0`
-- `useSiteNavigation` computes branch silhouettes at fork nodes
-- `SiteMapView` renders silhouette node types
-- Property test: all outputs satisfy `noAllBlandFork`
-- Update `siteConfigs.ts`: enable forks for junior+ pyramids
-
-### 5b — Seals (local chest keys)
-
-- Assembler places seal locks solvable-by-construction (key always reachable before gate)
-- `useSiteNavigation` checks `sealKeys` (per-site inventory) for gate traversal
-- `useJourneys` V3: `collectSealKey(siteId, keyId)` / `hasSealKey(siteId, keyId)` — seal keys are per-site, discarded on exit
-- Update `siteConfigs.ts`: enable seal gates for expert+ pyramids
-
-### 5c — Floors and Stairheads
-
-- Assembler handles `floors > 1`; stairhead nodes connect floors
-- `SiteMapScreen` animates camera pan downward on stairhead tap
-- Update `siteConfigs.ts`: enable multi-floor for expert+ pyramids
-
-### 5d — Wards (cross-site keys)
-
-- `SiteEdge.gateType: "ward"` + `requiredKeyId` points to a `treasureId` in `useProgression.tombKeys`
-- `useSiteNavigation` checks `tombKeys` from `useProgression` for ward traversal
-- `SiteMapView` renders ward gate with locked-door icon + category label
-- Ward visibility rule: category shown always; specific treasure name shown when player is within one tier
-- Validator `wardSatisfiability` property-tested across multi-site sequences
-- Update `siteConfigs.ts`: add ward gates to branch endpoints for junior+ pyramids
-
----
-
-## Phase 6 — Pyramid Reward Economies
-
-**Goal:** All three pyramid reward types live and correct. Fragment system replaces probabilistic hieroglyph drops.
-
-### Hieroglyph fragment nodes
-
-Treasure node variant `{ type: "treasure", reward: { fragment: { hieroglyphId: string } } }`.
-
-`SiteMapScreen` on treasure collect: `useProgression.addFragment(hieroglyphId)`. If `isHieroglyphComplete(id)` becomes true → show completion moment in UI.
-
-Remove `src/app/PyramidLevel/inventoryLootLogic.ts` — fully replaced by authored fragments.
-
-### Map pieces
-
-`PyramidExpedition` on site complete: check if this site is the authored map-piece carrier for the journey (`siteConfig.mapPiece === true`). If so, `useJourneys.findMapPiece(journeyId)`.
-
-Remove `src/app/PyramidLevel/mapPieceLogic.ts` — probabilistic system replaced.
-
-### Mosaic tiles
-
-`SiteMapScreen` on treasure collect: `{ reward: { mosaicTiles: number } }` → `useProgression.collectMosaicTiles(pyramidJourneyId, count)`.
-
-Critical path always ends in a mosaic tile node. Branch endpoints without fragments or seal keys get mosaic tile nodes.
-
-### Ward keys
-
-`SiteMapScreen` on treasure collect: `{ reward: { wardKey: treasureId } }` → `useProgression.addTombKey(treasureId)`.
-
-**Note:** ward key treasures are in tombs, not pyramids. This wiring is used in Phase 7 when tomb interiors ship.
-
----
-
-## Phase 7 — Tomb Interiors as Site Maps
-
-**Goal:** Tomb journeys use the same `SiteLayout` system as pyramids. Tableau puzzle rooms are puzzle nodes. Treasure rooms are treasure nodes.
-
-### Site map for tombs
-
-Tomb site maps differ from pyramid site maps:
-- No entrance seal (tomb is opened by map pieces, not a puzzle)
-- `puzzle` nodes run tableau formula puzzles (existing `TombLevel` system), not Sumplete
-- `puzzle` node locked if required hieroglyph is incomplete → `NodeState: "revealed-unreachable"` with reason `"incomplete-hieroglyph"`
-- `treasure` nodes grant tomb treasures (ward keys or location keys)
-- Sections map to linear branches; internal seal gates connect sections
-
-### New node/treasure types
-
-```typescript
-// Add to NodeType
-export type NodeType = "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit" | "tableau"
-
-// Treasure reward variant
-type TreasureReward =
-  | { fragment: { hieroglyphId: string } }
-  | { mosaicTiles: number }
-  | { mapPiece: true }
-  | { wardKey: string }       // treasureId — opens a pyramid floor
-  | { locationKey: string }   // tombJourneyId — reveals a new tomb
-
-// Tableau node requires hieroglyphs to be complete
-type TableauNode = SiteNode & {
-  type: "tableau"
-  requiredHieroglyphs: string[]  // hieroglyphIds
-}
-```
-
-### `src/data/tombSiteConfigs.ts` (new)
-
-Authored `SiteConfig` entries for all 9 tombs. Each config specifies sections (as branch structure), tableau counts per section, gating type, and which treasure is the location key (if any).
-
-### State
-
-Tomb sites use the same `solvedEdges` + `position` tracking as pyramid sites — already in `useJourneys` V3.
-
-`useProgression.isTombDiscovered(tombJourneyId)` controls whether the tomb appears on the Travel screen. Starter/junior tombs start as `discovered`. Expert/master/wizard second and third tombs start undiscovered.
-
-### Tomb entry gate
-
-Tomb entry check: `mapPiecesFound >= piecesRequired`. `piecesRequired` authored on `TreasureTombJourney`. Currently the same 4-piece logic, but now per-tomb.
-
----
-
-## Phase 8 — Multi-Tomb Progression + Location Keys
-
-**Goal:** Location key treasures reveal new tombs. Map pieces for later tombs appear on deep floors. `piecesRequired` is flexible per tomb.
-
-### Location keys
-
-When `SiteMapScreen` collects a `{ locationKey: tombJourneyId }` treasure:
-- `useProgression.discoverTomb(tombJourneyId)`
-- Travel screen updates to show the new tomb (with a "discovered" reveal animation)
-
-### Map pieces on deep floors
-
-`SiteConfig` treasure nodes can carry `{ mapPiece: { forTomb: tombJourneyId } }`.
-
-`useProgression` tracks map pieces per tomb: `mapPiecesFound: Record<tombJourneyId, number>`.
-
-Tomb entry check becomes: `useProgression.mapPiecesFound[tombId] >= tomb.piecesRequired`.
-
-### `TreasureTombJourney.piecesRequired`
-
-Field already exists in `journeys.ts` semantically; make it explicit in the type:
-
-```typescript
-export type TreasureTombJourney = {
-  // ... existing fields
-  piecesRequired: number   // new — defaults to 4 if absent
-}
-```
-
-Starter/junior tombs: `piecesRequired: 4`. Later tombs in expert/master/wizard: `piecesRequired: 2–3`.
-
----
-
-## Phase 9 — World Generator (DSL + Constraint Solver)
-
-**Goal:** The worldSpec DSL is the single source of truth. The solver fills in what isn't authored, validates the result, and fails loudly with precise diagnostics when constraints can't be satisfied.
-
-### Core design principle
-
-- **Authored = hard constraint.** Every value you write in `worldSpec.ts` must be honoured or the solver exits with an error naming the exact rule and the location where it failed.
-- **Unspecified = solver fills in freely.** The solver makes the simplest valid choice for any unspecified field.
-- **Cascade = provenance.** Every resolved value tracks which rule set it (global → tier → journey → pyramid → floor). Errors cite the source rule, e.g.: *"Fragment budget exhausted on `starter_1` pyramid 3 — loosen `pathPuzzles` or `sideSections` at `tier("starter").pyramid(3)`"*.
-- **No silent auto-correct.** The current `autoCorrect` phase that silently adds chest paths is replaced by an explicit error if the fragment budget can't be met within authored constraints.
-
-### DSL scope matrix (full orthogonality)
-
-Every property is specifiable at every level. Specificity (lower = overridable):
-
-| Rank | Scope |
-|------|-------|
-| 1 | `global` |
-| 2 | `global + floor` |
-| 3 | `tier` |
-| 4 | `tier + floor` |
-| 5 | `journey` |
-| 6 | `journey + floor` |
-| 7 | `tier + pyramid` |
-| 8 | `tier + pyramid + floor` |
-| 9 | `journey + pyramid` |
-| 10 | `journey + pyramid + floor` |
-
-Missing scopes to add to `dsl.ts`: `global().floor()`, `tier(x).floor()`, `journey(x).floor()`.
-
-### Gate spec: tomb reference, not key ID
-
-```typescript
-// Before (brittle, key ID hardcoded):
-gate: { type: "tomb-key", wardKeyId: "starter_ward" }
-// After (solver picks which key from that tomb):
-gate: { type: "tomb-key", tombId: "starter_treasure_tomb" }
-```
-
-If a tomb issues multiple keys, the solver selects which satisfies the gate based on the forward-reachability pass.
-
-### Density → branch count
-
-`sideSections: "sparse" | "normal" | "dense"` translates to a number of side branches. Solver fills in puzzle count and reward per branch.
-
-### Ward key delivery (tomb final floor)
-
-Tomb final floor authors `puzzleFamily: "crocodiles"` (the compare/crocodile-lake puzzle, registered as a plugin). After that puzzle, a chest node contains the ward key treasure. Authored via:
-
-```typescript
-journey("starter_treasure_tomb").pyramid("last").floor(1, {
-  puzzleFamily: "crocodiles",
-  mainEndReward: { type: "tombKey", tombId: "starter_treasure_tomb" },
-})
-```
-
-### Solver pipeline
-
-```
-yarn generate-world
-  1. Resolve all constraints (cascade, specificity)
-  2. Validate hard constraints are mutually satisfiable — exit with error if not
-  3. Fill in solver decisions for unspecified fields
-  4. Assign fragments to chest slots — error if budget can't fit
-  5. Forward-pass BFS reachability check — error if anything unreachable
-  6. Write src/data/generatedWorld.ts
-```
-
-**CI:** `yarn validate-world` re-runs step 5 against the committed `generatedWorld.ts`. Fails if reachability breaks.
-
-### `src/data/generatedWorld.ts` (generated file)
-
-```typescript
-// Generated by scripts/generateWorld.ts — do not edit by hand
-export const SITE_CONFIGS: Record<string, SiteConfig[]> = { ... }
-export const FRAGMENT_PLACEMENTS: FragmentPlacement[] = [ ... ]
-```
-
----
-
-## Phase 9f — Hieroglyph Availability Validator
-
-**Goal:** A pass inside `buildWorldConfig()` that simulates player progression, verifies every tomb tableau's required hieroglyphs are findable before that tableau is encountered, and fixes gaps by adding chest slots to the appropriate sections.
-
-### Where it runs
-
-After `computeFragmentAssignments()` and before writing `generatedWorld.ts`. It mutates `FloorConfig` objects in-place — extending `chestRewards[]` and adjusting `pathPuzzles`/`chestEvery` — then the existing fragment assigner fills those new slots.
-
-Actually: the pass runs **before** `computeFragmentAssignments()`, producing a larger slot pool that the assigner then fills. New chest slots are added with unassigned rewards; the assigner fills them in the normal greedy pass.
-
-### Hieroglyph requirements source
-
-`tableauLevels` from `src/data/tableaus.ts` — deterministic, authored alongside the narrative. Each entry has:
-- `tombJourneyId` — which tomb
-- `runNumber` — which floor (run 1 = floor 1, always freely accessible)
-- `levelNr` — which tableau on that floor (1..levelCount)
-- `inventoryIds: string[]` — the exact hieroglyph symbol IDs required
-
-A player needs the per-hieroglyph fragment count (from `generatedWorld.ts`, derived from the tier × first-blocking-section matrix) to have it fully collected and usable. There is no single `FRAGMENT_THRESHOLD` constant — each hieroglyph has its own required count.
-
-### Progression simulation
-
-**Player state:** `{ accessibleSites: Set<string>, wardKeys: Set<string> }`
-
-**Initial state:** only starter pyramid ungated sections, `wardKeys = {}`
-
-**Unlock events (in order):**
-
-| Event | accessibleSites gains | wardKeys gains |
-|-------|-----------------------|----------------|
-| Start | starter_1..4 (ungated) | — |
-| 4 starter map pieces collected | starter_treasure_tomb | — |
-| Starter tomb treasure 1 collected | junior_1..4 (ungated) | `"starter_ward"` |
-| Starter tomb treasure 2 collected | — | — |
-| 4 junior map pieces collected | junior_treasure_tomb | — |
-| Junior tomb treasure 1 collected | expert_1..4 (ungated) | `"junior_ward"` |
-| … (same pattern up the chain) | | |
-
-Secondary tombs (expert_b, master_b, wizard_b/c) unlock via map pieces found inside the primary tomb — they enter the simulation after the primary tomb is fully explored.
-
-**Accessible sections at any moment:**
-
-A section is in scope when **both** conditions hold:
-1. Its **site** is in `accessibleSites`
-2. Its **gate** is absent, or `gate.wardKeyId` is in `wardKeys`
-
-### Accessible area rule per tableau
-
-**Run N of a difficulty-T tomb → accessible tiers 0..(T + N − 1)**
-
-| Run | Starter (T=0) | Junior (T=1) | Expert (T=2) |
-|-----|---------------|--------------|--------------|
-| 1 | tiers 0 | tiers 0–1 | tiers 0–2 |
-| 2 | tiers 0–1 | tiers 0–2 | tiers 0–3 |
-| 3 | tiers 0–2 | tiers 0–3 | tiers 0–4 |
-
-Tier mapping: 0=starter, 1=junior, 2=expert, 3=master, 4=wizard.
-
-### Check algorithm
-
-For each tomb (in unlock order), for each run (1..tomb.treasures.length), for each level (1..tomb.levelCount):
-
-1. Determine the accessible tier range: `0..(tier(tomb) + run − 1)`
-2. Collect all chest slots currently in scope (sites within tier range, sections not behind unacquired ward keys)
-3. For each `hieroglyphId` in `tableauLevel.inventoryIds`: count how many copies are already assigned to in-scope slots
-4. If count < `FRAGMENT_THRESHOLD`: record a deficit
-
-### Fix algorithm
-
-For each deficit `(hieroglyphId, needed, haveInScope)`:
-
-1. Find existing in-scope chest slots that are unassigned — assign the fragment there first
-2. If still insufficient: add new chest slots to sections that are:
-   - In the accessible tier range
-   - Preferring **ward-gated sections matching the tomb's tier** (thematic consistency)
-   - Never in sites that aren't yet accessible at this point, even if the player has the ward key
-3. Adding a chest slot: increment `pathPuzzles` on the target `FloorConfig` (triggering one more puzzle+chest pair via `chestEvery`) and append the fragment to `chestRewards[]`
-4. Log each fix: `⚙ Added chest for ${hieroglyphId} in ${siteId} floor ${floorIdx} (${tombId} run ${run} level ${level})`
-
-### Thematic placement preference
-
-Fragment tier → preferred ward section type for fix-up chests:
-- starter fragments → starter-ward sections (unlocked by `"starter_ward"`)
-- junior fragments → junior-ward sections (unlocked by `"junior_ward"`)
-- expert fragments → expert-ward sections
-- master fragments → master-ward sections
-- wizard fragments → wizard-ward sections
-
-Fallback: ungated sections of the highest accessible tier if no matching ward section has capacity.
-
-### Files involved
-
-- **`scripts/worldGen/configBuilder.ts`** — add `validateAndFixHieroglyphAvailability(configs, plan)` function, call it before `computeFragmentAssignments()`
-- **`src/data/tableaus.ts`** — already exports `tableauLevels`; import at worldgen time via a shared path or duplicate the tier-symbol constants in `scripts/worldGen/data.ts`
-- **`scripts/worldGen/data.ts`** — per-hieroglyph fragment counts sourced from the tier × section matrix (not a single constant)
-
-### Invariants enforced
-
-- Floor 1 of every tomb is always solvable from the initial starter-only area — if not, it's a hard error (not auto-fixed), because it means the fragment assigner fundamentally couldn't cover those symbols in starter pyramids
-- No fix chest is ever added to a site outside the current accessible tier range
-- The validator runs in unlock order so earlier fixes don't invalidate later checks
+All delivered. See git history for implementation details. Summary in build order table below.
 
 ---
 
@@ -687,13 +165,272 @@ Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine f
 
 ---
 
+## Phase 11 — Health System
+
+**Goal:** Session-persistent health state, half-heart UI, damage and healing plumbing. No traps yet — just the foundation.
+
+### State — `useProgression`
+
+```typescript
+// Add to ProgressionState
+currentHealth: number   // half-hearts; default 6 (3 hearts)
+maxHealth: number       // half-hearts; default 6; grows with treasure perks
+```
+
+Both fields persisted to disk via `useGameStorage`. No time-based regen.
+
+### Derived helpers
+
+```typescript
+canAttemptTrap(): boolean   // currentHealth >= 2 (at least 1 full heart)
+takeTrapDamage(armorStacks: number): void
+  // damage = max(1, 2 - armorStacks)  half-hearts; never below 1
+heal(halfHearts: number): void
+  // currentHealth = min(maxHealth, currentHealth + halfHearts)
+healToFull(): void
+```
+
+### `<HealthDisplay />` (`src/ui/HealthDisplay.tsx`)
+
+- Renders `maxHealth / 2` heart slots (full, half, empty)
+- Storybook story covering 0, half, 1, 2½, 3, 6 hearts
+
+### Storybook + unit test
+
+- Story: all heart states
+- Test: `takeTrapDamage`, `heal`, `canAttemptTrap` with and without armor stacks
+
+---
+
+## Phase 12 — Trap Plugin System + Arithmetic Reflex
+
+**Goal:** Trap questions are a first-class plugin type (parallel to puzzle plugins). Arithmetic reflex is the first implementation. No trapped corridors yet — just the encounter UI.
+
+### Design reference
+
+`TRAP_FAMILIES.md` — full spec for trap plugin contract, time limits, and upgrade interactions.
+
+### `src/game/trapPlugin.ts`
+
+```typescript
+export type TrapPlugin<TQuestion> = {
+  family: string
+  generate: (seed: number, tier: Tier, settings: TrapSettings) => TQuestion
+  Component: FC<{
+    question: TQuestion
+    timeLimit: number       // seconds, pre-computed with insight upgrades applied
+    onPass: () => void
+    onFail: () => void
+  }>
+}
+```
+
+### `src/game/trapRegistry.ts`
+
+Mirror of `puzzleRegistry.ts`. `registerTrap` / `getTrapPlugin`.
+
+### Timing constants (`src/game/trapConfig.ts`)
+
+```typescript
+// ponytail: all trap timing lives here — tune before playtesting
+export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
+  starter: 0, junior: 0, expert: 12, master: 9, wizard: 6,
+}
+export const TRAP_TIME_EXTENSION_PER_INSIGHT_STACK = 1  // seconds per stack
+```
+
+### Arithmetic reflex plugin (`src/app/TrapFamilies/ArithmeticReflex/plugin.ts`)
+
+- Generator: pick operation + operands within tier range, compute answer, generate 3 distractors (adjacent values, plausible wrong-op results)
+- Component: large expression display, 4 tap targets, countdown bar
+- Registers as `family: "arithmetic-reflex"`
+
+### `<TrapEncounter />` wrapper (`src/app/TrapFamilies/TrapEncounter.tsx`)
+
+- Looks up plugin by family, generates question with tier seed
+- Applies `trapInsightStacks` to time limit before passing to plugin
+- `onPass` / `onFail` callbacks bubble to caller
+- Storybook story: arithmetic reflex at expert/master/wizard time limits
+
+---
+
+## Phase 13 — Trap Corridors
+
+**Goal:** Trapped edges + warning nodes wired into site navigation and encounter flow. Health damage on fail. Trap tool disables a corridor permanently.
+
+### Site types — `src/game/siteTypes.ts`
+
+```typescript
+// Add to SiteEdge
+trapped?: boolean        // corridor triggers a trap encounter on traversal
+trapFamily?: string      // plugin family; defaults to "arithmetic-reflex"
+
+// Add to NodeType
+| "warning"              // free node before a trapped corridor; player may turn back
+```
+
+Warning nodes appear in `SiteConfig` authored data (expert+ pyramids, §11 of design doc). A warning node always precedes exactly one trapped corridor.
+
+### Navigation — `useSiteNavigation`
+
+- Blocked traversal: if edge is `trapped` AND `canAttemptTrap()` is false → `NodeState: "trap-blocked"` (warning node shows inaccessible indicator)
+- Traversable: if edge is `trapped` AND `canAttemptTrap()` is true → normal navigation, but launches encounter
+
+### `SiteMapScreen` — trap encounter flow
+
+```
+player taps warning node adjacent to trapped corridor
+  → if canAttemptTrap(): launch <TrapEncounter />
+      → onPass: markEdgeSolved(edgeId); advance dot to endpoint
+      → onFail: takeTrapDamage(armorStacks); corridor stays closed (retry possible)
+  → if !canAttemptTrap(): show "not enough health" message
+```
+
+### Trap tool — permanent corridor disable
+
+Consuming a trap tool: `markTrapDisabled(edgeId)` stored in `useJourneys` per-site (`disabledTraps: string[]`). Disabled trapped edges behave as normal edges — no encounter, freely traversable. The assembler/navigator checks `disabledTraps` before checking `trapped`.
+
+### Hidden corridors — `SiteEdge`
+
+```typescript
+hidden?: boolean    // corridor not shown at fork until Detection L1 unlocks it
+```
+
+Hidden corridors are revealed in `useSiteNavigation` when `detectionLevel >= 1` (player is adjacent) or by higher detection levels (see Phase 15).
+
+### `siteConfigs.ts` / `generatedWorld.ts` updates
+
+Add `warning` nodes and `trapped: true` edges to expert+ pyramid configs per density spec in `docs/pyramid-interior-design.md §11`.
+
+---
+
+## Phase 14 — Consumables
+
+**Goal:** Consumable inventory with carry cap, chest delivery, and use flow.
+
+### State — `useProgression`
+
+```typescript
+// Add to ProgressionState
+consumables: {
+  bandage: number     // restores 2 half-hearts (1 full heart)
+  oil: number         // restores to maxHealth
+  trapTool: number    // permanently disables one trapped corridor
+}
+```
+
+Carry cap enforced on pickup: `totalConsumables() <= consumableCarryCap()`.
+
+```typescript
+consumableCarryCap(): number   // packMuleLevel === 0 ? 2 : 4
+totalConsumables(): number     // bandage + oil + trapTool
+```
+
+### Chest reward variant
+
+```typescript
+// Add to TreasureReward
+| { consumable: "bandage" | "oil" | "trap-tool" }
+```
+
+`SiteMapScreen` on collect: if `totalConsumables() >= consumableCarryCap()` → mark chest as `skipped-full` (stored in per-site state for consumable detector); else add to inventory.
+
+### `<ConsumableBar />` (`src/ui/ConsumableBar.tsx`)
+
+Displays current counts for all three types with use buttons. Use triggers:
+- **Bandage:** `heal(2)` — disabled if `currentHealth >= maxHealth`
+- **Oil:** `healToFull()` — disabled if at full health
+- **Trap tool:** enters "select a trapped corridor" mode — next tap on a trap-blocked warning node calls `markTrapDisabled(edgeId)` and consumes one tool
+
+### `<SkippedChestIndicator />` 
+
+Visual marker on previously visited but inventory-full chests so player knows to return.
+
+---
+
+## Phase 15 — Tomb Treasure Perks + Detector System
+
+**Goal:** All perk effects wired. Detector slot UI. Scribe's Eye annotation in tableau rooms.
+
+### Perk state — `useProgression`
+
+```typescript
+// Add to ProgressionState
+perks: {
+  armorStacks: number           // 0–2
+  trapInsightStacks: number     // 0–2
+  packMuleLevel: number         // 0–1
+  compassLevel: number          // 0–3
+  consumableDetectorLevel: number  // 0–3
+  detectionLevel: number        // 0–4
+  scribesEyeLevel: number       // 0–3
+}
+```
+
+`applyTreasurePerk(treasureId)` reads the perk table from `docs/pyramid-interior-design.md §14` (encoded in `src/data/treasurePerks.ts`) and mutates the relevant field. Also handles `maxHealth += 1` for health upgrades and tier unlocks.
+
+### `src/data/treasurePerks.ts`
+
+```typescript
+// Encoded from §14 perk table
+export const TREASURE_PERKS: Record<string, TreasurePerk> = {
+  starter_a_1: { type: "tier-unlock", tier: "junior" },
+  starter_a_2: { type: "compass", level: 1 },
+  starter_a_3: { type: "pack-mule" },
+  starter_a_4: { type: "max-health" },
+  // ... all 40 entries
+}
+```
+
+### Detector slot — `useDetector` (`src/app/state/useDetector.ts`)
+
+```typescript
+type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
+
+// State
+activeDetector: DetectorMode
+compassTarget: string | null    // hieroglyphId being tracked
+
+// Actions
+setDetector(mode: DetectorMode): void
+setCompassTarget(hieroglyphId: string): void
+
+// Derived (reads progression + world data)
+compassResult(): { pyramidId, floorIndicator, exactPath } | null
+consumableResult(): { pyramidId, floorIndicator, exactPath } | null
+detectionMarkers(): { floors: string[], pyramids: string[], journeys: string[] }
+```
+
+Detection L1 (always-on passive) is checked in `useSiteNavigation` directly — no detector mode needed.
+
+### `<DetectorPanel />` (`src/ui/DetectorPanel.tsx`)
+
+Mode switcher (compass / consumable / detection) with result display appropriate to the active level. Disabled modes grayed out if perk not yet acquired.
+
+### Scribe's Eye — tableau room annotation
+
+Tableau puzzle rooms receive `scribesEyeSlots: number` prop (= `scribesEyeLevel === 3 ? Infinity : scribesEyeLevel`). The tableau component renders that many annotation input slots next to symbol cells. Annotations stored in component state — cleared on unmount (leaving the room).
+
+### Armor + trap insight wiring
+
+- `takeTrapDamage` already takes `armorStacks` — `SiteMapScreen` passes `perks.armorStacks`
+- `TrapEncounter` already takes `timeLimit` — `SiteMapScreen` computes `TRAP_TIME_LIMITS_SECONDS[tier] + perks.trapInsightStacks * TRAP_TIME_EXTENSION_PER_INSIGHT_STACK`
+
+### Old treasure effects cleanup (`src/data/treasures.ts`)
+
+The current `TreasureEffects` type contains probabilistic-loot-era fields that are now vestigial: `mapFragmentChance`, `higherLootChance`, `moreLootChance`, `expeditionBonus`, `errorHighlight`, `earlyFeedback`. All 40 treasure definitions carry these.
+
+Replace the entire `TreasureEffects` type and all treasure `effects` fields with the new perk model sourced from `TREASURE_PERKS` in `src/data/treasurePerks.ts`. The `effects` field on `Treasure` is removed; perk lookup goes through `treasurePerks.ts` exclusively. Check for any consumers of the old effect fields (search `TreasureEffects`, `mapFragmentChance`, `higherLootChance`) and remove or replace them.
+
+---
+
 ## What's explicitly out of scope for this build
 
 - **Carry-forward** — dropped; reintroduce only if a time-based puzzle family genuinely needs it
 - **Shortcut gates** — `maxBranchFactor` generates trees only; reconnecting branches deferred
 - **Additional puzzle families** — Sumplete only for pyramid puzzles; balance scale, nonogram, etc. are a separate future track
 - **Puzzle family difficulty scaling** — Sumplete parameters authored per `siteConfig`; no dynamic curve
-- **Trap system implementation** — warning nodes, trapped corridors, timed math questions, health (3 hearts), session-persistent health state, consumables, permanent upgrades from tomb treasures. Design complete in `docs/pyramid-interior-design.md §11`; implementation deferred (see §13 Q11–13)
+- **Additional trap question families** — pattern recognition, memory, spatial/visual. Arithmetic reflex ships first (Phase 12); remaining families added as plugins later with no system changes
 
 ---
 
@@ -721,3 +458,8 @@ Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine f
 | 9f | Hieroglyph availability validator | ✅ | `validateAndFixHieroglyphAvailability()` in `configBuilder.ts`; simulates player progression (accessibleTierMax + wardKeys state machine); computes `tableauInventory` via `computeTableauInventory()` in `data.ts` (bit-for-bit match with `src/data/tableaus.ts`); checks each primary tomb's run-1 tableaus; fixes deficits by filling empty ward sections or adding ungated side sections to accessible pyramids of the matching tier |
 | 10a | Exterior journey path map (bezier curve) | 🔜 | `JourneyPathView.tsx`, `WorldMapView.tsx`, bezier-spaced site nodes, explorer dot interpolation |
 | 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |
+| 11 | Health system | 🔜 | `currentHealth`/`maxHealth` in `useProgression`, `<HealthDisplay />`, damage/heal helpers |
+| 12 | Trap plugin system + arithmetic reflex | 🔜 | `trapPlugin.ts`, `trapRegistry.ts`, `trapConfig.ts`, `ArithmeticReflex/plugin.ts`, `<TrapEncounter />` |
+| 13 | Trap corridors + hidden paths | 🔜 | `trapped`/`hidden` edge attrs, `warning` node type, encounter flow in `SiteMapScreen`, `markTrapDisabled` |
+| 14 | Consumables | 🔜 | `consumables` state, carry cap, chest delivery, `<ConsumableBar />`, skipped-chest tracking |
+| 15 | Tomb treasure perks + detector system | 🔜 | `treasurePerks.ts`, perk state, `useDetector`, `<DetectorPanel />`, Scribe's Eye annotations, old `TreasureEffects` removal |

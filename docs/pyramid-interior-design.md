@@ -44,12 +44,15 @@ Ward gates always lead to a staircase. The staircase is the reward — a new flo
 
 | Effect | Description |
 |---|---|
-| Max health increase | Raise the health ceiling (more tolerance for failed traps) |
-| Armor / protection | Reduce damage taken from failed traps (floors the damage) |
-| Trap insight | More time to answer trap questions |
-| Fragment sense | Reveal which journeys still hold a specific hieroglyph's fragments |
+| Max health +½ heart | Raise the health ceiling in half-heart increments (6 total across all tombs) |
+| Armor / protection | Reduce damage taken from failed traps by 1 half-heart per stack (2 total) |
+| Trap insight +1s | Add 1 second to every trap time limit (2 total) |
+| Hieroglyph compass L1–3 | L1: which pyramid holds a tracked fragment · L2: proximity signal inside · L3: exact path to chest |
+| Hidden path detection L1–4 | L1: hidden corridors pulse during exploration · L2: floor indicator · L3: pyramid marker · L4: journey list marker |
 
-Higher-tier tombs grant stronger effects. Early tombs (starter, junior) primarily give max health increases — straightforward power. Later tombs give armor and insight effects — more situational, more interesting.
+Hard caps prevent snowballing: max health caps at 6 hearts (3 base + 6 half-heart upgrades), trap time extension caps at +2s total, armor caps at 1 full heart reduction. Compass and detection are utility perks — they reveal content but do not affect combat power.
+
+Higher-tier tombs grant utility perks (compass, detection); early tombs primarily give health — straightforward power first, situational tools later. 17 of 40 treasures carry a perk; the remaining 23 are pure ward/location keys (the floor they unlock is its own reward). See §14 for the full treasure distribution across all 9 tombs.
 
 ---
 
@@ -419,13 +422,15 @@ The question's difficulty and time limit scale with the pyramid tier.
 
 ### Health
 
-Players start with **3 hearts**. Tomb treasures can increase the maximum (e.g. to 4, 5, or 6 hearts over the course of the game). Trap damage and armor values are open — see §13 Q12.
+Health is stored in **half-hearts**. Players start with **3 hearts (6 half-hearts)**. Tomb treasures add +½ heart each; maximum is 6 hearts (12 half-hearts) once all health upgrades are collected.
 
-Health is a **session-persistent resource** — it carries across pyramid visits and does not reset on entry or exit. This is what makes the cross-pyramid backtracking loop meaningful: running low in pyramid B sends you back to pyramid A (or any accessible site) to find consumables before returning.
+**Trap damage:** 1 full heart (2 half-hearts) per failed attempt. Armor reduces this by 1 half-heart per stack (max 2 stacks = max 1 full heart reduction, so minimum damage with full armor is 1 half-heart).
 
-The main spine being trap-free guarantees the player can always reach the exit, even at zero health.
+**Trap entry blocked** when health falls below 1 full heart (< 2 half-hearts). The warning node shows the corridor as inaccessible. The player must heal before retrying.
 
-Health persistence between sessions (save/quit and resume) is an open question — see §13.
+**Health persists across sessions** (saved to disk). The "never truly stuck" guarantee comes from world design — main spines are always trap-free and always contain healing consumables. A player at zero health can always backtrack to an accessible main-path chest.
+
+No time-based regen. The primary recovery mechanic is backtracking to find consumables.
 
 ### Loot behind traps
 
@@ -444,11 +449,13 @@ Two layers of mitigation: **consumables** (tactical, found in chests) and **perm
 
 **Consumables** — found in normal pyramid chests:
 
-| Item | Effect |
-|---|---|
-| Mummy bandage | Restore a small amount of health |
-| Healing oil | Restore more health (rarer find) |
-| Trap tool | Bypass a trapped corridor without answering the question |
+| Item | Effect | Rarity |
+|---|---|---|
+| Mummy bandage | Restore 1 full heart (2 half-hearts) | Common |
+| Healing oil | Restore to full health | Rare |
+| Trap tool | Permanently disable a trapped corridor — becomes freely traversable | Uncommon |
+
+The trap tool does not bypass the question — it removes the trap entirely for that corridor. Once used, the corridor is open forever.
 
 **Permanent upgrades** — granted by tomb treasures (see §1):
 
@@ -504,14 +511,115 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 7. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb; should be reduced to 3–6 to fit the permanent-discovery/fragment model. Authoring work in `tableaus.ts`.
 
-8. **Treasure passive effect values** — categories are settled (see §1 tomb loot table). Exact numerical values (how much health, damage reduction percentage, time bonus) need playtesting once traps are implemented.
+8. ~~**Treasure passive effect values**~~ — **Resolved.** See §1 and §14. Values: health +½ heart per upgrade (6 total), armor −1 half-heart damage per stack (2 total), trap insight +1s per stack (2 total). Exact authored constants live in `TRAP_FAMILIES.md §3`.
 
 9. **Location key presentation** — the treasure that reveals a new tomb needs a distinct visual/text treatment to signal it's special. Design needed before Phase 6 UI work.
 
 10. **Ward gate count recalculation** — with 4 location key treasures, only 36 treasures act as ward keys. The WARD_MIX totals should sum to 36, not 40. Verify when authoring final WARD_MIX values.
 
-11. **Health persistence across sessions** — health is session-persistent within a play session. Decide whether health saves to disk (carries across quit/resume) or resets to full on each session start. Resetting on session start is simpler and forgiving; persisting rewards careful play across sittings but may frustrate returning players with zero health.
+11. ~~**Health persistence across sessions**~~ — **Resolved.** Health persists to disk. No time-based regen. See §11.
 
-12. **Trap damage value** — starting health is **3 hearts**. Max health upgrades from tomb treasures extend this (e.g. 4→5→6 hearts over the game). Decide how much a failed trap costs: 1 full heart (simple, 3 attempts before blocked) or ½ heart (more forgiving, but requires half-heart display). Needs playtesting once traps are implemented.
+12. ~~**Trap damage value**~~ — **Resolved.** 1 full heart damage; healing and armor in half-hearts. See §11.
 
 13. **Consumable distribution density** — 147 consumable slots across 823 total is ~18%. Should distribution be flat (same density everywhere) or concentrated near trap-heavy tiers (expert+)? Tunable via authored rules in `TIER_TEMPLATES`.
+
+---
+
+## 14. Treasure perk distribution
+
+Perks are back-loaded: deeper treasures in a tomb give better rewards. Treasure #1 of each tomb always broadens the world (tier unlock or pure floor key) — never a power perk. Location keys sit at position 2 — discovered mid-run, so the player finishes before chasing the new tomb.
+
+| Tomb | # | Key type | Perk |
+|---|---|---|---|
+| **Starter A** | 1 | Ward key | Unlocks junior difficulty |
+| | 2 | Ward key | Compass L1 |
+| | 3 | Ward key | Pack mule |
+| | 4 | Ward key | Max health +½ ♥ |
+| **Junior A** | 5 | Ward key | Unlocks expert difficulty |
+| | 6 | Ward key | — |
+| | 7 | Ward key | — |
+| | 8 | Ward key | — |
+| | 9 | Ward key | Max health +½ ♥ |
+| | 10 | Ward key | Max health +½ ♥ |
+| **Expert A** | 11 | Ward key | Unlocks master difficulty |
+| | 12 | Location key → Expert B | — |
+| | 13 | Ward key | Trap insight +1s |
+| | 14 | Ward key | Armor |
+| **Expert B** | 15 | Ward key | Consumable detector L1 |
+| | 16 | Ward key | — |
+| | 17 | Ward key | Trap insight +1s |
+| | 18 | Ward key | Max health +½ ♥ |
+| **Master A** | 19 | Ward key | Unlocks wizard difficulty |
+| | 20 | Location key → Master B | — |
+| | 21 | Ward key | — |
+| | 22 | Ward key | Compass L2 |
+| | 23 | Ward key | Armor |
+| **Master B** | 24 | Ward key | Consumable detector L2 |
+| | 25 | Ward key | Scribe's Eye L1 |
+| | 26 | Ward key | Compass L3 |
+| | 27 | Ward key | Max health +½ ♥ |
+| | 28 | Ward key | Detection L1 |
+| **Wizard A** | 29 | Ward key | — |
+| | 30 | Location key → Wizard B | — |
+| | 31 | Ward key | Detection L2 |
+| | 32 | Ward key | — |
+| **Wizard B** | 33 | Ward key | Consumable detector L3 |
+| | 34 | Location key → Wizard C | — |
+| | 35 | Ward key | Detection L3 |
+| | 36 | Ward key | Scribe's Eye L2 |
+| **Wizard C** | 37 | Ward key | — |
+| | 38 | Ward key | Scribe's Eye L3 |
+| | 39 | Ward key | Max health +½ ♥ |
+| | 40 | Ward key | Detection L4 |
+
+**Slot breakdown:** Tier unlock ×4 · Location key ×4 · Perk ×23 · Pure ward key ×9 = **40 total**
+
+---
+
+### The detector slot
+
+Three perks share a single **active detector slot** — only one can be active at a time. The player switches modes depending on what they need:
+
+| Mode | Perk required | What it tracks |
+|---|---|---|
+| Compass | Compass L1–3 | One chosen hieroglyph fragment |
+| Consumable | Consumable detector L1–3 | Nearest consumable chest (skipped-but-full-inventory chests first) |
+| Hidden passageway | Detection L2–4 | Undiscovered hidden corridors |
+
+**Detection L1 is passive and always-on** — hidden corridors pulse when the player is adjacent, regardless of the active detector mode. L2–4 (floor/pyramid/journey markers) require active selection.
+
+---
+
+### Perk reference
+
+| Perk | Levels | Effect per level | Implementation notes |
+|---|---|---|---|
+| **Tier unlock** | — | Unlocks the first journey of the next difficulty tier | Triggered on collecting treasure #1 of starter/junior/expert/master first-tomb |
+| **Max health +½ ♥** | — | Adds 1 half-heart to max health. Base = 6 half-hearts (3 hearts); max = 12 half-hearts (6 hearts) across all 6 upgrades | Stored as `maxHealth` integer (half-hearts). Display as full/half hearts |
+| **Armor** | — | Reduces trap damage by 1 half-heart per stack. Stack 1: trap hit costs 1½ hearts. Stack 2: trap hit costs 1 heart. Cannot reduce below 1 half-heart | Stored as `armorStacks` (0–2). Applied at damage calculation |
+| **Trap insight** | — | Adds +1s to every trap encounter time limit per stack. Stack 1: +1s. Stack 2: +2s total | Stored as `trapInsightStacks` (0–2). Applied in `TRAP_TIME_LIMITS_SECONDS` lookup |
+| **Pack mule** | 1 | Increases consumable carry capacity from 2 to 4 slots | Default cap = 2. After upgrade cap = 4. Stored as `packMuleLevel` (0–1). Cap = `packMuleLevel === 1 ? 4 : 2` |
+| **Compass** | L1–3 | **L1:** Journey map marks which pyramid holds a fragment for the tracked hieroglyph · **L2:** Proximity signal while navigating inside the pyramid · **L3:** Exact path to the fragment chest | Active detector mode. Player selects a partial hieroglyph to track. Points to one accessible chest only (filtered against current ward keys). State: `compassLevel` (0–3), `activeDetector`, `compassTarget` hieroglyph id |
+| **Consumable detector** | L1–3 | **L1:** Journey map marks pyramids containing consumable chests · **L2:** Proximity signal inside the pyramid · **L3:** Exact path to nearest consumable chest | Active detector mode. Prioritises chests the player visited but could not carry (inventory full) over unvisited chests. State: `consumableDetectorLevel` (0–3), `activeDetector` |
+| **Detection** | L1–4 | **L1 (passive):** Hidden corridor entrances pulse when player is adjacent · **L2:** Floor indicator — a hidden path exists on this floor · **L3:** Pyramid marker — secrets in this pyramid · **L4:** Journey list marker — shows which journeys have undiscovered hidden paths | L1 always-on passive; L2–4 are active detector modes. Hidden corridors: `hidden: true` edge attribute. State: `detectionLevel` (0–4), `activeDetector` |
+| **Scribe's Eye** | L1–3 | **L1:** Annotate 1 symbol value per tableau room · **L2:** Annotate 2 symbol values · **L3:** Annotate unlimited symbol values. Notes are player-entered (game never fills them in) and clear on leaving the room | Reduces memory load in long deduction chains without reducing calculation effort. State: `scribesEyeLevel` (0–3). Annotation slots = `scribesEyeLevel === 3 ? Infinity : scribesEyeLevel` |
+
+---
+
+## 15. Effort model — fragments to first treasure
+
+The carry-forward symbol model (tableaux re-use previously completed hieroglyphs) keeps the fragment gate to section 1 of each tomb roughly flat regardless of tier. By the time you reach expert pyramids, starter and junior hieroglyphs are already completed, so only the new tier's symbols represent actual hunting effort.
+
+| Tomb | Sec 1 requires | Already completed | New fragments needed |
+|---|---|---|---|
+| Starter A | 4 starter hieroglyphs | — | 4 × 2 = **8** |
+| Junior A | 2 starter + 2 junior | 2 starter ✓ | 2 × 3 = **6** |
+| Expert A | 2 junior + 2 expert | 2 junior ✓ | 2 × 4 = **8** |
+| Expert B | 2 junior + 2 expert | 2 junior ✓ | 2 × 5 = **10** |
+| Master A | 2 expert + 2 master | 2 expert ✓ | 2 × 5 = **10** |
+| Master B | 2 expert + 2 master | 2 expert ✓ | 2 × 6 = **12** |
+| Wizard A | 2 master + 2 wizard | 2 master ✓ | 2 × 6 = **12** |
+| Wizard B | 2 master + 2 wizard | 2 master ✓ | 2 × 7 = **14** |
+| Wizard C | 2 master + 2 wizard | 2 master ✓ | 2 × 8 = **16** |
+
+Effort to first treasure stays in the **6–16 fragment** range across all 9 tombs — roughly one session of exploration per tomb entry. The increasing numbers at higher tiers reflect deeper section positions (wizard B/C fragments are placed in later section positions of their hieroglyphs, which have higher fragment counts per the §3 matrix).
