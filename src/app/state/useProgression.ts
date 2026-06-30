@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
+import { hieroglyphRequired } from "@/data/generatedWorld"
 
 type ProgressionState = {
   hieroglyphFragments: Record<string, number>
@@ -46,9 +47,6 @@ export type ProgressionAPI = {
   mapPieceCount: (tombId: string) => number
 }
 
-// ponytail: fixed threshold; refine per-tier in Phase 6 when fragment authored data ships
-const FRAGMENT_THRESHOLD = 3
-
 export const useProgression = (): ProgressionAPI => {
   const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v2", initialState)
 
@@ -62,10 +60,11 @@ export const useProgression = (): ProgressionAPI => {
             [hieroglyphId]: (prev.hieroglyphFragments[hieroglyphId] ?? 0) + 1,
           },
         })),
-      isHieroglyphComplete: hieroglyphId => (state.hieroglyphFragments[hieroglyphId] ?? 0) >= FRAGMENT_THRESHOLD,
+      isHieroglyphComplete: hieroglyphId =>
+        (state.hieroglyphFragments[hieroglyphId] ?? 0) >= (hieroglyphRequired[hieroglyphId] ?? 2),
       hieroglyphProgress: hieroglyphId => ({
         found: state.hieroglyphFragments[hieroglyphId] ?? 0,
-        required: FRAGMENT_THRESHOLD,
+        required: hieroglyphRequired[hieroglyphId] ?? 2,
       }),
       hieroglyphFragments: state.hieroglyphFragments,
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
