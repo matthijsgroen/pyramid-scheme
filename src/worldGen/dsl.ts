@@ -134,7 +134,11 @@ interface JourneyScopeBuilder {
 // ── Builder functions ─────────────────────────────────────────────────────────
 
 const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccumulator => {
-  const constraints: PyramidConstraint = { ...c }
+  const constraints: PyramidConstraint = {
+    ...c,
+    ...(c.sidePaths ? { sidePaths: [...c.sidePaths] } : {}),
+    ...(c.hiddenPaths ? { hiddenPaths: [...c.hiddenPaths] } : {}),
+  }
   const acc: ConstraintAccumulator = {
     scope,
     constraints,
