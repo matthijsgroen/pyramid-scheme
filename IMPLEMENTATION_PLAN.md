@@ -10,7 +10,7 @@ Status: active plan · updated 2026-06-30
 | Decision | Resolution |
 |----------|-----------|
 | Save migration | Hard reset on V3 version bump — no migration code |
-| Hieroglyphs | **Fragment model** — `hieroglyphFragments: Record<id, count>` in `useProgression`; completion derived from count ≥ tier threshold (2 for starter/junior, 3 for expert/master/wizard) |
+| Hieroglyphs | **Fragment model** — `hieroglyphFragments: Record<id, count>` in `useProgression`; completion derived from count ≥ per-hieroglyph threshold (varies 2–8 by tier × first-blocking tomb section; see `docs/pyramid-interior-design.md §3`) |
 | Map pieces | Per-journey `foundMapPiece: boolean` stays; multi-tomb mapping authored in site config (Phase 8) |
 | Tomb keys (ward keys) | `tombKeys: Record<treasureId, true>` in `useProgression` — boolean, not count (each treasure is unique) |
 | Mosaic pieces | `mosaicPieces: string[]` in `useProgression` — pyramid journey IDs |
@@ -187,7 +187,7 @@ type ProgressionState = {
 
 Key derived queries:
 ```typescript
-// Fragment threshold: starter/junior = 2, expert/master/wizard = 3
+// Fragment threshold: per-hieroglyph (2–8), authored in generatedWorld.ts (tier × first-blocking section matrix)
 isHieroglyphComplete(hieroglyphId: string): boolean
 hieroglyphProgress(hieroglyphId: string): { found: number; required: number }
 hasTombKey(treasureId: string): boolean
@@ -484,6 +484,110 @@ export const FRAGMENT_PLACEMENTS: FragmentPlacement[] = [ ... ]
 
 ---
 
+## Phase 9f — Hieroglyph Availability Validator
+
+**Goal:** A pass inside `buildWorldConfig()` that simulates player progression, verifies every tomb tableau's required hieroglyphs are findable before that tableau is encountered, and fixes gaps by adding chest slots to the appropriate sections.
+
+### Where it runs
+
+After `computeFragmentAssignments()` and before writing `generatedWorld.ts`. It mutates `FloorConfig` objects in-place — extending `chestRewards[]` and adjusting `pathPuzzles`/`chestEvery` — then the existing fragment assigner fills those new slots.
+
+Actually: the pass runs **before** `computeFragmentAssignments()`, producing a larger slot pool that the assigner then fills. New chest slots are added with unassigned rewards; the assigner fills them in the normal greedy pass.
+
+### Hieroglyph requirements source
+
+`tableauLevels` from `src/data/tableaus.ts` — deterministic, authored alongside the narrative. Each entry has:
+- `tombJourneyId` — which tomb
+- `runNumber` — which floor (run 1 = floor 1, always freely accessible)
+- `levelNr` — which tableau on that floor (1..levelCount)
+- `inventoryIds: string[]` — the exact hieroglyph symbol IDs required
+
+A player needs the per-hieroglyph fragment count (from `generatedWorld.ts`, derived from the tier × first-blocking-section matrix) to have it fully collected and usable. There is no single `FRAGMENT_THRESHOLD` constant — each hieroglyph has its own required count.
+
+### Progression simulation
+
+**Player state:** `{ accessibleSites: Set<string>, wardKeys: Set<string> }`
+
+**Initial state:** only starter pyramid ungated sections, `wardKeys = {}`
+
+**Unlock events (in order):**
+
+| Event | accessibleSites gains | wardKeys gains |
+|-------|-----------------------|----------------|
+| Start | starter_1..4 (ungated) | — |
+| 4 starter map pieces collected | starter_treasure_tomb | — |
+| Starter tomb treasure 1 collected | junior_1..4 (ungated) | `"starter_ward"` |
+| Starter tomb treasure 2 collected | — | — |
+| 4 junior map pieces collected | junior_treasure_tomb | — |
+| Junior tomb treasure 1 collected | expert_1..4 (ungated) | `"junior_ward"` |
+| … (same pattern up the chain) | | |
+
+Secondary tombs (expert_b, master_b, wizard_b/c) unlock via map pieces found inside the primary tomb — they enter the simulation after the primary tomb is fully explored.
+
+**Accessible sections at any moment:**
+
+A section is in scope when **both** conditions hold:
+1. Its **site** is in `accessibleSites`
+2. Its **gate** is absent, or `gate.wardKeyId` is in `wardKeys`
+
+### Accessible area rule per tableau
+
+**Run N of a difficulty-T tomb → accessible tiers 0..(T + N − 1)**
+
+| Run | Starter (T=0) | Junior (T=1) | Expert (T=2) |
+|-----|---------------|--------------|--------------|
+| 1 | tiers 0 | tiers 0–1 | tiers 0–2 |
+| 2 | tiers 0–1 | tiers 0–2 | tiers 0–3 |
+| 3 | tiers 0–2 | tiers 0–3 | tiers 0–4 |
+
+Tier mapping: 0=starter, 1=junior, 2=expert, 3=master, 4=wizard.
+
+### Check algorithm
+
+For each tomb (in unlock order), for each run (1..tomb.treasures.length), for each level (1..tomb.levelCount):
+
+1. Determine the accessible tier range: `0..(tier(tomb) + run − 1)`
+2. Collect all chest slots currently in scope (sites within tier range, sections not behind unacquired ward keys)
+3. For each `hieroglyphId` in `tableauLevel.inventoryIds`: count how many copies are already assigned to in-scope slots
+4. If count < `FRAGMENT_THRESHOLD`: record a deficit
+
+### Fix algorithm
+
+For each deficit `(hieroglyphId, needed, haveInScope)`:
+
+1. Find existing in-scope chest slots that are unassigned — assign the fragment there first
+2. If still insufficient: add new chest slots to sections that are:
+   - In the accessible tier range
+   - Preferring **ward-gated sections matching the tomb's tier** (thematic consistency)
+   - Never in sites that aren't yet accessible at this point, even if the player has the ward key
+3. Adding a chest slot: increment `pathPuzzles` on the target `FloorConfig` (triggering one more puzzle+chest pair via `chestEvery`) and append the fragment to `chestRewards[]`
+4. Log each fix: `⚙ Added chest for ${hieroglyphId} in ${siteId} floor ${floorIdx} (${tombId} run ${run} level ${level})`
+
+### Thematic placement preference
+
+Fragment tier → preferred ward section type for fix-up chests:
+- starter fragments → starter-ward sections (unlocked by `"starter_ward"`)
+- junior fragments → junior-ward sections (unlocked by `"junior_ward"`)
+- expert fragments → expert-ward sections
+- master fragments → master-ward sections
+- wizard fragments → wizard-ward sections
+
+Fallback: ungated sections of the highest accessible tier if no matching ward section has capacity.
+
+### Files involved
+
+- **`scripts/worldGen/configBuilder.ts`** — add `validateAndFixHieroglyphAvailability(configs, plan)` function, call it before `computeFragmentAssignments()`
+- **`src/data/tableaus.ts`** — already exports `tableauLevels`; import at worldgen time via a shared path or duplicate the tier-symbol constants in `scripts/worldGen/data.ts`
+- **`scripts/worldGen/data.ts`** — per-hieroglyph fragment counts sourced from the tier × section matrix (not a single constant)
+
+### Invariants enforced
+
+- Floor 1 of every tomb is always solvable from the initial starter-only area — if not, it's a hard error (not auto-fixed), because it means the fragment assigner fundamentally couldn't cover those symbols in starter pyramids
+- No fix chest is ever added to a site outside the current accessible tier range
+- The validator runs in unlock order so earlier fixes don't invalidate later checks
+
+---
+
 ## Phase 10a — Exterior Journey Path Map (Bezier Curve)
 
 **Goal:** Each journey (pyramid or tomb) is displayed as a bezier curve with site nodes along it. Replaces or supplements the current tile-based journey progress display.
@@ -589,7 +693,7 @@ Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine f
 - **Shortcut gates** — `maxBranchFactor` generates trees only; reconnecting branches deferred
 - **Additional puzzle families** — Sumplete only for pyramid puzzles; balance scale, nonogram, etc. are a separate future track
 - **Puzzle family difficulty scaling** — Sumplete parameters authored per `siteConfig`; no dynamic curve
-- **Treasure passive effects redesign** — effects currently use old loot model; redesign to theme-based effects deferred (see `docs/pyramid-interior-design.md` §11 Q8)
+- **Trap system implementation** — warning nodes, trapped corridors, timed math questions, health (3 hearts), session-persistent health state, consumables, permanent upgrades from tomb treasures. Design complete in `docs/pyramid-interior-design.md §11`; implementation deferred (see §13 Q11–13)
 
 ---
 
@@ -612,7 +716,8 @@ Owns `chestOpened`, `showLoot`, `lootTimerRef` — removes the 3-state machine f
 | 9a | DSL full orthogonality | ✅ | `global().floor()`, `tier().floor()`, `journey().floor()` all implemented; specificity rank 0–9 in constraintResolver; gate spec uses `tombId` |
 | 9b | Solver hard constraints + error reporting | ✅ | Provenance per field; assertChestCapacity throws citing rule scope when explicit pathPuzzles is too small |
 | 9c | Density → branch count | ✅ | `"sparse"\|"normal"\|"dense"` → branch count via `INTENSITY_PATHS` in configBuilder |
-| 9d | Crocodiles plugin + tomb chest node | 🔜 | Not yet built |
+| 9d | Crocodiles plugin + tomb chest node | ✅ | Tableau plugin (`PuzzleFamilies/Tableau/plugin.tsx`) + Crocodile plugin (`PuzzleFamilies/Crocodile/plugin.tsx`); `lastMainPuzzleFamily` in FloorConfig designates last main-path puzzle as croc; tomb worldgen sets `pathPuzzles:2` + `lastMainPuzzleFamily:"crocodile"` on last floor (non-starter tombs) |
 | 9e | Re-run world gen + reachability check | ✅ | `yarn validate-world` exists; `yarn generate-world` runs all validators and writes `generatedWorld.ts` |
+| 9f | Hieroglyph availability validator | ✅ | `validateAndFixHieroglyphAvailability()` in `configBuilder.ts`; simulates player progression (accessibleTierMax + wardKeys state machine); computes `tableauInventory` via `computeTableauInventory()` in `data.ts` (bit-for-bit match with `src/data/tableaus.ts`); checks each primary tomb's run-1 tableaus; fixes deficits by filling empty ward sections or adding ungated side sections to accessible pyramids of the matching tier |
 | 10a | Exterior journey path map (bezier curve) | 🔜 | `JourneyPathView.tsx`, `WorldMapView.tsx`, bezier-spaced site nodes, explorer dot interpolation |
 | 10 | Journey map + hub + fast-travel + new-paths badge | 🔜 | `JourneyMapView.tsx`, `NewPathsBadge.tsx`, `useFastTravel.ts` |

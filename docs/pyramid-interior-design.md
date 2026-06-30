@@ -1,6 +1,6 @@
 # Pyramid Interior Design
 
-Status: design doc · resolved decisions from design session 2026-06-26  
+Status: design doc · updated 2026-06-30 with trap system  
 Companion to: `docs/game-loop.md`, `EXPEDITION_REDESIGN.md`, `IMPLEMENTATION_PLAN.md`
 
 ---
@@ -14,10 +14,20 @@ The game has two distinct site types. Their loot is strictly separated — nothi
 | Loot type | Quantity in game | Placement rule |
 |---|---|---|
 | Map piece | 1 per tomb per journey (on the right floor) | Authored per tomb; surface for first tomb, deep floors for later tombs |
-| Mosaic tiles | 298 total | Distributed across pyramid sites; fills any branch endpoint |
-| Hieroglyph fragment | 157 total (2–3 per hieroglyph) | One per site that carries one; spread across journeys |
+| Mosaic tiles | 298 (fixed) | Main path chests — guaranteed filler; never empty-handed |
+| Hieroglyph fragment | 308 total (matrix by tier × section) | Side path end rewards first; main path chests as overflow |
 | Seal key | Local only | One chest per pyramid; opens one sealed gate within that same site |
 | Ward gate | 36 total | Branch endpoint; leads to stairhead → new floor |
+| Consumable | ~147 total | Normal chests; used to heal or bypass traps |
+
+**Loot priority order:**
+1. Side path end rewards → hieroglyph fragments (primary delivery)
+2. Trap-gated side path end rewards → mosaic tiles or deep map pieces (see §11)
+3. Main path chests → mosaic tiles (filler; count floats with world geometry)
+4. Main path chests → consumables (mummy bandages, healing oils, trap tools)
+5. Main path chests → fragment overflow (if too many authored side paths claim fragments)
+
+World builder warns when side paths exceed available fragment slots.
 
 Ward gates always lead to a staircase. The staircase is the reward — a new floor below.
 
@@ -25,10 +35,21 @@ Ward gates always lead to a staircase. The staircase is the reward — a new flo
 
 | Loot type | Quantity | Notes |
 |---|---|---|
-| Treasure (ward key) | 36 total | Opens one specific pyramid floor |
-| Treasure (location key) | 4 total | Reveals the next tomb in the same tier |
+| Treasure (ward key) | 36 total | Opens one specific pyramid floor; also grants a permanent passive effect |
+| Treasure (location key) | 4 total | Reveals the next tomb in the same tier; also grants a permanent passive effect |
 
-40 treasures total. Most open pyramid floors; a few open entirely new tomb locations.
+40 treasures total. Every treasure grants a **permanent passive effect** in addition to its key function. Effects are themed to the tomb and accumulate across the whole game — the player grows stronger as they explore deeper.
+
+**Permanent effect categories:**
+
+| Effect | Description |
+|---|---|
+| Max health increase | Raise the health ceiling (more tolerance for failed traps) |
+| Armor / protection | Reduce damage taken from failed traps (floors the damage) |
+| Trap insight | More time to answer trap questions |
+| Fragment sense | Reveal which journeys still hold a specific hieroglyph's fragments |
+
+Higher-tier tombs grant stronger effects. Early tombs (starter, junior) primarily give max health increases — straightforward power. Later tombs give armor and insight effects — more situational, more interesting.
 
 ---
 
@@ -40,11 +61,14 @@ The interior is a node graph (from `EXPEDITION_REDESIGN.md` §3). Every room is 
 |---|---|---|
 | `puzzle` | Math puzzle | Opens the next corridor on solve |
 | `fork` | Free branch point | Reveals branch corridors ahead |
-| `treasure` | Chest room | Gives hieroglyph fragment, mosaic tiles, map piece, or seal key |
+| `treasure` | Chest room | Gives hieroglyph fragment, mosaic tiles, map piece, seal key, or consumable |
 | `gate (seal)` | Locked door (local) | Opens when the seal key from this site is collected |
 | `gate (ward)` | Locked door (cross-site) | Opens when player holds the specific tomb treasure |
 | `stairhead` | Floor transition | Descends to the next floor |
 | `exit` | Leave the pyramid | Ends the interior visit |
+| `warning` | Trap alert (expert+) | Free node before a trapped corridor; player may turn back |
+
+**Trapped corridors** are an attribute on edges, not a node type. The corridor between a `warning` node and its branch endpoint is trapped — moving through it triggers a timed math question.
 
 **Seal key flow within a site:**
 ```
@@ -64,16 +88,30 @@ branch endpoint → [gate: ward, requires treasure X]
 
 Hieroglyphs are no longer found as complete single-chest discoveries. Instead, fragments are scattered across pyramid sites. Collecting enough fragments of the same hieroglyph permanently completes it.
 
-**Fragment counts per tier:**
+**Fragment counts per hieroglyph — scaled by tier and first-blocking section:**
 
-| Tier | Hieroglyphs | Fragments each | Total fragments |
-|---|---|---|---|
-| Starter | 7 | 2 | 14 |
-| Junior | 10 | 2 | 20 |
-| Expert | 14 | 3 | 42 |
-| Master | 15 | 3 | 45 |
-| Wizard | 12 | 3 | 36 |
-| **Total** | **58** | — | **157** |
+Fragment count depends on (a) which tier the hieroglyph belongs to and (b) which tomb section it first appears in on run 1. Later sections mean the player already has more playing surface when they need that hieroglyph. Hieroglyphs only needed on tomb revisits (run 2+) get the revisit count — placed as collectibles now, tuned when the revisit mechanic ships.
+
+| | Sec 1 | Sec 2 | Sec 3 | Sec 4 | Sec 5 | Sec 6 | Revisit |
+|---|---|---|---|---|---|---|---|
+| Starter | 2 | 3 | — | — | — | — | 3 |
+| Junior | 3 | 4 | 4 | — | — | — | 4 |
+| Expert | 4 | 5 | 5 | 6 | — | — | 5 |
+| Master | 5 | 6 | 6 | 6 | 7 | — | 6 |
+| Wizard | 6 | 7 | 7 | 7 | 8 | 8 | 8 |
+
+**Per-tier totals (hieroglyphs × fragments):**
+
+| Tier | Hieroglyphs | Total fragments |
+|---|---|---|
+| Starter | 7 | 19 |
+| Junior | 10 | 39 |
+| Expert | 14 | 69 |
+| Master | 15 | 88 |
+| Wizard | 12 | 93 |
+| **Total** | **58** | **308** |
+
+The starter tomb section 1 requires 4 hieroglyphs × 2 fragments = 8 finds — achievable in 17 starter pyramids. Revisit hieroglyphs are those not needed in run 1 at all; they exist as collectibles and for the deferred multi-run tomb mechanic.
 
 **Placement rules (authored into the generator):**
 - Fragments are **specific** — each chest gives a named fragment ("Ra fragment"), not a generic pool
@@ -312,10 +350,10 @@ scripts/generateWorld.ts
 
 | Phase | Map pieces placed | Fragment slots | Gated deep pieces |
 |---|---|---|---|
-| 4 (linear, current) | 20 surface (main goal, no branches) | 47 / 157 | 0 — deferred |
-| 5a (branches) | 20 surface (branch endpoints); main goal → mosaicPiece | ~100 / 157 | 0 — deferred |
-| 5c (floors) | 20 surface + 10 gated deep floors | ~140 / 157 | 10 (expert_b ×2, master_b ×3, wizard_b ×3, wizard_c ×2) |
-| 6+ (full world) | 30 total | 157 / 157 | all placed |
+| 4 (linear, current) | 20 surface (main goal, no branches) | ~47 / 308 | 0 — deferred |
+| 5a (branches) | 20 surface (branch endpoints); main goal → mosaicPiece | ~150 / 308 | 0 — deferred |
+| 5c (floors) | 20 surface + 10 gated deep floors | ~250 / 308 | 10 (expert_b ×2, master_b ×3, wizard_b ×3, wizard_c ×2) |
+| 6+ (full world) | 30 total | 308 / 308 | all placed |
 
 **Note on linear-phase compromise:** Phase 4 configs are linear (no branches), so map pieces temporarily sit at the main goal (replacing mosaicPiece). `yarn generate-world` will warn about unplaced fragments — this is expected until Phase 5 adds branch endpoints.
 
@@ -331,22 +369,126 @@ CI runs `yarn validate-world` to catch rule changes that weren't regenerated.
 
 ---
 
-## 10. The numbers at a glance
+## 10. Loot economy at a glance
 
-| | Count | Notes |
+### Reward slot supply (full world)
+
+| Slot type | Surface | Ward floors (36) | Total |
+|---|---|---|---|
+| Side path endpoints | 244 | 108 | **352** |
+| Main path chests | 259 | 72 | **331** |
+| Main end rewards | 104 | 36 | **140** |
+| **Total** | **607** | **216** | **823** |
+
+Surface side path breakdown: 20 journeys × 2 special pyramids (3+6 branches) + 64 simple pyramids × 1 branch = 244. Ward floor estimate: ~3 side paths + 2 chests + 1 main end per floor.
+
+### Loot demand
+
+| Loot type | Count | Slot type |
 |---|---|---|
-| Pyramid sites | 129 | Across 20 journeys |
-| Tomb sites | 9 | 1+1+2+2+3 across the 5 tiers |
-| Total hieroglyphs | 58 | Permanent once completed |
-| Hieroglyph fragments | 157 | 2 per starter/junior hieroglyph, 3 per expert/master/wizard |
-| Total treasures | 40 | 36 ward keys + 4 location keys |
-| Pyramid floors unlocked | 36 | One per ward key treasure |
-| Map pieces in the world | 30 | Distributed surface + deep floors; per tomb: 4+4+4+2+4+3+4+3+2 |
-| Mosaic tiles | 298 | Fill remaining branch endpoints |
+| Hieroglyph fragments | 308 | Side path endpoints (primary), chests (overflow) |
+| Mosaic tiles | 298 | Chests + main end rewards |
+| Map pieces | 30 | Side path endpoints (20 surface + 10 deep floors) |
+| Seal / floor keys | ~40 | Chest slots (local mechanic, 1 per branchy pyramid) |
+| Consumables | ~147 | Chests — mummy bandages, healing oils, trap tools |
+| **Total assigned** | **823** | |
+
+All 823 slots assigned. Consumables (trap system, §11) absorb the previously unassigned 147 slots.
+
+## 11. Trap system
+
+### Overview
+
+Traps appear on specific **authored side branches** at expert difficulty and above. They are a corridor attribute — not a room type. The main spine is always trap-free; the player can always backtrack to the exit even at zero health.
+
+```
+[fork] ── [warning] ══(trapped)══ [treasure: mosaic / deep map piece]
+                ↑
+          player may turn back here
+```
+
+### Encounter flow
+
+When the player moves through a trapped corridor, a timed math question appears:
+
+- **Pass:** corridor opens; player reaches the endpoint treasure
+- **Fail:** take health damage; corridor stays closed (retry is possible)
+- **Health = 0 on attempt:** entry is blocked entirely — the warning node shows the corridor as inaccessible until health is restored
+
+The question's difficulty and time limit scale with the pyramid tier.
+
+### Health
+
+Players start with **3 hearts**. Tomb treasures can increase the maximum (e.g. to 4, 5, or 6 hearts over the course of the game). Trap damage and armor values are open — see §13 Q12.
+
+Health is a **session-persistent resource** — it carries across pyramid visits and does not reset on entry or exit. This is what makes the cross-pyramid backtracking loop meaningful: running low in pyramid B sends you back to pyramid A (or any accessible site) to find consumables before returning.
+
+The main spine being trap-free guarantees the player can always reach the exit, even at zero health.
+
+Health persistence between sessions (save/quit and resume) is an open question — see §13.
+
+### Loot behind traps
+
+Trap endpoints hold only high-value optional loot:
+
+| Loot type | Notes |
+|---|---|
+| Mosaic tiles | Most common trap reward — desirable but never blocking |
+| Deep tomb map pieces | A subset; some later-tomb map pieces require taking a risk |
+
+Trap endpoints **never** hold hieroglyph fragments, seal keys, or ward gates — those must stay accessible without health cost.
+
+### Mitigating traps
+
+Two layers of mitigation: **consumables** (tactical, found in chests) and **permanent upgrades** (strategic, from tomb treasures):
+
+**Consumables** — found in normal pyramid chests:
+
+| Item | Effect |
+|---|---|
+| Mummy bandage | Restore a small amount of health |
+| Healing oil | Restore more health (rarer find) |
+| Trap tool | Bypass a trapped corridor without answering the question |
+
+**Permanent upgrades** — granted by tomb treasures (see §1):
+
+| Effect | Impact on traps |
+|---|---|
+| Max health increase | More total health to risk on traps |
+| Armor / protection | Failed traps deal less damage |
+| Trap insight | More time to answer trap questions |
+
+Consumables fill the 147 previously unassigned reward slots (see §10). Permanent upgrades come from tomb treasures — no extra slots needed.
+
+### Difficulty gating
+
+| Tier | Traps |
+|---|---|
+| Starter | None |
+| Junior | None |
+| Expert | 1 trap per branchy pyramid |
+| Master | 1–2 traps per pyramid |
+| Wizard | 2–3 traps per pyramid |
 
 ---
 
-## 11. Open questions
+## 12. Key counts at a glance
+
+| | Count | Notes |
+|---|---|---|
+| Pyramid sites | ~104 | 20 journeys, capped at 6 levels each; exact count pending journey trim decision |
+| Tomb sites | 9 | 1+1+2+2+3 across the 5 tiers |
+| Total hieroglyphs | 58 | Permanent once completed |
+| Hieroglyph fragments | 308 | Scaled by tier × first-blocking section (see §3 matrix) |
+| Total treasures | 40 | 36 ward keys + 4 location keys |
+| Pyramid floors unlocked | 36 | One per ward key treasure |
+| Map pieces in the world | 30 | Distributed surface + deep floors; per tomb: 4+4+4+2+4+3+4+3+2 |
+| Consumables | ~147 | Mummy bandages, healing oils, trap tools — in normal chests |
+| Mosaic tiles | 298 (fixed) | Main path chest filler |
+
+---
+
+## 13. Open questions
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note in `journeys.ts`.
 
@@ -362,8 +504,14 @@ CI runs `yarn validate-world` to catch rule changes that weren't regenerated.
 
 7. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb; should be reduced to 3–6 to fit the permanent-discovery/fragment model. Authoring work in `tableaus.ts`.
 
-8. **Treasure passive effects** — effects should be themed per tomb (e.g. merchant tomb effects relate to loot/fragments; priestly tomb effects relate to tableau solving). Design needed before Phase 6.
+8. **Treasure passive effect values** — categories are settled (see §1 tomb loot table). Exact numerical values (how much health, damage reduction percentage, time bonus) need playtesting once traps are implemented.
 
 9. **Location key presentation** — the treasure that reveals a new tomb needs a distinct visual/text treatment to signal it's special. Design needed before Phase 6 UI work.
 
 10. **Ward gate count recalculation** — with 4 location key treasures, only 36 treasures act as ward keys. The WARD_MIX totals should sum to 36, not 40. Verify when authoring final WARD_MIX values.
+
+11. **Health persistence across sessions** — health is session-persistent within a play session. Decide whether health saves to disk (carries across quit/resume) or resets to full on each session start. Resetting on session start is simpler and forgiving; persisting rewards careful play across sittings but may frustrate returning players with zero health.
+
+12. **Trap damage value** — starting health is **3 hearts**. Max health upgrades from tomb treasures extend this (e.g. 4→5→6 hearts over the game). Decide how much a failed trap costs: 1 full heart (simple, 3 attempts before blocked) or ½ heart (more forgiving, but requires half-heart display). Needs playtesting once traps are implemented.
+
+13. **Consumable distribution density** — 147 consumable slots across 823 total is ~18%. Should distribution be flat (same density everywhere) or concentrated near trap-heavy tiers (expert+)? Tunable via authored rules in `TIER_TEMPLATES`.

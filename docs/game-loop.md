@@ -1,7 +1,7 @@
 # Game Loop Design — Pyramid Scheme
 
 Status: design doc · cross-checked against EXPEDITION_REDESIGN, PUZZLE_FAMILIES, ux-flow-map  
-Date: 2026-06-26 (updated same date with interior design decisions)  
+Date: 2026-06-26 (updated 2026-06-29 with loot economy redesign)  
 See also: `docs/pyramid-interior-design.md` for loot economy, interior structure, and floor system
 
 ---
@@ -21,7 +21,7 @@ Player enters a pyramid or tomb → navigates the node graph → fog burns back 
 Rewards collected during a site visit:
 | Reward | Frequency | Scope |
 |---|---|---|
-| Hieroglyph fragment | 0–1 per site; 157 total across the game | Completes a hieroglyph when enough are found (2–3 per hieroglyph) |
+| Hieroglyph fragment | 0–1 per site; 308 total across the game | Completes a hieroglyph when enough are found (2–8 per hieroglyph, scaled by tier and which tomb section first requires it) |
 | Mosaic tiles | Guaranteed on critical path; also fill optional branch endpoints | Game scope |
 | Map piece | 0–1 per site per tomb; surface floors feed first tomb, deep floors feed later tombs | Tomb-gate scope |
 
@@ -29,16 +29,19 @@ The site itself is the progress indicator — fog revealing is the reward. No se
 
 **Ward-gated content** (from Phase 5d of the build plan) means a first visit is not the whole story: some branches are deliberately inaccessible until a tomb key from a *later* tomb arrives. Early sites stay live throughout the game; they are *dormant*, not spent.
 
+**Trap corridors** (expert tier and above) are a second reason to return or backtrack. Specific authored side branches are preceded by a warning sign — the player may opt in. Moving through a trapped corridor triggers a timed math question: pass to proceed, fail to take health damage. Health is session-persistent; depleted health blocks further trap attempts until restored by consumables (found in normal chests) or permanent upgrades (from tomb treasures). See `docs/pyramid-interior-design.md §11` for full trap system design.
+
 ### Macro loop — one difficulty tier (several sessions)
 
-Four pyramid journeys (explorations) + one to three treasure tombs per tier.
+Four pyramid journeys per tier, unlocked sequentially (completing journey N unlocks journey N+1). One to three treasure tombs per tier.
 
-1. Play pyramid sites → collect hieroglyph fragments + map pieces + mosaic tiles
-2. Collect `piecesRequired` map pieces for the tier's first tomb → enter Tomb A
-3. Tomb interior: tableau rooms (gated on completed hieroglyphs) → treasure rooms
-4. Most treasures are **ward keys** opening specific pyramid floors; the final treasure is a **location key** revealing the next tomb
-5. Explore newly-opened floors → find hieroglyph fragments + map pieces for Tomb B
-6. Collect `piecesRequired` map pieces for Tomb B → enter Tomb B → repeat
+1. Complete the last pyramid of journey 1 → unlocks journey 2; collect map piece + fragments + mosaic tiles inside
+2. Repeat for journeys 2–4; completing each journey's final pyramid unlocks the next
+3. Each journey contains one map piece (on its surface floor); tomb unlocks as soon as all required map pieces are collected — the player need not finish the current journey first
+4. Tomb interior: tableau rooms (gated on completed hieroglyphs) → treasure rooms
+5. Tomb treasures are **ward keys** opening specific pyramid floors (or location keys revealing the next tomb in the tier); every treasure also grants a **permanent passive effect** (max health increase, armor, trap insight, or fragment sense) — first-tomb's final treasure also unlocks the first journey of the next difficulty tier
+6. Explore newly-opened pyramid floors → find hieroglyph fragments + map pieces for Tomb B
+7. Collect map pieces for Tomb B → enter Tomb B → repeat
 
 **Multiple tombs per tier at higher difficulties:**
 
@@ -50,7 +53,7 @@ Four pyramid journeys (explorations) + one to three treasure tombs per tier.
 | Master | 2 | 5 + 5 treasures |
 | Wizard | 3 | 4 + 4 + 4 treasures |
 
-**Hieroglyphs are discovered via fragments** — finding a hieroglyph fragment chest adds one fragment to the collection. A hieroglyph is completed when all its fragments are found (2 for starter/junior tier, 3 for expert/master/wizard). Completed hieroglyphs unlock tomb tableau rooms. Fragments of the same hieroglyph are always in different pyramid sites across different journeys.
+**Hieroglyphs are discovered via fragments** — finding a hieroglyph fragment chest adds one fragment to the collection. A hieroglyph is completed when all its fragments are found. Fragment counts scale by tier *and* by which tomb section first requires that hieroglyph — a hieroglyph only needed in section 3 has more fragments than one needed in section 1, because the player already has a larger playing surface by then. See `docs/pyramid-interior-design.md §3` for the full matrix (2–8 fragments per hieroglyph; 308 total). Completed hieroglyphs unlock tomb tableau rooms. Fragments of the same hieroglyph are always in different pyramid sites across different journeys.
 
 **Map pieces are flexible** — `piecesRequired` is authored per tomb and is not always 4. Later tombs within a tier need fewer pieces (they're already gated behind completing an earlier tomb). Map pieces for later tombs are found on deep floors opened by earlier tombs' ward keys — exploring new floors serves double duty.
 
@@ -73,9 +76,9 @@ The mosaic has two layers: a 20-piece *image* (one section per journey, index = 
 | Expert | 4, 6, 9, 7 | **26** | 6.5 |
 | Master | 4, 9, 8, 5 | **26** | 6.5 |
 | Wizard | 9, 11, 10, 8 | **38** | 9.5 |
-| **Pyramid total** | — | **129** | — |
-| **Tombs** (2,3,4,5,6) | — | **20** | — |
-| **Grand total** | — | **149** | — |
+| **Pyramid total** | — | **~104** | journeys capped at 6 levels each |
+| **Tombs** (1,1,2,2,3) | — | **9** | — |
+| **Grand total** | — | **~113** | — |
 
 ### Intra-tier shape
 
