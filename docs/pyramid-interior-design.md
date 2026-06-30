@@ -69,9 +69,9 @@ The interior is a node graph (from `EXPEDITION_REDESIGN.md` §3). Every room is 
 | `gate (ward)` | Locked door (cross-site) | Opens when player holds the specific tomb treasure |
 | `stairhead` | Floor transition | Descends to the next floor |
 | `exit` | Leave the pyramid | Ends the interior visit |
-| `warning` | Trap alert (expert+) | Free node before a trapped corridor; player may turn back |
+| `trap` | Timed challenge (expert+) | Requires passing a time-based math encounter to mark as completed |
 
-**Trapped corridors** are an attribute on edges, not a node type. The corridor between a `warning` node and its branch endpoint is trapped — moving through it triggers a timed math question.
+**Trap rooms** are a room type — same navigation as puzzle rooms, but the encounter is time-based (arithmetic reflex) rather than a grid puzzle. Displayed on the map with a **skull icon**. No warning node is needed; the skull provides the visual signal before the player commits to entering.
 
 **Seal key flow within a site:**
 ```
@@ -402,21 +402,23 @@ All 823 slots assigned. Consumables (trap system, §11) absorb the previously un
 
 ### Overview
 
-Traps appear on specific **authored side branches** at expert difficulty and above. They are a corridor attribute — not a room type. The main spine is always trap-free; the player can always backtrack to the exit even at zero health.
+Traps appear on **authored side branches** at expert difficulty and above. They are a **room type** (`"trap"`) — the same navigation model as puzzle rooms, but with a time-based encounter instead of a grid puzzle. The main spine is always trap-free; the player can always backtrack to the exit regardless of health.
 
 ```
-[fork] ── [warning] ══(trapped)══ [treasure: mosaic / deep map piece]
-                ↑
-          player may turn back here
+[fork] ── [trap 💀] ── [treasure: mosaic / consumable]
 ```
+
+Trap rooms display a **skull icon** on the site map. The skull is the player's visual signal — no separate warning node is needed.
 
 ### Encounter flow
 
-When the player moves through a trapped corridor, a timed math question appears:
+When the player taps a trap room to enter it:
 
-- **Pass:** corridor opens; player reaches the endpoint treasure
-- **Fail:** take health damage; corridor stays closed (retry is possible)
-- **Health = 0 on attempt:** entry is blocked entirely — the warning node shows the corridor as inaccessible until health is restored
+1. **First ever trap** → Fez intro tutorial fires before the encounter
+2. **Encounter launches** (ArithmeticReflex — timed math question)
+   - **Pass:** room marks as `"completed"`; freely walkable on revisit
+   - **Fail:** take health damage; encounter closes; room stays `"reachable"` for retry if `canAttemptTrap()` is still true
+3. **Insufficient health** (`currentHealth ≤ 1`): skull shows red/locked indicator; tapping shows a brief game message — encounter does not launch
 
 The question's difficulty and time limit scale with the pyramid tier.
 
@@ -424,13 +426,15 @@ The question's difficulty and time limit scale with the pyramid tier.
 
 Health is stored in **half-hearts**. Players start with **3 hearts (6 half-hearts)**. Tomb treasures add +½ heart each; maximum is 6 hearts (12 half-hearts) once all health upgrades are collected.
 
-**Trap damage:** 1 full heart (2 half-hearts) per failed attempt. Armor reduces this by 1 half-heart per stack (max 2 stacks = max 1 full heart reduction, so minimum damage with full armor is 1 half-heart).
+**Trap damage:** 1 full heart (2 half-hearts) per failed attempt. Armor reduces this by 1 half-heart per stack (max 2 stacks, so minimum damage with full armor is 1 half-heart).
 
-**Trap entry blocked** when health falls below 1 full heart (< 2 half-hearts). The warning node shows the corridor as inaccessible. The player must heal before retrying.
+**Health floor: 1 half-heart.** Health never reaches zero — there is no death screen. At 1 half-heart the player is blocked from all trap rooms until they heal. The player must prioritise finding consumables to restore health.
 
-**Health persists across sessions** (saved to disk). The "never truly stuck" guarantee comes from world design — main spines are always trap-free and always contain healing consumables. A player at zero health can always backtrack to an accessible main-path chest.
+**`canAttemptTrap()`** = `currentHealth > 1` (more than 1 half-heart remaining).
 
-No time-based regen. The primary recovery mechanic is backtracking to find consumables.
+**Health persists across sessions.** The "never truly stuck" guarantee comes from world design — main spines are always trap-free and always lead toward healing consumables.
+
+No time-based regen. The primary recovery mechanic is backtracking to find chests.
 
 ### Loot behind traps
 
@@ -439,6 +443,7 @@ Trap endpoints hold only high-value optional loot:
 | Loot type | Notes |
 |---|---|
 | Mosaic tiles | Most common trap reward — desirable but never blocking |
+| Consumables | Bandages, oils, trap tools — a self-sustaining risk/reward loop |
 | Deep tomb map pieces | A subset; some later-tomb map pieces require taking a risk |
 
 Trap endpoints **never** hold hieroglyph fragments, seal keys, or ward gates — those must stay accessible without health cost.
