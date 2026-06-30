@@ -18,17 +18,54 @@ export const WORLD_TARGETS = {
  */
 export const worldSpec = rules([
   // ── Defaults ──────────────────────────────────────────────────────────────
-  // sideSections: "sparse"|"normal"|"dense"|number = that many auto mosaic-piece side paths, no explicit sections.
-  // sideSections: [...] = explicit sections; auto-distributor still appends mosaic paths on top.
-  // undefined (default) = auto-distributor decides mosaic path count.
+  // sidePaths/hiddenPaths: declared density-based side paths; auto-distributor handles mosaic paths.
+  // sideSections: [...] = explicit sections (ward-gated map pieces, etc.); can be combined.
   global({ floorDepth: 1 }),
 
-  // ── Difficulty per tier ───────────────────────────────────────────────────
+  // ── Difficulty + side paths per tier ─────────────────────────────────────
   tier("starter", { difficulty: "starter" }),
   tier("junior", { difficulty: "junior" }),
   tier("expert", { difficulty: "expert" }),
   tier("master", { difficulty: "master" }),
   tier("wizard", { difficulty: "wizard" }),
+
+  tier("starter").set({ consumableDensity: 0 }).sidePaths("low").settings({ pathPuzzles: 0, end: "fragment" }),
+
+  tier("junior")
+    .set({ consumableDensity: 0.05 })
+    .sidePaths("low")
+    .settings({ pathPuzzles: 0, end: "treasure" })
+    .sidePaths("medium")
+    .settings({ pathPuzzles: 1, end: "fragment" })
+    .hiddenPaths("low")
+    .settings({ pathPuzzles: 0, end: "treasure" }),
+
+  tier("expert")
+    .set({ consumableDensity: 0.2 })
+    .sidePaths("low")
+    .settings({ pathPuzzles: 0, end: "treasure" })
+    .sidePaths("medium")
+    .settings({ pathPuzzles: 1, end: "fragment" })
+    .hiddenPaths("low")
+    .settings({ pathPuzzles: 0, end: "treasure" }),
+
+  tier("master")
+    .set({ consumableDensity: 0.25 })
+    .sidePaths("medium")
+    .settings({ pathPuzzles: 1, end: "fragment" })
+    .hiddenPaths("medium")
+    .settings({ pathPuzzles: 0, end: "treasure" }),
+
+  tier("wizard")
+    .set({ consumableDensity: 0.3 })
+    .sidePaths("medium")
+    .settings({ pathPuzzles: 1, end: "fragment" })
+    .sidePaths("low")
+    .settings({ pathPuzzles: 0, end: "treasure" })
+    .hiddenPaths("medium")
+    .settings({ pathPuzzles: 0, end: "treasure" })
+    .hiddenPaths("low")
+    .settings({ pathPuzzles: 1, end: "mosaic" }),
 
   // ── Starter tier ──────────────────────────────────────────────────────────
   // First pyramid is the map piece entry-point for the starter tomb.

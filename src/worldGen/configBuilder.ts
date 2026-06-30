@@ -20,7 +20,9 @@ import type {
   SideSectionConstraint,
   SideIntensity,
   KeyColor,
+  PathEntry,
 } from "./dsl"
+import { mulberry32 } from "../game/random"
 import type { Assignment } from "./types"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -133,7 +135,23 @@ const buildChestRewards = (
 
 // ── Mosaic path distribution ──────────────────────────────────────────────────
 
-const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, sparse: 1, normal: 2, dense: 4 }
+const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, low: 1, medium: 2, dense: 4 }
+
+// Simple deterministic hash for per-pyramid seeding of density ranges
+const hashStr = (s: string): number => {
+  let h = 0
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
+  return h >>> 0
+}
+
+// Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
+const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
+  if (density === "none") return 0
+  if (density === "low") return 1
+  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}`))
+  if (density === "medium") return 2 + Math.floor(rand() * 2) // 2 or 3
+  return 4 + Math.floor(rand() * 2) // 4 or 5
+}
 
 const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
   let committed = 0
@@ -166,7 +184,21 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
       if (Array.isArray(sd)) {
         committed += sd.filter(s => s.endReward === "mosaicPiece").length
       }
-      autoCandidates.push(p)
+      // Count mosaic paths from sidePaths/hiddenPaths declarations — those pyramids leave auto-pool.
+      // mosaicPathCount is set to 0 so buildSideSections skips the auto-mosaic loop;
+      // the declared hidden mosaics are built directly from constraints.
+      const allDeclared = [...(p.constraint.sidePaths ?? []), ...(p.constraint.hiddenPaths ?? [])]
+      const declaredMosaics = allDeclared.filter(e => e.end === "mosaic")
+      if (declaredMosaics.length > 0) {
+        const count = declaredMosaics.reduce(
+          (sum, e) => sum + pathCountForDensity(e.density, p.journeyId, p.pyramidIndex),
+          0
+        )
+        committed += count
+        explicitPaths.set(key, 0) // buildSideSections handles these via declaredHiddenPaths
+      } else {
+        autoCandidates.push(p)
+      }
     }
   }
 
@@ -188,7 +220,16 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 // ── Side sections ─────────────────────────────────────────────────────────────
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, sparse: 0.33, normal: 0.5, dense: 1.0 }
+const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
+
+const pathEndToReward = (end: string, tier: string): TreasureReward | undefined => {
+  if (end === "mosaic") return { type: "mosaicPiece" }
+  if (end === "fragment") {
+    const symbols = TOMB_SYMBOLS[tier as Tier]
+    return { type: "hieroglyphFragment", hieroglyphId: symbols[0] }
+  }
+  return undefined // "treasure" = no specific endReward, just chest room
+}
 
 const buildSideSections = (
   tier: string,
@@ -200,7 +241,11 @@ const buildSideSections = (
   mosaicPathCount: number,
   mainPathPuzzles: number,
   keyDensity?: SideIntensity,
-  keyColors?: number
+  keyColors?: number,
+  journeyId?: string,
+  pyramidIndex?: number,
+  declaredSidePaths?: PathEntry[],
+  declaredHiddenPaths?: PathEntry[]
 ): SideSection[] => {
   const sections: SideSection[] = []
 
@@ -259,6 +304,35 @@ const buildSideSections = (
       endReward: { type: "mosaicPiece" },
       ...(gate ? { gate } : {}),
     })
+  }
+
+  // Declared sidePaths / hiddenPaths from DSL
+  const jId = journeyId ?? ""
+  const pIdx = pyramidIndex ?? 0
+  for (const entry of declaredSidePaths ?? []) {
+    const count = pathCountForDensity(entry.density, jId, pIdx)
+    const endReward = pathEndToReward(entry.end, tier)
+    for (let j = 0; j < count; j++) {
+      sections.push({
+        pathPuzzles: entry.pathPuzzles,
+        difficulty,
+        end: "treasure",
+        ...(endReward ? { endReward } : {}),
+      })
+    }
+  }
+  for (const entry of declaredHiddenPaths ?? []) {
+    const count = pathCountForDensity(entry.density, jId, pIdx)
+    const endReward = pathEndToReward(entry.end, tier)
+    for (let j = 0; j < count; j++) {
+      sections.push({
+        pathPuzzles: entry.pathPuzzles,
+        difficulty,
+        end: "treasure",
+        hidden: true,
+        ...(endReward ? { endReward } : {}),
+      })
+    }
   }
 
   return sections
@@ -410,10 +484,15 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
           mosaicPathCount,
           pp,
           constraint.keyDensity,
-          constraint.keyColors
+          constraint.keyColors,
+          journeyId,
+          i,
+          constraint.sidePaths,
+          constraint.hiddenPaths
         )
         const chestRewards = buildChestRewards(journeyId, tier, chestOffset, pp, assignments)
         chestOffset += chestCountFor(pp)
+        const consumableDensity = constraint.consumableDensity
         pyramidConfigs.push([
           {
             pathPuzzles: pp,
@@ -424,6 +503,7 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
             sideSections,
             mainEndReward,
             chestRewards,
+            ...(consumableDensity !== undefined ? { consumableDensity } : {}),
           } satisfies FloorConfig,
         ])
       }

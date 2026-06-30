@@ -16,6 +16,7 @@ export type SubSection = {
   end: "treasure" | "staircase"
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
+  hidden?: boolean
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -31,6 +32,7 @@ export type FloorConfig = {
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]
   puzzleFamily?: "sumplete" | "tableau"
+  consumableDensity?: number
 }
 
 export type SiteConfig = FloorConfig[]

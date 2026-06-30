@@ -3,7 +3,9 @@ import type { Tier, Difficulty } from "./types"
 // ── Constraint vocabulary ─────────────────────────────────────────────────────
 
 export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
-export type SideIntensity = "none" | "sparse" | "normal" | "dense"
+export type SideIntensity = "none" | "low" | "medium" | "dense"
+export type PathEndHint = "fragment" | "treasure" | "mosaic"
+export type PathEntry = { density: SideIntensity; pathPuzzles: number; end: PathEndHint }
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
@@ -43,6 +45,12 @@ export type FloorConstraint = {
   keyDensity?: SideIntensity
   /** How many distinct key colors to use (1–5). Fewer colors → one key opens more doors. */
   keyColors?: number
+  /** Declared visible side paths — each entry adds paths of that density with the given reward. */
+  sidePaths?: PathEntry[]
+  /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
+  hiddenPaths?: PathEntry[]
+  /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
+  consumableDensity?: number
 }
 
 export type PyramidConstraint = {
@@ -67,6 +75,12 @@ export type PyramidConstraint = {
   mainEndReward?: RewardSpec
   gateHint?: GateType
   floors?: (FloorConstraint | null)[]
+  /** Declared visible side paths — each entry adds paths of that density with the given reward. */
+  sidePaths?: PathEntry[]
+  /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
+  hiddenPaths?: PathEntry[]
+  /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
+  consumableDensity?: number
 }
 
 // ── Rule representation ───────────────────────────────────────────────────────
@@ -95,19 +109,56 @@ interface GlobalScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
 }
 
+type PathSettingsBuilder = { settings(c: { pathPuzzles: number; end: PathEndHint }): ConstraintAccumulator }
+
+/** A Rule that also supports chaining `.sidePaths()` / `.hiddenPaths()` calls. */
+export type ConstraintAccumulator = Rule & {
+  sidePaths(density: SideIntensity): PathSettingsBuilder
+  hiddenPaths(density: SideIntensity): PathSettingsBuilder
+}
+
 interface TierScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
   pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
   pyramid(sel: PyramidSelector): PyramidChainBuilder
+  set(c: PyramidConstraint): ConstraintAccumulator
 }
 
 interface JourneyScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
   pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
   pyramid(sel: PyramidSelector): PyramidChainBuilder
+  set(c: PyramidConstraint): ConstraintAccumulator
 }
 
 // ── Builder functions ─────────────────────────────────────────────────────────
+
+const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccumulator => {
+  const constraints: PyramidConstraint = { ...c }
+  const acc: ConstraintAccumulator = {
+    scope,
+    constraints,
+    sidePaths(density: SideIntensity): PathSettingsBuilder {
+      return {
+        settings(config: { pathPuzzles: number; end: PathEndHint }): ConstraintAccumulator {
+          if (!constraints.sidePaths) constraints.sidePaths = []
+          constraints.sidePaths.push({ density, ...config })
+          return acc
+        },
+      }
+    },
+    hiddenPaths(density: SideIntensity): PathSettingsBuilder {
+      return {
+        settings(config: { pathPuzzles: number; end: PathEndHint }): ConstraintAccumulator {
+          if (!constraints.hiddenPaths) constraints.hiddenPaths = []
+          constraints.hiddenPaths.push({ density, ...config })
+          return acc
+        },
+      }
+    },
+  }
+  return acc
+}
 
 export function global(): GlobalScopeBuilder
 export function global(c: PyramidConstraint): Rule
@@ -136,6 +187,7 @@ export function tier(name: Tier, c?: PyramidConstraint): Rule | TierScopeBuilder
         }),
       }
     },
+    set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "tier", tier: name }, c),
   } as TierScopeBuilder
 }
 
@@ -157,6 +209,7 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
         }),
       }
     },
+    set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "journey", journey: id }, c),
   } as JourneyScopeBuilder
 }
 
