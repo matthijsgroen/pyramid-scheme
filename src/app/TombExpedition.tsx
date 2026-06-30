@@ -14,6 +14,7 @@ import { DeveloperButton } from "@/ui/DeveloperButton"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { Header } from "@/ui/Header"
 import { SiteMapScreen } from "./SiteMap/SiteMapScreen"
+import { useTimeout } from "@/support/useTimeout"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState
@@ -48,23 +49,17 @@ export const TombExpedition: FC<{
     tab => tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === activeJourney.completionCount + 1
   )
   const [completing, setCompleting] = useState(false)
-  const completingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  useEffect(
-    () => () => {
-      if (completingTimerRef.current) clearTimeout(completingTimerRef.current)
-    },
-    []
-  )
+  const [scheduleCompleting] = useTimeout()
 
   const handleLevelComplete = useCallback(() => {
     if (completing) return
     setCompleting(true)
-    completingTimerRef.current = setTimeout(() => {
+    scheduleCompleting(500, () => {
       completeLevel()
       onLevelComplete?.()
       setCompleting(false)
-    }, 500)
-  }, [completeLevel, onLevelComplete, completing])
+    })
+  }, [completeLevel, onLevelComplete, completing, scheduleCompleting])
 
   // ── V3: site-map path ─────────────────────────────────────────────────────
   const [showComparePuzzle, setShowComparePuzzle] = useState(false)
