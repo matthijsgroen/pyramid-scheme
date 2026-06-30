@@ -9,6 +9,8 @@ type ProgressionState = {
   mosaicSeenCount: number
   mosaicPieceCount: number
   collectedMapPieces: Record<string, number>
+  currentHealth: number // half-hearts
+  maxHealth: number // half-hearts
 }
 
 // First tomb of each tier is visible from the start; secondary tombs appear on first map piece
@@ -27,7 +29,11 @@ const initialState: ProgressionState = {
   mosaicSeenCount: 0,
   mosaicPieceCount: 0,
   collectedMapPieces: {},
+  currentHealth: 6,
+  maxHealth: 6,
 }
+
+export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
 
 export type ProgressionAPI = {
   addFragment: (hieroglyphId: string) => void
@@ -45,6 +51,12 @@ export type ProgressionAPI = {
   markMosaicViewed: (count: number) => void
   collectMapPiece: (tombId: string) => void
   mapPieceCount: (tombId: string) => number
+  currentHealth: number
+  maxHealth: number
+  canAttemptTrap: () => boolean
+  takeTrapDamage: (armorStacks: number) => void
+  heal: (halfHearts: number) => void
+  healToFull: () => void
 }
 
 export const useProgression = (): ProgressionAPI => {
@@ -97,6 +109,20 @@ export const useProgression = (): ProgressionAPI => {
           }
         }),
       mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
+      currentHealth: state.currentHealth ?? 6,
+      maxHealth: state.maxHealth ?? 6,
+      canAttemptTrap: () => (state.currentHealth ?? 6) >= 2,
+      takeTrapDamage: armorStacks =>
+        setState(prev => ({
+          ...prev,
+          currentHealth: Math.max(0, (prev.currentHealth ?? 6) - trapDamage(armorStacks)),
+        })),
+      heal: halfHearts =>
+        setState(prev => ({
+          ...prev,
+          currentHealth: Math.min(prev.maxHealth ?? 6, (prev.currentHealth ?? 6) + halfHearts),
+        })),
+      healToFull: () => setState(prev => ({ ...prev, currentHealth: prev.maxHealth ?? 6 })),
     }),
     [state, setState]
   )
