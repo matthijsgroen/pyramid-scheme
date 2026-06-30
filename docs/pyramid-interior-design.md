@@ -505,7 +505,7 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 4. **`higherLootChance` / `mapFragmentChance` fate** — vestigial after redesign. Remove or replace with redesign-compatible effects before Phase 6.
 
-5. **Mosaic two-layer model** — 20-piece image (one section per journey) vs 298-slice reveal mechanism. Confirm both layers are intentional and won't collide.
+5. ~~**Mosaic two-layer model**~~ — **Resolved.** Single 298-slice image revealed in order. No per-journey section assignment. Each puzzle solve globally unlocks the next slice(s) in sequence.
 
 6. **`inventoryLootLogic.ts` migration** — becomes vestigial once fragments replace probabilistic drops. Remove in Phase 6.
 

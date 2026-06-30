@@ -61,7 +61,7 @@ Four pyramid journeys per tier, unlocked sequentially (completing journey N unlo
 
 A stained-glass mosaic assembles across the whole game. Solving puzzles inside pyramids reveals mosaic tiles — the critical path through any pyramid always awards tiles, and optional branches award smaller bundles. 298 total slices, grouped into larger pieces. A half-built mosaic is a to-do list disguised as art. The completed picture is the natural ending — no additional "final boss" needed.
 
-The mosaic has two layers: a 20-piece *image* (one section per journey, index = journey order) and a 298-slice *reveal mechanism* (individual tiles fill in as puzzles are solved). See open question 5 for the design separation between these two layers.
+The mosaic is a single 298-slice image revealed in order — each solved puzzle node unlocks the next slice(s) in sequence. There is no per-journey section assignment; the picture emerges progressively as a whole. The completed mosaic is the natural ending.
 
 ---
 
@@ -121,7 +121,7 @@ Three ways to read this:
 | Topic | EXPEDITION_REDESIGN says | This doc says | Status |
 |---|---|---|---|
 | Map pieces | Deterministic, exactly one authored pyramid per journey | One per tomb per journey; surface for first tomb, deep floors for later | ⚠️ extended — map pieces now distributed across floors |
-| Mosaic | One guaranteed piece per pyramid | Guaranteed on critical path; fills optional branches | ✅ aligned (see open Q5 for two-layer model) |
+| Mosaic | One guaranteed piece per pyramid | Guaranteed on critical path; fills optional branches | ✅ aligned |
 | Tomb gate | Spend 4 map pieces to open | `piecesRequired` per tomb (flexible, 2–4); later tombs unlocked by location key | ⚠️ extended — multiple tombs per tier, flexible piece count |
 | Tomb keys / wards | From later tombs, keep early tombs alive | 36 ward keys (mixed tier); 4 location keys reveal new tombs | ⚠️ extended — location key treasure type added |
 | Ward placement | Optional branches only; critical path always completable | Same | ✅ aligned |
@@ -177,7 +177,7 @@ Treasure effects are passive modifiers to the micro loop. Under the new design:
 
 4. **`higherLootChance` / `mapFragmentChance` fate** — two effect types become vestigial after the redesign. Replace with redesign-compatible effects before Phase 6, or explicitly mark deprecated in `src/data/treasures.ts`.
 
-5. **Mosaic two-layer model** — the stained-glass has 298 slices (149 puzzle nodes × 2). The EXPEDITION_REDESIGN says "one mosaic piece per pyramid" (20 pieces). These are two different systems: the 20-piece stained glass *image* (which pyramid contributed which section) and the 298-slice *reveal mechanism* (how solved puzzles fill it in). Confirm that both systems are intentional and distinct, not a future collision. See also `pyramid-interior-design.md` §9 open Q5.
+5. ~~**Mosaic two-layer model**~~ — **Resolved.** Single 298-slice image revealed in order. No per-journey sections. Puzzle solves unlock the next slice(s) in sequence globally.
 
 6. **`inventoryLootLogic.ts` migration** — becomes vestigial once fragments replace probabilistic drops. Remove in Phase 6.
 
