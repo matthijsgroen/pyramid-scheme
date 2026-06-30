@@ -207,3 +207,39 @@ describe("specToGate", () => {
     )
   })
 })
+
+// ── trapped + consumable PathEntry ────────────────────────────────────────────
+
+describe("PathEntry trapped flag", () => {
+  it("sidePaths().settings() with trapped:true propagates to constraints", () => {
+    const r = tier("expert").set({}).sidePaths("low").settings({ pathPuzzles: 1, end: "consumable", trapped: true })
+    expect(r.constraints.sidePaths).toEqual([{ density: "low", pathPuzzles: 1, end: "consumable", trapped: true }])
+  })
+
+  it("hiddenPaths().settings() with trapped:true propagates to constraints", () => {
+    const r = tier("expert").set({}).hiddenPaths("low").settings({ pathPuzzles: 1, end: "treasure", trapped: true })
+    expect(r.constraints.hiddenPaths).toEqual([{ density: "low", pathPuzzles: 1, end: "treasure", trapped: true }])
+  })
+
+  it("settings() without trapped does not add the key", () => {
+    const r = tier("starter").set({}).sidePaths("low").settings({ pathPuzzles: 0, end: "fragment" })
+    expect(r.constraints.sidePaths![0]).not.toHaveProperty("trapped")
+  })
+
+  it("consumable PathEndHint accepted by sidePaths", () => {
+    const r = tier("expert").set({}).sidePaths("medium").settings({ pathPuzzles: 1, end: "consumable" })
+    expect(r.constraints.sidePaths![0].end).toBe("consumable")
+  })
+
+  it("trapped entry stacks alongside non-trapped entries", () => {
+    const r = tier("master")
+      .set({})
+      .sidePaths("medium")
+      .settings({ pathPuzzles: 1, end: "fragment" })
+      .sidePaths("low")
+      .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
+    expect(r.constraints.sidePaths).toHaveLength(2)
+    expect(r.constraints.sidePaths![0].trapped).toBeUndefined()
+    expect(r.constraints.sidePaths![1].trapped).toBe(true)
+  })
+})

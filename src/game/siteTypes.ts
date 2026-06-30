@@ -1,5 +1,5 @@
 export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
-export type RoomType = "entrance" | "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+export type RoomType = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
@@ -47,6 +47,8 @@ export type SubSection = {
   end: "treasure" | "staircase"
   gate?: GateConfig
   endReward?: TreasureReward
+  hidden?: boolean
+  trapped?: boolean
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]

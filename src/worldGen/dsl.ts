@@ -4,8 +4,8 @@ import type { Tier, Difficulty } from "./types"
 
 export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "low" | "medium" | "dense"
-export type PathEndHint = "fragment" | "treasure" | "mosaic"
-export type PathEntry = { density: SideIntensity; pathPuzzles: number; end: PathEndHint }
+export type PathEndHint = "fragment" | "treasure" | "mosaic" | "consumable"
+export type PathEntry = { density: SideIntensity; pathPuzzles: number; end: PathEndHint; trapped?: boolean }
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
@@ -109,7 +109,9 @@ interface GlobalScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
 }
 
-type PathSettingsBuilder = { settings(c: { pathPuzzles: number; end: PathEndHint }): ConstraintAccumulator }
+type PathSettingsBuilder = {
+  settings(c: { pathPuzzles: number; end: PathEndHint; trapped?: boolean }): ConstraintAccumulator
+}
 
 /** A Rule that also supports chaining `.sidePaths()` / `.hiddenPaths()` calls. */
 export type ConstraintAccumulator = Rule & {
@@ -144,7 +146,7 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
     constraints,
     sidePaths(density: SideIntensity): PathSettingsBuilder {
       return {
-        settings(config: { pathPuzzles: number; end: PathEndHint }): ConstraintAccumulator {
+        settings(config: { pathPuzzles: number; end: PathEndHint; trapped?: boolean }): ConstraintAccumulator {
           if (!constraints.sidePaths) constraints.sidePaths = []
           constraints.sidePaths.push({ density, ...config })
           return acc
@@ -153,7 +155,7 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
     },
     hiddenPaths(density: SideIntensity): PathSettingsBuilder {
       return {
-        settings(config: { pathPuzzles: number; end: PathEndHint }): ConstraintAccumulator {
+        settings(config: { pathPuzzles: number; end: PathEndHint; trapped?: boolean }): ConstraintAccumulator {
           if (!constraints.hiddenPaths) constraints.hiddenPaths = []
           constraints.hiddenPaths.push({ density, ...config })
           return acc

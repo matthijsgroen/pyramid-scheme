@@ -228,7 +228,7 @@ const pathEndToReward = (end: string, tier: string): TreasureReward | undefined 
     const symbols = TOMB_SYMBOLS[tier as Tier]
     return { type: "hieroglyphFragment", hieroglyphId: symbols[0] }
   }
-  return undefined // "treasure" = no specific endReward, just chest room
+  return undefined // "treasure" | "consumable" = no specific endReward (consumable system in Phase 14)
 }
 
 const buildSideSections = (
@@ -318,6 +318,7 @@ const buildSideSections = (
         difficulty,
         end: "treasure",
         ...(endReward ? { endReward } : {}),
+        ...(entry.trapped ? { trapped: true } : {}),
       })
     }
   }
@@ -331,6 +332,7 @@ const buildSideSections = (
         end: "treasure",
         hidden: true,
         ...(endReward ? { endReward } : {}),
+        ...(entry.trapped ? { trapped: true } : {}),
       })
     }
   }

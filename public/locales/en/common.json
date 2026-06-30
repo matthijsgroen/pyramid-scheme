@@ -75,6 +75,7 @@
     "suggestedExpedition": "Suggested",
     "puzzleComplete": "The answer is:",
     "puzzleCompleted": "Puzzle Complete",
+    "trapBlocked": "Not enough health to attempt this trap",
     "spiritsRejectCode": "The spirits reject this code",
     "sacredSealBroken": "The sacred seal is broken",
     "newExpeditionUnlocked": "A new expedition is now unlocked",

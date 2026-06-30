@@ -196,4 +196,84 @@ describe(assembleFloor, () => {
       }
     }
   })
+
+  describe("trap rooms", () => {
+    it("places trap rooms for a trapped section", () => {
+      const config: FloorConfig = {
+        pathPuzzles: 1,
+        difficulty: "expert",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [{ pathPuzzles: 2, difficulty: "expert", end: "treasure", trapped: true }],
+      }
+      const result = assembleFloor("site-trap", config, 42)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
+        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+        expect(traps.length).toBe(2)
+        expect(puzzles.length).toBe(1) // only the main path puzzle
+      }
+    })
+
+    it("does not place trap rooms for non-trapped sections", () => {
+      const config: FloorConfig = {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [{ pathPuzzles: 2, difficulty: "starter", end: "treasure" }],
+      }
+      const result = assembleFloor("site-notrap", config, 42)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
+        expect(traps.length).toBe(0)
+      }
+    })
+  })
+
+  describe("hidden sections", () => {
+    it("filters out hidden sections — grid matches config without hidden sections", () => {
+      const withHidden: FloorConfig = {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true },
+        ],
+      }
+      const withoutHidden: FloorConfig = {
+        ...withHidden,
+        sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure" }],
+      }
+      const rWith = assembleFloor("site-h", withHidden, 99)
+      const rWithout = assembleFloor("site-h", withoutHidden, 99)
+      expect(rWith.success).toBe(true)
+      expect(rWithout.success).toBe(true)
+      if (rWith.success && rWithout.success) {
+        // Both grids should have the same room count — hidden section is excluded
+        const rooms = (g: FloorGrid) => g.cells.flat().filter(c => c.type === "room").length
+        expect(rooms(rWith.grid)).toBe(rooms(rWithout.grid))
+      }
+    })
+
+    it("a config with only hidden sections assembles like one with no sections", () => {
+      const config: FloorConfig = {
+        pathPuzzles: 2,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true }],
+      }
+      const result = assembleFloor("site-honly", config, 77)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
+        expect(traps.length).toBe(0)
+      }
+    })
+  })
 })

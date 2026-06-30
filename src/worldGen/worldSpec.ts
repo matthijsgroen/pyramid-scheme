@@ -46,6 +46,8 @@ export const worldSpec = rules([
     .settings({ pathPuzzles: 0, end: "treasure" })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
+    .sidePaths("low")
+    .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "treasure" }),
 
@@ -53,6 +55,8 @@ export const worldSpec = rules([
     .set({ consumableDensity: 0.25 })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
+    .sidePaths("low")
+    .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("medium")
     .settings({ pathPuzzles: 0, end: "treasure" }),
 
@@ -62,6 +66,8 @@ export const worldSpec = rules([
     .settings({ pathPuzzles: 1, end: "fragment" })
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "treasure" })
+    .sidePaths("low")
+    .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("medium")
     .settings({ pathPuzzles: 0, end: "treasure" })
     .hiddenPaths("low")

@@ -17,6 +17,7 @@ export type SubSection = {
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
   hidden?: boolean
+  trapped?: boolean
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]

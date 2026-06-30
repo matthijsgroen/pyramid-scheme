@@ -99,6 +99,44 @@ const PuzzleShape = ({ state }: ShapeProps) => {
   )
 }
 
+const trapFill: Record<CellState, string> = {
+  fogged: "#1a0808",
+  visible: "#2a0e08",
+  reachable: "#2a1010",
+  completed: "#2a1010",
+}
+const trapStroke: Record<CellState, string> = {
+  fogged: "#2e1010",
+  visible: "#903010",
+  reachable: "#c04020",
+  completed: "#c04020",
+}
+
+const TrapShape = ({ state }: ShapeProps) => {
+  const r = 13
+  const fill = trapFill[state]
+  const stroke = trapStroke[state]
+  return (
+    <>
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && (
+        // Skull: dome + eye sockets + teeth
+        <g fill={stroke}>
+          {/* Cranium */}
+          <ellipse cx={0} cy={-2} rx={6} ry={5.5} />
+          {/* Eye sockets */}
+          <ellipse cx={-2.5} cy={-2} rx={1.8} ry={2} fill={fill} />
+          <ellipse cx={2.5} cy={-2} rx={1.8} ry={2} fill={fill} />
+          {/* Jaw / teeth */}
+          <rect x={-5} y={2.5} width={3} height={3} rx={0.5} />
+          <rect x={-1} y={2.5} width={2} height={3} rx={0.5} />
+          <rect x={2} y={2.5} width={3} height={3} rx={0.5} />
+        </g>
+      )}
+    </>
+  )
+}
+
 const ForkShape = ({ state }: ShapeProps) => {
   const r = 7
   const stroke = state === "fogged" ? "#2e2018" : "#5a4a30"
@@ -252,6 +290,7 @@ const ExitShape = ({ state }: ShapeProps) => {
 const nodeRadius: Record<RoomType, number> = {
   entrance: 12,
   puzzle: 13,
+  trap: 13,
   fork: 7,
   gate: 12,
   treasure: 12,
@@ -268,6 +307,7 @@ const NodeBackground = ({ type }: { type: RoomType }) => {
       return <path d={archPath} fill={bg} />
     }
     case "puzzle":
+    case "trap":
     case "gate":
       return <rect x={-r} y={-r} width={r * 2} height={r * 2} fill={bg} />
     case "fork":
@@ -300,6 +340,8 @@ const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps
       return <EntranceShape {...p} />
     case "puzzle":
       return <PuzzleShape {...p} />
+    case "trap":
+      return <TrapShape {...p} />
     case "fork":
       return <ForkShape {...p} />
     case "gate":

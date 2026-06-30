@@ -134,14 +134,16 @@ const buildIntermediateTypes = (pathPuzzles: number, chestEvery: number): Array<
 }
 
 export const assembleFloor = (siteId: string, config: FloorConfig, seed: number): AssemblerResult => {
-  const hasGatedFloorKey = config.sideSections.some(s => s.gate?.type === "floor-key")
-  const hasUngated = config.sideSections.some(s => !s.gate)
+  // ponytail: hidden sections excluded until detection system (Phase 15)
+  const visibleSections = config.sideSections.filter(s => !s.hidden)
+  const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
+  const hasUngated = visibleSections.some(s => !s.gate)
 
   // Auto-inject a minimal ungated treasure section as key-holder when all sections are gated
   const sideSections =
     hasGatedFloorKey && !hasUngated
-      ? [...config.sideSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
-      : config.sideSections
+      ? [...visibleSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
+      : visibleSections
 
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
   const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate)
@@ -497,11 +499,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
-      // Intermediate nodes within section (puzzles + chests), stride-2 to leave corridors
+      // Intermediate nodes within section (puzzles/traps + chests), stride-2 to leave corridors
       for (let pi = 0; pi < intermediate.length; pi++) {
         const [r, c] = cells[(contentStart + pi) * 2]
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+        } else if (section.trapped) {
+          roomSpecs.set(posKey(r, c), { roomType: "trap" })
         } else {
           roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
         }
@@ -564,6 +568,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const [r, c] = cells[(contentStart + pi) * 2]
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+        } else if (subSection.trapped) {
+          roomSpecs.set(posKey(r, c), { roomType: "trap" })
         } else {
           roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
         }
