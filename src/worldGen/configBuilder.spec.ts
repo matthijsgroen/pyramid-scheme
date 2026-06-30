@@ -59,9 +59,7 @@ describe(assertChestCapacity, () => {
   it("throws when ALL pyramids are explicitly constrained and collectively insufficient", () => {
     const explicitScope = { level: "tier" as const, tier: "starter" as const }
     // All pyramids explicitly set to pathPuzzles=1 → can never auto-correct
-    const plan = makePlan(
-      Array(5).fill({ pathPuzzles: 1, provenance: { pathPuzzles: explicitScope } })
-    )
+    const plan = makePlan(Array(5).fill({ pathPuzzles: 1, provenance: { pathPuzzles: explicitScope } }))
     expect(() => assertChestCapacity(plan)).toThrow(/tier\('starter'\)/)
     expect(() => assertChestCapacity(plan)).toThrow(/pathPuzzles=1/)
   })

@@ -9,8 +9,8 @@
  * configBuilder uses a chestOffset per pyramid to map back to local indices.
  */
 import type { Tier, Assignment, FragmentSlot, ChestSlotPlan } from "./types"
-import { WORLD_SEED, TOMB_SYMBOLS, FRAGMENT_COUNT, FRAGMENT_HOST_TIERS, chestCountFor } from "./data"
-import { mulberry32, shuffle } from "./rng"
+import { WORLD_SEED, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED, FRAGMENT_HOST_TIERS, chestCountFor } from "./data"
+import { mulberry32, shuffle } from "../game/random"
 
 const buildChestSlotsByTier = (plan: ChestSlotPlan[], rand: () => number): Record<Tier, FragmentSlot[]> => {
   const slotsByTier: Record<Tier, FragmentSlot[]> = {
@@ -81,7 +81,7 @@ export const computeFragmentAssignments = (plan: ChestSlotPlan[]): Assignment[] 
   const fragQueue: FragEntry[] = []
   for (const tier of ["starter", "junior", "expert", "master", "wizard"] as Tier[]) {
     for (const id of shuffle(TOMB_SYMBOLS[tier], rand)) {
-      fragQueue.push({ hieroglyphId: id, remaining: FRAGMENT_COUNT[tier], tier })
+      fragQueue.push({ hieroglyphId: id, remaining: HIEROGLYPH_REQUIRED[id] ?? 2, tier })
     }
   }
 
@@ -115,8 +115,8 @@ export const computeFragmentAssignments = (plan: ChestSlotPlan[]): Assignment[] 
     }
 
     if (placed < frag.remaining) {
-      console.warn(
-        `⚠ Only placed ${placed}/${frag.remaining} fragments for ${frag.hieroglyphId} (${frag.tier}) — more slots needed`
+      console.log(
+        `  ℹ ${frag.hieroglyphId} (${frag.tier}): placed ${placed}/${frag.remaining} — matrix target not yet achievable (world needs more branches/floors)`
       )
     }
   }

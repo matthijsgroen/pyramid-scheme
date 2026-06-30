@@ -1,9 +1,17 @@
 import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward, ChestSlotPlan } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, FRAGMENT_COUNT, chestEveryFor, chestCountFor } from "./data"
+import {
+  PYRAMID_JOURNEYS,
+  TOMB_JOURNEYS,
+  TOMB_SYMBOLS,
+  HIEROGLYPH_REQUIRED,
+  chestEveryFor,
+  chestCountFor,
+} from "./data"
+import { tableauLevels } from "../data/tableaus"
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
-import { worldSpec, WORLD_TARGETS } from "../worldSpec"
+import { worldSpec, WORLD_TARGETS } from "./worldSpec"
 import type {
   PyramidConstraint,
   RewardHint,
@@ -293,10 +301,7 @@ const buildPlan = (): PyramidPlan[] =>
 
 // ── Phase 2: Assert chest capacity for fragment coverage ──────────────────────
 
-const TOTAL_FRAGMENTS = (Object.keys(TOMB_SYMBOLS) as Tier[]).reduce(
-  (sum, tier) => sum + TOMB_SYMBOLS[tier].length * FRAGMENT_COUNT[tier],
-  0
-)
+const TOTAL_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((sum, n) => sum + n, 0)
 
 // Exported for testing. Throws if a pyramid with an explicit pathPuzzles constraint is too
 // small; silently bumps unconstrained pyramids (those with no provenance on pathPuzzles).
@@ -491,16 +496,20 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const wardKeyId = TOMB_WARD_KEYS[tomb.id]
     const lastFloorReward: TreasureReward | undefined = wardKeyId ? { type: "tombKey", keyId: wardKeyId } : undefined
 
+    // Starter tombs have no crocodile puzzle (compareAmount=0 in old system)
+    const hasCroc = tomb.tier !== "starter"
+
     const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => {
       const isLast = i === tomb.levelCount - 1
       return {
-        pathPuzzles: 1,
-        chestEvery: 0, // tomb floors have no chests; the puzzle node is the reward
+        pathPuzzles: isLast && hasCroc ? 2 : 1,
+        chestEvery: 0,
         difficulty,
         end: "treasure" as const,
         exitOrStaircase: isLast ? ("exit" as const) : ("staircase" as const),
         sideSections: [],
         puzzleFamily,
+        ...(isLast && hasCroc ? { lastMainPuzzleFamily: "crocodile" as const } : {}),
         ...(isLast && lastFloorReward ? { mainEndReward: lastFloorReward } : {}),
       }
     })
@@ -566,6 +575,152 @@ const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
   }
 }
 
+// ── Phase 9f: Hieroglyph availability validator ───────────────────────────────
+
+const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
+const TIER_INDEX: Record<string, number> = Object.fromEntries(TIERS.map((t, i) => [t, i]))
+
+// hieroglyphId → its tier (from TOMB_SYMBOLS)
+const TIER_BY_SYMBOL: Map<string, Tier> = new Map(
+  TIERS.flatMap(tier => TOMB_SYMBOLS[tier].map(id => [id, tier] as [string, Tier]))
+)
+
+const isSectionOpen = (
+  gate: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string } | undefined,
+  wardKeys: Set<string>
+): boolean => {
+  if (!gate) return true
+  if (gate.type === "floor-key") return true
+  return wardKeys.has(gate.wardKeyId)
+}
+
+// Count fragments of hieroglyphId accessible to the player given current progression state.
+const countAccessibleFragments = (
+  hieroglyphId: string,
+  accessibleTierMax: number,
+  wardKeys: Set<string>,
+  allConfigs: Record<string, SiteConfig[]>
+): number => {
+  let count = 0
+  for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
+    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId)
+    if (!journey || TIER_INDEX[journey.tier] > accessibleTierMax) continue
+    for (const floors of siteConfigs) {
+      for (const floor of floors) {
+        for (const r of floor.chestRewards ?? []) {
+          if (r.type === "hieroglyphFragment" && r.hieroglyphId === hieroglyphId) count++
+        }
+        for (const s of floor.sideSections) {
+          if (!isSectionOpen(s.gate, wardKeys)) continue
+          if (s.endReward?.type === "hieroglyphFragment" && s.endReward.hieroglyphId === hieroglyphId) count++
+          for (const sub of s.sideSections ?? []) {
+            if (!isSectionOpen(sub.gate, wardKeys)) continue
+            if (sub.endReward?.type === "hieroglyphFragment" && sub.endReward.hieroglyphId === hieroglyphId) count++
+          }
+        }
+      }
+    }
+  }
+  return count
+}
+
+// Add one explicit fragment chest to the most appropriate accessible pyramid of targetTier.
+// Priority: empty ward section → new ungated side section.
+const addFragmentChest = (
+  hieroglyphId: string,
+  targetTier: Tier,
+  accessibleTierMax: number,
+  wardKeys: Set<string>,
+  allConfigs: Record<string, SiteConfig[]>
+): void => {
+  // 1. Fill an empty ward section of targetTier (thematically appropriate)
+  for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
+    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId && j.tier === targetTier)
+    if (!journey || TIER_INDEX[journey.tier] > accessibleTierMax) continue
+    for (const floors of siteConfigs) {
+      for (const floor of floors) {
+        for (const s of floor.sideSections) {
+          if (s.gate?.type === "tomb-key" && wardKeys.has(s.gate.wardKeyId) && !s.endReward) {
+            s.endReward = { type: "hieroglyphFragment", hieroglyphId }
+            console.log(`  ✎ ${hieroglyphId}: filled empty ward section in ${journeyId}`)
+            return
+          }
+        }
+      }
+    }
+  }
+
+  // 2. Add new ungated side section to first accessible targetTier pyramid
+  for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
+    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId && j.tier === targetTier)
+    if (!journey || TIER_INDEX[journey.tier] > accessibleTierMax) continue
+    const floor = siteConfigs[0]?.[0]
+    if (!floor) continue
+    floor.sideSections.push({
+      pathPuzzles: 0,
+      difficulty: floor.difficulty,
+      end: "treasure",
+      endReward: { type: "hieroglyphFragment", hieroglyphId },
+    })
+    console.log(`  ✎ ${hieroglyphId}: added ungated chest to ${journeyId}`)
+    return
+  }
+
+  console.warn(`  ⚠ ${hieroglyphId}: no accessible ${targetTier} pyramid to place fragment in`)
+}
+
+// Simulates player progression and ensures every tableau's required hieroglyphs are findable
+// in the player's accessible area at that point. Fixes deficits by adding explicit chest rewards.
+// Validates run 1 only for each primary tomb (multi-run structure is deferred).
+const validateAndFixHieroglyphAvailability = (allConfigs: Record<string, SiteConfig[]>): void => {
+  let accessibleTierMax = 0 // starts at starter (index 0)
+  const wardKeys = new Set<string>()
+  let fixCount = 0
+
+  for (const tier of TIERS) {
+    // Primary tomb only (not _b / _c variants — those share the same symbol pool)
+    const tomb = TOMB_JOURNEYS.find(t => t.tier === (tier as Tier) && !t.id.includes("_b") && !t.id.includes("_c"))
+    if (!tomb) continue
+
+    // Check each floor (= one tableau in run 1)
+    for (let level = 1; level <= tomb.levelCount; level++) {
+      const hieroglyphs =
+        tableauLevels.find(t => t.tombJourneyId === tomb.id && t.runNumber === 1 && t.levelNr === level)
+          ?.inventoryIds ?? []
+
+      for (const hieroglyphId of hieroglyphs) {
+        const symbolTier = TIER_BY_SYMBOL.get(hieroglyphId)
+        if (!symbolTier) continue
+        const needed = HIEROGLYPH_REQUIRED[hieroglyphId] ?? 2
+        const accessible = countAccessibleFragments(hieroglyphId, accessibleTierMax, wardKeys, allConfigs)
+        if (accessible < needed) {
+          console.log(
+            `  ✎ Tableau ${tomb.id}.run1_level${level}: ${hieroglyphId} (${symbolTier}) has ${accessible}/${needed} accessible — adding ${needed - accessible} chest(s)`
+          )
+          for (let d = accessible; d < needed; d++) {
+            addFragmentChest(hieroglyphId, tier as Tier, accessibleTierMax, wardKeys, allConfigs)
+            fixCount++
+          }
+        }
+      }
+    }
+
+    // After completing this tomb, grant ward key and expand accessible tier
+    const wardKeyId = TOMB_WARD_KEYS[tomb.id]
+    if (wardKeyId) {
+      wardKeys.add(wardKeyId)
+      const nextTier = NEXT_TIER[tier]
+      if (nextTier) accessibleTierMax = TIER_INDEX[nextTier]
+    }
+  }
+
+  if (fixCount > 0) {
+    console.log(`  ✎ Hieroglyph availability: added ${fixCount} chest(s) to ensure tableau coverage`)
+  } else {
+    console.log(`  ✓ Hieroglyph availability: all tableau hieroglyphs reachable — no fixes needed`)
+  }
+}
+
 // ── Main entry point ──────────────────────────────────────────────────────────
 
 export const buildConfigs = (): Record<string, SiteConfig[]> => {
@@ -584,9 +739,13 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   // Phase 6: Build tomb site configs
   const tombConfigs = buildTombConfigs()
 
+  // Phase 9f: Ensure tableau hieroglyphs are findable before each tableau is encountered.
+  // Mutates pyramid configs in-place (adds side sections) when coverage is insufficient.
+  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+  validateAndFixHieroglyphAvailability(allConfigs)
+
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, and discovery graph solvability
-  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
   validateRewardCounts(allConfigs)
   validateDiscovery(allConfigs)
 

@@ -15,8 +15,8 @@
 import { writeFileSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
-import { buildConfigs } from "./worldGen/configBuilder"
-import { generateFile, printStats } from "./worldGen/serializer"
+import { buildConfigs } from "../src/worldGen/configBuilder"
+import { generateFile, printStats } from "../src/worldGen/serializer"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

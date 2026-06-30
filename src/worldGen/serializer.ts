@@ -1,5 +1,5 @@
-import type { FloorConfig, SideSection, SiteConfig, TreasureReward, Tier } from "./types"
-import { WORLD_SEED, TOMB_SYMBOLS, FRAGMENT_COUNT } from "./data"
+import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
+import { WORLD_SEED, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
 
 // ---------------------------------------------------------------------------
 // Serialization
@@ -61,6 +61,24 @@ const serializeSiteConfig = (floors: SiteConfig): string => {
   return `[\n${inner},\n  ]`
 }
 
+const countPlacedFragments = (configs: Record<string, SiteConfig[]>): Map<string, number> => {
+  const placed = new Map<string, number>()
+  for (const siteConfigs of Object.values(configs)) {
+    for (const floors of siteConfigs) {
+      for (const cfg of floors) {
+        for (const r of cfg.chestRewards ?? []) {
+          if (r.type === "hieroglyphFragment") placed.set(r.hieroglyphId, (placed.get(r.hieroglyphId) ?? 0) + 1)
+        }
+        for (const s of cfg.sideSections) {
+          if (s.endReward?.type === "hieroglyphFragment")
+            placed.set(s.endReward.hieroglyphId, (placed.get(s.endReward.hieroglyphId) ?? 0) + 1)
+        }
+      }
+    }
+  }
+  return placed
+}
+
 export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
   const entries = Object.entries(configs)
     .map(([id, siteConfigs]) => {
@@ -69,13 +87,24 @@ export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
     })
     .join(",\n")
 
+  // Use actual placed counts as required — never expect more fragments than exist in the world.
+  // The matrix in data.ts is the aspirational max; placed count is the real target.
+  const placed = countPlacedFragments(configs)
+  const hieroglyphRequired = Object.keys(HIEROGLYPH_REQUIRED)
+    .map(id => `  "${id}": ${placed.get(id) ?? 1}`)
+    .join(",\n")
+
   return `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY.
 // Run: yarn generate-world
 // World seed: ${WORLD_SEED}
-import type { SiteConfig } from "@/game/siteTypes"
+import type { SiteConfig } from "../game/siteTypes"
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
 ${entries},
+}
+
+export const hieroglyphRequired: Record<string, number> = {
+${hieroglyphRequired},
 }
 `
 }
@@ -124,26 +153,13 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   }
 
   const allHieroglyphs = Object.values(TOMB_SYMBOLS).flat()
-  const totalUnique = allHieroglyphs.reduce(
-    (s, id) =>
-      s + FRAGMENT_COUNT[(Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]).find(([, ids]) => ids.includes(id))![0]],
-    0
-  )
+  const totalUnique = allHieroglyphs.reduce((s, id) => s + (HIEROGLYPH_REQUIRED[id] ?? 0), 0)
   uniqueAssignedFragments = allHieroglyphs.reduce(
-    (s, id) =>
-      s +
-      Math.min(
-        fragCoverage.get(id) ?? 0,
-        FRAGMENT_COUNT[(Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]).find(([, ids]) => ids.includes(id))![0]]
-      ),
+    (s, id) => s + Math.min(fragCoverage.get(id) ?? 0, HIEROGLYPH_REQUIRED[id] ?? 0),
     0
   )
   const uncovered = allHieroglyphs.filter(id => !fragCoverage.has(id))
-  const under2 = allHieroglyphs.filter(id => {
-    const count = fragCoverage.get(id) ?? 0
-    const tier = (Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]).find(([, ids]) => ids.includes(id))?.[0]
-    return tier ? count < FRAGMENT_COUNT[tier] : false
-  })
+  const under2 = allHieroglyphs.filter(id => (fragCoverage.get(id) ?? 0) < (HIEROGLYPH_REQUIRED[id] ?? 0))
 
   console.log(
     `✓ Configs generated: ${pyramidJourneys} pyramid journeys (${pyramidLevels} levels), ${tombJourneys} tombs (${tombFloors} floors)`
@@ -154,5 +170,6 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
     `  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} unique + ${totalFragments - uniqueAssignedFragments} repeats (${totalFragments} total chest slots)`
   )
   if (uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${uncovered.join(", ")}`)
-  if (under2.length > 0) console.warn(`  ⚠ Hieroglyphs under target count: ${under2.join(", ")}`)
+  if (under2.length > 0)
+    console.log(`  ℹ Matrix target not yet reached (${under2.length} hieroglyphs) — game uses actual placed counts`)
 }

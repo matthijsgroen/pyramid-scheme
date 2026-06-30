@@ -16,6 +16,8 @@ import { LootPopup } from "@/ui/LootPopup"
 import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
+import "@/app/PuzzleFamilies/Tableau/plugin"
+import "@/app/PuzzleFamilies/Crocodile/plugin"
 
 type Props = {
   journeyId: string

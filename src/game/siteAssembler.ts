@@ -422,6 +422,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
 
     // Main path nodes
+    const lastPuzzleIntermediateIdx = config.lastMainPuzzleFamily ? intermediateTypes.lastIndexOf("puzzle") : -1
     let mainChestIdx = 0
     for (let mi = 0; mi < mainNodeCells.length; mi++) {
       const [r, c] = mainNodeCells[mi]
@@ -438,7 +439,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
         })
       } else {
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
+        const isLastPuzzle = mi - 1 === lastPuzzleIntermediateIdx
+        const family =
+          isLastPuzzle && config.lastMainPuzzleFamily
+            ? config.lastMainPuzzleFamily
+            : (config.puzzleFamily ?? "sumplete")
+        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family })
       }
     }
 

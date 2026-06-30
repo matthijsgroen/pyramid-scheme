@@ -1,4 +1,4 @@
-export type PuzzleFamily = "sumplete" | "tableau"
+export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "entrance" | "puzzle" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 export type TreasureReward =
   | { type: "mosaicPiece" }
@@ -61,6 +61,8 @@ export type FloorConfig = {
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]
   puzzleFamily?: PuzzleFamily
+  /** If set, the last main-path puzzle room uses this family instead of puzzleFamily. */
+  lastMainPuzzleFamily?: PuzzleFamily
 }
 
 // A site is one or more floors. Index 0 = surface.

@@ -1,4 +1,4 @@
-import { global, tier, journey, rules } from "./worldGen/dsl"
+import { global, tier, journey, rules } from "./dsl"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mosaicPieceRewards: 298 = number of unique journeyId:levelIndex steps in mosaicPieces.generated.ts
