@@ -34,6 +34,7 @@ const initialState: ProgressionState = {
 }
 
 export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
+export const canAttemptTrap = (currentHealth: number): boolean => currentHealth >= 2
 
 export type ProgressionAPI = {
   addFragment: (hieroglyphId: string) => void
@@ -111,7 +112,7 @@ export const useProgression = (): ProgressionAPI => {
       mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
       currentHealth: state.currentHealth ?? 6,
       maxHealth: state.maxHealth ?? 6,
-      canAttemptTrap: () => (state.currentHealth ?? 6) >= 2,
+      canAttemptTrap: () => canAttemptTrap(state.currentHealth ?? 6),
       takeTrapDamage: armorStacks =>
         setState(prev => ({
           ...prev,
