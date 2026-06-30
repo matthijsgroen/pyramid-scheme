@@ -35,9 +35,9 @@ const generate = (seed: number, difficulty: Difficulty): ArithmeticQuestion => {
   const rand = mulberry32(seed)
   const max = OPERAND_MAX[difficulty]
   const op = OPERATIONS[Math.floor(rand() * 3)]
-  const a = 1 + Math.floor(rand() * max)
-  // For subtraction keep b ≤ a so result is positive
-  const b = op === "-" ? 1 + Math.floor(rand() * a) : 1 + Math.floor(rand() * max)
+  // For subtraction ensure a ≥ 2 so b < a is always achievable (answer > 0)
+  const a = op === "-" ? 2 + Math.floor(rand() * (max - 1)) : 1 + Math.floor(rand() * max)
+  const b = op === "-" ? 1 + Math.floor(rand() * (a - 1)) : 1 + Math.floor(rand() * max)
   const answer = compute(a, b, op)
 
   // Three distractors: ±1, ±2, ±3 offsets — deduplicate and avoid the real answer

@@ -106,10 +106,7 @@ describe("journey().set() accumulator", () => {
   })
 
   it("hiddenPaths().settings() with mosaic end appends correctly", () => {
-    const r = journey("wizard_treasure_tomb_b")
-      .set({})
-      .hiddenPaths("low")
-      .settings({ pathPuzzles: 1, end: "mosaic" })
+    const r = journey("wizard_treasure_tomb_b").set({}).hiddenPaths("low").settings({ pathPuzzles: 1, end: "mosaic" })
     expect(r.constraints.hiddenPaths).toEqual([{ density: "low", pathPuzzles: 1, end: "mosaic" }])
   })
 })

@@ -145,7 +145,7 @@ const hashStr = (s: string): number => {
 }
 
 // Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
-const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
+export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
   if (density === "none") return 0
   if (density === "low") return 1
   const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}`))
