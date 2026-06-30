@@ -1,18 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { useCallback, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
-import { assembleFloor } from "@/game/siteAssembler"
-import { completeCell, findPath, getCell } from "@/game/gridNavigation"
-import { hashString } from "@/support/hashString"
-import type { FloorGrid, SiteConfig, TreasureReward } from "@/game/siteTypes"
-import { getInventoryItemById } from "@/data/inventory"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { findPath, getCell } from "@/game/gridNavigation"
 import { getPuzzlePlugin } from "@/game/puzzleRegistry"
+import { hashString } from "@/support/hashString"
+import { useTimeout } from "@/support/useTimeout"
+import type { SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
+import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
+import { ChestRewardFlow } from "./ChestRewardFlow"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
-import { Chest } from "@/ui/Chest"
-import { LootPopup } from "@/ui/LootPopup"
 import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
@@ -29,34 +26,6 @@ type Props = {
   renderPuzzle?: (floor: number, onSolved: () => void, onCancel: () => void) => ReactNode
 }
 
-const rewardEmoji = (type: string) => {
-  if (type === "mapPiece") return "📜"
-  if (type === "hieroglyphFragment") return "𓂀"
-  if (type === "tombKey") return "🗝"
-  if (type === "hieroglyphs") return "𓂀"
-  return "🔷"
-}
-
-// Edge IDs are "floorIdx:row,col". Backward compat: no colon prefix = floor 0.
-const encodeEdge = (floor: number, row: number, col: number): string => `${floor}:${row},${col}`
-const decodeEdge = (edgeId: string): [floor: number, row: number, col: number] => {
-  if (edgeId.includes(":")) {
-    const [f, pos] = edgeId.split(":")
-    const [r, c] = pos.split(",").map(Number)
-    return [Number(f), r, c]
-  }
-  const [r, c] = edgeId.split(",").map(Number)
-  return [0, r, c]
-}
-
-const applyEdges = (grid: FloorGrid, floor: number, allEdges: string[], wardKeys?: ReadonlySet<string>): FloorGrid =>
-  allEdges
-    .filter(e => decodeEdge(e)[0] === floor)
-    .reduce((g, edgeId) => {
-      const [, r, c] = decodeEdge(edgeId)
-      return completeCell(g, r, c, wardKeys)
-    }, grid)
-
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
   const { t } = useTranslation("common")
   const journeys = useJourneys()
@@ -68,55 +37,23 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [currentFloor, setCurrentFloor] = useState(0)
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
-  // ponytail: assemble once per floor+seed; edges reconstruct completed state
-  const baseGrid = useMemo(() => {
-    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor)
-    return result.success ? result.grid : null
-  }, [journeyId, floorConfig, seed, currentFloor])
-
-  // Always treat the entrance as completed so its corridor is visible from the start
-  const effectiveEdges = useMemo(() => {
-    if (!baseGrid) return allEdges
-    const entranceEdge = encodeEdge(currentFloor, baseGrid.entrancePos[0], baseGrid.entrancePos[1])
-    return allEdges.includes(entranceEdge) ? allEdges : [...allEdges, entranceEdge]
-  }, [baseGrid, allEdges, currentFloor])
-
-  const grid = useMemo(
-    () => (baseGrid ? applyEdges(baseGrid, currentFloor, effectiveEdges, wardKeys) : null),
-    [baseGrid, currentFloor, effectiveEdges, wardKeys]
+  const { grid, explorerPos } = useAssembledFloor(
+    journeyId,
+    floorConfig,
+    seed,
+    currentFloor,
+    allEdges,
+    wardKeys,
+    journeyState?.position
   )
 
-  const explorerPos: readonly [number, number] = useMemo(() => {
-    if (!grid) return [0, 0]
-    const pos = journeyState?.position
-    if (!pos) return grid.entrancePos
-    const [posFloor, r, c] = decodeEdge(pos)
-    return posFloor === currentFloor ? [r, c] : grid.entrancePos
-  }, [grid, journeyState?.position, currentFloor])
-
-  // active puzzle: [row, col] or null
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
   const [puzzleSolved, setPuzzleSolved] = useState(false)
-  const arrivalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const puzzleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lootTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  useEffect(
-    () => () => {
-      if (puzzleTimerRef.current) clearTimeout(puzzleTimerRef.current)
-      if (lootTimerRef.current) clearTimeout(lootTimerRef.current)
-    },
-    []
-  )
-  // chest → loot popup flow
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
-  const [chestOpened, setChestOpened] = useState(false)
-  const [showLoot, setShowLoot] = useState(false)
   const [exiting, setExiting] = useState(false)
 
-  const scheduleArrival = useCallback((path: readonly (readonly [number, number])[], cb: () => void) => {
-    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current)
-    arrivalTimerRef.current = setTimeout(cb, Math.max(0, path.length - 1) * 120 + 100)
-  }, [])
+  const [scheduleArrival] = useTimeout()
+  const [schedulePuzzle, cancelPuzzle] = useTimeout()
 
   const puzzlePlugin = useMemo(() => {
     if (!activePuzzlePos || !grid) return null
@@ -125,7 +62,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return getPuzzlePlugin(family) ?? null
   }, [activePuzzlePos, grid])
 
-  // Fall back to renderPuzzle for families without a registered plugin (e.g. tableau until Phase 7)
   const useRenderPuzzleFallback = activePuzzlePos != null && puzzlePlugin == null && renderPuzzle != null
 
   const activePuzzle = useMemo(() => {
@@ -133,6 +69,21 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
     return puzzlePlugin.generate(hashString(journeyId + edgeId), { difficulty: floorConfig.difficulty })
   }, [activePuzzlePos, puzzlePlugin, journeyId, currentFloor, floorConfig.difficulty])
+
+  const handlePuzzleSolved = useCallback(() => {
+    if (!activePuzzlePos) return
+    const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
+    journeys.markEdgeSolved(edgeId)
+    setActivePuzzlePos(null)
+    setPuzzleSolved(false)
+  }, [activePuzzlePos, journeys, currentFloor])
+
+  const handlePuzzleComplete = useCallback(() => {
+    schedulePuzzle(800, () => {
+      setPuzzleSolved(true)
+      schedulePuzzle(1500, handlePuzzleSolved)
+    })
+  }, [handlePuzzleSolved, schedulePuzzle])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -143,7 +94,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
 
       if (cell.type === "corridor") {
-        // Clicking a corner/junction corridor reveals around the bend
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
         return
@@ -152,31 +102,31 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       if (cell.type !== "room") return
 
       if (cell.roomType === "entrance") {
-        // Phase 4 adds the entrance seal; for now just complete it
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "puzzle") {
         journeys.updatePosition(journeyId, edgeId)
-        scheduleArrival(findPath(grid, explorerPos, [row, col]), () => setActivePuzzlePos([row, col]))
+        scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
+          setActivePuzzlePos([row, col])
+        )
       } else if (cell.roomType === "fork") {
-        // Fork is a free branch point — completing it reveals adjacent branches
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "stairhead") {
-        // Descend to next floor
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
         setCurrentFloor(f => f + 1)
       } else if (cell.roomType === "exit") {
         journeys.updatePosition(journeyId, edgeId)
-        scheduleArrival(findPath(grid, explorerPos, [row, col]), () => setExiting(true))
+        scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
+          setExiting(true)
+        )
       } else if (cell.roomType === "treasure") {
         journeys.markEdgeSolved(edgeId)
         journeys.updatePosition(journeyId, edgeId)
-        const reward = cell.reward
-        if (reward) {
-          scheduleArrival(findPath(grid, explorerPos, [row, col]), () => {
-            setChestOpened(false)
+        if (cell.reward) {
+          const reward = cell.reward
+          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
             setPendingReward({
               reward,
               onCollect: () => {
@@ -190,23 +140,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         }
       }
     },
-    [grid, journeys, journeyId, onSiteComplete, currentFloor, progression, explorerPos, scheduleArrival]
+    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival]
   )
-
-  const handlePuzzleSolved = useCallback(() => {
-    if (!activePuzzlePos) return
-    const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
-    journeys.markEdgeSolved(edgeId)
-    setActivePuzzlePos(null)
-    setPuzzleSolved(false)
-  }, [activePuzzlePos, journeys, currentFloor])
-
-  const handlePuzzleComplete = useCallback(() => {
-    puzzleTimerRef.current = setTimeout(() => {
-      setPuzzleSolved(true)
-      puzzleTimerRef.current = setTimeout(handlePuzzleSolved, 1500)
-    }, 800)
-  }, [handlePuzzleSolved])
 
   const ActivePuzzleComponent = puzzlePlugin?.Component ?? null
 
@@ -243,7 +178,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             {!puzzleSolved && (
               <button
                 onClick={() => {
-                  if (puzzleTimerRef.current) clearTimeout(puzzleTimerRef.current)
+                  cancelPuzzle()
                   setActivePuzzlePos(null)
                 }}
                 className="text-sm text-stone-400 hover:text-stone-200"
@@ -259,73 +194,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           </div>
         </div>
       )}
-
-      {/* Step 1: Chest overlay — tap to open */}
-      {pendingReward && !showLoot && (
-        <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-black/85">
-          <Chest
-            variant="wooden"
-            state={chestOpened ? "open" : "empty"}
-            allowInteraction={!chestOpened}
-            onClick={() => {
-              if (!chestOpened) {
-                setChestOpened(true)
-                pendingReward.onCollect()
-                lootTimerRef.current = setTimeout(() => setShowLoot(true), 600)
-              }
-            }}
-          />
-          {!chestOpened && <p className="mt-6 animate-pulse text-sm text-amber-300">{t("chest.tapToOpen")}</p>}
-        </div>
-      )}
-
-      {/* Step 2: LootPopup — shows reward after chest opens */}
-      {pendingReward &&
-        (() => {
-          const reward = pendingReward.reward
-          const onDismiss = () => {
-            setShowLoot(false)
-            setPendingReward(null)
-            setChestOpened(false)
-          }
-          if (reward.type === "hieroglyphFragment") {
-            const item = getInventoryItemById(reward.hieroglyphId)
-            const difficulty = getItemFirstLevel(reward.hieroglyphId)
-            const progress = progression.hieroglyphProgress(reward.hieroglyphId)
-            const rarity = progress.found >= progress.required ? "legendary" : progress.found >= 2 ? "rare" : "common"
-            return (
-              <LootPopup
-                isOpen={showLoot}
-                itemName={item ? `${item.name} — ${t("chest.hieroglyphFragment")}` : t("chest.hieroglyphFragment")}
-                itemDescription={`${item?.description ?? ""}\n\n${t("chest.fragmentProgress", { found: progress.found, required: progress.required })}`}
-                rarity={rarity}
-                itemComponent={
-                  item && difficulty ? (
-                    <HieroglyphTile
-                      symbol={item.symbol}
-                      difficulty={difficulty}
-                      size="lg"
-                      fragmentProgress={progress.found < progress.required ? progress : undefined}
-                    />
-                  ) : (
-                    <span className="text-6xl">𓂀</span>
-                  )
-                }
-                onDismiss={onDismiss}
-              />
-            )
-          }
-          const descKey = `chest.${reward.type}Description`
-          return (
-            <LootPopup
-              isOpen={showLoot}
-              itemName={t(`chest.${reward.type}`)}
-              itemDescription={t(descKey, "") || undefined}
-              itemComponent={<span className="text-6xl">{rewardEmoji(reward.type)}</span>}
-              onDismiss={onDismiss}
-            />
-          )
-        })()}
+      <ChestRewardFlow
+        pendingReward={pendingReward}
+        hieroglyphProgress={progression.hieroglyphProgress}
+        onDismiss={() => setPendingReward(null)}
+      />
     </div>
   )
 }
