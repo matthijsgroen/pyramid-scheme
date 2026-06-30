@@ -21,7 +21,7 @@ export const TravelPage: FC<{
   const { t } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
-  const { activeJourneyId, startJourney, cancelJourney, getJourney } = useJourneys()
+  const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney } = useJourneys()
   const { isTombDiscovered, mapPieceCount } = useProgression()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
@@ -57,6 +57,12 @@ export const TravelPage: FC<{
 
   const handleBackToMap = () => {
     setShowJourneySelection(false)
+  }
+
+  const handleNodeClick = (levelNr: number) => {
+    if (!journey) return
+    visitLevel(journey.id, levelNr)
+    startGame()
   }
 
   const handleInterruptExpedition = () => {
@@ -151,6 +157,7 @@ export const TravelPage: FC<{
               {!journey && <p className="mb-4 text-center">{t("ui.startAdventure")}</p>}
               <JourneyPathView
                 onClick={handleMapClick}
+                onNodeClick={journey ? handleNodeClick : undefined}
                 inJourney={!!journey}
                 levelCount={journey?.levelCount ?? 1}
                 levelNr={activeJourneyInfo?.levelNr ?? 1}

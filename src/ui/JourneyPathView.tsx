@@ -55,6 +55,7 @@ const getNodePositions = (path: string, n: number): Array<{ x: number; y: number
 
 type Props = {
   onClick: () => void
+  onNodeClick?: (levelNr: number) => void // 1-based; only fires for completed nodes
   label: string
   inJourney: boolean
   levelCount: number
@@ -66,6 +67,7 @@ type Props = {
 
 export const JourneyPathView: FC<Props> = ({
   onClick,
+  onNodeClick,
   label,
   inJourney,
   levelCount,
@@ -177,15 +179,28 @@ export const JourneyPathView: FC<Props> = ({
             const isCurrent = i === currentIdx
             if (isCompleted) {
               return (
-                <circle
+                <g
                   key={i}
-                  cx={pos.x}
-                  cy={pos.y}
-                  r="3.5"
-                  fill="rgb(245,158,11)"
-                  stroke="rgb(180,83,9)"
-                  strokeWidth="0.8"
-                />
+                  onClick={
+                    onNodeClick
+                      ? e => {
+                          e.stopPropagation()
+                          onNodeClick(i + 1)
+                        }
+                      : undefined
+                  }
+                  style={onNodeClick ? { cursor: "pointer" } : undefined}
+                >
+                  {onNodeClick && <circle cx={pos.x} cy={pos.y} r="7" fill="transparent" />}
+                  <circle
+                    cx={pos.x}
+                    cy={pos.y}
+                    r="3.5"
+                    fill="rgb(245,158,11)"
+                    stroke="rgb(180,83,9)"
+                    strokeWidth="0.8"
+                  />
+                </g>
               )
             }
             if (isCurrent) {

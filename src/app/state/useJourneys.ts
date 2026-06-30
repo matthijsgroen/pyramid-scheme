@@ -14,7 +14,7 @@ export type StoredJourneyStateV3 = {
   completionCount: number
   foundMapPiece: boolean
   active: boolean
-  solvedEdges: string[] // cell positions "row,col" solved in the site map — permanent per run
+  solvedEdges: Record<string, string[]> // keyed by levelNr; edges solved in the site interior — persists across revisits
   position: string | null // current node ID "row,col" or null (entrance)
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
 }
@@ -30,6 +30,7 @@ export type JourneyAPI = {
   activeJourneyId: string | undefined
   maxDifficulty: Difficulty
   startJourney: (journey: Journey) => void
+  visitLevel: (journeyId: string, levelNr: number) => void
   nextJourneySeed: (journeyId: string) => number
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
@@ -59,7 +60,7 @@ export const useJourneys = (): JourneyAPI => {
 
   useEffect(() => {
     if (versionLoaded && storageVersions.journeys !== 3) {
-      // Hard reset on version mismatch — no migration from V1/V2
+      // Hard reset on version mismatch — no migration from prior versions
       setStorageVersion(prev => ({ ...prev, journeys: 3 })).then(() => {
         setJourneys([])
       })
@@ -115,7 +116,7 @@ export const createJourneysV3Api = ({
       completionCount: 0,
       foundMapPiece: false,
       active: true,
-      solvedEdges: [],
+      solvedEdges: {},
       position: null,
       interiorLevelNr: null,
     }
@@ -132,10 +133,20 @@ export const createJourneysV3Api = ({
               active: false,
               completionCount: j.completionCount + 1,
               levelNr: 1,
-              solvedEdges: [],
+              solvedEdges: {},
               position: null,
               interiorLevelNr: null,
             }
+          : j
+      )
+    )
+  }
+
+  const visitLevel = (journeyId: string, targetLevelNr: number) => {
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === journeyId
+          ? { ...j, active: true, levelNr: targetLevelNr, position: null, interiorLevelNr: null }
           : j
       )
     )
@@ -152,7 +163,7 @@ export const createJourneysV3Api = ({
     if (!activeJourneyId) return
     setJourneys(prev =>
       prev.map(j =>
-        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, solvedEdges: [], position: null } : j
+        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null } : j
       )
     )
   }
@@ -165,16 +176,21 @@ export const createJourneysV3Api = ({
   const markEdgeSolved = (edgeId: string) => {
     if (!activeJourneyId) return
     setJourneys(prev =>
-      prev.map(j =>
-        j.journeyId === activeJourneyId && !j.solvedEdges.includes(edgeId)
-          ? { ...j, solvedEdges: [...j.solvedEdges, edgeId] }
-          : j
-      )
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const key = String(j.levelNr)
+        const current = j.solvedEdges[key] ?? []
+        if (current.includes(edgeId)) return j
+        return { ...j, solvedEdges: { ...j.solvedEdges, [key]: [...current, edgeId] } }
+      })
     )
   }
 
-  const getSolvedEdges = (journeyId: string): string[] =>
-    journeys.find(j => j.journeyId === journeyId)?.solvedEdges ?? []
+  const getSolvedEdges = (journeyId: string): string[] => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return []
+    return j.solvedEdges[String(j.levelNr)] ?? []
+  }
 
   const updatePosition = (journeyId: string, nodeId: string) => {
     setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId } : j)))
@@ -197,6 +213,7 @@ export const createJourneysV3Api = ({
     nextJourneySeed,
     findMapPiece,
     startJourney,
+    visitLevel,
     completeJourney,
     cancelJourney,
     completeLevel,
