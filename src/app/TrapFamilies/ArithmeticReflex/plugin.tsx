@@ -68,16 +68,14 @@ const ArithmeticReflexComponent: TrapPlugin<ArithmeticQuestion>["Component"] = (
   onFailRef.current = onFail
 
   useEffect(() => {
-    // Trigger CSS transition on next frame
+    if (timeLimit <= 0) return // unlimited — no countdown, no auto-fail
     const frame = requestAnimationFrame(() => setBarWidth(0))
-    const timer = setTimeout(() => {
-      if (!done) onFailRef.current()
-    }, timeLimit * 1000)
+    const timer = setTimeout(() => onFailRef.current(), timeLimit * 1000)
     return () => {
       cancelAnimationFrame(frame)
       clearTimeout(timer)
     }
-  }, [timeLimit, done])
+  }, [timeLimit]) // done intentionally omitted — onFailRef handles stale closure
 
   const handleChoice = (value: number) => {
     if (done) return
