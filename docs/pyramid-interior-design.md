@@ -521,7 +521,9 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 12. ~~**Trap damage value**~~ — **Resolved.** 1 full heart damage; healing and armor in half-hearts. See §11.
 
-13. **Consumable distribution density** — 147 consumable slots across 823 total is ~18%. Should distribution be flat (same density everywhere) or concentrated near trap-heavy tiers (expert+)? Tunable via authored rules in `TIER_TEMPLATES`.
+13. ~~**Consumable distribution density**~~ — **Resolved.** Density by tier: starter=0%, junior=5%, expert=20%, master=25%, wizard=30%. Authored via `consumableDensity()` in the world generator DSL. See `IMPLEMENTATION_PLAN.md` DSL section for full syntax.
+
+14. **Hidden path density** — **Resolved.** All tiers have hidden paths (starter=low, junior=low, expert=low, master=medium, wizard=medium+low). Authored via composable `hiddenPaths(level).settings(...)` DSL declarations. Starter hidden paths exist in the world from generation but are invisible until Detection L1 (earned at Master B). See `IMPLEMENTATION_PLAN.md` DSL section.
 
 ---
 

@@ -24,6 +24,9 @@ Status: active plan · updated 2026-06-30
 | World generation | Fixed seed, dev-time script → `src/data/generatedWorld.ts`; authored rules + seeded generator + global reachability solver |
 | Tomb count | 9 total (1+1+2+2+3); later tombs revealed by location key treasure |
 | Tomb interiors | Site map system (same as pyramids) — Phase 7 |
+| Consumable density | 0% / 5% / 20% / 25% / 30% per tier (starter→wizard); authored via `consumableDensity()` in DSL |
+| Hidden path density | Composable `hiddenPaths(level).settings(...)` declarations per tier; same density vocabulary as `sidePaths`; none=0, low=1, medium=2–3, dense=4–5 paths per pyramid |
+| Side path DSL | Composable `sidePaths(level).settings(...)` — multiple density levels stack, each with own `pathPuzzles` and `end` reward type |
 
 ---
 
@@ -63,6 +66,56 @@ Gaps found between what the DSL can express, what the world generator produces, 
 ## Phases 1–9f — Completed ✅
 
 All delivered. See git history for implementation details. Summary in build order table below.
+
+---
+
+## DSL — Path density syntax (Phase 9 extension)
+
+The existing `sideSections: "sparse" | "normal" | "dense"` scalar is replaced by composable density declarations. Multiple calls at different density levels stack — the generator creates both populations of paths.
+
+### Density → path count
+
+| Level | Paths per pyramid |
+|---|---|
+| `none` | 0 |
+| `low` | 1 |
+| `medium` | 2–3 |
+| `dense` | 4–5 |
+
+### `sidePaths` and `hiddenPaths`
+
+```typescript
+tier("starter").set({ consumableDensity: 0 })
+  .sidePaths('low').settings({ pathPuzzles: 0, end: 'fragment' })
+
+tier("junior").set({ consumableDensity: 0.05 })
+  .sidePaths('low').settings({ pathPuzzles: 0, end: 'treasure' })
+  .sidePaths('medium').settings({ pathPuzzles: 1, end: 'fragment' })
+  .hiddenPaths('low').settings({ pathPuzzles: 0, end: 'treasure' })
+
+tier("expert").set({ consumableDensity: 0.20 })
+  .sidePaths('low').settings({ pathPuzzles: 0, end: 'treasure' })
+  .sidePaths('medium').settings({ pathPuzzles: 1, end: 'fragment' })
+  .hiddenPaths('low').settings({ pathPuzzles: 0, end: 'treasure' })
+
+tier("master").set({ consumableDensity: 0.25 })
+  .sidePaths('medium').settings({ pathPuzzles: 1, end: 'fragment' })
+  .hiddenPaths('medium').settings({ pathPuzzles: 0, end: 'treasure' })
+
+tier("wizard").set({ consumableDensity: 0.30 })
+  .sidePaths('medium').settings({ pathPuzzles: 1, end: 'fragment' })
+  .sidePaths('low').settings({ pathPuzzles: 0, end: 'treasure' })
+  .hiddenPaths('medium').settings({ pathPuzzles: 0, end: 'treasure' })
+  .hiddenPaths('low').settings({ pathPuzzles: 1, end: 'mosaic' })
+```
+
+`hiddenPaths` produces paths with `hidden: true` on the edge — invisible without Detection L1. Starter hidden paths exist in the world from generation but are never visible until the player earns Detection L1 (Master B treasure 28).
+
+### Implementation notes
+
+- `consumableDensity` is a fraction (0–1) of chest slots in that tier that become consumable rewards; the generator fills them proportionally across bandage / oil / trap-tool (relative weights authored separately)
+- `sidePaths(level)` and `hiddenPaths(level)` calls accumulate into an array; the generator processes each entry independently and sums path counts
+- Path count from `medium` is a range `[2, 3]` — generator picks per-pyramid within the range using the site seed
 
 ---
 
