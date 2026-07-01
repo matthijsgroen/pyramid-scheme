@@ -45,7 +45,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     currentFloor,
     allEdges,
     wardKeys,
-    journeyState?.position
+    journeyState?.position,
+    0 // detectionLevel: wired to progression.perks.detectionLevel in Phase 15
   )
 
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)

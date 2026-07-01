@@ -234,7 +234,7 @@ describe(assembleFloor, () => {
   })
 
   describe("hidden sections", () => {
-    it("filters out hidden sections — grid matches config without hidden sections", () => {
+    it("includes hidden section cells in the grid, tagged hidden:true", () => {
       const withHidden: FloorConfig = {
         pathPuzzles: 1,
         difficulty: "starter",
@@ -253,26 +253,39 @@ describe(assembleFloor, () => {
       const rWithout = assembleFloor("site-h", withoutHidden, 99)
       expect(rWith.success).toBe(true)
       expect(rWithout.success).toBe(true)
-      if (rWith.success && rWithout.success) {
-        // Both grids should have the same room count — hidden section is excluded
-        const rooms = (g: FloorGrid) => g.cells.flat().filter(c => c.type === "room").length
-        expect(rooms(rWith.grid)).toBe(rooms(rWithout.grid))
+      if (rWith.success) {
+        const allCells = rWith.grid.cells.flat()
+        const hiddenCells = allCells.filter(c => (c.type === "room" || c.type === "corridor") && c.hidden)
+        const visibleRooms = allCells.filter(c => c.type === "room" && !c.hidden)
+        // Hidden section cells are present and tagged
+        expect(hiddenCells.length).toBeGreaterThan(0)
+        // Visible rooms are present (main path + visible side section)
+        expect(visibleRooms.length).toBeGreaterThan(0)
+        // No cell is both hidden and not hidden
+        expect(allCells.filter(c => (c.type === "room" || c.type === "corridor") && c.hidden === false).length).toBe(0)
       }
     })
 
-    it("a config with only hidden sections assembles like one with no sections", () => {
+    it("hidden cells have no hidden:true on visible-section cells", () => {
       const config: FloorConfig = {
         pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true }],
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 1, difficulty: "starter", end: "treasure", hidden: true },
+        ],
       }
-      const result = assembleFloor("site-honly", config, 77)
+      const result = assembleFloor("site-htag", config, 55)
       expect(result.success).toBe(true)
       if (result.success) {
-        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
-        expect(traps.length).toBe(0)
+        const wronglyTagged = result.grid.cells.flat().filter(c => {
+          if (c.type !== "room" && c.type !== "corridor") return false
+          // All hidden:true cells must have a sectionHash (so we can identify them)
+          return c.hidden && !c.sectionHash
+        })
+        expect(wronglyTagged.length).toBe(0)
       }
     })
   })

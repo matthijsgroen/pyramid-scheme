@@ -168,16 +168,19 @@ const buildIntermediateTypes = (pathPuzzles: number, chestEvery: number): Array<
 }
 
 export const assembleFloor = (siteId: string, config: FloorConfig, seed: number): AssemblerResult => {
-  // ponytail: hidden sections excluded until detection system (Phase 15)
+  // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements
   const visibleSections = config.sideSections.filter(s => !s.hidden)
   const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
   const hasUngated = visibleSections.some(s => !s.gate)
 
-  // Auto-inject a minimal ungated treasure section as key-holder when all sections are gated
+  // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by useAssembledFloor
+  const allSections = config.sideSections
   const sideSections =
     hasGatedFloorKey && !hasUngated
-      ? [...visibleSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
-      : visibleSections
+      ? [...allSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
+      : allSections
+
+  const hiddenSectionIdxs = new Set(allSections.map((s, i) => (s.hidden ? i : -1)).filter(i => i >= 0))
 
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
   const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate)
@@ -453,9 +456,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const chainKeyHostIdxs = new Set(chainKeyColorMap.keys())
 
     // Build room cell specs: posKey -> room properties (sectionHash injected separately)
-    type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash">
+    type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "hidden">
     const roomSpecs = new Map<string, RoomSpec>()
     const cellSectionHash = new Map<string, string>()
+    const hiddenCellPositions = new Set<string>()
 
     const posKey = (r: number, c: number) => `${r},${c}`
 
@@ -463,7 +467,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     for (const [r, c] of mainPath) cellSectionHash.set(posKey(r, c), mainSectionHash)
     for (const group of sectionGroups) {
       const sHash = computeSideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
-      for (const [r, c] of group.cells) cellSectionHash.set(posKey(r, c), sHash)
+      const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
+      for (const [r, c] of group.cells) {
+        cellSectionHash.set(posKey(r, c), sHash)
+        if (isHidden) hiddenCellPositions.add(posKey(r, c))
+      }
     }
     for (const { subSection, cells, parentSectionIdx, subSectionIdx } of subSectionGroups) {
       const sHash = computeSideSectionHash(subSection, subSectionIdx, parentSectionIdx)
@@ -671,6 +679,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
       const spec = roomSpecs.get(cellKey)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+      const hidden = hiddenCellPositions.has(cellKey) || undefined
       if (spec) {
         const roomCell: RoomCell = {
           type: "room",
@@ -678,6 +687,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           dirs,
           state: "fogged",
           sectionHash,
+          ...(hidden ? { hidden } : {}),
           ...(spec.reward ? { reward: spec.reward } : {}),
           ...(spec.requiredKeyId ? { requiredKeyId: spec.requiredKeyId } : {}),
           ...(spec.gateVariant ? { gateVariant: spec.gateVariant } : {}),
@@ -692,6 +702,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           dirs,
           state: "fogged",
           sectionHash,
+          ...(hidden ? { hidden } : {}),
         }
         cells2D[r][c] = corridorCell
       }
