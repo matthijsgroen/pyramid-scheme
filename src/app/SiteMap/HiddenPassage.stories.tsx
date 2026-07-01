@@ -6,8 +6,6 @@ import type { Direction, FloorConfig, FloorGrid, GridCell } from "../../game/sit
 import { SiteMapView } from "./SiteMapView"
 
 // ── Grid setup ────────────────────────────────────────────────────────────────
-// One fixed seed. Same seed + same maze size → same maze structure.
-// Hidden section adds extra cells that aren't present in the base config.
 
 const SEED = 17
 
@@ -23,7 +21,7 @@ const fullConfig: FloorConfig = {
   ...baseConfig,
   sideSections: [
     ...baseConfig.sideSections,
-    // Hidden branch: no puzzle rooms, just a mosaic-piece chest directly at the end.
+    // Hidden branch: no puzzle rooms, just a mosaic-piece chest at the end.
     { pathPuzzles: 0, difficulty: "expert", end: "treasure", endReward: { type: "mosaicPiece" } },
   ],
 }
@@ -41,7 +39,7 @@ if (baseGrid.rows !== fullGrid.rows || baseGrid.cols !== fullGrid.cols) {
   throw new Error("hidden-passage story: grid size mismatch — choose a different seed")
 }
 
-// Every cell present in fullGrid but absent in baseGrid belongs to the hidden section.
+// Cells only present in fullGrid (belong to the hidden section)
 const hiddenCells = new Set<string>()
 for (let r = 0; r < fullGrid.rows; r++) {
   for (let c = 0; c < fullGrid.cols; c++) {
@@ -51,19 +49,12 @@ for (let r = 0; r < fullGrid.rows; r++) {
   }
 }
 
-// Cells that have an actual maze corridor leading INTO the hidden section.
-// Geometric adjacency is not enough — the cell must have a dir pointing toward
-// a hidden cell (i.e. there is a walkable passage, not just a shared wall).
+// Non-hidden cells that have a walkable passage INTO a hidden cell
 const DELTA_TO_DIR: Record<string, Direction> = { "-1,0": "n", "1,0": "s", "0,-1": "w", "0,1": "e" }
 const adjacentToHidden = new Set<string>()
 for (const key of hiddenCells) {
   const [r, c] = key.split(",").map(Number)
-  for (const [dr, dc] of [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-  ] as [number, number][]) {
+  for (const [dr, dc] of [[-1, 0], [1, 0], [0, -1], [0, 1]] as [number, number][]) {
     const nr = r + dr
     const nc = c + dc
     const nk = `${nr},${nc}`
@@ -71,58 +62,63 @@ for (const key of hiddenCells) {
     const nCell = fullGrid.cells[nr]?.[nc]
     if (!nCell || nCell.type === "empty") continue
     if (nCell.type !== "room" && nCell.type !== "corridor") continue
-    // Direction the neighbor must have to connect into the hidden cell
     const dirToHidden = DELTA_TO_DIR[`${-dr},${-dc}`]
     if (dirToHidden && nCell.dirs.has(dirToHidden)) adjacentToHidden.add(nk)
   }
 }
 
-// Dir → [row-delta, col-delta]
 const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-const HiddenPassageDemo = () => {
+const HiddenPassageDemo = ({ hasDetector }: { hasDetector: boolean }) => {
   const [explored, setExplored] = useState<FloorGrid>(fullGrid)
   const [explorerPos, setExplorerPos] = useState<[number, number] | null>(null)
   const [revealed, setRevealed] = useState(false)
   const [mosaicFound, setMosaicFound] = useState(false)
 
   // Build the display grid:
-  //  - Hidden cells → empty (completely invisible, no dead-end stub)
-  //  - Cells adjacent to hidden cells → strip the dirs pointing toward hidden cells
-  //    so a junction looks like a plain corner, not a 3-way branch
+  //  - Hidden cells → empty (invisible, no dead-end stub)
+  //  - Cells adjacent to hidden → strip the dir pointing toward the hidden cell
+  //    so the junction looks like a plain corner, not a 3-way branch
   const displayGrid = useMemo((): FloorGrid => {
     if (revealed) return explored
     const newCells: GridCell[][] = explored.cells.map((row, r) =>
       row.map((cell, c): GridCell => {
-        // Hidden cells are invisible
         if (hiddenCells.has(`${r},${c}`)) return { type: "empty" }
-
-        // Strip any dirs that point into hidden cells
         if (cell.type === "room" || cell.type === "corridor") {
           const newDirs = new Set(cell.dirs) as Set<Direction>
           for (const [dir, [dr, dc]] of Object.entries(DIR_MOVES) as [Direction, [number, number]][]) {
             if (newDirs.has(dir) && hiddenCells.has(`${r + dr},${c + dc}`)) newDirs.delete(dir)
           }
-          if (newDirs.size !== cell.dirs.size) return { ...cell, dirs: newDirs as ReadonlySet<Direction> }
+          if (newDirs.size !== cell.dirs.size) {
+            // If a room lost a dir to the hidden section and is now just a passthrough,
+            // downgrade to corridor so it renders as a plain corner, not a room node.
+            // With a detector: keep it "reachable" so the player can always click back to it.
+            const state = hasDetector && cell.state === "completed" ? "reachable" : cell.state
+            if (cell.type === "room" && newDirs.size <= 2) {
+              return { type: "corridor", dirs: newDirs as ReadonlySet<Direction>, state }
+            }
+            return { ...cell, dirs: newDirs as ReadonlySet<Direction>, state }
+          }
         }
-
         return cell
       })
     )
     return { ...explored, cells: newCells }
   }, [explored, revealed])
 
-  // Reveal button shows only when the explorer is AT the junction cell.
+  // Only fire when the player has a detector and is standing at the junction
   const stoppedAtHidden =
-    !revealed && explorerPos !== null && adjacentToHidden.has(`${explorerPos[0]},${explorerPos[1]}`)
+    hasDetector &&
+    !revealed &&
+    explorerPos !== null &&
+    adjacentToHidden.has(`${explorerPos[0]},${explorerPos[1]}`)
 
   const handleClick = (row: number, col: number) => {
     const cell = explored.cells[row]?.[col]
     if (!cell || cell.type === "empty") return
     if (cell.state !== "reachable" && cell.state !== "completed") return
-
     if (cell.state === "reachable") {
       if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") {
         setMosaicFound(true)
@@ -131,8 +127,6 @@ const HiddenPassageDemo = () => {
     }
     setExplorerPos([row, col])
   }
-
-  const handleReveal = () => setRevealed(true)
 
   const handleReset = () => {
     setExplored(fullGrid)
@@ -169,18 +163,19 @@ const HiddenPassageDemo = () => {
           {mosaicFound
             ? "The ancient mosaic piece joins your collection."
             : stoppedAtHidden
-              ? "Your explorer stopped at a suspicious corner. Press Reveal to investigate."
+              ? "Your detector stopped you here. Press Reveal to investigate."
               : revealed
-                ? "A hidden chamber now visible — navigate to the chest inside."
-                : "Click reachable nodes to advance your explorer through the pyramid."}
+                ? "A hidden chamber is now visible — navigate to the chest inside."
+                : hasDetector
+                  ? "You carry a detector. It will stop you at hidden passages."
+                  : "No detector. Navigate normally — hidden passages are invisible."}
         </p>
       </div>
 
-      {/* Reveal button — appears only while explorer is at the junction */}
       <div className="flex h-10 items-center">
         {stoppedAtHidden && (
           <button
-            onClick={handleReveal}
+            onClick={() => setRevealed(true)}
             className="rounded-lg border border-yellow-700 bg-yellow-950 px-5 py-2 font-pyramid text-sm text-yellow-200 shadow-[0_0_12px_1px_rgba(200,160,0,0.25)] transition hover:bg-yellow-900 active:scale-95"
           >
             ✦ Reveal hidden passage
@@ -191,7 +186,6 @@ const HiddenPassageDemo = () => {
         )}
       </div>
 
-      {/* Map — same grid, same layout throughout; only dirs and visibility change */}
       <div
         className={`rounded-xl border transition-all duration-500 ${
           mosaicFound
@@ -226,7 +220,12 @@ export default {
   parameters: { layout: "fullscreen" },
 }
 
-export const FindThePassage: StoryObj = {
-  render: () => <HiddenPassageDemo />,
-  name: "Find the Hidden Passage",
+export const WithoutDetector: StoryObj = {
+  render: () => <HiddenPassageDemo hasDetector={false} />,
+  name: "Without Detector — corner looks normal, player glides through",
+}
+
+export const WithDetector: StoryObj = {
+  render: () => <HiddenPassageDemo hasDetector={true} />,
+  name: "With Detector — stops at hidden junction, reveals on tap",
 }
