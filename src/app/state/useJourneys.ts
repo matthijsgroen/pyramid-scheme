@@ -132,8 +132,6 @@ export const createJourneysV3Api = ({
               ...j,
               active: false,
               completionCount: j.completionCount + 1,
-              levelNr: 1,
-              solvedEdges: {},
               position: null,
               interiorLevelNr: null,
             }
