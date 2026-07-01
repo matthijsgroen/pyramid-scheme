@@ -4,93 +4,86 @@
 
 **A story must not contain logic that would need to be kept in sync with the game.**
 
-If a bug in a story's local code could make the story *lie* about what the game actually does, that code belongs in core — not in the story.
-
-A story's job is to wire up inputs and observe outputs. It is a thin harness, not a second implementation.
+If a bug in a story's local code could make the story *lie* about what the game actually does, that code belongs in core — not in the story. A story's job is to wire up inputs and observe outputs.
 
 ---
 
-## Decision flowchart
+## Decision process
 
-```
-Does the game already have a function or hook that produces this value?
-  └─ YES → use it. Never clone it.
-  └─ NO  → a local approximation is acceptable, but it is a flag:
-            extract to core when the real implementation is built.
-```
+When writing logic in a story, ask:
 
----
+1. **Does the game already have a function that does this?**
+   → Use it. Never clone it.
 
-## What is acceptable in a story
+2. **Would a bug here make the story show incorrect game behaviour?**
+   → Extract to core first, then call it from both the story and the game.
 
-| Acceptable | Example |
-|---|---|
-| Inline config/data literals | `const config: FloorConfig = { pathPuzzles: 2, ... }` |
-| Local `useState` holding game-shaped data | `useState<Record<string, string[]>>({})` for explored sections |
-| Calling real game functions for mutations | `encodeEdge(...)`, `completeCell(...)`, `assembleFloor(...)` |
-| Simple display helpers with no game equivalent | `const label = reward.type === "mosaicPiece" ? "Mosaic" : "Treasure"` |
-| Story-only layout wrappers | `<div className="p-4 bg-stone-900">` |
-| Mock props / Storybook args | `args: { difficulty: "expert" }` |
+3. **Is this pure display/formatting with no game equivalent?**
+   → A simple local helper is acceptable. It becomes a flag to extract when the game builds real UI for it.
+
+4. **Is this setup data (config literals, mock props)?**
+   → Fine locally. Same as a unit test fixture.
+
+Stop and extract to core before writing more than a few lines of story logic that isn't setup data or pure display.
 
 ---
 
-## What is NOT acceptable in a story
+## Boundaries
 
-| Not acceptable | Why | What to do instead |
-|---|---|---|
-| Reimplementing a function that exists in core | The story will silently diverge when core changes | Import and call the real function |
-| Computing a derived value the game computes | Same divergence risk | Call the game function that computes it |
-| Duplicating `encodeEdge` / `decodeEdge` | Already exported from `useAssembledFloor` | `import { encodeEdge, decodeEdge } from "./useAssembledFloor"` |
-| Custom grid masking / dir-stripping | Lives in `useAssembledFloor` | Use the hook with the appropriate `detectionLevel` |
-| Shadow exploration state machine | Lives in `useAssembledFloor` + `useJourneys` | Use the hook; hold state as `useState<Record<string,string[]>>` |
-| Full algorithm re-implementations | e.g. treasure selection, reward calculation | Extract to a core function first, then call it from both game and story |
+### What belongs in a story
+
+- **Config/data literals** — inline `FloorConfig`, mock props, Storybook args
+- **Local `useState` holding game-shaped data** — use the same TypeScript types as the game, hold them in local state, reset on reload
+- **Calls to real game functions** — assembly, navigation, cell completion, puzzle generation, etc.
+- **Simple display helpers with no game equivalent** — a label or colour derived from a data type, when the game has no shared utility for it yet
+- **Story-only layout** — wrappers, padding, background colours
+
+### What does NOT belong in a story
+
+- **A reimplementation of a function that exists in core** — the story will silently diverge when core changes
+- **A derived value the game computes** — if the game has a function that produces it, call that function
+- **A stateful algorithm the game runs** — selection logic, seed derivation, scoring — these must be in core and called from both game and story
 
 ---
 
-## State management in stories
+## State management pattern
 
-Stories do **not** use game state hooks (`useJourneys`, `useProgression`) directly — those are backed by localStorage and bleed between story reloads.
+Stories do **not** use game state hooks directly — those are backed by persistent storage and bleed between story reloads.
 
 Instead:
 
-- **Data shape**: use the same TypeScript types as the game (`Record<string, string[]>` for `exploredSections`, etc.)
-- **Mutation logic**: call real game functions (e.g. `completeCell`, `assembleFloor`)
-- **Storage**: `useState` — local to the story, resets on reload
+- Use the same **TypeScript types** as the game for local state shape
+- Call real **game functions** for mutations and computations
+- Store in **`useState`** — local to the story, resets on reload
 
 ```tsx
-// Good
+// Good — local state, real types, real game hook for the computed grid
 const [exploredSections, setExploredSections] = useState<Record<string, string[]>>({})
-const { grid, explorerPos } = useAssembledFloor(JOURNEY_ID, config, SEED, 0, exploredSections, ...)
+const { grid } = useAssembledFloor(id, config, seed, 0, exploredSections, ...)
 
-// Bad
-const [grid, setGrid] = useState<FloorGrid>(buildMyOwnGrid()) // shadow
+// Bad — reimplementing what the game hook already does
+const [grid, setGrid] = useState(() => buildMyOwnGrid())
 ```
 
 ---
 
 ## Display helpers
 
-If the game already renders a reward, a label, or a colour in its own UI, use the same source. If no game UI exists for it yet, a simple local helper is fine — but it is a flag to extract when the UI is built.
-
-```tsx
-// Fine — no game UI for this yet, simple enough that divergence is low risk
-const label = reward.type === "mosaicPiece" ? "Mosaic" : reward.type
-
-// Not fine — ChestRewardFlow already renders rewards; use a shared display util
-const rewardLabel = (r: TreasureReward) => { /* 20-line reimplementation */ }
-```
+If the game already has UI that renders a piece of data (a reward, a label, a status), use the same source. If no game UI exists for it yet, a simple local switch or map is acceptable — but note it as a candidate for extraction when the game builds that UI.
 
 ---
 
 ## When to extract to core first
 
-Before writing story logic, ask: *does this logic need to be correct to make the story trustworthy?*
+Extract before writing the story when:
 
-- Grid assembly → `assembleFloor()` ✓ already in core
-- Cell state application → `completeCell()` ✓ already in core
-- Edge ID encoding → `encodeEdge` / `decodeEdge` ✓ already exported from `useAssembledFloor`
-- Hidden cell masking → `useAssembledFloor` with `detectionLevel` ✓ already in core
-- Treasure selection algorithm → **extract first, then use in both game and story**
-- Reward display labels → **extract first if already rendered in game UI**
+- The logic determines **what the player receives** (loot, rewards, treasure selection)
+- The logic determines **what state the game is in** (exploration, completion, unlocks)
+- The logic involves **seeded randomness** — if the seed or selection formula differs between story and game, the story shows wrong data
+- The same logic is needed in **more than one place**
 
-If you find yourself writing more than ~5 lines of logic in a story that isn't setup data, stop and ask whether it should be in core.
+Do not extract when:
+
+- It is a config literal or fixture
+- It is a display label/colour with no existing game equivalent
+- It is story scaffolding (layout, reset buttons, debug controls)
