@@ -321,7 +321,6 @@ export const TRAP_TIME_EXTENSION_PER_INSIGHT_STACK = 1  // seconds per stack
 - **Fail:** take damage → encounter closes → room stays reachable for retry if still `canAttemptTrap()`
 - **Pass:** room marks `"completed"`, freely walkable on revisit
 - **Blocked (health ≤ 1):** skull shows red/locked indicator; tapping shows a game message (not Fez)
-- **Fez tutorial:** fires once on the player's first ever trap room tap
 - **Trap tool** (permanent disable): deferred to Phase 14 with other consumables
 - **`trapped?: boolean`** flag on DSL `settings()` — `pathPuzzles` = count of trap rooms when trapped; no mixed puzzle+trap paths for now
 - **`end: 'consumable'`** added to `PathEndHint`
@@ -350,7 +349,6 @@ export type PathEntry = { density: SideIntensity; pathPuzzles: number; end: Path
 
 ```
 player taps trap room
-  → first ever trap: showConversation("trapTutorial")
   → if canAttemptTrap(): launch <TrapEncounter />
       → onPass: markEdgeSolved(trapRoomEdgeId); room → "completed"
       → onFail: takeTrapDamage(armorStacks); room stays "reachable"
@@ -497,6 +495,28 @@ Replace the entire `TreasureEffects` type and all treasure `effects` fields with
 
 ---
 
+## Phase 16 — Introductions & Onboarding
+
+**Goal:** First-encounter explanations for every mechanic that needs one. Collected here so the core game loop ships clean and tutorials are layered on top, not woven in.
+
+### Candidates
+
+- **Puzzle rules** — brief overlay on the player's first encounter with each puzzle family (Sumplete, Tableau, Crocodile). Explain the win condition; skip on revisit.
+- **Traps** — first tap on a trap room explains the mechanic (timed challenge, health cost on fail, blocked at 1 half-heart).
+- **Consumables** — first time a consumable chest is collected, explain the consumable bar and carry cap.
+- **Detector** — first time `detectionLevel >= 1`, explain that suspicious corners will stop the explorer.
+- **Hidden passages (reveal)** — first time the reveal prompt appears, explain what a hidden passage is and that some contain rare loot.
+- **Ward keys / gated sections** — first encounter with a gate explains that a ward key from a tomb unlocks it.
+- **Health and healing** — first time health drops, explain that oil and bandages restore hearts.
+- **Map pieces** — first map piece collected, explain that it reveals a new tomb on the travel screen.
+- **Hieroglyph fragments** — first fragment collected, explain the hieroglyph collection mechanic.
+
+### Implementation approach
+
+One-shot flags stored in `useProgression` (or a dedicated `useTutorials` slice) — `seenTutorials: Set<string>`. Each mechanic checks its flag before showing; sets it on dismiss. UI is a lightweight modal or slide-in banner, not a Fez conversation (keep Fez for narrative moments).
+
+---
+
 ## Build order summary
 
 | Phase | Deliverable | Status | Key output |
@@ -526,3 +546,4 @@ Replace the entire `TreasureEffects` type and all treasure `effects` fields with
 | 13 | Trap corridors + hidden paths | 🔜 | `trapped`/`hidden` edge attrs, `warning` node type, encounter flow in `SiteMapScreen`, `markTrapDisabled` |
 | 14 | Consumables | 🔜 | `consumables` state, carry cap, chest delivery, `<ConsumableBar />`, skipped-chest tracking |
 | 15 | Tomb treasure perks + detector system | 🔜 | `treasurePerks.ts`, perk state, `useDetector`, `<DetectorPanel />`, Scribe's Eye annotations, old `TreasureEffects` removal |
+| 16 | Introductions & onboarding | 🔜 | `seenTutorials` state, first-encounter overlays for puzzles, traps, consumables, detector, hidden passages, ward keys, health, map pieces, fragments |

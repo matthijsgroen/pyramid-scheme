@@ -82,21 +82,13 @@ The project uses strict TypeScript. Avoid `any` types; define proper interfaces 
 
 ### 8. Domain / App / Design-System Layer Boundaries
 
-Code is split into three layers with strict one-way dependencies (domain ← app ← ui):
+Code is split into three layers with strict one-way dependencies (domain ← app ← ui). See **[`docs/instructions/architecture.md`](docs/instructions/architecture.md)** for the full rules.
 
 | Layer | Location | Rule |
 |-------|----------|------|
-| **Domain** | `src/game/` | Pure TypeScript — data types, generation functions, validation functions. No React, no DOM, no rendering. |
-| **App** | `src/app/` | Stateful React — pages, state hooks, orchestration. May import from domain and design system. |
-| **Design system** | `src/ui/` | Stateless React components. Props in, JSX out. No game state, no domain imports. |
-
-Concretely for the site map system:
-- `src/game/siteTypes.ts` — `FloorConfig`, `SiteLayout`, all data types
-- `src/game/siteAssembler.ts` — `assembleFloor()` pure function
-- `src/game/siteValidator.ts` — `validateSite()` / `validateJourney()` pure functions
-- `src/app/SiteMap/SiteMapView.tsx` — SVG renderer, receives layout + nav state as props
-- `src/app/SiteMap/useSiteNavigation.ts` — pure nav-state computation hook (no storage)
-- `src/app/SiteMap/SiteMapScreen.tsx` — stateful page that wires storage → hooks → view
+| **Domain** | `src/game/`, `src/data/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI. |
+| **App** | `src/app/` | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own. |
+| **Design system** | `src/ui/` | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
 
 ---
 
@@ -179,6 +171,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | Instruction file | Apply when |
 |---|---|
 | [`docs/instructions/storybook.md`](docs/instructions/storybook.md) | Writing or reviewing any `.stories.tsx` file |
+| [`docs/instructions/architecture.md`](docs/instructions/architecture.md) | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
 
 ---
 

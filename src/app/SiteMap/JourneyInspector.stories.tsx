@@ -32,7 +32,6 @@ const tombsByTier: Record<Tier, TreasureTombJourney[]> = Object.fromEntries(
 
 const DEFAULT_SEED = 42_195_837
 
-
 const applyEdges = (grid: FloorGrid, floor: number, edges: string[]): FloorGrid =>
   edges
     .filter(e => decodeEdge(e)[0] === floor)
