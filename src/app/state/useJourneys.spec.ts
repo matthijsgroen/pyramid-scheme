@@ -26,7 +26,7 @@ const makeStoredJourney = (overrides: Partial<StoredJourneyStateV3> = {}): Store
   completionCount: 0,
   foundMapPiece: false,
   active: true,
-  solvedEdges: {},
+  exploredSections: {},
   position: null,
   interiorLevelNr: null,
   ...overrides,
@@ -39,11 +39,11 @@ const makeApi = (journeys: StoredJourneyStateV3[], setJourneys = vi.fn()) =>
     journeyData: journeys.map(j => makeJourneyData(j.journeyId)),
   })
 
-// ── markEdgeSolved ────────────────────────────────────────────────────────────
+// ── markCellExplored ──────────────────────────────────────────────────────────
 
-describe("markEdgeSolved", () => {
-  it("stores the edge under the current levelNr key", () => {
-    const stored = makeStoredJourney({ levelNr: 2 })
+describe("markCellExplored", () => {
+  it("stores the cell under the section hash key", () => {
+    const stored = makeStoredJourney()
     let state = [stored]
     const api = createJourneysV3Api({
       journeys: state,
@@ -52,8 +52,8 @@ describe("markEdgeSolved", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markEdgeSolved("0:3,4")
-    expect(state[0].solvedEdges["2"]).toContain("0:3,4")
+    api.markCellExplored("abc123", "0:3,4")
+    expect(state[0].exploredSections["abc123"]).toContain("0:3,4")
   })
 
   it("deduplicates: calling twice does not double-store", () => {
@@ -66,18 +66,17 @@ describe("markEdgeSolved", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markEdgeSolved("0:1,2")
-    api.markEdgeSolved("0:1,2")
-    expect(state[0].solvedEdges["1"]).toHaveLength(1)
+    api.markCellExplored("abc123", "0:1,2")
+    api.markCellExplored("abc123", "0:1,2")
+    expect(state[0].exploredSections["abc123"]).toHaveLength(1)
   })
 
-  it("getSolvedEdges returns only the current levelNr edges", () => {
+  it("getExploredSections returns the full sections record", () => {
     const stored = makeStoredJourney({
-      levelNr: 3,
-      solvedEdges: { "1": ["0:0,0"], "2": ["0:1,1"], "3": ["0:2,2"] },
+      exploredSections: { sec1: ["0:0,0"], sec2: ["0:1,1"] },
     })
     const api = makeApi([stored])
-    expect(api.getSolvedEdges(REAL_ID)).toEqual(["0:2,2"])
+    expect(api.getExploredSections(REAL_ID)).toEqual({ sec1: ["0:0,0"], sec2: ["0:1,1"] })
   })
 })
 
@@ -88,7 +87,7 @@ describe("completeJourney", () => {
     makeStoredJourney({
       levelNr: 5,
       completionCount: 0,
-      solvedEdges: { "3": ["0:1,2", "0:1,3"], "4": ["0:2,2"], "5": ["0:3,3"] },
+      exploredSections: { sec1: ["0:1,2", "0:1,3"], sec2: ["0:2,2"], sec3: ["0:3,3"] },
       position: "0:3,3",
       active: true,
     })
@@ -121,7 +120,7 @@ describe("completeJourney", () => {
     expect(state[0].completionCount).toBe(1)
   })
 
-  it("preserves solvedEdges so exploration is intact on revisit", () => {
+  it("preserves exploredSections so exploration is intact on revisit", () => {
     const stored = makeActiveJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -132,7 +131,7 @@ describe("completeJourney", () => {
       journeyData: [makeJourneyData(REAL_ID)],
     })
     api.completeJourney()
-    expect(state[0].solvedEdges).toEqual(stored.solvedEdges)
+    expect(state[0].exploredSections).toEqual(stored.exploredSections)
   })
 
   it("preserves levelNr so the player returns to where they left off", () => {

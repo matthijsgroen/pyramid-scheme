@@ -5,10 +5,14 @@ import { WORLD_SEED, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
 // Serialization
 // ---------------------------------------------------------------------------
 
-const serializeReward = (r: TreasureReward): string => {
+type FragmentCounter = (hieroglyphId: string) => number
+
+const serializeReward = (r: TreasureReward, nextIdx: FragmentCounter): string => {
   switch (r.type) {
-    case "hieroglyphFragment":
-      return `{ type: "hieroglyphFragment", hieroglyphId: "${r.hieroglyphId}" }`
+    case "hieroglyphFragment": {
+      const pieceIndex = nextIdx(r.hieroglyphId)
+      return `{ type: "hieroglyphFragment", hieroglyphId: "${r.hieroglyphId}", pieceIndex: ${pieceIndex} }`
+    }
     case "tombKey":
       return `{ type: "tombKey", keyId: "${r.keyId}" }`
     case "mapPiece":
@@ -18,7 +22,7 @@ const serializeReward = (r: TreasureReward): string => {
   }
 }
 
-const serializeSideSection = (s: SideSection): string => {
+const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string => {
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: "${s.end}"`]
   if (s.chestEvery !== undefined) parts.push(`chestEvery: ${s.chestEvery}`)
   if (s.gate)
@@ -29,15 +33,15 @@ const serializeSideSection = (s: SideSection): string => {
           ? `gate: { type: "floor-key", color: "${s.gate.color}" }`
           : `gate: { type: "floor-key" }`
     )
-  if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
+  if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward, nextIdx)}`)
   return `{ ${parts.join(", ")} }`
 }
 
-const serializeFloor = (c: FloorConfig): string => {
+const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
   const sideSectionsStr =
     c.sideSections.length === 0
       ? "[]"
-      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`
+      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s, nextIdx)}`).join(",\n")},\n    ]`
   const lines: string[] = [
     `    pathPuzzles: ${c.pathPuzzles},`,
     `    chestEvery: ${c.chestEvery ?? 0},`,
@@ -47,17 +51,17 @@ const serializeFloor = (c: FloorConfig): string => {
     `    sideSections: ${sideSectionsStr},`,
   ]
   if (c.puzzleFamily) lines.push(`    puzzleFamily: "${c.puzzleFamily}",`)
-  if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
+  if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward, nextIdx)},`)
   if (c.chestRewards && c.chestRewards.length > 0) {
-    const rewards = c.chestRewards.map(r => `      ${serializeReward(r)}`).join(",\n")
+    const rewards = c.chestRewards.map(r => `      ${serializeReward(r, nextIdx)}`).join(",\n")
     lines.push(`    chestRewards: [\n${rewards},\n    ],`)
   }
   return `  {\n${lines.join("\n")}\n  }`
 }
 
-const serializeSiteConfig = (floors: SiteConfig): string => {
-  if (floors.length === 1) return `[${serializeFloor(floors[0]).trimStart()}]`
-  const inner = floors.map(f => `    ${serializeFloor(f).trimStart()}`).join(",\n")
+const serializeSiteConfig = (floors: SiteConfig, nextIdx: FragmentCounter): string => {
+  if (floors.length === 1) return `[${serializeFloor(floors[0], nextIdx).trimStart()}]`
+  const inner = floors.map(f => `    ${serializeFloor(f, nextIdx).trimStart()}`).join(",\n")
   return `[\n${inner},\n  ]`
 }
 
@@ -79,10 +83,28 @@ const countPlacedFragments = (configs: Record<string, SiteConfig[]>): Map<string
   return placed
 }
 
+const hashString = (str: string): number => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+  return Math.abs(hash)
+}
+
 export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
+  // Counter assigns unique piece indices per hieroglyphId across the entire world
+  const fragmentCounts = new Map<string, number>()
+  const nextFragmentIndex: FragmentCounter = (id: string) => {
+    const idx = fragmentCounts.get(id) ?? 0
+    fragmentCounts.set(id, idx + 1)
+    return idx
+  }
+
   const entries = Object.entries(configs)
     .map(([id, siteConfigs]) => {
-      const inner = siteConfigs.map(c => `    ${serializeSiteConfig(c)}`).join(",\n")
+      const inner = siteConfigs.map(c => `    ${serializeSiteConfig(c, nextFragmentIndex)}`).join(",\n")
       return `  ${id}: [\n${inner},\n  ]`
     })
     .join(",\n")
@@ -94,10 +116,16 @@ export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
     .map(id => `  "${id}": ${placed.get(id) ?? 1}`)
     .join(",\n")
 
+  // Hash of all site config entries — changes whenever world content is regenerated.
+  // Stored in save data so stale exploration state can be detected and discarded.
+  const contentHash = hashString(entries)
+
   return `// THIS FILE IS AUTO-GENERATED. DO NOT EDIT MANUALLY.
 // Run: yarn generate-world
 // World seed: ${WORLD_SEED}
 import type { SiteConfig } from "../game/siteTypes"
+
+export const worldContentHash = ${contentHash}
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
 ${entries},

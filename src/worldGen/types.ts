@@ -6,7 +6,7 @@ export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
   | { type: "hieroglyphs" }
-  | { type: "hieroglyphFragment"; hieroglyphId: string }
+  | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex?: number }
   | { type: "tombKey"; keyId: string }
 
 export type SubSection = {

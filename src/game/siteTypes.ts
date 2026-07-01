@@ -4,14 +4,14 @@ export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
   | { type: "hieroglyphs" }
-  | { type: "hieroglyphFragment"; hieroglyphId: string }
+  | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
   | { type: "tombKey"; keyId: string }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"
 
 export type EmptyCell = { type: "empty" }
-export type CorridorCell = { type: "corridor"; dirs: ReadonlySet<Direction>; state: CellState }
+export type CorridorCell = { type: "corridor"; dirs: ReadonlySet<Direction>; state: CellState; sectionHash?: string }
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RoomCell = {
@@ -19,6 +19,7 @@ export type RoomCell = {
   roomType: RoomType
   dirs: ReadonlySet<Direction>
   state: CellState
+  sectionHash?: string
   reward?: TreasureReward
   requiredKeyId?: string
   gateVariant?: GateVariant

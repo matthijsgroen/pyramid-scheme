@@ -3,7 +3,8 @@ import { useGameStorage } from "@/support/useGameStorage"
 import { hieroglyphRequired } from "@/data/generatedWorld"
 
 type ProgressionState = {
-  hieroglyphFragments: Record<string, number>
+  // "hieroglyphId:pieceIndex" entries — inventory-as-truth for chest loot
+  collectedFragments: string[]
   tombKeys: Record<string, true>
   discoveredTombs: string[]
   mosaicSeenCount: number
@@ -23,7 +24,7 @@ const AUTO_DISCOVERED_TOMBS = [
 ]
 
 const initialState: ProgressionState = {
-  hieroglyphFragments: {},
+  collectedFragments: [],
   tombKeys: {},
   discoveredTombs: AUTO_DISCOVERED_TOMBS,
   mosaicSeenCount: 0,
@@ -37,7 +38,8 @@ export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armor
 export const canAttemptTrap = (currentHealth: number): boolean => currentHealth >= 2
 
 export type ProgressionAPI = {
-  addFragment: (hieroglyphId: string) => void
+  addFragment: (hieroglyphId: string, pieceIndex: number) => void
+  hasFragment: (hieroglyphId: string, pieceIndex: number) => boolean
   isHieroglyphComplete: (hieroglyphId: string) => boolean
   hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
   hieroglyphFragments: Record<string, number>
@@ -61,25 +63,35 @@ export type ProgressionAPI = {
 }
 
 export const useProgression = (): ProgressionAPI => {
-  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v2", initialState)
+  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v3", initialState)
 
   return useMemo(
     () => ({
-      addFragment: hieroglyphId =>
-        setState(prev => ({
-          ...prev,
-          hieroglyphFragments: {
-            ...prev.hieroglyphFragments,
-            [hieroglyphId]: (prev.hieroglyphFragments[hieroglyphId] ?? 0) + 1,
-          },
-        })),
-      isHieroglyphComplete: hieroglyphId =>
-        (state.hieroglyphFragments[hieroglyphId] ?? 0) >= (hieroglyphRequired[hieroglyphId] ?? 2),
+      addFragment: (hieroglyphId, pieceIndex) => {
+        const key = `${hieroglyphId}:${pieceIndex}`
+        setState(prev =>
+          prev.collectedFragments.includes(key)
+            ? prev
+            : { ...prev, collectedFragments: [...prev.collectedFragments, key] }
+        )
+      },
+      hasFragment: (hieroglyphId, pieceIndex) => state.collectedFragments.includes(`${hieroglyphId}:${pieceIndex}`),
+      isHieroglyphComplete: hieroglyphId => {
+        const count = state.collectedFragments.filter(f => f.startsWith(`${hieroglyphId}:`)).length
+        return count >= (hieroglyphRequired[hieroglyphId] ?? 2)
+      },
       hieroglyphProgress: hieroglyphId => ({
-        found: state.hieroglyphFragments[hieroglyphId] ?? 0,
+        found: state.collectedFragments.filter(f => f.startsWith(`${hieroglyphId}:`)).length,
         required: hieroglyphRequired[hieroglyphId] ?? 2,
       }),
-      hieroglyphFragments: state.hieroglyphFragments,
+      hieroglyphFragments: Object.fromEntries(
+        state.collectedFragments
+          .map(f => f.split(":")[0])
+          .reduce((m, id) => {
+            m.set(id, (m.get(id) ?? 0) + 1)
+            return m
+          }, new Map<string, number>())
+      ),
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
       tombKeyIds: new Set(Object.keys(state.tombKeys)),

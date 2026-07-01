@@ -31,7 +31,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const { t } = useTranslation("common")
   const journeys = useJourneys()
   const progression = useProgression()
-  const allEdges = journeys.getSolvedEdges(journeyId)
+  const allEdges = journeys.getExploredSections(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = progression.tombKeyIds
 
@@ -75,12 +75,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   }, [activePuzzlePos, puzzlePlugin, journeyId, currentFloor, floorConfig.difficulty])
 
   const handlePuzzleSolved = useCallback(() => {
-    if (!activePuzzlePos) return
-    const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
-    journeys.markEdgeSolved(edgeId)
+    if (!activePuzzlePos || !grid) return
+    const [row, col] = activePuzzlePos
+    const edgeId = encodeEdge(currentFloor, row, col)
+    const cell = getCell(grid, row, col)
+    const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
+    journeys.markCellExplored(sectionHash, edgeId)
     setActivePuzzlePos(null)
     setPuzzleSolved(false)
-  }, [activePuzzlePos, journeys, currentFloor])
+  }, [activePuzzlePos, grid, journeys, currentFloor])
 
   const handlePuzzleComplete = useCallback(() => {
     schedulePuzzle(800, () => {
@@ -96,9 +99,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       if (!cell || cell.type === "empty" || cell.state !== "reachable") return
 
       const edgeId = encodeEdge(currentFloor, row, col)
+      const sectionHash = cell.sectionHash ?? ""
 
       if (cell.type === "corridor") {
-        journeys.markEdgeSolved(edgeId)
+        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
         return
       }
@@ -106,7 +110,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       if (cell.type !== "room") return
 
       if (cell.roomType === "entrance") {
-        journeys.markEdgeSolved(edgeId)
+        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "trap") {
         if (!progression.canAttemptTrap()) {
@@ -124,10 +128,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           setActivePuzzlePos([row, col])
         )
       } else if (cell.roomType === "fork") {
-        journeys.markEdgeSolved(edgeId)
+        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "stairhead") {
-        journeys.markEdgeSolved(edgeId)
+        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
         setCurrentFloor(f => f + 1)
       } else if (cell.roomType === "exit") {
@@ -136,21 +140,27 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           setExiting(true)
         )
       } else if (cell.roomType === "treasure") {
-        journeys.markEdgeSolved(edgeId)
+        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
         if (cell.reward) {
           const reward = cell.reward
-          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
-            setPendingReward({
-              reward,
-              onCollect: () => {
-                if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId)
-                else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
-                else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
-                else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-              },
+          // Inventory-as-truth: fragment already collected → skip overlay
+          const alreadyCollected =
+            reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
+          if (!alreadyCollected) {
+            scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+              setPendingReward({
+                reward,
+                onCollect: () => {
+                  if (reward.type === "hieroglyphFragment")
+                    progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
+                  else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
+                  else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
+                  else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
+                },
+              })
             })
-          })
+          }
         }
       }
     },
@@ -220,8 +230,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           difficulty={floorConfig.difficulty}
           trapInsightStacks={0}
           onPass={() => {
-            const edgeId = encodeEdge(currentFloor, activeTrapPos[0], activeTrapPos[1])
-            journeys.markEdgeSolved(edgeId)
+            const [tr, tc] = activeTrapPos
+            const edgeId = encodeEdge(currentFloor, tr, tc)
+            const trapCell = grid && getCell(grid, tr, tc)
+            const trapSectionHash = trapCell && trapCell.type !== "empty" ? (trapCell.sectionHash ?? "") : ""
+            journeys.markCellExplored(trapSectionHash, edgeId)
             setActiveTrapPos(null)
           }}
           onFail={() => {

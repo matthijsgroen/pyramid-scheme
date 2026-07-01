@@ -14,8 +14,10 @@ export type StoredJourneyStateV3 = {
   completionCount: number
   foundMapPiece: boolean
   active: boolean
-  solvedEdges: Record<string, string[]> // keyed by levelNr; edges solved in the site interior — persists across revisits
-  position: string | null // current node ID "row,col" or null (entrance)
+  // keyed by sectionHash; cells explored in the site interior — persists across revisits
+  // stale entries (section hash no longer in world) are silently ignored on apply
+  exploredSections: Record<string, string[]>
+  position: string | null // current node ID "floor:row,col" or null (entrance)
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
 }
 
@@ -37,8 +39,8 @@ export type JourneyAPI = {
   cancelJourney: () => void
   completeLevel: () => void
   findMapPiece: () => void
-  markEdgeSolved: (edgeId: string) => void
-  getSolvedEdges: (journeyId: string) => string[]
+  markCellExplored: (sectionHash: string, cellId: string) => void
+  getExploredSections: (journeyId: string) => Record<string, string[]>
   updatePosition: (journeyId: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
 }
@@ -116,7 +118,7 @@ export const createJourneysV3Api = ({
       completionCount: 0,
       foundMapPiece: false,
       active: true,
-      solvedEdges: {},
+      exploredSections: {},
       position: null,
       interiorLevelNr: null,
     }
@@ -171,23 +173,22 @@ export const createJourneysV3Api = ({
     setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j)))
   }
 
-  const markEdgeSolved = (edgeId: string) => {
+  const markCellExplored = (sectionHash: string, cellId: string) => {
     if (!activeJourneyId) return
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const key = String(j.levelNr)
-        const current = j.solvedEdges[key] ?? []
-        if (current.includes(edgeId)) return j
-        return { ...j, solvedEdges: { ...j.solvedEdges, [key]: [...current, edgeId] } }
+        const current = j.exploredSections[sectionHash] ?? []
+        if (current.includes(cellId)) return j
+        return { ...j, exploredSections: { ...j.exploredSections, [sectionHash]: [...current, cellId] } }
       })
     )
   }
 
-  const getSolvedEdges = (journeyId: string): string[] => {
+  const getExploredSections = (journeyId: string): Record<string, string[]> => {
     const j = journeys.find(j => j.journeyId === journeyId)
-    if (!j) return []
-    return j.solvedEdges[String(j.levelNr)] ?? []
+    if (!j) return {}
+    return j.exploredSections
   }
 
   const updatePosition = (journeyId: string, nodeId: string) => {
@@ -215,8 +216,8 @@ export const createJourneysV3Api = ({
     completeJourney,
     cancelJourney,
     completeLevel,
-    markEdgeSolved,
-    getSolvedEdges,
+    markCellExplored,
+    getExploredSections,
     updatePosition,
     setInteriorLevel,
   }

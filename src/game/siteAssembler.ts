@@ -1,4 +1,5 @@
 import { mulberry32 } from "./random"
+import { hashString } from "@/support/hashString"
 import type {
   AssemblerResult,
   FloorConfig,
@@ -9,8 +10,41 @@ import type {
   RoomCell,
   KeyColor,
   SubSection,
+  SideSection,
 } from "./siteTypes"
 import { validateSite } from "./siteValidator"
+
+// Section hash covers structural fields only — not rewards, render style, or specific key IDs.
+// Stable across: loot changes, key reassignment, corridor style tweaks.
+// Changes on: puzzle count, chest cadence, difficulty, exit type, gate presence, hidden/trapped flags.
+const computeMainSectionHash = (config: FloorConfig): string =>
+  String(
+    hashString(
+      JSON.stringify({
+        pathPuzzles: config.pathPuzzles,
+        chestEvery: config.chestEvery,
+        difficulty: config.difficulty,
+        exitOrStaircase: config.exitOrStaircase,
+      })
+    )
+  )
+
+const computeSideSectionHash = (section: SideSection | SubSection, idx: number, parentIdx?: number): string =>
+  String(
+    hashString(
+      JSON.stringify({
+        idx,
+        parentIdx,
+        pathPuzzles: section.pathPuzzles,
+        chestEvery: section.chestEvery,
+        difficulty: section.difficulty,
+        end: section.end,
+        hidden: section.hidden,
+        trapped: section.trapped,
+        gateType: section.gate?.type,
+      })
+    )
+  )
 
 const DIRS: Array<[number, number]> = [
   [-1, 0],
@@ -271,6 +305,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       subSection: SubSection
       cells: Array<[number, number]>
       intermediate: Array<"puzzle" | "chest">
+      parentSectionIdx: number
+      subSectionIdx: number
       keyNodeId?: string
       isKeyHost: boolean
       keyHostColor?: KeyColor
@@ -371,6 +407,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           subSection: subSects[idx],
           cells,
           intermediate,
+          parentSectionIdx: group.sectionIdx,
+          subSectionIdx: idx,
           keyNodeId: subKeyNodeIdMap.get(idx),
           isKeyHost: subKeyHostIdxs.has(idx),
           keyHostColor: subKeyHostColorsMap.get(idx)?.[0],
@@ -414,11 +452,23 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const chainKeyHostIdxs = new Set(chainKeyColorMap.keys())
 
-    // Build room cell specs: posKey -> room properties
-    type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state">
+    // Build room cell specs: posKey -> room properties (sectionHash injected separately)
+    type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash">
     const roomSpecs = new Map<string, RoomSpec>()
+    const cellSectionHash = new Map<string, string>()
 
     const posKey = (r: number, c: number) => `${r},${c}`
+
+    const mainSectionHash = computeMainSectionHash(config)
+    for (const [r, c] of mainPath) cellSectionHash.set(posKey(r, c), mainSectionHash)
+    for (const group of sectionGroups) {
+      const sHash = computeSideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
+      for (const [r, c] of group.cells) cellSectionHash.set(posKey(r, c), sHash)
+    }
+    for (const { subSection, cells, parentSectionIdx, subSectionIdx } of subSectionGroups) {
+      const sHash = computeSideSectionHash(subSection, subSectionIdx, parentSectionIdx)
+      for (const [r, c] of cells) cellSectionHash.set(posKey(r, c), sHash)
+    }
 
     // Collect branch junction cells (become fork nodes)
     const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
@@ -620,12 +670,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       }
 
       const spec = roomSpecs.get(cellKey)
+      const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
       if (spec) {
         const roomCell: RoomCell = {
           type: "room",
           roomType: spec.roomType,
           dirs,
           state: "fogged",
+          sectionHash,
           ...(spec.reward ? { reward: spec.reward } : {}),
           ...(spec.requiredKeyId ? { requiredKeyId: spec.requiredKeyId } : {}),
           ...(spec.gateVariant ? { gateVariant: spec.gateVariant } : {}),
@@ -639,6 +691,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           type: "corridor",
           dirs,
           state: "fogged",
+          sectionHash,
         }
         cells2D[r][c] = corridorCell
       }
