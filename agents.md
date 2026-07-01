@@ -74,7 +74,7 @@ Every user-facing string must be localized. Use `useTranslation` from `react-i18
 
 ### 6. Storybook for UI
 
-All new components in `src/ui/` should have a corresponding Storybook story. Use existing stories as reference.
+All new components in `src/ui/` should have a corresponding Storybook story. Stories must not contain shadow implementations of game logic — see **[`docs/instructions/storybook.md`](docs/instructions/storybook.md)** for the full guidelines.
 
 ### 7. TypeScript Strictness
 
@@ -169,6 +169,16 @@ Run all tests: `yarn test`
 - ❌ Skipping the Dutch translation when adding English strings
 - ❌ Committing without running `yarn check-types` and `yarn lint`
 - ❌ Managing game state locally in components (use state hooks instead)
+
+---
+
+## Agent Instructions
+
+Topic-specific guidelines for contributors and AI agents. Apply the relevant instruction file whenever working in that area.
+
+| Instruction file | Apply when |
+|---|---|
+| [`docs/instructions/storybook.md`](docs/instructions/storybook.md) | Writing or reviewing any `.stories.tsx` file |
 
 ---
 

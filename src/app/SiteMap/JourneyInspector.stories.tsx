@@ -8,6 +8,7 @@ import { journeys } from "../../data/journeys"
 import type { PyramidJourney, TreasureTombJourney } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
 import { ExplorerDot } from "./ExplorerDot"
+import { encodeEdge, decodeEdge } from "./useAssembledFloor"
 import type { FloorConfig } from "../../game/siteTypes"
 
 // ---------------------------------------------------------------------------
@@ -31,19 +32,6 @@ const tombsByTier: Record<Tier, TreasureTombJourney[]> = Object.fromEntries(
 
 const DEFAULT_SEED = 42_195_837
 
-// ---------------------------------------------------------------------------
-// Edge helpers (same format as SiteMapScreen)
-// ---------------------------------------------------------------------------
-const encodeEdge = (floor: number, row: number, col: number) => `${floor}:${row},${col}`
-const decodeEdge = (id: string): [number, number, number] => {
-  if (id.includes(":")) {
-    const [f, pos] = id.split(":")
-    const [r, c] = pos.split(",").map(Number)
-    return [Number(f), r, c]
-  }
-  const [r, c] = id.split(",").map(Number)
-  return [0, r, c]
-}
 
 const applyEdges = (grid: FloorGrid, floor: number, edges: string[]): FloorGrid =>
   edges
