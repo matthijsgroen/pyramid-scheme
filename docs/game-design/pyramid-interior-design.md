@@ -504,7 +504,7 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note in `journeys.ts`.
 
-2. **Two-pass site config authoring** — Phase 4 configs need to flag which sites gain branches in Phase 5, or defer those sites until Phase 5a ships.
+2. ~~**Two-pass site config authoring**~~ — **Resolved.** Phase 5a shipped; all site configs authored with branches via the worldgen DSL.
 
 3. **Tomb "disabled" condition** — definition: disabled only when all reachable nodes are solved and no unspent ward keys could open further branches.
 
@@ -520,7 +520,7 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 9. **Location key presentation** — the treasure that reveals a new tomb needs a distinct visual/text treatment to signal it's special. Design needed before Phase 6 UI work.
 
-10. **Ward gate count recalculation** — with 4 location key treasures, only 36 treasures act as ward keys. The WARD_MIX totals should sum to 36, not 40. Verify when authoring final WARD_MIX values.
+10. ~~**Ward gate count recalculation**~~ — **Resolved.** 36 ward keys confirmed throughout §1 and §6. WARD_MIX authored with correct totals in worldSpec.
 
 11. ~~**Health persistence across sessions**~~ — **Resolved.** Health persists to disk. No time-based regen. See §11.
 

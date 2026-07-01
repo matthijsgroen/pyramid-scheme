@@ -33,6 +33,7 @@ export type FloorConfig = {
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]
   puzzleFamily?: "sumplete" | "tableau"
+  lastMainPuzzleFamily?: "crocodile"
   consumableDensity?: number
 }
 

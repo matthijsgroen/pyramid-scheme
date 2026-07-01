@@ -158,12 +158,9 @@ The ux-flow-map describes the **current (pre-redesign) system**. Key divergences
 
 **One lingering conflict:** `ux-flow-map.md §2` says "Tomb with no more content → card is disabled; cannot select." Under the redesign, tombs have ward-gated branches that remain accessible for tomb keys from later tombs (§15 open decision, resolved: keys from later tombs). A "fully explored" tomb may still have wards that open when keys from higher tiers arrive. The "disabled when all treasures collected" behaviour needs revisiting — tombs should only be disabled if *all* branches (including ward-gated ones) are cleared.
 
-### `docs/treasure-effects.md`
+### `docs/treasure-effects.md` (removed)
 
-Treasure effects are passive modifiers to the micro loop. Under the new design:
-- `higherLootChance` and `mapFragmentChance` are currently "not yet implemented" — and both modify the *probabilistic* loot system that the redesign replaces with deterministic rewards.
-- These two effects become **semantically vacuous** once the redesign lands (map pieces are authored, not rolled). They should be removed or replaced with redesign-compatible effects before Phase 6.
-- `moreLootChance` and `expeditionBonus` survive as-is; their exact redesign-compatible interpretation needs defining once the authored-chest system ships.
+This file no longer exists. All treasure passive effects are now defined in `docs/pyramid-interior-design.md §14` and encoded in `src/data/treasurePerks.ts` (Phase 15). The old probabilistic fields (`higherLootChance`, `mapFragmentChance`, `moreLootChance`, `expeditionBonus`) from `TreasureEffects` are vestigial and will be removed in Phase 15 when the full perk model lands.
 
 ---
 
@@ -171,7 +168,7 @@ Treasure effects are passive modifiers to the micro loop. Under the new design:
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note it explicitly (see §2 recommendation).
 
-2. **Two-pass site config authoring** — Phase 4 (all 20 `siteConfig` entries) should flag which sites will gain forks/branches in Phase 5. Either author placeholder `maxBranchFactor: 0` entries now and revise in Phase 5, or defer authoring non-spine-only sites until Phase 5a ships. Mixing both approaches per site without a clear policy will create orphaned configs.
+2. ~~**Two-pass site config authoring**~~ — **Resolved.** Phase 5a shipped; all 20 site configs were authored with branches. The two-pass concern was addressed during worldgen DSL development (Phases 5a–9f).
 
 3. **Tomb "disabled" condition** — once ward-gated tomb branches are in play, the disable condition needs a precise definition. Proposal: disabled only when `solvedEdges` covers all reachable nodes *and* no unspent ward keys in inventory could open further branches. (The validator's forward pass produces this data for free.)
 
@@ -183,7 +180,7 @@ Treasure effects are passive modifiers to the micro loop. Under the new design:
 
 7. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb. Fragment model works better with 3–6. Needs authoring in `tableaus.ts` before Phase 6.
 
-8. **Treasure passive effects** — need theming per tomb (merchant tomb = loot/fragment effects; priestly tomb = tableau-solving effects). Design before Phase 6.
+8. ~~**Treasure passive effects**~~ — **Resolved.** Full perk table designed and documented in `docs/pyramid-interior-design.md §14`. Implementation in Phase 15 (`src/data/treasurePerks.ts`).
 
 9. **Location key presentation** — distinct visual/text treatment needed for the treasure that reveals a new tomb. Design before Phase 6 UI work.
 
