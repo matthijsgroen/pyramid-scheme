@@ -4,16 +4,18 @@ import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
 import { ExpeditionCompletionOverlay } from "@/app/PyramidExpedition/ExpeditionCompletionOverlay"
 import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
+import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
-import type { CombinedJourneyState } from "@/app/state/useJourneys"
+import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import { type PyramidJourney } from "@/data/journeys"
 import { FezContext } from "./fez/context"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
+import { createFloorStartIndices } from "@/app/PyramidLevel/support"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { Header } from "@/ui/Header"
@@ -43,6 +45,7 @@ export const PyramidExpedition: FC<{
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
   const { inventory } = useInventory()
+  const { setInteriorLevel } = useJourneys()
   const errorHighlightCount = allTreasures.filter(
     tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.errorHighlight
   ).length
@@ -52,10 +55,19 @@ export const PyramidExpedition: FC<{
   ).length
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
+  const [entering, setEntering] = useState(true)
+  // Restore interior if player backed out mid-interior on a previous visit
+  const [showingInterior, setShowingInterior] = useState(
+    activeJourney.journey.type === "pyramid" &&
+      !!(activeJourney.journey as PyramidJourney).siteConfigs?.length &&
+      activeJourney.interiorLevelNr === activeJourney.levelNr
+  )
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
   const futureLevelRef = useRef<HTMLDivElement>(null)
+  const transitionTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+  useEffect(() => () => transitionTimersRef.current.forEach(clearTimeout), [])
   const startNextLevel = transitionToLevel > activeJourney.levelNr
 
   const levelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr)
@@ -71,6 +83,19 @@ export const PyramidExpedition: FC<{
         earlyFeedbackCount
       )
     : []
+
+  const entranceBlockId = useMemo(() => {
+    if (!levelContent) return undefined
+    const { floorCount, blocks } = levelContent.pyramid
+    const starts = createFloorStartIndices(floorCount)
+    return blocks[starts[floorCount - 1] + Math.floor(floorCount / 2)]?.id
+  }, [levelContent])
+
+  useEffect(() => {
+    if (!entering) return
+    const t = setTimeout(() => setEntering(false), 900)
+    return () => clearTimeout(t)
+  }, [entering])
 
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
@@ -133,19 +158,31 @@ export const PyramidExpedition: FC<{
     setLevelCompleted(true)
   }, [startNextLevel])
 
+  const handleInteriorSiteComplete = useCallback(() => {
+    setInteriorLevel(activeJourney.journeyId, null)
+    setShowingInterior(false)
+    transitionTimersRef.current.forEach(clearTimeout)
+    transitionTimersRef.current = [
+      setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 300),
+      setTimeout(() => onNextLevel?.(), 2000),
+    ]
+  }, [setInteriorLevel, activeJourney.journeyId, activeJourney.levelNr, onNextLevel])
+
   const onCompletionFinished = useCallback(() => {
     setLevelCompleted(false)
-    setTimeout(() => {
-      // setStartNextLevel(true)
-      setTransitionToLevel(activeJourney.levelNr + 1)
-    }, 1000)
-    setTimeout(() => {
-      // setStartNextLevel(false)
-    }, 2000)
-    setTimeout(() => {
-      onNextLevel?.()
-    }, 1995)
-  }, [onNextLevel, activeJourney.levelNr])
+    const journey = activeJourney.journey as PyramidJourney
+    if (journey.siteConfigs?.length) {
+      // V3: mark interior open so re-entry skips the pyramid
+      setInteriorLevel(activeJourney.journeyId, activeJourney.levelNr)
+      setShowingInterior(true)
+    } else {
+      transitionTimersRef.current.forEach(clearTimeout)
+      transitionTimersRef.current = [
+        setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 1000),
+        setTimeout(() => onNextLevel?.(), 1995),
+      ]
+    }
+  }, [onNextLevel, activeJourney.levelNr, activeJourney.journey, activeJourney.journeyId, setInteriorLevel])
 
   // Early return if not a pyramid journey
   if (activeJourney.journey.type !== "pyramid") {
@@ -263,7 +300,10 @@ export const PyramidExpedition: FC<{
             <div
               ref={currentLevelRef}
               key={activeJourney.levelNr}
-              className="absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
+              className={clsx(
+                "absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out",
+                entering && "pointer-events-none"
+              )}
               style={{
                 transform: startNextLevel ? "translateX(-200%) scale(3)" : "scale(1)",
                 transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
@@ -281,6 +321,7 @@ export const PyramidExpedition: FC<{
                   earlyFeedbackBlockIds={earlyFeedbackBlockIds}
                   hieroglyphUnlockCount={hieroglyphUnlockCount}
                   pyramidDifficulty={activeJourney.journey.difficulty}
+                  entranceBlockId={entering || levelCompleted ? entranceBlockId : undefined}
                 />
               )}
             </div>
@@ -298,7 +339,29 @@ export const PyramidExpedition: FC<{
 
       {/* Level Completion Handler */}
       {levelContent && levelCompleted && (
-        <LevelCompletionHandler onCompletionFinished={onCompletionFinished} activeJourney={activeJourney} />
+        <LevelCompletionHandler
+          onCompletionFinished={onCompletionFinished}
+          activeJourney={activeJourney}
+          skipLoot={!!pyramidJourney.siteConfigs?.length}
+        />
+      )}
+
+      {/* Interior: shown after pyramid is solved for V3 journeys */}
+      {showingInterior && pyramidJourney.siteConfigs && (
+        <div className="absolute inset-0 z-30 bg-stone-950">
+          <SiteMapScreen
+            key={`${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.completionCount}`}
+            journeyId={activeJourney.journeyId}
+            siteConfig={pyramidJourney.siteConfigs[activeJourney.levelNr - 1] ?? pyramidJourney.siteConfigs[0]}
+            seed={activeJourney.randomSeed + activeJourney.levelNr}
+            onSiteComplete={handleInteriorSiteComplete}
+            onCancel={() => {
+              // Back from interior → go to map (2 levels up); interiorLevelNr stays set for re-entry
+              setShowingInterior(false)
+              onClose?.()
+            }}
+          />
+        </div>
       )}
     </DesertBackdrop>
   )

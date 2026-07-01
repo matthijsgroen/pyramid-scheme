@@ -9,6 +9,8 @@ type HieroglyphTileProps = {
   selected?: boolean
   disabled?: boolean
   empty?: boolean
+  /** Shows the tile in a partial-reveal state (1/3, 2/3 found). Left portion is revealed, right is masked. */
+  fragmentProgress?: { found: number; required: number }
   onClick?: () => void
   className?: string
 }
@@ -70,6 +72,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   selected = false,
   disabled = false,
   empty = false,
+  fragmentProgress,
   onClick,
   className,
 }) => {
@@ -251,6 +254,16 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
       >
         {symbol}
       </span>
+
+      {/* Partial-reveal overlay: masks the unfound portion (right side) */}
+      {fragmentProgress && fragmentProgress.found < fragmentProgress.required && (
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: `linear-gradient(to right, transparent ${Math.round((fragmentProgress.found / fragmentProgress.required) * 100)}%, rgba(0,0,0,0.72) ${Math.round((fragmentProgress.found / fragmentProgress.required) * 100)}%)`,
+          }}
+        />
+      )}
     </div>
   )
 }

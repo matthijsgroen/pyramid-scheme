@@ -74,6 +74,8 @@
     "howToPlay": "How to play",
     "suggestedExpedition": "Suggested",
     "puzzleComplete": "The answer is:",
+    "puzzleCompleted": "Puzzle Complete",
+    "trapBlocked": "Not enough health to attempt this trap",
     "spiritsRejectCode": "The spirits reject this code",
     "sacredSealBroken": "The sacred seal is broken",
     "newExpeditionUnlocked": "A new expedition is now unlocked",
@@ -81,6 +83,17 @@
     "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+  },
+  "chest": {
+    "tapToOpen": "Tap to open",
+    "mapPiece": "Map Piece",
+    "mapPieceDescription": "A fragment of an ancient map. Collect enough pieces to reveal the location of a hidden treasure tomb.",
+    "hieroglyphFragment": "Hieroglyph Fragment",
+    "fragmentProgress": "{{found}} of {{required}} fragments found",
+    "tombKey": "Tomb Key",
+    "hieroglyphs": "Ancient Hieroglyphs",
+    "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
+    "mosaicPiece": "Mosaic Piece"
   },
   "loot": {
     "youFound": "You found",

@@ -218,6 +218,49 @@ export const SizeShowcase: Story = {
   ),
 }
 
+export const FragmentOneOfThree: Story = {
+  args: {
+    symbol: "𓁧",
+    difficulty: "expert",
+    size: "md",
+    fragmentProgress: { found: 1, required: 3 },
+  },
+}
+
+export const FragmentTwoOfThree: Story = {
+  args: {
+    symbol: "𓁧",
+    difficulty: "expert",
+    size: "md",
+    fragmentProgress: { found: 2, required: 3 },
+  },
+}
+
+export const FragmentShowcase: Story = {
+  args: { symbol: "𓁧", difficulty: "expert" },
+  render: () => (
+    <div className="flex items-end gap-6 p-4">
+      {[
+        { label: "0/3 (empty)", node: <HieroglyphTile empty size="md" /> },
+        {
+          label: "1/3",
+          node: <HieroglyphTile symbol="𓁧" difficulty="expert" fragmentProgress={{ found: 1, required: 3 }} />,
+        },
+        {
+          label: "2/3",
+          node: <HieroglyphTile symbol="𓁧" difficulty="expert" fragmentProgress={{ found: 2, required: 3 }} />,
+        },
+        { label: "3/3 (complete)", node: <HieroglyphTile symbol="𓁧" difficulty="expert" /> },
+      ].map(({ label, node }) => (
+        <div key={label} className="flex flex-col items-center gap-2">
+          <span className="text-xs font-medium text-gray-500">{label}</span>
+          {node}
+        </div>
+      ))}
+    </div>
+  ),
+}
+
 export const InteractiveStates: Story = {
   args: {
     symbol: "𓃯",

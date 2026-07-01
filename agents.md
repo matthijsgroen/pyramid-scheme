@@ -74,11 +74,21 @@ Every user-facing string must be localized. Use `useTranslation` from `react-i18
 
 ### 6. Storybook for UI
 
-All new components in `src/ui/` should have a corresponding Storybook story. Use existing stories as reference.
+All new components in `src/ui/` should have a corresponding Storybook story. Stories must not contain shadow implementations of game logic — see **[`docs/instructions/storybook.md`](docs/instructions/storybook.md)** for the full guidelines.
 
 ### 7. TypeScript Strictness
 
 The project uses strict TypeScript. Avoid `any` types; define proper interfaces and types, preferably co-located with the code they describe.
+
+### 8. Domain / App / Design-System Layer Boundaries
+
+Code is split into three layers with strict one-way dependencies (domain ← app ← ui). See **[`docs/instructions/architecture.md`](docs/instructions/architecture.md)** for the full rules.
+
+| Layer | Location | Rule |
+|-------|----------|------|
+| **Domain** | `src/game/`, `src/data/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI. |
+| **App** | `src/app/` | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own. |
+| **Design system** | `src/ui/` | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
 
 ---
 
@@ -154,13 +164,28 @@ Run all tests: `yarn test`
 
 ---
 
+## Agent Instructions
+
+Topic-specific guidelines for contributors and AI agents. Apply the relevant instruction file whenever working in that area.
+
+| Instruction file | Apply when |
+|---|---|
+| [`docs/instructions/storybook.md`](docs/instructions/storybook.md) | Writing or reviewing any `.stories.tsx` file |
+| [`docs/instructions/architecture.md`](docs/instructions/architecture.md) | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
+| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file |
+
+---
+
 ## Feature Documentation
 
 Deeper design docs live in `docs/`:
 
 | Document | Topic |
 |----------|-------|
-| [`docs/crocodile-puzzle.md`](docs/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
+| [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
+| [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, perk table — **authoritative interior reference** |
+| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md) | Three nested loops, level counts, conflict checks against other docs |
+| [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md) | Section-hash exploration, inventory-as-truth fragments, storage versioning |
 
 ---
 

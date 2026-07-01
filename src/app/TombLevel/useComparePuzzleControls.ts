@@ -3,6 +3,7 @@ import { useInventory } from "../Inventory/useInventory"
 import type { TreasureTombJourney } from "@/data/journeys"
 import type { CombinedJourneyState } from "../state/useJourneys"
 import { mulberry32 } from "@/game/random"
+import { eligibleTreasures, treasureSelectionSeed } from "@/game/tombTreasureSelection"
 import { tableauLevels } from "@/data/tableaus"
 import { generateCompareLevel } from "@/game/generateCompareLevel"
 
@@ -26,9 +27,9 @@ export const useCrocodilePuzzleControls = ({
 
   const collectedTreasures = Object.keys(inventory)
 
-  const eligibleTreasures = journey.treasures.filter(t => !collectedTreasures.includes(t.id))
-  const random = mulberry32(activeJourney.randomSeed + 12345)
-  const lootId = eligibleTreasures[Math.floor(random() * eligibleTreasures.length)]?.id
+  const pool = eligibleTreasures(journey, collectedTreasures)
+  const random = mulberry32(treasureSelectionSeed(journey, activeJourney.levelNr))
+  const lootId = pool[Math.floor(random() * pool.length)]?.id
 
   const handleLootDismiss = useCallback(() => {
     setShowLoot(false)

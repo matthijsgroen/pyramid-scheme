@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { LootPopup } from "./LootPopup"
+import { HieroglyphTile } from "./HieroglyphTile"
 import { useState, type ComponentProps } from "react"
 
 // Mock treasure/item components
@@ -156,6 +157,63 @@ export const AlwaysOpen: Story = {
     rarity: "epic",
     itemComponent: <TreasureItem symbol="🪲" rarity="epic" />,
     onDismiss: () => console.log("Popup dismissed"),
+  },
+}
+
+const FRAGMENT_ITEM = {
+  name: "Horus",
+  symbol: "𓅃",
+  difficulty: "expert" as const,
+  description: "Falcon-headed sky god and protector of pharaohs, son of Osiris and Isis.",
+}
+
+export const FragmentFirstFind: Story = {
+  render: args => <InteractiveLootPopup {...args} />,
+  args: {
+    isOpen: false,
+    itemName: `${FRAGMENT_ITEM.name} — Hieroglyph Fragment`,
+    itemDescription: `${FRAGMENT_ITEM.description}\n\n1 of 3 fragments found`,
+    rarity: "common",
+    itemComponent: (
+      <HieroglyphTile
+        symbol={FRAGMENT_ITEM.symbol}
+        difficulty={FRAGMENT_ITEM.difficulty}
+        size="lg"
+        fragmentProgress={{ found: 1, required: 3 }}
+      />
+    ),
+    onDismiss: () => console.log("Dismissed"),
+  },
+}
+
+export const FragmentSecondFind: Story = {
+  render: args => <InteractiveLootPopup {...args} />,
+  args: {
+    isOpen: false,
+    itemName: `${FRAGMENT_ITEM.name} — Hieroglyph Fragment`,
+    itemDescription: `${FRAGMENT_ITEM.description}\n\n2 of 3 fragments found`,
+    rarity: "rare",
+    itemComponent: (
+      <HieroglyphTile
+        symbol={FRAGMENT_ITEM.symbol}
+        difficulty={FRAGMENT_ITEM.difficulty}
+        size="lg"
+        fragmentProgress={{ found: 2, required: 3 }}
+      />
+    ),
+    onDismiss: () => console.log("Dismissed"),
+  },
+}
+
+export const FragmentComplete: Story = {
+  render: args => <InteractiveLootPopup {...args} />,
+  args: {
+    isOpen: false,
+    itemName: `${FRAGMENT_ITEM.name} — Hieroglyph Fragment`,
+    itemDescription: `${FRAGMENT_ITEM.description}\n\n3 of 3 fragments found`,
+    rarity: "legendary",
+    itemComponent: <HieroglyphTile symbol={FRAGMENT_ITEM.symbol} difficulty={FRAGMENT_ITEM.difficulty} size="lg" />,
+    onDismiss: () => console.log("Dismissed"),
   },
 }
 

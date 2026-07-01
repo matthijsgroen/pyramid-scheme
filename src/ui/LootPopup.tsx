@@ -1,4 +1,4 @@
-import { type FC, type ReactNode, useEffect, useState } from "react"
+import { type FC, type ReactNode, useEffect, useRef, useState } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 
@@ -24,6 +24,13 @@ export const LootPopup: FC<LootPopupProps> = ({
   const { t } = useTranslation("common")
   const [showContent, setShowContent] = useState(false)
   const [animationPhase, setAnimationPhase] = useState<"hidden" | "burst" | "reveal" | "visible">("hidden")
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current)
+    },
+    []
+  )
 
   useEffect(() => {
     if (isOpen) {
@@ -52,7 +59,7 @@ export const LootPopup: FC<LootPopupProps> = ({
 
   const handleDismiss = () => {
     setAnimationPhase("hidden")
-    setTimeout(() => {
+    dismissTimerRef.current = setTimeout(() => {
       onDismiss()
       setShowContent(false)
     }, 200)

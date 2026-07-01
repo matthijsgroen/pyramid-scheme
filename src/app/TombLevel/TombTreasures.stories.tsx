@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
-import { hashString } from "@/support/hashString"
 import { allTreasures } from "@/data/treasures"
+import { treasureForRun, collectedTreasureIds } from "@/game/tombTreasureSelection"
 
 type TombLevelArgs = {
   runNr: number
@@ -52,45 +51,9 @@ const meta = {
   },
   tags: ["autodocs"],
   render: ({ runNr, journey }) => {
-    const getEligibleTreasures = (excludedTreasureIds: string[]) => {
-      const eligible = journey.treasures.filter(t => !excludedTreasureIds.includes(t.id))
-      return eligible.length > 0 ? eligible : journey.treasures
-    }
-
-    const getCollectedTreasureIds = (upToRun: number): string[] => {
-      const collectedIds: string[] = []
-
-      for (let previousRun = 1; previousRun < upToRun; previousRun++) {
-        const journeySeed = generateNewSeed(hashString(journey.id), previousRun)
-        const seed = journeySeed + 12345
-        const random = mulberry32(seed)
-        const eligible = getEligibleTreasures(collectedIds)
-        const lootId = eligible[Math.floor(random() * eligible.length)]?.id
-
-        if (lootId && !collectedIds.includes(lootId)) {
-          collectedIds.push(lootId)
-        }
-      }
-
-      return collectedIds
-    }
-
-    const treasureForRun = (tombRun: number): string | undefined => {
-      const journeySeed = generateNewSeed(hashString(journey.id), tombRun)
-      const seed = journeySeed + 12345
-      const random = mulberry32(seed)
-      const collectedTreasureIds = getCollectedTreasureIds(tombRun)
-      const eligible = getEligibleTreasures(collectedTreasureIds)
-
-      if (eligible.length === 0) {
-        return undefined
-      }
-
-      return eligible[Math.floor(random() * eligible.length)].id
-    }
-
-    const treasureId = treasureForRun(runNr)
-    const treasure = allTreasures.find(t => t.id === treasureId)
+    const collected = collectedTreasureIds(journey, runNr)
+    const selected = treasureForRun(journey, runNr, collected)
+    const treasure = selected ? allTreasures.find(t => t.id === selected.id) : undefined
 
     return (
       <div className="flex flex-col items-center gap-4 p-8">

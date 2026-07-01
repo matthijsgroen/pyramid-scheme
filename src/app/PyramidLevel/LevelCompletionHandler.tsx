@@ -1,26 +1,33 @@
-import { useEffect, useState, useRef, type FC, use } from "react"
+import { useEffect, useState, type FC, use } from "react"
 import { useTranslation } from "react-i18next"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
 import { LootPopup } from "@/ui/LootPopup"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { useLootDetermination } from "./useLootDetermination"
 import { FezContext } from "../fez/context"
+import { useTimeout } from "@/support/useTimeout"
 
 type LevelCompletionHandlerProps = {
   onCompletionFinished: () => void
   activeJourney: CombinedJourneyState
+  skipLoot?: boolean
 }
 
-export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onCompletionFinished, activeJourney }) => {
+export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
+  onCompletionFinished,
+  activeJourney,
+  skipLoot = false,
+}) => {
   const { t } = useTranslation("common")
   const [showOverlay, setShowOverlay] = useState(false)
   const [showFez, setShowFez] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const [completionPhase, setCompletionPhase] = useState<"hidden" | "overlay" | "loot" | "finished">("hidden")
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const [scheduleTimer, cancelTimer] = useTimeout()
 
   // Use the loot determination hook
-  const { loot, collectLoot } = useLootDetermination(activeJourney)
+  const { loot: rawLoot, collectLoot } = useLootDetermination(activeJourney)
+  const loot = skipLoot ? null : rawLoot
 
   useEffect(() => {
     if (completionPhase === "hidden") {
@@ -30,16 +37,6 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onComp
       setShowFez(true)
     }
   }, [completionPhase])
-
-  // Reset state when level completion is no longer active
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-        timerRef.current = null
-      }
-    }
-  }, [])
 
   const { showConversation } = use(FezContext)
 
@@ -53,28 +50,20 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onComp
 
   // Separate effect for handling the timer when in overlay phase
   useEffect(() => {
-    if (completionPhase === "overlay" && !showFez) {
-      const timer = setTimeout(() => {
+    if (completionPhase === "overlay" && !showFez && !skipLoot) {
+      scheduleTimer(2000, () => {
         if (loot) {
           setCompletionPhase("loot")
-          setShowOverlay(false) // Hide overlay before showing loot
+          setShowOverlay(false)
           setShowLoot(true)
         } else {
           setCompletionPhase("finished")
           onCompletionFinished()
         }
-      }, 2000)
-
-      timerRef.current = timer
-
-      return () => {
-        if (timerRef.current) {
-          clearTimeout(timerRef.current)
-          timerRef.current = null
-        }
-      }
+      })
+      return cancelTimer
     }
-  }, [completionPhase, loot, onCompletionFinished, showFez])
+  }, [completionPhase, loot, onCompletionFinished, showFez, scheduleTimer, cancelTimer])
 
   useEffect(() => {
     if (loot?.itemId === "mapPiece") {
@@ -91,11 +80,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onComp
     setShowLoot(false)
     setCompletionPhase("finished")
     collectLoot()
-
-    // Small delay before calling completion to allow loot popup to close
-    setTimeout(() => {
-      onCompletionFinished()
-    }, 300)
+    scheduleTimer(300, onCompletionFinished)
   }
 
   const handleOverlayClick = () => {
@@ -111,7 +96,16 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({ onComp
       {/* Level Completed Overlay */}
       {showOverlay && (
         <div onClick={handleOverlayClick} className="pointer-events-auto absolute inset-0 z-40 cursor-pointer">
-          <LevelCompletedOverlay />
+          <LevelCompletedOverlay
+            onComplete={
+              skipLoot
+                ? () => {
+                    setCompletionPhase("finished")
+                    onCompletionFinished()
+                  }
+                : undefined
+            }
+          />
           {!loot && completionPhase === "overlay" && (
             <div className="absolute bottom-8 left-1/2 z-50 -translate-x-1/2 transform">
               <p className="animate-pulse text-sm font-medium text-white">{t("loot.clickToContinue")}</p>
