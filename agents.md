@@ -183,11 +183,9 @@ Deeper design docs live in `docs/`:
 | Document | Topic |
 |----------|-------|
 | [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
-| [`docs/game-design/treasure-effects.md`](docs/game-design/treasure-effects.md) | Treasure passive effects system — material tiers, all effect types, implementation notes |
-| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md) | Three nested loops, level counts, conflict checks |
-| [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, per-tier templates |
+| [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, perk table — **authoritative interior reference** |
+| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md) | Three nested loops, level counts, conflict checks against other docs |
 | [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md) | Section-hash exploration, inventory-as-truth fragments, storage versioning |
-| [`docs/game-design/game-world-model.md`](docs/game-design/game-world-model.md) | Overall world model reference |
 | [`docs/handover-treasure-effects-implementation.md`](docs/handover-treasure-effects-implementation.md) | Handover brief — delete on completion |
 
 ---

@@ -366,6 +366,8 @@ Three placement rules make the table behave:
    optional branches — which means they cannot appear before **forks debut (T2+)**.
    The map growing branches is *what unlocks* the logic families. (See
    `EXPEDITION_REDESIGN.md` §6 on spine-dense critical paths.)
+   **Build note:** the initial Phase 4 build is linear (no forks); side-families
+   enter in Phase 5a when forks are introduced.
 3. **Low-ceiling families are deliberately early-only and graduate out.** Symmetry
    does its job T1–T3, then its `—` at T4/T5 frees the slot for richer families.
 

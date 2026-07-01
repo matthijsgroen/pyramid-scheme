@@ -69,6 +69,14 @@ Gaps found between what the DSL can express, what the world generator produces, 
 
 All delivered. See git history for implementation details. Summary in build order table below.
 
+**Known gap — per-pyramid site variation (future work):**
+`generatedWorldConfigs` currently stores one `SiteConfig` per journey, not one per pyramid.
+To enable distinct layouts per pyramid within a journey:
+- `generatedWorldConfigs` type: `Record<string, SiteConfig[]>` (array per journey)
+- `PyramidJourney.siteConfigs`: `SiteConfig[]` (was `siteConfig?: SiteConfig`)
+- `SiteMapScreen` props: add `pyramidIndex: number`
+- World builder: generate `levelCount` configs per journey instead of one
+
 ---
 
 ## DSL — Path density syntax (Phase 9 extension)

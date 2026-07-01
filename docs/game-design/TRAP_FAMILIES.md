@@ -47,7 +47,7 @@ export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
   wizard:   6,
 };
 
-export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 3;
+export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1;  // resolved: IMPLEMENTATION_PLAN Phase 12 (was 3)
 ```
 
 Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` to the player's effective time limit on every trap attempt, regardless of family or tier.
@@ -132,7 +132,7 @@ Tomb treasures grant permanent effects that directly modify trap encounters. Exa
 |---|---|
 | Max health +½ ♥ | More total health to risk on trap attempts (6 upgrades available; max 6 hearts) |
 | Armor | Reduces trap damage by 1 half-heart per stack; 2 stacks available; minimum damage is 1 half-heart (cannot negate entirely) |
-| Trap insight | Adds `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` per stack; 2 stacks available (+2s total max) |
+| Trap insight | Adds `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` (1s) per stack; 2 stacks available (+2s total max) |
 | Compass / Detection / Scribe's Eye | No direct effect on traps |
 
 ---

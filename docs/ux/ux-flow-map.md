@@ -1,5 +1,10 @@
 # UX Flow Map — Pyramid Scheme
 
+> **ARCHIVED — pre-redesign baseline.** Describes the system as it existed before the expedition
+> redesign (Phases 1–9f). Loot delivery, hieroglyph collection, and interior navigation have all
+> changed: see `docs/game-design/EXPEDITION_REDESIGN.md` and `docs/game-design/pyramid-interior-design.md`
+> for the current design. Kept as a friction-analysis reference and Phase 16 onboarding input.
+
 > Input document for flow discussion. Focus: Expeditions, Tombs, Hieroglyph collection.
 > Describes the current state as-built, not an ideal. Intended as a basis for friction review.
 

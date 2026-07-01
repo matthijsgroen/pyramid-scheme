@@ -407,20 +407,18 @@ scale. **Four mechanics? No — one idea, four times.**
 
 ---
 
-## 15. Open decisions
+## 15. Open decisions — resolved
 
-1. **Tomb-key flow.** Where do a tomb's *optional* ward keys come from?
-   - deeper in the same tomb (self-contained, limited reach),
-   - **later tombs** (recommended — keeps early tombs alive all game; clearing
-     the tier-5 vault lights side rooms in the tier-1 tomb),
-   - pyramid chests (inverts the flow; probably more confusing than it's worth).
+1. **Tomb-key flow.** ✅ Resolved: hybrid model. Ward keys (tomb floor access)
+   come from any tomb and open floors in any pyramid (WARD_MIX). Location keys
+   reveal the next tomb in the same tier. See `pyramid-interior-design.md §6 & §14`.
 
-2. **Site-addressable save state.** Confirm `solvedEdges` is keyed per *site* and
-   `inventory` is journey-global, so direct fast-travel reconstructs a
-   destination's state without replaying the path to it (§12).
+2. **Site-addressable save state.** ✅ Resolved: `exploredSections` is keyed per
+   `levelNr` (journey + pyramid index). `inventory` remains journey-global.
+   Implemented in Phase 3 / Phase 10a (`useJourneys`).
 
-3. **Shortcut gates.** How many branch-rejoining shortcut-gates (if any) to allow
-   before tree-layout + solvability cost outweighs the Metroid feel (§11).
+3. **Shortcut gates.** ✅ Resolved: deferred indefinitely. Solvability cost
+   outweighs the Metroid feel for the current content scope.
 
 ---
 
