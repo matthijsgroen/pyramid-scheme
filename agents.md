@@ -172,6 +172,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 |---|---|
 | [`docs/instructions/storybook.md`](docs/instructions/storybook.md) | Writing or reviewing any `.stories.tsx` file |
 | [`docs/instructions/architecture.md`](docs/instructions/architecture.md) | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
+| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file |
 
 ---
 
@@ -181,11 +182,13 @@ Deeper design docs live in `docs/`:
 
 | Document | Topic |
 |----------|-------|
-| [`docs/crocodile-puzzle.md`](docs/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
-| [`docs/treasure-effects.md`](docs/treasure-effects.md) | Treasure passive effects system — material tiers, all effect types, implementation notes |
-| [`docs/handover-treasure-effects-implementation.md`](docs/handover-treasure-effects-implementation.md) | Implementation handover — what's done, what to build, order of work, code patterns |
-| [`docs/game-loop.md`](docs/game-loop.md) | Three nested loops, level counts, conflict checks against EXPEDITION_REDESIGN and other docs |
-| [`docs/pyramid-interior-design.md`](docs/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, per-tier templates |
+| [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
+| [`docs/game-design/treasure-effects.md`](docs/game-design/treasure-effects.md) | Treasure passive effects system — material tiers, all effect types, implementation notes |
+| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md) | Three nested loops, level counts, conflict checks |
+| [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, per-tier templates |
+| [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md) | Section-hash exploration, inventory-as-truth fragments, storage versioning |
+| [`docs/game-design/game-world-model.md`](docs/game-design/game-world-model.md) | Overall world model reference |
+| [`docs/handover-treasure-effects-implementation.md`](docs/handover-treasure-effects-implementation.md) | Handover brief — delete on completion |
 
 ---
 
