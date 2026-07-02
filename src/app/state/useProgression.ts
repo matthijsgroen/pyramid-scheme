@@ -2,8 +2,29 @@ import { useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { hieroglyphRequired } from "@/data/generatedWorld"
 import type { ConsumableType } from "@/game/siteTypes"
+import { TREASURE_PERKS } from "@/data/treasurePerks"
 
 type ConsumableInventory = { bandage: number; oil: number; trapTool: number }
+
+export type PerkState = {
+  armorStacks: number // 0–2
+  trapInsightStacks: number // 0–2
+  packMuleLevel: number // 0–1
+  compassLevel: number // 0–3
+  consumableDetectorLevel: number // 0–3
+  detectionLevel: number // 0–4
+  scribesEyeLevel: number // 0–3
+}
+
+const INITIAL_PERKS: PerkState = {
+  armorStacks: 0,
+  trapInsightStacks: 0,
+  packMuleLevel: 0,
+  compassLevel: 0,
+  consumableDetectorLevel: 0,
+  detectionLevel: 0,
+  scribesEyeLevel: 0,
+}
 
 type ProgressionState = {
   // "hieroglyphId:pieceIndex" entries — inventory-as-truth for chest loot
@@ -16,6 +37,7 @@ type ProgressionState = {
   currentHealth: number // half-hearts
   maxHealth: number // half-hearts
   consumables: ConsumableInventory
+  perks: PerkState
 }
 
 // First tomb of each tier is visible from the start; secondary tombs appear on first map piece
@@ -27,7 +49,7 @@ const AUTO_DISCOVERED_TOMBS = [
   "wizard_treasure_tomb",
 ]
 
-const CONSUMABLE_CAP = 2 // ponytail: packMule upgrade deferred to Phase 15
+const consumableCarryCap = (packMuleLevel: number) => (packMuleLevel >= 1 ? 4 : 2)
 
 const initialState: ProgressionState = {
   collectedFragments: [],
@@ -39,6 +61,7 @@ const initialState: ProgressionState = {
   currentHealth: 6,
   maxHealth: 6,
   consumables: { bandage: 0, oil: 0, trapTool: 0 },
+  perks: INITIAL_PERKS,
 }
 
 export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
@@ -52,6 +75,7 @@ export type ProgressionAPI = {
   hieroglyphFragments: Record<string, number>
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
+  applyTreasurePerk: (treasureId: string) => void
   tombKeyIds: ReadonlySet<string>
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
@@ -71,6 +95,7 @@ export type ProgressionAPI = {
   consumableCarryCap: number
   addConsumable: (type: ConsumableType) => boolean // false if at cap
   useConsumable: (type: ConsumableType) => void
+  perks: PerkState
 }
 
 export const useProgression = (): ProgressionAPI => {
@@ -105,6 +130,33 @@ export const useProgression = (): ProgressionAPI => {
       ),
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
+      applyTreasurePerk: treasureId =>
+        setState(prev => {
+          const perk = TREASURE_PERKS[treasureId]
+          if (!perk || perk.type === "none" || perk.type === "location-key" || perk.type === "tier-unlock") return prev
+          const p = prev.perks ?? INITIAL_PERKS
+          switch (perk.type) {
+            case "max-health":
+              return { ...prev, maxHealth: Math.min(12, (prev.maxHealth ?? 6) + 1) }
+            case "armor":
+              return { ...prev, perks: { ...p, armorStacks: Math.min(2, p.armorStacks + 1) } }
+            case "trap-insight":
+              return { ...prev, perks: { ...p, trapInsightStacks: Math.min(2, p.trapInsightStacks + 1) } }
+            case "pack-mule":
+              return { ...prev, perks: { ...p, packMuleLevel: 1 } }
+            case "compass":
+              return { ...prev, perks: { ...p, compassLevel: Math.max(p.compassLevel, perk.level) } }
+            case "consumable-detector":
+              return {
+                ...prev,
+                perks: { ...p, consumableDetectorLevel: Math.max(p.consumableDetectorLevel, perk.level) },
+              }
+            case "scribes-eye":
+              return { ...prev, perks: { ...p, scribesEyeLevel: Math.max(p.scribesEyeLevel, perk.level) } }
+            case "detection":
+              return { ...prev, perks: { ...p, detectionLevel: Math.max(p.detectionLevel, perk.level) } }
+          }
+        }),
       tombKeyIds: new Set(Object.keys(state.tombKeys)),
       isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
       discoverTomb: tombJourneyId =>
@@ -148,10 +200,11 @@ export const useProgression = (): ProgressionAPI => {
         })),
       healToFull: () => setState(prev => ({ ...prev, currentHealth: prev.maxHealth ?? 6 })),
       consumables: state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 },
-      consumableCarryCap: CONSUMABLE_CAP,
+      consumableCarryCap: consumableCarryCap(state.perks?.packMuleLevel ?? 0),
       addConsumable: type => {
         const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
-        if (inv.bandage + inv.oil + inv.trapTool >= CONSUMABLE_CAP) return false
+        const cap = consumableCarryCap(state.perks?.packMuleLevel ?? 0)
+        if (inv.bandage + inv.oil + inv.trapTool >= cap) return false
         setState(prev => {
           const c = prev.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
           return { ...prev, consumables: { ...c, [type]: c[type] + 1 } }
@@ -171,6 +224,7 @@ export const useProgression = (): ProgressionAPI => {
                 : (prev.currentHealth ?? 6)
           return { ...prev, consumables: next, currentHealth: healed }
         }),
+      perks: state.perks ?? INITIAL_PERKS,
     }),
     [state, setState]
   )

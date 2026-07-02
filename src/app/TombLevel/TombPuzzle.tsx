@@ -7,6 +7,7 @@ import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { useProgression } from "@/app/state/useProgression"
 import { type FilledTileState } from "../Formulas/FormulaPart"
 import { clsx } from "clsx"
 import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
@@ -28,6 +29,8 @@ export const TombPuzzle: FC<{
 
   // Get player's actual inventory
   const { inventory, removeItems } = useInventory()
+  const { perks } = useProgression()
+  const scribesEyeSlots = perks.scribesEyeLevel === 3 ? Infinity : perks.scribesEyeLevel
 
   // State for managing which tiles are filled
   const [filledState, setFilledState] = useState<FilledTileState>({
@@ -243,6 +246,7 @@ export const TombPuzzle: FC<{
             calculation={calculation}
             filledState={filledState}
             onTileClick={handleTileClick}
+            scribesEyeSlots={scribesEyeSlots}
           />
 
           {/* Available symbols inventory - hide when puzzle is completed */}

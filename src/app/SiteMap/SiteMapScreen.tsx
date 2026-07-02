@@ -12,9 +12,11 @@ import { TrapEncounter } from "@/app/TrapFamilies/TrapEncounter"
 import { TrapWarningScreen } from "./TrapWarningScreen"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
+import { useDetector } from "@/app/state/useDetector"
 import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/HealthDisplay"
 import { ConsumableBar } from "@/ui/ConsumableBar"
+import { DetectorPanel } from "@/ui/DetectorPanel"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
 import "@/app/PuzzleFamilies/Tableau/plugin"
@@ -34,6 +36,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const { t } = useTranslation("common")
   const journeys = useJourneys()
   const progression = useProgression()
+  const detector = useDetector(progression, journeys)
   const allEdges = journeys.getExploredSections(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = progression.tombKeyIds
@@ -49,7 +52,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     allEdges,
     wardKeys,
     journeyState?.position,
-    0 // detectionLevel: wired to progression.perks.detectionLevel in Phase 15
+    progression.perks.detectionLevel
   )
 
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
@@ -153,8 +156,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                   if (reward.type === "hieroglyphFragment")
                     progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
                   else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
-                  else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
-                  else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
+                  else if (reward.type === "tombKey") {
+                    progression.addTombKey(reward.keyId)
+                    progression.applyTreasurePerk(reward.keyId)
+                  } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
                   else if (reward.type === "consumable") {
                     const added = progression.addConsumable(reward.consumable)
                     if (!added) journeys.markConsumableSkipped(edgeId)
@@ -191,9 +196,27 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       <div className="relative h-screen w-screen">
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} className="h-full w-full" />
       </div>
-      <div className="absolute right-0 bottom-4 left-0 z-10 flex items-center justify-center gap-4">
-        <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
-        <ConsumableBar consumables={progression.consumables} />
+      <div className="absolute right-0 bottom-4 left-0 z-10 flex flex-col items-center justify-center gap-2">
+        {(progression.perks.compassLevel > 0 ||
+          progression.perks.consumableDetectorLevel > 0 ||
+          progression.perks.detectionLevel > 0) && (
+          <DetectorPanel
+            activeDetector={detector.activeDetector}
+            compassLevel={progression.perks.compassLevel}
+            consumableDetectorLevel={progression.perks.consumableDetectorLevel}
+            detectionLevel={progression.perks.detectionLevel}
+            compassTarget={detector.compassTarget}
+            compassResults={detector.compassResults}
+            consumableResults={detector.consumableResults}
+            onSetDetector={detector.setDetector}
+            onSetCompassTarget={detector.setCompassTarget}
+            availableHieroglyphs={[]}
+          />
+        )}
+        <div className="flex items-center gap-4">
+          <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
+          <ConsumableBar consumables={progression.consumables} />
+        </div>
       </div>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
       {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
@@ -251,7 +274,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           family="arithmetic-reflex"
           seed={hashString(journeyId + encodeEdge(currentFloor, activeTrapPos[0], activeTrapPos[1]))}
           difficulty={floorConfig.difficulty}
-          trapInsightStacks={0}
+          trapInsightStacks={progression.perks.trapInsightStacks}
           onPass={() => {
             const [tr, tc] = activeTrapPos
             const edgeId = encodeEdge(currentFloor, tr, tc)
@@ -261,7 +284,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             setActiveTrapPos(null)
           }}
           onFail={() => {
-            progression.takeTrapDamage(0)
+            progression.takeTrapDamage(progression.perks.armorStacks)
             setActiveTrapPos(null)
           }}
         />

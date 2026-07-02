@@ -4,7 +4,7 @@ import type { TableauLevel } from "@/data/tableaus"
 import type { RewardCalculation } from "@/game/generateRewardCalculation"
 import { revealText } from "@/support/revealText"
 import clsx from "clsx"
-import { useMemo, type FC } from "react"
+import { useMemo, useState, type FC } from "react"
 import type { Formula as FormulaType } from "@/app/Formulas/formulas"
 import { Formula } from "../Formulas/Formula"
 import type { FilledTileState } from "../Formulas/FormulaPart"
@@ -37,7 +37,8 @@ export const TombTableau: FC<{
   calculation: RewardCalculation
   filledState: FilledTileState
   onTileClick?: (symbolId: string, position: string) => void
-}> = ({ difficulty, tableau, calculation, filledState, onTileClick }) => {
+  scribesEyeSlots?: number // 0/undefined = off; Infinity = unlimited
+}> = ({ difficulty, tableau, calculation, filledState, onTileClick, scribesEyeSlots = 0 }) => {
   // Calculate solved percentage based on filled tiles
   const solvedPercentage = useMemo(() => {
     // Count total slots across all formulas
@@ -50,6 +51,8 @@ export const TombTableau: FC<{
 
     return totalSlots > 0 ? filledSlots / totalSlots : 0
   }, [calculation, filledState.filledPositions])
+
+  const [annotations, setAnnotations] = useState<Record<string, string>>({})
 
   const random = mulberry32(hashString(tableau.name))
 
@@ -96,6 +99,27 @@ export const TombTableau: FC<{
           />
         </span>
       </div>
+      {scribesEyeSlots > 0 && (
+        <div className="border-t border-black/20 pt-2">
+          <p className="mb-1 text-xs opacity-60">📜 Notes</p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(calculation.symbolMapping)
+              .slice(0, scribesEyeSlots === Infinity ? undefined : scribesEyeSlots)
+              .map(([, symbolId]) => (
+                <label key={symbolId} className="flex items-center gap-1 text-sm">
+                  <span className="font-bold">{symbolId.slice(0, 3)}</span>
+                  <input
+                    type="text"
+                    value={annotations[symbolId] ?? ""}
+                    onChange={e => setAnnotations(prev => ({ ...prev, [symbolId]: e.target.value }))}
+                    className="w-10 rounded border border-black/30 bg-white/50 px-1 text-center text-xs"
+                    maxLength={4}
+                  />
+                </label>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
