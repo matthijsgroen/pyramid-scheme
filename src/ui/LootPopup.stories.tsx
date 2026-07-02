@@ -65,6 +65,10 @@ const meta = {
       control: "text",
     },
   },
+  args: {
+    youFoundLabel: "You found",
+    clickToContinueLabel: "Click to continue",
+  },
 } satisfies Meta<typeof LootPopup>
 
 export default meta
@@ -297,6 +301,8 @@ export const AllRarities: Story = {
           rarity={currentRarity}
           itemComponent={<TreasureItem symbol={rarityData[currentRarity].symbol} rarity={currentRarity} />}
           onDismiss={() => setIsOpen(false)}
+          youFoundLabel="You found"
+          clickToContinueLabel="Click to continue"
         />
       </div>
     )

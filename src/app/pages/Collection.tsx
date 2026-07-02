@@ -45,6 +45,7 @@ const CategorySection: FC<{
   hieroglyphFragments: Record<string, number>
 }> = ({ category, onItemClick, selectedItem, inventory, hieroglyphFragments }) => {
   const { t } = useTranslation("common")
+  const { hieroglyphProgress } = useProgression()
   const items = useInventoryCategory(category)
   const sortedItems = useMemo(
     () =>
@@ -84,11 +85,11 @@ const CategorySection: FC<{
           if (fragmentsFound > 0 && itemLevel) {
             // Partially collected — show progress tile with a badge showing "X/3"
             return (
-              <Badge key={item.id} label={`${fragmentsFound}/3`}>
+              <Badge key={item.id} label={`${fragmentsFound}/${hieroglyphProgress(item.id).required}`}>
                 <HieroglyphTile
                   symbol={item.symbol}
                   difficulty={itemLevel}
-                  fragmentProgress={{ found: fragmentsFound, required: 3 }}
+                  fragmentProgress={{ found: fragmentsFound, required: hieroglyphProgress(item.id).required }}
                   size="md"
                   className="aspect-square"
                 />

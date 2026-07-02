@@ -13,12 +13,8 @@ vi.mock("@/data/generatedWorld", () => ({
         // floor 0: fragment h1 piece 0 on main path
         {
           mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 0 },
-          sideSections: [
-            { endReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 1 } },
-          ],
-          chestRewards: [
-            { type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 0 },
-          ],
+          sideSections: [{ endReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 1 } }],
+          chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 0 }],
         },
       ],
     ],

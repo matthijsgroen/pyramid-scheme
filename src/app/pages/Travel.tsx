@@ -134,8 +134,8 @@ export const TravelPage: FC<{
         >
           <p className="sticky top-0 mb-4 border-b-2 border-red-200 bg-amber-50 py-1 text-center text-sm text-red-600">
             <strong className="font-bold">July 2026 redesign:</strong> this is a{" "}
-            <strong className="font-bold">completely new game</strong> — currently testing the skeleton.{" "}
-            Expect missing content, rough edges, and save resets.
+            <strong className="font-bold">completely new game</strong> — currently testing the skeleton. Expect missing
+            content, rough edges, and save resets.
           </p>
           <h1 className="mb-4 text-center font-pyramid text-xl font-bold">{t("ui.travel")}</h1>
 

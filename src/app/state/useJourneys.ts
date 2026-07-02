@@ -168,7 +168,9 @@ export const createJourneysV3Api = ({
     if (!activeJourneyId) return
     setJourneys(prev =>
       prev.map(j =>
-        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null } : j
+        j.journeyId === activeJourneyId
+          ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null }
+          : j
       )
     )
   }
@@ -183,9 +185,10 @@ export const createJourneysV3Api = ({
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const current = j.exploredSections[sectionHash] ?? []
+        const key = `${j.levelNr}:${sectionHash}`
+        const current = j.exploredSections[key] ?? []
         if (current.includes(cellId)) return j
-        return { ...j, exploredSections: { ...j.exploredSections, [sectionHash]: [...current, cellId] } }
+        return { ...j, exploredSections: { ...j.exploredSections, [key]: [...current, cellId] } }
       })
     )
   }
@@ -193,7 +196,12 @@ export const createJourneysV3Api = ({
   const getExploredSections = (journeyId: string): Record<string, string[]> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     if (!j) return {}
-    return j.exploredSections
+    const prefix = `${j.levelNr}:`
+    const result: Record<string, string[]> = {}
+    for (const [key, cells] of Object.entries(j.exploredSections)) {
+      if (key.startsWith(prefix)) result[key.slice(prefix.length)] = cells
+    }
+    return result
   }
 
   const updatePosition = (journeyId: string, nodeId: string) => {
@@ -217,13 +225,14 @@ export const createJourneysV3Api = ({
         if (j.journeyId !== activeJourneyId) return j
         const traps = j.disabledTraps ?? []
         if (traps.includes(edgeId)) return j
-        const current = j.exploredSections[sectionHash] ?? []
+        const key = `${j.levelNr}:${sectionHash}`
+        const current = j.exploredSections[key] ?? []
         return {
           ...j,
           disabledTraps: [...traps, edgeId],
           exploredSections: current.includes(edgeId)
             ? j.exploredSections
-            : { ...j.exploredSections, [sectionHash]: [...current, edgeId] },
+            : { ...j.exploredSections, [key]: [...current, edgeId] },
         }
       })
     )

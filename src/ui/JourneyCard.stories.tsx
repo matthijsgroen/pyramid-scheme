@@ -85,6 +85,16 @@ const meta = {
       control: "number",
     },
   },
+  args: {
+    labels: {
+      suggestedExpedition: "Suggested Expedition",
+      length: "Length",
+      chambers: "chambers",
+      progressLevel: "Progress: Level",
+      timesPlural: "times",
+      timesSingular: "time",
+    },
+  },
 } satisfies Meta<typeof JourneyCard>
 
 export default meta

@@ -53,7 +53,7 @@ describe("markCellExplored", () => {
       journeyData: [makeJourneyData(REAL_ID)],
     })
     api.markCellExplored("abc123", "0:3,4")
-    expect(state[0].exploredSections["abc123"]).toContain("0:3,4")
+    expect(state[0].exploredSections["1:abc123"]).toContain("0:3,4")
   })
 
   it("deduplicates: calling twice does not double-store", () => {
@@ -68,12 +68,13 @@ describe("markCellExplored", () => {
     })
     api.markCellExplored("abc123", "0:1,2")
     api.markCellExplored("abc123", "0:1,2")
-    expect(state[0].exploredSections["abc123"]).toHaveLength(1)
+    expect(state[0].exploredSections["1:abc123"]).toHaveLength(1)
   })
 
-  it("getExploredSections returns the full sections record", () => {
+  it("getExploredSections returns sections for the current level, with prefix stripped", () => {
     const stored = makeStoredJourney({
-      exploredSections: { sec1: ["0:0,0"], sec2: ["0:1,1"] },
+      levelNr: 1,
+      exploredSections: { "1:sec1": ["0:0,0"], "1:sec2": ["0:1,1"], "2:sec1": ["0:2,2"] },
     })
     const api = makeApi([stored])
     expect(api.getExploredSections(REAL_ID)).toEqual({ sec1: ["0:0,0"], sec2: ["0:1,1"] })

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1836930649
+export const worldContentHash = 835960621
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -15,9 +15,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [
-          { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
-          { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
-          { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
           {
             pathPuzzles: 0,
             difficulty: "starter",
@@ -83,9 +83,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [
-          { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
-          { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
-          { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
           {
             pathPuzzles: 0,
             difficulty: "starter",

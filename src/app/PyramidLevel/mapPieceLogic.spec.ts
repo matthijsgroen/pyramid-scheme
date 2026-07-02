@@ -9,9 +9,7 @@ const makeJourney = (type: "pyramid" | "treasure_tomb", startChance = 0.5, chanc
     rewards: { mapPiece: { startChance, chanceIncrease } },
   }) as unknown as TranslatedJourney
 
-const makeState = (
-  overrides: Partial<CombinedJourneyState> & { journey?: TranslatedJourney }
-): CombinedJourneyState =>
+const makeState = (overrides: Partial<CombinedJourneyState> & { journey?: TranslatedJourney }): CombinedJourneyState =>
   ({
     journeyId: "test_journey",
     randomSeed: 12345,

@@ -185,6 +185,7 @@ export const JourneyPathView: FC<Props> = ({
                     onNodeClick
                       ? e => {
                           e.stopPropagation()
+                          e.nativeEvent.stopImmediatePropagation()
                           onNodeClick(i + 1)
                         }
                       : undefined

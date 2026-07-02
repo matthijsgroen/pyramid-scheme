@@ -22,6 +22,15 @@ const meta = {
       control: { type: "range", min: 0, max: 10, step: 1 },
     },
   },
+  args: {
+    labels: {
+      treasureTomb: "Treasure Tomb",
+      requiresMapPieces: "Requires map pieces",
+      mapPieces: "map pieces",
+      collected: "collected",
+      completeExpeditionsToUnlock: "Complete expeditions to unlock",
+    },
+  },
 } satisfies Meta<typeof MapPiecePlaceholder>
 
 export default meta

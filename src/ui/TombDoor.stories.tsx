@@ -19,25 +19,55 @@ const doorContent = <p className="mt-8 text-center font-bold text-white/80">Tomb
 
 export const Starter: Story = {
   args: { difficulty: "starter", children: doorContent },
-  decorators: [Story => <div className="h-48 w-48"><Story /></div>],
+  decorators: [
+    Story => (
+      <div className="h-48 w-48">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const Expert: Story = {
   args: { difficulty: "expert", children: doorContent },
-  decorators: [Story => <div className="h-48 w-48"><Story /></div>],
+  decorators: [
+    Story => (
+      <div className="h-48 w-48">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const Master: Story = {
   args: { difficulty: "master", children: doorContent },
-  decorators: [Story => <div className="h-48 w-48"><Story /></div>],
+  decorators: [
+    Story => (
+      <div className="h-48 w-48">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const Wizard: Story = {
   args: { difficulty: "wizard", children: doorContent },
-  decorators: [Story => <div className="h-48 w-48"><Story /></div>],
+  decorators: [
+    Story => (
+      <div className="h-48 w-48">
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const Open: Story = {
   args: { difficulty: "starter", open: true, children: doorContent },
-  decorators: [Story => <div className="h-48 w-48"><Story /></div>],
+  decorators: [
+    Story => (
+      <div className="h-48 w-48">
+        <Story />
+      </div>
+    ),
+  ],
 }

@@ -284,7 +284,7 @@ const buildSideSections = (
   // Auto/density mosaic side paths — apply key gating by density + color count
   const gatedCount = keyDensity ? Math.round(mosaicPathCount * DENSITY_FRACTION[keyDensity]) : 0
   const colorCount = Math.min(keyColors ?? 1, 5)
-  const mosaicPP = Math.max(1, Math.round(mainPathPuzzles / 3))
+  const mosaicPP = Math.max(0, Math.round(mainPathPuzzles / 3))
   for (let j = 0; j < mosaicPathCount; j++) {
     const gate = j < gatedCount ? { type: "floor-key" as const, color: ALL_KEY_COLORS[j % colorCount] } : undefined
     sections.push({
@@ -583,9 +583,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       return undefined
     }
 
-    const buildSideSections = (
-      sections: SideSectionConstraint<"tombTreasure">[]
-    ): SideSection[] =>
+    const buildSideSections = (sections: SideSectionConstraint<"tombTreasure">[]): SideSection[] =>
       sections.map(s => ({
         pathPuzzles: typeof s.pathPuzzles === "number" ? s.pathPuzzles : 0,
         difficulty,
@@ -603,11 +601,15 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 
       const mainEndReward: TreasureReward | undefined = authored
         ? resolveTombReward(authored.mainEndReward as string | undefined)
-        : (() => { const perkId = perkIds[perkIndex++]; return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined })()
+        : (() => {
+            const perkId = perkIds[perkIndex++]
+            return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
+          })()
 
-      const sideSections: SideSection[] = authored && Array.isArray(authored.sideSections)
-        ? buildSideSections(authored.sideSections as SideSectionConstraint<"tombTreasure">[])
-        : []
+      const sideSections: SideSection[] =
+        authored && Array.isArray(authored.sideSections)
+          ? buildSideSections(authored.sideSections as SideSectionConstraint<"tombTreasure">[])
+          : []
 
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,

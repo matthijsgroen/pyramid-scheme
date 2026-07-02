@@ -42,7 +42,6 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
   labels,
   onClick,
 }) => {
-
   const timeEmojis = {
     morning: "🌅",
     afternoon: "☀️",
