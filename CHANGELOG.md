@@ -27,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tomb interiors as explorable maps** — treasure tomb floors are now navigated as full site maps, just like pyramids.
 - **Mosaic unlock** — the world mosaic fills in piece by piece as you play through pyramid levels; each completed level reveals more of the picture.
 - **Stained-glass mosaic artwork** — the mosaic uses a layered stained-glass visual that reveals from the outside in.
-- **Five difficulty tiers** — difficulties are now Starter, Junior, Expert, Master, and Wizard (previously three tiers).
 - **Iris transition** — a circular wipe animation plays when you complete a level and when you exit an interior.
 - **Puzzle completion animation** — a brief overlay celebrates solving a puzzle before the game moves on.
 
