@@ -84,6 +84,14 @@
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
   },
+  "trap": {
+    "warning": "⚠ Trapped Corridor",
+    "canAttempt": "You can attempt to pass through.",
+    "tooWeak": "You are too weak to risk this trap. Turn around.",
+    "attempt": "Attempt the trap",
+    "disable": "Disable trap",
+    "turnAround": "Turn around"
+  },
   "chest": {
     "tapToOpen": "Tap to open",
     "mapPiece": "Map Piece",
@@ -93,7 +101,13 @@
     "tombKey": "Tomb Key",
     "hieroglyphs": "Ancient Hieroglyphs",
     "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
-    "mosaicPiece": "Mosaic Piece"
+    "mosaicPiece": "Mosaic Piece",
+    "consumable": {
+      "bandage": "Bandage",
+      "oil": "Healing Oil",
+      "trapTool": "Trap Disabler"
+    },
+    "consumableFull": "Pack is full — {{item}} left behind"
   },
   "loot": {
     "youFound": "You found",

@@ -2,12 +2,14 @@ export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number; levelCount: number }
 export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
+export type ConsumableType = "bandage" | "oil" | "trapTool"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
   | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex?: number }
   | { type: "tombKey"; keyId: string }
+  | { type: "consumable"; consumable: ConsumableType }
 
 export type SubSection = {
   pathPuzzles: number

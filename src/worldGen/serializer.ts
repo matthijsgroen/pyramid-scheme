@@ -17,6 +17,8 @@ const serializeReward = (r: TreasureReward, nextIdx: FragmentCounter): string =>
       return `{ type: "tombKey", keyId: "${r.keyId}" }`
     case "mapPiece":
       return `{ type: "mapPiece", tombId: "${r.tombId}" }`
+    case "consumable":
+      return `{ type: "consumable", consumable: "${r.consumable}" }`
     default:
       return `{ type: "${r.type}" }`
   }

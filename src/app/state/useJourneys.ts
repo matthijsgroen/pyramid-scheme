@@ -19,6 +19,8 @@ export type StoredJourneyStateV3 = {
   exploredSections: Record<string, string[]>
   position: string | null // current node ID "floor:row,col" or null (entrance)
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
+  disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
+  skippedConsumables?: string[] // edgeIds where inventory was full at collect time
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -43,6 +45,9 @@ export type JourneyAPI = {
   getExploredSections: (journeyId: string) => Record<string, string[]>
   updatePosition: (journeyId: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
+  markTrapDisabled: (sectionHash: string, edgeId: string) => void
+  markConsumableSkipped: (edgeId: string) => void
+  getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -205,6 +210,42 @@ export const createJourneysV3Api = ({
     return difficulty
   }, "starter")
 
+  const markTrapDisabled = (sectionHash: string, edgeId: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const traps = j.disabledTraps ?? []
+        if (traps.includes(edgeId)) return j
+        const current = j.exploredSections[sectionHash] ?? []
+        return {
+          ...j,
+          disabledTraps: [...traps, edgeId],
+          exploredSections: current.includes(edgeId)
+            ? j.exploredSections
+            : { ...j.exploredSections, [sectionHash]: [...current, edgeId] },
+        }
+      })
+    )
+  }
+
+  const markConsumableSkipped = (edgeId: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const skipped = j.skippedConsumables ?? []
+        if (skipped.includes(edgeId)) return j
+        return { ...j, skippedConsumables: [...skipped, edgeId] }
+      })
+    )
+  }
+
+  const getSkippedConsumables = (journeyId: string): ReadonlySet<string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    return new Set(j?.skippedConsumables ?? [])
+  }
+
   return {
     activeJourneyId,
     maxDifficulty,
@@ -220,5 +261,8 @@ export const createJourneysV3Api = ({
     getExploredSections,
     updatePosition,
     setInteriorLevel,
+    markTrapDisabled,
+    markConsumableSkipped,
+    getSkippedConsumables,
   }
 }

@@ -9,9 +9,12 @@ import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
 import { ChestRewardFlow } from "./ChestRewardFlow"
 import { TrapEncounter } from "@/app/TrapFamilies/TrapEncounter"
+import { TrapWarningScreen } from "./TrapWarningScreen"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
+import { HealthDisplay } from "@/ui/HealthDisplay"
+import { ConsumableBar } from "@/ui/ConsumableBar"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
 import "@/app/PuzzleFamilies/Tableau/plugin"
@@ -50,15 +53,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   )
 
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
+  const [trapWarningPos, setTrapWarningPos] = useState<readonly [number, number] | null>(null)
   const [activeTrapPos, setActiveTrapPos] = useState<readonly [number, number] | null>(null)
   const [puzzleSolved, setPuzzleSolved] = useState(false)
   const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
-  const [blockedMessage, setBlockedMessage] = useState<string | null>(null)
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
   const [schedulePuzzle, cancelPuzzle] = useTimeout()
-  const [scheduleBlockedClear] = useTimeout()
 
   const puzzlePlugin = useMemo(() => {
     if (!activePuzzlePos || !grid) return null
@@ -114,14 +116,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "trap") {
-        if (!progression.canAttemptTrap()) {
-          setBlockedMessage(t("ui.trapBlocked"))
-          scheduleBlockedClear(2500, () => setBlockedMessage(null))
-          return
-        }
         journeys.updatePosition(journeyId, edgeId)
         scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-          setActiveTrapPos([row, col])
+          setTrapWarningPos([row, col])
         )
       } else if (cell.roomType === "puzzle") {
         journeys.updatePosition(journeyId, edgeId)
@@ -158,6 +155,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                   else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
                   else if (reward.type === "tombKey") progression.addTombKey(reward.keyId)
                   else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
+                  else if (reward.type === "consumable") {
+                    const added = progression.addConsumable(reward.consumable)
+                    if (!added) journeys.markConsumableSkipped(edgeId)
+                  }
                 },
               })
             })
@@ -165,7 +166,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         }
       }
     },
-    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, scheduleBlockedClear, t]
+    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival]
   )
 
   const ActivePuzzleComponent = puzzlePlugin?.Component ?? null
@@ -190,12 +191,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       <div className="relative h-screen w-screen">
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} className="h-full w-full" />
       </div>
+      <div className="absolute right-0 bottom-4 left-0 z-10 flex items-center justify-center gap-4">
+        <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
+        <ConsumableBar consumables={progression.consumables} />
+      </div>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
-      {blockedMessage && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="rounded-lg bg-stone-900/90 px-6 py-3 font-pyramid text-lg text-red-400">{blockedMessage}</div>
-        </div>
-      )}
       {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
       {!!activePuzzle && ActivePuzzleComponent && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
@@ -223,6 +223,28 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             )}
           </div>
         </div>
+      )}
+      {trapWarningPos && (
+        <TrapWarningScreen
+          currentHealth={progression.currentHealth}
+          maxHealth={progression.maxHealth}
+          canAttempt={progression.canAttemptTrap()}
+          trapToolCount={progression.consumables.trapTool}
+          onAttempt={() => {
+            setActiveTrapPos(trapWarningPos)
+            setTrapWarningPos(null)
+          }}
+          onTurnAround={() => setTrapWarningPos(null)}
+          onDisable={() => {
+            const [tr, tc] = trapWarningPos
+            const edgeId = encodeEdge(currentFloor, tr, tc)
+            const trapCell = grid && getCell(grid, tr, tc)
+            const trapSectionHash = trapCell && trapCell.type !== "empty" ? (trapCell.sectionHash ?? "") : ""
+            progression.useConsumable("trapTool")
+            journeys.markTrapDisabled(trapSectionHash, edgeId)
+            setTrapWarningPos(null)
+          }}
+        />
       )}
       {activeTrapPos && (
         <TrapEncounter

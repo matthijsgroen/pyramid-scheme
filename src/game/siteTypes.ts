@@ -1,11 +1,13 @@
 export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+export type ConsumableType = "bandage" | "oil" | "trapTool"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
   | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
   | { type: "tombKey"; keyId: string }
+  | { type: "consumable"; consumable: ConsumableType }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"

@@ -222,13 +222,21 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
 
-const pathEndToReward = (end: string, tier: string): TreasureReward | undefined => {
+const CONSUMABLE_THRESHOLDS = [5, 8] as const // <5 → bandage, <8 → oil, else → trapTool
+
+const pathEndToReward = (end: string, tier: string, index = 0): TreasureReward | undefined => {
   if (end === "mosaic") return { type: "mosaicPiece" }
   if (end === "fragment") {
     const symbols = TOMB_SYMBOLS[tier as Tier]
     return { type: "hieroglyphFragment", hieroglyphId: symbols[0] }
   }
-  return undefined // "treasure" | "consumable" = no specific endReward (consumable system in Phase 14)
+  if (end === "consumable") {
+    const roll = hashStr(`${tier}:consumable:${index}`) % 10
+    const consumable =
+      roll < CONSUMABLE_THRESHOLDS[0] ? "bandage" : roll < CONSUMABLE_THRESHOLDS[1] ? "oil" : "trapTool"
+    return { type: "consumable", consumable }
+  }
+  return undefined // "treasure" = no specific endReward
 }
 
 const buildSideSections = (
@@ -309,10 +317,11 @@ const buildSideSections = (
   // Declared sidePaths / hiddenPaths from DSL
   const jId = journeyId ?? ""
   const pIdx = pyramidIndex ?? 0
+  let consumableIdx = 0
   for (const entry of declaredSidePaths ?? []) {
     const count = pathCountForDensity(entry.density, jId, pIdx)
-    const endReward = pathEndToReward(entry.end, tier)
     for (let j = 0; j < count; j++) {
+      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,
@@ -324,8 +333,8 @@ const buildSideSections = (
   }
   for (const entry of declaredHiddenPaths ?? []) {
     const count = pathCountForDensity(entry.density, jId, pIdx)
-    const endReward = pathEndToReward(entry.end, tier)
     for (let j = 0; j < count; j++) {
+      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,

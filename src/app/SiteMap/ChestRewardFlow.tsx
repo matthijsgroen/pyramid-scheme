@@ -13,6 +13,9 @@ const rewardEmoji = (type: string) => {
   if (type === "hieroglyphFragment") return "𓂀"
   if (type === "tombKey") return "🗝"
   if (type === "hieroglyphs") return "𓂀"
+  if (type === "bandage") return "🩹"
+  if (type === "oil") return "🫙"
+  if (type === "trapTool") return "🔧"
   return "🔷"
 }
 
@@ -59,7 +62,14 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
         </div>
       )}
 
-      {reward.type === "hieroglyphFragment" ? (
+      {reward.type === "consumable" ? (
+        <LootPopup
+          isOpen={showLoot}
+          itemName={t(`chest.consumable.${reward.consumable}`)}
+          itemComponent={<span className="text-6xl">{rewardEmoji(reward.consumable)}</span>}
+          onDismiss={handleDismiss}
+        />
+      ) : reward.type === "hieroglyphFragment" ? (
         (() => {
           const item = getInventoryItemById(reward.hieroglyphId)
           const difficulty = getItemFirstLevel(reward.hieroglyphId)

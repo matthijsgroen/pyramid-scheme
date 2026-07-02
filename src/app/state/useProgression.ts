@@ -1,6 +1,9 @@
 import { useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { hieroglyphRequired } from "@/data/generatedWorld"
+import type { ConsumableType } from "@/game/siteTypes"
+
+type ConsumableInventory = { bandage: number; oil: number; trapTool: number }
 
 type ProgressionState = {
   // "hieroglyphId:pieceIndex" entries — inventory-as-truth for chest loot
@@ -12,6 +15,7 @@ type ProgressionState = {
   collectedMapPieces: Record<string, number>
   currentHealth: number // half-hearts
   maxHealth: number // half-hearts
+  consumables: ConsumableInventory
 }
 
 // First tomb of each tier is visible from the start; secondary tombs appear on first map piece
@@ -23,6 +27,8 @@ const AUTO_DISCOVERED_TOMBS = [
   "wizard_treasure_tomb",
 ]
 
+const CONSUMABLE_CAP = 2 // ponytail: packMule upgrade deferred to Phase 15
+
 const initialState: ProgressionState = {
   collectedFragments: [],
   tombKeys: {},
@@ -32,6 +38,7 @@ const initialState: ProgressionState = {
   collectedMapPieces: {},
   currentHealth: 6,
   maxHealth: 6,
+  consumables: { bandage: 0, oil: 0, trapTool: 0 },
 }
 
 export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
@@ -60,6 +67,10 @@ export type ProgressionAPI = {
   takeTrapDamage: (armorStacks: number) => void
   heal: (halfHearts: number) => void
   healToFull: () => void
+  consumables: ConsumableInventory
+  consumableCarryCap: number
+  addConsumable: (type: ConsumableType) => boolean // false if at cap
+  useConsumable: (type: ConsumableType) => void
 }
 
 export const useProgression = (): ProgressionAPI => {
@@ -136,6 +147,30 @@ export const useProgression = (): ProgressionAPI => {
           currentHealth: Math.min(prev.maxHealth ?? 6, (prev.currentHealth ?? 6) + halfHearts),
         })),
       healToFull: () => setState(prev => ({ ...prev, currentHealth: prev.maxHealth ?? 6 })),
+      consumables: state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 },
+      consumableCarryCap: CONSUMABLE_CAP,
+      addConsumable: type => {
+        const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
+        if (inv.bandage + inv.oil + inv.trapTool >= CONSUMABLE_CAP) return false
+        setState(prev => {
+          const c = prev.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
+          return { ...prev, consumables: { ...c, [type]: c[type] + 1 } }
+        })
+        return true
+      },
+      useConsumable: type =>
+        setState(prev => {
+          const c = prev.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
+          if (c[type] <= 0) return prev
+          const next = { ...c, [type]: c[type] - 1 }
+          const healed =
+            type === "bandage"
+              ? Math.min(prev.maxHealth ?? 6, (prev.currentHealth ?? 6) + 2)
+              : type === "oil"
+                ? (prev.maxHealth ?? 6)
+                : (prev.currentHealth ?? 6)
+          return { ...prev, consumables: next, currentHealth: healed }
+        }),
     }),
     [state, setState]
   )
