@@ -93,22 +93,13 @@ export const worldSpec = rules([
   journey("master_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
   journey("wizard_treasure_tomb_c").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
 
-  // ── Primary tombs: last floor drops a ward key (unlocks gated pyramid content) ──
-  journey("starter_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "starter_ward" } }),
-  journey("junior_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "junior_ward" } }),
-  journey("expert_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "expert_ward" } }),
-  journey("master_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "master_ward" } }),
-  journey("wizard_treasure_tomb").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "wizard_ward" } }),
-  // wizard_b drops its own key so wizard_c can be unlocked via a separate ward gate
-  journey("wizard_treasure_tomb_b").pyramid("last", { mainEndReward: { type: "tombKey", keyId: "wizard_b_ward" } }),
-
-  // ── Secondary tomb unlock chain: map pieces behind tier ward gates ──────────
-  // Requires the primary tomb's ward key to access — enforces tomb ordering.
+  // ── Secondary tomb unlock chain: map pieces behind location-key gates ───────
+  // Each secondary tomb is unlocked by the "location key" treasure (floor 2) of the preceding tomb.
   // 4 journeys × 1 piece each = 4 available per secondary tomb (piecesRequired ≤ 3).
   tier("expert").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", tombId: "expert_treasure_tomb" },
+        gate: { type: "tomb-key", wardKeyId: "expert_a_2" }, // Location key → Expert B
         endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
       },
     ],
@@ -116,7 +107,7 @@ export const worldSpec = rules([
   tier("master").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", tombId: "master_treasure_tomb" },
+        gate: { type: "tomb-key", wardKeyId: "master_a_2" }, // Location key → Master B
         endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
       },
     ],
@@ -124,7 +115,7 @@ export const worldSpec = rules([
   tier("wizard").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb" },
+        gate: { type: "tomb-key", wardKeyId: "wizard_a_2" }, // Location key → Wizard B
         endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
       },
     ],
@@ -132,7 +123,7 @@ export const worldSpec = rules([
   tier("wizard").pyramid("last-1", {
     sideSections: [
       {
-        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb_b" },
+        gate: { type: "tomb-key", wardKeyId: "wizard_b_2" }, // Location key → Wizard C
         endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
       },
     ],

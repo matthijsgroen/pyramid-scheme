@@ -8,11 +8,15 @@ export type PathEndHint = "fragment" | "treasure" | "mosaic" | "consumable"
 export type PathEntry = { density: SideIntensity; pathPuzzles: number; end: PathEndHint; trapped?: boolean }
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
-export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment" | "tombKey"
+export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
-// Structured gate — tomb-key references a tombId; resolver picks the ward key from that tomb's reward
-export type GateSpec = GateType | null | { type: "tomb-key"; tombId: string } | { type: "floor-key"; color?: KeyColor }
+// Structured gate — tomb-key uses wardKeyId (the perk treasure ID that the gate checks)
+export type GateSpec =
+  | GateType
+  | null
+  | { type: "tomb-key"; wardKeyId: string }
+  | { type: "floor-key"; color?: KeyColor }
 
 export type PuzzleFamily = "sumplete" | "tableau"
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer

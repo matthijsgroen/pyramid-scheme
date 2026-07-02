@@ -7,6 +7,7 @@ import {
   chestEveryFor,
   chestCountFor,
 } from "./data"
+import { TOMB_PERK_IDS, TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
 import { tableauLevels } from "../data/tableaus"
 import { computeFragmentAssignments } from "./fragmentAssigner"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
@@ -45,14 +46,6 @@ const SECONDARY_TOMBS: Record<string, string[]> = {
   wizard_treasure_tomb_b: ["wizard_treasure_tomb_c"],
 }
 
-// Ward key required by back-half pyramids of each tier (key comes from prev tier's tomb)
-const PREV_TIER: Partial<Record<string, string>> = {
-  junior: "starter",
-  expert: "junior",
-  master: "expert",
-  wizard: "master",
-}
-
 // ── Path puzzle scaling ───────────────────────────────────────────────────────
 
 const scalePP = (basePP: number, i: number, total: number): number => {
@@ -71,8 +64,6 @@ const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
       return { type: "mapPiece", tombId: `${tier}_treasure_tomb` }
     case "hieroglyphs":
       return { type: "hieroglyphs" }
-    case "tombKey":
-      return { type: "tombKey", keyId: `${tier}_ward` }
     case "hieroglyphFragment":
       return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
   }
@@ -84,16 +75,6 @@ const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   return spec as TreasureReward
 }
 
-// tombId → wardKeyId: primary tombs each yield a ward key on their last floor
-const TOMB_WARD_KEYS: Record<string, string> = {
-  starter_treasure_tomb: "starter_ward",
-  junior_treasure_tomb: "junior_ward",
-  expert_treasure_tomb: "expert_ward",
-  master_treasure_tomb: "master_ward",
-  wizard_treasure_tomb: "wizard_ward",
-  wizard_treasure_tomb_b: "wizard_b_ward",
-}
-
 // Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
 export const specToGate = (
   spec: GateSpec | undefined
@@ -101,9 +82,7 @@ export const specToGate = (
   if (spec == null) return undefined
   if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
   if (spec.type === "floor-key") return { type: "floor-key", color: spec.color ?? "blue" }
-  const wardKeyId = TOMB_WARD_KEYS[spec.tombId]
-  if (!wardKeyId) throw new Error(`[worldSpec] No ward key found for tombId "${spec.tombId}"`)
-  return { type: "tomb-key", wardKeyId }
+  return { type: "tomb-key", wardKeyId: spec.wardKeyId }
 }
 
 // ── Chest rewards ─────────────────────────────────────────────────────────────
@@ -263,13 +242,13 @@ const buildSideSections = (
   }
 
   if (hasWardGate && nextTier) {
-    const prevTierKey = PREV_TIER[tier]
-    if (prevTierKey) {
+    const wardKeyId = TIER_UNLOCK_PERK_ID[tier]
+    if (wardKeyId) {
       sections.push({
         pathPuzzles: 0,
         difficulty,
         end: "treasure",
-        gate: { type: "tomb-key", wardKeyId: `${prevTierKey}_ward` },
+        gate: { type: "tomb-key", wardKeyId },
       })
     }
   }
@@ -583,15 +562,15 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const difficulty: Difficulty = constraint.difficulty ?? "starter"
     const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
 
-    // Last floor always rewards the tomb's ward key so pyramid ward gates can be unlocked
-    const wardKeyId = TOMB_WARD_KEYS[tomb.id]
-    const lastFloorReward: TreasureReward | undefined = wardKeyId ? { type: "tombKey", keyId: wardKeyId } : undefined
+    const perkIds = TOMB_PERK_IDS[tomb.id] ?? []
 
     // Starter tombs have no crocodile puzzle (compareAmount=0 in old system)
     const hasCroc = tomb.tier !== "starter"
 
     const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => {
       const isLast = i === tomb.levelCount - 1
+      const perkId = perkIds[i]
+      const floorReward: TreasureReward | undefined = perkId ? { type: "tombKey", keyId: perkId } : undefined
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,
         chestEvery: 0,
@@ -601,7 +580,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         sideSections: [],
         puzzleFamily,
         ...(isLast && hasCroc ? { lastMainPuzzleFamily: "crocodile" as const } : {}),
-        ...(isLast && lastFloorReward ? { mainEndReward: lastFloorReward } : {}),
+        ...(floorReward ? { mainEndReward: floorReward } : {}),
       }
     })
 
@@ -796,10 +775,10 @@ const validateAndFixHieroglyphAvailability = (allConfigs: Record<string, SiteCon
       }
     }
 
-    // After completing this tomb, grant ward key and expand accessible tier
-    const wardKeyId = TOMB_WARD_KEYS[tomb.id]
-    if (wardKeyId) {
-      wardKeys.add(wardKeyId)
+    // After completing this tomb's first floor, the tier-unlock perk key is granted
+    const tierUnlockKey = TOMB_PERK_IDS[tomb.id]?.[0]
+    if (tierUnlockKey) {
+      wardKeys.add(tierUnlockKey)
       const nextTier = NEXT_TIER[tier]
       if (nextTier) accessibleTierMax = TIER_INDEX[nextTier]
     }

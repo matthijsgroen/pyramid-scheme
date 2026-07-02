@@ -190,21 +190,15 @@ describe("specToGate", () => {
     expect(specToGate("tomb-key")).toBeUndefined()
   })
 
-  it("structured tombId resolves to wardKeyId for known tombs", () => {
-    expect(specToGate({ type: "tomb-key", tombId: "expert_treasure_tomb" })).toEqual({
+  it("structured wardKeyId passes through to runtime gate", () => {
+    expect(specToGate({ type: "tomb-key", wardKeyId: "expert_a_2" })).toEqual({
       type: "tomb-key",
-      wardKeyId: "expert_ward",
+      wardKeyId: "expert_a_2",
     })
-    expect(specToGate({ type: "tomb-key", tombId: "wizard_treasure_tomb_b" })).toEqual({
+    expect(specToGate({ type: "tomb-key", wardKeyId: "wizard_b_2" })).toEqual({
       type: "tomb-key",
-      wardKeyId: "wizard_b_ward",
+      wardKeyId: "wizard_b_2",
     })
-  })
-
-  it("throws for unknown tombId", () => {
-    expect(() => specToGate({ type: "tomb-key", tombId: "nonexistent_tomb" })).toThrow(
-      'No ward key found for tombId "nonexistent_tomb"'
-    )
   })
 })
 

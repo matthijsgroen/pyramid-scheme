@@ -36,13 +36,13 @@ export const PYRAMID_STRUCTURES: PyramidStructure[] = [
 ]
 
 export const TOMB_STRUCTURES: TombStructure[] = [
-  { id: "starter_treasure_tomb", tier: "starter", levelCount: 2 },
-  { id: "junior_treasure_tomb", tier: "junior", levelCount: 3 },
+  { id: "starter_treasure_tomb", tier: "starter", levelCount: 4 },
+  { id: "junior_treasure_tomb", tier: "junior", levelCount: 6 },
   { id: "expert_treasure_tomb", tier: "expert", levelCount: 4 },
   { id: "expert_treasure_tomb_b", tier: "expert", levelCount: 4 },
   { id: "master_treasure_tomb", tier: "master", levelCount: 5 },
   { id: "master_treasure_tomb_b", tier: "master", levelCount: 5 },
-  { id: "wizard_treasure_tomb", tier: "wizard", levelCount: 6 },
-  { id: "wizard_treasure_tomb_b", tier: "wizard", levelCount: 6 },
-  { id: "wizard_treasure_tomb_c", tier: "wizard", levelCount: 6 },
+  { id: "wizard_treasure_tomb", tier: "wizard", levelCount: 4 },
+  { id: "wizard_treasure_tomb_b", tier: "wizard", levelCount: 4 },
+  { id: "wizard_treasure_tomb_c", tier: "wizard", levelCount: 4 },
 ]
