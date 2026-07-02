@@ -1,8 +1,16 @@
 import type { FC, PropsWithChildren } from "react"
-import { useTranslation } from "react-i18next"
 import clsx from "clsx"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/DifficultyPill"
+
+type JourneyCardLabels = {
+  suggestedExpedition: string
+  length: string
+  chambers: string
+  progressLevel: string
+  timesPlural: string
+  timesSingular: string
+}
 
 type JourneyCardProps = {
   journey: TranslatedJourney
@@ -14,6 +22,8 @@ type JourneyCardProps = {
   showDetails?: boolean
   disabled?: boolean
   suggested?: boolean
+  lang?: string
+  labels: JourneyCardLabels
   onClick: (journey: TranslatedJourney) => void
 }
 
@@ -28,9 +38,10 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
   disabled = false,
   hasMapPiece = false,
   suggested = false,
+  lang,
+  labels,
   onClick,
 }) => {
-  const { t, i18n } = useTranslation("common")
 
   const timeEmojis = {
     morning: "🌅",
@@ -84,7 +95,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
         })}
       >
         {suggested && (
-          <div className="mb-1 animate-pulse text-xs font-bold text-blue-600">★ {t("ui.suggestedExpedition")}</div>
+          <div className="mb-1 animate-pulse text-xs font-bold text-blue-600">★ {labels.suggestedExpedition}</div>
         )}
         <div className="mb-2">
           <div className="float-right ml-2">
@@ -96,7 +107,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
               "text-gray-700": !disabled && isTreasureTomb,
               "text-amber-900": !disabled && !isTreasureTomb,
             })}
-            lang={i18n.language}
+            lang={lang}
           >
             {journey.type === "pyramid" && timeEmojis[journey.background.time]} {journey.name}
           </span>
@@ -111,16 +122,16 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
           })}
         >
           <span className="flex-shrink-0">
-            {t("ui.length")}: {journey.lengthLabel}
+            {labels.length}: {journey.lengthLabel}
           </span>
           {journey.type === "treasure_tomb" && (
             <span className="flex-shrink-0">
-              {t("ui.chambers")}: {journey.levelCount}
+              {labels.chambers}: {journey.levelCount}
             </span>
           )}
           {progressLevelNr > 0 && (
             <span className="flex-shrink-0 font-bold">
-              {t("ui.progressLevel")}:{" "}
+              {labels.progressLevel}:{" "}
               {Math.min(Math.max(Math.round(((progressLevelNr - 1) / journey.levelCount) * 100), 0), 100)}%
             </span>
           )}
@@ -134,7 +145,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
                   <span className="inline-flex size-5 scale-75 items-center justify-center rounded-full bg-green-800 p-0.5 text-xs text-white">
                     ✔︎
                   </span>
-                  : {completionCount} {completionCount > 1 ? t("ui.timesPlural") : t("ui.timesSingular")}
+                  : {completionCount} {completionCount > 1 ? labels.timesPlural : labels.timesSingular}
                 </>
               )}
             </span>

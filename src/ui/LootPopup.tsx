@@ -1,6 +1,5 @@
 import { type FC, type ReactNode, useEffect, useRef, useState } from "react"
 import clsx from "clsx"
-import { useTranslation } from "react-i18next"
 
 type LootPopupProps = {
   isOpen: boolean
@@ -10,6 +9,8 @@ type LootPopupProps = {
   itemComponent: ReactNode
   onDismiss: () => void
   rarity?: "common" | "rare" | "epic" | "legendary"
+  youFoundLabel: string
+  clickToContinueLabel: string
 }
 
 export const LootPopup: FC<LootPopupProps> = ({
@@ -20,8 +21,9 @@ export const LootPopup: FC<LootPopupProps> = ({
   itemComponent,
   onDismiss,
   rarity = "common",
+  youFoundLabel,
+  clickToContinueLabel,
 }) => {
-  const { t } = useTranslation("common")
   const [showContent, setShowContent] = useState(false)
   const [animationPhase, setAnimationPhase] = useState<"hidden" | "burst" | "reveal" | "visible">("hidden")
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -159,7 +161,7 @@ export const LootPopup: FC<LootPopupProps> = ({
                   "scale-100 opacity-100": animationPhase === "visible",
                 })}
               >
-                {t("loot.youFound")}
+                {youFoundLabel}
               </h2>
 
               {/* Item display area */}
@@ -218,7 +220,7 @@ export const LootPopup: FC<LootPopupProps> = ({
 
               {/* Dismiss instruction */}
               {animationPhase === "visible" && (
-                <p className={clsx("animate-pulse text-sm font-medium", colors.text)}>{t("loot.clickToContinue")}</p>
+                <p className={clsx("animate-pulse text-sm font-medium", colors.text)}>{clickToContinueLabel}</p>
               )}
             </div>
           )}

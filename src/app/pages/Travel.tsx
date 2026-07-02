@@ -18,7 +18,7 @@ export const TravelPage: FC<{
   startGame: () => void
   pendingHieroglyphSearch?: Difficulty | null
 }> = ({ startGame, pendingHieroglyphSearch }) => {
-  const { t } = useTranslation("common")
+  const { t, i18n } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
   const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney } = useJourneys()
@@ -251,6 +251,13 @@ export const TravelPage: FC<{
                         piecesFound={piecesFound}
                         name={journey.name}
                         piecesNeeded={piecesNeeded}
+                        labels={{
+                          treasureTomb: t("ui.treasureTomb"),
+                          requiresMapPieces: t("ui.requiresMapPieces"),
+                          mapPieces: t("ui.mapPieces"),
+                          collected: t("ui.collected"),
+                          completeExpeditionsToUnlock: t("ui.completeExpeditionsToUnlock"),
+                        }}
                       />
                     )
                   }
@@ -270,6 +277,15 @@ export const TravelPage: FC<{
                       showAnimation={showJourneySelection}
                       hasMapPiece={hasMapPiece}
                       suggested={isSuggested}
+                      lang={i18n.language}
+                      labels={{
+                        suggestedExpedition: t("ui.suggestedExpedition"),
+                        length: t("ui.length"),
+                        chambers: t("ui.chambers"),
+                        progressLevel: t("ui.progressLevel"),
+                        timesPlural: t("ui.timesPlural"),
+                        timesSingular: t("ui.timesSingular"),
+                      }}
                       onClick={handleJourneySelect}
                     >
                       {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (

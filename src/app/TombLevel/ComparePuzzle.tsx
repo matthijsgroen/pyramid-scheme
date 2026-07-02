@@ -216,6 +216,8 @@ export const ComparePuzzle: FC<{
             itemComponent={loot.symbol}
             rarity={"legendary"}
             onDismiss={handleLootDismiss}
+            youFoundLabel={t("loot.youFound")}
+            clickToContinueLabel={t("loot.clickToContinue")}
           />
         </>
       )}

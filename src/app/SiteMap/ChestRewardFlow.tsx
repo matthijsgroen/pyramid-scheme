@@ -68,6 +68,8 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
           itemName={t(`chest.consumable.${reward.consumable}`)}
           itemComponent={<span className="text-6xl">{rewardEmoji(reward.consumable)}</span>}
           onDismiss={handleDismiss}
+          youFoundLabel={t("loot.youFound")}
+          clickToContinueLabel={t("loot.clickToContinue")}
         />
       ) : reward.type === "hieroglyphFragment" ? (
         (() => {
@@ -94,6 +96,8 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
                 )
               }
               onDismiss={handleDismiss}
+              youFoundLabel={t("loot.youFound")}
+              clickToContinueLabel={t("loot.clickToContinue")}
             />
           )
         })()
@@ -104,6 +108,8 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
           itemDescription={t(`chest.${reward.type}Description`, "") || undefined}
           itemComponent={<span className="text-6xl">{rewardEmoji(reward.type)}</span>}
           onDismiss={handleDismiss}
+          youFoundLabel={t("loot.youFound")}
+          clickToContinueLabel={t("loot.clickToContinue")}
         />
       )}
     </>

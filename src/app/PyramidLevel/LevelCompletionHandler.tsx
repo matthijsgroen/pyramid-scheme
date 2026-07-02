@@ -124,6 +124,8 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
             itemComponent={loot.itemComponent}
             rarity={loot.rarity || "common"}
             onDismiss={handleLootDismiss}
+            youFoundLabel={t("loot.youFound")}
+            clickToContinueLabel={t("loot.clickToContinue")}
           />
         </>
       )}
