@@ -29,6 +29,15 @@ Log an entry when the change is **visible to the player**:
 
 When in doubt: check whether `package.json` version changed since the bug was introduced. If yes → log it. If no → skip it.
 
+## Language
+
+Write for the player, not the developer. Entries must be readable by someone who has never seen the code.
+
+- **No technical terms**: no component names, hook names, file paths, refactors, DSL, or architecture jargon.
+- **Describe the experience**: what does the player see, feel, or do differently? Write that.
+- **Bad**: "Add `useDetector` hook with compass and consumable modes to `DetectorPanel`."
+- **Good**: "A compass tool shows which pyramid levels still contain pieces of a hieroglyph you are looking for."
+
 ## Format reminder
 
 ```markdown
