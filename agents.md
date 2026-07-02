@@ -180,6 +180,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | [`docs/instructions/architecture.md`](docs/instructions/architecture.md) | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
 | [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file |
 | [`docs/instructions/testing.md`](docs/instructions/testing.md) | Writing, reviewing, or deciding whether to add tests for any code |
+| [`docs/instructions/changelog.md`](docs/instructions/changelog.md) | Adding any user-facing change — to decide what belongs in `CHANGELOG.md` |
 
 ---
 
