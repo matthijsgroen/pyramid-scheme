@@ -99,11 +99,14 @@ export const specToGate = (
 
 // ── Chest rewards ─────────────────────────────────────────────────────────────
 
+const DEFAULT_CONSUMABLE_RATES = { bandage: 3, oil: 1, trapTool: 1 }
+
 const buildChestRewards = (
   journeyId: string,
   slotOffset: number,
   pathPuzzles: number,
-  assignments: Assignment[]
+  assignments: Assignment[],
+  rates: { bandage: number; oil: number; trapTool: number } = DEFAULT_CONSUMABLE_RATES
 ): TreasureReward[] => {
   const count = chestCountFor(pathPuzzles)
   const slots: TreasureReward[] = Array(count).fill(null)
@@ -113,11 +116,12 @@ const buildChestRewards = (
       slots[localIdx] = { type: "hieroglyphFragment", hieroglyphId: a.hieroglyphId }
     }
   }
-  // Fill any unassigned slots with consumables (deterministic by journey + absolute slot index)
+  const total = rates.bandage + rates.oil + rates.trapTool
   for (let i = 0; i < count; i++) {
     if (!slots[i]) {
-      const roll = hashStr(`${journeyId}:consumable:${slotOffset + i}`) % 10
-      const consumable: ConsumableType = roll < 4 ? "bandage" : roll < 7 ? "oil" : "trapTool"
+      const roll = hashStr(`${journeyId}:consumable:${slotOffset + i}`) % total
+      const consumable: ConsumableType =
+        roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
       slots[i] = { type: "consumable", consumable }
     }
   }
@@ -459,7 +463,13 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
           const isLast = fi === constraint.floors.length - 1
           const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
           const floorSideSections = buildSideSections(tier, floorDiff, false, false, null, floorSections, 0, floorPP)
-          const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, assignments)
+          const floorChests = buildChestRewards(
+            journeyId,
+            chestOffset,
+            floorPP,
+            assignments,
+            constraint.consumableRates
+          )
           chestOffset += chestCountFor(floorPP)
           floorConfigs.push({
             pathPuzzles: floorPP,
@@ -492,7 +502,7 @@ const buildSiteConfigs = (plan: PyramidPlan[], assignments: Assignment[]): Recor
           constraint.sidePaths,
           constraint.hiddenPaths
         )
-        const chestRewards = buildChestRewards(journeyId, chestOffset, pp, assignments)
+        const chestRewards = buildChestRewards(journeyId, chestOffset, pp, assignments, constraint.consumableRates)
         chestOffset += chestCountFor(pp)
         const consumableDensity = constraint.consumableDensity
         pyramidConfigs.push([

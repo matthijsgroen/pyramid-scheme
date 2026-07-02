@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1094406871
+export const worldContentHash = 444354150
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -3508,7 +3508,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 1 },
         chestRewards: [
-          { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "bandage" },
           { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 2 },
           { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 3 },
           { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 5 },
@@ -3608,7 +3608,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 5 },
           { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 0 },
           { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 7 },
-          { type: "consumable", consumable: "bandage" },
+          { type: "consumable", consumable: "oil" },
           { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 13 },
         ],
       },
@@ -3654,7 +3654,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 17 },
         chestRewards: [
-          { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "bandage" },
           { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 2 },
           { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 1 },
         ],
@@ -3792,8 +3792,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 4 },
           { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 5 },
-          { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "trapTool" },
         ],
       },
     ],
@@ -3838,11 +3838,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 4 },
         chestRewards: [
-          { type: "consumable", consumable: "oil" },
-          { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "bandage" },
+          { type: "consumable", consumable: "bandage" },
           { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 6 },
-          { type: "consumable", consumable: "trapTool" },
-          { type: "consumable", consumable: "trapTool" },
+          { type: "consumable", consumable: "bandage" },
+          { type: "consumable", consumable: "oil" },
         ],
       },
     ],
@@ -4124,7 +4124,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 6 },
           { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 44 },
           { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 9 },
-          { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "bandage" },
         ],
       },
     ],
@@ -4169,7 +4169,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 48 },
         chestRewards: [
-          { type: "consumable", consumable: "trapTool" },
+          { type: "consumable", consumable: "bandage" },
           { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 2 },
           { type: "consumable", consumable: "trapTool" },
           { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 2 },
@@ -4228,7 +4228,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 2 },
           { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 4 },
           { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 4 },
-          { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "bandage" },
         ],
       },
     ],
@@ -4318,7 +4318,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 8 },
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 7 },
-          { type: "consumable", consumable: "trapTool" },
+          { type: "consumable", consumable: "oil" },
           { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 9 },
           { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 8 },
         ],
@@ -4524,7 +4524,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chestRewards: [
           { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 5 },
           { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 9 },
-          { type: "consumable", consumable: "oil" },
+          { type: "consumable", consumable: "bandage" },
           { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 3 },
           { type: "consumable", consumable: "trapTool" },
         ],

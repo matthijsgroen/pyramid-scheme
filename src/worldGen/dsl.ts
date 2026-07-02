@@ -55,6 +55,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   hiddenPaths?: PathEntry[]
   /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
   consumableDensity?: number
+  /** Integer weights for consumable type selection. Higher = more frequent. */
+  consumableRates?: { bandage: number; oil: number; trapTool: number }
 }
 
 export type PyramidConstraint = {
@@ -85,6 +87,8 @@ export type PyramidConstraint = {
   hiddenPaths?: PathEntry[]
   /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
   consumableDensity?: number
+  /** Integer weights for consumable type selection. Higher = more frequent. */
+  consumableRates?: { bandage: number; oil: number; trapTool: number }
   /** Number of floors for tomb journeys. Overrides the value in TOMB_STRUCTURES. */
   levelCount?: number
 }

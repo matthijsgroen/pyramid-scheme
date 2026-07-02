@@ -20,7 +20,7 @@ export const worldSpec = rules([
   // ── Defaults ──────────────────────────────────────────────────────────────
   // sidePaths/hiddenPaths: declared density-based side paths; auto-distributor handles mosaic paths.
   // sideSections: [...] = explicit sections (ward-gated map pieces, etc.); can be combined.
-  global({ floorDepth: 1 }),
+  global({ floorDepth: 1, consumableRates: { bandage: 3, oil: 1, trapTool: 1 } }),
 
   // ── Difficulty + side paths per tier ─────────────────────────────────────
   tier("starter", { difficulty: "starter" }),
