@@ -1,7 +1,7 @@
 # Expedition Redesign — Implementation Plan
 
 Companion to: `EXPEDITION_REDESIGN.md`, `PUZZLE_FAMILIES.md`, `docs/game-loop.md`, `docs/pyramid-interior-design.md`  
-Status: active plan · updated 2026-06-30
+Status: active plan · updated 2026-07-02
 
 ---
 
@@ -551,7 +551,7 @@ One-shot flags stored in `useProgression` (or a dedicated `useTutorials` slice) 
 | 10 | Journey map + hub + fast-travel + new-paths badge | ⏭ | WorldMapView/JourneyMapView/NewPathsBadge deferred — Travel page map already serves as the hub; new-paths badge and fast-travel not yet needed |
 | 11 | Health system | ✅ | `currentHealth`/`maxHealth` in `useProgression`, `<HealthDisplay />`, `trapDamage()`, `takeTrapDamage`/`heal`/`healToFull`/`canAttemptTrap` helpers |
 | 12 | Trap plugin system + arithmetic reflex | ✅ | `trapPlugin.ts`, `trapRegistry.ts`, `trapConfig.ts`, `ArithmeticReflex/plugin.tsx`, `<TrapEncounter />`; bug fix: zero timeLimit guard + done dep removed from effect |
-| 13 | Trap corridors + hidden paths | 🔜 | `trapped`/`hidden` edge attrs, `warning` node type, encounter flow in `SiteMapScreen`, `markTrapDisabled` |
-| 14 | Consumables | 🔜 | `consumables` state, carry cap, chest delivery, `<ConsumableBar />`, skipped-chest tracking |
-| 15 | Tomb treasure perks + detector system | 🔜 | `treasurePerks.ts`, perk state, `useDetector`, `<DetectorPanel />`, Scribe's Eye annotations, old `TreasureEffects` removal |
+| 13 | Trap corridors + hidden paths | ✅ | `trapped`/`hidden` edge attrs, `"trap"` RoomType, encounter flow in `SiteMapScreen`, `TrapWarningScreen`; trapped paths authored in worldSpec; hidden paths in generatedWorld |
+| 14 | Consumables | ✅ | `consumables` state, carry cap, `<ConsumableBar />`, `<ChestRewardFlow />`, skipped-chest tracking; `consumableDensity` in worldSpec |
+| 15 | Tomb treasure perks + detector system | ✅ | `treasurePerks.ts`, perk state + `applyTreasurePerk` in `useProgression`, `useDetector.ts`, `<DetectorPanel />`, Scribe's Eye in `TombTableau`, `TreasureEffects` removed |
 | 16 | Introductions & onboarding | 🔜 | `seenTutorials` state, first-encounter overlays for puzzles, traps, consumables, detector, hidden passages, ward keys, health, map pieces, fragments |
