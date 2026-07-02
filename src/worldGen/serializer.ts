@@ -114,11 +114,11 @@ export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
     })
     .join(",\n")
 
-  // Use actual placed counts as required — never expect more fragments than exist in the world.
-  // The matrix in data.ts is the aspirational max; placed count is the real target.
+  // Use the unlock-required count (HIEROGLYPH_REQUIRED), capped at how many are actually placed
+  // so we never ask players to find more fragments than exist in the world.
   const placed = countPlacedFragments(configs)
   const hieroglyphRequired = Object.keys(HIEROGLYPH_REQUIRED)
-    .map(id => `  "${id}": ${placed.get(id) ?? 1}`)
+    .map(id => `  "${id}": ${Math.min(placed.get(id) ?? 1, HIEROGLYPH_REQUIRED[id] ?? 1)}`)
     .join(",\n")
 
   // Hash of all site config entries — changes whenever world content is regenerated.
