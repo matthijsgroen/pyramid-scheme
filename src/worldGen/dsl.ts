@@ -11,11 +11,11 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
-// Structured gate — tomb-key uses wardKeyId (the perk treasure ID that the gate checks)
+// Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
 export type GateSpec =
   | GateType
   | null
-  | { type: "tomb-key"; wardKeyId: string }
+  | { type: "tomb-key"; tombId: string; index: number }
   | { type: "floor-key"; color?: KeyColor }
 
 export type PuzzleFamily = "sumplete" | "tableau"
@@ -23,28 +23,28 @@ export type Theme = string // e.g. "desert", "underwater" — visual hint to ren
 
 export type PyramidSelector = number | "first" | "last" | "middle" | `${number}-${number}` | `last-${number}`
 
-export type SideSectionConstraint = {
+export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
-  endReward?: RewardSpec
-  sideSections?: SideSectionConstraint[]
+  endReward?: RewardSpec | TExtra
+  sideSections?: SideSectionConstraint<TExtra>[]
 }
 
-export type FloorConstraint = {
+export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
-  mainEndReward?: RewardHint
-  chestReward?: RewardHint
+  mainEndReward?: RewardHint | TExtra
+  chestReward?: RewardHint | TExtra
   /**
    * Side paths for this pyramid.
    * - SideIntensity | number: that many auto mosaic-piece paths, no explicit sections.
    * - SideSectionConstraint[]: explicit sections; auto-distributor still appends mosaic paths.
    * - undefined: auto-distributor decides.
    */
-  sideSections?: SideIntensity | number | SideSectionConstraint[]
+  sideSections?: SideIntensity | number | SideSectionConstraint<TExtra>[]
   /** Fraction of auto side paths gated with a floor key. "dense" = all gated. */
   keyDensity?: SideIntensity
   /** How many distinct key colors to use (1–5). Fewer colors → one key opens more doors. */
@@ -85,6 +85,13 @@ export type PyramidConstraint = {
   hiddenPaths?: PathEntry[]
   /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
   consumableDensity?: number
+  /** Number of floors for tomb journeys. Overrides the value in TOMB_STRUCTURES. */
+  levelCount?: number
+}
+
+/** Tomb journey constraint — extends PyramidConstraint with explicit authored floor layouts. */
+export type TombConstraint = Omit<PyramidConstraint, "floors"> & {
+  floors?: FloorConstraint<"tombTreasure">[]
 }
 
 // ── Rule representation ───────────────────────────────────────────────────────
@@ -101,7 +108,7 @@ export type RuleScope =
   | { level: "tier-pyramid-floor"; tier: Tier; pyramid: PyramidSelector; floor: number }
   | { level: "journey-pyramid-floor"; journey: string; pyramid: PyramidSelector; floor: number }
 
-export type Rule = { scope: RuleScope; constraints: PyramidConstraint | FloorConstraint }
+export type Rule = { scope: RuleScope; constraints: PyramidConstraint | TombConstraint | FloorConstraint }
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
@@ -221,6 +228,10 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "journey", journey: id }, c),
   } as JourneyScopeBuilder
+}
+
+export function tomb(id: string, c: TombConstraint): Rule {
+  return { scope: { level: "journey", journey: id }, constraints: c }
 }
 
 export const rules = (list: Rule[]): Rule[] => list

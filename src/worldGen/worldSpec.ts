@@ -1,4 +1,4 @@
-import { global, tier, journey, rules } from "./dsl"
+import { global, tier, tomb, rules } from "./dsl"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mosaicPieceRewards: 298 = number of unique journeyId:levelIndex steps in mosaicPieces.generated.ts
@@ -77,21 +77,110 @@ export const worldSpec = rules([
   // First pyramid is the map piece entry-point for the starter tomb.
   tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
 
-  // ── Tomb journeys: tableau puzzles, one floor per levelCount ──────────────
-  journey("starter_treasure_tomb", { puzzleFamily: "tableau", difficulty: "starter" }),
-  journey("junior_treasure_tomb", { puzzleFamily: "tableau", difficulty: "junior" }),
-  journey("expert_treasure_tomb", { puzzleFamily: "tableau", difficulty: "expert" }),
-  journey("expert_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "expert" }),
-  journey("master_treasure_tomb", { puzzleFamily: "tableau", difficulty: "master" }),
-  journey("master_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "master" }),
-  journey("wizard_treasure_tomb", { puzzleFamily: "tableau", difficulty: "wizard" }),
-  journey("wizard_treasure_tomb_b", { puzzleFamily: "tableau", difficulty: "wizard" }),
-  journey("wizard_treasure_tomb_c", { puzzleFamily: "tableau", difficulty: "wizard" }),
-
-  // ── Secondary tombs: override tier "last → mosaicPiece" rule (tombs don't give mosaic) ──
-  journey("expert_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
-  journey("master_treasure_tomb_b").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
-  journey("wizard_treasure_tomb_c").pyramid("last", { mainEndReward: "hieroglyphFragment" }),
+  // ── Tomb journeys: tableau puzzles, one tombTreasure per floor ──────────────
+  tomb("starter_treasure_tomb", {
+    puzzleFamily: "tableau",
+    difficulty: "starter",
+    levelCount: 4,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("junior_treasure_tomb", {
+    puzzleFamily: "tableau",
+    difficulty: "junior",
+    levelCount: 6,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("expert_treasure_tomb", {
+    puzzleFamily: "tableau",
+    difficulty: "expert",
+    levelCount: 4,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("expert_treasure_tomb_b", {
+    puzzleFamily: "tableau",
+    difficulty: "expert",
+    levelCount: 4,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("master_treasure_tomb", {
+    puzzleFamily: "tableau",
+    difficulty: "master",
+    levelCount: 5,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("master_treasure_tomb_b", {
+    puzzleFamily: "tableau",
+    difficulty: "master",
+    levelCount: 5,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("wizard_treasure_tomb", {
+    puzzleFamily: "tableau",
+    difficulty: "wizard",
+    levelCount: 4,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("wizard_treasure_tomb_b", {
+    puzzleFamily: "tableau",
+    difficulty: "wizard",
+    levelCount: 4,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
+  tomb("wizard_treasure_tomb_c", {
+    puzzleFamily: "tableau",
+    difficulty: "wizard",
+    levelCount: 4,
+    floors: [
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+      { mainEndReward: "tombTreasure" },
+    ],
+  }),
 
   // ── Secondary tomb unlock chain: map pieces behind location-key gates ───────
   // Each secondary tomb is unlocked by the "location key" treasure (floor 2) of the preceding tomb.
@@ -99,7 +188,7 @@ export const worldSpec = rules([
   tier("expert").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "expert_a_2" }, // Location key → Expert B
+        gate: { type: "tomb-key", tombId: "expert_treasure_tomb", index: 1 }, // Location key → Expert B
         endReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
       },
     ],
@@ -107,7 +196,7 @@ export const worldSpec = rules([
   tier("master").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "master_a_2" }, // Location key → Master B
+        gate: { type: "tomb-key", tombId: "master_treasure_tomb", index: 1 }, // Location key → Master B
         endReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
       },
     ],
@@ -115,7 +204,7 @@ export const worldSpec = rules([
   tier("wizard").pyramid("last", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "wizard_a_2" }, // Location key → Wizard B
+        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb", index: 1 }, // Location key → Wizard B
         endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
       },
     ],
@@ -123,7 +212,7 @@ export const worldSpec = rules([
   tier("wizard").pyramid("last-1", {
     sideSections: [
       {
-        gate: { type: "tomb-key", wardKeyId: "wizard_b_2" }, // Location key → Wizard C
+        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb_b", index: 1 }, // Location key → Wizard C
         endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
       },
     ],

@@ -17,8 +17,21 @@ import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
+import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+const errors = validateWorldSpec()
+if (errors.length > 0) {
+  console.error("✗ World spec validation failed:")
+  errors.forEach(e => console.error(`  ${e.tombId}: ${e.message}`))
+  process.exit(1)
+}
+
+if (process.argv.includes("--validate-only")) {
+  console.log("✓ World spec valid")
+  process.exit(0)
+}
 
 const configs = buildConfigs()
 printStats(configs)

@@ -190,15 +190,19 @@ describe("specToGate", () => {
     expect(specToGate("tomb-key")).toBeUndefined()
   })
 
-  it("structured wardKeyId passes through to runtime gate", () => {
-    expect(specToGate({ type: "tomb-key", wardKeyId: "expert_a_2" })).toEqual({
+  it("structured tombId+index resolves to runtime wardKeyId", () => {
+    expect(specToGate({ type: "tomb-key", tombId: "expert_treasure_tomb", index: 1 })).toEqual({
       type: "tomb-key",
       wardKeyId: "expert_a_2",
     })
-    expect(specToGate({ type: "tomb-key", wardKeyId: "wizard_b_2" })).toEqual({
+    expect(specToGate({ type: "tomb-key", tombId: "wizard_treasure_tomb_b", index: 1 })).toEqual({
       type: "tomb-key",
       wardKeyId: "wizard_b_2",
     })
+  })
+
+  it("out-of-bounds index → undefined", () => {
+    expect(specToGate({ type: "tomb-key", tombId: "starter_treasure_tomb", index: 99 })).toBeUndefined()
   })
 })
 

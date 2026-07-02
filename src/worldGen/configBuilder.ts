@@ -15,6 +15,7 @@ import type { Provenance } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "./worldSpec"
 import type {
   PyramidConstraint,
+  FloorConstraint,
   RewardHint,
   RewardSpec,
   GateSpec,
@@ -82,7 +83,9 @@ export const specToGate = (
   if (spec == null) return undefined
   if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
   if (spec.type === "floor-key") return { type: "floor-key", color: spec.color ?? "blue" }
-  return { type: "tomb-key", wardKeyId: spec.wardKeyId }
+  const wardKeyId = TOMB_PERK_IDS[spec.tombId]?.[spec.index]
+  if (!wardKeyId) return undefined
+  return { type: "tomb-key", wardKeyId }
 }
 
 // ── Chest rewards ─────────────────────────────────────────────────────────────
@@ -567,20 +570,55 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     // Starter tombs have no crocodile puzzle (compareAmount=0 in old system)
     const hasCroc = tomb.tier !== "starter"
 
-    const floors: SiteConfig = Array.from({ length: tomb.levelCount }, (_, i) => {
-      const isLast = i === tomb.levelCount - 1
-      const perkId = perkIds[i]
-      const floorReward: TreasureReward | undefined = perkId ? { type: "tombKey", keyId: perkId } : undefined
+    const levelCount = constraint.levelCount ?? tomb.levelCount
+    const authoredFloors = constraint.floors as FloorConstraint<"tombTreasure">[] | undefined
+    let perkIndex = 0
+
+    const resolveTombReward = (reward: string | undefined): TreasureReward | undefined => {
+      if (reward === "tombTreasure") {
+        const perkId = perkIds[perkIndex++]
+        return perkId ? { type: "tombKey", keyId: perkId } : undefined
+      }
+      if (reward) return hintToReward(reward as RewardHint, tomb.tier as Tier)
+      return undefined
+    }
+
+    const buildSideSections = (
+      sections: SideSectionConstraint<"tombTreasure">[]
+    ): SideSection[] =>
+      sections.map(s => ({
+        pathPuzzles: typeof s.pathPuzzles === "number" ? s.pathPuzzles : 0,
+        difficulty,
+        end: "treasure" as const,
+        ...(specToGate(s.gate) ? { gate: specToGate(s.gate) } : {}),
+        ...(s.endReward !== undefined ? { endReward: resolveTombReward(s.endReward as string) } : {}),
+        ...(Array.isArray(s.sideSections) && s.sideSections.length > 0
+          ? { sideSections: buildSideSections(s.sideSections as SideSectionConstraint<"tombTreasure">[]) }
+          : {}),
+      }))
+
+    const floors: SiteConfig = Array.from({ length: levelCount }, (_, i) => {
+      const isLast = i === levelCount - 1
+      const authored = authoredFloors?.[i]
+
+      const mainEndReward: TreasureReward | undefined = authored
+        ? resolveTombReward(authored.mainEndReward as string | undefined)
+        : (() => { const perkId = perkIds[perkIndex++]; return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined })()
+
+      const sideSections: SideSection[] = authored && Array.isArray(authored.sideSections)
+        ? buildSideSections(authored.sideSections as SideSectionConstraint<"tombTreasure">[])
+        : []
+
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,
         chestEvery: 0,
         difficulty,
         end: "treasure" as const,
         exitOrStaircase: isLast ? ("exit" as const) : ("staircase" as const),
-        sideSections: [],
+        sideSections,
         puzzleFamily,
         ...(isLast && hasCroc ? { lastMainPuzzleFamily: "crocodile" as const } : {}),
-        ...(floorReward ? { mainEndReward: floorReward } : {}),
+        ...(mainEndReward ? { mainEndReward } : {}),
       }
     })
 
