@@ -94,3 +94,20 @@ export type ValidationResult = { valid: true } | { valid: false; reasons: Valida
 export type AssemblerReason = ValidationReason | { type: "noUngatedSectionForKey" } | { type: "layoutNotFound" }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
+
+// ── Detector types ────────────────────────────────────────────────────────────
+
+export type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
+
+export type CompassResult = {
+  journeyId: string
+  levelIdx: number
+  floorIdx: number
+  hieroglyphId: string
+  pieceIndex: number
+}
+
+export type ConsumableResult = {
+  journeyId: string
+  edgeId: string
+}

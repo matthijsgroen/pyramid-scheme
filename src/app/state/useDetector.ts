@@ -1,23 +1,8 @@
 import { useMemo, useState } from "react"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import type { FloorConfig } from "@/game/siteTypes"
+import type { FloorConfig, DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 import type { ProgressionAPI } from "./useProgression"
 import type { JourneyAPI } from "./useJourneys"
-
-export type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
-
-export type CompassResult = {
-  journeyId: string
-  levelIdx: number
-  floorIdx: number
-  hieroglyphId: string
-  pieceIndex: number
-}
-
-export type ConsumableResult = {
-  journeyId: string
-  edgeId: string
-}
 
 export type DetectorAPI = {
   activeDetector: DetectorMode

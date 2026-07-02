@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import type { DetectorMode, CompassResult, ConsumableResult } from "@/app/state/useDetector"
+import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 
 type Props = {
   activeDetector: DetectorMode
