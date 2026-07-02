@@ -144,9 +144,15 @@ Deployments only happen on version bumps — increment `version` in `package.jso
 
 ## Testing Strategy
 
-- **Unit tests**: Co-located with source files (e.g., `generateLevel.spec.ts` next to `generateLevel.ts`)
-- **Component tests**: Use `@testing-library/react` with `jsdom`
-- **Visual tests**: Storybook stories serve as visual regression reference
+All behavior must have tests — tests ship in the same commit as the code.
+
+See **[`docs/instructions/testing.md`](docs/instructions/testing.md)** for the full rules: what counts as behavior, layer-by-layer requirements, file placement, and test description style.
+
+Quick reference:
+- Spec files are **co-located** with source (e.g. `generateLevel.spec.ts` beside `generateLevel.ts`)
+- Use **Vitest** + **`@testing-library/react`** (`render`/`renderHook`) — not just pure function extraction
+- **Storybook** covers visual appearance; it does not substitute for behavior tests
+- Test descriptions state the observable behavior and the invariant, not the implementation
 
 Run all tests: `yarn test`
 
@@ -173,6 +179,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | [`docs/instructions/storybook.md`](docs/instructions/storybook.md) | Writing or reviewing any `.stories.tsx` file |
 | [`docs/instructions/architecture.md`](docs/instructions/architecture.md) | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
 | [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file |
+| [`docs/instructions/testing.md`](docs/instructions/testing.md) | Writing, reviewing, or deciding whether to add tests for any code |
 
 ---
 
