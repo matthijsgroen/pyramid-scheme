@@ -19,9 +19,6 @@ import { createFloorStartIndices } from "@/app/PyramidLevel/support"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { Header } from "@/ui/Header"
-import { allTreasures } from "@/data/treasures"
-import { useInventory } from "@/app/Inventory/useInventory"
-import { computeEarlyFeedbackBlockIds } from "@/app/PyramidLevel/earlyFeedbackLogic"
 
 const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
@@ -44,15 +41,7 @@ export const PyramidExpedition: FC<{
 }> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
-  const { inventory } = useInventory()
   const { setInteriorLevel } = useJourneys()
-  const errorHighlightCount = allTreasures.filter(
-    tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.errorHighlight
-  ).length
-  const earlyFeedbackCount = allTreasures.filter(tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.earlyFeedback).length
-  const hieroglyphUnlockCount = allTreasures.filter(
-    tr => (inventory[tr.id] ?? 0) > 0 && tr.effects?.hieroglyphUnlock
-  ).length
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const [entering, setEntering] = useState(true)
@@ -75,14 +64,6 @@ export const PyramidExpedition: FC<{
   const nextNextLevelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr + 2)
 
   const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
-  const earlyFeedbackBlockIds = levelContent
-    ? computeEarlyFeedbackBlockIds(
-        levelContent.pyramid,
-        activeJourney.randomSeed,
-        activeJourney.levelNr,
-        earlyFeedbackCount
-      )
-    : []
 
   const entranceBlockId = useMemo(() => {
     if (!levelContent) return undefined
@@ -102,15 +83,11 @@ export const PyramidExpedition: FC<{
   const hasBlockedBlocks = useMemo(() => {
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
-  const hasEarlyFeedback = earlyFeedbackBlockIds.length > 0
 
   useEffect(() => {
     showConversation("pyramidIntro")
-    if (hieroglyphUnlockCount > 0) showConversation("hieroglyphUnlock")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
-    if (errorHighlightCount > 0) showConversation("errorHighlightTutorial")
-    if (hasEarlyFeedback) showConversation("earlyFeedbackTutorial")
-  }, [showConversation, hasBlockedBlocks, hieroglyphUnlockCount, errorHighlightCount, hasEarlyFeedback])
+  }, [showConversation, hasBlockedBlocks])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {
@@ -317,10 +294,6 @@ export const PyramidExpedition: FC<{
                   decorationOffset={activeJourney.randomSeed}
                   onComplete={onComplete}
                   dayTime={dayTime}
-                  errorHighlightCount={errorHighlightCount}
-                  earlyFeedbackBlockIds={earlyFeedbackBlockIds}
-                  hieroglyphUnlockCount={hieroglyphUnlockCount}
-                  pyramidDifficulty={activeJourney.journey.difficulty}
                   entranceBlockId={entering || levelCompleted ? entranceBlockId : undefined}
                 />
               )}

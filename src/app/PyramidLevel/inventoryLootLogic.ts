@@ -1,11 +1,10 @@
 import { type CombinedJourneyState } from "@/app/state/useJourneys"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
-import { tableauLevels, TOMB_SYMBOLS } from "@/data/tableaus"
+import { tableauLevels } from "@/data/tableaus"
 import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { type Difficulty, difficultyCompare } from "@/data/difficultyLevels"
-import { type Treasure, materialTierByDifficulty, difficultyByMaterialTier, type MaterialTier } from "@/data/treasures"
 
 export type InventoryLootResult = {
   shouldAwardInventoryItem: boolean
@@ -26,44 +25,12 @@ export const determineInventoryLootForCurrentRuns = (
   playerInventory: Record<string, number>,
   getJourney: (journeyId: string) => CombinedJourneyState | undefined,
   journeySeedGenerator: (journeyId: string) => number,
-  baseInventoryChance: number = 0.4, // 40% base chance - higher since it's more targeted
+  baseInventoryChance: number = 0.4,
   maxItemsToAward: number = 1,
-  maxPerItem: number = 3, // configurable max per item
-  ownedTreasures: Treasure[] = []
+  maxPerItem: number = 3
 ): InventoryLootResult => {
   const currentDifficulty = pyramidExpedition.journey.difficulty
-
-  // Apply higherLootChance bonus from owned treasures
-  const higherLootBonus = ownedTreasures.reduce((sum, t) => sum + (t.effects?.higherLootChance ?? 0), 0)
-  const effectiveBaseChance = baseInventoryChance + higherLootBonus
-
-  // Compute moreLootChance bonus items (grouped by resolved tier)
-  const moreLootGroups: Partial<Record<MaterialTier, number>> = {}
-  for (const t of ownedTreasures) {
-    const effect = t.effects?.moreLootChance
-    if (!effect) continue
-    const tier = effect.tier ?? materialTierByDifficulty[currentDifficulty]
-    moreLootGroups[tier] = (moreLootGroups[tier] ?? 0) + effect.chance
-  }
-
-  // Seeded roll for each tier group (offset 2000 to avoid collision with main loot seed)
-  const bonusSeed = generateNewSeed(pyramidExpedition.randomSeed, pyramidExpedition.levelNr + 2000)
-  const bonusRandom = mulberry32(bonusSeed)
-  const bonusItemIds: string[] = []
-
-  for (const [tier, totalChance] of Object.entries(moreLootGroups) as [MaterialTier, number][]) {
-    const guaranteed = Math.floor(totalChance)
-    const remainder = totalChance - guaranteed
-    const count = guaranteed + (bonusRandom() < remainder ? 1 : 0)
-    if (count > 0) {
-      const tierDifficulty = difficultyByMaterialTier[tier]
-      const tierItems = TOMB_SYMBOLS[tierDifficulty]
-      const shuffledTierItems = shuffle(tierItems, bonusRandom)
-      for (let i = 0; i < count; i++) {
-        bonusItemIds.push(shuffledTierItems[i % shuffledTierItems.length])
-      }
-    }
-  }
+  const effectiveBaseChance = baseInventoryChance
 
   const tombIds = journeys
     .filter(j => j.type === "treasure_tomb" && difficultyCompare(j.difficulty, maxDifficulty) <= 0)
@@ -177,8 +144,8 @@ export const determineInventoryLootForCurrentRuns = (
 
     if (filteredInterestingItems.length === 0) {
       return {
-        shouldAwardInventoryItem: bonusItemIds.length > 0,
-        itemIds: bonusItemIds,
+        shouldAwardInventoryItem: [].length > 0,
+        itemIds: [],
         baseChance: effectiveBaseChance,
         adjustedChance: 0,
         needMultiplier: 0,
@@ -229,8 +196,8 @@ export const determineInventoryLootForCurrentRuns = (
     : []
 
   return {
-    shouldAwardInventoryItem: shouldAward || bonusItemIds.length > 0,
-    itemIds: [...mainItemIds, ...bonusItemIds],
+    shouldAwardInventoryItem: shouldAward || [].length > 0,
+    itemIds: [...mainItemIds, ...[]],
     baseChance: effectiveBaseChance,
     adjustedChance,
     needMultiplier,

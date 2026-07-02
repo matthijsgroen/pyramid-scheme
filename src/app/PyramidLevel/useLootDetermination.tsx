@@ -8,7 +8,6 @@ import { useInventory } from "@/app/Inventory/useInventory"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { allTreasures } from "@/data/treasures"
 
 export type Loot = {
   itemId: string
@@ -55,10 +54,7 @@ export const useLootDetermination = (
   const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 
-  const ownedTreasures = allTreasures.filter(tr => (inventory[tr.id] ?? 0) > 0)
-  const bonusMapFragmentChance = ownedTreasures.reduce((sum, tr) => sum + (tr.effects?.mapFragmentChance ?? 0), 0)
-
-  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney, bonusMapFragmentChance)
+  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney, 0)
   const inventoryResult = determineInventoryLootForCurrentRuns(
     activeJourney,
     maxDifficulty,
@@ -67,10 +63,9 @@ export const useLootDetermination = (
     nextJourneySeed,
     0.4,
     1,
-    3,
-    ownedTreasures
+    3
   )
-  const expeditionItemIds = determineExpeditionBonus(activeJourney, ownedTreasures)
+  const expeditionItemIds = determineExpeditionBonus(activeJourney)
 
   const inventoryItemHook = useInventoryItem()
 

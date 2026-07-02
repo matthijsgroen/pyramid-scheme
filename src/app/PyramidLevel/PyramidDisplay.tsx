@@ -1,18 +1,14 @@
-import { useMemo, useRef, useState, type FC } from "react"
+import { useMemo, useRef, type FC } from "react"
 import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import type { Pyramid } from "@/game/types"
 import { Block } from "@/ui/Block"
 import { InputBlock } from "@/ui/InputBlock"
-import { HieroglyphUnlockPanel } from "@/ui/HieroglyphUnlockPanel"
 import { getAnswers, isComplete } from "@/game/state"
 import clsx from "clsx"
 import { mulberry32 } from "@/game/random"
 import { hieroglyphs } from "@/data/hieroglyphs"
 import { createFloorStartIndices } from "./support"
 import type { DayNightCycleStep } from "@/ui/backdropSelection"
-import type { Difficulty } from "@/data/difficultyLevels"
-import { useInventory } from "@/app/Inventory/useInventory"
-import { getUnlockArtifactId, getUnlockArtifactIds } from "./hieroglyphUnlockLogic"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 
@@ -45,10 +41,6 @@ export const PyramidDisplay: FC<{
   values: Record<string, number | undefined>
   completed?: boolean
   dayTime?: DayNightCycleStep
-  errorHighlightCount?: number
-  earlyFeedbackBlockIds?: string[]
-  hieroglyphUnlockCount?: number
-  pyramidDifficulty?: Difficulty
   entranceBlockId?: string
   onAnswer?: (blockId: string, value: number | undefined) => void
 }> = ({
@@ -59,10 +51,6 @@ export const PyramidDisplay: FC<{
   levelNr,
   decorationOffset = 0,
   dayTime = "afternoon",
-  errorHighlightCount = 0,
-  earlyFeedbackBlockIds = [],
-  hieroglyphUnlockCount = 0,
-  pyramidDifficulty = "starter",
   entranceBlockId,
 }) => {
   const { blocks } = pyramid
@@ -77,14 +65,6 @@ export const PyramidDisplay: FC<{
     blocks,
     onAnswer
   )
-  const [checkedBlocks, setCheckedBlocks] = useState<Set<string>>(new Set())
-  const [unlockedBlocks, setUnlockedBlocks] = useState<Set<string>>(new Set())
-  const [pendingUnlockBlockId, setPendingUnlockBlockId] = useState<string | null>(null)
-  const remainingCharges = hieroglyphUnlockCount - unlockedBlocks.size
-  const { inventory } = useInventory()
-  const artifactId = getUnlockArtifactId(inventory, unlockedBlocks.size)
-  const allArtifactIds = getUnlockArtifactIds(inventory)
-  const remainingArtifactIds = allArtifactIds.slice(unlockedBlocks.size + 1)
   const complete = !focusInput && isComplete({ levelNr: 1, pyramid, values })
   const correctAnswers = useMemo(() => getAnswers(pyramid), [pyramid])
   const decorationNumber = levelNr + decorationOffset
@@ -111,19 +91,6 @@ export const PyramidDisplay: FC<{
               const blockIndex = startIndex + index
               const block = blocks[blockIndex]
               const blockValue = values[block.id]
-              const isEarlyFeedback = earlyFeedbackBlockIds.includes(block.id)
-              const isChecked = checkedBlocks.has(block.id)
-              const blockFeedback = isEarlyFeedback
-                ? blockValue === undefined
-                  ? "pending"
-                  : blockValue === correctAnswers?.[block.id]
-                    ? "correct"
-                    : "incorrect"
-                : isChecked
-                  ? blockValue === correctAnswers?.[block.id]
-                    ? "correct"
-                    : "incorrect"
-                  : undefined
 
               const blockEl = block.isOpen ? (
                 <InputBlock
@@ -131,46 +98,8 @@ export const PyramidDisplay: FC<{
                   selected={selectedBlockIndex === startIndex + index && !completed}
                   disabled={complete && isCorrect}
                   shouldFocus={selectedBlockIndex === startIndex + index && focusInput}
-                  feedback={blockFeedback}
                   onSelect={() => setSelectedBlockIndex(startIndex + index)}
                   onBlur={() => {
-                    if (
-                      errorHighlightCount > 0 &&
-                      !isEarlyFeedback &&
-                      blockValue !== undefined &&
-                      blockValue !== correctAnswers?.[block.id] &&
-                      !isChecked &&
-                      checkedBlocks.size < errorHighlightCount
-                    ) {
-                      setCheckedBlocks(prev => new Set([...prev, block.id]))
-                    }
-                    setFocusInput(false)
-                    containerRef.current?.focus()
-                  }}
-                  onChange={value => onAnswer?.(block.id, value)}
-                />
-              ) : block.value === undefined && unlockedBlocks.has(block.id) ? (
-                // Hieroglyph block that has been unlocked — behaves as InputBlock
-                <InputBlock
-                  value={blockValue}
-                  selected={selectedBlockIndex === startIndex + index && !completed}
-                  disabled={complete && isCorrect}
-                  shouldFocus={selectedBlockIndex === startIndex + index && focusInput}
-                  feedback={
-                    isChecked ? (blockValue === correctAnswers?.[block.id] ? "correct" : "incorrect") : undefined
-                  }
-                  onSelect={() => setSelectedBlockIndex(startIndex + index)}
-                  onBlur={() => {
-                    if (
-                      errorHighlightCount > 0 &&
-                      !isEarlyFeedback &&
-                      blockValue !== undefined &&
-                      blockValue !== correctAnswers?.[block.id] &&
-                      !isChecked &&
-                      checkedBlocks.size < errorHighlightCount
-                    ) {
-                      setCheckedBlocks(prev => new Set([...prev, block.id]))
-                    }
                     setFocusInput(false)
                     containerRef.current?.focus()
                   }}
@@ -179,12 +108,6 @@ export const PyramidDisplay: FC<{
               ) : (
                 <Block
                   selected={selectedBlockIndex === startIndex + index}
-                  unlockable={block.value === undefined && remainingCharges > 0}
-                  onClick={
-                    block.value === undefined && remainingCharges > 0
-                      ? () => setPendingUnlockBlockId(block.id)
-                      : undefined
-                  }
                   className={clsx(dayTimeBlockColors[dayTime], "transition-colors duration-1000")}
                 >
                   {block.value !== undefined ? (
@@ -216,21 +139,6 @@ export const PyramidDisplay: FC<{
           </div>
         )
       })}
-      {pendingUnlockBlockId !== null && artifactId && (
-        <HieroglyphUnlockPanel
-          hieroglyphSymbol={
-            hieroglyphs[pyramid.blocks.findIndex(b => b.id === pendingUnlockBlockId) % hieroglyphs.length]
-          }
-          hieroglyphDifficulty={pyramidDifficulty}
-          artifactId={artifactId}
-          remainingArtifactIds={remainingArtifactIds}
-          onUnlock={() => {
-            setUnlockedBlocks(prev => new Set([...prev, pendingUnlockBlockId]))
-            setPendingUnlockBlockId(null)
-          }}
-          onDismiss={() => setPendingUnlockBlockId(null)}
-        />
-      )}
 
       <div className="absolute top-full right-12 left-0 z-[-1] h-0 overflow-visible">
         <div
