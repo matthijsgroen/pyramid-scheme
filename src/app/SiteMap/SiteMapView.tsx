@@ -508,28 +508,39 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs
 export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false, explorerPos, className }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const scrollRef = useRef<HTMLDivElement>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
 
   const PAD = 30
   const svgWidth = grid.cols * CELL + PAD * 2
   const svgHeight = grid.rows * CELL + PAD * 2
 
   useEffect(() => {
-    if (!explorerPos || !scrollRef.current) return
+    if (!explorerPos || !scrollRef.current || !svgRef.current) return
     const el = scrollRef.current
-    const x = PAD + explorerPos[1] * CELL + CELL / 2
-    const y = PAD + explorerPos[0] * CELL + CELL / 2
+    const elRect = el.getBoundingClientRect()
+    const svgRect = svgRef.current.getBoundingClientRect()
+    // Origin accounts for the svg's own offset within the scroll area (e.g. safe-area padding, centering margin)
+    const originX = svgRect.left - elRect.left + el.scrollLeft
+    const originY = svgRect.top - elRect.top + el.scrollTop
+    const x = originX + PAD + explorerPos[1] * CELL + CELL / 2
+    const y = originY + PAD + explorerPos[0] * CELL + CELL / 2
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorerPos?.[0], explorerPos?.[1]])
 
   return (
-    <div ref={scrollRef} className={`overflow-auto${className ? ` ${className}` : ""}`}>
+    <div
+      ref={scrollRef}
+      className={`flex overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left${className ? ` ${className}` : ""}`}
+    >
       <svg
+        ref={svgRef}
         width={svgWidth}
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         role="img"
         aria-label="site map"
+        className="m-auto"
         style={{ background: "#110d08" }}
       >
         <defs>

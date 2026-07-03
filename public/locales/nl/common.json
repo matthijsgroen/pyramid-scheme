@@ -44,6 +44,8 @@
     "expeditionCompleted": "Expeditie Voltooid!",
     "goBackToBase": "Terug naar basis",
     "backArrow": "←",
+    "back": "← Terug",
+    "floor": "Verdieping {{number}}",
     "timesSingular": "keer",
     "timesPlural": "keer",
     "travel": "Reizen",

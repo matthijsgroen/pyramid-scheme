@@ -18,6 +18,9 @@ import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/HealthDisplay"
 import { ConsumableBar } from "@/ui/ConsumableBar"
 import { DetectorPanel } from "@/ui/DetectorPanel"
+import { BackButton } from "@/ui/BackButton"
+import { FloorBadge } from "@/ui/FloorBadge"
+import { SiteHudBar } from "@/ui/SiteHudBar"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
 import "@/app/PuzzleFamilies/Tableau/plugin"
@@ -211,21 +214,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
-      <button
-        onClick={onCancel}
-        className="absolute top-2 left-2 z-10 rounded bg-stone-800 px-3 py-1 text-sm text-amber-200"
-      >
-        ← Back
-      </button>
-      {currentFloor > 0 && (
-        <div className="absolute top-2 right-2 z-10 rounded bg-stone-800 px-3 py-1 text-sm text-amber-200">
-          Floor {currentFloor + 1}
-        </div>
-      )}
+      <BackButton onClick={onCancel} label={t("ui.back")} />
+      {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
       <div className="relative h-screen w-screen">
         <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} className="h-full w-full" />
       </div>
-      <div className="absolute right-0 bottom-4 left-0 z-10 flex flex-col items-center justify-center gap-2">
+      <SiteHudBar>
         {(progression.perks.compassLevel > 0 ||
           progression.perks.consumableDetectorLevel > 0 ||
           progression.perks.detectionLevel > 0) && (
@@ -246,7 +240,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
           <ConsumableBar consumables={progression.consumables} />
         </div>
-      </div>
+      </SiteHudBar>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
       {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
       {!!activePuzzle && ActivePuzzleComponent && (

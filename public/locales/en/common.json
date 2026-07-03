@@ -44,6 +44,8 @@
     "expeditionCompleted": "Expedition Completed!",
     "goBackToBase": "Go back to base",
     "backArrow": "←",
+    "back": "← Back",
+    "floor": "Floor {{number}}",
     "timesSingular": "time",
     "timesPlural": "times",
     "travel": "Travel",
