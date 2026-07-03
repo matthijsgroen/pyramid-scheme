@@ -44,13 +44,14 @@ export const PyramidExpedition: FC<{
   const { setInteriorLevel } = useJourneys()
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
-  const [entering, setEntering] = useState(true)
   // Restore interior if player backed out mid-interior on a previous visit
-  const [showingInterior, setShowingInterior] = useState(
+  const restoringInterior =
     activeJourney.journey.type === "pyramid" &&
-      !!(activeJourney.journey as PyramidJourney).siteConfigs?.length &&
-      activeJourney.interiorLevelNr === activeJourney.levelNr
-  )
+    !!(activeJourney.journey as PyramidJourney).siteConfigs?.length &&
+    activeJourney.interiorLevelNr === activeJourney.levelNr
+  const [showingInterior, setShowingInterior] = useState(restoringInterior)
+  // The pyramid board's entrance animation is only meaningful when the board is actually shown
+  const [entering, setEntering] = useState(!restoringInterior)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
@@ -131,9 +132,10 @@ export const PyramidExpedition: FC<{
   }, [startNextLevel])
 
   const onComplete = useCallback(() => {
-    if (startNextLevel) return
+    // The board underneath the interior is already known to be solved; don't replay the completion celebration.
+    if (startNextLevel || showingInterior) return
     setLevelCompleted(true)
-  }, [startNextLevel])
+  }, [startNextLevel, showingInterior])
 
   const handleInteriorSiteComplete = useCallback(() => {
     setInteriorLevel(activeJourney.journeyId, null)

@@ -44,6 +44,8 @@
     "expeditionCompleted": "Expeditie Voltooid!",
     "goBackToBase": "Terug naar basis",
     "backArrow": "←",
+    "back": "← Terug",
+    "floor": "Verdieping {{number}}",
     "timesSingular": "keer",
     "timesPlural": "keer",
     "travel": "Reizen",
@@ -107,7 +109,8 @@
       "oil": "Genezende Olie",
       "trapTool": "Valuitschakelaar"
     },
-    "consumableFull": "Rugzak vol — {{item}} achtergelaten"
+    "consumableFull": "Rugzak vol — {{item}} achtergelaten",
+    "packFull": "Rugzak vol"
   },
   "loot": {
     "youFound": "Je hebt gevonden",

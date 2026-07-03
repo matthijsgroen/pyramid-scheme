@@ -18,6 +18,9 @@ import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/HealthDisplay"
 import { ConsumableBar } from "@/ui/ConsumableBar"
 import { DetectorPanel } from "@/ui/DetectorPanel"
+import { BackButton } from "@/ui/BackButton"
+import { FloorBadge } from "@/ui/FloorBadge"
+import { SiteHudBar } from "@/ui/SiteHudBar"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
 import "@/app/PuzzleFamilies/Tableau/plugin"
@@ -60,12 +63,24 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     journeyState?.position,
     progression.perks.detectionLevel
   )
+  const pendingConsumableCells = useMemo(() => {
+    const prefix = `${currentFloor}:`
+    const result = new Set<string>()
+    for (const edgeId of journeys.getSkippedConsumables(journeyId)) {
+      if (edgeId.startsWith(prefix)) result.add(edgeId.slice(prefix.length))
+    }
+    return result
+  }, [journeys, journeyId, currentFloor])
 
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
   const [trapWarningPos, setTrapWarningPos] = useState<readonly [number, number] | null>(null)
   const [activeTrapPos, setActiveTrapPos] = useState<readonly [number, number] | null>(null)
   const [puzzleSolved, setPuzzleSolved] = useState(false)
-  const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
+  const [pendingReward, setPendingReward] = useState<{
+    reward: TreasureReward
+    consumableFull?: boolean
+    onCollect: () => void
+  } | null>(null)
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
@@ -114,9 +129,34 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // Completed cells: just reposition the player, no puzzle/reward/trap
+      // Completed cells: just reposition the player, unless it's a chest we couldn't fit before —
+      // offer it again, showing whether there's room for it now or still not.
       if (cell.state === "completed") {
         journeys.updatePosition(journeyId, edgeId)
+        if (
+          cell.type === "room" &&
+          cell.roomType === "treasure" &&
+          cell.reward?.type === "consumable" &&
+          journeys.getSkippedConsumables(journeyId).has(edgeId)
+        ) {
+          const reward = cell.reward
+          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+            const stillFull =
+              progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
+              progression.consumableCarryCap
+            if (stillFull) {
+              setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
+              return
+            }
+            setPendingReward({
+              reward,
+              onCollect: () => {
+                progression.addConsumable(reward.consumable)
+                journeys.clearConsumableSkipped(edgeId)
+              },
+            })
+          })
+        }
         return
       }
 
@@ -170,6 +210,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           setExiting(true)
         )
       } else if (cell.roomType === "treasure") {
+        // Always mark the room explored so corridors past it keep unfolding, even if a consumable
+        // reward inside can't be picked up right now — that's tracked separately below.
         journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
         if (cell.reward) {
@@ -178,7 +220,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           const alreadyCollected =
             reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
           if (!alreadyCollected) {
+            // Consumables need a room check up front: a full pack leaves the reward for a later visit
+            // instead of silently losing it.
+            const packFull =
+              reward.type === "consumable" &&
+              progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
+                progression.consumableCarryCap
             scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+              if (packFull) {
+                journeys.markConsumableSkipped(edgeId)
+                setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
+                return
+              }
               setPendingReward({
                 reward,
                 onCollect: () => {
@@ -189,10 +242,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                     progression.addTombKey(reward.keyId)
                     progression.applyTreasurePerk(reward.keyId)
                   } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-                  else if (reward.type === "consumable") {
-                    const added = progression.addConsumable(reward.consumable)
-                    if (!added) journeys.markConsumableSkipped(edgeId)
-                  }
+                  else if (reward.type === "consumable") progression.addConsumable(reward.consumable)
                 },
               })
             })
@@ -211,21 +261,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
   return (
     <div className="relative flex h-full flex-col items-center justify-center">
-      <button
-        onClick={onCancel}
-        className="absolute top-2 left-2 z-10 rounded bg-stone-800 px-3 py-1 text-sm text-amber-200"
-      >
-        ← Back
-      </button>
-      {currentFloor > 0 && (
-        <div className="absolute top-2 right-2 z-10 rounded bg-stone-800 px-3 py-1 text-sm text-amber-200">
-          Floor {currentFloor + 1}
-        </div>
-      )}
+      <BackButton onClick={onCancel} label={t("ui.back")} />
+      {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
       <div className="relative h-screen w-screen">
-        <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} className="h-full w-full" />
+        <SiteMapView
+          grid={grid}
+          onCellClick={handleCellClick}
+          explorerPos={explorerPos}
+          pendingCells={pendingConsumableCells}
+          className="h-full w-full"
+        />
       </div>
-      <div className="absolute right-0 bottom-4 left-0 z-10 flex flex-col items-center justify-center gap-2">
+      <SiteHudBar>
         {(progression.perks.compassLevel > 0 ||
           progression.perks.consumableDetectorLevel > 0 ||
           progression.perks.detectionLevel > 0) && (
@@ -246,7 +293,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
           <ConsumableBar consumables={progression.consumables} />
         </div>
-      </div>
+      </SiteHudBar>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
       {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
       {!!activePuzzle && ActivePuzzleComponent && (

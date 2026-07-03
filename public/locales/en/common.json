@@ -44,6 +44,8 @@
     "expeditionCompleted": "Expedition Completed!",
     "goBackToBase": "Go back to base",
     "backArrow": "←",
+    "back": "← Back",
+    "floor": "Floor {{number}}",
     "timesSingular": "time",
     "timesPlural": "times",
     "travel": "Travel",
@@ -107,7 +109,8 @@
       "oil": "Healing Oil",
       "trapTool": "Trap Disabler"
     },
-    "consumableFull": "Pack is full — {{item}} left behind"
+    "consumableFull": "Pack is full — {{item}} left behind",
+    "packFull": "Pack full"
   },
   "loot": {
     "youFound": "You found",

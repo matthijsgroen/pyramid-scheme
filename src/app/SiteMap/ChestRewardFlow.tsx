@@ -22,7 +22,7 @@ const rewardEmoji = (type: string) => {
 }
 
 type Props = {
-  pendingReward: { reward: TreasureReward; onCollect: () => void } | null
+  pendingReward: { reward: TreasureReward; consumableFull?: boolean; onCollect: () => void } | null
   hieroglyphProgress: (id: string) => { found: number; required: number }
   onDismiss: () => void
 }
@@ -35,7 +35,7 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
 
   if (!pendingReward) return null
 
-  const { reward, onCollect } = pendingReward
+  const { reward, consumableFull, onCollect } = pendingReward
 
   const handleOpen = () => {
     if (chestOpened) return
@@ -64,7 +64,16 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
         </div>
       )}
 
-      {reward.type === "consumable" ? (
+      {reward.type === "consumable" && consumableFull ? (
+        <LootPopup
+          isOpen={showLoot}
+          itemName={t("chest.consumableFull", { item: t(`chest.consumable.${reward.consumable}`) })}
+          itemComponent={<span className="text-6xl opacity-50">{rewardEmoji(reward.consumable)}</span>}
+          onDismiss={handleDismiss}
+          youFoundLabel={t("chest.packFull")}
+          clickToContinueLabel={t("loot.clickToContinue")}
+        />
+      ) : reward.type === "consumable" ? (
         <LootPopup
           isOpen={showLoot}
           itemName={t(`chest.consumable.${reward.consumable}`)}

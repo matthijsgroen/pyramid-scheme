@@ -15,6 +15,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { Header } from "@/ui/Header"
 import { SiteMapScreen } from "./SiteMap/SiteMapScreen"
 import { useTimeout } from "@/support/useTimeout"
+import { BackButton } from "@/ui/BackButton"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState
@@ -121,12 +122,7 @@ export const TombExpedition: FC<{
                   onComplete={onSolved}
                   onFindHieroglyphs={onFindHieroglyphs}
                 />
-                <button
-                  onClick={onCancelPuzzle}
-                  className="absolute top-4 left-4 z-10 rounded bg-stone-800/80 px-3 py-1 text-sm text-amber-200"
-                >
-                  ← Back
-                </button>
+                <BackButton onClick={onCancelPuzzle} label={t("ui.back")} />
               </div>
             )
           }}
