@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix the back button, floor indicator, and health display inside pyramids and tombs being hidden behind the notch or home indicator on installed devices.
 - Fix the interior map opening in the top-left corner instead of centered on screen.
+- Fix the level-completion animation replaying over the interior map when returning to a pyramid you were already exploring.
 
 ## 0.24.0 - 2026-07-03
 ### Added
