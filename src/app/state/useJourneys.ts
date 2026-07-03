@@ -111,10 +111,23 @@ export const createJourneysV3Api = ({
     return generateNewSeed(hashString(journeyId), (info?.completionCount ?? 0) + 1)
   }
 
+  // Pyramids with a site interior are meant to stay revisitable: the random seed must stay
+  // stable across replays so a previously explored site still matches on return.
+  const isInteriorPyramid = (journey: Journey) => journey.type === "pyramid" && !!journey.siteConfigs?.length
+
   const startJourney = (journey: Journey) => {
     const existing = journeys.find(j => j.journeyId === journey.id)
     if (existing) {
-      setJourneys(prev => prev.map(j => (j.journeyId === journey.id ? { ...j, active: true } : j)))
+      const alreadyCompletedRun = isInteriorPyramid(journey) && existing.levelNr > journey.levelCount
+      setJourneys(prev =>
+        prev.map(j =>
+          j.journeyId === journey.id
+            ? alreadyCompletedRun
+              ? { ...j, active: true, levelNr: 1, position: null, interiorLevelNr: null }
+              : { ...j, active: true }
+            : j
+        )
+      )
       return
     }
     const newJourney: StoredJourneyStateV3 = {
@@ -132,13 +145,17 @@ export const createJourneysV3Api = ({
 
   const completeJourney = () => {
     if (!activeJourneyId) return
+    const journey = journeyData.find(j => j.id === activeJourneyId)
+    // Interior pyramids don't re-randomize on replay, so completing one again shouldn't bump the
+    // count past 1 — it only ever meant "first time" for these once the site itself is revisitable.
+    const capCompletionCount = journey && isInteriorPyramid(journey)
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
           ? {
               ...j,
               active: false,
-              completionCount: j.completionCount + 1,
+              completionCount: capCompletionCount ? Math.max(j.completionCount, 1) : j.completionCount + 1,
               position: null,
               interiorLevelNr: null,
             }
