@@ -30,7 +30,7 @@
 - **Reward Logic**: Use `generateRewardCalculation` and inventory hooks for loot awarding.
 - **Overlay/Backdrop**: Use themed backdrop components (e.g., `TombBackdrop`) for puzzle screens.
 - **Storybook**: All new UI components should have a Storybook story in `src/ui/`.
-- **CI/CD**: GitHub Actions workflow in `.github/workflows/deploy.yml` handles deploys; version checks are conditional on event type.
+- **CI/CD**: GitHub Actions workflow in `.github/workflows/release.yml` (manual dispatch) bumps the version/changelog and deploys to GitHub Pages in the same run.
 
 ## Key Files & Directories
 - `src/app/` — Main app, pages, state, expedition logic
