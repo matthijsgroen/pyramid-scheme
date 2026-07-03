@@ -60,8 +60,7 @@ const bumpType = counts.added > 0 || counts.removed > 0 ? "minor" : "patch"
 // ── Calculate new version ─────────────────────────────────────────────────────
 
 const [major, minor, patch] = pkg.version.split(".").map(Number)
-const newVersion =
-  bumpType === "minor" ? `${major}.${minor + 1}.0` : `${major}.${minor}.${patch + 1}`
+const newVersion = bumpType === "minor" ? `${major}.${minor + 1}.0` : `${major}.${minor}.${patch + 1}`
 
 const today = new Date().toISOString().slice(0, 10)
 
@@ -69,7 +68,13 @@ console.log(`Current version : ${pkg.version}`)
 console.log(`Bump type       : ${bumpType} (added=${counts.added}, removed=${counts.removed})`)
 console.log(`New version     : ${newVersion}`)
 console.log(`Release date    : ${today}`)
-console.log(`Changes         :`, Object.entries(counts).filter(([, n]) => n > 0).map(([k, n]) => `${k}=${n}`).join(", "))
+console.log(
+  `Changes         :`,
+  Object.entries(counts)
+    .filter(([, n]) => n > 0)
+    .map(([k, n]) => `${k}=${n}`)
+    .join(", ")
+)
 
 if (DRY_RUN) {
   console.log("\n--dry-run: no files written.")

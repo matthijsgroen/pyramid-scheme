@@ -1,9 +1,8 @@
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
-export const hieroglyphCategory = (id: string) =>
-  id.startsWith("d") ? "deities" : id.startsWith("p") ? "professions" : id.startsWith("art") ? "artifacts" : "animals"
 import type { TreasureReward } from "@/game/siteTypes"
+import { hieroglyphCategory } from "./hieroglyphCategory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"

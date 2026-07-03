@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { hieroglyphCategory } from "./ChestRewardFlow"
+import { hieroglyphCategory } from "./hieroglyphCategory"
 
 describe("hieroglyphCategory", () => {
   it("maps deities (d*) to the deities namespace", () => {
