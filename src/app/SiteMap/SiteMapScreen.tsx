@@ -68,7 +68,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [trapWarningPos, setTrapWarningPos] = useState<readonly [number, number] | null>(null)
   const [activeTrapPos, setActiveTrapPos] = useState<readonly [number, number] | null>(null)
   const [puzzleSolved, setPuzzleSolved] = useState(false)
-  const [pendingReward, setPendingReward] = useState<{ reward: TreasureReward; onCollect: () => void } | null>(null)
+  const [pendingReward, setPendingReward] = useState<{
+    reward: TreasureReward
+    consumableFull?: boolean
+    onCollect: () => void
+  } | null>(null)
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
@@ -173,15 +177,28 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           setExiting(true)
         )
       } else if (cell.roomType === "treasure") {
-        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
         if (cell.reward) {
           const reward = cell.reward
           // Inventory-as-truth: fragment already collected → skip overlay
           const alreadyCollected =
             reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
-          if (!alreadyCollected) {
+          if (alreadyCollected) {
+            journeys.markCellExplored(sectionHash, edgeId)
+          } else {
+            // Consumables need a room check up front: a full pack leaves the chest unmarked so it
+            // can be revisited once there's space, instead of silently consuming the find.
+            const packFull =
+              reward.type === "consumable" &&
+              progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
+                progression.consumableCarryCap
             scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+              if (packFull) {
+                journeys.markConsumableSkipped(edgeId)
+                setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
+                return
+              }
+              journeys.markCellExplored(sectionHash, edgeId)
               setPendingReward({
                 reward,
                 onCollect: () => {
@@ -192,14 +209,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                     progression.addTombKey(reward.keyId)
                     progression.applyTreasurePerk(reward.keyId)
                   } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-                  else if (reward.type === "consumable") {
-                    const added = progression.addConsumable(reward.consumable)
-                    if (!added) journeys.markConsumableSkipped(edgeId)
-                  }
+                  else if (reward.type === "consumable") progression.addConsumable(reward.consumable)
                 },
               })
             })
           }
+        } else {
+          journeys.markCellExplored(sectionHash, edgeId)
         }
       }
     },

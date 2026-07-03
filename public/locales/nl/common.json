@@ -109,7 +109,8 @@
       "oil": "Genezende Olie",
       "trapTool": "Valuitschakelaar"
     },
-    "consumableFull": "Rugzak vol — {{item}} achtergelaten"
+    "consumableFull": "Rugzak vol — {{item}} achtergelaten",
+    "packFull": "Rugzak vol"
   },
   "loot": {
     "youFound": "Je hebt gevonden",
