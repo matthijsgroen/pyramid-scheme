@@ -1,5 +1,8 @@
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+
+const hieroglyphCategory = (id: string) =>
+  id.startsWith("d") ? "deities" : id.startsWith("p") ? "professions" : "animals"
 import type { TreasureReward } from "@/game/siteTypes"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
@@ -26,7 +29,7 @@ type Props = {
 }
 
 export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, onDismiss }) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation(["common", "inventory"])
   const [chestOpened, setChestOpened] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const [scheduleLoot] = useTimeout()
@@ -80,8 +83,8 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
           return (
             <LootPopup
               isOpen={showLoot}
-              itemName={item ? `${item.name} — ${t("chest.hieroglyphFragment")}` : t("chest.hieroglyphFragment")}
-              itemDescription={`${item?.description ?? ""}\n\n${t("chest.fragmentProgress", { found: progress.found, required: progress.required })}`}
+              itemName={item ? `${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })} — ${t("chest.hieroglyphFragment")}` : t("chest.hieroglyphFragment")}
+              itemDescription={`${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: progress.found, required: progress.required })}`}
               rarity={rarity}
               itemComponent={
                 item && difficulty ? (
