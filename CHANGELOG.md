@@ -1,14 +1,13 @@
 # Changelog
-
 All notable user-facing changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
 
+## 0.24.0 - 2026-07-03
 ### Added
-
 - **Pyramid interiors** — after solving a pyramid level you now enter the pyramid itself: navigate room by room on a map, open chests along the way, and find your way to the exit.
 - **Explorer dot** — a glowing dot shows your movement as you travel through the pyramid interior.
 - **Hidden passages** — some corridors and side rooms are concealed behind walls; step close enough to reveal them.
@@ -31,10 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Puzzle completion animation** — a brief overlay celebrates solving a puzzle before the game moves on.
 
 ### Changed
-
 - The pyramid map now scrolls to keep the explorer dot centered as you move, so you can always see what is ahead without manually scrolling.
 - Completed rooms and corridors are now tappable again, letting you move back to any room you have already visited.
 - Expeditions no longer award inventory items directly on completion; items are found inside the pyramid during exploration instead.
 - The alpha notice banner has been updated to explain this is a full redesign of the game being tested from scratch.
 
-## [0.23.6] - 2025-01-01
+## 0.23.6 - 2025-01-01
