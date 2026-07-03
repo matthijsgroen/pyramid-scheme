@@ -7,8 +7,8 @@ Only files that tooling, platforms, or agent conventions require at the root:
 | File | Purpose |
 |---|---|
 | `README.md` | Project overview for humans and GitHub |
-| `CLAUDE.md` | Single pointer: tells Claude to read `agents.md`. No substantive content here. |
-| `agents.md` | Authoritative agent guide — architecture, conventions, workflows, key files, instruction pointers |
+| `CLAUDE.md` | Single pointer: tells Claude to read `AGENTS.md`. No substantive content here. |
+| `AGENTS.md` | Authoritative agent guide — architecture, conventions, workflows, key files, instruction pointers |
 | `IMPLEMENTATION_PLAN.md` | Active build roadmap. Lives at root because it is the current work item, not archived reference. |
 
 Everything else goes in `docs/`.
@@ -35,12 +35,12 @@ Stable documents describing how a mechanic works, why it was designed that way, 
 
 Process documents that tell contributors (human or AI) *how* to work in a specific area. Applied when working in that area, not read as reference.
 
-Each file covers one topic. The entry point for all instruction files is the table in `agents.md` under "Agent Instructions" — every instruction file must be registered there with a "when to apply" note.
+Each file covers one topic. The entry point for all instruction files is the table in `AGENTS.md` under "Agent Instructions" — every instruction file must be registered there with a "when to apply" note.
 
 **Belongs here:**
 - Layer boundary rules (what goes in which folder)
 - Storybook guidelines (what belongs in a story vs core)
-- Coding conventions that need more space than agents.md allows
+- Coding conventions that need more space than AGENTS.md allows
 
 **Does not belong here:**
 - Feature design or mechanic descriptions → `docs/`
@@ -77,4 +77,4 @@ Transient briefs for the next agent or session — what to build, what's already
 | Transient handover brief | `docs/handover-<topic>.md` (delete on completion) |
 | Active build roadmap | `IMPLEMENTATION_PLAN.md` (root) |
 | Agent entry point | `CLAUDE.md` (root, pointer only) |
-| Full agent guide | `agents.md` (root) |
+| Full agent guide | `AGENTS.md` (root) |
