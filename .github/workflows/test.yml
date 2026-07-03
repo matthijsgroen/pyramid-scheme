@@ -42,9 +42,14 @@ jobs:
           else
             NEW_VERSION=$(echo "$OUTPUT" | grep "^New version" | awk '{print $NF}')
             BUMP_TYPE=$(echo "$OUTPUT" | grep "^Bump type" | awk '{print $3}')
+            # Extract [Unreleased] section (lines between ## [Unreleased] and the next ## [)
+            UNRELEASED=$(sed -n '/^## \[Unreleased\]/,/^## \[/{ /^## \[Unreleased\]/d; /^## \[/d; p }' CHANGELOG.md | sed '/^[[:space:]]*$/{ N; /^\n$/d }')
             echo "will_release=true" >> "$GITHUB_OUTPUT"
             echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
             echo "bump_type=$BUMP_TYPE" >> "$GITHUB_OUTPUT"
+            echo "unreleased_content<<CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
+            echo "$UNRELEASED" >> "$GITHUB_OUTPUT"
+            echo "CHANGELOG_EOF" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: mshick/add-pr-comment@v2
@@ -54,6 +59,12 @@ jobs:
             After merge, a **new version** of the game will be published
 
             A **${{ steps.check_changelog.outputs.bump_type }}** bump → version **${{ steps.check_changelog.outputs.new_version }}**
+
+            <details><summary>Unreleased changes</summary>
+
+            ${{ steps.check_changelog.outputs.unreleased_content }}
+
+            </details>
 
       - uses: mshick/add-pr-comment@v2
         if: github.base_ref == 'main' && steps.check_changelog.outputs.will_release == 'false'
