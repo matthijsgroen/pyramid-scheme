@@ -63,7 +63,7 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
       })
       return cancelTimer
     }
-  }, [completionPhase, loot, onCompletionFinished, showFez, scheduleTimer, cancelTimer])
+  }, [completionPhase, loot, onCompletionFinished, showFez, skipLoot, scheduleTimer, cancelTimer])
 
   useEffect(() => {
     if (loot?.itemId === "mapPiece") {

@@ -200,7 +200,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         }
       }
     },
-    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival]
+    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig]
   )
 
   const ActivePuzzleComponent = puzzlePlugin?.Component ?? null
