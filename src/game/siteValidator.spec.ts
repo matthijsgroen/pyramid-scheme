@@ -39,7 +39,7 @@ const buildGrid = (
     cells[r][c] = cell
   }
 
-  return { cells, rows, cols, entrancePos, exitPos, siteId }
+  return { cells, rows, cols, entrancePos, exitPos, siteId, staircases: {} }
 }
 
 // ─── validateSite ─────────────────────────────────────────────────────────────

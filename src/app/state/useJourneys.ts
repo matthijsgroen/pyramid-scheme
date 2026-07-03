@@ -168,9 +168,7 @@ export const createJourneysV3Api = ({
     if (!activeJourneyId) return
     setJourneys(prev =>
       prev.map(j =>
-        j.journeyId === activeJourneyId
-          ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null }
-          : j
+        j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null } : j
       )
     )
   }

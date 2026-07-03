@@ -5,8 +5,9 @@ import { getPuzzlePlugin } from "@/game/puzzleRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
 import type { SiteConfig, TreasureReward } from "@/game/siteTypes"
+import { assembleFloor } from "@/game/siteAssembler"
 import { SiteMapView } from "./SiteMapView"
-import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
+import { useAssembledFloor, encodeEdge, decodeEdge } from "./useAssembledFloor"
 import { ChestRewardFlow } from "./ChestRewardFlow"
 import { TrapEncounter } from "@/app/TrapFamilies/TrapEncounter"
 import { TrapWarningScreen } from "./TrapWarningScreen"
@@ -41,7 +42,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = progression.tombKeyIds
 
-  const [currentFloor, setCurrentFloor] = useState(0)
+  const [currentFloor, setCurrentFloor] = useState(() => {
+    const pos = journeyState?.position
+    if (!pos) return 0
+    const [floor] = decodeEdge(pos)
+    return Math.min(floor, siteConfig.length - 1)
+  })
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
   const { grid, explorerPos } = useAssembledFloor(
@@ -133,8 +139,24 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "stairhead") {
         journeys.markCellExplored(sectionHash, edgeId)
-        journeys.updatePosition(journeyId, edgeId)
-        setCurrentFloor(f => f + 1)
+        if (cell.stairId) {
+          // Find the peer stairhead across floors and teleport there
+          const stairId = cell.stairId
+          for (let fi = 0; fi < siteConfig.length; fi++) {
+            if (fi === currentFloor) continue
+            const result = assembleFloor(journeyId, siteConfig[fi], seed + fi)
+            if (!result.success) continue
+            const peerPos = result.grid.staircases[stairId]
+            if (peerPos) {
+              journeys.updatePosition(journeyId, encodeEdge(fi, peerPos[0], peerPos[1]))
+              setCurrentFloor(fi)
+              break
+            }
+          }
+        } else {
+          journeys.updatePosition(journeyId, edgeId)
+          setCurrentFloor(f => f + 1)
+        }
       } else if (cell.roomType === "exit") {
         journeys.updatePosition(journeyId, edgeId)
         scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>

@@ -487,7 +487,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     for (let mi = 0; mi < mainNodeCells.length; mi++) {
       const [r, c] = mainNodeCells[mi]
       if (mi === 0) {
-        roomSpecs.set(posKey(r, c), { roomType: "entrance" })
+        if (config.entrance) {
+          const stairId = typeof config.entrance === "object" ? config.entrance.stairId : `${siteId}:entrance`
+          roomSpecs.set(posKey(r, c), { roomType: "stairhead", stairId })
+        } else {
+          roomSpecs.set(posKey(r, c), { roomType: "entrance" })
+        }
       } else if (mi === mainNodeCells.length - 1) {
         roomSpecs.set(posKey(r, c), {
           roomType: "treasure",
@@ -514,9 +519,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     }
 
     // Exit / stairhead
-    roomSpecs.set(posKey(exR, exC), {
-      roomType: config.exitOrStaircase === "exit" ? "exit" : "stairhead",
-    })
+    if (config.exitOrStaircase === "exit") {
+      roomSpecs.set(posKey(exR, exC), { roomType: "exit" })
+    } else {
+      const stairId =
+        typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
+      roomSpecs.set(posKey(exR, exC), { roomType: "stairhead", stairId })
+    }
 
     // The farthest mainPath cell has degree 1 (no free adjacents) so no section can branch from it.
     // Give it a small treasure so it renders as a room rather than a dead-end corridor.
@@ -577,8 +586,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           reward: { type: "tombKey", keyId: nid(er, ec) },
           keyColor: chainKeyColorMap.get(sectionIdx),
         })
-      } else if (section.end === "staircase") {
-        roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })
+      } else if (section.end === "staircase" || typeof section.end === "object") {
+        const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
+        roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
@@ -642,8 +652,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
           ...(hColors.length > 1 ? { keyColors: hColors } : {}),
         })
-      } else if (subSection.end === "staircase") {
-        roomSpecs.set(posKey(er, ec), { roomType: "stairhead" })
+      } else if (subSection.end === "staircase" || typeof subSection.end === "object") {
+        const stairId =
+          typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
+        roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
@@ -715,6 +727,16 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       cells2D[entRr][entCc] = { ...entranceCell, state: "reachable" }
     }
 
+    const staircases: Record<string, readonly [number, number]> = {}
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cell = cells2D[r][c]
+        if (cell.type === "room" && cell.roomType === "stairhead" && cell.stairId) {
+          staircases[cell.stairId] = [r, c]
+        }
+      }
+    }
+
     const grid: FloorGrid = {
       cells: cells2D,
       rows: N,
@@ -722,6 +744,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       entrancePos: [entR, entC],
       exitPos: [exR, exC],
       siteId,
+      staircases,
     }
 
     const v = validateSite(grid)

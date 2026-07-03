@@ -9,6 +9,7 @@ const makeLinearGrid = (): FloorGrid => ({
   cols: 3,
   entrancePos: [0, 0],
   exitPos: [0, 2],
+  staircases: {},
   cells: [
     [
       { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e"]), state: "reachable" },
@@ -31,6 +32,7 @@ describe(getOwnedKeys, () => {
       cols: 1,
       entrancePos: [0, 0],
       exitPos: [0, 0],
+      staircases: {},
       cells: [
         [
           {
@@ -81,6 +83,7 @@ describe(completeCell, () => {
       cols: 2,
       entrancePos: [0, 0],
       exitPos: [0, 1],
+      staircases: {},
       cells: [
         [
           { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e"]), state: "reachable" },
@@ -110,6 +113,7 @@ describe(completeCell, () => {
       cols: 2,
       entrancePos: [0, 0],
       exitPos: [1, 0],
+      staircases: {},
       cells: [
         [
           { type: "room", roomType: "entrance", dirs: new Set<Direction>(["e"]), state: "reachable" },

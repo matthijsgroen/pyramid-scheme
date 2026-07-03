@@ -15,7 +15,7 @@ export type SubSection = {
   pathPuzzles: number
   chestEvery?: number
   difficulty: Difficulty
-  end: "treasure" | "staircase"
+  end: "treasure" | "staircase" | { stairId: string }
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
   hidden?: boolean
@@ -30,7 +30,8 @@ export type FloorConfig = {
   chestEvery?: number
   difficulty: Difficulty
   end: "treasure"
-  exitOrStaircase: "exit" | "staircase"
+  exitOrStaircase: "exit" | "staircase" | { stairId: string }
+  entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]

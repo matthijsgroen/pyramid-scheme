@@ -35,6 +35,7 @@ export type RoomCell = {
   keyColor?: KeyColor
   keyColors?: KeyColor[]
   family?: PuzzleFamily
+  stairId?: string
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -45,6 +46,7 @@ export type FloorGrid = {
   readonly entrancePos: readonly [number, number]
   readonly exitPos: readonly [number, number]
   readonly siteId: string
+  readonly staircases: Record<string, readonly [number, number]>
 }
 
 export type GateConfig = { type: "floor-key"; color?: KeyColor } | { type: "tomb-key"; wardKeyId: string }
@@ -54,7 +56,7 @@ export type SubSection = {
   pathPuzzles: number
   chestEvery?: number
   difficulty: Difficulty
-  end: "treasure" | "staircase"
+  end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
   hidden?: boolean
@@ -68,7 +70,9 @@ export type FloorConfig = {
   chestEvery?: number
   difficulty: Difficulty
   end: "treasure"
-  exitOrStaircase: "exit" | "staircase"
+  exitOrStaircase: "exit" | "staircase" | { stairId: string }
+  /** If set, the entrance room becomes an up-stairhead with this stairId. */
+  entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]

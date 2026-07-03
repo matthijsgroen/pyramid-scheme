@@ -25,7 +25,8 @@ const serializeReward = (r: TreasureReward, nextIdx: FragmentCounter): string =>
 }
 
 const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string => {
-  const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: "${s.end}"`]
+  const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
+  const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
   if (s.chestEvery !== undefined) parts.push(`chestEvery: ${s.chestEvery}`)
   if (s.gate)
     parts.push(
@@ -51,9 +52,15 @@ const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
     `    chestEvery: ${c.chestEvery ?? 0},`,
     `    difficulty: "${c.difficulty}",`,
     `    end: "treasure",`,
-    `    exitOrStaircase: "${c.exitOrStaircase}",`,
+    typeof c.exitOrStaircase === "object"
+      ? `    exitOrStaircase: { stairId: "${c.exitOrStaircase.stairId}" },`
+      : `    exitOrStaircase: "${c.exitOrStaircase}",`,
     `    sideSections: ${sideSectionsStr},`,
   ]
+  if (c.entrance) {
+    const val = typeof c.entrance === "object" ? `{ stairId: "${c.entrance.stairId}" }` : `"${c.entrance}"`
+    lines.push(`    entrance: ${val},`)
+  }
   if (c.puzzleFamily) lines.push(`    puzzleFamily: "${c.puzzleFamily}",`)
   if (c.lastMainPuzzleFamily) lines.push(`    lastMainPuzzleFamily: "${c.lastMainPuzzleFamily}",`)
   if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward, nextIdx)},`)
