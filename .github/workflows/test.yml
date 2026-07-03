@@ -10,65 +10,64 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      version_changed: ${{ steps.check_version.outputs.changed }}
+      will_release: ${{ steps.check_changelog.outputs.will_release }}
 
     permissions:
       pull-requests: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install jq (JSON parser)
-        run: sudo apt-get install -y jq
+      - name: Enable Corepack
+        run: corepack enable
 
-      - name: Get current version
-        id: current_version
-        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-      - name: Fetch main branch
-        run: git fetch origin main
+      - name: Install dependencies
+        run: yarn install --immutable
 
-      - name: Get main branch version
-        id: main_version
+      - name: Check changelog for unreleased entries
+        id: check_changelog
         run: |
-          MAIN_PACKAGE=$(git show origin/main:package.json || echo "{}")
-          echo "version=$(echo $MAIN_PACKAGE | jq -r .version)" >> $GITHUB_OUTPUT
-
-      - name: Check version change
-        id: check_version
-        run: |
-          echo "comparing versions: $MAIN_VERSION to $CURRENT_VERSION"
-          if [ "$CURRENT_VERSION" != "$MAIN_VERSION" ]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+          OUTPUT=$(yarn release --dry-run 2>&1)
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q "Nothing in \[Unreleased\]"; then
+            echo "will_release=false" >> "$GITHUB_OUTPUT"
+            echo "new_version=" >> "$GITHUB_OUTPUT"
+            echo "bump_type=" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> $GITHUB_OUTPUT
+            NEW_VERSION=$(echo "$OUTPUT" | grep "^New version" | awk '{print $NF}')
+            BUMP_TYPE=$(echo "$OUTPUT" | grep "^Bump type" | awk '{print $3}')
+            echo "will_release=true" >> "$GITHUB_OUTPUT"
+            echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+            echo "bump_type=$BUMP_TYPE" >> "$GITHUB_OUTPUT"
           fi
-        env:
-          CURRENT_VERSION: ${{ steps.current_version.outputs.version }}
-          MAIN_VERSION: ${{ steps.main_version.outputs.version }}
 
       - uses: mshick/add-pr-comment@v2
-        if: github.base_ref == 'main' && steps.check_version.outputs.changed == 'true'
+        if: github.base_ref == 'main' && steps.check_changelog.outputs.will_release == 'true'
         with:
           message: |
             After merge, a **new version** of the game will be published
 
-            (version ${{ steps.current_version.outputs.version }}, vs. main branch, ${{ steps.main_version.outputs.version }})
+            A **${{ steps.check_changelog.outputs.bump_type }}** bump → version **${{ steps.check_changelog.outputs.new_version }}**
 
       - uses: mshick/add-pr-comment@v2
-        if: github.base_ref == 'main' && steps.check_version.outputs.changed == 'false'
+        if: github.base_ref == 'main' && steps.check_changelog.outputs.will_release == 'false'
         with:
           message: |
-            After merge, **no version** of the game will be published
+            After merge, **no new version** of the game will be published
 
-            (version is the same as the main branch, ${{ steps.main_version.outputs.version }})
+            The `[Unreleased]` section in `CHANGELOG.md` is empty.
 
       - uses: mshick/add-pr-comment@v2
         if: github.base_ref != 'main' && github.base_ref != ''
         with:
           message: |
-            This PR does not target `main`, so **no version will be published** upon merge regardless of version changes.
+            This PR does not target `main`, so **no version will be published** upon merge regardless of changelog changes.
 
   build:
     runs-on: ubuntu-latest

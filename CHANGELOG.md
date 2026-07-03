@@ -37,4 +37,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expeditions no longer award inventory items directly on completion; items are found inside the pyramid during exploration instead.
 - The alpha notice banner has been updated to explain this is a full redesign of the game being tested from scratch.
 
-## [0.23.6] — previous release baseline
+## [0.23.6] - 2025-01-01

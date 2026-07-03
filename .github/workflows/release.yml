@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Check for unreleased changes
+        id: check
+        run: |
+          # Exit 0 (skip) if [Unreleased] is empty; exit 1 (fail) on real errors
+          yarn release --dry-run 2>&1 | tee /tmp/release-dry.txt
+          if grep -q "Nothing in \[Unreleased\]" /tmp/release-dry.txt; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version and finalize changelog
+        if: steps.check.outputs.skip == 'false'
+        run: yarn release
+
+      - name: Commit release
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          VERSION=$(node -p "require('./package.json').version")
+          git add CHANGELOG.md package.json
+          git commit -m "chore: release v${VERSION} [skip ci]"
+          git push
