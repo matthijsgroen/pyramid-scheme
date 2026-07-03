@@ -66,8 +66,8 @@ const CategorySection: FC<{
         {sortedItems.map(item => {
           const itemLevel = getItemFirstLevel(item.id)
           const isSelected = selectedItem?.id === item.id
-          const isCollected = inventory[item.id] !== undefined
           const fragmentsFound = hieroglyphFragments[item.id] ?? 0
+          const isCollected = inventory[item.id] !== undefined || fragmentsFound >= hieroglyphProgress(item.id).required
 
           if (isCollected && itemLevel) {
             return (
