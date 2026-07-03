@@ -133,12 +133,12 @@ Always run `yarn check-types` and `yarn lint` before considering a change comple
 
 ## CI/CD Pipeline
 
-| Workflow     | Trigger                 | What it does                                                                     |
-| ------------ | ----------------------- | -------------------------------------------------------------------------------- |
-| `test.yml`   | Push / Pull Request     | Type checks, lint, tests, build verification; posts version change notice on PRs |
-| `deploy.yml` | Push to `main` / manual | Deploys to GitHub Pages only if `package.json` version has changed               |
+| Workflow      | Trigger              | What it does                                                                                       |
+| ------------- | --------------------- | --------------------------------------------------------------------------------------------------- |
+| `test.yml`    | Push / Pull Request   | Type checks, lint, tests, build verification; posts version change notice on PRs                    |
+| `release.yml` | Manual dispatch       | Bumps `package.json` and `CHANGELOG.md` from the Unreleased section, then deploys to GitHub Pages    |
 
-Deployments only happen on version bumps — increment `version` in `package.json` to trigger a deploy.
+Deploys only happen as part of a release — there is no separate deploy workflow.
 
 ---
 
