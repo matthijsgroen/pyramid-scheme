@@ -84,7 +84,7 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
             <LootPopup
               isOpen={showLoot}
               itemName={item ? `${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })} — ${t("chest.hieroglyphFragment")}` : t("chest.hieroglyphFragment")}
-              itemDescription={`${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: progress.found, required: progress.required })}`}
+              itemDescription={`${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`}
               rarity={rarity}
               itemComponent={
                 item && difficulty ? (
