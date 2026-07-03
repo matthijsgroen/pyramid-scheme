@@ -92,17 +92,26 @@ export const createJourneysV3Api = ({
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(j => j.active && knownJourneyIds.includes(j.journeyId))?.journeyId
 
+  // Pyramids with a site interior are meant to stay revisitable: the random seed must stay
+  // stable across replays so a previously explored site still matches on return.
+  const isInteriorPyramid = (journey: Journey) => journey.type === "pyramid" && !!journey.siteConfigs?.length
+
   const getJourney = (journeyId: string): CombinedJourneyState | undefined => {
     const journeyState = journeys.find(j => j.journeyId === journeyId)
     if (!journeyState) return undefined
     const journeyInfo = journeyData.find((j): j is TranslatedJourney => j.id === journeyId)
     if (!journeyInfo) return undefined
     const progressPercentage = Math.min(((journeyState.levelNr ?? 1) - 1) / journeyInfo.levelCount, 1)
+    // Interior pyramids are persistent, revisitable sites — their seed must never move, or a
+    // completed run's exploredSections stop matching the (now different) generated layout.
+    const randomSeed = isInteriorPyramid(journeyInfo)
+      ? generateNewSeed(hashString(journeyId), 1)
+      : generateNewSeed(hashString(journeyId), journeyState.completionCount + 1)
     return {
       ...journeyState,
       inProgress: journeyState.active,
       journey: journeyInfo,
-      randomSeed: generateNewSeed(hashString(journeyId), journeyState.completionCount + 1),
+      randomSeed,
       progressPercentage,
     }
   }
@@ -111,10 +120,6 @@ export const createJourneysV3Api = ({
     const info = getJourney(journeyId)
     return generateNewSeed(hashString(journeyId), (info?.completionCount ?? 0) + 1)
   }
-
-  // Pyramids with a site interior are meant to stay revisitable: the random seed must stay
-  // stable across replays so a previously explored site still matches on return.
-  const isInteriorPyramid = (journey: Journey) => journey.type === "pyramid" && !!journey.siteConfigs?.length
 
   const startJourney = (journey: Journey) => {
     const existing = journeys.find(j => j.journeyId === journey.id)
