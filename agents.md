@@ -158,6 +158,24 @@ Run all tests: `yarn test`
 
 ---
 
+## Definition of Done
+
+Before considering any task complete, run through this checklist:
+
+| # | Check | Requirement |
+|---|---|---|
+| 1 | **Tests** | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md). |
+| 2 | **Types** | `yarn check-types` exits clean. |
+| 3 | **Lint** | `yarn lint` exits clean (includes Tailwind class order). |
+| 4 | **Translations** | Any new user-facing string has both `en/` and `nl/` entries. |
+| 5 | **Changelog** | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]`. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
+
+Steps 1–3 are always required. Steps 4–5 apply only when the change touches user-facing strings or player-visible behavior.
+
+Version bumps are a deployment decision, not a per-feature step — see the CI/CD section above.
+
+---
+
 ## Things to Avoid
 
 - ❌ Using `Math.random()` — always use the seeded random utilities

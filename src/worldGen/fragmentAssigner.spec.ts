@@ -89,9 +89,7 @@ describe("fragment placement — run 1 (no ward preference)", () => {
     const { slot: s1, result: r1 } = makeSlot("starter_1", "starter", 0)
     const { slot: s2, result: r2 } = makeSlot("starter_2", "starter", 1)
 
-    assignToSlots([s1, s2], [
-      { hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 2 },
-    ])
+    assignToSlots([s1, s2], [{ hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 2 }])
 
     expect(r1()?.type).toBe("hieroglyphFragment")
     expect(r2()?.type).toBe("hieroglyphFragment")
@@ -102,9 +100,7 @@ describe("fragment placement — run 1 (no ward preference)", () => {
     const { slot: s1b, result: r1b } = makeSlot("starter_1", "starter", 0)
     const { slot: s2, result: r2 } = makeSlot("starter_2", "starter", 1)
 
-    assignToSlots([s1a, s1b, s2], [
-      { hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 2 },
-    ])
+    assignToSlots([s1a, s1b, s2], [{ hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 2 }])
 
     // Should place in s1a and s2, not s1b (same journey as s1a)
     const placed = [r1a(), r1b(), r2()].filter(r => r?.type === "hieroglyphFragment")
@@ -119,9 +115,7 @@ describe("fragment placement — run 1 (no ward preference)", () => {
     const { slot: s1a, result: r1a } = makeSlot("starter_1", "starter", 0)
     const { slot: s1b, result: r1b } = makeSlot("starter_1", "starter", 0)
 
-    assignToSlots([s1a, s1b], [
-      { hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 2 },
-    ])
+    assignToSlots([s1a, s1b], [{ hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 2 }])
 
     // Both slots are in the same journey — should still place both
     expect(r1a()?.type).toBe("hieroglyphFragment")
@@ -134,14 +128,17 @@ describe("fragment placement — run 2 (ward preference)", () => {
     const { slot: open, result: openResult } = makeSlot("starter_1", "starter", 0, [])
     const { slot: warded, result: wardedResult } = makeSlot("starter_2", "starter", 1, ["starter_a_1"])
 
-    assignToSlots([open, warded], [
-      {
-        hieroglyphId: "p8",
-        tier: "starter",
-        preferredWardKeys: ["starter_a_1"],
-        required: 1,
-      },
-    ])
+    assignToSlots(
+      [open, warded],
+      [
+        {
+          hieroglyphId: "p8",
+          tier: "starter",
+          preferredWardKeys: ["starter_a_1"],
+          required: 1,
+        },
+      ]
+    )
 
     expect(wardedResult()?.type).toBe("hieroglyphFragment")
     expect(openResult()?.type).not.toBe("hieroglyphFragment")
@@ -151,14 +148,17 @@ describe("fragment placement — run 2 (ward preference)", () => {
     const { slot: s1, result: r1 } = makeSlot("starter_1", "starter", 0, [])
     const { slot: s2, result: r2 } = makeSlot("starter_2", "starter", 1, [])
 
-    assignToSlots([s1, s2], [
-      {
-        hieroglyphId: "p8",
-        tier: "starter",
-        preferredWardKeys: ["starter_a_1"],
-        required: 2,
-      },
-    ])
+    assignToSlots(
+      [s1, s2],
+      [
+        {
+          hieroglyphId: "p8",
+          tier: "starter",
+          preferredWardKeys: ["starter_a_1"],
+          required: 2,
+        },
+      ]
+    )
 
     expect(r1()?.type).toBe("hieroglyphFragment")
     expect(r2()?.type).toBe("hieroglyphFragment")
@@ -169,9 +169,7 @@ describe("fragment placement — cross-tier fallback", () => {
   it("uses cross-tier slots when tier-matching slots exhausted", () => {
     const { slot: junior, result: juniorResult } = makeSlot("junior_1", "junior", 4, [])
 
-    assignToSlots([junior], [
-      { hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 1 },
-    ])
+    assignToSlots([junior], [{ hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 1 }])
 
     expect(juniorResult()?.type).toBe("hieroglyphFragment")
   })
@@ -183,9 +181,7 @@ describe("fragment placement — unfilled placeholder slots", () => {
     const { slot: s2, result: r2 } = makeSlot("starter_2", "starter", 1)
 
     // Only 1 fragment needed, 2 placeholder slots → one gets a fragment, one gets consumable
-    assignToSlots([s1, s2], [
-      { hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 1 },
-    ])
+    assignToSlots([s1, s2], [{ hieroglyphId: "p10", tier: "starter", preferredWardKeys: [], required: 1 }])
 
     const results = [r1(), r2()]
     expect(results.filter(r => r?.type === "hieroglyphFragment")).toHaveLength(1)

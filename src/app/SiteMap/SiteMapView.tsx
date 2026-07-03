@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react"
 import type { CellState, CorridorCell, FloorGrid, GateVariant, KeyColor, RoomType } from "../../game/siteTypes"
 import { revealAll } from "../../game/gridNavigation"
 import { ExplorerDot } from "./ExplorerDot"
@@ -506,13 +507,23 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs
 
 export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false, explorerPos, className }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const PAD = 30
   const svgWidth = grid.cols * CELL + PAD * 2
   const svgHeight = grid.rows * CELL + PAD * 2
 
+  useEffect(() => {
+    if (!explorerPos || !scrollRef.current) return
+    const el = scrollRef.current
+    const x = PAD + explorerPos[1] * CELL + CELL / 2
+    const y = PAD + explorerPos[0] * CELL + CELL / 2
+    el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [explorerPos?.[0], explorerPos?.[1]])
+
   return (
-    <div className={`overflow-auto${className ? ` ${className}` : ""}`}>
+    <div ref={scrollRef} className={`overflow-auto${className ? ` ${className}` : ""}`}>
       <svg
         width={svgWidth}
         height={svgHeight}
@@ -542,7 +553,8 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
               const isCorner =
                 cell.dirs.size !== 2 ||
                 !((cell.dirs.has("n") && cell.dirs.has("s")) || (cell.dirs.has("e") && cell.dirs.has("w")))
-              const corridorClickable = onCellClick && cell.state === "reachable" && isCorner
+              const corridorClickable =
+                onCellClick && (cell.state === "reachable" || cell.state === "completed") && isCorner
               return (
                 <g
                   key={`${r},${c}`}

@@ -216,9 +216,7 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   )
   console.log(`  Map pieces placed: ${totalMapPieces}`)
   console.log(`  Mosaic pieces placed: ${totalMosaicPieces}`)
-  console.log(
-    `  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} placed (${totalFragments} total)`
-  )
+  console.log(`  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} placed (${totalFragments} total)`)
   if (uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${uncovered.join(", ")}`)
   if (under2.length > 0)
     console.log(`  ℹ Matrix target not yet reached (${under2.length} hieroglyphs) — game uses actual placed counts`)

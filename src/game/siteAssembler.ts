@@ -522,8 +522,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     if (config.exitOrStaircase === "exit") {
       roomSpecs.set(posKey(exR, exC), { roomType: "exit" })
     } else {
-      const stairId =
-        typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
+      const stairId = typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
       roomSpecs.set(posKey(exR, exC), { roomType: "stairhead", stairId })
     }
 
@@ -653,8 +652,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           ...(hColors.length > 1 ? { keyColors: hColors } : {}),
         })
       } else if (subSection.end === "staircase" || typeof subSection.end === "object") {
-        const stairId =
-          typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
+        const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
         roomSpecs.set(posKey(er, ec), {

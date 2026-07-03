@@ -108,10 +108,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     (row: number, col: number) => {
       if (!grid) return
       const cell = getCell(grid, row, col)
-      if (!cell || cell.type === "empty" || cell.state !== "reachable") return
+      if (!cell || cell.type === "empty") return
+      if (cell.state !== "reachable" && cell.state !== "completed") return
 
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
+
+      // Completed cells: just reposition the player, no puzzle/reward/trap
+      if (cell.state === "completed") {
+        journeys.updatePosition(journeyId, edgeId)
+        return
+      }
 
       if (cell.type === "corridor") {
         journeys.markCellExplored(sectionHash, edgeId)

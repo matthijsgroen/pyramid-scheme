@@ -1,12 +1,4 @@
-import type {
-  ConsumableType,
-  Difficulty,
-  FloorConfig,
-  SideSection,
-  SiteConfig,
-  Tier,
-  TreasureReward,
-} from "./types"
+import type { ConsumableType, Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
 import {
   PYRAMID_JOURNEYS,
   TOMB_JOURNEYS,
@@ -450,12 +442,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           const isLast = fi === constraint.floors.length - 1
           const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
           const floorSideSections = buildSideSections(tier, floorDiff, false, false, null, floorSections, 0, floorPP)
-          const floorChests = buildChestRewards(
-            journeyId,
-            chestOffset,
-            floorPP,
-            constraint.consumableRates
-          )
+          const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
           floorConfigs.push({
             pathPuzzles: floorPP,
@@ -728,28 +715,35 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): SlotRef[
       for (const floor of floors) {
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot([], true, r => { f.mainEndReward = r })
+          addSlot([], true, r => {
+            f.mainEndReward = r
+          })
         }
         for (const section of floor.sideSections) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           if (section.endReward?.type === "fragmentSlot") {
             const s = section
-            addSlot(sWardKeys, true, r => { s.endReward = r })
+            addSlot(sWardKeys, true, r => {
+              s.endReward = r
+            })
           } else if (section.gate?.type === "tomb-key" && !section.endReward) {
             const s = section
-            addSlot(sWardKeys, false, r => { s.endReward = r })
+            addSlot(sWardKeys, false, r => {
+              s.endReward = r
+            })
           }
           for (const sub of section.sideSections ?? []) {
-            const subWardKeys = [
-              ...sWardKeys,
-              ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : []),
-            ]
+            const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
-              addSlot(subWardKeys, true, r => { ss.endReward = r })
+              addSlot(subWardKeys, true, r => {
+                ss.endReward = r
+              })
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {
               const ss = sub
-              addSlot(subWardKeys, false, r => { ss.endReward = r })
+              addSlot(subWardKeys, false, r => {
+                ss.endReward = r
+              })
             }
           }
         }

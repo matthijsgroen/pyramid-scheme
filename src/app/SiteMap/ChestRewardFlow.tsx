@@ -1,8 +1,8 @@
 import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
-const hieroglyphCategory = (id: string) =>
-  id.startsWith("d") ? "deities" : id.startsWith("p") ? "professions" : "animals"
+export const hieroglyphCategory = (id: string) =>
+  id.startsWith("d") ? "deities" : id.startsWith("p") ? "professions" : id.startsWith("art") ? "artifacts" : "animals"
 import type { TreasureReward } from "@/game/siteTypes"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
@@ -83,7 +83,11 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
           return (
             <LootPopup
               isOpen={showLoot}
-              itemName={item ? `${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })} — ${t("chest.hieroglyphFragment")}` : t("chest.hieroglyphFragment")}
+              itemName={
+                item
+                  ? `${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })} — ${t("chest.hieroglyphFragment")}`
+                  : t("chest.hieroglyphFragment")
+              }
               itemDescription={`${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`}
               rarity={rarity}
               itemComponent={

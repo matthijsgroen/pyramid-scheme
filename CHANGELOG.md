@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The pyramid map now scrolls to keep the explorer dot centered as you move, so you can always see what is ahead without manually scrolling.
+- Completed rooms and corridors are now tappable again, letting you move back to any room you have already visited.
 - Expeditions no longer award inventory items directly on completion; items are found inside the pyramid during exploration instead.
 - The alpha notice banner has been updated to explain this is a full redesign of the game being tested from scratch.
 

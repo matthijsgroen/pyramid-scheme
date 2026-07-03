@@ -95,10 +95,12 @@
   "chest": {
     "tapToOpen": "Tik om te openen",
     "mapPiece": "Kaartdeel",
+    "mapPieceDescription": "Een fragment van een oude kaart. Verzamel genoeg stukken om de locatie van een verborgen schattombe te onthullen.",
     "hieroglyphFragment": "Hiërogliefenfragment",
     "fragmentProgress": "{{found}} van {{required}} fragmenten gevonden",
     "tombKey": "Tombesleutel",
     "hieroglyphs": "Hiëroglieven",
+    "hieroglyphsDescription": "Heilige symbolen gegraveerd in de wanden van deze kamer. Hun betekenis vergroot je kennis van de oude wereld.",
     "mosaicPiece": "Mozaïekstuk",
     "consumable": {
       "bandage": "Verband",
