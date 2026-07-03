@@ -592,6 +592,10 @@ export const SiteMapView = ({
                   onClick={corridorClickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: corridorClickable ? "pointer" : "default" }}
                 >
+                  {/* Invisible full-cell hit target — the corridor bar itself is too thin to tap reliably */}
+                  {corridorClickable && (
+                    <rect x={-CELL / 2} y={-CELL / 2} width={CELL} height={CELL} fill="transparent" />
+                  )}
                   <CorridorCellShape cell={cell} />
                   {cell.state === "reachable" && isCorner && <circle r={3} fill="#d0a840" opacity={0.85} />}
                 </g>
