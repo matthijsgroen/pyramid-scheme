@@ -19,6 +19,8 @@ const serializeReward = (r: TreasureReward, nextIdx: FragmentCounter): string =>
       return `{ type: "mapPiece", tombId: "${r.tombId}" }`
     case "consumable":
       return `{ type: "consumable", consumable: "${r.consumable}" }`
+    case "fragmentSlot":
+      throw new Error("fragmentSlot reached serializer — assignFragments must run before serialization")
     default:
       return `{ type: "${r.type}" }`
   }
@@ -79,15 +81,18 @@ const serializeSiteConfig = (floors: SiteConfig, nextIdx: FragmentCounter): stri
 
 const countPlacedFragments = (configs: Record<string, SiteConfig[]>): Map<string, number> => {
   const placed = new Map<string, number>()
+  const count = (r: { type: string; hieroglyphId?: string } | undefined) => {
+    if (r?.type === "hieroglyphFragment" && r.hieroglyphId)
+      placed.set(r.hieroglyphId, (placed.get(r.hieroglyphId) ?? 0) + 1)
+  }
   for (const siteConfigs of Object.values(configs)) {
     for (const floors of siteConfigs) {
       for (const cfg of floors) {
-        for (const r of cfg.chestRewards ?? []) {
-          if (r.type === "hieroglyphFragment") placed.set(r.hieroglyphId, (placed.get(r.hieroglyphId) ?? 0) + 1)
-        }
+        count(cfg.mainEndReward)
+        for (const r of cfg.chestRewards ?? []) count(r)
         for (const s of cfg.sideSections) {
-          if (s.endReward?.type === "hieroglyphFragment")
-            placed.set(s.endReward.hieroglyphId, (placed.get(s.endReward.hieroglyphId) ?? 0) + 1)
+          count(s.endReward)
+          for (const sub of s.sideSections ?? []) count(sub.endReward)
         }
       }
     }
@@ -181,12 +186,17 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
           if (s.endReward?.type === "mapPiece") totalMapPieces++
           if (s.endReward?.type === "mosaicPiece") totalMosaicPieces++
         }
-        for (const r of cfg.chestRewards ?? []) {
-          if (r.type === "hieroglyphFragment") {
+        const countFrag = (r: { type: string; hieroglyphId?: string } | undefined) => {
+          if (r?.type === "hieroglyphFragment" && r.hieroglyphId) {
             totalFragments++
-            const prev = fragCoverage.get(r.hieroglyphId) ?? 0
-            fragCoverage.set(r.hieroglyphId, prev + 1)
+            fragCoverage.set(r.hieroglyphId, (fragCoverage.get(r.hieroglyphId) ?? 0) + 1)
           }
+        }
+        countFrag(cfg.mainEndReward)
+        for (const r of cfg.chestRewards ?? []) countFrag(r)
+        for (const s of cfg.sideSections) {
+          countFrag(s.endReward)
+          for (const sub of s.sideSections ?? []) countFrag(sub.endReward)
         }
       }
     }
@@ -207,7 +217,7 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   console.log(`  Map pieces placed: ${totalMapPieces}`)
   console.log(`  Mosaic pieces placed: ${totalMosaicPieces}`)
   console.log(
-    `  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} unique + ${totalFragments - uniqueAssignedFragments} repeats (${totalFragments} total chest slots)`
+    `  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} placed (${totalFragments} total)`
   )
   if (uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${uncovered.join(", ")}`)
   if (under2.length > 0)

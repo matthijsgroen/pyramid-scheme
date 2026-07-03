@@ -57,6 +57,8 @@ const rewardLabel = (r: TreasureReward): string => {
       return "Hieroglyphs"
     case "consumable":
       return `Consumable: ${r.consumable}`
+    case "fragmentSlot":
+      return "Fragment Slot (unassigned)"
   }
 }
 
@@ -74,6 +76,8 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-stone-500"
     case "consumable":
       return "text-orange-300"
+    case "fragmentSlot":
+      return "text-stone-400"
   }
 }
 

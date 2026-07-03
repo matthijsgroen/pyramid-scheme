@@ -8,6 +8,7 @@ export type TreasureReward =
   | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
+  | { type: "fragmentSlot" }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"
