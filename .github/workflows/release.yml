@@ -55,7 +55,9 @@ jobs:
 
   deploy:
     needs: release
-    if: needs.release.outputs.released == 'true'
+    # Always deploy on a successful manual run, even if there was nothing new to release —
+    # this is also the "just deploy current main" button.
+    if: needs.release.result == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
