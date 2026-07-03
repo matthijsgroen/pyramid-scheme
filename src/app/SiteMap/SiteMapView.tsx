@@ -8,6 +8,8 @@ type Props = {
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
   explorerPos?: readonly [number, number]
+  /** "row,col" keys of completed treasure cells with a reward still waiting to be picked up */
+  pendingCells?: ReadonlySet<string>
   className?: string
 }
 
@@ -51,6 +53,16 @@ const CompletedBadge = ({ r }: { r: number }) => (
     <circle r={7} fill="#0e1e14" stroke="#3a8858" strokeWidth={1.5} />
     <text textAnchor="middle" dominantBaseline="central" fontSize={8} fill="#60c080" style={{ userSelect: "none" }}>
       ✓
+    </text>
+  </g>
+)
+
+// A treasure that couldn't be picked up (inventory was full) — still waiting to be looted
+const PendingLootBadge = ({ r }: { r: number }) => (
+  <g transform={`translate(${r - 7}, ${r - 7})`}>
+    <circle r={7} fill="#2a1e08" stroke="#d0a840" strokeWidth={1.5} />
+    <text textAnchor="middle" dominantBaseline="central" fontSize={9} fill="#f0c860" style={{ userSelect: "none" }}>
+      !
     </text>
   </g>
 )
@@ -505,7 +517,14 @@ const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = false, explorerPos, className }: Props) => {
+export const SiteMapView = ({
+  grid: gridProp,
+  onCellClick,
+  revealAllCells = false,
+  explorerPos,
+  pendingCells,
+  className,
+}: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const scrollRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -582,6 +601,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
             // room cell
             const state = cell.state
             const isCompleted = state === "completed"
+            const isPending = isCompleted && (pendingCells?.has(`${r},${c}`) ?? false)
             const clickable = onCellClick && (state === "reachable" || state === "completed")
             const roomR = nodeRadius[cell.roomType]
 
@@ -594,7 +614,7 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
               >
                 <ConnectionStubs dirs={cell.dirs} state={state} />
                 <NodeBackground type={cell.roomType} />
-                <g opacity={isCompleted ? 0.45 : 1}>
+                <g opacity={isCompleted && !isPending ? 0.45 : 1}>
                   <NodeShape
                     type={cell.roomType}
                     state={state}
@@ -603,9 +623,10 @@ export const SiteMapView = ({ grid: gridProp, onCellClick, revealAllCells = fals
                     keyColors={cell.keyColors}
                   />
                 </g>
-                {isCompleted && cell.roomType !== "fork" && cell.roomType !== "entrance" && (
-                  <CompletedBadge r={roomR} />
-                )}
+                {isCompleted &&
+                  cell.roomType !== "fork" &&
+                  cell.roomType !== "entrance" &&
+                  (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
               </g>
             )
           })

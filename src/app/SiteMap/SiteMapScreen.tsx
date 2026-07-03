@@ -63,6 +63,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     journeyState?.position,
     progression.perks.detectionLevel
   )
+  const pendingConsumableCells = useMemo(() => {
+    const prefix = `${currentFloor}:`
+    const result = new Set<string>()
+    for (const edgeId of journeys.getSkippedConsumables(journeyId)) {
+      if (edgeId.startsWith(prefix)) result.add(edgeId.slice(prefix.length))
+    }
+    return result
+  }, [journeys, journeyId, currentFloor])
 
   const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
   const [trapWarningPos, setTrapWarningPos] = useState<readonly [number, number] | null>(null)
@@ -121,20 +129,25 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // Completed cells: just reposition the player, unless it's a chest we couldn't fit before
-      // and there's room for it now — in that case, offer it again.
+      // Completed cells: just reposition the player, unless it's a chest we couldn't fit before —
+      // offer it again, showing whether there's room for it now or still not.
       if (cell.state === "completed") {
         journeys.updatePosition(journeyId, edgeId)
         if (
           cell.type === "room" &&
           cell.roomType === "treasure" &&
           cell.reward?.type === "consumable" &&
-          journeys.getSkippedConsumables(journeyId).has(edgeId) &&
-          progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool <
-            progression.consumableCarryCap
+          journeys.getSkippedConsumables(journeyId).has(edgeId)
         ) {
           const reward = cell.reward
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+            const stillFull =
+              progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
+              progression.consumableCarryCap
+            if (stillFull) {
+              setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
+              return
+            }
             setPendingReward({
               reward,
               onCollect: () => {
@@ -251,7 +264,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       <BackButton onClick={onCancel} label={t("ui.back")} />
       {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
       <div className="relative h-screen w-screen">
-        <SiteMapView grid={grid} onCellClick={handleCellClick} explorerPos={explorerPos} className="h-full w-full" />
+        <SiteMapView
+          grid={grid}
+          onCellClick={handleCellClick}
+          explorerPos={explorerPos}
+          pendingCells={pendingConsumableCells}
+          className="h-full w-full"
+        />
       </div>
       <SiteHudBar>
         {(progression.perks.compassLevel > 0 ||
