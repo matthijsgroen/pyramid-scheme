@@ -163,3 +163,46 @@ describe("completeJourney", () => {
     expect(state[0].position).toBeNull()
   })
 })
+
+// ── getJourney: randomSeed stability for interior pyramids ────────────────────
+
+describe("getJourney randomSeed", () => {
+  const makeInteriorJourneyData = (id: string): TranslatedJourney =>
+    ({
+      ...makeJourneyData(id),
+      siteConfigs: [{}],
+    }) as TranslatedJourney
+
+  // createJourneysV3Api mirrors a hook that re-derives its return value from `journeys` on
+  // every render — so each read/mutation here gets a fresh api bound to the current state,
+  // the same way a component calling useJourneys() again after a state update would.
+  const makeStatefulApi = (stored: StoredJourneyStateV3, journeyData: TranslatedJourney[]) => {
+    let state = [stored]
+    return () =>
+      createJourneysV3Api({
+        journeys: state,
+        setJourneys: updater => {
+          state = typeof updater === "function" ? updater(state) : updater
+        },
+        journeyData,
+      })
+  }
+
+  it("keeps the same seed across a completion for an interior pyramid (site stays revisitable)", () => {
+    const stored = makeStoredJourney({ levelNr: REAL_LEVEL_COUNT + 1, completionCount: 0, active: true })
+    const freshApi = makeStatefulApi(stored, [makeInteriorJourneyData(REAL_ID)])
+    const seedBefore = freshApi().getJourney(REAL_ID)!.randomSeed
+    freshApi().completeJourney()
+    const seedAfter = freshApi().getJourney(REAL_ID)!.randomSeed
+    expect(seedAfter).toBe(seedBefore)
+  })
+
+  it("varies the seed across a completion for a non-interior journey (legacy repeat-run design)", () => {
+    const stored = makeStoredJourney({ levelNr: REAL_LEVEL_COUNT + 1, completionCount: 0, active: true })
+    const freshApi = makeStatefulApi(stored, [makeJourneyData(REAL_ID)])
+    const seedBefore = freshApi().getJourney(REAL_ID)!.randomSeed
+    freshApi().completeJourney()
+    const seedAfter = freshApi().getJourney(REAL_ID)!.randomSeed
+    expect(seedAfter).not.toBe(seedBefore)
+  })
+})
