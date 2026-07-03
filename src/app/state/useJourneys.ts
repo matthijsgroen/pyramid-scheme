@@ -47,6 +47,7 @@ export type JourneyAPI = {
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   markTrapDisabled: (sectionHash: string, edgeId: string) => void
   markConsumableSkipped: (edgeId: string) => void
+  clearConsumableSkipped: (edgeId: string) => void
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
 }
 
@@ -265,6 +266,17 @@ export const createJourneysV3Api = ({
     )
   }
 
+  const clearConsumableSkipped = (edgeId: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === activeJourneyId
+          ? { ...j, skippedConsumables: (j.skippedConsumables ?? []).filter(id => id !== edgeId) }
+          : j
+      )
+    )
+  }
+
   const getSkippedConsumables = (journeyId: string): ReadonlySet<string> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     return new Set(j?.skippedConsumables ?? [])
@@ -287,6 +299,7 @@ export const createJourneysV3Api = ({
     setInteriorLevel,
     markTrapDisabled,
     markConsumableSkipped,
+    clearConsumableSkipped,
     getSkippedConsumables,
   }
 }

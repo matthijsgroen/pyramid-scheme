@@ -121,9 +121,29 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // Completed cells: just reposition the player, no puzzle/reward/trap
+      // Completed cells: just reposition the player, unless it's a chest we couldn't fit before
+      // and there's room for it now — in that case, offer it again.
       if (cell.state === "completed") {
         journeys.updatePosition(journeyId, edgeId)
+        if (
+          cell.type === "room" &&
+          cell.roomType === "treasure" &&
+          cell.reward?.type === "consumable" &&
+          journeys.getSkippedConsumables(journeyId).has(edgeId) &&
+          progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool <
+            progression.consumableCarryCap
+        ) {
+          const reward = cell.reward
+          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+            setPendingReward({
+              reward,
+              onCollect: () => {
+                progression.addConsumable(reward.consumable)
+                journeys.clearConsumableSkipped(edgeId)
+              },
+            })
+          })
+        }
         return
       }
 
@@ -177,17 +197,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           setExiting(true)
         )
       } else if (cell.roomType === "treasure") {
+        // Always mark the room explored so corridors past it keep unfolding, even if a consumable
+        // reward inside can't be picked up right now — that's tracked separately below.
+        journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
         if (cell.reward) {
           const reward = cell.reward
           // Inventory-as-truth: fragment already collected → skip overlay
           const alreadyCollected =
             reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
-          if (alreadyCollected) {
-            journeys.markCellExplored(sectionHash, edgeId)
-          } else {
-            // Consumables need a room check up front: a full pack leaves the chest unmarked so it
-            // can be revisited once there's space, instead of silently consuming the find.
+          if (!alreadyCollected) {
+            // Consumables need a room check up front: a full pack leaves the reward for a later visit
+            // instead of silently losing it.
             const packFull =
               reward.type === "consumable" &&
               progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
@@ -198,7 +219,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                 setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
                 return
               }
-              journeys.markCellExplored(sectionHash, edgeId)
               setPendingReward({
                 reward,
                 onCollect: () => {
@@ -214,8 +234,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
               })
             })
           }
-        } else {
-          journeys.markCellExplored(sectionHash, edgeId)
         }
       }
     },
