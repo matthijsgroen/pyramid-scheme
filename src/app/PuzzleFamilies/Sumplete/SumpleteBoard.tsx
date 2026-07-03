@@ -100,9 +100,6 @@ export const SumpleteBoard = ({ grid, rowTargets, colTargets, onSolved }: Props)
         ))}
         <div className="ml-1 h-10 w-10" />
       </div>
-      {solved && (
-        <div className="mt-3 text-center text-sm font-bold tracking-wide text-green-400 uppercase">Solved!</div>
-      )}
     </div>
   )
 }
