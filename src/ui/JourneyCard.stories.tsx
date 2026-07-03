@@ -43,6 +43,7 @@ const mockTreasureTombJourney: TranslatedJourney = {
   difficulty: "starter",
   journeyLength: "short",
   levelCount: 4,
+  piecesRequired: 4,
   difficultyLabel: "Starter",
   lengthLabel: "Short",
   treasures: merchantCacheTreasures,
@@ -82,6 +83,16 @@ const meta = {
     },
     index: {
       control: "number",
+    },
+  },
+  args: {
+    labels: {
+      suggestedExpedition: "Suggested Expedition",
+      length: "Length",
+      chambers: "chambers",
+      progressLevel: "Progress: Level",
+      timesPlural: "times",
+      timesSingular: "time",
     },
   },
 } satisfies Meta<typeof JourneyCard>

@@ -23,8 +23,14 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const defaultLabels = {
+  instructionLabel: "Drag the artifact onto the hieroglyph to unlock",
+  alsoAvailableLabel: "Also available",
+}
+
 export const MeteoriteFragment: Story = {
   args: {
+    ...defaultLabels,
     hieroglyphSymbol: "𓁺",
     hieroglyphDifficulty: "master",
     artifactId: "t24",
@@ -35,6 +41,7 @@ export const MeteoriteFragment: Story = {
 
 export const TimeCrystal: Story = {
   args: {
+    ...defaultLabels,
     hieroglyphSymbol: "𓆕",
     hieroglyphDifficulty: "master",
     artifactId: "t26",
@@ -45,6 +52,7 @@ export const TimeCrystal: Story = {
 
 export const StarterDifficulty: Story = {
   args: {
+    ...defaultLabels,
     hieroglyphSymbol: "𓀀",
     hieroglyphDifficulty: "starter",
     artifactId: "t24",

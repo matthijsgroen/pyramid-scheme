@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { determineInventoryLootForCurrentRuns } from "./inventoryLootLogic"
 import { determineExpeditionBonus } from "./expeditionBonusLogic"
-import { TOMB_SYMBOLS } from "@/data/tableaus"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
-import type { Treasure } from "@/data/treasures"
 
 const makeJourney = (levelNr = 1, seed = 12345): CombinedJourneyState =>
   ({
@@ -23,324 +21,34 @@ const makeJourney = (levelNr = 1, seed = 12345): CombinedJourneyState =>
     },
   }) as unknown as CombinedJourneyState
 
-const makeTreasure = (id: string, effects: Treasure["effects"]): Treasure => ({
-  id,
-  name: "Test Treasure",
-  symbol: "𓀀",
-  description: "test",
-  effects,
-})
-
-describe("moreLootChance treasure effects", () => {
-  it("no owned treasures → no bonus loot from moreLootChance", () => {
-    // base chance 0 so only moreLootChance could produce items
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      []
-    )
-    expect(result.shouldAwardInventoryItem).toBe(false)
-    expect(result.itemIds).toHaveLength(0)
-  })
-
-  it("100% moreLootChance always awards a bonus item", () => {
-    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 1.0, tier: "stone" } })
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0, // base chance 0 so only bonus items
-      1,
-      3,
-      [treasure]
-    )
-    expect(result.shouldAwardInventoryItem).toBe(true)
-    expect(result.itemIds.length).toBeGreaterThan(0)
-  })
-
-  it("0% moreLootChance never awards a bonus item", () => {
-    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 0.0, tier: "stone" } })
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      [treasure]
-    )
-    expect(result.shouldAwardInventoryItem).toBe(false)
-    expect(result.itemIds).toHaveLength(0)
-  })
-
-  it("two 50% same-tier treasures stack to 100% and always award a bonus item", () => {
-    const treasures = [
-      makeTreasure("t1", { moreLootChance: { chance: 0.5, tier: "stone" } }),
-      makeTreasure("t2", { moreLootChance: { chance: 0.5, tier: "stone" } }),
-    ]
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      treasures
-    )
-    expect(result.shouldAwardInventoryItem).toBe(true)
-    expect(result.itemIds.length).toBeGreaterThan(0)
-  })
-
-  // Helper: run the same treasure set across N seeds and collect item counts
-  const bonusCountsAcrossSeeds = (treasures: ReturnType<typeof makeTreasure>[], seedCount = 30): number[] =>
-    Array.from(
-      { length: seedCount },
-      (_, i) =>
-        determineInventoryLootForCurrentRuns(
-          makeJourney(1, (i + 1) * 1000),
-          "starter",
-          {},
-          () => undefined,
-          () => 0,
-          0,
-          1,
-          3,
-          treasures
-        ).itemIds.length
-    )
-
-  it("totalChance = 1.0 always awards exactly 1 item", () => {
-    const treasures = [makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } })]
-    const counts = bonusCountsAcrossSeeds(treasures)
-    expect(Math.min(...counts)).toBe(1)
-    expect(Math.max(...counts)).toBe(1)
-  })
-
-  it("totalChance = 1.5 always awards 1 or 2 items, never 0 or 3", () => {
-    const treasures = [
-      makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } }),
-      makeTreasure("t2", { moreLootChance: { chance: 0.5, tier: "stone" } }),
-    ]
-    const counts = bonusCountsAcrossSeeds(treasures)
-    expect(Math.min(...counts)).toBe(1)
-    expect(Math.max(...counts)).toBe(2)
-  })
-
-  it("totalChance = 2.0 always awards exactly 2 items", () => {
-    const treasures = [
-      makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } }),
-      makeTreasure("t2", { moreLootChance: { chance: 1.0, tier: "stone" } }),
-    ]
-    const counts = bonusCountsAcrossSeeds(treasures)
-    expect(Math.min(...counts)).toBe(2)
-    expect(Math.max(...counts)).toBe(2)
-  })
-
-  it("totalChance = 2.5 always awards 2 or 3 items, never 1 or 4", () => {
-    const treasures = [
-      makeTreasure("t1", { moreLootChance: { chance: 1.0, tier: "stone" } }),
-      makeTreasure("t2", { moreLootChance: { chance: 1.0, tier: "stone" } }),
-      makeTreasure("t3", { moreLootChance: { chance: 0.5, tier: "stone" } }),
-    ]
-    const counts = bonusCountsAcrossSeeds(treasures)
-    expect(Math.min(...counts)).toBe(2)
-    expect(Math.max(...counts)).toBe(3)
-  })
-
-  it("totalChance = 3.0 always awards exactly 3 items", () => {
-    const treasures = Array.from({ length: 3 }, (_, i) =>
-      makeTreasure(`t${i}`, { moreLootChance: { chance: 1.0, tier: "stone" } })
-    )
-    const counts = bonusCountsAcrossSeeds(treasures)
-    expect(Math.min(...counts)).toBe(3)
-    expect(Math.max(...counts)).toBe(3)
-  })
-
-  it("totalChance = 3.2 (fully stacked at 0.4) awards 3 or 4 items, never fewer", () => {
-    // 8 × 0.4 = 3.2: floor(3) guaranteed + 20% chance of 4th
-    const treasures = Array.from({ length: 8 }, (_, i) =>
-      makeTreasure(`t${i}`, { moreLootChance: { chance: 0.4, tier: "stone" } })
-    )
-    const counts = bonusCountsAcrossSeeds(treasures)
-    expect(Math.min(...counts)).toBe(3)
-    expect(Math.max(...counts)).toBe(4)
-  })
-
-  it("bonus items come from the correct tier pool", () => {
-    const treasure = makeTreasure("t1", { moreLootChance: { chance: 3.0, tier: "stone" } })
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      [treasure]
-    )
-    expect(result.itemIds).toHaveLength(3)
-    result.itemIds.forEach(id => expect(TOMB_SYMBOLS["starter"]).toContain(id))
-  })
-
-  it("tier-specific treasure awards item from that tier regardless of current pyramid difficulty", () => {
-    // Bronze-tier treasure played on a starter (stone) pyramid
-    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 1.0, tier: "bronze" } })
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      [treasure]
-    )
-    expect(result.shouldAwardInventoryItem).toBe(true)
-    expect(result.itemIds.length).toBeGreaterThan(0)
-  })
-
-  it("tier-less moreLootChance resolves to current pyramid difficulty tier", () => {
-    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 1.0 } }) // no tier = adapts
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      [treasure]
-    )
-    expect(result.shouldAwardInventoryItem).toBe(true)
-    expect(result.itemIds.length).toBeGreaterThan(0)
-  })
-
+describe("determineInventoryLootForCurrentRuns", () => {
   it("result is deterministic for the same seed and level", () => {
-    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 0.5, tier: "stone" } })
-    const args: Parameters<typeof determineInventoryLootForCurrentRuns> = [
-      makeJourney(1, 99999),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0,
-      1,
-      3,
-      [treasure],
-    ]
+    const args = [makeJourney(), "starter", {}, () => undefined, () => 0, 0, 1, 3] as const
     const result1 = determineInventoryLootForCurrentRuns(...args)
     const result2 = determineInventoryLootForCurrentRuns(...args)
     expect(result1.itemIds).toEqual(result2.itemIds)
     expect(result1.shouldAwardInventoryItem).toBe(result2.shouldAwardInventoryItem)
   })
-})
 
-describe("expeditionBonus treasure effects", () => {
-  const lastLevelJourney = makeJourney(3) // levelNr 3 = levelCount 3 → last level
-
-  it("not on last level → no bonus items", () => {
-    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
-    expect(determineExpeditionBonus(makeJourney(1), [treasure])).toHaveLength(0)
-    expect(determineExpeditionBonus(makeJourney(2), [treasure])).toHaveLength(0)
-  })
-
-  it("last level, no treasures with expeditionBonus → no bonus items", () => {
-    const treasure = makeTreasure("t_test", { moreLootChance: { chance: 1.0 } })
-    expect(determineExpeditionBonus(lastLevelJourney, [treasure])).toHaveLength(0)
-    expect(determineExpeditionBonus(lastLevelJourney, [])).toHaveLength(0)
-  })
-
-  it("last level with one expedition bonus treasure awards one item", () => {
-    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
-    const items = determineExpeditionBonus(lastLevelJourney, [treasure])
-    expect(items).toHaveLength(1)
-    expect(TOMB_SYMBOLS["starter"]).toContain(items[0])
-  })
-
-  it("two treasures with same tier stack — awards two items of that tier", () => {
-    const treasures = [
-      makeTreasure("t1", { expeditionBonus: { amount: 1, tier: "stone" } }),
-      makeTreasure("t2", { expeditionBonus: { amount: 1, tier: "stone" } }),
-    ]
-    const items = determineExpeditionBonus(lastLevelJourney, treasures)
-    expect(items).toHaveLength(2)
-    items.forEach(id => expect(TOMB_SYMBOLS["starter"]).toContain(id))
-  })
-
-  it("only awards items for the tier matching the current expedition", () => {
-    const treasures = [
-      makeTreasure("t1", { expeditionBonus: { amount: 1, tier: "stone" } }),
-      makeTreasure("t2", { expeditionBonus: { amount: 1, tier: "bronze" } }),
-    ]
-    // lastLevelJourney is starter (stone tier), so only the stone bonus fires
-    const items = determineExpeditionBonus(lastLevelJourney, treasures)
-    expect(items).toHaveLength(1)
-    expect(TOMB_SYMBOLS["starter"]).toContain(items[0])
-  })
-
-  it("result is deterministic for the same seed and level", () => {
-    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
-    const result1 = determineExpeditionBonus(lastLevelJourney, [treasure])
-    const result2 = determineExpeditionBonus(lastLevelJourney, [treasure])
-    expect(result1).toEqual(result2)
-  })
-
-  it("different seeds produce independent results", () => {
-    const treasure = makeTreasure("t_test", { expeditionBonus: { amount: 1, tier: "stone" } })
-    const results = new Set(
-      Array.from({ length: 10 }, (_, i) => determineExpeditionBonus(makeJourney(3, i * 1000 + 1), [treasure])[0])
-    )
-    // With 7 possible stone items and 10 different seeds, expect more than one distinct item
-    expect(results.size).toBeGreaterThan(1)
-  })
-})
-
-describe("higherLootChance treasure effects", () => {
-  it("higherLootChance adds to base inventory chance", () => {
-    const treasure = makeTreasure("t_test", { higherLootChance: 0.1 })
+  it("base chance 0 → no award", () => {
     const result = determineInventoryLootForCurrentRuns(
       makeJourney(),
       "starter",
       {},
       () => undefined,
       () => 0,
-      0.4,
+      0,
       1,
-      3,
-      [treasure]
+      3
     )
-    // effectiveBaseChance should be 0.5 (0.4 + 0.1)
-    expect(result.baseChance).toBeCloseTo(0.5)
+    expect(result.shouldAwardInventoryItem).toBe(false)
+    expect(result.itemIds).toHaveLength(0)
   })
+})
 
-  it("multiple higherLootChance treasures stack additively", () => {
-    const treasures = [makeTreasure("t1", { higherLootChance: 0.1 }), makeTreasure("t2", { higherLootChance: 0.1 })]
-    const result = determineInventoryLootForCurrentRuns(
-      makeJourney(),
-      "starter",
-      {},
-      () => undefined,
-      () => 0,
-      0.4,
-      1,
-      3,
-      treasures
-    )
-    expect(result.baseChance).toBeCloseTo(0.6)
+describe("determineExpeditionBonus", () => {
+  it("always returns [] (expedition bonus removed with TreasureEffects)", () => {
+    expect(determineExpeditionBonus(makeJourney(3))).toHaveLength(0)
+    expect(determineExpeditionBonus(makeJourney(1))).toHaveLength(0)
   })
 })

@@ -21,7 +21,8 @@ html, body {
   overflow: hidden;
 }
 
-#root {
+#root,
+#storybook-root {
   height: 100%;
 }
 
@@ -112,6 +113,24 @@ html, body {
     33%  { border-color: rgb(6, 182, 212); }
     66%  { border-color: rgb(245, 158, 11); }
     100% { border-color: rgb(168, 85, 247); }
+  }
+
+  --animate-entrance-zoom: entrance-zoom 0.8s ease-in both;
+  @keyframes entrance-zoom {
+    from { transform: translate(-50%, -50%) scale(0); }
+    to   { transform: translate(-50%, -50%) scale(150); }
+  }
+
+--animate-stone-entrance: stone-entrance 1.8s 1s ease-in-out both;
+  --animate-stone-bg: stone-bg 0.1s 1s both;
+  @keyframes stone-bg {
+    from { background-color: transparent; }
+    to   { background-color: rgb(2 6 23 / 0.8); }
+  }
+  @keyframes stone-entrance {
+    0%   { clip-path: inset(0 0 0 0 round 4px);      transform: translateX(0); }
+    25%  { clip-path: inset(0 -16px 0 0 round 4px);  transform: translateX(-16px) translateY(5px); }
+    100% { clip-path: inset(0 -16px 0 0 round 4px);  transform: translateX(-120%) translateY(5px); }
   }
 
   --animate-shake: shake 0.5s ease-in-out 2;

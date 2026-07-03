@@ -1,6 +1,13 @@
 import type { FC } from "react"
-import { useTranslation } from "react-i18next"
 import clsx from "clsx"
+
+type MapPiecePlaceholderLabels = {
+  treasureTomb: string
+  requiresMapPieces: string
+  mapPieces: string
+  collected: string
+  completeExpeditionsToUnlock: string
+}
 
 type MapPiecePlaceholderProps = {
   piecesFound: number
@@ -8,6 +15,7 @@ type MapPiecePlaceholderProps = {
   name: string
   index?: number
   showAnimation?: boolean
+  labels: MapPiecePlaceholderLabels
 }
 
 export const MapPiecePlaceholder: FC<MapPiecePlaceholderProps> = ({
@@ -16,9 +24,8 @@ export const MapPiecePlaceholder: FC<MapPiecePlaceholderProps> = ({
   name,
   index = 0,
   showAnimation = false,
+  labels,
 }) => {
-  const { t } = useTranslation("common")
-
   const progressPercentage = Math.round((piecesFound / piecesNeeded) * 100)
 
   return (
@@ -35,18 +42,18 @@ export const MapPiecePlaceholder: FC<MapPiecePlaceholderProps> = ({
     >
       <div className="mb-2">
         <span className="font-pyramid text-lg leading-tight font-bold break-words hyphens-auto text-gray-500">
-          🗝️ {piecesFound > 0 ? name : t("ui.treasureTomb")}
+          🗝️ {piecesFound > 0 ? name : labels.treasureTomb}
         </span>
       </div>
 
       <div className="flex items-center justify-between text-xs text-gray-500">
-        <span>{t("ui.requiresMapPieces")}</span>
+        <span>{labels.requiresMapPieces}</span>
       </div>
 
       {/* Map Pieces Progress */}
       <div className="mt-3 flex flex-col gap-2">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-medium text-gray-600">📜 {t("ui.mapPieces")}</span>
+          <span className="font-medium text-gray-600">📜 {labels.mapPieces}</span>
           <span className="font-bold text-gray-700">
             {piecesFound}/{piecesNeeded}
           </span>
@@ -61,12 +68,12 @@ export const MapPiecePlaceholder: FC<MapPiecePlaceholderProps> = ({
         </div>
 
         <div className="text-center text-xs font-medium text-gray-600">
-          {progressPercentage}% {t("ui.collected")}
+          {progressPercentage}% {labels.collected}
         </div>
       </div>
 
       {piecesFound < piecesNeeded && (
-        <div className="mt-2 text-center text-xs text-gray-500">{t("ui.completeExpeditionsToUnlock")}</div>
+        <div className="mt-2 text-center text-xs text-gray-500">{labels.completeExpeditionsToUnlock}</div>
       )}
     </div>
   )

@@ -2,7 +2,7 @@ import clsx from "clsx"
 import type { FC } from "react"
 
 export type ChestState = "empty" | "error" | "open"
-export type ChestVariant = "vibrant" | "muted"
+export type ChestVariant = "vibrant" | "muted" | "wooden"
 
 export const Chest: FC<{
   allowInteraction: boolean
@@ -23,56 +23,63 @@ export const Chest: FC<{
         role={allowInteraction ? "button" : undefined}
         aria-label={allowInteraction ? label : undefined}
       >
-        {/* Ornate base platform with hieroglyphic pattern */}
+        {/* Base platform */}
         <div
           className={clsx(
             "absolute -bottom-3 left-1/2 h-4 w-28 -translate-x-1/2 rounded-sm bg-gradient-to-r shadow-xl",
             {
               "from-yellow-700 via-yellow-600 to-yellow-700": variant === "vibrant",
               "from-stone-600 via-stone-500 to-stone-600": variant === "muted",
+              "from-amber-950 via-amber-900 to-amber-950": variant === "wooden",
             }
           )}
         >
-          {/* Hieroglyphic decorations on base */}
+          {/* Base decorations */}
           <div
             className={clsx("absolute top-1 left-2 h-1 w-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
+              "bg-amber-950": variant === "wooden",
             })}
           />
           <div
             className={clsx("absolute top-1 left-4 h-1 w-2", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
+              "bg-amber-950": variant === "wooden",
             })}
           />
           <div
             className={clsx("absolute top-1 left-7 h-1 w-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
+              "bg-amber-950": variant === "wooden",
             })}
           />
           <div
             className={clsx("absolute top-1 right-7 h-1 w-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
+              "bg-amber-950": variant === "wooden",
             })}
           />
           <div
             className={clsx("absolute top-1 right-4 h-1 w-2", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
+              "bg-amber-950": variant === "wooden",
             })}
           />
           <div
             className={clsx("absolute top-1 right-2 h-1 w-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
+              "bg-amber-950": variant === "wooden",
             })}
           />
         </div>
 
-        {/* Main lock body with Egyptian styling */}
+        {/* Main body */}
         <div
           className={clsx(
             "relative h-24 w-28 rounded-b-xl border-4 bg-gradient-to-b shadow-2xl transition-all duration-300",
@@ -90,53 +97,57 @@ export const Chest: FC<{
               "border-red-700 from-red-50 to-red-100 before:bg-red-200": state === "error" && variant === "muted",
               "border-emerald-700 from-emerald-50 to-emerald-100 before:bg-emerald-200":
                 state === "open" && variant === "muted",
+              // Wooden colors
+              "border-amber-950 from-amber-800 to-amber-900 before:bg-amber-700":
+                state === "empty" && variant === "wooden",
+              "border-red-950 from-red-900 to-red-950 before:bg-red-800": state === "error" && variant === "wooden",
+              "border-emerald-950 from-emerald-900 to-emerald-950 before:bg-emerald-800":
+                state === "open" && variant === "wooden",
             }
           )}
         >
-          {/* Egyptian decorative corners */}
+          {/* Corner brackets */}
           <div
             className={clsx("absolute top-1 left-1 h-2 w-2 border-t-2 border-l-2", {
               "border-amber-900": variant === "vibrant",
               "border-stone-700": variant === "muted",
+              "border-stone-600": variant === "wooden",
             })}
           />
           <div
             className={clsx("absolute top-1 right-1 h-2 w-2 border-t-2 border-r-2", {
               "border-amber-900": variant === "vibrant",
               "border-stone-700": variant === "muted",
+              "border-stone-600": variant === "wooden",
             })}
           />
 
-          {/* Sacred Eye of Horus keyhole */}
+          {/* Keyhole */}
           <div className="absolute top-6 left-1/2 -translate-x-1/2">
             <div
               className={clsx("relative h-5 w-8 rounded-full transition-colors duration-300", {
-                // Vibrant colors
                 "bg-amber-800": state === "empty" && variant === "vibrant",
                 "bg-red-900": state === "error" && variant === "vibrant",
                 "bg-emerald-900": state === "open" && variant === "vibrant",
-                // Muted colors
-                "bg-stone-700": state === "empty" && variant === "muted",
-                "bg-red-800": state === "error" && variant === "muted",
-                "bg-emerald-800": state === "open" && variant === "muted",
+                "bg-stone-700": state === "empty" && (variant === "muted" || variant === "wooden"),
+                "bg-red-800": state === "error" && (variant === "muted" || variant === "wooden"),
+                "bg-emerald-800": state === "open" && (variant === "muted" || variant === "wooden"),
               })}
             >
-              {/* Eye pupil with inner glow */}
+              {/* Pupil */}
               <div className="absolute top-1/2 left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black">
                 <div
                   className={clsx("absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full", {
-                    // Vibrant colors
                     "bg-amber-400": state === "empty" && variant === "vibrant",
                     "bg-red-400": state === "error" && variant === "vibrant",
                     "bg-emerald-400": state === "open" && variant === "vibrant",
-                    // Muted colors
-                    "bg-stone-400": state === "empty" && variant === "muted",
-                    "bg-red-300": state === "error" && variant === "muted",
-                    "bg-emerald-300": state === "open" && variant === "muted",
+                    "bg-stone-400": state === "empty" && (variant === "muted" || variant === "wooden"),
+                    "bg-red-300": state === "error" && (variant === "muted" || variant === "wooden"),
+                    "bg-emerald-300": state === "open" && (variant === "muted" || variant === "wooden"),
                   })}
                 />
               </div>
-              {/* Eye of Horus tear mark - only show in vibrant mode */}
+              {/* Eye of Horus details - vibrant only */}
               {variant === "vibrant" && (
                 <div
                   className={clsx("absolute right-0 -bottom-1 h-2 w-3 rounded-bl-full transition-colors duration-300", {
@@ -146,7 +157,6 @@ export const Chest: FC<{
                   })}
                 />
               )}
-              {/* Eye of Horus eyebrow - only show in vibrant mode */}
               {variant === "vibrant" && (
                 <div
                   className={clsx("absolute -top-1 left-1 h-1 w-6 rounded-full transition-colors duration-300", {
@@ -159,7 +169,16 @@ export const Chest: FC<{
             </div>
           </div>
 
-          {/* Hieroglyphic patterns - only show in vibrant mode */}
+          {/* Wood grain lines — wooden only */}
+          {variant === "wooden" && (
+            <div className="absolute inset-x-2 bottom-3 flex flex-col gap-1.5">
+              <div className="h-px w-full bg-amber-950/40" />
+              <div className="h-px w-full bg-amber-950/40" />
+              <div className="h-px w-full bg-amber-950/40" />
+            </div>
+          )}
+
+          {/* Hieroglyphic patterns — vibrant only */}
           {variant === "vibrant" && (
             <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
               <div className="h-1 w-1 rounded-full bg-amber-900/70" />
@@ -170,7 +189,7 @@ export const Chest: FC<{
             </div>
           )}
 
-          {/* Ankh symbols in corners - only show in vibrant mode */}
+          {/* Ankh symbols — vibrant only */}
           {variant === "vibrant" && (
             <>
               <div className="absolute bottom-1 left-1 text-xs text-amber-900/50">⚱</div>
@@ -179,7 +198,7 @@ export const Chest: FC<{
           )}
         </div>
 
-        {/* Ornate Egyptian shackle with hieroglyphic details */}
+        {/* Shackle */}
         <div
           className={clsx(
             "absolute top-3 left-1/2 h-12 w-20 -translate-x-1/2 rounded-t-full border-4 border-b-0 bg-gradient-to-t transition-all duration-500",
@@ -197,24 +216,28 @@ export const Chest: FC<{
               "border-red-700 from-red-50 to-red-100 before:bg-red-200": state === "error" && variant === "muted",
               "border-emerald-700 from-emerald-50 to-emerald-100 before:bg-emerald-200 translate-x-4 rotate-15":
                 state === "open" && variant === "muted",
+              // Wooden — iron shackle
+              "border-stone-700 from-stone-600 to-stone-700 before:bg-stone-500":
+                state === "empty" && variant === "wooden",
+              "border-red-900 from-red-800 to-red-900 before:bg-red-700": state === "error" && variant === "wooden",
+              "border-emerald-900 from-emerald-800 to-emerald-900 before:bg-emerald-700 translate-x-4 rotate-15":
+                state === "open" && variant === "wooden",
             }
           )}
         >
-          {/* Shackle decorative scarab beetles - only show in vibrant mode */}
+          {/* Shackle beetles — vibrant only */}
           {variant === "vibrant" && (
             <>
               <div className="absolute top-3 left-2 h-1 w-2 rounded-full bg-amber-900/60" />
               <div className="absolute top-3 right-2 h-1 w-2 rounded-full bg-amber-900/60" />
             </>
           )}
-
-          {/* Egyptian symbols on shackle - only show in vibrant mode */}
           {variant === "vibrant" && (
             <div className="absolute top-1 left-1/2 -translate-x-1/2 text-xs text-amber-900/40">𓂀</div>
           )}
         </div>
 
-        {/* Mystical glow effects */}
+        {/* Glow effects */}
         {state === "open" && (
           <>
             <div className="absolute -inset-6 rounded-full bg-emerald-400/30 blur-xl" />

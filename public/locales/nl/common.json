@@ -74,6 +74,8 @@
     "howToPlay": "Hoe te spelen",
     "suggestedExpedition": "Aanbevolen",
     "puzzleComplete": "Het antwoord is:",
+    "puzzleCompleted": "Puzzel Voltooid",
+    "trapBlocked": "Niet genoeg gezondheid om deze val te proberen",
     "spiritsRejectCode": "De geesten verwerpen deze code",
     "sacredSealBroken": "Het heilige zegel is verbroken",
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
@@ -81,6 +83,31 @@
     "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+  },
+  "trap": {
+    "warning": "⚠ Gevaarlijke Gang",
+    "canAttempt": "Je kunt proberen door te gaan.",
+    "tooWeak": "Je bent te zwak om dit risico te nemen. Draai om.",
+    "attempt": "Val proberen",
+    "disable": "Val uitschakelen",
+    "turnAround": "Omdraaien"
+  },
+  "chest": {
+    "tapToOpen": "Tik om te openen",
+    "mapPiece": "Kaartdeel",
+    "mapPieceDescription": "Een fragment van een oude kaart. Verzamel genoeg stukken om de locatie van een verborgen schattombe te onthullen.",
+    "hieroglyphFragment": "Hiërogliefenfragment",
+    "fragmentProgress": "{{found}} van {{required}} fragmenten gevonden",
+    "tombKey": "Tombesleutel",
+    "hieroglyphs": "Hiëroglieven",
+    "hieroglyphsDescription": "Heilige symbolen gegraveerd in de wanden van deze kamer. Hun betekenis vergroot je kennis van de oude wereld.",
+    "mosaicPiece": "Mozaïekstuk",
+    "consumable": {
+      "bandage": "Verband",
+      "oil": "Genezende Olie",
+      "trapTool": "Valuitschakelaar"
+    },
+    "consumableFull": "Rugzak vol — {{item}} achtergelaten"
   },
   "loot": {
     "youFound": "Je hebt gevonden",

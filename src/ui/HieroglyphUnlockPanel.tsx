@@ -1,5 +1,4 @@
 import { useState, useRef, type FC } from "react"
-import { useTranslation } from "react-i18next"
 import { HieroglyphTile } from "@/ui/HieroglyphTile"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
@@ -12,6 +11,8 @@ type HieroglyphUnlockPanelProps = {
   remainingArtifactIds?: string[]
   onUnlock: () => void
   onDismiss: () => void
+  instructionLabel: string
+  alsoAvailableLabel: string
 }
 
 const TILE_WIDTH = 48 // w-12 = 48px
@@ -25,8 +26,9 @@ export const HieroglyphUnlockPanel: FC<HieroglyphUnlockPanelProps> = ({
   remainingArtifactIds = [],
   onUnlock,
   onDismiss,
+  instructionLabel,
+  alsoAvailableLabel,
 }) => {
-  const { t } = useTranslation("treasures")
   const getTreasureItem = useTreasureItem()
   const artifact = getTreasureItem(artifactId)
   const artifactDifficulty = getItemFirstLevel(artifactId)
@@ -108,12 +110,12 @@ export const HieroglyphUnlockPanel: FC<HieroglyphUnlockPanelProps> = ({
           {artifact && <p className="font-pyramid text-base font-semibold text-amber-800">{artifact.name}</p>}
 
           {/* Instruction */}
-          <p className="text-center text-sm text-gray-500">{t("hieroglyphUnlockPanel.instruction")}</p>
+          <p className="text-center text-sm text-gray-500">{instructionLabel}</p>
 
           {/* Remaining artifacts */}
           {remainingArtifactIds.length > 0 && (
             <div className="flex flex-col items-center gap-2">
-              <p className="text-xs text-gray-400">{t("hieroglyphUnlockPanel.alsoAvailable")}</p>
+              <p className="text-xs text-gray-400">{alsoAvailableLabel}</p>
               <div className="flex gap-2">
                 {remainingArtifactIds.map(id => {
                   const remaining = getTreasureItem(id)

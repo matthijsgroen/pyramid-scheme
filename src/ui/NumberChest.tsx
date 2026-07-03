@@ -1,5 +1,4 @@
 import type { FC } from "react"
-import { useState, useEffect } from "react"
 import clsx from "clsx"
 import { Chest, type ChestState, type ChestVariant } from "./Chest"
 import { NumberLock } from "./NumberLock"
@@ -27,24 +26,13 @@ export const NumberChest: FC<NumberLockProps> = ({
   maxLength = 4,
   className,
 }) => {
-  const [internalValue, setInternalValue] = useState(value)
-
-  useEffect(() => {
-    setInternalValue(value)
-  }, [value])
+  const isDisabled = disabled || state === "open"
 
   const handleLockClick = () => {
-    if (internalValue && !isDisabled) {
-      onSubmit?.(internalValue)
+    if (value && !isDisabled) {
+      onSubmit?.(value)
     }
   }
-
-  const handleInputChange = (newValue: string) => {
-    setInternalValue(newValue)
-    onChange?.(newValue)
-  }
-
-  const isDisabled = disabled || state === "open"
 
   return (
     <div className={clsx("flex flex-col items-center gap-6", className)}>
@@ -53,13 +41,13 @@ export const NumberChest: FC<NumberLockProps> = ({
         state={state}
         variant={variant}
         label="Submit Code"
-        allowInteraction={!!internalValue && !disabled}
+        allowInteraction={!!value && !disabled}
       />
       <NumberLock
         state={state}
         variant={variant}
-        value={internalValue}
-        onChange={handleInputChange}
+        value={value}
+        onChange={onChange}
         onSubmit={handleLockClick}
         disabled={isDisabled}
         placeholder={placeholder}

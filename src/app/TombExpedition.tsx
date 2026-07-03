@@ -13,6 +13,8 @@ import { FezContext } from "./fez/context"
 import { DeveloperButton } from "@/ui/DeveloperButton"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { Header } from "@/ui/Header"
+import { SiteMapScreen } from "./SiteMap/SiteMapScreen"
+import { useTimeout } from "@/support/useTimeout"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState
@@ -47,32 +49,95 @@ export const TombExpedition: FC<{
     tab => tab.tombJourneyId === activeJourney.journeyId && tab.runNumber === activeJourney.completionCount + 1
   )
   const [completing, setCompleting] = useState(false)
+  const [scheduleCompleting] = useTimeout()
 
   const handleLevelComplete = useCallback(() => {
     if (completing) return
-    // Complete the level in the journey system
     setCompleting(true)
-
-    setTimeout(() => {
+    scheduleCompleting(500, () => {
       completeLevel()
-      // Call the external level complete handler
       onLevelComplete?.()
       setCompleting(false)
-    }, 500)
-  }, [completeLevel, onLevelComplete, completing])
+    })
+  }, [completeLevel, onLevelComplete, completing, scheduleCompleting])
 
-  const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
-  const tableau = runTableaus[activeJourney.levelNr - 1]
+  // ── V3: site-map path ─────────────────────────────────────────────────────
+  const [showComparePuzzle, setShowComparePuzzle] = useState(false)
 
-  const calculation = useMemo(() => {
-    const random = mulberry32(seed)
-    if (!tableau) return null
-    const calc = generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, tableau), random)
-    return calc
-  }, [seed, tableau, journey.levelSettings])
+  const handleSiteComplete = useCallback(() => {
+    completeLevel()
+    if (journey.levelSettings.compareAmount > 0) {
+      setShowComparePuzzle(true)
+    } else {
+      onLevelComplete?.()
+    }
+  }, [completeLevel, journey.levelSettings.compareAmount, onLevelComplete])
 
+  // ── V1 (legacy): hooks must be unconditional, computed regardless of path ──
+  const legacySeed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
+  const legacyTableau = runTableaus[activeJourney.levelNr - 1]
+  const legacyCalculation = useMemo(() => {
+    const random = mulberry32(legacySeed)
+    if (!legacyTableau) return null
+    return generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, legacyTableau), random)
+  }, [legacySeed, legacyTableau, journey.levelSettings])
+
+  if (journey.siteConfigs) {
+    const siteConfig = journey.siteConfigs[0]
+    const seed = generateNewSeed(activeJourney.randomSeed, activeJourney.completionCount)
+
+    if (showComparePuzzle) {
+      return (
+        <TombBackdrop className="relative flex h-dvh flex-col" difficulty={journey.difficulty}>
+          <ComparePuzzle activeJourney={activeJourney} onComplete={onJourneyComplete} />
+        </TombBackdrop>
+      )
+    }
+
+    return (
+      <TombBackdrop className="relative flex h-dvh flex-col" difficulty={journey.difficulty}>
+        <SiteMapScreen
+          journeyId={journey.id}
+          siteConfig={siteConfig}
+          seed={seed}
+          onSiteComplete={handleSiteComplete}
+          onCancel={onClose ?? (() => {})}
+          renderPuzzle={(floor, onSolved, onCancelPuzzle) => {
+            const tableau = runTableaus[floor]
+            if (!tableau) return null
+            const random = mulberry32(generateNewSeed(seed, floor))
+            const calculation = generateRewardCalculation(
+              buildTombCalculationSettings(journey.levelSettings, tableau),
+              random
+            )
+            if (!calculation) return null
+            return (
+              <div className="fixed inset-0 z-20">
+                <TombPuzzle
+                  key={`${journey.id}-floor-${floor}`}
+                  tableau={tableau}
+                  calculation={calculation}
+                  difficulty={journey.difficulty}
+                  onComplete={onSolved}
+                  onFindHieroglyphs={onFindHieroglyphs}
+                />
+                <button
+                  onClick={onCancelPuzzle}
+                  className="absolute top-4 left-4 z-10 rounded bg-stone-800/80 px-3 py-1 text-sm text-amber-200"
+                >
+                  ← Back
+                </button>
+              </div>
+            )
+          }}
+        />
+      </TombBackdrop>
+    )
+  }
+
+  // ── V1 (legacy) render ────────────────────────────────────────────────────
   // if there are no run Tableaus, that means there is nothing to discover at this tomb anymore!
-  if (tableau === undefined || calculation === null) {
+  if (legacyTableau === undefined || legacyCalculation === null) {
     return (
       <TombBackdrop
         className="relative flex h-dvh flex-col"
@@ -137,8 +202,8 @@ export const TombExpedition: FC<{
         </div>
         <TombPuzzle
           key={activeJourney.journeyId + activeJourney.levelNr}
-          tableau={tableau}
-          calculation={calculation}
+          tableau={legacyTableau}
+          calculation={legacyCalculation}
           difficulty={journey.difficulty}
           onComplete={handleLevelComplete}
           onFindHieroglyphs={onFindHieroglyphs}

@@ -7,9 +7,10 @@ import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { useProgression } from "@/app/state/useProgression"
 import { type FilledTileState } from "../Formulas/FormulaPart"
 import { clsx } from "clsx"
-import { useState, useMemo, type FC, type FormEvent, useEffect, use } from "react"
+import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
 import { revealText } from "@/support/revealText"
 import { TombTableau } from "./TombTableau"
@@ -28,6 +29,8 @@ export const TombPuzzle: FC<{
 
   // Get player's actual inventory
   const { inventory, removeItems } = useInventory()
+  const { perks } = useProgression()
+  const scribesEyeSlots = perks.scribesEyeLevel === 3 ? Infinity : perks.scribesEyeLevel
 
   // State for managing which tiles are filled
   const [filledState, setFilledState] = useState<FilledTileState>({
@@ -41,6 +44,13 @@ export const TombPuzzle: FC<{
   const [lockCode, setLockCode] = useState("")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
+  const lockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (lockTimerRef.current) clearTimeout(lockTimerRef.current)
+    },
+    []
+  )
 
   // Check if puzzle is completely solved (all symbols placed)
   const isPuzzleCompleted = useMemo(() => {
@@ -162,23 +172,19 @@ export const TombPuzzle: FC<{
       setLockState("open")
       setIsProcessingCompletion(true)
 
-      // After 2 seconds, remove used inventory items and call onComplete
-      setTimeout(() => {
-        // Remove used inventory items in a single batch operation
+      lockTimerRef.current = setTimeout(() => {
         const itemsToRemove = Object.fromEntries(
           Object.entries(inventoryUsage).filter(([, usedCount]) => usedCount > 0)
         )
         if (Object.keys(itemsToRemove).length > 0) {
           removeItems(itemsToRemove)
         }
-        // Call completion handler
         onComplete?.()
         setIsProcessingCompletion(false)
       }, 2000)
     } else {
       setLockState("error")
-      // Reset to empty state after a delay
-      setTimeout(() => {
+      lockTimerRef.current = setTimeout(() => {
         setLockState("empty")
         setLockCode("")
       }, 2000)
@@ -240,6 +246,7 @@ export const TombPuzzle: FC<{
             calculation={calculation}
             filledState={filledState}
             onTileClick={handleTileClick}
+            scribesEyeSlots={scribesEyeSlots}
           />
 
           {/* Available symbols inventory - hide when puzzle is completed */}
