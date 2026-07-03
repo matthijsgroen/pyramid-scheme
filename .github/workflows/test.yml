@@ -41,9 +41,11 @@ jobs:
             echo "bump_type=" >> "$GITHUB_OUTPUT"
           else
             NEW_VERSION=$(echo "$OUTPUT" | grep "^New version" | awk '{print $NF}')
-            BUMP_TYPE=$(echo "$OUTPUT" | grep "^Bump type" | awk '{print $3}')
-            # Extract [Unreleased] section (lines between ## [Unreleased] and the next ## [)
-            UNRELEASED=$(sed -n '/^## \[Unreleased\]/,/^## \[/{ /^## \[Unreleased\]/d; /^## \[/d; p }' CHANGELOG.md | sed '/^[[:space:]]*$/{ N; /^\n$/d }')
+            BUMP_TYPE=$(echo "$OUTPUT" | grep "^Bump type" | awk '{print $4}')
+            # Extract the Unreleased section (lines between the Unreleased heading and the next
+            # release heading). The keep-a-changelog tool writes headings without brackets
+            # (e.g. "## Unreleased", "## 0.24.0 - ..."), so match either style defensively.
+            UNRELEASED=$(awk '/^## \[?Unreleased\]?/{started=1; next} started && /^## /{exit} started' CHANGELOG.md | sed '/^[[:space:]]*$/{ N; /^\n$/d }')
             echo "will_release=true" >> "$GITHUB_OUTPUT"
             echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
             echo "bump_type=$BUMP_TYPE" >> "$GITHUB_OUTPUT"
