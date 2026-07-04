@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix corridor corners in pyramid interiors being hard to tap on mobile.
 - Fix a completed pyramid's interior showing different corridors explored than when you left it, after revisiting it.
+- Fix the "pack is full" chest marker sometimes showing up on puzzle rooms instead of the chest it belonged to.
 
 ## 0.24.2 - 2026-07-03
 ### Fixed
