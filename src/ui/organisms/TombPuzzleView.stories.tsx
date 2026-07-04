@@ -1,0 +1,66 @@
+import type { Meta, StoryObj } from "@storybook/react-vite"
+import { generateNewSeed, mulberry32 } from "@/game/random"
+import { journeys } from "@/data/journeys"
+import { hashString } from "@/support/hashString"
+import { generateRewardCalculation } from "@/game/generateRewardCalculation"
+import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
+import { TombPuzzleView } from "./TombPuzzleView"
+
+const meta = {
+  title: "UI/TombPuzzleView",
+  parameters: { layout: "fullscreen" },
+  tags: ["autodocs"],
+} satisfies Meta<Record<string, never>>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+const journey = journeys.find(j => j.type === "treasure_tomb")!
+const seed = generateNewSeed(hashString(journey.id), 1)
+
+export const InProgress: Story = {
+  render: () => {
+    const tableaus = useTableauTranslations()
+    const tableau = tableaus.find(t => t.tombJourneyId === journey.id)!
+    const calculation = generateRewardCalculation(
+      {
+        amountSymbols: tableau.symbolCount,
+        hieroglyphIds: tableau.inventoryIds,
+        numberRange: journey.levelSettings.numberRange,
+        operations: journey.levelSettings.operators,
+      },
+      mulberry32(seed)
+    )
+    const resolveTile = (symbolId: string) => resolveHieroglyphSymbol(symbolId, journey.difficulty)
+
+    return (
+      <TombPuzzleView
+        difficulty={journey.difficulty}
+        tableau={tableau}
+        calculation={calculation}
+        filledState={{ symbolCounts: {}, filledPositions: {} }}
+        resolveTile={resolveTile}
+        hintFormulas={calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))}
+        solvedPercentage={0.3}
+        annotations={{}}
+        isPuzzleCompleted={false}
+        lockState="empty"
+        lockValue=""
+        onLockChange={() => {}}
+        onLockSubmit={() => {}}
+        inventoryTitle="Available symbols"
+        inventoryItems={Object.entries(calculation.symbolCounts).map(([symbolId, maxNeeded]) => ({
+          symbolId,
+          ...resolveTile(symbolId),
+          availableCount: maxNeeded,
+          maxNeeded,
+          canPlace: true,
+        }))}
+        onInventoryItemClick={() => {}}
+        showFindHieroglyphsButton={false}
+        findHieroglyphsLabel="Find missing hieroglyphs"
+      />
+    )
+  },
+}

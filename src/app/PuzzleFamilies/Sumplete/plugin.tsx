@@ -2,14 +2,19 @@
 import { type FC } from "react"
 import { registerPuzzle } from "@/game/puzzleRegistry"
 import { generateSumplete, type SumpleteGrid } from "@/game/generateSumplete"
-import { SumpleteBoard } from "./SumpleteBoard"
+import { SumpletePuzzle } from "./SumpletePuzzle"
 import type { PuzzleSettings } from "@/game/puzzlePlugin"
 
 const SumpleteComponent: FC<{ puzzle: SumpleteGrid; settings: PuzzleSettings; onSolved: () => void }> = ({
   puzzle,
   onSolved,
 }) => (
-  <SumpleteBoard grid={puzzle.grid} rowTargets={puzzle.rowTargets} colTargets={puzzle.colTargets} onSolved={onSolved} />
+  <SumpletePuzzle
+    grid={puzzle.grid}
+    rowTargets={puzzle.rowTargets}
+    colTargets={puzzle.colTargets}
+    onSolved={onSolved}
+  />
 )
 
 registerPuzzle({
