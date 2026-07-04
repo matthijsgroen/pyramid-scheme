@@ -1,7 +1,21 @@
-import { useEffect, useRef } from "react"
-import type { CellState, CorridorCell, FloorGrid, GateVariant, KeyColor, RoomType } from "../../game/siteTypes"
+import { useEffect, useMemo, useRef } from "react"
+import type {
+  CellState,
+  DecorationKind,
+  Direction,
+  FloorGrid,
+  GateVariant,
+  GridCell,
+  KeyColor,
+  RoomType,
+} from "../../game/siteTypes"
 import { revealAll } from "../../game/gridNavigation"
 import { ExplorerDot } from "./ExplorerDot"
+
+// Cells one step outside the grid are still real void for claiming purposes — a fork or
+// endpoint sitting on the map's edge shouldn't look artificially clipped next to one
+// that happens to have interior void around it. Anything beyond the grid is `empty`.
+const cellAt = (grid: FloorGrid, r: number, c: number): GridCell => grid.cells[r]?.[c] ?? { type: "empty" }
 
 type Props = {
   grid: FloorGrid
@@ -14,8 +28,6 @@ type Props = {
 }
 
 const CELL = 44
-const CORRIDOR_W = 8
-const CORRIDOR_INNER = 3
 
 const entranceFill: Record<CellState, string> = {
   fogged: "#1a1208",
@@ -311,41 +323,6 @@ const nodeRadius: Record<RoomType, number> = {
   exit: 12,
 }
 
-const NodeBackground = ({ type }: { type: RoomType }) => {
-  const bg = "#110d08"
-  const r = nodeRadius[type]
-  switch (type) {
-    case "entrance": {
-      const archPath = `M ${-r},${r} L ${-r},0 A ${r},${r} 0 0,1 ${r},0 L ${r},${r} Z`
-      return <path d={archPath} fill={bg} />
-    }
-    case "puzzle":
-    case "trap":
-    case "gate":
-      return <rect x={-r} y={-r} width={r * 2} height={r * 2} fill={bg} />
-    case "fork":
-      return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={bg} />
-    case "treasure":
-      return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill={bg} />
-    case "stairhead": {
-      const cut = 5
-      const pts = [
-        `-${r - cut},-${r}`,
-        `${r - cut},-${r}`,
-        `${r},-${r - cut}`,
-        `${r},${r - cut}`,
-        `${r - cut},${r}`,
-        `-${r - cut},${r}`,
-        `-${r},${r - cut}`,
-        `-${r},-${r - cut}`,
-      ].join(" ")
-      return <polygon points={pts} fill={bg} />
-    }
-    case "exit":
-      return <circle r={r} fill={bg} />
-  }
-}
-
 const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: RoomType }) => {
   const p = { state, gateVariant, keyColor, keyColors }
   switch (type) {
@@ -472,48 +449,277 @@ const exitIcon: Record<CellState, string> = {
   completed: "#d0d850",
 }
 
-// ─── Corridor arms (shared by corridor cells and room cells) ──────────────────
+// ─── Floor tiles ────────────────────────────────────────────────────────────────
+// Every occupied cell (room or corridor) is a floor tile composited from a full-cell
+// fill plus 0-4 wall strips, chosen per side from the same `dirs` bitmask the future
+// sprite-tile renderer will use (see docs/game-design/spritesheet-renderer-prep.md).
 
-type ArmSet = ReadonlySet<"n" | "s" | "e" | "w">
+const ALL_DIRS: readonly Direction[] = ["n", "s", "e", "w"]
+const DIR_MOVES: Record<Direction, readonly [number, number]> = {
+  n: [-1, 0],
+  s: [1, 0],
+  e: [0, 1],
+  w: [0, -1],
+}
 
-const ConnectionStubs = ({ dirs, state }: { dirs: ArmSet; state: CellState }) => {
-  if (state === "fogged") return null
-  const HALF = CELL / 2
-  const HW = CORRIDOR_W / 2
-  const HI = CORRIDOR_INNER / 2
-  const armDefs = {
-    n: { ox: -HW, oy: -HALF, ow: CORRIDOR_W, oh: HALF + HW, ix: -HI, iy: -HALF, iw: CORRIDOR_INNER, ih: HALF + HI },
-    s: { ox: -HW, oy: -HW, ow: CORRIDOR_W, oh: HALF + HW, ix: -HI, iy: -HI, iw: CORRIDOR_INNER, ih: HALF + HI },
-    e: { ox: -HW, oy: -HW, ow: HALF + HW, oh: CORRIDOR_W, ix: -HI, iy: -HI, iw: HALF + HI, ih: CORRIDOR_INNER },
-    w: {
-      ox: -HALF - HW,
-      oy: -HW,
-      ow: HALF + HW,
-      oh: CORRIDOR_W,
-      ix: -HALF - HI,
-      iy: -HI,
-      iw: HALF + HI,
-      ih: CORRIDOR_INNER,
-    },
+// Forks and dead-end (leaf) treasure/stairhead/exit rooms claim adjacent grid cells as
+// part of their own footprint — real extra tiles, grid-aligned, rather than a rendering
+// stretch. That keeps every room shape made of whole cells, which is what the eventual
+// sprite-tile renderer needs to tile cleanly (see
+// docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
+// the existing grid — no generation-side bookkeeping.
+const canClaimVoid = (roomType: RoomType, dirsSize: number): boolean =>
+  roomType === "fork" ||
+  ((roomType === "treasure" || roomType === "stairhead" || roomType === "exit") && dirsSize === 1)
+
+const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
+  [-1, 0],
+  [1, 0],
+  [0, -1],
+  [0, 1],
+]
+// Each diagonal offset paired with the two orthogonal offsets flanking it — a diagonal
+// only joins the claim if at least one flank "belongs" to the owner too (either also
+// claimed void, or the owner's own real corridor arm), otherwise it'd be a tile touching
+// the room by a single corner point with walls on all 4 sides (nothing to open toward),
+// which reads as a floating box rather than part of the room.
+const DIAGONAL_OFFSETS: ReadonlyArray<{
+  offset: readonly [number, number]
+  flanks: readonly [readonly [number, number], readonly [number, number]]
+}> = [
+  {
+    offset: [-1, -1],
+    flanks: [
+      [-1, 0],
+      [0, -1],
+    ],
+  },
+  {
+    offset: [-1, 1],
+    flanks: [
+      [-1, 0],
+      [0, 1],
+    ],
+  },
+  {
+    offset: [1, -1],
+    flanks: [
+      [1, 0],
+      [0, -1],
+    ],
+  },
+  {
+    offset: [1, 1],
+    flanks: [
+      [1, 0],
+      [0, 1],
+    ],
+  },
+]
+
+// A neighbor is claimable if it's genuine void (`empty`), or — the one exception — a
+// single corridor tile that only exists to *approach* a gate: either a real gate room
+// two steps away (revealed), or a corridor stub whose far side got masked to `empty`
+// because it leads into an undetected hidden section. Either way that corridor tile
+// reads better as the junction's own doorway than as a separate hallway segment.
+// Diagonal neighbors can only ever be void — a real edge is never diagonal.
+const isClaimableNeighbor = (grid: FloorGrid, ownerR: number, ownerC: number, nr: number, nc: number): boolean => {
+  const cell = cellAt(grid, nr, nc)
+  if (cell.type === "empty") return true
+  if (cell.type !== "corridor") return false
+  const dr = nr - ownerR,
+    dc = nc - ownerC
+  if (Math.abs(dr) + Math.abs(dc) !== 1) return false
+  const beyond = grid.cells[ownerR + dr * 2]?.[ownerC + dc * 2]
+  const leadsToGate = beyond?.type === "room" && beyond.roomType === "gate"
+  return leadsToGate || cell.dirs.size === 1
+}
+
+const OFFSET_TO_DIR: Record<string, Direction> = { "-1,0": "n", "1,0": "s", "0,-1": "w", "0,1": "e" }
+const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
+  const a = `${r1},${c1}`,
+    b = `${r2},${c2}`
+  return a < b ? `${a}|${b}` : `${b}|${a}`
+}
+
+type RoomClaims = {
+  /** claimed-cell key ("r,c") -> owning room's key ("r,c") */
+  claimedBy: ReadonlyMap<string, string>
+  /** the one claimed cell (per owner) that carries the owner's decoration, if any */
+  decorationAt: ReadonlyMap<string, DecorationKind>
+  /** unordered cell-pair keys with no wall between them (owner<->claim, or diagonal<->flank) */
+  openEdges: ReadonlySet<string>
+}
+
+// Row-major scan so two nearby claimable rooms never fight over the same cell —
+// whichever comes first in reading order claims it. Each owner independently claims
+// whichever of its 8 immediate neighbors (sides + diagonals) are free — no flood-fill
+// beyond that ring, so the shape stays a direct "3x3 minus whatever's occupied" instead
+// of wandering off into open floor further away. A diagonal's flank can be either
+// claimed void or the owner's own real corridor arm — either way the diagonal ends up
+// visually flush with a wall the owner already has open, not floating by itself.
+const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
+  const claimedBy = new Map<string, string>()
+  const decorationAt = new Map<string, DecorationKind>()
+  const openEdges = new Set<string>()
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.dirs.size)) continue
+      const ownerKey = `${r},${c}`
+      // decoration only ever lands on a genuine claim (void or diagonal), never on a
+      // flank corridor that's just being re-tinted below
+      const claims: Array<[number, number]> = []
+      // a real corridor arm used as a diagonal's flank keeps functioning as a normal
+      // passage (own state, own click behavior) but renders with the room's floor tint
+      // since it's now flush with the claimed diagonal beside it
+      const flankClaims: Array<[number, number]> = []
+      const claimedThisOwner = new Set<string>()
+      for (const [dr, dc] of ORTHO_OFFSETS) {
+        const nr = r + dr,
+          nc = c + dc
+        const key = `${nr},${nc}`
+        if (claimedBy.has(key) || !isClaimableNeighbor(grid, r, c, nr, nc)) continue
+        claims.push([nr, nc])
+        claimedThisOwner.add(key)
+        openEdges.add(edgeKey(r, c, nr, nc))
+      }
+      for (const {
+        offset: [dr, dc],
+        flanks,
+      } of DIAGONAL_OFFSETS) {
+        const nr = r + dr,
+          nc = c + dc
+        const key = `${nr},${nc}`
+        if (claimedBy.has(key) || !isClaimableNeighbor(grid, r, c, nr, nc)) continue
+        const attachedFlanks = flanks.filter(([fr, fc]) => {
+          if (claimedThisOwner.has(`${r + fr},${c + fc}`)) return true
+          return cell.dirs.has(OFFSET_TO_DIR[`${fr},${fc}`])
+        })
+        if (attachedFlanks.length === 0) continue
+        claims.push([nr, nc])
+        claimedThisOwner.add(key)
+        for (const [fr, fc] of attachedFlanks) {
+          const flankR = r + fr,
+            flankC = c + fc
+          const flankKey = `${flankR},${flankC}`
+          openEdges.add(edgeKey(nr, nc, flankR, flankC))
+          if (!claimedThisOwner.has(flankKey) && !claimedBy.has(flankKey)) {
+            flankClaims.push([flankR, flankC])
+            claimedThisOwner.add(flankKey)
+          }
+        }
+      }
+      if (cell.decoration && claims.length > 0) {
+        decorationAt.set(`${claims[0][0]},${claims[0][1]}`, cell.decoration)
+      }
+      for (const [nr, nc] of [...claims, ...flankClaims]) claimedBy.set(`${nr},${nc}`, ownerKey)
+    }
   }
+  return { claimedBy, decorationAt, openEdges }
+}
+
+const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: Direction): boolean => {
+  const cell = cellAt(grid, r, c)
+  const [dr, dc] = DIR_MOVES[dir]
+  const nr = r + dr,
+    nc = c + dc
+  // a real graph edge is always open
+  if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
+  return claims.openEdges.has(edgeKey(r, c, nr, nc))
+}
+
+// A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
+// passage interaction) whenever it isn't a plain straight-through segment.
+const isCorridorCorner = (dirs: ReadonlySet<Direction>): boolean =>
+  dirs.size !== 2 || !((dirs.has("n") && dirs.has("s")) || (dirs.has("e") && dirs.has("w")))
+
+// Corridors and rooms share the same wall/opening logic, but get different floor tints
+// so a room's footprint (fork/endpoint chambers included) reads as a distinct place —
+// not just "a wide stretch of hallway". Room floor is warmer/lighter than corridor floor.
+const corridorFloorFill: Record<CellState, string> = {
+  fogged: "#130c07",
+  visible: "#1e130a",
+  reachable: "#22160b",
+  completed: "#1c130a",
+}
+const roomFloorFill: Record<CellState, string> = {
+  fogged: "#1c130a",
+  visible: "#382412",
+  reachable: "#3f2a15",
+  completed: "#332210",
+}
+const WALL_COLOR = "#080502"
+const WALL_THICKNESS = 4
+
+const FloorTile = ({
+  state,
+  open,
+  kind,
+}: {
+  state: CellState
+  open: Record<Direction, boolean>
+  kind: "room" | "corridor"
+}) => {
+  const half = CELL / 2
+  const fill = kind === "room" ? roomFloorFill[state] : corridorFloorFill[state]
   return (
     <>
-      {(["n", "s", "e", "w"] as const)
-        .filter(d => dirs.has(d))
-        .map(dir => {
-          const a = armDefs[dir]
-          return (
-            <g key={dir}>
-              <rect x={a.ox} y={a.oy} width={a.ow} height={a.oh} fill="#2a1e12" />
-              <rect x={a.ix} y={a.iy} width={a.iw} height={a.ih} fill="#3a2a18" />
-            </g>
-          )
-        })}
+      <rect x={-half} y={-half} width={CELL} height={CELL} fill={fill} />
+      {!open.n && <rect x={-half} y={-half} width={CELL} height={WALL_THICKNESS} fill={WALL_COLOR} />}
+      {!open.s && <rect x={-half} y={half - WALL_THICKNESS} width={CELL} height={WALL_THICKNESS} fill={WALL_COLOR} />}
+      {!open.w && <rect x={-half} y={-half} width={WALL_THICKNESS} height={CELL} fill={WALL_COLOR} />}
+      {!open.e && <rect x={half - WALL_THICKNESS} y={-half} width={WALL_THICKNESS} height={CELL} fill={WALL_COLOR} />}
     </>
   )
 }
 
-const CorridorCellShape = ({ cell }: { cell: CorridorCell }) => <ConnectionStubs dirs={cell.dirs} state={cell.state} />
+// ─── Decorations ────────────────────────────────────────────────────────────────
+// Placeholder glyphs only — real sprite art arrives with the sprite-tile renderer
+// migration (see docs/game-design/spritesheet-renderer-prep.md). Rendered centered in
+// the room's first genuine claim (void or diagonal — never a flank corridor, see
+// buildRoomClaims above).
+
+const DECORATION_COLOR = "#5a4a30"
+
+const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
+  switch (kind) {
+    case "sarcophagus":
+      return (
+        <rect x={-6} y={-10} width={12} height={20} rx={4} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+      )
+    case "statue":
+      return (
+        <>
+          <circle cy={-8} r={4} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+          <rect x={-4} y={-4} width={8} height={14} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+        </>
+      )
+    case "fountain":
+      return (
+        <>
+          <circle r={9} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+          <circle r={3} fill={DECORATION_COLOR} />
+        </>
+      )
+    case "pit":
+      return <ellipse rx={9} ry={7} fill="#0a0604" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+    case "rubble":
+      return (
+        <>
+          <circle cx={-4} cy={2} r={3} fill={DECORATION_COLOR} opacity={0.7} />
+          <circle cx={3} cy={-2} r={4} fill={DECORATION_COLOR} opacity={0.7} />
+          <circle cx={2} cy={5} r={2.5} fill={DECORATION_COLOR} opacity={0.7} />
+        </>
+      )
+    case "pillar":
+      return <rect x={-4} y={-10} width={8} height={20} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+    case "chestProp":
+      return (
+        <rect x={-6} y={-5} width={12} height={10} rx={1} fill="none" stroke={DECORATION_COLOR} strokeWidth={1.5} />
+      )
+  }
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -528,8 +734,12 @@ export const SiteMapView = ({
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const scrollRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
+  const claims = useMemo(() => buildRoomClaims(grid), [grid])
 
-  const PAD = 30
+  // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
+  // the grid" void (see cellAt above), and that extra ring needs to physically fit
+  // within the padding margin without clipping.
+  const PAD = CELL
   const svgWidth = grid.cols * CELL + PAD * 2
   const svgHeight = grid.rows * CELL + PAD * 2
 
@@ -571,18 +781,68 @@ export const SiteMapView = ({
         </defs>
         <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
 
-        {Array.from({ length: grid.rows }, (_, r) =>
-          Array.from({ length: grid.cols }, (_, c) => {
-            const cell = grid.cells[r][c]
-            if (cell.type === "empty") return null
-
+        {Array.from({ length: grid.rows + 2 }, (_, ri) => {
+          const r = ri - 1
+          return Array.from({ length: grid.cols + 2 }, (_, ci) => {
+            const c = ci - 1
+            const cell = cellAt(grid, r, c)
             const cx = PAD + c * CELL + CELL / 2
             const cy = PAD + r * CELL + CELL / 2
+            const cellKey = `${r},${c}`
+            const claimOwnerKey = claims.claimedBy.get(cellKey)
+
+            // A cell claimed by a neighboring room — genuine void (including one step
+            // outside the grid), or a corridor absorbed as a gate's approach or a
+            // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
+            // room, always, using the OWNER's state for the floor tint. The claim shape
+            // is a static function of the finished grid (independent of exploration
+            // progress), so the whole blob must render as a single visual unit — hiding
+            // a claimed corridor while its own fog state lags behind the owner's is what
+            // punched the "spotty" holes in an otherwise-explored room. Click/interaction
+            // still uses the corridor's own state, since it's a real, independently
+            // progressed passage for gameplay purposes even though it looks unified.
+            if (claimOwnerKey && (cell.type === "empty" || cell.type === "corridor")) {
+              const [ownerRow, ownerCol] = claimOwnerKey.split(",").map(Number)
+              const owner = grid.cells[ownerRow]?.[ownerCol]
+              if (!owner || owner.type !== "room") return null
+              const state = owner.state
+              const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
+                Direction,
+                boolean
+              >
+              const decoration = claims.decorationAt.get(cellKey)
+              const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
+              const corridorClickable =
+                cell.type === "corridor" &&
+                onCellClick &&
+                (cell.state === "reachable" || cell.state === "completed") &&
+                isCorner
+              return (
+                <g
+                  key={cellKey}
+                  transform={`translate(${cx}, ${cy})`}
+                  onClick={corridorClickable ? () => onCellClick(r, c) : undefined}
+                  style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                >
+                  <FloorTile state={state} open={open} kind="room" />
+                  {cell.type === "corridor" && cell.state === "reachable" && isCorner && (
+                    <circle r={3} fill="#d0a840" opacity={0.85} />
+                  )}
+                  {decoration && state !== "fogged" && <DecorationGlyph kind={decoration} />}
+                </g>
+              )
+            }
+
+            if (cell.type === "empty") return null
+
+            const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
+              Direction,
+              boolean
+            >
 
             if (cell.type === "corridor") {
-              const isCorner =
-                cell.dirs.size !== 2 ||
-                !((cell.dirs.has("n") && cell.dirs.has("s")) || (cell.dirs.has("e") && cell.dirs.has("w")))
+              if (cell.state === "fogged") return null
+              const isCorner = isCorridorCorner(cell.dirs)
               const corridorClickable =
                 onCellClick && (cell.state === "reachable" || cell.state === "completed") && isCorner
               return (
@@ -592,11 +852,7 @@ export const SiteMapView = ({
                   onClick={corridorClickable ? () => onCellClick(r, c) : undefined}
                   style={{ cursor: corridorClickable ? "pointer" : "default" }}
                 >
-                  {/* Invisible full-cell hit target — the corridor bar itself is too thin to tap reliably */}
-                  {corridorClickable && (
-                    <rect x={-CELL / 2} y={-CELL / 2} width={CELL} height={CELL} fill="transparent" />
-                  )}
-                  <CorridorCellShape cell={cell} />
+                  <FloorTile state={cell.state} open={open} kind="corridor" />
                   {cell.state === "reachable" && isCorner && <circle r={3} fill="#d0a840" opacity={0.85} />}
                 </g>
               )
@@ -623,8 +879,7 @@ export const SiteMapView = ({
                 onClick={clickable ? () => onCellClick(r, c) : undefined}
                 style={{ cursor: clickable ? "pointer" : "default" }}
               >
-                <ConnectionStubs dirs={cell.dirs} state={state} />
-                <NodeBackground type={cell.roomType} />
+                <FloorTile state={state} open={open} kind="room" />
                 <g opacity={isCompleted && !isPending ? 0.45 : 1}>
                   <NodeShape
                     type={cell.roomType}
@@ -641,7 +896,7 @@ export const SiteMapView = ({
               </g>
             )
           })
-        )}
+        })}
 
         {explorerPos && <ExplorerDot grid={grid} pos={explorerPos} />}
       </svg>

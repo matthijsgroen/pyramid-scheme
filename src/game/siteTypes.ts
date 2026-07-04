@@ -23,6 +23,7 @@ export type CorridorCell = {
 }
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
+export type DecorationKind = "sarcophagus" | "statue" | "fountain" | "pit" | "rubble" | "pillar" | "chestProp"
 export type RoomCell = {
   type: "room"
   roomType: RoomType
@@ -37,6 +38,7 @@ export type RoomCell = {
   keyColors?: KeyColor[]
   family?: PuzzleFamily
   stairId?: string
+  decoration?: DecorationKind
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -62,6 +64,8 @@ export type SubSection = {
   endReward?: TreasureReward
   hidden?: boolean
   trapped?: boolean
+  /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
+  decorations?: DecorationKind[]
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -75,6 +79,8 @@ export type FloorConfig = {
   /** If set, the entrance room becomes an up-stairhead with this stairId. */
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
+  /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
+  decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
   chestRewards?: TreasureReward[]
   puzzleFamily?: PuzzleFamily

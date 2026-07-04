@@ -1,4 +1,5 @@
 import type { Tier, Difficulty } from "./types"
+import type { DecorationKind } from "../game/siteTypes"
 
 // ── Constraint vocabulary ─────────────────────────────────────────────────────
 
@@ -30,6 +31,8 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   endReward?: RewardSpec | TExtra
   sideSections?: SideSectionConstraint<TExtra>[]
+  /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
+  decorations?: DecorationKind[]
 }
 
 export type FloorConstraint<TExtra extends string = never> = {
@@ -38,6 +41,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   mainEndReward?: RewardHint | TExtra
   chestReward?: RewardHint | TExtra
+  /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
+  decorations?: DecorationKind[]
   /**
    * Side paths for this pyramid.
    * - SideIntensity | number: that many auto mosaic-piece paths, no explicit sections.

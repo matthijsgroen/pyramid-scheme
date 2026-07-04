@@ -11,6 +11,7 @@ import type {
   KeyColor,
   SubSection,
   SideSection,
+  DecorationKind,
 } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
@@ -53,12 +54,26 @@ const DIRS: Array<[number, number]> = [
   [0, -1],
 ]
 
-const DIRMAP: Array<[number, number, Direction]> = [
-  [-1, 0, "n"],
-  [0, 1, "e"],
-  [1, 0, "s"],
-  [0, -1, "w"],
+// Real path nodes live only on even/even grid coordinates, two cells apart in any
+// direction — the cell directly between two connected nodes is a plain corridor
+// connector. This guarantees a genuine empty gap wherever the maze winds back near
+// itself (a switchback's two strands are never directly adjacent, only ever
+// diagonally so), instead of a dense maze where every single cell is real path and
+// parallel strands can end up touching with nothing but a thin wall between them.
+const NODE_STEP = 2
+const DIRS2: Array<[number, number]> = [
+  [-NODE_STEP, 0],
+  [0, NODE_STEP],
+  [NODE_STEP, 0],
+  [0, -NODE_STEP],
 ]
+const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
+  [-NODE_STEP, 0, "n"],
+  [0, NODE_STEP, "e"],
+  [NODE_STEP, 0, "s"],
+  [0, -NODE_STEP, "w"],
+]
+const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
 const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number) => {
   const a = r1 * N + c1,
@@ -66,33 +81,45 @@ const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number)
   return a < b ? `${a}-${b}` : `${b}-${a}`
 }
 
+// How often the DFS continues in the same direction instead of turning, when it can.
+// A plain random-direction DFS maze is very serpentine (every step is a coin flip);
+// biasing toward straight runs gives longer corridors and fewer forced turns, which
+// reads as "a real place" and needs fewer click-to-reveal stops on first traversal.
+const STRAIGHT_BIAS = 0.65
+
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns adjacency function, BFS path from entrance to farthest cell, and passages set.
 const buildMaze = (N: number, entR: number, entC: number, rand: () => number) => {
   const passages = new Set<string>()
   const visited = new Set<string>()
   const pkey = makePkey(N)
+  // Direction of travel used to reach each visited cell, for the straightness bias.
+  const arrivedVia = new Map<string, [number, number]>()
 
   // ponytail: iterative DFS avoids stack overflow for large N
   const stack: Array<[number, number]> = [[entR, entC]]
   visited.add(`${entR},${entC}`)
   while (stack.length > 0) {
     const [r, c] = stack[stack.length - 1]
-    const unvisited = DIRS.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
+    const unvisited = DIRS2.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
       ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !visited.has(`${nr},${nc}`)
     )
     if (unvisited.length === 0) {
       stack.pop()
     } else {
-      const [nr, nc] = unvisited[Math.floor(rand() * unvisited.length)]
+      const incoming = arrivedVia.get(`${r},${c}`)
+      const straightAhead = incoming && unvisited.find(([nr, nc]) => nr - r === incoming[0] && nc - c === incoming[1])
+      const [nr, nc] =
+        straightAhead && rand() < STRAIGHT_BIAS ? straightAhead : unvisited[Math.floor(rand() * unvisited.length)]
       passages.add(pkey(r, c, nr, nc))
       visited.add(`${nr},${nc}`)
+      arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
       stack.push([nr, nc])
     }
   }
 
   const neighbors = (r: number, c: number): Array<[number, number]> =>
-    DIRS.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
+    DIRS2.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
       ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc))
     )
 
@@ -127,14 +154,19 @@ const buildMaze = (N: number, entR: number, entC: number, rand: () => number) =>
 }
 
 // Find a chain of `count` cells starting from (startR, startC),
-// extending through available maze neighbors not in usedCells.
+// extending through available maze neighbors not in usedCells. The final cell in the
+// chain becomes a section/sub-section endpoint, which later wants a multi-cell footprint
+// (see the claiming pass in assembleFloor) — so when a `scorer` is given, the last step
+// is biased toward a neighbor with more surrounding open space, same idea as fork
+// placement above. Every other step stays a plain random shuffle.
 const extendPath = (
   startR: number,
   startC: number,
   count: number,
   neighbors: (r: number, c: number) => Array<[number, number]>,
   usedCells: Set<string>,
-  rand: () => number
+  rand: () => number,
+  scorer?: (r: number, c: number) => number
 ): Array<[number, number]> | null => {
   if (count === 0) return []
   const result: Array<[number, number]> = []
@@ -142,9 +174,14 @@ const extendPath = (
 
   const dfs = (r: number, c: number, remaining: number): boolean => {
     if (remaining === 0) return true
-    const nbrs = neighbors(r, c)
-      .filter(([nr, nc]) => !tempUsed.has(`${nr},${nc}`))
-      .sort(() => rand() - 0.5)
+    const free = neighbors(r, c).filter(([nr, nc]) => !tempUsed.has(`${nr},${nc}`))
+    const nbrs =
+      remaining === 1 && scorer
+        ? free
+            .map(n => ({ n, score: scorer(n[0], n[1]) + rand() * 3 }))
+            .sort((a, b) => b.score - a.score)
+            .map(({ n }) => n)
+        : free.sort(() => rand() - 0.5)
     for (const [nr, nc] of nbrs) {
       tempUsed.add(`${nr},${nc}`)
       result.push([nr, nc])
@@ -188,7 +225,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
   // Build the ordered sequence of intermediate main-path node types
   const intermediateTypes = buildIntermediateTypes(config.pathPuzzles, config.chestEvery ?? 0)
 
-  // Minimum cells needed (nodes only, sections may need extra for branching)
+  // Minimum node count needed (real path nodes only — the connector cell between two
+  // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
   const minCells =
     1 + // entrance
     intermediateTypes.length +
@@ -196,19 +234,36 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     1 + // exit/stairhead
     sideSections.reduce((sum, sec) => {
       const si = buildIntermediateTypes(sec.pathPuzzles, sec.chestEvery ?? 0)
-      const rc = si.length + 1 + (sec.gate ? 1 : 0)
-      const secCells = rc <= 1 ? rc : (rc - 1) * 2 + 1
+      const secCells = si.length + 1 + (sec.gate ? 1 : 0)
       const subCells = (sec.sideSections ?? []).reduce((s2, sub) => {
         const subI = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
-        const subRc = subI.length + 1 + (sub.gate ? 1 : 0)
-        return s2 + (subRc <= 1 ? subRc : (subRc - 1) * 2 + 1)
+        return s2 + subI.length + 1 + (sub.gate ? 1 : 0)
       }, 0)
       return sum + secCells + subCells
     }, 0)
 
-  // Derive odd grid size: enough cells + padding for layout freedom
+  // Rough count of fork/endpoint rooms that will want a decorative multi-cell footprint
+  // later (see footprint-claiming pass below) — a one-pass estimate is fine since that
+  // pass is best-effort (claims whatever's free, never fails).
+  const subSectionCount = sideSections.reduce((s, sec) => s + (sec.sideSections?.length ?? 0), 0)
+  const expectedFootprintRooms =
+    sideSections.length /* forks */ +
+    2 /* main end + exit */ +
+    sideSections.length /* section ends */ +
+    subSectionCount /* sub-section ends */
+  const FOOTPRINT_SLACK_PER_ROOM = 2
+
+  // Derive odd grid size. Only even/even positions can hold a real node (see NODE_STEP
+  // above), so usable node capacity is ((N+1)/2)^2, not N^2 — the grid needs to be
+  // noticeably bigger than the old dense model for the same amount of content, which
+  // is exactly the point: the odd-position lattice between nodes is what guarantees a
+  // genuine gap wherever the path winds back near itself.
   let N = 3
-  while (N * N < minCells + N + sideSections.length) N += 2
+  while (
+    Math.pow((N + 1) / 2, 2) <
+    minCells * 4 + (N + 1) / 2 + sideSections.length + expectedFootprintRooms * FOOTPRINT_SLACK_PER_ROOM
+  )
+    N += 2
 
   const nid = (r: number, c: number) => `${siteId}-${r}-${c}`
 
@@ -218,13 +273,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const rand = mulberry32(seed + attempt * 7919)
     const pkey = makePkey(N)
 
-    // Pick entrance from edge cells (non-corner preferred for more connections)
+    // Pick entrance from edge cells (non-corner preferred for more connections).
+    // Must be an even/even position — the only kind of cell that can be a real node.
     const edgeCells: Array<[number, number]> = []
-    for (let r = 0; r < N; r++) {
+    for (let r = 0; r < N; r += 2) {
       edgeCells.push([r, 0])
       edgeCells.push([r, N - 1])
     }
-    for (let c = 1; c < N - 1; c++) {
+    for (let c = 2; c < N - 1; c += 2) {
       edgeCells.push([0, c])
       edgeCells.push([N - 1, c])
     }
@@ -232,15 +288,15 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
 
-    // Stride-2 spacing: 1 corridor between each room.
     // Exit placed at the farthest dead-end (degree-1) so no corridor passes through it.
+    // mainPath is already a sequence of directly-connected nodes (see buildMaze), so
+    // the main-path content nodes are just its first interLen+2 entries, taken directly
+    // — no stride multiplication needed like the old dense model required.
     const interLen = intermediateTypes.length
-    const minPathLen = interLen * 2 + 3
-    if (mainPath.length < minPathLen + 1) continue
+    const goalIndex = interLen + 1 // 0 = entrance, 1..interLen = intermediates, interLen+1 = goal
+    if (mainPath.length < goalIndex + 2) continue // need >=1 more node past the goal, for a distinct exit
 
-    const mainNodeCells: Array<[number, number]> = [mainPath[0]]
-    for (let i = 0; i < interLen; i++) mainNodeCells.push(mainPath[(i + 1) * 2])
-    mainNodeCells.push(mainPath[minPathLen - 1])
+    const mainNodeCells: Array<[number, number]> = mainPath.slice(0, goalIndex + 1)
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
@@ -264,42 +320,119 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (!hasAdj) continue
       branchCandidates.push({ pathCell: [pr, pc] })
     }
-    const shuffledCandidates = [...branchCandidates].sort(() => rand() - 0.5)
-
-    for (let si = 0; si < sideSections.length; si++) {
-      const section = sideSections[si]
-      const secIntermediate = buildIntermediateTypes(section.pathPuzzles, section.chestEvery ?? 0)
-      const roomCount = secIntermediate.length + 1 + (section.gate ? 1 : 0)
-      const needed = roomCount <= 1 ? roomCount : (roomCount - 1) * 2 + 1
-      let placed = false
-
-      for (const {
-        pathCell: [pcr, pcc],
-      } of shuffledCandidates) {
-        const freeAdj = neighbors(pcr, pcc)
-          .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
-          .sort(() => rand() - 0.5)
-        if (freeAdj.length === 0) continue
-
-        for (const [startR, startC] of freeAdj) {
-          usedCells.add(`${startR},${startC}`)
-          const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand)
-          if (rest === null) {
-            usedCells.delete(`${startR},${startC}`)
-            continue
-          }
-          const cells: Array<[number, number]> = [[startR, startC], ...rest]
-          cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-          sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate, attachedAt: [pcr, pcc] })
-          placed = true
-          break
+    // Prefer branch points that sit next to a genuinely large contiguous empty pocket —
+    // this is where the fork ends up, and its later multi-cell footprint (the claiming
+    // pass below) floods outward through exactly this kind of pocket. A handful of
+    // scattered free cells scores far lower than one solid open patch of the same size.
+    // Jittered rather than a hard sort so mazes stay varied, not just "biggest room wins".
+    const pocketSize = ([pr, pc]: [number, number], cap: number): number => {
+      const visited = new Set<string>([`${pr},${pc}`])
+      const queue: Array<[number, number]> = [[pr, pc]]
+      let count = 0
+      while (queue.length > 0 && count < cap) {
+        const [r, c] = queue.shift()!
+        for (const [dr, dc] of DIRS) {
+          const nr = r + dr,
+            nc = c + dc
+          const key = `${nr},${nc}`
+          if (visited.has(key)) continue
+          visited.add(key)
+          if (nr < 0 || nr >= N || nc < 0 || nc >= N || usedCells.has(key)) continue
+          count++
+          if (count >= cap) break
+          queue.push([nr, nc])
         }
-        if (placed) break
       }
+      return count
+    }
+    const spaciousness = (pathCell: [number, number]): number => pocketSize(pathCell, 8)
+    const shuffledCandidates = branchCandidates
+      .map(bc => ({ bc, score: spaciousness(bc.pathCell) + rand() * 3 }))
+      .sort((a, b) => b.score - a.score)
+      .map(({ bc }) => bc)
 
-      if (!placed) {
-        failed = true
-        break
+    // Bundle side sections onto shared branch points ("hubs") instead of every section
+    // scattering to its own private fork — a floor with many side sections reads as a
+    // few significant crossroads rooms rather than many forgettable single junctions.
+    // Group size scales with how many sections there are; low counts stay ungrouped
+    // (today's behavior, one fork per section).
+    const hubGroupSize = sideSections.length >= 5 ? 3 : sideSections.length >= 2 ? 2 : 1
+    const sectionOrder = sideSections.map((_, i) => i).sort(() => rand() - 0.5)
+    const hubGroups: number[][] = []
+    for (let i = 0; i < sectionOrder.length; i += hubGroupSize) {
+      hubGroups.push(sectionOrder.slice(i, i + hubGroupSize))
+    }
+
+    outer: for (const group of hubGroups) {
+      let hubCell: [number, number] | null = null
+
+      for (const si of group) {
+        const section = sideSections[si]
+        const secIntermediate = buildIntermediateTypes(section.pathPuzzles, section.chestEvery ?? 0)
+        const needed = secIntermediate.length + 1 + (section.gate ? 1 : 0)
+        let placed = false
+
+        // Try the shared hub first (if this group already has one); fall through to a
+        // fresh candidate search if it's run out of free adjacent directions.
+        const candidateSources: BranchCandidate[] = hubCell
+          ? [{ pathCell: hubCell }, ...shuffledCandidates]
+          : shuffledCandidates
+
+        for (const {
+          pathCell: [pcr, pcc],
+        } of candidateSources) {
+          let freeAdj = neighbors(pcr, pcc)
+            .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
+            .sort(() => rand() - 0.5)
+
+          // The hub is out of natural passages to branch into — carve a brand-new one
+          // into a plain grid-adjacent unused cell instead of giving up on it. This is a
+          // deliberate departure from "perfect maze" (a real cycle) at hub spots only:
+          // two junctions ending up next to each other is fine, players can explore
+          // either order — it just makes that visible as one genuine multi-exit room
+          // instead of two separate ones.
+          if (freeAdj.length === 0 && hubCell && pcr === hubCell[0] && pcc === hubCell[1]) {
+            const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
+              .filter(
+                ([nr, nc]) =>
+                  nr >= 0 &&
+                  nr < N &&
+                  nc >= 0 &&
+                  nc < N &&
+                  !usedCells.has(`${nr},${nc}`) &&
+                  !passages.has(pkey(pcr, pcc, nr, nc))
+              )
+              .sort(() => rand() - 0.5)
+            if (carveCandidates.length > 0) {
+              passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
+              freeAdj = [carveCandidates[0]]
+            }
+          }
+          if (freeAdj.length === 0) continue
+
+          for (const [startR, startC] of freeAdj) {
+            usedCells.add(`${startR},${startC}`)
+            const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand, (r, c) =>
+              pocketSize([r, c], 8)
+            )
+            if (rest === null) {
+              usedCells.delete(`${startR},${startC}`)
+              continue
+            }
+            const cells: Array<[number, number]> = [[startR, startC], ...rest]
+            cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
+            sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate, attachedAt: [pcr, pcc] })
+            if (!hubCell) hubCell = [pcr, pcc]
+            placed = true
+            break
+          }
+          if (placed) break
+        }
+
+        if (!placed) {
+          failed = true
+          break outer
+        }
       }
     }
 
@@ -347,8 +480,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (let si = 0; si < subSects.length; si++) {
         const sub = subSects[si]
         const subIntermediate = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
-        const subRoomCount = subIntermediate.length + 1 + (sub.gate ? 1 : 0)
-        const subNeeded = subRoomCount <= 1 ? subRoomCount : (subRoomCount - 1) * 2 + 1
+        const subNeeded = subIntermediate.length + 1 + (sub.gate ? 1 : 0)
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
@@ -358,7 +490,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           if (freeAdj.length === 0) continue
           for (const [startR, startC] of freeAdj) {
             usedCells.add(`${startR},${startC}`)
-            const rest = extendPath(startR, startC, subNeeded - 1, neighbors, usedCells, rand)
+            const rest = extendPath(startR, startC, subNeeded - 1, neighbors, usedCells, rand, (r, c) =>
+              pocketSize([r, c], 8)
+            )
             if (rest === null) {
               usedCells.delete(`${startR},${startC}`)
               continue
@@ -460,22 +594,32 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const roomSpecs = new Map<string, RoomSpec>()
     const cellSectionHash = new Map<string, string>()
     const hiddenCellPositions = new Set<string>()
+    // Which section's authored decoration pool a footprint room should draw from.
+    const cellDecorationPool = new Map<string, DecorationKind[] | undefined>()
 
     const posKey = (r: number, c: number) => `${r},${c}`
 
     const mainSectionHash = computeMainSectionHash(config)
-    for (const [r, c] of mainPath) cellSectionHash.set(posKey(r, c), mainSectionHash)
+    for (const [r, c] of mainPath) {
+      cellSectionHash.set(posKey(r, c), mainSectionHash)
+      cellDecorationPool.set(posKey(r, c), config.decorations)
+    }
     for (const group of sectionGroups) {
       const sHash = computeSideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
       const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
+      const pool = sideSections[group.sectionIdx].decorations
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
+        cellDecorationPool.set(posKey(r, c), pool)
         if (isHidden) hiddenCellPositions.add(posKey(r, c))
       }
     }
     for (const { subSection, cells, parentSectionIdx, subSectionIdx } of subSectionGroups) {
       const sHash = computeSideSectionHash(subSection, subSectionIdx, parentSectionIdx)
-      for (const [r, c] of cells) cellSectionHash.set(posKey(r, c), sHash)
+      for (const [r, c] of cells) {
+        cellSectionHash.set(posKey(r, c), sHash)
+        cellDecorationPool.set(posKey(r, c), subSection.decorations)
+      }
     }
 
     // Collect branch junction cells (become fork nodes)
@@ -565,9 +709,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
-      // Intermediate nodes within section (puzzles/traps + chests), stride-2 to leave corridors
+      // Intermediate nodes within section (puzzles/traps + chests) — consecutive nodes,
+      // the connector cell between each pair lives at a separate grid position.
       for (let pi = 0; pi < intermediate.length; pi++) {
-        const [r, c] = cells[(contentStart + pi) * 2]
+        const [r, c] = cells[contentStart + pi]
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
         } else if (section.trapped) {
@@ -670,9 +815,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // Fill used cells with corridor or room
     for (const cellKey of usedCells) {
       const [r, c] = cellKey.split(",").map(Number)
-      // Compute dirs from passages
+      // Compute dirs from passages — nodes are two cells apart (see NODE_STEP above)
       const dirs = new Set<Direction>()
-      for (const [dr, dc, d] of DIRMAP) {
+      for (const [dr, dc, d] of CONNECTOR_DIRS) {
         const nr = r + dr,
           nc = c + dc
         if (
@@ -718,11 +863,67 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       }
     }
 
+    // Materialize the connector cell for every real edge between two used nodes — this
+    // is the plain 1-wide corridor cell physically between them (see NODE_STEP above).
+    // Each edge is only processed once (from its lower-keyed endpoint) since it's
+    // symmetric. A connector inherits `hidden` only when both endpoints do, so a hidden
+    // section's own internal corridors stay hidden together with it, while the single
+    // corridor linking a hidden section to its (visible) attachment point stays visible
+    // — same as a normal doorway would.
+    for (const cellKey of usedCells) {
+      const [r, c] = cellKey.split(",").map(Number)
+      for (const [dr, dc, d] of CONNECTOR_DIRS) {
+        const nr = r + dr,
+          nc = c + dc
+        const neighborKey = `${nr},${nc}`
+        if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
+        if (!passages.has(pkey(r, c, nr, nc)) || !usedCells.has(neighborKey)) continue
+        if (r * N + c > nr * N + nc) continue // process each edge once
+        const mr = (r + nr) / 2,
+          mc = (c + nc) / 2
+        const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
+        const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+        cells2D[mr][mc] = {
+          type: "corridor",
+          dirs: new Set([d, OPPOSITE[d]]),
+          state: "fogged",
+          sectionHash,
+          ...(hidden ? { hidden } : {}),
+        }
+      }
+    }
+
     // Set entrance cell state to "reachable"
     const [entRr, entCc] = [entR, entC]
     const entranceCell = cells2D[entRr][entCc]
     if (entranceCell.type === "room") {
       cells2D[entRr][entCc] = { ...entranceCell, state: "reachable" }
+    }
+
+    // Decorations: fork rooms and leaf-degree endpoint rooms (dead ends — treasure,
+    // stairhead, exit) may show a decoration drawn from their section's authored pool.
+    // Purely cosmetic, placed directly on the room's own cell — the renderer draws it
+    // offset into whichever side has open void next to it (see SiteMapView.tsx).
+    const endpointPositions = new Set<string>()
+    for (const [pk, spec] of roomSpecs) {
+      if (spec.roomType !== "treasure" && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue
+      const [r, c] = pk.split(",").map(Number)
+      const cell = cells2D[r][c]
+      if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
+    }
+    const decorationPoolIdx = new Map<DecorationKind[], number>()
+    const nextDecoration = (pool?: DecorationKind[]): DecorationKind | undefined => {
+      if (!pool) return undefined
+      const idx = decorationPoolIdx.get(pool) ?? 0
+      decorationPoolIdx.set(pool, idx + 1)
+      return pool[idx]
+    }
+    for (const pk of new Set([...forkPositions, ...endpointPositions])) {
+      const decoration = nextDecoration(cellDecorationPool.get(pk))
+      if (!decoration) continue
+      const [r, c] = pk.split(",").map(Number)
+      const owner = cells2D[r][c]
+      if (owner.type === "room") cells2D[r][c] = { ...owner, decoration }
     }
 
     const staircases: Record<string, readonly [number, number]> = {}

@@ -259,6 +259,7 @@ const buildSideSections = (
         end: "treasure" as const,
         ...(subGate ? { gate: subGate } : {}),
         ...(subEndReward ? { endReward: subEndReward } : {}),
+        ...(sub.decorations?.length ? { decorations: sub.decorations } : {}),
       }
     })
     sections.push({
@@ -268,6 +269,7 @@ const buildSideSections = (
       ...(gate ? { gate } : {}),
       ...(endReward ? { endReward } : {}),
       ...(subSections?.length ? { sideSections: subSections } : {}),
+      ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     })
   }
 
@@ -453,6 +455,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             sideSections: floorSideSections,
             ...(isLast ? { mainEndReward } : {}),
             ...(floorChests.length > 0 ? { chestRewards: floorChests } : {}),
+            ...(fc.decorations?.length ? { decorations: fc.decorations } : {}),
           } satisfies FloorConfig)
         }
         pyramidConfigs.push(floorConfigs)
@@ -585,6 +588,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         ...(Array.isArray(s.sideSections) && s.sideSections.length > 0
           ? { sideSections: buildSideSections(s.sideSections as SideSectionConstraint<"tombTreasure">[]) }
           : {}),
+        ...(s.decorations?.length ? { decorations: s.decorations } : {}),
       }))
 
     const floors: SiteConfig = Array.from({ length: levelCount }, (_, i) => {
@@ -614,6 +618,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         puzzleFamily,
         ...(isLast && hasCroc ? { lastMainPuzzleFamily: "crocodile" as const } : {}),
         ...(mainEndReward ? { mainEndReward } : {}),
+        ...(authored?.decorations?.length ? { decorations: authored.decorations } : {}),
       }
     })
 
