@@ -605,7 +605,14 @@ export const SiteMapView = ({
             // room cell
             const state = cell.state
             const isCompleted = state === "completed"
-            const isPending = isCompleted && (pendingCells?.has(`${r},${c}`) ?? false)
+            // Only ever a pending-loot marker for a treasure room with a consumable reward — this
+            // guards against stale coordinates in pendingCells (e.g. left over from before a site
+            // was regenerated) painting the badge onto whatever room now occupies that cell.
+            const isPending =
+              isCompleted &&
+              cell.roomType === "treasure" &&
+              cell.reward?.type === "consumable" &&
+              (pendingCells?.has(`${r},${c}`) ?? false)
             const clickable = onCellClick && (state === "reachable" || state === "completed")
             const roomR = nodeRadius[cell.roomType]
 
