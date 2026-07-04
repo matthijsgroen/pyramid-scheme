@@ -247,4 +247,28 @@ describe("SiteMapView — long corridor click target", () => {
     fireEvent.click(findCell(container, 110, 66)!)
     expect(onClick).toHaveBeenCalledWith(0, 1)
   })
+
+  it("renders the near-end marker as a direction arrow, not a plain dot", () => {
+    const grid = makeGrid([
+      [fork("completed", ["e"]), straightCorridor("visible", ["e", "w"]), straightCorridor("reachable", ["n", "e"])],
+    ])
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
+    const nearCell = findCell(container, 110, 66)
+    expect(nearCell?.querySelector("polygon")).toBeTruthy()
+    expect(nearCell?.querySelector("circle")).toBeNull()
+  })
+
+  it("hides the run-target marker the instant the explorer starts traveling elsewhere", () => {
+    // The marker tracks the dot's *visual* (settled) position, not the raw explorerPos
+    // prop — so as soon as a move is in flight, the old junction's markers disappear
+    // immediately instead of lingering until the glide finishes.
+    const grid = makeGrid([
+      [fork("completed", ["e"]), straightCorridor("visible", ["e", "w"]), straightCorridor("reachable", ["n", "e"])],
+    ])
+    const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
+    expect(findCell(container, 110, 66)?.querySelector("polygon")).toBeTruthy()
+
+    rerender(<SiteMapView grid={grid} explorerPos={[0, 2]} />)
+    expect(findCell(container, 110, 66)?.querySelector("polygon")).toBeNull()
+  })
 })

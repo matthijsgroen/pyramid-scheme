@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -743,15 +743,20 @@ const findCorridorRunTarget = (
   return null
 }
 
+type CorridorRunTarget = { row: number; col: number; dir: Direction }
+
+const EMPTY_RUN_TARGETS: ReadonlyMap<string, CorridorRunTarget> = new Map()
+
 // For each direction open from the explorer's current cell, find the corridor run's far
 // click target (if any) and key it by the NEAR cell — the first step of that run — so
-// rendering can put the click affordance right next to the player.
+// rendering can put the click affordance right next to the player. `dir` is that first
+// step's direction, unambiguous by construction, so the marker can point the way there.
 const useCorridorRunTargets = (
   grid: FloorGrid,
   explorerPos: readonly [number, number] | undefined
-): ReadonlyMap<string, readonly [number, number]> =>
+): ReadonlyMap<string, CorridorRunTarget> =>
   useMemo(() => {
-    const targets = new Map<string, readonly [number, number]>()
+    const targets = new Map<string, CorridorRunTarget>()
     if (!explorerPos) return targets
     const [er, ec] = explorerPos
     const startCell = cellAt(grid, er, ec)
@@ -762,7 +767,7 @@ const useCorridorRunTargets = (
         nearC = ec + dc
       const target = findCorridorRunTarget(grid, nearR, nearC, dir)
       if (target && (target[0] !== nearR || target[1] !== nearC)) {
-        targets.set(`${nearR},${nearC}`, target)
+        targets.set(`${nearR},${nearC}`, { row: target[0], col: target[1], dir })
       }
     }
     return targets
@@ -855,6 +860,20 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
   }
 }
 
+// ─── Click-target markers ───────────────────────────────────────────────────────
+
+// A plain corner's reachable marker has no single direction to point in — a corner or
+// T-junction is itself the decision point. A corridor-run target, by contrast, always
+// has exactly one direction (the first step out of the player's own cell), so it renders
+// as an arrow instead of a dot to hint which way it leads.
+const DIR_ROTATION: Record<Direction, number> = { n: 0, e: 90, s: 180, w: 270 }
+
+const ReachableDot = () => <circle r={3} fill="#d0a840" opacity={0.85} />
+
+const RunTargetArrow = ({ dir }: { dir: Direction }) => (
+  <polygon points="0,-5 4,4 -4,4" fill="#d0a840" opacity={0.85} transform={`rotate(${DIR_ROTATION[dir]})`} />
+)
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const SiteMapView = ({
@@ -869,7 +888,18 @@ export const SiteMapView = ({
   const scrollRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
-  const corridorRunTargets = useCorridorRunTargets(grid, explorerPos)
+  // Corridor-run markers track the explorer dot's visual position, not the logical one:
+  // hide them the instant a run target is clicked (the player has committed to a
+  // destination, so the old markers no longer apply), and don't show the new ones at the
+  // far end until the dot actually arrives there rather than while it's still gliding.
+  const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
+  const isTraveling = !!(
+    explorerPos &&
+    settledExplorerPos &&
+    (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
+  )
+  const settledCorridorRunTargets = useCorridorRunTargets(grid, settledExplorerPos)
+  const corridorRunTargets = isTraveling ? EMPTY_RUN_TARGETS : settledCorridorRunTargets
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit
@@ -952,7 +982,7 @@ export const SiteMapView = ({
                 cell.type === "corridor" &&
                 onCellClick &&
                 ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
-              const clickTarget = runTarget ?? ([r, c] as const)
+              const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
               return (
                 <g
                   key={cellKey}
@@ -962,9 +992,11 @@ export const SiteMapView = ({
                 >
                   <FloorTile state={state} open={open} kind="room" />
                   {cell.type === "corridor" &&
-                    ((cell.state === "reachable" && isCorner) || runTarget) && (
-                      <circle r={3} fill="#d0a840" opacity={0.85} />
-                    )}
+                    (runTarget ? (
+                      <RunTargetArrow dir={runTarget.dir} />
+                    ) : (
+                      cell.state === "reachable" && isCorner && <ReachableDot />
+                    ))}
                   {decoration && <DecorationGlyph kind={decoration} />}
                 </g>
               )
@@ -987,7 +1019,7 @@ export const SiteMapView = ({
               const corridorClickable =
                 onCellClick &&
                 (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
-              const clickTarget = runTarget ?? ([r, c] as const)
+              const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
               return (
                 <g
                   key={`${r},${c}`}
@@ -996,8 +1028,10 @@ export const SiteMapView = ({
                   style={{ cursor: corridorClickable ? "pointer" : "default" }}
                 >
                   <FloorTile state={cell.state} open={open} kind="corridor" />
-                  {((cell.state === "reachable" && isCorner) || runTarget) && (
-                    <circle r={3} fill="#d0a840" opacity={0.85} />
+                  {runTarget ? (
+                    <RunTargetArrow dir={runTarget.dir} />
+                  ) : (
+                    cell.state === "reachable" && isCorner && <ReachableDot />
                   )}
                 </g>
               )
@@ -1043,7 +1077,9 @@ export const SiteMapView = ({
           })
         })}
 
-        {explorerPos && <ExplorerDot grid={grid} pos={explorerPos} />}
+        {explorerPos && (
+          <ExplorerDot grid={grid} pos={explorerPos} onArrive={() => setSettledExplorerPos(explorerPos)} />
+        )}
       </svg>
     </div>
   )

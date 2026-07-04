@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Room icons on the pyramid/tomb interior map are larger and easier to make out on mobile.
-- A long corridor's click target now sits right next to you instead of at its far end, so you don't need to scroll to walk into it.
+- A long corridor's click target now sits right next to you instead of at its far end, so you don't need to scroll to walk into it. It's now shown as a direction arrow rather than a plain dot, and only appears once the explorer dot actually settles there.
 
 ### Fixed
 - Fix the explorer dot rendering off-center and small inside pyramid/tomb interiors.
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adjacent junction rooms now visually merge into one open space instead of showing a wall between them.
 - Fix a hidden passage's detector-stop message never appearing when the passage was more than one step past its junction.
 - Fix walls shifting near an unrelated junction when a hidden passage elsewhere on the same map was revealed.
+- Fix the explorer dot skipping its travel animation and snapping instantly on the very first move of a session.
 
 ## 0.25.0 - 2026-07-04
 ### Added
