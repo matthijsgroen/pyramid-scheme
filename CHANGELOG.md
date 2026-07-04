@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Junctions, treasure rooms, staircases, and exits inside pyramid and tomb interiors now appear as larger, uniquely shaped rooms instead of uniform single tiles.
+- The corridor leading up to a locked gate now blends into the neighboring room instead of showing as a separate passage tile.
+- Interior corridors wind more naturally, with occasional wider junctions where several paths meet.
+
+### Added
+- Some interior rooms now display decorative dungeon details, such as statues or sarcophagi.
+
 ## 0.24.2 - 2026-07-03
 ### Fixed
 - Fix corridor corners in pyramid interiors being hard to tap on mobile.

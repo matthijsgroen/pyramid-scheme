@@ -3,7 +3,7 @@ import { NumberChest } from "./NumberChest"
 import { useState } from "react"
 
 const meta = {
-  title: "UI/NumberLock",
+  title: "UI/NumberChest",
   component: NumberChest,
   parameters: {
     layout: "centered",

@@ -197,6 +197,68 @@ describe(assembleFloor, () => {
     }
   })
 
+  describe("multi-cell footprints", () => {
+    it("assigns decorations from the section's authored pool, on the fork/endpoint's own room cell", () => {
+      const config: FloorConfig = {
+        pathPuzzles: 0,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", decorations: ["sarcophagus"] },
+          {
+            pathPuzzles: 1,
+            difficulty: "junior",
+            end: "staircase",
+            gate: { type: "floor-key" },
+            decorations: ["statue"],
+          },
+        ],
+      }
+      let sawDecoration = false
+      for (let seed = 0; seed < 30; seed++) {
+        const result = assembleFloor(`site-${seed}`, config, seed)
+        if (!result.success) continue
+        const decorations = result.grid.cells
+          .flat()
+          .flatMap(cell => (cell.type === "room" ? [cell.decoration] : []))
+          .filter(Boolean)
+        if (decorations.length > 0) {
+          sawDecoration = true
+          for (const d of decorations) expect(["sarcophagus", "statue"]).toContain(d)
+        }
+      }
+      expect(sawDecoration).toBe(true)
+    })
+
+    it("bundles some side sections onto a shared hub fork with a carved 4-way junction", () => {
+      const config: FloorConfig = {
+        pathPuzzles: 2,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 1, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
+        ],
+      }
+      let sawHub = false
+      for (let seed = 0; seed < 60; seed++) {
+        const result = assembleFloor(`site-${seed}`, config, seed)
+        if (!result.success) continue
+        const v = validateSite(result.grid)
+        expect(v.valid, `seed ${seed} failed validation: ${JSON.stringify(v)}`).toBe(true)
+        if (result.grid.cells.flat().some(c => c.type === "room" && c.roomType === "fork" && c.dirs.size === 4)) {
+          sawHub = true
+        }
+      }
+      expect(sawHub).toBe(true)
+    })
+  })
+
   describe("trap rooms", () => {
     it("places trap rooms for a trapped section", () => {
       const config: FloorConfig = {

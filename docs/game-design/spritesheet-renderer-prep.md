@@ -50,3 +50,34 @@ No stored state needed. `ExplorerDot` already has access to `from` and `to` posi
 outside those two files cares about the rendering primitive.
 
 **Spritesheet manifest** — a simple `Record<theme, { url: string; tileW: number; tileH: number; map: Record<tileName, [sx, sy]> }>` passed as a prop or loaded via a hook. No game-data coupling needed.
+
+**Room-space claiming (`buildRoomClaims` in `SiteMapView.tsx`)** — forks and dead-end
+treasure/stairhead/exit rooms already claim extra grid cells as real footprint (box-first
+3x3 including diagonals, falling back to an orthogonal flood-fill), purely derived at
+render time from the finished `FloorGrid` — see the function and its comments for the
+current rules, including the exception that absorbs a gate's one-cell approach corridor
+into the junction's own footprint. This is exactly the shape a sprite-tile pass needs, and
+the two per-cell values it needs are already computed today, just not carried as data yet:
+
+- **Autotile role** — the `open: Record<Direction, boolean>` bitmask computed per cell
+  (walls vs. openings) is already the Wang-tile/autotile index (e.g. "room top-left
+  corner", "corridor straight", "room center"). Nothing new to derive, just needs to be
+  exposed as a lookup key instead of directly driving rect/wall geometry.
+- **`kind: "room" | "corridor"`** — already computed per cell for floor tinting. Doubles
+  as the signal for where ambient overlays (dust puffs, light beams) and decorations are
+  allowed to scatter — corridors should stay bare, rooms (including claimed cells) can
+  carry them.
+
+Still missing, needed before sprite selection can be theme-aware:
+
+- **Area/ward styling** ("junior ward" reads as a noble wing, etc.) — cells already carry
+  a `sectionHash` from generation tracing back to their DSL section, but that hash is
+  currently just an opaque dedup key with no semantic meaning attached. Needs a lookup
+  built once from `FloorConfig`, e.g. `sectionHash → { difficulty, theme }`, threaded down
+  to the renderer alongside the `theme` prop from item 1 above.
+
+Proposed shape when this is picked up: one more pure, unit-testable function alongside
+`buildRoomClaims`, e.g. `selectTile(grid, claims, areaByHash, r, c) → { area, role, kind,
+decoration }`, called once per cell and consumed by the sprite renderer instead of the
+current inline rect/wall drawing. Rendering-layer only — no changes to `siteAssembler.ts`
+or the `FloorGrid` data model.
