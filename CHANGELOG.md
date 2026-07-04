@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.25.1 - 2026-07-04
 ### Changed
 - Room icons on the pyramid/tomb interior map are larger and easier to make out on mobile.
 - A long corridor's click target now sits right next to you instead of at its far end, so you don't need to scroll to walk into it. It's now shown as a direction arrow rather than a plain dot, and only appears once the explorer dot actually settles there.
