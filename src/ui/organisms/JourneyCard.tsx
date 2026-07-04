@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from "react"
 import clsx from "clsx"
 import type { TranslatedJourney } from "@/data/useJourneyTranslations"
-import { DifficultyPill } from "@/ui/DifficultyPill"
+import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 
 type JourneyCardLabels = {
   suggestedExpedition: string

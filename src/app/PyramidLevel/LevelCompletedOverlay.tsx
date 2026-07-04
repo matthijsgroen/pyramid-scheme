@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { EntranceTransitionOverlay } from "@/ui/EntranceTransitionOverlay"
+import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 
 // The pyramid's entrance block slides open (animate-stone-entrance, 1s delay + 1.8s slide = 2.8s).
 // Circle iris starts at 2.5s so it begins just before the stone finishes, then covers the screen.

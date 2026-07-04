@@ -6,9 +6,9 @@ import { ExpeditionCompletionOverlay } from "@/app/PyramidExpedition/ExpeditionC
 import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
 import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { clsx } from "clsx"
-import { DesertBackdrop } from "@/ui/DesertBackdrop"
+import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
-import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/backdropSelection"
+import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import { type PyramidJourney } from "@/data/journeys"
@@ -17,8 +17,8 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
 import { createFloorStartIndices } from "@/app/PyramidLevel/support"
 import { DevelopContext } from "@/contexts/DevelopMode"
-import { DeveloperButton } from "@/ui/DeveloperButton"
-import { Header } from "@/ui/Header"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import { Header } from "@/ui/atoms/Header"
 
 const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
   const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)

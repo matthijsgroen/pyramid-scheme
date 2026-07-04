@@ -1,14 +1,14 @@
 import { useMemo, useRef, type FC } from "react"
 import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import type { Pyramid } from "@/game/types"
-import { Block } from "@/ui/Block"
-import { InputBlock } from "@/ui/InputBlock"
+import { Block } from "@/ui/atoms/Block"
+import { InputBlock } from "@/ui/molecules/InputBlock"
 import { getAnswers, isComplete } from "@/game/state"
 import clsx from "clsx"
 import { mulberry32 } from "@/game/random"
 import { hieroglyphs } from "@/data/hieroglyphs"
 import { createFloorStartIndices } from "./support"
-import type { DayNightCycleStep } from "@/ui/backdropSelection"
+import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 

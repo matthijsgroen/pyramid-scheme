@@ -2,7 +2,7 @@ import { use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { SettingsModal } from "@/app/SettingsModal"
 import { DevelopContext } from "@/contexts/DevelopMode"
-import { Header } from "@/ui/Header"
+import { Header } from "@/ui/atoms/Header"
 
 export const BaseHeader = () => {
   const { t } = useTranslation("common")

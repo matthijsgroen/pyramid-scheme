@@ -7,7 +7,7 @@ import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/
 import { useInventory } from "../Inventory/useInventory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import clsx from "clsx"
 import { difficultyCompare } from "@/data/difficultyLevels"
 

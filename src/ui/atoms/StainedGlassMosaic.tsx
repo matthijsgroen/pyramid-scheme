@@ -1,8 +1,8 @@
 import type { FC } from "react"
 import clsx from "clsx"
 import { MOSAIC_PIECES, type MosaicPieceDef } from "./mosaicPieces.generated"
-import stainedGlassUrl from "../assets/stained-glass.png"
-import stainedGlassMaskUrl from "../assets/stained-glass-mask.png"
+import stainedGlassUrl from "../../assets/stained-glass.png"
+import stainedGlassMaskUrl from "../../assets/stained-glass-mask.png"
 
 // ViewBox matches stained-glass.png aspect ratio (1372×2352 → 200×343)
 const VB_W = 200

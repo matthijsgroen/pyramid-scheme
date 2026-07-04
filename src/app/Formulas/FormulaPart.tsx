@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { egyptianDeities, egyptianProfessions, egyptianAnimals, egyptianArtifacts } from "@/data/inventory"
 import type { Formula, Operation } from "@/app/Formulas/formulas"

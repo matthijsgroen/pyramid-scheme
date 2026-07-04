@@ -1,8 +1,8 @@
 import type { FC } from "react"
 import { useRef, useEffect } from "react"
 import clsx from "clsx"
-import { Block } from "@/ui/Block"
-import type { BlockFeedback } from "@/ui/Block"
+import { Block } from "@/ui/atoms/Block"
+import type { BlockFeedback } from "@/ui/atoms/Block"
 
 export const InputBlock: FC<{
   value?: number

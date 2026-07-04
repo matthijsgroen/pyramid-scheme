@@ -3,7 +3,7 @@ import type { PyramidLevel } from "@/game/types"
 import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
 import { isValid } from "@/game/state"
 import { useGameStorage } from "@/support/useGameStorage"
-import type { DayNightCycleStep } from "@/ui/backdropSelection"
+import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 
 export const Level: FC<{
   content: PyramidLevel
