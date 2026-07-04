@@ -551,36 +551,48 @@ type RoomClaims = {
   openEdges: ReadonlySet<string>
 }
 
-// Row-major scan so two nearby claimable rooms never fight over the same cell —
-// whichever comes first in reading order claims it. Each owner independently claims
-// whichever of its 8 immediate neighbors (sides + diagonals) are free — no flood-fill
-// beyond that ring, so the shape stays a direct "3x3 minus whatever's occupied" instead
-// of wandering off into open floor further away. A diagonal's flank can be either
-// claimed void or the owner's own real corridor arm — either way the diagonal ends up
-// visually flush with a wall the owner already has open, not floating by itself.
+// Row-major scan order, plus a strength ranking for contested diagonals (see below), so
+// two nearby claimable rooms never fight unpredictably over the same cell. Each owner
+// independently claims whichever of its 8 immediate neighbors (sides + diagonals) are
+// free — no flood-fill beyond that ring, so the shape stays a direct "3x3 minus whatever's
+// occupied" instead of wandering off into open floor further away. A diagonal's flank can
+// be either claimed void or the owner's own real corridor arm — either way the diagonal
+// ends up visually flush with a wall the owner already has open, not floating by itself.
 const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   const claimedBy = new Map<string, string>()
-  const decorationAt = new Map<string, DecorationKind>()
   const openEdges = new Set<string>()
+  const ownerFirstClaim = new Map<string, string>()
+  const noteClaim = (cellKey: string, ownerKey: string) => {
+    claimedBy.set(cellKey, ownerKey)
+    if (!ownerFirstClaim.has(ownerKey)) ownerFirstClaim.set(ownerKey, cellKey)
+  }
+
+  // Ortho claims commit immediately, row-major first-come — two owners contending for the
+  // same orthogonal neighbor is rare enough not to warrant the ranking below. Diagonal
+  // claims are only proposed here and resolved afterward (see below).
+  type DiagonalCandidate = {
+    ownerKey: string
+    ownerRow: number
+    ownerCol: number
+    scanOrder: number
+    attachedFlanks: ReadonlyArray<readonly [number, number]>
+    realFlankCount: number
+  }
+  const diagonalCandidates = new Map<string, DiagonalCandidate[]>()
+  let scanOrder = 0
+
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.dirs.size)) continue
       const ownerKey = `${r},${c}`
-      // decoration only ever lands on a genuine claim (void or diagonal), never on a
-      // flank corridor that's just being re-tinted below
-      const claims: Array<[number, number]> = []
-      // a real corridor arm used as a diagonal's flank keeps functioning as a normal
-      // passage (own state, own click behavior) but renders with the room's floor tint
-      // since it's now flush with the claimed diagonal beside it
-      const flankClaims: Array<[number, number]> = []
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {
         const nr = r + dr,
           nc = c + dc
         const key = `${nr},${nc}`
         if (claimedBy.has(key) || !isClaimableNeighbor(grid, r, c, nr, nc)) continue
-        claims.push([nr, nc])
+        noteClaim(key, ownerKey)
         claimedThisOwner.add(key)
         openEdges.add(edgeKey(r, c, nr, nc))
       }
@@ -591,32 +603,83 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
         const nr = r + dr,
           nc = c + dc
         const key = `${nr},${nc}`
-        if (claimedBy.has(key) || !isClaimableNeighbor(grid, r, c, nr, nc)) continue
+        if (!isClaimableNeighbor(grid, r, c, nr, nc)) continue
+        // A flank attached via the owner's own real graph edge is a durable structural
+        // fact; one attached only because this same pass just claimed it as void is
+        // incidental and shouldn't count as equally strong when ranking contested claims.
+        let realFlankCount = 0
         const attachedFlanks = flanks.filter(([fr, fc]) => {
-          if (claimedThisOwner.has(`${r + fr},${c + fc}`)) return true
-          return cell.dirs.has(OFFSET_TO_DIR[`${fr},${fc}`])
+          if (cell.dirs.has(OFFSET_TO_DIR[`${fr},${fc}`])) {
+            realFlankCount++
+            return true
+          }
+          return claimedThisOwner.has(`${r + fr},${c + fc}`)
         })
         if (attachedFlanks.length === 0) continue
-        claims.push([nr, nc])
-        claimedThisOwner.add(key)
-        for (const [fr, fc] of attachedFlanks) {
-          const flankR = r + fr,
-            flankC = c + fc
-          const flankKey = `${flankR},${flankC}`
-          openEdges.add(edgeKey(nr, nc, flankR, flankC))
-          if (!claimedThisOwner.has(flankKey) && !claimedBy.has(flankKey)) {
-            flankClaims.push([flankR, flankC])
-            claimedThisOwner.add(flankKey)
-          }
-        }
+        const existing = diagonalCandidates.get(key) ?? []
+        existing.push({ ownerKey, ownerRow: r, ownerCol: c, scanOrder: scanOrder++, attachedFlanks, realFlankCount })
+        diagonalCandidates.set(key, existing)
       }
-      if (cell.decoration && claims.length > 0) {
-        decorationAt.set(`${claims[0][0]},${claims[0][1]}`, cell.decoration)
-      }
-      for (const [nr, nc] of [...claims, ...flankClaims]) claimedBy.set(`${nr},${nc}`, ownerKey)
     }
   }
+
+  // A room's own progression state approximates how "established" it is: a room the
+  // player has already completed predates one that just got revealed and is still merely
+  // reachable. Used as a claim tiebreaker below — see STATE_RANK's call site.
+  const STATE_RANK: Record<CellState, number> = { completed: 3, reachable: 2, visible: 1, fogged: 0 }
+  const stateRankOf = (row: number, col: number): number => {
+    const owner = grid.cells[row]?.[col]
+    return owner?.type === "room" ? STATE_RANK[owner.state] : 0
+  }
+
+  // Resolve each contested diagonal by attachment strength — a diagonal flush against
+  // both its neighboring arms is a stronger, more established claim than one flush
+  // against only one. Without this, revealing a hidden room can introduce a new,
+  // weakly-attached claimant that — by pure scan order — steals a diagonal cell out from
+  // under a room that was already flush against it on two sides, visibly moving a wall.
+  // When flank strength ties too, prefer the more-established room (see stateRankOf) over
+  // scan order — a freshly-revealed room is reliably the newer, less-established claimant.
+  for (const [key, candidates] of diagonalCandidates) {
+    if (claimedBy.has(key)) continue // already an ortho claim, which always wins
+    const winner = candidates.reduce((best, c) => {
+      if (c.realFlankCount !== best.realFlankCount) return c.realFlankCount > best.realFlankCount ? c : best
+      if (c.attachedFlanks.length !== best.attachedFlanks.length) {
+        return c.attachedFlanks.length > best.attachedFlanks.length ? c : best
+      }
+      const cRank = stateRankOf(c.ownerRow, c.ownerCol)
+      const bestRank = stateRankOf(best.ownerRow, best.ownerCol)
+      if (cRank !== bestRank) return cRank > bestRank ? c : best
+      return c.scanOrder < best.scanOrder ? c : best
+    })
+    noteClaim(key, winner.ownerKey)
+    const [kr, kc] = key.split(",").map(Number)
+    for (const [fr, fc] of winner.attachedFlanks) {
+      const flankKey = `${winner.ownerRow + fr},${winner.ownerCol + fc}`
+      openEdges.add(edgeKey(kr, kc, winner.ownerRow + fr, winner.ownerCol + fc))
+      if (!claimedBy.has(flankKey)) noteClaim(flankKey, winner.ownerKey)
+    }
+  }
+
+  // Decoration only ever lands on a genuine claim (void or diagonal), on whichever one
+  // was committed first for its owner — never on a flank corridor that's just re-tinted.
+  const decorationAt = new Map<string, DecorationKind>()
+  for (const [ownerKey, cellKey] of ownerFirstClaim) {
+    const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+    const owner = grid.cells[ownerRow]?.[ownerCol]
+    if (owner?.type === "room" && owner.decoration) decorationAt.set(cellKey, owner.decoration)
+  }
+
   return { claimedBy, decorationAt, openEdges }
+}
+
+// True if the void/corridor cell at `key` was claimed by a junction (fork) room — the
+// other end of a fork-to-fork merge (see isOpenSide below).
+const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolean => {
+  const ownerKey = claims.claimedBy.get(key)
+  if (!ownerKey) return false
+  const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
+  const owner = grid.cells[ownerRow]?.[ownerCol]
+  return owner?.type === "room" && owner.roomType === "fork"
 }
 
 const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, dir: Direction): boolean => {
@@ -624,9 +687,19 @@ const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, d
   const [dr, dc] = DIR_MOVES[dir]
   const nr = r + dr,
     nc = c + dc
+  const neighbor = cellAt(grid, nr, nc)
   // a real graph edge is always open
   if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
-  return claims.openEdges.has(edgeKey(r, c, nr, nc))
+  if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true
+  // Two junction rooms that each claim their own side of a shared void/corridor cell
+  // (buildRoomClaims assigns that cell to whichever claims first) should still read as one
+  // open space — junctions are connective tissue, not a distinct place, unlike other room
+  // types, which stay visually separate even sitting right next to someone else's claim.
+  const isForkMeetingClaim = (a: GridCell, bKey: string): boolean =>
+    a.type === "room" && a.roomType === "fork" && claimedByFork(grid, claims, bKey)
+  if (isForkMeetingClaim(cell, `${nr},${nc}`)) return true
+  if (isForkMeetingClaim(neighbor, `${r},${c}`)) return true
+  return false
 }
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
@@ -804,7 +877,7 @@ export const SiteMapView = ({
             if (claimOwnerKey && (cell.type === "empty" || cell.type === "corridor")) {
               const [ownerRow, ownerCol] = claimOwnerKey.split(",").map(Number)
               const owner = grid.cells[ownerRow]?.[ownerCol]
-              if (!owner || owner.type !== "room") return null
+              if (!owner || owner.type !== "room" || owner.state === "fogged") return null
               const state = owner.state
               const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
                 Direction,
@@ -828,12 +901,13 @@ export const SiteMapView = ({
                   {cell.type === "corridor" && cell.state === "reachable" && isCorner && (
                     <circle r={3} fill="#d0a840" opacity={0.85} />
                   )}
-                  {decoration && state !== "fogged" && <DecorationGlyph kind={decoration} />}
+                  {decoration && <DecorationGlyph kind={decoration} />}
                 </g>
               )
             }
 
             if (cell.type === "empty") return null
+            if (cell.state === "fogged") return null
 
             const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
               Direction,
@@ -841,7 +915,6 @@ export const SiteMapView = ({
             >
 
             if (cell.type === "corridor") {
-              if (cell.state === "fogged") return null
               const isCorner = isCorridorCorner(cell.dirs)
               const corridorClickable =
                 onCellClick && (cell.state === "reachable" || cell.state === "completed") && isCorner

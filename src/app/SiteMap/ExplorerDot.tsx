@@ -3,7 +3,7 @@ import type { FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
 
 export const SITE_MAP_CELL = 44
-export const SITE_MAP_PAD = 30
+export const SITE_MAP_PAD = 44
 
 type Point = { x: number; y: number }
 
@@ -107,7 +107,7 @@ export const ExplorerDot = ({
     <circle
       cx={svgPos.x}
       cy={svgPos.y}
-      r={6}
+      r={9}
       fill={color}
       stroke="#110d08"
       strokeWidth={2}

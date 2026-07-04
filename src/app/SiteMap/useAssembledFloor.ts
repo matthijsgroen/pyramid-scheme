@@ -78,8 +78,15 @@ const maskHiddenCells = (
         }
         if (newDirs.size !== cell.dirs.size) {
           junctions.add(`${r},${c}`)
-          // With detector: keep junction reachable after completion so the player can return
-          const state = detectionLevel >= 1 && cell.state === "completed" ? "reachable" : cell.state
+          // With detector: force the junction reachable, whether the player is walking up to
+          // it for the first time ("visible" — completeCell treated it as a plain passthrough
+          // on the unmasked graph, since it had no idea one side led to a hidden dead end) or
+          // returning to it later ("completed"). Without a detector, leave the state alone —
+          // the player glides straight through the hidden gap, seeing nothing unusual.
+          const state =
+            detectionLevel >= 1 && (cell.state === "completed" || cell.state === "visible")
+              ? "reachable"
+              : cell.state
           // Downgrade room → corridor if hidden dir removal leaves it as a passthrough corner
           if (cell.type === "room" && newDirs.size <= 2) {
             return { type: "corridor", dirs: newDirs as ReadonlySet<Direction>, state, sectionHash: cell.sectionHash }

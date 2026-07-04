@@ -12,6 +12,10 @@ const config: FloorConfig = {
   difficulty: "expert",
   end: "treasure",
   exitOrStaircase: "exit",
+  // Pinned so the main path's own treasure can never roll the same mosaicPiece reward as
+  // the hidden one below — that coincidence let a demo player "win" on the ordinary path
+  // before ever reaching the hidden branch, making the detector look broken.
+  mainEndReward: { type: "hieroglyphs" },
   sideSections: [
     { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
     // Hidden branch — tagged hidden:true, masked by useAssembledFloor
