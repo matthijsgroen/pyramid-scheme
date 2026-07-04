@@ -43,7 +43,7 @@ const entranceStroke: Record<CellState, string> = {
 }
 
 const EntranceShape = ({ state }: ShapeProps) => {
-  const r = 12
+  const r = 15
   const fill = entranceFill[state]
   const stroke = entranceStroke[state]
   // arch: flat bottom, semicircle top
@@ -92,7 +92,7 @@ const KEY_COLOR_HEX: Record<KeyColor, { visible: string; reachable: string }> = 
 }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
-  const r = 13
+  const r = 16
   const fill = puzzleFill[state]
   const stroke = puzzleStroke[state]
   return (
@@ -138,7 +138,7 @@ const trapStroke: Record<CellState, string> = {
 }
 
 const TrapShape = ({ state }: ShapeProps) => {
-  const r = 13
+  const r = 16
   const fill = trapFill[state]
   const stroke = trapStroke[state]
   return (
@@ -169,7 +169,7 @@ const ForkShape = ({ state }: ShapeProps) => {
 }
 
 const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
-  const r = 12
+  const r = 15
   const isTomb = gateVariant === "tomb-key"
   const colorKey = state === "visible" ? "visible" : "reachable"
   const fill = isTomb ? tombGateFill[state] : gateFill[state]
@@ -230,7 +230,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
 }
 
 const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
-  const r = 12
+  const r = 15
   const colorKey = state === "visible" ? "visible" : "reachable"
   const badges = keyColors && keyColors.length > 0 ? keyColors : keyColor ? [keyColor] : []
   const primaryColor = badges[0]
@@ -275,7 +275,7 @@ const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
 }
 
 const StairheadShape = ({ state }: ShapeProps) => {
-  const r = 12
+  const r = 15
   const cut = 5
   const fill = stairFill[state]
   const stroke = stairStroke[state]
@@ -300,7 +300,7 @@ const StairheadShape = ({ state }: ShapeProps) => {
 }
 
 const ExitShape = ({ state }: ShapeProps) => {
-  const r = 12
+  const r = 15
   const fill = exitFill[state]
   const stroke = exitStroke[state]
   return (
@@ -313,14 +313,14 @@ const ExitShape = ({ state }: ShapeProps) => {
 }
 
 const nodeRadius: Record<RoomType, number> = {
-  entrance: 12,
-  puzzle: 13,
-  trap: 13,
+  entrance: 15,
+  puzzle: 16,
+  trap: 16,
   fork: 7,
-  gate: 12,
-  treasure: 12,
-  stairhead: 12,
-  exit: 12,
+  gate: 15,
+  treasure: 15,
+  stairhead: 15,
+  exit: 15,
 }
 
 const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: RoomType }) => {
