@@ -1,5 +1,5 @@
 import { useState, useRef, type FC } from "react"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import { useTreasureItem } from "@/data/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import type { Difficulty } from "@/data/difficultyLevels"

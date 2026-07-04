@@ -1,5 +1,18 @@
 # Storybook Story Guidelines
 
+## Where stories live
+
+`src/ui/` is split into four atomic-design tier folders:
+
+- **`atoms/`** — renders no other `src/ui` component. The leaf building blocks.
+- **`molecules/`** — composes a small number of atoms.
+- **`organisms/`** — composes molecules/atoms into a larger, self-contained UI section (e.g. a card used directly in a screen).
+- **`principles/`** — non-component design-token/foundation docs (colors, spacing, typography), not tied to a single component.
+
+Classify by what the component imports and renders from `src/ui`, not by visual complexity — a component that composes zero other `src/ui` components is an atom even if its own JSX/CSS is elaborate.
+
+Every component in `src/ui/` — atom, molecule, or organism — must have a matching `*.stories.tsx` file living in the same tier folder next to it. This applies to existing components as well as new ones; there is no exemption for "it's just a wrapper."
+
 ## The core rule
 
 **A story must not contain logic that would need to be kept in sync with the game.**

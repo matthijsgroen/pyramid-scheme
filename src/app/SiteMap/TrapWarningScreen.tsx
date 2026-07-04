@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
-import { HealthDisplay } from "@/ui/HealthDisplay"
+import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 
 type Props = {
   currentHealth: number

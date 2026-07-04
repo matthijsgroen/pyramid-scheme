@@ -5,8 +5,9 @@ import { hashString } from "@/support/hashString"
 import { generateRewardCalculation } from "@/game/generateRewardCalculation"
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
-import { createPositionOverview } from "../Formulas/filledPositions"
+import { createPositionOverview } from "@/app/Formulas/filledPositions"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 
 type TombLevelArgs = {
   tableauNr: number
@@ -111,6 +112,10 @@ const meta = {
             symbolCounts: calculation.symbolCounts,
             filledPositions,
           }}
+          resolveTile={symbolId => resolveHieroglyphSymbol(symbolId, journey.difficulty)}
+          hintFormulas={calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))}
+          solvedPercentage={filled}
+          annotations={{}}
         />
       </div>
     )

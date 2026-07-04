@@ -8,14 +8,14 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
-import { TombBackdrop } from "@/ui/TombBackdrop"
+import { TombBackdrop } from "@/ui/atoms/TombBackdrop"
 import { FezContext } from "./fez/context"
-import { DeveloperButton } from "@/ui/DeveloperButton"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevelopContext } from "@/contexts/DevelopMode"
-import { Header } from "@/ui/Header"
+import { Header } from "@/ui/atoms/Header"
 import { SiteMapScreen } from "./SiteMap/SiteMapScreen"
 import { useTimeout } from "@/support/useTimeout"
-import { BackButton } from "@/ui/BackButton"
+import { BackButton } from "@/ui/atoms/BackButton"
 
 export const TombExpedition: FC<{
   activeJourney: CombinedJourneyState

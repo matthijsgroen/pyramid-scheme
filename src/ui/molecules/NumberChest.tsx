@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import clsx from "clsx"
-import { Chest, type ChestState, type ChestVariant } from "./Chest"
-import { NumberLock } from "./NumberLock"
+import { Chest, type ChestState, type ChestVariant } from "@/ui/atoms/Chest"
+import { NumberLock } from "@/ui/atoms/NumberLock"
 
 type NumberLockProps = {
   state?: ChestState

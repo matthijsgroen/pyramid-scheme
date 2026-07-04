@@ -1,4 +1,4 @@
-import type { Difficulty } from "./difficultyLevels"
+import type { Difficulty } from "@/data/difficultyLevels"
 
 export const hieroglyphLevelColors: Record<Difficulty, string> = {
   starter: "bg-stone-300 border-stone-400",

@@ -1,24 +1,24 @@
-import type { Difficulty } from "@/data/difficultyLevels"
 import type { FC } from "react"
 import { FormulaPart, type FilledTileState } from "./FormulaPart"
 import type { Formula as FormulaType } from "@/app/Formulas/formulas"
+import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 
 export const Formula: FC<{
   formula: FormulaType
   showResult: boolean
-  difficulty: Difficulty
   symbolMapping: Record<number, string>
   filledState: FilledTileState
+  resolveTile: HieroglyphSymbolResolver
   onTileClick?: (symbolId: string, position: string) => void
   formulaIndex: number
-}> = ({ formula, showResult, difficulty, symbolMapping, filledState, onTileClick, formulaIndex }) => (
+}> = ({ formula, showResult, symbolMapping, filledState, resolveTile, onTileClick, formulaIndex }) => (
   <FormulaPart
     formula={formula}
     showResult={true}
     obfuscateResult={!showResult}
-    difficulty={difficulty}
     symbolMapping={symbolMapping}
     filledState={filledState}
+    resolveTile={resolveTile}
     onTileClick={onTileClick}
     positionPrefix={`formula-${formulaIndex}`}
   />

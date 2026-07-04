@@ -2,7 +2,7 @@ import { type FC, useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
 import { clearGameData } from "@/support/useGameStorage"
-import { ConfirmModal } from "@/ui/ConfirmModal"
+import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 
 type SettingsModalProps = {
   isOpen: boolean

@@ -1,8 +1,6 @@
 import type { FC } from "react"
-import type { Difficulty } from "@/data/difficultyLevels"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { egyptianDeities, egyptianProfessions, egyptianAnimals, egyptianArtifacts } from "@/data/inventory"
+import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 import type { Formula, Operation } from "@/app/Formulas/formulas"
 import { revealText } from "@/support/revealText"
 
@@ -20,12 +18,6 @@ const getOperatorPrecedence = (operation: Operation): number => {
   }
 }
 
-// Helper function to get inventory item by ID
-const getInventoryItemById = (id: string) => {
-  const allItems = [...egyptianDeities, ...egyptianProfessions, ...egyptianAnimals, ...egyptianArtifacts]
-  return allItems.find(item => item.id === id)
-}
-
 export type FilledTileState = {
   symbolCounts: Record<string, number>
   filledPositions: Record<string, number>
@@ -35,9 +27,9 @@ type FormulaPartProps = {
   formula: Formula
   showResult: boolean
   obfuscateResult: boolean
-  difficulty: Difficulty
   symbolMapping: Record<number, string>
   filledState: FilledTileState
+  resolveTile: HieroglyphSymbolResolver
   onTileClick?: (symbolId: string, position: string) => void
   positionPrefix: string
   parentPrecedence?: number
@@ -46,7 +38,7 @@ type FormulaPartProps = {
 const renderTile = (
   symbolMapping: Record<number, string>,
   filledState: FilledTileState,
-  difficulty: Difficulty,
+  resolveTile: HieroglyphSymbolResolver,
   operand: { symbol: number },
   position: string,
   onTileClick?: (symbolId: string, position: string) => void
@@ -54,14 +46,13 @@ const renderTile = (
   const symbolId = symbolMapping[operand.symbol]
 
   const isFilled = filledState.filledPositions[position] > 0
-  const inventoryItem = getInventoryItemById(symbolId)
-  const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
+  const { symbol, difficulty } = resolveTile(symbolId)
 
   return (
     <HieroglyphTile
       empty={!isFilled}
-      symbol={isFilled && inventoryItem ? inventoryItem.symbol : undefined}
-      difficulty={itemDifficulty}
+      symbol={isFilled ? symbol : undefined}
+      difficulty={difficulty}
       size="sm"
       className="inline-block cursor-pointer align-middle"
       onClick={() => onTileClick?.(symbolId, position)}
@@ -75,7 +66,7 @@ const renderOperand = (
   props: FormulaPartProps,
   currentPrecedence = 0
 ) => {
-  const { symbolMapping, filledState, onTileClick, difficulty, positionPrefix } = props
+  const { symbolMapping, filledState, resolveTile, onTileClick, positionPrefix } = props
 
   const position = `${positionPrefix}-${side}`
   if (typeof operand === "number") {
@@ -83,7 +74,7 @@ const renderOperand = (
   }
 
   if ("symbol" in operand) {
-    return renderTile(symbolMapping, filledState, difficulty, operand, position, onTileClick)
+    return renderTile(symbolMapping, filledState, resolveTile, operand, position, onTileClick)
   }
 
   return <FormulaPart {...props} formula={operand} positionPrefix={position} parentPrecedence={currentPrecedence} />

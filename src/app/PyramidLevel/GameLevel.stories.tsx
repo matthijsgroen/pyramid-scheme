@@ -1,11 +1,11 @@
-import { DesertBackdrop } from "@/ui/DesertBackdrop"
+import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { PyramidDisplay } from "./PyramidDisplay"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys, type PyramidJourney } from "@/data/journeys"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { hashString } from "@/support/hashString"
-import { dayNightCycleDayTime } from "@/ui/backdropSelection"
+import { dayNightCycleDayTime } from "@/ui/atoms/backdropSelection"
 
 type PyramidLevelArgs = {
   levelNr: number

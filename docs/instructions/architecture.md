@@ -7,7 +7,7 @@ The codebase has three strict layers with one-way dependencies: domain ← app �
 ```
 src/game/   domain logic
 src/data/   domain data
-src/ui/     design system (rendering only)
+src/ui/     design system (rendering only) — split into principles/, atoms/, molecules/, organisms/
 src/app/    state, flow, and composition
 ```
 

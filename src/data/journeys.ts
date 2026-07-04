@@ -1,4 +1,4 @@
-import type { DayNightCycleStep } from "@/ui/backdropSelection"
+import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
 import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"

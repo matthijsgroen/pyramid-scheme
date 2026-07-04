@@ -9,7 +9,7 @@ import {
   skyMiddle,
   skyTop,
   type DayNightCycleStep,
-} from "@/ui/backdropSelection"
+} from "@/ui/atoms/backdropSelection"
 
 export const DesertBackdrop: FC<
   PropsWithChildren<{

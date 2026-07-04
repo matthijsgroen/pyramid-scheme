@@ -1,7 +1,7 @@
 import { useEffect, useState, type FC, use } from "react"
 import { useTranslation } from "react-i18next"
 import { LevelCompletedOverlay } from "./LevelCompletedOverlay"
-import { LootPopup } from "@/ui/LootPopup"
+import { LootPopup } from "@/ui/atoms/LootPopup"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { useLootDetermination } from "./useLootDetermination"
 import { FezContext } from "../fez/context"

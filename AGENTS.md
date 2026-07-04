@@ -25,6 +25,10 @@ src/
 ├── data/         # Game data definitions and translation hooks
 ├── game/         # Pure game logic: puzzle generation, rewards, randomization
 ├── ui/           # Reusable themed UI components + Storybook stories
+│   ├── principles/   # Design-token/foundation docs (colors, spacing, typography)
+│   ├── atoms/        # Leaf components — render no other src/ui component
+│   ├── molecules/    # Compose a few atoms
+│   └── organisms/    # Compose molecules/atoms into a complete UI section
 ├── components/   # Shared React components
 ├── contexts/     # React context providers
 ├── config/       # App-level configuration
@@ -74,7 +78,7 @@ Every user-facing string must be localized. Use `useTranslation` from `react-i18
 
 ### 6. Storybook for UI
 
-All new components in `src/ui/` should have a corresponding Storybook story. Stories must not contain shadow implementations of game logic — see **[`docs/instructions/storybook.md`](docs/instructions/storybook.md)** for the full guidelines.
+**Every** component in `src/ui/` must have a corresponding Storybook story, placed alongside it in the same atomic tier folder (`atoms/`, `molecules/`, `organisms/`). Stories must not contain shadow implementations of game logic — see **[`docs/instructions/storybook.md`](docs/instructions/storybook.md)** for the full guidelines, including how to classify a new component into a tier.
 
 ### 7. TypeScript Strictness
 
@@ -118,10 +122,11 @@ Always run `yarn check-types` and `yarn lint` before considering a change comple
 
 ### Adding a New UI Component
 
-1. Create the component in `src/ui/`
-2. Add a Storybook story in `src/ui/<ComponentName>.stories.tsx`
-3. Use Tailwind for styling (canonical class order)
-4. Expose customization via props
+1. Classify it as an atom (renders no other `src/ui` component), molecule (composes a few atoms), or organism (composes molecules/atoms into a complete section)
+2. Create the component in `src/ui/<tier>/`
+3. Add a Storybook story alongside it in `src/ui/<tier>/<ComponentName>.stories.tsx`
+4. Use Tailwind for styling (canonical class order)
+5. Expose customization via props
 
 ### Adding a New Translation Key
 

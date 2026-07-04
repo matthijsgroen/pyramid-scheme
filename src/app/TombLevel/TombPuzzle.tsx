@@ -1,22 +1,43 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import { hieroglyphLevelColors } from "@/data/hieroglyphLevelColors"
 import type { TableauLevel } from "@/data/tableaus"
 import { type RewardCalculation } from "@/game/generateRewardCalculation"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
-import { NumberLock } from "@/ui/NumberLock"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
+import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
+import { revealText } from "@/support/revealText"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useProgression } from "@/app/state/useProgression"
-import { type FilledTileState } from "../Formulas/FormulaPart"
-import { clsx } from "clsx"
+import { type FilledTileState } from "@/ui/molecules/FormulaPart"
 import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
-import { revealText } from "@/support/revealText"
-import { TombTableau } from "./TombTableau"
-import { TombDoor } from "@/ui/TombDoor"
+import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
+import type { InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
+import type { OrderedFormula } from "@/ui/organisms/TombTableau"
 import { FezContext } from "../fez/context"
 import { createPositionOverview } from "../Formulas/filledPositions"
+import { mulberry32, shuffle } from "@/game/random"
+import { hashString } from "@/support/hashString"
+import type { Formula as FormulaType } from "@/app/Formulas/formulas"
+
+// Counts the number of number-tile slots in a formula (used for solved-percentage display)
+const countFormulaSlots = (formula: FormulaType): number => {
+  let count = 0
+  if (typeof formula.left === "number") {
+    // nothing to do
+  } else if ("symbol" in formula.left) {
+    count += 1
+  } else {
+    count += countFormulaSlots(formula.left)
+  }
+  if (typeof formula.right === "number") {
+    // nothing to do
+  } else if ("symbol" in formula.right) {
+    count += 1
+  } else {
+    count += countFormulaSlots(formula.right)
+  }
+  return count
+}
 
 export const TombPuzzle: FC<{
   tableau: TableauLevel
@@ -44,6 +65,7 @@ export const TombPuzzle: FC<{
   const [lockCode, setLockCode] = useState("")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
   const [isProcessingCompletion, setIsProcessingCompletion] = useState(false)
+  const [annotations, setAnnotations] = useState<Record<string, string>>({})
   const lockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(
     () => () => {
@@ -74,6 +96,27 @@ export const TombPuzzle: FC<{
       showConversation("notEnoughHieroglyphs")
     }
   }, [notEnough, showConversation])
+
+  const resolveTile = useMemo(() => (symbolId: string) => resolveHieroglyphSymbol(symbolId, difficulty), [difficulty])
+
+  const solvedPercentage = useMemo(() => {
+    const totalSlots =
+      calculation.hintFormulas.reduce((sum, formula) => sum + countFormulaSlots(formula), 0) +
+      countFormulaSlots(calculation.mainFormula)
+    const filledSlots = Object.keys(filledState.filledPositions).length
+    return totalSlots > 0 ? filledSlots / totalSlots : 0
+  }, [calculation, filledState.filledPositions])
+
+  const hintFormulas: OrderedFormula[] = useMemo(() => {
+    const ordered = calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))
+    if (difficulty === "starter" || difficulty === "junior") return ordered
+    const random = mulberry32(hashString(tableau.name))
+    return shuffle(ordered, random)
+  }, [calculation.hintFormulas, difficulty, tableau.name])
+
+  const handleAnnotationChange = (symbolId: string, value: string) => {
+    setAnnotations(prev => ({ ...prev, [symbolId]: value }))
+  }
 
   const handleTileClick = (symbolId: string, position: string) => {
     setFilledState(prev => {
@@ -198,105 +241,52 @@ export const TombPuzzle: FC<{
     }
   }
 
+  const inventoryItems: InventoryStripItem[] = Object.entries(calculation.symbolCounts)
+    .sort((a, b) => difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0])))
+    .map(([symbolId, maxNeeded]) => {
+      const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+      const usedFromInventory = inventoryUsage[symbolId] || 0
+      const availableInInventory = inventory[symbolId] || 0
+      const inventoryItem = getInventoryItemById(symbolId)
+      const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
+      const canPlace = availableInInventory > usedFromInventory && usedInPuzzle < maxNeeded
+
+      return {
+        symbolId,
+        symbol: inventoryItem?.symbol,
+        difficulty: itemDifficulty,
+        availableCount: availableInInventory - usedFromInventory,
+        maxNeeded,
+        canPlace,
+      }
+    })
+
   return (
-    <div className="flex flex-1 flex-row overflow-y-auto">
-      <div className="flex flex-1">{/** left side */}</div>
-      <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
-        <div className="flex flex-1">{/** top side */}</div>
-        {notEnough && !isPuzzleCompleted && onFindHieroglyphs && (
-          <button
-            onClick={onFindHieroglyphs}
-            className="mb-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition-colors hover:bg-blue-700"
-          >
-            {t("ui.findMissingHieroglyphs")}
-          </button>
-        )}
-        <TombDoor
-          className="flex flex-2 flex-col items-center justify-center"
-          open={lockState === "open"}
-          difficulty={difficulty}
-        >
-          {/* NumberLock appears when puzzle is completed */}
-          {isPuzzleCompleted && (
-            <div className={clsx("order-2 mb-6 animate-slide-down")}>
-              <form
-                onSubmit={handleLockSubmit}
-                className={clsx(
-                  "flex flex-col items-center rounded-b-lg p-4",
-                  hieroglyphLevelColors[difficulty],
-                  lockState === "error" && "animate-shake"
-                )}
-              >
-                <NumberLock
-                  state={lockState}
-                  variant="muted"
-                  value={lockCode}
-                  onChange={handleLockChange}
-                  onSubmit={handleLockSubmit}
-                  disabled={isProcessingCompletion}
-                  placeholder={revealText(calculation.mainFormula.result.toString(), 0)}
-                  maxLength={4}
-                />
-              </form>
-            </div>
-          )}
-          <TombTableau
-            difficulty={difficulty}
-            tableau={tableau}
-            calculation={calculation}
-            filledState={filledState}
-            onTileClick={handleTileClick}
-            scribesEyeSlots={scribesEyeSlots}
-          />
-
-          {/* Available symbols inventory - hide when puzzle is completed */}
-          {!isPuzzleCompleted && (
-            <div className="mt-8 mb-4 w-fit rounded bg-black/20 p-2">
-              <h3 className="mb-2 text-sm font-bold">{t("ui.availableSymbols")}</h3>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(calculation.symbolCounts)
-                  .sort((a, b) => difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0])))
-                  .map(([symbolId, maxNeeded]) => {
-                    const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-                    const usedFromInventory = inventoryUsage[symbolId] || 0
-                    const availableInInventory = inventory[symbolId] || 0
-                    const inventoryItem = getInventoryItemById(symbolId)
-                    const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-                    const canPlace = availableInInventory > usedFromInventory && usedInPuzzle < maxNeeded
-
-                    return (
-                      <button
-                        key={symbolId}
-                        className={clsx(
-                          "flex items-center gap-1 rounded p-1 transition-colors select-auto",
-                          canPlace ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed opacity-50"
-                        )}
-                        onClick={() => canPlace && handleInventoryClick(symbolId)}
-                      >
-                        <HieroglyphTile
-                          symbol={inventoryItem?.symbol || symbolId}
-                          difficulty={itemDifficulty}
-                          size="sm"
-                          disabled={!canPlace}
-                          className="pointer-events-none"
-                        />
-                        <div className="flex flex-col text-xs">
-                          <span>
-                            {availableInInventory - usedFromInventory}/
-                            <span className={clsx(maxNeeded > availableInInventory && "font-bold text-red-400")}>
-                              {maxNeeded}
-                            </span>
-                          </span>
-                        </div>
-                      </button>
-                    )
-                  })}
-              </div>
-            </div>
-          )}
-        </TombDoor>
-      </div>
-      <div className="flex flex-1">{/** right side */}</div>
-    </div>
+    <TombPuzzleView
+      difficulty={difficulty}
+      tableau={tableau}
+      calculation={calculation}
+      filledState={filledState}
+      resolveTile={resolveTile}
+      hintFormulas={hintFormulas}
+      solvedPercentage={solvedPercentage}
+      annotations={annotations}
+      onTileClick={handleTileClick}
+      onAnnotationChange={handleAnnotationChange}
+      scribesEyeSlots={scribesEyeSlots}
+      isPuzzleCompleted={isPuzzleCompleted}
+      lockState={lockState}
+      lockValue={lockCode}
+      onLockChange={handleLockChange}
+      onLockSubmit={handleLockSubmit}
+      lockDisabled={isProcessingCompletion}
+      lockPlaceholder={revealText(calculation.mainFormula.result.toString(), 0)}
+      inventoryTitle={t("ui.availableSymbols")}
+      inventoryItems={inventoryItems}
+      onInventoryItemClick={handleInventoryClick}
+      showFindHieroglyphsButton={notEnough && !isPuzzleCompleted}
+      findHieroglyphsLabel={t("ui.findMissingHieroglyphs")}
+      onFindHieroglyphs={onFindHieroglyphs}
+    />
   )
 }

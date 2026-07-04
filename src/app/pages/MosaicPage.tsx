@@ -1,7 +1,7 @@
 import { type FC, useEffect, useMemo, useRef, useState } from "react"
-import { Page } from "@/ui/Page"
-import { StainedGlassMosaic } from "@/ui/StainedGlassMosaic"
-import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/mosaicRevealOrder"
+import { Page } from "@/ui/atoms/Page"
+import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
+import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/atoms/mosaicRevealOrder"
 import { useProgression } from "@/app/state/useProgression"
 
 export const MosaicPage: FC = () => {

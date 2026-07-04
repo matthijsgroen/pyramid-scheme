@@ -6,7 +6,7 @@ import { determineInventoryLootForCurrentRuns } from "./inventoryLootLogic"
 import { determineExpeditionBonus } from "./expeditionBonusLogic"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useInventoryItem } from "@/data/useInventoryTranslations"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 
 export type Loot = {

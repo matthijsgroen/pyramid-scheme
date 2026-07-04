@@ -5,9 +5,9 @@ import type { TreasureReward } from "@/game/siteTypes"
 import { hieroglyphCategory } from "./hieroglyphCategory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { HieroglyphTile } from "@/ui/HieroglyphTile"
-import { Chest } from "@/ui/Chest"
-import { LootPopup } from "@/ui/LootPopup"
+import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { Chest } from "@/ui/atoms/Chest"
+import { LootPopup } from "@/ui/atoms/LootPopup"
 import { useTimeout } from "@/support/useTimeout"
 
 const rewardEmoji = (type: string) => {

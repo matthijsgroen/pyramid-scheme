@@ -1,4 +1,4 @@
-import { DesertBackdrop } from "@/ui/DesertBackdrop"
+import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { PyramidDisplay } from "./PyramidDisplay"
 import { generateLevel } from "@/game/generateLevel"
