@@ -3,7 +3,7 @@ import type { FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
 
 export const SITE_MAP_CELL = 44
-export const SITE_MAP_PAD = 30
+export const SITE_MAP_PAD = 44
 
 type Point = { x: number; y: number }
 
@@ -15,6 +15,8 @@ type Props = {
   /** Duration per grid-cell step in ms. Default 120. */
   segmentDuration?: number
   color?: string
+  /** Fires once the dot visually settles at `pos` — on arrival, on an instant snap, and on mount. */
+  onArrive?: () => void
 }
 
 export const ExplorerDot = ({
@@ -24,6 +26,7 @@ export const ExplorerDot = ({
   padding = SITE_MAP_PAD,
   segmentDuration = 120,
   color = "#ffd060",
+  onArrive,
 }: Props) => {
   const toPixel = ([r, c]: readonly [number, number]): Point => ({
     x: padding + c * cellSize + cellSize / 2,
@@ -36,19 +39,26 @@ export const ExplorerDot = ({
   const rafRef = useRef<number | null>(null)
   // ponytail: skip animation on first render so stale saved position doesn't slide into view
   const mountedRef = useRef(false)
+  const onArriveRef = useRef(onArrive)
+  onArriveRef.current = onArrive
 
   useEffect(() => {
     const from = prevPosRef.current
     prevPosRef.current = pos
+    // Mark mounted on this effect's very first run, whether or not pos happens to have
+    // changed by then — otherwise a `pos` that's still unchanged on mount leaves this flag
+    // false, and the *next* real move (however much later) gets wrongly treated as the
+    // initial settle and skips its animation entirely.
+    const isFirstRun = !mountedRef.current
+    mountedRef.current = true
 
     if (from[0] === pos[0] && from[1] === pos[1]) return
 
-    if (!mountedRef.current) {
-      mountedRef.current = true
+    if (isFirstRun) {
       setSvgPos(toPixel(pos))
+      onArriveRef.current?.()
       return
     }
-    mountedRef.current = true
 
     const waypoints = findPath(grid, from, pos).map(toPixel)
     const dest = waypoints[waypoints.length - 1]
@@ -58,11 +68,13 @@ export const ExplorerDot = ({
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
       animatingRef.current = false
       setSvgPos(dest)
+      onArriveRef.current?.()
       return
     }
 
     if (waypoints.length <= 1) {
       setSvgPos(dest)
+      onArriveRef.current?.()
       return
     }
 
@@ -89,6 +101,7 @@ export const ExplorerDot = ({
           rafRef.current = requestAnimationFrame(animate)
         } else {
           animatingRef.current = false
+          onArriveRef.current?.()
         }
       } else {
         rafRef.current = requestAnimationFrame(animate)
@@ -107,7 +120,7 @@ export const ExplorerDot = ({
     <circle
       cx={svgPos.x}
       cy={svgPos.y}
-      r={6}
+      r={9}
       fill={color}
       stroke="#110d08"
       strokeWidth={2}
