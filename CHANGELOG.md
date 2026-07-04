@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unexplored (fogged) rooms no longer render at all, instead of showing faintly.
 - Adjacent junction rooms now visually merge into one open space instead of showing a wall between them.
 - Fix a hidden passage's detector-stop message never appearing when the passage was more than one step past its junction.
-- Fix walls shifting near an unrelated junction when a hidden passage elsewhere on the same map was revealed.
+- Fix walls shifting near an unrelated junction whenever a hidden room's progression changed (being revealed, then later completed).
 - Fix the explorer dot skipping its travel animation and snapping instantly on the very first move of a session.
 
 ## 0.25.0 - 2026-07-04

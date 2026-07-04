@@ -128,16 +128,26 @@ describe("SiteMapView — room clickability", () => {
 })
 
 // Finds the cell group by its exact translate transform, then checks whether it has a
-// wall rect on the given relative edge (CELL = 44, so half = 22).
+// wall rect on the given relative edge (CELL = 44, so half = 22). North and west walls
+// (and south and east) share an x,y origin — only width/height tell them apart — so all
+// four dimensions are matched, not just position.
 const hasWallRect = (container: HTMLElement, cx: number, cy: number, edge: "n" | "s" | "e" | "w") => {
   const g = Array.from(container.querySelectorAll("g")).find(
     el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
   )
   if (!g) throw new Error(`no cell group at (${cx}, ${cy})`)
-  const rectX = { n: -22, s: -22, w: -22, e: 18 }[edge]
-  const rectY = { n: -22, s: 18, w: -22, e: -22 }[edge]
+  const rect = {
+    n: { x: -22, y: -22, w: 44, h: 4 },
+    s: { x: -22, y: 18, w: 44, h: 4 },
+    w: { x: -22, y: -22, w: 4, h: 44 },
+    e: { x: 18, y: -22, w: 4, h: 44 },
+  }[edge]
   return Array.from(g.querySelectorAll('rect[fill="#080502"]')).some(
-    r => r.getAttribute("x") === String(rectX) && r.getAttribute("y") === String(rectY)
+    r =>
+      r.getAttribute("x") === String(rect.x) &&
+      r.getAttribute("y") === String(rect.y) &&
+      r.getAttribute("width") === String(rect.w) &&
+      r.getAttribute("height") === String(rect.h)
   )
 }
 
@@ -196,19 +206,35 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
     expect(floorFillAt(revealed.container, 110, 110)).toBe(forkFill)
   })
 
-  it("breaks an exact flank-strength tie in favor of the more-established room", () => {
+  it("breaks an exact flank-strength tie in favor of the fork, regardless of either room's state", () => {
     // fork(2,0), dirs {n} -- (1,0) corridor -- (1,1) contested void -- (0,1) corridor -- treasure(0,2), dirs {w}
     // Here BOTH claimants have exactly one real-edge flank (fork's north, treasure's west)
     // plus one same-pass claimed-void flank (fork's east neighbor (2,1), treasure's south
-    // neighbor (1,2)) — a genuine tie in flank strength. The already-completed fork should
-    // still win over a treasure that only just became reachable by being revealed.
-    const grid: FloorGrid = makeGrid([
-      [empty, straightCorridor("reachable", ["e"]), leafTreasure("reachable", ["w"])],
-      [straightCorridor("reachable", ["n", "s"]), empty, empty],
-      [fork("completed", ["n"]), empty, empty],
-    ])
-    const { container } = render(<SiteMapView grid={grid} />)
-    expect(floorFillAt(container, 110, 110)).toBe(floorFillAt(container, 66, 154))
+    // neighbor (1,2)) — a genuine tie in flank strength. A first fix broke this tie by
+    // progression state (completed > reachable), but that reintroduced the same instability
+    // one level up: once the treasure was ALSO completed (its chest opened), both claimants
+    // tied on state too and ownership flipped again. Room type doesn't change mid-session,
+    // so ranking by that — fork over leaf room — must hold no matter what state either is in.
+    //
+    // Fork winning means (1,1) opens toward its own flanks, (1,0) [west] and (2,1) [south];
+    // treasure winning would instead open (1,1) toward (0,1) [north] and (1,2) [east]. Wall
+    // presence on a fixed side is used instead of floor tint, since matching states (as in
+    // the "both completed" case) give both owners the identical tint either way.
+    const buildGrid = (treasureState: CellState, forkState: CellState): FloorGrid =>
+      makeGrid([
+        [empty, straightCorridor(treasureState, ["e"]), leafTreasure(treasureState, ["w"])],
+        [straightCorridor(treasureState, ["n", "s"]), empty, empty],
+        [fork(forkState, ["n"]), empty, empty],
+      ])
+
+    for (const [treasureState, forkState] of [
+      ["reachable", "completed"],
+      ["completed", "completed"],
+    ] as const) {
+      const { container } = render(<SiteMapView grid={buildGrid(treasureState, forkState)} />)
+      expect(hasWallRect(container, 110, 110, "n")).toBe(true)
+      expect(hasWallRect(container, 110, 110, "w")).toBe(false)
+    }
   })
 })
 

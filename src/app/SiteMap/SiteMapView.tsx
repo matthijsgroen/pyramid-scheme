@@ -623,13 +623,16 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     }
   }
 
-  // A room's own progression state approximates how "established" it is: a room the
-  // player has already completed predates one that just got revealed and is still merely
-  // reachable. Used as a claim tiebreaker below — see STATE_RANK's call site.
-  const STATE_RANK: Record<CellState, number> = { completed: 3, reachable: 2, visible: 1, fogged: 0 }
-  const stateRankOf = (row: number, col: number): number => {
+  // A room's *type* — unlike its progression state — never changes for the rest of the
+  // session, so it makes a stable tiebreaker. A completed/reachable/visible rank was tried
+  // here before and reintroduced the same bug one level up: two claimants tied on state
+  // (e.g. both eventually "completed") fell back to scan order and flipped ownership all
+  // over again the moment the player finished exploring. Forks are junctions, structurally
+  // meant to absorb the void around them; leaf rooms (treasure/stairhead/exit) are
+  // endpoints that happen to reach a shared diagonal too. Prefer the fork, permanently.
+  const roomTypeRankOf = (row: number, col: number): number => {
     const owner = grid.cells[row]?.[col]
-    return owner?.type === "room" ? STATE_RANK[owner.state] : 0
+    return owner?.type === "room" && owner.roomType === "fork" ? 1 : 0
   }
 
   // Resolve each contested diagonal by attachment strength — a diagonal flush against
@@ -637,8 +640,6 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   // against only one. Without this, revealing a hidden room can introduce a new,
   // weakly-attached claimant that — by pure scan order — steals a diagonal cell out from
   // under a room that was already flush against it on two sides, visibly moving a wall.
-  // When flank strength ties too, prefer the more-established room (see stateRankOf) over
-  // scan order — a freshly-revealed room is reliably the newer, less-established claimant.
   for (const [key, candidates] of diagonalCandidates) {
     if (claimedBy.has(key)) continue // already an ortho claim, which always wins
     const winner = candidates.reduce((best, c) => {
@@ -646,8 +647,8 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
       if (c.attachedFlanks.length !== best.attachedFlanks.length) {
         return c.attachedFlanks.length > best.attachedFlanks.length ? c : best
       }
-      const cRank = stateRankOf(c.ownerRow, c.ownerCol)
-      const bestRank = stateRankOf(best.ownerRow, best.ownerCol)
+      const cRank = roomTypeRankOf(c.ownerRow, c.ownerCol)
+      const bestRank = roomTypeRankOf(best.ownerRow, best.ownerCol)
       if (cRank !== bestRank) return cRank > bestRank ? c : best
       return c.scanOrder < best.scanOrder ? c : best
     })
