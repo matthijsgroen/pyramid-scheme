@@ -211,3 +211,40 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
     expect(floorFillAt(container, 110, 110)).toBe(floorFillAt(container, 66, 154))
   })
 })
+
+describe("SiteMapView — long corridor click target", () => {
+  // jsdom doesn't implement scrollTo; SiteMapView calls it to center on explorerPos.
+  Element.prototype.scrollTo = vi.fn()
+
+  const findCell = (container: HTMLElement, cx: number, cy: number) =>
+    Array.from(container.querySelectorAll("g")).find(
+      el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
+    )
+
+  it("puts a clickable target at the near end of a long visible corridor, routed to the far corner", () => {
+    // fork(0,0) -- visible -- visible -- reachable corner(0,3). Only the corner has a real
+    // click target normally; a long run like this could scroll it off screen entirely.
+    const onClick = vi.fn()
+    const grid = makeGrid([
+      [
+        fork("completed", ["e"]),
+        straightCorridor("visible", ["e", "w"]),
+        straightCorridor("visible", ["e", "w"]),
+        straightCorridor("reachable", ["n", "e"]),
+      ],
+    ])
+    const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[0, 0]} />)
+    const nearCell = findCell(container, 110, 66)
+    expect(nearCell?.style.cursor).toBe("pointer")
+    fireEvent.click(nearCell!)
+    expect(onClick).toHaveBeenCalledWith(0, 3)
+  })
+
+  it("does not reroute a corridor that's already its own corner", () => {
+    const onClick = vi.fn()
+    const grid = makeGrid([[fork("completed", ["e"]), corridor("reachable", true)]])
+    const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[0, 0]} />)
+    fireEvent.click(findCell(container, 110, 66)!)
+    expect(onClick).toHaveBeenCalledWith(0, 1)
+  })
+})

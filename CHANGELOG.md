@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Room icons on the pyramid/tomb interior map are larger and easier to make out on mobile.
+- A long corridor's click target now sits right next to you instead of at its far end, so you don't need to scroll to walk into it.
 
 ### Fixed
 - Fix the explorer dot rendering off-center and small inside pyramid/tomb interiors.

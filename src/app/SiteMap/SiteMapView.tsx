@@ -707,6 +707,67 @@ const isOpenSide = (grid: FloorGrid, claims: RoomClaims, r: number, c: number, d
 const isCorridorCorner = (dirs: ReadonlySet<Direction>): boolean =>
   dirs.size !== 2 || !((dirs.has("n") && dirs.has("s")) || (dirs.has("e") && dirs.has("w")))
 
+const OPPOSITE_DIR: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
+
+// A straight run of "visible" corridor only ever has one real click target: the corner
+// (or room) that ends it, which can be many cells — and screens — away. Walking that far
+// out means the on-screen entrance to the run has nothing to tap. This walks a run
+// forward from its near end (right next to the explorer) to find that far target, so the
+// caller can render the click affordance where the player already is instead.
+const findCorridorRunTarget = (
+  grid: FloorGrid,
+  startR: number,
+  startC: number,
+  incomingDir: Direction
+): readonly [number, number] | null => {
+  let r = startR,
+    c = startC,
+    fromDir = incomingDir
+  for (let steps = 0; steps < grid.rows * grid.cols; steps++) {
+    const cell = cellAt(grid, r, c)
+    if (cell.type === "empty") return null
+    if (cell.type === "room") {
+      return cell.state === "reachable" || cell.state === "completed" ? [r, c] : null
+    }
+    if (isCorridorCorner(cell.dirs)) {
+      return cell.state === "reachable" || cell.state === "completed" ? [r, c] : null
+    }
+    if (cell.state !== "visible" && cell.state !== "reachable" && cell.state !== "completed") return null
+    const nextDir = ([...cell.dirs] as Direction[]).find(d => d !== OPPOSITE_DIR[fromDir])
+    if (!nextDir) return null
+    const [dr, dc] = DIR_MOVES[nextDir]
+    r += dr
+    c += dc
+    fromDir = nextDir
+  }
+  return null
+}
+
+// For each direction open from the explorer's current cell, find the corridor run's far
+// click target (if any) and key it by the NEAR cell — the first step of that run — so
+// rendering can put the click affordance right next to the player.
+const useCorridorRunTargets = (
+  grid: FloorGrid,
+  explorerPos: readonly [number, number] | undefined
+): ReadonlyMap<string, readonly [number, number]> =>
+  useMemo(() => {
+    const targets = new Map<string, readonly [number, number]>()
+    if (!explorerPos) return targets
+    const [er, ec] = explorerPos
+    const startCell = cellAt(grid, er, ec)
+    if (startCell.type !== "room" && startCell.type !== "corridor") return targets
+    for (const dir of startCell.dirs) {
+      const [dr, dc] = DIR_MOVES[dir]
+      const nearR = er + dr,
+        nearC = ec + dc
+      const target = findCorridorRunTarget(grid, nearR, nearC, dir)
+      if (target && (target[0] !== nearR || target[1] !== nearC)) {
+        targets.set(`${nearR},${nearC}`, target)
+      }
+    }
+    return targets
+  }, [grid, explorerPos?.[0], explorerPos?.[1]])
+
 // Corridors and rooms share the same wall/opening logic, but get different floor tints
 // so a room's footprint (fork/endpoint chambers included) reads as a distinct place —
 // not just "a wide stretch of hallway". Room floor is warmer/lighter than corridor floor.
@@ -808,6 +869,7 @@ export const SiteMapView = ({
   const scrollRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
+  const corridorRunTargets = useCorridorRunTargets(grid, explorerPos)
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit
@@ -885,22 +947,24 @@ export const SiteMapView = ({
               >
               const decoration = claims.decorationAt.get(cellKey)
               const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
+              const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
               const corridorClickable =
                 cell.type === "corridor" &&
                 onCellClick &&
-                (cell.state === "reachable" || cell.state === "completed") &&
-                isCorner
+                ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
+              const clickTarget = runTarget ?? ([r, c] as const)
               return (
                 <g
                   key={cellKey}
                   transform={`translate(${cx}, ${cy})`}
-                  onClick={corridorClickable ? () => onCellClick(r, c) : undefined}
+                  onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
                   style={{ cursor: corridorClickable ? "pointer" : "default" }}
                 >
                   <FloorTile state={state} open={open} kind="room" />
-                  {cell.type === "corridor" && cell.state === "reachable" && isCorner && (
-                    <circle r={3} fill="#d0a840" opacity={0.85} />
-                  )}
+                  {cell.type === "corridor" &&
+                    ((cell.state === "reachable" && isCorner) || runTarget) && (
+                      <circle r={3} fill="#d0a840" opacity={0.85} />
+                    )}
                   {decoration && <DecorationGlyph kind={decoration} />}
                 </g>
               )
@@ -916,17 +980,25 @@ export const SiteMapView = ({
 
             if (cell.type === "corridor") {
               const isCorner = isCorridorCorner(cell.dirs)
+              const runTarget = corridorRunTargets.get(cellKey)
+              // A visible run's near end has no corner of its own to click — it borrows the
+              // far corner's click target (see findCorridorRunTarget) so a long corridor
+              // that scrolls off screen still has something to tap right next to the player.
               const corridorClickable =
-                onCellClick && (cell.state === "reachable" || cell.state === "completed") && isCorner
+                onCellClick &&
+                (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
+              const clickTarget = runTarget ?? ([r, c] as const)
               return (
                 <g
                   key={`${r},${c}`}
                   transform={`translate(${cx}, ${cy})`}
-                  onClick={corridorClickable ? () => onCellClick(r, c) : undefined}
+                  onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
                   style={{ cursor: corridorClickable ? "pointer" : "default" }}
                 >
                   <FloorTile state={cell.state} open={open} kind="corridor" />
-                  {cell.state === "reachable" && isCorner && <circle r={3} fill="#d0a840" opacity={0.85} />}
+                  {((cell.state === "reachable" && isCorner) || runTarget) && (
+                    <circle r={3} fill="#d0a840" opacity={0.85} />
+                  )}
                 </g>
               )
             }
