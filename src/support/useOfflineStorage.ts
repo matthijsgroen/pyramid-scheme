@@ -8,6 +8,7 @@ type Store = {
   getItem: <T>(key: string) => Promise<T | null>
   setItem: <T>(key: string, value: T) => Promise<T | null>
   removeItem: (key: string) => Promise<void>
+  clear: () => Promise<void>
   subscribe: <T>(key: string, callback: (value: T) => void) => VoidFunction
 }
 
@@ -35,6 +36,9 @@ const getStore = (storeName: string): Store => {
       },
       removeItem: async key => {
         await forage.removeItem(key)
+      },
+      clear: async () => {
+        await forage.clear()
       },
       subscribe: <T>(key: string, callback: (value: T) => void) => {
         subscribers.push({ key, callback } as {
@@ -66,6 +70,11 @@ export const setOfflineValue = <T>(key: string, value: T, storeName = "defaultSt
 export const deleteOfflineValue = (key: string, storeName = "defaultStore"): Promise<void> => {
   const store = getStore(storeName)
   return store.removeItem(key)
+}
+
+export const clearOfflineStore = (storeName = "defaultStore"): Promise<void> => {
+  const store = getStore(storeName)
+  return store.clear()
 }
 
 export const useOfflineStorage = <T>(

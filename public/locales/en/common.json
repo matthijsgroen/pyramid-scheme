@@ -65,6 +65,8 @@
     "language": "Language",
     "close": "Close",
     "done": "Done",
+    "clearGameData": "Clear game data",
+    "confirmClearGameData": "This permanently deletes all progress, items, and explored pyramids. This cannot be undone.",
     "progressLevel": "In Progress",
     "treasureTomb": "Treasure Location",
     "requiresMapPieces": "Requires map pieces",

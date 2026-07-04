@@ -1,6 +1,8 @@
 import { type FC, useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
+import { clearGameData } from "@/support/useGameStorage"
+import { ConfirmModal } from "@/ui/ConfirmModal"
 
 type SettingsModalProps = {
   isOpen: boolean
@@ -10,6 +12,12 @@ type SettingsModalProps = {
 export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation("common")
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
+
+  const handleClearGameData = async () => {
+    await clearGameData()
+    window.location.reload()
+  }
 
   // Update local state when i18n language changes
   useEffect(() => {
@@ -70,6 +78,16 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               ))}
             </select>
           </div>
+
+          {/* Clear game data */}
+          <div>
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="w-full rounded-lg border border-red-300 px-4 py-2 font-medium text-red-600 transition-colors hover:bg-red-50"
+            >
+              {t("ui.clearGameData")}
+            </button>
+          </div>
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-4">
@@ -82,6 +100,16 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showClearConfirm}
+        title={t("ui.clearGameData")}
+        message={t("ui.confirmClearGameData")}
+        confirmText={t("ui.clearGameData")}
+        cancelText={t("ui.cancel")}
+        onConfirm={handleClearGameData}
+        onCancel={() => setShowClearConfirm(false)}
+      />
     </div>
   )
 }

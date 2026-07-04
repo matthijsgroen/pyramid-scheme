@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- A "Clear game data" option in Settings, for resetting your save without needing to clear app/browser storage manually.
+
 ### Fixed
 - Fix corridor corners in pyramid interiors being hard to tap on mobile.
 - Fix a completed pyramid's interior showing different corridors explored than when you left it, after revisiting it.
