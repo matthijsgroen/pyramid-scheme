@@ -243,9 +243,7 @@ describe("SiteMapView — long corridor click target", () => {
   Element.prototype.scrollTo = vi.fn()
 
   const findCell = (container: HTMLElement, cx: number, cy: number) =>
-    Array.from(container.querySelectorAll("g")).find(
-      el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
-    )
+    Array.from(container.querySelectorAll("g")).find(el => el.getAttribute("transform") === `translate(${cx}, ${cy})`)
 
   it("puts a clickable target at the near end of a long visible corridor, routed to the far corner", () => {
     // fork(0,0) -- visible -- visible -- reachable corner(0,3). Only the corner has a real

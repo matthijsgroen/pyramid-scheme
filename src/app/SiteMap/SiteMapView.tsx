@@ -772,6 +772,7 @@ const useCorridorRunTargets = (
       }
     }
     return targets
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grid, explorerPos?.[0], explorerPos?.[1]])
 
 // Corridors and rooms share the same wall/opening logic, but get different floor tints
@@ -1018,8 +1019,7 @@ export const SiteMapView = ({
               // far corner's click target (see findCorridorRunTarget) so a long corridor
               // that scrolls off screen still has something to tap right next to the player.
               const corridorClickable =
-                onCellClick &&
-                (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
+                onCellClick && (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
               const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
               return (
                 <g

@@ -84,9 +84,7 @@ const maskHiddenCells = (
           // returning to it later ("completed"). Without a detector, leave the state alone —
           // the player glides straight through the hidden gap, seeing nothing unusual.
           const state =
-            detectionLevel >= 1 && (cell.state === "completed" || cell.state === "visible")
-              ? "reachable"
-              : cell.state
+            detectionLevel >= 1 && (cell.state === "completed" || cell.state === "visible") ? "reachable" : cell.state
           // Downgrade room → corridor if hidden dir removal leaves it as a passthrough corner
           if (cell.type === "room" && newDirs.size <= 2) {
             return { type: "corridor", dirs: newDirs as ReadonlySet<Direction>, state, sectionHash: cell.sectionHash }
