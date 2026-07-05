@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.26.4 - 2026-07-05
 ### Changed
 - Puzzles, chests, and a floor's main treasure room are now spread out along the whole path from entrance to exit, instead of being packed near the entrance with a long empty corridor afterward.
 
