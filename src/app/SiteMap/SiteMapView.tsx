@@ -949,7 +949,7 @@ export const SiteMapView = ({
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         role="img"
         aria-label="site map"
-        className="m-auto"
+        className="m-auto shrink-0"
         style={{ background: "#110d08" }}
       >
         <defs>
