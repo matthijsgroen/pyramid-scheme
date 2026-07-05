@@ -3,6 +3,7 @@ import { createPortal } from "react-dom"
 import { Fez } from "./Fez"
 import { useGameStorage } from "@/support/useGameStorage"
 import { FezContext, type FezConversationResult } from "./context"
+import { shouldSkipConversation } from "./shouldSkipConversation"
 
 export const FezCompanion: React.FC<{
   children: React.ReactNode
@@ -15,6 +16,7 @@ export const FezCompanion: React.FC<{
     }[]
   >([])
   const [conversations, setConversations, loaded] = useGameStorage<Record<string, boolean>>("conversations", {})
+  const [tutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
 
   const contextValue = useMemo(
     () => ({
@@ -26,7 +28,7 @@ export const FezCompanion: React.FC<{
         if (!loaded) {
           return onComplete?.("not-loaded")
         }
-        if (conversations[conversationId] && !options?.forceReplay) {
+        if (shouldSkipConversation(!!conversations[conversationId], tutorialsEnabled, options?.forceReplay)) {
           return onComplete?.("seen-earlier")
         }
         const entry = {
@@ -58,7 +60,7 @@ export const FezCompanion: React.FC<{
         }
       },
     }),
-    [conversations, loaded, setConversations]
+    [conversations, loaded, setConversations, tutorialsEnabled]
   )
 
   return (
