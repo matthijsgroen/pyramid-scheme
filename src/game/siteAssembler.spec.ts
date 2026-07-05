@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
+import { findPath } from "./gridNavigation"
 
 const basicConfig = (): FloorConfig => ({
   pathPuzzles: 1,
@@ -173,6 +174,52 @@ describe(assembleFloor, () => {
       expect(puzzles.length).toBe(4)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
+  })
+
+  it("interleaves side-section forks with main-path puzzles instead of clustering them all after the last one", () => {
+    // Before the fix, fork attachment was picked purely by which spot had the biggest open
+    // pocket — reliably the unused corridor tail past the last main-path puzzle — so every
+    // side section clustered there instead of spreading across the puzzle stretch.
+    const config: FloorConfig = {
+      pathPuzzles: 5,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      ],
+    }
+    const seeds = 40
+    let interleavedCount = 0
+    for (let seed = 0; seed < seeds; seed++) {
+      const result = assembleFloor(`site-${seed}`, config, seed)
+      expect(result.success, `seed ${seed} failed assembly`).toBe(true)
+      if (!result.success) continue
+      const { grid } = result
+      const distanceTo = (r: number, c: number) => findPath(grid, grid.entrancePos, [r, c]).length - 1
+      const puzzleDistances: number[] = []
+      const branchDistances: number[] = []
+      for (let r = 0; r < grid.rows; r++) {
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.roomType === "puzzle") puzzleDistances.push(distanceTo(r, c))
+          // A branch point is any node with more than 2 connections — whether that's a
+          // dedicated "fork" room, or a side section attached straight onto an existing
+          // main-path room's own cell (which keeps that room's original roomType).
+          if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.size > 2) {
+            branchDistances.push(distanceTo(r, c))
+          }
+        }
+      }
+      expect(puzzleDistances.length, `seed ${seed}`).toBe(5)
+      const maxPuzzleDistance = Math.max(...puzzleDistances)
+      if (branchDistances.some(d => d < maxPuzzleDistance)) interleavedCount++
+    }
+    // A strong majority, not literally every seed — maze shape can still legitimately leave
+    // a seed with no good interleaved spot. Before the fix this was ~0/40.
+    expect(interleavedCount).toBeGreaterThan(seeds * 0.7)
   })
 
   it("property: 100 seeds × basic config all pass validation", () => {

@@ -1,8 +1,49 @@
 import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
-import type { FloorConfig } from "@/game/siteTypes"
+import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
 import { encodeEdge, useAssembledFloor } from "./useAssembledFloor"
+
+const OPPOSITE_DIR: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
+const DIR_MOVE: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+// The "gateway" is whichever real (non-hidden) cell sits right next to a hidden one — the
+// exact spot maskHiddenCells flags as a junction, regardless of whether it's a dedicated
+// fork room, a plain corridor corner, or an existing main-path room that a side section
+// just happens to attach onto (all of these are possible outcomes of generation, and none
+// of them is fixed for a given seed/config, so tests must find it dynamically). To
+// reproduce real play, `predecessor` — one step further back, away from the hidden branch —
+// is what gets marked "explored": completing it exercises the exact cascade that glides
+// through (or stops at, with a detector) the gateway.
+const findGatewayToHidden = (
+  grid: FloorGrid
+): {
+  gatewayPos: [number, number]
+  predecessorPos: [number, number]
+  predecessorCell: CorridorCell | RoomCell
+} => {
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (!(cell.type === "room" || cell.type === "corridor") || !cell.hidden) continue
+      for (const dir of cell.dirs) {
+        const [dr, dc] = DIR_MOVE[dir]
+        const gatewayPos: [number, number] = [r + dr, c + dc]
+        const gateway = grid.cells[gatewayPos[0]]?.[gatewayPos[1]]
+        if (!gateway || (gateway.type !== "room" && gateway.type !== "corridor") || gateway.hidden) continue
+        const cameFrom = OPPOSITE_DIR[dir]
+        const backDir = [...gateway.dirs].find(d => d !== cameFrom)
+        if (!backDir) return { gatewayPos, predecessorPos: gatewayPos, predecessorCell: gateway }
+        const [bdr, bdc] = DIR_MOVE[backDir]
+        const predecessorPos: [number, number] = [gatewayPos[0] + bdr, gatewayPos[1] + bdc]
+        const predecessorCell = grid.cells[predecessorPos[0]]?.[predecessorPos[1]]
+        if (!predecessorCell || predecessorCell.type === "empty") continue
+        return { gatewayPos, predecessorPos, predecessorCell }
+      }
+    }
+  }
+  throw new Error("no gateway leading to a hidden cell found")
+}
 
 // Same shape as the HiddenPassage story: a hidden side section reachable only via a fork.
 const SEED = 17
@@ -24,16 +65,15 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
 
-    // At this seed, the hidden treasure sits two cells past a fork: fork -> corridor -> hidden
-    // treasure. Only the endpoint is tagged `hidden`, so the corridor cell has no turn of its
-    // own on the unmasked graph — completeCell treats it as an ordinary straight passthrough
-    // and marks it "visible" while auto-revealing past it, rather than stopping there.
-    // Completing just the fork (not the corridor itself) reproduces that real play sequence.
-    const fork = grid.cells[10][14]
-    if (fork.type !== "room" || fork.roomType !== "fork") {
-      throw new Error("site generation changed — fork is no longer at (10,14) for this seed/config")
+    // The gateway sits right next to the hidden branch. Only the endpoint is tagged
+    // `hidden`, so on the unmasked graph the gateway has no turn of its own if it's a plain
+    // straight corridor — completeCell treats it as an ordinary passthrough and marks it
+    // "visible" while auto-revealing past it, rather than stopping there. Completing the
+    // predecessor (not the gateway itself) reproduces that real play sequence.
+    const { predecessorPos, predecessorCell } = findGatewayToHidden(grid)
+    const exploredSections = {
+      [predecessorCell.sectionHash ?? ""]: [encodeEdge(0, predecessorPos[0], predecessorPos[1])],
     }
-    const exploredSections = { [fork.sectionHash ?? ""]: [encodeEdge(0, 10, 14)] }
 
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, new Set(), null, 1, new Set())
@@ -52,11 +92,10 @@ describe("useAssembledFloor — hidden junctions", () => {
     const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
     if (!assembled.success) throw new Error("assembly failed")
     const grid = assembled.grid
-    const fork = grid.cells[10][14]
-    if (fork.type !== "room" || fork.roomType !== "fork") {
-      throw new Error("site generation changed — fork is no longer at (10,14) for this seed/config")
+    const { predecessorPos, predecessorCell } = findGatewayToHidden(grid)
+    const exploredSections = {
+      [predecessorCell.sectionHash ?? ""]: [encodeEdge(0, predecessorPos[0], predecessorPos[1])],
     }
-    const exploredSections = { [fork.sectionHash ?? ""]: [encodeEdge(0, 10, 14)] }
 
     const { result } = renderHook(() =>
       useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, new Set(), null, 0, new Set())

@@ -312,13 +312,32 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const sectionGroups: SectionGroup[] = []
     let failed = false
 
+    // A candidate's branch doesn't need a *pre-existing* maze passage to an unused
+    // neighbor — same as the hub-carving fallback below, a brand-new passage can be carved
+    // into any plain grid-adjacent unused cell on demand. Restricting candidates to cells
+    // that already happen to have a spare tree branch (via `neighbors`, passages only)
+    // made them vanishingly rare anywhere near the entrance: the DFS spanning tree's few
+    // side-branches are scattered roughly uniformly across the *whole* corridor, and the
+    // main-path puzzle stretch is a tiny fraction of a corridor sized to fit every side
+    // section too — so almost all of those rare branches fell in the long unused tail past
+    // the last puzzle, which is exactly the clustering this is meant to avoid.
+    const rawFreeNeighbors = (r: number, c: number): Array<[number, number]> =>
+      DIRS2.map(([dr, dc]): [number, number] => [r + dr, c + dc]).filter(
+        ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !usedCells.has(`${nr},${nc}`)
+      )
+
     type BranchCandidate = { pathCell: [number, number] }
     const branchCandidates: BranchCandidate[] = []
+    // Cells within the actual puzzle-bearing stretch of the main path (before the goal),
+    // in path order — kept separate so fork placement can prefer interleaving with main-path
+    // puzzles over the unused corridor tail beyond the goal (see bucketing below).
+    const mainZoneCandidates: BranchCandidate[] = []
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
-      const hasAdj = neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
-      if (!hasAdj) continue
-      branchCandidates.push({ pathCell: [pr, pc] })
+      if (rawFreeNeighbors(pr, pc).length === 0) continue
+      const candidate: BranchCandidate = { pathCell: [pr, pc] }
+      branchCandidates.push(candidate)
+      if (pi < goalIndex) mainZoneCandidates.push(candidate)
     }
     // Prefer branch points that sit next to a genuinely large contiguous empty pocket —
     // this is where the fork ends up, and its later multi-cell footprint (the claiming
@@ -346,10 +365,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       return count
     }
     const spaciousness = (pathCell: [number, number]): number => pocketSize(pathCell, 8)
-    const shuffledCandidates = branchCandidates
-      .map(bc => ({ bc, score: spaciousness(bc.pathCell) + rand() * 3 }))
-      .sort((a, b) => b.score - a.score)
-      .map(({ bc }) => bc)
+    const scoreCandidates = (list: BranchCandidate[]): BranchCandidate[] =>
+      list
+        .map(bc => ({ bc, score: spaciousness(bc.pathCell) + rand() * 3 }))
+        .sort((a, b) => b.score - a.score)
+        .map(({ bc }) => bc)
+    const shuffledCandidates = scoreCandidates(branchCandidates)
 
     // Bundle side sections onto shared branch points ("hubs") instead of every section
     // scattering to its own private fork — a floor with many side sections reads as a
@@ -363,8 +384,24 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       hubGroups.push(sectionOrder.slice(i, i + hubGroupSize))
     }
 
-    outer: for (const group of hubGroups) {
+    // Split the main-path puzzle stretch into one contiguous slice per hub group, in path
+    // order, so each group prefers a different stretch of the corridor instead of every
+    // group competing for whichever single spot has the biggest open pocket (which is
+    // reliably the unused tail past the last main-path puzzle — the exact clustering this
+    // is meant to avoid). Slices are handed out in a shuffled order so hub 0 doesn't always
+    // land nearest the entrance. Falls back to the full main zone, then the whole corridor
+    // (today's behavior), so this can never make an otherwise-placeable section fail.
+    const mainZoneSlices: BranchCandidate[][] = hubGroups.map((_, bi) => {
+      const start = Math.floor((bi * mainZoneCandidates.length) / hubGroups.length)
+      const end = Math.floor(((bi + 1) * mainZoneCandidates.length) / hubGroups.length)
+      return scoreCandidates(mainZoneCandidates.slice(start, end))
+    })
+    const sliceOrder = hubGroups.map((_, i) => i).sort(() => rand() - 0.5)
+    const shuffledMainZoneCandidates = scoreCandidates(mainZoneCandidates)
+
+    outer: for (const [groupIdx, group] of hubGroups.entries()) {
       let hubCell: [number, number] | null = null
+      const ownSlice = mainZoneSlices[sliceOrder[groupIdx]]
 
       for (const si of group) {
         const section = sideSections[si]
@@ -372,11 +409,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const needed = secIntermediate.length + 1 + (section.gate ? 1 : 0)
         let placed = false
 
-        // Try the shared hub first (if this group already has one); fall through to a
-        // fresh candidate search if it's run out of free adjacent directions.
+        // Try the shared hub first (if this group already has one), then this group's own
+        // stretch of the puzzle zone, then any other main-zone spot, then the full corridor
+        // (including the tail) as a last resort.
         const candidateSources: BranchCandidate[] = hubCell
-          ? [{ pathCell: hubCell }, ...shuffledCandidates]
-          : shuffledCandidates
+          ? [{ pathCell: hubCell }, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+          : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
 
         for (const {
           pathCell: [pcr, pcc],
@@ -385,13 +423,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
             .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
             .sort(() => rand() - 0.5)
 
-          // The hub is out of natural passages to branch into — carve a brand-new one
-          // into a plain grid-adjacent unused cell instead of giving up on it. This is a
-          // deliberate departure from "perfect maze" (a real cycle) at hub spots only:
-          // two junctions ending up next to each other is fine, players can explore
-          // either order — it just makes that visible as one genuine multi-exit room
-          // instead of two separate ones.
-          if (freeAdj.length === 0 && hubCell && pcr === hubCell[0] && pcc === hubCell[1]) {
+          // No natural passage to branch into — carve a brand-new one into a plain
+          // grid-adjacent unused cell instead of giving up on this candidate. A deliberate
+          // departure from "perfect maze" (a real cycle) at branch spots: two junctions
+          // ending up next to each other is fine, players can explore either order — it
+          // just makes that visible as one genuine multi-exit room instead of two separate
+          // ones. Not just for repeat-hub cells (see rawFreeNeighbors above for why this
+          // needs to work for the first branch off a spot too, not only subsequent ones).
+          if (freeAdj.length === 0) {
             const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
               .filter(
                 ([nr, nc]) =>
