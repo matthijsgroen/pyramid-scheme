@@ -239,7 +239,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                     progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
                   else if (reward.type === "mapPiece") {
                     progression.collectMapPiece(reward.tombId)
-                    journeys.findMapPiece()
+                    progression.markMapPieceFound(journeyId)
                   }
                   else if (reward.type === "tombKey") {
                     progression.addTombKey(reward.keyId)

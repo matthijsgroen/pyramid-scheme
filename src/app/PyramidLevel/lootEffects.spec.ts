@@ -8,7 +8,6 @@ const makeJourney = (levelNr = 1, seed = 12345): CombinedJourneyState =>
     journeyId: "starter_pyramid_1",
     levelNr,
     completionCount: 0,
-    foundMapPiece: false,
     inProgress: true,
     active: true,
     randomSeed: seed,

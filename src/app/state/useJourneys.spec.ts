@@ -24,7 +24,6 @@ const makeStoredJourney = (overrides: Partial<StoredJourneyStateV3> = {}): Store
   journeyId: REAL_ID,
   levelNr: 1,
   completionCount: 0,
-  foundMapPiece: false,
   active: true,
   exploredSections: {},
   position: null,

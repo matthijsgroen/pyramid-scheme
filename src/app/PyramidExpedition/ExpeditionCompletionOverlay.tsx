@@ -3,6 +3,7 @@ import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { journeys as allJourneys, type PyramidJourney } from "@/data/journeys"
 import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
+import { useProgression } from "../state/useProgression"
 import { FezContext } from "../fez/context"
 
 export const ExpeditionCompletionOverlay: FC<{
@@ -13,6 +14,7 @@ export const ExpeditionCompletionOverlay: FC<{
 }> = ({ onJourneyComplete, onStartJourney, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const { getJourney } = useJourneys()
+  const { hasMapPiece } = useProgression()
   const journey = activeJourney.journey as PyramidJourney
   const { showConversation } = use(FezContext)
 
@@ -26,7 +28,7 @@ export const ExpeditionCompletionOverlay: FC<{
   const pyramidJourneysForDifficulty = allJourneys.filter(
     j => j.type === "pyramid" && j.difficulty === journey.difficulty
   )
-  const allMapPiecesFound = pyramidJourneysForDifficulty.every(j => getJourney(j.id)?.foundMapPiece === true)
+  const allMapPiecesFound = pyramidJourneysForDifficulty.every(j => hasMapPiece(j.id))
   const tombState = tombJourney ? getJourney(tombJourney.id) : undefined
   const newTombJourneyId =
     allMapPiecesFound && tombJourney && (tombState?.completionCount ?? 0) === 0 ? tombJourney.id : undefined

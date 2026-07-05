@@ -22,7 +22,7 @@ export const TravelPage: FC<{
   const journeys = useJourneyTranslations()
 
   const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney } = useJourneys()
-  const { isTombDiscovered, mapPieceCount } = useProgression()
+  const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useProgression()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
@@ -237,7 +237,7 @@ export const TravelPage: FC<{
                 }
                 const journeyInfo = getJourney(journey.id)
                 const completionCount = journeyInfo?.completionCount ?? 0
-                const hasMapPiece = journeyInfo?.foundMapPiece ?? false
+                const hasMapPiece = hasFoundMapPiece(journey.id)
                 const progressLevelNr = journeyInfo?.levelNr ?? 0
 
                 if (journey.type === "treasure_tomb") {
