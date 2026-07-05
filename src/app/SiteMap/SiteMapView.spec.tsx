@@ -242,6 +242,18 @@ describe("SiteMapView — long corridor click target", () => {
   // jsdom doesn't implement scrollTo; SiteMapView calls it to center on explorerPos.
   Element.prototype.scrollTo = vi.fn()
 
+  // ExplorerDot animates a move over real requestAnimationFrame callbacks. Left alone, a
+  // rerender that changes explorerPos schedules one that's still pending when this test
+  // file's environment tears down, and it fires afterward against a torn-down jsdom —
+  // an unhandled exception that fails the whole run despite every test having passed.
+  // Advancing a fake clock each call converges the animation synchronously instead.
+  let mockRafTime = 0
+  vi.spyOn(window, "requestAnimationFrame").mockImplementation(cb => {
+    mockRafTime += 50
+    cb(mockRafTime)
+    return 0
+  })
+
   const findCell = (container: HTMLElement, cx: number, cy: number) =>
     Array.from(container.querySelectorAll("g")).find(el => el.getAttribute("transform") === `translate(${cx}, ${cy})`)
 
