@@ -237,8 +237,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                 onCollect: () => {
                   if (reward.type === "hieroglyphFragment")
                     progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
-                  else if (reward.type === "mapPiece") progression.collectMapPiece(reward.tombId)
-                  else if (reward.type === "tombKey") {
+                  else if (reward.type === "mapPiece") {
+                    progression.collectMapPiece(reward.tombId)
+                    progression.markMapPieceFound(journeyId)
+                  } else if (reward.type === "tombKey") {
                     progression.addTombKey(reward.keyId)
                     progression.applyTreasurePerk(reward.keyId)
                   } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()

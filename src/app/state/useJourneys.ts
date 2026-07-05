@@ -12,7 +12,6 @@ export type StoredJourneyStateV3 = {
   levelNr: number
 
   completionCount: number
-  foundMapPiece: boolean
   active: boolean
   // keyed by sectionHash; cells explored in the site interior — persists across revisits
   // stale entries (section hash no longer in world) are silently ignored on apply
@@ -40,7 +39,6 @@ export type JourneyAPI = {
   completeJourney: () => void
   cancelJourney: () => void
   completeLevel: () => void
-  findMapPiece: () => void
   markCellExplored: (sectionHash: string, cellId: string) => void
   getExploredSections: (journeyId: string) => Record<string, string[]>
   updatePosition: (journeyId: string, nodeId: string) => void
@@ -140,7 +138,6 @@ export const createJourneysV3Api = ({
       journeyId: journey.id,
       levelNr: 1,
       completionCount: 0,
-      foundMapPiece: false,
       active: true,
       exploredSections: {},
       position: null,
@@ -194,11 +191,6 @@ export const createJourneysV3Api = ({
         j.journeyId === activeJourneyId ? { ...j, levelNr: j.levelNr + 1, position: null, interiorLevelNr: null } : j
       )
     )
-  }
-
-  const findMapPiece = () => {
-    if (!activeJourneyId) return
-    setJourneys(prev => prev.map(j => (j.journeyId === activeJourneyId ? { ...j, foundMapPiece: true } : j)))
   }
 
   const markCellExplored = (sectionHash: string, cellId: string) => {
@@ -292,7 +284,6 @@ export const createJourneysV3Api = ({
     maxDifficulty,
     getJourney,
     nextJourneySeed,
-    findMapPiece,
     startJourney,
     visitLevel,
     completeJourney,

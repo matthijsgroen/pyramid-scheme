@@ -1,4 +1,5 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
+import { useProgression } from "@/app/state/useProgression"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { determineMapPieceLoot } from "./mapPieceLogic"
@@ -50,11 +51,12 @@ const makeInventoryLoot = (
 export const useLootDetermination = (
   activeJourney: CombinedJourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
-  const { findMapPiece, getJourney, nextJourneySeed, maxDifficulty } = useJourneys()
+  const { getJourney, nextJourneySeed, maxDifficulty } = useJourneys()
+  const { hasMapPiece, markMapPieceFound } = useProgression()
   const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 
-  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney, 0)
+  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney, hasMapPiece(activeJourney.journeyId), 0)
   const inventoryResult = determineInventoryLootForCurrentRuns(
     activeJourney,
     maxDifficulty,
@@ -79,7 +81,7 @@ export const useLootDetermination = (
           itemComponent: "📜",
           rarity: "rare",
         },
-        collectLoot: findMapPiece,
+        collectLoot: () => markMapPieceFound(activeJourney.journeyId),
       }
     }
 
@@ -100,8 +102,9 @@ export const useLootDetermination = (
     expeditionItemIds,
     inventoryItemHook,
     activeJourney.journey,
+    activeJourney.journeyId,
     t,
-    findMapPiece,
+    markMapPieceFound,
     addItems,
   ])
 }

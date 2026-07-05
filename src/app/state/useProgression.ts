@@ -34,6 +34,8 @@ type ProgressionState = {
   mosaicSeenCount: number
   mosaicPieceCount: number
   collectedMapPieces: Record<string, number>
+  // journeyIds whose map-piece chest has been opened — inventory-as-truth for the journey list badge
+  mapPieceJourneys: string[]
   currentHealth: number // half-hearts
   maxHealth: number // half-hearts
   consumables: ConsumableInventory
@@ -58,6 +60,7 @@ const initialState: ProgressionState = {
   mosaicSeenCount: 0,
   mosaicPieceCount: 0,
   collectedMapPieces: {},
+  mapPieceJourneys: [],
   currentHealth: 6,
   maxHealth: 6,
   consumables: { bandage: 0, oil: 0, trapTool: 0 },
@@ -85,6 +88,8 @@ export type ProgressionAPI = {
   markMosaicViewed: (count: number) => void
   collectMapPiece: (tombId: string) => void
   mapPieceCount: (tombId: string) => number
+  hasMapPiece: (journeyId: string) => boolean
+  markMapPieceFound: (journeyId: string) => void
   currentHealth: number
   maxHealth: number
   canAttemptTrap: () => boolean
@@ -185,6 +190,13 @@ export const useProgression = (): ProgressionAPI => {
           }
         }),
       mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
+      hasMapPiece: journeyId => (state.mapPieceJourneys ?? []).includes(journeyId),
+      markMapPieceFound: journeyId =>
+        setState(prev =>
+          (prev.mapPieceJourneys ?? []).includes(journeyId)
+            ? prev
+            : { ...prev, mapPieceJourneys: [...(prev.mapPieceJourneys ?? []), journeyId] }
+        ),
       currentHealth: state.currentHealth ?? 6,
       maxHealth: state.maxHealth ?? 6,
       canAttemptTrap: () => canAttemptTrap(state.currentHealth ?? 6),

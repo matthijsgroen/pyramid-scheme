@@ -91,8 +91,6 @@ const meta = {
       length: "Length",
       chambers: "chambers",
       progressLevel: "Progress: Level",
-      timesPlural: "times",
-      timesSingular: "time",
     },
   },
 } satisfies Meta<typeof JourneyCard>

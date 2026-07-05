@@ -8,8 +8,6 @@ type JourneyCardLabels = {
   length: string
   chambers: string
   progressLevel: string
-  timesPlural: string
-  timesSingular: string
 }
 
 type JourneyCardProps = {
@@ -140,12 +138,9 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
                 <span className="ml-1 inline-flex items-center bg-green-800 bg-clip-text text-transparent">📜</span>
               )}{" "}
               {completionCount > 0 && (
-                <>
-                  <span className="inline-flex size-5 scale-75 items-center justify-center rounded-full bg-green-800 p-0.5 text-xs text-white">
-                    ✔︎
-                  </span>
-                  : {completionCount} {completionCount > 1 ? labels.timesPlural : labels.timesSingular}
-                </>
+                <span className="inline-flex size-5 scale-75 items-center justify-center rounded-full bg-green-800 p-0.5 text-xs text-white">
+                  ✔︎
+                </span>
               )}
             </span>
           )}

@@ -17,6 +17,7 @@ const getMapPieceChance = (journey: Journey, journeyCount: number): number => {
 export const determineMapPieceLoot = (
   activeJourney: CombinedJourneyState,
   getJourney: (journeyId: string) => CombinedJourneyState | undefined,
+  hasMapPiece: boolean,
   bonusMapFragmentChance: number = 0
 ): MapPieceResult => {
   const journeyInfo = getJourney(activeJourney.journeyId)
@@ -24,11 +25,10 @@ export const determineMapPieceLoot = (
 
   const lootSeed = generateNewSeed(activeJourney.randomSeed, activeJourney.levelNr)
   const random = mulberry32(lootSeed)
-  const foundMapPiece = journeyInfo?.foundMapPiece || false
 
   const journey = activeJourney.journey
 
-  const mapPieceChance = foundMapPiece ? 0 : getMapPieceChance(journey, journeyCount) + bonusMapFragmentChance
+  const mapPieceChance = hasMapPiece ? 0 : getMapPieceChance(journey, journeyCount) + bonusMapFragmentChance
 
   const shouldAwardMapPiece = random() < mapPieceChance
 
