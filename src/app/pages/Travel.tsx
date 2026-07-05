@@ -283,8 +283,6 @@ export const TravelPage: FC<{
                         length: t("ui.length"),
                         chambers: t("ui.chambers"),
                         progressLevel: t("ui.progressLevel"),
-                        timesPlural: t("ui.timesPlural"),
-                        timesSingular: t("ui.timesSingular"),
                       }}
                       onClick={handleJourneySelect}
                     >
