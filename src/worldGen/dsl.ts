@@ -39,6 +39,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
+  corridorStraightness?: number
   mainEndReward?: RewardHint | TExtra
   chestReward?: RewardHint | TExtra
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
@@ -82,6 +84,8 @@ export type PyramidConstraint = {
   keyColors?: number
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
+  corridorStraightness?: number
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType
