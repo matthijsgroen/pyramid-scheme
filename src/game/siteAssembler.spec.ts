@@ -1,8 +1,33 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
-import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
+import type { Direction, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { validateSite } from "./siteValidator"
-import { findPath } from "./gridNavigation"
+
+const DIR_MOVE: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+
+// Pure structural BFS distance, ignoring exploration state — assembleFloor's output is a
+// freshly-generated, unexplored grid, so findPath's real (state-aware) pathing has nothing
+// to work with here; this measures the maze's actual graph shape instead.
+const graphDistance = (grid: FloorGrid, from: readonly [number, number], to: readonly [number, number]): number => {
+  const key = (r: number, c: number) => `${r},${c}`
+  const visited = new Set([key(...from)])
+  const queue: Array<[number, number, number]> = [[from[0], from[1], 0]]
+  while (queue.length > 0) {
+    const [r, c, d] = queue.shift()!
+    if (r === to[0] && c === to[1]) return d
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") continue
+    for (const dir of cell.dirs) {
+      const [dr, dc] = DIR_MOVE[dir]
+      const nr = r + dr,
+        nc = c + dc
+      if (visited.has(key(nr, nc))) continue
+      visited.add(key(nr, nc))
+      queue.push([nr, nc, d + 1])
+    }
+  }
+  throw new Error(`no path from ${from} to ${to}`)
+}
 
 const basicConfig = (): FloorConfig => ({
   pathPuzzles: 1,
@@ -198,7 +223,7 @@ describe(assembleFloor, () => {
       expect(result.success, `seed ${seed} failed assembly`).toBe(true)
       if (!result.success) continue
       const { grid } = result
-      const distanceTo = (r: number, c: number) => findPath(grid, grid.entrancePos, [r, c]).length - 1
+      const distanceTo = (r: number, c: number) => graphDistance(grid, grid.entrancePos, [r, c])
       const puzzleDistances: number[] = []
       const branchDistances: number[] = []
       for (let r = 0; r < grid.rows; r++) {
