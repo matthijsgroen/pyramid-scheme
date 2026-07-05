@@ -1,7 +1,7 @@
 import { type FC, useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
-import { clearGameData } from "@/support/useGameStorage"
+import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 
 type SettingsModalProps = {
@@ -13,6 +13,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation("common")
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
 
   const handleClearGameData = async () => {
     await clearGameData()
@@ -78,6 +79,17 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               ))}
             </select>
           </div>
+
+          {/* Disable tutorials */}
+          <label className="flex items-center justify-between gap-2">
+            <span className="text-sm font-medium text-gray-700">{t("ui.disableTutorials")}</span>
+            <input
+              type="checkbox"
+              checked={!tutorialsEnabled}
+              onChange={e => setTutorialsEnabled(!e.target.checked)}
+              className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+          </label>
 
           {/* Clear game data */}
           <div>
