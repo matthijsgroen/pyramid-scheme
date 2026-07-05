@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Fixed
-- Fix the explorer dot cutting through unexplored corridors when a floor has a genuine loop and you tap a destination reachable by more than one route.
 
+## 0.25.3 - 2026-07-05
 ### Changed
 - The pyramid/tomb interior map is more zoomed in — corridors, rooms, and icons are all noticeably bigger.
+
+### Fixed
+- Fix the explorer dot cutting through unexplored corridors when a floor has a genuine loop and you tap a destination reachable by more than one route.
 
 ## 0.25.2 - 2026-07-05
 ### Changed
