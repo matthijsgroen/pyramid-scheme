@@ -1,31 +1,33 @@
-import type { JourneyDef, TombJourneyDef, Tier } from "./types"
+import type { JourneyDef, TombJourneyDef, Tier, PathPuzzlesRange } from "./types"
 import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "../data/journeyStructure"
 import { tableauLevels } from "../data/tableaus"
 
 export const WORLD_SEED = 42_195_837
 
-// pathPuzzles is worldGen-only; merged with PYRAMID_STRUCTURES (single source of truth for id/tier/levelCount)
-const PYRAMID_PATH_PUZZLES: Record<string, number> = {
-  starter_1: 2,
-  starter_2: 2,
-  starter_3: 3,
-  starter_4: 3,
-  junior_1: 3,
-  junior_2: 4,
-  junior_3: 5,
-  junior_4: 4,
-  expert_1: 4,
-  expert_2: 5,
-  expert_3: 6,
-  expert_4: 5,
-  master_1: 5,
-  master_2: 7,
-  master_3: 7,
-  master_4: 6,
-  wizard_1: 8,
-  wizard_2: 8,
-  wizard_3: 8,
-  wizard_4: 8,
+// pathPuzzles is worldGen-only; merged with PYRAMID_STRUCTURES (single source of truth for id/tier/levelCount).
+// Each entry is the puzzle-count progression across the journey's pyramids, first to last —
+// explicit and authored, no implicit scaling applied anywhere else.
+const PYRAMID_PATH_PUZZLES: Record<string, PathPuzzlesRange> = {
+  starter_1: { start: 1, end: 3 },
+  starter_2: { start: 1, end: 3 },
+  starter_3: { start: 2, end: 4 },
+  starter_4: { start: 2, end: 4 },
+  junior_1: { start: 2, end: 4 },
+  junior_2: { start: 3, end: 5 },
+  junior_3: { start: 4, end: 6 },
+  junior_4: { start: 3, end: 5 },
+  expert_1: { start: 3, end: 5 },
+  expert_2: { start: 4, end: 6 },
+  expert_3: { start: 5, end: 7 },
+  expert_4: { start: 4, end: 6 },
+  master_1: { start: 4, end: 6 },
+  master_2: { start: 6, end: 8 },
+  master_3: { start: 6, end: 8 },
+  master_4: { start: 5, end: 7 },
+  wizard_1: { start: 7, end: 9 },
+  wizard_2: { start: 7, end: 9 },
+  wizard_3: { start: 7, end: 9 },
+  wizard_4: { start: 7, end: 9 },
 }
 
 export const PYRAMID_JOURNEYS: JourneyDef[] = PYRAMID_STRUCTURES.map(s => ({

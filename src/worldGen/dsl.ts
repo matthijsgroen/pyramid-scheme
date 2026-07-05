@@ -1,5 +1,7 @@
-import type { Tier, Difficulty } from "./types"
+import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind } from "../game/siteTypes"
+
+export type { PathPuzzlesRange } from "./types"
 
 // ── Constraint vocabulary ─────────────────────────────────────────────────────
 
@@ -67,7 +69,9 @@ export type FloorConstraint<TExtra extends string = never> = {
 }
 
 export type PyramidConstraint = {
-  pathPuzzles?: PathPuzzlesPreset | number
+  /** A bare number/preset is literal — applied as-is, everywhere it resolves. A range
+   * interpolates linearly from `start` (the journey's first pyramid) to `end` (its last). */
+  pathPuzzles?: PathPuzzlesPreset | number | PathPuzzlesRange
   floorDepth?: number
   minFloors?: number
   maxFloors?: number

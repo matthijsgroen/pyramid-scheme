@@ -217,6 +217,7 @@ Deeper design docs live in `docs/`:
 | [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, perk table — **authoritative interior reference** |
 | [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md) | Three nested loops, level counts, conflict checks against other docs |
 | [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md) | Section-hash exploration, inventory-as-truth fragments, storage versioning |
+| [`docs/game-design/worldgen-dsl-redesign.md`](docs/game-design/worldgen-dsl-redesign.md) | **In progress** — world-gen DSL value model (Structure/Loot/Population/Decoration layers), rank-based fragment assignment redesign |
 
 ---
 
