@@ -2,21 +2,23 @@
 
 An ancient Egyptian-themed puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.
 
-![Version](https://img.shields.io/badge/version-0.23.3-blue.svg)
 ![Status](https://img.shields.io/badge/status-alpha-orange.svg)
 ![Tech](https://img.shields.io/badge/tech-React%20+%20TypeScript%20+%20Vite-green.svg)
 
+See [CHANGELOG.md](CHANGELOG.md) for the version history.
+
 ## 🎮 Game Overview
 
-**Pyramid Scheme** is a mathematical puzzle game set in ancient Egypt. Players embark on expeditions through pyramids of increasing difficulty, solving symbolic puzzles that unlock the secrets of forgotten treasures.
+**Pyramid Scheme** is a mathematical puzzle game set in ancient Egypt. Players explore pyramid interiors of increasing difficulty, solving symbolic puzzles to collect hieroglyph fragments and map pieces, then spend those to unlock treasure tombs guarded by traps and sealed gates.
 
 ### 🎯 Core Gameplay
 
-- **Explore Pyramids**: Journey through 5 difficulty levels from Starter to Wizard
+- **Explore Pyramid Interiors**: Navigate branching floors across 5 difficulty tiers, from Starter to Wizard
 - **Solve Puzzles**: Decode hieroglyphic symbols using mathematical formulas
-- **Collect Treasures**: Gather ancient artifacts and build your collection
-- **Progressive Unlocking**: Complete expeditions to unlock treasure tombs
-- **Map Pieces**: Find fragments that reveal the locations of hidden treasure vaults
+- **Collect Hieroglyph Fragments**: Complete hieroglyphs to unlock tomb tableau rooms that require them
+- **Survive Traps**: Beat arithmetic reflex challenges and trap corridors, or spend consumables to heal and bypass them
+- **Unlock Ward Gates**: Use ward-key treasures earned in tombs to open sealed floors back in the pyramids
+- **Claim Treasures**: Clear treasure tombs for permanent passive effects — more health, armor, and better fragment/hidden-path detection
 
 ## 🗺️ Journey Types
 
@@ -35,12 +37,12 @@ Explore ancient pyramids across different times of day:
 - 🔴 **Wizard** - Ultimate mastery
 
 ### 🗝️ Treasure Tombs
-Hidden vaults unlocked by collecting map pieces:
-- **Forgotten Merchant's Cache** - Ancient trading post treasures
-- **Noble's Hidden Vault** - Aristocratic riches
-- **High Priest's Treasury** - Sacred temple wealth
-- **Pharaoh's Secret Hoard** - Royal burial treasures
-- **Vault of the Gods** - Divine mythical artifacts
+9 tombs across the 5 tiers, unlocked with map pieces collected from pyramid floors. Higher tiers have multiple tombs — later ones are revealed by a location-key treasure found in the tier's first tomb:
+- **Forgotten Merchant's Cache** (Starter)
+- **Noble's Hidden Vault** (Junior)
+- **High Priest's Treasury** → **Inner Sanctum** (Expert)
+- **Hall of Ma'at** → **Hall of Osiris** (Master)
+- **Vault of the Gods** → **Realm of Cosmic Forces** → **Throne of Eternity** (Wizard)
 
 ## 🧩 Puzzle Mechanics
 
@@ -133,17 +135,15 @@ yarn storybook
 
 The entire level structure — puzzle counts, floor depths, reward distribution, and gate types — is controlled by a single authoring file:
 
-**[`scripts/worldSpec.ts`](scripts/worldSpec.ts)**
+**[`src/worldGen/worldSpec.ts`](src/worldGen/worldSpec.ts)**
 
 Edit this file to shape the world: set difficulty constraints per tier or per journey, control how many puzzle floors a pyramid has, place tomb-key gates, and tune loot cadence. After editing, run the world builder to regenerate `src/data/` and inspect the results in Storybook (`yarn storybook` → *SiteMap/JourneyInspector*).
 
 ## 🏗️ Project Structure
 
 ```
-scripts/
-└── worldSpec.ts       # ← World authoring: rules, constraints, reward layout
-
 src/
+├── worldGen/          # World authoring: worldSpec.ts rules, constraints, reward layout
 ├── app/               # Main application components
 ├── data/              # Game data and configuration
 ├── game/              # Core game logic
