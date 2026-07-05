@@ -446,6 +446,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           const floorSideSections = buildSideSections(tier, floorDiff, false, false, null, floorSections, 0, floorPP)
           const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
+          const floorStraightness = fc.corridorStraightness ?? constraint.corridorStraightness
           floorConfigs.push({
             pathPuzzles: floorPP,
             chestEvery: chestEveryFor(floorPP),
@@ -456,6 +457,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             ...(isLast ? { mainEndReward } : {}),
             ...(floorChests.length > 0 ? { chestRewards: floorChests } : {}),
             ...(fc.decorations?.length ? { decorations: fc.decorations } : {}),
+            ...(floorStraightness !== undefined ? { corridorStraightness: floorStraightness } : {}),
           } satisfies FloorConfig)
         }
         pyramidConfigs.push(floorConfigs)
@@ -492,6 +494,9 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             mainEndReward,
             chestRewards,
             ...(consumableDensity !== undefined ? { consumableDensity } : {}),
+            ...(constraint.corridorStraightness !== undefined
+              ? { corridorStraightness: constraint.corridorStraightness }
+              : {}),
           } satisfies FloorConfig,
         ])
       }
@@ -607,6 +612,8 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
           ? buildSideSections(authored.sideSections as SideSectionConstraint<"tombTreasure">[])
           : []
 
+      const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
+
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,
         chestEvery: 0,
@@ -619,6 +626,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         ...(isLast && hasCroc ? { lastMainPuzzleFamily: "crocodile" as const } : {}),
         ...(mainEndReward ? { mainEndReward } : {}),
         ...(authored?.decorations?.length ? { decorations: authored.decorations } : {}),
+        ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
       }
     })
 

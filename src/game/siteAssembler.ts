@@ -85,11 +85,12 @@ const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number)
 // A plain random-direction DFS maze is very serpentine (every step is a coin flip);
 // biasing toward straight runs gives longer corridors and fewer forced turns, which
 // reads as "a real place" and needs fewer click-to-reveal stops on first traversal.
-const STRAIGHT_BIAS = 0.65
+// Overridable per floor via FloorConfig.corridorStraightness (see assembleFloor).
+const DEFAULT_STRAIGHT_BIAS = 0.65
 
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns adjacency function, BFS path from entrance to farthest cell, and passages set.
-const buildMaze = (N: number, entR: number, entC: number, rand: () => number) => {
+const buildMaze = (N: number, entR: number, entC: number, rand: () => number, straightBias: number) => {
   const passages = new Set<string>()
   const visited = new Set<string>()
   const pkey = makePkey(N)
@@ -110,7 +111,7 @@ const buildMaze = (N: number, entR: number, entC: number, rand: () => number) =>
       const incoming = arrivedVia.get(`${r},${c}`)
       const straightAhead = incoming && unvisited.find(([nr, nc]) => nr - r === incoming[0] && nc - c === incoming[1])
       const [nr, nc] =
-        straightAhead && rand() < STRAIGHT_BIAS ? straightAhead : unvisited[Math.floor(rand() * unvisited.length)]
+        straightAhead && rand() < straightBias ? straightAhead : unvisited[Math.floor(rand() * unvisited.length)]
       passages.add(pkey(r, c, nr, nc))
       visited.add(`${nr},${nc}`)
       arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
@@ -286,17 +287,39 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     }
     const [entR, entC] = edgeCells[Math.floor(rand() * edgeCells.length)]
 
-    const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand)
+    const straightBias = config.corridorStraightness ?? DEFAULT_STRAIGHT_BIAS
+    const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand, straightBias)
 
     // Exit placed at the farthest dead-end (degree-1) so no corridor passes through it.
-    // mainPath is already a sequence of directly-connected nodes (see buildMaze), so
-    // the main-path content nodes are just its first interLen+2 entries, taken directly
-    // — no stride multiplication needed like the old dense model required.
+    // Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
+    // path instead of packed against the entrance — packing them up front left a long
+    // bare corridor behind the goal with nothing to do and nowhere to branch. Spreading
+    // keeps something to find along the whole walk, and puts the goal last (closest to
+    // the exit) so there's no unused tail behind it either.
     const interLen = intermediateTypes.length
-    const goalIndex = interLen + 1 // 0 = entrance, 1..interLen = intermediates, interLen+1 = goal
-    if (mainPath.length < goalIndex + 2) continue // need >=1 more node past the goal, for a distinct exit
+    const contentCount = interLen + 1 // + goal
+    if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
-    const mainNodeCells: Array<[number, number]> = mainPath.slice(0, goalIndex + 1)
+    const contentIndices: number[] = []
+    {
+      const used = new Set<number>()
+      const lastIdx = mainPath.length - 2 // reserve the final index for the exit
+      for (let i = 0; i < contentCount; i++) {
+        const t = (i + 1) / (contentCount + 1)
+        let idx = Math.round(1 + t * (lastIdx - 1))
+        idx = Math.max(1, Math.min(lastIdx, idx))
+        while (used.has(idx) && idx < lastIdx) idx++
+        while (used.has(idx) && idx > 1) idx--
+        used.add(idx)
+        contentIndices.push(idx)
+      }
+      contentIndices.sort((a, b) => a - b)
+    }
+    const goalIndex = contentIndices[contentIndices.length - 1]
+    // Aligned with intermediateTypes order — puzzleChestIndices[k] is where intermediateTypes[k] lands.
+    const puzzleChestIndices = contentIndices.slice(0, -1)
+    const puzzleChestRole = new Map<number, number>()
+    puzzleChestIndices.forEach((idx, k) => puzzleChestRole.set(idx, k))
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
@@ -664,11 +687,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // Collect branch junction cells (become fork nodes)
     const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
 
-    // Main path nodes
+    // Main path nodes — spread across the full path per contentIndices/goalIndex above;
+    // everything else along mainPath is left unassigned and falls through to plain corridor.
     const lastPuzzleIntermediateIdx = config.lastMainPuzzleFamily ? intermediateTypes.lastIndexOf("puzzle") : -1
     let mainChestIdx = 0
-    for (let mi = 0; mi < mainNodeCells.length; mi++) {
-      const [r, c] = mainNodeCells[mi]
+    for (let mi = 0; mi < mainPath.length; mi++) {
+      const [r, c] = mainPath[mi]
       if (mi === 0) {
         if (config.entrance) {
           const stairId = typeof config.entrance === "object" ? config.entrance.stairId : `${siteId}:entrance`
@@ -676,23 +700,26 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         } else {
           roomSpecs.set(posKey(r, c), { roomType: "entrance" })
         }
-      } else if (mi === mainNodeCells.length - 1) {
+      } else if (mi === goalIndex) {
         roomSpecs.set(posKey(r, c), {
           roomType: "treasure",
           reward: config.mainEndReward ?? { type: "mosaicPiece" },
         })
-      } else if (intermediateTypes[mi - 1] === "chest") {
-        roomSpecs.set(posKey(r, c), {
-          roomType: "treasure",
-          reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
-        })
-      } else {
-        const isLastPuzzle = mi - 1 === lastPuzzleIntermediateIdx
-        const family =
-          isLastPuzzle && config.lastMainPuzzleFamily
-            ? config.lastMainPuzzleFamily
-            : (config.puzzleFamily ?? "sumplete")
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family })
+      } else if (puzzleChestRole.has(mi)) {
+        const k = puzzleChestRole.get(mi)!
+        if (intermediateTypes[k] === "chest") {
+          roomSpecs.set(posKey(r, c), {
+            roomType: "treasure",
+            reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
+          })
+        } else {
+          const isLastPuzzle = k === lastPuzzleIntermediateIdx
+          const family =
+            isLastPuzzle && config.lastMainPuzzleFamily
+              ? config.lastMainPuzzleFamily
+              : (config.puzzleFamily ?? "sumplete")
+          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family })
+        }
       }
     }
 
