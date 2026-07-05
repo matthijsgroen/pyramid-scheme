@@ -180,11 +180,56 @@ describe(findPath, () => {
   })
 
   it("returns path through corridor cells between two rooms", () => {
-    const grid = makeLinearGrid() // entrance(0,0) -e- corridor(0,1) -e- exit(0,2)
+    // Same shape as makeLinearGrid, but with states representing already-explored ground —
+    // the corridor and destination need to be seen (not "fogged") to be a valid route at all.
+    const grid: FloorGrid = {
+      ...makeLinearGrid(),
+      cells: [
+        [
+          { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "visible" },
+          { type: "room", roomType: "exit", dirs: new Set<Direction>(["w"]), state: "reachable" },
+        ],
+      ],
+    }
     const path = findPath(grid, [0, 0], [0, 2])
     expect(path).toEqual([
       [0, 0],
       [0, 1],
+      [0, 2],
+    ])
+  })
+
+  it("never routes through a fogged (unexplored) cell, even when it's the only shortest route", () => {
+    // A diamond: (0,1) is a direct, unexplored shortcut between the two rooms; (1,0)-(1,1)-(1,2)
+    // is a longer detour the player has actually seen. Real loops mean the graph-shortest path
+    // and the "route the player has walked" can now genuinely differ.
+    const grid: FloorGrid = {
+      siteId: "test",
+      rows: 2,
+      cols: 3,
+      entrancePos: [0, 0],
+      exitPos: [0, 2],
+      staircases: {},
+      cells: [
+        [
+          { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e", "s"]), state: "reachable" },
+          { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" },
+          { type: "room", roomType: "exit", dirs: new Set<Direction>(["w", "s"]), state: "reachable" },
+        ],
+        [
+          { type: "corridor", dirs: new Set<Direction>(["n", "e"]), state: "visible" },
+          { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "visible" },
+          { type: "corridor", dirs: new Set<Direction>(["w", "n"]), state: "visible" },
+        ],
+      ],
+    }
+    const path = findPath(grid, [0, 0], [0, 2])
+    expect(path).toEqual([
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [1, 2],
       [0, 2],
     ])
   })

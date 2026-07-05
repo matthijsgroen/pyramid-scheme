@@ -125,6 +125,12 @@ export const findPath = (
         nc = c + dc
       const nk = key(nr, nc)
       if (parent.has(nk)) continue
+      const neighbor = grid.cells[nr]?.[nc]
+      // Now that real loops exist, the graph-shortest route isn't always the one the
+      // player has actually walked — it can cut through a corridor never revealed yet.
+      // Restricting to non-fogged cells keeps the animated path on ground the player has
+      // genuinely seen, even if that means a longer route than the absolute shortest one.
+      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
       parent.set(nk, key(r, c))
       if (nr === tr && nc === tc) break outer
       queue.push([nr, nc])
