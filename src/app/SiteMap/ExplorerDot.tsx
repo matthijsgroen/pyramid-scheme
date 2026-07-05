@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import type { FloorGrid } from "../../game/siteTypes"
 import { findPath } from "../../game/gridNavigation"
-
-export const SITE_MAP_CELL = 44
-export const SITE_MAP_PAD = 44
+import { CELL, EXPLORER_DOT_RADIUS } from "./mapScale"
 
 type Point = { x: number; y: number }
 
@@ -22,8 +20,8 @@ type Props = {
 export const ExplorerDot = ({
   grid,
   pos,
-  cellSize = SITE_MAP_CELL,
-  padding = SITE_MAP_PAD,
+  cellSize = CELL,
+  padding = CELL,
   segmentDuration = 120,
   color = "#ffd060",
   onArrive,
@@ -120,7 +118,7 @@ export const ExplorerDot = ({
     <circle
       cx={svgPos.x}
       cy={svgPos.y}
-      r={9}
+      r={EXPLORER_DOT_RADIUS}
       fill={color}
       stroke="#110d08"
       strokeWidth={2}

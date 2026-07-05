@@ -11,6 +11,14 @@ import type {
 } from "../../game/siteTypes"
 import { revealAll } from "../../game/gridNavigation"
 import { ExplorerDot } from "./ExplorerDot"
+import {
+  CELL,
+  WALL_THICKNESS,
+  NODE_RADIUS_LARGE,
+  NODE_RADIUS_PUZZLE,
+  NODE_RADIUS_FORK,
+  MARKER_RADIUS,
+} from "./mapScale"
 
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
 // endpoint sitting on the map's edge shouldn't look artificially clipped next to one
@@ -27,8 +35,6 @@ type Props = {
   className?: string
 }
 
-const CELL = 44
-
 const entranceFill: Record<CellState, string> = {
   fogged: "#1a1208",
   visible: "#281c08",
@@ -43,7 +49,7 @@ const entranceStroke: Record<CellState, string> = {
 }
 
 const EntranceShape = ({ state }: ShapeProps) => {
-  const r = 15
+  const r = NODE_RADIUS_LARGE
   const fill = entranceFill[state]
   const stroke = entranceStroke[state]
   // arch: flat bottom, semicircle top
@@ -92,7 +98,7 @@ const KEY_COLOR_HEX: Record<KeyColor, { visible: string; reachable: string }> = 
 }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
-  const r = 16
+  const r = NODE_RADIUS_PUZZLE
   const fill = puzzleFill[state]
   const stroke = puzzleStroke[state]
   return (
@@ -138,7 +144,7 @@ const trapStroke: Record<CellState, string> = {
 }
 
 const TrapShape = ({ state }: ShapeProps) => {
-  const r = 16
+  const r = NODE_RADIUS_PUZZLE
   const fill = trapFill[state]
   const stroke = trapStroke[state]
   return (
@@ -163,13 +169,13 @@ const TrapShape = ({ state }: ShapeProps) => {
 }
 
 const ForkShape = ({ state }: ShapeProps) => {
-  const r = 7
+  const r = NODE_RADIUS_FORK
   const stroke = state === "fogged" ? "#2e2018" : "#5a4a30"
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
 const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
-  const r = 15
+  const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
   const colorKey = state === "visible" ? "visible" : "reachable"
   const fill = isTomb ? tombGateFill[state] : gateFill[state]
@@ -230,7 +236,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
 }
 
 const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
-  const r = 15
+  const r = NODE_RADIUS_LARGE
   const colorKey = state === "visible" ? "visible" : "reachable"
   const badges = keyColors && keyColors.length > 0 ? keyColors : keyColor ? [keyColor] : []
   const primaryColor = badges[0]
@@ -275,8 +281,8 @@ const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
 }
 
 const StairheadShape = ({ state }: ShapeProps) => {
-  const r = 15
-  const cut = 5
+  const r = NODE_RADIUS_LARGE
+  const cut = 6
   const fill = stairFill[state]
   const stroke = stairStroke[state]
   const pts = [
@@ -300,7 +306,7 @@ const StairheadShape = ({ state }: ShapeProps) => {
 }
 
 const ExitShape = ({ state }: ShapeProps) => {
-  const r = 15
+  const r = NODE_RADIUS_LARGE
   const fill = exitFill[state]
   const stroke = exitStroke[state]
   return (
@@ -313,14 +319,14 @@ const ExitShape = ({ state }: ShapeProps) => {
 }
 
 const nodeRadius: Record<RoomType, number> = {
-  entrance: 15,
-  puzzle: 16,
-  trap: 16,
-  fork: 7,
-  gate: 15,
-  treasure: 15,
-  stairhead: 15,
-  exit: 15,
+  entrance: NODE_RADIUS_LARGE,
+  puzzle: NODE_RADIUS_PUZZLE,
+  trap: NODE_RADIUS_PUZZLE,
+  fork: NODE_RADIUS_FORK,
+  gate: NODE_RADIUS_LARGE,
+  treasure: NODE_RADIUS_LARGE,
+  stairhead: NODE_RADIUS_LARGE,
+  exit: NODE_RADIUS_LARGE,
 }
 
 const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: RoomType }) => {
@@ -791,7 +797,6 @@ const roomFloorFill: Record<CellState, string> = {
   completed: "#332210",
 }
 const WALL_COLOR = "#080502"
-const WALL_THICKNESS = 4
 
 const FloorTile = ({
   state,
@@ -870,11 +875,19 @@ const DecorationGlyph = ({ kind }: { kind: DecorationKind }) => {
 // as an arrow instead of a dot to hint which way it leads.
 const DIR_ROTATION: Record<Direction, number> = { n: 0, e: 90, s: 180, w: 270 }
 
-const ReachableDot = () => <circle r={3} fill="#d0a840" opacity={0.85} />
+const ReachableDot = () => <circle r={MARKER_RADIUS} fill="#d0a840" opacity={0.85} />
 
-const RunTargetArrow = ({ dir }: { dir: Direction }) => (
-  <polygon points="0,-5 4,4 -4,4" fill="#d0a840" opacity={0.85} transform={`rotate(${DIR_ROTATION[dir]})`} />
-)
+const RunTargetArrow = ({ dir }: { dir: Direction }) => {
+  const r = MARKER_RADIUS
+  return (
+    <polygon
+      points={`0,${-r} ${r},${r} ${-r},${r}`}
+      fill="#d0a840"
+      opacity={0.85}
+      transform={`rotate(${DIR_ROTATION[dir]})`}
+    />
+  )
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 

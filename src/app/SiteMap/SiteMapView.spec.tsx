@@ -1,7 +1,16 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView } from "./SiteMapView"
+import { CELL, WALL_THICKNESS } from "./mapScale"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+
+// PAD === CELL in SiteMapView, so a cell at (row, col) always centers at this pixel —
+// derived from the shared scale constant rather than hardcoded, so a future EM change
+// doesn't silently break every position assumption in this file.
+const cellCenter = (row: number, col: number) => ({
+  cx: CELL + col * CELL + CELL / 2,
+  cy: CELL + row * CELL + CELL / 2,
+})
 
 // ── Grid factory ──────────────────────────────────────────────────────────────
 
@@ -128,19 +137,20 @@ describe("SiteMapView — room clickability", () => {
 })
 
 // Finds the cell group by its exact translate transform, then checks whether it has a
-// wall rect on the given relative edge (CELL = 44, so half = 22). North and west walls
-// (and south and east) share an x,y origin — only width/height tell them apart — so all
-// four dimensions are matched, not just position.
+// wall rect on the given relative edge. North and west walls (and south and east) share
+// an x,y origin — only width/height tell them apart — so all four dimensions are matched,
+// not just position.
 const hasWallRect = (container: HTMLElement, cx: number, cy: number, edge: "n" | "s" | "e" | "w") => {
   const g = Array.from(container.querySelectorAll("g")).find(
     el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
   )
   if (!g) throw new Error(`no cell group at (${cx}, ${cy})`)
+  const half = CELL / 2
   const rect = {
-    n: { x: -22, y: -22, w: 44, h: 4 },
-    s: { x: -22, y: 18, w: 44, h: 4 },
-    w: { x: -22, y: -22, w: 4, h: 44 },
-    e: { x: 18, y: -22, w: 4, h: 44 },
+    n: { x: -half, y: -half, w: CELL, h: WALL_THICKNESS },
+    s: { x: -half, y: half - WALL_THICKNESS, w: CELL, h: WALL_THICKNESS },
+    w: { x: -half, y: -half, w: WALL_THICKNESS, h: CELL },
+    e: { x: half - WALL_THICKNESS, y: -half, w: WALL_THICKNESS, h: CELL },
   }[edge]
   return Array.from(g.querySelectorAll('rect[fill="#080502"]')).some(
     r =>
@@ -152,22 +162,21 @@ const hasWallRect = (container: HTMLElement, cx: number, cy: number, edge: "n" |
 }
 
 describe("SiteMapView — junction merging", () => {
-  // Grid layout: fork | void | fork, 1 row. PAD = CELL = 44, so cell centers land at
-  // x = 44 + col*44 + 22: col 0 -> 66, col 1 (the shared void) -> 110, col 2 -> 154.
+  // Grid layout: fork | void | fork, 1 row.
   it("opens the wall between two forks that each claim a side of the void between them", () => {
     // Neither fork has a real graph edge to the other; each claims its own adjacent void
     // cell, and the shared boundary should render with no wall on either side.
     const { container } = render(<SiteMapView grid={makeGrid([[fork("visible"), empty, fork("visible")]])} />)
-    expect(hasWallRect(container, 110, 66, "e")).toBe(false)
-    expect(hasWallRect(container, 154, 66, "w")).toBe(false)
+    expect(hasWallRect(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy, "e")).toBe(false)
+    expect(hasWallRect(container, cellCenter(0, 2).cx, cellCenter(0, 2).cy, "w")).toBe(false)
   })
 
   it("does not merge non-junction rooms sharing a claimed void the same way", () => {
     // puzzle rooms don't claim void at all, so the shared cell renders as nothing and
     // each room keeps its own wall facing the gap.
     const { container } = render(<SiteMapView grid={makeGrid([[room("visible"), empty, room("visible")]])} />)
-    expect(hasWallRect(container, 66, 66, "e")).toBe(true)
-    expect(hasWallRect(container, 154, 66, "w")).toBe(true)
+    expect(hasWallRect(container, cellCenter(0, 0).cx, cellCenter(0, 0).cy, "e")).toBe(true)
+    expect(hasWallRect(container, cellCenter(0, 2).cx, cellCenter(0, 2).cy, "w")).toBe(true)
   })
 })
 
@@ -186,7 +195,6 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
       [empty, straightCorridor("reachable", ["e"]), fork("reachable", ["n", "w"])],
     ])
 
-  // PAD = CELL = 44: col1 -> x=110, row1 -> y=110, row2 -> y=154
   const floorFillAt = (container: HTMLElement, cx: number, cy: number) => {
     const g = Array.from(container.querySelectorAll("g")).find(
       el => el.getAttribute("transform") === `translate(${cx}, ${cy})`
@@ -201,9 +209,9 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
     const hidden = render(<SiteMapView grid={buildGrid(empty)} />)
     const revealed = render(<SiteMapView grid={buildGrid(leafTreasure("visible", ["s"]))} />)
 
-    const forkFill = floorFillAt(hidden.container, 154, 154)
-    expect(floorFillAt(hidden.container, 110, 110)).toBe(forkFill)
-    expect(floorFillAt(revealed.container, 110, 110)).toBe(forkFill)
+    const forkFill = floorFillAt(hidden.container, cellCenter(2, 2).cx, cellCenter(2, 2).cy)
+    expect(floorFillAt(hidden.container, cellCenter(1, 1).cx, cellCenter(1, 1).cy)).toBe(forkFill)
+    expect(floorFillAt(revealed.container, cellCenter(1, 1).cx, cellCenter(1, 1).cy)).toBe(forkFill)
   })
 
   it("breaks an exact flank-strength tie in favor of the fork, regardless of either room's state", () => {
@@ -232,8 +240,8 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
       ["completed", "completed"],
     ] as const) {
       const { container } = render(<SiteMapView grid={buildGrid(treasureState, forkState)} />)
-      expect(hasWallRect(container, 110, 110, "n")).toBe(true)
-      expect(hasWallRect(container, 110, 110, "w")).toBe(false)
+      expect(hasWallRect(container, cellCenter(1, 1).cx, cellCenter(1, 1).cy, "n")).toBe(true)
+      expect(hasWallRect(container, cellCenter(1, 1).cx, cellCenter(1, 1).cy, "w")).toBe(false)
     }
   })
 })
@@ -270,7 +278,7 @@ describe("SiteMapView — long corridor click target", () => {
       ],
     ])
     const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[0, 0]} />)
-    const nearCell = findCell(container, 110, 66)
+    const nearCell = findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)
     expect(nearCell?.style.cursor).toBe("pointer")
     fireEvent.click(nearCell!)
     expect(onClick).toHaveBeenCalledWith(0, 3)
@@ -280,7 +288,7 @@ describe("SiteMapView — long corridor click target", () => {
     const onClick = vi.fn()
     const grid = makeGrid([[fork("completed", ["e"]), corridor("reachable", true)]])
     const { container } = render(<SiteMapView grid={grid} onCellClick={onClick} explorerPos={[0, 0]} />)
-    fireEvent.click(findCell(container, 110, 66)!)
+    fireEvent.click(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)!)
     expect(onClick).toHaveBeenCalledWith(0, 1)
   })
 
@@ -289,7 +297,7 @@ describe("SiteMapView — long corridor click target", () => {
       [fork("completed", ["e"]), straightCorridor("visible", ["e", "w"]), straightCorridor("reachable", ["n", "e"])],
     ])
     const { container } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
-    const nearCell = findCell(container, 110, 66)
+    const nearCell = findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)
     expect(nearCell?.querySelector("polygon")).toBeTruthy()
     expect(nearCell?.querySelector("circle")).toBeNull()
   })
@@ -302,9 +310,9 @@ describe("SiteMapView — long corridor click target", () => {
       [fork("completed", ["e"]), straightCorridor("visible", ["e", "w"]), straightCorridor("reachable", ["n", "e"])],
     ])
     const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={[0, 0]} />)
-    expect(findCell(container, 110, 66)?.querySelector("polygon")).toBeTruthy()
+    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeTruthy()
 
     rerender(<SiteMapView grid={grid} explorerPos={[0, 2]} />)
-    expect(findCell(container, 110, 66)?.querySelector("polygon")).toBeNull()
+    expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeNull()
   })
 })
