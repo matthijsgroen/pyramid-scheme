@@ -88,9 +88,30 @@ const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number)
 // Overridable per floor via FloorConfig.corridorStraightness (see assembleFloor).
 const DEFAULT_STRAIGHT_BIAS = 0.65
 
+// Multiplier on the grid's roaming room beyond its bare content minimum (see the N-growth
+// loop in assembleFloor). 1 = today's default footprint; <1 packs the floor (and its
+// winding corridors) tighter, >1 gives it more breathing room. Overridable per floor via
+// FloorConfig.packing.
+const DEFAULT_PACKING = 1
+
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
-// Returns adjacency function, BFS path from entrance to farthest cell, and passages set.
-const buildMaze = (N: number, entR: number, entC: number, rand: () => number, straightBias: number) => {
+// Returns adjacency function, BFS path from entrance to the chosen main-path endpoint, and
+// passages set. `targetDistance` picks the main path's length: the *true* farthest node in
+// the spanning tree is always the maze's diameter, which is a large fraction of the whole
+// grid almost regardless of grid size — using it unconditionally means the main path is
+// always "as long as physically possible," never short relative to how little content it
+// carries. Instead this picks the closest node to `targetDistance` hops from the entrance
+// (falling back to the true farthest node if the grid is too small to reach it), so path
+// length is something an author can actually target via FloorConfig.packing rather than an
+// emergent side effect of grid size.
+const buildMaze = (
+  N: number,
+  entR: number,
+  entC: number,
+  rand: () => number,
+  straightBias: number,
+  targetDistance: number
+) => {
   const passages = new Set<string>()
   const visited = new Set<string>()
   const pkey = makePkey(N)
@@ -124,16 +145,23 @@ const buildMaze = (N: number, entR: number, entC: number, rand: () => number, st
       ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc))
     )
 
-  // BFS from entrance to find farthest reachable cell (deepest dead-end in spanning tree)
+  // BFS from entrance: track the true farthest node (fallback for a too-small grid) and the
+  // closest node to targetDistance (preferred main-path endpoint — see comment above).
   const par = new Map<string, string | null>([[`${entR},${entC}`, null]])
   const q: Array<[number, number, number]> = [[entR, entC, 0]]
   let farthest: [number, number] = [entR, entC]
   let maxDist = 0
+  let targetPick: [number, number] | null = null
+  let targetPickDist = Infinity
   while (q.length > 0) {
     const [r, c, d] = q.shift()!
     if (d > maxDist) {
       maxDist = d
       farthest = [r, c]
+    }
+    if (d >= targetDistance && d < targetPickDist) {
+      targetPickDist = d
+      targetPick = [r, c]
     }
     for (const [nr, nc] of neighbors(r, c)) {
       if (!par.has(`${nr},${nc}`)) {
@@ -142,9 +170,10 @@ const buildMaze = (N: number, entR: number, entC: number, rand: () => number, st
       }
     }
   }
+  const chosen = targetPick ?? farthest
 
   const mainPath: Array<[number, number]> = []
-  let cur: string | null = `${farthest[0]},${farthest[1]}`
+  let cur: string | null = `${chosen[0]},${chosen[1]}`
   while (cur) {
     const [r, c] = cur.split(",").map(Number)
     mainPath.unshift([r, c])
@@ -205,6 +234,30 @@ const buildIntermediateTypes = (pathPuzzles: number, chestEvery: number): Array<
   return types
 }
 
+// Spreads `count` content items evenly across [startIdx, totalLen-2], reserving the final
+// index for the chain's own terminal room (the main path's goal+exit; a section's end room)
+// and everything before `startIdx` for whatever already occupies the head (the entrance;
+// a section's gate room, if any). Same technique for the main path and every section/
+// sub-section chain, so a padded (packing-scaled) chain gets its content interleaved with
+// the extra room instead of packed at the front with all the padding trailing behind it.
+const spreadContentIndices = (count: number, startIdx: number, totalLen: number): number[] => {
+  const indices: number[] = []
+  if (count === 0) return indices
+  const used = new Set<number>()
+  const lastIdx = totalLen - 2 // reserve the final index for the terminal room
+  for (let i = 0; i < count; i++) {
+    const t = (i + 1) / (count + 1)
+    let idx = Math.round(startIdx + t * (lastIdx - startIdx))
+    idx = Math.max(startIdx, Math.min(lastIdx, idx))
+    while (used.has(idx) && idx < lastIdx) idx++
+    while (used.has(idx) && idx > startIdx) idx--
+    used.add(idx)
+    indices.push(idx)
+  }
+  indices.sort((a, b) => a - b)
+  return indices
+}
+
 export const assembleFloor = (siteId: string, config: FloorConfig, seed: number): AssemblerResult => {
   // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements
   const visibleSections = config.sideSections.filter(s => !s.hidden)
@@ -226,13 +279,16 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
   // Build the ordered sequence of intermediate main-path node types
   const intermediateTypes = buildIntermediateTypes(config.pathPuzzles, config.chestEvery ?? 0)
 
+  // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
+  // kept separate from `minCells` below (which folds in every side-section's cost too) so
+  // `packing`'s path-length target scales with what the *main path itself* needs, not with
+  // how much unrelated side-section content happens to branch off it elsewhere.
+  const mainPathCells = 1 /* entrance */ + intermediateTypes.length + 1 /* goal */ + 1 /* exit/stairhead */
+
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
   const minCells =
-    1 + // entrance
-    intermediateTypes.length +
-    1 + // goal
-    1 + // exit/stairhead
+    mainPathCells +
     sideSections.reduce((sum, sec) => {
       const si = buildIntermediateTypes(sec.pathPuzzles, sec.chestEvery ?? 0)
       const secCells = si.length + 1 + (sec.gate ? 1 : 0)
@@ -254,15 +310,50 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     subSectionCount /* sub-section ends */
   const FOOTPRINT_SLACK_PER_ROOM = 2
 
+  // `packing` targets the main path's actual walkable *length*, not the grid's bounding
+  // box. buildMaze's BFS always used to pick the true farthest node in the spanning tree
+  // as the main-path end — which is, by definition, the longest route the maze can offer —
+  // so a winding corridor was always "as long as physically possible" regardless of how
+  // little content it carried or how small the surrounding grid was. `targetDistance`
+  // (node-hops, not counting the connector cell between each pair — see NODE_STEP) is what
+  // buildMaze now aims for instead: `mainPathCells` hops at packing=0 (walk exactly enough
+  // to fit the main path's own content, no wandering) scaling up to `mainPathCells * 6` at
+  // packing=1 (today's rough default feel) and beyond for packing>1. Deliberately scaled by
+  // `mainPathCells`, not the fuller `minCells` below — side-section content branches off
+  // the main path rather than extending it, so a floor with two chunky gated sections
+  // shouldn't get a longer main path than one with none, just because minCells is bigger.
+  // See buildMaze's own comment for the fallback when a grid is too small to reach the
+  // target.
+  const packing = config.packing ?? DEFAULT_PACKING
+  const targetDistance = Math.max(1, Math.round(mainPathCells * (1 + 5 * packing)))
+
+  // Same `packing` scaling applied to every section/sub-section chain — a gated path used
+  // to be *exactly* `pathPuzzles + gate + end` cells long, deaf to both `packing` and
+  // `corridorStraightness`, however spacious or winding the rest of the floor got. Reusing
+  // the identical formula (not a separate, lighter-touch one) keeps one mental model for
+  // "how long is a walk" everywhere in the DSL, main path or side path alike.
+  const paddedChainLength = (contentCellsCount: number): number =>
+    Math.max(contentCellsCount, Math.round(contentCellsCount * (1 + 5 * packing)))
+
   // Derive odd grid size. Only even/even positions can hold a real node (see NODE_STEP
   // above), so usable node capacity is ((N+1)/2)^2, not N^2 — the grid needs to be
   // noticeably bigger than the old dense model for the same amount of content, which
   // is exactly the point: the odd-position lattice between nodes is what guarantees a
-  // genuine gap wherever the path winds back near itself.
+  // genuine gap wherever the path winds back near itself. Sized to comfortably fit
+  // whichever is bigger: the content itself (`minCells` + packing-scaled headroom for
+  // section carving), or enough room for a maze to actually offer a path of
+  // `targetDistance` hops (a DFS-maze's diameter is typically a large fraction of its
+  // total node count, so `targetDistance * 2` is a generous safety margin — if it's still
+  // not enough, the retry loop below grows N further; buildMaze never fails outright).
   let N = 3
   while (
     Math.pow((N + 1) / 2, 2) <
-    minCells * 4 + (N + 1) / 2 + sideSections.length + expectedFootprintRooms * FOOTPRINT_SLACK_PER_ROOM
+    Math.max(
+      minCells +
+        packing *
+          (minCells * 3 + (N + 1) / 2 + sideSections.length + expectedFootprintRooms * FOOTPRINT_SLACK_PER_ROOM),
+      targetDistance * 2
+    )
   )
     N += 2
 
@@ -288,7 +379,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const [entR, entC] = edgeCells[Math.floor(rand() * edgeCells.length)]
 
     const straightBias = config.corridorStraightness ?? DEFAULT_STRAIGHT_BIAS
-    const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand, straightBias)
+    const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand, straightBias, targetDistance)
 
     // Exit placed at the farthest dead-end (degree-1) so no corridor passes through it.
     // Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
@@ -300,21 +391,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const contentCount = interLen + 1 // + goal
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
-    const contentIndices: number[] = []
-    {
-      const used = new Set<number>()
-      const lastIdx = mainPath.length - 2 // reserve the final index for the exit
-      for (let i = 0; i < contentCount; i++) {
-        const t = (i + 1) / (contentCount + 1)
-        let idx = Math.round(1 + t * (lastIdx - 1))
-        idx = Math.max(1, Math.min(lastIdx, idx))
-        while (used.has(idx) && idx < lastIdx) idx++
-        while (used.has(idx) && idx > 1) idx--
-        used.add(idx)
-        contentIndices.push(idx)
-      }
-      contentIndices.sort((a, b) => a - b)
-    }
+    const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     const goalIndex = contentIndices[contentIndices.length - 1]
     // Aligned with intermediateTypes order — puzzleChestIndices[k] is where intermediateTypes[k] lands.
     const puzzleChestIndices = contentIndices.slice(0, -1)
@@ -429,7 +506,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (const si of group) {
         const section = sideSections[si]
         const secIntermediate = buildIntermediateTypes(section.pathPuzzles, section.chestEvery ?? 0)
-        const needed = secIntermediate.length + 1 + (section.gate ? 1 : 0)
+        const needed = paddedChainLength(secIntermediate.length + 1 + (section.gate ? 1 : 0))
         let placed = false
 
         // Try the shared hub first (if this group already has one), then this group's own
@@ -502,6 +579,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     type SubSectionGroup = {
       subSection: SubSection
       cells: Array<[number, number]>
+      attachedAt: [number, number]
       intermediate: Array<"puzzle" | "chest">
       parentSectionIdx: number
       subSectionIdx: number
@@ -536,13 +614,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const placedSubs: Array<{
         idx: number
         cells: Array<[number, number]>
+        attachedAt: [number, number]
         intermediate: Array<"puzzle" | "chest">
       }> = []
 
       for (let si = 0; si < subSects.length; si++) {
         const sub = subSects[si]
         const subIntermediate = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
-        const subNeeded = subIntermediate.length + 1 + (sub.gate ? 1 : 0)
+        const subNeeded = paddedChainLength(subIntermediate.length + 1 + (sub.gate ? 1 : 0))
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
@@ -561,7 +640,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
             }
             const cells: Array<[number, number]> = [[startR, startC], ...rest]
             cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-            placedSubs.push({ idx: si, cells, intermediate: subIntermediate })
+            placedSubs.push({ idx: si, cells, attachedAt: [pcr, pcc], intermediate: subIntermediate })
             placed = true
             break
           }
@@ -601,10 +680,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       }
       const subKeyHostIdxs = new Set(subKeyHostColorsMap.keys())
 
-      for (const { idx, cells, intermediate } of placedSubs) {
+      for (const { idx, cells, attachedAt, intermediate } of placedSubs) {
         subSectionGroups.push({
           subSection: subSects[idx],
           cells,
+          attachedAt,
           intermediate,
           parentSectionIdx: group.sectionIdx,
           subSectionIdx: idx,
@@ -660,6 +740,53 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const cellDecorationPool = new Map<string, DecorationKind[] | undefined>()
 
     const posKey = (r: number, c: number) => `${r},${c}`
+
+    // ── Gate isolation ──────────────────────────────────────────────────────────
+    // `passages` is a spanning tree over the *entire* node lattice, built once before
+    // any section exists — most of its edges never get walked by main-path/section/
+    // sub-section construction, but any two used cells that happen to be tree-adjacent
+    // still read as a real door once dirs get computed below (see the two loops after
+    // `cells2D` is allocated). For ungated content that's a harmless bonus: a stray
+    // loop or shortcut nobody planned but nobody minds either. For gated content it's
+    // a softlock/bypass — a section only exists behind its gate because the gate is
+    // its *only* legitimate entrance, so it must never gain a "free" extra door from
+    // a leftover tree edge. `intendedEdgeKeys` records the edges each chain actually
+    // walked (main path, and each section's/sub-section's attach point through its own
+    // cells in order); `gatedCellKeys` marks every cell behind a gate, including a
+    // gated section's ungated sub-sections (still behind the same outer gate) and an
+    // ungated section's own gated sub-section. A door is allowed if it's an intended
+    // edge, or if neither endpoint is gated content.
+    const gatedCellKeys = new Set<string>()
+    const intendedEdgeKeys = new Set<string>()
+    const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
+      let [pr, pc] = attachedAt
+      for (const [r, c] of chainCells) {
+        intendedEdgeKeys.add(pkey(pr, pc, r, c))
+        ;[pr, pc] = [r, c]
+      }
+    }
+    for (let mi = 0; mi < mainPath.length - 1; mi++) {
+      const [r, c] = mainPath[mi]
+      const [nr, nc] = mainPath[mi + 1]
+      intendedEdgeKeys.add(pkey(r, c, nr, nc))
+    }
+    for (const group of sectionGroups) {
+      markChain(group.attachedAt, group.cells)
+      if (sideSections[group.sectionIdx].gate) {
+        for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
+      }
+    }
+    for (const sub of subSectionGroups) {
+      markChain(sub.attachedAt, sub.cells)
+      if (sideSections[sub.parentSectionIdx].gate || sub.subSection.gate) {
+        for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
+      }
+    }
+    const edgeAllowed = (r: number, c: number, nr: number, nc: number): boolean => {
+      if (!passages.has(pkey(r, c, nr, nc))) return false
+      if (intendedEdgeKeys.has(pkey(r, c, nr, nc))) return true
+      return !gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))
+    }
 
     const mainSectionHash = computeMainSectionHash(config)
     for (const [r, c] of mainPath) {
@@ -775,10 +902,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
-      // Intermediate nodes within section (puzzles/traps + chests) — consecutive nodes,
-      // the connector cell between each pair lives at a separate grid position.
+      // Intermediate nodes within section (puzzles/traps + chests) — spread across
+      // whatever room `paddedChainLength` gave this chain (see spreadContentIndices),
+      // same technique as the main path, instead of assumed-consecutive from contentStart
+      // (which only ever held when a chain was exactly its bare content length).
+      const secContentIndices = spreadContentIndices(intermediate.length, contentStart, cells.length)
       for (let pi = 0; pi < intermediate.length; pi++) {
-        const [r, c] = cells[contentStart + pi]
+        const [r, c] = cells[secContentIndices[pi]]
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
         } else if (section.trapped) {
@@ -842,8 +972,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
+      // Spread across whatever room `paddedChainLength` gave this chain — same technique
+      // as the parent section and the main path (see spreadContentIndices). Previously
+      // indexed as `(contentStart + pi) * 2`, which only ever happened to line up for a
+      // single-puzzle sub-section; any sub-section with more than one puzzle/chest was
+      // silently indexing past its own content into whatever cell happened to sit there.
+      const subContentIndices = spreadContentIndices(intermediate.length, contentStart, cells.length)
       for (let pi = 0; pi < intermediate.length; pi++) {
-        const [r, c] = cells[(contentStart + pi) * 2]
+        const [r, c] = cells[subContentIndices[pi]]
         if (intermediate[pi] === "chest") {
           roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
         } else if (subSection.trapped) {
@@ -886,14 +1022,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (const [dr, dc, d] of CONNECTOR_DIRS) {
         const nr = r + dr,
           nc = c + dc
-        if (
-          nr >= 0 &&
-          nr < N &&
-          nc >= 0 &&
-          nc < N &&
-          passages.has(pkey(r, c, nr, nc)) &&
-          usedCells.has(`${nr},${nc}`)
-        ) {
+        if (nr >= 0 && nr < N && nc >= 0 && nc < N && usedCells.has(`${nr},${nc}`) && edgeAllowed(r, c, nr, nc)) {
           dirs.add(d)
         }
       }
@@ -943,7 +1072,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           nc = c + dc
         const neighborKey = `${nr},${nc}`
         if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
-        if (!passages.has(pkey(r, c, nr, nc)) || !usedCells.has(neighborKey)) continue
+        if (!usedCells.has(neighborKey) || !edgeAllowed(r, c, nr, nc)) continue
         if (r * N + c > nr * N + nc) continue // process each edge once
         const mr = (r + nr) / 2,
           mc = (c + nc) / 2

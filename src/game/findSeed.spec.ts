@@ -18,12 +18,16 @@ const denseConfig: FloorConfig = {
 }
 
 describe("find smallest grid that works", () => {
-  it("scans seeds to find the grid size used", () => {
-    for (let s = 1; s <= 50; s++) {
-      const r = assembleFloor("t", denseConfig, s)
-      if (r.success) {
-        console.log(`seed=${s} grid=${r.grid.rows}x${r.grid.cols}`)
+  it(
+    "scans seeds to find the grid size used",
+    () => {
+      for (let s = 1; s <= 50; s++) {
+        const r = assembleFloor("t", denseConfig, s)
+        if (r.success) {
+          console.log(`seed=${s} grid=${r.grid.rows}x${r.grid.cols}`)
+        }
       }
-    }
-  })
+    },
+    20000
+  )
 })

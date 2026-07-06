@@ -458,6 +458,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
           const floorStraightness = fc.corridorStraightness ?? constraint.corridorStraightness
+          const floorPacking = fc.packing ?? constraint.packing
           floorConfigs.push({
             pathPuzzles: floorPP,
             chestEvery: chestEveryFor(floorPP),
@@ -469,6 +470,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             ...(floorChests.length > 0 ? { chestRewards: floorChests } : {}),
             ...(fc.decorations?.length ? { decorations: fc.decorations } : {}),
             ...(floorStraightness !== undefined ? { corridorStraightness: floorStraightness } : {}),
+            ...(floorPacking !== undefined ? { packing: floorPacking } : {}),
           } satisfies FloorConfig)
         }
         pyramidConfigs.push(floorConfigs)
@@ -508,6 +510,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             ...(constraint.corridorStraightness !== undefined
               ? { corridorStraightness: constraint.corridorStraightness }
               : {}),
+            ...(constraint.packing !== undefined ? { packing: constraint.packing } : {}),
           } satisfies FloorConfig,
         ])
       }
@@ -624,6 +627,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
           : []
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
+      const packing = authored?.packing ?? constraint.packing
 
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,
@@ -638,6 +642,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         ...(mainEndReward ? { mainEndReward } : {}),
         ...(authored?.decorations?.length ? { decorations: authored.decorations } : {}),
         ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
+        ...(packing !== undefined ? { packing } : {}),
       }
     })
 

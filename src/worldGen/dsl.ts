@@ -43,6 +43,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
+  /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
+  packing?: number
   mainEndReward?: RewardHint | TExtra
   chestReward?: RewardHint | TExtra
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
@@ -90,6 +92,8 @@ export type PyramidConstraint = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
+  /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
+  packing?: number
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType
