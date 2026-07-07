@@ -18,10 +18,10 @@ import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
 import type { InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
 import type { OrderedFormula } from "@/ui/organisms/TombTableau"
 import { FezContext } from "../fez/context"
-import { createPositionOverview } from "../Formulas/filledPositions"
+import { createPositionOverview } from "@/game/formulas/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
-import type { Formula as FormulaType } from "@/app/Formulas/formulas"
+import type { Formula as FormulaType } from "@/game/formulas/formulas"
 
 // Counts the number of number-tile slots in a formula (used for solved-percentage display)
 const countFormulaSlots = (formula: FormulaType): number => {

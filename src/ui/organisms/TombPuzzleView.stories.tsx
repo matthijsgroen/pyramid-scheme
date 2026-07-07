@@ -3,7 +3,7 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import { journeys } from "@/data/journeys"
 import { hashString } from "@/support/hashString"
 import { generateRewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
-import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { TombPuzzleView } from "./TombPuzzleView"
 

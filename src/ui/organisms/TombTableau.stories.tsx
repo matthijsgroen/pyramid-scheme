@@ -5,8 +5,8 @@ import { hashString } from "@/support/hashString"
 import { generateRewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
-import { createPositionOverview } from "@/app/Formulas/filledPositions"
-import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { createPositionOverview } from "@/game/formulas/filledPositions"
+import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 
 type TombLevelArgs = {

@@ -1,4 +1,4 @@
-import { createVerifiedFormula, type Formula, type Operation } from "@/app/Formulas/formulas"
+import { createVerifiedFormula, type Formula, type Operation } from "@/game/formulas/formulas"
 
 export type CompareFormulaSettings = {
   numberOfSymbols: number

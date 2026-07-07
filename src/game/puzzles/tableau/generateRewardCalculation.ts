@@ -5,7 +5,7 @@ import {
   type Formula,
   type FormulaSettings,
   type Operation,
-} from "@/app/Formulas/formulas"
+} from "@/game/formulas/formulas"
 
 /**
  * Describe a reward calculation.

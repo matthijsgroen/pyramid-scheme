@@ -3,7 +3,7 @@ import { use, useCallback, useEffect, useMemo, useRef, useState, type FC } from 
 import { useGameStorage } from "@/support/useGameStorage"
 import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
-import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import {
   buildTombCalculationSettings,

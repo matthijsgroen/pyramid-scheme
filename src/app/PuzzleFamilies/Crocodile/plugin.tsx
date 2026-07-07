@@ -13,8 +13,8 @@ import {
   resetCrocodileState,
 } from "@/game/puzzles/crocodile/crocodileState"
 import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
-import type { Operation } from "@/app/Formulas/formulas"
-import { formulaToString } from "@/app/Formulas/formulas"
+import type { Operation } from "@/game/formulas/formulas"
+import { formulaToString } from "@/game/formulas/formulas"
 import { NumberChest } from "@/ui/molecules/NumberChest"
 import { Chest } from "@/ui/atoms/Chest"
 import crocodileOpen from "@/assets/crocodile-250.png"

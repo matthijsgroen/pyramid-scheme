@@ -9,7 +9,7 @@ periodically, this list will drift as files change.
 
 ## A. Layer boundary violations (`docs/instructions/architecture.md`)
 
-**~49 findings total** (12 in `src/ui/`, 7 in `src/game/`/`src/data/`, 30 pre-existing `className` cases in `src/app/`).
+**~44 findings total** (12 in `src/ui/`, 2 in `src/game/`/`src/data/`, 30 pre-existing `className` cases in `src/app/`).
 
 ### A1. `src/ui/` components using disallowed hooks (12 files)
 
@@ -33,18 +33,11 @@ Storybook files under `src/ui/` (lower priority — storybook.md explicitly allo
 
 No `useTranslation` usage and no `src/game/`/`src/data/`/`src/app/` imports found anywhere under `src/ui/` — clean on those two sub-rules.
 
-### A2. Domain layer (`src/game/`, `src/data/`) purity violations (7 files)
+### A2. Domain layer (`src/game/`, `src/data/`) purity violations (2 files remaining)
 
 Rule: no React/DOM imports, no imports from `src/app/` or `src/ui/`.
 
-Real runtime React/i18n dependencies in `src/data/` (highest severity — hooks, not stray types):
-
-| File                                   | Violation                                                     |
-| -------------------------------------- | ------------------------------------------------------------- |
-| `src/data/useTableauTranslations.ts`   | `useTranslation("tableaus")` hook                             |
-| `src/data/useInventoryTranslations.ts` | `useTranslation("inventory")` hook                            |
-| `src/data/useJourneyTranslations.ts`   | `useTranslation("journeys")`/`useTranslation("common")` hooks |
-| `src/data/useTreasureTranslations.ts`  | `useTranslation("treasures")` hook                            |
+The React/i18n hooks previously in `src/data/` moved to `src/app/translations/`, and the `src/game/` ↔ `src/app/Formulas/formulas.ts` dependency cycle is gone (`Formulas/` relocated to `src/game/formulas/`).
 
 Type-only React imports in `src/game/` (lower severity — no runtime dependency, but still a literal rule violation):
 
@@ -52,17 +45,6 @@ Type-only React imports in `src/game/` (lower severity — no runtime dependency
 | ---------------------------- | ------------------------------------------------------------------ |
 | `src/game/trapPlugin.ts:1`   | `import type { FC } from "react"` for a `Component: FC<...>` field |
 | `src/game/puzzlePlugin.ts:1` | Same pattern                                                       |
-
-Cross-layer dependency cycle — `src/game/` importing from `src/app/`:
-
-| File                                         | Violation                                                                               |
-| -------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `src/game/generateCompareLevel.ts:1`         | Imports `createVerifiedFormula`, `Formula`, `Operation` from `../app/Formulas/formulas` |
-| `src/game/generateRewardCalculation.ts:8`    | Same import target                                                                      |
-| `src/game/generateCompareLevel.spec.ts`      | Same import                                                                             |
-| `src/game/generateRewardCalculation.spec.ts` | Same import                                                                             |
-
-Most notable finding in category A: `src/app/Formulas/formulas.ts` contains what is really domain logic (`createVerifiedFormula`, `formulaToString`, `Formula`/`Operation` types) but lives under `src/app/`, while `src/game/` depends on it back — an actual upward-then-downward dependency cycle (`formulas.ts` itself imports `src/game/random`). Recommended fix: relocate `Formulas/` into `src/game/` or `src/data/`.
 
 ### A3. `src/app/` raw `className=` usage — pre-existing carve-out (30 files, 303 occurrences)
 
@@ -118,9 +100,9 @@ Per architecture.md's explicit carve-out ("some app/ components still contain cl
 
 ## C. Missing tests (`docs/instructions/testing.md`)
 
-**27 findings total** (18 in `src/game`/`src/data`, 5 in `src/support`, 2 in `src/worldGen`, 1 in `src/app/state`, 1 `*Logic.ts`/`*Calc.ts`).
+**26 findings total** (17 in `src/game`/`src/data`, 5 in `src/support`, 2 in `src/worldGen`, 1 in `src/app/state`, 1 `*Logic.ts`/`*Calc.ts`). `src/game/random.ts` now has `random.spec.ts` — no longer a finding.
 
-### C1. `src/game/` and `src/data/` (18)
+### C1. `src/game/` and `src/data/` (17)
 
 `src/data/` (12):
 
@@ -132,18 +114,12 @@ Per architecture.md's explicit carve-out ("some app/ components still contain cl
 - `src/data/siteConfigs.ts` — `pyramidSiteConfigs`, no invariant spec
 - `src/data/treasurePerks.ts` — cross-referencing perk tables, no spec asserting cross-refs hold
 - `src/data/treasures.ts` — large treasure tables + mapping functions, no spec
-- `src/data/useInventoryTranslations.ts` — branching hooks, no spec
-- `src/data/useJourneyTranslations.ts` — branching hooks, no spec
-- `src/data/useTableauTranslations.ts` — branching hooks, no spec
-- `src/data/useTreasureTranslations.ts` — branching hooks, no spec
+- `src/app/translations/useInventoryTranslations.ts` / `useJourneyTranslations.ts` / `useTableauTranslations.ts` / `useTreasureTranslations.ts` — no dedicated specs (moved from `src/data/`, no longer a layer violation, but still untested)
 
-(The last four also appear in A2 — same files, two different rule breaks.)
-
-`src/game/` (6):
+`src/game/` (5):
 
 - `src/game/generateJourneyLevel.ts` — core level-generation logic, no dedicated spec
 - `src/game/puzzleRegistry.ts` — `registerPuzzle()`/`getPuzzlePlugin()`, no spec (borderline: small registry wrapper)
-- `src/game/random.ts` — `mulberry32()`, `generateNewSeed()`, `shuffle()` — the deterministic-seed backbone of the whole world, no spec
 - `src/game/tombTreasureSelection.ts` — `eligibleTreasures()`, `treasureSelectionSeed()`, `treasureForRun()`, `collectedTreasureIds()`, no spec
 - `src/game/trapRegistry.ts` — `registerTrap()`/`getTrapPlugin()`, no spec (borderline, same pattern as puzzleRegistry)
 - `src/game/test-utils/pyramidfactory.ts` — `createPyramid()` test-fixture factory, no spec (borderline/low priority — itself test infrastructure)
@@ -228,9 +204,9 @@ Priority order for remediation: D3 (`useJourneys`) > D4 (`useProgression`) > D5 
 
 | Category                      | Findings                                                                            |
 | ----------------------------- | ----------------------------------------------------------------------------------- |
-| A — Layer boundary violations | ~49 (12 ui/, 7 game+data, 30 pre-existing app/ className — low priority)            |
+| A — Layer boundary violations | ~44 (12 ui/, 2 game+data, 30 pre-existing app/ className — low priority)            |
 | B — Missing Storybook stories | 0                                                                                   |
-| C — Missing tests             | 27 (18 game/data, 5 support, 2 worldGen, 1 app/state, 1 Logic/Calc)                 |
+| C — Missing tests             | 26 (17 game/data, 5 support, 2 worldGen, 1 app/state, 1 Logic/Calc)                 |
 | D — DDD state violations      | 2 fixed + 4 new (useJourneys, useProgression, useInventory, TombPuzzle annotations) |
 
-Highest-signal items for prioritization: the `src/data/use*Translations.ts` files (4 files, real React/i18n hooks in the domain layer — breaks both A and C simultaneously), the `src/game/` ↔ `src/app/Formulas/formulas.ts` dependency cycle (architectural, not just a lint nit), `src/game/random.ts` having zero tests despite being the seed backbone for the entire generated world, and the two D-category findings (both are concrete, scoped refactors following an existing template).
+Previously highest-signal items — the `src/data/use*Translations.ts` React/i18n hooks in the domain layer, the `src/game/` ↔ `src/app/Formulas/formulas.ts` dependency cycle, and `src/game/random.ts` having zero tests — are now resolved. Remaining highest-signal items: D3/D4 (`useJourneys`, `useProgression`), the largest and most load-bearing state modules still missing domain actions.

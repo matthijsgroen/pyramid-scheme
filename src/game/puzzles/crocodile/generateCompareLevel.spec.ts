@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { generateCompareLevel, type CompareLevel, type CompareLevelSettings } from "./generateCompareLevel"
 import { mulberry32 } from "@/game/random"
-import { countMultiplicativeOps, formulaToString } from "@/app/Formulas/formulas"
+import { countMultiplicativeOps, formulaToString } from "@/game/formulas/formulas"
 
 describe(generateCompareLevel, () => {
   const stringifyCompare = (level: CompareLevel) =>
