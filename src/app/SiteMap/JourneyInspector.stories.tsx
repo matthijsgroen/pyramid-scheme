@@ -226,6 +226,30 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
             )}
           </div>
           <div className="ml-auto flex gap-2">
+            {siteConfig.length > 1 && (
+              <>
+                <button
+                  onClick={() => {
+                    setCurrentFloor(f => Math.max(0, f - 1))
+                    setExplorerPos(null)
+                  }}
+                  disabled={currentFloor === 0}
+                  className="rounded border border-stone-700 px-2 py-0.5 text-xs text-stone-400 hover:border-stone-500 hover:text-stone-200 disabled:opacity-30"
+                >
+                  ← Floor
+                </button>
+                <button
+                  onClick={() => {
+                    setCurrentFloor(f => Math.min(siteConfig.length - 1, f + 1))
+                    setExplorerPos(null)
+                  }}
+                  disabled={currentFloor === siteConfig.length - 1}
+                  className="rounded border border-stone-700 px-2 py-0.5 text-xs text-stone-400 hover:border-stone-500 hover:text-stone-200 disabled:opacity-30"
+                >
+                  Floor →
+                </button>
+              </>
+            )}
             <button
               onClick={() => setRevealAll(v => !v)}
               className={`rounded border px-2 py-0.5 text-xs ${

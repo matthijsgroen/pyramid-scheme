@@ -147,6 +147,10 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
     const key = `${p.journeyId}:${p.pyramidIndex}`
     // Multi-floor pyramids with explicit floors[] are fully specified — exclude from auto-distribution
     if (p.constraint.floors?.length) {
+      for (const floor of p.constraint.floors) {
+        const floorSd = floor?.sideSections
+        if (Array.isArray(floorSd)) committed += floorSd.filter(s => s.endReward === "mosaicPiece").length
+      }
       explicitPaths.set(key, 0)
       continue
     }

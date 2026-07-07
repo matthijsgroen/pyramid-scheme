@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 2136382183
+export const worldContentHash = 114640578
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -19,15 +19,23 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: { stairId: "starter_1:side0" },
-            gate: { type: "floor-key", color: "blue" },
+            gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 0 },
           },
           { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
-          { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, trapped: true },
+          {
+            pathPuzzles: 2,
+            difficulty: "starter",
+            end: "treasure",
+            endReward: { type: "mosaicPiece" },
+            hidden: true,
+            trapped: true,
+          },
         ],
       },
       {
-        pathPuzzles: 3,
-        chestEvery: 3,
+        pathPuzzles: 2,
+        chestEvery: 2,
         difficulty: "junior",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -235,7 +243,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 0 },
           },
         ],
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 0 },
+        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
     ],
@@ -306,7 +314,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 1 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 2 },
           },
         ],
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
@@ -488,7 +496,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 2 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 3 },
           },
           { pathPuzzles: 1, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } },
           { pathPuzzles: 1, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } },
@@ -617,7 +625,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 3 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 2 },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
@@ -656,17 +664,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
+            endReward: { type: "consumable", consumable: "oil" },
           },
           {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "oil" },
+            endReward: { type: "consumable", consumable: "trapTool" },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 2 },
+        mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "bandage" },
@@ -706,7 +714,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "trapTool" },
+        mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "oil" },
@@ -736,13 +744,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "oil" },
+            endReward: { type: "consumable", consumable: "trapTool" },
           },
           {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -752,7 +760,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "bandage" },
+        mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
           { type: "consumable", consumable: "bandage" },
@@ -902,7 +910,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -918,7 +926,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "oil" },
+        mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "oil" },
@@ -948,17 +956,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "oil" },
+            endReward: { type: "consumable", consumable: "trapTool" },
           },
           {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "bandage" },
+        mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
           { type: "consumable", consumable: "bandage" },
@@ -995,13 +1003,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
+            endReward: { type: "consumable", consumable: "trapTool" },
           },
           {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
@@ -1031,12 +1039,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
-          },
-          {
-            pathPuzzles: 1,
-            difficulty: "junior",
-            end: "treasure",
             endReward: { type: "consumable", consumable: "oil" },
           },
           {
@@ -1044,6 +1046,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "consumable", consumable: "trapTool" },
+          },
+          {
+            pathPuzzles: 1,
+            difficulty: "junior",
+            end: "treasure",
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
@@ -1073,7 +1081,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
+            endReward: { type: "consumable", consumable: "oil" },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
@@ -1106,12 +1114,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
-          },
-          {
-            pathPuzzles: 1,
-            difficulty: "junior",
-            end: "treasure",
             endReward: { type: "consumable", consumable: "bandage" },
           },
           {
@@ -1119,10 +1121,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "consumable", consumable: "bandage" },
+          },
+          {
+            pathPuzzles: 1,
+            difficulty: "junior",
+            end: "treasure",
+            endReward: { type: "consumable", consumable: "oil" },
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "oil" },
+        mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
           { type: "consumable", consumable: "bandage" },
@@ -1152,7 +1160,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -1168,7 +1176,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "oil" },
+        mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "bandage" },
@@ -1198,13 +1206,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "oil" },
+            endReward: { type: "consumable", consumable: "trapTool" },
           },
           {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "trapTool" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -1214,7 +1222,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "bandage" },
+        mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
           { type: "consumable", consumable: "trapTool" },
@@ -1708,12 +1716,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
-          },
-          {
-            pathPuzzles: 1,
-            difficulty: "expert",
-            end: "treasure",
             endReward: { type: "consumable", consumable: "oil" },
           },
           {
@@ -1721,6 +1723,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "consumable", consumable: "trapTool" },
+          },
+          {
+            pathPuzzles: 1,
+            difficulty: "expert",
+            end: "treasure",
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -1749,7 +1757,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [
-          { pathPuzzles: 2, difficulty: "expert", end: "treasure", endReward: { type: "mosaicPiece" } },
           { pathPuzzles: 2, difficulty: "expert", end: "treasure", endReward: { type: "mosaicPiece" } },
           { pathPuzzles: 2, difficulty: "expert", end: "treasure", endReward: { type: "mosaicPiece" } },
           { pathPuzzles: 2, difficulty: "expert", end: "treasure", endReward: { type: "mosaicPiece" } },
@@ -1953,12 +1960,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
-          },
-          {
-            pathPuzzles: 1,
-            difficulty: "expert",
-            end: "treasure",
             endReward: { type: "consumable", consumable: "oil" },
           },
           {
@@ -1966,6 +1967,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "consumable", consumable: "trapTool" },
+          },
+          {
+            pathPuzzles: 1,
+            difficulty: "expert",
+            end: "treasure",
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -2020,13 +2027,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
+            endReward: { type: "consumable", consumable: "oil" },
           },
           {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "oil" },
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           {
             pathPuzzles: 1,
@@ -2248,13 +2255,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
+            endReward: { type: "consumable", consumable: "oil" },
           },
           {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "oil" },
+            endReward: { type: "consumable", consumable: "trapTool" },
           },
           {
             pathPuzzles: 1,
@@ -2320,7 +2327,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
-        mainEndReward: { type: "consumable", consumable: "trapTool" },
+        mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "bandage" },
@@ -4522,12 +4529,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "wizard",
             end: "treasure",
-            endReward: { type: "consumable", consumable: "bandage" },
-          },
-          {
-            pathPuzzles: 1,
-            difficulty: "wizard",
-            end: "treasure",
             endReward: { type: "consumable", consumable: "oil" },
           },
           {
@@ -4535,6 +4536,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             endReward: { type: "consumable", consumable: "trapTool" },
+          },
+          {
+            pathPuzzles: 1,
+            difficulty: "wizard",
+            end: "treasure",
+            endReward: { type: "consumable", consumable: "bandage" },
           },
           { pathPuzzles: 0, difficulty: "wizard", end: "treasure" },
           {

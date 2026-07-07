@@ -139,8 +139,9 @@ export type Rule = { scope: RuleScope; constraints: PyramidConstraint | TombCons
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
-interface PyramidChainBuilder {
-  floor(n: number, c: FloorConstraint): Rule
+/** A Rule whose `constraints.floors` accumulates via chained `.floor(n, c)` calls. */
+export type FloorChainBuilder = Rule & {
+  floor(n: number, c: FloorConstraint): FloorChainBuilder
 }
 
 interface GlobalScopeBuilder {
@@ -160,14 +161,16 @@ export type ConstraintAccumulator = Rule & {
 interface TierScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
   pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
-  pyramid(sel: PyramidSelector): PyramidChainBuilder
+  // Only a single pyramid (a bare number) can chain per-floor overrides — a range/first/
+  // last selector spans several pyramids, so "the floor" wouldn't mean any one of them.
+  pyramid(sel: number): FloorChainBuilder
   set(c: PyramidConstraint): ConstraintAccumulator
 }
 
 interface JourneyScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
   pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
-  pyramid(sel: PyramidSelector): PyramidChainBuilder
+  pyramid(sel: number): FloorChainBuilder
   set(c: PyramidConstraint): ConstraintAccumulator
 }
 
@@ -204,6 +207,19 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
   return acc
 }
 
+const makeFloorChain = (scope: RuleScope): FloorChainBuilder => {
+  const floors: (FloorConstraint | null)[] = []
+  const chain: FloorChainBuilder = {
+    scope,
+    constraints: { floors },
+    floor(n: number, c: FloorConstraint): FloorChainBuilder {
+      floors[n] = c
+      return chain
+    },
+  }
+  return chain
+}
+
 export function global(): GlobalScopeBuilder
 export function global(c: PyramidConstraint): Rule
 export function global(c?: PyramidConstraint): Rule | GlobalScopeBuilder {
@@ -222,14 +238,9 @@ export function tier(name: Tier, c?: PyramidConstraint): Rule | TierScopeBuilder
       scope: { level: "tier-floor", tier: name, floor: n },
       constraints: fc,
     }),
-    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | PyramidChainBuilder {
+    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | FloorChainBuilder {
       if (pc !== undefined) return { scope: { level: "tier-pyramid", tier: name, pyramid: sel }, constraints: pc }
-      return {
-        floor: (n: number, fc: FloorConstraint): Rule => ({
-          scope: { level: "tier-pyramid-floor", tier: name, pyramid: sel, floor: n },
-          constraints: fc,
-        }),
-      }
+      return makeFloorChain({ level: "tier-pyramid", tier: name, pyramid: sel })
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "tier", tier: name }, c),
   } as TierScopeBuilder
@@ -244,14 +255,9 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
       scope: { level: "journey-floor", journey: id, floor: n },
       constraints: fc,
     }),
-    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | PyramidChainBuilder {
+    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | FloorChainBuilder {
       if (pc !== undefined) return { scope: { level: "journey-pyramid", journey: id, pyramid: sel }, constraints: pc }
-      return {
-        floor: (n: number, fc: FloorConstraint): Rule => ({
-          scope: { level: "journey-pyramid-floor", journey: id, pyramid: sel, floor: n },
-          constraints: fc,
-        }),
-      }
+      return makeFloorChain({ level: "journey-pyramid", journey: id, pyramid: sel })
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "journey", journey: id }, c),
   } as JourneyScopeBuilder
@@ -262,3 +268,45 @@ export function tomb(id: string, c: TombConstraint): Rule {
 }
 
 export const rules = (list: Rule[]): Rule[] => list
+
+// ── Compact side-path helpers ──────────────────────────────────────────────────
+// Shorthand for authoring a floor's `sideSections` array. `puzzles`/`tier` are aliases
+// for `pathPuzzles`/`difficulty` — kept short here only; the underlying constraint
+// shape (and every other spec file) still uses the long names.
+
+type PathOpts = Omit<SideSectionConstraint, "pathPuzzles" | "difficulty" | "end" | "gate" | "hidden" | "trapped"> & {
+  puzzles?: PathPuzzlesPreset | number
+  tier?: Difficulty
+}
+
+/** A plain, ungated side path — puzzles then a treasure room. */
+export const sidePath = (opts: PathOpts = {}): SideSectionConstraint => {
+  const { puzzles, tier, ...rest } = opts
+  return { ...rest, pathPuzzles: puzzles ?? 0, ...(tier ? { difficulty: tier } : {}) }
+}
+
+/** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor. */
+export const wardPath = (
+  opts: PathOpts & { tomb: string; index: number }
+): SideSectionConstraint => {
+  const { puzzles, tier, tomb: tombId, index, ...rest } = opts
+  return {
+    ...rest,
+    pathPuzzles: puzzles ?? 0,
+    ...(tier ? { difficulty: tier } : {}),
+    gate: { type: "tomb-key", tombId, index },
+    end: "staircase",
+  }
+}
+
+/** A hidden side path, invisible without the Detection perk. */
+export const hiddenPath = (opts: PathOpts & { trapped?: boolean } = {}): SideSectionConstraint => {
+  const { puzzles, tier, trapped, ...rest } = opts
+  return {
+    ...rest,
+    pathPuzzles: puzzles ?? 0,
+    ...(tier ? { difficulty: tier } : {}),
+    hidden: true,
+    ...(trapped ? { trapped: true } : {}),
+  }
+}

@@ -146,9 +146,15 @@ describe("tier() builder", () => {
     expect(r.scope.level).toBe("tier-pyramid")
   })
 
-  it("tier(name).pyramid(sel).floor(n, c) returns a tier-pyramid-floor rule", () => {
-    const r = tier("expert").pyramid("last").floor(0, { difficulty: "expert" })
-    expect(r.scope.level).toBe("tier-pyramid-floor")
+  it("tier(name).pyramid(n).floor(a, c).floor(b, c) chains floors into one tier-pyramid rule", () => {
+    const r = tier("expert")
+      .pyramid(2)
+      .floor(0, { difficulty: "expert" })
+      .floor(1, { difficulty: "master" })
+    expect(r.scope.level).toBe("tier-pyramid")
+    const floors = (r.constraints as { floors?: unknown[] }).floors
+    expect(floors?.[0]).toEqual({ difficulty: "expert" })
+    expect(floors?.[1]).toEqual({ difficulty: "master" })
   })
 })
 
@@ -165,9 +171,11 @@ describe("journey() builder", () => {
     expect((r.scope as { journey: string; floor: number }).floor).toBe(0)
   })
 
-  it("journey(id).pyramid(sel).floor(n, c) returns a journey-pyramid-floor rule", () => {
-    const r = journey("my_tomb").pyramid("first").floor(2, { difficulty: "junior" })
-    expect(r.scope.level).toBe("journey-pyramid-floor")
+  it("journey(id).pyramid(n).floor(a, c) returns a journey-pyramid rule with a floors array", () => {
+    const r = journey("my_tomb").pyramid(1).floor(2, { difficulty: "junior" })
+    expect(r.scope.level).toBe("journey-pyramid")
+    const floors = (r.constraints as { floors?: unknown[] }).floors
+    expect(floors?.[2]).toEqual({ difficulty: "junior" })
   })
 })
 
