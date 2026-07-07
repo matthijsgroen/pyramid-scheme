@@ -4,7 +4,12 @@ import type { Rule } from "../dsl"
 export const starterRules: Rule[] = [
     tier("starter", { difficulty: "starter" }),
 
-    tier("starter").set({ consumableDensity: 0 }).sidePaths("low").settings({ pathPuzzles: 0, end: "fragment" }),
+    tier("starter")
+        .set({ consumableDensity: 0 })
+        .sidePaths("low")
+        .settings({ pathPuzzles: 0, end: "fragment" })
+        .hiddenPaths("low")
+        .settings({ pathPuzzles: 1, end: "treasure" }),
 
     // First pyramid is the map piece entry-point for the starter tomb.
     tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
@@ -60,7 +65,7 @@ export const starterRules: Rule[] = [
         .floor(1, {
             pathPuzzles: 3,
             difficulty: "master",
-            sideSections: [sidePath({ puzzles: 1 })],
+            sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, trapped: true })],
         }),
 
     tomb("starter_treasure_tomb", {

@@ -11,7 +11,7 @@ export const juniorRules: Rule[] = [
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 0, end: "treasure" }),
+    .settings({ pathPuzzles: 1, end: "treasure" }),
 
   tomb("junior_treasure_tomb", {
     puzzleFamily: "tableau",

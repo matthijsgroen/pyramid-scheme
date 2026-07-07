@@ -21,7 +21,7 @@ export const wizardRules: Rule[] = [
     .sidePaths("low")
     .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 0, end: "treasure" })
+    .settings({ pathPuzzles: 1, end: "treasure", trapped: true })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 1, end: "mosaic" }),
 

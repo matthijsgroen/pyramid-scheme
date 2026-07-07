@@ -13,7 +13,7 @@ export const expertRules: Rule[] = [
     .sidePaths("low")
     .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 0, end: "treasure" }),
+    .settings({ pathPuzzles: 1, end: "treasure", trapped: true }),
 
   tomb("expert_treasure_tomb", {
     puzzleFamily: "tableau",
