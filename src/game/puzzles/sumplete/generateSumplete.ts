@@ -1,4 +1,4 @@
-import { mulberry32 } from "./random"
+import { mulberry32 } from "@/game/random"
 import { countSolutions } from "./uniquenessVerifier"
 
 export type SumpleteGrid = {

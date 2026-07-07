@@ -5,7 +5,7 @@ import type { CombinedJourneyState } from "../state/useJourneys"
 import { mulberry32 } from "@/game/random"
 import { eligibleTreasures, treasureSelectionSeed } from "@/game/tombTreasureSelection"
 import { tableauLevels } from "@/data/tableaus"
-import { generateCompareLevel } from "@/game/generateCompareLevel"
+import { generateCompareLevel } from "@/game/puzzles/crocodile/generateCompareLevel"
 
 export const useCrocodilePuzzleControls = ({
   activeJourney,

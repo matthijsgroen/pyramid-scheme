@@ -1,4 +1,5 @@
-export type SumpleteCellState = "included" | "excluded" | "unknown"
+import type { SumpleteCellState } from "./sumpleteState"
+
 export type SumpleteLineStatus = "under" | "exact" | "over"
 
 const statusFor = (sum: number, target: number): SumpleteLineStatus =>

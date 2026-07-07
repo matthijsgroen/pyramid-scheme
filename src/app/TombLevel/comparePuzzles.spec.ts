@@ -1,7 +1,7 @@
 import { difficulties } from "@/data/difficultyLevels"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { tableauLevels } from "@/data/tableaus"
-import { generateCompareLevel } from "@/game/generateCompareLevel"
+import { generateCompareLevel } from "@/game/puzzles/crocodile/generateCompareLevel"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { hashString } from "@/support/hashString"
 import { describe, expect, it } from "vitest"

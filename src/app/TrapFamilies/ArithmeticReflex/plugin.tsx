@@ -1,8 +1,8 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { useEffect, useRef, useState } from "react"
 import { mulberry32, shuffle } from "@/game/random"
-import { registerTrap } from "@/game/trapRegistry"
-import type { TrapPlugin } from "@/game/trapPlugin"
+import { registerTrap } from "@/game/traps/trapRegistry"
+import type { TrapPlugin } from "@/game/traps/trapPlugin"
 import type { Difficulty } from "@/data/difficultyLevels"
 
 type Operation = "+" | "-" | "×"

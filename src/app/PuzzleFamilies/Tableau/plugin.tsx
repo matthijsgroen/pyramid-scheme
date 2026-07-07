@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { type FC } from "react"
-import { registerPuzzle } from "@/game/puzzleRegistry"
+import { registerPuzzle } from "@/game/puzzles/puzzleRegistry"
 import { mulberry32 } from "@/game/random"
-import { generateRewardCalculation, type RewardCalculation } from "@/game/generateRewardCalculation"
-import type { PuzzleSettings } from "@/game/puzzlePlugin"
+import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
+import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
 import type { Operation } from "@/app/Formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"

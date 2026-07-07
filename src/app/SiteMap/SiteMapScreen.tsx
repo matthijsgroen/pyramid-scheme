@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell } from "@/game/gridNavigation"
-import { getPuzzlePlugin } from "@/game/puzzleRegistry"
+import { getPuzzlePlugin } from "@/game/puzzles/puzzleRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
 import type { SiteConfig, TreasureReward } from "@/game/siteTypes"

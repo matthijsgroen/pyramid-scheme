@@ -1,7 +1,7 @@
 import type { FC, FormEvent } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { TableauLevel } from "@/data/tableaus"
-import type { RewardCalculation } from "@/game/generateRewardCalculation"
+import type { RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 import type { ChestState } from "@/ui/atoms/Chest"
 import { TombDoor } from "@/ui/atoms/TombDoor"

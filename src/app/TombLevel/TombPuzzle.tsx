@@ -1,13 +1,17 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { TableauLevel } from "@/data/tableaus"
-import { type RewardCalculation } from "@/game/generateRewardCalculation"
+import { type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { revealText } from "@/support/revealText"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useProgression } from "@/app/state/useProgression"
-import { type FilledTileState } from "@/ui/molecules/FormulaPart"
+import {
+  createTableauPuzzleState,
+  isTableauPuzzleCompleted,
+  toggleTableauTile,
+} from "@/game/puzzles/tableau/tableauPuzzleState"
 import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
@@ -53,14 +57,10 @@ export const TombPuzzle: FC<{
   const { perks } = useProgression()
   const scribesEyeSlots = perks.scribesEyeLevel === 3 ? Infinity : perks.scribesEyeLevel
 
-  // State for managing which tiles are filled
-  const [filledState, setFilledState] = useState<FilledTileState>({
-    symbolCounts: {},
-    filledPositions: {},
-  })
+  // Domain state: which tiles are filled and how much inventory that used
+  const [state, setState] = useState(createTableauPuzzleState)
+  const { filledPositions, symbolCounts, inventoryUsage } = state
 
-  // State for tracking how many inventory items are used in the puzzle
-  const [inventoryUsage, setInventoryUsage] = useState<Record<string, number>>({})
   // State for NumberLock
   const [lockCode, setLockCode] = useState("")
   const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
@@ -75,12 +75,10 @@ export const TombPuzzle: FC<{
   )
 
   // Check if puzzle is completely solved (all symbols placed)
-  const isPuzzleCompleted = useMemo(() => {
-    return Object.entries(calculation.symbolCounts).every(([symbolId, maxNeeded]) => {
-      const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
-      return usedInPuzzle === maxNeeded
-    })
-  }, [calculation.symbolCounts, filledState.symbolCounts])
+  const isPuzzleCompleted = useMemo(
+    () => isTableauPuzzleCompleted(state, calculation.symbolCounts),
+    [calculation.symbolCounts, state]
+  )
 
   const notEnough = useMemo(() => {
     if (Object.keys(inventory).length === 0) return false
@@ -103,9 +101,9 @@ export const TombPuzzle: FC<{
     const totalSlots =
       calculation.hintFormulas.reduce((sum, formula) => sum + countFormulaSlots(formula), 0) +
       countFormulaSlots(calculation.mainFormula)
-    const filledSlots = Object.keys(filledState.filledPositions).length
+    const filledSlots = Object.keys(filledPositions).length
     return totalSlots > 0 ? filledSlots / totalSlots : 0
-  }, [calculation, filledState.filledPositions])
+  }, [calculation, filledPositions])
 
   const hintFormulas: OrderedFormula[] = useMemo(() => {
     const ordered = calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))
@@ -119,56 +117,9 @@ export const TombPuzzle: FC<{
   }
 
   const handleTileClick = (symbolId: string, position: string) => {
-    setFilledState(prev => {
-      const newState = { ...prev }
-
-      // If position is already filled, remove the tile (only if puzzle is not completed)
-      if (newState.filledPositions[position] > 0) {
-        // Don't allow removal if puzzle is completed
-        if (isPuzzleCompleted) {
-          return prev
-        }
-
-        newState.filledPositions = { ...newState.filledPositions }
-        delete newState.filledPositions[position]
-        newState.symbolCounts = {
-          ...newState.symbolCounts,
-          [symbolId]: Math.max(0, (newState.symbolCounts[symbolId] || 0) - 1),
-        }
-
-        // Decrease inventory usage
-        setInventoryUsage(prevUsage => ({
-          ...prevUsage,
-          [symbolId]: Math.max(0, (prevUsage[symbolId] || 0) - 1),
-        }))
-      } else {
-        // Check if we have available inventory items to use
-        const currentUsage = inventoryUsage[symbolId] || 0
-        const availableInInventory = inventory[symbolId] || 0
-        const currentPlaced = newState.symbolCounts[symbolId] || 0
-        const maxNeeded = calculation.symbolCounts[symbolId] || 0
-
-        // Only place if we have inventory available and haven't exceeded puzzle requirements
-        if (availableInInventory > currentUsage && currentPlaced < maxNeeded) {
-          newState.filledPositions = {
-            ...newState.filledPositions,
-            [position]: 1,
-          }
-          newState.symbolCounts = {
-            ...newState.symbolCounts,
-            [symbolId]: currentPlaced + 1,
-          }
-
-          // Increase inventory usage
-          setInventoryUsage(prevUsage => ({
-            ...prevUsage,
-            [symbolId]: currentUsage + 1,
-          }))
-        }
-      }
-
-      return newState
-    })
+    // Don't allow removal if puzzle is completed
+    if (filledPositions[position] > 0 && isPuzzleCompleted) return
+    setState(prev => toggleTableauTile(prev, symbolId, position, calculation.symbolCounts, inventory[symbolId] || 0))
   }
 
   // Helper function to find all empty positions for a given symbol
@@ -177,7 +128,7 @@ export const TombPuzzle: FC<{
     const positionsObject = createPositionOverview(calculation)
     Object.entries(positionsObject).forEach(([position, value]) => {
       const symId = calculation.symbolMapping[value]
-      if (symId === symbolId && !filledState.filledPositions[position]) {
+      if (symId === symbolId && !filledPositions[position]) {
         positions.push(position)
       }
     })
@@ -188,7 +139,7 @@ export const TombPuzzle: FC<{
   const handleInventoryClick = (symbolId: string) => {
     const currentUsage = inventoryUsage[symbolId] || 0
     const availableInInventory = inventory[symbolId] || 0
-    const currentPlaced = filledState.symbolCounts[symbolId] || 0
+    const currentPlaced = symbolCounts[symbolId] || 0
     const maxNeeded = calculation.symbolCounts[symbolId] || 0
 
     // Check if we have available inventory items and haven't exceeded puzzle requirements
@@ -244,7 +195,7 @@ export const TombPuzzle: FC<{
   const inventoryItems: InventoryStripItem[] = Object.entries(calculation.symbolCounts)
     .sort((a, b) => difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0])))
     .map(([symbolId, maxNeeded]) => {
-      const usedInPuzzle = filledState.symbolCounts[symbolId] || 0
+      const usedInPuzzle = symbolCounts[symbolId] || 0
       const usedFromInventory = inventoryUsage[symbolId] || 0
       const availableInInventory = inventory[symbolId] || 0
       const inventoryItem = getInventoryItemById(symbolId)
@@ -266,7 +217,7 @@ export const TombPuzzle: FC<{
       difficulty={difficulty}
       tableau={tableau}
       calculation={calculation}
-      filledState={filledState}
+      filledState={{ filledPositions, symbolCounts }}
       resolveTile={resolveTile}
       hintFormulas={hintFormulas}
       solvedPercentage={solvedPercentage}

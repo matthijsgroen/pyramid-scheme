@@ -5,7 +5,10 @@ import { useTranslation } from "react-i18next"
 import { TombPuzzle } from "./TombLevel/TombPuzzle"
 import { useTableauTranslations } from "@/data/useTableauTranslations"
 import { generateNewSeed, mulberry32 } from "@/game/random"
-import { buildTombCalculationSettings, generateRewardCalculation } from "@/game/generateRewardCalculation"
+import {
+  buildTombCalculationSettings,
+  generateRewardCalculation,
+} from "@/game/puzzles/tableau/generateRewardCalculation"
 import type { TreasureTombJourney } from "@/data/journeys"
 import { ComparePuzzle } from "./TombLevel/ComparePuzzle"
 import { TombBackdrop } from "@/ui/atoms/TombBackdrop"

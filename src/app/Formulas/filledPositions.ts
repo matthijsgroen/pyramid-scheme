@@ -1,4 +1,4 @@
-import type { RewardCalculation } from "@/game/generateRewardCalculation"
+import type { RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import type { Formula } from "./formulas"
 
 const createFormulaFilledPositions = (
