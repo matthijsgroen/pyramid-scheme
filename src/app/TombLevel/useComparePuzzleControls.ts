@@ -6,6 +6,15 @@ import { mulberry32 } from "@/game/random"
 import { eligibleTreasures, treasureSelectionSeed } from "@/game/tombTreasureSelection"
 import { tableauLevels } from "@/data/tableaus"
 import { generateCompareLevel } from "@/game/puzzles/crocodile/generateCompareLevel"
+import {
+  advanceFocus,
+  commitLeft,
+  commitRight,
+  createCrocodileState,
+  previewLeft,
+  previewRight,
+  resetCrocodileState,
+} from "@/game/puzzles/crocodile/crocodileState"
 
 export const useCrocodilePuzzleControls = ({
   activeJourney,
@@ -19,9 +28,8 @@ export const useCrocodilePuzzleControls = ({
   const [showLoot, setShowLoot] = useState(false)
   const { inventory, addItem } = useInventory()
   const [lockValue, setLockValue] = useState("")
-  const [answers, setAnswers] = useState<{
-    [key: number]: "left" | "right" | "noneLeft" | "noneRight"
-  }>({})
+  const [state, setState] = useState(createCrocodileState)
+  const { focus, answers } = state
 
   const journey = activeJourney.journey as TreasureTombJourney
 
@@ -90,12 +98,9 @@ export const useCrocodilePuzzleControls = ({
 
   const hasComparison = levelData.comparisons.length > 0
 
-  const [focus, setFocus] = useState(0)
-
   const handleIDontKnow = useCallback(() => {
-    setFocus(0)
-    setAnswers({})
-  }, [setFocus, setAnswers])
+    setState(prev => resetCrocodileState(prev))
+  }, [])
 
   const handleLockSubmit = (value: string) => {
     // Prevent multiple submissions during processing
@@ -105,8 +110,7 @@ export const useCrocodilePuzzleControls = ({
     if (levelData.requirements.digit.toString() !== value) {
       setLockState("error")
       setIsProcessingCompletion(false)
-      setFocus(0)
-      setAnswers({})
+      setState(prev => resetCrocodileState(prev))
       return
     }
 
@@ -119,33 +123,9 @@ export const useCrocodilePuzzleControls = ({
     }, 1500)
   }
 
-  const handleMouseOverLeft = useCallback(() => {
-    setAnswers(answers => {
-      const currentAnswer = answers[focus] ?? "noneRight"
-      if (!currentAnswer.startsWith("none")) {
-        return answers
-      }
+  const handleMouseOverLeft = useCallback(() => setState(prev => previewLeft(prev)), [])
 
-      return {
-        ...answers,
-        [focus]: "noneLeft",
-      }
-    })
-  }, [focus])
-
-  const handleMouseOverRight = useCallback(() => {
-    setAnswers(answers => {
-      const currentAnswer = answers[focus] ?? "noneLeft"
-      if (!currentAnswer.startsWith("none")) {
-        return answers
-      }
-
-      return {
-        ...answers,
-        [focus]: "noneRight",
-      }
-    })
-  }, [focus])
+  const handleMouseOverRight = useCallback(() => setState(prev => previewRight(prev)), [])
 
   const handleLeftClick = useCallback(() => {
     const activeCompare = levelData.comparisons[focus]
@@ -156,25 +136,12 @@ export const useCrocodilePuzzleControls = ({
     if (!currentAnswer.startsWith("none")) return
     const needsTurn = currentAnswer !== "noneLeft"
 
-    setAnswers(answers => ({
-      ...answers,
-      [focus]: needsTurn ? "noneLeft" : "left",
-    }))
+    setState(prev => (needsTurn ? previewLeft(prev) : commitLeft(prev)))
     if (needsTurn) {
-      setTimeout(() => {
-        setAnswers(answers => ({
-          ...answers,
-          [focus]: "left",
-        }))
-      }, 500)
+      setTimeout(() => setState(prev => commitLeft(prev)), 500)
     }
 
-    setTimeout(
-      () => {
-        setFocus(prev => prev + 1)
-      },
-      needsTurn ? 800 : 200
-    )
+    setTimeout(() => setState(prev => advanceFocus(prev)), needsTurn ? 800 : 200)
   }, [focus, levelData.comparisons, answers])
 
   const handleRightClick = useCallback(() => {
@@ -186,26 +153,13 @@ export const useCrocodilePuzzleControls = ({
     const currentAnswer = answers[focus] ?? "noneRight"
     if (!currentAnswer.startsWith("none")) return
     const needsTurn = currentAnswer !== "noneRight"
-    setAnswers(answers => ({
-      ...answers,
-      [focus]: needsTurn ? "noneRight" : "right",
-    }))
 
+    setState(prev => (needsTurn ? previewRight(prev) : commitRight(prev)))
     if (needsTurn) {
-      setTimeout(() => {
-        setAnswers(answers => ({
-          ...answers,
-          [focus]: "right",
-        }))
-      }, 500)
+      setTimeout(() => setState(prev => commitRight(prev)), 500)
     }
 
-    setTimeout(
-      () => {
-        setFocus(prev => prev + 1)
-      },
-      needsTurn ? 800 : 200
-    )
+    setTimeout(() => setState(prev => advanceFocus(prev)), needsTurn ? 800 : 200)
   }, [focus, levelData.comparisons, answers])
 
   return {
