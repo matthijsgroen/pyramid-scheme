@@ -1,19 +1,26 @@
-# Puzzle State Models (DDD)
+# State Models (DDD)
 
-For any puzzle family with non-trivial in-progress state (a grid of cell
-states, marks, a partial solution — Sumplete, and future families like it),
-model that state as a domain object in `src/game/puzzles/<family>/`,
-independent of React. Sumplete is the reference implementation
-(`src/game/puzzles/sumplete/sumpleteState.ts`,
+For any feature with non-trivial in-progress state — a grid of cell states,
+marks, a partial solution, a block-id → value map, anything with nested
+structure or more than one kind of move — model that state as a domain
+object in `src/game/`, independent of React. This applies wherever such
+state lives: puzzle families, trap families, pyramid levels, journeys,
+inventory, progression — not just puzzles. Sumplete is the reference
+implementation (`src/game/puzzles/sumplete/sumpleteState.ts`,
 `src/game/puzzles/sumplete/sumpleteStatus.ts`).
 
 ## Where it lives
 
-Each puzzle family gets its own folder under `src/game/puzzles/`, holding its
+Puzzle families get their own folder under `src/game/puzzles/`, holding
 generation, state, and checks together: `src/game/puzzles/<family>/`. Shared
 puzzle infra (`puzzlePlugin.ts`, `puzzleRegistry.ts`) stays directly under
 `src/game/puzzles/`, not inside a family folder. Trap families follow the
-same idea under `src/game/traps/`.
+same idea under `src/game/traps/`. Everything else with domain state that
+doesn't belong to a puzzle/trap family (level progress, journey state,
+inventory, etc.) lives directly under `src/game/`, next to the module that
+already owns the related checks/queries — e.g. `src/game/state.ts` holds
+`PyramidAnswers`/`createPyramidAnswers`/`setBlockAnswer` alongside the
+pyramid's existing `isComplete`/`isValid`/`getAnswers` checks.
 
 ## Shape
 
@@ -59,7 +66,9 @@ from the current state to derive props for `src/ui/`.
 
 ## When NOT to do this
 
-A puzzle family with state that's just a single primitive or flat value
-(e.g. "current guess index") doesn't need this split — a plain `useState`
-call in the `src/app/` wrapper is enough. Reach for the state/actions/checks
-split when there's a grid, nested structure, or more than one kind of move.
+A feature with state that's just a single primitive or flat value (e.g.
+"current guess index", a boolean toggle) doesn't need this split — a plain
+`useState` call in the `src/app/` wrapper is enough. Reach for the
+state/actions/checks split when there's a grid, nested structure, or more
+than one kind of move — regardless of whether it's a puzzle, a trap, or
+some other piece of game state.

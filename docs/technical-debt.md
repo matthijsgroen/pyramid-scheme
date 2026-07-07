@@ -151,51 +151,62 @@ Skipped as trivial: `src/worldGen/spec/*.ts` (declarative `Rule[]` literals), `t
 
 ---
 
-## D. Puzzle state not following the DDD pattern (`docs/instructions/state-models.md`)
+## D. State not following the DDD pattern (`docs/instructions/state-models.md`)
 
-**2 findings.**
+**2 findings fixed, 4 new candidates exposed after broadening the rule beyond puzzle/trap families (2026-07-07).**
 
-### D1. `src/app/TombLevel/ComparePuzzle.tsx` + `src/app/TombLevel/useComparePuzzleControls.ts` — abandoned duplicate of Crocodile
+### D1. `src/app/TombLevel/ComparePuzzle.tsx` + `src/app/TombLevel/useComparePuzzleControls.ts` — abandoned duplicate of Crocodile — **fixed**
 
-A second, still-live implementation of the same comparison-puzzle mechanic that `src/game/crocodileState.ts` already models, and that `src/app/PuzzleFamilies/Crocodile/plugin.tsx` already consumes. This older file was never switched over — a partial/abandoned migration, not dead code (still rendered from `src/app/TombExpedition.tsx`).
+`useComparePuzzleControls.ts` now uses `previewLeft`/`commitLeft`/`previewRight`/`commitRight`/`advanceFocus`/`resetCrocodileState` from `src/game/puzzles/crocodile/crocodileState.ts`, same as the Crocodile plugin wrapper, instead of hand-duplicating the `{ focus, answers }` shape.
 
-- State shape (`useComparePuzzleControls.ts:22-24,93`) hand-duplicates `CrocodileState = { focus, answers }`:
-  ```ts
-  const [answers, setAnswers] = useState<{
-    [key: number]: "left" | "right" | "noneLeft" | "noneRight"
-  }>({})
-  const [focus, setFocus] = useState(0)
-  ```
-- Inline mutation instead of named actions (`useComparePuzzleControls.ts:159-162`), plus a manual double-reset (`handleIDontKnow`, lines 95-98) instead of `resetCrocodileState`.
-- Fix: replace with `previewLeft`/`commitLeft`/`previewRight`/`commitRight`/`advanceFocus`/`resetCrocodileState` from `src/game/crocodileState.ts`, same as the Crocodile plugin wrapper.
+### D2. `src/app/PyramidLevel/Level.tsx` — pyramid block answers never migrated — **fixed**
 
-### D2. `src/app/PyramidLevel/Level.tsx` — pyramid block answers never migrated
+`src/game/state.ts` gained `PyramidAnswers`, `createPyramidAnswers()`, and a `setBlockAnswer()` action (with spec coverage); `Level.tsx` now calls `setBlockAnswer()` instead of hand-rolled spreading.
 
-The core Pyramid Level fill-in-the-blanks puzzle stores in-progress answers as a block-id → value map in a plain storage-backed `useState` wrapper, mutated via hand-rolled spread.
+### D3. `src/app/state/useJourneys.ts` — journey progress, no domain module
 
-- State shape (`Level.tsx:16-19`):
-  ```ts
-  const [storedAnswers, setAnswers] = useGameStorage<{
-    key: string
-    values: Record<string, number | undefined>
-  }>("levelAnswers", { key: storageKey ?? "dummy", values: {} })
-  ```
-- Inline mutation (`Level.tsx:54-62`) spreads `prev.values` by hand instead of calling a named action.
-- `src/game/state.ts` already has the _check_ half of the pattern (`isComplete`, `isValid`, `getAnswers`, `getBlockChildIndices`) but no state type/factory/named actions (e.g. a `setBlockAnswer` action) — a half-migrated domain module, missing the action layer.
+State: `StoredJourneyStateV3[]` — array of nested objects, each with `exploredSections: Record<string, string[]>`, `disabledTraps?: string[]`, `skippedConsumables?: string[]`.
 
-### Checked, compliant — no action needed
+- 10+ functions (`startJourney`, `completeJourney`, `visitLevel`, `cancelJourney`, `completeLevel`, `markCellExplored`, `updatePosition`, `setInteriorLevel`, `markTrapDisabled`, `markConsumableSkipped`, `clearConsumableSkipped`) all do inline `setJourneys(prev => prev.map(j => j.journeyId === id ? {...j, ...} : j))` spread chains.
+- No `src/game/*State.ts` module backs this at all — clearest violation of the broadened rule (array + record-of-arrays, many distinct mutation kinds).
+- Previously marked "no complex inline mutation found" under the old puzzle-only rule — that call is superseded.
 
-`src/app/PuzzleFamilies/Sumplete/*`, `src/app/PuzzleFamilies/Crocodile/plugin.tsx`, `src/app/TombLevel/TombPuzzle.tsx` (Tableau) — correctly wired to their `src/game/*State.ts` modules. `src/app/TrapFamilies/ArithmeticReflex/plugin.tsx`, `PyramidLevel/LevelCompletionHandler.tsx`, `PyramidExpedition.tsx`, `TombExpedition.tsx`, `SiteMap/SiteMapScreen.tsx`, `SiteMap/SiteMapView.tsx`, `SiteMap/ChestRewardFlow.tsx` — local state found is flat primitives/booleans, exempt per state-models.md's "single primitive" carve-out. `src/app/SiteMap/useAssembledFloor.ts` — derived `useMemo` over domain-owned grid data, nothing to migrate. `src/app/state/useDetector.ts`, `useJourneys.ts`, `useProgression.ts` — no complex inline mutation found.
+### D4. `src/app/state/useProgression.ts` — 243-line state machine, no domain module
+
+State: `ProgressionState` — nested object with `collectedFragments: string[]`, `tombKeys: Record<string, true>`, `discoveredTombs: string[]`, `collectedMapPieces: Record<string, number>`, `mapPieceJourneys: string[]`, `consumables: {...}`, `perks: PerkState` (7 fields).
+
+- ~15 API methods (`addTombKey`, `applyTreasurePerk`, `discoverTomb`, `collectMapPiece`, `markMapPieceFound`, `takeTrapDamage`, `heal`, `addConsumable`, `useConsumable`, etc.) each do inline `setState(prev => ({...prev, nested: {...prev.nested, ...}}))`, including a large `switch` inside `applyTreasurePerk`.
+- Same "no complex inline mutation found" call as D3, now superseded.
+
+### D5. `src/app/Inventory/useInventory.ts` — inventory counts, no domain module
+
+State: `Record<string, number>`.
+
+- `addItem`, `removeItem`, `addItems`, `removeItems` each hand-roll `setInventory(prev => ({...prev, [id]: ...}))` or a manual loop-copy for the batch versions — a Record with multiple entries and multiple distinct mutation kinds (add/remove/batch-add/batch-remove).
+- Consumed by `useComparePuzzleControls.ts` and `TombPuzzle.tsx`.
+
+### D6. `src/app/TombLevel/TombPuzzle.tsx` — `annotations` state (minor)
+
+State: `useState<Record<string, string>>({})`, separate from the already-compliant Tableau puzzle domain state (`createTableauPuzzleState`/`toggleTableauTile`) in the same file.
+
+- Single `handleAnnotationChange` does `setAnnotations(prev => ({...prev, [symbolId]: value}))`.
+- Technically a Record with multiple entries per the rule, but only one mutation kind exists — lowest priority of the four, candidate for folding into the same domain module or documenting as an accepted exception.
+
+### Checked, still compliant — no action needed
+
+`src/app/PuzzleFamilies/Sumplete/*`, `src/app/PuzzleFamilies/Crocodile/plugin.tsx`, `src/app/TombLevel/TombPuzzle.tsx`'s puzzle state (Tableau, not its `annotations` — see D6) — correctly wired to their `src/game/*State.ts` modules. `src/app/state/useDetector.ts` — two independent flat `useState` (`DetectorMode`, `compassTarget`), rest derived via `useMemo`. `src/app/SiteMap/SiteMapScreen.tsx`'s `pendingReward` — always replaced wholesale, never incrementally spread. `src/app/TrapFamilies/ArithmeticReflex/plugin.tsx`, `PyramidLevel/LevelCompletionHandler.tsx`, `PyramidExpedition.tsx`, `TombExpedition.tsx`, `SiteMap/SiteMapView.tsx`, `SiteMap/ChestRewardFlow.tsx`, `FezCompanion.tsx`, `Travel.tsx`, `Collection.tsx`, `usePyramidNavigation.ts`, `ExplorerDot.tsx` — flat primitives/whole-value replacement, exempt per state-models.md's "single primitive" carve-out. `src/app/SiteMap/useAssembledFloor.ts` — derived `useMemo` over domain-owned grid data, nothing to migrate. `src/support/useGameStorage.ts`/`useOfflineStorage.ts` — generic persistence wrappers, not domain logic themselves (though they're the mechanism storing D3–D5's non-compliant state).
+
+Priority order for remediation: D3 (`useJourneys`) > D4 (`useProgression`) > D5 (`useInventory`) > D6 (`TombPuzzle` annotations).
 
 ---
 
 ## Summary
 
-| Category                        | Findings                                                                 |
-| ------------------------------- | ------------------------------------------------------------------------ |
-| A — Layer boundary violations   | ~44 (12 ui/, 2 game+data, 30 pre-existing app/ className — low priority) |
-| B — Missing Storybook stories   | 0                                                                        |
-| C — Missing tests               | 26 (17 game/data, 5 support, 2 worldGen, 1 app/state, 1 Logic/Calc)      |
-| D — DDD puzzle-state violations | 2 (ComparePuzzle/Crocodile duplicate, PyramidLevel Level.tsx)            |
+| Category                      | Findings                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| A — Layer boundary violations | ~44 (12 ui/, 2 game+data, 30 pre-existing app/ className — low priority)            |
+| B — Missing Storybook stories | 0                                                                                   |
+| C — Missing tests             | 26 (17 game/data, 5 support, 2 worldGen, 1 app/state, 1 Logic/Calc)                 |
+| D — DDD state violations      | 2 fixed + 4 new (useJourneys, useProgression, useInventory, TombPuzzle annotations) |
 
-Previously highest-signal items — the `src/data/use*Translations.ts` React/i18n hooks in the domain layer, the `src/game/` ↔ `src/app/Formulas/formulas.ts` dependency cycle, and `src/game/random.ts` having zero tests — are now resolved. Remaining highest-signal items: the two D-category findings (both concrete, scoped refactors following an existing template).
+Previously highest-signal items — the `src/data/use*Translations.ts` React/i18n hooks in the domain layer, the `src/game/` ↔ `src/app/Formulas/formulas.ts` dependency cycle, and `src/game/random.ts` having zero tests — are now resolved. Remaining highest-signal items: D3/D4 (`useJourneys`, `useProgression`), the largest and most load-bearing state modules still missing domain actions.

@@ -1,7 +1,45 @@
-import { getAnswers, getBlockChildIndices, isComplete, isValid } from "@/game/state"
+import {
+  createPyramidAnswers,
+  getAnswers,
+  getBlockChildIndices,
+  isComplete,
+  isValid,
+  setBlockAnswer,
+} from "@/game/state"
 import { describe, it, expect } from "vitest"
 import type { PyramidLevel } from "@/game/types"
 import { createPyramid } from "@/game/test-utils/pyramidfactory"
+
+describe(createPyramidAnswers, () => {
+  it("starts empty", () => {
+    expect(createPyramidAnswers()).toEqual({})
+  })
+})
+
+describe(setBlockAnswer, () => {
+  it("sets a block's value", () => {
+    const state = setBlockAnswer(createPyramidAnswers(), "1", 5)
+    expect(state).toEqual({ "1": 5 })
+  })
+
+  it("does not mutate the previous state", () => {
+    const state = createPyramidAnswers()
+    setBlockAnswer(state, "1", 5)
+    expect(state).toEqual({})
+  })
+
+  it("keeps other blocks' values", () => {
+    const state = setBlockAnswer(createPyramidAnswers(), "1", 5)
+    const next = setBlockAnswer(state, "2", 7)
+    expect(next).toEqual({ "1": 5, "2": 7 })
+  })
+
+  it("can clear a block's value", () => {
+    const state = setBlockAnswer(createPyramidAnswers(), "1", 5)
+    const next = setBlockAnswer(state, "1", undefined)
+    expect(next).toEqual({ "1": undefined })
+  })
+})
 
 describe(isComplete, () => {
   it("returns true when all open blocks have corresponding values", () => {
