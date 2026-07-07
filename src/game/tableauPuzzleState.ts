@@ -43,7 +43,5 @@ export const toggleTableauTile = produce(
   }
 )
 
-export const isTableauPuzzleCompleted = (
-  state: TableauPuzzleState,
-  targetCounts: Record<string, number>
-): boolean => Object.entries(targetCounts).every(([symbolId, maxNeeded]) => state.symbolCounts[symbolId] === maxNeeded)
+export const isTableauPuzzleCompleted = (state: TableauPuzzleState, targetCounts: Record<string, number>): boolean =>
+  Object.entries(targetCounts).every(([symbolId, maxNeeded]) => state.symbolCounts[symbolId] === maxNeeded)

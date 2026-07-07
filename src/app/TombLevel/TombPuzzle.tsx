@@ -115,9 +115,7 @@ export const TombPuzzle: FC<{
   const handleTileClick = (symbolId: string, position: string) => {
     // Don't allow removal if puzzle is completed
     if (filledPositions[position] > 0 && isPuzzleCompleted) return
-    setState(prev =>
-      toggleTableauTile(prev, symbolId, position, calculation.symbolCounts, inventory[symbolId] || 0)
-    )
+    setState(prev => toggleTableauTile(prev, symbolId, position, calculation.symbolCounts, inventory[symbolId] || 0))
   }
 
   // Helper function to find all empty positions for a given symbol
