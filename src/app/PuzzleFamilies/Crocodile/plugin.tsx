@@ -1,8 +1,8 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { type FC, useCallback, useState } from "react"
-import { registerPuzzle } from "@/game/puzzleRegistry"
+import { registerPuzzle } from "@/game/puzzles/puzzleRegistry"
 import { mulberry32 } from "@/game/random"
-import { generateCompareLevel, type CompareLevel } from "@/game/generateCompareLevel"
+import { generateCompareLevel, type CompareLevel } from "@/game/puzzles/crocodile/generateCompareLevel"
 import {
   advanceFocus,
   commitLeft,
@@ -11,8 +11,8 @@ import {
   previewLeft,
   previewRight,
   resetCrocodileState,
-} from "@/game/crocodileState"
-import type { PuzzleSettings } from "@/game/puzzlePlugin"
+} from "@/game/puzzles/crocodile/crocodileState"
+import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
 import type { Operation } from "@/app/Formulas/formulas"
 import { formulaToString } from "@/app/Formulas/formulas"
 import { NumberChest } from "@/ui/molecules/NumberChest"

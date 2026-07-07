@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
 import type { ArithmeticQuestion } from "@/app/TrapFamilies/ArithmeticReflex/plugin"
 import "@/app/TrapFamilies/ArithmeticReflex/plugin"
-import { getTrapPlugin } from "@/game/trapRegistry"
+import { getTrapPlugin } from "@/game/traps/trapRegistry"
 import type { Difficulty } from "@/data/difficultyLevels"
 
 const generate = (seed: number, difficulty: Difficulty) =>

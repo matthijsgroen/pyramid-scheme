@@ -4,8 +4,8 @@ import {
   generateRewardCalculation,
   type RewardCalculationSettings,
 } from "./generateRewardCalculation"
-import { mulberry32 } from "./random"
-import { formulaToString } from "../app/Formulas/formulas"
+import { mulberry32 } from "@/game/random"
+import { formulaToString } from "@/app/Formulas/formulas"
 
 describe(generateRewardCalculation, () => {
   it("generates a reward calculation with unique symbols", () => {
@@ -231,9 +231,9 @@ describe(generateRewardCalculation, () => {
   })
 
   describe("maxMultiplyOperandResult", () => {
-    const collectMultiplyOperands = (formula: import("../app/Formulas/formulas").Formula): number[] => {
+    const collectMultiplyOperands = (formula: import("@/app/Formulas/formulas").Formula): number[] => {
       const results: number[] = []
-      const visit = (node: number | import("../app/Formulas/formulas").Formula | { symbol: number }) => {
+      const visit = (node: number | import("@/app/Formulas/formulas").Formula | { symbol: number }) => {
         if (typeof node === "number" || "symbol" in node) return
         if (node.operation === "*") {
           results.push(

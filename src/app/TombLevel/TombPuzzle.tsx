@@ -1,13 +1,17 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { TableauLevel } from "@/data/tableaus"
-import { type RewardCalculation } from "@/game/generateRewardCalculation"
+import { type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { revealText } from "@/support/revealText"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useProgression } from "@/app/state/useProgression"
-import { createTableauPuzzleState, isTableauPuzzleCompleted, toggleTableauTile } from "@/game/tableauPuzzleState"
+import {
+  createTableauPuzzleState,
+  isTableauPuzzleCompleted,
+  toggleTableauTile,
+} from "@/game/puzzles/tableau/tableauPuzzleState"
 import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"

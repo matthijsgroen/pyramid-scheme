@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
-import { generateSumplete } from "@/game/generateSumplete"
-import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "@/game/sumpleteStatus"
-import { createSumpleteState, toggleSumpleteCell, type SumpleteCellState } from "@/game/sumpleteState"
+import { generateSumplete } from "@/game/puzzles/sumplete/generateSumplete"
+import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "@/game/puzzles/sumplete/sumpleteStatus"
+import { createSumpleteState, toggleSumpleteCell, type SumpleteCellState } from "@/game/puzzles/sumplete/sumpleteState"
 import { SumpleteBoard } from "./SumpleteBoard"
 
 const meta = {

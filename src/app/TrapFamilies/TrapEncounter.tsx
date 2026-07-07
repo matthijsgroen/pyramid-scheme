@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { getTrapPlugin } from "@/game/trapRegistry"
-import { TRAP_TIME_LIMITS_SECONDS, TRAP_TIME_EXTENSION_PER_INSIGHT_STACK } from "@/game/trapConfig"
+import { getTrapPlugin } from "@/game/traps/trapRegistry"
+import { TRAP_TIME_LIMITS_SECONDS, TRAP_TIME_EXTENSION_PER_INSIGHT_STACK } from "@/game/traps/trapConfig"
 // Side-effect: registers trap plugins
 import "./ArithmeticReflex/plugin"
 

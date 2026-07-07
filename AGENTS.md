@@ -24,6 +24,8 @@ src/
 ├── app/          # App shell, pages, routing, state management, expedition logic
 ├── data/         # Game data definitions and translation hooks
 ├── game/         # Pure game logic: puzzle generation, rewards, randomization
+│   ├── puzzles/      # Puzzle family folders (sumplete/, crocodile/, tableau/) + shared plugin/registry
+│   └── traps/        # Trap plugin/registry + per-family trap infra
 ├── ui/           # Reusable themed UI components + Storybook stories
 │   ├── principles/   # Design-token/foundation docs (colors, spacing, typography)
 │   ├── atoms/        # Leaf components — render no other src/ui component
@@ -96,7 +98,7 @@ Code is split into three layers with strict one-way dependencies (domain ← app
 
 ### 9. Puzzle State Models
 
-Any puzzle family with non-trivial in-progress state (a grid, marks, a partial solution) gets its state modeled in `src/game/` as a domain object: a state type + factory, named action functions that mutate via immer, and plain query functions for checks (win state, line status, etc.). See **[`docs/instructions/state-models.md`](docs/instructions/state-models.md)** — Sumplete (`src/game/sumpleteState.ts`) is the reference implementation.
+Any puzzle family with non-trivial in-progress state (a grid, marks, a partial solution) gets its state modeled in `src/game/` as a domain object: a state type + factory, named action functions that mutate via immer, and plain query functions for checks (win state, line status, etc.). See **[`docs/instructions/state-models.md`](docs/instructions/state-models.md)** — Sumplete (`src/game/puzzles/sumplete/sumpleteState.ts`) is the reference implementation.
 
 ---
 
@@ -228,17 +230,17 @@ Deeper design docs live in `docs/`:
 
 ## Key Files Quick Reference
 
-| File                                    | Purpose                                |
-| --------------------------------------- | -------------------------------------- |
-| `src/game/random.ts`                    | Seeded random number generation        |
-| `src/game/generateLevel.ts`             | Core puzzle level generation           |
-| `src/game/generateRewardCalculation.ts` | Reward/loot calculation logic          |
-| `src/data/journeys.ts`                  | All pyramid expedition definitions     |
-| `src/data/tableaus.ts`                  | Tableau (puzzle blueprint) definitions |
-| `src/data/difficultyLevels.ts`          | Difficulty scaling configuration       |
-| `src/data/hieroglyphs.ts`               | Hieroglyph symbol definitions          |
-| `src/data/inventory.ts`                 | Inventory item definitions             |
-| `src/data/treasures.ts`                 | Treasure/tomb definitions              |
-| `public/locales/en/common.json`         | English UI translations                |
-| `public/locales/nl/common.json`         | Dutch UI translations                  |
-| `.github/copilot-instructions.md`       | GitHub Copilot-specific instructions   |
+| File                                                    | Purpose                                |
+| ------------------------------------------------------- | -------------------------------------- |
+| `src/game/random.ts`                                    | Seeded random number generation        |
+| `src/game/generateLevel.ts`                             | Core puzzle level generation           |
+| `src/game/puzzles/tableau/generateRewardCalculation.ts` | Reward/loot calculation logic          |
+| `src/data/journeys.ts`                                  | All pyramid expedition definitions     |
+| `src/data/tableaus.ts`                                  | Tableau (puzzle blueprint) definitions |
+| `src/data/difficultyLevels.ts`                          | Difficulty scaling configuration       |
+| `src/data/hieroglyphs.ts`                               | Hieroglyph symbol definitions          |
+| `src/data/inventory.ts`                                 | Inventory item definitions             |
+| `src/data/treasures.ts`                                 | Treasure/tomb definitions              |
+| `public/locales/en/common.json`                         | English UI translations                |
+| `public/locales/nl/common.json`                         | Dutch UI translations                  |
+| `.github/copilot-instructions.md`                       | GitHub Copilot-specific instructions   |

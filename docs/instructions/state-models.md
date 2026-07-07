@@ -2,13 +2,22 @@
 
 For any puzzle family with non-trivial in-progress state (a grid of cell
 states, marks, a partial solution — Sumplete, and future families like it),
-model that state as a domain object in `src/game/`, independent of React.
-Sumplete is the reference implementation (`src/game/sumpleteState.ts`,
-`src/game/sumpleteStatus.ts`).
+model that state as a domain object in `src/game/puzzles/<family>/`,
+independent of React. Sumplete is the reference implementation
+(`src/game/puzzles/sumplete/sumpleteState.ts`,
+`src/game/puzzles/sumplete/sumpleteStatus.ts`).
+
+## Where it lives
+
+Each puzzle family gets its own folder under `src/game/puzzles/`, holding its
+generation, state, and checks together: `src/game/puzzles/<family>/`. Shared
+puzzle infra (`puzzlePlugin.ts`, `puzzleRegistry.ts`) stays directly under
+`src/game/puzzles/`, not inside a family folder. Trap families follow the
+same idea under `src/game/traps/`.
 
 ## Shape
 
-Split into three pieces, all pure TypeScript, all in `src/game/`:
+Split into three pieces, all pure TypeScript, all in the family's folder:
 
 1. **State type** — `type FooState = { ... }` plus a `createFooState(...)`
    factory. This is the whole shape of "what's true about a puzzle in
