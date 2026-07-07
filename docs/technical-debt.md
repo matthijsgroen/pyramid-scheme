@@ -17,13 +17,13 @@ Rule: `src/ui/` components must be stateless — no `useState`, `useEffect`, or 
 
 Production components (highest priority — these ship):
 
-| File | Violation |
-|---|---|
-| `src/ui/molecules/HieroglyphUnlockPanel.tsx` | Imports `useState`; two `useState()` calls |
-| `src/ui/molecules/InputBlock.tsx` | Imports `useEffect`; two `useEffect()` calls |
-| `src/ui/atoms/LootPopup.tsx` | Imports `useState`/`useEffect`; `useState(false)`, `useState("hidden")`, two `useEffect()` calls |
+| File                                         | Violation                                                                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `src/ui/molecules/HieroglyphUnlockPanel.tsx` | Imports `useState`; two `useState()` calls                                                       |
+| `src/ui/molecules/InputBlock.tsx`            | Imports `useEffect`; two `useEffect()` calls                                                     |
+| `src/ui/atoms/LootPopup.tsx`                 | Imports `useState`/`useEffect`; `useState(false)`, `useState("hidden")`, two `useEffect()` calls |
 
-Storybook files under `src/ui/` (lower priority — storybook.md explicitly allows local `useState` in *stories*, so these are likely false positives against architecture.md, not real violations — flagged for triage):
+Storybook files under `src/ui/` (lower priority — storybook.md explicitly allows local `useState` in _stories_, so these are likely false positives against architecture.md, not real violations — flagged for triage):
 
 - `src/ui/molecules/NumberChest.stories.tsx`
 - `src/ui/atoms/StainedGlassMosaic.stories.tsx`
@@ -39,28 +39,28 @@ Rule: no React/DOM imports, no imports from `src/app/` or `src/ui/`.
 
 Real runtime React/i18n dependencies in `src/data/` (highest severity — hooks, not stray types):
 
-| File | Violation |
-|---|---|
-| `src/data/useTableauTranslations.ts` | `useTranslation("tableaus")` hook |
-| `src/data/useInventoryTranslations.ts` | `useTranslation("inventory")` hook |
-| `src/data/useJourneyTranslations.ts` | `useTranslation("journeys")`/`useTranslation("common")` hooks |
-| `src/data/useTreasureTranslations.ts` | `useTranslation("treasures")` hook |
+| File                                   | Violation                                                     |
+| -------------------------------------- | ------------------------------------------------------------- |
+| `src/data/useTableauTranslations.ts`   | `useTranslation("tableaus")` hook                             |
+| `src/data/useInventoryTranslations.ts` | `useTranslation("inventory")` hook                            |
+| `src/data/useJourneyTranslations.ts`   | `useTranslation("journeys")`/`useTranslation("common")` hooks |
+| `src/data/useTreasureTranslations.ts`  | `useTranslation("treasures")` hook                            |
 
 Type-only React imports in `src/game/` (lower severity — no runtime dependency, but still a literal rule violation):
 
-| File | Violation |
-|---|---|
-| `src/game/trapPlugin.ts:1` | `import type { FC } from "react"` for a `Component: FC<...>` field |
-| `src/game/puzzlePlugin.ts:1` | Same pattern |
+| File                         | Violation                                                          |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `src/game/trapPlugin.ts:1`   | `import type { FC } from "react"` for a `Component: FC<...>` field |
+| `src/game/puzzlePlugin.ts:1` | Same pattern                                                       |
 
 Cross-layer dependency cycle — `src/game/` importing from `src/app/`:
 
-| File | Violation |
-|---|---|
-| `src/game/generateCompareLevel.ts:1` | Imports `createVerifiedFormula`, `Formula`, `Operation` from `../app/Formulas/formulas` |
-| `src/game/generateRewardCalculation.ts:8` | Same import target |
-| `src/game/generateCompareLevel.spec.ts` | Same import |
-| `src/game/generateRewardCalculation.spec.ts` | Same import |
+| File                                         | Violation                                                                               |
+| -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `src/game/generateCompareLevel.ts:1`         | Imports `createVerifiedFormula`, `Formula`, `Operation` from `../app/Formulas/formulas` |
+| `src/game/generateRewardCalculation.ts:8`    | Same import target                                                                      |
+| `src/game/generateCompareLevel.spec.ts`      | Same import                                                                             |
+| `src/game/generateRewardCalculation.spec.ts` | Same import                                                                             |
 
 Most notable finding in category A: `src/app/Formulas/formulas.ts` contains what is really domain logic (`createVerifiedFormula`, `formulaToString`, `Formula`/`Operation` types) but lives under `src/app/`, while `src/game/` depends on it back — an actual upward-then-downward dependency cycle (`formulas.ts` itself imports `src/game/random`). Recommended fix: relocate `Formulas/` into `src/game/` or `src/data/`.
 
@@ -177,35 +177,15 @@ Skipped as trivial: `src/worldGen/spec/*.ts` (declarative `Rule[]` literals), `t
 
 ## D. Puzzle state not following the DDD pattern (`docs/instructions/state-models.md`)
 
-**2 findings.**
+**2 findings — both fixed.**
 
-### D1. `src/app/TombLevel/ComparePuzzle.tsx` + `src/app/TombLevel/useComparePuzzleControls.ts` — abandoned duplicate of Crocodile
+### D1. `src/app/TombLevel/ComparePuzzle.tsx` + `src/app/TombLevel/useComparePuzzleControls.ts` — abandoned duplicate of Crocodile — **fixed**
 
-A second, still-live implementation of the same comparison-puzzle mechanic that `src/game/crocodileState.ts` already models, and that `src/app/PuzzleFamilies/Crocodile/plugin.tsx` already consumes. This older file was never switched over — a partial/abandoned migration, not dead code (still rendered from `src/app/TombExpedition.tsx`).
+`useComparePuzzleControls.ts` now uses `previewLeft`/`commitLeft`/`previewRight`/`commitRight`/`advanceFocus`/`resetCrocodileState` from `src/game/puzzles/crocodile/crocodileState.ts`, same as the Crocodile plugin wrapper, instead of hand-duplicating the `{ focus, answers }` shape.
 
-- State shape (`useComparePuzzleControls.ts:22-24,93`) hand-duplicates `CrocodileState = { focus, answers }`:
-  ```ts
-  const [answers, setAnswers] = useState<{
-    [key: number]: "left" | "right" | "noneLeft" | "noneRight"
-  }>({})
-  const [focus, setFocus] = useState(0)
-  ```
-- Inline mutation instead of named actions (`useComparePuzzleControls.ts:159-162`), plus a manual double-reset (`handleIDontKnow`, lines 95-98) instead of `resetCrocodileState`.
-- Fix: replace with `previewLeft`/`commitLeft`/`previewRight`/`commitRight`/`advanceFocus`/`resetCrocodileState` from `src/game/crocodileState.ts`, same as the Crocodile plugin wrapper.
+### D2. `src/app/PyramidLevel/Level.tsx` — pyramid block answers never migrated — **fixed**
 
-### D2. `src/app/PyramidLevel/Level.tsx` — pyramid block answers never migrated
-
-The core Pyramid Level fill-in-the-blanks puzzle stores in-progress answers as a block-id → value map in a plain storage-backed `useState` wrapper, mutated via hand-rolled spread.
-
-- State shape (`Level.tsx:16-19`):
-  ```ts
-  const [storedAnswers, setAnswers] = useGameStorage<{
-    key: string
-    values: Record<string, number | undefined>
-  }>("levelAnswers", { key: storageKey ?? "dummy", values: {} })
-  ```
-- Inline mutation (`Level.tsx:54-62`) spreads `prev.values` by hand instead of calling a named action.
-- `src/game/state.ts` already has the *check* half of the pattern (`isComplete`, `isValid`, `getAnswers`, `getBlockChildIndices`) but no state type/factory/named actions (e.g. a `setBlockAnswer` action) — a half-migrated domain module, missing the action layer.
+`src/game/state.ts` gained `PyramidAnswers`, `createPyramidAnswers()`, and a `setBlockAnswer()` action (with spec coverage); `Level.tsx` now calls `setBlockAnswer()` instead of hand-rolled spreading.
 
 ### Checked, compliant — no action needed
 
@@ -215,11 +195,11 @@ The core Pyramid Level fill-in-the-blanks puzzle stores in-progress answers as a
 
 ## Summary
 
-| Category | Findings |
-|---|---|
-| A — Layer boundary violations | ~49 (12 ui/, 7 game+data, 30 pre-existing app/ className — low priority) |
-| B — Missing Storybook stories | 0 |
-| C — Missing tests | 27 (18 game/data, 5 support, 2 worldGen, 1 app/state, 1 Logic/Calc) |
-| D — DDD puzzle-state violations | 2 (ComparePuzzle/Crocodile duplicate, PyramidLevel Level.tsx) |
+| Category                        | Findings                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------ |
+| A — Layer boundary violations   | ~49 (12 ui/, 7 game+data, 30 pre-existing app/ className — low priority) |
+| B — Missing Storybook stories   | 0                                                                        |
+| C — Missing tests               | 27 (18 game/data, 5 support, 2 worldGen, 1 app/state, 1 Logic/Calc)      |
+| D — DDD puzzle-state violations | 2 (ComparePuzzle/Crocodile duplicate, PyramidLevel Level.tsx)            |
 
 Highest-signal items for prioritization: the `src/data/use*Translations.ts` files (4 files, real React/i18n hooks in the domain layer — breaks both A and C simultaneously), the `src/game/` ↔ `src/app/Formulas/formulas.ts` dependency cycle (architectural, not just a lint nit), `src/game/random.ts` having zero tests despite being the seed backbone for the entire generated world, and the two D-category findings (both are concrete, scoped refactors following an existing template).

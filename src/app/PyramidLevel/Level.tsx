@@ -1,7 +1,7 @@
 import { type FC, useEffect, useRef } from "react"
 import type { PyramidLevel } from "@/game/types"
 import { PyramidDisplay } from "@/app/PyramidLevel/PyramidDisplay"
-import { isValid } from "@/game/state"
+import { createPyramidAnswers, isValid, setBlockAnswer, type PyramidAnswers } from "@/game/state"
 import { useGameStorage } from "@/support/useGameStorage"
 import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 
@@ -15,8 +15,8 @@ export const Level: FC<{
 }> = ({ content, storageKey, onComplete, decorationOffset = 0, dayTime, entranceBlockId }) => {
   const [storedAnswers, setAnswers] = useGameStorage<{
     key: string
-    values: Record<string, number | undefined>
-  }>("levelAnswers", { key: storageKey ?? "dummy", values: {} })
+    values: PyramidAnswers
+  }>("levelAnswers", { key: storageKey ?? "dummy", values: createPyramidAnswers() })
 
   const answers = storedAnswers.key === storageKey && storageKey ? storedAnswers.values : {}
 
@@ -52,13 +52,8 @@ export const Level: FC<{
             storageKey
               ? (blockId: string, value: number | undefined) => {
                   setAnswers(prev => {
-                    if (prev.key !== storageKey) {
-                      return { key: storageKey, values: { [blockId]: value } }
-                    }
-                    return {
-                      key: storageKey,
-                      values: { ...prev.values, [blockId]: value },
-                    }
+                    const values = prev.key === storageKey ? prev.values : createPyramidAnswers()
+                    return { key: storageKey, values: setBlockAnswer(values, blockId, value) }
                   })
                 }
               : undefined

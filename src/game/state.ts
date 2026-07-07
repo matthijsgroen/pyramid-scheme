@@ -1,4 +1,13 @@
+import { produce } from "immer"
 import type { Pyramid, PyramidLevel } from "@/game/types"
+
+export type PyramidAnswers = Record<string, number | undefined>
+
+export const createPyramidAnswers = (): PyramidAnswers => ({})
+
+export const setBlockAnswer = produce((state: PyramidAnswers, blockId: string, value: number | undefined) => {
+  state[blockId] = value
+})
 
 export const isComplete = (state: PyramidLevel): boolean => {
   const openBlocks = state.pyramid.blocks.filter(block => block.isOpen).map(block => block.id)
