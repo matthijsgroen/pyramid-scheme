@@ -524,3 +524,70 @@ conversation.
 4. **Which families output values for carry-forward** beyond the obvious spine
    set — e.g. should a Sumplete grid expose a derived number (count of kept cells)
    so it *can* occasionally feed a corridor, or stay strictly a side family?
+
+---
+
+## 11. Theme fit & weight classification
+
+Two things every family needs beyond its curriculum-tier slot (§7): which
+**visual/narrative theme(s)** it can wear (a family isn't locked to one theme —
+most fit several), and how much **authoring weight** it costs a floor's content
+budget, since solve time varies wildly across families (§3.2, §8).
+
+### 11.1 Theme taxonomy
+
+Named so far (some already in use elsewhere in the docs — `worldgen-dsl-
+redesign.md` has "merchant"/"night-market" as live `theme` string examples):
+
+| Theme | Flavor | Families that fit |
+|---|---|---|
+| **Sun & Sky** | sun-god, celestial, daylight | Sundial, clock-arithmetic, mirror/lightbeam, Eye of Horus (Horus = sky/sun god) |
+| **Water & Nile** | flooding, irrigation, the river | Water clock — currently the *only* member, see gap note below |
+| **Merchant / Market** | trade, weighing goods, bartering | Balance scale, Sokoban (moving cargo), target-number (haggling to a price) |
+| **Logistics / Caravan** | moving things through constrained space | Sokoban, Rush Hour |
+| **Scribe / Inscription** | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions) |
+| **Tomb / Burial Logic** | funerary glyphs, wall art, sealed chambers | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro |
+| **Night & Stars** | decans, star-clock, nocturnal | Clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion) |
+| **Sacred Geometry / Ritual** | temple art, sanctuary lighting | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above) |
+
+**Gap:** Water & Nile has exactly one family. Two directions to fill it: a
+water-pouring/vessel-transfer puzzle (classic "water jug problem," spine —
+outputs a volume) or a Nile-flood timing puzzle riffing on water clock's
+duration mechanic but with a different UI. Not designed — flagging the gap,
+not proposing a fix yet.
+
+**Weakest theme by family count, not counting the flagged gap:** Water & Nile
+(1). Everything else has 3+, so it's the one worth deliberately filling if a
+gap ever needs plugging (e.g. wanting a puzzle to round out a "river journey"
+stretch of a pyramid).
+
+### 11.2 Weight (authoring budget, derived from §6/§8 solve-time data)
+
+Weight is a rough *how much of a floor's puzzle budget does one instance cost*
+signal — not difficulty. A high-weight family should be rarer per floor and
+never gate the critical path (§8's pacing rule already says this for the
+long-pole families; this table just makes the number explicit for every family
+so it can be used when authoring density knobs).
+
+| Family | Solve time (§6) | Weight |
+|---|---|---|
+| Cross-sum | 15–60s | **Low** |
+| Sundial | 15–60s | **Low** |
+| Eye of Horus fractions | 15–60s | **Low** |
+| Symmetry | 15–45s | **Low** |
+| Sequence | 15–45s | **Low** |
+| Egyptian doubling | 20–60s | **Low** |
+| Balance scale | 20–90s | **Low–Med** |
+| Water clock | 30–90s | **Med** |
+| Clock-arithmetic | 30–90s | **Med** |
+| Target-number | 30–90s | **Med** |
+| Sumplete | med–high, no fixed ceiling | **Med–High** |
+| Glyph Latin-square | 1–6 min, **high variance** | **High** |
+| Kakuro | 2–8 min | **High** |
+| Nonogram | 3–15+ min, **very high variance** | **Very High** |
+| Mirror/lightbeam | not yet measured (unbuilt) | **TBD — estimate Low–Med**, pending real solve-time data once built |
+| Sokoban | not yet measured (unbuilt) | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes |
+| Rush Hour | not yet measured (unbuilt) | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most |
+
+Once mirror/lightbeam, Sokoban, and Rush Hour are built, replace the TBD rows
+with real telemetry (§8) rather than trusting the estimate.
