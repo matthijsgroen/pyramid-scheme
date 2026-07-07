@@ -22,6 +22,7 @@ import type {
   SideIntensity,
   KeyColor,
   PathEntry,
+  PathPuzzlesRange,
 } from "./dsl"
 import { mulberry32 } from "../game/random"
 
@@ -47,11 +48,17 @@ const SECONDARY_TOMBS: Record<string, string[]> = {
 
 // ── Path puzzle scaling ───────────────────────────────────────────────────────
 
-const scalePP = (basePP: number, i: number, total: number): number => {
-  if (total <= 1) return basePP
-  const t = i / (total - 1)
-  return Math.max(1, Math.round(basePP - 1 + t * 2))
-}
+const isPathPuzzlesRange = (v: unknown): v is PathPuzzlesRange =>
+  typeof v === "object" && v !== null && "start" in v && "end" in v
+
+// Linear interpolation from range.start (pyramid 0) to range.end (the journey's last
+// pyramid) — the only place puzzle counts vary across a journey without being spelled
+// out one pyramid at a time. A bare number is never scaled; only an authored range is.
+const interpolatePathPuzzles = (range: PathPuzzlesRange, i: number, total: number): number =>
+  total <= 1 ? range.start : Math.round(range.start + (i / (total - 1)) * (range.end - range.start))
+
+const resolvePathPuzzles = (value: number | PathPuzzlesRange, i: number, total: number): number =>
+  isPathPuzzlesRange(value) ? interpolatePathPuzzles(value, i, total) : value
 
 // ── Reward resolution ─────────────────────────────────────────────────────────
 
@@ -345,8 +352,12 @@ const buildPlan = (): PyramidPlan[] =>
         i,
         j.levelCount
       )
-      const basePP =
-        constraint.pathPuzzles !== undefined && typeof constraint.pathPuzzles === "number"
+      // A bare number is always literal, no matter which scope authored it — a plain
+      // pathPuzzles constraint never implicitly varies across a journey's pyramids. Only
+      // an explicit PathPuzzlesRange spreads a count from its first to its last pyramid;
+      // PathPuzzlesPreset strings aren't resolved anywhere yet, so fall back like unset.
+      const pathPuzzlesValue: number | PathPuzzlesRange =
+        typeof constraint.pathPuzzles === "number" || isPathPuzzlesRange(constraint.pathPuzzles)
           ? constraint.pathPuzzles
           : j.pathPuzzles
       return {
@@ -354,7 +365,7 @@ const buildPlan = (): PyramidPlan[] =>
         tier: j.tier as Tier,
         pyramidIndex: i,
         levelCount: j.levelCount,
-        pathPuzzles: scalePP(basePP, i, j.levelCount),
+        pathPuzzles: resolvePathPuzzles(pathPuzzlesValue, i, j.levelCount),
         constraint,
         provenance,
       }
@@ -447,6 +458,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
           const floorStraightness = fc.corridorStraightness ?? constraint.corridorStraightness
+          const floorPacking = fc.packing ?? constraint.packing
           floorConfigs.push({
             pathPuzzles: floorPP,
             chestEvery: chestEveryFor(floorPP),
@@ -458,6 +470,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             ...(floorChests.length > 0 ? { chestRewards: floorChests } : {}),
             ...(fc.decorations?.length ? { decorations: fc.decorations } : {}),
             ...(floorStraightness !== undefined ? { corridorStraightness: floorStraightness } : {}),
+            ...(floorPacking !== undefined ? { packing: floorPacking } : {}),
           } satisfies FloorConfig)
         }
         pyramidConfigs.push(floorConfigs)
@@ -497,6 +510,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             ...(constraint.corridorStraightness !== undefined
               ? { corridorStraightness: constraint.corridorStraightness }
               : {}),
+            ...(constraint.packing !== undefined ? { packing: constraint.packing } : {}),
           } satisfies FloorConfig,
         ])
       }
@@ -613,6 +627,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
           : []
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
+      const packing = authored?.packing ?? constraint.packing
 
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,
@@ -627,6 +642,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         ...(mainEndReward ? { mainEndReward } : {}),
         ...(authored?.decorations?.length ? { decorations: authored.decorations } : {}),
         ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
+        ...(packing !== undefined ? { packing } : {}),
       }
     })
 

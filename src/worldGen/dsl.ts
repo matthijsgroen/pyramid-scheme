@@ -1,5 +1,7 @@
-import type { Tier, Difficulty } from "./types"
+import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind } from "../game/siteTypes"
+
+export type { PathPuzzlesRange } from "./types"
 
 // ── Constraint vocabulary ─────────────────────────────────────────────────────
 
@@ -41,6 +43,8 @@ export type FloorConstraint<TExtra extends string = never> = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
+  /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
+  packing?: number
   mainEndReward?: RewardHint | TExtra
   chestReward?: RewardHint | TExtra
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
@@ -67,7 +71,9 @@ export type FloorConstraint<TExtra extends string = never> = {
 }
 
 export type PyramidConstraint = {
-  pathPuzzles?: PathPuzzlesPreset | number
+  /** A bare number/preset is literal — applied as-is, everywhere it resolves. A range
+   * interpolates linearly from `start` (the journey's first pyramid) to `end` (its last). */
+  pathPuzzles?: PathPuzzlesPreset | number | PathPuzzlesRange
   floorDepth?: number
   minFloors?: number
   maxFloors?: number
@@ -86,6 +92,8 @@ export type PyramidConstraint = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
+  /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
+  packing?: number
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType

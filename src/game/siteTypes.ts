@@ -88,6 +88,8 @@ export type FloorConfig = {
   lastMainPuzzleFamily?: PuzzleFamily
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
+  /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
+  packing?: number
 }
 
 // A site is one or more floors. Index 0 = surface.

@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- The very first pyramid of the game now has no main-path puzzles at all; the rest of that opening journey only has one puzzle per pyramid.
+
+### Fixed
+- A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
 
 ## 0.26.4 - 2026-07-05
 ### Changed
