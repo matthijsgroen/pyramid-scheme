@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 57524051
+export const worldContentHash = 481001028
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -57,7 +57,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: { stairId: "starter_1:side0" },
-            gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
+            gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 0 },
           },
           { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
