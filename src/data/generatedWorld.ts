@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 481001028
+export const worldContentHash = 993409693
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -67,14 +67,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
       {
         pathPuzzles: 2,
         chestEvery: 2,
-        difficulty: "junior",
+        difficulty: "expert",
         end: "treasure",
         exitOrStaircase: "exit",
         sideSections: [
-          { pathPuzzles: 1, difficulty: "junior", end: "treasure" },
+          { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
           {
             pathPuzzles: 2,
-            difficulty: "junior",
+            difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
             hidden: true,
