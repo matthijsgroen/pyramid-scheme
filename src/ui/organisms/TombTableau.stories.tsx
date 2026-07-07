@@ -6,7 +6,7 @@ import { generateRewardCalculation } from "@/game/puzzles/tableau/generateReward
 import { useMemo } from "react"
 import { TombTableau } from "./TombTableau"
 import { createPositionOverview } from "@/game/formulas/filledPositions"
-import { useTableauTranslations } from "@/data/useTableauTranslations"
+import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 
 type TombLevelArgs = {

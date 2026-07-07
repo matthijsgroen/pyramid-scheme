@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { determineMapPieceLoot } from "./mapPieceLogic"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
-import type { TranslatedJourney } from "@/data/useJourneyTranslations"
+import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 
 const makeJourney = (type: "pyramid" | "treasure_tomb", startChance = 0.5, chanceIncrease = 0.1) =>
   ({

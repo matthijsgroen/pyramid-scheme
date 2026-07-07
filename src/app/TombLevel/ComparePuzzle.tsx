@@ -1,7 +1,7 @@
 import { LootPopup } from "@/ui/atoms/LootPopup"
 import { useTranslation } from "react-i18next"
 import type { CombinedJourneyState } from "../state/useJourneys"
-import { useTreasureItem } from "@/data/useTreasureTranslations"
+import { useTreasureItem } from "@/app/translations/useTreasureTranslations"
 import { Chest } from "@/ui/atoms/Chest"
 import { NumberChest } from "@/ui/molecules/NumberChest"
 import crocodileOpen from "@/assets/crocodile-250.png"

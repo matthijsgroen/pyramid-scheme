@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { JourneyCard } from "./JourneyCard"
-import type { TranslatedJourney } from "@/data/useJourneyTranslations"
+import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { merchantCacheTreasures } from "@/data/treasures"
 
 // Mock journey data

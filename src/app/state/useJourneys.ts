@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
-import { useJourneyTranslations, type TranslatedJourney } from "@/data/useJourneyTranslations"
+import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 

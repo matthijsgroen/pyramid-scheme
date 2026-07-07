@@ -1,4 +1,4 @@
-import { useJourneyTranslation } from "@/data/useJourneyTranslations"
+import { useJourneyTranslation } from "@/app/translations/useJourneyTranslations"
 import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { journeys as allJourneys, type PyramidJourney } from "@/data/journeys"

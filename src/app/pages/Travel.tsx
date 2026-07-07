@@ -7,7 +7,7 @@ import { JourneyCard } from "@/ui/organisms/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/atoms/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
-import { useJourneyTranslations, type TranslatedJourney } from "@/data/useJourneyTranslations"
+import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { FezContext } from "../fez/context"
 

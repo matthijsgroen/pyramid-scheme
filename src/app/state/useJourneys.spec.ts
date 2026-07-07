@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 import { createJourneysV3Api, type StoredJourneyStateV3 } from "./useJourneys"
-import type { TranslatedJourney } from "@/data/useJourneyTranslations"
+import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
