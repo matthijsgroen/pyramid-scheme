@@ -15,7 +15,7 @@ import {
   vaultOfGodsCTreasures,
   type Treasure,
 } from "./treasures"
-import type { Operation } from "@/app/Formulas/formulas"
+import type { Operation } from "@/game/formulas/formulas"
 
 /**
  * JourneyLength:

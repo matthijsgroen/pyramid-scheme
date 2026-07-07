@@ -1,4 +1,4 @@
-import { shuffle } from "../../game/random"
+import { shuffle } from "../random"
 import { findFormulaWithOptionalExtra } from "./formulasWithTarget"
 
 export type Operation = "+" | "-" | "*" | "/"

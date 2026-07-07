@@ -4,7 +4,7 @@ import { registerPuzzle } from "@/game/puzzles/puzzleRegistry"
 import { mulberry32 } from "@/game/random"
 import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
-import type { Operation } from "@/app/Formulas/formulas"
+import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
 

@@ -1,7 +1,7 @@
 import type { FC } from "react"
 import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
-import type { Formula, Operation } from "@/app/Formulas/formulas"
+import type { Formula, Operation } from "@/game/formulas/formulas"
 import { revealText } from "@/support/revealText"
 
 // Helper function to get operator precedence for parentheses
