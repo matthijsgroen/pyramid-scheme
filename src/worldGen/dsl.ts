@@ -160,17 +160,17 @@ export type ConstraintAccumulator = Rule & {
 
 interface TierScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
-  pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
   // Only a single pyramid (a bare number) can chain per-floor overrides — a range/first/
   // last selector spans several pyramids, so "the floor" wouldn't mean any one of them.
-  pyramid(sel: number): FloorChainBuilder
+  pyramid(sel: number, c?: PyramidConstraint): FloorChainBuilder
+  pyramid(sel: Exclude<PyramidSelector, number>, c: PyramidConstraint): Rule
   set(c: PyramidConstraint): ConstraintAccumulator
 }
 
 interface JourneyScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
-  pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
-  pyramid(sel: number): FloorChainBuilder
+  pyramid(sel: number, c?: PyramidConstraint): FloorChainBuilder
+  pyramid(sel: Exclude<PyramidSelector, number>, c: PyramidConstraint): Rule
   set(c: PyramidConstraint): ConstraintAccumulator
 }
 
@@ -207,13 +207,13 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
   return acc
 }
 
-const makeFloorChain = (scope: RuleScope): FloorChainBuilder => {
+const makeFloorChain = (scope: RuleScope, c?: PyramidConstraint): FloorChainBuilder => {
   const floors: (FloorConstraint | null)[] = []
   const chain: FloorChainBuilder = {
     scope,
-    constraints: { floors },
-    floor(n: number, c: FloorConstraint): FloorChainBuilder {
-      floors[n] = c
+    constraints: { ...c, floors },
+    floor(n: number, fc: FloorConstraint): FloorChainBuilder {
+      floors[n] = fc
       return chain
     },
   }
@@ -239,8 +239,9 @@ export function tier(name: Tier, c?: PyramidConstraint): Rule | TierScopeBuilder
       constraints: fc,
     }),
     pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | FloorChainBuilder {
-      if (pc !== undefined) return { scope: { level: "tier-pyramid", tier: name, pyramid: sel }, constraints: pc }
-      return makeFloorChain({ level: "tier-pyramid", tier: name, pyramid: sel })
+      const scope: RuleScope = { level: "tier-pyramid", tier: name, pyramid: sel }
+      if (typeof sel === "number") return makeFloorChain(scope, pc)
+      return { scope, constraints: pc as PyramidConstraint }
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "tier", tier: name }, c),
   } as TierScopeBuilder
@@ -256,8 +257,9 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
       constraints: fc,
     }),
     pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | FloorChainBuilder {
-      if (pc !== undefined) return { scope: { level: "journey-pyramid", journey: id, pyramid: sel }, constraints: pc }
-      return makeFloorChain({ level: "journey-pyramid", journey: id, pyramid: sel })
+      const scope: RuleScope = { level: "journey-pyramid", journey: id, pyramid: sel }
+      if (typeof sel === "number") return makeFloorChain(scope, pc)
+      return { scope, constraints: pc as PyramidConstraint }
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "journey", journey: id }, c),
   } as JourneyScopeBuilder
