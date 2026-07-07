@@ -47,6 +47,22 @@ export const starterRules: Rule[] = [
             ],
         }),
 
+    // Pyramid 3: same shape as pyramid 2, but no hidden path, and the ward path/floor
+    // step up again to master.
+    journey("starter_1")
+        .pyramid(3)
+        .floor(0, {
+            sideSections: [
+                wardPath({ puzzles: 1, tier: "master", tomb: "expert_treasure_tomb", index: 2 }),
+                sidePath(),
+            ],
+        })
+        .floor(1, {
+            pathPuzzles: 2,
+            difficulty: "master",
+            sideSections: [sidePath({ puzzles: 1 })],
+        }),
+
     tomb("starter_treasure_tomb", {
         puzzleFamily: "tableau",
         difficulty: "starter",
