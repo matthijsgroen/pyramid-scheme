@@ -35,6 +35,12 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
+  /** "staircase" ends the path at a stairhead into the next floor instead of a treasure room. */
+  end?: "treasure" | "staircase"
+  /** Invisible without the Detection perk. */
+  hidden?: boolean
+  /** Every intermediate room along this path is a trap instead of a puzzle. */
+  trapped?: boolean
 }
 
 export type FloorConstraint<TExtra extends string = never> = {

@@ -269,14 +269,18 @@ const buildSideSections = (
         ...(sub.decorations?.length ? { decorations: sub.decorations } : {}),
       }
     })
+    const end =
+      cs.end === "staircase" ? { stairId: `${journeyId}:side${sections.length}` } : ("treasure" as const)
     sections.push({
       pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
       difficulty: cs.difficulty ?? difficulty,
-      end: "treasure" as const,
+      end,
       ...(gate ? { gate } : {}),
       ...(endReward ? { endReward } : {}),
       ...(subSections?.length ? { sideSections: subSections } : {}),
       ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
+      ...(cs.hidden ? { hidden: true } : {}),
+      ...(cs.trapped ? { trapped: true } : {}),
     })
   }
 
@@ -454,7 +458,19 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           const floorDiff: Difficulty = fc.difficulty ?? difficulty
           const isLast = fi === constraint.floors.length - 1
           const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
-          const floorSideSections = buildSideSections(tier, floorDiff, false, false, null, floorSections, 0, floorPP)
+          const floorSideSections = buildSideSections(
+            tier,
+            floorDiff,
+            false,
+            false,
+            null,
+            floorSections,
+            0,
+            floorPP,
+            undefined,
+            undefined,
+            journeyId
+          )
           const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
           const floorStraightness = fc.corridorStraightness ?? constraint.corridorStraightness
@@ -472,6 +488,13 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             ...(floorStraightness !== undefined ? { corridorStraightness: floorStraightness } : {}),
             ...(floorPacking !== undefined ? { packing: floorPacking } : {}),
           } satisfies FloorConfig)
+        }
+        // Wire each floor's side-path stairhead to the entrance of the next floor.
+        for (let fi = 0; fi < floorConfigs.length - 1; fi++) {
+          const stairSection = floorConfigs[fi].sideSections.find(s => typeof s.end === "object")
+          if (stairSection && typeof stairSection.end === "object") {
+            floorConfigs[fi + 1].entrance = { stairId: stairSection.end.stairId }
+          }
         }
         pyramidConfigs.push(floorConfigs)
       } else {
