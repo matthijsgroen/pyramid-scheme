@@ -94,6 +94,10 @@ Code is split into three layers with strict one-way dependencies (domain ← app
 | **App** | `src/app/` | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own. |
 | **Design system** | `src/ui/` | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
 
+### 9. Puzzle State Models
+
+Any puzzle family with non-trivial in-progress state (a grid, marks, a partial solution) gets its state modeled in `src/game/` as a domain object: a state type + factory, named action functions that mutate via immer, and plain query functions for checks (win state, line status, etc.). See **[`docs/instructions/state-models.md`](docs/instructions/state-models.md)** — Sumplete (`src/game/sumpleteState.ts`) is the reference implementation.
+
 ---
 
 ## Common Workflows

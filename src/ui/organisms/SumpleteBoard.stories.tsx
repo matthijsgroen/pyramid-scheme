@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { generateSumplete } from "@/game/generateSumplete"
-import { computeColStatuses, computeRowStatuses, isSumpleteSolved, type SumpleteCellState } from "@/game/sumpleteStatus"
+import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "@/game/sumpleteStatus"
+import { createSumpleteState, toggleSumpleteCell, type SumpleteCellState } from "@/game/sumpleteState"
 import { SumpleteBoard } from "./SumpleteBoard"
 
 const meta = {
@@ -51,27 +52,19 @@ export const Interactive3x3: Story = {
     onToggle: () => {},
   },
   render: () => {
-    const [cells, setCells] = useState(emptyCells(3))
-    const rowStatuses = computeRowStatuses(p3.grid, cells, p3.rowTargets)
-    const colStatuses = computeColStatuses(p3.grid, cells, p3.colTargets)
+    const [state, setState] = useState(createSumpleteState(3))
+    const rowStatuses = computeRowStatuses(p3.grid, state.cells, p3.rowTargets)
+    const colStatuses = computeColStatuses(p3.grid, state.cells, p3.colTargets)
     const solved = isSumpleteSolved(rowStatuses, colStatuses)
-    const cycle = (s: SumpleteCellState): SumpleteCellState =>
-      s === "unknown" ? "excluded" : s === "excluded" ? "included" : "unknown"
 
     return (
       <div className="flex flex-col items-center gap-3">
         <SumpleteBoard
           {...p3}
-          cells={cells}
+          cells={state.cells}
           rowStatuses={rowStatuses}
           colStatuses={colStatuses}
-          onToggle={(r, c) =>
-            setCells(prev => {
-              const next = prev.map(row => [...row])
-              next[r][c] = cycle(prev[r][c])
-              return next
-            })
-          }
+          onToggle={(r, c) => setState(prev => toggleSumpleteCell(prev, r, c))}
         />
         {solved && <p className="text-sm text-green-400">Solved!</p>}
       </div>

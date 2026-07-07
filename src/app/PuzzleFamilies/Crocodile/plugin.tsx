@@ -3,6 +3,15 @@ import { type FC, useCallback, useState } from "react"
 import { registerPuzzle } from "@/game/puzzleRegistry"
 import { mulberry32 } from "@/game/random"
 import { generateCompareLevel, type CompareLevel } from "@/game/generateCompareLevel"
+import {
+  advanceFocus,
+  commitLeft,
+  commitRight,
+  createCrocodileState,
+  previewLeft,
+  previewRight,
+  resetCrocodileState,
+} from "@/game/crocodileState"
 import type { PuzzleSettings } from "@/game/puzzlePlugin"
 import type { Operation } from "@/app/Formulas/formulas"
 import { formulaToString } from "@/app/Formulas/formulas"
@@ -54,8 +63,8 @@ const CrocodileComponent: FC<{ puzzle: CompareLevel; settings: PuzzleSettings; o
   onSolved,
 }) => {
   const { t } = useTranslation("common")
-  const [focus, setFocus] = useState(0)
-  const [answers, setAnswers] = useState<Record<number, "left" | "right" | "noneLeft" | "noneRight">>({})
+  const [state, setState] = useState(createCrocodileState)
+  const { focus, answers } = state
   const [lockState, setLockState] = useState<"empty" | "error" | "open">("empty")
   const [lockValue, setLockValue] = useState("")
   const [processing, setProcessing] = useState(false)
@@ -68,9 +77,9 @@ const CrocodileComponent: FC<{ puzzle: CompareLevel; settings: PuzzleSettings; o
     const current = answers[focus] ?? "noneRight"
     if (!current.startsWith("none")) return
     const needsTurn = current !== "noneLeft"
-    setAnswers(a => ({ ...a, [focus]: needsTurn ? "noneLeft" : "left" }))
-    if (needsTurn) setTimeout(() => setAnswers(a => ({ ...a, [focus]: "left" })), 500)
-    setTimeout(() => setFocus(f => f + 1), needsTurn ? 800 : 200)
+    setState(prev => (needsTurn ? previewLeft(prev) : commitLeft(prev)))
+    if (needsTurn) setTimeout(() => setState(prev => commitLeft(prev)), 500)
+    setTimeout(() => setState(prev => advanceFocus(prev)), needsTurn ? 800 : 200)
   }, [focus, puzzle.comparisons, answers])
 
   const handleRightClick = useCallback(() => {
@@ -79,37 +88,23 @@ const CrocodileComponent: FC<{ puzzle: CompareLevel; settings: PuzzleSettings; o
     const current = answers[focus] ?? "noneLeft"
     if (!current.startsWith("none")) return
     const needsTurn = current !== "noneRight"
-    setAnswers(a => ({ ...a, [focus]: needsTurn ? "noneRight" : "right" }))
-    if (needsTurn) setTimeout(() => setAnswers(a => ({ ...a, [focus]: "right" })), 500)
-    setTimeout(() => setFocus(f => f + 1), needsTurn ? 800 : 200)
+    setState(prev => (needsTurn ? previewRight(prev) : commitRight(prev)))
+    if (needsTurn) setTimeout(() => setState(prev => commitRight(prev)), 500)
+    setTimeout(() => setState(prev => advanceFocus(prev)), needsTurn ? 800 : 200)
   }, [focus, puzzle.comparisons, answers])
 
-  const handleMouseOverLeft = useCallback(() => {
-    setAnswers(a => {
-      const cur = a[focus] ?? "noneRight"
-      return cur.startsWith("none") ? { ...a, [focus]: "noneLeft" } : a
-    })
-  }, [focus])
+  const handleMouseOverLeft = useCallback(() => setState(prev => previewLeft(prev)), [])
 
-  const handleMouseOverRight = useCallback(() => {
-    setAnswers(a => {
-      const cur = a[focus] ?? "noneLeft"
-      return cur.startsWith("none") ? { ...a, [focus]: "noneRight" } : a
-    })
-  }, [focus])
+  const handleMouseOverRight = useCallback(() => setState(prev => previewRight(prev)), [])
 
-  const handleIDontKnow = useCallback(() => {
-    setFocus(0)
-    setAnswers({})
-  }, [])
+  const handleIDontKnow = useCallback(() => setState(prev => resetCrocodileState(prev)), [])
 
   const handleLockSubmit = useCallback(
     (value: string) => {
       if (processing) return
       if (value !== puzzle.requirements.digit.toString()) {
         setLockState("error")
-        setFocus(0)
-        setAnswers({})
+        setState(prev => resetCrocodileState(prev))
         return
       }
       setLockState("open")

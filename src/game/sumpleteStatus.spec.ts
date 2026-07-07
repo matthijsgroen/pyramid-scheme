@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { computeColStatuses, computeRowStatuses, isSumpleteSolved, type SumpleteCellState } from "./sumpleteStatus"
+import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "./sumpleteStatus"
+import type { SumpleteCellState } from "./sumpleteState"
 
 // row sums when everything counts: row0 = 1+2 = 3, row1 = 3+4 = 7
 // col sums when everything counts: col0 = 1+3 = 4, col1 = 2+4 = 6

@@ -5864,6 +5864,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immer@npm:^11.1.11":
+  version: 11.1.11
+  resolution: "immer@npm:11.1.11"
+  checksum: 10c0/b660b4308966775f8514da8b266d061d90bab83ac90c7be6c400fac66f71054a85a272eb97f87f1c4cad5f9bab92e62ed3d2312bb65308debe4d3318d06ad9e2
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^3.2.1":
   version: 3.3.1
   resolution: "import-fresh@npm:3.3.1"
@@ -7377,6 +7384,7 @@ __metadata:
     i18next: "npm:^25.3.2"
     i18next-browser-languagedetector: "npm:^8.2.0"
     i18next-http-backend: "npm:^3.0.5"
+    immer: "npm:^11.1.11"
     jsdom: "npm:^26.1.0"
     keep-a-changelog: "npm:^3.0.5"
     localforage: "npm:^1.10.0"
