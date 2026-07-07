@@ -5,7 +5,7 @@ export const masterRules: Rule[] = [
   tier("master", { difficulty: "master" }),
 
   tier("master")
-    .set({ consumableDensity: 0.25 })
+    .set({ consumableDensity: 0.25, wardWings: 2 })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
     .sidePaths("low")

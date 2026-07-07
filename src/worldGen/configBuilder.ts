@@ -7,7 +7,7 @@ import {
   chestEveryFor,
   chestCountFor,
 } from "./data"
-import { TOMB_PERK_IDS, TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
+import { TOMB_PERK_IDS, TIER_UNLOCK_PERK_ID, TREASURE_PERKS } from "../data/treasurePerks"
 import { tableauLevels } from "../data/tableaus"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
@@ -34,6 +34,18 @@ const NEXT_TIER: Record<string, string | null> = {
   expert: "master",
   master: "wizard",
   wizard: null,
+}
+
+// Ward-wing key indices for a tomb, skipping any slot reserved for a tier-unlock or
+// location-key perk (those are spoken for elsewhere) — first `count` remaining indices.
+const freeWardIndices = (tombId: string, count: number): number[] => {
+  const perkIds = TOMB_PERK_IDS[tombId] ?? []
+  const free: number[] = []
+  for (let idx = 0; idx < perkIds.length && free.length < count; idx++) {
+    const perk = TREASURE_PERKS[perkIds[idx]]
+    if (perk?.type !== "tier-unlock" && perk?.type !== "location-key") free.push(idx)
+  }
+  return free
 }
 
 // Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.
@@ -500,6 +512,99 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             floorConfigs[fi + 1].entrance = { stairId: stairSection.end.stairId }
           }
         }
+        pyramidConfigs.push(floorConfigs)
+      } else if ((constraint.mainFloors ?? 1) > 1 || (constraint.wardWings ?? 0) > 0) {
+        // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries
+        // the pyramid's usual side content), then `wardWings` bonus floors branching off
+        // that last main floor, each behind its own ward-key gate from this tier's own tomb.
+        const mainFloors = constraint.mainFloors ?? 1
+        const wardWings = constraint.wardWings ?? 0
+        const floorConfigs: FloorConfig[] = []
+
+        for (let fi = 0; fi < mainFloors; fi++) {
+          if (fi < mainFloors - 1) {
+            floorConfigs.push({
+              pathPuzzles: pp,
+              chestEvery: 0,
+              difficulty,
+              end: "treasure",
+              exitOrStaircase: "exit",
+              sideSections: [],
+            })
+            continue
+          }
+          const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
+          const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
+          const sideSections = buildSideSections(
+            tier,
+            difficulty,
+            hasMapPieceBranch,
+            hasWardGate,
+            nextTier,
+            constraintSections,
+            mosaicPathCount,
+            pp,
+            constraint.keyDensity,
+            constraint.keyColors,
+            journeyId,
+            i,
+            constraint.sidePaths,
+            constraint.hiddenPaths
+          )
+          const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
+          chestOffset += chestCountFor(pp)
+          floorConfigs.push({
+            pathPuzzles: pp,
+            chestEvery: chestEveryFor(pp),
+            difficulty,
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections,
+            mainEndReward,
+            chestRewards,
+            ...(constraint.consumableDensity !== undefined ? { consumableDensity: constraint.consumableDensity } : {}),
+            ...(constraint.corridorStraightness !== undefined
+              ? { corridorStraightness: constraint.corridorStraightness }
+              : {}),
+            ...(constraint.packing !== undefined ? { packing: constraint.packing } : {}),
+          } satisfies FloorConfig)
+        }
+
+        // Wire main-floor stairheads sequentially (floor N's exit → floor N+1's entrance).
+        for (let fi = 0; fi < floorConfigs.length - 1; fi++) {
+          const stairId = `${journeyId}:p${i}:main${fi}`
+          floorConfigs[fi].exitOrStaircase = { stairId }
+          floorConfigs[fi + 1].entrance = { stairId }
+        }
+
+        if (wardWings > 0) {
+          const tombId = `${tier}_treasure_tomb`
+          const wingIndices = freeWardIndices(tombId, wardWings)
+          const lastMain = floorConfigs[floorConfigs.length - 1]
+          for (let w = 0; w < wingIndices.length; w++) {
+            const wingStairId = `${journeyId}:p${i}:wing${w}`
+            lastMain.sideSections = [
+              ...lastMain.sideSections,
+              {
+                pathPuzzles: 1,
+                difficulty,
+                end: { stairId: wingStairId },
+                gate: { type: "tomb-key", wardKeyId: TOMB_PERK_IDS[tombId][wingIndices[w]] },
+              },
+            ]
+            floorConfigs.push({
+              pathPuzzles: pp,
+              chestEvery: chestEveryFor(pp),
+              difficulty,
+              end: "treasure",
+              exitOrStaircase: "exit",
+              entrance: { stairId: wingStairId },
+              sideSections: [],
+              mainEndReward: { type: "hieroglyphs" },
+            })
+          }
+        }
+
         pyramidConfigs.push(floorConfigs)
       } else {
         const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined

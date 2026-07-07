@@ -104,6 +104,11 @@ export type PyramidConstraint = {
   mainEndReward?: RewardSpec
   gateHint?: GateType
   floors?: (FloorConstraint | null)[]
+  /** Baseline floor count for the main path itself, before any ward wings. Default 1. */
+  mainFloors?: number
+  /** Auto-generated ward-gated bonus floors branching off the last main floor, keyed from
+   * this tier's own tomb (skipping any index reserved for tier-unlock/location-key). */
+  wardWings?: number
   /** Declared visible side paths — each entry adds paths of that density with the given reward. */
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
