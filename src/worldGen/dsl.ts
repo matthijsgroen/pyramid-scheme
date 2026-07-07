@@ -94,6 +94,12 @@ export type PyramidConstraint = {
   keyDensity?: SideIntensity
   /** How many distinct key colors to use (1–5). Fewer colors → one key opens more doors. */
   keyColors?: number
+  /** Chance [0-1], rolled per pyramid, that keyColors resolves to 1 (one key, every gated
+   * door). Ignored if keyColors or keyColorsRange is also set. */
+  sharedKeyChance?: number
+  /** keyColors rolled per pyramid, uniformly in [min, max]. Takes priority over keyColors
+   * and sharedKeyChance. */
+  keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */

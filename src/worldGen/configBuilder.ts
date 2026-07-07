@@ -145,6 +145,26 @@ export const pathCountForDensity = (density: SideIntensity, journeyId: string, p
   return 4 + Math.floor(rand() * 2) // 4 or 5
 }
 
+// Resolves the effective keyColors for a pyramid, honoring (in priority order):
+// a literal keyColorsRange roll, a literal keyColors, then a sharedKeyChance roll — a hit
+// resolves to 1 (one key, every gated door); a miss resolves to 5 (mostly-dedicated keys),
+// since the buildSideSections default of "no keyColors set" already means 1 color and
+// would make a miss indistinguishable from a hit.
+const resolveKeyColors = (
+  constraint: PyramidConstraint,
+  journeyId: string,
+  pyramidIndex: number
+): number | undefined => {
+  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}:keyColors`))
+  if (constraint.keyColorsRange) {
+    const { min, max } = constraint.keyColorsRange
+    return min + Math.floor(rand() * (max - min + 1))
+  }
+  if (constraint.keyColors !== undefined) return constraint.keyColors
+  if (constraint.sharedKeyChance !== undefined) return rand() < constraint.sharedKeyChance ? 1 : 5
+  return undefined
+}
+
 const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
   let committed = 0
   for (const p of plan) {
@@ -545,7 +565,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             mosaicPathCount,
             pp,
             constraint.keyDensity,
-            constraint.keyColors,
+            resolveKeyColors(constraint, journeyId, i),
             journeyId,
             i,
             constraint.sidePaths,
@@ -619,7 +639,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           mosaicPathCount,
           pp,
           constraint.keyDensity,
-          constraint.keyColors,
+          resolveKeyColors(constraint, journeyId, i),
           journeyId,
           i,
           constraint.sidePaths,
