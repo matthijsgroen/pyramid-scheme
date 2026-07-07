@@ -12,6 +12,8 @@ type Props = {
   pathPuzzles: number
   chestEvery: number
   exitOrStaircase: FloorConfig["exitOrStaircase"]
+  corridorStraightness: number
+  packing: number
   section1: boolean
   section1Puzzles: number
   section1ChestEvery: number
@@ -29,6 +31,8 @@ const SiteMapBuilder = ({
   pathPuzzles,
   chestEvery,
   exitOrStaircase,
+  corridorStraightness,
+  packing,
   section1,
   section1Puzzles,
   section1ChestEvery,
@@ -72,6 +76,8 @@ const SiteMapBuilder = ({
     end: "treasure",
     exitOrStaircase,
     sideSections,
+    corridorStraightness,
+    packing,
   }
 
   const result = assembleFloor("builder", config, seed)
@@ -87,7 +93,7 @@ const SiteMapBuilder = ({
       </div>
     )
   }
-  return <SiteMapView grid={result.grid} revealAllCells />
+  return <SiteMapView grid={result.grid} revealAllCells className="max-h-[80vh] max-w-[90vw]" />
 }
 
 const meta = {
@@ -99,6 +105,8 @@ const meta = {
     pathPuzzles: { control: { type: "range", min: 0, max: 5, step: 1 } },
     chestEvery: { control: { type: "range", min: 0, max: 5, step: 1 } },
     exitOrStaircase: { control: "select", options: ["exit", "staircase"] },
+    corridorStraightness: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
+    packing: { control: { type: "range", min: 0.3, max: 2, step: 0.1 } },
     section1: { control: "boolean" },
     section1Puzzles: { control: { type: "range", min: 0, max: 4, step: 1 } },
     section1ChestEvery: { control: { type: "range", min: 0, max: 4, step: 1 } },
@@ -121,6 +129,8 @@ export const Builder: Story = {
     pathPuzzles: 0,
     chestEvery: 0,
     exitOrStaircase: "exit",
+    corridorStraightness: 0.65,
+    packing: 1,
     section1: true,
     section1Puzzles: 0,
     section1ChestEvery: 0,
@@ -134,12 +144,38 @@ export const Builder: Story = {
   },
 }
 
+/** Dedicated demo for dialing the two layout knobs against a fixed amount of content:
+ * `packing` (grid footprint tightness) and `corridorStraightness` (corridor turniness). */
+export const PackingAndStraightness: Story = {
+  args: {
+    seed: 7,
+    pathPuzzles: 4,
+    chestEvery: 2,
+    exitOrStaircase: "exit",
+    corridorStraightness: 0.65,
+    packing: 1,
+    section1: true,
+    section1Puzzles: 2,
+    section1ChestEvery: 0,
+    section1End: "treasure",
+    section1Gate: "none",
+    section2: true,
+    section2Puzzles: 2,
+    section2ChestEvery: 0,
+    section2End: "staircase",
+    section2Gate: "floor-key",
+  },
+  parameters: { layout: "fullscreen" },
+}
+
 export const FirstPyramid: Story = {
   args: {
     seed: 42,
     pathPuzzles: 0,
     chestEvery: 0,
     exitOrStaircase: "exit",
+    corridorStraightness: 0.65,
+    packing: 1,
     section1: true,
     section1Puzzles: 0,
     section1ChestEvery: 0,

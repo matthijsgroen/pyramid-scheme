@@ -1,4 +1,5 @@
 # Changelog
+
 All notable user-facing changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -6,49 +7,77 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## 0.26.4 - 2026-07-05
 ### Changed
+
+- The very first pyramid of the game now has no main-path puzzles at all; the rest of that opening journey only has one puzzle per pyramid.
+
+### Fixed
+
+- A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
+
+## 0.26.4 - 2026-07-05
+
+### Changed
+
 - Puzzles, chests, and a floor's main treasure room are now spread out along the whole path from entrance to exit, instead of being packed near the entrance with a long empty corridor afterward.
 
 ## 0.26.3 - 2026-07-05
+
 ### Changed
+
 - The journey list only shows a checkmark for completed expeditions now, without the "completed N times" count.
 
 ### Fixed
+
 - The journey list's map-piece indicator now lights up again when you've found a pyramid's map piece.
 
 ## 0.26.2 - 2026-07-05
+
 ### Changed
+
 - The pyramid/tomb interior map is scaled back down to its previous size — the narrow-screen squish fix left it rendering at full zoomed-in size everywhere, which was too large.
 
 ## 0.26.1 - 2026-07-05
+
 ### Fixed
+
 - Fix the pyramid/tomb interior map rendering squished on narrow screens — the map now always renders at full size and scrolls in both directions instead of shrinking to fit the width while staying full height.
 
 ## 0.26.0 - 2026-07-05
+
 ### Added
+
 - A "Disable tutorials" toggle in Settings, for skipping Fez's guidance popups. Explicit replays (like the tomb's "?" button) still work even with tutorials disabled.
 
 ### Changed
+
 - The pyramid/tomb interior map is zoomed in twice as far as the previous pass.
 
 ## 0.25.3 - 2026-07-05
+
 ### Changed
+
 - The pyramid/tomb interior map is more zoomed in — corridors, rooms, and icons are all noticeably bigger.
 
 ### Fixed
+
 - Fix the explorer dot cutting through unexplored corridors when a floor has a genuine loop and you tap a destination reachable by more than one route.
 
 ## 0.25.2 - 2026-07-05
+
 ### Changed
+
 - Side paths now branch off throughout the main path instead of all bunching up after its last puzzle room.
 
 ## 0.25.1 - 2026-07-04
+
 ### Changed
+
 - Room icons on the pyramid/tomb interior map are larger and easier to make out on mobile.
 - A long corridor's click target now sits right next to you instead of at its far end, so you don't need to scroll to walk into it. It's now shown as a direction arrow rather than a plain dot, and only appears once the explorer dot actually settles there.
 
 ### Fixed
+
 - Fix the explorer dot rendering off-center and small inside pyramid/tomb interiors.
 - Unexplored (fogged) rooms no longer render at all, instead of showing faintly.
 - Adjacent junction rooms now visually merge into one open space instead of showing a wall between them.
@@ -57,25 +86,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix the explorer dot skipping its travel animation and snapping instantly on the very first move of a session.
 
 ## 0.25.0 - 2026-07-04
+
 ### Added
+
 - A "Clear game data" option in Settings, for resetting your save without needing to clear app/browser storage manually.
 - Some interior rooms now display decorative dungeon details, such as statues or sarcophagi.
 
 ### Changed
+
 - Junctions, treasure rooms, staircases, and exits inside pyramid and tomb interiors now appear as larger, uniquely shaped rooms instead of uniform single tiles.
 - The corridor leading up to a locked gate now blends into the neighboring room instead of showing as a separate passage tile.
 - Interior corridors wind more naturally, with occasional wider junctions where several paths meet.
 
 ### Fixed
+
 - Fix the "pack is full" chest marker sometimes showing up on puzzle rooms instead of the chest it belonged to.
 
 ## 0.24.2 - 2026-07-03
+
 ### Fixed
+
 - Fix corridor corners in pyramid interiors being hard to tap on mobile.
 - Fix a completed pyramid's interior showing different corridors explored than when you left it, after revisiting it.
 
 ## 0.24.1 - 2026-07-03
+
 ### Fixed
+
 - Fix the back button, floor indicator, and health display inside pyramids and tombs being hidden behind the notch or home indicator on installed devices.
 - Fix the interior map opening in the top-left corner instead of centered on screen.
 - Fix the level-completion animation replaying over the interior map when returning to a pyramid you were already exploring.
@@ -84,7 +121,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix the fragment-count badge staying on a hieroglyph in the collection screen after it's fully completed.
 
 ## 0.24.0 - 2026-07-03
+
 ### Added
+
 - **Pyramid interiors** — after solving a pyramid level you now enter the pyramid itself: navigate room by room on a map, open chests along the way, and find your way to the exit.
 - **Explorer dot** — a glowing dot shows your movement as you travel through the pyramid interior.
 - **Hidden passages** — some corridors and side rooms are concealed behind walls; step close enough to reveal them.
@@ -107,6 +146,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Puzzle completion animation** — a brief overlay celebrates solving a puzzle before the game moves on.
 
 ### Changed
+
 - The pyramid map now scrolls to keep the explorer dot centered as you move, so you can always see what is ahead without manually scrolling.
 - Completed rooms and corridors are now tappable again, letting you move back to any room you have already visited.
 - Expeditions no longer award inventory items directly on completion; items are found inside the pyramid during exploration instead.

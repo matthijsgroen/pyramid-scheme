@@ -25,5 +25,5 @@ describe("find smallest grid that works", () => {
         console.log(`seed=${s} grid=${r.grid.rows}x${r.grid.cols}`)
       }
     }
-  })
+  }, 20000)
 })

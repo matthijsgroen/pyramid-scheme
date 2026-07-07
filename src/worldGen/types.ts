@@ -1,5 +1,9 @@
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
-export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number; levelCount: number }
+// Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
+// `end` on the last pyramid, linearly interpolated in between. Explicit and literal —
+// no implicit spread happens unless a range is authored.
+export type PathPuzzlesRange = { start: number; end: number }
+export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number | PathPuzzlesRange; levelCount: number }
 export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 export type ConsumableType = "bandage" | "oil" | "trapTool"

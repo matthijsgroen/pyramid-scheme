@@ -91,6 +91,113 @@ describe(assembleFloor, () => {
     expect(a).toEqual(b)
   })
 
+  it("packing scales the main path's actual walked length, not just the grid footprint", () => {
+    // Regression guard: packing went through two wrong designs before this one — a first
+    // cut that barely moved grid size (a fixed dominant term swamped it), then a fixed
+    // grid-size formula that still didn't shorten the *visible* corridor, because
+    // buildMaze always picked the spanning tree's true farthest node regardless of grid
+    // size (the longest possible route, almost independent of how small the grid is).
+    // The real fix targets path length directly, so this asserts the outcome that
+    // actually matters: entrance-to-exit distance must grow with packing.
+    const config = (packing: number): FloorConfig => ({
+      pathPuzzles: 0,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      corridorStraightness: 0,
+      packing,
+      sideSections: [
+        { pathPuzzles: 2, difficulty: "starter", end: "staircase", gate: { type: "tomb-key", wardKeyId: "w" } },
+        { pathPuzzles: 2, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
+      ],
+    })
+    const distanceFor = (packing: number) => {
+      const result = assembleFloor("packing-test", config(packing), 7)
+      if (!result.success) throw new Error("assembly failed")
+      return graphDistance(result.grid, result.grid.entrancePos, result.grid.exitPos)
+    }
+    const tight = distanceFor(0.3)
+    const normal = distanceFor(1)
+    const spacious = distanceFor(2)
+    expect(tight).toBeLessThan(normal)
+    expect(normal).toBeLessThan(spacious)
+  })
+
+  it("packing's path-length target isn't inflated by heavy side-section content", () => {
+    // Regression guard: the target was first derived from `minCells`, which folds in every
+    // side-section's own cost — so a floor with two chunky gated sections got a much longer
+    // main path than one with none, at the same packing, even though those sections branch
+    // off the main path rather than extending it. Distances should land in the same
+    // ballpark regardless of how much side-section content exists.
+    const distanceFor = (sideSections: FloorConfig["sideSections"]) => {
+      const config: FloorConfig = {
+        pathPuzzles: 4,
+        chestEvery: 2,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        corridorStraightness: 0.65,
+        packing: 0.3,
+        sideSections,
+      }
+      const result = assembleFloor("packing-inflation-test", config, 7)
+      if (!result.success) throw new Error("assembly failed")
+      return graphDistance(result.grid, result.grid.entrancePos, result.grid.exitPos)
+    }
+    const bare = distanceFor([])
+    const heavy = distanceFor([
+      { pathPuzzles: 2, difficulty: "starter", end: "treasure", gate: { type: "tomb-key", wardKeyId: "w" } },
+      { pathPuzzles: 2, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
+    ])
+    expect(heavy).toBeLessThan(bare * 1.5)
+  })
+
+  it("packing also scales a gated section's chain length, not just the main path", () => {
+    // Regression guard: packing/corridorStraightness originally only reached buildMaze's
+    // main-path selection — a section's chain was always *exactly* pathPuzzles + gate + end
+    // cells, deaf to both knobs no matter how spacious or winding the rest of the floor got.
+    const chainSizeFor = (packing: number) => {
+      const config: FloorConfig = {
+        pathPuzzles: 4,
+        chestEvery: 2,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        corridorStraightness: 0.65,
+        packing,
+        sideSections: [
+          { pathPuzzles: 2, difficulty: "starter", end: "staircase", gate: { type: "tomb-key", wardKeyId: "w" } },
+        ],
+      }
+      const result = assembleFloor("section-packing-test", config, 7)
+      if (!result.success) throw new Error("assembly failed")
+      const gate = findRoom(result.grid, c => c.gateVariant === "tomb-key")
+      if (!gate) throw new Error("no gate room found")
+      // Cells downstream of the gate, as a proxy for chain length — reuses graphDistance's
+      // BFS shape but counts reachable cells instead of returning a single distance.
+      const key = (r: number, c: number) => `${r},${c}`
+      const seen = new Set([key(gate.r, gate.c)])
+      const queue: Array<[number, number]> = [[gate.r, gate.c]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = result.grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE[dir]
+          const nr = r + dr,
+            nc = c + dc
+          if (seen.has(key(nr, nc))) continue
+          seen.add(key(nr, nc))
+          queue.push([nr, nc])
+        }
+      }
+      return seen.size
+    }
+    const tight = chainSizeFor(0.3)
+    const spacious = chainSizeFor(2)
+    expect(tight).toBeLessThan(spacious)
+  })
+
   it("succeeds for the first pyramid config (0 main puzzles, 2 sections)", () => {
     const result = assembleFloor("site-1", firstPyramid(), 42)
     expect(result.success).toBe(true)
@@ -104,6 +211,74 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", firstPyramid(), 42)
     if (!result.success) throw new Error("assembly failed")
     expect(validateSite(result.grid)).toEqual({ valid: true })
+  })
+
+  it("gated sections have no back-door — removing the gate room cuts off its whole chain", () => {
+    // Reproduces a real bug: a leftover edge from buildMaze's whole-grid spanning tree
+    // (see the "Gate isolation" comment in siteAssembler.ts) could connect a gated
+    // section's interior straight back to the ungated backbone or another section,
+    // letting a player reach gated content — even the exit — without ever passing
+    // the gate. Sweep several seeds/configs; the gate room must be the section's only
+    // entrance every time.
+    const key = (r: number, c: number) => `${r},${c}`
+    const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
+      const seen = new Set<string>([key(...start)])
+      const queue: Array<[number, number]> = [[start[0], start[1]]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE_ALL[dir]
+          const nr = r + dr,
+            nc = c + dc
+          const k = key(nr, nc)
+          if (seen.has(k) || blocked.has(k)) continue
+          seen.add(k)
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const config = (): FloorConfig => ({
+      pathPuzzles: 3,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 2, difficulty: "starter", end: "staircase", gate: { type: "tomb-key", wardKeyId: "w" } },
+        { pathPuzzles: 2, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
+        {
+          pathPuzzles: 1,
+          difficulty: "starter",
+          end: "treasure",
+          sideSections: [{ pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "floor-key" } }],
+        },
+      ],
+    })
+
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("gate-isolation", config(), seed)
+      if (!result.success) continue
+      const grid = result.grid
+      const gates: Array<[number, number]> = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.gateVariant) gates.push([r, c])
+        }
+      expect(gates.length).toBeGreaterThan(0)
+
+      const fullyReachable = reachableFrom(grid, grid.entrancePos, new Set())
+      for (const [gr, gc] of gates) {
+        const withoutGate = reachableFrom(grid, grid.entrancePos, new Set([key(gr, gc)]))
+        const onlyViaThisGate = [...fullyReachable].filter(k => !withoutGate.has(k))
+        // More than just the gate cell itself must depend on it — a real chain behind it.
+        expect(onlyViaThisGate.length).toBeGreaterThan(1)
+      }
+    }
   })
 
   it("auto-injects an ungated section when all sections are gated with floor-key", () => {
@@ -267,6 +442,42 @@ describe(assembleFloor, () => {
         expect(v.valid, `seed ${seed} failed validation: ${JSON.stringify(v)}`).toBe(true)
       }
     }
+  })
+
+  it("places every puzzle in a multi-puzzle sub-section at a distinct, valid room", () => {
+    // Regression guard: sub-section content used to be indexed as `(contentStart + pi) * 2`
+    // instead of `contentStart + pi` — harmless for a single-puzzle sub-section (index 0
+    // either way) but wrong for any sub-section with more than one puzzle/chest, which had
+    // zero test coverage before this. `packing: 0` keeps the chain at its bare minimum
+    // length (no padding slack) so a too-large index reliably goes out of bounds instead of
+    // landing on a padding cell that happens to still be in range.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      packing: 0,
+      sideSections: [
+        {
+          pathPuzzles: 1,
+          difficulty: "starter",
+          end: "treasure",
+          sideSections: [{ pathPuzzles: 3, difficulty: "junior", end: "treasure" }],
+        },
+      ],
+    }
+    const result = assembleFloor("sub-section-indexing-test", config, 42)
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(validateSite(result.grid)).toEqual({ valid: true })
+    const puzzleRooms = new Set<string>()
+    for (let r = 0; r < result.grid.rows; r++)
+      for (let c = 0; c < result.grid.cols; c++) {
+        const cell = result.grid.cells[r][c]
+        if (cell.type === "room" && cell.roomType === "puzzle") puzzleRooms.add(`${r},${c}`)
+      }
+    // 1 main-path puzzle + 1 parent-section puzzle + 3 sub-section puzzles, all distinct.
+    expect(puzzleRooms.size).toBe(5)
   })
 
   describe("multi-cell footprints", () => {

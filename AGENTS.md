@@ -88,11 +88,11 @@ The project uses strict TypeScript. Avoid `any` types; define proper interfaces 
 
 Code is split into three layers with strict one-way dependencies (domain ← app ← ui). See **[`docs/instructions/architecture.md`](docs/instructions/architecture.md)** for the full rules.
 
-| Layer | Location | Rule |
-|-------|----------|------|
-| **Domain** | `src/game/`, `src/data/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI. |
-| **App** | `src/app/` | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own. |
-| **Design system** | `src/ui/` | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
+| Layer             | Location                 | Rule                                                                                                                                |
+| ----------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Domain**        | `src/game/`, `src/data/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI.                                                                  |
+| **App**           | `src/app/`               | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own.                                                        |
+| **Design system** | `src/ui/`                | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
 
 ### 9. Puzzle State Models
 
@@ -142,10 +142,10 @@ Always run `yarn check-types` and `yarn lint` before considering a change comple
 
 ## CI/CD Pipeline
 
-| Workflow      | Trigger              | What it does                                                                                       |
-| ------------- | --------------------- | --------------------------------------------------------------------------------------------------- |
-| `test.yml`    | Push / Pull Request   | Type checks, lint, tests, build verification; posts version change notice on PRs                    |
-| `release.yml` | Manual dispatch       | Bumps `package.json` and `CHANGELOG.md` from the Unreleased section, then deploys to GitHub Pages    |
+| Workflow      | Trigger             | What it does                                                                                      |
+| ------------- | ------------------- | ------------------------------------------------------------------------------------------------- |
+| `test.yml`    | Push / Pull Request | Type checks, lint, tests, build verification; posts version change notice on PRs                  |
+| `release.yml` | Manual dispatch     | Bumps `package.json` and `CHANGELOG.md` from the Unreleased section, then deploys to GitHub Pages |
 
 Deploys only happen as part of a release — there is no separate deploy workflow.
 
@@ -158,6 +158,7 @@ All behavior must have tests — tests ship in the same commit as the code.
 See **[`docs/instructions/testing.md`](docs/instructions/testing.md)** for the full rules: what counts as behavior, layer-by-layer requirements, file placement, and test description style.
 
 Quick reference:
+
 - Spec files are **co-located** with source (e.g. `generateLevel.spec.ts` beside `generateLevel.ts`)
 - Use **Vitest** + **`@testing-library/react`** (`render`/`renderHook`) — not just pure function extraction
 - **Storybook** covers visual appearance; it does not substitute for behavior tests
@@ -171,13 +172,13 @@ Run all tests: `yarn test`
 
 Before considering any task complete, run through this checklist:
 
-| # | Check | Requirement |
-|---|---|---|
-| 1 | **Tests** | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md). |
-| 2 | **Types** | `yarn check-types` exits clean. |
-| 3 | **Lint** | `yarn lint` exits clean (includes Tailwind class order). |
-| 4 | **Translations** | Any new user-facing string has both `en/` and `nl/` entries. |
-| 5 | **Changelog** | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]`. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
+| #   | Check            | Requirement                                                                                                                                    |
+| --- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Tests**        | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md).      |
+| 2   | **Types**        | `yarn check-types` exits clean.                                                                                                                |
+| 3   | **Lint**         | `yarn lint` exits clean (includes Tailwind class order).                                                                                       |
+| 4   | **Translations** | Any new user-facing string has both `en/` and `nl/` entries.                                                                                   |
+| 5   | **Changelog**    | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]`. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
 
 Steps 1–3 are always required. Steps 4–5 apply only when the change touches user-facing strings or player-visible behavior.
 
@@ -201,13 +202,13 @@ Version bumps are a deployment decision, not a per-feature step — see the CI/C
 
 Topic-specific guidelines for contributors and AI agents. Apply the relevant instruction file whenever working in that area.
 
-| Instruction file | Apply when |
-|---|---|
-| [`docs/instructions/storybook.md`](docs/instructions/storybook.md) | Writing or reviewing any `.stories.tsx` file |
-| [`docs/instructions/architecture.md`](docs/instructions/architecture.md) | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
-| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file |
-| [`docs/instructions/testing.md`](docs/instructions/testing.md) | Writing, reviewing, or deciding whether to add tests for any code |
-| [`docs/instructions/changelog.md`](docs/instructions/changelog.md) | Adding any user-facing change — to decide what belongs in `CHANGELOG.md` |
+| Instruction file                                                           | Apply when                                                                            |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [`docs/instructions/storybook.md`](docs/instructions/storybook.md)         | Writing or reviewing any `.stories.tsx` file                                          |
+| [`docs/instructions/architecture.md`](docs/instructions/architecture.md)   | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
+| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file                                             |
+| [`docs/instructions/testing.md`](docs/instructions/testing.md)             | Writing, reviewing, or deciding whether to add tests for any code                     |
+| [`docs/instructions/changelog.md`](docs/instructions/changelog.md)         | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`              |
 
 ---
 
@@ -215,12 +216,13 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 
 Deeper design docs live in `docs/`:
 
-| Document | Topic |
-|----------|-------|
-| [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md) | Crocodile lock mechanic for Treasure Tombs |
+| Document                                                                                     | Topic                                                                                                                                 |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md)               | Crocodile lock mechanic for Treasure Tombs                                                                                            |
 | [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, perk table — **authoritative interior reference** |
-| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md) | Three nested loops, level counts, conflict checks against other docs |
-| [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md) | Section-hash exploration, inventory-as-truth fragments, storage versioning |
+| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md)                             | Three nested loops, level counts, conflict checks against other docs                                                                  |
+| [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md)                 | Section-hash exploration, inventory-as-truth fragments, storage versioning                                                            |
+| [`docs/game-design/worldgen-dsl-redesign.md`](docs/game-design/worldgen-dsl-redesign.md)     | **In progress** — world-gen DSL value model (Structure/Loot/Population/Decoration layers), rank-based fragment assignment redesign    |
 
 ---
 
