@@ -58,7 +58,7 @@ export const starterRules: Rule[] = [
             ],
         })
         .floor(1, {
-            pathPuzzles: 2,
+            pathPuzzles: 3,
             difficulty: "master",
             sideSections: [sidePath({ puzzles: 1 })],
         }),

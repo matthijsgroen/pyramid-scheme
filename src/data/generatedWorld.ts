@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1532467448
+export const worldContentHash = 1525351592
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -105,8 +105,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
       {
-        pathPuzzles: 2,
-        chestEvery: 2,
+        pathPuzzles: 3,
+        chestEvery: 3,
         difficulty: "master",
         end: "treasure",
         exitOrStaircase: "exit",
