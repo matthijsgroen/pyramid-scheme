@@ -104,8 +104,16 @@ export type PyramidConstraint = {
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
+  /** Chance [0-1], rolled per pyramid, of an extra-winding floor. Ignored if corridorStraightness is set. */
+  windyChance?: number
+  /** corridorStraightness used on a windyChance hit. Default 0.35. */
+  windyStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Chance [0-1], rolled per pyramid, of an extra-large packing floor. Ignored if packing is set. */
+  packingChance?: number
+  /** packing used on a packingChance hit. Default 1.6. */
+  packingWhenHit?: number
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType

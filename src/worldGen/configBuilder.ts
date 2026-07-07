@@ -165,6 +165,41 @@ const resolveKeyColors = (
   return undefined
 }
 
+// Resolves an authored literal, or a chance-rolled "hit" value, or undefined (builder default).
+const resolveChanceValue = (
+  literal: number | undefined,
+  chance: number | undefined,
+  hitValue: number,
+  journeyId: string,
+  pyramidIndex: number,
+  tag: string
+): number | undefined => {
+  if (literal !== undefined) return literal
+  if (chance === undefined) return undefined
+  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}:${tag}`))
+  return rand() < chance ? hitValue : undefined
+}
+
+const resolveCorridorStraightness = (constraint: PyramidConstraint, journeyId: string, pyramidIndex: number) =>
+  resolveChanceValue(
+    constraint.corridorStraightness,
+    constraint.windyChance,
+    constraint.windyStraightness ?? 0.35,
+    journeyId,
+    pyramidIndex,
+    "windy"
+  )
+
+const resolvePacking = (constraint: PyramidConstraint, journeyId: string, pyramidIndex: number) =>
+  resolveChanceValue(
+    constraint.packing,
+    constraint.packingChance,
+    constraint.packingWhenHit ?? 1.6,
+    journeyId,
+    pyramidIndex,
+    "packing"
+  )
+
 const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
   let committed = 0
   for (const p of plan) {
@@ -509,8 +544,8 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           )
           const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
-          const floorStraightness = fc.corridorStraightness ?? constraint.corridorStraightness
-          const floorPacking = fc.packing ?? constraint.packing
+          const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
+          const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
           floorConfigs.push({
             pathPuzzles: floorPP,
             chestEvery: chestEveryFor(floorPP),
@@ -573,6 +608,8 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           )
           const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
           chestOffset += chestCountFor(pp)
+          const straightness = resolveCorridorStraightness(constraint, journeyId, i)
+          const packing = resolvePacking(constraint, journeyId, i)
           floorConfigs.push({
             pathPuzzles: pp,
             chestEvery: chestEveryFor(pp),
@@ -583,10 +620,8 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             mainEndReward,
             chestRewards,
             ...(constraint.consumableDensity !== undefined ? { consumableDensity: constraint.consumableDensity } : {}),
-            ...(constraint.corridorStraightness !== undefined
-              ? { corridorStraightness: constraint.corridorStraightness }
-              : {}),
-            ...(constraint.packing !== undefined ? { packing: constraint.packing } : {}),
+            ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
+            ...(packing !== undefined ? { packing } : {}),
           } satisfies FloorConfig)
         }
 
@@ -648,6 +683,8 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
         chestOffset += chestCountFor(pp)
         const consumableDensity = constraint.consumableDensity
+        const straightness = resolveCorridorStraightness(constraint, journeyId, i)
+        const packing = resolvePacking(constraint, journeyId, i)
         pyramidConfigs.push([
           {
             pathPuzzles: pp,
@@ -659,10 +696,8 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
             mainEndReward,
             chestRewards,
             ...(consumableDensity !== undefined ? { consumableDensity } : {}),
-            ...(constraint.corridorStraightness !== undefined
-              ? { corridorStraightness: constraint.corridorStraightness }
-              : {}),
-            ...(constraint.packing !== undefined ? { packing: constraint.packing } : {}),
+            ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
+            ...(packing !== undefined ? { packing } : {}),
           } satisfies FloorConfig,
         ])
       }

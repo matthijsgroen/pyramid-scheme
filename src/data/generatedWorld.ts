@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1317695877
+export const worldContentHash = 1146743849
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -136,6 +136,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p10", pieceIndex: 1 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -158,6 +159,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art1", pieceIndex: 0 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p8", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "oil" }],
       },
@@ -180,6 +182,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 0 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a6", pieceIndex: 0 },
         chestRewards: [{ type: "consumable", consumable: "trapTool" }],
       },
@@ -202,6 +205,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d1", pieceIndex: 0 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -226,6 +230,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art1", pieceIndex: 1 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "consumable", consumable: "oil" }],
       },
@@ -248,6 +253,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a6", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "trapTool" }],
       },
@@ -270,6 +276,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d1", pieceIndex: 1 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -292,6 +299,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 1 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -317,6 +325,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "consumable", consumable: "trapTool" },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -344,6 +353,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 2 },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         chestRewards: [{ type: "consumable", consumable: "oil" }],
       },
@@ -366,6 +376,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "consumable", consumable: "oil" },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 2 },
         chestRewards: [{ type: "consumable", consumable: "trapTool" }],
       },
@@ -388,6 +399,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "consumable", consumable: "bandage" },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -410,6 +422,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "consumable", consumable: "bandage" },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -435,6 +448,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "consumable", consumable: "trapTool" },
           },
         ],
+        consumableDensity: 0,
         mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -470,6 +484,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 0 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -506,6 +521,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 0 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -549,6 +565,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 0 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -590,6 +607,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -626,6 +644,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a13", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -656,6 +675,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -701,6 +721,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -741,6 +762,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -787,6 +809,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -822,6 +845,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -861,6 +885,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -901,6 +926,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -953,6 +979,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -993,6 +1020,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -1040,6 +1068,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1082,6 +1111,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -1112,6 +1142,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1157,6 +1188,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -1203,6 +1235,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "oil" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1249,6 +1282,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.05,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -1303,6 +1337,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 1 },
         chestRewards: [{ type: "consumable", consumable: "bandage" }],
       },
@@ -1352,6 +1387,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        packing: 1.6,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p7", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -1416,6 +1453,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        packing: 1.6,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a5", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1482,6 +1521,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 0 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1530,6 +1570,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1582,6 +1623,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -1635,6 +1677,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1700,6 +1743,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        packing: 1.6,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -1759,6 +1804,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d3", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1826,6 +1872,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        corridorStraightness: 0.35,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -1876,6 +1924,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        corridorStraightness: 0.35,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1923,6 +1973,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -1976,6 +2027,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        packing: 1.6,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2042,6 +2095,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -2102,6 +2156,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2169,6 +2224,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        packing: 1.6,
+        consumableDensity: 0.2,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -2218,6 +2275,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2264,6 +2322,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        packing: 1.6,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -2311,6 +2371,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        corridorStraightness: 0.35,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2376,6 +2438,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        corridorStraightness: 0.35,
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -2429,6 +2493,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2490,6 +2555,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
           { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true },
         ],
+        consumableDensity: 0.2,
         mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2557,6 +2623,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2649,6 +2716,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -2752,6 +2820,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2850,6 +2919,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        packing: 1.6,
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a1", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2938,6 +3009,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3031,6 +3103,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -3124,6 +3197,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3229,6 +3303,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3321,6 +3396,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        packing: 1.6,
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -3421,6 +3498,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3517,6 +3595,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        corridorStraightness: 0.35,
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3610,6 +3690,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a1", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -3703,6 +3784,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3801,6 +3883,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art11", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3900,6 +3983,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        packing: 1.6,
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art11", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4007,6 +4092,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4095,6 +4181,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        corridorStraightness: 0.35,
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4180,6 +4268,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 5 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -4272,6 +4361,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4364,6 +4454,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 5 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4470,6 +4561,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
           },
         ],
+        consumableDensity: 0.25,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4567,6 +4659,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_1:p0:main0" },
+        corridorStraightness: 0.35,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 1 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4665,6 +4759,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_1:p1:main0" },
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4770,6 +4866,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_1:p2:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -4882,6 +4979,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_1:p3:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4988,6 +5086,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_1:p4:main0" },
+        corridorStraightness: 0.35,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5094,6 +5194,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_1:p5:main0" },
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5195,6 +5297,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_2:p0:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5300,6 +5403,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_2:p1:main0" },
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5405,6 +5510,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_2:p2:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -5510,6 +5616,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_2:p3:main0" },
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 2 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5616,6 +5724,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_2:p4:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5722,6 +5831,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_2:p5:main0" },
+        corridorStraightness: 0.35,
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 4 },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -5830,6 +5942,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p0:main0" },
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 3 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5935,6 +6049,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p1:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 5 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6033,6 +6148,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p2:main0" },
+        corridorStraightness: 0.35,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 5 },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -6145,6 +6262,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p3:main0" },
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6251,6 +6370,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p4:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -6364,6 +6484,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p5:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -6472,6 +6593,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p0:main0" },
+        corridorStraightness: 0.35,
+        packing: 1.6,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 6 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6577,6 +6701,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p1:main0" },
+        corridorStraightness: 0.35,
+        consumableDensity: 0.3,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 6 },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6675,6 +6801,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p2:main0" },
+        corridorStraightness: 0.35,
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -6787,6 +6915,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p3:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "oil" },
@@ -6893,6 +7022,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p4:main0" },
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "trapTool" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },
@@ -7006,6 +7136,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p5:main0" },
+        corridorStraightness: 0.35,
+        consumableDensity: 0.3,
         mainEndReward: { type: "consumable", consumable: "bandage" },
         chestRewards: [
           { type: "consumable", consumable: "bandage" },

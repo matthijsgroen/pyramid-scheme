@@ -65,6 +65,9 @@ const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
   }
   if (c.puzzleFamily) lines.push(`    puzzleFamily: "${c.puzzleFamily}",`)
   if (c.lastMainPuzzleFamily) lines.push(`    lastMainPuzzleFamily: "${c.lastMainPuzzleFamily}",`)
+  if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
+  if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
+  if (c.consumableDensity !== undefined) lines.push(`    consumableDensity: ${c.consumableDensity},`)
   if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward, nextIdx)},`)
   if (c.chestRewards && c.chestRewards.length > 0) {
     const rewards = c.chestRewards.map(r => `      ${serializeReward(r, nextIdx)}`).join(",\n")
