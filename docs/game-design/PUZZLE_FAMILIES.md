@@ -292,6 +292,79 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
 - **UI:** easy.
 - **Role:** spine-ish (outputs a value) but low ceiling — a flavour family.
 
+### 4.15 Mirror / lightbeam — *(new, spec locked, not yet built)*
+- **Skill:** spatial reasoning, route-tracing, elimination of irrelevant pieces.
+- **Operates:** a beam enters from a fixed edge cell in a fixed direction and must
+  reach a target edge cell. Two movable tile types sit on the grid:
+  - **Rotate tile** — fixed position, tap-cycles between two diagonal
+    orientations (`/` ↔ `\`), deflecting the beam 90° off either approach face
+    (geometric default — no single-sided-vs-double-sided variant).
+  - **Slide tile** — fixed mirror angle, tap-cycles between 2–3 discrete stops
+    along an authored track (one fixed row or column per tile).
+  A third tile type, **wall**, is a pure blocker — the beam is absorbed/dead on
+  contact, no decoration-only variant for this family.
+- **Knobs:** grid size · wall count · free-vs-fixed mirror ratio (fixed mirrors
+  are pre-set "givens," like Sudoku clues) · count of off-path decoy tiles the
+  player must reason are irrelevant.
+- **Scaling:** should be good — position × orientation combinatorics grow fast
+  with tile count, similar shape to the grid-logic families.
+- **Generation:** build the solved beam path backward first (route source →
+  target, drop a rotate/slide tile at each turn with the orientation/position
+  the turn requires), scatter decoys and walls off that path, then **run a
+  uniqueness verifier** — brute-force every position×orientation combination
+  across movable tiles and confirm exactly one reaches the target before
+  accepting the puzzle. Required, not optional: with only 2–3 states per tile
+  a misplaced decoy can accidentally open a second valid route.
+- **UI:** medium — same tap-to-cycle gesture language as Sumplete/rotate, just
+  applied to orientation or track position instead of a 3-state keep/delete
+  toggle. No drag needed (slide is discrete stops, not free-drag).
+- **Role:** side (no value output in v1).
+- **Deferred:** prism/color-split tiles (splitting one beam into multiple
+  colored beams, each needing its own target) — a genuinely different puzzle
+  shape (multi-beam, color-matching), not a v1 knob. **The Talos Principle**
+  has already solved this exact problem (rotatable mirrors + color-splitting
+  prisms + multi-receiver puzzles) — reference it directly when this phase
+  starts rather than re-deriving from scratch.
+- **Prior art to draw UI/pacing lessons from:** Prince of Persia: Sands of Time
+  (chained sun-mirror puzzles), Zelda Wind Waker/Twilight Princess (mirror
+  shield reflecting sunlight at switches — close thematic fit for an Egyptian
+  sun-god setting), Chip's Challenge, and mobile games *Reflect*/*Laser
+  Overload* (already-solved tap-to-cycle mobile ergonomics for this exact
+  gesture).
+
+### 4.16 Sokoban (crate pushing) — *(proposed, not yet designed)*
+- **Skill:** spatial planning, move-order reasoning, undo-driven exploration.
+- **Operates:** push crates across a grid onto target tiles; a crate only moves
+  if the tile behind it (in the push direction) is empty — the classic
+  push-don't-pull constraint. Not yet designed beyond this — no knobs, scaling,
+  or generation approach locked yet.
+- **Role:** side, likely no value output — flagged here mainly to record the
+  **theme pairing** below before it's forgotten.
+- **Theme pairing — "Merchant":** groups with **balance scale** (§4.2) under a
+  shared visual/narrative wrapper — weighing goods and moving cargo are both
+  merchant-flavored actions, even though the two mechanics are unrelated
+  (algebra vs spatial push-block). This is the first example of a **theme as a
+  cross-family grouping** rather than a per-family visual skin — worth
+  revisiting once more families exist, to see if other natural theme clusters
+  emerge (e.g. a "sun god" cluster for mirror/lightbeam + sundial).
+
+### 4.17 Rush Hour (sliding vehicle blockade) — *(proposed, not yet designed)*
+- **Skill:** spatial planning, move-order reasoning — same muscle as Sokoban,
+  different constraint shape.
+- **Operates:** vehicles occupy a row or column and slide freely along it until
+  blocked by a wall, the grid edge, or another vehicle — never off-axis, unlike
+  Sokoban's crates. Goal: clear a path so a target vehicle reaches the exit.
+  Not yet designed beyond this — no knobs, scaling, or generation approach
+  locked yet.
+- **Note:** distinct from the mirror/lightbeam slide-tile (§4.15), which moves
+  between discrete authored stops rather than freely until blocked — this
+  family is the free-slide-until-blocked version that was considered and set
+  aside for that tile, now standing on its own as a full family instead.
+- **Role:** side, likely no value output.
+- **Theme pairing:** pairs naturally with **Sokoban** under a broader
+  "logistics/caravan route" grouping — both are grid-block movement puzzles
+  about clearing or arranging paths, just with different piece-movement rules.
+
 ---
 
 ## 5. The shared grid engine
