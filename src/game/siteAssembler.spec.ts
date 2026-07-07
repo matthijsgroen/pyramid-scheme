@@ -281,6 +281,63 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("trapped sections have no back-door either — removing the first trap cuts off its whole chain", () => {
+    // Same leftover-spanning-tree-edge risk as gated sections, but for ungated trapped
+    // content: without isolation, a stray door could let a player step past a trap
+    // and still reach the section's reward.
+    const key = (r: number, c: number) => `${r},${c}`
+    const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
+      const seen = new Set<string>([key(...start)])
+      const queue: Array<[number, number]> = [[start[0], start[1]]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE_ALL[dir]
+          const nr = r + dr,
+            nc = c + dc
+          const k = key(nr, nc)
+          if (seen.has(k) || blocked.has(k)) continue
+          seen.add(k)
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const config = (): FloorConfig => ({
+      pathPuzzles: 3,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, trapped: true },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+      ],
+    })
+
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("trap-isolation", config(), seed)
+      if (!result.success) continue
+      const grid = result.grid
+      const traps: Array<[number, number]> = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.roomType === "trap") traps.push([r, c])
+        }
+      if (traps.length === 0) continue
+
+      const fullyReachable = reachableFrom(grid, grid.entrancePos, new Set())
+      const [tr, tc] = traps[0]
+      const withoutFirstTrap = reachableFrom(grid, grid.entrancePos, new Set([key(tr, tc)]))
+      const onlyViaThisTrap = [...fullyReachable].filter(k => !withoutFirstTrap.has(k))
+      expect(onlyViaThisTrap.length).toBeGreaterThan(1)
+    }
+  })
+
   it("auto-injects an ungated section when all sections are gated with floor-key", () => {
     const config: FloorConfig = {
       pathPuzzles: 1,

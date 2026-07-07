@@ -746,16 +746,18 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // any section exists — most of its edges never get walked by main-path/section/
     // sub-section construction, but any two used cells that happen to be tree-adjacent
     // still read as a real door once dirs get computed below (see the two loops after
-    // `cells2D` is allocated). For ungated content that's a harmless bonus: a stray
+    // `cells2D` is allocated). For plain content that's a harmless bonus: a stray
     // loop or shortcut nobody planned but nobody minds either. For gated content it's
     // a softlock/bypass — a section only exists behind its gate because the gate is
     // its *only* legitimate entrance, so it must never gain a "free" extra door from
-    // a leftover tree edge. `intendedEdgeKeys` records the edges each chain actually
-    // walked (main path, and each section's/sub-section's attach point through its own
-    // cells in order); `gatedCellKeys` marks every cell behind a gate, including a
-    // gated section's ungated sub-sections (still behind the same outer gate) and an
-    // ungated section's own gated sub-section. A door is allowed if it's an intended
-    // edge, or if neither endpoint is gated content.
+    // a leftover tree edge. Trapped content gets the same treatment even without a
+    // gate: a stray door would let a player step past a trap cell for free.
+    // `intendedEdgeKeys` records the edges each chain actually walked (main path, and
+    // each section's/sub-section's attach point through its own cells in order);
+    // `gatedCellKeys` marks every cell behind a gate or trap, including a gated/trapped
+    // section's plain sub-sections (still behind the same outer gate/trap) and a plain
+    // section's own gated/trapped sub-section. A door is allowed if it's an intended
+    // edge, or if neither endpoint is gated/trapped content.
     const gatedCellKeys = new Set<string>()
     const intendedEdgeKeys = new Set<string>()
     const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
@@ -772,13 +774,20 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     }
     for (const group of sectionGroups) {
       markChain(group.attachedAt, group.cells)
-      if (sideSections[group.sectionIdx].gate) {
+      // Trapped content gets the same isolation as gated content — a stray tree edge
+      // would otherwise let a player step past a trap cell for free.
+      if (sideSections[group.sectionIdx].gate || sideSections[group.sectionIdx].trapped) {
         for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
       }
     }
     for (const sub of subSectionGroups) {
       markChain(sub.attachedAt, sub.cells)
-      if (sideSections[sub.parentSectionIdx].gate || sub.subSection.gate) {
+      if (
+        sideSections[sub.parentSectionIdx].gate ||
+        sub.subSection.gate ||
+        sideSections[sub.parentSectionIdx].trapped ||
+        sub.subSection.trapped
+      ) {
         for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
       }
     }
