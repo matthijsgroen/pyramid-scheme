@@ -1,4 +1,4 @@
-import type { ConsumableType, Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
+import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
 import {
   PYRAMID_JOURNEYS,
   TOMB_JOURNEYS,
@@ -17,8 +17,6 @@ import type {
   PyramidConstraint,
   FloorConstraint,
   RewardHint,
-  RewardSpec,
-  GateSpec,
   SideSectionConstraint,
   SideIntensity,
   KeyColor,
@@ -26,6 +24,7 @@ import type {
   PathPuzzlesRange,
 } from "./dsl"
 import { mulberry32 } from "../game/random"
+import { hashStr, hintToReward, pathEndToReward, rollConsumable, specToGate, specToReward } from "./rewards"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -73,39 +72,6 @@ const interpolatePathPuzzles = (range: PathPuzzlesRange, i: number, total: numbe
 const resolvePathPuzzles = (value: number | PathPuzzlesRange, i: number, total: number): number =>
   isPathPuzzlesRange(value) ? interpolatePathPuzzles(value, i, total) : value
 
-// ── Reward resolution ─────────────────────────────────────────────────────────
-
-const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
-  switch (hint) {
-    case "mosaicPiece":
-      return { type: "mosaicPiece" }
-    case "mapPiece":
-      return { type: "mapPiece", tombId: `${tier}_treasure_tomb` }
-    case "hieroglyphs":
-      return { type: "hieroglyphs" }
-    case "hieroglyphFragment":
-      return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
-  }
-}
-
-// Translates a RewardSpec (string hint or structured object) to a TreasureReward
-const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
-  if (typeof spec === "string") return hintToReward(spec, tier)
-  return spec as TreasureReward
-}
-
-// Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
-export const specToGate = (
-  spec: GateSpec | undefined
-): { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string } | undefined => {
-  if (spec == null) return undefined
-  if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
-  if (spec.type === "floor-key") return { type: "floor-key", color: spec.color ?? "blue" }
-  const wardKeyId = TOMB_PERK_IDS[spec.tombId]?.[spec.index]
-  if (!wardKeyId) return undefined
-  return { type: "tomb-key", wardKeyId }
-}
-
 // ── Chest rewards ─────────────────────────────────────────────────────────────
 
 const buildChestRewards = (
@@ -115,25 +81,15 @@ const buildChestRewards = (
   rates: { bandage: number; oil: number; trapTool: number } = GLOBAL_DEFAULTS.consumableRates
 ): TreasureReward[] => {
   const count = chestCountFor(pathPuzzles)
-  const total = rates.bandage + rates.oil + rates.trapTool
-  return Array.from({ length: count }, (_, i) => {
-    const roll = hashStr(`${journeyId}:consumable:${slotOffset + i}`) % total
-    const consumable: ConsumableType =
-      roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
-    return { type: "consumable", consumable }
-  })
+  return Array.from({ length: count }, (_, i) => ({
+    type: "consumable" as const,
+    consumable: rollConsumable(`${journeyId}:consumable:${slotOffset + i}`, rates),
+  }))
 }
 
 // ── Mosaic path distribution ──────────────────────────────────────────────────
 
 const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, low: 1, medium: 2, dense: 4 }
-
-// Simple deterministic hash for per-pyramid seeding of density ranges
-const hashStr = (s: string): number => {
-  let h = 0
-  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
-  return h >>> 0
-}
 
 // Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
 export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
@@ -271,22 +227,6 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
-
-const CONSUMABLE_THRESHOLDS = [5, 8] as const // <5 → bandage, <8 → oil, else → trapTool
-
-const pathEndToReward = (end: string, tier: string, index = 0): TreasureReward | undefined => {
-  if (end === "mosaic") return { type: "mosaicPiece" }
-  if (end === "fragment") {
-    return { type: "fragmentSlot" }
-  }
-  if (end === "consumable") {
-    const roll = hashStr(`${tier}:consumable:${index}`) % 10
-    const consumable =
-      roll < CONSUMABLE_THRESHOLDS[0] ? "bandage" : roll < CONSUMABLE_THRESHOLDS[1] ? "oil" : "trapTool"
-    return { type: "consumable", consumable }
-  }
-  return undefined // "treasure" = no specific endReward
-}
 
 const buildSideSections = (
   tier: string,
@@ -1069,13 +1009,10 @@ const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void => {
 
   // Fill remaining placeholder slots with consumables
   const rates = GLOBAL_DEFAULTS.consumableRates
-  const total = rates.bandage + rates.oil + rates.trapTool
   let fallbackIdx = 0
   for (const slot of available) {
     if (!slot.isPlaceholder) continue
-    const roll = hashStr(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`) % total
-    const consumable: ConsumableType =
-      roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
+    const consumable = rollConsumable(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`, rates)
     slot.assign({ type: "consumable", consumable })
   }
 
