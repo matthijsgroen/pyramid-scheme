@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Treasure tombs now hold chests along their path, and some tombs have a hidden side path leading to a mosaic piece or a hieroglyph fragment.
+
 ### Changed
 
 - The opening journey's first three pyramids now branch out to ward-gated bonus floors, each holding a hidden path with a puzzle or trap to find, with difficulty stepping up pyramid by pyramid.

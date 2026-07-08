@@ -1,30 +1,25 @@
-import type { ConsumableType, Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
-import {
-  PYRAMID_JOURNEYS,
-  TOMB_JOURNEYS,
-  TOMB_SYMBOLS,
-  HIEROGLYPH_REQUIRED,
-  chestEveryFor,
-  chestCountFor,
-} from "./data"
-import { TOMB_PERK_IDS, TIER_UNLOCK_PERK_ID, TREASURE_PERKS } from "../data/treasurePerks"
-import { tableauLevels } from "../data/tableaus"
+import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, HIEROGLYPH_REQUIRED, chestCountFor, chestEveryFor } from "./data"
+import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
-import { worldSpec, WORLD_TARGETS } from "./worldSpec"
+import { worldSpec } from "./worldSpec"
 import type {
   PyramidConstraint,
   FloorConstraint,
   RewardHint,
   RewardSpec,
-  GateSpec,
   SideSectionConstraint,
-  SideIntensity,
-  KeyColor,
-  PathEntry,
   PathPuzzlesRange,
+  TombRewardHint,
 } from "./dsl"
-import { mulberry32 } from "../game/random"
+import { hintToReward, specToReward } from "./rewards"
+import { buildSideSections } from "./sideSections"
+import { buildChestRewards, buildFloor, buildSite, wireStaircases } from "./buildSite"
+import { computeMosaicPaths } from "./mosaics"
+import { assignFragments } from "./fragments"
+import { validateDiscovery, validateRewardCounts } from "./validate"
+import { PYRAMID_CAPABILITIES, TOMB_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -34,28 +29,6 @@ const NEXT_TIER: Record<string, string | null> = {
   expert: "master",
   master: "wizard",
   wizard: null,
-}
-
-// Ward-wing key indices for a tomb, skipping any slot reserved for a tier-unlock or
-// location-key perk (those are spoken for elsewhere) — first `count` remaining indices.
-const freeWardIndices = (tombId: string, count: number): number[] => {
-  const perkIds = TOMB_PERK_IDS[tombId] ?? []
-  const free: number[] = []
-  for (let idx = 0; idx < perkIds.length && free.length < count; idx++) {
-    const perk = TREASURE_PERKS[perkIds[idx]]
-    if (perk?.type !== "tier-unlock" && perk?.type !== "location-key") free.push(idx)
-  }
-  return free
-}
-
-// Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.
-// If a secondary tomb has no mapPiece/locationKey in any authored config, a locationKey
-// is auto-injected as a side section on the primary tomb's last floor.
-const SECONDARY_TOMBS: Record<string, string[]> = {
-  expert_treasure_tomb: ["expert_treasure_tomb_b"],
-  master_treasure_tomb: ["master_treasure_tomb_b"],
-  wizard_treasure_tomb: ["wizard_treasure_tomb_b"],
-  wizard_treasure_tomb_b: ["wizard_treasure_tomb_c"],
 }
 
 // ── Path puzzle scaling ───────────────────────────────────────────────────────
@@ -71,338 +44,6 @@ const interpolatePathPuzzles = (range: PathPuzzlesRange, i: number, total: numbe
 
 const resolvePathPuzzles = (value: number | PathPuzzlesRange, i: number, total: number): number =>
   isPathPuzzlesRange(value) ? interpolatePathPuzzles(value, i, total) : value
-
-// ── Reward resolution ─────────────────────────────────────────────────────────
-
-const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
-  switch (hint) {
-    case "mosaicPiece":
-      return { type: "mosaicPiece" }
-    case "mapPiece":
-      return { type: "mapPiece", tombId: `${tier}_treasure_tomb` }
-    case "hieroglyphs":
-      return { type: "hieroglyphs" }
-    case "hieroglyphFragment":
-      return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
-  }
-}
-
-// Translates a RewardSpec (string hint or structured object) to a TreasureReward
-const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
-  if (typeof spec === "string") return hintToReward(spec, tier)
-  return spec as TreasureReward
-}
-
-// Translates a GateSpec to the runtime GateConfig form (undefined = no gate)
-export const specToGate = (
-  spec: GateSpec | undefined
-): { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string } | undefined => {
-  if (spec == null) return undefined
-  if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
-  if (spec.type === "floor-key") return { type: "floor-key", color: spec.color ?? "blue" }
-  const wardKeyId = TOMB_PERK_IDS[spec.tombId]?.[spec.index]
-  if (!wardKeyId) return undefined
-  return { type: "tomb-key", wardKeyId }
-}
-
-// ── Chest rewards ─────────────────────────────────────────────────────────────
-
-const DEFAULT_CONSUMABLE_RATES = { bandage: 3, oil: 1, trapTool: 1 }
-
-const buildChestRewards = (
-  journeyId: string,
-  slotOffset: number,
-  pathPuzzles: number,
-  rates: { bandage: number; oil: number; trapTool: number } = DEFAULT_CONSUMABLE_RATES
-): TreasureReward[] => {
-  const count = chestCountFor(pathPuzzles)
-  const total = rates.bandage + rates.oil + rates.trapTool
-  return Array.from({ length: count }, (_, i) => {
-    const roll = hashStr(`${journeyId}:consumable:${slotOffset + i}`) % total
-    const consumable: ConsumableType =
-      roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
-    return { type: "consumable", consumable }
-  })
-}
-
-// ── Mosaic path distribution ──────────────────────────────────────────────────
-
-const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, low: 1, medium: 2, dense: 4 }
-
-// Simple deterministic hash for per-pyramid seeding of density ranges
-const hashStr = (s: string): number => {
-  let h = 0
-  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
-  return h >>> 0
-}
-
-// Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
-export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
-  if (density === "none") return 0
-  if (density === "low") return 1
-  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}`))
-  if (density === "medium") return 2 + Math.floor(rand() * 2) // 2 or 3
-  return 4 + Math.floor(rand() * 2) // 4 or 5
-}
-
-// Resolves the effective keyColors for a pyramid, honoring (in priority order):
-// a literal keyColorsRange roll, a literal keyColors, then a sharedKeyChance roll — a hit
-// resolves to 1 (one key, every gated door); a miss resolves to 5 (mostly-dedicated keys),
-// since the buildSideSections default of "no keyColors set" already means 1 color and
-// would make a miss indistinguishable from a hit.
-const resolveKeyColors = (
-  constraint: PyramidConstraint,
-  journeyId: string,
-  pyramidIndex: number
-): number | undefined => {
-  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}:keyColors`))
-  if (constraint.keyColorsRange) {
-    const { min, max } = constraint.keyColorsRange
-    return min + Math.floor(rand() * (max - min + 1))
-  }
-  if (constraint.keyColors !== undefined) return constraint.keyColors
-  if (constraint.sharedKeyChance !== undefined) return rand() < constraint.sharedKeyChance ? 1 : 5
-  return undefined
-}
-
-// Resolves an authored literal, or a chance-rolled "hit" value, or undefined (builder default).
-const resolveChanceValue = (
-  literal: number | undefined,
-  chance: number | undefined,
-  hitValue: number,
-  journeyId: string,
-  pyramidIndex: number,
-  tag: string
-): number | undefined => {
-  if (literal !== undefined) return literal
-  if (chance === undefined) return undefined
-  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}:${tag}`))
-  return rand() < chance ? hitValue : undefined
-}
-
-const resolveCorridorStraightness = (constraint: PyramidConstraint, journeyId: string, pyramidIndex: number) =>
-  resolveChanceValue(
-    constraint.corridorStraightness,
-    constraint.windyChance,
-    constraint.windyStraightness ?? 0.35,
-    journeyId,
-    pyramidIndex,
-    "windy"
-  )
-
-const resolvePacking = (constraint: PyramidConstraint, journeyId: string, pyramidIndex: number) =>
-  resolveChanceValue(
-    constraint.packing,
-    constraint.packingChance,
-    constraint.packingWhenHit ?? 1.6,
-    journeyId,
-    pyramidIndex,
-    "packing"
-  )
-
-const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
-  let committed = 0
-  for (const p of plan) {
-    if (p.constraint.mainEndReward === "mosaicPiece") committed++
-  }
-
-  const explicitPaths = new Map<string, number>()
-  const autoCandidates: PyramidPlan[] = []
-  let explicitTotal = 0
-
-  for (const p of plan) {
-    const key = `${p.journeyId}:${p.pyramidIndex}`
-    // Multi-floor pyramids with explicit floors[] are fully specified — exclude from auto-distribution
-    if (p.constraint.floors?.length) {
-      for (const floor of p.constraint.floors) {
-        const floorSd = floor?.sideSections
-        if (Array.isArray(floorSd)) committed += floorSd.filter(s => s.endReward === "mosaicPiece").length
-      }
-      explicitPaths.set(key, 0)
-      continue
-    }
-    const sd = p.constraint.sideSections
-    if (typeof sd === "string") {
-      // SideIntensity → all side paths are mosaic, not an auto-candidate
-      const count = INTENSITY_PATHS[sd as SideIntensity] ?? 0
-      explicitPaths.set(key, count)
-      explicitTotal += count
-    } else if (typeof sd === "number") {
-      explicitPaths.set(key, sd)
-      explicitTotal += sd
-    } else {
-      // Array or undefined → auto-candidate; count explicitly specified mosaicPiece sections
-      if (Array.isArray(sd)) {
-        committed += sd.filter(s => s.endReward === "mosaicPiece").length
-      }
-      // Count mosaic paths from sidePaths/hiddenPaths declarations — those pyramids leave auto-pool.
-      // mosaicPathCount is set to 0 so buildSideSections skips the auto-mosaic loop;
-      // the declared hidden mosaics are built directly from constraints.
-      const allDeclared = [...(p.constraint.sidePaths ?? []), ...(p.constraint.hiddenPaths ?? [])]
-      const declaredMosaics = allDeclared.filter(e => e.end === "mosaic")
-      if (declaredMosaics.length > 0) {
-        const count = declaredMosaics.reduce(
-          (sum, e) => sum + pathCountForDensity(e.density, p.journeyId, p.pyramidIndex),
-          0
-        )
-        committed += count
-        explicitPaths.set(key, 0) // buildSideSections handles these via declaredHiddenPaths
-      } else {
-        autoCandidates.push(p)
-      }
-    }
-  }
-
-  const remaining = WORLD_TARGETS.mosaicPieceRewards - committed - explicitTotal
-  const result = new Map(explicitPaths)
-
-  if (remaining > 0 && autoCandidates.length > 0) {
-    const sorted = [...autoCandidates].sort((a, b) => b.pathPuzzles - a.pathPuzzles)
-    for (let rem = remaining, i = 0; rem > 0; rem--, i++) {
-      const p = sorted[i % sorted.length]
-      const key = `${p.journeyId}:${p.pyramidIndex}`
-      result.set(key, (result.get(key) ?? 0) + 1)
-    }
-  }
-
-  return result
-}
-
-// ── Side sections ─────────────────────────────────────────────────────────────
-
-const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
-
-const CONSUMABLE_THRESHOLDS = [5, 8] as const // <5 → bandage, <8 → oil, else → trapTool
-
-const pathEndToReward = (end: string, tier: string, index = 0): TreasureReward | undefined => {
-  if (end === "mosaic") return { type: "mosaicPiece" }
-  if (end === "fragment") {
-    return { type: "fragmentSlot" }
-  }
-  if (end === "consumable") {
-    const roll = hashStr(`${tier}:consumable:${index}`) % 10
-    const consumable =
-      roll < CONSUMABLE_THRESHOLDS[0] ? "bandage" : roll < CONSUMABLE_THRESHOLDS[1] ? "oil" : "trapTool"
-    return { type: "consumable", consumable }
-  }
-  return undefined // "treasure" = no specific endReward
-}
-
-const buildSideSections = (
-  tier: string,
-  difficulty: Difficulty,
-  hasMapPieceBranch: boolean,
-  hasWardGate: boolean,
-  nextTier: string | null,
-  constraintSections: SideSectionConstraint[] | undefined,
-  mosaicPathCount: number,
-  mainPathPuzzles: number,
-  keyDensity?: SideIntensity,
-  keyColors?: number,
-  journeyId?: string,
-  pyramidIndex?: number,
-  declaredSidePaths?: PathEntry[],
-  declaredHiddenPaths?: PathEntry[]
-): SideSection[] => {
-  const sections: SideSection[] = []
-
-  if (hasMapPieceBranch) {
-    const tombId = `${tier}_treasure_tomb`
-    sections.push({ pathPuzzles: 0, difficulty, end: "treasure", endReward: { type: "mapPiece", tombId } })
-  }
-
-  if (hasWardGate && nextTier) {
-    const wardKeyId = TIER_UNLOCK_PERK_ID[tier]
-    if (wardKeyId) {
-      sections.push({
-        pathPuzzles: 0,
-        difficulty,
-        end: "treasure",
-        gate: { type: "tomb-key", wardKeyId },
-      })
-    }
-  }
-
-  // DSL-specified additional sections (appended after hardcoded ones)
-  for (const cs of constraintSections ?? []) {
-    const gate = specToGate(cs.gate)
-    const endReward = cs.endReward ? specToReward(cs.endReward, tier as Tier) : undefined
-    const subSections = cs.sideSections?.map(sub => {
-      const subGate = specToGate(sub.gate)
-      const subEndReward = sub.endReward ? specToReward(sub.endReward, tier as Tier) : undefined
-      return {
-        pathPuzzles: typeof sub.pathPuzzles === "number" ? sub.pathPuzzles : 0,
-        difficulty: sub.difficulty ?? difficulty,
-        end: "treasure" as const,
-        ...(subGate ? { gate: subGate } : {}),
-        ...(subEndReward ? { endReward: subEndReward } : {}),
-        ...(sub.decorations?.length ? { decorations: sub.decorations } : {}),
-      }
-    })
-    const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${sections.length}` } : ("treasure" as const)
-    sections.push({
-      pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
-      difficulty: cs.difficulty ?? difficulty,
-      end,
-      ...(gate ? { gate } : {}),
-      ...(endReward ? { endReward } : {}),
-      ...(subSections?.length ? { sideSections: subSections } : {}),
-      ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
-      ...(cs.hidden ? { hidden: true } : {}),
-      ...(cs.trapped ? { trapped: true } : {}),
-    })
-  }
-
-  // Auto/density mosaic side paths — apply key gating by density + color count
-  const gatedCount = keyDensity ? Math.round(mosaicPathCount * DENSITY_FRACTION[keyDensity]) : 0
-  const colorCount = Math.min(keyColors ?? 1, 5)
-  const mosaicPP = Math.max(0, Math.round(mainPathPuzzles / 3))
-  for (let j = 0; j < mosaicPathCount; j++) {
-    const gate = j < gatedCount ? { type: "floor-key" as const, color: ALL_KEY_COLORS[j % colorCount] } : undefined
-    sections.push({
-      pathPuzzles: mosaicPP,
-      difficulty,
-      end: "treasure",
-      endReward: { type: "mosaicPiece" },
-      ...(gate ? { gate } : {}),
-    })
-  }
-
-  // Declared sidePaths / hiddenPaths from DSL
-  const jId = journeyId ?? ""
-  const pIdx = pyramidIndex ?? 0
-  let consumableIdx = 0
-  for (const entry of declaredSidePaths ?? []) {
-    const count = pathCountForDensity(entry.density, jId, pIdx)
-    for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
-      sections.push({
-        pathPuzzles: entry.pathPuzzles,
-        difficulty,
-        end: "treasure",
-        ...(endReward ? { endReward } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
-      })
-    }
-  }
-  for (const entry of declaredHiddenPaths ?? []) {
-    const count = pathCountForDensity(entry.density, jId, pIdx)
-    for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
-      sections.push({
-        pathPuzzles: entry.pathPuzzles,
-        difficulty,
-        end: "treasure",
-        hidden: true,
-        ...(endReward ? { endReward } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
-      })
-    }
-  }
-
-  return sections
-}
 
 // ── Phase 1: Build initial plan ───────────────────────────────────────────────
 
@@ -450,10 +91,24 @@ const buildPlan = (): PyramidPlan[] =>
 
 const TOTAL_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((sum, n) => sum + n, 0)
 
+// Tombs' own chest capacity (fixed floor pathPuzzles, mirrors buildTombConfigs) — counts
+// toward the same fragment-coverage budget pyramids are checked against below.
+const TOMB_CHEST_CAPACITY = TOMB_CAPABILITIES.placeChests
+  ? TOMB_JOURNEYS.reduce((sum, tomb) => {
+      const hasCroc = tomb.tier !== "starter"
+      return (
+        sum +
+        Array.from({ length: tomb.levelCount }, (_, i) =>
+          chestCountFor(i === tomb.levelCount - 1 && hasCroc ? 2 : 1)
+        ).reduce((a, b) => a + b, 0)
+      )
+    }, 0)
+  : 0
+
 // Exported for testing. Throws if a pyramid with an explicit pathPuzzles constraint is too
 // small; silently bumps unconstrained pyramids (those with no provenance on pathPuzzles).
 export const assertChestCapacity = (plan: PyramidPlan[]): PyramidPlan[] => {
-  const totalSlots = (p: PyramidPlan[]) => p.reduce((s, e) => s + chestCountFor(e.pathPuzzles), 0)
+  const totalSlots = (p: PyramidPlan[]) => p.reduce((s, e) => s + chestCountFor(e.pathPuzzles), 0) + TOMB_CHEST_CAPACITY
   if (totalSlots(plan) >= TOTAL_FRAGMENTS) return plan
 
   const mutable = plan.map(p => ({ ...p }))
@@ -512,247 +167,29 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
       const { pyramidIndex: i, pathPuzzles: pp, constraint } = p
       const difficulty: Difficulty = constraint.difficulty ?? "expert"
 
-      const hasMapPieceBranch = i === mapPiecePyramid && tier !== "starter"
-      const hasWardGate = i >= Math.ceil(levelCount / 2) && nextTier !== null
-
-      const mainEndReward: TreasureReward = constraint.mainEndReward
-        ? specToReward(constraint.mainEndReward, tier)
-        : { type: "fragmentSlot" }
-
-      if (constraint.floors?.length) {
-        // Multi-floor: build one FloorConfig per floors[] entry
-        const floorConfigs: FloorConfig[] = []
-        for (let fi = 0; fi < constraint.floors.length; fi++) {
-          const fc = constraint.floors[fi] ?? {}
-          const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
-          const floorDiff: Difficulty = fc.difficulty ?? difficulty
-          const isLast = fi === constraint.floors.length - 1
-          const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
-          const floorSideSections = buildSideSections(
-            tier,
-            floorDiff,
-            false,
-            false,
-            null,
-            floorSections,
-            0,
-            floorPP,
-            undefined,
-            undefined,
-            journeyId
-          )
-          const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
-          chestOffset += chestCountFor(floorPP)
-          const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
-          const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
-          floorConfigs.push({
-            pathPuzzles: floorPP,
-            chestEvery: chestEveryFor(floorPP),
-            difficulty: floorDiff,
-            end: "treasure",
-            exitOrStaircase: "exit",
-            sideSections: floorSideSections,
-            ...(isLast ? { mainEndReward } : {}),
-            ...(floorChests.length > 0 ? { chestRewards: floorChests } : {}),
-            ...(fc.decorations?.length ? { decorations: fc.decorations } : {}),
-            ...(floorStraightness !== undefined ? { corridorStraightness: floorStraightness } : {}),
-            ...(floorPacking !== undefined ? { packing: floorPacking } : {}),
-          } satisfies FloorConfig)
-        }
-        // Wire each floor's side-path stairhead to the entrance of the next floor.
-        for (let fi = 0; fi < floorConfigs.length - 1; fi++) {
-          const stairSection = floorConfigs[fi].sideSections.find(s => typeof s.end === "object")
-          if (stairSection && typeof stairSection.end === "object") {
-            floorConfigs[fi + 1].entrance = { stairId: stairSection.end.stairId }
-          }
-        }
-        pyramidConfigs.push(floorConfigs)
-      } else if ((constraint.mainFloors ?? 1) > 1 || (constraint.wardWings ?? 0) > 0) {
-        // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries
-        // the pyramid's usual side content), then `wardWings` bonus floors branching off
-        // that last main floor, each behind its own ward-key gate from this tier's own tomb.
-        const mainFloors = constraint.mainFloors ?? 1
-        const wardWings = constraint.wardWings ?? 0
-        const floorConfigs: FloorConfig[] = []
-
-        for (let fi = 0; fi < mainFloors; fi++) {
-          if (fi < mainFloors - 1) {
-            floorConfigs.push({
-              pathPuzzles: pp,
-              chestEvery: 0,
-              difficulty,
-              end: "treasure",
-              exitOrStaircase: "exit",
-              sideSections: [],
-            })
-            continue
-          }
-          const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
-          const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
-          const sideSections = buildSideSections(
-            tier,
-            difficulty,
-            hasMapPieceBranch,
-            hasWardGate,
-            nextTier,
-            constraintSections,
-            mosaicPathCount,
-            pp,
-            constraint.keyDensity,
-            resolveKeyColors(constraint, journeyId, i),
-            journeyId,
-            i,
-            constraint.sidePaths,
-            constraint.hiddenPaths
-          )
-          const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
-          chestOffset += chestCountFor(pp)
-          const straightness = resolveCorridorStraightness(constraint, journeyId, i)
-          const packing = resolvePacking(constraint, journeyId, i)
-          floorConfigs.push({
-            pathPuzzles: pp,
-            chestEvery: chestEveryFor(pp),
-            difficulty,
-            end: "treasure",
-            exitOrStaircase: "exit",
-            sideSections,
-            mainEndReward,
-            chestRewards,
-            ...(constraint.consumableDensity !== undefined ? { consumableDensity: constraint.consumableDensity } : {}),
-            ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
-            ...(packing !== undefined ? { packing } : {}),
-          } satisfies FloorConfig)
-        }
-
-        // Wire main-floor stairheads sequentially (floor N's exit → floor N+1's entrance).
-        for (let fi = 0; fi < floorConfigs.length - 1; fi++) {
-          const stairId = `${journeyId}:p${i}:main${fi}`
-          floorConfigs[fi].exitOrStaircase = { stairId }
-          floorConfigs[fi + 1].entrance = { stairId }
-        }
-
-        if (wardWings > 0) {
-          const tombId = `${tier}_treasure_tomb`
-          const wingIndices = freeWardIndices(tombId, wardWings)
-          const lastMain = floorConfigs[floorConfigs.length - 1]
-          for (let w = 0; w < wingIndices.length; w++) {
-            const wingStairId = `${journeyId}:p${i}:wing${w}`
-            lastMain.sideSections = [
-              ...lastMain.sideSections,
-              {
-                pathPuzzles: 1,
-                difficulty,
-                end: { stairId: wingStairId },
-                gate: { type: "tomb-key", wardKeyId: TOMB_PERK_IDS[tombId][wingIndices[w]] },
-              },
-            ]
-            floorConfigs.push({
-              pathPuzzles: pp,
-              chestEvery: chestEveryFor(pp),
-              difficulty,
-              end: "treasure",
-              exitOrStaircase: "exit",
-              entrance: { stairId: wingStairId },
-              sideSections: [],
-              mainEndReward: { type: "hieroglyphs" },
-            })
-          }
-        }
-
-        pyramidConfigs.push(floorConfigs)
-      } else {
-        const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
-        const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
-        const sideSections = buildSideSections(
-          tier,
-          difficulty,
-          hasMapPieceBranch,
-          hasWardGate,
-          nextTier,
-          constraintSections,
-          mosaicPathCount,
-          pp,
-          constraint.keyDensity,
-          resolveKeyColors(constraint, journeyId, i),
-          journeyId,
-          i,
-          constraint.sidePaths,
-          constraint.hiddenPaths
-        )
-        const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
-        chestOffset += chestCountFor(pp)
-        const consumableDensity = constraint.consumableDensity
-        const straightness = resolveCorridorStraightness(constraint, journeyId, i)
-        const packing = resolvePacking(constraint, journeyId, i)
-        pyramidConfigs.push([
-          {
-            pathPuzzles: pp,
-            chestEvery: chestEveryFor(pp),
-            difficulty,
-            end: "treasure",
-            exitOrStaircase: "exit",
-            sideSections,
-            mainEndReward,
-            chestRewards,
-            ...(consumableDensity !== undefined ? { consumableDensity } : {}),
-            ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
-            ...(packing !== undefined ? { packing } : {}),
-          } satisfies FloorConfig,
-        ])
-      }
+      const { floors, chestOffset: nextChestOffset } = buildSite({
+        journeyId,
+        tier,
+        pyramidIndex: i,
+        pathPuzzles: pp,
+        constraint,
+        difficulty,
+        hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
+        hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
+        nextTier,
+        mosaicPathCount: PYRAMID_CAPABILITIES.emitMosaics ? (mosaicPaths.get(`${journeyId}:${i}`) ?? 0) : 0,
+        chestOffset,
+        resolveReward: spec => specToReward(spec, tier),
+        resolveMainEndReward: spec => specToReward(spec, tier),
+      })
+      chestOffset = nextChestOffset
+      pyramidConfigs.push(floors)
     }
 
     configs[journeyId] = pyramidConfigs
   }
 
   return configs
-}
-
-// ── Phase 5: Validate structural rewards ──────────────────────────────────────
-
-const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
-
-const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
-  let mapPieces = 0
-  let mosaicPieces = 0
-  const unknownTombIds: string[] = []
-
-  const checkReward = (r: TreasureReward | undefined) => {
-    if (!r) return
-    if (r.type === "mapPiece") {
-      mapPieces++
-      if (!KNOWN_JOURNEY_IDS.has(r.tombId)) unknownTombIds.push(r.tombId)
-    }
-    if (r.type === "mosaicPiece") mosaicPieces++
-  }
-
-  for (const [siteId, siteConfigs] of Object.entries(configs)) {
-    for (const floors of siteConfigs) {
-      for (let fi = 0; fi < floors.length; fi++) {
-        const floor = floors[fi]
-        const isLast = fi === floors.length - 1
-        if (isLast && floor.exitOrStaircase !== "exit")
-          throw new Error(
-            `[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
-          )
-        checkReward(floor.mainEndReward)
-        for (const r of floor.chestRewards ?? []) checkReward(r)
-        for (const s of floor.sideSections) {
-          checkReward(s.endReward)
-          for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
-        }
-      }
-    }
-  }
-
-  if (unknownTombIds.length > 0)
-    throw new Error(
-      `[worldSpec] mapPiece rewards reference unknown journey IDs: ${[...new Set(unknownTombIds)].join(", ")}`
-    )
-  if (mapPieces !== WORLD_TARGETS.mapPieceRewards)
-    throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
-  if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
-    throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mosaicPieceRewards} mosaic pieces, got ${mosaicPieces}`)
 }
 
 // ── Tomb configs ──────────────────────────────────────────────────────────────
@@ -771,37 +208,26 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const hasCroc = tomb.tier !== "starter"
 
     const levelCount = constraint.levelCount ?? tomb.levelCount
-    const authoredFloors = constraint.floors as FloorConstraint<"tombTreasure">[] | undefined
+    const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
     let perkIndex = 0
+    let chestOffset = 0
 
-    const resolveTombReward = (reward: string | undefined): TreasureReward | undefined => {
+    const resolveTombReward = (reward: RewardSpec | TombRewardHint | undefined): TreasureReward | undefined => {
       if (reward === "tombTreasure") {
         const perkId = perkIds[perkIndex++]
         return perkId ? { type: "tombKey", keyId: perkId } : undefined
       }
+      if (reward === "fragmentSlot") return { type: "fragmentSlot" }
       if (reward) return hintToReward(reward as RewardHint, tomb.tier as Tier)
       return undefined
     }
 
-    const buildSideSections = (sections: SideSectionConstraint<"tombTreasure">[]): SideSection[] =>
-      sections.map(s => ({
-        pathPuzzles: typeof s.pathPuzzles === "number" ? s.pathPuzzles : 0,
-        difficulty,
-        end: "treasure" as const,
-        ...(specToGate(s.gate) ? { gate: specToGate(s.gate) } : {}),
-        ...(s.endReward !== undefined ? { endReward: resolveTombReward(s.endReward as string) } : {}),
-        ...(Array.isArray(s.sideSections) && s.sideSections.length > 0
-          ? { sideSections: buildSideSections(s.sideSections as SideSectionConstraint<"tombTreasure">[]) }
-          : {}),
-        ...(s.decorations?.length ? { decorations: s.decorations } : {}),
-      }))
-
-    const floors: SiteConfig = Array.from({ length: levelCount }, (_, i) => {
+    const floors: FloorConfig[] = Array.from({ length: levelCount }, (_, i) => {
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
 
       const mainEndReward: TreasureReward | undefined = authored
-        ? resolveTombReward(authored.mainEndReward as string | undefined)
+        ? resolveTombReward(authored.mainEndReward)
         : (() => {
             const perkId = perkIds[perkIndex++]
             return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
@@ -809,278 +235,42 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 
       const sideSections: SideSection[] =
         authored && Array.isArray(authored.sideSections)
-          ? buildSideSections(authored.sideSections as SideSectionConstraint<"tombTreasure">[])
+          ? buildSideSections({
+              tier: tomb.tier,
+              difficulty,
+              resolveReward: resolveTombReward,
+              journeyId: tomb.id,
+              constraintSections: authored.sideSections as SideSectionConstraint<TombRewardHint>[],
+            })
           : []
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
       const packing = authored?.packing ?? constraint.packing
 
-      return {
-        pathPuzzles: isLast && hasCroc ? 2 : 1,
-        chestEvery: 0,
+      const pathPuzzles = isLast && hasCroc ? 2 : 1
+      const chestRewards = TOMB_CAPABILITIES.placeChests
+        ? buildChestRewards(tomb.id, chestOffset, pathPuzzles, constraint.consumableRates)
+        : undefined
+      if (TOMB_CAPABILITIES.placeChests) chestOffset += chestCountFor(pathPuzzles)
+
+      return buildFloor({
+        pathPuzzles,
+        chestEvery: TOMB_CAPABILITIES.placeChests ? chestEveryFor(pathPuzzles) : 0,
+        chestRewards,
         difficulty,
-        end: "treasure" as const,
-        exitOrStaircase: isLast ? ("exit" as const) : { stairId: `${tomb.id}:floor${i}` },
-        ...(i > 0 ? { entrance: { stairId: `${tomb.id}:floor${i - 1}` } } : {}),
         sideSections,
         puzzleFamily,
-        ...(isLast && hasCroc ? { lastMainPuzzleFamily: "crocodile" as const } : {}),
-        ...(mainEndReward ? { mainEndReward } : {}),
-        ...(authored?.decorations?.length ? { decorations: authored.decorations } : {}),
-        ...(straightness !== undefined ? { corridorStraightness: straightness } : {}),
-        ...(packing !== undefined ? { packing } : {}),
-      }
+        lastMainPuzzleFamily: isLast && hasCroc ? "crocodile" : undefined,
+        mainEndReward,
+        corridorStraightness: straightness,
+        packing,
+      })
     })
 
+    wireStaircases(floors, fi => `${tomb.id}:floor${fi}`)
     configs[tomb.id] = [floors]
   }
   return configs
-}
-
-// ── Phase 7: Validate discovery graph ────────────────────────────────────────
-
-// Collect all tombIds that have a mapPiece reward in any config OTHER than their own site
-const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string, Set<string>> => {
-  const discovered = new Map<string, Set<string>>()
-  for (const [siteId, siteConfigs] of Object.entries(configs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        const checkReward = (r: TreasureReward | undefined) => {
-          if (r?.type !== "mapPiece" || r.tombId === siteId) return
-          const set = discovered.get(r.tombId) ?? new Set()
-          set.add(siteId)
-          discovered.set(r.tombId, set)
-        }
-        checkReward(floor.mainEndReward)
-        for (const s of floor.sideSections) {
-          checkReward(s.endReward)
-          for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
-        }
-        for (const r of floor.chestRewards ?? []) checkReward(r)
-      }
-    }
-  }
-  return discovered
-}
-
-// Validate that every secondary tomb has a mapPiece reward reachable before it's needed.
-// Throws with a clear message listing any unreachable secondary tombs (missing or circular).
-const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
-  const allSecondary = new Set(Object.values(SECONDARY_TOMBS).flat())
-  const discoveredBy = collectDiscoveredBy(allConfigs)
-
-  // BFS: start from non-secondary sites (auto-discovered), expand when mapPiece host is reachable
-  const reachable = new Set(Object.keys(allConfigs).filter(id => !allSecondary.has(id)))
-  let changed = true
-  while (changed) {
-    changed = false
-    for (const secId of allSecondary) {
-      if (reachable.has(secId)) continue
-      const hosts = discoveredBy.get(secId)
-      if (hosts && [...hosts].some(h => reachable.has(h))) {
-        reachable.add(secId)
-        changed = true
-      }
-    }
-  }
-
-  const unreachable = [...allSecondary].filter(id => !reachable.has(id))
-  if (unreachable.length > 0) {
-    throw new Error(
-      `[worldSpec] Unsolvable discovery graph — these secondary tombs are unreachable:\n` +
-        unreachable.map(id => `  - ${id} (no mapPiece found in a reachable site)`).join("\n")
-    )
-  }
-}
-
-// ── Phase 9f: Fragment assignment ────────────────────────────────────────────
-
-const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
-
-export type SlotRef = {
-  journeyId: string
-  tier: Tier
-  journeyOrderIndex: number
-  wardKeys: string[]
-  isPlaceholder: boolean
-  assign: (r: TreasureReward) => void
-}
-
-export type HieroglyphPlacementInfo = {
-  hieroglyphId: string
-  tier: Tier
-  preferredWardKeys: string[]
-  required: number
-}
-
-export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): SlotRef[] => {
-  const slots: SlotRef[] = []
-
-  for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
-    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId)
-    if (!journey) continue
-
-    const tier = journey.tier as Tier
-    const journeyOrderIndex = PYRAMID_JOURNEYS.indexOf(journey)
-
-    const addSlot = (wardKeys: string[], isPlaceholder: boolean, assign: (r: TreasureReward) => void) =>
-      slots.push({ journeyId, tier, journeyOrderIndex, wardKeys, isPlaceholder, assign })
-
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        if (floor.mainEndReward?.type === "fragmentSlot") {
-          const f = floor
-          addSlot([], true, r => {
-            f.mainEndReward = r
-          })
-        }
-        for (const section of floor.sideSections) {
-          const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
-          if (section.endReward?.type === "fragmentSlot") {
-            const s = section
-            addSlot(sWardKeys, true, r => {
-              s.endReward = r
-            })
-          } else if (section.gate?.type === "tomb-key" && !section.endReward) {
-            const s = section
-            addSlot(sWardKeys, false, r => {
-              s.endReward = r
-            })
-          }
-          for (const sub of section.sideSections ?? []) {
-            const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
-            if (sub.endReward?.type === "fragmentSlot") {
-              const ss = sub
-              addSlot(subWardKeys, true, r => {
-                ss.endReward = r
-              })
-            } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {
-              const ss = sub
-              addSlot(subWardKeys, false, r => {
-                ss.endReward = r
-              })
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return slots
-}
-
-export const buildPlacementInfos = (): HieroglyphPlacementInfo[] => {
-  const infos: HieroglyphPlacementInfo[] = []
-  const seen = new Set<string>()
-
-  for (const tier of TIERS) {
-    const tombId = `${tier}_treasure_tomb`
-    const tombPerkIds = TOMB_PERK_IDS[tombId] ?? []
-
-    for (const hieroglyphId of TOMB_SYMBOLS[tier as Tier]) {
-      if (seen.has(hieroglyphId)) continue
-      seen.add(hieroglyphId)
-
-      const firstRunNumber = tableauLevels
-        .filter(t => t.tombJourneyId === tombId && t.inventoryIds.includes(hieroglyphId))
-        .reduce((min, t) => Math.min(min, t.runNumber), Infinity)
-
-      const runNumber = isFinite(firstRunNumber) ? firstRunNumber : 1
-      // Ward keys earned after completing runs 1..(runNumber-1) gate the preferred slots.
-      // run 1 → no wards needed; run 2 → tombPerkIds[0]; run 3 → tombPerkIds[0..1]; etc.
-      const preferredWardKeys = tombPerkIds.slice(0, runNumber - 1)
-
-      infos.push({
-        hieroglyphId,
-        tier: tier as Tier,
-        preferredWardKeys,
-        required: HIEROGLYPH_REQUIRED[hieroglyphId] ?? 2,
-      })
-    }
-  }
-
-  return infos
-}
-
-const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void => {
-  const slots = collectSlots(allConfigs)
-  const infos = buildPlacementInfos()
-  const available = [...slots]
-
-  const placedInJourney = new Map<string, Set<string>>()
-  for (const j of PYRAMID_JOURNEYS) placedInJourney.set(j.id, new Set())
-
-  let totalPlaced = 0
-
-  for (const info of infos) {
-    const needed = info.required
-    let placed = 0
-
-    // Pools in priority order:
-    // 0 — tier-matching slots behind preferred ward keys (run 2+ fragments go here first)
-    // 1 — tier-matching open slots (no ward)
-    // 2 — any remaining slots (cross-tier fallback)
-    const pools = [
-      available.filter(
-        s =>
-          s.tier === info.tier &&
-          info.preferredWardKeys.length > 0 &&
-          s.wardKeys.some(k => info.preferredWardKeys.includes(k))
-      ),
-      available.filter(s => s.tier === info.tier && s.wardKeys.length === 0),
-      available.filter(s => s.tier !== info.tier),
-    ]
-
-    for (const pool of pools) {
-      if (placed >= needed) break
-
-      // First pass: respect 1-per-journey
-      for (const slot of [...pool]) {
-        if (placed >= needed) break
-        const idx = available.indexOf(slot)
-        if (idx === -1) continue
-        if (placedInJourney.get(slot.journeyId)?.has(info.hieroglyphId)) continue
-        slot.assign({ type: "hieroglyphFragment", hieroglyphId: info.hieroglyphId })
-        placedInJourney.get(slot.journeyId)!.add(info.hieroglyphId)
-        available.splice(idx, 1)
-        placed++
-      }
-
-      if (placed >= needed) break
-
-      // Second pass: relax 1-per-journey if pool exhausted
-      for (const slot of [...pool]) {
-        if (placed >= needed) break
-        const idx = available.indexOf(slot)
-        if (idx === -1) continue
-        slot.assign({ type: "hieroglyphFragment", hieroglyphId: info.hieroglyphId })
-        available.splice(idx, 1)
-        placed++
-      }
-    }
-
-    totalPlaced += placed
-    if (placed < needed) {
-      console.warn(`  ⚠ ${info.hieroglyphId} (${info.tier}): placed ${placed}/${needed} — not enough fragment slots`)
-    }
-  }
-
-  // Fill remaining placeholder slots with consumables
-  const total = DEFAULT_CONSUMABLE_RATES.bandage + DEFAULT_CONSUMABLE_RATES.oil + DEFAULT_CONSUMABLE_RATES.trapTool
-  let fallbackIdx = 0
-  for (const slot of available) {
-    if (!slot.isPlaceholder) continue
-    const roll = hashStr(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`) % total
-    const consumable: ConsumableType =
-      roll < DEFAULT_CONSUMABLE_RATES.bandage
-        ? "bandage"
-        : roll < DEFAULT_CONSUMABLE_RATES.bandage + DEFAULT_CONSUMABLE_RATES.oil
-          ? "oil"
-          : "trapTool"
-    slot.assign({ type: "consumable", consumable })
-  }
-
-  console.log(`  ✓ Fragment assignment: ${totalPlaced} fragments placed`)
 }
 
 // ── Main entry point ──────────────────────────────────────────────────────────

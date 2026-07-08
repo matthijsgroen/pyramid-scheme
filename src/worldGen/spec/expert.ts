@@ -21,7 +21,8 @@ export const expertRules: Rule[] = [
     levelCount: 4,
     floors: [
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // A side path opting into the same hieroglyph-fragment assignment pyramids use.
+      { mainEndReward: "tombTreasure", sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }] },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
     ],

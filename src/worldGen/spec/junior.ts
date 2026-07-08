@@ -1,4 +1,4 @@
-import { tier, tomb } from "../dsl"
+import { tier, tomb, sidePath } from "../dsl"
 import type { Rule } from "../dsl"
 
 export const juniorRules: Rule[] = [
@@ -20,7 +20,8 @@ export const juniorRules: Rule[] = [
     floors: [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
+      { mainEndReward: "tombTreasure", sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece" })] },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

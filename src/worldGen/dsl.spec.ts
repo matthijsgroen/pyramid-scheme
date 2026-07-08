@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest"
 import { global, tier, journey } from "./dsl"
-import { specToGate } from "./configBuilder"
 
 // ── Constraint accumulator (.set / .sidePaths / .hiddenPaths) ─────────────────
 
@@ -173,41 +172,6 @@ describe("journey() builder", () => {
     expect(r.scope.level).toBe("journey-pyramid")
     const floors = (r.constraints as { floors?: unknown[] }).floors
     expect(floors?.[2]).toEqual({ difficulty: "junior" })
-  })
-})
-
-// ── specToGate ────────────────────────────────────────────────────────────────
-
-describe("specToGate", () => {
-  it("null → undefined (no gate)", () => {
-    expect(specToGate(null)).toBeUndefined()
-  })
-
-  it("undefined → undefined", () => {
-    expect(specToGate(undefined)).toBeUndefined()
-  })
-
-  it('"floor-key" → { type: "floor-key", color: "blue" }', () => {
-    expect(specToGate("floor-key")).toEqual({ type: "floor-key", color: "blue" })
-  })
-
-  it('"tomb-key" string (ambiguous) → undefined (no keyId resolvable)', () => {
-    expect(specToGate("tomb-key")).toBeUndefined()
-  })
-
-  it("structured tombId+index resolves to runtime wardKeyId", () => {
-    expect(specToGate({ type: "tomb-key", tombId: "expert_treasure_tomb", index: 1 })).toEqual({
-      type: "tomb-key",
-      wardKeyId: "expert_a_2",
-    })
-    expect(specToGate({ type: "tomb-key", tombId: "wizard_treasure_tomb_b", index: 1 })).toEqual({
-      type: "tomb-key",
-      wardKeyId: "wizard_b_2",
-    })
-  })
-
-  it("out-of-bounds index → undefined", () => {
-    expect(specToGate({ type: "tomb-key", tombId: "starter_treasure_tomb", index: 99 })).toBeUndefined()
   })
 })
 
