@@ -2,8 +2,7 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 
 // Which reward economies a site participates in. Presets select capabilities instead of
 // code branching on "is this a pyramid?" — a site opts into a capability by having it here,
-// not by which builder function happened to construct it. See
-// docs/game-design/worldgen-builder-unification.md Phase 4/5.
+// not by which builder function happened to construct it.
 export type SiteCapabilities = {
   /** Auto-distributed chest rewards along the main path (buildChestRewards). */
   placeChests: boolean

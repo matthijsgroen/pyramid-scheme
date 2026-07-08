@@ -5,7 +5,6 @@ import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 
 // Golden guard for the world-builder refactor: buildConfigs() must keep
 // producing the same reward counts and the same output on every run.
-// See docs/game-design/worldgen-builder-unification.md.
 
 const countRewards = (configs: Record<string, SiteConfig[]>) => {
   let mapPieces = 0

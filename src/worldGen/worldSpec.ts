@@ -10,8 +10,7 @@ import { wizardRules } from "./spec/wizard"
 // mosaicPieceRewards: 298 pyramid-side (number of unique journeyId:levelIndex steps in
 //                    mosaicPieces.generated.ts, distributed as extra side paths, density
 //                    controlled by mosaicPaths DSL field) + 1 tomb-authored
-//                    (junior_treasure_tomb floor 3 side path — see docs/game-design/
-//                    worldgen-builder-unification.md Phase 5).
+//                    (junior_treasure_tomb floor 3 side path).
 // mapPieceRewards:    20 primary (1 per pyramid journey) + 16 secondary
 //                    (4 journeys × 4 secondary tombs, each on last or last-1 pyramid)
 export const WORLD_TARGETS = {
