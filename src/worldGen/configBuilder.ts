@@ -12,6 +12,7 @@ import { tableauLevels } from "../data/tableaus"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
 import { worldSpec, WORLD_TARGETS } from "./worldSpec"
+import { GLOBAL_DEFAULTS } from "./spec/global"
 import type {
   PyramidConstraint,
   FloorConstraint,
@@ -107,13 +108,11 @@ export const specToGate = (
 
 // ── Chest rewards ─────────────────────────────────────────────────────────────
 
-const DEFAULT_CONSUMABLE_RATES = { bandage: 3, oil: 1, trapTool: 1 }
-
 const buildChestRewards = (
   journeyId: string,
   slotOffset: number,
   pathPuzzles: number,
-  rates: { bandage: number; oil: number; trapTool: number } = DEFAULT_CONSUMABLE_RATES
+  rates: { bandage: number; oil: number; trapTool: number } = GLOBAL_DEFAULTS.consumableRates
 ): TreasureReward[] => {
   const count = chestCountFor(pathPuzzles)
   const total = rates.bandage + rates.oil + rates.trapTool
@@ -184,7 +183,7 @@ const resolveCorridorStraightness = (constraint: PyramidConstraint, journeyId: s
   resolveChanceValue(
     constraint.corridorStraightness,
     constraint.windyChance,
-    constraint.windyStraightness ?? 0.35,
+    constraint.windyStraightness ?? GLOBAL_DEFAULTS.windyStraightness,
     journeyId,
     pyramidIndex,
     "windy"
@@ -194,7 +193,7 @@ const resolvePacking = (constraint: PyramidConstraint, journeyId: string, pyrami
   resolveChanceValue(
     constraint.packing,
     constraint.packingChance,
-    constraint.packingWhenHit ?? 1.6,
+    constraint.packingWhenHit ?? GLOBAL_DEFAULTS.packingWhenHit,
     journeyId,
     pyramidIndex,
     "packing"
@@ -567,12 +566,15 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           }
         }
         pyramidConfigs.push(floorConfigs)
-      } else if ((constraint.mainFloors ?? 1) > 1 || (constraint.wardWings ?? 0) > 0) {
+      } else if (
+        (constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors) > 1 ||
+        (constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings) > 0
+      ) {
         // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries
         // the pyramid's usual side content), then `wardWings` bonus floors branching off
         // that last main floor, each behind its own ward-key gate from this tier's own tomb.
-        const mainFloors = constraint.mainFloors ?? 1
-        const wardWings = constraint.wardWings ?? 0
+        const mainFloors = constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors
+        const wardWings = constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings
         const floorConfigs: FloorConfig[] = []
 
         for (let fi = 0; fi < mainFloors; fi++) {
@@ -1066,17 +1068,14 @@ const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void => {
   }
 
   // Fill remaining placeholder slots with consumables
-  const total = DEFAULT_CONSUMABLE_RATES.bandage + DEFAULT_CONSUMABLE_RATES.oil + DEFAULT_CONSUMABLE_RATES.trapTool
+  const rates = GLOBAL_DEFAULTS.consumableRates
+  const total = rates.bandage + rates.oil + rates.trapTool
   let fallbackIdx = 0
   for (const slot of available) {
     if (!slot.isPlaceholder) continue
     const roll = hashStr(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`) % total
     const consumable: ConsumableType =
-      roll < DEFAULT_CONSUMABLE_RATES.bandage
-        ? "bandage"
-        : roll < DEFAULT_CONSUMABLE_RATES.bandage + DEFAULT_CONSUMABLE_RATES.oil
-          ? "oil"
-          : "trapTool"
+      roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
     slot.assign({ type: "consumable", consumable })
   }
 
