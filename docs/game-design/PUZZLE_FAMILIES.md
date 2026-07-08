@@ -1,7 +1,8 @@
 # PUZZLE_FAMILIES.md
 
 Status: design draft · base document for Claude Code
-Companion to: `EXPEDITION_REDESIGN.md` (progression / map layer) and
+Companion to: `docs/game-design/game-loop.md` and
+`docs/game-design/pyramid-interior-design.md` (progression / map layer) and
 `TABLEAU_REDESIGN.md` (the existing cross-sum presentation).
 
 This document defines the **puzzle families** the game can serve inside puzzle
@@ -13,13 +14,12 @@ should first appear at**. Tiers are referenced as **T1–T5**, where **T1 = the
 
 ## 1. Purpose & scope
 
-A puzzle node in the expedition (see `EXPEDITION_REDESIGN.md` §3) runs one
+A puzzle node in the expedition (see `docs/game-design/pyramid-interior-design.md` §2) runs one
 **puzzle family**. This doc is the catalogue of those families. For each:
 what skill it trains, how it operates, how it scales, how to generate it, its
 mobile-UI cost, and where it belongs in the curriculum.
 
-Two cross-cutting decisions from `EXPEDITION_REDESIGN.md` that this doc depends
-on:
+Two cross-cutting design decisions this doc depends on:
 
 - **`family` is a field on the puzzle node**, orthogonal to map position. Where
   a puzzle sits and what math it runs are separate dimensions.
@@ -55,7 +55,7 @@ decoded upstream feeds a puzzle downstream). These are **spine** families and
 may sit on the critical path. Families whose answer is a *mask or arrangement*
 (the grid-logic families) do **not** naturally produce a value — they are
 **side** families and live in optional branches. (Carry-forward never crosses a
-stairhead; see `EXPEDITION_REDESIGN.md` §8.)
+stairhead; see `docs/game-design/pyramid-interior-design.md` §6.)
 
 **P4 — A family debuts at the bottom of its OWN scale.** A family entering at a
 high tier still enters as its *simplest* instance, so "fresh" never means "wall."
@@ -101,8 +101,8 @@ infrastructure**, not optional polish — and crucially it is **shared** across
 all the verifier-class families (see §5).
 
 ### 3.4 Seeded, deterministic
-All generation is seeded and deterministic, consistent with the save model
-(`EXPEDITION_REDESIGN.md` §12). The seed picks a puzzle within the authored
+All generation is seeded and deterministic, consistent with the save model.
+The seed picks a puzzle within the authored
 knob bounds; it never changes difficulty.
 
 ---
@@ -438,7 +438,7 @@ Three placement rules make the table behave:
    nonogram, kakuro, Sumplete, sequence don't produce a value, so they live in
    optional branches — which means they cannot appear before **forks debut (T2+)**.
    The map growing branches is *what unlocks* the logic families. (See
-   `EXPEDITION_REDESIGN.md` §6 on spine-dense critical paths.)
+   `docs/game-design/game-loop.md` on spine-dense critical paths.)
    **Build note:** the initial Phase 4 build is linear (no forks); side-families
    enter in Phase 5a when forks are introduced.
 3. **Low-ceiling families are deliberately early-only and graduate out.** Symmetry

@@ -1,7 +1,7 @@
 # TRAP_FAMILIES.md
 
 Status: design draft  
-Companion to: `PUZZLE_FAMILIES.md` (puzzle nodes), `docs/pyramid-interior-design.md §11` (trap system design)
+Companion to: `PUZZLE_FAMILIES.md` (puzzle nodes), `pyramid-interior-design.md §11` (trap system design)
 
 This document defines the **trap families** the game can serve inside trapped corridors, how each scales, and which difficulty tier each is appropriate for. Tiers are referenced as **T1–T5**, matching the tier naming in `PUZZLE_FAMILIES.md`.
 
@@ -9,7 +9,7 @@ This document defines the **trap families** the game can serve inside trapped co
 
 ## 1. Purpose & scope
 
-A trapped corridor (see `docs/pyramid-interior-design.md §2`) triggers a **trap encounter** when the player moves through it. This is distinct from a puzzle node encounter in three fundamental ways:
+A trapped corridor (see `pyramid-interior-design.md §2`) triggers a **trap encounter** when the player moves through it. This is distinct from a puzzle node encounter in three fundamental ways:
 
 1. **Time-gated** — the player has a fixed number of seconds to answer. No answer = fail.
 2. **Fail = damage** — a wrong answer or timeout costs 1 full heart (2 half-hearts). The player must hold at least 1 full heart to attempt a trap corridor at all.
@@ -47,7 +47,7 @@ export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
   wizard:   6,
 };
 
-export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1;  // resolved: IMPLEMENTATION_PLAN Phase 12 (was 3)
+export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1;  // resolved: was 3
 ```
 
 Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` to the player's effective time limit on every trap attempt, regardless of family or tier.
@@ -126,7 +126,7 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 ## 6. Interaction with permanent upgrades
 
-Tomb treasures grant permanent effects that directly modify trap encounters. Exact values are authored constants — see `docs/pyramid-interior-design.md §1` for categories.
+Tomb treasures grant permanent effects that directly modify trap encounters. Exact values are authored constants — see `pyramid-interior-design.md §1` for categories.
 
 | Upgrade | Effect on traps |
 |---|---|

@@ -137,7 +137,7 @@ The entire level structure — puzzle counts, floor depths, reward distribution,
 
 **[`src/worldGen/worldSpec.ts`](src/worldGen/worldSpec.ts)**
 
-Edit this file to shape the world: set difficulty constraints per tier or per journey, control how many puzzle floors a pyramid has, place tomb-key gates, and tune loot cadence. After editing, run the world builder to regenerate `src/data/` and inspect the results in Storybook (`yarn storybook` → *SiteMap/JourneyInspector*).
+Edit this file to shape the world: set difficulty constraints per tier or per journey, control how many puzzle floors a pyramid has, place tomb-key gates, and tune loot cadence. After editing, run **`yarn generate-world`** to regenerate `src/data/generatedWorld.ts` (or **`yarn validate-world`** to check the spec without writing), then inspect the results in Storybook (`yarn storybook` → *SiteMap/JourneyInspector*).
 
 ## 🏗️ Project Structure
 
@@ -148,6 +148,10 @@ src/
 ├── data/              # Game data and configuration
 ├── game/              # Core game logic
 ├── ui/                # Reusable UI components
+├── components/        # Shared React components
+├── contexts/          # React context providers
+├── config/            # App-level configuration
+├── support/           # Shared utilities and helpers
 └── i18n/              # Internationalization setup
 
 public/locales/        # Translation files
