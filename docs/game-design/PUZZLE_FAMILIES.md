@@ -591,3 +591,37 @@ so it can be used when authoring density knobs).
 
 Once mirror/lightbeam, Sokoban, and Rush Hour are built, replace the TBD rows
 with real telemetry (§8) rather than trusting the estimate.
+
+---
+
+## 12. Sandstorm — a cross-family difficulty modifier
+
+Not a family of its own — a **modifier** layered onto an existing grid-toggle
+family (Sumplete, Latin-square, nonogram, kakuro, eclipse if built). Explicitly
+**not** the Memory trap family (`TRAP_FAMILIES.md` §5.3, flash-then-hide-then-
+answer-in-time) — sandstorm has **no timer**. Distinguishing test: if it
+involves a countdown, it's a trap, not this.
+
+- **Effect:** some of the family's clues (row/column targets, nonogram
+  run-clues, kakuro clue-triangles, Latin-square given cells) start buried
+  under sand instead of visible from the start. A buried clue reveals once a
+  cell adjacent to it (or in its row/column, family-dependent) is correctly
+  resolved — solving nearby cells blows the sand off the next clue, cascading
+  outward. **This is a real difficulty knob, not just presentation** — it
+  changes solving strategy (you can't front-load with a full clue read), so it
+  needs its own reveal-order generation rule per family it's applied to, not
+  just a shared visual layer.
+- **Knob:** fraction of clues buried at start (0 = off, indistinguishable from
+  the base family).
+- **Generation dependency:** the reveal-order rule needs to know, for each
+  buried clue, which cell(s) unlock it — derivable from the family's own
+  row/column/region structure, but the *unlock adjacency* itself is a new
+  per-family piece of generation logic, not free.
+- **Build note:** since every qualifying family already went through the
+  shared grid engine (§5), sandstorm is the natural second shared-infra
+  milestone once 2+ grid families exist — build the reveal-order/unlock-
+  adjacency logic once, generically, rather than per-family.
+- **Open question:** does a buried clue's cell also render differently (sand
+  texture over the cell itself, not just the clue), or is it only the clue
+  numbers that hide while the cell grid is fully visible throughout? Affects
+  whether this needs new per-cell render state or just a clue-visibility flag.
