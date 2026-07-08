@@ -2,7 +2,7 @@
 
 Status: design doc · cross-checked against PUZZLE_FAMILIES  
 Date: 2026-06-26 (updated 2026-06-29 with loot economy redesign)  
-See also: `docs/pyramid-interior-design.md` for loot economy, interior structure, and floor system
+See also: `pyramid-interior-design.md` for loot economy, interior structure, and floor system
 
 ---
 
@@ -21,15 +21,17 @@ Player enters a pyramid or tomb → navigates the node graph → fog burns back 
 Rewards collected during a site visit:
 | Reward | Frequency | Scope |
 |---|---|---|
-| Hieroglyph fragment | 0–1 per site; 273 total across the game | Completes a hieroglyph when enough are found (2–8 per hieroglyph, scaled by tier and which tomb section first requires it) |
+| Hieroglyph fragment | 0–1 per site | Completes a hieroglyph when enough are found (2–8 per hieroglyph, scaled by tier and which tomb section first requires it) |
 | Mosaic tiles | Guaranteed on critical path; also fill optional branch endpoints | Game scope |
 | Map piece | 0–1 per site per tomb; surface floors feed first tomb, deep floors feed later tombs | Tomb-gate scope |
+
+See `pyramid-interior-design.md §12` for canonical counts.
 
 The site itself is the progress indicator — fog revealing is the reward. No separate XP bar, no streak counter. Completion is legible at a glance.
 
 **Ward-gated content** (from Phase 5d of the build plan) means a first visit is not the whole story: some branches are deliberately inaccessible until a tomb key from a *later* tomb arrives. Early sites stay live throughout the game; they are *dormant*, not spent.
 
-**Trap corridors** (expert tier and above) are a second reason to return or backtrack. Specific authored side branches are preceded by a warning sign — the player may opt in. Moving through a trapped corridor triggers a timed math question: pass to proceed, fail to take health damage. Health is session-persistent; depleted health blocks further trap attempts until restored by consumables (found in normal chests) or permanent upgrades (from tomb treasures). See `docs/pyramid-interior-design.md §11` for full trap system design.
+**Trap corridors** (expert tier and above) are a second reason to return or backtrack. Specific authored side branches are preceded by a warning sign — the player may opt in. Moving through a trapped corridor triggers a timed math question: pass to proceed, fail to take health damage. Health is session-persistent; depleted health blocks further trap attempts until restored by consumables (found in normal chests) or permanent upgrades (from tomb treasures). See `pyramid-interior-design.md §11` for full trap system design.
 
 ### Macro loop — one difficulty tier (several sessions)
 
@@ -43,17 +45,9 @@ Four pyramid journeys per tier, unlocked sequentially (completing journey N unlo
 6. Explore newly-opened pyramid floors → find hieroglyph fragments + map pieces for Tomb B
 7. Collect map pieces for Tomb B → enter Tomb B → repeat
 
-**Multiple tombs per tier at higher difficulties:**
+**Multiple tombs per tier at higher difficulties:** the tomb count rises with tier (one tomb at starter/junior, two at expert/master, three at wizard), and later tombs in a tier are revealed by completing the earlier one. See `pyramid-interior-design.md §12` for canonical counts.
 
-| Tier | Tombs | Notes |
-|---|---|---|
-| Starter | 1 | 4 treasures |
-| Junior | 1 | 6 treasures |
-| Expert | 2 | 4 + 4 treasures; Tomb B revealed by completing Tomb A |
-| Master | 2 | 5 + 5 treasures |
-| Wizard | 3 | 4 + 4 + 4 treasures |
-
-**Hieroglyphs are discovered via fragments** — finding a hieroglyph fragment chest adds one fragment to the collection. A hieroglyph is completed when all its fragments are found. Fragment counts scale by tier *and* by which tomb section first requires that hieroglyph — a hieroglyph only needed in section 3 has more fragments than one needed in section 1, because the player already has a larger playing surface by then. See `docs/pyramid-interior-design.md §3` for the full matrix (2–8 fragments per hieroglyph; 273 total). Completed hieroglyphs unlock tomb tableau rooms. Fragments of the same hieroglyph are always in different pyramid sites across different journeys.
+**Hieroglyphs are discovered via fragments** — finding a hieroglyph fragment chest adds one fragment to the collection. A hieroglyph is completed when all its fragments are found. Fragment counts scale by tier *and* by which tomb section first requires that hieroglyph — a hieroglyph only needed in section 3 has more fragments than one needed in section 1, because the player already has a larger playing surface by then. See `pyramid-interior-design.md §3` for the full matrix (2–8 fragments per hieroglyph; 273 total). Completed hieroglyphs unlock tomb tableau rooms. Fragments of the same hieroglyph are always in different pyramid sites across different journeys.
 
 **Map pieces are flexible** — `piecesRequired` is authored per tomb and is not always 4. Later tombs within a tier need fewer pieces (they're already gated behind completing an earlier tomb). Map pieces for later tombs are found on deep floors opened by earlier tombs' ward keys — exploring new floors serves double duty.
 
@@ -67,18 +61,7 @@ The mosaic is a single image revealed in order across 298 reveal steps (`LEVEL_S
 
 ## 2. Content scope — the level count question
 
-`journeys.ts` defines `levelCount` per pyramid, which becomes `puzzleBudget` in the site map design (the number of puzzle nodes in the site). Totals:
-
-| Tier | Site counts | Sum | Avg nodes/site |
-|---|---|---|---|
-| Starter | 3, 4, 5, 5 | **17** | 4.3 |
-| Junior | 3, 6, 8, 5 | **22** | 5.5 |
-| Expert | 4, 6, 9, 7 | **26** | 6.5 |
-| Master | 4, 9, 8, 5 | **26** | 6.5 |
-| Wizard | 9, 11, 10, 8 | **38** | 9.5 |
-| **Pyramid total** | — | **~104** | journeys capped at 6 levels each |
-| **Tombs** (1,1,2,2,3) | — | **9** | — |
-| **Grand total** | — | **~113** | — |
+`journeys.ts` defines `levelCount` per pyramid, which becomes `puzzleBudget` in the site map design (the number of puzzle nodes in the site). The per-site counts live in `journeys.ts`; see `pyramid-interior-design.md §12` for canonical totals. The analysis below reads the *shape* of those counts within and across tiers.
 
 ### Intra-tier shape
 
@@ -128,13 +111,13 @@ The curriculum map (§7) assigns families to tiers T1–T5. Mapping to game diff
 | Master | T4 | Nonogram (10×10), Kakuro, Clock-arith (decoy) |
 | Wizard | T5 | Ceilings: 9×9 Latin-square, 15×15 nonogram, multi-unknown algebra, modular time |
 
-The IMPLEMENTATION_PLAN resolves to **Sumplete only for initial build**. This is consistent — Sumplete is a T3 family (PUZZLE_FAMILIES §7: `◐ 5×5` at T3). The initial build targets the expert tier as the live test bed for the site map system.
+Sumplete is the initial build family (see `design-decisions.md`). This is consistent — Sumplete is a T3 family (PUZZLE_FAMILIES §7: `◐ 5×5` at T3). The initial build targets the expert tier as the live test bed for the site map system.
 
 **One tension:** PUZZLE_FAMILIES §7 says side-families (Latin-square, nonogram, Sumplete) cannot appear before forks debut (T2+), since side-families live in optional branches. The build plan stages forks in Phase 5a, after the linear-spine Phase 1–4 ships. This is structurally correct — but it means the site configs authored in Phase 4 for all 20 pyramids will need **two passes**: one for the linear-spine launch (forks absent) and a second revision once forks ship. This should be explicit in the authoring plan.
 
 ### `docs/treasure-effects.md` (removed)
 
-This file no longer exists. All treasure passive effects are now defined in `docs/pyramid-interior-design.md §14` and encoded in `src/data/treasurePerks.ts`. The old probabilistic fields (`higherLootChance`, `mapFragmentChance`, `moreLootChance`, `expeditionBonus`) from `TreasureEffects` have been removed; the perk model has fully replaced them.
+This file no longer exists. All treasure passive effects are now defined in `pyramid-interior-design.md §14` and encoded in `src/data/treasurePerks.ts`. The old probabilistic fields (`higherLootChance`, `mapFragmentChance`, `moreLootChance`, `expeditionBonus`) from `TreasureEffects` have been removed; the perk model has fully replaced them.
 
 ---
 
@@ -142,16 +125,10 @@ This file no longer exists. All treasure passive effects are now defined in `doc
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note it explicitly (see §2 recommendation).
 
-2. ~~**Two-pass site config authoring**~~ — **Resolved.** Phase 5a shipped; all 20 site configs were authored with branches. The two-pass concern was addressed during worldgen DSL development (Phases 5a–9f).
+2. **Tomb "disabled" condition** — once ward-gated tomb branches are in play, the disable condition needs a precise definition. Proposal: disabled only when `solvedEdges` covers all reachable nodes *and* no unspent ward keys in inventory could open further branches. (The validator's forward pass produces this data for free.)
 
-3. **Tomb "disabled" condition** — once ward-gated tomb branches are in play, the disable condition needs a precise definition. Proposal: disabled only when `solvedEdges` covers all reachable nodes *and* no unspent ward keys in inventory could open further branches. (The validator's forward pass produces this data for free.)
+3. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb. Fragment model works better with 3–6. Needs authoring in `tableaus.ts` before Phase 6.
 
-4. ~~**Mosaic two-layer model**~~ — **Resolved.** Single 298-slice image revealed in order. No per-journey sections. Puzzle solves unlock the next slice(s) in sequence globally.
+4. **Location key presentation** — distinct visual/text treatment needed for the treasure that reveals a new tomb. Design before Phase 6 UI work.
 
-5. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb. Fragment model works better with 3–6. Needs authoring in `tableaus.ts` before Phase 6.
-
-6. ~~**Treasure passive effects**~~ — **Resolved.** Full perk table designed and documented in `docs/pyramid-interior-design.md §14`. Implementation in Phase 15 (`src/data/treasurePerks.ts`).
-
-7. **Location key presentation** — distinct visual/text treatment needed for the treasure that reveals a new tomb. Design before Phase 6 UI work.
-
-8. **WARD_MIX totals** — 36 ward keys (not 40) since 4 treasures are location keys. Final WARD_MIX values must sum to 36. See `pyramid-interior-design.md` §10 open Q10.
+5. **WARD_MIX totals** — 36 ward keys (not 40) since 4 treasures are location keys. Final WARD_MIX values must sum to 36.

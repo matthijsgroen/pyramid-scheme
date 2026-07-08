@@ -1,7 +1,7 @@
 # Pyramid Interior Design
 
 Status: design doc · updated 2026-06-30 with trap system  
-Companion to: `docs/game-loop.md`, `IMPLEMENTATION_PLAN.md`
+Companion to: `game-loop.md`, `design-decisions.md`
 
 ---
 
@@ -349,17 +349,6 @@ scripts/generateWorld.ts
 
 **5. Solver constraints** (code, not data) — no circular unlock chains, all fragments reachable before completing their hieroglyph, all tomb map pieces reachable before that tomb's circular dependencies, no dead-end game states.
 
-### Generator state by phase
-
-| Phase | Map pieces placed | Fragment slots | Gated deep pieces |
-|---|---|---|---|
-| 4 (linear, current) | 20 surface (main goal, no branches) | ~47 / 273 | 0 — deferred |
-| 5a (branches) | 20 surface (branch endpoints); main goal → mosaicPiece | ~150 / 273 | 0 — deferred |
-| 5c (floors) | 20 surface + 16 gated deep floors | ~250 / 273 | 16 (4 per secondary tomb: expert_b, master_b, wizard_b, wizard_c) |
-| 6+ (full world) | 36 total | 273 / 273 | all placed |
-
-**Note on linear-phase compromise:** Phase 4 configs are linear (no branches), so map pieces temporarily sit at the main goal (replacing mosaicPiece). `yarn generate-world` will warn about unplaced fragments — this is expected until Phase 5 adds branch endpoints.
-
 ### Tuning workflow
 
 1. Adjust an authored rule
@@ -504,31 +493,15 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note in `journeys.ts`.
 
-2. ~~**Two-pass site config authoring**~~ — **Resolved.** Phase 5a shipped; all site configs authored with branches via the worldgen DSL.
+2. **Tomb "disabled" condition** — definition: disabled only when all reachable nodes are solved and no unspent ward keys could open further branches.
 
-3. **Tomb "disabled" condition** — definition: disabled only when all reachable nodes are solved and no unspent ward keys could open further branches.
+3. **`higherLootChance` / `mapFragmentChance` fate** — vestigial after redesign. Remove or replace with redesign-compatible effects before Phase 6.
 
-4. **`higherLootChance` / `mapFragmentChance` fate** — vestigial after redesign. Remove or replace with redesign-compatible effects before Phase 6.
+4. **`inventoryLootLogic.ts` migration** — becomes vestigial once fragments replace probabilistic drops. Remove in Phase 6.
 
-5. ~~**Mosaic two-layer model**~~ — **Resolved.** Single 298-slice image revealed in order. No per-journey section assignment. Each puzzle solve globally unlocks the next slice(s) in sequence.
+5. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb; should be reduced to 3–6 to fit the permanent-discovery/fragment model. Authoring work in `tableaus.ts`.
 
-6. **`inventoryLootLogic.ts` migration** — becomes vestigial once fragments replace probabilistic drops. Remove in Phase 6.
-
-7. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb; should be reduced to 3–6 to fit the permanent-discovery/fragment model. Authoring work in `tableaus.ts`.
-
-8. ~~**Treasure passive effect values**~~ — **Resolved.** See §1 and §14. Values: health +½ heart per upgrade (6 total), armor −1 half-heart damage per stack (2 total), trap insight +1s per stack (2 total). Exact authored constants live in `TRAP_FAMILIES.md §3`.
-
-9. **Location key presentation** — the treasure that reveals a new tomb needs a distinct visual/text treatment to signal it's special. Design needed before Phase 6 UI work.
-
-10. ~~**Ward gate count recalculation**~~ — **Resolved.** 36 ward keys confirmed throughout §1 and §6. WARD_MIX authored with correct totals in worldSpec.
-
-11. ~~**Health persistence across sessions**~~ — **Resolved.** Health persists to disk. No time-based regen. See §11.
-
-12. ~~**Trap damage value**~~ — **Resolved.** 1 full heart damage; healing and armor in half-hearts. See §11.
-
-13. ~~**Consumable distribution density**~~ — **Resolved.** Density by tier: starter=0%, junior=5%, expert=20%, master=25%, wizard=30%. Authored via `consumableDensity()` in the world generator DSL. See `IMPLEMENTATION_PLAN.md` DSL section for full syntax.
-
-14. **Hidden path density** — **Resolved.** All tiers have hidden paths (starter=low, junior=low, expert=low, master=medium, wizard=medium+low). Authored via composable `hiddenPaths(level).settings(...)` DSL declarations. Starter hidden paths exist in the world from generation but are invisible until Detection L1 (earned at Master B). See `IMPLEMENTATION_PLAN.md` DSL section.
+6. **Location key presentation** — the treasure that reveals a new tomb needs a distinct visual/text treatment to signal it's special. Design needed before Phase 6 UI work.
 
 ---
 

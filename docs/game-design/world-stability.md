@@ -60,7 +60,7 @@ The DSL lets authors change *which* ward key is assigned to a gated section (e.g
 
 ## Storage version
 
-`useProgression` uses key `"pyramid-scheme-progression-v3"`. `useJourneys` uses `StoredJourneyStateV3`. If a breaking migration is needed in future, bump the version and provide a migration or accept a fresh start.
+Progression and journey state are stored under versioned keys. If a breaking migration is ever needed, the policy is to bump the storage version and hard-reset — accept a fresh start rather than attempt an in-place migration.
 
 ---
 
@@ -77,18 +77,3 @@ The DSL lets authors change *which* ward key is assigned to a gated section (e.g
 | Section removed | N/A — stale hash ignored | No |
 | Difficulty changes | Yes — hash changes | No |
 | Fragment re-ordered across chests | No | No — piece index is stable per world build |
-
----
-
-## Implementation files
-
-| Concern | File |
-|---|---|
-| Cell types with `sectionHash` | `src/game/siteTypes.ts` |
-| Hash assignment at grid-build time | `src/game/siteAssembler.ts` |
-| `pieceIndex` assignment in worldgen | `src/worldGen/serializer.ts` |
-| Generated world with piece indices | `src/data/generatedWorld.ts` |
-| Exploration storage (section-keyed) | `src/app/state/useJourneys.ts` |
-| Section-aware grid restore | `src/app/SiteMap/useAssembledFloor.ts` |
-| Inventory-as-truth fragment checks | `src/app/SiteMap/SiteMapScreen.tsx` |
-| Fragment inventory storage | `src/app/state/useProgression.ts` |

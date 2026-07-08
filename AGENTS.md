@@ -19,30 +19,7 @@ This document describes how AI coding agents should understand and work within t
 
 ## Architecture Overview
 
-```
-src/
-├── app/          # App shell, pages, routing, state management, expedition logic
-├── data/         # Game data definitions and translation hooks
-├── game/         # Pure game logic: puzzle generation, rewards, randomization
-│   ├── puzzles/      # Puzzle family folders (sumplete/, crocodile/, tableau/) + shared plugin/registry
-│   └── traps/        # Trap plugin/registry + per-family trap infra
-├── worldGen/     # Domain: world authoring & generation (worldSpec.ts, dsl.ts, configBuilder.ts, validators) → src/data/generatedWorld.ts
-├── ui/           # Reusable themed UI components + Storybook stories
-│   ├── principles/   # Design-token/foundation docs (colors, spacing, typography)
-│   ├── atoms/        # Leaf components — render no other src/ui component
-│   ├── molecules/    # Compose a few atoms
-│   └── organisms/    # Compose molecules/atoms into a complete UI section
-├── components/   # Shared React components
-├── contexts/     # React context providers
-├── config/       # App-level configuration
-├── i18n/         # i18next setup and configuration
-└── support/      # Shared utilities and helpers
-
-public/
-└── locales/
-    ├── en/       # English translations (common.json, tableaus.json, ...)
-    └── nl/       # Dutch translations (must stay in sync with en/)
-```
+See `docs/instructions/architecture.md` for the layer structure and `README.md` for the directory overview. Atomic-design tier definitions (atoms/molecules/organisms/principles) live in `docs/instructions/storybook.md`.
 
 ### Key Subsystems
 
@@ -226,22 +203,3 @@ Deeper design docs live in `docs/`:
 | [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md)                             | Three nested loops, level counts, conflict checks against other docs                                                                  |
 | [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md)                 | Section-hash exploration, inventory-as-truth fragments, storage versioning                                                            |
 | [`docs/game-design/worldgen-dsl-redesign.md`](docs/game-design/worldgen-dsl-redesign.md)     | **In progress** — world-gen DSL value model (Structure/Loot/Population/Decoration layers), rank-based fragment assignment redesign    |
-
----
-
-## Key Files Quick Reference
-
-| File                                                    | Purpose                                |
-| ------------------------------------------------------- | -------------------------------------- |
-| `src/game/random.ts`                                    | Seeded random number generation        |
-| `src/game/generateLevel.ts`                             | Core puzzle level generation           |
-| `src/game/puzzles/tableau/generateRewardCalculation.ts` | Reward/loot calculation logic          |
-| `src/data/journeys.ts`                                  | All pyramid expedition definitions     |
-| `src/data/tableaus.ts`                                  | Tableau (puzzle blueprint) definitions |
-| `src/data/difficultyLevels.ts`                          | Difficulty scaling configuration       |
-| `src/data/hieroglyphs.ts`                               | Hieroglyph symbol definitions          |
-| `src/data/inventory.ts`                                 | Inventory item definitions             |
-| `src/data/treasures.ts`                                 | Treasure/tomb definitions              |
-| `public/locales/en/common.json`                         | English UI translations                |
-| `public/locales/nl/common.json`                         | Dutch UI translations                  |
-| `.github/copilot-instructions.md`                       | GitHub Copilot-specific instructions   |

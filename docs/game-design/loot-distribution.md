@@ -49,7 +49,7 @@ Where sentinels appear:
 
 ## Fragment assignment algorithm
 
-### Step 1 — collect slots (`collectSlots`)
+### Step 1 — collect slots
 
 Scans all pyramid configs (tombs are skipped) and builds a list of `SlotRef` objects. Each `SlotRef` carries:
 
@@ -60,7 +60,7 @@ Scans all pyramid configs (tombs are skipped) and builds a list of `SlotRef` obj
 
 Non-placeholder ward slots are included so they can receive fragments during assignment, but are never filled with consumables if they remain unassigned.
 
-### Step 2 — build placement infos (`buildPlacementInfos`)
+### Step 2 — build placement infos
 
 For each hieroglyph, derives:
 
@@ -76,7 +76,7 @@ For each hieroglyph, derives:
 | 2 | `[tombPerkIds[0]]` | Needed after run 1 → prefer slots behind ward key #1 |
 | 3 | `[tombPerkIds[0], tombPerkIds[1]]` | Needed after run 2 → prefer slots behind ward keys #1 and #2 |
 
-### Step 3 — assign (`assignFragments`)
+### Step 3 — assign
 
 For each hieroglyph (in tier order, starter first):
 
@@ -111,24 +111,4 @@ Run-N fragments are designed to be placed *behind* the ward key earned after com
 
 ## Output
 
-The world ships with exactly the required fragment count per hieroglyph:
-
-```
-273/273 fragments placed (273 total)
-```
-
-The serializer throws `Error: fragmentSlot reached serializer` if any sentinel survives `assignFragments`, acting as a hard invariant check at generation time.
-
----
-
-## Key files
-
-| File | Role |
-|---|---|
-| `src/worldGen/fragments.ts` | `collectSlots`, `buildPlacementInfos`, `assignFragments` |
-| `src/worldGen/data.ts` | `HIEROGLYPH_REQUIRED`, `TOMB_SYMBOLS`, `chestCountFor` |
-| `src/data/tableaus.ts` | `tableauLevels` with `runNumber` per tableau level |
-| `src/data/treasurePerks.ts` | `TOMB_PERK_IDS` — ward key IDs per tomb in run order |
-| `src/worldGen/serializer.ts` | `generateFile` (throws on fragmentSlot), `printStats` |
-| `src/worldGen/fragments.spec.ts` | Unit tests for the assignment algorithm |
-| `src/data/generatedWorld.ts` | Generated output — do not edit manually |
+The world ships with exactly the required fragment count per hieroglyph. The serializer throws if any `fragmentSlot` sentinel survives assignment, acting as a hard invariant check at generation time.

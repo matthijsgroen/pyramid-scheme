@@ -14,21 +14,7 @@ If the player doesn't remember, an "I don't know" button resets the comparison p
 
 Each run through a tomb generates a deterministic puzzle from `levelSeed = randomSeed + runNumber * 3210`.
 
-`generateCompareLevel` (`src/game/puzzles/crocodile/generateCompareLevel.ts`) produces a `CompareLevel`:
-
-```ts
-type Requirements = {
-  digit: number // 0–9, randomly chosen
-  largest: "always" | "never"
-}
-
-type CompareLevel = {
-  requirements: Requirements
-  comparisons: { left: Formula; right: Formula }[]
-}
-```
-
-For each comparison, `createCompare` regenerates formula pairs until the constraint is satisfied:
+A generated level is a set of comparisons plus a target digit (0–9) and an always/never rule. For each comparison, formula pairs are regenerated until the constraint is satisfied:
 
 - `largest: "always"` — the digit appears in the **larger** result but not the smaller
 - `largest: "never"` — the digit appears in the **smaller** result but not the larger
@@ -42,18 +28,6 @@ On lock submission (`handleLockSubmit` in `useComparePuzzleControls.ts`), the en
 ## Loot Selection
 
 The treasure awarded is selected deterministically from `randomSeed + 12345` at the start of the hook — before the puzzle is shown. Only treasures not already in the player's inventory are eligible.
-
-## Key Files
-
-| File                                                 | Purpose                                                        |
-| ---------------------------------------------------- | -------------------------------------------------------------- |
-| `src/app/TombLevel/ComparePuzzle.tsx`                | UI: comparison cards, crocodile animation, lock input          |
-| `src/app/TombLevel/useComparePuzzleControls.ts`      | All puzzle state, answer handling, lock validation, loot award |
-| `src/game/puzzles/crocodile/generateCompareLevel.ts` | Deterministic level generation from seed + requirements        |
-| `src/game/puzzles/crocodile/crocodileState.ts`       | DDD domain state object for the crocodile puzzle               |
-| `src/assets/crocodile-250.png`                       | Crocodile with open mouth                                      |
-| `src/assets/crocodile-closed-250.png`                | Crocodile with closed mouth (after eating)                     |
-| `public/locales/en/common.json`                      | UI strings under `tomb.crocodile*`                             |
 
 ## Journey Configuration
 

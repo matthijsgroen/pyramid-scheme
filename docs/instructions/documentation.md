@@ -9,9 +9,14 @@ Only files that tooling, platforms, or agent conventions require at the root:
 | `README.md` | Project overview for humans and GitHub |
 | `CLAUDE.md` | Single pointer: tells Claude to read `AGENTS.md`. No substantive content here. |
 | `AGENTS.md` | Authoritative agent guide — architecture, conventions, workflows, key files, instruction pointers |
-| `IMPLEMENTATION_PLAN.md` | Active build roadmap. Lives at root because it is the current work item, not archived reference. |
 
 Everything else goes in `docs/`.
+
+---
+
+## What goes in a doc
+
+Do not hand-maintain file lists, path tables, or violation counts in Markdown — code and git are the source of truth; generate such lists on demand. Docs hold intent, rules, rationale, and decisions only.
 
 ---
 
@@ -75,6 +80,6 @@ Transient briefs for the next agent or session — what to build, what's already
 | "How to work in area X" guidelines | `docs/instructions/<topic>.md` |
 | UX flow maps, friction findings | `docs/ux/<topic>.md` |
 | Transient handover brief | `docs/handover-<topic>.md` (delete on completion) |
-| Active build roadmap | `IMPLEMENTATION_PLAN.md` (root) |
+| Durable design decisions & backlog | `docs/game-design/design-decisions.md` |
 | Agent entry point | `CLAUDE.md` (root, pointer only) |
 | Full agent guide | `AGENTS.md` (root) |
