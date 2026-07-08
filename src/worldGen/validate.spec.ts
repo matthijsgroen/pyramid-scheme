@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { SECONDARY_TOMBS, validateDiscovery, validateRewardCounts } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
-import { PYRAMID_JOURNEYS } from "./data"
+import { PYRAMID_JOURNEYS, EXPECTED_HIEROGLYPH_FRAGMENTS } from "./data"
 import type { FloorConfig, SiteConfig } from "./types"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
@@ -19,6 +19,14 @@ const fillMosaics = (n: number): FloorConfig["sideSections"] =>
     difficulty: "starter" as const,
     end: "treasure" as const,
     endReward: { type: "mosaicPiece" as const },
+  }))
+
+const fillFragments = (n: number): FloorConfig["sideSections"] =>
+  Array.from({ length: n }, (_, i) => ({
+    pathPuzzles: 0,
+    difficulty: "starter" as const,
+    end: "treasure" as const,
+    endReward: { type: "hieroglyphFragment" as const, hieroglyphId: `h${i}` },
   }))
 
 describe("validateRewardCounts", () => {
@@ -60,6 +68,7 @@ describe("validateRewardCounts", () => {
           floor({
             sideSections: [
               ...fillMosaics(WORLD_TARGETS.mosaicPieceRewards),
+              ...fillFragments(EXPECTED_HIEROGLYPH_FRAGMENTS),
               ...Array.from({ length: WORLD_TARGETS.mapPieceRewards }, () => ({
                 pathPuzzles: 0,
                 difficulty: "starter" as const,

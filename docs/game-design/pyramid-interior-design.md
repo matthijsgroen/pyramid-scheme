@@ -1,7 +1,7 @@
 # Pyramid Interior Design
 
 Status: design doc · updated 2026-06-30 with trap system  
-Companion to: `docs/game-loop.md`, `EXPEDITION_REDESIGN.md`, `IMPLEMENTATION_PLAN.md`
+Companion to: `docs/game-loop.md`, `IMPLEMENTATION_PLAN.md`
 
 ---
 
@@ -15,7 +15,7 @@ The game has two distinct site types. Their loot is strictly separated — nothi
 |---|---|---|
 | Map piece | 1 per tomb per journey (on the right floor) | Authored per tomb; surface for first tomb, deep floors for later tombs |
 | Mosaic tiles | 298 (fixed) | Main path chests — guaranteed filler; never empty-handed |
-| Hieroglyph fragment | 308 total (matrix by tier × section) | Side path end rewards first; main path chests as overflow |
+| Hieroglyph fragment | 273 total (matrix by tier × section) | Side path end rewards first; main path chests as overflow |
 | Seal key | Local only | One chest per pyramid; opens one sealed gate within that same site |
 | Ward gate | 36 total | Branch endpoint; leads to stairhead → new floor |
 | Consumable | ~147 total | Normal chests; used to heal or bypass traps |
@@ -58,7 +58,7 @@ Higher-tier tombs grant utility perks (compass, detection); early tombs primaril
 
 ## 2. Pyramid interior node types
 
-The interior is a node graph (from `EXPEDITION_REDESIGN.md` §3). Every room is one of:
+The interior is a node graph. Every room is one of:
 
 | Node type | Role | Loot / effect |
 |---|---|---|
@@ -107,12 +107,12 @@ Fragment count depends on (a) which tier the hieroglyph belongs to and (b) which
 
 | Tier | Hieroglyphs | Total fragments |
 |---|---|---|
-| Starter | 7 | 19 |
-| Junior | 10 | 39 |
-| Expert | 14 | 69 |
-| Master | 15 | 88 |
-| Wizard | 12 | 93 |
-| **Total** | **58** | **308** |
+| Starter | 7 | 14 |
+| Junior | 10 | 30 |
+| Expert | 14 | 64 |
+| Master | 15 | 83 |
+| Wizard | 12 | 82 |
+| **Total** | **58** | **273** |
 
 The starter tomb section 1 requires 4 hieroglyphs × 2 fragments = 8 finds — achievable in 17 starter pyramids. Revisit hieroglyphs are those not needed in run 1 at all; they exist as collectibles and for the deferred multi-run tomb mechanic.
 
@@ -131,7 +131,7 @@ The starter tomb section 1 requires 4 hieroglyphs × 2 fragments = 8 finds — a
 
 ## 4. Mosaic tiles
 
-298 total slices, grouped into displayable pieces. Mosaic tiles fill any branch endpoint that doesn't have a more specific reward.
+298 total reward pieces — one per reveal step (`LEVEL_STEPS`), revealed in sequence — grouped into displayable pieces. Reveal is count-based, so the reward total must equal the step count. Mosaic tiles fill any branch endpoint that doesn't have a more specific reward.
 
 **Placement rules:**
 - The critical path through every pyramid always ends in a mosaic tile bundle (guaranteed)
@@ -174,9 +174,9 @@ explore tier pyramids (surface)
 
 ### Map piece distribution rules
 
-**One map piece per pyramid journey, on the surface floor.** Every pyramid journey contributes exactly one map piece for the first tomb of its tier. This gives 4 map pieces per first-tomb (4 journeys per tier × 1 piece each).
+**One map piece per pyramid journey, on the surface floor.** Every pyramid journey contributes exactly one map piece for the first tomb of its tier. This gives 4 map pieces per first-tomb (4 journeys per tier × 1 piece each) — **20 primary pieces** across the 20 pyramid journeys.
 
-**Extra-tomb pieces are always gated.** Second and third tombs within a tier (expert_b, master_b, wizard_b, wizard_c) require map pieces found on deep floors — floors that are only accessible after collecting the corresponding ward key from the first tomb of that tier. The player must complete expert_a's tomb to unlock the floor that contains expert_b's pieces.
+**Extra-tomb pieces are always gated.** Second and third tombs within a tier (expert_b, master_b, wizard_b, wizard_c) draw map pieces found on deep floors — floors that are only accessible after collecting the corresponding ward key from the first tomb of that tier. The player must complete expert_a's tomb to unlock the floor that contains expert_b's pieces. Each of the **4 secondary tombs** receives one piece per journey in its tier, for **16 secondary pieces** (4 × 4). **20 primary + 16 secondary = 36 map piece rewards** placed in the world. Note that `piecesRequired` (below) is the unlock *cost* — fewer than the pieces placed for later tombs, giving the player slack.
 
 **Main goal is always mosaicPiece in the full design.** The critical path through every pyramid ends in a mosaic tile bundle. Map pieces ride as intermediate chest nodes on the main path (linear sites) or on branch endpoints (branched sites). In the current linear-only phase, there are no branches, so map pieces temporarily occupy the main goal slot — Phase 5 restores mosaicPiece to the main goal when branches are introduced.
 
@@ -187,7 +187,7 @@ explore tier pyramids (surface)
 | starter_a | 4 | starter_1–4 surface, one per journey | No |
 | junior_a | 4 | junior_1–4 surface, one per journey | No |
 | expert_a | 4 | expert_1–4 surface, one per journey | No |
-| expert_b | 2 | expert deep floors (floor 2), via expert_a ward keys | Yes — requires expert_a treasure |
+| expert_b | 3 | expert deep floors (floor 2), via expert_a ward keys | Yes — requires expert_a treasure |
 | master_a | 4 | master_1–4 surface, one per journey | No |
 | master_b | 3 | master deep floors (floor 2), via master_a ward keys | Yes — requires master_a treasure |
 | wizard_a | 4 | wizard_1–4 surface, one per journey | No |
@@ -353,10 +353,10 @@ scripts/generateWorld.ts
 
 | Phase | Map pieces placed | Fragment slots | Gated deep pieces |
 |---|---|---|---|
-| 4 (linear, current) | 20 surface (main goal, no branches) | ~47 / 308 | 0 — deferred |
-| 5a (branches) | 20 surface (branch endpoints); main goal → mosaicPiece | ~150 / 308 | 0 — deferred |
-| 5c (floors) | 20 surface + 10 gated deep floors | ~250 / 308 | 10 (expert_b ×2, master_b ×3, wizard_b ×3, wizard_c ×2) |
-| 6+ (full world) | 30 total | 308 / 308 | all placed |
+| 4 (linear, current) | 20 surface (main goal, no branches) | ~47 / 273 | 0 — deferred |
+| 5a (branches) | 20 surface (branch endpoints); main goal → mosaicPiece | ~150 / 273 | 0 — deferred |
+| 5c (floors) | 20 surface + 16 gated deep floors | ~250 / 273 | 16 (4 per secondary tomb: expert_b, master_b, wizard_b, wizard_c) |
+| 6+ (full world) | 36 total | 273 / 273 | all placed |
 
 **Note on linear-phase compromise:** Phase 4 configs are linear (no branches), so map pieces temporarily sit at the main goal (replacing mosaicPiece). `yarn generate-world` will warn about unplaced fragments — this is expected until Phase 5 adds branch endpoints.
 
@@ -389,14 +389,14 @@ Surface side path breakdown: 20 journeys × 2 special pyramids (3+6 branches) + 
 
 | Loot type | Count | Slot type |
 |---|---|---|
-| Hieroglyph fragments | 308 | Side path endpoints (primary), chests (overflow) |
+| Hieroglyph fragments | 273 | Side path endpoints (primary), chests (overflow) |
 | Mosaic tiles | 298 | Chests + main end rewards |
-| Map pieces | 30 | Side path endpoints (20 surface + 10 deep floors) |
+| Map pieces | 36 | Side path endpoints (20 surface + 16 deep floors) |
 | Seal / floor keys | ~40 | Chest slots (local mechanic, 1 per branchy pyramid) |
 | Consumables | ~147 | Chests — mummy bandages, healing oils, trap tools |
-| **Total assigned** | **823** | |
+| **Total assigned** | **~795** | |
 
-All 823 slots assigned. Consumables (trap system, §11) absorb the previously unassigned 147 slots.
+The ~823-slot supply comfortably covers the ~795 slots of demand; the surplus is flex chest capacity. Consumables (trap system, §11) fill the bulk of the otherwise-empty chest slots.
 
 ## 11. Trap system
 
@@ -491,10 +491,10 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 | Pyramid sites | ~104 | 20 journeys, capped at 6 levels each; exact count pending journey trim decision |
 | Tomb sites | 9 | 1+1+2+2+3 across the 5 tiers |
 | Total hieroglyphs | 58 | Permanent once completed |
-| Hieroglyph fragments | 308 | Scaled by tier × first-blocking section (see §3 matrix) |
+| Hieroglyph fragments | 273 | Scaled by tier × first-blocking section (see §3 matrix) |
 | Total treasures | 40 | 36 ward keys + 4 location keys |
 | Pyramid floors unlocked | 36 | One per ward key treasure |
-| Map pieces in the world | 30 | Distributed surface + deep floors; per tomb: 4+4+4+2+4+3+4+3+2 |
+| Map pieces in the world | 36 | 20 primary (1 per pyramid journey) + 16 secondary (4 per secondary tomb: expert_b, master_b, wizard_b, wizard_c) |
 | Consumables | ~147 | Mummy bandages, healing oils, trap tools — in normal chests |
 | Mosaic tiles | 298 (fixed) | Main path chest filler |
 

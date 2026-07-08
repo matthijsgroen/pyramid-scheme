@@ -1,5 +1,5 @@
 import type { SiteConfig, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, EXPECTED_HIEROGLYPH_FRAGMENTS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
@@ -9,6 +9,7 @@ const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_J
 export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
   let mapPieces = 0
   let mosaicPieces = 0
+  let fragments = 0
   const unknownTombIds: string[] = []
 
   const checkReward = (r: TreasureReward | undefined) => {
@@ -18,6 +19,7 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): voi
       if (!KNOWN_JOURNEY_IDS.has(r.tombId)) unknownTombIds.push(r.tombId)
     }
     if (r.type === "mosaicPiece") mosaicPieces++
+    if (r.type === "hieroglyphFragment") fragments++
   }
 
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
@@ -47,6 +49,8 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): voi
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
   if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mosaicPieceRewards} mosaic pieces, got ${mosaicPieces}`)
+  if (fragments !== EXPECTED_HIEROGLYPH_FRAGMENTS)
+    throw new Error(`[worldSpec] Expected ${EXPECTED_HIEROGLYPH_FRAGMENTS} hieroglyph fragments, got ${fragments}`)
 }
 
 // Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.

@@ -5,17 +5,18 @@
 The codebase has three strict layers with one-way dependencies: domain ← app ← ui.
 
 ```
-src/game/   domain logic
-src/data/   domain data
-src/ui/     design system (rendering only) — split into principles/, atoms/, molecules/, organisms/
-src/app/    state, flow, and composition
+src/game/     domain logic
+src/data/     domain data
+src/worldGen/ domain — world authoring / generation (pure TS)
+src/ui/       design system (rendering only) — split into principles/, atoms/, molecules/, organisms/
+src/app/      state, flow, and composition
 ```
 
 `src/support/` and `src/components/` are transitional; absorb their contents into the three layers when touching those files. Pure utilities go to `src/game/` or `src/data/`, React hooks go to `src/app/`, shared stateless components go to `src/ui/`.
 
 ---
 
-## Domain layer — `src/game/` and `src/data/`
+## Domain layer — `src/game/`, `src/data/`, and `src/worldGen/`
 
 **Rule: pure TypeScript only. No React, no DOM, no i18n, no framework imports of any kind.**
 
@@ -23,6 +24,7 @@ The domain layer must be portable — it could run in a CLI, a test runner, or a
 
 - `src/game/` — puzzle generation, seeded randomisation, reward calculation, site assembly, navigation, validation
 - `src/data/` — journey definitions, tableau blueprints, difficulty settings, hieroglyphs, inventory items, treasures
+- `src/worldGen/` — world authoring and generation: the world spec DSL, config builders, fragment/mosaic/reward placement, and validators that produce `src/data/generatedWorld.ts` at dev time
 
 **Violations to avoid:**
 - Importing from `react`, `react-dom`, or any framework package
@@ -76,10 +78,11 @@ The app layer wires state to UI. It calls game functions, manages React state an
 ## Dependency direction
 
 ```
-src/ui/     can import:  nothing from src/ (only React, external libs)
-src/game/   can import:  src/data/, src/support/ (pure only)
-src/data/   can import:  nothing from src/
-src/app/    can import:  src/game/, src/data/, src/ui/
+src/ui/       can import:  nothing from src/ (only React, external libs)
+src/game/     can import:  src/data/, src/support/ (pure only)
+src/data/     can import:  nothing from src/
+src/worldGen/ can import:  src/data/, src/game/ (pure only)
+src/app/      can import:  src/game/, src/data/, src/ui/
 ```
 
 A cycle or upward import (ui/ importing from app/, game/ importing from ui/) is always a bug.

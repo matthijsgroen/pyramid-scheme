@@ -43,8 +43,8 @@ Type-only React imports in `src/game/` (lower severity — no runtime dependency
 
 | File                         | Violation                                                          |
 | ---------------------------- | ------------------------------------------------------------------ |
-| `src/game/trapPlugin.ts:1`   | `import type { FC } from "react"` for a `Component: FC<...>` field |
-| `src/game/puzzlePlugin.ts:1` | Same pattern                                                       |
+| `src/game/traps/trapPlugin.ts:1`   | `import type { FC } from "react"` for a `Component: FC<...>` field |
+| `src/game/puzzles/puzzlePlugin.ts:1` | Same pattern                                                       |
 
 ### A3. `src/app/` raw `className=` usage — pre-existing carve-out (30 files, 303 occurrences)
 

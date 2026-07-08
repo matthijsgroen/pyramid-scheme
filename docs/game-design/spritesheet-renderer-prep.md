@@ -22,15 +22,11 @@ into `FloorConfig` (`siteTypes.ts` / `worldGen/types.ts`) and never reaches `Sit
 
 No visual change. The prop surface is ready when tileset loading arrives.
 
-### 2. Unify the cell-size constant
+### 2. Unify the cell-size constant — ✅ done
 
-`SiteMapView` has `const CELL = 44` (internal, not exported).  
-`ExplorerDot` exports `SITE_MAP_CELL = 44` separately — already out of sync in name.
-
-- Add a `cellSize` prop to `SiteMapView` (default 44)
-- Pass it down to `ExplorerDot` rather than each hardcoding their own value
-
-Sprite tiles are typically 16, 32, or 64 px — this makes changing the size a one-liner.
+`CELL` now lives in `src/app/SiteMap/mapScale.ts` and is imported by both
+`SiteMapView` and `ExplorerDot`; the duplicate `SITE_MAP_CELL` export was removed.
+A single shared constant makes changing the tile size (16, 32, or 64 px) a one-liner.
 
 ---
 

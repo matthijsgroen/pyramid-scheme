@@ -74,6 +74,11 @@ export const HIEROGLYPH_REQUIRED: Record<string, number> = (() => {
   return result
 })()
 
+// Total hieroglyph fragments the world must place — the sum of every hieroglyph's
+// required count. Single source of truth is FRAGMENT_MATRIX (above); this is its
+// derived total, validated against actual placement in validate.ts.
+export const EXPECTED_HIEROGLYPH_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((a, b) => a + b, 0)
+
 // Which pyramid tiers can host fragments from each hieroglyph tier
 // Rule: fragments appear in same tier and +1 adjacent tier (overlap for revisit motivation)
 export const FRAGMENT_HOST_TIERS: Record<Tier, Tier[]> = {

@@ -50,6 +50,7 @@ The treasure awarded is selected deterministically from `randomSeed + 12345` at 
 | `src/app/TombLevel/ComparePuzzle.tsx`                | UI: comparison cards, crocodile animation, lock input          |
 | `src/app/TombLevel/useComparePuzzleControls.ts`      | All puzzle state, answer handling, lock validation, loot award |
 | `src/game/puzzles/crocodile/generateCompareLevel.ts` | Deterministic level generation from seed + requirements        |
+| `src/game/puzzles/crocodile/crocodileState.ts`       | DDD domain state object for the crocodile puzzle               |
 | `src/assets/crocodile-250.png`                       | Crocodile with open mouth                                      |
 | `src/assets/crocodile-closed-250.png`                | Crocodile with closed mouth (after eating)                     |
 | `public/locales/en/common.json`                      | UI strings under `tomb.crocodile*`                             |

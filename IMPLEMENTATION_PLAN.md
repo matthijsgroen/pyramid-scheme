@@ -1,7 +1,7 @@
 # Expedition Redesign — Implementation Plan
 
-Companion to: `EXPEDITION_REDESIGN.md`, `PUZZLE_FAMILIES.md`, `docs/game-loop.md`, `docs/pyramid-interior-design.md`  
-Status: active plan · updated 2026-07-02
+Companion to: `docs/game-design/PUZZLE_FAMILIES.md`, `docs/game-design/game-loop.md`, `docs/game-design/pyramid-interior-design.md`  
+Status: active plan · updated 2026-07-08
 
 ---
 
@@ -137,7 +137,7 @@ tier("wizard").set({ consumableDensity: 0.30 })
 
 A bezier path represents the physical route of a journey through the landscape. Individual sites (pyramids/tomb floors) appear as nodes along the curve. The explorer dot follows the curve between sites as levels are completed.
 
-### `src/app/JourneyMap/JourneyPathView.tsx` (new)
+### `src/ui/atoms/JourneyPathView.tsx` (shipped — the `src/app/JourneyMap/` dir was never created)
 
 - SVG component: renders a cubic bezier path for a single journey
 - Control points: authored per journey (or procedurally derived from tier/index)
@@ -149,7 +149,7 @@ A bezier path represents the physical route of a journey through the landscape. 
 
 Control points for each journey path can be authored as `[p0, p1, p2, p3]` in `journeyStructure.ts` or as a separate authored data file. No worldGen involvement needed — these are layout-only.
 
-### `src/app/JourneyMap/WorldMapView.tsx` (new)
+### `src/app/JourneyMap/WorldMapView.tsx` (new — NOTE: never created; path is planning-only)
 
 - All journey paths rendered simultaneously on a shared canvas/SVG
 - Pan + zoom for navigation between tiers
@@ -160,6 +160,8 @@ Control points for each journey path can be authored as `[p0, p1, p2, p3]` in `j
 ## Phase 10 — Journey Map + Hub + Fast-Travel
 
 **Goal:** The journey map is the full exploration hub. New-paths badge surfaces when a newly acquired tomb key unlocks previously blocked ward gates.
+
+> NOTE: Phase 10 is deferred. The `src/app/JourneyMap/JourneyMapView.tsx`, `WorldMapView.tsx`, and `NewPathsBadge.tsx` paths below were never created — they are planning-only placeholders.
 
 ### `src/app/JourneyMap/JourneyMapView.tsx`
 
@@ -253,7 +255,7 @@ heal(halfHearts: number): void
 healToFull(): void
 ```
 
-### `<HealthDisplay />` (`src/ui/HealthDisplay.tsx`)
+### `<HealthDisplay />` (`src/ui/atoms/HealthDisplay.tsx`)
 
 - Renders `maxHealth / 2` heart slots (full, half, empty)
 - Storybook story covering 0, half, 1, 2½, 3, 6 hearts
@@ -271,9 +273,9 @@ healToFull(): void
 
 ### Design reference
 
-`TRAP_FAMILIES.md` — full spec for trap plugin contract, time limits, and upgrade interactions.
+`docs/game-design/TRAP_FAMILIES.md` — full spec for trap plugin contract, time limits, and upgrade interactions.
 
-### `src/game/trapPlugin.ts`
+### `src/game/traps/trapPlugin.ts`
 
 ```typescript
 export type TrapPlugin<TQuestion> = {
@@ -288,11 +290,11 @@ export type TrapPlugin<TQuestion> = {
 }
 ```
 
-### `src/game/trapRegistry.ts`
+### `src/game/traps/trapRegistry.ts`
 
 Mirror of `puzzleRegistry.ts`. `registerTrap` / `getTrapPlugin`.
 
-### Timing constants (`src/game/trapConfig.ts`)
+### Timing constants (`src/game/traps/trapConfig.ts`)
 
 ```typescript
 // ponytail: all trap timing lives here — tune before playtesting
@@ -302,7 +304,7 @@ export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
 export const TRAP_TIME_EXTENSION_PER_INSIGHT_STACK = 1  // seconds per stack
 ```
 
-### Arithmetic reflex plugin (`src/app/TrapFamilies/ArithmeticReflex/plugin.ts`)
+### Arithmetic reflex plugin (`src/app/TrapFamilies/ArithmeticReflex/plugin.tsx`)
 
 - Generator: pick operation + operands within tier range, compute answer, generate 3 distractors (adjacent values, plausible wrong-op results)
 - Component: large expression display, 4 tap targets, countdown bar
@@ -404,7 +406,7 @@ totalConsumables(): number     // bandage + oil + trapTool
 
 `SiteMapScreen` on collect: if `totalConsumables() >= consumableCarryCap()` → mark chest as `skipped-full` (stored in per-site state for consumable detector); else add to inventory.
 
-### `<ConsumableBar />` (`src/ui/ConsumableBar.tsx`)
+### `<ConsumableBar />` (`src/ui/atoms/ConsumableBar.tsx`)
 
 Displays current counts for all three types with use buttons. Use triggers:
 - **Bandage:** `heal(2)` — disabled if `currentHealth >= maxHealth`
@@ -472,7 +474,7 @@ detectionMarkers(): { floors: string[], pyramids: string[], journeys: string[] }
 
 Detection L1 (always-on passive) is checked in `useSiteNavigation` directly — no detector mode needed.
 
-### `<DetectorPanel />` (`src/ui/DetectorPanel.tsx`)
+### `<DetectorPanel />` (`src/ui/atoms/DetectorPanel.tsx`)
 
 Mode switcher (compass / consumable / detection) with result display appropriate to the active level. Disabled modes grayed out if perk not yet acquired.
 

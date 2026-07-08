@@ -26,6 +26,7 @@ src/
 ├── game/         # Pure game logic: puzzle generation, rewards, randomization
 │   ├── puzzles/      # Puzzle family folders (sumplete/, crocodile/, tableau/) + shared plugin/registry
 │   └── traps/        # Trap plugin/registry + per-family trap infra
+├── worldGen/     # Domain: world authoring & generation (worldSpec.ts, dsl.ts, configBuilder.ts, validators) → src/data/generatedWorld.ts
 ├── ui/           # Reusable themed UI components + Storybook stories
 │   ├── principles/   # Design-token/foundation docs (colors, spacing, typography)
 │   ├── atoms/        # Leaf components — render no other src/ui component
@@ -92,7 +93,7 @@ Code is split into three layers with strict one-way dependencies (domain ← app
 
 | Layer             | Location                 | Rule                                                                                                                                |
 | ----------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **Domain**        | `src/game/`, `src/data/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI.                                                                  |
+| **Domain**        | `src/game/`, `src/data/`, `src/worldGen/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI. (`src/worldGen/` = world authoring/generation.)                  |
 | **App**           | `src/app/`               | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own.                                                        |
 | **Design system** | `src/ui/`                | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
 

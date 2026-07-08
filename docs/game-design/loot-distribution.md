@@ -125,10 +125,10 @@ The serializer throws `Error: fragmentSlot reached serializer` if any sentinel s
 
 | File | Role |
 |---|---|
-| `src/worldGen/configBuilder.ts` | `collectSlots`, `buildPlacementInfos`, `assignFragments` |
+| `src/worldGen/fragments.ts` | `collectSlots`, `buildPlacementInfos`, `assignFragments` |
 | `src/worldGen/data.ts` | `HIEROGLYPH_REQUIRED`, `TOMB_SYMBOLS`, `chestCountFor` |
 | `src/data/tableaus.ts` | `tableauLevels` with `runNumber` per tableau level |
 | `src/data/treasurePerks.ts` | `TOMB_PERK_IDS` — ward key IDs per tomb in run order |
 | `src/worldGen/serializer.ts` | `generateFile` (throws on fragmentSlot), `printStats` |
-| `src/worldGen/fragmentAssigner.spec.ts` | Unit tests for the assignment algorithm |
+| `src/worldGen/fragments.spec.ts` | Unit tests for the assignment algorithm |
 | `src/data/generatedWorld.ts` | Generated output — do not edit manually |
