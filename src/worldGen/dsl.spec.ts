@@ -147,10 +147,7 @@ describe("tier() builder", () => {
   })
 
   it("tier(name).pyramid(n).floor(a, c).floor(b, c) chains floors into one tier-pyramid rule", () => {
-    const r = tier("expert")
-      .pyramid(2)
-      .floor(0, { difficulty: "expert" })
-      .floor(1, { difficulty: "master" })
+    const r = tier("expert").pyramid(2).floor(0, { difficulty: "expert" }).floor(1, { difficulty: "master" })
     expect(r.scope.level).toBe("tier-pyramid")
     const floors = (r.constraints as { floors?: unknown[] }).floors
     expect(floors?.[0]).toEqual({ difficulty: "expert" })

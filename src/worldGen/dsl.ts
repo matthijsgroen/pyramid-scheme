@@ -307,9 +307,7 @@ export const sidePath = (opts: PathOpts = {}): SideSectionConstraint => {
 }
 
 /** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor. */
-export const wardPath = (
-  opts: PathOpts & { tomb: string; index: number }
-): SideSectionConstraint => {
+export const wardPath = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
   const { puzzles, tier, tomb: tombId, index, ...rest } = opts
   return {
     ...rest,

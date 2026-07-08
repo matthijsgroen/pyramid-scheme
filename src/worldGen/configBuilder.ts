@@ -340,8 +340,7 @@ const buildSideSections = (
         ...(sub.decorations?.length ? { decorations: sub.decorations } : {}),
       }
     })
-    const end =
-      cs.end === "staircase" ? { stairId: `${journeyId}:side${sections.length}` } : ("treasure" as const)
+    const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${sections.length}` } : ("treasure" as const)
     sections.push({
       pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
       difficulty: cs.difficulty ?? difficulty,

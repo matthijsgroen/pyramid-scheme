@@ -149,7 +149,10 @@ describe("resolveFloorConstraint", () => {
     // Raw rule: "first"/"last"/range selectors can't chain .floor() through the fluent
     // API (only a bare pyramid number can) — construct the journey-pyramid-floor scope directly.
     const r = rules([
-      { scope: { level: "journey-pyramid-floor", journey: "j1", pyramid: "first", floor: 0 }, constraints: { difficulty: "junior" } },
+      {
+        scope: { level: "journey-pyramid-floor", journey: "j1", pyramid: "first", floor: 0 },
+        constraints: { difficulty: "junior" },
+      },
     ])
     const result = resolveFloorConstraint(r, pyramidC, "j1", "starter", 0, 3, 0)
     expect(result.difficulty).toBe("junior")
@@ -197,9 +200,15 @@ describe("resolveFloorConstraint", () => {
   it("journey-pyramid-floor > journey-floor > tier-pyramid-floor > tier-floor", () => {
     const r = rules([
       tier("starter").floor(0, { difficulty: "starter" }),
-      { scope: { level: "tier-pyramid-floor", tier: "starter", pyramid: "first", floor: 0 }, constraints: { difficulty: "junior" } },
+      {
+        scope: { level: "tier-pyramid-floor", tier: "starter", pyramid: "first", floor: 0 },
+        constraints: { difficulty: "junior" },
+      },
       journey("j1").floor(0, { difficulty: "expert" }),
-      { scope: { level: "journey-pyramid-floor", journey: "j1", pyramid: "first", floor: 0 }, constraints: { difficulty: "expert" } },
+      {
+        scope: { level: "journey-pyramid-floor", journey: "j1", pyramid: "first", floor: 0 },
+        constraints: { difficulty: "expert" },
+      },
     ])
     // journey-pyramid-floor (rank 9) wins
     expect(resolveFloor(r, 0, 3, 0).difficulty).toBe("expert")
