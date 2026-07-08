@@ -1,5 +1,5 @@
 import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, HIEROGLYPH_REQUIRED, chestCountFor } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, HIEROGLYPH_REQUIRED, chestCountFor, chestEveryFor } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
@@ -14,10 +14,11 @@ import type {
 } from "./dsl"
 import { hintToReward, specToReward } from "./rewards"
 import { buildSideSections } from "./sideSections"
-import { buildFloor, buildSite, wireStaircases } from "./buildSite"
+import { buildChestRewards, buildFloor, buildSite, wireStaircases } from "./buildSite"
 import { computeMosaicPaths } from "./mosaics"
 import { assignFragments } from "./fragments"
 import { validateDiscovery, validateRewardCounts } from "./validate"
+import { PYRAMID_CAPABILITIES, TOMB_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -158,10 +159,10 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         pathPuzzles: pp,
         constraint,
         difficulty,
-        hasMapPieceBranch: i === mapPiecePyramid && tier !== "starter",
+        hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
-        mosaicPathCount: mosaicPaths.get(`${journeyId}:${i}`) ?? 0,
+        mosaicPathCount: PYRAMID_CAPABILITIES.emitMosaics ? (mosaicPaths.get(`${journeyId}:${i}`) ?? 0) : 0,
         chestOffset,
         resolveReward: spec => specToReward(spec, tier),
         resolveMainEndReward: spec => specToReward(spec, tier),
@@ -194,6 +195,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const levelCount = constraint.levelCount ?? tomb.levelCount
     const authoredFloors = constraint.floors as FloorConstraint<"tombTreasure">[] | undefined
     let perkIndex = 0
+    let chestOffset = 0
 
     const resolveTombReward = (reward: RewardSpec | "tombTreasure" | undefined): TreasureReward | undefined => {
       if (reward === "tombTreasure") {
@@ -229,9 +231,16 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
       const packing = authored?.packing ?? constraint.packing
 
+      const pathPuzzles = isLast && hasCroc ? 2 : 1
+      const chestRewards = TOMB_CAPABILITIES.placeChests
+        ? buildChestRewards(tomb.id, chestOffset, pathPuzzles, constraint.consumableRates)
+        : undefined
+      if (TOMB_CAPABILITIES.placeChests) chestOffset += chestCountFor(pathPuzzles)
+
       return buildFloor({
-        pathPuzzles: isLast && hasCroc ? 2 : 1,
-        chestEvery: 0,
+        pathPuzzles,
+        chestEvery: TOMB_CAPABILITIES.placeChests ? chestEveryFor(pathPuzzles) : 0,
+        chestRewards,
         difficulty,
         sideSections,
         puzzleFamily,

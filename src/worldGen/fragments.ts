@@ -4,6 +4,7 @@ import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { tableauLevels } from "../data/tableaus"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { rollConsumable } from "./rewards"
+import { capabilitiesFor } from "./capabilities"
 
 const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
 
@@ -23,14 +24,16 @@ export type HieroglyphPlacementInfo = {
   required: number
 }
 
-// Collects every fragmentSlot sentinel across all sites (pyramids only — tombs opt out via
-// the PYRAMID_JOURNEYS lookup below) plus every open tomb-key ward gate, as assignable refs.
+// Collects every fragmentSlot sentinel across all sites that opt into the emitFragmentSlots
+// capability (pyramids today — see ./capabilities) plus every open tomb-key ward gate, as
+// assignable refs.
 export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): SlotRef[] => {
   const slots: SlotRef[] = []
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
-    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId)
-    if (!journey) continue
+    if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
+    // Safe: only pyramids carry emitFragmentSlots today, so this lookup always resolves.
+    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId)!
 
     const tier = journey.tier as Tier
     const journeyOrderIndex = PYRAMID_JOURNEYS.indexOf(journey)
