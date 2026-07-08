@@ -78,6 +78,7 @@ describe("buildSite", () => {
     journeyId: "j1",
     tier: "starter" as const,
     pyramidIndex: 0,
+    levelCount: 3,
     pathPuzzles: 3,
     constraint: {},
     difficulty: "starter" as const,

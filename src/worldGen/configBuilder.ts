@@ -171,6 +171,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         journeyId,
         tier,
         pyramidIndex: i,
+        levelCount,
         pathPuzzles: pp,
         constraint,
         difficulty,

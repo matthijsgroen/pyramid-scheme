@@ -165,6 +165,8 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   let uniqueAssignedFragments = 0
   let totalMapPieces = 0
   let totalMosaicPieces = 0
+  let chestConsumables = 0
+  let slotConsumables = 0
   let pyramidJourneys = 0
   let tombJourneys = 0
   let pyramidLevels = 0
@@ -200,6 +202,14 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
           countFrag(s.endReward)
           for (const sub of s.sideSections ?? []) countFrag(sub.endReward)
         }
+        // Consumables land in main-path chests (pre-rolled) and in leftover fragmentSlots
+        // (section/main ends no hieroglyph claimed)
+        for (const r of cfg.chestRewards ?? []) if (r.type === "consumable") chestConsumables++
+        if (cfg.mainEndReward?.type === "consumable") slotConsumables++
+        for (const s of cfg.sideSections) {
+          if (s.endReward?.type === "consumable") slotConsumables++
+          for (const sub of s.sideSections ?? []) if (sub.endReward?.type === "consumable") slotConsumables++
+        }
       }
     }
   }
@@ -219,6 +229,7 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   console.log(`  Map pieces placed: ${totalMapPieces}`)
   console.log(`  Mosaic pieces placed: ${totalMosaicPieces}`)
   console.log(`  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} placed (${totalFragments} total)`)
+  console.log(`  Consumables: ${chestConsumables} in chests, ${slotConsumables} in leftover fragment slots`)
   if (uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${uncovered.join(", ")}`)
   if (under2.length > 0)
     console.log(`  ℹ Matrix target not yet reached (${under2.length} hieroglyphs) — game uses actual placed counts`)

@@ -8,8 +8,8 @@ export const WORLD_SEED = 42_195_837
 // Each entry is the puzzle-count progression across the journey's pyramids, first to last —
 // explicit and authored, no implicit scaling applied anywhere else.
 const PYRAMID_PATH_PUZZLES: Record<string, PathPuzzlesRange> = {
-  starter_1: { start: 1, end: 3 },
-  starter_2: { start: 1, end: 3 },
+  starter_1: { start: 1, end: 1 },
+  starter_2: { start: 1, end: 1 },
   starter_3: { start: 2, end: 4 },
   starter_4: { start: 2, end: 4 },
   junior_1: { start: 2, end: 4 },
@@ -89,8 +89,9 @@ export const FRAGMENT_HOST_TIERS: Record<Tier, Tier[]> = {
   wizard: ["expert", "master", "wizard"],
 }
 
-// chestEvery strategy: every 2 puzzles for pp≥4; every pp puzzles for pp<4 (1 chest)
-export const chestEveryFor = (pp: number): number => (pp >= 4 ? 2 : pp)
+// chestEvery strategy: every 3 puzzles for pp≥4; every pp puzzles for pp<4 (1 chest).
+// Chests hold consumables only — sparse cadence keeps them a payoff, not filler.
+export const chestEveryFor = (pp: number): number => (pp >= 4 ? 3 : pp)
 
 export const chestCountFor = (pp: number): number => {
   const ce = chestEveryFor(pp)

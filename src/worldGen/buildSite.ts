@@ -145,6 +145,7 @@ export type BuildSiteContext = {
   journeyId: string
   tier: Tier
   pyramidIndex: number
+  levelCount: number
   pathPuzzles: number
   constraint: PyramidConstraint
   difficulty: Difficulty
@@ -160,7 +161,7 @@ export type BuildSiteContext = {
 // Builds one pyramid's floors (the 3 floor-shape branches: authored floors[], auto
 // multi-floor mainFloors+wardWings, or a single floor) and the chest-slot offset consumed.
 export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chestOffset: number } => {
-  const { journeyId, tier, pyramidIndex: i, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
+  const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const { hasMapPieceBranch, hasWardGate, nextTier, mosaicPathCount, resolveMainEndReward } = ctx
   let chestOffset = ctx.chestOffset
 
@@ -213,13 +214,16 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
 
   if (
     (constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors) > 1 ||
-    (constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings) > 0
+    (constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings) > 0 ||
+    (constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths) > 0
   ) {
-    // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries
-    // the pyramid's usual side content), then `wardWings` bonus floors branching off
-    // that last main floor, each behind its own ward-key gate from this tier's own tomb.
+    // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries the
+    // pyramid's usual side content), then ward return-content off that last main floor —
+    // `wardWings` bonus floors and `wardPaths` single gated sections, each behind its own
+    // ward-key gate from this tier's own tomb.
     const mainFloors = constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors
     const wardWings = constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings
+    const wardPaths = constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths
     const floorConfigs: FloorConfig[] = []
 
     for (let fi = 0; fi < mainFloors; fi++) {
@@ -265,10 +269,15 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
     // Wire main-floor stairheads sequentially (floor N's exit → floor N+1's entrance).
     wireStaircases(floorConfigs, fi => `${journeyId}:p${i}:main${fi}`)
 
-    if (wardWings > 0) {
+    if (wardWings > 0 || wardPaths > 0) {
       const tombId = `${tier}_treasure_tomb`
-      const wingIndices = freeWardIndices(tombId, wardWings)
+      // One shared pool of free ward-key indices: wings take the first `wardWings`, paths the rest.
+      const wardIndices = freeWardIndices(tombId, wardWings + wardPaths)
+      const wingIndices = wardIndices.slice(0, wardWings)
+      const pathIndices = wardIndices.slice(wardWings, wardWings + wardPaths)
       const lastMain = floorConfigs[floorConfigs.length - 1]
+
+      // Ward wings: a whole ward-gated bonus floor, reached via a staircase side section.
       for (let w = 0; w < wingIndices.length; w++) {
         const wingStairId = `${journeyId}:p${i}:wing${w}`
         lastMain.sideSections = [
@@ -287,10 +296,26 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
             difficulty,
             sideSections: [],
             entrance: { stairId: wingStairId },
-            mainEndReward: { type: "hieroglyphs" },
+            mainEndReward: { type: "fragmentSlot" },
           })
         )
       }
+
+      // Ward paths: a single tomb-key gated side section with one fragment reward — cheaper
+      // return-content than a whole wing. With wardPathTrapped, the earlier-half pyramids trap
+      // their ward paths so the return trip costs consumables (raising their value).
+      const trapWardPath = (constraint.wardPathTrapped ?? false) && i < Math.ceil(levelCount / 2)
+      lastMain.sideSections = [
+        ...lastMain.sideSections,
+        ...pathIndices.map(idx => ({
+          pathPuzzles: 1,
+          difficulty,
+          end: "treasure" as const,
+          endReward: { type: "fragmentSlot" as const },
+          gate: { type: "tomb-key" as const, wardKeyId: TOMB_PERK_IDS[tombId][idx] },
+          ...(trapWardPath ? { trapped: true } : {}),
+        })),
+      ]
     }
 
     return { floors: floorConfigs, chestOffset }

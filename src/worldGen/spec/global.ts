@@ -14,6 +14,8 @@ export const GLOBAL_DEFAULTS = {
   mainFloors: 1,
   /** Auto ward-gated bonus floors branching off the last main floor. */
   wardWings: 0,
+  /** Auto ward-gated side paths (single gated section, one reward) off the last main floor. */
+  wardPaths: 0,
   /** corridorStraightness applied on a windyChance hit. */
   windyStraightness: 0.35,
   /** packing applied on a packingChance hit. */

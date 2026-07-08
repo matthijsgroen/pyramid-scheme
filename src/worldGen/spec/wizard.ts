@@ -8,22 +8,21 @@ export const wizardRules: Rule[] = [
     .set({
       consumableDensity: 0.3,
       mainFloors: 2,
-      wardWings: 3,
+      wardWings: 1,
+      wardPaths: 2,
+      wardPathTrapped: true,
       keyDensity: "medium",
       keyColorsRange: { min: 2, max: 4 },
       windyChance: 0.25,
       packingChance: 0.25,
     })
     .sidePaths("medium")
-    .settings({ pathPuzzles: 1, end: "fragment" })
-    .sidePaths("low")
-    .settings({ pathPuzzles: 0, end: "treasure" })
-    .sidePaths("low")
-    .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
+    .settings({ pathPuzzles: 1, end: "fragment", gate: "floor-key" })
+    // Wizard is trap-heavy: 2-3 trapped hidden mosaics per pyramid, plus one plain-loot hidden.
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 1, end: "treasure", trapped: true })
+    .settings({ pathPuzzles: 1, end: "mosaic", trapped: true })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "mosaic" }),
+    .settings({ pathPuzzles: 0, end: "mosaic" }),
 
   tomb("wizard_treasure_tomb", {
     puzzleFamily: "tableau",
