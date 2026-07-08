@@ -7,7 +7,7 @@ import {
   chestEveryFor,
   chestCountFor,
 } from "./data"
-import { TOMB_PERK_IDS, TIER_UNLOCK_PERK_ID, TREASURE_PERKS } from "../data/treasurePerks"
+import { TOMB_PERK_IDS, TREASURE_PERKS } from "../data/treasurePerks"
 import { tableauLevels } from "../data/tableaus"
 import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
@@ -17,14 +17,14 @@ import type {
   PyramidConstraint,
   FloorConstraint,
   RewardHint,
+  RewardSpec,
   SideSectionConstraint,
   SideIntensity,
-  KeyColor,
-  PathEntry,
   PathPuzzlesRange,
 } from "./dsl"
 import { mulberry32 } from "../game/random"
-import { hashStr, hintToReward, pathEndToReward, rollConsumable, specToGate, specToReward } from "./rewards"
+import { hashStr, hintToReward, rollConsumable, specToReward } from "./rewards"
+import { buildSideSections, pathCountForDensity } from "./sideSections"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -90,15 +90,6 @@ const buildChestRewards = (
 // ── Mosaic path distribution ──────────────────────────────────────────────────
 
 const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, low: 1, medium: 2, dense: 4 }
-
-// Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
-export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
-  if (density === "none") return 0
-  if (density === "low") return 1
-  const rand = mulberry32(hashStr(`${journeyId}:${pyramidIndex}`))
-  if (density === "medium") return 2 + Math.floor(rand() * 2) // 2 or 3
-  return 4 + Math.floor(rand() * 2) // 4 or 5
-}
 
 // Resolves the effective keyColors for a pyramid, honoring (in priority order):
 // a literal keyColorsRange roll, a literal keyColors, then a sharedKeyChance roll — a hit
@@ -224,124 +215,7 @@ const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
 }
 
 // ── Side sections ─────────────────────────────────────────────────────────────
-
-const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
-
-const buildSideSections = (
-  tier: string,
-  difficulty: Difficulty,
-  hasMapPieceBranch: boolean,
-  hasWardGate: boolean,
-  nextTier: string | null,
-  constraintSections: SideSectionConstraint[] | undefined,
-  mosaicPathCount: number,
-  mainPathPuzzles: number,
-  keyDensity?: SideIntensity,
-  keyColors?: number,
-  journeyId?: string,
-  pyramidIndex?: number,
-  declaredSidePaths?: PathEntry[],
-  declaredHiddenPaths?: PathEntry[]
-): SideSection[] => {
-  const sections: SideSection[] = []
-
-  if (hasMapPieceBranch) {
-    const tombId = `${tier}_treasure_tomb`
-    sections.push({ pathPuzzles: 0, difficulty, end: "treasure", endReward: { type: "mapPiece", tombId } })
-  }
-
-  if (hasWardGate && nextTier) {
-    const wardKeyId = TIER_UNLOCK_PERK_ID[tier]
-    if (wardKeyId) {
-      sections.push({
-        pathPuzzles: 0,
-        difficulty,
-        end: "treasure",
-        gate: { type: "tomb-key", wardKeyId },
-      })
-    }
-  }
-
-  // DSL-specified additional sections (appended after hardcoded ones)
-  for (const cs of constraintSections ?? []) {
-    const gate = specToGate(cs.gate)
-    const endReward = cs.endReward ? specToReward(cs.endReward, tier as Tier) : undefined
-    const subSections = cs.sideSections?.map(sub => {
-      const subGate = specToGate(sub.gate)
-      const subEndReward = sub.endReward ? specToReward(sub.endReward, tier as Tier) : undefined
-      return {
-        pathPuzzles: typeof sub.pathPuzzles === "number" ? sub.pathPuzzles : 0,
-        difficulty: sub.difficulty ?? difficulty,
-        end: "treasure" as const,
-        ...(subGate ? { gate: subGate } : {}),
-        ...(subEndReward ? { endReward: subEndReward } : {}),
-        ...(sub.decorations?.length ? { decorations: sub.decorations } : {}),
-      }
-    })
-    const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${sections.length}` } : ("treasure" as const)
-    sections.push({
-      pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
-      difficulty: cs.difficulty ?? difficulty,
-      end,
-      ...(gate ? { gate } : {}),
-      ...(endReward ? { endReward } : {}),
-      ...(subSections?.length ? { sideSections: subSections } : {}),
-      ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
-      ...(cs.hidden ? { hidden: true } : {}),
-      ...(cs.trapped ? { trapped: true } : {}),
-    })
-  }
-
-  // Auto/density mosaic side paths — apply key gating by density + color count
-  const gatedCount = keyDensity ? Math.round(mosaicPathCount * DENSITY_FRACTION[keyDensity]) : 0
-  const colorCount = Math.min(keyColors ?? 1, 5)
-  const mosaicPP = Math.max(0, Math.round(mainPathPuzzles / 3))
-  for (let j = 0; j < mosaicPathCount; j++) {
-    const gate = j < gatedCount ? { type: "floor-key" as const, color: ALL_KEY_COLORS[j % colorCount] } : undefined
-    sections.push({
-      pathPuzzles: mosaicPP,
-      difficulty,
-      end: "treasure",
-      endReward: { type: "mosaicPiece" },
-      ...(gate ? { gate } : {}),
-    })
-  }
-
-  // Declared sidePaths / hiddenPaths from DSL
-  const jId = journeyId ?? ""
-  const pIdx = pyramidIndex ?? 0
-  let consumableIdx = 0
-  for (const entry of declaredSidePaths ?? []) {
-    const count = pathCountForDensity(entry.density, jId, pIdx)
-    for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
-      sections.push({
-        pathPuzzles: entry.pathPuzzles,
-        difficulty,
-        end: "treasure",
-        ...(endReward ? { endReward } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
-      })
-    }
-  }
-  for (const entry of declaredHiddenPaths ?? []) {
-    const count = pathCountForDensity(entry.density, jId, pIdx)
-    for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
-      sections.push({
-        pathPuzzles: entry.pathPuzzles,
-        difficulty,
-        end: "treasure",
-        hidden: true,
-        ...(endReward ? { endReward } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
-      })
-    }
-  }
-
-  return sections
-}
+// buildSideSections itself lives in ./sideSections — shared by pyramids and tombs.
 
 // ── Phase 1: Build initial plan ───────────────────────────────────────────────
 
@@ -467,19 +341,13 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           const floorDiff: Difficulty = fc.difficulty ?? difficulty
           const isLast = fi === constraint.floors.length - 1
           const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
-          const floorSideSections = buildSideSections(
+          const floorSideSections = buildSideSections({
             tier,
-            floorDiff,
-            false,
-            false,
-            null,
-            floorSections,
-            0,
-            floorPP,
-            undefined,
-            undefined,
-            journeyId
-          )
+            difficulty: floorDiff,
+            resolveReward: spec => specToReward(spec, tier),
+            journeyId,
+            constraintSections: floorSections,
+          })
           const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
           chestOffset += chestCountFor(floorPP)
           const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
@@ -531,22 +399,23 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
           }
           const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
           const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
-          const sideSections = buildSideSections(
+          const sideSections = buildSideSections({
             tier,
             difficulty,
+            resolveReward: spec => specToReward(spec, tier),
+            journeyId,
+            constraintSections,
             hasMapPieceBranch,
             hasWardGate,
             nextTier,
-            constraintSections,
             mosaicPathCount,
-            pp,
-            constraint.keyDensity,
-            resolveKeyColors(constraint, journeyId, i),
-            journeyId,
-            i,
-            constraint.sidePaths,
-            constraint.hiddenPaths
-          )
+            mainPathPuzzles: pp,
+            keyDensity: constraint.keyDensity,
+            keyColors: resolveKeyColors(constraint, journeyId, i),
+            pyramidIndex: i,
+            declaredSidePaths: constraint.sidePaths,
+            declaredHiddenPaths: constraint.hiddenPaths,
+          })
           const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
           chestOffset += chestCountFor(pp)
           const straightness = resolveCorridorStraightness(constraint, journeyId, i)
@@ -605,22 +474,23 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
       } else {
         const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
         const mosaicPathCount = mosaicPaths.get(`${journeyId}:${i}`) ?? 0
-        const sideSections = buildSideSections(
+        const sideSections = buildSideSections({
           tier,
           difficulty,
+          resolveReward: spec => specToReward(spec, tier),
+          journeyId,
+          constraintSections,
           hasMapPieceBranch,
           hasWardGate,
           nextTier,
-          constraintSections,
           mosaicPathCount,
-          pp,
-          constraint.keyDensity,
-          resolveKeyColors(constraint, journeyId, i),
-          journeyId,
-          i,
-          constraint.sidePaths,
-          constraint.hiddenPaths
-        )
+          mainPathPuzzles: pp,
+          keyDensity: constraint.keyDensity,
+          keyColors: resolveKeyColors(constraint, journeyId, i),
+          pyramidIndex: i,
+          declaredSidePaths: constraint.sidePaths,
+          declaredHiddenPaths: constraint.hiddenPaths,
+        })
         const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
         chestOffset += chestCountFor(pp)
         const consumableDensity = constraint.consumableDensity
@@ -716,7 +586,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const authoredFloors = constraint.floors as FloorConstraint<"tombTreasure">[] | undefined
     let perkIndex = 0
 
-    const resolveTombReward = (reward: string | undefined): TreasureReward | undefined => {
+    const resolveTombReward = (reward: RewardSpec | "tombTreasure" | undefined): TreasureReward | undefined => {
       if (reward === "tombTreasure") {
         const perkId = perkIds[perkIndex++]
         return perkId ? { type: "tombKey", keyId: perkId } : undefined
@@ -725,25 +595,12 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       return undefined
     }
 
-    const buildSideSections = (sections: SideSectionConstraint<"tombTreasure">[]): SideSection[] =>
-      sections.map(s => ({
-        pathPuzzles: typeof s.pathPuzzles === "number" ? s.pathPuzzles : 0,
-        difficulty,
-        end: "treasure" as const,
-        ...(specToGate(s.gate) ? { gate: specToGate(s.gate) } : {}),
-        ...(s.endReward !== undefined ? { endReward: resolveTombReward(s.endReward as string) } : {}),
-        ...(Array.isArray(s.sideSections) && s.sideSections.length > 0
-          ? { sideSections: buildSideSections(s.sideSections as SideSectionConstraint<"tombTreasure">[]) }
-          : {}),
-        ...(s.decorations?.length ? { decorations: s.decorations } : {}),
-      }))
-
     const floors: SiteConfig = Array.from({ length: levelCount }, (_, i) => {
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
 
       const mainEndReward: TreasureReward | undefined = authored
-        ? resolveTombReward(authored.mainEndReward as string | undefined)
+        ? resolveTombReward(authored.mainEndReward)
         : (() => {
             const perkId = perkIds[perkIndex++]
             return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
@@ -751,7 +608,13 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 
       const sideSections: SideSection[] =
         authored && Array.isArray(authored.sideSections)
-          ? buildSideSections(authored.sideSections as SideSectionConstraint<"tombTreasure">[])
+          ? buildSideSections({
+              tier: tomb.tier,
+              difficulty,
+              resolveReward: resolveTombReward,
+              journeyId: tomb.id,
+              constraintSections: authored.sideSections as SideSectionConstraint<"tombTreasure">[],
+            })
           : []
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
