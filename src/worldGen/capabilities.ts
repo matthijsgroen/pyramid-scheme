@@ -26,9 +26,9 @@ export const PYRAMID_CAPABILITIES: SiteCapabilities = {
 }
 
 export const TOMB_CAPABILITIES: SiteCapabilities = {
-  placeChests: false,
-  emitFragmentSlots: false,
-  emitMosaics: false,
+  placeChests: true,
+  emitFragmentSlots: true,
+  emitMosaics: true,
   emitMapPiece: false,
   emitPerkStream: true,
 }

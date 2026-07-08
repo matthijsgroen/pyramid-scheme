@@ -1,15 +1,43 @@
-import { WORLD_TARGETS } from "./worldSpec"
+import { TOMB_JOURNEYS } from "./data"
+import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
+import { worldSpec, WORLD_TARGETS } from "./worldSpec"
 import { pathCountForDensity } from "./sideSections"
+import { TOMB_CAPABILITIES } from "./capabilities"
 import type { PyramidPlan } from "./configBuilder"
-import type { SideIntensity } from "./dsl"
+import type { FloorConstraint, SideIntensity, SideSectionConstraint, TombRewardHint } from "./dsl"
+import type { Tier } from "./types"
 
 const INTENSITY_PATHS: Record<SideIntensity, number> = { none: 0, low: 1, medium: 2, dense: 4 }
+
+const countMosaicEndRewards = (sections: SideSectionConstraint<TombRewardHint>[] | undefined): number =>
+  (sections ?? []).reduce(
+    (sum, s) => sum + (s.endReward === "mosaicPiece" ? 1 : 0) + countMosaicEndRewards(s.sideSections),
+    0
+  )
+
+// Tomb-authored mosaicPiece endRewards draw from the same world-wide budget pyramids
+// auto-distribute from, so pyramids don't overshoot WORLD_TARGETS once tombs opt in.
+// Exported for testing.
+export const countAuthoredTombMosaics = (): number => {
+  if (!TOMB_CAPABILITIES.emitMosaics) return 0
+  return TOMB_JOURNEYS.reduce((sum, tomb) => {
+    const { constraint } = resolvePyramidConstraintWithProvenance(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
+    const floors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
+    return (
+      sum +
+      (floors ?? []).reduce(
+        (s, f) => s + countMosaicEndRewards(f?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined),
+        0
+      )
+    )
+  }, 0)
+}
 
 // Decides, per pyramid, how many auto-distributed mosaic side paths it gets — honoring
 // any explicit sideSections density/count/array first, then spreading the remaining
 // WORLD_TARGETS.mosaicPieceRewards budget across the unconstrained pyramids, biggest first.
 export const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => {
-  let committed = 0
+  let committed = countAuthoredTombMosaics()
   for (const p of plan) {
     if (p.constraint.mainEndReward === "mosaicPiece") committed++
   }

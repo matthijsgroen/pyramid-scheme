@@ -83,8 +83,56 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
   return discovered
 }
 
-// Validate that every secondary tomb has a mapPiece reward reachable before it's needed.
-// Throws with a clear message listing any unreachable secondary tombs (missing or circular).
+type SiteFloorRef = { siteId: string; floorIndex: number }
+
+// Where each tomb-key (ward key) is actually granted — the first mainEndReward/chestReward/
+// sideSection(+sub) reward of type "tombKey" for that keyId, walked in floor order.
+const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, SiteFloorRef> => {
+  const grants = new Map<string, SiteFloorRef>()
+  const record = (r: TreasureReward | undefined, ref: SiteFloorRef) => {
+    if (r?.type === "tombKey" && !grants.has(r.keyId)) grants.set(r.keyId, ref)
+  }
+  for (const [siteId, siteConfigs] of Object.entries(configs)) {
+    for (const floors of siteConfigs) {
+      floors.forEach((floor, floorIndex) => {
+        const ref = { siteId, floorIndex }
+        record(floor.mainEndReward, ref)
+        for (const r of floor.chestRewards ?? []) record(r, ref)
+        for (const s of floor.sideSections) {
+          record(s.endReward, ref)
+          for (const sub of s.sideSections ?? []) record(sub.endReward, ref)
+        }
+      })
+    }
+  }
+  return grants
+}
+
+// Every tomb-key gate in the world, and where it sits (which floor's content it blocks).
+const findWardKeyRequirements = (configs: Record<string, SiteConfig[]>): (SiteFloorRef & { wardKeyId: string })[] => {
+  const requirements: (SiteFloorRef & { wardKeyId: string })[] = []
+  const record = (gate: { type: "floor-key" | "tomb-key"; wardKeyId?: string } | undefined, ref: SiteFloorRef) => {
+    if (gate?.type === "tomb-key") requirements.push({ ...ref, wardKeyId: gate.wardKeyId! })
+  }
+  for (const [siteId, siteConfigs] of Object.entries(configs)) {
+    for (const floors of siteConfigs) {
+      floors.forEach((floor, floorIndex) => {
+        const ref = { siteId, floorIndex }
+        for (const s of floor.sideSections) {
+          record(s.gate, ref)
+          for (const sub of s.sideSections ?? []) record(sub.gate, ref)
+        }
+      })
+    }
+  }
+  return requirements
+}
+
+// Validate that every secondary tomb has a mapPiece reward reachable before it's needed, and
+// that every tomb-key (ward) gate is satisfiable before the player reaches it: the key must be
+// granted on an earlier floor of the same site, or at a different site already known reachable
+// (floor-key gates are a same-floor maze mechanic, verified separately by the site assembler).
+// Throws with a clear message naming the offending site + missing/out-of-order key.
 export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
   const allSecondary = new Set(Object.values(SECONDARY_TOMBS).flat())
   const discoveredBy = collectDiscoveredBy(allConfigs)
@@ -110,5 +158,26 @@ export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): voi
       `[worldSpec] Unsolvable discovery graph — these secondary tombs are unreachable:\n` +
         unreachable.map(id => `  - ${id} (no mapPiece found in a reachable site)`).join("\n")
     )
+  }
+
+  const grants = findWardKeyGrants(allConfigs)
+  const orderingErrors: string[] = []
+  for (const req of findWardKeyRequirements(allConfigs)) {
+    const grant = grants.get(req.wardKeyId)
+    if (!grant) {
+      orderingErrors.push(`  - "${req.wardKeyId}" gates ${req.siteId} floor ${req.floorIndex} but is never granted`)
+      continue
+    }
+    const sameSiteInOrder = grant.siteId === req.siteId && grant.floorIndex <= req.floorIndex
+    const otherSiteReachable = grant.siteId !== req.siteId && reachable.has(grant.siteId)
+    if (!sameSiteInOrder && !otherSiteReachable) {
+      orderingErrors.push(
+        `  - "${req.wardKeyId}" gates ${req.siteId} floor ${req.floorIndex} but is granted at ` +
+          `${grant.siteId} floor ${grant.floorIndex}, which isn't reachable first`
+      )
+    }
+  }
+  if (orderingErrors.length > 0) {
+    throw new Error(`[worldSpec] Unsolvable ward-key ordering:\n${orderingErrors.join("\n")}`)
   }
 }

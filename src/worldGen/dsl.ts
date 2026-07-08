@@ -135,9 +135,14 @@ export type PyramidConstraint = {
   levelCount?: number
 }
 
+/** Tomb-only reward hints: "tombTreasure" draws the next ward-key/perk off the tomb's
+ * perk stream; "fragmentSlot" opts a slot into the same hieroglyph-fragment assignment
+ * pyramids use (see collectSlots/assignFragments). */
+export type TombRewardHint = "tombTreasure" | "fragmentSlot"
+
 /** Tomb journey constraint — extends PyramidConstraint with explicit authored floor layouts. */
 export type TombConstraint = Omit<PyramidConstraint, "floors"> & {
-  floors?: FloorConstraint<"tombTreasure">[]
+  floors?: FloorConstraint<TombRewardHint>[]
 }
 
 // ── Rule representation ───────────────────────────────────────────────────────

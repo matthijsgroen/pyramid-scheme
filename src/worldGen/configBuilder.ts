@@ -11,6 +11,7 @@ import type {
   RewardSpec,
   SideSectionConstraint,
   PathPuzzlesRange,
+  TombRewardHint,
 } from "./dsl"
 import { hintToReward, specToReward } from "./rewards"
 import { buildSideSections } from "./sideSections"
@@ -90,10 +91,24 @@ const buildPlan = (): PyramidPlan[] =>
 
 const TOTAL_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((sum, n) => sum + n, 0)
 
+// Tombs' own chest capacity (fixed floor pathPuzzles, mirrors buildTombConfigs) — counts
+// toward the same fragment-coverage budget pyramids are checked against below.
+const TOMB_CHEST_CAPACITY = TOMB_CAPABILITIES.placeChests
+  ? TOMB_JOURNEYS.reduce((sum, tomb) => {
+      const hasCroc = tomb.tier !== "starter"
+      return (
+        sum +
+        Array.from({ length: tomb.levelCount }, (_, i) =>
+          chestCountFor(i === tomb.levelCount - 1 && hasCroc ? 2 : 1)
+        ).reduce((a, b) => a + b, 0)
+      )
+    }, 0)
+  : 0
+
 // Exported for testing. Throws if a pyramid with an explicit pathPuzzles constraint is too
 // small; silently bumps unconstrained pyramids (those with no provenance on pathPuzzles).
 export const assertChestCapacity = (plan: PyramidPlan[]): PyramidPlan[] => {
-  const totalSlots = (p: PyramidPlan[]) => p.reduce((s, e) => s + chestCountFor(e.pathPuzzles), 0)
+  const totalSlots = (p: PyramidPlan[]) => p.reduce((s, e) => s + chestCountFor(e.pathPuzzles), 0) + TOMB_CHEST_CAPACITY
   if (totalSlots(plan) >= TOTAL_FRAGMENTS) return plan
 
   const mutable = plan.map(p => ({ ...p }))
@@ -193,15 +208,16 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const hasCroc = tomb.tier !== "starter"
 
     const levelCount = constraint.levelCount ?? tomb.levelCount
-    const authoredFloors = constraint.floors as FloorConstraint<"tombTreasure">[] | undefined
+    const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
     let perkIndex = 0
     let chestOffset = 0
 
-    const resolveTombReward = (reward: RewardSpec | "tombTreasure" | undefined): TreasureReward | undefined => {
+    const resolveTombReward = (reward: RewardSpec | TombRewardHint | undefined): TreasureReward | undefined => {
       if (reward === "tombTreasure") {
         const perkId = perkIds[perkIndex++]
         return perkId ? { type: "tombKey", keyId: perkId } : undefined
       }
+      if (reward === "fragmentSlot") return { type: "fragmentSlot" }
       if (reward) return hintToReward(reward as RewardHint, tomb.tier as Tier)
       return undefined
     }
@@ -224,7 +240,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
               difficulty,
               resolveReward: resolveTombReward,
               journeyId: tomb.id,
-              constraintSections: authored.sideSections as SideSectionConstraint<"tombTreasure">[],
+              constraintSections: authored.sideSections as SideSectionConstraint<TombRewardHint>[],
             })
           : []
 

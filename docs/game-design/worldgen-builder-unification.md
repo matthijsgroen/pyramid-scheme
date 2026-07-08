@@ -1,6 +1,6 @@
 # World-Builder Unification — Handover
 
-Status: planned · not started · handover written 2026-07-08
+Status: done · all 6 phases complete 2026-07-08
 Branch: `refactor/world-builder` (off `feat/pyramid-content-scaling`)
 Companion to: `docs/game-design/worldgen-dsl-redesign.md`, `docs/game-design/loot-distribution.md`, `docs/game-design/pyramid-interior-design.md`
 

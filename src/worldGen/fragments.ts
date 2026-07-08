@@ -1,5 +1,5 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { tableauLevels } from "../data/tableaus"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -25,18 +25,17 @@ export type HieroglyphPlacementInfo = {
 }
 
 // Collects every fragmentSlot sentinel across all sites that opt into the emitFragmentSlots
-// capability (pyramids today — see ./capabilities) plus every open tomb-key ward gate, as
-// assignable refs.
+// capability (see ./capabilities) plus every open tomb-key ward gate, as assignable refs.
 export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): SlotRef[] => {
   const slots: SlotRef[] = []
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
-    // Safe: only pyramids carry emitFragmentSlots today, so this lookup always resolves.
-    const journey = PYRAMID_JOURNEYS.find(j => j.id === journeyId)!
-
-    const tier = journey.tier as Tier
-    const journeyOrderIndex = PYRAMID_JOURNEYS.indexOf(journey)
+    const pyramidJourney = PYRAMID_JOURNEYS.find(j => j.id === journeyId)
+    const tombJourney = TOMB_JOURNEYS.find(j => j.id === journeyId)
+    const tier = (pyramidJourney ?? tombJourney)!.tier as Tier
+    // Unused elsewhere today; pyramids get their real ordering, tombs a stable sentinel.
+    const journeyOrderIndex = pyramidJourney ? PYRAMID_JOURNEYS.indexOf(pyramidJourney) : -1
 
     const addSlot = (wardKeys: string[], isPlaceholder: boolean, assign: (r: TreasureReward) => void) =>
       slots.push({ journeyId, tier, journeyOrderIndex, wardKeys, isPlaceholder, assign })
@@ -127,7 +126,7 @@ export const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void 
   const available = [...slots]
 
   const placedInJourney = new Map<string, Set<string>>()
-  for (const j of PYRAMID_JOURNEYS) placedInJourney.set(j.id, new Set())
+  for (const j of [...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS]) placedInJourney.set(j.id, new Set())
 
   let totalPlaced = 0
 
