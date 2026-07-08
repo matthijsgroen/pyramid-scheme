@@ -35,6 +35,12 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
+  /** "staircase" ends the path at a stairhead into the next floor instead of a treasure room. */
+  end?: "treasure" | "staircase"
+  /** Invisible without the Detection perk. */
+  hidden?: boolean
+  /** Every intermediate room along this path is a trap instead of a puzzle. */
+  trapped?: boolean
 }
 
 export type FloorConstraint<TExtra extends string = never> = {
@@ -88,16 +94,35 @@ export type PyramidConstraint = {
   keyDensity?: SideIntensity
   /** How many distinct key colors to use (1–5). Fewer colors → one key opens more doors. */
   keyColors?: number
+  /** Chance [0-1], rolled per pyramid, that keyColors resolves to 1 (one key, every gated
+   * door). Ignored if keyColors or keyColorsRange is also set. */
+  sharedKeyChance?: number
+  /** keyColors rolled per pyramid, uniformly in [min, max]. Takes priority over keyColors
+   * and sharedKeyChance. */
+  keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
+  /** Chance [0-1], rolled per pyramid, of an extra-winding floor. Ignored if corridorStraightness is set. */
+  windyChance?: number
+  /** corridorStraightness used on a windyChance hit. Default 0.35. */
+  windyStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Chance [0-1], rolled per pyramid, of an extra-large packing floor. Ignored if packing is set. */
+  packingChance?: number
+  /** packing used on a packingChance hit. Default 1.6. */
+  packingWhenHit?: number
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType
   floors?: (FloorConstraint | null)[]
+  /** Baseline floor count for the main path itself, before any ward wings. Default 1. */
+  mainFloors?: number
+  /** Auto-generated ward-gated bonus floors branching off the last main floor, keyed from
+   * this tier's own tomb (skipping any index reserved for tier-unlock/location-key). */
+  wardWings?: number
   /** Declared visible side paths — each entry adds paths of that density with the given reward. */
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
@@ -110,9 +135,14 @@ export type PyramidConstraint = {
   levelCount?: number
 }
 
+/** Tomb-only reward hints: "tombTreasure" draws the next ward-key/perk off the tomb's
+ * perk stream; "fragmentSlot" opts a slot into the same hieroglyph-fragment assignment
+ * pyramids use (see collectSlots/assignFragments). */
+export type TombRewardHint = "tombTreasure" | "fragmentSlot"
+
 /** Tomb journey constraint — extends PyramidConstraint with explicit authored floor layouts. */
 export type TombConstraint = Omit<PyramidConstraint, "floors"> & {
-  floors?: FloorConstraint<"tombTreasure">[]
+  floors?: FloorConstraint<TombRewardHint>[]
 }
 
 // ── Rule representation ───────────────────────────────────────────────────────
@@ -133,8 +163,9 @@ export type Rule = { scope: RuleScope; constraints: PyramidConstraint | TombCons
 
 // ── Builder interfaces ────────────────────────────────────────────────────────
 
-interface PyramidChainBuilder {
-  floor(n: number, c: FloorConstraint): Rule
+/** A Rule whose `constraints.floors` accumulates via chained `.floor(n, c)` calls. */
+export type FloorChainBuilder = Rule & {
+  floor(n: number, c: FloorConstraint): FloorChainBuilder
 }
 
 interface GlobalScopeBuilder {
@@ -153,15 +184,17 @@ export type ConstraintAccumulator = Rule & {
 
 interface TierScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
-  pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
-  pyramid(sel: PyramidSelector): PyramidChainBuilder
+  // Only a single pyramid (a bare number) can chain per-floor overrides — a range/first/
+  // last selector spans several pyramids, so "the floor" wouldn't mean any one of them.
+  pyramid(sel: number, c?: PyramidConstraint): FloorChainBuilder
+  pyramid(sel: Exclude<PyramidSelector, number>, c: PyramidConstraint): Rule
   set(c: PyramidConstraint): ConstraintAccumulator
 }
 
 interface JourneyScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
-  pyramid(sel: PyramidSelector, c: PyramidConstraint): Rule
-  pyramid(sel: PyramidSelector): PyramidChainBuilder
+  pyramid(sel: number, c?: PyramidConstraint): FloorChainBuilder
+  pyramid(sel: Exclude<PyramidSelector, number>, c: PyramidConstraint): Rule
   set(c: PyramidConstraint): ConstraintAccumulator
 }
 
@@ -198,6 +231,19 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
   return acc
 }
 
+const makeFloorChain = (scope: RuleScope, c?: PyramidConstraint): FloorChainBuilder => {
+  const floors: (FloorConstraint | null)[] = []
+  const chain: FloorChainBuilder = {
+    scope,
+    constraints: { ...c, floors },
+    floor(n: number, fc: FloorConstraint): FloorChainBuilder {
+      floors[n] = fc
+      return chain
+    },
+  }
+  return chain
+}
+
 export function global(): GlobalScopeBuilder
 export function global(c: PyramidConstraint): Rule
 export function global(c?: PyramidConstraint): Rule | GlobalScopeBuilder {
@@ -216,14 +262,10 @@ export function tier(name: Tier, c?: PyramidConstraint): Rule | TierScopeBuilder
       scope: { level: "tier-floor", tier: name, floor: n },
       constraints: fc,
     }),
-    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | PyramidChainBuilder {
-      if (pc !== undefined) return { scope: { level: "tier-pyramid", tier: name, pyramid: sel }, constraints: pc }
-      return {
-        floor: (n: number, fc: FloorConstraint): Rule => ({
-          scope: { level: "tier-pyramid-floor", tier: name, pyramid: sel, floor: n },
-          constraints: fc,
-        }),
-      }
+    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | FloorChainBuilder {
+      const scope: RuleScope = { level: "tier-pyramid", tier: name, pyramid: sel }
+      if (typeof sel === "number") return makeFloorChain(scope, pc)
+      return { scope, constraints: pc as PyramidConstraint }
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "tier", tier: name }, c),
   } as TierScopeBuilder
@@ -238,14 +280,10 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
       scope: { level: "journey-floor", journey: id, floor: n },
       constraints: fc,
     }),
-    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | PyramidChainBuilder {
-      if (pc !== undefined) return { scope: { level: "journey-pyramid", journey: id, pyramid: sel }, constraints: pc }
-      return {
-        floor: (n: number, fc: FloorConstraint): Rule => ({
-          scope: { level: "journey-pyramid-floor", journey: id, pyramid: sel, floor: n },
-          constraints: fc,
-        }),
-      }
+    pyramid(sel: PyramidSelector, pc?: PyramidConstraint): Rule | FloorChainBuilder {
+      const scope: RuleScope = { level: "journey-pyramid", journey: id, pyramid: sel }
+      if (typeof sel === "number") return makeFloorChain(scope, pc)
+      return { scope, constraints: pc as PyramidConstraint }
     },
     set: (c: PyramidConstraint): ConstraintAccumulator => makeAccumulator({ level: "journey", journey: id }, c),
   } as JourneyScopeBuilder
@@ -256,3 +294,43 @@ export function tomb(id: string, c: TombConstraint): Rule {
 }
 
 export const rules = (list: Rule[]): Rule[] => list
+
+// ── Compact side-path helpers ──────────────────────────────────────────────────
+// Shorthand for authoring a floor's `sideSections` array. `puzzles`/`tier` are aliases
+// for `pathPuzzles`/`difficulty` — kept short here only; the underlying constraint
+// shape (and every other spec file) still uses the long names.
+
+type PathOpts = Omit<SideSectionConstraint, "pathPuzzles" | "difficulty" | "end" | "gate" | "hidden" | "trapped"> & {
+  puzzles?: PathPuzzlesPreset | number
+  tier?: Difficulty
+}
+
+/** A plain, ungated side path — puzzles then a treasure room. */
+export const sidePath = (opts: PathOpts = {}): SideSectionConstraint => {
+  const { puzzles, tier, ...rest } = opts
+  return { ...rest, pathPuzzles: puzzles ?? 0, ...(tier ? { difficulty: tier } : {}) }
+}
+
+/** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor. */
+export const wardPath = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
+  const { puzzles, tier, tomb: tombId, index, ...rest } = opts
+  return {
+    ...rest,
+    pathPuzzles: puzzles ?? 0,
+    ...(tier ? { difficulty: tier } : {}),
+    gate: { type: "tomb-key", tombId, index },
+    end: "staircase",
+  }
+}
+
+/** A hidden side path, invisible without the Detection perk. */
+export const hiddenPath = (opts: PathOpts & { trapped?: boolean } = {}): SideSectionConstraint => {
+  const { puzzles, tier, trapped, ...rest } = opts
+  return {
+    ...rest,
+    pathPuzzles: puzzles ?? 0,
+    ...(tier ? { difficulty: tier } : {}),
+    hidden: true,
+    ...(trapped ? { trapped: true } : {}),
+  }
+}

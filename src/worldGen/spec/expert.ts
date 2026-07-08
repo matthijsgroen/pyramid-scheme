@@ -5,7 +5,7 @@ export const expertRules: Rule[] = [
   tier("expert", { difficulty: "expert" }),
 
   tier("expert")
-    .set({ consumableDensity: 0.2 })
+    .set({ consumableDensity: 0.2, keyDensity: "low", sharedKeyChance: 0.15, windyChance: 0.25, packingChance: 0.25 })
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "treasure" })
     .sidePaths("medium")
@@ -13,7 +13,7 @@ export const expertRules: Rule[] = [
     .sidePaths("low")
     .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 0, end: "treasure" }),
+    .settings({ pathPuzzles: 1, end: "treasure", trapped: true }),
 
   tomb("expert_treasure_tomb", {
     puzzleFamily: "tableau",
@@ -21,7 +21,8 @@ export const expertRules: Rule[] = [
     levelCount: 4,
     floors: [
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // A side path opting into the same hieroglyph-fragment assignment pyramids use.
+      { mainEndReward: "tombTreasure", sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }] },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
     ],

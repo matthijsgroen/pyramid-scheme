@@ -1,0 +1,124 @@
+import { describe, expect, it } from "vitest"
+import { buildFloor, buildSite, wireStaircases } from "./buildSite"
+import type { FloorConfig } from "./types"
+
+describe("buildFloor", () => {
+  it("defaults to an exiting, reward-free floor", () => {
+    expect(buildFloor({ pathPuzzles: 2, chestEvery: 1, difficulty: "starter", sideSections: [] })).toEqual({
+      pathPuzzles: 2,
+      chestEvery: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [],
+    })
+  })
+
+  it("omits chestRewards when empty, includes it when non-empty", () => {
+    const empty = buildFloor({
+      pathPuzzles: 1,
+      chestEvery: 0,
+      difficulty: "starter",
+      sideSections: [],
+      chestRewards: [],
+    })
+    expect(empty.chestRewards).toBeUndefined()
+    const full = buildFloor({
+      pathPuzzles: 1,
+      chestEvery: 0,
+      difficulty: "starter",
+      sideSections: [],
+      chestRewards: [{ type: "consumable", consumable: "bandage" }],
+    })
+    expect(full.chestRewards).toHaveLength(1)
+  })
+
+  it("carries through optional fields only when defined", () => {
+    const floor = buildFloor({
+      pathPuzzles: 1,
+      chestEvery: 0,
+      difficulty: "starter",
+      sideSections: [],
+      puzzleFamily: "tableau",
+      lastMainPuzzleFamily: "crocodile",
+      corridorStraightness: 0.5,
+    })
+    expect(floor.puzzleFamily).toBe("tableau")
+    expect(floor.lastMainPuzzleFamily).toBe("crocodile")
+    expect(floor.corridorStraightness).toBe(0.5)
+    expect(floor.packing).toBeUndefined()
+  })
+})
+
+describe("wireStaircases", () => {
+  it("links each floor's exit to the next floor's entrance, leaving the last floor untouched", () => {
+    const floors: FloorConfig[] = [
+      buildFloor({ pathPuzzles: 1, chestEvery: 0, difficulty: "starter", sideSections: [] }),
+      buildFloor({ pathPuzzles: 1, chestEvery: 0, difficulty: "starter", sideSections: [] }),
+      buildFloor({ pathPuzzles: 1, chestEvery: 0, difficulty: "starter", sideSections: [] }),
+    ]
+    wireStaircases(floors, fi => `j:${fi}`)
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j:0" })
+    expect(floors[1].entrance).toEqual({ stairId: "j:0" })
+    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:1" })
+    expect(floors[2].entrance).toEqual({ stairId: "j:1" })
+    expect(floors[2].exitOrStaircase).toBe("exit")
+  })
+
+  it("does nothing for a single floor", () => {
+    const floors = [buildFloor({ pathPuzzles: 1, chestEvery: 0, difficulty: "starter", sideSections: [] })]
+    wireStaircases(floors, fi => `j:${fi}`)
+    expect(floors[0].exitOrStaircase).toBe("exit")
+    expect(floors[0].entrance).toBeUndefined()
+  })
+})
+
+describe("buildSite", () => {
+  const baseCtx = {
+    journeyId: "j1",
+    tier: "starter" as const,
+    pyramidIndex: 0,
+    pathPuzzles: 3,
+    constraint: {},
+    difficulty: "starter" as const,
+    hasMapPieceBranch: false,
+    hasWardGate: false,
+    nextTier: null,
+    mosaicPathCount: 0,
+    chestOffset: 0,
+    resolveReward: () => undefined,
+    resolveMainEndReward: () => ({ type: "hieroglyphs" as const }),
+  }
+
+  it("single-floor branch: no floors[]/mainFloors/wardWings authored → one exiting floor", () => {
+    const { floors, chestOffset } = buildSite(baseCtx)
+    expect(floors).toHaveLength(1)
+    expect(floors[0].exitOrStaircase).toBe("exit")
+    expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })
+    expect(chestOffset).toBeGreaterThanOrEqual(baseCtx.chestOffset)
+  })
+
+  it("authored floors[] branch: one FloorConfig per entry, last floor carries mainEndReward", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: { floors: [{ pathPuzzles: 1 }, { pathPuzzles: 2 }] },
+    })
+    expect(floors).toHaveLength(2)
+    expect(floors[0].mainEndReward).toBeUndefined()
+    expect(floors[1].mainEndReward).toEqual({ type: "fragmentSlot" })
+  })
+
+  it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { mainFloors: 3 } })
+    expect(floors).toHaveLength(3)
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: expect.stringContaining("main0") })
+    expect(floors[2].exitOrStaircase).toBe("exit")
+    expect(floors[2].mainEndReward).toEqual({ type: "fragmentSlot" })
+  })
+
+  it("chestOffset accumulates across calls (mirrors per-pyramid running offset)", () => {
+    const first = buildSite(baseCtx)
+    const second = buildSite({ ...baseCtx, chestOffset: first.chestOffset })
+    expect(second.chestOffset).toBeGreaterThanOrEqual(first.chestOffset)
+  })
+})

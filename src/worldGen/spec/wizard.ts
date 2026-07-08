@@ -5,7 +5,15 @@ export const wizardRules: Rule[] = [
   tier("wizard", { difficulty: "wizard" }),
 
   tier("wizard")
-    .set({ consumableDensity: 0.3 })
+    .set({
+      consumableDensity: 0.3,
+      mainFloors: 2,
+      wardWings: 3,
+      keyDensity: "medium",
+      keyColorsRange: { min: 2, max: 4 },
+      windyChance: 0.25,
+      packingChance: 0.25,
+    })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
     .sidePaths("low")
@@ -13,7 +21,7 @@ export const wizardRules: Rule[] = [
     .sidePaths("low")
     .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 0, end: "treasure" })
+    .settings({ pathPuzzles: 1, end: "treasure", trapped: true })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 1, end: "mosaic" }),
 

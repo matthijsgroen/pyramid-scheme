@@ -43,6 +43,8 @@ export type FloorConfig = {
   puzzleFamily?: "sumplete" | "tableau"
   lastMainPuzzleFamily?: "crocodile"
   consumableDensity?: number
+  corridorStraightness?: number
+  packing?: number
 }
 
 export type SiteConfig = FloorConfig[]

@@ -2,20 +2,20 @@ import { TOMB_JOURNEYS } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import { worldSpec } from "./worldSpec"
-import type { TombConstraint, FloorConstraint, SideSectionConstraint } from "./dsl"
+import type { TombConstraint, FloorConstraint, SideSectionConstraint, TombRewardHint } from "./dsl"
 import type { Tier } from "./types"
 
 export type WorldSpecError = { tombId: string; message: string }
 
-const countTombTreasures = (floors: FloorConstraint<"tombTreasure">[]): number => {
+const countTombTreasures = (floors: FloorConstraint<TombRewardHint>[]): number => {
   let count = 0
   for (const floor of floors) {
     if (floor.mainEndReward === "tombTreasure") count++
     if (Array.isArray(floor.sideSections)) {
-      for (const section of floor.sideSections as SideSectionConstraint<"tombTreasure">[]) {
+      for (const section of floor.sideSections as SideSectionConstraint<TombRewardHint>[]) {
         if (section.endReward === "tombTreasure") count++
         if (Array.isArray(section.sideSections)) {
-          for (const sub of section.sideSections as SideSectionConstraint<"tombTreasure">[]) {
+          for (const sub of section.sideSections as SideSectionConstraint<TombRewardHint>[]) {
             if (sub.endReward === "tombTreasure") count++
           }
         }
@@ -31,7 +31,7 @@ export const validateWorldSpec = (): WorldSpecError[] => {
   for (const tomb of TOMB_JOURNEYS) {
     const { constraint } = resolvePyramidConstraintWithProvenance(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
     const tombConstraint = constraint as TombConstraint
-    const floors = tombConstraint.floors as FloorConstraint<"tombTreasure">[] | undefined
+    const floors = tombConstraint.floors as FloorConstraint<TombRewardHint>[] | undefined
 
     if (!floors) continue
 

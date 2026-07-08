@@ -292,6 +292,79 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
 - **UI:** easy.
 - **Role:** spine-ish (outputs a value) but low ceiling — a flavour family.
 
+### 4.15 Mirror / lightbeam — *(new, spec locked, not yet built)*
+- **Skill:** spatial reasoning, route-tracing, elimination of irrelevant pieces.
+- **Operates:** a beam enters from a fixed edge cell in a fixed direction and must
+  reach a target edge cell. Two movable tile types sit on the grid:
+  - **Rotate tile** — fixed position, tap-cycles between two diagonal
+    orientations (`/` ↔ `\`), deflecting the beam 90° off either approach face
+    (geometric default — no single-sided-vs-double-sided variant).
+  - **Slide tile** — fixed mirror angle, tap-cycles between 2–3 discrete stops
+    along an authored track (one fixed row or column per tile).
+  A third tile type, **wall**, is a pure blocker — the beam is absorbed/dead on
+  contact, no decoration-only variant for this family.
+- **Knobs:** grid size · wall count · free-vs-fixed mirror ratio (fixed mirrors
+  are pre-set "givens," like Sudoku clues) · count of off-path decoy tiles the
+  player must reason are irrelevant.
+- **Scaling:** should be good — position × orientation combinatorics grow fast
+  with tile count, similar shape to the grid-logic families.
+- **Generation:** build the solved beam path backward first (route source →
+  target, drop a rotate/slide tile at each turn with the orientation/position
+  the turn requires), scatter decoys and walls off that path, then **run a
+  uniqueness verifier** — brute-force every position×orientation combination
+  across movable tiles and confirm exactly one reaches the target before
+  accepting the puzzle. Required, not optional: with only 2–3 states per tile
+  a misplaced decoy can accidentally open a second valid route.
+- **UI:** medium — same tap-to-cycle gesture language as Sumplete/rotate, just
+  applied to orientation or track position instead of a 3-state keep/delete
+  toggle. No drag needed (slide is discrete stops, not free-drag).
+- **Role:** side (no value output in v1).
+- **Deferred:** prism/color-split tiles (splitting one beam into multiple
+  colored beams, each needing its own target) — a genuinely different puzzle
+  shape (multi-beam, color-matching), not a v1 knob. **The Talos Principle**
+  has already solved this exact problem (rotatable mirrors + color-splitting
+  prisms + multi-receiver puzzles) — reference it directly when this phase
+  starts rather than re-deriving from scratch.
+- **Prior art to draw UI/pacing lessons from:** Prince of Persia: Sands of Time
+  (chained sun-mirror puzzles), Zelda Wind Waker/Twilight Princess (mirror
+  shield reflecting sunlight at switches — close thematic fit for an Egyptian
+  sun-god setting), Chip's Challenge, and mobile games *Reflect*/*Laser
+  Overload* (already-solved tap-to-cycle mobile ergonomics for this exact
+  gesture).
+
+### 4.16 Sokoban (crate pushing) — *(proposed, not yet designed)*
+- **Skill:** spatial planning, move-order reasoning, undo-driven exploration.
+- **Operates:** push crates across a grid onto target tiles; a crate only moves
+  if the tile behind it (in the push direction) is empty — the classic
+  push-don't-pull constraint. Not yet designed beyond this — no knobs, scaling,
+  or generation approach locked yet.
+- **Role:** side, likely no value output — flagged here mainly to record the
+  **theme pairing** below before it's forgotten.
+- **Theme pairing — "Merchant":** groups with **balance scale** (§4.2) under a
+  shared visual/narrative wrapper — weighing goods and moving cargo are both
+  merchant-flavored actions, even though the two mechanics are unrelated
+  (algebra vs spatial push-block). This is the first example of a **theme as a
+  cross-family grouping** rather than a per-family visual skin — worth
+  revisiting once more families exist, to see if other natural theme clusters
+  emerge (e.g. a "sun god" cluster for mirror/lightbeam + sundial).
+
+### 4.17 Rush Hour (sliding vehicle blockade) — *(proposed, not yet designed)*
+- **Skill:** spatial planning, move-order reasoning — same muscle as Sokoban,
+  different constraint shape.
+- **Operates:** vehicles occupy a row or column and slide freely along it until
+  blocked by a wall, the grid edge, or another vehicle — never off-axis, unlike
+  Sokoban's crates. Goal: clear a path so a target vehicle reaches the exit.
+  Not yet designed beyond this — no knobs, scaling, or generation approach
+  locked yet.
+- **Note:** distinct from the mirror/lightbeam slide-tile (§4.15), which moves
+  between discrete authored stops rather than freely until blocked — this
+  family is the free-slide-until-blocked version that was considered and set
+  aside for that tile, now standing on its own as a full family instead.
+- **Role:** side, likely no value output.
+- **Theme pairing:** pairs naturally with **Sokoban** under a broader
+  "logistics/caravan route" grouping — both are grid-block movement puzzles
+  about clearing or arranging paths, just with different piece-movement rules.
+
 ---
 
 ## 5. The shared grid engine
@@ -451,3 +524,104 @@ conversation.
 4. **Which families output values for carry-forward** beyond the obvious spine
    set — e.g. should a Sumplete grid expose a derived number (count of kept cells)
    so it *can* occasionally feed a corridor, or stay strictly a side family?
+
+---
+
+## 11. Theme fit & weight classification
+
+Two things every family needs beyond its curriculum-tier slot (§7): which
+**visual/narrative theme(s)** it can wear (a family isn't locked to one theme —
+most fit several), and how much **authoring weight** it costs a floor's content
+budget, since solve time varies wildly across families (§3.2, §8).
+
+### 11.1 Theme taxonomy
+
+Named so far (some already in use elsewhere in the docs — `worldgen-dsl-
+redesign.md` has "merchant"/"night-market" as live `theme` string examples):
+
+| Theme | Flavor | Families that fit |
+|---|---|---|
+| **Sun & Sky** | sun-god, celestial, daylight | Sundial, clock-arithmetic, mirror/lightbeam, Eye of Horus (Horus = sky/sun god) |
+| **Water & Nile** | flooding, irrigation, the river | Water clock — currently the *only* member, see gap note below |
+| **Merchant / Market** | trade, weighing goods, bartering | Balance scale, Sokoban (moving cargo), target-number (haggling to a price) |
+| **Logistics / Caravan** | moving things through constrained space | Sokoban, Rush Hour |
+| **Scribe / Inscription** | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions) |
+| **Tomb / Burial Logic** | funerary glyphs, wall art, sealed chambers | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro |
+| **Night & Stars** | decans, star-clock, nocturnal | Clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion) |
+| **Sacred Geometry / Ritual** | temple art, sanctuary lighting | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above) |
+
+**Gap:** Water & Nile has exactly one family. Two directions to fill it: a
+water-pouring/vessel-transfer puzzle (classic "water jug problem," spine —
+outputs a volume) or a Nile-flood timing puzzle riffing on water clock's
+duration mechanic but with a different UI. Not designed — flagging the gap,
+not proposing a fix yet.
+
+**Weakest theme by family count, not counting the flagged gap:** Water & Nile
+(1). Everything else has 3+, so it's the one worth deliberately filling if a
+gap ever needs plugging (e.g. wanting a puzzle to round out a "river journey"
+stretch of a pyramid).
+
+### 11.2 Weight (authoring budget, derived from §6/§8 solve-time data)
+
+Weight is a rough *how much of a floor's puzzle budget does one instance cost*
+signal — not difficulty. A high-weight family should be rarer per floor and
+never gate the critical path (§8's pacing rule already says this for the
+long-pole families; this table just makes the number explicit for every family
+so it can be used when authoring density knobs).
+
+| Family | Solve time (§6) | Weight |
+|---|---|---|
+| Cross-sum | 15–60s | **Low** |
+| Sundial | 15–60s | **Low** |
+| Eye of Horus fractions | 15–60s | **Low** |
+| Symmetry | 15–45s | **Low** |
+| Sequence | 15–45s | **Low** |
+| Egyptian doubling | 20–60s | **Low** |
+| Balance scale | 20–90s | **Low–Med** |
+| Water clock | 30–90s | **Med** |
+| Clock-arithmetic | 30–90s | **Med** |
+| Target-number | 30–90s | **Med** |
+| Sumplete | med–high, no fixed ceiling | **Med–High** |
+| Glyph Latin-square | 1–6 min, **high variance** | **High** |
+| Kakuro | 2–8 min | **High** |
+| Nonogram | 3–15+ min, **very high variance** | **Very High** |
+| Mirror/lightbeam | not yet measured (unbuilt) | **TBD — estimate Low–Med**, pending real solve-time data once built |
+| Sokoban | not yet measured (unbuilt) | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes |
+| Rush Hour | not yet measured (unbuilt) | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most |
+
+Once mirror/lightbeam, Sokoban, and Rush Hour are built, replace the TBD rows
+with real telemetry (§8) rather than trusting the estimate.
+
+---
+
+## 12. Sandstorm — a cross-family difficulty modifier
+
+Not a family of its own — a **modifier** layered onto an existing grid-toggle
+family (Sumplete, Latin-square, nonogram, kakuro, eclipse if built). Explicitly
+**not** the Memory trap family (`TRAP_FAMILIES.md` §5.3, flash-then-hide-then-
+answer-in-time) — sandstorm has **no timer**. Distinguishing test: if it
+involves a countdown, it's a trap, not this.
+
+- **Effect:** some of the family's clues (row/column targets, nonogram
+  run-clues, kakuro clue-triangles, Latin-square given cells) start buried
+  under sand instead of visible from the start. A buried clue reveals once a
+  cell adjacent to it (or in its row/column, family-dependent) is correctly
+  resolved — solving nearby cells blows the sand off the next clue, cascading
+  outward. **This is a real difficulty knob, not just presentation** — it
+  changes solving strategy (you can't front-load with a full clue read), so it
+  needs its own reveal-order generation rule per family it's applied to, not
+  just a shared visual layer.
+- **Knob:** fraction of clues buried at start (0 = off, indistinguishable from
+  the base family).
+- **Generation dependency:** the reveal-order rule needs to know, for each
+  buried clue, which cell(s) unlock it — derivable from the family's own
+  row/column/region structure, but the *unlock adjacency* itself is a new
+  per-family piece of generation logic, not free.
+- **Build note:** since every qualifying family already went through the
+  shared grid engine (§5), sandstorm is the natural second shared-infra
+  milestone once 2+ grid families exist — build the reveal-order/unlock-
+  adjacency logic once, generically, rather than per-family.
+- **Open question:** does a buried clue's cell also render differently (sand
+  texture over the cell itself, not just the clue), or is it only the clue
+  numbers that hide while the cell grid is fully visible throughout? Affects
+  whether this needs new per-cell render state or just a clue-visibility flag.

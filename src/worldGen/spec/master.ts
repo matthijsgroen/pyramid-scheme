@@ -5,13 +5,20 @@ export const masterRules: Rule[] = [
   tier("master", { difficulty: "master" }),
 
   tier("master")
-    .set({ consumableDensity: 0.25 })
+    .set({
+      consumableDensity: 0.25,
+      wardWings: 2,
+      keyDensity: "medium",
+      sharedKeyChance: 0.4,
+      windyChance: 0.25,
+      packingChance: 0.25,
+    })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
     .sidePaths("low")
     .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 0, end: "treasure" }),
+    .settings({ pathPuzzles: 1, end: "treasure", trapped: true }),
 
   tomb("master_treasure_tomb", {
     puzzleFamily: "tableau",

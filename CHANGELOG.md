@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Treasure tombs now hold chests along their path, and some tombs have a hidden side path leading to a mosaic piece or a hieroglyph fragment.
+
 ### Changed
 
-- The very first pyramid of the game now has no main-path puzzles at all; the rest of that opening journey only has one puzzle per pyramid.
+- The opening journey's first three pyramids now branch out to ward-gated bonus floors, each holding a hidden path with a puzzle or trap to find, with difficulty stepping up pyramid by pyramid.
+- Master pyramids now have two ward-gated bonus floors to explore; wizard pyramids have three, plus a two-floor main path.
+- Some pyramids now use a single key to open several locked doors instead of one each, more common at higher difficulties (wizard pyramids vary how many keys are in play from one pyramid to the next).
+- Some pyramids at higher difficulties now have extra winding corridors or a larger, more sprawling layout.
+- Every pyramid now has at least one hidden path holding a puzzle or a trap to find.
 
 ### Fixed
 
 - A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
+- A hidden, trapped area could occasionally generate with a way to reach its reward without passing through the trap.
 
 ## 0.26.4 - 2026-07-05
 

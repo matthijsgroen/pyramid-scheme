@@ -162,7 +162,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
   const [currentFloor, setCurrentFloor] = useState(0)
   const [collected, setCollected] = useState<CollectedEntry[]>([])
   const [explorerPos, setExplorerPos] = useState<readonly [number, number] | null>(null)
-  const [revealAll, setRevealAll] = useState(false)
+  const [revealAll, setRevealAll] = useState(true)
 
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
@@ -210,9 +210,9 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
   if (!grid) return <div className="p-4 text-red-400">Assembly failed for {journey.id}</div>
 
   return (
-    <div className="flex gap-6 bg-stone-950 p-4 text-stone-200">
+    <div className="flex h-screen gap-6 overflow-hidden bg-stone-950 p-4 text-stone-200">
       {/* Map */}
-      <div className="flex flex-col gap-2">
+      <div className="flex h-full flex-col gap-2 overflow-auto">
         <div className="flex items-center gap-3 text-sm">
           <div>
             <span className="font-bold text-amber-300">{journey.name}</span>
@@ -226,6 +226,30 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
             )}
           </div>
           <div className="ml-auto flex gap-2">
+            {siteConfig.length > 1 && (
+              <>
+                <button
+                  onClick={() => {
+                    setCurrentFloor(f => Math.max(0, f - 1))
+                    setExplorerPos(null)
+                  }}
+                  disabled={currentFloor === 0}
+                  className="rounded border border-stone-700 px-2 py-0.5 text-xs text-stone-400 hover:border-stone-500 hover:text-stone-200 disabled:opacity-30"
+                >
+                  ← Floor
+                </button>
+                <button
+                  onClick={() => {
+                    setCurrentFloor(f => Math.min(siteConfig.length - 1, f + 1))
+                    setExplorerPos(null)
+                  }}
+                  disabled={currentFloor === siteConfig.length - 1}
+                  className="rounded border border-stone-700 px-2 py-0.5 text-xs text-stone-400 hover:border-stone-500 hover:text-stone-200 disabled:opacity-30"
+                >
+                  Floor →
+                </button>
+              </>
+            )}
             <button
               onClick={() => setRevealAll(v => !v)}
               className={`rounded border px-2 py-0.5 text-xs ${
@@ -256,7 +280,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
       </div>
 
       {/* Sidebar */}
-      <div className="flex w-60 flex-shrink-0 flex-col gap-4">
+      <div className="flex h-full w-60 flex-shrink-0 flex-col gap-4 overflow-y-auto">
         {/* Journey info */}
         <div>
           <h3 className="mb-1 text-xs font-bold tracking-wider text-stone-500 uppercase">Journey</h3>
@@ -315,7 +339,7 @@ const meta = {
   title: "App/SiteMap/JourneyInspector",
   component: JourneyInspector,
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
     backgrounds: { default: "dark" },
   },
   argTypes: {
