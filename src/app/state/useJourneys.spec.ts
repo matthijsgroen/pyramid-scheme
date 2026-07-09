@@ -205,3 +205,48 @@ describe("getJourney randomSeed", () => {
     expect(seedAfter).not.toBe(seedBefore)
   })
 })
+
+// ── markShopPurchased / hasPurchasedShop ────────────────────────────────────────
+
+describe("markShopPurchased / hasPurchasedShop", () => {
+  it("is not purchased until marked", () => {
+    const api = makeApi([makeStoredJourney()])
+    expect(api.hasPurchasedShop(REAL_ID, "0:3,4")).toBe(false)
+  })
+
+  it("persists a purchase and reports it back", () => {
+    const stored = makeStoredJourney()
+    let state = [stored]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    api.markShopPurchased("0:3,4")
+    expect(state[0].purchasedShops).toEqual(["0:3,4"])
+    expect(
+      createJourneysV3Api({
+        journeys: state,
+        setJourneys: vi.fn(),
+        journeyData: [makeJourneyData(REAL_ID)],
+      }).hasPurchasedShop(REAL_ID, "0:3,4")
+    ).toBe(true)
+  })
+
+  it("deduplicates: marking the same edge twice does not double-store", () => {
+    const stored = makeStoredJourney()
+    let state = [stored]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    api.markShopPurchased("0:3,4")
+    api.markShopPurchased("0:3,4")
+    expect(state[0].purchasedShops).toEqual(["0:3,4"])
+  })
+})

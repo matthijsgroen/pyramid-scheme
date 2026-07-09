@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react"
+import { use, useCallback, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell } from "@/game/gridNavigation"
 import { getPuzzlePlugin } from "@/game/puzzles/puzzleRegistry"
@@ -9,12 +9,17 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge, decodeEdge } from "./useAssembledFloor"
 import { ChestRewardFlow } from "./ChestRewardFlow"
+import { hieroglyphCategory } from "./hieroglyphCategory"
 import { TrapEncounter } from "@/app/TrapFamilies/TrapEncounter"
 import { TrapWarningScreen } from "./TrapWarningScreen"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { FezContext } from "@/app/fez/context"
+import { getInventoryItemById } from "@/data/inventory"
+import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
+import { getSellableById, sellValueForItemId } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
@@ -23,6 +28,7 @@ import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
+import { FezShop } from "@/ui/organisms/FezShop"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
 import "@/app/PuzzleFamilies/Tableau/plugin"
@@ -38,8 +44,38 @@ type Props = {
   renderPuzzle?: (floor: number, onSolved: () => void, onCancel: () => void) => ReactNode
 }
 
+const CONSUMABLE_ICONS = { bandage: "🩹", oil: "🫙", trapTool: "🔧" } as const
+
+type TFn = (key: string, opts?: Record<string, unknown>) => string
+
+// Shops only ever relocate one of these three reward types (SHOP_PLAN.md's 13 rare slots) —
+// narrower than ChestRewardFlow's full reward-type switch, which also covers consumable/money/sellable.
+const rareItemDisplay = (
+  reward: TreasureReward,
+  t: TFn
+): { itemName: string; itemDescription?: string; icon: string } => {
+  if (reward.type === "hieroglyphFragment") {
+    const item = getInventoryItemById(reward.hieroglyphId)
+    const name = item
+      ? t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, {
+          ns: "inventory",
+          defaultValue: item.name,
+        })
+      : t("chest.hieroglyphFragment")
+    return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, icon: item?.symbol ?? "𓂀" }
+  }
+  if (reward.type === "mapPiece") {
+    return { itemName: t("chest.mapPiece"), itemDescription: t("chest.mapPieceDescription"), icon: "📜" }
+  }
+  if (reward.type === "mosaicPiece") {
+    return { itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }
+  }
+  return { itemName: reward.type, icon: "🔷" }
+}
+
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation(["common", "inventory", "sellables"])
+  const fez = use(FezContext)
   const journeys = useJourneys()
   const progression = useProgression()
   const inventory = useInventory()
@@ -84,6 +120,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     consumableFull?: boolean
     onCollect: () => void
   } | null>(null)
+  const [activeShop, setActiveShop] = useState<{
+    edgeId: string
+    reward: TreasureReward
+    price: number
+    purchased: boolean
+  } | null>(null)
+  const [shopStock, setShopStock] = useState({
+    bandage: CONSUMABLE_STOCK_PER_VISIT,
+    oil: CONSUMABLE_STOCK_PER_VISIT,
+    trapTool: CONSUMABLE_STOCK_PER_VISIT,
+  })
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
@@ -123,6 +170,61 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       else if (reward.type === "sellable") inventory.addItem(reward.itemId, 1)
     },
     [progression, journeyId, inventory]
+  )
+
+  const openShop = useCallback(
+    (edgeId: string, reward: TreasureReward, price: number) => {
+      setShopStock({
+        bandage: CONSUMABLE_STOCK_PER_VISIT,
+        oil: CONSUMABLE_STOCK_PER_VISIT,
+        trapTool: CONSUMABLE_STOCK_PER_VISIT,
+      })
+      const purchased = journeys.hasPurchasedShop(journeyId, edgeId)
+      fez.showConversation("shopArrival", () => setActiveShop({ edgeId, reward, price, purchased }))
+    },
+    [fez, journeys, journeyId]
+  )
+
+  const handleShopBuyRare = useCallback(() => {
+    setActiveShop(current => {
+      if (!current || current.purchased) return current
+      if (!progression.spendMoney(current.price)) return current
+      applyReward(current.reward)
+      journeys.markShopPurchased(current.edgeId)
+      return { ...current, purchased: true }
+    })
+  }, [progression, applyReward, journeys])
+
+  const handleShopBuyConsumable = useCallback(
+    (type: keyof typeof CONSUMABLE_PRICES) => {
+      if (shopStock[type] <= 0) return
+      if (!progression.spendMoney(CONSUMABLE_PRICES[type])) return
+      const added = progression.addConsumable(type)
+      if (!added) {
+        progression.addMoney(CONSUMABLE_PRICES[type]) // pack was full — refund
+        return
+      }
+      setShopStock(prev => ({ ...prev, [type]: prev[type] - 1 }))
+    },
+    [progression, shopStock]
+  )
+
+  const handleShopBuy = useCallback(
+    (id: string) => {
+      if (id === "rare") handleShopBuyRare()
+      else if (id === "bandage" || id === "oil" || id === "trapTool") handleShopBuyConsumable(id)
+    },
+    [handleShopBuyRare, handleShopBuyConsumable]
+  )
+
+  const handleShopSell = useCallback(
+    (id: string) => {
+      const value = sellValueForItemId(id)
+      if (value <= 0) return
+      inventory.removeItem(id, 1)
+      progression.addMoney(value)
+    },
+    [inventory, progression]
   )
 
   const handlePuzzleSolved = useCallback(() => {
@@ -167,6 +269,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       // offer it again, showing whether there's room for it now or still not.
       if (cell.state === "completed") {
         journeys.updatePosition(journeyId, edgeId)
+        if (cell.type === "room" && cell.reward && cell.shopPrice != null) {
+          const reward = cell.reward
+          const price = cell.shopPrice
+          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
+            openShop(edgeId, reward, price)
+          )
+          return
+        }
         if (
           cell.type === "room" &&
           cell.reward?.type === "consumable" &&
@@ -244,7 +354,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         // reward inside can't be picked up right now — that's tracked separately below.
         journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
-        if (cell.reward) {
+        if (cell.reward && cell.shopPrice != null) {
+          const reward = cell.reward
+          const price = cell.shopPrice
+          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
+            openShop(edgeId, reward, price)
+          )
+        } else if (cell.reward) {
           const reward = cell.reward
           // Inventory-as-truth: fragment already collected → skip overlay
           const alreadyCollected =
@@ -265,7 +381,19 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         }
       }
     },
-    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig, applyReward]
+    [
+      grid,
+      journeys,
+      journeyId,
+      currentFloor,
+      progression,
+      explorerPos,
+      scheduleArrival,
+      seed,
+      siteConfig,
+      applyReward,
+      openShop,
+    ]
   )
 
   const ActivePuzzleComponent = puzzlePlugin?.Component ?? null
@@ -386,6 +514,56 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         hieroglyphProgress={progression.hieroglyphProgress}
         onDismiss={() => setPendingReward(null)}
       />
+      {activeShop && (
+        <FezShop
+          isOpen
+          title={t("shop.title")}
+          balance={progression.money}
+          balanceLabel={t("money.label")}
+          dismissLabel={t("shop.dismiss")}
+          buyLabel={t("shop.buy")}
+          soldOutLabel={t("shop.soldOut")}
+          sellLabel={t("shop.sell")}
+          rareItemsLabel={t("shop.rareItems")}
+          suppliesLabel={t("shop.supplies")}
+          sellSectionLabel={t("shop.sellSection")}
+          rareItems={[
+            {
+              id: "rare",
+              ...rareItemDisplay(activeShop.reward, t),
+              price: activeShop.price,
+              affordable: progression.money >= activeShop.price,
+              soldOut: activeShop.purchased,
+              featured: true,
+            },
+          ]}
+          consumables={(Object.keys(CONSUMABLE_ICONS) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
+            id: type,
+            itemName: t(`chest.consumable.${type}`),
+            icon: CONSUMABLE_ICONS[type],
+            price: CONSUMABLE_PRICES[type],
+            affordable: progression.money >= CONSUMABLE_PRICES[type],
+            soldOut: shopStock[type] <= 0,
+          }))}
+          sellables={Object.entries(inventory.inventory).flatMap(([id, count]) => {
+            const item = getSellableById(id)
+            if (!item || !count) return []
+            return [
+              {
+                id,
+                itemName: t(`${id}.name`, { ns: "sellables" }),
+                itemDescription: t(`${id}.description`, { ns: "sellables" }),
+                icon: item.symbol,
+                sellValue: sellValueForItemId(id),
+                ownedCount: count,
+              },
+            ]
+          })}
+          onBuy={handleShopBuy}
+          onSell={handleShopSell}
+          onDismiss={() => setActiveShop(null)}
+        />
+      )}
     </div>
   )
 }

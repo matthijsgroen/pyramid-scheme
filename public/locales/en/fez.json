@@ -44,5 +44,8 @@
   "tombLoot": "Wow, our first treasure! Well done!",
   "mapPiece": "We found a map piece! Together they lead to a hidden tomb.",
   "mapPiece2": "There's one waiting in each expedition at this difficulty — let's find them all!",
-  "mapPiece3": "Check the journey list to see how many we've collected so far."
+  "mapPiece3": "Check the journey list to see how many we've collected so far.",
+
+  "shopArrival": "Ah, a shop! I always keep a bit of coin handy for occasions like this.",
+  "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any junk you're carrying."
 }
