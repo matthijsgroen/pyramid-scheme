@@ -79,6 +79,49 @@ describe(assembleFloor, () => {
     expect(goal?.cell.reward).toEqual({ type: "hieroglyphs" })
   })
 
+  it("carries a section's shopPrice through to its end room", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" }, shopPrice: 500 },
+      ],
+    }
+    const result = assembleFloor("shop-site", config, 0)
+    if (!result.success) throw new Error("assembly failed")
+    const priced = result.grid.cells.flat().filter(c => c.type === "room" && c.shopPrice !== undefined) as RoomCell[]
+    expect(priced).toHaveLength(1)
+    expect(priced[0].shopPrice).toBe(500)
+    expect(priced[0].reward).toEqual({ type: "mosaicPiece" })
+  })
+
+  it("carries stairId through to a stairhead room, and populates grid.staircases from it", () => {
+    // Regression guard: RoomSpec→RoomCell conversion listed every field except stairId,
+    // so grid.staircases was always empty — masked because every existing wing/path setup
+    // has at most one wing, so the client's "assume next floor" fallback happened to agree.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: { stairId: "test:main" },
+      sideSections: [],
+    }
+    const result = assembleFloor("stair-site", config, 0)
+    if (!result.success) throw new Error("assembly failed")
+    const stairhead = findRoom(result.grid, c => c.roomType === "stairhead")
+    expect(stairhead?.cell.stairId).toBe("test:main")
+    expect(result.grid.staircases["test:main"]).toEqual([stairhead!.r, stairhead!.c])
+  })
+
+  it("does not set shopPrice on an ordinary (non-shop) end-of-path room", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
+    if (!result.success) throw new Error("assembly failed")
+    const goal = findRoom(result.grid, c => c.roomType === "treasure")
+    expect(goal?.cell.shopPrice).toBeUndefined()
+  })
+
   it("has an entrance node on the grid edge", () => {
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")

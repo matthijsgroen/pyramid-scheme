@@ -34,6 +34,8 @@ export type RoomCell = {
   sectionHash?: string
   hidden?: boolean
   reward?: TreasureReward
+  /** `reward` is a Fez-shop purchase (this many coins), not a free pickup. */
+  shopPrice?: number
   requiredKeyId?: string
   gateVariant?: GateVariant
   keyColor?: KeyColor
@@ -63,6 +65,8 @@ export type SubSection = {
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
+  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
+  shopPrice?: number
   puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   trapped?: boolean

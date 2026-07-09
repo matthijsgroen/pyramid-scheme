@@ -41,6 +41,7 @@ const buildDslSection = <TExtra extends string>(
     end,
     ...(gate ? { gate } : {}),
     ...(endReward ? { endReward } : {}),
+    ...(cs.shopPrice !== undefined ? { shopPrice: cs.shopPrice } : {}),
     ...(subSections.length > 0 ? { sideSections: subSections } : {}),
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),

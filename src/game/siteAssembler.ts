@@ -918,6 +918,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: section.endReward ?? { type: "hieroglyphs" },
+          ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
         })
       }
     }
@@ -985,6 +986,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: subSection.endReward ?? { type: "hieroglyphs" },
+          ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
         })
       }
     }
@@ -1024,6 +1026,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           ...(spec.keyColor ? { keyColor: spec.keyColor } : {}),
           ...(spec.keyColors ? { keyColors: spec.keyColors } : {}),
           ...(spec.family ? { family: spec.family } : {}),
+          ...(spec.stairId ? { stairId: spec.stairId } : {}),
+          ...(spec.shopPrice !== undefined ? { shopPrice: spec.shopPrice } : {}),
         }
         cells2D[r][c] = roomCell
       } else {

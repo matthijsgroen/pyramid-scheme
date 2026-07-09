@@ -228,12 +228,54 @@ number>`). No new persistence layer needed.
   tests in `buildSite.spec.ts`/`siteAssembler.spec.ts`/`capabilities.spec.ts`.
 - `scripts/worldInfo.ts`: drop the `chests` column, add a `puzzleRewards`/`junk` column.
 
-### 3 — Shop room + relocation + guard
-- New `endReward.type:"shop"` on one ungated sidepath per tomb (8 of 9; starter excluded).
-- Relocate the 13 rare slots per the locked stock list above. Still counted in 647
-  (validators unchanged). Reserve so `fragments.ts` fallback doesn't fill it.
-  **No `chance` on shop slots** — must stay deterministic.
-- Add money-budget guard (exact-total, not slack-based) in `configBuilder`/`validate` (throws).
+### 3 — Shop room + relocation + guard (implemented)
+- **Not** `endReward.type:"shop"` as originally sketched — instead a new `shopPrice?:
+  number` field on `SideSection`/`SubSection` (both `worldGen/types.ts` and
+  `game/siteTypes.ts`), threaded through `sideSections.ts`'s `buildDslSection` and all the
+  way to the runtime `RoomCell`. The `endReward` itself stays a completely ordinary
+  fragment/mosaic/mapPiece reward — `shopPrice` is just a sibling flag marking it as a
+  purchase. Keeps every existing budget-counting/validator/serializer code path (which all
+  pattern-match on top-level `endReward`/`mainEndReward` types) working unchanged — a
+  wrapper `{type:"shop", items:[...]}` reward would have broken all of them.
+- All 13 rare slots authored directly on the 8 tombs' `floors[].sideSections` via
+  `sidePath({endReward:..., shopPrice:...})`, prices from the new shared
+  `src/data/shopPricing.ts` (single source of truth for Phase 4 too):
+  - **Fragment** (`endReward:"hieroglyphFragment"`, resolves to `TOMB_SYMBOLS[tier][0]`):
+    bypasses `fragmentSlot`/`collectSlots` entirely — no competitive-pool risk. Compensated
+    in `fragments.ts` by a new `countExistingHieroglyphFragments` scan that subtracts
+    pre-placed direct fragments from each hieroglyph's `required` count, so the world total
+    stays exactly 273 regardless of how many were placed this way.
+  - **Mosaic** (`endReward:"mosaicPiece"`): needed zero extra code — `mosaics.ts`'s existing
+    `countAuthoredTombMosaics` already nets out any tomb-authored `"mosaicPiece"` hint
+    (same mechanism as the one pre-existing tomb-authored mosaic in `junior.ts`).
+  - **MapPiece** (`master_treasure_tomb_b`, solo slot): one of the 4 wizard journeys'
+    `wizard_treasure_tomb_c` map-piece copies is freed via
+    `journey("wizard_4").pyramid("last-1", {sideSections: []})` in `spec/wizard.ts`
+    (journey-pyramid specificity overrides the tier-wide rule for that one journey only) —
+    net map-piece total stays exactly 36.
+- **Bug fixed along the way**: `configBuilder.ts`'s `resolveTombReward` passed structured
+  `RewardSpec` objects (e.g. our literal `{type:"mapPiece",tombId}`) straight into
+  `hintToReward`, which only handles string hints — silently returned `undefined` for any
+  object. Fixed to use `specToReward` (handles both). Without this the shop's mapPiece slot
+  would have silently resolved to nothing.
+- Money-budget guard: `validateEconomyGuard` (new, in `validate.ts`), wired into
+  `configBuilder.buildConfigs()`. Walks all configs summing `shopPrice` (rares) +
+  `puzzleRewards[].money` + `sellable` endRewards (guaranteed income), throws if
+  `shopPrices + TOTAL_CONSUMABLE_BUYABLE (1,760) > guaranteedIncome`. Global cumulative
+  per the locked design, not per-tier.
+- **Second bug found+fixed, unrelated but adjacent**: threading `shopPrice` to the runtime
+  `RoomCell` required editing the `RoomSpec`→`RoomCell` conversion in `siteAssembler.ts`
+  (~line 1024) — that block explicitly lists fields to copy and was missing `stairId`
+  (set on every stairhead's `RoomSpec` at 5 call sites, never actually copied through).
+  `grid.staircases` was therefore always empty; masked because the client's stairhead
+  handler falls back to "assume next floor" when `cell.stairId` is unset, and every
+  existing ward-wing/path setup has at most one wing per pyramid — so the fallback always
+  coincided with the correct floor. Fixed; behavior-preserving for all current content
+  (confirmed: full test suite unaffected), now correct for any future multi-wing content.
+- **Known gap, by design**: the claim switch doesn't enforce `shopPrice` yet — reaching one
+  of these 13 rooms today grants the reward for free. That's Phase 4's job ("extend claim
+  switch for purchase = `spendMoney` then grant/claim item"). Phase 4 is a hard blocker
+  before this reaches players, not just a nice-to-have — do not ship Phase 3 alone.
 
 ### 4 — Shop UI (started, PR #104)
 - ~~Shop modal reusing `LootPopup`/`ChestRewardFlow` styling~~ → done as dumb components:

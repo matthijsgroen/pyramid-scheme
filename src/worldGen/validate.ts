@@ -1,6 +1,8 @@
-import type { SiteConfig, TreasureReward } from "./types"
+import type { SideSection, SiteConfig, SubSection, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, EXPECTED_HIEROGLYPH_FRAGMENTS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
+import { TOTAL_CONSUMABLE_BUYABLE } from "../data/shopPricing"
+import { sellValueForItemId } from "../data/sellables"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -180,5 +182,46 @@ export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): voi
   }
   if (orderingErrors.length > 0) {
     throw new Error(`[worldSpec] Unsolvable ward-key ordering:\n${orderingErrors.join("\n")}`)
+  }
+}
+
+// SHOP_PLAN.md "Economy model" guard: Σ(all shop prices, rares + one full consumable
+// restock per shop) ≤ Σ(all guaranteed income — puzzle-solve money + junk sell value).
+// Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
+// order affordable; only the world-wide totals matter. Throws at build, not at runtime.
+export const validateEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void => {
+  let shopPrices = 0
+  let guaranteedIncome = 0
+
+  const tallySubSection = (s: SubSection) => {
+    if (s.shopPrice !== undefined) shopPrices += s.shopPrice
+    if (s.endReward?.type === "sellable") guaranteedIncome += sellValueForItemId(s.endReward.itemId)
+    for (const r of s.puzzleRewards ?? []) {
+      if (r?.type === "money") guaranteedIncome += r.amount
+    }
+  }
+  const walkSection = (s: SideSection) => {
+    tallySubSection(s)
+    for (const sub of s.sideSections ?? []) tallySubSection(sub)
+  }
+
+  for (const siteConfigs of Object.values(allConfigs)) {
+    for (const floors of siteConfigs) {
+      for (const floor of floors) {
+        if (floor.mainEndReward?.type === "sellable") guaranteedIncome += sellValueForItemId(floor.mainEndReward.itemId)
+        for (const r of floor.puzzleRewards ?? []) {
+          if (r?.type === "money") guaranteedIncome += r.amount
+        }
+        for (const s of floor.sideSections) walkSection(s)
+      }
+    }
+  }
+
+  const totalBuyable = shopPrices + TOTAL_CONSUMABLE_BUYABLE
+  if (totalBuyable > guaranteedIncome) {
+    throw new Error(
+      `[worldSpec] Shop economy guard failed: total buyable (${totalBuyable} = ${shopPrices} rares + ` +
+        `${TOTAL_CONSUMABLE_BUYABLE} consumable stock) exceeds guaranteed income (${guaranteedIncome}).`
+    )
   }
 }
