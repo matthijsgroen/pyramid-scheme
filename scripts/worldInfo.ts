@@ -14,7 +14,7 @@ const flag = (name: string) => {
   const eq = argv.find(a => a.startsWith(`--${name}=`))
   if (eq) return eq.split("=")[1]
   const i = argv.indexOf(`--${name}`)
-  return i !== -1 ? (argv[i + 1]?.startsWith("--") ? "" : argv[i + 1] ?? "") : undefined
+  return i !== -1 ? (argv[i + 1]?.startsWith("--") ? "" : (argv[i + 1] ?? "")) : undefined
 }
 const tierFilter = flag("tier")
 const perPyramid = argv.includes("--per-pyramid") || argv.includes("-p")
@@ -137,11 +137,14 @@ const section = (title: string, journeys: Array<{ id: string; levels: number }>)
     const t = tally(j.id)
     for (const k of Object.keys(totals) as Array<keyof Tally>) totals[k] += t[k]
   }
-  row("TOTAL", journeys.reduce((s, j) => s + j.levels, 0), totals)
+  row(
+    "TOTAL",
+    journeys.reduce((s, j) => s + j.levels, 0),
+    totals
+  )
 }
 
-const byTier = <T extends { tier: string }>(list: T[]) =>
-  tierFilter ? list.filter(j => j.tier === tierFilter) : list
+const byTier = <T extends { tier: string }>(list: T[]) => (tierFilter ? list.filter(j => j.tier === tierFilter) : list)
 
 section(
   "PYRAMIDS",
