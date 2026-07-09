@@ -432,6 +432,37 @@ type Distribution = {
 { scope: sectionOf(ctx), fill: [{ family: "arithmeticReflex", weight: 0.3 }, { family: "sumplete", weight: 0.7 }] }
 ```
 
+**Weights should be relative, not required to sum to anything, and the
+tunable numbers should stay where they already live.** Checked
+`src/worldGen/spec/global.ts` — `GLOBAL_DEFAULTS` already is "one place a
+designer eyeballs" (its own comment says so), with `chance` cascading
+through the existing global → tier → journey → pyramid rule scoping. That
+doesn't go away — a family's weight function is a thin read of that
+resolved value, not an independently authored number:
+
+```ts
+weight: ctx => ctx.chance         // trap — reads the existing cascade
+weight: ctx => 1 - ctx.chance     // puzzle — complement of the same knob
+```
+
+That works for exactly two competitors and silently breaks the moment a
+third family bids on the same slot kind — `1 - ctx.chance` stops summing to
+1 and nothing notices. Real fix: core normalizes whatever weights get
+registered for a scope, so mods declare relative desire, not numbers that
+have to add up to anything —
+
+```ts
+function resolveSlot(bids: { family: string; weight: number }[]): string {
+  const total = bids.reduce((sum, b) => sum + b.weight, 0)
+  const roll = seededRandom() * total
+  // pick by cumulative weight — no normalization step for any author to remember
+}
+
+weight: ctx => ctx.chance   // trap, still reads the one authored knob
+weight: ctx => 1            // puzzle, "whatever's left"
+// a fourth family later just adds its own weight — no existing file needs touching
+```
+
 Room *type* (which family plays here, resolved by `Distribution`) and reward
 *instance* (which specific fragment/mapPiece/money amount that room's
 treasure grants) stay two separate systems — already true in the current
@@ -602,11 +633,14 @@ against what's actually registered instead of hardcoding the list by hand.
   change today — not a live toggle players flip, so this doesn't need a
   general answer, just the same release discipline already used for any
   worldgen change.
-- **Tier tuning ergonomics.** Today's per-tier knobs (`chance`,
-  `wardPaths`, `consumableRates` from PR #103) sit in one place a designer
-  can eyeball. Spread across mod-owned `Distribution` weights, tuning "make
-  wizard tier 30% trap" means checking that trap's and puzzle's weights
-  still sum sensibly across files instead of reading one table.
+- ~~Tier tuning ergonomics.~~ **Resolved** — see "Distribution" above.
+  The tunable numbers stay exactly where they are (`GLOBAL_DEFAULTS`, the
+  existing global/tier/journey/pyramid cascade); mod weight functions are
+  thin reads of that cascade, not independently authored numbers. What
+  needed fixing wasn't ergonomics, it was that `1 - ctx.chance`-style
+  complements break past two competitors — core normalizing registered
+  weights removes the cross-file coordination burden permanently, not just
+  for today's two mods.
 - ~~Snapshot tests.~~ **Resolved.** Design intent is expressed in counts,
   not exact placement — a sidepath landing after puzzle 2 vs. puzzle 3
   is equally valid as long as it exists where the design calls for one.
