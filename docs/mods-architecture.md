@@ -19,11 +19,12 @@ Two concrete coupling points found:
 
 - `SiteMapScreen.tsx` — the claim-switch branches on room type per mechanic
   by hand.
-- `useProgression.ts` — one flat state blob mixing core meta-progression
-  (fragments, mosaic, tombKeys) with mechanic-specific perks (`armorStacks`,
-  `trapInsightStacks` are trap-only, but live in core state) and a third,
-  entirely separate reward channel (perks) nothing else in this doc accounts
-  for. See "Gaps" at the end.
+- `useProgression.ts` — one flat state blob mixing several mods' currencies
+  (fragments belong to `hieroglyph`, mosaic to `mosaic`, health to `trap`)
+  with mechanic-specific perks (`armorStacks`, `trapInsightStacks` are
+  trap-only, but live in this shared blob) and a third, entirely separate
+  reward channel (perks) this doc didn't originally account for — now
+  resolved, see "Gates, ward paths, hidden passages, perks, detectors".
 
 ## One family registry — trap is a puzzle with a nonzero fail cost
 
@@ -52,7 +53,8 @@ registerFamily({
   ...
 })
 
-mod("trap").dependsOn(["core-loop"]) // core-loop owns the `health` currency
+// health is trap's own currency (see "Granularity" below) — no cross-mod
+// dependency needed, trap just owns and spends its own ledger entry
 
 // inside trap's own onFail handler — not core:
 onFail: () => {
@@ -76,52 +78,67 @@ rename it.
 ## Three layers
 
 ```
-core/ledger/        generic currency store — a bucket store that doesn't
-                     know what any currency id means, plus a topological
-                     loader that resolves mod dependencies
-core/roomDispatch    encounter room -> family lookup, replaces the
-                     hand-written claim-switch in SiteMapScreen.tsx
-core/siteBuilder     topology + gating (grid, corridors, chains, floor-key /
-                     tomb-key chains) — structural, not mechanic-specific,
-                     stays core
-mods/trap/           timers, family variants (ArithmeticReflex...), spends
-                     health on fail via its own onFail handler, produces
-                     trapTool
-mods/puzzle/         family variants (Sumplete, Tableau, Crocodile...), no
-                     ledger writes on fail, one of the allocation sites for
-                     fragment/money rewards
+core/                engine only, owns no currency and (mostly) no screen:
+  ledger/              generic bucket store, doesn't know what any currency
+                       id means; topological dependency loader; the
+                       generic reward-claim dispatch for treasure rooms
+                       (grant whatever currency id a RoomSpec names,
+                       regardless of which mod owns its meaning)
+  roomDispatch/        encounter room -> family lookup, replaces the
+                       hand-written claim-switch in SiteMapScreen.tsx
+  siteBuilder/         topology + gating (grid, corridors, chains,
+                       floor-key / tomb-key chains, grid movement,
+                       staircases, journey-completion bookkeeping)
+  Collection.tsx       the one generic screen: renders ledger.entries() +
+                       registered CurrencyMeta, aggregates across every
+                       mod, owned by none of them
+
+mods/trap/           timers, family variants (ArithmeticReflex...), owns
+                     health AND bandage/oil (its own healing consumables)
+                     AND trapTool — single consumer, no dedicated screen,
+                     folds in fully per "Granularity" below
+mods/puzzle/         family variants (Sumplete, Tableau, Crocodile...),
+                     owns no currency of its own — an allocation site and
+                     consumer of fragment (hieroglyph mod's) and money
+                     (shop's)
 mods/shop/           Fez dialogue, stock, prices (per SHOP_PLAN.md design),
-                     depends on trap/puzzle/core-loop output to price itself
-core-loop            walking pyramid levels — not optional, but registers
-                     into the same ledger as any mod (produces mosaicPiece),
-                     and owns the health resource — see below
+                     owns money, depends on puzzle/core output to price
+                     itself
+mods/hieroglyph/     owns fragment, HIEROGLYPH_REQUIRED, the Collection
+                     grid's hieroglyph sections
+mods/mosaic/         owns mosaicPiece, MosaicPage.tsx (its own persistent
+                     screen — see "Collection & Mosaic" below), the
+                     LEVEL_STEPS reveal logic
+mods/tomb-treasure/  owns mapPiece, tombKey, the perk-grant table
+                     (TREASURE_PERKS/TOMB_PERK_IDS) — the 40 treasures and
+                     what each one unlocks
 ```
 
-## Health is a core resource, not trap-owned
+## Granularity: when does a currency get its own mod?
 
-Checked `useProgression.ts` — today `currentHealth`/`maxHealth` are only
-ever debited by `takeTrapDamage`, only gate trap attempts
-(`canAttemptTrap`), only get restored by trap-folder consumables
-(bandage/oil). Puzzle-cancel never touches it. That's an artifact of trap
-being the only family with a nonzero consequence today, not a reason health
-itself should be trap's, and not a reason core needs to know what "damage"
-means either.
+Health forced a correction. Checked `useProgression.ts`: `currentHealth`/
+`maxHealth` have exactly one consumer (`takeTrapDamage`, `canAttemptTrap`)
+and no dedicated screen — just a bar `SiteMapScreen` renders in the HUD.
+Compare `fragment` and `mosaicPiece`: each has a *second stakeholder*
+independent of any mechanic — a dedicated screen that treats the currency
+as a first-class collectible (`Collection.tsx`'s hieroglyph grid,
+`MosaicPage.tsx`'s reveal). That screen is what forced fragment and mosaic
+into their own mods, not "more than one mod touches it" — puzzle is still
+fragment's only mechanic consumer today, same as trap is health's only
+consumer, yet the two land differently.
 
-Under the unified family model, health becomes a **core ledger counter**
-(`kind: "counter"`, cap = `maxHealth`) owned by `core-loop`. Trap declares a
-dependency on it and spends from it itself inside its own `onFail` handler
-— core never reads a damage number or applies anything. `armorStacks` (a
-trap perk that reduces trap's own damage formula) and the pre-attempt gate
-(`canAttemptTrap` becomes trap's own `canAttempt: ledger => ...`, see above)
-both stay entirely inside trap's code. Core's only currency-free
-responsibility on any fail, trap or puzzle, is marking the room still
-unsolved.
+**Rule: promote a currency to its own mod when a second independent
+consumer appears, or when it earns a dedicated screen — whichever comes
+first. Not before.** Health satisfies neither, so it folds entirely into
+`mods/trap/`: the currency, `bandage`/`oil` (they heal it, so they're
+trap's consumables too, not a separate ownership question), `armorStacks`,
+`canAttemptTrap`. No cross-mod dependency needed for something a mod owns
+outright — that line is gone from the family-registry example above.
+`trapTool` was never in question, disarm/skip has nothing to do with
+health.
 
-Murkier: `bandage`/`oil` heal a now-core resource but are named and folded
-into trap's consumable set today by inertia, not necessity — worth an
-explicit ownership call rather than leaving them in `mods/trap/` unexamined.
-`trapTool` (disarm/skip, never touches health) is the one genuinely
-trap-specific consumable of the three.
+This resolves the old "bandage/oil ownership" gap outright rather than
+downgrading it: there's no ambiguity left once health itself is trap's.
 
 ## Currencies are mod-owned, not a closed core vocabulary
 
@@ -139,9 +156,10 @@ type CurrencyMeta = {
   total?: number // required when kind === "capped"
 }
 
-registerCurrency({ id: "health", ownerMod: "core-loop", kind: "counter", ... })
-registerCurrency({ id: "fragment", ownerMod: "puzzle", kind: "capped", total: SUM_HIEROGLYPH_REQUIRED, ... })
-registerCurrency({ id: "mosaicPiece", ownerMod: "core-loop", kind: "capped", total: LEVEL_STEPS.length, ... })
+registerCurrency({ id: "health", ownerMod: "trap", kind: "counter", ... }) // folded in, see "Granularity"
+registerCurrency({ id: "fragment", ownerMod: "hieroglyph", kind: "capped", total: SUM_HIEROGLYPH_REQUIRED, ... })
+registerCurrency({ id: "mosaicPiece", ownerMod: "mosaic", kind: "capped", total: LEVEL_STEPS.length, ... })
+registerCurrency({ id: "mapPiece", ownerMod: "tomb-treasure", kind: "capped", total: TOMB_COUNT, ... })
 registerCurrency({ id: "money", ownerMod: "shop", kind: "counter", ... })
 ```
 
@@ -156,8 +174,8 @@ case per reward type.
 Checked the actual data — most of what looked like "produce more of X" is
 actually a fixed pool with an allocator, not an open counter:
 
-- **Open counter** — no fixed total, only a flow guard. `money`, `health`,
-  consumables (`bandage`/`oil`/`trapTool`).
+- **Open counter** — no fixed total, only a flow guard. `money` (shop),
+  `health` (trap), consumables (`bandage`/`oil`/`trapTool`, all trap's).
 - **Capped/allocated** — a fixed total decided up front; the only question
   is *which room* hands out *which specific instance*. `fragment` (Σ
   `HIEROGLYPH_REQUIRED` across the fixed hieroglyph roster, see
@@ -175,28 +193,83 @@ type CappedPool = {
   sites: { modId: string; take(ctx): number }[] // sums to `total`, enforced at load
 }
 
-// today: core treasure rooms hand out every mapPiece instance
-// shop's plan: relocate ONE instance out of that pool into shop stock —
-// not a second producer, a second site drawing from the same pool
+// today: plain treasure rooms (core's own room type, no mechanic involved)
+// hand out every mapPiece instance. shop's plan: relocate ONE instance out
+// of that pool into shop stock — not a second producer, a second
+// *placement site* drawing from the same pool the owning mod (tomb-treasure)
+// still defines the total for
 registerCappedPool({
-  currencyId: "mapPiece",
+  currencyId: "mapPiece", // owned by tomb-treasure — see registerCurrency above
   total: TOMB_COUNT,
   sites: [
-    { modId: "core-loop", take: ctx => TOMB_COUNT - 1 },
+    { modId: "core", take: ctx => TOMB_COUNT - 1 }, // ordinary treasure rooms
     { modId: "shop", take: ctx => 1 }, // the "unlocks last tomb" slot
   ],
 })
 ```
 
+## Reward weight: a fill-order algorithm the allocator was missing
+
+`CappedPool.sites` says *how many* instances a mod's rooms take, but never
+said *which specific room* among many candidates of the same type gets one
+— that gap was filled by hand (`fragmentSlot` sentinels an author places
+explicitly) or, in the in-flight shop branch, by a bespoke deterministic
+shuffle over puzzle rooms specifically (`SHOP_PLAN.md`'s puzzle-solve
+rewards: 441 of 1,714 puzzles picked by shuffle+slice). Two mechanisms
+doing the same job differently.
+
+Checked `siteAssembler.ts`'s room-spec calls to see what's eligible today:
+`roomType: "puzzle"` and `roomType: "trap"` carry **no** `reward` field at
+all — solving a puzzle or surviving a trap grants nothing today. Only
+`roomType: "treasure"` ever does. The shop branch's puzzle-solve mechanic is
+the *first* thing making a solve event reward-eligible, and it's narrow —
+puzzles only, flat shuffle, no notion of priority by type.
+
+Generalizes to a weight each room type/family declares, and one generic
+fill algorithm across the whole population of solved nodes instead of a
+bespoke selection per mechanic:
+
+```ts
+type RoomTypeMeta = { rewardWeight: number } // 0 = never eligible
+
+registerFamily({ meta: { id: "sumplete", rewardWeight: 8, ... } })         // puzzle: high
+registerFamily({ meta: { id: "tableau", rewardWeight: 8, ... } })
+registerFamily({ meta: { id: "arithmeticReflex", rewardWeight: 0, ... } }) // trap: survived, not solved — none
+
+// core room types, not families — not competing in the ranking at all:
+"treasure": rewardWeight: Infinity  // already the reward, not a candidate for one
+"gate": rewardWeight: 0
+"stairhead" / "exit": rewardWeight: 0
+```
+
+`CappedPool`'s allocator ranks every solved node in the generated world by
+`rewardWeight` and walks down the ranking assigning instances until `total`
+is exhausted — one generic weighted fill replacing both the hand-placed
+sentinel mechanism and the branch's bespoke shuffle.
+
+Trap at `0` is a real design call, not just an architecture one — but
+that's exactly what this model is good at: it's one number, not a decision
+baked into the mechanism. `0` for now, undecided whether traps should ever
+pay out; revisiting it later is changing `rewardWeight`, nothing structural.
+
+**This is a different mechanism from `Distribution`, not a replacement for
+it.** `rewardWeight` handles the bulk, doesn't-matter-which-specific-one
+case — most fragment instances, most puzzle-solve consumables.
+Narratively-load-bearing placements (shop's map piece that must be the one
+unlocking the *last* tomb, the crocodile capstone) stay explicit
+`Distribution` overrides / reserved `CappedPool` sites — those are pinned
+by design, not ranked by weight, and weight-based fill should never be
+allowed to override a pin.
+
 ## Dependencies replace the closed vocabulary AND the standalone guard
 
 Shop can't validate its own price list in isolation — it's only valid
-relative to what trap/puzzle/core-loop actually grant. Rather than a
-separate "composed guard" pass, this is just shop declaring a read
-dependency and checking at load time:
+relative to what puzzle and core's plain treasure/junk rooms actually grant.
+Rather than a separate "composed guard" pass, this is just shop declaring a
+read dependency and checking at load time:
 
 ```ts
-mod("shop").dependsOn(["trap", "puzzle", "core-loop"])
+mod("shop").dependsOn(["puzzle", "core"])
 
 function shopGuard(ledger) {
   const granted = ledger.totalGranted(["money"]) // summed from whatever
@@ -215,19 +288,24 @@ mod is finished and shipped, so shop never actually faces a missing
 dependency in a real configuration. A hard failure on an unsupported combo
 is enough.
 
-## Collection & Mosaic screens are core, not mod UI
+## Collection is core; Mosaic is a mod's own screen — corrected
 
-`Collection.tsx` and `MosaicPage.tsx` both read `useProgression()` directly
-(`hieroglyphFragments`, `mosaicPieceCount`, `mosaicSeenCount`) — core
-meta-progression every mod feeds into, not something that disappears if a mod
-is toggled off. Tableau puzzle reads hieroglyph IDs for its formula theming
-(`generateRewardCalculation.ts`) but never writes the ledger — read-only tap,
-same boundary.
+Originally called both core. Wrong for Mosaic: checked where
+`mosaicPiece` actually gets produced (`SiteMapScreen.tsx:246`) and it's
+granted through the exact same treasure-room claim-switch as `mapPiece` and
+`fragment` — an ordinary allocated currency, not something the engine
+produces on its own. `MosaicPage.tsx` is `mosaic` mod's own dedicated
+screen, always has been, just unlabeled — the "second stakeholder" signal
+from "Granularity" above.
 
-Tell: turn trap off, fragments you already own should still show. Under the
-revised model, these screens become one generic renderer over
-`ledger.entries()` + registered `CurrencyMeta`, rather than a fixed set of
-hand-coded props.
+`Collection.tsx` stays core: it aggregates hieroglyph's fragments *and*
+tomb-treasure's treasures in one grid, owned by neither — the generic
+renderer over `ledger.entries()` + registered `CurrencyMeta` this doc
+already described. `hieroglyphFragments` is a read, not something
+Collection produces.
+
+Tell that still holds either way: turn trap off, fragments you already own
+should still show, because neither screen depends on trap at all.
 
 ## Toggling is a diagnostic, not a production requirement
 
@@ -302,6 +380,103 @@ Topology and gating (grid/corridor layout, floor-key / tomb-key chains) stay
 core — nothing mechanic-specific about them. `Distribution` only fills
 encounter slots within that skeleton.
 
+## Gates, ward paths, hidden passages, perks, detectors
+
+Walked the rest of the world-gen/progression surface against this model.
+Most of it already fits without change; two things (perks, detectors) needed
+a real answer.
+
+**Gates and ward paths — already core, no change.** Floor-key/tomb-key gates
+(`types.ts:24`) are pure topology, `core/siteBuilder`'s job as already
+stated. `wardPaths`/`wardWings` (`buildSite.ts:272-319`) decide *how many*
+gated side-paths/wings a tomb gets — also structural, also core. What's
+*inside* one (a fragment reward, optionally all-trap via
+`wardPathTrapped` — a corridor with only traps, per the earlier
+conversation) is a scoped `Distribution` override, same primitive as the
+crocodile capstone, not a new mechanism:
+`{ scope: wardPathOf(idx), fill: "trap" }` replaces the bespoke `trapped`
+boolean threaded through `buildSite.ts`. Two independent confirmations of
+the same primitive now (crocodile, ward-path-trapped) — good sign it's the
+right one, not a one-off fit.
+
+**Hidden passages — core, one leaky call site.** Masking
+(`useAssembledFloor.ts`) and reveal-on-detection are structural/core, but
+`maskHiddenCells(grid, detectionLevel: number, ...)` hardcodes that one
+perk's field name directly into core rendering code — a concrete instance
+of the `PerkState`-blob-leaking-into-core problem already flagged in "Known
+cost," not a new issue.
+
+**Perks — resolved, the "Gaps" bullet below is answered.** Ward keys turned
+out to matter here: `wardKeyId` in a gate is literally one of the ids
+`applyTreasurePerk` grants perks for (`TOMB_PERK_IDS`/`TREASURE_PERKS`,
+`useProgression.ts:138-159`) — a ward gate's unlock check and a perk grant
+are the same mechanism under two names. The split that resolves it:
+
+- **Grant** — which treasure id maps to which perk, at which level. Core-
+  owned *authored content*, same shelf as `data/treasurePerks.ts` today —
+  design data, not mod logic, exactly like deciding which room gets
+  `mapPiece` instance #3.
+- **Consume** — whoever reads the perk and changes behavior. Genuinely
+  mod-owned, and the current code already proves the split is real without
+  anyone declaring it: `compassLevel`/`consumableDetectorLevel`/
+  `detectionLevel` are read only by core's own navigation code
+  (`DetectorPanel`, `useAssembledFloor`'s masking) — engine-level generic
+  functionality, not owned by any mod; `scribesEyeLevel` is read only by
+  puzzle mod's `TombPuzzle.tsx:58` for hieroglyph hint slots. Nobody wrote
+  that rule, consumption just naturally ended up sitting with whoever cares.
+
+```ts
+registerPerk({ id: "scribesEye", ownerMod: "puzzle", maxLevel: 3 })
+registerPerk({ id: "compass", ownerMod: "core", maxLevel: 3 })
+```
+
+A mod can register a new perk id it wants to *consume*. It can't decide
+which specific ward key grants it or at what level — that's the authored
+allocation table, same reason `mapPiece` placement isn't decided by
+whichever mod's `Distribution` slot happened to win. This isn't a mechanism
+that needs enforcing, either — the only way grant and consume drift apart
+is authoring a mismatch, same category of mistake as double-allocating a
+capped hieroglyph, and `validate.ts`'s existing
+`findWardKeyGrants`/`findWardKeyRequirements` ordering check is the model
+for how you'd catch it if it ever mattered enough to check.
+
+**Detectors — a generic core query over allocation records, not per-type
+scan functions.** Checked `useDetector.ts`: compass already does "pick a
+fragment, scan for it" (`scanFloorForFragments` walks every
+`generatedWorldConfigs` floor, diffs against `progression.hasFragment`);
+the consumable detector does something structurally different — "find
+rooms I skipped because inventory was full" (`getSkippedConsumables`). Two
+hand-written functions today, one per reward type. Both collapse into
+generic queries once currencies are registered the way this doc describes:
+
+- **Capped/allocated currencies** — a `CappedPool`'s `sites` already record
+  which room holds which specific instance, by definition. Detecting one is
+  `findUnownedInstances(currencyId, variantFilter?)`, diffing allocation
+  records against the ledger. Compass's "pick a hieroglyph" is filtering
+  fragment instances by variant; **detecting a map piece is the identical
+  query** with `currencyId: "mapPiece"`, filtered by tombId instead —
+  same function, no new mechanism, direct answer to "can a mod detect a
+  map piece": yes, for free, by registering the currency as capped.
+- **Open counters hitting a cap** (skipped consumables) — a different
+  query, `findSkippedGrants(currencyId)`, still generic, still core, since
+  it's ledger bookkeeping (where a grant was attempted and dropped), not
+  mod logic.
+- **Hidden passages** stay outside this — live grid masking while walking,
+  not a scan-and-report query, already a different mechanism above.
+
+Core owns one generic locator over whatever `CappedPool`/ledger records
+mods already register for other reasons — a mod gets detectability for
+free just by registering its currency as capped, no scan function to
+write. Which detector buttons show stays perk-gated
+(`compassLevel > 0`, from the perk-consumer model above).
+
+Live bug this surfaces, independent of any redesign:
+`SiteMapScreen.tsx` passes `availableHieroglyphs={[]}` — hardcoded empty,
+always. Compass's target-picker was never actually wired to a real list.
+The generic model fixes this near-incidentally: "available variants of the
+fragment currency the player hasn't completed" becomes a ledger query
+instead of something someone forgot to hand-wire.
+
 ## DSL changes
 
 Two closed unions already show strain from a family list that's smaller
@@ -353,13 +528,10 @@ against what's actually registered instead of hardcoding the list by hand.
 
 ## Gaps — not yet resolved
 
-- **Perks are an unmodeled third reward channel.** `applyTreasurePerk`
-  (`useProgression.ts:138-159`) grants perks via a static `TREASURE_PERKS`
-  table keyed by treasure id — entirely separate from the `TreasureReward`
-  DSL union and from the currency/ledger model above. Nothing in this doc
-  accounts for it yet. Likely needs its own registered-effect concept
-  (a perk grant mutates mod-owned state directly, isn't a spendable/summed
-  resource, doesn't fit `CurrencyMeta`).
+- ~~Perks are an unmodeled third reward channel.~~ **Resolved** — see
+  "Gates, ward paths, hidden passages, perks, detectors" above: grant
+  (authored, core) vs. consume (`registerPerk`, mod-owned) split, same
+  shape as `mapPiece` allocation vs. family placement.
 - **Determinism vs. mod set — downgraded.** World gen is fixed-seed. A new
   mod shipping does regenerate the world once, same as any other worldgen
   change today — not a live toggle players flip, so this doesn't need a
@@ -378,8 +550,17 @@ against what's actually registered instead of hardcoding the list by hand.
   Whether that's acceptable is a call to make explicitly.
 - **Save migration.** `useProgression`'s flat blob to a ledger shape is a
   save-format migration for existing players — not designed yet.
-- **Bandage/oil ownership.** Heal a core resource (health) but are
-  currently folded into trap's consumable set by naming, not by necessity.
+- ~~Bandage/oil ownership.~~ **Resolved** — health folded fully into
+  `mods/trap/` (see "Granularity"), so bandage/oil are unambiguously trap's
+  own consumables, not a separate ownership question.
+- **`detectionLevel` leaks into core rendering code.** `maskHiddenCells`
+  takes it as a directly-typed param (`useAssembledFloor.ts:48`) instead of
+  reading it through a generic perk query — small, but the same
+  `PerkState`-blob problem as trap-only perks sitting in core state.
+- **`availableHieroglyphs={[]}` is a live stub**, not a design gap —
+  `SiteMapScreen.tsx` hardcodes it empty, so compass's target-picker has
+  never worked end to end. Worth fixing regardless of this redesign; the
+  ledger-query approach above fixes it as a side effect.
 
 ## Open question
 
