@@ -15,6 +15,7 @@
     "generate-pwa-assets": "pwa-assets-generator",
     "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
+    "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
     "prepare": "husky"
   },

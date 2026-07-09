@@ -71,21 +71,15 @@ export const computeMosaicPaths = (plan: PyramidPlan[]): Map<string, number> => 
       if (Array.isArray(sd)) {
         committed += sd.filter(s => s.endReward === "mosaicPiece").length
       }
-      // Count mosaic paths from sidePaths/hiddenPaths declarations — those pyramids leave auto-pool.
-      // mosaicPathCount is set to 0 so buildSideSections skips the auto-mosaic loop;
-      // the declared hidden mosaics are built directly from constraints.
+      // Count declared mosaic paths (sidePaths/hiddenPaths with end:"mosaic") toward the
+      // budget — buildSideSections builds those directly. The pyramid still stays an
+      // auto-candidate so the remaining budget can top it up with auto surface mosaics;
+      // otherwise declaring one hidden mosaic would strand the rest of the budget.
       const allDeclared = [...(p.constraint.sidePaths ?? []), ...(p.constraint.hiddenPaths ?? [])]
-      const declaredMosaics = allDeclared.filter(e => e.end === "mosaic")
-      if (declaredMosaics.length > 0) {
-        const count = declaredMosaics.reduce(
-          (sum, e) => sum + pathCountForDensity(e.density, p.journeyId, p.pyramidIndex),
-          0
-        )
-        committed += count
-        explicitPaths.set(key, 0) // buildSideSections handles these via declaredHiddenPaths
-      } else {
-        autoCandidates.push(p)
-      }
+      committed += allDeclared
+        .filter(e => e.end === "mosaic")
+        .reduce((sum, e) => sum + pathCountForDensity(e.density, p.journeyId, p.pyramidIndex), 0)
+      autoCandidates.push(p)
     }
   }
 

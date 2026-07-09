@@ -6,14 +6,10 @@ export const expertRules: Rule[] = [
 
   tier("expert")
     .set({ consumableDensity: 0.2, keyDensity: "low", sharedKeyChance: 0.15, windyChance: 0.25, packingChance: 0.25 })
-    .sidePaths("low")
-    .settings({ pathPuzzles: 0, end: "treasure" })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
-    .sidePaths("low")
-    .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "treasure", trapped: true }),
+    .settings({ pathPuzzles: 1, end: "mosaic", trapped: true }),
 
   tomb("expert_treasure_tomb", {
     puzzleFamily: "tableau",

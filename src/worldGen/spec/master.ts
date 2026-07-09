@@ -7,7 +7,8 @@ export const masterRules: Rule[] = [
   tier("master")
     .set({
       consumableDensity: 0.25,
-      wardWings: 2,
+      wardWings: 1,
+      wardPaths: 1,
       keyDensity: "medium",
       sharedKeyChance: 0.4,
       windyChance: 0.25,
@@ -15,10 +16,8 @@ export const masterRules: Rule[] = [
     })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
-    .sidePaths("low")
-    .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
-    .hiddenPaths("medium")
-    .settings({ pathPuzzles: 1, end: "treasure", trapped: true }),
+    .hiddenPaths("low")
+    .settings({ pathPuzzles: 1, end: "mosaic", trapped: true }),
 
   tomb("master_treasure_tomb", {
     puzzleFamily: "tableau",

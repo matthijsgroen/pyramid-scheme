@@ -8,7 +8,17 @@ export type { PathPuzzlesRange } from "./types"
 export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "low" | "medium" | "dense"
 export type PathEndHint = "fragment" | "treasure" | "mosaic" | "consumable"
-export type PathEntry = { density: SideIntensity; pathPuzzles: number; end: PathEndHint; trapped?: boolean }
+export type PathEntry = {
+  density: SideIntensity
+  pathPuzzles: number
+  end: PathEndHint
+  trapped?: boolean
+  /** Lock this path behind a floor-key door. Color is drawn from the floor's keyColors rotation. */
+  gate?: "floor-key"
+  /** Chance [0-1], rolled per pyramid, that this entry emits at all. Omit = always. Use to
+   * scatter (e.g. trapped) paths across only some pyramids instead of every one. */
+  chance?: number
+}
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment"
@@ -123,6 +133,13 @@ export type PyramidConstraint = {
   /** Auto-generated ward-gated bonus floors branching off the last main floor, keyed from
    * this tier's own tomb (skipping any index reserved for tier-unlock/location-key). */
   wardWings?: number
+  /** Ward-gated side paths off the last main floor — a single gated section with one reward,
+   * not a whole bonus floor. Cheaper return-content; draws ward keys from the same pool as
+   * wardWings (allocated after them). */
+  wardPaths?: number
+  /** Trap the ward paths in this journey's earlier-half pyramids, so the return trip costs
+   * consumables. Only affects wardPaths (a floor's main path has no trap model). */
+  wardPathTrapped?: boolean
   /** Declared visible side paths — each entry adds paths of that density with the given reward. */
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
@@ -172,8 +189,10 @@ interface GlobalScopeBuilder {
   floor(n: number, c: FloorConstraint): Rule
 }
 
+export type PathSettings = Omit<PathEntry, "density">
+
 type PathSettingsBuilder = {
-  settings(c: { pathPuzzles: number; end: PathEndHint; trapped?: boolean }): ConstraintAccumulator
+  settings(c: PathSettings): ConstraintAccumulator
 }
 
 /** A Rule that also supports chaining `.sidePaths()` / `.hiddenPaths()` calls. */
@@ -211,7 +230,7 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
     constraints,
     sidePaths(density: SideIntensity): PathSettingsBuilder {
       return {
-        settings(config: { pathPuzzles: number; end: PathEndHint; trapped?: boolean }): ConstraintAccumulator {
+        settings(config: PathSettings): ConstraintAccumulator {
           if (!constraints.sidePaths) constraints.sidePaths = []
           constraints.sidePaths.push({ density, ...config })
           return acc
@@ -220,7 +239,7 @@ const makeAccumulator = (scope: RuleScope, c: PyramidConstraint): ConstraintAccu
     },
     hiddenPaths(density: SideIntensity): PathSettingsBuilder {
       return {
-        settings(config: { pathPuzzles: number; end: PathEndHint; trapped?: boolean }): ConstraintAccumulator {
+        settings(config: PathSettings): ConstraintAccumulator {
           if (!constraints.hiddenPaths) constraints.hiddenPaths = []
           constraints.hiddenPaths.push({ density, ...config })
           return acc

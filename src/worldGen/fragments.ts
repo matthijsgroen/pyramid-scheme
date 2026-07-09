@@ -183,11 +183,12 @@ export const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void 
     }
   }
 
-  // Fill remaining placeholder slots with consumables
+  // Fill every remaining slot with a consumable — both fragmentSlot placeholders and open
+  // ward-gate slots that no fragment reached. Otherwise an unclaimed ward gate renders a
+  // generic (untracked) hieroglyphs room instead of real loot.
   const rates = GLOBAL_DEFAULTS.consumableRates
   let fallbackIdx = 0
   for (const slot of available) {
-    if (!slot.isPlaceholder) continue
     const consumable = rollConsumable(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`, rates)
     slot.assign({ type: "consumable", consumable })
   }

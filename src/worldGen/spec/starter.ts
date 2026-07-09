@@ -9,13 +9,13 @@ export const starterRules: Rule[] = [
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "fragment" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "treasure" }),
+    .settings({ pathPuzzles: 1, end: "mosaic" }),
 
-  // First pyramid is the map piece entry-point for the starter tomb.
+  // First pyramid of each starter journey is that journey's map-piece entry-point.
   tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
 
-  // The very first pyramid of the whole game has no main-path puzzles at all — just the
-  // side path and the map piece. The rest of that first journey stays to a single puzzle.
+  // starter_1 — the whole game's onboarding: a single pyramid, no main-path puzzles, just
+  // the map piece and a gentle ward path into the starter tomb.
   journey("starter_1")
     .pyramid(1, { pathPuzzles: 0 })
     .floor(0, {
@@ -31,12 +31,11 @@ export const starterRules: Rule[] = [
       difficulty: "junior",
       sideSections: [sidePath({ puzzles: 1 })],
     }),
-  journey("starter_1").pyramid("2-3", { pathPuzzles: 1 }),
 
-  // Pyramid 2: same shape as pyramid 1, but 1 main-path puzzle on floor 1, the ward
-  // path steps up to expert, and the hidden path moves down to floor 2.
-  journey("starter_1")
-    .pyramid(2)
+  // starter_2 — the two follow-up curated pyramids (moved out of starter_1). One main-path
+  // puzzle each; ward path steps up expert then master, with a hidden mosaic on the deeper floor.
+  journey("starter_2")
+    .pyramid(1)
     .floor(0, {
       sideSections: [wardPath({ puzzles: 1, tier: "expert", tomb: "junior_treasure_tomb", index: 1 }), sidePath()],
     })
@@ -46,17 +45,15 @@ export const starterRules: Rule[] = [
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, trapped: true, endReward: "mosaicPiece" })],
     }),
 
-  // Pyramid 3: same shape as pyramid 2, but no hidden path, and the ward path/floor
-  // step up again to master.
-  journey("starter_1")
-    .pyramid(3)
+  journey("starter_2")
+    .pyramid(2)
     .floor(0, {
       sideSections: [wardPath({ puzzles: 1, tier: "master", tomb: "expert_treasure_tomb", index: 2 }), sidePath()],
     })
     .floor(1, {
       pathPuzzles: 3,
       difficulty: "master",
-      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, trapped: true })],
+      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, trapped: true, endReward: "mosaicPiece" })],
     }),
 
   tomb("starter_treasure_tomb", {

@@ -131,23 +131,38 @@ export const buildSideSections = <TExtra extends string = never>(
     })
   }
 
-  // Declared sidePaths / hiddenPaths from DSL
-  let consumableIdx = 0
-  for (const entry of declaredSidePaths ?? []) {
+  // Per-pyramid emit count for a declared entry — its density count, or 0 if it declares a
+  // `chance` and this pyramid's roll misses (scatters e.g. trapped paths across some pyramids).
+  const emitCount = (entry: PathEntry, tag: string): number => {
     const count = pathCountForDensity(entry.density, journeyId, pyramidIndex)
+    if (entry.chance === undefined) return count
+    return mulberry32(hashStr(`${journeyId}:${pyramidIndex}:${tag}`))() < entry.chance ? count : 0
+  }
+
+  // Declared sidePaths / hiddenPaths from DSL. Visible sidePaths may opt into a floor-key
+  // gate; colors rotate through the floor's keyColors count, continuing the auto-mosaic run.
+  let consumableIdx = 0
+  let gatedColorIdx = gatedCount
+  ;(declaredSidePaths ?? []).forEach((entry, ei) => {
+    const count = emitCount(entry, `sidepath:${ei}`)
     for (let j = 0; j < count; j++) {
       const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
+      const gate =
+        entry.gate === "floor-key"
+          ? { type: "floor-key" as const, color: ALL_KEY_COLORS[gatedColorIdx++ % colorCount] }
+          : undefined
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,
         end: "treasure",
         ...(endReward ? { endReward } : {}),
+        ...(gate ? { gate } : {}),
         ...(entry.trapped ? { trapped: true } : {}),
       })
     }
-  }
-  for (const entry of declaredHiddenPaths ?? []) {
-    const count = pathCountForDensity(entry.density, journeyId, pyramidIndex)
+  })
+  ;(declaredHiddenPaths ?? []).forEach((entry, ei) => {
+    const count = emitCount(entry, `hiddenpath:${ei}`)
     for (let j = 0; j < count; j++) {
       const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
       sections.push({
@@ -159,7 +174,7 @@ export const buildSideSections = <TExtra extends string = never>(
         ...(entry.trapped ? { trapped: true } : {}),
       })
     }
-  }
+  })
 
   return sections
 }
