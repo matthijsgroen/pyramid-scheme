@@ -9,7 +9,6 @@ type Props = {
   dismissLabel: string
   onDismiss: () => void
   headerExtra?: ReactNode
-  aboveScroll?: ReactNode
   onBodyScroll?: (scrollTop: number, maxScroll: number) => void
   children: ReactNode
 }
@@ -22,7 +21,6 @@ export const ShopPanel: FC<Props> = ({
   dismissLabel,
   onDismiss,
   headerExtra,
-  aboveScroll,
   onBodyScroll,
   children,
 }) => {
@@ -32,16 +30,15 @@ export const ShopPanel: FC<Props> = ({
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/70" onClick={onDismiss} />
       <div className="relative z-10 mx-4 flex max-h-[90vh] w-full max-w-sm flex-col rounded-2xl border border-amber-700/50 bg-stone-900 p-5 shadow-2xl">
-        <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="mb-4 flex shrink-0 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2">
             {headerExtra}
             <h2 className="truncate font-pyramid text-lg font-bold text-amber-100">{title}</h2>
           </div>
           <ShopBalance amount={balance} label={balanceLabel} />
         </div>
-        {aboveScroll}
         <div
-          className="flex flex-col gap-2 overflow-y-auto"
+          className="flex min-h-0 flex-col gap-2 overflow-y-auto"
           onScroll={
             onBodyScroll
               ? e =>
