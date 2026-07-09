@@ -17,6 +17,7 @@ import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { FezContext } from "@/app/fez/context"
+import { DevelopContext } from "@/contexts/DevelopMode"
 import { getInventoryItemById } from "@/data/inventory"
 import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
 import { getSellableById, sellValueForItemId } from "@/data/sellables"
@@ -28,6 +29,7 @@ import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { FezShop } from "@/ui/organisms/FezShop"
 // Side-effect: registers puzzle plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
@@ -76,6 +78,7 @@ const rareItemDisplay = (
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
   const fez = use(FezContext)
+  const { isDevelopMode } = use(DevelopContext)
   const journeys = useJourneys()
   const progression = useProgression()
   const inventory = useInventory()
@@ -173,12 +176,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   )
 
   const openShop = useCallback(
-    (edgeId: string, reward: TreasureReward, price: number) => {
-      setShopStock({
-        bandage: CONSUMABLE_STOCK_PER_VISIT,
-        oil: CONSUMABLE_STOCK_PER_VISIT,
-        trapTool: CONSUMABLE_STOCK_PER_VISIT,
-      })
+    (edgeId: string, reward: TreasureReward, price: number, resetStock: boolean) => {
+      if (resetStock) {
+        setShopStock({
+          bandage: CONSUMABLE_STOCK_PER_VISIT,
+          oil: CONSUMABLE_STOCK_PER_VISIT,
+          trapTool: CONSUMABLE_STOCK_PER_VISIT,
+        })
+      }
       const purchased = journeys.hasPurchasedShop(journeyId, edgeId)
       fez.showConversation("shopArrival", () => setActiveShop({ edgeId, reward, price, purchased }))
     },
@@ -268,12 +273,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       // Completed cells: just reposition the player, unless it's a chest we couldn't fit before —
       // offer it again, showing whether there's room for it now or still not.
       if (cell.state === "completed") {
+        // Stock only refreshes on a genuine re-entry (the player was elsewhere before this
+        // click) — otherwise dismissing the shop and clicking the same room again while still
+        // standing in it would refill consumable stock for free, indefinitely.
+        const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         journeys.updatePosition(journeyId, edgeId)
         if (cell.type === "room" && cell.reward && cell.shopPrice != null) {
           const reward = cell.reward
           const price = cell.shopPrice
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-            openShop(edgeId, reward, price)
+            openShop(edgeId, reward, price, !alreadyStandingHere)
           )
           return
         }
@@ -357,8 +366,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         if (cell.reward && cell.shopPrice != null) {
           const reward = cell.reward
           const price = cell.shopPrice
+          // Reaching a shop room via the "reachable" state always means arriving fresh —
+          // the player can't already be standing on a cell that isn't yet "completed".
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-            openShop(edgeId, reward, price)
+            openShop(edgeId, reward, price, true)
           )
         } else if (cell.reward) {
           const reward = cell.reward
@@ -436,6 +447,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
           <ConsumableBar consumables={progression.consumables} />
           <ShopBalance amount={progression.money} label={t("money.label")} />
+          {isDevelopMode && <DeveloperButton onClick={() => progression.addMoney(1000)} label="+1000 Coins" />}
         </div>
       </SiteHudBar>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
