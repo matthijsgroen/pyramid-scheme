@@ -307,6 +307,71 @@ Collection produces.
 Tell that still holds either way: turn trap off, fragments you already own
 should still show, because neither screen depends on trap at all.
 
+## UI wiring
+
+**Mechanic mods have exactly one entry point into the app: `roomDispatch`.**
+Checked shop specifically against this — per `SHOP_PLAN.md` it's "hosted
+by Fez on an ungated sidepath off its tomb," which is a `sideAttachment`
+room, dispatched exactly like any encounter. Shop needs no slot in
+`Base.tsx`'s navigation at all. Nothing about trap or puzzle needs one
+either. A mechanic mod's UI *is* the room it's dispatched into — nothing
+else to wire.
+
+**`Base.tsx` isn't fully fixed — progression mods can register a
+persistent page.** It's a hardcoded 3-page swipe deck today (`Travel`,
+`CollectionPage`, `MosaicPage`), but `MosaicPage.tsx` was already a mod's
+own page before anyone labeled it that way (see "Collection is core;
+Mosaic is a mod's own screen" above). Rule: core pages (`Travel` — engine
+chrome; `Collection` — generic cross-mod aggregator) plus any progression
+mod whose content is meant to be *browsed* rather than *encountered*.
+Mechanic mods (trap/puzzle/shop) never get one — their interaction is
+always a room, never a page.
+
+**HUD stays core-composed, driven off metadata, not a widget registry.**
+`SiteMapScreen.tsx`'s `SiteHudBar` hardcodes three things today:
+`DetectorPanel` (core perks), `HealthDisplay`, `ConsumableBar` (both
+trap's, per "Granularity"). Considered a `registerHudWidget` mechanism for
+mods to plug into; rejected for the same reason `CurrencyMeta` beat a
+closed reward-type union — three known things doesn't justify a plugin
+slot. Cleaner: `CurrencyMeta` gets a `showInHud: boolean`, and the bar
+loops over registered currencies rendering anything flagged, the same
+generic-renderer pattern already used for `Collection.tsx`. No registry,
+no new mechanism, reuses data that already exists.
+
+**i18n scoped per mod.** Agreed, logical extension of the physical-folder
+separation this whole doc is chasing — one shared `useTranslation("common")`
+namespace today, each mod should own its own. Not detailed beyond the
+decision; the mechanics of splitting `public/locales/*/common.json` per
+mod folder are implementation work, not a design question.
+
+**Detector target selection: from the SiteMap HUD, or from Collection.**
+`compassResults` (`useDetector.ts`) is a pure, stateless query over
+`generatedWorldConfigs` + the ledger — it doesn't structurally need to be
+"inside a site" at all, that's just where the current UI happens to live.
+Two ways to wire "pick an unfinished hieroglyph, activate the detector":
+
+1. **Inline on Collection.** Tapping an unfinished tile calls
+   `findUnownedInstances("fragment", hieroglyphId)` directly and shows
+   results in a popover under the tile. No detector "mode," no cross-screen
+   state, no navigation — the same core query the HUD panel would use,
+   reused from a second entry point.
+2. **Jump into a site with the target pre-armed.** Lift a
+   `pendingDetectorTarget` to app-root state, route into an expedition,
+   seed `useDetector`'s initial `compassTarget` from it.
+
+At the time this was discussed, (2) had a precedent to copy —
+`pendingHieroglyphSearch` did the same lift-and-route for a coarser,
+tier-level version. That precedent is now gone: it predated PR #72's
+pyramid-interior redesign and was removed this session (see commit
+`b4ded7c`) for solving a problem the walkable interiors already solve
+better. So (2) is no longer "reuse an existing pattern," it's "build new
+cross-screen state infrastructure." (1) needs zero new plumbing and reuses
+a query this doc already specified — the better default unless there's a
+concrete reason to want the "jump there live" experience over a location
+list.
+
+Neither option is decided; this is where the choice stands.
+
 ## Toggling is a diagnostic, not a production requirement
 
 Real intent, clarified: trap/puzzle/shop are never actually disabled for
@@ -542,12 +607,12 @@ against what's actually registered instead of hardcoding the list by hand.
   can eyeball. Spread across mod-owned `Distribution` weights, tuning "make
   wizard tier 30% trap" means checking that trap's and puzzle's weights
   still sum sensibly across files instead of reading one table.
-- **Snapshot tests.** `validateWorldSpec.ts` and related specs pin exact
-  counts (85 pyramids, 40 treasures, etc). "Roughly the same world" needs to
-  be checked against these, not assumed from the shape being equivalent —
-  a `Distribution` resolver can produce a different *valid* room order than
-  today's straight-line loop on the same seed, same stats, different map.
-  Whether that's acceptable is a call to make explicitly.
+- ~~Snapshot tests.~~ **Resolved.** Design intent is expressed in counts,
+  not exact placement — a sidepath landing after puzzle 2 vs. puzzle 3
+  is equally valid as long as it exists where the design calls for one.
+  `validateWorldSpec.ts` already checks counts, not layouts, so it already
+  checks the right thing — a `Distribution` resolver producing a different
+  *valid* room order on the same seed isn't a regression to guard against.
 - **Save migration.** `useProgression`'s flat blob to a ledger shape is a
   save-format migration for existing players — not designed yet.
 - ~~Bandage/oil ownership.~~ **Resolved** — health folded fully into
