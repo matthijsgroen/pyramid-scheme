@@ -1,8 +1,11 @@
-import type { FC, ReactNode } from "react"
+import { useEffect, useState, type FC, type ReactNode } from "react"
 import fezCocktail from "@/assets/cocktail-fez-250.png"
 import { ShopPanel } from "@/ui/molecules/ShopPanel"
 import { ShopItemCard } from "@/ui/atoms/ShopItemCard"
 import { SellItemCard } from "@/ui/atoms/SellItemCard"
+
+// ponytail: scroll distance (px) over which the portrait fully shrinks into the header thumbnail
+const SHRINK_DISTANCE = 72
 
 export type ShopBuyItem = {
   id: string
@@ -62,76 +65,100 @@ export const FezShop: FC<Props> = ({
   onBuy,
   onSell,
   onDismiss,
-}) => (
-  <ShopPanel
-    isOpen={isOpen}
-    title={title}
-    balance={balance}
-    balanceLabel={balanceLabel}
-    dismissLabel={dismissLabel}
-    onDismiss={onDismiss}
-  >
-    <div className="mb-2 flex justify-center">
-      <img src={fezCocktail} alt="" className="h-24 w-auto" />
-    </div>
+}) => {
+  const [scrollProgress, setScrollProgress] = useState(0)
 
-    {rareItems.length > 0 && (
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{rareItemsLabel}</p>
-        {rareItems.map(item => (
-          <ShopItemCard
-            key={item.id}
-            itemName={item.itemName}
-            itemDescription={item.itemDescription}
-            icon={item.icon}
-            price={item.price}
-            affordable={item.affordable}
-            soldOut={item.soldOut}
-            featured={item.featured}
-            buyLabel={buyLabel}
-            soldOutLabel={soldOutLabel}
-            onBuy={() => onBuy(item.id)}
-          />
-        ))}
-      </div>
-    )}
+  useEffect(() => {
+    if (!isOpen) setScrollProgress(0)
+  }, [isOpen])
 
-    {consumables.length > 0 && (
-      <div className="mt-4 flex flex-col gap-2">
-        <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{suppliesLabel}</p>
-        {consumables.map(item => (
-          <ShopItemCard
-            key={item.id}
-            itemName={item.itemName}
-            itemDescription={item.itemDescription}
-            icon={item.icon}
-            price={item.price}
-            affordable={item.affordable}
-            soldOut={item.soldOut}
-            buyLabel={buyLabel}
-            soldOutLabel={soldOutLabel}
-            onBuy={() => onBuy(item.id)}
-          />
-        ))}
+  return (
+    <ShopPanel
+      isOpen={isOpen}
+      title={title}
+      balance={balance}
+      balanceLabel={balanceLabel}
+      dismissLabel={dismissLabel}
+      onDismiss={onDismiss}
+      onBodyScroll={scrollTop => setScrollProgress(Math.min(scrollTop / SHRINK_DISTANCE, 1))}
+      headerExtra={
+        <img
+          src={fezCocktail}
+          alt=""
+          className="shrink-0 rounded-full transition-all duration-150"
+          style={{ width: scrollProgress * 40, height: scrollProgress * 40, opacity: scrollProgress }}
+        />
+      }
+    >
+      <div
+        className="flex shrink-0 justify-center overflow-hidden transition-all duration-150"
+        style={{
+          height: 176 * (1 - scrollProgress),
+          opacity: 1 - scrollProgress,
+          marginBottom: 8 * (1 - scrollProgress),
+        }}
+      >
+        <img src={fezCocktail} alt="" className="h-44 w-auto" />
       </div>
-    )}
 
-    {sellables.length > 0 && (
-      <div className="mt-4 flex flex-col gap-2">
-        <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{sellSectionLabel}</p>
-        {sellables.map(item => (
-          <SellItemCard
-            key={item.id}
-            itemName={item.itemName}
-            itemDescription={item.itemDescription}
-            icon={item.icon}
-            sellValue={item.sellValue}
-            ownedCount={item.ownedCount}
-            sellLabel={sellLabel}
-            onSell={() => onSell(item.id)}
-          />
-        ))}
-      </div>
-    )}
-  </ShopPanel>
-)
+      {rareItems.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{rareItemsLabel}</p>
+          {rareItems.map(item => (
+            <ShopItemCard
+              key={item.id}
+              itemName={item.itemName}
+              itemDescription={item.itemDescription}
+              icon={item.icon}
+              price={item.price}
+              affordable={item.affordable}
+              soldOut={item.soldOut}
+              featured={item.featured}
+              buyLabel={buyLabel}
+              soldOutLabel={soldOutLabel}
+              onBuy={() => onBuy(item.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {consumables.length > 0 && (
+        <div className="mt-4 flex flex-col gap-2">
+          <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{suppliesLabel}</p>
+          {consumables.map(item => (
+            <ShopItemCard
+              key={item.id}
+              itemName={item.itemName}
+              itemDescription={item.itemDescription}
+              icon={item.icon}
+              price={item.price}
+              affordable={item.affordable}
+              soldOut={item.soldOut}
+              buyLabel={buyLabel}
+              soldOutLabel={soldOutLabel}
+              onBuy={() => onBuy(item.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {sellables.length > 0 && (
+        <div className="mt-4 flex flex-col gap-2">
+          <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{sellSectionLabel}</p>
+          {sellables.map(item => (
+            <SellItemCard
+              key={item.id}
+              itemName={item.itemName}
+              itemDescription={item.itemDescription}
+              icon={item.icon}
+              sellValue={item.sellValue}
+              ownedCount={item.ownedCount}
+              sellLabel={sellLabel}
+              onSell={() => onSell(item.id)}
+            />
+          ))}
+        </div>
+      )}
+    </ShopPanel>
+  )
+}

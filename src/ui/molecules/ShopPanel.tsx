@@ -8,21 +8,41 @@ type Props = {
   balanceLabel: string
   dismissLabel: string
   onDismiss: () => void
+  headerExtra?: ReactNode
+  onBodyScroll?: (scrollTop: number) => void
   children: ReactNode
 }
 
-export const ShopPanel: FC<Props> = ({ isOpen, title, balance, balanceLabel, dismissLabel, onDismiss, children }) => {
+export const ShopPanel: FC<Props> = ({
+  isOpen,
+  title,
+  balance,
+  balanceLabel,
+  dismissLabel,
+  onDismiss,
+  headerExtra,
+  onBodyScroll,
+  children,
+}) => {
   if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/70" onClick={onDismiss} />
       <div className="relative z-10 mx-4 flex max-h-[90vh] w-full max-w-sm flex-col rounded-2xl border border-amber-700/50 bg-stone-900 p-5 shadow-2xl">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-pyramid text-lg font-bold text-amber-100">{title}</h2>
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            {headerExtra}
+            <h2 className="truncate font-pyramid text-lg font-bold text-amber-100">{title}</h2>
+          </div>
           <ShopBalance amount={balance} label={balanceLabel} />
         </div>
-        <div className="flex flex-col gap-2 overflow-y-auto">{children}</div>
+        <div
+          className="flex flex-col gap-2 overflow-y-auto"
+          onScroll={onBodyScroll ? e => onBodyScroll(e.currentTarget.scrollTop) : undefined}
+        >
+          {children}
+        </div>
         <button
           onClick={onDismiss}
           className="mt-4 w-full shrink-0 rounded-lg bg-stone-700 py-2 text-sm font-medium text-stone-200 hover:bg-stone-600"
