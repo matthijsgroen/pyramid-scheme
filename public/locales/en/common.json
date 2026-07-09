@@ -118,6 +118,9 @@
     "expeditionReward": "Extra reward for completing the expedition",
     "clickToContinue": "Click anywhere to continue"
   },
+  "money": {
+    "label": "Coins"
+  },
   "level": {
     "completed": "Level Completed!"
   },

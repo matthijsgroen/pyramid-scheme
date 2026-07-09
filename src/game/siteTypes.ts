@@ -9,6 +9,8 @@ export type TreasureReward =
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
   | { type: "fragmentSlot" }
+  | { type: "money"; amount: number }
+  | { type: "sellable"; itemId: string }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"

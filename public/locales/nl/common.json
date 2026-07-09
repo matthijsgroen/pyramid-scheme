@@ -118,6 +118,9 @@
     "expeditionReward": "Extra beloning voor het voltooien van de expeditie",
     "clickToContinue": "Klik ergens om door te gaan"
   },
+  "money": {
+    "label": "Munten"
+  },
   "level": {
     "completed": "Niveau Voltooid!"
   },
