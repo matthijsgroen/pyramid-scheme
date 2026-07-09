@@ -6,7 +6,6 @@ export const masterRules: Rule[] = [
 
   tier("master")
     .set({
-      consumableDensity: 0.25,
       wardWings: 1,
       wardPaths: 1,
       keyDensity: "medium",

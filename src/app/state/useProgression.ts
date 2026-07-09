@@ -100,6 +100,7 @@ export type ProgressionAPI = {
   healToFull: () => void
   consumables: ConsumableInventory
   consumableCarryCap: number
+  isConsumablePackFull: () => boolean
   addConsumable: (type: ConsumableType) => boolean // false if at cap
   useConsumable: (type: ConsumableType) => void
   perks: PerkState
@@ -218,6 +219,11 @@ export const useProgression = (): ProgressionAPI => {
       healToFull: () => setState(prev => ({ ...prev, currentHealth: prev.maxHealth ?? 6 })),
       consumables: state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 },
       consumableCarryCap: consumableCarryCap(state.perks?.packMuleLevel ?? 0),
+      isConsumablePackFull: () => {
+        const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
+        const cap = consumableCarryCap(state.perks?.packMuleLevel ?? 0)
+        return inv.bandage + inv.oil + inv.trapTool >= cap
+      },
       addConsumable: type => {
         const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
         const cap = consumableCarryCap(state.perks?.packMuleLevel ?? 0)

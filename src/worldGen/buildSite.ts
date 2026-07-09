@@ -1,26 +1,11 @@
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS, TREASURE_PERKS } from "../data/treasurePerks"
-import { chestEveryFor, chestCountFor } from "./data"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { mulberry32 } from "../game/random"
-import { hashStr, rollConsumable } from "./rewards"
+import { hashStr } from "./rewards"
+import { assignPuzzleRewards } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import type { PyramidConstraint, RewardSpec } from "./dsl"
-
-// ── Chest rewards ─────────────────────────────────────────────────────────────
-
-export const buildChestRewards = (
-  journeyId: string,
-  slotOffset: number,
-  pathPuzzles: number,
-  rates: { bandage: number; oil: number; trapTool: number } = GLOBAL_DEFAULTS.consumableRates
-): TreasureReward[] => {
-  const count = chestCountFor(pathPuzzles)
-  return Array.from({ length: count }, (_, i) => ({
-    type: "consumable" as const,
-    consumable: rollConsumable(`${journeyId}:consumable:${slotOffset + i}`, rates),
-  }))
-}
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -95,16 +80,13 @@ export const freeWardIndices = (tombId: string, count: number): number[] => {
 
 export type BuildFloorOptions = {
   pathPuzzles: number
-  chestEvery: number
   difficulty: Difficulty
   sideSections: SideSection[]
   exitOrStaircase?: FloorConfig["exitOrStaircase"]
   entrance?: FloorConfig["entrance"]
   mainEndReward?: TreasureReward
-  chestRewards?: TreasureReward[]
   puzzleFamily?: FloorConfig["puzzleFamily"]
   lastMainPuzzleFamily?: FloorConfig["lastMainPuzzleFamily"]
-  consumableDensity?: number
   corridorStraightness?: number
   packing?: number
 }
@@ -113,17 +95,14 @@ export type BuildFloorOptions = {
 // plain exiting floor with no rewards; callers layer on what their site actually has.
 export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   pathPuzzles: opts.pathPuzzles,
-  chestEvery: opts.chestEvery,
   difficulty: opts.difficulty,
   end: "treasure",
   exitOrStaircase: opts.exitOrStaircase ?? "exit",
   sideSections: opts.sideSections,
   ...(opts.entrance ? { entrance: opts.entrance } : {}),
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
-  ...(opts.chestRewards?.length ? { chestRewards: opts.chestRewards } : {}),
   ...(opts.puzzleFamily ? { puzzleFamily: opts.puzzleFamily } : {}),
   ...(opts.lastMainPuzzleFamily ? { lastMainPuzzleFamily: opts.lastMainPuzzleFamily } : {}),
-  ...(opts.consumableDensity !== undefined ? { consumableDensity: opts.consumableDensity } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
 })
@@ -153,17 +132,18 @@ export type BuildSiteContext = {
   hasWardGate: boolean
   nextTier: string | null
   mosaicPathCount: number
-  chestOffset: number
   resolveReward: ResolveReward
   resolveMainEndReward: (spec: RewardSpec) => TreasureReward
 }
 
 // Builds one pyramid's floors (the 3 floor-shape branches: authored floors[], auto
-// multi-floor mainFloors+wardWings, or a single floor) and the chest-slot offset consumed.
-export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chestOffset: number } => {
+// multi-floor mainFloors+wardWings, or a single floor), then assigns puzzle-solve
+// rewards across the whole result (must run after ward wings/paths are appended, so
+// their puzzles are eligible too — see the auto multi-floor branch below).
+export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const { hasMapPieceBranch, hasWardGate, nextTier, mosaicPathCount, resolveMainEndReward } = ctx
-  let chestOffset = ctx.chestOffset
+  const rates = constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
     ? resolveMainEndReward(constraint.mainEndReward)
@@ -185,18 +165,14 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
         journeyId,
         constraintSections: floorSections,
       })
-      const floorChests = buildChestRewards(journeyId, chestOffset, floorPP, constraint.consumableRates)
-      chestOffset += chestCountFor(floorPP)
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,
-          chestEvery: chestEveryFor(floorPP),
           difficulty: floorDiff,
           sideSections: floorSideSections,
           mainEndReward: isLast ? mainEndReward : undefined,
-          chestRewards: floorChests,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
         })
@@ -209,7 +185,8 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
         floorConfigs[fi + 1].entrance = { stairId: stairSection.end.stairId }
       }
     }
-    return { floors: floorConfigs, chestOffset }
+    assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
+    return { floors: floorConfigs }
   }
 
   if (
@@ -228,7 +205,14 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
 
     for (let fi = 0; fi < mainFloors; fi++) {
       if (fi < mainFloors - 1) {
-        floorConfigs.push(buildFloor({ pathPuzzles: pp, chestEvery: 0, difficulty, sideSections: [] }))
+        // Non-last main floor (wizard's mainFloors:2 today): give it a real mainEndReward
+        // (routed through the same fragmentSlot/assignFragments budget pipeline as every
+        // other unset reward) instead of leaving it unset — an unset mainEndReward falls
+        // back to a free, uncounted mosaicPiece at assembly time (siteAssembler.ts), which
+        // is exactly the bug SHOP_PLAN.md's "World reshape" fixes.
+        floorConfigs.push(
+          buildFloor({ pathPuzzles: pp, difficulty, sideSections: [], mainEndReward: { type: "fragmentSlot" } })
+        )
         continue
       }
       const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
@@ -249,17 +233,12 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
-      const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
-      chestOffset += chestCountFor(pp)
       floorConfigs.push(
         buildFloor({
           pathPuzzles: pp,
-          chestEvery: chestEveryFor(pp),
           difficulty,
           sideSections,
           mainEndReward,
-          chestRewards,
-          consumableDensity: constraint.consumableDensity,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
         })
@@ -292,7 +271,6 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
         floorConfigs.push(
           buildFloor({
             pathPuzzles: pp,
-            chestEvery: chestEveryFor(pp),
             difficulty,
             sideSections: [],
             entrance: { stairId: wingStairId },
@@ -318,7 +296,8 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
       ]
     }
 
-    return { floors: floorConfigs, chestOffset }
+    assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
+    return { floors: floorConfigs }
   }
 
   const constraintSections = Array.isArray(constraint.sideSections) ? constraint.sideSections : undefined
@@ -339,19 +318,15 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[]; chest
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })
-  const chestRewards = buildChestRewards(journeyId, chestOffset, pp, constraint.consumableRates)
-  chestOffset += chestCountFor(pp)
   const floor = buildFloor({
     pathPuzzles: pp,
-    chestEvery: chestEveryFor(pp),
     difficulty,
     sideSections,
     mainEndReward,
-    chestRewards,
-    consumableDensity: constraint.consumableDensity,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
   })
 
-  return { floors: [floor], chestOffset }
+  assignPuzzleRewards(`${journeyId}:${i}`, [floor], rates)
+  return { floors: [floor] }
 }

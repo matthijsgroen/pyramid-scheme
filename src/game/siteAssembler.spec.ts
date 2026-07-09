@@ -69,11 +69,14 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("places goal (mosaicPiece) somewhere on the grid", () => {
+  it("goal room falls back to the grant-nothing placeholder, not a free mosaicPiece, when mainEndReward is unset", () => {
+    // Regression guard: an unset mainEndReward used to fall back to `{type:"mosaicPiece"}` —
+    // a free, uncounted reward validate.ts's 298-budget guard can never see (it only reads
+    // stored config, never this runtime fallback). See SHOP_PLAN.md "World reshape".
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const goal = findRoom(result.grid, c => c.reward?.type === "mosaicPiece")
-    expect(goal).not.toBeNull()
+    const goal = findRoom(result.grid, c => c.roomType === "treasure")
+    expect(goal?.cell.reward).toEqual({ type: "hieroglyphs" })
   })
 
   it("has an entrance node on the grid edge", () => {
@@ -132,7 +135,6 @@ describe(assembleFloor, () => {
     const distanceFor = (sideSections: FloorConfig["sideSections"]) => {
       const config: FloorConfig = {
         pathPuzzles: 4,
-        chestEvery: 2,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -159,7 +161,6 @@ describe(assembleFloor, () => {
     const chainSizeFor = (packing: number) => {
       const config: FloorConfig = {
         pathPuzzles: 4,
-        chestEvery: 2,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -410,25 +411,24 @@ describe(assembleFloor, () => {
     }
   })
 
-  it("chestEvery: places hieroglyphs chests between puzzles on the main path", () => {
+  it("puzzleRewards: attaches config.puzzleRewards[k] onto the k-th main-path puzzle room, in order", () => {
     const config: FloorConfig = {
       pathPuzzles: 4,
-      chestEvery: 2,
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [],
+      puzzleRewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      const hieroglyphChests = result.grid.cells
-        .flat()
-        .filter(c => c.type === "room" && c.roomType === "treasure" && (c as RoomCell).reward?.type === "hieroglyphs")
-      // 4 puzzles, chestEvery 2 → at least 2 chests (after puzzle 2 and after puzzle 4)
-      expect(hieroglyphChests.length).toBeGreaterThanOrEqual(2)
-      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
-      expect(puzzles.length).toBe(4)
+      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle") as RoomCell[]
+      expect(puzzles).toHaveLength(4)
+      const rewards = puzzles.map(p => p.reward?.type)
+      expect(rewards).toContain("money")
+      expect(rewards).toContain("consumable")
+      expect(rewards.filter(r => r === undefined)).toHaveLength(2)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
   })

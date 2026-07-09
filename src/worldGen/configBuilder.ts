@@ -1,7 +1,7 @@
 import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, HIEROGLYPH_REQUIRED, chestCountFor, chestEveryFor } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
-import { resolvePyramidConstraintWithProvenance, describeScope } from "./constraintResolver"
+import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
 import { worldSpec } from "./worldSpec"
 import type {
@@ -15,11 +15,13 @@ import type {
 } from "./dsl"
 import { hintToReward, specToReward } from "./rewards"
 import { buildSideSections } from "./sideSections"
-import { buildChestRewards, buildFloor, buildSite, wireStaircases } from "./buildSite"
+import { buildFloor, buildSite, wireStaircases } from "./buildSite"
+import { assignPuzzleRewards } from "./puzzleRewards"
+import { GLOBAL_DEFAULTS } from "./spec/global"
 import { computeMosaicPaths } from "./mosaics"
 import { assignFragments } from "./fragments"
 import { validateDiscovery, validateRewardCounts } from "./validate"
-import { PYRAMID_CAPABILITIES, TOMB_CAPABILITIES } from "./capabilities"
+import { PYRAMID_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -87,60 +89,6 @@ const buildPlan = (): PyramidPlan[] =>
     })
   )
 
-// ── Phase 2: Assert chest capacity for fragment coverage ──────────────────────
-
-const TOTAL_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((sum, n) => sum + n, 0)
-
-// Tombs' own chest capacity (fixed floor pathPuzzles, mirrors buildTombConfigs) — counts
-// toward the same fragment-coverage budget pyramids are checked against below.
-const TOMB_CHEST_CAPACITY = TOMB_CAPABILITIES.placeChests
-  ? TOMB_JOURNEYS.reduce((sum, tomb) => {
-      const hasCroc = tomb.tier !== "starter"
-      return (
-        sum +
-        Array.from({ length: tomb.levelCount }, (_, i) =>
-          chestCountFor(i === tomb.levelCount - 1 && hasCroc ? 2 : 1)
-        ).reduce((a, b) => a + b, 0)
-      )
-    }, 0)
-  : 0
-
-// Exported for testing. Throws if a pyramid with an explicit pathPuzzles constraint is too
-// small; silently bumps unconstrained pyramids (those with no provenance on pathPuzzles).
-export const assertChestCapacity = (plan: PyramidPlan[]): PyramidPlan[] => {
-  const totalSlots = (p: PyramidPlan[]) => p.reduce((s, e) => s + chestCountFor(e.pathPuzzles), 0) + TOMB_CHEST_CAPACITY
-  if (totalSlots(plan) >= TOTAL_FRAGMENTS) return plan
-
-  const mutable = plan.map(p => ({ ...p }))
-
-  while (totalSlots(mutable) < TOTAL_FRAGMENTS) {
-    // Bump the pyramid that gains the most chests per +1 PP (ties broken by lowest PP)
-    mutable.sort(
-      (a, b) =>
-        chestCountFor(a.pathPuzzles + 1) -
-          chestCountFor(a.pathPuzzles) -
-          (chestCountFor(b.pathPuzzles + 1) - chestCountFor(b.pathPuzzles)) ||
-        a.pathPuzzles - b.pathPuzzles ||
-        // prefer unconstrained (no provenance) — keep explicit constraints at front, auto-correct at back
-        (b.provenance.pathPuzzles ? 1 : 0) - (a.provenance.pathPuzzles ? 1 : 0)
-    )
-    const target = mutable[mutable.length - 1]
-    if (target.provenance.pathPuzzles) {
-      throw new Error(
-        `[worldSpec] Not enough chest slots for all hieroglyph fragments.\n` +
-          `  Pyramid journey='${target.journeyId}' index=${target.pyramidIndex + 1} has pathPuzzles=${target.pathPuzzles}\n` +
-          `  explicitly set by ${describeScope(target.provenance.pathPuzzles)} — cannot auto-correct.\n` +
-          `  Increase pathPuzzles in that rule or remove it to allow auto-correction.`
-      )
-    }
-    target.pathPuzzles++
-  }
-
-  const expanded = mutable.filter((p, i) => p.pathPuzzles !== plan[i].pathPuzzles).length
-  if (expanded > 0) console.log(`  ⚙ Auto-corrected: expanded ${expanded} unconstrained pyramid(s) for chest coverage`)
-  return mutable
-}
-
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 
 const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => {
@@ -161,13 +109,12 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
     const mapPiecePyramid = Math.floor(levelCount / 2)
 
     const pyramidConfigs: SiteConfig[] = []
-    let chestOffset = 0
 
     for (const p of pyramids) {
       const { pyramidIndex: i, pathPuzzles: pp, constraint } = p
       const difficulty: Difficulty = constraint.difficulty ?? "expert"
 
-      const { floors, chestOffset: nextChestOffset } = buildSite({
+      const { floors } = buildSite({
         journeyId,
         tier,
         pyramidIndex: i,
@@ -179,11 +126,9 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
         mosaicPathCount: PYRAMID_CAPABILITIES.emitMosaics ? (mosaicPaths.get(`${journeyId}:${i}`) ?? 0) : 0,
-        chestOffset,
         resolveReward: spec => specToReward(spec, tier),
         resolveMainEndReward: spec => specToReward(spec, tier),
       })
-      chestOffset = nextChestOffset
       pyramidConfigs.push(floors)
     }
 
@@ -211,7 +156,6 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const levelCount = constraint.levelCount ?? tomb.levelCount
     const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
     let perkIndex = 0
-    let chestOffset = 0
 
     const resolveTombReward = (reward: RewardSpec | TombRewardHint | undefined): TreasureReward | undefined => {
       if (reward === "tombTreasure") {
@@ -249,15 +193,9 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       const packing = authored?.packing ?? constraint.packing
 
       const pathPuzzles = isLast && hasCroc ? 2 : 1
-      const chestRewards = TOMB_CAPABILITIES.placeChests
-        ? buildChestRewards(tomb.id, chestOffset, pathPuzzles, constraint.consumableRates)
-        : undefined
-      if (TOMB_CAPABILITIES.placeChests) chestOffset += chestCountFor(pathPuzzles)
 
       return buildFloor({
         pathPuzzles,
-        chestEvery: TOMB_CAPABILITIES.placeChests ? chestEveryFor(pathPuzzles) : 0,
-        chestRewards,
         difficulty,
         sideSections,
         puzzleFamily,
@@ -269,6 +207,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     })
 
     wireStaircases(floors, fi => `${tomb.id}:floor${fi}`)
+    assignPuzzleRewards(tomb.id, floors, constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates)
     configs[tomb.id] = [floors]
   }
   return configs

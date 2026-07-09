@@ -2,9 +2,10 @@ import type { SiteConfig, Tier, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { tableauLevels } from "../data/tableaus"
-import { GLOBAL_DEFAULTS } from "./spec/global"
-import { rollConsumable } from "./rewards"
+import { hashStr } from "./rewards"
 import { capabilitiesFor } from "./capabilities"
+import { sellablesForDifficulty } from "../data/sellables"
+import type { Difficulty } from "../data/difficultyLevels"
 
 const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
 
@@ -183,14 +184,16 @@ export const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void 
     }
   }
 
-  // Fill every remaining slot with a consumable — both fragmentSlot placeholders and open
+  // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open
   // ward-gate slots that no fragment reached. Otherwise an unclaimed ward gate renders a
-  // generic (untracked) hieroglyphs room instead of real loot.
-  const rates = GLOBAL_DEFAULTS.consumableRates
+  // generic (untracked) hieroglyphs room instead of real loot. Tiered by the slot's own
+  // journey tier (SHOP_PLAN.md "World reshape") — sellable, not consumable: consumables
+  // moved to puzzle-solve rewards, end-of-path slots are the junk-loot channel now.
   let fallbackIdx = 0
   for (const slot of available) {
-    const consumable = rollConsumable(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`, rates)
-    slot.assign({ type: "consumable", consumable })
+    const items = sellablesForDifficulty(slot.tier as Difficulty)
+    const item = items[hashStr(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`) % items.length]
+    slot.assign({ type: "sellable", itemId: item.id })
   }
 
   console.log(`  ✓ Fragment assignment: ${totalPlaced} fragments placed`)

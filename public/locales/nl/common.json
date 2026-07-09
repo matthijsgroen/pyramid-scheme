@@ -97,6 +97,7 @@
   },
   "chest": {
     "tapToOpen": "Tik om te openen",
+    "money": "{{amount}} munten",
     "mapPiece": "Kaartdeel",
     "mapPieceDescription": "Een fragment van een oude kaart. Verzamel genoeg stukken om de locatie van een verborgen schattombe te onthullen.",
     "hieroglyphFragment": "Hiërogliefenfragment",

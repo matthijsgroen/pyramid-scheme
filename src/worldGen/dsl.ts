@@ -7,7 +7,7 @@ export type { PathPuzzlesRange } from "./types"
 
 export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "low" | "medium" | "dense"
-export type PathEndHint = "fragment" | "treasure" | "mosaic" | "consumable"
+export type PathEndHint = "fragment" | "treasure" | "mosaic" | "junk"
 export type PathEntry = {
   density: SideIntensity
   pathPuzzles: number
@@ -62,7 +62,6 @@ export type FloorConstraint<TExtra extends string = never> = {
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
   mainEndReward?: RewardHint | TExtra
-  chestReward?: RewardHint | TExtra
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
   /**
@@ -80,8 +79,6 @@ export type FloorConstraint<TExtra extends string = never> = {
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
-  consumableDensity?: number
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
 }
@@ -144,8 +141,6 @@ export type PyramidConstraint = {
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
-  consumableDensity?: number
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
   /** Number of floors for tomb journeys. Overrides the value in TOMB_STRUCTURES. */

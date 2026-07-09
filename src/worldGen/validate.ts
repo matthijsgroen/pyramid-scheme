@@ -32,7 +32,6 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): voi
             `[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
           )
         checkReward(floor.mainEndReward)
-        for (const r of floor.chestRewards ?? []) checkReward(r)
         for (const s of floor.sideSections) {
           checkReward(s.endReward)
           for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
@@ -80,7 +79,6 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
           checkReward(s.endReward)
           for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
         }
-        for (const r of floor.chestRewards ?? []) checkReward(r)
       }
     }
   }
@@ -89,7 +87,7 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
 
 type SiteFloorRef = { siteId: string; floorIndex: number }
 
-// Where each tomb-key (ward key) is actually granted — the first mainEndReward/chestReward/
+// Where each tomb-key (ward key) is actually granted — the first mainEndReward/
 // sideSection(+sub) reward of type "tombKey" for that keyId, walked in floor order.
 const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, SiteFloorRef> => {
   const grants = new Map<string, SiteFloorRef>()
@@ -101,7 +99,6 @@ const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, S
       floors.forEach((floor, floorIndex) => {
         const ref = { siteId, floorIndex }
         record(floor.mainEndReward, ref)
-        for (const r of floor.chestRewards ?? []) record(r, ref)
         for (const s of floor.sideSections) {
           record(s.endReward, ref)
           for (const sub of s.sideSections ?? []) record(sub.endReward, ref)

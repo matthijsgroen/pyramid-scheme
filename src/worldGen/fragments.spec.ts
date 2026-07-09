@@ -86,12 +86,12 @@ describe("assignFragments", () => {
     expect(f.mainEndReward?.type).toBe("hieroglyphFragment")
   })
 
-  it("falls back to a consumable when a placeholder slot goes unused", () => {
-    // Way more slots than total real-world fragment demand — the surplus falls back to consumables.
+  it("falls back to junk loot (sellable) when a placeholder slot goes unused", () => {
+    // Way more slots than total real-world fragment demand — the surplus falls back to junk loot.
     const floors = Array.from({ length: 1000 }, () => floor({ mainEndReward: { type: "fragmentSlot" } }))
     const configs = { [PYRAMID_JOURNEYS[0].id]: [floors] as SiteConfig[] }
     assignFragments(configs)
     const types = new Set(floors.map(f => f.mainEndReward?.type))
-    expect(types.has("consumable")).toBe(true)
+    expect(types.has("sellable")).toBe(true)
   })
 })

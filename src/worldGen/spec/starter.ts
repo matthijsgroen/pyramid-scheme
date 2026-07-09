@@ -5,7 +5,7 @@ export const starterRules: Rule[] = [
   tier("starter", { difficulty: "starter" }),
 
   tier("starter")
-    .set({ consumableDensity: 0 })
+    .set({})
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "fragment" })
     .hiddenPaths("low")

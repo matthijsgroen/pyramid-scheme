@@ -6,7 +6,6 @@ export const wizardRules: Rule[] = [
 
   tier("wizard")
     .set({
-      consumableDensity: 0.3,
       mainFloors: 2,
       wardWings: 1,
       wardPaths: 2,

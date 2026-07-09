@@ -21,11 +21,6 @@ const scanFloorForFragments = (floor: FloorConfig, hieroglyphId: string): { piec
     }
   }
   checkReward(floor.mainEndReward)
-  for (const chest of floor.chestRewards ?? []) {
-    if (chest.type === "hieroglyphFragment" && chest.hieroglyphId === hieroglyphId) {
-      results.push({ pieceIndex: chest.pieceIndex })
-    }
-  }
   for (const section of floor.sideSections ?? []) {
     checkReward(section.endReward)
   }

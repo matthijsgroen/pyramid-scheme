@@ -49,7 +49,7 @@ scope, touches `siteAssembler.ts` reward placement directly.
   purchasable (mandatory rares + one full stock of consumables per shop), not just the
   mandatory subset with a buffer.
 
-## World reshape (locked)
+## World reshape (locked, numbers corrected 2026-07-09)
 
 Old mid-path chest mechanic (`chestEvery` cadence, 261 rooms total — confirmed via
 `scripts/worldInfo.ts` `chestNodes`, 100% consumable, all separate maze rooms) is
@@ -60,28 +60,57 @@ rooms added anywhere. Replaced by:
   room count unchanged):**
   - **647 untouched**: fragment(273) + mosaic(298) + mapPiece(36) + tombKey(40) — the
     hard collectible ceiling, still validator-enforced, no change to placement logic.
-  - **204 flexible slots** (180 that currently end in a consumable + 24 that currently
-    render the grant-nothing `{type:"hieroglyphs"}` placeholder — both counted precisely
-    against `generatedWorld.ts`) become **higher-end junk loot**, sell-value tiered by
+  - **180 flexible slots** (156 section/sub-section end-rewards + 24 floor-level
+    `mainEndReward`, both currently type `consumable` — counted exactly against
+    `generatedWorld.ts`) become **higher-end junk loot**, sell-value tiered by
     `MaterialTier`: stone 10 / bronze 20 / silver 30 / gold 40 / divine 50. Weighted by
-    pyramid-count-per-tier, avg ≈32.7 → 204 × 32.7 ≈ **6,671** income.
-  - 6 side-section onboarding empties (starter.ts) stay empty — untouched, existing
-    intentional design.
+    pyramid-count-per-tier, avg ≈32.7 → 180 × 32.7 ≈ **5,886** income.
+  - 6 side-section onboarding empties (starter.ts, render `{type:"hieroglyphs"}` via
+    `section.endReward ?? {type:"hieroglyphs"}` in `siteAssembler.ts:944,1016`) stay
+    empty — untouched, existing intentional design. There is no separate "24 empty
+    floor-ends" set rendering this placeholder — the only true "grant nothing" case in
+    the entire game is these 6 starter slots.
+  - **Pre-existing bug found + fixed in this pass**: a floor with no `mainEndReward` set
+    (any non-last floor when `mainFloors > 1`) falls back to `{type:"mosaicPiece"}`
+    (`siteAssembler.ts:842`) — a free, **uncounted** mosaic piece `validate.ts`'s
+    298-budget guard can't see (it only reads stored config, never this runtime
+    fallback). Empirically verified against `generatedWorldConfigs` (not assumed):
+    exactly **24 floors** hit this — **3 starter** (stone tier) + **21 wizard**
+    (divine tier, `spec/wizard.ts:10` `mainFloors:2` × 21 wizard pyramids); no other
+    tier sets `mainFloors > 1`. Fix (implemented): give these 24 floors an explicit
+    `{type:"fragmentSlot"}` mainEndReward instead of leaving it unset — routes them
+    through the *same* budget-aware `assignFragments` pipeline every other unset reward
+    slot already uses, rather than a bespoke direct-assign. Trade-off: these 24 slots now
+    compete in the shared fragment-priority pool (`fragments.ts`), so a slot occasionally
+    resolves to a real `hieroglyphFragment` instead of junk — harmless (total fragment
+    count stays exactly 273, validator-enforced) but means the "3×10 + 21×50 = 1,080"
+    junk value for this bucket is an **estimate, not a guarantee** (confirmed: an actual
+    `yarn generate-world` run landed junk at 201 total vs. the 204-slot estimate — a few
+    of these 24 became real fragments). Phase 3's exact-income guard must validate
+    against the *realized* totals from a generated world, not this pre-computed estimate.
+  - **Total junk-loot slots: ~204** (180 + up to 24, some of the 24 may resolve to a
+    real fragment instead). **Total junk income: ≈6,966**, realized ≈6,000-7,000
+    depending on how many of the 24 land as fragments vs junk.
 - **Puzzle-solve rewards (1,714 total puzzles — 1,664 pyramid + 50 tomb — currently
   reward nothing on solve):** new delivery mechanism for "everyday loot":
   - **Consumables**: the ~441 instances that used to live in mid-path chests + the 180
     consumable end-rewards move 1:1 onto puzzle solves. Same total volume, new delivery
-    point — no net change to how often a bandage/oil/trapTool is found.
-  - **Loose money** (1-10, avg 5.5): covers the remainder of the 8,060 target not
-    covered by junk end-rewards → 8,060 − 6,671 ≈ 1,389 → ≈**253 puzzles** get a money
-    drop.
-  - Total puzzles carrying any reward: 441 + 253 = 694 of 1,714 (~40%); 1,020 stay plain.
-    Sparse/seeded distribution (deterministic, like existing chest cadence was) — not
-    "solve any puzzle, get paid."
+    point — no net change to how often a bandage/oil/trapTool is found. Type distribution
+    keeps reading the existing per-tier `consumableRates` DSL knob (bandage/oil/trapTool
+    weights authored in `spec/*.ts`) — do not hardcode a flat global rate.
+  - **Loose money** (seeded random 1-10, avg 5.5): covers the remainder of the 8,060
+    target not covered by junk end-rewards → 8,060 − 6,966 ≈ 1,094 → ≈**199 puzzles** get
+    a money drop.
+  - Total puzzles carrying any reward: 441 + 199 = 640 of 1,714 (~37%); 1,074 stay plain.
+  - **Selection algorithm (locked)**: deterministic shuffle + slice, not a per-puzzle
+    `chance` roll — seed a shuffle per journey (reuse `hashStr` + `mulberry32` + `shuffle`
+    from `worldGen/rewards.ts`/`game/random.ts`), take the first N indices. Guarantees the
+    exact split, no drift from probabilistic rolling.
 
 Net effect: **zero new rooms**, 261 rooms deleted outright, 8,060 income target hit
-exactly (6,671 junk + 1,389 money), all 647 mandatory collectibles and their placement
-logic untouched, consumable find-rate unchanged (just relocated).
+exactly (6,966 junk + 1,094 money), all 647 mandatory collectibles and their placement
+logic untouched, consumable find-rate unchanged (just relocated), plus a pre-existing
+uncounted-mosaic bug fixed along the way.
 
 ## Economy model (soft-lock-critical)
 
@@ -89,12 +118,40 @@ logic untouched, consumable find-rate unchanged (just relocated).
   revisitable (re-enter tomb; stock refreshes; rare item persists until bought). Player
   can earn late and **backtrack** to buy at an earlier tomb, or save early for a pricey
   wizard item.
-- Sources (deterministic): puzzle-solve money drops + end-of-path junk sell-value.
+- Sources (deterministic): puzzle-solve money drops + end-of-path junk (sellable items,
+  sold manually at any shop — see below) + tombKey/treasure pickups feeding the existing
+  generic inventory.
 - Sinks: consumables (optional, also still free-findable via puzzles) + all 13 rare
   collectibles (mandatory for 100%).
 - **Guard (new, throws at build)**: `Σ(ALL shop prices, rares+consumable stock) ≤
   Σ(ALL guaranteed income)` — GLOBAL cumulative, not per-tier (backtracking makes it
   any-order affordable). Target is now the exact total (8,060), not a padded estimate.
+  Junk counts toward guaranteed income at its full sell value even though realizing it
+  requires a manual sell action — selling is never optional/skippable en route to 100%
+  (money is mandatory for the 13 rares), so treating find-value as guaranteed is safe.
+
+## Sellables are real inventory items, not instant money (locked 2026-07-09)
+
+**Not** auto-converted to money on pickup. A `{type:"sellable", itemId}` reward adds the
+item to the game's existing generic inventory system — `src/app/Inventory/useInventory.ts`
+(`addItem(id, count)`, storage key `inventory-v2`, already used for hieroglyph
+deities/professions/animals/artifacts and tomb treasures, count-based `Record<string,
+number>`). No new persistence layer needed.
+
+- `src/data/sellables.ts` items need the same shape as `src/data/inventory.ts`'s existing
+  items: `{ id, name, symbol, description, sellValue, tier }` — the `description` carries
+  historical-Egyptian flavor text (matches `treasures.ts`'s existing style), shown on the
+  **Collection screen** (`src/app/pages/Collection.tsx`) as a new category, same pattern
+  as `CategorySection`/`TreasureCategorySection`.
+- **Selling** happens at any shop (money is global, backtracking-friendly, per the model
+  above) — `removeItem(itemId, 1)` + `progression.addMoney(item.sellValue)`. This is a
+  **Phase 3/4 UI addition** (`ShopItemCard` is currently buy-only, PR #104 — needs a sell
+  variant/mode), not blocking on Phase 2.
+- **Phase 2 scope**: world-gen produces `{type:"sellable", itemId}` rewards; the claim
+  switch (`SiteMapScreen.tsx`) calls `addItem(reward.itemId, 1)` on pickup (needs
+  `useInventory` imported there — not currently used in that file). That's the full
+  extent of Phase 2's sellables work; the sell-UI and Collection-screen category land
+  later.
 
 ## Key file anchors (from code map)
 
@@ -135,15 +192,41 @@ logic untouched, consumable find-rate unchanged (just relocated).
 - Money counter in `SiteHudBar`.
 
 ### 2 — Delete mid-path chests, move loot onto puzzles + end-rewards (world-gen)
-- Remove `chestEvery`/`chestNodes`/`buildChestRewards` mid-path insertion entirely.
-- New `RoomCell.reward` support on `roomType === "puzzle"` in `siteAssembler.ts` +
-  claim-switch branch in `SiteMapScreen.tsx`.
-- Seeded/deterministic selection of ~694 of 1,714 puzzles to carry a reward (441
-  consumable, 253 money) — same distribution spirit as old chest cadence.
-- Upgrade the 204 flexible end-of-path slots (180 ex-consumable + 24 empty) to
-  tiered junk-loot rewards.
+- Remove `chestEvery`/`chestNodes`/`buildChestRewards`/`chestOffset` mid-path insertion
+  entirely, incl. dead surface: `FloorConstraint.chestReward` (singular, never read),
+  `assertChestCapacity`/`TOMB_CHEST_CAPACITY` (already unwired), `SubSection.chestEvery`
+  (never written by any builder), defensive fragment/mosaic scans over `chestRewards` in
+  `validate.ts`/`serializer.ts`/`useDetector.ts` (dead — chests never held those types).
+- Fix the free-mosaic fallback bug (`siteAssembler.ts:842`,
+  `config.mainEndReward ?? {type:"mosaicPiece"}` → seeded junk/`sellable` roll, same
+  channel as the other 180 end-of-path slots, NOT a consumable roll) + add the missing
+  regression test. Exactly 24 floors affected (3 starter/stone + 21 wizard/divine,
+  verified against `generatedWorldConfigs`).
+- New `RoomCell.reward` support on `roomType === "puzzle"`: three `RoomSpec`
+  construction sites in `siteAssembler.ts` (main path ~857, section ~926, sub-section
+  ~997) need reward-array threading mirroring the existing `chestRewards`/`mainChestIdx`
+  pattern; claim-switch branch in `SiteMapScreen.tsx` (`handlePuzzleSolved`, ~line 105) —
+  grant `cell.reward` at solve time, same `{reward, consumableFull?, onCollect}` shape
+  `ChestRewardFlow` already consumes. Generalize the consumable-full deferral logic
+  (`markConsumableSkipped`, currently hardcoded to `roomType==="treasure"`) to any
+  `reward.type==="consumable"` room — otherwise a puzzle-solve consumable reward with a
+  full pack silently vanishes instead of deferring.
+- Seeded/deterministic shuffle+slice selection of ~640 of 1,714 puzzles to carry a
+  reward (441 consumable, 199 money) — reuse `hashStr`+`mulberry32`+`shuffle`.
+- Upgrade the 204 flexible end-of-path slots (156 section + 24 floor-level consumable +
+  24 floor-level bug-fallback, see above) to tiered junk-loot rewards.
 - `src/data/sellables.ts`: one themed junk item per `MaterialTier` + sell value
-  (10/20/30/40/50).
+  (10/20/30/40/50), shape matches `src/data/inventory.ts` (`id`/`name`/`symbol`/
+  `description` with Egyptian flavor text, plus `sellValue`/`tier`).
+- Claim switch: `sellable` reward → `useInventory().addItem(reward.itemId, 1)` (import
+  `useInventory` into `SiteMapScreen.tsx` — not currently used there). NOT an instant
+  `addMoney` — see "Sellables are real inventory items" above. Selling happens later,
+  Phase 4.
+- Dev-tooling cleanup in the same pass: delete `configBuilder.spec.ts` (100%
+  `assertChestCapacity` tests, already dead-code-only), update/remove chest controls in
+  `SiteMapBuilder.stories.tsx`/`JourneyInspector.stories.tsx`, update chest-dependent
+  tests in `buildSite.spec.ts`/`siteAssembler.spec.ts`/`capabilities.spec.ts`.
+- `scripts/worldInfo.ts`: drop the `chests` column, add a `puzzleRewards`/`junk` column.
 
 ### 3 — Shop room + relocation + guard
 - New `endReward.type:"shop"` on one ungated sidepath per tomb (8 of 9; starter excluded).
@@ -157,6 +240,10 @@ logic untouched, consumable find-rate unchanged (just relocated).
   `ShopBalance`, `ShopItemCard`, `ShopPanel`. Still needed: wire to real `ProgressionState`
   once Phase 1 lands; Fez hosts (cocktail pose + new shop conversation); extend claim
   switch for purchase = `spendMoney` then grant/claim item.
+- **New**: sell-mode for junk. `ShopItemCard` is currently buy-only — needs a sell
+  variant (shows player-held sellables from `useInventory`, action = `removeItem` +
+  `addMoney(item.sellValue)`). Collection screen (`src/app/pages/Collection.tsx`) also
+  needs a new category section for sellables, same pattern as `TreasureCategorySection`.
 
 ### 5 — Balance, tests, docs
 - Tests: economy guard (income == exact total), spend/earn state, 647 total still holds,

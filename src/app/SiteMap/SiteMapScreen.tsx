@@ -14,6 +14,7 @@ import { TrapWarningScreen } from "./TrapWarningScreen"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
+import { useInventory } from "@/app/Inventory/useInventory"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
@@ -41,6 +42,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const { t } = useTranslation("common")
   const journeys = useJourneys()
   const progression = useProgression()
+  const inventory = useInventory()
   const detector = useDetector(progression, journeys)
   const allEdges = journeys.getExploredSections(journeyId)
   const journeyState = journeys.getJourney(journeyId)
@@ -102,6 +104,27 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return puzzlePlugin.generate(hashString(journeyId + edgeId), { difficulty: floorConfig.difficulty })
   }, [activePuzzlePos, puzzlePlugin, journeyId, currentFloor, floorConfig.difficulty])
 
+  // Shared by both the treasure-room claim flow and puzzle-solve rewards below — the
+  // "apply this reward to game state" half, kept separate from the surrounding
+  // pack-full/dedup checks (those differ per entry point: fragments dedup by
+  // inventory-as-truth, only treasure rooms carry them).
+  const applyReward = useCallback(
+    (reward: TreasureReward) => {
+      if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
+      else if (reward.type === "mapPiece") {
+        progression.collectMapPiece(reward.tombId)
+        progression.markMapPieceFound(journeyId)
+      } else if (reward.type === "tombKey") {
+        progression.addTombKey(reward.keyId)
+        progression.applyTreasurePerk(reward.keyId)
+      } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
+      else if (reward.type === "consumable") progression.addConsumable(reward.consumable)
+      else if (reward.type === "money") progression.addMoney(reward.amount)
+      else if (reward.type === "sellable") inventory.addItem(reward.itemId, 1)
+    },
+    [progression, journeyId, inventory]
+  )
+
   const handlePuzzleSolved = useCallback(() => {
     if (!activePuzzlePos || !grid) return
     const [row, col] = activePuzzlePos
@@ -111,7 +134,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     journeys.markCellExplored(sectionHash, edgeId)
     setActivePuzzlePos(null)
     setPuzzleSolved(false)
-  }, [activePuzzlePos, grid, journeys, currentFloor])
+
+    const reward = cell?.type === "room" ? cell.reward : undefined
+    if (!reward) return
+    const packFull = reward.type === "consumable" && progression.isConsumablePackFull()
+    if (packFull) {
+      journeys.markConsumableSkipped(edgeId)
+      setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
+      return
+    }
+    setPendingReward({ reward, onCollect: () => applyReward(reward) })
+  }, [activePuzzlePos, grid, journeys, currentFloor, progression, applyReward])
 
   const handlePuzzleComplete = useCallback(() => {
     schedulePuzzle(800, () => {
@@ -136,16 +169,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
         if (
           cell.type === "room" &&
-          cell.roomType === "treasure" &&
           cell.reward?.type === "consumable" &&
           journeys.getSkippedConsumables(journeyId).has(edgeId)
         ) {
           const reward = cell.reward
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
-            const stillFull =
-              progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
-              progression.consumableCarryCap
-            if (stillFull) {
+            if (progression.isConsumablePackFull()) {
               setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
               return
             }
@@ -223,37 +252,20 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           if (!alreadyCollected) {
             // Consumables need a room check up front: a full pack leaves the reward for a later visit
             // instead of silently losing it.
-            const packFull =
-              reward.type === "consumable" &&
-              progression.consumables.bandage + progression.consumables.oil + progression.consumables.trapTool >=
-                progression.consumableCarryCap
+            const packFull = reward.type === "consumable" && progression.isConsumablePackFull()
             scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
               if (packFull) {
                 journeys.markConsumableSkipped(edgeId)
                 setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
                 return
               }
-              setPendingReward({
-                reward,
-                onCollect: () => {
-                  if (reward.type === "hieroglyphFragment")
-                    progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
-                  else if (reward.type === "mapPiece") {
-                    progression.collectMapPiece(reward.tombId)
-                    progression.markMapPieceFound(journeyId)
-                  } else if (reward.type === "tombKey") {
-                    progression.addTombKey(reward.keyId)
-                    progression.applyTreasurePerk(reward.keyId)
-                  } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-                  else if (reward.type === "consumable") progression.addConsumable(reward.consumable)
-                },
-              })
+              setPendingReward({ reward, onCollect: () => applyReward(reward) })
             })
           }
         }
       }
     },
-    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig]
+    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig, applyReward]
   )
 
   const ActivePuzzleComponent = puzzlePlugin?.Component ?? null

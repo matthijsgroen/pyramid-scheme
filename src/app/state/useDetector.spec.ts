@@ -14,7 +14,6 @@ vi.mock("@/data/generatedWorld", () => ({
         {
           mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 0 },
           sideSections: [{ endReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 1 } }],
-          chestRewards: [{ type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 0 }],
         },
       ],
     ],
@@ -86,14 +85,6 @@ describe("compassResults", () => {
     act(() => result.current.setCompassTarget("h1"))
     expect(result.current.compassResults).toHaveLength(1)
     expect(result.current.compassResults[0].pieceIndex).toBe(1)
-  })
-
-  it("finds fragments in chestRewards", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
-    act(() => result.current.setDetector("compass"))
-    act(() => result.current.setCompassTarget("h2"))
-    expect(result.current.compassResults).toHaveLength(1)
-    expect(result.current.compassResults[0]).toMatchObject({ hieroglyphId: "h2", pieceIndex: 0 })
   })
 
   it("returns [] when target not present in world", () => {

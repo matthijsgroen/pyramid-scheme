@@ -18,7 +18,6 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 
   const countFloor = (floor: FloorConfig) => {
     count(floor.mainEndReward)
-    for (const r of floor.chestRewards ?? []) count(r)
     for (const s of floor.sideSections) {
       count(s.endReward)
       for (const sub of s.sideSections ?? []) count(sub.endReward)

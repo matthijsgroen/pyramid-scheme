@@ -5,7 +5,7 @@ export const expertRules: Rule[] = [
   tier("expert", { difficulty: "expert" }),
 
   tier("expert")
-    .set({ consumableDensity: 0.2, keyDensity: "low", sharedKeyChance: 0.15, windyChance: 0.25, packingChance: 0.25 })
+    .set({ keyDensity: "low", sharedKeyChance: 0.15, windyChance: 0.25, packingChance: 0.25 })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
     .hiddenPaths("low")

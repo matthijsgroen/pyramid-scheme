@@ -59,11 +59,11 @@ export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 export type SubSection = {
   pathPuzzles: number
-  chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
+  puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   trapped?: boolean
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
@@ -74,7 +74,6 @@ export type SideSection = SubSection & {
 }
 export type FloorConfig = {
   pathPuzzles: number
-  chestEvery?: number
   difficulty: Difficulty
   end: "treasure"
   exitOrStaircase: "exit" | "staircase" | { stairId: string }
@@ -84,7 +83,7 @@ export type FloorConfig = {
   /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
-  chestRewards?: TreasureReward[]
+  puzzleRewards?: (TreasureReward | undefined)[]
   puzzleFamily?: PuzzleFamily
   /** If set, the last main-path puzzle room uses this family instead of puzzleFamily. */
   lastMainPuzzleFamily?: PuzzleFamily
