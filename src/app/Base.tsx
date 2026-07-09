@@ -4,15 +4,8 @@ import { CollectionPage } from "@/app/pages/Collection"
 import { MosaicPage } from "@/app/pages/MosaicPage"
 import { use, useEffect } from "react"
 import { FezContext } from "./fez/context"
-import type { Difficulty } from "@/data/difficultyLevels"
 
-export const Base = ({
-  startGame,
-  pendingHieroglyphSearch,
-}: {
-  startGame: () => void
-  pendingHieroglyphSearch?: Difficulty | null
-}) => {
+export const Base = ({ startGame }: { startGame: () => void }) => {
   const { showConversation } = use(FezContext)
 
   useEffect(() => {
@@ -25,7 +18,7 @@ export const Base = ({
         <BaseHeader />
       </div>
       <div className="flex w-full flex-1 snap-x snap-mandatory flex-row justify-around overflow-x-scroll overscroll-contain bg-gradient-to-b from-blue-100 to-blue-300">
-        <TravelPage startGame={startGame} pendingHieroglyphSearch={pendingHieroglyphSearch} />
+        <TravelPage startGame={startGame} />
         <CollectionPage />
         <MosaicPage />
       </div>

@@ -5,7 +5,6 @@ import type { RewardCalculation } from "@/game/puzzles/tableau/generateRewardCal
 import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 import type { ChestState } from "@/ui/atoms/Chest"
 import { TombDoor } from "@/ui/atoms/TombDoor"
-import { ActionButton } from "@/ui/atoms/ActionButton"
 import { TombLockPanel } from "@/ui/molecules/TombLockPanel"
 import { HieroglyphInventoryStrip, type InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
 import { TombTableau, type OrderedFormula } from "@/ui/organisms/TombTableau"
@@ -33,9 +32,6 @@ export const TombPuzzleView: FC<{
   inventoryTitle: string
   inventoryItems: InventoryStripItem[]
   onInventoryItemClick: (symbolId: string) => void
-  showFindHieroglyphsButton: boolean
-  findHieroglyphsLabel: string
-  onFindHieroglyphs?: () => void
 }> = ({
   difficulty,
   tableau,
@@ -58,17 +54,11 @@ export const TombPuzzleView: FC<{
   inventoryTitle,
   inventoryItems,
   onInventoryItemClick,
-  showFindHieroglyphsButton,
-  findHieroglyphsLabel,
-  onFindHieroglyphs,
 }) => (
   <div className="flex flex-1 flex-row overflow-y-auto">
     <div className="flex flex-1" />
     <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
       <div className="flex flex-1" />
-      {showFindHieroglyphsButton && onFindHieroglyphs && (
-        <ActionButton label={findHieroglyphsLabel} onClick={onFindHieroglyphs} />
-      )}
       <TombDoor
         className="flex flex-2 flex-col items-center justify-center"
         open={lockState === "open"}

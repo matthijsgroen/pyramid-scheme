@@ -58,8 +58,6 @@ export const InProgress: Story = {
           canPlace: true,
         }))}
         onInventoryItemClick={() => {}}
-        showFindHieroglyphsButton={false}
-        findHieroglyphsLabel="Find missing hieroglyphs"
       />
     )
   },

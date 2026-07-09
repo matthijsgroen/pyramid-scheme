@@ -87,7 +87,6 @@ const meta = {
   },
   args: {
     labels: {
-      suggestedExpedition: "Suggested Expedition",
       length: "Length",
       chambers: "chambers",
       progressLevel: "Progress: Level",

@@ -1,6 +1,5 @@
 import { use, useEffect, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import type { Difficulty } from "@/data/difficultyLevels"
 import { Page } from "@/ui/atoms/Page"
 import { JourneyPathView } from "@/ui/atoms/JourneyPathView"
 import { JourneyCard } from "@/ui/organisms/JourneyCard"
@@ -16,8 +15,7 @@ import { useProgression } from "@/app/state/useProgression"
 
 export const TravelPage: FC<{
   startGame: () => void
-  pendingHieroglyphSearch?: Difficulty | null
-}> = ({ startGame, pendingHieroglyphSearch }) => {
+}> = ({ startGame }) => {
   const { t, i18n } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
@@ -83,23 +81,6 @@ export const TravelPage: FC<{
     })
   }, [journeys, getJourney])
 
-  const searchHandled = useRef(false)
-  useEffect(() => {
-    if (pendingHieroglyphSearch && !searchHandled.current) {
-      searchHandled.current = true
-      setShowJourneySelection(true)
-    }
-  }, [pendingHieroglyphSearch])
-
-  const suggestedJourneyId = useMemo(() => {
-    if (!pendingHieroglyphSearch) return null
-    const effectiveUnlocked = unlocked === -1 ? journeys.length : unlocked
-    const candidates = journeys
-      .filter((j, idx) => j.type === "pyramid" && j.difficulty === pendingHieroglyphSearch && idx < effectiveUnlocked)
-      .sort((a, b) => (getJourney(a.id)?.completionCount ?? 0) - (getJourney(b.id)?.completionCount ?? 0))
-    return candidates[0]?.id ?? null
-  }, [pendingHieroglyphSearch, journeys, unlocked, getJourney])
-
   const hasPendingMapPieceProgress = useMemo(() => {
     return journeys
       .filter(j => j.type === "treasure_tomb" && isTombDiscovered(j.id))
@@ -111,15 +92,6 @@ export const TravelPage: FC<{
   }, [journeys, isTombDiscovered, mapPieceCount])
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const suggestedCardRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!showJourneySelection || !suggestedJourneyId) return
-    const timer = setTimeout(() => {
-      suggestedCardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" })
-    }, 750)
-    return () => clearTimeout(timer)
-  }, [showJourneySelection, suggestedJourneyId])
 
   return (
     <Page
@@ -264,33 +236,29 @@ export const TravelPage: FC<{
                 }
                 const disabled = journey.type === "treasure_tomb" && journey.treasures.length <= completionCount
 
-                const isSuggested = journey.id === suggestedJourneyId
                 return (
-                  <div key={journey.id} ref={isSuggested ? suggestedCardRef : undefined}>
-                    <JourneyCard
-                      showDetails={index === unlocked - 1}
-                      journey={journey}
-                      disabled={disabled}
-                      completionCount={completionCount}
-                      progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
-                      index={index}
-                      showAnimation={showJourneySelection}
-                      hasMapPiece={hasMapPiece}
-                      suggested={isSuggested}
-                      lang={i18n.language}
-                      labels={{
-                        suggestedExpedition: t("ui.suggestedExpedition"),
-                        length: t("ui.length"),
-                        chambers: t("ui.chambers"),
-                        progressLevel: t("ui.progressLevel"),
-                      }}
-                      onClick={handleJourneySelect}
-                    >
-                      {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
-                        <TableauInventory journeyInfo={journeyInfo} />
-                      ) : null}
-                    </JourneyCard>
-                  </div>
+                  <JourneyCard
+                    key={journey.id}
+                    showDetails={index === unlocked - 1}
+                    journey={journey}
+                    disabled={disabled}
+                    completionCount={completionCount}
+                    progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
+                    index={index}
+                    showAnimation={showJourneySelection}
+                    hasMapPiece={hasMapPiece}
+                    lang={i18n.language}
+                    labels={{
+                      length: t("ui.length"),
+                      chambers: t("ui.chambers"),
+                      progressLevel: t("ui.progressLevel"),
+                    }}
+                    onClick={handleJourneySelect}
+                  >
+                    {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
+                      <TableauInventory journeyInfo={journeyInfo} />
+                    ) : null}
+                  </JourneyCard>
                 )
               })}
             </div>

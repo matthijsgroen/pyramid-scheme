@@ -4,7 +4,6 @@ import type { TranslatedJourney } from "@/app/translations/useJourneyTranslation
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 
 type JourneyCardLabels = {
-  suggestedExpedition: string
   length: string
   chambers: string
   progressLevel: string
@@ -19,7 +18,6 @@ type JourneyCardProps = {
   hasMapPiece?: boolean
   showDetails?: boolean
   disabled?: boolean
-  suggested?: boolean
   lang?: string
   labels: JourneyCardLabels
   onClick: (journey: TranslatedJourney) => void
@@ -35,7 +33,6 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
   completionCount = 0,
   disabled = false,
   hasMapPiece = false,
-  suggested = false,
   lang,
   labels,
   onClick,
@@ -62,7 +59,6 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
           "border-amber-300 bg-amber-50 shadow-lg hover:scale-105 hover:border-amber-400 hover:shadow-xl":
             !disabled && !isTreasureTomb,
           "animate-slide-in-up": showAnimation,
-          "ring-2 ring-blue-400 ring-offset-2": suggested,
         }
       )}
       style={{
@@ -80,20 +76,12 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
         )}
       ></div>
       <div
-        className={clsx("flex-1 flex-col rounded-r-lg py-3 pr-3 pl-1", {
-          "border-2 border-l-0": !suggested,
+        className={clsx("flex-1 flex-col rounded-r-lg border-2 border-l-0 py-3 pr-3 pl-1", {
           "cursor-not-allowed border-gray-300 bg-gray-100 opacity-30 contrast-75 grayscale": disabled,
-          "border-gray-400 bg-gray-100 shadow-lg hover:border-gray-500 hover:shadow-xl":
-            !disabled && isTreasureTomb && !suggested,
-          "border-amber-300 bg-amber-50 shadow-lg hover:border-amber-400 hover:shadow-xl":
-            !disabled && !isTreasureTomb && !suggested,
-          "bg-gray-100 shadow-lg": !disabled && isTreasureTomb && suggested,
-          "bg-amber-50 shadow-lg": !disabled && !isTreasureTomb && suggested,
+          "border-gray-400 bg-gray-100 shadow-lg hover:border-gray-500 hover:shadow-xl": !disabled && isTreasureTomb,
+          "border-amber-300 bg-amber-50 shadow-lg hover:border-amber-400 hover:shadow-xl": !disabled && !isTreasureTomb,
         })}
       >
-        {suggested && (
-          <div className="mb-1 animate-pulse text-xs font-bold text-blue-600">★ {labels.suggestedExpedition}</div>
-        )}
         <div className="mb-2">
           <div className="float-right ml-2">
             <DifficultyPill difficulty={journey.difficulty} label={journey.difficultyLabel} disabled={disabled} />
