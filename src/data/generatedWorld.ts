@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1020630637
+export const worldContentHash = 1991090984
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -7460,6 +7460,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 2 },
+            shopPrice: 300,
             puzzleRewards: [undefined],
           },
           {
@@ -7467,6 +7468,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
+            shopPrice: 500,
             puzzleRewards: [undefined],
           },
         ],
@@ -7556,6 +7558,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 3 },
+            shopPrice: 350,
             puzzleRewards: [undefined],
           },
           {
@@ -7563,6 +7566,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
+            shopPrice: 500,
             puzzleRewards: [undefined],
           },
         ],
@@ -7630,6 +7634,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 4 },
+            shopPrice: 350,
             puzzleRewards: [undefined],
           },
         ],
@@ -7686,6 +7691,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 4 },
+            shopPrice: 400,
             puzzleRewards: [{ type: "money", amount: 8 }],
           },
           {
@@ -7693,6 +7699,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
+            shopPrice: 500,
             puzzleRewards: [{ type: "consumable", consumable: "oil" }],
           },
         ],
@@ -7760,6 +7767,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
+            shopPrice: 1000,
             puzzleRewards: [undefined],
           },
         ],
@@ -7827,6 +7835,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 5 },
+            shopPrice: 450,
             puzzleRewards: [undefined],
           },
           {
@@ -7834,6 +7843,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
+            shopPrice: 500,
             puzzleRewards: [{ type: "money", amount: 6 }],
           },
         ],
@@ -7890,6 +7900,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 6 },
+            shopPrice: 450,
             puzzleRewards: [undefined],
           },
           {
@@ -7897,6 +7908,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
+            shopPrice: 500,
             puzzleRewards: [{ type: "money", amount: 3 }],
           },
         ],
@@ -7953,6 +7965,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
+            shopPrice: 500,
             puzzleRewards: [undefined],
           },
         ],
