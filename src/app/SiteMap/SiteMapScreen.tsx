@@ -18,7 +18,7 @@ import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { FezContext } from "@/app/fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
-import { getInventoryItemById } from "@/data/inventory"
+import { allItems, getInventoryItemById } from "@/data/inventory"
 import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
 import { ALL_SELLABLES, getSellableById, sellValueForItemId } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
@@ -455,6 +455,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
                 inventory.addItem(ALL_SELLABLES[0].id, 1) // second copy, to see the ×N badge
               }}
               label="+Junk"
+            />
+          )}
+          {isDevelopMode && (
+            <DeveloperButton
+              onClick={() => allItems.forEach(item => inventory.addItem(item.id, 20))}
+              label="+Hieroglyphs"
             />
           )}
         </div>
