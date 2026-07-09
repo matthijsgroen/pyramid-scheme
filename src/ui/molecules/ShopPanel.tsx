@@ -9,7 +9,6 @@ type Props = {
   dismissLabel: string
   onDismiss: () => void
   headerExtra?: ReactNode
-  aboveScroll?: ReactNode
   onBodyScroll?: (scrollTop: number, maxScroll: number) => void
   children: ReactNode
 }
@@ -22,7 +21,6 @@ export const ShopPanel: FC<Props> = ({
   dismissLabel,
   onDismiss,
   headerExtra,
-  aboveScroll,
   onBodyScroll,
   children,
 }) => {
@@ -39,7 +37,6 @@ export const ShopPanel: FC<Props> = ({
           </div>
           <ShopBalance amount={balance} label={balanceLabel} />
         </div>
-        {aboveScroll}
         <div
           className="flex min-h-0 flex-col gap-2 overflow-y-auto"
           onScroll={
