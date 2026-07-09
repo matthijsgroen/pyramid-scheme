@@ -16,6 +16,7 @@ export const expertRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "expert",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
@@ -35,6 +36,7 @@ export const expertRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "expert",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",

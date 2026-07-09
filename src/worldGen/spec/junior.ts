@@ -21,6 +21,7 @@ export const juniorRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "junior",
     levelCount: 6,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",

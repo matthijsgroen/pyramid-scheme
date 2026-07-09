@@ -28,6 +28,7 @@ export const wizardRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "wizard",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
@@ -46,6 +47,7 @@ export const wizardRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "wizard",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
@@ -64,6 +66,7 @@ export const wizardRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "wizard",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
