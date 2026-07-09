@@ -92,18 +92,19 @@ export const FezShop: FC<Props> = ({
           style={{ height: scrollProgress * 40, opacity: scrollProgress }}
         />
       }
+      aboveScroll={
+        <div
+          className="flex shrink-0 justify-center overflow-hidden transition-all duration-150"
+          style={{
+            height: 176 * (1 - scrollProgress),
+            opacity: 1 - scrollProgress,
+            marginBottom: 8 * (1 - scrollProgress),
+          }}
+        >
+          <img src={fezCocktail} alt="" className="h-44 w-auto" />
+        </div>
+      }
     >
-      <div
-        className="flex shrink-0 justify-center overflow-hidden transition-all duration-150"
-        style={{
-          height: 176 * (1 - scrollProgress),
-          opacity: 1 - scrollProgress,
-          marginBottom: 8 * (1 - scrollProgress),
-        }}
-      >
-        <img src={fezCocktail} alt="" className="h-44 w-auto" />
-      </div>
-
       {rareItems.length > 0 && (
         <div className="flex flex-col gap-2">
           <p className="text-xs font-bold tracking-wide text-amber-400 uppercase">{rareItemsLabel}</p>
