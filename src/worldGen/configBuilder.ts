@@ -190,6 +190,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
       const packing = authored?.packing ?? constraint.packing
+      const sealed = authored?.sealed ?? constraint.sealed
 
       const pathPuzzles = isLast && hasCroc ? 2 : 1
 
@@ -202,6 +203,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         mainEndReward,
         corridorStraightness: straightness,
         packing,
+        sealed,
       })
     })
 

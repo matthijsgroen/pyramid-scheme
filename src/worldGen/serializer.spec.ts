@@ -14,6 +14,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
       difficulty: "junior",
       end: "treasure",
       exitOrStaircase: "exit",
+      sealed: true,
       sideSections: [
         {
           pathPuzzles: 1,
@@ -21,6 +22,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
           end: "treasure",
           endReward: { type: "mosaicPiece" },
           shopPrice: 500,
+          sealed: true,
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -35,5 +37,13 @@ describe("generateFile — serializeSideSection field coverage", () => {
 
   it("keeps a nested sideSections array", () => {
     expect(output).toMatch(/sideSections: \[\{ pathPuzzles: 0/)
+  })
+
+  it("keeps sealed on a serialized side section", () => {
+    expect(output).toContain("sealed: true")
+  })
+
+  it("keeps sealed on a serialized floor (main path)", () => {
+    expect(output.match(/sealed: true/g)?.length).toBe(2) // one on the floor, one on its side section
   })
 })

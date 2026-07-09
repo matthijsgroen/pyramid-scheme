@@ -64,6 +64,8 @@ export const resolvePacking = (constraint: PyramidConstraint, journeyId: string,
     "packing"
   )
 
+export const resolveSealed = (constraint: PyramidConstraint): boolean | undefined => constraint.sealed
+
 // Ward-wing key indices for a tomb, skipping any slot reserved for a tier-unlock or
 // location-key perk (those are spoken for elsewhere) — first `count` remaining indices.
 export const freeWardIndices = (tombId: string, count: number): number[] => {
@@ -89,6 +91,7 @@ export type BuildFloorOptions = {
   lastMainPuzzleFamily?: FloorConfig["lastMainPuzzleFamily"]
   corridorStraightness?: number
   packing?: number
+  sealed?: boolean
 }
 
 // The common FloorConfig skeleton shared by every pyramid and tomb floor — defaults to a
@@ -105,6 +108,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.lastMainPuzzleFamily ? { lastMainPuzzleFamily: opts.lastMainPuzzleFamily } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
+  ...(opts.sealed ? { sealed: true } : {}),
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
@@ -167,6 +171,7 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
+      const floorSealed = fc.sealed ?? resolveSealed(constraint)
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,
@@ -175,6 +180,7 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
           mainEndReward: isLast ? mainEndReward : undefined,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
+          sealed: floorSealed,
         })
       )
     }
@@ -241,6 +247,7 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
           mainEndReward,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
+          sealed: resolveSealed(constraint),
         })
       )
     }
@@ -325,6 +332,7 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
     mainEndReward,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
+    sealed: resolveSealed(constraint),
   })
 
   assignPuzzleRewards(`${journeyId}:${i}`, [floor], rates)

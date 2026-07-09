@@ -70,6 +70,8 @@ export type SubSection = {
   puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   trapped?: boolean
+  /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
+  sealed?: boolean
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
 }
@@ -95,6 +97,8 @@ export type FloorConfig = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
+  sealed?: boolean
 }
 
 // A site is one or more floors. Index 0 = surface.
