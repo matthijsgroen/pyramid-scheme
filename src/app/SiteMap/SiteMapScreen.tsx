@@ -20,7 +20,7 @@ import { FezContext } from "@/app/fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { getInventoryItemById } from "@/data/inventory"
 import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
-import { getSellableById, sellValueForItemId } from "@/data/sellables"
+import { ALL_SELLABLES, getSellableById, sellValueForItemId } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
@@ -448,6 +448,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           <ConsumableBar consumables={progression.consumables} />
           <ShopBalance amount={progression.money} label={t("money.label")} />
           {isDevelopMode && <DeveloperButton onClick={() => progression.addMoney(1000)} label="+1000 Coins" />}
+          {isDevelopMode && (
+            <DeveloperButton
+              onClick={() => {
+                ALL_SELLABLES.slice(0, 5).forEach(item => inventory.addItem(item.id, 1))
+                inventory.addItem(ALL_SELLABLES[0].id, 1) // second copy, to see the ×N badge
+              }}
+              label="+Junk"
+            />
+          )}
         </div>
       </SiteHudBar>
       {exiting && <EntranceTransitionOverlay origin="50% 50%" onComplete={onSiteComplete} />}
