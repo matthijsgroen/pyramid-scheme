@@ -80,13 +80,16 @@ export const FezShop: FC<Props> = ({
       balanceLabel={balanceLabel}
       dismissLabel={dismissLabel}
       onDismiss={onDismiss}
-      onBodyScroll={scrollTop => setScrollProgress(Math.min(scrollTop / SHRINK_DISTANCE, 1))}
+      onBodyScroll={(scrollTop, maxScroll) => {
+        const shrinkOver = Math.max(1, Math.min(SHRINK_DISTANCE, maxScroll))
+        setScrollProgress(Math.min(scrollTop / shrinkOver, 1))
+      }}
       headerExtra={
         <img
           src={fezCocktail}
           alt=""
-          className="shrink-0 rounded-full transition-all duration-150"
-          style={{ width: scrollProgress * 40, height: scrollProgress * 40, opacity: scrollProgress }}
+          className="w-auto shrink-0 rounded-md transition-all duration-150"
+          style={{ height: scrollProgress * 40, opacity: scrollProgress }}
         />
       }
     >

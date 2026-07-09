@@ -9,7 +9,7 @@ type Props = {
   dismissLabel: string
   onDismiss: () => void
   headerExtra?: ReactNode
-  onBodyScroll?: (scrollTop: number) => void
+  onBodyScroll?: (scrollTop: number, maxScroll: number) => void
   children: ReactNode
 }
 
@@ -39,7 +39,12 @@ export const ShopPanel: FC<Props> = ({
         </div>
         <div
           className="flex flex-col gap-2 overflow-y-auto"
-          onScroll={onBodyScroll ? e => onBodyScroll(e.currentTarget.scrollTop) : undefined}
+          onScroll={
+            onBodyScroll
+              ? e =>
+                  onBodyScroll(e.currentTarget.scrollTop, e.currentTarget.scrollHeight - e.currentTarget.clientHeight)
+              : undefined
+          }
         >
           {children}
         </div>
