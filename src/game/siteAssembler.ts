@@ -911,7 +911,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           const reward = section.puzzleRewards?.[pi]
           roomSpecs.set(posKey(r, c), {
             roomType: "puzzle",
-            family: config.puzzleFamily ?? "sumplete",
+            // Side-path puzzles are always sumplete, regardless of the floor's own
+            // puzzleFamily (tableau, for tombs) — tableaus consume hieroglyph symbols the
+            // player may not have yet, so they stay a main-path-only puzzle type.
+            family: "sumplete",
             ...(reward ? { reward } : {}),
           })
         }
@@ -978,7 +981,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           const reward = subSection.puzzleRewards?.[pi]
           roomSpecs.set(posKey(r, c), {
             roomType: "puzzle",
-            family: config.puzzleFamily ?? "sumplete",
+            // Same reasoning as the side-section case above: sub-section puzzles never
+            // inherit the floor's tableau family, only the main path does.
+            family: "sumplete",
             ...(reward ? { reward } : {}),
           })
         }

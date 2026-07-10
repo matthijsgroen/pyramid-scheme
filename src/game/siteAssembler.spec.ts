@@ -509,6 +509,27 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("side-path puzzles are always sumplete, even when the floor's own puzzleFamily is tableau", () => {
+    // Tableaus consume hieroglyph symbols the player may not have yet (found via a separate
+    // minigame before entering) — side paths (e.g. a shop's) must stay reachable without them.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      puzzleFamily: "tableau",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+    }
+    const result = assembleFloor("site-1", config, 1)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const mainPuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      expect(mainPuzzle).not.toBeNull()
+      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "sumplete")
+      expect(sidePuzzle).not.toBeNull()
+    }
+  })
+
   it("places exactly pathPuzzles puzzle rooms on the main path", () => {
     for (const pathPuzzles of [0, 1, 2, 3]) {
       const config: FloorConfig = {
