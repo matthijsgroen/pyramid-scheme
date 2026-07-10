@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Treasure tombs now hold chests along their path, and some tombs have a hidden side path leading to a mosaic piece or a hieroglyph fragment.
+- Solving a puzzle sometimes rewards a few coins or a healing supply, on top of its usual progress.
+- Ancient trinkets and curios can now be found scattered through pyramids.
+
+### Removed
+
+- Chests scattered along pyramid paths are gone — the supplies they held are now rewarded for solving puzzles instead.
 
 ### Changed
 

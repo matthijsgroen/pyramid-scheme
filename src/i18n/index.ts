@@ -37,7 +37,7 @@ i18n
 
     // Default namespace
     defaultNS: "common",
-    ns: ["common", "inventory", "journeys", "tableaus", "treasures", "fez"],
+    ns: ["common", "inventory", "journeys", "tableaus", "treasures", "sellables", "fez"],
   })
 
 export default i18n

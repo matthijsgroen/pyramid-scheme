@@ -59,6 +59,10 @@ const rewardLabel = (r: TreasureReward): string => {
       return `Consumable: ${r.consumable}`
     case "fragmentSlot":
       return "Fragment Slot (unassigned)"
+    case "money":
+      return `Money: ${r.amount}`
+    case "sellable":
+      return `Sellable: ${r.itemId}`
   }
 }
 
@@ -78,6 +82,10 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-orange-300"
     case "fragmentSlot":
       return "text-stone-400"
+    case "money":
+      return "text-yellow-300"
+    case "sellable":
+      return "text-lime-300"
   }
 }
 
@@ -85,13 +93,6 @@ const rewardColor = (r: TreasureReward): string => {
 // Puzzle/chest breakdown for a floor
 // ---------------------------------------------------------------------------
 const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean }) => {
-  const chestPositions: number[] = []
-  if (floor.chestEvery && floor.chestEvery > 0) {
-    for (let p = 1; p <= floor.pathPuzzles; p++) {
-      if (p % floor.chestEvery === 0) chestPositions.push(p)
-    }
-  }
-
   return (
     <div className={`mb-3 text-xs ${active ? "text-stone-200" : "text-stone-600"}`}>
       <div className="mb-1 flex gap-2">
@@ -100,15 +101,12 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
       </div>
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
-          const puzzleNum = i + 1
-          const hasChest = chestPositions.includes(puzzleNum)
-          const chestIdx = chestPositions.indexOf(puzzleNum)
-          const chest = hasChest ? (floor.chestRewards?.[chestIdx] ?? { type: "hieroglyphs" as const }) : null
+          const reward = floor.puzzleRewards?.[i]
           return (
             <div key={i} className="flex items-baseline gap-1">
-              <span className="w-4 shrink-0 text-stone-600">{puzzleNum}.</span>
+              <span className="w-4 shrink-0 text-stone-600">{i + 1}.</span>
               <span className="text-stone-500">puzzle</span>
-              {chest && <span className={`ml-1 ${rewardColor(chest)}`}>+ {rewardLabel(chest)}</span>}
+              {reward && <span className={`ml-1 ${rewardColor(reward)}`}>+ {rewardLabel(reward)}</span>}
             </div>
           )
         })}

@@ -23,7 +23,6 @@ const computeMainSectionHash = (config: FloorConfig): string =>
     hashString(
       JSON.stringify({
         pathPuzzles: config.pathPuzzles,
-        chestEvery: config.chestEvery,
         difficulty: config.difficulty,
         exitOrStaircase: config.exitOrStaircase,
       })
@@ -37,11 +36,12 @@ const computeSideSectionHash = (section: SideSection | SubSection, idx: number, 
         idx,
         parentIdx,
         pathPuzzles: section.pathPuzzles,
-        chestEvery: section.chestEvery,
         difficulty: section.difficulty,
         end: section.end,
         hidden: section.hidden,
         trapped: section.trapped,
+        sealed: section.sealed,
+        puzzleFamily: section.puzzleFamily,
         gateType: section.gate?.type,
       })
     )
@@ -225,15 +225,6 @@ const extendPath = (
   return dfs(startR, startC, count) ? result : null
 }
 
-const buildIntermediateTypes = (pathPuzzles: number, chestEvery: number): Array<"puzzle" | "chest"> => {
-  const types: Array<"puzzle" | "chest"> = []
-  for (let p = 1; p <= pathPuzzles; p++) {
-    types.push("puzzle")
-    if (chestEvery > 0 && p % chestEvery === 0) types.push("chest")
-  }
-  return types
-}
-
 // Spreads `count` content items evenly across [startIdx, totalLen-2], reserving the final
 // index for the chain's own terminal room (the main path's goal+exit; a section's end room)
 // and everything before `startIdx` for whatever already occupies the head (the entrance;
@@ -276,26 +267,19 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
   const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate)
 
-  // Build the ordered sequence of intermediate main-path node types
-  const intermediateTypes = buildIntermediateTypes(config.pathPuzzles, config.chestEvery ?? 0)
-
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
   // `packing`'s path-length target scales with what the *main path itself* needs, not with
   // how much unrelated side-section content happens to branch off it elsewhere.
-  const mainPathCells = 1 /* entrance */ + intermediateTypes.length + 1 /* goal */ + 1 /* exit/stairhead */
+  const mainPathCells = 1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */
 
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
   const minCells =
     mainPathCells +
     sideSections.reduce((sum, sec) => {
-      const si = buildIntermediateTypes(sec.pathPuzzles, sec.chestEvery ?? 0)
-      const secCells = si.length + 1 + (sec.gate ? 1 : 0)
-      const subCells = (sec.sideSections ?? []).reduce((s2, sub) => {
-        const subI = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
-        return s2 + subI.length + 1 + (sub.gate ? 1 : 0)
-      }, 0)
+      const secCells = sec.pathPuzzles + 1 + (sec.gate ? 1 : 0)
+      const subCells = (sec.sideSections ?? []).reduce((s2, sub) => s2 + sub.pathPuzzles + 1 + (sub.gate ? 1 : 0), 0)
       return sum + secCells + subCells
     }, 0)
 
@@ -387,16 +371,16 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // bare corridor behind the goal with nothing to do and nowhere to branch. Spreading
     // keeps something to find along the whole walk, and puts the goal last (closest to
     // the exit) so there's no unused tail behind it either.
-    const interLen = intermediateTypes.length
-    const contentCount = interLen + 1 // + goal
+    const contentCount = config.pathPuzzles + 1 // + goal
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     const goalIndex = contentIndices[contentIndices.length - 1]
-    // Aligned with intermediateTypes order — puzzleChestIndices[k] is where intermediateTypes[k] lands.
-    const puzzleChestIndices = contentIndices.slice(0, -1)
-    const puzzleChestRole = new Map<number, number>()
-    puzzleChestIndices.forEach((idx, k) => puzzleChestRole.set(idx, k))
+    // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
+    // used to index into config.puzzleRewards[k] below.
+    const puzzleIndices = contentIndices.slice(0, -1)
+    const puzzleRole = new Map<number, number>()
+    puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
@@ -406,7 +390,6 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     type SectionGroup = {
       sectionIdx: number
       cells: Array<[number, number]>
-      intermediate: Array<"puzzle" | "chest">
       attachedAt: [number, number]
     }
     const sectionGroups: SectionGroup[] = []
@@ -505,8 +488,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
       for (const si of group) {
         const section = sideSections[si]
-        const secIntermediate = buildIntermediateTypes(section.pathPuzzles, section.chestEvery ?? 0)
-        const needed = paddedChainLength(secIntermediate.length + 1 + (section.gate ? 1 : 0))
+        const needed = paddedChainLength(section.pathPuzzles + 1 + (section.gate ? 1 : 0))
         let placed = false
 
         // Try the shared hub first (if this group already has one), then this group's own
@@ -560,7 +542,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
             }
             const cells: Array<[number, number]> = [[startR, startC], ...rest]
             cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-            sectionGroups.push({ sectionIdx: si, cells, intermediate: secIntermediate, attachedAt: [pcr, pcc] })
+            sectionGroups.push({ sectionIdx: si, cells, attachedAt: [pcr, pcc] })
             if (!hubCell) hubCell = [pcr, pcc]
             placed = true
             break
@@ -580,7 +562,6 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       subSection: SubSection
       cells: Array<[number, number]>
       attachedAt: [number, number]
-      intermediate: Array<"puzzle" | "chest">
       parentSectionIdx: number
       subSectionIdx: number
       keyNodeId?: string
@@ -615,13 +596,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         idx: number
         cells: Array<[number, number]>
         attachedAt: [number, number]
-        intermediate: Array<"puzzle" | "chest">
       }> = []
 
       for (let si = 0; si < subSects.length; si++) {
         const sub = subSects[si]
-        const subIntermediate = buildIntermediateTypes(sub.pathPuzzles, sub.chestEvery ?? 0)
-        const subNeeded = paddedChainLength(subIntermediate.length + 1 + (sub.gate ? 1 : 0))
+        const subNeeded = paddedChainLength(sub.pathPuzzles + 1 + (sub.gate ? 1 : 0))
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
@@ -640,7 +619,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
             }
             const cells: Array<[number, number]> = [[startR, startC], ...rest]
             cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-            placedSubs.push({ idx: si, cells, attachedAt: [pcr, pcc], intermediate: subIntermediate })
+            placedSubs.push({ idx: si, cells, attachedAt: [pcr, pcc] })
             placed = true
             break
           }
@@ -680,12 +659,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       }
       const subKeyHostIdxs = new Set(subKeyHostColorsMap.keys())
 
-      for (const { idx, cells, attachedAt, intermediate } of placedSubs) {
+      for (const { idx, cells, attachedAt } of placedSubs) {
         subSectionGroups.push({
           subSection: subSects[idx],
           cells,
           attachedAt,
-          intermediate,
           parentSectionIdx: group.sectionIdx,
           subSectionIdx: idx,
           keyNodeId: subKeyNodeIdMap.get(idx),
@@ -772,11 +750,22 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const [nr, nc] = mainPath[mi + 1]
       intendedEdgeKeys.add(pkey(r, c, nr, nc))
     }
+    // `sealed` opts a main path into the same isolation gated/trapped content already gets —
+    // every consecutive main-path edge is already `intended` above, so this only blocks
+    // *extra* leftover edges that would otherwise merge a shortcut around a puzzle room.
+    if (config.sealed) {
+      for (const [r, c] of mainPath) gatedCellKeys.add(posKey(r, c))
+    }
     for (const group of sectionGroups) {
       markChain(group.attachedAt, group.cells)
       // Trapped content gets the same isolation as gated content — a stray tree edge
-      // would otherwise let a player step past a trap cell for free.
-      if (sideSections[group.sectionIdx].gate || sideSections[group.sectionIdx].trapped) {
+      // would otherwise let a player step past a trap cell for free. `sealed` opts any
+      // ordinary (visible, ungated) path into the same protection on request.
+      if (
+        sideSections[group.sectionIdx].gate ||
+        sideSections[group.sectionIdx].trapped ||
+        sideSections[group.sectionIdx].sealed
+      ) {
         for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
       }
     }
@@ -786,7 +775,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         sideSections[sub.parentSectionIdx].gate ||
         sub.subSection.gate ||
         sideSections[sub.parentSectionIdx].trapped ||
-        sub.subSection.trapped
+        sub.subSection.trapped ||
+        sideSections[sub.parentSectionIdx].sealed ||
+        sub.subSection.sealed
       ) {
         for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
       }
@@ -825,8 +816,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
-    const lastPuzzleIntermediateIdx = config.lastMainPuzzleFamily ? intermediateTypes.lastIndexOf("puzzle") : -1
-    let mainChestIdx = 0
+    // The goal-room fallback here is defensive only: every real config sets mainEndReward
+    // explicitly (buildSite.ts) — an unset one used to silently grant a free, uncounted
+    // mosaicPiece (a bug, see SHOP_PLAN.md "World reshape"), so this now falls back to the
+    // same grant-nothing placeholder every other unset reward slot uses.
+    const lastPuzzleIdx = config.lastMainPuzzleFamily ? config.pathPuzzles - 1 : -1
     for (let mi = 0; mi < mainPath.length; mi++) {
       const [r, c] = mainPath[mi]
       if (mi === 0) {
@@ -839,23 +833,17 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       } else if (mi === goalIndex) {
         roomSpecs.set(posKey(r, c), {
           roomType: "treasure",
-          reward: config.mainEndReward ?? { type: "mosaicPiece" },
+          reward: config.mainEndReward ?? { type: "hieroglyphs" },
         })
-      } else if (puzzleChestRole.has(mi)) {
-        const k = puzzleChestRole.get(mi)!
-        if (intermediateTypes[k] === "chest") {
-          roomSpecs.set(posKey(r, c), {
-            roomType: "treasure",
-            reward: config.chestRewards?.[mainChestIdx++] ?? { type: "hieroglyphs" },
-          })
-        } else {
-          const isLastPuzzle = k === lastPuzzleIntermediateIdx
-          const family =
-            isLastPuzzle && config.lastMainPuzzleFamily
-              ? config.lastMainPuzzleFamily
-              : (config.puzzleFamily ?? "sumplete")
-          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family })
-        }
+      } else if (puzzleRole.has(mi)) {
+        const k = puzzleRole.get(mi)!
+        const isLastPuzzle = k === lastPuzzleIdx
+        const family =
+          isLastPuzzle && config.lastMainPuzzleFamily
+            ? config.lastMainPuzzleFamily
+            : (config.puzzleFamily ?? "sumplete")
+        const reward = config.puzzleRewards?.[k]
+        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family, ...(reward ? { reward } : {}) })
       }
     }
 
@@ -881,7 +869,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     // Section nodes
     for (const group of sectionGroups) {
-      const { sectionIdx, cells, intermediate } = group
+      const { sectionIdx, cells } = group
       const section = sideSections[sectionIdx]
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
@@ -911,19 +899,25 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         contentStart = 1
       }
 
-      // Intermediate nodes within section (puzzles/traps + chests) — spread across
-      // whatever room `paddedChainLength` gave this chain (see spreadContentIndices),
-      // same technique as the main path, instead of assumed-consecutive from contentStart
-      // (which only ever held when a chain was exactly its bare content length).
-      const secContentIndices = spreadContentIndices(intermediate.length, contentStart, cells.length)
-      for (let pi = 0; pi < intermediate.length; pi++) {
+      // Intermediate nodes within section (puzzles/traps) — spread across whatever room
+      // `paddedChainLength` gave this chain (see spreadContentIndices), same technique as
+      // the main path, instead of assumed-consecutive from contentStart (which only ever
+      // held when a chain was exactly its bare content length).
+      const secContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
+      for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
-        if (intermediate[pi] === "chest") {
-          roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
-        } else if (section.trapped) {
+        if (section.trapped) {
           roomSpecs.set(posKey(r, c), { roomType: "trap" })
         } else {
-          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
+          const reward = section.puzzleRewards?.[pi]
+          roomSpecs.set(posKey(r, c), {
+            roomType: "puzzle",
+            // Never inherits the floor's own puzzleFamily (tableau, for tombs) — tableaus
+            // consume hieroglyph symbols the player may not have yet, so a side path stays
+            // sumplete unless it explicitly opts into a different family itself.
+            family: section.puzzleFamily ?? "sumplete",
+            ...(reward ? { reward } : {}),
+          })
         }
       }
 
@@ -942,20 +936,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: section.endReward ?? { type: "hieroglyphs" },
+          ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
         })
       }
     }
 
     // Sub-section nodes
-    for (const {
-      subSection,
-      cells,
-      intermediate,
-      keyNodeId,
-      isKeyHost,
-      keyHostColor,
-      keyHostColors,
-    } of subSectionGroups) {
+    for (const { subSection, cells, keyNodeId, isKeyHost, keyHostColor, keyHostColors } of subSectionGroups) {
       const isFloorKeyGate = subSection.gate?.type === "floor-key"
       const isTombKeyGate = subSection.gate?.type === "tomb-key"
       let contentStart = 0
@@ -984,17 +971,22 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // Spread across whatever room `paddedChainLength` gave this chain — same technique
       // as the parent section and the main path (see spreadContentIndices). Previously
       // indexed as `(contentStart + pi) * 2`, which only ever happened to line up for a
-      // single-puzzle sub-section; any sub-section with more than one puzzle/chest was
-      // silently indexing past its own content into whatever cell happened to sit there.
-      const subContentIndices = spreadContentIndices(intermediate.length, contentStart, cells.length)
-      for (let pi = 0; pi < intermediate.length; pi++) {
+      // single-puzzle sub-section; any sub-section with more than one puzzle was silently
+      // indexing past its own content into whatever cell happened to sit there.
+      const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
+      for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
-        if (intermediate[pi] === "chest") {
-          roomSpecs.set(posKey(r, c), { roomType: "treasure", reward: { type: "hieroglyphs" } })
-        } else if (subSection.trapped) {
+        if (subSection.trapped) {
           roomSpecs.set(posKey(r, c), { roomType: "trap" })
         } else {
-          roomSpecs.set(posKey(r, c), { roomType: "puzzle", family: config.puzzleFamily ?? "sumplete" })
+          const reward = subSection.puzzleRewards?.[pi]
+          roomSpecs.set(posKey(r, c), {
+            roomType: "puzzle",
+            // Same reasoning as the side-section case above: never inherits the floor's
+            // tableau family unless the sub-section explicitly opts in itself.
+            family: subSection.puzzleFamily ?? "sumplete",
+            ...(reward ? { reward } : {}),
+          })
         }
       }
 
@@ -1014,6 +1006,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), {
           roomType: "treasure",
           reward: subSection.endReward ?? { type: "hieroglyphs" },
+          ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
         })
       }
     }
@@ -1053,6 +1046,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           ...(spec.keyColor ? { keyColor: spec.keyColor } : {}),
           ...(spec.keyColors ? { keyColors: spec.keyColors } : {}),
           ...(spec.family ? { family: spec.family } : {}),
+          ...(spec.stairId ? { stairId: spec.stairId } : {}),
+          ...(spec.shopPrice !== undefined ? { shopPrice: spec.shopPrice } : {}),
         }
         cells2D[r][c] = roomCell
       } else {

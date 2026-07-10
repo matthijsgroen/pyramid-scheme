@@ -1,6 +1,8 @@
-import type { SiteConfig, TreasureReward } from "./types"
+import type { SideSection, SiteConfig, SubSection, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, EXPECTED_HIEROGLYPH_FRAGMENTS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
+import { TOTAL_CONSUMABLE_BUYABLE } from "../data/shopPricing"
+import { sellValueForItemId } from "../data/sellables"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -32,7 +34,6 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): voi
             `[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
           )
         checkReward(floor.mainEndReward)
-        for (const r of floor.chestRewards ?? []) checkReward(r)
         for (const s of floor.sideSections) {
           checkReward(s.endReward)
           for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
@@ -80,7 +81,6 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
           checkReward(s.endReward)
           for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
         }
-        for (const r of floor.chestRewards ?? []) checkReward(r)
       }
     }
   }
@@ -89,7 +89,7 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
 
 type SiteFloorRef = { siteId: string; floorIndex: number }
 
-// Where each tomb-key (ward key) is actually granted — the first mainEndReward/chestReward/
+// Where each tomb-key (ward key) is actually granted — the first mainEndReward/
 // sideSection(+sub) reward of type "tombKey" for that keyId, walked in floor order.
 const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, SiteFloorRef> => {
   const grants = new Map<string, SiteFloorRef>()
@@ -101,7 +101,6 @@ const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, S
       floors.forEach((floor, floorIndex) => {
         const ref = { siteId, floorIndex }
         record(floor.mainEndReward, ref)
-        for (const r of floor.chestRewards ?? []) record(r, ref)
         for (const s of floor.sideSections) {
           record(s.endReward, ref)
           for (const sub of s.sideSections ?? []) record(sub.endReward, ref)
@@ -183,5 +182,50 @@ export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): voi
   }
   if (orderingErrors.length > 0) {
     throw new Error(`[worldSpec] Unsolvable ward-key ordering:\n${orderingErrors.join("\n")}`)
+  }
+}
+
+// SHOP_PLAN.md "Economy model" guard: Σ(all shop prices, rares + one full consumable
+// restock per shop) ≤ Σ(all guaranteed income — puzzle-solve money + junk sell value).
+// Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
+// order affordable; only the world-wide totals matter. Throws at build, not at runtime.
+// This is a hand-walked, shop-specific version of a more general "dependency read as guard"
+// mechanism docs/mods-architecture.md describes — a mechanic declaring a dependency on
+// another's output, with the sum-check falling out of the dependency graph instead of being
+// hand-rolled per feature. Not generalizing yet; a pointer for whoever does.
+export const validateEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void => {
+  let shopPrices = 0
+  let guaranteedIncome = 0
+
+  const tallySubSection = (s: SubSection) => {
+    if (s.shopPrice !== undefined) shopPrices += s.shopPrice
+    if (s.endReward?.type === "sellable") guaranteedIncome += sellValueForItemId(s.endReward.itemId)
+    for (const r of s.puzzleRewards ?? []) {
+      if (r?.type === "money") guaranteedIncome += r.amount
+    }
+  }
+  const walkSection = (s: SideSection) => {
+    tallySubSection(s)
+    for (const sub of s.sideSections ?? []) tallySubSection(sub)
+  }
+
+  for (const siteConfigs of Object.values(allConfigs)) {
+    for (const floors of siteConfigs) {
+      for (const floor of floors) {
+        if (floor.mainEndReward?.type === "sellable") guaranteedIncome += sellValueForItemId(floor.mainEndReward.itemId)
+        for (const r of floor.puzzleRewards ?? []) {
+          if (r?.type === "money") guaranteedIncome += r.amount
+        }
+        for (const s of floor.sideSections) walkSection(s)
+      }
+    }
+  }
+
+  const totalBuyable = shopPrices + TOTAL_CONSUMABLE_BUYABLE
+  if (totalBuyable > guaranteedIncome) {
+    throw new Error(
+      `[worldSpec] Shop economy guard failed: total buyable (${totalBuyable} = ${shopPrices} rares + ` +
+        `${TOTAL_CONSUMABLE_BUYABLE} consumable stock) exceeds guaranteed income (${guaranteedIncome}).`
+    )
   }
 }

@@ -20,6 +20,7 @@ export type StoredJourneyStateV3 = {
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // edgeIds where inventory was full at collect time
+  purchasedShops?: string[] // edgeIds of shop rooms whose rare item has been bought
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -47,6 +48,8 @@ export type JourneyAPI = {
   markConsumableSkipped: (edgeId: string) => void
   clearConsumableSkipped: (edgeId: string) => void
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
+  markShopPurchased: (edgeId: string) => void
+  hasPurchasedShop: (journeyId: string, edgeId: string) => boolean
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -279,6 +282,23 @@ export const createJourneysV3Api = ({
     return new Set(j?.skippedConsumables ?? [])
   }
 
+  const markShopPurchased = (edgeId: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const purchased = j.purchasedShops ?? []
+        if (purchased.includes(edgeId)) return j
+        return { ...j, purchasedShops: [...purchased, edgeId] }
+      })
+    )
+  }
+
+  const hasPurchasedShop = (journeyId: string, edgeId: string): boolean => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    return (j?.purchasedShops ?? []).includes(edgeId)
+  }
+
   return {
     activeJourneyId,
     maxDifficulty,
@@ -297,5 +317,7 @@ export const createJourneysV3Api = ({
     markConsumableSkipped,
     clearConsumableSkipped,
     getSkippedConsumables,
+    markShopPurchased,
+    hasPurchasedShop,
   }
 }

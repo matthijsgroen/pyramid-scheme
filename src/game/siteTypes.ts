@@ -1,6 +1,9 @@
 export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 export type ConsumableType = "bandage" | "oil" | "trapTool"
+// Closed union — grows by one variant per new reward/currency (money, sellable were the
+// latest). docs/mods-architecture.md proposes collapsing this into a currency-id registry;
+// see that doc before adding a variant here for what's replacing this pattern.
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
@@ -9,6 +12,8 @@ export type TreasureReward =
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
   | { type: "fragmentSlot" }
+  | { type: "money"; amount: number }
+  | { type: "sellable"; itemId: string }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"
@@ -32,6 +37,8 @@ export type RoomCell = {
   sectionHash?: string
   hidden?: boolean
   reward?: TreasureReward
+  /** `reward` is a Fez-shop purchase (this many coins), not a free pickup. */
+  shopPrice?: number
   requiredKeyId?: string
   gateVariant?: GateVariant
   keyColor?: KeyColor
@@ -57,13 +64,21 @@ export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 export type SubSection = {
   pathPuzzles: number
-  chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
+  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
+  shopPrice?: number
+  puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   trapped?: boolean
+  /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
+  sealed?: boolean
+  /** Overrides the floor's puzzleFamily for this section's own puzzle rooms — defaults to
+   * "sumplete" when unset (a floor's tableau family never leaks onto a side path unless a
+   * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family. */
+  puzzleFamily?: Exclude<PuzzleFamily, "crocodile">
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
 }
@@ -72,7 +87,6 @@ export type SideSection = SubSection & {
 }
 export type FloorConfig = {
   pathPuzzles: number
-  chestEvery?: number
   difficulty: Difficulty
   end: "treasure"
   exitOrStaircase: "exit" | "staircase" | { stairId: string }
@@ -82,7 +96,7 @@ export type FloorConfig = {
   /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
-  chestRewards?: TreasureReward[]
+  puzzleRewards?: (TreasureReward | undefined)[]
   puzzleFamily?: PuzzleFamily
   /** If set, the last main-path puzzle room uses this family instead of puzzleFamily. */
   lastMainPuzzleFamily?: PuzzleFamily
@@ -90,6 +104,8 @@ export type FloorConfig = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
+  sealed?: boolean
 }
 
 // A site is one or more floors. Index 0 = surface.

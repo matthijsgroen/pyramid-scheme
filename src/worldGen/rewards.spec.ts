@@ -114,9 +114,9 @@ describe("pathEndToReward", () => {
     expect(pathEndToReward("fragment", "starter")).toEqual({ type: "fragmentSlot" })
   })
 
-  it('"consumable" → a consumable reward', () => {
-    const reward = pathEndToReward("consumable", "starter", 0)
-    expect(reward?.type).toBe("consumable")
+  it('"junk" → a sellable reward', () => {
+    const reward = pathEndToReward("junk", "starter", "seed-0")
+    expect(reward?.type).toBe("sellable")
   })
 
   it('"treasure" → undefined (no specific reward)', () => {

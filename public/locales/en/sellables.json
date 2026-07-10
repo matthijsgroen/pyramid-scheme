@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Stone",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "divine": "Divine"
+  },
+  "sell_stone_1": {
+    "name": "Chipped Ostracon",
+    "description": "A broken pottery shard scratched with a scribe's practice notes — worthless to read, but Fez pays for the clay."
+  },
+  "sell_stone_2": {
+    "name": "Cracked Clay Jar",
+    "description": "A storage jar for grain or beer, split down one side by the weight of centuries."
+  },
+  "sell_stone_3": {
+    "name": "Worn Reed Sandal",
+    "description": "Woven from papyrus reeds, the sole worn thin by some long-forgotten worker's daily walk."
+  },
+  "sell_stone_4": {
+    "name": "Faded Linen Scrap",
+    "description": "A torn strip of undyed linen, the kind wound endlessly around the dead — or used to patch a sail."
+  },
+  "sell_stone_5": {
+    "name": "Broken Flint Blade",
+    "description": "A knapped flint knife, snapped at the tip. Cheap to make, cheaper to replace."
+  },
+  "sell_bronze_1": {
+    "name": "Bent Bronze Amulet",
+    "description": "A cheap protective charm, cast crooked and never fixed. Common enough that no collector wants it — but bronze is bronze."
+  },
+  "sell_bronze_2": {
+    "name": "Corroded Bronze Mirror",
+    "description": "Once polished bright enough to see your reflection; now clouded green with age."
+  },
+  "sell_bronze_3": {
+    "name": "Dull Bronze Fishhook",
+    "description": "A fisherman's tool, lost overboard on the Nile long before the tomb was sealed."
+  },
+  "sell_bronze_4": {
+    "name": "Small Bronze Bell",
+    "description": "Meant to hang from a temple door or a dancer's ankle — it no longer rings true."
+  },
+  "sell_bronze_5": {
+    "name": "Tarnished Bronze Ring",
+    "description": "A plain band, sized for a finger long since turned to dust."
+  },
+  "sell_silver_1": {
+    "name": "Tarnished Silver Ankh",
+    "description": "A symbol of life, worn dull by centuries underground. Too tarnished to display, still worth its weight."
+  },
+  "sell_silver_2": {
+    "name": "Silver Kohl Applicator",
+    "description": "A slender rod once used to line the eyes of the wealthy — the kohl is long gone."
+  },
+  "sell_silver_3": {
+    "name": "Dented Silver Bowl",
+    "description": "A small offering bowl, crushed on one side when the ceiling above it finally gave way."
+  },
+  "sell_silver_4": {
+    "name": "Silver Hair Pin",
+    "description": "Simple and unadorned, it once held back the hair of someone whose name is lost."
+  },
+  "sell_silver_5": {
+    "name": "Worn Silver Bracelet",
+    "description": "A thin band of silver, its clasp broken. Not fine enough for a noble, too fine for a laborer."
+  },
+  "sell_gold_1": {
+    "name": "Small Gold Bead",
+    "description": "One bead from a burial necklace, scattered long ago. A jeweler's delight, if you can find the rest."
+  },
+  "sell_gold_2": {
+    "name": "Gold Leaf Fragment",
+    "description": "A sliver of gold leaf, peeled from a statue's face by grave robbers centuries before you arrived."
+  },
+  "sell_gold_3": {
+    "name": "Thin Gold Earring",
+    "description": "Hammered thin to stretch a noble's gold further — still enough to catch a merchant's eye."
+  },
+  "sell_gold_4": {
+    "name": "Gold-Flecked Shard",
+    "description": "A broken piece of gilded plaster, flecks of real gold still clinging to the surface."
+  },
+  "sell_gold_5": {
+    "name": "Chipped Gold Signet",
+    "description": "A seal ring, its engraving worn past recognition — whoever it named is forgotten."
+  },
+  "sell_divine_1": {
+    "name": "Faded Lapis Scarab",
+    "description": "Carved from precious lapis lazuli, imported at great cost for a pharaoh's rebirth. The color has faded, the value hasn't."
+  },
+  "sell_divine_2": {
+    "name": "Carnelian Eye Amulet",
+    "description": "A protective eye carved from blood-red carnelian, meant to ward off misfortune in the afterlife."
+  },
+  "sell_divine_3": {
+    "name": "Turquoise Inlay Chip",
+    "description": "A single tile from a shattered mosaic, once part of a god's likeness on a temple wall."
+  },
+  "sell_divine_4": {
+    "name": "Alabaster Canopic Shard",
+    "description": "A broken piece of a jar meant to hold a pharaoh's preserved organs — precious stone for a grim purpose."
+  },
+  "sell_divine_5": {
+    "name": "Obsidian Ritual Blade",
+    "description": "Volcanic glass, ground to a ceremonial edge never meant for battle — only for the temple."
+  }
+}

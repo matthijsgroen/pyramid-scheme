@@ -4,7 +4,8 @@
  * Run: yarn generate-world
  *
  * Fragment distribution:
- * - Intermediate chest nodes hold hieroglyphFragment rewards (specific inventory item IDs)
+ * - fragmentSlot placeholders (main-path ends, section/sub-section ends) hold
+ *   hieroglyphFragment rewards (specific inventory item IDs); leftover slots become junk loot
  * - Spread: starter fragments in starter+junior; junior in junior+expert; etc.
  * - No two fragments of the same hieroglyph in the same journey
  * - 47/157 fragments placed on linear sites; remaining 110 go on Phase 5 branches
