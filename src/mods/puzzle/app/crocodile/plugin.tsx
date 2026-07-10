@@ -20,7 +20,8 @@ import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
-import { PuzzleFamilyShell } from "@/app/PuzzleFamilies/PuzzleFamilyShell"
+import { PuzzleFamilyShell } from "@/mods/puzzle/app/PuzzleFamilyShell"
+import { CROCODILE_META } from "@/mods/puzzle/game/crocodile/meta"
 
 type CrocodileConfig = {
   compareAmount: number
@@ -270,7 +271,7 @@ const CrocodileFamilyComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puz
 )
 
 registerFamily({
-  meta: { id: "crocodile", ownerMod: "puzzle", tags: ["tomb-puzzle"], icon: "🐊", color: "green" },
+  meta: CROCODILE_META,
   generate: (seed, ctx): CompareLevel => {
     const difficulty = ctx.difficulty ?? "starter"
     const config = CROC_CONFIG[difficulty] ?? CROC_CONFIG.starter

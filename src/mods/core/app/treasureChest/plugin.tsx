@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
+import { TREASURE_CHEST_META } from "@/mods/core/game/treasureChest/meta"
 import { Chest } from "@/ui/atoms/Chest"
 
 // A treasure chest is an encounter with zero challenge and zero fail cost — clicking it IS
@@ -26,7 +27,7 @@ const TreasureComponent: FamilyPlugin["Component"] = ({ onSolved }) => {
 }
 
 registerFamily({
-  meta: { id: "treasure-chest", ownerMod: "core", tags: ["treasure"], icon: "🪙", color: "amber" },
+  meta: TREASURE_CHEST_META,
   generate: () => undefined,
   Component: TreasureComponent,
 })

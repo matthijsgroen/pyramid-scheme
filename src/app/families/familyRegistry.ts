@@ -2,13 +2,15 @@ import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { TreasureReward } from "@/game/siteTypes"
 import type { ResolveEncounter } from "@/game/siteAssembler"
+import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import type { useInventory } from "@/app/Inventory/useInventory"
 
 // The one registry for every encounter family (puzzle, trap, shop, treasure). Lives in
-// src/app/ (not src/game/) because Component needs ProgressionAPI/JourneyAPI.
-export type FamilyMeta = { id: string; ownerMod: string; tags: string[]; icon: string; color: string }
+// src/app/ (not src/game/) because Component needs ProgressionAPI/JourneyAPI — FamilyMeta
+// itself is plain data, defined in src/game/families/familyMeta.ts so world-gen can read it.
+export type { FamilyMeta }
 
 export type FamilyContext = {
   // This room's own identity, for families that act on journeys/progression directly.

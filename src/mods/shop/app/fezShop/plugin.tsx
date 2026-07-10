@@ -2,6 +2,7 @@
 import { use, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
+import { FEZ_SHOP_META } from "@/mods/shop/game/fezShop/meta"
 import { useModState } from "@/app/state/useModState"
 import { FezContext } from "@/app/fez/context"
 import { FezShop } from "@/ui/organisms/FezShop"
@@ -138,7 +139,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
 }
 
 registerFamily({
-  meta: { id: "fez-shop", ownerMod: "shop", tags: ["shop"], icon: "🛒", color: "amber" },
+  meta: FEZ_SHOP_META,
   generate: (_seed, ctx) => ({ reward: ctx.reward, price: ctx.price }),
   Component: ShopComponent,
 })

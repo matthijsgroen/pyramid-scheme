@@ -5,7 +5,8 @@ import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzle
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
-import { PuzzleFamilyShell } from "@/app/PuzzleFamilies/PuzzleFamilyShell"
+import { PuzzleFamilyShell } from "@/mods/puzzle/app/PuzzleFamilyShell"
+import { TABLEAU_META } from "@/mods/puzzle/game/tableau/meta"
 
 const TOMB_SYMBOLS: Record<string, string[]> = {
   starter: ["p10", "p8", "art1", "a6", "a8", "art5", "d1"],
@@ -52,7 +53,7 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
 }
 
 registerFamily({
-  meta: { id: "tableau", ownerMod: "puzzle", tags: ["tomb-puzzle"], icon: "📜", color: "amber" },
+  meta: TABLEAU_META,
   generate: (seed, ctx): RewardCalculation => {
     const difficulty = ctx.difficulty ?? "starter"
     const config = TABLEAU_CONFIG[difficulty] ?? TABLEAU_CONFIG.starter

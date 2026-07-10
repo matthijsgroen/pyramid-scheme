@@ -1,7 +1,14 @@
 import { describe, it, expect } from "vitest"
 import { registerFamily, getFamilyPlugin, allFamilies, resolveFamilyByIdOrTag } from "./familyRegistry"
 
-const stubMeta = (id: string, tags: string[]) => ({ id, ownerMod: "test", tags, icon: "?", color: "gray" })
+const stubMeta = (id: string, tags: string[]) => ({
+  id,
+  ownerMod: "test",
+  tags,
+  icon: "?",
+  color: "gray",
+  rewardWeight: 0,
+})
 const stubPlugin = (id: string, tags: string[]) => ({
   meta: stubMeta(id, tags),
   generate: () => undefined,

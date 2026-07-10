@@ -2,7 +2,8 @@
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { generateSumplete, type SumpleteGrid } from "@/game/puzzles/sumplete/generateSumplete"
 import { SumpletePuzzle } from "./SumpletePuzzle"
-import { PuzzleFamilyShell } from "@/app/PuzzleFamilies/PuzzleFamilyShell"
+import { PuzzleFamilyShell } from "@/mods/puzzle/app/PuzzleFamilyShell"
+import { SUMPLETE_META } from "@/mods/puzzle/game/sumplete/meta"
 
 const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved, onCancel }) => (
   <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
@@ -18,7 +19,7 @@ const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, on
 )
 
 registerFamily({
-  meta: { id: "sumplete", ownerMod: "puzzle", tags: ["puzzle"], icon: "🔢", color: "blue" },
+  meta: SUMPLETE_META,
   generate: (seed, ctx): SumpleteGrid =>
     generateSumplete(["expert", "master", "wizard"].includes(ctx.difficulty ?? "starter") ? 4 : 3, seed, {
       allowZeroTargets: ctx.difficulty === "wizard",

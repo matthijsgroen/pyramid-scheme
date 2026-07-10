@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import type { ArithmeticQuestion } from "@/app/TrapFamilies/ArithmeticReflex/plugin"
-import "@/app/TrapFamilies/ArithmeticReflex/plugin"
+import type { ArithmeticQuestion } from "@/mods/trap/game/arithmeticReflex/generate"
+import "./plugin"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { Difficulty } from "@/data/difficultyLevels"
 

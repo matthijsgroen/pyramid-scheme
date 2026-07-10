@@ -4,13 +4,8 @@ import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/siteTypes"
 import { encodeEdge, useAssembledFloor } from "./useAssembledFloor"
 // useAssembledFloor resolves families through the real registry — populate it, same as
-// main.tsx does, so resolution doesn't silently fall back to untagged rooms.
-import "@/app/TrapFamilies/ArithmeticReflex/plugin"
-import "@/app/PuzzleFamilies/Sumplete/plugin"
-import "@/app/PuzzleFamilies/Tableau/plugin"
-import "@/app/PuzzleFamilies/Crocodile/plugin"
-import "@/app/ShopFamily/plugin"
-import "@/app/TreasureFamily/plugin"
+// SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
+import "@/mods/registerAllFamilies"
 
 const OPPOSITE_DIR: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
 const DIR_MOVE: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }

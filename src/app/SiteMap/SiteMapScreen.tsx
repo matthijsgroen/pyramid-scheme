@@ -26,13 +26,8 @@ import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-// Side-effect: registers family plugins
-import "@/app/PuzzleFamilies/Sumplete/plugin"
-import "@/app/PuzzleFamilies/Tableau/plugin"
-import "@/app/PuzzleFamilies/Crocodile/plugin"
-import "@/app/TrapFamilies/ArithmeticReflex/plugin"
-import "@/app/ShopFamily/plugin"
-import "@/app/TreasureFamily/plugin"
+// Side-effect: registers every mod's family plugin
+import "@/mods/registerAllFamilies"
 
 type Props = {
   journeyId: string
