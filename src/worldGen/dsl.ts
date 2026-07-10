@@ -12,7 +12,9 @@ export type PathEntry = {
   density: SideIntensity
   pathPuzzles: number
   end: PathEndHint
-  trapped?: boolean
+  /** Which family/tag renders this path's intermediate rooms — an exact registered family
+   * id (e.g. "tableau") or a tag (e.g. "trap"). Omit = the default for this slot's context. */
+  encounter?: string | string[]
   /** Lock this path behind a floor-key door. Color is drawn from the floor's keyColors rotation. */
   gate?: "floor-key"
   /** Chance [0-1], rolled per pyramid, that this entry emits at all. Omit = always. Use to
@@ -31,7 +33,6 @@ export type GateSpec =
   | { type: "tomb-key"; tombId: string; index: number }
   | { type: "floor-key"; color?: KeyColor }
 
-export type PuzzleFamily = "sumplete" | "tableau"
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
 export type PyramidSelector = number | "first" | "last" | "middle" | `${number}-${number}` | `last-${number}`
@@ -40,7 +41,10 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** Which family/tag renders this section's intermediate rooms — an exact registered family
+   * id (e.g. "tableau", "sumplete") or a tag (e.g. "trap", "puzzle"). Omit = the default for
+   * this section's context (a side path defaults to the "puzzle" tag, i.e. sumplete). */
+  encounter?: string | string[]
   endReward?: RewardSpec | TExtra
   /** Marks this section's endReward as a Fez-shop purchase instead of a free pickup — the
    * DSL literal in coins. No `chance` allowed on a shop slot; must stay deterministic. */
@@ -52,17 +56,17 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   end?: "treasure" | "staircase"
   /** Invisible without the Detection perk. */
   hidden?: boolean
-  /** Every intermediate room along this path is a trap instead of a puzzle. */
-  trapped?: boolean
   /** Isolates this section's cells from leftover maze edges in a compact layout, so a
-   * shortcut can't merge around it — same mechanism `gate`/`trapped` already get for free. */
+   * shortcut can't merge around it — same mechanism `gate`/an `encounter:"trap"` section
+   * already gets for free. */
   sealed?: boolean
 }
 
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** Default family/tag for this floor's main-path encounter rooms. */
+  encounter?: string | string[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
@@ -117,7 +121,9 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
+   * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. */
+  encounter?: string | string[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Chance [0-1], rolled per pyramid, of an extra-winding floor. Ignored if corridorStraightness is set. */
@@ -326,7 +332,7 @@ export const rules = (list: Rule[]): Rule[] => list
 // for `pathPuzzles`/`difficulty` — kept short here only; the underlying constraint
 // shape (and every other spec file) still uses the long names.
 
-type PathOpts = Omit<SideSectionConstraint, "pathPuzzles" | "difficulty" | "end" | "gate" | "hidden" | "trapped"> & {
+type PathOpts = Omit<SideSectionConstraint, "pathPuzzles" | "difficulty" | "end" | "gate" | "hidden" | "encounter"> & {
   puzzles?: PathPuzzlesPreset | number
   tier?: Difficulty
 }
@@ -350,13 +356,13 @@ export const wardPath = (opts: PathOpts & { tomb: string; index: number }): Side
 }
 
 /** A hidden side path, invisible without the Detection perk. */
-export const hiddenPath = (opts: PathOpts & { trapped?: boolean } = {}): SideSectionConstraint => {
-  const { puzzles, tier, trapped, ...rest } = opts
+export const hiddenPath = (opts: PathOpts & { encounter?: string | string[] } = {}): SideSectionConstraint => {
+  const { puzzles, tier, encounter, ...rest } = opts
   return {
     ...rest,
     pathPuzzles: puzzles ?? 0,
     ...(tier ? { difficulty: tier } : {}),
     hidden: true,
-    ...(trapped ? { trapped: true } : {}),
+    ...(encounter !== undefined ? { encounter } : {}),
   }
 }

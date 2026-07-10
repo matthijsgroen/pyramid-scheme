@@ -74,13 +74,12 @@ export type SubSection = {
   shopPrice?: number
   puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
-  trapped?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
-  /** Overrides the floor's puzzleFamily for this section's own puzzle rooms — defaults to
-   * "sumplete" when unset (a floor's tableau family never leaks onto a side path unless a
+  /** Family/tag for this section's own intermediate rooms — defaults to the "puzzle" tag
+   * (sumplete) when unset (a floor's tableau family never leaks onto a side path unless a
    * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family. */
-  puzzleFamily?: Exclude<PuzzleFamily, "crocodile">
+  encounter?: string
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
 }
@@ -99,8 +98,9 @@ export type FloorConfig = {
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
   puzzleRewards?: (TreasureReward | undefined)[]
-  puzzleFamily?: PuzzleFamily
-  /** If set, the last main-path puzzle room uses this family instead of puzzleFamily. */
+  /** Default family/tag for this floor's main-path encounter rooms. */
+  encounter?: string
+  /** If set, the last main-path puzzle room uses this family instead of `encounter`. */
   lastMainPuzzleFamily?: PuzzleFamily
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number

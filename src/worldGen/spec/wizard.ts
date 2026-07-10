@@ -20,12 +20,12 @@ export const wizardRules: Rule[] = [
     .settings({ pathPuzzles: 1, end: "fragment", gate: "floor-key" })
     // Wizard is trap-heavy: 2-3 trapped hidden mosaics per pyramid, plus one plain-loot hidden.
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 1, end: "mosaic", trapped: true })
+    .settings({ pathPuzzles: 1, end: "mosaic", encounter: "trap" })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" }),
 
   tomb("wizard_treasure_tomb", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -44,7 +44,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_b", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -63,7 +63,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_c", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room

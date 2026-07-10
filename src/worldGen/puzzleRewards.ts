@@ -15,8 +15,11 @@ type Chain = {
 
 // A trapped chain's puzzle slots render as trap rooms, not puzzle rooms (siteAssembler.ts) —
 // excluded here so a reward is never assigned somewhere it can't be delivered.
+const isTrapEncounter = (encounter: string | undefined): boolean =>
+  encounter === "trap" || encounter === "arithmetic-reflex"
+
 const chainFor = (section: SubSection): Chain | undefined => {
-  if (section.trapped || section.pathPuzzles === 0) return undefined
+  if (isTrapEncounter(section.encounter) || section.pathPuzzles === 0) return undefined
   const rewards: (TreasureReward | undefined)[] = new Array(section.pathPuzzles).fill(undefined)
   section.puzzleRewards = rewards
   return { puzzleCount: section.pathPuzzles, rewards }

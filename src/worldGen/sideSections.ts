@@ -45,11 +45,10 @@ const buildDslSection = <TExtra extends string>(
     ...(subSections.length > 0 ? { sideSections: subSections } : {}),
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
-    ...(cs.trapped ? { trapped: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
-    // Array form exists on the constraint type but is never authored/resolved anywhere —
-    // only forward a plain single family.
-    ...(cs.puzzleFamily && !Array.isArray(cs.puzzleFamily) ? { puzzleFamily: cs.puzzleFamily } : {}),
+    // Real multi-candidate tag resolution isn't built (docs/mods-architecture.md step 5's
+    // Distribution) — an authored string[] just forwards its first entry.
+    ...(cs.encounter !== undefined ? { encounter: Array.isArray(cs.encounter) ? cs.encounter[0] : cs.encounter } : {}),
   }
 }
 
@@ -161,7 +160,9 @@ export const buildSideSections = <TExtra extends string = never>(
         end: "treasure",
         ...(endReward ? { endReward } : {}),
         ...(gate ? { gate } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
+        ...(entry.encounter !== undefined
+          ? { encounter: Array.isArray(entry.encounter) ? entry.encounter[0] : entry.encounter }
+          : {}),
       })
     }
   })
@@ -175,7 +176,9 @@ export const buildSideSections = <TExtra extends string = never>(
         end: "treasure",
         hidden: true,
         ...(endReward ? { endReward } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
+        ...(entry.encounter !== undefined
+          ? { encounter: Array.isArray(entry.encounter) ? entry.encounter[0] : entry.encounter }
+          : {}),
       })
     }
   })

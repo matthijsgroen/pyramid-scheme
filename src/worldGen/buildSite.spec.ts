@@ -18,11 +18,11 @@ describe("buildFloor", () => {
       pathPuzzles: 1,
       difficulty: "starter",
       sideSections: [],
-      puzzleFamily: "tableau",
+      encounter: "tableau",
       lastMainPuzzleFamily: "crocodile",
       corridorStraightness: 0.5,
     })
-    expect(floor.puzzleFamily).toBe("tableau")
+    expect(floor.encounter).toBe("tableau")
     expect(floor.lastMainPuzzleFamily).toBe("crocodile")
     expect(floor.corridorStraightness).toBe(0.5)
     expect(floor.packing).toBeUndefined()

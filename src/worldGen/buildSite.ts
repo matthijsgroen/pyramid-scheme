@@ -87,7 +87,7 @@ export type BuildFloorOptions = {
   exitOrStaircase?: FloorConfig["exitOrStaircase"]
   entrance?: FloorConfig["entrance"]
   mainEndReward?: TreasureReward
-  puzzleFamily?: FloorConfig["puzzleFamily"]
+  encounter?: FloorConfig["encounter"]
   lastMainPuzzleFamily?: FloorConfig["lastMainPuzzleFamily"]
   corridorStraightness?: number
   packing?: number
@@ -104,7 +104,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   sideSections: opts.sideSections,
   ...(opts.entrance ? { entrance: opts.entrance } : {}),
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
-  ...(opts.puzzleFamily ? { puzzleFamily: opts.puzzleFamily } : {}),
+  ...(opts.encounter ? { encounter: opts.encounter } : {}),
   ...(opts.lastMainPuzzleFamily ? { lastMainPuzzleFamily: opts.lastMainPuzzleFamily } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
@@ -298,7 +298,7 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
           end: "treasure" as const,
           endReward: { type: "fragmentSlot" as const },
           gate: { type: "tomb-key" as const, wardKeyId: TOMB_PERK_IDS[tombId][idx] },
-          ...(trapWardPath ? { trapped: true } : {}),
+          ...(trapWardPath ? { encounter: "trap" } : {}),
         })),
       ]
     }

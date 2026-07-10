@@ -366,7 +366,7 @@ describe(assembleFloor, () => {
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [
-        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, trapped: true },
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, encounter: "trap" },
         { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
       ],
     })
@@ -526,7 +526,7 @@ describe(assembleFloor, () => {
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
-      puzzleFamily: "tableau",
+      encounter: "tableau",
       sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
     }
     const result = assembleFloor("site-1", config, 1)
@@ -547,7 +547,7 @@ describe(assembleFloor, () => {
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
-      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", puzzleFamily: "tableau" }],
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", encounter: "tableau" }],
     }
     const result = assembleFloor("site-1", config, 1)
     expect(result.success).toBe(true)
@@ -807,7 +807,7 @@ describe(assembleFloor, () => {
         difficulty: "expert",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [{ pathPuzzles: 2, difficulty: "expert", end: "treasure", trapped: true }],
+        sideSections: [{ pathPuzzles: 2, difficulty: "expert", end: "treasure", encounter: "trap" }],
       }
       const result = assembleFloor("site-trap", config, 42)
       expect(result.success).toBe(true)

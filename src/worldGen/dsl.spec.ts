@@ -175,22 +175,22 @@ describe("journey() builder", () => {
   })
 })
 
-// ── trapped + junk PathEntry ───────────────────────────────────────────────────
+// ── encounter + junk PathEntry ───────────────────────────────────────────────────
 
-describe("PathEntry trapped flag", () => {
-  it("sidePaths().settings() with trapped:true propagates to constraints", () => {
-    const r = tier("expert").set({}).sidePaths("low").settings({ pathPuzzles: 1, end: "junk", trapped: true })
-    expect(r.constraints.sidePaths).toEqual([{ density: "low", pathPuzzles: 1, end: "junk", trapped: true }])
+describe("PathEntry encounter field", () => {
+  it("sidePaths().settings() with encounter propagates to constraints", () => {
+    const r = tier("expert").set({}).sidePaths("low").settings({ pathPuzzles: 1, end: "junk", encounter: "trap" })
+    expect(r.constraints.sidePaths).toEqual([{ density: "low", pathPuzzles: 1, end: "junk", encounter: "trap" }])
   })
 
-  it("hiddenPaths().settings() with trapped:true propagates to constraints", () => {
-    const r = tier("expert").set({}).hiddenPaths("low").settings({ pathPuzzles: 1, end: "treasure", trapped: true })
-    expect(r.constraints.hiddenPaths).toEqual([{ density: "low", pathPuzzles: 1, end: "treasure", trapped: true }])
+  it("hiddenPaths().settings() with encounter propagates to constraints", () => {
+    const r = tier("expert").set({}).hiddenPaths("low").settings({ pathPuzzles: 1, end: "treasure", encounter: "trap" })
+    expect(r.constraints.hiddenPaths).toEqual([{ density: "low", pathPuzzles: 1, end: "treasure", encounter: "trap" }])
   })
 
-  it("settings() without trapped does not add the key", () => {
+  it("settings() without encounter does not add the key", () => {
     const r = tier("starter").set({}).sidePaths("low").settings({ pathPuzzles: 0, end: "fragment" })
-    expect(r.constraints.sidePaths![0]).not.toHaveProperty("trapped")
+    expect(r.constraints.sidePaths![0]).not.toHaveProperty("encounter")
   })
 
   it("junk PathEndHint accepted by sidePaths", () => {
@@ -198,15 +198,15 @@ describe("PathEntry trapped flag", () => {
     expect(r.constraints.sidePaths![0].end).toBe("junk")
   })
 
-  it("trapped entry stacks alongside non-trapped entries", () => {
+  it("encounter entry stacks alongside plain entries", () => {
     const r = tier("master")
       .set({})
       .sidePaths("medium")
       .settings({ pathPuzzles: 1, end: "fragment" })
       .sidePaths("low")
-      .settings({ pathPuzzles: 1, end: "junk", trapped: true })
+      .settings({ pathPuzzles: 1, end: "junk", encounter: "trap" })
     expect(r.constraints.sidePaths).toHaveLength(2)
-    expect(r.constraints.sidePaths![0].trapped).toBeUndefined()
-    expect(r.constraints.sidePaths![1].trapped).toBe(true)
+    expect(r.constraints.sidePaths![0].encounter).toBeUndefined()
+    expect(r.constraints.sidePaths![1].encounter).toBe("trap")
   })
 })

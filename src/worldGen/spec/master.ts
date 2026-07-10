@@ -17,10 +17,10 @@ export const masterRules: Rule[] = [
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "mosaic", trapped: true }),
+    .settings({ pathPuzzles: 1, end: "mosaic", encounter: "trap" }),
 
   tomb("master_treasure_tomb", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "master",
     levelCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -40,7 +40,7 @@ export const masterRules: Rule[] = [
     ],
   }),
   tomb("master_treasure_tomb_b", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "master",
     levelCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room

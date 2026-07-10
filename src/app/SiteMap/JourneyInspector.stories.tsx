@@ -96,7 +96,7 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
   return (
     <div className={`mb-3 text-xs ${active ? "text-stone-200" : "text-stone-600"}`}>
       <div className="mb-1 flex gap-2">
-        <span className="font-semibold text-stone-400">{floor.puzzleFamily ?? "sumplete"}</span>
+        <span className="font-semibold text-stone-400">{floor.encounter ?? "sumplete"}</span>
         <span className="text-stone-500">{floor.difficulty}</span>
       </div>
       <div>

@@ -23,7 +23,7 @@ export const starterRules: Rule[] = [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tier: "junior", tomb: "starter_treasure_tomb", index: 0 }),
         sidePath(),
-        hiddenPath({ puzzles: 2, trapped: true, endReward: "mosaicPiece" }),
+        hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" }),
       ],
     })
     .floor(1, {
@@ -42,7 +42,7 @@ export const starterRules: Rule[] = [
     .floor(1, {
       pathPuzzles: 2,
       difficulty: "expert",
-      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, trapped: true, endReward: "mosaicPiece" })],
+      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
   journey("starter_2")
@@ -53,11 +53,11 @@ export const starterRules: Rule[] = [
     .floor(1, {
       pathPuzzles: 3,
       difficulty: "master",
-      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, trapped: true, endReward: "mosaicPiece" })],
+      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
   tomb("starter_treasure_tomb", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "starter",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room

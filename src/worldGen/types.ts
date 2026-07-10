@@ -30,12 +30,11 @@ export type SubSection = {
   shopPrice?: number
   puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
-  trapped?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
-  /** Overrides the floor's puzzleFamily for this section's own puzzle rooms — defaults to
-   * "sumplete" when unset. Never "crocodile" — that's a main-path-finale-only family. */
-  puzzleFamily?: "sumplete" | "tableau"
+  /** Family/tag for this section's own intermediate rooms — defaults to the "puzzle" tag
+   * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. */
+  encounter?: string
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -50,7 +49,7 @@ export type FloorConfig = {
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   puzzleRewards?: (TreasureReward | undefined)[]
-  puzzleFamily?: "sumplete" | "tableau"
+  encounter?: string
   lastMainPuzzleFamily?: "crocodile"
   corridorStraightness?: number
   packing?: number

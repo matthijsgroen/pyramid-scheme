@@ -15,10 +15,10 @@ export const juniorRules: Rule[] = [
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "junk", trapped: true, chance: 0.4 }),
+    .settings({ pathPuzzles: 1, end: "junk", encounter: "trap", chance: 0.4 }),
 
   tomb("junior_treasure_tomb", {
-    puzzleFamily: "tableau",
+    encounter: "tableau",
     difficulty: "junior",
     levelCount: 6,
     sealed: true, // linear tomb — no shortcut around a tableau room

@@ -62,7 +62,7 @@ describe("assignPuzzleRewards", () => {
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [{ pathPuzzles: 5, difficulty: "starter", end: "treasure", trapped: true }],
+        sideSections: [{ pathPuzzles: 5, difficulty: "starter", end: "treasure", encounter: "trap" }],
       },
     ]
     assignPuzzleRewards("journey-e", floors, RATES)

@@ -23,7 +23,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
           endReward: { type: "mosaicPiece" },
           shopPrice: 500,
           sealed: true,
-          puzzleFamily: "tableau",
+          encounter: "tableau",
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -48,7 +48,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
     expect(output.match(/sealed: true/g)?.length).toBe(2) // one on the floor, one on its side section
   })
 
-  it("keeps puzzleFamily on a serialized side section", () => {
-    expect(output).toContain('puzzleFamily: "tableau"')
+  it("keeps encounter on a serialized side section", () => {
+    expect(output).toContain('encounter: "tableau"')
   })
 })

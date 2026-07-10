@@ -15,6 +15,24 @@ import type {
 } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
+// Resolves an authored `encounter` (exact family id, or tag) to a concrete family id.
+// Mirrors the family registry's own first-registered-family-wins tag defaults (see
+// src/app/families/familyRegistry.ts's resolveFamilyByIdOrTag) — duplicated here as a plain
+// lookup because this module is domain-layer and can't import that app-layer registry.
+// Real multi-candidate tag-weighted picking is docs/mods-architecture.md step 5's
+// Distribution primitive, not built here — an authored string[] just uses its first entry.
+const ENCOUNTER_TAG_DEFAULTS: Record<string, string> = {
+  trap: "arithmetic-reflex",
+  puzzle: "sumplete",
+  "tomb-puzzle": "tableau",
+}
+const resolveEncounterFamily = (encounter: string | string[] | undefined, defaultTag: string): string => {
+  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+  return ENCOUNTER_TAG_DEFAULTS[value] ?? value
+}
+const isTrapSection = (encounter: string | string[] | undefined): boolean =>
+  resolveEncounterFamily(encounter, "puzzle") === "arithmetic-reflex"
+
 // Section hash covers structural fields only — not rewards, render style, or specific key IDs.
 // Stable across: loot changes, key reassignment, corridor style tweaks.
 // Changes on: puzzle count, chest cadence, difficulty, exit type, gate presence, hidden/trapped flags.
@@ -39,9 +57,8 @@ const computeSideSectionHash = (section: SideSection | SubSection, idx: number, 
         difficulty: section.difficulty,
         end: section.end,
         hidden: section.hidden,
-        trapped: section.trapped,
         sealed: section.sealed,
-        puzzleFamily: section.puzzleFamily,
+        encounter: section.encounter,
         gateType: section.gate?.type,
       })
     )
@@ -763,7 +780,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // ordinary (visible, ungated) path into the same protection on request.
       if (
         sideSections[group.sectionIdx].gate ||
-        sideSections[group.sectionIdx].trapped ||
+        isTrapSection(sideSections[group.sectionIdx].encounter) ||
         sideSections[group.sectionIdx].sealed
       ) {
         for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
@@ -774,8 +791,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (
         sideSections[sub.parentSectionIdx].gate ||
         sub.subSection.gate ||
-        sideSections[sub.parentSectionIdx].trapped ||
-        sub.subSection.trapped ||
+        isTrapSection(sideSections[sub.parentSectionIdx].encounter) ||
+        isTrapSection(sub.subSection.encounter) ||
         sideSections[sub.parentSectionIdx].sealed ||
         sub.subSection.sealed
       ) {
@@ -842,7 +859,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const family =
           isLastPuzzle && config.lastMainPuzzleFamily
             ? config.lastMainPuzzleFamily
-            : (config.puzzleFamily ?? "sumplete")
+            : resolveEncounterFamily(config.encounter, "puzzle")
         const reward = config.puzzleRewards?.[k]
         roomSpecs.set(posKey(r, c), { roomType: "encounter", family, ...(reward ? { reward } : {}) })
       }
@@ -911,19 +928,15 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const secContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
-        if (section.trapped) {
-          roomSpecs.set(posKey(r, c), { roomType: "encounter", family: "arithmetic-reflex" })
-        } else {
-          const reward = section.puzzleRewards?.[pi]
-          roomSpecs.set(posKey(r, c), {
-            roomType: "encounter",
-            // Never inherits the floor's own puzzleFamily (tableau, for tombs) — tableaus
-            // consume hieroglyph symbols the player may not have yet, so a side path stays
-            // sumplete unless it explicitly opts into a different family itself.
-            family: section.puzzleFamily ?? "sumplete",
-            ...(reward ? { reward } : {}),
-          })
-        }
+        const reward = section.puzzleRewards?.[pi]
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
+          // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
+          // tag's default) unless it explicitly opts into a different family itself.
+          family: resolveEncounterFamily(section.encounter, "puzzle"),
+          ...(reward ? { reward } : {}),
+        })
       }
 
       // End node
@@ -983,18 +996,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
-        if (subSection.trapped) {
-          roomSpecs.set(posKey(r, c), { roomType: "encounter", family: "arithmetic-reflex" })
-        } else {
-          const reward = subSection.puzzleRewards?.[pi]
-          roomSpecs.set(posKey(r, c), {
-            roomType: "encounter",
-            // Same reasoning as the side-section case above: never inherits the floor's
-            // tableau family unless the sub-section explicitly opts in itself.
-            family: subSection.puzzleFamily ?? "sumplete",
-            ...(reward ? { reward } : {}),
-          })
-        }
+        const reward = subSection.puzzleRewards?.[pi]
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          // Same reasoning as the side-section case above: never inherits the floor's
+          // tableau encounter unless the sub-section explicitly opts in itself.
+          family: resolveEncounterFamily(subSection.encounter, "puzzle"),
+          ...(reward ? { reward } : {}),
+        })
       }
 
       const [er, ec] = cells[cells.length - 1]
