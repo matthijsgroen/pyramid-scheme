@@ -48,8 +48,7 @@ export const TombPuzzle: FC<{
   calculation: RewardCalculation
   difficulty: Difficulty
   onComplete?: () => void
-  onFindHieroglyphs?: () => void
-}> = ({ tableau, calculation, difficulty, onComplete, onFindHieroglyphs }) => {
+}> = ({ tableau, calculation, difficulty, onComplete }) => {
   const { t } = useTranslation("common")
 
   // Get player's actual inventory
@@ -235,9 +234,6 @@ export const TombPuzzle: FC<{
       inventoryTitle={t("ui.availableSymbols")}
       inventoryItems={inventoryItems}
       onInventoryItemClick={handleInventoryClick}
-      showFindHieroglyphsButton={notEnough && !isPuzzleCompleted}
-      findHieroglyphsLabel={t("ui.findMissingHieroglyphs")}
-      onFindHieroglyphs={onFindHieroglyphs}
     />
   )
 }

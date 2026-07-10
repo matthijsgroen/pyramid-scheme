@@ -25,8 +25,7 @@ export const TombExpedition: FC<{
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
   onClose?: () => void
-  onFindHieroglyphs?: () => void
-}> = ({ onClose, activeJourney, onLevelComplete, onJourneyComplete, onFindHieroglyphs }) => {
+}> = ({ onClose, activeJourney, onLevelComplete, onJourneyComplete }) => {
   const { t } = useTranslation("common")
   const tableaux = useTableauTranslations()
 
@@ -123,7 +122,6 @@ export const TombExpedition: FC<{
                   calculation={calculation}
                   difficulty={journey.difficulty}
                   onComplete={onSolved}
-                  onFindHieroglyphs={onFindHieroglyphs}
                 />
                 <BackButton onClick={onCancelPuzzle} label={t("ui.back")} />
               </div>
@@ -205,7 +203,6 @@ export const TombExpedition: FC<{
           calculation={legacyCalculation}
           difficulty={journey.difficulty}
           onComplete={handleLevelComplete}
-          onFindHieroglyphs={onFindHieroglyphs}
         />
       </div>
     </TombBackdrop>
