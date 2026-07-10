@@ -96,7 +96,7 @@ describe("assignFragments", () => {
   })
 
   it("subtracts a pre-existing direct hieroglyphFragment placement from that hieroglyph's remaining demand", () => {
-    // Mirrors a Fez-shop slot (SHOP_PLAN.md): authored directly as hieroglyphFragment,
+    // Mirrors a Fez-shop slot: authored directly as hieroglyphFragment,
     // bypassing the fragmentSlot pool entirely — assignFragments must count it toward
     // `required` so the world-wide total doesn't drift above EXPECTED_HIEROGLYPH_FRAGMENTS.
     // infos[0] is processed first in TIERS order, so it can't be starved by other

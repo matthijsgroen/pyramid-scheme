@@ -27,7 +27,7 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — SHOP_PLAN.md locked stock list: fragment + mosaic.
+        // Fez shop — locked stock list: fragment + mosaic.
         sideSections: [
           sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("master") }),
           sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
@@ -47,7 +47,7 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — SHOP_PLAN.md locked stock list: mapPiece (solo slot). Always the piece
+        // Fez shop — locked stock list: mapPiece (solo slot). Always the piece
         // that unlocks the *last* tomb specifically — forward-only dependency, no
         // backtrack softlock. One of the 4 wizard-journey copies is freed for this via
         // spec/wizard.ts's journey("wizard_4") override.

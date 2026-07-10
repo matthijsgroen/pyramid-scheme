@@ -32,7 +32,7 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — SHOP_PLAN.md locked stock list: fragment + mosaic.
+        // Fez shop — locked stock list: fragment + mosaic.
         sideSections: [
           sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("wizard") }),
           sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
@@ -51,7 +51,7 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — SHOP_PLAN.md locked stock list: fragment + mosaic.
+        // Fez shop — locked stock list: fragment + mosaic.
         sideSections: [
           sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("wizard") }),
           sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
@@ -70,7 +70,7 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — SHOP_PLAN.md locked stock list: mosaic (solo slot). Never mapPiece
+        // Fez shop — locked stock list: mosaic (solo slot). Never mapPiece
         // here — this is the last tomb, nothing left to unlock with one.
         sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE })],
       },
@@ -98,7 +98,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   // One of the 4 wizard journeys' wizard_treasure_tomb_c map-piece copies is relocated
-  // into master_treasure_tomb_b's Fez shop instead (SHOP_PLAN.md) — freeing this specific
+  // into master_treasure_tomb_b's Fez shop instead — freeing this specific
   // journey's slot keeps the world total at exactly 36 map pieces. journey-pyramid
   // specificity (8) overrides the tier-pyramid rule above (6) for wizard_4 only;
   // wizard_1/2/3 keep the normal gated branch untouched.

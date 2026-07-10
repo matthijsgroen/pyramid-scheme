@@ -818,8 +818,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // everything else along mainPath is left unassigned and falls through to plain corridor.
     // The goal-room fallback here is defensive only: every real config sets mainEndReward
     // explicitly (buildSite.ts) — an unset one used to silently grant a free, uncounted
-    // mosaicPiece (a bug, see SHOP_PLAN.md "World reshape"), so this now falls back to the
-    // same grant-nothing placeholder every other unset reward slot uses.
+    // mosaicPiece, so this now falls back to the same grant-nothing placeholder every other
+    // unset reward slot uses.
     const lastPuzzleIdx = config.lastMainPuzzleFamily ? config.pathPuzzles - 1 : -1
     for (let mi = 0; mi < mainPath.length; mi++) {
       const [r, c] = mainPath[mi]

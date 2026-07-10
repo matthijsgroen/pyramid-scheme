@@ -121,8 +121,8 @@ export const buildPlacementInfos = (): HieroglyphPlacementInfo[] => {
 
 // Counts hieroglyphFragment rewards already authored directly (bypassing fragmentSlot
 // entirely — e.g. a Fez-shop slot literal-authored via `endReward:"hieroglyphFragment"`,
-// SHOP_PLAN.md's "reserve against the fragment fallback back-fill" — a direct reward is
-// never at risk of losing the fragmentSlot/available pool's competition to junk loot).
+// reserved against the fragment fallback back-fill — a direct reward is never at risk of
+// losing the fragmentSlot/available pool's competition to junk loot).
 // Subtracted from each hieroglyph's `required` count below so the world-wide total stays
 // exactly EXPECTED_HIEROGLYPH_FRAGMENTS regardless of how many were placed this way.
 const countExistingHieroglyphFragments = (allConfigs: Record<string, SiteConfig[]>): Map<string, number> => {
@@ -214,8 +214,8 @@ export const assignFragments = (allConfigs: Record<string, SiteConfig[]>): void 
   // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open
   // ward-gate slots that no fragment reached. Otherwise an unclaimed ward gate renders a
   // generic (untracked) hieroglyphs room instead of real loot. Tiered by the slot's own
-  // journey tier (SHOP_PLAN.md "World reshape") — sellable, not consumable: consumables
-  // moved to puzzle-solve rewards, end-of-path slots are the junk-loot channel now.
+  // journey tier — sellable, not consumable: consumables moved to puzzle-solve rewards,
+  // end-of-path slots are the junk-loot channel now.
   let fallbackIdx = 0
   for (const slot of available) {
     const items = sellablesForDifficulty(slot.tier as Difficulty)

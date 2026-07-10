@@ -185,8 +185,8 @@ export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): voi
   }
 }
 
-// SHOP_PLAN.md "Economy model" guard: Σ(all shop prices, rares + one full consumable
-// restock per shop) ≤ Σ(all guaranteed income — puzzle-solve money + junk sell value).
+// Economy guard: Σ(all shop prices, rares + one full consumable restock per shop) ≤
+// Σ(all guaranteed income — puzzle-solve money + junk sell value).
 // Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
 // order affordable; only the world-wide totals matter. Throws at build, not at runtime.
 // This is a hand-walked, shop-specific version of a more general "dependency read as guard"

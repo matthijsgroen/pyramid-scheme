@@ -10,7 +10,7 @@ import {
   NUM_SHOPS,
 } from "./shopPricing"
 
-// SHOP_PLAN.md "Prices (locked)" — these exact numbers are the economy guard's baseline.
+// These exact numbers are locked — the economy guard's baseline.
 describe("fragmentPrice", () => {
   it("scales 250 + 50×difficultyLevel, matching the locked price table", () => {
     expect(fragmentPrice("starter")).toBe(250)
@@ -22,7 +22,7 @@ describe("fragmentPrice", () => {
 })
 
 describe("locked flat prices", () => {
-  it("mosaic and map piece match SHOP_PLAN.md", () => {
+  it("mosaic and map piece match the locked price table", () => {
     expect(MOSAIC_PRICE).toBe(500)
     expect(MAP_PIECE_PRICE).toBe(1000)
   })
