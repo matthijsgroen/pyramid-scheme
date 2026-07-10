@@ -12,7 +12,6 @@ export type ConsumableType = "bandage" | "oil" | "trapTool"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
-  | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex?: number }
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
@@ -32,9 +31,10 @@ export type SubSection = {
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
-  /** Family/tag for this section's own intermediate rooms — defaults to the "puzzle" tag
-   * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. */
-  encounter?: string
+  /** Family/tag(s) for this section's own intermediate rooms — defaults to the "puzzle" tag
+   * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. An
+   * array means AND: every listed tag must be present on the resolved family. */
+  encounter?: string | string[]
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -49,7 +49,7 @@ export type FloorConfig = {
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
   puzzleRewards?: (TreasureReward | undefined)[]
-  encounter?: string
+  encounter?: string | string[]
   lastMainPuzzleFamily?: "crocodile"
   corridorStraightness?: number
   packing?: number

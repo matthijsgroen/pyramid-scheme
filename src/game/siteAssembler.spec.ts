@@ -76,14 +76,14 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("goal room falls back to the grant-nothing placeholder, not a free mosaicPiece, when mainEndReward is unset", () => {
+  it("goal room grants nothing, not a free mosaicPiece, when mainEndReward is unset", () => {
     // Regression guard: an unset mainEndReward used to fall back to `{type:"mosaicPiece"}` —
     // a free, uncounted reward validate.ts's 298-budget guard can never see (it only reads
     // stored config, never this runtime fallback).
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
     const goal = findRoom(result.grid, isTreasureRoom)
-    expect(goal?.cell.reward).toEqual({ type: "hieroglyphs" })
+    expect(goal?.cell.reward).toBeUndefined()
   })
 
   it("carries a section's shopPrice through to its end room", () => {

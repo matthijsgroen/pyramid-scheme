@@ -53,8 +53,6 @@ const rewardLabel = (r: TreasureReward): string => {
       return "Mosaic Piece"
     case "mapPiece":
       return `Map Piece → ${r.tombId}`
-    case "hieroglyphs":
-      return "Hieroglyphs"
     case "consumable":
       return `Consumable: ${r.consumable}`
     case "fragmentSlot":
@@ -76,8 +74,6 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-cyan-300"
     case "mapPiece":
       return "text-green-300"
-    case "hieroglyphs":
-      return "text-stone-500"
     case "consumable":
       return "text-orange-300"
     case "fragmentSlot":

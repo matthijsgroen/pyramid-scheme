@@ -81,14 +81,3 @@ registerRewardHandler({
     }
   },
 })
-
-registerRewardHandler({
-  type: "hieroglyphs",
-  apply: () => {}, // no state change on grant
-  emoji: "𓂀",
-  text: t => ({
-    itemName: t("chest.hieroglyphs"),
-    itemDescription: t("chest.hieroglyphsDescription", { defaultValue: "" }) || undefined,
-    icon: "𓂀",
-  }),
-})

@@ -7,6 +7,9 @@ import { WORLD_SEED, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
 
 type FragmentCounter = (hieroglyphId: string) => number
 
+const serializeEncounter = (encounter: string | string[]): string =>
+  Array.isArray(encounter) ? `[${encounter.map(e => `"${e}"`).join(", ")}]` : `"${encounter}"`
+
 const serializeReward = (r: TreasureReward, nextIdx: FragmentCounter): string => {
   switch (r.type) {
     case "hieroglyphFragment": {
@@ -49,7 +52,7 @@ const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string 
   if (s.puzzleRewards?.length) parts.push(`puzzleRewards: ${serializePuzzleRewards(s.puzzleRewards, nextIdx)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
-  if (s.encounter) parts.push(`encounter: "${s.encounter}"`)
+  if (s.encounter) parts.push(`encounter: ${serializeEncounter(s.encounter)}`)
   if (s.sideSections?.length)
     parts.push(
       `sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection, nextIdx)).join(", ")}]`
@@ -75,7 +78,7 @@ const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
     const val = typeof c.entrance === "object" ? `{ stairId: "${c.entrance.stairId}" }` : `"${c.entrance}"`
     lines.push(`    entrance: ${val},`)
   }
-  if (c.encounter) lines.push(`    encounter: "${c.encounter}",`)
+  if (c.encounter) lines.push(`    encounter: ${serializeEncounter(c.encounter)},`)
   if (c.lastMainPuzzleFamily) lines.push(`    lastMainPuzzleFamily: "${c.lastMainPuzzleFamily}",`)
   if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
   if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)

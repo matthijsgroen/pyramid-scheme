@@ -47,10 +47,6 @@ describe("hintToReward", () => {
     expect(hintToReward("mapPiece", "expert")).toEqual({ type: "mapPiece", tombId: "expert_treasure_tomb" })
   })
 
-  it("hieroglyphs → { type: hieroglyphs }", () => {
-    expect(hintToReward("hieroglyphs", "starter")).toEqual({ type: "hieroglyphs" })
-  })
-
   it("hieroglyphFragment → first tier symbol", () => {
     const reward = hintToReward("hieroglyphFragment", "starter")
     expect(reward.type).toBe("hieroglyphFragment")

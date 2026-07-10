@@ -318,16 +318,14 @@ const ExitShape = ({ state }: ShapeProps) => {
   )
 }
 
-// The visual shape an "encounter" room takes, by family id — picks among the hand-drawn
-// puzzle/trap/treasure shapes below.
+// The visual shape an "encounter" room takes, by its family's tags — picks among the
+// hand-drawn puzzle/trap/treasure shapes below.
 type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 
-const TREASURE_LIKE_FAMILIES = new Set(["treasure-chest", "fez-shop"])
-
-const shapeKindFor = (roomType: RoomType, family: string | undefined): ShapeKind => {
+const shapeKindFor = (roomType: RoomType, tags: string[] | undefined): ShapeKind => {
   if (roomType !== "encounter") return roomType
-  if (family === "arithmetic-reflex") return "trap"
-  if (TREASURE_LIKE_FAMILIES.has(family ?? "")) return "treasure"
+  if (tags?.includes("trap")) return "trap"
+  if (tags?.includes("treasure") || tags?.includes("shop")) return "treasure"
   return "puzzle"
 }
 
@@ -487,9 +485,9 @@ const DIR_MOVES: Record<Direction, readonly [number, number]> = {
 // sprite-tile renderer needs to tile cleanly (see
 // docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
 // the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (roomType: RoomType, family: string | undefined, dirsSize: number): boolean =>
+const canClaimVoid = (roomType: RoomType, tags: string[] | undefined, dirsSize: number): boolean =>
   roomType === "fork" ||
-  ((shapeKindFor(roomType, family) === "treasure" || roomType === "stairhead" || roomType === "exit") && dirsSize === 1)
+  ((shapeKindFor(roomType, tags) === "treasure" || roomType === "stairhead" || roomType === "exit") && dirsSize === 1)
 
 const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
   [-1, 0],
@@ -603,7 +601,7 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.family, cell.dirs.size)) continue
+      if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.tags, cell.dirs.size)) continue
       const ownerKey = `${r},${c}`
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {
@@ -1070,7 +1068,7 @@ export const SiteMapView = ({
             // Only ever a pending-loot marker for a treasure room with a consumable reward — this
             // guards against stale coordinates in pendingCells (e.g. left over from before a site
             // was regenerated) painting the badge onto whatever room now occupies that cell.
-            const shapeKind = shapeKindFor(cell.roomType, cell.family)
+            const shapeKind = shapeKindFor(cell.roomType, cell.tags)
             const isPending =
               isCompleted &&
               shapeKind === "treasure" &&

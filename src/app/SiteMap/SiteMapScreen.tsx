@@ -1,14 +1,14 @@
 import { use, useCallback, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell } from "@/game/gridNavigation"
-import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
+import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
 import type { SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge, decodeEdge } from "./useAssembledFloor"
-import { ChestRewardFlow } from "./ChestRewardFlow"
+import { RewardFlow } from "./RewardFlow"
 import { useApplyReward } from "./applyReward"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
@@ -236,7 +236,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           const stairId = cell.stairId
           for (let fi = 0; fi < siteConfig.length; fi++) {
             if (fi === currentFloor) continue
-            const result = assembleFloor(journeyId, siteConfig[fi], seed + fi)
+            const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter)
             if (!result.success) continue
             const peerPos = result.grid.staircases[stairId]
             if (peerPos) {
@@ -346,7 +346,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           </div>
         </div>
       )}
-      <ChestRewardFlow
+      <RewardFlow
         pendingReward={pendingReward}
         hieroglyphProgress={progression.hieroglyphProgress}
         onDismiss={() => setPendingReward(null)}

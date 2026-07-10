@@ -66,7 +66,7 @@ describe("buildSite", () => {
     nextTier: null,
     mosaicPathCount: 0,
     resolveReward: () => undefined,
-    resolveMainEndReward: () => ({ type: "hieroglyphs" as const }),
+    resolveMainEndReward: () => ({ type: "mosaicPiece" as const }),
   }
 
   it("single-floor branch: no floors[]/mainFloors/wardWings authored → one exiting floor", () => {

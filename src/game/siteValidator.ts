@@ -1,10 +1,5 @@
 import type { FloorGrid, ValidationReason, ValidationResult } from "./siteTypes"
 
-// Structural room-kind classification by family id (can't import the app-layer registry
-// here). "trap" is in neither set: a fork branch leading only to a trap counts as bland.
-const TREASURE_LIKE_FAMILIES = new Set(["treasure-chest", "fez-shop"])
-const PUZZLE_LIKE_FAMILIES = new Set(["sumplete", "tableau", "crocodile"])
-
 type Pos = readonly [number, number]
 
 const posKey = (r: number, c: number) => `${r},${c}`
@@ -129,8 +124,11 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
           const bcell = grid.cells[br]?.[bc]
           if (!bcell || bcell.type === "empty") continue
           if (bcell.type === "room") {
-            const isTreasureLike = bcell.roomType === "encounter" && TREASURE_LIKE_FAMILIES.has(bcell.family ?? "")
-            const isPuzzleLike = bcell.roomType === "encounter" && PUZZLE_LIKE_FAMILIES.has(bcell.family ?? "")
+            // "trap" counts as neither: a fork branch leading only to a trap counts as bland.
+            const isTreasureLike =
+              bcell.roomType === "encounter" && (bcell.tags?.includes("treasure") || bcell.tags?.includes("shop"))
+            const isPuzzleLike =
+              bcell.roomType === "encounter" && (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle"))
             if (bcell.roomType === "gate" || bcell.roomType === "stairhead" || isTreasureLike) hasInteresting = true
             else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch

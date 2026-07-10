@@ -147,10 +147,8 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     const { constraint } = resolvePyramidConstraintWithProvenance(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
     const difficulty: Difficulty = constraint.difficulty ?? "starter"
     // Defaults to the "tomb-puzzle" tag (resolves to tableau) — not "puzzle" (sumplete), since
-    // tomb main-path rooms consume hieroglyph symbols the player may not have yet. Real
-    // multi-candidate tag resolution isn't built — an authored string[] uses its first entry.
-    const encounterConstraint = constraint.encounter ?? "tomb-puzzle"
-    const encounter = Array.isArray(encounterConstraint) ? encounterConstraint[0] : encounterConstraint
+    // tomb main-path rooms consume hieroglyph symbols the player may not have yet.
+    const encounter = constraint.encounter ?? "tomb-puzzle"
 
     const perkIds = TOMB_PERK_IDS[tomb.id] ?? []
 

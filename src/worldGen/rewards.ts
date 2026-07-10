@@ -31,8 +31,6 @@ export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
       return { type: "mosaicPiece" }
     case "mapPiece":
       return { type: "mapPiece", tombId: `${tier}_treasure_tomb` }
-    case "hieroglyphs":
-      return { type: "hieroglyphs" }
     case "hieroglyphFragment":
       return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
   }

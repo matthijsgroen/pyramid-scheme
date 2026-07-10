@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
+import { resolveEncounter } from "@/app/families/familyRegistry"
 
 // Edge IDs are "floorIdx:row,col". Backward compat: no colon prefix = floor 0.
 export const encodeEdge = (floor: number, row: number, col: number): string => `${floor}:${row},${col}`
@@ -117,7 +118,7 @@ export const useAssembledFloor = (
   hiddenSectionHashes: ReadonlySet<string>
 } => {
   const baseGrid = useMemo(() => {
-    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor)
+    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter)
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor])
 

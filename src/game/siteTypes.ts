@@ -7,7 +7,6 @@ export type ConsumableType = "bandage" | "oil" | "trapTool"
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }
-  | { type: "hieroglyphs" }
   | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
@@ -46,6 +45,9 @@ export type RoomCell = {
   // Registered family id (src/app/families/familyRegistry.ts) — open string, not a closed
   // union, since mods register their own families. Always set for roomType "encounter".
   family?: string
+  // The resolved family's own tags (e.g. ["trap"], ["treasure"]) — lets domain-layer code
+  // (siteValidator.ts, SiteMapView.tsx) classify a room without knowing family ids itself.
+  tags?: string[]
   stairId?: string
   decoration?: DecorationKind
 }
@@ -76,10 +78,11 @@ export type SubSection = {
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
-  /** Family/tag for this section's own intermediate rooms — defaults to the "puzzle" tag
+  /** Family/tag(s) for this section's own intermediate rooms — defaults to the "puzzle" tag
    * (sumplete) when unset (a floor's tableau family never leaks onto a side path unless a
-   * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family. */
-  encounter?: string
+   * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family.
+   * An array means AND: every listed tag must be present on the resolved family. */
+  encounter?: string | string[]
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
 }
@@ -98,8 +101,8 @@ export type FloorConfig = {
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
   puzzleRewards?: (TreasureReward | undefined)[]
-  /** Default family/tag for this floor's main-path encounter rooms. */
-  encounter?: string
+  /** Default family/tag(s) for this floor's main-path encounter rooms. An array means AND. */
+  encounter?: string | string[]
   /** If set, the last main-path puzzle room uses this family instead of `encounter`. */
   lastMainPuzzleFamily?: PuzzleFamily
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */

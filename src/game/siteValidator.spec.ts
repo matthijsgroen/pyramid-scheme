@@ -13,6 +13,12 @@ const DEFAULT_FAMILY: Partial<Record<LegacyRoomKind, string>> = {
   treasure: "treasure-chest",
 }
 
+const DEFAULT_TAGS: Partial<Record<LegacyRoomKind, string[]>> = {
+  puzzle: ["puzzle"],
+  trap: ["trap"],
+  treasure: ["treasure"],
+}
+
 const room = (
   kind: LegacyRoomKind,
   dirs: Direction[],
@@ -23,6 +29,7 @@ const room = (
   dirs: new Set(dirs),
   state: "reachable",
   ...(DEFAULT_FAMILY[kind] ? { family: DEFAULT_FAMILY[kind] } : {}),
+  ...(DEFAULT_TAGS[kind] ? { tags: DEFAULT_TAGS[kind] } : {}),
   ...opts,
 })
 
@@ -149,7 +156,7 @@ describe(validateSite, () => {
         [0, 0, room("puzzle", ["e"])],
         [0, 1, room("fork", ["w", "e", "s"])],
         [0, 2, room("puzzle", ["w"])],
-        [1, 1, room("treasure", ["n"], { reward: { type: "hieroglyphs" } })],
+        [1, 1, room("treasure", ["n"], { reward: { type: "money", amount: 1 } })],
       ],
       [0, 0],
       [0, 2]
@@ -295,7 +302,7 @@ describe(validateJourney, () => {
     const noPrimary = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("treasure", ["w", "e"], { reward: { type: "hieroglyphs" } })],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "money", amount: 1 } })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],

@@ -1,6 +1,7 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { TreasureReward } from "@/game/siteTypes"
+import type { ResolveEncounter } from "@/game/siteAssembler"
 import type { ProgressionAPI } from "@/app/state/useProgression"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import type { useInventory } from "@/app/Inventory/useInventory"
@@ -51,10 +52,24 @@ export const getFamilyPlugin = (id: string): FamilyPlugin | undefined => registr
 
 export const allFamilies = (): FamilyPlugin[] => [...registry.values()]
 
-// First-registered-family-wins for a tag — not weighted selection (that's
+// A single string is an exact id or a single tag. An array requires every listed tag
+// present at once (authoring "AND": the time puzzles AND the sun puzzles AND the water
+// traps). First-registered-family-wins among matches — not weighted selection (that's
 // docs/mods-architecture.md step 5's Distribution primitive).
-export const resolveFamilyByIdOrTag = (idOrTag: string): FamilyPlugin | undefined => {
-  const exact = registry.get(idOrTag)
-  if (exact) return exact
-  return [...registry.values()].find(p => p.meta.tags.includes(idOrTag))
+export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin | undefined => {
+  if (typeof idOrTag === "string") {
+    const exact = registry.get(idOrTag)
+    if (exact) return exact
+    return [...registry.values()].find(p => p.meta.tags.includes(idOrTag))
+  }
+  return [...registry.values()].find(p => idOrTag.every(tag => p.meta.tags.includes(tag)))
+}
+
+// Bridges siteAssembler.ts's domain-layer resolution to the real registry — the one place
+// an authored `encounter` id/tag actually reaches a family's real id and tags.
+export const resolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
+  const query = encounter ?? defaultTag
+  const plugin = resolveFamilyByIdOrTag(query)
+  if (plugin) return { familyId: plugin.meta.id, tags: plugin.meta.tags }
+  return { familyId: Array.isArray(query) ? query.join("+") : query, tags: [] }
 }

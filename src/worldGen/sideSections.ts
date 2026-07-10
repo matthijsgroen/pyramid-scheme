@@ -46,9 +46,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
-    // Real multi-candidate tag resolution isn't built (docs/mods-architecture.md step 5's
-    // Distribution) — an authored string[] just forwards its first entry.
-    ...(cs.encounter !== undefined ? { encounter: Array.isArray(cs.encounter) ? cs.encounter[0] : cs.encounter } : {}),
+    ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
   }
 }
 
@@ -160,9 +158,7 @@ export const buildSideSections = <TExtra extends string = never>(
         end: "treasure",
         ...(endReward ? { endReward } : {}),
         ...(gate ? { gate } : {}),
-        ...(entry.encounter !== undefined
-          ? { encounter: Array.isArray(entry.encounter) ? entry.encounter[0] : entry.encounter }
-          : {}),
+        ...(entry.encounter !== undefined ? { encounter: entry.encounter } : {}),
       })
     }
   })
@@ -176,9 +172,7 @@ export const buildSideSections = <TExtra extends string = never>(
         end: "treasure",
         hidden: true,
         ...(endReward ? { endReward } : {}),
-        ...(entry.encounter !== undefined
-          ? { encounter: Array.isArray(entry.encounter) ? entry.encounter[0] : entry.encounter }
-          : {}),
+        ...(entry.encounter !== undefined ? { encounter: entry.encounter } : {}),
       })
     }
   })

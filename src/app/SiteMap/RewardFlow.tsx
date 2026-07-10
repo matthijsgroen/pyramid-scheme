@@ -1,4 +1,4 @@
-import { useState, type FC } from "react"
+import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
 import type { TreasureReward } from "@/game/siteTypes"
@@ -7,7 +7,6 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { getSellableById } from "@/data/sellables"
 import type { MaterialTier } from "@/data/treasures"
 import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
-import { Chest } from "@/ui/atoms/Chest"
 import { LootPopup } from "@/ui/atoms/LootPopup"
 import { useTimeout } from "@/support/useTimeout"
 import { rewardText } from "./rewardDisplay"
@@ -26,42 +25,32 @@ type Props = {
   onDismiss: () => void
 }
 
-export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, onDismiss }) => {
+export const RewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, onDismiss }) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
-  const [chestOpened, setChestOpened] = useState(false)
   const [showLoot, setShowLoot] = useState(false)
   const [scheduleLoot] = useTimeout()
 
+  // The chest-open gesture belongs to the encounter itself (TreasureFamily's plugin) —
+  // by the time a reward is pending, it's already been solved. This is the reveal only.
+  useEffect(() => {
+    if (!pendingReward) return
+    pendingReward.onCollect()
+    scheduleLoot(600, () => setShowLoot(true))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per pendingReward instance
+  }, [pendingReward])
+
   if (!pendingReward) return null
 
-  const { reward, consumableFull, onCollect } = pendingReward
-
-  const handleOpen = () => {
-    if (chestOpened) return
-    setChestOpened(true)
-    onCollect()
-    scheduleLoot(600, () => setShowLoot(true))
-  }
+  const { reward, consumableFull } = pendingReward
 
   const handleDismiss = () => {
     setShowLoot(false)
-    setChestOpened(false)
     onDismiss()
   }
 
   return (
     <>
-      {!showLoot && (
-        <div className="fixed inset-0 z-30 flex flex-col items-center justify-center bg-black/85">
-          <Chest
-            variant="wooden"
-            state={chestOpened ? "open" : "empty"}
-            allowInteraction={!chestOpened}
-            onClick={handleOpen}
-          />
-          {!chestOpened && <p className="mt-6 animate-pulse text-sm text-amber-300">{t("chest.tapToOpen")}</p>}
-        </div>
-      )}
+      {!showLoot && <div className="fixed inset-0 z-30 bg-black/85" />}
 
       {reward.type === "consumable" && consumableFull
         ? (() => {

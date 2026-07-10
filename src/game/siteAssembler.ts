@@ -15,20 +15,33 @@ import type {
 } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
-// Resolves an authored `encounter` (exact family id, or tag) to a concrete family id.
-// Duplicated as a plain lookup from the app-layer family registry since this module is
-// domain-layer. Not weighted selection (docs/mods-architecture.md step 5's Distribution).
-const ENCOUNTER_TAG_DEFAULTS: Record<string, string> = {
+// Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
+// plus that family's own tags. Injected by the caller so this domain module never needs
+// to know which families/mods actually exist — see resolveEncounter in
+// src/app/families/familyRegistry.ts for the real (registry-backed) implementation.
+export type EncounterResolution = { familyId: string; tags: string[] }
+export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
+
+const DEFAULT_TAG_FAMILIES: Record<string, string> = {
   trap: "arithmetic-reflex",
   puzzle: "sumplete",
   "tomb-puzzle": "tableau",
 }
-const resolveEncounterFamily = (encounter: string | string[] | undefined, defaultTag: string): string => {
-  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
-  return ENCOUNTER_TAG_DEFAULTS[value] ?? value
+const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
+  "arithmetic-reflex": ["trap"],
+  sumplete: ["puzzle"],
+  tableau: ["tomb-puzzle"],
+  crocodile: ["tomb-puzzle"],
+  "treasure-chest": ["treasure"],
+  "fez-shop": ["shop"],
 }
-const isTrapSection = (encounter: string | string[] | undefined): boolean =>
-  resolveEncounterFamily(encounter, "puzzle") === "arithmetic-reflex"
+// Fallback for callers that don't inject the real family registry (tests, stories) —
+// production always passes familyRegistry.ts's resolveEncounter.
+const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
+  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+  const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
+  return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
+}
 
 // Section hash covers structural fields only — not rewards, render style, or specific key IDs.
 // Stable across: loot changes, key reassignment, corridor style tweaks.
@@ -263,7 +276,19 @@ const spreadContentIndices = (count: number, startIdx: number, totalLen: number)
   return indices
 }
 
-export const assembleFloor = (siteId: string, config: FloorConfig, seed: number): AssemblerResult => {
+export const assembleFloor = (
+  siteId: string,
+  config: FloorConfig,
+  seed: number,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter
+): AssemblerResult => {
+  const isTrapSection = (encounter: string | string[] | undefined): boolean =>
+    resolveEncounter(encounter, "puzzle").tags.includes("trap")
+  const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
+  const fezShop = resolveEncounter("fez-shop", "fez-shop")
+  const treasureOrShop = (shopPrice: number | undefined): EncounterResolution =>
+    shopPrice !== undefined ? fezShop : treasureChest
+
   // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements
   const visibleSections = config.sideSections.filter(s => !s.hidden)
   const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
@@ -847,18 +872,24 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       } else if (mi === goalIndex) {
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
-          family: "treasure-chest",
-          reward: config.mainEndReward ?? { type: "hieroglyphs" },
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
+          ...(config.mainEndReward ? { reward: config.mainEndReward } : {}),
         })
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
         const isLastPuzzle = k === lastPuzzleIdx
         const family =
           isLastPuzzle && config.lastMainPuzzleFamily
-            ? config.lastMainPuzzleFamily
-            : resolveEncounterFamily(config.encounter, "puzzle")
+            ? resolveEncounter(config.lastMainPuzzleFamily, config.lastMainPuzzleFamily)
+            : resolveEncounter(config.encounter, "puzzle")
         const reward = config.puzzleRewards?.[k]
-        roomSpecs.set(posKey(r, c), { roomType: "encounter", family, ...(reward ? { reward } : {}) })
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          family: family.familyId,
+          tags: family.tags,
+          ...(reward ? { reward } : {}),
+        })
       }
     }
 
@@ -881,8 +912,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     if (!roomSpecs.has(posKey(farthestR, farthestC))) {
       roomSpecs.set(posKey(farthestR, farthestC), {
         roomType: "encounter",
-        family: "treasure-chest",
-        reward: { type: "hieroglyphs" },
+        family: treasureChest.familyId,
+        tags: treasureChest.tags,
       })
     }
 
@@ -926,12 +957,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
         const reward = section.puzzleRewards?.[pi]
+        const family = resolveEncounter(section.encounter, "puzzle")
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
           // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
           // tag's default) unless it explicitly opts into a different family itself.
-          family: resolveEncounterFamily(section.encounter, "puzzle"),
+          family: family.familyId,
+          tags: family.tags,
           ...(reward ? { reward } : {}),
         })
       }
@@ -941,7 +974,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (chainKeyHostIdxs.has(sectionIdx)) {
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: "treasure-chest",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
           reward: { type: "tombKey", keyId: nid(er, ec) },
           keyColor: chainKeyColorMap.get(sectionIdx),
         })
@@ -949,10 +983,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
+        const endFamily = treasureOrShop(section.shopPrice)
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: section.shopPrice !== undefined ? "fez-shop" : "treasure-chest",
-          reward: section.endReward ?? { type: "hieroglyphs" },
+          family: endFamily.familyId,
+          tags: endFamily.tags,
+          ...(section.endReward ? { reward: section.endReward } : {}),
           ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
         })
       }
@@ -994,11 +1030,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
         const reward = subSection.puzzleRewards?.[pi]
+        const family = resolveEncounter(subSection.encounter, "puzzle")
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           // Same reasoning as the side-section case above: never inherits the floor's
           // tableau encounter unless the sub-section explicitly opts in itself.
-          family: resolveEncounterFamily(subSection.encounter, "puzzle"),
+          family: family.familyId,
+          tags: family.tags,
           ...(reward ? { reward } : {}),
         })
       }
@@ -1008,7 +1046,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const hColors = keyHostColors ?? (keyHostColor ? [keyHostColor] : [])
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: "treasure-chest",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
           reward: { type: "tombKey", keyId: nid(er, ec) },
           ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
           ...(hColors.length > 1 ? { keyColors: hColors } : {}),
@@ -1017,10 +1056,12 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
+        const endFamily = treasureOrShop(subSection.shopPrice)
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: subSection.shopPrice !== undefined ? "fez-shop" : "treasure-chest",
-          reward: subSection.endReward ?? { type: "hieroglyphs" },
+          family: endFamily.familyId,
+          tags: endFamily.tags,
+          ...(subSection.endReward ? { reward: subSection.endReward } : {}),
           ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
         })
       }
@@ -1061,6 +1102,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           ...(spec.keyColor ? { keyColor: spec.keyColor } : {}),
           ...(spec.keyColors ? { keyColors: spec.keyColors } : {}),
           ...(spec.family ? { family: spec.family } : {}),
+          ...(spec.tags ? { tags: spec.tags } : {}),
           ...(spec.stairId ? { stairId: spec.stairId } : {}),
           ...(spec.shopPrice !== undefined ? { shopPrice: spec.shopPrice } : {}),
         }
@@ -1122,7 +1164,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     for (const [pk, spec] of roomSpecs) {
       // Dead-end rooms only — treasure/shop chests and stairs/exits, never mid-path.
       const isTreasureLike =
-        spec.roomType === "encounter" && (spec.family === "treasure-chest" || spec.family === "fez-shop")
+        spec.roomType === "encounter" && (spec.tags?.includes("treasure") || spec.tags?.includes("shop"))
       if (!isTreasureLike && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue
       const [r, c] = pk.split(",").map(Number)
       const cell = cells2D[r][c]
