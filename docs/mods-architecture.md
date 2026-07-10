@@ -663,6 +663,57 @@ against what's actually registered instead of hardcoding the list by hand.
   never worked end to end. Worth fixing regardless of this redesign; the
   ledger-query approach above fixes it as a side effect.
 
+## Implementation order
+
+Shop landed (#104, #106–109) and got reviewed against this doc twice — the
+model held up against real code, both when it merged and again once all
+four phases were in. That's the condition this doc set for moving from
+design to implementation. Ordered by risk, not by doc section: cheapest,
+most isolated wins first; the one thing already flagged as "not an
+afternoon" (`siteAssembler.ts`'s core loop) goes last, once the model's
+proven itself on smaller pieces instead of just on paper.
+
+1. **Generic ledger + currency registry.** Self-contained — no worldgen/DSL
+   changes needed. Build `core/ledger` (`grant`/`spend`/`CurrencyMeta`),
+   back it with `useProgression`'s existing fields internally, keep the
+   public `ProgressionAPI` shape unchanged so nothing downstream breaks yet.
+   Swap `useApplyReward` (`applyReward.ts`) and `rewardDisplay.ts` from
+   their `reward.type` if/else chains to registry lookups — the most
+   concrete, already-consolidated pain point from the shop review, and
+   fixable without touching a single worldgen file. Save migration
+   (storage `v4`→`v5`) lives here, one-time. Highest value, lowest risk —
+   start here.
+2. **Perk grant/consume split + health folds into trap.** Small follow-up
+   once the ledger exists — split `PerkState` by owning mod (trap keeps
+   `armorStacks`/`trapInsightStacks`, puzzle keeps `scribesEyeLevel`, core
+   keeps the three detector perks). Mechanical, well-scoped, low risk.
+3. **Family registry unification** (`trapRegistry`+`puzzleRegistry` → one
+   registry, one `encounter` room type). Safe to isolate now because reward
+   *application* already routes through the ledger from step 1 — this step
+   is purely "which component renders this room," not currency plumbing.
+   Touches `siteAssembler.ts`'s room-spec assignment and `SiteMapScreen.tsx`'s
+   claim-switch, narrowly. Also the natural point to replace the
+   `cell.shopPrice != null` inline checks with a real dispatch.
+4. **Reward-weight fill-order algorithm.** Replaces `puzzleRewards.ts`'s
+   flat shuffle and fragment's `collectSlots` sentinel mechanism with the
+   generic weighted allocator — needs the currency registry (1) and family
+   metadata (3) to exist first.
+5. **`Distribution` primitive**, replacing `section.trapped`/`puzzleFamily`/
+   `lastMainPuzzleFamily` with weight normalization. The real
+   `siteAssembler.ts` core-loop rewrite — do it last, once 1–4 have already
+   validated the model works for real. Also where `sealed`/ward-path-trapped
+   and shop's map-piece relocation finally become instances of `CappedPool`
+   sites instead of bespoke fields.
+6. **Cleanup, can ride alongside any of the above:** HUD → generic
+   `showInHud`-metadata loop (collapses the HUD *and* `Collection.tsx`'s
+   now-four near-identical category components into one generic renderer),
+   i18n split per mod, physical `mods/` folder moves — incrementally, as
+   each mechanism above lands, not as a big-bang rename PR with no test
+   value.
+
+Same shape as the shop mechanic's own precedent — stacked, independently
+mergeable PRs (its Phase 1–4), not one giant branch.
+
 ## Open question
 
 Whether a 4th mod (buffs, curses, seasonal event) would need anything this
