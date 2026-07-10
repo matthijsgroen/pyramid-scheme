@@ -3,6 +3,7 @@ import { useGameStorage } from "@/support/useGameStorage"
 import { hieroglyphRequired } from "@/data/generatedWorld"
 import type { ConsumableType } from "@/game/siteTypes"
 import { TREASURE_PERKS } from "@/data/treasurePerks"
+import { createLedger, type LedgerState } from "@/game/ledger/ledger"
 
 type ConsumableInventory = { bandage: number; oil: number; trapTool: number }
 
@@ -26,21 +27,23 @@ const INITIAL_PERKS: PerkState = {
   scribesEyeLevel: 0,
 }
 
+// money/health/mosaicPiece — the ledger-backed currencies (see src/game/ledger). Health's
+// cap (maxHealth) and the rest of ProgressionState are not currencies, so they stay outside it.
+const DEFAULT_LEDGER: LedgerState = { money: 0, health: 6, mosaicPiece: 0 }
+
 type ProgressionState = {
   // "hieroglyphId:pieceIndex" entries — inventory-as-truth for chest loot
   collectedFragments: string[]
   tombKeys: Record<string, true>
   discoveredTombs: string[]
   mosaicSeenCount: number
-  mosaicPieceCount: number
   collectedMapPieces: Record<string, number>
   // journeyIds whose map-piece chest has been opened — inventory-as-truth for the journey list badge
   mapPieceJourneys: string[]
-  currentHealth: number // half-hearts
   maxHealth: number // half-hearts
   consumables: ConsumableInventory
   perks: PerkState
-  money: number
+  ledger: LedgerState
 }
 
 // First tomb of each tier is visible from the start; secondary tombs appear on first map piece
@@ -59,14 +62,12 @@ const initialState: ProgressionState = {
   tombKeys: {},
   discoveredTombs: AUTO_DISCOVERED_TOMBS,
   mosaicSeenCount: 0,
-  mosaicPieceCount: 0,
   collectedMapPieces: {},
   mapPieceJourneys: [],
-  currentHealth: 6,
   maxHealth: 6,
   consumables: { bandage: 0, oil: 0, trapTool: 0 },
   perks: INITIAL_PERKS,
-  money: 0,
+  ledger: DEFAULT_LEDGER,
 }
 
 export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
@@ -112,8 +113,12 @@ export type ProgressionAPI = {
 export const useProgression = (): ProgressionAPI => {
   const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v4", initialState)
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    const ledger = createLedger(state.ledger ?? DEFAULT_LEDGER, updater =>
+      setState(prev => ({ ...prev, ledger: updater(prev.ledger ?? DEFAULT_LEDGER) }))
+    )
+
+    return {
       addFragment: (hieroglyphId, pieceIndex) => {
         const key = `${hieroglyphId}:${pieceIndex}`
         setState(prev =>
@@ -178,8 +183,8 @@ export const useProgression = (): ProgressionAPI => {
             : [...prev.discoveredTombs, tombJourneyId],
         })),
       mosaicSeenCount: state.mosaicSeenCount,
-      mosaicPieceCount: state.mosaicPieceCount ?? 0,
-      collectMosaicPiece: () => setState(prev => ({ ...prev, mosaicPieceCount: (prev.mosaicPieceCount ?? 0) + 1 })),
+      mosaicPieceCount: ledger.get("mosaicPiece"),
+      collectMosaicPiece: () => ledger.grant("mosaicPiece", 1),
       markMosaicViewed: count =>
         setState(prev => ({ ...prev, mosaicSeenCount: Math.max(prev.mosaicSeenCount, count) })),
       collectMapPiece: tombId =>
@@ -203,20 +208,27 @@ export const useProgression = (): ProgressionAPI => {
             ? prev
             : { ...prev, mapPieceJourneys: [...(prev.mapPieceJourneys ?? []), journeyId] }
         ),
-      currentHealth: state.currentHealth ?? 6,
+      currentHealth: ledger.get("health"),
       maxHealth: state.maxHealth ?? 6,
-      canAttemptTrap: () => canAttemptTrap(state.currentHealth ?? 6),
+      canAttemptTrap: () => canAttemptTrap(ledger.get("health")),
       takeTrapDamage: armorStacks =>
-        setState(prev => ({
-          ...prev,
-          currentHealth: Math.max(0, (prev.currentHealth ?? 6) - trapDamage(armorStacks)),
-        })),
+        setState(prev => {
+          const prevLedger = prev.ledger ?? DEFAULT_LEDGER
+          return {
+            ...prev,
+            ledger: { ...prevLedger, health: Math.max(0, prevLedger.health - trapDamage(armorStacks)) },
+          }
+        }),
       heal: halfHearts =>
-        setState(prev => ({
-          ...prev,
-          currentHealth: Math.min(prev.maxHealth ?? 6, (prev.currentHealth ?? 6) + halfHearts),
-        })),
-      healToFull: () => setState(prev => ({ ...prev, currentHealth: prev.maxHealth ?? 6 })),
+        setState(prev => {
+          const prevLedger = prev.ledger ?? DEFAULT_LEDGER
+          return {
+            ...prev,
+            ledger: { ...prevLedger, health: Math.min(prev.maxHealth ?? 6, prevLedger.health + halfHearts) },
+          }
+        }),
+      healToFull: () =>
+        setState(prev => ({ ...prev, ledger: { ...(prev.ledger ?? DEFAULT_LEDGER), health: prev.maxHealth ?? 6 } })),
       consumables: state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 },
       consumableCarryCap: consumableCarryCap(state.perks?.packMuleLevel ?? 0),
       isConsumablePackFull: () => {
@@ -239,23 +251,19 @@ export const useProgression = (): ProgressionAPI => {
           const c = prev.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
           if (c[type] <= 0) return prev
           const next = { ...c, [type]: c[type] - 1 }
+          const prevLedger = prev.ledger ?? DEFAULT_LEDGER
           const healed =
             type === "bandage"
-              ? Math.min(prev.maxHealth ?? 6, (prev.currentHealth ?? 6) + 2)
+              ? Math.min(prev.maxHealth ?? 6, prevLedger.health + 2)
               : type === "oil"
                 ? (prev.maxHealth ?? 6)
-                : (prev.currentHealth ?? 6)
-          return { ...prev, consumables: next, currentHealth: healed }
+                : prevLedger.health
+          return { ...prev, consumables: next, ledger: { ...prevLedger, health: healed } }
         }),
       perks: state.perks ?? INITIAL_PERKS,
-      money: state.money ?? 0,
-      addMoney: amount => setState(prev => ({ ...prev, money: (prev.money ?? 0) + amount })),
-      spendMoney: amount => {
-        if ((state.money ?? 0) < amount) return false
-        setState(prev => ({ ...prev, money: (prev.money ?? 0) - amount }))
-        return true
-      },
-    }),
-    [state, setState]
-  )
+      money: ledger.get("money"),
+      addMoney: amount => ledger.grant("money", amount),
+      spendMoney: amount => ledger.spend("money", amount),
+    }
+  }, [state, setState])
 }

@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Bakes absolute filesystem paths at commit time — breaks across worktrees/machines
+.yarn/install-state.gz
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

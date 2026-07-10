@@ -1,6 +1,8 @@
 import { useCallback } from "react"
 import type { TreasureReward } from "@/game/siteTypes"
 import type { ProgressionAPI } from "@/app/state/useProgression"
+import { getRewardHandler } from "./rewardHandlerRegistry"
+import "./registerRewardHandlers"
 
 type InventoryAPI = { addItem: (id: string, count: number) => void }
 
@@ -10,17 +12,7 @@ type InventoryAPI = { addItem: (id: string, count: number) => void }
 export const useApplyReward = (progression: ProgressionAPI, inventory: InventoryAPI, journeyId: string) =>
   useCallback(
     (reward: TreasureReward) => {
-      if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
-      else if (reward.type === "mapPiece") {
-        progression.collectMapPiece(reward.tombId)
-        progression.markMapPieceFound(journeyId)
-      } else if (reward.type === "tombKey") {
-        progression.addTombKey(reward.keyId)
-        progression.applyTreasurePerk(reward.keyId)
-      } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-      else if (reward.type === "consumable") progression.addConsumable(reward.consumable)
-      else if (reward.type === "money") progression.addMoney(reward.amount)
-      else if (reward.type === "sellable") inventory.addItem(reward.itemId, 1)
+      getRewardHandler(reward.type)?.apply(reward, { progression, inventory, journeyId })
     },
     [progression, journeyId, inventory]
   )
