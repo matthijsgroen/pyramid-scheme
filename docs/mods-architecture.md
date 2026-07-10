@@ -626,34 +626,12 @@ against what's actually registered instead of hardcoding the list by hand.
 
 ## Gaps — not yet resolved
 
-- ~~Perks are an unmodeled third reward channel.~~ **Resolved** — see
-  "Gates, ward paths, hidden passages, perks, detectors" above: grant
-  (authored, core) vs. consume (`registerPerk`, mod-owned) split, same
-  shape as `mapPiece` allocation vs. family placement.
-- **Determinism vs. mod set — downgraded.** World gen is fixed-seed. A new
-  mod shipping does regenerate the world once, same as any other worldgen
-  change today — not a live toggle players flip, so this doesn't need a
-  general answer, just the same release discipline already used for any
-  worldgen change.
-- ~~Tier tuning ergonomics.~~ **Resolved** — see "Distribution" above.
-  The tunable numbers stay exactly where they are (`GLOBAL_DEFAULTS`, the
-  existing global/tier/journey/pyramid cascade); mod weight functions are
-  thin reads of that cascade, not independently authored numbers. What
-  needed fixing wasn't ergonomics, it was that `1 - ctx.chance`-style
-  complements break past two competitors — core normalizing registered
-  weights removes the cross-file coordination burden permanently, not just
-  for today's two mods.
-- ~~Snapshot tests.~~ **Resolved.** Design intent is expressed in counts,
-  not exact placement — a sidepath landing after puzzle 2 vs. puzzle 3
-  is equally valid as long as it exists where the design calls for one.
-  `validateWorldSpec.ts` already checks counts, not layouts, so it already
-  checks the right thing — a `Distribution` resolver producing a different
-  *valid* room order on the same seed isn't a regression to guard against.
+Everything else raised during this exercise (perks, tier-tuning ergonomics,
+snapshot tests, bandage/oil ownership, determinism vs. mod set) got resolved
+by pushing on it — see the sections above each topic lives in. What's left:
+
 - **Save migration.** `useProgression`'s flat blob to a ledger shape is a
   save-format migration for existing players — not designed yet.
-- ~~Bandage/oil ownership.~~ **Resolved** — health folded fully into
-  `mods/trap/` (see "Granularity"), so bandage/oil are unambiguously trap's
-  own consumables, not a separate ownership question.
 - **`detectionLevel` leaks into core rendering code.** `maskHiddenCells`
   takes it as a directly-typed param (`useAssembledFloor.ts:48`) instead of
   reading it through a generic perk query — small, but the same
