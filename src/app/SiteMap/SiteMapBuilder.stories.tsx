@@ -10,18 +10,15 @@ type GateOption = "none" | GateConfig["type"]
 type Props = {
   seed: number
   pathPuzzles: number
-  chestEvery: number
   exitOrStaircase: FloorConfig["exitOrStaircase"]
   corridorStraightness: number
   packing: number
   section1: boolean
   section1Puzzles: number
-  section1ChestEvery: number
   section1End: SideSection["end"]
   section1Gate: GateOption
   section2: boolean
   section2Puzzles: number
-  section2ChestEvery: number
   section2End: SideSection["end"]
   section2Gate: GateOption
 }
@@ -29,18 +26,15 @@ type Props = {
 const SiteMapBuilder = ({
   seed,
   pathPuzzles,
-  chestEvery,
   exitOrStaircase,
   corridorStraightness,
   packing,
   section1,
   section1Puzzles,
-  section1ChestEvery,
   section1End,
   section1Gate,
   section2,
   section2Puzzles,
-  section2ChestEvery,
   section2End,
   section2Gate,
 }: Props) => {
@@ -55,7 +49,6 @@ const SiteMapBuilder = ({
   if (section1)
     sideSections.push({
       pathPuzzles: section1Puzzles,
-      ...(section1ChestEvery > 0 ? { chestEvery: section1ChestEvery } : {}),
       difficulty: "starter",
       end: section1End,
       gate: toGate(section1Gate),
@@ -63,7 +56,6 @@ const SiteMapBuilder = ({
   if (section2)
     sideSections.push({
       pathPuzzles: section2Puzzles,
-      ...(section2ChestEvery > 0 ? { chestEvery: section2ChestEvery } : {}),
       difficulty: "junior",
       end: section2End,
       gate: toGate(section2Gate),
@@ -71,7 +63,6 @@ const SiteMapBuilder = ({
 
   const config: FloorConfig = {
     pathPuzzles,
-    ...(chestEvery > 0 ? { chestEvery } : {}),
     difficulty: "starter",
     end: "treasure",
     exitOrStaircase,
@@ -103,18 +94,15 @@ const meta = {
   argTypes: {
     seed: { control: { type: "number" } },
     pathPuzzles: { control: { type: "range", min: 0, max: 5, step: 1 } },
-    chestEvery: { control: { type: "range", min: 0, max: 5, step: 1 } },
     exitOrStaircase: { control: "select", options: ["exit", "staircase"] },
     corridorStraightness: { control: { type: "range", min: 0, max: 1, step: 0.05 } },
     packing: { control: { type: "range", min: 0.3, max: 2, step: 0.1 } },
     section1: { control: "boolean" },
     section1Puzzles: { control: { type: "range", min: 0, max: 4, step: 1 } },
-    section1ChestEvery: { control: { type: "range", min: 0, max: 4, step: 1 } },
     section1End: { control: "select", options: ["treasure", "staircase"] },
     section1Gate: { control: "select", options: ["none", "floor-key", "tomb-key"] },
     section2: { control: "boolean" },
     section2Puzzles: { control: { type: "range", min: 0, max: 4, step: 1 } },
-    section2ChestEvery: { control: { type: "range", min: 0, max: 4, step: 1 } },
     section2End: { control: "select", options: ["treasure", "staircase"] },
     section2Gate: { control: "select", options: ["none", "floor-key", "tomb-key"] },
   },
@@ -127,18 +115,15 @@ export const Builder: Story = {
   args: {
     seed: 1,
     pathPuzzles: 0,
-    chestEvery: 0,
     exitOrStaircase: "exit",
     corridorStraightness: 0.65,
     packing: 1,
     section1: true,
     section1Puzzles: 0,
-    section1ChestEvery: 0,
     section1End: "treasure",
     section1Gate: "none",
     section2: true,
     section2Puzzles: 1,
-    section2ChestEvery: 0,
     section2End: "staircase",
     section2Gate: "floor-key",
   },
@@ -150,18 +135,15 @@ export const PackingAndStraightness: Story = {
   args: {
     seed: 7,
     pathPuzzles: 4,
-    chestEvery: 2,
     exitOrStaircase: "exit",
     corridorStraightness: 0.65,
     packing: 1,
     section1: true,
     section1Puzzles: 2,
-    section1ChestEvery: 0,
     section1End: "treasure",
     section1Gate: "none",
     section2: true,
     section2Puzzles: 2,
-    section2ChestEvery: 0,
     section2End: "staircase",
     section2Gate: "floor-key",
   },
@@ -172,18 +154,15 @@ export const FirstPyramid: Story = {
   args: {
     seed: 42,
     pathPuzzles: 0,
-    chestEvery: 0,
     exitOrStaircase: "exit",
     corridorStraightness: 0.65,
     packing: 1,
     section1: true,
     section1Puzzles: 0,
-    section1ChestEvery: 0,
     section1End: "treasure",
     section1Gate: "none",
     section2: true,
     section2Puzzles: 1,
-    section2ChestEvery: 0,
     section2End: "staircase",
     section2Gate: "floor-key",
   },

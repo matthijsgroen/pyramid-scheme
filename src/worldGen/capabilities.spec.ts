@@ -18,15 +18,13 @@ describe("capabilitiesFor", () => {
 
 describe("capability presets", () => {
   it("pyramids run every capability", () => {
-    expect(PYRAMID_CAPABILITIES.placeChests).toBe(true)
     expect(PYRAMID_CAPABILITIES.emitFragmentSlots).toBe(true)
     expect(PYRAMID_CAPABILITIES.emitMosaics).toBe(true)
     expect(PYRAMID_CAPABILITIES.emitMapPiece).toBe(true)
     expect(PYRAMID_CAPABILITIES.emitPerkStream).toBe(false)
   })
 
-  it("tombs share chests/fragments/mosaics with pyramids, run their own perk stream, and never auto-inject a mapPiece branch", () => {
-    expect(TOMB_CAPABILITIES.placeChests).toBe(true)
+  it("tombs share fragments/mosaics with pyramids, run their own perk stream, and never auto-inject a mapPiece branch", () => {
     expect(TOMB_CAPABILITIES.emitFragmentSlots).toBe(true)
     expect(TOMB_CAPABILITIES.emitMosaics).toBe(true)
     expect(TOMB_CAPABILITIES.emitPerkStream).toBe(true)

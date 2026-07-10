@@ -22,7 +22,8 @@ const perPyramid = argv.includes("--per-pyramid") || argv.includes("-p")
 type Tally = {
   floors: number
   puzzles: number
-  chests: number
+  puzzleRewards: number
+  junk: number
   wardGates: number
   floorKeys: number
   traps: number
@@ -35,7 +36,8 @@ type Tally = {
 const empty = (): Tally => ({
   floors: 0,
   puzzles: 0,
-  chests: 0,
+  puzzleRewards: 0,
+  junk: 0,
   wardGates: 0,
   floorKeys: 0,
   traps: 0,
@@ -45,17 +47,13 @@ const empty = (): Tally => ({
   map: 0,
 })
 
-// Chest nodes rendered for a chain: p=1..pp, a chest at every `chestEvery`th puzzle (siteAssembler)
-const chestNodes = (pp: number, ce?: number) => {
-  if (!ce || ce <= 0) return 0
-  let n = 0
-  for (let p = 1; p <= pp; p++) if (p % ce === 0) n++
-  return n
+const countPuzzleRewards = (t: Tally, rewards?: Array<{ type: string } | undefined>) => {
+  for (const r of rewards ?? []) if (r?.type === "consumable" || r?.type === "money") t.puzzleRewards++
 }
 
 const countSection = (t: Tally, s: SubSection) => {
   t.puzzles += s.pathPuzzles
-  t.chests += chestNodes(s.pathPuzzles, s.chestEvery)
+  countPuzzleRewards(t, s.puzzleRewards)
   if (s.gate?.type === "tomb-key") t.wardGates++
   if (s.gate?.type === "floor-key") t.floorKeys++
   if (s.trapped) t.traps++
@@ -68,6 +66,7 @@ const tallyReward = (t: Tally, r?: { type: string }) => {
   if (r.type === "hieroglyphFragment") t.fragments++
   else if (r.type === "mosaicPiece") t.mosaic++
   else if (r.type === "mapPiece") t.map++
+  else if (r.type === "sellable") t.junk++
 }
 
 const tallyFloors = (floors: FloorConfig[]): Tally => {
@@ -75,9 +74,8 @@ const tallyFloors = (floors: FloorConfig[]): Tally => {
   for (const f of floors) {
     t.floors++
     t.puzzles += f.pathPuzzles
-    t.chests += chestNodes(f.pathPuzzles, f.chestEvery)
+    countPuzzleRewards(t, f.puzzleRewards)
     tallyReward(t, f.mainEndReward)
-    for (const r of f.chestRewards ?? []) tallyReward(t, r)
     for (const s of f.sideSections) {
       countSection(t, s)
       for (const sub of s.sideSections ?? []) countSection(t, sub)
@@ -98,7 +96,8 @@ const tally = (journeyId: string): Tally => {
 const cols: Array<[string, keyof Tally, number]> = [
   ["floors", "floors", 6],
   ["puzzles", "puzzles", 7],
-  ["chests", "chests", 6],
+  ["puzzRw", "puzzleRewards", 6],
+  ["junk", "junk", 5],
   ["wards", "wardGates", 5],
   ["fKeys", "floorKeys", 5],
   ["traps", "traps", 5],

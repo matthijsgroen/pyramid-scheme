@@ -88,14 +88,3 @@ export const FRAGMENT_HOST_TIERS: Record<Tier, Tier[]> = {
   master: ["master", "wizard"],
   wizard: ["expert", "master", "wizard"],
 }
-
-// chestEvery strategy: every 3 puzzles for pp≥4; every pp puzzles for pp<4 (1 chest).
-// Chests hold consumables only — sparse cadence keeps them a payoff, not filler.
-export const chestEveryFor = (pp: number): number => (pp >= 4 ? 3 : pp)
-
-export const chestCountFor = (pp: number): number => {
-  const ce = chestEveryFor(pp)
-  let count = 0
-  for (let p = 1; p <= pp; p++) if (p % ce === 0) count++
-  return count
-}

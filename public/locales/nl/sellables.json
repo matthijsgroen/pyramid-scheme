@@ -1,0 +1,109 @@
+{
+  "tiers": {
+    "stone": "Steen",
+    "bronze": "Brons",
+    "silver": "Zilver",
+    "gold": "Goud",
+    "divine": "Goddelijk"
+  },
+  "sell_stone_1": {
+    "name": "Gebroken Ostracon",
+    "description": "Een gebroken aardewerkscherf met oefennotities van een schrijver — waardeloos om te lezen, maar Fez betaalt voor de klei."
+  },
+  "sell_stone_2": {
+    "name": "Gebarsten Kleikruik",
+    "description": "Een opslagkruik voor graan of bier, gescheurd door het gewicht van eeuwen."
+  },
+  "sell_stone_3": {
+    "name": "Versleten Rieten Sandaal",
+    "description": "Geweven uit papyrusriet, de zool dun versleten door de dagelijkse wandeling van een vergeten arbeider."
+  },
+  "sell_stone_4": {
+    "name": "Vervaagde Linnen Reep",
+    "description": "Een gescheurde reep ongeverfd linnen, van het soort dat eindeloos om de doden werd gewikkeld — of gebruikt om een zeil te verstellen."
+  },
+  "sell_stone_5": {
+    "name": "Gebroken Vuurstenen Mes",
+    "description": "Een geslepen vuurstenen mes, afgebroken aan de punt. Goedkoop gemaakt, nog goedkoper vervangen."
+  },
+  "sell_bronze_1": {
+    "name": "Verbogen Bronzen Amulet",
+    "description": "Een goedkope beschermende hanger, scheef gegoten en nooit rechtgezet. Zo gewoon dat geen verzamelaar hem wil — maar brons is brons."
+  },
+  "sell_bronze_2": {
+    "name": "Verweerde Bronzen Spiegel",
+    "description": "Ooit gepolijst genoeg om je spiegelbeeld in te zien; nu vertroebeld groen door ouderdom."
+  },
+  "sell_bronze_3": {
+    "name": "Dof Bronzen Vishaak",
+    "description": "Het gereedschap van een visser, overboord verloren op de Nijl lang voordat de tombe werd verzegeld."
+  },
+  "sell_bronze_4": {
+    "name": "Kleine Bronzen Bel",
+    "description": "Bedoeld om aan een tempeldeur of een danseres' enkel te hangen — hij klinkt niet meer zuiver."
+  },
+  "sell_bronze_5": {
+    "name": "Verkleurde Bronzen Ring",
+    "description": "Een eenvoudige band, ooit passend voor een vinger die al lang tot stof is vergaan."
+  },
+  "sell_silver_1": {
+    "name": "Verkleurde Zilveren Ankh",
+    "description": "Een symbool van leven, dof geworden door eeuwen onder de grond. Te verkleurd om uit te stallen, nog steeds zijn gewicht waard."
+  },
+  "sell_silver_2": {
+    "name": "Zilveren Kohl-Applicator",
+    "description": "Een slank staafje dat ooit de ogen van de rijken omlijnde — de kohl is lang verdwenen."
+  },
+  "sell_silver_3": {
+    "name": "Gedeukte Zilveren Schaal",
+    "description": "Een klein offerschaaltje, ingedeukt aan één kant toen het plafond erboven het uiteindelijk begaf."
+  },
+  "sell_silver_4": {
+    "name": "Zilveren Haarspeld",
+    "description": "Eenvoudig en onversierd, hield ooit het haar bijeen van iemand wiens naam verloren is."
+  },
+  "sell_silver_5": {
+    "name": "Versleten Zilveren Armband",
+    "description": "Een dunne zilveren band met een gebroken sluiting. Niet fijn genoeg voor een edele, te fijn voor een arbeider."
+  },
+  "sell_gold_1": {
+    "name": "Kleine Gouden Kraal",
+    "description": "Één kraal van een grafketting, lang geleden verstrooid. Een juwelier zou er blij mee zijn, als je de rest kunt vinden."
+  },
+  "sell_gold_2": {
+    "name": "Gouden Bladfragment",
+    "description": "Een splinter bladgoud, gepeld van het gezicht van een standbeeld door grafrovers eeuwen voor jouw komst."
+  },
+  "sell_gold_3": {
+    "name": "Dunne Gouden Oorring",
+    "description": "Dun geslagen om het goud van een edele verder te rekken — nog steeds genoeg om een handelaar te verleiden."
+  },
+  "sell_gold_4": {
+    "name": "Goudgespikkelde Scherf",
+    "description": "Een gebroken stuk verguld pleisterwerk, met vlekjes echt goud die nog aan het oppervlak kleven."
+  },
+  "sell_gold_5": {
+    "name": "Beschadigde Gouden Zegelring",
+    "description": "Een zegelring waarvan de gravure te versleten is om te herkennen — wie hij ook aanduidde, is vergeten."
+  },
+  "sell_divine_1": {
+    "name": "Vervaagde Lapis Scarabee",
+    "description": "Gesneden uit kostbare lapis lazuli, tegen hoge kosten ingevoerd voor de wedergeboorte van een farao. De kleur is vervaagd, de waarde niet."
+  },
+  "sell_divine_2": {
+    "name": "Carneool Oog-Amulet",
+    "description": "Een beschermend oog gesneden uit bloedrode carneool, bedoeld om onheil in het hiernamaals af te weren."
+  },
+  "sell_divine_3": {
+    "name": "Turkoois Inlegstukje",
+    "description": "Een enkele tegel van een verbrijzeld mozaïek, ooit deel van het beeltenis van een god op een tempelmuur."
+  },
+  "sell_divine_4": {
+    "name": "Albasten Canopische Scherf",
+    "description": "Een gebroken stuk van een kruik bedoeld om de geconserveerde organen van een farao te bewaren — kostbare steen voor een grimmig doel."
+  },
+  "sell_divine_5": {
+    "name": "Obsidiaan Ritueel Mes",
+    "description": "Vulkanisch glas, geslepen tot een ceremoniële snede nooit bedoeld voor de strijd — enkel voor de tempel."
+  }
+}

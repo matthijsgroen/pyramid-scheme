@@ -2,6 +2,8 @@ import type { ConsumableType, Tier, TreasureReward } from "./types"
 import { TOMB_SYMBOLS } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
+import { sellablesForDifficulty } from "../data/sellables"
+import type { Difficulty } from "../data/difficultyLevels"
 
 // Simple deterministic hash for per-pyramid seeding of density ranges and reward rolls
 export const hashStr = (s: string): number => {
@@ -19,6 +21,9 @@ export const rollConsumable = (
   const roll = hashStr(seed) % total
   return roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
 }
+
+// Seeded loose-money amount, 1-10
+export const rollMoney = (seed: string): number => 1 + (hashStr(seed) % 10)
 
 export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
   switch (hint) {
@@ -51,18 +56,15 @@ export const specToGate = (
   return { type: "tomb-key", wardKeyId }
 }
 
-const CONSUMABLE_THRESHOLDS = [5, 8] as const // <5 → bandage, <8 → oil, else → trapTool
-
-export const pathEndToReward = (end: string, tier: string, index = 0): TreasureReward | undefined => {
+export const pathEndToReward = (end: string, tier: string, seed = tier): TreasureReward | undefined => {
   if (end === "mosaic") return { type: "mosaicPiece" }
   if (end === "fragment") {
     return { type: "fragmentSlot" }
   }
-  if (end === "consumable") {
-    const roll = hashStr(`${tier}:consumable:${index}`) % 10
-    const consumable =
-      roll < CONSUMABLE_THRESHOLDS[0] ? "bandage" : roll < CONSUMABLE_THRESHOLDS[1] ? "oil" : "trapTool"
-    return { type: "consumable", consumable }
+  if (end === "junk") {
+    const items = sellablesForDifficulty(tier as Difficulty)
+    const item = items[hashStr(seed) % items.length]
+    return { type: "sellable", itemId: item.id }
   }
   return undefined // "treasure" = no specific endReward
 }

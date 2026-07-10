@@ -40,6 +40,7 @@ type ProgressionState = {
   maxHealth: number // half-hearts
   consumables: ConsumableInventory
   perks: PerkState
+  money: number
 }
 
 // First tomb of each tier is visible from the start; secondary tombs appear on first map piece
@@ -65,6 +66,7 @@ const initialState: ProgressionState = {
   maxHealth: 6,
   consumables: { bandage: 0, oil: 0, trapTool: 0 },
   perks: INITIAL_PERKS,
+  money: 0,
 }
 
 export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
@@ -98,13 +100,17 @@ export type ProgressionAPI = {
   healToFull: () => void
   consumables: ConsumableInventory
   consumableCarryCap: number
+  isConsumablePackFull: () => boolean
   addConsumable: (type: ConsumableType) => boolean // false if at cap
   useConsumable: (type: ConsumableType) => void
   perks: PerkState
+  money: number
+  addMoney: (amount: number) => void
+  spendMoney: (amount: number) => boolean // false if insufficient funds
 }
 
 export const useProgression = (): ProgressionAPI => {
-  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v3", initialState)
+  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v4", initialState)
 
   return useMemo(
     () => ({
@@ -213,6 +219,11 @@ export const useProgression = (): ProgressionAPI => {
       healToFull: () => setState(prev => ({ ...prev, currentHealth: prev.maxHealth ?? 6 })),
       consumables: state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 },
       consumableCarryCap: consumableCarryCap(state.perks?.packMuleLevel ?? 0),
+      isConsumablePackFull: () => {
+        const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
+        const cap = consumableCarryCap(state.perks?.packMuleLevel ?? 0)
+        return inv.bandage + inv.oil + inv.trapTool >= cap
+      },
       addConsumable: type => {
         const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
         const cap = consumableCarryCap(state.perks?.packMuleLevel ?? 0)
@@ -237,6 +248,13 @@ export const useProgression = (): ProgressionAPI => {
           return { ...prev, consumables: next, currentHealth: healed }
         }),
       perks: state.perks ?? INITIAL_PERKS,
+      money: state.money ?? 0,
+      addMoney: amount => setState(prev => ({ ...prev, money: (prev.money ?? 0) + amount })),
+      spendMoney: amount => {
+        if ((state.money ?? 0) < amount) return false
+        setState(prev => ({ ...prev, money: (prev.money ?? 0) - amount }))
+        return true
+      },
     }),
     [state, setState]
   )

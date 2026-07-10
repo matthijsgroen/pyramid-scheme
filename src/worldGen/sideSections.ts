@@ -41,10 +41,15 @@ const buildDslSection = <TExtra extends string>(
     end,
     ...(gate ? { gate } : {}),
     ...(endReward ? { endReward } : {}),
+    ...(cs.shopPrice !== undefined ? { shopPrice: cs.shopPrice } : {}),
     ...(subSections.length > 0 ? { sideSections: subSections } : {}),
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.trapped ? { trapped: true } : {}),
+    ...(cs.sealed ? { sealed: true } : {}),
+    // Array form exists on the constraint type but is never authored/resolved anywhere —
+    // only forward a plain single family.
+    ...(cs.puzzleFamily && !Array.isArray(cs.puzzleFamily) ? { puzzleFamily: cs.puzzleFamily } : {}),
   }
 }
 
@@ -141,12 +146,11 @@ export const buildSideSections = <TExtra extends string = never>(
 
   // Declared sidePaths / hiddenPaths from DSL. Visible sidePaths may opt into a floor-key
   // gate; colors rotate through the floor's keyColors count, continuing the auto-mosaic run.
-  let consumableIdx = 0
   let gatedColorIdx = gatedCount
   ;(declaredSidePaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `sidepath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
+      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:sidepath:${ei}:${j}`)
       const gate =
         entry.gate === "floor-key"
           ? { type: "floor-key" as const, color: ALL_KEY_COLORS[gatedColorIdx++ % colorCount] }
@@ -164,7 +168,7 @@ export const buildSideSections = <TExtra extends string = never>(
   ;(declaredHiddenPaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `hiddenpath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, consumableIdx++)
+      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:hiddenpath:${ei}:${j}`)
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,

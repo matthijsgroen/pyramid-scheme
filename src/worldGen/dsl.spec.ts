@@ -5,9 +5,9 @@ import { global, tier, journey } from "./dsl"
 
 describe("tier().set() accumulator", () => {
   it("returns a Rule with tier scope", () => {
-    const r = tier("starter").set({ consumableDensity: 0 })
+    const r = tier("starter").set({ corridorStraightness: 0.5 })
     expect(r.scope).toEqual({ level: "tier", tier: "starter" })
-    expect(r.constraints).toMatchObject({ consumableDensity: 0 })
+    expect(r.constraints).toMatchObject({ corridorStraightness: 0.5 })
   })
 
   it("sidePaths().settings() appends to constraints.sidePaths", () => {
@@ -22,7 +22,7 @@ describe("tier().set() accumulator", () => {
 
   it("multiple sidePaths calls stack in order", () => {
     const r = tier("junior")
-      .set({ consumableDensity: 0.05 })
+      .set({})
       .sidePaths("low")
       .settings({ pathPuzzles: 0, end: "treasure" })
       .sidePaths("medium")
@@ -100,7 +100,7 @@ describe("tier().set() accumulator", () => {
 
 describe("journey().set() accumulator", () => {
   it("returns a Rule with journey scope", () => {
-    const r = journey("my_tomb").set({ consumableDensity: 0 })
+    const r = journey("my_tomb").set({})
     expect(r.scope).toEqual({ level: "journey", journey: "my_tomb" })
   })
 
@@ -175,12 +175,12 @@ describe("journey() builder", () => {
   })
 })
 
-// ── trapped + consumable PathEntry ────────────────────────────────────────────
+// ── trapped + junk PathEntry ───────────────────────────────────────────────────
 
 describe("PathEntry trapped flag", () => {
   it("sidePaths().settings() with trapped:true propagates to constraints", () => {
-    const r = tier("expert").set({}).sidePaths("low").settings({ pathPuzzles: 1, end: "consumable", trapped: true })
-    expect(r.constraints.sidePaths).toEqual([{ density: "low", pathPuzzles: 1, end: "consumable", trapped: true }])
+    const r = tier("expert").set({}).sidePaths("low").settings({ pathPuzzles: 1, end: "junk", trapped: true })
+    expect(r.constraints.sidePaths).toEqual([{ density: "low", pathPuzzles: 1, end: "junk", trapped: true }])
   })
 
   it("hiddenPaths().settings() with trapped:true propagates to constraints", () => {
@@ -193,9 +193,9 @@ describe("PathEntry trapped flag", () => {
     expect(r.constraints.sidePaths![0]).not.toHaveProperty("trapped")
   })
 
-  it("consumable PathEndHint accepted by sidePaths", () => {
-    const r = tier("expert").set({}).sidePaths("medium").settings({ pathPuzzles: 1, end: "consumable" })
-    expect(r.constraints.sidePaths![0].end).toBe("consumable")
+  it("junk PathEndHint accepted by sidePaths", () => {
+    const r = tier("expert").set({}).sidePaths("medium").settings({ pathPuzzles: 1, end: "junk" })
+    expect(r.constraints.sidePaths![0].end).toBe("junk")
   })
 
   it("trapped entry stacks alongside non-trapped entries", () => {
@@ -204,7 +204,7 @@ describe("PathEntry trapped flag", () => {
       .sidePaths("medium")
       .settings({ pathPuzzles: 1, end: "fragment" })
       .sidePaths("low")
-      .settings({ pathPuzzles: 1, end: "consumable", trapped: true })
+      .settings({ pathPuzzles: 1, end: "junk", trapped: true })
     expect(r.constraints.sidePaths).toHaveLength(2)
     expect(r.constraints.sidePaths![0].trapped).toBeUndefined()
     expect(r.constraints.sidePaths![1].trapped).toBe(true)

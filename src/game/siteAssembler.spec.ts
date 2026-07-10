@@ -69,11 +69,57 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("places goal (mosaicPiece) somewhere on the grid", () => {
+  it("goal room falls back to the grant-nothing placeholder, not a free mosaicPiece, when mainEndReward is unset", () => {
+    // Regression guard: an unset mainEndReward used to fall back to `{type:"mosaicPiece"}` —
+    // a free, uncounted reward validate.ts's 298-budget guard can never see (it only reads
+    // stored config, never this runtime fallback). See SHOP_PLAN.md "World reshape".
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const goal = findRoom(result.grid, c => c.reward?.type === "mosaicPiece")
-    expect(goal).not.toBeNull()
+    const goal = findRoom(result.grid, c => c.roomType === "treasure")
+    expect(goal?.cell.reward).toEqual({ type: "hieroglyphs" })
+  })
+
+  it("carries a section's shopPrice through to its end room", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" }, shopPrice: 500 },
+      ],
+    }
+    const result = assembleFloor("shop-site", config, 0)
+    if (!result.success) throw new Error("assembly failed")
+    const priced = result.grid.cells.flat().filter(c => c.type === "room" && c.shopPrice !== undefined) as RoomCell[]
+    expect(priced).toHaveLength(1)
+    expect(priced[0].shopPrice).toBe(500)
+    expect(priced[0].reward).toEqual({ type: "mosaicPiece" })
+  })
+
+  it("carries stairId through to a stairhead room, and populates grid.staircases from it", () => {
+    // Regression guard: RoomSpec→RoomCell conversion listed every field except stairId,
+    // so grid.staircases was always empty — masked because every existing wing/path setup
+    // has at most one wing, so the client's "assume next floor" fallback happened to agree.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: { stairId: "test:main" },
+      sideSections: [],
+    }
+    const result = assembleFloor("stair-site", config, 0)
+    if (!result.success) throw new Error("assembly failed")
+    const stairhead = findRoom(result.grid, c => c.roomType === "stairhead")
+    expect(stairhead?.cell.stairId).toBe("test:main")
+    expect(result.grid.staircases["test:main"]).toEqual([stairhead!.r, stairhead!.c])
+  })
+
+  it("does not set shopPrice on an ordinary (non-shop) end-of-path room", () => {
+    const result = assembleFloor("site-1", basicConfig(), 42)
+    if (!result.success) throw new Error("assembly failed")
+    const goal = findRoom(result.grid, c => c.roomType === "treasure")
+    expect(goal?.cell.shopPrice).toBeUndefined()
   })
 
   it("has an entrance node on the grid edge", () => {
@@ -132,7 +178,6 @@ describe(assembleFloor, () => {
     const distanceFor = (sideSections: FloorConfig["sideSections"]) => {
       const config: FloorConfig = {
         pathPuzzles: 4,
-        chestEvery: 2,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -159,7 +204,6 @@ describe(assembleFloor, () => {
     const chainSizeFor = (packing: number) => {
       const config: FloorConfig = {
         pathPuzzles: 4,
-        chestEvery: 2,
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
@@ -338,6 +382,116 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("a sealed side section has no back-door either — removing its puzzle room cuts off its whole chain", () => {
+    // `sealed` opts an ordinary (visible, ungated) path into the same isolation gate/trapped
+    // content already get, so a compact layout can't merge a shortcut around its puzzle room.
+    const key = (r: number, c: number) => `${r},${c}`
+    const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
+      const seen = new Set<string>([key(...start)])
+      const queue: Array<[number, number]> = [[start[0], start[1]]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE_ALL[dir]
+          const nr = r + dr,
+            nc = c + dc
+          const k = key(nr, nc)
+          if (seen.has(k) || blocked.has(k)) continue
+          seen.add(k)
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const config = (): FloorConfig => ({
+      // 0 main-path puzzles, so every "puzzle" room found below unambiguously belongs to
+      // the sealed side section rather than the main path.
+      pathPuzzles: 0,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", sealed: true },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+      ],
+    })
+
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("sealed-isolation", config(), seed)
+      if (!result.success) continue
+      const grid = result.grid
+      const puzzles: Array<[number, number]> = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+        }
+      if (puzzles.length === 0) continue
+
+      const fullyReachable = reachableFrom(grid, grid.entrancePos, new Set())
+      const [pr, pc] = puzzles[0]
+      const withoutFirstPuzzle = reachableFrom(grid, grid.entrancePos, new Set([key(pr, pc)]))
+      const onlyViaThisPuzzle = [...fullyReachable].filter(k => !withoutFirstPuzzle.has(k))
+      expect(onlyViaThisPuzzle.length).toBeGreaterThan(1)
+    }
+  })
+
+  it("a sealed main path has no back-door either — removing an early puzzle room cuts off the rest", () => {
+    const key = (r: number, c: number) => `${r},${c}`
+    const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
+      const seen = new Set<string>([key(...start)])
+      const queue: Array<[number, number]> = [[start[0], start[1]]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE_ALL[dir]
+          const nr = r + dr,
+            nc = c + dc
+          const k = key(nr, nc)
+          if (seen.has(k) || blocked.has(k)) continue
+          seen.add(k)
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const config = (): FloorConfig => ({
+      pathPuzzles: 3,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+      sealed: true,
+    })
+
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("sealed-mainpath-isolation", config(), seed)
+      if (!result.success) continue
+      const grid = result.grid
+      const puzzles: Array<[number, number]> = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+        }
+      if (puzzles.length === 0) continue
+
+      const fullyReachable = reachableFrom(grid, grid.entrancePos, new Set())
+      const [pr, pc] = puzzles[0]
+      const withoutFirstPuzzle = reachableFrom(grid, grid.entrancePos, new Set([key(pr, pc)]))
+      const onlyViaThisPuzzle = [...fullyReachable].filter(k => !withoutFirstPuzzle.has(k))
+      expect(onlyViaThisPuzzle.length).toBeGreaterThan(1)
+    }
+  })
+
   it("auto-injects an ungated section when all sections are gated with floor-key", () => {
     const config: FloorConfig = {
       pathPuzzles: 1,
@@ -352,6 +506,45 @@ describe(assembleFloor, () => {
       expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
       expect(findRoom(result.grid, c => c.reward?.type === "tombKey")).not.toBeNull()
       expect(validateSite(result.grid)).toEqual({ valid: true })
+    }
+  })
+
+  it("side-path puzzles are always sumplete, even when the floor's own puzzleFamily is tableau", () => {
+    // Tableaus consume hieroglyph symbols the player may not have yet (found via a separate
+    // minigame before entering) — side paths (e.g. a shop's) must stay reachable without them.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      puzzleFamily: "tableau",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+    }
+    const result = assembleFloor("site-1", config, 1)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const mainPuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      expect(mainPuzzle).not.toBeNull()
+      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "sumplete")
+      expect(sidePuzzle).not.toBeNull()
+    }
+  })
+
+  it("a side section can explicitly opt into a non-default puzzle family", () => {
+    // Not hardcoded to sumplete — a section that sets its own puzzleFamily is honored,
+    // so a future puzzle family can be placed on a side path without new plumbing.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", puzzleFamily: "tableau" }],
+    }
+    const result = assembleFloor("site-1", config, 1)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      expect(sidePuzzle).not.toBeNull()
     }
   })
 
@@ -410,25 +603,24 @@ describe(assembleFloor, () => {
     }
   })
 
-  it("chestEvery: places hieroglyphs chests between puzzles on the main path", () => {
+  it("puzzleRewards: attaches config.puzzleRewards[k] onto the k-th main-path puzzle room, in order", () => {
     const config: FloorConfig = {
       pathPuzzles: 4,
-      chestEvery: 2,
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [],
+      puzzleRewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      const hieroglyphChests = result.grid.cells
-        .flat()
-        .filter(c => c.type === "room" && c.roomType === "treasure" && (c as RoomCell).reward?.type === "hieroglyphs")
-      // 4 puzzles, chestEvery 2 → at least 2 chests (after puzzle 2 and after puzzle 4)
-      expect(hieroglyphChests.length).toBeGreaterThanOrEqual(2)
-      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
-      expect(puzzles.length).toBe(4)
+      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle") as RoomCell[]
+      expect(puzzles).toHaveLength(4)
+      const rewards = puzzles.map(p => p.reward?.type)
+      expect(rewards).toContain("money")
+      expect(rewards).toContain("consumable")
+      expect(rewards.filter(r => r === undefined)).toHaveLength(2)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
   })
