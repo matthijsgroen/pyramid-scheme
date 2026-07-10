@@ -47,6 +47,9 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.trapped ? { trapped: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
+    // Array form exists on the constraint type but is never authored/resolved anywhere —
+    // only forward a plain single family.
+    ...(cs.puzzleFamily && !Array.isArray(cs.puzzleFamily) ? { puzzleFamily: cs.puzzleFamily } : {}),
   }
 }
 

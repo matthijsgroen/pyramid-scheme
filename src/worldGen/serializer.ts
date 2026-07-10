@@ -50,6 +50,7 @@ const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string 
   if (s.hidden) parts.push(`hidden: true`)
   if (s.trapped) parts.push(`trapped: true`)
   if (s.sealed) parts.push(`sealed: true`)
+  if (s.puzzleFamily) parts.push(`puzzleFamily: "${s.puzzleFamily}"`)
   if (s.sideSections?.length)
     parts.push(
       `sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection, nextIdx)).join(", ")}]`

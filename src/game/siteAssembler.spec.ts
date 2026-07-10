@@ -530,6 +530,24 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("a side section can explicitly opt into a non-default puzzle family", () => {
+    // Not hardcoded to sumplete — a section that sets its own puzzleFamily is honored,
+    // so a future puzzle family can be placed on a side path without new plumbing.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", puzzleFamily: "tableau" }],
+    }
+    const result = assembleFloor("site-1", config, 1)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      expect(sidePuzzle).not.toBeNull()
+    }
+  })
+
   it("places exactly pathPuzzles puzzle rooms on the main path", () => {
     for (const pathPuzzles of [0, 1, 2, 3]) {
       const config: FloorConfig = {

@@ -33,6 +33,9 @@ export type SubSection = {
   trapped?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
+  /** Overrides the floor's puzzleFamily for this section's own puzzle rooms — defaults to
+   * "sumplete" when unset. Never "crocodile" — that's a main-path-finale-only family. */
+  puzzleFamily?: "sumplete" | "tableau"
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]

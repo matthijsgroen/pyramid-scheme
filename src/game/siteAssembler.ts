@@ -41,6 +41,7 @@ const computeSideSectionHash = (section: SideSection | SubSection, idx: number, 
         hidden: section.hidden,
         trapped: section.trapped,
         sealed: section.sealed,
+        puzzleFamily: section.puzzleFamily,
         gateType: section.gate?.type,
       })
     )
@@ -911,10 +912,10 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           const reward = section.puzzleRewards?.[pi]
           roomSpecs.set(posKey(r, c), {
             roomType: "puzzle",
-            // Side-path puzzles are always sumplete, regardless of the floor's own
-            // puzzleFamily (tableau, for tombs) — tableaus consume hieroglyph symbols the
-            // player may not have yet, so they stay a main-path-only puzzle type.
-            family: "sumplete",
+            // Never inherits the floor's own puzzleFamily (tableau, for tombs) — tableaus
+            // consume hieroglyph symbols the player may not have yet, so a side path stays
+            // sumplete unless it explicitly opts into a different family itself.
+            family: section.puzzleFamily ?? "sumplete",
             ...(reward ? { reward } : {}),
           })
         }
@@ -981,9 +982,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
           const reward = subSection.puzzleRewards?.[pi]
           roomSpecs.set(posKey(r, c), {
             roomType: "puzzle",
-            // Same reasoning as the side-section case above: sub-section puzzles never
-            // inherit the floor's tableau family, only the main path does.
-            family: "sumplete",
+            // Same reasoning as the side-section case above: never inherits the floor's
+            // tableau family unless the sub-section explicitly opts in itself.
+            family: subSection.puzzleFamily ?? "sumplete",
             ...(reward ? { reward } : {}),
           })
         }
