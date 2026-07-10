@@ -215,7 +215,7 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
         // (routed through the same fragmentSlot/assignFragments budget pipeline as every
         // other unset reward) instead of leaving it unset — an unset mainEndReward falls
         // back to a free, uncounted mosaicPiece at assembly time (siteAssembler.ts), which
-        // is exactly the bug SHOP_PLAN.md's "World reshape" fixes.
+        // this fixes.
         floorConfigs.push(
           buildFloor({ pathPuzzles: pp, difficulty, sideSections: [], mainEndReward: { type: "fragmentSlot" } })
         )

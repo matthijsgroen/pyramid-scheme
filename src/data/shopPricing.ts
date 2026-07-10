@@ -1,6 +1,5 @@
-// Fez-shop price list — SHOP_PLAN.md "Prices (locked)". Single source of truth for both
-// world-gen placement (worldGen/spec/*.ts shop sidepaths, worldGen/validate.ts's economy
-// guard) and the shop UI (Phase 4).
+// Fez-shop price list — locked. Single source of truth for both world-gen placement
+// (worldGen/spec/*.ts shop sidepaths, worldGen/validate.ts's economy guard) and the shop UI.
 
 import { difficulties, type Difficulty } from "./difficultyLevels"
 
@@ -18,6 +17,6 @@ export const CONSUMABLE_STOCK_VALUE =
   (CONSUMABLE_PRICES.bandage + CONSUMABLE_PRICES.oil + CONSUMABLE_PRICES.trapTool) * CONSUMABLE_STOCK_PER_VISIT
 
 // Total coins a player could spend on consumables across every shop in one visit each —
-// counts toward the economy guard's total, since SHOP_PLAN.md's guard covers everything
-// buyable, not just the mandatory rares.
+// counts toward the economy guard's total, which covers everything buyable, not just the
+// mandatory rares.
 export const TOTAL_CONSUMABLE_BUYABLE = NUM_SHOPS * CONSUMABLE_STOCK_VALUE

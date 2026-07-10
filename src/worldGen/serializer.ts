@@ -215,7 +215,7 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
           countFrag(s.endReward)
           for (const sub of s.sideSections ?? []) countFrag(sub.endReward)
         }
-        // Puzzle-solve rewards (SHOP_PLAN.md "World reshape") replace the old mid-path chests
+        // Puzzle-solve rewards replace the old mid-path chests
         const countPuzzleRewards = (rewards: (TreasureReward | undefined)[] | undefined) => {
           for (const r of rewards ?? []) {
             if (r?.type === "consumable") puzzleConsumables++

@@ -25,7 +25,7 @@ export const juniorRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — SHOP_PLAN.md locked stock list: fragment + mosaic.
+        // Fez shop — locked stock list: fragment + mosaic.
         sideSections: [
           sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("junior") }),
           sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),

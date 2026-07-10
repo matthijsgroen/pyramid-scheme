@@ -2,10 +2,9 @@ import type { FloorConfig, SubSection, TreasureReward } from "./types"
 import { hashStr, rollConsumable, rollMoney } from "./rewards"
 import { mulberry32, shuffle } from "../game/random"
 
-// Global design target (SHOP_PLAN.md "World reshape"): ~441/1714 puzzles carry a
-// consumable, ~199/1714 carry loose money. Applied per-journey via shuffle+slice, so the
-// realized total drifts slightly from this exact ratio in aggregate — acceptable, not
-// validator-enforced (see SHOP_PLAN.md).
+// Global design target: ~441/1714 puzzles carry a consumable, ~199/1714 carry loose money.
+// Applied per-journey via shuffle+slice, so the realized total drifts slightly from this
+// exact ratio in aggregate — acceptable, not validator-enforced.
 const CONSUMABLE_FRACTION = 441 / 1714
 const MONEY_FRACTION = 199 / 1714
 
