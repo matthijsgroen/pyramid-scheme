@@ -15,16 +15,22 @@ export type TreasureReward =
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
   | { type: "fragmentSlot" }
+  | { type: "money"; amount: number }
+  | { type: "sellable"; itemId: string }
 
 export type SubSection = {
   pathPuzzles: number
-  chestEvery?: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
+  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
+  shopPrice?: number
+  puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   trapped?: boolean
+  /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
+  sealed?: boolean
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -32,27 +38,24 @@ export type SideSection = SubSection & {
 
 export type FloorConfig = {
   pathPuzzles: number
-  chestEvery?: number
   difficulty: Difficulty
   end: "treasure"
   exitOrStaircase: "exit" | "staircase" | { stairId: string }
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
-  chestRewards?: TreasureReward[]
+  puzzleRewards?: (TreasureReward | undefined)[]
   puzzleFamily?: "sumplete" | "tableau"
   lastMainPuzzleFamily?: "crocodile"
-  consumableDensity?: number
   corridorStraightness?: number
   packing?: number
+  /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
+  sealed?: boolean
 }
 
 export type SiteConfig = FloorConfig[]
 
 export type FragmentSlot = { journeyId: string; slotIndex: number }
 export type Assignment = { journeyId: string; slotIndex: number; hieroglyphId: string }
-
-// Per-pyramid plan: resolved pathPuzzles after worldSpec constraints + scaling + auto-correction
-export type ChestSlotPlan = { journeyId: string; tier: Tier; pathPuzzles: number }
 
 export type TombJourneyDef = { id: string; tier: Tier; levelCount: number }

@@ -4,8 +4,6 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 // code branching on "is this a pyramid?" — a site opts into a capability by having it here,
 // not by which builder function happened to construct it.
 export type SiteCapabilities = {
-  /** Auto-distributed chest rewards along the main path (buildChestRewards). */
-  placeChests: boolean
   /** fragmentSlot sentinels eligible for collectSlots / assignFragments. */
   emitFragmentSlots: boolean
   /** Auto-distributed mosaic side paths (computeMosaicPaths + the buildSideSections auto loop). */
@@ -17,7 +15,6 @@ export type SiteCapabilities = {
 }
 
 export const PYRAMID_CAPABILITIES: SiteCapabilities = {
-  placeChests: true,
   emitFragmentSlots: true,
   emitMosaics: true,
   emitMapPiece: true,
@@ -25,7 +22,6 @@ export const PYRAMID_CAPABILITIES: SiteCapabilities = {
 }
 
 export const TOMB_CAPABILITIES: SiteCapabilities = {
-  placeChests: true,
   emitFragmentSlots: true,
   emitMosaics: true,
   emitMapPiece: false,

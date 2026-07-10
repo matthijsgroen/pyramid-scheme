@@ -7,7 +7,7 @@ export type { PathPuzzlesRange } from "./types"
 
 export type PathPuzzlesPreset = "tiny" | "small" | "medium" | "large" | "huge"
 export type SideIntensity = "none" | "low" | "medium" | "dense"
-export type PathEndHint = "fragment" | "treasure" | "mosaic" | "consumable"
+export type PathEndHint = "fragment" | "treasure" | "mosaic" | "junk"
 export type PathEntry = {
   density: SideIntensity
   pathPuzzles: number
@@ -42,6 +42,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   endReward?: RewardSpec | TExtra
+  /** Marks this section's endReward as a Fez-shop purchase instead of a free pickup — the
+   * DSL literal in coins. No `chance` allowed on a shop slot; must stay deterministic. */
+  shopPrice?: number
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
@@ -51,6 +54,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   hidden?: boolean
   /** Every intermediate room along this path is a trap instead of a puzzle. */
   trapped?: boolean
+  /** Isolates this section's cells from leftover maze edges in a compact layout, so a
+   * shortcut can't merge around it — same mechanism `gate`/`trapped` already get for free. */
+  sealed?: boolean
 }
 
 export type FloorConstraint<TExtra extends string = never> = {
@@ -61,8 +67,10 @@ export type FloorConstraint<TExtra extends string = never> = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
+   * shortcut can't merge around a main-path puzzle room. */
+  sealed?: boolean
   mainEndReward?: RewardHint | TExtra
-  chestReward?: RewardHint | TExtra
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
   /**
@@ -80,8 +88,6 @@ export type FloorConstraint<TExtra extends string = never> = {
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
-  consumableDensity?: number
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
 }
@@ -124,6 +130,9 @@ export type PyramidConstraint = {
   packingChance?: number
   /** packing used on a packingChance hit. Default 1.6. */
   packingWhenHit?: number
+  /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
+   * shortcut can't merge around a main-path puzzle room. Per-floor `sealed` overrides this. */
+  sealed?: boolean
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType
@@ -144,8 +153,6 @@ export type PyramidConstraint = {
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Fraction 0–1 of chest slots that become consumable rewards (Phase 14). */
-  consumableDensity?: number
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
   /** Number of floors for tomb journeys. Overrides the value in TOMB_STRUCTURES. */

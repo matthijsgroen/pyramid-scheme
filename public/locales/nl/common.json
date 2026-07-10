@@ -97,6 +97,7 @@
   },
   "chest": {
     "tapToOpen": "Tik om te openen",
+    "money": "{{amount}} munten",
     "mapPiece": "Kaartdeel",
     "mapPieceDescription": "Een fragment van een oude kaart. Verzamel genoeg stukken om de locatie van een verborgen schattombe te onthullen.",
     "hieroglyphFragment": "Hiërogliefenfragment",
@@ -105,6 +106,7 @@
     "hieroglyphs": "Hiëroglieven",
     "hieroglyphsDescription": "Heilige symbolen gegraveerd in de wanden van deze kamer. Hun betekenis vergroot je kennis van de oude wereld.",
     "mosaicPiece": "Mozaïekstuk",
+    "mosaicPieceDescription": "Een glanzende tegel uit een groter beeld — een prijs voor verzamelaars, niet nodig om een tombe te voltooien.",
     "consumable": {
       "bandage": "Verband",
       "oil": "Genezende Olie",
@@ -121,6 +123,16 @@
   "money": {
     "label": "Munten"
   },
+  "shop": {
+    "title": "Fez's Kraam",
+    "buy": "Kopen",
+    "sell": "Verkopen",
+    "soldOut": "Uitverkocht",
+    "dismiss": "Vertrekken",
+    "rareItems": "Zeldzame Vondsten",
+    "supplies": "Benodigdheden",
+    "sellSection": "Rommel verkopen"
+  },
   "level": {
     "completed": "Niveau Voltooid!"
   },
@@ -132,7 +144,8 @@
       "professions": "⚱️ Beroepen",
       "animals": "🐾 Dieren",
       "artifacts": "💎 Artefacten",
-      "treasures": "💰 Schatten"
+      "treasures": "💰 Schatten",
+      "junk": "🔷 Rommel"
     },
     "treasureCategories": {
       "merchantCache": "💰 Handelaars Voorraad",

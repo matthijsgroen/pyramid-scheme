@@ -5,7 +5,7 @@ export const starterRules: Rule[] = [
   tier("starter", { difficulty: "starter" }),
 
   tier("starter")
-    .set({ consumableDensity: 0 })
+    .set({})
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "fragment" })
     .hiddenPaths("low")
@@ -60,6 +60,7 @@ export const starterRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "starter",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

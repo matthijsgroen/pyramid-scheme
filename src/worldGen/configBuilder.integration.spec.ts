@@ -18,7 +18,6 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 
   const countFloor = (floor: FloorConfig) => {
     count(floor.mainEndReward)
-    for (const r of floor.chestRewards ?? []) count(r)
     for (const s of floor.sideSections) {
       count(s.endReward)
       for (const sub of s.sideSections ?? []) count(sub.endReward)
@@ -47,5 +46,38 @@ describe("buildConfigs golden guard", () => {
     const first = buildConfigs()
     const second = buildConfigs()
     expect(second).toEqual(first)
+  })
+})
+
+describe("tomb floor linking — ward-path shortcuts", () => {
+  const configs = buildConfigs()
+  const floors = configs.junior_treasure_tomb[0]
+
+  it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
+    for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")
+  })
+
+  it("every non-last floor has a ward-path shortcut gated by that floor's own key", () => {
+    for (let i = 0; i < floors.length - 1; i++) {
+      const shortcut = floors[i].sideSections.find(s => s.gate?.type === "tomb-key")
+      expect(shortcut).toBeDefined()
+      expect(shortcut!.gate).toEqual({
+        type: "tomb-key",
+        wardKeyId: (floors[i].mainEndReward as { keyId: string }).keyId,
+      })
+      expect(typeof shortcut!.end).toBe("object")
+    }
+  })
+
+  it("the last floor has no ward-path shortcut", () => {
+    const last = floors[floors.length - 1]
+    expect(last.sideSections.some(s => s.gate?.type === "tomb-key")).toBe(false)
+  })
+
+  it("wires each floor's entrance to the previous floor's shortcut stairId", () => {
+    for (let i = 0; i < floors.length - 1; i++) {
+      const shortcut = floors[i].sideSections.find(s => s.gate?.type === "tomb-key")!
+      expect(floors[i + 1].entrance).toEqual(shortcut.end)
+    }
   })
 })

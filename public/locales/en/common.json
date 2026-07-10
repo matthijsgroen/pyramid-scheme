@@ -97,6 +97,7 @@
   },
   "chest": {
     "tapToOpen": "Tap to open",
+    "money": "{{amount}} coins",
     "mapPiece": "Map Piece",
     "mapPieceDescription": "A fragment of an ancient map. Collect enough pieces to reveal the location of a hidden treasure tomb.",
     "hieroglyphFragment": "Hieroglyph Fragment",
@@ -105,6 +106,7 @@
     "hieroglyphs": "Ancient Hieroglyphs",
     "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
     "mosaicPiece": "Mosaic Piece",
+    "mosaicPieceDescription": "A gleaming tile from a larger picture — a completionist's prize, not required to finish any single tomb.",
     "consumable": {
       "bandage": "Bandage",
       "oil": "Healing Oil",
@@ -121,6 +123,16 @@
   "money": {
     "label": "Coins"
   },
+  "shop": {
+    "title": "Fez's Stall",
+    "buy": "Buy",
+    "sell": "Sell",
+    "soldOut": "Sold out",
+    "dismiss": "Leave",
+    "rareItems": "Rare Finds",
+    "supplies": "Supplies",
+    "sellSection": "Junk to sell"
+  },
   "level": {
     "completed": "Level Completed!"
   },
@@ -132,7 +144,8 @@
       "professions": "⚱️ Professions",
       "animals": "🐾 Animals",
       "artifacts": "💎 Artifacts",
-      "treasures": "💰 Treasures"
+      "treasures": "💰 Treasures",
+      "junk": "🔷 Junk"
     },
     "treasureCategories": {
       "merchantCache": "💰 Merchant Cache",
