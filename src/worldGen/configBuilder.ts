@@ -12,9 +12,10 @@ import type {
   PathPuzzlesRange,
   TombRewardHint,
 } from "./dsl"
+import { wardPath } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSideSections } from "./sideSections"
-import { buildFloor, buildSite, wireStaircases } from "./buildSite"
+import { buildFloor, buildSite } from "./buildSite"
 import { assignPuzzleRewards } from "./puzzleRewards"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { computeMosaicPaths } from "./mosaics"
@@ -177,16 +178,21 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
             return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
           })()
 
-      const sideSections: SideSection[] =
-        authored && Array.isArray(authored.sideSections)
-          ? buildSideSections({
-              tier: tomb.tier,
-              difficulty,
-              resolveReward: resolveTombReward,
-              journeyId: tomb.id,
-              constraintSections: authored.sideSections as SideSectionConstraint<TombRewardHint>[],
-            })
-          : []
+      // Every non-last floor gets a ward-path shortcut, gated by that SAME floor's own
+      // mainEndReward key (index i === the perk index that reward just consumed) — walk the
+      // floor once to earn the key, then a later re-entry can skip straight past it via the
+      // shortcut instead of re-solving its tableau. Never authored per-tomb; systemic for all.
+      const authoredSections = (authored?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined) ?? []
+      const shortcut = isLast ? [] : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
+      const sideSections: SideSection[] = buildSideSections({
+        tier: tomb.tier,
+        difficulty,
+        resolveReward: resolveTombReward,
+        // Per-floor-scoped, so each floor's shortcut gets a globally unique stairId — plain
+        // `tomb.id` would collide across floors sharing the same side-section position.
+        journeyId: `${tomb.id}:floor${i}`,
+        constraintSections: [...authoredSections, ...shortcut],
+      })
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
       const packing = authored?.packing ?? constraint.packing
@@ -207,7 +213,15 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       })
     })
 
-    wireStaircases(floors, fi => `${tomb.id}:floor${fi}`)
+    // No wireStaircases here: every floor's main path now ends in a real "exit" (buildFloor's
+    // default), not an auto-chained stairhead. Floor-to-floor descent instead runs through
+    // each floor's own ward-path shortcut, wired to the next floor's entrance below.
+    for (let fi = 0; fi < floors.length - 1; fi++) {
+      const shortcutSection = floors[fi].sideSections.find(s => s.gate?.type === "tomb-key")
+      if (shortcutSection && typeof shortcutSection.end === "object") {
+        floors[fi + 1].entrance = { stairId: shortcutSection.end.stairId }
+      }
+    }
     assignPuzzleRewards(tomb.id, floors, constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates)
     configs[tomb.id] = [floors]
   }
