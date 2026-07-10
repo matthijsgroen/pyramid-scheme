@@ -4,9 +4,7 @@ import { getInventoryItemById } from "@/data/inventory"
 import { getSellableById } from "@/data/sellables"
 import type { ConsumableType } from "@/game/siteTypes"
 
-// "fragmentSlot" (a TreasureReward variant) is intentionally left unregistered — it had no
-// apply/display special case before this refactor either; both fall through to the generic
-// default in applyReward.ts / rewardDisplay.ts.
+// "fragmentSlot" has no handler — falls through to applyReward.ts/rewardDisplay.ts's generic default.
 
 registerRewardHandler({
   type: "hieroglyphFragment",
@@ -49,14 +47,14 @@ registerRewardHandler({
 registerRewardHandler({
   type: "mosaicPiece",
   apply: (_reward, { progression }) => progression.collectMosaicPiece(),
-  emoji: "🔷", // matches rewardEmoji's original default — mosaicPiece had no explicit branch there
+  emoji: "🔷", // no dedicated icon; text().icon below is the real one
   text: t => ({ itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }),
 })
 
 registerRewardHandler({
   type: "consumable",
   apply: (reward, { progression }) => progression.addConsumable(reward.consumable),
-  emoji: "🔷", // matches rewardEmoji's original default — "consumable" itself had no branch there
+  emoji: "🔷", // no dedicated icon; text().icon below picks the consumable's own
   text: (reward, t) => ({
     itemName: t(`chest.consumable.${reward.consumable}`),
     icon: CONSUMABLE_EMOJI[reward.consumable as ConsumableType],
@@ -73,7 +71,7 @@ registerRewardHandler({
 registerRewardHandler({
   type: "sellable",
   apply: (reward, { inventory }) => inventory.addItem(reward.itemId, 1),
-  emoji: "🔷", // matches rewardEmoji's original default — "sellable" itself had no branch there
+  emoji: "🔷", // no dedicated icon; text().icon below uses the item's own symbol
   text: (reward, t) => {
     const item = getSellableById(reward.itemId)
     return {
@@ -86,7 +84,7 @@ registerRewardHandler({
 
 registerRewardHandler({
   type: "hieroglyphs",
-  apply: () => {}, // never handled by applyReward.ts before this refactor either
+  apply: () => {}, // no state change on grant
   emoji: "𓂀",
   text: t => ({
     itemName: t("chest.hieroglyphs"),

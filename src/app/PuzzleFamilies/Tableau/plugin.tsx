@@ -5,6 +5,7 @@ import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzle
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
+import { PuzzleFamilyShell } from "@/app/PuzzleFamilies/PuzzleFamilyShell"
 
 const TOMB_SYMBOLS: Record<string, string[]> = {
   starter: ["p10", "p8", "art1", "a6", "a8", "art5", "d1"],
@@ -29,7 +30,7 @@ const TABLEAU_CONFIG: Record<string, TableauConfig> = {
   wizard: { symbolCount: 5, numberRange: [1, 20], operators: ["+", "-", "*"], maxMultiplyOperandResult: 10 },
 }
 
-const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle, ctx, onSolved }) => {
+const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => {
   const difficulty = ctx.difficulty ?? "starter"
   const dummyTableau: TableauLevel = {
     id: "plugin",
@@ -41,7 +42,13 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
     name: "",
     description: "",
   }
-  return <TombPuzzle tableau={dummyTableau} calculation={puzzle} difficulty={difficulty} onComplete={onSolved} />
+  return (
+    <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
+      {handleSolved => (
+        <TombPuzzle tableau={dummyTableau} calculation={puzzle} difficulty={difficulty} onComplete={handleSolved} />
+      )}
+    </PuzzleFamilyShell>
+  )
 }
 
 registerFamily({

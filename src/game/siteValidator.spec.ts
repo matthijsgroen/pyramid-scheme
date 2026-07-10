@@ -4,9 +4,7 @@ import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell 
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
 
-// RoomType collapsed puzzle/trap/treasure into one "encounter" value (see
-// docs/mods-architecture.md) — this helper keeps every call site below using the pre-
-// collapse kind, translating to {roomType, family} once here instead of at each site.
+// Lets test cases below build rooms by kind; translates to the real {roomType, family} shape.
 type LegacyRoomKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 
 const DEFAULT_FAMILY: Partial<Record<LegacyRoomKind, string>> = {

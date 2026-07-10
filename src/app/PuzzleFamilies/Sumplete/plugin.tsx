@@ -2,14 +2,19 @@
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { generateSumplete, type SumpleteGrid } from "@/game/puzzles/sumplete/generateSumplete"
 import { SumpletePuzzle } from "./SumpletePuzzle"
+import { PuzzleFamilyShell } from "@/app/PuzzleFamilies/PuzzleFamilyShell"
 
-const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved }) => (
-  <SumpletePuzzle
-    grid={puzzle.grid}
-    rowTargets={puzzle.rowTargets}
-    colTargets={puzzle.colTargets}
-    onSolved={onSolved}
-  />
+const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved, onCancel }) => (
+  <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
+    {handleSolved => (
+      <SumpletePuzzle
+        grid={puzzle.grid}
+        rowTargets={puzzle.rowTargets}
+        colTargets={puzzle.colTargets}
+        onSolved={handleSolved}
+      />
+    )}
+  </PuzzleFamilyShell>
 )
 
 registerFamily({

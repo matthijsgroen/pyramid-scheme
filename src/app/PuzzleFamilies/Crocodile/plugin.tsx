@@ -20,6 +20,7 @@ import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
+import { PuzzleFamilyShell } from "@/app/PuzzleFamilies/PuzzleFamilyShell"
 
 type CrocodileConfig = {
   compareAmount: number
@@ -57,7 +58,7 @@ const CROC_CONFIG: Record<string, CrocodileConfig> = {
 
 const scaleDistance = (initialStep: number, n: number) => initialStep * (1 - Math.pow(0.5, n))
 
-const CrocodileComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, onSolved }) => {
+const CrocodileComponent = ({ puzzle, onSolved }: { puzzle: CompareLevel; onSolved: () => void }) => {
   const { t } = useTranslation("common")
   const [state, setState] = useState(createCrocodileState)
   const { focus, answers } = state
@@ -262,6 +263,12 @@ const CrocodileComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, o
   )
 }
 
+const CrocodileFamilyComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, onSolved, onCancel }) => (
+  <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
+    {handleSolved => <CrocodileComponent puzzle={puzzle} onSolved={handleSolved} />}
+  </PuzzleFamilyShell>
+)
+
 registerFamily({
   meta: { id: "crocodile", ownerMod: "puzzle", tags: ["tomb-puzzle"], icon: "🐊", color: "green" },
   generate: (seed, ctx): CompareLevel => {
@@ -282,7 +289,7 @@ registerFamily({
       random
     )
   },
-  Component: CrocodileComponent,
+  Component: CrocodileFamilyComponent,
 })
 
 // re-export for type use

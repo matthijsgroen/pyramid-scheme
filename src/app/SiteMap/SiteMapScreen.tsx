@@ -34,13 +34,6 @@ import "@/app/TrapFamilies/ArithmeticReflex/plugin"
 import "@/app/ShopFamily/plugin"
 import "@/app/TreasureFamily/plugin"
 
-// Families tagged this way get SiteMapScreen's own "completed!" banner-and-delay treatment
-// and its Cancel button — matches the pre-unification puzzle modal's UX exactly. Trap/shop/
-// treasure own their own full lifecycle UI instead (warning screens, dismiss buttons, or
-// nothing at all), so they're excluded from this generic wrapper flourish.
-const isPuzzleLikeFamily = (tags: string[] | undefined) =>
-  !!tags && (tags.includes("puzzle") || tags.includes("tomb-puzzle"))
-
 type Props = {
   journeyId: string
   siteConfig: SiteConfig
@@ -89,14 +82,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return result
   }, [journeys, journeyId, currentFloor])
 
-  // Replaces the old activePuzzlePos/trapWarningPos/activeTrapPos trio — one generic "which
-  // room's encounter is open" position, plus whether this was a fresh arrival (vs. a re-click
-  // while already standing here) for families that care (shop's stock-reset rule).
+  // Which room's encounter is open, plus whether this is a fresh arrival vs. a re-click
+  // while already standing here (shop's stock-reset rule cares).
   const [activeEncounter, setActiveEncounter] = useState<{
     pos: readonly [number, number]
     freshArrival: boolean
   } | null>(null)
-  const [encounterSolvedBanner, setEncounterSolvedBanner] = useState(false)
   const [pendingReward, setPendingReward] = useState<{
     reward: TreasureReward
     consumableFull?: boolean
@@ -105,7 +96,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
-  const [scheduleSolve, cancelSolve] = useTimeout()
 
   const encounterFamily = useMemo(() => {
     if (!activeEncounter || !grid) return null
@@ -138,16 +128,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
   const useRenderPuzzleFallback = activeEncounter != null && encounterFamily == null && renderPuzzle != null
 
-  // Shared by both the treasure-room claim flow and puzzle-solve rewards below — the
-  // "apply this reward to game state" half, kept separate from the surrounding
-  // pack-full/dedup checks (those differ per entry point: fragments dedup by
-  // inventory-as-truth, only treasure rooms carry them).
+  // Applies a claimed reward to game state; pack-full/dedup checks happen at each call site.
   const applyReward = useApplyReward(progression, inventory, journeyId)
 
-  // The ONE thing core does on any solved encounter, for every family alike: mark the room
-  // explored (unlocking corridors past it) and, if it carries a reward, offer it — the same
-  // pack-full/dedup handling previously duplicated between the puzzle-success and treasure-
-  // claim paths.
+  // The one thing core does on any solved encounter, for every family alike: mark the room
+  // explored and offer its reward, if it has one.
   const genericHandleSolved = useCallback(
     (pos: readonly [number, number]) => {
       if (!grid) return
@@ -175,29 +160,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     [grid, journeys, currentFloor, progression, applyReward]
   )
 
-  const handleEncounterCancel = useCallback(() => {
-    cancelSolve()
-    setEncounterSolvedBanner(false)
-    setActiveEncounter(null)
-  }, [cancelSolve])
+  const handleEncounterCancel = useCallback(() => setActiveEncounter(null), [])
 
   const handleEncounterSolved = useCallback(() => {
-    if (!activeEncounter) return
-    const pos = activeEncounter.pos
-    if (isPuzzleLikeFamily(encounterFamily?.meta.tags)) {
-      // Cosmetic "Puzzle completed!" delay — matches the pre-unification puzzle modal exactly;
-      // trap/shop/treasure never had this and don't get it now either.
-      scheduleSolve(800, () => {
-        setEncounterSolvedBanner(true)
-        scheduleSolve(1500, () => {
-          setEncounterSolvedBanner(false)
-          genericHandleSolved(pos)
-        })
-      })
-    } else {
-      genericHandleSolved(pos)
-    }
-  }, [activeEncounter, encounterFamily, scheduleSolve, genericHandleSolved])
+    if (activeEncounter) genericHandleSolved(activeEncounter.pos)
+  }, [activeEncounter, genericHandleSolved])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -209,13 +176,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // Completed cells: just reposition the player, unless it's a shop we couldn't fully use
-      // before (still buyable) or a chest we couldn't fit before — offer either again.
+      // Completed cells just reposition the player, except a still-buyable shop or an
+      // unfitted consumable, which reopen.
       if (cell.state === "completed") {
-        // Stock only refreshes on a genuine re-entry (the player was elsewhere before this
-        // click) — otherwise dismissing the shop and clicking the same room again while still
-        // standing in it would refill consumable stock for free, indefinitely. The shop family
-        // itself reads this via ctx.freshArrival.
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         journeys.updatePosition(journeyId, edgeId)
         if (cell.type === "room" && cell.reward && cell.shopPrice != null) {
@@ -380,16 +343,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
               onSolved={handleEncounterSolved}
               onCancel={handleEncounterCancel}
             />
-            {isPuzzleLikeFamily(encounterFamily?.meta.tags) && !encounterSolvedBanner && (
-              <button onClick={handleEncounterCancel} className="text-sm text-stone-400 hover:text-stone-200">
-                {t("ui.cancel")}
-              </button>
-            )}
-            {encounterSolvedBanner && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/90">
-                <p className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</p>
-              </div>
-            )}
           </div>
         </div>
       )}

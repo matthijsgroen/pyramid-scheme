@@ -1,10 +1,7 @@
 import type { FloorGrid, ValidationReason, ValidationResult } from "./siteTypes"
 
-// Structural room-kind classification by family id — the exact literals siteAssembler.ts
-// assigns for what used to be roomType "treasure"/"puzzle" (this module can't import the
-// app-layer family registry). "trap" (arithmetic-reflex) is deliberately in neither set,
-// preserving a pre-existing gap: a fork branch that only leads to a trap counts as bland,
-// same as today.
+// Structural room-kind classification by family id (can't import the app-layer registry
+// here). "trap" is in neither set: a fork branch leading only to a trap counts as bland.
 const TREASURE_LIKE_FAMILIES = new Set(["treasure-chest", "fez-shop"])
 const PUZZLE_LIKE_FAMILIES = new Set(["sumplete", "tableau", "crocodile"])
 

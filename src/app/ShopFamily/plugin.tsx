@@ -18,11 +18,8 @@ const freshStock = (): ShopStock => ({
   trapTool: CONSUMABLE_STOCK_PER_VISIT,
 })
 
-// Shop is presentational-and-transactional, not solve/fail — it never calls onSolved (that
-// would auto-grant ctx.reward generically via core, which would give the rare item away for
-// free instead of requiring payment). It marks its own room explored on arrival (matching
-// treasure rooms' "always explored, regardless of what's inside" rule) and always closes via
-// onCancel — same "self-handle, then onCancel" pattern as trap's disable bypass.
+// Fez's shop encounter — browsing/buying, never a solve/fail challenge, so it always
+// closes via onCancel and never onSolved (which would auto-grant ctx.reward for free).
 const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, inventory, applyReward, onCancel }) => {
   const { t } = useTranslation(["common", "sellables"])
   const fez = use(FezContext)
@@ -33,23 +30,20 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   const reward = ctx.reward
   const price = ctx.price ?? 0
 
-  // Fez's greeting conversation plays once, before the shop UI itself ever appears —
-  // matches today's openShop(...) sequencing exactly.
+  // Fez's greeting conversation plays once, before the shop UI itself ever appears.
   useEffect(() => {
     fez.showConversation("shopArrival", () => setGreeted(true))
   }, [fez])
 
-  // Always explored on arrival, regardless of whether anything gets bought — matches how
-  // treasure rooms mark themselves explored the moment they're reached, independent of
-  // their contents (SiteMapScreen.tsx's old "treasure" branch).
+  // Always explored on arrival, regardless of whether anything gets bought — a shop room
+  // is a claim point, not a challenge; reaching it is enough to unlock corridors past it.
   useEffect(() => {
     journeys.markCellExplored(ctx.sectionHash, ctx.edgeId)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 
-  // Stock only refreshes on a genuine re-entry (the player traveled away and came back) —
-  // otherwise closing and reopening the same shop while still standing in it would refill
-  // consumable stock for free, indefinitely.
+  // Stock refreshes only on a genuine re-entry — reopening while still standing here must
+  // not refill it for free.
   useEffect(() => {
     if (ctx.freshArrival) {
       setModState(prev => ({ stockByEdge: { ...prev.stockByEdge, [ctx.edgeId]: freshStock() } }))

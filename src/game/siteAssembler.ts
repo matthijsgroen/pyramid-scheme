@@ -16,11 +16,8 @@ import type {
 import { validateSite } from "./siteValidator"
 
 // Resolves an authored `encounter` (exact family id, or tag) to a concrete family id.
-// Mirrors the family registry's own first-registered-family-wins tag defaults (see
-// src/app/families/familyRegistry.ts's resolveFamilyByIdOrTag) — duplicated here as a plain
-// lookup because this module is domain-layer and can't import that app-layer registry.
-// Real multi-candidate tag-weighted picking is docs/mods-architecture.md step 5's
-// Distribution primitive, not built here — an authored string[] just uses its first entry.
+// Duplicated as a plain lookup from the app-layer family registry since this module is
+// domain-layer. Not weighted selection (docs/mods-architecture.md step 5's Distribution).
 const ENCOUNTER_TAG_DEFAULTS: Record<string, string> = {
   trap: "arithmetic-reflex",
   puzzle: "sumplete",
@@ -1123,10 +1120,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // offset into whichever side has open void next to it (see SiteMapView.tsx).
     const endpointPositions = new Set<string>()
     for (const [pk, spec] of roomSpecs) {
-      // Dead-end rooms only — treasure/shop chests and stairs/exits, never a mid-path
-      // puzzle/trap encounter. Checked by family id, the exact literals this same function
-      // assigns above for what used to be roomType "treasure" — not a family-registry lookup
-      // (siteAssembler.ts is domain-layer, can't import the app-layer registry).
+      // Dead-end rooms only — treasure/shop chests and stairs/exits, never mid-path.
       const isTreasureLike =
         spec.roomType === "encounter" && (spec.family === "treasure-chest" || spec.family === "fez-shop")
       if (!isTreasureLike && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue

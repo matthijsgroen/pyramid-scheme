@@ -48,9 +48,7 @@ const firstPyramid = (): FloorConfig => ({
   ],
 })
 
-// RoomType collapsed puzzle/trap/treasure into one "encounter" value (see
-// docs/mods-architecture.md) — these classify by the family id siteAssembler.ts assigns,
-// matching what the old roomType literal used to mean.
+// Classify an "encounter" room by its assigned family id.
 const isPuzzleRoom = (c: RoomCell) =>
   c.roomType === "encounter" && ["sumplete", "tableau", "crocodile"].includes(c.family ?? "")
 const isTrapRoom = (c: RoomCell) => c.roomType === "encounter" && c.family === "arithmetic-reflex"

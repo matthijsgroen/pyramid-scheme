@@ -5,15 +5,12 @@ import type { ProgressionAPI } from "@/app/state/useProgression"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import type { useInventory } from "@/app/Inventory/useInventory"
 
-// Replaces trapRegistry.ts + puzzleRegistry.ts — trap is a puzzle with a nonzero fail cost,
-// see docs/mods-architecture.md. Lives in src/app/ (not src/game/) because Component needs
-// ProgressionAPI/JourneyAPI, which domain code can't import.
+// The one registry for every encounter family (puzzle, trap, shop, treasure). Lives in
+// src/app/ (not src/game/) because Component needs ProgressionAPI/JourneyAPI.
 export type FamilyMeta = { id: string; ownerMod: string; tags: string[]; icon: string; color: string }
 
 export type FamilyContext = {
-  // This room's own identity — needed by any family that acts on journeys/progression itself
-  // (e.g. trap's disable bypass calling markTrapDisabled, shop's purchase tracking calling
-  // hasPurchasedShop), not just by core's generic dispatch.
+  // This room's own identity, for families that act on journeys/progression directly.
   journeyId: string
   edgeId: string
   sectionHash: string
@@ -54,9 +51,8 @@ export const getFamilyPlugin = (id: string): FamilyPlugin | undefined => registr
 
 export const allFamilies = (): FamilyPlugin[] => [...registry.values()]
 
-// Deterministic first-registered-family-wins — NOT weighted/random selection. Real
-// multi-candidate tag-weighted picking (e.g. "any trap" when several share a tag) is
-// docs/mods-architecture.md step 5's Distribution primitive, not built here.
+// First-registered-family-wins for a tag — not weighted selection (that's
+// docs/mods-architecture.md step 5's Distribution primitive).
 export const resolveFamilyByIdOrTag = (idOrTag: string): FamilyPlugin | undefined => {
   const exact = registry.get(idOrTag)
   if (exact) return exact

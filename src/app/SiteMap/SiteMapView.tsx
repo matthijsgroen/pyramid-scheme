@@ -318,10 +318,8 @@ const ExitShape = ({ state }: ShapeProps) => {
   )
 }
 
-// The visual shape an "encounter" room takes — one RoomType now covers what used to be
-// three (puzzle/trap/treasure), distinguished by family id. Not a family-registry lookup
-// (see docs/mods-architecture.md's icon/color proposal for the eventual generic version) —
-// just enough to keep today's three hand-drawn shapes mapped to the right rooms.
+// The visual shape an "encounter" room takes, by family id — picks among the hand-drawn
+// puzzle/trap/treasure shapes below.
 type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 
 const TREASURE_LIKE_FAMILIES = new Set(["treasure-chest", "fez-shop"])
