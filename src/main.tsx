@@ -4,6 +4,7 @@ import "./index.css"
 import "./icons.css"
 import "@/i18n"
 import "@/app/state/registerCurrencies"
+import "@/app/state/registerPerks"
 import "@/app/SiteMap/registerRewardHandlers"
 import App from "@/App.tsx"
 
