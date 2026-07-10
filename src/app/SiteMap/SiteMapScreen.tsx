@@ -9,17 +9,18 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge, decodeEdge } from "./useAssembledFloor"
 import { ChestRewardFlow } from "./ChestRewardFlow"
-import { hieroglyphCategory } from "./hieroglyphCategory"
+import { rewardEmoji, rewardText } from "./rewardDisplay"
+import { useApplyReward } from "./applyReward"
+import { useShopEncounter } from "./useShopEncounter"
 import { TrapEncounter } from "@/app/TrapFamilies/TrapEncounter"
 import { TrapWarningScreen } from "./TrapWarningScreen"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { FezContext } from "@/app/fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
-import { allItems, getInventoryItemById } from "@/data/inventory"
-import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
+import { allItems } from "@/data/inventory"
+import { CONSUMABLE_PRICES } from "@/data/shopPricing"
 import { ALL_SELLABLES, getSellableById, sellValueForItemId } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
@@ -46,38 +47,8 @@ type Props = {
   renderPuzzle?: (floor: number, onSolved: () => void, onCancel: () => void) => ReactNode
 }
 
-const CONSUMABLE_ICONS = { bandage: "🩹", oil: "🫙", trapTool: "🔧" } as const
-
-type TFn = (key: string, opts?: Record<string, unknown>) => string
-
-// Shops only ever relocate one of these three reward types (SHOP_PLAN.md's 13 rare slots) —
-// narrower than ChestRewardFlow's full reward-type switch, which also covers consumable/money/sellable.
-const rareItemDisplay = (
-  reward: TreasureReward,
-  t: TFn
-): { itemName: string; itemDescription?: string; icon: string } => {
-  if (reward.type === "hieroglyphFragment") {
-    const item = getInventoryItemById(reward.hieroglyphId)
-    const name = item
-      ? t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, {
-          ns: "inventory",
-          defaultValue: item.name,
-        })
-      : t("chest.hieroglyphFragment")
-    return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, icon: item?.symbol ?? "𓂀" }
-  }
-  if (reward.type === "mapPiece") {
-    return { itemName: t("chest.mapPiece"), itemDescription: t("chest.mapPieceDescription"), icon: "📜" }
-  }
-  if (reward.type === "mosaicPiece") {
-    return { itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }
-  }
-  return { itemName: reward.type, icon: "🔷" }
-}
-
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
-  const fez = use(FezContext)
   const { isDevelopMode } = use(DevelopContext)
   const journeys = useJourneys()
   const progression = useProgression()
@@ -123,17 +94,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     consumableFull?: boolean
     onCollect: () => void
   } | null>(null)
-  const [activeShop, setActiveShop] = useState<{
-    edgeId: string
-    reward: TreasureReward
-    price: number
-    purchased: boolean
-  } | null>(null)
-  const [shopStock, setShopStock] = useState({
-    bandage: CONSUMABLE_STOCK_PER_VISIT,
-    oil: CONSUMABLE_STOCK_PER_VISIT,
-    trapTool: CONSUMABLE_STOCK_PER_VISIT,
-  })
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
@@ -158,78 +118,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // "apply this reward to game state" half, kept separate from the surrounding
   // pack-full/dedup checks (those differ per entry point: fragments dedup by
   // inventory-as-truth, only treasure rooms carry them).
-  const applyReward = useCallback(
-    (reward: TreasureReward) => {
-      if (reward.type === "hieroglyphFragment") progression.addFragment(reward.hieroglyphId, reward.pieceIndex)
-      else if (reward.type === "mapPiece") {
-        progression.collectMapPiece(reward.tombId)
-        progression.markMapPieceFound(journeyId)
-      } else if (reward.type === "tombKey") {
-        progression.addTombKey(reward.keyId)
-        progression.applyTreasurePerk(reward.keyId)
-      } else if (reward.type === "mosaicPiece") progression.collectMosaicPiece()
-      else if (reward.type === "consumable") progression.addConsumable(reward.consumable)
-      else if (reward.type === "money") progression.addMoney(reward.amount)
-      else if (reward.type === "sellable") inventory.addItem(reward.itemId, 1)
-    },
-    [progression, journeyId, inventory]
-  )
+  const applyReward = useApplyReward(progression, inventory, journeyId)
 
-  const openShop = useCallback(
-    (edgeId: string, reward: TreasureReward, price: number, resetStock: boolean) => {
-      if (resetStock) {
-        setShopStock({
-          bandage: CONSUMABLE_STOCK_PER_VISIT,
-          oil: CONSUMABLE_STOCK_PER_VISIT,
-          trapTool: CONSUMABLE_STOCK_PER_VISIT,
-        })
-      }
-      const purchased = journeys.hasPurchasedShop(journeyId, edgeId)
-      fez.showConversation("shopArrival", () => setActiveShop({ edgeId, reward, price, purchased }))
-    },
-    [fez, journeys, journeyId]
-  )
-
-  const handleShopBuyRare = useCallback(() => {
-    setActiveShop(current => {
-      if (!current || current.purchased) return current
-      if (!progression.spendMoney(current.price)) return current
-      applyReward(current.reward)
-      journeys.markShopPurchased(current.edgeId)
-      return { ...current, purchased: true }
-    })
-  }, [progression, applyReward, journeys])
-
-  const handleShopBuyConsumable = useCallback(
-    (type: keyof typeof CONSUMABLE_PRICES) => {
-      if (shopStock[type] <= 0) return
-      if (!progression.spendMoney(CONSUMABLE_PRICES[type])) return
-      const added = progression.addConsumable(type)
-      if (!added) {
-        progression.addMoney(CONSUMABLE_PRICES[type]) // pack was full — refund
-        return
-      }
-      setShopStock(prev => ({ ...prev, [type]: prev[type] - 1 }))
-    },
-    [progression, shopStock]
-  )
-
-  const handleShopBuy = useCallback(
-    (id: string) => {
-      if (id === "rare") handleShopBuyRare()
-      else if (id === "bandage" || id === "oil" || id === "trapTool") handleShopBuyConsumable(id)
-    },
-    [handleShopBuyRare, handleShopBuyConsumable]
-  )
-
-  const handleShopSell = useCallback(
-    (id: string) => {
-      const value = sellValueForItemId(id)
-      if (value <= 0) return
-      inventory.removeItem(id, 1)
-      progression.addMoney(value)
-    },
-    [inventory, progression]
+  const { activeShop, shopStock, openShop, handleShopBuy, handleShopSell, closeShop } = useShopEncounter(
+    journeyId,
+    progression,
+    inventory,
+    journeys,
+    applyReward
   )
 
   const handlePuzzleSolved = useCallback(() => {
@@ -566,17 +462,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           rareItems={[
             {
               id: "rare",
-              ...rareItemDisplay(activeShop.reward, t),
+              ...rewardText(activeShop.reward, t),
               price: activeShop.price,
               affordable: progression.money >= activeShop.price,
               soldOut: activeShop.purchased,
               featured: true,
             },
           ]}
-          consumables={(Object.keys(CONSUMABLE_ICONS) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
+          consumables={(Object.keys(CONSUMABLE_PRICES) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
             id: type,
             itemName: t(`chest.consumable.${type}`),
-            icon: CONSUMABLE_ICONS[type],
+            icon: rewardEmoji(type),
             price: CONSUMABLE_PRICES[type],
             affordable: progression.money >= CONSUMABLE_PRICES[type],
             soldOut: shopStock[type] <= 0,
@@ -597,7 +493,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           })}
           onBuy={handleShopBuy}
           onSell={handleShopSell}
-          onDismiss={() => setActiveShop(null)}
+          onDismiss={closeShop}
         />
       )}
     </div>

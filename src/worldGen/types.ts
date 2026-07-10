@@ -7,6 +7,8 @@ export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number | PathPuz
 export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 export type ConsumableType = "bandage" | "oil" | "trapTool"
+// Mirrors game/siteTypes.ts's TreasureReward — same closed-union growth concern, see the
+// comment there and docs/mods-architecture.md.
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }

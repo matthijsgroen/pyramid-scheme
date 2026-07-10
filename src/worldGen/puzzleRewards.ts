@@ -47,6 +47,9 @@ const collectChains = (floors: FloorConfig[]): Chain[] => {
 // path + every non-trapped section/sub-section), then slices consumable/money quotas off
 // the front — deterministic, no drift between builds for the same journeyId + floor shape.
 // Mutates `floors` in place (writes `puzzleRewards` onto each FloorConfig/SubSection).
+// This flat shuffle+slice is the ad hoc precursor to the generic weighted-fill reward
+// allocator docs/mods-architecture.md's "reward weight" section calls for once more than
+// trap/puzzle compete for the same slots. Fine as an MVP; a pointer for whoever replaces it.
 export const assignPuzzleRewards = (
   journeyId: string,
   floors: FloorConfig[],

@@ -2,7 +2,6 @@ import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
 import type { TreasureReward } from "@/game/siteTypes"
-import { hieroglyphCategory } from "./hieroglyphCategory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { getSellableById } from "@/data/sellables"
@@ -11,18 +10,7 @@ import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import { Chest } from "@/ui/atoms/Chest"
 import { LootPopup } from "@/ui/atoms/LootPopup"
 import { useTimeout } from "@/support/useTimeout"
-
-const rewardEmoji = (type: string) => {
-  if (type === "mapPiece") return "📜"
-  if (type === "hieroglyphFragment") return "𓂀"
-  if (type === "tombKey") return "🗝"
-  if (type === "hieroglyphs") return "𓂀"
-  if (type === "bandage") return "🩹"
-  if (type === "oil") return "🫙"
-  if (type === "trapTool") return "🔧"
-  if (type === "money") return "🪙"
-  return "🔷"
-}
+import { rewardText } from "./rewardDisplay"
 
 const SELLABLE_RARITY: Record<MaterialTier, "common" | "rare" | "legendary"> = {
   stone: "common",
@@ -75,94 +63,82 @@ export const ChestRewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, 
         </div>
       )}
 
-      {reward.type === "consumable" && consumableFull ? (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={t("chest.consumableFull", { item: t(`chest.consumable.${reward.consumable}`) })}
-          itemComponent={<span className="text-6xl opacity-50">{rewardEmoji(reward.consumable)}</span>}
-          onDismiss={handleDismiss}
-          youFoundLabel={t("chest.packFull")}
-          clickToContinueLabel={t("loot.clickToContinue")}
-        />
-      ) : reward.type === "consumable" ? (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={t(`chest.consumable.${reward.consumable}`)}
-          itemComponent={<span className="text-6xl">{rewardEmoji(reward.consumable)}</span>}
-          onDismiss={handleDismiss}
-          youFoundLabel={t("loot.youFound")}
-          clickToContinueLabel={t("loot.clickToContinue")}
-        />
-      ) : reward.type === "hieroglyphFragment" ? (
-        (() => {
-          const item = getInventoryItemById(reward.hieroglyphId)
-          const difficulty = getItemFirstLevel(reward.hieroglyphId)
-          const progress = hieroglyphProgress(reward.hieroglyphId)
-          const rarity = progress.found >= progress.required ? "legendary" : progress.found >= 2 ? "rare" : "common"
-          return (
-            <LootPopup
-              isOpen={showLoot}
-              itemName={
-                item
-                  ? `${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })} — ${t("chest.hieroglyphFragment")}`
-                  : t("chest.hieroglyphFragment")
-              }
-              itemDescription={`${t(`${hieroglyphCategory(reward.hieroglyphId)}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`}
-              rarity={rarity}
-              itemComponent={
-                item && difficulty ? (
-                  <HieroglyphTile
-                    symbol={item.symbol}
-                    difficulty={difficulty}
-                    size="lg"
-                    fragmentProgress={progress.found < progress.required ? progress : undefined}
+      {reward.type === "consumable" && consumableFull
+        ? (() => {
+            const { itemName, icon } = rewardText(reward, t)
+            return (
+              <LootPopup
+                isOpen={showLoot}
+                itemName={t("chest.consumableFull", { item: itemName })}
+                itemComponent={<span className="text-6xl opacity-50">{icon}</span>}
+                onDismiss={handleDismiss}
+                youFoundLabel={t("chest.packFull")}
+                clickToContinueLabel={t("loot.clickToContinue")}
+              />
+            )
+          })()
+        : reward.type === "hieroglyphFragment"
+          ? (() => {
+              const item = getInventoryItemById(reward.hieroglyphId)
+              const difficulty = getItemFirstLevel(reward.hieroglyphId)
+              const progress = hieroglyphProgress(reward.hieroglyphId)
+              const rarity = progress.found >= progress.required ? "legendary" : progress.found >= 2 ? "rare" : "common"
+              const { itemName, itemDescription } = rewardText(reward, t, hieroglyphProgress)
+              return (
+                <LootPopup
+                  isOpen={showLoot}
+                  itemName={itemName}
+                  itemDescription={itemDescription}
+                  rarity={rarity}
+                  itemComponent={
+                    item && difficulty ? (
+                      <HieroglyphTile
+                        symbol={item.symbol}
+                        difficulty={difficulty}
+                        size="lg"
+                        fragmentProgress={progress.found < progress.required ? progress : undefined}
+                      />
+                    ) : (
+                      <span className="text-6xl">𓂀</span>
+                    )
+                  }
+                  onDismiss={handleDismiss}
+                  youFoundLabel={t("loot.youFound")}
+                  clickToContinueLabel={t("loot.clickToContinue")}
+                />
+              )
+            })()
+          : reward.type === "sellable"
+            ? (() => {
+                const item = getSellableById(reward.itemId)
+                const { itemName, itemDescription, icon } = rewardText(reward, t)
+                return (
+                  <LootPopup
+                    isOpen={showLoot}
+                    itemName={itemName}
+                    itemDescription={itemDescription}
+                    rarity={item ? SELLABLE_RARITY[item.tier] : "common"}
+                    itemComponent={<span className="text-6xl">{icon}</span>}
+                    onDismiss={handleDismiss}
+                    youFoundLabel={t("loot.youFound")}
+                    clickToContinueLabel={t("loot.clickToContinue")}
                   />
-                ) : (
-                  <span className="text-6xl">𓂀</span>
                 )
-              }
-              onDismiss={handleDismiss}
-              youFoundLabel={t("loot.youFound")}
-              clickToContinueLabel={t("loot.clickToContinue")}
-            />
-          )
-        })()
-      ) : reward.type === "money" ? (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={t("chest.money", { amount: reward.amount })}
-          itemComponent={<span className="text-6xl">{rewardEmoji(reward.type)}</span>}
-          onDismiss={handleDismiss}
-          youFoundLabel={t("loot.youFound")}
-          clickToContinueLabel={t("loot.clickToContinue")}
-        />
-      ) : reward.type === "sellable" ? (
-        (() => {
-          const item = getSellableById(reward.itemId)
-          return (
-            <LootPopup
-              isOpen={showLoot}
-              itemName={item ? t(`${item.id}.name`, { ns: "sellables" }) : reward.itemId}
-              itemDescription={item ? t(`${item.id}.description`, { ns: "sellables" }) : undefined}
-              rarity={item ? SELLABLE_RARITY[item.tier] : "common"}
-              itemComponent={<span className="text-6xl">{item?.symbol ?? "🔷"}</span>}
-              onDismiss={handleDismiss}
-              youFoundLabel={t("loot.youFound")}
-              clickToContinueLabel={t("loot.clickToContinue")}
-            />
-          )
-        })()
-      ) : (
-        <LootPopup
-          isOpen={showLoot}
-          itemName={t(`chest.${reward.type}`)}
-          itemDescription={t(`chest.${reward.type}Description`, "") || undefined}
-          itemComponent={<span className="text-6xl">{rewardEmoji(reward.type)}</span>}
-          onDismiss={handleDismiss}
-          youFoundLabel={t("loot.youFound")}
-          clickToContinueLabel={t("loot.clickToContinue")}
-        />
-      )}
+              })()
+            : (() => {
+                const { itemName, itemDescription, icon } = rewardText(reward, t)
+                return (
+                  <LootPopup
+                    isOpen={showLoot}
+                    itemName={itemName}
+                    itemDescription={itemDescription}
+                    itemComponent={<span className="text-6xl">{icon}</span>}
+                    onDismiss={handleDismiss}
+                    youFoundLabel={t("loot.youFound")}
+                    clickToContinueLabel={t("loot.clickToContinue")}
+                  />
+                )
+              })()}
     </>
   )
 }
