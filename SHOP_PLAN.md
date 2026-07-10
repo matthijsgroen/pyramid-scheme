@@ -1,7 +1,8 @@
 # Plan — Fez shop mechanic + money economy
 
-Branch `rimrock-mogote` follow-up. Status: **design locked, 2026-07-09. Not built.**
-Phase 4 (UI) partially started — see PR #104 (`ShopBalance`/`ShopItemCard`/`ShopPanel`, presentational only).
+Branch `rimrock-mogote` follow-up. Status: **Phases 1-4 built** (stacked draft PRs
+#104/#106/#107/#108/#109). Phase 5 (balance/docs polish) not started. Not yet
+manually playtested end-to-end.
 
 ## Concept
 8 shops total (junior→wizard, ~9 tombs; **starter stays shop-free** for onboarding — 9
@@ -277,15 +278,39 @@ number>`). No new persistence layer needed.
   switch for purchase = `spendMoney` then grant/claim item"). Phase 4 is a hard blocker
   before this reaches players, not just a nice-to-have — do not ship Phase 3 alone.
 
-### 4 — Shop UI (started, PR #104)
-- ~~Shop modal reusing `LootPopup`/`ChestRewardFlow` styling~~ → done as dumb components:
-  `ShopBalance`, `ShopItemCard`, `ShopPanel`. Still needed: wire to real `ProgressionState`
-  once Phase 1 lands; Fez hosts (cocktail pose + new shop conversation); extend claim
-  switch for purchase = `spendMoney` then grant/claim item.
-- **New**: sell-mode for junk. `ShopItemCard` is currently buy-only — needs a sell
-  variant (shows player-held sellables from `useInventory`, action = `removeItem` +
-  `addMoney(item.sellValue)`). Collection screen (`src/app/pages/Collection.tsx`) also
-  needs a new category section for sellables, same pattern as `TreasureCategorySection`.
+### 4 — Shop UI (implemented, PR #104 + #109)
+- Dumb/presentational layer (PR #104): `ShopBalance`, `ShopItemCard`, `ShopPanel`.
+- `SellItemCard` atom (sell-mode sibling to the buy-only `ShopItemCard`) + `FezShop`
+  organism composing `ShopPanel` + rares/supplies (`ShopItemCard`) + junk (`SellItemCard`),
+  demoable standalone in Storybook — presentational only, no state coupling.
+- **Real wiring (`SiteMapScreen.tsx`)**: the claim switch now branches on `cell.shopPrice`
+  — a shop-priced treasure room opens `FezShop` (bound to real `progression.money`/
+  `spendMoney`/`addMoney`, `useInventory`) instead of the old free-grant `ChestRewardFlow`
+  path. Buying the rare item calls `spendMoney` then `applyReward`; buying a consumable
+  spends from a **per-visit stock** (`CONSUMABLE_STOCK_PER_VISIT`, resets every time the
+  shop is opened) with a refund if `addConsumable` fails (pack full); selling junk calls
+  `useInventory().removeItem` + `addMoney(sellValueForItemId(...))`.
+- **Revisit semantics**: shops are always reachable again on re-entry (per the "backtracking
+  friendly" economy model) — the claim switch's `cell.state === "completed"` branch reopens
+  `FezShop` every time, regardless of purchase state, so consumables/selling stay available
+  even after the rare is bought. A new persisted `journeys.purchasedShops` set (mirrors the
+  existing `skippedConsumables` pattern) tracks whether *this specific room's* rare item was
+  bought — needed because mosaic/mapPiece rewards are fungible counts with no natural
+  per-slot dedup (unlike `hieroglyphFragment`, which already dedups via `hasFragment`);
+  without it, repeatedly re-entering and re-buying the same slot would inflate the
+  otherwise-capped 298/36 totals.
+- **No new "can't afford" UI needed**: since reaching a shop room opens the real `FezShop`
+  interface (not a blind instant-grant popup), affordability is just `ShopItemCard`'s
+  existing disabled-button state — the player can dismiss and come back once they've earned
+  or sold enough.
+- **Fez integration**: new `shopArrival` conversation entry (cocktail pose, dormant until
+  now) in `Fez.tsx`, triggered via the existing generic `FezContext.showConversation`
+  mechanism (same call-site pattern as `Collection.tsx`'s `collectionIntro`) — fires once
+  ever across all 8 shops (tutorial-style, auto-deduped by `FezCompanion`'s "seen"
+  tracking), then opens `FezShop`.
+- **Collection screen**: new `SellableCategorySection` (mirrors `TreasureCategorySection`'s
+  shape — ownership = `inventory[item.id] !== undefined`, no fragment-style partial
+  progress), always rendered (junk isn't tomb-gated), sourced from `ALL_SELLABLES`.
 
 ### 5 — Balance, tests, docs
 - Tests: economy guard (income == exact total), spend/earn state, 647 total still holds,

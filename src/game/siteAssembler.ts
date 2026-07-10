@@ -40,6 +40,7 @@ const computeSideSectionHash = (section: SideSection | SubSection, idx: number, 
         end: section.end,
         hidden: section.hidden,
         trapped: section.trapped,
+        sealed: section.sealed,
         gateType: section.gate?.type,
       })
     )
@@ -748,11 +749,22 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const [nr, nc] = mainPath[mi + 1]
       intendedEdgeKeys.add(pkey(r, c, nr, nc))
     }
+    // `sealed` opts a main path into the same isolation gated/trapped content already gets —
+    // every consecutive main-path edge is already `intended` above, so this only blocks
+    // *extra* leftover edges that would otherwise merge a shortcut around a puzzle room.
+    if (config.sealed) {
+      for (const [r, c] of mainPath) gatedCellKeys.add(posKey(r, c))
+    }
     for (const group of sectionGroups) {
       markChain(group.attachedAt, group.cells)
       // Trapped content gets the same isolation as gated content — a stray tree edge
-      // would otherwise let a player step past a trap cell for free.
-      if (sideSections[group.sectionIdx].gate || sideSections[group.sectionIdx].trapped) {
+      // would otherwise let a player step past a trap cell for free. `sealed` opts any
+      // ordinary (visible, ungated) path into the same protection on request.
+      if (
+        sideSections[group.sectionIdx].gate ||
+        sideSections[group.sectionIdx].trapped ||
+        sideSections[group.sectionIdx].sealed
+      ) {
         for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
       }
     }
@@ -762,7 +774,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         sideSections[sub.parentSectionIdx].gate ||
         sub.subSection.gate ||
         sideSections[sub.parentSectionIdx].trapped ||
-        sub.subSection.trapped
+        sub.subSection.trapped ||
+        sideSections[sub.parentSectionIdx].sealed ||
+        sub.subSection.sealed
       ) {
         for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
       }

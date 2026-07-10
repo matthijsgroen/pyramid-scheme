@@ -45,9 +45,15 @@ const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string 
           : `gate: { type: "floor-key" }`
     )
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward, nextIdx)}`)
+  if (s.shopPrice !== undefined) parts.push(`shopPrice: ${s.shopPrice}`)
   if (s.puzzleRewards?.length) parts.push(`puzzleRewards: ${serializePuzzleRewards(s.puzzleRewards, nextIdx)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.trapped) parts.push(`trapped: true`)
+  if (s.sealed) parts.push(`sealed: true`)
+  if (s.sideSections?.length)
+    parts.push(
+      `sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection, nextIdx)).join(", ")}]`
+    )
   return `{ ${parts.join(", ")} }`
 }
 
@@ -73,6 +79,7 @@ const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
   if (c.lastMainPuzzleFamily) lines.push(`    lastMainPuzzleFamily: "${c.lastMainPuzzleFamily}",`)
   if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
   if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
+  if (c.sealed) lines.push(`    sealed: true,`)
   if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward, nextIdx)},`)
   if (c.puzzleRewards?.length) lines.push(`    puzzleRewards: ${serializePuzzleRewards(c.puzzleRewards, nextIdx)},`)
   return `  {\n${lines.join("\n")}\n  }`

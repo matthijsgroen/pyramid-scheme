@@ -46,6 +46,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.trapped ? { trapped: true } : {}),
+    ...(cs.sealed ? { sealed: true } : {}),
   }
 }
 

@@ -10,6 +10,8 @@ import { useInventory } from "@/app/Inventory/useInventory"
 import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import { ALL_SELLABLES } from "@/data/sellables"
+import { difficultyByMaterialTier } from "@/data/treasures"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
@@ -146,6 +148,50 @@ const TreasureCategorySection: FC<{
   )
 }
 
+const SellableCategorySection: FC<{
+  onItemClick: (item: InventoryItem) => void
+  selectedItem: InventoryItem | null
+  inventory: Record<string, number | undefined>
+}> = ({ onItemClick, selectedItem, inventory }) => {
+  const { t } = useTranslation(["common", "sellables"])
+
+  return (
+    <div className="mb-8">
+      <h2 className="mb-4 border-2 border-b-emerald-800 bg-emerald-800 bg-clip-text font-pyramid text-xl font-semibold text-transparent">
+        {t("collection.categories.junk")}
+      </h2>
+      <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-15">
+        {ALL_SELLABLES.map(item => {
+          const isSelected = selectedItem?.id === item.id
+          const isCollected = inventory[item.id] !== undefined
+
+          if (!isCollected) {
+            return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
+          }
+
+          return (
+            <HieroglyphTile
+              key={item.id}
+              symbol={item.symbol}
+              difficulty={difficultyByMaterialTier[item.tier]}
+              selected={isSelected}
+              onClick={() =>
+                onItemClick({
+                  id: item.id,
+                  symbol: item.symbol,
+                  name: t(`${item.id}.name`, { ns: "sellables" }),
+                  description: t(`${item.id}.description`, { ns: "sellables" }),
+                })
+              }
+              className="aspect-square shadow-md hover:shadow-lg"
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 const DetailPanel: FC<{
   item: InventoryItem | null
   debug?: boolean
@@ -261,6 +307,8 @@ export const CollectionPage: FC = () => {
               treasures={inventory}
             />
           )}
+
+          <SellableCategorySection onItemClick={handleItemClick} selectedItem={selectedItem} inventory={inventory} />
 
           {/* Inventory Categories */}
           <CategorySection

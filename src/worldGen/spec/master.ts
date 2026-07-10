@@ -23,6 +23,7 @@ export const masterRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "master",
     levelCount: 5,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
@@ -42,6 +43,7 @@ export const masterRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "master",
     levelCount: 5,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",

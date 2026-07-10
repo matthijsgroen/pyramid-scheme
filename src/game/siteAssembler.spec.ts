@@ -382,6 +382,116 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("a sealed side section has no back-door either — removing its puzzle room cuts off its whole chain", () => {
+    // `sealed` opts an ordinary (visible, ungated) path into the same isolation gate/trapped
+    // content already get, so a compact layout can't merge a shortcut around its puzzle room.
+    const key = (r: number, c: number) => `${r},${c}`
+    const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
+      const seen = new Set<string>([key(...start)])
+      const queue: Array<[number, number]> = [[start[0], start[1]]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE_ALL[dir]
+          const nr = r + dr,
+            nc = c + dc
+          const k = key(nr, nc)
+          if (seen.has(k) || blocked.has(k)) continue
+          seen.add(k)
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const config = (): FloorConfig => ({
+      // 0 main-path puzzles, so every "puzzle" room found below unambiguously belongs to
+      // the sealed side section rather than the main path.
+      pathPuzzles: 0,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", sealed: true },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
+      ],
+    })
+
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("sealed-isolation", config(), seed)
+      if (!result.success) continue
+      const grid = result.grid
+      const puzzles: Array<[number, number]> = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+        }
+      if (puzzles.length === 0) continue
+
+      const fullyReachable = reachableFrom(grid, grid.entrancePos, new Set())
+      const [pr, pc] = puzzles[0]
+      const withoutFirstPuzzle = reachableFrom(grid, grid.entrancePos, new Set([key(pr, pc)]))
+      const onlyViaThisPuzzle = [...fullyReachable].filter(k => !withoutFirstPuzzle.has(k))
+      expect(onlyViaThisPuzzle.length).toBeGreaterThan(1)
+    }
+  })
+
+  it("a sealed main path has no back-door either — removing an early puzzle room cuts off the rest", () => {
+    const key = (r: number, c: number) => `${r},${c}`
+    const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
+      const seen = new Set<string>([key(...start)])
+      const queue: Array<[number, number]> = [[start[0], start[1]]]
+      while (queue.length > 0) {
+        const [r, c] = queue.shift()!
+        const cell = grid.cells[r]?.[c]
+        if (!cell || cell.type === "empty") continue
+        for (const dir of cell.dirs) {
+          const [dr, dc] = DIR_MOVE_ALL[dir]
+          const nr = r + dr,
+            nc = c + dc
+          const k = key(nr, nc)
+          if (seen.has(k) || blocked.has(k)) continue
+          seen.add(k)
+          queue.push([nr, nc])
+        }
+      }
+      return seen
+    }
+
+    const config = (): FloorConfig => ({
+      pathPuzzles: 3,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+      sealed: true,
+    })
+
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("sealed-mainpath-isolation", config(), seed)
+      if (!result.success) continue
+      const grid = result.grid
+      const puzzles: Array<[number, number]> = []
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+        }
+      if (puzzles.length === 0) continue
+
+      const fullyReachable = reachableFrom(grid, grid.entrancePos, new Set())
+      const [pr, pc] = puzzles[0]
+      const withoutFirstPuzzle = reachableFrom(grid, grid.entrancePos, new Set([key(pr, pc)]))
+      const onlyViaThisPuzzle = [...fullyReachable].filter(k => !withoutFirstPuzzle.has(k))
+      expect(onlyViaThisPuzzle.length).toBeGreaterThan(1)
+    }
+  })
+
   it("auto-injects an ungated section when all sections are gated with floor-key", () => {
     const config: FloorConfig = {
       pathPuzzles: 1,
