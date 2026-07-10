@@ -296,29 +296,56 @@ All mechanics active. Up to 3 floors. Floor 2 carries map pieces for wizard_b; f
 
 ## 8. Tomb interior design
 
-### Structure
+### Structure — one persistent multi-floor site, same shape as a pyramid interior
 
-Each tomb has **sections**, one per treasure. Each section:
-- 1–3 tableau puzzle rooms (formula puzzles using discovered hieroglyphs from the pool)
-- 1 treasure room at the end
+A tomb is **structurally the same as a pyramid interior**: a `SiteConfig[]` of connected floors, generated once, revisited over time — not a small site replayed N times with reshuffled content. Floor `T` corresponds to treasure `T` (a tomb with 4 treasures has 4 floors).
 
-**Early sections:** open on entry  
-**Later sections:** sealed — key found in an earlier section  
-**Last section:** may require a ward key (a treasure from an earlier section within the same tomb)
+**Floor `T`'s layout:**
+
+```
+Entrance ── side path ── [fez shop] (always open, no gate)
+    │
+    └── main path ── N tableau rooms (N grows with T) ──┬── [gate: tomb-key, requires key T]
+                                                          │        └── stairhead → floor T+1 entrance
+                                                          └── [crocodile capstone] ── [chest: treasure T + key T] ── exit
+```
+
+- The **gated side path** (requiring key `T`) branches off the main path partway through and leads to floor `T+1`'s entrance — same `gate: {type:"tomb-key", wardKeyId}` primitive pyramids already use for ward gates.
+- The **main path's own end** — crocodile capstone, then the chest — is a separate, ungated terminus. The chest grants **both** treasure `T` and key `T` in one reward. The exit there returns to the overworld.
+- Key `T` is only obtainable from floor `T`'s own chest, and the gate it opens sits on floor `T`'s own main path — so reaching floor `T+1` means **solving floor T, then backtracking through the same floor** to the now-unlocked side path. This is the intended shape, not a workaround.
+
+### The core gameplay loop
+
+1. Enter the tomb. Floor 1's tableaus use hieroglyphs the player has already collected elsewhere — solvable immediately.
+2. Reach the crocodile capstone and chest: collect treasure 1 + key 1.
+3. Backtrack to the gated side path (now unlockable with key 1) and proceed to floor 2 — or exit the tomb here; nothing is lost either way, since the tomb remembers what's already been explored.
+4. Floor 2's tableaus need hieroglyphs the player doesn't have yet. Progress stalls here by design.
+5. Exit the tomb, explore pyramids/other tombs to collect the missing fragments, then return. The tomb map is exactly as left — already-unlocked gates stay unlocked, already-solved rooms stay solved.
+
+The fragment hunt and the tomb gate each other: pyramids supply the symbols, tombs consume them to unlock deeper floors. Progress is driven entirely by what the player has actually collected — never by a replay counter or randomized content.
+
+### Persistence (retires the old replay model)
+
+Tombs get the **same treatment `useJourneys.ts` already gives interior pyramids** (`isInteriorPyramid`): pinned random seed (never reseeds on re-entry), `completionCount` capped rather than incrementing per visit, `exploredSections`/unlocked gates remembered across visits. A tomb is entered, explored incrementally over many visits, and never regenerates.
+
+This retires, in full:
+- `inventoryLootLogic.ts` / `useLootDetermination`'s probabilistic "should the player get a random inventory item" roll — already vestigial for pyramids (`skipLoot`), now fully removable everywhere once tombs migrate too.
+- `TombExpedition.tsx`'s `renderPuzzle` prop and its `runTableaus`/`completionCount`-keyed live tableau selection — tableau content becomes an ordinary encounter room dispatched through the registered `tableau` family plugin, like every other room type.
+- The "reshuffle the same small maze N times, get different content each time" model entirely — a tomb is one deterministic place, not a slot machine.
 
 ### The location key treasure
 
 The final treasure in each multi-tomb tier's earlier tomb is the *location key* — a special treasure that reveals the next tomb's existence. Mechanically it can also be a ward key for a pyramid floor (no reason it can't do both). Its reward text announces the discovery.
 
-### Tableau puzzle model
-
-- Tomb map (layout) is **permanent** — the player remembers it across visits
-- Tableau formulas **regenerate each visit** — fresh numbers, same hieroglyph set
-- Treasure rooms show "collected" on revisit — no re-collecting, but the path stays navigable
-
 ### Hieroglyph symbol pool
 
 Each tomb has a small authored pool of 3–6 symbols, sourced from `TOMB_SYMBOLS` in `tableaus.ts`. The generator reads this — no separate field in the tomb template. A tableau room is locked if any of its symbols are not yet completed by the player.
+
+### Still open
+
+- Exact formula for "N tableaus on floor T" — does it reuse `fragments.ts`'s existing per-tier/per-floor-index table (`FRAGMENT_MATRIX`), or is it a new, simpler rule?
+- Hard gate or soft gate on an under-equipped tableau: does the room refuse entry outright (like a locked door), or can the player enter and simply fail to solve it?
+- Does every floor get its own crocodile capstone, or only the tomb's last floor (crocodile is currently a main-path-finale-only mechanic, singular)?
 
 ---
 
@@ -493,11 +520,11 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note in `journeys.ts`.
 
-2. **Tomb "disabled" condition** — definition: disabled only when all reachable nodes are solved and no unspent ward keys could open further branches.
+2. ~~**Tomb "disabled" condition**~~ — resolved by §8's persistent-site redesign: a tomb is never "disabled," it's a persistent site that deepens as the player collects fragments elsewhere. See §8.
 
 3. **`higherLootChance` / `mapFragmentChance` fate** — vestigial after redesign. Remove or replace with redesign-compatible effects before Phase 6.
 
-4. **`inventoryLootLogic.ts` migration** — becomes vestigial once fragments replace probabilistic drops. Remove in Phase 6.
+4. ~~**`inventoryLootLogic.ts` migration**~~ — resolved: retired in full once tombs get the same persistent-site treatment pyramids already have. See §8 ("Persistence").
 
 5. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb; should be reduced to 3–6 to fit the permanent-discovery/fragment model. Authoring work in `tableaus.ts`.
 
