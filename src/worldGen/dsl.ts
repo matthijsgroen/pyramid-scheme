@@ -42,6 +42,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   difficulty?: Difficulty
   puzzleFamily?: PuzzleFamily | PuzzleFamily[]
   endReward?: RewardSpec | TExtra
+  /** Marks this section's endReward as a Fez-shop purchase instead of a free pickup — the
+   * DSL literal in coins. No `chance` allowed on a shop slot; must stay deterministic. */
+  shopPrice?: number
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
@@ -51,6 +54,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   hidden?: boolean
   /** Every intermediate room along this path is a trap instead of a puzzle. */
   trapped?: boolean
+  /** Isolates this section's cells from leftover maze edges in a compact layout, so a
+   * shortcut can't merge around it — same mechanism `gate`/`trapped` already get for free. */
+  sealed?: boolean
 }
 
 export type FloorConstraint<TExtra extends string = never> = {
@@ -61,6 +67,9 @@ export type FloorConstraint<TExtra extends string = never> = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
+   * shortcut can't merge around a main-path puzzle room. */
+  sealed?: boolean
   mainEndReward?: RewardHint | TExtra
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
@@ -121,6 +130,9 @@ export type PyramidConstraint = {
   packingChance?: number
   /** packing used on a packingChance hit. Default 1.6. */
   packingWhenHit?: number
+  /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
+   * shortcut can't merge around a main-path puzzle room. Per-floor `sealed` overrides this. */
+  sealed?: boolean
   theme?: Theme
   mainEndReward?: RewardSpec
   gateHint?: GateType

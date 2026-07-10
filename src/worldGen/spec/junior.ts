@@ -1,4 +1,5 @@
 import { tier, tomb, sidePath } from "../dsl"
+import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
 import type { Rule } from "../dsl"
 
 export const juniorRules: Rule[] = [
@@ -20,8 +21,16 @@ export const juniorRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "junior",
     levelCount: 6,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
-      { mainEndReward: "tombTreasure" },
+      {
+        mainEndReward: "tombTreasure",
+        // Fez shop — SHOP_PLAN.md locked stock list: fragment + mosaic.
+        sideSections: [
+          sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("junior") }),
+          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
+        ],
+      },
       { mainEndReward: "tombTreasure" },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
       { mainEndReward: "tombTreasure", sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece" })] },

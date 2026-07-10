@@ -94,4 +94,29 @@ describe("assignFragments", () => {
     const types = new Set(floors.map(f => f.mainEndReward?.type))
     expect(types.has("sellable")).toBe(true)
   })
+
+  it("subtracts a pre-existing direct hieroglyphFragment placement from that hieroglyph's remaining demand", () => {
+    // Mirrors a Fez-shop slot (SHOP_PLAN.md): authored directly as hieroglyphFragment,
+    // bypassing the fragmentSlot pool entirely — assignFragments must count it toward
+    // `required` so the world-wide total doesn't drift above EXPECTED_HIEROGLYPH_FRAGMENTS.
+    // infos[0] is processed first in TIERS order, so it can't be starved by other
+    // hieroglyphs' cross-tier fallback consuming this tiny pool first.
+    const info = buildPlacementInfos()[0]
+    const journeyId = PYRAMID_JOURNEYS.find(j => j.tier === info.tier)!.id
+    const directFloor = floor({ mainEndReward: { type: "hieroglyphFragment", hieroglyphId: info.hieroglyphId } })
+    const slotFloors = Array.from({ length: info.required }, () => floor({ mainEndReward: { type: "fragmentSlot" } }))
+    const configs = { [journeyId]: [[directFloor, ...slotFloors]] as SiteConfig[] }
+
+    assignFragments(configs)
+
+    const placedForThisId = slotFloors.filter(
+      f => f.mainEndReward?.type === "hieroglyphFragment" && f.mainEndReward.hieroglyphId === info.hieroglyphId
+    )
+    // required-1 more, not `required` — the direct placement already covers one. The one
+    // leftover slot resolves to *something* else (another hieroglyph's fragment, since this
+    // tiny world has plenty of other unmet demand competing via the cross-tier fallback
+    // pool — the junk-loot fallback only catches slots nobody wanted at all).
+    expect(placedForThisId).toHaveLength(info.required - 1)
+    expect(slotFloors.every(f => f.mainEndReward?.type !== "fragmentSlot")).toBe(true)
+  })
 })

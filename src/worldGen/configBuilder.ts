@@ -7,20 +7,20 @@ import { worldSpec } from "./worldSpec"
 import type {
   PyramidConstraint,
   FloorConstraint,
-  RewardHint,
   RewardSpec,
   SideSectionConstraint,
   PathPuzzlesRange,
   TombRewardHint,
 } from "./dsl"
-import { hintToReward, specToReward } from "./rewards"
+import { wardPath } from "./dsl"
+import { specToReward } from "./rewards"
 import { buildSideSections } from "./sideSections"
-import { buildFloor, buildSite, wireStaircases } from "./buildSite"
+import { buildFloor, buildSite } from "./buildSite"
 import { assignPuzzleRewards } from "./puzzleRewards"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { computeMosaicPaths } from "./mosaics"
 import { assignFragments } from "./fragments"
-import { validateDiscovery, validateRewardCounts } from "./validate"
+import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         return perkId ? { type: "tombKey", keyId: perkId } : undefined
       }
       if (reward === "fragmentSlot") return { type: "fragmentSlot" }
-      if (reward) return hintToReward(reward as RewardHint, tomb.tier as Tier)
+      if (reward) return specToReward(reward as RewardSpec, tomb.tier as Tier)
       return undefined
     }
 
@@ -178,19 +178,25 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
             return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
           })()
 
-      const sideSections: SideSection[] =
-        authored && Array.isArray(authored.sideSections)
-          ? buildSideSections({
-              tier: tomb.tier,
-              difficulty,
-              resolveReward: resolveTombReward,
-              journeyId: tomb.id,
-              constraintSections: authored.sideSections as SideSectionConstraint<TombRewardHint>[],
-            })
-          : []
+      // Every non-last floor gets a ward-path shortcut, gated by that SAME floor's own
+      // mainEndReward key (index i === the perk index that reward just consumed) — walk the
+      // floor once to earn the key, then a later re-entry can skip straight past it via the
+      // shortcut instead of re-solving its tableau. Never authored per-tomb; systemic for all.
+      const authoredSections = (authored?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined) ?? []
+      const shortcut = isLast ? [] : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
+      const sideSections: SideSection[] = buildSideSections({
+        tier: tomb.tier,
+        difficulty,
+        resolveReward: resolveTombReward,
+        // Per-floor-scoped, so each floor's shortcut gets a globally unique stairId — plain
+        // `tomb.id` would collide across floors sharing the same side-section position.
+        journeyId: `${tomb.id}:floor${i}`,
+        constraintSections: [...authoredSections, ...shortcut],
+      })
 
       const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
       const packing = authored?.packing ?? constraint.packing
+      const sealed = authored?.sealed ?? constraint.sealed
 
       const pathPuzzles = isLast && hasCroc ? 2 : 1
 
@@ -203,10 +209,19 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         mainEndReward,
         corridorStraightness: straightness,
         packing,
+        sealed,
       })
     })
 
-    wireStaircases(floors, fi => `${tomb.id}:floor${fi}`)
+    // No wireStaircases here: every floor's main path now ends in a real "exit" (buildFloor's
+    // default), not an auto-chained stairhead. Floor-to-floor descent instead runs through
+    // each floor's own ward-path shortcut, wired to the next floor's entrance below.
+    for (let fi = 0; fi < floors.length - 1; fi++) {
+      const shortcutSection = floors[fi].sideSections.find(s => s.gate?.type === "tomb-key")
+      if (shortcutSection && typeof shortcutSection.end === "object") {
+        floors[fi + 1].entrance = { stairId: shortcutSection.end.stairId }
+      }
+    }
     assignPuzzleRewards(tomb.id, floors, constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates)
     configs[tomb.id] = [floors]
   }
@@ -230,9 +245,10 @@ export const buildConfigs = (): Record<string, SiteConfig[]> => {
   assignFragments(allConfigs)
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
-  // tomb ID references, and discovery graph solvability
+  // tomb ID references, discovery graph solvability, and the shop economy guard
   validateRewardCounts(allConfigs)
   validateDiscovery(allConfigs)
+  validateEconomyGuard(allConfigs)
 
   return allConfigs
 }

@@ -24,9 +24,13 @@ export type SubSection = {
   end: "treasure" | "staircase" | { stairId: string }
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
+  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
+  shopPrice?: number
   puzzleRewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   trapped?: boolean
+  /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
+  sealed?: boolean
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -45,6 +49,8 @@ export type FloorConfig = {
   lastMainPuzzleFamily?: "crocodile"
   corridorStraightness?: number
   packing?: number
+  /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
+  sealed?: boolean
 }
 
 export type SiteConfig = FloorConfig[]

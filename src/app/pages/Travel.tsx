@@ -10,6 +10,8 @@ import { useJourneys } from "@/app/state/useJourneys"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { FezContext } from "../fez/context"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 
 import { TableauInventory } from "./TableauInventory"
 import { useProgression } from "@/app/state/useProgression"
@@ -30,6 +32,8 @@ export const TravelPage: FC<{
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
   const { showConversation } = use(FezContext)
+  const { isDevelopMode } = use(DevelopContext)
+  const shopTombJourney = journeys.find(j => j.id === "junior_treasure_tomb")
 
   useEffect(() => {
     if (showJourneySelection) {
@@ -138,6 +142,11 @@ export const TravelPage: FC<{
             content, rough edges, and save resets.
           </p>
           <h1 className="mb-4 text-center font-pyramid text-xl font-bold">{t("ui.travel")}</h1>
+          {isDevelopMode && shopTombJourney && (
+            <div className="mb-4 flex justify-center">
+              <DeveloperButton onClick={() => handleJourneySelect(shopTombJourney)} label="Jump to Shop Tomb" />
+            </div>
+          )}
 
           {/* Map Section */}
           <div className={`flex w-full flex-col items-center px-8 pb-safe-bottom`}>

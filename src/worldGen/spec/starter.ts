@@ -60,6 +60,7 @@ export const starterRules: Rule[] = [
     puzzleFamily: "tableau",
     difficulty: "starter",
     levelCount: 4,
+    sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

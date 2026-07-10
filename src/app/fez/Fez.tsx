@@ -43,6 +43,7 @@ const conversations: Record<string, PoseChat[]> = {
     "glassesPoint",
     ["pyramidBlockedBlocks4"]
   ),
+  shopArrival: pose("cocktail", ["shopArrival", "shopArrival2"]),
 }
 
 const NOT_FOUND = pose("default", ["not-found"])
