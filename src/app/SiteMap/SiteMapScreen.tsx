@@ -1,7 +1,7 @@
 import { use, useCallback, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell } from "@/game/gridNavigation"
-import { getPuzzlePlugin } from "@/game/puzzles/puzzleRegistry"
+import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
 import type { SiteConfig, TreasureReward } from "@/game/siteTypes"
@@ -9,19 +9,14 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge, decodeEdge } from "./useAssembledFloor"
 import { ChestRewardFlow } from "./ChestRewardFlow"
-import { rewardEmoji, rewardText } from "./rewardDisplay"
 import { useApplyReward } from "./applyReward"
-import { useShopEncounter } from "./useShopEncounter"
-import { TrapEncounter } from "@/app/TrapFamilies/TrapEncounter"
-import { TrapWarningScreen } from "./TrapWarningScreen"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { allItems } from "@/data/inventory"
-import { CONSUMABLE_PRICES } from "@/data/shopPricing"
-import { ALL_SELLABLES, getSellableById, sellValueForItemId } from "@/data/sellables"
+import { ALL_SELLABLES } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
@@ -31,11 +26,20 @@ import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { FezShop } from "@/ui/organisms/FezShop"
-// Side-effect: registers puzzle plugins
+// Side-effect: registers family plugins
 import "@/app/PuzzleFamilies/Sumplete/plugin"
 import "@/app/PuzzleFamilies/Tableau/plugin"
 import "@/app/PuzzleFamilies/Crocodile/plugin"
+import "@/app/TrapFamilies/ArithmeticReflex/plugin"
+import "@/app/ShopFamily/plugin"
+import "@/app/TreasureFamily/plugin"
+
+// Families tagged this way get SiteMapScreen's own "completed!" banner-and-delay treatment
+// and its Cancel button — matches the pre-unification puzzle modal's UX exactly. Trap/shop/
+// treasure own their own full lifecycle UI instead (warning screens, dismiss buttons, or
+// nothing at all), so they're excluded from this generic wrapper flourish.
+const isPuzzleLikeFamily = (tags: string[] | undefined) =>
+  !!tags && (tags.includes("puzzle") || tags.includes("tomb-puzzle"))
 
 type Props = {
   journeyId: string
@@ -85,10 +89,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return result
   }, [journeys, journeyId, currentFloor])
 
-  const [activePuzzlePos, setActivePuzzlePos] = useState<readonly [number, number] | null>(null)
-  const [trapWarningPos, setTrapWarningPos] = useState<readonly [number, number] | null>(null)
-  const [activeTrapPos, setActiveTrapPos] = useState<readonly [number, number] | null>(null)
-  const [puzzleSolved, setPuzzleSolved] = useState(false)
+  // Replaces the old activePuzzlePos/trapWarningPos/activeTrapPos trio — one generic "which
+  // room's encounter is open" position, plus whether this was a fresh arrival (vs. a re-click
+  // while already standing here) for families that care (shop's stock-reset rule).
+  const [activeEncounter, setActiveEncounter] = useState<{
+    pos: readonly [number, number]
+    freshArrival: boolean
+  } | null>(null)
+  const [encounterSolvedBanner, setEncounterSolvedBanner] = useState(false)
   const [pendingReward, setPendingReward] = useState<{
     reward: TreasureReward
     consumableFull?: boolean
@@ -97,22 +105,38 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [exiting, setExiting] = useState(false)
 
   const [scheduleArrival] = useTimeout()
-  const [schedulePuzzle, cancelPuzzle] = useTimeout()
+  const [scheduleSolve, cancelSolve] = useTimeout()
 
-  const puzzlePlugin = useMemo(() => {
-    if (!activePuzzlePos || !grid) return null
-    const cell = getCell(grid, activePuzzlePos[0], activePuzzlePos[1])
-    const family = cell?.type === "room" ? (cell.family ?? "sumplete") : "sumplete"
-    return getPuzzlePlugin(family) ?? null
-  }, [activePuzzlePos, grid])
+  const encounterFamily = useMemo(() => {
+    if (!activeEncounter || !grid) return null
+    const cell = getCell(grid, activeEncounter.pos[0], activeEncounter.pos[1])
+    const family = cell?.type === "room" ? cell.family : undefined
+    return family ? getFamilyPlugin(family) : null
+  }, [activeEncounter, grid])
 
-  const useRenderPuzzleFallback = activePuzzlePos != null && puzzlePlugin == null && renderPuzzle != null
+  const encounterCtx = useMemo((): FamilyContext | null => {
+    if (!activeEncounter || !grid) return null
+    const [row, col] = activeEncounter.pos
+    const cell = getCell(grid, row, col)
+    const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
+    const edgeId = encodeEdge(currentFloor, row, col)
+    return {
+      journeyId,
+      edgeId,
+      sectionHash,
+      freshArrival: activeEncounter.freshArrival,
+      difficulty: floorConfig.difficulty,
+      reward: cell?.type === "room" ? cell.reward : undefined,
+      price: cell?.type === "room" ? cell.shopPrice : undefined,
+    }
+  }, [activeEncounter, grid, currentFloor, journeyId, floorConfig.difficulty])
 
-  const activePuzzle = useMemo(() => {
-    if (!activePuzzlePos || !puzzlePlugin) return null
-    const edgeId = encodeEdge(currentFloor, activePuzzlePos[0], activePuzzlePos[1])
-    return puzzlePlugin.generate(hashString(journeyId + edgeId), { difficulty: floorConfig.difficulty })
-  }, [activePuzzlePos, puzzlePlugin, journeyId, currentFloor, floorConfig.difficulty])
+  const generatedPuzzle = useMemo(() => {
+    if (!encounterFamily || !encounterCtx) return null
+    return encounterFamily.generate(hashString(journeyId + encounterCtx.edgeId), encounterCtx)
+  }, [encounterFamily, encounterCtx, journeyId])
+
+  const useRenderPuzzleFallback = activeEncounter != null && encounterFamily == null && renderPuzzle != null
 
   // Shared by both the treasure-room claim flow and puzzle-solve rewards below — the
   // "apply this reward to game state" half, kept separate from the surrounding
@@ -120,41 +144,60 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // inventory-as-truth, only treasure rooms carry them).
   const applyReward = useApplyReward(progression, inventory, journeyId)
 
-  const { activeShop, shopStock, openShop, handleShopBuy, handleShopSell, closeShop } = useShopEncounter(
-    journeyId,
-    progression,
-    inventory,
-    journeys,
-    applyReward
+  // The ONE thing core does on any solved encounter, for every family alike: mark the room
+  // explored (unlocking corridors past it) and, if it carries a reward, offer it — the same
+  // pack-full/dedup handling previously duplicated between the puzzle-success and treasure-
+  // claim paths.
+  const genericHandleSolved = useCallback(
+    (pos: readonly [number, number]) => {
+      if (!grid) return
+      const [row, col] = pos
+      const edgeId = encodeEdge(currentFloor, row, col)
+      const cell = getCell(grid, row, col)
+      const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
+      journeys.markCellExplored(sectionHash, edgeId)
+      setActiveEncounter(null)
+
+      const reward = cell?.type === "room" ? cell.reward : undefined
+      if (!reward) return
+      // Inventory-as-truth: fragment already collected elsewhere → skip the popup
+      const alreadyCollected =
+        reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
+      if (alreadyCollected) return
+      const packFull = reward.type === "consumable" && progression.isConsumablePackFull()
+      if (packFull) {
+        journeys.markConsumableSkipped(edgeId)
+        setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
+        return
+      }
+      setPendingReward({ reward, onCollect: () => applyReward(reward) })
+    },
+    [grid, journeys, currentFloor, progression, applyReward]
   )
 
-  const handlePuzzleSolved = useCallback(() => {
-    if (!activePuzzlePos || !grid) return
-    const [row, col] = activePuzzlePos
-    const edgeId = encodeEdge(currentFloor, row, col)
-    const cell = getCell(grid, row, col)
-    const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
-    journeys.markCellExplored(sectionHash, edgeId)
-    setActivePuzzlePos(null)
-    setPuzzleSolved(false)
+  const handleEncounterCancel = useCallback(() => {
+    cancelSolve()
+    setEncounterSolvedBanner(false)
+    setActiveEncounter(null)
+  }, [cancelSolve])
 
-    const reward = cell?.type === "room" ? cell.reward : undefined
-    if (!reward) return
-    const packFull = reward.type === "consumable" && progression.isConsumablePackFull()
-    if (packFull) {
-      journeys.markConsumableSkipped(edgeId)
-      setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
-      return
+  const handleEncounterSolved = useCallback(() => {
+    if (!activeEncounter) return
+    const pos = activeEncounter.pos
+    if (isPuzzleLikeFamily(encounterFamily?.meta.tags)) {
+      // Cosmetic "Puzzle completed!" delay — matches the pre-unification puzzle modal exactly;
+      // trap/shop/treasure never had this and don't get it now either.
+      scheduleSolve(800, () => {
+        setEncounterSolvedBanner(true)
+        scheduleSolve(1500, () => {
+          setEncounterSolvedBanner(false)
+          genericHandleSolved(pos)
+        })
+      })
+    } else {
+      genericHandleSolved(pos)
     }
-    setPendingReward({ reward, onCollect: () => applyReward(reward) })
-  }, [activePuzzlePos, grid, journeys, currentFloor, progression, applyReward])
-
-  const handlePuzzleComplete = useCallback(() => {
-    schedulePuzzle(800, () => {
-      setPuzzleSolved(true)
-      schedulePuzzle(1500, handlePuzzleSolved)
-    })
-  }, [handlePuzzleSolved, schedulePuzzle])
+  }, [activeEncounter, encounterFamily, scheduleSolve, genericHandleSolved])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -166,19 +209,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // Completed cells: just reposition the player, unless it's a chest we couldn't fit before —
-      // offer it again, showing whether there's room for it now or still not.
+      // Completed cells: just reposition the player, unless it's a shop we couldn't fully use
+      // before (still buyable) or a chest we couldn't fit before — offer either again.
       if (cell.state === "completed") {
         // Stock only refreshes on a genuine re-entry (the player was elsewhere before this
         // click) — otherwise dismissing the shop and clicking the same room again while still
-        // standing in it would refill consumable stock for free, indefinitely.
+        // standing in it would refill consumable stock for free, indefinitely. The shop family
+        // itself reads this via ctx.freshArrival.
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         journeys.updatePosition(journeyId, edgeId)
         if (cell.type === "room" && cell.reward && cell.shopPrice != null) {
-          const reward = cell.reward
-          const price = cell.shopPrice
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-            openShop(edgeId, reward, price, !alreadyStandingHere)
+            setActiveEncounter({ pos: [row, col], freshArrival: !alreadyStandingHere })
           )
           return
         }
@@ -216,15 +258,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       if (cell.roomType === "entrance") {
         journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
-      } else if (cell.roomType === "trap") {
+      } else if (cell.roomType === "encounter") {
         journeys.updatePosition(journeyId, edgeId)
         scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-          setTrapWarningPos([row, col])
-        )
-      } else if (cell.roomType === "puzzle") {
-        journeys.updatePosition(journeyId, edgeId)
-        scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-          setActivePuzzlePos([row, col])
+          setActiveEncounter({ pos: [row, col], freshArrival: true })
         )
       } else if (cell.roomType === "fork") {
         journeys.markCellExplored(sectionHash, edgeId)
@@ -254,56 +291,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
           setExiting(true)
         )
-      } else if (cell.roomType === "treasure") {
-        // Always mark the room explored so corridors past it keep unfolding, even if a consumable
-        // reward inside can't be picked up right now — that's tracked separately below.
-        journeys.markCellExplored(sectionHash, edgeId)
-        journeys.updatePosition(journeyId, edgeId)
-        if (cell.reward && cell.shopPrice != null) {
-          const reward = cell.reward
-          const price = cell.shopPrice
-          // Reaching a shop room via the "reachable" state always means arriving fresh —
-          // the player can't already be standing on a cell that isn't yet "completed".
-          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-            openShop(edgeId, reward, price, true)
-          )
-        } else if (cell.reward) {
-          const reward = cell.reward
-          // Inventory-as-truth: fragment already collected → skip overlay
-          const alreadyCollected =
-            reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
-          if (!alreadyCollected) {
-            // Consumables need a room check up front: a full pack leaves the reward for a later visit
-            // instead of silently losing it.
-            const packFull = reward.type === "consumable" && progression.isConsumablePackFull()
-            scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
-              if (packFull) {
-                journeys.markConsumableSkipped(edgeId)
-                setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
-                return
-              }
-              setPendingReward({ reward, onCollect: () => applyReward(reward) })
-            })
-          }
-        }
       }
     },
-    [
-      grid,
-      journeys,
-      journeyId,
-      currentFloor,
-      progression,
-      explorerPos,
-      scheduleArrival,
-      seed,
-      siteConfig,
-      applyReward,
-      openShop,
-    ]
+    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig]
   )
 
-  const ActivePuzzleComponent = puzzlePlugin?.Component ?? null
+  const ActiveEncounterComponent = encounterFamily?.Component ?? null
 
   if (!grid) {
     return <div className="p-4 text-red-400">Site layout unavailable.</div>
@@ -371,27 +364,28 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           onComplete={currentFloor === siteConfig.length - 1 ? onSiteComplete : onCancel}
         />
       )}
-      {useRenderPuzzleFallback && renderPuzzle!(currentFloor, handlePuzzleSolved, () => setActivePuzzlePos(null))}
-      {!!activePuzzle && ActivePuzzleComponent && (
+      {useRenderPuzzleFallback &&
+        activeEncounter &&
+        renderPuzzle!(currentFloor, () => genericHandleSolved(activeEncounter.pos), handleEncounterCancel)}
+      {activeEncounter && ActiveEncounterComponent && encounterCtx && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
           <div className="relative flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">
-            <ActivePuzzleComponent
-              puzzle={activePuzzle}
-              settings={{ difficulty: floorConfig.difficulty }}
-              onSolved={handlePuzzleComplete}
+            <ActiveEncounterComponent
+              puzzle={generatedPuzzle}
+              ctx={encounterCtx}
+              progression={progression}
+              journeys={journeys}
+              inventory={inventory}
+              applyReward={applyReward}
+              onSolved={handleEncounterSolved}
+              onCancel={handleEncounterCancel}
             />
-            {!puzzleSolved && (
-              <button
-                onClick={() => {
-                  cancelPuzzle()
-                  setActivePuzzlePos(null)
-                }}
-                className="text-sm text-stone-400 hover:text-stone-200"
-              >
+            {isPuzzleLikeFamily(encounterFamily?.meta.tags) && !encounterSolvedBanner && (
+              <button onClick={handleEncounterCancel} className="text-sm text-stone-400 hover:text-stone-200">
                 {t("ui.cancel")}
               </button>
             )}
-            {puzzleSolved && (
+            {encounterSolvedBanner && (
               <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/90">
                 <p className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</p>
               </div>
@@ -399,103 +393,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           </div>
         </div>
       )}
-      {trapWarningPos && (
-        <TrapWarningScreen
-          currentHealth={progression.currentHealth}
-          maxHealth={progression.maxHealth}
-          canAttempt={progression.canAttemptTrap()}
-          trapToolCount={progression.consumables.trapTool}
-          onAttempt={() => {
-            setActiveTrapPos(trapWarningPos)
-            setTrapWarningPos(null)
-          }}
-          onTurnAround={() => setTrapWarningPos(null)}
-          onDisable={() => {
-            const [tr, tc] = trapWarningPos
-            const edgeId = encodeEdge(currentFloor, tr, tc)
-            const trapCell = grid && getCell(grid, tr, tc)
-            const trapSectionHash = trapCell && trapCell.type !== "empty" ? (trapCell.sectionHash ?? "") : ""
-            progression.useConsumable("trapTool")
-            journeys.markTrapDisabled(trapSectionHash, edgeId)
-            setTrapWarningPos(null)
-          }}
-        />
-      )}
-      {activeTrapPos && (
-        <TrapEncounter
-          family="arithmetic-reflex"
-          seed={hashString(journeyId + encodeEdge(currentFloor, activeTrapPos[0], activeTrapPos[1]))}
-          difficulty={floorConfig.difficulty}
-          trapInsightStacks={progression.perks.trapInsightStacks}
-          onPass={() => {
-            const [tr, tc] = activeTrapPos
-            const edgeId = encodeEdge(currentFloor, tr, tc)
-            const trapCell = grid && getCell(grid, tr, tc)
-            const trapSectionHash = trapCell && trapCell.type !== "empty" ? (trapCell.sectionHash ?? "") : ""
-            journeys.markCellExplored(trapSectionHash, edgeId)
-            setActiveTrapPos(null)
-          }}
-          onFail={() => {
-            progression.takeTrapDamage(progression.perks.armorStacks)
-            setActiveTrapPos(null)
-          }}
-        />
-      )}
       <ChestRewardFlow
         pendingReward={pendingReward}
         hieroglyphProgress={progression.hieroglyphProgress}
         onDismiss={() => setPendingReward(null)}
       />
-      {activeShop && (
-        <FezShop
-          isOpen
-          title={t("shop.title")}
-          balance={progression.money}
-          balanceLabel={t("money.label")}
-          dismissLabel={t("shop.dismiss")}
-          buyLabel={t("shop.buy")}
-          soldOutLabel={t("shop.soldOut")}
-          sellLabel={t("shop.sell")}
-          rareItemsLabel={t("shop.rareItems")}
-          suppliesLabel={t("shop.supplies")}
-          sellSectionLabel={t("shop.sellSection")}
-          rareItems={[
-            {
-              id: "rare",
-              ...rewardText(activeShop.reward, t),
-              price: activeShop.price,
-              affordable: progression.money >= activeShop.price,
-              soldOut: activeShop.purchased,
-              featured: true,
-            },
-          ]}
-          consumables={(Object.keys(CONSUMABLE_PRICES) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
-            id: type,
-            itemName: t(`chest.consumable.${type}`),
-            icon: rewardEmoji(type),
-            price: CONSUMABLE_PRICES[type],
-            affordable: progression.money >= CONSUMABLE_PRICES[type],
-            soldOut: shopStock[type] <= 0,
-          }))}
-          sellables={Object.entries(inventory.inventory).flatMap(([id, count]) => {
-            const item = getSellableById(id)
-            if (!item || !count) return []
-            return [
-              {
-                id,
-                itemName: t(`${id}.name`, { ns: "sellables" }),
-                itemDescription: t(`${id}.description`, { ns: "sellables" }),
-                icon: item.symbol,
-                sellValue: sellValueForItemId(id),
-                ownedCount: count,
-              },
-            ]
-          })}
-          onBuy={handleShopBuy}
-          onSell={handleShopSell}
-          onDismiss={closeShop}
-        />
-      )}
     </div>
   )
 }

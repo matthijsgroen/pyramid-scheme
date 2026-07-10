@@ -5,6 +5,7 @@ import type { ConsumableType } from "@/game/siteTypes"
 import { TREASURE_PERKS } from "@/data/treasurePerks"
 import { createLedger, type LedgerState } from "@/game/ledger/ledger"
 import { getPerkMeta, type PerkSlice } from "@/game/perks/perkRegistry"
+import { trapDamage, canAttemptTrap } from "@/game/traps/trapHealth"
 import "./registerPerks"
 
 type ConsumableInventory = { bandage: number; oil: number; trapTool: number }
@@ -79,9 +80,6 @@ const PERK_SLICE_DEFAULTS: Record<PerkSlice, Record<string, number>> = {
   puzzlePerks: INITIAL_PUZZLE_PERKS,
   corePerks: INITIAL_CORE_PERKS,
 }
-
-export const trapDamage = (armorStacks: number): number => Math.max(1, 2 - armorStacks)
-export const canAttemptTrap = (currentHealth: number): boolean => currentHealth >= 2
 
 export type ProgressionAPI = {
   addFragment: (hieroglyphId: string, pieceIndex: number) => void

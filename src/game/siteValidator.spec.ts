@@ -4,15 +4,27 @@ import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell 
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
 
+// RoomType collapsed puzzle/trap/treasure into one "encounter" value (see
+// docs/mods-architecture.md) — this helper keeps every call site below using the pre-
+// collapse kind, translating to {roomType, family} once here instead of at each site.
+type LegacyRoomKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+
+const DEFAULT_FAMILY: Partial<Record<LegacyRoomKind, string>> = {
+  puzzle: "sumplete",
+  trap: "arithmetic-reflex",
+  treasure: "treasure-chest",
+}
+
 const room = (
-  roomType: RoomCell["roomType"],
+  kind: LegacyRoomKind,
   dirs: Direction[],
   opts?: Partial<Omit<RoomCell, "type" | "roomType" | "dirs" | "state">>
 ): RoomCell => ({
   type: "room",
-  roomType,
+  roomType: kind === "puzzle" || kind === "trap" || kind === "treasure" ? "encounter" : kind,
   dirs: new Set(dirs),
   state: "reachable",
+  ...(DEFAULT_FAMILY[kind] ? { family: DEFAULT_FAMILY[kind] } : {}),
   ...opts,
 })
 

@@ -1,5 +1,13 @@
 import type { FloorGrid, ValidationReason, ValidationResult } from "./siteTypes"
 
+// Structural room-kind classification by family id — the exact literals siteAssembler.ts
+// assigns for what used to be roomType "treasure"/"puzzle" (this module can't import the
+// app-layer family registry). "trap" (arithmetic-reflex) is deliberately in neither set,
+// preserving a pre-existing gap: a fork branch that only leads to a trap counts as bland,
+// same as today.
+const TREASURE_LIKE_FAMILIES = new Set(["treasure-chest", "fez-shop"])
+const PUZZLE_LIKE_FAMILIES = new Set(["sumplete", "tableau", "crocodile"])
+
 type Pos = readonly [number, number]
 
 const posKey = (r: number, c: number) => `${r},${c}`
@@ -69,7 +77,6 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
         const cell = grid.cells[r][c]
         if (
           cell.type === "room" &&
-          cell.roomType === "treasure" &&
           cell.reward?.type === "tombKey" &&
           reachable.has(posKey(r, c)) &&
           !collectedKeys.has(cell.reward.keyId)
@@ -96,7 +103,6 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
               const kcell = grid.cells[kr][kc]
               if (
                 kcell.type === "room" &&
-                kcell.roomType === "treasure" &&
                 kcell.reward?.type === "tombKey" &&
                 kcell.reward.keyId === cell.requiredKeyId
               )
@@ -109,7 +115,6 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
 
       if (cell.roomType === "fork") {
         const forkPos: Pos = [r, c]
-        const interestingTypes = new Set(["treasure", "gate", "stairhead"])
         // BFS through corridors from each fork direction to find an interesting room
         const forkKey = posKey(r, c)
         let hasInteresting = false
@@ -127,8 +132,10 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
           const bcell = grid.cells[br]?.[bc]
           if (!bcell || bcell.type === "empty") continue
           if (bcell.type === "room") {
-            if (interestingTypes.has(bcell.roomType)) hasInteresting = true
-            else if (bcell.roomType === "puzzle" || bcell.roomType === "fork") {
+            const isTreasureLike = bcell.roomType === "encounter" && TREASURE_LIKE_FAMILIES.has(bcell.family ?? "")
+            const isPuzzleLike = bcell.roomType === "encounter" && PUZZLE_LIKE_FAMILIES.has(bcell.family ?? "")
+            if (bcell.roomType === "gate" || bcell.roomType === "stairhead" || isTreasureLike) hasInteresting = true
+            else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch
               for (const d of bcell.dirs) {
                 const [dr, dc] = MOVES[d as string]
@@ -158,7 +165,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
-      if (cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
+      if (cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
       if (cell.roomType === "gate" && cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
     }
   }
@@ -178,8 +185,7 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
 
   const mapPieceSites = grids.filter(g => {
     for (const row of g.cells)
-      for (const cell of row)
-        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mapPiece") return true
+      for (const cell of row) if (cell.type === "room" && cell.reward?.type === "mapPiece") return true
     return false
   })
 
@@ -193,8 +199,7 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
     for (let r = 0; r < g.rows; r++)
       for (let c = 0; c < g.cols; c++) {
         const cell = g.cells[r][c]
-        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mapPiece")
-          mapPiecePos = [r, c]
+        if (cell.type === "room" && cell.reward?.type === "mapPiece") mapPiecePos = [r, c]
       }
     if (mapPiecePos) {
       const sealReachable = reachableFrom(g, g.entrancePos, new Set())
@@ -209,7 +214,7 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
     let mosaicCount = 0
     for (const row of g.cells)
       for (const cell of row) {
-        if (cell.type !== "room" || cell.roomType !== "treasure") continue
+        if (cell.type !== "room") continue
         if (cell.reward?.type === "mosaicPiece" || cell.reward?.type === "mapPiece") primaryCount++
         if (cell.reward?.type === "mosaicPiece") mosaicCount++
       }

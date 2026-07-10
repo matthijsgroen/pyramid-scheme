@@ -1,9 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
-import { type FC } from "react"
-import { registerPuzzle } from "@/game/puzzles/puzzleRegistry"
+import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { mulberry32 } from "@/game/random"
 import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
-import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
@@ -31,12 +29,8 @@ const TABLEAU_CONFIG: Record<string, TableauConfig> = {
   wizard: { symbolCount: 5, numberRange: [1, 20], operators: ["+", "-", "*"], maxMultiplyOperandResult: 10 },
 }
 
-const TableauComponent: FC<{ puzzle: RewardCalculation; settings: PuzzleSettings; onSolved: () => void }> = ({
-  puzzle,
-  settings,
-  onSolved,
-}) => {
-  const difficulty = settings.difficulty ?? "starter"
+const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle, ctx, onSolved }) => {
+  const difficulty = ctx.difficulty ?? "starter"
   const dummyTableau: TableauLevel = {
     id: "plugin",
     levelNr: 1,
@@ -50,10 +44,10 @@ const TableauComponent: FC<{ puzzle: RewardCalculation; settings: PuzzleSettings
   return <TombPuzzle tableau={dummyTableau} calculation={puzzle} difficulty={difficulty} onComplete={onSolved} />
 }
 
-registerPuzzle({
-  family: "tableau",
-  generate: (seed, settings): RewardCalculation => {
-    const difficulty = settings.difficulty ?? "starter"
+registerFamily({
+  meta: { id: "tableau", ownerMod: "puzzle", tags: ["tomb-puzzle"], icon: "📜", color: "amber" },
+  generate: (seed, ctx): RewardCalculation => {
+    const difficulty = ctx.difficulty ?? "starter"
     const config = TABLEAU_CONFIG[difficulty] ?? TABLEAU_CONFIG.starter
     const symbols = TOMB_SYMBOLS[difficulty] ?? TOMB_SYMBOLS.starter
     const random = mulberry32(seed)
@@ -68,5 +62,5 @@ registerPuzzle({
       random
     )
   },
-  Component: TableauComponent as FC<{ puzzle: unknown; settings: PuzzleSettings; onSolved: () => void }>,
+  Component: TableauComponent,
 })

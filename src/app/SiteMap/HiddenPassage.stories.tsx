@@ -61,7 +61,7 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
         if (existing.includes(cellId)) return prev
         return { ...prev, [sHash]: [...existing, cellId] }
       })
-      if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") {
+      if (cell.type === "room" && cell.reward?.type === "mosaicPiece") {
         setMosaicFound(true)
       }
     }

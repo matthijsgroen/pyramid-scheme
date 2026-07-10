@@ -318,7 +318,22 @@ const ExitShape = ({ state }: ShapeProps) => {
   )
 }
 
-const nodeRadius: Record<RoomType, number> = {
+// The visual shape an "encounter" room takes — one RoomType now covers what used to be
+// three (puzzle/trap/treasure), distinguished by family id. Not a family-registry lookup
+// (see docs/mods-architecture.md's icon/color proposal for the eventual generic version) —
+// just enough to keep today's three hand-drawn shapes mapped to the right rooms.
+type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+
+const TREASURE_LIKE_FAMILIES = new Set(["treasure-chest", "fez-shop"])
+
+const shapeKindFor = (roomType: RoomType, family: string | undefined): ShapeKind => {
+  if (roomType !== "encounter") return roomType
+  if (family === "arithmetic-reflex") return "trap"
+  if (TREASURE_LIKE_FAMILIES.has(family ?? "")) return "treasure"
+  return "puzzle"
+}
+
+const nodeRadius: Record<ShapeKind, number> = {
   entrance: NODE_RADIUS_LARGE,
   puzzle: NODE_RADIUS_PUZZLE,
   trap: NODE_RADIUS_PUZZLE,
@@ -329,7 +344,7 @@ const nodeRadius: Record<RoomType, number> = {
   exit: NODE_RADIUS_LARGE,
 }
 
-const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: RoomType }) => {
+const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: ShapeKind }) => {
   const p = { state, gateVariant, keyColor, keyColors }
   switch (type) {
     case "entrance":
@@ -474,9 +489,9 @@ const DIR_MOVES: Record<Direction, readonly [number, number]> = {
 // sprite-tile renderer needs to tile cleanly (see
 // docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
 // the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (roomType: RoomType, dirsSize: number): boolean =>
+const canClaimVoid = (roomType: RoomType, family: string | undefined, dirsSize: number): boolean =>
   roomType === "fork" ||
-  ((roomType === "treasure" || roomType === "stairhead" || roomType === "exit") && dirsSize === 1)
+  ((shapeKindFor(roomType, family) === "treasure" || roomType === "stairhead" || roomType === "exit") && dirsSize === 1)
 
 const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
   [-1, 0],
@@ -590,7 +605,7 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.dirs.size)) continue
+      if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.family, cell.dirs.size)) continue
       const ownerKey = `${r},${c}`
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {
@@ -1057,13 +1072,14 @@ export const SiteMapView = ({
             // Only ever a pending-loot marker for a treasure room with a consumable reward — this
             // guards against stale coordinates in pendingCells (e.g. left over from before a site
             // was regenerated) painting the badge onto whatever room now occupies that cell.
+            const shapeKind = shapeKindFor(cell.roomType, cell.family)
             const isPending =
               isCompleted &&
-              cell.roomType === "treasure" &&
+              shapeKind === "treasure" &&
               cell.reward?.type === "consumable" &&
               (pendingCells?.has(`${r},${c}`) ?? false)
             const clickable = onCellClick && (state === "reachable" || state === "completed")
-            const roomR = nodeRadius[cell.roomType]
+            const roomR = nodeRadius[shapeKind]
 
             return (
               <g
@@ -1075,7 +1091,7 @@ export const SiteMapView = ({
                 <FloorTile state={state} open={open} kind="room" />
                 <g opacity={isCompleted && !isPending ? 0.45 : 1}>
                   <NodeShape
-                    type={cell.roomType}
+                    type={shapeKind}
                     state={state}
                     gateVariant={cell.gateVariant}
                     keyColor={cell.keyColor}

@@ -832,7 +832,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         }
       } else if (mi === goalIndex) {
         roomSpecs.set(posKey(r, c), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: "treasure-chest",
           reward: config.mainEndReward ?? { type: "hieroglyphs" },
         })
       } else if (puzzleRole.has(mi)) {
@@ -843,7 +844,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
             ? config.lastMainPuzzleFamily
             : (config.puzzleFamily ?? "sumplete")
         const reward = config.puzzleRewards?.[k]
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family, ...(reward ? { reward } : {}) })
+        roomSpecs.set(posKey(r, c), { roomType: "encounter", family, ...(reward ? { reward } : {}) })
       }
     }
 
@@ -864,7 +865,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // Give it a small treasure so it renders as a room rather than a dead-end corridor.
     const [farthestR, farthestC] = mainPath[mainPath.length - 1]
     if (!roomSpecs.has(posKey(farthestR, farthestC))) {
-      roomSpecs.set(posKey(farthestR, farthestC), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+      roomSpecs.set(posKey(farthestR, farthestC), {
+        roomType: "encounter",
+        family: "treasure-chest",
+        reward: { type: "hieroglyphs" },
+      })
     }
 
     // Section nodes
@@ -907,11 +912,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
         if (section.trapped) {
-          roomSpecs.set(posKey(r, c), { roomType: "trap" })
+          roomSpecs.set(posKey(r, c), { roomType: "encounter", family: "arithmetic-reflex" })
         } else {
           const reward = section.puzzleRewards?.[pi]
           roomSpecs.set(posKey(r, c), {
-            roomType: "puzzle",
+            roomType: "encounter",
             // Never inherits the floor's own puzzleFamily (tableau, for tombs) — tableaus
             // consume hieroglyph symbols the player may not have yet, so a side path stays
             // sumplete unless it explicitly opts into a different family itself.
@@ -925,7 +930,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const [er, ec] = cells[cells.length - 1]
       if (chainKeyHostIdxs.has(sectionIdx)) {
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: "treasure-chest",
           reward: { type: "tombKey", keyId: nid(er, ec) },
           keyColor: chainKeyColorMap.get(sectionIdx),
         })
@@ -934,7 +940,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: section.shopPrice !== undefined ? "fez-shop" : "treasure-chest",
           reward: section.endReward ?? { type: "hieroglyphs" },
           ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
         })
@@ -977,11 +984,11 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
         if (subSection.trapped) {
-          roomSpecs.set(posKey(r, c), { roomType: "trap" })
+          roomSpecs.set(posKey(r, c), { roomType: "encounter", family: "arithmetic-reflex" })
         } else {
           const reward = subSection.puzzleRewards?.[pi]
           roomSpecs.set(posKey(r, c), {
-            roomType: "puzzle",
+            roomType: "encounter",
             // Same reasoning as the side-section case above: never inherits the floor's
             // tableau family unless the sub-section explicitly opts in itself.
             family: subSection.puzzleFamily ?? "sumplete",
@@ -994,7 +1001,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (isKeyHost) {
         const hColors = keyHostColors ?? (keyHostColor ? [keyHostColor] : [])
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: "treasure-chest",
           reward: { type: "tombKey", keyId: nid(er, ec) },
           ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
           ...(hColors.length > 1 ? { keyColors: hColors } : {}),
@@ -1004,7 +1012,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
       } else {
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: subSection.shopPrice !== undefined ? "fez-shop" : "treasure-chest",
           reward: subSection.endReward ?? { type: "hieroglyphs" },
           ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
         })
@@ -1105,7 +1114,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // offset into whichever side has open void next to it (see SiteMapView.tsx).
     const endpointPositions = new Set<string>()
     for (const [pk, spec] of roomSpecs) {
-      if (spec.roomType !== "treasure" && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue
+      // Dead-end rooms only — treasure/shop chests and stairs/exits, never a mid-path
+      // puzzle/trap encounter. Checked by family id, the exact literals this same function
+      // assigns above for what used to be roomType "treasure" — not a family-registry lookup
+      // (siteAssembler.ts is domain-layer, can't import the app-layer registry).
+      const isTreasureLike =
+        spec.roomType === "encounter" && (spec.family === "treasure-chest" || spec.family === "fez-shop")
+      if (!isTreasureLike && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue
       const [r, c] = pk.split(",").map(Number)
       const cell = cells2D[r][c]
       if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)

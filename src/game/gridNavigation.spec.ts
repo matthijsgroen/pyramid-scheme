@@ -12,7 +12,7 @@ const makeLinearGrid = (): FloorGrid => ({
   staircases: {},
   cells: [
     [
-      { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e"]), state: "reachable" },
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
       { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" },
       { type: "room", roomType: "exit", dirs: new Set<Direction>(["w"]), state: "fogged" },
     ],
@@ -37,7 +37,7 @@ describe(getOwnedKeys, () => {
         [
           {
             type: "room",
-            roomType: "treasure",
+            roomType: "encounter",
             dirs: new Set<Direction>(),
             state: "completed",
             reward: { type: "tombKey", keyId: "my-key" },
@@ -86,7 +86,7 @@ describe(completeCell, () => {
       staircases: {},
       cells: [
         [
-          { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
           {
             type: "room",
             roomType: "gate",
@@ -119,7 +119,7 @@ describe(completeCell, () => {
           { type: "room", roomType: "entrance", dirs: new Set<Direction>(["e"]), state: "reachable" },
           {
             type: "room",
-            roomType: "treasure",
+            roomType: "encounter",
             dirs: new Set<Direction>(["w", "s"]),
             state: "reachable",
             reward: { type: "tombKey", keyId: "the-key" },
@@ -186,7 +186,7 @@ describe(findPath, () => {
       ...makeLinearGrid(),
       cells: [
         [
-          { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
           { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "visible" },
           { type: "room", roomType: "exit", dirs: new Set<Direction>(["w"]), state: "reachable" },
         ],
@@ -213,7 +213,7 @@ describe(findPath, () => {
       staircases: {},
       cells: [
         [
-          { type: "room", roomType: "puzzle", dirs: new Set<Direction>(["e", "s"]), state: "reachable" },
+          { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e", "s"]), state: "reachable" },
           { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" },
           { type: "room", roomType: "exit", dirs: new Set<Direction>(["w", "s"]), state: "reachable" },
         ],

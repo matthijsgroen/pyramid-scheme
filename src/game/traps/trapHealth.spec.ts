@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { canAttemptTrap, trapDamage } from "./useProgression"
+import { canAttemptTrap, trapDamage } from "./trapHealth"
 
 describe("trapDamage", () => {
   it("deals 2 half-hearts with no armor", () => expect(trapDamage(0)).toBe(2))

@@ -1,9 +1,16 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type FC } from "react"
 import { mulberry32, shuffle } from "@/game/random"
-import { registerTrap } from "@/game/traps/trapRegistry"
-import type { TrapPlugin } from "@/game/traps/trapPlugin"
+import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
+import { TrapFamilyShell } from "@/app/TrapFamilies/TrapFamilyShell"
 import type { Difficulty } from "@/data/difficultyLevels"
+
+type ChallengeProps = {
+  question: ArithmeticQuestion
+  timeLimit: number
+  onPass: () => void
+  onFail: () => void
+}
 
 type Operation = "+" | "-" | "×"
 
@@ -55,12 +62,7 @@ const generate = (seed: number, difficulty: Difficulty): ArithmeticQuestion => {
   return { a, b, op, answer, choices }
 }
 
-const ArithmeticReflexComponent: TrapPlugin<ArithmeticQuestion>["Component"] = ({
-  question,
-  timeLimit,
-  onPass,
-  onFail,
-}) => {
+const ArithmeticReflexComponent: FC<ChallengeProps> = ({ question, timeLimit, onPass, onFail }) => {
   const { a, b, op, answer, choices } = question
   const [done, setDone] = useState(false)
   const [barWidth, setBarWidth] = useState(100)
@@ -113,8 +115,27 @@ const ArithmeticReflexComponent: TrapPlugin<ArithmeticQuestion>["Component"] = (
   )
 }
 
-registerTrap({
-  family: "arithmetic-reflex",
-  generate,
-  Component: ArithmeticReflexComponent,
+const ArithmeticReflexFamily: FamilyPlugin<ArithmeticQuestion>["Component"] = ({
+  puzzle,
+  ctx,
+  progression,
+  journeys,
+  onSolved,
+  onCancel,
+}) => (
+  <TrapFamilyShell
+    question={puzzle}
+    ctx={ctx}
+    progression={progression}
+    journeys={journeys}
+    onSolved={onSolved}
+    onCancel={onCancel}
+    ChallengeComponent={ArithmeticReflexComponent}
+  />
+)
+
+registerFamily({
+  meta: { id: "arithmetic-reflex", ownerMod: "trap", tags: ["trap"], icon: "⚡", color: "red" },
+  generate: (seed, ctx) => generate(seed, ctx.difficulty ?? "starter"),
+  Component: ArithmeticReflexFamily,
 })

@@ -48,6 +48,15 @@ const firstPyramid = (): FloorConfig => ({
   ],
 })
 
+// RoomType collapsed puzzle/trap/treasure into one "encounter" value (see
+// docs/mods-architecture.md) — these classify by the family id siteAssembler.ts assigns,
+// matching what the old roomType literal used to mean.
+const isPuzzleRoom = (c: RoomCell) =>
+  c.roomType === "encounter" && ["sumplete", "tableau", "crocodile"].includes(c.family ?? "")
+const isTrapRoom = (c: RoomCell) => c.roomType === "encounter" && c.family === "arithmetic-reflex"
+const isTreasureRoom = (c: RoomCell) =>
+  c.roomType === "encounter" && ["treasure-chest", "fez-shop"].includes(c.family ?? "")
+
 const findRoom = (grid: FloorGrid, predicate: (cell: RoomCell) => boolean) => {
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
@@ -75,7 +84,7 @@ describe(assembleFloor, () => {
     // stored config, never this runtime fallback).
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const goal = findRoom(result.grid, c => c.roomType === "treasure")
+    const goal = findRoom(result.grid, isTreasureRoom)
     expect(goal?.cell.reward).toEqual({ type: "hieroglyphs" })
   })
 
@@ -118,7 +127,7 @@ describe(assembleFloor, () => {
   it("does not set shopPrice on an ordinary (non-shop) end-of-path room", () => {
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const goal = findRoom(result.grid, c => c.roomType === "treasure")
+    const goal = findRoom(result.grid, isTreasureRoom)
     expect(goal?.cell.shopPrice).toBeUndefined()
   })
 
@@ -370,7 +379,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "trap") traps.push([r, c])
+          if (cell.type === "room" && isTrapRoom(cell)) traps.push([r, c])
         }
       if (traps.length === 0) continue
 
@@ -428,7 +437,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+          if (cell.type === "room" && isPuzzleRoom(cell)) puzzles.push([r, c])
         }
       if (puzzles.length === 0) continue
 
@@ -480,7 +489,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+          if (cell.type === "room" && isPuzzleRoom(cell)) puzzles.push([r, c])
         }
       if (puzzles.length === 0) continue
 
@@ -523,9 +532,9 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 1)
     expect(result.success).toBe(true)
     if (result.success) {
-      const mainPuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      const mainPuzzle = findRoom(result.grid, c => isPuzzleRoom(c) && c.family === "tableau")
       expect(mainPuzzle).not.toBeNull()
-      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "sumplete")
+      const sidePuzzle = findRoom(result.grid, c => isPuzzleRoom(c) && c.family === "sumplete")
       expect(sidePuzzle).not.toBeNull()
     }
   })
@@ -543,7 +552,7 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 1)
     expect(result.success).toBe(true)
     if (result.success) {
-      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      const sidePuzzle = findRoom(result.grid, c => isPuzzleRoom(c) && c.family === "tableau")
       expect(sidePuzzle).not.toBeNull()
     }
   })
@@ -560,7 +569,7 @@ describe(assembleFloor, () => {
       const result = assembleFloor("site-1", config, 42)
       expect(result.success, `pathPuzzles=${pathPuzzles} failed`).toBe(true)
       if (result.success) {
-        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && isPuzzleRoom(c))
         expect(puzzles.length, `pathPuzzles=${pathPuzzles} wrong count`).toBe(pathPuzzles)
       }
     }
@@ -615,7 +624,7 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle") as RoomCell[]
+      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && isPuzzleRoom(c)) as RoomCell[]
       expect(puzzles).toHaveLength(4)
       const rewards = puzzles.map(p => p.reward?.type)
       expect(rewards).toContain("money")
@@ -653,7 +662,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++) {
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "puzzle") puzzleDistances.push(distanceTo(r, c))
+          if (cell.type === "room" && isPuzzleRoom(cell)) puzzleDistances.push(distanceTo(r, c))
           // A branch point is any node with more than 2 connections — whether that's a
           // dedicated "fork" room, or a side section attached straight onto an existing
           // main-path room's own cell (which keeps that room's original roomType).
@@ -723,7 +732,7 @@ describe(assembleFloor, () => {
     for (let r = 0; r < result.grid.rows; r++)
       for (let c = 0; c < result.grid.cols; c++) {
         const cell = result.grid.cells[r][c]
-        if (cell.type === "room" && cell.roomType === "puzzle") puzzleRooms.add(`${r},${c}`)
+        if (cell.type === "room" && isPuzzleRoom(cell)) puzzleRooms.add(`${r},${c}`)
       }
     // 1 main-path puzzle + 1 parent-section puzzle + 3 sub-section puzzles, all distinct.
     expect(puzzleRooms.size).toBe(5)
@@ -803,8 +812,8 @@ describe(assembleFloor, () => {
       const result = assembleFloor("site-trap", config, 42)
       expect(result.success).toBe(true)
       if (result.success) {
-        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
-        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && isTrapRoom(c))
+        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && isPuzzleRoom(c))
         expect(traps.length).toBe(2)
         expect(puzzles.length).toBe(1) // only the main path puzzle
       }
@@ -821,7 +830,7 @@ describe(assembleFloor, () => {
       const result = assembleFloor("site-notrap", config, 42)
       expect(result.success).toBe(true)
       if (result.success) {
-        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && isTrapRoom(c))
         expect(traps.length).toBe(0)
       }
     })

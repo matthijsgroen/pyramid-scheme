@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
-import { type FC, useCallback, useState } from "react"
-import { registerPuzzle } from "@/game/puzzles/puzzleRegistry"
+import { useCallback, useState } from "react"
+import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { mulberry32 } from "@/game/random"
 import { generateCompareLevel, type CompareLevel } from "@/game/puzzles/crocodile/generateCompareLevel"
 import {
@@ -12,7 +12,6 @@ import {
   previewRight,
   resetCrocodileState,
 } from "@/game/puzzles/crocodile/crocodileState"
-import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
 import type { Operation } from "@/game/formulas/formulas"
 import { formulaToString } from "@/game/formulas/formulas"
 import { NumberChest } from "@/ui/molecules/NumberChest"
@@ -58,10 +57,7 @@ const CROC_CONFIG: Record<string, CrocodileConfig> = {
 
 const scaleDistance = (initialStep: number, n: number) => initialStep * (1 - Math.pow(0.5, n))
 
-const CrocodileComponent: FC<{ puzzle: CompareLevel; settings: PuzzleSettings; onSolved: () => void }> = ({
-  puzzle,
-  onSolved,
-}) => {
+const CrocodileComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, onSolved }) => {
   const { t } = useTranslation("common")
   const [state, setState] = useState(createCrocodileState)
   const { focus, answers } = state
@@ -266,10 +262,10 @@ const CrocodileComponent: FC<{ puzzle: CompareLevel; settings: PuzzleSettings; o
   )
 }
 
-registerPuzzle({
-  family: "crocodile",
-  generate: (seed, settings): CompareLevel => {
-    const difficulty = settings.difficulty ?? "starter"
+registerFamily({
+  meta: { id: "crocodile", ownerMod: "puzzle", tags: ["tomb-puzzle"], icon: "🐊", color: "green" },
+  generate: (seed, ctx): CompareLevel => {
+    const difficulty = ctx.difficulty ?? "starter"
     const config = CROC_CONFIG[difficulty] ?? CROC_CONFIG.starter
     const random = mulberry32(seed)
     const digit = Math.round(random() * 9)
@@ -286,7 +282,7 @@ registerPuzzle({
       random
     )
   },
-  Component: CrocodileComponent as FC<{ puzzle: unknown; settings: PuzzleSettings; onSolved: () => void }>,
+  Component: CrocodileComponent,
 })
 
 // re-export for type use

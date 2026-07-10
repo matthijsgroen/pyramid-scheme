@@ -2,11 +2,17 @@ import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
 import type { ArithmeticQuestion } from "@/app/TrapFamilies/ArithmeticReflex/plugin"
 import "@/app/TrapFamilies/ArithmeticReflex/plugin"
-import { getTrapPlugin } from "@/game/traps/trapRegistry"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { Difficulty } from "@/data/difficultyLevels"
 
 const generate = (seed: number, difficulty: Difficulty) =>
-  getTrapPlugin("arithmetic-reflex")!.generate(seed, difficulty) as ArithmeticQuestion
+  getFamilyPlugin("arithmetic-reflex")!.generate(seed, {
+    journeyId: "test",
+    edgeId: "test",
+    sectionHash: "test",
+    freshArrival: true,
+    difficulty,
+  }) as ArithmeticQuestion
 
 describe("ArithmeticReflex generator", () => {
   describe.each(difficulties)("%s difficulty", difficulty => {

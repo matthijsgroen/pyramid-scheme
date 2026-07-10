@@ -1,14 +1,9 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
-import { type FC } from "react"
-import { registerPuzzle } from "@/game/puzzles/puzzleRegistry"
+import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { generateSumplete, type SumpleteGrid } from "@/game/puzzles/sumplete/generateSumplete"
 import { SumpletePuzzle } from "./SumpletePuzzle"
-import type { PuzzleSettings } from "@/game/puzzles/puzzlePlugin"
 
-const SumpleteComponent: FC<{ puzzle: SumpleteGrid; settings: PuzzleSettings; onSolved: () => void }> = ({
-  puzzle,
-  onSolved,
-}) => (
+const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved }) => (
   <SumpletePuzzle
     grid={puzzle.grid}
     rowTargets={puzzle.rowTargets}
@@ -17,11 +12,11 @@ const SumpleteComponent: FC<{ puzzle: SumpleteGrid; settings: PuzzleSettings; on
   />
 )
 
-registerPuzzle({
-  family: "sumplete",
-  generate: (seed, settings): SumpleteGrid =>
-    generateSumplete(["expert", "master", "wizard"].includes(settings.difficulty ?? "starter") ? 4 : 3, seed, {
-      allowZeroTargets: settings.difficulty === "wizard",
+registerFamily({
+  meta: { id: "sumplete", ownerMod: "puzzle", tags: ["puzzle"], icon: "🔢", color: "blue" },
+  generate: (seed, ctx): SumpleteGrid =>
+    generateSumplete(["expert", "master", "wizard"].includes(ctx.difficulty ?? "starter") ? 4 : 3, seed, {
+      allowZeroTargets: ctx.difficulty === "wizard",
     }),
-  Component: SumpleteComponent as FC<{ puzzle: unknown; settings: PuzzleSettings; onSolved: () => void }>,
+  Component: SumpleteComponent,
 })

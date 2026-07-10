@@ -1,5 +1,5 @@
 export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
-export type RoomType = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+export type RoomType = "entrance" | "encounter" | "fork" | "gate" | "stairhead" | "exit"
 export type ConsumableType = "bandage" | "oil" | "trapTool"
 // Closed union — grows by one variant per new reward/currency (money, sellable were the
 // latest). docs/mods-architecture.md proposes collapsing this into a currency-id registry;
@@ -43,7 +43,9 @@ export type RoomCell = {
   gateVariant?: GateVariant
   keyColor?: KeyColor
   keyColors?: KeyColor[]
-  family?: PuzzleFamily
+  // Registered family id (src/app/families/familyRegistry.ts) — open string, not a closed
+  // union, since mods register their own families. Always set for roomType "encounter".
+  family?: string
   stairId?: string
   decoration?: DecorationKind
 }
