@@ -305,14 +305,43 @@ A tomb is **structurally the same as a pyramid interior**: a `SiteConfig[]` of c
 ```
 Entrance ── side path ── [fez shop] (always open, no gate)
     │
-    └── main path ── N tableau rooms (N grows with T) ──┬── [gate: tomb-key, requires key T]
-                                                          │        └── stairhead → floor T+1 entrance
-                                                          └── [crocodile capstone] ── [chest: treasure T + key T] ── exit
+    └── main path ── N tableau rooms ──┬── [gate: tomb-key, requires treasure T]
+                                        │        └── stairhead → floor T+1 entrance
+                                        └── [crocodile capstone] ── [chest: treasure T] ── exit
 ```
 
-- The **gated side path** (requiring key `T`) branches off the main path partway through and leads to floor `T+1`'s entrance — same `gate: {type:"tomb-key", wardKeyId}` primitive pyramids already use for ward gates.
-- The **main path's own end** — crocodile capstone, then the chest — is a separate, ungated terminus. The chest grants **both** treasure `T` and key `T` in one reward. The exit there returns to the overworld.
-- Key `T` is only obtainable from floor `T`'s own chest, and the gate it opens sits on floor `T`'s own main path — so reaching floor `T+1` means **solving floor T, then backtracking through the same floor** to the now-unlocked side path. This is the intended shape, not a workaround.
+- **The treasure *is* the key** — one reward, not two. Collecting treasure `T` at floor `T`'s chest is what satisfies floor `T`'s own gate (`gate: {type:"tomb-key", tombId, index}`, the same ward-gate primitive pyramids already use, just self-referential — a tomb gating its own next floor with its own earlier treasure). A treasure can *also* carry a permanent perk on top (see §1/§14) — being a key and granting a perk aren't exclusive.
+- The **gated side path** branches off the main path partway through and leads to floor `T+1`'s entrance.
+- The **main path's own end** — crocodile capstone, then the chest — is a separate, ungated terminus. The exit there returns to the overworld.
+- Since the gate that unlocks floor `T+1` sits on floor `T`'s own main path, reaching floor `T+1` means **solving floor T, then backtracking through the same floor** to the now-unlocked side path. This is the intended shape, not a workaround.
+- **N tableau rooms per floor** needs no new formula — `tableauLevels` (`src/data/tableaus.ts`) already has one `TableauLevel` entry per (tomb, run, level); those entries, fragmented into `hieroglyphFragment` collectibles by `fragments.ts`, are exactly the floor's tableau rooms. Nothing new to author here beyond what already exists.
+- **Crocodile capstone: every floor gets one**, not just the tomb's last (today's `hasCroc`/`isLast` special-casing in `configBuilder.ts` is the thing to replace). This needs to become an *authorable per-floor DSL field* — not another hardcoded tier/position special case. See the DSL example below.
+- **Gating is soft everywhere** — tableau, trap, and gate rooms are all approachable and enterable regardless of what the player currently holds; they simply can't be *solved*/*passed* yet. No hard "encounter does not launch" block (today's trap behavior — `canAttemptTrap()` — is the one holdout and needs to soften to match).
+- **Tomb "complete"** fires on treasure 1 alone (matches §14: treasure #1 is always the tier-unlock). Floors 2+ are a deepening tail explored over time, not a completion requirement.
+
+**Illustrative DSL** (once `FloorConstraint` gains a per-floor capstone field — doesn't exist yet, `lastMainPuzzleFamily` today only exists on the resolved `FloorConfig`, hardcoded by `configBuilder.ts`):
+
+```ts
+// One authored floor inside a tomb's `floors` array — this is floor 3 (0-based index 2).
+const floorThree: FloorConstraint = {
+  encounter: "tomb-puzzle",           // main-path rooms default to tableau
+  pathPuzzles: 3,                     // however many TableauLevel entries this run has
+  lastMainPuzzleFamily: "crocodile",  // this floor's own capstone — authored per floor now,
+                                       // not hardcoded to "only the tomb's last floor"
+  mainEndReward: { type: "tombKey", keyId: "starter_treasure_tomb:t3" },
+  // the treasure IS the key — this one reward both records the collectible and satisfies
+  // the next floor's gate below
+  sideSections: [
+    { pathPuzzles: 0, end: "treasure", shopPrice: 250 }, // always-open branch to the Fez shop
+    {
+      pathPuzzles: 0,
+      end: "staircase",
+      // self-referential: this tomb's own 3rd treasure (0-based index 2) unlocks its own next floor
+      gate: { type: "tomb-key", tombId: "starter_treasure_tomb", index: 2 },
+    },
+  ],
+}
+```
 
 ### The core gameplay loop
 
@@ -341,11 +370,11 @@ The final treasure in each multi-tomb tier's earlier tomb is the *location key* 
 
 Each tomb has a small authored pool of 3–6 symbols, sourced from `TOMB_SYMBOLS` in `tableaus.ts`. The generator reads this — no separate field in the tomb template. A tableau room is locked if any of its symbols are not yet completed by the player.
 
-### Still open
+### Implementation gap (not a design question — this is settled, just not built)
 
-- Exact formula for "N tableaus on floor T" — does it reuse `fragments.ts`'s existing per-tier/per-floor-index table (`FRAGMENT_MATRIX`), or is it a new, simpler rule?
-- Hard gate or soft gate on an under-equipped tableau: does the room refuse entry outright (like a locked door), or can the player enter and simply fail to solve it?
-- Does every floor get its own crocodile capstone, or only the tomb's last floor (crocodile is currently a main-path-finale-only mechanic, singular)?
+- `FloorConstraint` (`dsl.ts`) needs the per-floor capstone field shown above — today `lastMainPuzzleFamily` only exists on the resolved `FloorConfig`, set by `configBuilder.ts`'s hardcoded `hasCroc`/`isLast` tier check.
+- `configBuilder.ts`'s `buildTombConfigs` generates one small site per tomb (matching `tomb.levelCount`, one run's worth) — needs to become the persistent multi-floor site described above.
+- `TombExpedition.tsx` still uses the live `renderPuzzle` override; `useJourneys.ts` still lacks the `isInteriorPyramid`-equivalent pinned-seed/capped-completionCount treatment for `treasure_tomb` journeys; trap's `canAttemptTrap()` hard-blocks and needs to soften.
 
 ---
 
