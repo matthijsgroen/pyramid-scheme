@@ -1,10 +1,12 @@
 # Mods architecture — design exercise
 
 Status: **exploratory, not decided**. Captures a brainstorm on reshaping trap /
-puzzle / (future) shop mechanics into pluggable mods over a shared engine.
-Design now, implement later — after the in-flight shop branch lands, so the
-generalization is read off three real implementations instead of two and a
-plan doc.
+puzzle / shop mechanics into pluggable mods over a shared engine. Shop has
+now landed on `main` (#104, #106–109) — three real implementations exist to
+generalize from instead of two and a plan doc, which was the condition this
+doc set for moving from design to implementation. Reviewed shop against this
+doc on PR #106; feedback incorporated (`useShopEncounter.ts`, pointer
+comments on `TreasureReward`).
 
 ## Starting observation
 
