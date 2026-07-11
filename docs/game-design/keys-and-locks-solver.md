@@ -79,6 +79,51 @@ runs the same loop:
    solvable — recompute the reachable play area (now bigger) and continue
    to the next blocking key.
 
+### Distribution rules: composable functions, not declarative config
+
+A distribution rule is a plain function over the reachable area's
+candidate slots, `(candidates, ctx) => candidates` (filtered/reordered,
+best-first) — registerable by a mod the same way `registerFamily`/
+`registerCurrency` already are. `WARD_MIX`-style weighted cross-tier
+targeting is real logic, not expressible as a simple config object without
+inventing a rule language for it.
+
+The three rules named so far all decompose into two small, reusable
+primitive kinds — **filters** (narrow candidates) and **rankers** (order
+what's left) — composed with a plain `pipe`:
+
+```ts
+// map fragment: dedup by pyramid, then generic loot priority
+pipe(uniqueBy(slot => slot.pyramidId), rankBy(lootPriority))
+
+// hieroglyph fragment: tier-match filter, then generic loot priority
+pipe(filterBy(slot => slot.difficulty === ctx.targetDifficulty), rankBy(lootPriority))
+
+// ward-key (replaces WARD_MIX): weighted tier-target ranker, no filter
+pipe(rankBy(weightedTierTarget(ctx.currencyTier)), rankBy(lootPriority))
+```
+
+A future currency composes the same handful of primitives instead of
+writing placement logic from scratch.
+
+### Preferences are soft — they relax under pressure, they don't block
+
+A distribution rule's constraint can be broken if honoring it strictly
+would leave instances unplaceable. Concretely: map fragments prefer one
+per journey, but higher difficulty tiers have more tombs (more fragments
+needed) than journeys to spread them across uniquely — the constraint must
+degrade gracefully, not block generation. This isn't new: `fragments.ts`'s
+`assignFragments` already does exactly this today (a strict first pass,
+then a relaxed second pass if the strict pool's exhausted) — it just needs
+to become a **generic combinator** every currency reuses instead of
+per-currency bespoke retry code:
+
+```ts
+preferThenRelax(uniqueBy(slot => slot.pyramidId), rankBy(lootPriority))
+// tries the strict filter first; only falls through to the relaxed rule
+// (skipping the filter, keeping the ranker) if too few candidates survive
+```
+
 ## Worked example
 
 **Blocker 1 — reaching the first tomb.** The tomb needs `piecesRequired`
