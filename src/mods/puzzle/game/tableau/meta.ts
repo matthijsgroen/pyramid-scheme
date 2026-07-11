@@ -1,4 +1,5 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
+import { resolveTableauKeyRequirements } from "./keyRequirements"
 
 export const TABLEAU_META: FamilyMeta = {
   id: "tableau",
@@ -7,4 +8,5 @@ export const TABLEAU_META: FamilyMeta = {
   icon: "📜",
   color: "amber",
   rewardWeight: 8,
+  resolveKeyRequirements: resolveTableauKeyRequirements,
 }

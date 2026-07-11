@@ -25,8 +25,8 @@ export type ResolveEncounter = (encounter: string | string[] | undefined, defaul
 // Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's
 // hieroglyph requirement) to opaque key ids — same idea as ResolveEncounter, injected so
 // this module never needs to know which family owns which requirement, only that one might
-// exist. Real implementation dispatches by familyId to whichever family provides it (see
-// src/mods/allKeyRequirementResolvers.ts); most families provide none.
+// exist. Real implementation dispatches by familyId to whichever family's own FamilyMeta
+// declares one (see src/mods/allFamilyMeta.ts); most families provide none.
 export type ResolveKeyRequirements = (
   familyId: string,
   ctx: { journeyId: string; floorIndex: number; pathIndex: number; encounterArgs?: unknown }

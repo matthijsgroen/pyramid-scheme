@@ -1,4 +1,5 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
+import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { ARITHMETIC_REFLEX_META } from "./trap/game/arithmeticReflex/meta"
 import { SUMPLETE_META } from "./puzzle/game/sumplete/meta"
 import { TABLEAU_META } from "./puzzle/game/tableau/meta"
@@ -20,3 +21,9 @@ export const ALL_FAMILY_META: FamilyMeta[] = [
   TREASURE_CHEST_META,
   KEY_GATE_META,
 ]
+
+// Dispatches to whichever family declares its own resolveKeyRequirements (most provide
+// none) — lives on FamilyMeta itself, not a separate registry, so there's exactly one place
+// to touch when registering a new family, key-requirement-bearing or not.
+export const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
+  ALL_FAMILY_META.find(m => m.id === familyId)?.resolveKeyRequirements?.(ctx)

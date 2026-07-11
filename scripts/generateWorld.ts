@@ -19,7 +19,7 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { resolveKeyRequirements } from "../src/mods/allKeyRequirementResolvers"
+import { resolveKeyRequirements } from "../src/mods/allFamilyMeta"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

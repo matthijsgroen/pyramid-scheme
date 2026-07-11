@@ -10,7 +10,7 @@ import { HIEROGLYPH_REQUIRED } from "./data"
 // No default resolver here — this module stays within src/worldGen/'s own dependency rules
 // (data/, game/ only) same as assembleFloor itself never importing the real resolveEncounter.
 // A caller wanting real key-requirement gating (e.g. a future placement script) passes one
-// in, built from src/mods/allKeyRequirementResolvers.ts.
+// in, built from src/mods/allFamilyMeta.ts.
 const noKeyRequirements: ResolveKeyRequirements = () => undefined
 
 // The coarse reachability graph: "which floors/tombs/tiers are reachable given keys

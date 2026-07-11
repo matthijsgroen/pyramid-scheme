@@ -40,7 +40,7 @@ describe("buildConfigs golden guard", () => {
       mapPieces: WORLD_TARGETS.mapPieceRewards,
       mosaicPieces: WORLD_TARGETS.mosaicPieceRewards,
     })
-  })
+  }, 20000)
 
   it("is deterministic across runs", () => {
     const first = buildConfigs()

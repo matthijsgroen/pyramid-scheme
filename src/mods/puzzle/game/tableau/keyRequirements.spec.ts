@@ -18,36 +18,71 @@ describe(resolveTableauKeyRequirements, () => {
 
     for (let pathIndex = 0; pathIndex < levelCount; pathIndex++) {
       const expected = realTableau(tombId, 1, pathIndex + 1)!
-      expect(resolveTableauKeyRequirements(tombId, 0, pathIndex, { runNr: 1 })).toEqual(
-        expected.inventoryIds.map(id => `hieroglyph:${id}`)
-      )
+      expect(
+        resolveTableauKeyRequirements({ journeyId: tombId, floorIndex: 0, pathIndex, encounterArgs: { runNr: 1 } })
+      ).toEqual(expected.inventoryIds.map(id => `hieroglyph:${id}`))
     }
   })
 
   it("runNr selects which treasure's tableau, independent of floorIndex", () => {
     const tombId = "starter_treasure_tomb"
-    const run1 = resolveTableauKeyRequirements(tombId, 0, 0, { runNr: 1 })
-    const run2 = resolveTableauKeyRequirements(tombId, 0, 0, { runNr: 2 })
+    const run1 = resolveTableauKeyRequirements({
+      journeyId: tombId,
+      floorIndex: 0,
+      pathIndex: 0,
+      encounterArgs: { runNr: 1 },
+    })
+    const run2 = resolveTableauKeyRequirements({
+      journeyId: tombId,
+      floorIndex: 0,
+      pathIndex: 0,
+      encounterArgs: { runNr: 2 },
+    })
     expect(run2).not.toEqual(run1)
   })
 
   it("floorIndex doesn't affect the result — runNr/pathIndex fully determine the lookup", () => {
     const tombId = "starter_treasure_tomb"
-    const a = resolveTableauKeyRequirements(tombId, 0, 0, { runNr: 1 })
-    const b = resolveTableauKeyRequirements(tombId, 99, 0, { runNr: 1 })
+    const a = resolveTableauKeyRequirements({
+      journeyId: tombId,
+      floorIndex: 0,
+      pathIndex: 0,
+      encounterArgs: { runNr: 1 },
+    })
+    const b = resolveTableauKeyRequirements({
+      journeyId: tombId,
+      floorIndex: 99,
+      pathIndex: 0,
+      encounterArgs: { runNr: 1 },
+    })
     expect(a).toEqual(b)
   })
 
   it("throws when encounterArgs is missing or malformed", () => {
     const tombId = "starter_treasure_tomb"
-    expect(() => resolveTableauKeyRequirements(tombId, 0, 0, undefined)).toThrow()
-    expect(() => resolveTableauKeyRequirements(tombId, 0, 0, {})).toThrow()
-    expect(() => resolveTableauKeyRequirements(tombId, 0, 0, { runNr: -1 })).toThrow()
-    expect(() => resolveTableauKeyRequirements(tombId, 0, 0, { runNr: "1" })).toThrow()
+    const base = { journeyId: tombId, floorIndex: 0, pathIndex: 0 }
+    expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: undefined })).toThrow()
+    expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: {} })).toThrow()
+    expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: { runNr: -1 } })).toThrow()
+    expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: { runNr: "1" } })).toThrow()
   })
 
   it("throws for a (journey, runNr, levelNr) combination with no matching tableau level", () => {
-    expect(() => resolveTableauKeyRequirements("starter_treasure_tomb", 0, 999, { runNr: 1 })).toThrow()
-    expect(() => resolveTableauKeyRequirements("not-a-real-tomb", 0, 0, { runNr: 1 })).toThrow()
+    expect(() =>
+      resolveTableauKeyRequirements({
+        journeyId: "starter_treasure_tomb",
+        floorIndex: 0,
+        pathIndex: 999,
+        encounterArgs: { runNr: 1 },
+      })
+    ).toThrow()
+    expect(() =>
+      resolveTableauKeyRequirements({
+        journeyId: "not-a-real-tomb",
+        floorIndex: 0,
+        pathIndex: 0,
+        encounterArgs: { runNr: 1 },
+      })
+    ).toThrow()
   })
 })

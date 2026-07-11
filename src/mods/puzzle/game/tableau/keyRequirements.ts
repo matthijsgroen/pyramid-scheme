@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { tableauLevels } from "@/data/tableaus"
+import type { FamilyKeyRequirementResolver } from "@/game/families/familyMeta"
 
 // The only place that knows a tableau room's completion precondition is "hold enough
 // fragments of these specific hieroglyphs" — core (siteAssembler.ts/siteValidator.ts) only
@@ -15,12 +16,11 @@ import { tableauLevels } from "@/data/tableaus"
 // ResolveKeyRequirements in siteAssembler.ts for how pathIndex is scoped).
 const tableauEncounterArgsSchema = z.object({ runNr: z.number().int().positive() })
 
-export const resolveTableauKeyRequirements = (
-  journeyId: string,
-  _floorIndex: number,
-  pathIndex: number,
-  encounterArgs?: unknown
-): string[] | undefined => {
+export const resolveTableauKeyRequirements: FamilyKeyRequirementResolver = ({
+  journeyId,
+  pathIndex,
+  encounterArgs,
+}) => {
   const { runNr } = tableauEncounterArgsSchema.parse(encounterArgs)
   const levelNr = pathIndex + 1
   const level = tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
