@@ -58,6 +58,14 @@ Higher-tier tombs grant utility perks (compass, detection); early tombs primaril
 
 ## 2. Pyramid interior node types
 
+This table predates `keys-and-locks-solver.md`'s node model — read that
+doc for the current shape. Short version: every row below except `fork`
+and `stairhead`/`exit` (which unify into `portal`) is a registered family
+under one `encounter` node type, including the two gate rows — a gate has
+its own click-to-attempt visual and `onSolved`, same contract as every
+other family, not a separate mechanism. Kept here for the historical
+loot-table detail, not the node taxonomy.
+
 The interior is a node graph. Every room is one of:
 
 | Node type | Role | Loot / effect |

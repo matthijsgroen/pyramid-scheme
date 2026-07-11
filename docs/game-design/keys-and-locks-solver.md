@@ -23,6 +23,76 @@ solver fed by per-currency rule data. (A mod that introduces its own
 key-like currency would supply its own rule the same way — that's the one
 place this touches the mods architecture at all.)
 
+## Node types: portal, fork, encounter — gate is not a fourth thing
+
+Three conceptual node kinds cover every room:
+
+- **Portal** — entrance/exit/stairhead, unified. Pure transition, no
+  family dispatch, no requirement.
+- **Fork** — pure branching. Structural, not a dispatched node at all.
+- **Encounter** — everything else. Always family-dispatched (the existing
+  `FamilyPlugin` registry), and *optionally* carries a key-requirement
+  precondition on top of its own interactive content.
+
+**Gate is not architecturally distinct from encounter — it's a family.** A
+gate has real interactive content: it renders a visual, the player clicks
+to attempt it, shows "you don't have the right key yet" if unsatisfied
+(soft — same as every other gating in this doc, never a hard block on
+approach), and calls `onSolved()` once the requirement is met and the
+player clicks. That's the exact same `FamilyPlugin` contract
+`TreasureFamily`'s click-to-open chest already uses — a gate is just a
+registered family (`id: "key-gate"`, tags: `["gate"]`) whose defaults are
+"no loot on solve, solving requires possessing a key." Today's `RoomType`
+(`entrance | encounter | fork | gate | stairhead | exit`) collapses one
+step further than the mods-architecture doc's original family-registry
+work: `gate` merges into `encounter`, and `entrance`/`stairhead`/`exit`
+unify into `portal`. Final shape: `portal | fork | encounter`.
+
+**Tableau is an encounter that also happens to gate.** The same
+key-requirement precondition that makes a gate a gate is just a property
+any encounter can carry — a tableau room still renders its own interactive
+puzzle content, but can't be solved until the player possesses the
+required hieroglyph symbols. Not two mechanisms, one precondition applied
+to two different kinds of interactive content (a gate with none, a tableau
+with its own puzzle).
+
+## Demand vs. supply: a node declares what it needs, a currency decides where it goes
+
+A gate/encounter's key-requirement is authored **on the node** — what
+currency, how many instances (or which specific variants). It does **not**
+own placement. Placement stays the currency's own distribution rule (map
+fragment's "one per journey" applies no matter which gate needs it).
+Node = demand. Currency = supply policy. This keeps the split intact
+everywhere: a hundred different gates can all demand "2 hieroglyph
+fragments" without any of them knowing or caring where those fragments
+actually get placed.
+
+## A currency's "key" role and its collection-screen visibility are independent
+
+Whether a currency shows on a persistent collection UI (`Collection.tsx`)
+is its own metadata flag, unrelated to whether it functions as a key.
+Three currencies, three independent combinations already exist in the
+game as designed: hieroglyph fragments are both a key (gate tableaus) and
+collection-tracked (the 58-hieroglyph collection screen); map pieces are a
+key (gate tomb entry) with no collection UI at all; mosaic tiles are
+collection-tracked (the mosaic reveal) and never function as a key.
+
+## Locks have a scope — room, journey, or global
+
+A lock's possession-check is the same mechanism everywhere — "does the
+player hold currency X" — but what it unlocks differs by **scope**:
+
+- **Room-scoped** — a gate/encounter node in one specific site.
+- **Journey-scoped** — a tomb becomes enterable once `piecesRequired` map
+  pieces are held (no single room, a threshold over the whole journey).
+- **Global-scoped** — the next difficulty tier unlocks.
+
+One key instance can satisfy multiple scoped locks at once — a tomb's
+first treasure is simultaneously the thing that opens that tomb's own
+room-scoped ward gates *and* the thing that flips the global next-
+difficulty unlock. Not two keys, one key checked against two locks of
+different scope.
+
 ## The invariant the solver exists to guarantee
 
 Reaching the highest difficulty tier (Wizard) must never be blocked. This
