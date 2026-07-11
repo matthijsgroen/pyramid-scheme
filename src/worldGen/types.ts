@@ -35,6 +35,9 @@ export type SubSection = {
    * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. An
    * array means AND: every listed tag must be present on the resolved family. */
   encounter?: string | string[]
+  /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
+   * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
+  encounterArgs?: unknown
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -55,6 +58,9 @@ export type FloorConfig = {
   packing?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
+  /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
+   * `{runNr}`) — mirrors game/siteTypes.ts's FloorConfig.encounterArgs. */
+  encounterArgs?: unknown
 }
 
 export type SiteConfig = FloorConfig[]

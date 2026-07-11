@@ -6,10 +6,10 @@ import { resolveTableauKeyRequirements } from "./puzzle/game/tableau/keyRequirem
 // each other's registries. Most families provide none; only tableau does today.
 export const ALL_KEY_REQUIREMENT_RESOLVERS: Record<
   string,
-  (journeyId: string, floorIndex: number, pathIndex: number) => string[] | undefined
+  (journeyId: string, floorIndex: number, pathIndex: number, encounterArgs?: unknown) => string[] | undefined
 > = {
   tableau: resolveTableauKeyRequirements,
 }
 
 export const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
-  ALL_KEY_REQUIREMENT_RESOLVERS[familyId]?.(ctx.journeyId, ctx.floorIndex, ctx.pathIndex)
+  ALL_KEY_REQUIREMENT_RESOLVERS[familyId]?.(ctx.journeyId, ctx.floorIndex, ctx.pathIndex, ctx.encounterArgs)

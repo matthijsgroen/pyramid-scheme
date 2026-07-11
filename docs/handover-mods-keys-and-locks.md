@@ -139,41 +139,54 @@ written yet:
        0-based position among its floor's main-path puzzle rooms — pure
        structural data).
      - `siteAssembler.ts` gained an injected `ResolveKeyRequirements`
-       function (mirroring the existing `ResolveEncounter` pattern),
-       called per main-path puzzle room using the same path-position index
-       already computed for `puzzleRewards[k]`. New params are bundled
-       into one trailing options object (`{resolveKeyRequirements,
+       function (mirroring the existing `ResolveEncounter` pattern), called
+       per puzzle room — main path, side section, and sub-section, each
+       using its own section-scoped 0-based path-position index (same one
+       already computed for `puzzleRewards[k]`/`[pi]`). New params are
+       bundled into one trailing options object (`{resolveKeyRequirements,
        floorRef}`), not raw positional args — avoids the "pass `undefined`
        to skip an earlier optional param" problem `ResolveEncounter` alone
        didn't have room for.
      - `siteValidator.ts`'s `reachableFrom` (the fine BFS) now also checks
        `requiredKeyIds`.
+     - A generic `encounterArgs?: unknown` DSL field (on `FloorConfig` and
+       on `SubSection`/`SideSection`) lets an author attach an opaque
+       payload to any corridor's rooms — threaded through `dsl.ts` →
+       `sideSections.ts`/`buildSite.ts` → the runtime config `assembleFloor`
+       reads. This decouples a tableau corridor from floor position
+       entirely: it can be authored on the main path or on a ward-gated
+       side path, and two corridors on the same floor can each carry their
+       own payload.
      - The only place that knows hieroglyphs/tableaus exist:
-       `src/mods/puzzle/game/tableau/keyRequirements.ts` (looks up
-       `tableauLevels` by `(journeyId, floorIndex, pathIndex)`, derives
-       `hieroglyph:${id}` key strings), aggregated by
-       `src/mods/allKeyRequirementResolvers.ts` (a plain, side-effect-free
-       `Record<familyId, resolver>` mirroring `src/mods/allFamilyMeta.ts`'s
-       shape). **`reachability.ts` does NOT import this aggregator
-       directly** — `docs/instructions/architecture.md`'s dependency table
-       doesn't actually list `src/mods/` as importable from
-       `src/worldGen/`, and `allFamilyMeta.ts` turned out to be an
-       unused/aspirational precedent, not a working one, when checked.
-       `reachableFloorsInSite`/`computeReachability` default to a no-op
-       resolver instead (same as `assembleFloor` never importing the real
-       `resolveEncounter`); whoever wires this into a real script supplies
-       the real one.
-     - **A real mapping bug caught by review, not by me**: `tableauLevels`'
-       `runNumber` is which *replay* of a tomb (`completionCount + 1`, per
-       `TombExpedition.tsx`/`TableauInventory.tsx`), and `levelNr`/array
-       position is which *floor* within that replay — the opposite of what
-       reading the generator code in isolation suggested. World-gen's
-       persistent floor sequence only cares about run 1 (run 2+ is the
-       still-unbuilt revisit mechanic, pyramid-interior-design.md §3);
-       `pathIndex` has no correspondence in today's data (one tableau room
-       per floor) and is accepted but unused. Fixed, with a test that
-       checks against every floor of a real multi-floor tomb (not just
-       "floor 1 differs from floor 0", which passed even with the bug).
+       `src/mods/puzzle/game/tableau/keyRequirements.ts`. It validates
+       `encounterArgs` via zod (`{runNr: number}`), throwing on a bad/
+       missing shape, then looks up `tableauLevels` by
+       `(journeyId, runNumber: runNr, levelNr: pathIndex + 1)`, throwing if
+       nothing matches — a tagged tableau room must always resolve to
+       something. Aggregated by `src/mods/allKeyRequirementResolvers.ts` (a
+       plain, side-effect-free `Record<familyId, resolver>` mirroring
+       `src/mods/allFamilyMeta.ts`'s shape). **`reachability.ts` does NOT
+       import this aggregator directly** — `docs/instructions/
+       architecture.md`'s dependency table doesn't actually list
+       `src/mods/` as importable from `src/worldGen/`, and `allFamilyMeta.ts`
+       turned out to be an unused/aspirational precedent, not a working
+       one, when checked. `reachableFloorsInSite`/`computeReachability`
+       default to a no-op resolver instead (same as `assembleFloor` never
+       importing the real `resolveEncounter`); whoever wires this into a
+       real script supplies the real one.
+     - **A real mapping bug caught by review, not by me** (now superseded):
+       `tableauLevels`' `runNumber` is which *replay*/treasure a tomb floor
+       unlocks (`completionCount + 1`, per `TombExpedition.tsx`/
+       `TableauInventory.tsx`), and `levelNr`/array position is which room
+       within that run — the opposite of what reading the generator code in
+       isolation suggested. The original fix hardcoded `runNumber === 1`
+       (world-gen only ever building "run 1"); that's since been replaced
+       by the `encounterArgs.runNr` mechanism above — `configBuilder.ts`'s
+       `buildTombConfigs` now authors `encounterArgs: {runNr: i + 1}` per
+       floor by default (tying each floor's tableau to the treasure it
+       unlocks, "grind era" style), verified against every real tomb
+       (`treasures.length === levelCount` for all 9) so the default never
+       fails to resolve.
    - Still to build: the worklist loop itself (a queue of not-yet-satisfied
      locks, recomputing reachability after each placement — this is now
      clearly load-bearing for hieroglyph fragments too, not just ward

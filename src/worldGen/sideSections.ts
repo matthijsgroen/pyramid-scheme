@@ -47,6 +47,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
+    ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
   }
 }
 

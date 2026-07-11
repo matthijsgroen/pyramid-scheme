@@ -78,11 +78,13 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index", () => {
-    const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau" }
+  it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index and the floor's encounterArgs", () => {
+    const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau", encounterArgs: { runNr: 7 } }
     const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {
       resolveKeyRequirements: (familyId, ctx) =>
-        familyId === "tableau" ? [`hieroglyph:${ctx.journeyId}:${ctx.floorIndex}:${ctx.pathIndex}`] : undefined,
+        familyId === "tableau"
+          ? [`hieroglyph:${ctx.journeyId}:${ctx.floorIndex}:${ctx.pathIndex}:${JSON.stringify(ctx.encounterArgs)}`]
+          : undefined,
       floorRef: { journeyId: "starter_treasure_tomb", floorIndex: 2 },
     })
     if (!result.success) throw new Error("assembly failed")
@@ -91,8 +93,40 @@ describe(assembleFloor, () => {
     const pathIndices = puzzleRooms.map(c => c.pathIndex).sort()
     expect(pathIndices).toEqual([0, 1])
     for (const room of puzzleRooms) {
-      expect(room.requiredKeyIds).toEqual([`hieroglyph:starter_treasure_tomb:2:${room.pathIndex}`])
+      expect(room.requiredKeyIds).toEqual([
+        `hieroglyph:starter_treasure_tomb:2:${room.pathIndex}:${JSON.stringify({ runNr: 7 })}`,
+      ])
     }
+  })
+
+  it("resolves a side-section puzzle room's own key requirement via the injected resolver, using that section's own encounterArgs and its own room position", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      sideSections: [
+        {
+          pathPuzzles: 2,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "tableau",
+          encounterArgs: { runNr: 3 },
+        },
+      ],
+    }
+    const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {
+      resolveKeyRequirements: (familyId, ctx) =>
+        familyId === "tableau" ? [`hieroglyph:${ctx.pathIndex}:${JSON.stringify(ctx.encounterArgs)}`] : undefined,
+      floorRef: { journeyId: "starter_treasure_tomb", floorIndex: 2 },
+    })
+    if (!result.success) throw new Error("assembly failed")
+    const puzzleRooms = result.grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && c.family === "tableau")
+    expect(puzzleRooms).toHaveLength(2)
+    const keys = puzzleRooms.map(c => c.requiredKeyIds?.[0]).sort()
+    expect(keys).toEqual([
+      `hieroglyph:0:${JSON.stringify({ runNr: 3 })}`,
+      `hieroglyph:1:${JSON.stringify({ runNr: 3 })}`,
+    ])
   })
 
   it("goal room grants nothing, not a free mosaicPiece, when mainEndReward is unset", () => {

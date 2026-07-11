@@ -48,9 +48,10 @@ export type RoomCell = {
   gateVariant?: GateVariant
   keyColor?: KeyColor
   keyColors?: KeyColor[]
-  // This room's position among its floor's main-path puzzle rooms (0-based) — purely
-  // structural, meaningful only to whichever family reads it (e.g. the tableau family
-  // re-deriving which TableauLevel it presents from journeyId + floor + this index).
+  // This room's position among its own section's puzzle rooms (0-based, path order) —
+  // purely structural, meaningful only to whichever family reads it (e.g. the tableau
+  // family re-deriving which TableauLevel it presents from journeyId + the section's own
+  // encounterArgs.runNr + this index, not from floor position).
   pathIndex?: number
   // Registered family id (src/app/families/familyRegistry.ts) — open string, not a closed
   // union, since mods register their own families. Always set for roomType "encounter".
@@ -95,6 +96,10 @@ export type SubSection = {
   encounter?: string | string[]
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
+  /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
+   * `{runNr}`) — validated by that family's own ResolveKeyRequirements resolver, never
+   * interpreted here. See ResolveKeyRequirements in siteAssembler.ts. */
+  encounterArgs?: unknown
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -121,6 +126,10 @@ export type FloorConfig = {
   packing?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
+  /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
+   * `{runNr}`) — validated by that family's own ResolveKeyRequirements resolver, never
+   * interpreted here. See ResolveKeyRequirements in siteAssembler.ts. */
+  encounterArgs?: unknown
 }
 
 // A site is one or more floors. Index 0 = surface.

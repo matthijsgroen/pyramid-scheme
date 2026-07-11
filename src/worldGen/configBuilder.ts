@@ -177,6 +177,11 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     // floor gets a ward-path shortcut gated by that same key: walk the floor once to earn
     // it, then a later re-entry can skip straight past via the shortcut instead of
     // re-solving its tableau. Never authored per-tomb; systemic for all.
+    //
+    // encounterArgs.runNr defaults to this floor's own 1-based index — same as the "grind
+    // era", each floor's tableau is tied to the treasure it unlocks (perkIndex above walks
+    // in lockstep with i). An authored floor can override it to place its tableau content
+    // on a different run (e.g. a ward-gated side path pointing at a later run's puzzle).
     const floors: FloorConstraint<TombRewardHint>[] = Array.from({ length: levelCount }, (_, i) => {
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
@@ -192,6 +197,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
         packing: authored?.packing ?? constraint.packing,
         sealed: authored?.sealed ?? constraint.sealed,
+        encounterArgs: authored?.encounterArgs ?? { runNr: i + 1 },
       }
     })
 

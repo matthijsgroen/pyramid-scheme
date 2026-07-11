@@ -29,7 +29,7 @@ export type ResolveEncounter = (encounter: string | string[] | undefined, defaul
 // src/mods/allKeyRequirementResolvers.ts); most families provide none.
 export type ResolveKeyRequirements = (
   familyId: string,
-  ctx: { journeyId: string; floorIndex: number; pathIndex: number }
+  ctx: { journeyId: string; floorIndex: number; pathIndex: number; encounterArgs?: unknown }
 ) => string[] | undefined
 const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
 
@@ -905,7 +905,11 @@ export const assembleFloor = (
             ? resolveEncounter(config.lastMainPuzzleFamily, config.lastMainPuzzleFamily)
             : resolveEncounter(config.encounter, "puzzle")
         const reward = config.puzzleRewards?.[k]
-        const requiredKeyIds = resolveKeyRequirements(family.familyId, { ...floorRef, pathIndex: k })
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+          ...floorRef,
+          pathIndex: k,
+          encounterArgs: config.encounterArgs,
+        })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           family: family.familyId,
@@ -986,6 +990,11 @@ export const assembleFloor = (
         const [r, c] = cells[secContentIndices[pi]]
         const reward = section.puzzleRewards?.[pi]
         const family = resolveEncounter(section.encounter, "puzzle")
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+          ...floorRef,
+          pathIndex: pi,
+          encounterArgs: section.encounterArgs,
+        })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
@@ -993,6 +1002,7 @@ export const assembleFloor = (
           // tag's default) unless it explicitly opts into a different family itself.
           family: family.familyId,
           tags: family.tags,
+          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
       }
@@ -1063,12 +1073,18 @@ export const assembleFloor = (
         const [r, c] = cells[subContentIndices[pi]]
         const reward = subSection.puzzleRewards?.[pi]
         const family = resolveEncounter(subSection.encounter, "puzzle")
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+          ...floorRef,
+          pathIndex: pi,
+          encounterArgs: subSection.encounterArgs,
+        })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           // Same reasoning as the side-section case above: never inherits the floor's
           // tableau encounter unless the sub-section explicitly opts in itself.
           family: family.familyId,
           tags: family.tags,
+          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
       }

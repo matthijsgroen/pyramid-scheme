@@ -45,6 +45,11 @@ export type SideSectionConstraint<TExtra extends string = never> = {
    * id (e.g. "tableau", "sumplete") or a tag (e.g. "trap", "puzzle"). Omit = the default for
    * this section's context (a side path defaults to the "puzzle" tag, i.e. sumplete). */
   encounter?: string | string[]
+  /** Opaque payload for whichever family renders this section's rooms — e.g. a tableau
+   * section's `{runNr: 2}`, pulled through that family's own zod schema at assembly time
+   * (siteAssembler.ts's ResolveKeyRequirements). Lets a tableau corridor be authored
+   * anywhere (main path or a ward-gated side path) instead of being tied to floor position. */
+  encounterArgs?: unknown
   endReward?: RewardSpec | TExtra
   /** Marks this section's endReward as a Fez-shop purchase instead of a free pickup — the
    * DSL literal in coins. No `chance` allowed on a shop slot; must stay deterministic. */
@@ -77,6 +82,9 @@ export type FloorConstraint<TExtra extends string = never> = {
   mainEndReward?: RewardHint | TExtra
   /** This floor's own capstone family override instead of its regular last main-path puzzle. */
   lastMainPuzzleFamily?: "crocodile"
+  /** Opaque payload for whichever family renders the main path's rooms — see
+   * SideSectionConstraint.encounterArgs above for the full rationale. */
+  encounterArgs?: unknown
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
   /**

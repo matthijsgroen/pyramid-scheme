@@ -92,6 +92,7 @@ export type BuildFloorOptions = {
   corridorStraightness?: number
   packing?: number
   sealed?: boolean
+  encounterArgs?: unknown
 }
 
 // The common FloorConfig skeleton shared by every pyramid and tomb floor — defaults to a
@@ -109,6 +110,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
+  ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
@@ -213,6 +215,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           corridorStraightness: floorStraightness,
           packing: floorPacking,
           sealed: floorSealed,
+          encounterArgs: fc.encounterArgs,
         })
       )
     }
