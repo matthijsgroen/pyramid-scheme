@@ -194,6 +194,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | [`docs/instructions/testing.md`](docs/instructions/testing.md)             | Writing, reviewing, or deciding whether to add tests for any code                     |
 | [`docs/instructions/comments.md`](docs/instructions/comments.md)           | Writing or reviewing any code comment                                                 |
 | [`docs/instructions/changelog.md`](docs/instructions/changelog.md)         | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`              |
+| [`docs/instructions/design-doc-fidelity.md`](docs/instructions/design-doc-fidelity.md) | Implementing or reviewing code against an existing `docs/game-design/` doc, or when the same kind of architectural gap surfaces more than once |
 
 ---
 
