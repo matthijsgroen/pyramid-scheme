@@ -17,6 +17,7 @@ import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { computeMosaicPaths } from "./mosaics"
 import { placeFragments } from "./placeFragments"
+import type { CurrencyDistribution } from "./placeFragments"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
@@ -226,10 +227,14 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 
 // ── Main entry point ──────────────────────────────────────────────────────────
 
-// `resolveKeyRequirements` defaults to a no-op (tableaus treated as ungated) — src/worldGen/
-// can't import src/mods/'s real resolver directly (architecture.md's dependency table); the
-// caller with access to it (scripts/generateWorld.ts) passes the real one in.
-export const buildConfigs = (resolveKeyRequirements?: ResolveKeyRequirements): Record<string, SiteConfig[]> => {
+// `resolveKeyRequirements`/`currencies` default to a no-op resolver and no currencies —
+// src/worldGen/ can't import src/mods/'s real resolver or mod-owned currencies directly
+// (architecture.md's dependency table); the caller with access to them
+// (scripts/generateWorld.ts) passes the real ones in.
+export const buildConfigs = (
+  resolveKeyRequirements?: ResolveKeyRequirements,
+  currencies: CurrencyDistribution[] = []
+): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
 
@@ -239,10 +244,10 @@ export const buildConfigs = (resolveKeyRequirements?: ResolveKeyRequirements): R
   // Phase 3: Build tomb site configs
   const tombConfigs = buildTombConfigs()
 
-  // Phase 4: Worklist-driven hieroglyph-fragment placement (docs/game-design/
-  // keys-and-locks-solver.md) — assigns fragmentSlot positions, fills the remainder with junk loot
+  // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
+  // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  placeFragments(allConfigs, resolveKeyRequirements)
+  placeFragments(allConfigs, currencies, resolveKeyRequirements)
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, discovery graph solvability, and the shop economy guard

@@ -1,84 +1,50 @@
-import type { SiteConfig, Tier } from "./types"
+import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { Difficulty } from "../data/difficultyLevels"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
-import {
-  computeReachability,
-  createFloorAssemblyCache,
-  floorKey,
-  hieroglyphBucket,
-  type JourneyMeta,
-} from "./reachability"
+import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
 import { collectSlots, type Slot } from "./slots"
 import { pipe, filterBy, uniqueBy, rankBy, preferThenRelax } from "./distribution"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
-import { TOMB_PERK_IDS } from "../data/treasurePerks"
-import { tableauLevels } from "../data/tableaus"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { journeys as REAL_JOURNEYS } from "../data/journeys"
 import { sellablesForDifficulty } from "../data/sellables"
 import { hashStr } from "./rewards"
 
-// Worklist-driven hieroglyph-fragment placement — the concrete currency this backlog item's
-// solver was built for. See docs/game-design/keys-and-locks-solver.md, "The placement
-// algorithm": place a hieroglyph's fragments only into slots inside the currently reachable
-// area, recompute reachability once its requirement is satisfied (that may open further
-// floors/tableaus), repeat. Replaces fragments.ts's own tier/ward-tag heuristic, which never
-// checked real computed reachability at all.
+// Worklist-driven, reachability-gated currency placement — the concrete engine this
+// backlog item's solver was built for. See docs/game-design/keys-and-locks-solver.md,
+// "The placement algorithm". Generic over WHICH currency: place each currency's
+// instances only into slots inside the currently reachable area, recompute reachability
+// once a currency's requirement is satisfied (that may open further floors/tableaus),
+// repeat. This module owns none of the "which currency, how many, which candidates score
+// higher" knowledge — that's mod-owned (docs/mods-architecture.md, "Currencies are
+// mod-owned, not a closed core vocabulary"), injected as CurrencyDistribution values by
+// whoever has access to the real mod registry (src/mods/allCurrencyDistributions.ts,
+// consumed by scripts/generateWorld.ts) — this module never imports src/mods/ directly.
 
-const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
-
-type HieroglyphInfo = { hieroglyphId: string; tier: Tier; preferredWardKeys: string[]; required: number }
-
-// For each hieroglyph: which tier it belongs to, how many fragments it needs, and which ward
-// keys (earned by completing earlier tomb runs) its preferred placement slots sit behind.
-// Ported from fragments.ts's buildPlacementInfos — this is the currency's OWN authored
-// preference (per the doc's step 2a), layered as a ranking on top of the reachability filter.
-const buildHieroglyphInfos = (): HieroglyphInfo[] => {
-  const infos: HieroglyphInfo[] = []
-  const seen = new Set<string>()
-
-  for (const tier of TIERS) {
-    const tombId = `${tier}_treasure_tomb`
-    const tombPerkIds = TOMB_PERK_IDS[tombId] ?? []
-
-    for (const hieroglyphId of TOMB_SYMBOLS[tier]) {
-      if (seen.has(hieroglyphId)) continue
-      seen.add(hieroglyphId)
-
-      const firstRunNumber = tableauLevels
-        .filter(t => t.tombJourneyId === tombId && t.inventoryIds.includes(hieroglyphId))
-        .reduce((min, t) => Math.min(min, t.runNumber), Infinity)
-      const runNumber = isFinite(firstRunNumber) ? firstRunNumber : 1
-      const preferredWardKeys = tombPerkIds.slice(0, runNumber - 1)
-
-      infos.push({ hieroglyphId, tier, preferredWardKeys, required: HIEROGLYPH_REQUIRED[hieroglyphId] ?? 2 })
-    }
-  }
-
-  return infos
+export type CurrencyDemand = {
+  instanceId: string
+  tier: Tier
+  preferredWardKeys: string[]
+  // How many MORE instances the worklist must place — already net of anything
+  // pre-authored directly (bypassing slots, e.g. a Fez-shop stock literal), so the
+  // world-wide total placed-by-worklist + pre-authored stays exactly `totalRequired`.
+  required: number
+  // The RAW total this currency's own completion fact is thresholded against in
+  // reachability.ts's OwnedCounts model (e.g. HIEROGLYPH_REQUIRED[id]) — NOT net of
+  // pre-authored instances. `ownedCounts` must be set to this once satisfied, not to
+  // `required`, or a currency with any pre-authored instances would be permanently
+  // under-counted against its own threshold (reachability.ts's deriveOwnedFacts) even
+  // though every instance — pre-authored + placed — genuinely exists.
+  totalRequired: number
 }
 
-// hieroglyphFragment rewards already authored directly (bypassing fragmentSlot entirely —
-// e.g. a Fez-shop stock literal) — subtracted from each hieroglyph's `required` so the
-// world-wide total stays exactly EXPECTED_HIEROGLYPH_FRAGMENTS regardless of how many were
-// placed this way.
-const countExistingFragments = (allConfigs: Record<string, SiteConfig[]>): Map<string, number> => {
-  const counts = new Map<string, number>()
-  const bump = (r?: { type: string; hieroglyphId?: string }) => {
-    if (r?.type === "hieroglyphFragment" && r.hieroglyphId)
-      counts.set(r.hieroglyphId, (counts.get(r.hieroglyphId) ?? 0) + 1)
-  }
-  for (const siteConfigs of Object.values(allConfigs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        bump(floor.mainEndReward)
-        for (const s of floor.sideSections) {
-          bump(s.endReward)
-          for (const sub of s.sideSections ?? []) bump(sub.endReward)
-        }
-      }
-    }
-  }
-  return counts
+export type CurrencyDistribution = {
+  // Bucket id this currency's completion fact lives under in reachability.ts's
+  // OwnedCounts model (e.g. hieroglyphBucket) — how much of instanceId is needed before
+  // the fact counts as owned is threshold logic reachability.ts already owns.
+  bucket: (instanceId: string) => string
+  toReward: (instanceId: string) => TreasureReward
+  // Every instance this currency needs placed, with its own tier/ward preference.
+  demands: (allConfigs: Record<string, SiteConfig[]>) => CurrencyDemand[]
 }
 
 // Pyramids have no map-piece threshold (0); tombs use their real `piecesRequired` from
@@ -95,20 +61,19 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
   return meta
 }
 
-// Mutates allConfigs in place: assigns hieroglyphFragment rewards to fragmentSlot sentinels
-// and open ward gates, then fills any remaining placeholder slots with consumables. Throws
-// (does not warn) if a hieroglyph has no reachable slot once every relaxation rung is
-// exhausted — docs/game-design/keys-and-locks-solver.md, "Exhausted relaxation is a build
-// failure, not a warning".
+// Mutates allConfigs in place: assigns each registered currency's rewards to fragmentSlot
+// sentinels and open ward gates, then fills any remaining placeholder slots with
+// consumables. Throws (does not warn) if a demand has no reachable slot once every
+// relaxation rung is exhausted — docs/game-design/keys-and-locks-solver.md, "Exhausted
+// relaxation is a build failure, not a warning".
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
+  currencies: readonly CurrencyDistribution[],
   resolveRequirements?: ResolveKeyRequirements
 ): void => {
   const slots = collectSlots(allConfigs)
   const available = new Set(slots)
   const journeyMeta = buildJourneyMeta()
-  const infos = buildHieroglyphInfos()
-  const existing = countExistingFragments(allConfigs)
 
   const ownedCounts = new Map<string, number>()
   // One cache for this whole placement run — grid topology never changes as ownedCounts
@@ -140,52 +105,53 @@ export const placeFragments = (
   }
   settle()
 
-  for (const info of infos) {
-    let needed = info.required - (existing.get(info.hieroglyphId) ?? 0)
-    if (needed <= 0) continue
+  for (const currency of currencies) {
+    for (const info of currency.demands(allConfigs)) {
+      let needed = info.required
+      if (needed <= 0) continue
 
-    const eligible = (s: Slot) => available.has(s) && reach.reachableFloors.has(floorKey(s.ref))
-    // Pool priority (tier+preferred-ward > tier-only > cross-tier) as a rank score, not
-    // fragments.ts's separate sequential pools — the doc's own composable-rule shape
-    // (`pipe(filterBy(...), rankBy(...))`). Ranked BEFORE deduping by journey, so the
-    // "one per journey" strict pass keeps each journey's best-scoring slot, not an
-    // arbitrary one.
-    const byPoolScore = rankBy<Slot>(s => {
-      const tierMatch = s.tier === info.tier
-      const wardMatch = info.preferredWardKeys.length > 0 && s.wardKeys.some(k => info.preferredWardKeys.includes(k))
-      return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0)
-    })
-    const ranked = pipe<Slot>(
-      filterBy(eligible),
-      preferThenRelax(
-        pipe(
-          byPoolScore,
-          uniqueBy(s => s.journeyId)
-        ),
-        byPoolScore
-      )
-    )(slots)
+      const eligible = (s: Slot) => available.has(s) && reach.reachableFloors.has(floorKey(s.ref))
+      // Pool priority (tier+preferred-ward > tier-only > cross-tier) as a rank score —
+      // the doc's own composable-rule shape (`pipe(filterBy(...), rankBy(...))`). Ranked
+      // BEFORE deduping by journey, so the "one per journey" strict pass keeps each
+      // journey's best-scoring slot, not an arbitrary one.
+      const byPoolScore = rankBy<Slot>(s => {
+        const tierMatch = s.tier === info.tier
+        const wardMatch = info.preferredWardKeys.length > 0 && s.wardKeys.some(k => info.preferredWardKeys.includes(k))
+        return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0)
+      })
+      const ranked = pipe<Slot>(
+        filterBy(eligible),
+        preferThenRelax(
+          pipe(
+            byPoolScore,
+            uniqueBy(s => s.journeyId)
+          ),
+          byPoolScore
+        )
+      )(slots)
 
-    for (const slot of ranked) {
-      if (needed <= 0) break
-      slot.assign({ type: "hieroglyphFragment", hieroglyphId: info.hieroglyphId })
-      available.delete(slot)
-      needed--
+      for (const slot of ranked) {
+        if (needed <= 0) break
+        slot.assign(currency.toReward(info.instanceId))
+        available.delete(slot)
+        needed--
+      }
+
+      if (needed > 0) {
+        throw new Error(
+          `placeFragments: ${info.instanceId} (${info.tier}) unplaceable — ${needed} instance(s) with no reachable slot`
+        )
+      }
+
+      ownedCounts.set(currency.bucket(info.instanceId), info.totalRequired)
+      reach = computeReach()
+      settle()
     }
-
-    if (needed > 0) {
-      throw new Error(
-        `placeFragments: ${info.hieroglyphId} (${info.tier}) unplaceable — ${needed} fragment(s) with no reachable slot`
-      )
-    }
-
-    ownedCounts.set(hieroglyphBucket(info.hieroglyphId), info.required)
-    reach = computeReach()
-    settle()
   }
 
   // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open
-  // ward-gate slots that no fragment reached. Tiered by the slot's own journey tier.
+  // ward-gate slots that no currency reached. Tiered by the slot's own journey tier.
   let fallbackIdx = 0
   for (const slot of available) {
     const items = sellablesForDifficulty(slot.tier as Difficulty)

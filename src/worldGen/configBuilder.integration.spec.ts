@@ -2,8 +2,16 @@ import { describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { WORLD_TARGETS } from "./worldSpec"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
+// Deliberate exception to "src/worldGen/ never imports src/mods/": this integration spec
+// verifies the REAL, complete world (273/273 fragments), which needs the real mod-owned
+// currencies — same standing as scripts/generateWorld.ts, the other sanctioned place that
+// reaches across for a full build. Production code (configBuilder.ts/placeFragments.ts)
+// never imports this; it only accepts an injected currencies list.
+import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
 
-// Golden guard for the world-builder refactor: buildConfigs() must keep
+const buildRealConfigs = () => buildConfigs(undefined, ALL_CURRENCY_DISTRIBUTIONS)
+
+// Golden guard for the world-builder refactor: buildRealConfigs() must keep
 // producing the same reward counts and the same output on every run.
 
 const countRewards = (configs: Record<string, SiteConfig[]>) => {
@@ -35,7 +43,7 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 
 describe("buildConfigs golden guard", () => {
   it("hits WORLD_TARGETS exactly", () => {
-    const configs = buildConfigs()
+    const configs = buildRealConfigs()
     expect(countRewards(configs)).toEqual({
       mapPieces: WORLD_TARGETS.mapPieceRewards,
       mosaicPieces: WORLD_TARGETS.mosaicPieceRewards,
@@ -43,14 +51,14 @@ describe("buildConfigs golden guard", () => {
   }, 20000)
 
   it("is deterministic across runs", () => {
-    const first = buildConfigs()
-    const second = buildConfigs()
+    const first = buildRealConfigs()
+    const second = buildRealConfigs()
     expect(second).toEqual(first)
   }, 20000)
 })
 
 describe("tomb floor linking — ward-path shortcuts", () => {
-  const configs = buildConfigs()
+  const configs = buildRealConfigs()
   const floors = configs.junior_treasure_tomb[0]
 
   it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
