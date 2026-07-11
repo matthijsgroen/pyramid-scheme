@@ -18,12 +18,16 @@ contributing e.g.:
 - **trap**: multiple economy contributions (health, bandage, oil,
   trapTool), trap encounters, and health/maxHealth state registration
 
-None of that container mechanism exists. Concretely, right now:
-- tableau's currency (hieroglyph fragment + its distribution rule) isn't
-  mod-registered at all — hardcoded directly in `src/worldGen/placeFragments.ts`
-- mosaic isn't a mod — `src/mods/mosaic/` doesn't exist
-- trap's health/maxHealth are still plain fields on the shared
-  `ProgressionState` in `useProgression.ts`, not something trap registers
+None of the real container mechanism exists yet. Concretely, right now:
+- [x] tableau's currency (hieroglyph fragment + its distribution rule) is now
+      mod-owned — `src/mods/tableau/game/hieroglyphCurrency.ts`, registered via
+      `src/mods/allCurrencyDistributions.ts`, injected into the now-fully-generic
+      `placeFragments.ts` by `scripts/generateWorld.ts`. Still a flat array
+      (`CurrencyDistribution[]`), not a real per-mod container — proves the DI
+      pattern works, doesn't replace the missing `registerMod` mechanism itself.
+- [ ] mosaic isn't a mod — `src/mods/mosaic/` doesn't exist
+- [ ] trap's health/maxHealth are still plain fields on the shared
+      `ProgressionState` in `useProgression.ts`, not something trap registers
 
 The last several small fixes (rewardWeight values, key-requirement scatter,
 tableau mod split) each surfaced another instance of this same missing
@@ -67,16 +71,20 @@ corrections.
         every lock is "held count of bucket X ≥ threshold(X)"
   - [x] composable distribution-rule primitives (`src/worldGen/distribution.ts`)
   - [x] candidate slot discovery (`src/worldGen/slots.ts`)
-  - [x] worklist-driven placement for hieroglyph fragments (`src/worldGen/placeFragments.ts`),
-        wired end-to-end into `configBuilder.ts` → `scripts/generateWorld.ts`, 273/273 placed
-    - found + fixed 3 real pre-existing bugs along the way: a `starter.ts` map-piece
-      deadlock (gated behind its own tomb's tier-unlock treasure), a `siteAssembler.ts`
-      key-host reward-hijack (both the ungated entry point and the chain-internal relay —
-      confirmed silently dropping hieroglyph fragments in real generated data, proven by a
-      regression test before the fix), and a `mosaics.ts` undercount
-  - [ ] generalize the worklist beyond hieroglyph fragments, if another currency ever needs
-        reachability-gated placement (map pieces / ward-keys stay fully deterministic today —
-        no known need yet)
+  - [x] worklist-driven placement, generic over any mod-registered currency
+        (`src/worldGen/placeFragments.ts` + `CurrencyDistribution`), wired end-to-end into
+        `configBuilder.ts` → `scripts/generateWorld.ts`; hieroglyph fragments are the one
+        currency registered today, 273/273 placed through it
+    - found + fixed 4 real bugs along the way: a `starter.ts` map-piece deadlock (gated
+      behind its own tomb's tier-unlock treasure), a `siteAssembler.ts` key-host
+      reward-hijack (both the ungated entry point and the chain-internal relay — confirmed
+      silently dropping hieroglyph fragments in real generated data, proven by a regression
+      test before the fix), a `mosaics.ts` undercount, and an `ownedCounts` regression
+      introduced while extracting the currency into the tableau mod (net-remaining vs.
+      raw-total conflated — caught via the byte-identical-output check before it shipped)
+  - [ ] generalize beyond one currency — the mechanism is generic, but map pieces / ward
+        keys stay fully deterministic today (no known need for reachability-gated
+        placement yet); mosaic would be the next real candidate once it's its own mod
   - [ ] filler-loot fill-the-rest pass generalized into the same composable pipeline
         (currently a plain fill pass inside `placeFragments.ts`)
   - [ ] slot capacity — a node holding several items (a shop's stock) as a first-class
