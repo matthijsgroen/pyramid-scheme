@@ -20,7 +20,7 @@ import crocodileOpen from "@/assets/crocodile-250.png"
 import crocodileClosed from "@/assets/crocodile-closed-250.png"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
-import { PuzzleFamilyShell } from "@/mods/puzzle/app/PuzzleFamilyShell"
+import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { CROCODILE_META } from "@/mods/puzzle/game/crocodile/meta"
 
 type CrocodileConfig = {

@@ -3,7 +3,7 @@
 // needs to work: SiteMapScreen.tsx, or a test/story exercising the real registry.
 import "./trap/app/arithmeticReflex/plugin"
 import "./puzzle/app/sumplete/plugin"
-import "./puzzle/app/tableau/plugin"
+import "./tableau/app/plugin"
 import "./puzzle/app/crocodile/plugin"
 import "./shop/app/fezShop/plugin"
 import "./core/app/treasureChest/plugin"

@@ -2,7 +2,7 @@
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { generateSumplete, type SumpleteGrid } from "@/game/puzzles/sumplete/generateSumplete"
 import { SumpletePuzzle } from "./SumpletePuzzle"
-import { PuzzleFamilyShell } from "@/mods/puzzle/app/PuzzleFamilyShell"
+import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { SUMPLETE_META } from "@/mods/puzzle/game/sumplete/meta"
 
 const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved, onCancel }) => (

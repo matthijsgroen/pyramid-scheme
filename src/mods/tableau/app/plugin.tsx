@@ -5,8 +5,8 @@ import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzle
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
-import { PuzzleFamilyShell } from "@/mods/puzzle/app/PuzzleFamilyShell"
-import { TABLEAU_META } from "@/mods/puzzle/game/tableau/meta"
+import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { TABLEAU_META } from "@/mods/tableau/game/meta"
 
 const TOMB_SYMBOLS: Record<string, string[]> = {
   starter: ["p10", "p8", "art1", "a6", "a8", "art5", "d1"],

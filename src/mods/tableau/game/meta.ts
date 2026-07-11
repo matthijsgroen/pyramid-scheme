@@ -3,7 +3,7 @@ import { resolveTableauKeyRequirements } from "./keyRequirements"
 
 export const TABLEAU_META: FamilyMeta = {
   id: "tableau",
-  ownerMod: "puzzle",
+  ownerMod: "tableau",
   tags: ["tomb-puzzle"],
   icon: "📜",
   color: "amber",
