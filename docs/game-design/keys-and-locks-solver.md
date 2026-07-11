@@ -103,7 +103,7 @@ difficulty tier — the reachable area widens (new journeys, plus newly
 satisfiable ward gates inside already-visited pyramids). The whole loop
 repeats one tier up, all the way to Wizard.
 
-## Relationship to CappedPool / reward-weight / Distribution
+## Relationship to CappedPool / reward-weight / Distribution / WARD_MIX
 
 This folds into, and supersedes the earlier separate framing of,
 `CappedPool` and `mods-architecture.md` step 4's reward-weight allocator —
@@ -112,6 +112,14 @@ concern: which specific instance goes where, reachability-gated.
 `Distribution` (family selection per room slot) stays a separate, narrower
 concern — which family renders a slot, not what unlocks it or where its
 keys land.
+
+`WARD_MIX` (`pyramid-interior-design.md` §6 — a design-doc-only table,
+never implemented in code: "treasure tier → target pyramid tiers →
+distribution") is also superseded, not a separate mechanism to preserve
+alongside this one. "Which tiers a ward-key currency's instances can
+target" is just that currency's own distribution rule, same shape as map-
+fragment's "one per journey" or hieroglyph-fragment's "difficulty-matched
+corridor" — it plugs into this solver as data like every other key type.
 
 ## Open (implementation not yet designed)
 
