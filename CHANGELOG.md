@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Master pyramids now have two ward-gated bonus floors to explore; wizard pyramids have three, plus a two-floor main path.
 - Some pyramids now use a single key to open several locked doors instead of one each, more common at higher difficulties (wizard pyramids vary how many keys are in play from one pyramid to the next).
 - Some pyramids at higher difficulties now have extra winding corridors or a larger, more sprawling layout.
+- Expert, master, and wizard treasure tombs also now sometimes have extra winding corridors or a larger, more sprawling layout, matching their tier's pyramids.
 - Every pyramid now has at least one hidden path holding a puzzle or a trap to find.
 
 ### Fixed

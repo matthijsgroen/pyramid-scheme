@@ -5,7 +5,7 @@ import { mulberry32 } from "../game/random"
 import { hashStr } from "./rewards"
 import { assignPuzzleRewards } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
-import type { PyramidConstraint, RewardSpec } from "./dsl"
+import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -113,7 +113,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
 // and floor fi+1's entrance both become { stairId: stairId(fi) }. Used for main-path chains
-// (pyramid auto-multi-floor, tomb floor-to-floor) — never touches the last floor's exit.
+// (pyramid auto-multi-floor) — never touches the last floor's exit.
 export const wireStaircases = (floors: FloorConfig[], stairId: (index: number) => string): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
     const id = stairId(fi)
@@ -122,9 +122,23 @@ export const wireStaircases = (floors: FloorConfig[], stairId: (index: number) =
   }
 }
 
+// Wires floors[fi+1].entrance to whichever of floors[fi]'s own side sections ends in a
+// stairhead — the shared floor-to-floor chaining mechanism for authored multi-floor sites,
+// whether the shortcut is ward-gated by an external key (a pyramid's authored floors[]) or
+// self-gated by the floor's own treasure (a tomb's shortcut — pyramid-interior-design.md
+// §8, "the treasure IS the key"). Both are just a side section whose `end` is a stairhead.
+export const wireSideSectionStaircases = (floors: FloorConfig[]): void => {
+  for (let fi = 0; fi < floors.length - 1; fi++) {
+    const stairSection = floors[fi].sideSections.find(s => typeof s.end === "object")
+    if (stairSection && typeof stairSection.end === "object") {
+      floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
+    }
+  }
+}
+
 // ── Pyramid site construction ─────────────────────────────────────────────────
 
-export type BuildSiteContext = {
+export type BuildSiteContext<TExtra extends string = never> = {
   journeyId: string
   tier: Tier
   pyramidIndex: number
@@ -136,15 +150,18 @@ export type BuildSiteContext = {
   hasWardGate: boolean
   nextTier: string | null
   mosaicPathCount: number
-  resolveReward: ResolveReward
+  resolveReward: ResolveReward<TExtra>
   resolveMainEndReward: (spec: RewardSpec) => TreasureReward
 }
 
-// Builds one pyramid's floors (the 3 floor-shape branches: authored floors[], auto
-// multi-floor mainFloors+wardWings, or a single floor), then assigns puzzle-solve
-// rewards across the whole result (must run after ward wings/paths are appended, so
-// their puzzles are eligible too — see the auto multi-floor branch below).
-export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
+// Builds one site's floors (the 3 floor-shape branches: authored floors[], auto multi-floor
+// mainFloors+wardWings, or a single floor), then assigns puzzle-solve rewards across the
+// whole result (must run after ward wings/paths are appended, so their puzzles are eligible
+// too — see the auto multi-floor branch below). Used for both pyramids (authored floors[]
+// is the exception) and tombs (authored floors[] is the only shape they ever use, one entry
+// per treasure) — a tomb is structurally the same as a pyramid interior
+// (pyramid-interior-design.md §8), just always taking this one branch.
+export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const { hasMapPieceBranch, hasWardGate, nextTier, mosaicPathCount, resolveMainEndReward } = ctx
   const rates = constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates
@@ -154,43 +171,52 @@ export const buildSite = (ctx: BuildSiteContext): { floors: FloorConfig[] } => {
     : { type: "fragmentSlot" }
 
   if (constraint.floors?.length) {
-    // Multi-floor: build one FloorConfig per floors[] entry
+    // Multi-floor: build one FloorConfig per floors[] entry. Cast to the caller's own
+    // TExtra reward vocabulary (e.g. a tomb's TombRewardHint) — resolveReward below
+    // already understands it.
+    const floors = constraint.floors as (FloorConstraint<TExtra> | null)[]
     const floorConfigs: FloorConfig[] = []
-    for (let fi = 0; fi < constraint.floors.length; fi++) {
-      const fc = constraint.floors[fi] ?? {}
+    for (let fi = 0; fi < floors.length; fi++) {
+      const fc = floors[fi] ?? {}
       const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
       const floorDiff: Difficulty = fc.difficulty ?? difficulty
-      const isLast = fi === constraint.floors.length - 1
+      const isLast = fi === floors.length - 1
       const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
       const floorSideSections = buildSideSections({
         tier,
         difficulty: floorDiff,
         resolveReward,
-        journeyId,
+        // Per-floor-scoped, so each floor's auto-generated stairhead ids (e.g. a
+        // "staircase"-ending side section) are globally unique across the whole site —
+        // a plain site-level journeyId would let two floors' sections collide on the same
+        // id, and the cross-floor teleport lookup (SiteMapScreen.tsx) would find whichever
+        // floor happens to come first instead of the intended one.
+        journeyId: `${journeyId}:${i}:floor${fi}`,
         constraintSections: floorSections,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
       const floorSealed = fc.sealed ?? resolveSealed(constraint)
+      // A floor's own reward can gate its own further shortcut (a tomb's self-referential
+      // "treasure IS the key") — resolved per floor, falling back to the site-level reward
+      // on the last floor only when this floor didn't declare its own.
+      const floorMainEndReward =
+        fc.mainEndReward !== undefined ? resolveReward(fc.mainEndReward) : isLast ? mainEndReward : undefined
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,
           difficulty: floorDiff,
           sideSections: floorSideSections,
-          mainEndReward: isLast ? mainEndReward : undefined,
+          mainEndReward: floorMainEndReward,
+          encounter: fc.encounter,
+          lastMainPuzzleFamily: fc.lastMainPuzzleFamily,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
           sealed: floorSealed,
         })
       )
     }
-    // Wire each floor's side-path stairhead to the entrance of the next floor.
-    for (let fi = 0; fi < floorConfigs.length - 1; fi++) {
-      const stairSection = floorConfigs[fi].sideSections.find(s => typeof s.end === "object")
-      if (stairSection && typeof stairSection.end === "object") {
-        floorConfigs[fi + 1].entrance = { stairId: stairSection.end.stairId }
-      }
-    }
+    wireSideSectionStaircases(floorConfigs)
     assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
     return { floors: floorConfigs }
   }

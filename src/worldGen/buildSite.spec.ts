@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { buildFloor, buildSite, wireStaircases } from "./buildSite"
 import type { FloorConfig } from "./types"
+import type { PyramidConstraint } from "./dsl"
 
 describe("buildFloor", () => {
   it("defaults to an exiting, reward-free floor", () => {
@@ -84,6 +85,24 @@ describe("buildSite", () => {
     expect(floors).toHaveLength(2)
     expect(floors[0].mainEndReward).toBeUndefined()
     expect(floors[1].mainEndReward).toEqual({ type: "fragmentSlot" })
+  })
+
+  it("authored floors[] branch: a floor's own mainEndReward/lastMainPuzzleFamily/encounter override the site defaults — a tomb's self-gated shortcut", () => {
+    const { floors } = buildSite<"tombTreasure">({
+      ...baseCtx,
+      resolveReward: spec => (spec === "tombTreasure" ? { type: "tombKey", keyId: "k1" } : undefined),
+      constraint: {
+        floors: [
+          { pathPuzzles: 1, mainEndReward: "tombTreasure", encounter: "tableau" },
+          { pathPuzzles: 1, lastMainPuzzleFamily: "crocodile" },
+        ],
+      } as PyramidConstraint,
+    })
+    expect(floors[0].mainEndReward).toEqual({ type: "tombKey", keyId: "k1" })
+    expect(floors[0].encounter).toBe("tableau")
+    expect(floors[1].lastMainPuzzleFamily).toBe("crocodile")
+    // Non-last floor's own reward, not the site-level fallback (which never runs here).
+    expect(floors[0].mainEndReward).not.toEqual({ type: "fragmentSlot" })
   })
 
   it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases, non-last floor gets a real reward slot", () => {

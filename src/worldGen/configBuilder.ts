@@ -1,4 +1,4 @@
-import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
+import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
@@ -14,10 +14,7 @@ import type {
 } from "./dsl"
 import { wardPath } from "./dsl"
 import { specToReward } from "./rewards"
-import { buildSideSections } from "./sideSections"
-import { buildFloor, buildSite } from "./buildSite"
-import { assignPuzzleRewards } from "./puzzleRewards"
-import { GLOBAL_DEFAULTS } from "./spec/global"
+import { buildSite } from "./buildSite"
 import { computeMosaicPaths } from "./mosaics"
 import { assignFragments } from "./fragments"
 import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
@@ -140,6 +137,12 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
 
 // ── Tomb configs ──────────────────────────────────────────────────────────────
 
+// A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md §8) —
+// one treasure per floor, self-gating its own next floor's shortcut ("the treasure IS the
+// key"). Built by authoring one FloorConstraint per floor and handing them to buildSite()'s
+// authored-floors branch, the exact same mechanism pyramids' own authored floors[] use —
+// tomb-specific vocabulary (wardPath, the perk-stream reward resolver, "tomb-puzzle" encounter,
+// crocodile capstone) is authoring convenience, not a separate construction path.
 const buildTombConfigs = (): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
   for (const tomb of TOMB_JOURNEYS) {
@@ -169,63 +172,47 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       return undefined
     }
 
-    const floors: FloorConfig[] = Array.from({ length: levelCount }, (_, i) => {
+    // Every floor is authored explicitly — its own mainEndReward defaults to "tombTreasure"
+    // (the perk-stream's next id) unless an authored entry overrides it, and every non-last
+    // floor gets a ward-path shortcut gated by that same key: walk the floor once to earn
+    // it, then a later re-entry can skip straight past via the shortcut instead of
+    // re-solving its tableau. Never authored per-tomb; systemic for all.
+    const floors: FloorConstraint<TombRewardHint>[] = Array.from({ length: levelCount }, (_, i) => {
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
-
-      const mainEndReward: TreasureReward | undefined = authored
-        ? resolveTombReward(authored.mainEndReward)
-        : (() => {
-            const perkId = perkIds[perkIndex++]
-            return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
-          })()
-
-      // Every non-last floor gets a ward-path shortcut, gated by that SAME floor's own
-      // mainEndReward key (index i === the perk index that reward just consumed) — walk the
-      // floor once to earn the key, then a later re-entry can skip straight past it via the
-      // shortcut instead of re-solving its tableau. Never authored per-tomb; systemic for all.
       const authoredSections = (authored?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined) ?? []
       const shortcut = isLast ? [] : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
-      const sideSections: SideSection[] = buildSideSections({
-        tier: tomb.tier,
+      return {
+        pathPuzzles: isLast && hasCroc ? 2 : 1,
         difficulty,
-        resolveReward: resolveTombReward,
-        // Per-floor-scoped, so each floor's shortcut gets a globally unique stairId — plain
-        // `tomb.id` would collide across floors sharing the same side-section position.
-        journeyId: `${tomb.id}:floor${i}`,
-        constraintSections: [...authoredSections, ...shortcut],
-      })
-
-      const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
-      const packing = authored?.packing ?? constraint.packing
-      const sealed = authored?.sealed ?? constraint.sealed
-
-      const pathPuzzles = isLast && hasCroc ? 2 : 1
-
-      return buildFloor({
-        pathPuzzles,
-        difficulty,
-        sideSections,
         encounter,
+        mainEndReward: authored?.mainEndReward ?? "tombTreasure",
         lastMainPuzzleFamily: isLast && hasCroc ? "crocodile" : undefined,
-        mainEndReward,
-        corridorStraightness: straightness,
-        packing,
-        sealed,
-      })
+        sideSections: [...authoredSections, ...shortcut],
+        corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
+        packing: authored?.packing ?? constraint.packing,
+        sealed: authored?.sealed ?? constraint.sealed,
+      }
     })
 
-    // No wireStaircases here: every floor's main path now ends in a real "exit" (buildFloor's
-    // default), not an auto-chained stairhead. Floor-to-floor descent instead runs through
-    // each floor's own ward-path shortcut, wired to the next floor's entrance below.
-    for (let fi = 0; fi < floors.length - 1; fi++) {
-      const shortcutSection = floors[fi].sideSections.find(s => s.gate?.type === "tomb-key")
-      if (shortcutSection && typeof shortcutSection.end === "object") {
-        floors[fi + 1].entrance = { stairId: shortcutSection.end.stairId }
-      }
-    }
-    assignPuzzleRewards(tomb.id, floors, constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates)
-    configs[tomb.id] = [floors]
+    const { floors: floorConfigs } = buildSite<TombRewardHint>({
+      journeyId: tomb.id,
+      tier: tomb.tier as Tier,
+      pyramidIndex: 0,
+      levelCount: 1,
+      pathPuzzles: 1,
+      // Cast: `floors` is authored in tomb's own TombRewardHint vocabulary, which
+      // resolveTombReward (below) understands.
+      constraint: { ...constraint, floors } as PyramidConstraint,
+      difficulty,
+      hasMapPieceBranch: false,
+      hasWardGate: false,
+      nextTier: null,
+      mosaicPathCount: 0,
+      resolveReward: resolveTombReward,
+      resolveMainEndReward: () => ({ type: "fragmentSlot" }),
+    })
+    configs[tomb.id] = [floorConfigs]
   }
   return configs
 }

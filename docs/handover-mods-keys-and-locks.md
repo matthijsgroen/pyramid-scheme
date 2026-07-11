@@ -62,6 +62,31 @@ written yet:
    treatment pyramids already have in `useJourneys.ts` (pinned seed, capped
    `completionCount`). Kills `TombExpedition.tsx`'s `renderPuzzle` prop and
    its `completionCount`-keyed live tableau selection entirely.
+
+   - **World-gen construction is already unified** — `configBuilder.ts`'s
+     `buildTombConfigs` used to hand-roll its own floor-array + stairhead-
+     wiring loop, diverging from `buildSiteConfigs`/`buildSite.ts`'s shared
+     mechanism. Fixed: tombs now author a `floors: FloorConstraint[]` array
+     (tomb-flavored authoring stays tomb-flavored — `wardPath()`, the
+     perk-stream reward resolver, `"tomb-puzzle"` encounter, crocodile
+     capstone) and call the SAME `buildSite()` pyramids' own authored
+     `floors[]` mode uses. `buildSite()` was generalized to resolve
+     `mainEndReward` per floor (a tomb's own treasure gates its own next
+     floor — pyramid-interior-design.md §8's "the treasure IS the key" —
+     previously only the site's last floor ever got one) and pass through
+     `lastMainPuzzleFamily`; the two near-identical stairhead-wiring loops
+     collapsed into one `wireSideSectionStaircases()`. Caught and fixed a
+     latent stairId-collision bug in the process (multiple floors of one
+     site could generate the same auto-numbered stairId, confusing
+     `SiteMapScreen.tsx`'s cross-floor teleport lookup) — now scoped
+     per-floor. This is unrelated to the persistent-site/`useJourneys.ts`
+     work above; only the *generation* mechanism was unified, not runtime
+     behavior. `generatedWorld.ts` was regenerated; the diff is fully
+     explained by the stairId rescoping, reshuffled (still valid)
+     puzzle-solve rewards, and expert/master/wizard tombs now correctly
+     picking up their tier's `windyChance`/`packingChance` corridor-variety
+     roll (previously silently dead for tombs specifically — see
+     CHANGELOG.md).
 3. **The keys-and-locks solver itself** — the reachability graph (two
    levels: coarse floor/tomb/journey graph over the existing unchanged
    per-floor `reachableFrom` in `siteValidator.ts`), the worklist-driven
