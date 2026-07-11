@@ -8,7 +8,9 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 
 // BFS through grid. Gates require their key to be in ownedKeys.
 // blockedPos: skip this cell (for keyBeforeGate check).
-const reachableFrom = (
+// Exported for src/worldGen/reachability.ts's coarse graph — the one fine-grained
+// reachability primitive the coarse solver projects from, never re-derived.
+export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
@@ -50,16 +52,21 @@ const reachableFrom = (
   return visited
 }
 
-export const validateSite = (grid: FloorGrid): ValidationResult => {
-  const reasons: ValidationReason[] = []
-
-  // Iterative key collection: simulate exploration. BFS → collect reachable keys →
-  // unlock new gates → repeat. Correctly handles key chains (key behind a gate).
-  const collectedKeys = new Set<string>()
+// Iterative key collection: simulate exploration. BFS → collect reachable keys → unlock
+// new gates → repeat. Correctly handles key chains (key behind a gate) and self-referential
+// ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
+// design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
+// coarse graph, which needs the same fixed point across a whole multi-floor site.
+export const collectReachableKeys = (
+  grid: FloorGrid,
+  startPos: Pos,
+  initialKeys: ReadonlySet<string> = new Set()
+): { reachable: Set<string>; keys: Set<string> } => {
+  const collectedKeys = new Set(initialKeys)
+  let reachable = reachableFrom(grid, startPos, collectedKeys)
   let changed = true
   while (changed) {
     changed = false
-    const reachable = reachableFrom(grid, grid.entrancePos, collectedKeys)
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
         const cell = grid.cells[r][c]
@@ -74,7 +81,15 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
         }
       }
     }
+    if (changed) reachable = reachableFrom(grid, startPos, collectedKeys)
   }
+  return { reachable, keys: collectedKeys }
+}
+
+export const validateSite = (grid: FloorGrid): ValidationResult => {
+  const reasons: ValidationReason[] = []
+
+  const { keys: collectedKeys } = collectReachableKeys(grid, grid.entrancePos)
 
   // All floor-key gates must have a collectible key
   for (let r = 0; r < grid.rows; r++) {

@@ -68,13 +68,32 @@ written yet:
    placement loop, composable filter/rank distribution rules, slot
    capacity (shop stock), hard-fail on exhausted relaxation. This is the
    biggest single piece and everything else depends on it working
-   correctly — **the reachability graph must understand every existing
-   gate type (floor-key, tomb-key/ward, map-piece tomb-entry) from day
-   one, that part can't land incrementally.** Which currency's *placement
-   decision* moves onto it first can still be incremental — hieroglyph
-   fragments are the natural first slice (real existing implementation to
-   replace and measure against: `fragments.ts`, confirmed "273/273 placed"
-   this session).
+   correctly.
+
+   - ~~Coarse reachability graph~~ — done, `src/worldGen/reachability.ts`
+     (`computeReachability`/`reachableFloorsInSite`/`isJourneyEnterable`/
+     `isTierUnlocked`). Not wired into `scripts/generateWorld.ts` yet — it's
+     a standalone, fully-tested primitive (13 tests) the worklist loop will
+     call repeatedly as it grows `ownedKeys`, per the doc's own scoping.
+     Two real gaps found+fixed during review, both worth knowing before
+     building on top: (a) `siteValidator.ts`'s `reachableFrom` is now
+     exported, and its iterative key-collection loop was extracted into a
+     new exported `collectReachableKeys` — the coarse graph needs the same
+     fixed point *within* a floor (a tomb's own treasure is the key to its
+     own next floor, pyramid-interior-design.md §8) that `validateSite`
+     always had, just never as a reusable function; (b) floor-to-floor
+     stairId hosting is NOT always `site[i]` → `site[i+1]` — ward-wing
+     branches (`buildSite.ts`) can all anchor off one earlier "host" floor
+     as siblings, not a linear chain, so `reachableFloorsInSite` searches
+     every later still-unreached floor against each newly-reachable one,
+     not just its immediate successor. Both cases now have dedicated tests.
+   - Still to build: the worklist-driven placement loop itself, composable
+     filter/rank distribution rules (`preferThenRelax` etc.), slot
+     capacity, hard-fail on exhausted relaxation, and the hieroglyph-
+     fragment migration measured against `fragments.ts`'s "273/273 placed"
+     bar. Which currency's *placement decision* moves onto the solver
+     first can still be incremental — hieroglyph fragments are the natural
+     next slice.
 4. **Trap's hard gate needs to soften** — `canAttemptTrap()` currently hard-
    blocks (`TrapWarningScreen` won't launch the encounter at all below 1
    health). The tomb redesign's "soft gating everywhere" decision means
