@@ -50,3 +50,9 @@ Detailed handover: `docs/handover-mods-keys-and-locks.md`.
         no known need yet)
   - [ ] filler-loot fill-the-rest pass generalized into the same composable pipeline
         (currently a plain fill pass inside `placeFragments.ts`)
+  - [ ] slot capacity — a node holding several items (a shop's stock) as a first-class
+        `Slot` concept. Not built: `Slot`/`RoomCell` are single-capacity only
+        (`assign(reward)`, one call, `reward?: TreasureReward` singular). Today's
+        "shop with several items" is several separate single-capacity fez-shop sections
+        bundled onto the same hub by `siteAssembler.ts`'s layout code, a maze-layout
+        coincidence, not something the solver reasons about as one N-capacity slot
