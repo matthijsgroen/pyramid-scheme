@@ -162,8 +162,22 @@ not a simulated playthrough). A key is never placed outside that reachable
 area — this is what mechanically guarantees "never blocked," not authoring
 discipline.
 
-For each currency that also functions as an unlock condition, the solver
-runs the same loop:
+This is **worklist-driven, not ladder-driven** — the progression ladder
+(reach Wizard) is the invariant checked at the end, not the control flow.
+The solver keeps a queue of not-yet-satisfied locks (gates, journey
+thresholds, the tier-unlock); after each placement it recomputes the
+reachable set, which may reveal new locks to enqueue and may satisfy
+others. It stops when the queue empties (everything placed, world fully
+solvable) or when nothing can progress — the latter is the hard-fail
+condition, no ladder-position bookkeeping needed to detect it. Worklist
+over ladder specifically because locks don't resolve in tidy tier order —
+`WARD_MIX`-style cross-tier gating (a starter key gating a junior floor
+holding a starter-tier fragment, per the earlier example) means whatever's
+actually blocking gets processed whenever it becomes the frontier,
+regardless of which tier it nominally belongs to. This also keeps
+exploration open rather than corseting the player into one tier at a time.
+
+For each entry pulled off the worklist:
 
 1. Compute the reachable play area given everything placed and possessed
    so far.
@@ -179,8 +193,23 @@ runs the same loop:
      by the existing generic loot-slot priority order (chests first — see
      `pyramid-interior-design.md`'s "Loot priority order").
 3. Once every instance of that key is placed, whatever it unlocked becomes
-   solvable — recompute the reachable play area (now bigger) and continue
-   to the next blocking key.
+   solvable — recompute the reachable play area (now bigger), enqueue any
+   newly-visible locks, and continue.
+
+### Filler loot: the same pipeline, once the worklist is empty
+
+Once every key-like currency is fully placed (no blockers left), whatever
+slots remain get filled with non-gating loot (mosaic tiles, consumables,
+sellables, junk) — through the **same composable distribution-rule
+pipeline**, just with looser or trivial rules (mosaic tiles: no filter at
+all, rank-and-fill). This phase needs no incremental reachability
+recompute — by the time the worklist is empty the reachable area *is* the
+final, fully-unlocked world, so filler placement is one pass over whatever
+candidate slots remain, not a re-expanding loop. `fragments.ts`'s existing
+final pass ("fill every remaining slot with junk loot") already proves
+this two-phase shape in miniature — it just needs to stop being
+fragment-specific. Since shop stock is a capacity-bearing slot like any
+other, this same pass is what populates a shop's stock, too.
 
 ### Distribution rules: composable functions, not declarative config
 
