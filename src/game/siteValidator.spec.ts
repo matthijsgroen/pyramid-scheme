@@ -11,13 +11,18 @@ const DEFAULT_FAMILY: Partial<Record<LegacyRoomKind, string>> = {
   puzzle: "sumplete",
   trap: "arithmetic-reflex",
   treasure: "treasure-chest",
+  gate: "key-gate",
 }
 
 const DEFAULT_TAGS: Partial<Record<LegacyRoomKind, string[]>> = {
   puzzle: ["puzzle"],
   trap: ["trap"],
   treasure: ["treasure"],
+  gate: ["gate"],
 }
+
+const ENCOUNTER_KINDS: ReadonlySet<LegacyRoomKind> = new Set(["puzzle", "trap", "treasure", "gate"])
+const PORTAL_KINDS: ReadonlySet<LegacyRoomKind> = new Set(["entrance", "stairhead", "exit"])
 
 const room = (
   kind: LegacyRoomKind,
@@ -25,7 +30,7 @@ const room = (
   opts?: Partial<Omit<RoomCell, "type" | "roomType" | "dirs" | "state">>
 ): RoomCell => ({
   type: "room",
-  roomType: kind === "puzzle" || kind === "trap" || kind === "treasure" ? "encounter" : kind,
+  roomType: ENCOUNTER_KINDS.has(kind) ? "encounter" : PORTAL_KINDS.has(kind) ? "portal" : "fork",
   dirs: new Set(dirs),
   state: "reachable",
   ...(DEFAULT_FAMILY[kind] ? { family: DEFAULT_FAMILY[kind] } : {}),

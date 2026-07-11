@@ -36,14 +36,27 @@ truth (dated 2026-07-11) and the code hasn't caught up yet.
 
 ## What's designed but NOT implemented — the actual backlog
 
+1. ~~**Node type collapse**~~ — done. `RoomType` is now `portal|fork|encounter`.
+   Gate is a registered family (`id: "key-gate"`, `src/mods/core/{game,app}/keyGate/`),
+   same `FamilyPlugin` contract as any other encounter — click-to-attempt,
+   "you don't have the key yet" message (`gate.*` i18n keys), `onSolved`.
+   `entrance`/`stairhead`/`exit` unified into `portal` (distinguished at
+   render/click time by `stairId` presence and `grid.entrancePos`, not by a
+   separate roomType). Gating turned out to already be a *hard* block on
+   approach (`gridNavigation.ts` marked a keyless gate `"visible"`, never
+   clickable) — this was corrected to match the soft model this doc and
+   `pyramid-interior-design.md` §8 both specify: a locked gate is now always
+   reachable/clickable, the lock check moved into the family's own
+   `generate`/`Component` (via new `FamilyContext.requiredKeyId`/`ownedKeys`
+   fields). So this landed as slightly more than a pure rename — the
+   click-dead-end bug flagged during recon (`SiteMapScreen.tsx`'s old
+   `handleCellClick` had no `"gate"` case at all) is fixed as part of the
+   same change, not deferred. All 775 existing tests + `yarn validate-world`
+   pass; `yarn lint`/`yarn tsc -b` clean.
+
 Everything below is real, substantial implementation work, zero code
 written yet:
 
-1. **Node type collapse** — `RoomType` (`entrance|encounter|fork|gate|stairhead|exit`)
-   → `portal|fork|encounter`. Gate becomes a registered family
-   (`id: "key-gate"`), same `FamilyPlugin` contract as any other encounter
-   (click-to-attempt, "need key" message, `onSolved`). `entrance`/`stairhead`/`exit`
-   unify into `portal`.
 2. **Tomb interior rebuild** — tombs become persistent multi-floor sites
    (`SiteConfig[]`, one floor per treasure), same `isInteriorPyramid`
    treatment pyramids already have in `useJourneys.ts` (pinned seed, capped
@@ -75,9 +88,7 @@ the tomb design assumes fragment placement respects reachability, which is
 exactly what the solver provides. Build the solver's reachability graph +
 hieroglyph-fragment placement first, prove it against `fragments.ts`'s
 existing "273/273 placed" bar, *then* rebuild tomb topology on top of it.
-Node-type collapse (#1) can land independently/first — it's a pure
-refactor with no new behavior (gate already resolves via `getFamilyPlugin`
-today, this just makes that literal).
+Node-type collapse (#1, done) landed first, independently, as planned.
 
 ## Not blocking, but worth knowing
 

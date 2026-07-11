@@ -37,14 +37,10 @@ const reachableFrom = (
       const ncell = grid.cells[nr]?.[nc]
       if (!ncell || ncell.type === "empty") continue
 
-      // Gate: only passable if we own the key
-      if (
-        ncell.type === "room" &&
-        ncell.roomType === "gate" &&
-        ncell.requiredKeyId &&
-        !ownedKeys.has(ncell.requiredKeyId)
-      )
-        continue
+      // Gate: only passable if we own the key. requiredKeyId alone is the signal — any
+      // encounter can carry a key requirement (a gate's only job; a tableau's incidental
+      // one), not just rooms tagged "gate".
+      if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) continue
 
       visited.add(nkey)
       queue.push([nr, nc])
@@ -86,7 +82,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
-      if (cell.roomType === "gate" && cell.requiredKeyId && cell.gateVariant === "floor-key") {
+      if (cell.requiredKeyId && cell.gateVariant === "floor-key") {
         if (!collectedKeys.has(cell.requiredKeyId)) {
           const gatePos: Pos = [r, c]
           let keyPos: Pos = gatePos
@@ -129,7 +125,8 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
               bcell.roomType === "encounter" && (bcell.tags?.includes("treasure") || bcell.tags?.includes("shop"))
             const isPuzzleLike =
               bcell.roomType === "encounter" && (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle"))
-            if (bcell.roomType === "gate" || bcell.roomType === "stairhead" || isTreasureLike) hasInteresting = true
+            const isGate = bcell.tags?.includes("gate")
+            if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
             else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch
               for (const d of bcell.dirs) {
@@ -161,7 +158,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
       if (cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
-      if (cell.roomType === "gate" && cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
+      if (cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
     }
   }
 

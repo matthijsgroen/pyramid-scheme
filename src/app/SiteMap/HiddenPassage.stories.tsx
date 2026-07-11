@@ -37,7 +37,6 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
     SEED,
     0,
     exploredSections,
-    new Set(),
     positionStr,
     detectionLevel,
     revealedSections

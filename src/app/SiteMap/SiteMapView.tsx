@@ -32,6 +32,8 @@ type Props = {
   explorerPos?: readonly [number, number]
   /** "row,col" keys of completed treasure cells with a reward still waiting to be picked up */
   pendingCells?: ReadonlySet<string>
+  /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
+  ownedKeys?: ReadonlySet<string>
   className?: string
 }
 
@@ -318,12 +320,26 @@ const ExitShape = ({ state }: ShapeProps) => {
   )
 }
 
-// The visual shape an "encounter" room takes, by its family's tags — picks among the
-// hand-drawn puzzle/trap/treasure shapes below.
+// The visual shape a room takes. "encounter" rooms pick among the hand-drawn
+// puzzle/trap/treasure/gate shapes by family tag; "portal" rooms (entrance/stairhead/exit
+// are all `RoomType: "portal"` now — pure transitions, no family) pick by position/stairId,
+// the same fields siteAssembler used to pick a roomType literal from before the collapse.
 type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 
-const shapeKindFor = (roomType: RoomType, tags: string[] | undefined): ShapeKind => {
-  if (roomType !== "encounter") return roomType
+const shapeKindFor = (
+  grid: FloorGrid,
+  r: number,
+  c: number,
+  roomType: RoomType,
+  tags: string[] | undefined,
+  stairId: string | undefined
+): ShapeKind => {
+  if (roomType === "fork") return "fork"
+  if (roomType === "portal") {
+    if (stairId) return "stairhead"
+    return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
+  }
+  if (tags?.includes("gate")) return "gate"
   if (tags?.includes("trap")) return "trap"
   if (tags?.includes("treasure") || tags?.includes("shop")) return "treasure"
   return "puzzle"
@@ -485,9 +501,19 @@ const DIR_MOVES: Record<Direction, readonly [number, number]> = {
 // sprite-tile renderer needs to tile cleanly (see
 // docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
 // the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (roomType: RoomType, tags: string[] | undefined, dirsSize: number): boolean =>
-  roomType === "fork" ||
-  ((shapeKindFor(roomType, tags) === "treasure" || roomType === "stairhead" || roomType === "exit") && dirsSize === 1)
+const canClaimVoid = (
+  grid: FloorGrid,
+  r: number,
+  c: number,
+  roomType: RoomType,
+  tags: string[] | undefined,
+  stairId: string | undefined,
+  dirsSize: number
+): boolean => {
+  if (roomType === "fork") return true
+  const kind = shapeKindFor(grid, r, c, roomType, tags, stairId)
+  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && dirsSize === 1
+}
 
 const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
   [-1, 0],
@@ -548,7 +574,7 @@ const isClaimableNeighbor = (grid: FloorGrid, ownerR: number, ownerC: number, nr
     dc = nc - ownerC
   if (Math.abs(dr) + Math.abs(dc) !== 1) return false
   const beyond = grid.cells[ownerR + dr * 2]?.[ownerC + dc * 2]
-  const leadsToGate = beyond?.type === "room" && beyond.roomType === "gate"
+  const leadsToGate = beyond?.type === "room" && !!beyond.tags?.includes("gate")
   return leadsToGate || cell.dirs.size === 1
 }
 
@@ -601,7 +627,8 @@ const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room" || !canClaimVoid(cell.roomType, cell.tags, cell.dirs.size)) continue
+      if (cell.type !== "room" || !canClaimVoid(grid, r, c, cell.roomType, cell.tags, cell.stairId, cell.dirs.size))
+        continue
       const ownerKey = `${r},${c}`
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {
@@ -908,6 +935,7 @@ export const SiteMapView = ({
   revealAllCells = false,
   explorerPos,
   pendingCells,
+  ownedKeys,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1068,7 +1096,7 @@ export const SiteMapView = ({
             // Only ever a pending-loot marker for a treasure room with a consumable reward — this
             // guards against stale coordinates in pendingCells (e.g. left over from before a site
             // was regenerated) painting the badge onto whatever room now occupies that cell.
-            const shapeKind = shapeKindFor(cell.roomType, cell.tags)
+            const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
             const isPending =
               isCompleted &&
               shapeKind === "treasure" &&
@@ -1076,6 +1104,13 @@ export const SiteMapView = ({
               (pendingCells?.has(`${r},${c}`) ?? false)
             const clickable = onCellClick && (state === "reachable" || state === "completed")
             const roomR = nodeRadius[shapeKind]
+            // Gating is soft: a locked gate is still "reachable" (clickable), so its own
+            // exploration state no longer distinguishes locked from unlocked the way it used
+            // to. Recover that purely cosmetic distinction here, independent of `state` —
+            // `displayState` feeds the floor tint and icon only, never clickability/badges.
+            const locked =
+              shapeKind === "gate" && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
+            const displayState: CellState = locked && state === "reachable" ? "visible" : state
 
             return (
               <g
@@ -1084,19 +1119,19 @@ export const SiteMapView = ({
                 onClick={clickable ? () => onCellClick(r, c) : undefined}
                 style={{ cursor: clickable ? "pointer" : "default" }}
               >
-                <FloorTile state={state} open={open} kind="room" />
+                <FloorTile state={displayState} open={open} kind="room" />
                 <g opacity={isCompleted && !isPending ? 0.45 : 1}>
                   <NodeShape
                     type={shapeKind}
-                    state={state}
+                    state={displayState}
                     gateVariant={cell.gateVariant}
                     keyColor={cell.keyColor}
                     keyColors={cell.keyColors}
                   />
                 </g>
                 {isCompleted &&
-                  cell.roomType !== "fork" &&
-                  cell.roomType !== "entrance" &&
+                  shapeKind !== "fork" &&
+                  shapeKind !== "entrance" &&
                   (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
               </g>
             )

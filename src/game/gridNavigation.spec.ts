@@ -14,7 +14,7 @@ const makeLinearGrid = (): FloorGrid => ({
     [
       { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
       { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" },
-      { type: "room", roomType: "exit", dirs: new Set<Direction>(["w"]), state: "fogged" },
+      { type: "room", roomType: "portal", dirs: new Set<Direction>(["w"]), state: "fogged" },
     ],
   ],
 })
@@ -76,7 +76,10 @@ describe(completeCell, () => {
     if (exitCell.type === "room") expect(exitCell.state).toBe("reachable")
   })
 
-  it("gate stays visible (not reachable) when key not owned", () => {
+  it("gate becomes reachable (clickable) even when its key isn't owned — gating is soft", () => {
+    // A locked gate is still approachable and clickable; the gate family itself refuses
+    // to solve until the key is held (see mods/core/app/keyGate/plugin.tsx). Reachability
+    // no longer hard-blocks on requiredKeyId the way it used to.
     const gateGrid: FloorGrid = {
       siteId: "test",
       rows: 1,
@@ -89,7 +92,8 @@ describe(completeCell, () => {
           { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
           {
             type: "room",
-            roomType: "gate",
+            roomType: "encounter",
+            tags: ["gate"],
             dirs: new Set<Direction>(["w"]),
             state: "fogged",
             requiredKeyId: "some-key",
@@ -100,13 +104,13 @@ describe(completeCell, () => {
     const updated = completeCell(gateGrid, 0, 0)
     const gate = updated.cells[0][1]
     expect(gate.type).toBe("room")
-    if (gate.type === "room") expect(gate.state).toBe("visible")
+    if (gate.type === "room") expect(gate.state).toBe("reachable")
   })
 
-  it("gate becomes reachable after completing the key room then clicking the corner", () => {
+  it("gate reached around a corner follows the same corner-reveal rule as any other room", () => {
     // layout: entrance(0,0) -e- key-chest(0,1) -s- corridor(1,1) -w- gate(1,0)
-    // The corridor at (1,1) is a corner {n,w}, so it becomes "reachable" after the chest.
-    // Clicking the corner then reveals the gate (now that we own the key).
+    // The corridor at (1,1) is a corner {n,w}, so it becomes "reachable" after the chest;
+    // the gate itself (around the corner) stays fogged until the corner is clicked.
     const grid: FloorGrid = {
       siteId: "test",
       rows: 2,
@@ -116,7 +120,7 @@ describe(completeCell, () => {
       staircases: {},
       cells: [
         [
-          { type: "room", roomType: "entrance", dirs: new Set<Direction>(["e"]), state: "reachable" },
+          { type: "room", roomType: "portal", dirs: new Set<Direction>(["e"]), state: "reachable" },
           {
             type: "room",
             roomType: "encounter",
@@ -128,7 +132,8 @@ describe(completeCell, () => {
         [
           {
             type: "room",
-            roomType: "gate",
+            roomType: "encounter",
+            tags: ["gate"],
             dirs: new Set<Direction>(["e"]),
             state: "fogged",
             requiredKeyId: "the-key",
@@ -188,7 +193,7 @@ describe(findPath, () => {
         [
           { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state: "reachable" },
           { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "visible" },
-          { type: "room", roomType: "exit", dirs: new Set<Direction>(["w"]), state: "reachable" },
+          { type: "room", roomType: "portal", dirs: new Set<Direction>(["w"]), state: "reachable" },
         ],
       ],
     }
@@ -215,7 +220,7 @@ describe(findPath, () => {
         [
           { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e", "s"]), state: "reachable" },
           { type: "corridor", dirs: new Set<Direction>(["w", "e"]), state: "fogged" },
-          { type: "room", roomType: "exit", dirs: new Set<Direction>(["w", "s"]), state: "reachable" },
+          { type: "room", roomType: "portal", dirs: new Set<Direction>(["w", "s"]), state: "reachable" },
         ],
         [
           { type: "corridor", dirs: new Set<Direction>(["n", "e"]), state: "visible" },

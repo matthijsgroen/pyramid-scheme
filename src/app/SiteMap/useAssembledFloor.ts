@@ -16,12 +16,7 @@ export const decodeEdge = (edgeId: string): [floor: number, row: number, col: nu
   return [0, r, c]
 }
 
-const applyExplored = (
-  grid: FloorGrid,
-  floor: number,
-  exploredSections: Record<string, string[]>,
-  wardKeys?: ReadonlySet<string>
-): FloorGrid => {
+const applyExplored = (grid: FloorGrid, floor: number, exploredSections: Record<string, string[]>): FloorGrid => {
   let result = grid
   for (const [sectionHash, cellIds] of Object.entries(exploredSections)) {
     for (const cellId of cellIds) {
@@ -32,7 +27,7 @@ const applyExplored = (
       if (cell.type === "empty") continue
       // Skip stale cells whose section was restructured since save
       if (cell.sectionHash !== sectionHash) continue
-      result = completeCell(result, r, c, wardKeys)
+      result = completeCell(result, r, c)
     }
   }
   return result
@@ -107,7 +102,6 @@ export const useAssembledFloor = (
   seed: number,
   currentFloor: number,
   exploredSections: Record<string, string[]>,
-  wardKeys: ReadonlySet<string>,
   position: string | null | undefined,
   detectionLevel = 0,
   revealedSections?: ReadonlySet<string>
@@ -135,8 +129,8 @@ export const useAssembledFloor = (
   }, [baseGrid, exploredSections, currentFloor])
 
   const exploredGrid = useMemo(
-    () => (baseGrid ? applyExplored(baseGrid, currentFloor, effectiveExplored, wardKeys) : null),
-    [baseGrid, currentFloor, effectiveExplored, wardKeys]
+    () => (baseGrid ? applyExplored(baseGrid, currentFloor, effectiveExplored) : null),
+    [baseGrid, currentFloor, effectiveExplored]
   )
 
   const { grid, hiddenJunctions, hiddenSectionHashes } = useMemo(() => {

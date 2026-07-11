@@ -187,7 +187,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
 
     if (cell.reward) setCollected(prev => [...prev, { reward: cell.reward!, floor: currentFloor }])
 
-    if (cell.roomType === "stairhead") {
+    if (cell.roomType === "portal" && cell.stairId) {
       setCurrentFloor(f => f + 1)
       setExplorerPos(null)
     }

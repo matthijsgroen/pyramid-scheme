@@ -93,6 +93,13 @@
     "disable": "Val uitschakelen",
     "turnAround": "Omdraaien"
   },
+  "gate": {
+    "title": "🔒 Gesloten Poort",
+    "locked": "Je hebt de juiste sleutel nog niet.",
+    "unlocked": "Je hebt de sleutel.",
+    "pass": "Doorgaan",
+    "turnAround": "Omdraaien"
+  },
   "chest": {
     "tapToOpen": "Tik om te openen",
     "money": "{{amount}} munten",

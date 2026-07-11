@@ -93,6 +93,13 @@
     "disable": "Disable trap",
     "turnAround": "Turn around"
   },
+  "gate": {
+    "title": "🔒 Locked Gate",
+    "locked": "You don't have the right key yet.",
+    "unlocked": "You have the key.",
+    "pass": "Pass through",
+    "turnAround": "Turn around"
+  },
   "chest": {
     "tapToOpen": "Tap to open",
     "money": "{{amount}} coins",

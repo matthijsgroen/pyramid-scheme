@@ -79,7 +79,7 @@ describe("useAssembledFloor — hidden junctions", () => {
     }
 
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, new Set(), null, 1, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
     )
 
     expect(result.current.hiddenJunctions.size).toBeGreaterThan(0)
@@ -101,7 +101,7 @@ describe("useAssembledFloor — hidden junctions", () => {
     }
 
     const { result } = renderHook(() =>
-      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, new Set(), null, 0, new Set())
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 0, new Set())
     )
 
     const [r, c] = [...result.current.hiddenJunctions][0].split(",").map(Number)

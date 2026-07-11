@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { TreasureReward } from "@/game/siteTypes"
+import type { GateVariant, KeyColor, TreasureReward } from "@/game/siteTypes"
 import type { ResolveEncounter } from "@/game/siteAssembler"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
@@ -25,6 +25,12 @@ export type FamilyContext = {
   tags?: string[]
   reward?: TreasureReward
   price?: number
+  // key-gate's own precondition: which key this room needs, and whether the player
+  // already holds it (local-floor tomb keys ∪ ward keys owned entering the site).
+  requiredKeyId?: string
+  gateVariant?: GateVariant
+  keyColor?: KeyColor
+  ownedKeys?: ReadonlySet<string>
 }
 
 type InventoryAPI = ReturnType<typeof useInventory>

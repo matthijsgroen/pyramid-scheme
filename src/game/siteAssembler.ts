@@ -34,6 +34,7 @@ const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
   crocodile: ["tomb-puzzle"],
   "treasure-chest": ["treasure"],
   "fez-shop": ["shop"],
+  "key-gate": ["gate"],
 }
 // Fallback for callers that don't inject the real family registry (tests, stories) —
 // production always passes familyRegistry.ts's resolveEncounter.
@@ -286,6 +287,7 @@ export const assembleFloor = (
     resolveEncounter(encounter, "puzzle").tags.includes("trap")
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
+  const keyGate = resolveEncounter("key-gate", "key-gate")
   const treasureOrShop = (shopPrice: number | undefined): EncounterResolution =>
     shopPrice !== undefined ? fezShop : treasureChest
 
@@ -865,9 +867,9 @@ export const assembleFloor = (
       if (mi === 0) {
         if (config.entrance) {
           const stairId = typeof config.entrance === "object" ? config.entrance.stairId : `${siteId}:entrance`
-          roomSpecs.set(posKey(r, c), { roomType: "stairhead", stairId })
+          roomSpecs.set(posKey(r, c), { roomType: "portal", stairId })
         } else {
-          roomSpecs.set(posKey(r, c), { roomType: "entrance" })
+          roomSpecs.set(posKey(r, c), { roomType: "portal" })
         }
       } else if (mi === goalIndex) {
         roomSpecs.set(posKey(r, c), {
@@ -900,10 +902,10 @@ export const assembleFloor = (
 
     // Exit / stairhead
     if (config.exitOrStaircase === "exit") {
-      roomSpecs.set(posKey(exR, exC), { roomType: "exit" })
+      roomSpecs.set(posKey(exR, exC), { roomType: "portal" })
     } else {
       const stairId = typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
-      roomSpecs.set(posKey(exR, exC), { roomType: "stairhead", stairId })
+      roomSpecs.set(posKey(exR, exC), { roomType: "portal", stairId })
     }
 
     // The farthest mainPath cell has degree 1 (no free adjacents) so no section can branch from it.
@@ -932,7 +934,9 @@ export const assembleFloor = (
         const [gr, gc] = cells[0]
         const floorKeyGate = section.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
           keyColor: floorKeyGate.color ?? "blue",
@@ -942,7 +946,9 @@ export const assembleFloor = (
         const [gr, gc] = cells[0]
         const tombGate = section.gate as { type: "tomb-key"; wardKeyId: string }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: tombGate.wardKeyId,
           gateVariant: "tomb-key",
         })
@@ -981,7 +987,7 @@ export const assembleFloor = (
         })
       } else if (section.end === "staircase" || typeof section.end === "object") {
         const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
-        roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
+        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
         const endFamily = treasureOrShop(section.shopPrice)
         roomSpecs.set(posKey(er, ec), {
@@ -1004,7 +1010,9 @@ export const assembleFloor = (
         const [gr, gc] = cells[0]
         const floorKeyGate = subSection.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
           keyColor: floorKeyGate.color ?? "blue",
@@ -1014,7 +1022,9 @@ export const assembleFloor = (
         const [gr, gc] = cells[0]
         const tombGate = subSection.gate as { type: "tomb-key"; wardKeyId: string }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: tombGate.wardKeyId,
           gateVariant: "tomb-key",
         })
@@ -1054,7 +1064,7 @@ export const assembleFloor = (
         })
       } else if (subSection.end === "staircase" || typeof subSection.end === "object") {
         const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
-        roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
+        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
         const endFamily = treasureOrShop(subSection.shopPrice)
         roomSpecs.set(posKey(er, ec), {
@@ -1162,11 +1172,13 @@ export const assembleFloor = (
     // offset into whichever side has open void next to it (see SiteMapView.tsx).
     const endpointPositions = new Set<string>()
     for (const [pk, spec] of roomSpecs) {
-      // Dead-end rooms only — treasure/shop chests and stairs/exits, never mid-path.
+      const [r, c] = pk.split(",").map(Number)
+      // Dead-end rooms only — treasure/shop chests and stairs/exits, never mid-path or
+      // the floor's own entrance (a portal, but never a decoration-worthy dead end).
       const isTreasureLike =
         spec.roomType === "encounter" && (spec.tags?.includes("treasure") || spec.tags?.includes("shop"))
-      if (!isTreasureLike && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue
-      const [r, c] = pk.split(",").map(Number)
+      const isPortalEndpoint = spec.roomType === "portal" && !(r === entR && c === entC)
+      if (!isTreasureLike && !isPortalEndpoint) continue
       const cell = cells2D[r][c]
       if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
     }
@@ -1189,7 +1201,7 @@ export const assembleFloor = (
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
         const cell = cells2D[r][c]
-        if (cell.type === "room" && cell.roomType === "stairhead" && cell.stairId) {
+        if (cell.type === "room" && cell.stairId) {
           staircases[cell.stairId] = [r, c]
         }
       }

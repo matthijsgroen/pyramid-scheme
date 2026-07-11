@@ -1,6 +1,6 @@
 import { use, useCallback, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
-import { findPath, getCell } from "@/game/gridNavigation"
+import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
@@ -64,10 +64,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     seed,
     currentFloor,
     allEdges,
-    wardKeys,
     journeyState?.position,
     progression.perks.detectionLevel
   )
+  // Keys the player already holds for THIS floor's gates: this floor's own completed
+  // tomb-key treasures, union'd with ward keys owned entering the site (progression's
+  // global tombKeyIds, above). Same union completeCell used to gate reachability before
+  // gating went soft — now purely a "is this gate satisfied" read, for the gate family's
+  // own precondition and the map's locked/unlocked gate coloring.
+  const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
+
   const pendingConsumableCells = useMemo(() => {
     const prefix = `${currentFloor}:`
     const result = new Set<string>()
@@ -113,8 +119,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       difficulty: floorConfig.difficulty,
       reward: cell?.type === "room" ? cell.reward : undefined,
       price: cell?.type === "room" ? cell.shopPrice : undefined,
+      requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,
+      gateVariant: cell?.type === "room" ? cell.gateVariant : undefined,
+      keyColor: cell?.type === "room" ? cell.keyColor : undefined,
+      ownedKeys,
     }
-  }, [activeEncounter, grid, currentFloor, journeyId, floorConfig.difficulty])
+  }, [activeEncounter, grid, currentFloor, journeyId, floorConfig.difficulty, ownedKeys])
 
   const generatedPuzzle = useMemo(() => {
     if (!encounterFamily || !encounterCtx) return null
@@ -213,7 +223,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
       if (cell.type !== "room") return
 
-      if (cell.roomType === "entrance") {
+      if (cell.roomType === "fork") {
         journeys.markCellExplored(sectionHash, edgeId)
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "encounter") {
@@ -221,13 +231,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
           setActiveEncounter({ pos: [row, col], freshArrival: true })
         )
-      } else if (cell.roomType === "fork") {
-        journeys.markCellExplored(sectionHash, edgeId)
-        journeys.updatePosition(journeyId, edgeId)
-      } else if (cell.roomType === "stairhead") {
-        journeys.markCellExplored(sectionHash, edgeId)
+      } else if (cell.roomType === "portal") {
         if (cell.stairId) {
           // Find the peer stairhead across floors and teleport there
+          journeys.markCellExplored(sectionHash, edgeId)
           const stairId = cell.stairId
           for (let fi = 0; fi < siteConfig.length; fi++) {
             if (fi === currentFloor) continue
@@ -240,15 +247,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
               break
             }
           }
+        } else if (row === grid.entrancePos[0] && col === grid.entrancePos[1]) {
+          journeys.markCellExplored(sectionHash, edgeId)
+          journeys.updatePosition(journeyId, edgeId)
         } else {
           journeys.updatePosition(journeyId, edgeId)
-          setCurrentFloor(f => f + 1)
+          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
+            setExiting(true)
+          )
         }
-      } else if (cell.roomType === "exit") {
-        journeys.updatePosition(journeyId, edgeId)
-        scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-          setExiting(true)
-        )
       }
     },
     [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig]
@@ -270,6 +277,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           onCellClick={handleCellClick}
           explorerPos={explorerPos}
           pendingCells={pendingConsumableCells}
+          ownedKeys={ownedKeys}
           className="h-full w-full"
         />
       </div>

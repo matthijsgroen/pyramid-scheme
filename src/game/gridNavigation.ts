@@ -14,12 +14,7 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   return keys
 }
 
-export const completeCell = (
-  grid: FloorGrid,
-  row: number,
-  col: number,
-  externalKeys?: ReadonlySet<string>
-): FloorGrid => {
+export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGrid => {
   // 1. Shallow-copy cells (immutable update)
   const newCells: GridCell[][] = grid.cells.map(r => [...r])
 
@@ -31,12 +26,9 @@ export const completeCell = (
     newCells[row][col] = { ...targetCell, state: "completed" }
   }
 
-  // 3. Compute ownedKeys from updated cells + any external keys (ward keys from useProgression)
   const updatedGrid = { ...grid, cells: newCells }
-  const localKeys = getOwnedKeys(updatedGrid)
-  const ownedKeys: ReadonlySet<string> = externalKeys ? new Set([...localKeys, ...externalKeys]) : localKeys
 
-  // 4. BFS through corridors and rooms from (row,col)
+  // 3. BFS through corridors and rooms from (row,col)
   const cell = newCells[row][col]
   if (cell.type === "empty") return updatedGrid
 
@@ -85,15 +77,12 @@ export const completeCell = (
         }
       }
     } else if (neighbor.type === "room") {
-      // Gate without key: mark visible. Others: mark reachable.
-      if (neighbor.roomType === "gate" && neighbor.requiredKeyId && !ownedKeys.has(neighbor.requiredKeyId)) {
-        if (neighbor.state === "fogged") {
-          newCells[r][c] = { ...neighbor, state: "visible" }
-        }
-      } else {
-        if (neighbor.state === "fogged" || neighbor.state === "visible") {
-          newCells[r][c] = { ...neighbor, state: "reachable" }
-        }
+      // Gating is soft: a locked gate is still approachable and clickable, same as any
+      // other room — its own family shows "you don't have the key yet" and refuses to
+      // solve. Reachability past it (revealing what's beyond) only happens once it's
+      // actually completed, which "don't traverse through rooms" below already enforces.
+      if (neighbor.state === "fogged" || neighbor.state === "visible") {
+        newCells[r][c] = { ...neighbor, state: "reachable" }
       }
       // Don't traverse through rooms
     }
@@ -234,16 +223,17 @@ export const renderAscii = (grid: FloorGrid): string => {
         continue
       }
       const upper = cell.state === "reachable"
-      const letters: Record<string, string> = {
-        entrance: "e",
-        puzzle: "p",
-        gate: "g",
-        treasure: "t",
-        stairhead: "s",
-        exit: "x",
-        fork: "f",
-      }
-      const base = letters[cell.roomType] ?? "?"
+      const tagLetters: Record<string, string> = { gate: "g", puzzle: "p", trap: "r", treasure: "t", shop: "$" }
+      const base =
+        cell.roomType === "fork"
+          ? "f"
+          : cell.roomType === "portal"
+            ? isEntrance
+              ? "e"
+              : cell.stairId
+                ? "s"
+                : "x"
+            : (cell.tags?.map(t => tagLetters[t]).find(Boolean) ?? "?")
       line += upper ? base.toUpperCase() : base
     }
     rows.push(line)

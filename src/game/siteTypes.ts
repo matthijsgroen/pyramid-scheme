@@ -1,5 +1,5 @@
 export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
-export type RoomType = "entrance" | "encounter" | "fork" | "gate" | "stairhead" | "exit"
+export type RoomType = "portal" | "fork" | "encounter"
 export type ConsumableType = "bandage" | "oil" | "trapTool"
 // Closed union — grows by one variant per new reward/currency (money, sellable were the
 // latest). docs/mods-architecture.md proposes collapsing this into a currency-id registry;

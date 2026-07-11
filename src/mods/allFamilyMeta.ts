@@ -5,6 +5,7 @@ import { TABLEAU_META } from "./puzzle/game/tableau/meta"
 import { CROCODILE_META } from "./puzzle/game/crocodile/meta"
 import { FEZ_SHOP_META } from "./shop/game/fezShop/meta"
 import { TREASURE_CHEST_META } from "./core/game/treasureChest/meta"
+import { KEY_GATE_META } from "./core/game/keyGate/meta"
 
 // Every registered family's metadata, domain-layer only (no Component/generate) — the one
 // place world-gen (which can't import the app-layer family registry) can read tags/
@@ -17,4 +18,5 @@ export const ALL_FAMILY_META: FamilyMeta[] = [
   CROCODILE_META,
   FEZ_SHOP_META,
   TREASURE_CHEST_META,
+  KEY_GATE_META,
 ]

@@ -54,6 +54,8 @@ const isPuzzleRoom = (c: RoomCell) =>
 const isTrapRoom = (c: RoomCell) => c.roomType === "encounter" && c.family === "arithmetic-reflex"
 const isTreasureRoom = (c: RoomCell) =>
   c.roomType === "encounter" && ["treasure-chest", "fez-shop"].includes(c.family ?? "")
+const isGateRoom = (c: RoomCell) => c.roomType === "encounter" && !!c.tags?.includes("gate")
+const isStairheadRoom = (c: RoomCell) => c.roomType === "portal" && !!c.stairId
 
 const findRoom = (grid: FloorGrid, predicate: (cell: RoomCell) => boolean) => {
   for (let r = 0; r < grid.rows; r++)
@@ -117,7 +119,7 @@ describe(assembleFloor, () => {
     }
     const result = assembleFloor("stair-site", config, 0)
     if (!result.success) throw new Error("assembly failed")
-    const stairhead = findRoom(result.grid, c => c.roomType === "stairhead")
+    const stairhead = findRoom(result.grid, isStairheadRoom)
     expect(stairhead?.cell.stairId).toBe("test:main")
     expect(result.grid.staircases["test:main"]).toEqual([stairhead!.r, stairhead!.c])
   })
@@ -253,8 +255,8 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", firstPyramid(), 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(findRoom(result.grid, c => c.roomType === "stairhead")).not.toBeNull()
-      expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
+      expect(findRoom(result.grid, isStairheadRoom)).not.toBeNull()
+      expect(findRoom(result.grid, isGateRoom)).not.toBeNull()
     }
   })
 
@@ -510,7 +512,7 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
+      expect(findRoom(result.grid, isGateRoom)).not.toBeNull()
       expect(findRoom(result.grid, c => c.reward?.type === "tombKey")).not.toBeNull()
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
@@ -584,8 +586,10 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(findRoom(result.grid, c => c.roomType === "stairhead")).not.toBeNull()
-      expect(findRoom(result.grid, c => c.roomType === "exit")).toBeNull()
+      const [exR, exC] = result.grid.exitPos
+      const exitCell = result.grid.cells[exR][exC]
+      expect(exitCell.type).toBe("room")
+      if (exitCell.type === "room") expect(exitCell.stairId).toBeDefined()
     }
   })
 
@@ -602,7 +606,7 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      const gate = findRoom(result.grid, c => c.roomType === "gate")
+      const gate = findRoom(result.grid, isGateRoom)
       expect(gate).not.toBeNull()
       expect(gate!.cell.gateVariant).toBe("tomb-key")
       // tomb-key gates don't place a key on the floor
