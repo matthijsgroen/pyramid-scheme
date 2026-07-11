@@ -72,11 +72,23 @@ Transient briefs for the next agent or session — what to build, what's already
 
 ---
 
+## Implementation plan documents
+
+A mechanic's *design* and its *build plan* are two different documents with two different lifecycles — never conflate them in one file.
+
+- **Design doc** (`docs/game-design/<topic>.md`) — durable, survives the mechanic's full lifetime. Holds intent, rules, data model, decisions: how it works and why.
+- **Implementation plan** (`docs/<topic>-implementation-plan.md`) — transient, scoped to getting the mechanic built. Holds phase breakdown, done-vs-pending status, rollout-specific dated decisions, PR/branch references.
+
+**Lifecycle: delete the implementation plan once the mechanic ships.** Before deleting, extract anything durable (a fact about how the mechanic actually works) into the design doc — don't let it disappear with the plan. Everything else (phase status, "locked as of DATE" notes, bug-fixes-in-passing) belongs nowhere once the mechanic is live; git history and the PR description already own that. A design doc that still reads like a build plan (phase numbers, stacked-PR references, "not yet playtested") is a sign the split didn't happen — fix it there, don't let the mixed doc stand as the permanent record.
+
+---
+
 ## Summary
 
 | What you have | Where it goes |
 |---|---|
 | Mechanic design, system decisions | `docs/game-design/<topic>.md` |
+| Phased build plan for a mechanic | `docs/<topic>-implementation-plan.md` (delete once shipped, extract durable facts first) |
 | "How to work in area X" guidelines | `docs/instructions/<topic>.md` |
 | UX flow maps, friction findings | `docs/ux/<topic>.md` |
 | Transient handover brief | `docs/handover-<topic>.md` (delete on completion) |
