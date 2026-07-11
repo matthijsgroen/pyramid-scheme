@@ -11,13 +11,13 @@ ward-gate placement is not one mechanism today — it's two, conflated:
 
 **The solver (generic, world builder engine):** understands "reachability
 given a set of possessed keys." It knows nothing about what a key *is*
-semantically — a map fragment, a hieroglyph fragment, a ward-key treasure
+semantically — a map piece, a hieroglyph fragment, a ward-key treasure
 are all the same shape to it: "possessing currency X's instance Y
 satisfies requirement Z."
 
-**The placement rule (per-currency, authored):** which slots are eligible
-for a given currency's instances, in what order, following what
-distribution policy. Today's code conflates the two: fragment/map-piece/
+**The distribution rule (per-currency, authored):** which slots are
+eligible for a given currency's instances, in what order, following what
+placement policy. Today's code conflates the two: fragment/map-piece/
 ward-key placement logic is hardcoded per-currency instead of being one
 solver fed by per-currency rule data. (A mod that introduces its own
 key-like currency would supply its own rule the same way — that's the one
@@ -187,7 +187,7 @@ For each entry pulled off the worklist:
      instance.
    - Otherwise pick from the reachable area's available loot slots,
      filtered by that currency's own **distribution rule** (an authored
-     placement policy — e.g. map fragments: prefer one per journey, never
+     placement policy — e.g. map pieces: prefer one per journey, never
      two in the same pyramid; hieroglyph fragments: difficulty X fragments
      go in difficulty X corridors), ranked within the eligible candidates
      by the existing generic loot-slot priority order (chests first — see
@@ -225,7 +225,7 @@ primitive kinds — **filters** (narrow candidates) and **rankers** (order
 what's left) — composed with a plain `pipe`:
 
 ```ts
-// map fragment: dedup by pyramid, then generic loot priority
+// map piece: dedup by pyramid, then generic loot priority
 pipe(uniqueBy(slot => slot.pyramidId), rankBy(lootPriority))
 
 // hieroglyph fragment: tier-match filter, then generic loot priority
@@ -241,7 +241,7 @@ writing placement logic from scratch.
 ### Preferences are soft — they relax under pressure, they don't block
 
 A distribution rule's constraint can be broken if honoring it strictly
-would leave instances unplaceable. Concretely: map fragments prefer one
+would leave instances unplaceable. Concretely: map pieces prefer one
 per journey, but higher difficulty tiers have more tombs (more fragments
 needed) than journeys to spread them across uniquely — the constraint must
 degrade gracefully, not block generation. This isn't new: `fragments.ts`'s
@@ -265,7 +265,7 @@ just an occupied/free flag.
 
 This makes a shop a legitimate placement target for a key-like currency,
 same as any chest — "purchasable" is just another acquisition channel a
-distribution rule can prefer. Concretely: the map fragment gating wizard
+distribution rule can prefer. Concretely: the map piece gating wizard
 tier's second tomb can prefer placement as shop stock inside wizard tier's
 *first* tomb (its own fez-shop) — once the player has reached that far,
 the fragment is right there to buy, no separate exploration required.
@@ -293,10 +293,10 @@ under this solver it becomes a real build error.
 ## Worked example
 
 **Blocker 1 — reaching the first tomb.** The tomb needs `piecesRequired`
-map fragments to unlock. Compute the reachable area with zero keys placed
-— the starting four journeys. Place map fragment 1: no authored
+map pieces to unlock. Compute the reachable area with zero keys placed
+— the starting four journeys. Place map piece 1: no authored
 preference, so pick the highest-priority available slot (a chest) in the
-reachable area. Place map fragment 2: the currency's distribution rule
+reachable area. Place map piece 2: the currency's distribution rule
 ("never the same pyramid as another instance") filters candidates to a
 different journey; again no authored preference, pick the best slot there.
 Repeat for 3 and 4. All four sit *inside* the area computed *before* any of
@@ -313,6 +313,19 @@ first, then loot-priority ranking within the reachable area.
 difficulty tier — the reachable area widens (new journeys, plus newly
 satisfiable ward gates inside already-visited pyramids). The whole loop
 repeats one tier up, all the way to Wizard.
+
+**Why this has to be whole-world, concretely.** Starter's tomb has more
+than one treasure — treasure 1 flips the global tier-unlock (junior
+becomes playable); treasure 2 (a different key, same tomb) happens to be
+the ward-key a *junior* pyramid's floor demands. The player is now in
+junior difficulty, exploring junior pyramids, and opens that gate with a
+key they got from starter. Behind it sits a hieroglyph fragment — and that
+fragment turns out to be exactly what starter's *own* tableau needs for
+its treasure 3. The player leaves junior, walks back into the starter
+tomb, and only now can pass a gate they walked past on their very first
+visit. This is the pitch's "backward and forward" in miniature: a worklist
+processing whatever's blocking, regardless of which tier it nominally
+belongs to, is what makes this kind of path even expressible.
 
 ## Relationship to CappedPool / reward-weight / Distribution / WARD_MIX
 
@@ -334,15 +347,20 @@ corridor" — it plugs into this solver as data like every other key type.
 
 ## Open (implementation not yet designed)
 
-- Exact data shape for a currency's "distribution rule" and how it plugs
-  into the solver.
-- Where the solver lives layer-wise (`src/worldGen/`, since placement is a
-  world-gen-time concern, same as everything else in this document).
-- How this replaces `fragments.ts`'s existing `buildPlacementInfos`/
-  `collectSlots` (which already approximates this for hieroglyphs alone,
-  via preferred-pool-then-fallback — not a hard reachability guarantee).
-- Whether/how this exposes a *hard* validator (mirroring `keyAfterGate`)
-  that fails world generation if a key ever lands outside the reachable
-  area at the time it's needed — directly closes the gap raised for tomb
-  tableau/fragment reachability (see `project_tomb_interior_redesign`
-  memory / `pyramid-interior-design.md` §8).
+Resolved during design (kept here only as a changelog, not a live list):
+distribution rule shape (composable filter/rank functions), where the
+solver lives (`scripts/generateWorld.ts`, after topology, over the
+existing per-floor BFS), and hard-failure enforcement (exhausted
+relaxation fails the build — no separate post-hoc validator needed, since
+the solver only ever places constructively within the reachable area).
+
+Still genuinely open:
+
+- The concrete migration path off `fragments.ts`'s `buildPlacementInfos`/
+  `collectSlots` — which pieces get deleted outright vs. reused as the
+  hieroglyph currency's own distribution rule.
+- Exact `Slot`/`Lock`/worklist-entry TypeScript shapes — the coarse graph's
+  node/edge representation hasn't been designed, only its behavior.
+- Whether the coarse solver needs to re-run incrementally during
+  development (`yarn generate-world` iteration) or only matters for the
+  final validated build.

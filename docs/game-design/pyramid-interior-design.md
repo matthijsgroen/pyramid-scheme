@@ -224,6 +224,12 @@ This creates layered revisit motivation: the first visit finds expert_a's piece;
 
 ### Mixed difficulty floors
 
+`WARD_MIX` below is design-doc-only, never implemented, and is superseded
+by `keys-and-locks-solver.md` — "which tiers a ward-key currency targets"
+becomes that currency's own distribution rule under the new solver, not a
+separate table. Kept here for the illustrative distribution shape, not as
+a mechanism to build as-is.
+
 Floors are not tied to the pyramid's tier. Ward keys from any tomb can unlock floors in any pyramid. Authored in `WARD_MIX`:
 
 | Treasure tier | Target pyramid tiers | Distribution |

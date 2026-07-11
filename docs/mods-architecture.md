@@ -579,7 +579,7 @@ instead of something someone forgot to hand-wire.
 
 This used to be a section here, but it's a world builder concern, not a
 mods-boundary one — moved to `docs/game-design/keys-and-locks-solver.md`.
-Short version: gate/key *placement* (which slot a map fragment, hieroglyph
+Short version: gate/key *placement* (which slot a map piece, hieroglyph
 fragment, or ward-key treasure lands in) is a generic reachability solver
 plus per-currency distribution rules, not the "already core, no change"
 single mechanism this doc used to claim. It folds into, and supersedes the
