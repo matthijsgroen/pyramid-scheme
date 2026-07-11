@@ -39,10 +39,12 @@ export const reachableFrom = (
       const ncell = grid.cells[nr]?.[nc]
       if (!ncell || ncell.type === "empty") continue
 
-      // Gate: only passable if we own the key. requiredKeyId alone is the signal — any
-      // encounter can carry a key requirement (a gate's only job; a tableau's incidental
-      // one), not just rooms tagged "gate".
+      // Gate: only passable if we own the key(s). requiredKeyId/requiredKeyIds alone are
+      // the signal — any encounter can carry a key requirement (a gate's only job; a
+      // tableau's several, one per hieroglyph it needs complete), not just rooms tagged
+      // "gate".
       if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) continue
+      if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) continue
 
       visited.add(nkey)
       queue.push([nr, nc])
@@ -174,6 +176,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       if (cell.type !== "room") continue
       if (cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
       if (cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
+      for (const id of cell.requiredKeyIds ?? []) allKeyIds.add(id)
     }
   }
 

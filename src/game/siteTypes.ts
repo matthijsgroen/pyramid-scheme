@@ -39,9 +39,19 @@ export type RoomCell = {
   /** `reward` is a Fez-shop purchase (this many coins), not a free pickup. */
   shopPrice?: number
   requiredKeyId?: string
+  // Same precondition as requiredKeyId, generalized to several — every id must be owned
+  // for this room to be completable. A tableau needing several hieroglyphs complete is
+  // several independent locks, not one; resolved per-room at assembly time by whichever
+  // family owns it (see ResolveKeyRequirements in siteAssembler.ts) — core never
+  // interprets what an id means.
+  requiredKeyIds?: string[]
   gateVariant?: GateVariant
   keyColor?: KeyColor
   keyColors?: KeyColor[]
+  // This room's position among its floor's main-path puzzle rooms (0-based) — purely
+  // structural, meaningful only to whichever family reads it (e.g. the tableau family
+  // re-deriving which TableauLevel it presents from journeyId + floor + this index).
+  pathIndex?: number
   // Registered family id (src/app/families/familyRegistry.ts) — open string, not a closed
   // union, since mods register their own families. Always set for roomType "encounter".
   family?: string

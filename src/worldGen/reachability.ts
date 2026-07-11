@@ -1,9 +1,16 @@
 import type { SiteConfig, Tier } from "./types"
 import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
+import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor } from "../game/siteAssembler"
 import { collectReachableKeys } from "../game/siteValidator"
 import { hashString } from "../support/hashString"
 import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
+
+// No default resolver here — this module stays within src/worldGen/'s own dependency rules
+// (data/, game/ only) same as assembleFloor itself never importing the real resolveEncounter.
+// A caller wanting real key-requirement gating (e.g. a future placement script) passes one
+// in, built from src/mods/allKeyRequirementResolvers.ts.
+const noKeyRequirements: ResolveKeyRequirements = () => undefined
 
 // The coarse reachability graph: "which floors/tombs/tiers are reachable given keys
 // collected so far", computed on demand over the existing per-floor `collectReachableKeys`/
@@ -38,7 +45,8 @@ export const reachableFloorsInSite = (
   ref: SiteRef,
   site: SiteConfig,
   ownedKeys: ReadonlySet<string>,
-  seed: number = defaultSeedFor(ref)
+  seed: number = defaultSeedFor(ref),
+  resolveRequirements: ResolveKeyRequirements = noKeyRequirements
 ): ReadonlySet<number> => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
@@ -50,7 +58,10 @@ export const reachableFloorsInSite = (
     // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
     // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
     // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
-    const result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i)
+    const result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, undefined, {
+      resolveKeyRequirements: resolveRequirements,
+      floorRef: { journeyId: ref.journeyId, floorIndex: i },
+    })
     if (!result.success) continue
 
     const { keys: expandedKeys, reachable: reachableHere } = collectReachableKeys(
@@ -108,7 +119,8 @@ export const computeReachability = (
   allConfigs: Record<string, SiteConfig[]>,
   journeyMeta: Record<string, JourneyMeta>,
   ownedKeys: ReadonlySet<string>,
-  mapPiecesHeld: ReadonlyMap<string, number>
+  mapPiecesHeld: ReadonlyMap<string, number>,
+  resolveRequirements: ResolveKeyRequirements = noKeyRequirements
 ): ReachabilityResult => {
   const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedKeys)))
   const reachableFloors = new Set<string>()
@@ -120,7 +132,7 @@ export const computeReachability = (
 
     sites.forEach((site, levelIndex) => {
       const ref: SiteRef = { journeyId, levelIndex }
-      for (const floorIndex of reachableFloorsInSite(ref, site, ownedKeys)) {
+      for (const floorIndex of reachableFloorsInSite(ref, site, ownedKeys, undefined, resolveRequirements)) {
         reachableFloors.add(floorKey({ ...ref, floorIndex }))
       }
     })

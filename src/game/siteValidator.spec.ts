@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { validateJourney, validateSite } from "./siteValidator"
+import { reachableFrom, validateJourney, validateSite } from "./siteValidator"
 import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
@@ -228,6 +228,40 @@ describe(validateSite, () => {
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "mosaicNotReachable")).toBe(true)
     }
+  })
+})
+
+// ─── reachableFrom: requiredKeyIds (a tableau needing several hieroglyphs complete) ───────
+
+describe(reachableFrom, () => {
+  it("blocks a room needing several keys until all of them are owned", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("puzzle", ["w", "e"], { requiredKeyIds: ["hieroglyph:a", "hieroglyph:b"] })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0]).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a", "hieroglyph:b"])).has("0,2")).toBe(true)
+  })
+
+  it("requiredKeyId and requiredKeyIds both gate the same room independently", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "k1", requiredKeyIds: ["hieroglyph:a"] })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0], new Set(["k1"])).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["k1", "hieroglyph:a"])).has("0,2")).toBe(true)
   })
 })
 

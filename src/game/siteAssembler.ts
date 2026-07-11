@@ -22,6 +22,17 @@ import { validateSite } from "./siteValidator"
 export type EncounterResolution = { familyId: string; tags: string[] }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
 
+// Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's
+// hieroglyph requirement) to opaque key ids — same idea as ResolveEncounter, injected so
+// this module never needs to know which family owns which requirement, only that one might
+// exist. Real implementation dispatches by familyId to whichever family provides it (see
+// src/mods/allKeyRequirementResolvers.ts); most families provide none.
+export type ResolveKeyRequirements = (
+  familyId: string,
+  ctx: { journeyId: string; floorIndex: number; pathIndex: number }
+) => string[] | undefined
+const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
+
 const DEFAULT_TAG_FAMILIES: Record<string, string> = {
   trap: "arithmetic-reflex",
   puzzle: "sumplete",
@@ -277,12 +288,20 @@ const spreadContentIndices = (count: number, startIdx: number, totalLen: number)
   return indices
 }
 
+export type AssembleFloorKeyRequirements = {
+  resolveKeyRequirements?: ResolveKeyRequirements
+  floorRef?: { journeyId: string; floorIndex: number }
+}
+
 export const assembleFloor = (
   siteId: string,
   config: FloorConfig,
   seed: number,
-  resolveEncounter: ResolveEncounter = defaultResolveEncounter
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter,
+  keyRequirements: AssembleFloorKeyRequirements = {}
 ): AssemblerResult => {
+  const { resolveKeyRequirements = defaultResolveKeyRequirements, floorRef = { journeyId: siteId, floorIndex: 0 } } =
+    keyRequirements
   const isTrapSection = (encounter: string | string[] | undefined): boolean =>
     resolveEncounter(encounter, "puzzle").tags.includes("trap")
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
@@ -886,10 +905,13 @@ export const assembleFloor = (
             ? resolveEncounter(config.lastMainPuzzleFamily, config.lastMainPuzzleFamily)
             : resolveEncounter(config.encounter, "puzzle")
         const reward = config.puzzleRewards?.[k]
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, { ...floorRef, pathIndex: k })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           family: family.familyId,
           tags: family.tags,
+          pathIndex: k,
+          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
       }
@@ -1099,22 +1121,17 @@ export const assembleFloor = (
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
       if (spec) {
+        // Spread the whole spec (RoomSpec = RoomCell minus the structural fields set here)
+        // rather than copying fields one by one — a field dropped from this list is exactly
+        // the bug class that silently discarded pathIndex/requiredKeyIds until a test caught
+        // it; spreading means a future RoomCell field can't go missing here again.
         const roomCell: RoomCell = {
           type: "room",
-          roomType: spec.roomType,
           dirs,
           state: "fogged",
           sectionHash,
           ...(hidden ? { hidden } : {}),
-          ...(spec.reward ? { reward: spec.reward } : {}),
-          ...(spec.requiredKeyId ? { requiredKeyId: spec.requiredKeyId } : {}),
-          ...(spec.gateVariant ? { gateVariant: spec.gateVariant } : {}),
-          ...(spec.keyColor ? { keyColor: spec.keyColor } : {}),
-          ...(spec.keyColors ? { keyColors: spec.keyColors } : {}),
-          ...(spec.family ? { family: spec.family } : {}),
-          ...(spec.tags ? { tags: spec.tags } : {}),
-          ...(spec.stairId ? { stairId: spec.stairId } : {}),
-          ...(spec.shopPrice !== undefined ? { shopPrice: spec.shopPrice } : {}),
+          ...spec,
         }
         cells2D[r][c] = roomCell
       } else {

@@ -78,6 +78,23 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
+  it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index", () => {
+    const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau" }
+    const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {
+      resolveKeyRequirements: (familyId, ctx) =>
+        familyId === "tableau" ? [`hieroglyph:${ctx.journeyId}:${ctx.floorIndex}:${ctx.pathIndex}`] : undefined,
+      floorRef: { journeyId: "starter_treasure_tomb", floorIndex: 2 },
+    })
+    if (!result.success) throw new Error("assembly failed")
+    const puzzleRooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(puzzleRooms).toHaveLength(2)
+    const pathIndices = puzzleRooms.map(c => c.pathIndex).sort()
+    expect(pathIndices).toEqual([0, 1])
+    for (const room of puzzleRooms) {
+      expect(room.requiredKeyIds).toEqual([`hieroglyph:starter_treasure_tomb:2:${room.pathIndex}`])
+    }
+  })
+
   it("goal room grants nothing, not a free mosaicPiece, when mainEndReward is unset", () => {
     // Regression guard: an unset mainEndReward used to fall back to `{type:"mosaicPiece"}` —
     // a free, uncounted reward validate.ts's 298-budget guard can never see (it only reads

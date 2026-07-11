@@ -112,13 +112,75 @@ written yet:
      as siblings, not a linear chain, so `reachableFloorsInSite` searches
      every later still-unreached floor against each newly-reachable one,
      not just its immediate successor. Both cases now have dedicated tests.
-   - Still to build: the worklist-driven placement loop itself, composable
-     filter/rank distribution rules (`preferThenRelax` etc.), slot
-     capacity, hard-fail on exhausted relaxation, and the hieroglyph-
-     fragment migration measured against `fragments.ts`'s "273/273 placed"
-     bar. Which currency's *placement decision* moves onto the solver
-     first can still be incremental — hieroglyph fragments are the natural
-     next slice.
+   - ~~Distribution rule primitives~~ — done, `src/worldGen/distribution.ts`
+     (`pipe`/`filterBy`/`uniqueBy`/`rankBy`/`preferThenRelax`, 6 tests).
+     Generic, currency-agnostic, not yet composed into a real per-currency
+     rule.
+   - ~~Candidate slot discovery~~ — done, `src/worldGen/slots.ts`
+     (`collectSlots`, 4 tests). Generalizes `fragments.ts`'s own
+     `collectSlots` with per-slot `FloorRef` tagging so a distribution rule
+     can filter by reachability. Deliberately near-duplicates
+     `fragments.ts`'s tree-walk for now (flagged debt, not a bug) — the two
+     should collapse into one once the worklist actually replaces
+     `fragments.ts`.
+   - **A real gap found and fixed while building this**: the reachability
+     graph didn't know a tableau room's own hieroglyph requirement at all —
+     it only checked `requiredKeyId` (a gate's single-treasure
+     precondition), so it silently treated every tableau as trivially
+     solvable. Since rooms are soft-gated (always walkable-up-to, but
+     nothing past an uncompleted room is ever revealed — same rule for
+     gates and puzzles), this meant the solver overestimated reachability
+     for every tomb floor past the first. Fixed, keeping ALL hieroglyph/
+     tableau knowledge out of core:
+     - `RoomCell` gained two fully generic fields: `requiredKeyIds?:
+       string[]` (same idea as `requiredKeyId`, but a list — all must be
+       owned; a tableau needing 3 hieroglyphs complete is 3 independent
+       locks, not one composite key) and `pathIndex?: number` (a room's
+       0-based position among its floor's main-path puzzle rooms — pure
+       structural data).
+     - `siteAssembler.ts` gained an injected `ResolveKeyRequirements`
+       function (mirroring the existing `ResolveEncounter` pattern),
+       called per main-path puzzle room using the same path-position index
+       already computed for `puzzleRewards[k]`. New params are bundled
+       into one trailing options object (`{resolveKeyRequirements,
+       floorRef}`), not raw positional args — avoids the "pass `undefined`
+       to skip an earlier optional param" problem `ResolveEncounter` alone
+       didn't have room for.
+     - `siteValidator.ts`'s `reachableFrom` (the fine BFS) now also checks
+       `requiredKeyIds`.
+     - The only place that knows hieroglyphs/tableaus exist:
+       `src/mods/puzzle/game/tableau/keyRequirements.ts` (looks up
+       `tableauLevels` by `(journeyId, floorIndex, pathIndex)`, derives
+       `hieroglyph:${id}` key strings), aggregated by
+       `src/mods/allKeyRequirementResolvers.ts` (a plain, side-effect-free
+       `Record<familyId, resolver>` mirroring `src/mods/allFamilyMeta.ts`'s
+       shape). **`reachability.ts` does NOT import this aggregator
+       directly** — `docs/instructions/architecture.md`'s dependency table
+       doesn't actually list `src/mods/` as importable from
+       `src/worldGen/`, and `allFamilyMeta.ts` turned out to be an
+       unused/aspirational precedent, not a working one, when checked.
+       `reachableFloorsInSite`/`computeReachability` default to a no-op
+       resolver instead (same as `assembleFloor` never importing the real
+       `resolveEncounter`); whoever wires this into a real script supplies
+       the real one.
+     - **A real mapping bug caught by review, not by me**: `tableauLevels`'
+       `runNumber` is which *replay* of a tomb (`completionCount + 1`, per
+       `TombExpedition.tsx`/`TableauInventory.tsx`), and `levelNr`/array
+       position is which *floor* within that replay — the opposite of what
+       reading the generator code in isolation suggested. World-gen's
+       persistent floor sequence only cares about run 1 (run 2+ is the
+       still-unbuilt revisit mechanic, pyramid-interior-design.md §3);
+       `pathIndex` has no correspondence in today's data (one tableau room
+       per floor) and is accepted but unused. Fixed, with a test that
+       checks against every floor of a real multi-floor tomb (not just
+       "floor 1 differs from floor 0", which passed even with the bug).
+   - Still to build: the worklist loop itself (a queue of not-yet-satisfied
+     locks, recomputing reachability after each placement — this is now
+     clearly load-bearing for hieroglyph fragments too, not just ward
+     keys/map pieces, since fragments gate tableaus which gate everything
+     past them), slot capacity, hard-fail on exhausted relaxation, and the
+     hieroglyph-fragment migration measured against `fragments.ts`'s
+     "273/273 placed" bar.
 4. **Trap's hard gate needs to soften** — `canAttemptTrap()` currently hard-
    blocks (`TrapWarningScreen` won't launch the encounter at all below 1
    health). The tomb redesign's "soft gating everywhere" decision means
