@@ -3,6 +3,35 @@
 Design docs: `docs/mods-architecture.md`, `docs/game-design/keys-and-locks-solver.md`.
 Detailed handover: `docs/handover-mods-keys-and-locks.md`.
 
+## Root gap: no real "mod" container yet — do this before any more small fixes
+
+A mod today is just a folder + an `ownerMod: string` tag. There's no actual
+registration unit. The real aggregation is flat, global lists that don't
+know mods exist as a concept: `allFamilyMeta.ts`'s `ALL_FAMILY_META:
+FamilyMeta[]`, `registerAllFamilies.ts`'s side-effect imports. The intended
+shape is a mod as a container that registers everything it owns as one
+unit — `registerMod({ families, currencies, screens, stateSlices })` —
+contributing e.g.:
+- **tableau**: a tableau encounter family + its own currency (hieroglyph
+  fragment + distribution rule)
+- **mosaic**: a currency contribution + a dedicated screen registration
+- **trap**: multiple economy contributions (health, bandage, oil,
+  trapTool), trap encounters, and health/maxHealth state registration
+
+None of that container mechanism exists. Concretely, right now:
+- tableau's currency (hieroglyph fragment + its distribution rule) isn't
+  mod-registered at all — hardcoded directly in `src/worldGen/placeFragments.ts`
+- mosaic isn't a mod — `src/mods/mosaic/` doesn't exist
+- trap's health/maxHealth are still plain fields on the shared
+  `ProgressionState` in `useProgression.ts`, not something trap registers
+
+The last several small fixes (rewardWeight values, key-requirement scatter,
+tableau mod split) each surfaced another instance of this same missing
+piece — they're symptoms, not separate problems, and doing more of them
+one at a time costs more than it fixes. Next real step: design and build
+the mod-registration container itself, before any more piecemeal per-mod
+corrections.
+
 ## Mods architecture (`docs/mods-architecture.md`'s 6-step order)
 
 - [x] 1. Generic ledger + currency registry
