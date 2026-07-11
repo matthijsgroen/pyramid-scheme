@@ -6,5 +6,5 @@ export const TREASURE_CHEST_META: FamilyMeta = {
   tags: ["treasure"],
   icon: "🪙",
   color: "amber",
-  rewardWeight: 0, // already carries its own authored reward directly
+  rewardWeight: 100, // treasure always has loot — fills first, guaranteed
 }

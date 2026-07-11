@@ -6,5 +6,5 @@ export const CROCODILE_META: FamilyMeta = {
   tags: ["tomb-puzzle"],
   icon: "🐊",
   color: "green",
-  rewardWeight: 8,
+  rewardWeight: 60, // a plain puzzle room for reward purposes, same pool as sumplete
 }

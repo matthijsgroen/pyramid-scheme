@@ -6,5 +6,5 @@ export const SUMPLETE_META: FamilyMeta = {
   tags: ["puzzle"],
   icon: "🔢",
   color: "blue",
-  rewardWeight: 8,
+  rewardWeight: 60, // fills only once treasure's guaranteed slots are spoken for
 }

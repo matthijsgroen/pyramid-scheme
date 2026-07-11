@@ -18,8 +18,14 @@ export type FamilyMeta = {
   tags: string[]
   icon: string
   color: string
-  // Priority for the reward-weight fill-order allocator (docs/mods-architecture.md step 4)
-  // — higher fills first, 0 = never eligible (e.g. a trap: survived, not solved).
+  // Priority for the reward-weight fill-order allocator (docs/mods-architecture.md step 4,
+  // folded into the keys-and-locks solver's placement model) — 0-100 scale, higher fills
+  // first, 0 = never eligible for this pool. Treasure (100) always has loot and fills
+  // first; a plain puzzle room (60) only gets what's left once treasure's guaranteed slots
+  // are spoken for; a gate/trap/shop/tableau (0) either isn't a reward candidate at all or
+  // is filled by its own dedicated mechanism (a shop's stock, a tableau's hieroglyph
+  // fragment) — explicit DSL authoring or a system that targets it directly, never this
+  // generic pool, even though a shop has real capacity (several stock slots).
   rewardWeight: number
   // This family's own completion precondition (e.g. a tableau's hieroglyph requirement) —
   // most families provide none. The one place a family declares "I gate on holding

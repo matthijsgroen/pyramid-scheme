@@ -7,6 +7,6 @@ export const TABLEAU_META: FamilyMeta = {
   tags: ["tomb-puzzle"],
   icon: "📜",
   color: "amber",
-  rewardWeight: 8,
+  rewardWeight: 0, // its own reward is the hieroglyph fragment, via the placement worklist — not this pool
   resolveKeyRequirements: resolveTableauKeyRequirements,
 }
