@@ -484,18 +484,18 @@ Walked the rest of the world-gen/progression surface against this model.
 Most of it already fits without change; two things (perks, detectors) needed
 a real answer.
 
-**Gates and ward paths — already core, no change.** Floor-key/tomb-key gates
-(`types.ts:24`) are pure topology, `core/siteBuilder`'s job as already
-stated. `wardPaths`/`wardWings` (`buildSite.ts:272-319`) decide *how many*
-gated side-paths/wings a tomb gets — also structural, also core. What's
-*inside* one (a fragment reward, optionally all-trap via
-`wardPathTrapped` — a corridor with only traps, per the earlier
-conversation) is a scoped `Distribution` override, same primitive as the
-crocodile capstone, not a new mechanism:
-`{ scope: wardPathOf(idx), fill: "trap" }` replaces the bespoke `trapped`
-boolean threaded through `buildSite.ts`. Two independent confirmations of
-the same primitive now (crocodile, ward-path-trapped) — good sign it's the
-right one, not a one-off fit.
+**Gates and ward paths — corrected, see "The keys-and-locks solver" below.**
+This used to say "already core, no change," treating floor-key/tomb-key
+gates as pure topology end to end. That's wrong for the placement half of
+the mechanism. Gate *topology* (a gate room exists, blocks traversal until
+satisfied) stays core; deciding *which currency instance goes where* to
+eventually satisfy that gate does not — see below, which replaces this
+conclusion. `wardPaths`/`wardWings` (`buildSite.ts:272-319`) deciding *how
+many* gated side-paths/wings a tomb gets is still structural/core. What's
+*inside* one (a fragment reward, optionally all-trap via `wardPathTrapped`)
+is a scoped `Distribution` override, same primitive as the crocodile
+capstone: `{ scope: wardPathOf(idx), fill: "trap" }` replaces the bespoke
+`trapped` boolean threaded through `buildSite.ts`.
 
 **Hidden passages — core, one leaky call site.** Masking
 (`useAssembledFloor.ts`) and reveal-on-detection are structural/core, but
@@ -574,6 +574,99 @@ always. Compass's target-picker was never actually wired to a real list.
 The generic model fixes this near-incidentally: "available variants of the
 fragment currency the player hasn't completed" becomes a ledger query
 instead of something someone forgot to hand-wire.
+
+## The keys-and-locks solver — a core solver, mod-owned placement
+
+Corrects "Gates and ward paths — already core, no change" above. Floor-key/
+tomb-key/ward-gate placement is not one core mechanism — it's two, and only
+one of them is core.
+
+**Core:** a generic solver that understands "reachability given a set of
+possessed keys." It knows nothing about what a key *is* semantically — a
+map fragment, a hieroglyph fragment, a ward-key treasure are all the same
+shape to it: "possessing currency X's instance Y satisfies requirement Z."
+
+**Mod-owned:** the placement mechanic for any specific key-like currency —
+which slots are eligible, in what order, following what distribution rule.
+Today's code conflates these: fragment/map-piece/ward-key placement logic
+is hardcoded per-currency instead of being data plugged into one solver.
+
+### The invariant the solver exists to guarantee
+
+Reaching the highest difficulty tier (Wizard) must never be blocked. This
+is the one hard requirement everything else serves — not "probably fine,"
+mechanically guaranteed the same way `keyAfterGate` mechanically guarantees
+a gate's key is never placed behind the gate it opens.
+
+### The progression ladder
+
+Difficulty is linear: each tier is 4 pyramid journeys + 1 tomb. Collecting
+a tomb's first treasure unlocks the next tier (another 4 journeys + a
+tomb), and so on to Wizard. The solver's top-level goal graph is exactly
+this ladder.
+
+### The placement algorithm
+
+At every point the solver knows the **currently reachable play area** —
+everything solvable given the keys the player could plausibly already
+hold, computed from scratch at world-gen time (the theoretical maximum,
+not a simulated playthrough). A key is never placed outside that reachable
+area — this is what mechanically guarantees "never blocked," not authoring
+discipline.
+
+For each currency that also functions as an unlock condition, the solver
+runs the same loop:
+
+1. Compute the reachable play area given everything placed and possessed
+   so far.
+2. For each remaining instance of this key, in the currency's own priority
+   order:
+   - Use an authored placement preference if one exists for this specific
+     instance.
+   - Otherwise pick from the reachable area's available loot slots,
+     filtered by that currency's own **distribution rule** (mod-owned
+     placement policy — e.g. map fragments: prefer one per journey, never
+     two in the same pyramid; hieroglyph fragments: difficulty X fragments
+     go in difficulty X corridors), ranked within the eligible candidates
+     by the existing generic loot-slot priority order (chests first — see
+     `pyramid-interior-design.md`'s "Loot priority order").
+3. Once every instance of that key is placed, whatever it unlocked becomes
+   solvable — recompute the reachable play area (now bigger) and continue
+   to the next blocking key.
+
+### Worked example
+
+**Blocker 1 — reaching the first tomb.** The tomb needs `piecesRequired`
+map fragments to unlock. Compute the reachable area with zero keys placed
+— the starting four journeys. Place map fragment 1: no authored
+preference, so pick the highest-priority available slot (a chest) in the
+reachable area. Place map fragment 2: the currency's distribution rule
+("never the same pyramid as another instance") filters candidates to a
+different journey; again no authored preference, pick the best slot there.
+Repeat for 3 and 4. All four sit *inside* the area computed *before* any of
+them existed — they can never gate themselves. The tomb is now enterable.
+
+**Blocker 2 — the tomb's first tableau.** Reaching the tier-unlock goal
+(the tomb's first treasure) is now blocked by a tableau requiring several
+hieroglyph fragments. Same loop, different currency, different
+distribution rule (difficulty-matched: a starter hieroglyph's fragments go
+in starter pyramids/paths). Placed the same way — authored preference
+first, then loot-priority ranking within the reachable area.
+
+**Recursion.** Collecting the tomb's first treasure unlocks the next
+difficulty tier — the reachable area widens (new journeys, plus newly
+satisfiable ward gates inside already-visited pyramids). The whole loop
+repeats one tier up, all the way to Wizard.
+
+### Relationship to CappedPool / reward-weight / Distribution
+
+This folds into, and supersedes the earlier separate framing of,
+`CappedPool` (above) and step 4's reward-weight allocator — a
+`CappedPool`'s `sites`/`take()` and a key's placement rule are the same
+concern: which specific instance goes where, reachability-gated.
+`Distribution` (family selection per room slot) stays a separate, narrower
+concern — which family renders a slot, not what unlocks it or where its
+keys land.
 
 ## DSL changes
 
