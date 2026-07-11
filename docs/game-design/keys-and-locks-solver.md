@@ -120,6 +120,39 @@ needs. Reachability genuinely flows backward (deeper tiers feeding earlier
 ones) as well as forward — a sequential per-tier loop cannot model that,
 only one whole-world graph can.
 
+## Two levels: a coarse world graph over an unchanged fine-grained one
+
+The reachable play area is computed at two levels, not one giant room-level
+graph spanning the whole world:
+
+- **Fine-grained (existing, unchanged):** `siteValidator.ts`'s
+  `reachableFrom` already solves "which rooms are reachable within this one
+  floor, given owned keys" — correct today, nothing here changes it.
+- **Coarse (new):** a much smaller graph over floors/tombs/journeys —
+  "which floors/tombs are even enterable at all, given keys collected so
+  far." Far smaller state space than reasoning about every room in the
+  world at once.
+
+**A coarse edge is a projection, not an independently authored fact.** A
+floor itself is never "locked" — what's locked is the *path to its own
+stairhead*, inside whichever earlier floor actually contains that
+transition. "Floor 2 requires key X" is derived by asking the existing
+fine-grained model "is the specific stairhead cell leading to floor 2
+reachable, within floor 1, given currently-possessed keys?" — never stored
+as a separate fact on floor 2 itself. This matters: if floor 1's topology
+changes (different gate position, different key), the coarse edge updates
+automatically because it's computed on demand, not duplicated data that
+could silently drift out of sync with the room graph it's supposed to
+describe.
+
+Concretely, `configBuilder.ts`/`siteAssembler.ts` don't change for this —
+they keep building per-floor topology exactly as today. The new coarse
+solver is a separate pass (in `scripts/generateWorld.ts`, after topology
+exists, per the two-phase shape already agreed), reading the already-built
+floor data to answer "which floors are reachable" and, within a reachable
+floor, "which of its rooms are eligible slots" — by calling the existing
+fine-grained BFS, not re-deriving it.
+
 ## The placement algorithm
 
 At every point the solver knows the **currently reachable play area** —
