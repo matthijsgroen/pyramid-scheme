@@ -124,6 +124,40 @@ preferThenRelax(uniqueBy(slot => slot.pyramidId), rankBy(lootPriority))
 // (skipping the filter, keeping the ranker) if too few candidates survive
 ```
 
+### Slots have capacity — a shop can hold many keys, a chest holds one
+
+A candidate slot isn't always single-use. A treasure chest takes exactly
+one item; a shop slot is its own **stock** — several items can be assigned
+to the same shop at once. The candidate-slot model needs a capacity, not
+just an occupied/free flag.
+
+This makes a shop a legitimate placement target for a key-like currency,
+same as any chest — "purchasable" is just another acquisition channel a
+distribution rule can prefer. Concretely: the map fragment gating wizard
+tier's second tomb can prefer placement as shop stock inside wizard tier's
+*first* tomb (its own fez-shop) — once the player has reached that far,
+the fragment is right there to buy, no separate exploration required.
+
+### Mod-owned slot types need their own fallback rung
+
+The shop is itself a mod (`ownerMod: "shop"`) — disable-able, per the mods
+architecture's own principle that mods can be turned off. A rule preferring
+shop placement must fall back to a non-shop slot if the shop mod isn't
+registered in a given build — one more rung on the same `preferThenRelax`
+chain: prefer shop stock in wizard tomb A's shop → relax to any wizard-tier
+chest → etc. Any rule targeting a mod-owned slot type needs this same
+tolerance, not just the shop case.
+
+### Exhausted relaxation is a build failure, not a warning
+
+If every relaxation rung is exhausted and a required key still has no
+eligible slot, world generation must **hard-fail** — this is where the
+"never blocked" invariant actually gets enforced, same category as
+`keyAfterGate`. `fragments.ts`'s current behavior (a `console.warn` when a
+hieroglyph can't place all its required fragments) is exactly what this
+replaces: today that's a soft warning a build can silently ship with;
+under this solver it becomes a real build error.
+
 ## Worked example
 
 **Blocker 1 — reaching the first tomb.** The tomb needs `piecesRequired`
