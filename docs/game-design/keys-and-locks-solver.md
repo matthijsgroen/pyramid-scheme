@@ -36,7 +36,19 @@ opens.
 Difficulty is linear: each tier is 4 pyramid journeys + 1 tomb. Collecting
 a tomb's first treasure unlocks the next tier (another 4 journeys + a
 tomb), and so on to Wizard. The solver's top-level goal graph is exactly
-this ladder.
+this ladder — reaching Wizard.
+
+**The ladder is linear; reachability is not.** The solver must compute
+reachability across the **whole world at once**, not tier by tier. `WARD_MIX`
+(`pyramid-interior-design.md` §6) already places ward keys across tiers in
+both directions — a starter treasure can gate a junior pyramid's floor, and
+a wizard treasure can gate a junior one. Concretely: the player reaches
+junior difficulty via starter's tier-unlock treasure; a *different* starter
+treasure (key 2) gates a floor inside a junior pyramid; a fragment placed
+behind *that* gate might be exactly what starter's own tableau (key 3)
+needs. Reachability genuinely flows backward (deeper tiers feeding earlier
+ones) as well as forward — a sequential per-tier loop cannot model that,
+only one whole-world graph can.
 
 ## The placement algorithm
 
