@@ -385,6 +385,50 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("a floor-key gated section's own authored endReward survives — never overwritten by a chain-internal relay key", () => {
+    // Real bug found via reachability-aware fragment placement: when several floor-key
+    // gated treasure-end sections share a floor, the chain-relay mechanism (each section's
+    // end room grants the NEXT gate's key) picked chain[ci-1] as a host with zero regard for
+    // whether that section already carried its own authored endReward — silently replacing
+    // a real reward (e.g. a hieroglyph fragment) with a synthetic tombKey. Two free
+    // (rewardless) gated sections plus one rewarded one, swept across seeds so the random
+    // chain-shuffle can't dodge the bug by luck: the rewarded section's own reward must
+    // always survive, regardless of where the shuffle places it in the chain.
+    const config = (): FloorConfig => ({
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key", color: "blue" } },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key", color: "red" } },
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          gate: { type: "floor-key", color: "green" },
+          endReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
+        },
+      ],
+    })
+
+    let sawRewardedGate = false
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("chain-reward-safety", config(), seed)
+      if (!result.success) continue
+      const rewardedGateRoom = result.grid.cells
+        .flat()
+        .find((c): c is RoomCell => c.type === "room" && c.gateVariant === "floor-key" && c.keyColor === "green")
+      if (!rewardedGateRoom) continue // this attempt's layout didn't place it reachably; skip
+      sawRewardedGate = true
+      const mapPieceRoom = result.grid.cells
+        .flat()
+        .find((c): c is RoomCell => c.type === "room" && c.reward?.type === "mapPiece")
+      expect(mapPieceRoom).toBeDefined()
+    }
+    expect(sawRewardedGate).toBe(true) // otherwise this test never actually exercised the gate
+  })
+
   it("trapped sections have no back-door either — removing the first trap cuts off its whole chain", () => {
     // Same leftover-spanning-tree-edge risk as gated sections, but for ungated trapped
     // content: without isolation, a stray door could let a player step past a trap

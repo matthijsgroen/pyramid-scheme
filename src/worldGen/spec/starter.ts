@@ -16,9 +16,18 @@ export const starterRules: Rule[] = [
 
   // starter_1 — the whole game's onboarding: a single pyramid, no main-path puzzles, just
   // the map piece and a gentle ward path into the starter tomb.
+  //
+  // The tier-wide "first pyramid → mapPiece" rule above lands on this pyramid's LAST floor
+  // by default — which used to be floor 1, gated behind the very ward path that needs
+  // starter_treasure_tomb's OWN tier-unlock treasure to open. That's a genuine deadlock (the
+  // map piece feeds the tomb's own piecesRequired threshold, which grants the key this floor
+  // needs). Fixed by moving the real map piece to floor 0 (always reachable) and leaving
+  // floor 1's ward-gated reward as safe bonus loot (mosaicPiece never gates anything, same
+  // convention already used for this file's other hidden/ward bonus content).
   journey("starter_1")
     .pyramid(1, { pathPuzzles: 0 })
     .floor(0, {
+      mainEndReward: "mapPiece",
       sideSections: [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tier: "junior", tomb: "starter_treasure_tomb", index: 0 }),
@@ -27,19 +36,24 @@ export const starterRules: Rule[] = [
       ],
     })
     .floor(1, {
+      mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       difficulty: "junior",
       sideSections: [sidePath({ puzzles: 1 })],
     }),
 
   // starter_2 — the two follow-up curated pyramids (moved out of starter_1). One main-path
-  // puzzle each; ward path steps up expert then master, with a hidden mosaic on the deeper floor.
+  // puzzle each; ward path steps up expert then master, with a hidden mosaic on the deeper
+  // floor. Pyramid 1 gets the same map-piece/ward-gate fix as starter_1 above — pyramid 2
+  // isn't "first" so never had a map piece here in the first place.
   journey("starter_2")
     .pyramid(1)
     .floor(0, {
+      mainEndReward: "mapPiece",
       sideSections: [wardPath({ puzzles: 1, tier: "expert", tomb: "junior_treasure_tomb", index: 1 }), sidePath()],
     })
     .floor(1, {
+      mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       difficulty: "expert",
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],

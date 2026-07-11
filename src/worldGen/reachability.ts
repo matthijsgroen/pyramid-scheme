@@ -1,5 +1,5 @@
 import type { SiteConfig, Tier } from "./types"
-import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
+import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor } from "../game/siteAssembler"
 import { collectReachableKeys } from "../game/siteValidator"
@@ -60,13 +60,28 @@ export const floorKey = (ref: FloorRef): string => `${ref.journeyId}#${ref.level
 // keys gate which transitions. Any deterministic seed is a representative instance.
 const defaultSeedFor = (ref: SiteRef): number => hashString(`${ref.journeyId}:${ref.levelIndex}`)
 
+// Grid topology (gate/key structure, room layout) depends only on (siteId, floorIndex,
+// seed), never on which keys are currently owned — assembleFloor is deterministic given
+// those inputs. A worklist calling computeReachability repeatedly (once per placement, see
+// docs/game-design/keys-and-locks-solver.md's placement loop) would otherwise re-run full
+// maze assembly for every reachable floor on every single call — for a few hundred floors
+// across dozens of placements, that's tens of thousands of redundant assemblies. Callers
+// that drive such a loop create ONE cache and pass it through every call; each call still
+// re-runs the (cheap) fine-grained BFS with whatever `ownedFacts` it has that round.
+export type FloorAssemblyCache = Map<string, AssemblerResult>
+export const createFloorAssemblyCache = (): FloorAssemblyCache => new Map()
+
 export type SiteReachability = {
   floors: ReadonlySet<number>
-  // Map-piece / hieroglyph-fragment rewards found within this site's own reachable rooms —
-  // tomb-key rewards are already folded into the fine BFS's own fixed point (below) and
-  // need no separate harvesting; these two feed the whole-world threshold checks
-  // (piecesRequired, HIEROGLYPH_REQUIRED) computeReachability applies across every site, not
-  // a single floor's self-contained BFS.
+  // tombKey / map-piece / hieroglyph-fragment rewards found within this site's own reachable
+  // rooms. The fine BFS's own fixed point (collectReachableKeys, below) already resolves a
+  // tombKey WITHIN this one site (e.g. a tomb's own treasure opening its own next floor) —
+  // but that resolution is local to this function call and never reaches computeReachability's
+  // OUTER cross-journey pass on its own. A tier-unlock treasure granted by one journey's tomb
+  // gating a DIFFERENT journey's tier check is exactly the "backward and forward" propagation
+  // the doc's worked example describes — it only happens if tombKey facts are harvested here
+  // too, same as map pieces/hieroglyphs, so a caller's own fixed point (computeReachability's
+  // `harvestedCounts` aggregation) can fold them back into `ownedCounts` for its next pass.
   harvestedCounts: ReadonlyMap<string, number>
 }
 
@@ -83,7 +98,8 @@ export const reachableFloorsInSite = (
   site: SiteConfig,
   ownedFacts: ReadonlySet<string>,
   seed: number = defaultSeedFor(ref),
-  resolveRequirements: ResolveKeyRequirements = noKeyRequirements
+  resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
+  cache?: FloorAssemblyCache
 ): SiteReachability => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
@@ -97,10 +113,15 @@ export const reachableFloorsInSite = (
     // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
     // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
     // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
-    const result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, undefined, {
-      resolveKeyRequirements: resolveRequirements,
-      floorRef: { journeyId: ref.journeyId, floorIndex: i },
-    })
+    const cacheKey = `${siteId}#${i}#${seed + i}`
+    let result = cache?.get(cacheKey)
+    if (!result) {
+      result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, undefined, {
+        resolveKeyRequirements: resolveRequirements,
+        floorRef: { journeyId: ref.journeyId, floorIndex: i },
+      })
+      cache?.set(cacheKey, result)
+    }
     if (!result.success) continue
 
     const { keys: expandedKeys, reachable: reachableHere } = collectReachableKeys(
@@ -114,6 +135,7 @@ export const reachableFloorsInSite = (
       for (let c = 0; c < result.grid.cols; c++) {
         const cell = result.grid.cells[r][c]
         if (cell.type !== "room" || !reachableHere.has(`${r},${c}`)) continue
+        if (cell.reward?.type === "tombKey") harvest(cell.reward.keyId)
         if (cell.reward?.type === "mapPiece") harvest(mapPieceBucket(cell.reward.tombId))
         if (cell.reward?.type === "hieroglyphFragment") harvest(hieroglyphBucket(cell.reward.hieroglyphId))
       }
@@ -175,7 +197,10 @@ export const computeReachability = (
   allConfigs: Record<string, SiteConfig[]>,
   journeyMeta: Record<string, JourneyMeta>,
   ownedCounts: OwnedCounts,
-  resolveRequirements: ResolveKeyRequirements = noKeyRequirements
+  resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
+  // Assumed constant for the cache's whole lifetime — a cache reused across calls with a
+  // DIFFERENT resolveRequirements would return stale grids built under the old one.
+  cache?: FloorAssemblyCache
 ): ReachabilityResult => {
   const ownedFacts = deriveOwnedFacts(ownedCounts, journeyMeta)
   const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts)))
@@ -191,7 +216,7 @@ export const computeReachability = (
 
     sites.forEach((site, levelIndex) => {
       const ref: SiteRef = { journeyId, levelIndex }
-      const siteResult = reachableFloorsInSite(ref, site, ownedFacts, undefined, resolveRequirements)
+      const siteResult = reachableFloorsInSite(ref, site, ownedFacts, undefined, resolveRequirements, cache)
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
     })

@@ -185,6 +185,25 @@ describe(reachableFloorsInSite, () => {
     expect(result.harvestedCounts.get("hieroglyph:p10")).toBe(1)
   })
 
+  it("also harvests tombKey rewards, so a tier-unlock treasure can propagate to a DIFFERENT journey's own reachability check — not just resolve gates within this same site", () => {
+    // The fine BFS's own fixed point already resolves a tombKey WITHIN one site (see the
+    // tombShapedSite test above) — but that's local to this call. Cross-journey propagation
+    // (a starter treasure unlocking junior tier for every OTHER journey) only works if this
+    // function's own return value exposes the fact, for computeReachability to aggregate.
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 0,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        mainEndReward: { type: "tombKey", keyId: "starter_a_1" },
+        sideSections: [],
+      },
+    ]
+    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    expect(result.harvestedCounts.get("starter_a_1")).toBe(1)
+  })
+
   it("does not harvest a reward sitting behind a still-locked gate", () => {
     // tomb-key gate (not floor-key) — its key must come from outside this floor, unlike a
     // floor-key gate whose host is always auto-injected within the same floor.
@@ -259,6 +278,35 @@ describe(computeReachability, () => {
     const withKey = computeReachability(allConfigs, journeyMeta, new Map([["cross-journey-key", 1]]))
     expect(withKey.reachableFloors.has(floorKey({ journeyId: "journeyA", levelIndex: 0, floorIndex: 1 }))).toBe(true)
     expect(withKey.reachableFloors.has(floorKey({ journeyId: "journeyB", levelIndex: 0, floorIndex: 1 }))).toBe(true)
+  })
+
+  it("a tombKey granted within one journey's reachable area shows up in harvestedCounts, so a caller can fold it in and unlock a gate in a DIFFERENT journey on the next pass", () => {
+    const allConfigs: Record<string, SiteConfig[]> = {
+      journeyA: [
+        [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter" as const,
+            end: "treasure" as const,
+            exitOrStaircase: "exit" as const,
+            mainEndReward: { type: "tombKey" as const, keyId: "cross-journey-key" },
+            sideSections: [],
+          },
+        ],
+      ],
+      journeyB: [gatedTwoFloorSite("cross-journey-key")],
+    }
+    const journeyMeta = {
+      journeyA: { tier: "starter" as const, piecesRequired: 0 },
+      journeyB: { tier: "starter" as const, piecesRequired: 0 },
+    }
+
+    const first = computeReachability(allConfigs, journeyMeta, new Map())
+    expect(first.reachableFloors.has(floorKey({ journeyId: "journeyB", levelIndex: 0, floorIndex: 1 }))).toBe(false)
+    expect(first.harvestedCounts.get("cross-journey-key")).toBe(1)
+
+    const second = computeReachability(allConfigs, journeyMeta, first.harvestedCounts)
+    expect(second.reachableFloors.has(floorKey({ journeyId: "journeyB", levelIndex: 0, floorIndex: 1 }))).toBe(true)
   })
 
   it("a journey below its piecesRequired threshold contributes no reachable floors at all", () => {

@@ -19,6 +19,7 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
+import { resolveKeyRequirements } from "../src/mods/allKeyRequirementResolvers"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -34,7 +35,7 @@ if (process.argv.includes("--validate-only")) {
   process.exit(0)
 }
 
-const configs = buildConfigs()
+const configs = buildConfigs(resolveKeyRequirements)
 printStats(configs)
 writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs))
 console.log("✓ Written: src/data/generatedWorld.ts")

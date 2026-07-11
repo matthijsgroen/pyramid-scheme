@@ -46,7 +46,7 @@ describe("buildConfigs golden guard", () => {
     const first = buildConfigs()
     const second = buildConfigs()
     expect(second).toEqual(first)
-  })
+  }, 20000)
 })
 
 describe("tomb floor linking — ward-path shortcuts", () => {

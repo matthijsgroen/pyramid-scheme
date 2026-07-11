@@ -310,22 +310,36 @@ export const assembleFloor = (
   const treasureOrShop = (shopPrice: number | undefined): EncounterResolution =>
     shopPrice !== undefined ? fezShop : treasureChest
 
-  // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements
+  // A floor-key gate's key host is a purely local, structural requirement — every floor-key
+  // gate on this floor needs exactly one key SOMEWHERE on this same floor, decided here,
+  // before any section's own endReward gets treated as competing content. "Available host"
+  // means genuinely free capacity: ungated AND not already carrying its own authored reward
+  // (a section holding a map piece/mosaic/fragment is not free capacity just because it
+  // lacks a gate — see docs/game-design/keys-and-locks-solver.md, "Slots have capacity").
+  // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements.
   const visibleSections = config.sideSections.filter(s => !s.hidden)
   const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
-  const hasUngated = visibleSections.some(s => !s.gate)
+  const hasFreeUngatedHost = visibleSections.some(s => !s.gate && !s.endReward)
 
   // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by useAssembledFloor
   const allSections = config.sideSections
   const sideSections =
-    hasGatedFloorKey && !hasUngated
+    hasGatedFloorKey && !hasFreeUngatedHost
       ? [...allSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
       : allSections
 
   const hiddenSectionIdxs = new Set(allSections.map((s, i) => (s.hidden ? i : -1)).filter(i => i >= 0))
 
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
-  const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate)
+  const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate && !sideSections[i].endReward)
+
+  // The auto-injection above guarantees a free host whenever one's needed — this is a
+  // structural safety net, not an expected path: if a floor-key gate still has nowhere to
+  // put its key, that's an unsolvable floor, not a per-seed maze fluke, so it fails
+  // immediately rather than burning 30 retry attempts on something a different seed can't fix.
+  if (gatedFloorKeyIdxs.length > 0 && ungatedIdxs.length === 0) {
+    return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
+  }
 
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
@@ -637,14 +651,21 @@ export const assembleFloor = (
       if (!parentSection.sideSections?.length) continue
 
       let subSects = parentSection.sideSections
-      // Auto-inject ungated key-holder if all sub-sections are floor-key gated
-      const allSubGated = subSects.every(s => s.gate?.type === "floor-key")
-      const anySubUngated = subSects.some(s => !s.gate)
-      if (allSubGated && !anySubUngated)
+      // Same "free host, not just ungated" reasoning as the top-level side sections above —
+      // a sub-section already carrying its own endReward isn't free capacity for a key.
+      const anySubGatedFloorKey = subSects.some(s => s.gate?.type === "floor-key")
+      const anySubFreeUngated = subSects.some(s => !s.gate && !s.endReward)
+      if (anySubGatedFloorKey && !anySubFreeUngated)
         subSects = [...subSects, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
 
       const subGatedIdxs = subSects.map((_, i) => i).filter(i => subSects[i].gate?.type === "floor-key")
-      const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate)
+      const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate && !subSects[i].endReward)
+
+      // Same reasoning as the top-level check above — this is config-derived, not
+      // seed-derived, so failing immediately (not retrying) is correct here too.
+      if (subGatedIdxs.length > 0 && subUngatedIdxs.length === 0) {
+        return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
+      }
 
       // Branch candidates: parent section cells (excluding end cell)
       const subBranchCandidates = group.cells
@@ -736,9 +757,14 @@ export const assembleFloor = (
 
     if (failed) continue
 
-    // Build a random key chain: treasure-end gated sections first (they relay the next key),
-    // staircase-end sections last (they're terminal and can't hold a relay key).
-    // chain[0]'s key → ungated section end; chain[i]'s key → chain[i-1]'s end room.
+    // Build a random key chain: only FREE (no endReward) treasure-end gated sections can
+    // safely relay the next key onward — one that already carries its own authored reward
+    // must be a chain LEAF (receives a key, never grants one), same "never overwrite an
+    // authored reward" rule as the ungated-entry host above. Staircase-end sections are
+    // always leaves too (terminal, no relay). chain[0]'s key → ungated section end; each
+    // later element's key → the MOST RECENT free section's end room, which may end up
+    // granting several different leaves' keys at once (not necessarily its own immediate
+    // successor) — never a rewarded section's own room.
     const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
     const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")
     const chain = [
@@ -747,23 +773,29 @@ export const assembleFloor = (
     ]
 
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
-    const chainKeyColorMap = new Map<number, KeyColor>() // section idx → key color its end room holds
+    const chainKeyColorMap = new Map<number, KeyColor[]>() // host section idx → key color(s) its end room holds
 
     if (chain.length > 0 && ungatedIdxs.length > 0) {
       const hostGroup = sectionGroups.find(g => g.sectionIdx === ungatedIdxs[0])
       if (hostGroup) {
-        const [er, ec] = hostGroup.cells[hostGroup.cells.length - 1]
-        keyNodeIdMap.set(chain[0], nid(er, ec))
-        const gate0 = sideSections[chain[0]].gate as { type: "floor-key"; color?: KeyColor }
-        chainKeyColorMap.set(ungatedIdxs[0], gate0.color ?? "blue")
-      }
-      for (let ci = 1; ci < chain.length; ci++) {
-        const prevGroup = sectionGroups.find(g => g.sectionIdx === chain[ci - 1])
-        if (!prevGroup) continue
-        const [er, ec] = prevGroup.cells[prevGroup.cells.length - 1]
-        keyNodeIdMap.set(chain[ci], nid(er, ec))
-        const gateI = sideSections[chain[ci]].gate as { type: "floor-key"; color?: KeyColor }
-        chainKeyColorMap.set(chain[ci - 1], gateI.color ?? "blue")
+        let hostIdx = ungatedIdxs[0]
+        let hostCell = hostGroup.cells[hostGroup.cells.length - 1]
+
+        for (const idx of chain) {
+          keyNodeIdMap.set(idx, nid(hostCell[0], hostCell[1]))
+          const gate = sideSections[idx].gate as { type: "floor-key"; color?: KeyColor }
+          const colors = chainKeyColorMap.get(hostIdx) ?? []
+          colors.push(gate.color ?? "blue")
+          chainKeyColorMap.set(hostIdx, colors)
+
+          if (!sideSections[idx].endReward) {
+            const group = sectionGroups.find(g => g.sectionIdx === idx)
+            if (group) {
+              hostIdx = idx
+              hostCell = group.cells[group.cells.length - 1]
+            }
+          }
+        }
       }
     }
 
@@ -1010,12 +1042,14 @@ export const assembleFloor = (
       // End node
       const [er, ec] = cells[cells.length - 1]
       if (chainKeyHostIdxs.has(sectionIdx)) {
+        const hColors = chainKeyColorMap.get(sectionIdx) ?? []
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
           family: treasureChest.familyId,
           tags: treasureChest.tags,
           reward: { type: "tombKey", keyId: nid(er, ec) },
-          keyColor: chainKeyColorMap.get(sectionIdx),
+          ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
+          ...(hColors.length > 1 ? { keyColors: hColors } : {}),
         })
       } else if (section.end === "staircase" || typeof section.end === "object") {
         const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
