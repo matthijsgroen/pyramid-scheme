@@ -13,14 +13,6 @@ const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   ...overrides,
 })
 
-const fillMosaics = (n: number): FloorConfig["sideSections"] =>
-  Array.from({ length: n }, () => ({
-    pathPuzzles: 0,
-    difficulty: "starter" as const,
-    end: "treasure" as const,
-    endReward: { type: "mosaicPiece" as const },
-  }))
-
 const fillFragments = (n: number): FloorConfig["sideSections"] =>
   Array.from({ length: n }, (_, i) => ({
     pathPuzzles: 0,
@@ -60,8 +52,10 @@ describe("validateRewardCounts", () => {
     expect(() => validateRewardCounts(configs)).toThrow(/unknown journey IDs/)
   })
 
-  // A config valid on every OTHER check (mapPiece/mosaic counts, known journey ids) so
-  // fragment-count tests below isolate just that one check.
+  // A config valid on every OTHER check (mapPiece count, known journey ids) so the
+  // fragment-count tests below isolate just that one check. Mosaic is no longer a
+  // validateRewardCounts concern — it's a mod-owned capped currency the placement pass
+  // hard-fails on, not a post-hoc count here.
   const validConfigWithFragments = (n: number): Record<string, SiteConfig[]> => {
     const realTombId = PYRAMID_JOURNEYS[0].id
     return {
@@ -69,7 +63,6 @@ describe("validateRewardCounts", () => {
         [
           floor({
             sideSections: [
-              ...fillMosaics(WORLD_TARGETS.mosaicPieceRewards),
               ...fillFragments(n),
               ...Array.from({ length: WORLD_TARGETS.mapPieceRewards }, () => ({
                 pathPuzzles: 0,

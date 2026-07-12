@@ -54,6 +54,21 @@ export type CurrencyDistribution = {
   rank: (candidates: readonly Slot[], demand: CurrencyDemand) => Slot[]
 }
 
+// A capped-filler currency — a fixed total spread across loot nodes that NEVER gates progress
+// (mosaic pieces). Unlike CurrencyDistribution it's not discovered via the reachability
+// worklist (nothing blocks on it); it's placed by the phase-3 pass below once the lock queue
+// drains. Smaller shape: no ownsBucket/demandFor, just "how many, which reward, in what order".
+// Mod-owned and injected the same way CurrencyDistribution is — this module never imports mods.
+export type CappedCurrency = {
+  bucket: string
+  toReward: () => TreasureReward
+  // World-wide count to place, net of any pre-authored literals (compute from allConfigs if a
+  // currency has some; mosaic has none — every instance flows through the slot pool).
+  totalRequired: (allConfigs: Record<string, SiteConfig[]>) => number
+  // Order the still-available slots best-first for this currency (e.g. prefer `prefers`-tagged).
+  rank: (candidates: readonly Slot[]) => Slot[]
+}
+
 // Pyramids have no map-piece threshold (0); tombs use their real `piecesRequired` from
 // src/data/journeys.ts — the same value validateDiscovery/real gameplay already gate on, no
 // special-casing for primary vs. secondary tombs needed (both resolve via the same
@@ -76,7 +91,8 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
-  resolveRequirements?: ResolveKeyRequirements
+  resolveRequirements?: ResolveKeyRequirements,
+  capped: readonly CappedCurrency[] = []
 ): void => {
   const slots = collectSlots(allConfigs)
   const available = new Set(slots)
@@ -166,6 +182,30 @@ export const placeFragments = (
     reach = computeReach()
     settleHarvest()
     enqueueNewLocks()
+  }
+
+  // Phase 3: capped-filler currencies (e.g. mosaic pieces). These never gate progress, so
+  // they're not on the worklist above — placed only once every lock has been resolved, into
+  // whatever slots the gating currencies left free. Each spreads across all still-available
+  // slots in its own rank order, up to its total, and HARD-FAILS if short: capped loot must
+  // fully place (keys-and-locks-solver.md, "Exhausted relaxation is a build failure"). A short
+  // fall means author more loot-bearing capacity in the DSL (docs/mods/TARGET.md rule 2).
+  for (const currency of capped) {
+    const total = currency.totalRequired(allConfigs)
+    const ranked = currency.rank([...available])
+    let placed = 0
+    for (const slot of ranked) {
+      if (placed >= total) break
+      slot.assign(currency.toReward())
+      available.delete(slot)
+      placed++
+    }
+    if (placed < total) {
+      throw new Error(
+        `placeFragments: capped currency "${currency.bucket}" unplaceable — needed ${total}, ` +
+          `only ${placed} loot node(s) available. Author more loot-bearing capacity in the DSL.`
+      )
+    }
   }
 
   // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open

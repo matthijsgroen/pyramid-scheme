@@ -5,7 +5,6 @@ import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
 
 // Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
 export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
@@ -71,10 +70,6 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
   hasWardGate?: boolean
   nextTier?: string | null
-  /** Pyramid-only: appends this many auto-distributed mosaic side paths, key-gated by density. */
-  mosaicPathCount?: number
-  mainPathPuzzles?: number
-  keyDensity?: SideIntensity
   keyColors?: number
   pyramidIndex?: number
   /** Pyramid-only: DSL-declared visible/hidden side paths (density-driven, auto-counted). */
@@ -94,9 +89,6 @@ export const buildSideSections = <TExtra extends string = never>(
     hasMapPieceBranch,
     hasWardGate,
     nextTier,
-    mosaicPathCount = 0,
-    mainPathPuzzles = 0,
-    keyDensity,
     keyColors,
     pyramidIndex = 0,
     declaredSidePaths,
@@ -119,20 +111,7 @@ export const buildSideSections = <TExtra extends string = never>(
 
   sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, journeyId, sections.length))
 
-  // Auto/density mosaic side paths — apply key gating by density + color count
-  const gatedCount = keyDensity ? Math.round(mosaicPathCount * DENSITY_FRACTION[keyDensity]) : 0
   const colorCount = Math.min(keyColors ?? 1, 5)
-  const mosaicPP = Math.max(0, Math.round(mainPathPuzzles / 3))
-  for (let j = 0; j < mosaicPathCount; j++) {
-    const gate = j < gatedCount ? { type: "floor-key" as const, color: ALL_KEY_COLORS[j % colorCount] } : undefined
-    sections.push({
-      pathPuzzles: mosaicPP,
-      difficulty,
-      end: "treasure",
-      endReward: { type: "mosaicPiece" },
-      ...(gate ? { gate } : {}),
-    })
-  }
 
   // Per-pyramid emit count for a declared entry — its density count, or 0 if it declares a
   // `chance` and this pyramid's roll misses (scatters e.g. trapped paths across some pyramids).
@@ -144,7 +123,7 @@ export const buildSideSections = <TExtra extends string = never>(
 
   // Declared sidePaths / hiddenPaths from DSL. Visible sidePaths may opt into a floor-key
   // gate; colors rotate through the floor's keyColors count, continuing the auto-mosaic run.
-  let gatedColorIdx = gatedCount
+  let gatedColorIdx = 0
   ;(declaredSidePaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `sidepath:${ei}`)
     for (let j = 0; j < count; j++) {

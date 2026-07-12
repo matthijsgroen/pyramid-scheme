@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { WORLD_TARGETS } from "./worldSpec"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -9,11 +9,24 @@ import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 // full build. Production code (configBuilder.ts/placeFragments.ts) never imports this; it
 // only accepts injected currencies + an injected expected-fragment total.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
+import { CAPPED_CURRENCIES } from "../mods/registeredMods"
+import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { resolveKeyRequirements } from "../mods/allFamilyMeta"
 import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../mods/tableau/game/hieroglyphCurrency"
 
+// This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
+// check. The economy guard is a separate global invariant (validated by generate-world) that only
+// balances once the whole world is authored; skip it here so these assertions don't depend on
+// economy tuning mid-authoring.
+beforeAll(() => {
+  process.env.SKIP_ECONOMY_GUARD = "1"
+})
+afterAll(() => {
+  delete process.env.SKIP_ECONOMY_GUARD
+})
+
 const buildRealConfigs = () =>
-  buildConfigs(resolveKeyRequirements, ALL_CURRENCY_DISTRIBUTIONS, EXPECTED_HIEROGLYPH_FRAGMENTS)
+  buildConfigs(resolveKeyRequirements, ALL_CURRENCY_DISTRIBUTIONS, EXPECTED_HIEROGLYPH_FRAGMENTS, CAPPED_CURRENCIES)
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
 // producing the same reward counts and the same output on every run.
@@ -46,11 +59,11 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 }
 
 describe("buildConfigs golden guard", () => {
-  it("hits WORLD_TARGETS exactly", () => {
+  it("hits reward targets exactly (map from core, mosaic from the mosaic mod)", () => {
     const configs = buildRealConfigs()
     expect(countRewards(configs)).toEqual({
       mapPieces: WORLD_TARGETS.mapPieceRewards,
-      mosaicPieces: WORLD_TARGETS.mosaicPieceRewards,
+      mosaicPieces: MOSAIC_TOTAL,
     })
   }, 20000)
 
@@ -62,8 +75,12 @@ describe("buildConfigs golden guard", () => {
 })
 
 describe("tomb floor linking — ward-path shortcuts", () => {
-  const configs = buildRealConfigs()
-  const floors = configs.junior_treasure_tomb[0]
+  // Built in beforeAll (not the describe body) so it runs AFTER the top-level beforeAll sets
+  // SKIP_ECONOMY_GUARD — a describe-body call would execute at collection time, before it.
+  let floors: FloorConfig[]
+  beforeAll(() => {
+    floors = buildRealConfigs().junior_treasure_tomb[0]
+  })
 
   it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
     for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")

@@ -106,6 +106,15 @@ export type FloorConstraint<TExtra extends string = never> = {
   consumableRates?: { bandage: number; oil: number; trapTool: number }
 }
 
+/** One authored ward wing: a gated staircase to a bonus floor at `difficulty`, keyed to a
+ * chosen tomb treasure (`tomb`/`index`). Authored form of `wardWings` — varied per wing. */
+export type WardWingSpec = {
+  tomb: string
+  index: number
+  difficulty?: Difficulty
+  puzzles?: number
+}
+
 export type PyramidConstraint = {
   /** A bare number/preset is literal — applied as-is, everywhere it resolves. A range
    * interpolates linearly from `start` (the journey's first pyramid) to `end` (its last). */
@@ -155,9 +164,11 @@ export type PyramidConstraint = {
   floors?: (FloorConstraint | null)[]
   /** Baseline floor count for the main path itself, before any ward wings. Default 1. */
   mainFloors?: number
-  /** Auto-generated ward-gated bonus floors branching off the last main floor, keyed from
-   * this tier's own tomb (skipping any index reserved for tier-unlock/location-key). */
-  wardWings?: number
+  /** Ward-gated bonus floors branching off the last main floor. A `number` auto-generates that
+   * many, keyed from this tier's own tomb at the pyramid's own difficulty. A `WardWingSpec[]`
+   * authors each wing explicitly — its own tomb key + difficulty — for varied "come back
+   * stronger" wings across a tier. */
+  wardWings?: number | WardWingSpec[]
   /** Ward-gated side paths off the last main floor — a single gated section with one reward,
    * not a whole bonus floor. Cheaper return-content; draws ward keys from the same pool as
    * wardWings (allocated after them). */
@@ -362,6 +373,30 @@ export const wardPath = (opts: PathOpts & { tomb: string; index: number }): Side
     ...(tier ? { difficulty: tier } : {}),
     gate: { type: "tomb-key", tombId, index },
     end: "staircase",
+  }
+}
+
+/** Authors one ward wing — a gated bonus floor at a chosen difficulty, keyed to a chosen tomb
+ * treasure. Pass an array of these as `wardWings` for varied "come back stronger" wings. */
+export const wardWing = (opts: { tomb: string; index: number; tier?: Difficulty; puzzles?: number }): WardWingSpec => ({
+  tomb: opts.tomb,
+  index: opts.index,
+  ...(opts.tier ? { difficulty: opts.tier } : {}),
+  ...(opts.puzzles !== undefined ? { puzzles: opts.puzzles } : {}),
+})
+
+/** A side path gated by a ward key (tomb treasure) ending in a loot chest — a "come back
+ * later" teaser. No endReward: the gated treasure becomes a fillable slot the loot solver
+ * assigns (currency if reachable, else mosaic/junk). Distinct from wardPath (a staircase
+ * route) and wardWings (a whole new floor). */
+export const wardChest = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
+  const { puzzles, tier, tomb: tombId, index, ...rest } = opts
+  return {
+    ...rest,
+    pathPuzzles: puzzles ?? 0,
+    ...(tier ? { difficulty: tier } : {}),
+    gate: { type: "tomb-key", tombId, index },
+    end: "treasure",
   }
 }
 

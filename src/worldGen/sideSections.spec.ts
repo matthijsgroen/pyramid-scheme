@@ -142,22 +142,6 @@ describe("buildSideSections", () => {
     expect(sections[1].end).toEqual({ stairId: "myJourney:side1" })
   })
 
-  it("auto mosaic paths respect mosaicPathCount and gate by keyDensity", () => {
-    const sections = buildSideSections({
-      tier: "starter",
-      difficulty: "starter",
-      resolveReward: noReward,
-      journeyId: "j",
-      mosaicPathCount: 4,
-      mainPathPuzzles: 6,
-      keyDensity: "medium",
-      keyColors: 2,
-    })
-    expect(sections).toHaveLength(4)
-    expect(sections.every(s => s.endReward?.type === "mosaicPiece")).toBe(true)
-    expect(sections.filter(s => s.gate).length).toBe(2) // round(4 * 0.5)
-  })
-
   it("declaredSidePaths/declaredHiddenPaths expand by seeded density count", () => {
     const sections = buildSideSections({
       tier: "starter",

@@ -7,14 +7,15 @@ import { sellValueForItemId } from "../data/sellables"
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
-// or the total mapPiece/mosaicPiece counts drift from WORLD_TARGETS. `expectedFragments` is
-// injected, not imported from a core hieroglyph-specific table — "how many fragments must
-// exist" is the tableau currency's own number (src/mods/tableau/game/hieroglyphCurrency.ts),
-// core only checks whatever total it's told to expect. Omit to skip that specific check
-// (e.g. a caller with no currencies registered at all).
+// or the total mapPiece count drifts from WORLD_TARGETS. `expectedFragments` is injected, not
+// imported from a core hieroglyph-specific table — "how many fragments must exist" is the
+// tableau currency's own number (src/mods/tableau/game/hieroglyphCurrency.ts), core only checks
+// whatever total it's told to expect. Omit to skip that specific check (e.g. a caller with no
+// currencies registered at all). Mod-owned capped currencies (mosaic) aren't checked here at
+// all — placeFragments' phase-3 pass hard-fails if it can't fully place them, so core needs no
+// per-mod count (docs/mods/TARGET.md rule 2).
 export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expectedFragments?: number): void => {
   let mapPieces = 0
-  let mosaicPieces = 0
   let fragments = 0
   const unknownTombIds: string[] = []
 
@@ -24,7 +25,6 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expe
       mapPieces++
       if (!KNOWN_JOURNEY_IDS.has(r.tombId)) unknownTombIds.push(r.tombId)
     }
-    if (r.type === "mosaicPiece") mosaicPieces++
     if (r.type === "hieroglyphFragment") fragments++
   }
 
@@ -52,8 +52,6 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expe
     )
   if (mapPieces !== WORLD_TARGETS.mapPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
-  if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
-    throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mosaicPieceRewards} mosaic pieces, got ${mosaicPieces}`)
   if (expectedFragments !== undefined && fragments !== expectedFragments)
     throw new Error(`[worldSpec] Expected ${expectedFragments} hieroglyph fragments, got ${fragments}`)
 }

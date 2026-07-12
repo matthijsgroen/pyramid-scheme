@@ -28,8 +28,6 @@ export const rollMoney = (seed: string): number => 1 + (hashStr(seed) % 10)
 
 export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
   switch (hint) {
-    case "mosaicPiece":
-      return { type: "mosaicPiece" }
     case "mapPiece":
       // A preference-tagged open slot, not a baked literal — the worklist solver grants the
       // actual mapPiece reward once discovered blocking tomb entry (keys-and-locks-solver.md,
@@ -38,6 +36,11 @@ export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
       return { type: "fragmentSlot", prefers: mapPieceBucket(`${tier}_treasure_tomb`) }
     case "hieroglyphFragment":
       return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
+    default:
+      // Any other hint is a mod-owned capped currency's bucket (e.g. "mosaicPiece") — opaque to
+      // core. It becomes a preference-tagged open slot the capped-placement pass fills; core
+      // never branches on what the bucket means (docs/mods/TARGET.md rule 2).
+      return { type: "fragmentSlot", prefers: hint }
   }
 }
 
@@ -63,7 +66,9 @@ export const specToGate = (
 }
 
 export const pathEndToReward = (end: string, tier: string, seed = tier): TreasureReward | undefined => {
-  if (end === "mosaic") return { type: "mosaicPiece" }
+  // "mosaic" is a mod currency's authored path end — a preference-tagged open slot the capped
+  // pass fills, not a baked literal. Core doesn't know what "mosaic" means beyond the tag.
+  if (end === "mosaic") return { type: "fragmentSlot", prefers: "mosaicPiece" }
   if (end === "fragment") {
     return { type: "fragmentSlot" }
   }

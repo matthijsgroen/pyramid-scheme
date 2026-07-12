@@ -39,8 +39,8 @@ describe("rollConsumable", () => {
 // ── hintToReward / specToReward ─────────────────────────────────────────────────
 
 describe("hintToReward", () => {
-  it("mosaicPiece → { type: mosaicPiece }", () => {
-    expect(hintToReward("mosaicPiece", "starter")).toEqual({ type: "mosaicPiece" })
+  it("mosaicPiece → a preference-tagged open slot (mosaic is a mod-owned capped currency)", () => {
+    expect(hintToReward("mosaicPiece", "starter")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
   })
 
   it("mapPiece → a preference-tagged open slot, not a baked literal", () => {
@@ -58,7 +58,7 @@ describe("hintToReward", () => {
 
 describe("specToReward", () => {
   it("string hint resolves via hintToReward", () => {
-    expect(specToReward("mosaicPiece", "starter")).toEqual({ type: "mosaicPiece" })
+    expect(specToReward("mosaicPiece", "starter")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
   })
 
   it("structured mapPiece object also becomes a preference-tagged open slot", () => {
@@ -105,8 +105,8 @@ describe("specToGate", () => {
 // ── pathEndToReward ──────────────────────────────────────────────────────────────
 
 describe("pathEndToReward", () => {
-  it('"mosaic" → mosaicPiece', () => {
-    expect(pathEndToReward("mosaic", "starter")).toEqual({ type: "mosaicPiece" })
+  it('"mosaic" → a preference-tagged open slot', () => {
+    expect(pathEndToReward("mosaic", "starter")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
   })
 
   it('"fragment" → fragmentSlot', () => {

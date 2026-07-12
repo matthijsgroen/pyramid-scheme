@@ -151,7 +151,6 @@ export type BuildSiteContext<TExtra extends string = never> = {
   hasMapPieceBranch: boolean
   hasWardGate: boolean
   nextTier: string | null
-  mosaicPathCount: number
   resolveReward: ResolveReward<TExtra>
   resolveMainEndReward: (spec: RewardSpec) => TreasureReward
 }
@@ -165,7 +164,7 @@ export type BuildSiteContext<TExtra extends string = never> = {
 // (pyramid-interior-design.md §8), just always taking this one branch.
 export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
-  const { hasMapPieceBranch, hasWardGate, nextTier, mosaicPathCount, resolveMainEndReward } = ctx
+  const { hasMapPieceBranch, hasWardGate, nextTier, resolveMainEndReward } = ctx
   const rates = constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
@@ -195,6 +194,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // floor happens to come first instead of the intended one.
         journeyId: `${journeyId}:${i}:floor${fi}`,
         constraintSections: floorSections,
+        // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
+        // fallback here so a fully-authored floor stays explicit (tombs author everything).
+        declaredSidePaths: fc.sidePaths,
+        declaredHiddenPaths: fc.hiddenPaths,
+        keyColors: resolveKeyColors(constraint, journeyId, i),
+        pyramidIndex: i,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -224,18 +229,17 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     return { floors: floorConfigs }
   }
 
-  if (
-    (constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors) > 1 ||
-    (constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings) > 0 ||
-    (constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths) > 0
-  ) {
+  const wardWingsRaw = constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings
+  const wingSpecs = Array.isArray(wardWingsRaw) ? wardWingsRaw : null
+  const wingCount = Array.isArray(wardWingsRaw) ? wardWingsRaw.length : wardWingsRaw
+  const mainFloors = constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors
+  const wardPaths = constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths
+
+  if (mainFloors > 1 || wingCount > 0 || wardPaths > 0) {
     // Auto multi-floor: `mainFloors` plain main-path floors (only the last one carries the
     // pyramid's usual side content), then ward return-content off that last main floor —
-    // `wardWings` bonus floors and `wardPaths` single gated sections, each behind its own
-    // ward-key gate from this tier's own tomb.
-    const mainFloors = constraint.mainFloors ?? GLOBAL_DEFAULTS.mainFloors
-    const wardWings = constraint.wardWings ?? GLOBAL_DEFAULTS.wardWings
-    const wardPaths = constraint.wardPaths ?? GLOBAL_DEFAULTS.wardPaths
+    // ward wings (a uniform count keyed from this tier's tomb, OR authored WardWingSpec[] with
+    // per-wing tomb/difficulty) and `wardPaths` single gated sections.
     const floorConfigs: FloorConfig[] = []
 
     for (let fi = 0; fi < mainFloors; fi++) {
@@ -260,9 +264,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         hasMapPieceBranch,
         hasWardGate,
         nextTier,
-        mosaicPathCount,
-        mainPathPuzzles: pp,
-        keyDensity: constraint.keyDensity,
         keyColors: resolveKeyColors(constraint, journeyId, i),
         pyramidIndex: i,
         declaredSidePaths: constraint.sidePaths,
@@ -284,36 +285,49 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // Wire main-floor stairheads sequentially (floor N's exit → floor N+1's entrance).
     wireStaircases(floorConfigs, fi => `${journeyId}:p${i}:main${fi}`)
 
-    if (wardWings > 0 || wardPaths > 0) {
+    if (wingCount > 0 || wardPaths > 0) {
       const tombId = `${tier}_treasure_tomb`
-      // One shared pool of free ward-key indices: wings take the first `wardWings`, paths the rest.
-      const wardIndices = freeWardIndices(tombId, wardWings + wardPaths)
-      const wingIndices = wardIndices.slice(0, wardWings)
-      const pathIndices = wardIndices.slice(wardWings, wardWings + wardPaths)
+      // Uniform (count) wings + all wardPaths draw distinct free indices from this tier's tomb;
+      // authored (spec) wings bring their own keys, so only wardPaths needs free indices then.
+      const uniformWingCount = wingSpecs ? 0 : wingCount
+      const wardIndices = freeWardIndices(tombId, uniformWingCount + wardPaths)
+      const pathIndices = wardIndices.slice(uniformWingCount, uniformWingCount + wardPaths)
       const lastMain = floorConfigs[floorConfigs.length - 1]
 
       // Ward wings: a whole ward-gated bonus floor, reached via a staircase side section.
-      for (let w = 0; w < wingIndices.length; w++) {
+      // Authored specs carry their own tomb key + difficulty; uniform wings key from this tier's
+      // tomb at the pyramid's own difficulty (stair 1 puzzle, floor `pp` — the original behavior).
+      const wingDefs = wingSpecs
+        ? wingSpecs.map(s => {
+            const wardKeyId = TOMB_PERK_IDS[s.tomb]?.[s.index]
+            if (!wardKeyId) throw new Error(`buildSite: wardWing references unknown ward key ${s.tomb}[${s.index}]`)
+            return { wardKeyId, difficulty: s.difficulty ?? difficulty, stairPP: s.puzzles ?? 1, floorPP: s.puzzles ?? 1 }
+          })
+        : wardIndices
+            .slice(0, uniformWingCount)
+            .map(idx => ({ wardKeyId: TOMB_PERK_IDS[tombId][idx], difficulty, stairPP: 1, floorPP: pp }))
+
+      wingDefs.forEach((wing, w) => {
         const wingStairId = `${journeyId}:p${i}:wing${w}`
         lastMain.sideSections = [
           ...lastMain.sideSections,
           {
-            pathPuzzles: 1,
-            difficulty,
+            pathPuzzles: wing.stairPP,
+            difficulty: wing.difficulty,
             end: { stairId: wingStairId },
-            gate: { type: "tomb-key", wardKeyId: TOMB_PERK_IDS[tombId][wingIndices[w]] },
+            gate: { type: "tomb-key", wardKeyId: wing.wardKeyId },
           },
         ]
         floorConfigs.push(
           buildFloor({
-            pathPuzzles: pp,
-            difficulty,
+            pathPuzzles: wing.floorPP,
+            difficulty: wing.difficulty,
             sideSections: [],
             entrance: { stairId: wingStairId },
             mainEndReward: { type: "fragmentSlot" },
           })
         )
-      }
+      })
 
       // Ward paths: a single tomb-key gated side section with one fragment reward — cheaper
       // return-content than a whole wing. With wardPathTrapped, the earlier-half pyramids trap
@@ -346,9 +360,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     hasMapPieceBranch,
     hasWardGate,
     nextTier,
-    mosaicPathCount,
-    mainPathPuzzles: pp,
-    keyDensity: constraint.keyDensity,
     keyColors: resolveKeyColors(constraint, journeyId, i),
     pyramidIndex: i,
     declaredSidePaths: constraint.sidePaths,

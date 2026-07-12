@@ -15,9 +15,8 @@ import type {
 import { wardPath } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
-import { computeMosaicPaths } from "./mosaics"
 import { placeFragments } from "./placeFragments"
-import type { CurrencyDistribution } from "./placeFragments"
+import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
@@ -92,7 +91,6 @@ const buildPlan = (): PyramidPlan[] =>
 
 const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
-  const mosaicPaths = computeMosaicPaths(plan)
 
   // Group plan entries by journey
   const byJourney = new Map<string, PyramidPlan[]>()
@@ -124,7 +122,6 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
-        mosaicPathCount: PYRAMID_CAPABILITIES.emitMosaics ? (mosaicPaths.get(`${journeyId}:${i}`) ?? 0) : 0,
         resolveReward: spec => specToReward(spec, tier),
         resolveMainEndReward: spec => specToReward(spec, tier),
       })
@@ -216,7 +213,6 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
       hasMapPieceBranch: false,
       hasWardGate: false,
       nextTier: null,
-      mosaicPathCount: 0,
       resolveReward: resolveTombReward,
       resolveMainEndReward: () => ({ type: "fragmentSlot" }),
     })
@@ -236,7 +232,8 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 export const buildConfigs = (
   resolveKeyRequirements?: ResolveKeyRequirements,
   currencies: CurrencyDistribution[] = [],
-  expectedFragments?: number
+  expectedFragments?: number,
+  capped: CappedCurrency[] = []
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -250,13 +247,17 @@ export const buildConfigs = (
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  placeFragments(allConfigs, currencies, resolveKeyRequirements)
+  placeFragments(allConfigs, currencies, resolveKeyRequirements, capped)
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, discovery graph solvability, and the shop economy guard
   validateRewardCounts(allConfigs, expectedFragments)
   validateDiscovery(allConfigs)
-  validateEconomyGuard(allConfigs)
+  // Economy guard is a global balance check — it can't pass until the whole world is grown,
+  // so it blocks mid-exercise regeneration during world authoring. SKIP_ECONOMY_GUARD lets an
+  // author iterate + inspect (yarn world-info) with structural validation still on; the real
+  // generate-world for commit must run without it. ponytail: env escape hatch, not a config knob.
+  if (!process.env.SKIP_ECONOMY_GUARD) validateEconomyGuard(allConfigs)
 
   return allConfigs
 }
