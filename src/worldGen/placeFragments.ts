@@ -54,6 +54,12 @@ export type CurrencyDistribution = {
   // currency doesn't own. Injected into reachability's harvest so core reads "which bucket
   // does this reward feed" without naming the reward type.
   bucketForReward?: (reward: TreasureReward) => string | undefined
+  // How many instances of this currency the finished world must contain — the mod's own
+  // number (docs/mods/TARGET.md rule 2). Summed across registered currencies into the build's
+  // reward-count check; a currency that leaves the registry drops its expectation with it, so
+  // toggle-off never trips a false "expected N, got 0". Omit for core currencies validated
+  // their own way (map pieces vs WORLD_TARGETS).
+  expectedTotal?: () => number
   // Computes one bucket's demand lazily, only once the worklist has actually discovered it
   // blocking somewhere reachable — see keys-and-locks-solver.md, "Structure, then loot".
   demandFor: (bucket: string, allConfigs: Record<string, SiteConfig[]>) => CurrencyDemand

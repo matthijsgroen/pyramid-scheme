@@ -226,13 +226,12 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 // `resolveKeyRequirements`/`currencies` default to a no-op resolver and no currencies —
 // src/worldGen/ can't import src/mods/'s real resolver or mod-owned currencies directly
 // (architecture.md's dependency table); the caller with access to them
-// (scripts/generateWorld.ts) passes the real ones in. `expectedFragments` is the same
-// story — how many hieroglyph fragments must exist is the tableau currency's own number
-// (src/mods/tableau/game/hieroglyphCurrency.ts), not something core hardcodes.
+// (scripts/generateWorld.ts) passes the real ones in. The reward-count expectation and the
+// "is this a gating-currency reward" predicate are derived from those same `currencies`, so a
+// currency that isn't registered contributes neither — core hardcodes no per-mod number.
 export const buildConfigs = (
   resolveKeyRequirements?: ResolveKeyRequirements,
   currencies: CurrencyDistribution[] = [],
-  expectedFragments?: number,
   capped: CappedCurrency[] = []
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
@@ -250,8 +249,13 @@ export const buildConfigs = (
   placeFragments(allConfigs, currencies, resolveKeyRequirements, capped)
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
-  // tomb ID references, discovery graph solvability, and the shop economy guard
-  validateRewardCounts(allConfigs, expectedFragments)
+  // tomb ID references, discovery graph solvability, and the shop economy guard. The
+  // gating-currency reward expectation + predicate come from the registered currencies
+  // themselves (a currency contributes its own expectedTotal + bucketForReward), so an
+  // unregistered mod's currency drops out of the check — no false "expected N, got 0".
+  const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
+  const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
+  validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
   validateDiscovery(allConfigs)
   // Economy guard is a global balance check — it can't pass until the whole world is grown,
   // so it blocks mid-exercise regeneration during world authoring. SKIP_ECONOMY_GUARD lets an

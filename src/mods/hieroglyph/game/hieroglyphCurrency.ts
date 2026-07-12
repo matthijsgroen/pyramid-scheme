@@ -98,6 +98,8 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
   // `hieroglyph:<id>` bucket.
   bucketForReward: reward =>
     reward.type === "hieroglyphFragment" ? `${BUCKET_PREFIX}${reward.hieroglyphId}` : undefined,
+  // The world-wide count the reward-count check expects — this mod's own number.
+  expectedTotal: () => EXPECTED_HIEROGLYPH_FRAGMENTS,
   demandFor: (bucket, allConfigs) => {
     const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
     const tier = TIER_BY_HIEROGLYPH[hieroglyphId]

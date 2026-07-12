@@ -21,7 +21,6 @@ import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import { resolveKeyRequirements } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
-import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../src/mods/hieroglyph/game/hieroglyphCurrency"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { CAPPED_CURRENCIES } from "../src/mods/registeredMods"
 
@@ -39,12 +38,7 @@ if (process.argv.includes("--validate-only")) {
   process.exit(0)
 }
 
-const configs = buildConfigs(
-  resolveKeyRequirements,
-  ALL_CURRENCY_DISTRIBUTIONS,
-  EXPECTED_HIEROGLYPH_FRAGMENTS,
-  CAPPED_CURRENCIES
-)
+const configs = buildConfigs(resolveKeyRequirements, ALL_CURRENCY_DISTRIBUTIONS, CAPPED_CURRENCIES)
 printStats(configs, HIEROGLYPH_REQUIRED)
 writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs, HIEROGLYPH_REQUIRED))
 console.log("✓ Written: src/data/generatedWorld.ts")

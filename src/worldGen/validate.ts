@@ -7,16 +7,21 @@ import { sellValueForItemId } from "../data/sellables"
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
-// or the total mapPiece count drifts from WORLD_TARGETS. `expectedFragments` is injected, not
-// imported from a core hieroglyph-specific table — "how many fragments must exist" is the
-// tableau currency's own number (src/mods/tableau/game/hieroglyphCurrency.ts), core only checks
-// whatever total it's told to expect. Omit to skip that specific check (e.g. a caller with no
-// currencies registered at all). Mod-owned capped currencies (mosaic) aren't checked here at
-// all — placeFragments' phase-3 pass hard-fails if it can't fully place them, so core needs no
-// per-mod count (docs/mods/TARGET.md rule 2).
-export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expectedFragments?: number): void => {
+// the total mapPiece count drifts from WORLD_TARGETS, or the count of placed gating-currency
+// rewards drifts from what the registered currencies expect. Both the expected total and the
+// "is this a gating-currency reward" predicate are injected (built from the registered
+// currencies by the caller) — core names no specific currency, and a currency that leaves the
+// registry drops its expectation and its rewards together, so toggle-off never trips a false
+// "expected N, got 0". Omit both to skip the currency-reward check. Mod-owned capped currencies
+// (mosaic) aren't checked here — placeFragments' phase-3 pass hard-fails if it can't fully place
+// them, so core needs no per-mod count (docs/mods/TARGET.md rule 2).
+export const validateRewardCounts = (
+  configs: Record<string, SiteConfig[]>,
+  expectedCurrencyRewards?: number,
+  isCurrencyReward: (r: TreasureReward) => boolean = () => false
+): void => {
   let mapPieces = 0
-  let fragments = 0
+  let currencyRewards = 0
   const unknownTombIds: string[] = []
 
   const checkReward = (r: TreasureReward | undefined) => {
@@ -25,7 +30,7 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expe
       mapPieces++
       if (!KNOWN_JOURNEY_IDS.has(r.tombId)) unknownTombIds.push(r.tombId)
     }
-    if (r.type === "hieroglyphFragment") fragments++
+    if (isCurrencyReward(r)) currencyRewards++
   }
 
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
@@ -52,8 +57,10 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expe
     )
   if (mapPieces !== WORLD_TARGETS.mapPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
-  if (expectedFragments !== undefined && fragments !== expectedFragments)
-    throw new Error(`[worldSpec] Expected ${expectedFragments} hieroglyph fragments, got ${fragments}`)
+  if (expectedCurrencyRewards !== undefined && currencyRewards !== expectedCurrencyRewards)
+    throw new Error(
+      `[worldSpec] Expected ${expectedCurrencyRewards} gating-currency rewards, got ${currencyRewards}`
+    )
 }
 
 // Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.

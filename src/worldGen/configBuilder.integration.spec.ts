@@ -3,16 +3,14 @@ import { buildConfigs } from "./configBuilder"
 import { WORLD_TARGETS } from "./worldSpec"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 // Deliberate exception to "src/worldGen/ never imports src/mods/": this integration spec
-// verifies the REAL, complete world (every hieroglyph fragment the tableau currency expects,
-// EXPECTED_HIEROGLYPH_FRAGMENTS below), which needs the real mod-owned currencies — same
-// standing as scripts/generateWorld.ts, the other sanctioned place that reaches across for a
-// full build. Production code (configBuilder.ts/placeFragments.ts) never imports this; it
-// only accepts injected currencies + an injected expected-fragment total.
+// verifies the REAL, complete world, which needs the real mod-owned currencies — same standing
+// as scripts/generateWorld.ts, the other sanctioned place that reaches across for a full build.
+// Production code (configBuilder.ts/placeFragments.ts) never imports this; it derives the
+// expected reward counts from the injected currencies themselves.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
 import { CAPPED_CURRENCIES } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { resolveKeyRequirements } from "../mods/allFamilyMeta"
-import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../mods/hieroglyph/game/hieroglyphCurrency"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
 // check. The economy guard is a separate global invariant (validated by generate-world) that only
@@ -26,7 +24,7 @@ afterAll(() => {
 })
 
 const buildRealConfigs = () =>
-  buildConfigs(resolveKeyRequirements, ALL_CURRENCY_DISTRIBUTIONS, EXPECTED_HIEROGLYPH_FRAGMENTS, CAPPED_CURRENCIES)
+  buildConfigs(resolveKeyRequirements, ALL_CURRENCY_DISTRIBUTIONS, CAPPED_CURRENCIES)
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
 // producing the same reward counts and the same output on every run.

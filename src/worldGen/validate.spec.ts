@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { SECONDARY_TOMBS, validateDiscovery, validateEconomyGuard, validateRewardCounts } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
-import type { FloorConfig, SiteConfig } from "./types"
+import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
@@ -77,16 +77,22 @@ describe("validateRewardCounts", () => {
     }
   }
 
+  // The "is this a gating-currency reward" predicate is injected (in production, built from the
+  // registered currencies). Here a stand-in matching the hieroglyphFragment rewards fillFragments emits.
+  const isFragment = (r: TreasureReward) => r.type === "hieroglyphFragment"
+
   it("passes when counts exactly match WORLD_TARGETS and all mapPiece ids are known", () => {
-    expect(() => validateRewardCounts(validConfigWithFragments(5), 5)).not.toThrow()
+    expect(() => validateRewardCounts(validConfigWithFragments(5), 5, isFragment)).not.toThrow()
   })
 
-  it("throws when fragment count doesn't match the injected expectation", () => {
-    expect(() => validateRewardCounts(validConfigWithFragments(3), 5)).toThrow(/Expected 5 hieroglyph fragments, got 3/)
+  it("throws when the gating-currency reward count doesn't match the injected expectation", () => {
+    expect(() => validateRewardCounts(validConfigWithFragments(3), 5, isFragment)).toThrow(
+      /Expected 5 gating-currency rewards, got 3/
+    )
   })
 
-  it("skips the fragment-count check entirely when no expectation is injected", () => {
-    expect(() => validateRewardCounts(validConfigWithFragments(3))).not.toThrow()
+  it("skips the currency-reward check entirely when no expectation is injected", () => {
+    expect(() => validateRewardCounts(validConfigWithFragments(3), undefined, isFragment)).not.toThrow()
   })
 })
 
