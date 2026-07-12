@@ -1,7 +1,7 @@
 import { registerCurrency } from "@/game/ledger/currencyRegistry"
 import { hieroglyphRequired } from "@/data/generatedWorld"
 import { journeys } from "@/data/journeys"
-import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
+import { REGISTERED_MODS } from "@/mods/registeredMods"
 
 const fragmentTotal = Object.values(hieroglyphRequired).reduce((sum, n) => sum + n, 0)
 const tombCount = journeys.filter(j => j.type === "treasure_tomb").length
@@ -16,14 +16,6 @@ registerCurrency({
   total: fragmentTotal,
 })
 registerCurrency({
-  id: "mosaicPiece",
-  ownerMod: "mosaic",
-  displayName: "currency.mosaicPiece",
-  icon: "🟦",
-  kind: "capped",
-  total: LEVEL_STEPS.length,
-})
-registerCurrency({
   id: "mapPiece",
   ownerMod: "tomb-treasure",
   displayName: "currency.mapPiece",
@@ -32,3 +24,8 @@ registerCurrency({
   total: tombCount,
 })
 registerCurrency({ id: "money", ownerMod: "shop", displayName: "currency.money", icon: "🪙", kind: "counter" })
+
+// Extracted mods contribute their own currency meta via their descriptor — toggling a mod off
+// (removing it from REGISTERED_MODS) drops its currency from the registry too. The hardcoded ones
+// above are mods not yet extracted (trap/hieroglyph/tomb-treasure/shop); they move here as they land.
+for (const mod of REGISTERED_MODS) if (mod.currencyMeta) registerCurrency(mod.currencyMeta)

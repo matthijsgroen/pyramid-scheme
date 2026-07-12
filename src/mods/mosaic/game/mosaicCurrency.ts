@@ -1,4 +1,5 @@
 import type { CappedCurrency } from "@/worldGen/placeFragments"
+import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 
 // The mosaic-piece currency — mod-owned capped filler. Mosaic never gates progress, so it's
 // not on the reachability worklist (unlike map pieces / hieroglyph fragments); it's placed by
@@ -13,6 +14,17 @@ export const MOSAIC_BUCKET = "mosaicPiece"
 // the reveal is count-based (MosaicPage clamps to min(collected, LEVEL_STEPS.length)), so any
 // piece beyond this reveals nothing.
 export const MOSAIC_TOTAL = 298
+
+// The currency's app-facing registry metadata (Collection/HUD display). Mod-owned — registered
+// by whoever aggregates the mod list, not hardcoded in core's registerCurrencies.
+export const MOSAIC_CURRENCY_META: CurrencyMeta = {
+  id: MOSAIC_BUCKET,
+  ownerMod: "mosaic",
+  displayName: "currency.mosaicPiece",
+  icon: "🟦",
+  kind: "capped",
+  total: MOSAIC_TOTAL,
+}
 
 export const MOSAIC_CURRENCY: CappedCurrency = {
   bucket: MOSAIC_BUCKET,

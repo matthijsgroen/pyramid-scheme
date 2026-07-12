@@ -11,3 +11,7 @@ export const REGISTERED_MODS: ModDescriptor[] = [mosaicMod]
 // Every capped-filler currency any registered mod contributes, flattened for the world-gen
 // placement pass. Empty for a mod set that registers none.
 export const CAPPED_CURRENCIES: CappedCurrency[] = REGISTERED_MODS.flatMap(m => m.cappedCurrencies ?? [])
+
+// Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
+// so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.
+export const isModEnabled = (id: string): boolean => REGISTERED_MODS.some(m => m.id === id)

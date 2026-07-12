@@ -28,11 +28,13 @@ green suite.
 - [x] 5. Toggle-off proof (world-gen): mosaic out of `registeredMods` → generate-world
         builds with the economy guard ON, 0 mosaic, 31 map / 294 hieroglyph unchanged,
         worldGen core names no `mosaic`. VERIFIED.
-- [ ] 5b. Full APP toggle-off (grow the descriptor): the mosaic SCREEN (`Base.tsx`
-        hardcodes it) and the `mosaicPiece` currency-meta (`registerCurrencies.ts`) are
-        still wired outside the descriptor — the descriptor owns only `cappedCurrencies`
-        today. Full app toggle-off needs the descriptor to own `screen` + `currencyMeta`.
-        Minimal-descriptor-grows-later, per TARGET.md.
+- [x] 5b. FULL app toggle-off. Descriptor grew to own `currencyMeta` (game-side, no
+        React) — `registerCurrencies` registers mod-contributed metas via the list. The
+        SCREEN stays in `Base.tsx` (React can't live in the game descriptor that world-gen
+        scripts import) but is gated on `isModEnabled("mosaic")`. Single toggle point
+        (`REGISTERED_MODS`): removing mosaic drops world-gen placement + currency-meta +
+        screen together. VERIFIED (0 mosaic, mosaicPiece unregistered, other currencies
+        intact, guard ON). **Slice 1 complete.**
 
 ## World-authoring exercise (surfaced mid-slice — see project memory doom-loop)
 
