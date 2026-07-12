@@ -214,6 +214,23 @@ export const placeFragments = (
     enqueueNewLocks()
   }
 
+  // Winnability guard (keys-and-locks-solver.md, "nothing can progress = hard-fail"): once the
+  // worklist drains, no lock the walk discovered may still be blocking. A remaining lock means
+  // no registered currency owns it — e.g. a gating mod was toggled off but its gate is still
+  // authored — which is a soft-locked, unwinnable world. The per-placement throw above only
+  // catches a claimed-but-unplaceable currency; an unclaimed bucket slips past it via the
+  // `continue`, so this final sweep is what actually enforces the "reach Wizard" invariant for a
+  // gating currency's toggle-off. (Construction-time ward/tomb keys resolve via settleHarvest and
+  // are already satisfied here, so they don't trip it.)
+  if (reach.discoveredLocks.size > 0) {
+    const stuck = [...reach.discoveredLocks].join(", ")
+    throw new Error(
+      `placeFragments: world not fully solvable — lock(s) still blocking after placement: ${stuck}. ` +
+        `No registered currency owns them (a gating mod toggled off with its gate still authored?), ` +
+        `or a required key sits behind the gate it opens.`
+    )
+  }
+
   // Phase 3: capped-filler currencies (e.g. mosaic pieces). These never gate progress, so
   // they're not on the worklist above — placed only once every lock has been resolved, into
   // whatever slots the gating currencies left free. Each spreads across all still-available
