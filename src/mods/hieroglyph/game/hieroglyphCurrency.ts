@@ -1,5 +1,6 @@
 import type { SiteConfig, Tier } from "@/worldGen/types"
 import type { CurrencyDistribution } from "@/worldGen/placeFragments"
+import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { Slot } from "@/worldGen/slots"
 import { pipe, rankBy, uniqueBy, preferThenRelax } from "@/worldGen/distribution"
 import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "@/worldGen/data"
@@ -23,6 +24,20 @@ const BUCKET_PREFIX = "hieroglyph:"
 // The world-wide total this currency must place — this mod's own number (validate.ts takes
 // it as an injected parameter, never imports a hardcoded expectation itself).
 export const EXPECTED_HIEROGLYPH_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((a, b) => a + b, 0)
+
+// Display/ownership metadata for the fragment currency — the ledger + shared Collection screen
+// read this (registered via the mod descriptor, so toggling the mod off drops it too). One
+// counter across all hieroglyphs, not per-id; the per-hieroglyph `hieroglyph:<id>` buckets are a
+// world-gen placement detail, invisible here. `showInCollection` opts it into the Collection grid.
+export const HIEROGLYPH_CURRENCY_META: CurrencyMeta = {
+  id: "fragment",
+  ownerMod: "hieroglyph",
+  displayName: "currency.fragment",
+  icon: "𓂀",
+  kind: "capped",
+  total: EXPECTED_HIEROGLYPH_FRAGMENTS,
+  showInCollection: true,
+}
 
 // Tier lookup by hieroglyph id — ranking metadata (which corridors this fragment prefers),
 // not a demand list; a hieroglyph never referenced by any authored tableau just never gets

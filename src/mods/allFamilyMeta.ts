@@ -2,24 +2,26 @@ import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { ARITHMETIC_REFLEX_META } from "./trap/game/arithmeticReflex/meta"
 import { SUMPLETE_META } from "./puzzle/game/sumplete/meta"
-import { TABLEAU_META } from "./hieroglyph/game/meta"
 import { CROCODILE_META } from "./puzzle/game/crocodile/meta"
 import { FEZ_SHOP_META } from "./shop/game/fezShop/meta"
 import { TREASURE_CHEST_META } from "./core/game/treasureChest/meta"
 import { KEY_GATE_META } from "./core/game/keyGate/meta"
+import { MOD_FAMILY_META } from "./registeredMods"
 
 // Every registered family's metadata, domain-layer only (no Component/generate) — the one
 // place world-gen (which can't import the app-layer family registry) can read tags/
 // rewardWeight. Kept in sync with app/registerAllFamilies.ts's plugin registrations by each
-// plugin importing its meta from here rather than declaring its own copy.
+// plugin importing its meta from here rather than declaring its own copy. The still-legacy
+// families are listed directly; descriptor-migrated mods (e.g. hieroglyph's tableau) contribute
+// via MOD_FAMILY_META and drop out when the mod leaves REGISTERED_MODS.
 export const ALL_FAMILY_META: FamilyMeta[] = [
   ARITHMETIC_REFLEX_META,
   SUMPLETE_META,
-  TABLEAU_META,
   CROCODILE_META,
   FEZ_SHOP_META,
   TREASURE_CHEST_META,
   KEY_GATE_META,
+  ...MOD_FAMILY_META,
 ]
 
 // Dispatches to whichever family declares its own resolveKeyRequirements (most provide

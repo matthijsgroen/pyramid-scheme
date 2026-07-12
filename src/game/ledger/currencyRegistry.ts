@@ -7,6 +7,11 @@ export type CurrencyMeta = {
   icon: string
   kind: "counter" | "capped"
   total?: number // required when kind === "capped"
+  // Show this currency as a section on the shared Collection screen. Independent of whether it
+  // functions as a key (docs/game-design/keys-and-locks-solver.md, "key role and collection
+  // visibility are independent"): hieroglyph fragments are both; map pieces are a key with no
+  // collection UI; mosaic tiles are collection-tracked but via their own mod screen, not here.
+  showInCollection?: boolean
 }
 
 const registry = new Map<string, CurrencyMeta>()
