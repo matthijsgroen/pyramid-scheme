@@ -3,7 +3,7 @@ import type { CurrencyDistribution } from "@/worldGen/placeFragments"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { Slot } from "@/worldGen/slots"
 import { pipe, rankBy, uniqueBy, preferThenRelax } from "@/worldGen/distribution"
-import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "@/worldGen/data"
+import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./hieroglyphData"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { tableauLevels } from "@/data/tableaus"
 

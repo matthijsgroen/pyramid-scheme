@@ -22,6 +22,7 @@ import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import { resolveKeyRequirements } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../src/mods/hieroglyph/game/hieroglyphCurrency"
+import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { CAPPED_CURRENCIES } from "../src/mods/registeredMods"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -44,6 +45,6 @@ const configs = buildConfigs(
   EXPECTED_HIEROGLYPH_FRAGMENTS,
   CAPPED_CURRENCIES
 )
-printStats(configs)
-writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs))
+printStats(configs, HIEROGLYPH_REQUIRED)
+writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs, HIEROGLYPH_REQUIRED))
 console.log("✓ Written: src/data/generatedWorld.ts")

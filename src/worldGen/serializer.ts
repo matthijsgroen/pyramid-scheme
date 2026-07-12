@@ -1,5 +1,10 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
-import { WORLD_SEED, TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./data"
+import { WORLD_SEED } from "./data"
+
+// The per-hieroglyph required-fragment counts a mod owns (docs/mods/TARGET.md rule 2) — injected
+// by the caller (scripts/generateWorld.ts, from the hieroglyph mod), never imported here. Empty
+// when no such currency is registered, so the serializer stays mod-agnostic.
+type HieroglyphRequired = Record<string, number>
 
 // ---------------------------------------------------------------------------
 // Serialization
@@ -124,7 +129,10 @@ const hashString = (str: string): number => {
   return Math.abs(hash)
 }
 
-export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
+export const generateFile = (
+  configs: Record<string, SiteConfig[]>,
+  hieroglyphRequired: HieroglyphRequired = {}
+): string => {
   // Counter assigns unique piece indices per hieroglyphId across the entire world
   const fragmentCounts = new Map<string, number>()
   const nextFragmentIndex: FragmentCounter = (id: string) => {
@@ -140,11 +148,11 @@ export const generateFile = (configs: Record<string, SiteConfig[]>): string => {
     })
     .join(",\n")
 
-  // Use the unlock-required count (HIEROGLYPH_REQUIRED), capped at how many are actually placed
-  // so we never ask players to find more fragments than exist in the world.
+  // Use the injected required count, capped at how many are actually placed so we never ask
+  // players to find more fragments than exist in the world.
   const placed = countPlacedFragments(configs)
-  const hieroglyphRequired = Object.keys(HIEROGLYPH_REQUIRED)
-    .map(id => `  "${id}": ${Math.min(placed.get(id) ?? 1, HIEROGLYPH_REQUIRED[id] ?? 1)}`)
+  const hieroglyphRequiredEntries = Object.keys(hieroglyphRequired)
+    .map(id => `  "${id}": ${Math.min(placed.get(id) ?? 1, hieroglyphRequired[id] ?? 1)}`)
     .join(",\n")
 
   // Hash of all site config entries — changes whenever world content is regenerated.
@@ -163,7 +171,7 @@ ${entries},
 }
 
 export const hieroglyphRequired: Record<string, number> = {
-${hieroglyphRequired},
+${hieroglyphRequiredEntries},
 }
 `
 }
@@ -172,7 +180,10 @@ ${hieroglyphRequired},
 // Validation summary
 // ---------------------------------------------------------------------------
 
-export const printStats = (configs: Record<string, SiteConfig[]>): void => {
+export const printStats = (
+  configs: Record<string, SiteConfig[]>,
+  hieroglyphRequired: HieroglyphRequired = {}
+): void => {
   let totalFragments = 0
   let uniqueAssignedFragments = 0
   let totalMapPieces = 0
@@ -237,14 +248,14 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
     }
   }
 
-  const allHieroglyphs = Object.values(TOMB_SYMBOLS).flat()
-  const totalUnique = allHieroglyphs.reduce((s, id) => s + (HIEROGLYPH_REQUIRED[id] ?? 0), 0)
+  const allHieroglyphs = Object.keys(hieroglyphRequired)
+  const totalUnique = allHieroglyphs.reduce((s, id) => s + (hieroglyphRequired[id] ?? 0), 0)
   uniqueAssignedFragments = allHieroglyphs.reduce(
-    (s, id) => s + Math.min(fragCoverage.get(id) ?? 0, HIEROGLYPH_REQUIRED[id] ?? 0),
+    (s, id) => s + Math.min(fragCoverage.get(id) ?? 0, hieroglyphRequired[id] ?? 0),
     0
   )
   const uncovered = allHieroglyphs.filter(id => !fragCoverage.has(id))
-  const under2 = allHieroglyphs.filter(id => (fragCoverage.get(id) ?? 0) < (HIEROGLYPH_REQUIRED[id] ?? 0))
+  const under2 = allHieroglyphs.filter(id => (fragCoverage.get(id) ?? 0) < (hieroglyphRequired[id] ?? 0))
 
   console.log(
     `✓ Configs generated: ${pyramidJourneys} pyramid journeys (${pyramidLevels} levels), ${tombJourneys} tombs (${tombFloors} floors)`
