@@ -204,7 +204,11 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
           if (s.endReward?.type === "mapPiece") totalMapPieces++
           if (s.endReward?.type === "mosaicPiece") totalMosaicPieces++
           if (s.endReward?.type === "sellable") junkSellables++
-          for (const sub of s.sideSections ?? []) if (sub.endReward?.type === "sellable") junkSellables++
+          for (const sub of s.sideSections ?? []) {
+            if (sub.endReward?.type === "mapPiece") totalMapPieces++
+            if (sub.endReward?.type === "mosaicPiece") totalMosaicPieces++
+            if (sub.endReward?.type === "sellable") junkSellables++
+          }
         }
         const countFrag = (r: { type: string; hieroglyphId?: string } | undefined) => {
           if (r?.type === "hieroglyphFragment" && r.hieroglyphId) {
