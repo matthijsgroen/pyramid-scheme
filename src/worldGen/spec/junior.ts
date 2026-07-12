@@ -1,6 +1,15 @@
-import { tier, tomb, sidePath } from "../dsl"
+import { tier, journey, tomb, sidePath, wardWing } from "../dsl"
 import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
 import type { Rule } from "../dsl"
+
+// Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
+// journey (where the auto tier-unlock gate already sits). Each is a bonus floor at a HARDER
+// tier's difficulty, gated by that tier's unlock treasure — so you return once you've unlocked it.
+const WING = {
+  expert: () => wardWing({ tomb: "junior_treasure_tomb", index: 0, tier: "expert", puzzles: 1 }), // junior_a_1
+  master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, tier: "master", puzzles: 2 }), // expert_a_1
+  wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, tier: "wizard", puzzles: 2 }), // master_a_1
+}
 
 export const juniorRules: Rule[] = [
   tier("junior", { difficulty: "junior" }),
@@ -16,6 +25,15 @@ export const juniorRules: Rule[] = [
     .settings({ pathPuzzles: 0, end: "mosaic" })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 1, end: "junk", encounter: "trap", chance: 0.4 }),
+
+  // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
+  journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),
+  journey("junior_2").pyramid(3, { wardWings: [WING.master()] }),
+  journey("junior_2").pyramid(4, { wardWings: [WING.wizard()] }),
+  journey("junior_3").pyramid(3, { wardWings: [WING.expert()] }),
+  journey("junior_3").pyramid(4, { wardWings: [WING.master()] }),
+  journey("junior_4").pyramid(4, { wardWings: [WING.wizard()] }),
+  journey("junior_4").pyramid(5, { wardWings: [WING.expert()] }),
 
   tomb("junior_treasure_tomb", {
     encounter: "tableau",

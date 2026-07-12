@@ -9,7 +9,7 @@ export type TombStructure = { id: string; tier: JourneyTier; levelCount: number 
 
 export const PYRAMID_STRUCTURES: PyramidStructure[] = [
   // Starter
-  { id: "starter_1", tier: "starter", levelCount: 1 },
+  { id: "starter_1", tier: "starter", levelCount: 2 },
   { id: "starter_2", tier: "starter", levelCount: 2 },
   { id: "starter_3", tier: "starter", levelCount: 4 },
   { id: "starter_4", tier: "starter", levelCount: 4 },

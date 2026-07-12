@@ -14,19 +14,33 @@ green suite.
 
 ## Slice 1 — mosaic (reference implementation)
 
-- [ ] 1. Delete `computeMosaicPaths` + auto-loop + `emitMosaics`. Mosaic
-        pieces ride the general loot-node pool (chest with soft
-        `prefers: mosaic`; any loot node can hold one). Move the target count
-        into the mosaic mod (`totalRequired`); core holds no
-        `mosaicPieceRewards`.
-- [ ] 2. Generic phase-3 capped placement reads the registered currency,
-        spreads its total across all loot nodes (preferring tagged); hard-fail
-        if mod demand > total loot-node capacity.
-- [ ] 3. `src/mods/mosaic/index.ts` descriptor + `registeredMods` list.
+- [x] 1. Deleted `computeMosaicPaths` + auto-loop + `emitMosaics`; mosaic rides
+        the general loot pool via `prefers`-tagged slots; target count moved to
+        the mosaic mod (`MOSAIC_TOTAL`); core holds no `mosaicPieceRewards`.
+- [x] 2. Generic phase-3 capped placement in `placeFragments.ts` — spreads the
+        registered currency's total across loot slots (tagged first), hard-fails
+        if demand > capacity.
+- [x] 3. `src/mods/mosaic/index.ts` descriptor + `src/mods/registeredMods.ts`.
 - [ ] 4. File moves; `useMosaicProgress` via `useModState`; drop
         `mosaicSeenCount` from `ProgressionState`.
 - [ ] 5. Toggle-off proof: remove mosaic → build clean, 0 mosaic pieces,
         hieroglyph/mapPiece counts unchanged, core names no `mosaic`.
+
+## World-authoring exercise (surfaced mid-slice — see project memory doom-loop)
+
+Deleting the auto-distributor exposed the real world size: it was auto-expanding
+loot without authorship, so the world needs authored growth to stay solvent
+(economy guard). Grow each tier with authored ward content, then balance.
+
+- [x] engine primitives: `wardChest`, floor-level `sidePaths`/`hiddenPaths`,
+      varied `wardWings` (`WardWingSpec[]`)
+- [x] starter — +1 pyramid, per-pyramid ward-chest teasers (varied difficulty),
+      extra corridors on the last pyramid
+- [x] junior — varied ward WINGS (bonus floors, harder-tier difficulty) on
+      back-half pyramids
+- [ ] expert / master / wizard — grow (next)
+- [ ] re-enable economy guard, balance (income ≥ buyable); drop
+      `SKIP_ECONOMY_GUARD` usage, final `generate-world`
 
 ## Slices 2+ (re-planned after mosaic)
 

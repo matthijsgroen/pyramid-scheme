@@ -1,5 +1,19 @@
-import { tier, journey, tomb, wardPath, sidePath, hiddenPath } from "../dsl"
+import { tier, journey, tomb, wardPath, wardChest, sidePath, hiddenPath } from "../dsl"
 import type { Rule } from "../dsl"
+
+// Ward-chest teasers: every starter pyramid gets one ward-gated loot chest keyed to a LATER
+// tier's unlock treasure — visible early, openable only once you've progressed that far. Keeps
+// starter small while giving a reason to come back. `tomb`/`index` name that tier-unlock key;
+// `tier` sets the teaser puzzle's difficulty.
+const TEASE = {
+  junior: { tier: "junior", tomb: "starter_treasure_tomb", index: 0 }, // starter_a_1
+  expert: { tier: "expert", tomb: "junior_treasure_tomb", index: 0 }, // junior_a_1
+  master: { tier: "master", tomb: "expert_treasure_tomb", index: 0 }, // expert_a_1
+  wizard: { tier: "wizard", tomb: "master_treasure_tomb", index: 0 }, // master_a_1
+} as const
+type TeaseName = keyof typeof TEASE
+const teaseChest = (t: TeaseName) => wardChest({ ...TEASE[t], puzzles: t === "master" || t === "wizard" ? 2 : 1 })
+const STARTER_CYCLE: TeaseName[] = ["junior", "expert", "master", "wizard"]
 
 export const starterRules: Rule[] = [
   tier("starter", { difficulty: "starter" }),
@@ -14,16 +28,16 @@ export const starterRules: Rule[] = [
   // First pyramid of each starter journey is that journey's map-piece entry-point.
   tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
 
-  // starter_1 — the whole game's onboarding: a single pyramid, no main-path puzzles, just
-  // the map piece and a gentle ward path into the starter tomb.
+  // starter_1 — the whole game's onboarding. Pyramid 1: the map piece + a gentle ward path into
+  // the starter tomb (see the deadlock fix below). Pyramid 2: one main puzzle, its chests from
+  // the tier defaults. Both also carry a ward-chest teaser to a later tier.
   //
-  // The tier-wide "first pyramid → mapPiece" rule above lands on this pyramid's LAST floor
-  // by default — which used to be floor 1, gated behind the very ward path that needs
-  // starter_treasure_tomb's OWN tier-unlock treasure to open. That's a genuine deadlock (the
-  // map piece feeds the tomb's own piecesRequired threshold, which grants the key this floor
-  // needs). Fixed by moving the real map piece to floor 0 (always reachable) and leaving
-  // floor 1's ward-gated reward as safe bonus loot (mosaicPiece never gates anything, same
-  // convention already used for this file's other hidden/ward bonus content).
+  // The tier-wide "first pyramid → mapPiece" rule lands on this pyramid's LAST floor by default —
+  // which used to be floor 1, gated behind the very ward path that needs starter_treasure_tomb's
+  // OWN tier-unlock treasure to open. That's a deadlock (the map piece feeds the tomb's own
+  // piecesRequired threshold, which grants the key this floor needs). Fixed by moving the real
+  // map piece to floor 0 (always reachable) and leaving floor 1's ward-gated reward as safe bonus
+  // loot (mosaicPiece never gates anything).
   journey("starter_1")
     .pyramid(1, { pathPuzzles: 0 })
     .floor(0, {
@@ -33,6 +47,7 @@ export const starterRules: Rule[] = [
         wardPath({ puzzles: 1, tier: "junior", tomb: "starter_treasure_tomb", index: 0 }),
         sidePath(),
         hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" }),
+        teaseChest("expert"),
       ],
     })
     .floor(1, {
@@ -42,15 +57,23 @@ export const starterRules: Rule[] = [
       sideSections: [sidePath({ puzzles: 1 })],
     }),
 
-  // starter_2 — the two follow-up curated pyramids (moved out of starter_1). One main-path
-  // puzzle each; ward path steps up expert then master, with a hidden mosaic on the deeper
-  // floor. Pyramid 1 gets the same map-piece/ward-gate fix as starter_1 above — pyramid 2
-  // isn't "first" so never had a map piece here in the first place.
+  journey("starter_1")
+    .pyramid(2, { pathPuzzles: 1 })
+    .floor(0, {
+      sideSections: [teaseChest("master")],
+    }),
+
+  // starter_2 — two curated follow-up pyramids. One main-path puzzle each; existing ward-path
+  // steps into expert then master, plus the new ward-chest teaser.
   journey("starter_2")
     .pyramid(1)
     .floor(0, {
       mainEndReward: "mapPiece",
-      sideSections: [wardPath({ puzzles: 1, tier: "expert", tomb: "junior_treasure_tomb", index: 1 }), sidePath()],
+      sideSections: [
+        wardPath({ puzzles: 1, tier: "expert", tomb: "junior_treasure_tomb", index: 1 }),
+        sidePath(),
+        teaseChest("wizard"),
+      ],
     })
     .floor(1, {
       mainEndReward: "mosaicPiece",
@@ -62,13 +85,37 @@ export const starterRules: Rule[] = [
   journey("starter_2")
     .pyramid(2)
     .floor(0, {
-      sideSections: [wardPath({ puzzles: 1, tier: "master", tomb: "expert_treasure_tomb", index: 2 }), sidePath()],
+      sideSections: [
+        wardPath({ puzzles: 1, tier: "master", tomb: "expert_treasure_tomb", index: 2 }),
+        sidePath(),
+        teaseChest("junior"),
+      ],
     })
     .floor(1, {
       pathPuzzles: 3,
       difficulty: "master",
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, encounter: "trap", endReward: "mosaicPiece" })],
     }),
+
+  // starter_3 / starter_4 — otherwise ride the tier defaults (map piece on pyramid 1, low
+  // fragment + hidden mosaic side paths). Each pyramid gains one ward-chest teaser, difficulty
+  // cycling junior→wizard so the tier as a whole points at every later difficulty.
+  // starter_3 / starter_4 keep the tier defaults (map piece on pyramid 1, low fragment + hidden
+  // mosaic side paths) and gain one ward-chest teaser each, difficulty cycling junior→wizard.
+  // Authored at the .pyramid() level, NOT .floor() — a floor override drops the tier's
+  // sidePaths/hiddenPaths (buildSite's authored-floors branch ignores them).
+  ...["starter_3", "starter_4"].flatMap(jid =>
+    [1, 2, 3, 4]
+      .filter(n => !(jid === "starter_4" && n === 4))
+      .map(n => journey(jid).pyramid(n, { sideSections: [teaseChest(STARTER_CYCLE[(n - 1) % 4])] }))
+  ),
+
+  // Last pyramid of the last starter journey: its ward-chest teaser + a few extra loot side
+  // corridors (medium fragment side paths, on top of the tier default).
+  journey("starter_4").pyramid(4, {
+    sideSections: [teaseChest("wizard")],
+    sidePaths: [{ density: "medium", pathPuzzles: 1, end: "fragment" }],
+  }),
 
   tomb("starter_treasure_tomb", {
     encounter: "tableau",
