@@ -33,14 +33,22 @@ loot without authorship, so the world needs authored growth to stay solvent
 (economy guard). Grow each tier with authored ward content, then balance.
 
 - [x] engine primitives: `wardChest`, floor-level `sidePaths`/`hiddenPaths`,
-      varied `wardWings` (`WardWingSpec[]`)
+      varied `wardWings` (`WardWingSpec[]`), key chains (nested floor-key,
+      2 levels max — assembler flattens deeper)
 - [x] starter — +1 pyramid, per-pyramid ward-chest teasers (varied difficulty),
       extra corridors on the last pyramid
-- [x] junior — varied ward WINGS (bonus floors, harder-tier difficulty) on
-      back-half pyramids
-- [ ] expert / master / wizard — grow (next)
-- [ ] re-enable economy guard, balance (income ≥ buyable); drop
-      `SKIP_ECONOMY_GUARD` usage, final `generate-world`
+- [x] junior — varied ward WINGS (bonus floors, harder-tier difficulty)
+- [x] expert — ward content everywhere, first open traps, consumable bump,
+      first floor keys on the open main path, broad packing
+- [x] master — deeper locks (multi-color keys + key chains), trapped returns
+      (`wardPathTrapped`), open junk income
+- [x] wizard — saturated: open traps + key chains at the ceiling
+- [x] economy balances with the guard ON (no `SKIP_ECONOMY_GUARD` needed for a
+      real build; the env gate stays as a dev/iteration affordance)
+
+Escalation ladder: starter (see locked content) → junior (bonus floors) →
+expert (intro traps + floor keys) → master (deepen: multi-color + chains,
+hazardous returns) → wizard (saturate all).
 
 ## Slices 2+ (re-planned after mosaic)
 
