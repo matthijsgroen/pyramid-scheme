@@ -6,7 +6,7 @@ import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { TABLEAU_META } from "@/mods/tableau/game/meta"
+import { TABLEAU_META } from "@/mods/hieroglyph/game/meta"
 
 const TOMB_SYMBOLS: Record<string, string[]> = {
   starter: ["p10", "p8", "art1", "a6", "a8", "art5", "d1"],

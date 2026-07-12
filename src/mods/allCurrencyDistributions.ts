@@ -1,6 +1,6 @@
 import type { CurrencyDistribution } from "@/worldGen/placeFragments"
 import { MAP_PIECE_CURRENCY } from "@/worldGen/mapPieceCurrency"
-import { HIEROGLYPH_CURRENCY } from "./tableau/game/hieroglyphCurrency"
+import { HIEROGLYPH_CURRENCY } from "./hieroglyph/game/hieroglyphCurrency"
 
 // Every currency registered with the worklist solver — core (map pieces, every tomb needs
 // one regardless of mods) and mod-owned (hieroglyph fragments, docs/mods-architecture.md's

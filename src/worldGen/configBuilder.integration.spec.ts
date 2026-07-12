@@ -12,7 +12,7 @@ import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
 import { CAPPED_CURRENCIES } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { resolveKeyRequirements } from "../mods/allFamilyMeta"
-import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../mods/tableau/game/hieroglyphCurrency"
+import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../mods/hieroglyph/game/hieroglyphCurrency"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
 // check. The economy guard is a separate global invariant (validated by generate-world) that only

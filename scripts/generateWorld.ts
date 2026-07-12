@@ -21,7 +21,7 @@ import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import { resolveKeyRequirements } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
-import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../src/mods/tableau/game/hieroglyphCurrency"
+import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../src/mods/hieroglyph/game/hieroglyphCurrency"
 import { CAPPED_CURRENCIES } from "../src/mods/registeredMods"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
