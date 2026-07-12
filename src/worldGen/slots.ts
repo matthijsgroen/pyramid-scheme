@@ -19,6 +19,11 @@ export type Slot = {
   /** True for an explicit `fragmentSlot` sentinel (always eligible); false for an open,
    * not-yet-rewarded tomb-key gate (eligible only until something else claims it). */
   isPlaceholder: boolean
+  /** Soft authored placement preference (a bucket id, e.g. `mapPiece:starter_treasure_tomb`)
+   * — a ranking boost for that currency, not an exclusive claim. See
+   * docs/game-design/keys-and-locks-solver.md, "A slot's authored placement preference is a
+   * soft tag, not an exclusive claim". */
+  preference?: string
   assign: (reward: TreasureReward) => void
 }
 
@@ -34,15 +39,20 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
     const tombJourney = TOMB_JOURNEYS.find(j => j.id === journeyId)
     const tier = (pyramidJourney ?? tombJourney)!.tier as Tier
 
-    const addSlot = (ref: FloorRef, wardKeys: string[], isPlaceholder: boolean, assign: (r: TreasureReward) => void) =>
-      slots.push({ ref, journeyId, tier, wardKeys, isPlaceholder, assign })
+    const addSlot = (
+      ref: FloorRef,
+      wardKeys: string[],
+      isPlaceholder: boolean,
+      preference: string | undefined,
+      assign: (r: TreasureReward) => void
+    ) => slots.push({ ref, journeyId, tier, wardKeys, isPlaceholder, preference, assign })
 
     siteConfigs.forEach((floors, levelIndex) => {
       floors.forEach((floor, floorIndex) => {
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot(ref, [], true, r => {
+          addSlot(ref, [], true, floor.mainEndReward.prefers, r => {
             f.mainEndReward = r
           })
         }
@@ -50,12 +60,12 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           if (section.endReward?.type === "fragmentSlot") {
             const s = section
-            addSlot(ref, sWardKeys, true, r => {
+            addSlot(ref, sWardKeys, true, section.endReward.prefers, r => {
               s.endReward = r
             })
           } else if (section.gate?.type === "tomb-key" && !section.endReward) {
             const s = section
-            addSlot(ref, sWardKeys, false, r => {
+            addSlot(ref, sWardKeys, false, undefined, r => {
               s.endReward = r
             })
           }
@@ -63,12 +73,12 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
-              addSlot(ref, subWardKeys, true, r => {
+              addSlot(ref, subWardKeys, true, sub.endReward.prefers, r => {
                 ss.endReward = r
               })
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {
               const ss = sub
-              addSlot(ref, subWardKeys, false, r => {
+              addSlot(ref, subWardKeys, false, undefined, r => {
                 ss.endReward = r
               })
             }

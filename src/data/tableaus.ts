@@ -88,58 +88,125 @@ const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type ===
 const collectAllAvailableSymbols = (difficulties: Difficulty[]) =>
   difficulties.flatMap(difficulty => TOMB_SYMBOLS[difficulty] || [])
 
-const tableauInventory: Record<string, string[]> = difficulties.reduce(
-  (acc, difficulty, i, list) => {
-    const tombInfo = tombJourneys.find(j => j.difficulty === difficulty)
-    if (!tombInfo) throw new Error("no tomb info for difficulty " + difficulty)
-    const symbols = collectAllAvailableSymbols(list.slice(0, i + 1))
+// Grind-era generation, untouched: one shuffle per difficulty, cumulative symbol pool,
+// same shared `random` sequence/order this always used. Every hand-authored story in
+// tableaus.json was written against these exact draws — the shuffle itself must never change.
+const shuffledSymbolsByDifficulty = {} as Record<Difficulty, string[]>
+difficulties.forEach((difficulty, i, list) => {
+  const symbols = collectAllAvailableSymbols(list.slice(0, i + 1))
+  shuffledSymbolsByDifficulty[difficulty] = shuffle(symbols, random)
+})
 
-    const shuffledSymbols = shuffle(symbols, random)
+// Remap: one tableau per REAL tomb floor — matches the exploration-based world (one
+// walk-through, not repeated grind-runs), not the original per-treasure grind loop.
+// `runNumber` is the tomb's own 1-based floor index; `levelNr` is always 1 (a floor has
+// exactly one tableau puzzle now, no "levels within a run").
+//
+// The original grid was `treasureIndex × level` — for wizard (levelCount 4, 4 treasures)
+// that's 16 cells, but only the `level 1` row (4 cells, one per run) was ever read, since
+// a floor only ever queried (run, level=1). This remap treats the grid as `levelCount`
+// ROWS (one per level) and slices a whole row per REAL tomb of the tier: row 1 (level 1)
+// goes to the tier's PRIMARY tomb — the EXACT original cells, so every hand-authored story
+// in tableaus.json keeps matching its tableau's symbols byte-for-byte. Row 2, 3, ... go to
+// each SECONDARY tomb in turn (split off once a single tomb got too large for exploration —
+// pyramid-interior-design.md §5) — rows the original grid always generated but never read,
+// so this is genuinely unused content, not a duplicate of the primary's (the old code's
+// bug: it keyed inventory by *difficulty*, so secondaries silently reused the primary's
+// exact `level 1` cells). No story was ever authored for secondary tombs either way
+// (tableaus.json has no keys for them), so there's nothing to preserve there.
+const tableauInventory: Record<string, string[]> = {}
+difficulties.forEach(difficulty => {
+  const tierTombs = tombJourneys.filter(j => j.difficulty === difficulty)
+  const [primaryTomb, ...secondaryTombs] = tierTombs
+  const pool = shuffledSymbolsByDifficulty[difficulty]
+  const poolSlice = (start: number, count: number) =>
+    Array.from({ length: count }, (_, s) => pool[(start + s) % pool.length])
 
-    return (
-      tombInfo?.treasures.reduce((innerAcc, _treasure, treasureIndex) => {
-        for (let level = 1; level <= tombInfo.levelCount; level++) {
-          const startSymbolIndex =
-            treasureIndex * tombInfo.levelCount * tombInfo.levelSettings.symbolCount +
-            level * tombInfo.levelSettings.symbolCount -
-            1
+  // Row start position uses the SAME formula/scaling constants (primary's own levelCount
+  // and symbolCount) the original grid was built with — only the slice LENGTH taken from
+  // that position is each real tomb's own symbolCount, which can differ from the primary's
+  // (e.g. master_treasure_tomb vs. master_treasure_tomb_b).
+  const rowCellStart = (level: number, run: number): number =>
+    (run - 1) * primaryTomb.levelCount * primaryTomb.levelSettings.symbolCount +
+    level * primaryTomb.levelSettings.symbolCount -
+    1
 
-          const tableauSymbols: string[] = []
-          for (let s = 0; s < tombInfo.levelSettings.symbolCount; s++) {
-            const symbolIndex = (startSymbolIndex + s) % shuffledSymbols.length
-            tableauSymbols.push(shuffledSymbols[symbolIndex])
-          }
-
-          innerAcc[`${difficulty}_treasure_tomb.run${treasureIndex + 1}_level${level}`] = tableauSymbols
-        }
-
-        return innerAcc
-      }, acc) ?? acc
+  for (let floor = 1; floor <= primaryTomb.levelCount; floor++) {
+    tableauInventory[`${primaryTomb.id}.run${floor}_level1`] = poolSlice(
+      rowCellStart(1, floor),
+      primaryTomb.levelSettings.symbolCount
     )
-  },
-  {} as Record<string, string[]>
-)
+  }
+
+  secondaryTombs.forEach((tomb, i) => {
+    const level = i + 2 // row 1 is the primary's
+    for (let floor = 1; floor <= tomb.levelCount; floor++) {
+      tableauInventory[`${tomb.id}.run${floor}_level1`] = poolSlice(
+        rowCellStart(level, floor),
+        tomb.levelSettings.symbolCount
+      )
+    }
+  })
+})
+
+// Coverage completion: row-slicing above still doesn't guarantee every hieroglyph symbol
+// gets hit (confirmed empirically: 3 of 58 fall through). Every symbol must be collectible,
+// so patch any gap into a SECONDARY tomb's slot only (never primary, which would disturb a
+// curated story) — the first secondary-tomb (tomb, floor) slot in a tier at or after the
+// symbol's origin tier (pools are cumulative, so a later tier's tomb already carries
+// earlier symbols), walking through every available slot before reusing one.
+;(() => {
+  const usedSymbols = new Set(Object.values(tableauInventory).flat())
+  const tierOf: Record<string, Difficulty> = {}
+  for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Difficulty, string[]][]) {
+    for (const id of ids) tierOf[id] = tier
+  }
+  const patchSlotsByTier = new Map<Difficulty, string[]>()
+  for (const tomb of tombJourneys) {
+    const tierTombs = tombJourneys.filter(j => j.difficulty === tomb.difficulty)
+    if (tierTombs[0] === tomb) continue // primary — never patched
+    const slots = patchSlotsByTier.get(tomb.difficulty) ?? []
+    for (let floor = 1; floor <= tomb.levelCount; floor++) slots.push(`${tomb.id}.run${floor}_level1`)
+    patchSlotsByTier.set(tomb.difficulty, slots)
+  }
+  const patchCursor = new Map<Difficulty, number>()
+
+  for (const id of Object.values(TOMB_SYMBOLS).flat()) {
+    if (usedSymbols.has(id)) continue
+    const originTierIdx = difficulties.indexOf(tierOf[id])
+    const targetTierIdx = difficulties.findIndex(
+      (d, i) => i >= originTierIdx && (patchSlotsByTier.get(d)?.length ?? 0) > 0
+    )
+    if (targetTierIdx === -1)
+      throw new Error(`tableaus.ts: no secondary tomb slot available to patch missing symbol "${id}"`)
+    const targetTier = difficulties[targetTierIdx]
+    const slots = patchSlotsByTier.get(targetTier)!
+    const cursor = patchCursor.get(targetTier) ?? 0
+    const key = slots[cursor % slots.length]
+    patchCursor.set(targetTier, cursor + 1)
+    tableauInventory[key] = [id, ...tableauInventory[key].slice(1)]
+    usedSymbols.add(id)
+  }
+})()
 
 // Generate all tableau levels with i18n support
 export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
   const tableaus: TableauLevel[] = []
 
   tombJourneys.forEach(tomb => {
-    for (let treasure = 1; treasure <= tomb.treasures.length; treasure++) {
-      for (let level = 1; level <= tomb.levelCount; level++) {
-        const tableauSymbols = tableauInventory[`${tomb.difficulty}_treasure_tomb.run${treasure}_level${level}`]
+    for (let floor = 1; floor <= tomb.levelCount; floor++) {
+      const tableauSymbols = tableauInventory[`${tomb.id}.run${floor}_level1`]
 
-        tableaus.push({
-          id: `tab_${tomb.difficulty}_r${treasure}_l${level}`,
-          levelNr: level,
-          symbolCount: tomb.levelSettings.symbolCount,
-          inventoryIds: tableauSymbols,
-          tombJourneyId: tomb.id,
-          runNumber: treasure,
-          name: getTableauTitle(tomb.id, treasure, level, t),
-          description: getTableauDescription(tomb.id, treasure, level, tableauSymbols, t),
-        })
-      }
+      tableaus.push({
+        id: `tab_${tomb.id}_r${floor}_l1`,
+        levelNr: 1,
+        symbolCount: tomb.levelSettings.symbolCount,
+        inventoryIds: tableauSymbols,
+        tombJourneyId: tomb.id,
+        runNumber: floor,
+        name: getTableauTitle(tomb.id, floor, 1, t),
+        description: getTableauDescription(tomb.id, floor, 1, tableauSymbols, t),
+      })
     }
   })
 

@@ -5,6 +5,15 @@ Companion to: `game-loop.md`, `design-decisions.md`
 
 ---
 
+## Terminology
+
+- **Tier** — one of the 5 difficulty levels (starter/junior/expert/master/wizard).
+- **Journey** (= expedition) — one of the 4 pyramid-type entries per tier (e.g. `starter_1`..`starter_4`, 20 total across all tiers). Defined in `src/data/journeys.ts`.
+- **Pyramid** — one specific, replayable site within a journey (one entry in that journey's `siteConfigs` array, indexed by `levelIndex`). ~85 total across the game — this is the unit "85 pyramids" refers to elsewhere in these docs.
+- **Tomb** — a `treasure_tomb`-type journey (its own top-level entry in `journeys.ts`, not nested inside a pyramid journey). 9 total across all tiers.
+
+A journey's map piece is collected from one of its pyramids and feeds that tier's tomb(s) `piecesRequired` threshold — see "Map piece distribution rules" below.
+
 ## 1. The two-world model
 
 The game has two distinct site types. Their loot is strictly separated — nothing crosses over.

@@ -3,6 +3,96 @@
 Design docs: `docs/mods-architecture.md`, `docs/game-design/keys-and-locks-solver.md`.
 Detailed handover: `docs/handover-mods-keys-and-locks.md`.
 
+## Recovery plan — doc-fidelity gap found in hieroglyph placement
+
+Gap analysis (2026-07-11) of `placeFragments.ts`/`hieroglyphCurrency.ts`/`reachability.ts`
+against `keys-and-locks-solver.md`'s own stated algorithm. Not cosmetic — 3 structural gaps
+share one root cause: there is no real worklist queue.
+
+- [x] 1. Gap analysis — done, see below. Analysis only, no fixes yet.
+- [x] 1b. Design corrections, now written into `keys-and-locks-solver.md`:
+      "Structure, then loot" phase split (nodes + their wishes are fully built before any
+      currency is granted), the soft `prefers: <currency>` slot tag (a ranking boost, not an
+      exclusive claim — a leftover preference is inert once that currency's demand hits 0),
+      and the map-piece two-level diversity ladder (journey first, relax to pyramid — the doc
+      previously conflated these under a single "pyramid" dedup, now fixed).
+- [x] 2. Build the real worklist queue — done. `collectReachableKeys`/`reachableFrom`
+      (`siteValidator.ts`) now surface unsatisfied `requiredKeyId`/`requiredKeyIds` hit at the
+      reachable frontier as `blockedRequirements`, aggregated world-wide in `reachability.ts`
+      as `discoveredLocks` (plus a journey-scoped `mapPiece:<tombId>` lock when a tier is
+      unlocked but `piecesRequired` isn't met yet). `placeFragments.ts` is a real queue: seeded
+      from `discoveredLocks`, grown via `enqueueNewLocks()` after every placement. Verified via
+      a live cascade trace (floors 12→31→53→76→124→156 as each hieroglyph's demand resolved,
+      cross-tier locks appearing exactly per the doc's worked example).
+  - [x] hieroglyph demand now comes from `CurrencyDistribution.demandFor(bucket, allConfigs)`,
+        called lazily per discovered bucket — no static `TIERS × TOMB_SYMBOLS` table anymore.
+  - [x] `CurrencyDistribution` gained its own `rank(candidates, demand)` — ranking moved out of
+        `placeFragments.ts` (which only computes eligibility) into each currency, so map
+        pieces' two-level journey→pyramid ladder and hieroglyphs' tier/ward ranking can differ.
+  - [ ] filler loot is still a separate ad hoc loop, not the same composable pipeline — open.
+  - [ ] no fallback rung for mod-owned slot types (shop disable-ability) — open.
+  - [ ] slot capacity — `Slot.assign` still single-capacity only — open (tracked below too).
+- [x] 2b. Map pieces migrated onto the queue. `TreasureReward.fragmentSlot` gained `prefers?:
+      string` (a bucket id, soft ranking hint only — inert once that currency's demand is
+      satisfied, never an exclusive claim); `rewards.ts`'s `hintToReward`/`specToReward` now
+      compile both the bare `"mapPiece"` hint and the structured `{type:"mapPiece",tombId}`
+      form to a preference-tagged `fragmentSlot` instead of a baked literal; new
+      `src/worldGen/mapPieceCurrency.ts` (core, not `src/mods/` — every tomb needs one
+      regardless of which mods are registered) implements the journey-then-pyramid diversity
+      ladder. `WORLD_TARGETS.mapPieceRewards` corrected 36→31 (the old "20 primary + 16
+      secondary" surplus-loot split was redesigned away; 31 = sum of every tomb's
+      `piecesRequired`, confirmed by the user).
+- [x] 2c. (found during 2/2b) Fixed a real, pre-existing authoring bug in `src/data/tableaus.ts`
+      — leftover from the "grind era" (repeated tomb replays) that never got updated when large
+      tombs were split into several journeys for the exploration-based world. Two bugs: (a)
+      `tableauInventory` generation picked only the FIRST tomb per difficulty
+      (`tombJourneys.find`), so a tier's secondary tombs (`_b`/`_c`) silently reused the
+      primary's exact symbol allocation instead of getting their own; (b) the generated
+      `run × level` grid assumed multiple tableau puzzles per floor, but construction
+      (`configBuilder.ts`) only ever builds one per floor (`levelNr` always 1) — ~3/4 of the
+      grid was structurally dead, and some hieroglyphs' only allocation fell in a dead cell,
+      permanently undiscoverable.
+      Fix keeps generation itself untouched (same one-shuffle-per-difficulty call, same
+      shared `random` sequence/order — every hand-authored story depends on those exact
+      draws) and only changes the REMAP on top: the old grid was `treasureIndex × level`
+      (e.g. 4×4=16 cells for wizard's primary tomb) but only the `level 1` row was ever
+      read. Remap treats the grid as `levelCount` ROWS and slices a whole row per REAL tomb
+      of the tier — row 1 goes to the PRIMARY tomb (the exact original cells, so every
+      hand-authored story keeps matching its tableau's symbols byte-for-byte, verified
+      against 3 hand-picked stories), row 2/3/... go to each SECONDARY tomb in turn — rows
+      the grid always generated but never read, genuinely unused (not the primary's
+      duplicated content the old bug produced), correctly sized to each tomb's own
+      `symbolCount` even where it differs from the primary's (e.g. `master_treasure_tomb`
+      vs `_b`). A small coverage-completion pass patches any symbol that still falls
+      through both the primary's row and the secondary rows (found empirically: 3 of 58)
+      into a secondary-tomb slot only, never primary. Result: `EXPECTED_HIEROGLYPH_FRAGMENTS`
+      273→294 (the corrected total, confirmed by `yarn generate-world`: 294/294 placed).
+      `HIEROGLYPH_REQUIRED` in `worldGen/data.ts` also fixed to search every tomb of a tier,
+      not just the primary.
+      **Still open:** secondary tombs (`expert_treasure_tomb_b`, `master_treasure_tomb_b`,
+      `wizard_treasure_tomb_b`, `wizard_treasure_tomb_c`) have NO story/description i18n
+      entries at all in `public/locales/{en,nl}/tableaus.json` — only the 5 primary tombs do.
+      `getTableauTitle`/`getTableauDescription` fall back to generic text only when `t` itself
+      is undefined, not when a specific key is missing — needs real narrative content authored
+      (creative/game-design work, not something to auto-generate) before this fully ships.
+- [x] 2d. (found via the same authoring-bug conversation) Validation ownership fix: core's
+      `validate.ts` used to import `EXPECTED_HIEROGLYPH_FRAGMENTS` directly from core
+      `data.ts` — the same "mod-owned logic sitting in core" pattern already hit 3 times this
+      session (rewardWeight, key-requirement resolver, currency placement rule), now a 4th.
+      `validateRewardCounts`/`buildConfigs` now take `expectedFragments` as an optional
+      injected parameter (skips that check if omitted) instead of hardcoding it; the number
+      itself is now exposed from `src/mods/tableau/game/hieroglyphCurrency.ts` (the currency's
+      own module), threaded in by `scripts/generateWorld.ts` and the integration spec — the
+      same injection pattern `resolveKeyRequirements`/`currencies` already use.
+- [ ] 3. Keys-vs-loot distinction (capped-must-complete vs. uncapped-max-%-plus-drop-rate
+      loot) — still not written down anywhere. Narrower than it looked in the first pass: the
+      "local-first-then-global keys" half is now covered by 2/2b above (a lock's own room is
+      always inside the reachable frontier that discovered it, so placement is inherently
+      local-first already) — what's left is specifically the uncapped-loot max-%/drop-rate
+      model (mosaic tiles, sellables, consumables), not yet touched.
+- [ ] 4. Mod-container (`registerMod`) mechanism — own dedicated effort, see root gap section
+      below. Do after 3, not interleaved with it.
+
 ## Root gap: no real "mod" container yet — do this before any more small fixes
 
 A mod today is just a folder + an `ownerMod: string` tag. There's no actual
@@ -73,18 +163,24 @@ corrections.
   - [x] candidate slot discovery (`src/worldGen/slots.ts`)
   - [x] worklist-driven placement, generic over any mod-registered currency
         (`src/worldGen/placeFragments.ts` + `CurrencyDistribution`), wired end-to-end into
-        `configBuilder.ts` → `scripts/generateWorld.ts`; hieroglyph fragments are the one
-        currency registered today, 273/273 placed through it
-    - found + fixed 4 real bugs along the way: a `starter.ts` map-piece deadlock (gated
+        `configBuilder.ts` → `scripts/generateWorld.ts`. Two currencies registered today —
+        map pieces (core, `src/worldGen/mapPieceCurrency.ts`) and hieroglyph fragments
+        (mod-owned, `src/mods/tableau/game/hieroglyphCurrency.ts`) — both fully reactive,
+        discovered via the real worklist queue, not a precomputed list. 31/31 map pieces,
+        296/296 hieroglyph fragments (see recovery-plan section above for the 273→296 fix).
+    - found + fixed 6 real bugs along the way: a `starter.ts` map-piece deadlock (gated
       behind its own tomb's tier-unlock treasure), a `siteAssembler.ts` key-host
       reward-hijack (both the ungated entry point and the chain-internal relay — confirmed
       silently dropping hieroglyph fragments in real generated data, proven by a regression
-      test before the fix), a `mosaics.ts` undercount, and an `ownedCounts` regression
+      test before the fix), a `mosaics.ts` undercount, an `ownedCounts` regression
       introduced while extracting the currency into the tableau mod (net-remaining vs.
-      raw-total conflated — caught via the byte-identical-output check before it shipped)
-  - [ ] generalize beyond one currency — the mechanism is generic, but map pieces / ward
-        keys stay fully deterministic today (no known need for reachability-gated
-        placement yet); mosaic would be the next real candidate once it's its own mod
+      raw-total conflated — caught via the byte-identical-output check before it shipped),
+      a pre-existing `configBuilder.integration.spec.ts` test gap (never actually passed the
+      real `resolveKeyRequirements`, so it never exercised real tableau gating), and the
+      `tableauInventory` grind-era authoring bug (2c above).
+  - [x] generalized beyond one currency — map pieces are now solver-placed too, using the
+        two-level journey→pyramid diversity ladder; mosaic would be a further candidate once
+        it's its own mod
   - [ ] filler-loot fill-the-rest pass generalized into the same composable pipeline
         (currently a plain fill pass inside `placeFragments.ts`)
   - [ ] slot capacity — a node holding several items (a shop's stock) as a first-class

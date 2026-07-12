@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { SECONDARY_TOMBS, validateDiscovery, validateEconomyGuard, validateRewardCounts } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
-import { PYRAMID_JOURNEYS, EXPECTED_HIEROGLYPH_FRAGMENTS } from "./data"
+import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig } from "./types"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
@@ -60,15 +60,17 @@ describe("validateRewardCounts", () => {
     expect(() => validateRewardCounts(configs)).toThrow(/unknown journey IDs/)
   })
 
-  it("passes when counts exactly match WORLD_TARGETS and all mapPiece ids are known", () => {
+  // A config valid on every OTHER check (mapPiece/mosaic counts, known journey ids) so
+  // fragment-count tests below isolate just that one check.
+  const validConfigWithFragments = (n: number): Record<string, SiteConfig[]> => {
     const realTombId = PYRAMID_JOURNEYS[0].id
-    const configs = {
+    return {
       [realTombId]: [
         [
           floor({
             sideSections: [
               ...fillMosaics(WORLD_TARGETS.mosaicPieceRewards),
-              ...fillFragments(EXPECTED_HIEROGLYPH_FRAGMENTS),
+              ...fillFragments(n),
               ...Array.from({ length: WORLD_TARGETS.mapPieceRewards }, () => ({
                 pathPuzzles: 0,
                 difficulty: "starter" as const,
@@ -80,7 +82,18 @@ describe("validateRewardCounts", () => {
         ],
       ] as SiteConfig[],
     }
-    expect(() => validateRewardCounts(configs)).not.toThrow()
+  }
+
+  it("passes when counts exactly match WORLD_TARGETS and all mapPiece ids are known", () => {
+    expect(() => validateRewardCounts(validConfigWithFragments(5), 5)).not.toThrow()
+  })
+
+  it("throws when fragment count doesn't match the injected expectation", () => {
+    expect(() => validateRewardCounts(validConfigWithFragments(3), 5)).toThrow(/Expected 5 hieroglyph fragments, got 3/)
+  })
+
+  it("skips the fragment-count check entirely when no expectation is injected", () => {
+    expect(() => validateRewardCounts(validConfigWithFragments(3))).not.toThrow()
   })
 })
 

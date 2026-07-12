@@ -10,7 +10,10 @@ export type TreasureReward =
   | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
   | { type: "tombKey"; keyId: string }
   | { type: "consumable"; consumable: ConsumableType }
-  | { type: "fragmentSlot" }
+  // `prefers`: a soft authored placement preference (a bucket id) — a ranking boost for that
+  // currency's demand, not an exclusive claim. See keys-and-locks-solver.md, "A slot's
+  // authored placement preference is a soft tag, not an exclusive claim".
+  | { type: "fragmentSlot"; prefers?: string }
   | { type: "money"; amount: number }
   | { type: "sellable"; itemId: string }
 

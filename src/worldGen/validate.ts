@@ -1,5 +1,5 @@
 import type { SideSection, SiteConfig, SubSection, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS, EXPECTED_HIEROGLYPH_FRAGMENTS } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 import { TOTAL_CONSUMABLE_BUYABLE } from "../data/shopPricing"
 import { sellValueForItemId } from "../data/sellables"
@@ -7,8 +7,12 @@ import { sellValueForItemId } from "../data/sellables"
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
-// or the total mapPiece/mosaicPiece counts drift from WORLD_TARGETS.
-export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): void => {
+// or the total mapPiece/mosaicPiece counts drift from WORLD_TARGETS. `expectedFragments` is
+// injected, not imported from a core hieroglyph-specific table — "how many fragments must
+// exist" is the tableau currency's own number (src/mods/tableau/game/hieroglyphCurrency.ts),
+// core only checks whatever total it's told to expect. Omit to skip that specific check
+// (e.g. a caller with no currencies registered at all).
+export const validateRewardCounts = (configs: Record<string, SiteConfig[]>, expectedFragments?: number): void => {
   let mapPieces = 0
   let mosaicPieces = 0
   let fragments = 0
@@ -50,8 +54,8 @@ export const validateRewardCounts = (configs: Record<string, SiteConfig[]>): voi
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
   if (mosaicPieces !== WORLD_TARGETS.mosaicPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mosaicPieceRewards} mosaic pieces, got ${mosaicPieces}`)
-  if (fragments !== EXPECTED_HIEROGLYPH_FRAGMENTS)
-    throw new Error(`[worldSpec] Expected ${EXPECTED_HIEROGLYPH_FRAGMENTS} hieroglyph fragments, got ${fragments}`)
+  if (expectedFragments !== undefined && fragments !== expectedFragments)
+    throw new Error(`[worldSpec] Expected ${expectedFragments} hieroglyph fragments, got ${fragments}`)
 }
 
 // Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.

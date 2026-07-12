@@ -153,6 +153,26 @@ floor data to answer "which floors are reachable" and, within a reachable
 floor, "which of its rooms are eligible slots" — by calling the existing
 fine-grained BFS, not re-deriving it.
 
+## Structure, then loot — two strictly separate phases
+
+`assembleFloor` (structure phase) builds every node — every portal, fork,
+and encounter — for the *entire* world, up front, deterministic per seed.
+Every node's own **wish** is baked in at this point: a gate's
+`requiredKeyId`, a tableau's `requiredKeyIds` (from that family's own
+`resolveKeyRequirements`), a slot's optional `prefers` tag. None of this is
+loot yet — a wish is a precondition or a preference, not a granted reward.
+No currency's actual reward value (which specific hieroglyph, which
+tomb's map piece) is written during this phase.
+
+The solver (grant phase, below) never adds or removes nodes — it only
+walks the already-finished structure and grants currency instances into
+slots to satisfy wishes and fill capacity. This is why a "lock" doesn't
+need to be invented or pre-enumerated: it's *discovered* by walking the
+fixed-point BFS (`collectReachableKeys`) and noting which reachable
+frontier cells carry a wish that current `ownedFacts` don't satisfy yet —
+the same wish that was always there in the structure, just not yet
+visible to the walk because nothing had opened the door to it.
+
 ## The placement algorithm
 
 At every point the solver knows the **currently reachable play area** —
@@ -225,8 +245,9 @@ primitive kinds — **filters** (narrow candidates) and **rankers** (order
 what's left) — composed with a plain `pipe`:
 
 ```ts
-// map piece: dedup by pyramid, then generic loot priority
-pipe(uniqueBy(slot => slot.pyramidId), rankBy(lootPriority))
+// map piece: prefer a different journey per instance; relax to a different
+// pyramid within an already-used journey (see "Map piece placement" below)
+pipe(uniqueBy(slot => slot.journeyId), rankBy(lootPriority))
 
 // hieroglyph fragment: tier-match filter, then generic loot priority
 pipe(filterBy(slot => slot.difficulty === ctx.targetDifficulty), rankBy(lootPriority))
@@ -237,6 +258,28 @@ pipe(rankBy(weightedTierTarget(ctx.currencyTier)), rankBy(lootPriority))
 
 A future currency composes the same handful of primitives instead of
 writing placement logic from scratch.
+
+### Map piece placement — a two-level diversity ladder, not a single dedup
+
+A journey (one of the 4 pyramid-type entries per tier, e.g. `starter_1`) is
+made of several pyramids (its own replayable sites, indexed by
+`levelIndex` — see `pyramid-interior-design.md`'s Terminology section).
+Map piece placement prefers to spread across **journeys** first — no two
+instances in the same journey — and only relaxes to **pyramid**-level
+diversity (a different pyramid within a journey that already has one) once
+every journey in the tier already holds an instance:
+
+```ts
+preferThenRelax(
+  uniqueBy(slot => slot.journeyId),
+  preferThenRelax(uniqueBy(slot => `${slot.journeyId}:${slot.levelIndex}`), rankBy(lootPriority))
+)
+```
+
+This is the same `preferThenRelax` combinator nested two deep, not a new
+primitive — a tier with more tomb map-piece demand than it has journeys
+(e.g. a tier needing 4 pieces across only 4 journeys is exactly at the
+boundary) degrades to reusing a journey rather than failing outright.
 
 ### Preferences are soft — they relax under pressure, they don't block
 
@@ -269,6 +312,23 @@ distribution rule can prefer. Concretely: the map piece gating wizard
 tier's second tomb can prefer placement as shop stock inside wizard tier's
 *first* tomb (its own fez-shop) — once the player has reached that far,
 the fragment is right there to buy, no separate exploration required.
+
+### A slot's authored placement preference is a soft tag, not an exclusive claim
+
+"Use an authored placement preference if one exists for this specific
+instance" (the placement algorithm, step 2) is realized as an optional
+`prefers: <currency>` tag on a candidate slot itself — set once, at
+structure-build time, by whoever authors that node (e.g. "this journey's
+first pyramid's main chest prefers the map piece"). It is a ranking boost,
+not an eligibility filter: a currency's distribution rule ranks
+preference-tagged slots first, but any slot remains eligible for *any*
+currency's generic fill. Once the preferred currency's demand is fully
+satisfied, a leftover `prefers` tag is simply inert — the slot falls
+through to whatever fills next (generic loot-priority ranking, then filler
+loot), never blocking or reserving capacity nobody claims. This is what
+lets `mainEndReward: "mapPiece"`-style DSL authoring stay expressive
+(“the map piece goes here, normally”) without baking a literal reward at
+structure-build time — see "Structure, then loot" below.
 
 ### Mod-owned slot types need their own fallback rung
 
@@ -354,13 +414,25 @@ existing per-floor BFS), and hard-failure enforcement (exhausted
 relaxation fails the build — no separate post-hoc validator needed, since
 the solver only ever places constructively within the reachable area).
 
+Also resolved since (2026-07-11/12 gap-analysis pass — see `TODO.md` for
+live implementation status): the map-piece two-level diversity ladder
+(journey then pyramid, not a single dedup level — see "Map piece
+placement" above), the soft preference-tag mechanism for authored
+placement preferences, and the structure/loot phase split ("Structure,
+then loot" above).
+
 Still genuinely open:
 
-- The concrete migration path off `fragments.ts`'s `buildPlacementInfos`/
-  `collectSlots` — which pieces get deleted outright vs. reused as the
-  hieroglyph currency's own distribution rule.
-- Exact `Slot`/`Lock`/worklist-entry TypeScript shapes — the coarse graph's
-  node/edge representation hasn't been designed, only its behavior.
+- The real worklist queue itself is not built — today's
+  `placeFragments.ts` iterates a precomputed, static per-currency demand
+  list instead of discovering locks reactively from the reachable
+  frontier. This is the actual implementation gap, not a design gap; see
+  `TODO.md`'s recovery-plan section.
+- Map pieces are not yet migrated onto the solver — still pre-authored
+  DSL literals (`mainEndReward: "mapPiece"`), not preference-tagged slots.
+- Slot capacity (a shop's several-items stock) is not built — `Slot` is
+  still single-assign only.
+- Filler loot is a separate ad hoc pass, not the same composable pipeline.
 - Whether the coarse solver needs to re-run incrementally during
   development (`yarn generate-world` iteration) or only matters for the
   final validated build.

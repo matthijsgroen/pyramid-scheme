@@ -230,10 +230,13 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 // `resolveKeyRequirements`/`currencies` default to a no-op resolver and no currencies —
 // src/worldGen/ can't import src/mods/'s real resolver or mod-owned currencies directly
 // (architecture.md's dependency table); the caller with access to them
-// (scripts/generateWorld.ts) passes the real ones in.
+// (scripts/generateWorld.ts) passes the real ones in. `expectedFragments` is the same
+// story — how many hieroglyph fragments must exist is the tableau currency's own number
+// (src/mods/tableau/game/hieroglyphCurrency.ts), not something core hardcodes.
 export const buildConfigs = (
   resolveKeyRequirements?: ResolveKeyRequirements,
-  currencies: CurrencyDistribution[] = []
+  currencies: CurrencyDistribution[] = [],
+  expectedFragments?: number
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -251,7 +254,7 @@ export const buildConfigs = (
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, discovery graph solvability, and the shop economy guard
-  validateRewardCounts(allConfigs)
+  validateRewardCounts(allConfigs, expectedFragments)
   validateDiscovery(allConfigs)
   validateEconomyGuard(allConfigs)
 

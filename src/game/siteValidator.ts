@@ -10,11 +10,16 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 // blockedPos: skip this cell (for keyBeforeGate check).
 // Exported for src/worldGen/reachability.ts's coarse graph — the one fine-grained
 // reachability primitive the coarse solver projects from, never re-derived.
+// `blockedRequirements`, if given, collects every requiredKeyId/requiredKeyIds hit at the
+// reachable frontier but not satisfied by `ownedKeys` — the worklist solver's own "discovered
+// lock" signal (docs/game-design/keys-and-locks-solver.md, "Structure, then loot": a wish
+// was always there in the structure, this is just the walk noticing it for the first time).
 export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
-  blockedPos?: Pos
+  blockedPos?: Pos,
+  blockedRequirements?: Set<string>
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -43,8 +48,14 @@ export const reachableFrom = (
       // the signal — any encounter can carry a key requirement (a gate's only job; a
       // tableau's several, one per hieroglyph it needs complete), not just rooms tagged
       // "gate".
-      if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) continue
-      if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) continue
+      if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
+        blockedRequirements?.add(ncell.requiredKeyId)
+        continue
+      }
+      if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
+        for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
+        continue
+      }
 
       visited.add(nkey)
       queue.push([nr, nc])
@@ -63,9 +74,13 @@ export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
   initialKeys: ReadonlySet<string> = new Set()
-): { reachable: Set<string>; keys: Set<string> } => {
+): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
-  let reachable = reachableFrom(grid, startPos, collectedKeys)
+  // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
+  // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
+  // this same floor's fixed point went on to collect.
+  let blockedRequirements = new Set<string>()
+  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
   let changed = true
   while (changed) {
     changed = false
@@ -83,9 +98,12 @@ export const collectReachableKeys = (
         }
       }
     }
-    if (changed) reachable = reachableFrom(grid, startPos, collectedKeys)
+    if (changed) {
+      blockedRequirements = new Set<string>()
+      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
+    }
   }
-  return { reachable, keys: collectedKeys }
+  return { reachable, keys: collectedKeys, blockedRequirements }
 }
 
 export const validateSite = (grid: FloorGrid): ValidationResult => {

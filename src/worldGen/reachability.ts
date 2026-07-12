@@ -83,6 +83,11 @@ export type SiteReachability = {
   // too, same as map pieces/hieroglyphs, so a caller's own fixed point (computeReachability's
   // `harvestedCounts` aggregation) can fold them back into `ownedCounts` for its next pass.
   harvestedCounts: ReadonlyMap<string, number>
+  // Bucket ids hit at this site's reachable frontier but not yet satisfied — a gate's
+  // requiredKeyId, a tableau's requiredKeyIds. These are the worklist's discovered locks
+  // (keys-and-locks-solver.md, "Structure, then loot": the wish was always in the
+  // structure, this is the walk noticing it isn't satisfiable yet).
+  discoveredLocks: ReadonlySet<string>
 }
 
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
@@ -106,6 +111,7 @@ export const reachableFloorsInSite = (
   let keys = new Set(ownedFacts)
   const harvestedCounts = new Map<string, number>()
   const harvest = (id: string) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + 1)
+  const discoveredLocks = new Set<string>()
 
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
@@ -124,12 +130,13 @@ export const reachableFloorsInSite = (
     }
     if (!result.success) continue
 
-    const { keys: expandedKeys, reachable: reachableHere } = collectReachableKeys(
-      result.grid,
-      result.grid.entrancePos,
-      keys
-    )
+    const {
+      keys: expandedKeys,
+      reachable: reachableHere,
+      blockedRequirements,
+    } = collectReachableKeys(result.grid, result.grid.entrancePos, keys)
     keys = expandedKeys
+    for (const id of blockedRequirements) discoveredLocks.add(id)
 
     for (let r = 0; r < result.grid.rows; r++) {
       for (let c = 0; c < result.grid.cols; c++) {
@@ -154,7 +161,7 @@ export const reachableFloorsInSite = (
     }
   }
 
-  return { floors: reachable, harvestedCounts }
+  return { floors: reachable, harvestedCounts, discoveredLocks }
 }
 
 // Global scope: starter is always unlocked; every other tier needs its TIER_UNLOCK_PERK_ID
@@ -183,6 +190,10 @@ export type ReachabilityResult = {
   // growing `ownedCounts` and calling again) merges these in for its next pass; see
   // `deriveOwnedFacts` above for how a raw count becomes a boolean fact once thresholded.
   harvestedCounts: ReadonlyMap<string, number>
+  // Bucket ids discovered as blocking somewhere reachable this pass — a room-scoped gate/
+  // tableau requirement, or a journey-scoped piecesRequired shortfall for a tomb whose tier
+  // is unlocked but isn't enterable yet. The worklist's queue is seeded and grown from this.
+  discoveredLocks: ReadonlySet<string>
 }
 
 const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
@@ -207,20 +218,28 @@ export const computeReachability = (
   const reachableFloors = new Set<string>()
   const harvestedCounts = new Map<string, number>()
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)
+  const discoveredLocks = new Set<string>()
 
   for (const [journeyId, sites] of Object.entries(allConfigs)) {
     const meta = journeyMeta[journeyId]
     if (!meta) continue
+    if (!isTierUnlocked(meta.tier, ownedFacts)) continue // tier itself not reached yet — not a frontier lock here
     const mapPiecesHeld = ownedCounts.get(mapPieceBucket(journeyId)) ?? 0
-    if (!isJourneyEnterable(meta.tier, ownedFacts, meta.piecesRequired, mapPiecesHeld)) continue
+    if (mapPiecesHeld < meta.piecesRequired) {
+      // Journey-scoped lock: tier reached, but this tomb's piecesRequired threshold isn't
+      // met — a genuine discovered lock, distinct from a room-scoped requiredKeyId.
+      discoveredLocks.add(mapPieceBucket(journeyId))
+      continue
+    }
 
     sites.forEach((site, levelIndex) => {
       const ref: SiteRef = { journeyId, levelIndex }
       const siteResult = reachableFloorsInSite(ref, site, ownedFacts, undefined, resolveRequirements, cache)
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
+      for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)
     })
   }
 
-  return { reachableFloors, unlockedTiers, harvestedCounts }
+  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks }
 }

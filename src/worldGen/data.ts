@@ -57,12 +57,16 @@ const FRAGMENT_MATRIX: Record<Tier, Record<number, number> & { revisit: number }
   wizard: { 1: 6, 2: 7, 3: 7, 4: 7, 5: 8, 6: 8, revisit: 8 },
 }
 
-// Per-hieroglyph required fragment count, derived from tableauLevels + FRAGMENT_MATRIX
+// Per-hieroglyph required fragment count, derived from tableauLevels + FRAGMENT_MATRIX.
+// A tier's tomb can be split across several journeys once a single tomb got too large for
+// exploration (pyramid-interior-design.md §5) — a symbol may only ever appear in a
+// secondary tomb's tableaus, so "first section" must search every tomb of the tier, not
+// just its primary (`${tier}_treasure_tomb`).
 export const HIEROGLYPH_REQUIRED: Record<string, number> = (() => {
   const result: Record<string, number> = {}
   for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]) {
-    const tombId = `${tier}_treasure_tomb`
-    const tombLevels = tableauLevels.filter(t => t.tombJourneyId === tombId)
+    const tierTombIds = new Set(TOMB_JOURNEYS.filter(j => j.tier === tier).map(j => j.id))
+    const tombLevels = tableauLevels.filter(t => tierTombIds.has(t.tombJourneyId))
     const matrix = FRAGMENT_MATRIX[tier]
     for (const id of ids) {
       const firstSection = tombLevels
@@ -74,10 +78,10 @@ export const HIEROGLYPH_REQUIRED: Record<string, number> = (() => {
   return result
 })()
 
-// Total hieroglyph fragments the world must place — the sum of every hieroglyph's
-// required count. Single source of truth is FRAGMENT_MATRIX (above); this is its
-// derived total, validated against actual placement in validate.ts.
-export const EXPECTED_HIEROGLYPH_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((a, b) => a + b, 0)
+// The world-wide total (sum of every hieroglyph's required count) is the tableau currency's
+// own number, not core's — see src/mods/tableau/game/hieroglyphCurrency.ts's
+// EXPECTED_HIEROGLYPH_FRAGMENTS (core only supplies the threshold data it shares with
+// reachability.ts, not the validation expectation itself).
 
 // Which pyramid tiers can host fragments from each hieroglyph tier
 // Rule: fragments appear in same tier and +1 adjacent tier (overlap for revisit motivation)

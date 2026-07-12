@@ -1,6 +1,7 @@
 import type { SiteConfig, Tier } from "@/worldGen/types"
-import type { CurrencyDemand, CurrencyDistribution } from "@/worldGen/placeFragments"
-import { hieroglyphBucket } from "@/worldGen/reachability"
+import type { CurrencyDistribution } from "@/worldGen/placeFragments"
+import type { Slot } from "@/worldGen/slots"
+import { pipe, rankBy, uniqueBy, preferThenRelax } from "@/worldGen/distribution"
 import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "@/worldGen/data"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { tableauLevels } from "@/data/tableaus"
@@ -10,47 +11,50 @@ import { tableauLevels } from "@/data/tableaus"
 // This is the currency's own authored placement preference (the doc's step 2a), the one
 // piece of domain knowledge ("which tier, which ward keys, how many") the generic
 // worklist in src/worldGen/placeFragments.ts never needs to know.
+//
+// Which hieroglyphs actually need placing is never enumerated here — that's discovered
+// reactively by the worklist queue hitting a tableau's own requiredKeyIds (resolveTableau-
+// KeyRequirements' output, "hieroglyph:${id}"), per keys-and-locks-solver.md's "Structure,
+// then loot". This module only answers "given a discovered hieroglyph bucket, how many
+// fragments total, and where does it prefer to land" — ranking metadata, not demand discovery.
 
-const TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
+const BUCKET_PREFIX = "hieroglyph:"
 
-// For each hieroglyph: which tier it belongs to, how many fragments it needs, and which
-// ward keys (earned by completing earlier tomb runs) its preferred placement slots sit
-// behind — derived once from tableauLevels/TOMB_PERK_IDS, not authored per-hieroglyph.
-const buildHieroglyphDemands = (existing: Map<string, number>): CurrencyDemand[] => {
-  const demands: CurrencyDemand[] = []
-  const seen = new Set<string>()
+// The world-wide total this currency must place — this mod's own number (validate.ts takes
+// it as an injected parameter, never imports a hardcoded expectation itself).
+export const EXPECTED_HIEROGLYPH_FRAGMENTS = Object.values(HIEROGLYPH_REQUIRED).reduce((a, b) => a + b, 0)
 
-  for (const tier of TIERS) {
-    const tombId = `${tier}_treasure_tomb`
-    const tombPerkIds = TOMB_PERK_IDS[tombId] ?? []
-
-    for (const hieroglyphId of TOMB_SYMBOLS[tier]) {
-      if (seen.has(hieroglyphId)) continue
-      seen.add(hieroglyphId)
-
-      const firstRunNumber = tableauLevels
-        .filter(t => t.tombJourneyId === tombId && t.inventoryIds.includes(hieroglyphId))
-        .reduce((min, t) => Math.min(min, t.runNumber), Infinity)
-      const runNumber = isFinite(firstRunNumber) ? firstRunNumber : 1
-      const preferredWardKeys = tombPerkIds.slice(0, runNumber - 1)
-
-      const totalRequired = HIEROGLYPH_REQUIRED[hieroglyphId] ?? 2
-      const required = totalRequired - (existing.get(hieroglyphId) ?? 0)
-      demands.push({ instanceId: hieroglyphId, tier, preferredWardKeys, required, totalRequired })
-    }
+// Tier lookup by hieroglyph id — ranking metadata (which corridors this fragment prefers),
+// not a demand list; a hieroglyph never referenced by any authored tableau just never gets
+// discovered, and this table is never iterated to find that out.
+const TIER_BY_HIEROGLYPH: Record<string, Tier> = (() => {
+  const result: Record<string, Tier> = {}
+  for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]) {
+    for (const id of ids) result[id] = tier
   }
+  return result
+})()
 
-  return demands
+// Which ward keys (earned by completing earlier tomb runs) this hieroglyph's preferred
+// placement slots sit behind — derived from tableauLevels/TOMB_PERK_IDS, not authored
+// per-hieroglyph.
+const preferredWardKeysFor = (tier: Tier, hieroglyphId: string): string[] => {
+  const tombId = `${tier}_treasure_tomb`
+  const tombPerkIds = TOMB_PERK_IDS[tombId] ?? []
+  const firstRunNumber = tableauLevels
+    .filter(t => t.tombJourneyId === tombId && t.inventoryIds.includes(hieroglyphId))
+    .reduce((min, t) => Math.min(min, t.runNumber), Infinity)
+  const runNumber = isFinite(firstRunNumber) ? firstRunNumber : 1
+  return tombPerkIds.slice(0, runNumber - 1)
 }
 
 // hieroglyphFragment rewards already authored directly (bypassing fragmentSlot entirely —
-// e.g. a Fez-shop stock literal) — subtracted from each hieroglyph's required count so the
-// world-wide total stays exactly right regardless of how many were placed this way.
-const countExistingFragments = (allConfigs: Record<string, SiteConfig[]>): Map<string, number> => {
-  const counts = new Map<string, number>()
+// e.g. a Fez-shop stock literal) — subtracted from the required count so the world-wide
+// total stays exactly right regardless of how many were placed this way.
+const countExisting = (allConfigs: Record<string, SiteConfig[]>, hieroglyphId: string): number => {
+  let count = 0
   const bump = (r?: { type: string; hieroglyphId?: string }) => {
-    if (r?.type === "hieroglyphFragment" && r.hieroglyphId)
-      counts.set(r.hieroglyphId, (counts.get(r.hieroglyphId) ?? 0) + 1)
+    if (r?.type === "hieroglyphFragment" && r.hieroglyphId === hieroglyphId) count++
   }
   for (const siteConfigs of Object.values(allConfigs)) {
     for (const floors of siteConfigs) {
@@ -63,11 +67,44 @@ const countExistingFragments = (allConfigs: Record<string, SiteConfig[]>): Map<s
       }
     }
   }
-  return counts
+  return count
 }
 
 export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
-  bucket: hieroglyphBucket,
+  ownsBucket: bucket => bucket.startsWith(BUCKET_PREFIX),
   toReward: hieroglyphId => ({ type: "hieroglyphFragment", hieroglyphId }),
-  demands: allConfigs => buildHieroglyphDemands(countExistingFragments(allConfigs)),
+  demandFor: (bucket, allConfigs) => {
+    const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
+    const tier = TIER_BY_HIEROGLYPH[hieroglyphId]
+    const totalRequired = HIEROGLYPH_REQUIRED[hieroglyphId] ?? 2
+    const required = totalRequired - countExisting(allConfigs, hieroglyphId)
+    return {
+      bucket,
+      instanceId: hieroglyphId,
+      tier,
+      preferredWardKeys: preferredWardKeysFor(tier, hieroglyphId),
+      required,
+      totalRequired,
+    }
+  },
+  // Pool priority (tier+preferred-ward > tier-only > cross-tier) as a rank score — the doc's
+  // own composable-rule shape. Ranked BEFORE deduping by journey, so the "one per journey"
+  // strict pass keeps each journey's best-scoring slot, not an arbitrary one.
+  rank: (candidates, demand) => {
+    const byPoolScore = rankBy<Slot>(s => {
+      const tierMatch = s.tier === demand.tier
+      const wardMatch =
+        demand.preferredWardKeys.length > 0 && s.wardKeys.some(k => demand.preferredWardKeys.includes(k))
+      return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0)
+    })
+    return pipe<Slot>(
+      preferThenRelax(
+        pipe(
+          byPoolScore,
+          uniqueBy(s => s.journeyId)
+        ),
+        byPoolScore
+      )
+    )(candidates)
+  },
 }

@@ -43,8 +43,11 @@ describe("hintToReward", () => {
     expect(hintToReward("mosaicPiece", "starter")).toEqual({ type: "mosaicPiece" })
   })
 
-  it("mapPiece → tombId derived from tier", () => {
-    expect(hintToReward("mapPiece", "expert")).toEqual({ type: "mapPiece", tombId: "expert_treasure_tomb" })
+  it("mapPiece → a preference-tagged open slot, not a baked literal", () => {
+    expect(hintToReward("mapPiece", "expert")).toEqual({
+      type: "fragmentSlot",
+      prefers: "mapPiece:expert_treasure_tomb",
+    })
   })
 
   it("hieroglyphFragment → first tier symbol", () => {
@@ -58,9 +61,9 @@ describe("specToReward", () => {
     expect(specToReward("mosaicPiece", "starter")).toEqual({ type: "mosaicPiece" })
   })
 
-  it("structured object passes through unchanged", () => {
+  it("structured mapPiece object also becomes a preference-tagged open slot", () => {
     const reward = { type: "mapPiece", tombId: "starter_treasure_tomb" } as const
-    expect(specToReward(reward, "starter")).toEqual(reward)
+    expect(specToReward(reward, "starter")).toEqual({ type: "fragmentSlot", prefers: "mapPiece:starter_treasure_tomb" })
   })
 })
 

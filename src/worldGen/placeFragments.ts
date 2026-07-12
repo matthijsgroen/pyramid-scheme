@@ -3,7 +3,6 @@ import type { Difficulty } from "../data/difficultyLevels"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
 import { collectSlots, type Slot } from "./slots"
-import { pipe, filterBy, uniqueBy, rankBy, preferThenRelax } from "./distribution"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { journeys as REAL_JOURNEYS } from "../data/journeys"
 import { sellablesForDifficulty } from "../data/sellables"
@@ -11,16 +10,17 @@ import { hashStr } from "./rewards"
 
 // Worklist-driven, reachability-gated currency placement — the concrete engine this
 // backlog item's solver was built for. See docs/game-design/keys-and-locks-solver.md,
-// "The placement algorithm". Generic over WHICH currency: place each currency's
-// instances only into slots inside the currently reachable area, recompute reachability
-// once a currency's requirement is satisfied (that may open further floors/tableaus),
-// repeat. This module owns none of the "which currency, how many, which candidates score
-// higher" knowledge — that's mod-owned (docs/mods-architecture.md, "Currencies are
-// mod-owned, not a closed core vocabulary"), injected as CurrencyDistribution values by
-// whoever has access to the real mod registry (src/mods/allCurrencyDistributions.ts,
-// consumed by scripts/generateWorld.ts) — this module never imports src/mods/ directly.
+// "The placement algorithm" / "Structure, then loot". A real queue: seeded from whatever's
+// discovered blocking right now, grown as each placement unblocks further reachability and
+// reveals new locks — never a precomputed, exhaustive demand list. This module owns none of
+// the "which currency, how many, which candidates score higher" knowledge — that's mod-owned
+// (docs/mods-architecture.md, "Currencies are mod-owned, not a closed core vocabulary"),
+// injected as CurrencyDistribution values by whoever has access to the real mod registry
+// (src/mods/allCurrencyDistributions.ts, consumed by scripts/generateWorld.ts) — this module
+// never imports src/mods/ directly.
 
 export type CurrencyDemand = {
+  bucket: string
   instanceId: string
   tier: Tier
   preferredWardKeys: string[]
@@ -38,13 +38,20 @@ export type CurrencyDemand = {
 }
 
 export type CurrencyDistribution = {
-  // Bucket id this currency's completion fact lives under in reachability.ts's
-  // OwnedCounts model (e.g. hieroglyphBucket) — how much of instanceId is needed before
-  // the fact counts as owned is threshold logic reachability.ts already owns.
-  bucket: (instanceId: string) => string
+  // Does this currency own the given OwnedCounts bucket id (e.g. a `hieroglyph:` prefix)?
+  // Checked against every lock the worklist discovers — whichever currency claims it then
+  // computes its own demand lazily (demandFor), never enumerated upfront.
+  ownsBucket: (bucket: string) => boolean
   toReward: (instanceId: string) => TreasureReward
-  // Every instance this currency needs placed, with its own tier/ward preference.
-  demands: (allConfigs: Record<string, SiteConfig[]>) => CurrencyDemand[]
+  // Computes one bucket's demand lazily, only once the worklist has actually discovered it
+  // blocking somewhere reachable — see keys-and-locks-solver.md, "Structure, then loot".
+  demandFor: (bucket: string, allConfigs: Record<string, SiteConfig[]>) => CurrencyDemand
+  // This currency's own distribution rule: order `candidates` best-first (composed from
+  // src/worldGen/distribution.ts's pipe/filterBy/rankBy/preferThenRelax primitives) — e.g.
+  // hieroglyphs rank tier/ward-match then dedup by journey; map pieces dedup by journey then
+  // relax to pyramid. placeFragments only ever hands over already reachable-and-available
+  // candidates; ordering them is entirely this currency's own policy, never this module's.
+  rank: (candidates: readonly Slot[], demand: CurrencyDemand) => Slot[]
 }
 
 // Pyramids have no map-piece threshold (0); tombs use their real `piecesRequired` from
@@ -84,13 +91,13 @@ export const placeFragments = (
   const computeReach = () =>
     computeReachability(allConfigs, journeyMeta, ownedCounts, resolveRequirements, assemblyCache)
 
-  // Grow ownedCounts with freshly-harvested map-piece/hieroglyph facts until nothing new
-  // shows up — nothing here is CHOSEN by this solver (map-piece/tomb-key rewards are
-  // pre-baked at build time); this is purely discovering what's already reachable given
-  // what's already been placed, the same fixed point computeReachability's own harvest
-  // exists to feed.
   let reach = computeReach()
-  const settle = (): void => {
+
+  // Grow ownedCounts with freshly-harvested map-piece/hieroglyph facts until nothing new
+  // shows up — nothing here is CHOSEN by this solver (pre-authored rewards are pre-baked at
+  // build time); this is purely discovering what's already reachable given what's already
+  // been placed, the same fixed point computeReachability's own harvest exists to feed.
+  const settleHarvest = (): void => {
     for (;;) {
       let grew = false
       for (const [id, count] of reach.harvestedCounts) {
@@ -103,51 +110,62 @@ export const placeFragments = (
       reach = computeReach()
     }
   }
-  settle()
+  settleHarvest()
 
-  for (const currency of currencies) {
-    for (const info of currency.demands(allConfigs)) {
-      let needed = info.required
-      if (needed <= 0) continue
+  // The real worklist queue (keys-and-locks-solver.md, "The placement algorithm"): seeded
+  // from whatever's discovered blocking right now, grown after every placement as newly
+  // reachable frontier reveals further locks. `queued` prevents duplicate enqueue; `satisfied`
+  // prevents re-processing a bucket a later recompute still (harmlessly) reports as discovered.
+  const queue: string[] = [...reach.discoveredLocks]
+  const queued = new Set(queue)
+  const satisfied = new Set<string>()
 
+  const enqueueNewLocks = (): void => {
+    for (const id of reach.discoveredLocks) {
+      if (satisfied.has(id) || queued.has(id)) continue
+      queue.push(id)
+      queued.add(id)
+    }
+  }
+
+  while (queue.length > 0) {
+    const bucket = queue.shift()!
+    queued.delete(bucket)
+    if (satisfied.has(bucket)) continue
+
+    // Nobody claims this bucket (e.g. a ward-key/tombKey gate resolved by siteAssembler's
+    // own construction-time key chain, not a currency this module places) — leave it; it
+    // either resolves itself via harvestedCounts once the right site becomes reachable, or
+    // it's a gate the fine-grained validator's own checks are responsible for catching.
+    const currency = currencies.find(c => c.ownsBucket(bucket))
+    if (!currency) continue
+
+    const demand = currency.demandFor(bucket, allConfigs)
+    let needed = demand.required
+
+    if (needed > 0) {
       const eligible = (s: Slot) => available.has(s) && reach.reachableFloors.has(floorKey(s.ref))
-      // Pool priority (tier+preferred-ward > tier-only > cross-tier) as a rank score —
-      // the doc's own composable-rule shape (`pipe(filterBy(...), rankBy(...))`). Ranked
-      // BEFORE deduping by journey, so the "one per journey" strict pass keeps each
-      // journey's best-scoring slot, not an arbitrary one.
-      const byPoolScore = rankBy<Slot>(s => {
-        const tierMatch = s.tier === info.tier
-        const wardMatch = info.preferredWardKeys.length > 0 && s.wardKeys.some(k => info.preferredWardKeys.includes(k))
-        return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0)
-      })
-      const ranked = pipe<Slot>(
-        filterBy(eligible),
-        preferThenRelax(
-          pipe(
-            byPoolScore,
-            uniqueBy(s => s.journeyId)
-          ),
-          byPoolScore
-        )
-      )(slots)
+      const ranked = currency.rank(slots.filter(eligible), demand)
 
       for (const slot of ranked) {
         if (needed <= 0) break
-        slot.assign(currency.toReward(info.instanceId))
+        slot.assign(currency.toReward(demand.instanceId))
         available.delete(slot)
         needed--
       }
 
       if (needed > 0) {
         throw new Error(
-          `placeFragments: ${info.instanceId} (${info.tier}) unplaceable — ${needed} instance(s) with no reachable slot`
+          `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed} instance(s) with no reachable slot`
         )
       }
-
-      ownedCounts.set(currency.bucket(info.instanceId), info.totalRequired)
-      reach = computeReach()
-      settle()
     }
+
+    satisfied.add(bucket)
+    ownedCounts.set(bucket, demand.totalRequired)
+    reach = computeReach()
+    settleHarvest()
+    enqueueNewLocks()
   }
 
   // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open

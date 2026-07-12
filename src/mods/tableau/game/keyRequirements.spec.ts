@@ -11,17 +11,19 @@ const realTableau = (journeyId: string, runNr: number, levelNr: number) =>
   tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
 
 describe(resolveTableauKeyRequirements, () => {
-  it("pathIndex selects levelNr (pathIndex + 1), independent of runNr", () => {
+  it("pathIndex 0 selects levelNr 1 — the tomb's one tableau puzzle per floor", () => {
     const tombId = "starter_treasure_tomb"
-    const levelCount = tableauLevels.filter(t => t.tombJourneyId === tombId && t.runNumber === 1).length
-    expect(levelCount).toBeGreaterThan(1) // otherwise this test can't distinguish pathIndex at all
+    const expected = realTableau(tombId, 1, 1)!
+    expect(
+      resolveTableauKeyRequirements({ journeyId: tombId, floorIndex: 0, pathIndex: 0, encounterArgs: { runNr: 1 } })
+    ).toEqual(expected.inventoryIds.map(id => `hieroglyph:${id}`))
+  })
 
-    for (let pathIndex = 0; pathIndex < levelCount; pathIndex++) {
-      const expected = realTableau(tombId, 1, pathIndex + 1)!
-      expect(
-        resolveTableauKeyRequirements({ journeyId: tombId, floorIndex: 0, pathIndex, encounterArgs: { runNr: 1 } })
-      ).toEqual(expected.inventoryIds.map(id => `hieroglyph:${id}`))
-    }
+  it("a pathIndex beyond 0 has no matching levelNr — one tableau puzzle per floor, not several", () => {
+    const tombId = "starter_treasure_tomb"
+    expect(() =>
+      resolveTableauKeyRequirements({ journeyId: tombId, floorIndex: 0, pathIndex: 1, encounterArgs: { runNr: 1 } })
+    ).toThrow()
   })
 
   it("runNr selects which treasure's tableau, independent of floorIndex", () => {

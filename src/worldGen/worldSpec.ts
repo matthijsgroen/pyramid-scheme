@@ -12,11 +12,13 @@ import { wizardRules } from "./spec/wizard"
 //                    (MosaicPage clamps to Math.min(collected, LEVEL_STEPS.length)), so any
 //                    extra reward beyond 298 reveals nothing. Distributed as side paths across
 //                    pyramids, minus the 1 tomb-authored piece (junior_treasure_tomb floor 3).
-// mapPieceRewards:    20 primary (1 per pyramid journey) + 16 secondary
-//                    (4 journeys × 4 secondary tombs, each on last or last-1 pyramid)
+// mapPieceRewards: the sum of every tomb's own piecesRequired (the keys-and-locks solver's
+// map-piece currency places exactly this many, no surplus) — 31 across the 9 tombs. The
+// older "20 primary + 16 secondary" surplus-loot split this comment used to describe was
+// redesigned away; this is the current, correct total.
 export const WORLD_TARGETS = {
   mosaicPieceRewards: 298,
-  mapPieceRewards: 36,
+  mapPieceRewards: 31,
 }
 
 /**

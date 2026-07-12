@@ -4,6 +4,7 @@ import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
 import { sellablesForDifficulty } from "../data/sellables"
 import type { Difficulty } from "../data/difficultyLevels"
+import { mapPieceBucket } from "./reachability"
 
 // Simple deterministic hash for per-pyramid seeding of density ranges and reward rolls
 export const hashStr = (s: string): number => {
@@ -30,7 +31,11 @@ export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
     case "mosaicPiece":
       return { type: "mosaicPiece" }
     case "mapPiece":
-      return { type: "mapPiece", tombId: `${tier}_treasure_tomb` }
+      // A preference-tagged open slot, not a baked literal — the worklist solver grants the
+      // actual mapPiece reward once discovered blocking tomb entry (keys-and-locks-solver.md,
+      // "Structure, then loot"). This is the tier's own primary tomb; a secondary tomb's map
+      // piece is always authored via the structured `{type:"mapPiece",tombId}` form below.
+      return { type: "fragmentSlot", prefers: mapPieceBucket(`${tier}_treasure_tomb`) }
     case "hieroglyphFragment":
       return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
   }
@@ -39,6 +44,9 @@ export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
 // Translates a RewardSpec (string hint or structured object) to a TreasureReward
 export const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   if (typeof spec === "string") return hintToReward(spec, tier)
+  // Same "preference-tagged slot, not a baked literal" treatment as the bare hint above —
+  // the structured form only differs in naming an explicit (secondary) tomb.
+  if (spec.type === "mapPiece") return { type: "fragmentSlot", prefers: mapPieceBucket(spec.tombId) }
   return spec as TreasureReward
 }
 
