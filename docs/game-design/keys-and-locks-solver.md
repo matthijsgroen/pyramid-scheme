@@ -23,6 +23,44 @@ solver fed by per-currency rule data. (A mod that introduces its own
 key-like currency would supply its own rule the same way — that's the one
 place this touches the mods architecture at all.)
 
+## World-building phases — the canonical order
+
+Four phases, strictly sequential, each depending only on what the previous
+one finished:
+
+1. **Structural setup (DSL).** Builds every node — portal, fork, encounter
+   — for the whole world, deterministic per seed. Assigns each node's own
+   *wish* (a gate's `requiredKeyId`, a tableau's `requiredKeyIds`) and, new
+   here, each candidate slot's own *loot preference* (`prefers: <currency>`
+   — a soft tag, e.g. "this chest prefers the mosaic currency"). No reward
+   is granted yet — a wish or a preference is not loot. See "Structure,
+   then loot" below.
+2. **Exploration.** The reactive worklist: discover key demands (locks) as
+   reachability expands, place keys — anything that *gates* progress
+   (map pieces, hieroglyph fragments, future mod-owned key currencies) —
+   into reachable slots. See "The placement algorithm" below.
+3. **Capped loot.** Runs once exploration settles (nothing left blocking).
+   Any mod can register a capped-loot currency (mosaic tiles are the
+   first). Every capped currency must be placed **completely** — no
+   partial fills. Each currency owns its own placement rule, but should
+   prefer slots already tagged in phase 1 before falling back to its
+   generic rule. Spreading across journeys/pyramids/tombs is itself a goal
+   of this phase, not an accident — avoid front-loading a currency's
+   instances into early-game content, the same diversity-ladder shape map
+   pieces already use (see "Capped loot spreads" below). Authored DSL drop
+   rates for capped loot are a tentative idea, not yet designed — see
+   "Open" below.
+4. **Uncapped loot.** Fills whatever's left (sellables, consumables,
+   junk) — a max-%-occupancy and a drop rate, not "always fill." Not yet
+   designed at all; out of scope until phase 3 (capped loot) is built and
+   proven. See "Open" below.
+
+Phases 3 and 4 both used to be lumped together as "filler loot, once the
+worklist is empty" — they're related (both non-gating, both run after
+exploration) but distinct enough in their own completion guarantee
+(capped = must-finish, uncapped = drop-rate-gated) to warrant separate
+phases, not one pass.
+
 ## Node types: portal, fork, encounter — gate is not a fourth thing
 
 Three conceptual node kinds cover every room:
@@ -216,20 +254,34 @@ For each entry pulled off the worklist:
    solvable — recompute the reachable play area (now bigger), enqueue any
    newly-visible locks, and continue.
 
-### Filler loot: the same pipeline, once the worklist is empty
+### Phase 3/4 loot: the same pipeline, once the worklist is empty
 
-Once every key-like currency is fully placed (no blockers left), whatever
-slots remain get filled with non-gating loot (mosaic tiles, consumables,
-sellables, junk) — through the **same composable distribution-rule
-pipeline**, just with looser or trivial rules (mosaic tiles: no filter at
-all, rank-and-fill). This phase needs no incremental reachability
-recompute — by the time the worklist is empty the reachable area *is* the
-final, fully-unlocked world, so filler placement is one pass over whatever
-candidate slots remain, not a re-expanding loop. `fragments.ts`'s existing
-final pass ("fill every remaining slot with junk loot") already proves
-this two-phase shape in miniature — it just needs to stop being
-fragment-specific. Since shop stock is a capacity-bearing slot like any
-other, this same pass is what populates a shop's stock, too.
+Once every key-like currency is fully placed (no blockers left), remaining
+slots get filled by phase 3 (capped loot: mosaic tiles today, more
+mod-owned capped currencies later) then phase 4 (uncapped loot:
+consumables, sellables, junk) — through the **same composable
+distribution-rule pipeline** every key currency already uses, just with
+different completion guarantees (capped = must fully place; uncapped =
+drop-rate-gated, a slot can end up genuinely empty). Neither phase needs
+incremental reachability recompute — by the time the worklist is empty the
+reachable area *is* the final, fully-unlocked world, so both are one pass
+over whatever candidate slots remain, not a re-expanding loop.
+`fragments.ts`'s old final pass ("fill every remaining slot with junk
+loot") proved this shape in miniature, unconditionally — it needs to
+become two real, ranked phases (capped first, uncapped second), not stay
+fragment-specific or single-pass. Since shop stock is a capacity-bearing
+slot like any other, this same pipeline is what populates a shop's stock,
+too.
+
+### Capped loot spreads across journeys/pyramids/tombs — a general property
+
+Map piece placement's two-level diversity ladder (below) isn't a
+map-piece-specific quirk — it's the general shape every phase-3 capped
+currency should follow: prefer spreading instances across journeys first,
+relax to pyramid-level diversity only once every journey already holds
+one. The goal is the same regardless of currency — a capped currency's 298
+(or however many) instances should read as spread through the whole game,
+not clustered into whichever handful of slots the ranker reaches first.
 
 ### Distribution rules: composable functions, not declarative config
 
@@ -421,18 +473,26 @@ placement" above), the soft preference-tag mechanism for authored
 placement preferences, and the structure/loot phase split ("Structure,
 then loot" above).
 
+Resolved since: the real worklist queue is built and proven, and map
+pieces are migrated onto it using the two-level diversity ladder —
+phases 1 and 2 above are real, not just designed.
+
 Still genuinely open:
 
-- The real worklist queue itself is not built — today's
-  `placeFragments.ts` iterates a precomputed, static per-currency demand
-  list instead of discovering locks reactively from the reachable
-  frontier. This is the actual implementation gap, not a design gap; see
-  `TODO.md`'s recovery-plan section.
-- Map pieces are not yet migrated onto the solver — still pre-authored
-  DSL literals (`mainEndReward: "mapPiece"`), not preference-tagged slots.
-- Slot capacity (a shop's several-items stock) is not built — `Slot` is
+- **Phase 3 (capped loot) isn't generalized yet.** Mosaic tiles are still
+  placed by an older, structural, pre-worklist mechanism — deciding how
+  many mosaic slots a pyramid gets at build time, rather than a currency
+  choosing among already-built candidate slots. Migrating it to a real
+  phase-3 currency is the current work.
+- **Phase 4 (uncapped loot) isn't designed at all.** What "drop rate" and
+  "max occupancy" mean precisely, and what happens to a slot that misses
+  its roll (decided: genuinely empty, not a guaranteed fallback) still
+  need a real mechanism, not just this paragraph.
+- **Authored DSL drop rates for phase-3 capped currencies** — floated as
+  an idea, not committed to a shape. May not survive contact with
+  "capped loot must fully place" (a dropped roll would need to be retried
+  somewhere, or the total would need to shrink) — genuinely open.
+- Slot capacity (a shop's several-items stock) is not built — a slot is
   still single-assign only.
-- Filler loot is a separate ad hoc pass, not the same composable pipeline.
 - Whether the coarse solver needs to re-run incrementally during
-  development (`yarn generate-world` iteration) or only matters for the
-  final validated build.
+  development or only matters for the final validated build.
