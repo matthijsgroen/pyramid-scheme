@@ -112,9 +112,14 @@ difficulties.forEach((difficulty, i, list) => {
 // pyramid-interior-design.md §5) — rows the original grid always generated but never read,
 // so this is genuinely unused content, not a duplicate of the primary's (the old code's
 // bug: it keyed inventory by *difficulty*, so secondaries silently reused the primary's
-// exact `level 1` cells). No story was ever authored for secondary tombs either way
-// (tableaus.json has no keys for them), so there's nothing to preserve there.
+// exact `level 1` cells). Every row DOES have a real hand-authored story in tableaus.json —
+// the full run×level grid was always fully authored, just never read past level 1 — it's
+// only ever filed under the PRIMARY tomb's id (e.g. "expert_treasure_tomb.run1_level2"), so
+// `storySource` records which (tombId, run, level) triple each real tomb's floor actually
+// came from, letting the lookup below find that existing story instead of falling back to
+// generic placeholder text.
 const tableauInventory: Record<string, string[]> = {}
+const storySource: Record<string, { tombId: string; run: number; level: number }> = {}
 difficulties.forEach(difficulty => {
   const tierTombs = tombJourneys.filter(j => j.difficulty === difficulty)
   const [primaryTomb, ...secondaryTombs] = tierTombs
@@ -132,19 +137,20 @@ difficulties.forEach(difficulty => {
     1
 
   for (let floor = 1; floor <= primaryTomb.levelCount; floor++) {
-    tableauInventory[`${primaryTomb.id}.run${floor}_level1`] = poolSlice(
-      rowCellStart(1, floor),
-      primaryTomb.levelSettings.symbolCount
-    )
+    const key = `${primaryTomb.id}.run${floor}_level1`
+    tableauInventory[key] = poolSlice(rowCellStart(1, floor), primaryTomb.levelSettings.symbolCount)
+    storySource[key] = { tombId: primaryTomb.id, run: floor, level: 1 }
   }
 
   secondaryTombs.forEach((tomb, i) => {
     const level = i + 2 // row 1 is the primary's
     for (let floor = 1; floor <= tomb.levelCount; floor++) {
-      tableauInventory[`${tomb.id}.run${floor}_level1`] = poolSlice(
-        rowCellStart(level, floor),
-        tomb.levelSettings.symbolCount
-      )
+      const key = `${tomb.id}.run${floor}_level1`
+      tableauInventory[key] = poolSlice(rowCellStart(level, floor), tomb.levelSettings.symbolCount)
+      // The real story for this content lives under the PRIMARY tomb's id at this row's
+      // own level (it was always authored there, for the full grid) — never the secondary
+      // tomb's own id, which has no story keys at all.
+      storySource[key] = { tombId: primaryTomb.id, run: floor, level }
     }
   })
 })
@@ -195,7 +201,9 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
 
   tombJourneys.forEach(tomb => {
     for (let floor = 1; floor <= tomb.levelCount; floor++) {
-      const tableauSymbols = tableauInventory[`${tomb.id}.run${floor}_level1`]
+      const key = `${tomb.id}.run${floor}_level1`
+      const tableauSymbols = tableauInventory[key]
+      const story = storySource[key]
 
       tableaus.push({
         id: `tab_${tomb.id}_r${floor}_l1`,
@@ -204,8 +212,8 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
         inventoryIds: tableauSymbols,
         tombJourneyId: tomb.id,
         runNumber: floor,
-        name: getTableauTitle(tomb.id, floor, 1, t),
-        description: getTableauDescription(tomb.id, floor, 1, tableauSymbols, t),
+        name: getTableauTitle(story.tombId, story.run, story.level, t),
+        description: getTableauDescription(story.tombId, story.run, story.level, tableauSymbols, t),
       })
     }
   })

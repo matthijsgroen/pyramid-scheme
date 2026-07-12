@@ -69,12 +69,16 @@ share one root cause: there is no real worklist queue.
       273→294 (the corrected total, confirmed by `yarn generate-world`: 294/294 placed).
       `HIEROGLYPH_REQUIRED` in `worldGen/data.ts` also fixed to search every tomb of a tier,
       not just the primary.
-      **Still open:** secondary tombs (`expert_treasure_tomb_b`, `master_treasure_tomb_b`,
-      `wizard_treasure_tomb_b`, `wizard_treasure_tomb_c`) have NO story/description i18n
-      entries at all in `public/locales/{en,nl}/tableaus.json` — only the 5 primary tombs do.
-      `getTableauTitle`/`getTableauDescription` fall back to generic text only when `t` itself
-      is undefined, not when a specific key is missing — needs real narrative content authored
-      (creative/game-design work, not something to auto-generate) before this fully ships.
+      **Resolved, not actually a content gap:** initially assumed secondary tombs needed
+      brand-new story content authored — wrong. The user caught it: every `run×level` cell
+      the old grid ever generated already had a real hand-authored story in
+      `tableaus.json`, just filed under the PRIMARY tomb's id at the level that was never
+      read (e.g. `expert_treasure_tomb.run1_level2` — real title + description, sitting
+      there unused). Added a `storySource` map recording which (tombId, run, level) triple
+      each real tomb's floor actually pulled its symbols from — secondary tombs now look up
+      their story under the PRIMARY's id/row, not their own (nonexistent) id. Verified: all
+      40 real tableaus (primary + secondary) resolve to a genuine authored story, zero
+      fallback-to-generic-text.
 - [x] 2d. (found via the same authoring-bug conversation) Validation ownership fix: core's
       `validate.ts` used to import `EXPECTED_HIEROGLYPH_FRAGMENTS` directly from core
       `data.ts` — the same "mod-owned logic sitting in core" pattern already hit 3 times this
