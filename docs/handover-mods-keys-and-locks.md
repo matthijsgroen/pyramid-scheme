@@ -1,225 +1,173 @@
-# Handover — mods architecture + keys-and-locks solver
+# Handover — keys-and-locks solver, mosaic extraction next
 
-Branch: `mods/ledger-currency-registry`, PR #112 (draft), all pushed, clean tree.
+Branch: `mods/ledger-currency-registry`, all pushed, clean tree.
 
 ## Read first, in this order
 
-1. `docs/mods-architecture.md` — steps 1–4 (steps 1–3 fully implemented and
-   committed; step 4's `rewardWeight` field exists but nothing consumes it
-   yet — superseded by #3 below anyway).
-2. `docs/game-design/pyramid-interior-design.md` §8 — tomb interior
-   redesign. Fully resolved design, zero open questions. Not implemented.
-3. `docs/game-design/keys-and-locks-solver.md` — the world-gen reachability
-   solver + node-type collapse (gate/portal → `encounter`/`portal`).
-   Fully resolved design (see its own "Open" section for the handful of
-   genuinely-unresolved implementation details — everything else there is
-   settled, not up for re-litigation).
-4. `docs/game-design/shop-mechanic.md` — durable shop reference, unrelated
-   to the above but reconstructed this session (was missing).
+1. `docs/game-design/keys-and-locks-solver.md` — the world-gen reachability
+   solver. Read the whole thing; it's the single source of truth for the
+   loot-placement model. In particular: "World-building phases" (the
+   canonical 4-phase order), "Structure, then loot", "The placement
+   algorithm", "Capped loot spreads", and "Open" (the live list of
+   genuinely-unresolved items — everything else in the doc is settled).
+2. `docs/mods-architecture.md` §"Collection is core; Mosaic is a mod's own
+   screen — corrected" and §"UI wiring" — already answers "does mosaic
+   need a screen-registry mechanism" (no — `Base.tsx` stays a hardcoded
+   swipe deck, `MosaicPage.tsx` just moves folders).
+3. `TODO.md` — live checklist, kept current all session. Recovery-plan
+   section at the top is the most relevant one right now.
 
-Do not re-derive any of this from code archaeology — it's all already
-decided. If something in code contradicts these docs, the docs are current
-truth (dated 2026-07-11) and the code hasn't caught up yet.
+Do not re-derive any of this from code archaeology — read the docs first.
 
-## What's actually done (code)
+## What's actually done and shipped (3 commits this session, all pushed)
 
-- Mods steps 1–3: ledger/currency registry, perk grant/consume split,
-  family registry unification with real DI into `assembleFloor`.
-- Step 4 groundwork: `FamilyMeta.rewardWeight` field exists
-  (`src/game/families/familyMeta.ts`), physical `src/mods/<mod>/{game,app}/`
-  folder structure landed, `src/mods/allFamilyMeta.ts` (domain-safe central
-  index) and `src/mods/registerAllFamilies.ts` (app-layer registration)
-  exist. Nothing consumes `rewardWeight` yet — don't build that consumer,
-  it's superseded by the keys-and-locks solver's placement model (see
-  doc #3 above, "Relationship to CappedPool / reward-weight / Distribution").
-- All 4 PR #112 review comments addressed and pushed.
+1. **The real worklist queue.** `reachability.ts`'s `collectReachableKeys`/
+   `reachableFrom` now surface unsatisfied `requiredKeyId`/`requiredKeyIds`
+   hit at the reachable frontier as `discoveredLocks` (plus a
+   journey-scoped `mapPiece:<tombId>` lock when a tier is unlocked but
+   `piecesRequired` isn't met). `placeFragments.ts` is a genuine queue —
+   seeded from `discoveredLocks`, grown after every placement — not a
+   precomputed static list. Verified via a live cascade trace before
+   shipping (floors growing 12→31→53→...→156 as each currency's demand
+   resolved, cross-tier locks appearing exactly per the doc's worked
+   example).
+2. **Map pieces migrated onto the queue.** `TreasureReward.fragmentSlot`
+   gained a soft `prefers?: string` tag (a ranking hint, never an
+   exclusive claim — inert once that currency's demand is satisfied).
+   `src/worldGen/mapPieceCurrency.ts` (core, not `src/mods/` — every tomb
+   needs one regardless of mods) implements the journey-then-pyramid
+   diversity ladder. `CurrencyDistribution` gained its own `rank()` so
+   different currencies can use different placement policies.
+3. **Fixed a real, pre-existing authoring bug in `src/data/tableaus.ts`**
+   — a "grind era" (repeated tomb replays) leftover never updated when
+   large tombs got split into several journeys. Two bugs: secondary tombs
+   silently duplicated the primary's exact symbols (keyed by difficulty,
+   not tomb id), and ~3/4 of the generated grid was structurally dead
+   (only `level 1` was ever read). Fixed via a row-slicing remap — row 1
+   (unchanged formula, byte-identical to the original curated stories)
+   goes to the primary tomb, rows 2/3/... to each secondary tomb in turn.
+   **Follow-up correction, also shipped:** every row already had a real
+   hand-authored story in `tableaus.json`, just filed under the primary
+   tomb's id at a level nothing read — added a `storySource` map so
+   secondary tombs resolve their real story instead of generic fallback
+   text. All 40 real tableaus verified to resolve to genuine content.
+4. **Validation ownership fix.** `EXPECTED_HIEROGLYPH_FRAGMENTS` moved off
+   a core hardcoded import into an injected parameter
+   (`validateRewardCounts(configs, expectedFragments?)`), sourced from the
+   tableau currency's own module — same injection pattern
+   `resolveKeyRequirements`/`currencies` already use.
 
-## What's designed but NOT implemented — the actual backlog
+`yarn generate-world`: 294/294 hieroglyph fragments, 31/31 map pieces.
+Full suite 718/718, lint/types clean.
 
-1. ~~**Node type collapse**~~ — done. `RoomType` is now `portal|fork|encounter`.
-   Gate is a registered family (`id: "key-gate"`, `src/mods/core/{game,app}/keyGate/`),
-   same `FamilyPlugin` contract as any other encounter — click-to-attempt,
-   "you don't have the key yet" message (`gate.*` i18n keys), `onSolved`.
-   `entrance`/`stairhead`/`exit` unified into `portal` (distinguished at
-   render/click time by `stairId` presence and `grid.entrancePos`, not by a
-   separate roomType). Gating turned out to already be a *hard* block on
-   approach (`gridNavigation.ts` marked a keyless gate `"visible"`, never
-   clickable) — this was corrected to match the soft model this doc and
-   `pyramid-interior-design.md` §8 both specify: a locked gate is now always
-   reachable/clickable, the lock check moved into the family's own
-   `generate`/`Component` (via new `FamilyContext.requiredKeyId`/`ownedKeys`
-   fields). So this landed as slightly more than a pure rename — the
-   click-dead-end bug flagged during recon (`SiteMapScreen.tsx`'s old
-   `handleCellClick` had no `"gate"` case at all) is fixed as part of the
-   same change, not deferred. All 775 existing tests + `yarn validate-world`
-   pass; `yarn lint`/`yarn tsc -b` clean.
+## What's next: mosaic extraction — designed, NOT started
 
-Everything below is real, substantial implementation work, zero code
-written yet:
+Current ask: move mosaic into its own mod (`src/mods/mosaic/`), including
+its screen, and migrate its placement onto the real loot-distribution
+system (phase 3 of the doc's 4-phase model — capped loot). **No code has
+been written for this yet** — the session got as far as investigation +
+design agreement, then stopped. Read `keys-and-locks-solver.md`'s "World-
+building phases" section before touching anything; the plan below assumes
+it.
 
-2. **Tomb interior rebuild** — tombs become persistent multi-floor sites
-   (`SiteConfig[]`, one floor per treasure), same `isInteriorPyramid`
-   treatment pyramids already have in `useJourneys.ts` (pinned seed, capped
-   `completionCount`). Kills `TombExpedition.tsx`'s `renderPuzzle` prop and
-   its `completionCount`-keyed live tableau selection entirely.
+### What's already understood (don't re-investigate)
 
-   - **World-gen construction is already unified** — `configBuilder.ts`'s
-     `buildTombConfigs` used to hand-roll its own floor-array + stairhead-
-     wiring loop, diverging from `buildSiteConfigs`/`buildSite.ts`'s shared
-     mechanism. Fixed: tombs now author a `floors: FloorConstraint[]` array
-     (tomb-flavored authoring stays tomb-flavored — `wardPath()`, the
-     perk-stream reward resolver, `"tomb-puzzle"` encounter, crocodile
-     capstone) and call the SAME `buildSite()` pyramids' own authored
-     `floors[]` mode uses. `buildSite()` was generalized to resolve
-     `mainEndReward` per floor (a tomb's own treasure gates its own next
-     floor — pyramid-interior-design.md §8's "the treasure IS the key" —
-     previously only the site's last floor ever got one) and pass through
-     `lastMainPuzzleFamily`; the two near-identical stairhead-wiring loops
-     collapsed into one `wireSideSectionStaircases()`. Caught and fixed a
-     latent stairId-collision bug in the process (multiple floors of one
-     site could generate the same auto-numbered stairId, confusing
-     `SiteMapScreen.tsx`'s cross-floor teleport lookup) — now scoped
-     per-floor. This is unrelated to the persistent-site/`useJourneys.ts`
-     work above; only the *generation* mechanism was unified, not runtime
-     behavior. `generatedWorld.ts` was regenerated; the diff is fully
-     explained by the stairId rescoping, reshuffled (still valid)
-     puzzle-solve rewards, and expert/master/wizard tombs now correctly
-     picking up their tier's `windyChance`/`packingChance` corridor-variety
-     roll (previously silently dead for tombs specifically — see
-     CHANGELOG.md).
-3. **The keys-and-locks solver itself** — the reachability graph (two
-   levels: coarse floor/tomb/journey graph over the existing unchanged
-   per-floor `reachableFrom` in `siteValidator.ts`), the worklist-driven
-   placement loop, composable filter/rank distribution rules, slot
-   capacity (shop stock), hard-fail on exhausted relaxation. This is the
-   biggest single piece and everything else depends on it working
-   correctly.
+- **Mosaic's placement today is a separate, older, pre-worklist
+  mechanism** (`src/worldGen/mosaics.ts`'s `computeMosaicPaths` +
+  `src/worldGen/sideSections.ts`'s auto-mosaic-path loop), wired directly
+  into `configBuilder.ts`. It decides a STRUCTURAL count (how many bonus
+  side-paths a pyramid gets) and bakes `{type: "mosaicPiece"}` directly
+  into those slots at construction time — the same "structure baking
+  loot" violation map pieces had before their own migration.
+  `reachability.ts` never harvests `mosaicPiece` at all today.
+- **Fixing this the same way map pieces were fixed:** `rewards.ts`'s
+  `hintToReward("mosaicPiece", …)` and `pathEndToReward("mosaic", …)` need
+  to return a preference-tagged `{type: "fragmentSlot", prefers:
+  "mosaicPiece"}` instead of the literal — same pattern already proven.
+  `sideSections.ts`'s auto-mosaic-path loop (the
+  `for (let j = 0; j < mosaicPathCount; j++)` block) needs the same
+  change. `computeMosaicPaths` likely keeps its structural role (deciding
+  *how many* bonus side-paths exist) — that's a legitimate "structure"
+  decision independent of what reward eventually fills them — but must
+  stop hardcoding the reward type.
+- **Mosaic doesn't fit `CurrencyDistribution`'s shape.** That interface
+  (`ownsBucket`/`demandFor`, discovered via the queue) is for currencies
+  that *block progress*. Mosaic never blocks anything — it's pure phase-3
+  capped filler. Needs a new, smaller shape — something like `{ bucket,
+  toReward, totalRequired(allConfigs), rank(candidates) }` — placed by a
+  **new phase in `placeFragments.ts`** that runs once the lock-queue
+  drains: for each registered capped currency, rank all still-available
+  slots, assign up to `totalRequired`, **hard-fail if short** (capped =
+  must fully place, no exceptions — see the doc's "Exhausted relaxation is
+  a build failure" applied to phase 3 too).
+- **One pre-authored mosaic piece already exists as a literal** (a
+  tomb-authored one, per `worldSpec.ts`'s old comment referencing "1
+  tomb-authored piece") — the new currency's `totalRequired` math needs
+  the same `countExisting`-and-subtract pattern hieroglyph/map-piece
+  currencies already use, not a fresh count from zero.
+- **Runtime state is much simpler than it first looks.**
+  `mosaicPieceCount`/`collectMosaicPiece` in `useProgression.ts` already
+  read/write the generic ledger (`ledger.get("mosaicPiece")` /
+  `ledger.grant("mosaicPiece", 1)`) — **no extraction needed there**, same
+  as `money`/`health`. The only genuinely mosaic-specific runtime state is
+  `mosaicSeenCount` (reveal-animation progress, not a currency count) plus
+  its setter `markMosaicViewed`. `src/app/state/useModState.ts` already
+  exists for exactly this — a generic per-mod persisted slice
+  (`useGameStorage(\`pyramid-scheme-mod-${modId}\`, …)`). Plan: a small
+  `useMosaicProgress`-style hook in `src/mods/mosaic/app/` backed by
+  `useModState("mosaic", 0)`, and remove `mosaicSeenCount`/
+  `markMosaicViewed` from `ProgressionState`/`ProgressionAPI`. Cosmetic
+  migration note: existing players' `mosaicSeenCount` resets to 0 once —
+  no data loss (the ledger count is untouched), just a one-time replay of
+  reveal animations already seen. Worth a one-line callout when it ships,
+  not a blocker.
+- **File moves (mirror `src/mods/tableau/`'s shape):**
+  - `src/ui/atoms/mosaicRevealOrder.ts` → `src/mods/mosaic/game/mosaicRevealOrder.ts`
+  - `src/app/pages/MosaicPage.tsx` → `src/mods/mosaic/app/MosaicPage.tsx`
+    (stays hardcoded into `Base.tsx`, per mods-architecture.md — just a
+    different import path)
+  - Leave `StainedGlassMosaic.tsx`/`mosaicPieces.generated.ts` in
+    `src/ui/atoms/` — pure stateless rendering, not mod-specific logic.
+  - `src/ui/atoms/mosaicPieces.ts` (`MOSAIC_PIECE_IDS`) looks unused/dead
+    — confirm and drop it during the move rather than carrying it over.
+  - New `src/mods/mosaic/game/mosaicCurrency.ts` for the capped-loot
+    currency.
 
-   - ~~Coarse reachability graph~~ — done, `src/worldGen/reachability.ts`
-     (`computeReachability`/`reachableFloorsInSite`/`isJourneyEnterable`/
-     `isTierUnlocked`). Not wired into `scripts/generateWorld.ts` yet — it's
-     a standalone, fully-tested primitive (13 tests) the worklist loop will
-     call repeatedly as it grows `ownedKeys`, per the doc's own scoping.
-     Two real gaps found+fixed during review, both worth knowing before
-     building on top: (a) `siteValidator.ts`'s `reachableFrom` is now
-     exported, and its iterative key-collection loop was extracted into a
-     new exported `collectReachableKeys` — the coarse graph needs the same
-     fixed point *within* a floor (a tomb's own treasure is the key to its
-     own next floor, pyramid-interior-design.md §8) that `validateSite`
-     always had, just never as a reusable function; (b) floor-to-floor
-     stairId hosting is NOT always `site[i]` → `site[i+1]` — ward-wing
-     branches (`buildSite.ts`) can all anchor off one earlier "host" floor
-     as siblings, not a linear chain, so `reachableFloorsInSite` searches
-     every later still-unreached floor against each newly-reachable one,
-     not just its immediate successor. Both cases now have dedicated tests.
-   - ~~Distribution rule primitives~~ — done, `src/worldGen/distribution.ts`
-     (`pipe`/`filterBy`/`uniqueBy`/`rankBy`/`preferThenRelax`, 6 tests).
-     Generic, currency-agnostic, not yet composed into a real per-currency
-     rule.
-   - ~~Candidate slot discovery~~ — done, `src/worldGen/slots.ts`
-     (`collectSlots`, 4 tests). Generalizes `fragments.ts`'s own
-     `collectSlots` with per-slot `FloorRef` tagging so a distribution rule
-     can filter by reachability. Deliberately near-duplicates
-     `fragments.ts`'s tree-walk for now (flagged debt, not a bug) — the two
-     should collapse into one once the worklist actually replaces
-     `fragments.ts`.
-   - **A real gap found and fixed while building this**: the reachability
-     graph didn't know a tableau room's own hieroglyph requirement at all —
-     it only checked `requiredKeyId` (a gate's single-treasure
-     precondition), so it silently treated every tableau as trivially
-     solvable. Since rooms are soft-gated (always walkable-up-to, but
-     nothing past an uncompleted room is ever revealed — same rule for
-     gates and puzzles), this meant the solver overestimated reachability
-     for every tomb floor past the first. Fixed, keeping ALL hieroglyph/
-     tableau knowledge out of core:
-     - `RoomCell` gained two fully generic fields: `requiredKeyIds?:
-       string[]` (same idea as `requiredKeyId`, but a list — all must be
-       owned; a tableau needing 3 hieroglyphs complete is 3 independent
-       locks, not one composite key) and `pathIndex?: number` (a room's
-       0-based position among its floor's main-path puzzle rooms — pure
-       structural data).
-     - `siteAssembler.ts` gained an injected `ResolveKeyRequirements`
-       function (mirroring the existing `ResolveEncounter` pattern), called
-       per puzzle room — main path, side section, and sub-section, each
-       using its own section-scoped 0-based path-position index (same one
-       already computed for `puzzleRewards[k]`/`[pi]`). New params are
-       bundled into one trailing options object (`{resolveKeyRequirements,
-       floorRef}`), not raw positional args — avoids the "pass `undefined`
-       to skip an earlier optional param" problem `ResolveEncounter` alone
-       didn't have room for.
-     - `siteValidator.ts`'s `reachableFrom` (the fine BFS) now also checks
-       `requiredKeyIds`.
-     - A generic `encounterArgs?: unknown` DSL field (on `FloorConfig` and
-       on `SubSection`/`SideSection`) lets an author attach an opaque
-       payload to any corridor's rooms — threaded through `dsl.ts` →
-       `sideSections.ts`/`buildSite.ts` → the runtime config `assembleFloor`
-       reads. This decouples a tableau corridor from floor position
-       entirely: it can be authored on the main path or on a ward-gated
-       side path, and two corridors on the same floor can each carry their
-       own payload.
-     - The only place that knows hieroglyphs/tableaus exist:
-       `src/mods/puzzle/game/tableau/keyRequirements.ts`. It validates
-       `encounterArgs` via zod (`{runNr: number}`), throwing on a bad/
-       missing shape, then looks up `tableauLevels` by
-       `(journeyId, runNumber: runNr, levelNr: pathIndex + 1)`, throwing if
-       nothing matches — a tagged tableau room must always resolve to
-       something. Aggregated by `src/mods/allKeyRequirementResolvers.ts` (a
-       plain, side-effect-free `Record<familyId, resolver>` mirroring
-       `src/mods/allFamilyMeta.ts`'s shape). **`reachability.ts` does NOT
-       import this aggregator directly** — `docs/instructions/
-       architecture.md`'s dependency table doesn't actually list
-       `src/mods/` as importable from `src/worldGen/`, and `allFamilyMeta.ts`
-       turned out to be an unused/aspirational precedent, not a working
-       one, when checked. `reachableFloorsInSite`/`computeReachability`
-       default to a no-op resolver instead (same as `assembleFloor` never
-       importing the real `resolveEncounter`); whoever wires this into a
-       real script supplies the real one.
-     - **A real mapping bug caught by review, not by me** (now superseded):
-       `tableauLevels`' `runNumber` is which *replay*/treasure a tomb floor
-       unlocks (`completionCount + 1`, per `TombExpedition.tsx`/
-       `TableauInventory.tsx`), and `levelNr`/array position is which room
-       within that run — the opposite of what reading the generator code in
-       isolation suggested. The original fix hardcoded `runNumber === 1`
-       (world-gen only ever building "run 1"); that's since been replaced
-       by the `encounterArgs.runNr` mechanism above — `configBuilder.ts`'s
-       `buildTombConfigs` now authors `encounterArgs: {runNr: i + 1}` per
-       floor by default (tying each floor's tableau to the treasure it
-       unlocks, "grind era" style), verified against every real tomb
-       (`treasures.length === levelCount` for all 9) so the default never
-       fails to resolve.
-   - Still to build: the worklist loop itself (a queue of not-yet-satisfied
-     locks, recomputing reachability after each placement — this is now
-     clearly load-bearing for hieroglyph fragments too, not just ward
-     keys/map pieces, since fragments gate tableaus which gate everything
-     past them), slot capacity, hard-fail on exhausted relaxation, and the
-     hieroglyph-fragment migration measured against `fragments.ts`'s
-     "273/273 placed" bar.
-4. **Trap's hard gate needs to soften** — `canAttemptTrap()` currently hard-
-   blocks (`TrapWarningScreen` won't launch the encounter at all below 1
-   health). The tomb redesign's "soft gating everywhere" decision means
-   this needs to change to match tableau/gate's soft model (always
-   enterable, consequence/lock is about *solving*, not *approaching*).
+### Concrete order for next session
 
-## Suggested order of attack
+1. Build the new capped-loot currency type + `placeFragments.ts`'s phase-3
+   pass (world-gen only, no file moves yet) — get this working and tested
+   in isolation against the *existing* mosaic placement mechanism still in
+   place, so there's something to A/B against.
+2. Switch `rewards.ts`/`sideSections.ts` to emit preference-tagged slots
+   instead of literals; wire the new `MOSAIC_CURRENCY` in; delete
+   `computeMosaicPaths`' reward-type logic (keep its count logic, or fold
+   it into the currency's `totalRequired`+rank — judgment call, whichever
+   is less code). Run full suite + `yarn generate-world`, confirm 298
+   mosaic pieces still placed, confirm hieroglyph/map-piece counts
+   unaffected.
+3. Physical file moves into `src/mods/mosaic/`.
+4. `useMosaicProgress` hook + `useProgression.ts` cleanup.
+5. Update `TODO.md`'s recovery-plan section (phase 3 line) and
+   `keys-and-locks-solver.md`'s "Open" section once shipped.
 
-Doc #3 (keys-and-locks-solver.md) is a prerequisite for #2 (tomb rebuild) —
-the tomb design assumes fragment placement respects reachability, which is
-exactly what the solver provides. Build the solver's reachability graph +
-hieroglyph-fragment placement first, prove it against `fragments.ts`'s
-existing "273/273 placed" bar, *then* rebuild tomb topology on top of it.
-Node-type collapse (#1, done) landed first, independently, as planned.
+**Do each of these as its own commit** — this session's mistake was
+letting the mosaic task's scope grow live across investigation → design →
+implementation without landing anything in between. Land step 1 before
+starting step 2, even if it means a slightly awkward intermediate state
+(two placement mechanisms coexisting briefly).
 
-## Not blocking, but worth knowing
+## Known still-open items (from `keys-and-locks-solver.md`'s "Open" section)
 
-- `docs/mods-architecture.md` sits at `docs/` root, not
-  `docs/game-design/` — flagged as misplaced per
-  `docs/instructions/documentation.md`'s own rules, not yet moved (user's
-  call, was still open when this session ended).
-- New doc rule this session: mechanic design and implementation plans are
-  separate files with separate lifecycles (`docs/instructions/documentation.md`,
-  "Implementation plan documents"). If a phased build plan gets written for
-  the work above, keep it out of the design docs — separate
-  `docs/<topic>-implementation-plan.md`, delete once shipped.
-
-**Delete this file in the completion commit once this backlog is done or
-re-scoped** — per its own lifecycle rule.
+- Phase 4 (uncapped loot: sellables/consumables — max-%-occupancy + drop
+  rate) — not designed at all, deliberately deferred until phase 3 is
+  proven.
+- Authored DSL drop rates for phase-3 capped currencies — floated as an
+  idea, not committed to a shape; may not survive contact with "capped
+  loot must fully place."
+- Slot capacity (a shop's several-items stock) — not built, `Slot` is
+  still single-assign only.
+- The `registerMod` mod-container mechanism (`TODO.md`'s "Root gap"
+  section) — separate, bigger effort, do after the above.
+- Tomb interior runtime rebuild (persistent multi-floor sites) —
+  construction is unified, the runtime rebuild itself hasn't started.

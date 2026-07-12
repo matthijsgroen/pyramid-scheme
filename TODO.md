@@ -119,7 +119,13 @@ None of the real container mechanism exists yet. Concretely, right now:
       `placeFragments.ts` by `scripts/generateWorld.ts`. Still a flat array
       (`CurrencyDistribution[]`), not a real per-mod container — proves the DI
       pattern works, doesn't replace the missing `registerMod` mechanism itself.
-- [ ] mosaic isn't a mod — `src/mods/mosaic/` doesn't exist
+- [ ] mosaic isn't a mod — `src/mods/mosaic/` doesn't exist. **In progress,
+      designed but not started — see `docs/handover-mods-keys-and-locks.md`
+      for the full plan** (new capped-loot currency type, phase-3 pass in
+      `placeFragments.ts`, preference-tagged slots replacing
+      `computeMosaicPaths`' literal writes, file moves, `useMosaicProgress`
+      state extraction). Land in the ordered steps that doc lays out, one
+      commit per step.
 - [ ] trap's health/maxHealth are still plain fields on the shared
       `ProgressionState` in `useProgression.ts`, not something trap registers
 
