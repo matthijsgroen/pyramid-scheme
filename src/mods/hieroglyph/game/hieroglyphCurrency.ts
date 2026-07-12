@@ -19,7 +19,9 @@ import { tableauLevels } from "@/data/tableaus"
 // then loot". This module only answers "given a discovered hieroglyph bucket, how many
 // fragments total, and where does it prefer to land" — ranking metadata, not demand discovery.
 
-const BUCKET_PREFIX = "hieroglyph:"
+// Unified bucket/preference grammar: `"hieroglyph"` = any hieroglyph, `"hieroglyph:ra"` = Ra.
+const CURRENCY_ID = "hieroglyph"
+const BUCKET_PREFIX = `${CURRENCY_ID}:`
 
 // The world-wide total this currency must place — this mod's own number (validate.ts takes
 // it as an injected parameter, never imports a hardcoded expectation itself).
@@ -86,7 +88,7 @@ const countExisting = (allConfigs: Record<string, SiteConfig[]>, hieroglyphId: s
 }
 
 export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
-  ownsBucket: bucket => bucket.startsWith(BUCKET_PREFIX),
+  ownsBucket: bucket => bucket === CURRENCY_ID || bucket.startsWith(BUCKET_PREFIX),
   toReward: hieroglyphId => ({ type: "hieroglyphFragment", hieroglyphId }),
   demandFor: (bucket, allConfigs) => {
     const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
@@ -110,7 +112,10 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
       const tierMatch = s.tier === demand.tier
       const wardMatch =
         demand.preferredWardKeys.length > 0 && s.wardKeys.some(k => demand.preferredWardKeys.includes(k))
-      return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0)
+      // A slot preferring this exact hieroglyph (`hieroglyph:ra`) or any hieroglyph
+      // (bare `hieroglyph`) is ranked above untagged ones — the DSL's soft placement wish.
+      const prefMatch = s.preference === demand.bucket || s.preference === CURRENCY_ID
+      return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0) + (prefMatch ? 1 : 0)
     })
     return pipe<Slot>(
       preferThenRelax(

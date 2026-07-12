@@ -92,7 +92,7 @@ export const expertRules: Rule[] = [
         mainEndReward: "tombTreasure",
         // Fez shop — locked stock list: fragment + mosaic.
         sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("expert") }),
+          sidePath({ puzzles: 1, endReward: "hieroglyph", shopPrice: fragmentPrice("expert") }),
           sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
         ],
       },
@@ -111,7 +111,7 @@ export const expertRules: Rule[] = [
       {
         mainEndReward: "tombTreasure",
         // Fez shop — locked stock list: fragment (solo slot).
-        sideSections: [sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("expert") })],
+        sideSections: [sidePath({ puzzles: 1, endReward: "hieroglyph", shopPrice: fragmentPrice("expert") })],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

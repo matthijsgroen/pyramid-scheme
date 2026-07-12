@@ -11,7 +11,10 @@ import { journeys as REAL_JOURNEYS } from "../data/journeys"
 // ladder (spread across journeys first, relax to a different pyramid within an already-used
 // journey), not a single dedup level.
 
-const BUCKET_PREFIX = "mapPiece:"
+// Unified bucket/preference grammar: `"mapPiece"` = any map piece, `"mapPiece:<tombId>"` = that
+// tomb's.
+const CURRENCY_ID = "mapPiece"
+const BUCKET_PREFIX = `${CURRENCY_ID}:`
 
 // mapPiece rewards already authored directly as a literal (bypassing the preference-tagged
 // fragmentSlot sentinel entirely) — subtracted from the required count so the world-wide
@@ -36,7 +39,7 @@ const countExisting = (allConfigs: Record<string, SiteConfig[]>, tombId: string)
 }
 
 export const MAP_PIECE_CURRENCY: CurrencyDistribution = {
-  ownsBucket: bucket => bucket.startsWith(BUCKET_PREFIX),
+  ownsBucket: bucket => bucket === CURRENCY_ID || bucket.startsWith(BUCKET_PREFIX),
   toReward: tombId => ({ type: "mapPiece", tombId }),
   demandFor: (bucket, allConfigs) => {
     const tombId = bucket.slice(BUCKET_PREFIX.length)
@@ -54,7 +57,8 @@ export const MAP_PIECE_CURRENCY: CurrencyDistribution = {
   rank: (candidates, demand) => {
     const byPoolScore = rankBy<Slot>(s => {
       const tierMatch = s.tier === demand.tier ? 1 : 0
-      const prefMatch = s.preference === demand.bucket ? 1 : 0
+      // Exact (`mapPiece:<tombId>`) or any-map-piece (bare `mapPiece`) preference boosts.
+      const prefMatch = s.preference === demand.bucket || s.preference === CURRENCY_ID ? 1 : 0
       return tierMatch + prefMatch
     })
     return pipe<Slot>(

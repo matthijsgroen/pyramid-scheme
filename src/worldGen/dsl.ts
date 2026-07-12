@@ -23,7 +23,11 @@ export type PathEntry = {
 }
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
-export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphFragment"
+// A reward hint is a currency id — the DSL authors a soft placement preference for that
+// currency (resolved to a `{ type: "fragmentSlot", prefers: <id> }` slot), never a baked
+// reward. Unified bucket grammar: `<currencyId>` prefers any instance of that currency,
+// `<currencyId>:<instanceId>` prefers one specific instance (see the placement solver).
+export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index

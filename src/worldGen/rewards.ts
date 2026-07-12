@@ -1,5 +1,4 @@
 import type { ConsumableType, Tier, TreasureReward } from "./types"
-import { TOMB_SYMBOLS } from "./data"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
 import { sellablesForDifficulty } from "../data/sellables"
@@ -34,12 +33,12 @@ export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
       // "Structure, then loot"). This is the tier's own primary tomb; a secondary tomb's map
       // piece is always authored via the structured `{type:"mapPiece",tombId}` form below.
       return { type: "fragmentSlot", prefers: mapPieceBucket(`${tier}_treasure_tomb`) }
-    case "hieroglyphFragment":
-      return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
     default:
-      // Any other hint is a mod-owned capped currency's bucket (e.g. "mosaicPiece") — opaque to
-      // core. It becomes a preference-tagged open slot the capped-placement pass fills; core
-      // never branches on what the bucket means (docs/mods/TARGET.md rule 2).
+      // Every other hint is a currency id (e.g. "mosaicPiece", "hieroglyph") — opaque to core.
+      // It becomes a preference-tagged open slot the placement solver / capped pass fills;
+      // core never branches on what the bucket means and never bakes the currency reward
+      // itself, so an unregistered currency's slot simply falls through to filler loot
+      // (docs/mods/TARGET.md rule 2; the DSL-as-preference model).
       return { type: "fragmentSlot", prefers: hint }
   }
 }

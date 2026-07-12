@@ -15,7 +15,45 @@ the gate: remove `hieroglyphMod` from `REGISTERED_MODS` →
 
 then re-add. The removal is the test, not the shipped state.
 
-## Decisions (settled with user)
+## Decisions (settled with user) — REVISED after discovering the mosaic bar
+
+**The reference slice (mosaic) never grep-cleaned core.** `src/worldGen` still holds
+`{type:"mosaicPiece"}` (reward union), the `"mosaic"`/`"mosaicPiece"` DSL hints, specs
+authoring `end:"mosaic"`, and a cosmetic `printStats` tally. Mosaic shipped "complete"
+anyway. So the real toggle-off bar is: **mod owns its number + placement; core holds no
+load-bearing mod *meaning*; world+app build/run without it.** NOT a literal zero-grep.
+
+Consequences:
+- **No reward-type genericization.** `{type:"hieroglyphFragment"}` stays an *inert* union
+  variant, exactly like `{type:"mosaicPiece"}` — only the mod's `toReward` (worklist) ever
+  produces it; core lists it but never branches on load-bearing logic. The 26/50-file generic
+  reward refactor is dropped.
+- **DSL authors preferences, not baked currencies.** The bug: hieroglyph DSL *bakes* a literal
+  `{type:"hieroglyphFragment"}` (via `hintToReward` + 6 shop-stock specs), which orphans when
+  the mod's off. Fix: author a `{type:"fragmentSlot", prefers:<bucket>}` like mosaic — mod on →
+  worklist fills it; mod off → no currency claims the tag → generic loot. Toggle-off clean.
+- **Exact-preference pass-through.** Core stops mapping hint→bucket (`rewards.ts` `"mosaic"` →
+  `"mosaicPiece"`). The DSL authors the exact bucket string; core carries it through. Removes
+  the name→bucket table (a bit of mod info) from core.
+- **Unified bucket/preference grammar:** `<currencyId>` = any instance, `<currencyId>:<instanceId>`
+  = one. `"hieroglyph"` (any) / `"hieroglyph:ra"` (Ra); `"mapPiece"` (any) /
+  `"mapPiece:starter_treasure_tomb"` (that tomb); `"mosaicPiece"` (no instances). `ownsBucket`
+  = `b === id || b.startsWith(id+":")`; a bare-`<currency>` slot preference matches any instance
+  of that currency, a `<currency>:<instance>` preference matches only that one.
+- **The real hieroglyph asymmetry vs mosaic (this IS the slice):** hieroglyph *gates*, so core
+  reachability holds *load-bearing* hieroglyph meaning — `HIEROGLYPH_REQUIRED` as the gate
+  threshold (`reachability.ts:8,39`), the `hieroglyphFragment` harvest (`:147`), and core
+  `data.ts` *deriving the mod's numbers*. Move the number into the mod; inject the threshold +
+  reward→bucket harvest generically so core gates on "held ≥ what the registered currency says,"
+  naming no hieroglyph.
+- **Shop-stock fragments (6 specs):** their proper home is a shop-targeting placement rule over
+  the capacity/eagerness slot model (chest cap1/eager100, puzzle cap1/eager60, gate cap0/eager0,
+  shop cap6/eager0 — normal fill never touches a shop; only a mod rule targeting `shop` +
+  relax-to-normal fills it). That model is FROZEN (TARGET "slot capacity"). Interim for Slice 2:
+  author them as prefer-tagged `fragmentSlot`s (single-assign works for one item); they evolve
+  into shop-targeted placement when the capacity/eagerness model lands in the shop slice.
+
+## Decisions (original — superseded above where they conflict)
 
 - **Mod = `hieroglyph`** (folder `src/mods/tableau/` → `src/mods/hieroglyph/`).
   Internal family/puzzle id stays `"tableau"` — renaming ripples into saved

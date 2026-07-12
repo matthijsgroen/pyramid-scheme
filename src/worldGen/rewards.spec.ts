@@ -50,9 +50,8 @@ describe("hintToReward", () => {
     })
   })
 
-  it("hieroglyphFragment → first tier symbol", () => {
-    const reward = hintToReward("hieroglyphFragment", "starter")
-    expect(reward.type).toBe("hieroglyphFragment")
+  it("hieroglyph → a preference-tagged open slot (any hieroglyph), never a baked literal", () => {
+    expect(hintToReward("hieroglyph", "starter")).toEqual({ type: "fragmentSlot", prefers: "hieroglyph" })
   })
 })
 
