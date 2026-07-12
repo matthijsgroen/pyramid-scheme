@@ -1,7 +1,7 @@
 import { registerCurrency } from "@/game/ledger/currencyRegistry"
 import { hieroglyphRequired } from "@/data/generatedWorld"
 import { journeys } from "@/data/journeys"
-import { LEVEL_STEPS } from "@/ui/atoms/mosaicRevealOrder"
+import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
 
 const fragmentTotal = Object.values(hieroglyphRequired).reduce((sum, n) => sum + n, 0)
 const tombCount = journeys.filter(j => j.type === "treasure_tomb").length

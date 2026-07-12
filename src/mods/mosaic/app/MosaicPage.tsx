@@ -1,11 +1,14 @@
 import { type FC, useEffect, useMemo, useRef, useState } from "react"
 import { Page } from "@/ui/atoms/Page"
 import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
-import { LEVEL_STEPS, PIECES_BY_STEP } from "@/ui/atoms/mosaicRevealOrder"
+import { LEVEL_STEPS, PIECES_BY_STEP } from "@/mods/mosaic/game/mosaicRevealOrder"
 import { useProgression } from "@/app/state/useProgression"
+import { useMosaicProgress } from "./useMosaicProgress"
 
 export const MosaicPage: FC = () => {
-  const { mosaicSeenCount, mosaicPieceCount, markMosaicViewed } = useProgression()
+  // Piece count is the ledger's (core); seen-count is the mosaic mod's own persisted slice.
+  const { mosaicPieceCount } = useProgression()
+  const { seenCount: mosaicSeenCount, markViewed: markMosaicViewed } = useMosaicProgress()
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
 

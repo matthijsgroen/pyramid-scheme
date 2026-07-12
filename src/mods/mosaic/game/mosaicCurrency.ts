@@ -9,7 +9,7 @@ import type { CappedCurrency } from "@/worldGen/placeFragments"
 export const MOSAIC_BUCKET = "mosaicPiece"
 
 // How many mosaic pieces exist in the world. Mod-owned — core holds no per-mod target
-// (docs/mods/TARGET.md rule 2). Must equal LEVEL_STEPS.length (src/ui/atoms/mosaicRevealOrder.ts):
+// (docs/mods/TARGET.md rule 2). Must equal LEVEL_STEPS.length (./mosaicRevealOrder.ts):
 // the reveal is count-based (MosaicPage clamps to min(collected, LEVEL_STEPS.length)), so any
 // piece beyond this reveals nothing.
 export const MOSAIC_TOTAL = 298

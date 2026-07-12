@@ -1,7 +1,7 @@
 import { BaseHeader } from "@/components/BaseHeader"
 import { TravelPage } from "@/app/pages/Travel"
 import { CollectionPage } from "@/app/pages/Collection"
-import { MosaicPage } from "@/app/pages/MosaicPage"
+import { MosaicPage } from "@/mods/mosaic/app/MosaicPage"
 import { use, useEffect } from "react"
 import { FezContext } from "./fez/context"
 

@@ -5,7 +5,7 @@
 // "dense" fills the gaps (odd-indexed), producing the dotted-then-solid effect.
 
 import { journeys } from "@/data/journeys"
-import { MOSAIC_PIECES } from "./mosaicPieces.generated"
+import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
 
 // Center of the 200×343 SVG viewBox
 const CENTER_X = 100

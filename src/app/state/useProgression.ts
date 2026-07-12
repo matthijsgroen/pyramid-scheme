@@ -39,7 +39,6 @@ type ProgressionState = {
   collectedFragments: string[]
   tombKeys: Record<string, true>
   discoveredTombs: string[]
-  mosaicSeenCount: number
   collectedMapPieces: Record<string, number>
   // journeyIds whose map-piece chest has been opened — inventory-as-truth for the journey list badge
   mapPieceJourneys: string[]
@@ -65,7 +64,6 @@ const initialState: ProgressionState = {
   collectedFragments: [],
   tombKeys: {},
   discoveredTombs: AUTO_DISCOVERED_TOMBS,
-  mosaicSeenCount: 0,
   collectedMapPieces: {},
   mapPieceJourneys: [],
   consumables: { bandage: 0, oil: 0, trapTool: 0 },
@@ -93,10 +91,8 @@ export type ProgressionAPI = {
   tombKeyIds: ReadonlySet<string>
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
-  mosaicSeenCount: number
   mosaicPieceCount: number
   collectMosaicPiece: () => void
-  markMosaicViewed: (count: number) => void
   collectMapPiece: (tombId: string) => void
   mapPieceCount: (tombId: string) => number
   hasMapPiece: (journeyId: string) => boolean
@@ -179,11 +175,8 @@ export const useProgression = (): ProgressionAPI => {
             ? prev.discoveredTombs
             : [...prev.discoveredTombs, tombJourneyId],
         })),
-      mosaicSeenCount: state.mosaicSeenCount,
       mosaicPieceCount: ledger.get("mosaicPiece"),
       collectMosaicPiece: () => ledger.grant("mosaicPiece", 1),
-      markMosaicViewed: count =>
-        setState(prev => ({ ...prev, mosaicSeenCount: Math.max(prev.mosaicSeenCount, count) })),
       collectMapPiece: tombId =>
         setState(prev => {
           const prevCount = prev.collectedMapPieces[tombId] ?? 0

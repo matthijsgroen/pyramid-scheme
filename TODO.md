@@ -21,10 +21,18 @@ green suite.
         registered currency's total across loot slots (tagged first), hard-fails
         if demand > capacity.
 - [x] 3. `src/mods/mosaic/index.ts` descriptor + `src/mods/registeredMods.ts`.
-- [ ] 4. File moves; `useMosaicProgress` via `useModState`; drop
-        `mosaicSeenCount` from `ProgressionState`.
-- [ ] 5. Toggle-off proof: remove mosaic → build clean, 0 mosaic pieces,
-        hieroglyph/mapPiece counts unchanged, core names no `mosaic`.
+- [x] 4. File moves: `mosaicRevealOrder.ts` → `mods/mosaic/game/`, `MosaicPage.tsx`
+        → `mods/mosaic/app/`; `useMosaicProgress` (via `useModState`) replaces
+        `mosaicSeenCount`/`markMosaicViewed` on `ProgressionState`; dropped the dead
+        `mosaicPieces.ts`.
+- [x] 5. Toggle-off proof (world-gen): mosaic out of `registeredMods` → generate-world
+        builds with the economy guard ON, 0 mosaic, 31 map / 294 hieroglyph unchanged,
+        worldGen core names no `mosaic`. VERIFIED.
+- [ ] 5b. Full APP toggle-off (grow the descriptor): the mosaic SCREEN (`Base.tsx`
+        hardcodes it) and the `mosaicPiece` currency-meta (`registerCurrencies.ts`) are
+        still wired outside the descriptor — the descriptor owns only `cappedCurrencies`
+        today. Full app toggle-off needs the descriptor to own `screen` + `currencyMeta`.
+        Minimal-descriptor-grows-later, per TARGET.md.
 
 ## World-authoring exercise (surfaced mid-slice — see project memory doom-loop)
 
