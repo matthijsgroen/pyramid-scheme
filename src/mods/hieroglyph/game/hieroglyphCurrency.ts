@@ -90,6 +90,14 @@ const countExisting = (allConfigs: Record<string, SiteConfig[]>, hieroglyphId: s
 export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
   ownsBucket: bucket => bucket === CURRENCY_ID || bucket.startsWith(BUCKET_PREFIX),
   toReward: hieroglyphId => ({ type: "hieroglyphFragment", hieroglyphId }),
+  // The gate threshold reachability injects: a tableau needs this many fragments of this
+  // hieroglyph. Matches demandFor's totalRequired so a gate opens exactly when its fragments
+  // are placed. This is the mod's own number — core reachability reads it only via injection.
+  thresholdFor: bucket => HIEROGLYPH_REQUIRED[bucket.slice(BUCKET_PREFIX.length)] ?? 2,
+  // Harvest mapping reachability injects: a hieroglyph-fragment reward counts toward its
+  // `hieroglyph:<id>` bucket.
+  bucketForReward: reward =>
+    reward.type === "hieroglyphFragment" ? `${BUCKET_PREFIX}${reward.hieroglyphId}` : undefined,
   demandFor: (bucket, allConfigs) => {
     const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
     const tier = TIER_BY_HIEROGLYPH[hieroglyphId]

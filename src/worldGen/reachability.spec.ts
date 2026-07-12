@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { SiteConfig } from "./types"
+import type { SiteConfig, TreasureReward } from "./types"
 import {
   computeReachability,
   floorKey,
@@ -180,7 +180,21 @@ describe(reachableFloorsInSite, () => {
         sideSections: [],
       },
     ]
-    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    // mapPiece is harvested by core directly; the hieroglyph fragment routes through injected
+    // currency support (reachability names no mod currency) — here an inline stand-in.
+    const support = {
+      bucketForReward: (r: TreasureReward) =>
+        r.type === "hieroglyphFragment" ? `hieroglyph:${r.hieroglyphId}` : undefined,
+    }
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      site,
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      support
+    )
     expect(result.harvestedCounts.get(mapPieceBucket("some_tomb"))).toBe(1)
     expect(result.harvestedCounts.get("hieroglyph:p10")).toBe(1)
   })

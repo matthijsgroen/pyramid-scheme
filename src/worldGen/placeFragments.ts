@@ -43,6 +43,17 @@ export type CurrencyDistribution = {
   // computes its own demand lazily (demandFor), never enumerated upfront.
   ownsBucket: (bucket: string) => boolean
   toReward: (instanceId: string) => TreasureReward
+  // The gate threshold for one of this currency's buckets: how many held instances satisfy a
+  // lock on it (e.g. a hieroglyph needing N fragments). Injected into reachability so core
+  // gates on "held ≥ what the registered currency says," naming no specific currency. Core's
+  // own currencies (map pieces via a journey's piecesRequired) are handled by reachability
+  // directly and need not implement this.
+  thresholdFor?: (bucket: string) => number
+  // Maps one of this currency's harvestable rewards to the bucket it counts toward (e.g. a
+  // hieroglyph-fragment reward → `hieroglyph:<id>`). Returns undefined for rewards this
+  // currency doesn't own. Injected into reachability's harvest so core reads "which bucket
+  // does this reward feed" without naming the reward type.
+  bucketForReward?: (reward: TreasureReward) => string | undefined
   // Computes one bucket's demand lazily, only once the worklist has actually discovered it
   // blocking somewhere reachable — see keys-and-locks-solver.md, "Structure, then loot".
   demandFor: (bucket: string, allConfigs: Record<string, SiteConfig[]>) => CurrencyDemand
@@ -104,8 +115,21 @@ export const placeFragments = (
   // so every one of this loop's many computeReachability calls reuses the same assembled
   // grids instead of re-running maze generation for every reachable floor every time.
   const assemblyCache = createFloorAssemblyCache()
+  // Currency knowledge reachability needs but must not import (it's mod-agnostic): each
+  // registered currency supplies its own gate threshold + reward→bucket harvest. Built here,
+  // where the injected `currencies` list is in scope, and threaded into every reachability call.
+  const support = {
+    thresholdFor: (bucket: string) => currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket),
+    bucketForReward: (reward: TreasureReward) => {
+      for (const c of currencies) {
+        const b = c.bucketForReward?.(reward)
+        if (b) return b
+      }
+      return undefined
+    },
+  }
   const computeReach = () =>
-    computeReachability(allConfigs, journeyMeta, ownedCounts, resolveRequirements, assemblyCache)
+    computeReachability(allConfigs, journeyMeta, ownedCounts, resolveRequirements, assemblyCache, support)
 
   let reach = computeReach()
 

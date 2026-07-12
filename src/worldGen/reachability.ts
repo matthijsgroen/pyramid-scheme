@@ -1,11 +1,21 @@
-import type { SiteConfig, Tier } from "./types"
+import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor } from "../game/siteAssembler"
 import { collectReachableKeys } from "../game/siteValidator"
 import { hashString } from "../support/hashString"
 import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
-import { HIEROGLYPH_REQUIRED } from "./data"
+
+// Currency knowledge injected by the caller (placeFragments, built from the registered
+// currencies) — reachability stays mod-agnostic, naming no specific currency. `thresholdFor`
+// gives a bucket's gate threshold; `bucketForReward` maps a harvestable reward to its bucket.
+// Both default to "not mine" so a caller with no mod currencies (or a test) still works: an
+// unknown bucket thresholds at 1, an unrecognized reward harvests nothing.
+export type CurrencySupport = {
+  thresholdFor?: (bucket: string) => number | undefined
+  bucketForReward?: (reward: TreasureReward) => string | undefined
+}
+const noCurrencySupport: CurrencySupport = {}
 
 // No default resolver here — this module stays within src/worldGen/'s own dependency rules
 // (data/, game/ only) same as assembleFloor itself never importing the real resolveEncounter.
@@ -33,18 +43,28 @@ const noKeyRequirements: ResolveKeyRequirements = () => undefined
 export type OwnedCounts = ReadonlyMap<string, number>
 
 export const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
-export const hieroglyphBucket = (hieroglyphId: string): string => `hieroglyph:${hieroglyphId}`
 
-const thresholdFor = (id: string, journeyMeta: Record<string, JourneyMeta>): number => {
-  if (id.startsWith("hieroglyph:")) return HIEROGLYPH_REQUIRED[id.slice("hieroglyph:".length)] ?? 1
+// mapPiece is core world-gen's own currency (every tomb needs one, mod-independent), so its
+// threshold — a tomb's own `piecesRequired` — is read here directly. Every other bucket's
+// threshold comes from the injected currency support (e.g. a hieroglyph's fragment count);
+// a bucket no registered currency claims (a tomb-key/tier-unlock perk) is threshold-1.
+const thresholdFor = (
+  id: string,
+  journeyMeta: Record<string, JourneyMeta>,
+  support: CurrencySupport
+): number => {
   if (id.startsWith("mapPiece:")) return journeyMeta[id.slice("mapPiece:".length)]?.piecesRequired ?? 1
-  return 1
+  return support.thresholdFor?.(id) ?? 1
 }
 
-// Bounded to whatever's actually been recorded in `counts` (a handful of perks/hieroglyphs/
+// Bounded to whatever's actually been recorded in `counts` (a handful of perks/currencies/
 // tombs at most), not the whole universe of possible bucket ids.
-export const deriveOwnedFacts = (counts: OwnedCounts, journeyMeta: Record<string, JourneyMeta>): Set<string> =>
-  new Set([...counts.keys()].filter(id => (counts.get(id) ?? 0) >= thresholdFor(id, journeyMeta)))
+export const deriveOwnedFacts = (
+  counts: OwnedCounts,
+  journeyMeta: Record<string, JourneyMeta>,
+  support: CurrencySupport = noCurrencySupport
+): Set<string> =>
+  new Set([...counts.keys()].filter(id => (counts.get(id) ?? 0) >= thresholdFor(id, journeyMeta, support)))
 
 // One entry of a journey's SiteConfig[] — a single pyramid-level, or (for tombs) the
 // tomb's one multi-floor site. Progressing between `levelIndex` values is plain sequential
@@ -104,7 +124,8 @@ export const reachableFloorsInSite = (
   ownedFacts: ReadonlySet<string>,
   seed: number = defaultSeedFor(ref),
   resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
-  cache?: FloorAssemblyCache
+  cache?: FloorAssemblyCache,
+  support: CurrencySupport = noCurrencySupport
 ): SiteReachability => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
@@ -142,9 +163,15 @@ export const reachableFloorsInSite = (
       for (let c = 0; c < result.grid.cols; c++) {
         const cell = result.grid.cells[r][c]
         if (cell.type !== "room" || !reachableHere.has(`${r},${c}`)) continue
+        // tombKey + mapPiece are core's own currencies (harvested directly). Every other
+        // harvestable reward routes through the injected currency support — a mod's currency
+        // (e.g. a hieroglyph fragment) maps its own reward to its own bucket; core names none.
         if (cell.reward?.type === "tombKey") harvest(cell.reward.keyId)
-        if (cell.reward?.type === "mapPiece") harvest(mapPieceBucket(cell.reward.tombId))
-        if (cell.reward?.type === "hieroglyphFragment") harvest(hieroglyphBucket(cell.reward.hieroglyphId))
+        else if (cell.reward?.type === "mapPiece") harvest(mapPieceBucket(cell.reward.tombId))
+        else if (cell.reward) {
+          const bucket = support.bucketForReward?.(cell.reward)
+          if (bucket) harvest(bucket)
+        }
       }
     }
 
@@ -211,9 +238,10 @@ export const computeReachability = (
   resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
   // Assumed constant for the cache's whole lifetime — a cache reused across calls with a
   // DIFFERENT resolveRequirements would return stale grids built under the old one.
-  cache?: FloorAssemblyCache
+  cache?: FloorAssemblyCache,
+  support: CurrencySupport = noCurrencySupport
 ): ReachabilityResult => {
-  const ownedFacts = deriveOwnedFacts(ownedCounts, journeyMeta)
+  const ownedFacts = deriveOwnedFacts(ownedCounts, journeyMeta, support)
   const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts)))
   const reachableFloors = new Set<string>()
   const harvestedCounts = new Map<string, number>()
@@ -234,7 +262,7 @@ export const computeReachability = (
 
     sites.forEach((site, levelIndex) => {
       const ref: SiteRef = { journeyId, levelIndex }
-      const siteResult = reachableFloorsInSite(ref, site, ownedFacts, undefined, resolveRequirements, cache)
+      const siteResult = reachableFloorsInSite(ref, site, ownedFacts, undefined, resolveRequirements, cache, support)
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
       for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)
