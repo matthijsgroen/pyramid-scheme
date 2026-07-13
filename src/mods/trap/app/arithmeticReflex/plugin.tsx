@@ -4,6 +4,7 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import { TrapFamilyShell } from "@/mods/trap/app/TrapFamilyShell"
 import { generate, type ArithmeticQuestion } from "@/mods/trap/game/arithmeticReflex/generate"
 import { ARITHMETIC_REFLEX_META } from "@/mods/trap/game/arithmeticReflex/meta"
+import { isModEnabled } from "@/mods/registeredMods"
 
 type ChallengeProps = {
   question: ArithmeticQuestion
@@ -86,8 +87,12 @@ const ArithmeticReflexFamily: FamilyPlugin<ArithmeticQuestion>["Component"] = ({
   />
 )
 
-registerFamily({
-  meta: ARITHMETIC_REFLEX_META,
-  generate: (seed, ctx) => generate(seed, ctx.difficulty ?? "starter"),
-  Component: ArithmeticReflexFamily,
-})
+// Gated on the mod: registerAllFamilies imports this file unconditionally (static side-effect),
+// so the enablement check lives here — trap off → no plugin in the registry → a trap-tagged room
+// resolves via the family-absence pass-through (SiteMapScreen) instead of rendering a challenge.
+if (isModEnabled("trap"))
+  registerFamily({
+    meta: ARITHMETIC_REFLEX_META,
+    generate: (seed, ctx) => generate(seed, ctx.difficulty ?? "starter"),
+    Component: ArithmeticReflexFamily,
+  })

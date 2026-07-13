@@ -1,6 +1,5 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
-import { ARITHMETIC_REFLEX_META } from "./trap/game/arithmeticReflex/meta"
 import { SUMPLETE_META } from "./puzzle/game/sumplete/meta"
 import { CROCODILE_META } from "./puzzle/game/crocodile/meta"
 import { FEZ_SHOP_META } from "./shop/game/fezShop/meta"
@@ -15,7 +14,6 @@ import { MOD_FAMILY_META } from "./registeredMods"
 // families are listed directly; descriptor-migrated mods (e.g. hieroglyph's tableau) contribute
 // via MOD_FAMILY_META and drop out when the mod leaves REGISTERED_MODS.
 export const ALL_FAMILY_META: FamilyMeta[] = [
-  ARITHMETIC_REFLEX_META,
   SUMPLETE_META,
   CROCODILE_META,
   FEZ_SHOP_META,
