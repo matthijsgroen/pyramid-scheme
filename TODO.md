@@ -169,7 +169,9 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - [ ] health methods → `useTrapProgress` — NOT done. `takeTrapDamage`/`canAttemptTrap`/heal/
             restore still in core `useProgression` (dormant when trap off). Ownership polish, not
             toggle-off-critical. Decide: extract now vs defer.
-      - [ ] consumable expert+-path eligibility (design) — still on all puzzle paths (see 3a note).
+      - [x] consumable expert+-path eligibility: `ConsumableSpec.eligible` (trap sets tier ≥ expert).
+            Consumables now only on expert/master/wizard sections (368: 70/123/175), none on
+            starter/junior. Guard holds; junk backfills the vacated low-tier slots.
 - [ ] shop — Slice 4. Money distribution + economy guard move here from core; Fez shop family; may
       pull shop encounters from Increment 2 forward (per-instance shop capacity via the encounter dist).
 - [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler

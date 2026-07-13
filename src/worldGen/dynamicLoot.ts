@@ -5,11 +5,15 @@ import { hashStr, rollMoney } from "./rewards"
 import { sellablesForDifficulty } from "../data/sellables"
 import { mulberry32, shuffle } from "../game/random"
 
-// A mod's consumable contribution: how dense (fraction of a site's puzzle slots carry one) and
-// which type (the mod's own rarity roll). Trap owns it (src/mods/trap); when the trap mod is off
-// no spec is injected, so the consumable-role slots stay empty (→ junk/empty). Core keeps the
-// per-site layout (the density design); the mod owns only the fill.
-export type ConsumableSpec = { fraction: number; roll: (seed: string) => ConsumableType }
+// A mod's consumable contribution: how dense (fraction of a site's puzzle slots carry one),
+// which type (rarity roll), and which slots are eligible (e.g. expert+ paths only — traps arrive
+// at expert). Trap owns it (src/mods/trap); when the trap mod is off no spec is injected, so no
+// consumables are placed. Core keeps the per-site layout (density); the mod owns the fill + rule.
+export type ConsumableSpec = {
+  fraction: number
+  roll: (seed: string) => ConsumableType
+  eligible?: (slot: Slot) => boolean
+}
 
 // The dynamic loot pass (distribution-primitive-design.md, pass 5). Runs after gating + capped
 // placement, over whatever slots are left. Junk is filler: it can go in ANY loot-bearing slot,
@@ -32,10 +36,9 @@ const byTier = (slots: Slot[]): Map<Tier, Slot[]> => {
   return m
 }
 
-// Money + consumables into puzzle-chain slots, per owning site — a single shuffle over a site's
-// puzzle slots slices the consumable/money quotas off the front. With the trap mod on the layout
-// (and thus money placement) is unchanged from the retired assignPuzzleRewards; with it off the
-// consumable quota is 0 and those slots fall through to empty/junk. Returns the still-empty slots.
+// Money + consumables into puzzle-chain slots, per owning site — one shuffle per site, off which
+// consumables claim their eligible quota first and money claims the rest. Trap off → no consumable
+// quota, so those slots fall through to empty/junk. Returns the still-empty slots.
 const fillPuzzleLoot = (puzzleSlots: Slot[], consumables: ConsumableSpec | undefined): Slot[] => {
   const bySite = new Map<string, Slot[]>()
   for (const slot of puzzleSlots)
@@ -49,17 +52,21 @@ const fillPuzzleLoot = (puzzleSlots: Slot[], consumables: ConsumableSpec | undef
       Array.from({ length: n }, (_, i) => i),
       mulberry32(hashStr(`${siteId}:puzzleRewards`))
     )
+    // Consumables claim eligible slots (e.g. expert+ paths) first, up to their quota; money then
+    // claims from what's left. Both walk the same shuffle so they stay disjoint and deterministic.
     const consumableCount = consumables ? Math.round(n * consumables.fraction) : 0
     const moneyCount = Math.round(n * MONEY_FRACTION)
-    const kindBySeq = new Map<number, "consumable" | "money">()
-    shuffled.slice(0, consumableCount).forEach(i => kindBySeq.set(i, "consumable"))
-    shuffled.slice(consumableCount, consumableCount + moneyCount).forEach(i => kindBySeq.set(i, "money"))
+    const eligibleSeqs = consumables
+      ? shuffled.filter(seq => !consumables.eligible || consumables.eligible(slots[seq]))
+      : []
+    const consumableSeqs = new Set(eligibleSeqs.slice(0, consumableCount))
+    const moneySeqs = new Set(shuffled.filter(seq => !consumableSeqs.has(seq)).slice(0, moneyCount))
 
     slots.forEach((slot, seq) => {
       const seed = `${siteId}:puzzleReward:${seq}`
-      const kind = kindBySeq.get(seq)
-      if (kind === "consumable" && consumables) slot.assign({ type: "consumable", consumable: consumables.roll(seed) })
-      else if (kind === "money") slot.assign({ type: "money", amount: rollMoney(seed) })
+      if (consumableSeqs.has(seq) && consumables)
+        slot.assign({ type: "consumable", consumable: consumables.roll(seed) })
+      else if (moneySeqs.has(seq)) slot.assign({ type: "money", amount: rollMoney(seed) })
       else empty.push(slot)
     })
   }

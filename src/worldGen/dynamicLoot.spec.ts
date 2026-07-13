@@ -50,6 +50,15 @@ describe("assignDynamicLoot", () => {
     expect(runPuzzle("site-x", 30)).not.toEqual(runPuzzle("site-y", 30))
   })
 
+  it("honors the consumable eligible filter — none on ineligible slots", () => {
+    // All slots here are starter; an expert+ eligible rule places zero consumables (money still).
+    const out: (TreasureReward | undefined)[] = new Array(40).fill(undefined)
+    const set = new Set<Slot>(Array.from({ length: 40 }, (_, i) => puzzleSlot("site-e", i, r => (out[i] = r))))
+    assignDynamicLoot(set, { ...CONSUMABLES, eligible: s => s.tier !== "starter" })
+    expect(out.some(r => r?.type === "consumable")).toBe(false)
+    expect(out.some(r => r?.type === "money")).toBe(true)
+  })
+
   it("places no consumables when no spec is injected (trap off)", () => {
     const out: (TreasureReward | undefined)[] = new Array(40).fill(undefined)
     const set = new Set<Slot>(Array.from({ length: 40 }, (_, i) => puzzleSlot("site-off", i, r => (out[i] = r))))
