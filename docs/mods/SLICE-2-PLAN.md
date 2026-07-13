@@ -66,6 +66,8 @@ Consequences:
 - **Fragments move into the ledger** — today counts live in `useProgression`,
   separate from the `inventory` ledger. Move to ledger buckets like other
   currencies so the generic Collection renderer + toggle-off work uniformly.
+  CONFIRMED do-it-this-slice (app-side session), WITH save-data handling —
+  touches useProgression/useDetector/SiteMapScreen/RewardFlow/Collection.
 - **Collection stays a shared core screen** (already renders treasures + junk +
   hieroglyphs). The hieroglyph *section* becomes driven by a registered
   `CurrencyMeta` collection-visibility flag (spec §"key role and collection

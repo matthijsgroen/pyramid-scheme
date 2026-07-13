@@ -60,11 +60,33 @@ Escalation ladder: starter (see locked content) → junior (bonus floors) →
 expert (intro traps + floor keys) → master (deepen: multi-color + chains,
 hazardous returns) → wizard (saturate all).
 
-## Slices 2+ (re-planned after mosaic)
+## Slice 2 — hieroglyph (first gating currency) — IN PROGRESS
 
-- [ ] tableau / hieroglyph — first gating currency (hard toggle-off)
+Plan + decisions: `docs/mods/SLICE-2-PLAN.md`. Handover: `docs/mods/HANDOVER.md`.
+Branch `mods/hieroglyph-currency` (7 commits, not pushed).
+
+World-gen half DONE (711 green, world byte-identical):
+- [x] move `mods/tableau` → `mods/hieroglyph` (family id stays `tableau`)
+- [x] descriptor + registration (currencyDistributions, families, currencyMeta[], showInCollection)
+- [x] DSL authors preference not baked currency + unified bucket grammar `<cur>`/`<cur>:<inst>`
+- [x] reachability: inject gate threshold + reward→bucket harvest (core names no hieroglyph)
+- [x] move HIEROGLYPH_REQUIRED/TOMB_SYMBOLS/FRAGMENT_MATRIX into the mod; serializer injected
+- [x] reward-count validation derived from registered currencies (toggle-off safe)
+- [x] winnability hard-fail (lock with no owning currency)
+
+App-side half TODO (next session — the larger/riskier chunk):
+- [ ] gate tableau family registration on isModEnabled (registerAllFamilies unconditional today)
+- [ ] family-absence fallback (tableau room → pass-through render)
+- [ ] fragments → ledger (save-data migration — USER CONFIRMED do-it-this-slice)
+- [ ] Collection hieroglyph section from registered CurrencyMeta, gated
+- [ ] gate/move the hieroglyphFragment reward handler
+- [ ] TOGGLE-OFF PROOF + full suite + real generate-world (the gate)
+
+## Slices 3+ (re-planned after hieroglyph)
+
 - [ ] trap — perks (grant/consume split), consumables, HUD
-- [ ] shop — money, depends on puzzle/core economy
+- [ ] shop — money, depends on puzzle/core economy; unblocks the capacity/eagerness slot model
+      (shop cap6/eager0 + shop-targeting placement rule) the hieroglyph shop-stock fragments want
 - [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive) — last
 
 ## Frozen until modules land (do not extend)
