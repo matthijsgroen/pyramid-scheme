@@ -1,11 +1,7 @@
 import { useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { hieroglyphRequired } from "@/data/generatedWorld"
-import type { ConsumableType } from "@/game/siteTypes"
 import { createLedger, type LedgerState } from "@/game/ledger/ledger"
-import { trapDamage, canAttemptTrap } from "@/game/traps/trapHealth"
-
-type ConsumableInventory = { bandage: number; oil: number; trapTool: number }
 
 export type PerkState = {
   armorStacks: number // 0–2
@@ -28,8 +24,9 @@ const INITIAL_TRAP_PERKS: TrapPerks = { armorStacks: 0, trapInsightStacks: 0, pa
 const INITIAL_PUZZLE_PERKS: PuzzlePerks = { scribesEyeLevel: 0 }
 const INITIAL_CORE_PERKS: CorePerks = { compassLevel: 0, consumableDetectorLevel: 0, detectionLevel: 0 }
 
-// money/health/mosaicPiece — the ledger-backed currencies (see src/game/ledger).
-const DEFAULT_LEDGER: LedgerState = { money: 0, health: 6, mosaicPiece: 0 }
+// money/mosaicPiece — the ledger-backed currencies (see src/game/ledger). Health is NOT here:
+// it's trap-only, so it lives in the trap mod's own state (src/mods/trap/app/useTrapProgress).
+const DEFAULT_LEDGER: LedgerState = { money: 0, mosaicPiece: 0 }
 
 type ProgressionState = {
   // "hieroglyphId:pieceIndex" entries — inventory-as-truth for chest loot
@@ -39,7 +36,6 @@ type ProgressionState = {
   collectedMapPieces: Record<string, number>
   // journeyIds whose map-piece chest has been opened — inventory-as-truth for the journey list badge
   mapPieceJourneys: string[]
-  consumables: ConsumableInventory
   trapPerks: TrapPerks
   puzzlePerks: PuzzlePerks
   corePerks: CorePerks
@@ -55,15 +51,12 @@ const AUTO_DISCOVERED_TOMBS = [
   "wizard_treasure_tomb",
 ]
 
-const consumableCarryCap = (packMuleLevel: number) => (packMuleLevel >= 1 ? 4 : 2)
-
 const initialState: ProgressionState = {
   collectedFragments: [],
   tombKeys: {},
   discoveredTombs: AUTO_DISCOVERED_TOMBS,
   collectedMapPieces: {},
   mapPieceJourneys: [],
-  consumables: { bandage: 0, oil: 0, trapTool: 0 },
   trapPerks: INITIAL_TRAP_PERKS,
   puzzlePerks: INITIAL_PUZZLE_PERKS,
   corePerks: INITIAL_CORE_PERKS,
@@ -88,17 +81,6 @@ export type ProgressionAPI = {
   mapPieceCount: (tombId: string) => number
   hasMapPiece: (journeyId: string) => boolean
   markMapPieceFound: (journeyId: string) => void
-  currentHealth: number
-  maxHealth: number
-  canAttemptTrap: () => boolean
-  takeTrapDamage: (armorStacks: number) => void
-  heal: (halfHearts: number) => void
-  healToFull: () => void
-  consumables: ConsumableInventory
-  consumableCarryCap: number
-  isConsumablePackFull: () => boolean
-  addConsumable: (type: ConsumableType) => boolean // false if at cap
-  useConsumable: (type: ConsumableType) => void
   perks: PerkState
   money: number
   addMoney: (amount: number) => void
@@ -182,60 +164,6 @@ export const useProgression = (): ProgressionAPI => {
             ? prev
             : { ...prev, mapPieceJourneys: [...(prev.mapPieceJourneys ?? []), journeyId] }
         ),
-      currentHealth: ledger.get("health"),
-      maxHealth: trapPerks.maxHealth,
-      canAttemptTrap: () => canAttemptTrap(ledger.get("health")),
-      takeTrapDamage: armorStacks =>
-        setState(prev => {
-          const prevLedger = prev.ledger ?? DEFAULT_LEDGER
-          return {
-            ...prev,
-            ledger: { ...prevLedger, health: Math.max(0, prevLedger.health - trapDamage(armorStacks)) },
-          }
-        }),
-      heal: halfHearts =>
-        setState(prev => {
-          const prevLedger = prev.ledger ?? DEFAULT_LEDGER
-          const maxHealth = (prev.trapPerks ?? INITIAL_TRAP_PERKS).maxHealth
-          return { ...prev, ledger: { ...prevLedger, health: Math.min(maxHealth, prevLedger.health + halfHearts) } }
-        }),
-      healToFull: () =>
-        setState(prev => {
-          const maxHealth = (prev.trapPerks ?? INITIAL_TRAP_PERKS).maxHealth
-          return { ...prev, ledger: { ...(prev.ledger ?? DEFAULT_LEDGER), health: maxHealth } }
-        }),
-      consumables: state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 },
-      consumableCarryCap: consumableCarryCap(trapPerks.packMuleLevel),
-      isConsumablePackFull: () => {
-        const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
-        const cap = consumableCarryCap(trapPerks.packMuleLevel)
-        return inv.bandage + inv.oil + inv.trapTool >= cap
-      },
-      addConsumable: type => {
-        const inv = state.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
-        const cap = consumableCarryCap(trapPerks.packMuleLevel)
-        if (inv.bandage + inv.oil + inv.trapTool >= cap) return false
-        setState(prev => {
-          const c = prev.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
-          return { ...prev, consumables: { ...c, [type]: c[type] + 1 } }
-        })
-        return true
-      },
-      useConsumable: type =>
-        setState(prev => {
-          const c = prev.consumables ?? { bandage: 0, oil: 0, trapTool: 0 }
-          if (c[type] <= 0) return prev
-          const next = { ...c, [type]: c[type] - 1 }
-          const prevLedger = prev.ledger ?? DEFAULT_LEDGER
-          const maxHealth = (prev.trapPerks ?? INITIAL_TRAP_PERKS).maxHealth
-          const healed =
-            type === "bandage"
-              ? Math.min(maxHealth, prevLedger.health + 2)
-              : type === "oil"
-                ? maxHealth
-                : prevLedger.health
-          return { ...prev, consumables: next, ledger: { ...prevLedger, health: healed } }
-        }),
       perks: {
         armorStacks: trapPerks.armorStacks,
         trapInsightStacks: trapPerks.trapInsightStacks,

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { FEZ_SHOP_META } from "@/mods/shop/game/fezShop/meta"
 import { useModState } from "@/app/state/useModState"
+import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
 import { FezContext } from "@/app/fez/context"
 import { FezShop } from "@/ui/organisms/FezShop"
 import { rewardEmoji, rewardText } from "@/app/SiteMap/rewardDisplay"
@@ -23,6 +24,7 @@ const freshStock = (): ShopStock => ({
 // closes via onCancel and never onSolved (which would auto-grant ctx.reward for free).
 const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, inventory, applyReward, onCancel }) => {
   const { t } = useTranslation(["common", "sellables"])
+  const trap = useTrapProgress() // consumables are trap-owned
   const fez = use(FezContext)
   const [greeted, setGreeted] = useState(false)
   const [modState, setModState] = useModState<ShopModState>("shop", { stockByEdge: {} })
@@ -64,7 +66,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   const buyConsumable = (type: keyof typeof CONSUMABLE_PRICES) => {
     if (stock[type] <= 0) return
     if (!progression.spendMoney(CONSUMABLE_PRICES[type])) return
-    const added = progression.addConsumable(type)
+    const added = trap.addConsumable(type)
     if (!added) {
       progression.addMoney(CONSUMABLE_PRICES[type]) // pack was full — refund
       return

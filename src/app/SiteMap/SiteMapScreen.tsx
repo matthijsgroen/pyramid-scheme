@@ -21,6 +21,7 @@ import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
 import { isModEnabled } from "@/mods/registeredMods"
+import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
 import { ShopBalance } from "@/ui/atoms/ShopBalance"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
@@ -45,6 +46,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const { isDevelopMode } = use(DevelopContext)
   const journeys = useJourneys()
   const progression = useProgression()
+  const trap = useTrapProgress()
   const inventory = useInventory()
   const detector = useDetector(progression, journeys)
   const allEdges = journeys.getExploredSections(journeyId)
@@ -135,7 +137,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const useRenderPuzzleFallback = activeEncounter != null && encounterFamily == null && renderPuzzle != null
 
   // Applies a claimed reward to game state; pack-full/dedup checks happen at each call site.
-  const applyReward = useApplyReward(progression, inventory, journeyId)
+  const applyReward = useApplyReward(progression, inventory, journeyId, trap)
 
   // The one thing core does on any solved encounter, for every family alike: mark the room
   // explored and offer its reward, if it has one.
@@ -155,7 +157,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const alreadyCollected =
         reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
       if (alreadyCollected) return
-      const packFull = reward.type === "consumable" && progression.isConsumablePackFull()
+      const packFull = reward.type === "consumable" && trap.isConsumablePackFull()
       if (packFull) {
         journeys.markConsumableSkipped(edgeId)
         setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
@@ -163,7 +165,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       }
       setPendingReward({ reward, onCollect: () => applyReward(reward) })
     },
-    [grid, journeys, currentFloor, progression, applyReward]
+    [grid, journeys, currentFloor, progression, trap, applyReward]
   )
 
   const handleEncounterCancel = useCallback(() => setActiveEncounter(null), [])
@@ -208,14 +210,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         ) {
           const reward = cell.reward
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
-            if (progression.isConsumablePackFull()) {
+            if (trap.isConsumablePackFull()) {
               setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
               return
             }
             setPendingReward({
               reward,
               onCollect: () => {
-                progression.addConsumable(reward.consumable)
+                trap.addConsumable(reward.consumable)
                 journeys.clearConsumableSkipped(edgeId)
               },
             })
@@ -267,7 +269,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         }
       }
     },
-    [grid, journeys, journeyId, currentFloor, progression, explorerPos, scheduleArrival, seed, siteConfig]
+    [grid, journeys, journeyId, currentFloor, trap, explorerPos, scheduleArrival, seed, siteConfig]
   )
 
   const ActiveEncounterComponent = encounterFamily?.Component ?? null
@@ -311,8 +313,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           {/* Health + consumables are trap-owned — gone when the trap mod is off. */}
           {isModEnabled("trap") && (
             <>
-              <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
-              <ConsumableBar consumables={progression.consumables} />
+              <HealthDisplay currentHealth={trap.currentHealth} maxHealth={trap.maxHealth} />
+              <ConsumableBar consumables={trap.consumables} />
             </>
           )}
           <ShopBalance amount={progression.money} label={t("money.label")} />

@@ -56,15 +56,18 @@ registerRewardHandler({
   text: t => ({ itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }),
 })
 
-registerRewardHandler({
-  type: "consumable",
-  apply: (reward, { progression }) => progression.addConsumable(reward.consumable),
-  emoji: "🔷", // no dedicated icon; text().icon below picks the consumable's own
-  text: (reward, t) => ({
-    itemName: t(`chest.consumable.${reward.consumable}`),
-    icon: CONSUMABLE_EMOJI[reward.consumable as ConsumableType],
-  }),
-})
+// Gated on the trap mod: consumables are trap-owned, so with trap off world-gen places no
+// consumable rewards and this handler would only dangle. addConsumable lives on the trap state.
+if (isModEnabled("trap"))
+  registerRewardHandler({
+    type: "consumable",
+    apply: (reward, { trapProgress }) => trapProgress.addConsumable(reward.consumable),
+    emoji: "🔷", // no dedicated icon; text().icon below picks the consumable's own
+    text: (reward, t) => ({
+      itemName: t(`chest.consumable.${reward.consumable}`),
+      icon: CONSUMABLE_EMOJI[reward.consumable as ConsumableType],
+    }),
+  })
 
 registerRewardHandler({
   type: "money",

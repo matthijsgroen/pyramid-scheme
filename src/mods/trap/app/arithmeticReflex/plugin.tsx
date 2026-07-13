@@ -71,7 +71,6 @@ const ArithmeticReflexComponent: FC<ChallengeProps> = ({ question, timeLimit, on
 const ArithmeticReflexFamily: FamilyPlugin<ArithmeticQuestion>["Component"] = ({
   puzzle,
   ctx,
-  progression,
   journeys,
   onSolved,
   onCancel,
@@ -79,7 +78,6 @@ const ArithmeticReflexFamily: FamilyPlugin<ArithmeticQuestion>["Component"] = ({
   <TrapFamilyShell
     question={puzzle}
     ctx={ctx}
-    progression={progression}
     journeys={journeys}
     onSolved={onSolved}
     onCancel={onCancel}

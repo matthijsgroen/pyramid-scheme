@@ -1,5 +1,6 @@
 import type { TreasureReward, ConsumableType } from "@/game/siteTypes"
 import type { ProgressionAPI } from "@/app/state/useProgression"
+import type { TrapProgressAPI } from "@/mods/trap/app/useTrapProgress"
 
 export type TFn = (key: string, opts?: Record<string, unknown>) => string
 export type RewardText = { itemName: string; itemDescription?: string; icon: string }
@@ -10,7 +11,13 @@ export type RewardText = { itemName: string; itemDescription?: string; icon: str
 export const CONSUMABLE_EMOJI: Record<ConsumableType, string> = { bandage: "🩹", oil: "🫙", trapTool: "🔧" }
 
 type InventoryAPI = { addItem: (id: string, count: number) => void }
-type ApplyCtx = { progression: ProgressionAPI; inventory: InventoryAPI; journeyId: string }
+// trapProgress carries trap-owned state (health + consumables); the consumable handler uses it.
+type ApplyCtx = {
+  progression: ProgressionAPI
+  inventory: InventoryAPI
+  journeyId: string
+  trapProgress: TrapProgressAPI
+}
 
 export type RewardHandler<R extends TreasureReward = TreasureReward> = {
   type: R["type"]

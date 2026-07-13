@@ -166,9 +166,13 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - [x] stage 4 — HUD gated: HealthDisplay + ConsumableBar hidden when trap off (all consumables
             are trap-owned — oil=full heal, bandage=1 heart, trapTool=disarm).
       - [x] perks DISREGARDED (grants no-op) — health uses constant maxHealth 6, no perk seam.
-      - [ ] health methods → `useTrapProgress` — NOT done. `takeTrapDamage`/`canAttemptTrap`/heal/
-            restore still in core `useProgression` (dormant when trap off). Ownership polish, not
-            toggle-off-critical. Decide: extract now vs defer.
+      - [x] health + consumables → `useTrapProgress` (trap mod state, useModState). Health left the
+            shared ledger (it's trap-only); consumable inventory left ProgressionState. Methods
+            (currentHealth/maxHealth/canAttemptTrap/takeTrapDamage/consumables/carry-cap/add/use) all
+            trap-owned. Consumers rewired: TrapFamilyShell, SiteMapScreen (HUD + pickup, via the
+            trap hook), fezShop buy, and the `consumable` reward handler (gated on trap, reads
+            `ctx.trapProgress`). Dead `heal`/`healToFull` dropped. Persistence: health/consumables
+            move to the `mod-trap` key → one-time reset for existing saves (no data loss elsewhere).
       - [x] consumable expert+-path eligibility: `ConsumableSpec.eligible` (trap sets tier ≥ expert).
             Consumables now only on expert/master/wizard sections (368: 70/123/175), none on
             starter/junior. Guard holds; junk backfills the vacated low-tier slots.

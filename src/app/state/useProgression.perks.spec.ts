@@ -23,13 +23,13 @@ const { useProgression } = await import("./useProgression")
 describe("applyTreasurePerk (perks disregarded)", () => {
   it("leaves every perk at baseline — grants do nothing", async () => {
     const { result } = renderHook(() => useProgression())
-    const before = { ...result.current.perks, maxHealth: result.current.maxHealth }
+    const before = { ...result.current.perks }
     await act(async () => result.current.applyTreasurePerk("expert_a_4")) // armor
     await act(async () => result.current.applyTreasurePerk("starter_a_4")) // max-health
     await act(async () => result.current.applyTreasurePerk("master_a_4")) // compass
     await act(async () => result.current.applyTreasurePerk("master_b_2")) // scribes-eye
-    expect({ ...result.current.perks, maxHealth: result.current.maxHealth }).toEqual(before)
-    expect(result.current.maxHealth).toBe(6)
+    expect(result.current.perks).toEqual(before)
     expect(result.current.perks.armorStacks).toBe(0)
+    expect(result.current.perks.scribesEyeLevel).toBe(0)
   })
 })
