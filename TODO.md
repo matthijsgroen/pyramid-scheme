@@ -119,21 +119,23 @@ Scope when picked up:
 
 Perk UPGRADES are parked (above); the trap slice excludes them but is otherwise NOT blocked.
 
-- [ ] Slice 3a — filler-loot generalization (UNFREEZE, per user). Consumables are probabilistic
-      filler loot (`puzzleRewards.ts` bakes `{type:"consumable"}`/money quotas), not capped-currency
-      slots — so mod-owning them needs the filler-loot pass to become mod-contributed. Generalize:
-      mods contribute filler-loot providers (kind + weight/rate + roller); core distributes across
-      puzzle/filler slots by asking registered providers; a mod off → its kind isn't offered → slots
-      go to the remaining providers. Drive it FROM the trap need (vertical anchor — NOT a speculative
-      horizontal core rewrite; see doom-loop memory + TARGET). Needs a design/plan doc first.
+- [ ] Slice 3a — the Distribution primitive (DESIGNED — `docs/mods/filler-loot-generalization-design.md`).
+      Unfreezing filler-loot became the unified loot model + MERGED Slice 5. Every loot kind is a
+      `Distribution` with a footprint (min/max slots) + eligibility + rank; **core allocates slots,
+      the mod fills them itself** (owns its variants/rarity/completeness — core never rolls a
+      variant). Capped currencies = exact footprint; money/junk/consumables = flexible; gating =
+      worklist. Plus an authorable **empty** quota (% of X). Settled: unify with Distribution; empty
+      = % of X, authorable; money = footprint-only validation; junk completeness (≥1 each) hard-fail.
+      Gate is no longer byte-identical (OQ1) — it's builds + hard-fail invariants + economy solvent.
+      Implementation is large (see design doc §sequencing) — a fresh multi-step effort.
 - [ ] Slice 3b — trap. Scope: trap encounter family + health (trap-owned currency, value stays in
-      shared ledger, methods → `useTrapProgress`) + consumables (trap-owned filler provider, on 3a)
-      + HUD (HealthDisplay/ConsumableBar gated). **Excludes the 4 trap perk upgrades** (max-health,
-      armor, pack-mule, trap-insight) — parked with the perk system; trap logic READS those perk
-      values from the still-core slice (documented seam). Decisions settled: health trap-owned;
-      consumables trap-owned.
-- [ ] shop — money currency (mosaic/hieroglyph pattern), Fez shop family.
-- [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive).
+      shared ledger, methods → `useTrapProgress`) + consumables (trap-owned Distribution, on 3a)
+      + HUD (HealthDisplay/ConsumableBar gated). **Excludes the 4 trap perk upgrades** — parked with
+      the perk system; trap logic READS those perk values from the still-core slice (documented
+      seam). Decisions settled: health trap-owned; consumables trap-owned.
+- [ ] shop — money Distribution moves here from core (Slice 4), Fez shop family.
+- [ ] ~~`siteAssembler` core-loop rewrite~~ — MERGED into 3a's Distribution primitive (topology/
+      encounter distribution may still be a follow-on step; see design doc OQ4).
 - [ ] Perk & detector system (see above) — unblocks the trap perk upgrades + revives DET-1. Last.
 
 ## Frozen until modules land (do not extend)
