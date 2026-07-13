@@ -1,16 +1,13 @@
 import type { FC } from "react"
-import { use, useEffect, useMemo, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
-import { useInventoryCategory } from "@/app/translations/useInventoryTranslations"
 import { useTreasureCategory } from "@/app/translations/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { getCurrencyMeta } from "@/game/ledger/currencyRegistry"
-import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "../state/useJourneys"
-import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import { type Difficulty } from "@/data/difficultyLevels"
 import { ALL_SELLABLES } from "@/data/sellables"
 import { difficultyByMaterialTier } from "@/data/treasures"
 import { FezContext } from "../fez/context"
@@ -20,18 +17,11 @@ import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
-
-type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
+import { collectionSections, type CollectionItem } from "./collectionSectionRegistry"
+// Side-effect: registers every enabled mod's Collection section into the registry
+import "@/mods/registerAllCollectionSections"
 
 type TreasureCategory = "merchantCache" | "nobleVault" | "templeSecrets" | "ancientRelics" | "mythicalArtifacts"
-
-type InventoryItem = {
-  id: string
-  symbol: string
-  name: string
-  description: string
-  effectDescription?: string
-}
 
 // Map treasure categories to their corresponding difficulty levels
 const treasureCategoryToDifficulty: Record<TreasureCategory, Difficulty> = {
@@ -42,56 +32,10 @@ const treasureCategoryToDifficulty: Record<TreasureCategory, Difficulty> = {
   mythicalArtifacts: "wizard",
 }
 
-const CategorySection: FC<{
-  category: InventoryCategory
-  onItemClick: (item: InventoryItem) => void
-  selectedItem: InventoryItem | null
-  inventory: Record<string, number | undefined>
-  hieroglyphFragments: Record<string, number>
-}> = ({ category, onItemClick, selectedItem, inventory, hieroglyphFragments }) => {
-  const { t } = useTranslation("common")
-  const { hieroglyphProgress } = useProgression()
-  const items = useInventoryCategory(category)
-  const sortedItems = useMemo(
-    () =>
-      items.slice().sort((a, b) => {
-        const levelA = difficulties.indexOf(getItemFirstLevel(a.id))
-        const levelB = difficulties.indexOf(getItemFirstLevel(b.id))
-        return (levelA || 0) - (levelB || 0)
-      }),
-    [items]
-  )
-
-  return (
-    <CollectionSection title={t(`collection.categories.${category}`)} accent="purple">
-      <CategoryGrid>
-        {sortedItems.map(item => {
-          const itemLevel = getItemFirstLevel(item.id)
-          const fragmentsFound = hieroglyphFragments[item.id] ?? 0
-          const required = hieroglyphProgress(item.id).required
-          const isCollected = inventory[item.id] !== undefined || fragmentsFound >= required
-          const state = !itemLevel ? "empty" : isCollected ? "collected" : fragmentsFound > 0 ? "partial" : "empty"
-          return (
-            <CollectibleSlot
-              key={item.id}
-              state={state}
-              symbol={item.symbol}
-              difficulty={itemLevel}
-              progress={{ found: fragmentsFound, required }}
-              selected={selectedItem?.id === item.id}
-              onClick={() => onItemClick(item)}
-            />
-          )
-        })}
-      </CategoryGrid>
-    </CollectionSection>
-  )
-}
-
 const TreasureCategorySection: FC<{
   category: TreasureCategory
-  onItemClick: (item: InventoryItem) => void
-  selectedItem: InventoryItem | null
+  onItemClick: (item: CollectionItem) => void
+  selectedItem: CollectionItem | null
   treasures: Record<string, number | undefined>
 }> = ({ category, onItemClick, selectedItem, treasures }) => {
   const { t } = useTranslation("common")
@@ -118,8 +62,8 @@ const TreasureCategorySection: FC<{
 }
 
 const SellableCategorySection: FC<{
-  onItemClick: (item: InventoryItem) => void
-  selectedItem: InventoryItem | null
+  onItemClick: (item: CollectionItem) => void
+  selectedItem: CollectionItem | null
   inventory: Record<string, number | undefined>
 }> = ({ onItemClick, selectedItem, inventory }) => {
   const { t } = useTranslation(["common", "sellables"])
@@ -151,7 +95,7 @@ const SellableCategorySection: FC<{
 }
 
 const DetailPanel: FC<{
-  item: InventoryItem | null
+  item: CollectionItem | null
   debug?: boolean
   onAdd?: () => void
 }> = ({ item, debug = false, onAdd }) => {
@@ -197,10 +141,9 @@ const DetailPanel: FC<{
 
 export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
-  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null)
   const { getJourney } = useJourneys()
   const { inventory, addItem } = useInventory()
-  const { hieroglyphFragments } = useProgression()
   const { isDevelopMode } = use(DevelopContext)
 
   const { showConversation } = use(FezContext)
@@ -211,15 +154,12 @@ export const CollectionPage: FC = () => {
     }
   }, [inventory, showConversation])
 
-  const handleItemClick = (item: InventoryItem) => {
+  const handleItemClick = (item: CollectionItem) => {
     setSelectedItem(item)
   }
 
   const hasCollectedItems = Object.values(inventory).some(value => value !== undefined)
   const hasCompletedTomb = (tombId: string) => (getJourney(tombId)?.completionCount ?? 0) > 0
-  // The hieroglyph fragment currency opts into this grid via showInCollection; its meta is only
-  // registered while the hieroglyph mod is on, so this is false when the mod is toggled off.
-  const showHieroglyphCollection = getCurrencyMeta("fragment")?.showInCollection ?? false
 
   return (
     <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="center">
@@ -271,41 +211,11 @@ export const CollectionPage: FC = () => {
 
           <SellableCategorySection onItemClick={handleItemClick} selectedItem={selectedItem} inventory={inventory} />
 
-          {/* Hieroglyph fragment categories — shown only when a currency opts into the collection
-              grid (hieroglyph mod on). Registered metas drop with their mod, so this hides itself
-              when the mod is toggled off. */}
-          {showHieroglyphCollection && (
-            <>
-              <CategorySection
-                category="deities"
-                onItemClick={handleItemClick}
-                selectedItem={selectedItem}
-                inventory={inventory}
-                hieroglyphFragments={hieroglyphFragments}
-              />
-              <CategorySection
-                category="professions"
-                onItemClick={handleItemClick}
-                selectedItem={selectedItem}
-                inventory={inventory}
-                hieroglyphFragments={hieroglyphFragments}
-              />
-              <CategorySection
-                category="animals"
-                onItemClick={handleItemClick}
-                selectedItem={selectedItem}
-                inventory={inventory}
-                hieroglyphFragments={hieroglyphFragments}
-              />
-              <CategorySection
-                category="artifacts"
-                onItemClick={handleItemClick}
-                selectedItem={selectedItem}
-                inventory={inventory}
-                hieroglyphFragments={hieroglyphFragments}
-              />
-            </>
-          )}
+          {/* Mod-contributed sections. Each registers itself gated on its mod, so a section drops
+              out when its mod is toggled off — core names none here. */}
+          {collectionSections().map(section => (
+            <section.Component key={section.id} selectedItem={selectedItem} onSelect={handleItemClick} />
+          ))}
         </div>
         {hasCollectedItems && (
           <DetailPanel

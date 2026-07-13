@@ -1,8 +1,8 @@
 # Design — mod-owned Collection sections, design-system extraction, detector revival
 
-Status: draft for review. Scope decided with the user: (1) make the hieroglyph
-Collection section **mod-owned** (not a core conditional render), (2) build
-Collection sections/tiles from **design-system primitives**.
+Status: **DS-1 + MOD-1 shipped; DET-1 deferred.** Scope decided with the user:
+(1) make the hieroglyph Collection section **mod-owned** (not a core conditional
+render), (2) build Collection sections/tiles from **design-system primitives**.
 
 **Detector/compass revival is OUT OF SCOPE for now** — it's shipped-but-dead
 (`availableHieroglyphs={[]}`), endgame, and the riskiest, most independent piece.
@@ -241,16 +241,20 @@ its own step.
 
 ## 6. Sequencing (two slices, each independently shippable)
 
-1. **DS-1 — design-system primitives.** Add `CollectibleSlot`,
+1. **DS-1 — design-system primitives. ✅ DONE.** Added `CollectibleSlot`,
    `CollectionSection`, `CategoryGrid`, `difficultyColors` tokens + stories.
-   Refactor `Collection.tsx`'s existing three sections to use them (no behavior
-   change, treasure/junk re-verified). Pure core cleanup; no mod work yet.
-2. **MOD-1 — mod-owned hieroglyph section.** Add the collection-section registry
-   + aggregator; move the hieroglyph section into `mods/hieroglyph/app/`, built
-   on DS-1 primitives, gated on `isModEnabled`. Toggle-off proof: section is
-   gone with core naming no hieroglyph.
+   Refactored `Collection.tsx`'s three sections onto them. `CategoryGrid` ended
+   up auto-fitting fixed-width tiles with a gap-based density knob (the original
+   fixed-column breakpoints were fragile). Also fixed the invisible-selection bug
+   (clip-safe drop-shadow outline). No intended visual change to unselected tiles.
+2. **MOD-1 — mod-owned hieroglyph section. ✅ DONE.** Added
+   `collectionSectionRegistry.ts` + `registerAllCollectionSections.ts`
+   (aggregator); moved the section into `mods/hieroglyph/app/`, gated on
+   `isModEnabled`. Toggle-off proven: section gone + app builds + core Collection
+   names no hieroglyph. A registered section gets only `{selectedItem, onSelect}`
+   and self-sources its own hooks (the narrow contract, Q2).
 
-DS-1 unblocks MOD-1. Each ends green + (for MOD-1) a toggle-off proof.
+Both shipped green with a toggle-off proof.
 
 **DET-1 (detector revival) — deferred, out of scope.** When picked up: hoist or
 persist detector state; add target-picking on Collection; rewrite provider
