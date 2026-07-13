@@ -192,9 +192,10 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - [x] stage 2 — HUD-widget registry (trap HUD out of SiteMapScreen). `913c923`
       - [x] stage 3 — mod-owned reward effects (rewardContributions): consumable effect + pack-full
             canAccept are trap contributions; ApplyCtx.trapProgress + the isModEnabled gates gone. `18e7886`
-      - [ ] stage 4 (optional tidiness) — fold `registerAllFamilies` + `registerAllCollectionSections`
-            into the per-mod app entrypoints so there's ONE app manifest (registerModApps). Not
-            required for the clean-cut property.
+      - [x] stage 4 — ONE app manifest. Each mod has an `app/index.ts` entrypoint importing its own
+            plugins/section/screen/HUD/reward; `registerModApps` imports the six entrypoints;
+            `registerAllFamilies` + `registerAllCollectionSections` deleted. SiteMapScreen /
+            Collection / the spec import `registerModApps`.
 - [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler
       `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline encounter-tag authoring
       into `encounter`-pass distributions with per-instance config. Completes the B target.

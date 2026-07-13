@@ -7,9 +7,9 @@ import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 // placement. Toggle off by removing it from src/mods/registeredMods.ts — trap-tagged rooms then
 // resolve via the family-absence pass-through (SiteMapScreen), and no consumables are placed.
 //
-// Game-side only (no React) — the trap challenge Component registers app-side
-// (registerAllFamilies → trap/app/arithmeticReflex/plugin), gated on this mod being enabled.
-// Health currency and the HUD land in later stages of Slice 3b.
+// Game-side only (no React). The app contributions — the challenge Component, the HUD widget,
+// and the consumable reward effect — register via the trap app entrypoint (src/mods/trap/app,
+// pulled in by registerModApps), gated on this mod being enabled.
 export const trapMod: ModDescriptor = {
   id: "trap",
   families: [ARITHMETIC_REFLEX_META],

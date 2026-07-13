@@ -26,8 +26,8 @@ import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-// Side-effect: registers every mod's family plugin
-import "@/mods/registerAllFamilies"
+// Side-effect: registers every mod's app contributions (families, HUD, reward effects, …)
+import "@/mods/registerModApps"
 
 type Props = {
   journeyId: string

@@ -5,7 +5,7 @@ import type { FloorGrid, FloorConfig, CorridorCell, RoomCell } from "@/game/site
 import { encodeEdge, useAssembledFloor } from "./useAssembledFloor"
 // useAssembledFloor resolves families through the real registry — populate it, same as
 // SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
-import "@/mods/registerAllFamilies"
+import "@/mods/registerModApps"
 
 const OPPOSITE_DIR: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
 const DIR_MOVE: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }

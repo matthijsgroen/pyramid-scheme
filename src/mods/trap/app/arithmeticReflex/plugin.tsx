@@ -85,7 +85,7 @@ const ArithmeticReflexFamily: FamilyPlugin<ArithmeticQuestion>["Component"] = ({
   />
 )
 
-// Gated on the mod: registerAllFamilies imports this file unconditionally (static side-effect),
+// Gated on the mod: registerModApps imports this file unconditionally (static side-effect),
 // so the enablement check lives here — trap off → no plugin in the registry → a trap-tagged room
 // resolves via the family-absence pass-through (SiteMapScreen) instead of rendering a challenge.
 if (isModEnabled("trap"))

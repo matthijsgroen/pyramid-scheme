@@ -53,7 +53,7 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
   )
 }
 
-// Gated on the mod: registerAllFamilies imports this file unconditionally (static side-effect),
+// Gated on the mod: registerModApps imports this file unconditionally (static side-effect),
 // so the enablement check lives here — mod off → no tableau plugin in the registry → the room
 // resolves via the family-absence pass-through instead of rendering the puzzle.
 if (isModEnabled("hieroglyph"))

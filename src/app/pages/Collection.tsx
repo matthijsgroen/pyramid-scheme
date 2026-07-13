@@ -19,7 +19,7 @@ import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 import { collectionSections, type CollectionItem } from "./collectionSectionRegistry"
 // Side-effect: registers every enabled mod's Collection section into the registry
-import "@/mods/registerAllCollectionSections"
+import "@/mods/registerModApps"
 
 type TreasureCategory = "merchantCache" | "nobleVault" | "templeSecrets" | "ancientRelics" | "mythicalArtifacts"
 

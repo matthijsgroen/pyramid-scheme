@@ -8,7 +8,7 @@ import { TABLEAU_META } from "./game/meta"
 // ../modDescriptor. Toggle off by removing this from src/mods/registeredMods.ts.
 //
 // Game-side only (no React). The tableau room's React Component + runtime generate register
-// app-side (registerAllFamilies → ./app/plugin), gated on this mod being enabled.
+// app-side (registerModApps → ./app/plugin), gated on this mod being enabled.
 export const hieroglyphMod: ModDescriptor = {
   id: "hieroglyph",
   currencyDistributions: [HIEROGLYPH_CURRENCY],

@@ -11,7 +11,7 @@ import type { FamilyMeta } from "@/game/families/familyMeta"
 //
 // Game-side only (no React) — registeredMods.ts is imported by world-gen scripts, so the
 // descriptor must never pull in app/UI. A mod's SCREEN / room Component is wired app-side
-// (Base.tsx, registerAllFamilies), gated on the mod being enabled. Fields grow as slices need
+// (Base.tsx, registerModApps), gated on the mod being enabled. Fields grow as slices need
 // them — do not add a field before a mod that uses it.
 export type ModDescriptor = {
   id: string
@@ -21,7 +21,7 @@ export type ModDescriptor = {
   // fragments. Injected into placeFragments' worklist via allCurrencyDistributions.ts.
   currencyDistributions?: CurrencyDistribution[]
   // Game-side encounter-family metadata (tags, rewardWeight, resolveKeyRequirements). The
-  // React Component + runtime generate register app-side (registerAllFamilies), gated on this
+  // React Component + runtime generate register app-side (registerModApps), gated on this
   // mod — this descriptor stays React-free. Merged into allFamilyMeta.ts.
   families?: FamilyMeta[]
   // Currency display/ownership metadata for the ledger + collection UI — one or many.

@@ -1,9 +1,12 @@
-// Side-effect: each registered mod's app entrypoint registers its app-side contributions
-// (screens, and — as the clean-cut slice lands — HUD widgets and reward effects) into the core
-// registries. This is the single app-side enumeration point; core UI iterates the registries and
-// names no mod. Import it once, high in the app tree (Base). See docs/mods/app-plugins-design.md.
-//
-// A mod's entrypoint self-gates on isModEnabled, so removing a mod from REGISTERED_MODS drops its
-// app contributions without editing core.
+// The single app-side manifest (side-effect). Each mod's app entrypoint registers ALL its app
+// contributions — family plugins, screen, HUD widgets, reward contributions, Collection section —
+// into the core registries, self-gating on isModEnabled where the mod is toggleable. Core UI reads
+// the registries and names no mod; this is the one place the app enumerates mods. Import it once,
+// high in the app tree (Base) and anywhere the registries must be populated (SiteMapScreen,
+// Collection, tests). See docs/mods/app-plugins-design.md.
+import "./core/app"
 import "./mosaic/app"
+import "./hieroglyph/app"
+import "./puzzle/app"
 import "./trap/app"
+import "./shop/app"

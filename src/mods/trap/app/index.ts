@@ -3,6 +3,7 @@ import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { isModEnabled } from "@/mods/registeredMods"
 import { TrapHud } from "./TrapHud"
 import { useTrapProgress } from "./useTrapProgress"
+import "./arithmeticReflex/plugin" // the trap encounter family (self-gated)
 
 // Trap's app-side registration (side-effect), self-gated on the mod being enabled:
 // - the HUD widget (health + consumables),

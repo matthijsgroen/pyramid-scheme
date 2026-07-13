@@ -9,7 +9,7 @@ import { MOD_FAMILY_META } from "./registeredMods"
 
 // Every registered family's metadata, domain-layer only (no Component/generate) — the one
 // place world-gen (which can't import the app-layer family registry) can read tags/
-// rewardWeight. Kept in sync with app/registerAllFamilies.ts's plugin registrations by each
+// rewardWeight. Kept in sync with app/registerModApps.ts's plugin registrations by each
 // plugin importing its meta from here rather than declaring its own copy. The still-legacy
 // families are listed directly; descriptor-migrated mods (e.g. hieroglyph's tableau) contribute
 // via MOD_FAMILY_META and drop out when the mod leaves REGISTERED_MODS.
