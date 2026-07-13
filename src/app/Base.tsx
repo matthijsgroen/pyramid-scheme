@@ -1,8 +1,8 @@
 import { BaseHeader } from "@/components/BaseHeader"
 import { TravelPage } from "@/app/pages/Travel"
 import { CollectionPage } from "@/app/pages/Collection"
-import { MosaicPage } from "@/mods/mosaic/app/MosaicPage"
-import { isModEnabled } from "@/mods/registeredMods"
+import { modScreens } from "@/app/pages/screenRegistry"
+import "@/mods/registerModApps"
 import { use, useEffect } from "react"
 import { FezContext } from "./fez/context"
 
@@ -21,7 +21,9 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
       <div className="flex w-full flex-1 snap-x snap-mandatory flex-row justify-around overflow-x-scroll overscroll-contain bg-gradient-to-b from-blue-100 to-blue-300">
         <TravelPage startGame={startGame} />
         <CollectionPage />
-        {isModEnabled("mosaic") && <MosaicPage />}
+        {modScreens().map(({ id, Component }) => (
+          <Component key={id} />
+        ))}
       </div>
     </div>
   )
