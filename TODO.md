@@ -185,6 +185,11 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - economy guard (`validate.ts` shopPrices + TOTAL_CONSUMABLE_BUYABLE) moves to shop.
       - Fez shop family + descriptor + register + toggle-off.
       - may pull shop encounters from Increment 2 forward (per-instance shop capacity).
+- [ ] App-side mod plugins — the CLEAN CUT (design: `docs/mods/app-plugins-design.md`). Screen +
+      HUD-widget + reward-effect registries + a per-mod `app.tsx` entrypoint + one app manifest, so
+      core UI names/imports no mod. Kills every `isModEnabled` in core (Base mosaic screen,
+      SiteMapScreen trap HUD, registerRewardHandlers hieroglyph/trap) and the `@/mods/*` imports in
+      core (MosaicPage, useTrapProgress, ApplyCtx.trapProgress). Do before shop so shop lands clean.
 - [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler
       `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline encounter-tag authoring
       into `encounter`-pass distributions with per-instance config. Completes the B target.
