@@ -2,11 +2,8 @@ import { useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { hieroglyphRequired } from "@/data/generatedWorld"
 import type { ConsumableType } from "@/game/siteTypes"
-import { TREASURE_PERKS } from "@/data/treasurePerks"
 import { createLedger, type LedgerState } from "@/game/ledger/ledger"
-import { getPerkMeta, type PerkSlice } from "@/game/perks/perkRegistry"
 import { trapDamage, canAttemptTrap } from "@/game/traps/trapHealth"
-import "./registerPerks"
 
 type ConsumableInventory = { bandage: number; oil: number; trapTool: number }
 
@@ -71,12 +68,6 @@ const initialState: ProgressionState = {
   puzzlePerks: INITIAL_PUZZLE_PERKS,
   corePerks: INITIAL_CORE_PERKS,
   ledger: DEFAULT_LEDGER,
-}
-
-const PERK_SLICE_DEFAULTS: Record<PerkSlice, Record<string, number>> = {
-  trapPerks: INITIAL_TRAP_PERKS,
-  puzzlePerks: INITIAL_PUZZLE_PERKS,
-  corePerks: INITIAL_CORE_PERKS,
 }
 
 export type ProgressionAPI = {
@@ -153,19 +144,12 @@ export const useProgression = (): ProgressionAPI => {
       ),
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
-      // Grant side (core-owned authored data: treasureId -> perk id/level, see data/treasurePerks.ts)
-      // reads which slice/field the perk registry says it belongs to and writes the bumped
-      // value there — no perk name is hardcoded here, that knowledge lives only in the registry.
-      applyTreasurePerk: treasureId =>
-        setState(prev => {
-          const perk = TREASURE_PERKS[treasureId]
-          const meta = perk && getPerkMeta(perk.type)
-          if (!meta) return prev
-          const slice = (prev[meta.slice] ?? PERK_SLICE_DEFAULTS[meta.slice]) as Record<string, number>
-          const grantedLevel = "level" in perk ? perk.level : undefined
-          const next = meta.bump(slice[meta.field] ?? 0, grantedLevel)
-          return { ...prev, [meta.slice]: { ...slice, [meta.field]: next } }
-        }),
+      // The perk system is disregarded pending its redesign (user decision): treasure-granted
+      // stat perks (armor/max-health/pack-mule/trap-insight, compass/detector/detection,
+      // scribes-eye) do nothing, so every perk stays at its baseline (maxHealth 6, armor 0, …).
+      // The perk registry (src/game/perks) + registerPerks stay as dormant anchors for the
+      // redesign; only this grant is stubbed. Restore the registry-driven bump here to revive.
+      applyTreasurePerk: () => {},
       tombKeyIds: new Set(Object.keys(state.tombKeys)),
       isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
       discoverTomb: tombJourneyId =>

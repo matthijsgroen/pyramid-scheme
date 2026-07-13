@@ -17,50 +17,19 @@ vi.mock("@/support/useGameStorage", () => ({
 
 const { useProgression } = await import("./useProgression")
 
-describe("applyTreasurePerk", () => {
-  it("armor (trap) increments armorStacks, capped at 2", async () => {
-    const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("expert_a_4"))
-    expect(result.current.perks.armorStacks).toBe(1)
-    await act(async () => result.current.applyTreasurePerk("expert_a_4"))
-    await act(async () => result.current.applyTreasurePerk("expert_a_4"))
-    expect(result.current.perks.armorStacks).toBe(2)
-  })
-
-  it("pack-mule (trap) sets packMuleLevel to 1, idempotently", async () => {
-    const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("starter_a_3"))
-    await act(async () => result.current.applyTreasurePerk("starter_a_3"))
-    expect(result.current.perks.packMuleLevel).toBe(1)
-  })
-
-  it("max-health (trap) raises the public maxHealth field, capped at 12", async () => {
-    const { result } = renderHook(() => useProgression())
-    expect(result.current.maxHealth).toBe(6)
-    await act(async () => result.current.applyTreasurePerk("starter_a_4"))
-    expect(result.current.maxHealth).toBe(7)
-  })
-
-  it("compass (core) raises compassLevel to the granted level, never lowers it", async () => {
-    const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("master_a_4")) // level 2
-    expect(result.current.perks.compassLevel).toBe(2)
-    await act(async () => result.current.applyTreasurePerk("starter_a_2")) // level 1
-    expect(result.current.perks.compassLevel).toBe(2)
-  })
-
-  it("scribes-eye (puzzle) surfaces through the same merged perks object as trap/core perks", async () => {
-    const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("master_b_2")) // level 1
-    expect(result.current.perks.scribesEyeLevel).toBe(1)
-  })
-
-  it("none/location-key/tier-unlock treasures don't touch any perk", async () => {
+// The perk system is disregarded pending redesign — applyTreasurePerk is a no-op, so every perk
+// stays at its baseline no matter which treasure is granted. (The registry-driven grant behavior
+// this used to assert returns when perks are redesigned.)
+describe("applyTreasurePerk (perks disregarded)", () => {
+  it("leaves every perk at baseline — grants do nothing", async () => {
     const { result } = renderHook(() => useProgression())
     const before = { ...result.current.perks, maxHealth: result.current.maxHealth }
-    await act(async () => result.current.applyTreasurePerk("junior_a_2")) // none
-    await act(async () => result.current.applyTreasurePerk("expert_a_2")) // location-key
-    await act(async () => result.current.applyTreasurePerk("junior_a_1")) // tier-unlock
+    await act(async () => result.current.applyTreasurePerk("expert_a_4")) // armor
+    await act(async () => result.current.applyTreasurePerk("starter_a_4")) // max-health
+    await act(async () => result.current.applyTreasurePerk("master_a_4")) // compass
+    await act(async () => result.current.applyTreasurePerk("master_b_2")) // scribes-eye
     expect({ ...result.current.perks, maxHealth: result.current.maxHealth }).toEqual(before)
+    expect(result.current.maxHealth).toBe(6)
+    expect(result.current.perks.armorStacks).toBe(0)
   })
 })

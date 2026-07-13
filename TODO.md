@@ -100,13 +100,21 @@ Design: `docs/mods/collection-and-detector-design.md`.
 - [ ] DET-1 — detector revival — folded into the Perk & detector system item below (detectors
       ARE perks). See design doc §3C + Appendix A.
 
-## Perk & detector system — DESIGN then BUILD, AFTER the mod refactor (parked)
+## Perk & detector system — DISREGARDED pending a full redesign (user decision)
 
-One combined work item (per user). Detectors are perks (compass / consumable-detector / detection
-live in `corePerks`), and trap owns 4 perks (armor, max-health, trap-insight, pack-mule) — so "how
-a mod contributes perks" and "revive the detector" are the same design problem. Deliberately parked
-until the other slices land, so the perk system is designed once, cleanly, with all its stakeholders
-known.
+The perk system is now DISREGARDED app-wide: `applyTreasurePerk` is a no-op (useProgression), so
+every perk stays at baseline (maxHealth 6, armor 0, compass/detector/scribes-eye 0…). Treasures
+that grant stat perks do nothing for now. The registry (`src/game/perks`) + `registerPerks` stay
+loaded (main.tsx) as dormant anchors; restoring the registry-driven bump in `applyTreasurePerk`
+revives them. This unblocked trap/health from the parked-perk seam — health uses a constant
+maxHealth, no perk reads.
+
+REDESIGN scope (when picked up): detectors are perks (compass / consumable-detector / detection),
+trap owns 4 perks (armor, max-health, trap-insight, pack-mule) — "how a mod contributes perks" and
+"revive the detector" (DET-1) are one design problem. Open fork: does the grant path write through
+the registry to mod-owned slice state (dynamic `PerkSlice`/defaults), or a gated side-effect leaving
+slices in core? DET-1 detector revival rides on top (target-picking on Collection, counter-native
+provider search, reachability-aware).
 
 Scope when picked up:
 - A perk-contribution mechanism mods use (the open fork: does `applyTreasurePerk`'s grant path
