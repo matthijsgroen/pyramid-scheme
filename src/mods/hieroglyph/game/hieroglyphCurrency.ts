@@ -8,7 +8,7 @@ import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { tableauLevels } from "@/data/tableaus"
 
 // The hieroglyph-fragment currency, owned by the tableau mod (not core world-gen) —
-// docs/mods-architecture.md, "Currencies are mod-owned, not a closed core vocabulary".
+// docs/mods/ARCHITECTURE.md, "Currencies are mod-owned, not a closed core vocabulary".
 // This is the currency's own authored placement preference (the doc's step 2a), the one
 // piece of domain knowledge ("which tier, which ward keys, how many") the generic
 // worklist in src/worldGen/placeFragments.ts never needs to know.

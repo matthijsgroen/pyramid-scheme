@@ -199,7 +199,7 @@ export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): voi
 // Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
 // order affordable; only the world-wide totals matter. Throws at build, not at runtime.
 // This is a hand-walked, shop-specific version of a more general "dependency read as guard"
-// mechanism docs/mods-architecture.md describes — a mechanic declaring a dependency on
+// mechanism docs/mods/ARCHITECTURE.md describes — a mechanic declaring a dependency on
 // another's output, with the sum-check falling out of the dependency graph instead of being
 // hand-rolled per feature. Not generalizing yet; a pointer for whoever does.
 export const validateEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void => {

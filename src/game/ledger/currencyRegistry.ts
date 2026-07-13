@@ -1,5 +1,5 @@
 // Generic bucket-store metadata — core doesn't know what any currency id means,
-// it only tracks who owns it and how it should be displayed. See docs/mods-architecture.md.
+// it only tracks who owns it and how it should be displayed. See docs/mods/ARCHITECTURE.md.
 export type CurrencyMeta = {
   id: string
   ownerMod: string

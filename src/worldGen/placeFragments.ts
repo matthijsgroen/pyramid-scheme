@@ -13,7 +13,7 @@ import { journeys as REAL_JOURNEYS } from "../data/journeys"
 // discovered blocking right now, grown as each placement unblocks further reachability and
 // reveals new locks — never a precomputed, exhaustive demand list. This module owns none of
 // the "which currency, how many, which candidates score higher" knowledge — that's mod-owned
-// (docs/mods-architecture.md, "Currencies are mod-owned, not a closed core vocabulary"),
+// (docs/mods/ARCHITECTURE.md, "Currencies are mod-owned, not a closed core vocabulary"),
 // injected as CurrencyDistribution values by whoever has access to the real mod registry
 // (src/mods/allCurrencyDistributions.ts, consumed by scripts/generateWorld.ts) — this module
 // never imports src/mods/ directly.

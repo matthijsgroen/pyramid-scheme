@@ -18,8 +18,8 @@ export type FamilyMeta = {
   tags: string[]
   icon: string
   color: string
-  // Priority for the reward-weight fill-order allocator (docs/mods-architecture.md step 4,
-  // folded into the keys-and-locks solver's placement model) — 0-100 scale, higher fills
+  // Priority for the reward-weight fill-order allocator (docs/mods/ARCHITECTURE.md's placement
+  // pipeline, folded into the keys-and-locks solver's placement model) — 0-100 scale, higher fills
   // first, 0 = never eligible for this pool. Treasure (100) always has loot and fills
   // first; a plain puzzle room (60) only gets what's left once treasure's guaranteed slots
   // are spoken for; a gate/trap/shop/tableau (0) either isn't a reward candidate at all or

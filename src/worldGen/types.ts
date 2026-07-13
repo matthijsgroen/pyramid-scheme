@@ -8,7 +8,7 @@ export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 export type ConsumableType = "bandage" | "oil" | "trapTool"
 // Mirrors game/siteTypes.ts's TreasureReward — same closed-union growth concern, see the
-// comment there and docs/mods-architecture.md.
+// comment there and docs/mods/ARCHITECTURE.md.
 export type TreasureReward =
   | { type: "mosaicPiece" }
   | { type: "mapPiece"; tombId: string }

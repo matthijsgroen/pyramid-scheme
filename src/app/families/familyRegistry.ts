@@ -63,7 +63,7 @@ export const allFamilies = (): FamilyPlugin[] => [...registry.values()]
 // A single string is an exact id or a single tag. An array requires every listed tag
 // present at once (authoring "AND": the time puzzles AND the sun puzzles AND the water
 // traps). First-registered-family-wins among matches — not weighted selection (that's
-// docs/mods-architecture.md step 5's Distribution primitive).
+// docs/mods/ARCHITECTURE.md's Distribution primitive).
 export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin | undefined => {
   if (typeof idOrTag === "string") {
     const exact = registry.get(idOrTag)

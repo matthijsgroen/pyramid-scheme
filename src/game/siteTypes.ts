@@ -2,7 +2,7 @@ export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "portal" | "fork" | "encounter"
 export type ConsumableType = "bandage" | "oil" | "trapTool"
 // Closed union — grows by one variant per new reward/currency (money, sellable were the
-// latest). docs/mods-architecture.md proposes collapsing this into a currency-id registry;
+// latest). docs/mods/ARCHITECTURE.md proposes collapsing this into a currency-id registry;
 // see that doc before adding a variant here for what's replacing this pattern.
 export type TreasureReward =
   | { type: "mosaicPiece" }

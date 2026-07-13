@@ -2,7 +2,7 @@ export type PerkSlice = "trapPerks" | "puzzlePerks" | "corePerks"
 
 // Grant (which treasure maps to which perk, at which level) is authored core data
 // (data/treasurePerks.ts) — this registry is the consume side: where a perk's value
-// lives and how a new grant combines with the current value. See docs/mods-architecture.md.
+// lives and how a new grant combines with the current value. See docs/mods/ARCHITECTURE.md.
 export type PerkMeta = {
   id: string
   ownerMod: string
