@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { assignDynamicLoot } from "./dynamicLoot"
+import { assignDynamicLoot, type ConsumableSpec } from "./dynamicLoot"
 import type { Slot } from "./slots"
 import type { TreasureReward } from "./types"
+
+// Stand-in for the trap mod's consumable spec — same density as production, fixed type.
+const CONSUMABLES: ConsumableSpec = { fraction: 441 / 1714, roll: () => "bandage" }
 
 const puzzleSlot = (siteId: string, seq: number, sink: (r: TreasureReward) => void): Slot => ({
   ref: { journeyId: siteId, levelIndex: 0, floorIndex: 0 },
@@ -28,7 +31,7 @@ const endSlot = (tier: Slot["tier"], sink: (r: TreasureReward) => void): Slot =>
 const runPuzzle = (siteId: string, n: number): (TreasureReward | undefined)[] => {
   const out: (TreasureReward | undefined)[] = new Array(n).fill(undefined)
   const set = new Set<Slot>(Array.from({ length: n }, (_, i) => puzzleSlot(siteId, i, r => (out[i] = r))))
-  assignDynamicLoot(set)
+  assignDynamicLoot(set, CONSUMABLES)
   return out
 }
 
@@ -45,6 +48,14 @@ describe("assignDynamicLoot", () => {
     // Regression guard (moved from buildSite): placement is keyed by siteId (journeyId:level),
     // so two sites of the same shape must not get identical reward layouts.
     expect(runPuzzle("site-x", 30)).not.toEqual(runPuzzle("site-y", 30))
+  })
+
+  it("places no consumables when no spec is injected (trap off)", () => {
+    const out: (TreasureReward | undefined)[] = new Array(40).fill(undefined)
+    const set = new Set<Slot>(Array.from({ length: 40 }, (_, i) => puzzleSlot("site-off", i, r => (out[i] = r))))
+    assignDynamicLoot(set) // no ConsumableSpec
+    expect(out.some(r => r?.type === "consumable")).toBe(false)
+    expect(out.some(r => r?.type === "money")).toBe(true) // money is core, still placed
   })
 
   it("puts money/consumables AND junk in a puzzle-only pool (junk is eager on empties)", () => {

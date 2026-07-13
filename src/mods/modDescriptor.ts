@@ -1,4 +1,5 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
+import type { ConsumableSpec } from "@/worldGen/dynamicLoot"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 
@@ -25,4 +26,8 @@ export type ModDescriptor = {
   families?: FamilyMeta[]
   // Currency display/ownership metadata for the ledger + collection UI — one or many.
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
+  // Consumable placement this mod owns (density + rarity roll) — the dynamic loot pass fills the
+  // consumable-role puzzle slots with it. Drops when the mod leaves REGISTERED_MODS (trap off →
+  // no consumables placed). Only one registered mod should contribute this.
+  consumables?: ConsumableSpec
 }

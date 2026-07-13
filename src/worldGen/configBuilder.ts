@@ -17,6 +17,7 @@ import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
+import type { ConsumableSpec } from "./dynamicLoot"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
@@ -232,7 +233,8 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
 export const buildConfigs = (
   resolveKeyRequirements?: ResolveKeyRequirements,
   currencies: CurrencyDistribution[] = [],
-  capped: CappedCurrency[] = []
+  capped: CappedCurrency[] = [],
+  consumables?: ConsumableSpec
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -246,7 +248,7 @@ export const buildConfigs = (
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  placeFragments(allConfigs, currencies, resolveKeyRequirements, capped)
+  placeFragments(allConfigs, currencies, resolveKeyRequirements, capped, consumables)
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, discovery graph solvability, and the shop economy guard. The

@@ -1,29 +1,30 @@
-import type { Tier } from "./types"
+import type { ConsumableType, Tier } from "./types"
 import type { Difficulty } from "../data/difficultyLevels"
 import type { Slot } from "./slots"
-import { GLOBAL_DEFAULTS } from "./spec/global"
-import { hashStr, rollConsumable, rollMoney } from "./rewards"
+import { hashStr, rollMoney } from "./rewards"
 import { sellablesForDifficulty } from "../data/sellables"
 import { mulberry32, shuffle } from "../game/random"
+
+// A mod's consumable contribution: how dense (fraction of a site's puzzle slots carry one) and
+// which type (the mod's own rarity roll). Trap owns it (src/mods/trap); when the trap mod is off
+// no spec is injected, so the consumable-role slots stay empty (→ junk/empty). Core keeps the
+// per-site layout (the density design); the mod owns only the fill.
+export type ConsumableSpec = { fraction: number; roll: (seed: string) => ConsumableType }
 
 // The dynamic loot pass (distribution-primitive-design.md, pass 5). Runs after gating + capped
 // placement, over whatever slots are left. Junk is filler: it can go in ANY loot-bearing slot,
 // filled by an eagerness ratio per slot type (docs/mods/SLICE-2-PLAN.md) — chests eagerly (all),
-// puzzle slots partially, traps/gates never. Consumables + money keep to puzzle chains. Core-owned
-// for now; consumables move to the trap mod (Slice 3b) and money to the shop mod (Slice 4).
+// puzzle slots partially, traps/gates never. Money stays core (→ shop mod, Slice 4); consumables
+// are trap-owned (injected).
 
-// Global design target: ~441/1714 puzzles carry a consumable, ~199/1714 carry loose money.
-const CONSUMABLE_FRACTION = 441 / 1714
+// Global design target: ~199/1714 puzzles carry loose money. Consumable density is the trap mod's
+// own number (ConsumableSpec.fraction), so it drops with the mod.
 const MONEY_FRACTION = 199 / 1714
 
 // Junk eagerness per slot kind (docs/mods/SLICE-2-PLAN.md: chest eager100, puzzle eager60,
 // gate/trap eager0). Chests take all leftover junk; puzzle chains take a fraction of their
 // still-empty slots, the rest stay empty (a puzzle with no loot). Traps/gates never bear junk.
 const JUNK_EAGERNESS: Record<Slot["kind"], number> = { end: 1, puzzle: 0.6 }
-
-// ponytail: one global consumable rate (spec/global). The DSL's per-site `consumableRates`
-// override is unused by any spec today; wire it onto the puzzle slot if a site ever needs its own.
-const RATES = GLOBAL_DEFAULTS.consumableRates
 
 const byTier = (slots: Slot[]): Map<Tier, Slot[]> => {
   const m = new Map<Tier, Slot[]>()
@@ -32,10 +33,10 @@ const byTier = (slots: Slot[]): Map<Tier, Slot[]> => {
 }
 
 // Money + consumables into puzzle-chain slots, per owning site — a single shuffle over a site's
-// puzzle slots slices the consumable/money quotas off the front (matches the retired
-// assignPuzzleRewards, so economy totals are unchanged). Returns the slots left empty, which the
-// junk pass may then partially claim.
-const fillPuzzleLoot = (puzzleSlots: Slot[]): Slot[] => {
+// puzzle slots slices the consumable/money quotas off the front. With the trap mod on the layout
+// (and thus money placement) is unchanged from the retired assignPuzzleRewards; with it off the
+// consumable quota is 0 and those slots fall through to empty/junk. Returns the still-empty slots.
+const fillPuzzleLoot = (puzzleSlots: Slot[], consumables: ConsumableSpec | undefined): Slot[] => {
   const bySite = new Map<string, Slot[]>()
   for (const slot of puzzleSlots)
     (bySite.get(slot.siteId!) ?? bySite.set(slot.siteId!, []).get(slot.siteId!)!).push(slot)
@@ -48,7 +49,7 @@ const fillPuzzleLoot = (puzzleSlots: Slot[]): Slot[] => {
       Array.from({ length: n }, (_, i) => i),
       mulberry32(hashStr(`${siteId}:puzzleRewards`))
     )
-    const consumableCount = Math.round(n * CONSUMABLE_FRACTION)
+    const consumableCount = consumables ? Math.round(n * consumables.fraction) : 0
     const moneyCount = Math.round(n * MONEY_FRACTION)
     const kindBySeq = new Map<number, "consumable" | "money">()
     shuffled.slice(0, consumableCount).forEach(i => kindBySeq.set(i, "consumable"))
@@ -57,7 +58,7 @@ const fillPuzzleLoot = (puzzleSlots: Slot[]): Slot[] => {
     slots.forEach((slot, seq) => {
       const seed = `${siteId}:puzzleReward:${seq}`
       const kind = kindBySeq.get(seq)
-      if (kind === "consumable") slot.assign({ type: "consumable", consumable: rollConsumable(seed, RATES) })
+      if (kind === "consumable" && consumables) slot.assign({ type: "consumable", consumable: consumables.roll(seed) })
       else if (kind === "money") slot.assign({ type: "money", amount: rollMoney(seed) })
       else empty.push(slot)
     })
@@ -95,12 +96,13 @@ const fillJunk = (chestSlots: Slot[], emptyPuzzleSlots: Slot[]): void => {
 }
 
 // Fills every remaining slot from `available` that bears loot (chests + eager puzzle share);
-// unclaimed empty puzzle slots stay empty. Clears `available`.
-export const assignDynamicLoot = (available: Set<Slot>): void => {
+// unclaimed empty puzzle slots stay empty. Clears `available`. `consumables` is the trap mod's
+// spec, or undefined when trap is off.
+export const assignDynamicLoot = (available: Set<Slot>, consumables?: ConsumableSpec): void => {
   const puzzle: Slot[] = []
   const chest: Slot[] = []
   for (const slot of available) (slot.kind === "puzzle" ? puzzle : chest).push(slot)
-  const emptyPuzzle = fillPuzzleLoot(puzzle)
+  const emptyPuzzle = fillPuzzleLoot(puzzle, consumables)
   fillJunk(chest, emptyPuzzle)
   available.clear()
 }

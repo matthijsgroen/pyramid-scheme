@@ -1,4 +1,5 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
+import type { ConsumableSpec } from "@/worldGen/dynamicLoot"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ModDescriptor } from "./modDescriptor"
 import { mosaicMod } from "./mosaic"
@@ -25,6 +26,10 @@ export const CURRENCY_DISTRIBUTIONS: CurrencyDistribution[] = REGISTERED_MODS.fl
 // Every mod-contributed encounter-family meta, merged with the still-legacy family metas in
 // allFamilyMeta.ts. A mod's families drop out of world-gen dispatch when it leaves this list.
 export const MOD_FAMILY_META: FamilyMeta[] = REGISTERED_MODS.flatMap(m => m.families ?? [])
+
+// The registered consumable placement (trap-owned). Undefined when no enabled mod contributes it
+// (trap off) → the dynamic loot pass places no consumables. Only one mod should own this.
+export const CONSUMABLES: ConsumableSpec | undefined = REGISTERED_MODS.find(m => m.consumables)?.consumables
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.

@@ -140,7 +140,12 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
             toggle-off (mosaic) solvable; 716 green.
       - [ ] `emptyFraction` knob SKIPPED (YAGNI) — leftover puzzle slots are the empties naturally
             (eager 0.6 fills the rest); add a real knob when an author wants to force chest empties.
-      - [ ] consumable dist still CORE — ownership hand-off to trap (3b) pending.
+      - [x] consumables → TRAP-OWNED (Slice 3b stage 2): `ModDescriptor.consumables` (density +
+            rarity roll), injected via `registeredMods.CONSUMABLES` → buildConfigs → dynamicLoot.
+            Core keeps the per-site layout; trap owns the fill. Trap ON = byte-identical (393
+            consumable / 176 money / 795 junk); trap OFF = 0 consumables, vacated slots eager-fill
+            junk (795→1030), guard holds. NOTE: expert+-path eligibility (design) NOT yet applied —
+            consumables still on all puzzle paths; fold in when refining.
       - [x] PART B: placement tier follows the slot's OWN floor/section difficulty, not the journey
             tier (`collectSlots`). A ward path/wing authored at a difficulty (e.g. `wardWing({tomb,
             index, tier})`) tiers its loot by that marker — expert "come back stronger" wings in a

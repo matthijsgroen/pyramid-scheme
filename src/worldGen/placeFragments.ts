@@ -3,7 +3,7 @@ import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
 import { collectSlots, type Slot } from "./slots"
 import { allocateDistributions, cappedToDistribution } from "./slotAllocator"
-import { assignDynamicLoot } from "./dynamicLoot"
+import { assignDynamicLoot, type ConsumableSpec } from "./dynamicLoot"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { journeys as REAL_JOURNEYS } from "../data/journeys"
 
@@ -108,7 +108,8 @@ export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
   resolveRequirements?: ResolveKeyRequirements,
-  capped: readonly CappedCurrency[] = []
+  capped: readonly CappedCurrency[] = [],
+  consumables?: ConsumableSpec
 ): void => {
   const slots = collectSlots(allConfigs)
   const available = new Set(slots)
@@ -240,7 +241,7 @@ export const placeFragments = (
   // allocator as flexible-footprint distributions in later steps (distribution-primitive-design.md).
   allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
-  // Phase 5: dynamic loot fills everything left — puzzle-chain slots get money/consumables,
-  // leftover path-end slots get junk (with ≥1-of-each completeness). See dynamicLoot.ts.
-  assignDynamicLoot(available)
+  // Phase 5: dynamic loot fills everything left — puzzle-chain slots get money + (trap-owned)
+  // consumables, leftover path-end slots get junk (with ≥1-of-each completeness). See dynamicLoot.ts.
+  assignDynamicLoot(available, consumables)
 }
