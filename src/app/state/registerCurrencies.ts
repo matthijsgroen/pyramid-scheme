@@ -4,7 +4,6 @@ import { REGISTERED_MODS } from "@/mods/registeredMods"
 
 const tombCount = journeys.filter(j => j.type === "treasure_tomb").length
 
-registerCurrency({ id: "health", ownerMod: "trap", displayName: "currency.health", icon: "❤️", kind: "counter" })
 registerCurrency({
   id: "mapPiece",
   ownerMod: "tomb-treasure",
@@ -17,7 +16,8 @@ registerCurrency({ id: "money", ownerMod: "shop", displayName: "currency.money",
 
 // Extracted mods contribute their own currency meta via their descriptor — toggling a mod off
 // (removing it from REGISTERED_MODS) drops its currency from the registry too. The hardcoded ones
-// above are mods not yet extracted (trap/tomb-treasure/shop); they move here as they land.
+// above are mods not yet extracted (tomb-treasure/shop); they move here as they land (trap already
+// contributes `health` via its descriptor).
 for (const mod of REGISTERED_MODS) {
   if (!mod.currencyMeta) continue
   const metas = Array.isArray(mod.currencyMeta) ? mod.currencyMeta : [mod.currencyMeta]

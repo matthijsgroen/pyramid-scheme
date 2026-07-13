@@ -1,6 +1,7 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { ARITHMETIC_REFLEX_META } from "./game/arithmeticReflex/meta"
 import { TRAP_CONSUMABLES } from "./game/consumables"
+import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 
 // The trap mod descriptor. Owns the arithmetic-reflex trap encounter family and consumable
 // placement. Toggle off by removing it from src/mods/registeredMods.ts — trap-tagged rooms then
@@ -13,4 +14,5 @@ export const trapMod: ModDescriptor = {
   id: "trap",
   families: [ARITHMETIC_REFLEX_META],
   consumables: TRAP_CONSUMABLES,
+  currencyMeta: HEALTH_CURRENCY_META,
 }
