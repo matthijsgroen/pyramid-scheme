@@ -88,13 +88,19 @@ The site assembler maps an authored encounter tag to a family
 through to a pass-through that resolves the room generically. So a room whose mod
 is off is never a dead end.
 
-### Reward-handler registry
-`src/app/SiteMap/rewardHandlerRegistry.ts` maps a `TreasureReward` type to an
-`apply(reward, ctx)` + display text. `ctx` (`ApplyCtx`) carries `progression`,
-`inventory`, `journeyId`, and `trapProgress`. `useApplyReward` builds the context
-from the live hooks; `registerRewardHandlers.ts` registers the handlers, each
-gated on the owning mod. Applying a reward is one seam shared by chest claims,
-puzzle-solve rewards, and shop purchases.
+### Reward claiming — handlers + contributions
+Two seams, so core never sees a mod's state:
+- `rewardHandlerRegistry.ts` maps a `TreasureReward` type to display text/emoji + an
+  optional `apply(reward, ctx)` for effects on CORE state only (`ctx` =
+  `progression`, `inventory`, `journeyId` — no mod state).
+- `rewardContributions.ts` — a mod registers a HOOK returning its reward `effects`
+  (state writes reading the mod's own hooks) + an optional `canAccept` (e.g. a full
+  consumable pack refuses one). `useMergedRewardContributions` merges every
+  contribution in a stable order.
+
+`useApplyReward` runs the core handler's `apply` plus the merged mod effects; the
+site-map screen uses `canAccept` for the pack-full pickup guard. One claim seam,
+shared by chest claims, puzzle-solve rewards, and shop purchases — core names no mod.
 
 ### Perk registry
 `src/game/perks/perkRegistry.ts` maps a treasure-granted perk id to the slice +
@@ -127,11 +133,26 @@ the reward). Core allocates; the mod fills — it never rolls a variant.
 Component uses it for state that is neither a ledger currency nor a perk (e.g. a
 reveal-animation counter, a health + consumable pack).
 
-### Collection + screens
-`src/app/pages/collectionSectionRegistry.ts` lets a mod contribute a section to
-the shared Collection screen; sections source their own data via hooks, so the
-screen names no mod. A mod's full-screen UI is wired in `src/app/pages/Base.tsx`,
-gated on `isModEnabled`.
+### Screens, HUD widgets, collection sections
+Three parallel component registries a mod pushes into, so core UI iterates and
+names no mod:
+- `src/app/pages/screenRegistry.ts` — full-screen pages; `Base.tsx` renders the
+  registered screens (e.g. the mosaic screen) beside core's Travel/Collection.
+- `src/app/SiteMap/hudRegistry.ts` — site-map HUD widgets, ordered; `SiteMapScreen`
+  renders them (e.g. the trap health + consumable widget).
+- `src/app/pages/collectionSectionRegistry.ts` — Collection-screen sections.
+
+Each contributed component reads its own mod state via hooks, so core imports none
+of them. A mod registers these in its app entrypoint (below).
+
+### App entrypoint + manifest
+Each mod has an app-side entrypoint (`src/mods/<id>/app`, React) separate from the
+React-free descriptor. It self-gates on `isModEnabled` and registers the mod's
+screen, HUD widgets, and reward contributions into the registries above.
+`src/mods/registerModApps.ts` side-effect-imports the entrypoints — the app-side
+enumeration point. Core UI reads the registries and never imports a mod: `src/app`
+and `src/game` contain no `isModEnabled("<mod>")` branch and no `@/mods/<name>`
+import.
 
 ## Lifecycle — what fires when
 
@@ -156,24 +177,26 @@ Three distinct phases; mod contributions enter at a different seam in each.
 
 ### App boot — side-effect registration
 `src/main.tsx` imports the registration modules for their side effects, once:
-`registerCurrencies` (descriptor `currencyMeta` loop + core currencies),
-`registerPerks`. Family plugins register via `registerAllFamilies` (self-gated
-imports) and collection sections via `registerAllCollectionSections`, pulled in
-where family resolution / the Collection screen need them. After boot the
-registries are populated; a mod absent from `REGISTERED_MODS` never registered.
+`registerCurrencies` (descriptor `currencyMeta` loop + core currencies) and
+`registerPerks`. Each mod's app entrypoint (`registerModApps` → `mods/<id>/app`)
+registers its screen / HUD widget / reward contribution, self-gated on
+`isModEnabled`; family plugins register via `registerAllFamilies` and collection
+sections via `registerAllCollectionSections` (aggregators pending the fold into
+`registerModApps`). After boot the registries are populated; a mod absent from
+`REGISTERED_MODS` registered nothing.
 
 ### Per encounter — runtime (`SiteMapScreen`)
-1. The screen holds the live state hooks: `useProgression` (ledger + core
-   progression), `useTrapProgress` (trap health/consumables), `useInventory`,
-   `useJourneys`.
+1. The screen holds the live core state hooks (`useProgression`, `useInventory`,
+   `useJourneys`) and the merged reward contributions — it does not call any mod
+   hook directly.
 2. The site assembler turns the baked config into a room grid; `resolveEncounter`
    maps each encounter tag to a registered family.
 3. Entering an encounter room: the family's `generate(seed, ctx)` produces the
    puzzle, its `Component` renders. If the family isn't registered (mod off), the
    absence pass-through resolves the room instead.
-4. On solve/claim: `useApplyReward` looks up the reward handler and calls
-   `apply(reward, ctx)` with `{ progression, inventory, journeyId, trapProgress }`;
-   the handler writes to the ledger / progression / trap state.
+4. On solve/claim: `useApplyReward` runs the core handler's `apply` (core state)
+   plus the merged mod reward effects (each closing over its own mod state) — so a
+   consumable's `addConsumable` happens without core knowing trap exists.
 5. State changes persist through `useGameStorage` / `useModState` — core state
    under its key, each mod's state under `pyramid-scheme-mod-<id>`.
 
