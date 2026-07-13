@@ -176,8 +176,15 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - [x] consumable expert+-path eligibility: `ConsumableSpec.eligible` (trap sets tier ≥ expert).
             Consumables now only on expert/master/wizard sections (368: 70/123/175), none on
             starter/junior. Guard holds; junk backfills the vacated low-tier slots.
-- [ ] shop — Slice 4. Money distribution + economy guard move here from core; Fez shop family; may
-      pull shop encounters from Increment 2 forward (per-instance shop capacity via the encounter dist).
+- [ ] shop — Slice 4. The whole money economy is shop-owned:
+      - money currency (move the hardcoded `registerCurrencies` entry → shop descriptor) + money
+        dynamic distribution (move from core `dynamicLoot` → shop-injected, like consumables).
+      - **JUNK/sellables → shop-owned** (user decision, revises the design doc's "junk = core"):
+        `dynamicLoot.fillJunk` + `data/sellables.ts` + ≥1-each completeness + the Collection "junk"
+        category all become shop-injected. Shop off → no junk placed, leftover chests → empty.
+      - economy guard (`validate.ts` shopPrices + TOTAL_CONSUMABLE_BUYABLE) moves to shop.
+      - Fez shop family + descriptor + register + toggle-off.
+      - may pull shop encounters from Increment 2 forward (per-instance shop capacity).
 - [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler
       `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline encounter-tag authoring
       into `encounter`-pass distributions with per-instance config. Completes the B target.

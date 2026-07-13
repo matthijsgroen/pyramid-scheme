@@ -88,7 +88,7 @@ being separate frozen items.
 | keys / map pieces / hieroglyph | gating | core + hieroglyph mod | reachability worklist (unchanged) |
 | mosaic | capped | mosaic mod | exact footprint |
 | money | dynamic | core now → **shop mod** (Slice 4) | economy guard is a shop concern |
-| junk | dynamic | core | per-tier variants; **≥1 of each** (completeness, hard-fail); tier drives value |
+| junk | dynamic | **shop mod** (REVISED — was core) | per-tier variants; **≥1 of each** (completeness, hard-fail); tier drives value. Junk is the sell-side of the money economy (found as loot, sold for money at the Fez shop) — no shop, no purpose. Shop off → no junk placed, leftover chests fall to empty. |
 | consumables | dynamic | **trap mod** | rarity weights trap-owned; `eligible` = expert+ paths |
 | empty | — | core | the density knob |
 
