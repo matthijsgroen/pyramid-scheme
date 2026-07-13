@@ -49,13 +49,21 @@ src/mods/<id>/app.tsx    app registration (React, side-effect): registers this
 ```
 
 An **app manifest** (`src/mods/registerModApps.ts`) side-effect-imports each
-mod's `app.tsx`; it is the single app-side enumeration point, replacing
-`registerAllFamilies` + `registerAllCollectionSections` + the hardcoded screen/
-HUD wiring. A mod's `app.tsx` is imported iff it is listed — so no `isModEnabled`
-self-gate is needed inside mod code; being unlisted *is* being off.
+mod's app entrypoint; it is the app-side enumeration point. Each entrypoint
+**self-gates its registrations on `isModEnabled`** — the check lives in the mod,
+never in core — so removing a mod from `REGISTERED_MODS` (a single line) drops its
+screen/HUD/effects while the manifest import stays harmless. Deleting the folder
+additionally drops the manifest import line. This mirrors the family-plugin
+pattern (plugins self-gate, imported by an aggregator).
 
-Deleting a mod: remove `src/mods/<id>/`, its `REGISTERED_MODS` entry, and its
-`registerModApps` import. Core is untouched.
+As-built note: the family and collection-section aggregators
+(`registerAllFamilies`, `registerAllCollectionSections`) still exist alongside
+`registerModApps`; folding all three into the per-mod entrypoints (one manifest)
+is remaining tidiness. It does not affect the clean-cut property, which is about
+core naming/importing no mod — already met once screens/HUD/effects moved out.
+
+Deleting a mod: remove `src/mods/<id>/`, its `REGISTERED_MODS` line (import +
+array entry), and its `registerModApps` import. Core is untouched.
 
 ## The app registries (generic, core-owned, name no mod)
 

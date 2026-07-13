@@ -185,11 +185,16 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - economy guard (`validate.ts` shopPrices + TOTAL_CONSUMABLE_BUYABLE) moves to shop.
       - Fez shop family + descriptor + register + toggle-off.
       - may pull shop encounters from Increment 2 forward (per-instance shop capacity).
-- [ ] App-side mod plugins — the CLEAN CUT (design: `docs/mods/app-plugins-design.md`). Screen +
-      HUD-widget + reward-effect registries + a per-mod `app.tsx` entrypoint + one app manifest, so
-      core UI names/imports no mod. Kills every `isModEnabled` in core (Base mosaic screen,
-      SiteMapScreen trap HUD, registerRewardHandlers hieroglyph/trap) and the `@/mods/*` imports in
-      core (MosaicPage, useTrapProgress, ApplyCtx.trapProgress). Do before shop so shop lands clean.
+- [~] App-side mod plugins — the CLEAN CUT (design: `docs/mods/app-plugins-design.md`). CORE
+      PROPERTY DONE: `src/app` + `src/game` now hold ZERO `isModEnabled("<mod>")` branches and ZERO
+      `@/mods/<name>` imports.
+      - [x] stage 1 — screen registry (mosaic screen out of Base). `38c092b`
+      - [x] stage 2 — HUD-widget registry (trap HUD out of SiteMapScreen). `913c923`
+      - [x] stage 3 — mod-owned reward effects (rewardContributions): consumable effect + pack-full
+            canAccept are trap contributions; ApplyCtx.trapProgress + the isModEnabled gates gone. `18e7886`
+      - [ ] stage 4 (optional tidiness) — fold `registerAllFamilies` + `registerAllCollectionSections`
+            into the per-mod app entrypoints so there's ONE app manifest (registerModApps). Not
+            required for the clean-cut property.
 - [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler
       `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline encounter-tag authoring
       into `encounter`-pass distributions with per-instance config. Completes the B target.
