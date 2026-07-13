@@ -3,6 +3,7 @@ import type { Difficulty } from "../data/difficultyLevels"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
 import { collectSlots, type Slot } from "./slots"
+import { allocateDistributions, cappedToDistribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { journeys as REAL_JOURNEYS } from "../data/journeys"
 import { sellablesForDifficulty } from "../data/sellables"
@@ -233,27 +234,13 @@ export const placeFragments = (
 
   // Phase 3: capped-filler currencies (e.g. mosaic pieces). These never gate progress, so
   // they're not on the worklist above — placed only once every lock has been resolved, into
-  // whatever slots the gating currencies left free. Each spreads across all still-available
-  // slots in its own rank order, up to its total, and HARD-FAILS if short: capped loot must
-  // fully place (keys-and-locks-solver.md, "Exhausted relaxation is a build failure"). A short
-  // fall means author more loot-bearing capacity in the DSL (docs/mods/TARGET.md rule 2).
-  for (const currency of capped) {
-    const total = currency.totalRequired(allConfigs)
-    const ranked = currency.rank([...available])
-    let placed = 0
-    for (const slot of ranked) {
-      if (placed >= total) break
-      slot.assign(currency.toReward())
-      available.delete(slot)
-      placed++
-    }
-    if (placed < total) {
-      throw new Error(
-        `placeFragments: capped currency "${currency.bucket}" unplaceable — needed ${total}, ` +
-          `only ${placed} loot node(s) available. Author more loot-bearing capacity in the DSL.`
-      )
-    }
-  }
+  // whatever slots the gating currencies left free, via the unified slot allocator: each is an
+  // exact-footprint Distribution (spread across still-available slots in its own rank order, up
+  // to its total), which HARD-FAILS if short — capped loot must fully place (keys-and-locks-
+  // solver.md, "Exhausted relaxation is a build failure"). A shortfall means author more loot-
+  // bearing capacity in the DSL (docs/mods/TARGET.md rule 2). Money/junk/consumables join this
+  // allocator as flexible-footprint distributions in later steps (distribution-primitive-design.md).
+  allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
   // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open
   // ward-gate slots that no currency reached. Tiered by the slot's own journey tier.
