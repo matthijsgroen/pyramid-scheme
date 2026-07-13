@@ -179,11 +179,9 @@ Three distinct phases; mod contributions enter at a different seam in each.
 `src/main.tsx` imports the registration modules for their side effects, once:
 `registerCurrencies` (descriptor `currencyMeta` loop + core currencies) and
 `registerPerks`. Each mod's app entrypoint (`registerModApps` → `mods/<id>/app`)
-registers its screen / HUD widget / reward contribution, self-gated on
-`isModEnabled`; family plugins register via `registerAllFamilies` and collection
-sections via `registerAllCollectionSections` (aggregators pending the fold into
-`registerModApps`). After boot the registries are populated; a mod absent from
-`REGISTERED_MODS` registered nothing.
+registers ALL its app contributions — family plugins, screen, HUD widget, reward
+contribution, Collection section — self-gated on `isModEnabled`. After boot the
+registries are populated; a mod absent from `REGISTERED_MODS` registered nothing.
 
 ### Per encounter — runtime (`SiteMapScreen`)
 1. The screen holds the live core state hooks (`useProgression`, `useInventory`,

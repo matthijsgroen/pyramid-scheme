@@ -56,11 +56,10 @@ screen/HUD/effects while the manifest import stays harmless. Deleting the folder
 additionally drops the manifest import line. This mirrors the family-plugin
 pattern (plugins self-gate, imported by an aggregator).
 
-As-built note: the family and collection-section aggregators
-(`registerAllFamilies`, `registerAllCollectionSections`) still exist alongside
-`registerModApps`; folding all three into the per-mod entrypoints (one manifest)
-is remaining tidiness. It does not affect the clean-cut property, which is about
-core naming/importing no mod — already met once screens/HUD/effects moved out.
+As-built: each mod's `app` entrypoint registers all its contributions (family
+plugins, screen, HUD, reward contribution, Collection section), and
+`registerModApps` imports the six entrypoints — the sole app-side manifest. The
+old `registerAllFamilies` / `registerAllCollectionSections` aggregators are gone.
 
 Deleting a mod: remove `src/mods/<id>/`, its `REGISTERED_MODS` line (import +
 array entry), and its `registerModApps` import. Core is untouched.
