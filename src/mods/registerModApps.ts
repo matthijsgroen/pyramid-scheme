@@ -6,3 +6,4 @@
 // A mod's entrypoint self-gates on isModEnabled, so removing a mod from REGISTERED_MODS drops its
 // app contributions without editing core.
 import "./mosaic/app"
+import "./trap/app"

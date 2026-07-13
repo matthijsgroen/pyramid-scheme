@@ -18,9 +18,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { allItems } from "@/data/inventory"
 import { ALL_SELLABLES } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
-import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
-import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
-import { isModEnabled } from "@/mods/registeredMods"
+import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
 import { ShopBalance } from "@/ui/atoms/ShopBalance"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
@@ -310,13 +308,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           />
         )}
         <div className="flex items-center gap-4">
-          {/* Health + consumables are trap-owned — gone when the trap mod is off. */}
-          {isModEnabled("trap") && (
-            <>
-              <HealthDisplay currentHealth={trap.currentHealth} maxHealth={trap.maxHealth} />
-              <ConsumableBar consumables={trap.consumables} />
-            </>
-          )}
+          {/* Mod-contributed HUD widgets (e.g. trap's health + consumables) — core names none. */}
+          {hudWidgets().map(({ id, Component }) => (
+            <Component key={id} />
+          ))}
           <ShopBalance amount={progression.money} label={t("money.label")} />
           {isDevelopMode && <DeveloperButton onClick={() => progression.addMoney(1000)} label="+1000 Coins" />}
           {isDevelopMode && (
