@@ -1,5 +1,5 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
 
@@ -44,17 +44,20 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
-    const pyramidJourney = PYRAMID_JOURNEYS.find(j => j.id === journeyId)
-    const tombJourney = TOMB_JOURNEYS.find(j => j.id === journeyId)
-    const tier = (pyramidJourney ?? tombJourney)!.tier as Tier
 
+    // A slot's tier is its OWN floor/section difficulty, not the journey's tier — so a
+    // deliberately-tiered ward path/wing (e.g. a starter path inside a wizard tomb, or an
+    // expert "come back stronger" wing in a junior pyramid) tiers its loot by that marked
+    // difficulty. Difficulty and Tier share the same value set (difficultyLevels.ts).
     const addSlot = (
       ref: FloorRef,
+      difficulty: Difficulty,
       wardKeys: string[],
       isPlaceholder: boolean,
       preference: string | undefined,
       assign: (r: TreasureReward) => void
-    ) => slots.push({ ref, journeyId, tier, wardKeys, isPlaceholder, preference, kind: "end", assign })
+    ) =>
+      slots.push({ ref, journeyId, tier: difficulty as Tier, wardKeys, isPlaceholder, preference, kind: "end", assign })
 
     siteConfigs.forEach((floors, levelIndex) => {
       // Puzzle-chain slots: one per position of every `puzzleRewards` array initPuzzleChains
@@ -64,14 +67,18 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
       // and capped pass skip them (they were never reward-slot candidates — only filler is).
       const siteId = `${journeyId}:${levelIndex}`
       let puzzleSeq = 0
-      const emitPuzzle = (rewards: (TreasureReward | undefined)[] | undefined, ref: FloorRef) => {
+      const emitPuzzle = (
+        rewards: (TreasureReward | undefined)[] | undefined,
+        ref: FloorRef,
+        difficulty: Difficulty
+      ) => {
         if (!rewards) return
         rewards.forEach((_, i) => {
           const arr = rewards
           slots.push({
             ref,
             journeyId,
-            tier,
+            tier: difficulty as Tier,
             wardKeys: [],
             isPlaceholder: false,
             kind: "puzzle",
@@ -85,10 +92,10 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.puzzleRewards, pRef)
+        emitPuzzle(floor.puzzleRewards, pRef, floor.difficulty)
         for (const section of floor.sideSections) {
-          emitPuzzle(section.puzzleRewards, pRef)
-          for (const sub of section.sideSections ?? []) emitPuzzle(sub.puzzleRewards, pRef)
+          emitPuzzle(section.puzzleRewards, pRef, section.difficulty)
+          for (const sub of section.sideSections ?? []) emitPuzzle(sub.puzzleRewards, pRef, sub.difficulty)
         }
       })
 
@@ -96,7 +103,7 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot(ref, [], true, floor.mainEndReward.prefers, r => {
+          addSlot(ref, floor.difficulty, [], true, floor.mainEndReward.prefers, r => {
             f.mainEndReward = r
           })
         }
@@ -104,12 +111,12 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           if (section.endReward?.type === "fragmentSlot") {
             const s = section
-            addSlot(ref, sWardKeys, true, section.endReward.prefers, r => {
+            addSlot(ref, section.difficulty, sWardKeys, true, section.endReward.prefers, r => {
               s.endReward = r
             })
           } else if (section.gate?.type === "tomb-key" && !section.endReward) {
             const s = section
-            addSlot(ref, sWardKeys, false, undefined, r => {
+            addSlot(ref, section.difficulty, sWardKeys, false, undefined, r => {
               s.endReward = r
             })
           }
@@ -117,12 +124,12 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
-              addSlot(ref, subWardKeys, true, sub.endReward.prefers, r => {
+              addSlot(ref, sub.difficulty, subWardKeys, true, sub.endReward.prefers, r => {
                 ss.endReward = r
               })
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {
               const ss = sub
-              addSlot(ref, subWardKeys, false, undefined, r => {
+              addSlot(ref, sub.difficulty, subWardKeys, false, undefined, r => {
                 ss.endReward = r
               })
             }

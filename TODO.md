@@ -141,9 +141,11 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - [ ] `emptyFraction` knob SKIPPED (YAGNI) — leftover puzzle slots are the empties naturally
             (eager 0.6 fills the rest); add a real knob when an author wants to force chest empties.
       - [ ] consumable dist still CORE — ownership hand-off to trap (3b) pending.
-      - [ ] PART B (user direction, pending): ward-path difficulty = the ward KEY's tier (a starter
-            ward path in a wizard tomb = starter difficulty), so low-tier junk/keys land in low-tier
-            content wherever the ward path lives. `buildSite`/`sideSections` change, orthogonal to loot.
+      - [x] PART B: placement tier follows the slot's OWN floor/section difficulty, not the journey
+            tier (`collectSlots`). A ward path/wing authored at a difficulty (e.g. `wardWing({tomb,
+            index, tier})`) tiers its loot by that marker — expert "come back stronger" wings in a
+            junior pyramid now tier up (divine 406→422, stone 27→16); a future starter path in a
+            wizard tomb would tier down. Money byte-identical (1009); completeness + guard hold.
 - [ ] Slice 3b — trap. Trap encounter family + health (trap-owned currency, value in shared ledger,
       methods → `useTrapProgress`) + consumables (trap-owned dynamic dist, eligible expert+ paths) +
       HUD (gated). **Excludes the 4 perk upgrades** (parked; trap logic reads them from the still-core

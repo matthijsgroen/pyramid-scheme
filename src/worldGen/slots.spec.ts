@@ -27,8 +27,8 @@ const siteWithOpenWardGate = (): SiteConfig => [
 
 describe(collectSlots, () => {
   it("finds a fragmentSlot sentinel, tagged with its own floor and tier", () => {
-    // starter_1 is a real authored pyramid journey (journeyStructure.ts) — collectSlots
-    // looks up its tier there, so a made-up journeyId would throw.
+    // starter_1 is a real authored pyramid journey — collectSlots gates on its emitFragmentSlots
+    // capability, so a made-up journeyId would be skipped. Tier comes from the floor difficulty.
     const slots = collectSlots({ starter_1: [siteWithFragmentSlot()] })
     expect(slots).toHaveLength(1)
     expect(slots[0]).toMatchObject({
@@ -37,6 +37,25 @@ describe(collectSlots, () => {
       wardKeys: [],
       isPlaceholder: true,
     })
+  })
+
+  it("tiers a slot by its own section difficulty, not the journey's tier", () => {
+    // A wizard-difficulty ward wing authored inside a starter journey: its loot must tier as
+    // wizard (Part B — the difficulty marker drives placement, not the containing journey).
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "wizard", end: "treasure", endReward: { type: "fragmentSlot" } },
+        ],
+      },
+    ]
+    const slots = collectSlots({ starter_1: [site] })
+    expect(slots).toHaveLength(1)
+    expect(slots[0].tier).toBe("wizard")
   })
 
   it("finds an open (unrewarded) tomb-key gate as a non-placeholder slot, tagged with its ward key", () => {
