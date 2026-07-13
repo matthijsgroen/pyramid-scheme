@@ -138,6 +138,22 @@ specifically).
   ripple = a separate session.
 - Core allocates slots; the **mod fills** (owns variants/rarity/completeness).
 
+## As-built refinements (Increment 1, loot pass — landed)
+
+- **Junk fills ALL loot slots by an eagerness ratio**, not end-slots only. Ratio per slot kind
+  (from SLICE-2-PLAN): chest 1.0, puzzle 0.6, trap/gate 0. Chests take all leftover junk; puzzle
+  chains take 0.6 of their still-empty slots (the rest stay empty). This is what makes junk
+  completeness satisfiable — end-slots alone are wizard-skewed (146) and starved in low/mid tiers
+  (starter 1, junior 3, expert/master 0); puzzle slots supply the low-tier capacity.
+- **Completeness = the Collection "junk" category must be finishable** (`Collection.tsx` renders
+  all 25 `ALL_SELLABLES`). Round-robin per tier guarantees ≥1 of each; hard-fail if a tier still
+  can't cover its set (a real "grow the world" signal). Junk value is tier-fixed
+  (`SELL_VALUE_BY_TIER`), so which item lands never moves the economy.
+- **`emptyFraction` knob deferred (YAGNI):** the eager<1 puzzle remainder already yields empties;
+  add a real knob only when an author needs to force chest empties.
+- **Money/consumables byte-identical:** the dynamic pass replays the retired `assignPuzzleRewards`
+  per-site seeds, so economy totals are unchanged (money sum 1009, consumables 248/73/72).
+
 ## Still open (for the build, not blocking the design)
 
 - Concrete `Slot` metadata shape (tier, pathDifficulty, encounter, capacity,

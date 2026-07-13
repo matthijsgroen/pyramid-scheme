@@ -232,11 +232,12 @@ export const printStats = (
           countFrag(s.endReward)
           for (const sub of s.sideSections ?? []) countFrag(sub.endReward)
         }
-        // Puzzle-solve rewards replace the old mid-path chests
+        // Puzzle chains carry consumables/money and (via the dynamic pass's eager fill) junk.
         const countPuzzleRewards = (rewards: (TreasureReward | undefined)[] | undefined) => {
           for (const r of rewards ?? []) {
             if (r?.type === "consumable") puzzleConsumables++
             if (r?.type === "money") puzzleMoney++
+            if (r?.type === "sellable") junkSellables++
           }
         }
         countPuzzleRewards(cfg.puzzleRewards)

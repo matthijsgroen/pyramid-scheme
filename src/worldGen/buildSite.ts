@@ -3,7 +3,7 @@ import { TOMB_PERK_IDS, TREASURE_PERKS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { mulberry32 } from "../game/random"
 import { hashStr } from "./rewards"
-import { assignPuzzleRewards } from "./puzzleRewards"
+import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 
@@ -165,7 +165,6 @@ export type BuildSiteContext<TExtra extends string = never> = {
 export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const { hasMapPieceBranch, hasWardGate, nextTier, resolveMainEndReward } = ctx
-  const rates = constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
     ? resolveMainEndReward(constraint.mainEndReward)
@@ -225,7 +224,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       )
     }
     wireSideSectionStaircases(floorConfigs)
-    assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
+    initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
 
@@ -346,7 +345,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       ]
     }
 
-    assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
+    initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
 
@@ -375,6 +374,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sealed: resolveSealed(constraint),
   })
 
-  assignPuzzleRewards(`${journeyId}:${i}`, [floor], rates)
+  initPuzzleChains([floor])
   return { floors: [floor] }
 }

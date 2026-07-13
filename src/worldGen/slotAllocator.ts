@@ -63,6 +63,8 @@ export const cappedToDistribution = (c: CappedCurrency): Distribution => ({
     const total = c.totalRequired(allConfigs)
     return { min: total, max: total }
   },
+  // Capped currencies are path-end rewards only; puzzle-chain slots are filler-only (dynamic pass).
+  eligible: s => s.kind === "end",
   rank: c.rank,
   fill: slots => {
     for (const slot of slots) slot.assign(c.toReward())

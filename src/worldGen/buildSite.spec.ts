@@ -117,19 +117,11 @@ describe("buildSite", () => {
     expect(floors[2].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
-  it("assigns puzzle-solve rewards across the built floors", () => {
+  it("inits an empty puzzle-reward array per chain (fill happens later, in the placement pass)", () => {
     const { floors } = buildSite({ ...baseCtx, pathPuzzles: 20 })
     expect(floors[0].puzzleRewards).toHaveLength(20)
-    expect(floors[0].puzzleRewards?.some(r => r !== undefined)).toBe(true)
-  })
-
-  it("gives different pyramids in the same journey different puzzle-reward patterns", () => {
-    // Regression guard: assignPuzzleRewards must be seeded per-pyramid, not per-journey —
-    // every other seed helper in this file (resolveKeyColors, resolveChanceValue) folds in
-    // pyramidIndex; this one originally didn't, so every pyramid in a journey got an
-    // identical (often exact-duplicate) reward layout.
-    const first = buildSite({ ...baseCtx, pyramidIndex: 0, pathPuzzles: 20 })
-    const second = buildSite({ ...baseCtx, pyramidIndex: 1, pathPuzzles: 20 })
-    expect(first.floors[0].puzzleRewards).not.toEqual(second.floors[0].puzzleRewards)
+    // buildSite only creates the slots; dynamicLoot fills them (dynamicLoot.spec covers fill +
+    // the per-site seed variation the puzzle placement used to be checked for here).
+    expect(floors[0].puzzleRewards?.every(r => r === undefined)).toBe(true)
   })
 })

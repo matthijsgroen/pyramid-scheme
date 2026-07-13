@@ -1,0 +1,79 @@
+import { describe, expect, it } from "vitest"
+import { assignDynamicLoot } from "./dynamicLoot"
+import type { Slot } from "./slots"
+import type { TreasureReward } from "./types"
+
+const puzzleSlot = (siteId: string, seq: number, sink: (r: TreasureReward) => void): Slot => ({
+  ref: { journeyId: siteId, levelIndex: 0, floorIndex: 0 },
+  journeyId: siteId,
+  tier: "starter",
+  wardKeys: [],
+  isPlaceholder: false,
+  kind: "puzzle",
+  siteId,
+  puzzleSeq: seq,
+  assign: sink,
+})
+
+const endSlot = (tier: Slot["tier"], sink: (r: TreasureReward) => void): Slot => ({
+  ref: { journeyId: "j", levelIndex: 0, floorIndex: 0 },
+  journeyId: "j",
+  tier,
+  wardKeys: [],
+  isPlaceholder: true,
+  kind: "end",
+  assign: sink,
+})
+
+const runPuzzle = (siteId: string, n: number): (TreasureReward | undefined)[] => {
+  const out: (TreasureReward | undefined)[] = new Array(n).fill(undefined)
+  const set = new Set<Slot>(Array.from({ length: n }, (_, i) => puzzleSlot(siteId, i, r => (out[i] = r))))
+  assignDynamicLoot(set)
+  return out
+}
+
+describe("assignDynamicLoot", () => {
+  it("is deterministic per site and leaves some puzzle slots empty", () => {
+    const a = runPuzzle("site-a", 40)
+    const b = runPuzzle("site-a", 40)
+    expect(a).toEqual(b)
+    for (const r of a.filter(Boolean)) expect(["consumable", "money", "sellable"]).toContain(r!.type)
+    expect(a.filter(r => r === undefined).length).toBeGreaterThan(0) // eagerness < 1 → not every slot
+  })
+
+  it("seeds puzzle placement per site — different sites get different patterns", () => {
+    // Regression guard (moved from buildSite): placement is keyed by siteId (journeyId:level),
+    // so two sites of the same shape must not get identical reward layouts.
+    expect(runPuzzle("site-x", 30)).not.toEqual(runPuzzle("site-y", 30))
+  })
+
+  it("puts money/consumables AND junk in a puzzle-only pool (junk is eager on empties)", () => {
+    const rewards = runPuzzle("site-b", 40).filter(Boolean)
+    const types = new Set(rewards.map(r => r!.type))
+    expect(types).toContain("consumable")
+    expect(types).toContain("money")
+    expect(types).toContain("sellable")
+  })
+
+  it("fills every chest, clears the pool", () => {
+    const filled: TreasureReward[] = []
+    const set = new Set<Slot>(Array.from({ length: 8 }, () => endSlot("starter", r => filled.push(r))))
+    assignDynamicLoot(set)
+    expect(set.size).toBe(0)
+    expect(filled.filter(r => r.type === "sellable")).toHaveLength(8) // chests eager100
+  })
+
+  it("round-robins junk so every tier item appears (≥1-of-each completeness)", () => {
+    const ids: string[] = []
+    const set = new Set<Slot>(
+      Array.from({ length: 5 }, () => endSlot("starter", r => ids.push((r as { itemId: string }).itemId)))
+    )
+    assignDynamicLoot(set)
+    expect(new Set(ids).size).toBe(5) // all 5 stone items, no repeats
+  })
+
+  it("hard-fails when a tier has fewer loot slots than collectibles", () => {
+    const set = new Set<Slot>(Array.from({ length: 3 }, () => endSlot("starter", () => {})))
+    expect(() => assignDynamicLoot(set)).toThrow(/junk completeness/)
+  })
+})

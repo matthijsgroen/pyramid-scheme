@@ -24,6 +24,15 @@ export type Slot = {
    * docs/game-design/keys-and-locks-solver.md, "A slot's authored placement preference is a
    * soft tag, not an exclusive claim". */
   preference?: string
+  /** `"end"` = a path-end reward (fragmentSlot / open ward gate) — the only slots the gating
+   * worklist and capped pass touch. `"puzzle"` = a puzzle-chain position — filler-only, seen
+   * exclusively by the dynamic loot pass (money/consumables). */
+  kind: "end" | "puzzle"
+  /** Puzzle slots only: the owning site (`journeyId:levelIndex`) and its per-site sequence, so
+   * the dynamic pass can replay placement deterministically per site (distribution-primitive-
+   * design.md). Undefined for `"end"` slots. */
+  siteId?: string
+  puzzleSeq?: number
   assign: (reward: TreasureReward) => void
 }
 
@@ -45,9 +54,44 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
       isPlaceholder: boolean,
       preference: string | undefined,
       assign: (r: TreasureReward) => void
-    ) => slots.push({ ref, journeyId, tier, wardKeys, isPlaceholder, preference, assign })
+    ) => slots.push({ ref, journeyId, tier, wardKeys, isPlaceholder, preference, kind: "end", assign })
 
     siteConfigs.forEach((floors, levelIndex) => {
+      // Puzzle-chain slots: one per position of every `puzzleRewards` array initPuzzleChains
+      // (buildSite) created, walked in that same order (floor main path → each side section →
+      // its sub-sections) so the dynamic loot pass replays money/consumable placement per site
+      // deterministically. Tagged `kind:"puzzle"` + a per-site `puzzleSeq`; the gating worklist
+      // and capped pass skip them (they were never reward-slot candidates — only filler is).
+      const siteId = `${journeyId}:${levelIndex}`
+      let puzzleSeq = 0
+      const emitPuzzle = (rewards: (TreasureReward | undefined)[] | undefined, ref: FloorRef) => {
+        if (!rewards) return
+        rewards.forEach((_, i) => {
+          const arr = rewards
+          slots.push({
+            ref,
+            journeyId,
+            tier,
+            wardKeys: [],
+            isPlaceholder: false,
+            kind: "puzzle",
+            siteId,
+            puzzleSeq: puzzleSeq++,
+            assign: r => {
+              arr[i] = r
+            },
+          })
+        })
+      }
+      floors.forEach((floor, floorIndex) => {
+        const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
+        emitPuzzle(floor.puzzleRewards, pRef)
+        for (const section of floor.sideSections) {
+          emitPuzzle(section.puzzleRewards, pRef)
+          for (const sub of section.sideSections ?? []) emitPuzzle(sub.puzzleRewards, pRef)
+        }
+      })
+
       floors.forEach((floor, floorIndex) => {
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {

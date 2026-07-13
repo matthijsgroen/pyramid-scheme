@@ -1,13 +1,11 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import type { Difficulty } from "../data/difficultyLevels"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
 import { collectSlots, type Slot } from "./slots"
 import { allocateDistributions, cappedToDistribution } from "./slotAllocator"
+import { assignDynamicLoot } from "./dynamicLoot"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { journeys as REAL_JOURNEYS } from "../data/journeys"
-import { sellablesForDifficulty } from "../data/sellables"
-import { hashStr } from "./rewards"
 
 // Worklist-driven, reachability-gated currency placement — the concrete engine this
 // backlog item's solver was built for. See docs/game-design/keys-and-locks-solver.md,
@@ -101,11 +99,11 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
   return meta
 }
 
-// Mutates allConfigs in place: assigns each registered currency's rewards to fragmentSlot
-// sentinels and open ward gates, then fills any remaining placeholder slots with
-// consumables. Throws (does not warn) if a demand has no reachable slot once every
-// relaxation rung is exhausted — docs/game-design/keys-and-locks-solver.md, "Exhausted
-// relaxation is a build failure, not a warning".
+// Mutates allConfigs in place: places gating currencies (reachability worklist) then capped
+// currencies (allocator) into path-end slots, then hands every remaining slot to the dynamic
+// loot pass (dynamicLoot.ts — junk/money/consumables). Throws (does not warn) if a demand has
+// no reachable slot once every relaxation rung is exhausted — docs/game-design/keys-and-locks-
+// solver.md, "Exhausted relaxation is a build failure, not a warning".
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
@@ -191,7 +189,7 @@ export const placeFragments = (
     let needed = demand.required
 
     if (needed > 0) {
-      const eligible = (s: Slot) => available.has(s) && reach.reachableFloors.has(floorKey(s.ref))
+      const eligible = (s: Slot) => s.kind === "end" && available.has(s) && reach.reachableFloors.has(floorKey(s.ref))
       const ranked = currency.rank(slots.filter(eligible), demand)
 
       for (const slot of ranked) {
@@ -242,12 +240,7 @@ export const placeFragments = (
   // allocator as flexible-footprint distributions in later steps (distribution-primitive-design.md).
   allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
-  // Fill every remaining slot with junk loot — both fragmentSlot placeholders and open
-  // ward-gate slots that no currency reached. Tiered by the slot's own journey tier.
-  let fallbackIdx = 0
-  for (const slot of available) {
-    const items = sellablesForDifficulty(slot.tier as Difficulty)
-    const item = items[hashStr(`${slot.journeyId}:fragment-fallback:${fallbackIdx++}`) % items.length]
-    slot.assign({ type: "sellable", itemId: item.id })
-  }
+  // Phase 5: dynamic loot fills everything left — puzzle-chain slots get money/consumables,
+  // leftover path-end slots get junk (with ≥1-of-each completeness). See dynamicLoot.ts.
+  assignDynamicLoot(available)
 }

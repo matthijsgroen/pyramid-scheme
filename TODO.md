@@ -127,11 +127,23 @@ order: structure → encounters → gating → capped → dynamic (+ authorable 
 full unified model (B); **built loot-first**. Subsumes: filler-loot generalization, the Slice-5
 siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in the doc.
 
-- [ ] Slice 3a — loot distributions (Increment 1). Define `Distribution` + registry; wrap capped
-      currencies (no change); add `emptyFraction`; money + junk as dynamic dists (junk ≥1-each
-      completeness, hard-fail); retire `assignPuzzleRewards`/`placeFragments` junk-sink into the
-      unified dynamic pass. Gate = valid+solvable world (not byte-identical). Consumable dist hands
-      off to 3b.
+- [~] Slice 3a — loot distributions (Increment 1). MOSTLY DONE:
+      - [x] `Distribution` + registry + `allocateDistributions`; capped currencies routed through it,
+            no change (`25c4692`).
+      - [x] slot pool extended to puzzle-chain slots (`slots.ts` emits `kind:"puzzle"` + `siteId`/
+            `puzzleSeq`; gating + capped filter to `kind:"end"` so their output is unchanged).
+      - [x] unified dynamic pass (`dynamicLoot.ts`): money + consumables byte-identical to the retired
+            `assignPuzzleRewards` (same per-site seeds — money sum 1009, consumables 248/73/72
+            unchanged); junk by EAGERNESS (chest 1.0 / puzzle 0.6 / trap+gate 0, per SLICE-2-PLAN)
+            over ALL loot slots, round-robin per tier for ≥1-of-each completeness (hard-fail).
+            `assignPuzzleRewards` retired (buildSite only inits arrays now). Guard ON build solvable;
+            toggle-off (mosaic) solvable; 716 green.
+      - [ ] `emptyFraction` knob SKIPPED (YAGNI) — leftover puzzle slots are the empties naturally
+            (eager 0.6 fills the rest); add a real knob when an author wants to force chest empties.
+      - [ ] consumable dist still CORE — ownership hand-off to trap (3b) pending.
+      - [ ] PART B (user direction, pending): ward-path difficulty = the ward KEY's tier (a starter
+            ward path in a wizard tomb = starter difficulty), so low-tier junk/keys land in low-tier
+            content wherever the ward path lives. `buildSite`/`sideSections` change, orthogonal to loot.
 - [ ] Slice 3b — trap. Trap encounter family + health (trap-owned currency, value in shared ledger,
       methods → `useTrapProgress`) + consumables (trap-owned dynamic dist, eligible expert+ paths) +
       HUD (gated). **Excludes the 4 perk upgrades** (parked; trap logic reads them from the still-core
