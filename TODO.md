@@ -97,18 +97,37 @@ Design: `docs/mods/collection-and-detector-design.md`.
       `difficultyColors` tokens); fixed invisible tile selection (clip-safe drop-shadow outline)
 - [x] MOD-1 — mod-owned hieroglyph Collection section (collection-section registry mirroring
       `registerAllFamilies`); core Collection names no mod; toggle-off proven
-- [ ] DET-1 — revive the dead compass/detector (shipped with `availableHieroglyphs={[]}`, no way
-      to pick a target). Target-picking on Collection, counter-native provider search (looted =
-      explored-state, not per-piece), reachability-aware. **AFTER the mod architecture is complete**
-      (per user) — deferred until the slices below land. See design doc §3C + Appendix A.
+- [ ] DET-1 — detector revival — folded into the Perk & detector system item below (detectors
+      ARE perks). See design doc §3C + Appendix A.
+
+## Perk & detector system — DESIGN then BUILD, AFTER the mod refactor (parked)
+
+One combined work item (per user). Detectors are perks (compass / consumable-detector / detection
+live in `corePerks`), and trap owns 4 perks (armor, max-health, trap-insight, pack-mule) — so "how
+a mod contributes perks" and "revive the detector" are the same design problem. Deliberately parked
+until the other slices land, so the perk system is designed once, cleanly, with all its stakeholders
+known.
+
+Scope when picked up:
+- A perk-contribution mechanism mods use (the open fork: does `applyTreasurePerk`'s grant path
+  write through the registry to mod-owned slice state, so `PerkSlice`/defaults go dynamic? vs a
+  gated side-effect leaving slices in core `ProgressionState`). See the trap notes.
+- DET-1 detector revival on top of that (target-picking on Collection, counter-native provider
+  search, reachability-aware).
 
 ## Slices 3+ (re-planned after hieroglyph)
 
-- [ ] trap — perks (grant/consume split), consumables, HUD
-- [ ] shop — money, depends on puzzle/core economy; unblocks the capacity/eagerness slot model
-      (shop cap6/eager0 + shop-targeting placement rule) the hieroglyph shop-stock fragments want
-- [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive) — last
-- [ ] DET-1 detector revival — after the above (see Collection redesign section)
+**Perks are parked (above), which reorders these** — trap is the biggest perk owner, so it waits.
+
+- [ ] shop — money currency (mosaic/hieroglyph currency pattern), Fez shop family. Least
+      perk-entangled → the sensible NEXT slice. Unblocks the capacity/eagerness slot model
+      (shop cap6/eager0 + shop-targeting placement rule) the hieroglyph shop-stock fragments want.
+- [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive).
+- [ ] trap — family + health (trap-owned currency, `useTrapProgress`) + consumables (trap-owned)
+      + HUD. **BLOCKED on the perk system** (trap owns 4 perks; health's maxHealth is a perk).
+      Decisions already settled: health trap-owned (value stays in shared ledger, methods →
+      `useTrapProgress`); consumables trap-owned (fall through to filler when off). Do after perks.
+- [ ] Perk & detector system (see above) — the design/build that unblocks trap + revives DET-1.
 
 ## Frozen until modules land (do not extend)
 
