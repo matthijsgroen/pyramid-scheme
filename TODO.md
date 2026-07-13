@@ -119,32 +119,38 @@ Scope when picked up:
 
 Perk UPGRADES are parked (above); the trap slice excludes them but is otherwise NOT blocked.
 
-- [ ] Slice 3a — the Distribution primitive (DESIGNED — `docs/mods/filler-loot-generalization-design.md`).
-      Unfreezing filler-loot became the unified loot model + MERGED Slice 5. Every loot kind is a
-      `Distribution` with a footprint (min/max slots) + eligibility + rank; **core allocates slots,
-      the mod fills them itself** (owns its variants/rarity/completeness — core never rolls a
-      variant). Capped currencies = exact footprint; money/junk/consumables = flexible; gating =
-      worklist. Plus an authorable **empty** quota (% of X). Settled: unify with Distribution; empty
-      = % of X, authorable; money = footprint-only validation; junk completeness (≥1 each) hard-fail.
-      Gate is no longer byte-identical (OQ1) — it's builds + hard-fail invariants + economy solvent.
-      Implementation is large (see design doc §sequencing) — a fresh multi-step effort.
-- [ ] Slice 3b — trap. Scope: trap encounter family + health (trap-owned currency, value stays in
-      shared ledger, methods → `useTrapProgress`) + consumables (trap-owned Distribution, on 3a)
-      + HUD (HealthDisplay/ConsumableBar gated). **Excludes the 4 trap perk upgrades** — parked with
-      the perk system; trap logic READS those perk values from the still-core slice (documented
-      seam). Decisions settled: health trap-owned; consumables trap-owned.
-- [ ] shop — money Distribution moves here from core (Slice 4), Fez shop family.
-- [ ] ~~`siteAssembler` core-loop rewrite~~ — MERGED into 3a's Distribution primitive (topology/
-      encounter distribution may still be a follow-on step; see design doc OQ4).
+**The Distribution primitive is DESIGNED (design locked): `docs/mods/distribution-primitive-design.md`.**
+Everything placed into the world — encounters (trap/puzzle/shop) AND loot (currencies/junk/
+consumables/money) — is a `Distribution`: **core allocates slots (footprint + eligibility + rank),
+the mod fills them** (owns variants/rarity/completeness/per-instance encounter config). Fixed pass
+order: structure → encounters → gating → capped → dynamic (+ authorable empty quota). Target = the
+full unified model (B); **built loot-first**. Subsumes: filler-loot generalization, the Slice-5
+siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in the doc.
+
+- [ ] Slice 3a — loot distributions (Increment 1). Define `Distribution` + registry; wrap capped
+      currencies (no change); add `emptyFraction`; money + junk as dynamic dists (junk ≥1-each
+      completeness, hard-fail); retire `assignPuzzleRewards`/`placeFragments` junk-sink into the
+      unified dynamic pass. Gate = valid+solvable world (not byte-identical). Consumable dist hands
+      off to 3b.
+- [ ] Slice 3b — trap. Trap encounter family + health (trap-owned currency, value in shared ledger,
+      methods → `useTrapProgress`) + consumables (trap-owned dynamic dist, eligible expert+ paths) +
+      HUD (gated). **Excludes the 4 perk upgrades** (parked; trap logic reads them from the still-core
+      slice — documented seam).
+- [ ] shop — Slice 4. Money distribution + economy guard move here from core; Fez shop family; may
+      pull shop encounters from Increment 2 forward (per-instance shop capacity via the encounter dist).
+- [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler
+      `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline encounter-tag authoring
+      into `encounter`-pass distributions with per-instance config. Completes the B target.
 - [ ] Perk & detector system (see above) — unblocks the trap perk upgrades + revives DET-1. Last.
 
-## Frozen until modules land (do not extend)
+## Frozen — now subsumed by the Distribution primitive (no longer separate)
 
-- [ ] phase-4 uncapped loot (max-% occupancy + drop rate) — likely folds into Slice 3a's provider
-      model (a provider can be uncapped w/ a drop rate); revisit during the 3a design.
-- [ ] slot capacity (`Slot` holding several items)
-
-Unfrozen: filler-loot fill-the-rest generalization → Slice 3a (driven by the trap slice).
+- filler-loot fill-the-rest generalization → the `dynamic` pass.
+- slot capacity (`Slot` holding several items) → a slot whose footprint contribution is >1
+  (e.g. a shop's capacity).
+- phase-4 uncapped loot (max-% occupancy + drop rate) → a dynamic distribution's footprint/rate;
+  revisit when authoring the dynamic pass.
+- `siteAssembler` core-loop rewrite → Distribution Increment 2 (encounter distributions).
 
 ## Prior work still standing (carried into core, not undone)
 
