@@ -7,6 +7,7 @@ import { useInventoryCategory } from "@/app/translations/useInventoryTranslation
 import { useTreasureCategory } from "@/app/translations/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { getCurrencyMeta } from "@/game/ledger/currencyRegistry"
 import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "../state/useJourneys"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
@@ -259,6 +260,9 @@ export const CollectionPage: FC = () => {
 
   const hasCollectedItems = Object.values(inventory).some(value => value !== undefined)
   const hasCompletedTomb = (tombId: string) => (getJourney(tombId)?.completionCount ?? 0) > 0
+  // The hieroglyph fragment currency opts into this grid via showInCollection; its meta is only
+  // registered while the hieroglyph mod is on, so this is false when the mod is toggled off.
+  const showHieroglyphCollection = getCurrencyMeta("fragment")?.showInCollection ?? false
 
   return (
     <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="center">
@@ -310,35 +314,41 @@ export const CollectionPage: FC = () => {
 
           <SellableCategorySection onItemClick={handleItemClick} selectedItem={selectedItem} inventory={inventory} />
 
-          {/* Inventory Categories */}
-          <CategorySection
-            category="deities"
-            onItemClick={handleItemClick}
-            selectedItem={selectedItem}
-            inventory={inventory}
-            hieroglyphFragments={hieroglyphFragments}
-          />
-          <CategorySection
-            category="professions"
-            onItemClick={handleItemClick}
-            selectedItem={selectedItem}
-            inventory={inventory}
-            hieroglyphFragments={hieroglyphFragments}
-          />
-          <CategorySection
-            category="animals"
-            onItemClick={handleItemClick}
-            selectedItem={selectedItem}
-            inventory={inventory}
-            hieroglyphFragments={hieroglyphFragments}
-          />
-          <CategorySection
-            category="artifacts"
-            onItemClick={handleItemClick}
-            selectedItem={selectedItem}
-            inventory={inventory}
-            hieroglyphFragments={hieroglyphFragments}
-          />
+          {/* Hieroglyph fragment categories — shown only when a currency opts into the collection
+              grid (hieroglyph mod on). Registered metas drop with their mod, so this hides itself
+              when the mod is toggled off. */}
+          {showHieroglyphCollection && (
+            <>
+              <CategorySection
+                category="deities"
+                onItemClick={handleItemClick}
+                selectedItem={selectedItem}
+                inventory={inventory}
+                hieroglyphFragments={hieroglyphFragments}
+              />
+              <CategorySection
+                category="professions"
+                onItemClick={handleItemClick}
+                selectedItem={selectedItem}
+                inventory={inventory}
+                hieroglyphFragments={hieroglyphFragments}
+              />
+              <CategorySection
+                category="animals"
+                onItemClick={handleItemClick}
+                selectedItem={selectedItem}
+                inventory={inventory}
+                hieroglyphFragments={hieroglyphFragments}
+              />
+              <CategorySection
+                category="artifacts"
+                onItemClick={handleItemClick}
+                selectedItem={selectedItem}
+                inventory={inventory}
+                hieroglyphFragments={hieroglyphFragments}
+              />
+            </>
+          )}
         </div>
         {hasCollectedItems && (
           <DetailPanel

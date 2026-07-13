@@ -1,4 +1,4 @@
-import { use, useCallback, useMemo, useState, type ReactNode } from "react"
+import { use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
@@ -170,6 +170,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const handleEncounterSolved = useCallback(() => {
     if (activeEncounter) genericHandleSolved(activeEncounter.pos)
   }, [activeEncounter, genericHandleSolved])
+
+  // Family-absence pass-through: a room whose family isn't registered — e.g. a gating mod toggled
+  // off with its encounter still authored — has no puzzle to render. Resolve it immediately (mark
+  // explored, offer whatever generic loot the slot got) so the player isn't stuck on a dead room.
+  // The legacy tomb `renderPuzzle` path, when present, still owns the render.
+  useEffect(() => {
+    if (activeEncounter && encounterFamily == null && !useRenderPuzzleFallback) genericHandleSolved(activeEncounter.pos)
+  }, [activeEncounter, encounterFamily, useRenderPuzzleFallback, genericHandleSolved])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {

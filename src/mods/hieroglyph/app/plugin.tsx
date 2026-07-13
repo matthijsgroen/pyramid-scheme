@@ -7,6 +7,7 @@ import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { TABLEAU_META } from "@/mods/hieroglyph/game/meta"
+import { isModEnabled } from "@/mods/registeredMods"
 
 const TOMB_SYMBOLS: Record<string, string[]> = {
   starter: ["p10", "p8", "art1", "a6", "a8", "art5", "d1"],
@@ -52,23 +53,27 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
   )
 }
 
-registerFamily({
-  meta: TABLEAU_META,
-  generate: (seed, ctx): RewardCalculation => {
-    const difficulty = ctx.difficulty ?? "starter"
-    const config = TABLEAU_CONFIG[difficulty] ?? TABLEAU_CONFIG.starter
-    const symbols = TOMB_SYMBOLS[difficulty] ?? TOMB_SYMBOLS.starter
-    const random = mulberry32(seed)
-    return generateRewardCalculation(
-      {
-        amountSymbols: config.symbolCount,
-        hieroglyphIds: symbols,
-        numberRange: config.numberRange,
-        operations: config.operators,
-        maxMultiplyOperandResult: config.maxMultiplyOperandResult,
-      },
-      random
-    )
-  },
-  Component: TableauComponent,
-})
+// Gated on the mod: registerAllFamilies imports this file unconditionally (static side-effect),
+// so the enablement check lives here — mod off → no tableau plugin in the registry → the room
+// resolves via the family-absence pass-through instead of rendering the puzzle.
+if (isModEnabled("hieroglyph"))
+  registerFamily({
+    meta: TABLEAU_META,
+    generate: (seed, ctx): RewardCalculation => {
+      const difficulty = ctx.difficulty ?? "starter"
+      const config = TABLEAU_CONFIG[difficulty] ?? TABLEAU_CONFIG.starter
+      const symbols = TOMB_SYMBOLS[difficulty] ?? TOMB_SYMBOLS.starter
+      const random = mulberry32(seed)
+      return generateRewardCalculation(
+        {
+          amountSymbols: config.symbolCount,
+          hieroglyphIds: symbols,
+          numberRange: config.numberRange,
+          operations: config.operators,
+          maxMultiplyOperandResult: config.maxMultiplyOperandResult,
+        },
+        random
+      )
+    },
+    Component: TableauComponent,
+  })

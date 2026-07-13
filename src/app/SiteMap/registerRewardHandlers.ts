@@ -2,27 +2,32 @@ import { registerRewardHandler, CONSUMABLE_EMOJI } from "./rewardHandlerRegistry
 import { hieroglyphCategory } from "./hieroglyphCategory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getSellableById } from "@/data/sellables"
+import { isModEnabled } from "@/mods/registeredMods"
 import type { ConsumableType } from "@/game/siteTypes"
 
 // "fragmentSlot" has no handler — falls through to applyReward.ts/rewardDisplay.ts's generic default.
 
-registerRewardHandler({
-  type: "hieroglyphFragment",
-  apply: (reward, { progression }) => progression.addFragment(reward.hieroglyphId, reward.pieceIndex),
-  emoji: "𓂀",
-  text: (reward, t, hieroglyphProgress) => {
-    const item = getInventoryItemById(reward.hieroglyphId)
-    const category = hieroglyphCategory(reward.hieroglyphId)
-    const name = item
-      ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
-      : t("chest.hieroglyphFragment")
-    const progress = hieroglyphProgress?.(reward.hieroglyphId)
-    const itemDescription = progress
-      ? `${t(`${category}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`
-      : undefined
-    return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, itemDescription, icon: item?.symbol ?? "𓂀" }
-  },
-})
+// Gated on the hieroglyph mod: with it off, world-gen places no hieroglyphFragment rewards, so
+// this handler would only dangle. Keeping the registration behind the toggle means an orphaned
+// reward has no live handler when the mod is removed.
+if (isModEnabled("hieroglyph"))
+  registerRewardHandler({
+    type: "hieroglyphFragment",
+    apply: (reward, { progression }) => progression.addFragment(reward.hieroglyphId, reward.pieceIndex),
+    emoji: "𓂀",
+    text: (reward, t, hieroglyphProgress) => {
+      const item = getInventoryItemById(reward.hieroglyphId)
+      const category = hieroglyphCategory(reward.hieroglyphId)
+      const name = item
+        ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
+        : t("chest.hieroglyphFragment")
+      const progress = hieroglyphProgress?.(reward.hieroglyphId)
+      const itemDescription = progress
+        ? `${t(`${category}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`
+        : undefined
+      return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, itemDescription, icon: item?.symbol ?? "𓂀" }
+    },
+  })
 
 registerRewardHandler({
   type: "mapPiece",

@@ -60,7 +60,7 @@ Escalation ladder: starter (see locked content) → junior (bonus floors) →
 expert (intro traps + floor keys) → master (deepen: multi-color + chains,
 hazardous returns) → wizard (saturate all).
 
-## Slice 2 — hieroglyph (first gating currency) — IN PROGRESS
+## Slice 2 — hieroglyph (first gating currency) — DONE
 
 Plan + decisions: `docs/mods/SLICE-2-PLAN.md`. Handover: `docs/mods/HANDOVER.md`.
 Branch `mods/hieroglyph-currency` (7 commits, not pushed).
@@ -74,13 +74,21 @@ World-gen half DONE (711 green, world byte-identical):
 - [x] reward-count validation derived from registered currencies (toggle-off safe)
 - [x] winnability hard-fail (lock with no owning currency)
 
-App-side half TODO (next session — the larger/riskier chunk):
-- [ ] gate tableau family registration on isModEnabled (registerAllFamilies unconditional today)
-- [ ] family-absence fallback (tableau room → pass-through render)
-- [ ] fragments → ledger (save-data migration — USER CONFIRMED do-it-this-slice)
-- [ ] Collection hieroglyph section from registered CurrencyMeta, gated
-- [ ] gate/move the hieroglyphFragment reward handler
-- [ ] TOGGLE-OFF PROOF + full suite + real generate-world (the gate)
+App-side half DONE (711 green, world byte-identical, toggle-off proven both ways):
+- [x] gate tableau family registration on isModEnabled (plugin.tsx self-gates its registerFamily)
+- [x] family-absence fallback (SiteMapScreen effect auto-resolves an unregistered-family room)
+- [~] fragments → ledger — DROPPED. `collectedFragments: string[]` kept: it already gives the
+      player-facing counter (hieroglyphProgress "Ra 3/5"), lives in src/app (outside the
+      worldGen/game grep gate), and empties when the mod's off. The ledger is a flat counter;
+      the migration was churn + a forced compass redesign + save migration for no toggle-off gain.
+- [x] Collection hieroglyph sections gated on registered CurrencyMeta.showInCollection (meta only
+      registered while the mod's on → sections drop with it)
+- [x] gate the hieroglyphFragment reward handler on isModEnabled (in-place; moving it would break
+      applyReward/rewardDisplay's direct import ordering)
+- [x] TOGGLE-OFF PROOF: mod off → generate-world guard ON + winnable + 0/294 frags + app builds;
+      re-add → byte-identical. Full suite 711 green.
+
+**Slice 2 complete.**
 
 ## Slices 3+ (re-planned after hieroglyph)
 
