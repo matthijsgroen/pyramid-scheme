@@ -90,12 +90,25 @@ App-side half DONE (711 green, world byte-identical, toggle-off proven both ways
 
 **Slice 2 complete.**
 
+## Collection redesign (post-Slice-2 follow-on) — DS-1 + MOD-1 DONE
+
+Design: `docs/mods/collection-and-detector-design.md`.
+- [x] DS-1 — design-system primitives (`CollectibleSlot`/`CollectionSection`/`CategoryGrid` +
+      `difficultyColors` tokens); fixed invisible tile selection (clip-safe drop-shadow outline)
+- [x] MOD-1 — mod-owned hieroglyph Collection section (collection-section registry mirroring
+      `registerAllFamilies`); core Collection names no mod; toggle-off proven
+- [ ] DET-1 — revive the dead compass/detector (shipped with `availableHieroglyphs={[]}`, no way
+      to pick a target). Target-picking on Collection, counter-native provider search (looted =
+      explored-state, not per-piece), reachability-aware. **AFTER the mod architecture is complete**
+      (per user) — deferred until the slices below land. See design doc §3C + Appendix A.
+
 ## Slices 3+ (re-planned after hieroglyph)
 
 - [ ] trap — perks (grant/consume split), consumables, HUD
 - [ ] shop — money, depends on puzzle/core economy; unblocks the capacity/eagerness slot model
       (shop cap6/eager0 + shop-targeting placement rule) the hieroglyph shop-stock fragments want
 - [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive) — last
+- [ ] DET-1 detector revival — after the above (see Collection redesign section)
 
 ## Frozen until modules land (do not extend)
 
