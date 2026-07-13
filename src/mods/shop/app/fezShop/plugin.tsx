@@ -2,6 +2,7 @@
 import { use, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
+import { isModEnabled } from "@/mods/registeredMods"
 import { FEZ_SHOP_META } from "@/mods/shop/game/fezShop/meta"
 import { useModState } from "@/app/state/useModState"
 import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
@@ -140,8 +141,12 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   )
 }
 
-registerFamily({
-  meta: FEZ_SHOP_META,
-  generate: (_seed, ctx) => ({ reward: ctx.reward, price: ctx.price }),
-  Component: ShopComponent,
-})
+// Gated on the mod: registerModApps imports this file unconditionally (static side-effect), so
+// the enablement check lives here — shop off → no plugin in the registry → a shop-tagged room
+// resolves via the family-absence pass-through (SiteMapScreen) instead of rendering the shop.
+if (isModEnabled("shop"))
+  registerFamily({
+    meta: FEZ_SHOP_META,
+    generate: (_seed, ctx) => ({ reward: ctx.reward, price: ctx.price }),
+    Component: ShopComponent,
+  })

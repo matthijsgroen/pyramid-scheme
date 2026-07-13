@@ -17,9 +17,9 @@ import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
-import type { ConsumableSpec } from "./dynamicLoot"
+import type { DynamicLootSpecs } from "./dynamicLoot"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
-import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
+import { validateDiscovery, validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -234,7 +234,8 @@ export const buildConfigs = (
   resolveKeyRequirements?: ResolveKeyRequirements,
   currencies: CurrencyDistribution[] = [],
   capped: CappedCurrency[] = [],
-  consumables?: ConsumableSpec
+  dynamicLoot?: DynamicLootSpecs,
+  worldValidators: WorldValidator[] = []
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -248,7 +249,7 @@ export const buildConfigs = (
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  placeFragments(allConfigs, currencies, resolveKeyRequirements, capped, consumables)
+  placeFragments(allConfigs, currencies, resolveKeyRequirements, capped, dynamicLoot)
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, discovery graph solvability, and the shop economy guard. The
@@ -259,11 +260,10 @@ export const buildConfigs = (
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
   validateDiscovery(allConfigs)
-  // Economy guard is a global balance check — it can't pass until the whole world is grown,
-  // so it blocks mid-exercise regeneration during world authoring. SKIP_ECONOMY_GUARD lets an
-  // author iterate + inspect (yarn world-info) with structural validation still on; the real
-  // generate-world for commit must run without it. ponytail: env escape hatch, not a config knob.
-  if (!process.env.SKIP_ECONOMY_GUARD) validateEconomyGuard(allConfigs)
+  // Mod-injected post-build validators (e.g. the shop economy guard) run last, over the whole
+  // grown world. They drop out with their mod, so core names none — the shop guard leaves the
+  // check when shop leaves REGISTERED_MODS.
+  for (const validate of worldValidators) validate(allConfigs)
 
   return allConfigs
 }

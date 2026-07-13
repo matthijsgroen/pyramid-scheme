@@ -1,5 +1,6 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
-import type { ConsumableSpec } from "@/worldGen/dynamicLoot"
+import type { ConsumableSpec, MoneySpec, JunkSpec } from "@/worldGen/dynamicLoot"
+import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 
@@ -30,4 +31,13 @@ export type ModDescriptor = {
   // consumable-role puzzle slots with it. Drops when the mod leaves REGISTERED_MODS (trap off →
   // no consumables placed). Only one registered mod should contribute this.
   consumables?: ConsumableSpec
+  // Loose-money placement this mod owns (density) — shop off → no loose money placed. The money
+  // amount stays a core-ledger value; the mod owns only how dense it is. One mod should own this.
+  money?: MoneySpec
+  // Junk (sellable filler) placement this mod owns (eagerness + per-tier item set) — shop off →
+  // no junk placed, leftover chests fall empty. One mod should own this.
+  junk?: JunkSpec
+  // Post-build world validator (e.g. the shop economy guard) — a global balance check run over
+  // the whole grown world in buildConfigs. Drops with the mod, so core names no mod balance rule.
+  worldValidator?: WorldValidator
 }

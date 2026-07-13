@@ -8,8 +8,6 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useJourneys } from "../state/useJourneys"
 import { type Difficulty } from "@/data/difficultyLevels"
-import { ALL_SELLABLES } from "@/data/sellables"
-import { difficultyByMaterialTier } from "@/data/treasures"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
@@ -53,39 +51,6 @@ const TreasureCategorySection: FC<{
             difficulty={difficulty}
             selected={selectedItem?.id === item.id}
             onClick={() => onItemClick(item)}
-            className="aspect-square shadow-md hover:shadow-lg"
-          />
-        ))}
-      </CategoryGrid>
-    </CollectionSection>
-  )
-}
-
-const SellableCategorySection: FC<{
-  onItemClick: (item: CollectionItem) => void
-  selectedItem: CollectionItem | null
-  inventory: Record<string, number | undefined>
-}> = ({ onItemClick, selectedItem, inventory }) => {
-  const { t } = useTranslation(["common", "sellables"])
-
-  return (
-    <CollectionSection title={t("collection.categories.junk")} accent="emerald">
-      <CategoryGrid>
-        {ALL_SELLABLES.map(item => (
-          <CollectibleSlot
-            key={item.id}
-            state={inventory[item.id] !== undefined ? "collected" : "empty"}
-            symbol={item.symbol}
-            difficulty={difficultyByMaterialTier[item.tier]}
-            selected={selectedItem?.id === item.id}
-            onClick={() =>
-              onItemClick({
-                id: item.id,
-                symbol: item.symbol,
-                name: t(`${item.id}.name`, { ns: "sellables" }),
-                description: t(`${item.id}.description`, { ns: "sellables" }),
-              })
-            }
             className="aspect-square shadow-md hover:shadow-lg"
           />
         ))}
@@ -209,10 +174,9 @@ export const CollectionPage: FC = () => {
             />
           )}
 
-          <SellableCategorySection onItemClick={handleItemClick} selectedItem={selectedItem} inventory={inventory} />
-
-          {/* Mod-contributed sections. Each registers itself gated on its mod, so a section drops
-              out when its mod is toggled off — core names none here. */}
+          {/* Mod-contributed sections (shop's junk category, hieroglyph's fragments, …). Each
+              registers itself gated on its mod, so a section drops out when its mod is toggled
+              off — core names none here. */}
           {collectionSections().map(section => (
             <section.Component key={section.id} selectedItem={selectedItem} onSelect={handleItemClick} />
           ))}

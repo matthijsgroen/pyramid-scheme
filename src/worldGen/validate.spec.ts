@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { SECONDARY_TOMBS, validateDiscovery, validateEconomyGuard, validateRewardCounts } from "./validate"
+import { SECONDARY_TOMBS, validateDiscovery, validateRewardCounts } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -173,56 +173,5 @@ describe("validateDiscovery", () => {
   })
 })
 
-describe("validateEconomyGuard", () => {
-  const shopSlot = (shopPrice: number) => ({
-    pathPuzzles: 0,
-    difficulty: "starter" as const,
-    end: "treasure" as const,
-    endReward: { type: "mosaicPiece" as const },
-    shopPrice,
-  })
-  const moneyPuzzleFloor = (amount: number) =>
-    floor({ pathPuzzles: 1, puzzleRewards: [{ type: "money" as const, amount }] })
-  const junkFloor = (itemId: string) => floor({ mainEndReward: { type: "sellable" as const, itemId } })
-
-  it("passes when guaranteed income covers total shop prices + consumable stock", () => {
-    // TOTAL_CONSUMABLE_BUYABLE alone is 1,760 — a single shop price of 100 needs 1,860 income.
-    const configs = {
-      site: [
-        [
-          floor({ sideSections: [shopSlot(100)] }),
-          moneyPuzzleFloor(1000),
-          moneyPuzzleFloor(1000),
-          junkFloor("sell_divine_1"), // 50
-        ],
-      ] as SiteConfig[],
-    }
-    expect(() => validateEconomyGuard(configs)).not.toThrow()
-  })
-
-  it("throws when total shop prices + consumable stock exceed guaranteed income", () => {
-    const configs = { site: [[floor({ sideSections: [shopSlot(100)] }), moneyPuzzleFloor(1)]] as SiteConfig[] }
-    expect(() => validateEconomyGuard(configs)).toThrow(/economy guard failed/)
-  })
-
-  it("ignores non-shop end-of-path rewards when totaling shop prices", () => {
-    // Exactly enough income for the fixed 1,760 consumable-stock floor, no shop prices —
-    // a plain (non-shop) mosaicPiece endReward alongside it must not push the total over.
-    const plainMosaic = {
-      pathPuzzles: 0,
-      difficulty: "starter" as const,
-      end: "treasure" as const,
-      endReward: { type: "mosaicPiece" as const },
-    }
-    const passingConfigs = {
-      site: [[floor({ sideSections: [plainMosaic] }), moneyPuzzleFloor(1760)]] as SiteConfig[],
-    }
-    expect(() => validateEconomyGuard(passingConfigs)).not.toThrow()
-
-    // Same income, but the mosaic now has a real shopPrice — must push the total over.
-    const failingConfigs = {
-      site: [[floor({ sideSections: [shopSlot(1)] }), moneyPuzzleFloor(1760)]] as SiteConfig[],
-    }
-    expect(() => validateEconomyGuard(failingConfigs)).toThrow(/economy guard failed/)
-  })
-})
+// The shop economy guard moved to the shop mod (src/mods/shop/game/economyGuard.spec.ts) —
+// it's a shop-owned balance check, injected as the mod's worldValidator, not a core rule.

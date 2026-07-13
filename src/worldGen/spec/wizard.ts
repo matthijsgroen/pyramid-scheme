@@ -10,7 +10,9 @@ const WIZARD_CHAIN: SideSectionConstraint = {
   pathPuzzles: 1,
   end: "treasure",
   endReward: "mosaicPiece",
-  sideSections: [{ gate: { type: "floor-key", color: "green" }, pathPuzzles: 1, end: "treasure", endReward: "mosaicPiece" }],
+  sideSections: [
+    { gate: { type: "floor-key", color: "green" }, pathPuzzles: 1, end: "treasure", endReward: "mosaicPiece" },
+  ],
 }
 
 export const wizardRules: Rule[] = [
@@ -40,7 +42,9 @@ export const wizardRules: Rule[] = [
     .settings({ pathPuzzles: 0, end: "mosaic" }),
 
   // 3-level key-chain showcase on the 2nd pyramid of each wizard journey.
-  ...["wizard_1", "wizard_2", "wizard_3", "wizard_4"].map(jid => journey(jid).pyramid(2, { sideSections: [WIZARD_CHAIN] })),
+  ...["wizard_1", "wizard_2", "wizard_3", "wizard_4"].map(jid =>
+    journey(jid).pyramid(2, { sideSections: [WIZARD_CHAIN] })
+  ),
 
   tomb("wizard_treasure_tomb", {
     encounter: "tableau",

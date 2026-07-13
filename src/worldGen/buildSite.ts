@@ -300,7 +300,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         ? wingSpecs.map(s => {
             const wardKeyId = TOMB_PERK_IDS[s.tomb]?.[s.index]
             if (!wardKeyId) throw new Error(`buildSite: wardWing references unknown ward key ${s.tomb}[${s.index}]`)
-            return { wardKeyId, difficulty: s.difficulty ?? difficulty, stairPP: s.puzzles ?? 1, floorPP: s.puzzles ?? 1 }
+            return {
+              wardKeyId,
+              difficulty: s.difficulty ?? difficulty,
+              stairPP: s.puzzles ?? 1,
+              floorPP: s.puzzles ?? 1,
+            }
           })
         : wardIndices
             .slice(0, uniformWingCount)

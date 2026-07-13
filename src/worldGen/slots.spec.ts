@@ -48,9 +48,7 @@ describe(collectSlots, () => {
         difficulty: "starter",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [
-          { pathPuzzles: 0, difficulty: "wizard", end: "treasure", endReward: { type: "fragmentSlot" } },
-        ],
+        sideSections: [{ pathPuzzles: 0, difficulty: "wizard", end: "treasure", endReward: { type: "fragmentSlot" } }],
       },
     ]
     const slots = collectSlots({ starter_1: [site] })

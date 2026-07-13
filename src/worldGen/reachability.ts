@@ -48,11 +48,7 @@ export const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
 // threshold — a tomb's own `piecesRequired` — is read here directly. Every other bucket's
 // threshold comes from the injected currency support (e.g. a hieroglyph's fragment count);
 // a bucket no registered currency claims (a tomb-key/tier-unlock perk) is threshold-1.
-const thresholdFor = (
-  id: string,
-  journeyMeta: Record<string, JourneyMeta>,
-  support: CurrencySupport
-): number => {
+const thresholdFor = (id: string, journeyMeta: Record<string, JourneyMeta>, support: CurrencySupport): number => {
   if (id.startsWith("mapPiece:")) return journeyMeta[id.slice("mapPiece:".length)]?.piecesRequired ?? 1
   return support.thresholdFor?.(id) ?? 1
 }

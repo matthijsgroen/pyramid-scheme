@@ -1,10 +1,13 @@
-import type { SideSection, SiteConfig, SubSection, TreasureReward } from "./types"
+import type { SiteConfig, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
-import { TOTAL_CONSUMABLE_BUYABLE } from "../data/shopPricing"
-import { sellValueForItemId } from "../data/sellables"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
+
+// A post-build check over the whole grown world, contributed by a mod (e.g. the shop economy
+// guard) and injected into buildConfigs. Drops out with its mod, so core names no mod-specific
+// balance rule.
+export type WorldValidator = (configs: Record<string, SiteConfig[]>) => void
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
 // the total mapPiece count drifts from WORLD_TARGETS, or the count of placed gating-currency
@@ -58,9 +61,7 @@ export const validateRewardCounts = (
   if (mapPieces !== WORLD_TARGETS.mapPieceRewards)
     throw new Error(`[worldSpec] Expected ${WORLD_TARGETS.mapPieceRewards} map pieces, got ${mapPieces}`)
   if (expectedCurrencyRewards !== undefined && currencyRewards !== expectedCurrencyRewards)
-    throw new Error(
-      `[worldSpec] Expected ${expectedCurrencyRewards} gating-currency rewards, got ${currencyRewards}`
-    )
+    throw new Error(`[worldSpec] Expected ${expectedCurrencyRewards} gating-currency rewards, got ${currencyRewards}`)
 }
 
 // Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.
@@ -191,50 +192,5 @@ export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): voi
   }
   if (orderingErrors.length > 0) {
     throw new Error(`[worldSpec] Unsolvable ward-key ordering:\n${orderingErrors.join("\n")}`)
-  }
-}
-
-// Economy guard: Σ(all shop prices, rares + one full consumable restock per shop) ≤
-// Σ(all guaranteed income — puzzle-solve money + junk sell value).
-// Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
-// order affordable; only the world-wide totals matter. Throws at build, not at runtime.
-// This is a hand-walked, shop-specific version of a more general "dependency read as guard"
-// mechanism docs/mods/ARCHITECTURE.md describes — a mechanic declaring a dependency on
-// another's output, with the sum-check falling out of the dependency graph instead of being
-// hand-rolled per feature. Not generalizing yet; a pointer for whoever does.
-export const validateEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void => {
-  let shopPrices = 0
-  let guaranteedIncome = 0
-
-  const tallySubSection = (s: SubSection) => {
-    if (s.shopPrice !== undefined) shopPrices += s.shopPrice
-    if (s.endReward?.type === "sellable") guaranteedIncome += sellValueForItemId(s.endReward.itemId)
-    for (const r of s.puzzleRewards ?? []) {
-      if (r?.type === "money") guaranteedIncome += r.amount
-    }
-  }
-  const walkSection = (s: SideSection) => {
-    tallySubSection(s)
-    for (const sub of s.sideSections ?? []) tallySubSection(sub)
-  }
-
-  for (const siteConfigs of Object.values(allConfigs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        if (floor.mainEndReward?.type === "sellable") guaranteedIncome += sellValueForItemId(floor.mainEndReward.itemId)
-        for (const r of floor.puzzleRewards ?? []) {
-          if (r?.type === "money") guaranteedIncome += r.amount
-        }
-        for (const s of floor.sideSections) walkSection(s)
-      }
-    }
-  }
-
-  const totalBuyable = shopPrices + TOTAL_CONSUMABLE_BUYABLE
-  if (totalBuyable > guaranteedIncome) {
-    throw new Error(
-      `[worldSpec] Shop economy guard failed: total buyable (${totalBuyable} = ${shopPrices} rares + ` +
-        `${TOTAL_CONSUMABLE_BUYABLE} consumable stock) exceeds guaranteed income (${guaranteedIncome}).`
-    )
   }
 }

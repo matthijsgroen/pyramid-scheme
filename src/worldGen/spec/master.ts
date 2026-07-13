@@ -21,7 +21,9 @@ const KEY_CHAIN: SideSectionConstraint = {
   pathPuzzles: 1,
   end: "treasure",
   endReward: "mosaicPiece",
-  sideSections: [{ gate: { type: "floor-key", color: "green" }, pathPuzzles: 1, end: "treasure", endReward: "mosaicPiece" }],
+  sideSections: [
+    { gate: { type: "floor-key", color: "green" }, pathPuzzles: 1, end: "treasure", endReward: "mosaicPiece" },
+  ],
 }
 
 export const masterRules: Rule[] = [

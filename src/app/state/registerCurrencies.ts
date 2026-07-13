@@ -12,12 +12,11 @@ registerCurrency({
   kind: "capped",
   total: tombCount,
 })
-registerCurrency({ id: "money", ownerMod: "shop", displayName: "currency.money", icon: "🪙", kind: "counter" })
 
 // Extracted mods contribute their own currency meta via their descriptor — toggling a mod off
-// (removing it from REGISTERED_MODS) drops its currency from the registry too. The hardcoded ones
-// above are mods not yet extracted (tomb-treasure/shop); they move here as they land (trap already
-// contributes `health` via its descriptor).
+// (removing it from REGISTERED_MODS) drops its currency from the registry too. The hardcoded one
+// above is the mod not yet extracted (tomb-treasure); it moves here when that mod lands (trap,
+// shop and mosaic already contribute their currencies via their descriptors).
 for (const mod of REGISTERED_MODS) {
   if (!mod.currencyMeta) continue
   const metas = Array.isArray(mod.currencyMeta) ? mod.currencyMeta : [mod.currencyMeta]

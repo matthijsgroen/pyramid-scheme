@@ -4,8 +4,8 @@ import type { Slot } from "./slots"
 import type { TreasureReward } from "./types"
 
 // Minimal fake slot — only the fields the allocator touches, plus a spy on assign.
-const makeSlot = (id: string, tier = "starter"): Slot & { filled: TreasureReward[] } => {
-  const filled: TreasureReward[] = []
+const makeSlot = (id: string, tier = "starter"): Slot & { filled: (TreasureReward | undefined)[] } => {
+  const filled: (TreasureReward | undefined)[] = []
   return {
     ref: { journeyId: id, levelIndex: 0, floorIndex: 0 },
     journeyId: id,

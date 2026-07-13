@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest"
-import { assignDynamicLoot, type ConsumableSpec } from "./dynamicLoot"
+import { assignDynamicLoot, type ConsumableSpec, type DynamicLootSpecs } from "./dynamicLoot"
+import { sellablesForDifficulty } from "../data/sellables"
+import type { Difficulty } from "../data/difficultyLevels"
 import type { Slot } from "./slots"
 import type { TreasureReward } from "./types"
 
-// Stand-in for the trap mod's consumable spec — same density as production, fixed type.
+// Stand-ins for the mod-owned specs — trap consumables, shop money + junk — at production density.
 const CONSUMABLES: ConsumableSpec = { fraction: 441 / 1714, roll: () => "bandage" }
+const SPECS: DynamicLootSpecs = {
+  consumables: CONSUMABLES,
+  money: { fraction: 199 / 1714 },
+  junk: { eagerness: { end: 1, puzzle: 0.6 }, itemsForTier: tier => sellablesForDifficulty(tier as Difficulty) },
+}
 
-const puzzleSlot = (siteId: string, seq: number, sink: (r: TreasureReward) => void): Slot => ({
+const puzzleSlot = (siteId: string, seq: number, sink: (r: TreasureReward | undefined) => void): Slot => ({
   ref: { journeyId: siteId, levelIndex: 0, floorIndex: 0 },
   journeyId: siteId,
   tier: "starter",
@@ -18,7 +25,7 @@ const puzzleSlot = (siteId: string, seq: number, sink: (r: TreasureReward) => vo
   assign: sink,
 })
 
-const endSlot = (tier: Slot["tier"], sink: (r: TreasureReward) => void): Slot => ({
+const endSlot = (tier: Slot["tier"], sink: (r: TreasureReward | undefined) => void): Slot => ({
   ref: { journeyId: "j", levelIndex: 0, floorIndex: 0 },
   journeyId: "j",
   tier,
@@ -31,7 +38,7 @@ const endSlot = (tier: Slot["tier"], sink: (r: TreasureReward) => void): Slot =>
 const runPuzzle = (siteId: string, n: number): (TreasureReward | undefined)[] => {
   const out: (TreasureReward | undefined)[] = new Array(n).fill(undefined)
   const set = new Set<Slot>(Array.from({ length: n }, (_, i) => puzzleSlot(siteId, i, r => (out[i] = r))))
-  assignDynamicLoot(set, CONSUMABLES)
+  assignDynamicLoot(set, SPECS)
   return out
 }
 
@@ -54,7 +61,7 @@ describe("assignDynamicLoot", () => {
     // All slots here are starter; an expert+ eligible rule places zero consumables (money still).
     const out: (TreasureReward | undefined)[] = new Array(40).fill(undefined)
     const set = new Set<Slot>(Array.from({ length: 40 }, (_, i) => puzzleSlot("site-e", i, r => (out[i] = r))))
-    assignDynamicLoot(set, { ...CONSUMABLES, eligible: s => s.tier !== "starter" })
+    assignDynamicLoot(set, { ...SPECS, consumables: { ...CONSUMABLES, eligible: s => s.tier !== "starter" } })
     expect(out.some(r => r?.type === "consumable")).toBe(false)
     expect(out.some(r => r?.type === "money")).toBe(true)
   })
@@ -62,9 +69,18 @@ describe("assignDynamicLoot", () => {
   it("places no consumables when no spec is injected (trap off)", () => {
     const out: (TreasureReward | undefined)[] = new Array(40).fill(undefined)
     const set = new Set<Slot>(Array.from({ length: 40 }, (_, i) => puzzleSlot("site-off", i, r => (out[i] = r))))
-    assignDynamicLoot(set) // no ConsumableSpec
+    assignDynamicLoot(set, { money: SPECS.money, junk: SPECS.junk }) // shop on, trap off
     expect(out.some(r => r?.type === "consumable")).toBe(false)
-    expect(out.some(r => r?.type === "money")).toBe(true) // money is core, still placed
+    expect(out.some(r => r?.type === "money")).toBe(true)
+  })
+
+  it("places no money or junk when shop is off (only trap consumables remain)", () => {
+    const out: (TreasureReward | undefined)[] = new Array(40).fill(undefined)
+    const set = new Set<Slot>(Array.from({ length: 40 }, (_, i) => puzzleSlot("site-noshop", i, r => (out[i] = r))))
+    assignDynamicLoot(set, { consumables: CONSUMABLES }) // shop off — no money/junk spec
+    expect(out.some(r => r?.type === "consumable")).toBe(true)
+    expect(out.some(r => r?.type === "money")).toBe(false)
+    expect(out.some(r => r?.type === "sellable")).toBe(false)
   })
 
   it("puts money/consumables AND junk in a puzzle-only pool (junk is eager on empties)", () => {
@@ -76,11 +92,11 @@ describe("assignDynamicLoot", () => {
   })
 
   it("fills every chest, clears the pool", () => {
-    const filled: TreasureReward[] = []
+    const filled: (TreasureReward | undefined)[] = []
     const set = new Set<Slot>(Array.from({ length: 8 }, () => endSlot("starter", r => filled.push(r))))
-    assignDynamicLoot(set)
+    assignDynamicLoot(set, SPECS)
     expect(set.size).toBe(0)
-    expect(filled.filter(r => r.type === "sellable")).toHaveLength(8) // chests eager100
+    expect(filled.filter(r => r?.type === "sellable")).toHaveLength(8) // chests eager100
   })
 
   it("round-robins junk so every tier item appears (≥1-of-each completeness)", () => {
@@ -88,12 +104,12 @@ describe("assignDynamicLoot", () => {
     const set = new Set<Slot>(
       Array.from({ length: 5 }, () => endSlot("starter", r => ids.push((r as { itemId: string }).itemId)))
     )
-    assignDynamicLoot(set)
+    assignDynamicLoot(set, SPECS)
     expect(new Set(ids).size).toBe(5) // all 5 stone items, no repeats
   })
 
   it("hard-fails when a tier has fewer loot slots than collectibles", () => {
     const set = new Set<Slot>(Array.from({ length: 3 }, () => endSlot("starter", () => {})))
-    expect(() => assignDynamicLoot(set)).toThrow(/junk completeness/)
+    expect(() => assignDynamicLoot(set, SPECS)).toThrow(/junk completeness/)
   })
 })

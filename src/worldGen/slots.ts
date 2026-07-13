@@ -33,7 +33,9 @@ export type Slot = {
    * design.md). Undefined for `"end"` slots. */
   siteId?: string
   puzzleSeq?: number
-  assign: (reward: TreasureReward) => void
+  /** Assign this slot's reward, or clear it to empty (`undefined`) — a leftover placeholder with
+   * no filler (e.g. a chest when the shop mod is off) becomes an empty path end. */
+  assign: (reward: TreasureReward | undefined) => void
 }
 
 // Every fragmentSlot sentinel and open (unrewarded) tomb-key gate across every site that
@@ -55,7 +57,7 @@ export const collectSlots = (allConfigs: Record<string, SiteConfig[]>): Slot[] =
       wardKeys: string[],
       isPlaceholder: boolean,
       preference: string | undefined,
-      assign: (r: TreasureReward) => void
+      assign: (r: TreasureReward | undefined) => void
     ) =>
       slots.push({ ref, journeyId, tier: difficulty as Tier, wardKeys, isPlaceholder, preference, kind: "end", assign })
 
