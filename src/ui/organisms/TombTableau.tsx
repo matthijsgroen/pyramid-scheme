@@ -1,5 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import { hieroglyphLevelColors } from "@/ui/atoms/hieroglyphLevelColors"
+import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
 import type { TableauLevel } from "@/data/tableaus"
 import type { RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
@@ -40,7 +40,7 @@ export const TombTableau: FC<{
   <div
     className={clsx(
       "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-600 shadow-lg",
-      hieroglyphLevelColors[difficulty]
+      difficultyMaterialFlat[difficulty]
     )}
   >
     <h1 className="text-center font-pyramid text-2xl">{revealText(tableau.name, solvedPercentage)}</h1>

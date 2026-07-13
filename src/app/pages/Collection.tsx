@@ -17,7 +17,9 @@ import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
-import { Badge } from "@/ui/atoms/Badge"
+import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
+import { CollectionSection } from "@/ui/atoms/CollectionSection"
+import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 
 type InventoryCategory = "deities" | "professions" | "animals" | "artifacts"
 
@@ -61,49 +63,28 @@ const CategorySection: FC<{
   )
 
   return (
-    <div className="mb-8">
-      <h2 className="mb-4 border-2 border-b-purple-800 bg-purple-800 bg-clip-text font-pyramid text-xl font-semibold text-transparent">
-        {t(`collection.categories.${category}`)}
-      </h2>
-      <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-15">
+    <CollectionSection title={t(`collection.categories.${category}`)} accent="purple">
+      <CategoryGrid>
         {sortedItems.map(item => {
           const itemLevel = getItemFirstLevel(item.id)
-          const isSelected = selectedItem?.id === item.id
           const fragmentsFound = hieroglyphFragments[item.id] ?? 0
-          const isCollected = inventory[item.id] !== undefined || fragmentsFound >= hieroglyphProgress(item.id).required
-
-          if (isCollected && itemLevel) {
-            return (
-              <Badge key={item.id}>
-                <HieroglyphTile
-                  symbol={item.symbol}
-                  difficulty={itemLevel}
-                  selected={isSelected}
-                  onClick={() => onItemClick(item)}
-                />
-              </Badge>
-            )
-          }
-
-          if (fragmentsFound > 0 && itemLevel) {
-            // Partially collected — show progress tile with a badge showing "X/3"
-            return (
-              <Badge key={item.id} label={`${fragmentsFound}/${hieroglyphProgress(item.id).required}`}>
-                <HieroglyphTile
-                  symbol={item.symbol}
-                  difficulty={itemLevel}
-                  fragmentProgress={{ found: fragmentsFound, required: hieroglyphProgress(item.id).required }}
-                  size="md"
-                  className="aspect-square"
-                />
-              </Badge>
-            )
-          }
-
-          return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
+          const required = hieroglyphProgress(item.id).required
+          const isCollected = inventory[item.id] !== undefined || fragmentsFound >= required
+          const state = !itemLevel ? "empty" : isCollected ? "collected" : fragmentsFound > 0 ? "partial" : "empty"
+          return (
+            <CollectibleSlot
+              key={item.id}
+              state={state}
+              symbol={item.symbol}
+              difficulty={itemLevel}
+              progress={{ found: fragmentsFound, required }}
+              selected={selectedItem?.id === item.id}
+              onClick={() => onItemClick(item)}
+            />
+          )
         })}
-      </div>
-    </div>
+      </CategoryGrid>
+    </CollectionSection>
   )
 }
 
@@ -118,34 +99,21 @@ const TreasureCategorySection: FC<{
   const difficulty = treasureCategoryToDifficulty[category]
 
   return (
-    <div className="mb-8">
-      <h2 className="mb-4 border-2 border-b-amber-800 bg-amber-800 bg-clip-text font-pyramid text-xl font-semibold text-transparent">
-        {t(`collection.treasureCategories.${category}`)}
-      </h2>
-      <div className="grid grid-cols-5 gap-3 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10">
-        {items.map(item => {
-          const isSelected = selectedItem?.id === item.id
-
-          const isCollected = treasures[item.id] !== undefined
-
-          if (!isCollected) {
-            // Show empty placeholder for uncollected treasures
-            return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
-          }
-
-          return (
-            <HieroglyphTile
-              key={item.id}
-              symbol={item.symbol}
-              difficulty={difficulty}
-              selected={isSelected}
-              onClick={() => onItemClick(item)}
-              className="aspect-square shadow-md hover:shadow-lg"
-            />
-          )
-        })}
-      </div>
-    </div>
+    <CollectionSection title={t(`collection.treasureCategories.${category}`)} accent="amber">
+      <CategoryGrid>
+        {items.map(item => (
+          <CollectibleSlot
+            key={item.id}
+            state={treasures[item.id] !== undefined ? "collected" : "empty"}
+            symbol={item.symbol}
+            difficulty={difficulty}
+            selected={selectedItem?.id === item.id}
+            onClick={() => onItemClick(item)}
+            className="aspect-square shadow-md hover:shadow-lg"
+          />
+        ))}
+      </CategoryGrid>
+    </CollectionSection>
   )
 }
 
@@ -157,39 +125,28 @@ const SellableCategorySection: FC<{
   const { t } = useTranslation(["common", "sellables"])
 
   return (
-    <div className="mb-8">
-      <h2 className="mb-4 border-2 border-b-emerald-800 bg-emerald-800 bg-clip-text font-pyramid text-xl font-semibold text-transparent">
-        {t("collection.categories.junk")}
-      </h2>
-      <div className="grid grid-cols-5 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-15">
-        {ALL_SELLABLES.map(item => {
-          const isSelected = selectedItem?.id === item.id
-          const isCollected = inventory[item.id] !== undefined
-
-          if (!isCollected) {
-            return <HieroglyphTile key={item.id} empty size="md" className="aspect-square" />
-          }
-
-          return (
-            <HieroglyphTile
-              key={item.id}
-              symbol={item.symbol}
-              difficulty={difficultyByMaterialTier[item.tier]}
-              selected={isSelected}
-              onClick={() =>
-                onItemClick({
-                  id: item.id,
-                  symbol: item.symbol,
-                  name: t(`${item.id}.name`, { ns: "sellables" }),
-                  description: t(`${item.id}.description`, { ns: "sellables" }),
-                })
-              }
-              className="aspect-square shadow-md hover:shadow-lg"
-            />
-          )
-        })}
-      </div>
-    </div>
+    <CollectionSection title={t("collection.categories.junk")} accent="emerald">
+      <CategoryGrid>
+        {ALL_SELLABLES.map(item => (
+          <CollectibleSlot
+            key={item.id}
+            state={inventory[item.id] !== undefined ? "collected" : "empty"}
+            symbol={item.symbol}
+            difficulty={difficultyByMaterialTier[item.tier]}
+            selected={selectedItem?.id === item.id}
+            onClick={() =>
+              onItemClick({
+                id: item.id,
+                symbol: item.symbol,
+                name: t(`${item.id}.name`, { ns: "sellables" }),
+                description: t(`${item.id}.description`, { ns: "sellables" }),
+              })
+            }
+            className="aspect-square shadow-md hover:shadow-lg"
+          />
+        ))}
+      </CategoryGrid>
+    </CollectionSection>
   )
 }
 
