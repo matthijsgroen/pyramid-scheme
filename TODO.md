@@ -117,23 +117,32 @@ Scope when picked up:
 
 ## Slices 3+ (re-planned after hieroglyph)
 
-**Perks are parked (above), which reorders these** — trap is the biggest perk owner, so it waits.
+Perk UPGRADES are parked (above); the trap slice excludes them but is otherwise NOT blocked.
 
-- [ ] shop — money currency (mosaic/hieroglyph currency pattern), Fez shop family. Least
-      perk-entangled → the sensible NEXT slice. Unblocks the capacity/eagerness slot model
-      (shop cap6/eager0 + shop-targeting placement rule) the hieroglyph shop-stock fragments want.
+- [ ] Slice 3a — filler-loot generalization (UNFREEZE, per user). Consumables are probabilistic
+      filler loot (`puzzleRewards.ts` bakes `{type:"consumable"}`/money quotas), not capped-currency
+      slots — so mod-owning them needs the filler-loot pass to become mod-contributed. Generalize:
+      mods contribute filler-loot providers (kind + weight/rate + roller); core distributes across
+      puzzle/filler slots by asking registered providers; a mod off → its kind isn't offered → slots
+      go to the remaining providers. Drive it FROM the trap need (vertical anchor — NOT a speculative
+      horizontal core rewrite; see doom-loop memory + TARGET). Needs a design/plan doc first.
+- [ ] Slice 3b — trap. Scope: trap encounter family + health (trap-owned currency, value stays in
+      shared ledger, methods → `useTrapProgress`) + consumables (trap-owned filler provider, on 3a)
+      + HUD (HealthDisplay/ConsumableBar gated). **Excludes the 4 trap perk upgrades** (max-health,
+      armor, pack-mule, trap-insight) — parked with the perk system; trap logic READS those perk
+      values from the still-core slice (documented seam). Decisions settled: health trap-owned;
+      consumables trap-owned.
+- [ ] shop — money currency (mosaic/hieroglyph pattern), Fez shop family.
 - [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive).
-- [ ] trap — family + health (trap-owned currency, `useTrapProgress`) + consumables (trap-owned)
-      + HUD. **BLOCKED on the perk system** (trap owns 4 perks; health's maxHealth is a perk).
-      Decisions already settled: health trap-owned (value stays in shared ledger, methods →
-      `useTrapProgress`); consumables trap-owned (fall through to filler when off). Do after perks.
-- [ ] Perk & detector system (see above) — the design/build that unblocks trap + revives DET-1.
+- [ ] Perk & detector system (see above) — unblocks the trap perk upgrades + revives DET-1. Last.
 
 ## Frozen until modules land (do not extend)
 
-- [ ] phase-4 uncapped loot (max-% occupancy + drop rate)
-- [ ] filler-loot fill-the-rest generalization
+- [ ] phase-4 uncapped loot (max-% occupancy + drop rate) — likely folds into Slice 3a's provider
+      model (a provider can be uncapped w/ a drop rate); revisit during the 3a design.
 - [ ] slot capacity (`Slot` holding several items)
+
+Unfrozen: filler-loot fill-the-rest generalization → Slice 3a (driven by the trap slice).
 
 ## Prior work still standing (carried into core, not undone)
 
