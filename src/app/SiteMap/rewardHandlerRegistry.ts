@@ -1,6 +1,5 @@
 import type { TreasureReward, ConsumableType } from "@/game/siteTypes"
 import type { ProgressionAPI } from "@/app/state/useProgression"
-import type { TrapProgressAPI } from "@/mods/trap/app/useTrapProgress"
 
 export type TFn = (key: string, opts?: Record<string, unknown>) => string
 export type RewardText = { itemName: string; itemDescription?: string; icon: string }
@@ -11,17 +10,14 @@ export type RewardText = { itemName: string; itemDescription?: string; icon: str
 export const CONSUMABLE_EMOJI: Record<ConsumableType, string> = { bandage: "🩹", oil: "🫙", trapTool: "🔧" }
 
 type InventoryAPI = { addItem: (id: string, count: number) => void }
-// trapProgress carries trap-owned state (health + consumables); the consumable handler uses it.
-type ApplyCtx = {
-  progression: ProgressionAPI
-  inventory: InventoryAPI
-  journeyId: string
-  trapProgress: TrapProgressAPI
-}
+type ApplyCtx = { progression: ProgressionAPI; inventory: InventoryAPI; journeyId: string }
 
 export type RewardHandler<R extends TreasureReward = TreasureReward> = {
   type: R["type"]
-  apply: (reward: R, ctx: ApplyCtx) => void
+  // The state write for a claim that only touches CORE state (progression/inventory). Reward
+  // types whose effect needs a mod's own state (e.g. a consumable → trap) omit this and register
+  // a reward contribution instead (rewardContributions.ts); a handler is then display-only.
+  apply?: (reward: R, ctx: ApplyCtx) => void
   emoji: string
   text: (reward: R, t: TFn, hieroglyphProgress?: (id: string) => { found: number; required: number }) => RewardText
 }

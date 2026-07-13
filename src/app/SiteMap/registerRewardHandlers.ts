@@ -2,32 +2,29 @@ import { registerRewardHandler, CONSUMABLE_EMOJI } from "./rewardHandlerRegistry
 import { hieroglyphCategory } from "./hieroglyphCategory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getSellableById } from "@/data/sellables"
-import { isModEnabled } from "@/mods/registeredMods"
 import type { ConsumableType } from "@/game/siteTypes"
 
 // "fragmentSlot" has no handler — falls through to applyReward.ts/rewardDisplay.ts's generic default.
 
-// Gated on the hieroglyph mod: with it off, world-gen places no hieroglyphFragment rewards, so
-// this handler would only dangle. Keeping the registration behind the toggle means an orphaned
-// reward has no live handler when the mod is removed.
-if (isModEnabled("hieroglyph"))
-  registerRewardHandler({
-    type: "hieroglyphFragment",
-    apply: (reward, { progression }) => progression.addFragment(reward.hieroglyphId, reward.pieceIndex),
-    emoji: "𓂀",
-    text: (reward, t, hieroglyphProgress) => {
-      const item = getInventoryItemById(reward.hieroglyphId)
-      const category = hieroglyphCategory(reward.hieroglyphId)
-      const name = item
-        ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
-        : t("chest.hieroglyphFragment")
-      const progress = hieroglyphProgress?.(reward.hieroglyphId)
-      const itemDescription = progress
-        ? `${t(`${category}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`
-        : undefined
-      return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, itemDescription, icon: item?.symbol ?? "𓂀" }
-    },
-  })
+// hieroglyph fragments write to core progression (fragments still live there), so this stays a
+// core handler; it simply never fires when the hieroglyph mod is off (no such rewards are placed).
+registerRewardHandler({
+  type: "hieroglyphFragment",
+  apply: (reward, { progression }) => progression.addFragment(reward.hieroglyphId, reward.pieceIndex),
+  emoji: "𓂀",
+  text: (reward, t, hieroglyphProgress) => {
+    const item = getInventoryItemById(reward.hieroglyphId)
+    const category = hieroglyphCategory(reward.hieroglyphId)
+    const name = item
+      ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
+      : t("chest.hieroglyphFragment")
+    const progress = hieroglyphProgress?.(reward.hieroglyphId)
+    const itemDescription = progress
+      ? `${t(`${category}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`
+      : undefined
+    return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, itemDescription, icon: item?.symbol ?? "𓂀" }
+  },
+})
 
 registerRewardHandler({
   type: "mapPiece",
@@ -56,18 +53,17 @@ registerRewardHandler({
   text: t => ({ itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }),
 })
 
-// Gated on the trap mod: consumables are trap-owned, so with trap off world-gen places no
-// consumable rewards and this handler would only dangle. addConsumable lives on the trap state.
-if (isModEnabled("trap"))
-  registerRewardHandler({
-    type: "consumable",
-    apply: (reward, { trapProgress }) => trapProgress.addConsumable(reward.consumable),
-    emoji: "🔷", // no dedicated icon; text().icon below picks the consumable's own
-    text: (reward, t) => ({
-      itemName: t(`chest.consumable.${reward.consumable}`),
-      icon: CONSUMABLE_EMOJI[reward.consumable as ConsumableType],
-    }),
-  })
+// Display only — consumables are trap-owned, so the claim EFFECT (addConsumable) is a trap reward
+// contribution (mods/trap/app), not a core apply. This entry just supplies the popup text/icon,
+// and never fires when trap is off (no consumable rewards are placed).
+registerRewardHandler({
+  type: "consumable",
+  emoji: "🔷", // no dedicated icon; text().icon below picks the consumable's own
+  text: (reward, t) => ({
+    itemName: t(`chest.consumable.${reward.consumable}`),
+    icon: CONSUMABLE_EMOJI[reward.consumable as ConsumableType],
+  }),
+})
 
 registerRewardHandler({
   type: "money",
