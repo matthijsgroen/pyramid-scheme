@@ -159,10 +159,17 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
             index, tier})`) tiers its loot by that marker — expert "come back stronger" wings in a
             junior pyramid now tier up (divine 406→422, stone 27→16); a future starter path in a
             wizard tomb would tier down. Money byte-identical (1009); completeness + guard hold.
-- [ ] Slice 3b — trap. Trap encounter family + health (trap-owned currency, value in shared ledger,
-      methods → `useTrapProgress`) + consumables (trap-owned dynamic dist, eligible expert+ paths) +
-      HUD (gated). **Excludes the 4 perk upgrades** (parked; trap logic reads them from the still-core
-      slice — documented seam).
+- [~] Slice 3b — trap. MOSTLY DONE (staged):
+      - [x] stage 1 — trap `ModDescriptor` + register + arithmetic-reflex family (app-gated). `dcd8881`
+      - [x] stage 2 — consumables trap-owned (`ModDescriptor.consumables`, injected). `c3830e4`
+      - [x] stage 3 — health currency trap-owned (descriptor `currencyMeta`; value already ledger).
+      - [x] stage 4 — HUD gated: HealthDisplay + ConsumableBar hidden when trap off (all consumables
+            are trap-owned — oil=full heal, bandage=1 heart, trapTool=disarm).
+      - [x] perks DISREGARDED (grants no-op) — health uses constant maxHealth 6, no perk seam.
+      - [ ] health methods → `useTrapProgress` — NOT done. `takeTrapDamage`/`canAttemptTrap`/heal/
+            restore still in core `useProgression` (dormant when trap off). Ownership polish, not
+            toggle-off-critical. Decide: extract now vs defer.
+      - [ ] consumable expert+-path eligibility (design) — still on all puzzle paths (see 3a note).
 - [ ] shop — Slice 4. Money distribution + economy guard move here from core; Fez shop family; may
       pull shop encounters from Increment 2 forward (per-instance shop capacity via the encounter dist).
 - [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler

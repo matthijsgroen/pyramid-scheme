@@ -20,6 +20,7 @@ import { ALL_SELLABLES } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
 import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
+import { isModEnabled } from "@/mods/registeredMods"
 import { ShopBalance } from "@/ui/atoms/ShopBalance"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
@@ -307,8 +308,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           />
         )}
         <div className="flex items-center gap-4">
-          <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
-          <ConsumableBar consumables={progression.consumables} />
+          {/* Health + consumables are trap-owned — gone when the trap mod is off. */}
+          {isModEnabled("trap") && (
+            <>
+              <HealthDisplay currentHealth={progression.currentHealth} maxHealth={progression.maxHealth} />
+              <ConsumableBar consumables={progression.consumables} />
+            </>
+          )}
           <ShopBalance amount={progression.money} label={t("money.label")} />
           {isDevelopMode && <DeveloperButton onClick={() => progression.addMoney(1000)} label="+1000 Coins" />}
           {isDevelopMode && (
