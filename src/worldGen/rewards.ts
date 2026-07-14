@@ -1,8 +1,6 @@
 import type { ConsumableType, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
-import { sellablesForDifficulty } from "../data/sellables"
-import type { Difficulty } from "../data/difficultyLevels"
 import { mapPieceBucket } from "./reachability"
 
 // Simple deterministic hash for per-pyramid seeding of density ranges and reward rolls
@@ -64,17 +62,14 @@ export const specToGate = (
   return { type: "tomb-key", wardKeyId }
 }
 
-export const pathEndToReward = (end: string, tier: string, seed = tier): TreasureReward | undefined => {
-  // "mosaic" is a mod currency's authored path end — a preference-tagged open slot the capped
-  // pass fills, not a baked literal. Core doesn't know what "mosaic" means beyond the tag.
+export const pathEndToReward = (end: string): TreasureReward | undefined => {
+  // Authored path ends are preference-tagged OPEN slots the placement pass fills — never baked
+  // reward literals. Core doesn't know what a currency means beyond the tag, and never rolls a
+  // variant (docs/mods/distribution-primitive-design.md). "junk" is a plain loot slot: the shop's
+  // money economy fills it (junk or coins), and with shop off it falls to empty like any other —
+  // so core no longer names `sellable` here.
   if (end === "mosaic") return { type: "fragmentSlot", prefers: "mosaicPiece" }
-  if (end === "fragment") {
-    return { type: "fragmentSlot" }
-  }
-  if (end === "junk") {
-    const items = sellablesForDifficulty(tier as Difficulty)
-    const item = items[hashStr(seed) % items.length]
-    return { type: "sellable", itemId: item.id }
-  }
+  if (end === "fragment") return { type: "fragmentSlot" }
+  if (end === "junk") return { type: "fragmentSlot", prefers: "junk" }
   return undefined // "treasure" = no specific endReward
 }

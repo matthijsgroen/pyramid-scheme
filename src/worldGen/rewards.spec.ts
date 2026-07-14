@@ -105,19 +105,18 @@ describe("specToGate", () => {
 
 describe("pathEndToReward", () => {
   it('"mosaic" → a preference-tagged open slot', () => {
-    expect(pathEndToReward("mosaic", "starter")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
+    expect(pathEndToReward("mosaic")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
   })
 
   it('"fragment" → fragmentSlot', () => {
-    expect(pathEndToReward("fragment", "starter")).toEqual({ type: "fragmentSlot" })
+    expect(pathEndToReward("fragment")).toEqual({ type: "fragmentSlot" })
   })
 
-  it('"junk" → a sellable reward', () => {
-    const reward = pathEndToReward("junk", "starter", "seed-0")
-    expect(reward?.type).toBe("sellable")
+  it('"junk" → a preference-tagged open slot (the shop mod fills it, not a baked literal)', () => {
+    expect(pathEndToReward("junk")).toEqual({ type: "fragmentSlot", prefers: "junk" })
   })
 
   it('"treasure" → undefined (no specific reward)', () => {
-    expect(pathEndToReward("treasure", "starter")).toBeUndefined()
+    expect(pathEndToReward("treasure")).toBeUndefined()
   })
 })

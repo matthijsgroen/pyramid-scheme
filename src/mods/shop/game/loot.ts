@@ -21,10 +21,14 @@ const COIN_MAX = 3 // loose change stays small (1–3) so coins read as "a littl
 
 const TIER_ORDER: MaterialTier[] = ["stone", "bronze", "silver", "gold", "divine"]
 
-// Group the shop's allocated slots by material tier, preserving the eager order core handed them.
+// Group the shop's allocated slots by material tier. Within a tier, slots an author tagged
+// `prefers: "junk"` (a DSL `end: "junk"`) come first, so junk lands where it was asked for — the
+// authoring states the preference, the mod does the placement (soft tag, not exclusive: an untagged
+// slot still takes junk once the tagged ones run out). Otherwise the eager order core handed us.
 const byMaterialTier = (slots: Slot[]): Map<MaterialTier, Slot[]> => {
   const m = new Map<MaterialTier, Slot[]>()
-  for (const s of slots) {
+  const ordered = [...slots].sort((a, b) => (a.preference === "junk" ? 0 : 1) - (b.preference === "junk" ? 0 : 1))
+  for (const s of ordered) {
     const tier = materialTierByDifficulty[s.tier as Difficulty]
     ;(m.get(tier) ?? m.set(tier, []).get(tier)!).push(s)
   }

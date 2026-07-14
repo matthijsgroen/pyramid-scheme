@@ -127,7 +127,7 @@ export const buildSideSections = <TExtra extends string = never>(
   ;(declaredSidePaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `sidepath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:sidepath:${ei}:${j}`)
+      const endReward = pathEndToReward(entry.end)
       const gate =
         entry.gate === "floor-key"
           ? { type: "floor-key" as const, color: ALL_KEY_COLORS[gatedColorIdx++ % colorCount] }
@@ -145,7 +145,7 @@ export const buildSideSections = <TExtra extends string = never>(
   ;(declaredHiddenPaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `hiddenpath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:hiddenpath:${ei}:${j}`)
+      const endReward = pathEndToReward(entry.end)
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,
