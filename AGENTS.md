@@ -29,7 +29,7 @@ See `docs/instructions/architecture.md` for the layer structure and `README.md` 
 | Game Data            | `src/data/`                    | Journeys, tableaus, difficulty levels, hieroglyphs, inventory, treasures |
 | App State            | `src/app/state/`               | Progress, inventory, logs — managed via custom hooks and context         |
 | UI Components        | `src/ui/`                      | All themed (Egyptian-style) reusable components                          |
-| Expedition Flow      | `src/app/`                     | `PyramidExpedition` and `TombExpedition` orchestrate full puzzle runs    |
+| Expedition Flow      | `src/app/`                     | `PyramidExpedition` orchestrates full puzzle runs for both pyramids and tombs (exterior board → interior site map) |
 | Internationalization | `src/i18n/`, `public/locales/` | All user-facing strings; always use `useTranslation`                     |
 
 ---

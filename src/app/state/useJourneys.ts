@@ -93,9 +93,11 @@ export const createJourneysV3Api = ({
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(j => j.active && knownJourneyIds.includes(j.journeyId))?.journeyId
 
-  // Pyramids with a site interior are meant to stay revisitable: the random seed must stay
-  // stable across replays so a previously explored site still matches on return.
-  const isInteriorPyramid = (journey: Journey) => journey.type === "pyramid" && !!journey.siteConfigs?.length
+  // Sites with an interior are persistent, revisitable places: the random seed must stay stable
+  // across replays so a previously explored layout still matches on return. Tombs are one such
+  // site — a single multi-floor place explored incrementally, never a reshuffled replay.
+  const isPersistentInterior = (journey: Journey) =>
+    (journey.type === "pyramid" || journey.type === "treasure_tomb") && !!journey.siteConfigs?.length
 
   const getJourney = (journeyId: string): CombinedJourneyState | undefined => {
     const journeyState = journeys.find(j => j.journeyId === journeyId)
@@ -103,9 +105,9 @@ export const createJourneysV3Api = ({
     const journeyInfo = journeyData.find((j): j is TranslatedJourney => j.id === journeyId)
     if (!journeyInfo) return undefined
     const progressPercentage = Math.min(((journeyState.levelNr ?? 1) - 1) / journeyInfo.levelCount, 1)
-    // Interior pyramids are persistent, revisitable sites — their seed must never move, or a
-    // completed run's exploredSections stop matching the (now different) generated layout.
-    const randomSeed = isInteriorPyramid(journeyInfo)
+    // Persistent interiors (pyramids and tombs) are revisitable sites — their seed must never
+    // move, or a completed run's exploredSections stop matching the (now different) layout.
+    const randomSeed = isPersistentInterior(journeyInfo)
       ? generateNewSeed(hashString(journeyId), 1)
       : generateNewSeed(hashString(journeyId), journeyState.completionCount + 1)
     return {
@@ -125,7 +127,7 @@ export const createJourneysV3Api = ({
   const startJourney = (journey: Journey) => {
     const existing = journeys.find(j => j.journeyId === journey.id)
     if (existing) {
-      const alreadyCompletedRun = isInteriorPyramid(journey) && existing.levelNr > journey.levelCount
+      const alreadyCompletedRun = isPersistentInterior(journey) && existing.levelNr > journey.levelCount
       setJourneys(prev =>
         prev.map(j =>
           j.journeyId === journey.id
@@ -152,9 +154,9 @@ export const createJourneysV3Api = ({
   const completeJourney = () => {
     if (!activeJourneyId) return
     const journey = journeyData.find(j => j.id === activeJourneyId)
-    // Interior pyramids don't re-randomize on replay, so completing one again shouldn't bump the
-    // count past 1 — it only ever meant "first time" for these once the site itself is revisitable.
-    const capCompletionCount = journey && isInteriorPyramid(journey)
+    // Persistent interiors don't re-randomize on replay, so completing one again shouldn't bump
+    // the count past 1 — it only ever means "first time" once the site itself is revisitable.
+    const capCompletionCount = journey && isPersistentInterior(journey)
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId

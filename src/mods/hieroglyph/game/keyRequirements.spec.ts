@@ -2,11 +2,10 @@ import { describe, expect, it } from "vitest"
 import { tableauLevels } from "@/data/tableaus"
 import { resolveTableauKeyRequirements } from "./keyRequirements"
 
-// Real consumers (TombExpedition.tsx, TableauInventory.tsx) select a run's tableaus by
-// tombJourneyId + runNumber, then index by floor (levelNr - 1 via array position) — e.g.
-// `runTableaus[floor]` where `runTableaus = tableaux.filter(t => t.runNumber === n)`. This
-// mirrors that exact lookup, independently of resolveTableauKeyRequirements's own
-// implementation.
+// The authored tableau data is indexed by tombJourneyId + runNumber, then by floor (levelNr - 1
+// via array position) — e.g. `runTableaus[floor]` where `runTableaus = tableaux.filter(t =>
+// t.runNumber === n)`. This mirrors that exact lookup, independently of
+// resolveTableauKeyRequirements's own implementation.
 const realTableau = (journeyId: string, runNr: number, levelNr: number) =>
   tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
 

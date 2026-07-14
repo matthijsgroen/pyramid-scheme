@@ -73,6 +73,10 @@ export type TreasureTombJourney = {
   piecesRequired: number
   treasures: Treasure[]
   siteConfigs?: SiteConfig[]
+  // Optional exterior board shown before entering the tomb interior. When absent, the expedition
+  // synthesizes a modest default from the tomb's difficulty (see PyramidExpedition). Author here to
+  // give a tomb a bespoke exterior later.
+  background?: PyramidJourney["background"]
   levelSettings: {
     symbolCount: number
     numberRange: [min: number, max: number]

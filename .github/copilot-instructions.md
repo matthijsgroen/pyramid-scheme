@@ -26,7 +26,7 @@
 - **Internationalization**: Use `useTranslation` from `react-i18next` for all user-facing text.
 
 ## Integration Points & Patterns
-- **Expedition Flow**: `TombExpedition` and `PyramidExpedition` orchestrate puzzle progression, completion, and reward logic.
+- **Expedition Flow**: `PyramidExpedition` orchestrates puzzle progression, completion, and reward logic for both pyramids and tombs (a tomb rides the same exterior-board → interior-site-map flow).
 - **Reward Logic**: Use `generateRewardCalculation` and inventory hooks for loot awarding.
 - **Overlay/Backdrop**: Use themed backdrop components (e.g., `TombBackdrop`) for puzzle screens.
 - **Storybook**: All new UI components should have a Storybook story in `src/ui/`.

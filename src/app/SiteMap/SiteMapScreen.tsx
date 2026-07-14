@@ -1,4 +1,4 @@
-import { use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
+import { use, useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
@@ -34,11 +34,9 @@ type Props = {
   seed: number
   onSiteComplete: () => void
   onCancel: () => void
-  /** Called when a puzzle room is tapped on a non-sumplete floor. Return null to use default SumpleteBoard. */
-  renderPuzzle?: (floor: number, onSolved: () => void, onCancel: () => void) => ReactNode
 }
 
-export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel, renderPuzzle }: Props) => {
+export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel }: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
   const { isDevelopMode } = use(DevelopContext)
   const journeys = useJourneys()
@@ -131,8 +129,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return encounterFamily.generate(hashString(journeyId + encounterCtx.edgeId), encounterCtx)
   }, [encounterFamily, encounterCtx, journeyId])
 
-  const useRenderPuzzleFallback = activeEncounter != null && encounterFamily == null && renderPuzzle != null
-
   // Applies a claimed reward to game state; pack-full/dedup checks happen at each call site.
   const applyReward = useApplyReward(progression, inventory, journeyId)
 
@@ -175,10 +171,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // Family-absence pass-through: a room whose family isn't registered — e.g. a gating mod toggled
   // off with its encounter still authored — has no puzzle to render. Resolve it immediately (mark
   // explored, offer whatever generic loot the slot got) so the player isn't stuck on a dead room.
-  // The legacy tomb `renderPuzzle` path, when present, still owns the render.
   useEffect(() => {
-    if (activeEncounter && encounterFamily == null && !useRenderPuzzleFallback) genericHandleSolved(activeEncounter.pos)
-  }, [activeEncounter, encounterFamily, useRenderPuzzleFallback, genericHandleSolved])
+    if (activeEncounter && encounterFamily == null) genericHandleSolved(activeEncounter.pos)
+  }, [activeEncounter, encounterFamily, genericHandleSolved])
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -350,9 +345,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           onComplete={currentFloor === siteConfig.length - 1 ? onSiteComplete : onCancel}
         />
       )}
-      {useRenderPuzzleFallback &&
-        activeEncounter &&
-        renderPuzzle!(currentFloor, () => genericHandleSolved(activeEncounter.pos), handleEncounterCancel)}
       {activeEncounter && ActiveEncounterComponent && encounterCtx && (
         <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
           <div className="relative flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">

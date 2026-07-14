@@ -27,9 +27,15 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
 - **§A.1 ✅** movable mechanics relocated to mods — trap config/health, sumplete, TrapWarningScreen,
   ConsumableBar, SumpleteBoard (`e937029`).
 - **§H ✅** double-registered fez-shop meta fixed (`2835ffe`).
-- **§A.2 + §G** ⏳ tomb-interior-as-registry rework (kill legacy `TombExpedition`/`renderPuzzle`, tomb
-  persistence, multi-floor, per-floor capstone, authored-tableau wiring; then tableau/crocodile
-  mechanics move). The big gameplay-facing slice; makes hieroglyph/puzzle toggle-off real in tombs.
+- **§A.2 ✅ (Step 1, render migration)** tombs route through the family registry via the SAME
+  `PyramidExpedition` flow as pyramids (exterior board → interior site map); legacy `TombExpedition`,
+  the `ComparePuzzle` crocodile finale, and `SiteMapScreen`'s `renderPuzzle` escape hatch are gone;
+  tomb persistence added (`isPersistentInterior` covers `treasure_tomb`). World byte-identical.
+  A tomb is adapted into a single-level `PyramidJourney` (default exterior by difficulty; optional
+  `background?` on the tomb for later bespoke authoring). Playtest + tuning pending (expected).
+- **§G ⏳ (Step 2, content)** crocodile capstone every floor, soft trap gating (`canAttemptTrap`),
+  authored per-floor tableau content into the tableau family's `generate` (today TOMB_SYMBOLS pool).
+  Once done, tableau/crocodile mechanics relocate out of core (see §A below).
 - **§A.3** ⏳ encounters-as-distributions (Increment 2) — world-gen slice.
 - **§E** ⏳ ward/tomb keys → the solver (still construction-time literals + a separate validator).
 - **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).

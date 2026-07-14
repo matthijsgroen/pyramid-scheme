@@ -12,7 +12,10 @@ import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSele
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
 import { type PyramidJourney } from "@/data/journeys"
+import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
+import type { Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "./fez/context"
+import { useGameStorage } from "@/support/useGameStorage"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
 import { createFloorStartIndices } from "@/app/PyramidLevel/support"
@@ -20,15 +23,39 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { Header } from "@/ui/atoms/Header"
 
-const generateExpeditionLevel = (activeJourney: CombinedJourneyState, levelNr: number): PyramidLevel | null => {
-  const randomSeed = generateNewSeed(activeJourney.randomSeed, levelNr)
-  const random = mulberry32(randomSeed)
-
-  const journey = activeJourney.journey
-  if (journey.type !== "pyramid") {
-    return null
-  }
+const generateExpeditionLevel = (journey: PyramidJourney, baseSeed: number, levelNr: number): PyramidLevel | null => {
+  const random = mulberry32(generateNewSeed(baseSeed, levelNr))
   return generateJourneyLevel(journey, levelNr, random)
+}
+
+// Modest default exterior board size per difficulty — used only when a tomb authors no exterior.
+const DEFAULT_TOMB_EXTERIOR_FLOORS: Record<Difficulty, number> = {
+  starter: 3,
+  junior: 3,
+  expert: 4,
+  master: 4,
+  wizard: 5,
+}
+
+// A tomb runs through the same expedition flow as a pyramid: an exterior cross-sum board, then the
+// interior site map. A tomb carries no exterior generation params of its own, so we present it as a
+// single-level PyramidJourney — one exterior board whose interior is the tomb's persistent
+// multi-floor site (siteConfigs[0]). The default board is synthesized from the tomb's difficulty;
+// a tomb may author its own `background` to override. Tuning the exterior further is future work.
+const asExteriorJourney = (journey: TranslatedJourney): PyramidJourney => {
+  if (journey.type === "pyramid") return journey
+  return {
+    ...(journey as unknown as PyramidJourney),
+    type: "pyramid",
+    levelCount: 1,
+    background: journey.background ?? { time: "night" },
+    levelSettings: {
+      startFloorCount: DEFAULT_TOMB_EXTERIOR_FLOORS[journey.difficulty],
+      startNumberRange: journey.levelSettings.numberRange,
+    },
+    rewards: { mapPiece: { startChance: 0, chanceIncrease: 0 }, completed: { pieces: [0, 0] } },
+    siteConfigs: journey.siteConfigs,
+  }
 }
 
 export const PyramidExpedition: FC<{
@@ -39,6 +66,10 @@ export const PyramidExpedition: FC<{
   onStartJourney?: (journeyId: string) => void
   onClose?: () => void
 }> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
+  const isTomb = activeJourney.journey.type === "treasure_tomb"
+  // Both site types render through this one flow; a tomb is adapted into a single-level exterior
+  // journey whose interior is its multi-floor site.
+  const pyramidJourney = asExteriorJourney(activeJourney.journey)
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
   const { setInteriorLevel } = useJourneys()
@@ -46,9 +77,7 @@ export const PyramidExpedition: FC<{
   const [levelCompleted, setLevelCompleted] = useState(false)
   // Restore interior if player backed out mid-interior on a previous visit
   const restoringInterior =
-    activeJourney.journey.type === "pyramid" &&
-    !!(activeJourney.journey as PyramidJourney).siteConfigs?.length &&
-    activeJourney.interiorLevelNr === activeJourney.levelNr
+    !!pyramidJourney.siteConfigs?.length && activeJourney.interiorLevelNr === activeJourney.levelNr
   const [showingInterior, setShowingInterior] = useState(restoringInterior)
   // The pyramid board's entrance animation is only meaningful when the board is actually shown
   const [entering, setEntering] = useState(!restoringInterior)
@@ -60,9 +89,13 @@ export const PyramidExpedition: FC<{
   useEffect(() => () => transitionTimersRef.current.forEach(clearTimeout), [])
   const startNextLevel = transitionToLevel > activeJourney.levelNr
 
-  const levelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr)
-  const nextLevelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr + 1)
-  const nextNextLevelContent = generateExpeditionLevel(activeJourney, activeJourney.levelNr + 2)
+  const levelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr)
+  const nextLevelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr + 1)
+  const nextNextLevelContent = generateExpeditionLevel(
+    pyramidJourney,
+    activeJourney.randomSeed,
+    activeJourney.levelNr + 2
+  )
 
   const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
 
@@ -85,10 +118,24 @@ export const PyramidExpedition: FC<{
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
 
+  const [tombTutorialSeen, setTombTutorialSeen] = useGameStorage<boolean>("tombTutorialSeen", false)
+  const tombTutorialSeenAtMount = useRef(tombTutorialSeen)
+
   useEffect(() => {
+    if (isTomb) {
+      if (!tombTutorialSeenAtMount.current) {
+        showConversation("tombIntro", () => {
+          setTombTutorialSeen(true)
+          showConversation("tombTutorial")
+        })
+      } else {
+        showConversation("tombIntro")
+      }
+      return
+    }
     showConversation("pyramidIntro")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
-  }, [showConversation, hasBlockedBlocks])
+  }, [isTomb, showConversation, setTombTutorialSeen, hasBlockedBlocks])
 
   // Handle scroll for parallax effect with direct DOM manipulation
   useEffect(() => {
@@ -149,9 +196,8 @@ export const PyramidExpedition: FC<{
 
   const onCompletionFinished = useCallback(() => {
     setLevelCompleted(false)
-    const journey = activeJourney.journey as PyramidJourney
-    if (journey.siteConfigs?.length) {
-      // V3: mark interior open so re-entry skips the pyramid
+    if (pyramidJourney.siteConfigs?.length) {
+      // Mark interior open so re-entry skips the exterior board and drops straight into the site.
       setInteriorLevel(activeJourney.journeyId, activeJourney.levelNr)
       setShowingInterior(true)
     } else {
@@ -161,15 +207,7 @@ export const PyramidExpedition: FC<{
         setTimeout(() => onNextLevel?.(), 1995),
       ]
     }
-  }, [onNextLevel, activeJourney.levelNr, activeJourney.journey, activeJourney.journeyId, setInteriorLevel])
-
-  // Early return if not a pyramid journey
-  if (activeJourney.journey.type !== "pyramid") {
-    return null
-  }
-
-  // Cast to PyramidJourney since we've confirmed the type
-  const pyramidJourney = activeJourney.journey as PyramidJourney
+  }, [onNextLevel, activeJourney.levelNr, pyramidJourney.siteConfigs, activeJourney.journeyId, setInteriorLevel])
 
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
@@ -182,11 +220,7 @@ export const PyramidExpedition: FC<{
     pyramidJourney.background.timeStepSize
   )
   const textColor =
-    dayNightCycleStep(
-      activeJourney.levelNr,
-      pyramidJourney.background.time,
-      activeJourney.journey.background.timeStepSize
-    ) < 6
+    dayNightCycleStep(activeJourney.levelNr, pyramidJourney.background.time, pyramidJourney.background.timeStepSize) < 6
       ? "text-black"
       : "text-white"
 
