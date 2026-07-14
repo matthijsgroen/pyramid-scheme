@@ -8,7 +8,8 @@ import { useModState } from "@/app/state/useModState"
 import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
 import { FezContext } from "@/app/fez/context"
 import { FezShop } from "@/ui/organisms/FezShop"
-import { rewardEmoji, rewardText } from "@/app/SiteMap/rewardDisplay"
+import { rewardText } from "@/app/SiteMap/rewardDisplay"
+import { CONSUMABLE_EMOJI } from "@/mods/trap/app/consumableEmoji"
 import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
 import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
@@ -59,17 +60,17 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
 
   const buyRare = () => {
     if (purchased) return
-    if (!progression.spendMoney(price)) return
+    if (!progression.ledger.spend("money", price)) return
     applyReward(reward)
     journeys.markShopPurchased(ctx.edgeId)
   }
 
   const buyConsumable = (type: keyof typeof CONSUMABLE_PRICES) => {
     if (stock[type] <= 0) return
-    if (!progression.spendMoney(CONSUMABLE_PRICES[type])) return
+    if (!progression.ledger.spend("money", CONSUMABLE_PRICES[type])) return
     const added = trap.addConsumable(type)
     if (!added) {
-      progression.addMoney(CONSUMABLE_PRICES[type]) // pack was full — refund
+      progression.ledger.grant("money", CONSUMABLE_PRICES[type]) // pack was full — refund
       return
     }
     setModState(prev => ({
@@ -86,14 +87,14 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     const value = sellValueForItemId(id)
     if (value <= 0) return
     inventory.removeItem(id, 1)
-    progression.addMoney(value)
+    progression.ledger.grant("money", value)
   }
 
   return (
     <FezShop
       isOpen
       title={t("shop.title")}
-      balance={progression.money}
+      balance={progression.ledger.get("money")}
       balanceLabel={t("money.label")}
       dismissLabel={t("shop.dismiss")}
       buyLabel={t("shop.buy")}
@@ -107,7 +108,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
           id: "rare",
           ...rewardText(reward, t),
           price,
-          affordable: progression.money >= price,
+          affordable: progression.ledger.get("money") >= price,
           soldOut: purchased,
           featured: true,
         },
@@ -115,9 +116,9 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
       consumables={(Object.keys(CONSUMABLE_PRICES) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
         id: type,
         itemName: t(`chest.consumable.${type}`),
-        icon: rewardEmoji(type),
+        icon: CONSUMABLE_EMOJI[type],
         price: CONSUMABLE_PRICES[type],
-        affordable: progression.money >= CONSUMABLE_PRICES[type],
+        affordable: progression.ledger.get("money") >= CONSUMABLE_PRICES[type],
         soldOut: stock[type] <= 0,
       }))}
       sellables={Object.entries(inventory.inventory).flatMap(([id, count]) => {

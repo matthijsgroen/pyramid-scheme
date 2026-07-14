@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import { hieroglyphRequired } from "@/data/generatedWorld"
-import { createLedger, type LedgerState } from "@/game/ledger/ledger"
+import { createLedger, type Ledger, type LedgerState } from "@/game/ledger/ledger"
 
 export type PerkState = {
   armorStacks: number // 0–2
@@ -24,13 +23,12 @@ const INITIAL_TRAP_PERKS: TrapPerks = { armorStacks: 0, trapInsightStacks: 0, pa
 const INITIAL_PUZZLE_PERKS: PuzzlePerks = { scribesEyeLevel: 0 }
 const INITIAL_CORE_PERKS: CorePerks = { compassLevel: 0, consumableDetectorLevel: 0, detectionLevel: 0 }
 
-// money/mosaicPiece — the ledger-backed currencies (see src/game/ledger). Health is NOT here:
-// it's trap-only, so it lives in the trap mod's own state (src/mods/trap/app/useTrapProgress).
-const DEFAULT_LEDGER: LedgerState = { money: 0, mosaicPiece: 0 }
+// The ledger starts empty and creates currency keys lazily on first grant — core seeds no
+// currency id, so a mod owns which ids exist (shop's money, mosaic's mosaicPiece, …) while core
+// owns the bucket. Health is NOT a ledger currency: it's trap-only, in the trap mod's own state.
+const DEFAULT_LEDGER: LedgerState = {}
 
 type ProgressionState = {
-  // "hieroglyphId:pieceIndex" entries — inventory-as-truth for chest loot
-  collectedFragments: string[]
   tombKeys: Record<string, true>
   discoveredTombs: string[]
   collectedMapPieces: Record<string, number>
@@ -52,7 +50,6 @@ const AUTO_DISCOVERED_TOMBS = [
 ]
 
 const initialState: ProgressionState = {
-  collectedFragments: [],
   tombKeys: {},
   discoveredTombs: AUTO_DISCOVERED_TOMBS,
   collectedMapPieces: {},
@@ -64,27 +61,19 @@ const initialState: ProgressionState = {
 }
 
 export type ProgressionAPI = {
-  addFragment: (hieroglyphId: string, pieceIndex: number) => void
-  hasFragment: (hieroglyphId: string, pieceIndex: number) => boolean
-  isHieroglyphComplete: (hieroglyphId: string) => boolean
-  hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
-  hieroglyphFragments: Record<string, number>
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
   applyTreasurePerk: (treasureId: string) => void
   tombKeyIds: ReadonlySet<string>
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
-  mosaicPieceCount: number
-  collectMosaicPiece: () => void
   collectMapPiece: (tombId: string) => void
   mapPieceCount: (tombId: string) => number
   hasMapPiece: (journeyId: string) => boolean
   markMapPieceFound: (journeyId: string) => void
   perks: PerkState
-  money: number
-  addMoney: (amount: number) => void
-  spendMoney: (amount: number) => boolean // false if insufficient funds
+  // Generic id-keyed currency store — a mod grants/spends its own currency ids; core seeds none.
+  ledger: Ledger
 }
 
 export const useProgression = (): ProgressionAPI => {
@@ -99,31 +88,6 @@ export const useProgression = (): ProgressionAPI => {
     const corePerks = state.corePerks ?? INITIAL_CORE_PERKS
 
     return {
-      addFragment: (hieroglyphId, pieceIndex) => {
-        const key = `${hieroglyphId}:${pieceIndex}`
-        setState(prev =>
-          prev.collectedFragments.includes(key)
-            ? prev
-            : { ...prev, collectedFragments: [...prev.collectedFragments, key] }
-        )
-      },
-      hasFragment: (hieroglyphId, pieceIndex) => state.collectedFragments.includes(`${hieroglyphId}:${pieceIndex}`),
-      isHieroglyphComplete: hieroglyphId => {
-        const count = state.collectedFragments.filter(f => f.startsWith(`${hieroglyphId}:`)).length
-        return count >= (hieroglyphRequired[hieroglyphId] ?? 2)
-      },
-      hieroglyphProgress: hieroglyphId => ({
-        found: state.collectedFragments.filter(f => f.startsWith(`${hieroglyphId}:`)).length,
-        required: hieroglyphRequired[hieroglyphId] ?? 2,
-      }),
-      hieroglyphFragments: Object.fromEntries(
-        state.collectedFragments
-          .map(f => f.split(":")[0])
-          .reduce((m, id) => {
-            m.set(id, (m.get(id) ?? 0) + 1)
-            return m
-          }, new Map<string, number>())
-      ),
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
       // The perk system is disregarded pending its redesign (user decision): treasure-granted
@@ -141,8 +105,6 @@ export const useProgression = (): ProgressionAPI => {
             ? prev.discoveredTombs
             : [...prev.discoveredTombs, tombJourneyId],
         })),
-      mosaicPieceCount: ledger.get("mosaicPiece"),
-      collectMosaicPiece: () => ledger.grant("mosaicPiece", 1),
       collectMapPiece: tombId =>
         setState(prev => {
           const prevCount = prev.collectedMapPieces[tombId] ?? 0
@@ -173,9 +135,7 @@ export const useProgression = (): ProgressionAPI => {
         detectionLevel: corePerks.detectionLevel,
         scribesEyeLevel: puzzlePerks.scribesEyeLevel,
       },
-      money: ledger.get("money"),
-      addMoney: amount => ledger.grant("money", amount),
-      spendMoney: amount => ledger.spend("money", amount),
+      ledger,
     }
   }, [state, setState])
 }

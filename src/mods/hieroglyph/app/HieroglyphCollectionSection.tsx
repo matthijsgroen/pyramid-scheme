@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { useInventoryCategory } from "@/app/translations/useInventoryTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useProgression } from "@/app/state/useProgression"
+import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { difficulties } from "@/data/difficultyLevels"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
@@ -27,7 +27,7 @@ const CategoryGridSection: FC<{
   hieroglyphFragments: Record<string, number>
 }> = ({ category, selectedItem, onSelect, inventory, hieroglyphFragments }) => {
   const { t } = useTranslation("common")
-  const { hieroglyphProgress } = useProgression()
+  const { hieroglyphProgress } = useHieroglyphProgress()
   const items = useInventoryCategory(category)
   const sortedItems = useMemo(
     () =>
@@ -67,7 +67,7 @@ const CategoryGridSection: FC<{
 
 export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
   const { inventory } = useInventory()
-  const { hieroglyphFragments } = useProgression()
+  const { hieroglyphFragments } = useHieroglyphProgress()
   return (
     <>
       {CATEGORIES.map(category => (

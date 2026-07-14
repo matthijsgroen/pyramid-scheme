@@ -20,7 +20,6 @@ import { ALL_SELLABLES } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
-import { ShopBalance } from "@/ui/atoms/ShopBalance"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
@@ -46,7 +45,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const progression = useProgression()
   const rewardContributions = useMergedRewardContributions()
   const inventory = useInventory()
-  const detector = useDetector(progression, journeys)
+  const detector = useDetector(journeys)
   const allEdges = journeys.getExploredSections(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = progression.tombKeyIds
@@ -151,10 +150,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
       const reward = cell?.type === "room" ? cell.reward : undefined
       if (!reward) return
-      // Inventory-as-truth: fragment already collected elsewhere → skip the popup
-      const alreadyCollected =
-        reward.type === "hieroglyphFragment" && progression.hasFragment(reward.hieroglyphId, reward.pieceIndex)
-      if (alreadyCollected) return
+      // canAccept merges every mod's rule: trap refuses a reward when its pack is full, hieroglyph
+      // refuses an already-collected fragment. Core dispatches on the merged verdict, naming none.
       const packFull = !rewardContributions.canAccept(reward)
       if (packFull) {
         journeys.markConsumableSkipped(edgeId)
@@ -163,7 +160,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       }
       setPendingReward({ reward, onCollect: () => applyReward(reward) })
     },
-    [grid, journeys, currentFloor, progression, rewardContributions, applyReward]
+    [grid, journeys, currentFloor, rewardContributions, applyReward]
   )
 
   const handleEncounterCancel = useCallback(() => setActiveEncounter(null), [])
@@ -319,12 +316,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           />
         )}
         <div className="flex items-center gap-4">
-          {/* Mod-contributed HUD widgets (e.g. trap's health + consumables) — core names none. */}
+          {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />
           ))}
-          <ShopBalance amount={progression.money} label={t("money.label")} />
-          {isDevelopMode && <DeveloperButton onClick={() => progression.addMoney(1000)} label="+1000 Coins" />}
           {isDevelopMode && (
             <DeveloperButton
               onClick={() => {
@@ -371,11 +366,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           </div>
         </div>
       )}
-      <RewardFlow
-        pendingReward={pendingReward}
-        hieroglyphProgress={progression.hieroglyphProgress}
-        onDismiss={() => setPendingReward(null)}
-      />
+      <RewardFlow pendingReward={pendingReward} onDismiss={() => setPendingReward(null)} />
     </div>
   )
 }
