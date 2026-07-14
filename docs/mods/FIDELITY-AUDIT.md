@@ -58,7 +58,8 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   (no core residue); a puzzle-less world isn't valid because shop's junk-completeness depends on
   puzzle rooms' loot slots — puzzle is a root mod that stays on. (Shop's hard-fail-on-low-capacity
   is a separate shop-robustness question.)
-- **tomb-treasure mod** ⏳ (the "last mod") extract `mapPiece`/`tombKey`. LARGER than the other
+- **tomb-treasure mod** ⏳ (the "last mod") extract `mapPiece`/`tombKey`. **Build brief:
+  `docs/mods/SLICE-tomb-treasure.md`** (decisions settled in discussion). LARGER than the other
   mods: `mapPiece` is load-bearing in CORE world-gen (`MAP_PIECE_CURRENCY` gating currency in
   `worldGen/mapPieceCurrency.ts`, reachability refs in `buildSite`/`configBuilder`/`sideSections`)
   AND core progression state (`useProgression` `tombKeys`/`collectedMapPieces`/`mapPieceJourneys`),

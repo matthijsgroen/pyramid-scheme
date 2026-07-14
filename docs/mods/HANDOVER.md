@@ -43,8 +43,10 @@ changed encounter representation but is semantic-identical — same family rende
 
 ## Remaining (priority order — see FIDELITY-AUDIT "Progress")
 
-1. **tomb-treasure mod** — the "last mod" (`mapPiece`/`tombKey`), and the largest remaining
-   extraction. `mapPiece` is load-bearing in CORE world-gen: `MAP_PIECE_CURRENCY`
+1. **tomb-treasure mod** — the "last mod" (`mapPiece`/`tombKey`). **Build brief:
+   `docs/mods/SLICE-tomb-treasure.md`** (decisions settled: one mod, sentinel-fill, mod-owned state,
+   §E deferred; hieroglyph is the template). The largest remaining extraction. `mapPiece` is
+   load-bearing in CORE world-gen: `MAP_PIECE_CURRENCY`
    (`worldGen/mapPieceCurrency.ts`, a gating currency on the reachability worklist) + refs in
    `buildSite.ts`/`configBuilder.ts`/`sideSections.ts`. Plus core progression state in
    `useProgression.ts` (`tombKeys`/`collectedMapPieces`/`mapPieceJourneys` + `addTombKey`/
