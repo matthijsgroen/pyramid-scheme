@@ -3,6 +3,7 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ModDescriptor } from "./modDescriptor"
+import { puzzleMod } from "./puzzle"
 import { mosaicMod } from "./mosaic"
 import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
@@ -13,7 +14,7 @@ import { shopMod } from "./shop"
 // toggle-off is the acceptance gate: with a mod removed, `yarn generate-world` + the app must
 // still build, just without that mechanic. src/worldGen/ can't import this file directly
 // (core is mod-agnostic); scripts/generateWorld.ts injects the aggregated contributions.
-export const REGISTERED_MODS: ModDescriptor[] = [mosaicMod, hieroglyphMod, trapMod, shopMod]
+export const REGISTERED_MODS: ModDescriptor[] = [puzzleMod, mosaicMod, hieroglyphMod, trapMod, shopMod]
 
 // Every capped-filler currency any registered mod contributes, flattened for the world-gen
 // phase-3 placement pass. Empty for a mod set that registers none.

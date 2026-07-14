@@ -22,6 +22,7 @@ import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { CROCODILE_META } from "@/mods/puzzle/game/crocodile/meta"
+import { isModEnabled } from "@/mods/registeredMods"
 
 type CrocodileConfig = {
   compareAmount: number
@@ -270,28 +271,29 @@ const CrocodileFamilyComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puz
   </PuzzleFamilyShell>
 )
 
-registerFamily({
-  meta: CROCODILE_META,
-  generate: (seed, ctx): CompareLevel => {
-    const difficulty = ctx.difficulty ?? "starter"
-    const config = CROC_CONFIG[difficulty] ?? CROC_CONFIG.starter
-    const random = mulberry32(seed)
-    const digit = Math.round(random() * 9)
-    const always = random() > 0.5
-    return generateCompareLevel(
-      {
-        compareAmount: config.compareAmount,
-        numberOfSymbols: config.numberOfSymbols,
-        numberRange: config.numberRange,
-        operators: config.operators,
-        maxMultiplyOperandResult: config.maxMultiplyOperandResult,
-      },
-      { digit, largest: always ? "always" : "never" },
-      random
-    )
-  },
-  Component: CrocodileFamilyComponent,
-})
+if (isModEnabled("puzzle"))
+  registerFamily({
+    meta: CROCODILE_META,
+    generate: (seed, ctx): CompareLevel => {
+      const difficulty = ctx.difficulty ?? "starter"
+      const config = CROC_CONFIG[difficulty] ?? CROC_CONFIG.starter
+      const random = mulberry32(seed)
+      const digit = Math.round(random() * 9)
+      const always = random() > 0.5
+      return generateCompareLevel(
+        {
+          compareAmount: config.compareAmount,
+          numberOfSymbols: config.numberOfSymbols,
+          numberRange: config.numberRange,
+          operators: config.operators,
+          maxMultiplyOperandResult: config.maxMultiplyOperandResult,
+        },
+        { digit, largest: always ? "always" : "never" },
+        random
+      )
+    },
+    Component: CrocodileFamilyComponent,
+  })
 
 // re-export for type use
 export type { CrocodileConfig }

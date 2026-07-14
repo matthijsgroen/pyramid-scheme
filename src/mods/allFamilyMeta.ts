@@ -2,9 +2,6 @@ import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { mulberry32 } from "@/game/random"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import { SUMPLETE_META } from "./puzzle/game/sumplete/meta"
-import { SUMPLETE_MIRROR_META } from "./puzzle/game/sumpleteMirror/meta"
-import { CROCODILE_META } from "./puzzle/game/crocodile/meta"
 import { TREASURE_CHEST_META } from "./core/game/treasureChest/meta"
 import { KEY_GATE_META } from "./core/game/keyGate/meta"
 import { MOD_FAMILY_META } from "./registeredMods"
@@ -12,19 +9,12 @@ import { MOD_FAMILY_META } from "./registeredMods"
 // Every registered family's metadata, domain-layer only (no Component/generate) — the one
 // place world-gen (which can't import the app-layer family registry) can read tags/
 // rewardWeight. Kept in sync with app/registerModApps.ts's plugin registrations by each
-// plugin importing its meta from here rather than declaring its own copy. The still-legacy
-// families are listed directly — core's treasure-chest/key-gate and the always-on puzzle mod's
-// sumplete/crocodile (puzzle isn't a REGISTERED_MODS entry). Descriptor-registered mods (trap's
-// arithmetic-reflex, hieroglyph's tableau, shop's fez-shop) contribute via MOD_FAMILY_META and
-// drop out when the mod leaves REGISTERED_MODS — so they must NOT be listed here too.
-export const ALL_FAMILY_META: FamilyMeta[] = [
-  SUMPLETE_META,
-  SUMPLETE_MIRROR_META,
-  CROCODILE_META,
-  TREASURE_CHEST_META,
-  KEY_GATE_META,
-  ...MOD_FAMILY_META,
-]
+// plugin importing its meta from here rather than declaring its own copy. Only CORE's own
+// families (treasure-chest, key-gate — not a toggleable mod) are listed directly; every
+// descriptor-registered mod (puzzle's sumplete/crocodile, trap's arithmetic-reflex, hieroglyph's
+// tableau, shop's fez-shop) contributes via MOD_FAMILY_META and drops out when the mod leaves
+// REGISTERED_MODS — so those must NOT be listed here too.
+export const ALL_FAMILY_META: FamilyMeta[] = [TREASURE_CHEST_META, KEY_GATE_META, ...MOD_FAMILY_META]
 
 // Dispatches to whichever family declares its own resolveKeyRequirements (most provide
 // none) — lives on FamilyMeta itself, not a separate registry, so there's exactly one place
