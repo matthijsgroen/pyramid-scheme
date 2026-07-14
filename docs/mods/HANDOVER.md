@@ -1,9 +1,16 @@
 # Handover — mod-restructure fidelity work (branch `mods/hieroglyph-currency`)
 
-Branch **pushed** through `2835ffe` (+ an audit-doc commit). Full suite green (**718**),
-`yarn build` clean, `yarn generate-world` builds with the economy guard ON and is **byte-identical**,
-per-slice toggle-off proven. This branch is executing the gaps in **`docs/mods/FIDELITY-AUDIT.md`** —
-read that first; its "Progress" section is the live tracker.
+Branch committed through `ff97078` (NOT pushed — local commits this session). Full suite green
+(**718**), `yarn build`/`tsc`/`lint` clean, `yarn generate-world` builds. This branch is executing
+the gaps in **`docs/mods/FIDELITY-AUDIT.md`** — read that first; its "Progress" section is the live
+tracker.
+
+**This session (6 commits on top of `0659eae`):** §A.2 tombs→family-registry via a unified
+`PyramidExpedition` (`7e7a16f`); §A mechanic extraction — crocodile (`7dc8eb7`) + tableau (`c19fab1`)
+out of `src/game/puzzles` into their mods; §A.3 gen-time **tag-based encounter allocation**
+(`8b00c6c`) + `sumplete-mirror` proof family (`75deb6a`); §H puzzle→real mod (`ff97078`). Verify by
+regen + `git diff --stat src/data/generatedWorld.ts` (refactor commits are byte-identical; §A.3
+changed encounter representation but is semantic-identical — same family renders in every room).
 
 ## Read first, in order
 
@@ -36,31 +43,38 @@ read that first; its "Progress" section is the live tracker.
 
 ## Remaining (priority order — see FIDELITY-AUDIT "Progress")
 
-1. **§A.2 + §G — tomb-interior as a registry site** (the big one, gameplay-facing, needs playtesting).
-   Kill the legacy `src/app/TombExpedition.tsx` render + `SiteMapScreen`'s `renderPuzzle` escape hatch;
-   route tombs through the family registry exactly like `PyramidExpedition`. Requires: tomb persistence
-   in `useJourneys.ts` (the `isInteriorPyramid` pinned-seed / capped-`completionCount` treatment for
-   `treasure_tomb`), multi-floor indexing (`TombExpedition` hardcodes `siteConfigs[0]`), per-floor
-   crocodile capstone (`configBuilder.ts` `isLast && hasCroc`), and wiring authored tableau content into
-   the tableau family's `generate` (today it uses a dummy). Drop the redundant `ComparePuzzle` finale
-   (the in-grid crocodile capstone already renders via the registry). **Only after this** can tableau +
-   crocodile mechanics (`src/game/puzzles/{tableau,crocodile}`, `TombPuzzle`) move to their mods. This
-   is what makes hieroglyph/puzzle toggle-off actually remove the mechanic in tombs.
-2. **§A.3 — encounters-as-distributions (Increment 2)**, world-gen only, disjoint from §A.2. Add
-   `slot.encounter`/`capacity` metadata; an encounter-pass distribution that stamps it + sets
-   `rewardWeight` (moving the `siteAssembler.ts` `trapped`/`puzzleFamily`/shop special-cases + the
-   `slots.ts` weight stamp); shop stock as a loot distribution on `eligible = s.encounter==="shop"`.
-3. **§E — ward/tomb keys → the solver.** Today construction-time literals (`configBuilder.ts`) +
+1. **tomb-treasure mod** — the "last mod" (`mapPiece`/`tombKey`), and the largest remaining
+   extraction. `mapPiece` is load-bearing in CORE world-gen: `MAP_PIECE_CURRENCY`
+   (`worldGen/mapPieceCurrency.ts`, a gating currency on the reachability worklist) + refs in
+   `buildSite.ts`/`configBuilder.ts`/`sideSections.ts`. Plus core progression state in
+   `useProgression.ts` (`tombKeys`/`collectedMapPieces`/`mapPieceJourneys` + `addTombKey`/
+   `collectMapPiece`/`discoverTomb`/`hasMapPiece`/…), consumed across ~11 app/ui/worldGen files
+   (Travel, ExpeditionCompletionOverlay, mapPieceLogic, JourneyCard, SiteMapScreen, …). Handlers +
+   schemas in `registerRewardHandlers.ts`. **Start by exploring the world-gen reachability coupling**
+   — moving a gating currency out of core is the crux (the §E work overlaps: keys/currencies →
+   mod-owned). Do it as its own focused session.
+2. **§E — ward/tomb keys → the solver.** Today construction-time literals (`configBuilder.ts`) +
    a separate `validateDiscovery` reachability re-implementation. Migrate to a currency distribution.
-4. **§F — treasure perks.** `applyTreasurePerk` is a no-op but `pyramid-interior-design.md` presents a
+   Overlaps tomb-treasure (tombKey is a key); consider doing them together.
+3. **§F — treasure perks.** `applyTreasurePerk` is a no-op but `pyramid-interior-design.md` presents a
    full perk economy. A decision: build the perk system, or correct the doc. (Blocks nothing.)
-5. **§H (puzzle) — design decision:** `puzzle` is a mod-in-name-only (not in `REGISTERED_MODS`, ungated).
-   Make it a real toggleable mod, or accept as always-on core-adjacent.
-6. **tomb-treasure mod** — extract `mapPiece`/`tombKey` (the "last mod"; core owns them under the open
-   union today, which is fine until then).
+4. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
+   consumable/shop-money `eligible` to join on it instead of the `rewardWeight` proxy (which works).
+5. **§G tomb content (deferred to playtest/tuning)** — crocodile capstone every floor, soft trap
+   gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's `generate`
+   (today the TOMB_SYMBOLS pool). Gameplay-facing; expects playtesting + tuning.
+
+**Shop-robustness note (surfaced by §H toggle-off):** shop's junk-completeness `fill` hard-fails
+when loot-bearing capacity drops below the collectible count (e.g. puzzle off). A root mod off
+starving another mod's invariant is expected, but shop arguably should degrade gracefully rather
+than throw. Decision, not urgent.
 
 ## As-built seams to reuse (all built here)
 
+- **Encounter allocation** (`worldGen/placeEncounters.ts` + `allFamilyMeta.allocateEncounterFamily`)
+  — gen-time tag→family resolution from the tier-eligible pool; a family joins by declaring its tag
+  in `FamilyMeta` (+ `minTier`). Injected into `buildConfigs`. Add a puzzle/trap family = a pure
+  plugin (its meta via `MOD_FAMILY_META`, no core edit) — see `sumplete-mirror`.
 - **Distribution** (`worldGen/slotAllocator.ts`) + `allocateDistributions` — loot placement.
 - **rewardContributions** (`effects`/`canAccept`/`skip`) + **rewardDisplayRegistry** + **detectorScanners**
   + **rewardSchemas** (zod) — all in `src/app/SiteMap/`, hook-based, registered per mod via

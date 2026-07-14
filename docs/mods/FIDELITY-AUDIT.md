@@ -52,8 +52,18 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   loot `eligible` join on `slot.encounter` (loot still uses the rewardWeight proxy, which works).
 - **§E** ⏳ ward/tomb keys → the solver (still construction-time literals + a separate validator).
 - **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
-- **§H (puzzle)** ⏳ `puzzle` is a mod-in-name-only — design decision.
-- **tomb-treasure mod** ⏳ extract `mapPiece`/`tombKey` (the "last mod"; core owns them under the open union today).
+- **§H (puzzle) ✅** `puzzle` is now a real `REGISTERED_MODS` mod (`ff97078`): families flow via
+  `MOD_FAMILY_META`, plugins self-gate, `ALL_FAMILY_META` lists only core's own families. Adding a
+  puzzle family is a pure plugin (`sumplete-mirror` demo now clean). Toggle-off proves isolation
+  (no core residue); a puzzle-less world isn't valid because shop's junk-completeness depends on
+  puzzle rooms' loot slots — puzzle is a root mod that stays on. (Shop's hard-fail-on-low-capacity
+  is a separate shop-robustness question.)
+- **tomb-treasure mod** ⏳ (the "last mod") extract `mapPiece`/`tombKey`. LARGER than the other
+  mods: `mapPiece` is load-bearing in CORE world-gen (`MAP_PIECE_CURRENCY` gating currency in
+  `worldGen/mapPieceCurrency.ts`, reachability refs in `buildSite`/`configBuilder`/`sideSections`)
+  AND core progression state (`useProgression` `tombKeys`/`collectedMapPieces`/`mapPieceJourneys`),
+  consumed across ~11 app/ui/worldGen files. Handlers/schemas in `registerRewardHandlers.ts`.
+  Needs its own focused session (explore the world-gen reachability coupling first).
 
 ---
 
