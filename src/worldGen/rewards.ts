@@ -1,4 +1,4 @@
-import type { ConsumableType, Tier, TreasureReward } from "./types"
+import type { Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
 import { mapPieceBucket } from "./reachability"
@@ -8,16 +8,6 @@ export const hashStr = (s: string): number => {
   let h = 0
   for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
   return h >>> 0
-}
-
-// Seeded pick of a consumable type, weighted by rates
-export const rollConsumable = (
-  seed: string,
-  rates: { bandage: number; oil: number; trapTool: number }
-): ConsumableType => {
-  const total = rates.bandage + rates.oil + rates.trapTool
-  const roll = hashStr(seed) % total
-  return roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
 }
 
 // Seeded loose-money amount, 1-10

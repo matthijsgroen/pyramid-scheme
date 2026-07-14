@@ -97,7 +97,7 @@ describe("tomb floor linking — ward-path shortcuts", () => {
       expect(shortcut).toBeDefined()
       expect(shortcut!.gate).toEqual({
         type: "tomb-key",
-        wardKeyId: (floors[i].mainEndReward as { keyId: string }).keyId,
+        wardKeyId: (floors[i].mainEndReward as unknown as { keyId: string }).keyId,
       })
       expect(typeof shortcut!.end).toBe("object")
     }

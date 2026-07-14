@@ -1,4 +1,4 @@
-import type { SiteConfig, Tier, TreasureReward } from "./types"
+import type { SiteConfig, Tier, TreasureReward, MapPieceReward, TombKeyReward } from "./types"
 import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor } from "../game/siteAssembler"
@@ -162,8 +162,8 @@ export const reachableFloorsInSite = (
         // tombKey + mapPiece are core's own currencies (harvested directly). Every other
         // harvestable reward routes through the injected currency support — a mod's currency
         // (e.g. a hieroglyph fragment) maps its own reward to its own bucket; core names none.
-        if (cell.reward?.type === "tombKey") harvest(cell.reward.keyId)
-        else if (cell.reward?.type === "mapPiece") harvest(mapPieceBucket(cell.reward.tombId))
+        if (cell.reward?.type === "tombKey") harvest((cell.reward as TombKeyReward).keyId)
+        else if (cell.reward?.type === "mapPiece") harvest(mapPieceBucket((cell.reward as MapPieceReward).tombId))
         else if (cell.reward) {
           const bucket = support.bucketForReward?.(cell.reward)
           if (bucket) harvest(bucket)

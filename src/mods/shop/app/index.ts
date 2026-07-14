@@ -1,9 +1,11 @@
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerHudWidget } from "@/app/SiteMap/hudRegistry"
+import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useProgression } from "@/app/state/useProgression"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { moneyRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
 import { ShopCollectionSection } from "./ShopCollectionSection"
 import { ShopHud } from "./ShopHud"
 import { registerShopRewardDisplay } from "./rewardDisplay"
@@ -20,17 +22,15 @@ if (isModEnabled("shop")) {
   registerCollectionSection({ id: "shop", order: 20, Component: ShopCollectionSection })
   registerHudWidget({ id: "shop", order: 10, Component: ShopHud })
   registerShopRewardDisplay()
+  registerRewardSchema("money", moneyRewardSchema)
+  registerRewardSchema("sellable", sellableRewardSchema)
   registerRewardContribution(() => {
     const progression = useProgression()
     const inventory = useInventory()
     return {
       effects: {
-        money: reward => {
-          if (reward.type === "money") progression.ledger.grant("money", reward.amount)
-        },
-        sellable: reward => {
-          if (reward.type === "sellable") inventory.addItem(reward.itemId, 1)
-        },
+        money: reward => progression.ledger.grant("money", moneyRewardSchema.parse(reward).amount),
+        sellable: reward => inventory.addItem(sellableRewardSchema.parse(reward).itemId, 1),
       },
     }
   })

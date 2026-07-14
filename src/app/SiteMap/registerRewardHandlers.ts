@@ -1,4 +1,6 @@
+import { z } from "zod"
 import { registerRewardHandler } from "./rewardHandlerRegistry"
+import { registerRewardSchema } from "./rewardSchemas"
 
 // Core owns only the tomb-treasure reward handlers (mapPiece / tombKey) — those write core state
 // and aren't a toggleable mod's mechanic. Every other reward type's effect + display is owned by
@@ -26,3 +28,12 @@ registerRewardHandler({
   emoji: "🗝",
   text: t => ({ itemName: t("chest.tombKey"), icon: "🗝" }),
 })
+
+// Core owns the schemas for its own reward shapes (siteTypes.ts). `fragmentSlot` is the world-gen
+// placement sentinel — it never survives serialization into the app, so it won't appear in the
+// generated data, but it's registered for completeness. `mapPiece`/`tombKey` are tomb-treasure,
+// core until that mod is extracted. Mods register their own reward schemas from their app
+// entrypoints (rewardSchemas.ts).
+registerRewardSchema("fragmentSlot", z.object({ type: z.literal("fragmentSlot"), prefers: z.string().optional() }))
+registerRewardSchema("mapPiece", z.object({ type: z.literal("mapPiece"), tombId: z.string() }))
+registerRewardSchema("tombKey", z.object({ type: z.literal("tombKey"), keyId: z.string() }))

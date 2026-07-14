@@ -79,13 +79,13 @@ describe("shopMoneyEconomy fill", () => {
     const available = new Set<Slot>(slots)
     allocateDistributions(available, [shopMoneyEconomy], {})
     const rewards = slots.map(reward).filter(Boolean) as TreasureReward[]
-    const sellables = rewards.filter(r => r.type === "sellable") as { itemId: string }[]
+    const sellables = rewards.filter(r => r.type === "sellable") as unknown as { itemId: string }[]
     // all 5 divine collectibles appear ≥1 (materialTier for wizard difficulty = divine)
     const distinct = new Set(sellables.map(r => r.itemId))
     expect(distinct.size).toBe(5)
     const value =
       sellables.length * 50 +
-      (rewards.filter(r => r.type === "money") as { amount: number }[]).reduce((a, r) => a + r.amount, 0)
+      (rewards.filter(r => r.type === "money") as unknown as { amount: number }[]).reduce((a, r) => a + r.amount, 0)
     expect(value).toBeGreaterThanOrEqual(1760) // TOTAL_CONSUMABLE_BUYABLE floor
   })
 

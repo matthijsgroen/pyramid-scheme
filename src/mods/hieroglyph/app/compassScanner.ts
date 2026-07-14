@@ -3,13 +3,14 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import type { CompassResult, FloorConfig } from "@/game/siteTypes"
 import type { CompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
+import { hieroglyphFragmentSchema } from "./rewardSchema"
 
 const scanFloorForFragments = (floor: FloorConfig, hieroglyphId: string): number[] => {
   const results: number[] = []
   const checkReward = (r: FloorConfig["mainEndReward"]) => {
-    if (r?.type === "hieroglyphFragment" && r.hieroglyphId === hieroglyphId && r.pieceIndex !== undefined) {
-      results.push(r.pieceIndex)
-    }
+    if (r?.type !== "hieroglyphFragment") return
+    const fragment = hieroglyphFragmentSchema.parse(r)
+    if (fragment.hieroglyphId === hieroglyphId) results.push(fragment.pieceIndex)
   }
   checkReward(floor.mainEndReward)
   for (const section of floor.sideSections ?? []) checkReward(section.endReward)

@@ -1,4 +1,4 @@
-import type { SiteConfig, TreasureReward } from "./types"
+import type { SiteConfig, TreasureReward, MapPieceReward, TombKeyReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 
@@ -30,8 +30,9 @@ export const validateRewardCounts = (
   const checkReward = (r: TreasureReward | undefined) => {
     if (!r) return
     if (r.type === "mapPiece") {
+      const mp = r as MapPieceReward
       mapPieces++
-      if (!KNOWN_JOURNEY_IDS.has(r.tombId)) unknownTombIds.push(r.tombId)
+      if (!KNOWN_JOURNEY_IDS.has(mp.tombId)) unknownTombIds.push(mp.tombId)
     }
     if (isCurrencyReward(r)) currencyRewards++
   }
@@ -81,10 +82,12 @@ const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string,
     for (const floors of siteConfigs) {
       for (const floor of floors) {
         const checkReward = (r: TreasureReward | undefined) => {
-          if (r?.type !== "mapPiece" || r.tombId === siteId) return
-          const set = discovered.get(r.tombId) ?? new Set()
+          if (r?.type !== "mapPiece") return
+          const mp = r as MapPieceReward
+          if (mp.tombId === siteId) return
+          const set = discovered.get(mp.tombId) ?? new Set()
           set.add(siteId)
-          discovered.set(r.tombId, set)
+          discovered.set(mp.tombId, set)
         }
         checkReward(floor.mainEndReward)
         for (const s of floor.sideSections) {
@@ -104,7 +107,9 @@ type SiteFloorRef = { siteId: string; floorIndex: number }
 const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, SiteFloorRef> => {
   const grants = new Map<string, SiteFloorRef>()
   const record = (r: TreasureReward | undefined, ref: SiteFloorRef) => {
-    if (r?.type === "tombKey" && !grants.has(r.keyId)) grants.set(r.keyId, ref)
+    if (r?.type !== "tombKey") return
+    const tk = r as TombKeyReward
+    if (!grants.has(tk.keyId)) grants.set(tk.keyId, ref)
   }
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
     for (const floors of siteConfigs) {

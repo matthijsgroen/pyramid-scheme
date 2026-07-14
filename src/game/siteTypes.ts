@@ -1,21 +1,19 @@
 export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "portal" | "fork" | "encounter"
-export type ConsumableType = "bandage" | "oil" | "trapTool"
-// Closed union — grows by one variant per new reward/currency (money, sellable were the
-// latest). docs/mods/ARCHITECTURE.md proposes collapsing this into a currency-id registry;
-// see that doc before adding a variant here for what's replacing this pattern.
-export type TreasureReward =
-  | { type: "mosaicPiece" }
-  | { type: "mapPiece"; tombId: string }
-  | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
-  | { type: "tombKey"; keyId: string }
-  | { type: "consumable"; consumable: ConsumableType }
-  // `prefers`: a soft authored placement preference (a bucket id) — a ranking boost for that
-  // currency's demand, not an exclusive claim. See keys-and-locks-solver.md, "A slot's
-  // authored placement preference is a soft tag, not an exclusive claim".
-  | { type: "fragmentSlot"; prefers?: string }
-  | { type: "money"; amount: number }
-  | { type: "sellable"; itemId: string }
+// OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
+// core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
+// owning mod defines. Validated at load against per-type zod schemas registered by the mods
+// (src/app/SiteMap/rewardSchemas). Producers/consumers that own a type narrow it via its schema
+// (mods) or the core-owned shapes below.
+export type TreasureReward = { type: string } & Record<string, unknown>
+
+// Core-owned reward shapes — NOT a mod-currency enumeration: `fragmentSlot` is the world-gen
+// placement sentinel (never serialized), and `mapPiece`/`tombKey` are tomb-treasure, which stays
+// core until that mod is extracted (its own later slice). Core code casts to these when it reads
+// its own reward types; the open `TreasureReward` stays the surface everything passes around.
+export type FragmentSlotReward = { type: "fragmentSlot"; prefers?: string }
+export type MapPieceReward = { type: "mapPiece"; tombId: string }
+export type TombKeyReward = { type: "tombKey"; keyId: string }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"

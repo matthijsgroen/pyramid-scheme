@@ -1,4 +1,4 @@
-import type { FloorGrid, ValidationReason, ValidationResult } from "./siteTypes"
+import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
 
 type Pos = readonly [number, number]
 
@@ -91,9 +91,9 @@ export const collectReachableKeys = (
           cell.type === "room" &&
           cell.reward?.type === "tombKey" &&
           reachable.has(posKey(r, c)) &&
-          !collectedKeys.has(cell.reward.keyId)
+          !collectedKeys.has((cell.reward as TombKeyReward).keyId)
         ) {
-          collectedKeys.add(cell.reward.keyId)
+          collectedKeys.add((cell.reward as TombKeyReward).keyId)
           changed = true
         }
       }

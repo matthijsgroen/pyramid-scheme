@@ -1,5 +1,7 @@
+import { z } from "zod"
 import { registerModScreen } from "@/app/pages/screenRegistry"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
+import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useProgression } from "@/app/state/useProgression"
 import { MosaicPage } from "./MosaicPage"
@@ -13,6 +15,8 @@ import { registerMosaicRewardDisplay } from "./rewardDisplay"
 if (isModEnabled("mosaic")) {
   registerModScreen({ id: "mosaic", Component: MosaicPage })
   registerMosaicRewardDisplay()
+  // mosaicPiece carries no payload — just the type tag.
+  registerRewardSchema("mosaicPiece", z.object({ type: z.literal("mosaicPiece") }))
   registerRewardContribution(() => {
     const progression = useProgression()
     return {

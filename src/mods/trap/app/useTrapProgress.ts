@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useModState } from "@/app/state/useModState"
-import type { ConsumableType } from "@/game/siteTypes"
+import type { ConsumableType } from "@/mods/trap/game/consumableTypes"
 import { trapDamage, canAttemptTrap } from "@/game/traps/trapHealth"
 
 // Trap-owned runtime state: health + the consumable pack. Health is trap-only (traps are the

@@ -1,5 +1,7 @@
 import type { FC } from "react"
-import type { ConsumableType } from "@/game/siteTypes"
+// ponytail: a src/ui atom importing a trap-mod type — acceptable for now (a display-only vocab
+// import, not a runtime dependency); revisit if the ui/mod boundary needs hardening.
+import type { ConsumableType } from "@/mods/trap/game/consumableTypes"
 
 const EMOJI: Record<ConsumableType, string> = {
   bandage: "🩹",

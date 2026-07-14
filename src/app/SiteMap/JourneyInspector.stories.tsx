@@ -61,6 +61,9 @@ const rewardLabel = (r: TreasureReward): string => {
       return `Money: ${r.amount}`
     case "sellable":
       return `Sellable: ${r.itemId}`
+    default:
+      // Open reward union — an unrecognized mod reward type falls back to its raw tag.
+      return r.type
   }
 }
 
@@ -82,6 +85,8 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-yellow-300"
     case "sellable":
       return "text-lime-300"
+    default:
+      return "text-stone-400"
   }
 }
 

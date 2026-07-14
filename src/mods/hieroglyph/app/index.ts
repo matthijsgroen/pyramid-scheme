@@ -1,9 +1,11 @@
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
+import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
 import { registerHieroglyphRewardDisplay } from "./rewardDisplay"
+import { hieroglyphFragmentSchema } from "./rewardSchema"
 import "./plugin"
 import "./collection"
 
@@ -16,15 +18,21 @@ import "./collection"
 // - the compass detector scanner: finds uncollected fragment locations for a target hieroglyph.
 if (isModEnabled("hieroglyph")) {
   registerHieroglyphRewardDisplay()
+  registerRewardSchema("hieroglyphFragment", hieroglyphFragmentSchema)
   registerRewardContribution(() => {
     const hg = useHieroglyphProgress()
     return {
       effects: {
         hieroglyphFragment: reward => {
-          if (reward.type === "hieroglyphFragment") hg.addFragment(reward.hieroglyphId, reward.pieceIndex)
+          const { hieroglyphId, pieceIndex } = hieroglyphFragmentSchema.parse(reward)
+          hg.addFragment(hieroglyphId, pieceIndex)
         },
       },
-      skip: reward => reward.type === "hieroglyphFragment" && hg.hasFragment(reward.hieroglyphId, reward.pieceIndex),
+      skip: reward => {
+        if (reward.type !== "hieroglyphFragment") return false
+        const { hieroglyphId, pieceIndex } = hieroglyphFragmentSchema.parse(reward)
+        return hg.hasFragment(hieroglyphId, pieceIndex)
+      },
     }
   })
   registerCompassScanner(useHieroglyphCompassScanner)

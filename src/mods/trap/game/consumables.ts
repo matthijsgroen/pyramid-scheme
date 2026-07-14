@@ -1,5 +1,6 @@
 import type { Distribution } from "@/worldGen/slotAllocator"
-import { rollConsumable, hashStr } from "@/worldGen/rewards"
+import { hashStr } from "@/worldGen/rewards"
+import { rollConsumable } from "./consumableTypes"
 import { difficultyCompare } from "@/data/difficultyLevels"
 
 // Trap owns consumables (docs/mods/distribution-primitive-design.md): how many, which type

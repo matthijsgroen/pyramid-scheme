@@ -2,6 +2,7 @@ import type { SideSection, SiteConfig, SubSection, TreasureReward } from "@/worl
 import type { WorldValidator } from "@/worldGen/validate"
 import { TOTAL_CONSUMABLE_BUYABLE } from "@/data/shopPricing"
 import { sellValueForItemId } from "@/data/sellables"
+import { moneyRewardSchema, sellableRewardSchema } from "./rewardSchemas"
 
 // Σ of every authored shop price across the world. The shop's money economy needs the player to be
 // able to afford this (+ a full consumable restock per shop) — it's the floor the loot budget
@@ -40,8 +41,8 @@ export const runEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void 
   // money economy mixes both across end AND puzzle slots (junk = packaged money), so both reward
   // types count in both positions — not the old "sellables in chests, money in puzzles" split.
   const addReward = (r: TreasureReward | undefined) => {
-    if (r?.type === "money") guaranteedIncome += r.amount
-    else if (r?.type === "sellable") guaranteedIncome += sellValueForItemId(r.itemId)
+    if (r?.type === "money") guaranteedIncome += moneyRewardSchema.parse(r).amount
+    else if (r?.type === "sellable") guaranteedIncome += sellValueForItemId(sellableRewardSchema.parse(r).itemId)
   }
   const tallySubSection = (s: SubSection) => {
     addReward(s.endReward)

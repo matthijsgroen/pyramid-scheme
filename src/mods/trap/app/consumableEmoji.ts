@@ -1,4 +1,4 @@
-import type { ConsumableType } from "@/game/siteTypes"
+import type { ConsumableType } from "@/mods/trap/game/consumableTypes"
 
 // Consumable subtype → icon. Consumables are trap-owned, so this map lives here (not core): it
 // feeds the consumable reward's popup text and the shop's supplies list. Consumable subtypes

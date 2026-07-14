@@ -1,4 +1,4 @@
-import type { SiteConfig, Tier, TreasureReward } from "./types"
+import type { SiteConfig, Tier, TreasureReward, FragmentSlotReward } from "./types"
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
@@ -143,7 +143,7 @@ export const collectSlots = (
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot(ref, floor.difficulty, [], true, floor.mainEndReward.prefers, r => {
+          addSlot(ref, floor.difficulty, [], true, (floor.mainEndReward as FragmentSlotReward).prefers, r => {
             f.mainEndReward = r
           })
         }
@@ -151,7 +151,7 @@ export const collectSlots = (
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           if (section.endReward?.type === "fragmentSlot") {
             const s = section
-            addSlot(ref, section.difficulty, sWardKeys, true, section.endReward.prefers, r => {
+            addSlot(ref, section.difficulty, sWardKeys, true, (section.endReward as FragmentSlotReward).prefers, r => {
               s.endReward = r
             })
           } else if (section.gate?.type === "tomb-key" && !section.endReward) {
@@ -164,7 +164,7 @@ export const collectSlots = (
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
-              addSlot(ref, sub.difficulty, subWardKeys, true, sub.endReward.prefers, r => {
+              addSlot(ref, sub.difficulty, subWardKeys, true, (sub.endReward as FragmentSlotReward).prefers, r => {
                 ss.endReward = r
               })
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {

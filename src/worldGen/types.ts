@@ -6,22 +6,10 @@ export type PathPuzzlesRange = { start: number; end: number }
 export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number | PathPuzzlesRange; levelCount: number }
 export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
-export type ConsumableType = "bandage" | "oil" | "trapTool"
-// Mirrors game/siteTypes.ts's TreasureReward — same closed-union growth concern, see the
-// comment there and docs/mods/ARCHITECTURE.md.
-export type TreasureReward =
-  | { type: "mosaicPiece" }
-  | { type: "mapPiece"; tombId: string }
-  | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex?: number }
-  | { type: "tombKey"; keyId: string }
-  | { type: "consumable"; consumable: ConsumableType }
-  // `prefers`: a soft authored placement preference (a bucket id, e.g.
-  // `mapPiece:starter_treasure_tomb`) — a ranking boost for that currency's demand, not an
-  // exclusive claim. See keys-and-locks-solver.md, "A slot's authored placement preference
-  // is a soft tag, not an exclusive claim".
-  | { type: "fragmentSlot"; prefers?: string }
-  | { type: "money"; amount: number }
-  | { type: "sellable"; itemId: string }
+// One open reward type, shared: worldGen re-exports game/siteTypes rather than mirroring it
+// (worldGen→game is an allowed edge). Core enumerates no reward id; see the doc comment there.
+import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward } from "@/game/siteTypes"
+export type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward }
 
 export type SubSection = {
   pathPuzzles: number

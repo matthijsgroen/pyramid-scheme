@@ -5,6 +5,7 @@ import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
+import { hieroglyphFragmentSchema } from "./rewardSchema"
 
 // The fragment reward's synchronous text/emoji (generic RewardFlow fallback + shop stock), plus
 // its rich display (a HieroglyphTile with fragment progress + a rarity that climbs as pieces are
@@ -15,10 +16,11 @@ export const registerHieroglyphRewardDisplay = () => {
     type: "hieroglyphFragment",
     emoji: "𓂀",
     text: (reward, t) => {
-      const item = getInventoryItemById(reward.hieroglyphId)
-      const category = hieroglyphCategory(reward.hieroglyphId)
+      const { hieroglyphId } = hieroglyphFragmentSchema.parse(reward)
+      const item = getInventoryItemById(hieroglyphId)
+      const category = hieroglyphCategory(hieroglyphId)
       const name = item
-        ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
+        ? t(`${category}.${hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
         : t("chest.hieroglyphFragment")
       return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, icon: item?.symbol ?? "𓂀" }
     },
@@ -31,16 +33,16 @@ const useHieroglyphRewardDisplays = (): Partial<Record<string, RewardDisplayFn>>
   const { hieroglyphProgress } = useHieroglyphProgress()
   return {
     hieroglyphFragment: (reward, t) => {
-      if (reward.type !== "hieroglyphFragment") return { itemName: "", ItemVisual: null }
-      const item = getInventoryItemById(reward.hieroglyphId)
-      const difficulty = getItemFirstLevel(reward.hieroglyphId)
-      const category = hieroglyphCategory(reward.hieroglyphId)
-      const progress = hieroglyphProgress(reward.hieroglyphId)
+      const { hieroglyphId } = hieroglyphFragmentSchema.parse(reward)
+      const item = getInventoryItemById(hieroglyphId)
+      const difficulty = getItemFirstLevel(hieroglyphId)
+      const category = hieroglyphCategory(hieroglyphId)
+      const progress = hieroglyphProgress(hieroglyphId)
       const rarity = progress.found >= progress.required ? "legendary" : progress.found >= 2 ? "rare" : "common"
       const name = item
-        ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
+        ? t(`${category}.${hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
         : t("chest.hieroglyphFragment")
-      const description = t(`${category}.${reward.hieroglyphId}.description`, {
+      const description = t(`${category}.${hieroglyphId}.description`, {
         ns: "inventory",
         defaultValue: item?.description ?? "",
       })

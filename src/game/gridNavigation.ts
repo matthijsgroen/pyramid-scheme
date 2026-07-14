@@ -1,4 +1,4 @@
-import type { FloorGrid, GridCell, Direction, CellState } from "./siteTypes"
+import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward } from "./siteTypes"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
@@ -10,7 +10,7 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   for (const row of grid.cells)
     for (const cell of row)
       if (cell.type === "room" && cell.state === "completed" && cell.reward?.type === "tombKey")
-        keys.add(cell.reward.keyId)
+        keys.add((cell.reward as TombKeyReward).keyId)
   return keys
 }
 
