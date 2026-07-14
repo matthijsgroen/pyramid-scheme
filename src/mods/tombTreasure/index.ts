@@ -7,10 +7,11 @@ import { resolveTombTreasure } from "./game/tombTreasureReward"
 // toggle unit (they're one interdependent loop: enter a tomb with map pieces, leave with keys):
 //  - `mapPiece` (this descriptor's gating currency): found in pyramids, unlocks a tomb's entry.
 //  - `tombKey` (the tomb treasure: ward keys + location keys): found in tombs, opens pyramid ward
-//    floors, self-gates the tomb's next floor, reveals the next tomb, drives tier unlock. Still a
-//    construction-time literal (configBuilder resolveTombReward) + validateDiscovery for now — its
-//    migration to the reachability solver is a separate slice (§E, docs/mods/FIDELITY-AUDIT.md);
-//    this mod owns its reward handler/schema/state, not its placement.
+//    floors, self-gates the tomb's next floor, reveals the next tomb, drives tier unlock. Positional
+//    tomb content (one treasure per floor), placed via this descriptor's `resolveTombTreasure` and
+//    harvested for reachability via `reachabilitySupport` (§E) — core world-gen names neither the
+//    reward type nor the gating currency; this mod owns handler/schema/state + placement + the
+//    reachability facts.
 //
 // Game-side only (no React). The reward handlers/effects/schemas + progression state (map-piece
 // count, tomb keys, tomb discovery) register app-side (registerModApps → ./app), gated on this mod
