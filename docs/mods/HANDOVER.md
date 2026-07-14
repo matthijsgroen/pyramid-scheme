@@ -1,73 +1,95 @@
-# Handover — Slice 4 (shop) DONE; tomb-treasure mod next
+# Handover — mod-restructure fidelity work (branch `mods/hieroglyph-currency`)
 
-Branch `mods/hieroglyph-currency`, **not pushed**. Tree has the Slice-4 changes uncommitted.
-Full suite green (715), `yarn build` clean, `yarn generate-world` builds byte-identical with the
-economy guard ON, and toggle-off is proven (shop out of `REGISTERED_MODS` → world + app build,
-guard gone, no dynamic money/junk).
+Branch **pushed** through `2835ffe` (+ an audit-doc commit). Full suite green (**718**),
+`yarn build` clean, `yarn generate-world` builds with the economy guard ON and is **byte-identical**,
+per-slice toggle-off proven. This branch is executing the gaps in **`docs/mods/FIDELITY-AUDIT.md`** —
+read that first; its "Progress" section is the live tracker.
 
-## Read first, in this order
+## Read first, in order
 
-1. `docs/mods/ARCHITECTURE.md` — the as-built system: the two invariants, the seams
-   (descriptor, registries, placement pipeline, mod state), the lifecycle, the mod inventory.
-2. `docs/mods/app-plugins-design.md` — the clean-cut app-plugin design (built).
-3. `docs/mods/distribution-primitive-design.md` — loot placement.
-4. `docs/mods/TARGET.md` — the two rules.
-5. Auto-memories: `project_mod_restructure_target`, `reference_worldgen_dsl_authoring`,
-   `project_shop_mechanic_design`, `project_world_authorship_doom_loop`, `feedback_design_doc_fidelity`.
+1. `docs/mods/FIDELITY-AUDIT.md` — the gap ledger + per-root-cause status (✅ done / ⏳ remaining).
+2. `docs/mods/ARCHITECTURE.md` — the two invariants + the as-built seams.
+3. `docs/mods/distribution-primitive-design.md` — the loot/encounter primitive (§"As-built refinements").
+4. `docs/mods/TARGET.md` — the two rules (mod-agnostic core; toggle-off is the gate).
+5. `docs/mods/pyramid-interior-design.md` §8 — the tomb-interior target (needed for §A.2+§G).
+6. Auto-memories: `project_distribution_primitive_contract`, `feedback_design_doc_fidelity`,
+   `project_mod_restructure_target`, `reference_worldgen_dsl_authoring`.
 
-## What landed this session — Slice 4, shop is a full mod
+## Done on this branch
 
-`shopMod` is now in `REGISTERED_MODS` and owns the whole injected money economy. The pattern
-mirrors trap exactly (game-side descriptor + self-gated app entrypoint).
+- **§C** — dynamic loot (money/junk/consumables) runs through the `Distribution` primitive
+  (`slotAllocator.ts`); mods own placement via `footprint`/`eligible`/`rank`/`fill`; eagerness =
+  `FamilyMeta.rewardWeight` (fill order) stamped on slots; `emptyFraction` knob; authored `end:"junk"`
+  is an open slot (not a baked sellable). Money+junk = one shop `shopMoneyEconomy` budget.
+- **§D** — `TreasureReward` is OPEN (`{type:string}&Record<string,unknown>`); core enumerates no
+  reward/currency id. Per-type **zod schemas** (owner-registered) validate every placed reward at boot
+  (`rewardSchemas.ts` `validatePlacedRewards`, called from `registerModApps`). Reward effects/display/
+  state all mod-owned (fragments → `useHieroglyphProgress`/useModState; ledger generic get/grant/spend;
+  `ConsumableType`/`rollConsumable` → trap; serializer generic; hieroglyph `pieceIndex`+cap → the mod's
+  finalize; baked mod data rides a generic `modExports` channel). `skip` vs `canAccept` are distinct
+  (owned fragment silently skips; full pack refuses-come-back).
+- **§A.1** — movable mechanics relocated to mods: `src/game/traps/*`, `src/game/puzzles/sumplete/*`,
+  `TrapWarningScreen`, `ConsumableBar`, `SumpleteBoard`. `src/game/traps/` gone; `src/game/puzzles/`
+  keeps only tableau + crocodile (blocked — see §A.2).
+- **§H** — fixed the double-registered `FEZ_SHOP_META` (was hardcoded in `allFamilyMeta.ts` AND via the
+  descriptor). Now drops with the mod.
 
-- **Descriptor** `src/mods/shop/index.ts` — `{ id, families:[FEZ_SHOP_META], currencyMeta (money),
-  money (MoneySpec), junk (JunkSpec), worldValidator (economy guard) }`. New game-side files under
-  `src/mods/shop/game/`: `moneyCurrency.ts`, `loot.ts` (money + junk specs), `economyGuard.ts`.
-- **Money currency** — meta moved off the hardcoded line in `registerCurrencies.ts` to the
-  descriptor. VALUE stays on the shared ledger (`DEFAULT_LEDGER.money`), the mosaic/health
-  precedent (broadly-earned, HUD-shown); no `useModState`.
-- **Dynamic-loot injection generalized** — `placeFragments`/`configBuilder`/`generateWorld` now
-  thread a single `DynamicLootSpecs { consumables?, money?, junk? }` (was a lone `consumables?`
-  param). Aggregated in `registeredMods.ts` as `DYNAMIC_LOOT`. `MONEY_FRACTION`/`JUNK_EAGERNESS`
-  are gone from core — they're `SHOP_MONEY_SPEC`/`SHOP_JUNK_SPEC`.
-- **Economy guard is shop-owned** — `validateEconomyGuard` moved out of core `validate.ts` to
-  `src/mods/shop/game/economyGuard.ts` (`runEconomyGuard` + the `SKIP_ECONOMY_GUARD`-aware
-  `shopEconomyGuard`). Injected via the new descriptor `worldValidator` field →
-  `MOD_WORLD_VALIDATORS` → `buildConfigs` runs them last. Core `validate` names no shop.
-- **Collection junk section is shop-owned** — `SellableCategorySection` moved out of
-  `Collection.tsx` to `src/mods/shop/app/ShopCollectionSection.tsx`, registered self-gated in
-  `shop/app/index.ts`. Fez plugin now self-gates on `isModEnabled("shop")`.
-- **`Slot.assign` widened to accept `undefined`** — the dynamic pass now clears leftover chest
-  placeholders to empty when junk is off (a `fragmentSlot` must never reach the serializer). This
-  is what makes "shop off → chests fall empty" actually build.
+## Remaining (priority order — see FIDELITY-AUDIT "Progress")
 
-## Mod inventory now
+1. **§A.2 + §G — tomb-interior as a registry site** (the big one, gameplay-facing, needs playtesting).
+   Kill the legacy `src/app/TombExpedition.tsx` render + `SiteMapScreen`'s `renderPuzzle` escape hatch;
+   route tombs through the family registry exactly like `PyramidExpedition`. Requires: tomb persistence
+   in `useJourneys.ts` (the `isInteriorPyramid` pinned-seed / capped-`completionCount` treatment for
+   `treasure_tomb`), multi-floor indexing (`TombExpedition` hardcodes `siteConfigs[0]`), per-floor
+   crocodile capstone (`configBuilder.ts` `isLast && hasCroc`), and wiring authored tableau content into
+   the tableau family's `generate` (today it uses a dummy). Drop the redundant `ComparePuzzle` finale
+   (the in-grid crocodile capstone already renders via the registry). **Only after this** can tableau +
+   crocodile mechanics (`src/game/puzzles/{tableau,crocodile}`, `TombPuzzle`) move to their mods. This
+   is what makes hieroglyph/puzzle toggle-off actually remove the mechanic in tombs.
+2. **§A.3 — encounters-as-distributions (Increment 2)**, world-gen only, disjoint from §A.2. Add
+   `slot.encounter`/`capacity` metadata; an encounter-pass distribution that stamps it + sets
+   `rewardWeight` (moving the `siteAssembler.ts` `trapped`/`puzzleFamily`/shop special-cases + the
+   `slots.ts` weight stamp); shop stock as a loot distribution on `eligible = s.encounter==="shop"`.
+3. **§E — ward/tomb keys → the solver.** Today construction-time literals (`configBuilder.ts`) +
+   a separate `validateDiscovery` reachability re-implementation. Migrate to a currency distribution.
+4. **§F — treasure perks.** `applyTreasurePerk` is a no-op but `pyramid-interior-design.md` presents a
+   full perk economy. A decision: build the perk system, or correct the doc. (Blocks nothing.)
+5. **§H (puzzle) — design decision:** `puzzle` is a mod-in-name-only (not in `REGISTERED_MODS`, ungated).
+   Make it a real toggleable mod, or accept as always-on core-adjacent.
+6. **tomb-treasure mod** — extract `mapPiece`/`tombKey` (the "last mod"; core owns them under the open
+   union today, which is fine until then).
 
-- **mosaic, hieroglyph, trap, shop** — full mods in `REGISTERED_MODS`, toggle-off proven.
-- **core, puzzle** — families only, always-on, app entrypoints via `registerModApps`.
+## As-built seams to reuse (all built here)
 
-## Toggle-off residual (the deferred reward-vocab leak, NOT a Slice-4 bug)
+- **Distribution** (`worldGen/slotAllocator.ts`) + `allocateDistributions` — loot placement.
+- **rewardContributions** (`effects`/`canAccept`/`skip`) + **rewardDisplayRegistry** + **detectorScanners**
+  + **rewardSchemas** (zod) — all in `src/app/SiteMap/`, hook-based, registered per mod via
+  `registerModApps`, mod-agnostic in core.
+- **useModState** (`pyramid-scheme-mod-<id>`), **generic ledger** (`ledger.get/grant/spend(id)`),
+  **familyWeightFor** + **modExports** injection (via `scripts/generateWorld.ts`, the sanctioned crossing).
+- Descriptor `ModDescriptor` fields; `REGISTERED_MODS`; `MOD_FAMILY_META`/`DYNAMIC_DISTRIBUTIONS`/
+  `MOD_WORLD_VALIDATORS` aggregators.
 
-With shop off, dynamic money/junk drop to 0/0 as intended, but ~77 **authored** `end:"junk"`
-sellables still bake (from `worldGen/spec/*.ts` `.settings({ end:"junk" })` → `pathEndToReward`).
-This is the SAME class as authored `encounter:"trap"` surviving trap-off (resolves via family
-pass-through): authored DSL naming a mod concept. It's the closed-reward-vocabulary gotcha below,
-explicitly out of Slice-4 scope. The world still builds and is solvable; the residual junk is dead
-inventory (no shop to sell at).
+## Workflow that's been used (the user expects it — they hate half-implementations / "concepts mixed")
 
-## Next: tomb-treasure mod (the last mod)
+explore (parallel agents) → **plan** (Plan agent to pressure-test) → **grill the genuine forks** with
+the user via AskUserQuestion → build (self for risky/core-sensitive; delegate mechanical work) →
+**verify** (tsc + build + full suite + lint + world byte-identical + toggle-off) → **doc-fidelity review
+agent** → fix findings → commit → push. Surface design deviations as questions, don't silently pick.
 
-`mapPiece` + `collectedMapPieces` — still core (`registerCurrencies` hardcodes the `mapPiece`
-currency; `useProgression` holds `collectedMapPieces`). Stage it like trap/shop: descriptor
-(`currencyMeta` mapPiece + `currencyDistributions`), self-gated app bits, toggle-off proof.
+## Gotchas
 
-## Gotchas carried forward
-
-- **Reward-vocabulary leak:** `TreasureReward` in `siteTypes.ts`/`worldGen/types.ts` and the
-  reward handlers in `registerRewardHandlers.ts` still name `mosaicPiece`/`hieroglyphFragment`/
-  `money`/`sellable`; `pathEndToReward` bakes authored `junk`; the serializer names them. This is
-  the last "closed core vocabulary" gap — its own cleanup, and the reason shop toggle-off leaves
-  the 77 authored sellables above. Do this before or alongside a vocabulary-sensitive slice.
-- **hieroglyph fragments** still live in core `useProgression` (`collectedFragments`) — deliberate.
-- **Perks DISREGARDED** — `applyTreasurePerk` is a no-op; every perk at baseline. Registry dormant.
-- `SKIP_ECONOMY_GUARD=1 yarn generate-world` for iteration (now honored inside the shop guard).
+- **Independently verify subagent "all green" claims.** Both delegated pushes reported green but had
+  stale editor diagnostics; Push 1 had a real regression (skip-vs-canAccept) the review caught. Run
+  `yarn tsc -b`/`build`/`vitest` yourself.
+- **World byte-identity** is the strong check for a refactor that shouldn't change output; `git diff
+  --stat src/data/generatedWorld.ts` should be empty (regenerate first).
+- **Toggle-off** = remove a mod from `REGISTERED_MODS` (+ comment its import), regenerate, build. The
+  boot `validatePlacedRewards` throws if the world still has a toggled-off mod's reward type (correct —
+  regenerate). Restore exactly after.
+- **DSL authoring vocabulary still names currencies** (`dsl.ts` `RewardHint`/`RewardSpec`, `spec/*.ts`
+  `endReward:"mosaicPiece"`, `pathEndToReward`'s `"mosaic"→prefers`) — §A DSL scope, rule-2 sanctioned;
+  NOT a §D leak.
+- **Consumable-detector path** still names `"consumable"` (`SiteMapScreen`/`SiteMapView` skipped-consumable
+  reopen) — deferred to a detector slice.
+- `SKIP_ECONOMY_GUARD=1 yarn generate-world` for iteration.

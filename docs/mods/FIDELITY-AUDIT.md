@@ -19,6 +19,23 @@ trap, shop, and the tomb puzzles still live in core**, with mods acting as thin 
 toggle-off gate passes only in its weakest reading ("it compiles"), not its intent ("the mechanic
 is gone"). And one shipped-looking system (treasure perks) is entirely inert.
 
+## Progress (branch `mods/hieroglyph-currency`, updated 2026-07-14)
+
+- **§C ✅** dynamic loot on the `Distribution` primitive (commits `6af7a8d`, `4e66b1a`).
+- **§D ✅** open reward union + zod boot-validation; effects/state/display/vocab out of core
+  (`da781cc`, `ef40959`, `3d70b83`, `a001964`, `e27d3b7`).
+- **§A.1 ✅** movable mechanics relocated to mods — trap config/health, sumplete, TrapWarningScreen,
+  ConsumableBar, SumpleteBoard (`e937029`).
+- **§H ✅** double-registered fez-shop meta fixed (`2835ffe`).
+- **§A.2 + §G** ⏳ tomb-interior-as-registry rework (kill legacy `TombExpedition`/`renderPuzzle`, tomb
+  persistence, multi-floor, per-floor capstone, authored-tableau wiring; then tableau/crocodile
+  mechanics move). The big gameplay-facing slice; makes hieroglyph/puzzle toggle-off real in tombs.
+- **§A.3** ⏳ encounters-as-distributions (Increment 2) — world-gen slice.
+- **§E** ⏳ ward/tomb keys → the solver (still construction-time literals + a separate validator).
+- **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
+- **§H (puzzle)** ⏳ `puzzle` is a mod-in-name-only — design decision.
+- **tomb-treasure mod** ⏳ extract `mapPiece`/`tombKey` (the "last mod"; core owns them under the open union today).
+
 ---
 
 ## A — Mechanics live in core; mods are thin wrappers  ·  HIGH (systemic)
@@ -176,15 +193,20 @@ exist but their `bump` is never invoked. Base health stays 6 forever. Only tier-
 
 ---
 
-## H — Concrete latent bug: shop family meta double-registered  ·  MEDIUM  ·  `contract-violation`
+## H — Concrete latent bug: shop family meta double-registered  ·  MEDIUM  ·  `contract-violation`  ·  ✅ FIXED (2026-07-14)
+
+> **Resolved** (`2835ffe`): removed the hardcoded `FEZ_SHOP_META` from `allFamilyMeta.ts`; it now
+> comes only via the shop descriptor (`MOD_FAMILY_META`) and drops when shop leaves `REGISTERED_MODS`.
+> World byte-identical. Original finding below.
 
 `FEZ_SHOP_META` is contributed by the shop descriptor (`shop/index.ts:18` → `MOD_FAMILY_META`) **and**
 hardcoded in the legacy list (`allFamilyMeta.ts:19`). It appears twice in `ALL_FAMILY_META`; toggling
 shop off drops only the descriptor copy, so fez-shop stays in world-gen dispatch + `resolveKeyRequirements`.
 A registered mod's meta does not fully drop. (Fix is small and worth doing regardless.)
 
-Related: `puzzle` is a mod-shaped folder but **not** in `REGISTERED_MODS`; its plugins call
-`registerFamily` **ungated** (unlike every other mod) — a mod in name only (`shortcut-as-done`/`stale-doc`).
+Related — **STILL OPEN:** `puzzle` is a mod-shaped folder but **not** in `REGISTERED_MODS`; its plugins
+call `registerFamily` **ungated** (unlike every other mod) — a mod in name only. A design decision
+(make puzzle a real toggleable mod, or accept it as always-on core-adjacent), not a bug fix.
 
 ---
 
