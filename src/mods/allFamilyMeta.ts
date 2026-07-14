@@ -3,6 +3,7 @@ import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { mulberry32 } from "@/game/random"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { SUMPLETE_META } from "./puzzle/game/sumplete/meta"
+import { SUMPLETE_MIRROR_META } from "./puzzle/game/sumpleteMirror/meta"
 import { CROCODILE_META } from "./puzzle/game/crocodile/meta"
 import { TREASURE_CHEST_META } from "./core/game/treasureChest/meta"
 import { KEY_GATE_META } from "./core/game/keyGate/meta"
@@ -18,6 +19,7 @@ import { MOD_FAMILY_META } from "./registeredMods"
 // drop out when the mod leaves REGISTERED_MODS — so they must NOT be listed here too.
 export const ALL_FAMILY_META: FamilyMeta[] = [
   SUMPLETE_META,
+  SUMPLETE_MIRROR_META,
   CROCODILE_META,
   TREASURE_CHEST_META,
   KEY_GATE_META,
