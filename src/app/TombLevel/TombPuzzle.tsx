@@ -1,6 +1,6 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { TableauLevel } from "@/data/tableaus"
-import { type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
+import { type RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
@@ -11,14 +11,14 @@ import {
   createTableauPuzzleState,
   isTableauPuzzleCompleted,
   toggleTableauTile,
-} from "@/game/puzzles/tableau/tableauPuzzleState"
+} from "@/mods/hieroglyph/game/tableauPuzzleState"
 import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
 import type { InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
 import type { OrderedFormula } from "@/ui/organisms/TombTableau"
 import { FezContext } from "../fez/context"
-import { createPositionOverview } from "@/game/formulas/filledPositions"
+import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"

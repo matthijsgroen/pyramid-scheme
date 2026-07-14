@@ -1,7 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
 import type { TableauLevel } from "@/data/tableaus"
-import type { RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
+import type { RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
 import { revealText } from "@/support/revealText"
 import clsx from "clsx"

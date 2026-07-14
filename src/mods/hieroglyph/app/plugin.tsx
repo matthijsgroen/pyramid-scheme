@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { mulberry32 } from "@/game/random"
-import { generateRewardCalculation, type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
+import { generateRewardCalculation, type RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import type { TableauLevel } from "@/data/tableaus"

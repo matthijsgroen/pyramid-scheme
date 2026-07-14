@@ -1,5 +1,5 @@
-import type { RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
-import type { Formula } from "./formulas"
+import type { RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
+import type { Formula } from "@/game/formulas/formulas"
 
 const createFormulaFilledPositions = (
   filledPositions: Record<string, number>,

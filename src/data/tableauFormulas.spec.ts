@@ -4,7 +4,7 @@ import { difficulties } from "./difficultyLevels"
 import { journeys, type TreasureTombJourney } from "./journeys"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import { hashString } from "@/support/hashString"
-import { generateRewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
+import { generateRewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 
 describe("Tableau System", () => {
   // Generate tableaux once for all tests
