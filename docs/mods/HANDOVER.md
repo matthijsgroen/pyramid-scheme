@@ -40,6 +40,14 @@ changed encounter representation but is semantic-identical — same family rende
   keeps only tableau + crocodile (blocked — see §A.2).
 - **§H** — fixed the double-registered `FEZ_SHOP_META` (was hardcoded in `allFamilyMeta.ts` AND via the
   descriptor). Now drops with the mod.
+- **§E — ward/tomb keys → the solver (4 stages, `SLICE-E-ward-keys.md`).** Retired the redundant
+  `validateDiscovery`; genericized `reachability.ts` so core names no currency (journey-entry
+  threshold, tier-unlock ladder, tombKey/mapPiece harvest all injected via a mod-supplied
+  `ReachabilitySupport`); injected tombKey placement from the mod (`TombTreasureResolver`) so core
+  `configBuilder` names no reward type; and gave every treasure an optional loot pocket (last-floor
+  `wardChest`). Key reframe: tomb keys are **positional content harvested by reachability**, NOT a
+  demand-spread currency (that's why the audit's "keys-as-currency" framing didn't fit). Stages 1-3
+  byte-identical; stage 4 changed the world (9 pockets + loot redistribution, counts stable).
 - **tomb-treasure mod** — `mapPiece`/`tombKey` extracted into `src/mods/tombTreasure` (see
   FIDELITY-AUDIT "Progress" + `SLICE-tomb-treasure.md`). Map-piece currency + `currencyMeta` mod-owned
   (`worldGen/mapPieceCurrency.ts` gone); the map-piece branch emits a `fragmentSlot` sentinel tagged
@@ -51,22 +59,16 @@ changed encounter representation but is semantic-identical — same family rende
 
 ## Remaining (priority order — see FIDELITY-AUDIT "Progress")
 
-1. **§E — ward/tomb keys → the solver.** Today construction-time literals (`configBuilder.ts
-   resolveTombReward` + `hasWardGate` in `sideSections.ts`) + a separate `validateDiscovery`
-   reachability re-implementation. Migrate to currency distributions like map pieces/hieroglyphs.
-   **Now the top gap:** tomb-treasure's toggle-off hard-fails `generate-world` precisely because
-   ward gates are core-authored but depend on the mod's tomb keys — §E is what makes tombKey fully
-   mod-owned and the toggle-off degenerate-but-buildable. `tombKey` is already a mod reward
-   (handler/schema/state); §E moves its PLACEMENT. `MAP_PIECE_CURRENCY` (`src/mods/tombTreasure/
-   game/`) is the template shape.
-2. **§F — treasure perks.** `applyTreasurePerk` is a no-op (now on `useTombTreasureProgress`) but
+1. **§F — treasure perks.** `applyTreasurePerk` is a no-op (now on `useTombTreasureProgress`) but
    `pyramid-interior-design.md` presents a full perk economy. A decision: build the perk system, or
-   correct the doc. (Blocks nothing.)
-3. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
+   correct the doc. (Blocks nothing.) Note: many tomb treasures carry a perk that currently does
+   nothing — §F is where they come alive.
+2. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
    consumable/shop-money `eligible` to join on it instead of the `rewardWeight` proxy (which works).
-4. **§G tomb content (deferred to playtest/tuning)** — crocodile capstone every floor, soft trap
+3. **§G tomb content (deferred to playtest/tuning)** — crocodile capstone every floor, soft trap
    gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's `generate`
-   (today the TOMB_SYMBOLS pool). Gameplay-facing; expects playtesting + tuning.
+   (today the TOMB_SYMBOLS pool). Gameplay-facing; expects playtesting + tuning. The new last-floor
+   `wardChest` pockets (§E) are optional loot — playtest whether their placement/fill feels right.
 
 **Shop-robustness note (surfaced by §H toggle-off):** shop's junk-completeness `fill` hard-fails
 when loot-bearing capacity drops below the collectible count (e.g. puzzle off). A root mod off
@@ -89,6 +91,13 @@ than throw. Decision, not urgent.
   **familyWeightFor** + **modExports** injection (via `scripts/generateWorld.ts`, the sanctioned crossing).
 - Descriptor `ModDescriptor` fields; `REGISTERED_MODS`; `MOD_FAMILY_META`/`DYNAMIC_DISTRIBUTIONS`/
   `MOD_WORLD_VALIDATORS` aggregators.
+- **§E reachability injection** — `ReachabilitySupport` (`reachability.ts`: `bucketForReward`/
+  `thresholdFor`/`journeyEntryLock`/`tierUnlockBucket`) + `TombTreasureResolver` (`configBuilder.ts`),
+  both mod-descriptor fields aggregated in `registeredMods.ts` (`MOD_REACHABILITY_SUPPORT`,
+  `MOD_TOMB_TREASURE_RESOLVER`) and injected by `generateWorld.ts` into `buildConfigs`. This is how
+  core world-gen gates/harvests/places a mod's currency without naming it.
+- **`keyProviders`** (held ward keys the site-map engine reads for gate satisfaction; tomb-treasure
+  registers its `tombKeyIds`) — the app-side counterpart, mirrors `detectorScanners`.
 
 ## Workflow that's been used (the user expects it — they hate half-implementations / "concepts mixed")
 

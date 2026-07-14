@@ -50,7 +50,11 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   core/spec/siteAssembler edit. Deterministic seeded spread; semantic-identical with today's single
   family per role (world plays the same; generatedWorld now bakes concrete families). Deferred: the
   loot `eligible` join on `slot.encounter` (loot still uses the rewardWeight proxy, which works).
-- **§E** ⏳ ward/tomb keys → the solver (still construction-time literals + a separate validator).
+- **§E ✅** ward/tomb keys → the solver: `validateDiscovery` retired (reachability subsumes it),
+  `reachability.ts` genericized (mod-supplied `ReachabilitySupport` — core names no currency),
+  tombKey placement injected from the mod (core `configBuilder` names no reward type), and every
+  treasure now gates an optional loot pocket (last-floor `wardChest`). Direction 3 / positional-keys,
+  not the audit's "keys-as-currency" framing. See `docs/mods/SLICE-E-ward-keys.md`.
 - **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
 - **§H (puzzle) ✅** `puzzle` is now a real `REGISTERED_MODS` mod (`ff97078`): families flow via
   `MOD_FAMILY_META`, plugins self-gate, `ALL_FAMILY_META` lists only core's own families. Adding a
@@ -192,7 +196,28 @@ the "reward-vocabulary leak" the handover calls one deferred gotcha; the audit s
 
 ---
 
-## E — Ward/tomb keys never migrated to the solver  ·  HIGH  ·  `contract-violation` + `stale-doc`
+## E — Ward/tomb keys → the solver  ·  HIGH  ·  ✅ FIXED (2026-07-14)
+
+> **Resolved** (§E, 4 stages — `docs/mods/SLICE-E-ward-keys.md`; commits on `mods/hieroglyph-currency`).
+> The audit's "make ward keys a currency distribution" framing partly misread the mechanic —
+> exploration showed tomb treasures are **positional tomb content** (210 gates : 32 distinct keys,
+> many:1, threshold-1 demand), not a demand-spread currency. So the real §E was **direction 3**: a
+> generic core reachability primitive that names no currency + the tomb-treasure mod supplying the
+> specifics as data. Delivered:
+> - **`validateDiscovery` retired** — reachability already subsumes+strengthens it (count-aware
+>   secondary-tomb entry vs existence-only; ward-key ordering via the fine BFS + settleHarvest +
+>   winnability sweep).
+> - **`reachability.ts` genericized** — the journey-entry threshold, tier-unlock ladder, and
+>   tombKey/mapPiece harvest are injected via a mod-supplied `ReachabilitySupport`; core names no
+>   currency in its logic.
+> - **tombKey placement injected** from the mod (`TombTreasureResolver`) — core `configBuilder`
+>   names no reward type (only the `fragmentSlot` sentinel).
+> - **Every treasure now gates an optional loot pocket** — each tomb's last floor gets a `wardChest`
+>   keyed on its own treasure (was an allocation artifact leaving 8 last-floor keys demand-less);
+>   normal tier-matched fill, terminal wizard treasure's pocket falls to tier-agnostic mosaic.
+>
+> Stages 1-3 world byte-identical; stage 4 changed the world (9 pockets + loot redistribution,
+> counts stable: tombKey 40, mapPiece 31, mosaic 298, hieroglyph 294). Original finding below.
 
 `keys-and-locks-solver.md` intro + §Relationship: ward-key placement "plugs into this solver as
 data like every other key type" via `pipe(rankBy(weightedTierTarget(...)), rankBy(lootPriority))`;

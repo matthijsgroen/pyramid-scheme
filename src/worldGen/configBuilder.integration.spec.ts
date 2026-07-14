@@ -113,9 +113,17 @@ describe("tomb floor linking — ward-path shortcuts", () => {
     }
   })
 
-  it("the last floor has no ward-path shortcut", () => {
+  it("the last floor gets a ward-chest loot pocket (not a staircase shortcut) keyed on its own treasure", () => {
+    // §E: every treasure gates an (optional) pocket — the last floor has no next floor to skip
+    // to, so its own treasure gates a loot chest instead of a shortcut staircase.
     const last = floors[floors.length - 1]
-    expect(last.sideSections.some(s => s.gate?.type === "tomb-key")).toBe(false)
+    const pocket = last.sideSections.find(s => s.gate?.type === "tomb-key")
+    expect(pocket).toBeDefined()
+    expect(pocket!.gate).toEqual({
+      type: "tomb-key",
+      wardKeyId: (last.mainEndReward as unknown as { keyId: string }).keyId,
+    })
+    expect(pocket!.end).toBe("treasure") // a chest, not a { stairId } staircase
   })
 
   it("wires each floor's entrance to the previous floor's shortcut stairId", () => {

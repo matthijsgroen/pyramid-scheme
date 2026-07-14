@@ -11,7 +11,7 @@ import type {
   PathPuzzlesRange,
   TombRewardHint,
 } from "./dsl"
-import { wardPath } from "./dsl"
+import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator } from "./placeEncounters"
@@ -180,10 +180,13 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     }
 
     // Every floor is authored explicitly — its own mainEndReward defaults to "tombTreasure"
-    // (the perk-stream's next id) unless an authored entry overrides it, and every non-last
-    // floor gets a ward-path shortcut gated by that same key: walk the floor once to earn
-    // it, then a later re-entry can skip straight past via the shortcut instead of
-    // re-solving its tableau. Never authored per-tomb; systemic for all.
+    // (the perk-stream's next id) unless an authored entry overrides it, and every floor gets a
+    // ward-gated section keyed by that same key so EVERY treasure gates an (optional) pocket
+    // (§E, docs/mods/SLICE-E-ward-keys.md — no demand-less keys): a non-last floor gets a
+    // ward-path shortcut (walk once to earn the key, later re-entry skips straight past via the
+    // shortcut instead of re-solving its tableau), the last floor (no next floor to skip to) gets
+    // a ward-chest loot pocket instead — the loot solver fills it (mosaic/junk, tier-matched; the
+    // terminal wizard treasure's pocket falls to tier-agnostic mosaic). Never authored per-tomb.
     //
     // encounterArgs.runNr defaults to this floor's own 1-based index — same as the "grind
     // era", each floor's tableau is tied to the treasure it unlocks (perkIndex above walks
@@ -193,7 +196,9 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
       const authoredSections = (authored?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined) ?? []
-      const shortcut = isLast ? [] : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
+      const shortcut = isLast
+        ? [wardChest({ tomb: tomb.id, index: i, puzzles: 0 })]
+        : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
       return {
         pathPuzzles: isLast && hasCroc ? 2 : 1,
         difficulty,
