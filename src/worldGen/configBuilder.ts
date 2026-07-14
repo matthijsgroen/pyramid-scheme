@@ -21,7 +21,7 @@ import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { Distribution } from "./slotAllocator"
 import type { FamilyWeightFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
-import { validateDiscovery, validateRewardCounts, type WorldValidator } from "./validate"
+import { validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -279,7 +279,9 @@ export const buildConfigs = (
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
-  validateDiscovery(allConfigs)
+  // Secondary-tomb discovery + ward-key ordering are no longer a separate post-build validator
+  // (§E): the worklist reachability model (placeFragments above) already guarantees both — it
+  // hard-fails if any lock stays blocking. See validate.ts's note + docs/mods/SLICE-E-ward-keys.md.
   // Mod-injected post-build validators (e.g. the shop economy guard) run last, over the whole
   // grown world. They drop out with their mod, so core names none — the shop guard leaves the
   // check when shop leaves REGISTERED_MODS.

@@ -1,4 +1,4 @@
-import type { SiteConfig, TreasureReward, MapPieceReward, TombKeyReward } from "./types"
+import type { SiteConfig, TreasureReward, MapPieceReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 
@@ -65,137 +65,10 @@ export const validateRewardCounts = (
     throw new Error(`[worldSpec] Expected ${expectedCurrencyRewards} gating-currency rewards, got ${currencyRewards}`)
 }
 
-// Secondary tombs that need discovery — primary tomb ID → list of secondary tomb IDs.
-// If a secondary tomb has no mapPiece/locationKey in any authored config, a locationKey
-// is auto-injected as a side section on the primary tomb's last floor.
-export const SECONDARY_TOMBS: Record<string, string[]> = {
-  expert_treasure_tomb: ["expert_treasure_tomb_b"],
-  master_treasure_tomb: ["master_treasure_tomb_b"],
-  wizard_treasure_tomb: ["wizard_treasure_tomb_b"],
-  wizard_treasure_tomb_b: ["wizard_treasure_tomb_c"],
-}
-
-// Collect all tombIds that have a mapPiece reward in any config OTHER than their own site
-const collectDiscoveredBy = (configs: Record<string, SiteConfig[]>): Map<string, Set<string>> => {
-  const discovered = new Map<string, Set<string>>()
-  for (const [siteId, siteConfigs] of Object.entries(configs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        const checkReward = (r: TreasureReward | undefined) => {
-          if (r?.type !== "mapPiece") return
-          const mp = r as MapPieceReward
-          if (mp.tombId === siteId) return
-          const set = discovered.get(mp.tombId) ?? new Set()
-          set.add(siteId)
-          discovered.set(mp.tombId, set)
-        }
-        checkReward(floor.mainEndReward)
-        for (const s of floor.sideSections) {
-          checkReward(s.endReward)
-          for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
-        }
-      }
-    }
-  }
-  return discovered
-}
-
-type SiteFloorRef = { siteId: string; floorIndex: number }
-
-// Where each tomb-key (ward key) is actually granted — the first mainEndReward/
-// sideSection(+sub) reward of type "tombKey" for that keyId, walked in floor order.
-const findWardKeyGrants = (configs: Record<string, SiteConfig[]>): Map<string, SiteFloorRef> => {
-  const grants = new Map<string, SiteFloorRef>()
-  const record = (r: TreasureReward | undefined, ref: SiteFloorRef) => {
-    if (r?.type !== "tombKey") return
-    const tk = r as TombKeyReward
-    if (!grants.has(tk.keyId)) grants.set(tk.keyId, ref)
-  }
-  for (const [siteId, siteConfigs] of Object.entries(configs)) {
-    for (const floors of siteConfigs) {
-      floors.forEach((floor, floorIndex) => {
-        const ref = { siteId, floorIndex }
-        record(floor.mainEndReward, ref)
-        for (const s of floor.sideSections) {
-          record(s.endReward, ref)
-          for (const sub of s.sideSections ?? []) record(sub.endReward, ref)
-        }
-      })
-    }
-  }
-  return grants
-}
-
-// Every tomb-key gate in the world, and where it sits (which floor's content it blocks).
-const findWardKeyRequirements = (configs: Record<string, SiteConfig[]>): (SiteFloorRef & { wardKeyId: string })[] => {
-  const requirements: (SiteFloorRef & { wardKeyId: string })[] = []
-  const record = (gate: { type: "floor-key" | "tomb-key"; wardKeyId?: string } | undefined, ref: SiteFloorRef) => {
-    if (gate?.type === "tomb-key") requirements.push({ ...ref, wardKeyId: gate.wardKeyId! })
-  }
-  for (const [siteId, siteConfigs] of Object.entries(configs)) {
-    for (const floors of siteConfigs) {
-      floors.forEach((floor, floorIndex) => {
-        const ref = { siteId, floorIndex }
-        for (const s of floor.sideSections) {
-          record(s.gate, ref)
-          for (const sub of s.sideSections ?? []) record(sub.gate, ref)
-        }
-      })
-    }
-  }
-  return requirements
-}
-
-// Validate that every secondary tomb has a mapPiece reward reachable before it's needed, and
-// that every tomb-key (ward) gate is satisfiable before the player reaches it: the key must be
-// granted on an earlier floor of the same site, or at a different site already known reachable
-// (floor-key gates are a same-floor maze mechanic, verified separately by the site assembler).
-// Throws with a clear message naming the offending site + missing/out-of-order key.
-export const validateDiscovery = (allConfigs: Record<string, SiteConfig[]>): void => {
-  const allSecondary = new Set(Object.values(SECONDARY_TOMBS).flat())
-  const discoveredBy = collectDiscoveredBy(allConfigs)
-
-  // BFS: start from non-secondary sites (auto-discovered), expand when mapPiece host is reachable
-  const reachable = new Set(Object.keys(allConfigs).filter(id => !allSecondary.has(id)))
-  let changed = true
-  while (changed) {
-    changed = false
-    for (const secId of allSecondary) {
-      if (reachable.has(secId)) continue
-      const hosts = discoveredBy.get(secId)
-      if (hosts && [...hosts].some(h => reachable.has(h))) {
-        reachable.add(secId)
-        changed = true
-      }
-    }
-  }
-
-  const unreachable = [...allSecondary].filter(id => !reachable.has(id))
-  if (unreachable.length > 0) {
-    throw new Error(
-      `[worldSpec] Unsolvable discovery graph — these secondary tombs are unreachable:\n` +
-        unreachable.map(id => `  - ${id} (no mapPiece found in a reachable site)`).join("\n")
-    )
-  }
-
-  const grants = findWardKeyGrants(allConfigs)
-  const orderingErrors: string[] = []
-  for (const req of findWardKeyRequirements(allConfigs)) {
-    const grant = grants.get(req.wardKeyId)
-    if (!grant) {
-      orderingErrors.push(`  - "${req.wardKeyId}" gates ${req.siteId} floor ${req.floorIndex} but is never granted`)
-      continue
-    }
-    const sameSiteInOrder = grant.siteId === req.siteId && grant.floorIndex <= req.floorIndex
-    const otherSiteReachable = grant.siteId !== req.siteId && reachable.has(grant.siteId)
-    if (!sameSiteInOrder && !otherSiteReachable) {
-      orderingErrors.push(
-        `  - "${req.wardKeyId}" gates ${req.siteId} floor ${req.floorIndex} but is granted at ` +
-          `${grant.siteId} floor ${grant.floorIndex}, which isn't reachable first`
-      )
-    }
-  }
-  if (orderingErrors.length > 0) {
-    throw new Error(`[worldSpec] Unsolvable ward-key ordering:\n${orderingErrors.join("\n")}`)
-  }
-}
+// NOTE: the old `validateDiscovery` post-build check (secondary-tomb discovery + ward-key
+// ordering) was retired in §E — the worklist reachability model (src/worldGen/reachability.ts +
+// placeFragments.ts) already subsumes and strengthens it: secondary-tomb enterability is
+// count-aware there (a tomb's own `piecesRequired` map pieces) vs this check's existence-only BFS,
+// and ward-key ordering is enforced structurally by the fine per-floor BFS + settleHarvest + the
+// winnability sweep (placeFragments.ts, which hard-fails if any lock stays blocking). See
+// docs/mods/SLICE-E-ward-keys.md.

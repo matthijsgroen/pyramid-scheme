@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { SECONDARY_TOMBS, validateDiscovery, validateRewardCounts } from "./validate"
+import { validateRewardCounts } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -96,82 +96,11 @@ describe("validateRewardCounts", () => {
   })
 })
 
-// A config set where every SECONDARY_TOMBS entry already has its mapPiece hosted on a
-// reachable site — the ward-key ordering tests below only care about tomb-key gates, so they
-// build on top of this to avoid tripping the (separate) mapPiece-discovery check.
-const discoverableBase = (): Record<string, SiteConfig[]> => {
-  const configs: Record<string, SiteConfig[]> = {}
-  for (const [primaryId, secondaryIds] of Object.entries(SECONDARY_TOMBS)) {
-    configs[primaryId] ??= [[floor()]]
-    for (const secondaryId of secondaryIds) {
-      configs[primaryId][0][0].sideSections.push({
-        pathPuzzles: 0,
-        difficulty: "starter",
-        end: "treasure",
-        endReward: { type: "mapPiece", tombId: secondaryId },
-      })
-      configs[secondaryId] ??= [[floor()]]
-    }
-  }
-  return configs
-}
-
-const tombKeyGate = (wardKeyId: string) => ({
-  pathPuzzles: 0,
-  difficulty: "starter" as const,
-  end: "treasure" as const,
-  gate: { type: "tomb-key" as const, wardKeyId },
-})
-
-describe("validateDiscovery", () => {
-  it("throws when a secondary tomb has no reachable mapPiece", () => {
-    const configs = {
-      expert_treasure_tomb: [[floor()]] as SiteConfig[],
-      expert_treasure_tomb_b: [[floor()]] as SiteConfig[],
-    }
-    expect(() => validateDiscovery(configs)).toThrow(/expert_treasure_tomb_b/)
-  })
-
-  it("passes once every SECONDARY_TOMBS entry has a mapPiece hosted on a reachable site", () => {
-    expect(() => validateDiscovery(discoverableBase())).not.toThrow()
-  })
-
-  it("throws when a tomb-key gate requires a key that's never granted anywhere", () => {
-    const configs = { ...discoverableBase(), site: [[floor({ sideSections: [tombKeyGate("ghost")] })]] as SiteConfig[] }
-    expect(() => validateDiscovery(configs)).toThrow(/"ghost".*never granted/)
-  })
-
-  it("throws when a same-site ward key is required before the floor that grants it", () => {
-    const configs = {
-      ...discoverableBase(),
-      site: [
-        [floor({ sideSections: [tombKeyGate("k1")] }), floor({ mainEndReward: { type: "tombKey", keyId: "k1" } })],
-      ] as SiteConfig[],
-    }
-    expect(() => validateDiscovery(configs)).toThrow(/"k1".*floor 0.*floor 1/)
-  })
-
-  it("passes when a same-site ward key is granted on an earlier or equal floor", () => {
-    const configs = {
-      ...discoverableBase(),
-      site: [
-        [floor({ mainEndReward: { type: "tombKey", keyId: "k1" } }), floor({ sideSections: [tombKeyGate("k1")] })],
-      ] as SiteConfig[],
-    }
-    expect(() => validateDiscovery(configs)).not.toThrow()
-  })
-
-  it("passes when the ward key is granted at a different, already-reachable site", () => {
-    // Any site not in SECONDARY_TOMBS starts reachable, so a cross-site grant from one is always
-    // fine — the mapPiece-discovery check above is what actually gates secondary-tomb reachability.
-    const configs = {
-      ...discoverableBase(),
-      host: [[floor({ mainEndReward: { type: "tombKey", keyId: "k1" } })]] as SiteConfig[],
-      gated: [[floor({ sideSections: [tombKeyGate("k1")] })]] as SiteConfig[],
-    }
-    expect(() => validateDiscovery(configs)).not.toThrow()
-  })
-})
+// The old `validateDiscovery` tests were removed in §E — secondary-tomb discovery + ward-key
+// ordering are no longer a separate post-build check; the worklist reachability model
+// (reachability.ts + placeFragments.ts) guarantees both and hard-fails on a stuck lock. Its
+// coverage lives in reachability.spec.ts / the configBuilder integration golden guard. See
+// docs/mods/SLICE-E-ward-keys.md.
 
 // The shop economy guard moved to the shop mod (src/mods/shop/game/economyGuard.spec.ts) —
 // it's a shop-owned balance check, injected as the mod's worldValidator, not a core rule.
