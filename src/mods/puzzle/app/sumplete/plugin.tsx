@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
-import { generateSumplete, type SumpleteGrid } from "@/game/puzzles/sumplete/generateSumplete"
+import { generateSumplete, type SumpleteGrid } from "@/mods/puzzle/game/sumplete/generateSumplete"
 import { SumpletePuzzle } from "./SumpletePuzzle"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { SUMPLETE_META } from "@/mods/puzzle/game/sumplete/meta"

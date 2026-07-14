@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type FC } from "react"
-import { SumpleteBoard } from "@/ui/organisms/SumpleteBoard"
-import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "@/game/puzzles/sumplete/sumpleteStatus"
-import { createSumpleteState, toggleSumpleteCell } from "@/game/puzzles/sumplete/sumpleteState"
+import { SumpleteBoard } from "@/mods/puzzle/app/sumplete/SumpleteBoard"
+import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
+import { createSumpleteState, toggleSumpleteCell } from "@/mods/puzzle/game/sumplete/sumpleteState"
 
 type Props = {
   grid: number[][]

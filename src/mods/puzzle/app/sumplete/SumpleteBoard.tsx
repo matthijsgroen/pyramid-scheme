@@ -1,8 +1,8 @@
 import clsx from "clsx"
 import type { FC } from "react"
 import { Tile, type TileVariant } from "@/ui/atoms/Tile"
-import type { SumpleteLineStatus } from "@/game/puzzles/sumplete/sumpleteStatus"
-import type { SumpleteCellState } from "@/game/puzzles/sumplete/sumpleteState"
+import type { SumpleteLineStatus } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
+import type { SumpleteCellState } from "@/mods/puzzle/game/sumplete/sumpleteState"
 
 type Props = {
   grid: number[][]

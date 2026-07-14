@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { HealthDisplay } from "@/ui/atoms/HealthDisplay"
-import { ConsumableBar } from "@/ui/atoms/ConsumableBar"
+import { ConsumableBar } from "@/mods/trap/app/ConsumableBar"
 import { useTrapProgress } from "./useTrapProgress"
 
 // The trap mod's HUD widget: health + the consumable pack, both trap-owned. Reads its own state

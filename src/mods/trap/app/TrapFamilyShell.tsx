@@ -1,8 +1,8 @@
 import { useState, type FC } from "react"
 import type { FamilyContext } from "@/app/families/familyRegistry"
 import type { JourneyAPI } from "@/app/state/useJourneys"
-import { TRAP_TIME_LIMITS_SECONDS } from "@/game/traps/trapConfig"
-import { TrapWarningScreen } from "@/app/SiteMap/TrapWarningScreen"
+import { TRAP_TIME_LIMITS_SECONDS } from "@/mods/trap/game/trapConfig"
+import { TrapWarningScreen } from "@/mods/trap/app/TrapWarningScreen"
 import { useTrapProgress } from "./useTrapProgress"
 
 // Generic across any trap family — the warning/attempt/disable/turn-around lifecycle has
