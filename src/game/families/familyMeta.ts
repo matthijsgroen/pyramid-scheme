@@ -1,3 +1,5 @@
+import type { Difficulty } from "@/data/difficultyLevels"
+
 // Ctx shape matches src/game/siteAssembler.ts's ResolveKeyRequirements (minus the familyId
 // dispatch param, already implied by which FamilyMeta this sits on) — kept as a local,
 // self-contained type rather than importing it, so this file stays dependency-free.
@@ -27,6 +29,12 @@ export type FamilyMeta = {
   // fragment) — explicit DSL authoring or a system that targets it directly, never this
   // generic pool, even though a shop has real capacity (several stock slots).
   rewardWeight: number
+  // First difficulty tier this family may be allocated at (its catalogue debut, per
+  // docs/game-design/PUZZLE_FAMILIES.md / TRAP_FAMILIES.md). The gen-time encounter allocator
+  // only draws a family into a role's pool for slots at or above this tier. Unset = "starter"
+  // (eligible everywhere). Only meaningful for families the allocator picks by tag (puzzles,
+  // traps); structural families (treasure/gate) leave it unset.
+  minTier?: Difficulty
   // This family's own completion precondition (e.g. a tableau's hieroglyph requirement) —
   // most families provide none. The one place a family declares "I gate on holding
   // something," right alongside its other facts, not a separate registry to remember.

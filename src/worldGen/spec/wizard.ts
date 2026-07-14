@@ -47,7 +47,7 @@ export const wizardRules: Rule[] = [
   ),
 
   tomb("wizard_treasure_tomb", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -66,7 +66,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_b", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -85,7 +85,7 @@ export const wizardRules: Rule[] = [
     ],
   }),
   tomb("wizard_treasure_tomb_c", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room

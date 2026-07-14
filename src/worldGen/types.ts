@@ -45,7 +45,7 @@ export type FloorConfig = {
   mainEndReward?: TreasureReward
   puzzleRewards?: (TreasureReward | undefined)[]
   encounter?: string | string[]
-  lastMainPuzzleFamily?: "crocodile"
+  lastMainPuzzleFamily?: string
   corridorStraightness?: number
   packing?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */

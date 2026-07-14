@@ -1,5 +1,7 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
+import { mulberry32 } from "@/game/random"
+import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { SUMPLETE_META } from "./puzzle/game/sumplete/meta"
 import { CROCODILE_META } from "./puzzle/game/crocodile/meta"
 import { TREASURE_CHEST_META } from "./core/game/treasureChest/meta"
@@ -39,4 +41,23 @@ export const familyWeightFor = (encounter: string | string[] | undefined, defaul
   const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
   const meta = ALL_FAMILY_META.find(m => m.id === value) ?? ALL_FAMILY_META.find(m => m.tags.includes(value))
   return meta?.rewardWeight ?? 0
+}
+
+// Gen-time encounter allocation: given an authored ROLE (a family tag, or an AND-array of tags)
+// and the slot's tier, pick one concrete family id from the pool of enabled families that carry
+// the tag(s) and debut at or below this tier. Deterministic in `seed` so regen is stable and the
+// choice is tunable. Pool sorted for a stable order, so adding a family inserts predictably.
+// Empty pool (only matching mod toggled off, or an id authored that no family tags) → return the
+// role unchanged, so the runtime family-absence pass-through owns the dead room. Adding a new
+// puzzle family = its meta joins ALL_FAMILY_META via the mod aggregator and enters the pool
+// automatically — no core edit, no spec edit. This is the seam that makes puzzle types pluggable.
+export const allocateEncounterFamily = (role: string | string[], tier: Difficulty, seed: number): string | string[] => {
+  const roles = Array.isArray(role) ? role : [role]
+  const pool = ALL_FAMILY_META.filter(
+    m => roles.every(r => m.tags.includes(r)) && difficultyCompare(tier, m.minTier ?? "starter") >= 0
+  )
+    .map(m => m.id)
+    .sort()
+  if (pool.length === 0) return role
+  return pool[Math.floor(mulberry32(seed)() * pool.length)]
 }

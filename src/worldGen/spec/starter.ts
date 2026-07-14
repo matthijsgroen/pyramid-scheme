@@ -118,7 +118,7 @@ export const starterRules: Rule[] = [
   }),
 
   tomb("starter_treasure_tomb", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "starter",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room

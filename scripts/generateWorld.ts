@@ -19,7 +19,7 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { resolveKeyRequirements, familyWeightFor } from "../src/mods/allFamilyMeta"
+import { resolveKeyRequirements, familyWeightFor, allocateEncounterFamily } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import {
@@ -55,7 +55,8 @@ const configs = buildConfigs(
   DYNAMIC_DISTRIBUTIONS,
   MOD_WORLD_VALIDATORS,
   familyWeightFor,
-  EMPTY_FRACTION
+  EMPTY_FRACTION,
+  allocateEncounterFamily
 )
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex and cap the required
 // counts to what was actually placed — hieroglyph-specific logic the core serializer no longer owns.

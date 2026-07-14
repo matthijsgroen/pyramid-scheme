@@ -48,7 +48,7 @@ export const masterRules: Rule[] = [
   ),
 
   tomb("master_treasure_tomb", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "master",
     levelCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -68,7 +68,7 @@ export const masterRules: Rule[] = [
     ],
   }),
   tomb("master_treasure_tomb_b", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "master",
     levelCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room

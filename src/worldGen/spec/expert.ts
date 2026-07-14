@@ -83,7 +83,7 @@ export const expertRules: Rule[] = [
   }),
 
   tomb("expert_treasure_tomb", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "expert",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
@@ -103,7 +103,7 @@ export const expertRules: Rule[] = [
     ],
   }),
   tomb("expert_treasure_tomb_b", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "expert",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room

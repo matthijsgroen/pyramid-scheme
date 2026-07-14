@@ -5,6 +5,7 @@ export const TABLEAU_META: FamilyMeta = {
   id: "tableau",
   ownerMod: "tableau",
   tags: ["tomb-puzzle"],
+  minTier: "starter",
   icon: "📜",
   color: "amber",
   rewardWeight: 0, // its own reward is the hieroglyph fragment, via the placement worklist — not this pool

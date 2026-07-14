@@ -15,6 +15,7 @@ import type {
 import { wardPath } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
+import { assignEncounters, type EncounterAllocator } from "./placeEncounters"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { Distribution } from "./slotAllocator"
@@ -193,7 +194,7 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
         difficulty,
         encounter,
         mainEndReward: authored?.mainEndReward ?? "tombTreasure",
-        lastMainPuzzleFamily: isLast && hasCroc ? "crocodile" : undefined,
+        lastMainPuzzleFamily: isLast && hasCroc ? "capstone" : undefined,
         sideSections: [...authoredSections, ...shortcut],
         corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
         packing: authored?.packing ?? constraint.packing,
@@ -238,7 +239,8 @@ export const buildConfigs = (
   dynamicDistributions: Distribution[] = [],
   worldValidators: WorldValidator[] = [],
   familyWeightFor?: FamilyWeightFor,
-  emptyFraction = 0
+  emptyFraction = 0,
+  allocateEncounter?: EncounterAllocator
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -249,9 +251,16 @@ export const buildConfigs = (
   // Phase 3: Build tomb site configs
   const tombConfigs = buildTombConfigs()
 
+  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+
+  // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
+  // Runs before slot collection (rewardWeight derives from the chosen family) and serialization.
+  // Injected from src/mods (allFamilyMeta.allocateEncounterFamily) — src/worldGen can't read the
+  // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
+  if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter)
+
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
-  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
   placeFragments(
     allConfigs,
     currencies,

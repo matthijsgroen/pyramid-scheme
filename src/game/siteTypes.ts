@@ -1,4 +1,3 @@
-export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -119,8 +118,10 @@ export type FloorConfig = {
   puzzleRewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means AND. */
   encounter?: string | string[]
-  /** If set, the last main-path puzzle room uses this family instead of `encounter`. */
-  lastMainPuzzleFamily?: PuzzleFamily
+  /** If set, the last main-path puzzle room uses this family instead of `encounter`. Authored as
+   * a role (e.g. the "capstone" tag) and baked to a concrete family id by the gen-time encounter
+   * pass; at runtime it is always a resolved family id. */
+  lastMainPuzzleFamily?: string
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

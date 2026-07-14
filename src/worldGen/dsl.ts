@@ -84,8 +84,9 @@ export type FloorConstraint<TExtra extends string = never> = {
    * shortcut can't merge around a main-path puzzle room. */
   sealed?: boolean
   mainEndReward?: RewardHint | TExtra
-  /** This floor's own capstone family override instead of its regular last main-path puzzle. */
-  lastMainPuzzleFamily?: "crocodile"
+  /** This floor's own capstone role instead of its regular last main-path puzzle — e.g. the
+   * "capstone" tag (resolves to crocodile). Baked to a concrete family by the encounter pass. */
+  lastMainPuzzleFamily?: string
   /** Opaque payload for whichever family renders the main path's rooms — see
    * SideSectionConstraint.encounterArgs above for the full rationale. */
   encounterArgs?: unknown

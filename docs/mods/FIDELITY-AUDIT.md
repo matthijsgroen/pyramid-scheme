@@ -42,7 +42,14 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
 - **§G ⏳ (Step 2, content — deferred to playtest/tuning phase)** crocodile capstone every floor,
   soft trap gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's
   `generate` (today TOMB_SYMBOLS pool).
-- **§A.3** ⏳ encounters-as-distributions (Increment 2) — world-gen slice.
+- **§A.3 ✅ (encounter allocation)** gen-time **tag-based** encounter allocation: authored roles
+  (family tags `puzzle`/`tomb-puzzle`/`trap`/`capstone`) resolve to a concrete family from the
+  tier-eligible pool of enabled families, baked into the config (`placeEncounters.ts` +
+  `allocateEncounterFamily` reading `ALL_FAMILY_META`; `minTier` added to `FamilyMeta`; crocodile
+  re-tagged `capstone`). Adding a puzzle family = register its meta+plugin → it joins the pool, no
+  core/spec/siteAssembler edit. Deterministic seeded spread; semantic-identical with today's single
+  family per role (world plays the same; generatedWorld now bakes concrete families). Deferred: the
+  loot `eligible` join on `slot.encounter` (loot still uses the rewardWeight proxy, which works).
 - **§E** ⏳ ward/tomb keys → the solver (still construction-time literals + a separate validator).
 - **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
 - **§H (puzzle)** ⏳ `puzzle` is a mod-in-name-only — design decision.

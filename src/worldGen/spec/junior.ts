@@ -36,7 +36,7 @@ export const juniorRules: Rule[] = [
   journey("junior_4").pyramid(5, { wardWings: [WING.expert()] }),
 
   tomb("junior_treasure_tomb", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "junior",
     levelCount: 6,
     sealed: true, // linear tomb — no shortcut around a tableau room
