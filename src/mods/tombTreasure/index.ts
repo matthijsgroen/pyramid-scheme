@@ -1,6 +1,7 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { MAP_PIECE_CURRENCY, MAP_PIECE_CURRENCY_META } from "./game/mapPieceCurrency"
 import { TOMB_TREASURE_REACHABILITY } from "./game/reachabilitySupport"
+import { resolveTombTreasure } from "./game/tombTreasureReward"
 
 // The tomb-treasure mod descriptor — the "last mod". Owns BOTH tomb-treasure currencies as one
 // toggle unit (they're one interdependent loop: enter a tomb with map pieces, leave with keys):
@@ -22,4 +23,7 @@ export const tombTreasureMod: ModDescriptor = {
   // §E: the reachability facts core must not name — tomb-key harvest, tomb map-piece entry lock,
   // tier-unlock ladder. Drops with the mod (a tomb-less world then has no tombs to gate).
   reachabilitySupport: TOMB_TREASURE_REACHABILITY,
+  // §E: tomb-content authoring — floor position → this tomb's `tombKey` perk stream, so core
+  // world-gen names no reward type. Drops with the mod.
+  resolveTombTreasure,
 }

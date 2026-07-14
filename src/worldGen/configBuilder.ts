@@ -1,6 +1,5 @@
 import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
-import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
 import { worldSpec } from "./worldSpec"
@@ -140,13 +139,19 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
 
 // ── Tomb configs ──────────────────────────────────────────────────────────────
 
+// Maps a tomb's treasure-stream position (floor index) to the reward placed there — injected by
+// whoever owns that reward vocabulary (the tomb-treasure mod: position → its `tombKey` for the
+// tomb's ordered perk ids). Core never names the reward type; a missing resolver (mod off) leaves
+// the floor's treasure absent. See docs/mods/SLICE-E-ward-keys.md.
+export type TombTreasureResolver = (tombId: string, index: number) => TreasureReward | undefined
+
 // A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md §8) —
 // one treasure per floor, self-gating its own next floor's shortcut ("the treasure IS the
 // key"). Built by authoring one FloorConstraint per floor and handing them to buildSite()'s
 // authored-floors branch, the exact same mechanism pyramids' own authored floors[] use —
 // tomb-specific vocabulary (wardPath, the perk-stream reward resolver, "tomb-puzzle" encounter,
 // crocodile capstone) is authoring convenience, not a separate construction path.
-const buildTombConfigs = (): Record<string, SiteConfig[]> => {
+const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
   for (const tomb of TOMB_JOURNEYS) {
     // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match
@@ -156,20 +161,19 @@ const buildTombConfigs = (): Record<string, SiteConfig[]> => {
     // tomb main-path rooms consume hieroglyph symbols the player may not have yet.
     const encounter = constraint.encounter ?? "tomb-puzzle"
 
-    const perkIds = TOMB_PERK_IDS[tomb.id] ?? []
-
     // Starter tombs have no crocodile puzzle (compareAmount=0 in old system)
     const hasCroc = tomb.tier !== "starter"
 
     const levelCount = constraint.levelCount ?? tomb.levelCount
     const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
-    let perkIndex = 0
+    // Position in this tomb's treasure stream — core tracks WHICH floor (structural), the
+    // injected resolver (tomb-treasure mod) maps that position to its own reward vocabulary, so
+    // core names no reward type. With no resolver (mod off / a bare test), a floor's treasure is
+    // simply absent.
+    let treasureIndex = 0
 
     const resolveTombReward = (reward: RewardSpec | TombRewardHint | undefined): TreasureReward | undefined => {
-      if (reward === "tombTreasure") {
-        const perkId = perkIds[perkIndex++]
-        return perkId ? { type: "tombKey", keyId: perkId } : undefined
-      }
+      if (reward === "tombTreasure") return resolveTombTreasure?.(tomb.id, treasureIndex++)
       if (reward === "fragmentSlot") return { type: "fragmentSlot" }
       if (reward) return specToReward(reward as RewardSpec, tomb.tier as Tier)
       return undefined
@@ -242,7 +246,8 @@ export const buildConfigs = (
   familyWeightFor?: FamilyWeightFor,
   emptyFraction = 0,
   allocateEncounter?: EncounterAllocator,
-  reachabilitySupport?: ReachabilitySupport
+  reachabilitySupport?: ReachabilitySupport,
+  resolveTombTreasure?: TombTreasureResolver
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -251,7 +256,7 @@ export const buildConfigs = (
   const pyramidConfigs = buildSiteConfigs(plan)
 
   // Phase 3: Build tomb site configs
-  const tombConfigs = buildTombConfigs()
+  const tombConfigs = buildTombConfigs(resolveTombTreasure)
 
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
 

@@ -1,5 +1,6 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
 import type { ReachabilitySupport } from "@/worldGen/reachability"
+import type { TombTreasureResolver } from "@/worldGen/configBuilder"
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
@@ -59,6 +60,13 @@ export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
   journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
   tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
 }
+
+// The tomb-treasure content resolver (§E): maps a tomb's floor position → its `tombKey` reward, so
+// core world-gen names no reward type. First contributing mod wins (one provider expected); with
+// none (mod off), buildConfigs places no tomb treasures. Injected by scripts/generateWorld.ts.
+export const MOD_TOMB_TREASURE_RESOLVER: TombTreasureResolver | undefined = REGISTERED_MODS.map(
+  m => m.resolveTombTreasure
+).find(r => r !== undefined)
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.

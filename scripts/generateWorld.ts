@@ -32,6 +32,7 @@ import {
   DYNAMIC_DISTRIBUTIONS,
   MOD_WORLD_VALIDATORS,
   MOD_REACHABILITY_SUPPORT,
+  MOD_TOMB_TREASURE_RESOLVER,
 } from "../src/mods/registeredMods"
 
 // The share of loot-eligible slots deliberately left empty so found loot stays meaningful (no
@@ -62,7 +63,8 @@ const configs = buildConfigs(
   familyWeightFor,
   EMPTY_FRACTION,
   allocateEncounterFamily,
-  MOD_REACHABILITY_SUPPORT
+  MOD_REACHABILITY_SUPPORT,
+  MOD_TOMB_TREASURE_RESOLVER
 )
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex and cap the required
 // counts to what was actually placed — hieroglyph-specific logic the core serializer no longer owns.

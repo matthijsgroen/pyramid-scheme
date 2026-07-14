@@ -13,6 +13,7 @@ import {
   DYNAMIC_DISTRIBUTIONS,
   MOD_WORLD_VALIDATORS,
   MOD_REACHABILITY_SUPPORT,
+  MOD_TOMB_TREASURE_RESOLVER,
 } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { resolveKeyRequirements, familyWeightFor } from "../mods/allFamilyMeta"
@@ -38,7 +39,8 @@ const buildRealConfigs = () =>
     familyWeightFor,
     0,
     undefined,
-    MOD_REACHABILITY_SUPPORT
+    MOD_REACHABILITY_SUPPORT,
+    MOD_TOMB_TREASURE_RESOLVER
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep

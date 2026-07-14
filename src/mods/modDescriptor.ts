@@ -1,5 +1,6 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
 import type { ReachabilitySupport } from "@/worldGen/reachability"
+import type { TombTreasureResolver } from "@/worldGen/configBuilder"
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
@@ -42,4 +43,8 @@ export type ModDescriptor = {
   // ladder. Merged across mods and injected into buildConfigs. The tomb-treasure mod supplies it;
   // it drops with the mod. See docs/mods/SLICE-E-ward-keys.md.
   reachabilitySupport?: ReachabilitySupport
+  // Maps a tomb's treasure-stream position → the reward placed there (the tomb-treasure mod's
+  // `tombKey` perk stream). Injected into buildConfigs so core world-gen names no reward type;
+  // drops with the mod (a tomb-less world places no tomb treasures). One provider expected.
+  resolveTombTreasure?: TombTreasureResolver
 }
