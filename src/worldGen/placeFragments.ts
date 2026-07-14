@@ -1,10 +1,15 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
-import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
+import {
+  computeReachability,
+  createFloorAssemblyCache,
+  floorKey,
+  type JourneyMeta,
+  type ReachabilitySupport,
+} from "./reachability"
 import { collectSlots, type Slot, type FamilyWeightFor } from "./slots"
 import { allocateDistributions, cappedToDistribution, type Distribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
-import { journeys as REAL_JOURNEYS } from "../data/journeys"
 
 // Worklist-driven, reachability-gated currency placement — the concrete engine this
 // backlog item's solver was built for. See docs/game-design/keys-and-locks-solver.md,
@@ -84,17 +89,13 @@ export type CappedCurrency = {
   rank: (candidates: readonly Slot[]) => Slot[]
 }
 
-// Pyramids have no map-piece threshold (0); tombs use their real `piecesRequired` from
-// src/data/journeys.ts — the same value validateDiscovery/real gameplay already gate on, no
-// special-casing for primary vs. secondary tombs needed (both resolve via the same
-// reachability fixed point below, using their own real threshold).
+// Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
+// map pieces) is the injected `reachabilitySupport.journeyEntryLock`'s data, so core names no
+// currency and reads no per-tomb count here.
 const buildJourneyMeta = (): Record<string, JourneyMeta> => {
   const meta: Record<string, JourneyMeta> = {}
-  for (const j of PYRAMID_JOURNEYS) meta[j.id] = { tier: j.tier, piecesRequired: 0 }
-  for (const j of TOMB_JOURNEYS) {
-    const real = REAL_JOURNEYS.find(rj => rj.id === j.id)
-    meta[j.id] = { tier: j.tier, piecesRequired: real?.type === "treasure_tomb" ? real.piecesRequired : 0 }
-  }
+  for (const j of PYRAMID_JOURNEYS) meta[j.id] = { tier: j.tier }
+  for (const j of TOMB_JOURNEYS) meta[j.id] = { tier: j.tier }
   return meta
 }
 
@@ -110,7 +111,8 @@ export const placeFragments = (
   capped: readonly CappedCurrency[] = [],
   dynamicDistributions: readonly Distribution[] = [],
   familyWeightFor?: FamilyWeightFor,
-  emptyFraction = 0
+  emptyFraction = 0,
+  reachabilitySupport: ReachabilitySupport = {}
 ): void => {
   const slots = collectSlots(allConfigs, familyWeightFor)
   const available = new Set(slots)
@@ -123,17 +125,22 @@ export const placeFragments = (
   // grids instead of re-running maze generation for every reachable floor every time.
   const assemblyCache = createFloorAssemblyCache()
   // Currency knowledge reachability needs but must not import (it's mod-agnostic): each
-  // registered currency supplies its own gate threshold + reward→bucket harvest. Built here,
-  // where the injected `currencies` list is in scope, and threaded into every reachability call.
-  const support = {
-    thresholdFor: (bucket: string) => currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket),
+  // registered currency supplies its own gate threshold + reward→bucket harvest, merged with the
+  // mod-injected `reachabilitySupport` (the tomb-treasure mod's tomb-key harvest, the tomb
+  // journey-entry lock, and the tier-unlock ladder). Built here, where the injected `currencies`
+  // + support are in scope, and threaded into every reachability call. Core names no currency.
+  const support: ReachabilitySupport = {
+    thresholdFor: (bucket: string) =>
+      currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket) ?? reachabilitySupport.thresholdFor?.(bucket),
     bucketForReward: (reward: TreasureReward) => {
       for (const c of currencies) {
         const b = c.bucketForReward?.(reward)
         if (b) return b
       }
-      return undefined
+      return reachabilitySupport.bucketForReward?.(reward)
     },
+    journeyEntryLock: reachabilitySupport.journeyEntryLock,
+    tierUnlockBucket: reachabilitySupport.tierUnlockBucket,
   }
   const computeReach = () =>
     computeReachability(allConfigs, journeyMeta, ownedCounts, resolveRequirements, assemblyCache, support)

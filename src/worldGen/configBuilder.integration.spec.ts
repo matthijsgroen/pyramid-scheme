@@ -8,7 +8,12 @@ import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 // Production code (configBuilder.ts/placeFragments.ts) never imports this; it derives the
 // expected reward counts from the injected currencies themselves.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
-import { CAPPED_CURRENCIES, DYNAMIC_DISTRIBUTIONS, MOD_WORLD_VALIDATORS } from "../mods/registeredMods"
+import {
+  CAPPED_CURRENCIES,
+  DYNAMIC_DISTRIBUTIONS,
+  MOD_WORLD_VALIDATORS,
+  MOD_REACHABILITY_SUPPORT,
+} from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
 import { resolveKeyRequirements, familyWeightFor } from "../mods/allFamilyMeta"
 
@@ -30,7 +35,10 @@ const buildRealConfigs = () =>
     CAPPED_CURRENCIES,
     DYNAMIC_DISTRIBUTIONS,
     MOD_WORLD_VALIDATORS,
-    familyWeightFor
+    familyWeightFor,
+    0,
+    undefined,
+    MOD_REACHABILITY_SUPPORT
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep

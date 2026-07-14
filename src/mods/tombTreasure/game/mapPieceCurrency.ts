@@ -35,6 +35,12 @@ export const MAP_PIECE_CURRENCY_META: CurrencyMeta = {
 export const MAP_PIECE_CURRENCY: CurrencyDistribution = {
   ownsBucket: bucket => bucket === CURRENCY_ID || bucket.startsWith(BUCKET_PREFIX),
   toReward: tombId => ({ type: "mapPiece", tombId }),
+  // NOTE: no `bucketForReward` here — map-piece harvest rides the mod's reachabilitySupport
+  // (game/reachabilitySupport.ts) alongside tomb keys, deliberately NOT the currency. Reason:
+  // buildConfigs' `isCurrencyReward` count check keys on `bucketForReward` presence + sums
+  // `expectedTotal`; map pieces are validated by their own WORLD_TARGETS count, not that spread-
+  // currency check (they have no expectedTotal), so exposing bucketForReward here would
+  // double-count them (325 vs 294). Harvest still works — it just flows via reachabilitySupport.
   demandFor: bucket => {
     const tombId = bucket.slice(BUCKET_PREFIX.length)
     const tomb = TOMB_JOURNEYS.find(j => j.id === tombId)

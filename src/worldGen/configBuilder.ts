@@ -18,6 +18,7 @@ import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator } from "./placeEncounters"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
+import type { ReachabilitySupport } from "./reachability"
 import type { Distribution } from "./slotAllocator"
 import type { FamilyWeightFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
@@ -240,7 +241,8 @@ export const buildConfigs = (
   worldValidators: WorldValidator[] = [],
   familyWeightFor?: FamilyWeightFor,
   emptyFraction = 0,
-  allocateEncounter?: EncounterAllocator
+  allocateEncounter?: EncounterAllocator,
+  reachabilitySupport?: ReachabilitySupport
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -268,7 +270,8 @@ export const buildConfigs = (
     capped,
     dynamicDistributions,
     familyWeightFor,
-    emptyFraction
+    emptyFraction,
+    reachabilitySupport
   )
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,

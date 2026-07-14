@@ -1,7 +1,13 @@
 import type { Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
-import { mapPieceBucket } from "./reachability"
+
+// The map-piece currency's bucket grammar, as authored in the DSL (`mapPiece` / `{type:"mapPiece",
+// tombId}` → a `prefers`-tagged open slot the tomb-treasure mod's currency fills). This is
+// DSL-authoring vocabulary (docs/mods/TARGET.md rule 2 — the DSL names currencies), not reachability
+// logic; the reachability engine (reachability.ts) names no currency. The mod defines the same
+// `mapPiece:<id>` grammar independently for its own currency + reachability support.
+const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
 
 // Simple deterministic hash for per-pyramid seeding of density ranges and reward rolls
 export const hashStr = (s: string): number => {

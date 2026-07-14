@@ -1,4 +1,5 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
+import type { ReachabilitySupport } from "@/worldGen/reachability"
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
@@ -36,4 +37,9 @@ export type ModDescriptor = {
   // Post-build world validator (e.g. the shop economy guard) — a global balance check run over
   // the whole grown world in buildConfigs. Drops with the mod, so core names no mod balance rule.
   worldValidator?: WorldValidator
+  // Currency-specific facts the world-gen reachability model needs but core must not name (§E):
+  // a reward→bucket harvest, a journey's currency entry lock (tomb map pieces), the tier-unlock
+  // ladder. Merged across mods and injected into buildConfigs. The tomb-treasure mod supplies it;
+  // it drops with the mod. See docs/mods/SLICE-E-ward-keys.md.
+  reachabilitySupport?: ReachabilitySupport
 }

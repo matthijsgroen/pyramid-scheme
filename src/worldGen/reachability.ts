@@ -1,21 +1,29 @@
-import type { SiteConfig, Tier, TreasureReward, MapPieceReward, TombKeyReward } from "./types"
+import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor } from "../game/siteAssembler"
 import { collectReachableKeys } from "../game/siteValidator"
 import { hashString } from "../support/hashString"
-import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
 
-// Currency knowledge injected by the caller (placeFragments, built from the registered
-// currencies) — reachability stays mod-agnostic, naming no specific currency. `thresholdFor`
-// gives a bucket's gate threshold; `bucketForReward` maps a harvestable reward to its bucket.
-// Both default to "not mine" so a caller with no mod currencies (or a test) still works: an
-// unknown bucket thresholds at 1, an unrecognized reward harvests nothing.
-export type CurrencySupport = {
+// Every piece of currency knowledge reachability needs, injected by the caller (placeFragments,
+// which assembles it from the registered mod currencies + the tomb-treasure mod's reachability
+// support). Reachability itself names NO currency — not map pieces, not tomb keys, not the tier
+// ladder. All four hooks default to "not mine" so a caller with no mods (or a test) still works:
+// an unknown bucket thresholds at 1, an unrecognized reward harvests nothing, a journey has no
+// entry lock, a tier has no unlock lock (so everything is reachable).
+//   - thresholdFor:     a bucket's gate threshold (held count that satisfies it).
+//   - bucketForReward:  which bucket a harvestable reward feeds (a mod maps its own reward type).
+//   - journeyEntryLock: the (bucket, threshold) that gates ENTERING a journey — e.g. a tomb needs
+//                       N of the map-piece currency. undefined = no currency lock (pyramids).
+//   - tierUnlockBucket: the bucket whose possession unlocks a difficulty tier globally (the
+//                       ladder). undefined = that tier has no lock (e.g. the first tier).
+export type ReachabilitySupport = {
   thresholdFor?: (bucket: string) => number | undefined
   bucketForReward?: (reward: TreasureReward) => string | undefined
+  journeyEntryLock?: (journeyId: string) => { bucket: string; threshold: number } | undefined
+  tierUnlockBucket?: (tier: Tier) => string | undefined
 }
-const noCurrencySupport: CurrencySupport = {}
+const noSupport: ReachabilitySupport = {}
 
 // No default resolver here — this module stays within src/worldGen/'s own dependency rules
 // (data/, game/ only) same as assembleFloor itself never importing the real resolveEncounter.
@@ -33,34 +41,23 @@ const noKeyRequirements: ResolveKeyRequirements = () => undefined
 // One currency model, not three: a tomb-key/tier-unlock perk, a map piece, and a hieroglyph
 // fragment are all "held instances of currency bucket X", the doc's own framing ("all the
 // same shape to it"). Every lock — a gate/tableau's requiredKeyId(s), a tier unlock, a
-// journey's piecesRequired — reduces to one check: held count of bucket X >= that bucket's
-// own threshold. Perks/tomb-keys default to threshold 1 (own it once, done); map pieces
-// threshold at their tomb's own `piecesRequired`; hieroglyphs threshold at
-// `HIEROGLYPH_REQUIRED[id]`. `OwnedCounts` is the one input type this whole module takes;
-// `deriveOwnedFacts` is the one place raw counts become the booleans the fine per-floor BFS
-// (siteValidator.ts, genuinely unchanged — every room-level check there is threshold-1 by
-// contract) actually consumes.
+// journey's entry threshold — reduces to one check: held count of bucket X >= that bucket's
+// own threshold. The thresholds are all mod-supplied (`support.thresholdFor`): tomb-keys/
+// tier-unlock perks default to 1 (own it once, done); hieroglyphs threshold at their fragment
+// count; a journey's entry threshold rides `journeyEntryLock`, not this map. `OwnedCounts` is
+// the one input type this whole module takes; `deriveOwnedFacts` is the one place raw counts
+// become the booleans the fine per-floor BFS (siteValidator.ts, genuinely unchanged — every
+// room-level check there is threshold-1 by contract) actually consumes.
 export type OwnedCounts = ReadonlyMap<string, number>
 
-export const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
-
-// mapPiece is core world-gen's own currency (every tomb needs one, mod-independent), so its
-// threshold — a tomb's own `piecesRequired` — is read here directly. Every other bucket's
-// threshold comes from the injected currency support (e.g. a hieroglyph's fragment count);
-// a bucket no registered currency claims (a tomb-key/tier-unlock perk) is threshold-1.
-const thresholdFor = (id: string, journeyMeta: Record<string, JourneyMeta>, support: CurrencySupport): number => {
-  if (id.startsWith("mapPiece:")) return journeyMeta[id.slice("mapPiece:".length)]?.piecesRequired ?? 1
-  return support.thresholdFor?.(id) ?? 1
-}
+// A bucket's gate threshold — entirely mod-supplied; an unclaimed bucket (a tomb-key/tier-unlock
+// perk) is threshold-1 (own it once). Core names no currency here.
+const thresholdFor = (id: string, support: ReachabilitySupport): number => support.thresholdFor?.(id) ?? 1
 
 // Bounded to whatever's actually been recorded in `counts` (a handful of perks/currencies/
 // tombs at most), not the whole universe of possible bucket ids.
-export const deriveOwnedFacts = (
-  counts: OwnedCounts,
-  journeyMeta: Record<string, JourneyMeta>,
-  support: CurrencySupport = noCurrencySupport
-): Set<string> =>
-  new Set([...counts.keys()].filter(id => (counts.get(id) ?? 0) >= thresholdFor(id, journeyMeta, support)))
+export const deriveOwnedFacts = (counts: OwnedCounts, support: ReachabilitySupport = noSupport): Set<string> =>
+  new Set([...counts.keys()].filter(id => (counts.get(id) ?? 0) >= thresholdFor(id, support)))
 
 // One entry of a journey's SiteConfig[] — a single pyramid-level, or (for tombs) the
 // tomb's one multi-floor site. Progressing between `levelIndex` values is plain sequential
@@ -121,7 +118,7 @@ export const reachableFloorsInSite = (
   seed: number = defaultSeedFor(ref),
   resolveRequirements: ResolveKeyRequirements = noKeyRequirements,
   cache?: FloorAssemblyCache,
-  support: CurrencySupport = noCurrencySupport
+  support: ReachabilitySupport = noSupport
 ): SiteReachability => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
@@ -159,12 +156,10 @@ export const reachableFloorsInSite = (
       for (let c = 0; c < result.grid.cols; c++) {
         const cell = result.grid.cells[r][c]
         if (cell.type !== "room" || !reachableHere.has(`${r},${c}`)) continue
-        // tombKey + mapPiece are core's own currencies (harvested directly). Every other
-        // harvestable reward routes through the injected currency support — a mod's currency
-        // (e.g. a hieroglyph fragment) maps its own reward to its own bucket; core names none.
-        if (cell.reward?.type === "tombKey") harvest((cell.reward as TombKeyReward).keyId)
-        else if (cell.reward?.type === "mapPiece") harvest(mapPieceBucket((cell.reward as MapPieceReward).tombId))
-        else if (cell.reward) {
+        // Every harvestable reward routes through the injected support — a mod maps its own
+        // reward type to its own bucket (map piece → mapPiece:<tomb>, tomb key → its keyId,
+        // hieroglyph fragment → hieroglyph:<id>). Core names none.
+        if (cell.reward) {
           const bucket = support.bucketForReward?.(cell.reward)
           if (bucket) harvest(bucket)
         }
@@ -187,23 +182,17 @@ export const reachableFloorsInSite = (
   return { floors: reachable, harvestedCounts, discoveredLocks }
 }
 
-// Global scope: starter is always unlocked; every other tier needs its TIER_UNLOCK_PERK_ID
-// treasure held (data/treasurePerks.ts) — threshold 1, already folded into `ownedFacts`.
-export const isTierUnlocked = (tier: Tier, ownedFacts: ReadonlySet<string>): boolean => {
-  const perkId = TIER_UNLOCK_PERK_ID[tier]
-  return tier === "starter" || (perkId != null && ownedFacts.has(perkId))
+// Global scope: a tier is unlocked when it has no unlock lock (e.g. the first tier), or when the
+// mod-supplied unlock bucket for it is held. Core names no specific tier-unlock key — the ladder
+// is `support.tierUnlockBucket`'s data (see ReachabilitySupport).
+export const isTierUnlocked = (tier: Tier, ownedFacts: ReadonlySet<string>, support: ReachabilitySupport): boolean => {
+  const bucket = support.tierUnlockBucket?.(tier)
+  return bucket == null || ownedFacts.has(bucket)
 }
 
-// Journey scope: enterable once its tier is unlocked and (for tombs) `piecesRequired` map
-// pieces are held. Pyramids have no piecesRequired (pass 0) — tier unlock is the only gate.
-export const isJourneyEnterable = (
-  tier: Tier,
-  ownedFacts: ReadonlySet<string>,
-  piecesRequired: number,
-  mapPiecesHeld: number
-): boolean => isTierUnlocked(tier, ownedFacts) && mapPiecesHeld >= piecesRequired
-
-export type JourneyMeta = { tier: Tier; piecesRequired: number }
+// A journey carries only its tier; whether entering it needs a currency threshold (a tomb's map
+// pieces) is `support.journeyEntryLock`'s data, not a field here — core names no currency.
+export type JourneyMeta = { tier: Tier }
 
 export type ReachabilityResult = {
   reachableFloors: ReadonlySet<string>
@@ -235,10 +224,10 @@ export const computeReachability = (
   // Assumed constant for the cache's whole lifetime — a cache reused across calls with a
   // DIFFERENT resolveRequirements would return stale grids built under the old one.
   cache?: FloorAssemblyCache,
-  support: CurrencySupport = noCurrencySupport
+  support: ReachabilitySupport = noSupport
 ): ReachabilityResult => {
-  const ownedFacts = deriveOwnedFacts(ownedCounts, journeyMeta, support)
-  const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts)))
+  const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+  const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts, support)))
   const reachableFloors = new Set<string>()
   const harvestedCounts = new Map<string, number>()
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)
@@ -247,12 +236,13 @@ export const computeReachability = (
   for (const [journeyId, sites] of Object.entries(allConfigs)) {
     const meta = journeyMeta[journeyId]
     if (!meta) continue
-    if (!isTierUnlocked(meta.tier, ownedFacts)) continue // tier itself not reached yet — not a frontier lock here
-    const mapPiecesHeld = ownedCounts.get(mapPieceBucket(journeyId)) ?? 0
-    if (mapPiecesHeld < meta.piecesRequired) {
-      // Journey-scoped lock: tier reached, but this tomb's piecesRequired threshold isn't
-      // met — a genuine discovered lock, distinct from a room-scoped requiredKeyId.
-      discoveredLocks.add(mapPieceBucket(journeyId))
+    if (!isTierUnlocked(meta.tier, ownedFacts, support)) continue // tier itself not reached yet — not a frontier lock here
+    // Journey-scoped entry lock (mod-supplied): e.g. a tomb needs N of the map-piece currency.
+    // Tier reached but the threshold unmet → a genuine discovered lock, distinct from a
+    // room-scoped requiredKeyId. Pyramids have no entry lock (undefined) and always pass.
+    const entryLock = support.journeyEntryLock?.(journeyId)
+    if (entryLock && (ownedCounts.get(entryLock.bucket) ?? 0) < entryLock.threshold) {
+      discoveredLocks.add(entryLock.bucket)
       continue
     }
 

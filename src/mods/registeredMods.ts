@@ -1,4 +1,5 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
+import type { ReachabilitySupport } from "@/worldGen/reachability"
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
@@ -42,6 +43,22 @@ export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m =
 export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m =>
   m.worldValidator ? [m.worldValidator] : []
 )
+
+// Every mod's reachability support (§E), merged into one — the currency-specific facts core
+// reachability must not name (tomb-key harvest, tomb map-piece entry lock, tier-unlock ladder).
+// Each hook tries every contributing mod and takes the first defined answer; with no contributor
+// (or a mod toggled off) it returns undefined, so core reachability falls back to "no lock" —
+// generic and mod-agnostic. Injected into buildConfigs by scripts/generateWorld.ts.
+const REACHABILITY_SUPPORTS: ReachabilitySupport[] = REGISTERED_MODS.flatMap(m =>
+  m.reachabilitySupport ? [m.reachabilitySupport] : []
+)
+const firstDefined = <T>(values: (T | undefined)[]): T | undefined => values.find(v => v !== undefined)
+export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
+  thresholdFor: bucket => firstDefined(REACHABILITY_SUPPORTS.map(s => s.thresholdFor?.(bucket))),
+  bucketForReward: reward => firstDefined(REACHABILITY_SUPPORTS.map(s => s.bucketForReward?.(reward))),
+  journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
+  tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
+}
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.
