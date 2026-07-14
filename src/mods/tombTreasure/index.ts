@@ -1,0 +1,21 @@
+import type { ModDescriptor } from "../modDescriptor"
+import { MAP_PIECE_CURRENCY, MAP_PIECE_CURRENCY_META } from "./game/mapPieceCurrency"
+
+// The tomb-treasure mod descriptor — the "last mod". Owns BOTH tomb-treasure currencies as one
+// toggle unit (they're one interdependent loop: enter a tomb with map pieces, leave with keys):
+//  - `mapPiece` (this descriptor's gating currency): found in pyramids, unlocks a tomb's entry.
+//  - `tombKey` (the tomb treasure: ward keys + location keys): found in tombs, opens pyramid ward
+//    floors, self-gates the tomb's next floor, reveals the next tomb, drives tier unlock. Still a
+//    construction-time literal (configBuilder resolveTombReward) + validateDiscovery for now — its
+//    migration to the reachability solver is a separate slice (§E, docs/mods/FIDELITY-AUDIT.md);
+//    this mod owns its reward handler/schema/state, not its placement.
+//
+// Game-side only (no React). The reward handlers/effects/schemas + progression state (map-piece
+// count, tomb keys, tomb discovery) register app-side (registerModApps → ./app), gated on this mod
+// being enabled. Toggle off by removing this from src/mods/registeredMods.ts (isolation test only —
+// a tomb-less world has no map pieces/keys, so tombs are unreachable; it stays on in production).
+export const tombTreasureMod: ModDescriptor = {
+  id: "tomb-treasure",
+  currencyDistributions: [MAP_PIECE_CURRENCY],
+  currencyMeta: MAP_PIECE_CURRENCY_META,
+}

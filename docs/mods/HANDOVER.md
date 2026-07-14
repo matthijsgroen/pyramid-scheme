@@ -40,29 +40,31 @@ changed encounter representation but is semantic-identical — same family rende
   keeps only tableau + crocodile (blocked — see §A.2).
 - **§H** — fixed the double-registered `FEZ_SHOP_META` (was hardcoded in `allFamilyMeta.ts` AND via the
   descriptor). Now drops with the mod.
+- **tomb-treasure mod** — `mapPiece`/`tombKey` extracted into `src/mods/tombTreasure` (see
+  FIDELITY-AUDIT "Progress" + `SLICE-tomb-treasure.md`). Map-piece currency + `currencyMeta` mod-owned
+  (`worldGen/mapPieceCurrency.ts` gone); the map-piece branch emits a `fragmentSlot` sentinel tagged
+  `mapPiece:<tombId>` that the currency fills (map-piece cells byte-identical; benign hieroglyph-label
+  reshuffle only). Reward handlers/effects/schemas → the mod; `registerRewardHandlers.ts` is now just
+  the `fragmentSlot` schema. State → `useTombTreasureProgress` (useModState); `useProgression` keeps
+  perks + ledger. `SiteMapScreen` reads ward keys via a new mod-agnostic `keyProviders` seam. §E
+  (tombKey/ward-key placement) still deferred — that's why toggle-off hard-fails generate-world.
 
 ## Remaining (priority order — see FIDELITY-AUDIT "Progress")
 
-1. **tomb-treasure mod** — the "last mod" (`mapPiece`/`tombKey`). **Build brief:
-   `docs/mods/SLICE-tomb-treasure.md`** (decisions settled: one mod, sentinel-fill, mod-owned state,
-   §E deferred; hieroglyph is the template). The largest remaining extraction. `mapPiece` is
-   load-bearing in CORE world-gen: `MAP_PIECE_CURRENCY`
-   (`worldGen/mapPieceCurrency.ts`, a gating currency on the reachability worklist) + refs in
-   `buildSite.ts`/`configBuilder.ts`/`sideSections.ts`. Plus core progression state in
-   `useProgression.ts` (`tombKeys`/`collectedMapPieces`/`mapPieceJourneys` + `addTombKey`/
-   `collectMapPiece`/`discoverTomb`/`hasMapPiece`/…), consumed across ~11 app/ui/worldGen files
-   (Travel, ExpeditionCompletionOverlay, mapPieceLogic, JourneyCard, SiteMapScreen, …). Handlers +
-   schemas in `registerRewardHandlers.ts`. **Start by exploring the world-gen reachability coupling**
-   — moving a gating currency out of core is the crux (the §E work overlaps: keys/currencies →
-   mod-owned). Do it as its own focused session.
-2. **§E — ward/tomb keys → the solver.** Today construction-time literals (`configBuilder.ts`) +
-   a separate `validateDiscovery` reachability re-implementation. Migrate to a currency distribution.
-   Overlaps tomb-treasure (tombKey is a key); consider doing them together.
-3. **§F — treasure perks.** `applyTreasurePerk` is a no-op but `pyramid-interior-design.md` presents a
-   full perk economy. A decision: build the perk system, or correct the doc. (Blocks nothing.)
-4. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
+1. **§E — ward/tomb keys → the solver.** Today construction-time literals (`configBuilder.ts
+   resolveTombReward` + `hasWardGate` in `sideSections.ts`) + a separate `validateDiscovery`
+   reachability re-implementation. Migrate to currency distributions like map pieces/hieroglyphs.
+   **Now the top gap:** tomb-treasure's toggle-off hard-fails `generate-world` precisely because
+   ward gates are core-authored but depend on the mod's tomb keys — §E is what makes tombKey fully
+   mod-owned and the toggle-off degenerate-but-buildable. `tombKey` is already a mod reward
+   (handler/schema/state); §E moves its PLACEMENT. `MAP_PIECE_CURRENCY` (`src/mods/tombTreasure/
+   game/`) is the template shape.
+2. **§F — treasure perks.** `applyTreasurePerk` is a no-op (now on `useTombTreasureProgress`) but
+   `pyramid-interior-design.md` presents a full perk economy. A decision: build the perk system, or
+   correct the doc. (Blocks nothing.)
+3. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
    consumable/shop-money `eligible` to join on it instead of the `rewardWeight` proxy (which works).
-5. **§G tomb content (deferred to playtest/tuning)** — crocodile capstone every floor, soft trap
+4. **§G tomb content (deferred to playtest/tuning)** — crocodile capstone every floor, soft trap
    gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's `generate`
    (today the TOMB_SYMBOLS pool). Gameplay-facing; expects playtesting + tuning.
 
@@ -78,9 +80,11 @@ than throw. Decision, not urgent.
   in `FamilyMeta` (+ `minTier`). Injected into `buildConfigs`. Add a puzzle/trap family = a pure
   plugin (its meta via `MOD_FAMILY_META`, no core edit) — see `sumplete-mirror`.
 - **Distribution** (`worldGen/slotAllocator.ts`) + `allocateDistributions` — loot placement.
-- **rewardContributions** (`effects`/`canAccept`/`skip`) + **rewardDisplayRegistry** + **detectorScanners**
-  + **rewardSchemas** (zod) — all in `src/app/SiteMap/`, hook-based, registered per mod via
-  `registerModApps`, mod-agnostic in core.
+- **rewardContributions** (`effects`/`canAccept`/`skip`; `effects` now get a `{journeyId}` ctx) +
+  **rewardDisplayRegistry** + **detectorScanners** + **keyProviders** (held ward keys the site-map
+  engine reads for gate satisfaction — mirrors detectorScanners; tomb-treasure registers its
+  `tombKeyIds`) + **rewardSchemas** (zod) — all in `src/app/SiteMap/`, hook-based, registered per mod
+  via `registerModApps`, mod-agnostic in core.
 - **useModState** (`pyramid-scheme-mod-<id>`), **generic ledger** (`ledger.get/grant/spend(id)`),
   **familyWeightFor** + **modExports** injection (via `scripts/generateWorld.ts`, the sanctioned crossing).
 - Descriptor `ModDescriptor` fields; `REGISTERED_MODS`; `MOD_FAMILY_META`/`DYNAMIC_DISTRIBUTIONS`/

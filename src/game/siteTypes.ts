@@ -6,10 +6,12 @@ export type RoomType = "portal" | "fork" | "encounter"
 // (mods) or the core-owned shapes below.
 export type TreasureReward = { type: string } & Record<string, unknown>
 
-// Core-owned reward shapes — NOT a mod-currency enumeration: `fragmentSlot` is the world-gen
-// placement sentinel (never serialized), and `mapPiece`/`tombKey` are tomb-treasure, which stays
-// core until that mod is extracted (its own later slice). Core code casts to these when it reads
-// its own reward types; the open `TreasureReward` stays the surface everything passes around.
+// Core-owned reward shapes — NOT a mod-currency enumeration. `fragmentSlot` is the world-gen
+// placement sentinel (never serialized). `mapPiece`/`tombKey` belong to the tomb-treasure mod
+// (effect/display/schema/state all live there), but their world-gen PLACEMENT hasn't migrated to
+// the solver yet (§E): reachability harvest, validate.ts counting, and the tombKey construction
+// literal still cast to these shapes. Kept here as structural cast helpers until §E; the open
+// `TreasureReward` stays the surface everything passes around.
 export type FragmentSlotReward = { type: "fragmentSlot"; prefers?: string }
 export type MapPieceReward = { type: "mapPiece"; tombId: string }
 export type TombKeyReward = { type: "tombKey"; keyId: string }

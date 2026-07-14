@@ -13,7 +13,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 
 import { TableauInventory } from "./TableauInventory"
-import { useProgression } from "@/app/state/useProgression"
+import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 
 export const TravelPage: FC<{
   startGame: () => void
@@ -22,7 +22,7 @@ export const TravelPage: FC<{
   const journeys = useJourneyTranslations()
 
   const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney } = useJourneys()
-  const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useProgression()
+  const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useTombTreasureProgress()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)

@@ -1,5 +1,11 @@
 import type { TreasureReward } from "@/game/siteTypes"
 
+// Context a claim effect may read — the journey the reward is being claimed in (e.g. the
+// tomb-treasure mod marks that pyramid journey's map-piece chest opened). Grows as effects need
+// it; most effects ignore it.
+export type RewardEffectCtx = { journeyId: string }
+export type RewardEffect = (reward: TreasureReward, ctx: RewardEffectCtx) => void
+
 // How a mod plugs into reward claiming without core knowing the mod exists. A contribution is a
 // HOOK (so it can read the mod's own state, e.g. useTrapProgress) returning:
 //   - effects: what to do when a reward of a given type is claimed (the mod owns the state write)
@@ -11,7 +17,7 @@ import type { TreasureReward } from "@/game/siteTypes"
 // Core merges every registered contribution and dispatches by reward type — it never names a mod
 // or threads mod-specific state into the reward context. See docs/mods/app-plugins-design.md.
 export type RewardContribution = {
-  effects?: Partial<Record<TreasureReward["type"], (reward: TreasureReward) => void>>
+  effects?: Partial<Record<TreasureReward["type"], RewardEffect>>
   canAccept?: (reward: TreasureReward) => boolean
   skip?: (reward: TreasureReward) => boolean
 }
@@ -23,7 +29,7 @@ const registry: UseRewardContribution[] = []
 export const registerRewardContribution = (useContribution: UseRewardContribution) => registry.push(useContribution)
 
 export type MergedRewardContributions = {
-  effects: Partial<Record<TreasureReward["type"], (reward: TreasureReward) => void>>
+  effects: Partial<Record<TreasureReward["type"], RewardEffect>>
   canAccept: (reward: TreasureReward) => boolean
   skip: (reward: TreasureReward) => boolean
 }
@@ -34,7 +40,7 @@ export type MergedRewardContributions = {
 // full pack refuses (come back), an owned fragment skips (nothing to do). Pure, so the
 // distinction is testable without the registry/hooks.
 export const mergeContributions = (contributions: readonly RewardContribution[]): MergedRewardContributions => {
-  const effects: Partial<Record<TreasureReward["type"], (reward: TreasureReward) => void>> = {}
+  const effects: Partial<Record<TreasureReward["type"], RewardEffect>> = {}
   const accepts: Array<(reward: TreasureReward) => boolean> = []
   const skips: Array<(reward: TreasureReward) => boolean> = []
   for (const c of contributions) {

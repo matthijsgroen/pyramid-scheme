@@ -3,7 +3,7 @@ import { use, useEffect, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { journeys as allJourneys, type PyramidJourney } from "@/data/journeys"
 import { useJourneys, type CombinedJourneyState } from "../state/useJourneys"
-import { useProgression } from "../state/useProgression"
+import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 import { FezContext } from "../fez/context"
 
 export const ExpeditionCompletionOverlay: FC<{
@@ -14,7 +14,7 @@ export const ExpeditionCompletionOverlay: FC<{
 }> = ({ onJourneyComplete, onStartJourney, newPyramidJourneyId, activeJourney }) => {
   const { t } = useTranslation("common")
   const { getJourney } = useJourneys()
-  const { hasMapPiece } = useProgression()
+  const { hasMapPiece } = useTombTreasureProgress()
   const journey = activeJourney.journey as PyramidJourney
   const { showConversation } = use(FezContext)
 

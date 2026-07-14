@@ -17,7 +17,7 @@ export const useApplyReward = (progression: ProgressionAPI, inventory: Inventory
   return useCallback(
     (reward: TreasureReward) => {
       getRewardHandler(reward.type)?.apply?.(reward, { progression, inventory, journeyId })
-      effects[reward.type]?.(reward)
+      effects[reward.type]?.(reward, { journeyId })
     },
     [progression, journeyId, inventory, effects]
   )

@@ -4,13 +4,14 @@
 // the registries and names no mod; this is the one place the app enumerates mods. Import it once,
 // high in the app tree (Base) and anywhere the registries must be populated (SiteMapScreen,
 // Collection, tests). See docs/mods/app-plugins-design.md.
-import "@/app/SiteMap/registerRewardHandlers" // core reward handlers + schemas (mapPiece/tombKey/fragmentSlot)
+import "@/app/SiteMap/registerRewardHandlers" // core-owned fragmentSlot sentinel schema only
 import "./core/app"
 import "./mosaic/app"
 import "./hieroglyph/app"
 import "./puzzle/app"
 import "./trap/app"
 import "./shop/app"
+import "./tombTreasure/app"
 
 import { validatePlacedRewards } from "@/app/SiteMap/rewardSchemas"
 import { generatedWorldConfigs } from "@/data/generatedWorld"

@@ -58,13 +58,24 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   (no core residue); a puzzle-less world isn't valid because shop's junk-completeness depends on
   puzzle rooms' loot slots — puzzle is a root mod that stays on. (Shop's hard-fail-on-low-capacity
   is a separate shop-robustness question.)
-- **tomb-treasure mod** ⏳ (the "last mod") extract `mapPiece`/`tombKey`. **Build brief:
-  `docs/mods/SLICE-tomb-treasure.md`** (decisions settled in discussion). LARGER than the other
-  mods: `mapPiece` is load-bearing in CORE world-gen (`MAP_PIECE_CURRENCY` gating currency in
-  `worldGen/mapPieceCurrency.ts`, reachability refs in `buildSite`/`configBuilder`/`sideSections`)
-  AND core progression state (`useProgression` `tombKeys`/`collectedMapPieces`/`mapPieceJourneys`),
-  consumed across ~11 app/ui/worldGen files. Handlers/schemas in `registerRewardHandlers.ts`.
-  Needs its own focused session (explore the world-gen reachability coupling first).
+- **tomb-treasure mod ✅** (the "last mod") — `mapPiece`/`tombKey` extracted into
+  `src/mods/tombTreasure` per `docs/mods/SLICE-tomb-treasure.md`. The map-piece currency
+  (`MAP_PIECE_CURRENCY` + its `currencyMeta`) is now mod-owned; `worldGen/mapPieceCurrency.ts` is
+  gone. The pyramid's map-piece branch emits a `fragmentSlot` sentinel tagged `mapPiece:<tombId>`
+  (`sideSections.ts`) which the mod's currency fills — core world-gen no longer names the `mapPiece`
+  reward type there (map-piece cells byte-identical; only a benign hieroglyph-label reshuffle in the
+  regen). Reward handlers/effects/schemas moved to `src/mods/tombTreasure/app`; core
+  `registerRewardHandlers.ts` is down to the `fragmentSlot` sentinel schema only. Progression state
+  (tomb keys, map-piece counts, tomb discovery) moved to `useTombTreasureProgress` (over
+  `useModState`); `useProgression` keeps only perks + ledger. `SiteMapScreen` reads ward keys via a
+  new mod-agnostic `keyProviders` held-keys seam (mirrors `detectorScanners`) instead of
+  `progression.tombKeyIds`, so the site-map engine names no mod. **Deferred (decision 2 / overlaps
+  §E):** `tombKey` PLACEMENT stays a construction-time literal (`configBuilder.ts resolveTombReward`)
+  + `validateDiscovery`, and core still authors ward-key gates (`hasWardGate`). Consequence: toggling
+  the mod off hard-fails `generate-world` (the winnability guard trips — ward gates depend on
+  now-unreachable tomb keys), so toggle-off proves isolation of the MOD's own code, not a clean
+  degenerate build. Same class as the puzzle root mod; §E closes the gap by migrating ward/tomb keys
+  to the solver.
 
 ---
 

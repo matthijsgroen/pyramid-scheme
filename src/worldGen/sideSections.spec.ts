@@ -62,7 +62,7 @@ describe("buildSideSections", () => {
     ).toEqual([])
   })
 
-  it("hasMapPieceBranch prepends a mapPiece section pointing at the tier's tomb", () => {
+  it("hasMapPieceBranch prepends a fragmentSlot sentinel tagged for the tier's tomb", () => {
     const sections = buildSideSections({
       tier: "expert",
       difficulty: "expert",
@@ -70,12 +70,14 @@ describe("buildSideSections", () => {
       journeyId: "j",
       hasMapPieceBranch: true,
     })
+    // A generic sentinel tagged `mapPiece:<tombId>` — the tomb-treasure mod's currency fills it,
+    // so core world-gen names no reward type here (docs/mods/SLICE-tomb-treasure.md).
     expect(sections).toEqual([
       {
         pathPuzzles: 0,
         difficulty: "expert",
         end: "treasure",
-        endReward: { type: "mapPiece", tombId: "expert_treasure_tomb" },
+        endReward: { type: "fragmentSlot", prefers: "mapPiece:expert_treasure_tomb" },
       },
     ])
   })
@@ -138,7 +140,7 @@ describe("buildSideSections", () => {
       hasMapPieceBranch: true,
       constraintSections: [{ pathPuzzles: 1, end: "staircase" }],
     })
-    // index 0 = mapPiece branch, index 1 = the staircase section
+    // index 0 = map-piece branch sentinel, index 1 = the staircase section
     expect(sections[1].end).toEqual({ stairId: "myJourney:side1" })
   })
 

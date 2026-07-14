@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { describe, expect, it, vi } from "vitest"
-import { renderHook, act } from "@testing-library/react"
+import { renderHook } from "@testing-library/react"
 
 vi.mock("@/support/useGameStorage", () => ({
   useGameStorage: <T>(_key: string, initialValue: T | (() => T)) => {
@@ -17,19 +17,21 @@ vi.mock("@/support/useGameStorage", () => ({
 
 const { useProgression } = await import("./useProgression")
 
-// The perk system is disregarded pending redesign — applyTreasurePerk is a no-op, so every perk
-// stays at its baseline no matter which treasure is granted. (The registry-driven grant behavior
-// this used to assert returns when perks are redesigned.)
-describe("applyTreasurePerk (perks disregarded)", () => {
-  it("leaves every perk at baseline — grants do nothing", async () => {
+// The perk system is disregarded pending redesign — no code bumps a perk, so every perk stays at
+// its baseline (maxHealth 6, armor 0, …). The treasure-grant path (applyTreasurePerk) is a no-op on
+// the tomb-treasure mod now; core progression exposes only the disregarded baseline. (The
+// registry-driven grant behavior this used to assert returns when perks are redesigned, §F.)
+describe("perks (disregarded pending redesign)", () => {
+  it("core progression exposes every perk at its baseline", () => {
     const { result } = renderHook(() => useProgression())
-    const before = { ...result.current.perks }
-    await act(async () => result.current.applyTreasurePerk("expert_a_4")) // armor
-    await act(async () => result.current.applyTreasurePerk("starter_a_4")) // max-health
-    await act(async () => result.current.applyTreasurePerk("master_a_4")) // compass
-    await act(async () => result.current.applyTreasurePerk("master_b_2")) // scribes-eye
-    expect(result.current.perks).toEqual(before)
-    expect(result.current.perks.armorStacks).toBe(0)
-    expect(result.current.perks.scribesEyeLevel).toBe(0)
+    expect(result.current.perks).toEqual({
+      armorStacks: 0,
+      trapInsightStacks: 0,
+      packMuleLevel: 0,
+      compassLevel: 0,
+      consumableDetectorLevel: 0,
+      detectionLevel: 0,
+      scribesEyeLevel: 0,
+    })
   })
 })

@@ -20,6 +20,7 @@ import { ALL_SELLABLES } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
+import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
@@ -46,7 +47,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const detector = useDetector(journeys)
   const allEdges = journeys.getExploredSections(journeyId)
   const journeyState = journeys.getJourney(journeyId)
-  const wardKeys = progression.tombKeyIds
+  const wardKeys = useMergedHeldKeys()
 
   const [currentFloor, setCurrentFloor] = useState(() => {
     const pos = journeyState?.position

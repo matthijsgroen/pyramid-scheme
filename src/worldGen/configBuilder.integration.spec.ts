@@ -64,7 +64,7 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 }
 
 describe("buildConfigs golden guard", () => {
-  it("hits reward targets exactly (map from core, mosaic from the mosaic mod)", () => {
+  it("hits reward targets exactly (map + mosaic from their mods)", () => {
     const configs = buildRealConfigs()
     expect(countRewards(configs)).toEqual({
       mapPieces: WORLD_TARGETS.mapPieceRewards,
