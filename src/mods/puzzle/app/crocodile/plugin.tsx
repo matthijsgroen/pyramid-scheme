@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { mulberry32 } from "@/game/random"
-import { generateCompareLevel, type CompareLevel } from "@/game/puzzles/crocodile/generateCompareLevel"
+import { generateCompareLevel, type CompareLevel } from "@/mods/puzzle/game/crocodile/generateCompareLevel"
 import {
   advanceFocus,
   commitLeft,
@@ -11,7 +11,7 @@ import {
   previewLeft,
   previewRight,
   resetCrocodileState,
-} from "@/game/puzzles/crocodile/crocodileState"
+} from "@/mods/puzzle/game/crocodile/crocodileState"
 import type { Operation } from "@/game/formulas/formulas"
 import { formulaToString } from "@/game/formulas/formulas"
 import { NumberChest } from "@/ui/molecules/NumberChest"
