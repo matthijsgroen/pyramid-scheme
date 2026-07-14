@@ -16,7 +16,6 @@ const INITIAL: HieroglyphState = { collectedFragments: [] }
 export type HieroglyphProgressAPI = {
   addFragment: (hieroglyphId: string, pieceIndex: number) => void
   hasFragment: (hieroglyphId: string, pieceIndex: number) => boolean
-  isHieroglyphComplete: (hieroglyphId: string) => boolean
   hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
   // hieroglyphId → count of distinct pieces found (for the collection/detector views).
   hieroglyphFragments: Record<string, number>
@@ -37,7 +36,6 @@ export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
         )
       },
       hasFragment: (hieroglyphId, pieceIndex) => state.collectedFragments.includes(`${hieroglyphId}:${pieceIndex}`),
-      isHieroglyphComplete: hieroglyphId => found(hieroglyphId) >= (hieroglyphRequired[hieroglyphId] ?? 2),
       hieroglyphProgress: hieroglyphId => ({
         found: found(hieroglyphId),
         required: hieroglyphRequired[hieroglyphId] ?? 2,

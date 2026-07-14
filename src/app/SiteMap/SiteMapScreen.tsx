@@ -150,8 +150,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
       const reward = cell?.type === "room" ? cell.reward : undefined
       if (!reward) return
-      // canAccept merges every mod's rule: trap refuses a reward when its pack is full, hieroglyph
-      // refuses an already-collected fragment. Core dispatches on the merged verdict, naming none.
+      // A mod may silently ignore a reward (nothing to do — e.g. an already-collected hieroglyph
+      // fragment): no popup, no side effect, not remembered. Distinct from a refusal below.
+      if (rewardContributions.skip(reward)) return
+      // canAccept merges every mod's "refused for now, come back" rule (e.g. trap when its pack is
+      // full): show the come-back popup and remember the skip. Core dispatches, naming no mod.
       const packFull = !rewardContributions.canAccept(reward)
       if (packFull) {
         journeys.markConsumableSkipped(edgeId)
