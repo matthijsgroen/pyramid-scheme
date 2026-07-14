@@ -1,10 +1,12 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
 import { WORLD_SEED } from "./data"
 
-// The per-hieroglyph required-fragment counts a mod owns (docs/mods/TARGET.md rule 2) — injected
-// by the caller (scripts/generateWorld.ts, from the hieroglyph mod), never imported here. Empty
-// when no such currency is registered, so the serializer stays mod-agnostic.
-type HieroglyphRequired = Record<string, number>
+// Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
+// value), e.g. the hieroglyph mod's per-hieroglyph required-fragment counts. Injected by the caller
+// (scripts/generateWorld.ts) so core never names a mod's data — it just writes `export const
+// <name> = <value>`, and the mod imports it back from src/data/generatedWorld. Empty when no mod
+// contributes any (docs/mods/TARGET.md rule 2).
+export type ModExports = Record<string, unknown>
 
 // ---------------------------------------------------------------------------
 // Serialization
@@ -96,10 +98,7 @@ const hashString = (str: string): number => {
   return Math.abs(hash)
 }
 
-export const generateFile = (
-  configs: Record<string, SiteConfig[]>,
-  hieroglyphRequired: HieroglyphRequired = {}
-): string => {
+export const generateFile = (configs: Record<string, SiteConfig[]>, modExports: ModExports = {}): string => {
   const entries = Object.entries(configs)
     .map(([id, siteConfigs]) => {
       const inner = siteConfigs.map(c => `    ${serializeSiteConfig(c)}`).join(",\n")
@@ -107,11 +106,12 @@ export const generateFile = (
     })
     .join(",\n")
 
-  // `hieroglyphRequired` is already capped-to-placed by the hieroglyph finalize (generateWorld);
-  // core just emits it. Core does not count or cap any reward type.
-  const hieroglyphRequiredEntries = Object.keys(hieroglyphRequired)
-    .map(id => `  "${id}": ${hieroglyphRequired[id]}`)
-    .join(",\n")
+  // Each mod-contributed export, written generically — core names none of them. The value is
+  // already-finalized mod data (e.g. capped hieroglyphRequired); JSON is valid TS for the plain
+  // records mods bake, and TS infers the type at the import site.
+  const modExportLines = Object.entries(modExports)
+    .map(([name, value]) => `export const ${name} = ${JSON.stringify(value)}\n`)
+    .join("\n")
 
   // Hash of all site config entries — changes whenever world content is regenerated.
   // Stored in save data so stale exploration state can be detected and discarded.
@@ -128,10 +128,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
 ${entries},
 }
 
-export const hieroglyphRequired: Record<string, number> = {
-${hieroglyphRequiredEntries},
-}
-`
+${modExportLines}`
 }
 
 // ---------------------------------------------------------------------------

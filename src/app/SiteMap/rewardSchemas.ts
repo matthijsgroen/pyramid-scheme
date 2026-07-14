@@ -16,8 +16,9 @@ export const registerRewardSchema = (type: string, schema: z.ZodType): void => {
 
 export const getRewardSchema = (type: string): z.ZodType | undefined => schemas.get(type)
 
-// Every reward placed anywhere in a config tree: main-path + side/sub-section ends and every
-// puzzle-chain slot. Mirrors the walks in worldGen/validate.ts.
+// Every reward placed anywhere in a config tree: main-path + side/sub-section ends AND every
+// puzzle-chain slot (money/consumables live in puzzle slots, so — unlike validate.ts's end-only
+// walk — those must be covered too, or the bulk of placed rewards would go unvalidated).
 const collectRewards = (configs: Record<string, SiteConfig[]>): TreasureReward[] => {
   const rewards: TreasureReward[] = []
   const add = (r: TreasureReward | undefined) => {

@@ -1,6 +1,10 @@
 import { useMemo } from "react"
 import { useModState } from "@/app/state/useModState"
-import { hieroglyphRequired } from "@/data/generatedWorld"
+// The generated `hieroglyphRequired` is baked generically (core annotates no mod export), so TS
+// infers a literal shape — the mod owns the type: it's a per-hieroglyph piece-count lookup.
+import { hieroglyphRequired as hieroglyphRequiredRaw } from "@/data/generatedWorld"
+
+const hieroglyphRequired = hieroglyphRequiredRaw as Record<string, number>
 
 // Hieroglyph-owned collection state: which fragment pieces of which hieroglyph the player has found.
 // A fragment is one piece of a multi-piece hieroglyph (stored as an "id:pieceIndex" set); a

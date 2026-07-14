@@ -67,5 +67,7 @@ const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)
 console.log(`  Hieroglyph fragments: ${cov.assigned}/${cov.target} placed (${cov.total} total)`)
 if (cov.uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${cov.uncovered.join(", ")}`)
 
-writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs, hieroglyphRequired))
+// The hieroglyph mod's baked data (capped per-hieroglyph piece targets) rides the generic
+// modExports channel — core writes `export const hieroglyphRequired = …` without naming it.
+writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs, { hieroglyphRequired }))
 console.log("✓ Written: src/data/generatedWorld.ts")

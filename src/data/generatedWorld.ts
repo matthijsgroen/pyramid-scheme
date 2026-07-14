@@ -8319,7 +8319,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   ],
 }
 
-export const hieroglyphRequired: Record<string, number> = {
+export const hieroglyphRequired = {
   p10: 2,
   p8: 3,
   art1: 2,
