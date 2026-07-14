@@ -103,7 +103,17 @@ Distribution" contract is the one violated.)
 
 ---
 
-## D — Reward vocabulary **and state** leak into core  ·  HIGH  ·  `contract-violation`
+## D — Reward vocabulary **and state** leak into core  ·  HIGH  ·  `contract-violation`  ·  ✅ FIXED (2026-07-14)
+
+> **Resolved.** `TreasureReward` is now an open `{ type: string } & Record<string, unknown>`; core
+> enumerates no reward/currency id. Per-type zod schemas (owner-registered) validate every placed
+> reward at boot (`rewardSchemas.ts` `validatePlacedRewards`). Effects/display/state all moved to
+> the owning mods (fragments → `useHieroglyphProgress`/useModState; ledger generic; `ConsumableType`/
+> `rollConsumable` → trap; serializer generic; `pieceIndex`/capping → hieroglyph finalize; mod-baked
+> data rides a generic `modExports` channel). Runtime path verified clean; world byte-identical.
+> Residual `"consumable"` naming is confined to the consumable-detector path (a later detector
+> slice). Original finding below.
+
 
 ARCHITECTURE invariant 1: "core never enumerates the currency ids that exist". app-plugins:
 "remove a mod's folder + manifest line, nothing in core changes."
