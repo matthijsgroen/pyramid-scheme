@@ -10,38 +10,27 @@ type HieroglyphRequired = Record<string, number>
 // Serialization
 // ---------------------------------------------------------------------------
 
-type FragmentCounter = (hieroglyphId: string) => number
-
 const serializeEncounter = (encounter: string | string[]): string =>
   Array.isArray(encounter) ? `[${encounter.map(e => `"${e}"`).join(", ")}]` : `"${encounter}"`
 
-const serializeReward = (r: TreasureReward, nextIdx: FragmentCounter): string => {
-  switch (r.type) {
-    case "hieroglyphFragment": {
-      const pieceIndex = nextIdx(r.hieroglyphId)
-      return `{ type: "hieroglyphFragment", hieroglyphId: "${r.hieroglyphId}", pieceIndex: ${pieceIndex} }`
-    }
-    case "tombKey":
-      return `{ type: "tombKey", keyId: "${r.keyId}" }`
-    case "mapPiece":
-      return `{ type: "mapPiece", tombId: "${r.tombId}" }`
-    case "consumable":
-      return `{ type: "consumable", consumable: "${r.consumable}" }`
-    case "money":
-      return `{ type: "money", amount: ${r.amount} }`
-    case "sellable":
-      return `{ type: "sellable", itemId: "${r.itemId}" }`
-    case "fragmentSlot":
-      throw new Error("fragmentSlot reached serializer — assignFragments must run before serialization")
-    default:
-      return `{ type: "${r.type}" }`
-  }
+// Emit a reward as an object literal from whatever fields it carries — core enumerates no reward
+// type or currency id (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1).
+// Reward payloads are flat scalars (type + amount/itemId/hieroglyphId/pieceIndex/…). fragmentSlot
+// is the placement sentinel; any hieroglyph pieceIndex is already stamped by the hieroglyph
+// finalize pass (scripts/generateWorld.ts) before we get here.
+const serializeValue = (v: unknown): string => (typeof v === "string" ? `"${v}"` : `${v}`)
+const serializeReward = (r: TreasureReward): string => {
+  if (r.type === "fragmentSlot")
+    throw new Error("fragmentSlot reached serializer — placement must fill or clear every slot first")
+  return `{ ${Object.entries(r)
+    .map(([k, v]) => `${k}: ${serializeValue(v)}`)
+    .join(", ")} }`
 }
 
-const serializePuzzleRewards = (rewards: (TreasureReward | undefined)[], nextIdx: FragmentCounter): string =>
-  `[${rewards.map(r => (r ? serializeReward(r, nextIdx) : "undefined")).join(", ")}]`
+const serializePuzzleRewards = (rewards: (TreasureReward | undefined)[]): string =>
+  `[${rewards.map(r => (r ? serializeReward(r) : "undefined")).join(", ")}]`
 
-const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string => {
+const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
   if (s.gate)
@@ -52,24 +41,22 @@ const serializeSideSection = (s: SideSection, nextIdx: FragmentCounter): string 
           ? `gate: { type: "floor-key", color: "${s.gate.color}" }`
           : `gate: { type: "floor-key" }`
     )
-  if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward, nextIdx)}`)
+  if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
   if (s.shopPrice !== undefined) parts.push(`shopPrice: ${s.shopPrice}`)
-  if (s.puzzleRewards?.length) parts.push(`puzzleRewards: ${serializePuzzleRewards(s.puzzleRewards, nextIdx)}`)
+  if (s.puzzleRewards?.length) parts.push(`puzzleRewards: ${serializePuzzleRewards(s.puzzleRewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
   if (s.encounter) parts.push(`encounter: ${serializeEncounter(s.encounter)}`)
   if (s.sideSections?.length)
-    parts.push(
-      `sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection, nextIdx)).join(", ")}]`
-    )
+    parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
 }
 
-const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
+const serializeFloor = (c: FloorConfig): string => {
   const sideSectionsStr =
     c.sideSections.length === 0
       ? "[]"
-      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s, nextIdx)}`).join(",\n")},\n    ]`
+      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`
   const lines: string[] = [
     `    pathPuzzles: ${c.pathPuzzles},`,
     `    difficulty: "${c.difficulty}",`,
@@ -88,35 +75,15 @@ const serializeFloor = (c: FloorConfig, nextIdx: FragmentCounter): string => {
   if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
   if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
   if (c.sealed) lines.push(`    sealed: true,`)
-  if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward, nextIdx)},`)
-  if (c.puzzleRewards?.length) lines.push(`    puzzleRewards: ${serializePuzzleRewards(c.puzzleRewards, nextIdx)},`)
+  if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
+  if (c.puzzleRewards?.length) lines.push(`    puzzleRewards: ${serializePuzzleRewards(c.puzzleRewards)},`)
   return `  {\n${lines.join("\n")}\n  }`
 }
 
-const serializeSiteConfig = (floors: SiteConfig, nextIdx: FragmentCounter): string => {
-  if (floors.length === 1) return `[${serializeFloor(floors[0], nextIdx).trimStart()}]`
-  const inner = floors.map(f => `    ${serializeFloor(f, nextIdx).trimStart()}`).join(",\n")
+const serializeSiteConfig = (floors: SiteConfig): string => {
+  if (floors.length === 1) return `[${serializeFloor(floors[0]).trimStart()}]`
+  const inner = floors.map(f => `    ${serializeFloor(f).trimStart()}`).join(",\n")
   return `[\n${inner},\n  ]`
-}
-
-const countPlacedFragments = (configs: Record<string, SiteConfig[]>): Map<string, number> => {
-  const placed = new Map<string, number>()
-  const count = (r: { type: string; hieroglyphId?: string } | undefined) => {
-    if (r?.type === "hieroglyphFragment" && r.hieroglyphId)
-      placed.set(r.hieroglyphId, (placed.get(r.hieroglyphId) ?? 0) + 1)
-  }
-  for (const siteConfigs of Object.values(configs)) {
-    for (const floors of siteConfigs) {
-      for (const cfg of floors) {
-        count(cfg.mainEndReward)
-        for (const s of cfg.sideSections) {
-          count(s.endReward)
-          for (const sub of s.sideSections ?? []) count(sub.endReward)
-        }
-      }
-    }
-  }
-  return placed
 }
 
 const hashString = (str: string): number => {
@@ -133,26 +100,17 @@ export const generateFile = (
   configs: Record<string, SiteConfig[]>,
   hieroglyphRequired: HieroglyphRequired = {}
 ): string => {
-  // Counter assigns unique piece indices per hieroglyphId across the entire world
-  const fragmentCounts = new Map<string, number>()
-  const nextFragmentIndex: FragmentCounter = (id: string) => {
-    const idx = fragmentCounts.get(id) ?? 0
-    fragmentCounts.set(id, idx + 1)
-    return idx
-  }
-
   const entries = Object.entries(configs)
     .map(([id, siteConfigs]) => {
-      const inner = siteConfigs.map(c => `    ${serializeSiteConfig(c, nextFragmentIndex)}`).join(",\n")
+      const inner = siteConfigs.map(c => `    ${serializeSiteConfig(c)}`).join(",\n")
       return `  ${id}: [\n${inner},\n  ]`
     })
     .join(",\n")
 
-  // Use the injected required count, capped at how many are actually placed so we never ask
-  // players to find more fragments than exist in the world.
-  const placed = countPlacedFragments(configs)
+  // `hieroglyphRequired` is already capped-to-placed by the hieroglyph finalize (generateWorld);
+  // core just emits it. Core does not count or cap any reward type.
   const hieroglyphRequiredEntries = Object.keys(hieroglyphRequired)
-    .map(id => `  "${id}": ${Math.min(placed.get(id) ?? 1, hieroglyphRequired[id] ?? 1)}`)
+    .map(id => `  "${id}": ${hieroglyphRequired[id]}`)
     .join(",\n")
 
   // Hash of all site config entries — changes whenever world content is regenerated.
@@ -180,26 +138,20 @@ ${hieroglyphRequiredEntries},
 // Validation summary
 // ---------------------------------------------------------------------------
 
-export const printStats = (
-  configs: Record<string, SiteConfig[]>,
-  hieroglyphRequired: HieroglyphRequired = {}
-): void => {
-  let totalFragments = 0
-  let uniqueAssignedFragments = 0
-  let totalMapPieces = 0
-  let totalMosaicPieces = 0
-  let puzzleConsumables = 0
-  let puzzleMoney = 0
-  let junkSellables = 0
+export const printStats = (configs: Record<string, SiteConfig[]>): void => {
   let pyramidJourneys = 0
   let tombJourneys = 0
   let pyramidLevels = 0
   let tombFloors = 0
-  const fragCoverage = new Map<string, number>()
+  // Reward tally is by type, discovered from the data — core names no reward id. A mod prints its
+  // own richer stats (e.g. hieroglyph coverage) from generateWorld.
+  const byType = new Map<string, number>()
+  const tally = (r: TreasureReward | undefined) => {
+    if (r) byType.set(r.type, (byType.get(r.type) ?? 0) + 1)
+  }
 
   for (const [journeyId, siteConfigs] of Object.entries(configs)) {
-    const isTomb = journeyId.includes("tomb")
-    if (isTomb) {
+    if (journeyId.includes("tomb")) {
       tombJourneys++
       for (const floors of siteConfigs) tombFloors += floors.length
     } else {
@@ -208,65 +160,27 @@ export const printStats = (
     }
     for (const floors of siteConfigs) {
       for (const cfg of floors) {
-        if (cfg.mainEndReward?.type === "mapPiece") totalMapPieces++
-        if (cfg.mainEndReward?.type === "mosaicPiece") totalMosaicPieces++
-        if (cfg.mainEndReward?.type === "sellable") junkSellables++
+        tally(cfg.mainEndReward)
+        for (const r of cfg.puzzleRewards ?? []) tally(r)
         for (const s of cfg.sideSections) {
-          if (s.endReward?.type === "mapPiece") totalMapPieces++
-          if (s.endReward?.type === "mosaicPiece") totalMosaicPieces++
-          if (s.endReward?.type === "sellable") junkSellables++
+          tally(s.endReward)
+          for (const r of s.puzzleRewards ?? []) tally(r)
           for (const sub of s.sideSections ?? []) {
-            if (sub.endReward?.type === "mapPiece") totalMapPieces++
-            if (sub.endReward?.type === "mosaicPiece") totalMosaicPieces++
-            if (sub.endReward?.type === "sellable") junkSellables++
+            tally(sub.endReward)
+            for (const r of sub.puzzleRewards ?? []) tally(r)
           }
-        }
-        const countFrag = (r: { type: string; hieroglyphId?: string } | undefined) => {
-          if (r?.type === "hieroglyphFragment" && r.hieroglyphId) {
-            totalFragments++
-            fragCoverage.set(r.hieroglyphId, (fragCoverage.get(r.hieroglyphId) ?? 0) + 1)
-          }
-        }
-        countFrag(cfg.mainEndReward)
-        for (const s of cfg.sideSections) {
-          countFrag(s.endReward)
-          for (const sub of s.sideSections ?? []) countFrag(sub.endReward)
-        }
-        // Puzzle chains carry consumables/money and (via the dynamic pass's eager fill) junk.
-        const countPuzzleRewards = (rewards: (TreasureReward | undefined)[] | undefined) => {
-          for (const r of rewards ?? []) {
-            if (r?.type === "consumable") puzzleConsumables++
-            if (r?.type === "money") puzzleMoney++
-            if (r?.type === "sellable") junkSellables++
-          }
-        }
-        countPuzzleRewards(cfg.puzzleRewards)
-        for (const s of cfg.sideSections) {
-          countPuzzleRewards(s.puzzleRewards)
-          for (const sub of s.sideSections ?? []) countPuzzleRewards(sub.puzzleRewards)
         }
       }
     }
   }
 
-  const allHieroglyphs = Object.keys(hieroglyphRequired)
-  const totalUnique = allHieroglyphs.reduce((s, id) => s + (hieroglyphRequired[id] ?? 0), 0)
-  uniqueAssignedFragments = allHieroglyphs.reduce(
-    (s, id) => s + Math.min(fragCoverage.get(id) ?? 0, hieroglyphRequired[id] ?? 0),
-    0
-  )
-  const uncovered = allHieroglyphs.filter(id => !fragCoverage.has(id))
-  const under2 = allHieroglyphs.filter(id => (fragCoverage.get(id) ?? 0) < (hieroglyphRequired[id] ?? 0))
-
   console.log(
     `✓ Configs generated: ${pyramidJourneys} pyramid journeys (${pyramidLevels} levels), ${tombJourneys} tombs (${tombFloors} floors)`
   )
-  console.log(`  Map pieces placed: ${totalMapPieces}`)
-  console.log(`  Mosaic pieces placed: ${totalMosaicPieces}`)
-  console.log(`  Hieroglyph fragments: ${uniqueAssignedFragments}/${totalUnique} placed (${totalFragments} total)`)
-  console.log(`  Puzzle-solve rewards: ${puzzleConsumables} consumable, ${puzzleMoney} money`)
-  console.log(`  Junk loot (sellable): ${junkSellables}`)
-  if (uncovered.length > 0) console.warn(`  ⚠ Hieroglyphs with 0 fragments: ${uncovered.join(", ")}`)
-  if (under2.length > 0)
-    console.log(`  ℹ Matrix target not yet reached (${under2.length} hieroglyphs) — game uses actual placed counts`)
+  const tallyLine = [...byType.entries()]
+    .filter(([type]) => type !== "fragmentSlot")
+    .sort((a, b) => b[1] - a[1])
+    .map(([type, n]) => `${type} ${n}`)
+    .join(", ")
+  console.log(`  Rewards placed: ${tallyLine}`)
 }
