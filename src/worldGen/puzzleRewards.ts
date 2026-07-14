@@ -1,9 +1,9 @@
 import type { FloorConfig, SubSection } from "./types"
 
-// A puzzle chain's reward slots are created empty here at build time; the dynamic loot pass
-// (dynamicLoot.ts, run after gating/capped placement) fills them from the unified slot pool.
-// Splitting creation from fill is what lets puzzle-chain positions BE slots collectSlots emits
-// — see distribution-primitive-design.md, "dynamic loot".
+// A puzzle chain's reward slots are created empty here at build time; the dynamic-loot
+// distributions (allocateDistributions, run after gating/capped placement) fill them from the
+// unified slot pool. Splitting creation from fill is what lets puzzle-chain positions BE slots
+// collectSlots emits — see distribution-primitive-design.md, "core allocates, the mod fills".
 
 // A trapped chain's puzzle slots render as trap rooms, not puzzle rooms (siteAssembler.ts) —
 // excluded here so a reward is never assigned somewhere it can't be delivered.

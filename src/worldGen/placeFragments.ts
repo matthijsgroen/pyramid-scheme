@@ -99,10 +99,10 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
 }
 
 // Mutates allConfigs in place: places gating currencies (reachability worklist) then capped
-// currencies (allocator) into path-end slots, then hands every remaining slot to the dynamic
-// loot pass (dynamicLoot.ts — junk/money/consumables). Throws (does not warn) if a demand has
-// no reachable slot once every relaxation rung is exhausted — docs/game-design/keys-and-locks-
-// solver.md, "Exhausted relaxation is a build failure, not a warning".
+// currencies (allocator) into path-end slots, then hands every remaining slot to the dynamic-loot
+// distributions (allocateDistributions — the mod-owned money/junk/consumable Distributions).
+// Throws (does not warn) if a demand has no reachable slot once every relaxation rung is exhausted
+// — docs/game-design/keys-and-locks-solver.md, "Exhausted relaxation is a build failure, not a warning".
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
