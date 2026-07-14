@@ -1,7 +1,7 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { FEZ_SHOP_META } from "./game/fezShop/meta"
 import { MONEY_CURRENCY_META } from "./game/moneyCurrency"
-import { SHOP_MONEY_SPEC, SHOP_JUNK_SPEC } from "./game/loot"
+import { shopMoneyEconomy } from "./game/loot"
 import { shopEconomyGuard } from "./game/economyGuard"
 
 // The shop mod descriptor. Owns the Fez-shop encounter family, the money currency, loose-money +
@@ -17,7 +17,6 @@ export const shopMod: ModDescriptor = {
   id: "shop",
   families: [FEZ_SHOP_META],
   currencyMeta: MONEY_CURRENCY_META,
-  money: SHOP_MONEY_SPEC,
-  junk: SHOP_JUNK_SPEC,
+  dynamicDistributions: [shopMoneyEconomy],
   worldValidator: shopEconomyGuard,
 }

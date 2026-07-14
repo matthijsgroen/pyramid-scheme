@@ -8,9 +8,9 @@ import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 // Production code (configBuilder.ts/placeFragments.ts) never imports this; it derives the
 // expected reward counts from the injected currencies themselves.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
-import { CAPPED_CURRENCIES, DYNAMIC_LOOT, MOD_WORLD_VALIDATORS } from "../mods/registeredMods"
+import { CAPPED_CURRENCIES, DYNAMIC_DISTRIBUTIONS, MOD_WORLD_VALIDATORS } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
-import { resolveKeyRequirements } from "../mods/allFamilyMeta"
+import { resolveKeyRequirements, familyWeightFor } from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
 // check. The economy guard is a separate global invariant (validated by generate-world) that only
@@ -28,8 +28,9 @@ const buildRealConfigs = () =>
     resolveKeyRequirements,
     ALL_CURRENCY_DISTRIBUTIONS,
     CAPPED_CURRENCIES,
-    DYNAMIC_LOOT,
-    MOD_WORLD_VALIDATORS
+    DYNAMIC_DISTRIBUTIONS,
+    MOD_WORLD_VALIDATORS,
+    familyWeightFor
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep

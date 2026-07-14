@@ -87,10 +87,9 @@ being separate frozen items.
 | trap, puzzle, shop encounters | encounter | trap / puzzle / shop mods | per-instance config |
 | keys / map pieces / hieroglyph | gating | core + hieroglyph mod | reachability worklist (unchanged) |
 | mosaic | capped | mosaic mod | exact footprint |
-| money | dynamic | core now → **shop mod** (Slice 4) | economy guard is a shop concern |
-| junk | dynamic | **shop mod** (REVISED — was core) | per-tier variants; **≥1 of each** (completeness, hard-fail); tier drives value. Junk is the sell-side of the money economy (found as loot, sold for money at the Fez shop) — no shop, no purpose. Shop off → no junk placed, leftover chests fall to empty. |
-| consumables | dynamic | **trap mod** | rarity weights trap-owned; `eligible` = expert+ paths |
-| empty | — | core | the density knob |
+| money **+** junk | dynamic | **shop mod** (as-built §C) | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` ≈ 1.5×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) then loose coins. Shop off → not registered → no money/junk, leftover chests empty. |
+| consumables | dynamic | **trap mod** | one Distribution; rarity trap-owned; `eligible` = expert+ puzzle slots; count is a mod-owned target |
+| empty | — | core | `emptyFraction` — a real knob (see below), % of loot-eligible slots reserved empty |
 
 ## Toggle-off gate (settled)
 
@@ -138,26 +137,36 @@ specifically).
   ripple = a separate session.
 - Core allocates slots; the **mod fills** (owns variants/rarity/completeness).
 
-## As-built refinements (Increment 1, loot pass — landed)
+## As-built refinements (Increment 1, loot pass — landed; §C brought it onto the primitive)
 
-- **Junk fills ALL loot slots by an eagerness ratio**, not end-slots only. Ratio per slot kind
-  (from SLICE-2-PLAN): chest 1.0, puzzle 0.6, trap/gate 0. Chests take all leftover junk; puzzle
-  chains take 0.6 of their still-empty slots (the rest stay empty). This is what makes junk
-  completeness satisfiable — end-slots alone are wizard-skewed (146) and starved in low/mid tiers
-  (starter 1, junior 3, expert/master 0); puzzle slots supply the low-tier capacity.
-- **Completeness = the Collection "junk" category must be finishable** (`Collection.tsx` renders
-  all 25 `ALL_SELLABLES`). Round-robin per tier guarantees ≥1 of each; hard-fail if a tier still
-  can't cover its set (a real "grow the world" signal). Junk value is tier-fixed
-  (`SELL_VALUE_BY_TIER`), so which item lands never moves the economy.
-- **`emptyFraction` knob deferred (YAGNI):** the eager<1 puzzle remainder already yields empties;
-  add a real knob only when an author needs to force chest empties.
-- **Money/consumables byte-identical:** the dynamic pass replays the retired `assignPuzzleRewards`
-  per-site seeds, so economy totals are unchanged (money sum 1009, consumables 248/73/72).
+- **Dynamic loot IS the primitive.** money/junk/consumables are real `Distribution`s run through
+  `allocateDistributions`, not a parallel `assignDynamicLoot` pass. The mod's `fill` bakes the
+  rewards (owns variants/rarity/completeness); core only allocates + eager-orders + reserves empty.
+  (`ConsumableSpec`/`MoneySpec`/`JunkSpec`/`dynamicLoot.ts` are deleted.)
+- **Eagerness = `rewardWeight` = fill ORDER, sourced from the encounter family** (NOT a
+  `Record<Slot["kind"]>` ratio). `FamilyMeta.rewardWeight` (chest 100, sumplete 60,
+  trap/tableau/crocodile/gate/shop 0) is stamped on each slot at collect time via an injected
+  `familyWeightFor` (built from `ALL_FAMILY_META`, riding the `resolveKeyRequirements` seam).
+  `allocateDistributions` offers slots weight-desc (chests before puzzles); a distribution that
+  can't take everything leaves the least-eager slots empty. Weight-0 slots are loot-ineligible —
+  so tomb main-path tableau/crocodile puzzles bear no loot (matches the `familyMeta` intent).
+- **`emptyFraction` is a REAL core knob** (un-deferred): the least-eager loot-eligible slots are
+  skimmed and left empty up front, so found loot stays meaningful (no 1-coin spam). Default 0
+  (`scripts/generateWorld.ts`); dial up on a feel-check. Not YAGNI — it's the meaningfulness dial.
+- **Completeness = the Collection "junk" category must be finishable** (`Collection.tsx` renders all
+  25 `ALL_SELLABLES`). It lives in the shop's `fill` (≥1 of each item per present tier; hard-fail if
+  a present tier can't cover its 5). Junk value is tier-fixed (`SELL_VALUE_BY_TIER`).
+- **Economy: value budget, not byte-identical.** The shop's `fill` places money+junk to a budget of
+  `[totalBuyable, 1.5×]` — a deliberate rebalance (found income was ~4.3× buyable, now ~1×–1.5×), so
+  counts shifted (junk 810→~335, money ~156). The economy guard counts BOTH money and sellable value
+  in BOTH end and puzzle slots (junk now sits in either). Output is validated by the guard + the
+  fill's self-check, not by byte-identity.
 
 ## Still open (for the build, not blocking the design)
 
-- Concrete `Slot` metadata shape (tier, pathDifficulty, encounter, capacity,
-  ward gating, seed) — pin when coding Increment 1 step 1.
-- "area" vocabulary beyond difficulty, if consumable eligibility needs more than
-  `pathDifficulty >= expert`.
-- Exact hand-off of the economy guard to shop (Slice 4) vs an interim relaxation.
+- Increment 2 — encounters as distributions: `slot.encounter`/`capacity` metadata, per-instance shop
+  capacity, shop stock on the `eligible` join. Today `rewardWeight` is stamped from the authored
+  `encounter` field directly; full per-instance encounter config is the next slice (§A).
+- "area" vocabulary beyond difficulty, if consumable eligibility needs more than `tier >= expert`.
+- min-first-across-all allocator upgrade — only when a second nonzero-`min` distribution contends
+  for the same pool (e.g. Increment-2 shop stock).

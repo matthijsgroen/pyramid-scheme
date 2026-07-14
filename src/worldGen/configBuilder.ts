@@ -17,7 +17,8 @@ import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
-import type { DynamicLootSpecs } from "./dynamicLoot"
+import type { Distribution } from "./slotAllocator"
+import type { FamilyWeightFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateDiscovery, validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
@@ -234,8 +235,10 @@ export const buildConfigs = (
   resolveKeyRequirements?: ResolveKeyRequirements,
   currencies: CurrencyDistribution[] = [],
   capped: CappedCurrency[] = [],
-  dynamicLoot?: DynamicLootSpecs,
-  worldValidators: WorldValidator[] = []
+  dynamicDistributions: Distribution[] = [],
+  worldValidators: WorldValidator[] = [],
+  familyWeightFor?: FamilyWeightFor,
+  emptyFraction = 0
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -249,7 +252,15 @@ export const buildConfigs = (
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  placeFragments(allConfigs, currencies, resolveKeyRequirements, capped, dynamicLoot)
+  placeFragments(
+    allConfigs,
+    currencies,
+    resolveKeyRequirements,
+    capped,
+    dynamicDistributions,
+    familyWeightFor,
+    emptyFraction
+  )
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
   // tomb ID references, discovery graph solvability, and the shop economy guard. The

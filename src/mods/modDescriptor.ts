@@ -1,5 +1,5 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
-import type { ConsumableSpec, MoneySpec, JunkSpec } from "@/worldGen/dynamicLoot"
+import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
@@ -27,16 +27,12 @@ export type ModDescriptor = {
   families?: FamilyMeta[]
   // Currency display/ownership metadata for the ledger + collection UI — one or many.
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
-  // Consumable placement this mod owns (density + rarity roll) — the dynamic loot pass fills the
-  // consumable-role puzzle slots with it. Drops when the mod leaves REGISTERED_MODS (trap off →
-  // no consumables placed). Only one registered mod should contribute this.
-  consumables?: ConsumableSpec
-  // Loose-money placement this mod owns (density) — shop off → no loose money placed. The money
-  // amount stays a core-ledger value; the mod owns only how dense it is. One mod should own this.
-  money?: MoneySpec
-  // Junk (sellable filler) placement this mod owns (eagerness + per-tier item set) — shop off →
-  // no junk placed, leftover chests fall empty. One mod should own this.
-  junk?: JunkSpec
+  // Dynamic-loot distributions this mod owns (the unified loot primitive): each claims slots by
+  // footprint/eligibility/rank and fills them itself (owns variants/rarity/completeness) — e.g.
+  // trap consumables, the shop money economy. Drops when the mod leaves REGISTERED_MODS (trap off
+  // → no consumables; shop off → no money/junk, leftover chests fall empty). See
+  // docs/mods/distribution-primitive-design.md.
+  dynamicDistributions?: Distribution[]
   // Post-build world validator (e.g. the shop economy guard) — a global balance check run over
   // the whole grown world in buildConfigs. Drops with the mod, so core names no mod balance rule.
   worldValidator?: WorldValidator

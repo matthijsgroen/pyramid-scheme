@@ -19,10 +19,15 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { resolveKeyRequirements } from "../src/mods/allFamilyMeta"
+import { resolveKeyRequirements, familyWeightFor } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
-import { CAPPED_CURRENCIES, DYNAMIC_LOOT, MOD_WORLD_VALIDATORS } from "../src/mods/registeredMods"
+import { CAPPED_CURRENCIES, DYNAMIC_DISTRIBUTIONS, MOD_WORLD_VALIDATORS } from "../src/mods/registeredMods"
+
+// The share of loot-eligible slots deliberately left empty so found loot stays meaningful (no
+// 1-coin spam). A core world-gen knob (docs/mods/distribution-primitive-design.md); 0 = fill by
+// eagerness + budget alone. Dial up after a regen feel-check if loot reads as too dense.
+const EMPTY_FRACTION = 0
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -42,8 +47,10 @@ const configs = buildConfigs(
   resolveKeyRequirements,
   ALL_CURRENCY_DISTRIBUTIONS,
   CAPPED_CURRENCIES,
-  DYNAMIC_LOOT,
-  MOD_WORLD_VALIDATORS
+  DYNAMIC_DISTRIBUTIONS,
+  MOD_WORLD_VALIDATORS,
+  familyWeightFor,
+  EMPTY_FRACTION
 )
 printStats(configs, HIEROGLYPH_REQUIRED)
 writeFileSync(join(__dirname, "../src/data/generatedWorld.ts"), generateFile(configs, HIEROGLYPH_REQUIRED))

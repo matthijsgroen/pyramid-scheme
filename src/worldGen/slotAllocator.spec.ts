@@ -13,6 +13,7 @@ const makeSlot = (id: string, tier = "starter"): Slot & { filled: (TreasureRewar
     wardKeys: [],
     isPlaceholder: true,
     kind: "end",
+    rewardWeight: 100,
     assign: r => filled.push(r),
     filled,
   }

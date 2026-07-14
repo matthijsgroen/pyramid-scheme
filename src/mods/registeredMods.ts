@@ -1,5 +1,5 @@
 import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragments"
-import type { DynamicLootSpecs } from "@/worldGen/dynamicLoot"
+import type { Distribution } from "@/worldGen/slotAllocator"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ModDescriptor } from "./modDescriptor"
@@ -29,14 +29,11 @@ export const CURRENCY_DISTRIBUTIONS: CurrencyDistribution[] = REGISTERED_MODS.fl
 // allFamilyMeta.ts. A mod's families drop out of world-gen dispatch when it leaves this list.
 export const MOD_FAMILY_META: FamilyMeta[] = REGISTERED_MODS.flatMap(m => m.families ?? [])
 
-// The dynamic-loot contributions of all enabled mods, aggregated for the world-gen loot pass:
-// consumables (trap), loose money + junk (shop). Each field is present only while its owning mod
-// is registered, so toggling a mod off drops its loot. Only one mod should own each field.
-export const DYNAMIC_LOOT: DynamicLootSpecs = {
-  consumables: REGISTERED_MODS.find(m => m.consumables)?.consumables,
-  money: REGISTERED_MODS.find(m => m.money)?.money,
-  junk: REGISTERED_MODS.find(m => m.junk)?.junk,
-}
+// Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
+// before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop
+// takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
+// money/junk, trap off → no consumables.
+export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m => m.dynamicDistributions ?? [])
 
 // Every post-build world validator any registered mod contributes (e.g. the shop economy guard),
 // run last in buildConfigs over the whole grown world. A validator drops with its mod.

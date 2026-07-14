@@ -1,9 +1,8 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { computeReachability, createFloorAssemblyCache, floorKey, type JourneyMeta } from "./reachability"
-import { collectSlots, type Slot } from "./slots"
-import { allocateDistributions, cappedToDistribution } from "./slotAllocator"
-import { assignDynamicLoot, type DynamicLootSpecs } from "./dynamicLoot"
+import { collectSlots, type Slot, type FamilyWeightFor } from "./slots"
+import { allocateDistributions, cappedToDistribution, type Distribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { journeys as REAL_JOURNEYS } from "../data/journeys"
 
@@ -109,9 +108,11 @@ export const placeFragments = (
   currencies: readonly CurrencyDistribution[],
   resolveRequirements?: ResolveKeyRequirements,
   capped: readonly CappedCurrency[] = [],
-  dynamicLoot?: DynamicLootSpecs
+  dynamicDistributions: readonly Distribution[] = [],
+  familyWeightFor?: FamilyWeightFor,
+  emptyFraction = 0
 ): void => {
-  const slots = collectSlots(allConfigs)
+  const slots = collectSlots(allConfigs, familyWeightFor)
   const available = new Set(slots)
   const journeyMeta = buildJourneyMeta()
 
@@ -241,8 +242,15 @@ export const placeFragments = (
   // allocator as flexible-footprint distributions in later steps (distribution-primitive-design.md).
   allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
-  // Phase 5: dynamic loot fills everything left — puzzle-chain slots get (shop-owned) money +
-  // (trap-owned) consumables, leftover path-end slots get (shop-owned) junk with ≥1-of-each
-  // completeness. Each is mod-injected; an absent spec places none of it. See dynamicLoot.ts.
-  assignDynamicLoot(available, dynamicLoot)
+  // Phase 5: dynamic loot — the mod-owned distributions (trap consumables, shop money economy)
+  // claim eager-ordered eligible slots (chest 100 before puzzle 60) and fill them themselves;
+  // `emptyFraction` reserves a share empty up front so found loot stays meaningful. Each drops
+  // with its mod (shop off → no money/junk; trap off → no consumables). See slotAllocator.ts +
+  // docs/mods/distribution-primitive-design.md.
+  allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction)
+
+  // Every slot no distribution claimed (reserved-empty, weight-0, or budget left over) is an empty
+  // path end — clear the fragmentSlot sentinels so none reaches the serializer.
+  for (const slot of available) slot.assign(undefined)
+  available.clear()
 }
