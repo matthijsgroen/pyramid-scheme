@@ -33,9 +33,15 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   tomb persistence added (`isPersistentInterior` covers `treasure_tomb`). World byte-identical.
   A tomb is adapted into a single-level `PyramidJourney` (default exterior by difficulty; optional
   `background?` on the tomb for later bespoke authoring). Playtest + tuning pending (expected).
-- **§G ⏳ (Step 2, content)** crocodile capstone every floor, soft trap gating (`canAttemptTrap`),
-  authored per-floor tableau content into the tableau family's `generate` (today TOMB_SYMBOLS pool).
-  Once done, tableau/crocodile mechanics relocate out of core (see §A below).
+- **§A (mechanic extraction) ✅** tableau + crocodile puzzle generation/state relocated out of core
+  into their mods (`7dc8eb7` crocodile → `src/mods/puzzle/game/crocodile`; `c19fab1` tableau +
+  `filledPositions` → `src/mods/hieroglyph/game`). `src/game/puzzles/` deleted. Core invariant
+  verified: no production `src/game`/`src/worldGen` file imports `@/mods`. The puzzle *UI*
+  (`TombPuzzle`, `TombPuzzleView`, `TombTableau` in app/ui) stays put and imports the mod — allowed;
+  moving it into the mod is an optional further nicety, not an invariant fix.
+- **§G ⏳ (Step 2, content — deferred to playtest/tuning phase)** crocodile capstone every floor,
+  soft trap gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's
+  `generate` (today TOMB_SYMBOLS pool).
 - **§A.3** ⏳ encounters-as-distributions (Increment 2) — world-gen slice.
 - **§E** ⏳ ward/tomb keys → the solver (still construction-time literals + a separate validator).
 - **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
