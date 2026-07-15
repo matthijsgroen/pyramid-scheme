@@ -35,6 +35,16 @@ export const familyPriorityFor = (encounter: string | string[] | undefined, defa
   return meta?.rewardPriority ?? 0
 }
 
+// How many reward slots a node whose encounter resolves to this family exposes — the one place
+// world-gen reads FamilyMeta.rewardCapacity. Default 1 (ordinary node = one reward); fez-shop = 6.
+// Same id-then-tag resolution as familyPriorityFor. Unknown encounter → 1 (a fallen-back shop node,
+// e.g. shop mod off, is a plain 1-reward chest).
+export const familyCapacityFor = (encounter: string | string[] | undefined, defaultTag: string): number => {
+  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+  const meta = ALL_FAMILY_META.find(m => m.id === value) ?? ALL_FAMILY_META.find(m => m.tags.includes(value))
+  return meta?.rewardCapacity ?? 1
+}
+
 // Gen-time encounter allocation: given an authored ROLE (a family tag, or an AND-array of tags)
 // and the slot's tier, pick one concrete family id from the pool of enabled families that carry
 // the tag(s) and debut at or below this tier. Deterministic in `seed` so regen is stable and the

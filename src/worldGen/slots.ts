@@ -38,6 +38,11 @@ export type Slot = {
    * weight first and treats 0 as loot-ineligible. Stamped at collect time (docs/mods/
    * distribution-primitive-design.md). */
   rewardPriority: number
+  /** The concrete family this slot's node resolved to (e.g. "fez-shop", "sumplete"), when known —
+   * the §A.3 encounter identity a mod's placement/fill joins on (a shop's stock slots carry
+   * "fez-shop"). Undefined for a plain treasure end. Distinct from rewardPriority (a number): this
+   * is the family id, so a mod can target "shop slots" directly instead of via the weight proxy. */
+  encounter?: string
   /** Assign this slot's reward, or clear it to empty (`undefined`) — a leftover placeholder with
    * no filler (e.g. a chest when the shop mod is off) becomes an empty path end. */
   assign: (reward: TreasureReward | undefined) => void
@@ -114,6 +119,8 @@ export const collectSlots = (
         if (!rewards) return
         rewards.forEach((_, i) => {
           const arr = rewards
+          const enc = encountersByIndex?.[i] ?? encounter
+          const encId = Array.isArray(enc) ? enc[0] : enc
           slots.push({
             ref,
             journeyId,
@@ -123,7 +130,8 @@ export const collectSlots = (
             kind: "puzzle",
             siteId,
             puzzleSeq: puzzleSeq++,
-            rewardPriority: familyPriorityFor(encountersByIndex?.[i] ?? encounter, "puzzle"),
+            rewardPriority: familyPriorityFor(enc, "puzzle"),
+            ...(encId ? { encounter: encId } : {}),
             assign: r => {
               arr[i] = r
             },

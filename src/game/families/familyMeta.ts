@@ -29,6 +29,12 @@ export type FamilyMeta = {
   // fragment) — explicit DSL authoring or a system that targets it directly, never this
   // generic pool, even though a shop has real capacity (several stock slots).
   rewardPriority: number
+  // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
+  // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
+  // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place
+  // into it (positional currency assignment + trap's finite consumable fill), each priced by the
+  // shop. Distinct from rewardPriority: priority is fill-order eagerness, capacity is slot count.
+  rewardCapacity?: number
   // First difficulty tier this family may be allocated at (its catalogue debut, per
   // docs/game-design/PUZZLE_FAMILIES.md / TRAP_FAMILIES.md). The gen-time encounter allocator
   // only draws a family into a role's pool for slots at or above this tier. Unset = "starter"

@@ -14,7 +14,7 @@ import type {
 import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
-import { assignEncounters, type EncounterAllocator } from "./placeEncounters"
+import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor } from "./placeEncounters"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ReachabilitySupport } from "./reachability"
@@ -254,7 +254,8 @@ export const buildConfigs = (
   emptyFraction = 0,
   allocateEncounter?: EncounterAllocator,
   reachabilitySupport?: ReachabilitySupport,
-  resolveTombTreasure?: TombTreasureResolver
+  resolveTombTreasure?: TombTreasureResolver,
+  familyCapacityFor?: FamilyCapacityFor
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -271,7 +272,7 @@ export const buildConfigs = (
   // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.
   // Injected from src/mods (allFamilyMeta.allocateEncounterFamily) — src/worldGen can't read the
   // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
-  if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter)
+  if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor)
 
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
