@@ -88,7 +88,7 @@
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
     "canAttempt": "Je kunt proberen door te gaan.",
-    "tooWeak": "Je bent te zwak om dit risico te nemen. Draai om.",
+    "tooWeak": "Gevaarlijk zwak — een mislukte poging laat je met niets achter.",
     "attempt": "Val proberen",
     "disable": "Val uitschakelen",
     "turnAround": "Omdraaien"

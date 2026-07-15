@@ -39,9 +39,12 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   verified: no production `src/game`/`src/worldGen` file imports `@/mods`. The puzzle *UI*
   (`TombPuzzle`, `TombPuzzleView`, `TombTableau` in app/ui) stays put and imports the mod — allowed;
   moving it into the mod is an optional further nicety, not an invariant fix.
-- **§G ⏳ (Step 2, content — deferred to playtest/tuning phase)** crocodile capstone every floor,
-  soft trap gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's
-  `generate` (today TOMB_SYMBOLS pool).
+- **§G ✅** reframed to "uniform authoring, no code exceptions": crocodile capstone now authored via
+  a general **node-selector** vocabulary (`nodes: [{ where, encounter }]`, any path), replacing the
+  hardcoded `isLast && hasCroc` + one-off `lastMainPuzzleFamily` (world byte-identical); trap gating
+  softened (`isTrapAttemptSafe` warning, attempt always launches; health consequence in the trap
+  plugin); tomb persistence already done (§A.2); shop kept floor-0. Gate-injecting selectors designed,
+  not built. See `docs/mods/SLICE-G-selectors.md`.
 - **§A.3 ✅ (encounter allocation)** gen-time **tag-based** encounter allocation: authored roles
   (family tags `puzzle`/`tomb-puzzle`/`trap`/`capstone`) resolve to a concrete family from the
   tier-eligible pool of enabled families, baked into the config (`placeEncounters.ts` +
@@ -242,7 +245,23 @@ exist but their `bump` is never invoked. Base health stays 6 forever. Only tier-
 
 ---
 
-## G — Tomb interior half-built  ·  MEDIUM  (overlaps A.2)
+## G — Tomb interior  ·  MEDIUM  ·  ✅ RESOLVED (2026-07-15)
+
+> **Resolved.** Reframed in discussion from "wire per-floor crocs" to the real principle: uniform
+> world authoring with **no code-level exceptions**. Delivered:
+> - **Crocodile capstone authored, not hardcoded** — the `isLast && hasCroc` exception is gone from
+>   `configBuilder`; a general **node-selector** authoring vocabulary (`nodes: [{ where, encounter }]`,
+>   any path) replaced the one-off `lastMainPuzzleFamily`. Each non-starter tomb spec authors
+>   `nodes: [{ where: "last", encounter: "capstone" }]`. Placement byte-identical (8 crocs, same
+>   floors). Build family-swap only; gate-injection designed. See `docs/mods/SLICE-G-selectors.md`.
+> - **Trap gating softened** — `canAttemptTrap` (hard block at ≤1 heart) → `isTrapAttemptSafe`, a
+>   risk-warning signal only; the attempt always launches (soft, per §8), the health consequence
+>   stays in the trap plugin (`takeTrapDamage`).
+> - **Tomb persistence** — already DONE (`useJourneys.ts` `isPersistentInterior` covers
+>   `treasure_tomb`; the audit's exclusion note was stale, fixed in §A.2).
+> - **Fez shop floor-0-only** — kept by design (per-floor is a tuning experiment, not built).
+>
+> Original finding below.
 
 `pyramid-interior-design.md` §8. Enabling plumbing added, behavior not wired:
 - **Crocodile last-floor-only, not per-floor** (`shortcut-as-done`): doc says "every floor gets one";

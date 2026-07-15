@@ -88,7 +88,7 @@
   "trap": {
     "warning": "⚠ Trapped Corridor",
     "canAttempt": "You can attempt to pass through.",
-    "tooWeak": "You are too weak to risk this trap. Turn around.",
+    "tooWeak": "Dangerously weak — a failed attempt will leave you with nothing.",
     "attempt": "Attempt the trap",
     "disable": "Disable trap",
     "turnAround": "Turn around"

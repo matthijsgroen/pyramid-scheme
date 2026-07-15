@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useModState } from "@/app/state/useModState"
 import type { ConsumableType } from "@/mods/trap/game/consumableTypes"
-import { trapDamage, canAttemptTrap } from "@/mods/trap/game/trapHealth"
+import { trapDamage, isTrapAttemptSafe } from "@/mods/trap/game/trapHealth"
 
 // Trap-owned runtime state: health + the consumable pack. Health is trap-only (traps are the
 // sole source of damage and consumables the sole heal), so it lives in the trap mod's own
@@ -20,7 +20,7 @@ const INITIAL: TrapState = { health: MAX_HEALTH, consumables: { bandage: 0, oil:
 export type TrapProgressAPI = {
   currentHealth: number
   maxHealth: number
-  canAttemptTrap: () => boolean
+  isTrapAttemptSafe: () => boolean
   takeTrapDamage: () => void
   consumables: ConsumableInventory
   consumableCarryCap: number
@@ -37,7 +37,7 @@ export const useTrapProgress = (): TrapProgressAPI => {
     return {
       currentHealth: state.health,
       maxHealth: MAX_HEALTH,
-      canAttemptTrap: () => canAttemptTrap(state.health),
+      isTrapAttemptSafe: () => isTrapAttemptSafe(state.health),
       // Armor is disregarded with the perk system, so damage is the base trapDamage(0) = 2.
       takeTrapDamage: () => setState(prev => ({ ...prev, health: Math.max(0, prev.health - trapDamage(0)) })),
       consumables: state.consumables,

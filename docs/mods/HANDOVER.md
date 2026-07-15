@@ -40,6 +40,14 @@ changed encounter representation but is semantic-identical — same family rende
   keeps only tableau + crocodile (blocked — see §A.2).
 - **§H** — fixed the double-registered `FEZ_SHOP_META` (was hardcoded in `allFamilyMeta.ts` AND via the
   descriptor). Now drops with the mod.
+- **§G — tomb interior / node selectors (`SLICE-G-selectors.md`).** Reframed from "wire per-floor
+  crocs" to uniform authoring with no code exceptions: a general node-selector vocabulary
+  (`nodes: [{ where: "first"|"last"|n|{every,from}, encounter }]` on any path) replaced the hardcoded
+  `isLast && hasCroc` + one-off `lastMainPuzzleFamily` — resolved to `encountersByIndex` (per-node
+  family), consumed by placeEncounters/siteAssembler/slots/serializer. Crocodile placement
+  byte-identical. Trap gating softened (`isTrapAttemptSafe` — attempt always launches, warning only;
+  health consequence stays in the trap plugin). Persistence already done (§A.2); shop kept floor-0.
+  Gate-injecting selectors designed but NOT built (reopens maze assembler + §E; see the slice doc).
 - **§E — ward/tomb keys → the solver (4 stages, `SLICE-E-ward-keys.md`).** Retired the redundant
   `validateDiscovery`; genericized `reachability.ts` so core names no currency (journey-entry
   threshold, tier-unlock ladder, tombKey/mapPiece harvest all injected via a mod-supplied
@@ -65,10 +73,11 @@ changed encounter representation but is semantic-identical — same family rende
    nothing — §F is where they come alive.
 2. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
    consumable/shop-money `eligible` to join on it instead of the `rewardWeight` proxy (which works).
-3. **§G tomb content (deferred to playtest/tuning)** — crocodile capstone every floor, soft trap
-   gating (`canAttemptTrap`), authored per-floor tableau content into the tableau family's `generate`
-   (today the TOMB_SYMBOLS pool). Gameplay-facing; expects playtesting + tuning. The new last-floor
-   `wardChest` pockets (§E) are optional loot — playtest whether their placement/fill feels right.
+   Note: §G's per-node `encountersByIndex` now gives slots.ts a per-room family for loot weight —
+   part of this is delivered; the remaining bit is the encounter↔slot join for the dynamic pass.
+3. **Gate-injecting node selectors (designed, not built)** — extend `NodeSelector` with a `gate?`
+   to place ward/floor gates mid-path (authored "ward-gate gauntlet"). Reopens the maze assembler +
+   §E keys solver — its own slice. Impact analysis in `docs/mods/SLICE-G-selectors.md`.
 
 **Shop-robustness note (surfaced by §H toggle-off):** shop's junk-completeness `fill` hard-fails
 when loot-bearing capacity drops below the collectible count (e.g. puzzle off). A root mod off

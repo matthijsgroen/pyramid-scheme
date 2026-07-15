@@ -28,7 +28,7 @@ export const TrapFamilyShell = <T,>({ question, ctx, journeys, onSolved, onCance
       <TrapWarningScreen
         currentHealth={trap.currentHealth}
         maxHealth={trap.maxHealth}
-        canAttempt={trap.canAttemptTrap()}
+        attemptSafe={trap.isTrapAttemptSafe()}
         trapToolCount={trap.consumables.trapTool}
         onAttempt={() => setAttempting(true)}
         onTurnAround={onCancel}
