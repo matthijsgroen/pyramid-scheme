@@ -14,16 +14,16 @@ const isTrapEncounter = (encounter: string | string[] | undefined): boolean => {
 
 const initSection = (section: SubSection): void => {
   if (isTrapEncounter(section.encounter) || section.pathPuzzles === 0) return
-  section.puzzleRewards = new Array(section.pathPuzzles).fill(undefined)
+  section.rewards = new Array(section.pathPuzzles).fill(undefined)
 }
 
-// Creates an empty `puzzleRewards` array on every rewardable puzzle chain in a site's floors
+// Creates an empty `rewards` array on every rewardable puzzle chain in a site's floors
 // (main path + every non-trapped section/sub-section). Order — floor main, then each section,
 // then its sub-sections — is the order collectSlots walks to number puzzle slots, keeping the
 // dynamic pass's per-site placement deterministic.
 export const initPuzzleChains = (floors: FloorConfig[]): void => {
   for (const floor of floors) {
-    if (floor.pathPuzzles > 0) floor.puzzleRewards = new Array(floor.pathPuzzles).fill(undefined)
+    if (floor.pathPuzzles > 0) floor.rewards = new Array(floor.pathPuzzles).fill(undefined)
     for (const section of floor.sideSections) {
       initSection(section)
       for (const sub of section.sideSections ?? []) initSection(sub)

@@ -7,5 +7,5 @@ export const SUMPLETE_META: FamilyMeta = {
   minTier: "starter",
   icon: "🔢",
   color: "blue",
-  rewardWeight: 60, // fills only once treasure's guaranteed slots are spoken for
+  rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
 }

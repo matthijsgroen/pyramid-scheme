@@ -33,11 +33,11 @@ export type Slot = {
    * design.md). Undefined for `"end"` slots. */
   siteId?: string
   puzzleSeq?: number
-  /** Eagerness to bear loot, from the slot's own encounter family (FamilyMeta.rewardWeight):
+  /** Eagerness to bear loot, from the slot's own encounter family (FamilyMeta.rewardPriority):
    * chest 100, puzzle 60, trap/tableau/crocodile/gate/shop 0. The dynamic loot pass fills higher
    * weight first and treats 0 as loot-ineligible. Stamped at collect time (docs/mods/
    * distribution-primitive-design.md). */
-  rewardWeight: number
+  rewardPriority: number
   /** Assign this slot's reward, or clear it to empty (`undefined`) — a leftover placeholder with
    * no filler (e.g. a chest when the shop mod is off) becomes an empty path end. */
   assign: (reward: TreasureReward | undefined) => void
@@ -47,20 +47,20 @@ export type Slot = {
 // ALL_FAMILY_META in src/mods/allFamilyMeta.ts), since src/worldGen can't import mod family meta.
 // Defaults to 0 (loot-ineligible) when omitted, so tests/callers that don't inject it place no
 // dynamic loot rather than crashing.
-export type FamilyWeightFor = (encounter: string | string[] | undefined, defaultTag: string) => number
+export type FamilyPriorityFor = (encounter: string | string[] | undefined, defaultTag: string) => number
 
 // Every fragmentSlot sentinel and open (unrewarded) tomb-key gate across every site that
 // opts into the emitFragmentSlots capability — the same eligibility fragments.ts's own
 // collectSlots used, now with each slot's own FloorRef attached.
 export const collectSlots = (
   allConfigs: Record<string, SiteConfig[]>,
-  familyWeightFor: FamilyWeightFor = () => 0
+  familyPriorityFor: FamilyPriorityFor = () => 0
 ): Slot[] => {
   const slots: Slot[] = []
   // Every emitted end slot is a treasure-chest path end (shop ends carry shopPrice and are never
   // fragmentSlot sentinels, so they aren't collected) → chest eagerness (100). Resolved through
   // the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
-  const chestWeight = familyWeightFor(undefined, "treasure")
+  const chestWeight = familyPriorityFor(undefined, "treasure")
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
@@ -85,12 +85,12 @@ export const collectSlots = (
         isPlaceholder,
         preference,
         kind: "end",
-        rewardWeight: chestWeight,
+        rewardPriority: chestWeight,
         assign,
       })
 
     siteConfigs.forEach((floors, levelIndex) => {
-      // Puzzle-chain slots: one per position of every `puzzleRewards` array initPuzzleChains
+      // Puzzle-chain slots: one per position of every `rewards` array initPuzzleChains
       // (buildSite) created, walked in that same order (floor main path → each side section →
       // its sub-sections) so the dynamic loot pass replays money/consumable placement per site
       // deterministically. Tagged `kind:"puzzle"` + a per-site `puzzleSeq`; the gating worklist
@@ -123,7 +123,7 @@ export const collectSlots = (
             kind: "puzzle",
             siteId,
             puzzleSeq: puzzleSeq++,
-            rewardWeight: familyWeightFor(encountersByIndex?.[i] ?? encounter, "puzzle"),
+            rewardPriority: familyPriorityFor(encountersByIndex?.[i] ?? encounter, "puzzle"),
             assign: r => {
               arr[i] = r
             },
@@ -132,11 +132,11 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.puzzleRewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex)
+        emitPuzzle(floor.rewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex)
         for (const section of floor.sideSections) {
-          emitPuzzle(section.puzzleRewards, pRef, section.difficulty, section.encounter, section.encountersByIndex)
+          emitPuzzle(section.rewards, pRef, section.difficulty, section.encounter, section.encountersByIndex)
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.puzzleRewards, pRef, sub.difficulty, sub.encounter, sub.encountersByIndex)
+            emitPuzzle(sub.rewards, pRef, sub.difficulty, sub.encounter, sub.encountersByIndex)
         }
       })
 

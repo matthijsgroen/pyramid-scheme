@@ -46,7 +46,7 @@ export const runEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void 
   }
   const tallySubSection = (s: SubSection) => {
     addReward(s.endReward)
-    for (const r of s.puzzleRewards ?? []) addReward(r)
+    for (const r of s.rewards ?? []) addReward(r)
   }
   const walkSection = (s: SideSection) => {
     tallySubSection(s)
@@ -57,7 +57,7 @@ export const runEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void 
     for (const floors of siteConfigs) {
       for (const floor of floors) {
         addReward(floor.mainEndReward)
-        for (const r of floor.puzzleRewards ?? []) addReward(r)
+        for (const r of floor.rewards ?? []) addReward(r)
         for (const s of floor.sideSections) walkSection(s)
       }
     }

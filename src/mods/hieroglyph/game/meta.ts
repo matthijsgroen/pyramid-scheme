@@ -8,6 +8,6 @@ export const TABLEAU_META: FamilyMeta = {
   minTier: "starter",
   icon: "📜",
   color: "amber",
-  rewardWeight: 0, // its own reward is the hieroglyph fragment, via the placement worklist — not this pool
+  rewardPriority: 0, // its own reward is the hieroglyph fragment, via the placement worklist — not this pool
   resolveKeyRequirements: resolveTableauKeyRequirements,
 }

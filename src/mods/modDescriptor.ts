@@ -23,7 +23,7 @@ export type ModDescriptor = {
   // Gating currencies discovered on the reachability worklist (phase 2) — e.g. hieroglyph
   // fragments. Injected into placeFragments' worklist via allCurrencyDistributions.ts.
   currencyDistributions?: CurrencyDistribution[]
-  // Game-side encounter-family metadata (tags, rewardWeight, resolveKeyRequirements). The
+  // Game-side encounter-family metadata (tags, rewardPriority, resolveKeyRequirements). The
   // React Component + runtime generate register app-side (registerModApps), gated on this
   // mod — this descriptor stays React-free. Merged into allFamilyMeta.ts.
   families?: FamilyMeta[]

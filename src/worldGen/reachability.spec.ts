@@ -201,7 +201,7 @@ describe(reachableFloorsInSite, () => {
         end: "treasure",
         exitOrStaircase: "exit",
         mainEndReward: { type: "mapPiece", tombId: "some_tomb" },
-        puzzleRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
+        rewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
         sideSections: [],
       },
     ]

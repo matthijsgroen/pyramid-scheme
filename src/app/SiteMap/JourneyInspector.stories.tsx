@@ -102,7 +102,7 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
       </div>
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
-          const reward = floor.puzzleRewards?.[i]
+          const reward = floor.rewards?.[i]
           return (
             <div key={i} className="flex items-baseline gap-1">
               <span className="w-4 shrink-0 text-stone-600">{i + 1}.</span>

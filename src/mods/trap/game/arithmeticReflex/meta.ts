@@ -7,5 +7,5 @@ export const ARITHMETIC_REFLEX_META: FamilyMeta = {
   minTier: "starter",
   icon: "⚡",
   color: "red",
-  rewardWeight: 0, // survived, not solved
+  rewardPriority: 0, // survived, not solved
 }

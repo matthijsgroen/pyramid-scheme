@@ -26,7 +26,7 @@ const collectRewards = (configs: Record<string, SiteConfig[]>): TreasureReward[]
   }
   const tallySub = (s: SubSection) => {
     add(s.endReward)
-    for (const r of s.puzzleRewards ?? []) add(r)
+    for (const r of s.rewards ?? []) add(r)
   }
   const walkSection = (s: SideSection) => {
     tallySub(s)
@@ -36,7 +36,7 @@ const collectRewards = (configs: Record<string, SiteConfig[]>): TreasureReward[]
     for (const floors of siteConfigs) {
       for (const floor of floors) {
         add(floor.mainEndReward)
-        for (const r of floor.puzzleRewards ?? []) add(r)
+        for (const r of floor.rewards ?? []) add(r)
         for (const s of floor.sideSections) walkSection(s)
       }
     }

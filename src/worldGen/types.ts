@@ -19,7 +19,7 @@ export type SubSection = {
   endReward?: TreasureReward
   /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
   shopPrice?: number
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
@@ -46,7 +46,7 @@ export type FloorConfig = {
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   encounter?: string | string[]
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"). Room k uses

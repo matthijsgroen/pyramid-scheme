@@ -20,17 +20,17 @@ describe("initPuzzleChains", () => {
   it("creates an empty rewards array sized to each chain's puzzle count", () => {
     const floors = makeFloors(10, [2, 3])
     initPuzzleChains(floors)
-    expect(floors[0].puzzleRewards).toHaveLength(10)
-    expect(floors[0].sideSections[0].puzzleRewards).toHaveLength(2)
-    expect(floors[0].sideSections[1].puzzleRewards).toHaveLength(3)
-    expect(floors[0].puzzleRewards!.every(r => r === undefined)).toBe(true)
+    expect(floors[0].rewards).toHaveLength(10)
+    expect(floors[0].sideSections[0].rewards).toHaveLength(2)
+    expect(floors[0].sideSections[1].rewards).toHaveLength(3)
+    expect(floors[0].rewards!.every(r => r === undefined)).toBe(true)
   })
 
   it("leaves a zero-puzzle main floor without an array", () => {
     const floors = makeFloors(0, [4])
     initPuzzleChains(floors)
-    expect(floors[0].puzzleRewards).toBeUndefined()
-    expect(floors[0].sideSections[0].puzzleRewards).toHaveLength(4)
+    expect(floors[0].rewards).toBeUndefined()
+    expect(floors[0].sideSections[0].rewards).toHaveLength(4)
   })
 
   it("excludes trapped sections — their puzzles are never rewardable", () => {
@@ -44,6 +44,6 @@ describe("initPuzzleChains", () => {
       },
     ]
     initPuzzleChains(floors)
-    expect(floors[0].sideSections[0].puzzleRewards).toBeUndefined()
+    expect(floors[0].sideSections[0].rewards).toBeUndefined()
   })
 })

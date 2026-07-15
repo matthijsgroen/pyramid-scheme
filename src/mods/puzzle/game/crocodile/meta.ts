@@ -9,5 +9,5 @@ export const CROCODILE_META: FamilyMeta = {
   minTier: "junior", // starter tombs have no crocodile capstone
   icon: "🐊",
   color: "green",
-  rewardWeight: 0, // the tomb's treasure follows directly after — that's its payoff, not this pool
+  rewardPriority: 0, // the tomb's treasure follows directly after — that's its payoff, not this pool
 }

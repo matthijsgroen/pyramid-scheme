@@ -11,5 +11,5 @@ export const SUMPLETE_MIRROR_META: FamilyMeta = {
   minTier: "starter",
   icon: "🪞",
   color: "purple",
-  rewardWeight: 60,
+  rewardPriority: 60,
 }

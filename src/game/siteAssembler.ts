@@ -451,7 +451,7 @@ export const assembleFloor = (
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     const goalIndex = contentIndices[contentIndices.length - 1]
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.puzzleRewards[k] below.
+    // used to index into config.rewards[k] below.
     const puzzleIndices = contentIndices.slice(0, -1)
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
@@ -935,7 +935,7 @@ export const assembleFloor = (
         const override = config.encountersByIndex?.[k]
         const family =
           override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
-        const reward = config.puzzleRewards?.[k]
+        const reward = config.rewards?.[k]
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: k,
@@ -1019,7 +1019,7 @@ export const assembleFloor = (
       const secContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
-        const reward = section.puzzleRewards?.[pi]
+        const reward = section.rewards?.[pi]
         const secOverride = section.encountersByIndex?.[pi]
         const family =
           secOverride !== undefined
@@ -1108,7 +1108,7 @@ export const assembleFloor = (
       const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
-        const reward = subSection.puzzleRewards?.[pi]
+        const reward = subSection.rewards?.[pi]
         const subOverride = subSection.encountersByIndex?.[pi]
         const family =
           subOverride !== undefined

@@ -53,7 +53,7 @@ const serializeSideSection = (s: SideSection): string => {
     )
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
   if (s.shopPrice !== undefined) parts.push(`shopPrice: ${s.shopPrice}`)
-  if (s.puzzleRewards?.length) parts.push(`puzzleRewards: ${serializePuzzleRewards(s.puzzleRewards)}`)
+  if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
   if (s.encounter) parts.push(`encounter: ${serializeEncounter(s.encounter)}`)
@@ -89,7 +89,7 @@ const serializeFloor = (c: FloorConfig): string => {
   if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
   if (c.sealed) lines.push(`    sealed: true,`)
   if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
-  if (c.puzzleRewards?.length) lines.push(`    puzzleRewards: ${serializePuzzleRewards(c.puzzleRewards)},`)
+  if (c.rewards?.length) lines.push(`    rewards: ${serializePuzzleRewards(c.rewards)},`)
   return `  {\n${lines.join("\n")}\n  }`
 }
 
@@ -169,13 +169,13 @@ export const printStats = (configs: Record<string, SiteConfig[]>): void => {
     for (const floors of siteConfigs) {
       for (const cfg of floors) {
         tally(cfg.mainEndReward)
-        for (const r of cfg.puzzleRewards ?? []) tally(r)
+        for (const r of cfg.rewards ?? []) tally(r)
         for (const s of cfg.sideSections) {
           tally(s.endReward)
-          for (const r of s.puzzleRewards ?? []) tally(r)
+          for (const r of s.rewards ?? []) tally(r)
           for (const sub of s.sideSections ?? []) {
             tally(sub.endReward)
-            for (const r of sub.puzzleRewards ?? []) tally(r)
+            for (const r of sub.rewards ?? []) tally(r)
           }
         }
       }

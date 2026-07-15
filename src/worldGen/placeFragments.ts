@@ -7,7 +7,7 @@ import {
   type JourneyMeta,
   type ReachabilitySupport,
 } from "./reachability"
-import { collectSlots, type Slot, type FamilyWeightFor } from "./slots"
+import { collectSlots, type Slot, type FamilyPriorityFor } from "./slots"
 import { allocateDistributions, cappedToDistribution, type Distribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 
@@ -110,11 +110,11 @@ export const placeFragments = (
   resolveRequirements?: ResolveKeyRequirements,
   capped: readonly CappedCurrency[] = [],
   dynamicDistributions: readonly Distribution[] = [],
-  familyWeightFor?: FamilyWeightFor,
+  familyPriorityFor?: FamilyPriorityFor,
   emptyFraction = 0,
   reachabilitySupport: ReachabilitySupport = {}
 ): void => {
-  const slots = collectSlots(allConfigs, familyWeightFor)
+  const slots = collectSlots(allConfigs, familyPriorityFor)
   const available = new Set(slots)
   const journeyMeta = buildJourneyMeta()
 

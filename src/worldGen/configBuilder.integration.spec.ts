@@ -16,7 +16,7 @@ import {
   MOD_TOMB_TREASURE_RESOLVER,
 } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
-import { resolveKeyRequirements, familyWeightFor } from "../mods/allFamilyMeta"
+import { resolveKeyRequirements, familyPriorityFor } from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
 // check. The economy guard is a separate global invariant (validated by generate-world) that only
@@ -36,7 +36,7 @@ const buildRealConfigs = () =>
     CAPPED_CURRENCIES,
     DYNAMIC_DISTRIBUTIONS,
     MOD_WORLD_VALIDATORS,
-    familyWeightFor,
+    familyPriorityFor,
     0,
     undefined,
     MOD_REACHABILITY_SUPPORT,

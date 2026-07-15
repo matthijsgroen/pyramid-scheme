@@ -19,7 +19,7 @@ import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ReachabilitySupport } from "./reachability"
 import type { Distribution } from "./slotAllocator"
-import type { FamilyWeightFor } from "./slots"
+import type { FamilyPriorityFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
@@ -250,7 +250,7 @@ export const buildConfigs = (
   capped: CappedCurrency[] = [],
   dynamicDistributions: Distribution[] = [],
   worldValidators: WorldValidator[] = [],
-  familyWeightFor?: FamilyWeightFor,
+  familyPriorityFor?: FamilyPriorityFor,
   emptyFraction = 0,
   allocateEncounter?: EncounterAllocator,
   reachabilitySupport?: ReachabilitySupport,
@@ -268,7 +268,7 @@ export const buildConfigs = (
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
 
   // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
-  // Runs before slot collection (rewardWeight derives from the chosen family) and serialization.
+  // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.
   // Injected from src/mods (allFamilyMeta.allocateEncounterFamily) — src/worldGen can't read the
   // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
   if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter)
@@ -281,7 +281,7 @@ export const buildConfigs = (
     resolveKeyRequirements,
     capped,
     dynamicDistributions,
-    familyWeightFor,
+    familyPriorityFor,
     emptyFraction,
     reachabilitySupport
   )

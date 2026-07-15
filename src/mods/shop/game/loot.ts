@@ -37,9 +37,9 @@ const byMaterialTier = (slots: Slot[]): Map<MaterialTier, Slot[]> => {
 
 export const shopMoneyEconomy: Distribution = {
   id: "shop-money-economy",
-  // Puzzle + chest slots that still bear loot (rewardWeight>0); junk needs a material tier, which
+  // Puzzle + chest slots that still bear loot (rewardPriority>0); junk needs a material tier, which
   // every slot has (via its difficulty). Runs after consumables, so it takes what's left.
-  eligible: slot => slot.rewardWeight > 0,
+  eligible: slot => slot.rewardPriority > 0,
   // Completeness needs ≥1 of each collectible = 25 slots minimum (hard-fail below). No ceiling —
   // the shop claims every remaining eligible slot and empties the ones its budget doesn't need,
   // so eagerness (chest-first) + the budget decide how much of the world actually bears loot.

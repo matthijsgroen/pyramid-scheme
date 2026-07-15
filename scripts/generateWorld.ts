@@ -19,7 +19,7 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
-import { resolveKeyRequirements, familyWeightFor, allocateEncounterFamily } from "../src/mods/allFamilyMeta"
+import { resolveKeyRequirements, familyPriorityFor, allocateEncounterFamily } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import {
@@ -60,7 +60,7 @@ const configs = buildConfigs(
   CAPPED_CURRENCIES,
   DYNAMIC_DISTRIBUTIONS,
   MOD_WORLD_VALIDATORS,
-  familyWeightFor,
+  familyPriorityFor,
   EMPTY_FRACTION,
   allocateEncounterFamily,
   MOD_REACHABILITY_SUPPORT,

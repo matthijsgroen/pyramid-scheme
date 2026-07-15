@@ -6,5 +6,5 @@ export const KEY_GATE_META: FamilyMeta = {
   tags: ["gate"],
   icon: "🔒",
   color: "amber",
-  rewardWeight: 0, // demand, not a reward — never eligible for the reward-weight fill
+  rewardPriority: 0, // demand, not a reward — never eligible for the reward-weight fill
 }

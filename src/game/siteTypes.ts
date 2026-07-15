@@ -87,7 +87,7 @@ export type SubSection = {
   endReward?: TreasureReward
   /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
   shopPrice?: number
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
@@ -121,7 +121,7 @@ export type FloorConfig = {
   /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means AND. */
   encounter?: string | string[]
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from

@@ -6,5 +6,5 @@ export const FEZ_SHOP_META: FamilyMeta = {
   tags: ["shop"],
   icon: "🛒",
   color: "amber",
-  rewardWeight: 0, // browsed, not solved — never a puzzle-solve reward candidate
+  rewardPriority: 0, // browsed, not solved — never a puzzle-solve reward candidate
 }

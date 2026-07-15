@@ -28,7 +28,7 @@ export type FamilyMeta = {
   // is filled by its own dedicated mechanism (a shop's stock, a tableau's hieroglyph
   // fragment) — explicit DSL authoring or a system that targets it directly, never this
   // generic pool, even though a shop has real capacity (several stock slots).
-  rewardWeight: number
+  rewardPriority: number
   // First difficulty tier this family may be allocated at (its catalogue debut, per
   // docs/game-design/PUZZLE_FAMILIES.md / TRAP_FAMILIES.md). The gen-time encounter allocator
   // only draws a family into a role's pool for slots at or above this tier. Unset = "starter"

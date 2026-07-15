@@ -7,7 +7,7 @@ const stubMeta = (id: string, tags: string[]) => ({
   tags,
   icon: "?",
   color: "gray",
-  rewardWeight: 0,
+  rewardPriority: 0,
 })
 const stubPlugin = (id: string, tags: string[]) => ({
   meta: stubMeta(id, tags),

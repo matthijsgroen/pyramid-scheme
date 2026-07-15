@@ -15,8 +15,8 @@ export type Distribution = {
   // How many slots core should hand this distribution. Exact (min === max) for a fixed total.
   footprint: (allConfigs: Record<string, SiteConfig[]>) => Footprint
   // Which slots core may allocate to it (default: any). The encounter↔loot join lives here —
-  // e.g. consumables filter on `slot.rewardWeight > 0 && tier >= expert`; the shop takes any
-  // loot-eligible (`rewardWeight > 0`) slot.
+  // e.g. consumables filter on `slot.rewardPriority > 0 && tier >= expert`; the shop takes any
+  // loot-eligible (`rewardPriority > 0`) slot.
   eligible?: (slot: Slot) => boolean
   // Priority among eligible slots when contended (default: natural order).
   rank?: (candidates: readonly Slot[]) => Slot[]
@@ -32,11 +32,11 @@ export type Distribution = {
 // "Exhausted relaxation is a build failure").
 //
 // Eagerness (docs/mods/distribution-primitive-design.md): candidates are offered in
-// `rewardWeight`-desc order (chest 100 before puzzle 60), so eager slots fill first and a
+// `rewardPriority`-desc order (chest 100 before puzzle 60), so eager slots fill first and a
 // distribution that can't take everything leaves the least-eager slots empty. `emptyFraction`
 // reserves that share up front — the least-eager loot-eligible slots are skimmed and left empty
 // before anyone distributes, so found loot stays meaningful (no 1-coin spam). Slots of
-// `rewardWeight === 0` are loot-ineligible and simply never match a distribution's `eligible`.
+// `rewardPriority === 0` are loot-ineligible and simply never match a distribution's `eligible`.
 //
 // ponytail: greedy per-distribution (each takes up to its max in list order). Fine while at most
 // one distribution with a nonzero `min` competes for a given slot pool; upgrade to
@@ -51,7 +51,7 @@ export const allocateDistributions = (
   if (emptyFraction > 0) {
     // Least-eager loot-eligible slots first (puzzle before chest), so the reserved-empty share
     // lands on low-eagerness slots. Stable within a weight (collectSlots order) → deterministic.
-    const eligible = [...available].filter(s => s.rewardWeight > 0).sort((a, b) => a.rewardWeight - b.rewardWeight)
+    const eligible = [...available].filter(s => s.rewardPriority > 0).sort((a, b) => a.rewardPriority - b.rewardPriority)
     for (const slot of eligible.slice(0, Math.round(eligible.length * emptyFraction))) available.delete(slot)
   }
   for (const dist of distributions) {
@@ -59,7 +59,7 @@ export const allocateDistributions = (
     // Eager order is the default; dist.rank refines within it (Array.sort is stable).
     const eligible = [...available]
       .filter(s => dist.eligible?.(s) ?? true)
-      .sort((a, b) => b.rewardWeight - a.rewardWeight)
+      .sort((a, b) => b.rewardPriority - a.rewardPriority)
     const ranked = dist.rank ? dist.rank(eligible) : eligible
     const take = ranked.slice(0, max)
     if (take.length < min) {

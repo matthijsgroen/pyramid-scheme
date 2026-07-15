@@ -120,9 +120,9 @@ describe("buildSite", () => {
 
   it("inits an empty puzzle-reward array per chain (fill happens later, in the placement pass)", () => {
     const { floors } = buildSite({ ...baseCtx, pathPuzzles: 20 })
-    expect(floors[0].puzzleRewards).toHaveLength(20)
+    expect(floors[0].rewards).toHaveLength(20)
     // buildSite only creates the slots; the dynamic-loot distributions fill them
     // (dynamicDistributions.spec covers fill + the per-site seed variation).
-    expect(floors[0].puzzleRewards?.every(r => r === undefined)).toBe(true)
+    expect(floors[0].rewards?.every(r => r === undefined)).toBe(true)
   })
 })

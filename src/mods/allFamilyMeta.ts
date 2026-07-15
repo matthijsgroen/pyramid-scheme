@@ -8,7 +8,7 @@ import { MOD_FAMILY_META } from "./registeredMods"
 
 // Every registered family's metadata, domain-layer only (no Component/generate) — the one
 // place world-gen (which can't import the app-layer family registry) can read tags/
-// rewardWeight. Kept in sync with app/registerModApps.ts's plugin registrations by each
+// rewardPriority. Kept in sync with app/registerModApps.ts's plugin registrations by each
 // plugin importing its meta from here rather than declaring its own copy. Only CORE's own
 // families (treasure-chest, key-gate — not a toggleable mod) are listed directly; every
 // descriptor-registered mod (puzzle's sumplete/crocodile, trap's arithmetic-reflex, hieroglyph's
@@ -23,16 +23,16 @@ export const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   ALL_FAMILY_META.find(m => m.id === familyId)?.resolveKeyRequirements?.(ctx)
 
 // The reward-weight (eagerness) of the family an authored `encounter` resolves to — the one
-// place world-gen reads FamilyMeta.rewardWeight to rank loot slots (chest 100 > puzzle 60 >
+// place world-gen reads FamilyMeta.rewardPriority to rank loot slots (chest 100 > puzzle 60 >
 // trap/tableau/crocodile/gate/shop 0). `encounter` may be a family id ("sumplete") or a tag
 // ("puzzle"); `defaultTag` fills in when unset (e.g. "treasure" for a chest end, "puzzle" for a
 // plain puzzle chain). Resolves id-first then tag, mirroring familyRegistry's resolveEncounter,
 // but domain-only so it rides the same injection seam as resolveKeyRequirements. Returns 0 for an
 // unknown encounter (loot-ineligible) — a mod's family drops from ALL_FAMILY_META with the mod.
-export const familyWeightFor = (encounter: string | string[] | undefined, defaultTag: string): number => {
+export const familyPriorityFor = (encounter: string | string[] | undefined, defaultTag: string): number => {
   const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
   const meta = ALL_FAMILY_META.find(m => m.id === value) ?? ALL_FAMILY_META.find(m => m.tags.includes(value))
-  return meta?.rewardWeight ?? 0
+  return meta?.rewardPriority ?? 0
 }
 
 // Gen-time encounter allocation: given an authored ROLE (a family tag, or an AND-array of tags)

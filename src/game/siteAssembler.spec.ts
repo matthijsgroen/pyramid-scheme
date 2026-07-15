@@ -709,14 +709,14 @@ describe(assembleFloor, () => {
     }
   })
 
-  it("puzzleRewards: attaches config.puzzleRewards[k] onto the k-th main-path puzzle room, in order", () => {
+  it("rewards: attaches config.rewards[k] onto the k-th main-path puzzle room, in order", () => {
     const config: FloorConfig = {
       pathPuzzles: 4,
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [],
-      puzzleRewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
+      rewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)

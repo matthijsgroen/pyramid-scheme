@@ -17,7 +17,7 @@ const CONSUMABLE_COUNT = 368
 
 export const trapConsumables: Distribution = {
   id: "trap-consumables",
-  eligible: slot => slot.kind === "puzzle" && slot.rewardWeight > 0 && difficultyCompare(slot.tier, "expert") >= 0,
+  eligible: slot => slot.kind === "puzzle" && slot.rewardPriority > 0 && difficultyCompare(slot.tier, "expert") >= 0,
   footprint: () => ({ min: 0, max: CONSUMABLE_COUNT }),
   // Spread deterministically across sites (seeded by slot identity) so consumables don't cluster in
   // whichever sites collectSlots happened to emit first. No Math.random — hashStr is a pure seed.

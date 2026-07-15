@@ -16,7 +16,7 @@ const slot = (opts: { weight: number; tier?: Slot["tier"]; kind?: Slot["kind"]; 
     kind: opts.kind ?? "puzzle",
     siteId: "j:0",
     puzzleSeq: opts.seq ?? 0,
-    rewardWeight: opts.weight,
+    rewardPriority: opts.weight,
     reward: undefined as TreasureReward | undefined,
     assign(r: TreasureReward | undefined) {
       this.reward = r
@@ -32,7 +32,7 @@ describe("allocateDistributions — eagerness + empty quota", () => {
     fill: taken => taken.forEach(s => s.assign({ type: "money", amount: 1 })),
   }
 
-  it("offers eager slots first — a capped distribution takes the highest rewardWeight", () => {
+  it("offers eager slots first — a capped distribution takes the highest rewardPriority", () => {
     const chest = slot({ weight: 100, kind: "end", seq: 0 })
     const puzzle = slot({ weight: 60, seq: 1 })
     const available = new Set<Slot>([puzzle, chest]) // insertion order puzzle-first on purpose
@@ -45,7 +45,7 @@ describe("allocateDistributions — eagerness + empty quota", () => {
     const dead = slot({ weight: 0 })
     const live = slot({ weight: 60, seq: 1 })
     const available = new Set<Slot>([dead, live])
-    allocateDistributions(available, [{ ...fillFirst, eligible: s => s.rewardWeight > 0 }], {})
+    allocateDistributions(available, [{ ...fillFirst, eligible: s => s.rewardPriority > 0 }], {})
     expect((dead as unknown as { reward?: TreasureReward }).reward).toBeUndefined()
     expect((live as unknown as { reward?: TreasureReward }).reward).toEqual({ type: "money", amount: 1 })
   })
@@ -58,7 +58,7 @@ describe("allocateDistributions — eagerness + empty quota", () => {
     expect(filled).toHaveLength(8)
     // the two reserved-empty are weight-60 (least eager), never weight-100 chests
     const empties = slots.filter(s => (s as unknown as { reward?: TreasureReward }).reward === undefined)
-    expect(empties.every(s => s.rewardWeight === 60)).toBe(true)
+    expect(empties.every(s => s.rewardPriority === 60)).toBe(true)
   })
 
   it("hard-fails when a distribution's min can't be met", () => {

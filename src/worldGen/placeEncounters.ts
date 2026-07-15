@@ -28,7 +28,7 @@ const assignByIndex = (
 
 // Gen-time encounter pass. Walks every floor/section that actually has encounter rooms and bakes
 // its authored role → a concrete family, chosen from the tag pool by the injected allocator. Runs
-// before slot collection (so rewardWeight derives from the chosen family) and before serialization
+// before slot collection (so rewardPriority derives from the chosen family) and before serialization
 // (so generatedWorld stores the concrete choice). Per-floor/per-section granularity — a node's
 // rooms share one family; variety spreads across floors, sites, and sections. Seeded per
 // (journey, level, floor, node) so the spread is stable across regens and tunable by reseeding.
