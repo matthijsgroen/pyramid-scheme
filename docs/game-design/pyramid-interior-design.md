@@ -38,7 +38,7 @@ The game has two distinct site types. Their loot is strictly separated — nothi
 
 World builder warns when side paths exceed available fragment slots.
 
-Ward gates always lead to a staircase. The staircase is the reward — a new floor below.
+A ward gate leads to either a staircase (a new floor below) or an optional loot pocket — the pocket is *optional loot* by default, *load-bearing* only when it holds a required currency (see the invariant chain in `keys-and-locks-solver.md`). Every treasure now gates one (§E).
 
 ### Tombs — the key factory
 
@@ -342,20 +342,21 @@ Entrance ── side path ── [fez shop] (always open, no gate)
 - **Gating is soft everywhere** — tableau, trap, and gate rooms are all approachable and enterable regardless of what the player currently holds; they simply can't be *solved*/*passed* yet. No hard "encounter does not launch" block (today's trap behavior — `canAttemptTrap()` — is the one holdout and needs to soften to match).
 - **Tomb "complete"** fires on treasure 1 alone (matches §14: treasure #1 is always the tier-unlock). Floors 2+ are a deepening tail explored over time, not a completion requirement.
 
-**Illustrative DSL** (once `FloorConstraint` gains a per-floor capstone field — doesn't exist yet, `lastMainPuzzleFamily` today only exists on the resolved `FloorConfig`, hardcoded by `configBuilder.ts`):
+**Illustrative DSL** (as built — `FloorConstraint`/`SideSectionConstraint` carry `nodes` selectors, resolved to `encountersByIndex` on the `FloorConfig`; see `ARCHITECTURE.md`, "Authoring: node selectors"):
 
 ```ts
 // One authored floor inside a tomb's `floors` array — this is floor 3 (0-based index 2).
 const floorThree: FloorConstraint = {
   encounter: "tomb-puzzle",           // main-path rooms default to tableau
   pathPuzzles: 3,                     // however many TableauLevel entries this run has
-  lastMainPuzzleFamily: "crocodile",  // this floor's own capstone — authored per floor now,
-                                       // not hardcoded to "only the tomb's last floor"
+  nodes: [{ where: "last", encounter: "capstone" }], // this floor's own capstone (crocodile),
+                                       // authored per floor — no hardcoded "only the last floor"
   mainEndReward: { type: "tombKey", keyId: "starter_treasure_tomb:t3" },
   // the treasure IS the key — this one reward both records the collectible and satisfies
   // the next floor's gate below
   sideSections: [
-    { pathPuzzles: 0, end: "treasure", shopPrice: 250 }, // always-open branch to the Fez shop
+    { pathPuzzles: 0, end: "treasure", encounter: "shop" }, // always-open branch to the Fez shop;
+    // its stock lives in `rewards[]` (mods fill it), priced by the shop — no authored price here
     {
       pathPuzzles: 0,
       end: "staircase",
@@ -393,11 +394,12 @@ The final treasure in each multi-tomb tier's earlier tomb is the *location key* 
 
 Each tomb has a small authored pool of 3–6 symbols, sourced from `TOMB_SYMBOLS` in `tableaus.ts`. The generator reads this — no separate field in the tomb template. A tableau room is locked if any of its symbols are not yet completed by the player.
 
-### Implementation gap (not a design question — this is settled, just not built)
+### Implementation status (built — §A.2 / §G / shop-stock)
 
-- `FloorConstraint` (`dsl.ts`) needs the per-floor capstone field shown above — today `lastMainPuzzleFamily` only exists on the resolved `FloorConfig`, set by `configBuilder.ts`'s hardcoded `hasCroc`/`isLast` tier check.
-- `configBuilder.ts`'s `buildTombConfigs` generates one small site per tomb (matching `tomb.levelCount`, one run's worth) — needs to become the persistent multi-floor site described above.
-- `TombExpedition.tsx` still uses the live `renderPuzzle` override; `useJourneys.ts` still lacks the `isInteriorPyramid`-equivalent pinned-seed/capped-completionCount treatment for `treasure_tomb` journeys; trap's `canAttemptTrap()` hard-blocks and needs to soften.
+All three former gaps are now shipped:
+- The per-floor capstone is authored via `nodes` selectors (`{ where: "last", encounter: "capstone" }`); the `hasCroc`/`isLast` hardcode is gone from `configBuilder.ts`.
+- Tombs are persistent multi-floor sites: `useJourneys.ts`'s `isPersistentInterior` covers `treasure_tomb` (pinned seed, capped `completionCount`, remembered `exploredSections`); `TombExpedition`/`renderPuzzle` are gone — tomb rooms dispatch through the registered families like every other room.
+- Trap gating softened (`isTrapAttemptSafe` warns, the attempt always launches; the health consequence lives in the trap plugin).
 
 ---
 

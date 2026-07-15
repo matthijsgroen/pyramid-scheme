@@ -51,7 +51,7 @@ export type NodeWhere = "first" | "last" | number | { every: number; from?: numb
  * encounter: "trap" }`, `{ where: 4, encounter: "arithmetic-reflex" }`. Unselected nodes fall back
  * to the path's `encounter` default; on overlap, the LATER selector in the array wins. Currently
  * carries a family-swap (`encounter`) only; a `gate?` extension is designed but unbuilt
- * (docs/mods/SLICE-G-selectors.md). */
+ * (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). */
 export type NodeSelector = {
   where: NodeWhere
   /** Family/tag for the selected node(s) — an exact family id or a tag (e.g. "capstone", "trap"). */

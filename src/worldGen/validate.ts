@@ -79,4 +79,4 @@ export const validateRewardCounts = (
 // count-aware there (a tomb's own `piecesRequired` map pieces) vs this check's existence-only BFS,
 // and ward-key ordering is enforced structurally by the fine per-floor BFS + settleHarvest + the
 // winnability sweep (placeFragments.ts, which hard-fails if any lock stays blocking). See
-// docs/mods/SLICE-E-ward-keys.md.
+// docs/game-design/keys-and-locks-solver.md.

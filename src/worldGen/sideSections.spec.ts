@@ -71,7 +71,7 @@ describe("buildSideSections", () => {
       hasMapPieceBranch: true,
     })
     // A generic sentinel tagged `mapPiece:<tombId>` — the tomb-treasure mod's currency fills it,
-    // so core world-gen names no reward type here (docs/mods/SLICE-tomb-treasure.md).
+    // so core world-gen names no reward type here (docs/mods/ARCHITECTURE.md (tombTreasure mod)).
     expect(sections).toEqual([
       {
         pathPuzzles: 0,

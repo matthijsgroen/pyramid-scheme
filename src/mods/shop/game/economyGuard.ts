@@ -9,7 +9,7 @@ import { priceFor } from "./pricing"
 // player to be able to afford all of it — it's the floor the loot budget targets (see loot.ts) and
 // the number the economy guard checks income against. One walk, one source, shared by both so they
 // can never drift. (Finite stock is what keeps this bounded, so the guard can guarantee every
-// progression piece stays affordable — docs/mods/SLICE-shop-stock.md.)
+// progression piece stays affordable — docs/mods/ARCHITECTURE.md (shop mod).)
 export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number => {
   let sum = 0
   const tally = (s: SubSection) => {

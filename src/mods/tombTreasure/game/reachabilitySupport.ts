@@ -3,7 +3,7 @@ import { TIER_UNLOCK_PERK_ID } from "@/data/treasurePerks"
 import { journeys as REAL_JOURNEYS } from "@/data/journeys"
 
 // The tomb-treasure mod's contribution to the world-gen reachability model — the currency-specific
-// facts core reachability.ts must NOT name (docs/mods/SLICE-E-ward-keys.md, §E). Injected via the
+// facts core reachability.ts must NOT name (docs/game-design/keys-and-locks-solver.md, §E). Injected via the
 // mod descriptor → registeredMods → generateWorld → buildConfigs → placeFragments.
 //   - bucketForReward: harvest both tomb-treasure rewards — a tomb-key to its own keyId bucket, a
 //     map piece to its tomb's `mapPiece:<tombId>` bucket. Both live here (not on the map-piece

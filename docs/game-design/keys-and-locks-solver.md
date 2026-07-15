@@ -301,8 +301,17 @@ inventing a rule language for it.
 > key"), placed by tomb structure and *harvested* by the reachability model, never
 > ranked into free slots (210 gates reference only ~32 distinct keys — many:1,
 > threshold-1 demand; a demand-spread currency can't express that). So the
-> ward-key line below never became real code, and `WARD_MIX` stays buried. See
-> `docs/mods/SLICE-E-ward-keys.md`.
+> ward-key line below never became real code, and `WARD_MIX` stays buried.
+>
+> **Why retiring `validateDiscovery` is safe (the invariant chain):** every tomb
+> treasure is always placed as positional content → every ward key is therefore
+> harvestable → every ward gate (optional or load-bearing) resolves in reachability
+> → no hard-fail. A ward pocket is *optional loot* by default; it becomes
+> *load-bearing* only when it holds a required currency (e.g. a secondary-tomb map
+> piece on a deep floor), and the worklist already sequences that (place ward key →
+> pocket reachable → place the required piece). Reachability's winnability sweep +
+> `settleHarvest` enforce this structurally, subsuming `validateDiscovery`'s old
+> existence-only check.
 
 The three rules named so far all decompose into two small, reusable
 primitive kinds — **filters** (narrow candidates) and **rankers** (order

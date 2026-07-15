@@ -164,7 +164,7 @@ specifically).
 
 ## Still open (for the build, not blocking the design)
 
-- Increment 2 — encounters as distributions ✅ (shop-stock slice, `SLICE-shop-stock.md`):
+- Increment 2 — encounters as distributions ✅ (shop-stock slice; see `ARCHITECTURE.md`, shop mod):
   `Slot.encounter` + `FamilyMeta.rewardCapacity` metadata landed; a shop node expands into 6
   reward slots (priority 0) written into the node's `rewards[]`; the currency mods place stock on
   the `slot.encounter === "fez-shop"` join (`placeShopStock`), and trap fills the leftovers with

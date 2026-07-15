@@ -42,7 +42,7 @@ export type ModDescriptor = {
   // Currency-specific facts the world-gen reachability model needs but core must not name (§E):
   // a reward→bucket harvest, a journey's currency entry lock (tomb map pieces), the tier-unlock
   // ladder. Merged across mods and injected into buildConfigs. The tomb-treasure mod supplies it;
-  // it drops with the mod. See docs/mods/SLICE-E-ward-keys.md.
+  // it drops with the mod. See docs/game-design/keys-and-locks-solver.md.
   reachabilitySupport?: ReachabilitySupport
   // Maps a tomb's treasure-stream position → the reward placed there (the tomb-treasure mod's
   // `tombKey` perk stream). Injected into buildConfigs so core world-gen names no reward type;
@@ -51,6 +51,6 @@ export type ModDescriptor = {
   // This mod's shop-stock placements: sell specific currency pieces at specific shops (by
   // journeyId + nth). Each drops a fragmentSlot sentinel the capped/gating pass fills, so the piece
   // is moved out of the free-world spread into the shop. Drops with the mod (shop off → shops fall
-  // back to chests; this currency off → its pieces stay in the world). See docs/mods/SLICE-shop-stock.md.
+  // back to chests; this currency off → its pieces stay in the world). See docs/mods/ARCHITECTURE.md (shop mod).
   shopStock?: ShopStockAssignment[]
 }

@@ -24,6 +24,24 @@ the goals one-pager in `TARGET.md`, the placement design in
    and, if demand exceeds capacity, fails the build telling the author to add
    capacity. Target counts are the owning mod's, never core's.
 
+### Design guardrails (mod boundaries & typing)
+
+- **When a currency earns its own mod:** promote it when a *second independent
+  consumer* appears OR it earns a *dedicated screen* — whichever comes first, not
+  before. Until then it rides an existing mod.
+- **Toggling is a diagnostic, not a production requirement.** On/off exists for demo
+  builds and a new mod's WIP feature-flag lifecycle. Only the single shipping
+  mod-combo must ever be fully solvable; core is not hardened with a runtime
+  graceful "missing dependency" system for arbitrary combos. Toggle-off proves
+  *isolation* (a mod left no residue), which is why it's the acceptance gate — not
+  that every subset ships.
+- **What stays closed vs. open in the type system:** keep `Tier`, `GateType`,
+  `KeyColor` as closed literal unions (core structure). Open only *family ids* and
+  *currency ids* (mods coin them) — `TreasureReward` is `{ type: string } &
+  Record<string, unknown>`, validated per-type by owner-registered zod schemas at
+  boot. Prefer a codegen'd union over bare `string` where exhaustiveness matters.
+  Don't open everything: the boundary is "what mods extend," nothing more.
+
 ## Layers
 
 ```
@@ -88,6 +106,36 @@ The site assembler maps an authored encounter tag to a family
 (`resolveEncounter`) and renders it, or — when a family isn't registered — falls
 through to a pass-through that resolves the room generically. So a room whose mod
 is off is never a dead end.
+
+### Authoring: node selectors
+Which encounter sits at which position on a path is authored as *placement intent*,
+not a per-case hardcoded field. A section/floor constraint carries
+`nodes?: NodeSelector[]` (on both `FloorConstraint` and `SideSectionConstraint`),
+each `{ where, encounter }`:
+- `where`: `"first" | "last" | number | { every: number; from?: number }`
+  (positions 1-based); `encounter`: a family id/tag or list of them.
+- Resolves at build time to `encountersByIndex?: Record<number, string | string[]>`
+  on the section — `{ where: "last" }` → `encountersByIndex[N-1]`. This replaced the
+  old one-off `lastMainPuzzleFamily` field: adding a placement rule is now authoring,
+  not a new code field.
+- Conflict rule: **later selector in the array wins** (author controls order — e.g.
+  an `{ every: 2 }` sweep then an explicit `{ where: "last" }` override).
+- Per-node loot follows the resolved family: a slot's `rewardPriority` is
+  `familyPriorityFor(encountersByIndex[k] ?? sectionEncounter)`, so a weight-0 node
+  (trap) mid-chain is loot-ineligible while its neighbours bear loot — this is the
+  per-node half of the §A.3 eligibility join, delivered.
+
+The crocodile capstone (`nodes: [{ where: "last", encounter: "capstone" }]`) is the
+first real use; the grammar generalizes to every-nth / specific-index / role-lists on
+any path. **Extension — gate-injection (designed, not built):** the same selector can
+carry a gate — `{ where: n, encounter: "gate", gate, end?, endReward? }` — to place a
+key-gate mid-path. It's deferred because a mid-*main*-path gate is a bigger change:
+gates today live only on side sections, so splitting a linear chain reopens the maze
+assembler (`initPuzzleChains` + routing the continuation) and adds a new frontier shape
+to the §E reachability worklist (winnability + "a key is never behind its own gate"
+must hold per injected gate). The gate node bears no loot; its reward attaches to the
+gate's target. The grammar extends cleanly (`gate?` on the same `NodeSelector`), so
+shipping family-swap first doesn't foreclose it.
 
 ### Reward claiming — handlers + contributions
 Two seams, so core never sees a mod's state:
@@ -232,5 +280,21 @@ consumables are trap's alone.
 
 ### shop (`src/mods/shop`)
 The money economy: the Fez shop encounter family (`fez-shop`), where junk sells
-for money and money buys rares + consumable restock. Shop-owned money + junk
-placement + the economy guard are the sell/buy sides of one mechanic.
+for money and money buys stock. Shop-owned money + junk placement + the economy
+guard are the sell/buy sides of one mechanic. A shop is a node with
+`rewardCapacity` 6: the currency mods place stock into its `rewards[]` on the
+`slot.encounter === "fez-shop"` join (`shopStock`), trap fills the leftovers with
+finite consumables, and the shop prices every slot (`shop/game/pricing.ts`) — the
+mods stay money-blind. Stock is finite (no restock): the economy guard proves
+`income ≥ total buyable`, so a player who buys everything can still afford every
+progression-gating piece — unlimited stock would break that guarantee.
+
+### tombTreasure (`src/mods/tombTreasure`)
+Owns `mapPiece` (a gating currency found in pyramids, unlocks a tomb's entry) and
+`tombKey` (positional tomb content harvested by reachability). **Deliberately one
+mod, not two:** they are a single interdependent loop — enter a tomb with map
+pieces, leave with the keys that gate the next — so they toggle as one unit. A
+root mod that stays on in production (like `puzzle`): it owns the tomb-key/mapPiece
+gating, so toggling it off leaves authored gates unsatisfiable (an isolation test,
+not a shippable combo). The structural flags `hasMapPieceBranch`/`emitMapPiece`
+stay in core intentionally — they name no reward type, only *where a branch exists*.

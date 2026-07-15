@@ -1,8 +1,8 @@
 # Mods — target state (B)
 
 The one-page picture of where the architecture is going. If a decision isn't
-here, it isn't settled — check `SLICE-CHECKLIST.md` for how a slice lands, or
-`_brainstorm.md` for the (archived) reasoning that got us here.
+here, it isn't settled — check `SLICE-CHECKLIST.md` for how a slice lands, and
+`ARCHITECTURE.md` for how the pieces fit + the design guardrails.
 
 ## The shape
 

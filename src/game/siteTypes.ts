@@ -97,7 +97,7 @@ export type SubSection = {
    * An array means AND: every listed tag must be present on the resolved family. */
   encounter?: string | string[]
   /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
-   * selectors (docs/mods/SLICE-G-selectors.md). Room k uses `encountersByIndex[k] ?? encounter`;
+   * selectors (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). Room k uses `encountersByIndex[k] ?? encounter`;
    * at runtime the values are resolved family ids. */
   encountersByIndex?: Record<number, string | string[]>
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
@@ -127,7 +127,7 @@ export type FloorConfig = {
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
-   * pass. Replaces the old last-only `lastMainPuzzleFamily`. See docs/mods/SLICE-G-selectors.md. */
+   * pass. Replaces the old last-only `lastMainPuzzleFamily`. See docs/mods/ARCHITECTURE.md ("Authoring: node selectors"). */
   encountersByIndex?: Record<number, string | string[]>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number

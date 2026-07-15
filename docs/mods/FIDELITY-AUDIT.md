@@ -51,8 +51,10 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   a general **node-selector** vocabulary (`nodes: [{ where, encounter }]`, any path), replacing the
   hardcoded `isLast && hasCroc` + one-off `lastMainPuzzleFamily` (world byte-identical); trap gating
   softened (`isTrapAttemptSafe` warning, attempt always launches; health consequence in the trap
-  plugin); tomb persistence already done (§A.2); shop kept floor-0. Gate-injecting selectors designed,
-  not built. See `docs/mods/SLICE-G-selectors.md`.
+  plugin); tomb persistence already done (§A.2); shop kept floor-0. The node-selector grammar +
+  the designed-not-built gate-injection extension are documented in `ARCHITECTURE.md` ("Authoring:
+  node selectors"). This also delivered the per-node half of §A.3: a slot's `rewardPriority` reads
+  the resolved `encountersByIndex[k]`, so a weight-0 node mid-chain is loot-ineligible.
 - **§A.3 ✅ (encounter allocation)** gen-time **tag-based** encounter allocation: authored roles
   (family tags `puzzle`/`tomb-puzzle`/`trap`/`capstone`) resolve to a concrete family from the
   tier-eligible pool of enabled families, baked into the config (`placeEncounters.ts` +
@@ -65,7 +67,8 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   `reachability.ts` genericized (mod-supplied `ReachabilitySupport` — core names no currency),
   tombKey placement injected from the mod (core `configBuilder` names no reward type), and every
   treasure now gates an optional loot pocket (last-floor `wardChest`). Direction 3 / positional-keys,
-  not the audit's "keys-as-currency" framing. See `docs/mods/SLICE-E-ward-keys.md`.
+  not the audit's "keys-as-currency" framing. The spread-currency vs positional-key split + the
+  reachability two-layer design are in `docs/game-design/keys-and-locks-solver.md`.
 - **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
 - **§H (puzzle) ✅** `puzzle` is now a real `REGISTERED_MODS` mod (`ff97078`): families flow via
   `MOD_FAMILY_META`, plugins self-gate, `ALL_FAMILY_META` lists only core's own families. Adding a
@@ -74,7 +77,7 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   puzzle rooms' loot slots — puzzle is a root mod that stays on. (Shop's hard-fail-on-low-capacity
   is a separate shop-robustness question.)
 - **tomb-treasure mod ✅** (the "last mod") — `mapPiece`/`tombKey` extracted into
-  `src/mods/tombTreasure` per `docs/mods/SLICE-tomb-treasure.md`. The map-piece currency
+  `src/mods/tombTreasure` (mod summary + why-one-mod rationale in `ARCHITECTURE.md`). The map-piece currency
   (`MAP_PIECE_CURRENCY` + its `currencyMeta`) is now mod-owned; `worldGen/mapPieceCurrency.ts` is
   gone. The pyramid's map-piece branch emits a `fragmentSlot` sentinel tagged `mapPiece:<tombId>`
   (`sideSections.ts`) which the mod's currency fills — core world-gen no longer names the `mapPiece`
@@ -211,7 +214,7 @@ the "reward-vocabulary leak" the handover calls one deferred gotcha; the audit s
 
 ## E — Ward/tomb keys → the solver  ·  HIGH  ·  ✅ FIXED (2026-07-14)
 
-> **Resolved** (§E, 4 stages — `docs/mods/SLICE-E-ward-keys.md`; commits on `mods/hieroglyph-currency`).
+> **Resolved** (§E, 4 stages; commits on `mods/hieroglyph-currency`).
 > The audit's "make ward keys a currency distribution" framing partly misread the mechanic —
 > exploration showed tomb treasures are **positional tomb content** (210 gates : 32 distinct keys,
 > many:1, threshold-1 demand), not a demand-spread currency. So the real §E was **direction 3**: a
@@ -263,7 +266,8 @@ exist but their `bump` is never invoked. Base health stays 6 forever. Only tier-
 >   `configBuilder`; a general **node-selector** authoring vocabulary (`nodes: [{ where, encounter }]`,
 >   any path) replaced the one-off `lastMainPuzzleFamily`. Each non-starter tomb spec authors
 >   `nodes: [{ where: "last", encounter: "capstone" }]`. Placement byte-identical (8 crocs, same
->   floors). Build family-swap only; gate-injection designed. See `docs/mods/SLICE-G-selectors.md`.
+>   floors). Build family-swap only; gate-injection designed (grammar + deferral rationale in
+>   `ARCHITECTURE.md`, "Authoring: node selectors").
 > - **Trap gating softened** — `canAttemptTrap` (hard block at ≤1 heart) → `isTrapAttemptSafe`, a
 >   risk-warning signal only; the attempt always launches (soft, per §8), the health consequence
 >   stays in the trap plugin (`takeTrapDamage`).

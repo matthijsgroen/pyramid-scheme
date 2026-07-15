@@ -100,7 +100,7 @@ describe("validateRewardCounts", () => {
 // ordering are no longer a separate post-build check; the worklist reachability model
 // (reachability.ts + placeFragments.ts) guarantees both and hard-fails on a stuck lock. Its
 // coverage lives in reachability.spec.ts / the configBuilder integration golden guard. See
-// docs/mods/SLICE-E-ward-keys.md.
+// docs/game-design/keys-and-locks-solver.md.
 
 // The shop economy guard moved to the shop mod (src/mods/shop/game/economyGuard.spec.ts) —
 // it's a shop-owned balance check, injected as the mod's worldValidator, not a core rule.

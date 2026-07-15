@@ -106,7 +106,7 @@ export const buildSideSections = <TExtra extends string = never>(
     // A generic fragmentSlot sentinel tagged for this tier's tomb — the tomb-treasure mod's
     // map-piece currency (MAP_PIECE_CURRENCY) prefers this `prefers` tag and fills it, so core
     // world-gen never names the `mapPiece` reward type. `hasMapPieceBranch` stays a structural
-    // flag (where the branch lives), not a reward-type name. See docs/mods/SLICE-tomb-treasure.md.
+    // flag (where the branch lives), not a reward-type name. See docs/mods/ARCHITECTURE.md (tombTreasure mod).
     const tombId = `${tier}_treasure_tomb`
     sections.push({
       pathPuzzles: 0,

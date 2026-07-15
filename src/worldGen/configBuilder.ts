@@ -143,7 +143,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
 // Maps a tomb's treasure-stream position (floor index) to the reward placed there — injected by
 // whoever owns that reward vocabulary (the tomb-treasure mod: position → its `tombKey` for the
 // tomb's ordered perk ids). Core never names the reward type; a missing resolver (mod off) leaves
-// the floor's treasure absent. See docs/mods/SLICE-E-ward-keys.md.
+// the floor's treasure absent. See docs/game-design/keys-and-locks-solver.md.
 export type TombTreasureResolver = (tombId: string, index: number) => TreasureReward | undefined
 
 // A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md §8) —
@@ -180,7 +180,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     // Every floor is authored explicitly — its own mainEndReward defaults to "tombTreasure"
     // (the perk-stream's next id) unless an authored entry overrides it, and every floor gets a
     // ward-gated section keyed by that same key so EVERY treasure gates an (optional) pocket
-    // (§E, docs/mods/SLICE-E-ward-keys.md — no demand-less keys): a non-last floor gets a
+    // (§E, docs/game-design/keys-and-locks-solver.md — no demand-less keys): a non-last floor gets a
     // ward-path shortcut (walk once to earn the key, later re-entry skips straight past via the
     // shortcut instead of re-solving its tableau), the last floor (no next floor to skip to) gets
     // a ward-chest loot pocket instead — the loot solver fills it (mosaic/junk, tier-matched; the
@@ -188,7 +188,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     //
     // The crocodile capstone (and its extra main-path room) is AUTHORED per floor in the tomb spec
     // via `nodes: [{ where: "last", encounter: "capstone" }]` + `pathPuzzles: 2` — no hardcoded
-    // tier/position rule here (§G, docs/mods/SLICE-G-selectors.md). `nodes` + `pathPuzzles` pass
+    // tier/position rule here (§G, docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). `nodes` + `pathPuzzles` pass
     // straight through to buildSite, which resolves selectors → per-node families. A starter tomb
     // may author a capstone too; it just resolves to none (crocodile's family minTier is junior).
     //
@@ -303,7 +303,7 @@ export const buildConfigs = (
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
   // Secondary-tomb discovery + ward-key ordering are no longer a separate post-build validator
   // (§E): the worklist reachability model (placeFragments above) already guarantees both — it
-  // hard-fails if any lock stays blocking. See validate.ts's note + docs/mods/SLICE-E-ward-keys.md.
+  // hard-fails if any lock stays blocking. See validate.ts's note + docs/game-design/keys-and-locks-solver.md.
   // Mod-injected post-build validators (e.g. the shop economy guard) run last, over the whole
   // grown world. They drop out with their mod, so core names none — the shop guard leaves the
   // check when shop leaves REGISTERED_MODS.
