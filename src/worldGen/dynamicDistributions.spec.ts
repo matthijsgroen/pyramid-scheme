@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { allocateDistributions, type Distribution } from "./slotAllocator"
 import type { Slot } from "./slots"
-import type { TreasureReward } from "./types"
+import type { TreasureReward, SiteConfig } from "./types"
 import { shopMoneyEconomy } from "@/mods/shop/game/loot"
 import { trapConsumables } from "@/mods/trap/game/consumables"
 
@@ -72,12 +72,36 @@ describe("allocateDistributions — eagerness + empty quota", () => {
 describe("shopMoneyEconomy fill", () => {
   const reward = (s: Slot) => (s as unknown as { reward?: TreasureReward }).reward
 
+  // A world with a single fez-shop selling N mosaic pieces → totalBuyable = N × 500 (priceFor),
+  // the budget floor the shop's money economy must fund.
+  const shopWorld = (mosaics: number): Record<string, SiteConfig[]> => ({
+    j: [
+      [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [
+            {
+              pathPuzzles: 0,
+              difficulty: "starter",
+              end: "treasure",
+              encounter: "fez-shop",
+              rewards: Array.from({ length: mosaics }, () => ({ type: "mosaicPiece" as const })),
+            },
+          ],
+        },
+      ],
+    ],
+  })
+
   it("places ≥1 of each item per present tier (completeness) and hits the budget floor", () => {
-    // Empty configs → budget floor = TOTAL_CONSUMABLE_BUYABLE (no authored shop prices). Enough
-    // divine slots (50 each) to fund it with room for coins.
+    // Shop stock worth 4 × 500 = 2000 → the fill must fund that floor. Enough divine slots (50 each)
+    // to fund it with room for coins.
     const slots = Array.from({ length: 120 }, (_, i) => slot({ weight: 100, tier: "wizard", kind: "end", seq: i }))
     const available = new Set<Slot>(slots)
-    allocateDistributions(available, [shopMoneyEconomy], {})
+    allocateDistributions(available, [shopMoneyEconomy], shopWorld(4))
     const rewards = slots.map(reward).filter(Boolean) as TreasureReward[]
     const sellables = rewards.filter(r => r.type === "sellable") as unknown as { itemId: string }[]
     // all 5 divine collectibles appear ≥1 (materialTier for wizard difficulty = divine)
@@ -86,7 +110,7 @@ describe("shopMoneyEconomy fill", () => {
     const value =
       sellables.length * 50 +
       (rewards.filter(r => r.type === "money") as unknown as { amount: number }[]).reduce((a, r) => a + r.amount, 0)
-    expect(value).toBeGreaterThanOrEqual(1760) // TOTAL_CONSUMABLE_BUYABLE floor
+    expect(value).toBeGreaterThanOrEqual(2000) // totalBuyable floor (4 mosaic × 500)
   })
 
   it("hard-fails a present tier with fewer slots than its collectibles", () => {

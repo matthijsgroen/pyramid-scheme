@@ -12,53 +12,46 @@ const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
 })
 
 describe("runEconomyGuard", () => {
-  const shopSlot = (shopPrice: number) => ({
+  // A shop = a section whose encounter resolved to fez-shop, its stock in `rewards[]`. The guard
+  // prices that stock via priceFor (mosaicPiece = 500). A plain (non-shop) endReward isn't buyable.
+  const shop = (rewards: { type: string }[]) => ({
     pathPuzzles: 0,
     difficulty: "starter" as const,
     end: "treasure" as const,
-    endReward: { type: "mosaicPiece" as const },
-    shopPrice,
+    encounter: "fez-shop" as const,
+    rewards,
   })
   const moneyPuzzleFloor = (amount: number) => floor({ pathPuzzles: 1, rewards: [{ type: "money" as const, amount }] })
-  const junkFloor = (itemId: string) => floor({ mainEndReward: { type: "sellable" as const, itemId } })
 
-  it("passes when guaranteed income covers total shop prices + consumable stock", () => {
-    // TOTAL_CONSUMABLE_BUYABLE alone is 1,760 — a single shop price of 100 needs 1,860 income.
+  it("passes when guaranteed income covers the shop stock's value", () => {
+    // One shop mosaicPiece = 500; income 1000 covers it.
     const configs = {
-      site: [
-        [
-          floor({ sideSections: [shopSlot(100)] }),
-          moneyPuzzleFloor(1000),
-          moneyPuzzleFloor(1000),
-          junkFloor("sell_divine_1"), // 50
-        ],
-      ] as SiteConfig[],
+      site: [[floor({ sideSections: [shop([{ type: "mosaicPiece" }])] }), moneyPuzzleFloor(1000)]] as SiteConfig[],
     }
     expect(() => runEconomyGuard(configs)).not.toThrow()
   })
 
-  it("throws when total shop prices + consumable stock exceed guaranteed income", () => {
-    const configs = { site: [[floor({ sideSections: [shopSlot(100)] }), moneyPuzzleFloor(1)]] as SiteConfig[] }
+  it("throws when the shop stock's value exceeds guaranteed income", () => {
+    const configs = {
+      site: [[floor({ sideSections: [shop([{ type: "mosaicPiece" }])] }), moneyPuzzleFloor(1)]] as SiteConfig[],
+    }
     expect(() => runEconomyGuard(configs)).toThrow(/economy guard failed/)
   })
 
-  it("ignores non-shop end-of-path rewards when totaling shop prices", () => {
-    // Exactly enough income for the fixed 1,760 consumable-stock floor, no shop prices —
-    // a plain (non-shop) mosaicPiece endReward alongside it must not push the total over.
+  it("ignores a non-shop end-of-path reward when totaling buyable stock", () => {
+    // A plain mosaicPiece endReward (no fez-shop encounter) isn't buyable → buyable 0, always passes.
     const plainMosaic = {
       pathPuzzles: 0,
       difficulty: "starter" as const,
       end: "treasure" as const,
       endReward: { type: "mosaicPiece" as const },
     }
-    const passingConfigs = {
-      site: [[floor({ sideSections: [plainMosaic] }), moneyPuzzleFloor(1760)]] as SiteConfig[],
-    }
+    const passingConfigs = { site: [[floor({ sideSections: [plainMosaic] }), moneyPuzzleFloor(0)]] as SiteConfig[] }
     expect(() => runEconomyGuard(passingConfigs)).not.toThrow()
 
-    // Same income, but the mosaic now has a real shopPrice — must push the total over.
+    // The same mosaicPiece as shop stock IS buyable (500) → exceeds the 0 income.
     const failingConfigs = {
-      site: [[floor({ sideSections: [shopSlot(1)] }), moneyPuzzleFloor(1760)]] as SiteConfig[],
+      site: [[floor({ sideSections: [shop([{ type: "mosaicPiece" }])] }), moneyPuzzleFloor(0)]] as SiteConfig[],
     }
     expect(() => runEconomyGuard(failingConfigs)).toThrow(/economy guard failed/)
   })

@@ -1,17 +1,20 @@
 import type { SideSection, SiteConfig, SubSection, TreasureReward } from "@/worldGen/types"
 import type { WorldValidator } from "@/worldGen/validate"
-import { TOTAL_CONSUMABLE_BUYABLE } from "@/data/shopPricing"
 import { sellValueForItemId } from "@/data/sellables"
 import { moneyRewardSchema, sellableRewardSchema } from "./rewardSchemas"
+import { priceFor } from "./pricing"
 
-// Σ of every authored shop price across the world. The shop's money economy needs the player to be
-// able to afford this (+ a full consumable restock per shop) — it's the floor the loot budget
-// targets (see loot.ts) and the number the economy guard checks income against. One walk, one
-// source, shared by both so they can never drift.
+// Σ of the shop-priced value of every baked shop stock item across the world (currency pieces +
+// finite consumables), each priced by the shop's own priceFor. The shop's money economy needs the
+// player to be able to afford all of it — it's the floor the loot budget targets (see loot.ts) and
+// the number the economy guard checks income against. One walk, one source, shared by both so they
+// can never drift. (Finite stock is what keeps this bounded, so the guard can guarantee every
+// progression piece stays affordable — docs/mods/SLICE-shop-stock.md.)
 export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number => {
-  let shopPrices = 0
+  let sum = 0
   const tally = (s: SubSection) => {
-    if (s.shopPrice !== undefined) shopPrices += s.shopPrice
+    if (s.encounter !== "fez-shop") return
+    for (const r of s.rewards ?? []) if (r) sum += priceFor(r, s.difficulty)
   }
   for (const siteConfigs of Object.values(allConfigs)) {
     for (const floors of siteConfigs) {
@@ -23,7 +26,7 @@ export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number =
       }
     }
   }
-  return shopPrices + TOTAL_CONSUMABLE_BUYABLE
+  return sum
 }
 
 // Economy guard: Σ(all shop prices, rares + one full consumable restock per shop) ≤
@@ -66,8 +69,8 @@ export const runEconomyGuard = (allConfigs: Record<string, SiteConfig[]>): void 
   const buyable = totalBuyable(allConfigs)
   if (buyable > guaranteedIncome) {
     throw new Error(
-      `[worldSpec] Shop economy guard failed: total buyable (${buyable}, incl. ` +
-        `${TOTAL_CONSUMABLE_BUYABLE} consumable stock) exceeds guaranteed income (${guaranteedIncome}).`
+      `[worldSpec] Shop economy guard failed: total buyable shop stock (${buyable}) ` +
+        `exceeds guaranteed income (${guaranteedIncome}).`
     )
   }
 }

@@ -10,12 +10,15 @@ import { FezContext } from "@/app/fez/context"
 import { FezShop } from "@/ui/organisms/FezShop"
 import { rewardText } from "@/app/SiteMap/rewardDisplay"
 import { CONSUMABLE_EMOJI } from "@/mods/trap/app/consumableEmoji"
-import { CONSUMABLE_PRICES, CONSUMABLE_STOCK_PER_VISIT } from "@/data/shopPricing"
+import { CONSUMABLE_PRICES } from "@/mods/shop/game/pricing"
 import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
 type ShopStock = { bandage: number; oil: number; trapTool: number }
 type ShopModState = { stockByEdge: Record<string, ShopStock> }
 
+// ponytail: per-visit consumable restock — a stopgap that the shop-stock slice retires (the shop's
+// consumables become finite baked stock in the next boundary). Kept until then so the shop still works.
+const CONSUMABLE_STOCK_PER_VISIT = 2
 const freshStock = (): ShopStock => ({
   bandage: CONSUMABLE_STOCK_PER_VISIT,
   oil: CONSUMABLE_STOCK_PER_VISIT,

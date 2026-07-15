@@ -14,9 +14,15 @@ import {
   MOD_WORLD_VALIDATORS,
   MOD_REACHABILITY_SUPPORT,
   MOD_TOMB_TREASURE_RESOLVER,
+  MOD_SHOP_STOCK,
 } from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
-import { resolveKeyRequirements, familyPriorityFor } from "../mods/allFamilyMeta"
+import {
+  resolveKeyRequirements,
+  familyPriorityFor,
+  familyCapacityFor,
+  allocateEncounterFamily,
+} from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
 // check. The economy guard is a separate global invariant (validated by generate-world) that only
@@ -38,9 +44,11 @@ const buildRealConfigs = () =>
     MOD_WORLD_VALIDATORS,
     familyPriorityFor,
     0,
-    undefined,
+    allocateEncounterFamily,
     MOD_REACHABILITY_SUPPORT,
-    MOD_TOMB_TREASURE_RESOLVER
+    MOD_TOMB_TREASURE_RESOLVER,
+    familyCapacityFor,
+    MOD_SHOP_STOCK
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
@@ -56,11 +64,19 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
     if (r.type === "mosaicPiece") mosaicPieces++
   }
 
+  // Count both node reward fields: the path-end `endReward` AND every `rewards[]` entry (shop stock
+  // lives here) — mirrors validate.ts + the detector's uniform sweep.
+  const counts = (rs: (TreasureReward | undefined)[] | undefined) => rs?.forEach(count)
   const countFloor = (floor: FloorConfig) => {
     count(floor.mainEndReward)
+    counts(floor.rewards)
     for (const s of floor.sideSections) {
       count(s.endReward)
-      for (const sub of s.sideSections ?? []) count(sub.endReward)
+      counts(s.rewards)
+      for (const sub of s.sideSections ?? []) {
+        count(sub.endReward)
+        counts(sub.rewards)
+      }
     }
   }
 
