@@ -76,7 +76,12 @@ export const resolveNodeSelectors = (
     if (w === "first") set(1, sel.encounter)
     else if (w === "last") set(count, sel.encounter)
     else if (typeof w === "number") set(w, sel.encounter)
-    else for (let pos = w.from ?? 1; pos <= count; pos += w.every) set(pos, sel.encounter)
+    else {
+      // Clamp step to a positive integer so a bad `every` (0, negative, fractional) can't hang the
+      // build; a nonsense value degrades to "every node" rather than looping forever.
+      const step = Math.max(1, Math.floor(w.every))
+      for (let pos = w.from ?? 1; pos <= count; pos += step) set(pos, sel.encounter)
+    }
   }
   return out
 }

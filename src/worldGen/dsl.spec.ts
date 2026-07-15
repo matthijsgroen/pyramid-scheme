@@ -22,6 +22,11 @@ describe("resolveNodeSelectors", () => {
     })
   })
 
+  it("a non-positive/fractional every is clamped to 1 (no infinite loop)", () => {
+    expect(resolveNodeSelectors([{ where: { every: 0 }, encounter: "x" }], 3)).toEqual({ 0: "x", 1: "x", 2: "x" })
+    expect(resolveNodeSelectors([{ where: { every: -2 }, encounter: "x" }], 2)).toEqual({ 0: "x", 1: "x" })
+  })
+
   it("drops out-of-range positions and later selectors win on overlap", () => {
     expect(resolveNodeSelectors([{ where: 9, encounter: "x" }], 3)).toEqual({})
     expect(
