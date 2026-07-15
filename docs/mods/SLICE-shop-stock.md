@@ -130,6 +130,62 @@ World-changing slice — verify by **counts + toggle-off + playtest**, not byte-
    `ARCHITECTURE.md`/`FIDELITY-AUDIT.md`/`distribution-primitive-design.md`; fix `rewardWeight`
    doc refs; note `mainEndReward`→`rewards` deferred to the node-model unification slice.
 
+## Progress / handover (2026-07-15)
+
+Branch `mods/hieroglyph-currency`, **6 commits, local only (NOT pushed)**, HEAD `6fbff3e`.
+All green throughout: `tsc -b`, `vitest` (715), `lint`, `build`, `yarn generate-world` (economy
+guard passes, no SKIP needed).
+
+| commit | boundary |
+|---|---|
+| `a8c5edd` | renames `rewardWeight`→`rewardPriority`, `puzzleRewards`→`rewards` (incl. serialized key) |
+| `2b6cea6` | shop-stock infra (dormant): `rewardCapacity`/`familyCapacityFor`, `Slot.encounter`, chainless-encounter resolution + stock seeding |
+| `503206c` | **A** — a shop is a `pathPuzzles:0` section `encounter:"shop"` → resolved to fez-shop; `rewards[]` = stock; assembler renders it; specs drop `shopPrice`/currency `endReward` |
+| `56b1fae` | **B** — currency mods place stock via `shopStock` tables + `placeShopStock` (fragmentSlot sentinels the capped/gating pass fills); shop slots are a HARD preference claim; validate + hieroglyph finalize scan `rewards[]` |
+| `1439458` | **C** — `trapShopStock` fills the empty shop slots with finite consumables (no freshStock refresh) |
+| `6fbff3e` | **D** — `shop/game/pricing.ts` `priceFor`; `totalBuyable` prices baked stock; `src/data/shopPricing.ts` deleted; economy restored (sellable 60→210) |
+
+**DONE (world-gen half, all of it):** shops are 6-slot stock nodes (2 currency + 4 finite
+consumables), priced by the shop, economy-guaranteed, detector-*placed*. Core `src/worldGen`/
+`src/data`/`src/game` name no currency/price for shops. Stock kept from the pre-slice world
+(6 fragment + 6 mosaic + 1 mapPiece across 8 shops).
+
+**REMAINING:**
+
+- **E (step 6) — app-side render + buy.**
+  - `src/mods/shop/app/fezShop/plugin.tsx`: render `ctx.stock` (the 6-item array) instead of the
+    single `ctx.reward` (currently shows empty rares + per-visit `freshStock`). Each stock item
+    priced via `priceFor(item, ctx.difficulty)` (from `@/mods/shop/game/pricing`). Buy slot j =
+    `canAccept` check → `applyReward(stock[j])` + `ledger.spend("money", priceFor(...))` + mark
+    `(edgeId, j)` claimed. **Delete `freshStock`** + the per-visit refresh effect + the
+    `CONSUMABLE_STOCK_PER_VISIT` local (consumables are baked stock now).
+  - `src/app/state/useJourneys.ts`: replace `purchasedShops: string[]` (edgeId) +
+    `markShopPurchased`/`hasPurchasedShop` with a **per-(edgeId, stockIndex)** claimed set
+    (e.g. keys `${edgeId}#${j}`). `SiteMapScreen.tsx:194`'s still-buyable re-enter branch keyed on
+    `shopPrice` needs re-keying to "shop with unclaimed stock" (shopPrice is gone).
+  - `src/ui/organisms/FezShop.tsx`: adapt to a stock list (currency + consumable items priced
+    per-slot, sold-out per-slot). Sell (junk) section unchanged.
+  - **DETECTOR GAP (must fix in E/F):** `src/mods/hieroglyph/app/compassScanner.ts` scans only
+    `mainEndReward` + `section.endReward` — NOT `rewards[]`. So the compass does NOT yet point at a
+    shop selling a fragment. Make it scan `rewards[]` too (mirror the gen-side `forEachReward`
+    fix). Only THEN is the "buy → own → compass drops the shop" honesty real. This is the headline
+    acceptance test.
+- **F (step 7) — strip + reconcile + verify.** Remove any residual `shopPrice` type field if now
+  unused; reconcile `ARCHITECTURE.md`/`FIDELITY-AUDIT.md`/`distribution-primitive-design.md` +
+  the `rewardWeight`/`puzzleRewards` doc refs; note `mainEndReward`→`rewards` deferred to the
+  node-model unification slice. Full verify + **playtest**: buy a fragment at a shop → compass
+  stops pointing there; buy any slot → sold-out, no per-visit refresh; toggle-off (shop mod off →
+  shops fall back to chests; a currency mod off → its shop pieces stay in the world).
+
+**Gotchas for next session:**
+- Editor TS diagnostics lag badly (persistently claim `rewards`/`rewardPriority` missing after the
+  rename). Trust `yarn tsc -b`, not the inline diagnostics.
+- `generate-world` reward stats now: consumable 404, mosaicPiece 298, hieroglyphFragment 294,
+  money 278, sellable 210, tombKey 40, mapPiece 31.
+- The file `src/worldGen/puzzleRewards.ts` + helper `serializePuzzleRewards` keep their name (a
+  pre-existing `./rewards` module blocked the rename); the FIELD is `rewards` — that's what matters.
+- `shopStock` addressing is `(journeyId, nth=0)`; tombId == journeyId for the 8 shop tombs.
+
 ## Acceptance
 
 - Buy a hieroglyph fragment at a shop → own it → compass no longer points at that shop.
