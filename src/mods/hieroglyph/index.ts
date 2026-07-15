@@ -14,4 +14,16 @@ export const hieroglyphMod: ModDescriptor = {
   currencyDistributions: [HIEROGLYPH_CURRENCY],
   families: [TABLEAU_META],
   currencyMeta: HIEROGLYPH_CURRENCY_META,
+  // Sell one fragment at each of these tombs' Fez shops (a `prefers:"hieroglyph"` sentinel the
+  // gating worklist fills with a real, detectable fragment — moved out of the free-world spread).
+  // Mirrors the pre-slice shop stock. Drops with the mod (hieroglyph off → these stay unfilled and
+  // the shop slot falls back to empty).
+  shopStock: [
+    { journeyId: "junior_treasure_tomb", prefers: "hieroglyph" },
+    { journeyId: "wizard_treasure_tomb", prefers: "hieroglyph" },
+    { journeyId: "wizard_treasure_tomb_b", prefers: "hieroglyph" },
+    { journeyId: "expert_treasure_tomb", prefers: "hieroglyph" },
+    { journeyId: "expert_treasure_tomb_b", prefers: "hieroglyph" },
+    { journeyId: "master_treasure_tomb", prefers: "hieroglyph" },
+  ],
 }

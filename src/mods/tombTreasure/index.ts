@@ -27,4 +27,8 @@ export const tombTreasureMod: ModDescriptor = {
   // §E: tomb-content authoring — floor position → this tomb's `tombKey` perk stream, so core
   // world-gen names no reward type. Drops with the mod.
   resolveTombTreasure,
+  // Sell the wizard_treasure_tomb_c map-piece copy at master_treasure_tomb_b's Fez shop (that copy
+  // is freed for the shop by spec/wizard.ts's journey("wizard_4") override). A
+  // `prefers:"mapPiece:<tombId>"` sentinel the map-piece worklist fills. Drops with the mod.
+  shopStock: [{ journeyId: "master_treasure_tomb_b", prefers: "mapPiece:wizard_treasure_tomb_c" }],
 }

@@ -198,7 +198,15 @@ export const placeFragments = (
     let needed = demand.required
 
     if (needed > 0) {
-      const eligible = (s: Slot) => s.kind === "end" && available.has(s) && reach.reachableFloors.has(floorKey(s.ref))
+      // A shop stock slot's preference is a HARD claim (deliberate authored stock), unlike a
+      // free-world slot's soft preference: this currency may fill a fez-shop slot only if it owns
+      // that slot's tagged bucket — so the gating worklist can't spill e.g. a hieroglyph into a
+      // mosaic shop slot. Non-shop slots stay soft (any currency, any node).
+      const eligible = (s: Slot) =>
+        s.kind === "end" &&
+        available.has(s) &&
+        reach.reachableFloors.has(floorKey(s.ref)) &&
+        (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
       const ranked = currency.rank(slots.filter(eligible), demand)
 
       for (const slot of ranked) {

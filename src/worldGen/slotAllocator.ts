@@ -85,7 +85,10 @@ export const cappedToDistribution = (c: CappedCurrency): Distribution => ({
     return { min: total, max: total }
   },
   // Capped currencies are path-end rewards only; puzzle-chain slots are filler-only (dynamic pass).
-  eligible: s => s.kind === "end",
+  // A shop stock slot's preference is a hard claim (see placeFragments): fill a fez-shop slot only
+  // if it's tagged for this capped bucket, so a mosaic can't land in a hieroglyph/mapPiece shop slot.
+  eligible: s =>
+    s.kind === "end" && (s.encounter !== "fez-shop" || s.preference === undefined || s.preference === c.bucket),
   rank: c.rank,
   fill: (slots: Slot[]) => {
     for (const slot of slots) slot.assign(c.toReward())

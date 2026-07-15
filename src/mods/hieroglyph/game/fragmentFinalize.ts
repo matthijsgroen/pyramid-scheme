@@ -7,16 +7,23 @@ import type { SiteConfig, TreasureReward } from "@/worldGen/types"
 
 const HIEROGLYPH = "hieroglyphFragment"
 
-// Walk every end-slot reward (main + side + sub). Fragments only ever land on path-end slots, so
-// puzzle-chain rewards aren't walked. Mutating callback so the finalize can stamp pieceIndex.
-const forEachEndReward = (configs: Record<string, SiteConfig[]>, fn: (r: TreasureReward) => void) => {
+// Walk every reward a node bears: the path-end `endReward` AND every entry of a node's `rewards[]`
+// array (a shop's stock — a fragment sold at a shop lives here). One uniform sweep, mirroring what
+// the detector scans. Mutating callback so the finalize can stamp pieceIndex.
+const forEachReward = (configs: Record<string, SiteConfig[]>, fn: (r: TreasureReward) => void) => {
+  const rewards = (rs: (TreasureReward | undefined)[] | undefined) => rs?.forEach(r => r && fn(r))
   for (const siteConfigs of Object.values(configs)) {
     for (const floors of siteConfigs) {
       for (const cfg of floors) {
         if (cfg.mainEndReward) fn(cfg.mainEndReward)
+        rewards(cfg.rewards)
         for (const s of cfg.sideSections) {
           if (s.endReward) fn(s.endReward)
-          for (const sub of s.sideSections ?? []) if (sub.endReward) fn(sub.endReward)
+          rewards(s.rewards)
+          for (const sub of s.sideSections ?? []) {
+            if (sub.endReward) fn(sub.endReward)
+            rewards(sub.rewards)
+          }
         }
       }
     }
@@ -29,7 +36,7 @@ const forEachEndReward = (configs: Record<string, SiteConfig[]>, fn: (r: Treasur
 // replaces the core serializer's per-hieroglyph counter (which is now generic). Mutates in place.
 export const assignFragmentPieceIndices = (configs: Record<string, SiteConfig[]>): void => {
   const next = new Map<string, number>()
-  forEachEndReward(configs, r => {
+  forEachReward(configs, r => {
     if (r.type !== HIEROGLYPH) return
     const id = r.hieroglyphId as string
     const idx = next.get(id) ?? 0
@@ -41,7 +48,7 @@ export const assignFragmentPieceIndices = (configs: Record<string, SiteConfig[]>
 // How many fragments of each hieroglyph actually got placed.
 export const placedFragmentCounts = (configs: Record<string, SiteConfig[]>): Map<string, number> => {
   const placed = new Map<string, number>()
-  forEachEndReward(configs, r => {
+  forEachReward(configs, r => {
     if (r.type !== HIEROGLYPH) return
     const id = r.hieroglyphId as string
     placed.set(id, (placed.get(id) ?? 0) + 1)

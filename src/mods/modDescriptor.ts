@@ -2,6 +2,7 @@ import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragm
 import type { ReachabilitySupport } from "@/worldGen/reachability"
 import type { TombTreasureResolver } from "@/worldGen/configBuilder"
 import type { Distribution } from "@/worldGen/slotAllocator"
+import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
@@ -47,4 +48,9 @@ export type ModDescriptor = {
   // `tombKey` perk stream). Injected into buildConfigs so core world-gen names no reward type;
   // drops with the mod (a tomb-less world places no tomb treasures). One provider expected.
   resolveTombTreasure?: TombTreasureResolver
+  // This mod's shop-stock placements: sell specific currency pieces at specific shops (by
+  // journeyId + nth). Each drops a fragmentSlot sentinel the capped/gating pass fills, so the piece
+  // is moved out of the free-world spread into the shop. Drops with the mod (shop off → shops fall
+  // back to chests; this currency off → its pieces stay in the world). See docs/mods/SLICE-shop-stock.md.
+  shopStock?: ShopStockAssignment[]
 }

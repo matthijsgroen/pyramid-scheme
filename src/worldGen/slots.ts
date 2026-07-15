@@ -117,19 +117,24 @@ export const collectSlots = (
         encountersByIndex?: Record<number, string | string[]>
       ) => {
         if (!rewards) return
-        rewards.forEach((_, i) => {
+        rewards.forEach((rw, i) => {
           const arr = rewards
           const enc = encountersByIndex?.[i] ?? encounter
           const encId = Array.isArray(enc) ? enc[0] : enc
+          // A reward-array entry that's a fragmentSlot sentinel is a currency placeholder (a shop's
+          // stock slot the mods tagged for their currency) — it needs the capped/gating fill, which
+          // only touch `kind:"end"`. So emit it as an end slot (placeholder + its prefers tag), not a
+          // puzzle-chain filler slot. Empty entries stay puzzle-kind (dynamic loot / consumable fill).
+          const frag = rw?.type === "fragmentSlot" ? (rw as FragmentSlotReward) : undefined
           slots.push({
             ref,
             journeyId,
             tier: difficulty as Tier,
             wardKeys: [],
-            isPlaceholder: false,
-            kind: "puzzle",
-            siteId,
-            puzzleSeq: puzzleSeq++,
+            isPlaceholder: frag !== undefined,
+            ...(frag?.prefers ? { preference: frag.prefers } : {}),
+            kind: frag ? "end" : "puzzle",
+            ...(frag ? {} : { siteId, puzzleSeq: puzzleSeq++ }),
             rewardPriority: familyPriorityFor(enc, "puzzle"),
             ...(encId ? { encounter: encId } : {}),
             assign: r => {

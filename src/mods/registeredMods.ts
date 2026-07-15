@@ -2,6 +2,7 @@ import type { CappedCurrency, CurrencyDistribution } from "@/worldGen/placeFragm
 import type { ReachabilitySupport } from "@/worldGen/reachability"
 import type { TombTreasureResolver } from "@/worldGen/configBuilder"
 import type { Distribution } from "@/worldGen/slotAllocator"
+import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ModDescriptor } from "./modDescriptor"
@@ -38,6 +39,12 @@ export const MOD_FAMILY_META: FamilyMeta[] = REGISTERED_MODS.flatMap(m => m.fami
 // takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
 // money/junk, trap off → no consumables.
 export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m => m.dynamicDistributions ?? [])
+
+// Every mod's shop-stock placements, in registry order (so a shop shared by several currencies
+// fills its slots deterministically). Each drops a fragmentSlot sentinel into the addressed shop;
+// a currency mod off → its shop pieces vanish (fall back to the free-world spread), shop off → no
+// shops resolve so the assignments no-op. Injected into buildConfigs by scripts/generateWorld.ts.
+export const MOD_SHOP_STOCK: ShopStockAssignment[] = REGISTERED_MODS.flatMap(m => m.shopStock ?? [])
 
 // Every post-build world validator any registered mod contributes (e.g. the shop economy guard),
 // run last in buildConfigs over the whole grown world. A validator drops with its mod.

@@ -36,6 +36,9 @@ export const validateRewardCounts = (
     }
     if (isCurrencyReward(r)) currencyRewards++
   }
+  // Count both node reward fields: a path-end `endReward` AND every entry of a node's `rewards[]`
+  // array (a shop's stock lands here). One uniform sweep, mirroring what the detector scans.
+  const checkRewards = (rs: (TreasureReward | undefined)[] | undefined) => rs?.forEach(checkReward)
 
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
     for (const floors of siteConfigs) {
@@ -47,9 +50,14 @@ export const validateRewardCounts = (
             `[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
           )
         checkReward(floor.mainEndReward)
+        checkRewards(floor.rewards)
         for (const s of floor.sideSections) {
           checkReward(s.endReward)
-          for (const sub of s.sideSections ?? []) checkReward(sub.endReward)
+          checkRewards(s.rewards)
+          for (const sub of s.sideSections ?? []) {
+            checkReward(sub.endReward)
+            checkRewards(sub.rewards)
+          }
         }
       }
     }

@@ -15,6 +15,7 @@ import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor } from "./placeEncounters"
+import { placeShopStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
 import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ReachabilitySupport } from "./reachability"
@@ -255,7 +256,8 @@ export const buildConfigs = (
   allocateEncounter?: EncounterAllocator,
   reachabilitySupport?: ReachabilitySupport,
   resolveTombTreasure?: TombTreasureResolver,
-  familyCapacityFor?: FamilyCapacityFor
+  familyCapacityFor?: FamilyCapacityFor,
+  shopStock: readonly ShopStockAssignment[] = []
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -273,6 +275,10 @@ export const buildConfigs = (
   // Injected from src/mods (allFamilyMeta.allocateEncounterFamily) — src/worldGen can't read the
   // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
   if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor)
+
+  // Phase 3.6: mods place their shop-stock sentinels into resolved shops (after encounters resolve
+  // + stock arrays seed, before slot collection fills them). Core names no currency here.
+  placeShopStock(allConfigs, shopStock)
 
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
