@@ -90,6 +90,8 @@
     "canAttempt": "You can attempt to pass through.",
     "tooWeak": "Dangerously weak — a failed attempt will leave you with nothing.",
     "attempt": "Attempt the trap",
+    "heal": "Use a bandage",
+    "fullHeal": "Use oil (full heal)",
     "disable": "Disable trap",
     "turnAround": "Turn around"
   },

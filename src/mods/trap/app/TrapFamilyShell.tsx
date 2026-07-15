@@ -29,9 +29,10 @@ export const TrapFamilyShell = <T,>({ question, ctx, journeys, onSolved, onCance
         currentHealth={trap.currentHealth}
         maxHealth={trap.maxHealth}
         attemptSafe={trap.isTrapAttemptSafe()}
-        trapToolCount={trap.consumables.trapTool}
+        consumables={trap.consumables}
         onAttempt={() => setAttempting(true)}
         onTurnAround={onCancel}
+        onHeal={type => trap.useConsumable(type)}
         onDisable={() => {
           trap.useConsumable("trapTool")
           journeys.markTrapDisabled(ctx.sectionHash, ctx.edgeId)

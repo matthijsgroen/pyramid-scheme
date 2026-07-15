@@ -90,6 +90,8 @@
     "canAttempt": "Je kunt proberen door te gaan.",
     "tooWeak": "Gevaarlijk zwak — een mislukte poging laat je met niets achter.",
     "attempt": "Val proberen",
+    "heal": "Gebruik verband",
+    "fullHeal": "Gebruik olie (volledig herstel)",
     "disable": "Val uitschakelen",
     "turnAround": "Omdraaien"
   },
