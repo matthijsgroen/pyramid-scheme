@@ -6,6 +6,7 @@ import { hashStr } from "./rewards"
 import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
+import { resolveNodeSelectors } from "./dsl"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -88,7 +89,7 @@ export type BuildFloorOptions = {
   entrance?: FloorConfig["entrance"]
   mainEndReward?: TreasureReward
   encounter?: FloorConfig["encounter"]
-  lastMainPuzzleFamily?: FloorConfig["lastMainPuzzleFamily"]
+  encountersByIndex?: FloorConfig["encountersByIndex"]
   corridorStraightness?: number
   packing?: number
   sealed?: boolean
@@ -106,7 +107,9 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.entrance ? { entrance: opts.entrance } : {}),
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
   ...(opts.encounter ? { encounter: opts.encounter } : {}),
-  ...(opts.lastMainPuzzleFamily ? { lastMainPuzzleFamily: opts.lastMainPuzzleFamily } : {}),
+  ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
+    ? { encountersByIndex: opts.encountersByIndex }
+    : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
@@ -215,7 +218,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           sideSections: floorSideSections,
           mainEndReward: floorMainEndReward,
           encounter: fc.encounter,
-          lastMainPuzzleFamily: fc.lastMainPuzzleFamily,
+          // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
+          encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           corridorStraightness: floorStraightness,
           packing: floorPacking,
           sealed: floorSealed,

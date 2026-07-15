@@ -3,6 +3,7 @@ import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
+import { resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -34,8 +35,12 @@ const buildDslSection = <TExtra extends string>(
   const sectionDifficulty = cs.difficulty ?? difficulty
   const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, journeyId)
   const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${stairIndex}` } : ("treasure" as const)
+  const pathPuzzles = typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0
+  // This section's own per-node encounter overrides (authored `nodes` selectors) — selectors work
+  // on any path, not just the main path (§G).
+  const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   return {
-    pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
+    pathPuzzles,
     difficulty: sectionDifficulty,
     end,
     ...(gate ? { gate } : {}),
@@ -46,6 +51,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
+    ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
   }
 }

@@ -912,7 +912,6 @@ export const assembleFloor = (
     // explicitly (buildSite.ts) — an unset one used to silently grant a free, uncounted
     // mosaicPiece, so this now falls back to the same grant-nothing placeholder every other
     // unset reward slot uses.
-    const lastPuzzleIdx = config.lastMainPuzzleFamily ? config.pathPuzzles - 1 : -1
     for (let mi = 0; mi < mainPath.length; mi++) {
       const [r, c] = mainPath[mi]
       if (mi === 0) {
@@ -931,11 +930,11 @@ export const assembleFloor = (
         })
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
-        const isLastPuzzle = k === lastPuzzleIdx
+        // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
+        // index has one, else the chain's default `encounter`.
+        const override = config.encountersByIndex?.[k]
         const family =
-          isLastPuzzle && config.lastMainPuzzleFamily
-            ? resolveEncounter(config.lastMainPuzzleFamily, config.lastMainPuzzleFamily)
-            : resolveEncounter(config.encounter, "puzzle")
+          override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
         const reward = config.puzzleRewards?.[k]
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
@@ -1021,7 +1020,11 @@ export const assembleFloor = (
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
         const reward = section.puzzleRewards?.[pi]
-        const family = resolveEncounter(section.encounter, "puzzle")
+        const secOverride = section.encountersByIndex?.[pi]
+        const family =
+          secOverride !== undefined
+            ? resolveEncounter(secOverride, "puzzle")
+            : resolveEncounter(section.encounter, "puzzle")
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: pi,
@@ -1106,7 +1109,11 @@ export const assembleFloor = (
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
         const reward = subSection.puzzleRewards?.[pi]
-        const family = resolveEncounter(subSection.encounter, "puzzle")
+        const subOverride = subSection.encountersByIndex?.[pi]
+        const family =
+          subOverride !== undefined
+            ? resolveEncounter(subOverride, "puzzle")
+            : resolveEncounter(subSection.encounter, "puzzle")
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: pi,

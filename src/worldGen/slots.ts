@@ -97,20 +97,21 @@ export const collectSlots = (
       // and capped pass skip them (they were never reward-slot candidates — only filler is).
       const siteId = `${journeyId}:${levelIndex}`
       let puzzleSeq = 0
-      // A puzzle chain's eagerness comes from its own encounter family (default "puzzle" → sumplete
-      // 60 when unset). Tomb main paths author encounter "tomb-puzzle" → tableau (0) and side paths
-      // default to sumplete (60), so tomb main-path puzzles are loot-ineligible while tomb side
-      // paths still bear loot — no special-casing, it falls out of the family weights.
-      // (`lastMainPuzzleFamily` is crocodile-only, weight 0 like tableau, so it never changes a
-      // main puzzle's eligibility; not threaded here. Revisit if it ever names a nonzero family.)
+      // A puzzle chain's eagerness comes from each room's own encounter family (default "puzzle" →
+      // sumplete 60 when unset). Tomb main paths author encounter "tomb-puzzle" → tableau (0) and
+      // side paths default to sumplete (60), so tomb main-path puzzles are loot-ineligible while
+      // tomb side paths still bear loot — no special-casing, it falls out of the family weights.
+      // Per-node overrides (authored `nodes` selectors, e.g. a capstone or an every-3rd trap) are
+      // resolved PER room index: a weight-0 family (crocodile/trap) at position k makes only that
+      // room loot-ineligible, not its neighbours (§G).
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
         difficulty: Difficulty,
-        encounter: string | string[] | undefined
+        encounter: string | string[] | undefined,
+        encountersByIndex?: Record<number, string | string[]>
       ) => {
         if (!rewards) return
-        const rewardWeight = familyWeightFor(encounter, "puzzle")
         rewards.forEach((_, i) => {
           const arr = rewards
           slots.push({
@@ -122,7 +123,7 @@ export const collectSlots = (
             kind: "puzzle",
             siteId,
             puzzleSeq: puzzleSeq++,
-            rewardWeight,
+            rewardWeight: familyWeightFor(encountersByIndex?.[i] ?? encounter, "puzzle"),
             assign: r => {
               arr[i] = r
             },
@@ -131,11 +132,11 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.puzzleRewards, pRef, floor.difficulty, floor.encounter)
+        emitPuzzle(floor.puzzleRewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex)
         for (const section of floor.sideSections) {
-          emitPuzzle(section.puzzleRewards, pRef, section.difficulty, section.encounter)
+          emitPuzzle(section.puzzleRewards, pRef, section.difficulty, section.encounter, section.encountersByIndex)
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.puzzleRewards, pRef, sub.difficulty, sub.encounter)
+            emitPuzzle(sub.puzzleRewards, pRef, sub.difficulty, sub.encounter, sub.encountersByIndex)
         }
       })
 

@@ -16,15 +16,15 @@ describe("buildFloor", () => {
 
   it("carries through optional fields only when defined", () => {
     const floor = buildFloor({
-      pathPuzzles: 1,
+      pathPuzzles: 2,
       difficulty: "starter",
       sideSections: [],
       encounter: "tableau",
-      lastMainPuzzleFamily: "crocodile",
+      encountersByIndex: { 1: "crocodile" },
       corridorStraightness: 0.5,
     })
     expect(floor.encounter).toBe("tableau")
-    expect(floor.lastMainPuzzleFamily).toBe("crocodile")
+    expect(floor.encountersByIndex).toEqual({ 1: "crocodile" })
     expect(floor.corridorStraightness).toBe(0.5)
     expect(floor.packing).toBeUndefined()
   })
@@ -87,20 +87,21 @@ describe("buildSite", () => {
     expect(floors[1].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
-  it("authored floors[] branch: a floor's own mainEndReward/lastMainPuzzleFamily/encounter override the site defaults — a tomb's self-gated shortcut", () => {
+  it("authored floors[] branch: a floor's own mainEndReward/nodes/encounter override the site defaults — a tomb's self-gated shortcut", () => {
     const { floors } = buildSite<"tombTreasure">({
       ...baseCtx,
       resolveReward: spec => (spec === "tombTreasure" ? { type: "tombKey", keyId: "k1" } : undefined),
       constraint: {
         floors: [
           { pathPuzzles: 1, mainEndReward: "tombTreasure", encounter: "tableau" },
-          { pathPuzzles: 1, lastMainPuzzleFamily: "crocodile" },
+          { pathPuzzles: 2, nodes: [{ where: "last", encounter: "crocodile" }] },
         ],
       } as PyramidConstraint,
     })
     expect(floors[0].mainEndReward).toEqual({ type: "tombKey", keyId: "k1" })
     expect(floors[0].encounter).toBe("tableau")
-    expect(floors[1].lastMainPuzzleFamily).toBe("crocodile")
+    // `nodes: [{where:"last"}]` on a 2-node path resolves to index 1.
+    expect(floors[1].encountersByIndex).toEqual({ 1: "crocodile" })
     // Non-last floor's own reward, not the site-level fallback (which never runs here).
     expect(floors[0].mainEndReward).not.toEqual({ type: "fragmentSlot" })
   })

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1384906699
+export const worldContentHash = 1261165899
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -8174,7 +8174,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "junior_treasure_tomb:0:floor4:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "junior_a_6" },
         puzzleRewards: [undefined, undefined],
@@ -8284,7 +8284,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "expert_treasure_tomb:0:floor2:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_a_4" },
         puzzleRewards: [undefined, undefined],
@@ -8380,7 +8380,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "expert_treasure_tomb_b:0:floor2:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         packing: 1.6,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "expert_b_4" },
@@ -8503,7 +8503,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "master_treasure_tomb:0:floor3:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_a_5" },
         puzzleRewards: [undefined, undefined],
@@ -8620,7 +8620,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "master_treasure_tomb_b:0:floor3:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         packing: 1.6,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_5" },
@@ -8729,7 +8729,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_treasure_tomb:0:floor2:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         corridorStraightness: 0.35,
         packing: 1.6,
         sealed: true,
@@ -8833,7 +8833,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_treasure_tomb_b:0:floor2:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_b_4" },
         puzzleRewards: [undefined, undefined],
@@ -8926,7 +8926,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         entrance: { stairId: "wizard_treasure_tomb_c:0:floor2:side0" },
         encounter: "tableau",
-        lastMainPuzzleFamily: "crocodile",
+        encountersByIndex: { 1: "crocodile" },
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_c_4" },
         puzzleRewards: [undefined, undefined],

@@ -96,6 +96,10 @@ export type SubSection = {
    * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family.
    * An array means AND: every listed tag must be present on the resolved family. */
   encounter?: string | string[]
+  /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
+   * selectors (docs/mods/SLICE-G-selectors.md). Room k uses `encountersByIndex[k] ?? encounter`;
+   * at runtime the values are resolved family ids. */
+  encountersByIndex?: Record<number, string | string[]>
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
@@ -120,10 +124,11 @@ export type FloorConfig = {
   puzzleRewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means AND. */
   encounter?: string | string[]
-  /** If set, the last main-path puzzle room uses this family instead of `encounter`. Authored as
-   * a role (e.g. the "capstone" tag) and baked to a concrete family id by the gen-time encounter
-   * pass; at runtime it is always a resolved family id. */
-  lastMainPuzzleFamily?: string
+  /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
+   * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
+   * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
+   * pass. Replaces the old last-only `lastMainPuzzleFamily`. See docs/mods/SLICE-G-selectors.md. */
+  encountersByIndex?: Record<number, string | string[]>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

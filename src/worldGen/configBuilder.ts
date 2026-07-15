@@ -161,9 +161,6 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     // tomb main-path rooms consume hieroglyph symbols the player may not have yet.
     const encounter = constraint.encounter ?? "tomb-puzzle"
 
-    // Starter tombs have no crocodile puzzle (compareAmount=0 in old system)
-    const hasCroc = tomb.tier !== "starter"
-
     const levelCount = constraint.levelCount ?? tomb.levelCount
     const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
     // Position in this tomb's treasure stream — core tracks WHICH floor (structural), the
@@ -188,10 +185,15 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     // a ward-chest loot pocket instead — the loot solver fills it (mosaic/junk, tier-matched; the
     // terminal wizard treasure's pocket falls to tier-agnostic mosaic). Never authored per-tomb.
     //
-    // encounterArgs.runNr defaults to this floor's own 1-based index — same as the "grind
-    // era", each floor's tableau is tied to the treasure it unlocks (perkIndex above walks
-    // in lockstep with i). An authored floor can override it to place its tableau content
-    // on a different run (e.g. a ward-gated side path pointing at a later run's puzzle).
+    // The crocodile capstone (and its extra main-path room) is AUTHORED per floor in the tomb spec
+    // via `nodes: [{ where: "last", encounter: "capstone" }]` + `pathPuzzles: 2` — no hardcoded
+    // tier/position rule here (§G, docs/mods/SLICE-G-selectors.md). `nodes` + `pathPuzzles` pass
+    // straight through to buildSite, which resolves selectors → per-node families. A starter tomb
+    // may author a capstone too; it just resolves to none (crocodile's family minTier is junior).
+    //
+    // encounterArgs.runNr defaults to this floor's own 1-based index — each floor's tableau is tied
+    // to the treasure it unlocks. An authored floor can override it to place its tableau content on
+    // a different run (e.g. a ward-gated side path pointing at a later run's puzzle).
     const floors: FloorConstraint<TombRewardHint>[] = Array.from({ length: levelCount }, (_, i) => {
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
@@ -200,11 +202,11 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
         ? [wardChest({ tomb: tomb.id, index: i, puzzles: 0 })]
         : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
       return {
-        pathPuzzles: isLast && hasCroc ? 2 : 1,
+        pathPuzzles: authored?.pathPuzzles ?? 1,
         difficulty,
         encounter,
         mainEndReward: authored?.mainEndReward ?? "tombTreasure",
-        lastMainPuzzleFamily: isLast && hasCroc ? "capstone" : undefined,
+        nodes: authored?.nodes,
         sideSections: [...authoredSections, ...shortcut],
         corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
         packing: authored?.packing ?? constraint.packing,

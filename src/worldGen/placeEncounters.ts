@@ -9,6 +9,23 @@ export type EncounterAllocator = (role: string | string[], tier: Difficulty, see
 
 const roleOf = (authored: string | string[] | undefined, fallback: string): string | string[] => authored ?? fallback
 
+// Bake each per-node encounter override (`encountersByIndex`, from authored `nodes` selectors —
+// e.g. the last room → "capstone") to a concrete family, seeded per node index. Its own default
+// tag is the node's role itself (a capstone pool is single-family, so the seed is inert there).
+const assignByIndex = (
+  byIndex: Record<number, string | string[]> | undefined,
+  difficulty: Difficulty,
+  seedFor: (node: string) => number,
+  node: string,
+  allocate: EncounterAllocator
+): void => {
+  if (!byIndex) return
+  for (const key of Object.keys(byIndex)) {
+    const role = byIndex[+key]
+    byIndex[+key] = allocate(role, difficulty, seedFor(`${node}#${key}`))
+  }
+}
+
 // Gen-time encounter pass. Walks every floor/section that actually has encounter rooms and bakes
 // its authored role → a concrete family, chosen from the tag pool by the injected allocator. Runs
 // before slot collection (so rewardWeight derives from the chosen family) and before serialization
@@ -21,15 +38,12 @@ export const assignEncounters = (allConfigs: Record<string, SiteConfig[]>, alloc
       floors.forEach((floor, floorIndex) => {
         const seedFor = (node: string) => hashString(`${journeyId}:${levelIndex}:${floorIndex}:${node}`)
 
-        // Main path rooms (only when the floor actually has them).
+        // Main path rooms (only when the floor actually has them) — the chain default family.
         if (floor.pathPuzzles > 0) {
           floor.encounter = allocate(roleOf(floor.encounter, "puzzle"), floor.difficulty, seedFor("main"))
         }
-        // The capstone (last main-path puzzle) — its own role, resolved from the "capstone" pool.
-        if (floor.lastMainPuzzleFamily) {
-          const resolved = allocate(roleOf(floor.lastMainPuzzleFamily, "capstone"), floor.difficulty, seedFor("cap"))
-          floor.lastMainPuzzleFamily = Array.isArray(resolved) ? resolved[0] : resolved
-        }
+        // Per-node overrides (authored `nodes` selectors — e.g. the last room's capstone).
+        assignByIndex(floor.encountersByIndex, floor.difficulty, seedFor, "main", allocate)
         // Side sections + their nested sub-sections.
         floor.sideSections.forEach((section, si) => assignSection(section, seedFor, `s${si}`, allocate))
       })
@@ -46,5 +60,6 @@ const assignSection = (
   if (section.pathPuzzles > 0) {
     section.encounter = allocate(roleOf(section.encounter, "puzzle"), section.difficulty, seedFor(node))
   }
+  assignByIndex(section.encountersByIndex, section.difficulty, seedFor, node, allocate)
   section.sideSections?.forEach((sub, i) => assignSection(sub, seedFor, `${node}.${i}`, allocate))
 }

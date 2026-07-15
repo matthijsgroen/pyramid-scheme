@@ -27,6 +27,9 @@ export type SubSection = {
    * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. An
    * array means AND: every listed tag must be present on the resolved family. */
   encounter?: string | string[]
+  /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
+   * selectors. A room uses `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
+  encountersByIndex?: Record<number, string | string[]>
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
@@ -45,7 +48,10 @@ export type FloorConfig = {
   mainEndReward?: TreasureReward
   puzzleRewards?: (TreasureReward | undefined)[]
   encounter?: string | string[]
-  lastMainPuzzleFamily?: string
+  /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
+   * authored `nodes` selectors (e.g. the last room → "capstone"). Room k uses
+   * `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
+  encountersByIndex?: Record<number, string | string[]>
   corridorStraightness?: number
   packing?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */

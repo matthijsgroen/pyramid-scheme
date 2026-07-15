@@ -41,6 +41,46 @@ export type Theme = string // e.g. "desert", "underwater" — visual hint to ren
 
 export type PyramidSelector = number | "first" | "last" | "middle" | `${number}-${number}` | `last-${number}`
 
+/** Where along a path's encounter chain a selector applies. 1-based positions: `"first"`, `"last"`,
+ * an explicit `n`, or `{ every: k, from?: n }` (every k-th node, optionally starting at the n-th). */
+export type NodeWhere = "first" | "last" | number | { every: number; from?: number }
+
+/** An authoring selector that assigns an encounter preference to chosen node positions of a path
+ * (main path OR any side section). Generalises the old hardcoded "last main puzzle = capstone" into
+ * uniform authoring: `nodes: [{ where: "last", encounter: "capstone" }]`, `{ where: {every: 3},
+ * encounter: "trap" }`, `{ where: 4, encounter: "arithmetic-reflex" }`. Unselected nodes fall back
+ * to the path's `encounter` default; on overlap, the LATER selector in the array wins. Currently
+ * carries a family-swap (`encounter`) only; a `gate?` extension is designed but unbuilt
+ * (docs/mods/SLICE-G-selectors.md). */
+export type NodeSelector = {
+  where: NodeWhere
+  /** Family/tag for the selected node(s) — an exact family id or a tag (e.g. "capstone", "trap"). */
+  encounter?: string | string[]
+}
+
+/** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
+ * role map (the resolved form the gen-time encounter pass + assembler read). 1-based `where`
+ * positions; out-of-range positions are dropped; later selectors win on overlap. Pure. */
+export const resolveNodeSelectors = (
+  nodes: NodeSelector[] | undefined,
+  count: number
+): Record<number, string | string[]> => {
+  const out: Record<number, string | string[]> = {}
+  if (!nodes || count <= 0) return out
+  const set = (oneBased: number, enc: string | string[] | undefined) => {
+    const i = oneBased - 1
+    if (enc !== undefined && i >= 0 && i < count) out[i] = enc
+  }
+  for (const sel of nodes) {
+    const w = sel.where
+    if (w === "first") set(1, sel.encounter)
+    else if (w === "last") set(count, sel.encounter)
+    else if (typeof w === "number") set(w, sel.encounter)
+    else for (let pos = w.from ?? 1; pos <= count; pos += w.every) set(pos, sel.encounter)
+  }
+  return out
+}
+
 export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
@@ -49,6 +89,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
    * id (e.g. "tableau", "sumplete") or a tag (e.g. "trap", "puzzle"). Omit = the default for
    * this section's context (a side path defaults to the "puzzle" tag, i.e. sumplete). */
   encounter?: string | string[]
+  /** Per-node encounter selectors — override `encounter` at chosen positions of this section's own
+   * puzzle chain (e.g. every 3rd a trap). See NodeSelector. */
+  nodes?: NodeSelector[]
   /** Opaque payload for whichever family renders this section's rooms — e.g. a tableau
    * section's `{runNr: 2}`, pulled through that family's own zod schema at assembly time
    * (siteAssembler.ts's ResolveKeyRequirements). Lets a tableau corridor be authored
@@ -76,6 +119,10 @@ export type FloorConstraint<TExtra extends string = never> = {
   difficulty?: Difficulty
   /** Default family/tag for this floor's main-path encounter rooms. */
   encounter?: string | string[]
+  /** Per-node encounter selectors — override `encounter` at chosen positions of the main-path
+   * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
+   * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
+  nodes?: NodeSelector[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
@@ -84,9 +131,6 @@ export type FloorConstraint<TExtra extends string = never> = {
    * shortcut can't merge around a main-path puzzle room. */
   sealed?: boolean
   mainEndReward?: RewardHint | TExtra
-  /** This floor's own capstone role instead of its regular last main-path puzzle — e.g. the
-   * "capstone" tag (resolves to crocodile). Baked to a concrete family by the encounter pass. */
-  lastMainPuzzleFamily?: string
   /** Opaque payload for whichever family renders the main path's rooms — see
    * SideSectionConstraint.encounterArgs above for the full rationale. */
   encounterArgs?: unknown

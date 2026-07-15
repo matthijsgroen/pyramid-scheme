@@ -15,6 +15,14 @@ export type ModExports = Record<string, unknown>
 const serializeEncounter = (encounter: string | string[]): string =>
   Array.isArray(encounter) ? `[${encounter.map(e => `"${e}"`).join(", ")}]` : `"${encounter}"`
 
+// Per-node encounter overrides: `{ 1: "crocodile" }` — ascending index order for stable output.
+const serializeEncountersByIndex = (m: Record<number, string | string[]>): string =>
+  `{ ${Object.keys(m)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(k => `${k}: ${serializeEncounter(m[k])}`)
+    .join(", ")} }`
+
 // Emit a reward as an object literal from whatever fields it carries — core enumerates no reward
 // type or currency id (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1).
 // Reward payloads are flat scalars (type + amount/itemId/hieroglyphId/pieceIndex/…). fragmentSlot
@@ -49,6 +57,8 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
   if (s.encounter) parts.push(`encounter: ${serializeEncounter(s.encounter)}`)
+  if (s.encountersByIndex && Object.keys(s.encountersByIndex).length)
+    parts.push(`encountersByIndex: ${serializeEncountersByIndex(s.encountersByIndex)}`)
   if (s.sideSections?.length)
     parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
@@ -73,7 +83,8 @@ const serializeFloor = (c: FloorConfig): string => {
     lines.push(`    entrance: ${val},`)
   }
   if (c.encounter) lines.push(`    encounter: ${serializeEncounter(c.encounter)},`)
-  if (c.lastMainPuzzleFamily) lines.push(`    lastMainPuzzleFamily: "${c.lastMainPuzzleFamily}",`)
+  if (c.encountersByIndex && Object.keys(c.encountersByIndex).length)
+    lines.push(`    encountersByIndex: ${serializeEncountersByIndex(c.encountersByIndex)},`)
   if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
   if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
   if (c.sealed) lines.push(`    sealed: true,`)
