@@ -1,6 +1,6 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { ARITHMETIC_REFLEX_META } from "./game/arithmeticReflex/meta"
-import { trapConsumables } from "./game/consumables"
+import { trapConsumables, trapShopStock } from "./game/consumables"
 import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 
 // The trap mod descriptor. Owns the arithmetic-reflex trap encounter family and consumable
@@ -13,6 +13,6 @@ import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 export const trapMod: ModDescriptor = {
   id: "trap",
   families: [ARITHMETIC_REFLEX_META],
-  dynamicDistributions: [trapConsumables],
+  dynamicDistributions: [trapConsumables, trapShopStock],
   currencyMeta: HEALTH_CURRENCY_META,
 }

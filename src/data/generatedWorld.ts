@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 476240115
+export const worldContentHash = 844686800
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -7695,10 +7695,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece" },
               { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 2 },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
           },
@@ -7841,10 +7841,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece" },
               { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 2 },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "oil" },
             ],
             encounter: "fez-shop",
           },
@@ -7946,11 +7946,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             rewards: [
               { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 3 },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              undefined,
+              { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
           },
@@ -8049,10 +8049,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece" },
               { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 4 },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
           },
@@ -8164,7 +8164,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "master",
             end: "treasure",
-            rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
+            rewards: [
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+            ],
             encounter: "fez-shop",
           },
           {
@@ -8283,10 +8290,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece" },
               { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 5 },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
+              { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
           },
@@ -8389,10 +8396,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [
               { type: "mosaicPiece" },
               { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 5 },
-              undefined,
-              undefined,
-              undefined,
-              undefined,
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
             ],
             encounter: "fez-shop",
           },
@@ -8484,7 +8491,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "wizard",
             end: "treasure",
-            rewards: [{ type: "mosaicPiece" }, undefined, undefined, undefined, undefined, undefined],
+            rewards: [
+              { type: "mosaicPiece" },
+              { type: "consumable", consumable: "oil" },
+              { type: "consumable", consumable: "trapTool" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+              { type: "consumable", consumable: "bandage" },
+            ],
             encounter: "fez-shop",
           },
           {

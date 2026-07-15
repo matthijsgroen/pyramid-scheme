@@ -31,3 +31,24 @@ export const trapConsumables: Distribution = {
       })
   },
 }
+
+// Trap also stocks the Fez shops: every shop stock slot the currency mods didn't claim is filled
+// with a FINITE consumable (no per-visit refresh — sold-out = sold-out; docs/mods/SLICE-shop-stock.md).
+// Shop slots are rewardPriority 0 so the eager loot passes never touch them; this distribution
+// targets them explicitly by encounter. The currency stock slots were already claimed (removed from
+// `available`) by the capped/gating pass, so only the empty ones remain eligible here. Trap off →
+// not registered → shop stock slots fall empty (the shop just sells fewer things).
+export const trapShopStock: Distribution = {
+  id: "trap-shop-consumables",
+  eligible: slot => slot.encounter === "fez-shop",
+  footprint: () => ({ min: 0, max: Number.MAX_SAFE_INTEGER }),
+  rank: candidates =>
+    [...candidates].sort((a, b) => hashStr(`${a.siteId}:${a.puzzleSeq}`) - hashStr(`${b.siteId}:${b.puzzleSeq}`)),
+  fill: slots => {
+    for (const slot of slots)
+      slot.assign({
+        type: "consumable",
+        consumable: rollConsumable(`${slot.siteId}:shopstock:${slot.puzzleSeq}`, RATES),
+      })
+  },
+}
