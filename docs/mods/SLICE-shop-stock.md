@@ -168,9 +168,18 @@ consumables), priced by the shop, economy-guaranteed, detector-*placed*. Core `s
   `puzzleRewards`→`rewards` doc refs (archival findings left as-is). `mainEndReward`→`rewards`
   deferred to the node-model unification slice (TARGET slice 5).
 
-Verified: `tsc -b` + `lint` + `vitest` (715) + `build` + `generate-world` (economy guard passes)
+Verified: `tsc -b` + `lint` + `vitest` (717) + `build` + `generate-world` (economy guard passes)
 all green. Toggle-off: shop off → no baked residue (shops fall back to chests, currency pieces
 defer to the world spread); hieroglyph off → 0 fragments, world builds.
+
+**Fix (found by inspecting the generated JSON):** the doc's `master_treasure_tomb_b` mapPiece sale
+never materialized — its shop was all consumables. Unlike the capped mosaic/hieroglyph currencies
+(which have spare instances that fill a shop slot naturally), the gating map-piece currency has only
+`piecesRequired` instances and must *move* one into the shop. `MAP_PIECE_CURRENCY.rank` gave the
+shop slot no boost, so both instances stayed in pyramids and the shop sentinel went unfilled (trap
+backfilled a consumable). Fixed by ranking a `fez-shop` slot tagged for the tomb ahead of the pyramid
+branch slots — one instance now moves into the shop, total per tomb unchanged (wizard_c still 2:
+1 shop + 1 pyramid). Guarded by `mapPieceCurrency.spec.ts`.
 
 **Gotchas for next session:**
 - Editor TS diagnostics lag badly (persistently claim `rewards`/`rewardPriority` missing after the

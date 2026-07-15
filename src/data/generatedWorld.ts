@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1655137779
+export const worldContentHash = 1584571308
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -878,7 +878,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 1 },
-            rewards: [{ type: "money", amount: 3 }],
+            rewards: [{ type: "sellable", itemId: "sell_bronze_5" }],
             encounter: "sumplete-mirror",
           },
           {
@@ -886,7 +886,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
-            rewards: [{ type: "money", amount: 3 }],
+            rewards: [{ type: "sellable", itemId: "sell_bronze_1" }],
             encounter: "sumplete-mirror",
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" }, hidden: true },
@@ -909,7 +909,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "sellable", itemId: "sell_bronze_1" },
           { type: "sellable", itemId: "sell_bronze_2" },
           { type: "sellable", itemId: "sell_bronze_3" },
-          { type: "money", amount: 3 },
+          { type: "sellable", itemId: "sell_bronze_4" },
         ],
       },
       {
@@ -974,10 +974,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encounter: "sumplete-mirror",
         mainEndReward: { type: "mosaicPiece" },
         rewards: [
-          { type: "money", amount: 3 },
-          { type: "money", amount: 3 },
-          { type: "money", amount: 3 },
-          { type: "money", amount: 3 },
+          { type: "sellable", itemId: "sell_bronze_2" },
+          { type: "sellable", itemId: "sell_bronze_3" },
+          { type: "sellable", itemId: "sell_bronze_4" },
+          { type: "sellable", itemId: "sell_bronze_5" },
           { type: "money", amount: 3 },
         ],
       },
@@ -2693,7 +2693,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "mosaicPiece" },
             rewards: [
               { type: "sellable", itemId: "sell_silver_3" },
-              { type: "money", amount: 3 },
+              { type: "sellable", itemId: "sell_silver_4" },
             ],
             encounter: "sumplete",
           },
@@ -2703,8 +2703,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece" },
             rewards: [
-              { type: "money", amount: 3 },
-              { type: "money", amount: 3 },
+              { type: "sellable", itemId: "sell_silver_5" },
+              { type: "sellable", itemId: "sell_silver_1" },
             ],
             encounter: "sumplete",
           },
@@ -2713,7 +2713,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
-            rewards: [{ type: "money", amount: 3 }, undefined],
+            rewards: [
+              { type: "sellable", itemId: "sell_silver_2" },
+              { type: "sellable", itemId: "sell_silver_3" },
+            ],
             encounter: "sumplete-mirror",
           },
           {
@@ -2730,7 +2733,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "expert_3:p4:wing0" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 0 },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 2 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "sumplete",
           },
         ],
@@ -2755,7 +2761,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         entrance: { stairId: "expert_3:p4:wing0" },
         encounter: "sumplete-mirror",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 0 },
-        rewards: [undefined, undefined],
+        rewards: [
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+        ],
       },
     ],
   ],
@@ -2862,7 +2871,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d4", pieceIndex: 4 },
-            rewards: [{ type: "consumable", consumable: "bandage" }, undefined],
+            rewards: [
+              { type: "consumable", consumable: "bandage" },
+              { type: "sellable", itemId: "sell_silver_4" },
+            ],
             encounter: "sumplete",
           },
           {
@@ -2878,7 +2890,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece" },
-            rewards: [undefined],
+            rewards: [{ type: "sellable", itemId: "sell_silver_5" }],
             encounter: "sumplete",
           },
           {
@@ -2943,7 +2955,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
-            rewards: [{ type: "consumable", consumable: "bandage" }, undefined],
+            rewards: [
+              { type: "consumable", consumable: "bandage" },
+              { type: "money", amount: 3 },
+            ],
             encounter: "sumplete",
           },
           {
@@ -3015,7 +3030,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 3 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "sumplete",
           },
           {
@@ -3031,7 +3049,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "sumplete",
           },
           {
@@ -3048,7 +3066,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "expert_4:p3:wing0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 2 },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 2 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "sumplete-mirror",
           },
         ],
@@ -3074,7 +3095,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         entrance: { stairId: "expert_4:p3:wing0" },
         encounter: "sumplete-mirror",
         mainEndReward: { type: "mosaicPiece" },
-        rewards: [undefined, undefined],
+        rewards: [
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+        ],
       },
     ],
     [
@@ -3125,7 +3149,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 3 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "sumplete-mirror",
           },
           {
@@ -3133,7 +3160,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "mosaicPiece" },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 3 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "sumplete-mirror",
           },
           {
@@ -3150,7 +3180,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "expert_4:p4:wing0" },
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 1 },
-            rewards: [undefined, undefined],
+            rewards: [{ type: "money", amount: 3 }, undefined],
             encounter: "sumplete",
           },
         ],
@@ -4783,7 +4813,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_gold_4" },
             rewards: [undefined],
             encounter: "sumplete",
           },
@@ -4800,7 +4830,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "master_4:p2:wing0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_3" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_gold_5" },
             rewards: [undefined],
             encounter: "sumplete",
           },
@@ -4809,7 +4839,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "master_a_4" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_gold_1" },
             encounter: "arithmetic-reflex",
           },
         ],
@@ -4825,7 +4855,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "master_4:p2:wing0" },
         encounter: "sumplete",
-        mainEndReward: { type: "money", amount: 3 },
+        mainEndReward: { type: "sellable", itemId: "sell_gold_2" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
     ],
@@ -4841,13 +4871,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_gold_4" },
           },
           {
             pathPuzzles: 1,
             difficulty: "master",
             end: "treasure",
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_gold_5" },
             rewards: [undefined],
             encounter: "sumplete-mirror",
           },
@@ -4904,7 +4934,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         encounter: "sumplete",
-        mainEndReward: { type: "money", amount: 3 },
+        mainEndReward: { type: "sellable", itemId: "sell_gold_3" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
@@ -5678,7 +5708,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_divine_4" },
             encounter: "arithmetic-reflex",
           },
           {
@@ -5686,7 +5716,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_divine_5" },
             encounter: "arithmetic-reflex",
           },
         ],
@@ -5711,7 +5741,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "wizard_2:p0:wing0" },
         encounter: "sumplete-mirror",
-        mainEndReward: { type: "money", amount: 3 },
+        mainEndReward: { type: "sellable", itemId: "sell_divine_1" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "bandage" },
@@ -5731,7 +5761,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: { stairId: "wizard_2:p1:main0" },
         sideSections: [],
         encounter: "sumplete-mirror",
-        mainEndReward: { type: "money", amount: 3 },
+        mainEndReward: { type: "sellable", itemId: "sell_divine_2" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
       {
@@ -5765,7 +5795,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_divine_4" },
             rewards: [{ type: "consumable", consumable: "bandage" }],
             encounter: "sumplete-mirror",
           },
@@ -5774,7 +5804,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "floor-key", color: "red" },
-            endReward: { type: "money", amount: 3 },
+            endReward: { type: "sellable", itemId: "sell_divine_5" },
             rewards: [{ type: "consumable", consumable: "bandage" }],
             encounter: "sumplete-mirror",
           },
@@ -5848,7 +5878,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         entrance: { stairId: "wizard_2:p1:main0" },
         encounter: "sumplete",
         packing: 1.6,
-        mainEndReward: { type: "money", amount: 3 },
+        mainEndReward: { type: "sellable", itemId: "sell_divine_3" },
         rewards: [
           undefined,
           undefined,
@@ -6046,7 +6076,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_b_2" },
-            endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
+            endReward: { type: "money", amount: 3 },
           },
           {
             pathPuzzles: 1,
@@ -8329,7 +8359,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             rewards: [
-              { type: "consumable", consumable: "bandage" },
+              { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },
               { type: "consumable", consumable: "bandage" },

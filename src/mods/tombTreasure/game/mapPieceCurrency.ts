@@ -58,7 +58,12 @@ export const MAP_PIECE_CURRENCY: CurrencyDistribution = {
       const tierMatch = s.tier === demand.tier ? 1 : 0
       // Exact (`mapPiece:<tombId>`) or any-map-piece (bare `mapPiece`) preference boosts.
       const prefMatch = s.preference === demand.bucket || s.preference === CURRENCY_ID ? 1 : 0
-      return tierMatch + prefMatch
+      // A shop slot tagged for THIS tomb is a deliberate authored sale (shop-stock slice, decision
+      // 6): outrank the pyramid branch slots so one instance MOVES into the shop rather than both
+      // staying in pyramids and the shop sentinel going unfilled. Weight dominates tier+pref so the
+      // move always wins when the shop is reachable; unreachable → filtered out upstream, pyramids fill.
+      const shopMatch = s.encounter === "fez-shop" && s.preference === demand.bucket ? 1 : 0
+      return tierMatch + prefMatch + 4 * shopMatch
     })
     return pipe<Slot>(
       preferThenRelax(
