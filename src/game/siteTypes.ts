@@ -40,6 +40,10 @@ export type RoomCell = {
   reward?: TreasureReward
   /** `reward` is a Fez-shop purchase (this many coins), not a free pickup. */
   shopPrice?: number
+  /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the
+   * mods placed into the section's `rewards[]`. The shop family renders these as its buyable list;
+   * each is priced by the shop and claimed per (node, index). Entries may be undefined (unfilled). */
+  stock?: (TreasureReward | undefined)[]
   requiredKeyId?: string
   // Same precondition as requiredKeyId, generalized to several — every id must be owned
   // for this room to be completable. A tableau needing several hieroglyphs complete is

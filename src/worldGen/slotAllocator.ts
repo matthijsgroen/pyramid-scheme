@@ -51,7 +51,9 @@ export const allocateDistributions = (
   if (emptyFraction > 0) {
     // Least-eager loot-eligible slots first (puzzle before chest), so the reserved-empty share
     // lands on low-eagerness slots. Stable within a weight (collectSlots order) → deterministic.
-    const eligible = [...available].filter(s => s.rewardPriority > 0).sort((a, b) => a.rewardPriority - b.rewardPriority)
+    const eligible = [...available]
+      .filter(s => s.rewardPriority > 0)
+      .sort((a, b) => a.rewardPriority - b.rewardPriority)
     for (const slot of eligible.slice(0, Math.round(eligible.length * emptyFraction))) available.delete(slot)
   }
   for (const dist of distributions) {

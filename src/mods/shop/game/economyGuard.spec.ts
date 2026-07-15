@@ -19,8 +19,7 @@ describe("runEconomyGuard", () => {
     endReward: { type: "mosaicPiece" as const },
     shopPrice,
   })
-  const moneyPuzzleFloor = (amount: number) =>
-    floor({ pathPuzzles: 1, rewards: [{ type: "money" as const, amount }] })
+  const moneyPuzzleFloor = (amount: number) => floor({ pathPuzzles: 1, rewards: [{ type: "money" as const, amount }] })
   const junkFloor = (itemId: string) => floor({ mainEndReward: { type: "sellable" as const, itemId } })
 
   it("passes when guaranteed income covers total shop prices + consumable stock", () => {

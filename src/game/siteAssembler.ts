@@ -307,8 +307,6 @@ export const assembleFloor = (
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
-  const treasureOrShop = (shopPrice: number | undefined): EncounterResolution =>
-    shopPrice !== undefined ? fezShop : treasureChest
 
   // A floor-key gate's key host is a purely local, structural requirement — every floor-key
   // gate on this floor needs exactly one key SOMEWHERE on this same floor, decided here,
@@ -1058,13 +1056,18 @@ export const assembleFloor = (
         const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
         roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
-        const endFamily = treasureOrShop(section.shopPrice)
+        // A shop is a section whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain,
+        // so `encounter` describes this end node). It renders its `rewards[]` as buyable stock; a
+        // plain end renders its single endReward. Shop-off → encounter didn't resolve to fez-shop →
+        // falls back to a treasure chest here.
+        const isShop =
+          section.encounter !== undefined &&
+          resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: endFamily.familyId,
-          tags: endFamily.tags,
-          ...(section.endReward ? { reward: section.endReward } : {}),
-          ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
+          family: isShop ? fezShop.familyId : treasureChest.familyId,
+          tags: isShop ? fezShop.tags : treasureChest.tags,
+          ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
         })
       }
     }
@@ -1145,13 +1148,18 @@ export const assembleFloor = (
         const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
         roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
-        const endFamily = treasureOrShop(subSection.shopPrice)
+        const isShop =
+          subSection.encounter !== undefined &&
+          resolveEncounter(subSection.encounter, "treasure").familyId === fezShop.familyId
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: endFamily.familyId,
-          tags: endFamily.tags,
-          ...(subSection.endReward ? { reward: subSection.endReward } : {}),
-          ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
+          family: isShop ? fezShop.familyId : treasureChest.familyId,
+          tags: isShop ? fezShop.tags : treasureChest.tags,
+          ...(isShop
+            ? { stock: subSection.rewards ?? [] }
+            : subSection.endReward
+              ? { reward: subSection.endReward }
+              : {}),
         })
       }
     }

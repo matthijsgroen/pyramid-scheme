@@ -56,10 +56,13 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 
-  if (!greeted || !reward) return null
+  // Boundary A: a shop's buyable pieces now arrive as ctx.stock (a rewards[] array), not a single
+  // ctx.reward. Until the stock render + per-slot buy lands (step 6), stock is unpriced/empty, so the
+  // rare list is empty and the shop shows only consumables + sellables. Render regardless of reward.
+  if (!greeted) return null
 
   const buyRare = () => {
-    if (purchased) return
+    if (!reward || purchased) return
     if (!progression.ledger.spend("money", price)) return
     applyReward(reward)
     journeys.markShopPurchased(ctx.edgeId)
@@ -103,16 +106,20 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
       rareItemsLabel={t("shop.rareItems")}
       suppliesLabel={t("shop.supplies")}
       sellSectionLabel={t("shop.sellSection")}
-      rareItems={[
-        {
-          id: "rare",
-          ...rewardText(reward, t),
-          price,
-          affordable: progression.ledger.get("money") >= price,
-          soldOut: purchased,
-          featured: true,
-        },
-      ]}
+      rareItems={
+        reward
+          ? [
+              {
+                id: "rare",
+                ...rewardText(reward, t),
+                price,
+                affordable: progression.ledger.get("money") >= price,
+                soldOut: purchased,
+                featured: true,
+              },
+            ]
+          : []
+      }
       consumables={(Object.keys(CONSUMABLE_PRICES) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
         id: type,
         itemName: t(`chest.consumable.${type}`),

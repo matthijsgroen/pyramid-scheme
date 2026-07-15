@@ -118,6 +118,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       difficulty: floorConfig.difficulty,
       reward: cell?.type === "room" ? cell.reward : undefined,
       price: cell?.type === "room" ? cell.shopPrice : undefined,
+      stock: cell?.type === "room" ? cell.stock : undefined,
       requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,
       gateVariant: cell?.type === "room" ? cell.gateVariant : undefined,
       keyColor: cell?.type === "room" ? cell.keyColor : undefined,

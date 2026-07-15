@@ -1,5 +1,4 @@
-import { tier, journey, tomb, sidePath } from "../dsl"
-import { fragmentPrice, MOSAIC_PRICE, MAP_PIECE_PRICE } from "../../data/shopPricing"
+import { tier, journey, tomb } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
 
 // Master's escalation (between expert's intro of traps/keys and wizard's saturation): DEEPER
@@ -55,11 +54,8 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyph", shopPrice: fragmentPrice("master") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
@@ -76,17 +72,10 @@ export const masterRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: mapPiece (solo slot). Always the piece
-        // that unlocks the *last* tomb specifically — forward-only dependency, no
-        // backtrack softlock. One of the 4 wizard-journey copies is freed for this via
-        // spec/wizard.ts's journey("wizard_4") override.
-        sideSections: [
-          sidePath({
-            puzzles: 1,
-            endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
-            shopPrice: MAP_PIECE_PRICE,
-          }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. The tomb-treasure mod places the
+        // wizard_treasure_tomb_c map-piece copy here (resolveShopStock); one of the 4 wizard-journey
+        // copies is freed for this via spec/wizard.ts's journey("wizard_4") override. Empty until then.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

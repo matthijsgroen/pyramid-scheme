@@ -1,5 +1,4 @@
-import { tier, tomb, journey, sidePath } from "../dsl"
-import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
+import { tier, tomb, journey } from "../dsl"
 import type { Rule, SideSectionConstraint } from "../dsl"
 
 // The ceiling saturates every mechanic, including a key chain (a red floor-key gates a room
@@ -54,11 +53,8 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyph", shopPrice: fragmentPrice("wizard") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
@@ -74,11 +70,8 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyph", shopPrice: fragmentPrice("wizard") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
@@ -94,9 +87,8 @@ export const wizardRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: mosaic (solo slot). Never mapPiece
-        // here — this is the last tomb, nothing left to unlock with one.
-        sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE })],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

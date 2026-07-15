@@ -1,5 +1,4 @@
 import { tier, journey, tomb, sidePath, wardWing } from "../dsl"
-import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
 import type { Rule } from "../dsl"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
@@ -43,11 +42,9 @@ export const juniorRules: Rule[] = [
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyph", shopPrice: fragmentPrice("junior") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
+        // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.

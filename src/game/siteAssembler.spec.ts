@@ -139,22 +139,29 @@ describe(assembleFloor, () => {
     expect(goal?.cell.reward).toBeUndefined()
   })
 
-  it("carries a section's shopPrice through to its end room", () => {
+  it("renders a shop section's stock array at its (chainless) end room", () => {
+    // A shop is a pathPuzzles:0 section whose encounter resolves to fez-shop; its end node carries
+    // the section's `rewards[]` as buyable stock (not a single reward + shopPrice).
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [
-        { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" }, shopPrice: 500 },
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          rewards: [{ type: "mosaicPiece" }, undefined],
+        },
       ],
     }
     const result = assembleFloor("shop-site", config, 0)
     if (!result.success) throw new Error("assembly failed")
-    const priced = result.grid.cells.flat().filter(c => c.type === "room" && c.shopPrice !== undefined) as RoomCell[]
-    expect(priced).toHaveLength(1)
-    expect(priced[0].shopPrice).toBe(500)
-    expect(priced[0].reward).toEqual({ type: "mosaicPiece" })
+    const shops = result.grid.cells.flat().filter(c => c.type === "room" && c.family === "fez-shop") as RoomCell[]
+    expect(shops).toHaveLength(1)
+    expect(shops[0].stock).toEqual([{ type: "mosaicPiece" }, undefined])
   })
 
   it("carries stairId through to a stairhead room, and populates grid.staircases from it", () => {
