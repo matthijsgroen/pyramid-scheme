@@ -1,16 +1,23 @@
 # Handover — mod-restructure fidelity work (branch `mods/hieroglyph-currency`)
 
-Branch committed through `ff97078` (NOT pushed — local commits this session). Full suite green
-(**718**), `yarn build`/`tsc`/`lint` clean, `yarn generate-world` builds. This branch is executing
-the gaps in **`docs/mods/FIDELITY-AUDIT.md`** — read that first; its "Progress" section is the live
-tracker.
+HEAD `e0ee4f9`, **pushed** (branch == origin). Full suite green (**715**), `yarn tsc -b`/`build`/
+`lint` clean, `yarn generate-world` builds. This branch executes the gaps in
+**`docs/mods/FIDELITY-AUDIT.md`** — read that first; its "Progress" section is the live tracker.
 
-**This session (6 commits on top of `0659eae`):** §A.2 tombs→family-registry via a unified
-`PyramidExpedition` (`7e7a16f`); §A mechanic extraction — crocodile (`7dc8eb7`) + tableau (`c19fab1`)
-out of `src/game/puzzles` into their mods; §A.3 gen-time **tag-based encounter allocation**
-(`8b00c6c`) + `sumplete-mirror` proof family (`75deb6a`); §H puzzle→real mod (`ff97078`). Verify by
-regen + `git diff --stat src/data/generatedWorld.ts` (refactor commits are byte-identical; §A.3
-changed encounter representation but is semantic-identical — same family renders in every room).
+**This session (`ba2a7db..e0ee4f9`, 10 commits):**
+- **tomb-treasure mod** (`19cdb89`) — the "last mod": `mapPiece`/`tombKey` extracted to
+  `src/mods/tombTreasure` (currency, handlers, schemas, state, `keyProviders` seam).
+- **§E — ward/tomb keys → the solver** (`afee6e3`,`f2671ef`,`68d1908`,`225c937`,`7ee6e84`): retired
+  `validateDiscovery`; genericized `reachability.ts` (core names no currency, mod-injected
+  `ReachabilitySupport`); injected tombKey placement (`TombTreasureResolver`); every treasure gates
+  an optional `wardChest` pocket.
+- **§G — node selectors + trap** (`967e11d`,`90f6200`,`324f4a7`,`e0ee4f9`): a general authoring
+  vocabulary `nodes: [{ where, encounter }]` replacing the hardcoded capstone; trap gating softened;
+  heal added to the (plugin-owned) trap start screen.
+
+Verify: regen + `git diff --stat src/data/generatedWorld.ts`. tomb-treasure + §E stages 1-3 + §G are
+byte-identical (or representation-only); §E stage 4 deliberately changed the world (9 pockets + loot
+redistribution, reward counts stable: mapPiece 31, tombKey 40, mosaic 298, hieroglyph 294).
 
 ## Read first, in order
 
@@ -18,8 +25,11 @@ changed encounter representation but is semantic-identical — same family rende
 2. `docs/mods/ARCHITECTURE.md` — the two invariants + the as-built seams.
 3. `docs/mods/distribution-primitive-design.md` — the loot/encounter primitive (§"As-built refinements").
 4. `docs/mods/TARGET.md` — the two rules (mod-agnostic core; toggle-off is the gate).
-5. `docs/mods/pyramid-interior-design.md` §8 — the tomb-interior target (needed for §A.2+§G).
-6. Auto-memories: `project_distribution_primitive_contract`, `feedback_design_doc_fidelity`,
+5. `docs/mods/pyramid-interior-design.md` §8 — the tomb-interior target (§14 = the §F perk table).
+6. Slice records for this session's work: `SLICE-tomb-treasure.md`, `SLICE-E-ward-keys.md`,
+   `SLICE-G-selectors.md` (the last also holds the unbuilt gate-injection design).
+7. Auto-memories: `project_node_selectors`, `project_keys_and_locks_e_direction`,
+   `project_distribution_primitive_contract`, `feedback_design_doc_fidelity`,
    `project_mod_restructure_target`, `reference_worldgen_dsl_authoring`.
 
 ## Done on this branch
@@ -46,8 +56,9 @@ changed encounter representation but is semantic-identical — same family rende
   `isLast && hasCroc` + one-off `lastMainPuzzleFamily` — resolved to `encountersByIndex` (per-node
   family), consumed by placeEncounters/siteAssembler/slots/serializer. Crocodile placement
   byte-identical. Trap gating softened (`isTrapAttemptSafe` — attempt always launches, warning only;
-  health consequence stays in the trap plugin). Persistence already done (§A.2); shop kept floor-0.
-  Gate-injecting selectors designed but NOT built (reopens maze assembler + §E; see the slice doc).
+  health consequence stays in the trap plugin) + **heal** added to the plugin-owned trap start
+  screen (bandage/oil, shown when held + below max). Persistence already done (§A.2); shop kept
+  floor-0. Gate-injecting selectors designed but NOT built (reopens maze assembler + §E; slice doc).
 - **§E — ward/tomb keys → the solver (4 stages, `SLICE-E-ward-keys.md`).** Retired the redundant
   `validateDiscovery`; genericized `reachability.ts` so core names no currency (journey-entry
   threshold, tier-unlock ladder, tombKey/mapPiece harvest all injected via a mod-supplied
@@ -67,10 +78,18 @@ changed encounter representation but is semantic-identical — same family rende
 
 ## Remaining (priority order — see FIDELITY-AUDIT "Progress")
 
-1. **§F — treasure perks.** `applyTreasurePerk` is a no-op (now on `useTombTreasureProgress`) but
-   `pyramid-interior-design.md` presents a full perk economy. A decision: build the perk system, or
-   correct the doc. (Blocks nothing.) Note: many tomb treasures carry a perk that currently does
-   nothing — §F is where they come alive.
+1. **§F — treasure perks (the main open gap; a decision first, then build-or-doc).**
+   `pyramid-interior-design.md` §1+§14 present a full 40-treasure perk economy (max-health, armor,
+   trap-insight, pack-mule, compass, detection, scribe's-eye) as if shipped; reality is inert.
+   Concrete state: `useTombTreasureProgress.applyTreasurePerk` is a no-op stub (the `tombKey` claim
+   calls it, nothing happens); `TREASURE_PERKS`/`TOMB_PERK_IDS` (`data/treasurePerks.ts`) exist;
+   `perkRegistry.ts`/`registerPerks.ts` exist but their `bump` is never invoked; perk state is split
+   but static in core (`useProgression.ts` `trapPerks`/`puzzlePerks`/`corePerks`, all baseline;
+   maxHealth fixed 6, carry-cap 2, armor/trap-insight 0 in the trap mod). **The fork:** build the
+   registry-driven perk system (revive `bump` from the tombKey claim, per-perk effects in the owning
+   mods — health/armor/trap-insight → trap, scribes-eye → puzzle, detectors → core), OR correct the
+   doc to mark perks deferred. Grill the user on which before building — it's a real feature, not a
+   refactor. Overlaps §D/§E ownership (perk EFFECTS belong to the consuming mods, like the rest).
 2. **§A.3 loot `eligible` join (deferred)** — add `slot.encounter` metadata and rewrite the
    consumable/shop-money `eligible` to join on it instead of the `rewardWeight` proxy (which works).
    Note: §G's per-node `encountersByIndex` now gives slots.ts a per-room family for loot weight —
@@ -131,3 +150,14 @@ agent** → fix findings → commit → push. Surface design deviations as quest
 - **Consumable-detector path** still names `"consumable"` (`SiteMapScreen`/`SiteMapView` skipped-consumable
   reopen) — deferred to a detector slice.
 - `SKIP_ECONOMY_GUARD=1 yarn generate-world` for iteration.
+- **tomb-treasure toggle-off HARD-FAILS `generate-world`** (winnability sweep) — expected, not a
+  regression: ward gates are core-authored tomb/pyramid structure but depend on the mod's tomb keys.
+  It's a root mod that stays on; toggle-off proves isolation of the mod's own code, not a clean
+  degenerate build. (Making the mod own tomb topology is out of scope, noted in `SLICE-E`.)
+- **`TRAP_FAMILIES.md` §1.2 is stale** — says "must hold ≥1 full heart to attempt"; §G softened that
+  (`pyramid-interior-design.md` §8 supersedes — attempt always launches). Reconcile TRAP_FAMILIES
+  when next touched.
+- **Byte-identity can be "representation-only"** — §G's capstone migration + tomb-treasure's
+  sentinel change altered how a thing serializes (`encountersByIndex` vs `lastMainPuzzleFamily`;
+  `fragmentSlot` sentinel vs literal) without changing what renders. A non-empty `generatedWorld`
+  diff is fine IF it's confined to representation + reward counts hold — check, don't assume empty.

@@ -13,13 +13,21 @@ Legend — classification: `contract-violation` (code contradicts a locked contr
 
 ## The one-line verdict
 
+> **Update 2026-07-15.** The original verdict (below) is largely addressed — §A–§E + §G done. The
+> mechanics that "lived in core with mods as thin wrappers" were extracted: puzzle/tableau/crocodile
+> generation + state, trap config/health, reward vocabulary+state, and the tomb-treasure
+> currency/placement all live in their mods now; core `src/worldGen`+`src/game` name no mod reward or
+> currency in their logic. Remaining: **§F** (treasure perks still inert — the last shipped-looking-
+> but-dead system), the deferred **§A.3 loot-eligible join** tail, and the designed-not-built
+> **gate-injecting node selectors**. Original verdict, for the record:
+
 The **scaffolding is real** (descriptor/registry/allocator primitive exist; mosaic is a genuine
 clean slice; world-gen production code imports no mod). But the **runtime mechanics for hieroglyph,
 trap, shop, and the tomb puzzles still live in core**, with mods acting as thin wrappers — so the
 toggle-off gate passes only in its weakest reading ("it compiles"), not its intent ("the mechanic
 is gone"). And one shipped-looking system (treasure perks) is entirely inert.
 
-## Progress (branch `mods/hieroglyph-currency`, updated 2026-07-14)
+## Progress (branch `mods/hieroglyph-currency`, updated 2026-07-15)
 
 - **§C ✅** dynamic loot on the `Distribution` primitive (commits `6af7a8d`, `4e66b1a`).
 - **§D ✅** open reward union + zod boot-validation; effects/state/display/vocab out of core
