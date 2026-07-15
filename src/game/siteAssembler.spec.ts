@@ -141,7 +141,7 @@ describe(assembleFloor, () => {
 
   it("renders a shop section's stock array at its (chainless) end room", () => {
     // A shop is a pathPuzzles:0 section whose encounter resolves to fez-shop; its end node carries
-    // the section's `rewards[]` as buyable stock (not a single reward + shopPrice).
+    // the section's `rewards[]` as buyable stock.
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "starter",
@@ -182,11 +182,11 @@ describe(assembleFloor, () => {
     expect(result.grid.staircases["test:main"]).toEqual([stairhead!.r, stairhead!.c])
   })
 
-  it("does not set shopPrice on an ordinary (non-shop) end-of-path room", () => {
+  it("does not set stock on an ordinary (non-shop) end-of-path room", () => {
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
     const goal = findRoom(result.grid, isTreasureRoom)
-    expect(goal?.cell.shopPrice).toBeUndefined()
+    expect(goal?.cell.stock).toBeUndefined()
   })
 
   it("has an entrance node on the grid edge", () => {

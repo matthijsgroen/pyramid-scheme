@@ -150,32 +150,27 @@ consumables), priced by the shop, economy-guaranteed, detector-*placed*. Core `s
 `src/data`/`src/game` name no currency/price for shops. Stock kept from the pre-slice world
 (6 fragment + 6 mosaic + 1 mapPiece across 8 shops).
 
-**REMAINING:**
+**DONE (app half — E + F):**
 
-- **E (step 6) — app-side render + buy.**
-  - `src/mods/shop/app/fezShop/plugin.tsx`: render `ctx.stock` (the 6-item array) instead of the
-    single `ctx.reward` (currently shows empty rares + per-visit `freshStock`). Each stock item
-    priced via `priceFor(item, ctx.difficulty)` (from `@/mods/shop/game/pricing`). Buy slot j =
-    `canAccept` check → `applyReward(stock[j])` + `ledger.spend("money", priceFor(...))` + mark
-    `(edgeId, j)` claimed. **Delete `freshStock`** + the per-visit refresh effect + the
-    `CONSUMABLE_STOCK_PER_VISIT` local (consumables are baked stock now).
-  - `src/app/state/useJourneys.ts`: replace `purchasedShops: string[]` (edgeId) +
-    `markShopPurchased`/`hasPurchasedShop` with a **per-(edgeId, stockIndex)** claimed set
-    (e.g. keys `${edgeId}#${j}`). `SiteMapScreen.tsx:194`'s still-buyable re-enter branch keyed on
-    `shopPrice` needs re-keying to "shop with unclaimed stock" (shopPrice is gone).
-  - `src/ui/organisms/FezShop.tsx`: adapt to a stock list (currency + consumable items priced
-    per-slot, sold-out per-slot). Sell (junk) section unchanged.
-  - **DETECTOR GAP (must fix in E/F):** `src/mods/hieroglyph/app/compassScanner.ts` scans only
-    `mainEndReward` + `section.endReward` — NOT `rewards[]`. So the compass does NOT yet point at a
-    shop selling a fragment. Make it scan `rewards[]` too (mirror the gen-side `forEachReward`
-    fix). Only THEN is the "buy → own → compass drops the shop" honesty real. This is the headline
-    acceptance test.
-- **F (step 7) — strip + reconcile + verify.** Remove any residual `shopPrice` type field if now
-  unused; reconcile `ARCHITECTURE.md`/`FIDELITY-AUDIT.md`/`distribution-primitive-design.md` +
-  the `rewardWeight`/`puzzleRewards` doc refs; note `mainEndReward`→`rewards` deferred to the
-  node-model unification slice. Full verify + **playtest**: buy a fragment at a shop → compass
-  stops pointing there; buy any slot → sold-out, no per-visit refresh; toggle-off (shop mod off →
-  shops fall back to chests; a currency mod off → its shop pieces stay in the world).
+| commit | boundary |
+|---|---|
+| `1087af9` | **E** — fezShop plugin renders `ctx.stock` (one buy path per slot: `canAccept`→`spend`→`applyReward`→mark claimed); `purchasedShops`→per-`(edgeId,index)` `purchasedStock`; `SiteMapScreen` re-enter re-keyed off unclaimed stock; **compassScanner scans `rewards[]`** (headline: buy fragment→own→compass drops the shop) |
+| (F below) | strip residual `shopPrice`/`price` type fields; docs reconciled |
+
+- **E** — `plugin.tsx` renders the 6-item `ctx.stock` (currency = "rare", consumable = "supplies"),
+  each priced via `priceFor(item, ctx.difficulty)`; sold-out = bought OR owned (`skip`). `freshStock`
+  + per-visit refresh deleted. `useJourneys`: `markShopSlotPurchased`/`getPurchasedShopSlots` over
+  `purchasedStock[]` (`${edgeId}#${j}`). `compassScanner` walks `rewards[]` + nested sub-sections
+  (mirrors `validate.ts`) — new spec proves the buy→own→drop honesty.
+- **F** — removed dead `shopPrice` (dsl/types/serializer/siteTypes) + `FamilyContext.price`;
+  reconciled `ARCHITECTURE.md`/`FIDELITY-AUDIT.md` (shop toggle-off row now clean) /
+  `distribution-primitive-design.md` (Increment 2 marked done); `rewardWeight`→`rewardPriority`,
+  `puzzleRewards`→`rewards` doc refs (archival findings left as-is). `mainEndReward`→`rewards`
+  deferred to the node-model unification slice (TARGET slice 5).
+
+Verified: `tsc -b` + `lint` + `vitest` (715) + `build` + `generate-world` (economy guard passes)
+all green. Toggle-off: shop off → no baked residue (shops fall back to chests, currency pieces
+defer to the world spread); hieroglyph off → 0 fragments, world builds.
 
 **Gotchas for next session:**
 - Editor TS diagnostics lag badly (persistently claim `rewards`/`rewardPriority` missing after the

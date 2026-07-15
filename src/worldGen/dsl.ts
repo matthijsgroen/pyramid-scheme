@@ -103,9 +103,6 @@ export type SideSectionConstraint<TExtra extends string = never> = {
    * anywhere (main path or a ward-gated side path) instead of being tied to floor position. */
   encounterArgs?: unknown
   endReward?: RewardSpec | TExtra
-  /** Marks this section's endReward as a Fez-shop purchase instead of a free pickup — the
-   * DSL literal in coins. No `chance` allowed on a shop slot; must stay deterministic. */
-  shopPrice?: number
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]

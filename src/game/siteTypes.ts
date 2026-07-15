@@ -38,8 +38,6 @@ export type RoomCell = {
   sectionHash?: string
   hidden?: boolean
   reward?: TreasureReward
-  /** `reward` is a Fez-shop purchase (this many coins), not a free pickup. */
-  shopPrice?: number
   /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the
    * mods placed into the section's `rewards[]`. The shop family renders these as its buyable list;
    * each is priced by the shop and claimed per (node, index). Entries may be undefined (unfilled). */
@@ -89,8 +87,6 @@ export type SubSection = {
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
-  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
-  shopPrice?: number
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */

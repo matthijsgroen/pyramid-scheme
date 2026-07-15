@@ -60,7 +60,7 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   re-tagged `capstone`). Adding a puzzle family = register its meta+plugin → it joins the pool, no
   core/spec/siteAssembler edit. Deterministic seeded spread; semantic-identical with today's single
   family per role (world plays the same; generatedWorld now bakes concrete families). Deferred: the
-  loot `eligible` join on `slot.encounter` (loot still uses the rewardWeight proxy, which works).
+  loot `eligible` join on `slot.encounter` (loot still uses the rewardPriority proxy, which works).
 - **§E ✅** ward/tomb keys → the solver: `validateDiscovery` retired (reachability subsumes it),
   `reachability.ts` genericized (mod-supplied `ReachabilitySupport` — core names no currency),
   tombKey placement injected from the mod (core `configBuilder` names no reward type), and every
@@ -131,11 +131,13 @@ Build test — remove each mod from `REGISTERED_MODS`, run `yarn generate-world`
 | mosaic | ok (0 placed) | ok | **none — clean** |
 | hieroglyph | ok (0/294 frags) | ok | 40 `encounter:"tableau"` (by design) |
 | trap | ok (0 consumables) | ok | 167 `encounter:"trap"` (by design) |
-| shop | ok (0 money) | ok | **13 `shopPrice` literals still baked** |
+| shop | ok (0 money) | ok | **none — shop nodes fall back to chests** (shop-stock slice) |
 
-All four compile. But mosaic is the **only** mod that leaves *no* mechanic behind — because it is the
-only one whose mechanic isn't wired into a core runtime path (§A). "Just without that mechanic" is
-not met for hieroglyph/trap/shop at runtime.
+All four compile. As of the shop-stock slice, shop off leaves no baked residue: a shop-tagged
+section resolves to fez-shop only when the mod is enabled, else it falls back to a treasure chest,
+and the `shopPrice` literal is gone from core entirely (prices are shop-owned runtime data). mosaic
+was already clean; hieroglyph/trap still leave by-design `encounter` tags (a toggled-off gating mod's
+authored role) that the family-absence pass-through resolves at runtime.
 
 ---
 
@@ -143,7 +145,7 @@ not met for hieroglyph/trap/shop at runtime.
 
 > **Resolved.** money/junk/consumables are now real `Distribution`s (`footprint`/`eligible`/`rank`/
 > `fill`) run through `allocateDistributions`; the mod's `fill` owns variants/rarity/completeness.
-> Eagerness = `FamilyMeta.rewardWeight` stamped on each slot (fill-order, encounter-sourced);
+> Eagerness = `FamilyMeta.rewardPriority` stamped on each slot (fill-order, encounter-sourced);
 > `emptyFraction` is a real core knob. `MoneySpec`/`JunkSpec`/`ConsumableSpec`/`dynamicLoot.ts`
 > deleted. Money+junk = one `shopMoneyEconomy` distribution with a `[totalBuyable, 1.5×]` budget
 > (deliberate economy rebalance). Toggle-off + guard verified. See `distribution-primitive-design.md`
@@ -323,7 +325,7 @@ call `registerFamily` **ungated** (unlike every other mod) — a mod in name onl
 ## Recommended sequencing (proposal, not yet agreed)
 
 1. **Distribution primitive completion (§C)** — make money/junk/consumables real `Distribution`s
-   with `footprint {min,max}` + mod `fill`; consume `FamilyMeta.rewardWeight` as encounter eagerness.
+   with `footprint {min,max}` + mod `fill`; consume `FamilyMeta.rewardPriority` as encounter eagerness.
    Retire `MoneySpec`/`JunkSpec`/`assignDynamicLoot`. (This is the "full push" already chosen.)
 2. **Reward vocabulary + state extraction (§D)** — move reward types/handlers/state to owning mods so
    "delete a mod, core untouched" becomes true. Unblocks clean toggle-off for hieroglyph/trap/shop.

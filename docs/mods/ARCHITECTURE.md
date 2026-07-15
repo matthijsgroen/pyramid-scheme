@@ -75,7 +75,8 @@ loop in `src/app/state/registerCurrencies.ts`.
 ### Family registry + dispatch
 An encounter family (a puzzle/trap/shop kind) has two halves:
 - **Domain** (`FamilyMeta` in `src/game/families/familyMeta.ts`): id, ownerMod,
-  tags, icon, color, `rewardWeight` (0–100 fill priority). World-gen reads this;
+  tags, icon, color, `rewardPriority` (0–100 fill priority) + `rewardCapacity`
+  (reward-slot count, 1 for an ordinary node, 6 for a shop). World-gen reads this;
   it never imports the React component. Metas reach it via `MOD_FAMILY_META`
   (descriptor-contributed) merged with a direct list in
   `src/mods/allFamilyMeta.ts`.

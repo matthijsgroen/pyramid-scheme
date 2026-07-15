@@ -62,8 +62,9 @@ export const collectSlots = (
   familyPriorityFor: FamilyPriorityFor = () => 0
 ): Slot[] => {
   const slots: Slot[] = []
-  // Every emitted end slot is a treasure-chest path end (shop ends carry shopPrice and are never
-  // fragmentSlot sentinels, so they aren't collected) → chest eagerness (100). Resolved through
+  // Every emitted end slot is a treasure-chest path end (shop ends resolve to fez-shop with their
+  // own stock and are never fragmentSlot sentinels, so they aren't collected here) → chest
+  // eagerness (100). Resolved through
   // the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
   const chestWeight = familyPriorityFor(undefined, "treasure")
 

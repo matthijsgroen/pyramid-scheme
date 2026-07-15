@@ -24,7 +24,6 @@ export type FamilyContext = {
   theme?: string
   tags?: string[]
   reward?: TreasureReward
-  price?: number
   // A shop node's stock: the reward slots the mods placed into this node's `rewards[]` (currency
   // pieces + consumables). The fez-shop family renders these as its buyable list. Entries may be
   // undefined (unfilled slots). Distinct from the single `reward` a plain chest/puzzle-solve grants.

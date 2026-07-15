@@ -143,10 +143,10 @@ specifically).
   `allocateDistributions`, not a parallel `assignDynamicLoot` pass. The mod's `fill` bakes the
   rewards (owns variants/rarity/completeness); core only allocates + eager-orders + reserves empty.
   (`ConsumableSpec`/`MoneySpec`/`JunkSpec`/`dynamicLoot.ts` are deleted.)
-- **Eagerness = `rewardWeight` = fill ORDER, sourced from the encounter family** (NOT a
-  `Record<Slot["kind"]>` ratio). `FamilyMeta.rewardWeight` (chest 100, sumplete 60,
+- **Eagerness = `rewardPriority` = fill ORDER, sourced from the encounter family** (NOT a
+  `Record<Slot["kind"]>` ratio). `FamilyMeta.rewardPriority` (chest 100, sumplete 60,
   trap/tableau/crocodile/gate/shop 0) is stamped on each slot at collect time via an injected
-  `familyWeightFor` (built from `ALL_FAMILY_META`, riding the `resolveKeyRequirements` seam).
+  `familyPriorityFor` (built from `ALL_FAMILY_META`, riding the `resolveKeyRequirements` seam).
   `allocateDistributions` offers slots weight-desc (chests before puzzles); a distribution that
   can't take everything leaves the least-eager slots empty. Weight-0 slots are loot-ineligible —
   so tomb main-path tableau/crocodile puzzles bear no loot (matches the `familyMeta` intent).
@@ -164,9 +164,11 @@ specifically).
 
 ## Still open (for the build, not blocking the design)
 
-- Increment 2 — encounters as distributions: `slot.encounter`/`capacity` metadata, per-instance shop
-  capacity, shop stock on the `eligible` join. Today `rewardWeight` is stamped from the authored
-  `encounter` field directly; full per-instance encounter config is the next slice (§A).
+- Increment 2 — encounters as distributions ✅ (shop-stock slice, `SLICE-shop-stock.md`):
+  `Slot.encounter` + `FamilyMeta.rewardCapacity` metadata landed; a shop node expands into 6
+  reward slots (priority 0) written into the node's `rewards[]`; the currency mods place stock on
+  the `slot.encounter === "fez-shop"` join (`placeShopStock`), and trap fills the leftovers with
+  finite consumables. `rewardPriority` is stamped from the authored `encounter` field directly.
 - "area" vocabulary beyond difficulty, if consumable eligibility needs more than `tier >= expert`.
 - min-first-across-all allocator upgrade — only when a second nonzero-`min` distribution contends
   for the same pool (e.g. Increment-2 shop stock).

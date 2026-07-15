@@ -52,7 +52,6 @@ const serializeSideSection = (s: SideSection): string => {
           : `gate: { type: "floor-key" }`
     )
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
-  if (s.shopPrice !== undefined) parts.push(`shopPrice: ${s.shopPrice}`)
   if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
