@@ -20,7 +20,7 @@ export type StoredJourneyStateV3 = {
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // edgeIds where inventory was full at collect time
-  purchasedShops?: string[] // edgeIds of shop rooms whose rare item has been bought
+  purchasedStock?: string[] // `${edgeId}#${stockIndex}` of shop slots already bought
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -48,8 +48,8 @@ export type JourneyAPI = {
   markConsumableSkipped: (edgeId: string) => void
   clearConsumableSkipped: (edgeId: string) => void
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
-  markShopPurchased: (edgeId: string) => void
-  hasPurchasedShop: (journeyId: string, edgeId: string) => boolean
+  markShopSlotPurchased: (edgeId: string, stockIndex: number) => void
+  getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -284,21 +284,22 @@ export const createJourneysV3Api = ({
     return new Set(j?.skippedConsumables ?? [])
   }
 
-  const markShopPurchased = (edgeId: string) => {
+  const markShopSlotPurchased = (edgeId: string, stockIndex: number) => {
     if (!activeJourneyId) return
+    const key = `${edgeId}#${stockIndex}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const purchased = j.purchasedShops ?? []
-        if (purchased.includes(edgeId)) return j
-        return { ...j, purchasedShops: [...purchased, edgeId] }
+        const purchased = j.purchasedStock ?? []
+        if (purchased.includes(key)) return j
+        return { ...j, purchasedStock: [...purchased, key] }
       })
     )
   }
 
-  const hasPurchasedShop = (journeyId: string, edgeId: string): boolean => {
+  const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> => {
     const j = journeys.find(j => j.journeyId === journeyId)
-    return (j?.purchasedShops ?? []).includes(edgeId)
+    return new Set(j?.purchasedStock ?? [])
   }
 
   return {
@@ -319,7 +320,7 @@ export const createJourneysV3Api = ({
     markConsumableSkipped,
     clearConsumableSkipped,
     getSkippedConsumables,
-    markShopPurchased,
-    hasPurchasedShop,
+    markShopSlotPurchased,
+    getPurchasedShopSlots,
   }
 }

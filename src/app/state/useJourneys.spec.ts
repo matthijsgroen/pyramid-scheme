@@ -206,15 +206,15 @@ describe("getJourney randomSeed", () => {
   })
 })
 
-// ── markShopPurchased / hasPurchasedShop ────────────────────────────────────────
+// ── markShopSlotPurchased / getPurchasedShopSlots ───────────────────────────────
 
-describe("markShopPurchased / hasPurchasedShop", () => {
+describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
   it("is not purchased until marked", () => {
     const api = makeApi([makeStoredJourney()])
-    expect(api.hasPurchasedShop(REAL_ID, "0:3,4")).toBe(false)
+    expect(api.getPurchasedShopSlots(REAL_ID).has("0:3,4#0")).toBe(false)
   })
 
-  it("persists a purchase and reports it back", () => {
+  it("persists a per-slot purchase and reports it back", () => {
     const stored = makeStoredJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -224,18 +224,20 @@ describe("markShopPurchased / hasPurchasedShop", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markShopPurchased("0:3,4")
-    expect(state[0].purchasedShops).toEqual(["0:3,4"])
+    api.markShopSlotPurchased("0:3,4", 1)
+    expect(state[0].purchasedStock).toEqual(["0:3,4#1"])
     expect(
       createJourneysV3Api({
         journeys: state,
         setJourneys: vi.fn(),
         journeyData: [makeJourneyData(REAL_ID)],
-      }).hasPurchasedShop(REAL_ID, "0:3,4")
+      })
+        .getPurchasedShopSlots(REAL_ID)
+        .has("0:3,4#1")
     ).toBe(true)
   })
 
-  it("deduplicates: marking the same edge twice does not double-store", () => {
+  it("tracks slots of one shop independently", () => {
     const stored = makeStoredJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -245,8 +247,9 @@ describe("markShopPurchased / hasPurchasedShop", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markShopPurchased("0:3,4")
-    api.markShopPurchased("0:3,4")
-    expect(state[0].purchasedShops).toEqual(["0:3,4"])
+    api.markShopSlotPurchased("0:3,4", 0)
+    api.markShopSlotPurchased("0:3,4", 0) // dedup
+    api.markShopSlotPurchased("0:3,4", 2)
+    expect(state[0].purchasedStock).toEqual(["0:3,4#0", "0:3,4#2"])
   })
 })

@@ -4,39 +4,29 @@ import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { isModEnabled } from "@/mods/registeredMods"
 import { FEZ_SHOP_META } from "@/mods/shop/game/fezShop/meta"
-import { useModState } from "@/app/state/useModState"
-import { useTrapProgress } from "@/mods/trap/app/useTrapProgress"
+import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { FezContext } from "@/app/fez/context"
-import { FezShop } from "@/ui/organisms/FezShop"
+import { FezShop, type ShopBuyItem } from "@/ui/organisms/FezShop"
 import { rewardText } from "@/app/SiteMap/rewardDisplay"
-import { CONSUMABLE_EMOJI } from "@/mods/trap/app/consumableEmoji"
-import { CONSUMABLE_PRICES } from "@/mods/shop/game/pricing"
+import { priceFor } from "@/mods/shop/game/pricing"
 import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
-type ShopStock = { bandage: number; oil: number; trapTool: number }
-type ShopModState = { stockByEdge: Record<string, ShopStock> }
-
-// ponytail: per-visit consumable restock — a stopgap that the shop-stock slice retires (the shop's
-// consumables become finite baked stock in the next boundary). Kept until then so the shop still works.
-const CONSUMABLE_STOCK_PER_VISIT = 2
-const freshStock = (): ShopStock => ({
-  bandage: CONSUMABLE_STOCK_PER_VISIT,
-  oil: CONSUMABLE_STOCK_PER_VISIT,
-  trapTool: CONSUMABLE_STOCK_PER_VISIT,
-})
-
 // Fez's shop encounter — browsing/buying, never a solve/fail challenge, so it always
-// closes via onCancel and never onSolved (which would auto-grant ctx.reward for free).
+// closes via onCancel and never onSolved (which would auto-grant the node's rewards for free).
+// Stock is the node's baked `rewards[]` (currency pieces + finite consumables), reached as
+// ctx.stock. Each slot is bought once, tracked per-(edgeId, index) in journeys — sold-out stays
+// sold-out (no per-visit refresh). The shop prices every slot via priceFor; the currency mods
+// stay money-blind.
 const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, inventory, applyReward, onCancel }) => {
   const { t } = useTranslation(["common", "sellables"])
-  const trap = useTrapProgress() // consumables are trap-owned
+  const contributions = useMergedRewardContributions()
   const fez = use(FezContext)
   const [greeted, setGreeted] = useState(false)
-  const [modState, setModState] = useModState<ShopModState>("shop", { stockByEdge: {} })
-  const stock = modState.stockByEdge[ctx.edgeId] ?? freshStock()
-  const purchased = journeys.hasPurchasedShop(ctx.journeyId, ctx.edgeId)
-  const reward = ctx.reward
-  const price = ctx.price ?? 0
+
+  const stock = ctx.stock ?? []
+  const claimed = journeys.getPurchasedShopSlots(ctx.journeyId)
+  const balance = progression.ledger.get("money")
+  const tier = ctx.difficulty ?? "starter"
 
   // Fez's greeting conversation plays once, before the shop UI itself ever appears.
   useEffect(() => {
@@ -50,44 +40,37 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 
-  // Stock refreshes only on a genuine re-entry — reopening while still standing here must
-  // not refill it for free.
-  useEffect(() => {
-    if (ctx.freshArrival) {
-      setModState(prev => ({ stockByEdge: { ...prev.stockByEdge, [ctx.edgeId]: freshStock() } }))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
-  }, [ctx.edgeId])
-
-  // Boundary A: a shop's buyable pieces now arrive as ctx.stock (a rewards[] array), not a single
-  // ctx.reward. Until the stock render + per-slot buy lands (step 6), stock is unpriced/empty, so the
-  // rare list is empty and the shop shows only consumables + sellables. Render regardless of reward.
   if (!greeted) return null
 
-  const buyRare = () => {
-    if (!reward || purchased) return
-    if (!progression.ledger.spend("money", price)) return
-    applyReward(reward)
-    journeys.markShopPurchased(ctx.edgeId)
+  // One buy path for every stock slot (currency piece or consumable alike): pay, apply, claim.
+  const buySlot = (j: number) => {
+    const item = stock[j]
+    if (!item || claimed.has(`${ctx.edgeId}#${j}`)) return
+    // canAccept before spend — a full consumable pack refuses now, so nothing is charged then lost.
+    if (!contributions.canAccept(item)) return
+    if (!progression.ledger.spend("money", priceFor(item, tier))) return
+    applyReward(item)
+    journeys.markShopSlotPurchased(ctx.edgeId, j)
   }
 
-  const buyConsumable = (type: keyof typeof CONSUMABLE_PRICES) => {
-    if (stock[type] <= 0) return
-    if (!progression.ledger.spend("money", CONSUMABLE_PRICES[type])) return
-    const added = trap.addConsumable(type)
-    if (!added) {
-      progression.ledger.grant("money", CONSUMABLE_PRICES[type]) // pack was full — refund
-      return
+  // A slot renders once, split into the shop's two buy sections by reward type: consumables are
+  // "supplies", everything else (fragments/mosaic/map pieces) is "rare". Sold-out = already bought
+  // OR already owned (skip = nothing to grant) — mirrors the compass dropping an owned fragment.
+  const rareItems: ShopBuyItem[] = []
+  const consumables: ShopBuyItem[] = []
+  stock.forEach((item, j) => {
+    if (!item) return
+    const price = priceFor(item, tier)
+    const buyItem: ShopBuyItem = {
+      id: String(j),
+      ...rewardText(item, t),
+      price,
+      affordable: balance >= price,
+      soldOut: claimed.has(`${ctx.edgeId}#${j}`) || contributions.skip(item),
     }
-    setModState(prev => ({
-      stockByEdge: { ...prev.stockByEdge, [ctx.edgeId]: { ...stock, [type]: stock[type] - 1 } },
-    }))
-  }
-
-  const handleBuy = (id: string) => {
-    if (id === "rare") buyRare()
-    else if (id === "bandage" || id === "oil" || id === "trapTool") buyConsumable(id)
-  }
+    if (item.type === "consumable") consumables.push(buyItem)
+    else rareItems.push({ ...buyItem, featured: true })
+  })
 
   const handleSell = (id: string) => {
     const value = sellValueForItemId(id)
@@ -100,7 +83,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     <FezShop
       isOpen
       title={t("shop.title")}
-      balance={progression.ledger.get("money")}
+      balance={balance}
       balanceLabel={t("money.label")}
       dismissLabel={t("shop.dismiss")}
       buyLabel={t("shop.buy")}
@@ -109,28 +92,8 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
       rareItemsLabel={t("shop.rareItems")}
       suppliesLabel={t("shop.supplies")}
       sellSectionLabel={t("shop.sellSection")}
-      rareItems={
-        reward
-          ? [
-              {
-                id: "rare",
-                ...rewardText(reward, t),
-                price,
-                affordable: progression.ledger.get("money") >= price,
-                soldOut: purchased,
-                featured: true,
-              },
-            ]
-          : []
-      }
-      consumables={(Object.keys(CONSUMABLE_PRICES) as (keyof typeof CONSUMABLE_PRICES)[]).map(type => ({
-        id: type,
-        itemName: t(`chest.consumable.${type}`),
-        icon: CONSUMABLE_EMOJI[type],
-        price: CONSUMABLE_PRICES[type],
-        affordable: progression.ledger.get("money") >= CONSUMABLE_PRICES[type],
-        soldOut: stock[type] <= 0,
-      }))}
+      rareItems={rareItems}
+      consumables={consumables}
       sellables={Object.entries(inventory.inventory).flatMap(([id, count]) => {
         const item = getSellableById(id)
         if (!item || !count) return []
@@ -145,7 +108,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
           },
         ]
       })}
-      onBuy={handleBuy}
+      onBuy={id => buySlot(Number(id))}
       onSell={handleSell}
       onDismiss={onCancel}
     />
@@ -158,6 +121,6 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
 if (isModEnabled("shop"))
   registerFamily({
     meta: FEZ_SHOP_META,
-    generate: (_seed, ctx) => ({ reward: ctx.reward, price: ctx.price }),
+    generate: () => ({}),
     Component: ShopComponent,
   })

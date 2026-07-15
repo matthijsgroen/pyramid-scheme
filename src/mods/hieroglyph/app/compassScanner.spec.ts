@@ -7,10 +7,19 @@ vi.mock("@/data/generatedWorld", () => ({
   generatedWorldConfigs: {
     starter_1: [
       [
-        // floor 0: fragment h1 piece 0 on main path, piece 1 on a side section
+        // floor 0: fragment h1 piece 0 on main path, piece 1 on a side section, piece 2 baked into
+        // a shop's `rewards[]` stock array (the shop-stock slice — the compass must see it there).
         {
           mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 0 },
-          sideSections: [{ endReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 1 } }],
+          sideSections: [
+            { endReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 1 } },
+            {
+              rewards: [
+                { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 2 },
+                { type: "consumable", consumable: "oil" },
+              ],
+            },
+          ],
         },
       ],
     ],
@@ -26,22 +35,22 @@ vi.mock("./useHieroglyphProgress", () => ({
 const { useHieroglyphCompassScanner } = await import("./compassScanner")
 
 describe("useHieroglyphCompassScanner", () => {
-  it("finds uncollected fragments on main path and side sections", () => {
+  it("finds uncollected fragments on main path, side sections, and shop stock", () => {
     hasFragmentImpl = () => false
     const { result } = renderHook(() => useHieroglyphCompassScanner())
     const results = result.current("h1")
-    // h1 appears twice: mainEndReward (piece 0) and sideSections[0] (piece 1)
-    expect(results).toHaveLength(2)
-    expect(results[0]).toMatchObject({ journeyId: "starter_1", hieroglyphId: "h1", pieceIndex: 0 })
+    // h1 appears three times: mainEndReward (0), sideSections[0].endReward (1), and a shop's
+    // rewards[] stock (2). The compass points at the shop selling the fragment.
+    expect(results.map(r => r.pieceIndex).sort()).toEqual([0, 1, 2])
+    expect(results[0]).toMatchObject({ journeyId: "starter_1", hieroglyphId: "h1" })
   })
 
-  it("excludes already-collected fragments", () => {
-    // hasFragment returns true for h1/piece 0 — only piece 1 should appear
-    hasFragmentImpl = (id, idx) => id === "h1" && idx === 0
+  it("excludes already-collected fragments — including one bought at a shop", () => {
+    // Own the shop-stock piece (2): buying it drops the shop from the compass.
+    hasFragmentImpl = (id, idx) => id === "h1" && idx === 2
     const { result } = renderHook(() => useHieroglyphCompassScanner())
     const results = result.current("h1")
-    expect(results).toHaveLength(1)
-    expect(results[0].pieceIndex).toBe(1)
+    expect(results.map(r => r.pieceIndex).sort()).toEqual([0, 1])
   })
 
   it("returns [] when target not present in world", () => {

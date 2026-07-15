@@ -12,8 +12,20 @@ const scanFloorForFragments = (floor: FloorConfig, hieroglyphId: string): number
     const fragment = hieroglyphFragmentSchema.parse(r)
     if (fragment.hieroglyphId === hieroglyphId) results.push(fragment.pieceIndex)
   }
+  // Fragments live under two node-reward names: the path-end `endReward` AND every `rewards[]`
+  // entry (a shop node bakes its stock there). Scan both, or the compass can't point at a shop
+  // that sells a fragment — the ownership-skip below then drops it once bought. Mirrors the
+  // gen-side forEachReward sweep (validate.ts).
+  const scan = (s: { endReward?: FloorConfig["mainEndReward"]; rewards?: FloorConfig["mainEndReward"][] }) => {
+    checkReward(s.endReward)
+    for (const r of s.rewards ?? []) checkReward(r)
+  }
   checkReward(floor.mainEndReward)
-  for (const section of floor.sideSections ?? []) checkReward(section.endReward)
+  for (const r of floor.rewards ?? []) checkReward(r)
+  for (const section of floor.sideSections ?? []) {
+    scan(section)
+    for (const sub of section.sideSections ?? []) scan(sub)
+  }
   return results
 }
 

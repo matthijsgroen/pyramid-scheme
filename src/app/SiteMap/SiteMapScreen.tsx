@@ -117,7 +117,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       freshArrival: activeEncounter.freshArrival,
       difficulty: floorConfig.difficulty,
       reward: cell?.type === "room" ? cell.reward : undefined,
-      price: cell?.type === "room" ? cell.shopPrice : undefined,
       stock: cell?.type === "room" ? cell.stock : undefined,
       requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,
       gateVariant: cell?.type === "room" ? cell.gateVariant : undefined,
@@ -187,12 +186,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // Completed cells just reposition the player, except a still-buyable shop or an
+      // Completed cells just reposition the player, except a shop with unbought stock or an
       // unfitted consumable, which reopen.
       if (cell.state === "completed") {
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         journeys.updatePosition(journeyId, edgeId)
-        if (cell.type === "room" && cell.reward && cell.shopPrice != null) {
+        const shopHasUnclaimedStock =
+          cell.type === "room" &&
+          !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${edgeId}#${j}`))
+        if (shopHasUnclaimedStock) {
           scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
             setActiveEncounter({ pos: [row, col], freshArrival: !alreadyStandingHere })
           )
