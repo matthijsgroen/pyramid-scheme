@@ -61,7 +61,4 @@ export type FloorConfig = {
 
 export type SiteConfig = FloorConfig[]
 
-export type FragmentSlot = { journeyId: string; slotIndex: number }
-export type Assignment = { journeyId: string; slotIndex: number; hieroglyphId: string }
-
 export type TombJourneyDef = { id: string; tier: Tier; levelCount: number }
