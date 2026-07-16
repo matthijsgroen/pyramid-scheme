@@ -262,7 +262,10 @@ describe("hidden corridor tracking", () => {
   const run = (steps: (api: ReturnType<typeof makeApi>) => void) => {
     let state = [makeStoredJourney()]
     const set = (updater: unknown) => {
-      state = typeof updater === "function" ? (updater as (p: unknown) => StoredJourneyStateV3[])(state) : (updater as StoredJourneyStateV3[])
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
     }
     steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
     return {
