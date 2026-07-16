@@ -563,9 +563,30 @@ silent guesses**. This doc is the single source; keep it that way.
    doc bug; fixing the doc is part of the work.
 6. Any NEW open question you surface but don't resolve → add it to §8.6 so it isn't lost.
 
-**On handover (end of session):** append an entry to the log below — phase, status, commit
-hashes, what's built, what remains next, and any decision/gap you recorded. Keep it terse; the
-detail lives in the decisions above.
+**On handover (end of session):**
+7. Append an entry to the §9.1 log — phase, status, commit hashes, what's built, what remains
+   next, any decision/gap you recorded. Keep it terse; detail lives in the decisions above.
+8. **Emit the next kickoff prompt** (§9.2 template) for whatever comes next — the rest of this
+   phase if partial, or the next phase if done — then tell the user: **"Phase done + pushed —
+   clear the context and start a fresh session with the prompt above."** The chain runs one
+   phase (or phase-slice) per fresh context; a session never silently rolls into the next phase.
+
+### 9.2 Kickoff prompt template (paste into a fresh session)
+
+Fill `<PHASE>` (e.g. `P1`) and, if resuming a partial phase, a one-line `<RESUME NOTE>`:
+
+```
+Continue the detector+perk+treasure revive on branch mods/hieroglyph-currency.
+Read docs/mods/collection-and-detector-design.md — §7 (design), §8.0 + §8.0.1
+(locked decisions + perk catalog, FROZEN), §8.<PHASE> (your task list), and §9
+(handover protocol). Check §9.1 for the latest progress. <RESUME NOTE>
+
+Build <PHASE> only. Follow §9: commit per boundary; self-verify with the CLI
+(tsc -b / vitest / lint / build / generate-world — editor diagnostics lag);
+playtest the phase acceptance; prove toggle-off; push. No silent guesses — if the
+task block didn't cover something, ask or record the decision in the doc. When
+done: update the §9.1 log and emit the next kickoff prompt.
+```
 
 ### 9.1 Progress log
 
