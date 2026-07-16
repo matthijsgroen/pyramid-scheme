@@ -99,6 +99,37 @@ describe("useAssembledFloor — hidden junctions", () => {
     }
   })
 
+  it("reveals a corridor once its bordering section is in revealedSections, so it becomes walkable", () => {
+    // The reveal flow (SiteMapScreen): reaching a junction marks its bordered section found, and
+    // that found set is fed back in as revealedSections. A revealed section must un-mask — its cells
+    // reappear on the grid and it drops out of the hidden set — otherwise the loot stays unreachable.
+    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
+    if (!assembled.success) throw new Error("assembly failed")
+    const grid = assembled.grid
+    const { predecessorPos, predecessorCell } = findGatewayToHidden(grid)
+    const exploredSections = {
+      [predecessorCell.sectionHash ?? ""]: [encodeEdge(0, predecessorPos[0], predecessorPos[1])],
+    }
+
+    // First pass, unrevealed: learn which section the junction borders (what SiteMapScreen reveals).
+    const { result: masked } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, new Set())
+    )
+    const revealed = new Set(masked.current.hiddenSectionHashes)
+    expect(revealed.size).toBeGreaterThan(0)
+
+    // Second pass, that section revealed: its cells are no longer masked to empty, and it's gone
+    // from hiddenSectionHashes — the corridor is now part of the walkable grid.
+    const { result } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, exploredSections, null, 1, revealed)
+    )
+    for (const h of revealed) expect(result.current.hiddenSectionHashes.has(h)).toBe(false)
+    const revealedCellShown = result.current.grid!.cells.some(row =>
+      row.some(cell => cell.type !== "empty" && "sectionHash" in cell && revealed.has(cell.sectionHash ?? ""))
+    )
+    expect(revealedCellShown).toBe(true)
+  })
+
   it("leaves the junction alone without a detector, so the player glides through unaware", () => {
     const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
     if (!assembled.success) throw new Error("assembly failed")

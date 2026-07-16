@@ -61,6 +61,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   })
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
+  // Reveal set = the hidden corridors already found (§7.2). Reaching a corridor's bordering junction
+  // both marks it found (the effect below) AND reveals it: fed to useAssembledFloor as revealedSections,
+  // a found corridor unmasks → its cells become walkable and its optional loot collectible. Keyed on a
+  // stable content string (like hiddenHashKey) so the mask memo — and the found-marking effect that
+  // reads junctionSections — don't churn every render (foundSet is a fresh Set each render).
+  const foundKey = [...journeys.getFoundHiddenCorridors(journeyId)].sort().join(",")
+  const foundCorridors = useMemo(() => new Set(foundKey ? foundKey.split(",") : []), [foundKey])
+
   const { grid, explorerPos, hiddenSectionHashes, junctionSections } = useAssembledFloor(
     journeyId,
     floorConfig,
@@ -68,7 +76,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     currentFloor,
     allEdges,
     journeyState?.position,
-    detectorLevels.corridor
+    detectorLevels.corridor,
+    foundCorridors
   )
 
   // Corridor detector, found = noticed via proximity (§7.2). Every floor the player views makes its
@@ -88,7 +97,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorerPos, junctionSections, detectorLevels.corridor])
 
-  const foundCorridors = journeys.getFoundHiddenCorridors(journeyId)
   const floorHasHiddenCorridor = useMemo(
     () => [...hiddenSectionHashes].some(h => !foundCorridors.has(h)),
     [hiddenSectionHashes, foundCorridors]
