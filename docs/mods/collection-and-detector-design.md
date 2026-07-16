@@ -378,10 +378,9 @@ Collection treasure sections show all-empty). Unify:
   (`maxHealth` — note the duplicate: `useTrapProgress` holds a live fixed `6`, `useProgression`
   a dead copy; armor/detector levels read but stuck at 0). trap-insight + pack-mule have
   **no consumer** (effect unbuilt).
-- **Detectors:** enable-gated only — a level > 0 shows the mode, but all three display
-  **full info regardless of level**; the L1/L2/L3 tier logic is **unbuilt** (compass
-  scanner ignores level; supplies shows all skipped; corridor only does the L1-style
-  reveal). §7.2 tiers are new gameplay.
+- **Detectors:** all tiered (§7.2 done). Compass + supplies narrow inward (P3); corridor
+  widens outward (P4): L1 proximity, L2 floor line, L3 pyramid-wide count, L4 travel-list
+  badge. Corridor "found" = noticed via proximity (no reveal/enter flow — that's P5).
 - **Treasure collection:** dead (all-empty).
 
 ### 7.7 Toggle-off
@@ -552,7 +551,22 @@ shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit
   unbuilt slice — so the compass can't be driven end-to-end through the real UI yet. P3 acceptance
   is proven at the state/render layer (`compassScanner.spec`, `DetectorPanel.spec`) instead. Wire
   the picker (or move it to Collection per §3C) before the compass is player-reachable.
-- P4: journey-map marker surface — reuse an existing travel-map badge or new component?
+- ~~P4: journey-map marker surface — reuse an existing travel-map badge or new component?~~
+  **RESOLVED (P4, 2026-07-16): reuse the `JourneyCard` badge cluster** (the existing 📜 map-piece /
+  ✔ completion row). L4 adds one `👁` badge there, gated on `hasUnexploredCorridors`. No new
+  component — the cluster is exactly the "per-pyramid status glyphs on the travel list" surface.
+- ~~P4: what counts as a corridor "found" (the marker clear-signal)?~~ **RESOLVED (P4, 2026-07-16,
+  user sign-off): found = noticed via proximity.** Standing on a detector-forced hidden junction
+  (the `stoppedAtHidden` moment from the HiddenPassage story) marks the corridor it borders found —
+  no reveal/enter flow. P4 is pure awareness UI; actual loot access stays a P5 concern. Persisted
+  per journey as `known` (floors viewed) + `found` (junctions reached); outstanding = known \ found.
+  **Limitation (accepted):** markers only nag about corridors on floors the player has *viewed* —
+  you can't be reminded of what you've never walked onto. Coherent with the awareness framing.
+- ~~P4: 3 levels or 4?~~ **RESOLVED (P4, 2026-07-16): 4, per the frozen §7.2 + cap-4 catalog.** The
+  §8.4/kickoff "3-item" phrasing merged §7.2's L3 (pyramid-own-map) and L4 (travel list); the frozen
+  spec wins. Built L1 proximity → L2 floor line → L3 pyramid-wide count (both in `DetectorPanel`,
+  inside the site) → L4 `JourneyCard` badge (travel list). L3 and L4 share the outstanding-count
+  read; they differ only in surface.
 - P5: are today's `hidden` sections already reachability-gated, or placed as normal
   reachable? (buildSite flags `hidden:true`; confirm the solver treatment before changing.)
 - Detector state persistence (`compassTarget`) — ephemeral today (§3C Q3); persist if the
@@ -697,6 +711,29 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   headless because its target picker is still `availableHieroglyphs={[]}` (target-picking-on-Collection
   is a separate unbuilt slice; **new gap logged in §8.6**). Next: **P4** (tiered corridor detector +
   travel-map marker).
+- **P4 DONE + pushed (2026-07-16)** — tiered corridor detector (widen outward, §7.2), core-owned.
+  Commits `c66f2df` (persistence + junction→section map), `6a0daff` (in-game L1–L3), `41ebfb1` (L4
+  travel badge), `2825d68` (lint), `b511343` (hook test) on `mods/hieroglyph-currency`. Built:
+  **found = noticed via proximity** (user-chosen — no reveal/enter flow). `useJourneys` persists
+  `knownHiddenCorridors` (floors viewed) + `foundHiddenCorridors` (junctions the detector stopped the
+  player at), both keyed `levelNr:sectionHash`; outstanding = known \ found. `maskHiddenCells` now
+  maps each hidden junction to the section hash it borders (`junctionSections`) so a proximity stop
+  marks exactly that corridor. `SiteMapScreen` registers known corridors on floor view + marks found
+  when `explorerPos` lands on a junction (detector ≥ L1). `DetectorPanel` widens outward: L1 proximity
+  line, L2 "corridor waits on this floor", L3 pyramid-wide outstanding count. `JourneyCard` gains a
+  `👁` badge (L4, reusing the map-piece/completion cluster) when detection ≥ 4 and the pyramid has
+  outstanding corridors — clears when all noticed. CLI all green (tsc, lint, **731** tests +3 new,
+  build, generate-world regen **identical** — P4 touches no world-gen). Toggle-off proven: trap +
+  hieroglyph (supplies + compass owners) out of `REGISTERED_MODS` → tsc/build green + generate-world
+  wrote; corridor detector (core: `useProgression` + `useJourneys`) unaffected, degrades cleanly.
+  **Decisions recorded in §8.6** (were doc gaps/conflicts): (1) found = noticed-via-proximity, not
+  revealed (user sign-off) — awareness only, loot access is P5; markers only cover *viewed* floors
+  (accepted limitation). (2) 4 levels per frozen §7.2 (kickoff's "3-item" phrasing merged L3+L4). (3)
+  L4 marker reuses the `JourneyCard` badge cluster, no new component. **Playtest**: acceptance proven
+  at the state/render layer (`DetectorPanel.spec`: L1 silent / L2 floor / L3 count; `useJourneys.spec`:
+  outstanding clears at 0; `useAssembledFloor.spec`: junction→section mapping) — the full navigate-to-
+  a-junction UI flow isn't runnable headless in this harness, same constraint as P1/P3. Next: **P5**
+  (hidden corridor = gated pathway / world-gen loot).
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
