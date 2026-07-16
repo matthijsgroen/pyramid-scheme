@@ -1,6 +1,6 @@
 import { useState } from "react"
+import { act, renderHook } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { renderHook } from "@testing-library/react"
 
 vi.mock("@/support/useGameStorage", () => ({
   useGameStorage: <T>(_key: string, initialValue: T | (() => T)) => {
@@ -17,21 +17,24 @@ vi.mock("@/support/useGameStorage", () => ({
 
 const { useProgression } = await import("./useProgression")
 
-// The perk system is disregarded pending redesign — no code bumps a perk, so every perk stays at
-// its baseline (maxHealth 6, armor 0, …). The treasure-grant path (applyTreasurePerk) is a no-op on
-// the tomb-treasure mod now; core progression exposes only the disregarded baseline. (The
-// registry-driven grant behavior this used to assert returns when perks are redesigned, §F.)
-describe("perks (disregarded pending redesign)", () => {
-  it("core progression exposes every perk at its baseline", () => {
+// Core owns only the corridor detector now — the other perks moved to their owning mods (trap owns
+// max-health/armor/…, hieroglyph owns compass, puzzle owns scribes-eye). `perks` exposes detection
+// only; bumpDetection is toLevel-bumped and capped at 4.
+describe("core perks (detection only)", () => {
+  it("exposes detection at its baseline", () => {
     const { result } = renderHook(() => useProgression())
-    expect(result.current.perks).toEqual({
-      armorStacks: 0,
-      trapInsightStacks: 0,
-      packMuleLevel: 0,
-      compassLevel: 0,
-      consumableDetectorLevel: 0,
-      detectionLevel: 0,
-      scribesEyeLevel: 0,
-    })
+    expect(result.current.perks).toEqual({ detectionLevel: 0 })
+  })
+
+  it("bumpDetection raises the level (toLevel, capped at 4)", async () => {
+    const { result } = renderHook(() => useProgression())
+    await act(async () => result.current.bumpDetection(2))
+    expect(result.current.perks.detectionLevel).toBe(2)
+    // toLevel: a lower grant never lowers the current level.
+    await act(async () => result.current.bumpDetection(1))
+    expect(result.current.perks.detectionLevel).toBe(2)
+    // capped at 4.
+    await act(async () => result.current.bumpDetection(9))
+    expect(result.current.perks.detectionLevel).toBe(4)
   })
 })

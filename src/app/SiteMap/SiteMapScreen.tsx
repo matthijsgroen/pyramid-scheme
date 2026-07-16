@@ -21,6 +21,7 @@ import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
@@ -48,6 +49,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const allEdges = journeys.getExploredSections(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = useMergedHeldKeys()
+  // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
+  // the merged accessor — core names no mod. Replaces the old single progression.perks blob.
+  const detectorLevels = useMergedDetectorLevels()
 
   const [currentFloor, setCurrentFloor] = useState(() => {
     const pos = journeyState?.position
@@ -64,7 +68,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     currentFloor,
     allEdges,
     journeyState?.position,
-    progression.perks.detectionLevel
+    detectorLevels.corridor
   )
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
@@ -301,14 +305,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         />
       </div>
       <SiteHudBar>
-        {(progression.perks.compassLevel > 0 ||
-          progression.perks.consumableDetectorLevel > 0 ||
-          progression.perks.detectionLevel > 0) && (
+        {(detectorLevels.compass > 0 || detectorLevels.supplies > 0 || detectorLevels.corridor > 0) && (
           <DetectorPanel
             activeDetector={detector.activeDetector}
-            compassLevel={progression.perks.compassLevel}
-            consumableDetectorLevel={progression.perks.consumableDetectorLevel}
-            detectionLevel={progression.perks.detectionLevel}
+            compassLevel={detectorLevels.compass}
+            consumableDetectorLevel={detectorLevels.supplies}
+            detectionLevel={detectorLevels.corridor}
             compassTarget={detector.compassTarget}
             compassResults={detector.compassResults}
             consumableResults={detector.consumableResults}

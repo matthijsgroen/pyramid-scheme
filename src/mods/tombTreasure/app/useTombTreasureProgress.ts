@@ -38,9 +38,6 @@ const INITIAL: TombTreasureState = {
 export type TombTreasureProgressAPI = {
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
-  // Perks disregarded pending redesign (§F) — the tomb-key claim still calls this, but it's a
-  // no-op, so every perk stays at its baseline. Kept as a dormant anchor for the redesign.
-  applyTreasurePerk: (treasureId: string) => void
   tombKeyIds: ReadonlySet<string>
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
@@ -57,7 +54,6 @@ export const useTombTreasureProgress = (): TombTreasureProgressAPI => {
     () => ({
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
-      applyTreasurePerk: () => {},
       tombKeyIds: new Set(Object.keys(state.tombKeys)),
       isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
       discoverTomb: tombJourneyId =>
