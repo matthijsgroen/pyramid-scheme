@@ -1,6 +1,9 @@
+import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerCompassScanner } from "@/app/SiteMap/detectorScanners"
+import { registerPerkContribution } from "@/app/SiteMap/perkContributions"
+import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
@@ -36,4 +39,16 @@ if (isModEnabled("hieroglyph")) {
     }
   })
   registerCompassScanner(useHieroglyphCompassScanner)
+  // The compass perk (fragment detector) is hieroglyph-owned: grant/describe it, and expose its
+  // level to the merged detector-level accessor (§7.4).
+  registerPerkContribution(() => {
+    const hg = useHieroglyphProgress()
+    const { t } = useTranslation("treasures")
+    return {
+      grant: perk => hg.grantPerk(perk),
+      describe: perk =>
+        perk.type === "compass" ? { label: t("perks.compass", { level: perk.level ?? 1 }) } : undefined,
+    }
+  })
+  registerDetectorLevel("compass", () => useHieroglyphProgress().compassLevel)
 }

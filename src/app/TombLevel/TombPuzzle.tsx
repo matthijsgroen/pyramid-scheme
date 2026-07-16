@@ -6,7 +6,7 @@ import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { revealText } from "@/support/revealText"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useProgression } from "@/app/state/useProgression"
+import { usePuzzleProgress } from "@/mods/puzzle/app/usePuzzleProgress"
 import {
   createTableauPuzzleState,
   isTableauPuzzleCompleted,
@@ -53,8 +53,8 @@ export const TombPuzzle: FC<{
 
   // Get player's actual inventory
   const { inventory, removeItems } = useInventory()
-  const { perks } = useProgression()
-  const scribesEyeSlots = perks.scribesEyeLevel === 3 ? Infinity : perks.scribesEyeLevel
+  const { scribesEyeLevel } = usePuzzleProgress()
+  const scribesEyeSlots = scribesEyeLevel === 3 ? Infinity : scribesEyeLevel
 
   // Domain state: which tiles are filled and how much inventory that used
   const [state, setState] = useState(createTableauPuzzleState)
