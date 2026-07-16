@@ -567,8 +567,28 @@ shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit
   spec wins. Built L1 proximity → L2 floor line → L3 pyramid-wide count (both in `DetectorPanel`,
   inside the site) → L4 `JourneyCard` badge (travel list). L3 and L4 share the outstanding-count
   read; they differ only in surface.
-- P5: are today's `hidden` sections already reachability-gated, or placed as normal
-  reachable? (buildSite flags `hidden:true`; confirm the solver treatment before changing.)
+- ~~P5: are today's `hidden` sections already reachability-gated, or placed as normal
+  reachable?~~ **RESOLVED (P5, 2026-07-16): placed as NORMAL reachable — the bug.** `buildSite`
+  flags `hidden:true` on the SECTION, and the assembler tags the cells `hidden` + keeps the
+  connector to the visible attachment point visible, but the section carries **no key gate**. The
+  world-gen reachability solver (`reachability.ts`) walks raw `assembleFloor`/`collectReachableKeys`
+  (masking is a runtime-only concern in `useAssembledFloor.maskHiddenCells`, never applied at
+  gen), so hidden rooms are fully reachable to it and `collectSlots` didn't distinguish them → the
+  gating worklist placed **31 required hieroglyph fragments in hidden pockets**. Fix: mark slots
+  `hidden` and exclude them from the gating worklist (`placeFragments`), keeping them for optional
+  filler only, + a `validate.ts` backstop. Hidden pockets are stricter than §E ward pockets: a ward
+  pocket may become load-bearing once its key is placed (reachability-guaranteed), but a hidden
+  pocket is **discovery-gated** (no key currency, reveal never guaranteed) so it may NEVER be
+  load-bearing. Regen: 294/294 fragments still placed (31 relocated to visible slots), world solvable.
+- **P5 GAP (surfaced, not closed): no in-game reveal/enter flow for hidden corridors.** After P5 a
+  hidden pocket holds only optional loot — but `useAssembledFloor` masks hidden cells until
+  `revealedSections` names them, and `revealedSections` is set **only in `HiddenPassage.stories.tsx`**,
+  never in the real `SiteMapScreen`. So in production the player can *notice* a hidden corridor (P4
+  awareness) but has no way to reveal + walk into it to collect the loot — the corridor detector's
+  loot payoff isn't realizable in-game yet. P4 deliberately left this out (awareness only); P5 is
+  world-gen placement only. Wiring the reveal/enter flow into `SiteMapScreen` (lift the story's
+  `revealedSections` state + reveal action, persist per journey) is a separate unbuilt UI slice —
+  needed before the optional pockets are actually reachable by a player.
 - Detector state persistence (`compassTarget`) — ephemeral today (§3C Q3); persist if the
   hunt should survive navigation (relevant once P3 lands).
 
@@ -734,6 +754,31 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   outstanding clears at 0; `useAssembledFloor.spec`: junction→section mapping) — the full navigate-to-
   a-junction UI flow isn't runnable headless in this harness, same constraint as P1/P3. Next: **P5**
   (hidden corridor = gated pathway / world-gen loot).
+
+- **P5 DONE + pushed (2026-07-16)** — hidden corridor = optional-pocket gated pathway (§7.3),
+  core world-gen. Commit `92f37b3` + this doc commit on `mods/hieroglyph-currency`. **Finding
+  (resolved the §8.6 open end):** today's `hidden` sections were placed as **normal reachable** —
+  the section carries no key gate, and the world-gen reachability solver walks raw
+  `assembleFloor` (masking is runtime-only in `useAssembledFloor`), so 31 required hieroglyph
+  fragments had been placed in hidden pockets a player can't guarantee reaching. Built: `slots.ts`
+  marks each end/puzzle slot `hidden` (propagated to descendants of a hidden section);
+  `placeFragments` excludes hidden end slots from the gating worklist (they stay eligible for the
+  capped/dynamic filler passes — optional loot only); `validate.ts` post-build guard throws if any
+  hidden pocket holds a map piece or registered gating currency (+3 specs). Hidden pockets are
+  **stricter than §E ward pockets**: a ward pocket can become load-bearing once its key is placed
+  (reachability-guaranteed), but a hidden pocket is discovery-gated (reveal never guaranteed) so it
+  may never be load-bearing. CLI all green (tsc, lint, **734** tests +3, build, generate-world:
+  294/294 fragments still placed — 31 relocated to visible slots — 31 map pieces, world fully
+  solvable; golden guard + determinism pass). Regen diff symmetric (134 fragment lines out/in, no
+  loss). Toggle-off proven: hieroglyph out of `REGISTERED_MODS` → generate-world green (0 fragments,
+  gates degrade with their mod, no winnability hard-fail, guard doesn't trip). **Playtest**: the
+  no-hidden-gating invariant proven at the data layer (`validate.spec`: throws on hidden
+  fragment/map-piece, passes on hidden sellable; regen scan: 0 hidden pockets hold gating). **New
+  gap logged in §8.6**: no in-game reveal/enter flow (only in `HiddenPassage.stories`), so the
+  corridor detector's loot payoff isn't player-reachable yet — a separate unbuilt UI slice. **Next:
+  P5 is the last planned phase.** The detector+perk+treasure revive (§8 P1–P5) is complete; the two
+  open UI slices remaining across the plan (compass target-picker wiring, hidden-corridor reveal/
+  enter flow) are logged in §8.6 as gaps, not phases.
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
