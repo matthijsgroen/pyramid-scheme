@@ -89,6 +89,14 @@ describe("useAssembledFloor — hidden junctions", () => {
       if (cell?.type === "empty") throw new Error(`expected a real cell at ${key}`)
       expect(cell?.state).toBe("reachable")
     }
+
+    // Each junction maps to the hidden section it borders — the data the "found = noticed" mark
+    // reads (SiteMapScreen calls markCorridorFound on these hashes when the player stands here).
+    expect(result.current.junctionSections.size).toBeGreaterThan(0)
+    for (const [, hashes] of result.current.junctionSections) {
+      expect(hashes.size).toBeGreaterThan(0)
+      for (const h of hashes) expect(result.current.hiddenSectionHashes.has(h)).toBe(true)
+    }
   })
 
   it("leaves the junction alone without a detector, so the player glides through unaware", () => {
