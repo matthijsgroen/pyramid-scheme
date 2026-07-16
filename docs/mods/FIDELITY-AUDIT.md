@@ -256,6 +256,14 @@ happens; `TrapFamilyShell.tsx:12` confirms armor/trap-insight are 0. `perkRegist
 exist but their `bump` is never invoked. Base health stays 6 forever. Only tier-unlock + location-key
 (via `addTombKey`/`discoverTomb`, not the perk path) are live. The doc reads as a shipped system.
 
+> **Decision: build (mod-owned), not delete.** Full design + a phased, concrete build plan
+> are in `collection-and-detector-design.md` §7–§8. It reframed §F into one interlocking
+> system — tomb treasures grant perks, perks include the three detectors (corridor=core,
+> compass=hieroglyph, supplies=trap), the Collection shows treasures + their bonus.
+> **P1** (perk-grant contribution seam + state moved to owning mods + orphan effects wired)
+> discharges this audit item; P2–P5 are the Collection unify + tiered-detector gameplay +
+> hidden-corridor loot model, built in later sessions.
+
 ---
 
 ## G — Tomb interior  ·  MEDIUM  ·  ✅ RESOLVED (2026-07-15)
