@@ -619,6 +619,43 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   toLevel; `useProgression.perks.spec`: bumpDetection toLevel/cap; coverage spec) — the UI
   claim-a-treasure flow isn't runnable headless in this harness, so the effect-turns-on
   acceptance is proven at the state layer instead. Next: **P2** (tomb-treasure Collection section).
+- **P2 DONE + pushed (2026-07-16)** — tomb-treasure Collection section + data move complete.
+  Commits `7fa305d` (reservedTreasureIndices seam), `21cfecd` (catalog + TREASURE_PERKS move),
+  `944885c` (mod Collection section) on `mods/hieroglyph-currency`. Built: mod-owned
+  `TombTreasureCollectionSection` (5 per-difficulty groups, "collected" = own the tombKey, perk
+  bonus via merged `describe`), registered `order:30` gated on the mod; core `Collection.tsx`
+  names no treasure. worldGen stops reading perk types (`reservedTreasureIndices` seam). CLI all
+  green (tsc, 722 tests, lint, build, generate-world regen **identical**).
+  **Decisions recorded** (were doc gaps):
+  (1) **`src/data/treasures.ts` split, not a wholesale move**: the mod-agnostic material-tier
+  naming (`MaterialTier`/`materialTierByDifficulty`/`difficultyByMaterialTier`) stays in core as
+  `src/data/materialTiers.ts` (shop consumes it); only the treasure CATALOG moved to
+  `src/mods/tombTreasure/game/treasures.ts`. Moving the whole file would create a shop→tombTreasure
+  mod-to-mod import (boundary violation).
+  (2) **Only `TREASURE_PERKS` moved to the mod**; `TOMB_PERK_IDS`/`TIER_UNLOCK_PERK_ID` stay in core
+  `src/data/treasurePerks.ts` — they're structural keyId ordering world-gen wires ward gates from
+  (identifiers, not gameplay meaning), imported by rewards/sideSections/buildSite/validateWorldSpec.
+  (3) **The task's "generateWorld.ts" = `scripts/generateWorld.ts` → `buildConfigs`**. The
+  `reservedTreasureIndices(tombId)` seam is threaded descriptor → registeredMods
+  (`MOD_RESERVED_TREASURE_INDICES`) → `buildConfigs` → `buildSiteConfigs` → `buildSite` ctx;
+  `freeWardIndices` now takes a `reserved` index set instead of reading perk types. Regen identical.
+  (4) **Section always renders all 5 groups** (uncollected = empty `?` slot), dropping the old
+  per-tomb `hasCompletedTomb` visibility gate — matches the hieroglyph/shop sections and the same
+  persistent-tomb reasoning that dropped Travel's disable-check. `CollectionItem` gained an optional
+  `difficulty` so the shared detail panel shows a treasure's pill/material without core resolving
+  mod content (core `getItemFirstLevel` now resolves only tableau symbols).
+  (5) **Dead code retired by the move**: `game/tombTreasureSelection.ts` (old per-run award),
+  `app/translations/useTreasureTranslations.ts`, the story-only `HieroglyphUnlockPanel`(+story), and
+  `TombTreasures.stories.tsx` (story of the retired per-run selection). `comparePuzzles.spec.ts`
+  repointed its per-tomb run count from `journey.treasures` to `TOMB_PERK_IDS` (same counts).
+  `JourneyCard.stories` dropped its `treasures:` mock.
+  (6) **i18n**: `perks.tier-unlock` ("Unlocks {{tier}} tombs") + `perks.location-key` ("Reveals
+  another tomb") added to `treasures.json` (en+nl); `none` = blank line; described by the mod itself.
+  (7) **Toggle-off**: tomb-treasure removed from `REGISTERED_MODS` (+app import) → section gone +
+  `yarn build` green. `yarn generate-world`'s full-solve still needs the mod (no currency owns the
+  tomb ward keys) — the **pre-existing, documented** "last mod" isolation limit (see the descriptor
+  comment), unchanged by P2. The P2 "world builds" gate is the app build. Next: **P3** (tiered active
+  detectors — compass + supplies).
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
