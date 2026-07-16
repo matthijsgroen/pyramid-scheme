@@ -6,6 +6,7 @@ import { JourneyCard } from "@/ui/organisms/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/atoms/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
+import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { FezContext } from "../fez/context"
@@ -21,7 +22,10 @@ export const TravelPage: FC<{
   const { t, i18n } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
-  const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney } = useJourneys()
+  const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney, getOutstandingHiddenCorridorCount } =
+    useJourneys()
+  // Corridor detector L4 (§7.2): only the top detector level surfaces the world-wide marker.
+  const corridorDetectorLevel = useMergedDetectorLevels().corridor
   const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useTombTreasureProgress()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
@@ -254,6 +258,9 @@ export const TravelPage: FC<{
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
+                    hasUnexploredCorridors={
+                      corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
+                    }
                     lang={i18n.language}
                     labels={{
                       length: t("ui.length"),
