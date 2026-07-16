@@ -11,7 +11,9 @@
     "consumable-detector": "Voorraaddetector (niv {{level}})",
     "compass": "Fragmentkompas (niv {{level}})",
     "detection": "Verborgen-gangdetector (niv {{level}})",
-    "scribes-eye": "Tableau-hintvakken (niv {{level}})"
+    "scribes-eye": "Tableau-hintvakken (niv {{level}})",
+    "tier-unlock": "Ontgrendelt {{tier}}-tombes",
+    "location-key": "Onthult een andere tombe"
   },
   "tiers": {
     "stone": "stenen",

@@ -11,7 +11,9 @@
     "consumable-detector": "Supply detector (Lv {{level}})",
     "compass": "Fragment compass (Lv {{level}})",
     "detection": "Hidden-corridor detector (Lv {{level}})",
-    "scribes-eye": "Tableau hint slots (Lv {{level}})"
+    "scribes-eye": "Tableau hint slots (Lv {{level}})",
+    "tier-unlock": "Unlocks {{tier}} tombs",
+    "location-key": "Reveals another tomb"
   },
   "tiers": {
     "stone": "Stone",

@@ -2,10 +2,12 @@ import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
+import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
 import { isModEnabled } from "@/mods/registeredMods"
 import { TREASURE_PERKS } from "../game/treasurePerks"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { registerTombTreasureRewardDisplay } from "./rewardDisplay"
+import { TombTreasureCollectionSection } from "./TombTreasureCollectionSection"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
 
 // tomb-treasure's app entrypoint (side-effect): the reward display handlers, reward schemas, the
@@ -40,4 +42,7 @@ if (isModEnabled("tomb-treasure")) {
     }
   })
   registerHeldKeysProvider(() => useTombTreasureProgress().tombKeyIds)
+  // The 5 per-difficulty treasure groups (order after hieroglyph=10 / shop=20). "Collected" = own
+  // the tombKey; drops out of the Collection screen when the mod is off.
+  registerCollectionSection({ id: "tomb-treasure", order: 30, Component: TombTreasureCollectionSection })
 }
