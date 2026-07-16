@@ -43,9 +43,15 @@ const maskHiddenCells = (
   grid: FloorGrid,
   detectionLevel: number,
   revealedSections: ReadonlySet<string>
-): { masked: FloorGrid; hiddenJunctions: ReadonlySet<string>; hiddenSectionHashes: ReadonlySet<string> } => {
-  // Collect positions of hidden, unrevealed cells
-  const hiddenPos = new Set<string>()
+): {
+  masked: FloorGrid
+  hiddenJunctions: ReadonlySet<string>
+  hiddenSectionHashes: ReadonlySet<string>
+  junctionSections: ReadonlyMap<string, ReadonlySet<string>>
+} => {
+  // Collect positions of hidden, unrevealed cells, remembering each one's section hash so a junction
+  // can be tied to the specific corridor it borders (the "found = noticed" mark, §7.2).
+  const hiddenPos = new Map<string, string>()
   const hiddenSectionHashes = new Set<string>()
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
@@ -53,14 +59,16 @@ const maskHiddenCells = (
       if ((cell.type === "room" || cell.type === "corridor") && cell.hidden) {
         const hash = cell.sectionHash ?? ""
         if (!revealedSections.has(hash)) {
-          hiddenPos.add(`${r},${c}`)
+          hiddenPos.set(`${r},${c}`, hash)
           if (hash) hiddenSectionHashes.add(hash)
         }
       }
     }
   }
 
-  if (hiddenPos.size === 0) return { masked: grid, hiddenJunctions: new Set(), hiddenSectionHashes: new Set() }
+  const junctionSections = new Map<string, ReadonlySet<string>>()
+  if (hiddenPos.size === 0)
+    return { masked: grid, hiddenJunctions: new Set(), hiddenSectionHashes: new Set(), junctionSections }
 
   const junctions = new Set<string>()
   const newCells: GridCell[][] = grid.cells.map((row, r) =>
@@ -69,11 +77,17 @@ const maskHiddenCells = (
 
       if (cell.type === "room" || cell.type === "corridor") {
         const newDirs = new Set(cell.dirs) as Set<Direction>
+        const borderedSections = new Set<string>()
         for (const [dir, [dr, dc]] of Object.entries(DIR_MOVES) as [Direction, [number, number]][]) {
-          if (newDirs.has(dir) && hiddenPos.has(`${r + dr},${c + dc}`)) newDirs.delete(dir)
+          const neighborHash = newDirs.has(dir) ? hiddenPos.get(`${r + dr},${c + dc}`) : undefined
+          if (neighborHash !== undefined) {
+            newDirs.delete(dir)
+            if (neighborHash) borderedSections.add(neighborHash)
+          }
         }
         if (newDirs.size !== cell.dirs.size) {
           junctions.add(`${r},${c}`)
+          if (borderedSections.size > 0) junctionSections.set(`${r},${c}`, borderedSections)
           // With detector: force the junction reachable, whether the player is walking up to
           // it for the first time ("visible" — completeCell treated it as a plain passthrough
           // on the unmasked graph, since it had no idea one side led to a hidden dead end) or
@@ -93,7 +107,7 @@ const maskHiddenCells = (
     })
   )
 
-  return { masked: { ...grid, cells: newCells }, hiddenJunctions: junctions, hiddenSectionHashes }
+  return { masked: { ...grid, cells: newCells }, hiddenJunctions: junctions, hiddenSectionHashes, junctionSections }
 }
 
 export const useAssembledFloor = (
@@ -110,6 +124,7 @@ export const useAssembledFloor = (
   explorerPos: readonly [number, number]
   hiddenJunctions: ReadonlySet<string>
   hiddenSectionHashes: ReadonlySet<string>
+  junctionSections: ReadonlyMap<string, ReadonlySet<string>>
 } => {
   const baseGrid = useMemo(() => {
     const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter)
@@ -133,12 +148,19 @@ export const useAssembledFloor = (
     [baseGrid, currentFloor, effectiveExplored]
   )
 
-  const { grid, hiddenJunctions, hiddenSectionHashes } = useMemo(() => {
+  const { grid, hiddenJunctions, hiddenSectionHashes, junctionSections } = useMemo(() => {
     const empty = new Set<string>() as ReadonlySet<string>
-    if (!exploredGrid) return { grid: null, hiddenJunctions: empty, hiddenSectionHashes: empty }
+    const emptyMap = new Map<string, ReadonlySet<string>>() as ReadonlyMap<string, ReadonlySet<string>>
+    if (!exploredGrid)
+      return { grid: null, hiddenJunctions: empty, hiddenSectionHashes: empty, junctionSections: emptyMap }
     const revealed = revealedSections ?? empty
-    const { masked, hiddenJunctions, hiddenSectionHashes } = maskHiddenCells(exploredGrid, detectionLevel, revealed)
-    return { grid: masked, hiddenJunctions, hiddenSectionHashes }
+    const masked = maskHiddenCells(exploredGrid, detectionLevel, revealed)
+    return {
+      grid: masked.masked,
+      hiddenJunctions: masked.hiddenJunctions,
+      hiddenSectionHashes: masked.hiddenSectionHashes,
+      junctionSections: masked.junctionSections,
+    }
   }, [exploredGrid, detectionLevel, revealedSections])
 
   const explorerPos: readonly [number, number] = useMemo(() => {
@@ -149,5 +171,5 @@ export const useAssembledFloor = (
     return [r, c]
   }, [grid, position, currentFloor])
 
-  return { grid, explorerPos, hiddenJunctions, hiddenSectionHashes }
+  return { grid, explorerPos, hiddenJunctions, hiddenSectionHashes, junctionSections }
 }

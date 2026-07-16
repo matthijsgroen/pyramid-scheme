@@ -21,6 +21,11 @@ export type StoredJourneyStateV3 = {
   disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // edgeIds where inventory was full at collect time
   purchasedStock?: string[] // `${edgeId}#${stockIndex}` of shop slots already bought
+  // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionHash}`.
+  // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
+  // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
+  knownHiddenCorridors?: string[]
+  foundHiddenCorridors?: string[]
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -50,6 +55,10 @@ export type JourneyAPI = {
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
   markShopSlotPurchased: (edgeId: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
+  registerHiddenCorridors: (sectionHashes: string[]) => void
+  markCorridorFound: (sectionHash: string) => void
+  getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
+  getOutstandingHiddenCorridorCount: (journeyId: string) => number
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -302,6 +311,48 @@ export const createJourneysV3Api = ({
     return new Set(j?.purchasedStock ?? [])
   }
 
+  // Corridor detector: hidden sections become "known" the moment the player views the floor
+  // holding them; keyed by levelNr like exploredSections so a multi-level pyramid keeps them apart.
+  const registerHiddenCorridors = (sectionHashes: string[]) => {
+    if (!activeJourneyId || sectionHashes.length === 0) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const known = j.knownHiddenCorridors ?? []
+        const additions = sectionHashes.map(h => `${j.levelNr}:${h}`).filter(key => !known.includes(key))
+        if (additions.length === 0) return j // no churn: unchanged reference lets React bail
+        return { ...j, knownHiddenCorridors: [...known, ...additions] }
+      })
+    )
+  }
+
+  const markCorridorFound = (sectionHash: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const found = j.foundHiddenCorridors ?? []
+        const key = `${j.levelNr}:${sectionHash}`
+        if (found.includes(key)) return j
+        return { ...j, foundHiddenCorridors: [...found, key] }
+      })
+    )
+  }
+
+  const getFoundHiddenCorridors = (journeyId: string): ReadonlySet<string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Set()
+    const prefix = `${j.levelNr}:`
+    return new Set((j.foundHiddenCorridors ?? []).filter(k => k.startsWith(prefix)).map(k => k.slice(prefix.length)))
+  }
+
+  const getOutstandingHiddenCorridorCount = (journeyId: string): number => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return 0
+    const found = new Set(j.foundHiddenCorridors ?? [])
+    return (j.knownHiddenCorridors ?? []).filter(key => !found.has(key)).length
+  }
+
   return {
     activeJourneyId,
     maxDifficulty,
@@ -322,5 +373,9 @@ export const createJourneysV3Api = ({
     getSkippedConsumables,
     markShopSlotPurchased,
     getPurchasedShopSlots,
+    registerHiddenCorridors,
+    markCorridorFound,
+    getFoundHiddenCorridors,
+    getOutstandingHiddenCorridorCount,
   }
 }
