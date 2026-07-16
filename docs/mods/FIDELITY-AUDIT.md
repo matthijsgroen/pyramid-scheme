@@ -13,13 +13,15 @@ Legend — classification: `contract-violation` (code contradicts a locked contr
 
 ## The one-line verdict
 
-> **Update 2026-07-15.** The original verdict (below) is largely addressed — §A–§E + §G done. The
-> mechanics that "lived in core with mods as thin wrappers" were extracted: puzzle/tableau/crocodile
-> generation + state, trap config/health, reward vocabulary+state, and the tomb-treasure
-> currency/placement all live in their mods now; core `src/worldGen`+`src/game` name no mod reward or
-> currency in their logic. Remaining: **§F** (treasure perks still inert — the last shipped-looking-
-> but-dead system), the deferred **§A.3 loot-eligible join** tail, and the designed-not-built
-> **gate-injecting node selectors**. Original verdict, for the record:
+> **Update 2026-07-16.** The original verdict (below) is essentially addressed — §A–§H all done
+> (§F closed by the treasure-perk revive, see the Progress list). The mechanics that "lived in core
+> with mods as thin wrappers" were extracted: puzzle/tableau/crocodile generation + state, trap
+> config/health, reward vocabulary+state, and the tomb-treasure currency/placement all live in their
+> mods now; core `src/worldGen`+`src/game` name no mod reward or currency in their logic. Remaining
+> are two labelled tails, not open contract-violations: the deferred **§A.3 loot-eligible join** (loot
+> still uses the working `rewardPriority` proxy instead of joining on `slot.encounter`) and the
+> designed-not-built **gate-injecting node selectors** (grammar spec'd in ARCHITECTURE.md, no consumer
+> yet). Original verdict, for the record:
 
 The **scaffolding is real** (descriptor/registry/allocator primitive exist; mosaic is a genuine
 clean slice; world-gen production code imports no mod). But the **runtime mechanics for hieroglyph,
@@ -69,7 +71,12 @@ is gone"). And one shipped-looking system (treasure perks) is entirely inert.
   treasure now gates an optional loot pocket (last-floor `wardChest`). Direction 3 / positional-keys,
   not the audit's "keys-as-currency" framing. The spread-currency vs positional-key split + the
   reachability two-layer design are in `docs/game-design/keys-and-locks-solver.md`.
-- **§F** ⏳ treasure perks: dead but shipped-looking — build the system or correct the doc (decision).
+- **§F ✅** treasure perks revived (built, not doc-corrected) — designed as one interlocking system
+  (tomb treasures grant perks; perks incl. 3 detectors; Collection shows the bonus) in
+  `collection-and-detector-design.md` §7-8 and built P1–P5 + both UI slices on `mods/hieroglyph-currency`
+  (perk-grant seam replacing the dormant `perkRegistry`; perk state in owning mods; tomb-treasure
+  Collection section; tiered compass/supplies/corridor detectors; hidden-corridor = optional pocket +
+  reveal/enter flow; compass target-picker on Collection). No shipped-looking-but-dead system remains.
 - **§H (puzzle) ✅** `puzzle` is now a real `REGISTERED_MODS` mod (`ff97078`): families flow via
   `MOD_FAMILY_META`, plugins self-gate, `ALL_FAMILY_META` lists only core's own families. Adding a
   puzzle family is a pure plugin (`sumplete-mirror` demo now clean). Toggle-off proves isolation
