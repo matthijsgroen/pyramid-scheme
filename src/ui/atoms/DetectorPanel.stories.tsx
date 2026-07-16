@@ -69,3 +69,17 @@ export const AllModes: Story = {
     activeDetector: "hiddenPassageway",
   },
 }
+
+// Corridor detector widens outward (§7.2): L2 adds a floor indicator, L3 the pyramid-wide count.
+export const CorridorLevel2: Story = {
+  args: { detectionLevel: 2, activeDetector: "hiddenPassageway", floorHasHiddenCorridor: true },
+}
+
+export const CorridorLevel3: Story = {
+  args: {
+    detectionLevel: 3,
+    activeDetector: "hiddenPassageway",
+    floorHasHiddenCorridor: true,
+    pyramidHiddenCorridorCount: 3,
+  },
+}

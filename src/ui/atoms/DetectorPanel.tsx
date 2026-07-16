@@ -12,6 +12,10 @@ type Props = {
   onSetDetector: (mode: DetectorMode) => void
   onSetCompassTarget: (hieroglyphId: string) => void
   availableHieroglyphs: { id: string; label: string }[]
+  // Corridor detector widens outward (§7.2): L2 = an unfound corridor on this floor; L3 = the count
+  // still outstanding across the whole pyramid. Both default off so lower levels stay silent.
+  floorHasHiddenCorridor?: boolean
+  pyramidHiddenCorridorCount?: number
 }
 
 const MODE_ICON: Record<string, string> = {
@@ -69,6 +73,8 @@ export const DetectorPanel: FC<Props> = ({
   onSetDetector,
   onSetCompassTarget,
   availableHieroglyphs,
+  floorHasHiddenCorridor = false,
+  pyramidHiddenCorridorCount = 0,
 }) => {
   if (compassLevel === 0 && consumableDetectorLevel === 0 && detectionLevel === 0) return null
 
@@ -149,7 +155,17 @@ export const DetectorPanel: FC<Props> = ({
       )}
 
       {activeDetector === "hiddenPassageway" && (
-        <p className="text-stone-400">Suspicious corners revealed (L{detectionLevel})</p>
+        <div className="text-stone-400">
+          <p>Suspicious corners revealed nearby (L{detectionLevel})</p>
+          {detectionLevel >= 2 && floorHasHiddenCorridor && (
+            <p className="text-amber-200">A hidden corridor waits on this floor</p>
+          )}
+          {detectionLevel >= 3 && pyramidHiddenCorridorCount > 0 && (
+            <p className="text-amber-200">
+              This pyramid hides {pyramidHiddenCorridorCount} unexplored corridor{pyramidHiddenCorridorCount > 1 && "s"}
+            </p>
+          )}
+        </div>
       )}
     </div>
   )

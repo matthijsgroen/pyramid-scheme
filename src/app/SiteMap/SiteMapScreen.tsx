@@ -61,7 +61,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   })
   const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
 
-  const { grid, explorerPos } = useAssembledFloor(
+  const { grid, explorerPos, hiddenSectionHashes, junctionSections } = useAssembledFloor(
     journeyId,
     floorConfig,
     seed,
@@ -70,6 +70,30 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     journeyState?.position,
     detectorLevels.corridor
   )
+
+  // Corridor detector, found = noticed via proximity (§7.2). Every floor the player views makes its
+  // hidden corridors "known"; standing on a hidden junction (detector-forced reachable at L1) marks
+  // the corridor it borders "found". Outstanding = known \ found feeds the L3/L4 markers.
+  const hiddenHashKey = useMemo(() => [...hiddenSectionHashes].sort().join(","), [hiddenSectionHashes])
+  useEffect(() => {
+    if (hiddenHashKey) journeys.registerHiddenCorridors(hiddenHashKey.split(","))
+    // journeys is a fresh object each render; the reducer no-ops when nothing is added, so keying the
+    // effect on the stable hash string (not journeys) is what stops a write loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hiddenHashKey, journeyId, currentFloor])
+  useEffect(() => {
+    if (detectorLevels.corridor < 1) return
+    const bordered = junctionSections.get(`${explorerPos[0]},${explorerPos[1]}`)
+    if (bordered) for (const hash of bordered) journeys.markCorridorFound(hash)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [explorerPos, junctionSections, detectorLevels.corridor])
+
+  const foundCorridors = journeys.getFoundHiddenCorridors(journeyId)
+  const floorHasHiddenCorridor = useMemo(
+    () => [...hiddenSectionHashes].some(h => !foundCorridors.has(h)),
+    [hiddenSectionHashes, foundCorridors]
+  )
+  const pyramidHiddenCorridorCount = journeys.getOutstandingHiddenCorridorCount(journeyId)
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
   // global tombKeyIds, above). Same union completeCell used to gate reachability before
@@ -317,6 +341,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             onSetDetector={detector.setDetector}
             onSetCompassTarget={detector.setCompassTarget}
             availableHieroglyphs={[]}
+            floorHasHiddenCorridor={floorHasHiddenCorridor}
+            pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
           />
         )}
         <div className="flex items-center gap-4">

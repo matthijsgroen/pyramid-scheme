@@ -52,6 +52,33 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     expect(screen.getByText("starter_1 L1 F2 · (5,2)")).toBeTruthy()
   })
 
+  it("corridor detector widens outward: L1 silent, L2 floor line, L3 pyramid count", () => {
+    const base = {
+      activeDetector: "hiddenPassageway" as const,
+      compassLevel: 0,
+      consumableDetectorLevel: 0,
+      compassTarget: null,
+      compassResults: [],
+      consumableResults: [],
+      onSetDetector: noop,
+      onSetCompassTarget: noop,
+      availableHieroglyphs: [],
+      floorHasHiddenCorridor: true,
+      pyramidHiddenCorridorCount: 3,
+    }
+    const { rerender } = render(<DetectorPanel {...base} detectionLevel={1} />)
+    expect(screen.queryByText(/on this floor/)).toBeNull() // L1 = proximity only
+    expect(screen.queryByText(/unexplored corridor/)).toBeNull()
+
+    rerender(<DetectorPanel {...base} detectionLevel={2} />)
+    expect(screen.getByText(/on this floor/)).toBeTruthy()
+    expect(screen.queryByText(/unexplored corridor/)).toBeNull() // pyramid count is L3+
+
+    rerender(<DetectorPanel {...base} detectionLevel={3} />)
+    expect(screen.getByText(/on this floor/)).toBeTruthy()
+    expect(screen.getByText(/3 unexplored corridors/)).toBeTruthy()
+  })
+
   it("supplies L1 pyramid only; L3 exact cell", () => {
     const props = {
       activeDetector: "consumable" as const,
