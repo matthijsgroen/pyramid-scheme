@@ -20,6 +20,44 @@ const MODE_ICON: Record<string, string> = {
   hiddenPassageway: "👁",
 }
 
+const uniqueBy = <T,>(items: T[], key: (item: T) => string): T[] => {
+  const seen = new Set<string>()
+  return items.filter(item => {
+    const k = key(item)
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+}
+
+// Precision narrows inward with level (§7.2): L1 pyramid only, L2 +floor, L3 +exact cell. The key
+// collapses hits to the shown precision so lower levels don't list the same pyramid/floor twice.
+const compassKey = (r: CompassResult, level: number): string =>
+  level <= 1
+    ? r.journeyId
+    : level === 2
+      ? `${r.journeyId}:${r.levelIdx}:${r.floorIdx}`
+      : `${r.journeyId}:${r.levelIdx}:${r.floorIdx}:${r.cell?.row},${r.cell?.col}`
+
+const compassLabel = (r: CompassResult, level: number): string => {
+  if (level <= 1) return r.journeyId
+  const floor = `${r.journeyId} L${r.levelIdx + 1} F${r.floorIdx + 1}`
+  return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
+}
+
+const consumableKey = (r: ConsumableResult, level: number): string =>
+  level <= 1
+    ? r.journeyId
+    : level === 2
+      ? `${r.journeyId}:${r.floorIdx}`
+      : `${r.journeyId}:${r.floorIdx}:${r.cell.row},${r.cell.col}`
+
+const consumableLabel = (r: ConsumableResult, level: number): string => {
+  if (level <= 1) return r.journeyId
+  const floor = `${r.journeyId} F${r.floorIdx + 1}`
+  return level >= 3 ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
+}
+
 export const DetectorPanel: FC<Props> = ({
   activeDetector,
   compassLevel,
@@ -35,6 +73,9 @@ export const DetectorPanel: FC<Props> = ({
   if (compassLevel === 0 && consumableDetectorLevel === 0 && detectionLevel === 0) return null
 
   const toggle = (mode: DetectorMode) => onSetDetector(activeDetector === mode ? null : mode)
+
+  const shownCompass = uniqueBy(compassResults, r => compassKey(r, compassLevel))
+  const shownConsumables = uniqueBy(consumableResults, r => consumableKey(r, consumableDetectorLevel))
 
   return (
     <div className="rounded-lg border border-stone-700 bg-stone-900/90 p-2 text-xs text-stone-300">
@@ -82,28 +123,28 @@ export const DetectorPanel: FC<Props> = ({
               </option>
             ))}
           </select>
-          {compassTarget && compassResults.length === 0 && <p className="text-stone-500">All pieces collected</p>}
-          {compassResults.slice(0, 3).map((r, i) => (
+          {compassTarget && shownCompass.length === 0 && <p className="text-stone-500">All pieces collected</p>}
+          {shownCompass.slice(0, 3).map((r, i) => (
             <div key={i} className="truncate text-amber-200">
-              {r.journeyId} L{r.levelIdx + 1} F{r.floorIdx + 1}
+              {compassLabel(r, compassLevel)}
             </div>
           ))}
-          {compassResults.length > 3 && <p className="text-stone-500">+{compassResults.length - 3} more</p>}
+          {shownCompass.length > 3 && <p className="text-stone-500">+{shownCompass.length - 3} more</p>}
         </div>
       )}
 
       {activeDetector === "consumable" && (
         <div>
-          {consumableResults.length === 0 ? (
+          {shownConsumables.length === 0 ? (
             <p className="text-stone-500">No skipped chests</p>
           ) : (
-            consumableResults.slice(0, 3).map((r, i) => (
+            shownConsumables.slice(0, 3).map((r, i) => (
               <div key={i} className="truncate text-amber-200">
-                {r.journeyId}
+                {consumableLabel(r, consumableDetectorLevel)}
               </div>
             ))
           )}
-          {consumableResults.length > 3 && <p className="text-stone-500">+{consumableResults.length - 3} more</p>}
+          {shownConsumables.length > 3 && <p className="text-stone-500">+{shownConsumables.length - 3} more</p>}
         </div>
       )}
 
