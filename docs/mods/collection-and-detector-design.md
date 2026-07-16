@@ -164,11 +164,13 @@ material-token refactor touches all three collectible kinds. That's desirable
 (single source) but means the DS slice must re-verify treasure/junk rendering,
 not just hieroglyphs.
 
-### 3C. Detector/compass revival, wired into Collection — DEFERRED (out of scope)
+### 3C. Detector/compass revival — SUPERSEDED by §7/§8 (kept as P3 input)
 
-Kept as the design record; not built in this effort. See Appendix A for the
-"why deferred" and the degrade-cleanly requirement that DS-1/MOD-1 must still
-honor.
+**No longer deferred.** DET-1 is now designed in §7 and planned in §8; where this
+older, narrower analysis conflicts with §7/§8, **§7/§8 win**. Kept because the
+compass provider-search detail below (counter-native "looted = explored-state",
+reachability-aware ranking, target-picking on Collection, shared/persisted
+detector state) is concrete input for **P3** (tiered compass) — mine it there.
 
 The feature is dead; reviving it under the **counter model** (fragments are a
 player-facing counter, `pieceIndex` is meaningless — see the slice-2 decision):
@@ -218,7 +220,12 @@ its own step.
 
 ---
 
-## 5. Open questions (confirm before/while building)
+## 5. Open questions (DS-1/MOD-1 — mostly resolved)
+
+> Q1/Q2 resolved by DS-1/MOD-1 (see §6). The detector questions Q3–Q5 are now
+> superseded — folded into §8 (state home, reachability source, results) and the
+> build-time open ends in §8.6.
+
 
 - **Q1 — Section registry location & props surface.** Register in
   `src/app/pages/` (core owns the screen, mods contribute) vs `src/mods/`.
@@ -256,10 +263,8 @@ its own step.
 
 Both shipped green with a toggle-off proof.
 
-**DET-1 (detector revival) — deferred, out of scope.** When picked up: hoist or
-persist detector state; add target-picking on Collection; rewrite provider
-search counter-native (looted = explored-state, not per-piece) +
-reachability-aware; optional navigable results. Depends on DS-1 + MOD-1.
+**DET-1 (detector revival) — now designed + planned, see §7 (design) and §8
+(phases P1–P5).** No longer deferred. Depends on DS-1 + MOD-1 (both done).
 
 ---
 
@@ -569,14 +574,15 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
 - **Prep (2026-07-16)** — design (§7) + build plan (§8) + handover protocol (§9) written; no
   code yet. Locked decisions in §8.0/§8.0.1. Corridor detector confirmed **4 levels**. Next: P1.
 
-## Appendix A — why the detector is deferred
+## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
-The compass is shipped but **functionally dead** (`availableHieroglyphs={[]}`),
-gated behind endgame perks, and the largest/riskiest of the three concerns
-(shared-state hoisting + a counter-native reachability-aware provider search +
-reward→cell→explored plumbing). It's also fully independent of the section and
-design-system work. Deferring it de-risks DS-1/MOD-1 with zero coupling cost.
+**Resolved — now picked up in §7/§8.** During DS-1/MOD-1 the detector was deferred:
+functionally dead (`availableHieroglyphs={[]}`), endgame-gated, and the
+largest/riskiest concern (shared-state hoisting + counter-native reachability-aware
+provider search + reward→cell→explored plumbing), fully independent of the section
+work — so deferring de-risked DS-1/MOD-1 at zero coupling cost. It's now designed
+(§7) and phased (§8).
 
-The one constraint it leaves on DS-1/MOD-1: the Collection UI must **degrade
-cleanly when the fragment currency isn't registered** (mod off) — no dangling
-hunt affordance, no assumption a detector exists.
+The one constraint it left on DS-1/MOD-1 still holds: the Collection UI must
+**degrade cleanly when a perk's mod isn't registered** — no dangling hunt
+affordance, no assumption a detector exists. §7.7 carries this forward.
