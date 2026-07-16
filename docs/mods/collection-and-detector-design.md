@@ -580,15 +580,20 @@ shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit
   pocket may become load-bearing once its key is placed (reachability-guaranteed), but a hidden
   pocket is **discovery-gated** (no key currency, reveal never guaranteed) so it may NEVER be
   load-bearing. Regen: 294/294 fragments still placed (31 relocated to visible slots), world solvable.
-- **P5 GAP (surfaced, not closed): no in-game reveal/enter flow for hidden corridors.** After P5 a
-  hidden pocket holds only optional loot — but `useAssembledFloor` masks hidden cells until
-  `revealedSections` names them, and `revealedSections` is set **only in `HiddenPassage.stories.tsx`**,
-  never in the real `SiteMapScreen`. So in production the player can *notice* a hidden corridor (P4
-  awareness) but has no way to reveal + walk into it to collect the loot — the corridor detector's
-  loot payoff isn't realizable in-game yet. P4 deliberately left this out (awareness only); P5 is
-  world-gen placement only. Wiring the reveal/enter flow into `SiteMapScreen` (lift the story's
-  `revealedSections` state + reveal action, persist per journey) is a separate unbuilt UI slice —
-  needed before the optional pockets are actually reachable by a player.
+- ~~**P5 GAP: no in-game reveal/enter flow for hidden corridors.**~~ **RESOLVED (2026-07-16):
+  wired into `SiteMapScreen`.** The reveal reuses P4's found-via-proximity mechanic rather than
+  lifting the story's separate button/state: the persisted `foundHiddenCorridors` set (corridors
+  whose bordering junction the player has reached, detector ≥ L1) is fed into `useAssembledFloor`
+  as `revealedSections`. So reaching a junction both *notices* (P4 marker) AND *reveals* (unmasks)
+  the corridor it borders — its cells become walkable and its optional loot collectible via the
+  normal encounter flow. **found = revealed** now (the two collapse to one moment, by design —
+  §7.3 "revealed by the corridor detector *or* stumbled onto"; without a detector the player still
+  glides through unaware). No new state/effect: the P4 junction→section map + persistence already
+  do the work; only the wiring (one derived `revealedSections`, keyed on a stable content string
+  so the mask memo + found-marking effect don't churn) was missing. `HiddenPassage.stories.tsx`'s
+  explicit reveal *button* stays story-only (a manual-playtest affordance); production reveal is
+  automatic on junction-reach. Proven at the render layer (`useAssembledFloor.spec`: a section in
+  `revealedSections` un-masks → cells reappear, drops from `hiddenSectionHashes` → walkable).
 - Detector state persistence (`compassTarget`) — ephemeral today (§3C Q3); persist if the
   hunt should survive navigation (relevant once P3 lands).
 
@@ -779,6 +784,52 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   P5 is the last planned phase.** The detector+perk+treasure revive (§8 P1–P5) is complete; the two
   open UI slices remaining across the plan (compass target-picker wiring, hidden-corridor reveal/
   enter flow) are logged in §8.6 as gaps, not phases.
+
+- **UI-slice: hidden-corridor reveal/enter flow DONE + pushed (2026-07-16)** — closes the P5 GAP
+  (§8.6). Commit `8a25e46` on `mods/hieroglyph-currency`. `SiteMapScreen` now derives
+  `revealedSections` from the persisted `foundHiddenCorridors` set and feeds it to
+  `useAssembledFloor`, so reaching a hidden corridor's bordering junction (detector ≥ L1) both marks
+  it found (P4) and unmasks it — walkable + optional loot collectible via the normal encounter flow.
+  **found = revealed** (one moment, by design). Reused P4's junction→section map + per-journey
+  persistence wholesale — no new state, no new effect, ~12 LOC of wiring keyed on a stable content
+  string (mask memo + found-marking effect must not churn). The story's reveal *button* stays
+  story-only. CLI all green (tsc --force, lint, **735** tests +1 new, build; no world-gen touched so
+  generate-world skipped). Toggle-off proven: hieroglyph + trap out of `REGISTERED_MODS` (+imports) →
+  tsc + build green — the reveal flow is pure core (`SiteMapScreen` + `useAssembledFloor`, zero mod
+  coupling), degrades cleanly. **Decision recorded in §8.6**: reveal is automatic on junction-reach
+  (reuses P4's proximity trigger), not a separate button — found and revealed collapse to one moment,
+  matching §7.3. **Playtest**: reveal→walkable proven at the render layer (`useAssembledFloor.spec`
+  new case: revealed section un-masks, cells reappear, drops from `hiddenSectionHashes`) — the full
+  navigate-to-a-junction UI flow isn't runnable headless, same harness constraint as P1/P3/P4; the
+  `HiddenPassage` WithDetector story is the manual-playtest surface. **Next: the last open UI slice —
+  the compass target-picker gap** (`SiteMapScreen availableHieroglyphs={[]}`, §8.6). Kickoff below.
+
+### 9.3 Next kickoff — compass target-picker (paste into a fresh session)
+
+```
+Wire the compass target-picker on branch mods/hieroglyph-currency. Read
+docs/mods/collection-and-detector-design.md §3C (target-picking-on-Collection),
+§7.1–7.2 (compass = hieroglyph-owned active detector, narrows inward), and the two
+compass entries in §8.6 (the P3 "target picker still empty" gap + exact-cell notes).
+Check §9.1 for P3 context.
+
+The compass is dead end-to-end in production: DetectorPanel is fed
+`availableHieroglyphs={[]}` (SiteMapScreen), so the target <select> is empty and the
+player can never pick a hieroglyph to hunt — even though the level-aware scanner
+(P3) and DetectorPanel precision rendering already work. Build the picker per §3C:
+prefer target-picking on the Collection hieroglyph section (a partially-collected
+slot "Ra 3/5" becomes the hunt affordance) over reviving the dead HUD <select>.
+That means the compass target must be shared/persisted (§3C "shared detector
+state", Q3 / §8.6 last bullet) so a target set on Collection survives navigation
+into a site and drives the in-run DetectorPanel readout. Decide state home
+(persist compassTarget vs app-context) and record it in the doc.
+
+Follow §9: commit per boundary; self-verify with the CLI (tsc -b / vitest / lint /
+build — no world-gen surface expected); playtest pick-target→hunt→readout; prove
+toggle-off (hieroglyph off → no fragment slots → no hunt affordance, compass mode
+absent, app builds). No silent guesses — record decisions in the doc. When done:
+update §9.1. This is the last open UI slice in the plan.
+```
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
