@@ -47,10 +47,14 @@ export const TombTreasureCollectionSection: FC<CollectionSectionProps> = ({ sele
     <>
       {difficulties.map(difficulty => {
         const category = CATEGORY_BY_DIFFICULTY[difficulty]
+        const treasures = difficultyTreasures[difficulty]
+        // Hide a difficulty group until the player owns at least one of its treasures — an all-empty
+        // group is noise; it appears (with its remaining empty slots) once the first is collected.
+        if (!treasures.some(tr => tombKeyIds.has(keyIdByTreasureId[tr.id]))) return null
         return (
           <CollectionSection key={difficulty} title={t(`collection.treasureCategories.${category}`)} accent="amber">
             <CategoryGrid>
-              {difficultyTreasures[difficulty].map(treasure => {
+              {treasures.map(treasure => {
                 const keyId = keyIdByTreasureId[treasure.id]
                 const collected = tombKeyIds.has(keyId)
                 return (

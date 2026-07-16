@@ -16,6 +16,10 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
   const { t } = useTranslation(["common", "sellables"])
   const { inventory } = useInventory()
 
+  // Hide the junk category until the player owns at least one sellable — it appears (with its
+  // remaining empty slots) once the first is collected.
+  if (!ALL_SELLABLES.some(item => inventory[item.id] !== undefined)) return null
+
   return (
     <CollectionSection title={t("collection.categories.junk")} accent="emerald">
       <CategoryGrid>
