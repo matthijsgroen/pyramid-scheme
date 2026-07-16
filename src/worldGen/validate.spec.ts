@@ -94,6 +94,43 @@ describe("validateRewardCounts", () => {
   it("skips the currency-reward check entirely when no expectation is injected", () => {
     expect(() => validateRewardCounts(validConfigWithFragments(3), undefined, isFragment)).not.toThrow()
   })
+
+  // §7.3: a hidden corridor is a discovery-gated OPTIONAL pocket — a gating currency the solver
+  // must guarantee (map piece / registered fragment) may never sit there. placeFragments excludes
+  // hidden slots; this guard is the post-build backstop.
+  const realTombId = PYRAMID_JOURNEYS[0].id
+  const hiddenSectionWith = (r: TreasureReward): Record<string, SiteConfig[]> => ({
+    [realTombId]: [
+      [
+        floor({
+          sideSections: [
+            { pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true, endReward: r },
+            ...Array.from({ length: WORLD_TARGETS.mapPieceRewards }, () => ({
+              pathPuzzles: 0,
+              difficulty: "starter" as const,
+              end: "treasure" as const,
+              endReward: { type: "mapPiece" as const, tombId: realTombId },
+            })),
+          ],
+        }),
+      ],
+    ] as SiteConfig[],
+  })
+
+  it("throws when a hidden section holds a gating currency (registered fragment)", () => {
+    const configs = hiddenSectionWith({ type: "hieroglyphFragment", hieroglyphId: "h0" })
+    expect(() => validateRewardCounts(configs, undefined, isFragment)).toThrow(/hidden .*pocket/)
+  })
+
+  it("throws when a hidden section holds a map piece", () => {
+    const configs = hiddenSectionWith({ type: "mapPiece", tombId: realTombId })
+    expect(() => validateRewardCounts(configs, undefined, isFragment)).toThrow(/hidden .*pocket/)
+  })
+
+  it("allows a hidden section holding optional (non-gating) loot", () => {
+    const configs = hiddenSectionWith({ type: "sellable", itemId: "sell_bronze_1" })
+    expect(() => validateRewardCounts(configs, undefined, isFragment)).not.toThrow()
+  })
 })
 
 // The old `validateDiscovery` tests were removed in §E — secondary-tomb discovery + ward-key

@@ -28,6 +28,13 @@ export type Slot = {
    * worklist and capped pass touch. `"puzzle"` = a puzzle-chain position — filler-only, seen
    * exclusively by the dynamic loot pass (money/consumables). */
   kind: "end" | "puzzle"
+  /** True when this slot lives in a hidden (discovery-gated) section — a hidden corridor is an
+   * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md §7.3): structurally
+   * reachable but off the guaranteed path, since discovery isn't guaranteed (needs the corridor
+   * detector or a lucky stumble). So the gating worklist must NEVER place a progression-gating
+   * currency here — placeFragments excludes hidden end slots. Only optional filler (capped/dynamic)
+   * may land in a hidden pocket. Set for a hidden section or any descendant of one. */
+  hidden?: boolean
   /** Puzzle slots only: the owning site (`journeyId:levelIndex`) and its per-site sequence, so
    * the dynamic pass can replay placement deterministically per site (distribution-primitive-
    * design.md). Undefined for `"end"` slots. */
@@ -81,6 +88,7 @@ export const collectSlots = (
       wardKeys: string[],
       isPlaceholder: boolean,
       preference: string | undefined,
+      hidden: boolean,
       assign: (r: TreasureReward | undefined) => void
     ) =>
       slots.push({
@@ -92,6 +100,7 @@ export const collectSlots = (
         preference,
         kind: "end",
         rewardPriority: chestWeight,
+        ...(hidden ? { hidden: true } : {}),
         assign,
       })
 
@@ -115,7 +124,8 @@ export const collectSlots = (
         ref: FloorRef,
         difficulty: Difficulty,
         encounter: string | string[] | undefined,
-        encountersByIndex?: Record<number, string | string[]>
+        encountersByIndex: Record<number, string | string[]> | undefined,
+        hidden: boolean
       ) => {
         if (!rewards) return
         rewards.forEach((rw, i) => {
@@ -138,6 +148,7 @@ export const collectSlots = (
             ...(frag ? {} : { siteId, puzzleSeq: puzzleSeq++ }),
             rewardPriority: familyPriorityFor(enc, "puzzle"),
             ...(encId ? { encounter: encId } : {}),
+            ...(hidden ? { hidden: true } : {}),
             assign: r => {
               arr[i] = r
             },
@@ -146,11 +157,19 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex)
+        emitPuzzle(floor.rewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex, false)
         for (const section of floor.sideSections) {
-          emitPuzzle(section.rewards, pRef, section.difficulty, section.encounter, section.encountersByIndex)
+          const secHidden = !!section.hidden
+          emitPuzzle(section.rewards, pRef, section.difficulty, section.encounter, section.encountersByIndex, secHidden)
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.rewards, pRef, sub.difficulty, sub.encounter, sub.encountersByIndex)
+            emitPuzzle(
+              sub.rewards,
+              pRef,
+              sub.difficulty,
+              sub.encounter,
+              sub.encountersByIndex,
+              secHidden || !!sub.hidden
+            )
         }
       })
 
@@ -158,33 +177,51 @@ export const collectSlots = (
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot(ref, floor.difficulty, [], true, (floor.mainEndReward as FragmentSlotReward).prefers, r => {
+          addSlot(ref, floor.difficulty, [], true, (floor.mainEndReward as FragmentSlotReward).prefers, false, r => {
             f.mainEndReward = r
           })
         }
         for (const section of floor.sideSections) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
+          const secHidden = !!section.hidden
           if (section.endReward?.type === "fragmentSlot") {
             const s = section
-            addSlot(ref, section.difficulty, sWardKeys, true, (section.endReward as FragmentSlotReward).prefers, r => {
-              s.endReward = r
-            })
+            addSlot(
+              ref,
+              section.difficulty,
+              sWardKeys,
+              true,
+              (section.endReward as FragmentSlotReward).prefers,
+              secHidden,
+              r => {
+                s.endReward = r
+              }
+            )
           } else if (section.gate?.type === "tomb-key" && !section.endReward) {
             const s = section
-            addSlot(ref, section.difficulty, sWardKeys, false, undefined, r => {
+            addSlot(ref, section.difficulty, sWardKeys, false, undefined, secHidden, r => {
               s.endReward = r
             })
           }
           for (const sub of section.sideSections ?? []) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
+            const subHidden = secHidden || !!sub.hidden
             if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
-              addSlot(ref, sub.difficulty, subWardKeys, true, (sub.endReward as FragmentSlotReward).prefers, r => {
-                ss.endReward = r
-              })
+              addSlot(
+                ref,
+                sub.difficulty,
+                subWardKeys,
+                true,
+                (sub.endReward as FragmentSlotReward).prefers,
+                subHidden,
+                r => {
+                  ss.endReward = r
+                }
+              )
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {
               const ss = sub
-              addSlot(ref, sub.difficulty, subWardKeys, false, undefined, r => {
+              addSlot(ref, sub.difficulty, subWardKeys, false, undefined, subHidden, r => {
                 ss.endReward = r
               })
             }
