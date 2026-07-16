@@ -93,7 +93,10 @@ const buildPlan = (): PyramidPlan[] =>
 
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 
-const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => {
+const buildSiteConfigs = (
+  plan: PyramidPlan[],
+  reservedTreasureIndices?: (tombId: string) => number[]
+): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
 
   // Group plan entries by journey
@@ -126,6 +129,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
+        reservedTreasureIndices,
         resolveReward: spec => specToReward(spec, tier),
         resolveMainEndReward: spec => specToReward(spec, tier),
       })
@@ -257,13 +261,16 @@ export const buildConfigs = (
   reachabilitySupport?: ReachabilitySupport,
   resolveTombTreasure?: TombTreasureResolver,
   familyCapacityFor?: FamilyCapacityFor,
-  shopStock: readonly ShopStockAssignment[] = []
+  shopStock: readonly ShopStockAssignment[] = [],
+  // Floor indices a tomb reserves for tier-unlock/location-key treasures — injected by the
+  // tomb-treasure mod so pyramid ward wings skip them; core reads no perk types. Absent ⇒ none.
+  reservedTreasureIndices?: (tombId: string) => number[]
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
 
   // Phase 2: Build SiteConfigs for pyramids (fragmentSlot sentinels in place)
-  const pyramidConfigs = buildSiteConfigs(plan)
+  const pyramidConfigs = buildSiteConfigs(plan, reservedTreasureIndices)
 
   // Phase 3: Build tomb site configs
   const tombConfigs = buildTombConfigs(resolveTombTreasure)

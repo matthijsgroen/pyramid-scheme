@@ -75,6 +75,13 @@ export const MOD_TOMB_TREASURE_RESOLVER: TombTreasureResolver | undefined = REGI
   m => m.resolveTombTreasure
 ).find(r => r !== undefined)
 
+// Which tomb floors are reserved for tier-unlock/location-key treasures (§E) — so a pyramid's ward
+// wings skip them without core world-gen reading perk types. First contributing mod wins; with none
+// (mod off), nothing is reserved. Injected into buildConfigs by scripts/generateWorld.ts.
+export const MOD_RESERVED_TREASURE_INDICES: ((tombId: string) => number[]) | undefined = REGISTERED_MODS.map(
+  m => m.reservedTreasureIndices
+).find(r => r !== undefined)
+
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.
 export const isModEnabled = (id: string): boolean => REGISTERED_MODS.some(m => m.id === id)

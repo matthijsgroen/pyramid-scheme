@@ -2,6 +2,7 @@ import type { ModDescriptor } from "../modDescriptor"
 import { MAP_PIECE_CURRENCY, MAP_PIECE_CURRENCY_META } from "./game/mapPieceCurrency"
 import { TOMB_TREASURE_REACHABILITY } from "./game/reachabilitySupport"
 import { resolveTombTreasure } from "./game/tombTreasureReward"
+import { reservedTreasureIndices } from "./game/reservedTreasureIndices"
 
 // The tomb-treasure mod descriptor — the "last mod". Owns BOTH tomb-treasure currencies as one
 // toggle unit (they're one interdependent loop: enter a tomb with map pieces, leave with keys):
@@ -27,6 +28,9 @@ export const tombTreasureMod: ModDescriptor = {
   // §E: tomb-content authoring — floor position → this tomb's `tombKey` perk stream, so core
   // world-gen names no reward type. Drops with the mod.
   resolveTombTreasure,
+  // §E: which tomb floors are tier-unlock/location-key (spoken for), so pyramid ward wings skip
+  // them without core reading perk types. Drops with the mod.
+  reservedTreasureIndices,
   // Sell the wizard_treasure_tomb_c map-piece copy at master_treasure_tomb_b's Fez shop (that copy
   // is freed for the shop by spec/wizard.ts's journey("wizard_4") override). A
   // `prefers:"mapPiece:<tombId>"` sentinel the map-piece worklist fills. Drops with the mod.

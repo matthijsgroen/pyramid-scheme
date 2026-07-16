@@ -1,5 +1,5 @@
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
-import { TOMB_PERK_IDS, TREASURE_PERKS } from "../data/treasurePerks"
+import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { mulberry32 } from "../game/random"
 import { hashStr } from "./rewards"
@@ -67,14 +67,15 @@ export const resolvePacking = (constraint: PyramidConstraint, journeyId: string,
 
 export const resolveSealed = (constraint: PyramidConstraint): boolean | undefined => constraint.sealed
 
-// Ward-wing key indices for a tomb, skipping any slot reserved for a tier-unlock or
-// location-key perk (those are spoken for elsewhere) — first `count` remaining indices.
-export const freeWardIndices = (tombId: string, count: number): number[] => {
+// Ward-wing key indices for a tomb, skipping any floor slot reserved elsewhere (a tier-unlock or
+// location-key treasure) — first `count` remaining indices. `reserved` is injected by whoever owns
+// the reward vocabulary (the tomb-treasure mod's `reservedTreasureIndices`), so core world-gen no
+// longer reads perk types; with no injection (mod off) nothing is reserved.
+export const freeWardIndices = (tombId: string, count: number, reserved: ReadonlySet<number> = new Set()): number[] => {
   const perkIds = TOMB_PERK_IDS[tombId] ?? []
   const free: number[] = []
   for (let idx = 0; idx < perkIds.length && free.length < count; idx++) {
-    const perk = TREASURE_PERKS[perkIds[idx]]
-    if (perk?.type !== "tier-unlock" && perk?.type !== "location-key") free.push(idx)
+    if (!reserved.has(idx)) free.push(idx)
   }
   return free
 }
@@ -154,6 +155,9 @@ export type BuildSiteContext<TExtra extends string = never> = {
   hasMapPieceBranch: boolean
   hasWardGate: boolean
   nextTier: string | null
+  // Floor indices of a tomb reserved for a tier-unlock/location-key treasure — injected by the
+  // reward owner (tomb-treasure mod) so ward wings skip them. Undefined ⇒ none reserved (mod off).
+  reservedTreasureIndices?: (tombId: string) => number[]
   resolveReward: ResolveReward<TExtra>
   resolveMainEndReward: (spec: RewardSpec) => TreasureReward
 }
@@ -293,7 +297,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       // Uniform (count) wings + all wardPaths draw distinct free indices from this tier's tomb;
       // authored (spec) wings bring their own keys, so only wardPaths needs free indices then.
       const uniformWingCount = wingSpecs ? 0 : wingCount
-      const wardIndices = freeWardIndices(tombId, uniformWingCount + wardPaths)
+      const reserved = new Set(ctx.reservedTreasureIndices?.(tombId) ?? [])
+      const wardIndices = freeWardIndices(tombId, uniformWingCount + wardPaths, reserved)
       const pathIndices = wardIndices.slice(uniformWingCount, uniformWingCount + wardPaths)
       const lastMain = floorConfigs[floorConfigs.length - 1]
 

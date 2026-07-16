@@ -48,6 +48,10 @@ export type ModDescriptor = {
   // `tombKey` perk stream). Injected into buildConfigs so core world-gen names no reward type;
   // drops with the mod (a tomb-less world places no tomb treasures). One provider expected.
   resolveTombTreasure?: TombTreasureResolver
+  // Floor indices of a tomb reserved for a tier-unlock/location-key treasure (spoken for by the
+  // tier/discovery machinery). Injected into buildConfigs so a pyramid's ward wings skip them
+  // without core reading perk types. Drops with the mod (nothing reserved). One provider expected.
+  reservedTreasureIndices?: (tombId: string) => number[]
   // This mod's shop-stock placements: sell specific currency pieces at specific shops (by
   // journeyId + nth). Each drops a fragmentSlot sentinel the capped/gating pass fills, so the piece
   // is moved out of the free-world spread into the shop. Drops with the mod (shop off → shops fall
