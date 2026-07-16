@@ -1,4 +1,5 @@
 import type { FC } from "react"
+import type { Difficulty } from "@/data/difficultyLevels"
 
 // A collectible shown in the Collection screen's shared detail panel — the common shape every
 // section (core or mod) hands back on click.
@@ -8,6 +9,9 @@ export type CollectionItem = {
   name: string
   description: string
   effectDescription?: string
+  // The item's difficulty, when the section knows it directly (e.g. a mod-owned treasure). The
+  // detail panel prefers this over deriving one from the id, so core needn't resolve mod content.
+  difficulty?: Difficulty
 }
 
 // What a registered section receives from the screen: the shared selection state (one detail

@@ -1,29 +1,10 @@
-// Treasures found in treasure tomb journeys
-// Each treasure corresponds to a specific treasure tomb journey
+// The tomb-treasure catalog — the 40 authored treasures, one per tomb floor, grouped by tomb.
+// Owned by the tomb-treasure mod (moved out of core src/data): core carries no tomb content.
+// Names/symbols/descriptions here are the authored English fallbacks; the shown text comes from
+// treasures.json. Each treasure is 1:1 with a tomb floor's `tombKey` (see keyId↔treasure below).
 
-import type { Difficulty } from "./difficultyLevels"
-
-/**
- * Material tier of inventory items, mapped to difficulty levels:
- * stone=starter, bronze=junior, silver=expert, gold=master, divine=wizard
- */
-export type MaterialTier = "stone" | "bronze" | "silver" | "gold" | "divine"
-
-export const materialTierByDifficulty: Record<Difficulty, MaterialTier> = {
-  starter: "stone",
-  junior: "bronze",
-  expert: "silver",
-  master: "gold",
-  wizard: "divine",
-}
-
-export const difficultyByMaterialTier: Record<MaterialTier, Difficulty> = {
-  stone: "starter",
-  bronze: "junior",
-  silver: "expert",
-  gold: "master",
-  divine: "wizard",
-}
+import type { Difficulty } from "@/data/difficultyLevels"
+import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 
 export type Treasure = {
   id: string
@@ -326,4 +307,33 @@ export const difficultyTreasures: Record<Difficulty, Treasure[]> = {
   expert: templeSecretsTreasures,
   master: ancientRelicsTreasures,
   wizard: mythicalArtifactsTreasures,
+}
+
+// A tomb's ordered treasures (replaces core journeys.ts `treasures:` — content coupling cut).
+// Order matches TOMB_PERK_IDS[tombId], so index i is the treasure for that tomb's floor i.
+export const TOMB_TREASURES: Record<string, Treasure[]> = {
+  starter_treasure_tomb: merchantCacheTreasures,
+  junior_treasure_tomb: nobleVaultTreasures,
+  expert_treasure_tomb: templeOuterTreasures,
+  expert_treasure_tomb_b: templeInnerTreasures,
+  master_treasure_tomb: hallOfMaatTreasures,
+  master_treasure_tomb_b: hallOfOsirisTreasures,
+  wizard_treasure_tomb: vaultOfGodsATreasures,
+  wizard_treasure_tomb_b: vaultOfGodsBTreasures,
+  wizard_treasure_tomb_c: vaultOfGodsCTreasures,
+}
+
+// keyId ↔ treasure (1:1): zip each tomb's ordered treasures with its ordered perk-id (keyId) list.
+// "Collected" in the Collection = owning the treasure's keyId (a tombKey), so the section maps a
+// catalog treasure → its keyId to check ownership.
+export const keyIdByTreasureId: Record<string, string> = {}
+export const treasureByKeyId: Record<string, Treasure> = {}
+for (const [tombId, treasures] of Object.entries(TOMB_TREASURES)) {
+  const keyIds = TOMB_PERK_IDS[tombId] ?? []
+  treasures.forEach((treasure, i) => {
+    const keyId = keyIds[i]
+    if (!keyId) return
+    keyIdByTreasureId[treasure.id] = keyId
+    treasureByKeyId[keyId] = treasure
+  })
 }

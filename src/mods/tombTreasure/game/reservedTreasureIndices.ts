@@ -1,4 +1,5 @@
-import { TOMB_PERK_IDS, TREASURE_PERKS } from "@/data/treasurePerks"
+import { TOMB_PERK_IDS } from "@/data/treasurePerks"
+import { TREASURE_PERKS } from "./treasurePerks"
 
 // The tomb-treasure mod owns which floor slots of a tomb are "spoken for" — a tier-unlock or
 // location-key treasure, whose ward key is wired by the tier/discovery machinery, not handed to a

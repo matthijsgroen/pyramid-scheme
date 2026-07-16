@@ -7,7 +7,7 @@ import {
   sellValueForItemId,
   sellablesForDifficulty,
 } from "./sellables"
-import { materialTierByDifficulty, type MaterialTier } from "./treasures"
+import { materialTierByDifficulty, type MaterialTier } from "./materialTiers"
 
 const TIERS: MaterialTier[] = ["stone", "bronze", "silver", "gold", "divine"]
 

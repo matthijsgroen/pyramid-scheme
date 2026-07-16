@@ -2,7 +2,7 @@ import { registerRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
 import { registerRewardDisplays } from "@/app/SiteMap/rewardDisplayRegistry"
 import { getSellableById } from "@/data/sellables"
 import { moneyRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
-import type { MaterialTier } from "@/data/treasures"
+import type { MaterialTier } from "@/data/materialTiers"
 
 // Junk material tier → loot rarity for the reward popup.
 const SELLABLE_RARITY: Record<MaterialTier, "common" | "rare" | "legendary"> = {

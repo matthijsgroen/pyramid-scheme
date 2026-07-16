@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { renderHook } from "@testing-library/react"
 import "@/mods/registerModApps" // populate the perk-contribution registry (all mods on)
 import { useMergedPerkContributions } from "./perkContributions"
-import { TREASURE_PERKS } from "@/data/treasurePerks"
+import { TREASURE_PERKS } from "@/mods/tombTreasure/game/treasurePerks"
 
 // Guards the open-payload typo risk (§8.0): a stat perk whose `type` string no mod grants would
 // silently no-op. `describe` is defined only by the perk's owning mod, so a defined describe proves

@@ -243,14 +243,12 @@ export const TravelPage: FC<{
                     )
                   }
                 }
-                const disabled = journey.type === "treasure_tomb" && journey.treasures.length <= completionCount
-
                 return (
                   <JourneyCard
                     key={journey.id}
                     showDetails={index === unlocked - 1}
                     journey={journey}
-                    disabled={disabled}
+                    disabled={false}
                     completionCount={completionCount}
                     progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
                     index={index}

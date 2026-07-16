@@ -1,7 +1,7 @@
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { Slot } from "@/worldGen/slots"
 import { SELLABLES_BY_TIER, SELL_VALUE_BY_TIER } from "@/data/sellables"
-import { materialTierByDifficulty, type MaterialTier } from "@/data/treasures"
+import { materialTierByDifficulty, type MaterialTier } from "@/data/materialTiers"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { rollMoney } from "@/worldGen/rewards"
 import { totalBuyable } from "./economyGuard"

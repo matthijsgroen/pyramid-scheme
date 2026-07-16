@@ -3,61 +3,15 @@ import { use, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
-import { useTreasureCategory } from "@/app/translations/useTreasureTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useJourneys } from "../state/useJourneys"
-import { type Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
-import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
-import { CollectionSection } from "@/ui/atoms/CollectionSection"
-import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 import { collectionSections, type CollectionItem } from "./collectionSectionRegistry"
 // Side-effect: registers every enabled mod's Collection section into the registry
 import "@/mods/registerModApps"
-
-type TreasureCategory = "merchantCache" | "nobleVault" | "templeSecrets" | "ancientRelics" | "mythicalArtifacts"
-
-// Map treasure categories to their corresponding difficulty levels
-const treasureCategoryToDifficulty: Record<TreasureCategory, Difficulty> = {
-  merchantCache: "starter",
-  nobleVault: "junior",
-  templeSecrets: "expert",
-  ancientRelics: "master",
-  mythicalArtifacts: "wizard",
-}
-
-const TreasureCategorySection: FC<{
-  category: TreasureCategory
-  onItemClick: (item: CollectionItem) => void
-  selectedItem: CollectionItem | null
-  treasures: Record<string, number | undefined>
-}> = ({ category, onItemClick, selectedItem, treasures }) => {
-  const { t } = useTranslation("common")
-  const items = useTreasureCategory(category)
-  const difficulty = treasureCategoryToDifficulty[category]
-
-  return (
-    <CollectionSection title={t(`collection.treasureCategories.${category}`)} accent="amber">
-      <CategoryGrid>
-        {items.map(item => (
-          <CollectibleSlot
-            key={item.id}
-            state={treasures[item.id] !== undefined ? "collected" : "empty"}
-            symbol={item.symbol}
-            difficulty={difficulty}
-            selected={selectedItem?.id === item.id}
-            onClick={() => onItemClick(item)}
-            className="aspect-square shadow-md hover:shadow-lg"
-          />
-        ))}
-      </CategoryGrid>
-    </CollectionSection>
-  )
-}
 
 const DetailPanel: FC<{
   item: CollectionItem | null
@@ -65,7 +19,8 @@ const DetailPanel: FC<{
   onAdd?: () => void
 }> = ({ item, debug = false, onAdd }) => {
   const { t } = useTranslation("common")
-  const difficulty = item ? getItemFirstLevel(item.id) : null
+  // A section may hand its item a known difficulty (mod-owned content); otherwise derive from the id.
+  const difficulty = item ? (item.difficulty ?? getItemFirstLevel(item.id)) : null
 
   return (
     <div className="sticky bottom-0 min-h-fit rounded-lg bg-white/70 p-4 shadow-lg backdrop-blur-sm">
@@ -73,7 +28,7 @@ const DetailPanel: FC<{
         <div className="flex flex-col items-start gap-4">
           <div className="flex flex-row items-start gap-3">
             <div className="flex-shrink-0">
-              <HieroglyphTile symbol={item.symbol} difficulty={getItemFirstLevel(item.id)} size="lg" disabled={false} />
+              <HieroglyphTile symbol={item.symbol} difficulty={difficulty ?? undefined} size="lg" disabled={false} />
             </div>
             <div className="flex flex-col">
               <h3 className="font-pyramid text-xl font-bold text-gray-900">{item.name}</h3>
@@ -107,7 +62,6 @@ const DetailPanel: FC<{
 export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
   const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null)
-  const { getJourney } = useJourneys()
   const { inventory, addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
 
@@ -124,7 +78,6 @@ export const CollectionPage: FC = () => {
   }
 
   const hasCollectedItems = Object.values(inventory).some(value => value !== undefined)
-  const hasCompletedTomb = (tombId: string) => (getJourney(tombId)?.completionCount ?? 0) > 0
 
   return (
     <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="center">
@@ -132,49 +85,8 @@ export const CollectionPage: FC = () => {
         <h1 className="mb-6 text-center font-pyramid text-3xl font-bold text-purple-900">{t("collection.title")}</h1>
 
         <div className="space-y-6 pb-safe-bottom">
-          {/* Treasure Categories */}
-          {hasCompletedTomb("starter_treasure_tomb") && (
-            <TreasureCategorySection
-              category="merchantCache"
-              onItemClick={handleItemClick}
-              selectedItem={selectedItem}
-              treasures={inventory}
-            />
-          )}
-          {hasCompletedTomb("junior_treasure_tomb") && (
-            <TreasureCategorySection
-              category="nobleVault"
-              onItemClick={handleItemClick}
-              selectedItem={selectedItem}
-              treasures={inventory}
-            />
-          )}
-          {hasCompletedTomb("expert_treasure_tomb") && (
-            <TreasureCategorySection
-              category="templeSecrets"
-              onItemClick={handleItemClick}
-              selectedItem={selectedItem}
-              treasures={inventory}
-            />
-          )}
-          {hasCompletedTomb("master_treasure_tomb") && (
-            <TreasureCategorySection
-              category="ancientRelics"
-              onItemClick={handleItemClick}
-              selectedItem={selectedItem}
-              treasures={inventory}
-            />
-          )}
-          {hasCompletedTomb("wizard_treasure_tomb") && (
-            <TreasureCategorySection
-              category="mythicalArtifacts"
-              onItemClick={handleItemClick}
-              selectedItem={selectedItem}
-              treasures={inventory}
-            />
-          )}
-
-          {/* Mod-contributed sections (shop's junk category, hieroglyph's fragments, …). Each
+          {/* Mod-contributed sections (shop's junk category, hieroglyph's fragments, tomb treasures,
+              …). Each
               registers itself gated on its mod, so a section drops out when its mod is toggled
               off — core names none here. */}
           {collectionSections().map(section => (
