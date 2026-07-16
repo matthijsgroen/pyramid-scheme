@@ -4,7 +4,9 @@ import type { FloorConfig } from "./types"
 import type { PyramidConstraint } from "./dsl"
 
 describe("buildFloor", () => {
-  it("defaults to an exiting, reward-free floor", () => {
+  it("defaults to an exiting floor with no main reward (the caller/site decides the chest)", () => {
+    // buildFloor stays reward-agnostic — it runs before staircase wiring, so it can't know whether
+    // this floor truly exits. The site (buildSite) decides the main-end loot slot per structure.
     expect(buildFloor({ pathPuzzles: 2, difficulty: "starter", sideSections: [] })).toEqual({
       pathPuzzles: 2,
       difficulty: "starter",
@@ -77,13 +79,15 @@ describe("buildSite", () => {
     expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
-  it("authored floors[] branch: one FloorConfig per entry, last floor carries mainEndReward", () => {
+  it("authored floors[] branch: one FloorConfig per entry, every floor's main path bears a loot slot", () => {
     const { floors } = buildSite({
       ...baseCtx,
       constraint: { floors: [{ pathPuzzles: 1 }, { pathPuzzles: 2 }] },
     })
     expect(floors).toHaveLength(2)
-    expect(floors[0].mainEndReward).toBeUndefined()
+    // Each floor's main path exits into a treasure chest (floors chain via side-section staircases),
+    // so both get an untagged loot slot — a non-last floor is no longer an empty chest.
+    expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })
     expect(floors[1].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 

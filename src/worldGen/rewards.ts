@@ -67,5 +67,9 @@ export const pathEndToReward = (end: string): TreasureReward | undefined => {
   if (end === "mosaic") return { type: "fragmentSlot", prefers: "mosaicPiece" }
   if (end === "fragment") return { type: "fragmentSlot" }
   if (end === "junk") return { type: "fragmentSlot", prefers: "junk" }
-  return undefined // "treasure" = no specific endReward
+  // "treasure" = a plain treasure room: a loot slot with NO preference, filled by whatever the
+  // solver has spare (currency / mosaic / shop junk-coins), in priority order. A treasure chest
+  // gives something (pyramid-interior-design.md §10, "a treasure room gives ..."); an unfilled one
+  // is only possible on a genuine loot shortage. Identical to "fragment" (both untagged).
+  return { type: "fragmentSlot" }
 }

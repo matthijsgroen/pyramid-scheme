@@ -95,7 +95,9 @@ describe("pathEndToReward", () => {
     expect(pathEndToReward("junk")).toEqual({ type: "fragmentSlot", prefers: "junk" })
   })
 
-  it('"treasure" → undefined (no specific reward)', () => {
-    expect(pathEndToReward("treasure")).toBeUndefined()
+  it('"treasure" → an untagged fragmentSlot (a loot slot with no preference)', () => {
+    // A treasure room gives loot (pyramid-interior-design.md §10); the slot has no `prefers`, so the
+    // solver fills it with whatever's spare. Same as "fragment".
+    expect(pathEndToReward("treasure")).toEqual({ type: "fragmentSlot" })
   })
 })

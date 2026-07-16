@@ -211,10 +211,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
       const floorSealed = fc.sealed ?? resolveSealed(constraint)
       // A floor's own reward can gate its own further shortcut (a tomb's self-referential
-      // "treasure IS the key") — resolved per floor, falling back to the site-level reward
-      // on the last floor only when this floor didn't declare its own.
+      // "treasure IS the key") — resolved per floor, falling back to the site-level reward on the
+      // last floor. A non-last floor's main path also exits into a treasure chest (floors chain via
+      // side-section staircases here), so it defaults to an untagged loot slot too — never empty
+      // (matches the auto multi-floor branch below).
       const floorMainEndReward =
-        fc.mainEndReward !== undefined ? resolveReward(fc.mainEndReward) : isLast ? mainEndReward : undefined
+        fc.mainEndReward !== undefined
+          ? resolveReward(fc.mainEndReward)
+          : isLast
+            ? mainEndReward
+            : { type: "fragmentSlot" as const }
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,

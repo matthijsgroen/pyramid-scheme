@@ -128,7 +128,10 @@ describe("buildSideSections", () => {
       journeyId: "j",
       constraintSections: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 0, hidden: true }] }],
     })
-    expect(sections[0].sideSections).toEqual([{ pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true }])
+    // A plain treasure end (no authored reward, no gate) defaults to an untagged loot slot.
+    expect(sections[0].sideSections).toEqual([
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true, endReward: { type: "fragmentSlot" } },
+    ])
   })
 
   it('end: "staircase" numbers the stairId by position among already-pushed sections', () => {

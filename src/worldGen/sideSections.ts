@@ -31,10 +31,18 @@ const buildDslSection = <TExtra extends string>(
   stairIndex: number
 ): SideSection => {
   const gate = specToGate(cs.gate)
-  const endReward = cs.endReward !== undefined ? resolveReward(cs.endReward) : undefined
   const sectionDifficulty = cs.difficulty ?? difficulty
   const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, journeyId)
   const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${stairIndex}` } : ("treasure" as const)
+  // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
+  // untagged `treasure` slot (filled by whatever's spare). A gated end already becomes a slot via
+  // its open gate (collectSlots); a staircase end bears no reward.
+  const endReward =
+    cs.endReward !== undefined
+      ? resolveReward(cs.endReward)
+      : end === "treasure" && !gate
+        ? pathEndToReward("treasure")
+        : undefined
   const pathPuzzles = typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0
   // This section's own per-node encounter overrides (authored `nodes` selectors) — selectors work
   // on any path, not just the main path (§G).
