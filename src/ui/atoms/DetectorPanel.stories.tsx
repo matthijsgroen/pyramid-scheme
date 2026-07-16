@@ -14,11 +14,6 @@ const meta = {
     compassResults: [],
     consumableResults: [],
     onSetDetector: () => {},
-    onSetCompassTarget: () => {},
-    availableHieroglyphs: [
-      { id: "p10", label: "Owl" },
-      { id: "p8", label: "Vulture" },
-    ],
   },
 } satisfies Meta<typeof DetectorPanel>
 
@@ -29,6 +24,11 @@ export const NoPerks: Story = {}
 
 export const CompassOnly: Story = {
   args: { compassLevel: 1 },
+}
+
+// Compass active but no target picked yet — the HUD points the player at the Collection picker (§3C).
+export const CompassNoTarget: Story = {
+  args: { compassLevel: 1, activeDetector: "compass", compassTarget: null },
 }
 
 const COMPASS_HITS = [

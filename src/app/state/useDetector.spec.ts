@@ -49,16 +49,11 @@ describe("compassResults", () => {
     expect(result.current.compassResults).toHaveLength(0)
   })
 
-  it("returns [] when compass active but no target set", () => {
+  it("returns [] when compass active but no target set (no mod owns the target seam here)", () => {
     const { result } = renderHook(() => useDetector(makeJourneys()))
     act(() => result.current.setDetector("compass"))
-    expect(result.current.compassResults).toHaveLength(0)
-  })
-
-  it("returns [] when no scanner is registered (no mod imported)", () => {
-    const { result } = renderHook(() => useDetector(makeJourneys()))
-    act(() => result.current.setDetector("compass"))
-    act(() => result.current.setCompassTarget("h1"))
+    // No fragment mod imported → compassTarget seam yields null → nothing to scan.
+    expect(result.current.compassTarget).toBeNull()
     expect(result.current.compassResults).toHaveLength(0)
   })
 })

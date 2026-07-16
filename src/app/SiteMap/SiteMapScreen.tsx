@@ -347,8 +347,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             compassResults={detector.compassResults}
             consumableResults={detector.consumableResults}
             onSetDetector={detector.setDetector}
-            onSetCompassTarget={detector.setCompassTarget}
-            availableHieroglyphs={[]}
             floorHasHiddenCorridor={floorHasHiddenCorridor}
             pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
           />

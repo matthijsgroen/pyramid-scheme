@@ -4,6 +4,7 @@ import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { registerPerkContribution } from "@/app/SiteMap/perkContributions"
 import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
+import { registerCompassTarget } from "@/app/SiteMap/compassTarget"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
@@ -51,4 +52,7 @@ if (isModEnabled("hieroglyph")) {
     }
   })
   registerDetectorLevel("compass", () => useHieroglyphProgress().compassLevel)
+  // The hunt target is picked on the Collection screen (§3C) and stored in the mod's own state;
+  // core reads it through this seam to drive the in-run compass readout without naming the mod.
+  registerCompassTarget(() => useHieroglyphProgress().compassTarget)
 }

@@ -4,12 +4,18 @@ import { useTranslation } from "react-i18next"
 import { useInventoryCategory } from "@/app/translations/useInventoryTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
+import { allItems } from "@/data/inventory"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { difficulties } from "@/data/difficultyLevels"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
+
+// id → symbol for every hieroglyph (the four egyptian categories). Used to tell whether a selected
+// Collection item is a hieroglyph this mod owns (the hunt affordance only applies to those) and to
+// show the hunted glyph in the hunt bar.
+const HIEROGLYPH_SYMBOLS: Record<string, string> = Object.fromEntries(allItems.map(i => [i.id, i.symbol]))
 
 // The hieroglyph mod's Collection contribution: fragment-collectible categories, each hieroglyph
 // shown as an empty / partial ("Ra 1/3") / collected slot. Registered app-side and gated on the
@@ -65,11 +71,60 @@ const CategoryGridSection: FC<{
   )
 }
 
+// The hunt bar (§3C): the Collection is the compass's target picker. Shown only when the compass is
+// unlocked (compassLevel > 0) — with the mod off there's no fragment section at all, so the whole
+// affordance is absent. Selecting an uncollected hieroglyph offers "hunt it"; the active target
+// shows with a way to stop.
+const HuntBar: FC<{
+  selectedItem: CollectionSectionProps["selectedItem"]
+  inventory: Record<string, number | undefined>
+}> = ({ selectedItem, inventory }) => {
+  const { compassLevel, compassTarget, setCompassTarget, hieroglyphProgress } = useHieroglyphProgress()
+  if (compassLevel === 0) return null
+
+  const isHieroglyph = (id: string) => id in HIEROGLYPH_SYMBOLS
+  const isCollected = (id: string) => {
+    const { found, required } = hieroglyphProgress(id)
+    return inventory[id] !== undefined || found >= required
+  }
+  const huntable = selectedItem && isHieroglyph(selectedItem.id) && !isCollected(selectedItem.id) ? selectedItem : null
+
+  return (
+    <div className="flex items-center gap-2 rounded-lg bg-purple-900/80 px-3 py-2 text-sm text-purple-50">
+      <span className="text-lg">🧭</span>
+      {compassTarget ? (
+        <>
+          <span className="flex-1">
+            Hunting <span className="text-xl">{HIEROGLYPH_SYMBOLS[compassTarget] ?? compassTarget}</span>
+          </span>
+          <button
+            onClick={() => setCompassTarget(null)}
+            className="rounded bg-purple-700 px-2 py-1 hover:bg-purple-600"
+          >
+            Stop
+          </button>
+        </>
+      ) : (
+        <span className="flex-1 text-purple-200">Select an uncollected hieroglyph, then hunt it with the compass</span>
+      )}
+      {huntable && huntable.id !== compassTarget && (
+        <button
+          onClick={() => setCompassTarget(huntable.id)}
+          className="rounded bg-amber-600 px-2 py-1 text-amber-50 hover:bg-amber-500"
+        >
+          Hunt {huntable.symbol}
+        </button>
+      )}
+    </div>
+  )
+}
+
 export const HieroglyphCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
   const { inventory } = useInventory()
   const { hieroglyphFragments } = useHieroglyphProgress()
   return (
     <>
+      <HuntBar selectedItem={selectedItem} inventory={inventory} />
       {CATEGORIES.map(category => (
         <CategoryGridSection
           key={category}

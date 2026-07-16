@@ -26,8 +26,6 @@ const renderCompass = (compassLevel: number) =>
       compassResults={COMPASS}
       consumableResults={[]}
       onSetDetector={noop}
-      onSetCompassTarget={noop}
-      availableHieroglyphs={[]}
     />
   )
 
@@ -37,6 +35,22 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     // Two hits in the same pyramid collapse to a single 'starter_1' line.
     expect(screen.getAllByText("starter_1")).toHaveLength(1)
     expect(screen.queryByText(/F1|F2|\(3,4\)/)).toBeNull()
+  })
+
+  it("compass with no target points the player at the Collection picker (§3C)", () => {
+    render(
+      <DetectorPanel
+        activeDetector="compass"
+        compassLevel={1}
+        consumableDetectorLevel={0}
+        detectionLevel={0}
+        compassTarget={null}
+        compassResults={[]}
+        consumableResults={[]}
+        onSetDetector={noop}
+      />
+    )
+    expect(screen.getByText(/Pick a hieroglyph to hunt in your Collection/)).toBeTruthy()
   })
 
   it("compass L2 shows the floor but not the cell", () => {
@@ -61,8 +75,6 @@ describe("DetectorPanel precision by level (§7.2)", () => {
       compassResults: [],
       consumableResults: [],
       onSetDetector: noop,
-      onSetCompassTarget: noop,
-      availableHieroglyphs: [],
       floorHasHiddenCorridor: true,
       pyramidHiddenCorridorCount: 3,
     }
@@ -88,8 +100,6 @@ describe("DetectorPanel precision by level (§7.2)", () => {
       compassResults: [],
       consumableResults: CONSUMABLE,
       onSetDetector: noop,
-      onSetCompassTarget: noop,
-      availableHieroglyphs: [],
     }
     const { rerender } = render(<DetectorPanel {...props} consumableDetectorLevel={1} />)
     expect(screen.getAllByText("junior_1")).toHaveLength(1)

@@ -3,20 +3,22 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 import type { JourneyAPI } from "./useJourneys"
 import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
+import { useCompassTarget } from "@/app/SiteMap/compassTarget"
 import { decodeEdge } from "@/app/SiteMap/useAssembledFloor"
 
 export type DetectorAPI = {
   activeDetector: DetectorMode
   compassTarget: string | null
   setDetector: (mode: DetectorMode) => void
-  setCompassTarget: (hieroglyphId: string) => void
   compassResults: CompassResult[]
   consumableResults: ConsumableResult[]
 }
 
 export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
   const [activeDetector, setActiveDetector] = useState<DetectorMode>(null)
-  const [compassTarget, setCompassTarget] = useState<string | null>(null)
+  // The hunt target is picked on Collection and owned by the fragment mod (§3C); core reads it via
+  // the seam (null when no mod owns it) so a target survives navigation into a site.
+  const compassTarget = useCompassTarget()
   const scanCompass = useMergedCompassScanner()
 
   // Compass scanning is mod-owned (each mod registers a scanner for its own reward type via
@@ -46,7 +48,6 @@ export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
     activeDetector,
     compassTarget,
     setDetector: setActiveDetector,
-    setCompassTarget,
     compassResults,
     consumableResults,
   }

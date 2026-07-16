@@ -546,11 +546,15 @@ shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit
   `reward` + shop `stock`); a failed assembly degrades to floor-level (cell omitted), never drops
   the hit. Supplies gets the cell for free (`edgeId` decodes to `floor:row,col`). Precision +
   per-level dedup live in `DetectorPanel` (scanner owns data-cost, panel owns presentation).
-- P3 GAP (surfaced, not yet closed): the compass **target picker is still empty** in production
-  (`SiteMapScreen availableHieroglyphs={[]}`). Target-picking-on-Collection (§3C) is a separate,
-  unbuilt slice — so the compass can't be driven end-to-end through the real UI yet. P3 acceptance
-  is proven at the state/render layer (`compassScanner.spec`, `DetectorPanel.spec`) instead. Wire
-  the picker (or move it to Collection per §3C) before the compass is player-reachable.
+- ~~P3 GAP (surfaced, not yet closed): the compass **target picker is still empty** in production
+  (`SiteMapScreen availableHieroglyphs={[]}`).~~ **RESOLVED (UI-slice, 2026-07-16): target-picking
+  moved to the Collection (§3C), the dead HUD `<select>` deleted.** The hunt affordance is a **hunt
+  bar** in the mod-owned `HieroglyphCollectionSection` (gated on `compassLevel > 0`): selecting an
+  uncollected hieroglyph offers "Hunt <symbol>"; the active target shows with a Stop button. The
+  `DetectorPanel` compass panel is now read-only — it shows the readout for the picked target, or
+  "Pick a hieroglyph to hunt in your Collection" when none. `availableHieroglyphs` +
+  `onSetCompassTarget` props and the `<select>` are gone. See the state-home decision in the last
+  §8.6 bullet.
 - ~~P4: journey-map marker surface — reuse an existing travel-map badge or new component?~~
   **RESOLVED (P4, 2026-07-16): reuse the `JourneyCard` badge cluster** (the existing 📜 map-piece /
   ✔ completion row). L4 adds one `👁` badge there, gated on `hasUnexploredCorridors`. No new
@@ -594,8 +598,18 @@ shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit
   explicit reveal *button* stays story-only (a manual-playtest affordance); production reveal is
   automatic on junction-reach. Proven at the render layer (`useAssembledFloor.spec`: a section in
   `revealedSections` un-masks → cells reappear, drops from `hiddenSectionHashes` → walkable).
-- Detector state persistence (`compassTarget`) — ephemeral today (§3C Q3); persist if the
-  hunt should survive navigation (relevant once P3 lands).
+- ~~Detector state persistence (`compassTarget`) — ephemeral today (§3C Q3); persist if the
+  hunt should survive navigation (relevant once P3 lands).~~ **RESOLVED (UI-slice, 2026-07-16):
+  `compassTarget` lives in the hieroglyph mod's own persisted state** (`useModState("hieroglyph")`,
+  next to `compassLevel`), NOT app-context. Rationale: the target is a hieroglyph id — meaningless
+  without the mod — so mod-owned state gives the cleanest toggle-off (it drops with the mod, core
+  names nothing), persists across navigation into a site AND across reloads (Q3 "persisting is
+  simpler"), and lets the mod-owned Collection picker write it directly with no extra plumbing. Core
+  reads it via a new read-only seam `src/app/SiteMap/compassTarget.ts` (`registerCompassTarget` /
+  `useCompassTarget`, mirroring `detectorLevels.ts`); `useDetector` reads the seam instead of holding
+  its own `useState`, so a target picked on Collection drives the in-run `DetectorPanel` readout.
+  Write path = Collection only (the mod's hook); core no longer sets the target (`setCompassTarget`
+  dropped from `DetectorAPI`).
 
 ## 9. Handover protocol (every building session follows this)
 
@@ -804,32 +818,36 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   `HiddenPassage` WithDetector story is the manual-playtest surface. **Next: the last open UI slice —
   the compass target-picker gap** (`SiteMapScreen availableHieroglyphs={[]}`, §8.6). Kickoff below.
 
-### 9.3 Next kickoff — compass target-picker (paste into a fresh session)
+- **UI-slice: compass target-picker DONE + pushed (2026-07-16)** — the LAST open UI slice in the
+  plan; the detector+perk+treasure revive (§8 P1–P5 + both §8.6 UI gaps) is now fully complete.
+  Commit `<pending>` on `mods/hieroglyph-currency`. Closes the P3 GAP (§8.6): the compass is now
+  driveable end-to-end through the real UI. **State home (recorded in §8.6):** `compassTarget` lives
+  in the hieroglyph mod's persisted state (`useModState`), not app-context — cleanest toggle-off +
+  survives navigation/reload + the mod-owned picker writes it directly. Built: new read-only seam
+  `src/app/SiteMap/compassTarget.ts` (`registerCompassTarget`/`useCompassTarget`, mirrors
+  `detectorLevels.ts`); hieroglyph state gained `compassTarget` + `setCompassTarget`, registered on
+  the seam. `useDetector` reads the seam (dropped its `useState` + `setCompassTarget` from
+  `DetectorAPI`). **Picker = a hunt bar** in the mod-owned `HieroglyphCollectionSection` (gated
+  `compassLevel > 0`): pick an uncollected hieroglyph → "Hunt <symbol>"; active target shows +
+  Stop. The dead HUD `<select>` + `availableHieroglyphs`/`onSetCompassTarget` props deleted;
+  `DetectorPanel` compass panel is now a read-only readout (or "Pick a hieroglyph … in your
+  Collection" when no target). CLI all green (tsc --force, lint, **737** tests +2 net, build; no
+  world-gen surface so generate-world skipped). Toggle-off proven: hieroglyph out of
+  `REGISTERED_MODS` (+both imports) → tsc + build green — no fragment section (no hunt bar),
+  `useCompassTarget` → null, compass detector level 0 (button absent); the seam degrades cleanly and
+  core names no mod. **Playtest**: pick-target→persist proven at the state layer
+  (`useHieroglyphProgress.compass.spec` round-trips + clears); readout precision + the no-target hint
+  proven at the render layer (`DetectorPanel.spec`) — the full Collection-pick→enter-site→readout nav
+  flow isn't runnable headless (same harness constraint as P1/P3/P4/P5). **Next: nothing — the plan
+  is complete.** Both §8.6 UI gaps are closed; remaining doc items are the non-UI fidelity threads
+  (§A, §G/§H) tracked in the audit, outside this plan.
 
-```
-Wire the compass target-picker on branch mods/hieroglyph-currency. Read
-docs/mods/collection-and-detector-design.md §3C (target-picking-on-Collection),
-§7.1–7.2 (compass = hieroglyph-owned active detector, narrows inward), and the two
-compass entries in §8.6 (the P3 "target picker still empty" gap + exact-cell notes).
-Check §9.1 for P3 context.
+### 9.3 Next kickoff — none, the plan is complete
 
-The compass is dead end-to-end in production: DetectorPanel is fed
-`availableHieroglyphs={[]}` (SiteMapScreen), so the target <select> is empty and the
-player can never pick a hieroglyph to hunt — even though the level-aware scanner
-(P3) and DetectorPanel precision rendering already work. Build the picker per §3C:
-prefer target-picking on the Collection hieroglyph section (a partially-collected
-slot "Ra 3/5" becomes the hunt affordance) over reviving the dead HUD <select>.
-That means the compass target must be shared/persisted (§3C "shared detector
-state", Q3 / §8.6 last bullet) so a target set on Collection survives navigation
-into a site and drives the in-run DetectorPanel readout. Decide state home
-(persist compassTarget vs app-context) and record it in the doc.
-
-Follow §9: commit per boundary; self-verify with the CLI (tsc -b / vitest / lint /
-build — no world-gen surface expected); playtest pick-target→hunt→readout; prove
-toggle-off (hieroglyph off → no fragment slots → no hunt affordance, compass mode
-absent, app builds). No silent guesses — record decisions in the doc. When done:
-update §9.1. This is the last open UI slice in the plan.
-```
+The detector+perk+treasure revive (§8 P1–P5) plus both §8.6 UI slices (hidden-corridor reveal/enter
+flow, compass target-picker) are all DONE + pushed on `mods/hieroglyph-currency`. There is no next
+phase to kick off. Remaining threads live outside this plan: the non-UI fidelity items (§A mechanics-
+in-core / legacy render / encounters-as-distributions, §G/§H) tracked in `docs/mods/FIDELITY-AUDIT.md`.
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 

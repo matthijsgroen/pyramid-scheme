@@ -6,12 +6,11 @@ type Props = {
   compassLevel: number // 0 = not unlocked
   consumableDetectorLevel: number // 0 = not unlocked
   detectionLevel: number // 0 = not unlocked
+  // The hunted hieroglyph, picked on the Collection screen (§3C). null = nothing picked yet.
   compassTarget: string | null
   compassResults: CompassResult[]
   consumableResults: ConsumableResult[]
   onSetDetector: (mode: DetectorMode) => void
-  onSetCompassTarget: (hieroglyphId: string) => void
-  availableHieroglyphs: { id: string; label: string }[]
   // Corridor detector widens outward (§7.2): L2 = an unfound corridor on this floor; L3 = the count
   // still outstanding across the whole pyramid. Both default off so lower levels stay silent.
   floorHasHiddenCorridor?: boolean
@@ -71,8 +70,6 @@ export const DetectorPanel: FC<Props> = ({
   compassResults,
   consumableResults,
   onSetDetector,
-  onSetCompassTarget,
-  availableHieroglyphs,
   floorHasHiddenCorridor = false,
   pyramidHiddenCorridorCount = 0,
 }) => {
@@ -117,25 +114,21 @@ export const DetectorPanel: FC<Props> = ({
 
       {activeDetector === "compass" && (
         <div>
-          <select
-            value={compassTarget ?? ""}
-            onChange={e => onSetCompassTarget(e.target.value)}
-            className="mb-1 w-full rounded bg-stone-800 px-1 py-0.5 text-xs text-stone-200"
-          >
-            <option value="">— pick hieroglyph —</option>
-            {availableHieroglyphs.map(h => (
-              <option key={h.id} value={h.id}>
-                {h.label}
-              </option>
-            ))}
-          </select>
-          {compassTarget && shownCompass.length === 0 && <p className="text-stone-500">All pieces collected</p>}
-          {shownCompass.slice(0, 3).map((r, i) => (
-            <div key={i} className="truncate text-amber-200">
-              {compassLabel(r, compassLevel)}
-            </div>
-          ))}
-          {shownCompass.length > 3 && <p className="text-stone-500">+{shownCompass.length - 3} more</p>}
+          {/* Target is picked on the Collection screen (§3C), not here — the HUD only reads it out. */}
+          {!compassTarget ? (
+            <p className="text-stone-500">Pick a hieroglyph to hunt in your Collection</p>
+          ) : shownCompass.length === 0 ? (
+            <p className="text-stone-500">All pieces collected</p>
+          ) : (
+            <>
+              {shownCompass.slice(0, 3).map((r, i) => (
+                <div key={i} className="truncate text-amber-200">
+                  {compassLabel(r, compassLevel)}
+                </div>
+              ))}
+              {shownCompass.length > 3 && <p className="text-stone-500">+{shownCompass.length - 3} more</p>}
+            </>
+          )}
         </div>
       )}
 

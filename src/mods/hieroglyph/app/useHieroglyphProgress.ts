@@ -16,11 +16,14 @@ const hieroglyphRequired = hieroglyphRequiredRaw as Record<string, number>
 
 // collectedFragments: which pieces are found. compassLevel: the fragment-compass detector level,
 // granted by tomb treasures via the perk seam (§7.4) — lives here so toggling hieroglyph off drops it.
-type HieroglyphState = { collectedFragments: string[]; compassLevel: number } // fragment = "hieroglyphId:pieceIndex"
+// compassTarget: the hieroglyph the player is hunting (picked on the Collection screen, §3C) — lives
+// here too so it persists across navigation into a site and drops with the mod (core reads it via the
+// compassTarget seam).
+type HieroglyphState = { collectedFragments: string[]; compassLevel: number; compassTarget: string | null } // fragment = "hieroglyphId:pieceIndex"
 
 const COMPASS_CAP = 3
 
-const INITIAL: HieroglyphState = { collectedFragments: [], compassLevel: 0 }
+const INITIAL: HieroglyphState = { collectedFragments: [], compassLevel: 0, compassTarget: null }
 
 export type HieroglyphProgressAPI = {
   addFragment: (hieroglyphId: string, pieceIndex: number) => void
@@ -29,6 +32,9 @@ export type HieroglyphProgressAPI = {
   // hieroglyphId → count of distinct pieces found (for the collection/detector views).
   hieroglyphFragments: Record<string, number>
   compassLevel: number
+  // The hunted hieroglyph (set from the Collection picker, §3C); null = not hunting.
+  compassTarget: string | null
+  setCompassTarget: (hieroglyphId: string | null) => void
   grantPerk: (perk: Perk) => void
 }
 
@@ -57,6 +63,8 @@ export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
           .reduce((m, id) => m.set(id, (m.get(id) ?? 0) + 1), new Map<string, number>())
       ),
       compassLevel: state.compassLevel ?? 0,
+      compassTarget: state.compassTarget ?? null,
+      setCompassTarget: hieroglyphId => setState(prev => ({ ...prev, compassTarget: hieroglyphId })),
       // The compass perk is the only hieroglyph-owned perk (§8.0.1): toLevel bump, cap 3.
       grantPerk: perk =>
         perk.type === "compass"
