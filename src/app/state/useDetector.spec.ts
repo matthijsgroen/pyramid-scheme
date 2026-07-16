@@ -72,12 +72,17 @@ describe("consumableResults", () => {
     expect(result.current.consumableResults).toHaveLength(0)
   })
 
-  it("returns skipped consumable locations when active", () => {
-    const journeys = makeJourneys({ starter_1: ["edge-abc", "edge-def"] })
+  it("returns skipped consumable locations with the edge decoded to floor + cell", () => {
+    const journeys = makeJourneys({ starter_1: ["1:2,3", "0:4,5"] })
     const { result } = renderHook(() => useDetector(journeys))
     act(() => result.current.setDetector("consumable"))
     expect(result.current.consumableResults).toHaveLength(2)
-    expect(result.current.consumableResults[0]).toEqual({ journeyId: "starter_1", edgeId: "edge-abc" })
+    expect(result.current.consumableResults[0]).toEqual({
+      journeyId: "starter_1",
+      edgeId: "1:2,3",
+      floorIdx: 1,
+      cell: { row: 2, col: 3 },
+    })
   })
 
   it("returns [] when no consumables were skipped", () => {

@@ -163,15 +163,22 @@ export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFail
 
 export type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
 
+// `cell` (row,col within the floor) is resolved only at compass level 3 — it needs a floor
+// assembly the lower levels don't pay for. See collection-and-detector-design.md §7.2.
 export type CompassResult = {
   journeyId: string
   levelIdx: number
   floorIdx: number
   hieroglyphId: string
   pieceIndex: number
+  cell?: { row: number; col: number }
 }
 
+// floorIdx + cell decoded from edgeId ("floor:row,col") so the supplies detector can narrow its
+// readout by level (§7.2): L1 pyramid, L2 +floor, L3 +cell.
 export type ConsumableResult = {
   journeyId: string
   edgeId: string
+  floorIdx: number
+  cell: { row: number; col: number }
 }

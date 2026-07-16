@@ -3,6 +3,7 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 import type { JourneyAPI } from "./useJourneys"
 import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
+import { decodeEdge } from "@/app/SiteMap/useAssembledFloor"
 
 export type DetectorAPI = {
   activeDetector: DetectorMode
@@ -33,7 +34,9 @@ export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
     for (const [journeyId] of Object.entries(generatedWorldConfigs)) {
       const skipped = journeys.getSkippedConsumables(journeyId)
       for (const edgeId of skipped) {
-        results.push({ journeyId, edgeId })
+        // edgeId encodes "floor:row,col" — decode so the panel can narrow the readout by level (§7.2).
+        const [floorIdx, row, col] = decodeEdge(edgeId)
+        results.push({ journeyId, edgeId, floorIdx, cell: { row, col } })
       }
     }
     return results
