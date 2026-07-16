@@ -32,11 +32,11 @@ export const starterRules: Rule[] = [
   // the starter tomb (see the deadlock fix below). Pyramid 2: one main puzzle, its chests from
   // the tier defaults. Both also carry a ward-chest teaser to a later tier.
   //
-  // The tier-wide "first pyramid → mapPiece" rule lands on this pyramid's LAST floor by default —
-  // which used to be floor 1, gated behind the very ward path that needs starter_treasure_tomb's
-  // OWN tier-unlock treasure to open. That's a deadlock (the map piece feeds the tomb's own
-  // piecesRequired threshold, which grants the key this floor needs). Fixed by moving the real
-  // map piece to floor 0 (always reachable) and leaving floor 1's ward-gated reward as safe bonus
+  // The tier-wide "first pyramid → mapPiece" rule lands on this pyramid's LAST floor by default;
+  // on floor 1 that would gate the map piece behind the very ward path that needs
+  // starter_treasure_tomb's OWN tier-unlock treasure to open — a deadlock (the map piece feeds the
+  // tomb's own piecesRequired threshold, which grants the key that floor needs). So the real map
+  // piece sits on floor 0 (always reachable), leaving floor 1's ward-gated reward as safe bonus
   // loot (mosaicPiece never gates anything).
   journey("starter_1")
     .pyramid(1, { pathPuzzles: 0 })

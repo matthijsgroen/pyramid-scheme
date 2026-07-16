@@ -52,7 +52,7 @@ export type TrapProgressAPI = {
   addConsumable: (type: ConsumableType) => boolean // false if at cap
   useConsumable: (type: ConsumableType) => void
   // Applies a trap-owned perk to this slice; no-ops for perks trap doesn't own. See §8.0.1 catalog
-  // for caps/bumps (the old registerPerks helpers, reimplemented inline here).
+  // for caps/bumps.
   grantPerk: (perk: Perk) => void
 }
 

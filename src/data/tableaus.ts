@@ -110,9 +110,8 @@ difficulties.forEach((difficulty, i, list) => {
 // in tableaus.json keeps matching its tableau's symbols byte-for-byte. Row 2, 3, ... go to
 // each SECONDARY tomb in turn (split off once a single tomb got too large for exploration —
 // pyramid-interior-design.md §5) — rows the original grid always generated but never read,
-// so this is genuinely unused content, not a duplicate of the primary's (the old code's
-// bug: it keyed inventory by *difficulty*, so secondaries silently reused the primary's
-// exact `level 1` cells). Every row DOES have a real hand-authored story in tableaus.json —
+// so this is genuinely unused content, not a duplicate of the primary's. Every row DOES have a
+// real hand-authored story in tableaus.json —
 // the full run×level grid was always fully authored, just never read past level 1 — it's
 // only ever filed under the PRIMARY tomb's id (e.g. "expert_treasure_tomb.run1_level2"), so
 // `storySource` records which (tombId, run, level) triple each real tomb's floor actually

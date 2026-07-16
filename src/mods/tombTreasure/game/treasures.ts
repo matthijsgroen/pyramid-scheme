@@ -309,7 +309,7 @@ export const difficultyTreasures: Record<Difficulty, Treasure[]> = {
   wizard: mythicalArtifactsTreasures,
 }
 
-// A tomb's ordered treasures (replaces core journeys.ts `treasures:` — content coupling cut).
+// A tomb's ordered treasures (mod-owned).
 // Order matches TOMB_PERK_IDS[tombId], so index i is the treasure for that tomb's floor i.
 export const TOMB_TREASURES: Record<string, Treasure[]> = {
   starter_treasure_tomb: merchantCacheTreasures,

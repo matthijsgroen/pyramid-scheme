@@ -907,9 +907,8 @@ export const assembleFloor = (
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
     // The goal-room fallback here is defensive only: every real config sets mainEndReward
-    // explicitly (buildSite.ts) — an unset one used to silently grant a free, uncounted
-    // mosaicPiece, so this now falls back to the same grant-nothing placeholder every other
-    // unset reward slot uses.
+    // explicitly (buildSite.ts). An unset one falls back to the same grant-nothing placeholder
+    // every other unset reward slot uses.
     for (let mi = 0; mi < mainPath.length; mi++) {
       const [r, c] = mainPath[mi]
       if (mi === 0) {
@@ -1104,10 +1103,9 @@ export const assembleFloor = (
       }
 
       // Spread across whatever room `paddedChainLength` gave this chain — same technique
-      // as the parent section and the main path (see spreadContentIndices). Previously
-      // indexed as `(contentStart + pi) * 2`, which only ever happened to line up for a
-      // single-puzzle sub-section; any sub-section with more than one puzzle was silently
-      // indexing past its own content into whatever cell happened to sit there.
+      // as the parent section and the main path (see spreadContentIndices). Indices must map
+      // through `subContentIndices` (not a raw `(contentStart + pi) * 2`), so a multi-puzzle
+      // sub-section indexes its own content rather than past it.
       const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]

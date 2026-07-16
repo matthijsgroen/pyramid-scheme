@@ -50,7 +50,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = useMergedHeldKeys()
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
-  // the merged accessor — core names no mod. Replaces the old single progression.perks blob.
+  // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
 
   const [currentFloor, setCurrentFloor] = useState(() => {
@@ -104,9 +104,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const pyramidHiddenCorridorCount = journeys.getOutstandingHiddenCorridorCount(journeyId)
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
-  // global tombKeyIds, above). Same union completeCell used to gate reachability before
-  // gating went soft — now purely a "is this gate satisfied" read, for the gate family's
-  // own precondition and the map's locked/unlocked gate coloring.
+  // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
+  // satisfied" read, for the gate family's own precondition and the map's locked/unlocked
+  // gate coloring.
   const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
 
   const pendingConsumableCells = useMemo(() => {

@@ -63,7 +63,7 @@ export const pathEndToReward = (end: string): TreasureReward | undefined => {
   // reward literals. Core doesn't know what a currency means beyond the tag, and never rolls a
   // variant (docs/mods/distribution-primitive-design.md). "junk" is a plain loot slot: the shop's
   // money economy fills it (junk or coins), and with shop off it falls to empty like any other —
-  // so core no longer names `sellable` here.
+  // so core names no `sellable` here.
   if (end === "mosaic") return { type: "fragmentSlot", prefers: "mosaicPiece" }
   if (end === "fragment") return { type: "fragmentSlot" }
   if (end === "junk") return { type: "fragmentSlot", prefers: "junk" }

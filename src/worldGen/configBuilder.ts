@@ -308,7 +308,7 @@ export const buildConfigs = (
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
-  // Secondary-tomb discovery + ward-key ordering are no longer a separate post-build validator
+  // Secondary-tomb discovery + ward-key ordering need no separate post-build validator
   // (§E): the worklist reachability model (placeFragments above) already guarantees both — it
   // hard-fails if any lock stays blocking. See validate.ts's note + docs/game-design/keys-and-locks-solver.md.
   // Mod-injected post-build validators (e.g. the shop economy guard) run last, over the whole

@@ -8,9 +8,7 @@ import { wizardRules } from "./spec/wizard"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mapPieceRewards: the sum of every tomb's own piecesRequired (the keys-and-locks solver's
-// map-piece currency places exactly this many, no surplus) — 31 across the 9 tombs. The
-// older "20 primary + 16 secondary" surplus-loot split this comment used to describe was
-// redesigned away; this is the current, correct total.
+// map-piece currency places exactly this many, no surplus) — 31 across the 9 tombs.
 //
 // Mosaic is NOT here — it's a mod-owned capped currency (src/mods/mosaic/game/mosaicCurrency.ts's
 // MOSAIC_TOTAL); core holds no per-mod target (docs/mods/TARGET.md rule 2). It's placed by

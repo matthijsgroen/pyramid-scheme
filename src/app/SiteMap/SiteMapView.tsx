@@ -322,8 +322,7 @@ const ExitShape = ({ state }: ShapeProps) => {
 
 // The visual shape a room takes. "encounter" rooms pick among the hand-drawn
 // puzzle/trap/treasure/gate shapes by family tag; "portal" rooms (entrance/stairhead/exit
-// are all `RoomType: "portal"` now — pure transitions, no family) pick by position/stairId,
-// the same fields siteAssembler used to pick a roomType literal from before the collapse.
+// are all `RoomType: "portal"` — pure transitions, no family) pick by position/stairId.
 type ShapeKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
 
 const shapeKindFor = (
@@ -1104,9 +1103,9 @@ export const SiteMapView = ({
               (pendingCells?.has(`${r},${c}`) ?? false)
             const clickable = onCellClick && (state === "reachable" || state === "completed")
             const roomR = nodeRadius[shapeKind]
-            // Gating is soft: a locked gate is still "reachable" (clickable), so its own
-            // exploration state no longer distinguishes locked from unlocked the way it used
-            // to. Recover that purely cosmetic distinction here, independent of `state` —
+            // Gating is soft: a locked gate is still "reachable" (clickable), so `state`
+            // doesn't distinguish locked from unlocked. Recover that purely cosmetic
+            // distinction here, independent of `state` —
             // `displayState` feeds the floor tint and icon only, never clickability/badges.
             const locked =
               shapeKind === "gate" && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)

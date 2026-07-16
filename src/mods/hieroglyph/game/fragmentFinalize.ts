@@ -1,9 +1,9 @@
 import type { SiteConfig, TreasureReward } from "@/worldGen/types"
 
-// Hieroglyph-owned world-gen finalize (docs/mods/distribution-primitive-design.md, §D): the two
-// pieces of hieroglyph-specific logic that used to sit in the core serializer. Core stays generic
-// (it just emits whatever fields a reward carries); scripts/generateWorld.ts calls these before
-// serialization — the sanctioned worldGen→mod crossing (the script already imports mod data).
+// Hieroglyph-owned world-gen finalize (docs/mods/distribution-primitive-design.md, §D): two pieces
+// of hieroglyph-specific finalize logic kept out of the generic core serializer.
+// scripts/generateWorld.ts calls these before serialization — the sanctioned worldGen→mod crossing
+// (the script already imports mod data).
 
 const HIEROGLYPH = "hieroglyphFragment"
 
@@ -32,8 +32,8 @@ const forEachReward = (configs: Record<string, SiteConfig[]>, fn: (r: TreasureRe
 
 // Stamp each hieroglyphFragment reward with a distinct pieceIndex per hieroglyph (0,1,2,… in walk
 // order). The specific index is arbitrary — a fragment just needs a unique id within its hieroglyph
-// so re-collecting the same piece doesn't double-count — so any deterministic walk is fine. This
-// replaces the core serializer's per-hieroglyph counter (which is now generic). Mutates in place.
+// so re-collecting the same piece doesn't double-count — so any deterministic walk is fine.
+// Mutates in place.
 export const assignFragmentPieceIndices = (configs: Record<string, SiteConfig[]>): void => {
   const next = new Map<string, number>()
   forEachReward(configs, r => {
