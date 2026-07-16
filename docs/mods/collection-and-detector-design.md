@@ -594,6 +594,31 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
 
 - **Prep (2026-07-16)** — design (§7) + build plan (§8) + handover protocol (§9) written; no
   code yet. Locked decisions in §8.0/§8.0.1. Corridor detector confirmed **4 levels**. Next: P1.
+- **P1 DONE + pushed (2026-07-16)** — perk-grant seam + revive complete. Commits `6207c55`
+  (seams), `9d90b72` (trap perks + orphans), `7f86c69` (hieroglyph/puzzle perks), `92ba5f1`
+  (dispatch + core shrink + deletes + i18n + boot assertion) on `mods/hieroglyph-currency`.
+  Built: `perkContributions.ts` (grant fans out, describe first-owner) + `detectorLevels.ts`
+  (merged compass/supplies/corridor). Perk state moved to owning mods — trap owns
+  max-health/armor/trap-insight/pack-mule/consumable-detector (maxHealth now the single
+  stateful source, dup resolved), hieroglyph owns compass, puzzle owns scribes-eye (new
+  `usePuzzleProgress`), core owns detection only (`bumpDetection`). Orphans built: pack-mule
+  carry cap 2→4, trap-insight +1s/stack. tomb-treasure `tombKey` claim dispatches
+  `TREASURE_PERKS[keyId]` → merged grant. Deleted `perkRegistry`(+spec)/`registerPerks` +
+  main.tsx import. `DetectorPanel` fed from the merged detector-level accessor. CLI all green
+  (tsc, 719 tests, lint, build, generate-world regen identical). Toggle-off proven: trap out of
+  `REGISTERED_MODS` (+import) → tsc/build/generate-world green, consumables dropped, perk seam
+  no-ops. **Decisions recorded** (were doc gaps): (1) perk-id strings follow authored
+  `treasurePerks.ts` — the supplies detector's perk id is **`consumable-detector`** (field
+  `consumableDetectorLevel`, detector mode `"supplies"`), NOT `supplies-detector` as the §8.0.1
+  name column suggests. (2) **trap-insight extends only already-timed traps** (base>0); untimed
+  starter/junior (base 0) stay untimed — 0 = no countdown. (3) Perk `describe` label text
+  authored in `treasures.json` `perks.<type>` (en+nl); consumable-detector/compass/detection/
+  scribes-eye interpolate `{{level}}`. (4) Boot assertion implemented as **describe-coverage**
+  (a defined `describe(perk)` ⇒ the perk has an owning mod), all-mods-on. (5) **Playtest** was
+  done as automated grant-path tests (`useTrapProgress.perks.spec`: cap 6→7, carry 2→4, supplies
+  toLevel; `useProgression.perks.spec`: bumpDetection toLevel/cap; coverage spec) — the UI
+  claim-a-treasure flow isn't runnable headless in this harness, so the effect-turns-on
+  acceptance is proven at the state layer instead. Next: **P2** (tomb-treasure Collection section).
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
