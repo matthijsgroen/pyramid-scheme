@@ -532,8 +532,26 @@ shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit
 
 ### 8.6 Open ends to resolve at build time (not blockers now)
 
-- P3: does the hieroglyph compass ranking need proximity (player position) for L2/L3, or
-  just scope-narrowing? (proximity = "locks onto nearest" per §3C — decide when building P3).
+- ~~P3: does the hieroglyph compass ranking need proximity (player position) for L2/L3, or
+  just scope-narrowing?~~ **RESOLVED (P3, 2026-07-16): scope-narrowing only, no proximity.**
+  The scanner runs over the static `generatedWorldConfigs` (no live player position; the compass
+  is a global hunt across all pyramids, not a current-floor radar). §7.2's inward-narrowing ladder
+  IS the mechanic; "locks onto nearest" (§3C) is dropped — disproportionate plumbing (player cell +
+  distance) for a 3-line HUD readout.
+- ~~P3: exact-cell for compass~~ **RESOLVED (P3, 2026-07-16, user sign-off): built now.** Static
+  config has no grid cells (cells only exist post-assembly). Reproduced without live journey state:
+  a persistent interior's seed is a pure function of its id (`generateNewSeed(hashString(journeyId),
+  1)`; every generatedWorld journey is a persistent interior — `journeys.ts` assigns `siteConfigs`),
+  so `floorSeed = idSeed + (levelIdx+1) + floorIdx` (mirrors `SiteMapScreen`). At L3 only, the
+  scanner assembles each floor holding an uncollected piece and finds the fragment's cell (scans
+  `reward` + shop `stock`); a failed assembly degrades to floor-level (cell omitted), never drops
+  the hit. Supplies gets the cell for free (`edgeId` decodes to `floor:row,col`). Precision +
+  per-level dedup live in `DetectorPanel` (scanner owns data-cost, panel owns presentation).
+- P3 GAP (surfaced, not yet closed): the compass **target picker is still empty** in production
+  (`SiteMapScreen availableHieroglyphs={[]}`). Target-picking-on-Collection (§3C) is a separate,
+  unbuilt slice — so the compass can't be driven end-to-end through the real UI yet. P3 acceptance
+  is proven at the state/render layer (`compassScanner.spec`, `DetectorPanel.spec`) instead. Wire
+  the picker (or move it to Collection per §3C) before the compass is player-reachable.
 - P4: journey-map marker surface — reuse an existing travel-map badge or new component?
 - P5: are today's `hidden` sections already reachability-gated, or placed as normal
   reachable? (buildSite flags `hidden:true`; confirm the solver treatment before changing.)
@@ -656,6 +674,29 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   tomb ward keys) — the **pre-existing, documented** "last mod" isolation limit (see the descriptor
   comment), unchanged by P2. The P2 "world builds" gate is the app build. Next: **P3** (tiered active
   detectors — compass + supplies).
+- **P3 DONE + pushed (2026-07-16)** — tiered active detectors (compass + supplies), narrow-inward
+  precision (§7.2). Commits `ae08ab4` (level-aware scanners + types), `6fe598e` (panel precision),
+  + this doc commit on `mods/hieroglyph-currency`. Built: `CompassResult` gained optional `cell`,
+  `ConsumableResult` gained `floorIdx`+`cell` (decoded from `edgeId`). `compassScanner` reads its own
+  `compassLevel`; at L3 only it assembles each floor holding an uncollected piece (seed reproduced
+  purely from journeyId — persistent-interior seed is id-only) and resolves the fragment's exact cell
+  (`reward` + shop `stock`), degrading to floor-level on assembly failure. `useDetector` decodes the
+  supplies `edgeId` to floor+cell. `DetectorPanel` renders precision by level and dedups to the shown
+  granularity (L1 one line per pyramid, L2 +floor, L3 +cell) — scanner owns data-cost, panel owns
+  presentation. CLI all green (tsc, lint, **728** tests, build, generate-world regen **identical** —
+  P3 touches no world-gen). Toggle-off proven: hieroglyph out of `REGISTERED_MODS` (+import) →
+  tsc/build green; compass scanner + `detectorLevel("compass")` are inside `isModEnabled("hieroglyph")`
+  (`hieroglyph/app/index.ts:22`) → compass level 0 → no compass button (mode absent). Supplies
+  (trap-owned) + corridor (core) unaffected.
+  **Decisions recorded** (§8.6): (1) **proximity = NO**, scope-narrowing only (scanner has no live
+  player position; global hunt not a radar). (2) **compass exact-cell built now** (user sign-off) via
+  pure-id floor-seed reproduction + L3-only assembly; supplies cell is free from `edgeId`. (3) dedup +
+  precision live in the panel, not the scanner (scanner only gates the L3 assembly cost).
+  **Playtest**: acceptance ("L1 pyramid only … L3 exact cell") proven by `DetectorPanel.spec` (render
+  per level) + `compassScanner.spec` (no cell < L3, cell at L3) — the UI compass can't be driven
+  headless because its target picker is still `availableHieroglyphs={[]}` (target-picking-on-Collection
+  is a separate unbuilt slice; **new gap logged in §8.6**). Next: **P4** (tiered corridor detector +
+  travel-map marker).
 
 ## Appendix A — (historical) why the detector was deferred during DS-1/MOD-1
 
