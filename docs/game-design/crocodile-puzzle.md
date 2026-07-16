@@ -6,7 +6,7 @@ The crocodile puzzle is the lock mechanic guarding Treasure Tombs. It is themed 
 
 1. **Comparison phase** — The player is shown a series of pairs of math formulas and must tap the one with the **largest result** for the crocodile to eat. The crocodile faces the chosen side and snaps its mouth shut to confirm each answer.
 2. **Lock phase** — After all comparisons are resolved, the player is asked: _"What digit did the crocodile always/never eat?"_ They must identify a single digit (0–9) that consistently appeared (or never appeared) in the results the crocodile chose.
-3. **Reward** — A correct digit opens the chest and awards a random uncollected treasure from that tomb's loot table.
+3. **Reward** — A correct digit opens the chest and triggers the reward authored on that node: the tomb-key for that floor, which on claim unlocks its treasure (and any perk it grants) in the Collection. There is no per-run random treasure roll.
 
 If the player doesn't remember, an "I don't know" button resets the comparison phase so they can replay it with fresh attention.
 
@@ -23,11 +23,11 @@ The number of comparisons is set by `journey.levelSettings.compareAmount`. If ge
 
 ## Validation
 
-On lock submission (`handleLockSubmit` in `useComparePuzzleControls.ts`), the entered digit is compared against `levelData.requirements.digit`. A mismatch resets both the lock state and all comparison answers so the player must redo the full puzzle.
+On lock submission (`handleLockSubmit` in `src/mods/puzzle/app/crocodile/plugin.tsx`), the entered digit is compared against `puzzle.requirements.digit`. A mismatch resets both the lock state and all comparison answers so the player must redo the full puzzle.
 
-## Loot Selection
+## Reward flow
 
-The treasure awarded is selected deterministically from `randomSeed + 12345` at the start of the hook — before the puzzle is shown. Only treasures not already in the player's inventory are eligible.
+The crocodile is a `capstone` encounter family dispatched through the family registry like any other room (`src/mods/puzzle/app/crocodile/plugin.tsx`). On a correct digit it calls the generic `onSolved()` callback, which runs the standard reward flow (`RewardFlow` / `useApplyReward`) for whatever reward world-gen placed on that node — for a tomb floor, its authored tomb-key. The old per-run deterministic treasure selection (`tombTreasureSelection`, `randomSeed + 12345`) was retired when tomb treasures became tomb-key-owned (collection-and-detector-design.md §7.5).
 
 ## Journey Configuration
 

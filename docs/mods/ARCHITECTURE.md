@@ -99,8 +99,9 @@ An encounter family (a puzzle/trap/shop kind) has two halves:
   (descriptor-contributed) merged with a direct list in
   `src/mods/allFamilyMeta.ts`.
 - **App** (`FamilyPlugin` in `src/app/families/familyRegistry.ts`): the `generate`
-  function + React `Component`. Plugins self-register via side-effect imports in
-  `src/mods/registerAllFamilies.ts`, each gated on `isModEnabled`.
+  function + React `Component`. Each mod's app entrypoint (`mods/<id>/app`,
+  side-effect-imported by `src/mods/registerModApps.ts`) self-registers its own
+  family plugins, gated on `isModEnabled`.
 
 The site assembler maps an authored encounter tag to a family
 (`resolveEncounter`) and renders it, or — when a family isn't registered — falls
@@ -151,10 +152,26 @@ Two seams, so core never sees a mod's state:
 site-map screen uses `canAccept` for the pack-full pickup guard. One claim seam,
 shared by chest claims, puzzle-solve rewards, and shop purchases — core names no mod.
 
-### Perk registry
-`src/game/perks/perkRegistry.ts` maps a treasure-granted perk id to the slice +
-field it bumps. `src/app/state/registerPerks.ts` registers the perks. (The grant
-path is currently inert — see the perk note in `TODO.md`.)
+### Perks — contribution seam
+Perks (stat bonuses + detector levels) are granted by tomb treasures and owned by the
+mod whose gameplay they touch — core names none. A mod registers a hook via
+`registerPerkContribution(() => ({ grant, describe }))`
+(`src/app/SiteMap/perkContributions.ts`), merged like reward contributions:
+`grant(perk)` fans out to every registered handler (each no-ops for perks it doesn't
+own — exactly one owner per perk); `describe(perk)` returns the first owner's
+translated bonus label (undefined if none). Payload is an open descriptor
+`{ type, level? }` — each mod coins its own perk ids, no shared union. Perk STATE lives
+with its owner: trap owns max-health / armor / trap-insight / pack-mule /
+consumable-detector (`useTrapProgress`), hieroglyph owns compass, puzzle owns
+scribes-eye (`usePuzzleProgress`), core owns only corridor-detection
+(`useProgression.corePerks`). Dispatch: the tomb-treasure mod's `tombKey` claim
+resolves `TREASURE_PERKS[keyId]` and calls the merged `grant`. Detector levels read
+through a parallel merged accessor `useMergedDetectorLevels()`
+(`src/app/SiteMap/detectorLevels.ts`: compass←hieroglyph, supplies←trap, corridor←core)
+and the compass hunt target through `useCompassTarget()`
+(`src/app/SiteMap/compassTarget.ts`), so `DetectorPanel` names no mod. The old
+`perkRegistry` / `registerPerks` (registered at boot, never read) are deleted. Full
+design: `collection-and-detector-design.md` §7.
 
 ### Placement pipeline
 Offline, in `placeFragments` (`src/worldGen/placeFragments.ts`), over the slots
@@ -227,9 +244,10 @@ Three distinct phases; mod contributions enter at a different seam in each.
 ### App boot — side-effect registration
 `src/main.tsx` imports the registration modules for their side effects, once:
 `registerCurrencies` (descriptor `currencyMeta` loop + core currencies) and
-`registerPerks`. Each mod's app entrypoint (`registerModApps` → `mods/<id>/app`)
-registers ALL its app contributions — family plugins, screen, HUD widget, reward
-contribution, Collection section — self-gated on `isModEnabled`. After boot the
+`registerRewardHandlers` (core reward display/apply). Each mod's app entrypoint
+(`registerModApps` → `mods/<id>/app`) registers ALL its app contributions — family
+plugins, screen, HUD widget, reward contribution, perk contribution, detector
+level/target, Collection section — self-gated on `isModEnabled`. After boot the
 registries are populated; a mod absent from `REGISTERED_MODS` registered nothing.
 
 ### Per encounter — runtime (`SiteMapScreen`)

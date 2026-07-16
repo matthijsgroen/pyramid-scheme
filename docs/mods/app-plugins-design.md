@@ -30,10 +30,12 @@ Core *logic, UI, and types* name no mod and import no mod. A mod is deletable:
 remove its folder + its manifest line(s), and nothing in core changes.
 
 Enumeration is allowed — a **manifest** that lists mod ids is expected and fine
-(it is not core logic). Today enumeration is scattered across many files
-(`REGISTERED_MODS`, `registerAllFamilies`, `registerAllCollectionSections`,
-`Base.tsx`, `SiteMapScreen.tsx`, `registerRewardHandlers.ts`). The target is
-**two manifests only**: the game descriptor list and one app-entrypoint list.
+(it is not core logic). This target is now reached: enumeration lives in **two
+manifests only** — the game descriptor list (`REGISTERED_MODS` in
+`src/mods/registeredMods.ts`) and one app-entrypoint list (`registerModApps.ts`,
+which side-effect-imports each `mods/<id>/app`). The old scattered aggregators
+(`registerAllFamilies`, `registerAllCollectionSections`) are gone — folded into the
+per-mod app entrypoints.
 
 ## The two mod entrypoints
 

@@ -97,35 +97,29 @@ Design: `docs/mods/collection-and-detector-design.md`.
       `difficultyColors` tokens); fixed invisible tile selection (clip-safe drop-shadow outline)
 - [x] MOD-1 — mod-owned hieroglyph Collection section (collection-section registry mirroring
       `registerAllFamilies`); core Collection names no mod; toggle-off proven
-- [ ] DET-1 — detector revival — folded into the Perk & detector system item below (detectors
-      ARE perks). See design doc §3C + Appendix A.
+- [x] DET-1 — detector revival — folded into the Perk & detector system below (detectors ARE perks).
 
-## Perk & detector system — DISREGARDED pending a full redesign (user decision)
+## Perk & detector system — DONE (P1–P5 + both UI slices, 2026-07-16)
 
-The perk system is now DISREGARDED app-wide: `applyTreasurePerk` is a no-op (useProgression), so
-every perk stays at baseline (maxHealth 6, armor 0, compass/detector/scribes-eye 0…). Treasures
-that grant stat perks do nothing for now. The registry (`src/game/perks`) + `registerPerks` stay
-loaded (main.tsx) as dormant anchors; restoring the registry-driven bump in `applyTreasurePerk`
-revives them. This unblocked trap/health from the parked-perk seam — health uses a constant
-maxHealth, no perk reads.
-
-REDESIGN scope (when picked up): detectors are perks (compass / consumable-detector / detection),
-trap owns 4 perks (armor, max-health, trap-insight, pack-mule) — "how a mod contributes perks" and
-"revive the detector" (DET-1) are one design problem. Open fork: does the grant path write through
-the registry to mod-owned slice state (dynamic `PerkSlice`/defaults), or a gated side-effect leaving
-slices in core? DET-1 detector revival rides on top (target-picking on Collection, counter-native
-provider search, reachability-aware).
-
-Scope when picked up:
-- A perk-contribution mechanism mods use (the open fork: does `applyTreasurePerk`'s grant path
-  write through the registry to mod-owned slice state, so `PerkSlice`/defaults go dynamic? vs a
-  gated side-effect leaving slices in core `ProgressionState`). See the trap notes.
-- DET-1 detector revival on top of that (target-picking on Collection, counter-native provider
-  search, reachability-aware).
+Full design + build log: `docs/mods/collection-and-detector-design.md` §7 (design) + §9.1 (per-phase
+progress). Shipped on `mods/hieroglyph-currency`. Summary:
+- Perks are granted via a contribution seam (`registerPerkContribution(() => ({ grant, describe }))`,
+  `src/app/SiteMap/perkContributions.ts`) — the dormant `perkRegistry` / `registerPerks` are deleted.
+- Perk STATE moved to owning mods: trap owns max-health / armor / trap-insight / pack-mule /
+  consumable-detector; hieroglyph owns compass; puzzle owns scribes-eye; core owns only
+  corridor-detection. `maxHealth` duplication resolved (trap's copy is the single source). Orphan
+  effects built: pack-mule carry cap 2→4, trap-insight +1s/stack.
+- tomb-treasure's `tombKey` claim dispatches `TREASURE_PERKS[keyId]` → merged `grant`.
+- Detectors are tiered (§7.2): compass (hieroglyph) + supplies (trap) narrow inward L1–L3; corridor
+  (core) widens outward L1–L4. `DetectorPanel` reads a merged detector-level accessor
+  (`detectorLevels.ts`) + the compass target seam (`compassTarget.ts`) — names no mod.
+- Tomb-treasure Collection section (mod-owned): "collected" = own the tombKey; shows the perk bonus.
+- Hidden corridor = optional-pocket gated pathway (world-gen); in-game reveal/enter + compass
+  target-picking on the Collection are both wired.
 
 ## Slices 3+ (re-planned after hieroglyph)
 
-Perk UPGRADES are parked (above); the trap slice excludes them but is otherwise NOT blocked.
+Perk UPGRADES are now DONE (see the Perk & detector system section above).
 
 **The Distribution primitive is DESIGNED (design locked): `docs/mods/distribution-primitive-design.md`.**
 Everything placed into the world — encounters (trap/puzzle/shop) AND loot (currencies/junk/
