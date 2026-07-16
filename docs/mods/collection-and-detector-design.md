@@ -820,7 +820,7 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
 
 - **UI-slice: compass target-picker DONE + pushed (2026-07-16)** — the LAST open UI slice in the
   plan; the detector+perk+treasure revive (§8 P1–P5 + both §8.6 UI gaps) is now fully complete.
-  Commit `<pending>` on `mods/hieroglyph-currency`. Closes the P3 GAP (§8.6): the compass is now
+  Commit `02a56e8` + this doc commit on `mods/hieroglyph-currency`. Closes the P3 GAP (§8.6): the compass is now
   driveable end-to-end through the real UI. **State home (recorded in §8.6):** `compassTarget` lives
   in the hieroglyph mod's persisted state (`useModState`), not app-context — cleanest toggle-off +
   survives navigation/reload + the mod-owned picker writes it directly. Built: new read-only seam
