@@ -79,6 +79,7 @@ const HuntBar: FC<{
   selectedItem: CollectionSectionProps["selectedItem"]
   inventory: Record<string, number | undefined>
 }> = ({ selectedItem, inventory }) => {
+  const { t } = useTranslation("common")
   const { compassLevel, compassTarget, setCompassTarget, hieroglyphProgress } = useHieroglyphProgress()
   if (compassLevel === 0) return null
 
@@ -95,24 +96,24 @@ const HuntBar: FC<{
       {compassTarget ? (
         <>
           <span className="flex-1">
-            Hunting <span className="text-xl">{HIEROGLYPH_SYMBOLS[compassTarget] ?? compassTarget}</span>
+            {t("detector.hunting", { symbol: HIEROGLYPH_SYMBOLS[compassTarget] ?? compassTarget })}
           </span>
           <button
             onClick={() => setCompassTarget(null)}
             className="rounded bg-purple-700 px-2 py-1 hover:bg-purple-600"
           >
-            Stop
+            {t("detector.huntStop")}
           </button>
         </>
       ) : (
-        <span className="flex-1 text-purple-200">Select an uncollected hieroglyph, then hunt it with the compass</span>
+        <span className="flex-1 text-purple-200">{t("detector.huntHint")}</span>
       )}
       {huntable && huntable.id !== compassTarget && (
         <button
           onClick={() => setCompassTarget(huntable.id)}
           className="rounded bg-amber-600 px-2 py-1 text-amber-50 hover:bg-amber-500"
         >
-          Hunt {huntable.symbol}
+          {t("detector.huntAction", { symbol: huntable.symbol })}
         </button>
       )}
     </div>

@@ -1,7 +1,17 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
-import { DetectorPanel } from "./DetectorPanel"
 import type { CompassResult, ConsumableResult } from "@/game/siteTypes"
+
+// Isolated from the app's real i18n (never initialized in tests) — identity passthrough returns the
+// key (with interpolated opts appended) so assertions target the key + data, not the prose.
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string, opts?: Record<string, unknown>) =>
+      opts && typeof opts === "object" && !("ns" in opts) ? `${key}:${JSON.stringify(opts)}` : key,
+  }),
+}))
+
+const { DetectorPanel } = await import("./DetectorPanel")
 
 const noop = () => {}
 
@@ -50,7 +60,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
         onSetDetector={noop}
       />
     )
-    expect(screen.getByText(/Pick a hieroglyph to hunt in your Collection/)).toBeTruthy()
+    expect(screen.getByText("detector.pickTarget")).toBeTruthy()
   })
 
   it("compass L2 shows the floor but not the cell", () => {
@@ -79,16 +89,17 @@ describe("DetectorPanel precision by level (§7.2)", () => {
       pyramidHiddenCorridorCount: 3,
     }
     const { rerender } = render(<DetectorPanel {...base} detectionLevel={1} />)
-    expect(screen.queryByText(/on this floor/)).toBeNull() // L1 = proximity only
-    expect(screen.queryByText(/unexplored corridor/)).toBeNull()
+    expect(screen.queryByText("detector.corridorOnFloor")).toBeNull() // L1 = proximity only
+    expect(screen.queryByText(/detector\.corridorPyramidCount/)).toBeNull()
 
     rerender(<DetectorPanel {...base} detectionLevel={2} />)
-    expect(screen.getByText(/on this floor/)).toBeTruthy()
-    expect(screen.queryByText(/unexplored corridor/)).toBeNull() // pyramid count is L3+
+    expect(screen.getByText("detector.corridorOnFloor")).toBeTruthy()
+    expect(screen.queryByText(/detector\.corridorPyramidCount/)).toBeNull() // pyramid count is L3+
 
     rerender(<DetectorPanel {...base} detectionLevel={3} />)
-    expect(screen.getByText(/on this floor/)).toBeTruthy()
-    expect(screen.getByText(/3 unexplored corridors/)).toBeTruthy()
+    expect(screen.getByText("detector.corridorOnFloor")).toBeTruthy()
+    // Interpolated: identity mock appends the count — proves L3 passes pyramidHiddenCorridorCount=3.
+    expect(screen.getByText(/detector\.corridorPyramidCount:.*"count":3/)).toBeTruthy()
   })
 
   it("supplies L1 pyramid only; L3 exact cell", () => {

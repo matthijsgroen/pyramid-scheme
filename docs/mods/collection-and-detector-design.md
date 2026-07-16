@@ -838,9 +838,16 @@ _(none yet — P1 is the next pickup. First builder: start a bullet here.)_
   core names no mod. **Playtest**: pick-target→persist proven at the state layer
   (`useHieroglyphProgress.compass.spec` round-trips + clears); readout precision + the no-target hint
   proven at the render layer (`DetectorPanel.spec`) — the full Collection-pick→enter-site→readout nav
-  flow isn't runnable headless (same harness constraint as P1/P3/P4/P5). **Next: nothing — the plan
-  is complete.** Both §8.6 UI gaps are closed; remaining doc items are the non-UI fidelity threads
-  (§A, §G/§H) tracked in the audit, outside this plan.
+  flow isn't runnable headless (same harness constraint as P1/P3/P4/P5). **i18n (follow-up, same
+  slice):** all hunt-bar + `DetectorPanel` UI strings are now translated (en+nl) under a new
+  `common.json` `detector.*` block — this also retired the pre-existing hardcoded English readout
+  strings the P3/P4 panel had shipped (button titles, "All pieces collected", corridor lines w/
+  `{{level}}`/`{{count}}` plural). `DetectorPanel` gained an inline `useTranslation("common")` (it
+  builds labels dynamically, so prop-threading every string was impractical); its spec mocks
+  react-i18next (identity passthrough) and asserts on keys. Raw `journeyId`/`L#F#` coordinate labels
+  stay untranslated (internal identifiers, not prose). **Next: nothing — the plan is complete.** Both
+  §8.6 UI gaps are closed; remaining doc items are the non-UI fidelity threads (§A, §G/§H) tracked in
+  the audit, outside this plan.
 
 ### 9.3 Next kickoff — none, the plan is complete
 

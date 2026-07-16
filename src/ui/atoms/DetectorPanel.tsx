@@ -1,4 +1,5 @@
 import type { FC } from "react"
+import { useTranslation } from "react-i18next"
 import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 
 type Props = {
@@ -73,6 +74,7 @@ export const DetectorPanel: FC<Props> = ({
   floorHasHiddenCorridor = false,
   pyramidHiddenCorridorCount = 0,
 }) => {
+  const { t } = useTranslation("common")
   if (compassLevel === 0 && consumableDetectorLevel === 0 && detectionLevel === 0) return null
 
   const toggle = (mode: DetectorMode) => onSetDetector(activeDetector === mode ? null : mode)
@@ -87,7 +89,7 @@ export const DetectorPanel: FC<Props> = ({
           <button
             onClick={() => toggle("compass")}
             className={`rounded px-2 py-1 ${activeDetector === "compass" ? "bg-amber-700 text-amber-100" : "bg-stone-800 hover:bg-stone-700"}`}
-            title="Compass"
+            title={t("detector.compassTitle")}
           >
             {MODE_ICON.compass}
           </button>
@@ -96,7 +98,7 @@ export const DetectorPanel: FC<Props> = ({
           <button
             onClick={() => toggle("consumable")}
             className={`rounded px-2 py-1 ${activeDetector === "consumable" ? "bg-amber-700 text-amber-100" : "bg-stone-800 hover:bg-stone-700"}`}
-            title="Consumable detector"
+            title={t("detector.consumableTitle")}
           >
             {MODE_ICON.consumable}
           </button>
@@ -105,7 +107,7 @@ export const DetectorPanel: FC<Props> = ({
           <button
             onClick={() => toggle("hiddenPassageway")}
             className={`rounded px-2 py-1 ${activeDetector === "hiddenPassageway" ? "bg-amber-700 text-amber-100" : "bg-stone-800 hover:bg-stone-700"}`}
-            title="Hidden passageways"
+            title={t("detector.corridorTitle")}
           >
             {MODE_ICON.hiddenPassageway}
           </button>
@@ -116,9 +118,9 @@ export const DetectorPanel: FC<Props> = ({
         <div>
           {/* Target is picked on the Collection screen (§3C), not here — the HUD only reads it out. */}
           {!compassTarget ? (
-            <p className="text-stone-500">Pick a hieroglyph to hunt in your Collection</p>
+            <p className="text-stone-500">{t("detector.pickTarget")}</p>
           ) : shownCompass.length === 0 ? (
-            <p className="text-stone-500">All pieces collected</p>
+            <p className="text-stone-500">{t("detector.allCollected")}</p>
           ) : (
             <>
               {shownCompass.slice(0, 3).map((r, i) => (
@@ -126,7 +128,9 @@ export const DetectorPanel: FC<Props> = ({
                   {compassLabel(r, compassLevel)}
                 </div>
               ))}
-              {shownCompass.length > 3 && <p className="text-stone-500">+{shownCompass.length - 3} more</p>}
+              {shownCompass.length > 3 && (
+                <p className="text-stone-500">{t("detector.more", { count: shownCompass.length - 3 })}</p>
+              )}
             </>
           )}
         </div>
@@ -135,7 +139,7 @@ export const DetectorPanel: FC<Props> = ({
       {activeDetector === "consumable" && (
         <div>
           {shownConsumables.length === 0 ? (
-            <p className="text-stone-500">No skipped chests</p>
+            <p className="text-stone-500">{t("detector.noSkippedChests")}</p>
           ) : (
             shownConsumables.slice(0, 3).map((r, i) => (
               <div key={i} className="truncate text-amber-200">
@@ -143,19 +147,21 @@ export const DetectorPanel: FC<Props> = ({
               </div>
             ))
           )}
-          {shownConsumables.length > 3 && <p className="text-stone-500">+{shownConsumables.length - 3} more</p>}
+          {shownConsumables.length > 3 && (
+            <p className="text-stone-500">{t("detector.more", { count: shownConsumables.length - 3 })}</p>
+          )}
         </div>
       )}
 
       {activeDetector === "hiddenPassageway" && (
         <div className="text-stone-400">
-          <p>Suspicious corners revealed nearby (L{detectionLevel})</p>
+          <p>{t("detector.corridorNearby", { level: detectionLevel })}</p>
           {detectionLevel >= 2 && floorHasHiddenCorridor && (
-            <p className="text-amber-200">A hidden corridor waits on this floor</p>
+            <p className="text-amber-200">{t("detector.corridorOnFloor")}</p>
           )}
           {detectionLevel >= 3 && pyramidHiddenCorridorCount > 0 && (
             <p className="text-amber-200">
-              This pyramid hides {pyramidHiddenCorridorCount} unexplored corridor{pyramidHiddenCorridorCount > 1 && "s"}
+              {t("detector.corridorPyramidCount", { count: pyramidHiddenCorridorCount })}
             </p>
           )}
         </div>
