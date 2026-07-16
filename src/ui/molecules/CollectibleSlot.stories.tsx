@@ -19,3 +19,7 @@ export const Collected: Story = { args: { state: "collected", symbol: "𓂀", di
 export const CollectedSelected: Story = {
   args: { state: "collected", symbol: "𓂀", difficulty: "wizard", selected: true },
 }
+// Stackable item (junk): the count badge shows how many are held.
+export const CollectedWithCount: Story = {
+  args: { state: "collected", symbol: "𓂀", difficulty: "junior", count: 7 },
+}

@@ -27,6 +27,7 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
           <CollectibleSlot
             key={item.id}
             state={inventory[item.id] !== undefined ? "collected" : "empty"}
+            count={inventory[item.id]}
             symbol={item.symbol}
             difficulty={difficultyByMaterialTier[item.tier]}
             selected={selectedItem?.id === item.id}
