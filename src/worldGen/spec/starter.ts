@@ -22,6 +22,12 @@ export const starterRules: Rule[] = [
     .set({})
     .sidePaths("low")
     .settings({ pathPuzzles: 0, end: "fragment" })
+    // One VISIBLE mosaic per pyramid, on top of the hidden one below: the corridor detector that
+    // reveals hidden paths isn't earned until the master tier, so a hidden-only mosaic would leave
+    // the whole starter run with no reachable mosaic. This surplus visible end slot survives the
+    // (fixed-demand) gating pass and the phase-3 capped pass fills it. Reachable = first contact.
+    .sidePaths("low")
+    .settings({ pathPuzzles: 0, end: "mosaic" })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 1, end: "mosaic" }),
 
@@ -48,6 +54,10 @@ export const starterRules: Rule[] = [
         sidePath(),
         hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" }),
         teaseChest("expert"),
+        // A reachable mosaic in the onboarding pyramid (floor 0 is always reachable) — surplus end
+        // slot beyond the gating pass's fixed demand, so the capped mosaic pass fills it. Without it
+        // the first mosaic sits on the hidden path above, invisible until the master-tier detector.
+        sidePath({ endReward: "mosaicPiece" }),
       ],
     })
     .floor(1, {
@@ -73,6 +83,8 @@ export const starterRules: Rule[] = [
         wardPath({ puzzles: 1, tier: "expert", tomb: "junior_treasure_tomb", index: 1 }),
         sidePath(),
         teaseChest("wizard"),
+        // Reachable mosaic (see starter_1 floor 0) — surplus slot the capped pass fills.
+        sidePath({ endReward: "mosaicPiece" }),
       ],
     })
     .floor(1, {

@@ -17,6 +17,11 @@ export const juniorRules: Rule[] = [
     .set({})
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment" })
+    // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so
+    // the hidden mosaic below is unreachable this early (junior_1 was all-hidden = 0 reachable). A
+    // surplus visible end slot the capped pass fills. See starter tier default.
+    .sidePaths("low")
+    .settings({ pathPuzzles: 0, end: "mosaic" })
     // One plain-loot hidden mosaic in every pyramid; a trapped one in only ~40% (chance),
     // so junior traps stay light and some hidden paths are just loot. The chance-gated path
     // holds junk loot (uncounted budget) — `chance` + mosaic would misreserve the cap.
