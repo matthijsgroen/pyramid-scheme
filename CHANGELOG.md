@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.27.1 - 2026-07-17
 ### Changed
 - Revisiting a completed journey now opens its map so you can pick which pyramid to explore, instead of dropping you straight into the first one. Each re-entry replays the pyramid's exterior puzzle, and finishing or leaving a pyramid returns you to the map to pick another.
 
