@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.27.3 - 2026-07-17
 ### Fixed
 - Opening a chest that held a mosaic tile crashed the game to a black screen. The reward popup now shows correctly.
 
