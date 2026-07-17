@@ -24,6 +24,9 @@ export const TravelPage: FC<{
 
   const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney, getOutstandingHiddenCorridorCount } =
     useJourneys()
+  // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
+  // lands on the map (not the game) so the player picks which pyramid to re-enter.
+  const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
   // Corridor detector L4 (§7.2): only the top detector level surfaces the world-wide marker.
   const corridorDetectorLevel = useMergedDetectorLevels().corridor
   const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useTombTreasureProgress()
@@ -44,12 +47,20 @@ export const TravelPage: FC<{
   }, [showJourneySelection, showConversation])
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
+  // Revisit/explore: a completed journey (completionCount > 0). Every pyramid stays a pickable node
+  // even while one is open, so drive the path view past the last level regardless of stored levelNr.
+  const revisiting = !!journey && (activeJourneyInfo?.completionCount ?? 0) > 0
+  const pathLevelNr = revisiting && journey ? journey.levelCount + 1 : (activeJourneyInfo?.levelNr ?? 1)
 
   const handleMapClick = () => {
-    if (activeJourneyInfo) {
+    if (revisiting && journey) {
+      // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
+      // exterior board (visitLevel clears the interior).
+      const info = getJourney(journey.id)
+      const resumeAt = info && info.levelNr >= 1 && info.levelNr <= journey.levelCount ? info.levelNr : 1
+      visitLevel(journey.id, resumeAt)
       startGame()
-    } else if (selectedJourney && !activeJourneyInfo) {
-      startJourney(selectedJourney)
+    } else if (activeJourneyInfo?.inProgress) {
       startGame()
     } else {
       setShowJourneySelection(true)
@@ -57,6 +68,12 @@ export const TravelPage: FC<{
   }
 
   const handleJourneySelect = (journey: TranslatedJourney) => {
+    if (isRevisit(journey.id)) {
+      // Don't jump in — return to the map with the journey loaded so the player picks a pyramid.
+      setSelectedJourney(journey)
+      setShowJourneySelection(false)
+      return
+    }
     startJourney(journey)
     startGame()
   }
@@ -146,23 +163,24 @@ export const TravelPage: FC<{
                 onNodeClick={journey ? handleNodeClick : undefined}
                 inJourney={!!journey}
                 levelCount={journey?.levelCount ?? 1}
-                levelNr={activeJourneyInfo?.levelNr ?? 1}
+                levelNr={pathLevelNr}
                 journeyLength={journey?.journeyLength ?? "long"}
                 type={journey?.type ?? "pyramid"}
                 label={
-                  activeJourneyInfo?.inProgress
-                    ? t("ui.continueExpedition")
-                    : selectedJourney
-                      ? t("ui.startExpedition")
+                  revisiting
+                    ? t("ui.revisitExpedition")
+                    : activeJourneyInfo?.inProgress
+                      ? t("ui.continueExpedition")
                       : t("ui.planExpedition")
                 }
                 nudge={!journey && hasPendingMapPieceProgress}
               />
-              {!activeJourneyInfo && selectedJourney && (
+              {revisiting && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
                     onClick={() => {
+                      if (activeJourneyId) cancelJourney()
                       setSelectedJourney(null)
                       setShowJourneySelection(true)
                     }}
@@ -172,7 +190,7 @@ export const TravelPage: FC<{
                   </button>
                 </div>
               )}
-              {activeJourneyInfo && (
+              {!revisiting && activeJourneyInfo?.inProgress && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
                   <button
