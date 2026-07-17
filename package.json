@@ -80,7 +80,8 @@
     "workbox-window": "^7.3.0"
   },
   "resolutions": {
-    "sharp": "0.34.3"
+    "sharp": "0.34.3",
+    "ws": "^8.21.0"
   },
   "packageManager": "yarn@4.17.0"
 }
