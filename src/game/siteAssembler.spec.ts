@@ -236,6 +236,33 @@ describe(assembleFloor, () => {
     expect(normal).toBeLessThan(spacious)
   })
 
+  it("the exit is always a dead-end — no corridor continues past it", () => {
+    // Regression guard: the packing knob ends the main path at a mid-maze node, not the
+    // maze's farthest leaf, so the exit cell could keep tree passages into adjacent used
+    // side-section corridors — drawn as doors, making corridor read as continuing past an
+    // exit that ends the visit when stepped on. The exit must have exactly one connection.
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      packing: 1,
+      sideSections: [
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", gate: { type: "tomb-key", wardKeyId: "w" } },
+        { pathPuzzles: 2, difficulty: "junior", end: "staircase", gate: { type: "floor-key" } },
+      ],
+    }
+    for (let seed = 0; seed < 40; seed++) {
+      const result = assembleFloor("exit-deadend", config, seed)
+      if (!result.success) continue
+      const [er, ec] = result.grid.exitPos
+      const exit = result.grid.cells[er][ec]
+      expect(exit.type).toBe("room")
+      if (exit.type !== "room") continue
+      expect(exit.dirs.size).toBe(1)
+    }
+  })
+
   it("packing's path-length target isn't inflated by heavy side-section content", () => {
     // Regression guard: the target was first derived from `minCells`, which folds in every
     // side-section's own cost — so a floor with two chunky gated sections got a much longer
