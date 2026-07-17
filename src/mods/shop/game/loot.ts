@@ -9,7 +9,7 @@ import { totalBuyable } from "./economyGuard"
 // The shop money economy — ONE distribution owning money AND junk. Junk is money packaged as a
 // sellable item (it converts back to money at a shop), so they share a single budget the shop's
 // fill divides: enough money-equivalent for the player to afford the designed shop stock, but not
-// extreme (or found money feels worthless). Core hands this the eager-ordered slots (chests before
+// extreme (or found money feels worthless). Core hands this the priority-ordered slots (chests before
 // puzzles); the fill packs a mix of tier junk + loose coins to hit the budget and clears the rest
 // to empty. Shop off → this distribution isn't registered → no money/junk placed. See
 // docs/mods/distribution-primitive-design.md.
@@ -24,7 +24,7 @@ const TIER_ORDER: MaterialTier[] = ["stone", "bronze", "silver", "gold", "divine
 // Group the shop's allocated slots by material tier. Within a tier, slots an author tagged
 // `prefers: "junk"` (a DSL `end: "junk"`) come first, so junk lands where it was asked for — the
 // authoring states the preference, the mod does the placement (soft tag, not exclusive: an untagged
-// slot still takes junk once the tagged ones run out). Otherwise the eager order core handed us.
+// slot still takes junk once the tagged ones run out). Otherwise the priority order core handed us.
 const byMaterialTier = (slots: Slot[]): Map<MaterialTier, Slot[]> => {
   const m = new Map<MaterialTier, Slot[]>()
   const ordered = [...slots].sort((a, b) => (a.preference === "junk" ? 0 : 1) - (b.preference === "junk" ? 0 : 1))
@@ -42,7 +42,7 @@ export const shopMoneyEconomy: Distribution = {
   eligible: slot => slot.rewardPriority > 0,
   // Completeness needs ≥1 of each collectible = 25 slots minimum (hard-fail below). No ceiling —
   // the shop claims every remaining eligible slot and empties the ones its budget doesn't need,
-  // so eagerness (chest-first) + the budget decide how much of the world actually bears loot.
+  // so reward priority (chest-first) + the budget decide how much of the world actually bears loot.
   footprint: () => ({ min: 25, max: Number.MAX_SAFE_INTEGER }),
   fill: (slots, allConfigs) => {
     const budgetMin = totalBuyable(allConfigs)

@@ -264,7 +264,7 @@ export const placeFragments = (
   allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
   // Phase 5: dynamic loot — the mod-owned distributions (trap consumables, shop money economy)
-  // claim eager-ordered eligible slots (chest 100 before puzzle 60) and fill them themselves;
+  // claim priority-ordered eligible slots (chest 100 before puzzle 60) and fill them themselves;
   // `emptyFraction` reserves a share empty up front so found loot stays meaningful. Each drops
   // with its mod (shop off → no money/junk; trap off → no consumables). See slotAllocator.ts +
   // docs/mods/distribution-primitive-design.md.

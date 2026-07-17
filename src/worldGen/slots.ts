@@ -40,9 +40,9 @@ export type Slot = {
    * design.md). Undefined for `"end"` slots. */
   siteId?: string
   puzzleSeq?: number
-  /** Eagerness to bear loot, from the slot's own encounter family (FamilyMeta.rewardPriority):
+  /** Reward priority (fill order) to bear loot, from the slot's own encounter family (FamilyMeta.rewardPriority):
    * chest 100, puzzle 60, trap/tableau/crocodile/gate/shop 0. The dynamic loot pass fills higher
-   * weight first and treats 0 as loot-ineligible. Stamped at collect time (docs/mods/
+   * priority first and treats 0 as loot-ineligible. Stamped at collect time (docs/mods/
    * distribution-primitive-design.md). */
   rewardPriority: number
   /** The concrete family this slot's node resolved to (e.g. "fez-shop", "sumplete"), when known —
@@ -71,7 +71,7 @@ export const collectSlots = (
   const slots: Slot[] = []
   // Every emitted end slot is a treasure-chest path end (shop ends resolve to fez-shop with their
   // own stock and are never fragmentSlot sentinels, so they aren't collected here) → chest
-  // eagerness (100). Resolved through
+  // reward priority (100). Resolved through
   // the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
   const chestWeight = familyPriorityFor(undefined, "treasure")
 
@@ -112,7 +112,7 @@ export const collectSlots = (
       // and capped pass skip them (they were never reward-slot candidates — only filler is).
       const siteId = `${journeyId}:${levelIndex}`
       let puzzleSeq = 0
-      // A puzzle chain's eagerness comes from each room's own encounter family (default "puzzle" →
+      // A puzzle chain's reward priority comes from each room's own encounter family (default "puzzle" →
       // sumplete 60 when unset). Tomb main paths author encounter "tomb-puzzle" → tableau (0) and
       // side paths default to sumplete (60), so tomb main-path puzzles are loot-ineligible while
       // tomb side paths still bear loot — no special-casing, it falls out of the family weights.

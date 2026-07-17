@@ -22,7 +22,7 @@ export const ALL_FAMILY_META: FamilyMeta[] = [TREASURE_CHEST_META, KEY_GATE_META
 export const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   ALL_FAMILY_META.find(m => m.id === familyId)?.resolveKeyRequirements?.(ctx)
 
-// The reward-weight (eagerness) of the family an authored `encounter` resolves to — the one
+// The reward priority of the family an authored `encounter` resolves to — the one
 // place world-gen reads FamilyMeta.rewardPriority to rank loot slots (chest 100 > puzzle 60 >
 // trap/tableau/crocodile/gate/shop 0). `encounter` may be a family id ("sumplete") or a tag
 // ("puzzle"); `defaultTag` fills in when unset (e.g. "treasure" for a chest end, "puzzle" for a

@@ -25,19 +25,19 @@ const slot = (opts: { weight: number; tier?: Slot["tier"]; kind?: Slot["kind"]; 
   return s as Slot & { reward: TreasureReward | undefined }
 }
 
-describe("allocateDistributions — eagerness + empty quota", () => {
+describe("allocateDistributions — reward priority + empty quota", () => {
   const fillFirst: Distribution = {
     id: "fill",
     footprint: () => ({ min: 0, max: Number.MAX_SAFE_INTEGER }),
     fill: taken => taken.forEach(s => s.assign({ type: "money", amount: 1 })),
   }
 
-  it("offers eager slots first — a capped distribution takes the highest rewardPriority", () => {
+  it("offers highest-priority slots first — a capped distribution takes the highest rewardPriority", () => {
     const chest = slot({ weight: 100, kind: "end", seq: 0 })
     const puzzle = slot({ weight: 60, seq: 1 })
     const available = new Set<Slot>([puzzle, chest]) // insertion order puzzle-first on purpose
     allocateDistributions(available, [{ ...fillFirst, footprint: () => ({ min: 1, max: 1 }) }], {})
-    expect((chest as unknown as { reward?: TreasureReward }).reward).toBeDefined() // eager chest won
+    expect((chest as unknown as { reward?: TreasureReward }).reward).toBeDefined() // highest-priority chest won
     expect((puzzle as unknown as { reward?: TreasureReward }).reward).toBeUndefined()
   })
 
@@ -50,13 +50,13 @@ describe("allocateDistributions — eagerness + empty quota", () => {
     expect((live as unknown as { reward?: TreasureReward }).reward).toEqual({ type: "money", amount: 1 })
   })
 
-  it("empty% reserves the least-eager loot-eligible slots up front", () => {
+  it("empty% reserves the lowest-priority loot-eligible slots up front", () => {
     const slots = Array.from({ length: 10 }, (_, i) => slot({ weight: i < 5 ? 60 : 100, seq: i }))
     const available = new Set<Slot>(slots)
-    allocateDistributions(available, [fillFirst], {}, 0.2) // reserve 2 of 10 (least eager = weight 60)
+    allocateDistributions(available, [fillFirst], {}, 0.2) // reserve 2 of 10 (lowest priority = weight 60)
     const filled = slots.filter(s => (s as unknown as { reward?: TreasureReward }).reward !== undefined)
     expect(filled).toHaveLength(8)
-    // the two reserved-empty are weight-60 (least eager), never weight-100 chests
+    // the two reserved-empty are weight-60 (lowest priority), never weight-100 chests
     const empties = slots.filter(s => (s as unknown as { reward?: TreasureReward }).reward === undefined)
     expect(empties.every(s => s.rewardPriority === 60)).toBe(true)
   })

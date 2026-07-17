@@ -44,7 +44,7 @@ import {
 
 // The share of loot-eligible slots deliberately left empty so found loot stays meaningful (no
 // 1-coin spam). A core world-gen knob (docs/mods/distribution-primitive-design.md); 0 = fill by
-// eagerness + budget alone. Dial up after a regen feel-check if loot reads as too dense.
+// reward priority + budget alone. Dial up after a regen feel-check if loot reads as too dense.
 const EMPTY_FRACTION = 0
 
 const __dirname = dirname(fileURLToPath(import.meta.url))

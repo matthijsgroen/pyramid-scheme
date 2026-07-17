@@ -34,7 +34,7 @@ export const trapConsumables: Distribution = {
 
 // Trap also stocks the Fez shops: every shop stock slot the currency mods didn't claim is filled
 // with a FINITE consumable (no per-visit refresh — sold-out = sold-out; docs/mods/ARCHITECTURE.md (shop mod)).
-// Shop slots are rewardPriority 0 so the eager loot passes never touch them; this distribution
+// Shop slots are rewardPriority 0 so the loot passes never touch them; this distribution
 // targets them explicitly by encounter. The currency stock slots were already claimed (removed from
 // `available`) by the capped/gating pass, so only the empty ones remain eligible here. Trap off →
 // not registered → shop stock slots fall empty (the shop just sells fewer things).

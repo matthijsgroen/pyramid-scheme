@@ -33,7 +33,7 @@ export type FamilyMeta = {
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place
   // into it (positional currency assignment + trap's finite consumable fill), each priced by the
-  // shop. Distinct from rewardPriority: priority is fill-order eagerness, capacity is slot count.
+  // shop. Distinct from rewardPriority: priority is fill order, capacity is slot count.
   rewardCapacity?: number
   // First difficulty tier this family may be allocated at (its catalogue debut, per
   // docs/game-design/PUZZLE_FAMILIES.md / TRAP_FAMILIES.md). The gen-time encounter allocator

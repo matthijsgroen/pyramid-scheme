@@ -31,10 +31,10 @@ export type Distribution = {
 // `min` can't be met — capped/required loot must fully place (keys-and-locks-solver.md,
 // "Exhausted relaxation is a build failure").
 //
-// Eagerness (docs/mods/distribution-primitive-design.md): candidates are offered in
-// `rewardPriority`-desc order (chest 100 before puzzle 60), so eager slots fill first and a
-// distribution that can't take everything leaves the least-eager slots empty. `emptyFraction`
-// reserves that share up front — the least-eager loot-eligible slots are skimmed and left empty
+// Reward priority (docs/mods/distribution-primitive-design.md): candidates are offered in
+// `rewardPriority`-desc order (chest 100 before puzzle 60), so high-priority slots fill first and a
+// distribution that can't take everything leaves the lowest-priority slots empty. `emptyFraction`
+// reserves that share up front — the lowest-priority loot-eligible slots are skimmed and left empty
 // before anyone distributes, so found loot stays meaningful (no 1-coin spam). Slots of
 // `rewardPriority === 0` are loot-ineligible and simply never match a distribution's `eligible`.
 //
@@ -49,8 +49,8 @@ export const allocateDistributions = (
   emptyFraction = 0
 ): void => {
   if (emptyFraction > 0) {
-    // Least-eager loot-eligible slots first (puzzle before chest), so the reserved-empty share
-    // lands on low-eagerness slots. Stable within a weight (collectSlots order) → deterministic.
+    // Lowest-priority loot-eligible slots first (puzzle before chest), so the reserved-empty share
+    // lands on low-priority slots. Stable within a priority (collectSlots order) → deterministic.
     const eligible = [...available]
       .filter(s => s.rewardPriority > 0)
       .sort((a, b) => a.rewardPriority - b.rewardPriority)
@@ -58,7 +58,7 @@ export const allocateDistributions = (
   }
   for (const dist of distributions) {
     const { min, max } = dist.footprint(allConfigs)
-    // Eager order is the default; dist.rank refines within it (Array.sort is stable).
+    // Priority order is the default; dist.rank refines within it (Array.sort is stable).
     const eligible = [...available]
       .filter(s => dist.eligible?.(s) ?? true)
       .sort((a, b) => b.rewardPriority - a.rewardPriority)
