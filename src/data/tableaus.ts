@@ -222,5 +222,13 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
 
 const tableauLevels = generateTableaus()
 
+// The single tableau-resolution point: which authored TableauLevel a tomb floor presents, keyed
+// by (journeyId, runNr, levelNr). Shared by world-gen fragment placement (keyRequirements.ts) and
+// the play-time tableau puzzle (hieroglyph plugin) so the tableau the solver guarantees fragments
+// for is byte-for-byte the tableau the player solves — the two used to derive symbols separately
+// and could diverge (the played puzzle drew random symbols from the whole tier pool).
+export const getTableauLevel = (journeyId: string, runNr: number, levelNr: number): TableauLevel | undefined =>
+  tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
+
 // Export tomb configuration for other modules
 export { TOMB_SYMBOLS, tableauLevels }

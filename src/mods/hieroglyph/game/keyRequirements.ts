@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { tableauLevels } from "@/data/tableaus"
+import { getTableauLevel } from "@/data/tableaus"
 import type { FamilyKeyRequirementResolver } from "@/game/families/familyMeta"
 
 // The only place that knows a tableau room's completion precondition is "hold enough
@@ -14,7 +14,9 @@ import type { FamilyKeyRequirementResolver } from "@/game/families/familyMeta"
 // to name different runs. `levelNr` is never authored: it's `pathIndex + 1`, this room's
 // 1-based position among its own section's tableau rooms in path order (see
 // ResolveKeyRequirements in siteAssembler.ts for how pathIndex is scoped).
-const tableauEncounterArgsSchema = z.object({ runNr: z.number().int().positive() })
+// The tableau encounter's authored args — shared with the play-time tableau plugin so both the
+// world-gen resolver and the rendered puzzle validate + read `runNr` the same way.
+export const tableauEncounterArgsSchema = z.object({ runNr: z.number().int().positive() })
 
 export const resolveTableauKeyRequirements: FamilyKeyRequirementResolver = ({
   journeyId,
@@ -23,7 +25,7 @@ export const resolveTableauKeyRequirements: FamilyKeyRequirementResolver = ({
 }) => {
   const { runNr } = tableauEncounterArgsSchema.parse(encounterArgs)
   const levelNr = pathIndex + 1
-  const level = tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
+  const level = getTableauLevel(journeyId, runNr, levelNr)
   if (!level) {
     throw new Error(
       `resolveTableauKeyRequirements: no tableau for journey "${journeyId}", runNr ${runNr}, levelNr ${levelNr}`

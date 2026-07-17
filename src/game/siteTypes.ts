@@ -57,6 +57,11 @@ export type RoomCell = {
   // family re-deriving which TableauLevel it presents from journeyId + the section's own
   // encounterArgs.runNr + this index, not from floor position).
   pathIndex?: number
+  // The authored encounter args for this room's family (e.g. a tableau's `{ runNr }`), carried
+  // from the FloorConfig/SideSection so the play-time family can re-derive exactly what world-gen
+  // resolved (which authored TableauLevel this is). Opaque to core; each family reads it via its
+  // own zod schema. Mirrors FloorConfig/SideSection.encounterArgs.
+  encounterArgs?: unknown
   // Registered family id (src/app/families/familyRegistry.ts) — open string, not a closed
   // union, since mods register their own families. Always set for roomType "encounter".
   family?: string

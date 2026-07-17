@@ -56,6 +56,7 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.hidden) parts.push(`hidden: true`)
   if (s.sealed) parts.push(`sealed: true`)
   if (s.encounter) parts.push(`encounter: ${serializeEncounter(s.encounter)}`)
+  if (s.encounterArgs !== undefined) parts.push(`encounterArgs: ${JSON.stringify(s.encounterArgs)}`)
   if (s.encountersByIndex && Object.keys(s.encountersByIndex).length)
     parts.push(`encountersByIndex: ${serializeEncountersByIndex(s.encountersByIndex)}`)
   if (s.sideSections?.length)
@@ -82,6 +83,7 @@ const serializeFloor = (c: FloorConfig): string => {
     lines.push(`    entrance: ${val},`)
   }
   if (c.encounter) lines.push(`    encounter: ${serializeEncounter(c.encounter)},`)
+  if (c.encounterArgs !== undefined) lines.push(`    encounterArgs: ${JSON.stringify(c.encounterArgs)},`)
   if (c.encountersByIndex && Object.keys(c.encountersByIndex).length)
     lines.push(`    encountersByIndex: ${serializeEncountersByIndex(c.encountersByIndex)},`)
   if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)

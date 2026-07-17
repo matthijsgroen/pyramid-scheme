@@ -958,6 +958,7 @@ export const assembleFloor = (
           family: family.familyId,
           tags: family.tags,
           pathIndex: k,
+          ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1038,6 +1039,8 @@ export const assembleFloor = (
           // tag's default) unless it explicitly opts into a different family itself.
           family: family.familyId,
           tags: family.tags,
+          pathIndex: pi,
+          ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1130,6 +1133,8 @@ export const assembleFloor = (
           // tableau encounter unless the sub-section explicitly opts in itself.
           family: family.familyId,
           tags: family.tags,
+          pathIndex: pi,
+          ...(subSection.encounterArgs !== undefined ? { encounterArgs: subSection.encounterArgs } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })

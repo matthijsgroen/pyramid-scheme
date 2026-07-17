@@ -24,6 +24,11 @@ export type FamilyContext = {
   theme?: string
   tags?: string[]
   reward?: TreasureReward
+  // This room's structural position among its section's puzzle rooms + its family's authored args
+  // (e.g. a tableau's `{ runNr }`), carried from the assembled cell. The tableau family reads both
+  // to re-derive the exact authored TableauLevel world-gen placed fragments for. Opaque to core.
+  pathIndex?: number
+  encounterArgs?: unknown
   // A shop node's stock: the reward slots the mods placed into this node's `rewards[]` (currency
   // pieces + consumables). The fez-shop family renders these as its buyable list. Entries may be
   // undefined (unfilled slots). Distinct from the single `reward` a plain chest/puzzle-solve grants.

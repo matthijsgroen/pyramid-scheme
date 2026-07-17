@@ -1,10 +1,16 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { mulberry32 } from "@/game/random"
-import { generateRewardCalculation, type RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
+import {
+  buildTombCalculationSettings,
+  generateRewardCalculation,
+  type RewardCalculation,
+} from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
-import type { TableauLevel } from "@/data/tableaus"
+import { getTableauLevel, type TableauLevel } from "@/data/tableaus"
+import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { tableauEncounterArgsSchema } from "@/mods/hieroglyph/game/keyRequirements"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { TABLEAU_META } from "@/mods/hieroglyph/game/meta"
 import { isModEnabled } from "@/mods/registeredMods"
@@ -60,10 +66,28 @@ if (isModEnabled("hieroglyph"))
   registerFamily({
     meta: TABLEAU_META,
     generate: (seed, ctx): RewardCalculation => {
+      const random = mulberry32(seed)
+      // Resolve the AUTHORED tableau for this tomb floor so the puzzle the player solves uses
+      // exactly the symbols world-gen guaranteed reachable fragments for (keyRequirements.ts, via
+      // the shared getTableauLevel) and that the inventory preview shows (TableauInventory). The
+      // floor's `{ runNr }` rides ctx.encounterArgs (same zod schema the world-gen resolver uses);
+      // levelNr is its structural pathIndex+1. This is the fix for the play-vs-authored disconnect:
+      // the puzzle used to draw random symbols from the whole tier pool, so it could demand a
+      // hieroglyph whose fragments were never placed reachable for that floor (unsolvable at 0/N).
+      const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
+      const journey = journeys.find(
+        (j): j is TreasureTombJourney => j.id === ctx.journeyId && j.type === "treasure_tomb"
+      )
+      if (parsed.success && journey) {
+        const tableau = getTableauLevel(ctx.journeyId, parsed.data.runNr, (ctx.pathIndex ?? 0) + 1)
+        if (tableau)
+          return generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, tableau), random)
+      }
+      // Fallback for generation without a resolvable tomb floor (dummy/non-tomb): random draw from
+      // the tier pool. A real tomb floor always carries encounterArgs, so it never takes this path.
       const difficulty = ctx.difficulty ?? "starter"
       const config = TABLEAU_CONFIG[difficulty] ?? TABLEAU_CONFIG.starter
       const symbols = TOMB_SYMBOLS[difficulty] ?? TOMB_SYMBOLS.starter
-      const random = mulberry32(seed)
       return generateRewardCalculation(
         {
           amountSymbols: config.symbolCount,
