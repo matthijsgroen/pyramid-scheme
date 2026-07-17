@@ -22,7 +22,7 @@ const perPyramid = argv.includes("--per-pyramid") || argv.includes("-p")
 type Tally = {
   floors: number
   puzzles: number
-  puzzleRewards: number
+  rewards: number
   junk: number
   wardGates: number
   floorKeys: number
@@ -36,7 +36,7 @@ type Tally = {
 const empty = (): Tally => ({
   floors: 0,
   puzzles: 0,
-  puzzleRewards: 0,
+  rewards: 0,
   junk: 0,
   wardGates: 0,
   floorKeys: 0,
@@ -48,12 +48,12 @@ const empty = (): Tally => ({
 })
 
 const countPuzzleRewards = (t: Tally, rewards?: Array<{ type: string } | undefined>) => {
-  for (const r of rewards ?? []) if (r?.type === "consumable" || r?.type === "money") t.puzzleRewards++
+  for (const r of rewards ?? []) if (r?.type === "consumable" || r?.type === "money") t.rewards++
 }
 
 const countSection = (t: Tally, s: SubSection) => {
   t.puzzles += s.pathPuzzles
-  countPuzzleRewards(t, s.puzzleRewards)
+  countPuzzleRewards(t, s.rewards)
   if (s.gate?.type === "tomb-key") t.wardGates++
   if (s.gate?.type === "floor-key") t.floorKeys++
   if (s.trapped) t.traps++
@@ -74,7 +74,7 @@ const tallyFloors = (floors: FloorConfig[]): Tally => {
   for (const f of floors) {
     t.floors++
     t.puzzles += f.pathPuzzles
-    countPuzzleRewards(t, f.puzzleRewards)
+    countPuzzleRewards(t, f.rewards)
     tallyReward(t, f.mainEndReward)
     for (const s of f.sideSections) {
       countSection(t, s)
@@ -96,7 +96,7 @@ const tally = (journeyId: string): Tally => {
 const cols: Array<[string, keyof Tally, number]> = [
   ["floors", "floors", 6],
   ["puzzles", "puzzles", 7],
-  ["puzzRw", "puzzleRewards", 6],
+  ["puzzRw", "rewards", 6],
   ["junk", "junk", 5],
   ["wards", "wardGates", 5],
   ["fKeys", "floorKeys", 5],

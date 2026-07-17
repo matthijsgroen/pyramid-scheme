@@ -1,6 +1,5 @@
-import type { Difficulty, FloorConfig, SideSection, SiteConfig, Tier, TreasureReward } from "./types"
+import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
-import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
 import { worldSpec } from "./worldSpec"
@@ -12,15 +11,18 @@ import type {
   PathPuzzlesRange,
   TombRewardHint,
 } from "./dsl"
-import { wardPath } from "./dsl"
+import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
-import { buildSideSections } from "./sideSections"
-import { buildFloor, buildSite } from "./buildSite"
-import { assignPuzzleRewards } from "./puzzleRewards"
-import { GLOBAL_DEFAULTS } from "./spec/global"
-import { computeMosaicPaths } from "./mosaics"
-import { assignFragments } from "./fragments"
-import { validateDiscovery, validateRewardCounts, validateEconomyGuard } from "./validate"
+import { buildSite } from "./buildSite"
+import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor } from "./placeEncounters"
+import { placeShopStock, type ShopStockAssignment } from "./shopStock"
+import { placeFragments } from "./placeFragments"
+import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
+import type { ReachabilitySupport } from "./reachability"
+import type { Distribution } from "./slotAllocator"
+import type { FamilyPriorityFor } from "./slots"
+import type { ResolveKeyRequirements } from "../game/siteAssembler"
+import { validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -91,9 +93,11 @@ const buildPlan = (): PyramidPlan[] =>
 
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 
-const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => {
+const buildSiteConfigs = (
+  plan: PyramidPlan[],
+  reservedTreasureIndices?: (tombId: string) => number[]
+): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
-  const mosaicPaths = computeMosaicPaths(plan)
 
   // Group plan entries by journey
   const byJourney = new Map<string, PyramidPlan[]>()
@@ -125,7 +129,7 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
         hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
-        mosaicPathCount: PYRAMID_CAPABILITIES.emitMosaics ? (mosaicPaths.get(`${journeyId}:${i}`) ?? 0) : 0,
+        reservedTreasureIndices,
         resolveReward: spec => specToReward(spec, tier),
         resolveMainEndReward: spec => specToReward(spec, tier),
       })
@@ -140,115 +144,177 @@ const buildSiteConfigs = (plan: PyramidPlan[]): Record<string, SiteConfig[]> => 
 
 // ── Tomb configs ──────────────────────────────────────────────────────────────
 
-const buildTombConfigs = (): Record<string, SiteConfig[]> => {
+// Maps a tomb's treasure-stream position (floor index) to the reward placed there — injected by
+// whoever owns that reward vocabulary (the tomb-treasure mod: position → its `tombKey` for the
+// tomb's ordered perk ids). Core never names the reward type; a missing resolver (mod off) leaves
+// the floor's treasure absent. See docs/game-design/keys-and-locks-solver.md.
+export type TombTreasureResolver = (tombId: string, index: number) => TreasureReward | undefined
+
+// A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md §8) —
+// one treasure per floor, self-gating its own next floor's shortcut ("the treasure IS the
+// key"). Built by authoring one FloorConstraint per floor and handing them to buildSite()'s
+// authored-floors branch, the exact same mechanism pyramids' own authored floors[] use —
+// tomb-specific vocabulary (wardPath, the perk-stream reward resolver, "tomb-puzzle" encounter,
+// crocodile capstone) is authoring convenience, not a separate construction path.
+const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
   for (const tomb of TOMB_JOURNEYS) {
     // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match
     const { constraint } = resolvePyramidConstraintWithProvenance(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
     const difficulty: Difficulty = constraint.difficulty ?? "starter"
-    const puzzleFamily = (constraint.puzzleFamily ?? "tableau") as "sumplete" | "tableau"
-
-    const perkIds = TOMB_PERK_IDS[tomb.id] ?? []
-
-    // Starter tombs have no crocodile puzzle (compareAmount=0 in old system)
-    const hasCroc = tomb.tier !== "starter"
+    // Defaults to the "tomb-puzzle" tag (resolves to tableau) — not "puzzle" (sumplete), since
+    // tomb main-path rooms consume hieroglyph symbols the player may not have yet.
+    const encounter = constraint.encounter ?? "tomb-puzzle"
 
     const levelCount = constraint.levelCount ?? tomb.levelCount
     const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
-    let perkIndex = 0
+    // Position in this tomb's treasure stream — core tracks WHICH floor (structural), the
+    // injected resolver (tomb-treasure mod) maps that position to its own reward vocabulary, so
+    // core names no reward type. With no resolver (mod off / a bare test), a floor's treasure is
+    // simply absent.
+    let treasureIndex = 0
 
     const resolveTombReward = (reward: RewardSpec | TombRewardHint | undefined): TreasureReward | undefined => {
-      if (reward === "tombTreasure") {
-        const perkId = perkIds[perkIndex++]
-        return perkId ? { type: "tombKey", keyId: perkId } : undefined
-      }
+      if (reward === "tombTreasure") return resolveTombTreasure?.(tomb.id, treasureIndex++)
       if (reward === "fragmentSlot") return { type: "fragmentSlot" }
       if (reward) return specToReward(reward as RewardSpec, tomb.tier as Tier)
       return undefined
     }
 
-    const floors: FloorConfig[] = Array.from({ length: levelCount }, (_, i) => {
+    // Every floor is authored explicitly — its own mainEndReward defaults to "tombTreasure"
+    // (the perk-stream's next id) unless an authored entry overrides it, and every floor gets a
+    // ward-gated section keyed by that same key so EVERY treasure gates an (optional) pocket
+    // (§E, docs/game-design/keys-and-locks-solver.md — no demand-less keys): a non-last floor gets a
+    // ward-path shortcut (walk once to earn the key, later re-entry skips straight past via the
+    // shortcut instead of re-solving its tableau), the last floor (no next floor to skip to) gets
+    // a ward-chest loot pocket instead — the loot solver fills it (mosaic/junk, tier-matched; the
+    // terminal wizard treasure's pocket falls to tier-agnostic mosaic). Never authored per-tomb.
+    //
+    // The crocodile capstone (and its extra main-path room) is AUTHORED per floor in the tomb spec
+    // via `nodes: [{ where: "last", encounter: "capstone" }]` + `pathPuzzles: 2` — no hardcoded
+    // tier/position rule here (§G, docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). `nodes` + `pathPuzzles` pass
+    // straight through to buildSite, which resolves selectors → per-node families. A starter tomb
+    // may author a capstone too; it just resolves to none (crocodile's family minTier is junior).
+    //
+    // encounterArgs.runNr defaults to this floor's own 1-based index — each floor's tableau is tied
+    // to the treasure it unlocks. An authored floor can override it to place its tableau content on
+    // a different run (e.g. a ward-gated side path pointing at a later run's puzzle).
+    const floors: FloorConstraint<TombRewardHint>[] = Array.from({ length: levelCount }, (_, i) => {
       const isLast = i === levelCount - 1
       const authored = authoredFloors?.[i]
-
-      const mainEndReward: TreasureReward | undefined = authored
-        ? resolveTombReward(authored.mainEndReward)
-        : (() => {
-            const perkId = perkIds[perkIndex++]
-            return perkId ? { type: "tombKey" as const, keyId: perkId } : undefined
-          })()
-
-      // Every non-last floor gets a ward-path shortcut, gated by that SAME floor's own
-      // mainEndReward key (index i === the perk index that reward just consumed) — walk the
-      // floor once to earn the key, then a later re-entry can skip straight past it via the
-      // shortcut instead of re-solving its tableau. Never authored per-tomb; systemic for all.
       const authoredSections = (authored?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined) ?? []
-      const shortcut = isLast ? [] : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
-      const sideSections: SideSection[] = buildSideSections({
-        tier: tomb.tier,
+      const shortcut = isLast
+        ? [wardChest({ tomb: tomb.id, index: i, puzzles: 0 })]
+        : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
+      return {
+        pathPuzzles: authored?.pathPuzzles ?? 1,
         difficulty,
-        resolveReward: resolveTombReward,
-        // Per-floor-scoped, so each floor's shortcut gets a globally unique stairId — plain
-        // `tomb.id` would collide across floors sharing the same side-section position.
-        journeyId: `${tomb.id}:floor${i}`,
-        constraintSections: [...authoredSections, ...shortcut],
-      })
-
-      const straightness = authored?.corridorStraightness ?? constraint.corridorStraightness
-      const packing = authored?.packing ?? constraint.packing
-      const sealed = authored?.sealed ?? constraint.sealed
-
-      const pathPuzzles = isLast && hasCroc ? 2 : 1
-
-      return buildFloor({
-        pathPuzzles,
-        difficulty,
-        sideSections,
-        puzzleFamily,
-        lastMainPuzzleFamily: isLast && hasCroc ? "crocodile" : undefined,
-        mainEndReward,
-        corridorStraightness: straightness,
-        packing,
-        sealed,
-      })
+        encounter,
+        mainEndReward: authored?.mainEndReward ?? "tombTreasure",
+        nodes: authored?.nodes,
+        sideSections: [...authoredSections, ...shortcut],
+        corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
+        packing: authored?.packing ?? constraint.packing,
+        sealed: authored?.sealed ?? constraint.sealed,
+        encounterArgs: authored?.encounterArgs ?? { runNr: i + 1 },
+      }
     })
 
-    // No wireStaircases here: every floor's main path now ends in a real "exit" (buildFloor's
-    // default), not an auto-chained stairhead. Floor-to-floor descent instead runs through
-    // each floor's own ward-path shortcut, wired to the next floor's entrance below.
-    for (let fi = 0; fi < floors.length - 1; fi++) {
-      const shortcutSection = floors[fi].sideSections.find(s => s.gate?.type === "tomb-key")
-      if (shortcutSection && typeof shortcutSection.end === "object") {
-        floors[fi + 1].entrance = { stairId: shortcutSection.end.stairId }
-      }
-    }
-    assignPuzzleRewards(tomb.id, floors, constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates)
-    configs[tomb.id] = [floors]
+    const { floors: floorConfigs } = buildSite<TombRewardHint>({
+      journeyId: tomb.id,
+      tier: tomb.tier as Tier,
+      pyramidIndex: 0,
+      levelCount: 1,
+      pathPuzzles: 1,
+      // Cast: `floors` is authored in tomb's own TombRewardHint vocabulary, which
+      // resolveTombReward (below) understands.
+      constraint: { ...constraint, floors } as PyramidConstraint,
+      difficulty,
+      hasMapPieceBranch: false,
+      hasWardGate: false,
+      nextTier: null,
+      resolveReward: resolveTombReward,
+      resolveMainEndReward: () => ({ type: "fragmentSlot" }),
+    })
+    configs[tomb.id] = [floorConfigs]
   }
   return configs
 }
 
 // ── Main entry point ──────────────────────────────────────────────────────────
 
-export const buildConfigs = (): Record<string, SiteConfig[]> => {
+// `resolveKeyRequirements`/`currencies` default to a no-op resolver and no currencies —
+// src/worldGen/ can't import src/mods/'s real resolver or mod-owned currencies directly
+// (architecture.md's dependency table); the caller with access to them
+// (scripts/generateWorld.ts) passes the real ones in. The reward-count expectation and the
+// "is this a gating-currency reward" predicate are derived from those same `currencies`, so a
+// currency that isn't registered contributes neither — core hardcodes no per-mod number.
+export const buildConfigs = (
+  resolveKeyRequirements?: ResolveKeyRequirements,
+  currencies: CurrencyDistribution[] = [],
+  capped: CappedCurrency[] = [],
+  dynamicDistributions: Distribution[] = [],
+  worldValidators: WorldValidator[] = [],
+  familyPriorityFor?: FamilyPriorityFor,
+  emptyFraction = 0,
+  allocateEncounter?: EncounterAllocator,
+  reachabilitySupport?: ReachabilitySupport,
+  resolveTombTreasure?: TombTreasureResolver,
+  familyCapacityFor?: FamilyCapacityFor,
+  shopStock: readonly ShopStockAssignment[] = [],
+  // Floor indices a tomb reserves for tier-unlock/location-key treasures — injected by the
+  // tomb-treasure mod so pyramid ward wings skip them; core reads no perk types. Absent ⇒ none.
+  reservedTreasureIndices?: (tombId: string) => number[]
+): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
 
   // Phase 2: Build SiteConfigs for pyramids (fragmentSlot sentinels in place)
-  const pyramidConfigs = buildSiteConfigs(plan)
+  const pyramidConfigs = buildSiteConfigs(plan, reservedTreasureIndices)
 
   // Phase 3: Build tomb site configs
-  const tombConfigs = buildTombConfigs()
+  const tombConfigs = buildTombConfigs(resolveTombTreasure)
 
-  // Phase 4: Assign hieroglyph fragments to fragmentSlot positions; fill remainder with consumables
   const allConfigs = { ...pyramidConfigs, ...tombConfigs }
-  assignFragments(allConfigs)
+
+  // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
+  // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.
+  // Injected from src/mods (allFamilyMeta.allocateEncounterFamily) — src/worldGen can't read the
+  // family registry. When absent (a direct buildConfigs call in a test), roles stay as authored.
+  if (allocateEncounter) assignEncounters(allConfigs, allocateEncounter, familyCapacityFor)
+
+  // Phase 3.6: mods place their shop-stock sentinels into resolved shops (after encounters resolve
+  // + stock arrays seed, before slot collection fills them). Core names no currency here.
+  placeShopStock(allConfigs, shopStock)
+
+  // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
+  // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
+  placeFragments(
+    allConfigs,
+    currencies,
+    resolveKeyRequirements,
+    capped,
+    dynamicDistributions,
+    familyPriorityFor,
+    emptyFraction,
+    reachabilitySupport
+  )
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
-  // tomb ID references, discovery graph solvability, and the shop economy guard
-  validateRewardCounts(allConfigs)
-  validateDiscovery(allConfigs)
-  validateEconomyGuard(allConfigs)
+  // tomb ID references, discovery graph solvability, and the shop economy guard. The
+  // gating-currency reward expectation + predicate come from the registered currencies
+  // themselves (a currency contributes its own expectedTotal + bucketForReward), so an
+  // unregistered mod's currency drops out of the check — no false "expected N, got 0".
+  const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
+  const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
+  validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
+  // Secondary-tomb discovery + ward-key ordering need no separate post-build validator
+  // (§E): the worklist reachability model (placeFragments above) already guarantees both — it
+  // hard-fails if any lock stays blocking. See validate.ts's note + docs/game-design/keys-and-locks-solver.md.
+  // Mod-injected post-build validators (e.g. the shop economy guard) run last, over the whole
+  // grown world. They drop out with their mod, so core names none — the shop guard leaves the
+  // check when shop leaves REGISTERED_MODS.
+  for (const validate of worldValidators) validate(allConfigs)
 
   return allConfigs
 }

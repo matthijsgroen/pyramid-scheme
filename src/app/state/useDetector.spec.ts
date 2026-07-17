@@ -1,29 +1,20 @@
 import { describe, it, expect, vi } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useDetector } from "./useDetector"
-import type { ProgressionAPI } from "./useProgression"
 import type { JourneyAPI } from "./useJourneys"
 
 // ── Minimal world stub ────────────────────────────────────────────────────────
+// Compass scanning is mod-owned now (each mod registers a scanner via detectorScanners); this
+// spec imports no mod, so the merged compass scanner is empty and compassResults stays []. The
+// hieroglyph compass scan itself is covered by src/mods/hieroglyph/app/compassScanner.spec.ts.
 
 vi.mock("@/data/generatedWorld", () => ({
   generatedWorldConfigs: {
-    starter_1: [
-      [
-        // floor 0: fragment h1 piece 0 on main path
-        {
-          mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 0 },
-          sideSections: [{ endReward: { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 1 } }],
-        },
-      ],
-    ],
+    starter_1: [[{}]],
   },
 }))
 
 // ── Stub factories ────────────────────────────────────────────────────────────
-
-const makeProgression = (hasFragmentFn = (_id: string, _idx: number) => false): ProgressionAPI =>
-  ({ hasFragment: hasFragmentFn }) as unknown as ProgressionAPI
 
 const makeJourneys = (skipped: Record<string, string[]> = {}): JourneyAPI =>
   ({ getSkippedConsumables: (id: string) => skipped[id] ?? [] }) as unknown as JourneyAPI
@@ -32,18 +23,18 @@ const makeJourneys = (skipped: Record<string, string[]> = {}): JourneyAPI =>
 
 describe("activeDetector", () => {
   it("starts as null", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
+    const { result } = renderHook(() => useDetector(makeJourneys()))
     expect(result.current.activeDetector).toBeNull()
   })
 
   it("setDetector updates the mode", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
+    const { result } = renderHook(() => useDetector(makeJourneys()))
     act(() => result.current.setDetector("compass"))
     expect(result.current.activeDetector).toBe("compass")
   })
 
   it("setDetector to null clears the mode", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
+    const { result } = renderHook(() => useDetector(makeJourneys()))
     act(() => result.current.setDetector("consumable"))
     act(() => result.current.setDetector(null))
     expect(result.current.activeDetector).toBeNull()
@@ -54,43 +45,15 @@ describe("activeDetector", () => {
 
 describe("compassResults", () => {
   it("returns [] when mode is not compass", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
+    const { result } = renderHook(() => useDetector(makeJourneys()))
     expect(result.current.compassResults).toHaveLength(0)
   })
 
-  it("returns [] when compass active but no target set", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
+  it("returns [] when compass active but no target set (no mod owns the target seam here)", () => {
+    const { result } = renderHook(() => useDetector(makeJourneys()))
     act(() => result.current.setDetector("compass"))
-    expect(result.current.compassResults).toHaveLength(0)
-  })
-
-  it("finds uncollected fragments on main path and side sections", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
-    act(() => result.current.setDetector("compass"))
-    act(() => result.current.setCompassTarget("h1"))
-    // h1 appears twice: mainEndReward (piece 0) and sideSections[0] (piece 1)
-    expect(result.current.compassResults).toHaveLength(2)
-    expect(result.current.compassResults[0]).toMatchObject({
-      journeyId: "starter_1",
-      hieroglyphId: "h1",
-      pieceIndex: 0,
-    })
-  })
-
-  it("excludes already-collected fragments", () => {
-    // hasFragment returns true for h1/piece 0 — only piece 1 should appear
-    const progression = makeProgression((id, idx) => id === "h1" && idx === 0)
-    const { result } = renderHook(() => useDetector(progression, makeJourneys()))
-    act(() => result.current.setDetector("compass"))
-    act(() => result.current.setCompassTarget("h1"))
-    expect(result.current.compassResults).toHaveLength(1)
-    expect(result.current.compassResults[0].pieceIndex).toBe(1)
-  })
-
-  it("returns [] when target not present in world", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
-    act(() => result.current.setDetector("compass"))
-    act(() => result.current.setCompassTarget("nonexistent"))
+    // No fragment mod imported → compassTarget seam yields null → nothing to scan.
+    expect(result.current.compassTarget).toBeNull()
     expect(result.current.compassResults).toHaveLength(0)
   })
 })
@@ -100,20 +63,25 @@ describe("compassResults", () => {
 describe("consumableResults", () => {
   it("returns [] when mode is not consumable", () => {
     const journeys = makeJourneys({ starter_1: ["edge-abc"] })
-    const { result } = renderHook(() => useDetector(makeProgression(), journeys))
+    const { result } = renderHook(() => useDetector(journeys))
     expect(result.current.consumableResults).toHaveLength(0)
   })
 
-  it("returns skipped consumable locations when active", () => {
-    const journeys = makeJourneys({ starter_1: ["edge-abc", "edge-def"] })
-    const { result } = renderHook(() => useDetector(makeProgression(), journeys))
+  it("returns skipped consumable locations with the edge decoded to floor + cell", () => {
+    const journeys = makeJourneys({ starter_1: ["1:2,3", "0:4,5"] })
+    const { result } = renderHook(() => useDetector(journeys))
     act(() => result.current.setDetector("consumable"))
     expect(result.current.consumableResults).toHaveLength(2)
-    expect(result.current.consumableResults[0]).toEqual({ journeyId: "starter_1", edgeId: "edge-abc" })
+    expect(result.current.consumableResults[0]).toEqual({
+      journeyId: "starter_1",
+      edgeId: "1:2,3",
+      floorIdx: 1,
+      cell: { row: 2, col: 3 },
+    })
   })
 
   it("returns [] when no consumables were skipped", () => {
-    const { result } = renderHook(() => useDetector(makeProgression(), makeJourneys()))
+    const { result } = renderHook(() => useDetector(makeJourneys()))
     act(() => result.current.setDetector("consumable"))
     expect(result.current.consumableResults).toHaveLength(0)
   })

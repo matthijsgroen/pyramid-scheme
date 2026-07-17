@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { JourneyCard } from "./JourneyCard"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
-import { merchantCacheTreasures } from "@/data/treasures"
 
 // Mock journey data
 const mockPyramidJourney: TranslatedJourney = {
@@ -46,7 +45,6 @@ const mockTreasureTombJourney: TranslatedJourney = {
   piecesRequired: 4,
   difficultyLabel: "Starter",
   lengthLabel: "Short",
-  treasures: merchantCacheTreasures,
   levelSettings: {
     symbolCount: 2,
     numberRange: [1, 10],

@@ -1,6 +1,18 @@
-import { tier, tomb, journey, sidePath } from "../dsl"
-import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
-import type { Rule } from "../dsl"
+import { tier, tomb, journey } from "../dsl"
+import type { Rule, SideSectionConstraint } from "../dsl"
+
+// The ceiling saturates every mechanic, including a key chain (a red floor-key gates a room
+// holding a green-gated vault). Kept to two levels: the maze assembler flattens deeper nesting
+// on wizard's dense floors, so a 3-level chain doesn't survive as an actual chain.
+const WIZARD_CHAIN: SideSectionConstraint = {
+  gate: { type: "floor-key", color: "red" },
+  pathPuzzles: 1,
+  end: "treasure",
+  endReward: "mosaicPiece",
+  sideSections: [
+    { gate: { type: "floor-key", color: "green" }, pathPuzzles: 1, end: "treasure", endReward: "mosaicPiece" },
+  ],
+}
 
 export const wizardRules: Rule[] = [
   tier("wizard", { difficulty: "wizard" }),
@@ -18,65 +30,70 @@ export const wizardRules: Rule[] = [
     })
     .sidePaths("medium")
     .settings({ pathPuzzles: 1, end: "fragment", gate: "floor-key" })
+    // Open (visible) trapped path — the ceiling carries the open-trap mechanic expert introduced,
+    // ending in junk (income).
+    .sidePaths("low")
+    .settings({ pathPuzzles: 2, end: "junk", encounter: "trap" })
     // Wizard is trap-heavy: 2-3 trapped hidden mosaics per pyramid, plus one plain-loot hidden.
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 1, end: "mosaic", trapped: true })
+    .settings({ pathPuzzles: 1, end: "mosaic", encounter: "trap" })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" }),
 
+  // 3-level key-chain showcase on the 2nd pyramid of each wizard journey.
+  ...["wizard_1", "wizard_2", "wizard_3", "wizard_4"].map(jid =>
+    journey(jid).pyramid(2, { sideSections: [WIZARD_CHAIN] })
+  ),
+
   tomb("wizard_treasure_tomb", {
-    puzzleFamily: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("wizard") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // Crocodile capstone on the final floor — authored via a node selector (§G).
+      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
     ],
   }),
   tomb("wizard_treasure_tomb_b", {
-    puzzleFamily: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("wizard") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // Crocodile capstone on the final floor — authored via a node selector (§G).
+      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
     ],
   }),
   tomb("wizard_treasure_tomb_c", {
-    puzzleFamily: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "wizard",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: mosaic (solo slot). Never mapPiece
-        // here — this is the last tomb, nothing left to unlock with one.
-        sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE })],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // Crocodile capstone on the final floor — authored via a node selector (§G).
+      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
     ],
   }),
 

@@ -1,9 +1,13 @@
-import type { ConsumableType, Tier, TreasureReward } from "./types"
-import { TOMB_SYMBOLS } from "./data"
+import type { Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import type { RewardHint, RewardSpec, GateSpec } from "./dsl"
-import { sellablesForDifficulty } from "../data/sellables"
-import type { Difficulty } from "../data/difficultyLevels"
+
+// The map-piece currency's bucket grammar, as authored in the DSL (`mapPiece` / `{type:"mapPiece",
+// tombId}` → a `prefers`-tagged open slot the tomb-treasure mod's currency fills). This is
+// DSL-authoring vocabulary (docs/mods/TARGET.md rule 2 — the DSL names currencies), not reachability
+// logic; the reachability engine (reachability.ts) names no currency. The mod defines the same
+// `mapPiece:<id>` grammar independently for its own currency + reachability support.
+const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
 
 // Simple deterministic hash for per-pyramid seeding of density ranges and reward rolls
 export const hashStr = (s: string): number => {
@@ -12,35 +16,33 @@ export const hashStr = (s: string): number => {
   return h >>> 0
 }
 
-// Seeded pick of a consumable type, weighted by rates
-export const rollConsumable = (
-  seed: string,
-  rates: { bandage: number; oil: number; trapTool: number }
-): ConsumableType => {
-  const total = rates.bandage + rates.oil + rates.trapTool
-  const roll = hashStr(seed) % total
-  return roll < rates.bandage ? "bandage" : roll < rates.bandage + rates.oil ? "oil" : "trapTool"
-}
-
 // Seeded loose-money amount, 1-10
 export const rollMoney = (seed: string): number => 1 + (hashStr(seed) % 10)
 
 export const hintToReward = (hint: RewardHint, tier: Tier): TreasureReward => {
   switch (hint) {
-    case "mosaicPiece":
-      return { type: "mosaicPiece" }
     case "mapPiece":
-      return { type: "mapPiece", tombId: `${tier}_treasure_tomb` }
-    case "hieroglyphs":
-      return { type: "hieroglyphs" }
-    case "hieroglyphFragment":
-      return { type: "hieroglyphFragment", hieroglyphId: TOMB_SYMBOLS[tier][0] }
+      // A preference-tagged open slot, not a baked literal — the worklist solver grants the
+      // actual mapPiece reward once discovered blocking tomb entry (keys-and-locks-solver.md,
+      // "Structure, then loot"). This is the tier's own primary tomb; a secondary tomb's map
+      // piece is always authored via the structured `{type:"mapPiece",tombId}` form below.
+      return { type: "fragmentSlot", prefers: mapPieceBucket(`${tier}_treasure_tomb`) }
+    default:
+      // Every other hint is a currency id (e.g. "mosaicPiece", "hieroglyph") — opaque to core.
+      // It becomes a preference-tagged open slot the placement solver / capped pass fills;
+      // core never branches on what the bucket means and never bakes the currency reward
+      // itself, so an unregistered currency's slot simply falls through to filler loot
+      // (docs/mods/TARGET.md rule 2; the DSL-as-preference model).
+      return { type: "fragmentSlot", prefers: hint }
   }
 }
 
 // Translates a RewardSpec (string hint or structured object) to a TreasureReward
 export const specToReward = (spec: RewardSpec, tier: Tier): TreasureReward => {
   if (typeof spec === "string") return hintToReward(spec, tier)
+  // Same "preference-tagged slot, not a baked literal" treatment as the bare hint above —
+  // the structured form only differs in naming an explicit (secondary) tomb.
+  if (spec.type === "mapPiece") return { type: "fragmentSlot", prefers: mapPieceBucket(spec.tombId) }
   return spec as TreasureReward
 }
 
@@ -56,15 +58,18 @@ export const specToGate = (
   return { type: "tomb-key", wardKeyId }
 }
 
-export const pathEndToReward = (end: string, tier: string, seed = tier): TreasureReward | undefined => {
-  if (end === "mosaic") return { type: "mosaicPiece" }
-  if (end === "fragment") {
-    return { type: "fragmentSlot" }
-  }
-  if (end === "junk") {
-    const items = sellablesForDifficulty(tier as Difficulty)
-    const item = items[hashStr(seed) % items.length]
-    return { type: "sellable", itemId: item.id }
-  }
-  return undefined // "treasure" = no specific endReward
+export const pathEndToReward = (end: string): TreasureReward | undefined => {
+  // Authored path ends are preference-tagged OPEN slots the placement pass fills — never baked
+  // reward literals. Core doesn't know what a currency means beyond the tag, and never rolls a
+  // variant (docs/mods/distribution-primitive-design.md). "junk" is a plain loot slot: the shop's
+  // money economy fills it (junk or coins), and with shop off it falls to empty like any other —
+  // so core names no `sellable` here.
+  if (end === "mosaic") return { type: "fragmentSlot", prefers: "mosaicPiece" }
+  if (end === "fragment") return { type: "fragmentSlot" }
+  if (end === "junk") return { type: "fragmentSlot", prefers: "junk" }
+  // "treasure" = a plain treasure room: a loot slot with NO preference, filled by whatever the
+  // solver has spare (currency / mosaic / shop junk-coins), in priority order. A treasure chest
+  // gives something (pyramid-interior-design.md §10, "a treasure room gives ..."); an unfilled one
+  // is only possible on a genuine loot shortage. Identical to "fragment" (both untagged).
+  return { type: "fragmentSlot" }
 }

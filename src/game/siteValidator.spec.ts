@@ -1,18 +1,40 @@
 import { describe, expect, it } from "vitest"
-import { validateJourney, validateSite } from "./siteValidator"
+import { reachableFrom, validateJourney, validateSite } from "./siteValidator"
 import type { CellState, CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 // ─── Grid builders ────────────────────────────────────────────────────────────
 
+// Lets test cases below build rooms by kind; translates to the real {roomType, family} shape.
+type LegacyRoomKind = "entrance" | "puzzle" | "trap" | "fork" | "gate" | "treasure" | "stairhead" | "exit"
+
+const DEFAULT_FAMILY: Partial<Record<LegacyRoomKind, string>> = {
+  puzzle: "sumplete",
+  trap: "arithmetic-reflex",
+  treasure: "treasure-chest",
+  gate: "key-gate",
+}
+
+const DEFAULT_TAGS: Partial<Record<LegacyRoomKind, string[]>> = {
+  puzzle: ["puzzle"],
+  trap: ["trap"],
+  treasure: ["treasure"],
+  gate: ["gate"],
+}
+
+const ENCOUNTER_KINDS: ReadonlySet<LegacyRoomKind> = new Set(["puzzle", "trap", "treasure", "gate"])
+const PORTAL_KINDS: ReadonlySet<LegacyRoomKind> = new Set(["entrance", "stairhead", "exit"])
+
 const room = (
-  roomType: RoomCell["roomType"],
+  kind: LegacyRoomKind,
   dirs: Direction[],
   opts?: Partial<Omit<RoomCell, "type" | "roomType" | "dirs" | "state">>
 ): RoomCell => ({
   type: "room",
-  roomType,
+  roomType: ENCOUNTER_KINDS.has(kind) ? "encounter" : PORTAL_KINDS.has(kind) ? "portal" : "fork",
   dirs: new Set(dirs),
   state: "reachable",
+  ...(DEFAULT_FAMILY[kind] ? { family: DEFAULT_FAMILY[kind] } : {}),
+  ...(DEFAULT_TAGS[kind] ? { tags: DEFAULT_TAGS[kind] } : {}),
   ...opts,
 })
 
@@ -139,7 +161,7 @@ describe(validateSite, () => {
         [0, 0, room("puzzle", ["e"])],
         [0, 1, room("fork", ["w", "e", "s"])],
         [0, 2, room("puzzle", ["w"])],
-        [1, 1, room("treasure", ["n"], { reward: { type: "hieroglyphs" } })],
+        [1, 1, room("treasure", ["n"], { reward: { type: "money", amount: 1 } })],
       ],
       [0, 0],
       [0, 2]
@@ -206,6 +228,40 @@ describe(validateSite, () => {
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "mosaicNotReachable")).toBe(true)
     }
+  })
+})
+
+// ─── reachableFrom: requiredKeyIds (a tableau needing several hieroglyphs complete) ───────
+
+describe(reachableFrom, () => {
+  it("blocks a room needing several keys until all of them are owned", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("puzzle", ["w", "e"], { requiredKeyIds: ["hieroglyph:a", "hieroglyph:b"] })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0]).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a", "hieroglyph:b"])).has("0,2")).toBe(true)
+  })
+
+  it("requiredKeyId and requiredKeyIds both gate the same room independently", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "k1", requiredKeyIds: ["hieroglyph:a"] })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0], new Set(["k1"])).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(["k1", "hieroglyph:a"])).has("0,2")).toBe(true)
   })
 })
 
@@ -285,7 +341,7 @@ describe(validateJourney, () => {
     const noPrimary = buildGrid(
       [
         [0, 0, room("puzzle", ["e"])],
-        [0, 1, room("treasure", ["w", "e"], { reward: { type: "hieroglyphs" } })],
+        [0, 1, room("treasure", ["w", "e"], { reward: { type: "money", amount: 1 } })],
         [0, 2, room("exit", ["w"])],
       ],
       [0, 0],

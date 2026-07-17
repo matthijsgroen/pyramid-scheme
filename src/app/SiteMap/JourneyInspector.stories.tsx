@@ -53,8 +53,6 @@ const rewardLabel = (r: TreasureReward): string => {
       return "Mosaic Piece"
     case "mapPiece":
       return `Map Piece → ${r.tombId}`
-    case "hieroglyphs":
-      return "Hieroglyphs"
     case "consumable":
       return `Consumable: ${r.consumable}`
     case "fragmentSlot":
@@ -63,6 +61,9 @@ const rewardLabel = (r: TreasureReward): string => {
       return `Money: ${r.amount}`
     case "sellable":
       return `Sellable: ${r.itemId}`
+    default:
+      // Open reward union — an unrecognized mod reward type falls back to its raw tag.
+      return r.type
   }
 }
 
@@ -76,8 +77,6 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-cyan-300"
     case "mapPiece":
       return "text-green-300"
-    case "hieroglyphs":
-      return "text-stone-500"
     case "consumable":
       return "text-orange-300"
     case "fragmentSlot":
@@ -86,6 +85,8 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-yellow-300"
     case "sellable":
       return "text-lime-300"
+    default:
+      return "text-stone-400"
   }
 }
 
@@ -96,12 +97,12 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
   return (
     <div className={`mb-3 text-xs ${active ? "text-stone-200" : "text-stone-600"}`}>
       <div className="mb-1 flex gap-2">
-        <span className="font-semibold text-stone-400">{floor.puzzleFamily ?? "sumplete"}</span>
+        <span className="font-semibold text-stone-400">{floor.encounter ?? "sumplete"}</span>
         <span className="text-stone-500">{floor.difficulty}</span>
       </div>
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
-          const reward = floor.puzzleRewards?.[i]
+          const reward = floor.rewards?.[i]
           return (
             <div key={i} className="flex items-baseline gap-1">
               <span className="w-4 shrink-0 text-stone-600">{i + 1}.</span>
@@ -191,7 +192,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
 
     if (cell.reward) setCollected(prev => [...prev, { reward: cell.reward!, floor: currentFloor }])
 
-    if (cell.roomType === "stairhead") {
+    if (cell.roomType === "portal" && cell.stairId) {
       setCurrentFloor(f => f + 1)
       setExplorerPos(null)
     }

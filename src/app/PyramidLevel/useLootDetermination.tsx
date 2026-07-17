@@ -1,5 +1,5 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import { useProgression } from "@/app/state/useProgression"
+import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { determineMapPieceLoot } from "./mapPieceLogic"
@@ -52,7 +52,7 @@ export const useLootDetermination = (
   activeJourney: CombinedJourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
   const { getJourney, nextJourneySeed, maxDifficulty } = useJourneys()
-  const { hasMapPiece, markMapPieceFound } = useProgression()
+  const { hasMapPiece, markMapPieceFound } = useTombTreasureProgress()
   const { inventory, addItems } = useInventory()
   const { t } = useTranslation("treasures")
 

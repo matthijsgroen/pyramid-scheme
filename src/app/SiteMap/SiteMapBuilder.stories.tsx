@@ -236,7 +236,7 @@ const MultiFloorExplorer = ({ siteConfig, seed }: { siteConfig: SiteConfig; seed
     const edge = `${floorIdx}:${row},${col}`
     setEdges(prev => (prev.includes(edge) ? prev : [...prev, edge]))
     const cell = grid && getCell(grid, row, col)
-    if (cell?.type === "room" && cell.roomType === "stairhead" && floorIdx < siteConfig.length - 1)
+    if (cell?.type === "room" && cell.roomType === "portal" && cell.stairId && floorIdx < siteConfig.length - 1)
       setFloorIdx(f => f + 1)
   }
 

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { StainedGlassMosaic } from "./StainedGlassMosaic"
 import { MOSAIC_PIECES } from "./mosaicPieces.generated"
-import { LEVEL_STEPS } from "./mosaicRevealOrder"
+import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
 
 const meta = {
   title: "UI/StainedGlassMosaic",

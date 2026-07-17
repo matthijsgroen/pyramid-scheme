@@ -15,7 +15,7 @@ const config: FloorConfig = {
   // Pinned so the main path's own treasure can never roll the same mosaicPiece reward as
   // the hidden one below — that coincidence let a demo player "win" on the ordinary path
   // before ever reaching the hidden branch, making the detector look broken.
-  mainEndReward: { type: "hieroglyphs" },
+  mainEndReward: { type: "money", amount: 5 },
   sideSections: [
     { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
     // Hidden branch — tagged hidden:true, masked by useAssembledFloor
@@ -37,7 +37,6 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
     SEED,
     0,
     exploredSections,
-    new Set(),
     positionStr,
     detectionLevel,
     revealedSections
@@ -61,7 +60,7 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
         if (existing.includes(cellId)) return prev
         return { ...prev, [sHash]: [...existing, cellId] }
       })
-      if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") {
+      if (cell.type === "room" && cell.reward?.type === "mosaicPiece") {
         setMosaicFound(true)
       }
     }

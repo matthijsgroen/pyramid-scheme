@@ -3,7 +3,7 @@ import { generateFile } from "./serializer"
 import type { SiteConfig } from "./types"
 
 // Regression test for a real bug: serializeSideSection hand-enumerates fields and silently
-// dropped `shopPrice` (added for the Fez shop) and nested `sideSections` — round-tripping a
+// dropped `rewards` (a shop's stock array) and nested `sideSections` — round-tripping a
 // config through generateFile lost both, even though every other stage of the pipeline
 // (constraint resolution, buildSideSections, the economy guard) operates on the in-memory
 // config and never caught it.
@@ -21,9 +21,9 @@ describe("generateFile — serializeSideSection field coverage", () => {
           difficulty: "junior",
           end: "treasure",
           endReward: { type: "mosaicPiece" },
-          shopPrice: 500,
+          rewards: [{ type: "mosaicPiece" }, { type: "consumable", consumable: "oil" }],
           sealed: true,
-          puzzleFamily: "tableau",
+          encounter: "tableau",
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -32,8 +32,9 @@ describe("generateFile — serializeSideSection field coverage", () => {
 
   const output = generateFile({ test_journey: [config] })
 
-  it("keeps shopPrice on a serialized side section", () => {
-    expect(output).toContain("shopPrice: 500")
+  it("keeps a rewards (shop stock) array on a serialized side section", () => {
+    expect(output).toContain("rewards: [")
+    expect(output).toContain('consumable: "oil"')
   })
 
   it("keeps a nested sideSections array", () => {
@@ -48,7 +49,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
     expect(output.match(/sealed: true/g)?.length).toBe(2) // one on the floor, one on its side section
   })
 
-  it("keeps puzzleFamily on a serialized side section", () => {
-    expect(output).toContain('puzzleFamily: "tableau"')
+  it("keeps encounter on a serialized side section", () => {
+    expect(output).toContain('encounter: "tableau"')
   })
 })

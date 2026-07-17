@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest"
 import { buildFloor, buildSite, wireStaircases } from "./buildSite"
 import type { FloorConfig } from "./types"
+import type { PyramidConstraint } from "./dsl"
 
 describe("buildFloor", () => {
-  it("defaults to an exiting, reward-free floor", () => {
+  it("defaults to an exiting floor with no main reward (the caller/site decides the chest)", () => {
+    // buildFloor stays reward-agnostic — it runs before staircase wiring, so it can't know whether
+    // this floor truly exits. The site (buildSite) decides the main-end loot slot per structure.
     expect(buildFloor({ pathPuzzles: 2, difficulty: "starter", sideSections: [] })).toEqual({
       pathPuzzles: 2,
       difficulty: "starter",
@@ -15,15 +18,15 @@ describe("buildFloor", () => {
 
   it("carries through optional fields only when defined", () => {
     const floor = buildFloor({
-      pathPuzzles: 1,
+      pathPuzzles: 2,
       difficulty: "starter",
       sideSections: [],
-      puzzleFamily: "tableau",
-      lastMainPuzzleFamily: "crocodile",
+      encounter: "tableau",
+      encountersByIndex: { 1: "crocodile" },
       corridorStraightness: 0.5,
     })
-    expect(floor.puzzleFamily).toBe("tableau")
-    expect(floor.lastMainPuzzleFamily).toBe("crocodile")
+    expect(floor.encounter).toBe("tableau")
+    expect(floor.encountersByIndex).toEqual({ 1: "crocodile" })
     expect(floor.corridorStraightness).toBe(0.5)
     expect(floor.packing).toBeUndefined()
   })
@@ -66,7 +69,7 @@ describe("buildSite", () => {
     nextTier: null,
     mosaicPathCount: 0,
     resolveReward: () => undefined,
-    resolveMainEndReward: () => ({ type: "hieroglyphs" as const }),
+    resolveMainEndReward: () => ({ type: "mosaicPiece" as const }),
   }
 
   it("single-floor branch: no floors[]/mainFloors/wardWings authored → one exiting floor", () => {
@@ -76,14 +79,35 @@ describe("buildSite", () => {
     expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
-  it("authored floors[] branch: one FloorConfig per entry, last floor carries mainEndReward", () => {
+  it("authored floors[] branch: one FloorConfig per entry, every floor's main path bears a loot slot", () => {
     const { floors } = buildSite({
       ...baseCtx,
       constraint: { floors: [{ pathPuzzles: 1 }, { pathPuzzles: 2 }] },
     })
     expect(floors).toHaveLength(2)
-    expect(floors[0].mainEndReward).toBeUndefined()
+    // Each floor's main path exits into a treasure chest (floors chain via side-section staircases),
+    // so both get an untagged loot slot — a non-last floor is no longer an empty chest.
+    expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })
     expect(floors[1].mainEndReward).toEqual({ type: "fragmentSlot" })
+  })
+
+  it("authored floors[] branch: a floor's own mainEndReward/nodes/encounter override the site defaults — a tomb's self-gated shortcut", () => {
+    const { floors } = buildSite<"tombTreasure">({
+      ...baseCtx,
+      resolveReward: spec => (spec === "tombTreasure" ? { type: "tombKey", keyId: "k1" } : undefined),
+      constraint: {
+        floors: [
+          { pathPuzzles: 1, mainEndReward: "tombTreasure", encounter: "tableau" },
+          { pathPuzzles: 2, nodes: [{ where: "last", encounter: "crocodile" }] },
+        ],
+      } as PyramidConstraint,
+    })
+    expect(floors[0].mainEndReward).toEqual({ type: "tombKey", keyId: "k1" })
+    expect(floors[0].encounter).toBe("tableau")
+    // `nodes: [{where:"last"}]` on a 2-node path resolves to index 1.
+    expect(floors[1].encountersByIndex).toEqual({ 1: "crocodile" })
+    // Non-last floor's own reward, not the site-level fallback (which never runs here).
+    expect(floors[0].mainEndReward).not.toEqual({ type: "fragmentSlot" })
   })
 
   it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases, non-last floor gets a real reward slot", () => {
@@ -98,19 +122,11 @@ describe("buildSite", () => {
     expect(floors[2].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
-  it("assigns puzzle-solve rewards across the built floors", () => {
+  it("inits an empty puzzle-reward array per chain (fill happens later, in the placement pass)", () => {
     const { floors } = buildSite({ ...baseCtx, pathPuzzles: 20 })
-    expect(floors[0].puzzleRewards).toHaveLength(20)
-    expect(floors[0].puzzleRewards?.some(r => r !== undefined)).toBe(true)
-  })
-
-  it("gives different pyramids in the same journey different puzzle-reward patterns", () => {
-    // Regression guard: assignPuzzleRewards must be seeded per-pyramid, not per-journey —
-    // every other seed helper in this file (resolveKeyColors, resolveChanceValue) folds in
-    // pyramidIndex; this one originally didn't, so every pyramid in a journey got an
-    // identical (often exact-duplicate) reward layout.
-    const first = buildSite({ ...baseCtx, pyramidIndex: 0, pathPuzzles: 20 })
-    const second = buildSite({ ...baseCtx, pyramidIndex: 1, pathPuzzles: 20 })
-    expect(first.floors[0].puzzleRewards).not.toEqual(second.floors[0].puzzleRewards)
+    expect(floors[0].rewards).toHaveLength(20)
+    // buildSite only creates the slots; the dynamic-loot distributions fill them
+    // (dynamicDistributions.spec covers fill + the per-site seed variation).
+    expect(floors[0].rewards?.every(r => r === undefined)).toBe(true)
   })
 })

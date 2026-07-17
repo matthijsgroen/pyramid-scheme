@@ -6,7 +6,7 @@ import { generateNewSeed, mulberry32 } from "@/game/random"
 import {
   buildTombCalculationSettings,
   generateRewardCalculation,
-} from "@/game/puzzles/tableau/generateRewardCalculation"
+} from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { useInventory } from "../Inventory/useInventory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"

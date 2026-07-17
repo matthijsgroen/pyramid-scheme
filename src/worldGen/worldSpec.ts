@@ -7,16 +7,15 @@ import { masterRules } from "./spec/master"
 import { wizardRules } from "./spec/wizard"
 
 // Expected reward counts — validated by configBuilder after generation.
-// mosaicPieceRewards: 298 — must equal LEVEL_STEPS.length (mosaicRevealOrder.ts), the number
-//                    of reveal steps the player actually sees. Mosaic reveal is count-based
-//                    (MosaicPage clamps to Math.min(collected, LEVEL_STEPS.length)), so any
-//                    extra reward beyond 298 reveals nothing. Distributed as side paths across
-//                    pyramids, minus the 1 tomb-authored piece (junior_treasure_tomb floor 3).
-// mapPieceRewards:    20 primary (1 per pyramid journey) + 16 secondary
-//                    (4 journeys × 4 secondary tombs, each on last or last-1 pyramid)
+// mapPieceRewards: the sum of every tomb's own piecesRequired (the keys-and-locks solver's
+// map-piece currency places exactly this many, no surplus) — 31 across the 9 tombs.
+//
+// Mosaic is NOT here — it's a mod-owned capped currency (src/mods/mosaic/game/mosaicCurrency.ts's
+// MOSAIC_TOTAL); core holds no per-mod target (docs/mods/TARGET.md rule 2). It's placed by
+// placeFragments' phase-3 pass, which hard-fails if it can't fully place, so no post-hoc count
+// check is needed here.
 export const WORLD_TARGETS = {
-  mosaicPieceRewards: 298,
-  mapPieceRewards: 36,
+  mapPieceRewards: 31,
 }
 
 /**

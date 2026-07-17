@@ -1,4 +1,4 @@
-import type { FloorGrid, ValidationReason, ValidationResult } from "./siteTypes"
+import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
 
 type Pos = readonly [number, number]
 
@@ -8,11 +8,18 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 
 // BFS through grid. Gates require their key to be in ownedKeys.
 // blockedPos: skip this cell (for keyBeforeGate check).
-const reachableFrom = (
+// Exported for src/worldGen/reachability.ts's coarse graph — the one fine-grained
+// reachability primitive the coarse solver projects from, never re-derived.
+// `blockedRequirements`, if given, collects every requiredKeyId/requiredKeyIds hit at the
+// reachable frontier but not satisfied by `ownedKeys` — the worklist solver's own "discovered
+// lock" signal (docs/game-design/keys-and-locks-solver.md, "Structure, then loot": a wish
+// was always there in the structure, this is just the walk noticing it for the first time).
+export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
-  blockedPos?: Pos
+  blockedPos?: Pos,
+  blockedRequirements?: Set<string>
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -37,14 +44,18 @@ const reachableFrom = (
       const ncell = grid.cells[nr]?.[nc]
       if (!ncell || ncell.type === "empty") continue
 
-      // Gate: only passable if we own the key
-      if (
-        ncell.type === "room" &&
-        ncell.roomType === "gate" &&
-        ncell.requiredKeyId &&
-        !ownedKeys.has(ncell.requiredKeyId)
-      )
+      // Gate: only passable if we own the key(s). requiredKeyId/requiredKeyIds alone are
+      // the signal — any encounter can carry a key requirement (a gate's only job; a
+      // tableau's several, one per hieroglyph it needs complete), not just rooms tagged
+      // "gate".
+      if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
+        blockedRequirements?.add(ncell.requiredKeyId)
         continue
+      }
+      if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
+        for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
+        continue
+      }
 
       visited.add(nkey)
       queue.push([nr, nc])
@@ -54,32 +65,51 @@ const reachableFrom = (
   return visited
 }
 
-export const validateSite = (grid: FloorGrid): ValidationResult => {
-  const reasons: ValidationReason[] = []
-
-  // Iterative key collection: simulate exploration. BFS → collect reachable keys →
-  // unlock new gates → repeat. Correctly handles key chains (key behind a gate).
-  const collectedKeys = new Set<string>()
+// Iterative key collection: simulate exploration. BFS → collect reachable keys → unlock
+// new gates → repeat. Correctly handles key chains (key behind a gate) and self-referential
+// ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
+// design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
+// coarse graph, which needs the same fixed point across a whole multi-floor site.
+export const collectReachableKeys = (
+  grid: FloorGrid,
+  startPos: Pos,
+  initialKeys: ReadonlySet<string> = new Set()
+): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
+  const collectedKeys = new Set(initialKeys)
+  // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
+  // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
+  // this same floor's fixed point went on to collect.
+  let blockedRequirements = new Set<string>()
+  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
   let changed = true
   while (changed) {
     changed = false
-    const reachable = reachableFrom(grid, grid.entrancePos, collectedKeys)
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
         const cell = grid.cells[r][c]
         if (
           cell.type === "room" &&
-          cell.roomType === "treasure" &&
           cell.reward?.type === "tombKey" &&
           reachable.has(posKey(r, c)) &&
-          !collectedKeys.has(cell.reward.keyId)
+          !collectedKeys.has((cell.reward as TombKeyReward).keyId)
         ) {
-          collectedKeys.add(cell.reward.keyId)
+          collectedKeys.add((cell.reward as TombKeyReward).keyId)
           changed = true
         }
       }
     }
+    if (changed) {
+      blockedRequirements = new Set<string>()
+      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
+    }
   }
+  return { reachable, keys: collectedKeys, blockedRequirements }
+}
+
+export const validateSite = (grid: FloorGrid): ValidationResult => {
+  const reasons: ValidationReason[] = []
+
+  const { keys: collectedKeys } = collectReachableKeys(grid, grid.entrancePos)
 
   // All floor-key gates must have a collectible key
   for (let r = 0; r < grid.rows; r++) {
@@ -87,7 +117,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
-      if (cell.roomType === "gate" && cell.requiredKeyId && cell.gateVariant === "floor-key") {
+      if (cell.requiredKeyId && cell.gateVariant === "floor-key") {
         if (!collectedKeys.has(cell.requiredKeyId)) {
           const gatePos: Pos = [r, c]
           let keyPos: Pos = gatePos
@@ -96,7 +126,6 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
               const kcell = grid.cells[kr][kc]
               if (
                 kcell.type === "room" &&
-                kcell.roomType === "treasure" &&
                 kcell.reward?.type === "tombKey" &&
                 kcell.reward.keyId === cell.requiredKeyId
               )
@@ -109,7 +138,6 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
 
       if (cell.roomType === "fork") {
         const forkPos: Pos = [r, c]
-        const interestingTypes = new Set(["treasure", "gate", "stairhead"])
         // BFS through corridors from each fork direction to find an interesting room
         const forkKey = posKey(r, c)
         let hasInteresting = false
@@ -127,8 +155,14 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
           const bcell = grid.cells[br]?.[bc]
           if (!bcell || bcell.type === "empty") continue
           if (bcell.type === "room") {
-            if (interestingTypes.has(bcell.roomType)) hasInteresting = true
-            else if (bcell.roomType === "puzzle" || bcell.roomType === "fork") {
+            // "trap" counts as neither: a fork branch leading only to a trap counts as bland.
+            const isTreasureLike =
+              bcell.roomType === "encounter" && (bcell.tags?.includes("treasure") || bcell.tags?.includes("shop"))
+            const isPuzzleLike =
+              bcell.roomType === "encounter" && (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle"))
+            const isGate = bcell.tags?.includes("gate")
+            if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
+            else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch
               for (const d of bcell.dirs) {
                 const [dr, dc] = MOVES[d as string]
@@ -158,8 +192,9 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
-      if (cell.roomType === "treasure" && cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
-      if (cell.roomType === "gate" && cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
+      if (cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
+      if (cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
+      for (const id of cell.requiredKeyIds ?? []) allKeyIds.add(id)
     }
   }
 
@@ -178,8 +213,7 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
 
   const mapPieceSites = grids.filter(g => {
     for (const row of g.cells)
-      for (const cell of row)
-        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mapPiece") return true
+      for (const cell of row) if (cell.type === "room" && cell.reward?.type === "mapPiece") return true
     return false
   })
 
@@ -193,8 +227,7 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
     for (let r = 0; r < g.rows; r++)
       for (let c = 0; c < g.cols; c++) {
         const cell = g.cells[r][c]
-        if (cell.type === "room" && cell.roomType === "treasure" && cell.reward?.type === "mapPiece")
-          mapPiecePos = [r, c]
+        if (cell.type === "room" && cell.reward?.type === "mapPiece") mapPiecePos = [r, c]
       }
     if (mapPiecePos) {
       const sealReachable = reachableFrom(g, g.entrancePos, new Set())
@@ -209,7 +242,7 @@ export const validateJourney = (grids: FloorGrid[]): ValidationResult => {
     let mosaicCount = 0
     for (const row of g.cells)
       for (const cell of row) {
-        if (cell.type !== "room" || cell.roomType !== "treasure") continue
+        if (cell.type !== "room") continue
         if (cell.reward?.type === "mosaicPiece" || cell.reward?.type === "mapPiece") primaryCount++
         if (cell.reward?.type === "mosaicPiece") mosaicCount++
       }

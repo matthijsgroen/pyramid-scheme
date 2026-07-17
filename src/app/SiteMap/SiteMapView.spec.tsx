@@ -25,7 +25,8 @@ const corridor = (state: CellState, isCorner = true): GridCell => ({
 
 const room = (state: CellState): GridCell => ({
   type: "room",
-  roomType: "puzzle",
+  roomType: "encounter",
+  family: "sumplete",
   dirs: new Set(["s"]),
   state,
 })
@@ -39,7 +40,8 @@ const fork = (state: CellState, dirs: Direction[] = []): GridCell => ({
 
 const leafTreasure = (state: CellState, dirs: Direction[]): GridCell => ({
   type: "room",
-  roomType: "treasure",
+  roomType: "encounter",
+  family: "treasure-chest",
   dirs: new Set(dirs),
   state,
 })

@@ -1,8 +1,22 @@
 # Game Loop Design — Pyramid Scheme
 
 Status: design doc · cross-checked against PUZZLE_FAMILIES  
-Date: 2026-06-26 (updated 2026-06-29 with loot economy redesign)  
-See also: `pyramid-interior-design.md` for loot economy, interior structure, and floor system
+Date: 2026-06-26 (updated 2026-06-29 with loot economy redesign, 2026-07-11 with the pitch below)  
+See also: `pyramid-interior-design.md` for loot economy, interior structure, and floor system;
+`keys-and-locks-solver.md` for how the world guarantees this never dead-ends
+
+---
+
+## The pitch
+
+Exploration in this world runs **both forward and backward**. Forward: new
+keys and treasures unlock the next difficulty tier, new journeys, deeper
+tomb floors. Backward: those same keys reopen *earlier* sites that were
+never fully spent — a starter pyramid you finished tiers ago can hold a
+gate that only your latest wizard treasure opens, and a fragment you find
+there might be exactly what an early tomb's tableau was waiting on. No
+site is ever "done" until every gate in it is open. The player is always
+re-reading the map they already have, not just walking toward a new one.
 
 ---
 

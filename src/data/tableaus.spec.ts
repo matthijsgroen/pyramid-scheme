@@ -1,16 +1,21 @@
 import { describe, it, expect } from "vitest"
 import { generateTableaus, type TableauLevel, tableauLevels, TOMB_SYMBOLS } from "./tableaus"
 import tableausTranslations from "../../public/locales/en/tableaus.json"
-import { allItems, egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./inventory"
-import { journeys } from "./journeys"
+import { egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./inventory"
+import { journeys, type TreasureTombJourney } from "./journeys"
 import type { Difficulty } from "./difficultyLevels"
 
+const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
+
 describe("Tableau System", () => {
-  // Generate tableaux once for all tests
+  // One tableau per tomb floor (exploration-based world, not repeated grind-runs) — a tier's
+  // tomb may be split across several journeys once a single tomb got too large; each gets its
+  // own independent symbol allocation. See src/data/tableaus.ts's own comment.
 
   describe("Basic Structure", () => {
-    it("should generate exactly 182 tableaux", () => {
-      expect(tableauLevels).toHaveLength(182)
+    it("generates exactly one tableau per tomb floor", () => {
+      const expectedTotal = tombJourneys.reduce((sum, tomb) => sum + tomb.levelCount, 0)
+      expect(tableauLevels).toHaveLength(expectedTotal)
     })
 
     it("should have all required properties", () => {
@@ -27,101 +32,35 @@ describe("Tableau System", () => {
   })
 
   describe("Tomb Distribution", () => {
-    it("should have correct tableau count per tomb", () => {
-      const distribution = tableauLevels.reduce<Record<string, number>>(
-        (acc: Record<string, number>, tableau: TableauLevel) => {
-          acc[tableau.tombJourneyId] = (acc[tableau.tombJourneyId] || 0) + 1
-          return acc
-        },
-        {}
-      )
-
-      expect(distribution).toEqual({
-        starter_treasure_tomb: 16, // 4 treasures × 4 levels
-        junior_treasure_tomb: 36, // 6 treasures × 6 levels
-        expert_treasure_tomb: 16, // 4 treasures × 4 levels
-        expert_treasure_tomb_b: 16, // 4 treasures × 4 levels
-        master_treasure_tomb: 25, // 5 treasures × 5 levels
-        master_treasure_tomb_b: 25, // 5 treasures × 5 levels
-        wizard_treasure_tomb: 16, // 4 treasures × 4 levels
-        wizard_treasure_tomb_b: 16, // 4 treasures × 4 levels
-        wizard_treasure_tomb_c: 16, // 4 treasures × 4 levels
-      })
+    it("has exactly levelCount tableaus per tomb, one per floor", () => {
+      for (const tomb of tombJourneys) {
+        const tombTableaux = tableauLevels.filter(t => t.tombJourneyId === tomb.id)
+        expect(tombTableaux).toHaveLength(tomb.levelCount)
+        expect(tombTableaux.map(t => t.runNumber).sort((a, b) => a - b)).toEqual(
+          Array.from({ length: tomb.levelCount }, (_, i) => i + 1)
+        )
+        tombTableaux.forEach(t => expect(t.levelNr).toBe(1))
+      }
     })
 
     it("should have correct symbol counts per tomb", () => {
-      const symbolCounts: Record<string, number> = {
-        starter_treasure_tomb: 2,
-        junior_treasure_tomb: 3,
-        expert_treasure_tomb: 4,
-        expert_treasure_tomb_b: 4,
-        master_treasure_tomb: 4,
-        master_treasure_tomb_b: 5,
-        wizard_treasure_tomb: 5,
-        wizard_treasure_tomb_b: 5,
-        wizard_treasure_tomb_c: 5,
-      }
-
-      tableauLevels.forEach((tableau: TableauLevel) => {
-        const expectedCount = symbolCounts[tableau.tombJourneyId]
-        expect(tableau.symbolCount).toBe(expectedCount)
-      })
-    })
-  })
-
-  describe("Run Number Distribution", () => {
-    it("should have correct run numbers for starter tomb (4 treasures)", () => {
-      const starterTableaux = tableauLevels.filter((t: TableauLevel) => t.tombJourneyId === "starter_treasure_tomb")
-      expect(starterTableaux).toHaveLength(16)
-
-      // Should have 4 tableaux per run (4 levels per treasure)
-      for (let run = 1; run <= 4; run++) {
-        const runTableaux = starterTableaux.filter((t: TableauLevel) => t.runNumber === run)
-        expect(runTableaux).toHaveLength(4)
+      for (const tomb of tombJourneys) {
+        const tombTableaux = tableauLevels.filter(t => t.tombJourneyId === tomb.id)
+        tombTableaux.forEach(tableau => expect(tableau.symbolCount).toBe(tomb.levelSettings.symbolCount))
       }
     })
 
-    it("should have correct run numbers for junior tomb (6 treasures)", () => {
-      const juniorTableaux = tableauLevels.filter((t: TableauLevel) => t.tombJourneyId === "junior_treasure_tomb")
-      expect(juniorTableaux).toHaveLength(36)
-
-      // Should have 6 tableaux per run (6 levels per treasure)
-      for (let run = 1; run <= 6; run++) {
-        const runTableaux = juniorTableaux.filter((t: TableauLevel) => t.runNumber === run)
-        expect(runTableaux).toHaveLength(6)
-      }
-    })
-
-    it("should have correct run numbers for expert tomb (4 treasures each, split across 2 tombs)", () => {
-      const expertTableaux = tableauLevels.filter((t: TableauLevel) => t.tombJourneyId === "expert_treasure_tomb")
-      expect(expertTableaux).toHaveLength(16)
-
-      // Should have 4 tableaux per run (4 levels per treasure)
-      for (let run = 1; run <= 4; run++) {
-        const runTableaux = expertTableaux.filter((t: TableauLevel) => t.runNumber === run)
-        expect(runTableaux).toHaveLength(4)
-      }
-    })
-
-    it("should have correct run numbers for master tomb (5 treasures each, split across 2 tombs)", () => {
-      const masterTableaux = tableauLevels.filter((t: TableauLevel) => t.tombJourneyId === "master_treasure_tomb")
-      expect(masterTableaux).toHaveLength(25)
-
-      // Should have 5 tableaux per run (5 levels per treasure)
-      for (let run = 1; run <= 5; run++) {
-        const runTableaux = masterTableaux.filter((t: TableauLevel) => t.runNumber === run)
-        expect(runTableaux).toHaveLength(5)
-      }
-    })
-
-    it("should have correct run numbers for wizard tomb (4 treasures each, split across 3 tombs)", () => {
-      const wizardTableaux = tableauLevels.filter((t: TableauLevel) => t.tombJourneyId === "wizard_treasure_tomb")
-      expect(wizardTableaux).toHaveLength(16)
-
-      // Should have 4 tableaux per run (4 levels per treasure)
-      for (let run = 1; run <= 4; run++) {
-        const runTableaux = wizardTableaux.filter((t: TableauLevel) => t.runNumber === run)
-        expect(runTableaux).toHaveLength(4)
+    it("secondary tombs of the same tier get independent symbol allocations, not a copy of the primary", () => {
+      const byTier = new Map<Difficulty, TreasureTombJourney[]>()
+      for (const tomb of tombJourneys) byTier.set(tomb.difficulty, [...(byTier.get(tomb.difficulty) ?? []), tomb])
+      for (const [, tombs] of byTier) {
+        if (tombs.length < 2) continue
+        const [first, ...rest] = tombs
+        const firstIds = tableauLevels.filter(t => t.tombJourneyId === first.id).map(t => t.inventoryIds.join(","))
+        for (const other of rest) {
+          const otherIds = tableauLevels.filter(t => t.tombJourneyId === other.id).map(t => t.inventoryIds.join(","))
+          expect(otherIds).not.toEqual(firstIds)
+        }
       }
     })
   })
@@ -181,36 +120,22 @@ describe("Tableau System", () => {
 
   describe("Data Integrity", () => {
     it("should have valid tomb journey IDs", () => {
-      const validTombIds = journeys.filter(j => j.type === "treasure_tomb").map(j => j.id)
+      const validTombIds = tombJourneys.map(j => j.id)
 
       tableauLevels.forEach((tableau: TableauLevel) => {
         expect(validTombIds).toContain(tableau.tombJourneyId)
       })
     })
 
-    it("should use all symbols from the inventory system", () => {
-      // All symbols available in the inventory system
-      const allInventorySymbols = allItems.map(item => item.id)
-      // Collect all symbols used in tableaux
+    it("should use every hieroglyph symbol at least once", () => {
       const usedSymbols = new Set<string>()
       tableauLevels.forEach((tableau: TableauLevel) => {
-        tableau.inventoryIds.forEach((symbolId: string) => {
-          usedSymbols.add(symbolId)
-        })
+        tableau.inventoryIds.forEach((symbolId: string) => usedSymbols.add(symbolId))
       })
 
-      // Verify that every inventory symbol is used at least once
-      allInventorySymbols.forEach((symbol: string) => {
-        expect(usedSymbols.has(symbol)).toBe(true)
-      })
-
-      // Verify we're not using any symbols that aren't in the inventory
-      Array.from(usedSymbols).forEach((symbol: string) => {
-        expect(allInventorySymbols).toContain(symbol)
-      })
-
-      // Verify the counts match exactly
-      expect(usedSymbols.size).toBe(allInventorySymbols.length)
+      const allTombSymbols = Object.values(TOMB_SYMBOLS).flat()
+      allTombSymbols.forEach(symbol => expect(usedSymbols.has(symbol)).toBe(true))
+      expect(usedSymbols.size).toBe(allTombSymbols.length)
     })
 
     it("should have positive run numbers", () => {
@@ -236,11 +161,14 @@ describe("Tableau System", () => {
       })
     })
 
-    it("contains only inventory items from own or lower difficulty for first run", () => {
-      const tombs = journeys.filter(j => j.type === "treasure_tomb")
+    it("contains only inventory items from own or lower difficulty for the first floor", () => {
       const allowedDifficulties: Difficulty[] = []
-      tombs.forEach(tomb => {
-        allowedDifficulties.push(tomb.difficulty)
+      let lastDifficulty: Difficulty | undefined
+      tombJourneys.forEach(tomb => {
+        if (tomb.difficulty !== lastDifficulty) {
+          allowedDifficulties.push(tomb.difficulty)
+          lastDifficulty = tomb.difficulty
+        }
         const tableaus = tableauLevels.filter(t => t.tombJourneyId === tomb.id && t.runNumber === 1)
         tableaus.forEach((tableau: TableauLevel) => {
           const allowedSymbols = allowedDifficulties.flatMap(difficulty => TOMB_SYMBOLS[difficulty])
@@ -249,20 +177,6 @@ describe("Tableau System", () => {
           })
         })
       })
-    })
-  })
-
-  describe("Mathematical Verification", () => {
-    it("should match the expected formula: (4*4) + (6*6) + (4+4)*4 + (5+5)*5 + (4+4+4)*4 = 182", () => {
-      const starterCount = 4 * 4 // 16
-      const juniorCount = 6 * 6 // 36
-      const expertCount = (4 + 4) * 4 // 32 split across 2 tombs
-      const masterCount = (5 + 5) * 5 // 50 split across 2 tombs
-      const wizardCount = (4 + 4 + 4) * 4 // 48 split across 3 tombs
-      const expectedTotal = starterCount + juniorCount + expertCount + masterCount + wizardCount
-
-      expect(expectedTotal).toBe(182)
-      expect(tableauLevels).toHaveLength(expectedTotal)
     })
   })
 
@@ -282,110 +196,47 @@ describe("Tableau System", () => {
 
     const translatedTableauLevels = generateTableaus(t)
 
-    it("creates a representative tableau for the starter tomb", () => {
-      const starterTableaux = translatedTableauLevels.filter(
+    it("creates a representative tableau for the starter tomb's first floor", () => {
+      const firstTableau = translatedTableauLevels.find(
         (t: TableauLevel) => t.tombJourneyId === "starter_treasure_tomb" && t.runNumber === 1
-      )
-      expect(starterTableaux).toHaveLength(4)
-
-      // Check that the first tableau has the expected properties
-      const firstTableau = starterTableaux[0]
-      expect(firstTableau).toMatchInlineSnapshot(`
-        {
-          "description": "The merchant is granted an ankh, sealing a prosperous deal.",
-          "id": "tab_starter_r1_l1",
-          "inventoryIds": [
-            "p10",
-            "art1",
-          ],
-          "levelNr": 1,
-          "name": "Trade Blessing",
-          "runNumber": 1,
-          "symbolCount": 2,
-          "tombJourneyId": "starter_treasure_tomb",
-        }
-      `)
+      )!
+      expect(firstTableau.symbolCount).toBe(2)
+      expect(firstTableau.levelNr).toBe(1)
+      expect(firstTableau.inventoryIds).toHaveLength(2)
 
       const usedSymbols = allInventory
         .filter(item => firstTableau.inventoryIds.includes(item.id))
         .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓋹", "𓀃"])
+      expect(usedSymbols).toHaveLength(2)
     })
 
-    it("creates a representative tableau for the junior tomb", () => {
-      const juniorTableaux = translatedTableauLevels.filter(
+    it("creates a representative tableau for the junior tomb's first floor", () => {
+      const firstTableau = translatedTableauLevels.find(
         (t: TableauLevel) => t.tombJourneyId === "junior_treasure_tomb" && t.runNumber === 1
-      )
-      expect(juniorTableaux).toHaveLength(6)
-
-      // Check that the first tableau has the expected properties
-      const firstTableau = juniorTableaux[0]
-      expect(firstTableau).toMatchInlineSnapshot(`
-        {
-          "description": "The farmer, Hathor, and a cartouche bring blessing to the estate.",
-          "id": "tab_junior_r1_l1",
-          "inventoryIds": [
-            "p8",
-            "d15",
-            "art5",
-          ],
-          "levelNr": 1,
-          "name": "Estate Blessing",
-          "runNumber": 1,
-          "symbolCount": 3,
-          "tombJourneyId": "junior_treasure_tomb",
-        }
-      `)
-
-      const usedSymbols = allInventory
-        .filter(item => firstTableau.inventoryIds.includes(item.id))
-        .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓃒", "𓍷", "𓇅"])
+      )!
+      expect(firstTableau.symbolCount).toBe(3)
+      expect(firstTableau.levelNr).toBe(1)
+      expect(firstTableau.inventoryIds).toHaveLength(3)
     })
 
-    it("creates a representative tableau for the expert tomb", () => {
-      const expertTableaux = translatedTableauLevels.filter(
-        (t: TableauLevel) => t.tombJourneyId === "expert_treasure_tomb" && t.runNumber === 1
-      )
-      expect(expertTableaux).toHaveLength(4)
-
-      // Check that the first tableau has the expected properties
-      const firstTableau = expertTableaux[0]
-      expect(firstTableau).toMatchInlineSnapshot(`
-        {
-          "description": "At dawn, the high priest raises the ankh above the altar, the sistrum's chime echoing as sacred oils are poured into the canopic jar. The cartouche glimmers in the morning light, a silent witness to the ritual's power.",
-          "id": "tab_expert_r1_l1",
-          "inventoryIds": [
-            "art1",
-            "art5",
-            "art6",
-            "art3",
-          ],
-          "levelNr": 1,
-          "name": "Ritual of the Sacred Vessels",
-          "runNumber": 1,
-          "symbolCount": 4,
-          "tombJourneyId": "expert_treasure_tomb",
-        }
-      `)
-
-      const usedSymbols = allInventory
-        .filter(item => firstTableau.inventoryIds.includes(item.id))
-        .map(item => item.symbol)
-      expect(usedSymbols).toEqual(["𓋹", "𓎛", "𓍷", "𓎼"])
+    it("creates a representative tableau for the expert tomb's last floor", () => {
+      const expertTomb = tombJourneys.find(j => j.id === "expert_treasure_tomb")!
+      const lastTableau = translatedTableauLevels.find(
+        (t: TableauLevel) => t.tombJourneyId === "expert_treasure_tomb" && t.runNumber === expertTomb.levelCount
+      )!
+      expect(lastTableau.symbolCount).toBe(4)
+      expect(lastTableau.levelNr).toBe(1)
+      expect(lastTableau.inventoryIds).toHaveLength(4)
     })
 
-    it("creates a representative tableau for the wizard tomb", () => {
-      const wizardTableaux = translatedTableauLevels.filter(
-        (t: TableauLevel) => t.tombJourneyId === "wizard_treasure_tomb" && t.runNumber === 4
-      )
-      expect(wizardTableaux).toHaveLength(4)
-
-      // Check that the last tableau has the expected properties
-      const lastTableau = wizardTableaux[3]
+    it("creates a representative tableau for the wizard tomb's last floor", () => {
+      const wizardTomb = tombJourneys.find(j => j.id === "wizard_treasure_tomb")!
+      const lastTableau = translatedTableauLevels.find(
+        (t: TableauLevel) => t.tombJourneyId === "wizard_treasure_tomb" && t.runNumber === wizardTomb.levelCount
+      )!
       expect(lastTableau.tombJourneyId).toBe("wizard_treasure_tomb")
-      expect(lastTableau.runNumber).toBe(4)
-      expect(lastTableau.levelNr).toBe(4)
+      expect(lastTableau.runNumber).toBe(wizardTomb.levelCount)
+      expect(lastTableau.levelNr).toBe(1)
       expect(lastTableau.symbolCount).toBe(5)
       expect(lastTableau.inventoryIds).toHaveLength(5)
     })

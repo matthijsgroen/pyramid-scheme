@@ -6,8 +6,8 @@ structure or more than one kind of move — model that state as a domain
 object in `src/game/`, independent of React. This applies wherever such
 state lives: puzzle families, trap families, pyramid levels, journeys,
 inventory, progression — not just puzzles. Sumplete is the reference
-implementation (`src/game/puzzles/sumplete/sumpleteState.ts`,
-`src/game/puzzles/sumplete/sumpleteStatus.ts`).
+implementation (`src/mods/puzzle/game/sumplete/sumpleteState.ts`,
+`src/mods/puzzle/game/sumplete/sumpleteStatus.ts`).
 
 ## Where it lives
 

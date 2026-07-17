@@ -88,9 +88,18 @@
   "trap": {
     "warning": "⚠ Trapped Corridor",
     "canAttempt": "You can attempt to pass through.",
-    "tooWeak": "You are too weak to risk this trap. Turn around.",
+    "tooWeak": "Dangerously weak — a failed attempt will leave you with nothing.",
     "attempt": "Attempt the trap",
+    "heal": "Use a bandage",
+    "fullHeal": "Use oil (full heal)",
     "disable": "Disable trap",
+    "turnAround": "Turn around"
+  },
+  "gate": {
+    "title": "🔒 Locked Gate",
+    "locked": "You don't have the right key yet.",
+    "unlocked": "You have the key.",
+    "pass": "Pass through",
     "turnAround": "Turn around"
   },
   "chest": {
@@ -152,5 +161,22 @@
       "ancientRelics": "🏺 Ancient Relics",
       "mythicalArtifacts": "✨ Mythical Artifacts"
     }
+  },
+  "detector": {
+    "compassTitle": "Compass",
+    "consumableTitle": "Consumable detector",
+    "corridorTitle": "Hidden passageways",
+    "pickTarget": "Pick a hieroglyph to hunt in your Collection",
+    "allCollected": "All pieces collected",
+    "noSkippedChests": "No skipped chests",
+    "more": "+{{count}} more",
+    "corridorNearby": "Suspicious corners revealed nearby (L{{level}})",
+    "corridorOnFloor": "A hidden corridor waits on this floor",
+    "corridorPyramidCount_one": "This pyramid hides {{count}} unexplored corridor",
+    "corridorPyramidCount_other": "This pyramid hides {{count}} unexplored corridors",
+    "hunting": "Hunting {{symbol}}",
+    "huntStop": "Stop",
+    "huntHint": "Select an uncollected hieroglyph, then hunt it with the compass",
+    "huntAction": "Hunt {{symbol}}"
   }
 }

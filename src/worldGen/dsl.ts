@@ -12,7 +12,9 @@ export type PathEntry = {
   density: SideIntensity
   pathPuzzles: number
   end: PathEndHint
-  trapped?: boolean
+  /** Which family/tag renders this path's intermediate rooms — an exact registered family
+   * id (e.g. "tableau") or a tag (e.g. "trap"). Omit = the default for this slot's context. */
+  encounter?: string | string[]
   /** Lock this path behind a floor-key door. Color is drawn from the floor's keyColors rotation. */
   gate?: "floor-key"
   /** Chance [0-1], rolled per pyramid, that this entry emits at all. Omit = always. Use to
@@ -21,7 +23,11 @@ export type PathEntry = {
 }
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
-export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyphs" | "hieroglyphFragment"
+// A reward hint is a currency id — the DSL authors a soft placement preference for that
+// currency (resolved to a `{ type: "fragmentSlot", prefers: <id> }` slot), never a baked
+// reward. Unified bucket grammar: `<currencyId>` prefers any instance of that currency,
+// `<currencyId>:<instanceId>` prefers one specific instance (see the placement solver).
+export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
@@ -31,20 +37,72 @@ export type GateSpec =
   | { type: "tomb-key"; tombId: string; index: number }
   | { type: "floor-key"; color?: KeyColor }
 
-export type PuzzleFamily = "sumplete" | "tableau"
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
 export type PyramidSelector = number | "first" | "last" | "middle" | `${number}-${number}` | `last-${number}`
+
+/** Where along a path's encounter chain a selector applies. 1-based positions: `"first"`, `"last"`,
+ * an explicit `n`, or `{ every: k, from?: n }` (every k-th node, optionally starting at the n-th). */
+export type NodeWhere = "first" | "last" | number | { every: number; from?: number }
+
+/** An authoring selector that assigns an encounter preference to chosen node positions of a path
+ * (main path OR any side section). Generalises the old hardcoded "last main puzzle = capstone" into
+ * uniform authoring: `nodes: [{ where: "last", encounter: "capstone" }]`, `{ where: {every: 3},
+ * encounter: "trap" }`, `{ where: 4, encounter: "arithmetic-reflex" }`. Unselected nodes fall back
+ * to the path's `encounter` default; on overlap, the LATER selector in the array wins. Currently
+ * carries a family-swap (`encounter`) only; a `gate?` extension is designed but unbuilt
+ * (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). */
+export type NodeSelector = {
+  where: NodeWhere
+  /** Family/tag for the selected node(s) — an exact family id or a tag (e.g. "capstone", "trap"). */
+  encounter?: string | string[]
+}
+
+/** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
+ * role map (the resolved form the gen-time encounter pass + assembler read). 1-based `where`
+ * positions; out-of-range positions are dropped; later selectors win on overlap. Pure. */
+export const resolveNodeSelectors = (
+  nodes: NodeSelector[] | undefined,
+  count: number
+): Record<number, string | string[]> => {
+  const out: Record<number, string | string[]> = {}
+  if (!nodes || count <= 0) return out
+  const set = (oneBased: number, enc: string | string[] | undefined) => {
+    const i = oneBased - 1
+    if (enc !== undefined && i >= 0 && i < count) out[i] = enc
+  }
+  for (const sel of nodes) {
+    const w = sel.where
+    if (w === "first") set(1, sel.encounter)
+    else if (w === "last") set(count, sel.encounter)
+    else if (typeof w === "number") set(w, sel.encounter)
+    else {
+      // Clamp step to a positive integer so a bad `every` (0, negative, fractional) can't hang the
+      // build; a nonsense value degrades to "every node" rather than looping forever.
+      const step = Math.max(1, Math.floor(w.every))
+      for (let pos = w.from ?? 1; pos <= count; pos += step) set(pos, sel.encounter)
+    }
+  }
+  return out
+}
 
 export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** Which family/tag renders this section's intermediate rooms — an exact registered family
+   * id (e.g. "tableau", "sumplete") or a tag (e.g. "trap", "puzzle"). Omit = the default for
+   * this section's context (a side path defaults to the "puzzle" tag, i.e. sumplete). */
+  encounter?: string | string[]
+  /** Per-node encounter selectors — override `encounter` at chosen positions of this section's own
+   * puzzle chain (e.g. every 3rd a trap). See NodeSelector. */
+  nodes?: NodeSelector[]
+  /** Opaque payload for whichever family renders this section's rooms — e.g. a tableau
+   * section's `{runNr: 2}`, pulled through that family's own zod schema at assembly time
+   * (siteAssembler.ts's ResolveKeyRequirements). Lets a tableau corridor be authored
+   * anywhere (main path or a ward-gated side path) instead of being tied to floor position. */
+  encounterArgs?: unknown
   endReward?: RewardSpec | TExtra
-  /** Marks this section's endReward as a Fez-shop purchase instead of a free pickup — the
-   * DSL literal in coins. No `chance` allowed on a shop slot; must stay deterministic. */
-  shopPrice?: number
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
@@ -52,17 +110,21 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   end?: "treasure" | "staircase"
   /** Invisible without the Detection perk. */
   hidden?: boolean
-  /** Every intermediate room along this path is a trap instead of a puzzle. */
-  trapped?: boolean
   /** Isolates this section's cells from leftover maze edges in a compact layout, so a
-   * shortcut can't merge around it — same mechanism `gate`/`trapped` already get for free. */
+   * shortcut can't merge around it — same mechanism `gate`/an `encounter:"trap"` section
+   * already gets for free. */
   sealed?: boolean
 }
 
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** Default family/tag for this floor's main-path encounter rooms. */
+  encounter?: string | string[]
+  /** Per-node encounter selectors — override `encounter` at chosen positions of the main-path
+   * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
+   * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
+  nodes?: NodeSelector[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
@@ -71,6 +133,9 @@ export type FloorConstraint<TExtra extends string = never> = {
    * shortcut can't merge around a main-path puzzle room. */
   sealed?: boolean
   mainEndReward?: RewardHint | TExtra
+  /** Opaque payload for whichever family renders the main path's rooms — see
+   * SideSectionConstraint.encounterArgs above for the full rationale. */
+  encounterArgs?: unknown
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
   /**
@@ -90,6 +155,15 @@ export type FloorConstraint<TExtra extends string = never> = {
   hiddenPaths?: PathEntry[]
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
+}
+
+/** One authored ward wing: a gated staircase to a bonus floor at `difficulty`, keyed to a
+ * chosen tomb treasure (`tomb`/`index`). Authored form of `wardWings` — varied per wing. */
+export type WardWingSpec = {
+  tomb: string
+  index: number
+  difficulty?: Difficulty
+  puzzles?: number
 }
 
 export type PyramidConstraint = {
@@ -117,7 +191,9 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
-  puzzleFamily?: PuzzleFamily | PuzzleFamily[]
+  /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
+   * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. */
+  encounter?: string | string[]
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Chance [0-1], rolled per pyramid, of an extra-winding floor. Ignored if corridorStraightness is set. */
@@ -139,9 +215,11 @@ export type PyramidConstraint = {
   floors?: (FloorConstraint | null)[]
   /** Baseline floor count for the main path itself, before any ward wings. Default 1. */
   mainFloors?: number
-  /** Auto-generated ward-gated bonus floors branching off the last main floor, keyed from
-   * this tier's own tomb (skipping any index reserved for tier-unlock/location-key). */
-  wardWings?: number
+  /** Ward-gated bonus floors branching off the last main floor. A `number` auto-generates that
+   * many, keyed from this tier's own tomb at the pyramid's own difficulty. A `WardWingSpec[]`
+   * authors each wing explicitly — its own tomb key + difficulty — for varied "come back
+   * stronger" wings across a tier. */
+  wardWings?: number | WardWingSpec[]
   /** Ward-gated side paths off the last main floor — a single gated section with one reward,
    * not a whole bonus floor. Cheaper return-content; draws ward keys from the same pool as
    * wardWings (allocated after them). */
@@ -326,7 +404,7 @@ export const rules = (list: Rule[]): Rule[] => list
 // for `pathPuzzles`/`difficulty` — kept short here only; the underlying constraint
 // shape (and every other spec file) still uses the long names.
 
-type PathOpts = Omit<SideSectionConstraint, "pathPuzzles" | "difficulty" | "end" | "gate" | "hidden" | "trapped"> & {
+type PathOpts = Omit<SideSectionConstraint, "pathPuzzles" | "difficulty" | "end" | "gate" | "hidden" | "encounter"> & {
   puzzles?: PathPuzzlesPreset | number
   tier?: Difficulty
 }
@@ -349,14 +427,38 @@ export const wardPath = (opts: PathOpts & { tomb: string; index: number }): Side
   }
 }
 
+/** Authors one ward wing — a gated bonus floor at a chosen difficulty, keyed to a chosen tomb
+ * treasure. Pass an array of these as `wardWings` for varied "come back stronger" wings. */
+export const wardWing = (opts: { tomb: string; index: number; tier?: Difficulty; puzzles?: number }): WardWingSpec => ({
+  tomb: opts.tomb,
+  index: opts.index,
+  ...(opts.tier ? { difficulty: opts.tier } : {}),
+  ...(opts.puzzles !== undefined ? { puzzles: opts.puzzles } : {}),
+})
+
+/** A side path gated by a ward key (tomb treasure) ending in a loot chest — a "come back
+ * later" teaser. No endReward: the gated treasure becomes a fillable slot the loot solver
+ * assigns (currency if reachable, else mosaic/junk). Distinct from wardPath (a staircase
+ * route) and wardWings (a whole new floor). */
+export const wardChest = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
+  const { puzzles, tier, tomb: tombId, index, ...rest } = opts
+  return {
+    ...rest,
+    pathPuzzles: puzzles ?? 0,
+    ...(tier ? { difficulty: tier } : {}),
+    gate: { type: "tomb-key", tombId, index },
+    end: "treasure",
+  }
+}
+
 /** A hidden side path, invisible without the Detection perk. */
-export const hiddenPath = (opts: PathOpts & { trapped?: boolean } = {}): SideSectionConstraint => {
-  const { puzzles, tier, trapped, ...rest } = opts
+export const hiddenPath = (opts: PathOpts & { encounter?: string | string[] } = {}): SideSectionConstraint => {
+  const { puzzles, tier, encounter, ...rest } = opts
   return {
     ...rest,
     pathPuzzles: puzzles ?? 0,
     ...(tier ? { difficulty: tier } : {}),
     hidden: true,
-    ...(trapped ? { trapped: true } : {}),
+    ...(encounter !== undefined ? { encounter } : {}),
   }
 }

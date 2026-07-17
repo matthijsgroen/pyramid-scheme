@@ -1,6 +1,7 @@
 import type { FC } from "react"
 import clsx from "clsx"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { difficultyMaterial } from "@/ui/tokens/difficultyColors"
 
 type HieroglyphTileProps = {
   symbol?: string
@@ -65,6 +66,14 @@ const backgroundTexture = `
   radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0.5px, transparent 0.5px),
 `
 
+// Speck pattern layered over the offset drop-shadow element (same for every difficulty; only the
+// gradient underneath, from difficultyMaterial[difficulty].shadow, varies).
+const shadowTexture = `
+  radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+  radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+  radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
+`
+
 export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   symbol,
   difficulty,
@@ -123,147 +132,97 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   const edgeVariation = getEdgeVariation(symbol, difficulty)
 
   return (
+    // Wrapper carries the selection outline. A filter on the clipped tile itself gets cut off by
+    // its own clip-path, so the un-clipped wrapper renders stacked directional drop-shadows (a
+    // crisp ~2px edge tracing the chipped silhouette) plus a soft outer glow.
     <div
-      onClick={disabled ? undefined : onClick}
-      className={clsx(
-        // Base 3D stone tile styling with relative positioning for pseudo-element shadow
-        "relative flex items-center justify-center font-bold transition-all duration-200",
-        "transform-gpu",
-
-        // Size variations
-        sizeClasses[size],
-
-        // Interactive states
-        {
-          "cursor-pointer hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0":
-            !disabled && onClick,
-          "cursor-default opacity-50 grayscale": disabled,
-          "ring-2 ring-blue-400 ring-offset-2": selected && !disabled,
-        },
-
-        className
-      )}
+      className="inline-flex"
       style={{
-        // Stone-like chipped edges
-        clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
-
-        // Realistic 3D stone tile appearance with subtle texture overlay (darker for carved effect)
-        backgroundImage: disabled
-          ? "linear-gradient(145deg, #9ca3af, #6b7280)"
-          : difficulty === "starter"
-            ? `${backgroundTexture}
-              linear-gradient(145deg, var(--color-stone-300) 0%, var(--color-stone-400) 25%, var(--color-stone-500) 75%, var(--color-stone-800) 100%)
-            `
-            : difficulty === "junior"
-              ? `${backgroundTexture}
-                linear-gradient(145deg, var(--color-orange-300) 0%, var(--color-orange-400) 25%, var(--color-orange-500) 75%, var(--color-orange-800) 100%)
-              `
-              : difficulty === "expert"
-                ? `${backgroundTexture}
-                  linear-gradient(145deg, var(--color-slate-300) 0%, var(--color-slate-400) 25%, var(--color-slate-500) 75%, var(--color-slate-800) 100%)
-                `
-                : difficulty === "master"
-                  ? `${backgroundTexture}
-                    linear-gradient(145deg, var(--color-yellow-300) 0%, var(--color-yellow-400) 25%, var(--color-yellow-500) 75%, var(--color-yellow-800) 100%)
-                  `
-                  : `${backgroundTexture}
-                    linear-gradient(145deg, var(--color-emerald-300) 0%, var(--color-emerald-500) 25%, var(--color-emerald-600) 75%, var(--color-emerald-800) 100%)
-                  `,
-        backgroundSize: disabled ? "auto" : "12px 12px, 16px 16px, 8px 8px, 100% 100%",
-
-        // Inset shadows for 3D depth effect only
-        boxShadow: disabled
-          ? "none"
-          : selected
-            ? "inset -1px -1px 2px rgba(0, 0, 0, 0.1), inset 1px 1px 2px rgba(255, 255, 255, 0.8)"
-            : "inset -1px -1px 2px rgba(0, 0, 0, 0.1), inset 1px 1px 2px rgba(255, 255, 255, 0.8)",
+        filter:
+          selected && !disabled
+            ? "drop-shadow(2px 0 0 #2563eb) drop-shadow(-2px 0 0 #2563eb) drop-shadow(0 2px 0 #2563eb) drop-shadow(0 -2px 0 #2563eb) drop-shadow(0 0 4px rgba(37,99,235,0.7))"
+            : undefined,
       }}
     >
-      {/* Custom shadow element that follows the same clip-path */}
       <div
-        className="absolute inset-0"
-        style={{
-          // Same clip-path as the main element
-          clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
-          // Light background for raised shadow effect
-          background: disabled
-            ? "rgba(255, 255, 255, 0.8)"
-            : difficulty === "starter"
-              ? `
-                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-                radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-                radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                linear-gradient(145deg, var(--color-stone-100) 0%, var(--color-stone-200) 25%, var(--color-stone-400) 75%, var(--color-stone-600) 100%)
-              `
-              : difficulty === "junior"
-                ? `
-                  radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-                  radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-                  radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                  linear-gradient(145deg, var(--color-orange-50) 0%, var(--color-orange-100) 25%, var(--color-orange-300) 75%, var(--color-orange-500) 100%)
-                `
-                : difficulty === "expert"
-                  ? `
-                    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-                    radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-                    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                    linear-gradient(145deg, var(--color-slate-50) 0%, var(--color-slate-100) 25%, var(--color-slate-300) 75%, var(--color-slate-500) 100%)
-                  `
-                  : difficulty === "master"
-                    ? `
-                      radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-                      radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-                      radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                      linear-gradient(145deg, var(--color-yellow-50) 0%, var(--color-yellow-100) 25%, var(--color-yellow-200) 75%, var(--color-yellow-300) 100%)
-                    `
-                    : `
-                      radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-                      radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-                      radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.15) 0.5px, transparent 0.5px),
-                      linear-gradient(145deg, var(--color-emerald-100) 0%, var(--color-emerald-200) 25%, var(--color-emerald-400) 75%, var(--color-emerald-500) 100%)
-                    `,
-          // Offset the shadow
-          transform: disabled ? "translate(2px, 2px)" : "translate(3px, 4px)",
-          // Slight blur effect
-          filter: "blur(1px)",
-          // Put shadow behind everything
-          zIndex: -1,
-        }}
-      />
+        onClick={disabled ? undefined : onClick}
+        className={clsx(
+          // Base 3D stone tile styling with relative positioning for pseudo-element shadow
+          "relative flex items-center justify-center font-bold transition-all duration-200",
+          "transform-gpu",
 
-      {/* Stone surface with hieroglyph */}
-      <span
-        className="relative flex h-full w-full items-center justify-center font-mono select-none"
+          // Size variations
+          sizeClasses[size],
+
+          // Interactive states (selection cue is the wrapper's drop-shadow outline above — a ring
+          // here would be clipped away by this element's clip-path silhouette)
+          {
+            "cursor-pointer hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0":
+              !disabled && onClick,
+            "cursor-default opacity-50 grayscale": disabled,
+          },
+
+          className
+        )}
         style={{
-          // Symbol color matches the darker tile background
-          color: disabled
-            ? "#6b7280"
-            : difficulty === "starter"
-              ? "#57534e"
-              : difficulty === "junior"
-                ? "#92400e"
-                : difficulty === "expert"
-                  ? "#a16207"
-                  : difficulty === "master"
-                    ? "#c2410c"
-                    : "#b91c1c",
-          // Subtle engraved effect for the symbol
-          textShadow: disabled ? "none" : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
-          filter: selected ? "brightness(1.1)" : "none",
+          // Stone-like chipped edges
+          clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
+
+          // Realistic 3D stone tile appearance with subtle texture overlay (darker for carved effect)
+          backgroundImage: disabled
+            ? "linear-gradient(145deg, #9ca3af, #6b7280)"
+            : `${backgroundTexture}${difficultyMaterial[difficulty].tile}`,
+          backgroundSize: disabled ? "auto" : "12px 12px, 16px 16px, 8px 8px, 100% 100%",
+
+          // Inset shadows for 3D depth effect only
+          boxShadow: disabled
+            ? "none"
+            : "inset -1px -1px 2px rgba(0, 0, 0, 0.1), inset 1px 1px 2px rgba(255, 255, 255, 0.8)",
         }}
       >
-        {symbol}
-      </span>
-
-      {/* Partial-reveal overlay: masks the unfound portion (right side) */}
-      {fragmentProgress && fragmentProgress.found < fragmentProgress.required && (
+        {/* Custom shadow element that follows the same clip-path */}
         <div
-          className="pointer-events-none absolute inset-0"
+          className="absolute inset-0"
           style={{
-            background: `linear-gradient(to right, transparent ${Math.round((fragmentProgress.found / fragmentProgress.required) * 100)}%, rgba(0,0,0,0.72) ${Math.round((fragmentProgress.found / fragmentProgress.required) * 100)}%)`,
+            // Same clip-path as the main element
+            clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
+            // Light background for raised shadow effect
+            background: disabled
+              ? "rgba(255, 255, 255, 0.8)"
+              : `${shadowTexture}${difficultyMaterial[difficulty].shadow}`,
+            // Offset the shadow
+            transform: disabled ? "translate(2px, 2px)" : "translate(3px, 4px)",
+            // Slight blur effect
+            filter: "blur(1px)",
+            // Put shadow behind everything
+            zIndex: -1,
           }}
         />
-      )}
+
+        {/* Stone surface with hieroglyph */}
+        <span
+          className="relative flex h-full w-full items-center justify-center font-mono select-none"
+          style={{
+            // Symbol color matches the darker tile background
+            color: disabled ? "#6b7280" : difficultyMaterial[difficulty].symbol,
+            // Subtle engraved effect for the symbol
+            textShadow: disabled ? "none" : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
+            filter: selected ? "brightness(1.1)" : "none",
+          }}
+        >
+          {symbol}
+        </span>
+
+        {/* Partial-reveal overlay: masks the unfound portion (right side) */}
+        {fragmentProgress && fragmentProgress.found < fragmentProgress.required && (
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `linear-gradient(to right, transparent ${Math.round((fragmentProgress.found / fragmentProgress.required) * 100)}%, rgba(0,0,0,0.72) ${Math.round((fragmentProgress.found / fragmentProgress.required) * 100)}%)`,
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }

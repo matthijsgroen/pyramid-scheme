@@ -1,9 +1,57 @@
-import { describe, expect, it } from "vitest"
+import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { WORLD_TARGETS } from "./worldSpec"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
+// Deliberate exception to "src/worldGen/ never imports src/mods/": this integration spec
+// verifies the REAL, complete world, which needs the real mod-owned currencies — same standing
+// as scripts/generateWorld.ts, the other sanctioned place that reaches across for a full build.
+// Production code (configBuilder.ts/placeFragments.ts) never imports this; it derives the
+// expected reward counts from the injected currencies themselves.
+import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
+import {
+  CAPPED_CURRENCIES,
+  DYNAMIC_DISTRIBUTIONS,
+  MOD_WORLD_VALIDATORS,
+  MOD_REACHABILITY_SUPPORT,
+  MOD_TOMB_TREASURE_RESOLVER,
+  MOD_SHOP_STOCK,
+} from "../mods/registeredMods"
+import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import {
+  resolveKeyRequirements,
+  familyPriorityFor,
+  familyCapacityFor,
+  allocateEncounterFamily,
+} from "../mods/allFamilyMeta"
 
-// Golden guard for the world-builder refactor: buildConfigs() must keep
+// This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
+// check. The economy guard is a separate global invariant (validated by generate-world) that only
+// balances once the whole world is authored; skip it here so these assertions don't depend on
+// economy tuning mid-authoring.
+beforeAll(() => {
+  process.env.SKIP_ECONOMY_GUARD = "1"
+})
+afterAll(() => {
+  delete process.env.SKIP_ECONOMY_GUARD
+})
+
+const buildRealConfigs = () =>
+  buildConfigs(
+    resolveKeyRequirements,
+    ALL_CURRENCY_DISTRIBUTIONS,
+    CAPPED_CURRENCIES,
+    DYNAMIC_DISTRIBUTIONS,
+    MOD_WORLD_VALIDATORS,
+    familyPriorityFor,
+    0,
+    allocateEncounterFamily,
+    MOD_REACHABILITY_SUPPORT,
+    MOD_TOMB_TREASURE_RESOLVER,
+    familyCapacityFor,
+    MOD_SHOP_STOCK
+  )
+
+// Golden guard for the world-builder refactor: buildRealConfigs() must keep
 // producing the same reward counts and the same output on every run.
 
 const countRewards = (configs: Record<string, SiteConfig[]>) => {
@@ -16,11 +64,19 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
     if (r.type === "mosaicPiece") mosaicPieces++
   }
 
+  // Count both node reward fields: the path-end `endReward` AND every `rewards[]` entry (shop stock
+  // lives here) — mirrors validate.ts + the detector's uniform sweep.
+  const counts = (rs: (TreasureReward | undefined)[] | undefined) => rs?.forEach(count)
   const countFloor = (floor: FloorConfig) => {
     count(floor.mainEndReward)
+    counts(floor.rewards)
     for (const s of floor.sideSections) {
       count(s.endReward)
-      for (const sub of s.sideSections ?? []) count(sub.endReward)
+      counts(s.rewards)
+      for (const sub of s.sideSections ?? []) {
+        count(sub.endReward)
+        counts(sub.rewards)
+      }
     }
   }
 
@@ -34,24 +90,28 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 }
 
 describe("buildConfigs golden guard", () => {
-  it("hits WORLD_TARGETS exactly", () => {
-    const configs = buildConfigs()
+  it("hits reward targets exactly (map + mosaic from their mods)", () => {
+    const configs = buildRealConfigs()
     expect(countRewards(configs)).toEqual({
       mapPieces: WORLD_TARGETS.mapPieceRewards,
-      mosaicPieces: WORLD_TARGETS.mosaicPieceRewards,
+      mosaicPieces: MOSAIC_TOTAL,
     })
-  })
+  }, 20000)
 
   it("is deterministic across runs", () => {
-    const first = buildConfigs()
-    const second = buildConfigs()
+    const first = buildRealConfigs()
+    const second = buildRealConfigs()
     expect(second).toEqual(first)
-  })
+  }, 20000)
 })
 
 describe("tomb floor linking — ward-path shortcuts", () => {
-  const configs = buildConfigs()
-  const floors = configs.junior_treasure_tomb[0]
+  // Built in beforeAll (not the describe body) so it runs AFTER the top-level beforeAll sets
+  // SKIP_ECONOMY_GUARD — a describe-body call would execute at collection time, before it.
+  let floors: FloorConfig[]
+  beforeAll(() => {
+    floors = buildRealConfigs().junior_treasure_tomb[0]
+  })
 
   it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
     for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")
@@ -63,15 +123,23 @@ describe("tomb floor linking — ward-path shortcuts", () => {
       expect(shortcut).toBeDefined()
       expect(shortcut!.gate).toEqual({
         type: "tomb-key",
-        wardKeyId: (floors[i].mainEndReward as { keyId: string }).keyId,
+        wardKeyId: (floors[i].mainEndReward as unknown as { keyId: string }).keyId,
       })
       expect(typeof shortcut!.end).toBe("object")
     }
   })
 
-  it("the last floor has no ward-path shortcut", () => {
+  it("the last floor gets a ward-chest loot pocket (not a staircase shortcut) keyed on its own treasure", () => {
+    // §E: every treasure gates an (optional) pocket — the last floor has no next floor to skip
+    // to, so its own treasure gates a loot chest instead of a shortcut staircase.
     const last = floors[floors.length - 1]
-    expect(last.sideSections.some(s => s.gate?.type === "tomb-key")).toBe(false)
+    const pocket = last.sideSections.find(s => s.gate?.type === "tomb-key")
+    expect(pocket).toBeDefined()
+    expect(pocket!.gate).toEqual({
+      type: "tomb-key",
+      wardKeyId: (last.mainEndReward as unknown as { keyId: string }).keyId,
+    })
+    expect(pocket!.end).toBe("treasure") // a chest, not a { stairId } staircase
   })
 
   it("wires each floor's entrance to the previous floor's shortcut stairId", () => {

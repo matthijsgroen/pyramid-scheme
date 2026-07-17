@@ -48,6 +48,15 @@ const firstPyramid = (): FloorConfig => ({
   ],
 })
 
+// Classify an "encounter" room by its assigned family id.
+const isPuzzleRoom = (c: RoomCell) =>
+  c.roomType === "encounter" && ["sumplete", "tableau", "crocodile"].includes(c.family ?? "")
+const isTrapRoom = (c: RoomCell) => c.roomType === "encounter" && c.family === "arithmetic-reflex"
+const isTreasureRoom = (c: RoomCell) =>
+  c.roomType === "encounter" && ["treasure-chest", "fez-shop"].includes(c.family ?? "")
+const isGateRoom = (c: RoomCell) => c.roomType === "encounter" && !!c.tags?.includes("gate")
+const isStairheadRoom = (c: RoomCell) => c.roomType === "portal" && !!c.stairId
+
 const findRoom = (grid: FloorGrid, predicate: (cell: RoomCell) => boolean) => {
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
@@ -69,32 +78,90 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
-  it("goal room falls back to the grant-nothing placeholder, not a free mosaicPiece, when mainEndReward is unset", () => {
+  it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index and the floor's encounterArgs", () => {
+    const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau", encounterArgs: { runNr: 7 } }
+    const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {
+      resolveKeyRequirements: (familyId, ctx) =>
+        familyId === "tableau"
+          ? [`hieroglyph:${ctx.journeyId}:${ctx.floorIndex}:${ctx.pathIndex}:${JSON.stringify(ctx.encounterArgs)}`]
+          : undefined,
+      floorRef: { journeyId: "starter_treasure_tomb", floorIndex: 2 },
+    })
+    if (!result.success) throw new Error("assembly failed")
+    const puzzleRooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(puzzleRooms).toHaveLength(2)
+    const pathIndices = puzzleRooms.map(c => c.pathIndex).sort()
+    expect(pathIndices).toEqual([0, 1])
+    for (const room of puzzleRooms) {
+      expect(room.requiredKeyIds).toEqual([
+        `hieroglyph:starter_treasure_tomb:2:${room.pathIndex}:${JSON.stringify({ runNr: 7 })}`,
+      ])
+    }
+  })
+
+  it("resolves a side-section puzzle room's own key requirement via the injected resolver, using that section's own encounterArgs and its own room position", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      sideSections: [
+        {
+          pathPuzzles: 2,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "tableau",
+          encounterArgs: { runNr: 3 },
+        },
+      ],
+    }
+    const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {
+      resolveKeyRequirements: (familyId, ctx) =>
+        familyId === "tableau" ? [`hieroglyph:${ctx.pathIndex}:${JSON.stringify(ctx.encounterArgs)}`] : undefined,
+      floorRef: { journeyId: "starter_treasure_tomb", floorIndex: 2 },
+    })
+    if (!result.success) throw new Error("assembly failed")
+    const puzzleRooms = result.grid.cells
+      .flat()
+      .filter((c): c is RoomCell => c.type === "room" && c.family === "tableau")
+    expect(puzzleRooms).toHaveLength(2)
+    const keys = puzzleRooms.map(c => c.requiredKeyIds?.[0]).sort()
+    expect(keys).toEqual([
+      `hieroglyph:0:${JSON.stringify({ runNr: 3 })}`,
+      `hieroglyph:1:${JSON.stringify({ runNr: 3 })}`,
+    ])
+  })
+
+  it("goal room grants nothing, not a free mosaicPiece, when mainEndReward is unset", () => {
     // Regression guard: an unset mainEndReward used to fall back to `{type:"mosaicPiece"}` —
     // a free, uncounted reward validate.ts's 298-budget guard can never see (it only reads
     // stored config, never this runtime fallback).
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const goal = findRoom(result.grid, c => c.roomType === "treasure")
-    expect(goal?.cell.reward).toEqual({ type: "hieroglyphs" })
+    const goal = findRoom(result.grid, isTreasureRoom)
+    expect(goal?.cell.reward).toBeUndefined()
   })
 
-  it("carries a section's shopPrice through to its end room", () => {
+  it("renders a shop section's stock array at its (chainless) end room", () => {
+    // A shop is a pathPuzzles:0 section whose encounter resolves to fez-shop; its end node carries
+    // the section's `rewards[]` as buyable stock.
     const config: FloorConfig = {
       pathPuzzles: 2,
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [
-        { pathPuzzles: 1, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" }, shopPrice: 500 },
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          rewards: [{ type: "mosaicPiece" }, undefined],
+        },
       ],
     }
     const result = assembleFloor("shop-site", config, 0)
     if (!result.success) throw new Error("assembly failed")
-    const priced = result.grid.cells.flat().filter(c => c.type === "room" && c.shopPrice !== undefined) as RoomCell[]
-    expect(priced).toHaveLength(1)
-    expect(priced[0].shopPrice).toBe(500)
-    expect(priced[0].reward).toEqual({ type: "mosaicPiece" })
+    const shops = result.grid.cells.flat().filter(c => c.type === "room" && c.family === "fez-shop") as RoomCell[]
+    expect(shops).toHaveLength(1)
+    expect(shops[0].stock).toEqual([{ type: "mosaicPiece" }, undefined])
   })
 
   it("carries stairId through to a stairhead room, and populates grid.staircases from it", () => {
@@ -110,16 +177,16 @@ describe(assembleFloor, () => {
     }
     const result = assembleFloor("stair-site", config, 0)
     if (!result.success) throw new Error("assembly failed")
-    const stairhead = findRoom(result.grid, c => c.roomType === "stairhead")
+    const stairhead = findRoom(result.grid, isStairheadRoom)
     expect(stairhead?.cell.stairId).toBe("test:main")
     expect(result.grid.staircases["test:main"]).toEqual([stairhead!.r, stairhead!.c])
   })
 
-  it("does not set shopPrice on an ordinary (non-shop) end-of-path room", () => {
+  it("does not set stock on an ordinary (non-shop) end-of-path room", () => {
     const result = assembleFloor("site-1", basicConfig(), 42)
     if (!result.success) throw new Error("assembly failed")
-    const goal = findRoom(result.grid, c => c.roomType === "treasure")
-    expect(goal?.cell.shopPrice).toBeUndefined()
+    const goal = findRoom(result.grid, isTreasureRoom)
+    expect(goal?.cell.stock).toBeUndefined()
   })
 
   it("has an entrance node on the grid edge", () => {
@@ -246,8 +313,8 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", firstPyramid(), 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(findRoom(result.grid, c => c.roomType === "stairhead")).not.toBeNull()
-      expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
+      expect(findRoom(result.grid, isStairheadRoom)).not.toBeNull()
+      expect(findRoom(result.grid, isGateRoom)).not.toBeNull()
     }
   })
 
@@ -325,6 +392,50 @@ describe(assembleFloor, () => {
     }
   })
 
+  it("a floor-key gated section's own authored endReward survives — never overwritten by a chain-internal relay key", () => {
+    // Real bug found via reachability-aware fragment placement: when several floor-key
+    // gated treasure-end sections share a floor, the chain-relay mechanism (each section's
+    // end room grants the NEXT gate's key) picked chain[ci-1] as a host with zero regard for
+    // whether that section already carried its own authored endReward — silently replacing
+    // a real reward (e.g. a hieroglyph fragment) with a synthetic tombKey. Two free
+    // (rewardless) gated sections plus one rewarded one, swept across seeds so the random
+    // chain-shuffle can't dodge the bug by luck: the rewarded section's own reward must
+    // always survive, regardless of where the shuffle places it in the chain.
+    const config = (): FloorConfig => ({
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key", color: "blue" } },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key", color: "red" } },
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          gate: { type: "floor-key", color: "green" },
+          endReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
+        },
+      ],
+    })
+
+    let sawRewardedGate = false
+    for (let seed = 0; seed < 20; seed++) {
+      const result = assembleFloor("chain-reward-safety", config(), seed)
+      if (!result.success) continue
+      const rewardedGateRoom = result.grid.cells
+        .flat()
+        .find((c): c is RoomCell => c.type === "room" && c.gateVariant === "floor-key" && c.keyColor === "green")
+      if (!rewardedGateRoom) continue // this attempt's layout didn't place it reachably; skip
+      sawRewardedGate = true
+      const mapPieceRoom = result.grid.cells
+        .flat()
+        .find((c): c is RoomCell => c.type === "room" && c.reward?.type === "mapPiece")
+      expect(mapPieceRoom).toBeDefined()
+    }
+    expect(sawRewardedGate).toBe(true) // otherwise this test never actually exercised the gate
+  })
+
   it("trapped sections have no back-door either — removing the first trap cuts off its whole chain", () => {
     // Same leftover-spanning-tree-edge risk as gated sections, but for ungated trapped
     // content: without isolation, a stray door could let a player step past a trap
@@ -357,7 +468,7 @@ describe(assembleFloor, () => {
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [
-        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, trapped: true },
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, encounter: "trap" },
         { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
       ],
     })
@@ -370,7 +481,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "trap") traps.push([r, c])
+          if (cell.type === "room" && isTrapRoom(cell)) traps.push([r, c])
         }
       if (traps.length === 0) continue
 
@@ -428,7 +539,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+          if (cell.type === "room" && isPuzzleRoom(cell)) puzzles.push([r, c])
         }
       if (puzzles.length === 0) continue
 
@@ -480,7 +591,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++)
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "puzzle") puzzles.push([r, c])
+          if (cell.type === "room" && isPuzzleRoom(cell)) puzzles.push([r, c])
         }
       if (puzzles.length === 0) continue
 
@@ -503,7 +614,7 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(findRoom(result.grid, c => c.roomType === "gate")).not.toBeNull()
+      expect(findRoom(result.grid, isGateRoom)).not.toBeNull()
       expect(findRoom(result.grid, c => c.reward?.type === "tombKey")).not.toBeNull()
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }
@@ -517,15 +628,15 @@ describe(assembleFloor, () => {
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
-      puzzleFamily: "tableau",
+      encounter: "tableau",
       sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
     }
     const result = assembleFloor("site-1", config, 1)
     expect(result.success).toBe(true)
     if (result.success) {
-      const mainPuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      const mainPuzzle = findRoom(result.grid, c => isPuzzleRoom(c) && c.family === "tableau")
       expect(mainPuzzle).not.toBeNull()
-      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "sumplete")
+      const sidePuzzle = findRoom(result.grid, c => isPuzzleRoom(c) && c.family === "sumplete")
       expect(sidePuzzle).not.toBeNull()
     }
   })
@@ -538,12 +649,12 @@ describe(assembleFloor, () => {
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
-      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", puzzleFamily: "tableau" }],
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", encounter: "tableau" }],
     }
     const result = assembleFloor("site-1", config, 1)
     expect(result.success).toBe(true)
     if (result.success) {
-      const sidePuzzle = findRoom(result.grid, c => c.roomType === "puzzle" && c.family === "tableau")
+      const sidePuzzle = findRoom(result.grid, c => isPuzzleRoom(c) && c.family === "tableau")
       expect(sidePuzzle).not.toBeNull()
     }
   })
@@ -560,7 +671,7 @@ describe(assembleFloor, () => {
       const result = assembleFloor("site-1", config, 42)
       expect(result.success, `pathPuzzles=${pathPuzzles} failed`).toBe(true)
       if (result.success) {
-        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && isPuzzleRoom(c))
         expect(puzzles.length, `pathPuzzles=${pathPuzzles} wrong count`).toBe(pathPuzzles)
       }
     }
@@ -577,8 +688,10 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(findRoom(result.grid, c => c.roomType === "stairhead")).not.toBeNull()
-      expect(findRoom(result.grid, c => c.roomType === "exit")).toBeNull()
+      const [exR, exC] = result.grid.exitPos
+      const exitCell = result.grid.cells[exR][exC]
+      expect(exitCell.type).toBe("room")
+      if (exitCell.type === "room") expect(exitCell.stairId).toBeDefined()
     }
   })
 
@@ -595,7 +708,7 @@ describe(assembleFloor, () => {
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      const gate = findRoom(result.grid, c => c.roomType === "gate")
+      const gate = findRoom(result.grid, isGateRoom)
       expect(gate).not.toBeNull()
       expect(gate!.cell.gateVariant).toBe("tomb-key")
       // tomb-key gates don't place a key on the floor
@@ -603,19 +716,19 @@ describe(assembleFloor, () => {
     }
   })
 
-  it("puzzleRewards: attaches config.puzzleRewards[k] onto the k-th main-path puzzle room, in order", () => {
+  it("rewards: attaches config.rewards[k] onto the k-th main-path puzzle room, in order", () => {
     const config: FloorConfig = {
       pathPuzzles: 4,
       difficulty: "starter",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [],
-      puzzleRewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
+      rewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
     if (result.success) {
-      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle") as RoomCell[]
+      const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && isPuzzleRoom(c)) as RoomCell[]
       expect(puzzles).toHaveLength(4)
       const rewards = puzzles.map(p => p.reward?.type)
       expect(rewards).toContain("money")
@@ -653,7 +766,7 @@ describe(assembleFloor, () => {
       for (let r = 0; r < grid.rows; r++) {
         for (let c = 0; c < grid.cols; c++) {
           const cell = grid.cells[r][c]
-          if (cell.type === "room" && cell.roomType === "puzzle") puzzleDistances.push(distanceTo(r, c))
+          if (cell.type === "room" && isPuzzleRoom(cell)) puzzleDistances.push(distanceTo(r, c))
           // A branch point is any node with more than 2 connections — whether that's a
           // dedicated "fork" room, or a side section attached straight onto an existing
           // main-path room's own cell (which keeps that room's original roomType).
@@ -723,7 +836,7 @@ describe(assembleFloor, () => {
     for (let r = 0; r < result.grid.rows; r++)
       for (let c = 0; c < result.grid.cols; c++) {
         const cell = result.grid.cells[r][c]
-        if (cell.type === "room" && cell.roomType === "puzzle") puzzleRooms.add(`${r},${c}`)
+        if (cell.type === "room" && isPuzzleRoom(cell)) puzzleRooms.add(`${r},${c}`)
       }
     // 1 main-path puzzle + 1 parent-section puzzle + 3 sub-section puzzles, all distinct.
     expect(puzzleRooms.size).toBe(5)
@@ -798,13 +911,13 @@ describe(assembleFloor, () => {
         difficulty: "expert",
         end: "treasure",
         exitOrStaircase: "exit",
-        sideSections: [{ pathPuzzles: 2, difficulty: "expert", end: "treasure", trapped: true }],
+        sideSections: [{ pathPuzzles: 2, difficulty: "expert", end: "treasure", encounter: "trap" }],
       }
       const result = assembleFloor("site-trap", config, 42)
       expect(result.success).toBe(true)
       if (result.success) {
-        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
-        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "puzzle")
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && isTrapRoom(c))
+        const puzzles = result.grid.cells.flat().filter(c => c.type === "room" && isPuzzleRoom(c))
         expect(traps.length).toBe(2)
         expect(puzzles.length).toBe(1) // only the main path puzzle
       }
@@ -821,7 +934,7 @@ describe(assembleFloor, () => {
       const result = assembleFloor("site-notrap", config, 42)
       expect(result.success).toBe(true)
       if (result.success) {
-        const traps = result.grid.cells.flat().filter(c => c.type === "room" && c.roomType === "trap")
+        const traps = result.grid.cells.flat().filter(c => c.type === "room" && isTrapRoom(c))
         expect(traps.length).toBe(0)
       }
     })

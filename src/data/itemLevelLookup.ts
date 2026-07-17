@@ -1,13 +1,12 @@
 import { TOMB_SYMBOLS } from "@/data/tableaus"
 import { difficulties, type Difficulty } from "./difficultyLevels"
-import { difficultyTreasures } from "./treasures"
 
 /**
- * Get the first (lowest) level where an item appears
- * @param itemId - The inventory item ID
- * @returns The lowest level number where the item appears, or null if not found
+ * Get the first (lowest) level where a tableau symbol appears.
+ * @param itemId - The inventory item ID (a tableau/hieroglyph symbol)
+ * @returns The lowest difficulty where the symbol appears, or undefined if not found. Tomb-treasure
+ * ids aren't resolved here — that content is mod-owned; a treasure carries its own difficulty on the
+ * Collection item it emits.
  */
 export const getItemFirstLevel = (itemId: string): Difficulty =>
-  difficulties.find(
-    key => TOMB_SYMBOLS[key].some(item => item === itemId) || difficultyTreasures[key].some(item => item.id === itemId)
-  )!
+  difficulties.find(key => TOMB_SYMBOLS[key].some(item => item === itemId))!

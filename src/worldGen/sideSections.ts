@@ -3,9 +3,9 @@ import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
+import { resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
-const DENSITY_FRACTION: Record<SideIntensity, number> = { none: 0, low: 0.33, medium: 0.5, dense: 1.0 }
 
 // Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
 export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
@@ -31,25 +31,35 @@ const buildDslSection = <TExtra extends string>(
   stairIndex: number
 ): SideSection => {
   const gate = specToGate(cs.gate)
-  const endReward = cs.endReward !== undefined ? resolveReward(cs.endReward) : undefined
   const sectionDifficulty = cs.difficulty ?? difficulty
   const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, journeyId)
   const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${stairIndex}` } : ("treasure" as const)
+  // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
+  // untagged `treasure` slot (filled by whatever's spare). A gated end already becomes a slot via
+  // its open gate (collectSlots); a staircase end bears no reward.
+  const endReward =
+    cs.endReward !== undefined
+      ? resolveReward(cs.endReward)
+      : end === "treasure" && !gate
+        ? pathEndToReward("treasure")
+        : undefined
+  const pathPuzzles = typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0
+  // This section's own per-node encounter overrides (authored `nodes` selectors) — selectors work
+  // on any path, not just the main path (§G).
+  const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   return {
-    pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
+    pathPuzzles,
     difficulty: sectionDifficulty,
     end,
     ...(gate ? { gate } : {}),
     ...(endReward ? { endReward } : {}),
-    ...(cs.shopPrice !== undefined ? { shopPrice: cs.shopPrice } : {}),
     ...(subSections.length > 0 ? { sideSections: subSections } : {}),
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
-    ...(cs.trapped ? { trapped: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
-    // Array form exists on the constraint type but is never authored/resolved anywhere —
-    // only forward a plain single family.
-    ...(cs.puzzleFamily && !Array.isArray(cs.puzzleFamily) ? { puzzleFamily: cs.puzzleFamily } : {}),
+    ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
+    ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
+    ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
   }
 }
 
@@ -73,10 +83,6 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
   hasWardGate?: boolean
   nextTier?: string | null
-  /** Pyramid-only: appends this many auto-distributed mosaic side paths, key-gated by density. */
-  mosaicPathCount?: number
-  mainPathPuzzles?: number
-  keyDensity?: SideIntensity
   keyColors?: number
   pyramidIndex?: number
   /** Pyramid-only: DSL-declared visible/hidden side paths (density-driven, auto-counted). */
@@ -96,9 +102,6 @@ export const buildSideSections = <TExtra extends string = never>(
     hasMapPieceBranch,
     hasWardGate,
     nextTier,
-    mosaicPathCount = 0,
-    mainPathPuzzles = 0,
-    keyDensity,
     keyColors,
     pyramidIndex = 0,
     declaredSidePaths,
@@ -108,8 +111,17 @@ export const buildSideSections = <TExtra extends string = never>(
   const sections: SideSection[] = []
 
   if (hasMapPieceBranch) {
+    // A generic fragmentSlot sentinel tagged for this tier's tomb — the tomb-treasure mod's
+    // map-piece currency (MAP_PIECE_CURRENCY) prefers this `prefers` tag and fills it, so core
+    // world-gen never names the `mapPiece` reward type. `hasMapPieceBranch` stays a structural
+    // flag (where the branch lives), not a reward-type name. See docs/mods/ARCHITECTURE.md (tombTreasure mod).
     const tombId = `${tier}_treasure_tomb`
-    sections.push({ pathPuzzles: 0, difficulty, end: "treasure", endReward: { type: "mapPiece", tombId } })
+    sections.push({
+      pathPuzzles: 0,
+      difficulty,
+      end: "treasure",
+      endReward: { type: "fragmentSlot", prefers: `mapPiece:${tombId}` },
+    })
   }
 
   if (hasWardGate && nextTier) {
@@ -121,20 +133,7 @@ export const buildSideSections = <TExtra extends string = never>(
 
   sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, journeyId, sections.length))
 
-  // Auto/density mosaic side paths — apply key gating by density + color count
-  const gatedCount = keyDensity ? Math.round(mosaicPathCount * DENSITY_FRACTION[keyDensity]) : 0
   const colorCount = Math.min(keyColors ?? 1, 5)
-  const mosaicPP = Math.max(0, Math.round(mainPathPuzzles / 3))
-  for (let j = 0; j < mosaicPathCount; j++) {
-    const gate = j < gatedCount ? { type: "floor-key" as const, color: ALL_KEY_COLORS[j % colorCount] } : undefined
-    sections.push({
-      pathPuzzles: mosaicPP,
-      difficulty,
-      end: "treasure",
-      endReward: { type: "mosaicPiece" },
-      ...(gate ? { gate } : {}),
-    })
-  }
 
   // Per-pyramid emit count for a declared entry — its density count, or 0 if it declares a
   // `chance` and this pyramid's roll misses (scatters e.g. trapped paths across some pyramids).
@@ -146,11 +145,11 @@ export const buildSideSections = <TExtra extends string = never>(
 
   // Declared sidePaths / hiddenPaths from DSL. Visible sidePaths may opt into a floor-key
   // gate; colors rotate through the floor's keyColors count, continuing the auto-mosaic run.
-  let gatedColorIdx = gatedCount
+  let gatedColorIdx = 0
   ;(declaredSidePaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `sidepath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:sidepath:${ei}:${j}`)
+      const endReward = pathEndToReward(entry.end)
       const gate =
         entry.gate === "floor-key"
           ? { type: "floor-key" as const, color: ALL_KEY_COLORS[gatedColorIdx++ % colorCount] }
@@ -161,21 +160,21 @@ export const buildSideSections = <TExtra extends string = never>(
         end: "treasure",
         ...(endReward ? { endReward } : {}),
         ...(gate ? { gate } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
+        ...(entry.encounter !== undefined ? { encounter: entry.encounter } : {}),
       })
     }
   })
   ;(declaredHiddenPaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `hiddenpath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:hiddenpath:${ei}:${j}`)
+      const endReward = pathEndToReward(entry.end)
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,
         end: "treasure",
         hidden: true,
         ...(endReward ? { endReward } : {}),
-        ...(entry.trapped ? { trapped: true } : {}),
+        ...(entry.encounter !== undefined ? { encounter: entry.encounter } : {}),
       })
     }
   })

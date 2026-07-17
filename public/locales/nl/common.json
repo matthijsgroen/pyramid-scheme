@@ -88,9 +88,18 @@
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
     "canAttempt": "Je kunt proberen door te gaan.",
-    "tooWeak": "Je bent te zwak om dit risico te nemen. Draai om.",
+    "tooWeak": "Gevaarlijk zwak — een mislukte poging laat je met niets achter.",
     "attempt": "Val proberen",
+    "heal": "Gebruik verband",
+    "fullHeal": "Gebruik olie (volledig herstel)",
     "disable": "Val uitschakelen",
+    "turnAround": "Omdraaien"
+  },
+  "gate": {
+    "title": "🔒 Gesloten Poort",
+    "locked": "Je hebt de juiste sleutel nog niet.",
+    "unlocked": "Je hebt de sleutel.",
+    "pass": "Doorgaan",
     "turnAround": "Omdraaien"
   },
   "chest": {
@@ -152,5 +161,22 @@
       "ancientRelics": "🏺 Oude Relieken",
       "mythicalArtifacts": "✨ Mythische Artefacten"
     }
+  },
+  "detector": {
+    "compassTitle": "Kompas",
+    "consumableTitle": "Voorraaddetector",
+    "corridorTitle": "Verborgen gangen",
+    "pickTarget": "Kies een hiëroglief om op te jagen in je collectie",
+    "allCollected": "Alle stukken verzameld",
+    "noSkippedChests": "Geen overgeslagen kisten",
+    "more": "+{{count}} meer",
+    "corridorNearby": "Verdachte hoeken onthuld in de buurt (N{{level}})",
+    "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
+    "corridorPyramidCount_one": "Deze piramide verbergt {{count}} onontdekte gang",
+    "corridorPyramidCount_other": "Deze piramide verbergt {{count}} onontdekte gangen",
+    "hunting": "Op jacht naar {{symbol}}",
+    "huntStop": "Stop",
+    "huntHint": "Selecteer een niet-verzamelde hiëroglief en jaag erop met het kompas",
+    "huntAction": "Jaag op {{symbol}}"
   }
 }

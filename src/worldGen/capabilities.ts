@@ -6,8 +6,6 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 export type SiteCapabilities = {
   /** fragmentSlot sentinels eligible for collectSlots / assignFragments. */
   emitFragmentSlots: boolean
-  /** Auto-distributed mosaic side paths (computeMosaicPaths + the buildSideSections auto loop). */
-  emitMosaics: boolean
   /** The hardcoded mapPiece side-branch auto-injected by buildSideSections. */
   emitMapPiece: boolean
   /** The stateful tomb perk/ward-key allocator (resolveTombReward's "tombTreasure" hint). */
@@ -16,14 +14,12 @@ export type SiteCapabilities = {
 
 export const PYRAMID_CAPABILITIES: SiteCapabilities = {
   emitFragmentSlots: true,
-  emitMosaics: true,
   emitMapPiece: true,
   emitPerkStream: false,
 }
 
 export const TOMB_CAPABILITIES: SiteCapabilities = {
   emitFragmentSlots: true,
-  emitMosaics: true,
   emitMapPiece: false,
   emitPerkStream: true,
 }

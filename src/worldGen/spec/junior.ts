@@ -1,6 +1,14 @@
-import { tier, tomb, sidePath } from "../dsl"
-import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
+import { tier, journey, tomb, sidePath, wardWing } from "../dsl"
 import type { Rule } from "../dsl"
+
+// Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
+// journey (where the auto tier-unlock gate already sits). Each is a bonus floor at a HARDER
+// tier's difficulty, gated by that tier's unlock treasure — so you return once you've unlocked it.
+const WING = {
+  expert: () => wardWing({ tomb: "junior_treasure_tomb", index: 0, tier: "expert", puzzles: 1 }), // junior_a_1
+  master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, tier: "master", puzzles: 2 }), // expert_a_1
+  wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, tier: "wizard", puzzles: 2 }), // master_a_1
+}
 
 export const juniorRules: Rule[] = [
   tier("junior", { difficulty: "junior" }),
@@ -15,28 +23,36 @@ export const juniorRules: Rule[] = [
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "junk", trapped: true, chance: 0.4 }),
+    .settings({ pathPuzzles: 1, end: "junk", encounter: "trap", chance: 0.4 }),
+
+  // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
+  journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),
+  journey("junior_2").pyramid(3, { wardWings: [WING.master()] }),
+  journey("junior_2").pyramid(4, { wardWings: [WING.wizard()] }),
+  journey("junior_3").pyramid(3, { wardWings: [WING.expert()] }),
+  journey("junior_3").pyramid(4, { wardWings: [WING.master()] }),
+  journey("junior_4").pyramid(4, { wardWings: [WING.wizard()] }),
+  journey("junior_4").pyramid(5, { wardWings: [WING.expert()] }),
 
   tomb("junior_treasure_tomb", {
-    puzzleFamily: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "junior",
     levelCount: 6,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("junior") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
+        // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
       { mainEndReward: "tombTreasure", sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece" })] },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // Crocodile capstone on the final floor — authored via a node selector (§G), not a core rule.
+      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
     ],
   }),
 ]

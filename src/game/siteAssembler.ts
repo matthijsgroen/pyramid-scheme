@@ -15,6 +15,46 @@ import type {
 } from "./siteTypes"
 import { validateSite } from "./siteValidator"
 
+// Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
+// plus that family's own tags. Injected by the caller so this domain module never needs
+// to know which families/mods actually exist — see resolveEncounter in
+// src/app/families/familyRegistry.ts for the real (registry-backed) implementation.
+export type EncounterResolution = { familyId: string; tags: string[] }
+export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
+
+// Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's
+// hieroglyph requirement) to opaque key ids — same idea as ResolveEncounter, injected so
+// this module never needs to know which family owns which requirement, only that one might
+// exist. Real implementation dispatches by familyId to whichever family's own FamilyMeta
+// declares one (see src/mods/allFamilyMeta.ts); most families provide none.
+export type ResolveKeyRequirements = (
+  familyId: string,
+  ctx: { journeyId: string; floorIndex: number; pathIndex: number; encounterArgs?: unknown }
+) => string[] | undefined
+const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
+
+const DEFAULT_TAG_FAMILIES: Record<string, string> = {
+  trap: "arithmetic-reflex",
+  puzzle: "sumplete",
+  "tomb-puzzle": "tableau",
+}
+const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
+  "arithmetic-reflex": ["trap"],
+  sumplete: ["puzzle"],
+  tableau: ["tomb-puzzle"],
+  crocodile: ["tomb-puzzle"],
+  "treasure-chest": ["treasure"],
+  "fez-shop": ["shop"],
+  "key-gate": ["gate"],
+}
+// Fallback for callers that don't inject the real family registry (tests, stories) —
+// production always passes familyRegistry.ts's resolveEncounter.
+const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
+  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+  const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
+  return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
+}
+
 // Section hash covers structural fields only — not rewards, render style, or specific key IDs.
 // Stable across: loot changes, key reassignment, corridor style tweaks.
 // Changes on: puzzle count, chest cadence, difficulty, exit type, gate presence, hidden/trapped flags.
@@ -39,9 +79,8 @@ const computeSideSectionHash = (section: SideSection | SubSection, idx: number, 
         difficulty: section.difficulty,
         end: section.end,
         hidden: section.hidden,
-        trapped: section.trapped,
         sealed: section.sealed,
-        puzzleFamily: section.puzzleFamily,
+        encounter: section.encounter,
         gateType: section.gate?.type,
       })
     )
@@ -249,23 +288,56 @@ const spreadContentIndices = (count: number, startIdx: number, totalLen: number)
   return indices
 }
 
-export const assembleFloor = (siteId: string, config: FloorConfig, seed: number): AssemblerResult => {
-  // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements
+export type AssembleFloorKeyRequirements = {
+  resolveKeyRequirements?: ResolveKeyRequirements
+  floorRef?: { journeyId: string; floorIndex: number }
+}
+
+export const assembleFloor = (
+  siteId: string,
+  config: FloorConfig,
+  seed: number,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter,
+  keyRequirements: AssembleFloorKeyRequirements = {}
+): AssemblerResult => {
+  const { resolveKeyRequirements = defaultResolveKeyRequirements, floorRef = { journeyId: siteId, floorIndex: 0 } } =
+    keyRequirements
+  const isTrapSection = (encounter: string | string[] | undefined): boolean =>
+    resolveEncounter(encounter, "puzzle").tags.includes("trap")
+  const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
+  const fezShop = resolveEncounter("fez-shop", "fez-shop")
+  const keyGate = resolveEncounter("key-gate", "key-gate")
+
+  // A floor-key gate's key host is a purely local, structural requirement — every floor-key
+  // gate on this floor needs exactly one key SOMEWHERE on this same floor, decided here,
+  // before any section's own endReward gets treated as competing content. "Available host"
+  // means genuinely free capacity: ungated AND not already carrying its own authored reward
+  // (a section holding a map piece/mosaic/fragment is not free capacity just because it
+  // lacks a gate — see docs/game-design/keys-and-locks-solver.md, "Slots have capacity").
+  // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements.
   const visibleSections = config.sideSections.filter(s => !s.hidden)
   const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
-  const hasUngated = visibleSections.some(s => !s.gate)
+  const hasFreeUngatedHost = visibleSections.some(s => !s.gate && !s.endReward)
 
   // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by useAssembledFloor
   const allSections = config.sideSections
   const sideSections =
-    hasGatedFloorKey && !hasUngated
+    hasGatedFloorKey && !hasFreeUngatedHost
       ? [...allSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
       : allSections
 
   const hiddenSectionIdxs = new Set(allSections.map((s, i) => (s.hidden ? i : -1)).filter(i => i >= 0))
 
   const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
-  const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate)
+  const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate && !sideSections[i].endReward)
+
+  // The auto-injection above guarantees a free host whenever one's needed — this is a
+  // structural safety net, not an expected path: if a floor-key gate still has nowhere to
+  // put its key, that's an unsolvable floor, not a per-seed maze fluke, so it fails
+  // immediately rather than burning 30 retry attempts on something a different seed can't fix.
+  if (gatedFloorKeyIdxs.length > 0 && ungatedIdxs.length === 0) {
+    return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
+  }
 
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
@@ -377,7 +449,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     const goalIndex = contentIndices[contentIndices.length - 1]
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.puzzleRewards[k] below.
+    // used to index into config.rewards[k] below.
     const puzzleIndices = contentIndices.slice(0, -1)
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
@@ -577,14 +649,21 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (!parentSection.sideSections?.length) continue
 
       let subSects = parentSection.sideSections
-      // Auto-inject ungated key-holder if all sub-sections are floor-key gated
-      const allSubGated = subSects.every(s => s.gate?.type === "floor-key")
-      const anySubUngated = subSects.some(s => !s.gate)
-      if (allSubGated && !anySubUngated)
+      // Same "free host, not just ungated" reasoning as the top-level side sections above —
+      // a sub-section already carrying its own endReward isn't free capacity for a key.
+      const anySubGatedFloorKey = subSects.some(s => s.gate?.type === "floor-key")
+      const anySubFreeUngated = subSects.some(s => !s.gate && !s.endReward)
+      if (anySubGatedFloorKey && !anySubFreeUngated)
         subSects = [...subSects, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
 
       const subGatedIdxs = subSects.map((_, i) => i).filter(i => subSects[i].gate?.type === "floor-key")
-      const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate)
+      const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate && !subSects[i].endReward)
+
+      // Same reasoning as the top-level check above — this is config-derived, not
+      // seed-derived, so failing immediately (not retrying) is correct here too.
+      if (subGatedIdxs.length > 0 && subUngatedIdxs.length === 0) {
+        return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
+      }
 
       // Branch candidates: parent section cells (excluding end cell)
       const subBranchCandidates = group.cells
@@ -676,9 +755,14 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     if (failed) continue
 
-    // Build a random key chain: treasure-end gated sections first (they relay the next key),
-    // staircase-end sections last (they're terminal and can't hold a relay key).
-    // chain[0]'s key → ungated section end; chain[i]'s key → chain[i-1]'s end room.
+    // Build a random key chain: only FREE (no endReward) treasure-end gated sections can
+    // safely relay the next key onward — one that already carries its own authored reward
+    // must be a chain LEAF (receives a key, never grants one), same "never overwrite an
+    // authored reward" rule as the ungated-entry host above. Staircase-end sections are
+    // always leaves too (terminal, no relay). chain[0]'s key → ungated section end; each
+    // later element's key → the MOST RECENT free section's end room, which may end up
+    // granting several different leaves' keys at once (not necessarily its own immediate
+    // successor) — never a rewarded section's own room.
     const gatedTreasureIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end !== "staircase")
     const gatedStaircaseIdxs = gatedFloorKeyIdxs.filter(i => sideSections[i].end === "staircase")
     const chain = [
@@ -687,23 +771,29 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     ]
 
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
-    const chainKeyColorMap = new Map<number, KeyColor>() // section idx → key color its end room holds
+    const chainKeyColorMap = new Map<number, KeyColor[]>() // host section idx → key color(s) its end room holds
 
     if (chain.length > 0 && ungatedIdxs.length > 0) {
       const hostGroup = sectionGroups.find(g => g.sectionIdx === ungatedIdxs[0])
       if (hostGroup) {
-        const [er, ec] = hostGroup.cells[hostGroup.cells.length - 1]
-        keyNodeIdMap.set(chain[0], nid(er, ec))
-        const gate0 = sideSections[chain[0]].gate as { type: "floor-key"; color?: KeyColor }
-        chainKeyColorMap.set(ungatedIdxs[0], gate0.color ?? "blue")
-      }
-      for (let ci = 1; ci < chain.length; ci++) {
-        const prevGroup = sectionGroups.find(g => g.sectionIdx === chain[ci - 1])
-        if (!prevGroup) continue
-        const [er, ec] = prevGroup.cells[prevGroup.cells.length - 1]
-        keyNodeIdMap.set(chain[ci], nid(er, ec))
-        const gateI = sideSections[chain[ci]].gate as { type: "floor-key"; color?: KeyColor }
-        chainKeyColorMap.set(chain[ci - 1], gateI.color ?? "blue")
+        let hostIdx = ungatedIdxs[0]
+        let hostCell = hostGroup.cells[hostGroup.cells.length - 1]
+
+        for (const idx of chain) {
+          keyNodeIdMap.set(idx, nid(hostCell[0], hostCell[1]))
+          const gate = sideSections[idx].gate as { type: "floor-key"; color?: KeyColor }
+          const colors = chainKeyColorMap.get(hostIdx) ?? []
+          colors.push(gate.color ?? "blue")
+          chainKeyColorMap.set(hostIdx, colors)
+
+          if (!sideSections[idx].endReward) {
+            const group = sectionGroups.find(g => g.sectionIdx === idx)
+            if (group) {
+              hostIdx = idx
+              hostCell = group.cells[group.cells.length - 1]
+            }
+          }
+        }
       }
     }
 
@@ -763,7 +853,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       // ordinary (visible, ungated) path into the same protection on request.
       if (
         sideSections[group.sectionIdx].gate ||
-        sideSections[group.sectionIdx].trapped ||
+        isTrapSection(sideSections[group.sectionIdx].encounter) ||
         sideSections[group.sectionIdx].sealed
       ) {
         for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
@@ -774,8 +864,8 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       if (
         sideSections[sub.parentSectionIdx].gate ||
         sub.subSection.gate ||
-        sideSections[sub.parentSectionIdx].trapped ||
-        sub.subSection.trapped ||
+        isTrapSection(sideSections[sub.parentSectionIdx].encounter) ||
+        isTrapSection(sub.subSection.encounter) ||
         sideSections[sub.parentSectionIdx].sealed ||
         sub.subSection.sealed
       ) {
@@ -817,33 +907,45 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
     // The goal-room fallback here is defensive only: every real config sets mainEndReward
-    // explicitly (buildSite.ts) — an unset one used to silently grant a free, uncounted
-    // mosaicPiece, so this now falls back to the same grant-nothing placeholder every other
-    // unset reward slot uses.
-    const lastPuzzleIdx = config.lastMainPuzzleFamily ? config.pathPuzzles - 1 : -1
+    // explicitly (buildSite.ts). An unset one falls back to the same grant-nothing placeholder
+    // every other unset reward slot uses.
     for (let mi = 0; mi < mainPath.length; mi++) {
       const [r, c] = mainPath[mi]
       if (mi === 0) {
         if (config.entrance) {
           const stairId = typeof config.entrance === "object" ? config.entrance.stairId : `${siteId}:entrance`
-          roomSpecs.set(posKey(r, c), { roomType: "stairhead", stairId })
+          roomSpecs.set(posKey(r, c), { roomType: "portal", stairId })
         } else {
-          roomSpecs.set(posKey(r, c), { roomType: "entrance" })
+          roomSpecs.set(posKey(r, c), { roomType: "portal" })
         }
       } else if (mi === goalIndex) {
         roomSpecs.set(posKey(r, c), {
-          roomType: "treasure",
-          reward: config.mainEndReward ?? { type: "hieroglyphs" },
+          roomType: "encounter",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
+          ...(config.mainEndReward ? { reward: config.mainEndReward } : {}),
         })
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
-        const isLastPuzzle = k === lastPuzzleIdx
+        // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
+        // index has one, else the chain's default `encounter`.
+        const override = config.encountersByIndex?.[k]
         const family =
-          isLastPuzzle && config.lastMainPuzzleFamily
-            ? config.lastMainPuzzleFamily
-            : (config.puzzleFamily ?? "sumplete")
-        const reward = config.puzzleRewards?.[k]
-        roomSpecs.set(posKey(r, c), { roomType: "puzzle", family, ...(reward ? { reward } : {}) })
+          override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
+        const reward = config.rewards?.[k]
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+          ...floorRef,
+          pathIndex: k,
+          encounterArgs: config.encounterArgs,
+        })
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          family: family.familyId,
+          tags: family.tags,
+          pathIndex: k,
+          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
+          ...(reward ? { reward } : {}),
+        })
       }
     }
 
@@ -854,17 +956,21 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
 
     // Exit / stairhead
     if (config.exitOrStaircase === "exit") {
-      roomSpecs.set(posKey(exR, exC), { roomType: "exit" })
+      roomSpecs.set(posKey(exR, exC), { roomType: "portal" })
     } else {
       const stairId = typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
-      roomSpecs.set(posKey(exR, exC), { roomType: "stairhead", stairId })
+      roomSpecs.set(posKey(exR, exC), { roomType: "portal", stairId })
     }
 
     // The farthest mainPath cell has degree 1 (no free adjacents) so no section can branch from it.
     // Give it a small treasure so it renders as a room rather than a dead-end corridor.
     const [farthestR, farthestC] = mainPath[mainPath.length - 1]
     if (!roomSpecs.has(posKey(farthestR, farthestC))) {
-      roomSpecs.set(posKey(farthestR, farthestC), { roomType: "treasure", reward: { type: "hieroglyphs" } })
+      roomSpecs.set(posKey(farthestR, farthestC), {
+        roomType: "encounter",
+        family: treasureChest.familyId,
+        tags: treasureChest.tags,
+      })
     }
 
     // Section nodes
@@ -882,7 +988,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const [gr, gc] = cells[0]
         const floorKeyGate = section.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
           keyColor: floorKeyGate.color ?? "blue",
@@ -892,7 +1000,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const [gr, gc] = cells[0]
         const tombGate = section.gate as { type: "tomb-key"; wardKeyId: string }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: tombGate.wardKeyId,
           gateVariant: "tomb-key",
         })
@@ -906,37 +1016,57 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const secContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
-        if (section.trapped) {
-          roomSpecs.set(posKey(r, c), { roomType: "trap" })
-        } else {
-          const reward = section.puzzleRewards?.[pi]
-          roomSpecs.set(posKey(r, c), {
-            roomType: "puzzle",
-            // Never inherits the floor's own puzzleFamily (tableau, for tombs) — tableaus
-            // consume hieroglyph symbols the player may not have yet, so a side path stays
-            // sumplete unless it explicitly opts into a different family itself.
-            family: section.puzzleFamily ?? "sumplete",
-            ...(reward ? { reward } : {}),
-          })
-        }
+        const reward = section.rewards?.[pi]
+        const secOverride = section.encountersByIndex?.[pi]
+        const family =
+          secOverride !== undefined
+            ? resolveEncounter(secOverride, "puzzle")
+            : resolveEncounter(section.encounter, "puzzle")
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+          ...floorRef,
+          pathIndex: pi,
+          encounterArgs: section.encounterArgs,
+        })
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
+          // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
+          // tag's default) unless it explicitly opts into a different family itself.
+          family: family.familyId,
+          tags: family.tags,
+          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
+          ...(reward ? { reward } : {}),
+        })
       }
 
       // End node
       const [er, ec] = cells[cells.length - 1]
       if (chainKeyHostIdxs.has(sectionIdx)) {
+        const hColors = chainKeyColorMap.get(sectionIdx) ?? []
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
           reward: { type: "tombKey", keyId: nid(er, ec) },
-          keyColor: chainKeyColorMap.get(sectionIdx),
+          ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
+          ...(hColors.length > 1 ? { keyColors: hColors } : {}),
         })
       } else if (section.end === "staircase" || typeof section.end === "object") {
         const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
-        roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
+        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
+        // A shop is a section whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain,
+        // so `encounter` describes this end node). It renders its `rewards[]` as buyable stock; a
+        // plain end renders its single endReward. Shop-off → encounter didn't resolve to fez-shop →
+        // falls back to a treasure chest here.
+        const isShop =
+          section.encounter !== undefined &&
+          resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
-          reward: section.endReward ?? { type: "hieroglyphs" },
-          ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
+          roomType: "encounter",
+          family: isShop ? fezShop.familyId : treasureChest.familyId,
+          tags: isShop ? fezShop.tags : treasureChest.tags,
+          ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
         })
       }
     }
@@ -951,7 +1081,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const [gr, gc] = cells[0]
         const floorKeyGate = subSection.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
           keyColor: floorKeyGate.color ?? "blue",
@@ -961,7 +1093,9 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
         const [gr, gc] = cells[0]
         const tombGate = subSection.gate as { type: "tomb-key"; wardKeyId: string }
         roomSpecs.set(posKey(gr, gc), {
-          roomType: "gate",
+          roomType: "encounter",
+          family: keyGate.familyId,
+          tags: keyGate.tags,
           requiredKeyId: tombGate.wardKeyId,
           gateVariant: "tomb-key",
         })
@@ -969,44 +1103,61 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       }
 
       // Spread across whatever room `paddedChainLength` gave this chain — same technique
-      // as the parent section and the main path (see spreadContentIndices). Previously
-      // indexed as `(contentStart + pi) * 2`, which only ever happened to line up for a
-      // single-puzzle sub-section; any sub-section with more than one puzzle was silently
-      // indexing past its own content into whatever cell happened to sit there.
+      // as the parent section and the main path (see spreadContentIndices). Indices must map
+      // through `subContentIndices` (not a raw `(contentStart + pi) * 2`), so a multi-puzzle
+      // sub-section indexes its own content rather than past it.
       const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
-        if (subSection.trapped) {
-          roomSpecs.set(posKey(r, c), { roomType: "trap" })
-        } else {
-          const reward = subSection.puzzleRewards?.[pi]
-          roomSpecs.set(posKey(r, c), {
-            roomType: "puzzle",
-            // Same reasoning as the side-section case above: never inherits the floor's
-            // tableau family unless the sub-section explicitly opts in itself.
-            family: subSection.puzzleFamily ?? "sumplete",
-            ...(reward ? { reward } : {}),
-          })
-        }
+        const reward = subSection.rewards?.[pi]
+        const subOverride = subSection.encountersByIndex?.[pi]
+        const family =
+          subOverride !== undefined
+            ? resolveEncounter(subOverride, "puzzle")
+            : resolveEncounter(subSection.encounter, "puzzle")
+        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+          ...floorRef,
+          pathIndex: pi,
+          encounterArgs: subSection.encounterArgs,
+        })
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          // Same reasoning as the side-section case above: never inherits the floor's
+          // tableau encounter unless the sub-section explicitly opts in itself.
+          family: family.familyId,
+          tags: family.tags,
+          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
+          ...(reward ? { reward } : {}),
+        })
       }
 
       const [er, ec] = cells[cells.length - 1]
       if (isKeyHost) {
         const hColors = keyHostColors ?? (keyHostColor ? [keyHostColor] : [])
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
+          roomType: "encounter",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
           reward: { type: "tombKey", keyId: nid(er, ec) },
           ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
           ...(hColors.length > 1 ? { keyColors: hColors } : {}),
         })
       } else if (subSection.end === "staircase" || typeof subSection.end === "object") {
         const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
-        roomSpecs.set(posKey(er, ec), { roomType: "stairhead", stairId })
+        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
+        const isShop =
+          subSection.encounter !== undefined &&
+          resolveEncounter(subSection.encounter, "treasure").familyId === fezShop.familyId
         roomSpecs.set(posKey(er, ec), {
-          roomType: "treasure",
-          reward: subSection.endReward ?? { type: "hieroglyphs" },
-          ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
+          roomType: "encounter",
+          family: isShop ? fezShop.familyId : treasureChest.familyId,
+          tags: isShop ? fezShop.tags : treasureChest.tags,
+          ...(isShop
+            ? { stock: subSection.rewards ?? [] }
+            : subSection.endReward
+              ? { reward: subSection.endReward }
+              : {}),
         })
       }
     }
@@ -1033,21 +1184,17 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
       if (spec) {
+        // Spread the whole spec (RoomSpec = RoomCell minus the structural fields set here)
+        // rather than copying fields one by one — a field dropped from this list is exactly
+        // the bug class that silently discarded pathIndex/requiredKeyIds until a test caught
+        // it; spreading means a future RoomCell field can't go missing here again.
         const roomCell: RoomCell = {
           type: "room",
-          roomType: spec.roomType,
           dirs,
           state: "fogged",
           sectionHash,
           ...(hidden ? { hidden } : {}),
-          ...(spec.reward ? { reward: spec.reward } : {}),
-          ...(spec.requiredKeyId ? { requiredKeyId: spec.requiredKeyId } : {}),
-          ...(spec.gateVariant ? { gateVariant: spec.gateVariant } : {}),
-          ...(spec.keyColor ? { keyColor: spec.keyColor } : {}),
-          ...(spec.keyColors ? { keyColors: spec.keyColors } : {}),
-          ...(spec.family ? { family: spec.family } : {}),
-          ...(spec.stairId ? { stairId: spec.stairId } : {}),
-          ...(spec.shopPrice !== undefined ? { shopPrice: spec.shopPrice } : {}),
+          ...spec,
         }
         cells2D[r][c] = roomCell
       } else {
@@ -1105,8 +1252,13 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     // offset into whichever side has open void next to it (see SiteMapView.tsx).
     const endpointPositions = new Set<string>()
     for (const [pk, spec] of roomSpecs) {
-      if (spec.roomType !== "treasure" && spec.roomType !== "stairhead" && spec.roomType !== "exit") continue
       const [r, c] = pk.split(",").map(Number)
+      // Dead-end rooms only — treasure/shop chests and stairs/exits, never mid-path or
+      // the floor's own entrance (a portal, but never a decoration-worthy dead end).
+      const isTreasureLike =
+        spec.roomType === "encounter" && (spec.tags?.includes("treasure") || spec.tags?.includes("shop"))
+      const isPortalEndpoint = spec.roomType === "portal" && !(r === entR && c === entC)
+      if (!isTreasureLike && !isPortalEndpoint) continue
       const cell = cells2D[r][c]
       if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
     }
@@ -1129,7 +1281,7 @@ export const assembleFloor = (siteId: string, config: FloorConfig, seed: number)
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
         const cell = cells2D[r][c]
-        if (cell.type === "room" && cell.roomType === "stairhead" && cell.stairId) {
+        if (cell.type === "room" && cell.stairId) {
           staircases[cell.stairId] = [r, c]
         }
       }

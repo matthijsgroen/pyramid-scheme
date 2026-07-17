@@ -72,11 +72,41 @@ Transient briefs for the next agent or session — what to build, what's already
 
 ---
 
+## Implementation plan documents
+
+A mechanic's *design* and its *build plan* are two different documents with two different lifecycles — never conflate them in one file.
+
+- **Design doc** (`docs/game-design/<topic>.md`) — durable, survives the mechanic's full lifetime. Holds intent, rules, data model, decisions: how it works and why.
+- **Implementation plan** (`docs/<topic>-implementation-plan.md`) — transient, scoped to getting the mechanic built. Holds phase breakdown, done-vs-pending status, rollout-specific dated decisions, PR/branch references.
+
+**Lifecycle: delete the implementation plan once the mechanic ships.** Before deleting, extract anything durable (a fact about how the mechanic actually works) into the design doc — don't let it disappear with the plan. Everything else (phase status, "locked as of DATE" notes, bug-fixes-in-passing) belongs nowhere once the mechanic is live; git history and the PR description already own that. A design doc that still reads like a build plan (phase numbers, stacked-PR references, "not yet playtested") is a sign the split didn't happen — fix it there, don't let the mixed doc stand as the permanent record.
+
+### The split, as a checklist
+
+This applies to **every design doc, wherever it lives** (`docs/game-design/`, `docs/mods/`, …) — not only files named `*-implementation-plan.md`, and when **editing** a doc, not just creating one. A design doc says how a mechanic works and why. **Status lives elsewhere:**
+
+- **`TODO.md`** (repo root) — the standing tracker: done / in-progress / pending across slices.
+- **The PR description** — the net change this branch delivers.
+- **git history** — what changed when, in which commit.
+
+**Smell test — a design doc must contain NONE of these** (each belongs in the tracker/PR/git):
+
+- phase / stage / slice numbers used as progress; `[x]` / `[ ]` / `[~]` checkboxes
+- "DONE / landed / as-built / shipped / not yet built / byte-identical"
+- dated progress notes ("locked as of DATE", "updated DATE with X", "Progress log")
+- commit SHAs, PR numbers, or branch references
+- a per-phase build plan, kickoff prompt, or handover section
+
+Find one while editing? Move it to the tracker and delete it from the doc — never add another.
+
+---
+
 ## Summary
 
 | What you have | Where it goes |
 |---|---|
 | Mechanic design, system decisions | `docs/game-design/<topic>.md` |
+| Phased build plan for a mechanic | `docs/<topic>-implementation-plan.md` (delete once shipped, extract durable facts first) |
 | "How to work in area X" guidelines | `docs/instructions/<topic>.md` |
 | UX flow maps, friction findings | `docs/ux/<topic>.md` |
 | Transient handover brief | `docs/handover-<topic>.md` (delete on completion) |
