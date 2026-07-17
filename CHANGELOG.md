@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.27.2 - 2026-07-17
 ### Changed
 - A hieroglyph you've collected can now solve every tomb tableau that needs it, and is never used up — tableaus no longer consume your hieroglyphs or ask you to stockpile copies of each. The tableau screen now shows which hieroglyphs you already have and your fragment progress on the ones you're still collecting.
 
