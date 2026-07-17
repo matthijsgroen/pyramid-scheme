@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- A tomb tableau could ask for a hieroglyph whose fragments were impossible to collect, leaving the tomb unfinishable. Tableaus now always ask for the hieroglyphs each floor was built around, and every required hieroglyph is reachable — so a tomb can always be completed.
+- Pyramid corridors sometimes looked like they carried on past the exit, but that stretch was unreachable (stepping onto the exit leaves the pyramid). The exit now sits at the true end of the corridor.
 
 ## 0.27.4 - 2026-07-17
 ### Changed
