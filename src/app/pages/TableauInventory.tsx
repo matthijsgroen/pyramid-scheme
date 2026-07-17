@@ -7,11 +7,10 @@ import {
   buildTombCalculationSettings,
   generateRewardCalculation,
 } from "@/mods/hieroglyph/game/generateRewardCalculation"
-import { useInventory } from "../Inventory/useInventory"
+import { useHieroglyphProgress } from "@/mods/hieroglyph/app/useHieroglyphProgress"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
-import clsx from "clsx"
 import { difficultyCompare } from "@/data/difficultyLevels"
 
 export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ journeyInfo }) => {
@@ -20,7 +19,7 @@ export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ jo
   )
   const { getJourney } = useJourneys()
   const tableaux = useTableauTranslations()
-  const { inventory } = useInventory()
+  const { hieroglyphProgress } = useHieroglyphProgress()
 
   const seed = generateNewSeed(journeyInfo.randomSeed!, journeyInfo.levelNr ?? 1)
   const runNr = journey ? (getJourney(journey.id)?.completionCount ?? 0) + 1 : 1
@@ -40,12 +39,13 @@ export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ jo
   return (
     <div className="mt-2 flex justify-center">
       <div className="flex flex-wrap gap-2 rounded bg-black/15 p-1">
-        {Object.entries(calculation.symbolCounts)
-          .sort((a, b) => difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0])))
-          .map(([symbolId, maxNeeded]) => {
-            const availableInInventory = inventory[symbolId] || 0
+        {Object.keys(calculation.symbolCounts)
+          .sort((a, b) => difficultyCompare(getItemFirstLevel(a), getItemFirstLevel(b)))
+          .map(symbolId => {
             const inventoryItem = getInventoryItemById(symbolId)
             const itemDifficulty = getItemFirstLevel(symbolId) || journey.difficulty
+            const { found, required } = hieroglyphProgress(symbolId)
+            const owned = found >= required
 
             return (
               <div key={symbolId} className={"flex items-center gap-1 rounded p-1 transition-colors"}>
@@ -53,18 +53,17 @@ export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ jo
                   symbol={inventoryItem?.symbol || symbolId}
                   difficulty={itemDifficulty}
                   size="sm"
+                  disabled={!owned}
                   className="pointer-events-none"
                 />
                 <div className="flex flex-col text-xs">
-                  <span>
-                    <span className={clsx(maxNeeded <= availableInInventory && "font-bold")}>
-                      {availableInInventory}
+                  {owned ? (
+                    <span className="text-green-400">✓</span>
+                  ) : (
+                    <span className="text-red-400" title="fragments found">
+                      🧩 {found}/{required}
                     </span>
-                    /
-                    <span className={clsx(maxNeeded > availableInInventory && "font-bold text-red-400")}>
-                      {maxNeeded}
-                    </span>
-                  </span>
+                  )}
                 </div>
               </div>
             )

@@ -50,12 +50,12 @@ export const InProgress: Story = {
         onLockChange={() => {}}
         onLockSubmit={() => {}}
         inventoryTitle="Available symbols"
-        inventoryItems={Object.entries(calculation.symbolCounts).map(([symbolId, maxNeeded]) => ({
+        inventoryItems={Object.keys(calculation.symbolCounts).map(symbolId => ({
           symbolId,
           ...resolveTile(symbolId),
-          availableCount: maxNeeded,
-          maxNeeded,
-          canPlace: true,
+          owned: true,
+          found: 2,
+          required: 2,
         }))}
         onInventoryItemClick={() => {}}
       />
