@@ -8,7 +8,7 @@
   },
   "sell_stone_1": {
     "name": "Gebroken Ostracon",
-    "description": "Een gebroken aardewerkscherf met oefennotities van een schrijver — waardeloos om te lezen, maar Fez betaalt voor de klei."
+    "description": "Een gebroken aardewerkscherf met oefennotities van een schrijver — de letters te vervaagd om te lezen."
   },
   "sell_stone_2": {
     "name": "Gebarsten Kleikruik",
@@ -28,7 +28,7 @@
   },
   "sell_bronze_1": {
     "name": "Verbogen Bronzen Amulet",
-    "description": "Een goedkope beschermende hanger, scheef gegoten en nooit rechtgezet. Zo gewoon dat geen verzamelaar hem wil — maar brons is brons."
+    "description": "Een goedkope beschermende hanger, scheef gegoten en nooit rechtgezet."
   },
   "sell_bronze_2": {
     "name": "Verweerde Bronzen Spiegel",
@@ -48,7 +48,7 @@
   },
   "sell_silver_1": {
     "name": "Verkleurde Zilveren Ankh",
-    "description": "Een symbool van leven, dof geworden door eeuwen onder de grond. Te verkleurd om uit te stallen, nog steeds zijn gewicht waard."
+    "description": "Een symbool van leven, dof geworden door eeuwen onder de grond."
   },
   "sell_silver_2": {
     "name": "Zilveren Kohl-Applicator",
@@ -68,7 +68,7 @@
   },
   "sell_gold_1": {
     "name": "Kleine Gouden Kraal",
-    "description": "Één kraal van een grafketting, lang geleden verstrooid. Een juwelier zou er blij mee zijn, als je de rest kunt vinden."
+    "description": "Één kraal van een grafketting, lang geleden verstrooid."
   },
   "sell_gold_2": {
     "name": "Gouden Bladfragment",
@@ -76,7 +76,7 @@
   },
   "sell_gold_3": {
     "name": "Dunne Gouden Oorring",
-    "description": "Dun geslagen om het goud van een edele verder te rekken — nog steeds genoeg om een handelaar te verleiden."
+    "description": "Dun geslagen om het goud van een edele verder te rekken."
   },
   "sell_gold_4": {
     "name": "Goudgespikkelde Scherf",
@@ -88,7 +88,7 @@
   },
   "sell_divine_1": {
     "name": "Vervaagde Lapis Scarabee",
-    "description": "Gesneden uit kostbare lapis lazuli, tegen hoge kosten ingevoerd voor de wedergeboorte van een farao. De kleur is vervaagd, de waarde niet."
+    "description": "Gesneden uit kostbare lapis lazuli, tegen hoge kosten ingevoerd voor de wedergeboorte van een farao. De kleur is vervaagd met de eeuwen."
   },
   "sell_divine_2": {
     "name": "Carneool Oog-Amulet",

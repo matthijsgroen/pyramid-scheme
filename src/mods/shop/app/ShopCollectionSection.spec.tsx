@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
-import { render, screen, cleanup } from "@testing-library/react"
+import { render, screen, cleanup, fireEvent } from "@testing-library/react"
 import { ALL_SELLABLES } from "@/data/sellables"
 
 afterEach(cleanup)
@@ -30,5 +30,18 @@ describe("ShopCollectionSection hide-until-collected", () => {
     inventory = { [ALL_SELLABLES[0].id]: 1 }
     render(<ShopCollectionSection selectedItem={null} onSelect={() => {}} />)
     expect(screen.getByText(JUNK_TITLE)).toBeTruthy()
+  })
+
+  // Regression: the detail panel's HieroglyphTile throws without a difficulty (sellables aren't
+  // hieroglyphs, so it can't derive one from the id) — clicking a junk item blacked out the screen.
+  it("emits a difficulty on select so the detail panel can render", () => {
+    const item = ALL_SELLABLES[0]
+    inventory = { [item.id]: 1 }
+    const onSelect = vi.fn()
+    render(<ShopCollectionSection selectedItem={null} onSelect={onSelect} />)
+    fireEvent.click(screen.getByText(item.symbol))
+    expect(onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({ id: item.id, symbol: item.symbol, difficulty: expect.any(String) })
+    )
   })
 })

@@ -30,9 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some pyramids at higher difficulties now have extra winding corridors or a larger, more sprawling layout.
 - Expert, master, and wizard treasure tombs also now sometimes have extra winding corridors or a larger, more sprawling layout, matching their tier's pyramids.
 - Every pyramid now has at least one hidden path holding a puzzle or a trap to find.
+- Leaving a pyramid or tomb through any exit now finishes that site and continues your journey; deeper floors you skipped stay open to revisit later.
 
 ### Fixed
 
+- Turning tutorials off now survives clearing your game data — the intro no longer replays after a reset.
 - A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
 - A hidden, trapped area could occasionally generate with a way to reach its reward without passing through the trap.
 - Some treasure rooms at the end of a path could generate empty; every treasure room now holds something (a currency, a mosaic tile, or a little loot).

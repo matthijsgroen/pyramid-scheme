@@ -376,11 +376,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       {exiting && (
         <EntranceTransitionOverlay
           origin="50% 50%"
-          // A non-last floor's "exit" is a pause, not a completion — its ward-path shortcut
-          // (once its key is held) is the real way onward; only the true last floor's exit
-          // finishes the site. Leaving here must not touch levelNr/trigger the hieroglyph
-          // minigame the way onSiteComplete does — onCancel already does exactly that.
-          onComplete={currentFloor === siteConfig.length - 1 ? onSiteComplete : onCancel}
+          // Any exit portal finishes the site and advances the journey. Floors past the exit stay
+          // reachable on a later revisit (with keys); the interior is a persistent, stable-seed site.
+          onComplete={onSiteComplete}
         />
       )}
       {activeEncounter && ActiveEncounterComponent && encounterCtx && (

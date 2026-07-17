@@ -8,7 +8,7 @@
   },
   "sell_stone_1": {
     "name": "Chipped Ostracon",
-    "description": "A broken pottery shard scratched with a scribe's practice notes — worthless to read, but Fez pays for the clay."
+    "description": "A broken pottery shard scratched with a scribe's practice notes — the letters too faded to read."
   },
   "sell_stone_2": {
     "name": "Cracked Clay Jar",
@@ -28,7 +28,7 @@
   },
   "sell_bronze_1": {
     "name": "Bent Bronze Amulet",
-    "description": "A cheap protective charm, cast crooked and never fixed. Common enough that no collector wants it — but bronze is bronze."
+    "description": "A cheap protective charm, cast crooked and never fixed."
   },
   "sell_bronze_2": {
     "name": "Corroded Bronze Mirror",
@@ -48,7 +48,7 @@
   },
   "sell_silver_1": {
     "name": "Tarnished Silver Ankh",
-    "description": "A symbol of life, worn dull by centuries underground. Too tarnished to display, still worth its weight."
+    "description": "A symbol of life, worn dull by centuries underground."
   },
   "sell_silver_2": {
     "name": "Silver Kohl Applicator",
@@ -68,7 +68,7 @@
   },
   "sell_gold_1": {
     "name": "Small Gold Bead",
-    "description": "One bead from a burial necklace, scattered long ago. A jeweler's delight, if you can find the rest."
+    "description": "One bead from a burial necklace, scattered long ago."
   },
   "sell_gold_2": {
     "name": "Gold Leaf Fragment",
@@ -76,7 +76,7 @@
   },
   "sell_gold_3": {
     "name": "Thin Gold Earring",
-    "description": "Hammered thin to stretch a noble's gold further — still enough to catch a merchant's eye."
+    "description": "Hammered thin to stretch a noble's gold further."
   },
   "sell_gold_4": {
     "name": "Gold-Flecked Shard",
@@ -88,7 +88,7 @@
   },
   "sell_divine_1": {
     "name": "Faded Lapis Scarab",
-    "description": "Carved from precious lapis lazuli, imported at great cost for a pharaoh's rebirth. The color has faded, the value hasn't."
+    "description": "Carved from precious lapis lazuli, imported at great cost for a pharaoh's rebirth. The color has faded with the centuries."
   },
   "sell_divine_2": {
     "name": "Carnelian Eye Amulet",
