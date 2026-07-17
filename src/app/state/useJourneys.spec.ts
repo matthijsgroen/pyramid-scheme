@@ -206,15 +206,15 @@ describe("getJourney randomSeed", () => {
   })
 })
 
-// ── markShopPurchased / hasPurchasedShop ────────────────────────────────────────
+// ── markShopSlotPurchased / getPurchasedShopSlots ───────────────────────────────
 
-describe("markShopPurchased / hasPurchasedShop", () => {
+describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
   it("is not purchased until marked", () => {
     const api = makeApi([makeStoredJourney()])
-    expect(api.hasPurchasedShop(REAL_ID, "0:3,4")).toBe(false)
+    expect(api.getPurchasedShopSlots(REAL_ID).has("0:3,4#0")).toBe(false)
   })
 
-  it("persists a purchase and reports it back", () => {
+  it("persists a per-slot purchase and reports it back", () => {
     const stored = makeStoredJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -224,18 +224,20 @@ describe("markShopPurchased / hasPurchasedShop", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markShopPurchased("0:3,4")
-    expect(state[0].purchasedShops).toEqual(["0:3,4"])
+    api.markShopSlotPurchased("0:3,4", 1)
+    expect(state[0].purchasedStock).toEqual(["0:3,4#1"])
     expect(
       createJourneysV3Api({
         journeys: state,
         setJourneys: vi.fn(),
         journeyData: [makeJourneyData(REAL_ID)],
-      }).hasPurchasedShop(REAL_ID, "0:3,4")
+      })
+        .getPurchasedShopSlots(REAL_ID)
+        .has("0:3,4#1")
     ).toBe(true)
   })
 
-  it("deduplicates: marking the same edge twice does not double-store", () => {
+  it("tracks slots of one shop independently", () => {
     const stored = makeStoredJourney()
     let state = [stored]
     const api = createJourneysV3Api({
@@ -245,8 +247,54 @@ describe("markShopPurchased / hasPurchasedShop", () => {
       },
       journeyData: [makeJourneyData(REAL_ID)],
     })
-    api.markShopPurchased("0:3,4")
-    api.markShopPurchased("0:3,4")
-    expect(state[0].purchasedShops).toEqual(["0:3,4"])
+    api.markShopSlotPurchased("0:3,4", 0)
+    api.markShopSlotPurchased("0:3,4", 0) // dedup
+    api.markShopSlotPurchased("0:3,4", 2)
+    expect(state[0].purchasedStock).toEqual(["0:3,4#0", "0:3,4#2"])
+  })
+})
+
+// ── corridor detector: known / found / outstanding (§7.2 P4) ────────────────────
+
+describe("hidden corridor tracking", () => {
+  // The api captures `journeys` at creation, so reads must run against a freshly-built api over the
+  // latest state — mirrors how the hook rebuilds each render.
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void) => {
+    let state = [makeStoredJourney()]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    return {
+      state,
+      api: createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }),
+    }
+  }
+
+  it("registers known corridors keyed by levelNr and dedups", () => {
+    const { state } = run(api => {
+      api.registerHiddenCorridors(["a", "b"])
+      api.registerHiddenCorridors(["a"]) // dedup
+    })
+    expect(state[0].knownHiddenCorridors).toEqual(["1:a", "1:b"])
+  })
+
+  it("outstanding = known minus found; clears once every known corridor is found", () => {
+    const first = run(api => {
+      api.registerHiddenCorridors(["a", "b"])
+      api.markCorridorFound("a")
+    })
+    expect(first.api.getFoundHiddenCorridors(REAL_ID).has("a")).toBe(true)
+    expect(first.api.getOutstandingHiddenCorridorCount(REAL_ID)).toBe(1) // b still outstanding
+
+    const second = run(api => {
+      api.registerHiddenCorridors(["a", "b"])
+      api.markCorridorFound("a")
+      api.markCorridorFound("b")
+    })
+    expect(second.api.getOutstandingHiddenCorridorCount(REAL_ID)).toBe(0) // all found → marker clears
   })
 })

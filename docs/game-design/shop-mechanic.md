@@ -6,10 +6,13 @@ earned from puzzle-solve drops and junk loot.
 
 ## Placement
 
-One shop per non-starter tomb — 8 total (`NUM_SHOPS`, `src/data/shopPricing.ts`).
-Starter stays shop-free (no currency loop needed yet for onboarding). Each
-shop sits on an ungated side path off its tomb (ordinary puzzles en route,
-no key), ending in a `fez-shop` encounter instead of a plain chest.
+One shop per non-starter tomb. Shops are authored in the world DSL as side
+sections whose encounter resolves to the `fez-shop` family (not a fixed
+constant — there is no `NUM_SHOPS`); the shop mod fills their stock via its
+`shopStock` contribution. Starter stays shop-free (no currency loop needed yet
+for onboarding). Each shop sits on an ungated side path off its tomb (ordinary
+puzzles en route, no key), ending in a `fez-shop` encounter instead of a plain
+chest.
 
 ## Stock
 
@@ -28,7 +31,7 @@ Two kinds of stock, both refresh on re-entry:
 
 ## Pricing
 
-All defined in `src/data/shopPricing.ts`:
+All defined in `src/mods/shop/game/pricing.ts`:
 
 - **Fragment**: `250 + 50 × tierIndex` (starter=0 .. wizard=4) — junior 300,
   expert 350, master 400, wizard 450.
@@ -62,5 +65,5 @@ auto-converted to money on pickup. Selling is a deliberate action at any
 shop: `removeItem` + `addMoney(item.sellValue)`. Sell value is tiered by
 `MaterialTier` (`src/data/sellables.ts`): stone 10, bronze 20, silver 30,
 gold 40, divine 50. Sellables are junk loot found loose in corridors —
-distinct from the 40 tomb treasures (`src/data/treasures.ts`); the two
+distinct from the 40 tomb treasures (`src/mods/tombTreasure/game/treasures.ts`); the two
 sets are never repurposed as each other.

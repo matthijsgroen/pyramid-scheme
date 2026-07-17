@@ -1,7 +1,7 @@
 import type { FC, FormEvent } from "react"
 import clsx from "clsx"
 import { NumberLock } from "@/ui/atoms/NumberLock"
-import { hieroglyphLevelColors } from "@/ui/atoms/hieroglyphLevelColors"
+import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { ChestState } from "@/ui/atoms/Chest"
 
@@ -19,7 +19,7 @@ export const TombLockPanel: FC<{
       onSubmit={onSubmit}
       className={clsx(
         "flex flex-col items-center rounded-b-lg p-4",
-        hieroglyphLevelColors[difficulty],
+        difficultyMaterialFlat[difficulty],
         lockState === "error" && "animate-shake"
       )}
     >

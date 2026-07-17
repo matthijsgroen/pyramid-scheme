@@ -61,6 +61,9 @@ const rewardLabel = (r: TreasureReward): string => {
       return `Money: ${r.amount}`
     case "sellable":
       return `Sellable: ${r.itemId}`
+    default:
+      // Open reward union — an unrecognized mod reward type falls back to its raw tag.
+      return r.type
   }
 }
 
@@ -82,6 +85,8 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-yellow-300"
     case "sellable":
       return "text-lime-300"
+    default:
+      return "text-stone-400"
   }
 }
 
@@ -97,7 +102,7 @@ const FloorDetail = ({ floor, active }: { floor: FloorConfig; active: boolean })
       </div>
       <div>
         {Array.from({ length: floor.pathPuzzles }, (_, i) => {
-          const reward = floor.puzzleRewards?.[i]
+          const reward = floor.rewards?.[i]
           return (
             <div key={i} className="flex items-baseline gap-1">
               <span className="w-4 shrink-0 text-stone-600">{i + 1}.</span>

@@ -6,6 +6,7 @@ import { JourneyCard } from "@/ui/organisms/JourneyCard"
 import { MapPiecePlaceholder } from "@/ui/atoms/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
+import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { FezContext } from "../fez/context"
@@ -13,7 +14,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 
 import { TableauInventory } from "./TableauInventory"
-import { useProgression } from "@/app/state/useProgression"
+import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 
 export const TravelPage: FC<{
   startGame: () => void
@@ -21,8 +22,11 @@ export const TravelPage: FC<{
   const { t, i18n } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
-  const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney } = useJourneys()
-  const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useProgression()
+  const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney, getOutstandingHiddenCorridorCount } =
+    useJourneys()
+  // Corridor detector L4 (§7.2): only the top detector level surfaces the world-wide marker.
+  const corridorDetectorLevel = useMergedDetectorLevels().corridor
+  const { isTombDiscovered, mapPieceCount, hasMapPiece: hasFoundMapPiece } = useTombTreasureProgress()
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
@@ -243,19 +247,20 @@ export const TravelPage: FC<{
                     )
                   }
                 }
-                const disabled = journey.type === "treasure_tomb" && journey.treasures.length <= completionCount
-
                 return (
                   <JourneyCard
                     key={journey.id}
                     showDetails={index === unlocked - 1}
                     journey={journey}
-                    disabled={disabled}
+                    disabled={false}
                     completionCount={completionCount}
                     progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
                     index={index}
                     showAnimation={showJourneySelection}
                     hasMapPiece={hasMapPiece}
+                    hasUnexploredCorridors={
+                      corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
+                    }
                     lang={i18n.language}
                     labels={{
                       length: t("ui.length"),

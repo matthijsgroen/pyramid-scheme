@@ -3,11 +3,36 @@ import type { SiteConfig } from "./types"
 import {
   computeReachability,
   floorKey,
-  isJourneyEnterable,
   isTierUnlocked,
-  mapPieceBucket,
   reachableFloorsInSite,
+  type ReachabilitySupport,
 } from "./reachability"
+
+// The map-piece bucket grammar (mirrors the tomb-treasure mod). Core reachability names no
+// currency, so tests supply the currency knowledge the same way the mod does at runtime.
+const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
+
+// Stand-in for the tomb-treasure mod's ReachabilitySupport: harvest map pieces / tomb keys /
+// hieroglyph fragments to their buckets, gate tombs on a map-piece threshold, and the tier ladder.
+const TIER_UNLOCK: Record<string, string> = {
+  junior: "starter_a_1",
+  expert: "junior_a_1",
+  master: "expert_a_1",
+  wizard: "master_a_1",
+}
+const testSupport = (entryThresholds: Record<string, number> = {}): ReachabilitySupport => ({
+  bucketForReward: r =>
+    r.type === "mapPiece"
+      ? `mapPiece:${r.tombId as string}`
+      : r.type === "tombKey"
+        ? (r.keyId as string)
+        : r.type === "hieroglyphFragment"
+          ? `hieroglyph:${r.hieroglyphId as string}`
+          : undefined,
+  journeyEntryLock: j =>
+    j in entryThresholds ? { bucket: mapPieceBucket(j), threshold: entryThresholds[j] } : undefined,
+  tierUnlockBucket: t => TIER_UNLOCK[t],
+})
 
 // Two floors, floor 0's side section gated by `wardKeyId`, ending in a stairhead wired to
 // floor 1's entrance — the same `wireStaircases`-style {stairId} pairing buildSite.ts uses
@@ -176,11 +201,21 @@ describe(reachableFloorsInSite, () => {
         end: "treasure",
         exitOrStaircase: "exit",
         mainEndReward: { type: "mapPiece", tombId: "some_tomb" },
-        puzzleRewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
+        rewards: [{ type: "hieroglyphFragment", hieroglyphId: "p10" }],
         sideSections: [],
       },
     ]
-    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    // Both map pieces and hieroglyph fragments route through injected support — reachability
+    // names no mod currency.
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      site,
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
     expect(result.harvestedCounts.get(mapPieceBucket("some_tomb"))).toBe(1)
     expect(result.harvestedCounts.get("hieroglyph:p10")).toBe(1)
   })
@@ -200,7 +235,15 @@ describe(reachableFloorsInSite, () => {
         sideSections: [],
       },
     ]
-    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      site,
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
     expect(result.harvestedCounts.get("starter_a_1")).toBe(1)
   })
 
@@ -224,31 +267,27 @@ describe(reachableFloorsInSite, () => {
         ],
       },
     ]
-    const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      site,
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
     expect(result.harvestedCounts.get(mapPieceBucket("locked_tomb"))).toBeUndefined()
   })
 })
 
 describe(isTierUnlocked, () => {
-  it("starter is always unlocked", () => {
-    expect(isTierUnlocked("starter", new Set())).toBe(true)
+  it("a tier with no unlock bucket (starter) is always unlocked", () => {
+    expect(isTierUnlocked("starter", new Set(), testSupport())).toBe(true)
   })
 
-  it("junior needs starter's tier-unlock treasure (starter_a_1)", () => {
-    expect(isTierUnlocked("junior", new Set())).toBe(false)
-    expect(isTierUnlocked("junior", new Set(["starter_a_1"]))).toBe(true)
-  })
-})
-
-describe(isJourneyEnterable, () => {
-  it("a tomb needs piecesRequired map pieces held, independent of tier", () => {
-    expect(isJourneyEnterable("starter", new Set(), 4, 3)).toBe(false)
-    expect(isJourneyEnterable("starter", new Set(), 4, 4)).toBe(true)
-  })
-
-  it("a pyramid (piecesRequired 0) only needs its tier unlocked", () => {
-    expect(isJourneyEnterable("junior", new Set(), 0, 0)).toBe(false)
-    expect(isJourneyEnterable("junior", new Set(["starter_a_1"]), 0, 0)).toBe(true)
+  it("junior needs its mod-supplied tier-unlock key (starter_a_1)", () => {
+    expect(isTierUnlocked("junior", new Set(), testSupport())).toBe(false)
+    expect(isTierUnlocked("junior", new Set(["starter_a_1"]), testSupport())).toBe(true)
   })
 })
 
@@ -262,12 +301,9 @@ describe(computeReachability, () => {
       journeyA: [gatedTwoFloorSite("cross-journey-key")],
       journeyB: [gatedTwoFloorSite("cross-journey-key")],
     }
-    const journeyMeta = {
-      journeyA: { tier: "starter" as const, piecesRequired: 0 },
-      journeyB: { tier: "starter" as const, piecesRequired: 0 },
-    }
+    const journeyMeta = { journeyA: { tier: "starter" as const }, journeyB: { tier: "starter" as const } }
 
-    const withoutKey = computeReachability(allConfigs, journeyMeta, new Map())
+    const withoutKey = computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())
     expect(withoutKey.reachableFloors.has(floorKey({ journeyId: "journeyA", levelIndex: 0, floorIndex: 1 }))).toBe(
       false
     )
@@ -275,7 +311,14 @@ describe(computeReachability, () => {
       false
     )
 
-    const withKey = computeReachability(allConfigs, journeyMeta, new Map([["cross-journey-key", 1]]))
+    const withKey = computeReachability(
+      allConfigs,
+      journeyMeta,
+      new Map([["cross-journey-key", 1]]),
+      undefined,
+      undefined,
+      testSupport()
+    )
     expect(withKey.reachableFloors.has(floorKey({ journeyId: "journeyA", levelIndex: 0, floorIndex: 1 }))).toBe(true)
     expect(withKey.reachableFloors.has(floorKey({ journeyId: "journeyB", levelIndex: 0, floorIndex: 1 }))).toBe(true)
   })
@@ -296,38 +339,60 @@ describe(computeReachability, () => {
       ],
       journeyB: [gatedTwoFloorSite("cross-journey-key")],
     }
-    const journeyMeta = {
-      journeyA: { tier: "starter" as const, piecesRequired: 0 },
-      journeyB: { tier: "starter" as const, piecesRequired: 0 },
-    }
+    const journeyMeta = { journeyA: { tier: "starter" as const }, journeyB: { tier: "starter" as const } }
 
-    const first = computeReachability(allConfigs, journeyMeta, new Map())
+    const first = computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())
     expect(first.reachableFloors.has(floorKey({ journeyId: "journeyB", levelIndex: 0, floorIndex: 1 }))).toBe(false)
     expect(first.harvestedCounts.get("cross-journey-key")).toBe(1)
 
-    const second = computeReachability(allConfigs, journeyMeta, first.harvestedCounts)
+    const second = computeReachability(
+      allConfigs,
+      journeyMeta,
+      first.harvestedCounts,
+      undefined,
+      undefined,
+      testSupport()
+    )
     expect(second.reachableFloors.has(floorKey({ journeyId: "journeyB", levelIndex: 0, floorIndex: 1 }))).toBe(true)
   })
 
-  it("a journey below its piecesRequired threshold contributes no reachable floors at all", () => {
+  it("a journey below its (mod-supplied) map-piece entry threshold contributes no reachable floors at all", () => {
     const allConfigs: Record<string, SiteConfig[]> = { tomb: [ungatedTwoFloorSite()] }
-    const journeyMeta = { tomb: { tier: "starter" as const, piecesRequired: 4 } }
+    const journeyMeta = { tomb: { tier: "starter" as const } }
+    const support = testSupport({ tomb: 4 })
 
-    const result = computeReachability(allConfigs, journeyMeta, new Map([[mapPieceBucket("tomb"), 3]]))
+    const result = computeReachability(
+      allConfigs,
+      journeyMeta,
+      new Map([[mapPieceBucket("tomb"), 3]]),
+      undefined,
+      undefined,
+      support
+    )
     expect(result.reachableFloors.size).toBe(0)
 
-    const enough = computeReachability(allConfigs, journeyMeta, new Map([[mapPieceBucket("tomb"), 4]]))
+    const enough = computeReachability(
+      allConfigs,
+      journeyMeta,
+      new Map([[mapPieceBucket("tomb"), 4]]),
+      undefined,
+      undefined,
+      support
+    )
     expect(enough.reachableFloors.has(floorKey({ journeyId: "tomb", levelIndex: 0, floorIndex: 0 }))).toBe(true)
   })
 
-  it("unlockedTiers reflects only starter plus whatever tier-unlock treasures are held", () => {
+  it("unlockedTiers reflects only the tiers whose (mod-supplied) unlock keys are held, plus the lockless first tier", () => {
     const result = computeReachability(
       {},
       {},
       new Map([
         ["starter_a_1", 1],
         ["junior_a_1", 1],
-      ])
+      ]),
+      undefined,
+      undefined,
+      testSupport()
     )
     expect(result.unlockedTiers).toEqual(new Set(["starter", "junior", "expert"]))
   })
@@ -348,11 +413,8 @@ describe(computeReachability, () => {
         ],
       ],
     }
-    const journeyMeta = {
-      journeyA: { tier: "starter" as const, piecesRequired: 0 },
-      tomb: { tier: "starter" as const, piecesRequired: 0 },
-    }
-    const result = computeReachability(allConfigs, journeyMeta, new Map())
+    const journeyMeta = { journeyA: { tier: "starter" as const }, tomb: { tier: "starter" as const } }
+    const result = computeReachability(allConfigs, journeyMeta, new Map(), undefined, undefined, testSupport())
     expect(result.harvestedCounts.get(mapPieceBucket("tomb"))).toBe(1)
   })
 })

@@ -1,5 +1,4 @@
-import { tier, journey, tomb, sidePath, wardChest, wardWing } from "../dsl"
-import { fragmentPrice, MOSAIC_PRICE } from "../../data/shopPricing"
+import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
@@ -83,39 +82,38 @@ export const expertRules: Rule[] = [
   }),
 
   tomb("expert_treasure_tomb", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "expert",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment + mosaic.
-        sideSections: [
-          sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("expert") }),
-          sidePath({ puzzles: 1, endReward: "mosaicPiece", shopPrice: MOSAIC_PRICE }),
-        ],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       // A side path opting into the same hieroglyph-fragment assignment pyramids use.
       { mainEndReward: "tombTreasure", sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }] },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // Crocodile capstone on the final floor — authored via a node selector (§G).
+      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
     ],
   }),
   tomb("expert_treasure_tomb_b", {
-    encounter: "tableau",
+    encounter: "tomb-puzzle",
     difficulty: "expert",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       {
         mainEndReward: "tombTreasure",
-        // Fez shop — locked stock list: fragment (solo slot).
-        sideSections: [sidePath({ puzzles: 1, endReward: "hieroglyphFragment", shopPrice: fragmentPrice("expert") })],
+        // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
+        sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      // Crocodile capstone on the final floor — authored via a node selector (§G).
+      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
     ],
   }),
 

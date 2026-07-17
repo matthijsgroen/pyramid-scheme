@@ -60,18 +60,147 @@ Escalation ladder: starter (see locked content) → junior (bonus floors) →
 expert (intro traps + floor keys) → master (deepen: multi-color + chains,
 hazardous returns) → wizard (saturate all).
 
-## Slices 2+ (re-planned after mosaic)
+## Slice 2 — hieroglyph (first gating currency) — DONE
 
-- [ ] tableau / hieroglyph — first gating currency (hard toggle-off)
-- [ ] trap — perks (grant/consume split), consumables, HUD
-- [ ] shop — money, depends on puzzle/core economy
-- [ ] `siteAssembler` core-loop rewrite (`Distribution` primitive) — last
+Plan + decisions: `docs/mods/SLICE-2-PLAN.md`. Handover: `docs/mods/HANDOVER.md`.
+Branch `mods/hieroglyph-currency` (7 commits, not pushed).
 
-## Frozen until modules land (do not extend)
+World-gen half DONE (711 green, world byte-identical):
+- [x] move `mods/tableau` → `mods/hieroglyph` (family id stays `tableau`)
+- [x] descriptor + registration (currencyDistributions, families, currencyMeta[], showInCollection)
+- [x] DSL authors preference not baked currency + unified bucket grammar `<cur>`/`<cur>:<inst>`
+- [x] reachability: inject gate threshold + reward→bucket harvest (core names no hieroglyph)
+- [x] move HIEROGLYPH_REQUIRED/TOMB_SYMBOLS/FRAGMENT_MATRIX into the mod; serializer injected
+- [x] reward-count validation derived from registered currencies (toggle-off safe)
+- [x] winnability hard-fail (lock with no owning currency)
 
-- [ ] phase-4 uncapped loot (max-% occupancy + drop rate)
-- [ ] filler-loot fill-the-rest generalization
-- [ ] slot capacity (`Slot` holding several items)
+App-side half DONE (711 green, world byte-identical, toggle-off proven both ways):
+- [x] gate tableau family registration on isModEnabled (plugin.tsx self-gates its registerFamily)
+- [x] family-absence fallback (SiteMapScreen effect auto-resolves an unregistered-family room)
+- [~] fragments → ledger — DROPPED. `collectedFragments: string[]` kept: it already gives the
+      player-facing counter (hieroglyphProgress "Ra 3/5"), lives in src/app (outside the
+      worldGen/game grep gate), and empties when the mod's off. The ledger is a flat counter;
+      the migration was churn + a forced compass redesign + save migration for no toggle-off gain.
+- [x] Collection hieroglyph sections gated on registered CurrencyMeta.showInCollection (meta only
+      registered while the mod's on → sections drop with it)
+- [x] gate the hieroglyphFragment reward handler on isModEnabled (in-place; moving it would break
+      applyReward/rewardDisplay's direct import ordering)
+- [x] TOGGLE-OFF PROOF: mod off → generate-world guard ON + winnable + 0/294 frags + app builds;
+      re-add → byte-identical. Full suite 711 green.
+
+**Slice 2 complete.**
+
+## Collection redesign (post-Slice-2 follow-on) — DS-1 + MOD-1 DONE
+
+Design: `docs/mods/collection-and-detector-design.md`.
+- [x] DS-1 — design-system primitives (`CollectibleSlot`/`CollectionSection`/`CategoryGrid` +
+      `difficultyColors` tokens); fixed invisible tile selection (clip-safe drop-shadow outline)
+- [x] MOD-1 — mod-owned hieroglyph Collection section (collection-section registry mirroring
+      `registerAllFamilies`); core Collection names no mod; toggle-off proven
+- [x] DET-1 — detector revival — folded into the Perk & detector system below (detectors ARE perks).
+
+## Perk & detector system — DONE (P1–P5 + both UI slices, 2026-07-16)
+
+Full design + build log: `docs/mods/collection-and-detector-design.md` §7 (design) + §9.1 (per-phase
+progress). Shipped on `mods/hieroglyph-currency`. Summary:
+- Perks are granted via a contribution seam (`registerPerkContribution(() => ({ grant, describe }))`,
+  `src/app/SiteMap/perkContributions.ts`) — the dormant `perkRegistry` / `registerPerks` are deleted.
+- Perk STATE moved to owning mods: trap owns max-health / armor / trap-insight / pack-mule /
+  consumable-detector; hieroglyph owns compass; puzzle owns scribes-eye; core owns only
+  corridor-detection. `maxHealth` duplication resolved (trap's copy is the single source). Orphan
+  effects built: pack-mule carry cap 2→4, trap-insight +1s/stack.
+- tomb-treasure's `tombKey` claim dispatches `TREASURE_PERKS[keyId]` → merged `grant`.
+- Detectors are tiered (§7.2): compass (hieroglyph) + supplies (trap) narrow inward L1–L3; corridor
+  (core) widens outward L1–L4. `DetectorPanel` reads a merged detector-level accessor
+  (`detectorLevels.ts`) + the compass target seam (`compassTarget.ts`) — names no mod.
+- Tomb-treasure Collection section (mod-owned): "collected" = own the tombKey; shows the perk bonus.
+- Hidden corridor = optional-pocket gated pathway (world-gen); in-game reveal/enter + compass
+  target-picking on the Collection are both wired.
+
+## Slices 3+ (re-planned after hieroglyph)
+
+Perk UPGRADES are now DONE (see the Perk & detector system section above).
+
+**The Distribution primitive is DESIGNED (design locked): `docs/mods/distribution-primitive-design.md`.**
+Everything placed into the world — encounters (trap/puzzle/shop) AND loot (currencies/junk/
+consumables/money) — is a `Distribution`: **core allocates slots (footprint + eligibility + rank),
+the mod fills them** (owns variants/rarity/completeness/per-instance encounter config). Fixed pass
+order: structure → encounters → gating → capped → dynamic (+ authorable empty quota). Target = the
+full unified model (B); **built loot-first**. Subsumes: filler-loot generalization, the Slice-5
+siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in the doc.
+
+- [~] Slice 3a — loot distributions (Increment 1). MOSTLY DONE:
+      - [x] `Distribution` + registry + `allocateDistributions`; capped currencies routed through it,
+            no change (`25c4692`).
+      - [x] slot pool extended to puzzle-chain slots (`slots.ts` emits `kind:"puzzle"` + `siteId`/
+            `puzzleSeq`; gating + capped filter to `kind:"end"` so their output is unchanged).
+      - [x] unified dynamic pass (`dynamicLoot.ts`): money + consumables byte-identical to the retired
+            `assignPuzzleRewards` (same per-site seeds — money sum 1009, consumables 248/73/72
+            unchanged); junk by EAGERNESS (chest 1.0 / puzzle 0.6 / trap+gate 0, per SLICE-2-PLAN)
+            over ALL loot slots, round-robin per tier for ≥1-of-each completeness (hard-fail).
+            `assignPuzzleRewards` retired (buildSite only inits arrays now). Guard ON build solvable;
+            toggle-off (mosaic) solvable; 716 green.
+      - [ ] `emptyFraction` knob SKIPPED (YAGNI) — leftover puzzle slots are the empties naturally
+            (eager 0.6 fills the rest); add a real knob when an author wants to force chest empties.
+      - [x] consumables → TRAP-OWNED (Slice 3b stage 2): `ModDescriptor.consumables` (density +
+            rarity roll), injected via `registeredMods.CONSUMABLES` → buildConfigs → dynamicLoot.
+            Core keeps the per-site layout; trap owns the fill. Trap ON = byte-identical (393
+            consumable / 176 money / 795 junk); trap OFF = 0 consumables, vacated slots eager-fill
+            junk (795→1030), guard holds. NOTE: expert+-path eligibility (design) NOT yet applied —
+            consumables still on all puzzle paths; fold in when refining.
+      - [x] PART B: placement tier follows the slot's OWN floor/section difficulty, not the journey
+            tier (`collectSlots`). A ward path/wing authored at a difficulty (e.g. `wardWing({tomb,
+            index, tier})`) tiers its loot by that marker — expert "come back stronger" wings in a
+            junior pyramid now tier up (divine 406→422, stone 27→16); a future starter path in a
+            wizard tomb would tier down. Money byte-identical (1009); completeness + guard hold.
+- [~] Slice 3b — trap. MOSTLY DONE (staged):
+      - [x] stage 1 — trap `ModDescriptor` + register + arithmetic-reflex family (app-gated). `dcd8881`
+      - [x] stage 2 — consumables trap-owned (`ModDescriptor.consumables`, injected). `c3830e4`
+      - [x] stage 3 — health currency trap-owned (descriptor `currencyMeta`; value already ledger).
+      - [x] stage 4 — HUD gated: HealthDisplay + ConsumableBar hidden when trap off (all consumables
+            are trap-owned — oil=full heal, bandage=1 heart, trapTool=disarm).
+      - [x] perks DISREGARDED (grants no-op) — health uses constant maxHealth 6, no perk seam.
+      - [x] health + consumables → `useTrapProgress` (trap mod state, useModState). Health left the
+            shared ledger (it's trap-only); consumable inventory left ProgressionState. Methods
+            (currentHealth/maxHealth/canAttemptTrap/takeTrapDamage/consumables/carry-cap/add/use) all
+            trap-owned. Consumers rewired: TrapFamilyShell, SiteMapScreen (HUD + pickup, via the
+            trap hook), fezShop buy, and the `consumable` reward handler (gated on trap, reads
+            `ctx.trapProgress`). Dead `heal`/`healToFull` dropped. Persistence: health/consumables
+            move to the `mod-trap` key → one-time reset for existing saves (no data loss elsewhere).
+      - [x] consumable expert+-path eligibility: `ConsumableSpec.eligible` (trap sets tier ≥ expert).
+            Consumables now only on expert/master/wizard sections (368: 70/123/175), none on
+            starter/junior. Guard holds; junk backfills the vacated low-tier slots.
+- [x] shop — Slice 4. DONE. The money economy is fully shop-owned (`src/mods/shop`): money currency
+      + money dynamic distribution + JUNK/sellables (fill + `data/sellables.ts` + ≥1-of-each
+      completeness + the Collection "junk" section) + the economy guard (`shopEconomyGuard`) + the
+      Fez-shop family. Shop off → no money/junk placed, guard drops out. Toggle-off proven.
+- [x] App-side mod plugins — the CLEAN CUT (design: `docs/mods/app-plugins-design.md`). DONE. CORE
+      PROPERTY HOLDS (verified): `src/app` + `src/game` hold ZERO `isModEnabled("<mod>")` branches
+      and ZERO `@/mods/<name>` imports. All four stages landed:
+      - [x] stage 1 — screen registry (mosaic screen out of Base). `38c092b`
+      - [x] stage 2 — HUD-widget registry (trap HUD out of SiteMapScreen). `913c923`
+      - [x] stage 3 — mod-owned reward effects (rewardContributions). `18e7886`
+      - [x] stage 4 — ONE app manifest: each mod has an `app/index.ts`; `registerModApps` imports the
+            six entrypoints; `registerAllFamilies` + `registerAllCollectionSections` deleted.
+- [x] Perk & detector system — DONE (P1–P5 + both UI slices; see the "Perk & detector system"
+      section above). Perks via a contribution seam; detectors tiered; perk state owned by mods.
+- [x] Empty-chest fix — DONE (`03f4656`). A plain `end:"treasure"` now defaults to an untagged loot
+      slot (was: no placeholder → 7 empty chests shipped). Filled by the reward-priority passes
+      (chests first). Guarded by `src/worldGen/lootEconomyInvariants.spec.ts` (no empty chest while
+      any puzzle bears loot) + per-mod loot sanity specs.
+- [ ] Distribution Increment 2 — encounter distributions. **The one remaining slice.** Convert the
+      runtime siteAssembler `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline
+      encounter-tag authoring into `encounter`-pass distributions with per-instance config. Completes
+      the B target.
+
+## Frozen — now subsumed by the Distribution primitive (no longer separate)
+
+- filler-loot fill-the-rest generalization → the `dynamic` pass.
+- slot capacity (`Slot` holding several items) → a slot whose footprint contribution is >1
+  (e.g. a shop's capacity).
+- phase-4 uncapped loot (max-% occupancy + drop rate) → a dynamic distribution's footprint/rate;
+  revisit when authoring the dynamic pass.
+- `siteAssembler` core-loop rewrite → Distribution Increment 2 (encounter distributions).
 
 ## Prior work still standing (carried into core, not undone)
 

@@ -57,21 +57,6 @@ const getStore = (storeName: string): Store => {
   return store
 }
 
-export const getOfflineValue = <T>(key: string, storeName = "defaultStore"): Promise<T | null> => {
-  const store = getStore(storeName)
-  return store.getItem<T>(key)
-}
-
-export const setOfflineValue = <T>(key: string, value: T, storeName = "defaultStore"): Promise<T | null> => {
-  const store = getStore(storeName)
-  return store.setItem<T>(key, value)
-}
-
-export const deleteOfflineValue = (key: string, storeName = "defaultStore"): Promise<void> => {
-  const store = getStore(storeName)
-  return store.removeItem(key)
-}
-
 export const clearOfflineStore = (storeName = "defaultStore"): Promise<void> => {
   const store = getStore(storeName)
   return store.clear()

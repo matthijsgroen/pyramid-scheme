@@ -307,8 +307,6 @@ export const assembleFloor = (
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
-  const treasureOrShop = (shopPrice: number | undefined): EncounterResolution =>
-    shopPrice !== undefined ? fezShop : treasureChest
 
   // A floor-key gate's key host is a purely local, structural requirement — every floor-key
   // gate on this floor needs exactly one key SOMEWHERE on this same floor, decided here,
@@ -451,7 +449,7 @@ export const assembleFloor = (
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     const goalIndex = contentIndices[contentIndices.length - 1]
     // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.puzzleRewards[k] below.
+    // used to index into config.rewards[k] below.
     const puzzleIndices = contentIndices.slice(0, -1)
     const puzzleRole = new Map<number, number>()
     puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
@@ -909,10 +907,8 @@ export const assembleFloor = (
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
     // The goal-room fallback here is defensive only: every real config sets mainEndReward
-    // explicitly (buildSite.ts) — an unset one used to silently grant a free, uncounted
-    // mosaicPiece, so this now falls back to the same grant-nothing placeholder every other
-    // unset reward slot uses.
-    const lastPuzzleIdx = config.lastMainPuzzleFamily ? config.pathPuzzles - 1 : -1
+    // explicitly (buildSite.ts). An unset one falls back to the same grant-nothing placeholder
+    // every other unset reward slot uses.
     for (let mi = 0; mi < mainPath.length; mi++) {
       const [r, c] = mainPath[mi]
       if (mi === 0) {
@@ -931,12 +927,12 @@ export const assembleFloor = (
         })
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
-        const isLastPuzzle = k === lastPuzzleIdx
+        // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
+        // index has one, else the chain's default `encounter`.
+        const override = config.encountersByIndex?.[k]
         const family =
-          isLastPuzzle && config.lastMainPuzzleFamily
-            ? resolveEncounter(config.lastMainPuzzleFamily, config.lastMainPuzzleFamily)
-            : resolveEncounter(config.encounter, "puzzle")
-        const reward = config.puzzleRewards?.[k]
+          override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
+        const reward = config.rewards?.[k]
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: k,
@@ -1020,8 +1016,12 @@ export const assembleFloor = (
       const secContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[secContentIndices[pi]]
-        const reward = section.puzzleRewards?.[pi]
-        const family = resolveEncounter(section.encounter, "puzzle")
+        const reward = section.rewards?.[pi]
+        const secOverride = section.encountersByIndex?.[pi]
+        const family =
+          secOverride !== undefined
+            ? resolveEncounter(secOverride, "puzzle")
+            : resolveEncounter(section.encounter, "puzzle")
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: pi,
@@ -1055,13 +1055,18 @@ export const assembleFloor = (
         const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
         roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
-        const endFamily = treasureOrShop(section.shopPrice)
+        // A shop is a section whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain,
+        // so `encounter` describes this end node). It renders its `rewards[]` as buyable stock; a
+        // plain end renders its single endReward. Shop-off → encounter didn't resolve to fez-shop →
+        // falls back to a treasure chest here.
+        const isShop =
+          section.encounter !== undefined &&
+          resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: endFamily.familyId,
-          tags: endFamily.tags,
-          ...(section.endReward ? { reward: section.endReward } : {}),
-          ...(section.shopPrice !== undefined ? { shopPrice: section.shopPrice } : {}),
+          family: isShop ? fezShop.familyId : treasureChest.familyId,
+          tags: isShop ? fezShop.tags : treasureChest.tags,
+          ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
         })
       }
     }
@@ -1098,15 +1103,18 @@ export const assembleFloor = (
       }
 
       // Spread across whatever room `paddedChainLength` gave this chain — same technique
-      // as the parent section and the main path (see spreadContentIndices). Previously
-      // indexed as `(contentStart + pi) * 2`, which only ever happened to line up for a
-      // single-puzzle sub-section; any sub-section with more than one puzzle was silently
-      // indexing past its own content into whatever cell happened to sit there.
+      // as the parent section and the main path (see spreadContentIndices). Indices must map
+      // through `subContentIndices` (not a raw `(contentStart + pi) * 2`), so a multi-puzzle
+      // sub-section indexes its own content rather than past it.
       const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
       for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
         const [r, c] = cells[subContentIndices[pi]]
-        const reward = subSection.puzzleRewards?.[pi]
-        const family = resolveEncounter(subSection.encounter, "puzzle")
+        const reward = subSection.rewards?.[pi]
+        const subOverride = subSection.encountersByIndex?.[pi]
+        const family =
+          subOverride !== undefined
+            ? resolveEncounter(subOverride, "puzzle")
+            : resolveEncounter(subSection.encounter, "puzzle")
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: pi,
@@ -1138,13 +1146,18 @@ export const assembleFloor = (
         const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
         roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
       } else {
-        const endFamily = treasureOrShop(subSection.shopPrice)
+        const isShop =
+          subSection.encounter !== undefined &&
+          resolveEncounter(subSection.encounter, "treasure").familyId === fezShop.familyId
         roomSpecs.set(posKey(er, ec), {
           roomType: "encounter",
-          family: endFamily.familyId,
-          tags: endFamily.tags,
-          ...(subSection.endReward ? { reward: subSection.endReward } : {}),
-          ...(subSection.shopPrice !== undefined ? { shopPrice: subSection.shopPrice } : {}),
+          family: isShop ? fezShop.familyId : treasureChest.familyId,
+          tags: isShop ? fezShop.tags : treasureChest.tags,
+          ...(isShop
+            ? { stock: subSection.rewards ?? [] }
+            : subSection.endReward
+              ? { reward: subSection.endReward }
+              : {}),
         })
       }
     }

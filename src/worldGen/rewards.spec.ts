@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { hashStr, hintToReward, pathEndToReward, rollConsumable, specToGate, specToReward } from "./rewards"
+import { hashStr, hintToReward, pathEndToReward, specToGate, specToReward } from "./rewards"
 
 // ── hashStr ────────────────────────────────────────────────────────────────────
 
@@ -13,28 +13,7 @@ describe("hashStr", () => {
   })
 })
 
-// ── rollConsumable ─────────────────────────────────────────────────────────────
-
-describe("rollConsumable", () => {
-  it("only ever returns bandage, oil, or trapTool", () => {
-    const rates = { bandage: 3, oil: 1, trapTool: 1 }
-    for (let i = 0; i < 20; i++) {
-      expect(["bandage", "oil", "trapTool"]).toContain(rollConsumable(`seed:${i}`, rates))
-    }
-  })
-
-  it("is deterministic for the same seed and rates", () => {
-    const rates = { bandage: 3, oil: 1, trapTool: 1 }
-    expect(rollConsumable("seed", rates)).toBe(rollConsumable("seed", rates))
-  })
-
-  it("a zero-weighted type is never rolled", () => {
-    const rates = { bandage: 1, oil: 0, trapTool: 0 }
-    for (let i = 0; i < 20; i++) {
-      expect(rollConsumable(`seed:${i}`, rates)).toBe("bandage")
-    }
-  })
-})
+// (rollConsumable moved to the trap mod — see src/mods/trap/game/consumableTypes.spec.ts)
 
 // ── hintToReward / specToReward ─────────────────────────────────────────────────
 
@@ -50,9 +29,8 @@ describe("hintToReward", () => {
     })
   })
 
-  it("hieroglyphFragment → first tier symbol", () => {
-    const reward = hintToReward("hieroglyphFragment", "starter")
-    expect(reward.type).toBe("hieroglyphFragment")
+  it("hieroglyph → a preference-tagged open slot (any hieroglyph), never a baked literal", () => {
+    expect(hintToReward("hieroglyph", "starter")).toEqual({ type: "fragmentSlot", prefers: "hieroglyph" })
   })
 })
 
@@ -106,19 +84,20 @@ describe("specToGate", () => {
 
 describe("pathEndToReward", () => {
   it('"mosaic" → a preference-tagged open slot', () => {
-    expect(pathEndToReward("mosaic", "starter")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
+    expect(pathEndToReward("mosaic")).toEqual({ type: "fragmentSlot", prefers: "mosaicPiece" })
   })
 
   it('"fragment" → fragmentSlot', () => {
-    expect(pathEndToReward("fragment", "starter")).toEqual({ type: "fragmentSlot" })
+    expect(pathEndToReward("fragment")).toEqual({ type: "fragmentSlot" })
   })
 
-  it('"junk" → a sellable reward', () => {
-    const reward = pathEndToReward("junk", "starter", "seed-0")
-    expect(reward?.type).toBe("sellable")
+  it('"junk" → a preference-tagged open slot (the shop mod fills it, not a baked literal)', () => {
+    expect(pathEndToReward("junk")).toEqual({ type: "fragmentSlot", prefers: "junk" })
   })
 
-  it('"treasure" → undefined (no specific reward)', () => {
-    expect(pathEndToReward("treasure", "starter")).toBeUndefined()
+  it('"treasure" → an untagged fragmentSlot (a loot slot with no preference)', () => {
+    // A treasure room gives loot (pyramid-interior-design.md §10); the slot has no `prefers`, so the
+    // solver fills it with whatever's spare. Same as "fragment".
+    expect(pathEndToReward("treasure")).toEqual({ type: "fragmentSlot" })
   })
 })

@@ -2,31 +2,19 @@ import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 
 import type { TreasureReward } from "@/game/siteTypes"
-import { getInventoryItemById } from "@/data/inventory"
-import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { getSellableById } from "@/data/sellables"
-import type { MaterialTier } from "@/data/treasures"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
 import { LootPopup } from "@/ui/atoms/LootPopup"
 import { useTimeout } from "@/support/useTimeout"
 import { rewardText } from "./rewardDisplay"
-
-const SELLABLE_RARITY: Record<MaterialTier, "common" | "rare" | "legendary"> = {
-  stone: "common",
-  bronze: "common",
-  silver: "rare",
-  gold: "rare",
-  divine: "legendary",
-}
+import { useMergedRewardDisplays, type RewardDisplay } from "./rewardDisplayRegistry"
 
 type Props = {
   pendingReward: { reward: TreasureReward; consumableFull?: boolean; onCollect: () => void } | null
-  hieroglyphProgress: (id: string) => { found: number; required: number }
   onDismiss: () => void
 }
 
-export const RewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, onDismiss }) => {
+export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
+  const displays = useMergedRewardDisplays()
   const [showLoot, setShowLoot] = useState(false)
   const [scheduleLoot] = useTimeout()
 
@@ -48,86 +36,44 @@ export const RewardFlow: FC<Props> = ({ pendingReward, hieroglyphProgress, onDis
     onDismiss()
   }
 
+  // The mod that owns this reward type populates the popup content (rarity + labels + visual). A
+  // type with no registered display (money, tomb loot) falls back to a generic icon + text built
+  // from the synchronous reward handler. Core owns the shell (LootPopup) and names no mod.
+  const build = displays[reward.type]
+  const display: RewardDisplay =
+    build?.(reward, t) ??
+    (() => {
+      const { itemName, itemDescription, icon } = rewardText(reward, t)
+      return { itemName, itemDescription, ItemVisual: <span className="text-6xl">{icon}</span> }
+    })()
+
   return (
     <>
       {!showLoot && <div className="fixed inset-0 z-30 bg-black/85" />}
 
-      {reward.type === "consumable" && consumableFull
-        ? (() => {
-            const { itemName, icon } = rewardText(reward, t)
-            return (
-              <LootPopup
-                isOpen={showLoot}
-                itemName={t("chest.consumableFull", { item: itemName })}
-                itemComponent={<span className="text-6xl opacity-50">{icon}</span>}
-                onDismiss={handleDismiss}
-                youFoundLabel={t("chest.packFull")}
-                clickToContinueLabel={t("loot.clickToContinue")}
-              />
-            )
-          })()
-        : reward.type === "hieroglyphFragment"
-          ? (() => {
-              const item = getInventoryItemById(reward.hieroglyphId)
-              const difficulty = getItemFirstLevel(reward.hieroglyphId)
-              const progress = hieroglyphProgress(reward.hieroglyphId)
-              const rarity = progress.found >= progress.required ? "legendary" : progress.found >= 2 ? "rare" : "common"
-              const { itemName, itemDescription } = rewardText(reward, t, hieroglyphProgress)
-              return (
-                <LootPopup
-                  isOpen={showLoot}
-                  itemName={itemName}
-                  itemDescription={itemDescription}
-                  rarity={rarity}
-                  itemComponent={
-                    item && difficulty ? (
-                      <HieroglyphTile
-                        symbol={item.symbol}
-                        difficulty={difficulty}
-                        size="lg"
-                        fragmentProgress={progress.found < progress.required ? progress : undefined}
-                      />
-                    ) : (
-                      <span className="text-6xl">𓂀</span>
-                    )
-                  }
-                  onDismiss={handleDismiss}
-                  youFoundLabel={t("loot.youFound")}
-                  clickToContinueLabel={t("loot.clickToContinue")}
-                />
-              )
-            })()
-          : reward.type === "sellable"
-            ? (() => {
-                const item = getSellableById(reward.itemId)
-                const { itemName, itemDescription, icon } = rewardText(reward, t)
-                return (
-                  <LootPopup
-                    isOpen={showLoot}
-                    itemName={itemName}
-                    itemDescription={itemDescription}
-                    rarity={item ? SELLABLE_RARITY[item.tier] : "common"}
-                    itemComponent={<span className="text-6xl">{icon}</span>}
-                    onDismiss={handleDismiss}
-                    youFoundLabel={t("loot.youFound")}
-                    clickToContinueLabel={t("loot.clickToContinue")}
-                  />
-                )
-              })()
-            : (() => {
-                const { itemName, itemDescription, icon } = rewardText(reward, t)
-                return (
-                  <LootPopup
-                    isOpen={showLoot}
-                    itemName={itemName}
-                    itemDescription={itemDescription}
-                    itemComponent={<span className="text-6xl">{icon}</span>}
-                    onDismiss={handleDismiss}
-                    youFoundLabel={t("loot.youFound")}
-                    clickToContinueLabel={t("loot.clickToContinue")}
-                  />
-                )
-              })()}
+      {/* consumableFull is core chrome: a claim refused because the pack is full — the reward is
+          shown dimmed with a "pack full" label, not collected (onCollect was a no-op). */}
+      {consumableFull ? (
+        <LootPopup
+          isOpen={showLoot}
+          itemName={t("chest.consumableFull", { item: display.itemName })}
+          itemComponent={<span className="opacity-50">{display.ItemVisual}</span>}
+          onDismiss={handleDismiss}
+          youFoundLabel={t("chest.packFull")}
+          clickToContinueLabel={t("loot.clickToContinue")}
+        />
+      ) : (
+        <LootPopup
+          isOpen={showLoot}
+          itemName={display.itemName}
+          itemDescription={display.itemDescription}
+          rarity={display.rarity}
+          itemComponent={display.ItemVisual}
+          onDismiss={handleDismiss}
+          youFoundLabel={t("loot.youFound")}
+          clickToContinueLabel={t("loot.clickToContinue")}
+        />
+      )}
     </>
   )
 }

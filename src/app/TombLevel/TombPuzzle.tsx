@@ -1,24 +1,24 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { TableauLevel } from "@/data/tableaus"
-import { type RewardCalculation } from "@/game/puzzles/tableau/generateRewardCalculation"
+import { type RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { revealText } from "@/support/revealText"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { useProgression } from "@/app/state/useProgression"
+import { usePuzzleProgress } from "@/mods/puzzle/app/usePuzzleProgress"
 import {
   createTableauPuzzleState,
   isTableauPuzzleCompleted,
   toggleTableauTile,
-} from "@/game/puzzles/tableau/tableauPuzzleState"
+} from "@/mods/hieroglyph/game/tableauPuzzleState"
 import { useState, useMemo, useRef, type FC, type FormEvent, useEffect, use } from "react"
 import { useTranslation } from "react-i18next"
 import { TombPuzzleView } from "@/ui/organisms/TombPuzzleView"
 import type { InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
 import type { OrderedFormula } from "@/ui/organisms/TombTableau"
 import { FezContext } from "../fez/context"
-import { createPositionOverview } from "@/game/formulas/filledPositions"
+import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
@@ -53,8 +53,8 @@ export const TombPuzzle: FC<{
 
   // Get player's actual inventory
   const { inventory, removeItems } = useInventory()
-  const { perks } = useProgression()
-  const scribesEyeSlots = perks.scribesEyeLevel === 3 ? Infinity : perks.scribesEyeLevel
+  const { scribesEyeLevel } = usePuzzleProgress()
+  const scribesEyeSlots = scribesEyeLevel === 3 ? Infinity : scribesEyeLevel
 
   // Domain state: which tiles are filled and how much inventory that used
   const [state, setState] = useState(createTableauPuzzleState)

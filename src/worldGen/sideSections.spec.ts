@@ -62,7 +62,7 @@ describe("buildSideSections", () => {
     ).toEqual([])
   })
 
-  it("hasMapPieceBranch prepends a mapPiece section pointing at the tier's tomb", () => {
+  it("hasMapPieceBranch prepends a fragmentSlot sentinel tagged for the tier's tomb", () => {
     const sections = buildSideSections({
       tier: "expert",
       difficulty: "expert",
@@ -70,12 +70,14 @@ describe("buildSideSections", () => {
       journeyId: "j",
       hasMapPieceBranch: true,
     })
+    // A generic sentinel tagged `mapPiece:<tombId>` — the tomb-treasure mod's currency fills it,
+    // so core world-gen names no reward type here (docs/mods/ARCHITECTURE.md (tombTreasure mod)).
     expect(sections).toEqual([
       {
         pathPuzzles: 0,
         difficulty: "expert",
         end: "treasure",
-        endReward: { type: "mapPiece", tombId: "expert_treasure_tomb" },
+        endReward: { type: "fragmentSlot", prefers: "mapPiece:expert_treasure_tomb" },
       },
     ])
   })
@@ -126,7 +128,10 @@ describe("buildSideSections", () => {
       journeyId: "j",
       constraintSections: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 0, hidden: true }] }],
     })
-    expect(sections[0].sideSections).toEqual([{ pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true }])
+    // A plain treasure end (no authored reward, no gate) defaults to an untagged loot slot.
+    expect(sections[0].sideSections).toEqual([
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true, endReward: { type: "fragmentSlot" } },
+    ])
   })
 
   it('end: "staircase" numbers the stairId by position among already-pushed sections', () => {
@@ -138,7 +143,7 @@ describe("buildSideSections", () => {
       hasMapPieceBranch: true,
       constraintSections: [{ pathPuzzles: 1, end: "staircase" }],
     })
-    // index 0 = mapPiece branch, index 1 = the staircase section
+    // index 0 = map-piece branch sentinel, index 1 = the staircase section
     expect(sections[1].end).toEqual({ stairId: "myJourney:side1" })
   })
 

@@ -3,7 +3,7 @@
 // Names/descriptions live in locale files (public/locales/*/sellables.json), not here —
 // same pattern as treasures.ts/treasures.json.
 
-import { materialTierByDifficulty, type MaterialTier } from "./treasures"
+import { materialTierByDifficulty, type MaterialTier } from "./materialTiers"
 import type { Difficulty } from "./difficultyLevels"
 
 export type SellableItem = { id: string; symbol: string; tier: MaterialTier }

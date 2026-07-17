@@ -1,4 +1,5 @@
 import type { FC } from "react"
+import { useTranslation } from "react-i18next"
 import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 
 type Props = {
@@ -6,18 +7,59 @@ type Props = {
   compassLevel: number // 0 = not unlocked
   consumableDetectorLevel: number // 0 = not unlocked
   detectionLevel: number // 0 = not unlocked
+  // The hunted hieroglyph, picked on the Collection screen (§3C). null = nothing picked yet.
   compassTarget: string | null
   compassResults: CompassResult[]
   consumableResults: ConsumableResult[]
   onSetDetector: (mode: DetectorMode) => void
-  onSetCompassTarget: (hieroglyphId: string) => void
-  availableHieroglyphs: { id: string; label: string }[]
+  // Corridor detector widens outward (§7.2): L2 = an unfound corridor on this floor; L3 = the count
+  // still outstanding across the whole pyramid. Both default off so lower levels stay silent.
+  floorHasHiddenCorridor?: boolean
+  pyramidHiddenCorridorCount?: number
 }
 
 const MODE_ICON: Record<string, string> = {
   compass: "🧭",
   consumable: "🎒",
   hiddenPassageway: "👁",
+}
+
+const uniqueBy = <T,>(items: T[], key: (item: T) => string): T[] => {
+  const seen = new Set<string>()
+  return items.filter(item => {
+    const k = key(item)
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+}
+
+// Precision narrows inward with level (§7.2): L1 pyramid only, L2 +floor, L3 +exact cell. The key
+// collapses hits to the shown precision so lower levels don't list the same pyramid/floor twice.
+const compassKey = (r: CompassResult, level: number): string =>
+  level <= 1
+    ? r.journeyId
+    : level === 2
+      ? `${r.journeyId}:${r.levelIdx}:${r.floorIdx}`
+      : `${r.journeyId}:${r.levelIdx}:${r.floorIdx}:${r.cell?.row},${r.cell?.col}`
+
+const compassLabel = (r: CompassResult, level: number): string => {
+  if (level <= 1) return r.journeyId
+  const floor = `${r.journeyId} L${r.levelIdx + 1} F${r.floorIdx + 1}`
+  return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
+}
+
+const consumableKey = (r: ConsumableResult, level: number): string =>
+  level <= 1
+    ? r.journeyId
+    : level === 2
+      ? `${r.journeyId}:${r.floorIdx}`
+      : `${r.journeyId}:${r.floorIdx}:${r.cell.row},${r.cell.col}`
+
+const consumableLabel = (r: ConsumableResult, level: number): string => {
+  if (level <= 1) return r.journeyId
+  const floor = `${r.journeyId} F${r.floorIdx + 1}`
+  return level >= 3 ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
 }
 
 export const DetectorPanel: FC<Props> = ({
@@ -29,12 +71,16 @@ export const DetectorPanel: FC<Props> = ({
   compassResults,
   consumableResults,
   onSetDetector,
-  onSetCompassTarget,
-  availableHieroglyphs,
+  floorHasHiddenCorridor = false,
+  pyramidHiddenCorridorCount = 0,
 }) => {
+  const { t } = useTranslation("common")
   if (compassLevel === 0 && consumableDetectorLevel === 0 && detectionLevel === 0) return null
 
   const toggle = (mode: DetectorMode) => onSetDetector(activeDetector === mode ? null : mode)
+
+  const shownCompass = uniqueBy(compassResults, r => compassKey(r, compassLevel))
+  const shownConsumables = uniqueBy(consumableResults, r => consumableKey(r, consumableDetectorLevel))
 
   return (
     <div className="rounded-lg border border-stone-700 bg-stone-900/90 p-2 text-xs text-stone-300">
@@ -43,7 +89,7 @@ export const DetectorPanel: FC<Props> = ({
           <button
             onClick={() => toggle("compass")}
             className={`rounded px-2 py-1 ${activeDetector === "compass" ? "bg-amber-700 text-amber-100" : "bg-stone-800 hover:bg-stone-700"}`}
-            title="Compass"
+            title={t("detector.compassTitle")}
           >
             {MODE_ICON.compass}
           </button>
@@ -52,7 +98,7 @@ export const DetectorPanel: FC<Props> = ({
           <button
             onClick={() => toggle("consumable")}
             className={`rounded px-2 py-1 ${activeDetector === "consumable" ? "bg-amber-700 text-amber-100" : "bg-stone-800 hover:bg-stone-700"}`}
-            title="Consumable detector"
+            title={t("detector.consumableTitle")}
           >
             {MODE_ICON.consumable}
           </button>
@@ -61,7 +107,7 @@ export const DetectorPanel: FC<Props> = ({
           <button
             onClick={() => toggle("hiddenPassageway")}
             className={`rounded px-2 py-1 ${activeDetector === "hiddenPassageway" ? "bg-amber-700 text-amber-100" : "bg-stone-800 hover:bg-stone-700"}`}
-            title="Hidden passageways"
+            title={t("detector.corridorTitle")}
           >
             {MODE_ICON.hiddenPassageway}
           </button>
@@ -70,45 +116,55 @@ export const DetectorPanel: FC<Props> = ({
 
       {activeDetector === "compass" && (
         <div>
-          <select
-            value={compassTarget ?? ""}
-            onChange={e => onSetCompassTarget(e.target.value)}
-            className="mb-1 w-full rounded bg-stone-800 px-1 py-0.5 text-xs text-stone-200"
-          >
-            <option value="">— pick hieroglyph —</option>
-            {availableHieroglyphs.map(h => (
-              <option key={h.id} value={h.id}>
-                {h.label}
-              </option>
-            ))}
-          </select>
-          {compassTarget && compassResults.length === 0 && <p className="text-stone-500">All pieces collected</p>}
-          {compassResults.slice(0, 3).map((r, i) => (
-            <div key={i} className="truncate text-amber-200">
-              {r.journeyId} L{r.levelIdx + 1} F{r.floorIdx + 1}
-            </div>
-          ))}
-          {compassResults.length > 3 && <p className="text-stone-500">+{compassResults.length - 3} more</p>}
+          {/* Target is picked on the Collection screen (§3C), not here — the HUD only reads it out. */}
+          {!compassTarget ? (
+            <p className="text-stone-500">{t("detector.pickTarget")}</p>
+          ) : shownCompass.length === 0 ? (
+            <p className="text-stone-500">{t("detector.allCollected")}</p>
+          ) : (
+            <>
+              {shownCompass.slice(0, 3).map((r, i) => (
+                <div key={i} className="truncate text-amber-200">
+                  {compassLabel(r, compassLevel)}
+                </div>
+              ))}
+              {shownCompass.length > 3 && (
+                <p className="text-stone-500">{t("detector.more", { count: shownCompass.length - 3 })}</p>
+              )}
+            </>
+          )}
         </div>
       )}
 
       {activeDetector === "consumable" && (
         <div>
-          {consumableResults.length === 0 ? (
-            <p className="text-stone-500">No skipped chests</p>
+          {shownConsumables.length === 0 ? (
+            <p className="text-stone-500">{t("detector.noSkippedChests")}</p>
           ) : (
-            consumableResults.slice(0, 3).map((r, i) => (
+            shownConsumables.slice(0, 3).map((r, i) => (
               <div key={i} className="truncate text-amber-200">
-                {r.journeyId}
+                {consumableLabel(r, consumableDetectorLevel)}
               </div>
             ))
           )}
-          {consumableResults.length > 3 && <p className="text-stone-500">+{consumableResults.length - 3} more</p>}
+          {shownConsumables.length > 3 && (
+            <p className="text-stone-500">{t("detector.more", { count: shownConsumables.length - 3 })}</p>
+          )}
         </div>
       )}
 
       {activeDetector === "hiddenPassageway" && (
-        <p className="text-stone-400">Suspicious corners revealed (L{detectionLevel})</p>
+        <div className="text-stone-400">
+          <p>{t("detector.corridorNearby", { level: detectionLevel })}</p>
+          {detectionLevel >= 2 && floorHasHiddenCorridor && (
+            <p className="text-amber-200">{t("detector.corridorOnFloor")}</p>
+          )}
+          {detectionLevel >= 3 && pyramidHiddenCorridorCount > 0 && (
+            <p className="text-amber-200">
+              {t("detector.corridorPyramidCount", { count: pyramidHiddenCorridorCount })}
+            </p>
+          )}
+        </div>
       )}
     </div>
   )

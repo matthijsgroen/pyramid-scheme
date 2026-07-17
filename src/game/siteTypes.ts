@@ -1,21 +1,20 @@
-export type PuzzleFamily = "sumplete" | "tableau" | "crocodile"
 export type RoomType = "portal" | "fork" | "encounter"
-export type ConsumableType = "bandage" | "oil" | "trapTool"
-// Closed union — grows by one variant per new reward/currency (money, sellable were the
-// latest). docs/mods-architecture.md proposes collapsing this into a currency-id registry;
-// see that doc before adding a variant here for what's replacing this pattern.
-export type TreasureReward =
-  | { type: "mosaicPiece" }
-  | { type: "mapPiece"; tombId: string }
-  | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex: number }
-  | { type: "tombKey"; keyId: string }
-  | { type: "consumable"; consumable: ConsumableType }
-  // `prefers`: a soft authored placement preference (a bucket id) — a ranking boost for that
-  // currency's demand, not an exclusive claim. See keys-and-locks-solver.md, "A slot's
-  // authored placement preference is a soft tag, not an exclusive claim".
-  | { type: "fragmentSlot"; prefers?: string }
-  | { type: "money"; amount: number }
-  | { type: "sellable"; itemId: string }
+// OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
+// core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
+// owning mod defines. Validated at load against per-type zod schemas registered by the mods
+// (src/app/SiteMap/rewardSchemas). Producers/consumers that own a type narrow it via its schema
+// (mods) or the core-owned shapes below.
+export type TreasureReward = { type: string } & Record<string, unknown>
+
+// Core-owned reward shapes — NOT a mod-currency enumeration. `fragmentSlot` is the world-gen
+// placement sentinel (never serialized). `mapPiece`/`tombKey` belong to the tomb-treasure mod
+// (effect/display/schema/state all live there), but their world-gen PLACEMENT hasn't migrated to
+// the solver yet (§E): reachability harvest, validate.ts counting, and the tombKey construction
+// literal still cast to these shapes. Kept here as structural cast helpers until §E; the open
+// `TreasureReward` stays the surface everything passes around.
+export type FragmentSlotReward = { type: "fragmentSlot"; prefers?: string }
+export type MapPieceReward = { type: "mapPiece"; tombId: string }
+export type TombKeyReward = { type: "tombKey"; keyId: string }
 
 export type Direction = "n" | "s" | "e" | "w"
 export type CellState = "fogged" | "visible" | "reachable" | "completed"
@@ -39,8 +38,10 @@ export type RoomCell = {
   sectionHash?: string
   hidden?: boolean
   reward?: TreasureReward
-  /** `reward` is a Fez-shop purchase (this many coins), not a free pickup. */
-  shopPrice?: number
+  /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the
+   * mods placed into the section's `rewards[]`. The shop family renders these as its buyable list;
+   * each is priced by the shop and claimed per (node, index). Entries may be undefined (unfilled). */
+  stock?: (TreasureReward | undefined)[]
   requiredKeyId?: string
   // Same precondition as requiredKeyId, generalized to several — every id must be owned
   // for this room to be completable. A tableau needing several hieroglyphs complete is
@@ -86,9 +87,7 @@ export type SubSection = {
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
-  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
-  shopPrice?: number
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
@@ -97,6 +96,10 @@ export type SubSection = {
    * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family.
    * An array means AND: every listed tag must be present on the resolved family. */
   encounter?: string | string[]
+  /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
+   * selectors (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). Room k uses `encountersByIndex[k] ?? encounter`;
+   * at runtime the values are resolved family ids. */
+  encountersByIndex?: Record<number, string | string[]>
   /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
   decorations?: DecorationKind[]
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
@@ -118,11 +121,14 @@ export type FloorConfig = {
   /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means AND. */
   encounter?: string | string[]
-  /** If set, the last main-path puzzle room uses this family instead of `encounter`. */
-  lastMainPuzzleFamily?: PuzzleFamily
+  /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
+   * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
+   * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
+   * pass. Replaces the old last-only `lastMainPuzzleFamily`. See docs/mods/ARCHITECTURE.md ("Authoring: node selectors"). */
+  encountersByIndex?: Record<number, string | string[]>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
@@ -157,15 +163,22 @@ export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFail
 
 export type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
 
+// `cell` (row,col within the floor) is resolved only at compass level 3 — it needs a floor
+// assembly the lower levels don't pay for. See collection-and-detector-design.md §7.2.
 export type CompassResult = {
   journeyId: string
   levelIdx: number
   floorIdx: number
   hieroglyphId: string
   pieceIndex: number
+  cell?: { row: number; col: number }
 }
 
+// floorIdx + cell decoded from edgeId ("floor:row,col") so the supplies detector can narrow its
+// readout by level (§7.2): L1 pyramid, L2 +floor, L3 +cell.
 export type ConsumableResult = {
   journeyId: string
   edgeId: string
+  floorIdx: number
+  cell: { row: number; col: number }
 }

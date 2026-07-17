@@ -1,52 +1,32 @@
 import { useMemo, useState } from "react"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import type { FloorConfig, DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
-import type { ProgressionAPI } from "./useProgression"
+import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
 import type { JourneyAPI } from "./useJourneys"
+import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
+import { useCompassTarget } from "@/app/SiteMap/compassTarget"
+import { decodeEdge } from "@/app/SiteMap/useAssembledFloor"
 
 export type DetectorAPI = {
   activeDetector: DetectorMode
   compassTarget: string | null
   setDetector: (mode: DetectorMode) => void
-  setCompassTarget: (hieroglyphId: string) => void
   compassResults: CompassResult[]
   consumableResults: ConsumableResult[]
 }
 
-const scanFloorForFragments = (floor: FloorConfig, hieroglyphId: string): { pieceIndex?: number }[] => {
-  const results: { pieceIndex?: number }[] = []
-  const checkReward = (r: FloorConfig["mainEndReward"]) => {
-    if (r?.type === "hieroglyphFragment" && r.hieroglyphId === hieroglyphId) {
-      results.push({ pieceIndex: r.pieceIndex })
-    }
-  }
-  checkReward(floor.mainEndReward)
-  for (const section of floor.sideSections ?? []) {
-    checkReward(section.endReward)
-  }
-  return results
-}
-
-export const useDetector = (progression: ProgressionAPI, journeys: JourneyAPI): DetectorAPI => {
+export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
   const [activeDetector, setActiveDetector] = useState<DetectorMode>(null)
-  const [compassTarget, setCompassTarget] = useState<string | null>(null)
+  // The hunt target is picked on Collection and owned by the fragment mod (§3C); core reads it via
+  // the seam (null when no mod owns it) so a target survives navigation into a site.
+  const compassTarget = useCompassTarget()
+  const scanCompass = useMergedCompassScanner()
 
-  const compassResults = useMemo((): CompassResult[] => {
-    if (activeDetector !== "compass" || !compassTarget) return []
-    const results: CompassResult[] = []
-    for (const [journeyId, levels] of Object.entries(generatedWorldConfigs)) {
-      levels.forEach((floors, levelIdx) => {
-        floors.forEach((floor, floorIdx) => {
-          for (const found of scanFloorForFragments(floor, compassTarget)) {
-            if (found.pieceIndex !== undefined && !progression.hasFragment(compassTarget, found.pieceIndex)) {
-              results.push({ journeyId, levelIdx, floorIdx, hieroglyphId: compassTarget, pieceIndex: found.pieceIndex })
-            }
-          }
-        })
-      })
-    }
-    return results
-  }, [activeDetector, compassTarget, progression])
+  // Compass scanning is mod-owned (each mod registers a scanner for its own reward type via
+  // detectorScanners); core just runs the merged scanner for the current target.
+  const compassResults = useMemo<CompassResult[]>(
+    () => (activeDetector === "compass" && compassTarget ? scanCompass(compassTarget) : []),
+    [activeDetector, compassTarget, scanCompass]
+  )
 
   const consumableResults = useMemo((): ConsumableResult[] => {
     if (activeDetector !== "consumable") return []
@@ -56,7 +36,9 @@ export const useDetector = (progression: ProgressionAPI, journeys: JourneyAPI): 
     for (const [journeyId] of Object.entries(generatedWorldConfigs)) {
       const skipped = journeys.getSkippedConsumables(journeyId)
       for (const edgeId of skipped) {
-        results.push({ journeyId, edgeId })
+        // edgeId encodes "floor:row,col" — decode so the panel can narrow the readout by level (§7.2).
+        const [floorIdx, row, col] = decodeEdge(edgeId)
+        results.push({ journeyId, edgeId, floorIdx, cell: { row, col } })
       }
     }
     return results
@@ -66,7 +48,6 @@ export const useDetector = (progression: ProgressionAPI, journeys: JourneyAPI): 
     activeDetector,
     compassTarget,
     setDetector: setActiveDetector,
-    setCompassTarget,
     compassResults,
     consumableResults,
   }

@@ -3,16 +3,26 @@ import { buildConfigs } from "./configBuilder"
 import { WORLD_TARGETS } from "./worldSpec"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 // Deliberate exception to "src/worldGen/ never imports src/mods/": this integration spec
-// verifies the REAL, complete world (every hieroglyph fragment the tableau currency expects,
-// EXPECTED_HIEROGLYPH_FRAGMENTS below), which needs the real mod-owned currencies — same
-// standing as scripts/generateWorld.ts, the other sanctioned place that reaches across for a
-// full build. Production code (configBuilder.ts/placeFragments.ts) never imports this; it
-// only accepts injected currencies + an injected expected-fragment total.
+// verifies the REAL, complete world, which needs the real mod-owned currencies — same standing
+// as scripts/generateWorld.ts, the other sanctioned place that reaches across for a full build.
+// Production code (configBuilder.ts/placeFragments.ts) never imports this; it derives the
+// expected reward counts from the injected currencies themselves.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
-import { CAPPED_CURRENCIES } from "../mods/registeredMods"
+import {
+  CAPPED_CURRENCIES,
+  DYNAMIC_DISTRIBUTIONS,
+  MOD_WORLD_VALIDATORS,
+  MOD_REACHABILITY_SUPPORT,
+  MOD_TOMB_TREASURE_RESOLVER,
+  MOD_SHOP_STOCK,
+} from "../mods/registeredMods"
 import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
-import { resolveKeyRequirements } from "../mods/allFamilyMeta"
-import { EXPECTED_HIEROGLYPH_FRAGMENTS } from "../mods/tableau/game/hieroglyphCurrency"
+import {
+  resolveKeyRequirements,
+  familyPriorityFor,
+  familyCapacityFor,
+  allocateEncounterFamily,
+} from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
 // check. The economy guard is a separate global invariant (validated by generate-world) that only
@@ -26,7 +36,20 @@ afterAll(() => {
 })
 
 const buildRealConfigs = () =>
-  buildConfigs(resolveKeyRequirements, ALL_CURRENCY_DISTRIBUTIONS, EXPECTED_HIEROGLYPH_FRAGMENTS, CAPPED_CURRENCIES)
+  buildConfigs(
+    resolveKeyRequirements,
+    ALL_CURRENCY_DISTRIBUTIONS,
+    CAPPED_CURRENCIES,
+    DYNAMIC_DISTRIBUTIONS,
+    MOD_WORLD_VALIDATORS,
+    familyPriorityFor,
+    0,
+    allocateEncounterFamily,
+    MOD_REACHABILITY_SUPPORT,
+    MOD_TOMB_TREASURE_RESOLVER,
+    familyCapacityFor,
+    MOD_SHOP_STOCK
+  )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
 // producing the same reward counts and the same output on every run.
@@ -41,11 +64,19 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
     if (r.type === "mosaicPiece") mosaicPieces++
   }
 
+  // Count both node reward fields: the path-end `endReward` AND every `rewards[]` entry (shop stock
+  // lives here) — mirrors validate.ts + the detector's uniform sweep.
+  const counts = (rs: (TreasureReward | undefined)[] | undefined) => rs?.forEach(count)
   const countFloor = (floor: FloorConfig) => {
     count(floor.mainEndReward)
+    counts(floor.rewards)
     for (const s of floor.sideSections) {
       count(s.endReward)
-      for (const sub of s.sideSections ?? []) count(sub.endReward)
+      counts(s.rewards)
+      for (const sub of s.sideSections ?? []) {
+        count(sub.endReward)
+        counts(sub.rewards)
+      }
     }
   }
 
@@ -59,7 +90,7 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
 }
 
 describe("buildConfigs golden guard", () => {
-  it("hits reward targets exactly (map from core, mosaic from the mosaic mod)", () => {
+  it("hits reward targets exactly (map + mosaic from their mods)", () => {
     const configs = buildRealConfigs()
     expect(countRewards(configs)).toEqual({
       mapPieces: WORLD_TARGETS.mapPieceRewards,
@@ -92,15 +123,23 @@ describe("tomb floor linking — ward-path shortcuts", () => {
       expect(shortcut).toBeDefined()
       expect(shortcut!.gate).toEqual({
         type: "tomb-key",
-        wardKeyId: (floors[i].mainEndReward as { keyId: string }).keyId,
+        wardKeyId: (floors[i].mainEndReward as unknown as { keyId: string }).keyId,
       })
       expect(typeof shortcut!.end).toBe("object")
     }
   })
 
-  it("the last floor has no ward-path shortcut", () => {
+  it("the last floor gets a ward-chest loot pocket (not a staircase shortcut) keyed on its own treasure", () => {
+    // §E: every treasure gates an (optional) pocket — the last floor has no next floor to skip
+    // to, so its own treasure gates a loot chest instead of a shortcut staircase.
     const last = floors[floors.length - 1]
-    expect(last.sideSections.some(s => s.gate?.type === "tomb-key")).toBe(false)
+    const pocket = last.sideSections.find(s => s.gate?.type === "tomb-key")
+    expect(pocket).toBeDefined()
+    expect(pocket!.gate).toEqual({
+      type: "tomb-key",
+      wardKeyId: (last.mainEndReward as unknown as { keyId: string }).keyId,
+    })
+    expect(pocket!.end).toBe("treasure") // a chest, not a { stairId } staircase
   })
 
   it("wires each floor's entrance to the previous floor's shortcut stairId", () => {

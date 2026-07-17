@@ -23,9 +23,9 @@ Set<string>`. Each mechanic checks its flag before showing, sets it on dismiss.
 - **Map pieces** — first map piece: reveals a new tomb on the travel screen.
 - **Hieroglyph fragments** — first fragment: the hieroglyph collection mechanic.
 
-The **?**-button replay pattern (shipped on TombExpedition, replays
-`tombTutorial`) may generalise across pyramid / tomb / crocodile — revisit
-during a UI consistency pass.
+The **?**-button replay pattern (the tutorial replay for `tombTutorial`) may
+generalise across pyramid / tomb / crocodile — revisit during a UI consistency
+pass.
 
 ## Decisions — rejected findings
 

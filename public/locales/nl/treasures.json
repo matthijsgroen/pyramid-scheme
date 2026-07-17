@@ -3,15 +3,17 @@
     "instruction": "Schuif het artefact op de steen om het te ontgrendelen",
     "alsoAvailable": "Ook beschikbaar:"
   },
-  "effects": {
-    "mapFragmentChance": "+{{chance}}% kans op kaartfragment",
-    "higherLootChance": "+{{chance}}% kans op buit",
-    "moreLootChanceTier": "{{chance}}% kans op een extra {{tier}} hieroglyph per piramide",
-    "moreLootChanceAdaptive": "{{chance}}% kans op een extra hieroglyph per piramide (past aan bij huidige moeilijkheid)",
-    "expeditionBonus": "+{{amount}} {{tier}} hieroglyph bij voltooiing van expeditie",
-    "errorHighlight": "Markeert één fout blok tijdens het oplossen",
-    "earlyFeedback": "Toont directe feedback op controlepunt-blokken",
-    "hieroglyphUnlock": "Ontgrendel één verborgen blok per piramide om je waarde op te schrijven"
+  "perks": {
+    "max-health": "+½ hart op je levensmax",
+    "armor": "Vermindert valstrikschade",
+    "trap-insight": "+1s bij tijdvalstrikken",
+    "pack-mule": "Draag tot 4 voorraden",
+    "consumable-detector": "Voorraaddetector (niv {{level}})",
+    "compass": "Fragmentkompas (niv {{level}})",
+    "detection": "Verborgen-gangdetector (niv {{level}})",
+    "scribes-eye": "Tableau-hintvakken (niv {{level}})",
+    "tier-unlock": "Ontgrendelt {{tier}}-tombes",
+    "location-key": "Onthult een andere tombe"
   },
   "tiers": {
     "stone": "stenen",

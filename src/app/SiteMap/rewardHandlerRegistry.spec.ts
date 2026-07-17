@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { registerRewardHandler, getRewardHandler, CONSUMABLE_EMOJI } from "./rewardHandlerRegistry"
+import { registerRewardHandler, getRewardHandler } from "./rewardHandlerRegistry"
 
 describe("rewardHandlerRegistry", () => {
   it("registers a handler and retrieves it by reward type", () => {
@@ -30,9 +30,5 @@ describe("rewardHandlerRegistry", () => {
       text: () => ({ itemName: "B", icon: "🥇" }),
     })
     expect(getRewardHandler("testReward")?.emoji).toBe("🥇")
-  })
-
-  it("CONSUMABLE_EMOJI covers all three consumable subtypes", () => {
-    expect(CONSUMABLE_EMOJI).toEqual({ bandage: "🩹", oil: "🫙", trapTool: "🔧" })
   })
 })

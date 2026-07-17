@@ -1,83 +1,14 @@
-import { registerRewardHandler, CONSUMABLE_EMOJI } from "./rewardHandlerRegistry"
-import { hieroglyphCategory } from "./hieroglyphCategory"
-import { getInventoryItemById } from "@/data/inventory"
-import { getSellableById } from "@/data/sellables"
-import type { ConsumableType } from "@/game/siteTypes"
+import { z } from "zod"
+import { registerRewardSchema } from "./rewardSchemas"
 
-// "fragmentSlot" has no handler — falls through to applyReward.ts/rewardDisplay.ts's generic default.
-
-registerRewardHandler({
-  type: "hieroglyphFragment",
-  apply: (reward, { progression }) => progression.addFragment(reward.hieroglyphId, reward.pieceIndex),
-  emoji: "𓂀",
-  text: (reward, t, hieroglyphProgress) => {
-    const item = getInventoryItemById(reward.hieroglyphId)
-    const category = hieroglyphCategory(reward.hieroglyphId)
-    const name = item
-      ? t(`${category}.${reward.hieroglyphId}.name`, { ns: "inventory", defaultValue: item.name })
-      : t("chest.hieroglyphFragment")
-    const progress = hieroglyphProgress?.(reward.hieroglyphId)
-    const itemDescription = progress
-      ? `${t(`${category}.${reward.hieroglyphId}.description`, { ns: "inventory", defaultValue: item?.description ?? "" })}\n\n${t("chest.fragmentProgress", { found: Math.min(progress.found, progress.required), required: progress.required })}`
-      : undefined
-    return { itemName: `${name} — ${t("chest.hieroglyphFragment")}`, itemDescription, icon: item?.symbol ?? "𓂀" }
-  },
-})
-
-registerRewardHandler({
-  type: "mapPiece",
-  apply: (reward, { progression, journeyId }) => {
-    progression.collectMapPiece(reward.tombId)
-    progression.markMapPieceFound(journeyId)
-  },
-  emoji: "📜",
-  text: t => ({ itemName: t("chest.mapPiece"), itemDescription: t("chest.mapPieceDescription"), icon: "📜" }),
-})
-
-registerRewardHandler({
-  type: "tombKey",
-  apply: (reward, { progression }) => {
-    progression.addTombKey(reward.keyId)
-    progression.applyTreasurePerk(reward.keyId)
-  },
-  emoji: "🗝",
-  text: t => ({ itemName: t("chest.tombKey"), icon: "🗝" }),
-})
-
-registerRewardHandler({
-  type: "mosaicPiece",
-  apply: (_reward, { progression }) => progression.collectMosaicPiece(),
-  emoji: "🔷", // no dedicated icon; text().icon below is the real one
-  text: t => ({ itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }),
-})
-
-registerRewardHandler({
-  type: "consumable",
-  apply: (reward, { progression }) => progression.addConsumable(reward.consumable),
-  emoji: "🔷", // no dedicated icon; text().icon below picks the consumable's own
-  text: (reward, t) => ({
-    itemName: t(`chest.consumable.${reward.consumable}`),
-    icon: CONSUMABLE_EMOJI[reward.consumable as ConsumableType],
-  }),
-})
-
-registerRewardHandler({
-  type: "money",
-  apply: (reward, { progression }) => progression.addMoney(reward.amount),
-  emoji: "🪙",
-  text: (reward, t) => ({ itemName: t("chest.money", { amount: reward.amount }), icon: "🪙" }),
-})
-
-registerRewardHandler({
-  type: "sellable",
-  apply: (reward, { inventory }) => inventory.addItem(reward.itemId, 1),
-  emoji: "🔷", // no dedicated icon; text().icon below uses the item's own symbol
-  text: (reward, t) => {
-    const item = getSellableById(reward.itemId)
-    return {
-      itemName: item ? t(`${item.id}.name`, { ns: "sellables" }) : reward.itemId,
-      itemDescription: item ? t(`${item.id}.description`, { ns: "sellables" }) : undefined,
-      icon: item?.symbol ?? "🔷",
-    }
-  },
-})
+// Core owns NO reward vocabulary anymore — every reward type's effect, display, schema and state
+// belongs to the mod that defines it (registered from that mod's own app entrypoint): the claim
+// EFFECT is a reward contribution (rewardContributions.ts), the SYNCHRONOUS text/emoji is a
+// rewardHandler, and the rich popup content is a display registration (rewardDisplayRegistry.tsx).
+// mapPiece/tombKey moved to the tomb-treasure mod (src/mods/tombTreasure/app); mosaicPiece,
+// hieroglyphFragment, money, sellable, consumable each live in their own mod.
+//
+// The one exception below is `fragmentSlot`: it's the world-gen placement SENTINEL, not a mod
+// reward — it never survives serialization into the app (placeFragments clears any leftover), so
+// it won't appear in the generated data, but its schema is registered for completeness/validation.
+registerRewardSchema("fragmentSlot", z.object({ type: z.literal("fragmentSlot"), prefers: z.string().optional() }))

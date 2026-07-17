@@ -20,7 +20,12 @@ export type StoredJourneyStateV3 = {
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   disabledTraps?: string[] // edgeIds where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // edgeIds where inventory was full at collect time
-  purchasedShops?: string[] // edgeIds of shop rooms whose rare item has been bought
+  purchasedStock?: string[] // `${edgeId}#${stockIndex}` of shop slots already bought
+  // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionHash}`.
+  // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
+  // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
+  knownHiddenCorridors?: string[]
+  foundHiddenCorridors?: string[]
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -48,8 +53,12 @@ export type JourneyAPI = {
   markConsumableSkipped: (edgeId: string) => void
   clearConsumableSkipped: (edgeId: string) => void
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
-  markShopPurchased: (edgeId: string) => void
-  hasPurchasedShop: (journeyId: string, edgeId: string) => boolean
+  markShopSlotPurchased: (edgeId: string, stockIndex: number) => void
+  getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
+  registerHiddenCorridors: (sectionHashes: string[]) => void
+  markCorridorFound: (sectionHash: string) => void
+  getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
+  getOutstandingHiddenCorridorCount: (journeyId: string) => number
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -93,9 +102,11 @@ export const createJourneysV3Api = ({
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(j => j.active && knownJourneyIds.includes(j.journeyId))?.journeyId
 
-  // Pyramids with a site interior are meant to stay revisitable: the random seed must stay
-  // stable across replays so a previously explored site still matches on return.
-  const isInteriorPyramid = (journey: Journey) => journey.type === "pyramid" && !!journey.siteConfigs?.length
+  // Sites with an interior are persistent, revisitable places: the random seed must stay stable
+  // across replays so a previously explored layout still matches on return. Tombs are one such
+  // site — a single multi-floor place explored incrementally, never a reshuffled replay.
+  const isPersistentInterior = (journey: Journey) =>
+    (journey.type === "pyramid" || journey.type === "treasure_tomb") && !!journey.siteConfigs?.length
 
   const getJourney = (journeyId: string): CombinedJourneyState | undefined => {
     const journeyState = journeys.find(j => j.journeyId === journeyId)
@@ -103,9 +114,9 @@ export const createJourneysV3Api = ({
     const journeyInfo = journeyData.find((j): j is TranslatedJourney => j.id === journeyId)
     if (!journeyInfo) return undefined
     const progressPercentage = Math.min(((journeyState.levelNr ?? 1) - 1) / journeyInfo.levelCount, 1)
-    // Interior pyramids are persistent, revisitable sites — their seed must never move, or a
-    // completed run's exploredSections stop matching the (now different) generated layout.
-    const randomSeed = isInteriorPyramid(journeyInfo)
+    // Persistent interiors (pyramids and tombs) are revisitable sites — their seed must never
+    // move, or a completed run's exploredSections stop matching the (now different) layout.
+    const randomSeed = isPersistentInterior(journeyInfo)
       ? generateNewSeed(hashString(journeyId), 1)
       : generateNewSeed(hashString(journeyId), journeyState.completionCount + 1)
     return {
@@ -125,7 +136,7 @@ export const createJourneysV3Api = ({
   const startJourney = (journey: Journey) => {
     const existing = journeys.find(j => j.journeyId === journey.id)
     if (existing) {
-      const alreadyCompletedRun = isInteriorPyramid(journey) && existing.levelNr > journey.levelCount
+      const alreadyCompletedRun = isPersistentInterior(journey) && existing.levelNr > journey.levelCount
       setJourneys(prev =>
         prev.map(j =>
           j.journeyId === journey.id
@@ -152,9 +163,9 @@ export const createJourneysV3Api = ({
   const completeJourney = () => {
     if (!activeJourneyId) return
     const journey = journeyData.find(j => j.id === activeJourneyId)
-    // Interior pyramids don't re-randomize on replay, so completing one again shouldn't bump the
-    // count past 1 — it only ever meant "first time" for these once the site itself is revisitable.
-    const capCompletionCount = journey && isInteriorPyramid(journey)
+    // Persistent interiors don't re-randomize on replay, so completing one again shouldn't bump
+    // the count past 1 — it only ever means "first time" once the site itself is revisitable.
+    const capCompletionCount = journey && isPersistentInterior(journey)
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
@@ -282,21 +293,64 @@ export const createJourneysV3Api = ({
     return new Set(j?.skippedConsumables ?? [])
   }
 
-  const markShopPurchased = (edgeId: string) => {
+  const markShopSlotPurchased = (edgeId: string, stockIndex: number) => {
     if (!activeJourneyId) return
+    const key = `${edgeId}#${stockIndex}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        const purchased = j.purchasedShops ?? []
-        if (purchased.includes(edgeId)) return j
-        return { ...j, purchasedShops: [...purchased, edgeId] }
+        const purchased = j.purchasedStock ?? []
+        if (purchased.includes(key)) return j
+        return { ...j, purchasedStock: [...purchased, key] }
       })
     )
   }
 
-  const hasPurchasedShop = (journeyId: string, edgeId: string): boolean => {
+  const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> => {
     const j = journeys.find(j => j.journeyId === journeyId)
-    return (j?.purchasedShops ?? []).includes(edgeId)
+    return new Set(j?.purchasedStock ?? [])
+  }
+
+  // Corridor detector: hidden sections become "known" the moment the player views the floor
+  // holding them; keyed by levelNr like exploredSections so a multi-level pyramid keeps them apart.
+  const registerHiddenCorridors = (sectionHashes: string[]) => {
+    if (!activeJourneyId || sectionHashes.length === 0) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const known = j.knownHiddenCorridors ?? []
+        const additions = sectionHashes.map(h => `${j.levelNr}:${h}`).filter(key => !known.includes(key))
+        if (additions.length === 0) return j // no churn: unchanged reference lets React bail
+        return { ...j, knownHiddenCorridors: [...known, ...additions] }
+      })
+    )
+  }
+
+  const markCorridorFound = (sectionHash: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const found = j.foundHiddenCorridors ?? []
+        const key = `${j.levelNr}:${sectionHash}`
+        if (found.includes(key)) return j
+        return { ...j, foundHiddenCorridors: [...found, key] }
+      })
+    )
+  }
+
+  const getFoundHiddenCorridors = (journeyId: string): ReadonlySet<string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Set()
+    const prefix = `${j.levelNr}:`
+    return new Set((j.foundHiddenCorridors ?? []).filter(k => k.startsWith(prefix)).map(k => k.slice(prefix.length)))
+  }
+
+  const getOutstandingHiddenCorridorCount = (journeyId: string): number => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return 0
+    const found = new Set(j.foundHiddenCorridors ?? [])
+    return (j.knownHiddenCorridors ?? []).filter(key => !found.has(key)).length
   }
 
   return {
@@ -317,7 +371,11 @@ export const createJourneysV3Api = ({
     markConsumableSkipped,
     clearConsumableSkipped,
     getSkippedConsumables,
-    markShopPurchased,
-    hasPurchasedShop,
+    markShopSlotPurchased,
+    getPurchasedShopSlots,
+    registerHiddenCorridors,
+    markCorridorFound,
+    getFoundHiddenCorridors,
+    getOutstandingHiddenCorridorCount,
   }
 }

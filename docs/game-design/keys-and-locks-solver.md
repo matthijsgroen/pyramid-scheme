@@ -292,6 +292,27 @@ best-first) — registerable by a mod the same way `registerFamily`/
 targeting is real logic, not expressible as a simple config object without
 inventing a rule language for it.
 
+> **As-built note (§E, 2026-07-14).** The rule names below (`lootPriority`,
+> `weightedTierTarget`) are illustrative — the real rankers are each currency's
+> own bespoke `byPoolScore` (`src/mods/*/game/*Currency.ts`). And crucially: only
+> the **spread** currencies (map pieces, hieroglyph fragments) are placed by a
+> distribution rule. **Ward/tomb keys are NOT a distributed currency** — they're
+> **positional tomb content** (one treasure per tomb floor, "the treasure IS the
+> key"), placed by tomb structure and *harvested* by the reachability model, never
+> ranked into free slots (210 gates reference only ~32 distinct keys — many:1,
+> threshold-1 demand; a demand-spread currency can't express that). So the
+> ward-key line below never became real code, and `WARD_MIX` stays buried.
+>
+> **Why retiring `validateDiscovery` is safe (the invariant chain):** every tomb
+> treasure is always placed as positional content → every ward key is therefore
+> harvestable → every ward gate (optional or load-bearing) resolves in reachability
+> → no hard-fail. A ward pocket is *optional loot* by default; it becomes
+> *load-bearing* only when it holds a required currency (e.g. a secondary-tomb map
+> piece on a deep floor), and the worklist already sequences that (place ward key →
+> pocket reachable → place the required piece). Reachability's winnability sweep +
+> `settleHarvest` enforce this structurally, subsuming `validateDiscovery`'s old
+> existence-only check.
+
 The three rules named so far all decompose into two small, reusable
 primitive kinds — **filters** (narrow candidates) and **rankers** (order
 what's left) — composed with a plain `pipe`:
@@ -304,8 +325,8 @@ pipe(uniqueBy(slot => slot.journeyId), rankBy(lootPriority))
 // hieroglyph fragment: tier-match filter, then generic loot priority
 pipe(filterBy(slot => slot.difficulty === ctx.targetDifficulty), rankBy(lootPriority))
 
-// ward-key (replaces WARD_MIX): weighted tier-target ranker, no filter
-pipe(rankBy(weightedTierTarget(ctx.currencyTier)), rankBy(lootPriority))
+// ward-key: NOT built — ward/tomb keys are positional tomb content harvested by
+// reachability, not a distributed currency (see the §E as-built note above)
 ```
 
 A future currency composes the same handful of primitives instead of

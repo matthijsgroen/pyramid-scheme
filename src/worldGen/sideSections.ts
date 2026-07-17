@@ -3,6 +3,7 @@ import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
+import { resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -30,22 +31,34 @@ const buildDslSection = <TExtra extends string>(
   stairIndex: number
 ): SideSection => {
   const gate = specToGate(cs.gate)
-  const endReward = cs.endReward !== undefined ? resolveReward(cs.endReward) : undefined
   const sectionDifficulty = cs.difficulty ?? difficulty
   const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, journeyId)
   const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${stairIndex}` } : ("treasure" as const)
+  // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
+  // untagged `treasure` slot (filled by whatever's spare). A gated end already becomes a slot via
+  // its open gate (collectSlots); a staircase end bears no reward.
+  const endReward =
+    cs.endReward !== undefined
+      ? resolveReward(cs.endReward)
+      : end === "treasure" && !gate
+        ? pathEndToReward("treasure")
+        : undefined
+  const pathPuzzles = typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0
+  // This section's own per-node encounter overrides (authored `nodes` selectors) — selectors work
+  // on any path, not just the main path (§G).
+  const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   return {
-    pathPuzzles: typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0,
+    pathPuzzles,
     difficulty: sectionDifficulty,
     end,
     ...(gate ? { gate } : {}),
     ...(endReward ? { endReward } : {}),
-    ...(cs.shopPrice !== undefined ? { shopPrice: cs.shopPrice } : {}),
     ...(subSections.length > 0 ? { sideSections: subSections } : {}),
     ...(cs.decorations?.length ? { decorations: cs.decorations } : {}),
     ...(cs.hidden ? { hidden: true } : {}),
     ...(cs.sealed ? { sealed: true } : {}),
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
+    ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
   }
 }
@@ -98,8 +111,17 @@ export const buildSideSections = <TExtra extends string = never>(
   const sections: SideSection[] = []
 
   if (hasMapPieceBranch) {
+    // A generic fragmentSlot sentinel tagged for this tier's tomb — the tomb-treasure mod's
+    // map-piece currency (MAP_PIECE_CURRENCY) prefers this `prefers` tag and fills it, so core
+    // world-gen never names the `mapPiece` reward type. `hasMapPieceBranch` stays a structural
+    // flag (where the branch lives), not a reward-type name. See docs/mods/ARCHITECTURE.md (tombTreasure mod).
     const tombId = `${tier}_treasure_tomb`
-    sections.push({ pathPuzzles: 0, difficulty, end: "treasure", endReward: { type: "mapPiece", tombId } })
+    sections.push({
+      pathPuzzles: 0,
+      difficulty,
+      end: "treasure",
+      endReward: { type: "fragmentSlot", prefers: `mapPiece:${tombId}` },
+    })
   }
 
   if (hasWardGate && nextTier) {
@@ -127,7 +149,7 @@ export const buildSideSections = <TExtra extends string = never>(
   ;(declaredSidePaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `sidepath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:sidepath:${ei}:${j}`)
+      const endReward = pathEndToReward(entry.end)
       const gate =
         entry.gate === "floor-key"
           ? { type: "floor-key" as const, color: ALL_KEY_COLORS[gatedColorIdx++ % colorCount] }
@@ -145,7 +167,7 @@ export const buildSideSections = <TExtra extends string = never>(
   ;(declaredHiddenPaths ?? []).forEach((entry, ei) => {
     const count = emitCount(entry, `hiddenpath:${ei}`)
     for (let j = 0; j < count; j++) {
-      const endReward = pathEndToReward(entry.end, tier, `${journeyId}:${pyramidIndex}:hiddenpath:${ei}:${j}`)
+      const endReward = pathEndToReward(entry.end)
       sections.push({
         pathPuzzles: entry.pathPuzzles,
         difficulty,

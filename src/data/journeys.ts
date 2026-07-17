@@ -3,18 +3,6 @@ import type { Difficulty } from "./difficultyLevels"
 import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"
 import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
-import {
-  merchantCacheTreasures,
-  nobleVaultTreasures,
-  templeOuterTreasures,
-  templeInnerTreasures,
-  hallOfMaatTreasures,
-  hallOfOsirisTreasures,
-  vaultOfGodsATreasures,
-  vaultOfGodsBTreasures,
-  vaultOfGodsCTreasures,
-  type Treasure,
-} from "./treasures"
 import type { Operation } from "@/game/formulas/formulas"
 
 /**
@@ -71,8 +59,11 @@ export type TreasureTombJourney = {
   journeyLength: "short" | "medium" | "long"
   levelCount: number
   piecesRequired: number
-  treasures: Treasure[]
   siteConfigs?: SiteConfig[]
+  // Optional exterior board shown before entering the tomb interior. When absent, the expedition
+  // synthesizes a modest default from the tomb's difficulty (see PyramidExpedition). Author here to
+  // give a tomb a bespoke exterior later.
+  background?: PyramidJourney["background"]
   levelSettings: {
     symbolCount: number
     numberRange: [min: number, max: number]
@@ -212,7 +203,6 @@ export const journeys: Journey[] = [
     journeyLength: "short",
     levelCount: 2,
     piecesRequired: 4,
-    treasures: merchantCacheTreasures,
     levelSettings: {
       symbolCount: 2,
       numberRange: [1, 5],
@@ -351,7 +341,6 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 3,
     piecesRequired: 4,
-    treasures: nobleVaultTreasures,
     levelSettings: {
       symbolCount: 3,
       numberRange: [1, 10],
@@ -496,7 +485,6 @@ export const journeys: Journey[] = [
     journeyLength: "short",
     levelCount: 4,
     piecesRequired: 4,
-    treasures: templeOuterTreasures,
     levelSettings: {
       symbolCount: 4,
       numberRange: [1, 10],
@@ -515,7 +503,6 @@ export const journeys: Journey[] = [
     journeyLength: "short",
     levelCount: 4,
     piecesRequired: 3,
-    treasures: templeInnerTreasures,
     levelSettings: {
       symbolCount: 4,
       numberRange: [2, 12],
@@ -656,7 +643,6 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 5,
     piecesRequired: 4,
-    treasures: hallOfMaatTreasures,
     levelSettings: {
       symbolCount: 4,
       numberRange: [1, 10],
@@ -676,7 +662,6 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 5,
     piecesRequired: 3,
-    treasures: hallOfOsirisTreasures,
     levelSettings: {
       symbolCount: 5,
       numberRange: [1, 12],
@@ -829,7 +814,6 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 6,
     piecesRequired: 4,
-    treasures: vaultOfGodsATreasures,
     levelSettings: {
       symbolCount: 5,
       numberRange: [1, 15],
@@ -849,7 +833,6 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 6,
     piecesRequired: 3,
-    treasures: vaultOfGodsBTreasures,
     levelSettings: {
       symbolCount: 5,
       numberRange: [2, 18],
@@ -869,7 +852,6 @@ export const journeys: Journey[] = [
     journeyLength: "medium",
     levelCount: 6,
     piecesRequired: 2,
-    treasures: vaultOfGodsCTreasures,
     levelSettings: {
       symbolCount: 5,
       numberRange: [3, 20],

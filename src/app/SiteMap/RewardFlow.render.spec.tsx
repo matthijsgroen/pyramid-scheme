@@ -1,5 +1,8 @@
 import { render, act } from "@testing-library/react"
 import { describe, expect, it, vi, afterEach, beforeEach } from "vitest"
+// Registers every mod's reward handlers + displays (money + sellable are shop-owned now), so the
+// generic RewardFlow can look them up. Without this the popup would fall back to raw type labels.
+import "@/mods/registerModApps"
 import { RewardFlow } from "./RewardFlow"
 
 // Isolated from the app's real i18n setup (never initialized in tests) — identity
@@ -27,11 +30,7 @@ describe("RewardFlow — money and sellable rewards", () => {
   it("renders a money reward with the interpolated amount", () => {
     const onCollect = vi.fn()
     const { container } = render(
-      <RewardFlow
-        pendingReward={{ reward: { type: "money", amount: 7 }, onCollect }}
-        hieroglyphProgress={() => ({ found: 0, required: 0 })}
-        onDismiss={() => {}}
-      />
+      <RewardFlow pendingReward={{ reward: { type: "money", amount: 7 }, onCollect }} onDismiss={() => {}} />
     )
     advanceThroughReveal()
     expect(onCollect).toHaveBeenCalledTimes(1)
@@ -43,7 +42,6 @@ describe("RewardFlow — money and sellable rewards", () => {
     const { container } = render(
       <RewardFlow
         pendingReward={{ reward: { type: "sellable", itemId: "sell_divine_1" }, onCollect }}
-        hieroglyphProgress={() => ({ found: 0, required: 0 })}
         onDismiss={() => {}}
       />
     )
@@ -58,7 +56,6 @@ describe("RewardFlow — money and sellable rewards", () => {
     const { container } = render(
       <RewardFlow
         pendingReward={{ reward: { type: "sellable", itemId: "not_a_real_item" }, onCollect }}
-        hieroglyphProgress={() => ({ found: 0, required: 0 })}
         onDismiss={() => {}}
       />
     )

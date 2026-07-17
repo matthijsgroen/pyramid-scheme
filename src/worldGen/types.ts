@@ -6,22 +6,10 @@ export type PathPuzzlesRange = { start: number; end: number }
 export type JourneyDef = { id: string; tier: Tier; pathPuzzles: number | PathPuzzlesRange; levelCount: number }
 export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
-export type ConsumableType = "bandage" | "oil" | "trapTool"
-// Mirrors game/siteTypes.ts's TreasureReward — same closed-union growth concern, see the
-// comment there and docs/mods-architecture.md.
-export type TreasureReward =
-  | { type: "mosaicPiece" }
-  | { type: "mapPiece"; tombId: string }
-  | { type: "hieroglyphFragment"; hieroglyphId: string; pieceIndex?: number }
-  | { type: "tombKey"; keyId: string }
-  | { type: "consumable"; consumable: ConsumableType }
-  // `prefers`: a soft authored placement preference (a bucket id, e.g.
-  // `mapPiece:starter_treasure_tomb`) — a ranking boost for that currency's demand, not an
-  // exclusive claim. See keys-and-locks-solver.md, "A slot's authored placement preference
-  // is a soft tag, not an exclusive claim".
-  | { type: "fragmentSlot"; prefers?: string }
-  | { type: "money"; amount: number }
-  | { type: "sellable"; itemId: string }
+// One open reward type, shared: worldGen re-exports game/siteTypes rather than mirroring it
+// (worldGen→game is an allowed edge). Core enumerates no reward id; see the doc comment there.
+import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward } from "@/game/siteTypes"
+export type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward }
 
 export type SubSection = {
   pathPuzzles: number
@@ -29,9 +17,7 @@ export type SubSection = {
   end: "treasure" | "staircase" | { stairId: string }
   gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
-  /** endReward is a Fez-shop purchase (this many coins) instead of a free pickup. */
-  shopPrice?: number
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
   /** Isolates this section's cells from leftover maze edges, so a compact layout can't merge a shortcut around it. */
   sealed?: boolean
@@ -39,6 +25,9 @@ export type SubSection = {
    * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. An
    * array means AND: every listed tag must be present on the resolved family. */
   encounter?: string | string[]
+  /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
+   * selectors. A room uses `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
+  encountersByIndex?: Record<number, string | string[]>
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
@@ -55,9 +44,12 @@ export type FloorConfig = {
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
-  puzzleRewards?: (TreasureReward | undefined)[]
+  rewards?: (TreasureReward | undefined)[]
   encounter?: string | string[]
-  lastMainPuzzleFamily?: "crocodile"
+  /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
+   * authored `nodes` selectors (e.g. the last room → "capstone"). Room k uses
+   * `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
+  encountersByIndex?: Record<number, string | string[]>
   corridorStraightness?: number
   packing?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
@@ -68,8 +60,5 @@ export type FloorConfig = {
 }
 
 export type SiteConfig = FloorConfig[]
-
-export type FragmentSlot = { journeyId: string; slotIndex: number }
-export type Assignment = { journeyId: string; slotIndex: number; hieroglyphId: string }
 
 export type TombJourneyDef = { id: string; tier: Tier; levelCount: number }

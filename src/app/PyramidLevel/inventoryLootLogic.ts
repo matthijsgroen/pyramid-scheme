@@ -4,7 +4,7 @@ import { tableauLevels } from "@/data/tableaus"
 import {
   buildTombCalculationSettings,
   generateRewardCalculation,
-} from "@/game/puzzles/tableau/generateRewardCalculation"
+} from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { generateNewSeed, mulberry32, shuffle } from "@/game/random"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { type Difficulty, difficultyCompare } from "@/data/difficultyLevels"

@@ -29,7 +29,7 @@ See `docs/instructions/architecture.md` for the layer structure and `README.md` 
 | Game Data            | `src/data/`                    | Journeys, tableaus, difficulty levels, hieroglyphs, inventory, treasures |
 | App State            | `src/app/state/`               | Progress, inventory, logs — managed via custom hooks and context         |
 | UI Components        | `src/ui/`                      | All themed (Egyptian-style) reusable components                          |
-| Expedition Flow      | `src/app/`                     | `PyramidExpedition` and `TombExpedition` orchestrate full puzzle runs    |
+| Expedition Flow      | `src/app/`                     | `PyramidExpedition` orchestrates full puzzle runs for both pyramids and tombs (exterior board → interior site map) |
 | Internationalization | `src/i18n/`, `public/locales/` | All user-facing strings; always use `useTranslation`                     |
 
 ---
@@ -190,7 +190,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | [`docs/instructions/storybook.md`](docs/instructions/storybook.md)         | Writing or reviewing any `.stories.tsx` file                                          |
 | [`docs/instructions/architecture.md`](docs/instructions/architecture.md)   | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
-| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating or moving any documentation file                                             |
+| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating, moving, or editing any documentation file (esp. keeping design docs free of build status)  |
 | [`docs/instructions/testing.md`](docs/instructions/testing.md)             | Writing, reviewing, or deciding whether to add tests for any code                     |
 | [`docs/instructions/comments.md`](docs/instructions/comments.md)           | Writing or reviewing any code comment                                                 |
 | [`docs/instructions/changelog.md`](docs/instructions/changelog.md)         | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`              |
@@ -211,4 +211,6 @@ Deeper design docs live in `docs/`:
 | [`docs/game-design/worldgen-dsl-redesign.md`](docs/game-design/worldgen-dsl-redesign.md)     | **In progress** — world-gen DSL value model (Structure/Loot/Population/Decoration layers), rank-based fragment assignment redesign    |
 | [`docs/game-design/keys-and-locks-solver.md`](docs/game-design/keys-and-locks-solver.md)     | **Design, not yet implemented** — world-gen reachability solver + per-currency key placement rules; node type collapse (gate → encounter family, entrance/stairhead/exit → portal) |
 | [`docs/game-design/shop-mechanic.md`](docs/game-design/shop-mechanic.md)                     | Fez shop: placement, stock, pricing, money economy guard, sellables                                                                    |
-| [`docs/mods/TARGET.md`](docs/mods/TARGET.md)                                                 | **Canonical plan** — mod restructure target state (mod-agnostic core + mod containers + toggle-off gate + DSL-authoring tenet). Per-slice steps in `docs/mods/SLICE-CHECKLIST.md`; archived brainstorm in `docs/mods/_brainstorm.md` |
+| [`docs/mods/ARCHITECTURE.md`](docs/mods/ARCHITECTURE.md)                                     | **Mod architecture reference** — the two invariants, the systems mods plug into (descriptor/registry, ledger, family/reward/perk registries, placement pipeline, mod state), the build/boot/per-encounter lifecycle, and the mod inventory. The live anchor for design citations (replaces the old `docs/mods-architecture.md`, now archived as `_brainstorm.md`) |
+| [`docs/mods/app-plugins-design.md`](docs/mods/app-plugins-design.md)                         | **Design** — app-side mod-plugin seams for a *clean cut*: screen/HUD/reward-effect registries + a per-mod `app.tsx` entrypoint, so core UI names/imports no mod |
+| [`docs/mods/TARGET.md`](docs/mods/TARGET.md)                                                 | **Mod-architecture goals + the two rules** — mod-agnostic core + mod containers + toggle-off gate + DSL-authoring tenet. Per-slice steps in `docs/mods/SLICE-CHECKLIST.md`; current build status in `TODO.md` |

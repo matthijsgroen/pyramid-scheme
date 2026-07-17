@@ -1,11 +1,12 @@
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
-import { TOMB_PERK_IDS, TREASURE_PERKS } from "../data/treasurePerks"
+import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { mulberry32 } from "../game/random"
 import { hashStr } from "./rewards"
-import { assignPuzzleRewards } from "./puzzleRewards"
+import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
+import { resolveNodeSelectors } from "./dsl"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -66,14 +67,15 @@ export const resolvePacking = (constraint: PyramidConstraint, journeyId: string,
 
 export const resolveSealed = (constraint: PyramidConstraint): boolean | undefined => constraint.sealed
 
-// Ward-wing key indices for a tomb, skipping any slot reserved for a tier-unlock or
-// location-key perk (those are spoken for elsewhere) — first `count` remaining indices.
-export const freeWardIndices = (tombId: string, count: number): number[] => {
+// Ward-wing key indices for a tomb, skipping any floor slot reserved elsewhere (a tier-unlock or
+// location-key treasure) — first `count` remaining indices. `reserved` is injected by whoever owns
+// the reward vocabulary (the tomb-treasure mod's `reservedTreasureIndices`), so core world-gen no
+// longer reads perk types; with no injection (mod off) nothing is reserved.
+export const freeWardIndices = (tombId: string, count: number, reserved: ReadonlySet<number> = new Set()): number[] => {
   const perkIds = TOMB_PERK_IDS[tombId] ?? []
   const free: number[] = []
   for (let idx = 0; idx < perkIds.length && free.length < count; idx++) {
-    const perk = TREASURE_PERKS[perkIds[idx]]
-    if (perk?.type !== "tier-unlock" && perk?.type !== "location-key") free.push(idx)
+    if (!reserved.has(idx)) free.push(idx)
   }
   return free
 }
@@ -88,7 +90,7 @@ export type BuildFloorOptions = {
   entrance?: FloorConfig["entrance"]
   mainEndReward?: TreasureReward
   encounter?: FloorConfig["encounter"]
-  lastMainPuzzleFamily?: FloorConfig["lastMainPuzzleFamily"]
+  encountersByIndex?: FloorConfig["encountersByIndex"]
   corridorStraightness?: number
   packing?: number
   sealed?: boolean
@@ -106,7 +108,9 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.entrance ? { entrance: opts.entrance } : {}),
   ...(opts.mainEndReward ? { mainEndReward: opts.mainEndReward } : {}),
   ...(opts.encounter ? { encounter: opts.encounter } : {}),
-  ...(opts.lastMainPuzzleFamily ? { lastMainPuzzleFamily: opts.lastMainPuzzleFamily } : {}),
+  ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
+    ? { encountersByIndex: opts.encountersByIndex }
+    : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
@@ -151,6 +155,9 @@ export type BuildSiteContext<TExtra extends string = never> = {
   hasMapPieceBranch: boolean
   hasWardGate: boolean
   nextTier: string | null
+  // Floor indices of a tomb reserved for a tier-unlock/location-key treasure — injected by the
+  // reward owner (tomb-treasure mod) so ward wings skip them. Undefined ⇒ none reserved (mod off).
+  reservedTreasureIndices?: (tombId: string) => number[]
   resolveReward: ResolveReward<TExtra>
   resolveMainEndReward: (spec: RewardSpec) => TreasureReward
 }
@@ -165,7 +172,6 @@ export type BuildSiteContext<TExtra extends string = never> = {
 export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const { hasMapPieceBranch, hasWardGate, nextTier, resolveMainEndReward } = ctx
-  const rates = constraint.consumableRates ?? GLOBAL_DEFAULTS.consumableRates
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
     ? resolveMainEndReward(constraint.mainEndReward)
@@ -205,10 +211,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
       const floorSealed = fc.sealed ?? resolveSealed(constraint)
       // A floor's own reward can gate its own further shortcut (a tomb's self-referential
-      // "treasure IS the key") — resolved per floor, falling back to the site-level reward
-      // on the last floor only when this floor didn't declare its own.
+      // "treasure IS the key") — resolved per floor, falling back to the site-level reward on the
+      // last floor. A non-last floor's main path also exits into a treasure chest (floors chain via
+      // side-section staircases here), so it defaults to an untagged loot slot too — never empty
+      // (matches the auto multi-floor branch below).
       const floorMainEndReward =
-        fc.mainEndReward !== undefined ? resolveReward(fc.mainEndReward) : isLast ? mainEndReward : undefined
+        fc.mainEndReward !== undefined
+          ? resolveReward(fc.mainEndReward)
+          : isLast
+            ? mainEndReward
+            : { type: "fragmentSlot" as const }
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,
@@ -216,7 +228,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           sideSections: floorSideSections,
           mainEndReward: floorMainEndReward,
           encounter: fc.encounter,
-          lastMainPuzzleFamily: fc.lastMainPuzzleFamily,
+          // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
+          encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           corridorStraightness: floorStraightness,
           packing: floorPacking,
           sealed: floorSealed,
@@ -225,7 +238,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       )
     }
     wireSideSectionStaircases(floorConfigs)
-    assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
+    initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
 
@@ -290,7 +303,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       // Uniform (count) wings + all wardPaths draw distinct free indices from this tier's tomb;
       // authored (spec) wings bring their own keys, so only wardPaths needs free indices then.
       const uniformWingCount = wingSpecs ? 0 : wingCount
-      const wardIndices = freeWardIndices(tombId, uniformWingCount + wardPaths)
+      const reserved = new Set(ctx.reservedTreasureIndices?.(tombId) ?? [])
+      const wardIndices = freeWardIndices(tombId, uniformWingCount + wardPaths, reserved)
       const pathIndices = wardIndices.slice(uniformWingCount, uniformWingCount + wardPaths)
       const lastMain = floorConfigs[floorConfigs.length - 1]
 
@@ -301,7 +315,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         ? wingSpecs.map(s => {
             const wardKeyId = TOMB_PERK_IDS[s.tomb]?.[s.index]
             if (!wardKeyId) throw new Error(`buildSite: wardWing references unknown ward key ${s.tomb}[${s.index}]`)
-            return { wardKeyId, difficulty: s.difficulty ?? difficulty, stairPP: s.puzzles ?? 1, floorPP: s.puzzles ?? 1 }
+            return {
+              wardKeyId,
+              difficulty: s.difficulty ?? difficulty,
+              stairPP: s.puzzles ?? 1,
+              floorPP: s.puzzles ?? 1,
+            }
           })
         : wardIndices
             .slice(0, uniformWingCount)
@@ -346,7 +365,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       ]
     }
 
-    assignPuzzleRewards(`${journeyId}:${i}`, floorConfigs, rates)
+    initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
 
@@ -375,6 +394,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sealed: resolveSealed(constraint),
   })
 
-  assignPuzzleRewards(`${journeyId}:${i}`, [floor], rates)
+  initPuzzleChains([floor])
   return { floors: [floor] }
 }

@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Solving a puzzle sometimes rewards a few coins or a healing supply, on top of its usual progress.
 - Ancient trinkets and curios can now be found scattered through pyramids.
+- Tomb treasures now grant permanent perks — more health, sturdier armor, a bigger carrying capacity, steadier hands at traps, and upgrades to the detectors below.
+- Detectors can be leveled up. The compass homes in on hieroglyph fragments and the supply sensor on trap gear, each pointing more precisely as it improves; a new corridor detector reveals nearby hidden passages — first as a proximity hint, then pinned on the floor and travel maps.
+- Hidden passages can now hold optional bonus loot, found with the corridor detector or by stumbling onto them.
+- Fez shops now stock progression pieces you can buy (such as map pieces), alongside consumables.
+- Before attempting a trap you can choose to heal first; attempting one always launches the encounter now.
+- The Collection screen shows how many of each trinket you're holding, and keeps a category hidden until you've found your first piece from it.
 
 ### Removed
 
@@ -29,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
 - A hidden, trapped area could occasionally generate with a way to reach its reward without passing through the trap.
+- Some treasure rooms at the end of a path could generate empty; every treasure room now holds something (a currency, a mosaic tile, or a little loot).
 
 ## 0.26.4 - 2026-07-05
 

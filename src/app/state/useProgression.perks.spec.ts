@@ -1,6 +1,6 @@
 import { useState } from "react"
+import { act, renderHook } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { renderHook, act } from "@testing-library/react"
 
 vi.mock("@/support/useGameStorage", () => ({
   useGameStorage: <T>(_key: string, initialValue: T | (() => T)) => {
@@ -17,50 +17,24 @@ vi.mock("@/support/useGameStorage", () => ({
 
 const { useProgression } = await import("./useProgression")
 
-describe("applyTreasurePerk", () => {
-  it("armor (trap) increments armorStacks, capped at 2", async () => {
+// Core owns only the corridor detector now — the other perks moved to their owning mods (trap owns
+// max-health/armor/…, hieroglyph owns compass, puzzle owns scribes-eye). `perks` exposes detection
+// only; bumpDetection is toLevel-bumped and capped at 4.
+describe("core perks (detection only)", () => {
+  it("exposes detection at its baseline", () => {
     const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("expert_a_4"))
-    expect(result.current.perks.armorStacks).toBe(1)
-    await act(async () => result.current.applyTreasurePerk("expert_a_4"))
-    await act(async () => result.current.applyTreasurePerk("expert_a_4"))
-    expect(result.current.perks.armorStacks).toBe(2)
+    expect(result.current.perks).toEqual({ detectionLevel: 0 })
   })
 
-  it("pack-mule (trap) sets packMuleLevel to 1, idempotently", async () => {
+  it("bumpDetection raises the level (toLevel, capped at 4)", async () => {
     const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("starter_a_3"))
-    await act(async () => result.current.applyTreasurePerk("starter_a_3"))
-    expect(result.current.perks.packMuleLevel).toBe(1)
-  })
-
-  it("max-health (trap) raises the public maxHealth field, capped at 12", async () => {
-    const { result } = renderHook(() => useProgression())
-    expect(result.current.maxHealth).toBe(6)
-    await act(async () => result.current.applyTreasurePerk("starter_a_4"))
-    expect(result.current.maxHealth).toBe(7)
-  })
-
-  it("compass (core) raises compassLevel to the granted level, never lowers it", async () => {
-    const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("master_a_4")) // level 2
-    expect(result.current.perks.compassLevel).toBe(2)
-    await act(async () => result.current.applyTreasurePerk("starter_a_2")) // level 1
-    expect(result.current.perks.compassLevel).toBe(2)
-  })
-
-  it("scribes-eye (puzzle) surfaces through the same merged perks object as trap/core perks", async () => {
-    const { result } = renderHook(() => useProgression())
-    await act(async () => result.current.applyTreasurePerk("master_b_2")) // level 1
-    expect(result.current.perks.scribesEyeLevel).toBe(1)
-  })
-
-  it("none/location-key/tier-unlock treasures don't touch any perk", async () => {
-    const { result } = renderHook(() => useProgression())
-    const before = { ...result.current.perks, maxHealth: result.current.maxHealth }
-    await act(async () => result.current.applyTreasurePerk("junior_a_2")) // none
-    await act(async () => result.current.applyTreasurePerk("expert_a_2")) // location-key
-    await act(async () => result.current.applyTreasurePerk("junior_a_1")) // tier-unlock
-    expect({ ...result.current.perks, maxHealth: result.current.maxHealth }).toEqual(before)
+    await act(async () => result.current.bumpDetection(2))
+    expect(result.current.perks.detectionLevel).toBe(2)
+    // toLevel: a lower grant never lowers the current level.
+    await act(async () => result.current.bumpDetection(1))
+    expect(result.current.perks.detectionLevel).toBe(2)
+    // capped at 4.
+    await act(async () => result.current.bumpDetection(9))
+    expect(result.current.perks.detectionLevel).toBe(4)
   })
 })

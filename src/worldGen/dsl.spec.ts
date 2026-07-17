@@ -1,5 +1,50 @@
 import { describe, expect, it } from "vitest"
-import { global, tier, journey } from "./dsl"
+import { global, tier, journey, resolveNodeSelectors } from "./dsl"
+
+// ── Node selectors → per-index encounter overrides (§G) ───────────────────────
+
+describe("resolveNodeSelectors", () => {
+  it("resolves first/last/nth to 0-based indices (1-based authoring)", () => {
+    expect(resolveNodeSelectors([{ where: "first", encounter: "a" }], 4)).toEqual({ 0: "a" })
+    expect(resolveNodeSelectors([{ where: "last", encounter: "capstone" }], 4)).toEqual({ 3: "capstone" })
+    expect(resolveNodeSelectors([{ where: 2, encounter: "b" }], 4)).toEqual({ 1: "b" })
+  })
+
+  it("every-k selects every k-th node from an optional 1-based start", () => {
+    expect(resolveNodeSelectors([{ where: { every: 3 }, encounter: "trap" }], 7)).toEqual({
+      0: "trap",
+      3: "trap",
+      6: "trap",
+    })
+    expect(resolveNodeSelectors([{ where: { every: 2, from: 2 }, encounter: "trap" }], 5)).toEqual({
+      1: "trap",
+      3: "trap",
+    })
+  })
+
+  it("a non-positive/fractional every is clamped to 1 (no infinite loop)", () => {
+    expect(resolveNodeSelectors([{ where: { every: 0 }, encounter: "x" }], 3)).toEqual({ 0: "x", 1: "x", 2: "x" })
+    expect(resolveNodeSelectors([{ where: { every: -2 }, encounter: "x" }], 2)).toEqual({ 0: "x", 1: "x" })
+  })
+
+  it("drops out-of-range positions and later selectors win on overlap", () => {
+    expect(resolveNodeSelectors([{ where: 9, encounter: "x" }], 3)).toEqual({})
+    expect(
+      resolveNodeSelectors(
+        [
+          { where: { every: 1 }, encounter: "trap" },
+          { where: "last", encounter: "capstone" },
+        ],
+        3
+      )
+    ).toEqual({ 0: "trap", 1: "trap", 2: "capstone" })
+  })
+
+  it("empty for no selectors or a zero-length path", () => {
+    expect(resolveNodeSelectors(undefined, 4)).toEqual({})
+    expect(resolveNodeSelectors([{ where: "last", encounter: "a" }], 0)).toEqual({})
+  })
+})
 
 // ── Constraint accumulator (.set / .sidePaths / .hiddenPaths) ─────────────────
 

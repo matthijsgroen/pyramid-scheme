@@ -24,7 +24,10 @@ export type FamilyContext = {
   theme?: string
   tags?: string[]
   reward?: TreasureReward
-  price?: number
+  // A shop node's stock: the reward slots the mods placed into this node's `rewards[]` (currency
+  // pieces + consumables). The fez-shop family renders these as its buyable list. Entries may be
+  // undefined (unfilled slots). Distinct from the single `reward` a plain chest/puzzle-solve grants.
+  stock?: (TreasureReward | undefined)[]
   // key-gate's own precondition: which key this room needs, and whether the player
   // already holds it (local-floor tomb keys ∪ ward keys owned entering the site).
   requiredKeyId?: string
@@ -63,7 +66,7 @@ export const allFamilies = (): FamilyPlugin[] => [...registry.values()]
 // A single string is an exact id or a single tag. An array requires every listed tag
 // present at once (authoring "AND": the time puzzles AND the sun puzzles AND the water
 // traps). First-registered-family-wins among matches — not weighted selection (that's
-// docs/mods-architecture.md step 5's Distribution primitive).
+// docs/mods/ARCHITECTURE.md's Distribution primitive).
 export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin | undefined => {
   if (typeof idOrTag === "string") {
     const exact = registry.get(idOrTag)

@@ -6,5 +6,6 @@ export const FEZ_SHOP_META: FamilyMeta = {
   tags: ["shop"],
   icon: "🛒",
   color: "amber",
-  rewardWeight: 0, // browsed, not solved — never a puzzle-solve reward candidate
+  rewardPriority: 0, // browsed, not solved — never a reward candidate the priority passes fill
+  rewardCapacity: 6, // a shop node exposes 6 stock slots (its `rewards[]`), filled by the mods
 }

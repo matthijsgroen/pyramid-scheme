@@ -6,8 +6,9 @@ import { useProgression } from "@/app/state/useProgression"
 import { useMosaicProgress } from "./useMosaicProgress"
 
 export const MosaicPage: FC = () => {
-  // Piece count is the ledger's (core); seen-count is the mosaic mod's own persisted slice.
-  const { mosaicPieceCount } = useProgression()
+  // Piece count is the ledger's (core owns the bucket, mosaic owns the id); seen-count is the
+  // mosaic mod's own persisted slice.
+  const mosaicPieceCount = useProgression().ledger.get("mosaicPiece")
   const { seenCount: mosaicSeenCount, markViewed: markMosaicViewed } = useMosaicProgress()
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
