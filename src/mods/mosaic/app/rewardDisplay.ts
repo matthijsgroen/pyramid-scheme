@@ -7,6 +7,13 @@ export const registerMosaicRewardDisplay = () => {
   registerRewardHandler({
     type: "mosaicPiece",
     emoji: "🔷", // no dedicated icon; text().icon below is the real one
-    text: t => ({ itemName: t("chest.mosaicPiece"), itemDescription: t("chest.mosaicPieceDescription"), icon: "🟦" }),
+    // Signature is (reward, t) — the first arg is the reward, `t` is the translator. Taking a lone
+    // `t =>` param bound it to the reward object, so t("chest.mosaicPiece") called the reward as a
+    // function and crashed the reward popup (black screen) on the first mosaic a player ever opened.
+    text: (_reward, t) => ({
+      itemName: t("chest.mosaicPiece"),
+      itemDescription: t("chest.mosaicPieceDescription"),
+      icon: "🟦",
+    }),
   })
 }
