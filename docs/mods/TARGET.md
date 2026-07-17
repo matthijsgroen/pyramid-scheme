@@ -62,40 +62,9 @@ Core owns *mechanisms*; mods own *meaning*.
   numbers a mod-agnostic core must not hold — the target count moves into
   the owning mod (e.g. the mosaic currency's `totalRequired`).
 
-## Route
+## Approach
 
-Vertical slices, one mod fully to target at a time, each ending in a
-toggle-off proof. NOT a horizontal "make all of core generic first" rewrite —
-that shape has no unfakeable checkpoint and already drowned one session.
-
-Order (only slice 1 is locked; later slices re-planned after mosaic proves
-the pattern):
-
-1. **mosaic** — reference implementation. Pure capped filler, nothing gates
-   on it, so toggle-off can't break reachability. Proves: capped placement,
-   mod-owned screen, the descriptor + toggle mechanism, and rule 2 (authoring
-   mosaic slots in the DSL, deleting `computeMosaicPaths`).
-2. **tableau / hieroglyph** — first *gating* capped currency. The hard
-   toggle-off: core's keys-and-locks solver must tolerate a gating currency
-   simply not existing.
-3. **trap** — perks (grant/consume split), consumables, HUD widgets,
-   consequence-on-fail.
-4. **shop** — money, depends on puzzle/core economy output.
-5. **`siteAssembler` core-loop rewrite** — last, once the model is proven on
-   real slices. `Distribution` primitive replaces `trapped`/`puzzleFamily`/
-   `lastMainPuzzleFamily`.
-
-## Frozen until the module goal lands
-
-Off the critical path, do not extend:
-
-- Phase-4 uncapped loot (sellables/consumables: max-% occupancy + drop rate)
-- Filler-loot fill-the-rest generalization
-- Slot capacity (a `Slot` holding several items, e.g. shop stock)
-
-## Naming note
-
-The doc's original `mods/hieroglyph` is `mods/tableau` in code today (the
-encounter family owns the currency). Whether the hieroglyph currency earns
-its own mod (it has a dedicated Collection screen — the "second stakeholder"
-signal) is a slice-2 decision, deferred until mosaic sets the pattern.
+Vertical slices — one mod fully to target at a time, each ending in a toggle-off
+proof — not a horizontal "make all of core generic first" rewrite (that shape has
+no unfakeable checkpoint). Per-slice steps live in `docs/mods/SLICE-CHECKLIST.md`;
+current build status lives in `TODO.md`.

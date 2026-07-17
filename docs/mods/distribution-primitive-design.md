@@ -1,11 +1,9 @@
 # Design — the Distribution primitive (unified encounter + loot placement)
 
-Status: **design locked** (decisions settled with the user). No code yet.
-Target model = **B: everything placed into the world is a `Distribution`** —
-encounters (traps/puzzles/shops) *and* loot (currencies/junk/consumables/money).
-**Build order = loot-first**: land the loot distributions (unblocks trap +
-consumables), then convert encounter placement to distributions as the next
-increment. Same destination, safer increments.
+The model: **everything placed into the world is a `Distribution`** — encounters
+(traps/puzzles/shops) *and* loot (currencies/junk/consumables/money). Core
+allocates the slots (footprint + eligibility + priority); the mod fills them
+(owning its variants / rarity / completeness / per-instance config).
 
 This subsumes the old separate items: filler-loot generalization, the Slice-5
 `Distribution` primitive / siteAssembler rewrite, shop-stock targeting, and slot
@@ -87,7 +85,7 @@ being separate frozen items.
 | trap, puzzle, shop encounters | encounter | trap / puzzle / shop mods | per-instance config |
 | keys / map pieces / hieroglyph | gating | core + hieroglyph mod | reachability worklist (unchanged) |
 | mosaic | capped | mosaic mod | exact footprint |
-| money **+** junk | dynamic | **shop mod** (as-built §C) | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` ≈ 1.5×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) then loose coins. Shop off → not registered → no money/junk, leftover chests empty. |
+| money **+** junk | dynamic | **shop mod** | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` ≈ 1.5×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) then loose coins. Shop off → not registered → no money/junk, leftover chests empty. |
 | consumables | dynamic | **trap mod** | one Distribution; rarity trap-owned; `eligible` = expert+ puzzle slots; count is a mod-owned target |
 | empty | — | core | `emptyFraction` — a real knob (see below), % of loot-eligible slots reserved empty |
 
@@ -100,34 +98,9 @@ leaving the registry drops its distribution; its slots go to the other dynamic
 distributions or to empty. Broader world-stability implications (e.g. adding a
 mod shifting existing placements) are a **separate session** — safe pre-release.
 
-## Sequencing (loot-first toward the B target)
+## Decisions (settled)
 
-**Increment 1 — loot distributions (unblocks Slice 3b trap/consumables):**
-1. Define `Distribution` + registry/aggregation (mirror `CAPPED_CURRENCIES`),
-   injected via `scripts/generateWorld.ts`. Wrap today's capped currencies as
-   exact-footprint distributions — no behavior change.
-2. Add the authorable `emptyFraction` (default 0 → no change until authored).
-3. Money + junk as `dynamic` distributions (junk gains ≥1-each completeness →
-   world output changes; validated by the new invariants, not byte-identical).
-4. **Consumable distribution → trap mod** (Slice 3b hand-off): `eligible` =
-   expert+ paths, rarity trap-owned. Trap off → slots → other dynamic dists /
-   empty.
-5. Retire the old passes (`assignPuzzleRewards` quota + `placeFragments`
-   junk-sink) into the unified dynamic pass.
-
-**Increment 2 — encounter distributions (the B completion, later slice):**
-6. Convert encounter placement (the runtime `siteAssembler` `trapped` /
-   `puzzleFamily` / `lastMainPuzzleFamily` special-cases + offline tag authoring)
-   into `encounter`-pass distributions with per-instance config. Unlocks
-   mod-computed shop capacity, and moves shop-stock onto the `eligible` join.
-
-Slice 3b (trap) rides Increment 1. Shop (Slice 4) brings money + the economy
-guard + shop encounters (which may pull part of Increment 2 forward for shops
-specifically).
-
-## Settled decisions (recap)
-
-- Model = unified Distribution (encounters + loot); build loot-first.
+- Model = unified Distribution (encounters + loot).
 - Empty quota = % of X (total slots), authorable.
 - Money validates by **footprint only**; the economy guard belongs to the **shop
   mod**, not core.
@@ -137,38 +110,25 @@ specifically).
   ripple = a separate session.
 - Core allocates slots; the **mod fills** (owns variants/rarity/completeness).
 
-## As-built refinements (Increment 1, loot pass — landed; §C brought it onto the primitive)
+## How placement works (mechanics)
 
-- **Dynamic loot IS the primitive.** money/junk/consumables are real `Distribution`s run through
-  `allocateDistributions`, not a parallel `assignDynamicLoot` pass. The mod's `fill` bakes the
-  rewards (owns variants/rarity/completeness); core only allocates + priority-orders + reserves empty.
-  (`ConsumableSpec`/`MoneySpec`/`JunkSpec`/`dynamicLoot.ts` are deleted.)
-- **Reward priority = fill ORDER, sourced from the encounter family** (NOT a
-  `Record<Slot["kind"]>` ratio). `FamilyMeta.rewardPriority` (chest 100, sumplete 60,
-  trap/tableau/crocodile/gate/shop 0) is stamped on each slot at collect time via an injected
-  `familyPriorityFor` (built from `ALL_FAMILY_META`, riding the `resolveKeyRequirements` seam).
-  `allocateDistributions` offers slots priority-desc (chests before puzzles); a distribution that
-  can't take everything leaves the lowest-priority slots empty. Priority-0 slots are loot-ineligible —
-  so tomb main-path tableau/crocodile puzzles bear no loot (matches the `familyMeta` intent).
-- **`emptyFraction` is a core knob**: the lowest-priority loot-eligible slots are
-  skimmed and left empty up front, so found loot stays meaningful (no 1-coin spam). Default 0
-  (`scripts/generateWorld.ts`); dial up on a feel-check.
-- **Completeness = the Collection "junk" category must be finishable** (`Collection.tsx` renders all
-  25 `ALL_SELLABLES`). It lives in the shop's `fill` (≥1 of each item per present tier; hard-fail if
-  a present tier can't cover its 5). Junk value is tier-fixed (`SELL_VALUE_BY_TIER`).
-- **Economy: value budget, not byte-identical.** The shop's `fill` places money+junk to a budget of
-  `[totalBuyable, 1.5×]` — a deliberate rebalance (found income was ~4.3× buyable, now ~1×–1.5×), so
-  counts shifted (junk 810→~335, money ~156). The economy guard counts BOTH money and sellable value
-  in BOTH end and puzzle slots (junk now sits in either). Output is validated by the guard + the
-  fill's self-check, not by byte-identity.
+- **Reward priority = fill order, sourced from the encounter family** (not a per-kind ratio).
+  `FamilyMeta.rewardPriority` (chest 100, puzzle/sumplete 60, trap/tableau/crocodile/gate/shop 0) is
+  stamped on each slot at collect time via an injected `familyPriorityFor`. `allocateDistributions`
+  offers slots priority-desc (chests before puzzles); a distribution that can't take everything leaves
+  the lowest-priority slots empty. Priority-0 slots are loot-ineligible — so tomb main-path tableau/
+  crocodile puzzles bear no loot.
+- **`emptyFraction`** skims the lowest-priority loot-eligible slots empty up front, so found loot stays
+  meaningful (no 1-coin spam). An authoring dial; default 0.
+- **Completeness** — the Collection "junk" category must be finishable (all `ALL_SELLABLES`). The
+  shop's `fill` places ≥1 of each item per present material tier (hard-fail if a present tier can't
+  cover its set); junk value is tier-fixed.
+- **Economy is a value budget, not byte-identical.** The shop's `fill` places money+junk toward
+  `[totalBuyable, 1.5× totalBuyable]`; the economy guard counts money AND sellable value across both
+  end and puzzle slots. Validated by the guard + the fill's self-check.
 
-## Still open (for the build, not blocking the design)
+## Open design questions
 
-- Increment 2 — encounters as distributions ✅ (shop-stock slice; see `ARCHITECTURE.md`, shop mod):
-  `Slot.encounter` + `FamilyMeta.rewardCapacity` metadata landed; a shop node expands into 6
-  reward slots (priority 0) written into the node's `rewards[]`; the currency mods place stock on
-  the `slot.encounter === "fez-shop"` join (`placeShopStock`), and trap fills the leftovers with
-  finite consumables. `rewardPriority` is stamped from the authored `encounter` field directly.
-- "area" vocabulary beyond difficulty, if consumable eligibility needs more than `tier >= expert`.
-- min-first-across-all allocator upgrade — only when a second nonzero-`min` distribution contends
-  for the same pool (e.g. Increment-2 shop stock).
+- "area" vocabulary beyond difficulty, if consumable eligibility ever needs more than `tier >= expert`.
+- min-first-across-all allocator upgrade — only once a second nonzero-`min` distribution contends for
+  the same slot pool.

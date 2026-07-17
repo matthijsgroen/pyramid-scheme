@@ -1,7 +1,7 @@
 # Design — app-side mod plugins (the clean cut)
 
-Status: **design, not yet built.** Companion to `ARCHITECTURE.md` (as-built) and
-`TARGET.md` (goals). The gaps this closes are tracked in `TODO.md`.
+Design of the app-side mod-plugin seams — the *clean cut* that makes core UI name
+and import no mod. Companion to `ARCHITECTURE.md` (the as-built mod-system anchor).
 
 ## Problem
 
@@ -58,23 +58,22 @@ screen/HUD/effects while the manifest import stays harmless. Deleting the folder
 additionally drops the manifest import line. This mirrors the family-plugin
 pattern (plugins self-gate, imported by an aggregator).
 
-As-built: each mod's `app` entrypoint registers all its contributions (family
-plugins, screen, HUD, reward contribution, Collection section), and
-`registerModApps` imports the six entrypoints — the sole app-side manifest. The
-old `registerAllFamilies` / `registerAllCollectionSections` aggregators are gone.
+Each mod's `app` entrypoint registers all its contributions (family plugins,
+screen, HUD, reward contribution, Collection section); `registerModApps` imports
+the entrypoints — the sole app-side manifest.
 
 Deleting a mod: remove `src/mods/<id>/`, its `REGISTERED_MODS` line (import +
 array entry), and its `registerModApps` import. Core is untouched.
 
 ## The app registries (generic, core-owned, name no mod)
 
-| Registry | Status | A mod registers | Core renders/uses |
-|----------|--------|-----------------|-------------------|
-| family | exists | `{ meta, generate, Component }` | the family for an encounter tag |
-| collection section | exists | a section `Component` | all sections on the Collection screen |
-| **screen** | new | `{ id, navLabel, icon, Component }` | the nav + routes iterate registered screens |
-| **HUD widget** | new | a HUD `Component` (+ order) | the site-map HUD row renders registered widgets in order |
-| **reward effect** | exists, but core-populated → mod-populated | the effect for a reward `type` | dispatched when that reward is claimed |
+| Registry | A mod registers | Core renders/uses |
+|----------|-----------------|-------------------|
+| family | `{ meta, generate, Component }` | the family for an encounter tag |
+| collection section | a section `Component` | all sections on the Collection screen |
+| screen | `{ id, navLabel, icon, Component }` | the nav + routes iterate registered screens |
+| HUD widget | a HUD `Component` (+ order) | the site-map HUD row renders registered widgets in order |
+| reward effect | the effect for a reward `type` | dispatched when that reward is claimed (mod-populated) |
 
 Screens and HUD widgets are plain React components: each uses its own hooks
 internally (mosaic screen calls `useMosaicProgress`; the trap HUD widget calls
@@ -99,23 +98,8 @@ leak). Two clean options:
   claim-component (like an encounter). Heavier; only worth it if effects need to
   render UI, which they don't today.
 
-Recommendation: **A**. It mirrors how the HUD widget already reaches mod state
-(its own hook), just for the non-visual claim path.
-
-## Migration map (each current leak → its target home)
-
-- `Base.tsx` mosaic screen → **screen registry**; `Base` iterates, drops the
-  `MosaicPage` import + `isModEnabled` gate. (Smallest first step — proves the
-  screen registry.)
-- `SiteMapScreen` trap HUD → **HUD-widget registry**; the trap widget (owning
-  `HealthDisplay` + `ConsumableBar`) lives in `mods/trap/app` and calls
-  `useTrapProgress` itself. `SiteMapScreen` drops the import + gate.
-- `registerRewardHandlers` hieroglyph/trap handlers → each mod's `app.tsx`
-  registers its own reward effect; core keeps only genuinely-core effects (map
-  piece — until a tomb-treasure mod owns it). `ApplyCtx` drops `trapProgress`.
-- `registerAllFamilies` + `registerAllCollectionSections` → folded into
-  `registerModApps` (each mod's `app.tsx` does its own family + section
-  registration).
+Chosen: **A**. It mirrors how the HUD widget already reaches mod state (its own
+hook), just for the non-visual claim path.
 
 ## Non-goals
 
