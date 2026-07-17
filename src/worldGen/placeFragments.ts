@@ -225,7 +225,9 @@ export const placeFragments = (
       // currency's own rank order within each group; still falls back to a tagged slot if that's all
       // that's reachable, so placement never fails where it otherwise would.
       const ranked = [...currency.rank(slots.filter(eligible), demand)].sort(
-        (a, b) => (a.preference && cappedBuckets.has(a.preference) ? 1 : 0) - (b.preference && cappedBuckets.has(b.preference) ? 1 : 0)
+        (a, b) =>
+          (a.preference && cappedBuckets.has(a.preference) ? 1 : 0) -
+          (b.preference && cappedBuckets.has(b.preference) ? 1 : 0)
       )
 
       for (const slot of ranked) {
