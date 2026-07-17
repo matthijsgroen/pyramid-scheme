@@ -187,12 +187,25 @@ export const PyramidExpedition: FC<{
   const handleInteriorSiteComplete = useCallback(() => {
     setInteriorLevel(activeJourney.journeyId, null)
     setShowingInterior(false)
+    if (activeJourney.completionCount > 0) {
+      // Revisit/explore: each pyramid is an isolated re-exploration — return to the map instead of
+      // advancing to the next level or re-completing the journey.
+      onClose?.()
+      return
+    }
     transitionTimersRef.current.forEach(clearTimeout)
     transitionTimersRef.current = [
       setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 300),
       setTimeout(() => onNextLevel?.(), 2000),
     ]
-  }, [setInteriorLevel, activeJourney.journeyId, activeJourney.levelNr, onNextLevel])
+  }, [
+    setInteriorLevel,
+    activeJourney.journeyId,
+    activeJourney.levelNr,
+    activeJourney.completionCount,
+    onNextLevel,
+    onClose,
+  ])
 
   const onCompletionFinished = useCallback(() => {
     setLevelCompleted(false)

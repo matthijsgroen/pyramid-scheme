@@ -165,6 +165,9 @@ export const JourneyPathView: FC<Props> = ({
       {/* Path + site nodes */}
       {inJourney && (
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {/* Node hover halo — plain CSS so it doesn't depend on Tailwind JIT picking up SVG hover
+              utilities, and pointer-events:all so the transparent-when-idle circle still captures. */}
+          <style>{`.jpv-node{fill:#fcd34d;opacity:0;pointer-events:all;cursor:pointer;transition:opacity .15s}.jpv-node:hover{opacity:.6}`}</style>
           {/* Faint full path */}
           <path
             d={path}
@@ -179,20 +182,25 @@ export const JourneyPathView: FC<Props> = ({
             const isCurrent = i === currentIdx
             if (isCompleted) {
               return (
-                <g
-                  key={i}
-                  onClick={
-                    onNodeClick
-                      ? e => {
-                          e.stopPropagation()
-                          e.nativeEvent.stopImmediatePropagation()
-                          onNodeClick(i + 1)
-                        }
-                      : undefined
-                  }
-                  style={onNodeClick ? { cursor: "pointer" } : undefined}
-                >
-                  {onNodeClick && <circle cx={pos.x} cy={pos.y} r="7" fill="transparent" />}
+                <g key={i}>
+                  {/* Single hit-target + hover halo. pointer-events on the dot are disabled so the
+                      whole radius (center included) hovers this circle, not the dot on top of it. */}
+                  <circle
+                    cx={pos.x}
+                    cy={pos.y}
+                    r="9"
+                    onClick={
+                      onNodeClick
+                        ? e => {
+                            e.stopPropagation()
+                            e.nativeEvent.stopImmediatePropagation()
+                            onNodeClick(i + 1)
+                          }
+                        : undefined
+                    }
+                    // eslint-disable-next-line tailwindcss/no-custom-classname -- plain CSS hover class defined above
+                    className={onNodeClick ? "jpv-node" : "pointer-events-none fill-transparent"}
+                  />
                   <circle
                     cx={pos.x}
                     cy={pos.y}
@@ -200,6 +208,7 @@ export const JourneyPathView: FC<Props> = ({
                     fill="rgb(245,158,11)"
                     stroke="rgb(180,83,9)"
                     strokeWidth="0.8"
+                    className="pointer-events-none"
                   />
                 </g>
               )
@@ -234,9 +243,9 @@ export const JourneyPathView: FC<Props> = ({
         </svg>
       )}
 
-      {/* Label */}
+      {/* Label — pointer-events-none so node clicks/hovers underneath still reach the SVG circles */}
       <span
-        className={`relative z-10 text-2xl font-bold transition-colors duration-300 ${
+        className={`pointer-events-none relative z-10 text-2xl font-bold transition-colors duration-300 ${
           isPyramid ? "text-amber-900 group-hover:text-amber-800" : "text-amber-200 group-hover:text-amber-100"
         }`}
       >
@@ -245,7 +254,7 @@ export const JourneyPathView: FC<Props> = ({
 
       {/* Corner icon */}
       <div
-        className={`absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border text-xs ${
+        className={`pointer-events-none absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border text-xs ${
           isPyramid ? "border-amber-700 bg-amber-100 text-amber-800" : "border-amber-600 bg-stone-700 text-amber-400"
         }`}
       >
