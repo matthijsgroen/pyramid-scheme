@@ -155,7 +155,7 @@ authored role) that the family-absence pass-through resolves at runtime.
 
 > **Resolved.** money/junk/consumables are now real `Distribution`s (`footprint`/`eligible`/`rank`/
 > `fill`) run through `allocateDistributions`; the mod's `fill` owns variants/rarity/completeness.
-> Eagerness = `FamilyMeta.rewardPriority` stamped on each slot (fill-order, encounter-sourced);
+> Reward priority (`FamilyMeta.rewardPriority`) stamped on each slot sets fill order (encounter-sourced);
 > `emptyFraction` is a real core knob. `MoneySpec`/`JunkSpec`/`ConsumableSpec`/`dynamicLoot.ts`
 > deleted. Money+junk = one `shopMoneyEconomy` distribution with a `[totalBuyable, 1.5×]` budget
 > (deliberate economy rebalance). Toggle-off + guard verified. See `distribution-primitive-design.md`
@@ -176,9 +176,9 @@ variant, never knows rarity or completeness"; "money validates by footprint only
   exists for any dynamic loot; core also bakes money and consumables via `slot.assign` directly.
 - **Money has no footprint** — `MoneySpec = { fraction }` (`dynamicLoot.ts:19`;
   `shop/game/loot.ts:8`), placed as `round(n*fraction)` with no min and no hard-fail.
-- **Eagerness is a core `Record<Slot["kind"],number>` in `JunkSpec`**, not sourced from encounters.
+- **Reward priority is a core `Record<Slot["kind"],number>` in `JunkSpec`**, not sourced from encounters.
   Note: `FamilyMeta.rewardWeight` (treasure 100 / puzzle 60 / trap 0 / shop 0 / gate 0,
-  `familyMeta.ts`) is the *designed* encounter-owned eagerness home, and is **declared but never
+  `familyMeta.ts`) is the *designed* encounter-owned reward-priority home, and is **declared but never
   consumed** by the allocator.
 
 This is the gap that this session's Slice 4 (`MoneySpec`/`JunkSpec`) entrenched rather than fixed.
@@ -344,7 +344,7 @@ call `registerFamily` **ungated** (unlike every other mod) — a mod in name onl
 ## Recommended sequencing (proposal, not yet agreed)
 
 1. **Distribution primitive completion (§C)** — make money/junk/consumables real `Distribution`s
-   with `footprint {min,max}` + mod `fill`; consume `FamilyMeta.rewardPriority` as encounter eagerness.
+   with `footprint {min,max}` + mod `fill`; consume `FamilyMeta.rewardPriority` for encounter-sourced fill order.
    Retire `MoneySpec`/`JunkSpec`/`assignDynamicLoot`. (This is the "full push" already chosen.)
 2. **Reward vocabulary + state extraction (§D)** — move reward types/handlers/state to owning mods so
    "delete a mod, core untouched" becomes true. Unblocks clean toggle-off for hieroglyph/trap/shop.

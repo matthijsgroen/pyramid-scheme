@@ -141,18 +141,18 @@ specifically).
 
 - **Dynamic loot IS the primitive.** money/junk/consumables are real `Distribution`s run through
   `allocateDistributions`, not a parallel `assignDynamicLoot` pass. The mod's `fill` bakes the
-  rewards (owns variants/rarity/completeness); core only allocates + eager-orders + reserves empty.
+  rewards (owns variants/rarity/completeness); core only allocates + priority-orders + reserves empty.
   (`ConsumableSpec`/`MoneySpec`/`JunkSpec`/`dynamicLoot.ts` are deleted.)
-- **Eagerness = `rewardPriority` = fill ORDER, sourced from the encounter family** (NOT a
+- **Reward priority = fill ORDER, sourced from the encounter family** (NOT a
   `Record<Slot["kind"]>` ratio). `FamilyMeta.rewardPriority` (chest 100, sumplete 60,
   trap/tableau/crocodile/gate/shop 0) is stamped on each slot at collect time via an injected
   `familyPriorityFor` (built from `ALL_FAMILY_META`, riding the `resolveKeyRequirements` seam).
-  `allocateDistributions` offers slots weight-desc (chests before puzzles); a distribution that
-  can't take everything leaves the least-eager slots empty. Weight-0 slots are loot-ineligible —
+  `allocateDistributions` offers slots priority-desc (chests before puzzles); a distribution that
+  can't take everything leaves the lowest-priority slots empty. Priority-0 slots are loot-ineligible —
   so tomb main-path tableau/crocodile puzzles bear no loot (matches the `familyMeta` intent).
-- **`emptyFraction` is a REAL core knob** (un-deferred): the least-eager loot-eligible slots are
+- **`emptyFraction` is a core knob**: the lowest-priority loot-eligible slots are
   skimmed and left empty up front, so found loot stays meaningful (no 1-coin spam). Default 0
-  (`scripts/generateWorld.ts`); dial up on a feel-check. Not YAGNI — it's the meaningfulness dial.
+  (`scripts/generateWorld.ts`); dial up on a feel-check.
 - **Completeness = the Collection "junk" category must be finishable** (`Collection.tsx` renders all
   25 `ALL_SELLABLES`). It lives in the shop's `fill` (≥1 of each item per present tier; hard-fail if
   a present tier can't cover its 5). Junk value is tier-fixed (`SELL_VALUE_BY_TIER`).
@@ -161,132 +161,6 @@ specifically).
   counts shifted (junk 810→~335, money ~156). The economy guard counts BOTH money and sellable value
   in BOTH end and puzzle slots (junk now sits in either). Output is validated by the guard + the
   fill's self-check, not by byte-identity.
-  - **Revised** — the shop `fill` originally emptied its own surplus (which caught chests). See
-    "Contract revision — mods fill only, core owns emptiness" below: the economy now fills-all +
-    scales-to-goal, core owns emptiness, and empties are always bottom-of-priority.
-
-## Contract revision — mods fill only, core owns emptiness (empty-chest fix, 2026-07-16)
-
-**Problem found.** The world had 15 empty *chests* (`end:"treasure"` serialized with no reward) —
-e.g. `starter_1:L0:F0:s1`, the first pyramid. Root cause, two deviations from the model above:
-1. **`EMPTY_FRACTION = 0`** (`scripts/generateWorld.ts`) — core hid nothing, so the *shop economy*
-   was forced to decide emptiness itself.
-2. **The shop `fill` emptied its own surplus** (phase-4 `slot.assign(undefined)`) after filling to
-   budget, and it fills **per material tier** (junk tier-spread), so its "surplus" wasn't the
-   global least-eager — it caught **chests**. A mod emptied a chest; priority was ignored.
-
-The eager/`emptyFraction` bullets in "As-built refinements" describe the *intended* model; the shop
-fill violated it. This section is the authoritative correction.
-
-### The invariant (revised locked contract)
-
-- **Mods `fill` only — never empty.** A distribution's `fill` may assign a reward or leave a slot
-  untouched; it MUST NOT call `slot.assign(undefined)`. Emptiness is **core's** concern alone.
-- **Fill is top-priority-first.** `allocateDistributions` offers slots `rewardPriority`-desc, so
-  every provider fills chests (100) before puzzles (60). Whatever is left unfilled is therefore
-  always the **least-eager** slots.
-- **Empties have two legitimate sources, both bottom-of-priority:**
-  1. **Authored** — `emptyFraction` skims the least-eager loot-eligible slots up front (the author's
-     DSL dial). Chests, being top-priority, are never in that slice.
-  2. **Exhaustion** — after all providers fill, every provider's own thresholds (gating/capped
-     totals, shop budget ceiling + per-item caps) may leave slots unfillable. Core empties those.
-- **A chest empty ⇒ a genuine content shortfall**, never a distribution accident: it can only happen
-  when total loot supply across all providers can't cover the chest count. → **hard-fail** (guard
-  below), message points the author at the DSL (add loot capacity / cut chests). Puzzle-slot empties
-  are normal (authored or exhaustion); chest empties are a build error.
-
-### The economy adapts magnitude, not emptiness
-
-The shop economy **fills every slot it is handed** (never leaves one empty) and scales reward
-*magnitude* to hit the economy goal `[budgetMin, budgetMax]` over that slot count:
-- **Fewer slots** (author raised `emptyFraction`) → **higher** per-slot rewards.
-- **More slots** (`emptyFraction` low) → **lower** per-slot rewards (down toward loose 1-coins).
-- Junk value is tier-fixed (`SELL_VALUE_BY_TIER`), so scaling rides **loose-coin amounts + the
-  junk/coin ratio**, not junk value.
-- If minimal fill of all handed slots would still exceed `budgetMax` → **hard-fail: raise
-  `emptyFraction` / cut shop stock**. If it can't reach `budgetMin` → **hard-fail: add loot
-  capacity** (the existing self-check). `emptyFraction` is therefore a real **balance dial**, not
-  cosmetic — it is how the author keeps found-loot meaningful *and* the economy under its ceiling.
-
-### Mechanism
-
-- **`slotAllocator.allocateDistributions`:** after `dist.fill(take)`, **reclaim** any `take` slot the
-  fill left unassigned back into `available` (requires tracking whether a slot got a real reward).
-  This is the seam that makes "fill some, leave the rest" possible **without a mod emptying** — the
-  reclaimed slots flow to the core tail, which empties them (least-eager by construction).
-- **gating + capped eligibility:** drop `kind === "end"` → `rewardPriority > 0` (any loot node),
-  eager-ranked. Per TARGET.md rule 2 ("**any** loot-bearing node can hold **any** capped currency";
-  chests just rank first). Fixes the fidelity deviation that restricted required loot to ends only.
-- **shop `loot.ts`:** delete phase-4 self-empty; fill-all + scale-to-goal.
-- **core guard (`validate.ts`):** no `end:"treasure"` serialized without a reward. **Mod-aware** — a
-  deliberately loot-less world (loot mods toggled off) is exempt (the documented toggle-off
-  degenerate), so the guard trips only on a real shortfall while providers are registered.
-
-### Required tests (every loot-providing mod's `fill`)
-
-A loot distribution's `fill` MUST be unit-tested across span sizes (the ratio of budget goal to slot
-count), plus the ordering + no-empty invariants:
-- **Large span** — many slots, low budget-per-slot: all slots filled, rewards small (toward 1-coin),
-  total within `[budgetMin, budgetMax]`, mod emits no `undefined`.
-- **Good span** — balanced: all filled, moderate rewards, within budget.
-- **Tight span** — few slots, must scale up: all filled, higher per-slot rewards, hits `budgetMin`
-  without exceeding `budgetMax`.
-- **Shortfall** — too little capacity to reach `budgetMin`, or too many slots to stay under
-  `budgetMax` even minimally: **hard-fails** with the author-facing message.
-- **Ordering** — a mixed end+puzzle pool fills ends before puzzles; a chest is never the empty one.
-
-## Build plan — empty-chest fix (pick up after a context clear)
-
-Design is in "Contract revision" above (frozen). Each phase = its own commit/slice: self-verify with
-the CLI (`tsc -b` + `vitest` + `lint` + `build` + `generate-world`; editor diagnostics lag — trust
-the CLI), then push. Regen is expected to change (loot redistributes); review the diff, don't chase
-byte-identity. Do the phases in order — EP1 is the enforcement seam the rest leans on.
-
-- [ ] **EP1 — `slotAllocator` reclaim seam (enforce "mods fill only").** Track whether a slot got a
-      real reward; after `dist.fill(take)`, return any unfilled `take` slot to `available` so the
-      core tail empties it (never a mod). Add a dev assertion that no mod left a `fragmentSlot`
-      sentinel behind. Tests: a fill that fills-some-leaves-rest → the rest is reclaimed + ends empty
-      via the tail, not via the mod. (Enabler + safety net for EP3.)
-- [ ] **EP2 — widen gating + capped eligibility (fidelity, TARGET rule 2).** Drop `kind === "end"`
-      from `placeFragments` (gating) and `cappedToDistribution` (capped) → `eligible: rewardPriority
-      > 0`, keep eager `rank` (chests first). Required/optional-pocket + hidden + shop-bucket rules
-      still hold. Regen: fragments/mosaic may now sit in puzzle slots once chests are full — review.
-- [ ] **EP3 — shop `loot.ts`: fill-all + scale-to-goal (drop phase-4).** Remove the phase-4
-      `slot.assign(undefined)`. Fill every handed slot, eager (chests first), completeness (≥1 junk
-      per present tier), scaling loose-coin amounts + junk/coin ratio to land in
-      `[budgetMin, budgetMax]`. Hard-fails: below floor → "add loot capacity"; minimal fill above
-      ceiling → "raise `emptyFraction` / cut shop stock". Unit tests: **large / good / tight** spans
-      (all filled, scaled, in budget) + **shortfall** (hard-fail) + **ordering** (ends before
-      puzzles; a chest is never the empty one).
-- [ ] **EP4 — core no-empty-chest guard (`validate.ts`), mod-aware.** After build, throw if any
-      `end:"treasure"` serialized with no reward WHILE a loot provider is registered; exempt the
-      loot-mods-off degenerate. Tests: trips on an empty chest, passes a full world, exempt when loot
-      off.
-- [ ] **EP5 — set `EMPTY_FRACTION` (tuning).** With fill-all, `EMPTY_FRACTION=0` fills everything →
-      low per-slot money. Pick a sensible default (feel-check) so found loot stays meaningful; the
-      author can dial per taste. Regen + eyeball reward density.
-- [ ] **EP6 — regen + full verify + toggle-off.** `generate-world`: 0 empty chests, economy guard +
-      determinism + winnability pass, diff reviewed (fragment/mosaic relocation, money/junk
-      redistribution). Prove toggle-off: shop off → guard exempt, world builds. Update this doc's
-      status + memory.
-
-### Kickoff prompt (paste into a fresh session)
-
-```
-Build the empty-chest fix on branch mods/hieroglyph-currency. Read
-docs/mods/distribution-primitive-design.md — the "Contract revision — mods fill
-only, core owns emptiness" section (FROZEN design) + the "Build plan — empty-chest
-fix" checklist. Also skim [[project_distribution_primitive_contract]] in memory.
-
-Do the phases EP1..EP6 IN ORDER, one commit per phase. EP1 (slotAllocator reclaim)
-is the enforcement seam the rest needs. Self-verify each with the CLI (tsc -b /
-vitest / lint / build / generate-world — editor diagnostics lag). Regen WILL change
-(loot redistributes) — review the diff, don't chase byte-identity. The acceptance
-gate: 0 empty chests in generate-world, economy guard + winnability still pass, and
-the required span/shortfall/ordering unit tests exist per the design. No silent
-guesses — if the task didn't cover something, record the decision in the doc. When
-done: tick the checklist, update status, and note it in memory.
-```
 
 ## Still open (for the build, not blocking the design)
 

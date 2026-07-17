@@ -184,10 +184,12 @@ position). Passes run in a fixed order:
    map pieces / gating fragments so the world is solvable, into `end` slots.
 2. **Capped** — the slot allocator (`slotAllocator.ts`) hands each
    `CappedCurrency` an exact-footprint set of `end` slots.
-3. **Dynamic** — `dynamicLoot.ts` fills what's left: money + a mod's
-   `ConsumableSpec` into puzzle slots (by a per-site quota), then junk into
-   remaining slots by an **eagerness** ratio per slot kind (chest fills eagerly,
-   puzzle partially), with an empty remainder.
+3. **Dynamic** — the mod-owned distributions fill the rest through
+   `allocateDistributions`, which offers loot-eligible slots in **reward-priority**
+   order — chests before puzzles; each `Slot.rewardPriority` comes from its
+   encounter family. Trap consumables take expert+ puzzle slots; the shop's
+   money+junk take what remains, chests first. Each provider places its own
+   count; the lowest-priority leftovers stay empty.
 
 The unifying shape (`slotAllocator.ts`) is a **Distribution**: `footprint`
 (how many slots) + `eligible` (which) + `rank` (priority) + `fill` (the mod bakes
