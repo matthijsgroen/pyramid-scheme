@@ -437,8 +437,8 @@ export const assembleFloor = (
     const straightBias = config.corridorStraightness ?? DEFAULT_STRAIGHT_BIAS
     const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand, straightBias, targetDistance)
 
-    // Exit placed at the farthest dead-end (degree-1) so no corridor passes through it.
-    // Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
+    // Exit placed at the main path's end, forced to degree-1 below so no corridor passes
+    // through it. Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
     // path instead of packed against the entrance — packing them up front left a long
     // bare corridor behind the goal with nothing to do and nowhere to branch. Spreading
     // keeps something to find along the whole walk, and puts the goal last (closest to
@@ -457,6 +457,21 @@ export const assembleFloor = (
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
     const [exR, exC] = mainPath[mainPath.length - 1]
+
+    // Force the exit to be a true dead-end (degree 1). The packing knob (targetDistance) ends
+    // the main path at a mid-maze node, not the maze's farthest leaf, so the exit cell keeps
+    // tree passages toward the still-carved region past it. Left in place, `edgeAllowed` draws
+    // those as real doors into any adjacent used side-section corridor, so the corridor reads as
+    // continuing past an exit that actually ends the visit the moment it's stepped on. Drop every
+    // passage incident to the exit except the one to its main-path predecessor — before sections
+    // carve (they read `passages` via `neighbors`), so nothing branches through or beside it.
+    const [predR, predC] = mainPath[mainPath.length - 2]
+    for (const [dr, dc] of DIRS2) {
+      const nr = exR + dr,
+        nc = exC + dc
+      if (nr === predR && nc === predC) continue
+      passages.delete(pkey(exR, exC, nr, nc))
+    }
 
     // Assign each section to cells branching from any main path cell (excluding center).
     type SectionGroup = {
@@ -943,6 +958,7 @@ export const assembleFloor = (
           family: family.familyId,
           tags: family.tags,
           pathIndex: k,
+          ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -960,17 +976,6 @@ export const assembleFloor = (
     } else {
       const stairId = typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
       roomSpecs.set(posKey(exR, exC), { roomType: "portal", stairId })
-    }
-
-    // The farthest mainPath cell has degree 1 (no free adjacents) so no section can branch from it.
-    // Give it a small treasure so it renders as a room rather than a dead-end corridor.
-    const [farthestR, farthestC] = mainPath[mainPath.length - 1]
-    if (!roomSpecs.has(posKey(farthestR, farthestC))) {
-      roomSpecs.set(posKey(farthestR, farthestC), {
-        roomType: "encounter",
-        family: treasureChest.familyId,
-        tags: treasureChest.tags,
-      })
     }
 
     // Section nodes
@@ -1034,6 +1039,8 @@ export const assembleFloor = (
           // tag's default) unless it explicitly opts into a different family itself.
           family: family.familyId,
           tags: family.tags,
+          pathIndex: pi,
+          ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1126,6 +1133,8 @@ export const assembleFloor = (
           // tableau encounter unless the sub-section explicitly opts in itself.
           family: family.familyId,
           tags: family.tags,
+          pathIndex: pi,
+          ...(subSection.encounterArgs !== undefined ? { encounterArgs: subSection.encounterArgs } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })

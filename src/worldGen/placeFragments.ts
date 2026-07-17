@@ -3,6 +3,7 @@ import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import {
   computeReachability,
   createFloorAssemblyCache,
+  deriveOwnedFacts,
   floorKey,
   type JourneyMeta,
   type ReachabilitySupport,
@@ -211,11 +212,22 @@ export const placeFragments = (
       // reachable but never guaranteed reachable (needs the corridor detector or a lucky stumble),
       // so a progression-gating currency the solver must guarantee may never land there. They stay
       // available for the capped/dynamic filler passes below — optional loot is exactly their role.
+      //
+      // A slot's own tomb-key gates (`wardKeys`) must ALL be held right now, too. `reachableFloors`
+      // is floor-granular — it says the floor's entrance is reachable, not that a key-gated pocket
+      // WITHIN it is. Without this, a required fragment can land behind a tomb-key the worklist
+      // hasn't earned yet — worst case the SAME floor's own tableau reward (a tableau needing this
+      // very hieroglyph), a self-referential lock that caps the hieroglyph one fragment short
+      // forever. The doc's contract is explicit (keys-and-locks-solver.md: "a key is never placed
+      // outside the reachable area"; "place ward key → pocket reachable → THEN place the required
+      // piece") — a harvested tomb-key sits in ownedFacts, so once earned the pocket opens legitly.
+      const ownedFacts = deriveOwnedFacts(ownedCounts, support)
       const eligible = (s: Slot) =>
         s.kind === "end" &&
         !s.hidden &&
         available.has(s) &&
         reach.reachableFloors.has(floorKey(s.ref)) &&
+        s.wardKeys.every(k => ownedFacts.has(k)) &&
         (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
       // Soft-avoid slots an author tagged for a capped currency (e.g. `end: "mosaic"`): a gating
       // currency uses them only after untagged slots run out, so an authored capped-currency
