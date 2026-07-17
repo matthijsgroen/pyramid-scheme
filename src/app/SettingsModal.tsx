@@ -17,6 +17,8 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   const handleClearGameData = async () => {
     await clearGameData()
+    // Preserve the tutorials preference across a data wipe.
+    await setTutorialsEnabled(tutorialsEnabled)
     window.location.reload()
   }
 

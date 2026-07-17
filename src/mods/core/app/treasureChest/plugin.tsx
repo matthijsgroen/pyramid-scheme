@@ -15,7 +15,9 @@ const TreasureComponent: FamilyPlugin["Component"] = ({ onSolved }) => {
   const handleOpen = () => {
     if (opened) return
     setOpened(true)
-    onSolved()
+    // Let the chest open animation (shackle transition, 500ms) play out before
+    // the node closes and RewardFlow takes over.
+    setTimeout(onSolved, 600)
   }
 
   return (
