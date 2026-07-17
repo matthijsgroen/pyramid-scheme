@@ -5,7 +5,7 @@ import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { revealText } from "@/support/revealText"
-import { useInventory } from "@/app/Inventory/useInventory"
+import { useHieroglyphProgress } from "@/mods/hieroglyph/app/useHieroglyphProgress"
 import { usePuzzleProgress } from "@/mods/puzzle/app/usePuzzleProgress"
 import {
   createTableauPuzzleState,
@@ -51,14 +51,20 @@ export const TombPuzzle: FC<{
 }> = ({ tableau, calculation, difficulty, onComplete }) => {
   const { t } = useTranslation("common")
 
-  // Get player's actual inventory
-  const { inventory, removeItems } = useInventory()
+  // A hieroglyph is OWNED once its fragments are complete — a reusable key that fills every slot of
+  // every tableau, never consumed (see keyRequirements.ts / tableauPuzzleState.ts). So the puzzle
+  // reads fragment-collection state, not a stock of items.
+  const { hieroglyphProgress } = useHieroglyphProgress()
+  const owns = (symbolId: string) => {
+    const { found, required } = hieroglyphProgress(symbolId)
+    return found >= required
+  }
   const { scribesEyeLevel } = usePuzzleProgress()
   const scribesEyeSlots = scribesEyeLevel === 3 ? Infinity : scribesEyeLevel
 
-  // Domain state: which tiles are filled and how much inventory that used
+  // Domain state: which tiles are filled, and the placed-count per symbol
   const [state, setState] = useState(createTableauPuzzleState)
-  const { filledPositions, symbolCounts, inventoryUsage } = state
+  const { filledPositions, symbolCounts } = state
 
   // State for NumberLock
   const [lockCode, setLockCode] = useState("")
@@ -79,13 +85,14 @@ export const TombPuzzle: FC<{
     [calculation.symbolCounts, state]
   )
 
-  const notEnough = useMemo(() => {
-    if (Object.keys(inventory).length === 0) return false
-    return Object.entries(calculation.symbolCounts).some(([symbolId, maxNeeded]) => {
-      const availableInInventory = inventory[symbolId] || 0
-      return availableInInventory < maxNeeded
-    })
-  }, [calculation.symbolCounts, inventory])
+  // A tableau's hieroglyphs are a COMPLETION precondition, not an entry gate — you can walk in
+  // before collecting them all. If any required hieroglyph is still incomplete, Fez nudges you to
+  // go finish collecting it (you can place the ones you do own in the meantime).
+  const notEnough = useMemo(
+    () => Object.keys(calculation.symbolCounts).some(symbolId => !owns(symbolId)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- owns() is derived from hieroglyphProgress
+    [calculation.symbolCounts, hieroglyphProgress]
+  )
 
   const { showConversation } = use(FezContext)
   useEffect(() => {
@@ -118,7 +125,7 @@ export const TombPuzzle: FC<{
   const handleTileClick = (symbolId: string, position: string) => {
     // Don't allow removal if puzzle is completed
     if (filledPositions[position] > 0 && isPuzzleCompleted) return
-    setState(prev => toggleTableauTile(prev, symbolId, position, calculation.symbolCounts, inventory[symbolId] || 0))
+    setState(prev => toggleTableauTile(prev, symbolId, position, calculation.symbolCounts, owns(symbolId)))
   }
 
   // Helper function to find all empty positions for a given symbol
@@ -136,18 +143,13 @@ export const TombPuzzle: FC<{
   }
 
   const handleInventoryClick = (symbolId: string) => {
-    const currentUsage = inventoryUsage[symbolId] || 0
-    const availableInInventory = inventory[symbolId] || 0
     const currentPlaced = symbolCounts[symbolId] || 0
     const maxNeeded = calculation.symbolCounts[symbolId] || 0
 
-    // Check if we have available inventory items and haven't exceeded puzzle requirements
-    if (availableInInventory > currentUsage && currentPlaced < maxNeeded) {
-      // Find the first empty position for this symbol
+    // Owned hieroglyph with an open slot left → fill the first empty position for this symbol.
+    if (owns(symbolId) && currentPlaced < maxNeeded) {
       const emptyPositions = findEmptyPositionsForSymbol(symbolId)
-
       if (emptyPositions.length > 0) {
-        // Fill the first available position
         handleTileClick(symbolId, emptyPositions[0])
       }
     }
@@ -165,13 +167,8 @@ export const TombPuzzle: FC<{
       setLockState("open")
       setIsProcessingCompletion(true)
 
+      // Hieroglyphs are reusable keys — solving a tableau consumes nothing.
       lockTimerRef.current = setTimeout(() => {
-        const itemsToRemove = Object.fromEntries(
-          Object.entries(inventoryUsage).filter(([, usedCount]) => usedCount > 0)
-        )
-        if (Object.keys(itemsToRemove).length > 0) {
-          removeItems(itemsToRemove)
-        }
         onComplete?.()
         setIsProcessingCompletion(false)
       }, 2000)
@@ -191,23 +188,18 @@ export const TombPuzzle: FC<{
     }
   }
 
-  const inventoryItems: InventoryStripItem[] = Object.entries(calculation.symbolCounts)
-    .sort((a, b) => difficultyCompare(getItemFirstLevel(a[0]), getItemFirstLevel(b[0])))
-    .map(([symbolId, maxNeeded]) => {
-      const usedInPuzzle = symbolCounts[symbolId] || 0
-      const usedFromInventory = inventoryUsage[symbolId] || 0
-      const availableInInventory = inventory[symbolId] || 0
+  const inventoryItems: InventoryStripItem[] = Object.keys(calculation.symbolCounts)
+    .sort((a, b) => difficultyCompare(getItemFirstLevel(a), getItemFirstLevel(b)))
+    .map(symbolId => {
       const inventoryItem = getInventoryItemById(symbolId)
-      const itemDifficulty = getItemFirstLevel(symbolId) || difficulty
-      const canPlace = availableInInventory > usedFromInventory && usedInPuzzle < maxNeeded
-
+      const { found, required } = hieroglyphProgress(symbolId)
       return {
         symbolId,
         symbol: inventoryItem?.symbol,
-        difficulty: itemDifficulty,
-        availableCount: availableInInventory - usedFromInventory,
-        maxNeeded,
-        canPlace,
+        difficulty: getItemFirstLevel(symbolId) || difficulty,
+        owned: found >= required,
+        found,
+        required,
       }
     })
 

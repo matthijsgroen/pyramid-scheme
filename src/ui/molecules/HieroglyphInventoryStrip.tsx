@@ -7,9 +7,11 @@ export type InventoryStripItem = {
   symbolId: string
   symbol?: string
   difficulty: Difficulty
-  availableCount: number
-  maxNeeded: number
-  canPlace: boolean
+  // A completed hieroglyph is owned = usable in every slot of every tableau (reusable key, never
+  // consumed). Not owned → still collecting its fragments; `found`/`required` shows how close.
+  owned: boolean
+  found: number
+  required: number
 }
 
 export const HieroglyphInventoryStrip: FC<{
@@ -25,24 +27,26 @@ export const HieroglyphInventoryStrip: FC<{
           key={item.symbolId}
           className={clsx(
             "flex items-center gap-1 rounded p-1 transition-colors select-auto",
-            item.canPlace ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed opacity-50"
+            item.owned ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed opacity-50"
           )}
-          onClick={() => item.canPlace && onItemClick(item.symbolId)}
+          onClick={() => item.owned && onItemClick(item.symbolId)}
         >
           <HieroglyphTile
             symbol={item.symbol}
             difficulty={item.difficulty}
             size="sm"
-            disabled={!item.canPlace}
+            disabled={!item.owned}
             className="pointer-events-none"
           />
           <div className="flex flex-col text-xs">
-            <span>
-              {item.availableCount}/
-              <span className={clsx(item.maxNeeded > item.availableCount && "font-bold text-red-400")}>
-                {item.maxNeeded}
+            {item.owned ? (
+              <span className="text-green-400">✓</span>
+            ) : (
+              // Fragment progress toward completing this hieroglyph — not a placement count.
+              <span className="text-red-400" title="fragments found">
+                🧩 {item.found}/{item.required}
               </span>
-            </span>
+            )}
           </div>
         </button>
       ))}

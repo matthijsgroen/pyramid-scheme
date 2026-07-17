@@ -19,9 +19,9 @@ export const Default: Story = {
     title: "Available symbols",
     onItemClick: (symbolId: string) => console.log("clicked", symbolId),
     items: [
-      { symbolId: "d1", symbol: "𓇳", difficulty: "starter", availableCount: 2, maxNeeded: 3, canPlace: true },
-      { symbolId: "d2", symbol: "𓃥", difficulty: "junior", availableCount: 0, maxNeeded: 2, canPlace: false },
-      { symbolId: "d3", symbol: "𓅃", difficulty: "expert", availableCount: 1, maxNeeded: 1, canPlace: true },
+      { symbolId: "d1", symbol: "𓇳", difficulty: "starter", owned: true, found: 2, required: 2 },
+      { symbolId: "d2", symbol: "𓃥", difficulty: "junior", owned: false, found: 1, required: 2 },
+      { symbolId: "d3", symbol: "𓅃", difficulty: "expert", owned: true, found: 3, required: 3 },
     ],
   },
 }
