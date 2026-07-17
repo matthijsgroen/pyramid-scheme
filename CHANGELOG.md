@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
 - A hidden, trapped area could occasionally generate with a way to reach its reward without passing through the trap.
+- Some treasure rooms at the end of a path could generate empty; every treasure room now holds something (a currency, a mosaic tile, or a little loot).
 
 ## 0.26.4 - 2026-07-05
 

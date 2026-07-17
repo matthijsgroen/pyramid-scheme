@@ -170,30 +170,28 @@ siteAssembler rewrite, shop-stock targeting, slot capacity. Settled decisions in
       - [x] consumable expert+-path eligibility: `ConsumableSpec.eligible` (trap sets tier ≥ expert).
             Consumables now only on expert/master/wizard sections (368: 70/123/175), none on
             starter/junior. Guard holds; junk backfills the vacated low-tier slots.
-- [ ] shop — Slice 4. The whole money economy is shop-owned:
-      - money currency (move the hardcoded `registerCurrencies` entry → shop descriptor) + money
-        dynamic distribution (move from core `dynamicLoot` → shop-injected, like consumables).
-      - **JUNK/sellables → shop-owned** (user decision, revises the design doc's "junk = core"):
-        `dynamicLoot.fillJunk` + `data/sellables.ts` + ≥1-each completeness + the Collection "junk"
-        category all become shop-injected. Shop off → no junk placed, leftover chests → empty.
-      - economy guard (`validate.ts` shopPrices + TOTAL_CONSUMABLE_BUYABLE) moves to shop.
-      - Fez shop family + descriptor + register + toggle-off.
-      - may pull shop encounters from Increment 2 forward (per-instance shop capacity).
-- [~] App-side mod plugins — the CLEAN CUT (design: `docs/mods/app-plugins-design.md`). CORE
-      PROPERTY DONE: `src/app` + `src/game` now hold ZERO `isModEnabled("<mod>")` branches and ZERO
-      `@/mods/<name>` imports.
+- [x] shop — Slice 4. DONE. The money economy is fully shop-owned (`src/mods/shop`): money currency
+      + money dynamic distribution + JUNK/sellables (fill + `data/sellables.ts` + ≥1-of-each
+      completeness + the Collection "junk" section) + the economy guard (`shopEconomyGuard`) + the
+      Fez-shop family. Shop off → no money/junk placed, guard drops out. Toggle-off proven.
+- [x] App-side mod plugins — the CLEAN CUT (design: `docs/mods/app-plugins-design.md`). DONE. CORE
+      PROPERTY HOLDS (verified): `src/app` + `src/game` hold ZERO `isModEnabled("<mod>")` branches
+      and ZERO `@/mods/<name>` imports. All four stages landed:
       - [x] stage 1 — screen registry (mosaic screen out of Base). `38c092b`
       - [x] stage 2 — HUD-widget registry (trap HUD out of SiteMapScreen). `913c923`
-      - [x] stage 3 — mod-owned reward effects (rewardContributions): consumable effect + pack-full
-            canAccept are trap contributions; ApplyCtx.trapProgress + the isModEnabled gates gone. `18e7886`
-      - [x] stage 4 — ONE app manifest. Each mod has an `app/index.ts` entrypoint importing its own
-            plugins/section/screen/HUD/reward; `registerModApps` imports the six entrypoints;
-            `registerAllFamilies` + `registerAllCollectionSections` deleted. SiteMapScreen /
-            Collection / the spec import `registerModApps`.
-- [ ] Distribution Increment 2 — encounter distributions. Convert the runtime siteAssembler
-      `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline encounter-tag authoring
-      into `encounter`-pass distributions with per-instance config. Completes the B target.
-- [ ] Perk & detector system (see above) — unblocks the trap perk upgrades + revives DET-1. Last.
+      - [x] stage 3 — mod-owned reward effects (rewardContributions). `18e7886`
+      - [x] stage 4 — ONE app manifest: each mod has an `app/index.ts`; `registerModApps` imports the
+            six entrypoints; `registerAllFamilies` + `registerAllCollectionSections` deleted.
+- [x] Perk & detector system — DONE (P1–P5 + both UI slices; see the "Perk & detector system"
+      section above). Perks via a contribution seam; detectors tiered; perk state owned by mods.
+- [x] Empty-chest fix — DONE (`03f4656`). A plain `end:"treasure"` now defaults to an untagged loot
+      slot (was: no placeholder → 7 empty chests shipped). Filled by the reward-priority passes
+      (chests first). Guarded by `src/worldGen/lootEconomyInvariants.spec.ts` (no empty chest while
+      any puzzle bears loot) + per-mod loot sanity specs.
+- [ ] Distribution Increment 2 — encounter distributions. **The one remaining slice.** Convert the
+      runtime siteAssembler `trapped`/`puzzleFamily`/`lastMainPuzzleFamily` special-cases + offline
+      encounter-tag authoring into `encounter`-pass distributions with per-instance config. Completes
+      the B target.
 
 ## Frozen — now subsumed by the Distribution primitive (no longer separate)
 
