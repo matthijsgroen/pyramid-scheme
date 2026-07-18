@@ -47,17 +47,23 @@ export const TravelPage: FC<{
   }, [showJourneySelection, showConversation])
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
+  // A tomb is played as a SINGLE-level exterior journey (its multi-floor interior is one site), so
+  // its effective exterior level count is always 1 — regardless of the raw multi-floor `levelCount`
+  // (2–5). Re-entry must resume a tomb at level 1: resuming at its raw levelCount (where a completed
+  // tomb's stored levelNr sits) makes the expedition read `levelNr > 1` as "already complete" and
+  // immediately end the journey, blocking re-entry (PyramidExpedition's expeditionCompleted guard).
+  const effectiveLevelCount = journey?.type === "treasure_tomb" ? 1 : (journey?.levelCount ?? 1)
   // Revisit/explore: a completed journey (completionCount > 0). Every pyramid stays a pickable node
   // even while one is open, so drive the path view past the last level regardless of stored levelNr.
   const revisiting = !!journey && (activeJourneyInfo?.completionCount ?? 0) > 0
-  const pathLevelNr = revisiting && journey ? journey.levelCount + 1 : (activeJourneyInfo?.levelNr ?? 1)
+  const pathLevelNr = revisiting && journey ? effectiveLevelCount + 1 : (activeJourneyInfo?.levelNr ?? 1)
 
   const handleMapClick = () => {
     if (revisiting && journey) {
       // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
       // exterior board (visitLevel clears the interior).
       const info = getJourney(journey.id)
-      const resumeAt = info && info.levelNr >= 1 && info.levelNr <= journey.levelCount ? info.levelNr : 1
+      const resumeAt = info && info.levelNr >= 1 && info.levelNr <= effectiveLevelCount ? info.levelNr : 1
       visitLevel(journey.id, resumeAt)
       startGame()
     } else if (activeJourneyInfo?.inProgress) {
@@ -84,7 +90,8 @@ export const TravelPage: FC<{
 
   const handleNodeClick = (levelNr: number) => {
     if (!journey) return
-    visitLevel(journey.id, levelNr)
+    // A tomb has a single exterior level; every "node" re-enters that one site (see effectiveLevelCount).
+    visitLevel(journey.id, journey.type === "treasure_tomb" ? 1 : levelNr)
     startGame()
   }
 
@@ -148,11 +155,7 @@ export const TravelPage: FC<{
                 <>
                   <h3 className="mb-4 text-center font-pyramid text-xl">{journey.name}</h3>
                   <p className="mb-4 max-w-md">{journey.description}</p>
-                  <div className="mb-4 flex items-center justify-between gap-2">
-                    <p>
-                      {t("ui.length")}: {journey.lengthLabel}
-                    </p>
-                    {/* show difficulty pill */}
+                  <div className="mb-4 flex items-center justify-end gap-2">
                     <DifficultyPill difficulty={journey.difficulty} label={journey.difficultyLabel} />
                   </div>
                 </>
@@ -162,13 +165,15 @@ export const TravelPage: FC<{
                 onClick={handleMapClick}
                 onNodeClick={journey ? handleNodeClick : undefined}
                 inJourney={!!journey}
-                levelCount={journey?.levelCount ?? 1}
+                levelCount={effectiveLevelCount}
                 levelNr={pathLevelNr}
                 journeyLength={journey?.journeyLength ?? "long"}
                 type={journey?.type ?? "pyramid"}
                 label={
                   revisiting
-                    ? t("ui.revisitExpedition")
+                    ? journey?.type === "treasure_tomb"
+                      ? t("ui.revisitTomb")
+                      : t("ui.revisitExpedition")
                     : activeJourneyInfo?.inProgress
                       ? t("ui.continueExpedition")
                       : t("ui.planExpedition")
@@ -281,7 +286,6 @@ export const TravelPage: FC<{
                     }
                     lang={i18n.language}
                     labels={{
-                      length: t("ui.length"),
                       chambers: t("ui.chambers"),
                       progressLevel: t("ui.progressLevel"),
                     }}
