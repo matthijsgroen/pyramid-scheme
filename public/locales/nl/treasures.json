@@ -12,7 +12,7 @@
     "compass": "Fragmentkompas (niv {{level}})",
     "detection": "Verborgen-gangdetector (niv {{level}})",
     "scribes-eye": "Tableau-hintvakken (niv {{level}})",
-    "tier-unlock": "Ontgrendelt {{tier}}-tombes",
+    "tier-unlock": "Ontgrendelt {{tier}}-expedities",
     "location-key": "Onthult een andere tombe"
   },
   "tiers": {

@@ -12,7 +12,7 @@
     "compass": "Fragment compass (Lv {{level}})",
     "detection": "Hidden-corridor detector (Lv {{level}})",
     "scribes-eye": "Tableau hint slots (Lv {{level}})",
-    "tier-unlock": "Unlocks {{tier}} tombs",
+    "tier-unlock": "Unlocks {{tier}} expeditions",
     "location-key": "Reveals another tomb"
   },
   "tiers": {
