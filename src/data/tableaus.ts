@@ -127,22 +127,73 @@ const storyObjectIds = (storyKey: string): string[] => {
   })
 }
 
+// Sequence a tier's authored grid cells so each descending floor introduces as few NEW tier-own
+// hieroglyphs as possible, deferring first-appearance deep into the tomb. Without this, the N-rooms-
+// per-floor grid drains the whole tier symbol pool in floors 1-2 (nothing new to collect for after),
+// collapsing the collect-in-the-world / solve-in-the-tomb loop. Spreading first-appearance restores
+// per-floor demand: a later floor stays unsolvable until you go collect its fresh fragments.
+//
+// The higher tombs (master/wizard) have many tableaus authored entirely around EARLIER-tier symbols;
+// those land on the shallow floors, so the shallowest master/wizard floors gate on earlier-tier
+// symbols (often deep-master glyphs for wizard) rather than their own — intentional backward pressure
+// to finish the previous tier, not dead floors.
+//
+// No re-authoring: a cell's story still matches its own symbols by construction; only which physical
+// (floor, room) presents which authored cell changes, and the stories are standalone vignettes with
+// no cross-tableau continuity to disturb.
+
+// Order cells so each pick adds the fewest new own-symbols to the running seen-set (tie-break:
+// original grid order, for determinism). Yields a gentle ramp: known-symbol cells first, own-heavy
+// cells last.
+const orderByGradualReveal = <T extends { ids: string[] }>(cells: T[], own: Set<string>): T[] => {
+  const seen = new Set<string>()
+  const remaining = cells.map((c, i) => ({ c, i }))
+  const result: T[] = []
+  while (remaining.length) {
+    let best = 0
+    let bestNew = Infinity
+    for (let j = 0; j < remaining.length; j++) {
+      const nw = remaining[j].c.ids.filter(id => own.has(id) && !seen.has(id)).length
+      if (nw < bestNew) {
+        bestNew = nw
+        best = j
+      }
+    }
+    const [picked] = remaining.splice(best, 1)
+    picked.c.ids.forEach(id => seen.add(id))
+    result.push(picked.c)
+  }
+  return result
+}
+
 const tableauInventory: Record<string, string[]> = {}
 const storySource: Record<string, { tombId: string; run: number; level: number }> = {}
 difficulties.forEach(difficulty => {
   const tierTombs = tombJourneys.filter(j => j.difficulty === difficulty)
   const [primaryTomb] = tierTombs
   const roomsPerFloor = TABLEAUS_PER_FLOOR[difficulty]
-  let sourceRun = 0
+  const totalFloors = tierTombs.reduce((sum, t) => sum + t.levelCount, 0)
+  const own = new Set(TOMB_SYMBOLS[difficulty])
+
+  // All authored grid cells for the tier (run 1..totalFloors × level 1..roomsPerFloor).
+  const cells = [] as { run: number; level: number; ids: string[] }[]
+  for (let run = 1; run <= totalFloors; run++) {
+    for (let level = 1; level <= roomsPerFloor; level++) {
+      cells.push({ run, level, ids: storyObjectIds(`${primaryTomb.id}.run${run}_level${level}`) })
+    }
+  }
+  const ordered = orderByGradualReveal(cells, own)
+
+  // Assign ordered cells to physical (tomb, floor, room) slots in descent order. A cell carries its
+  // own authored (run, level) for the story lookup; physical placement is independent.
+  let idx = 0
   for (const tomb of tierTombs) {
     for (let floor = 1; floor <= tomb.levelCount; floor++) {
-      sourceRun++
       for (let room = 1; room <= roomsPerFloor; room++) {
+        const cell = ordered[idx++]
         const key = `${tomb.id}.run${floor}_level${room}`
-        // The real story lives under the PRIMARY tomb's id at this (global run, room) — the whole
-        // grid was authored there; secondary tombs have no story keys of their own.
-        storySource[key] = { tombId: primaryTomb.id, run: sourceRun, level: room }
-        tableauInventory[key] = storyObjectIds(`${primaryTomb.id}.run${sourceRun}_level${room}`)
+        storySource[key] = { tombId: primaryTomb.id, run: cell.run, level: cell.level }
+        tableauInventory[key] = cell.ids
       }
     }
   }
