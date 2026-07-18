@@ -3,7 +3,6 @@ import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
 import type { TableauLevel } from "@/data/tableaus"
 import type { RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
-import { revealText } from "@/support/revealText"
 import clsx from "clsx"
 import type { FC } from "react"
 import { Formula } from "@/ui/molecules/Formula"
@@ -19,7 +18,6 @@ export const TombTableau: FC<{
   filledState: FilledTileState
   resolveTile: HieroglyphSymbolResolver
   hintFormulas: OrderedFormula[]
-  solvedPercentage: number
   annotations: Record<string, string>
   onTileClick?: (symbolId: string, position: string) => void
   onAnnotationChange?: (symbolId: string, value: string) => void
@@ -31,7 +29,6 @@ export const TombTableau: FC<{
   filledState,
   resolveTile,
   hintFormulas,
-  solvedPercentage,
   annotations,
   onTileClick,
   onAnnotationChange,
@@ -43,8 +40,8 @@ export const TombTableau: FC<{
       difficultyMaterialFlat[difficulty]
     )}
   >
-    <h1 className="text-center font-pyramid text-2xl">{revealText(tableau.name, solvedPercentage)}</h1>
-    <div>{revealText(tableau.description, solvedPercentage)}</div>
+    <h1 className="text-center font-pyramid text-2xl">{tableau.name}</h1>
+    <div>{tableau.description}</div>
 
     {hintFormulas.map(({ formula, index }, key) => (
       <div key={key} className="text-2xl">

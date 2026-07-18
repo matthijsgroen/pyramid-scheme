@@ -114,7 +114,6 @@ const meta = {
           }}
           resolveTile={symbolId => resolveHieroglyphSymbol(symbolId, journey.difficulty)}
           hintFormulas={calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))}
-          solvedPercentage={filled}
           annotations={{}}
         />
       </div>

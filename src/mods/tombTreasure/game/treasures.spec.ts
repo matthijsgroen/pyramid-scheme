@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
-import { TOMB_TREASURES, keyIdByTreasureId, treasureByKeyId, allTreasures } from "./treasures"
+import { TOMB_TREASURES, keyIdByTreasureId, treasureByKeyId, treasureDisplayByKeyId, allTreasures } from "./treasures"
 import { TREASURE_PERKS } from "./treasurePerks"
 
 // The Collection section derives "collected" from a treasure's keyId (a tombKey), so the zip of
@@ -27,5 +27,18 @@ describe("tomb treasure ↔ keyId mapping", () => {
     for (const keyId of Object.keys(TREASURE_PERKS)) {
       expect(treasureByKeyId[keyId], `${keyId} has a treasure`).toBeDefined()
     }
+  })
+
+  // The tomb-key loot popup names the treasure a claimed ward key grants (not a generic "tomb key"),
+  // resolving it through treasureDisplayByKeyId — so every keyId must map to its treasure's own
+  // i18n category/id + symbol.
+  it("resolves every keyId to its treasure's display info", () => {
+    for (const [keyId, treasure] of Object.entries(treasureByKeyId)) {
+      const info = treasureDisplayByKeyId[keyId]
+      expect(info, `${keyId} has display info`).toBeDefined()
+      expect(info.treasureId).toBe(treasure.id)
+      expect(info.symbol).toBe(treasure.symbol)
+    }
+    expect(treasureDisplayByKeyId["starter_a_1"]?.category).toBe("merchantCache")
   })
 })

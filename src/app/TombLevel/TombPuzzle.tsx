@@ -21,28 +21,6 @@ import { FezContext } from "../fez/context"
 import { createPositionOverview } from "@/mods/hieroglyph/game/filledPositions"
 import { mulberry32, shuffle } from "@/game/random"
 import { hashString } from "@/support/hashString"
-import type { Formula as FormulaType } from "@/game/formulas/formulas"
-
-// Counts the number of number-tile slots in a formula (used for solved-percentage display)
-const countFormulaSlots = (formula: FormulaType): number => {
-  let count = 0
-  if (typeof formula.left === "number") {
-    // nothing to do
-  } else if ("symbol" in formula.left) {
-    count += 1
-  } else {
-    count += countFormulaSlots(formula.left)
-  }
-  if (typeof formula.right === "number") {
-    // nothing to do
-  } else if ("symbol" in formula.right) {
-    count += 1
-  } else {
-    count += countFormulaSlots(formula.right)
-  }
-  return count
-}
-
 export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
@@ -102,14 +80,6 @@ export const TombPuzzle: FC<{
   }, [notEnough, showConversation])
 
   const resolveTile = useMemo(() => (symbolId: string) => resolveHieroglyphSymbol(symbolId, difficulty), [difficulty])
-
-  const solvedPercentage = useMemo(() => {
-    const totalSlots =
-      calculation.hintFormulas.reduce((sum, formula) => sum + countFormulaSlots(formula), 0) +
-      countFormulaSlots(calculation.mainFormula)
-    const filledSlots = Object.keys(filledPositions).length
-    return totalSlots > 0 ? filledSlots / totalSlots : 0
-  }, [calculation, filledPositions])
 
   const hintFormulas: OrderedFormula[] = useMemo(() => {
     const ordered = calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))
@@ -211,7 +181,6 @@ export const TombPuzzle: FC<{
       filledState={{ filledPositions, symbolCounts }}
       resolveTile={resolveTile}
       hintFormulas={hintFormulas}
-      solvedPercentage={solvedPercentage}
       annotations={annotations}
       onTileClick={handleTileClick}
       onAnnotationChange={handleAnnotationChange}

@@ -1,12 +1,12 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
-import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import { difficulties } from "@/data/difficultyLevels"
 import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
-import { difficultyTreasures, keyIdByTreasureId } from "../game/treasures"
+import { CATEGORY_BY_DIFFICULTY, difficultyTreasures, keyIdByTreasureId } from "../game/treasures"
 import { TREASURE_PERKS } from "../game/treasurePerks"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
 
@@ -15,15 +15,6 @@ import { useTombTreasureProgress } from "./useTombTreasureProgress"
 // shows the treasure's perk bonus as its effect line — a stat/detector perk via the merged perk
 // `describe` (the owning mod's i18n), a tier-unlock/location-key described here, `none` blank.
 // Registered app-side gated on the mod (see ./index), so it drops out when tomb-treasure is off.
-
-// The catalog difficulty → its treasures.json category (the authored name/description namespace).
-const CATEGORY_BY_DIFFICULTY: Record<Difficulty, string> = {
-  starter: "merchantCache",
-  junior: "nobleVault",
-  expert: "templeSecrets",
-  master: "ancientRelics",
-  wizard: "mythicalArtifacts",
-}
 
 export const TombTreasureCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
   const { t } = useTranslation(["common", "treasures"])
