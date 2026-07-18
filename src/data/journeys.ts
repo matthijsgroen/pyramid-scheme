@@ -205,7 +205,7 @@ export const journeys: Journey[] = [
     piecesRequired: 4,
     levelSettings: {
       symbolCount: 2,
-      numberRange: [1, 5],
+      numberRange: [1, 6],
       operators: ["+"],
       compareAmount: 0,
     },
