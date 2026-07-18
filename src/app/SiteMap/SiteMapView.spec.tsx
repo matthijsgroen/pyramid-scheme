@@ -52,6 +52,16 @@ const straightCorridor = (state: CellState, dirs: Direction[]): GridCell => ({
   state,
 })
 
+// A portal room. With a stairId it renders as a stairhead (a staircase); without, entrance/exit by
+// position.
+const portal = (state: CellState, stairId?: string): GridCell => ({
+  type: "room",
+  roomType: "portal",
+  stairId,
+  dirs: new Set<Direction>(["s"]),
+  state,
+})
+
 const makeGrid = (cells: GridCell[][]): FloorGrid => ({
   cells,
   rows: cells.length,
@@ -245,6 +255,41 @@ describe("SiteMapView — diagonal claim stability across a hidden-passage revea
       expect(hasWallRect(container, cellCenter(1, 1).cx, cellCenter(1, 1).cy, "n")).toBe(true)
       expect(hasWallRect(container, cellCenter(1, 1).cx, cellCenter(1, 1).cy, "w")).toBe(false)
     }
+  })
+})
+
+describe("SiteMapView — portals never render as completed", () => {
+  // A staircase/entrance/exit is a transition, not a task — the entrance is always marked explored
+  // and used staircases complete, but they must not show the ✓ badge that implies a solved room.
+  it("does not badge a completed stairhead (staircase) with the ✓", () => {
+    // stairhead at (0,1); entrancePos is (0,0), so this is unambiguously a stairhead, not the entrance.
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), portal("completed", "s:main")]])} />)
+    expect(container.textContent).not.toContain("✓")
+  })
+
+  it("still badges a completed regular room with the ✓ (control)", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("completed"), empty]])} />)
+    expect(container.textContent).toContain("✓")
+  })
+})
+
+describe("SiteMapView — explorer dot snaps on floor switch", () => {
+  Element.prototype.scrollTo = vi.fn()
+
+  const dotAt = (container: HTMLElement) => container.querySelector('circle[fill="#ffd060"]')
+
+  it("places the dot at the new floor's entrance immediately instead of animating a walk", () => {
+    const floor0 = makeGrid([[room("completed"), room("reachable")]])
+    const { container, rerender } = render(<SiteMapView grid={floor0} explorerPos={[0, 1]} currentFloor={0} />)
+
+    // Floor switch: new grid + new currentFloor key → the dot remounts and snaps to (0,0),
+    // rather than gliding from the previous floor's (0,1).
+    const floor1 = makeGrid([[room("reachable"), room("reachable")]])
+    rerender(<SiteMapView grid={floor1} explorerPos={[0, 0]} currentFloor={1} />)
+
+    const { cx, cy } = cellCenter(0, 0)
+    expect(dotAt(container)?.getAttribute("cx")).toBe(String(cx))
+    expect(dotAt(container)?.getAttribute("cy")).toBe(String(cy))
   })
 })
 

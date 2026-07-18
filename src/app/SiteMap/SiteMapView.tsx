@@ -32,6 +32,9 @@ type Props = {
   onCellClick?: (row: number, col: number) => void
   revealAllCells?: boolean
   explorerPos?: readonly [number, number]
+  /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
+   * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
+  currentFloor?: number
   /** "row,col" keys of completed treasure cells with a reward still waiting to be picked up */
   pendingCells?: ReadonlySet<string>
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
@@ -954,6 +957,7 @@ export const SiteMapView = ({
   onCellClick,
   revealAllCells = false,
   explorerPos,
+  currentFloor,
   pendingCells,
   ownedKeys,
   className,
@@ -1117,6 +1121,10 @@ export const SiteMapView = ({
             // guards against stale coordinates in pendingCells (e.g. left over from before a site
             // was regenerated) painting the badge onto whatever room now occupies that cell.
             const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+            // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
+            // "completed", so they never get the completed dim or the ✓ badge even though the
+            // entrance is always marked explored (useAssembledFloor) and used staircases complete.
+            const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
             const isPending =
               isCompleted &&
               shapeKind === "treasure" &&
@@ -1140,7 +1148,7 @@ export const SiteMapView = ({
                 style={{ cursor: clickable ? "pointer" : "default" }}
               >
                 <FloorTile state={displayState} open={open} kind="room" />
-                <g opacity={isCompleted && !isPending ? 0.45 : 1}>
+                <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : 1}>
                   <NodeShape
                     type={shapeKind}
                     state={displayState}
@@ -1151,8 +1159,8 @@ export const SiteMapView = ({
                   />
                 </g>
                 {isCompleted &&
+                  !isPortal &&
                   shapeKind !== "fork" &&
-                  shapeKind !== "entrance" &&
                   (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
               </g>
             )
@@ -1160,7 +1168,12 @@ export const SiteMapView = ({
         })}
 
         {explorerPos && (
-          <ExplorerDot grid={grid} pos={explorerPos} onArrive={() => setSettledExplorerPos(explorerPos)} />
+          <ExplorerDot
+            key={currentFloor}
+            grid={grid}
+            pos={explorerPos}
+            onArrive={() => setSettledExplorerPos(explorerPos)}
+          />
         )}
       </svg>
     </div>

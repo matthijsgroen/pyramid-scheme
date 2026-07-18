@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- The entrance staircase on a tomb/pyramid floor no longer shows a "completed" checkmark and dimming — a staircase is a passage, not a puzzle to finish.
+- Switching floors now places you at the new floor's entrance instantly, instead of showing your marker gliding across the map to the staircase from your position on the previous floor.
 
 ## 0.29.3 - 2026-07-18
 ### Changed
