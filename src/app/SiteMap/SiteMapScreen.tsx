@@ -341,6 +341,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           grid={grid}
           onCellClick={handleCellClick}
           explorerPos={explorerPos}
+          currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
           className="h-full w-full"
