@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- The short story is shown again above a tomb tableau — it had gone blank.
+- You can now travel back down a staircase to a previous floor. Clicking a staircase you'd already used (including the one you arrive on) did nothing instead of taking you back.
 
 ## 0.28.2 - 2026-07-18
 ### Changed
