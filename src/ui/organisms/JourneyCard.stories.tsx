@@ -85,7 +85,6 @@ const meta = {
   },
   args: {
     labels: {
-      length: "Length",
       chambers: "chambers",
       progressLevel: "Progress: Level",
     },

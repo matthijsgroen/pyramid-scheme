@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Removed the length indicator from journey and tomb cards.
+
+### Fixed
+- Re-entering a completed tomb from the travel screen now works — clicking its revisit card used to end the journey instead of taking you back in. The tomb's card also now reads "Revisit — re-enter the tomb" instead of "pick a pyramid" (a tomb is a single site, not a set of pyramids).
 
 ## 0.28.1 - 2026-07-18
 ### Fixed
