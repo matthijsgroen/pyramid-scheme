@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components -- side-effect registration file */
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
@@ -8,7 +7,7 @@ import { Chest } from "@/ui/atoms/Chest"
 // A treasure chest is an encounter with zero challenge and zero fail cost — clicking it IS
 // solving it. Core's own RewardFlow takes over from there (reveal + grant); this family only
 // owns the chest visual and the click gesture.
-const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) => {
+export const TreasureComponent: FamilyPlugin["Component"] = ({ ctx, onSolved }) => {
   const { t } = useTranslation("common")
   const [opened, setOpened] = useState(false)
 
