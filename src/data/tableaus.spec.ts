@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { generateTableaus, type TableauLevel, tableauLevels, TOMB_SYMBOLS } from "./tableaus"
+import { generateTableaus, type TableauLevel, tableauLevels, TOMB_SYMBOLS, TABLEAUS_PER_FLOOR } from "./tableaus"
 import tableausTranslations from "../../public/locales/en/tableaus.json"
 import { egyptianAnimals, egyptianArtifacts, egyptianDeities, egyptianProfessions } from "./inventory"
 import { journeys, type TreasureTombJourney } from "./journeys"
@@ -8,13 +8,16 @@ import type { Difficulty } from "./difficultyLevels"
 const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
 
 describe("Tableau System", () => {
-  // One tableau per tomb floor (exploration-based world, not repeated grind-runs) — a tier's
-  // tomb may be split across several journeys once a single tomb got too large; each gets its
-  // own independent symbol allocation. See src/data/tableaus.ts's own comment.
+  // N tableau rooms per tomb floor (pyramid-interior-design.md §8) — a tier's tomb may be split
+  // across several journeys once a single tomb got too large; each floor of each tomb presents
+  // TABLEAUS_PER_FLOOR[tier] sequential rooms. See src/data/tableaus.ts's own comment.
 
   describe("Basic Structure", () => {
-    it("generates exactly one tableau per tomb floor", () => {
-      const expectedTotal = tombJourneys.reduce((sum, tomb) => sum + tomb.levelCount, 0)
+    it("generates TABLEAUS_PER_FLOOR tableaux per tomb floor", () => {
+      const expectedTotal = tombJourneys.reduce(
+        (sum, tomb) => sum + tomb.levelCount * TABLEAUS_PER_FLOOR[tomb.difficulty],
+        0
+      )
       expect(tableauLevels).toHaveLength(expectedTotal)
     })
 
@@ -32,14 +35,15 @@ describe("Tableau System", () => {
   })
 
   describe("Tomb Distribution", () => {
-    it("has exactly levelCount tableaus per tomb, one per floor", () => {
+    it("has levelCount × TABLEAUS_PER_FLOOR tableaus per tomb, levelNr 1..N on each floor", () => {
       for (const tomb of tombJourneys) {
+        const n = TABLEAUS_PER_FLOOR[tomb.difficulty]
         const tombTableaux = tableauLevels.filter(t => t.tombJourneyId === tomb.id)
-        expect(tombTableaux).toHaveLength(tomb.levelCount)
-        expect(tombTableaux.map(t => t.runNumber).sort((a, b) => a - b)).toEqual(
-          Array.from({ length: tomb.levelCount }, (_, i) => i + 1)
-        )
-        tombTableaux.forEach(t => expect(t.levelNr).toBe(1))
+        expect(tombTableaux).toHaveLength(tomb.levelCount * n)
+        for (let floor = 1; floor <= tomb.levelCount; floor++) {
+          const rooms = tombTableaux.filter(t => t.runNumber === floor)
+          expect(rooms.map(t => t.levelNr).sort((a, b) => a - b)).toEqual(Array.from({ length: n }, (_, i) => i + 1))
+        }
       }
     })
 

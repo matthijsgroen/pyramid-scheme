@@ -1,5 +1,6 @@
 import { tier, journey, tomb, sidePath, wardWing } from "../dsl"
 import type { Rule } from "../dsl"
+import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor at a HARDER
@@ -57,7 +58,11 @@ export const juniorRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G), not a core rule.
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.junior,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
 ]

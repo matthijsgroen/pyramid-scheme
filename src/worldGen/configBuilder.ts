@@ -24,6 +24,7 @@ import type { FamilyPriorityFor } from "./slots"
 import type { ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateRewardCounts, type WorldValidator } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
+import { TABLEAUS_PER_FLOOR } from "../data/tableaus"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
 
@@ -207,7 +208,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
         ? [wardChest({ tomb: tomb.id, index: i, puzzles: 0 })]
         : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
       return {
-        pathPuzzles: authored?.pathPuzzles ?? 1,
+        pathPuzzles: authored?.pathPuzzles ?? TABLEAUS_PER_FLOOR[difficulty],
         difficulty,
         encounter,
         mainEndReward: authored?.mainEndReward ?? "tombTreasure",
