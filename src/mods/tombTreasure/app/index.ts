@@ -42,7 +42,8 @@ if (isModEnabled("tomb-treasure")) {
     }
   })
   registerHeldKeysProvider(() => useTombTreasureProgress().tombKeyIds)
-  // The 5 per-difficulty treasure groups (order after hieroglyph=10 / shop=20). "Collected" = own
-  // the tombKey; drops out of the Collection screen when the mod is off.
-  registerCollectionSection({ id: "tomb-treasure", order: 30, Component: TombTreasureCollectionSection })
+  // The 5 per-difficulty treasure groups. Ordered first (before hieroglyph=20 / shop=30) — ward
+  // treasures are the most valuable collectibles (ward keys + their perks). "Collected" = own the
+  // tombKey; drops out of the Collection screen when the mod is off.
+  registerCollectionSection({ id: "tomb-treasure", order: 10, Component: TombTreasureCollectionSection })
 }
