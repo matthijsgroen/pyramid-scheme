@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- The short story on a tomb tableau is now fully readable from the start, instead of unscrambling letter by letter as you solve the puzzle.
+
+### Fixed
+- Claiming a tomb ward key now shows the actual treasure you found — its name and icon — instead of a generic "tomb key".
 
 ## 0.27.5 - 2026-07-17
 ### Fixed
