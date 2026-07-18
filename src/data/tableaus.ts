@@ -4,10 +4,10 @@
  * Symbols are assigned progressively - each tomb gets new symbols plus access to previous tomb symbols.
  */
 
-import { mulberry32, shuffle } from "@/game/random"
 import { difficulties, type Difficulty } from "./difficultyLevels"
 import { journeys, type TreasureTombJourney } from "./journeys"
 import { allItems } from "./inventory"
+import { objectsForStories } from "./objectsForStories"
 
 export type TableauLevel = {
   id: string
@@ -81,21 +81,7 @@ function getTableauDescription(
   return tableauSymbols.map(symbol => allItems.find(item => item.id === symbol)?.name).join(", ") || "Unknown symbols."
 }
 
-const random = mulberry32(9248529837592)
-
 const tombJourneys = journeys.filter((j): j is TreasureTombJourney => j.type === "treasure_tomb")
-
-const collectAllAvailableSymbols = (difficulties: Difficulty[]) =>
-  difficulties.flatMap(difficulty => TOMB_SYMBOLS[difficulty] || [])
-
-// Grind-era generation, untouched: one shuffle per difficulty, cumulative symbol pool,
-// same shared `random` sequence/order this always used. Every hand-authored story in
-// tableaus.json was written against these exact draws — the shuffle itself must never change.
-const shuffledSymbolsByDifficulty = {} as Record<Difficulty, string[]>
-difficulties.forEach((difficulty, i, list) => {
-  const symbols = collectAllAvailableSymbols(list.slice(0, i + 1))
-  shuffledSymbolsByDifficulty[difficulty] = shuffle(symbols, random)
-})
 
 // Remap: one tableau per REAL tomb floor — matches the exploration-based world (one
 // walk-through, not repeated grind-runs), not the original per-treasure grind loop.
@@ -117,49 +103,56 @@ difficulties.forEach((difficulty, i, list) => {
 // `storySource` records which (tombId, run, level) triple each real tomb's floor actually
 // came from, letting the lookup below find that existing story instead of falling back to
 // generic placeholder text.
+// A tableau's required symbols ARE the objects its authored story is about. objectsForStories is
+// the authored symbol set per (tomb, run, level) — the same list every storyTemplate/description in
+// tableaus.json was written against — so driving the inventory from it keeps the story and the
+// puzzle in lockstep by construction. (An earlier remap sliced symbols from a shuffled pool
+// independently, which drifted out of sync with the stories: a "Fish for the Market" tableau ended
+// up requiring Ankh + Ra.)
+const nameToId: Record<string, string> = {}
+for (const item of allItems) nameToId[item.name] = item.id
+const storyObjectIds = (storyKey: string): string[] => {
+  const names = objectsForStories[storyKey as keyof typeof objectsForStories]
+  if (!names) throw new Error(`tableaus.ts: no objectsForStories entry for "${storyKey}"`)
+  return names.map(name => {
+    const id = nameToId[name]
+    if (!id) throw new Error(`tableaus.ts: no hieroglyph id for story object "${name}" (${storyKey})`)
+    return id
+  })
+}
+
 const tableauInventory: Record<string, string[]> = {}
 const storySource: Record<string, { tombId: string; run: number; level: number }> = {}
 difficulties.forEach(difficulty => {
   const tierTombs = tombJourneys.filter(j => j.difficulty === difficulty)
   const [primaryTomb, ...secondaryTombs] = tierTombs
-  const pool = shuffledSymbolsByDifficulty[difficulty]
-  const poolSlice = (start: number, count: number) =>
-    Array.from({ length: count }, (_, s) => pool[(start + s) % pool.length])
-
-  // Row start position uses the SAME formula/scaling constants (primary's own levelCount
-  // and symbolCount) the original grid was built with — only the slice LENGTH taken from
-  // that position is each real tomb's own symbolCount, which can differ from the primary's
-  // (e.g. master_treasure_tomb vs. master_treasure_tomb_b).
-  const rowCellStart = (level: number, run: number): number =>
-    (run - 1) * primaryTomb.levelCount * primaryTomb.levelSettings.symbolCount +
-    level * primaryTomb.levelSettings.symbolCount -
-    1
 
   for (let floor = 1; floor <= primaryTomb.levelCount; floor++) {
     const key = `${primaryTomb.id}.run${floor}_level1`
-    tableauInventory[key] = poolSlice(rowCellStart(1, floor), primaryTomb.levelSettings.symbolCount)
     storySource[key] = { tombId: primaryTomb.id, run: floor, level: 1 }
+    tableauInventory[key] = storyObjectIds(`${primaryTomb.id}.run${floor}_level1`)
   }
 
   secondaryTombs.forEach((tomb, i) => {
     const level = i + 2 // row 1 is the primary's
     for (let floor = 1; floor <= tomb.levelCount; floor++) {
       const key = `${tomb.id}.run${floor}_level1`
-      tableauInventory[key] = poolSlice(rowCellStart(level, floor), tomb.levelSettings.symbolCount)
       // The real story for this content lives under the PRIMARY tomb's id at this row's
       // own level (it was always authored there, for the full grid) — never the secondary
       // tomb's own id, which has no story keys at all.
       storySource[key] = { tombId: primaryTomb.id, run: floor, level }
+      tableauInventory[key] = storyObjectIds(`${primaryTomb.id}.run${floor}_level${level}`)
     }
   })
 })
 
-// Coverage completion: row-slicing above still doesn't guarantee every hieroglyph symbol
-// gets hit (confirmed empirically: 3 of 58 fall through). Every symbol must be collectible,
-// so patch any gap into a SECONDARY tomb's slot only (never primary, which would disturb a
-// curated story) — the first secondary-tomb (tomb, floor) slot in a tier at or after the
-// symbol's origin tier (pools are cumulative, so a later tier's tomb already carries
-// earlier symbols), walking through every available slot before reusing one.
+// Every tomb symbol must be collectible — required by at least one tableau, so world-gen places its
+// fragments and its count matches. The 40 story entries the tomb floors actually consume cover 51 of
+// the 58 symbols; the story set as authored simply never uses the remaining few in a consumed slot.
+// Patch each such symbol into a SECONDARY tomb's slot only (never a primary/curated story — those,
+// including every tier's first tomb, keep matching their story exactly). Walk each tier's secondary
+// slots in turn before reusing one. A patched slot's first symbol no longer matches its story text,
+// but that only affects a handful of higher-tier secondary ("bonus") tombs.
 ;(() => {
   const usedSymbols = new Set(Object.values(tableauInventory).flat())
   const tierOf: Record<string, Difficulty> = {}
