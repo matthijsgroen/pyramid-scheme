@@ -1,7 +1,8 @@
 /**
- * This is an extracted result of the items generated above
- * They match, since it was generated with a static seed.
- * This object is to help an LLM in story generation. This is not used by the codebase itself, to reduce build size
+ * The authored symbol set for each tomb tableau, keyed by `<tombId>.run<run>_level<level>` — the
+ * objects each storyTemplate/description in tableaus.json is written about. This is the source of
+ * truth for a tableau's required hieroglyphs: tableaus.ts maps these names to ids so the puzzle a
+ * player solves always matches its story. Also used as the reference when authoring new stories.
  */
 export const objectsForStories = {
   "starter_treasure_tomb.run1_level1": ["Merchant", "Ankh"],

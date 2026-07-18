@@ -1,5 +1,6 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
+import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -96,7 +97,11 @@ export const expertRules: Rule[] = [
       { mainEndReward: "tombTreasure", sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }] },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
   tomb("expert_treasure_tomb_b", {
@@ -113,7 +118,11 @@ export const expertRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
 

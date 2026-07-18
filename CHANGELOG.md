@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Each tomb floor now holds several tableau puzzle rooms in sequence instead of just one, scaling with difficulty (2 in starter tombs up to 6 in the divine vaults). Every room tells its own story and puts more of the hieroglyph collection into play.
+
+### Fixed
+- A tomb tableau now requires the hieroglyphs its story is actually about — e.g. a "Fish for the Market" tableau asks for the Fish, not unrelated symbols. The story text and the required hieroglyphs had drifted apart for every tomb.
 
 ## 0.28.3 - 2026-07-18
 ### Fixed

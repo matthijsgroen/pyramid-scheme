@@ -1,5 +1,6 @@
 import { tier, journey, tomb } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
+import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
 // Master's escalation (between expert's intro of traps/keys and wizard's saturation): DEEPER
 // locks (multi-color floor keys + key chains) and HAZARDOUS returns (wardPathTrapped), plus the
@@ -61,7 +62,11 @@ export const masterRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
   tomb("master_treasure_tomb_b", {
@@ -81,7 +86,11 @@ export const masterRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
 

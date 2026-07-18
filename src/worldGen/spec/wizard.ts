@@ -1,5 +1,6 @@
 import { tier, tomb, journey } from "../dsl"
 import type { Rule, SideSectionConstraint } from "../dsl"
+import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
 // The ceiling saturates every mechanic, including a key chain (a red floor-key gates a room
 // holding a green-gated vault). Kept to two levels: the maze assembler flattens deeper nesting
@@ -59,7 +60,11 @@ export const wizardRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.wizard,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
   tomb("wizard_treasure_tomb_b", {
@@ -76,7 +81,11 @@ export const wizardRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.wizard,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
   tomb("wizard_treasure_tomb_c", {
@@ -93,7 +102,11 @@ export const wizardRules: Rule[] = [
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },
       // Crocodile capstone on the final floor — authored via a node selector (§G).
-      { mainEndReward: "tombTreasure", pathPuzzles: 2, nodes: [{ where: "last", encounter: "capstone" }] },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.wizard,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
     ],
   }),
 
