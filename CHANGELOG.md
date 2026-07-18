@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Tomb tableau rooms are ordered so each floor asks for new hieroglyphs as you descend, instead of demanding almost every symbol on the first floor or two. You now keep finding fresh puzzles to collect for deeper in a tomb, and the shallowest floors of the late-game tombs lean on symbols from earlier difficulties — rewarding having worked through them.
 
 ## 0.29.0 - 2026-07-18
 ### Added
