@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const RewardFlow: FC<Props> = ({ pendingReward, onDismiss }) => {
-  const { t } = useTranslation(["common", "inventory", "sellables"])
+  const { t } = useTranslation(["common", "inventory", "sellables", "treasures"])
   const displays = useMergedRewardDisplays()
   const [showLoot, setShowLoot] = useState(false)
   const [scheduleLoot] = useTimeout()

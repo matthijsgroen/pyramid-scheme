@@ -337,3 +337,25 @@ for (const [tombId, treasures] of Object.entries(TOMB_TREASURES)) {
     treasureByKeyId[keyId] = treasure
   })
 }
+
+// The Collection groups treasures by difficulty under these i18n category keys (`<category>.<id>.name`
+// in the `treasures` ns). Shared with the tomb-key reward display so a claimed ward key shows the
+// actual treasure's name + symbol instead of a generic "tomb key".
+export const CATEGORY_BY_DIFFICULTY: Record<Difficulty, string> = {
+  starter: "merchantCache",
+  junior: "nobleVault",
+  expert: "templeSecrets",
+  master: "ancientRelics",
+  wizard: "mythicalArtifacts",
+}
+
+// keyId → what the tomb-key reward popup needs to name the treasure it grants (its i18n key parts +
+// symbol), so the loot screen shows the item received rather than the opaque key type.
+export const treasureDisplayByKeyId: Record<string, { category: string; treasureId: string; symbol: string }> = {}
+for (const [difficulty, treasures] of Object.entries(difficultyTreasures) as [Difficulty, Treasure[]][]) {
+  const category = CATEGORY_BY_DIFFICULTY[difficulty]
+  for (const treasure of treasures) {
+    const keyId = keyIdByTreasureId[treasure.id]
+    if (keyId) treasureDisplayByKeyId[keyId] = { category, treasureId: treasure.id, symbol: treasure.symbol }
+  }
+}
