@@ -311,6 +311,25 @@ describe(generateRewardCalculation, () => {
       const settings = buildTombCalculationSettings(levelSettings, tableau)
       expect(settings.maxMultiplyOperandResult).toBeUndefined()
     })
+
+    it("escalates operators and range by room position — first room minimal, last room full", () => {
+      const levelSettings = {
+        numberRange: [1, 10] as [number, number],
+        operators: ["+", "-", "*"] as RewardCalculationSettings["operations"],
+      }
+      const tableau = { symbolCount: 3, inventoryIds: ["𓁧", "𓃯", "𓁝"] }
+      const first = buildTombCalculationSettings(levelSettings, tableau, { position: 1, total: 16 })
+      const last = buildTombCalculationSettings(levelSettings, tableau, { position: 16, total: 16 })
+      // First room: one operator, base range. Last room: all operators, range widened by the base span.
+      expect(first.operations).toEqual(["+"])
+      expect(first.numberRange).toEqual([1, 10])
+      expect(last.operations).toEqual(["+", "-", "*"])
+      expect(last.numberRange).toEqual([1, 19])
+      // Two rooms on the same floor still differ (the bug this fixes).
+      const room1 = buildTombCalculationSettings(levelSettings, tableau, { position: 1, total: 16 })
+      const room2 = buildTombCalculationSettings(levelSettings, tableau, { position: 2, total: 16 })
+      expect(room2.numberRange[1]).toBeGreaterThan(room1.numberRange[1])
+    })
   })
 
   it("can generate a puzzle with low difficulty", () => {

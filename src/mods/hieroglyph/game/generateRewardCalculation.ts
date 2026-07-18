@@ -31,16 +31,42 @@ export type TombTableauSettings = {
   inventoryIds: string[]
 }
 
+// A tableau room's position in the tomb's whole tableau sequence, for difficulty escalation. Keyed by
+// ROOM, not floor, so two rooms on one floor still differ. `position` is 1-based across all the tomb's
+// tableau rooms in descent order (`(floor-1) * roomsPerFloor + room`); `total` is that room count.
+export type CalcEscalation = { position: number; total: number }
+
+// Per-room escalation: later tableau rooms (deeper floor, or a later room on the same floor) widen the
+// number range and reveal more of the tomb's authored operators, so the arithmetic ramps across the
+// whole descent instead of every tableau asking the same shape of sum. `progress` runs 0 (first room)
+// → 1 (last): the first room uses one operator and the base range, the last uses all authored
+// operators and a range widened by the base span. Omit `escalation` (or a single-room tomb) for
+// neutral, full-operator settings — used by the vestigial inventory previews, which have no position.
 export const buildTombCalculationSettings = (
   levelSettings: TombLevelSettings,
-  tableau: TombTableauSettings
-): RewardCalculationSettings => ({
-  amountSymbols: tableau.symbolCount,
-  hieroglyphIds: tableau.inventoryIds,
-  numberRange: levelSettings.numberRange,
-  operations: levelSettings.operators,
-  maxMultiplyOperandResult: levelSettings.maxMultiplyOperandResult,
-})
+  tableau: TombTableauSettings,
+  escalation?: CalcEscalation
+): RewardCalculationSettings => {
+  const [min, max] = levelSettings.numberRange
+  const ops = levelSettings.operators
+  const base: RewardCalculationSettings = {
+    amountSymbols: tableau.symbolCount,
+    hieroglyphIds: tableau.inventoryIds,
+    numberRange: levelSettings.numberRange,
+    operations: ops,
+    maxMultiplyOperandResult: levelSettings.maxMultiplyOperandResult,
+  }
+  if (!escalation || escalation.total <= 1) return base
+
+  const progress = Math.min(1, Math.max(0, (escalation.position - 1) / (escalation.total - 1)))
+  const opCount = 1 + Math.round(progress * (ops.length - 1))
+  const rangeBoost = Math.round(progress * (max - min))
+  return {
+    ...base,
+    numberRange: [min, max + rangeBoost],
+    operations: ops.slice(0, opCount),
+  }
+}
 
 export type RewardCalculation = {
   pickedNumbers: number[]

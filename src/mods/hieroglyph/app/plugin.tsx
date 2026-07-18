@@ -8,7 +8,7 @@ import {
 } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
-import { getTableauLevel, type TableauLevel } from "@/data/tableaus"
+import { getTableauLevel, TABLEAUS_PER_FLOOR, type TableauLevel } from "@/data/tableaus"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
 import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { tableauEncounterArgsSchema } from "@/mods/hieroglyph/game/keyRequirements"
@@ -92,9 +92,21 @@ if (isModEnabled("hieroglyph"))
         (j): j is TreasureTombJourney => j.id === ctx.journeyId && j.type === "treasure_tomb"
       )
       if (parsed.success && journey) {
-        const tableau = getTableauLevel(ctx.journeyId, parsed.data.runNr, (ctx.pathIndex ?? 0) + 1)
-        if (tableau)
-          return generateRewardCalculation(buildTombCalculationSettings(journey.levelSettings, tableau), random)
+        const levelNr = (ctx.pathIndex ?? 0) + 1
+        const tableau = getTableauLevel(ctx.journeyId, parsed.data.runNr, levelNr)
+        if (tableau) {
+          // Escalate by the room's position across the whole tomb (floor AND room), so two tableaus
+          // on the same floor still ramp — not just floor-to-floor.
+          const roomsPerFloor = TABLEAUS_PER_FLOOR[journey.difficulty]
+          const escalation = {
+            position: (parsed.data.runNr - 1) * roomsPerFloor + levelNr,
+            total: journey.levelCount * roomsPerFloor,
+          }
+          return generateRewardCalculation(
+            buildTombCalculationSettings(journey.levelSettings, tableau, escalation),
+            random
+          )
+        }
       }
       // Fallback for generation without a resolvable tomb floor (dummy/non-tomb): random draw from
       // the tier pool. A real tomb floor always carries encounterArgs, so it never takes this path.
