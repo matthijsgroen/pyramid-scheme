@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Ward gates on the pyramid/tomb interior map are now tinted by the tier of the key that opens them, so you can read a locked ward's difficulty at a glance. The gate screen also shows a short themed line about who sealed it — a merchant, a nobleman, a high priest, a pharaoh, or the gods.
 
+### Changed
+- The short story on a tomb tableau is now fully readable from the start, instead of unscrambling letter by letter as you solve the puzzle.
+
+### Fixed
+- Claiming a tomb ward key now shows the actual treasure you found — its name and icon — instead of a generic "tomb key".
+
 ## 0.27.5 - 2026-07-17
 ### Fixed
 - A tomb tableau could ask for a hieroglyph whose fragments were impossible to collect, leaving the tomb unfinishable. Tableaus now always ask for the hieroglyphs each floor was built around, and every required hieroglyph is reachable — so a tomb can always be completed.

@@ -17,7 +17,6 @@ export const TombPuzzleView: FC<{
   filledState: FilledTileState
   resolveTile: HieroglyphSymbolResolver
   hintFormulas: OrderedFormula[]
-  solvedPercentage: number
   annotations: Record<string, string>
   onTileClick?: (symbolId: string, position: string) => void
   onAnnotationChange?: (symbolId: string, value: string) => void
@@ -39,7 +38,6 @@ export const TombPuzzleView: FC<{
   filledState,
   resolveTile,
   hintFormulas,
-  solvedPercentage,
   annotations,
   onTileClick,
   onAnnotationChange,
@@ -82,7 +80,6 @@ export const TombPuzzleView: FC<{
           filledState={filledState}
           resolveTile={resolveTile}
           hintFormulas={hintFormulas}
-          solvedPercentage={solvedPercentage}
           annotations={annotations}
           onTileClick={onTileClick}
           onAnnotationChange={onAnnotationChange}
