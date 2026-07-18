@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - The Collection screen now lists ward treasures first (the most valuable — ward keys and their perks), then hieroglyph fragments, then junk.
+- Loot leans more toward loose coins: small change turns up more often and in slightly bigger handfuls, while fewer trap consumables are scattered around. Shop-funding junk is unchanged.
 
 ## 0.29.0 - 2026-07-18
 ### Added

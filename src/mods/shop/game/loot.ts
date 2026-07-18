@@ -16,8 +16,8 @@ import { totalBuyable } from "./economyGuard"
 
 const BUDGET_CEILING = 1.5 // max money-equivalent placed = 1.5× the floor (totalBuyable)
 const PER_ITEM_CAP = 20 // ≤20 of each junk collectible, so no single item floods the world
-const COIN_SHARE = 0.25 // fraction of post-junk leftover slots that get loose coins (rest empty)
-const COIN_MAX = 3 // loose change stays small (1–3) so coins read as "a little extra", not a jackpot
+const COIN_SHARE = 0.5 // fraction of post-junk leftover slots that get loose coins (rest empty)
+const COIN_MAX = 4 // loose change stays small (1–4) so coins read as "a little extra", not a jackpot
 
 const TIER_ORDER: MaterialTier[] = ["stone", "bronze", "silver", "gold", "divine"]
 
@@ -73,7 +73,9 @@ export const shopMoneyEconomy: Distribution = {
 
     // Phase 2 — bulk junk up to the budget floor, round-robin across tiers (fair spread) up to the
     // per-item cap. Junk is high-value, so it reaches the floor on relatively few slots — that's
-    // what carries the economy and guarantees income ≥ buyable (the self-check below).
+    // what carries the economy and guarantees income ≥ buyable (the self-check below). Coins are far
+    // less slot-efficient (1–4 vs a tier's 10–50), so junk must claim its slots first or the floor
+    // becomes unreachable; small money is layered on afterward (Phase 3).
     const cursor = new Map(TIER_ORDER.map(t => [t, SELLABLES_BY_TIER[t].length])) // start past completeness
     let progressed = true
     while (value < budgetMin && progressed) {

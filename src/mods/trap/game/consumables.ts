@@ -13,7 +13,7 @@ const RATES = { bandage: 3, oil: 1, trapTool: 1 }
 // Design consumable count (tunable, feel-only — consumables don't enter the economy guard). The
 // allocator hands the trap mod up to this many of the highest-ranked eligible slots; fewer if the
 // world has fewer eligible expert+ puzzle slots (no hard-fail — min 0).
-const CONSUMABLE_COUNT = 368
+const CONSUMABLE_COUNT = 250
 
 export const trapConsumables: Distribution = {
   id: "trap-consumables",
