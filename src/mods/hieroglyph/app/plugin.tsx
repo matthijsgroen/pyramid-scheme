@@ -10,6 +10,7 @@ import type { Operation } from "@/game/formulas/formulas"
 import { TombPuzzle } from "@/app/TombLevel/TombPuzzle"
 import { getTableauLevel, type TableauLevel } from "@/data/tableaus"
 import { journeys, type TreasureTombJourney } from "@/data/journeys"
+import { useTableauTranslations } from "@/app/translations/useTableauTranslations"
 import { tableauEncounterArgsSchema } from "@/mods/hieroglyph/game/keyRequirements"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { TABLEAU_META } from "@/mods/hieroglyph/game/meta"
@@ -40,20 +41,32 @@ const TABLEAU_CONFIG: Record<string, TableauConfig> = {
 
 const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => {
   const difficulty = ctx.difficulty ?? "starter"
-  const dummyTableau: TableauLevel = {
-    id: "plugin",
-    levelNr: 1,
+  // Resolve this floor's authored TableauLevel so the puzzle shows its title + micro-story
+  // (translated), matching what the solver placed fragments for. Same (journeyId, runNr, levelNr)
+  // key the generate + world-gen resolvers use; the tableau id/symbols still come from the
+  // generated calculation. Without this the puzzle rendered an empty name/description (no story).
+  const translatedTableaus = useTableauTranslations()
+  const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
+  const levelNr = (ctx.pathIndex ?? 0) + 1
+  const authored = parsed.success
+    ? translatedTableaus.find(
+        t => t.tombJourneyId === ctx.journeyId && t.runNumber === parsed.data.runNr && t.levelNr === levelNr
+      )
+    : undefined
+  const tableau: TableauLevel = {
+    id: authored?.id ?? "plugin",
+    levelNr,
     symbolCount: Object.keys(puzzle.symbolCounts).length,
     inventoryIds: Object.values(puzzle.symbolMapping),
-    tombJourneyId: "plugin",
-    runNumber: 1,
-    name: "",
-    description: "",
+    tombJourneyId: ctx.journeyId,
+    runNumber: parsed.success ? parsed.data.runNr : 1,
+    name: authored?.name ?? "",
+    description: authored?.description ?? "",
   }
   return (
     <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
       {handleSolved => (
-        <TombPuzzle tableau={dummyTableau} calculation={puzzle} difficulty={difficulty} onComplete={handleSolved} />
+        <TombPuzzle tableau={tableau} calculation={puzzle} difficulty={difficulty} onComplete={handleSolved} />
       )}
     </PuzzleFamilyShell>
   )

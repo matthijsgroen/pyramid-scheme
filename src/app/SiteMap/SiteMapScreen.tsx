@@ -224,6 +224,27 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
+      // A staircase teleports between floors regardless of the cell's state — handled BEFORE the
+      // completed-cell block below. The entrance stairhead you arrive on (and any up-staircase after
+      // its first use) is marked "completed", so without this the completed block would just
+      // reposition the player and swallow the click, blocking back-travel down a staircase.
+      if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
+        journeys.markCellExplored(sectionHash, edgeId)
+        const stairId = cell.stairId
+        for (let fi = 0; fi < siteConfig.length; fi++) {
+          if (fi === currentFloor) continue
+          const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter)
+          if (!result.success) continue
+          const peerPos = result.grid.staircases[stairId]
+          if (peerPos) {
+            journeys.updatePosition(journeyId, encodeEdge(fi, peerPos[0], peerPos[1]))
+            setCurrentFloor(fi)
+            break
+          }
+        }
+        return
+      }
+
       // Completed cells just reposition the player, except a shop with unbought stock or an
       // unfitted consumable, which reopen.
       if (cell.state === "completed") {
@@ -278,22 +299,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           setActiveEncounter({ pos: [row, col], freshArrival: true })
         )
       } else if (cell.roomType === "portal") {
-        if (cell.stairId) {
-          // Find the peer stairhead across floors and teleport there
-          journeys.markCellExplored(sectionHash, edgeId)
-          const stairId = cell.stairId
-          for (let fi = 0; fi < siteConfig.length; fi++) {
-            if (fi === currentFloor) continue
-            const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter)
-            if (!result.success) continue
-            const peerPos = result.grid.staircases[stairId]
-            if (peerPos) {
-              journeys.updatePosition(journeyId, encodeEdge(fi, peerPos[0], peerPos[1]))
-              setCurrentFloor(fi)
-              break
-            }
-          }
-        } else if (row === grid.entrancePos[0] && col === grid.entrancePos[1]) {
+        // Staircase portals (with a stairId) are handled by the early teleport guard above; here a
+        // portal is either this floor's own entrance (reposition only) or a real exit (leave the site).
+        if (row === grid.entrancePos[0] && col === grid.entrancePos[1]) {
           journeys.markCellExplored(sectionHash, edgeId)
           journeys.updatePosition(journeyId, edgeId)
         } else {
