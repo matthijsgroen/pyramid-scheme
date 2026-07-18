@@ -2,6 +2,7 @@
 import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { KEY_GATE_META } from "@/mods/core/game/keyGate/meta"
+import { wardKeyDifficulty } from "@/data/difficultyLevels"
 
 type KeyGatePuzzle = { satisfied: boolean }
 
@@ -12,12 +13,20 @@ const generate = (_seed: number, ctx: FamilyContext): KeyGatePuzzle => ({
   satisfied: !ctx.requiredKeyId || (ctx.ownedKeys?.has(ctx.requiredKeyId) ?? false),
 })
 
-const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, onSolved, onCancel }) => {
+const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => {
   const { satisfied } = puzzle as KeyGatePuzzle
   const { t } = useTranslation("common")
+  // A ward (tomb-key) gate carries the flavor of the tier that sealed it (merchant, noble, ...),
+  // derived from its key's difficulty. Floor-key/color gates have no such theme.
+  const wardDifficulty = ctx.gateVariant === "tomb-key" ? wardKeyDifficulty(ctx.requiredKeyId) : undefined
   return (
     <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-6 bg-black/85">
       <p className="font-pyramid text-2xl text-amber-300">{t("gate.title")}</p>
+      {wardDifficulty && (
+        <p className="max-w-xs text-center text-sm text-stone-400 italic">
+          {t(`gate.wardDescription.${wardDifficulty}`)}
+        </p>
+      )}
       <p className="text-sm text-stone-300">{satisfied ? t("gate.unlocked") : t("gate.locked")}</p>
       <div className="flex flex-col items-center gap-3">
         {satisfied && (

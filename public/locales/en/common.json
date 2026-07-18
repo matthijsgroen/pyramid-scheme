@@ -101,7 +101,14 @@
     "locked": "You don't have the right key yet.",
     "unlocked": "You have the key.",
     "pass": "Pass through",
-    "turnAround": "Turn around"
+    "turnAround": "Turn around",
+    "wardDescription": {
+      "starter": "A merchant's seal bars this passage — only their ward key will part it.",
+      "junior": "A nobleman's crest locks this way — his ward key alone lifts it.",
+      "expert": "A high priest's temple ward guards this door — its sacred key must open it.",
+      "master": "A pharaoh's royal seal binds this passage — only the sovereign's key breaks it.",
+      "wizard": "A ward of the gods holds this gate — nothing but its divine key will pass."
+    }
   },
   "chest": {
     "tapToOpen": "Tap to open",
