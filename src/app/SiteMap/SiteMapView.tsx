@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import type {
   CellState,
   DecorationKind,
+  Difficulty,
   Direction,
   FloorGrid,
   GateVariant,
@@ -9,6 +10,7 @@ import type {
   KeyColor,
   RoomType,
 } from "../../game/siteTypes"
+import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll } from "../../game/gridNavigation"
 import { ExplorerDot } from "./ExplorerDot"
 import {
@@ -89,7 +91,14 @@ const PendingLootBadge = ({ r }: { r: number }) => (
 
 // ─── Node shape geometry ──────────────────────────────────────────────────────
 
-type ShapeProps = { state: CellState; gateVariant?: GateVariant; keyColor?: KeyColor; keyColors?: KeyColor[] }
+type ShapeProps = {
+  state: CellState
+  gateVariant?: GateVariant
+  keyColor?: KeyColor
+  keyColors?: KeyColor[]
+  // A ward (tomb-key) gate's tier, derived from its key id — tints the gate by difficulty.
+  difficulty?: Difficulty
+}
 
 const KEY_COLOR_HEX: Record<KeyColor, { visible: string; reachable: string }> = {
   blue: { visible: "#2060c0", reachable: "#4090e0" },
@@ -176,18 +185,21 @@ const ForkShape = ({ state }: ShapeProps) => {
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
-const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
+const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
   const colorKey = state === "visible" ? "visible" : "reachable"
   const fill = isTomb ? tombGateFill[state] : gateFill[state]
+  // A ward gate is tinted by its key's difficulty tier (so the map reads which tier a locked ward
+  // belongs to); tombGate* stays the fallback when no difficulty is known (or the default purple).
+  const tombAccent = difficulty ? DIFFICULTY_GATE_ACCENT[difficulty][colorKey] : undefined
   const stroke =
     state === "fogged"
       ? isTomb
         ? tombGateStroke[state]
         : gateStroke[state]
       : isTomb
-        ? tombGateStroke[state]
+        ? (tombAccent ?? tombGateStroke[state])
         : keyColor
           ? KEY_COLOR_HEX[keyColor][colorKey]
           : gateStroke[state]
@@ -195,9 +207,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor }: ShapeProps) => {
     state === "fogged"
       ? "#3a2a10"
       : isTomb
-        ? colorKey === "visible"
-          ? "#8040c0"
-          : "#9060e0"
+        ? (tombAccent ?? (colorKey === "visible" ? "#8040c0" : "#9060e0"))
         : keyColor
           ? KEY_COLOR_HEX[keyColor][colorKey]
           : colorKey === "visible"
@@ -355,8 +365,8 @@ const nodeRadius: Record<ShapeKind, number> = {
   exit: NODE_RADIUS_LARGE,
 }
 
-const NodeShape = ({ type, state, gateVariant, keyColor, keyColors }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors }
+const NodeShape = ({ type, state, gateVariant, keyColor, keyColors, difficulty }: ShapeProps & { type: ShapeKind }) => {
+  const p = { state, gateVariant, keyColor, keyColors, difficulty }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -422,6 +432,17 @@ const tombGateStroke: Record<CellState, string> = {
   visible: "#604898",
   reachable: "#7060c0",
   completed: "#7060c0",
+}
+
+// Ward (tomb-key) gate tint per difficulty tier — `visible` is the dimmer locked hue, `reachable`
+// the brighter one (also used for `completed`). Hues track the tier material palette
+// (difficultyColors.ts): stone / amber / slate / gold / emerald.
+const DIFFICULTY_GATE_ACCENT: Record<Difficulty, { visible: string; reachable: string }> = {
+  starter: { visible: "#8a857e", reachable: "#c4bcb2" },
+  junior: { visible: "#c2740e", reachable: "#f59e0b" },
+  expert: { visible: "#586274", reachable: "#94a3b8" },
+  master: { visible: "#c2a10b", reachable: "#eab308" },
+  wizard: { visible: "#0e9268", reachable: "#10b981" },
 }
 
 const treasureFill: Record<CellState, string> = {
@@ -1126,6 +1147,7 @@ export const SiteMapView = ({
                     gateVariant={cell.gateVariant}
                     keyColor={cell.keyColor}
                     keyColors={cell.keyColors}
+                    difficulty={wardKeyDifficulty(cell.requiredKeyId)}
                   />
                 </g>
                 {isCompleted &&

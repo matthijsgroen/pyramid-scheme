@@ -101,7 +101,14 @@
     "locked": "Je hebt de juiste sleutel nog niet.",
     "unlocked": "Je hebt de sleutel.",
     "pass": "Doorgaan",
-    "turnAround": "Omdraaien"
+    "turnAround": "Omdraaien",
+    "wardDescription": {
+      "starter": "Een handelaarszegel verspert deze doorgang — enkel hun wachtsleutel opent hem.",
+      "junior": "Het wapen van een edelman sluit deze weg — alleen zijn wachtsleutel licht het op.",
+      "expert": "De tempelban van een hogepriester bewaakt deze deur — enkel de heilige sleutel opent hem.",
+      "master": "Het koninklijke zegel van een farao bindt deze doorgang — enkel de sleutel van de vorst verbreekt het.",
+      "wizard": "Een ban van de goden houdt deze poort — niets dan de goddelijke sleutel komt erlangs."
+    }
   },
   "chest": {
     "tapToOpen": "Tik om te openen",

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell, getCell } from "../../game/gridNavigation"
-import type { FloorConfig, FloorGrid, GateConfig, SideSection, SiteConfig } from "../../game/siteTypes"
+import type { Difficulty, FloorConfig, FloorGrid, GateConfig, SideSection, SiteConfig } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 
 type GateOption = "none" | GateConfig["type"]
@@ -38,12 +38,14 @@ const SiteMapBuilder = ({
   section2End,
   section2Gate,
 }: Props) => {
-  const toGate = (opt: GateOption): GateConfig | undefined =>
+  // A real ward key is `<difficulty>_a_<n>`, so a tomb-key gate uses its section's own tier — the
+  // map then tints the gate by that difficulty, exactly as in the generated world.
+  const toGate = (opt: GateOption, difficulty: Difficulty): GateConfig | undefined =>
     opt === "none"
       ? undefined
       : opt === "floor-key"
         ? { type: "floor-key" }
-        : { type: "tomb-key", wardKeyId: "preview_ward" }
+        : { type: "tomb-key", wardKeyId: `${difficulty}_a_1` }
 
   const sideSections: SideSection[] = []
   if (section1)
@@ -51,14 +53,14 @@ const SiteMapBuilder = ({
       pathPuzzles: section1Puzzles,
       difficulty: "starter",
       end: section1End,
-      gate: toGate(section1Gate),
+      gate: toGate(section1Gate, "starter"),
     })
   if (section2)
     sideSections.push({
       pathPuzzles: section2Puzzles,
       difficulty: "junior",
       end: section2End,
-      gate: toGate(section2Gate),
+      gate: toGate(section2Gate, "junior"),
     })
 
   const config: FloorConfig = {
