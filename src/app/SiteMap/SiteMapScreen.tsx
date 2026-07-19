@@ -117,6 +117,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const floorExploration = useMemo(() => (grid ? computeFloorExploration(grid) : null), [grid])
   // Key the effect on the stable summary string, not `journeys` (a fresh object each render) — the
   // reducer's no-op guard then prevents a write loop, same pattern as registerHiddenCorridors above.
+  // `activeJourneyId` MUST be a dep: the journeys store loads async, so on the interior's first mount
+  // it can still be undefined — registerFloorExploration bails, and without this dep the effect would
+  // never re-fire once the journey resolves, so the floor would never get recorded (the marker then
+  // never shows). Verified live: without it, registerFloorExploration only ever runs with
+  // activeJourneyId undefined and floorExploration stays empty.
   const floorExplorationKey = floorExploration
     ? `${floorExploration.open}|${floorExploration.keySets.map(k => k.join(",")).join(";")}`
     : ""
@@ -124,7 +129,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     if (floorExploration)
       journeys.registerFloorExploration(currentFloor, floorExploration.open, floorExploration.keySets)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [floorExplorationKey, currentFloor, journeyId])
+  }, [floorExplorationKey, currentFloor, journeyId, journeys.activeJourneyId])
 
   const pendingConsumableCells = useMemo(() => {
     const prefix = `${currentFloor}:`

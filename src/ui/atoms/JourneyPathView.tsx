@@ -132,16 +132,6 @@ export const JourneyPathView: FC<Props> = ({
         </span>
       )}
 
-      {/* Unexplored-content marker: a completed journey still holds reachable content (a skipped path
-          or a ward door a now-held key opens). Same glowing-dot style as the nudge, emerald to set it
-          apart. Shown when revisiting (nudge is for the not-yet-started overview), so they never overlap. */}
-      {unexploredNodes && unexploredNodes.size > 0 && (
-        <span className="absolute top-3 left-3 flex h-4 w-4 items-center justify-center">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
-        </span>
-      )}
-
       {/* Grid lines */}
       <div className="absolute inset-0 opacity-20">
         {isPyramid ? (
@@ -224,6 +214,20 @@ export const JourneyPathView: FC<Props> = ({
                     strokeWidth="0.8"
                     className="pointer-events-none"
                   />
+                  {/* Emerald pulse: this completed pyramid still holds unvisited content (a skipped
+                      chest/puzzle, or a ward path/tableau a key you now hold unlocks). Only completed
+                      nodes light — the pyramid you're currently in never does. */}
+                  {unexploredNodes?.has(i + 1) && (
+                    <circle
+                      cx={pos.x}
+                      cy={pos.y}
+                      r="5.5"
+                      fill="none"
+                      stroke="rgb(16,185,129)"
+                      strokeWidth="1"
+                      className="pointer-events-none animate-ping"
+                    />
+                  )}
                 </g>
               )
             }

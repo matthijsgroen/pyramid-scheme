@@ -134,10 +134,13 @@ export const TravelPage: FC<{
       })
   }, [journeys, isTombDiscovered, mapPieceCount])
 
-  // Pyramids of the currently-shown (completed) journey that still hold reachable, unexplored
-  // content — marks those nodes on the map so a player with a fresh ward key knows where to go back.
-  const mapUnexploredNodes =
-    journey && revisiting ? getUnexploredLevels(journey.id, heldKeys) : (new Set<number>() as ReadonlySet<number>)
+  // Pyramids of the currently-shown journey that still hold unvisited content. Not gated on
+  // `revisiting`: a pyramid you finished mid-journey is a completed node too, so its dot shows as
+  // soon as you move past it. JourneyPathView only draws the dot on completed nodes, so the pyramid
+  // you're currently in never lights.
+  const mapUnexploredNodes = journey
+    ? getUnexploredLevels(journey.id, heldKeys)
+    : (new Set<number>() as ReadonlySet<number>)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
