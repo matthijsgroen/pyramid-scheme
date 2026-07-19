@@ -109,6 +109,39 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // gate coloring.
   const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
 
+  // Per-floor exploration summary for the Travel "unexplored here" marker — computed here (grid
+  // assembled = cheap) and persisted so the travel screen reads it without re-assembling. `openable`
+  // = a reachable, not-completed cell the player can walk to now (skipped side path / partial section
+  // / a ward door whose key is held); a locked door the player can't pass yet is excluded (its cells
+  // stay fogged, and its own gate room is soft-reachable but filtered out by the held-key check).
+  // `wardKeys` = tomb-key doors not yet opened, kept so a later-earned key re-lights this pyramid.
+  const floorExploration = useMemo(() => {
+    if (!grid) return null
+    let openable = false
+    const doors = new Set<string>()
+    for (const row of grid.cells) {
+      for (const cell of row) {
+        if (cell.type === "empty" || cell.hidden) continue
+        const reachableNow = cell.state === "reachable" || cell.state === "visible"
+        const gateKey = cell.type === "room" ? cell.requiredKeyId : undefined
+        if (reachableNow && (!gateKey || ownedKeys.has(gateKey))) openable = true
+        if (cell.type === "room" && cell.gateVariant === "tomb-key" && cell.state !== "completed" && cell.requiredKeyId)
+          doors.add(cell.requiredKeyId)
+      }
+    }
+    return { openable, wardKeys: [...doors].sort() }
+  }, [grid, ownedKeys])
+  // Key the effect on the stable summary string, not `journeys` (a fresh object each render) — the
+  // reducer's no-op guard then prevents a write loop, same pattern as registerHiddenCorridors above.
+  const floorExplorationKey = floorExploration
+    ? `${floorExploration.openable}|${floorExploration.wardKeys.join(",")}`
+    : ""
+  useEffect(() => {
+    if (floorExploration)
+      journeys.registerFloorExploration(currentFloor, floorExploration.openable, floorExploration.wardKeys)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [floorExplorationKey, currentFloor, journeyId])
+
   const pendingConsumableCells = useMemo(() => {
     const prefix = `${currentFloor}:`
     const result = new Set<string>()

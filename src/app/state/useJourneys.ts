@@ -26,6 +26,14 @@ export type StoredJourneyStateV3 = {
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
   knownHiddenCorridors?: string[]
   foundHiddenCorridors?: string[]
+  // Per-floor exploration summary, keyed `${levelNr}:${floorIndex}`, recomputed each time a floor
+  // is viewed (the grid is assembled there, so it's cheap — the travel screen has only configs and
+  // must not re-assemble). `openable` = a reachable, not-yet-completed node exists on the floor (a
+  // skipped side path, a partly-explored section, a chest/puzzle/corridor you can walk to now).
+  // `wardKeys` = tomb-key doors on the floor not yet opened; stored so the travel screen can re-check
+  // them against the CURRENTLY-held keys — a newly-earned ward key lights up a pyramid the player
+  // already left, with no re-assembly. Drives the Travel "unexplored here" marker.
+  floorExploration?: Record<string, { openable: boolean; wardKeys: string[] }>
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -59,6 +67,11 @@ export type JourneyAPI = {
   markCorridorFound: (sectionHash: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
   getOutstandingHiddenCorridorCount: (journeyId: string) => number
+  registerFloorExploration: (floorIndex: number, openable: boolean, wardKeys: string[]) => void
+  // 1-based levelNrs of this journey's pyramids that still hold reachable, unexplored content given
+  // the passed held keys (a skipped node, or a ward door a now-held key opens). Empty set = nothing
+  // to go back for. Read cheaply on the travel screen from the persisted floorExploration summary.
+  getUnexploredLevels: (journeyId: string, heldKeys: ReadonlySet<string>) => ReadonlySet<number>
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -353,6 +366,32 @@ export const createJourneysV3Api = ({
     return (j.knownHiddenCorridors ?? []).filter(key => !found.has(key)).length
   }
 
+  const registerFloorExploration = (floorIndex: number, openable: boolean, wardKeys: string[]) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const key = `${j.levelNr}:${floorIndex}`
+        const sorted = [...wardKeys].sort()
+        const prevEntry = j.floorExploration?.[key]
+        // No churn: identical summary lets React bail (the effect that calls this fires every render).
+        if (prevEntry && prevEntry.openable === openable && prevEntry.wardKeys.join(",") === sorted.join(",")) return j
+        return { ...j, floorExploration: { ...j.floorExploration, [key]: { openable, wardKeys: sorted } } }
+      })
+    )
+  }
+
+  const getUnexploredLevels = (journeyId: string, heldKeys: ReadonlySet<string>): ReadonlySet<number> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    const levels = new Set<number>()
+    if (!j?.floorExploration) return levels
+    for (const [key, entry] of Object.entries(j.floorExploration)) {
+      if (!entry.openable && !entry.wardKeys.some(k => heldKeys.has(k))) continue
+      levels.add(Number(key.split(":")[0]))
+    }
+    return levels
+  }
+
   return {
     activeJourneyId,
     maxDifficulty,
@@ -377,5 +416,7 @@ export const createJourneysV3Api = ({
     markCorridorFound,
     getFoundHiddenCorridors,
     getOutstandingHiddenCorridorCount,
+    registerFloorExploration,
+    getUnexploredLevels,
   }
 }

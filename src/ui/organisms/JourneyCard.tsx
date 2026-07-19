@@ -17,6 +17,9 @@ type JourneyCardProps = {
   hasMapPiece?: boolean
   // Corridor detector L4 (§7.2): this pyramid still hides corridors the player hasn't noticed.
   hasUnexploredCorridors?: boolean
+  // A completed journey still holds reachable, unexplored content — a skipped side path, or a ward
+  // door a newly-earned key now opens. Tells the player it's worth revisiting.
+  hasReachableUnexplored?: boolean
   showDetails?: boolean
   disabled?: boolean
   lang?: string
@@ -35,6 +38,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
   disabled = false,
   hasMapPiece = false,
   hasUnexploredCorridors = false,
+  hasReachableUnexplored = false,
   lang,
   labels,
   onClick,
@@ -119,8 +123,13 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
               {Math.min(Math.max(Math.round(((progressLevelNr - 1) / journey.levelCount) * 100), 0), 100)}%
             </span>
           )}
-          {(completionCount > 0 || hasMapPiece || hasUnexploredCorridors) && (
+          {(completionCount > 0 || hasMapPiece || hasUnexploredCorridors || hasReachableUnexplored) && (
             <span className="ml-auto inline-flex items-center font-bold text-amber-800">
+              {hasReachableUnexplored && (
+                <span className="mr-1 inline-flex items-center" title="Unexplored paths you can now reach">
+                  🔑
+                </span>
+              )}
               {hasUnexploredCorridors && (
                 <span className="mr-1 inline-flex items-center" title="Unexplored hidden corridors">
                   👁

@@ -16,7 +16,7 @@ import { totalBuyable } from "./economyGuard"
 
 const BUDGET_CEILING = 1.5 // max money-equivalent placed = 1.5× the floor (totalBuyable)
 const PER_ITEM_CAP = 20 // ≤20 of each junk collectible, so no single item floods the world
-const COIN_SHARE = 0.5 // fraction of post-junk leftover slots that get loose coins (rest empty)
+const COIN_RESERVE = 0.5 // fraction of EACH tier's slots held back from bulk junk, kept for coins
 const COIN_MAX = 4 // loose change stays small (1–4) so coins read as "a little extra", not a jackpot
 
 const TIER_ORDER: MaterialTier[] = ["stone", "bronze", "silver", "gold", "divine"]
@@ -73,9 +73,12 @@ export const shopMoneyEconomy: Distribution = {
 
     // Phase 2 — bulk junk up to the budget floor, round-robin across tiers (fair spread) up to the
     // per-item cap. Junk is high-value, so it reaches the floor on relatively few slots — that's
-    // what carries the economy and guarantees income ≥ buyable (the self-check below). Coins are far
-    // less slot-efficient (1–4 vs a tier's 10–50), so junk must claim its slots first or the floor
-    // becomes unreachable; small money is layered on afterward (Phase 3).
+    // what carries the economy and guarantees income ≥ buyable (the self-check below). Each tier
+    // keeps a COIN_RESERVE tail free of junk: without it, bulk junk drains the small early tiers dry
+    // (stone has ~40 slots vs divine's ~700) and Phase 3 has nothing left there, so starter/junior
+    // show no loose coins at all. The reserve costs the floor nothing — the big tiers meet it alone.
+    const junkLimit = (tier: MaterialTier, len: number) =>
+      Math.max(SELLABLES_BY_TIER[tier].length, len - Math.ceil(len * COIN_RESERVE))
     const cursor = new Map(TIER_ORDER.map(t => [t, SELLABLES_BY_TIER[t].length])) // start past completeness
     let progressed = true
     while (value < budgetMin && progressed) {
@@ -85,23 +88,34 @@ export const shopMoneyEconomy: Distribution = {
         const tierSlots = byTier.get(tier)
         if (!tierSlots) continue
         const i = cursor.get(tier)!
-        if (i >= tierSlots.length || Math.floor(i / SELLABLES_BY_TIER[tier].length) + 1 > PER_ITEM_CAP) continue
+        if (i >= junkLimit(tier, tierSlots.length) || Math.floor(i / SELLABLES_BY_TIER[tier].length) + 1 > PER_ITEM_CAP)
+          continue
         placeJunk(tierSlots[i], tier, i % SELLABLES_BY_TIER[tier].length)
         cursor.set(tier, i + 1)
         progressed = true
       }
     }
 
-    // Phase 3 — loose coins as flavor: sprinkle small change (1..COIN_MAX) on a share of the
-    // still-unused slots so coins exist in the world without 1-coin spam, staying under the ceiling.
-    const leftover = slots.filter(s => !used.has(s))
-    const coinSlots = leftover.slice(0, Math.round(leftover.length * COIN_SHARE))
-    for (const slot of coinSlots) {
-      const amount = Math.min(COIN_MAX, rollMoney(`${slot.siteId ?? slot.journeyId}:coin:${slot.puzzleSeq ?? 0}`))
-      if (value + amount > budgetMax) break
-      slot.assign({ type: "money", amount })
-      used.add(slot)
-      value += amount
+    // Phase 3 — loose coins as flavor (1..COIN_MAX), round-robin across tiers EARLY-FIRST so every
+    // present tier — especially the small starter/junior ones — shows some change before the ceiling
+    // is spent. Leftover the ceiling doesn't reach stays empty (Phase 4), keeping loot meaningful.
+    const coinPools = TIER_ORDER.map(t => (byTier.get(t) ?? []).filter(s => !used.has(s)))
+    for (let i = 0; ; i++) {
+      let progressedCoins = false
+      for (const pool of coinPools) {
+        if (i >= pool.length) continue
+        const slot = pool[i]
+        const amount = Math.min(COIN_MAX, rollMoney(`${slot.siteId ?? slot.journeyId}:coin:${slot.puzzleSeq ?? 0}`))
+        if (value + amount > budgetMax) {
+          progressedCoins = false
+          break
+        }
+        slot.assign({ type: "money", amount })
+        used.add(slot)
+        value += amount
+        progressedCoins = true
+      }
+      if (!progressedCoins) break
     }
 
     // Phase 4 — everything the budget didn't need is empty (a fragmentSlot must never serialize).
