@@ -28,12 +28,12 @@ export type StoredJourneyStateV3 = {
   foundHiddenCorridors?: string[]
   // Per-floor "still stuff to find here" summary, keyed `${levelNr}:${floorIndex}`, recomputed each
   // time a floor is viewed (the grid is assembled there, so it's cheap — the travel screen has only
-  // configs and must not re-assemble). `hasReward` = an uncollected reward sits in an ungated part
-  // of the floor (a chest/loot/puzzle the player skipped — revealed-but-unopened still counts).
-  // `wardKeys` = tomb-key doors with uncollected loot behind them; stored so the travel screen can
-  // re-check them against the CURRENTLY-held keys — a newly-earned ward key lights up a pyramid the
-  // player already left, with no re-assembly. Drives the Travel "still stuff to find" marker.
-  floorExploration?: Record<string, { hasReward: boolean; wardKeys: string[] }>
+  // configs and must not re-assemble). `open` = ungated unvisited content the player can just walk
+  // to. `keySets` = key bundles for gated content (a tomb-key ward door, a tableau's hieroglyphs, …);
+  // a bundle lights this floor once ALL its keys are held. Stored (not resolved here) so the travel
+  // screen re-checks against the CURRENTLY-held keys — a newly-earned key lights a pyramid the player
+  // already left, no re-assembly. Keys are opaque ids (mod-owned); this names no mod.
+  floorExploration?: Record<string, { open: boolean; keySets: string[][] }>
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -67,10 +67,11 @@ export type JourneyAPI = {
   markCorridorFound: (sectionHash: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
   getOutstandingHiddenCorridorCount: (journeyId: string) => number
-  registerFloorExploration: (floorIndex: number, hasReward: boolean, wardKeys: string[]) => void
-  // 1-based levelNrs of this journey's pyramids that still hold uncollected loot given the passed
-  // held keys (a skipped chest, or one behind a ward door a now-held key opens). Empty set = nothing
-  // to go back for. Read cheaply on the travel screen from the persisted floorExploration summary.
+  registerFloorExploration: (floorIndex: number, open: boolean, keySets: string[][]) => void
+  // 1-based levelNrs of this journey's pyramids that still hold unvisited content given the passed
+  // held keys — ungated content, or gated content whose full key bundle the player now holds (a ward
+  // door's key, a tableau's hieroglyphs, …). Empty set = nothing to go back for. Read cheaply on the
+  // travel screen from the persisted floorExploration summary; names no mod (keys are opaque ids).
   getUnexploredLevels: (journeyId: string, heldKeys: ReadonlySet<string>) => ReadonlySet<number>
 }
 
@@ -366,18 +367,17 @@ export const createJourneysV3Api = ({
     return (j.knownHiddenCorridors ?? []).filter(key => !found.has(key)).length
   }
 
-  const registerFloorExploration = (floorIndex: number, hasReward: boolean, wardKeys: string[]) => {
+  const registerFloorExploration = (floorIndex: number, open: boolean, keySets: string[][]) => {
     if (!activeJourneyId) return
+    const sig = (o: boolean, ks: string[][]) => `${o}|${ks.map(k => k.join(",")).join(";")}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const key = `${j.levelNr}:${floorIndex}`
-        const sorted = [...wardKeys].sort()
         const prevEntry = j.floorExploration?.[key]
         // No churn: identical summary lets React bail (the effect that calls this fires every render).
-        if (prevEntry && prevEntry.hasReward === hasReward && prevEntry.wardKeys.join(",") === sorted.join(","))
-          return j
-        return { ...j, floorExploration: { ...j.floorExploration, [key]: { hasReward, wardKeys: sorted } } }
+        if (prevEntry && sig(prevEntry.open, prevEntry.keySets) === sig(open, keySets)) return j
+        return { ...j, floorExploration: { ...j.floorExploration, [key]: { open, keySets } } }
       })
     )
   }
@@ -387,8 +387,7 @@ export const createJourneysV3Api = ({
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
     for (const [key, entry] of Object.entries(j.floorExploration)) {
-      if (!entry.hasReward && !entry.wardKeys.some(k => heldKeys.has(k))) continue
-      levels.add(Number(key.split(":")[0]))
+      if (entry.open || entry.keySets.some(ks => ks.every(k => heldKeys.has(k)))) levels.add(Number(key.split(":")[0]))
     }
     return levels
   }

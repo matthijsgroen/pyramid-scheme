@@ -2,7 +2,16 @@ import { useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
-import { resolveEncounter } from "@/app/families/familyRegistry"
+import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
+import type { ResolveKeyRequirements } from "@/game/siteAssembler"
+
+// A node's own key requirements, resolved from whichever family declares them (a tableau's
+// hieroglyphs, etc.) — the same dispatch world-gen uses, but off the app-side family registry so
+// this module names no mod. Populates each room's `requiredKeyIds` at assembly time so runtime
+// consumers (the "still stuff to find" marker) can read a node's exposed keys uniformly with a
+// gate's key. Inert for play — no other runtime code gates on requiredKeyIds.
+const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
+  getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
 // Edge IDs are "floorIdx:row,col". Backward compat: no colon prefix = floor 0.
 export const encodeEdge = (floor: number, row: number, col: number): string => `${floor}:${row},${col}`
@@ -127,7 +136,10 @@ export const useAssembledFloor = (
   junctionSections: ReadonlyMap<string, ReadonlySet<string>>
 } => {
   const baseGrid = useMemo(() => {
-    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter)
+    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
+      resolveKeyRequirements,
+      floorRef: { journeyId, floorIndex: currentFloor },
+    })
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor])
 

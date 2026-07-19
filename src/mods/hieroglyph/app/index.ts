@@ -5,6 +5,7 @@ import { registerCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { registerPerkContribution } from "@/app/SiteMap/perkContributions"
 import { registerDetectorLevel } from "@/app/SiteMap/detectorLevels"
 import { registerCompassTarget } from "@/app/SiteMap/compassTarget"
+import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { useHieroglyphCompassScanner } from "./compassScanner"
@@ -55,4 +56,8 @@ if (isModEnabled("hieroglyph")) {
   // The hunt target is picked on the Collection screen (§3C) and stored in the mod's own state;
   // core reads it through this seam to drive the in-run compass readout without naming the mod.
   registerCompassTarget(() => useHieroglyphProgress().compassTarget)
+  // Completed hieroglyphs are held keys (`hieroglyph:${id}`), so a tableau the player can now solve
+  // reads as unlocked content on the travel screen — same seam the tomb-treasure mod uses for ward
+  // keys. Core never learns these are hieroglyphs; a tableau node just exposes them as requiredKeyIds.
+  registerHeldKeysProvider(() => useHieroglyphProgress().completedHieroglyphKeys)
 }

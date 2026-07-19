@@ -29,6 +29,10 @@ export type HieroglyphProgressAPI = {
   addFragment: (hieroglyphId: string, pieceIndex: number) => void
   hasFragment: (hieroglyphId: string, pieceIndex: number) => boolean
   hieroglyphProgress: (hieroglyphId: string) => { found: number; required: number }
+  // Completed hieroglyphs as `hieroglyph:${id}` key ids — the same convention resolveTableauKey-
+  // Requirements uses. Exposed as held keys (via a keyProviders provider) so a tableau the player
+  // can now solve reads as unlocked content, uniformly with a ward gate's tomb key.
+  completedHieroglyphKeys: ReadonlySet<string>
   // hieroglyphId → count of distinct pieces found (for the collection/detector views).
   hieroglyphFragments: Record<string, number>
   compassLevel: number
@@ -57,6 +61,11 @@ export const useHieroglyphProgress = (): HieroglyphProgressAPI => {
         found: found(hieroglyphId),
         required: hieroglyphRequired[hieroglyphId] ?? 2,
       }),
+      completedHieroglyphKeys: new Set(
+        Object.keys(hieroglyphRequired)
+          .filter(id => found(id) >= (hieroglyphRequired[id] ?? 2))
+          .map(id => `hieroglyph:${id}`)
+      ),
       hieroglyphFragments: Object.fromEntries(
         state.collectedFragments
           .map(f => f.split(":")[0])
