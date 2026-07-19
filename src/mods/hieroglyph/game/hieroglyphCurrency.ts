@@ -115,8 +115,12 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
     }
   },
   // Pool priority (tier+preferred-ward > tier-only > cross-tier) as a rank score — the doc's
-  // own composable-rule shape. Ranked BEFORE deduping by journey, so the "one per journey"
-  // strict pass keeps each journey's best-scoring slot, not an arbitrary one.
+  // own composable-rule shape. Ranked BEFORE the strict dedup, so it keeps each pyramid's
+  // best-scoring slot, not an arbitrary one. Dedup is per-PYRAMID (journey#levelIndex), not
+  // per-journey: a hieroglyph needs more fragments (up to 8) than a tier has journeys (4), so
+  // one-per-journey forced the surplus cross-tier. Per-pyramid gives each tier enough in-tier
+  // slots to hold its own hieroglyphs (off-tier placement 24% → 4%) while still spreading them
+  // out — no two fragments of one hieroglyph in the same pyramid.
   rank: (candidates, demand) => {
     const byPoolScore = rankBy<Slot>(s => {
       const tierMatch = s.tier === demand.tier
@@ -131,7 +135,7 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
       preferThenRelax(
         pipe(
           byPoolScore,
-          uniqueBy(s => s.journeyId)
+          uniqueBy(s => `${s.journeyId}#${s.ref.levelIndex}`)
         ),
         byPoolScore
       )
