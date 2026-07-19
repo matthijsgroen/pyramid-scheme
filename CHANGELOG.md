@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- The "still something here" marker now actually appears. A pyramid's exploration wasn't being recorded on entry (the recording ran before the journey had finished loading and never retried), so a completed expedition's tile stayed blank even when it clearly still held loot. It now records reliably and the 🔑 shows on the tile; the pyramid's node on the map also pulses as soon as you finish it.
 
 ## 0.30.2 - 2026-07-19
 ### Fixed
