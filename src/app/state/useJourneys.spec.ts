@@ -319,20 +319,28 @@ describe("floor exploration tracking", () => {
   const NO_KEYS: ReadonlySet<string> = new Set()
 
   it("open (ungated) content marks its levelNr regardless of held keys", () => {
-    const { api } = run(a => a.registerFloorExploration(0, true, []))
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, true, []))
     expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
   })
 
   it("a gated key bundle lights up only once every key in it is held (the earned-later case)", () => {
-    const { api } = run(a => a.registerFloorExploration(2, false, [["junior_a_1"]]))
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 2, false, [["junior_a_1"]]))
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0) // no key yet → nothing to go back for
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1"]))]).toEqual([1]) // key earned → lit
   })
 
   it("a multi-key bundle (ward + hieroglyphs) needs ALL its keys, not just one", () => {
-    const { api } = run(a => a.registerFloorExploration(0, false, [["ward_a_1", "hieroglyph:p10"]]))
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, false, [["ward_a_1", "hieroglyph:p10"]]))
     expect(api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1"])).size).toBe(0) // only one held → not lit
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1", "hieroglyph:p10"]))]).toEqual([1]) // both → lit
+  })
+
+  it("records against the passed journeyId even when the journey is no longer active", () => {
+    // Recording runs from the interior's unmount cleanup — which can happen right after
+    // completeJourney flips `active` to false. Passing journeyId explicitly (not relying on the
+    // active journey) is what lets the completed journey still get its summary.
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, true, []), { active: false, completionCount: 1 })
+    expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
   })
 
   it("tolerates a floorExploration entry from an older build shape (no crash)", () => {
@@ -346,7 +354,7 @@ describe("floor exploration tracking", () => {
   })
 
   it("re-registering a floor overwrites its summary (content cleared → cleared)", () => {
-    const { api } = run(a => a.registerFloorExploration(0, false, []), {
+    const { api } = run(a => a.registerFloorExploration(REAL_ID, 0, false, []), {
       floorExploration: { "1:0": { open: true, keySets: [] } },
     })
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
