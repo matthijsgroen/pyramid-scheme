@@ -67,7 +67,7 @@ export type JourneyAPI = {
   markCorridorFound: (sectionHash: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
   getOutstandingHiddenCorridorCount: (journeyId: string) => number
-  registerFloorExploration: (floorIndex: number, open: boolean, keySets: string[][]) => void
+  registerFloorExploration: (journeyId: string, floorIndex: number, open: boolean, keySets: string[][]) => void
   // 1-based levelNrs of this journey's pyramids that still hold unvisited content given the passed
   // held keys — ungated content, or gated content whose full key bundle the player now holds (a ward
   // door's key, a tableau's hieroglyphs, …). Empty set = nothing to go back for. Read cheaply on the
@@ -374,11 +374,10 @@ export const createJourneysV3Api = ({
   const sig = (o: boolean | undefined, ks: string[][] | undefined) =>
     `${o ?? false}|${(ks ?? []).map(k => k.join(",")).join(";")}`
 
-  const registerFloorExploration = (floorIndex: number, open: boolean, keySets: string[][]) => {
-    if (!activeJourneyId) return
+  const registerFloorExploration = (journeyId: string, floorIndex: number, open: boolean, keySets: string[][]) => {
     setJourneys(prev =>
       prev.map(j => {
-        if (j.journeyId !== activeJourneyId) return j
+        if (j.journeyId !== journeyId) return j
         const key = `${j.levelNr}:${floorIndex}`
         const prevEntry = j.floorExploration?.[key]
         // No churn: identical summary lets React bail (the effect that calls this fires every render).

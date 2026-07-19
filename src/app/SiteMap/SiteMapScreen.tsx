@@ -1,4 +1,4 @@
-import { use, useCallback, useEffect, useMemo, useState } from "react"
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
 import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
@@ -110,26 +110,31 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // gate coloring.
   const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
 
-  // Per-floor "still stuff to find here" summary for the Travel marker — computed here (grid
-  // assembled = cheap) and persisted so the travel screen reads it without re-assembling. The pure
-  // classification (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod
-  // names) lives in floorExploration.ts and is unit-tested there.
+  // Per-floor "still stuff to find here" summary for the Travel marker. The pure classification
+  // (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod names) lives in
+  // floorExploration.ts and is unit-tested there.
+  //
+  // Persist it when the player LEAVES the floor (switches floor or exits the interior), read from a
+  // ref in the cleanup — NOT reactively on every grid change. A reactive write fed a render loop:
+  // writing re-rendered SiteMapScreen → the grid recomputed (getExploredSections returns a fresh
+  // object each render, so useAssembledFloor rebuilds) → the effect could re-fire while the exit
+  // chamber was mid-reveal, pegging the CPU (flicker, input starvation). Recording on-leave captures
+  // the floor's final state (exactly what "still stuff to find" means) and can never re-enter render.
   const floorExploration = useMemo(() => (grid ? computeFloorExploration(grid) : null), [grid])
-  // Key the effect on the stable summary string, not `journeys` (a fresh object each render) — the
-  // reducer's no-op guard then prevents a write loop, same pattern as registerHiddenCorridors above.
-  // `activeJourneyId` MUST be a dep: the journeys store loads async, so on the interior's first mount
-  // it can still be undefined — registerFloorExploration bails, and without this dep the effect would
-  // never re-fire once the journey resolves, so the floor would never get recorded (the marker then
-  // never shows). Verified live: without it, registerFloorExploration only ever runs with
-  // activeJourneyId undefined and floorExploration stays empty.
-  const floorExplorationKey = floorExploration
-    ? `${floorExploration.open}|${floorExploration.keySets.map(k => k.join(",")).join(";")}`
-    : ""
+  const floorExplorationRef = useRef(floorExploration)
+  floorExplorationRef.current = floorExploration
+  // Latest register fn (journeyId passed explicitly, so it records even after the journey goes
+  // inactive on completion — the interior unmounts right after completeJourney).
+  const recordExploration = useRef<(floor: number, open: boolean, keySets: string[][]) => void>(() => {})
+  recordExploration.current = (floor, open, keySets) =>
+    journeys.registerFloorExploration(journeyId, floor, open, keySets)
   useEffect(() => {
-    if (floorExploration)
-      journeys.registerFloorExploration(currentFloor, floorExploration.open, floorExploration.keySets)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [floorExplorationKey, currentFloor, journeyId, journeys.activeJourneyId])
+    const floor = currentFloor
+    return () => {
+      const fe = floorExplorationRef.current
+      if (fe) recordExploration.current(floor, fe.open, fe.keySets)
+    }
+  }, [currentFloor, journeyId])
 
   const pendingConsumableCells = useMemo(() => {
     const prefix = `${currentFloor}:`
