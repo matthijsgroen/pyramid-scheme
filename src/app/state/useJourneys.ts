@@ -367,9 +367,15 @@ export const createJourneysV3Api = ({
     return (j.knownHiddenCorridors ?? []).filter(key => !found.has(key)).length
   }
 
+  // `?? []` / `?? false` tolerate a floorExploration entry saved by an earlier build with a
+  // different shape (the field is loose persisted data, like exploredSections — stale/foreign
+  // entries are ignored, not migrated, and never crash). A pre-shape entry simply reads as "nothing
+  // here" until its floor is re-entered and re-recorded.
+  const sig = (o: boolean | undefined, ks: string[][] | undefined) =>
+    `${o ?? false}|${(ks ?? []).map(k => k.join(",")).join(";")}`
+
   const registerFloorExploration = (floorIndex: number, open: boolean, keySets: string[][]) => {
     if (!activeJourneyId) return
-    const sig = (o: boolean, ks: string[][]) => `${o}|${ks.map(k => k.join(",")).join(";")}`
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
@@ -387,7 +393,8 @@ export const createJourneysV3Api = ({
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
     for (const [key, entry] of Object.entries(j.floorExploration)) {
-      if (entry.open || entry.keySets.some(ks => ks.every(k => heldKeys.has(k)))) levels.add(Number(key.split(":")[0]))
+      const lit = (entry.open ?? false) || (entry.keySets ?? []).some(ks => ks.every(k => heldKeys.has(k)))
+      if (lit) levels.add(Number(key.split(":")[0]))
     }
     return levels
   }
