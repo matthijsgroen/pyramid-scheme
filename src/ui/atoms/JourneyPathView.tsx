@@ -218,15 +218,20 @@ export const JourneyPathView: FC<Props> = ({
                       chest/puzzle, or a ward path/tableau a key you now hold unlocks). Only completed
                       nodes light — the pyramid you're currently in never does. */}
                   {unexploredNodes?.has(i + 1) && (
+                    // SMIL animating r + opacity, not `animate-ping`: a CSS scale() transform on an
+                    // SVG element scales about the SVG origin (0,0), so the ring would drift toward
+                    // the corner instead of pulsing in place. Growing `r` expands from the fixed centre.
                     <circle
                       cx={pos.x}
                       cy={pos.y}
-                      r="5.5"
                       fill="none"
                       stroke="rgb(16,185,129)"
                       strokeWidth="1"
-                      className="pointer-events-none animate-ping"
-                    />
+                      className="pointer-events-none"
+                    >
+                      <animate attributeName="r" values="3.5;7" dur="1.1s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.8;0" dur="1.1s" repeatCount="indefinite" />
+                    </circle>
                   )}
                 </g>
               )
