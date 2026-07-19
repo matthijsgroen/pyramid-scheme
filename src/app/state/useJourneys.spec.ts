@@ -335,6 +335,16 @@ describe("floor exploration tracking", () => {
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1", "hieroglyph:p10"]))]).toEqual([1]) // both → lit
   })
 
+  it("tolerates a floorExploration entry from an older build shape (no crash)", () => {
+    // v0.30.0 stored { hasReward, wardKeys }; the field is loose persisted data. Reading it must not
+    // throw on `keySets.some` — a save that didn't clear would otherwise black-screen on startup.
+    const { api } = run(() => {}, {
+      floorExploration: { "1:0": { hasReward: true, wardKeys: ["starter_a_1"] } } as never,
+    })
+    expect(() => api.getUnexploredLevels(REAL_ID, new Set(["starter_a_1"]))).not.toThrow()
+    expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0) // pre-shape entry reads as empty
+  })
+
   it("re-registering a floor overwrites its summary (content cleared → cleared)", () => {
     const { api } = run(a => a.registerFloorExploration(0, false, []), {
       floorExploration: { "1:0": { open: true, keySets: [] } },
