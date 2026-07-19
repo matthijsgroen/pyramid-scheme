@@ -301,11 +301,7 @@ export const TravelPage: FC<{
                     hasUnexploredCorridors={
                       corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
                     }
-                    hasReachableUnexplored={
-                      completionCount > 0 &&
-                      !journeyInfo?.inProgress &&
-                      getUnexploredLevels(journey.id, heldKeys).size > 0
-                    }
+                    hasReachableUnexplored={completionCount > 0 && getUnexploredLevels(journey.id, heldKeys).size > 0}
                     lang={i18n.language}
                     labels={{
                       chambers: t("ui.chambers"),

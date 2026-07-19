@@ -110,32 +110,35 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
 
   // Per-floor "still stuff to find here" summary for the Travel marker — computed here (grid
-  // assembled = cheap) and persisted so the travel screen reads it without re-assembling. The
-  // signal is an UNCOLLECTED REWARD, not walk-state: a chest revealed on the map but never opened
-  // still counts (a skipped side path's chest sits deep in its section — often still fogged — so a
-  // reachability/visible test would miss it). "Collected" = the cell is `completed` (the player
-  // stood on it and its reward flow ran). Grouped by section so a reward behind a tomb-key door
-  // feeds `wardKeys` (re-checked against held keys on Travel — the earned-later case) instead of
-  // `hasReward` (ungated loot you can just go get). Hidden-corridor loot is excluded — it has its
-  // own 👁 marker.
+  // assembled = cheap) and persisted so the travel screen reads it without re-assembling. The signal
+  // is an unvisited LOOT-BEARING NODE, not walk-state and not actual loot content: a treasure chest
+  // counts even when its slot happens to be empty — the player can't tell an empty chest from a full
+  // one from the outside, so an unopened chest always reads as "there's still something here". A
+  // puzzle/reward node that carries loot counts too. The SHOP is excluded (a stocked shop isn't
+  // unexplored treasure), as are hidden-corridor nodes (they have their own 👁 marker). "Visited" =
+  // the cell is `completed` (the player stood on it). Grouped by section so a node behind a tomb-key
+  // door feeds `wardKeys` (re-checked against held keys on Travel — the earned-later case) instead
+  // of `hasReward` (ungated loot you can just walk to).
   const floorExploration = useMemo(() => {
     if (!grid) return null
-    const sections = new Map<string, { wardKey?: string; uncollected: boolean }>()
+    const sections = new Map<string, { wardKey?: string; unexplored: boolean }>()
     for (const row of grid.cells) {
       for (const cell of row) {
-        if (cell.type === "empty" || cell.hidden || cell.type !== "room") continue
+        if (cell.type !== "room" || cell.hidden) continue
         const h = cell.sectionHash ?? ""
-        const s = sections.get(h) ?? { uncollected: false }
+        const s = sections.get(h) ?? { unexplored: false }
         if (cell.gateVariant === "tomb-key" && cell.requiredKeyId) s.wardKey = cell.requiredKeyId
-        const hasLoot = cell.reward !== undefined || (cell.stock?.some(Boolean) ?? false)
-        if (hasLoot && cell.state !== "completed") s.uncollected = true
+        const isShop = cell.tags?.includes("shop") ?? false
+        const isChest = cell.tags?.includes("treasure") ?? false
+        const carriesLoot = cell.reward !== undefined || (cell.stock?.some(Boolean) ?? false)
+        if (!isShop && (isChest || carriesLoot) && cell.state !== "completed") s.unexplored = true
         sections.set(h, s)
       }
     }
     let hasReward = false
     const doors = new Set<string>()
     for (const s of sections.values()) {
-      if (!s.uncollected) continue
+      if (!s.unexplored) continue
       if (s.wardKey) doors.add(s.wardKey)
       else hasReward = true
     }
