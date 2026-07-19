@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.30.4 - 2026-07-19
 ### Fixed
 - Fixed a freeze/flicker that could make a pyramid impossible to finish: as the chamber with the exit was revealed, the screen flickered and the marker refused to move. Tracking "still something here" was running on every map change and feeding a render loop. It's now recorded once, when you leave the floor — no more loop.
 
