@@ -126,7 +126,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
           {(completionCount > 0 || hasMapPiece || hasUnexploredCorridors || hasReachableUnexplored) && (
             <span className="ml-auto inline-flex items-center font-bold text-amber-800">
               {hasReachableUnexplored && (
-                <span className="mr-1 inline-flex items-center" title="Unexplored paths you can now reach">
+                <span className="mr-1 inline-flex items-center" title="Still treasure to find here">
                   🔑
                 </span>
               )}

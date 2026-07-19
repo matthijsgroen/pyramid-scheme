@@ -299,7 +299,7 @@ describe("hidden corridor tracking", () => {
   })
 })
 
-// ── floor exploration: "unexplored here" travel marker ──────────────────────────
+// ── floor exploration: "still stuff to find here" travel marker ─────────────────
 
 describe("floor exploration tracking", () => {
   const run = (steps: (api: ReturnType<typeof makeApi>) => void, initial: Partial<StoredJourneyStateV3> = {}) => {
@@ -318,7 +318,7 @@ describe("floor exploration tracking", () => {
   }
   const NO_KEYS: ReadonlySet<string> = new Set()
 
-  it("openable floor marks its levelNr regardless of held keys", () => {
+  it("a floor with uncollected loot marks its levelNr regardless of held keys", () => {
     const { api } = run(a => a.registerFloorExploration(0, true, []))
     expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
   })
@@ -329,9 +329,9 @@ describe("floor exploration tracking", () => {
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1"]))]).toEqual([1]) // key earned → lit
   })
 
-  it("re-registering a floor overwrites its summary (walked → cleared)", () => {
+  it("re-registering a floor overwrites its summary (loot collected → cleared)", () => {
     const { api } = run(a => a.registerFloorExploration(0, false, []), {
-      floorExploration: { "1:0": { openable: true, wardKeys: [] } },
+      floorExploration: { "1:0": { hasReward: true, wardKeys: [] } },
     })
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
   })
