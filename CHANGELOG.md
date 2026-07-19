@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- A completed expedition now flags on the map (an emerald pulse) and on its card (a 🔑) when it still holds treasure you haven't collected — a chest you walked past, or one behind a ward door that a key you've since earned now opens. So a freshly-earned ward key points you back to exactly where it's worth returning.
+
+### Changed
+- Hieroglyph fragments now stay close to their own difficulty. Starter and junior fragments had been spilling heavily into harder pyramids, so early-game players kept finding symbols for tombs they couldn't tackle yet; fragments now land in pyramids of their own tier far more often.
+
+### Fixed
+- Loose coins now turn up from the very first tier. Early pyramids were handing out no loose money at all — the whole coin budget was landing in the late-game tiers — so every difficulty now gets its share of small change.
 
 ## 0.29.4 - 2026-07-18
 ### Fixed
