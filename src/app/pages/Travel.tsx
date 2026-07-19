@@ -7,6 +7,7 @@ import { MapPiecePlaceholder } from "@/ui/atoms/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
+import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { FezContext } from "../fez/context"
@@ -22,8 +23,18 @@ export const TravelPage: FC<{
   const { t, i18n } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
-  const { activeJourneyId, startJourney, visitLevel, cancelJourney, getJourney, getOutstandingHiddenCorridorCount } =
-    useJourneys()
+  const {
+    activeJourneyId,
+    startJourney,
+    visitLevel,
+    cancelJourney,
+    getJourney,
+    getOutstandingHiddenCorridorCount,
+    getUnexploredLevels,
+  } = useJourneys()
+  // Ward/tomb keys the player currently holds — a newly-earned one re-lights a completed pyramid
+  // that has a matching unopened ward door (getUnexploredLevels re-checks against this).
+  const heldKeys = useMergedHeldKeys()
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
@@ -123,6 +134,11 @@ export const TravelPage: FC<{
       })
   }, [journeys, isTombDiscovered, mapPieceCount])
 
+  // Pyramids of the currently-shown (completed) journey that still hold reachable, unexplored
+  // content — marks those nodes on the map so a player with a fresh ward key knows where to go back.
+  const mapUnexploredNodes =
+    journey && revisiting ? getUnexploredLevels(journey.id, heldKeys) : (new Set<number>() as ReadonlySet<number>)
+
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   return (
@@ -179,6 +195,7 @@ export const TravelPage: FC<{
                       : t("ui.planExpedition")
                 }
                 nudge={!journey && hasPendingMapPieceProgress}
+                unexploredNodes={mapUnexploredNodes}
               />
               {revisiting && (
                 <div className="mt-4 text-center text-sm">
@@ -283,6 +300,11 @@ export const TravelPage: FC<{
                     hasMapPiece={hasMapPiece}
                     hasUnexploredCorridors={
                       corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
+                    }
+                    hasReachableUnexplored={
+                      completionCount > 0 &&
+                      !journeyInfo?.inProgress &&
+                      getUnexploredLevels(journey.id, heldKeys).size > 0
                     }
                     lang={i18n.language}
                     labels={{

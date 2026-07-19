@@ -63,6 +63,9 @@ type Props = {
   journeyLength: "short" | "medium" | "long"
   type: "pyramid" | "treasure_tomb"
   nudge?: boolean
+  // 1-based levelNrs of completed nodes that still hold reachable, unexplored content — pinged so a
+  // player with a fresh ward key sees which pyramid to re-enter.
+  unexploredNodes?: ReadonlySet<number>
 }
 
 export const JourneyPathView: FC<Props> = ({
@@ -75,6 +78,7 @@ export const JourneyPathView: FC<Props> = ({
   journeyLength,
   type,
   nudge = false,
+  unexploredNodes,
 }) => {
   const path = PATHS[journeyLength]
   const nodes = inJourney ? getNodePositions(path, levelCount) : []
@@ -125,6 +129,16 @@ export const JourneyPathView: FC<Props> = ({
         <span className="absolute top-3 left-3 flex h-4 w-4 items-center justify-center">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75" />
           <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500" />
+        </span>
+      )}
+
+      {/* Unexplored-content marker: a completed journey still holds reachable content (a skipped path
+          or a ward door a now-held key opens). Same glowing-dot style as the nudge, emerald to set it
+          apart. Shown when revisiting (nudge is for the not-yet-started overview), so they never overlap. */}
+      {unexploredNodes && unexploredNodes.size > 0 && (
+        <span className="absolute top-3 left-3 flex h-4 w-4 items-center justify-center">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
         </span>
       )}
 

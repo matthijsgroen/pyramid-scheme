@@ -298,3 +298,41 @@ describe("hidden corridor tracking", () => {
     expect(second.api.getOutstandingHiddenCorridorCount(REAL_ID)).toBe(0) // all found → marker clears
   })
 })
+
+// ── floor exploration: "unexplored here" travel marker ──────────────────────────
+
+describe("floor exploration tracking", () => {
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void, initial: Partial<StoredJourneyStateV3> = {}) => {
+    let state = [makeStoredJourney(initial)]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    return {
+      state,
+      api: createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }),
+    }
+  }
+  const NO_KEYS: ReadonlySet<string> = new Set()
+
+  it("openable floor marks its levelNr regardless of held keys", () => {
+    const { api } = run(a => a.registerFloorExploration(0, true, []))
+    expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
+  })
+
+  it("a ward door lights up only once its key is held (the earned-later case)", () => {
+    const { api } = run(a => a.registerFloorExploration(2, false, ["junior_a_1"]))
+    expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0) // no key yet → nothing to go back for
+    expect([...api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1"]))]).toEqual([1]) // key earned → lit
+  })
+
+  it("re-registering a floor overwrites its summary (walked → cleared)", () => {
+    const { api } = run(a => a.registerFloorExploration(0, false, []), {
+      floorExploration: { "1:0": { openable: true, wardKeys: [] } },
+    })
+    expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
+  })
+})
