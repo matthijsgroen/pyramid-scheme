@@ -109,36 +109,46 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // gate coloring.
   const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
 
-  // Per-floor exploration summary for the Travel "unexplored here" marker — computed here (grid
-  // assembled = cheap) and persisted so the travel screen reads it without re-assembling. `openable`
-  // = a reachable, not-completed cell the player can walk to now (skipped side path / partial section
-  // / a ward door whose key is held); a locked door the player can't pass yet is excluded (its cells
-  // stay fogged, and its own gate room is soft-reachable but filtered out by the held-key check).
-  // `wardKeys` = tomb-key doors not yet opened, kept so a later-earned key re-lights this pyramid.
+  // Per-floor "still stuff to find here" summary for the Travel marker — computed here (grid
+  // assembled = cheap) and persisted so the travel screen reads it without re-assembling. The
+  // signal is an UNCOLLECTED REWARD, not walk-state: a chest revealed on the map but never opened
+  // still counts (a skipped side path's chest sits deep in its section — often still fogged — so a
+  // reachability/visible test would miss it). "Collected" = the cell is `completed` (the player
+  // stood on it and its reward flow ran). Grouped by section so a reward behind a tomb-key door
+  // feeds `wardKeys` (re-checked against held keys on Travel — the earned-later case) instead of
+  // `hasReward` (ungated loot you can just go get). Hidden-corridor loot is excluded — it has its
+  // own 👁 marker.
   const floorExploration = useMemo(() => {
     if (!grid) return null
-    let openable = false
-    const doors = new Set<string>()
+    const sections = new Map<string, { wardKey?: string; uncollected: boolean }>()
     for (const row of grid.cells) {
       for (const cell of row) {
-        if (cell.type === "empty" || cell.hidden) continue
-        const reachableNow = cell.state === "reachable" || cell.state === "visible"
-        const gateKey = cell.type === "room" ? cell.requiredKeyId : undefined
-        if (reachableNow && (!gateKey || ownedKeys.has(gateKey))) openable = true
-        if (cell.type === "room" && cell.gateVariant === "tomb-key" && cell.state !== "completed" && cell.requiredKeyId)
-          doors.add(cell.requiredKeyId)
+        if (cell.type === "empty" || cell.hidden || cell.type !== "room") continue
+        const h = cell.sectionHash ?? ""
+        const s = sections.get(h) ?? { uncollected: false }
+        if (cell.gateVariant === "tomb-key" && cell.requiredKeyId) s.wardKey = cell.requiredKeyId
+        const hasLoot = cell.reward !== undefined || (cell.stock?.some(Boolean) ?? false)
+        if (hasLoot && cell.state !== "completed") s.uncollected = true
+        sections.set(h, s)
       }
     }
-    return { openable, wardKeys: [...doors].sort() }
-  }, [grid, ownedKeys])
+    let hasReward = false
+    const doors = new Set<string>()
+    for (const s of sections.values()) {
+      if (!s.uncollected) continue
+      if (s.wardKey) doors.add(s.wardKey)
+      else hasReward = true
+    }
+    return { hasReward, wardKeys: [...doors].sort() }
+  }, [grid])
   // Key the effect on the stable summary string, not `journeys` (a fresh object each render) — the
   // reducer's no-op guard then prevents a write loop, same pattern as registerHiddenCorridors above.
   const floorExplorationKey = floorExploration
-    ? `${floorExploration.openable}|${floorExploration.wardKeys.join(",")}`
+    ? `${floorExploration.hasReward}|${floorExploration.wardKeys.join(",")}`
     : ""
   useEffect(() => {
     if (floorExploration)
-      journeys.registerFloorExploration(currentFloor, floorExploration.openable, floorExploration.wardKeys)
+      journeys.registerFloorExploration(currentFloor, floorExploration.hasReward, floorExploration.wardKeys)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [floorExplorationKey, currentFloor, journeyId])
 
