@@ -318,20 +318,26 @@ describe("floor exploration tracking", () => {
   }
   const NO_KEYS: ReadonlySet<string> = new Set()
 
-  it("a floor with uncollected loot marks its levelNr regardless of held keys", () => {
+  it("open (ungated) content marks its levelNr regardless of held keys", () => {
     const { api } = run(a => a.registerFloorExploration(0, true, []))
     expect([...api.getUnexploredLevels(REAL_ID, NO_KEYS)]).toEqual([1])
   })
 
-  it("a ward door lights up only once its key is held (the earned-later case)", () => {
-    const { api } = run(a => a.registerFloorExploration(2, false, ["junior_a_1"]))
+  it("a gated key bundle lights up only once every key in it is held (the earned-later case)", () => {
+    const { api } = run(a => a.registerFloorExploration(2, false, [["junior_a_1"]]))
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0) // no key yet → nothing to go back for
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1"]))]).toEqual([1]) // key earned → lit
   })
 
-  it("re-registering a floor overwrites its summary (loot collected → cleared)", () => {
+  it("a multi-key bundle (ward + hieroglyphs) needs ALL its keys, not just one", () => {
+    const { api } = run(a => a.registerFloorExploration(0, false, [["ward_a_1", "hieroglyph:p10"]]))
+    expect(api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1"])).size).toBe(0) // only one held → not lit
+    expect([...api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1", "hieroglyph:p10"]))]).toEqual([1]) // both → lit
+  })
+
+  it("re-registering a floor overwrites its summary (content cleared → cleared)", () => {
     const { api } = run(a => a.registerFloorExploration(0, false, []), {
-      floorExploration: { "1:0": { hasReward: true, wardKeys: [] } },
+      floorExploration: { "1:0": { open: true, keySets: [] } },
     })
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
   })

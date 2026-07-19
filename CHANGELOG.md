@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- The "still something here" marker on a completed expedition now actually catches what it should. It reads an unopened chest or puzzle as worth returning for even when you can't see what's inside, spots side branches you never entered, and lights up a ward path or tomb puzzle the moment you're holding the key or hieroglyphs it needs — where before it often stayed dark on pyramids that clearly still had loot.
 
 ## 0.30.0 - 2026-07-19
 ### Added
