@@ -375,6 +375,11 @@ export const createJourneysV3Api = ({
     `${o ?? false}|${(ks ?? []).map(k => k.join(",")).join(";")}`
 
   const registerFloorExploration = (journeyId: string, floorIndex: number, open: boolean, keySets: string[][]) => {
+    // Bail if the journey isn't in `journeys` yet, same as every other mutator here — most
+    // commonly because this instance's storage load hasn't landed yet (`journeys` still `[]`
+    // on mount). Without this check, a `.map` over that placeholder state silently no-ops the
+    // update but still fires setJourneys, overwriting the real persisted data with `[]`.
+    if (!journeys.some(j => j.journeyId === journeyId)) return
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== journeyId) return j

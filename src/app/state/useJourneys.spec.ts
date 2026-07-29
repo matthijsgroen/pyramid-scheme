@@ -359,4 +359,19 @@ describe("floor exploration tracking", () => {
     })
     expect(api.getUnexploredLevels(REAL_ID, NO_KEYS).size).toBe(0)
   })
+
+  it("does not touch storage when the journey isn't loaded yet (guards the progress-wipe race)", () => {
+    // A freshly-mounted useJourneys() instance (e.g. SiteMapScreen entering a site) starts with
+    // `journeys = []` until its own storage read resolves. The interior's floor-leave/unmount
+    // cleanup calls registerFloorExploration regardless — if that write went through against this
+    // placeholder empty state, it would overwrite every other journey's persisted progress with `[]`.
+    let setJourneysCalls = 0
+    const state: StoredJourneyStateV3[] = []
+    const set = () => {
+      setJourneysCalls += 1
+    }
+    const api = createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] })
+    api.registerFloorExploration(REAL_ID, 0, true, [])
+    expect(setJourneysCalls).toBe(0)
+  })
 })
