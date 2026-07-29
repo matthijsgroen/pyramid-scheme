@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.30.6 - 2026-07-29
 ### Fixed
 - Fixed a rare bug where leaving a pyramid or tomb right as it was entered — most likely while backing out of a glitching screen — could wipe every journey's progress back to the start, keeping only your hieroglyphs. Progress is now always saved on top of what's already there, never over it.
 
