@@ -107,6 +107,19 @@ Run-N fragments are designed to be placed *behind* the ward key earned after com
 
 **Current state:** no pyramid site currently has `{ type: "tomb-key" }` ward gates, so `wardKeys = []` for all slots. Pool 0 is always empty; all fragments fall through to pool 1 (open tier-matching). When ward-gated pyramid sections are added, the algorithm routes automatically — no code change needed.
 
+> **As-built note (2026-07-30).** This section (and the pool table above) describes the
+> retired `fragments.ts`/`assignFragments` design, since replaced by the generic
+> reachability-driven worklist (`src/worldGen/placeFragments.ts`) with the hieroglyph
+> currency's own `rank` (`src/mods/hieroglyph/game/hieroglyphCurrency.ts`) — see
+> `keys-and-locks-solver.md`'s "Distribution rules" section for the current mechanism. The
+> pool ladder is now **two rungs, not three**: tier is a hard filter (pool 2's "cross-tier
+> fallback" no longer exists at all — a fragment can never land off-tier, full stop), and
+> within the tier a slot behind one of the hieroglyph's preferred ward keys (pool 0) is
+> preferred over a plain open slot (pool 1), capped to one ward-matched slot per distinct
+> key so one symbol can't monopolize every gate. Ward-gated pyramid sections now do exist
+> (every tier's own tomb has several, authored via `wardChest` in each `src/worldGen/spec/*.ts`
+> file), so this is no longer a dormant, unused pathway.
+
 ---
 
 ## Output

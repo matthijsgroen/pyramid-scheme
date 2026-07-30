@@ -30,6 +30,11 @@ const WING = {
   wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, puzzles: 2 }),
 }
 type Tease = "master" | "wizard"
+// Own-tomb HOLDBACK chests — the counterpart to CHEST/WING above (those point forward, at a
+// later tier's key). These point at expert's own SECONDARY tomb keys, since most expert symbols
+// first needed on a later tableau run turn out to belong to expert_treasure_tomb_b, not the
+// primary. Difficulty auto-derives to expert.
+const holdChest = (index: number) => wardChest({ tomb: "expert_treasure_tomb_b", index, puzzles: 1 })
 // Pyramid counts per expert journey (mirror journeyStructure.ts). Front half → ward chest, back
 // half → ward wing; tease alternates master/wizard.
 const EXPERT_PYRAMIDS: [string, number][] = [
@@ -39,16 +44,25 @@ const EXPERT_PYRAMIDS: [string, number][] = [
   ["expert_4", 5],
 ]
 
-const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n]) => {
+const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n], ji) => {
   const half = Math.ceil(n / 2)
   return Array.from({ length: n }, (_, k) => {
     const tease: Tease = k % 2 === 0 ? "master" : "wizard"
     const isLast = k === n - 1
-    if (k < half) return journey(jid).pyramid(k + 1, { sideSections: [CHEST[tease]()] })
+    // expert_b_1 is the most-contested holdback key (6 expert_b symbols are first needed on the
+    // secondary tomb's very first floor), so the first front-half pyramid of every journey
+    // carries an extra chest behind it.
+    if (k < half)
+      return journey(jid).pyramid(k + 1, {
+        sideSections: [CHEST[tease](), holdChest((ji + k) % 3), ...(k === 0 ? [holdChest(0)] : [])],
+      })
     // Back-half pyramids: a ward wing; the last one of each journey also gets denser open junk
-    // corridors (income the still-short economy needs).
+    // corridors (income the still-short economy needs). The first back-half pyramid of each
+    // journey also carries an extra holdback chest — expert_b_1/b_2 need more supply than the
+    // front-half rotation alone provides.
     return journey(jid).pyramid(k + 1, {
       wardWings: [WING[tease]()],
+      ...(k === half ? { sideSections: [holdChest(ji % 2)] } : {}),
       ...(isLast ? { sidePaths: [{ density: "dense", pathPuzzles: 2, end: "junk" as const }] } : {}),
     })
   })

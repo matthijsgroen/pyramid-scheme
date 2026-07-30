@@ -15,6 +15,12 @@ const WIZARD_CHAIN: SideSectionConstraint = {
   ],
 }
 
+// Own-tomb HOLDBACK chests: gated on wizard's own secondary/tertiary tomb keys, since most
+// wizard symbols first needed on a later tableau run turn out to belong to wizard_treasure_tomb_b
+// or _c, not the primary. Difficulty auto-derives to wizard.
+const holdChestB = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_b", index, puzzles: 1 })
+const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c", index, puzzles: 1 })
+
 export const wizardRules: Rule[] = [
   tier("wizard", { difficulty: "wizard" }),
 
@@ -59,6 +65,23 @@ export const wizardRules: Rule[] = [
   journey("wizard_3").pyramid(4, {
     sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 5, puzzles: 1 })], // junior_a_6
   }),
+
+  // Own-tomb holdback chests, spread across pyramids that don't already carry a chain/teaser.
+  journey("wizard_1").pyramid(1, { sideSections: [holdChestC(0)] }),
+  journey("wizard_1").pyramid(4, { sideSections: [holdChestC(1)] }),
+  journey("wizard_2").pyramid(1, { sideSections: [holdChestC(0)] }),
+  journey("wizard_2").pyramid(3, { sideSections: [holdChestB(0)] }),
+  journey("wizard_2").pyramid(4, { sideSections: [holdChestC(2)] }),
+  journey("wizard_3").pyramid(1, { sideSections: [holdChestC(1)] }),
+  journey("wizard_3").pyramid(3, { sideSections: [holdChestC(0)] }),
+  journey("wizard_4").pyramid(1, { sideSections: [holdChestC(2)] }),
+  journey("wizard_4").pyramid(3, { sideSections: [holdChestC(1)] }),
+  // A few extra wizard_c_1/wizard_b_1 slots — the most-contested keys.
+  journey("wizard_2").pyramid(5, { sideSections: [holdChestC(0), holdChestC(0)] }),
+  journey("wizard_3").pyramid(5, { sideSections: [holdChestC(0), holdChestC(0)] }),
+  journey("wizard_3").pyramid(6, { sideSections: [holdChestB(0), holdChestB(0)] }),
+  journey("wizard_4").pyramid(4, { sideSections: [holdChestC(0), holdChestC(0)] }),
+  journey("wizard_4").pyramid(5, { sideSections: [holdChestB(0), holdChestB(0)] }),
 
   tomb("wizard_treasure_tomb", {
     encounter: "tomb-puzzle",

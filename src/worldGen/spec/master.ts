@@ -1,6 +1,15 @@
-import { tier, journey, tomb } from "../dsl"
+import { tier, journey, tomb, wardChest } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
 import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
+
+// Own-tomb HOLDBACK chests: gated on master's own SECONDARY tomb keys, since most master symbols
+// first needed on a later tableau run turn out to belong to master_treasure_tomb_b, not the
+// primary. Difficulty auto-derives to master.
+const holdChest = (index: number) => wardChest({ tomb: "master_treasure_tomb_b", index, puzzles: 1 })
+// A couple of primary-tomb holdback chests too, for the few master symbols first needed there
+// instead (the tier's own structural tier-unlock gates already provide some master_a_1 supply,
+// but not quite enough).
+const holdChestA = (index: number) => wardChest({ tomb: "master_treasure_tomb", index, puzzles: 1 })
 
 // Master's escalation (between expert's intro of traps/keys and wizard's saturation): DEEPER
 // locks (multi-color floor keys + key chains) and HAZARDOUS returns (wardPathTrapped), plus the
@@ -42,10 +51,31 @@ export const masterRules: Rule[] = [
     hiddenPaths: MASTER_HIDDEN_PATHS,
   }),
 
-  // Key-chain showcase on the mid pyramid of each journey.
-  ...["master_1", "master_2", "master_3", "master_4"].map(jid =>
-    journey(jid).pyramid(3, { sideSections: [KEY_CHAIN] })
+  // Key-chain showcase on the mid pyramid of each journey, plus an extra master_b_2 holdback
+  // chest on three of them (master_b_1's own supply is covered above; b_2 needed a bit more).
+  ...["master_1", "master_2", "master_3", "master_4"].map((jid, i) =>
+    journey(jid).pyramid(3, { sideSections: i < 3 ? [KEY_CHAIN, holdChest(1)] : [KEY_CHAIN] })
   ),
+
+  // Own-tomb holdback chests, spread across the remaining pyramids of each journey. master_b_1
+  // is by far the most-contested key (10 master_b symbols are first needed on the secondary
+  // tomb's very first floor), so it gets the most chests; a couple of master_a_1 chests cover
+  // the handful of symbols first needed on the primary tomb instead.
+  journey("master_1").pyramid(1, { sideSections: [holdChest(0)] }),
+  journey("master_1").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("master_1").pyramid(4, { sideSections: [holdChest(2), holdChestA(0)] }),
+  journey("master_2").pyramid(1, { sideSections: [holdChest(3)] }),
+  journey("master_2").pyramid(2, { sideSections: [holdChest(0)] }),
+  journey("master_2").pyramid(4, { sideSections: [holdChest(1)] }),
+  journey("master_3").pyramid(1, { sideSections: [holdChest(2)] }),
+  journey("master_3").pyramid(2, { sideSections: [holdChest(3)] }),
+  journey("master_3").pyramid(4, { sideSections: [holdChest(0), holdChestA(0)] }),
+  journey("master_4").pyramid(1, { sideSections: [holdChest(1)] }),
+  journey("master_4").pyramid(2, { sideSections: [holdChest(2)] }),
+  journey("master_4").pyramid(4, { sideSections: [holdChest(3)] }),
+  journey("master_2").pyramid(5, { sideSections: [holdChest(0)] }),
+  journey("master_3").pyramid(5, { sideSections: [holdChest(0)] }),
+  journey("master_4").pyramid(5, { sideSections: [holdChest(0)] }),
 
   tomb("master_treasure_tomb", {
     encounter: "tomb-puzzle",

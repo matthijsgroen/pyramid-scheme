@@ -1,4 +1,4 @@
-import { tier, journey, tomb, sidePath, wardWing } from "../dsl"
+import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule } from "../dsl"
 import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
@@ -11,6 +11,11 @@ const WING = {
   master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, puzzles: 2 }), // expert_a_1
   wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, puzzles: 2 }), // master_a_1
 }
+
+// Own-tomb HOLDBACK chests — the counterpart to starter.ts's holdChest: gated on
+// junior_treasure_tomb's own floor keys, so a junior hieroglyph needed on the tomb's 2nd+
+// tableau run can't complete purely from the open pyramids. Difficulty auto-derives to junior.
+const holdChest = (index: number) => wardChest({ tomb: "junior_treasure_tomb", index, puzzles: 1 })
 
 export const juniorRules: Rule[] = [
   tier("junior", { difficulty: "junior" }),
@@ -34,12 +39,24 @@ export const juniorRules: Rule[] = [
 
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
   journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),
-  journey("junior_2").pyramid(3, { wardWings: [WING.master()] }),
+  journey("junior_2").pyramid(3, { wardWings: [WING.master()], sideSections: [holdChest(0)] }),
   journey("junior_2").pyramid(4, { wardWings: [WING.wizard()] }),
-  journey("junior_3").pyramid(3, { wardWings: [WING.expert()] }),
+  journey("junior_3").pyramid(3, { wardWings: [WING.expert()], sideSections: [holdChest(0)] }),
   journey("junior_3").pyramid(4, { wardWings: [WING.master()] }),
   journey("junior_4").pyramid(4, { wardWings: [WING.wizard()] }),
   journey("junior_4").pyramid(5, { wardWings: [WING.expert()] }),
+
+  // Own-tomb holdback chests, spread across the front-half pyramids (the back half already
+  // carries a ward wing above).
+  journey("junior_1").pyramid(1, { sideSections: [holdChest(0)] }),
+  journey("junior_1").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
+  journey("junior_2").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
+  journey("junior_3").pyramid(2, { sideSections: [holdChest(2)] }),
+  journey("junior_4").pyramid(1, { sideSections: [holdChest(0)] }),
+  journey("junior_4").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("junior_4").pyramid(3, { sideSections: [holdChest(2)] }),
 
   tomb("junior_treasure_tomb", {
     encounter: "tomb-puzzle",
