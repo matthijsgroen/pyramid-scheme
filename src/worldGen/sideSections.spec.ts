@@ -107,6 +107,26 @@ describe("buildSideSections", () => {
     expect(sections).toEqual([])
   })
 
+  it("each journey of a tier gets its own distinct ward-gate key, in journey-ordinal order", () => {
+    // junior's 4 journeys must each pair with a different one of starter_treasure_tomb's 4
+    // keys — this is the actual fix for the flat-toggle bug: without it, every journey below
+    // would resolve to the same shared key.
+    const wardKeyIdFor = (journeyId: string) =>
+      buildSideSections({
+        tier: "junior",
+        difficulty: "junior",
+        resolveReward: noReward,
+        journeyId,
+        hasWardGate: true,
+        nextTier: "expert",
+      })[0].gate
+
+    expect(wardKeyIdFor("junior_1")).toEqual({ type: "tomb-key", wardKeyId: "starter_a_1" })
+    expect(wardKeyIdFor("junior_2")).toEqual({ type: "tomb-key", wardKeyId: "starter_a_2" })
+    expect(wardKeyIdFor("junior_3")).toEqual({ type: "tomb-key", wardKeyId: "starter_a_3" })
+    expect(wardKeyIdFor("junior_4")).toEqual({ type: "tomb-key", wardKeyId: "starter_a_4" })
+  })
+
   it("resolves DSL-authored constraintSections via resolveReward", () => {
     const sections = buildSideSections({
       tier: "starter",

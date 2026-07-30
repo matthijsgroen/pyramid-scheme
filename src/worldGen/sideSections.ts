@@ -1,11 +1,25 @@
 import type { Difficulty, SideSection, TreasureReward } from "./types"
 import { mulberry32 } from "../game/random"
-import { TIER_UNLOCK_PERK_ID } from "../data/treasurePerks"
+import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
 import { resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
+
+// Journey ids are always "<tier>_<n>" (1-based, src/data/journeyStructure.ts) — this picks out
+// the n, used to index this journey's own paired key out of its tier's TIER_UNLOCK_PERK_IDS.
+const journeyOrdinal = (journeyId: string): number => {
+  const match = /_(\d+)$/.exec(journeyId)
+  return match ? parseInt(match[1], 10) : 1
+}
+
+// Every journey of a tier gets its OWN one of that tier's unlock keys (junior_1 <-> keys[0],
+// junior_2 <-> keys[1], ...) rather than every ward gate across the whole tier sharing a single
+// key — so finding more of a tier's keys progressively opens more journeys' worth of ward-gated
+// content, instead of one key instantly unlocking every ward gate of its kind at once.
+const wardGateKeyForJourney = (tier: string, journeyId: string): string | undefined =>
+  TIER_UNLOCK_PERK_IDS[tier]?.[journeyOrdinal(journeyId) - 1]
 
 // Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
 export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {
@@ -125,7 +139,7 @@ export const buildSideSections = <TExtra extends string = never>(
   }
 
   if (hasWardGate && nextTier) {
-    const wardKeyId = TIER_UNLOCK_PERK_ID[tier]
+    const wardKeyId = wardGateKeyForJourney(tier, journeyId)
     if (wardKeyId) {
       sections.push({ pathPuzzles: 0, difficulty, end: "treasure", gate: { type: "tomb-key", wardKeyId } })
     }

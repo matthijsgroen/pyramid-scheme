@@ -142,9 +142,14 @@ opens.
 ## The progression ladder
 
 Difficulty is linear: each tier is 4 pyramid journeys + 1 tomb. Collecting
-a tomb's first treasure unlocks the next tier (another 4 journeys + a
+ANY ONE of a tomb's 4 designated tier-unlock treasures (`TIER_UNLOCK_PERK_IDS`,
+`src/data/treasurePerks.ts`) unlocks the next tier (another 4 journeys + a
 tomb), and so on to Wizard. The solver's top-level goal graph is exactly
-this ladder — reaching Wizard.
+this ladder — reaching Wizard. Each of those 4 treasures is *also* paired to
+one specific journey of the next tier (journey N's own ward gates open on
+tier-unlock key N) — so tier entry itself only ever needs one key, but
+fully exploring the tier's ward-gated bonus content across all 4 journeys
+means finding all of them, which is the actual progression this rewards.
 
 **The ladder is linear; reachability is not.** The solver must compute
 reachability across the **whole world at once**, not tier by tier. `WARD_MIX`
