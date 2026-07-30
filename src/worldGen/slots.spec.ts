@@ -73,4 +73,30 @@ describe(collectSlots, () => {
     const slots = collectSlots({ "not-a-real-journey": [siteWithFragmentSlot()] })
     expect(slots).toHaveLength(0)
   })
+
+  it("never surfaces an open tomb-key gate whose end is a stairhead, not a treasure", () => {
+    // buildSite.ts's wireSideSectionStaircases: a section whose `end` is a stairhead is a pure
+    // floor-to-floor connector ("the treasure IS the key", pyramid-interior-design.md §8) — and
+    // siteAssembler.ts's own room-building never attaches a reward to that stairhead cell. If a
+    // currency filled this slot anyway, the reward would be silently unreachable in play.
+    const siteWithStairheadGate: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: { stairId: "j:0:floor0:side0" },
+            gate: { type: "tomb-key", wardKeyId: "some-key" },
+          },
+        ],
+      },
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure", exitOrStaircase: "exit", sideSections: [] },
+    ]
+    const slots = collectSlots({ starter_1: [siteWithStairheadGate] })
+    expect(slots).toHaveLength(0)
+  })
 })
