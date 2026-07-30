@@ -34,7 +34,10 @@ export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph"
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
 export type GateSpec =
-  GateType | null | { type: "tomb-key"; tombId: string; index: number } | { type: "floor-key"; color?: KeyColor }
+  | GateType
+  | null
+  | { type: "tomb-key"; tombId: string; index: number }
+  | { type: "floor-key"; color?: KeyColor }
 
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
