@@ -61,21 +61,24 @@ export const masterRules: Rule[] = [
   // is by far the most-contested key (10 master_b symbols are first needed on the secondary
   // tomb's very first floor), so it gets the most chests; a couple of master_a_1 chests cover
   // the handful of symbols first needed on the primary tomb instead.
-  journey("master_1").pyramid(1, { sideSections: [holdChest(0)] }),
+  //
+  // Deliberately never on a journey's LAST pyramid: constraintResolver.ts resolves same-key
+  // constraints (like sideSections) by specificity, journey-pyramid (8) over tier-pyramid (6),
+  // overwriting wholesale rather than merging — and `tier("master").pyramid("last", ...)` below
+  // already owns that pyramid's sideSections (the secondary-tomb map-piece unlock gate). An
+  // earlier revision put chests there directly and silently deleted that gate for all 4 master
+  // journeys; every entry here now targets a pyramid the tier rule doesn't touch.
+  journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0)] }),
   journey("master_1").pyramid(2, { sideSections: [holdChest(1)] }),
-  journey("master_1").pyramid(4, { sideSections: [holdChest(2), holdChestA(0)] }),
-  journey("master_2").pyramid(1, { sideSections: [holdChest(3)] }),
+  journey("master_2").pyramid(1, { sideSections: [holdChest(3), holdChest(0)] }),
   journey("master_2").pyramid(2, { sideSections: [holdChest(0)] }),
   journey("master_2").pyramid(4, { sideSections: [holdChest(1)] }),
-  journey("master_3").pyramid(1, { sideSections: [holdChest(2)] }),
+  journey("master_3").pyramid(1, { sideSections: [holdChest(2), holdChest(0)] }),
   journey("master_3").pyramid(2, { sideSections: [holdChest(3)] }),
   journey("master_3").pyramid(4, { sideSections: [holdChest(0), holdChestA(0)] }),
-  journey("master_4").pyramid(1, { sideSections: [holdChest(1)] }),
+  journey("master_4").pyramid(1, { sideSections: [holdChest(1), holdChest(0)] }),
   journey("master_4").pyramid(2, { sideSections: [holdChest(2)] }),
   journey("master_4").pyramid(4, { sideSections: [holdChest(3)] }),
-  journey("master_2").pyramid(5, { sideSections: [holdChest(0)] }),
-  journey("master_3").pyramid(5, { sideSections: [holdChest(0)] }),
-  journey("master_4").pyramid(5, { sideSections: [holdChest(0)] }),
 
   tomb("master_treasure_tomb", {
     encounter: "tomb-puzzle",

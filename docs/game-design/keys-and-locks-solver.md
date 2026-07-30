@@ -337,32 +337,30 @@ pipe(filterBy(slot => slot.difficulty === ctx.targetDifficulty), rankBy(lootPrio
 A future currency composes the same handful of primitives instead of
 writing placement logic from scratch.
 
-> **As-built note (2026-07-30).** The hieroglyph-fragment tier filter above was
-> documented but not actually wired up until now — `HIEROGLYPH_CURRENCY.rank`
-> (`src/mods/hieroglyph/game/hieroglyphCurrency.ts`) only scored a tier match as
-> a +1 preference, so a fragment could still leak into an off-tier slot under
-> pressure (and occasionally did — two master-tier symbols were found leaking
-> into starter's reachable pool). `filterBy(s => s.tier === demand.tier)` is now
-> the genuine first stage, ahead of any ranking, closing that gap for good.
->
-> A third dedup rung was added alongside it: the strict pass also caps a
-> hieroglyph to **at most one ward-matched slot per distinct matched key**
-> (`uniqueBy(s => matchedKey ? `__ward__:${matchedKey}` : `${journeyId}#${levelIndex}`)`)
-> — without this, a single hungry symbol would claim every gated slot behind a
-> tomb's own key, leaving nothing for the other symbols that also prefer it. The
-> cap means a symbol needed deep in its tomb's tableau chain (several preferred
-> keys, one per earlier floor) holds back one fragment per floor instead of
-> piling them all behind the first, and no two of its own gated copies ever
-> require the identical key.
->
-> A per-symbol `endReward: "hieroglyph:<id>"` preference tag was considered as
-> an alternative (reserve a specific chest for a specific symbol) and rejected:
-> it's still only a soft +1 score (stealable by whichever demand processes
-> first, not an exclusive claim — see "A slot's authored placement preference
-> is a soft tag" below), and it would silently rot whenever the tableau story
-> generator (`orderByGradualReveal`, `src/data/tableaus.ts`) reshuffles which
-> symbol is first needed at which run. The ward-slot cap achieves the same
-> outcome without hardcoding a symbol id into the spec.
+The hieroglyph-fragment tier filter is a genuine hard filter
+(`filterBy(s => s.tier === demand.tier)`, `HIEROGLYPH_CURRENCY.rank` in
+`src/mods/hieroglyph/game/hieroglyphCurrency.ts`) — a fragment may never land
+in a slot whose own authored difficulty differs from its tier, regardless of
+ranking pressure. Beyond the tier filter, the rank composes two further soft
+rungs: a ward-key/preference score, then a dedup that caps a hieroglyph to
+**at most one ward-matched slot per distinct matched key**
+(`uniqueBy(s => matchedKey ? `__ward__:${matchedKey}` : `${journeyId}#${levelIndex}`)`,
+falling back to per-pyramid dedup for non-ward slots) — without this cap a
+single hungry symbol would claim every gated slot behind a tomb's own key,
+leaving nothing for the other symbols that also prefer it. The cap means a
+symbol needed deep in its tomb's tableau chain (several preferred keys, one
+per earlier floor) holds back one fragment per floor instead of piling them
+all behind the first, and no two of its own gated copies ever require the
+identical key.
+
+A per-symbol `endReward: "hieroglyph:<id>"` preference tag is deliberately
+not used to reserve a slot for a specific symbol: it would still be only a
+soft +1 score (stealable by whichever demand processes first, not an
+exclusive claim — see "A slot's authored placement preference is a soft tag"
+below), and it would rot whenever the tableau story generator
+(`orderByGradualReveal`, `src/data/tableaus.ts`) reshuffles which symbol is
+first needed at which run. The ward-slot cap achieves the same outcome
+without hardcoding a symbol id into the spec.
 
 ### Map piece placement — a two-level diversity ladder, not a single dedup
 
