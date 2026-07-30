@@ -184,6 +184,14 @@ export const collectSlots = (
         for (const section of floor.sideSections) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           const secHidden = !!section.hidden
+          // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
+          // floor-to-floor connector, never a loot node — buildSite.ts's `wireSideSectionStaircases`
+          // ("the treasure IS the key", pyramid-interior-design.md §8) and siteAssembler.ts's own
+          // room-building (the stairhead branch never reads `endReward`) agree: only an
+          // `end: "treasure"` section can actually display/grant a reward at runtime. An open
+          // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable
+          // slot — the reward would be silently dropped, capping that currency one instance short.
+          const rewardCapable = section.end === "treasure"
           if (section.endReward?.type === "fragmentSlot") {
             const s = section
             addSlot(
@@ -197,7 +205,7 @@ export const collectSlots = (
                 s.endReward = r
               }
             )
-          } else if (section.gate?.type === "tomb-key" && !section.endReward) {
+          } else if (section.gate?.type === "tomb-key" && !section.endReward && rewardCapable) {
             const s = section
             addSlot(ref, section.difficulty, sWardKeys, false, undefined, secHidden, r => {
               s.endReward = r
@@ -206,6 +214,7 @@ export const collectSlots = (
           for (const sub of section.sideSections ?? []) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
+            const subRewardCapable = sub.end === "treasure"
             if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
               addSlot(
@@ -219,7 +228,7 @@ export const collectSlots = (
                   ss.endReward = r
                 }
               )
-            } else if (sub.gate?.type === "tomb-key" && !sub.endReward) {
+            } else if (sub.gate?.type === "tomb-key" && !sub.endReward && subRewardCapable) {
               const ss = sub
               addSlot(ref, sub.difficulty, subWardKeys, false, undefined, subHidden, r => {
                 ss.endReward = r
