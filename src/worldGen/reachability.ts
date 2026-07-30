@@ -15,13 +15,14 @@ import { hashString } from "../support/hashString"
 //   - bucketForReward:  which bucket a harvestable reward feeds (a mod maps its own reward type).
 //   - journeyEntryLock: the (bucket, threshold) that gates ENTERING a journey — e.g. a tomb needs
 //                       N of the map-piece currency. undefined = no currency lock (pyramids).
-//   - tierUnlockBucket: the bucket whose possession unlocks a difficulty tier globally (the
-//                       ladder). undefined = that tier has no lock (e.g. the first tier).
+//   - tierUnlockBucket: the buckets whose possession unlocks a difficulty tier globally (the
+//                       ladder) — holding ANY ONE of them is enough. undefined/empty = that tier
+//                       has no lock (e.g. the first tier).
 export type ReachabilitySupport = {
   thresholdFor?: (bucket: string) => number | undefined
   bucketForReward?: (reward: TreasureReward) => string | undefined
   journeyEntryLock?: (journeyId: string) => { bucket: string; threshold: number } | undefined
-  tierUnlockBucket?: (tier: Tier) => string | undefined
+  tierUnlockBucket?: (tier: Tier) => string[] | undefined
 }
 const noSupport: ReachabilitySupport = {}
 
@@ -182,12 +183,14 @@ export const reachableFloorsInSite = (
   return { floors: reachable, harvestedCounts, discoveredLocks }
 }
 
-// Global scope: a tier is unlocked when it has no unlock lock (e.g. the first tier), or when the
-// mod-supplied unlock bucket for it is held. Core names no specific tier-unlock key — the ladder
-// is `support.tierUnlockBucket`'s data (see ReachabilitySupport).
+// Global scope: a tier is unlocked when it has no unlock locks (e.g. the first tier), or when ANY
+// ONE of the mod-supplied unlock buckets for it is held — so a player who finds just one of a
+// tier's several unlock treasures already has full entry, same as when there was only ever one.
+// Core names no specific tier-unlock key — the ladder is `support.tierUnlockBucket`'s data (see
+// ReachabilitySupport).
 export const isTierUnlocked = (tier: Tier, ownedFacts: ReadonlySet<string>, support: ReachabilitySupport): boolean => {
-  const bucket = support.tierUnlockBucket?.(tier)
-  return bucket == null || ownedFacts.has(bucket)
+  const buckets = support.tierUnlockBucket?.(tier)
+  return !buckets?.length || buckets.some(b => ownedFacts.has(b))
 }
 
 // A journey carries only its tier; whether entering it needs a currency threshold (a tomb's map

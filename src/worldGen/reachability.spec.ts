@@ -14,11 +14,11 @@ const mapPieceBucket = (tombId: string): string => `mapPiece:${tombId}`
 
 // Stand-in for the tomb-treasure mod's ReachabilitySupport: harvest map pieces / tomb keys /
 // hieroglyph fragments to their buckets, gate tombs on a map-piece threshold, and the tier ladder.
-const TIER_UNLOCK: Record<string, string> = {
-  junior: "starter_a_1",
-  expert: "junior_a_1",
-  master: "expert_a_1",
-  wizard: "master_a_1",
+const TIER_UNLOCK: Record<string, string[]> = {
+  junior: ["starter_a_1", "starter_a_2", "starter_a_3", "starter_a_4"],
+  expert: ["junior_a_1", "junior_a_2", "junior_a_3", "junior_a_4"],
+  master: ["expert_a_1", "expert_a_2", "expert_a_3", "expert_a_4"],
+  wizard: ["master_a_1", "master_a_2", "master_a_3", "master_a_4"],
 }
 const testSupport = (entryThresholds: Record<string, number> = {}): ReachabilitySupport => ({
   bucketForReward: r =>
@@ -281,13 +281,28 @@ describe(reachableFloorsInSite, () => {
 })
 
 describe(isTierUnlocked, () => {
-  it("a tier with no unlock bucket (starter) is always unlocked", () => {
+  it("a tier with no unlock buckets (starter) is always unlocked", () => {
     expect(isTierUnlocked("starter", new Set(), testSupport())).toBe(true)
   })
 
-  it("junior needs its mod-supplied tier-unlock key (starter_a_1)", () => {
+  it("junior needs at least one of its mod-supplied tier-unlock keys", () => {
     expect(isTierUnlocked("junior", new Set(), testSupport())).toBe(false)
     expect(isTierUnlocked("junior", new Set(["starter_a_1"]), testSupport())).toBe(true)
+  })
+
+  it("is unlocked by ANY single one of the tier's several keys, not just the first", () => {
+    // A player who happened to find starter_a_3 (not starter_a_1) still gets full junior entry —
+    // the whole point of spreading a tier's unlock across several keys is that finding any one of
+    // them is enough; it must never require collecting all of them, or Wizard could get blocked.
+    expect(isTierUnlocked("junior", new Set(["starter_a_3"]), testSupport())).toBe(true)
+  })
+
+  it("holding a later key without the first still unlocks (proves genuine any-of, not an ordering dependency)", () => {
+    expect(isTierUnlocked("junior", new Set(["starter_a_4"]), testSupport())).toBe(true)
+  })
+
+  it("holding none of the tier's keys stays locked even if unrelated other buckets are held", () => {
+    expect(isTierUnlocked("junior", new Set(["junior_a_1", "some_other_bucket"]), testSupport())).toBe(false)
   })
 })
 

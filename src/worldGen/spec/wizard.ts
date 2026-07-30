@@ -1,4 +1,4 @@
-import { tier, tomb, journey } from "../dsl"
+import { tier, tomb, journey, wardChest } from "../dsl"
 import type { Rule, SideSectionConstraint } from "../dsl"
 import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
@@ -45,6 +45,20 @@ export const wizardRules: Rule[] = [
   ...["wizard_1", "wizard_2", "wizard_3", "wizard_4"].map(jid =>
     journey(jid).pyramid(2, { sideSections: [WIZARD_CHAIN] })
   ),
+
+  // "Vice versa" teasers: bonus loot pockets in wizard pyramids gated by early-junior-tier
+  // treasures (junior_a_5/junior_a_6, both otherwise-spare "max-health" floors) — the mirror of
+  // the many existing early-pyramid-gated-by-late-key teasers (see starter.ts's TEASE/wardPath
+  // calls). A player who cleared junior_treasure_tomb long ago already holds the key; this just
+  // gives that old treasure one more thing to be worth, deep in the game. Difficulty is left unset
+  // so the puzzle behind the gate auto-derives to match the key's own (junior) tier exactly,
+  // rather than the wizard-tier pyramid it happens to sit in — see dsl.ts's wardKeyTier.
+  journey("wizard_1").pyramid(3, {
+    sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 4, puzzles: 1 })], // junior_a_5
+  }),
+  journey("wizard_3").pyramid(4, {
+    sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 5, puzzles: 1 })], // junior_a_6
+  }),
 
   tomb("wizard_treasure_tomb", {
     encounter: "tomb-puzzle",

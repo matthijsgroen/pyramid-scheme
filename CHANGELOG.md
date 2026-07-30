@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Ward gates that unlock a new difficulty tier no longer all open at once off a single key. Each tier now has 4 tier-unlock treasures instead of 1, mixed and matched across that tier's journeys, so finding more of them opens more ward-gated bonus content instead of one key instantly unlocking everything. A few of these treasures now also gate a bonus pocket much later in the game, so a key you found long ago may still have something new to open.
+
 ### Fixed
 - Fixed a small number of hieroglyph fragments being placed behind a tomb's own gated staircase to its next floor, where they could never actually be picked up — permanently locking the tableau rooms that needed them. Those fragments now always appear somewhere they can be collected.
 

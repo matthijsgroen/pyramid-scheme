@@ -19,13 +19,15 @@ const FLOOR_KEY_PATH: PathEntry = { density: "low", pathPuzzles: 1, end: "fragme
 // back half), varied to tease the two harder tiers (master/wizard), plus the first VISIBLE
 // (open) trapped pathways — earlier tiers only trap hidden paths. Consumables to survive the
 // open traps come from the extra open puzzle rooms (a trapped chain drops none itself).
+// Difficulty is left unset on all four so it auto-derives to match each key's own tier exactly
+// (see dsl.ts's wardKeyTier).
 const CHEST = {
-  master: () => wardChest({ tomb: "expert_treasure_tomb", index: 0, tier: "master", puzzles: 2 }), // expert_a_1
-  wizard: () => wardChest({ tomb: "master_treasure_tomb", index: 0, tier: "wizard", puzzles: 2 }), // master_a_1
+  master: () => wardChest({ tomb: "expert_treasure_tomb", index: 0, puzzles: 2 }), // expert_a_1
+  wizard: () => wardChest({ tomb: "master_treasure_tomb", index: 0, puzzles: 2 }), // master_a_1
 }
 const WING = {
-  master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, tier: "master", puzzles: 2 }),
-  wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, tier: "wizard", puzzles: 2 }),
+  master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, puzzles: 2 }),
+  wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, puzzles: 2 }),
 }
 type Tease = "master" | "wizard"
 // Pyramid counts per expert journey (mirror journeyStructure.ts). Front half → ward chest, back

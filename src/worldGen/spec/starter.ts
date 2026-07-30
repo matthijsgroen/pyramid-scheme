@@ -3,13 +3,14 @@ import type { Rule } from "../dsl"
 
 // Ward-chest teasers: every starter pyramid gets one ward-gated loot chest keyed to a LATER
 // tier's unlock treasure — visible early, openable only once you've progressed that far. Keeps
-// starter small while giving a reason to come back. `tomb`/`index` name that tier-unlock key;
-// `tier` sets the teaser puzzle's difficulty.
+// starter small while giving a reason to come back. `tomb`/`index` name that tier-unlock key; the
+// teaser puzzle's difficulty is left unset so it auto-derives to match that key's own tier exactly
+// (wardChest/wardPath/wardWing's default — see dsl.ts's wardKeyTier).
 const TEASE = {
-  junior: { tier: "junior", tomb: "starter_treasure_tomb", index: 0 }, // starter_a_1
-  expert: { tier: "expert", tomb: "junior_treasure_tomb", index: 0 }, // junior_a_1
-  master: { tier: "master", tomb: "expert_treasure_tomb", index: 0 }, // expert_a_1
-  wizard: { tier: "wizard", tomb: "master_treasure_tomb", index: 0 }, // master_a_1
+  junior: { tomb: "starter_treasure_tomb", index: 0 }, // starter_a_1
+  expert: { tomb: "junior_treasure_tomb", index: 0 }, // junior_a_1
+  master: { tomb: "expert_treasure_tomb", index: 0 }, // expert_a_1
+  wizard: { tomb: "master_treasure_tomb", index: 0 }, // master_a_1
 } as const
 type TeaseName = keyof typeof TEASE
 const teaseChest = (t: TeaseName) => wardChest({ ...TEASE[t], puzzles: t === "master" || t === "wizard" ? 2 : 1 })
@@ -50,7 +51,7 @@ export const starterRules: Rule[] = [
       mainEndReward: "mapPiece",
       sideSections: [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
-        wardPath({ puzzles: 1, tier: "junior", tomb: "starter_treasure_tomb", index: 0 }),
+        wardPath({ puzzles: 1, tomb: "starter_treasure_tomb", index: 0 }),
         sidePath(),
         hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" }),
         teaseChest("expert"),
@@ -80,7 +81,7 @@ export const starterRules: Rule[] = [
     .floor(0, {
       mainEndReward: "mapPiece",
       sideSections: [
-        wardPath({ puzzles: 1, tier: "expert", tomb: "junior_treasure_tomb", index: 1 }),
+        wardPath({ puzzles: 1, tomb: "junior_treasure_tomb", index: 1 }),
         sidePath(),
         teaseChest("wizard"),
         // Reachable mosaic (see starter_1 floor 0) — surplus slot the capped pass fills.
@@ -98,7 +99,7 @@ export const starterRules: Rule[] = [
     .pyramid(2)
     .floor(0, {
       sideSections: [
-        wardPath({ puzzles: 1, tier: "master", tomb: "expert_treasure_tomb", index: 2 }),
+        wardPath({ puzzles: 1, tomb: "expert_treasure_tomb", index: 2 }),
         sidePath(),
         teaseChest("junior"),
       ],
