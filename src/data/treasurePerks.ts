@@ -17,7 +17,7 @@ export const TOMB_PERK_IDS: Record<string, string[]> = {
 }
 
 // Ward key IDs: the treasures that unlock gated pyramid sections for the next tier — one per
-// journey of that tier (junior_1's ward gates open on keys[0], junior_2's on keys[1], etc.), all
+// journey of that tier, seeded-randomly paired (see sideSections.ts's wardGateKeyForJourney), all
 // drawn from the previous tier's own tomb. Holding ANY one of a tier's keys unlocks entry to the
 // whole tier (see isTierUnlocked); each specific key additionally opens its own paired journey's
 // ward-gated bonus content, so finding more of them progressively unlocks more exploration instead

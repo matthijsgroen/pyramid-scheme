@@ -1,5 +1,7 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind } from "../game/siteTypes"
+import { TOMB_PERK_IDS } from "../data/treasurePerks"
+import { wardKeyDifficulty } from "../data/difficultyLevels"
 
 export type { PathPuzzlesRange } from "./types"
 
@@ -32,10 +34,7 @@ export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph"
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
 export type GateSpec =
-  | GateType
-  | null
-  | { type: "tomb-key"; tombId: string; index: number }
-  | { type: "floor-key"; color?: KeyColor }
+  GateType | null | { type: "tomb-key"; tombId: string; index: number } | { type: "floor-key"; color?: KeyColor }
 
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
@@ -415,13 +414,21 @@ export const sidePath = (opts: PathOpts = {}): SideSectionConstraint => {
   return { ...rest, pathPuzzles: puzzles ?? 0, ...(tier ? { difficulty: tier } : {}) }
 }
 
+// A ward gate's content difficulty defaults to matching the gate's OWN key exactly (the
+// player's read of "how hard is this lock" and "how hard is what's behind it" should agree) —
+// derived from the same tomb/index the gate itself resolves its key from, so an author never has
+// to separately compute or keep it in sync by hand. An explicit `tier` still overrides this.
+const wardKeyTier = (tombId: string, index: number): Difficulty | undefined =>
+  wardKeyDifficulty(TOMB_PERK_IDS[tombId]?.[index])
+
 /** A side path gated by a ward key (tomb treasure), ending in a stairhead to the next floor. */
 export const wardPath = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
   const { puzzles, tier, tomb: tombId, index, ...rest } = opts
+  const resolvedTier = tier ?? wardKeyTier(tombId, index)
   return {
     ...rest,
     pathPuzzles: puzzles ?? 0,
-    ...(tier ? { difficulty: tier } : {}),
+    ...(resolvedTier ? { difficulty: resolvedTier } : {}),
     gate: { type: "tomb-key", tombId, index },
     end: "staircase",
   }
@@ -429,12 +436,15 @@ export const wardPath = (opts: PathOpts & { tomb: string; index: number }): Side
 
 /** Authors one ward wing — a gated bonus floor at a chosen difficulty, keyed to a chosen tomb
  * treasure. Pass an array of these as `wardWings` for varied "come back stronger" wings. */
-export const wardWing = (opts: { tomb: string; index: number; tier?: Difficulty; puzzles?: number }): WardWingSpec => ({
-  tomb: opts.tomb,
-  index: opts.index,
-  ...(opts.tier ? { difficulty: opts.tier } : {}),
-  ...(opts.puzzles !== undefined ? { puzzles: opts.puzzles } : {}),
-})
+export const wardWing = (opts: { tomb: string; index: number; tier?: Difficulty; puzzles?: number }): WardWingSpec => {
+  const resolvedTier = opts.tier ?? wardKeyTier(opts.tomb, opts.index)
+  return {
+    tomb: opts.tomb,
+    index: opts.index,
+    ...(resolvedTier ? { difficulty: resolvedTier } : {}),
+    ...(opts.puzzles !== undefined ? { puzzles: opts.puzzles } : {}),
+  }
+}
 
 /** A side path gated by a ward key (tomb treasure) ending in a loot chest — a "come back
  * later" teaser. No endReward: the gated treasure becomes a fillable slot the loot solver
@@ -442,10 +452,11 @@ export const wardWing = (opts: { tomb: string; index: number; tier?: Difficulty;
  * route) and wardWings (a whole new floor). */
 export const wardChest = (opts: PathOpts & { tomb: string; index: number }): SideSectionConstraint => {
   const { puzzles, tier, tomb: tombId, index, ...rest } = opts
+  const resolvedTier = tier ?? wardKeyTier(tombId, index)
   return {
     ...rest,
     pathPuzzles: puzzles ?? 0,
-    ...(tier ? { difficulty: tier } : {}),
+    ...(resolvedTier ? { difficulty: resolvedTier } : {}),
     gate: { type: "tomb-key", tombId, index },
     end: "treasure",
   }

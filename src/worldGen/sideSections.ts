@@ -7,19 +7,17 @@ import { resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
-// Journey ids are always "<tier>_<n>" (1-based, src/data/journeyStructure.ts) — this picks out
-// the n, used to index this journey's own paired key out of its tier's TIER_UNLOCK_PERK_IDS.
-const journeyOrdinal = (journeyId: string): number => {
-  const match = /_(\d+)$/.exec(journeyId)
-  return match ? parseInt(match[1], 10) : 1
+// Every journey of a tier gets its OWN one of that tier's unlock keys, seeded-randomly picked per
+// journey, rather than every ward gate across the whole tier sharing a single key — so finding
+// more of a tier's keys progressively opens more journeys' worth of ward-gated content, instead of
+// one key instantly unlocking every ward gate of its kind at once. Which specific key pairs with
+// which journey doesn't matter mechanically — isTierUnlocked treats a tier's keys as any-of-N.
+const wardGateKeyForJourney = (tier: string, journeyId: string): string | undefined => {
+  const keys = TIER_UNLOCK_PERK_IDS[tier]
+  if (!keys?.length) return undefined
+  const rand = mulberry32(hashStr(`${journeyId}:wardGateKey`))
+  return keys[Math.floor(rand() * keys.length)]
 }
-
-// Every journey of a tier gets its OWN one of that tier's unlock keys (junior_1 <-> keys[0],
-// junior_2 <-> keys[1], ...) rather than every ward gate across the whole tier sharing a single
-// key — so finding more of a tier's keys progressively opens more journeys' worth of ward-gated
-// content, instead of one key instantly unlocking every ward gate of its kind at once.
-const wardGateKeyForJourney = (tier: string, journeyId: string): string | undefined =>
-  TIER_UNLOCK_PERK_IDS[tier]?.[journeyOrdinal(journeyId) - 1]
 
 // Returns the seeded path count for a density level (medium=2-3, dense=4-5, others fixed)
 export const pathCountForDensity = (density: SideIntensity, journeyId: string, pyramidIndex: number): number => {

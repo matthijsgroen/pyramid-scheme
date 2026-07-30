@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { global, tier, journey, resolveNodeSelectors } from "./dsl"
+import { global, tier, journey, resolveNodeSelectors, wardPath, wardChest, wardWing } from "./dsl"
 
 // ── Node selectors → per-index encounter overrides (§G) ───────────────────────
 
@@ -253,5 +253,33 @@ describe("PathEntry encounter field", () => {
     expect(r.constraints.sidePaths).toHaveLength(2)
     expect(r.constraints.sidePaths![0].encounter).toBeUndefined()
     expect(r.constraints.sidePaths![1].encounter).toBe("trap")
+  })
+})
+
+// ── ward gate difficulty auto-derive (Δ=0 to the resolved key's own tier) ─────
+
+describe("wardPath / wardChest / wardWing difficulty auto-derive", () => {
+  it("wardPath derives difficulty from the resolved key's own tier when tier is omitted", () => {
+    // index 0 of junior_treasure_tomb is "junior_a_1" — a junior-prefixed key.
+    const cs = wardPath({ tomb: "junior_treasure_tomb", index: 0 })
+    expect(cs.difficulty).toBe("junior")
+  })
+
+  it("wardChest derives difficulty from the resolved key's own tier when tier is omitted", () => {
+    // index 0 of expert_treasure_tomb is "expert_a_1" — an expert-prefixed key.
+    const cs = wardChest({ tomb: "expert_treasure_tomb", index: 0 })
+    expect(cs.difficulty).toBe("expert")
+  })
+
+  it("wardWing derives difficulty from the resolved key's own tier when tier is omitted", () => {
+    // index 0 of master_treasure_tomb is "master_a_1" — a master-prefixed key.
+    const spec = wardWing({ tomb: "master_treasure_tomb", index: 0 })
+    expect(spec.difficulty).toBe("master")
+  })
+
+  it("an explicitly passed tier overrides the auto-derived one", () => {
+    expect(wardPath({ tomb: "junior_treasure_tomb", index: 0, tier: "wizard" }).difficulty).toBe("wizard")
+    expect(wardChest({ tomb: "junior_treasure_tomb", index: 0, tier: "wizard" }).difficulty).toBe("wizard")
+    expect(wardWing({ tomb: "junior_treasure_tomb", index: 0, tier: "wizard" }).difficulty).toBe("wizard")
   })
 })

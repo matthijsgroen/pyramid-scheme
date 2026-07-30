@@ -3,12 +3,13 @@ import type { Rule } from "../dsl"
 import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
-// journey (where the auto tier-unlock gate already sits). Each is a bonus floor at a HARDER
-// tier's difficulty, gated by that tier's unlock treasure — so you return once you've unlocked it.
+// journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
+// tier's unlock treasure — so you return once you've unlocked it. Difficulty is left unset so it
+// auto-derives to match that key's own tier exactly (see dsl.ts's wardKeyTier).
 const WING = {
-  expert: () => wardWing({ tomb: "junior_treasure_tomb", index: 0, tier: "expert", puzzles: 1 }), // junior_a_1
-  master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, tier: "master", puzzles: 2 }), // expert_a_1
-  wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, tier: "wizard", puzzles: 2 }), // master_a_1
+  expert: () => wardWing({ tomb: "junior_treasure_tomb", index: 0, puzzles: 1 }), // junior_a_1
+  master: () => wardWing({ tomb: "expert_treasure_tomb", index: 0, puzzles: 2 }), // expert_a_1
+  wizard: () => wardWing({ tomb: "master_treasure_tomb", index: 0, puzzles: 2 }), // master_a_1
 }
 
 export const juniorRules: Rule[] = [
