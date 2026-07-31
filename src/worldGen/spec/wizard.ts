@@ -27,12 +27,15 @@ const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c"
 const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 3, puzzles: 1 })
 
 // The full-circle moment: a starter-themed bonus floor, deep in the endgame. Gated on
-// starter_a_4, only obtainable by clearing starter_treasure_tomb's own 4 floors, so it's
-// structurally unreachable for a symbol needed on the tomb's own first tableau run
-// (placeFragments.ts's eligibility check requires the gate's key already owned) — prefers a real
-// starter hieroglyph fragment, falling back to mosaic if no starter symbol has outstanding demand
-// reaching this slot. Difficulty auto-derives to starter.
-const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 3, puzzles: 3, endReward: "hieroglyph" })
+// starter_a_1 (the tomb's FIRST floor key) rather than the last one: junior tier's own
+// entry-unlock mechanism already proves any one of starter_a_1..4 is reachable well before
+// starter's later tableau runs resolve (reachability.spec.ts's isTierUnlocked), and starter_a_1 is
+// owned right after floor 1 — early enough to be a genuinely eligible, competing candidate for a
+// real starter hieroglyph fragment, unlike starter_a_4 (only reachable after all starter demand is
+// already settled). Trade-off: starter_a_1 is also the key starter.ts's own holdChest/HOLD_CYCLE
+// holdback mechanism uses — verified empirically (fragmentHoldback.spec.ts, golden guard) that the
+// extra competing candidate doesn't starve anything. Difficulty auto-derives to starter.
+const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 0, puzzles: 3, endReward: "hieroglyph" })
 
 // The wizard_treasure_tomb_c map-piece unlock gate, shared between its normal home (the tier-wide
 // "last-1" rule below) and wizard_1's pyramid 3 (which happens to BE that journey's last-1

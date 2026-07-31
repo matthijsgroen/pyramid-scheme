@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 648257773
+export const worldContentHash = 742650883
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -97,7 +97,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 0 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "d1", pieceIndex: 0 },
             rewards: [{ type: "sellable", itemId: "sell_stone_4" }],
             encounter: "sumplete-mirror",
           },
@@ -147,7 +147,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "d1", pieceIndex: 0 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
             rewards: [{ type: "sellable", itemId: "sell_stone_1" }],
             encounter: "sumplete",
           },
@@ -208,14 +208,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 0 },
           },
           {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 0 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "p8", pieceIndex: 0 },
             rewards: [{ type: "sellable", itemId: "sell_stone_3" }],
             encounter: "sumplete",
           },
@@ -271,7 +271,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "p8", pieceIndex: 0 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "a6", pieceIndex: 0 },
             rewards: [{ type: "sellable", itemId: "sell_stone_1" }],
             encounter: "sumplete-mirror",
           },
@@ -288,7 +288,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 0,
             difficulty: "starter",
             end: "treasure",
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 2 },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
           },
           { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "mosaicPiece" } },
           {
@@ -384,7 +384,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            endReward: { type: "hieroglyphFragment", hieroglyphId: "a6", pieceIndex: 0 },
+            endReward: { type: "mosaicPiece" },
             rewards: [{ type: "sellable", itemId: "sell_stone_2" }],
             encounter: "sumplete-mirror",
           },
@@ -700,8 +700,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
-            endReward: { type: "mosaicPiece" },
+            gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
+            endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 2 },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete-mirror",
           },
@@ -1991,7 +1991,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 2,
             difficulty: "starter",
             end: { stairId: "expert_1:p2:wing1" },
-            gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             rewards: [
               { type: "money", amount: 4 },
               { type: "money", amount: 1 },
@@ -3614,7 +3614,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "starter",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "mosaicPiece" },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete-mirror",
@@ -5890,7 +5890,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 3,
             difficulty: "starter",
             end: { stairId: "wizard_1:p0:wing0" },
-            gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             rewards: [
               { type: "money", amount: 3 },
               { type: "money", amount: 4 },

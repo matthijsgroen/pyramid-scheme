@@ -17,14 +17,16 @@ const WING = {
 // tableau run can't complete purely from the open pyramids. Difficulty auto-derives to junior.
 const holdChest = (index: number) => wardChest({ tomb: "junior_treasure_tomb", index, puzzles: 1 })
 
-// A starter-themed breather deep in a harder tier (see master.ts/wizard.ts for the matching
-// pattern) — prefers a real starter hieroglyph fragment. Gated on starter_a_4, only obtainable by
-// clearing starter_treasure_tomb's own 4 floors, so it's structurally unreachable for a symbol
-// needed on the tomb's own first tableau run (placeFragments.ts's eligibility check requires the
-// gate's key already owned) — safe regardless of which starter symbol currently has demand.
-// Falls back to mosaic if no starter symbol has outstanding demand reaching this slot. Difficulty
-// auto-derives to starter.
-const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 3, puzzles: 1, endReward: "hieroglyph" })
+// A starter-themed breather deep in a harder tier, gated on starter_a_1 (the tomb's FIRST floor
+// key) rather than the last one — junior tier's own entry-unlock mechanism already proves any one
+// of starter_a_1..4 is reachable well before starter's later tableau runs resolve
+// (reachability.spec.ts's isTierUnlocked), and starter_a_1 is owned right after floor 1 — early
+// enough to be a genuinely eligible, competing candidate for a real starter hieroglyph fragment,
+// unlike starter_a_4 (only reachable after all starter demand is already settled). Trade-off:
+// starter_a_1 is also the key starter.ts's own holdChest/HOLD_CYCLE holdback mechanism uses —
+// verified empirically (fragmentHoldback.spec.ts, golden guard) that the extra competing candidate
+// doesn't starve anything.
+const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, puzzles: 1, endReward: "hieroglyph" })
 
 export const juniorRules: Rule[] = [
   tier("junior", { difficulty: "junior" }),
