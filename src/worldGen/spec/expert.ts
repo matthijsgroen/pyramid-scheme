@@ -35,6 +35,34 @@ type Tease = "master" | "wizard"
 // first needed on a later tableau run turn out to belong to expert_treasure_tomb_b, not the
 // primary. Difficulty auto-derives to expert.
 const holdChest = (index: number) => wardChest({ tomb: "expert_treasure_tomb_b", index, puzzles: 1 })
+
+// BACKWARD echo — makes junior↔expert the first bidirectional pair (junior already hosts two
+// expert-difficulty wings). Gated on junior_a_1 (the tomb's FIRST floor key) rather than the last
+// one: expert tier's own entry-unlock mechanism already proves any one of junior_a_1..4 is
+// reachable well before junior's later tableau runs resolve (reachability.spec.ts's
+// isTierUnlocked), and junior_a_1 is owned right after floor 1 — early enough to be a genuinely
+// eligible, competing candidate for a real junior hieroglyph fragment, unlike junior_a_6 (never in
+// any symbol's preferredWardKeys at all — the same class of bug already fixed for the starter
+// echoes). Trade-off: junior_a_1 is also the key junior.ts's own holdChest/WING.expert mechanism
+// uses — verified empirically (fragmentHoldback.spec.ts) that the extra competing candidate
+// doesn't starve anything. Difficulty auto-derives to junior.
+const juniorEcho = () => wardChest({ tomb: "junior_treasure_tomb", index: 0, puzzles: 1 })
+// journey id → 1-based pyramid number for the junior echo (front-half, non-`last` pyramids).
+const JUNIOR_ECHO_AT: Record<string, number> = { expert_2: 2, expert_3: 3 }
+
+// The full-circle starter echo (see master.ts/wizard.ts for the matching pattern) — a whole
+// bonus floor this time, since expert already wings its own tease targets on the back half. Gated
+// on starter_a_1 (the tomb's FIRST floor key) rather than the last one: junior tier's own
+// entry-unlock mechanism already proves any one of starter_a_1..4 is reachable well before
+// starter's later tableau runs resolve (reachability.spec.ts's isTierUnlocked), and starter_a_1 is
+// owned right after floor 1 — early enough to be a genuinely eligible, competing candidate for a
+// real starter hieroglyph fragment, unlike starter_a_4 (only reachable after all starter demand is
+// already settled). Trade-off: starter_a_1 is also the key starter.ts's own holdChest/HOLD_CYCLE
+// holdback mechanism uses — verified empirically (fragmentHoldback.spec.ts, golden guard) that the
+// extra competing candidate doesn't starve anything. Difficulty auto-derives to starter.
+const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 0, puzzles: 2, endReward: "hieroglyph" })
+// journey id → 1-based pyramid number for the starter wing (a back-half, non-`last` pyramid).
+const STARTER_WING_AT: Record<string, number> = { expert_1: 3 }
 // Pyramid counts per expert journey (mirror journeyStructure.ts). Front half → ward chest, back
 // half → ward wing; tease alternates master/wizard.
 const EXPERT_PYRAMIDS: [string, number][] = [
@@ -54,14 +82,19 @@ const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n], ji) => {
     // carries an extra chest behind it.
     if (k < half)
       return journey(jid).pyramid(k + 1, {
-        sideSections: [CHEST[tease](), holdChest((ji + k) % 3), ...(k === 0 ? [holdChest(0)] : [])],
+        sideSections: [
+          CHEST[tease](),
+          holdChest((ji + k) % 3),
+          ...(k === 0 ? [holdChest(0)] : []),
+          ...(JUNIOR_ECHO_AT[jid] === k + 1 ? [juniorEcho()] : []),
+        ],
       })
     // Back-half pyramids: a ward wing; the last one of each journey also gets denser open junk
     // corridors (income the still-short economy needs). The first back-half pyramid of each
     // journey also carries an extra holdback chest — expert_b_1/b_2 need more supply than the
     // front-half rotation alone provides.
     return journey(jid).pyramid(k + 1, {
-      wardWings: [WING[tease]()],
+      wardWings: STARTER_WING_AT[jid] === k + 1 ? [WING[tease](), starterWing()] : [WING[tease]()],
       ...(k === half ? { sideSections: [holdChest(ji % 2)] } : {}),
       ...(isLast ? { sidePaths: [{ density: "dense", pathPuzzles: 2, end: "junk" as const }] } : {}),
     })

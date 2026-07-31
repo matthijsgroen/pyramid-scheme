@@ -280,6 +280,19 @@ export const placeFragments = (
     )
   }
 
+  // A slot an author tagged for a gating currency (e.g. `endReward: "hieroglyph"`), if that
+  // currency's own demand never claimed it, gracefully falls back to a top-priority capped-currency
+  // candidate instead of competing purely on collection order in Phase 3 below — an author's
+  // placement intent shouldn't evaporate just because the gating currency this slot preferred
+  // didn't end up needing it. Every gating currency's demand is fully satisfied by this point (the
+  // loop above only exits once its queue drains), so any leftover gating-owned preference here is
+  // unclaimed for good.
+  for (const slot of available) {
+    if (slot.preference && capped[0] && currencies.some(c => c.ownsBucket(slot.preference!))) {
+      slot.preference = capped[0].bucket
+    }
+  }
+
   // Phase 3: capped-filler currencies (e.g. mosaic pieces). These never gate progress, so
   // they're not on the worklist above — placed only once every lock has been resolved, into
   // whatever slots the gating currencies left free, via the unified slot allocator: each is an
