@@ -15,6 +15,12 @@ const WIZARD_CHAIN: SideSectionConstraint = {
   ],
 }
 
+// Own-tomb HOLDBACK chests: gated on wizard's own secondary/tertiary tomb keys, since most
+// wizard symbols first needed on a later tableau run turn out to belong to wizard_treasure_tomb_b
+// or _c, not the primary. Difficulty auto-derives to wizard.
+const holdChestB = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_b", index, puzzles: 1 })
+const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c", index, puzzles: 1 })
+
 export const wizardRules: Rule[] = [
   tier("wizard", { difficulty: "wizard" }),
 
@@ -59,6 +65,25 @@ export const wizardRules: Rule[] = [
   journey("wizard_3").pyramid(4, {
     sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 5, puzzles: 1 })], // junior_a_6
   }),
+
+  // Own-tomb holdback chests, spread across pyramids that don't already carry a chain/teaser.
+  //
+  // Deliberately never on a journey's LAST or LAST-1 pyramid: constraintResolver.ts resolves
+  // same-key constraints (like sideSections) by specificity, journey-pyramid (8) over
+  // tier-pyramid (6), overwriting wholesale rather than merging — and the tier("wizard")
+  // .pyramid("last"/"last-1", ...) rules below already own those pyramids' sideSections (the
+  // secondary/tertiary-tomb map-piece unlock gates). An earlier revision put chests directly on
+  // those pyramids and silently deleted those gates for wizard_1/2/3; every entry here now
+  // targets a pyramid neither tier rule touches (and, for wizard_4, avoids the journey-specific
+  // "last-1" override further below that intentionally keeps that one pyramid slot-free).
+  journey("wizard_1").pyramid(1, { sideSections: [holdChestC(0), holdChestC(1)] }),
+  journey("wizard_2").pyramid(1, { sideSections: [holdChestC(0), holdChestC(2)] }),
+  journey("wizard_2").pyramid(3, { sideSections: [holdChestB(0), holdChestC(0), holdChestC(0)] }),
+  journey("wizard_3").pyramid(1, { sideSections: [holdChestC(1), holdChestC(0), holdChestC(0)] }),
+  journey("wizard_3").pyramid(3, { sideSections: [holdChestC(0), holdChestB(0), holdChestB(0)] }),
+  journey("wizard_4").pyramid(1, { sideSections: [holdChestC(2), holdChestB(0), holdChestB(0)] }),
+  journey("wizard_4").pyramid(3, { sideSections: [holdChestC(1)] }),
+  journey("wizard_4").pyramid(4, { sideSections: [holdChestC(0), holdChestC(0)] }),
 
   tomb("wizard_treasure_tomb", {
     encounter: "tomb-puzzle",

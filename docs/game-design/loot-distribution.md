@@ -105,7 +105,7 @@ Any `isPlaceholder` slot that was not assigned a fragment receives a consumable 
 
 Run-N fragments are designed to be placed *behind* the ward key earned after completing run N−1. This means the player will have already unlocked the deep floor before they need to hunt for that hieroglyph.
 
-**Current state:** no pyramid site currently has `{ type: "tomb-key" }` ward gates, so `wardKeys = []` for all slots. Pool 0 is always empty; all fragments fall through to pool 1 (open tier-matching). When ward-gated pyramid sections are added, the algorithm routes automatically — no code change needed.
+This section (and the pool table above) describes the `fragments.ts`/`assignFragments` design, since replaced by the generic reachability-driven worklist (`src/worldGen/placeFragments.ts`) with the hieroglyph currency's own `rank` (`src/mods/hieroglyph/game/hieroglyphCurrency.ts`) — see `keys-and-locks-solver.md`'s "Distribution rules" section for the current mechanism. The pool ladder there is two rungs, not three: tier is a hard filter (a fragment can never land off-tier, full stop — there is no cross-tier fallback), and within the tier a slot behind one of the hieroglyph's preferred ward keys is preferred over a plain open slot, capped to one ward-matched slot per distinct key so one symbol can't monopolize every gate. Ward-gated pyramid sections exist in every tier's own tomb, authored via `wardChest` in each `src/worldGen/spec/*.ts` file.
 
 ---
 

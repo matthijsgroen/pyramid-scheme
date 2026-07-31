@@ -2,10 +2,11 @@ import type { SiteConfig, Tier } from "@/worldGen/types"
 import type { CurrencyDistribution } from "@/worldGen/placeFragments"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { Slot } from "@/worldGen/slots"
-import { pipe, rankBy, uniqueBy, preferThenRelax } from "@/worldGen/distribution"
+import { pipe, rankBy, uniqueBy, preferThenRelax, filterBy } from "@/worldGen/distribution"
 import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./hieroglyphData"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { tableauLevels } from "@/data/tableaus"
+import { TOMB_JOURNEYS } from "@/worldGen/data"
 
 // The hieroglyph-fragment currency, owned by the tableau mod (not core world-gen) —
 // docs/mods/ARCHITECTURE.md, "Currencies are mod-owned, not a closed core vocabulary".
@@ -41,9 +42,10 @@ export const HIEROGLYPH_CURRENCY_META: CurrencyMeta = {
   showInCollection: true,
 }
 
-// Tier lookup by hieroglyph id — ranking metadata (which corridors this fragment prefers),
-// not a demand list; a hieroglyph never referenced by any authored tableau just never gets
-// discovered, and this table is never iterated to find that out.
+// Tier lookup by hieroglyph id — this fragment's HARD placement constraint (a slot's own
+// authored difficulty must equal this, not just its journey's — see slots.ts's own tier
+// comment), not a demand list; a hieroglyph never referenced by any authored tableau just
+// never gets discovered, and this table is never iterated to find that out.
 const TIER_BY_HIEROGLYPH: Record<string, Tier> = (() => {
   const result: Record<string, Tier> = {}
   for (const [tier, ids] of Object.entries(TOMB_SYMBOLS) as [Tier, string[]][]) {
@@ -54,15 +56,19 @@ const TIER_BY_HIEROGLYPH: Record<string, Tier> = (() => {
 
 // Which ward keys (earned by completing earlier tomb runs) this hieroglyph's preferred
 // placement slots sit behind — derived from tableauLevels/TOMB_PERK_IDS, not authored
-// per-hieroglyph.
+// per-hieroglyph. Searches every tomb of the tier (not just the primary `${tier}_treasure_tomb`)
+// and takes the perk ids of whichever tomb the glyph is actually first needed in — mirrors
+// HIEROGLYPH_REQUIRED's own tomb search (hieroglyphData.ts), since a symbol that only appears in
+// a tier's secondary tomb would otherwise never get a ward preference at all.
 const preferredWardKeysFor = (tier: Tier, hieroglyphId: string): string[] => {
-  const tombId = `${tier}_treasure_tomb`
-  const tombPerkIds = TOMB_PERK_IDS[tombId] ?? []
-  const firstRunNumber = tableauLevels
-    .filter(t => t.tombJourneyId === tombId && t.inventoryIds.includes(hieroglyphId))
-    .reduce((min, t) => Math.min(min, t.runNumber), Infinity)
-  const runNumber = isFinite(firstRunNumber) ? firstRunNumber : 1
-  return tombPerkIds.slice(0, runNumber - 1)
+  const tierTombIds = new Set(TOMB_JOURNEYS.filter(j => j.tier === tier).map(j => j.id))
+  const first = tableauLevels
+    .filter(t => tierTombIds.has(t.tombJourneyId) && t.inventoryIds.includes(hieroglyphId))
+    .reduce<
+      (typeof tableauLevels)[number] | undefined
+    >((best, t) => (!best || t.runNumber < best.runNumber ? t : best), undefined)
+  if (!first) return []
+  return (TOMB_PERK_IDS[first.tombJourneyId] ?? []).slice(0, first.runNumber - 1)
 }
 
 // hieroglyphFragment rewards already authored directly (bypassing fragmentSlot entirely —
@@ -103,6 +109,9 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
   demandFor: (bucket, allConfigs) => {
     const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
     const tier = TIER_BY_HIEROGLYPH[hieroglyphId]
+    // Unreachable today (TIER_BY_HIEROGLYPH covers every id any tableau references) — a clear
+    // error beats rank() silently filtering every candidate out via an undefined tier match.
+    if (!tier) throw new Error(`hieroglyph: bucket "${bucket}" names no hieroglyph in TOMB_SYMBOLS`)
     const totalRequired = HIEROGLYPH_REQUIRED[hieroglyphId] ?? 2
     const required = totalRequired - countExisting(allConfigs, hieroglyphId)
     return {
@@ -114,28 +123,40 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
       totalRequired,
     }
   },
-  // Pool priority (tier+preferred-ward > tier-only > cross-tier) as a rank score — the doc's
-  // own composable-rule shape. Ranked BEFORE the strict dedup, so it keeps each pyramid's
-  // best-scoring slot, not an arbitrary one. Dedup is per-PYRAMID (journey#levelIndex), not
-  // per-journey: a hieroglyph needs more fragments (up to 8) than a tier has journeys (4), so
-  // one-per-journey forced the surplus cross-tier. Per-pyramid gives each tier enough in-tier
-  // slots to hold its own hieroglyphs (off-tier placement 24% → 4%) while still spreading them
-  // out — no two fragments of one hieroglyph in the same pyramid.
+  // A hieroglyph's tier is a HARD constraint, not a ranking preference: a fragment may only land
+  // in a slot whose OWN authored difficulty is this hieroglyph's tier (slots.ts's `tier` — the
+  // floor/section's marked difficulty, not its journey's native tier). So the legitimate homes are
+  // the tier's own pyramids/tombs AND any deliberately cross-tier-authored floor or ward pocket
+  // marked with this difficulty (a master wing inside a starter pyramid counts; the starter pyramid
+  // around it does not) — realizes keys-and-locks-solver.md's own rule shape for this currency.
+  //
+  // Inside the tier, two soft rungs remain: ward-key/preference score, then dedup. Dedup keeps at
+  // most ONE ward-matched slot per distinct matched key (never two fragments behind the identical
+  // key — a symbol needed deep in its tomb's tableau chain can hold back one fragment per floor
+  // instead of piling them all behind the first), and per-PYRAMID for everything else (a
+  // hieroglyph needs more fragments, up to 8, than a tier has journeys, 4, so one-per-journey
+  // forced the surplus cross-tier; per-pyramid keeps them spread out — no two fragments of one
+  // hieroglyph in the same pyramid — while still fitting comfortably inside the tier). Both rungs
+  // are soft: preferThenRelax's tail still allows a repeat if the tier ever runs short, rather than
+  // failing placement outright.
   rank: (candidates, demand) => {
     const byPoolScore = rankBy<Slot>(s => {
-      const tierMatch = s.tier === demand.tier
       const wardMatch =
         demand.preferredWardKeys.length > 0 && s.wardKeys.some(k => demand.preferredWardKeys.includes(k))
       // A slot preferring this exact hieroglyph (`hieroglyph:ra`) or any hieroglyph
       // (bare `hieroglyph`) is ranked above untagged ones — the DSL's soft placement wish.
       const prefMatch = s.preference === demand.bucket || s.preference === CURRENCY_ID
-      return (tierMatch ? 1 : 0) + (tierMatch && wardMatch ? 1 : 0) + (prefMatch ? 1 : 0)
+      return (wardMatch ? 1 : 0) + (prefMatch ? 1 : 0)
     })
     return pipe<Slot>(
+      filterBy(s => s.tier === demand.tier),
       preferThenRelax(
         pipe(
           byPoolScore,
-          uniqueBy(s => `${s.journeyId}#${s.ref.levelIndex}`)
+          uniqueBy(s => {
+            const matchedKey = s.wardKeys.find(k => demand.preferredWardKeys.includes(k))
+            return matchedKey ? `__ward__:${matchedKey}` : `${s.journeyId}#${s.ref.levelIndex}`
+          })
         ),
         byPoolScore
       )
