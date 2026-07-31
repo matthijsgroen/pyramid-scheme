@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Taps near the bottom of a pyramid or tomb map are no longer swallowed. An invisible strip spanning the full width of the screen behind the detector panel and the health/coins row was catching them, so rooms and corridors down there simply wouldn't respond — worst while a detector was switched on, since the panel grows taller as it lists results.
+- You can now actually pick a hieroglyph to hunt with the compass. The Collection screen only let you tap hieroglyphs you'd already completed, while the "hunt this one" button only ever appeared for ones you hadn't — so the compass could never be given a target despite the screen telling you to choose one. Partially-collected hieroglyphs (the ones showing e.g. 2/3) are now tappable, which is what the hint always meant.
 
 ## 0.30.9 - 2026-07-31
 ### Changed

@@ -83,7 +83,10 @@ export const DetectorPanel: FC<Props> = ({
   const shownConsumables = uniqueBy(consumableResults, r => consumableKey(r, consumableDetectorLevel))
 
   return (
-    <div className="rounded-lg border border-stone-700 bg-stone-900/90 p-2 text-xs text-stone-300">
+    // `pointer-events-auto` re-enables hit-testing inside SiteHudBar's non-hit-testing band: needed
+    // for the mode toggles below, and it keeps taps on this opaque card from falling through to the
+    // map behind it.
+    <div className="pointer-events-auto rounded-lg border border-stone-700 bg-stone-900/90 p-2 text-xs text-stone-300">
       <div className="mb-2 flex gap-2">
         {compassLevel > 0 && (
           <button
