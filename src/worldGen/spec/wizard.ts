@@ -21,10 +21,14 @@ const WIZARD_CHAIN: SideSectionConstraint = {
 const holdChestB = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_b", index, puzzles: 1 })
 const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c", index, puzzles: 1 })
 
-// BACKWARD echo, one tier nearer than the junior teasers below: expert_treasure_tomb_b's last
-// floor (expert_b_4), untouched by expert's own holdback chests (which use indices 0-2).
-// Difficulty auto-derives to expert.
-const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 3, puzzles: 1 })
+// BACKWARD echo, one tier nearer than the junior teasers below. Gated on expert_b_1 (the tomb's
+// FIRST floor key) rather than the last (expert_b_4, never in any symbol's preferredWardKeys).
+// Trade-off, bigger than the other echoes: expert_b_1 is already expert.ts's own MOST-CONTESTED
+// holdback key (6 expert_b symbols are first needed on this exact floor — see expert.ts's own
+// holdChest comment) — verified empirically (fragmentHoldback.spec.ts, one test per expert_b
+// symbol) that this doesn't starve expert's own holdback balance; expert_b_2 (index 1) is the
+// documented fallback if it ever does. Difficulty auto-derives to expert.
+const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 0, puzzles: 1 })
 
 // The full-circle moment: a starter-themed bonus floor, deep in the endgame. Gated on
 // starter_a_1 (the tomb's FIRST floor key) rather than the last one: junior tier's own
@@ -96,8 +100,11 @@ export const wizardRules: Rule[] = [
       wardChest({ tomb: "junior_treasure_tomb", index: 4, puzzles: 1 }), // junior_a_5
     ],
   }),
+  // Gated on junior_a_1 (the tomb's FIRST floor key), not the last (junior_a_6, never in any
+  // symbol's preferredWardKeys) — see expert.ts's juniorEcho for the full rationale, the same fix
+  // applied there.
   journey("wizard_3").pyramid(4, {
-    sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 5, puzzles: 1 })], // junior_a_6
+    sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 0, puzzles: 1 })], // junior_a_1
   }),
 
   // Own-tomb holdback chests, spread across pyramids that don't already carry a chain/teaser.

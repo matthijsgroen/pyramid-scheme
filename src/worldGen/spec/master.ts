@@ -14,18 +14,29 @@ const holdChestA = (index: number) => wardChest({ tomb: "master_treasure_tomb", 
 // FORWARD tease into the ceiling — the game's first wizard-difficulty pocket outside wizard
 // itself. Replaces this pyramid's AUTO ward wing (master_treasure_tomb has exactly one
 // unreserved index, 4 — see reservedTreasureIndices — which the auto wing already consumes) with
-// an explicitly-keyed one: wizard_treasure_tomb's last floor (wizard_a_4). Difficulty is left
-// unset so it auto-derives to wizard (dsl.ts's wardKeyTier) — an emerald gate inside a gold
-// master pyramid. `wardPaths: 0` must accompany every use: authoring the wing frees master's one
-// spare index for the path allocator, which would otherwise silently add a brand-new trapped
-// master_a_5 chest.
-const wizardWing = () => wardWing({ tomb: "wizard_treasure_tomb", index: 3, puzzles: 4 })
+// an explicitly-keyed one. Gated on wizard_treasure_tomb_b's FIRST floor key (wizard_b_1), not any
+// index of the primary wizard_treasure_tomb: every wizard symbol's real demand routes through
+// wizard_treasure_tomb_b/_c (see wizard.ts's own holdChestB/holdChestC, and the total absence of a
+// holdChestA-equivalent there — confirmed by walking every wizard symbol's own tableauLevels
+// entry), so NO index of the primary tomb — including the last, wizard_a_4 — ever appears in any
+// symbol's preferredWardKeys. Difficulty is left unset so it auto-derives to wizard (dsl.ts's
+// wardKeyTier) — an emerald gate inside a gold master pyramid. `wardPaths: 0` must still
+// accompany every use (unrelated to this key choice — frees master's own spare index for the path
+// allocator, which would otherwise silently add a brand-new trapped master_a_5 chest). Trade-off:
+// wizard_b_1 is also wizard.ts's own holdChestB(0) key — verified empirically
+// (fragmentHoldback.spec.ts) that this doesn't starve wizard's own holdback balance;
+// wizard_treasure_tomb_c index 0 is the documented fallback (more contested — try _b first).
+const wizardWing = () => wardWing({ tomb: "wizard_treasure_tomb_b", index: 0, puzzles: 4 })
 
 // BACKWARD echo — the first time any tier reaches back to its own immediately-preceding tier.
-// expert_treasure_tomb's last floor (expert_a_4) is the spare, non-structural end of that tomb;
-// expert's own holdback chests use expert_treasure_tomb_b instead, so nothing else contends for
-// this index. Difficulty auto-derives to expert.
-const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb", index: 3, puzzles: 1 })
+// Gated on expert_a_1 (the tomb's FIRST floor key) rather than the last (expert_a_4, never in any
+// symbol's preferredWardKeys) — master tier's own entry-unlock mechanism already proves any one of
+// expert_a_1..4 is reachable well before expert's later tableau runs resolve, and expert_a_1 is
+// owned right after floor 1. Trade-off: expert_a_1 is ALSO expert.ts's own CHEST.master/WING.master
+// tease key (used across roughly half of expert's front-half pyramids) — verified empirically
+// (fragmentHoldback.spec.ts) that the extra competing candidate doesn't starve expert's own
+// holdback balance. Difficulty auto-derives to expert.
+const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb", index: 0, puzzles: 1 })
 
 // A starter-themed breather deep in a harder tier — merchant flavor, low difficulty, prefers a
 // real starter hieroglyph fragment. Gated on starter_a_1 (the tomb's FIRST floor key) rather than

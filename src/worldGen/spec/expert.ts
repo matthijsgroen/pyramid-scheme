@@ -37,12 +37,16 @@ type Tease = "master" | "wizard"
 const holdChest = (index: number) => wardChest({ tomb: "expert_treasure_tomb_b", index, puzzles: 1 })
 
 // BACKWARD echo — makes junior↔expert the first bidirectional pair (junior already hosts two
-// expert-difficulty wings). junior_treasure_tomb's last floor (junior_a_6) — already used once by
-// wizard.ts's own backward teaser; reusing the same key elsewhere is fine (many keys already gate
-// multiple chests). Chosen because a tomb's own last-floor key can never appear in any symbol's
-// preferredWardKeys, so it can't perturb junior's holdback balance. Difficulty auto-derives to
-// junior.
-const juniorEcho = () => wardChest({ tomb: "junior_treasure_tomb", index: 5, puzzles: 1 })
+// expert-difficulty wings). Gated on junior_a_1 (the tomb's FIRST floor key) rather than the last
+// one: expert tier's own entry-unlock mechanism already proves any one of junior_a_1..4 is
+// reachable well before junior's later tableau runs resolve (reachability.spec.ts's
+// isTierUnlocked), and junior_a_1 is owned right after floor 1 — early enough to be a genuinely
+// eligible, competing candidate for a real junior hieroglyph fragment, unlike junior_a_6 (never in
+// any symbol's preferredWardKeys at all — the same class of bug already fixed for the starter
+// echoes). Trade-off: junior_a_1 is also the key junior.ts's own holdChest/WING.expert mechanism
+// uses — verified empirically (fragmentHoldback.spec.ts) that the extra competing candidate
+// doesn't starve anything. Difficulty auto-derives to junior.
+const juniorEcho = () => wardChest({ tomb: "junior_treasure_tomb", index: 0, puzzles: 1 })
 // journey id → 1-based pyramid number for the junior echo (front-half, non-`last` pyramids).
 const JUNIOR_ECHO_AT: Record<string, number> = { expert_2: 2, expert_3: 3 }
 

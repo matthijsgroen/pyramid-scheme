@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 742650883
+export const worldContentHash = 1236598258
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -2278,7 +2278,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "junior_a_6" },
+            gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "mosaicPiece" },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete-mirror",
@@ -2785,7 +2785,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "junior_a_6" },
+            gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "mosaicPiece" },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete-mirror",
@@ -3718,7 +3718,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "expert_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             endReward: { type: "sellable", itemId: "sell_silver_4" },
             rewards: [{ type: "money", amount: 3 }],
             encounter: "sumplete-mirror",
@@ -4488,7 +4488,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 4,
             difficulty: "wizard",
             end: { stairId: "master_2:p3:wing0" },
-            gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             rewards: [
               { type: "money", amount: 4 },
               { type: "money", amount: 4 },
@@ -4776,7 +4776,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "expert_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             endReward: { type: "sellable", itemId: "sell_silver_5" },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete-mirror",
@@ -5640,7 +5640,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 4,
             difficulty: "wizard",
             end: { stairId: "master_4:p3:wing0" },
-            gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
+            gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             rewards: [
               { type: "money", amount: 2 },
               { type: "money", amount: 3 },
@@ -6794,7 +6794,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "expert_b_4" },
+            gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "sellable", itemId: "sell_silver_1" },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete-mirror",
@@ -7725,7 +7725,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "junior",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "junior_a_6" },
+            gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "sellable", itemId: "sell_bronze_2" },
             rewards: [{ type: "money", amount: 1 }],
             encounter: "sumplete-mirror",
@@ -8553,7 +8553,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             pathPuzzles: 1,
             difficulty: "expert",
             end: "treasure",
-            gate: { type: "tomb-key", wardKeyId: "expert_b_4" },
+            gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "sellable", itemId: "sell_silver_2" },
             rewards: [{ type: "money", amount: 4 }],
             encounter: "sumplete",
