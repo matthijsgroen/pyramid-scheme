@@ -6,7 +6,7 @@ import { pipe, rankBy, uniqueBy, preferThenRelax, filterBy } from "@/worldGen/di
 import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./hieroglyphData"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { tableauLevels } from "@/data/tableaus"
-import { TOMB_JOURNEYS } from "@/worldGen/data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
 
 // The hieroglyph-fragment currency, owned by the tableau mod (not core world-gen) —
 // docs/mods/ARCHITECTURE.md, "Currencies are mod-owned, not a closed core vocabulary".
@@ -54,6 +54,19 @@ const TIER_BY_HIEROGLYPH: Record<string, Tier> = (() => {
   return result
 })()
 
+// Journey id → that journey's OWN native tier (its authored difficulty, independent of any
+// section inside it that's been deliberately tiered differently) — used only to detect a "foreign
+// host": a slot whose own difficulty already matches this hieroglyph's tier (the hard filter
+// below, unchanged) but which physically lives inside a DIFFERENT tier's pyramid/tomb — a
+// cross-tier echo pocket (see slots.ts's own "a slot's tier is its own difficulty, not its
+// journey's" comment). Mirrors placeFragments.ts's own (unexported) buildJourneyMeta, built the
+// same way from the same two arrays.
+const JOURNEY_TIER: Record<string, Tier> = (() => {
+  const result: Record<string, Tier> = {}
+  for (const j of [...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS]) result[j.id] = j.tier
+  return result
+})()
+
 // Which ward keys (earned by completing earlier tomb runs) this hieroglyph's preferred
 // placement slots sit behind — derived from tableauLevels/TOMB_PERK_IDS, not authored
 // per-hieroglyph. Searches every tomb of the tier (not just the primary `${tier}_treasure_tomb`)
@@ -64,9 +77,10 @@ const preferredWardKeysFor = (tier: Tier, hieroglyphId: string): string[] => {
   const tierTombIds = new Set(TOMB_JOURNEYS.filter(j => j.tier === tier).map(j => j.id))
   const first = tableauLevels
     .filter(t => tierTombIds.has(t.tombJourneyId) && t.inventoryIds.includes(hieroglyphId))
-    .reduce<
-      (typeof tableauLevels)[number] | undefined
-    >((best, t) => (!best || t.runNumber < best.runNumber ? t : best), undefined)
+    .reduce<(typeof tableauLevels)[number] | undefined>(
+      (best, t) => (!best || t.runNumber < best.runNumber ? t : best),
+      undefined
+    )
   if (!first) return []
   return (TOMB_PERK_IDS[first.tombJourneyId] ?? []).slice(0, first.runNumber - 1)
 }
@@ -130,7 +144,8 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
   // marked with this difficulty (a master wing inside a starter pyramid counts; the starter pyramid
   // around it does not) — realizes keys-and-locks-solver.md's own rule shape for this currency.
   //
-  // Inside the tier, two soft rungs remain: ward-key/preference score, then dedup. Dedup keeps at
+  // Inside the tier, two soft rungs remain: ward-key/preference/foreign-host score, then dedup.
+  // Dedup keeps at
   // most ONE ward-matched slot per distinct matched key (never two fragments behind the identical
   // key — a symbol needed deep in its tomb's tableau chain can hold back one fragment per floor
   // instead of piling them all behind the first), and per-PYRAMID for everything else (a
@@ -146,7 +161,17 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
       // A slot preferring this exact hieroglyph (`hieroglyph:ra`) or any hieroglyph
       // (bare `hieroglyph`) is ranked above untagged ones — the DSL's soft placement wish.
       const prefMatch = s.preference === demand.bucket || s.preference === CURRENCY_ID
-      return (wardMatch ? 1 : 0) + (prefMatch ? 1 : 0)
+      // A candidate physically hosted in a DIFFERENT tier's own journey than this hieroglyph's
+      // tier (a cross-tier echo pocket) — preferring these over an equally-matched native slot
+      // spreads more real fragments into these deliberately-authored pockets instead of letting
+      // them fall through to mosaic/junk. Never weakens the hard tier filter below (every
+      // candidate here already has s.tier === demand.tier) — this only looks at which JOURNEY
+      // hosts the slot. Weighted at 1, half the step size of wardMatch/prefMatch below (doubled to
+      // 2 each) — this can only ever break a tie between candidates that already agree on
+      // wardMatch AND prefMatch; it can never outrank a candidate with a strictly better
+      // ward/pref match.
+      const foreignHost = JOURNEY_TIER[s.journeyId] !== demand.tier
+      return (wardMatch ? 2 : 0) + (prefMatch ? 2 : 0) + (foreignHost ? 1 : 0)
     })
     return pipe<Slot>(
       filterBy(s => s.tier === demand.tier),
