@@ -1,4 +1,4 @@
-import { tier, journey, tomb, wardChest } from "../dsl"
+import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
 import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
@@ -10,6 +10,29 @@ const holdChest = (index: number) => wardChest({ tomb: "master_treasure_tomb_b",
 // instead (the tier's own structural tier-unlock gates already provide some master_a_1 supply,
 // but not quite enough).
 const holdChestA = (index: number) => wardChest({ tomb: "master_treasure_tomb", index, puzzles: 1 })
+
+// FORWARD tease into the ceiling — the game's first wizard-difficulty pocket outside wizard
+// itself. Replaces this pyramid's AUTO ward wing (master_treasure_tomb has exactly one
+// unreserved index, 4 — see reservedTreasureIndices — which the auto wing already consumes) with
+// an explicitly-keyed one: wizard_treasure_tomb's last floor (wizard_a_4). Difficulty is left
+// unset so it auto-derives to wizard (dsl.ts's wardKeyTier) — an emerald gate inside a gold
+// master pyramid. `wardPaths: 0` must accompany every use: authoring the wing frees master's one
+// spare index for the path allocator, which would otherwise silently add a brand-new trapped
+// master_a_5 chest.
+const wizardWing = () => wardWing({ tomb: "wizard_treasure_tomb", index: 3, puzzles: 4 })
+
+// BACKWARD echo — the first time any tier reaches back to its own immediately-preceding tier.
+// expert_treasure_tomb's last floor (expert_a_4) is the spare, non-structural end of that tomb;
+// expert's own holdback chests use expert_treasure_tomb_b instead, so nothing else contends for
+// this index. Difficulty auto-derives to expert.
+const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb", index: 3, puzzles: 1 })
+
+// A starter-themed breather deep in a harder tier — merchant flavor, low difficulty, no
+// hieroglyph competition (explicitly mosaic-tagged, not left generic, so the hieroglyph currency
+// soft-avoids it regardless of which starter symbol's demand is active). Gated on starter_a_4,
+// the one starter key starter.ts's own HOLD_CYCLE never emits and no symbol's preferredWardKeys
+// can ever include (a tomb's last-floor key is never a prerequisite within its own tomb).
+const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 3, puzzles: 1, endReward: "mosaicPiece" })
 
 // Master's escalation (between expert's intro of traps/keys and wizard's saturation): DEEPER
 // locks (multi-color floor keys + key chains) and HAZARDOUS returns (wardPathTrapped), plus the
@@ -68,17 +91,25 @@ export const masterRules: Rule[] = [
   // already owns that pyramid's sideSections (the secondary-tomb map-piece unlock gate). An
   // earlier revision put chests there directly and silently deleted that gate for all 4 master
   // journeys; every entry here now targets a pyramid the tier rule doesn't touch.
-  journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0)] }),
-  journey("master_1").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0), starterEcho()] }),
+  journey("master_1").pyramid(2, { sideSections: [holdChest(1), expertEcho()] }),
   journey("master_2").pyramid(1, { sideSections: [holdChest(3), holdChest(0)] }),
   journey("master_2").pyramid(2, { sideSections: [holdChest(0)] }),
-  journey("master_2").pyramid(4, { sideSections: [holdChest(1)] }),
+  journey("master_2").pyramid(4, {
+    sideSections: [holdChest(1)],
+    wardWings: [wizardWing()],
+    wardPaths: 0,
+  }),
   journey("master_3").pyramid(1, { sideSections: [holdChest(2), holdChest(0)] }),
-  journey("master_3").pyramid(2, { sideSections: [holdChest(3)] }),
+  journey("master_3").pyramid(2, { sideSections: [holdChest(3), expertEcho()] }),
   journey("master_3").pyramid(4, { sideSections: [holdChest(0), holdChestA(0)] }),
   journey("master_4").pyramid(1, { sideSections: [holdChest(1), holdChest(0)] }),
   journey("master_4").pyramid(2, { sideSections: [holdChest(2)] }),
-  journey("master_4").pyramid(4, { sideSections: [holdChest(3)] }),
+  journey("master_4").pyramid(4, {
+    sideSections: [holdChest(3)],
+    wardWings: [wizardWing()],
+    wardPaths: 0,
+  }),
 
   tomb("master_treasure_tomb", {
     encounter: "tomb-puzzle",

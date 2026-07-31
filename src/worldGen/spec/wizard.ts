@@ -1,4 +1,4 @@
-import { tier, tomb, journey, wardChest } from "../dsl"
+import { tier, tomb, journey, wardChest, wardWing } from "../dsl"
 import type { Rule, SideSectionConstraint } from "../dsl"
 import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 
@@ -20,6 +20,28 @@ const WIZARD_CHAIN: SideSectionConstraint = {
 // or _c, not the primary. Difficulty auto-derives to wizard.
 const holdChestB = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_b", index, puzzles: 1 })
 const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c", index, puzzles: 1 })
+
+// BACKWARD echo, one tier nearer than the junior teasers below: expert_treasure_tomb_b's last
+// floor (expert_b_4), untouched by expert's own holdback chests (which use indices 0-2).
+// Difficulty auto-derives to expert.
+const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 3, puzzles: 1 })
+
+// The full-circle moment: a starter-themed bonus floor, deep in the endgame. Gated on
+// starter_a_4 — the one starter key starter.ts's own HOLD_CYCLE never emits and no symbol's
+// preferredWardKeys can ever include (a tomb's last-floor key is never a prerequisite within its
+// own tomb), so this can never compete with starter's hieroglyph-holdback balance. Difficulty
+// auto-derives to starter.
+const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 3, puzzles: 3 })
+
+// The wizard_treasure_tomb_c map-piece unlock gate, shared between its normal home (the tier-wide
+// "last-1" rule below) and wizard_1's pyramid 3 (which happens to BE that journey's last-1
+// pyramid too, and would otherwise silently overwrite this same-key `sideSections` constraint —
+// constraintResolver.ts resolves same-key constraints by specificity, replacing wholesale, not
+// merging).
+const wizardCMapPieceGate: SideSectionConstraint = {
+  gate: { type: "tomb-key", tombId: "wizard_treasure_tomb_b", index: 1 },
+  endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
+}
 
 export const wizardRules: Rule[] = [
   tier("wizard", { difficulty: "wizard" }),
@@ -59,8 +81,16 @@ export const wizardRules: Rule[] = [
   // gives that old treasure one more thing to be worth, deep in the game. Difficulty is left unset
   // so the puzzle behind the gate auto-derives to match the key's own (junior) tier exactly,
   // rather than the wizard-tier pyramid it happens to sit in — see dsl.ts's wardKeyTier.
+  // wizard_1 has only 4 pyramids, so THIS pyramid is also the tier's `last-1` — the rule below
+  // wins on `sideSections` by specificity (journey-pyramid 8 > tier-pyramid 6, replacing
+  // wholesale), so it must restate that pyramid's wizard_c map-piece gate or silently delete it
+  // (exactly the bug fixed in commit 6b4bee2 for master/wizard's other pyramids, just missed here
+  // since this call predates that fix).
   journey("wizard_1").pyramid(3, {
-    sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 4, puzzles: 1 })], // junior_a_5
+    sideSections: [
+      wizardCMapPieceGate,
+      wardChest({ tomb: "junior_treasure_tomb", index: 4, puzzles: 1 }), // junior_a_5
+    ],
   }),
   journey("wizard_3").pyramid(4, {
     sideSections: [wardChest({ tomb: "junior_treasure_tomb", index: 5, puzzles: 1 })], // junior_a_6
@@ -76,14 +106,17 @@ export const wizardRules: Rule[] = [
   // those pyramids and silently deleted those gates for wizard_1/2/3; every entry here now
   // targets a pyramid neither tier rule touches (and, for wizard_4, avoids the journey-specific
   // "last-1" override further below that intentionally keeps that one pyramid slot-free).
-  journey("wizard_1").pyramid(1, { sideSections: [holdChestC(0), holdChestC(1)] }),
+  journey("wizard_1").pyramid(1, {
+    sideSections: [holdChestC(0), holdChestC(1)],
+    wardWings: [starterWing()], // the full-circle starter-echo (see helper above)
+  }),
   journey("wizard_2").pyramid(1, { sideSections: [holdChestC(0), holdChestC(2)] }),
-  journey("wizard_2").pyramid(3, { sideSections: [holdChestB(0), holdChestC(0), holdChestC(0)] }),
+  journey("wizard_2").pyramid(3, { sideSections: [holdChestB(0), holdChestC(0), holdChestC(0), expertEcho()] }),
   journey("wizard_3").pyramid(1, { sideSections: [holdChestC(1), holdChestC(0), holdChestC(0)] }),
   journey("wizard_3").pyramid(3, { sideSections: [holdChestC(0), holdChestB(0), holdChestB(0)] }),
   journey("wizard_4").pyramid(1, { sideSections: [holdChestC(2), holdChestB(0), holdChestB(0)] }),
   journey("wizard_4").pyramid(3, { sideSections: [holdChestC(1)] }),
-  journey("wizard_4").pyramid(4, { sideSections: [holdChestC(0), holdChestC(0)] }),
+  journey("wizard_4").pyramid(4, { sideSections: [holdChestC(0), holdChestC(0), expertEcho()] }),
 
   tomb("wizard_treasure_tomb", {
     encounter: "tomb-puzzle",
@@ -158,14 +191,7 @@ export const wizardRules: Rule[] = [
       },
     ],
   }),
-  tier("wizard").pyramid("last-1", {
-    sideSections: [
-      {
-        gate: { type: "tomb-key", tombId: "wizard_treasure_tomb_b", index: 1 },
-        endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
-      },
-    ],
-  }),
+  tier("wizard").pyramid("last-1", { sideSections: [wizardCMapPieceGate] }),
   // One of the 4 wizard journeys' wizard_treasure_tomb_c map-piece copies is relocated
   // into master_treasure_tomb_b's Fez shop instead — freeing this specific
   // journey's slot keeps the world total at exactly 36 map pieces. journey-pyramid

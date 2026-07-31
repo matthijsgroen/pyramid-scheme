@@ -17,6 +17,12 @@ const WING = {
 // tableau run can't complete purely from the open pyramids. Difficulty auto-derives to junior.
 const holdChest = (index: number) => wardChest({ tomb: "junior_treasure_tomb", index, puzzles: 1 })
 
+// A starter-themed breather deep in a harder tier (see master.ts/wizard.ts for the matching
+// pattern) — explicitly mosaic-tagged so the hieroglyph currency soft-avoids it regardless of
+// starter's own hieroglyph-holdback demand. Gated on starter_a_4, provably inert w.r.t. every
+// symbol's preferredWardKeys and starter.ts's own HOLD_CYCLE. Difficulty auto-derives to starter.
+const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 3, puzzles: 1, endReward: "mosaicPiece" })
+
 export const juniorRules: Rule[] = [
   tier("junior", { difficulty: "junior" }),
 
@@ -48,7 +54,7 @@ export const juniorRules: Rule[] = [
 
   // Own-tomb holdback chests, spread across the front-half pyramids (the back half already
   // carries a ward wing above).
-  journey("junior_1").pyramid(1, { sideSections: [holdChest(0)] }),
+  journey("junior_1").pyramid(1, { sideSections: [holdChest(0), starterEcho()] }),
   journey("junior_1").pyramid(2, { sideSections: [holdChest(1)] }),
   journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_2").pyramid(2, { sideSections: [holdChest(1)] }),
