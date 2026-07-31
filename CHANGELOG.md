@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- More variety in what a ward gate can hold: pyramids now mix in bonus pockets from tiers other than their own more often, including several new tiers reaching back into each other for the first time (master previously never hosted anything but its own content). Starter-tier "merchant" moments also now reappear throughout the whole game, not just early on — a low-difficulty breather tucked into every later tier.
+- More variety in what a ward gate can hold: pyramids now mix in bonus pockets from tiers other than their own more often, including several new tiers reaching back into each other for the first time (master previously never hosted anything but its own content). Starter-tier "merchant" moments also now reappear throughout the whole game, not just early on — a low-difficulty breather tucked into every later tier, occasionally holding an actual starter hieroglyph fragment instead of always being cosmetic.
 
 ## 0.30.8 - 2026-07-31
 ### Changed

@@ -48,9 +48,12 @@ const JUNIOR_ECHO_AT: Record<string, number> = { expert_2: 2, expert_3: 3 }
 
 // The full-circle starter echo (see master.ts/wizard.ts for the matching pattern) — a whole
 // bonus floor this time, since expert already wings its own tease targets on the back half.
-// Gated on starter_a_4, provably inert w.r.t. every hieroglyph's holdback (see the other files'
-// comment for the full argument). Difficulty auto-derives to starter.
-const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 3, puzzles: 2 })
+// Gated on starter_a_4, only obtainable by clearing starter_treasure_tomb's own 4 floors, so it's
+// structurally unreachable for a symbol needed on the tomb's own first tableau run
+// (placeFragments.ts's eligibility check requires the gate's key already owned) — prefers a real
+// starter hieroglyph fragment, falling back to mosaic if no starter symbol has outstanding demand
+// reaching this slot. Difficulty auto-derives to starter.
+const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 3, puzzles: 2, endReward: "hieroglyph" })
 // journey id → 1-based pyramid number for the starter wing (a back-half, non-`last` pyramid).
 const STARTER_WING_AT: Record<string, number> = { expert_1: 3 }
 // Pyramid counts per expert journey (mirror journeyStructure.ts). Front half → ward chest, back

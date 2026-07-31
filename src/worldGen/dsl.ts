@@ -34,10 +34,7 @@ export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph"
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
 export type GateSpec =
-  | GateType
-  | null
-  | { type: "tomb-key"; tombId: string; index: number }
-  | { type: "floor-key"; color?: KeyColor }
+  GateType | null | { type: "tomb-key"; tombId: string; index: number } | { type: "floor-key"; color?: KeyColor }
 
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
@@ -166,6 +163,10 @@ export type WardWingSpec = {
   index: number
   difficulty?: Difficulty
   puzzles?: number
+  /** Soft placement preference for the wing's own bonus-floor reward (e.g. "hieroglyph" or
+   * "mosaicPiece") — same grammar as a `wardChest`'s `endReward`. Omit for the default generic
+   * fragment slot. */
+  endReward?: RewardHint
 }
 
 export type PyramidConstraint = {
@@ -439,13 +440,20 @@ export const wardPath = (opts: PathOpts & { tomb: string; index: number }): Side
 
 /** Authors one ward wing — a gated bonus floor at a chosen difficulty, keyed to a chosen tomb
  * treasure. Pass an array of these as `wardWings` for varied "come back stronger" wings. */
-export const wardWing = (opts: { tomb: string; index: number; tier?: Difficulty; puzzles?: number }): WardWingSpec => {
+export const wardWing = (opts: {
+  tomb: string
+  index: number
+  tier?: Difficulty
+  puzzles?: number
+  endReward?: RewardHint
+}): WardWingSpec => {
   const resolvedTier = opts.tier ?? wardKeyTier(opts.tomb, opts.index)
   return {
     tomb: opts.tomb,
     index: opts.index,
     ...(resolvedTier ? { difficulty: resolvedTier } : {}),
     ...(opts.puzzles !== undefined ? { puzzles: opts.puzzles } : {}),
+    ...(opts.endReward !== undefined ? { endReward: opts.endReward } : {}),
   }
 }
 

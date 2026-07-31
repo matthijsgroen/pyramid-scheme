@@ -27,11 +27,12 @@ const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c"
 const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 3, puzzles: 1 })
 
 // The full-circle moment: a starter-themed bonus floor, deep in the endgame. Gated on
-// starter_a_4 — the one starter key starter.ts's own HOLD_CYCLE never emits and no symbol's
-// preferredWardKeys can ever include (a tomb's last-floor key is never a prerequisite within its
-// own tomb), so this can never compete with starter's hieroglyph-holdback balance. Difficulty
-// auto-derives to starter.
-const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 3, puzzles: 3 })
+// starter_a_4, only obtainable by clearing starter_treasure_tomb's own 4 floors, so it's
+// structurally unreachable for a symbol needed on the tomb's own first tableau run
+// (placeFragments.ts's eligibility check requires the gate's key already owned) — prefers a real
+// starter hieroglyph fragment, falling back to mosaic if no starter symbol has outstanding demand
+// reaching this slot. Difficulty auto-derives to starter.
+const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 3, puzzles: 3, endReward: "hieroglyph" })
 
 // The wizard_treasure_tomb_c map-piece unlock gate, shared between its normal home (the tier-wide
 // "last-1" rule below) and wizard_1's pyramid 3 (which happens to BE that journey's last-1

@@ -27,12 +27,13 @@ const wizardWing = () => wardWing({ tomb: "wizard_treasure_tomb", index: 3, puzz
 // this index. Difficulty auto-derives to expert.
 const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb", index: 3, puzzles: 1 })
 
-// A starter-themed breather deep in a harder tier — merchant flavor, low difficulty, no
-// hieroglyph competition (explicitly mosaic-tagged, not left generic, so the hieroglyph currency
-// soft-avoids it regardless of which starter symbol's demand is active). Gated on starter_a_4,
-// the one starter key starter.ts's own HOLD_CYCLE never emits and no symbol's preferredWardKeys
-// can ever include (a tomb's last-floor key is never a prerequisite within its own tomb).
-const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 3, puzzles: 1, endReward: "mosaicPiece" })
+// A starter-themed breather deep in a harder tier — merchant flavor, low difficulty, prefers a
+// real starter hieroglyph fragment. Gated on starter_a_4, only obtainable by clearing
+// starter_treasure_tomb's own 4 floors, so it's structurally unreachable for a symbol needed on
+// the tomb's own first tableau run (placeFragments.ts's eligibility check requires the gate's key
+// already owned) — safe regardless of which starter symbol currently has demand. Falls back to
+// mosaic if no starter symbol has outstanding demand reaching this slot.
+const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 3, puzzles: 1, endReward: "hieroglyph" })
 
 // Master's escalation (between expert's intro of traps/keys and wizard's saturation): DEEPER
 // locks (multi-color floor keys + key chains) and HAZARDOUS returns (wardPathTrapped), plus the
