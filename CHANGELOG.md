@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.30.8 - 2026-07-31
 ### Changed
 - Hieroglyph fragments now stay strictly within their own difficulty — a symbol only ever turns up somewhere marked for its own tier, never mixed in with a harder or easier one. Most symbols also now require at least a little tomb descent to fully collect: a handful of early ones still turn up freely while exploring, but the rest hold back one or more of their pieces behind that tomb's own gates, so completing a hieroglyph collection is more of a hunt tied to your progress through its tomb, instead of something you can gather up entirely before ever setting foot inside.
 
