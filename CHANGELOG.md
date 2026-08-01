@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.0 - 2026-08-01
 ### Added
 - The compass now warns you when a piece isn't yours to take yet: 🔒 for one sitting behind a ward key you don't hold or in a difficulty you haven't unlocked, 👁 for one hidden in a corridor you'd need the passageway detector to find, and ❓ where it genuinely can't tell — inside a tomb you may not be able to enter, or on sale at a merchant. A piece with nothing known in its way carries no mark. Previously the compass listed every location in the world with no hint that most of them were unreachable, which had become misleading now that hieroglyph pieces are deliberately held back behind tomb gates.
 
