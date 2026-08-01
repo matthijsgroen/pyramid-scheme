@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.1 - 2026-08-01
 ### Fixed
 - Re-entering a pyramid no longer leaves you with a board you can't play. Picking an earlier pyramid off the journey map could slide the real board off to the side and leave a look-alike sitting in the middle of the screen — one that ignored every tap, since it was only ever scenery. Tapping around would also send the pyramids drifting out of view. The board you picked now stays put and stays playable.
 - A pyramid you'd already solved comes back empty instead of pre-filled. Its old answers were still being restored, which greyed out every square and re-ran the "level complete" celebration over a board you hadn't touched. Re-entering a pyramid means solving its board again; backing out part-way through still keeps what you'd filled in.
