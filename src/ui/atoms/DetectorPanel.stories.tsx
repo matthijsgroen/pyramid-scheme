@@ -14,18 +14,17 @@ const meta = {
     compassTarget: null,
     compassResults: [],
     consumableResults: [],
-    onSetDetector: () => {},
+    journeyName: (id: string) => ({ starter_1: "Sphinx Dawn", starter_2: "Papyrus Route" })[id] ?? id,
+    compassTargetLabel: () => "𓎗",
   },
 } satisfies Meta<typeof DetectorPanel>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const NoPerks: Story = {}
-
-export const CompassOnly: Story = {
-  args: { compassLevel: 1 },
-}
+// Readout only — the mode buttons live in DetectorToggles, so with no mode active this renders
+// nothing at all rather than an empty card.
+export const NoModeActive: Story = {}
 
 // Compass active but no target picked yet — the HUD points the player at the Collection picker (§3C).
 export const CompassNoTarget: Story = {

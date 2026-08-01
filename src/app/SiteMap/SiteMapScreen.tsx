@@ -26,6 +26,7 @@ import { useCompassTargetLabel } from "@/app/SiteMap/compassTarget"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
+import { DetectorToggles } from "@/ui/atoms/DetectorToggles"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
@@ -387,25 +388,32 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         />
       </div>
       <SiteHudBar>
-        {(detectorLevels.compass > 0 || detectorLevels.supplies > 0 || detectorLevels.corridor > 0) && (
-          <DetectorPanel
+        {/* The readout sits on its own row (it's multi-line), but only once a mode is switched on —
+            both this and the toggles below self-hide, so no empty row is reserved for them. */}
+        <DetectorPanel
+          activeDetector={detector.activeDetector}
+          compassLevel={detectorLevels.compass}
+          consumableDetectorLevel={detectorLevels.supplies}
+          detectionLevel={detectorLevels.corridor}
+          compassTarget={detector.compassTarget}
+          compassTargetLabel={compassTargetLabel}
+          journeyName={journeyName}
+          compassResults={detector.compassResults}
+          consumableResults={detector.consumableResults}
+          floorHasHiddenCorridor={floorHasHiddenCorridor}
+          pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
+        />
+        {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
+            non-hit-testing band (the widgets and dev buttons below are clickable). */}
+        <div className="pointer-events-auto flex items-center gap-4">
+          {/* Detector buttons ride along in this row rather than claiming one of their own. */}
+          <DetectorToggles
             activeDetector={detector.activeDetector}
             compassLevel={detectorLevels.compass}
             consumableDetectorLevel={detectorLevels.supplies}
             detectionLevel={detectorLevels.corridor}
-            compassTarget={detector.compassTarget}
-            compassTargetLabel={compassTargetLabel}
-            journeyName={journeyName}
-            compassResults={detector.compassResults}
-            consumableResults={detector.consumableResults}
             onSetDetector={detector.setDetector}
-            floorHasHiddenCorridor={floorHasHiddenCorridor}
-            pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
           />
-        )}
-        {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
-            non-hit-testing band (the widgets and dev buttons below are clickable). */}
-        <div className="pointer-events-auto flex items-center gap-4">
           {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />

@@ -17,8 +17,6 @@ const { DetectorPanel } = await import("./DetectorPanel")
 // mounted and later queries match earlier renders (see CollectibleSlot.spec.tsx for the same guard).
 afterEach(cleanup)
 
-const noop = () => {}
-
 // Journey ids are internal; the panel is handed a lookup so the readout shows real names. Tests use
 // stand-ins to prove the substitution happens (the app passes localized names from journeys.json).
 const journeyName = (id: string) => ({ starter_1: "Sphinx Dawn", junior_1: "Ibis Way" })[id] ?? id
@@ -62,7 +60,6 @@ const renderCompass = (compassLevel: number, compassResults: CompassHit[] = COMP
       journeyName={journeyName}
       compassResults={compassResults}
       consumableResults={[]}
-      onSetDetector={noop}
     />
   )
 
@@ -100,7 +97,6 @@ describe("DetectorPanel precision by level (§7.2)", () => {
         compassTarget={null}
         compassResults={[]}
         consumableResults={[]}
-        onSetDetector={noop}
       />
     )
     expect(screen.getByText("detector.pickTarget")).toBeTruthy()
@@ -127,7 +123,6 @@ describe("DetectorPanel precision by level (§7.2)", () => {
       compassTarget: null,
       compassResults: [],
       consumableResults: [],
-      onSetDetector: noop,
       floorHasHiddenCorridor: true,
       pyramidHiddenCorridorCount: 3,
     }
@@ -153,7 +148,6 @@ describe("DetectorPanel precision by level (§7.2)", () => {
       compassTarget: null,
       compassResults: [],
       consumableResults: CONSUMABLE,
-      onSetDetector: noop,
     }
     const { rerender } = render(<DetectorPanel {...props} consumableDetectorLevel={1} journeyName={journeyName} />)
     expect(screen.getAllByText("Ibis Way")).toHaveLength(1)
@@ -170,8 +164,8 @@ describe("DetectorPanel precision by level (§7.2)", () => {
 describe("DetectorPanel access marking", () => {
   const withAccess = (access: CompassHit["access"]) => [{ ...COMPASS[0], access }]
 
-  // Queried by tooltip rather than glyph: the mode-toggle buttons use some of the same emoji, so the
-  // title both disambiguates and proves the explanation is wired up.
+  // Queried by tooltip rather than glyph — 👁 also labels a detector mode, so the title both keeps
+  // the assertion unambiguous and proves the explanation is wired up.
   it("leaves an unblocked hit unmarked", () => {
     renderCompass(1, withAccess("open"))
     expect(screen.getByText("Sphinx Dawn L1")).toBeTruthy()

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - The compass readout now names places instead of showing internal ids — "Papyrus Merchant's Route L2" rather than `starter_2`. It also tells you which pyramid of a journey to search: at its first level it was naming the whole journey, which can be five pyramids, instead of the one pyramid it actually knows. The supplies detector's readout is named the same way.
 - The compass panel now says what it's hunting ("Looking for 𓎗"), rather than leaving you to remember which hieroglyph you picked over on the Collection screen.
+- The detector buttons now sit alongside your health and coins instead of taking up a row of their own above them, and the readout panel only appears once you actually switch a detector on — so the bottom of the screen stays clear of the map while you're exploring.
 
 ## 0.30.10 - 2026-08-01
 ### Fixed
