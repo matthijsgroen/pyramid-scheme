@@ -70,10 +70,10 @@ export const wizardRules: Rule[] = [
     // Open (visible) trapped path — the ceiling carries the open-trap mechanic expert introduced,
     // ending in junk (income).
     .sidePaths("low")
-    .settings({ pathPuzzles: 2, end: "junk", encounter: "trap" })
+    .settings({ pathPuzzles: 4, end: "junk", encounter: "trap" })
     // Wizard is trap-heavy: 2-3 trapped hidden mosaics per pyramid, plus one plain-loot hidden.
     .hiddenPaths("medium")
-    .settings({ pathPuzzles: 1, end: "mosaic", encounter: "trap" })
+    .settings({ pathPuzzles: 2, end: "mosaic", encounter: "trap" })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" }),
 

@@ -66,7 +66,7 @@ export const starterRules: Rule[] = [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tomb: "starter_treasure_tomb", index: 0 }),
         sidePath(),
-        hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" }),
+        hiddenPath({ puzzles: 4, encounter: "trap", endReward: "mosaicPiece" }),
         teaseChest("expert"),
         // A reachable mosaic in the onboarding pyramid (floor 0 is always reachable) — surplus end
         // slot beyond the gating pass's fixed demand, so the capped mosaic pass fills it. Without it
@@ -106,7 +106,7 @@ export const starterRules: Rule[] = [
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
       difficulty: "expert",
-      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],
+      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 4, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
   journey("starter_2")
@@ -121,7 +121,7 @@ export const starterRules: Rule[] = [
     .floor(1, {
       pathPuzzles: 3,
       difficulty: "master",
-      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 1, encounter: "trap", endReward: "mosaicPiece" })],
+      sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
   // starter_3 / starter_4 — otherwise ride the tier defaults (map piece on pyramid 1, low

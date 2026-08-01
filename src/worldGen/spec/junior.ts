@@ -46,7 +46,7 @@ export const juniorRules: Rule[] = [
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" })
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 1, end: "junk", encounter: "trap", chance: 0.4 }),
+    .settings({ pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }),
 
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
   journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),

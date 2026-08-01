@@ -60,7 +60,7 @@ const MASTER_SIDE_PATHS: PathEntry[] = [
   // Multi-color floor-key path (colors rotate through keyColorsRange below).
   { density: "low", pathPuzzles: 1, end: "fragment", gate: "floor-key" },
 ]
-const MASTER_HIDDEN_PATHS: PathEntry[] = [{ density: "low", pathPuzzles: 1, end: "mosaic", encounter: "trap" }]
+const MASTER_HIDDEN_PATHS: PathEntry[] = [{ density: "low", pathPuzzles: 2, end: "mosaic", encounter: "trap" }]
 
 // A KEY CHAIN: a red floor-key gates a room that itself holds a green-gated vault — find the red
 // key, use it to reach the green key, use that to reach the payoff. Master's deep-lock showcase.

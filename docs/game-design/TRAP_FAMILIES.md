@@ -40,15 +40,21 @@ Time limits are **authored constants per tier**, not generated values. Permanent
 ```ts
 // ponytail: all trap timing lives here — tweak before playtesting
 export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
-  starter:  0,   // no traps at starter
-  junior:   0,   // no traps at junior
-  expert:  12,
-  master:   9,
-  wizard:   6,
+  starter:  8,
+  junior:   8,
+  expert:   8,
+  master:   6,
+  wizard:   4,
 };
 
 export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1;  // resolved: was 3
 ```
+
+Every tier is timed. The family is a *reflex* check on arithmetic the player already does to progress
+at that tier (operand ranges scale separately), so the limit tests recall speed on familiar sums, not
+comprehension of new ones. Starter and junior share expert's limit: their sums are the smallest in the
+game and all their trap corridors are hidden (optional) content. `0` still means "untimed" if a tier
+should ever go back to it — the countdown short-circuits and trap insight refuses to extend it.
 
 Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` to the player's effective time limit on every trap attempt, regardless of family or tier.
 

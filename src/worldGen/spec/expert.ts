@@ -9,9 +9,9 @@ const EXPERT_SIDE_PATHS: PathEntry[] = [
   // below is survivable.
   { density: "medium", pathPuzzles: 2, end: "fragment" },
   // First OPEN (visible) trapped path — a threat you can see, ending in junk (sellable income).
-  { density: "low", pathPuzzles: 2, end: "junk", encounter: "trap" },
+  { density: "low", pathPuzzles: 4, end: "junk", encounter: "trap" },
 ]
-const EXPERT_HIDDEN_PATHS: PathEntry[] = [{ density: "low", pathPuzzles: 1, end: "mosaic", encounter: "trap" }]
+const EXPERT_HIDDEN_PATHS: PathEntry[] = [{ density: "low", pathPuzzles: 2, end: "mosaic", encounter: "trap" }]
 // A floor-key-gated fragment side path — find a colored key on the floor to open it.
 const FLOOR_KEY_PATH: PathEntry = { density: "low", pathPuzzles: 1, end: "fragment", gate: "floor-key" }
 
