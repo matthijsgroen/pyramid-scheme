@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
-import type { DetectorMode, CompassResult, ConsumableResult } from "@/game/siteTypes"
+import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
 
 type Props = {
   activeDetector: DetectorMode
@@ -9,7 +9,11 @@ type Props = {
   detectionLevel: number // 0 = not unlocked
   // The hunted hieroglyph, picked on the Collection screen (§3C). null = nothing picked yet.
   compassTarget: string | null
-  compassResults: CompassResult[]
+  // How to SHOW the target (id → glyph) and a journey (id → its localized name). Injected rather
+  // than looked up here: this is a presentational atom, and the target's meaning is mod-owned.
+  compassTargetLabel?: (id: string) => string
+  journeyName?: (journeyId: string) => string
+  compassResults: CompassHit[]
   consumableResults: ConsumableResult[]
   onSetDetector: (mode: DetectorMode) => void
   // Corridor detector widens outward (§7.2): L2 = an unfound corridor on this floor; L3 = the count
@@ -34,18 +38,31 @@ const uniqueBy = <T,>(items: T[], key: (item: T) => string): T[] => {
   })
 }
 
-// Precision narrows inward with level (§7.2): L1 pyramid only, L2 +floor, L3 +exact cell. The key
-// collapses hits to the shown precision so lower levels don't list the same pyramid/floor twice.
-const compassKey = (r: CompassResult, level: number): string =>
+// Precision narrows inward with level (§7.2): L1 pyramid, L2 +floor, L3 +exact cell. The key
+// collapses hits to the shown precision so lower levels don't list the same pyramid/floor twice —
+// L1 keys on the PYRAMID (journey + level), since a journey holds several and naming only the
+// journey would be a whole expedition rather than the "which pyramid" the design specifies.
+const compassKey = (r: CompassHit, level: number): string =>
   level <= 1
-    ? r.journeyId
+    ? `${r.journeyId}:${r.levelIdx}`
     : level === 2
       ? `${r.journeyId}:${r.levelIdx}:${r.floorIdx}`
       : `${r.journeyId}:${r.levelIdx}:${r.floorIdx}:${r.cell?.row},${r.cell?.col}`
 
-const compassLabel = (r: CompassResult, level: number): string => {
-  if (level <= 1) return r.journeyId
-  const floor = `${r.journeyId} L${r.levelIdx + 1} F${r.floorIdx + 1}`
+// What each access verdict looks like. "open" shows nothing — a bare row means "nothing known in the
+// way", which is all the data supports; only the blockers get a badge. See CompassAccess.
+const ACCESS_ICON: Record<CompassAccess, string> = {
+  open: "",
+  locked: "🔒",
+  hidden: "👁",
+  unknown: "❓",
+}
+
+const compassLabel = (r: CompassHit, level: number, journeyName: (id: string) => string): string => {
+  // L#/F# keeps the shipped notation (# = pyramid, then floor); only the journey id → name changes.
+  const pyramid = `${journeyName(r.journeyId)} L${r.levelIdx + 1}`
+  if (level <= 1) return pyramid
+  const floor = `${pyramid} F${r.floorIdx + 1}`
   return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
 }
 
@@ -56,9 +73,13 @@ const consumableKey = (r: ConsumableResult, level: number): string =>
       ? `${r.journeyId}:${r.floorIdx}`
       : `${r.journeyId}:${r.floorIdx}:${r.cell.row},${r.cell.col}`
 
-const consumableLabel = (r: ConsumableResult, level: number): string => {
-  if (level <= 1) return r.journeyId
-  const floor = `${r.journeyId} F${r.floorIdx + 1}`
+// The supplies readout gets the same name treatment. Its L1 stays journey-wide, unlike the compass:
+// ConsumableResult carries no levelIdx (it's rebuilt from an edgeId), so pyramid precision here
+// needs the skipped-consumable store to record one first.
+const consumableLabel = (r: ConsumableResult, level: number, journeyName: (id: string) => string): string => {
+  const journey = journeyName(r.journeyId)
+  if (level <= 1) return journey
+  const floor = `${journey} F${r.floorIdx + 1}`
   return level >= 3 ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
 }
 
@@ -68,6 +89,8 @@ export const DetectorPanel: FC<Props> = ({
   consumableDetectorLevel,
   detectionLevel,
   compassTarget,
+  compassTargetLabel = id => id,
+  journeyName = id => id,
   compassResults,
   consumableResults,
   onSetDetector,
@@ -122,17 +145,27 @@ export const DetectorPanel: FC<Props> = ({
           {/* Target is picked on the Collection screen (§3C), not here — the HUD only reads it out. */}
           {!compassTarget ? (
             <p className="text-stone-500">{t("detector.pickTarget")}</p>
-          ) : shownCompass.length === 0 ? (
-            <p className="text-stone-500">{t("detector.allCollected")}</p>
           ) : (
             <>
-              {shownCompass.slice(0, 3).map((r, i) => (
-                <div key={i} className="truncate text-amber-200">
-                  {compassLabel(r, compassLevel)}
-                </div>
-              ))}
-              {shownCompass.length > 3 && (
-                <p className="text-stone-500">{t("detector.more", { count: shownCompass.length - 3 })}</p>
+              <p className="text-stone-500">
+                {t("detector.lookingFor", { symbol: compassTargetLabel(compassTarget) })}
+              </p>
+              {shownCompass.length === 0 ? (
+                <p className="text-stone-500">{t("detector.allCollected")}</p>
+              ) : (
+                <>
+                  {shownCompass.slice(0, 3).map((r, i) => (
+                    <div key={i} className="truncate text-amber-200">
+                      {ACCESS_ICON[r.access] && (
+                        <span title={t(`detector.access.${r.access}`)}>{ACCESS_ICON[r.access]} </span>
+                      )}
+                      {compassLabel(r, compassLevel, journeyName)}
+                    </div>
+                  ))}
+                  {shownCompass.length > 3 && (
+                    <p className="text-stone-500">{t("detector.more", { count: shownCompass.length - 3 })}</p>
+                  )}
+                </>
               )}
             </>
           )}
@@ -146,7 +179,7 @@ export const DetectorPanel: FC<Props> = ({
           ) : (
             shownConsumables.slice(0, 3).map((r, i) => (
               <div key={i} className="truncate text-amber-200">
-                {consumableLabel(r, consumableDetectorLevel)}
+                {consumableLabel(r, consumableDetectorLevel, journeyName)}
               </div>
             ))
           )}

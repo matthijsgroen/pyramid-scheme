@@ -22,6 +22,8 @@ import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useCompassTargetLabel } from "@/app/SiteMap/compassTarget"
+import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { BackButton } from "@/ui/atoms/BackButton"
@@ -53,6 +55,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
+  // Player-facing labels for the detector readout: the hunted item's glyph (mod-owned, via the seam)
+  // and each journey's localized name, so it reads "Papyrus Merchant's Route 2" rather than
+  // "starter_2". useJourneyTranslations is called ONCE and reduced to a lookup — the per-id
+  // useJourneyTranslation is a hook and can't be called per result.
+  const compassTargetLabel = useCompassTargetLabel()
+  const translatedJourneys = useJourneyTranslations()
+  const journeyName = useMemo(() => {
+    const names: Record<string, string> = Object.fromEntries(translatedJourneys.map(j => [j.id, j.name]))
+    return (id: string) => names[id] ?? id
+  }, [translatedJourneys])
 
   const [currentFloor, setCurrentFloor] = useState(() => {
     const pos = journeyState?.position
@@ -382,6 +394,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             consumableDetectorLevel={detectorLevels.supplies}
             detectionLevel={detectorLevels.corridor}
             compassTarget={detector.compassTarget}
+            compassTargetLabel={compassTargetLabel}
+            journeyName={journeyName}
             compassResults={detector.compassResults}
             consumableResults={detector.consumableResults}
             onSetDetector={detector.setDetector}

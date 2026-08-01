@@ -4,18 +4,13 @@ import { useTranslation } from "react-i18next"
 import { useInventoryCategory } from "@/app/translations/useInventoryTranslations"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { allItems } from "@/data/inventory"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
+import { HIEROGLYPH_SYMBOLS } from "./hieroglyphSymbols"
 import { difficulties } from "@/data/difficultyLevels"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
-
-// id → symbol for every hieroglyph (the four egyptian categories). Used to tell whether a selected
-// Collection item is a hieroglyph this mod owns (the hunt affordance only applies to those) and to
-// show the hunted glyph in the hunt bar.
-const HIEROGLYPH_SYMBOLS: Record<string, string> = Object.fromEntries(allItems.map(i => [i.id, i.symbol]))
 
 // The hieroglyph mod's Collection contribution: fragment-collectible categories, each hieroglyph
 // shown as an empty / partial ("Ra 1/3") / collected slot. Registered app-side and gated on the
