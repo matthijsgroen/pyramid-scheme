@@ -69,13 +69,15 @@ export const TravelPage: FC<{
   const revisiting = !!journey && (activeJourneyInfo?.completionCount ?? 0) > 0
   const pathLevelNr = revisiting && journey ? effectiveLevelCount + 1 : (activeJourneyInfo?.levelNr ?? 1)
 
-  const handleMapClick = () => {
+  const handleMapClick = async () => {
     if (revisiting && journey) {
       // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
       // exterior board (visitLevel clears the interior).
       const info = getJourney(journey.id)
       const resumeAt = info && info.levelNr >= 1 && info.levelNr <= effectiveLevelCount ? info.levelNr : 1
-      visitLevel(journey.id, resumeAt)
+      // Awaited: the expedition must not mount until every useJourneys() instance can see the
+      // level we're heading to, or it seeds its transition animation from the level we're leaving.
+      await visitLevel(journey.id, resumeAt)
       startGame()
     } else if (activeJourneyInfo?.inProgress) {
       startGame()
@@ -84,14 +86,14 @@ export const TravelPage: FC<{
     }
   }
 
-  const handleJourneySelect = (journey: TranslatedJourney) => {
+  const handleJourneySelect = async (journey: TranslatedJourney) => {
     if (isRevisit(journey.id)) {
       // Don't jump in — return to the map with the journey loaded so the player picks a pyramid.
       setSelectedJourney(journey)
       setShowJourneySelection(false)
       return
     }
-    startJourney(journey)
+    await startJourney(journey)
     startGame()
   }
 
@@ -99,10 +101,11 @@ export const TravelPage: FC<{
     setShowJourneySelection(false)
   }
 
-  const handleNodeClick = (levelNr: number) => {
+  const handleNodeClick = async (levelNr: number) => {
     if (!journey) return
     // A tomb has a single exterior level; every "node" re-enters that one site (see effectiveLevelCount).
-    visitLevel(journey.id, journey.type === "treasure_tomb" ? 1 : levelNr)
+    // Awaited — see handleMapClick.
+    await visitLevel(journey.id, journey.type === "treasure_tomb" ? 1 : levelNr)
     startGame()
   }
 

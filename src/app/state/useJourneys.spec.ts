@@ -375,3 +375,57 @@ describe("floor exploration tracking", () => {
     expect(setJourneysCalls).toBe(0)
   })
 })
+
+describe("navigation mutators are awaitable", () => {
+  // Travel shows the expedition the moment the player picks a pyramid. useJourneys() is not a
+  // context, so every other instance — App's, which decides what PyramidExpedition is mounted
+  // with — only sees the new level once the write is persisted. These two must therefore report
+  // when that has happened, or the expedition mounts describing the level being left behind.
+  const deferredSetJourneys = () => {
+    let resolveWrite!: () => void
+    const written = new Promise<void>(resolve => {
+      resolveWrite = resolve
+    })
+    return { setJourneys: () => written, resolveWrite }
+  }
+
+  it("visitLevel resolves only once the write is persisted", async () => {
+    const { setJourneys, resolveWrite } = deferredSetJourneys()
+    const api = createJourneysV3Api({
+      journeys: [makeStoredJourney()],
+      setJourneys,
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+
+    let settled = false
+    const pending = api.visitLevel(REAL_ID, 1).then(() => {
+      settled = true
+    })
+    await Promise.resolve()
+    expect(settled).toBe(false)
+
+    resolveWrite()
+    await pending
+    expect(settled).toBe(true)
+  })
+
+  it("startJourney resolves only once the write is persisted", async () => {
+    const { setJourneys, resolveWrite } = deferredSetJourneys()
+    const api = createJourneysV3Api({
+      journeys: [makeStoredJourney()],
+      setJourneys,
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+
+    let settled = false
+    const pending = api.startJourney(allJourneys.find(j => j.id === REAL_ID)!).then(() => {
+      settled = true
+    })
+    await Promise.resolve()
+    expect(settled).toBe(false)
+
+    resolveWrite()
+    await pending
+    expect(settled).toBe(true)
+  })
+})
