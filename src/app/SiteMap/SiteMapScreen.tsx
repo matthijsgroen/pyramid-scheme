@@ -389,7 +389,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
           />
         )}
-        <div className="flex items-center gap-4">
+        {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
+            non-hit-testing band (the widgets and dev buttons below are clickable). */}
+        <div className="pointer-events-auto flex items-center gap-4">
           {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />
