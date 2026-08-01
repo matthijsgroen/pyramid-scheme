@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.2 - 2026-08-01
 ### Fixed
 - Seventeen pyramid interiors that couldn't be entered at all now open normally. Reaching one — the first expert pyramid among them — showed only "Site layout unavailable." with no way forward: its floor plan was being laid out on a grid too small to fit all of its side passages, and the game gave up trying. The affected floors sit in the expert, master and wizard tiers; they get a roomier floor plan, and a few of their side passages wander a little less than intended so everything fits. Every other interior keeps exactly the layout it had, so anything you'd already explored is untouched.
 
