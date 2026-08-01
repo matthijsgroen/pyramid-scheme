@@ -142,9 +142,14 @@ opens.
 ## The progression ladder
 
 Difficulty is linear: each tier is 4 pyramid journeys + 1 tomb. Collecting
-a tomb's first treasure unlocks the next tier (another 4 journeys + a
+ANY ONE of a tomb's 4 designated tier-unlock treasures (`TIER_UNLOCK_PERK_IDS`,
+`src/data/treasurePerks.ts`) unlocks the next tier (another 4 journeys + a
 tomb), and so on to Wizard. The solver's top-level goal graph is exactly
-this ladder — reaching Wizard.
+this ladder — reaching Wizard. Each of those 4 treasures is *also* paired to
+one specific journey of the next tier (journey N's own ward gates open on
+tier-unlock key N) — so tier entry itself only ever needs one key, but
+fully exploring the tier's ward-gated bonus content across all 4 journeys
+means finding all of them, which is the actual progression this rewards.
 
 **The ladder is linear; reachability is not.** The solver must compute
 reachability across the **whole world at once**, not tier by tier. `WARD_MIX`
@@ -331,6 +336,31 @@ pipe(filterBy(slot => slot.difficulty === ctx.targetDifficulty), rankBy(lootPrio
 
 A future currency composes the same handful of primitives instead of
 writing placement logic from scratch.
+
+The hieroglyph-fragment tier filter is a genuine hard filter
+(`filterBy(s => s.tier === demand.tier)`, `HIEROGLYPH_CURRENCY.rank` in
+`src/mods/hieroglyph/game/hieroglyphCurrency.ts`) — a fragment may never land
+in a slot whose own authored difficulty differs from its tier, regardless of
+ranking pressure. Beyond the tier filter, the rank composes two further soft
+rungs: a ward-key/preference score, then a dedup that caps a hieroglyph to
+**at most one ward-matched slot per distinct matched key**
+(`uniqueBy(s => matchedKey ? `__ward__:${matchedKey}` : `${journeyId}#${levelIndex}`)`,
+falling back to per-pyramid dedup for non-ward slots) — without this cap a
+single hungry symbol would claim every gated slot behind a tomb's own key,
+leaving nothing for the other symbols that also prefer it. The cap means a
+symbol needed deep in its tomb's tableau chain (several preferred keys, one
+per earlier floor) holds back one fragment per floor instead of piling them
+all behind the first, and no two of its own gated copies ever require the
+identical key.
+
+A per-symbol `endReward: "hieroglyph:<id>"` preference tag is deliberately
+not used to reserve a slot for a specific symbol: it would still be only a
+soft +1 score (stealable by whichever demand processes first, not an
+exclusive claim — see "A slot's authored placement preference is a soft tag"
+below), and it would rot whenever the tableau story generator
+(`orderByGradualReveal`, `src/data/tableaus.ts`) reshuffles which symbol is
+first needed at which run. The ward-slot cap achieves the same outcome
+without hardcoding a symbol id into the spec.
 
 ### Map piece placement — a two-level diversity ladder, not a single dedup
 

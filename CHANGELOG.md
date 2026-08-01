@@ -6,6 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.31.0 - 2026-08-01
+### Added
+- The compass now warns you when a piece isn't yours to take yet: 🔒 for one sitting behind a ward key you don't hold or in a difficulty you haven't unlocked, 👁 for one hidden in a corridor you'd need the passageway detector to find, and ❓ where it genuinely can't tell — inside a tomb you may not be able to enter, or on sale at a merchant. A piece with nothing known in its way carries no mark. Previously the compass listed every location in the world with no hint that most of them were unreachable, which had become misleading now that hieroglyph pieces are deliberately held back behind tomb gates.
+
+### Fixed
+- The compass readout now names places instead of showing internal ids — "Papyrus Merchant's Route L2" rather than `starter_2`. It also tells you which pyramid of a journey to search: at its first level it was naming the whole journey, which can be five pyramids, instead of the one pyramid it actually knows. The supplies detector's readout is named the same way.
+- The compass panel now says what it's hunting ("Looking for 𓎗"), rather than leaving you to remember which hieroglyph you picked over on the Collection screen.
+- The detector buttons now sit alongside your health and coins instead of taking up a row of their own above them, and the readout panel only appears once you actually switch a detector on — so the bottom of the screen stays clear of the map while you're exploring.
+
+## 0.30.10 - 2026-08-01
+### Fixed
+- Taps near the bottom of a pyramid or tomb map are no longer swallowed. An invisible strip spanning the full width of the screen behind the detector panel and the health/coins row was catching them, so rooms and corridors down there simply wouldn't respond — worst while a detector was switched on, since the panel grows taller as it lists results.
+- You can now actually pick a hieroglyph to hunt with the compass. The Collection screen only let you tap hieroglyphs you'd already completed, while the "hunt this one" button only ever appeared for ones you hadn't — so the compass could never be given a target despite the screen telling you to choose one. Partially-collected hieroglyphs (the ones showing e.g. 2/3) are now tappable, which is what the hint always meant.
+
+## 0.30.9 - 2026-07-31
+### Changed
+- More variety in what a ward gate can hold: pyramids now mix in bonus pockets from tiers other than their own more often, including several new tiers reaching back into each other for the first time (master previously never hosted anything but its own content). Starter-tier "merchant" moments also now reappear throughout the whole game, not just early on — a low-difficulty breather tucked into every later tier, occasionally holding an actual starter hieroglyph fragment instead of always being cosmetic.
+- These cross-tier bonus pockets are now noticeably more likely to actually hold a real hieroglyph fragment for their tier, rather than falling back to a mosaic piece or plain loot.
+
+## 0.30.8 - 2026-07-31
+### Changed
+- Hieroglyph fragments now stay strictly within their own difficulty — a symbol only ever turns up somewhere marked for its own tier, never mixed in with a harder or easier one. Most symbols also now require at least a little tomb descent to fully collect: a handful of early ones still turn up freely while exploring, but the rest hold back one or more of their pieces behind that tomb's own gates, so completing a hieroglyph collection is more of a hunt tied to your progress through its tomb, instead of something you can gather up entirely before ever setting foot inside.
+
+## 0.30.7 - 2026-07-30
+### Changed
+- Ward gates that unlock a new difficulty tier no longer all open at once off a single key. Each tier now has 4 tier-unlock treasures instead of 1, mixed and matched across that tier's journeys, so finding more of them opens more ward-gated bonus content instead of one key instantly unlocking everything. A few of these treasures now also gate a bonus pocket much later in the game, so a key you found long ago may still have something new to open.
+
 ### Fixed
 - Fixed a small number of hieroglyph fragments being placed behind a tomb's own gated staircase to its next floor, where they could never actually be picked up — permanently locking the tableau rooms that needed them. Those fragments now always appear somewhere they can be collected.
 

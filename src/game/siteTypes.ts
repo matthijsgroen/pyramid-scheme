@@ -177,7 +177,32 @@ export type CompassResult = {
   hieroglyphId: string
   pieceIndex: number
   cell?: { row: number; col: number }
+  // Access facts a scanner observes while walking the config, for the readout to flag pieces you
+  // can't collect yet (§7.2's readout is otherwise happy to point at gated content). Deliberately
+  // raw facts, not a verdict: the scanner has no access to what the player holds, so judging
+  // reachability is the consumer's job (useDetector).
+  //
+  // Every tomb-key ward gate between the floor and this piece — ALL must be held to reach it.
+  wardKeys?: readonly string[]
+  // The piece sits in a hidden corridor: structurally reachable but discovery-gated (§7.3), so it
+  // needs the corridor detector or luck rather than a key.
+  hidden?: boolean
+  // The piece is stock in a shop, so it costs money on top of getting there — a blocker the
+  // readout can't evaluate, hence surfaced as uncertainty rather than a lock.
+  inShop?: boolean
 }
+
+// Whether the player can actually go and collect a compass hit right now. The readout only models
+// some of what can block a piece, so this deliberately has a "don't know" value rather than
+// collapsing unknowns into "fine":
+// - "locked"  a checkable blocker IS in the way (a ward key not held, or the tier not unlocked)
+// - "hidden"  in a hidden corridor: needs the corridor detector or luck, not a key (§7.3)
+// - "unknown" a blocker exists that this readout can't evaluate (tomb map-piece entry, shop price)
+// - "open"    nothing known is in the way — NOT a guarantee, just "we checked and found nothing"
+export type CompassAccess = "open" | "locked" | "hidden" | "unknown"
+
+// A compass hit with its access verdict resolved against what the player currently holds.
+export type CompassHit = CompassResult & { access: CompassAccess; missingKeys?: readonly string[] }
 
 // floorIdx + cell decoded from edgeId ("floor:row,col") so the supplies detector can narrow its
 // readout by level (§7.2): L1 pyramid, L2 +floor, L3 +cell.

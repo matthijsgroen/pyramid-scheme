@@ -107,6 +107,31 @@ describe("buildSideSections", () => {
     expect(sections).toEqual([])
   })
 
+  it("picks one of the tier's own unlock keys for a journey, seeded-deterministically", () => {
+    // This is the actual fix for the flat-toggle bug: each journey resolves to one specific key
+    // out of starter_treasure_tomb's 4 keys (not every journey sharing one key), the pick is
+    // stable across repeated calls, and it may land on any of the tier's keys (mix-and-match —
+    // which specific key a journey gets isn't a requirement, only that it's seeded and valid).
+    const wardKeyIdFor = (journeyId: string) =>
+      buildSideSections({
+        tier: "junior",
+        difficulty: "junior",
+        resolveReward: noReward,
+        journeyId,
+        hasWardGate: true,
+        nextTier: "expert",
+      })[0].gate
+
+    const validKeys = ["starter_a_1", "starter_a_2", "starter_a_3", "starter_a_4"]
+    for (const journeyId of ["junior_1", "junior_2", "junior_3", "junior_4"]) {
+      const gate = wardKeyIdFor(journeyId)
+      expect(gate).toEqual({ type: "tomb-key", wardKeyId: expect.any(String) })
+      expect(validKeys).toContain((gate as { wardKeyId: string }).wardKeyId)
+      // Determinism: repeated calls for the same journey must resolve to the same key.
+      expect(wardKeyIdFor(journeyId)).toEqual(gate)
+    }
+  })
+
   it("resolves DSL-authored constraintSections via resolveReward", () => {
     const sections = buildSideSections({
       tier: "starter",

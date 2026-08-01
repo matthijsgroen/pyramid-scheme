@@ -2,7 +2,7 @@ import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from 
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
 import { mulberry32 } from "../game/random"
-import { hashStr } from "./rewards"
+import { hashStr, hintToReward } from "./rewards"
 import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
@@ -320,11 +320,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
               difficulty: s.difficulty ?? difficulty,
               stairPP: s.puzzles ?? 1,
               floorPP: s.puzzles ?? 1,
+              endReward: s.endReward,
             }
           })
-        : wardIndices
-            .slice(0, uniformWingCount)
-            .map(idx => ({ wardKeyId: TOMB_PERK_IDS[tombId][idx], difficulty, stairPP: 1, floorPP: pp }))
+        : wardIndices.slice(0, uniformWingCount).map(idx => ({
+            wardKeyId: TOMB_PERK_IDS[tombId][idx],
+            difficulty,
+            stairPP: 1,
+            floorPP: pp,
+            endReward: undefined,
+          }))
 
       wingDefs.forEach((wing, w) => {
         const wingStairId = `${journeyId}:p${i}:wing${w}`
@@ -343,7 +348,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             sideSections: [],
             entrance: { stairId: wingStairId },
-            mainEndReward: { type: "fragmentSlot" },
+            mainEndReward: wing.endReward ? hintToReward(wing.endReward, wing.difficulty) : { type: "fragmentSlot" },
           })
         )
       })

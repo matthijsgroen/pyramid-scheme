@@ -22,8 +22,11 @@ import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useCompassTargetLabel } from "@/app/SiteMap/compassTarget"
+import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
+import { DetectorToggles } from "@/ui/atoms/DetectorToggles"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
@@ -53,6 +56,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
+  // Player-facing labels for the detector readout: the hunted item's glyph (mod-owned, via the seam)
+  // and each journey's localized name, so it reads "Papyrus Merchant's Route 2" rather than
+  // "starter_2". useJourneyTranslations is called ONCE and reduced to a lookup — the per-id
+  // useJourneyTranslation is a hook and can't be called per result.
+  const compassTargetLabel = useCompassTargetLabel()
+  const translatedJourneys = useJourneyTranslations()
+  const journeyName = useMemo(() => {
+    const names: Record<string, string> = Object.fromEntries(translatedJourneys.map(j => [j.id, j.name]))
+    return (id: string) => names[id] ?? id
+  }, [translatedJourneys])
 
   const [currentFloor, setCurrentFloor] = useState(() => {
     const pos = journeyState?.position
@@ -375,21 +388,32 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         />
       </div>
       <SiteHudBar>
-        {(detectorLevels.compass > 0 || detectorLevels.supplies > 0 || detectorLevels.corridor > 0) && (
-          <DetectorPanel
+        {/* The readout sits on its own row (it's multi-line), but only once a mode is switched on —
+            both this and the toggles below self-hide, so no empty row is reserved for them. */}
+        <DetectorPanel
+          activeDetector={detector.activeDetector}
+          compassLevel={detectorLevels.compass}
+          consumableDetectorLevel={detectorLevels.supplies}
+          detectionLevel={detectorLevels.corridor}
+          compassTarget={detector.compassTarget}
+          compassTargetLabel={compassTargetLabel}
+          journeyName={journeyName}
+          compassResults={detector.compassResults}
+          consumableResults={detector.consumableResults}
+          floorHasHiddenCorridor={floorHasHiddenCorridor}
+          pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
+        />
+        {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
+            non-hit-testing band (the widgets and dev buttons below are clickable). */}
+        <div className="pointer-events-auto flex items-center gap-4">
+          {/* Detector buttons ride along in this row rather than claiming one of their own. */}
+          <DetectorToggles
             activeDetector={detector.activeDetector}
             compassLevel={detectorLevels.compass}
             consumableDetectorLevel={detectorLevels.supplies}
             detectionLevel={detectorLevels.corridor}
-            compassTarget={detector.compassTarget}
-            compassResults={detector.compassResults}
-            consumableResults={detector.consumableResults}
             onSetDetector={detector.setDetector}
-            floorHasHiddenCorridor={floorHasHiddenCorridor}
-            pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
           />
-        )}
-        <div className="flex items-center gap-4">
           {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />

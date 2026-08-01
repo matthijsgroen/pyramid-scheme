@@ -590,30 +590,32 @@ Consumables fill the 147 previously unassigned reward slots (see §10). Permanen
 
 Perks are back-loaded: deeper treasures in a tomb give better rewards. Treasure #1 of each tomb always broadens the world (tier unlock or pure floor key) — never a power perk. Location keys sit at position 2 — discovered mid-run, so the player finishes before chasing the new tomb.
 
+Tier unlock is no longer a single shared key: each tomb's first 4 treasures (`TIER_UNLOCK_PERK_IDS`, `src/data/treasurePerks.ts`) are ALL tier-unlock keys for the next tier, each additionally paired to one specific journey of that tier (holding any one of the 4 unlocks the whole tier; the specific key you hold determines which of the 4 next-tier journeys' own ward-gated bonus content opens). This is dual-purpose — a key keeps granting whatever perk the table below lists AND does this gating job — so finding treasure #2/3/4 of a tomb is no longer "just" a compass or armor upgrade, it's also a ticket to a specific next-tier journey's bonus content.
+
 | Tomb | # | Key type | Perk |
 |---|---|---|---|
-| **Starter A** | 1 | Ward key | Unlocks junior difficulty |
-| | 2 | Ward key | Compass L1 |
-| | 3 | Ward key | Pack mule |
-| | 4 | Ward key | Max health +½ ♥ |
-| **Junior A** | 5 | Ward key | Unlocks expert difficulty |
-| | 6 | Ward key | — |
-| | 7 | Ward key | — |
-| | 8 | Ward key | — |
+| **Starter A** | 1 | Ward key | Unlocks junior difficulty (journey 1) |
+| | 2 | Ward key | Compass L1 · unlocks junior difficulty (journey 2) |
+| | 3 | Ward key | Pack mule · unlocks junior difficulty (journey 3) |
+| | 4 | Ward key | Max health +½ ♥ · unlocks junior difficulty (journey 4) |
+| **Junior A** | 5 | Ward key | Unlocks expert difficulty (journey 1) |
+| | 6 | Ward key | Unlocks expert difficulty (journey 2) |
+| | 7 | Ward key | Unlocks expert difficulty (journey 3) |
+| | 8 | Ward key | Unlocks expert difficulty (journey 4) |
 | | 9 | Ward key | Max health +½ ♥ |
 | | 10 | Ward key | Max health +½ ♥ |
-| **Expert A** | 11 | Ward key | Unlocks master difficulty |
-| | 12 | Location key → Expert B | — |
-| | 13 | Ward key | Trap insight +1s |
-| | 14 | Ward key | Armor |
+| **Expert A** | 11 | Ward key | Unlocks master difficulty (journey 1) |
+| | 12 | Location key → Expert B | Unlocks master difficulty (journey 2) |
+| | 13 | Ward key | Trap insight +1s · unlocks master difficulty (journey 3) |
+| | 14 | Ward key | Armor · unlocks master difficulty (journey 4) |
 | **Expert B** | 15 | Ward key | Consumable detector L1 |
 | | 16 | Ward key | — |
 | | 17 | Ward key | Trap insight +1s |
 | | 18 | Ward key | Max health +½ ♥ |
-| **Master A** | 19 | Ward key | Unlocks wizard difficulty |
-| | 20 | Location key → Master B | — |
-| | 21 | Ward key | — |
-| | 22 | Ward key | Compass L2 |
+| **Master A** | 19 | Ward key | Unlocks wizard difficulty (journey 1) |
+| | 20 | Location key → Master B | Unlocks wizard difficulty (journey 2) |
+| | 21 | Ward key | Unlocks wizard difficulty (journey 3) |
+| | 22 | Ward key | Compass L2 · unlocks wizard difficulty (journey 4) |
 | | 23 | Ward key | Armor |
 | **Master B** | 24 | Ward key | Consumable detector L2 |
 | | 25 | Ward key | Scribe's Eye L1 |
@@ -655,7 +657,7 @@ Three perks share a single **active detector slot** — only one can be active a
 
 | Perk | Levels | Effect per level | Implementation notes |
 |---|---|---|---|
-| **Tier unlock** | — | Unlocks the first journey of the next difficulty tier | Triggered on collecting treasure #1 of starter/junior/expert/master first-tomb |
+| **Tier unlock** | — | Unlocks entry to the next difficulty tier | Triggered on collecting ANY ONE of treasures #1–4 of starter/junior/expert/master first-tomb (`TIER_UNLOCK_PERK_IDS`); each of those 4 also pairs to one specific journey of the next tier, so which one you find determines which journey's own ward-gated bonus content opens |
 | **Max health +½ ♥** | — | Adds 1 half-heart to max health. Base = 6 half-hearts (3 hearts); max = 12 half-hearts (6 hearts) across all 6 upgrades | Stored as `maxHealth` integer (half-hearts). Display as full/half hearts |
 | **Armor** | — | Reduces trap damage by 1 half-heart per stack. Stack 1: trap hit costs 1½ hearts. Stack 2: trap hit costs 1 heart. Cannot reduce below 1 half-heart | Stored as `armorStacks` (0–2). Applied at damage calculation |
 | **Trap insight** | — | Adds +1s to every trap encounter time limit per stack. Stack 1: +1s. Stack 2: +2s total | Stored as `trapInsightStacks` (0–2). Applied in `TRAP_TIME_LIMITS_SECONDS` lookup |

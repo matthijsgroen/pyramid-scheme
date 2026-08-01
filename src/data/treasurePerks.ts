@@ -16,12 +16,15 @@ export const TOMB_PERK_IDS: Record<string, string[]> = {
   wizard_treasure_tomb_c: ["wizard_c_1", "wizard_c_2", "wizard_c_3", "wizard_c_4"],
 }
 
-// Ward key IDs: the treasure that unlocks gated pyramid sections for the next tier.
-// Junior pyramids → starter_a_1 ("Unlocks junior difficulty")
-// Expert pyramids → junior_a_1, etc.
-export const TIER_UNLOCK_PERK_ID: Partial<Record<string, string>> = {
-  junior: "starter_a_1",
-  expert: "junior_a_1",
-  master: "expert_a_1",
-  wizard: "master_a_1",
+// Ward key IDs: the treasures that unlock gated pyramid sections for the next tier — one per
+// journey of that tier, seeded-randomly paired (see sideSections.ts's wardGateKeyForJourney), all
+// drawn from the previous tier's own tomb. Holding ANY one of a tier's keys unlocks entry to the
+// whole tier (see isTierUnlocked); each specific key additionally opens its own paired journey's
+// ward-gated bonus content, so finding more of them progressively unlocks more exploration instead
+// of the whole tier opening at once off a single shared key.
+export const TIER_UNLOCK_PERK_IDS: Partial<Record<string, string[]>> = {
+  junior: ["starter_a_1", "starter_a_2", "starter_a_3", "starter_a_4"],
+  expert: ["junior_a_1", "junior_a_2", "junior_a_3", "junior_a_4"],
+  master: ["expert_a_1", "expert_a_2", "expert_a_3", "expert_a_4"],
+  wizard: ["master_a_1", "master_a_2", "master_a_3", "master_a_4"],
 }

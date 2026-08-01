@@ -1,5 +1,5 @@
 import type { ReachabilitySupport } from "@/worldGen/reachability"
-import { TIER_UNLOCK_PERK_ID } from "@/data/treasurePerks"
+import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import { journeys as REAL_JOURNEYS } from "@/data/journeys"
 
 // The tomb-treasure mod's contribution to the world-gen reachability model — the currency-specific
@@ -11,9 +11,9 @@ import { journeys as REAL_JOURNEYS } from "@/data/journeys"
 //     buildConfigs' spread-currency count check (they're validated by WORLD_TARGETS instead).
 //   - journeyEntryLock: a treasure tomb is enterable once its `piecesRequired` map pieces are held
 //     — the mod tying tomb entry to its own map-piece currency. Pyramids / non-tomb journeys: none.
-//   - tierUnlockBucket: the difficulty ladder — a tier unlocks when the previous tomb's tier-unlock
-//     treasure is held (the first tier has none). Core owns the tier concept; the mod owns which
-//     key unlocks each.
+//   - tierUnlockBucket: the difficulty ladder — a tier unlocks when ANY ONE of the previous tomb's
+//     several tier-unlock treasures is held (the first tier has none). Core owns the tier concept;
+//     the mod owns which keys unlock each.
 
 // Per-tomb map-piece entry threshold, from the world data (journeys.ts). A tomb needs this many
 // map pieces to enter; a non-treasure-tomb journey (a pyramid) has no entry lock.
@@ -32,5 +32,5 @@ export const TOMB_TREASURE_REACHABILITY: ReachabilitySupport = {
     journeyId in PIECES_REQUIRED
       ? { bucket: `mapPiece:${journeyId}`, threshold: PIECES_REQUIRED[journeyId] }
       : undefined,
-  tierUnlockBucket: tier => TIER_UNLOCK_PERK_ID[tier],
+  tierUnlockBucket: tier => TIER_UNLOCK_PERK_IDS[tier],
 }
