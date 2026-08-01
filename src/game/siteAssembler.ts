@@ -133,6 +133,15 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // FloorConfig.packing.
 const DEFAULT_PACKING = 1
 
+// Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section
+// order), so assembleFloor retries. The first RECOVERY_ATTEMPT attempts run at the original
+// sizing; the rest re-size the grid to what the carve actually needs and wind the side chains
+// down. Measured over every authored floor × 30 seeds each: all of them assemble, the slowest
+// at attempt 37, so the tail of the budget is headroom rather than something floors rely on.
+// See the retry loop in assembleFloor for why the first stretch is deliberately frozen.
+const RECOVERY_ATTEMPT = 30
+const ASSEMBLY_ATTEMPTS = 60
+
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns adjacency function, BFS path from entrance to the chosen main-path endpoint, and
 // passages set. `targetDistance` picks the main path's length: the *true* farthest node in
@@ -334,7 +343,7 @@ export const assembleFloor = (
   // The auto-injection above guarantees a free host whenever one's needed — this is a
   // structural safety net, not an expected path: if a floor-key gate still has nowhere to
   // put its key, that's an unsolvable floor, not a per-seed maze fluke, so it fails
-  // immediately rather than burning 30 retry attempts on something a different seed can't fix.
+  // immediately rather than burning every retry attempt on something a different seed can't fix.
   if (gatedFloorKeyIdxs.length > 0 && ungatedIdxs.length === 0) {
     return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
   }
@@ -388,8 +397,32 @@ export const assembleFloor = (
   // `corridorStraightness`, however spacious or winding the rest of the floor got. Reusing
   // the identical formula (not a separate, lighter-touch one) keeps one mental model for
   // "how long is a walk" everywhere in the DSL, main path or side path alike.
+  //
+  // `chainPacking` is `packing` for every ordinary attempt; the recovery phase in the retry
+  // loop below winds it down, trading a side path's cosmetic wandering for a layout that fits
+  // at all. Nothing outside that loop should change it.
+  let chainPacking = packing
   const paddedChainLength = (contentCellsCount: number): number =>
-    Math.max(contentCellsCount, Math.round(contentCellsCount * (1 + 5 * packing)))
+    Math.max(contentCellsCount, Math.round(contentCellsCount * (1 + 5 * chainPacking)))
+
+  // What the carve *actually* consumes, as opposed to `minCells`'s bare content count: every
+  // side-section and sub-section chain is carved at its `paddedChainLength`, which is 6× its
+  // content at packing=1 and 11× at packing=2. Sizing the grid off `minCells` therefore
+  // undershoots badly on floors with many side sections (expert and up), and the retry loop
+  // below has to rescue them by growing N on shuffle luck — for 17 authored floors it never
+  // did, and they failed outright with `layoutNotFound`. This is the honest figure, and it
+  // moves with `chainPacking`, so the recovery phase re-sizes the grid to whatever it has
+  // wound the chains down to rather than leaving a shrunken floor rattling around a huge grid.
+  const carvedCells = (): number =>
+    mainPathCells +
+    sideSections.reduce((sum, sec) => {
+      const secCells = paddedChainLength(sec.pathPuzzles + 1 + (sec.gate ? 1 : 0))
+      const subCells = (sec.sideSections ?? []).reduce(
+        (s2, sub) => s2 + paddedChainLength(sub.pathPuzzles + 1 + (sub.gate ? 1 : 0)),
+        0
+      )
+      return sum + secCells + subCells
+    }, 0)
 
   // Derive odd grid size. Only even/even positions can hold a real node (see NODE_STEP
   // above), so usable node capacity is ((N+1)/2)^2, not N^2 — the grid needs to be
@@ -401,22 +434,46 @@ export const assembleFloor = (
   // `targetDistance` hops (a DFS-maze's diameter is typically a large fraction of its
   // total node count, so `targetDistance * 2` is a generous safety margin — if it's still
   // not enough, the retry loop below grows N further; buildMaze never fails outright).
-  let N = 3
-  while (
-    Math.pow((N + 1) / 2, 2) <
-    Math.max(
-      minCells +
-        packing *
-          (minCells * 3 + (N + 1) / 2 + sideSections.length + expectedFootprintRooms * FOOTPRINT_SLACK_PER_ROOM),
-      targetDistance * 2
+  const deriveN = (contentCells: number): number => {
+    let n = 3
+    while (
+      Math.pow((n + 1) / 2, 2) <
+      Math.max(
+        contentCells +
+          packing *
+            (contentCells * 3 + (n + 1) / 2 + sideSections.length + expectedFootprintRooms * FOOTPRINT_SLACK_PER_ROOM),
+        targetDistance * 2
+      )
     )
-  )
-    N += 2
+      n += 2
+    return n
+  }
+  const startingN = deriveN(minCells)
+  let N = startingN
 
   const nid = (r: number, c: number) => `${siteId}-${r}-${c}`
 
-  for (let attempt = 0; attempt < 30; attempt++) {
-    if (attempt > 0 && attempt % 4 === 0) N += 2
+  // Attempts 0..RECOVERY_ATTEMPT-1 are FROZEN: same starting N, same growth cadence, same
+  // chain lengths, same per-attempt seed as before the recovery phase existed. A pyramid/tomb
+  // interior is a persistent, revisitable place whose stored exploredSections and position are
+  // keyed to its layout (useJourneys' isPersistentInterior), so re-sizing a floor that already
+  // assembles would silently invalidate a player's progress on it.
+  //
+  // Only a floor that has exhausted the original budget — one nobody can currently enter at
+  // all, so there is no progress to protect — enters recovery. There, each attempt sizes the
+  // grid to what the carve genuinely needs (`carvedCells`, the figure the original sizing
+  // should always have used) while winding `chainPacking` down from `packing` to 0, so the
+  // floor is retried across the whole spectrum from "every side path as windy as authored" to
+  // "every side path at its bare content length". The last attempt is therefore the most
+  // permissive shape this config can take, which is what makes the phase converge instead of
+  // just rerolling the same too-tight puzzle. Cosmetically shorter side paths on a floor that
+  // was previously unreachable is a plain win.
+  for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
+    if (attempt >= RECOVERY_ATTEMPT) {
+      const steps = Math.max(1, ASSEMBLY_ATTEMPTS - RECOVERY_ATTEMPT - 1)
+      chainPacking = (packing * (steps - (attempt - RECOVERY_ATTEMPT))) / steps
+      N = Math.max(startingN, deriveN(carvedCells()))
+    } else if (attempt > 0 && attempt % 4 === 0) N += 2
 
     const rand = mulberry32(seed + attempt * 7919)
     const pkey = makePkey(N)
@@ -680,10 +737,21 @@ export const assembleFloor = (
         return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
       }
 
-      // Branch candidates: parent section cells (excluding end cell)
+      // Branch candidates: parent section cells (excluding end cell). In recovery a cell whose
+      // only opening has to be carved (see the fallback below) counts too — pre-filtering it out
+      // here would put it out of that fallback's reach.
+      const hasCarveableNeighbor = (pr: number, pc: number) =>
+        DIRS2.some(
+          ([dr, dc]) =>
+            pr + dr >= 0 && pr + dr < N && pc + dc >= 0 && pc + dc < N && !usedCells.has(`${pr + dr},${pc + dc}`)
+        )
       const subBranchCandidates = group.cells
         .slice(0, -1)
-        .filter(([pr, pc]) => neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)))
+        .filter(
+          ([pr, pc]) =>
+            neighbors(pr, pc).some(([ar, ac]) => !usedCells.has(`${ar},${ac}`)) ||
+            (attempt >= RECOVERY_ATTEMPT && hasCarveableNeighbor(pr, pc))
+        )
         .sort(() => rand() - 0.5)
 
       const placedSubs: Array<{
@@ -698,9 +766,34 @@ export const assembleFloor = (
         let placed = false
 
         for (const [pcr, pcc] of subBranchCandidates) {
-          const freeAdj = neighbors(pcr, pcc)
+          let freeAdj = neighbors(pcr, pcc)
             .filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`))
             .sort(() => rand() - 0.5)
+
+          // In recovery, carve a brand-new passage out of the parent chain rather than give up
+          // on this candidate — the same departure from "perfect maze" the top-level branch loop
+          // above already makes, and for the same reason. Sub-sections not having it is what left
+          // the recovery phase stuck: by the time they're placed, earlier chains have boxed the
+          // parent in, and a sub-section needing a single free cell would fail the whole attempt
+          // with plenty of grid still empty one wall away. Kept to recovery so the frozen
+          // attempts stay byte-identical.
+          if (freeAdj.length === 0 && attempt >= RECOVERY_ATTEMPT) {
+            const carveCandidates = DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc])
+              .filter(
+                ([nr, nc]) =>
+                  nr >= 0 &&
+                  nr < N &&
+                  nc >= 0 &&
+                  nc < N &&
+                  !usedCells.has(`${nr},${nc}`) &&
+                  !passages.has(pkey(pcr, pcc, nr, nc))
+              )
+              .sort(() => rand() - 0.5)
+            if (carveCandidates.length > 0) {
+              passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
+              freeAdj = [carveCandidates[0]]
+            }
+          }
           if (freeAdj.length === 0) continue
           for (const [startR, startC] of freeAdj) {
             usedCells.add(`${startR},${startC}`)

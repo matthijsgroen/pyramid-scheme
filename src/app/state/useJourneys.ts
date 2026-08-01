@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
+import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
@@ -138,7 +139,7 @@ export const createJourneysV3Api = ({
     // Persistent interiors (pyramids and tombs) are revisitable sites — their seed must never
     // move, or a completed run's exploredSections stop matching the (now different) layout.
     const randomSeed = isPersistentInterior(journeyInfo)
-      ? generateNewSeed(hashString(journeyId), 1)
+      ? persistentInteriorSeed(journeyId)
       : generateNewSeed(hashString(journeyId), journeyState.completionCount + 1)
     return {
       ...journeyState,

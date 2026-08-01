@@ -833,6 +833,57 @@ describe(assembleFloor, () => {
     }
   })
 
+  // An expert-shaped floor: a handful of main-path puzzles plus eight side sections, each of
+  // which is carved at `paddedChainLength` (6× its content at the default packing). The grid
+  // size used to be derived from the bare content count, so floors like this were sized for a
+  // fraction of what the carve consumes and only assembled when the retry shuffle got lucky —
+  // roughly 40% of seeds failed outright, and 17 real authored floors (expert_1's first pyramid
+  // among them) fell on the wrong side of that coin flip at the one seed the runtime ever gives
+  // them, rendering "Site layout unavailable." forever.
+  const manySideSections = (): FloorConfig => ({
+    pathPuzzles: 3,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: Array.from({ length: 8 }, () => ({
+      pathPuzzles: 2,
+      difficulty: "expert" as const,
+      end: "treasure" as const,
+    })),
+  })
+
+  it("property: 100 seeds × a side-section-heavy expert floor all pass validation", () => {
+    for (let seed = 0; seed < 100; seed++) {
+      const result = assembleFloor(`site-${seed}`, manySideSections(), seed)
+      expect(result.success, `seed ${seed} failed assembly`).toBe(true)
+      if (result.success) {
+        const v = validateSite(result.grid)
+        expect(v.valid, `seed ${seed} failed validation: ${JSON.stringify(v)}`).toBe(true)
+      }
+    }
+  }, 30_000)
+
+  it("keeps the layout of floors that already assembled within the original attempt budget", () => {
+    // The recovery re-size must stay invisible to any floor that never needed it. Interiors are
+    // persistent places whose stored exploration is keyed to the layout (see the retry loop's
+    // comment), so a change in grid size or entrance here means someone's saved progress moved.
+    const basic = assembleFloor("site-1", basicConfig(), 42)
+    const pyramid = assembleFloor("site-1", firstPyramid(), 7)
+    if (!basic.success || !pyramid.success) throw new Error("assembly failed")
+    expect([basic.grid.rows, basic.grid.cols, basic.grid.entrancePos, basic.grid.exitPos]).toEqual([
+      13,
+      13,
+      [0, 2],
+      [2, 4],
+    ])
+    expect([pyramid.grid.rows, pyramid.grid.cols, pyramid.grid.entrancePos, pyramid.grid.exitPos]).toEqual([
+      15,
+      15,
+      [12, 0],
+      [8, 8],
+    ])
+  })
+
   it("places every puzzle in a multi-puzzle sub-section at a distinct, valid room", () => {
     // Regression guard: sub-section content used to be indexed as `(contentStart + pi) * 2`
     // instead of `contentStart + pi` — harmless for a single-puzzle sub-section (index 0

@@ -2,8 +2,7 @@ import { describe, expect, it } from "vitest"
 import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { generateNewSeed } from "@/game/random"
-import { hashString } from "@/support/hashString"
+import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { computeFloorExploration } from "./floorExploration"
 // Populate the family registry (families, their meta.rewardPriority + resolveKeyRequirements) —
 // exactly what SiteMapScreen/useAssembledFloor rely on. Without this every family resolves to
@@ -16,8 +15,10 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
 
 const assemble = (journeyId: string, pyramid: number, floor: number) => {
   const cfg = generatedWorldConfigs[journeyId][pyramid][floor]
-  const seed = generateNewSeed(hashString(journeyId), 1)
-  const result = assembleFloor(journeyId, cfg, seed + floor, resolveEncounter, {
+  // The real seed the runtime hands this floor — `pyramid` is a 0-based index here, so the
+  // level number it stands for is one higher (see floorAssemblySeed).
+  const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), pyramid + 1, floor)
+  const result = assembleFloor(journeyId, cfg, seed, resolveEncounter, {
     resolveKeyRequirements,
     floorRef: { journeyId, floorIndex: floor },
   })
