@@ -1,4 +1,4 @@
-import { useMemo, useRef, type FC } from "react"
+import { useEffect, useMemo, useRef, type FC } from "react"
 import { usePyramidNavigation } from "@/app/PyramidLevel/usePyramidNavigation"
 import type { Pyramid } from "@/game/types"
 import { Block } from "@/ui/atoms/Block"
@@ -42,6 +42,10 @@ export const PyramidDisplay: FC<{
   completed?: boolean
   dayTime?: DayNightCycleStep
   entranceBlockId?: string
+  // False for a board rendered purely as scenery (the blurred, scaled-down neighbours on the
+  // expedition screen). Such a board must not be focusable: several are mounted at once inside one
+  // scroll container, and focusing an off-centre one scrolls the playable board out of view.
+  interactive?: boolean
   onAnswer?: (blockId: string, value: number | undefined) => void
 }> = ({
   pyramid,
@@ -52,6 +56,7 @@ export const PyramidDisplay: FC<{
   decorationOffset = 0,
   dayTime = "afternoon",
   entranceBlockId,
+  interactive = true,
 }) => {
   const { blocks } = pyramid
 
@@ -70,12 +75,19 @@ export const PyramidDisplay: FC<{
   const decorationNumber = levelNr + decorationOffset
   const position = getPosition(decorationNumber)
 
+  // `preventScroll` rather than `autoFocus`: the board lives in a scrollable, parallax-transformed
+  // container, and letting the browser scroll to whatever just took focus drags the pyramids out
+  // of view. Focus here only exists to receive the arrow-key navigation.
+  useEffect(() => {
+    if (!interactive) return
+    containerRef.current?.focus({ preventScroll: true })
+  }, [interactive])
+
   return (
     <div
       ref={containerRef}
       className="relative flex flex-col items-center focus:outline-none"
-      tabIndex={0}
-      autoFocus
+      tabIndex={interactive ? 0 : undefined}
       onKeyDown={handleKeyDown}
     >
       {floorStartIndices.map((startIndex, floor) => {
@@ -101,7 +113,7 @@ export const PyramidDisplay: FC<{
                   onSelect={() => setSelectedBlockIndex(startIndex + index)}
                   onBlur={() => {
                     setFocusInput(false)
-                    containerRef.current?.focus()
+                    containerRef.current?.focus({ preventScroll: true })
                   }}
                   onChange={value => onAnswer?.(block.id, value)}
                 />

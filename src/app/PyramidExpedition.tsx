@@ -81,12 +81,34 @@ export const PyramidExpedition: FC<{
   const [showingInterior, setShowingInterior] = useState(restoringInterior)
   // The pyramid board's entrance animation is only meaningful when the board is actually shown
   const [entering, setEntering] = useState(!restoringInterior)
+  // This component is keyed on the journey, not the level, so the states above outlive a level
+  // change — and they're seeded from an `activeJourney` that can still describe the level the
+  // player just left. `useJourneys()` is not a context, so this instance only learns the level
+  // they picked once the store's subscribe callback fires, which is after mount. Re-seed during
+  // render (not in an effect) so the stale state never reaches the DOM.
+  const [seededForLevel, setSeededForLevel] = useState(activeJourney.levelNr)
+  if (seededForLevel !== activeJourney.levelNr) {
+    setSeededForLevel(activeJourney.levelNr)
+    // A forward transition is finished the moment the level it was heading for arrives, and a
+    // revisit moves levelNr *down* — where a surviving `transitionToLevel` would keep
+    // `startNextLevel` true forever: the playable board flung to translateX(-200%) and the inert
+    // decorative one centred in its place, with no way back short of leaving the journey.
+    setTransitionToLevel(activeJourney.levelNr)
+    setShowingInterior(restoringInterior)
+    setLevelCompleted(false)
+  }
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const currentLevelRef = useRef<HTMLDivElement>(null)
   const nextLevelRef = useRef<HTMLDivElement>(null)
   const futureLevelRef = useRef<HTMLDivElement>(null)
   const transitionTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   useEffect(() => () => transitionTimersRef.current.forEach(clearTimeout), [])
+  // A queued transition step belongs to the level that scheduled it; once the level moves, firing
+  // it would re-apply the animation the re-seed above just cleared.
+  useEffect(() => {
+    transitionTimersRef.current.forEach(clearTimeout)
+    transitionTimersRef.current = []
+  }, [activeJourney.levelNr])
   const startNextLevel = transitionToLevel > activeJourney.levelNr
 
   const levelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr)
@@ -285,9 +307,13 @@ export const PyramidExpedition: FC<{
               minHeight: `min(100dvh, calc(var(--spacing) * 13 * ${(levelContent?.pyramid.floorCount ?? 0) + 2}))`,
             }}
           >
+            {/* inert: these two boards are scenery. They stack in the same scroll container as the
+                playable one, so leaving their inputs focusable lets a tab — or a stray programmatic
+                focus — scroll the board the player is solving off-screen. */}
             <div
               ref={futureLevelRef}
               key={activeJourney.levelNr + 2}
+              inert
               className="pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
               style={{
                 transform: startNextLevel ? "translateX(25%) scale(0.2)" : "translateX(35%) scale(0)",
@@ -301,12 +327,14 @@ export const PyramidExpedition: FC<{
                   key={activeJourney.levelNr + 2}
                   content={nextNextLevelContent}
                   decorationOffset={activeJourney.randomSeed}
+                  interactive={false}
                 />
               )}
             </div>
             <div
               ref={nextLevelRef}
               key={activeJourney.levelNr + 1}
+              inert
               className="pointer-events-none absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out"
               style={{
                 transform: startNextLevel ? "translateX(0) scale(1)" : "translateX(25%) scale(0.2)",
@@ -320,6 +348,7 @@ export const PyramidExpedition: FC<{
                   dayTime={dayTime}
                   content={nextLevelContent}
                   decorationOffset={activeJourney.randomSeed}
+                  interactive={false}
                 />
               )}
             </div>

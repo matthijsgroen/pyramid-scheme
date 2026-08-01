@@ -81,15 +81,28 @@ export const useOfflineStorage = <T>(
   // calls chain correctly without waiting for a re-render or async DB read.
   const localStateRef = useRef(localState)
   localStateRef.current = localState
+  // Only read on first load — the hook treats it as a mount-time seed. Kept in a ref so callers
+  // can keep passing fresh `[]`/`{}` literals without re-running the load effect on every render
+  // (which would re-issue getItem and hand setValue a perpetually unresolved load promise).
+  const initialValueRef = useRef(initialValue)
+  initialValueRef.current = initialValue
   // Resolves once this instance's own initial read of `key` has landed (or been seeded).
   // setValue awaits it first so a write that races the load never computes its next value
   // from the pre-load default and clobbers whatever another instance already persisted.
   const loadPromiseRef = useRef<Promise<void> | null>(null)
+  // Bumped whenever a newer value is applied — by this instance writing, or by another instance's
+  // write arriving through the subscription. The initial read captures it before starting; if it
+  // moved by the time that read resolves, the value it carries is older than what's already
+  // applied and must be dropped. Otherwise it rolls `localStateRef` back, and the ref is exactly
+  // what the next setValue(fn) computes from — so the superseded value would be written back out.
+  const stateVersionRef = useRef(0)
 
   useEffect(() => {
+    const readAtVersion = stateVersionRef.current
     loadPromiseRef.current = store
       .getItem<T>(key)
       .then(value => {
+        if (stateVersionRef.current !== readAtVersion) return
         if (value !== null) {
           localStateRef.current = value
           setLocalState(current => {
@@ -99,25 +112,31 @@ export const useOfflineStorage = <T>(
             return value
           })
         } else {
-          if (initialValue !== null) {
-            const resolvedInitial = typeof initialValue === "function" ? (initialValue as () => T)() : initialValue
+          const initial = initialValueRef.current
+          if (initial !== null) {
+            const resolvedInitial = typeof initial === "function" ? (initial as () => T)() : initial
             localStateRef.current = resolvedInitial
             store.setItem<T>(key, resolvedInitial)
           }
         }
       })
+      .catch(() => {
+        // A failed read must not leave every later setValue awaiting a rejected promise.
+      })
       .then(() => {
         setLoaded(true)
       })
     return store.subscribe<T>(key, value => {
+      stateVersionRef.current += 1
       localStateRef.current = value
       setLocalState(value)
     })
-  }, [initialValue, key, store])
+  }, [key, store])
 
   const setValue = useCallback(
     async (value: SetStateAction<T>) => {
       if (loadPromiseRef.current) await loadPromiseRef.current
+      stateVersionRef.current += 1
       if (isSetFunction(value)) {
         // Compute next value from the ref (always up-to-date) and update the
         // ref synchronously so chained calls each see the previous result.
@@ -138,12 +157,16 @@ export const useOfflineStorage = <T>(
 
   const deleteValue = useCallback(
     async (optimistic = true) => {
+      stateVersionRef.current += 1
       if (optimistic) {
-        setLocalState(typeof initialValue === "function" ? (initialValue as () => T)() : initialValue)
+        const initial = initialValueRef.current
+        const resolvedInitial = typeof initial === "function" ? (initial as () => T)() : initial
+        localStateRef.current = resolvedInitial
+        setLocalState(resolvedInitial)
       }
       await store.removeItem(key)
     },
-    [key, initialValue, store]
+    [key, store]
   )
 
   return [localState, setValue, loaded, deleteValue]

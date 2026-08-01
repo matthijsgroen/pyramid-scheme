@@ -46,8 +46,12 @@ export type CombinedJourneyState = StoredJourneyStateV3 & {
 export type JourneyAPI = {
   activeJourneyId: string | undefined
   maxDifficulty: Difficulty
-  startJourney: (journey: Journey) => void
-  visitLevel: (journeyId: string, levelNr: number) => void
+  // Both resolve once the write is persisted. Callers that immediately show the expedition must
+  // await them: `useJourneys()` is not a context, so every other instance only learns the new
+  // levelNr through the store's subscribe callback, which fires after the write lands. Mounting
+  // PyramidExpedition before that leaves it seeded with the level the player just left.
+  startJourney: (journey: Journey) => Promise<unknown>
+  visitLevel: (journeyId: string, levelNr: number) => Promise<unknown>
   nextJourneySeed: (journeyId: string) => number
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
@@ -77,18 +81,19 @@ export type JourneyAPI = {
 
 const knownJourneyIds = journeyData.map(j => j.id)
 
+// Module constants, not inline literals: a fresh literal on every render makes every consumer of
+// useOfflineStorage look like a different default to anything comparing by identity.
+const INITIAL_STORAGE_VERSIONS = { journeys: 3, inventory: 1, answers: 1 }
+const NO_JOURNEYS: StoredJourneyStateV3[] = []
+
 export const useJourneys = (): JourneyAPI => {
   const [storageVersions, setStorageVersion, versionLoaded] = useGameStorage<{
     journeys: number
     inventory: number
     answers: number
-  }>("storageVersions", {
-    journeys: 3,
-    inventory: 1,
-    answers: 1,
-  })
+  }>("storageVersions", INITIAL_STORAGE_VERSIONS)
   const translatedJourneys = useJourneyTranslations()
-  const [journeys, setJourneys] = useGameStorage<StoredJourneyStateV3[]>("journeys", [])
+  const [journeys, setJourneys] = useGameStorage<StoredJourneyStateV3[]>("journeys", NO_JOURNEYS)
 
   useEffect(() => {
     if (versionLoaded && storageVersions.journeys !== 3) {
@@ -112,7 +117,9 @@ export const createJourneysV3Api = ({
 }: {
   journeys: StoredJourneyStateV3[]
   journeyData: TranslatedJourney[]
-  setJourneys: (value: StoredJourneyStateV3[] | ((prev: StoredJourneyStateV3[]) => StoredJourneyStateV3[])) => void
+  setJourneys: (
+    value: StoredJourneyStateV3[] | ((prev: StoredJourneyStateV3[]) => StoredJourneyStateV3[])
+  ) => Promise<unknown> | void
 }): JourneyAPI => {
   const activeJourneyId = journeys.find(j => j.active && knownJourneyIds.includes(j.journeyId))?.journeyId
 
@@ -151,16 +158,17 @@ export const createJourneysV3Api = ({
     const existing = journeys.find(j => j.journeyId === journey.id)
     if (existing) {
       const alreadyCompletedRun = isPersistentInterior(journey) && existing.levelNr > journey.levelCount
-      setJourneys(prev =>
-        prev.map(j =>
-          j.journeyId === journey.id
-            ? alreadyCompletedRun
-              ? { ...j, active: true, levelNr: 1, position: null, interiorLevelNr: null }
-              : { ...j, active: true }
-            : j
+      return Promise.resolve(
+        setJourneys(prev =>
+          prev.map(j =>
+            j.journeyId === journey.id
+              ? alreadyCompletedRun
+                ? { ...j, active: true, levelNr: 1, position: null, interiorLevelNr: null }
+                : { ...j, active: true }
+              : j
+          )
         )
       )
-      return
     }
     const newJourney: StoredJourneyStateV3 = {
       journeyId: journey.id,
@@ -171,7 +179,7 @@ export const createJourneysV3Api = ({
       position: null,
       interiorLevelNr: null,
     }
-    setJourneys(prev => [...prev, newJourney])
+    return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
   }
 
   const completeJourney = () => {
@@ -195,15 +203,16 @@ export const createJourneysV3Api = ({
     )
   }
 
-  const visitLevel = (journeyId: string, targetLevelNr: number) => {
-    setJourneys(prev =>
-      prev.map(j =>
-        j.journeyId === journeyId
-          ? { ...j, active: true, levelNr: targetLevelNr, position: null, interiorLevelNr: null }
-          : j
+  const visitLevel = (journeyId: string, targetLevelNr: number) =>
+    Promise.resolve(
+      setJourneys(prev =>
+        prev.map(j =>
+          j.journeyId === journeyId
+            ? { ...j, active: true, levelNr: targetLevelNr, position: null, interiorLevelNr: null }
+            : j
+        )
       )
     )
-  }
 
   const cancelJourney = () => {
     if (!activeJourneyId) return
