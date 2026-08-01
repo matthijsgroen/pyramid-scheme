@@ -36,6 +36,49 @@ vi.mock("@/data/generatedWorld", () => ({
         },
       ],
     ],
+    // A second journey covering the ACCESS facts the readout needs (h2, so the h1 cases above are
+    // unaffected): a ward gate, a gate nested under it, a hidden corridor, and shop stock.
+    starter_2: [
+      [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          sideSections: [
+            {
+              pathPuzzles: 0,
+              difficulty: "starter",
+              end: "treasure",
+              gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
+              endReward: { type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 0 },
+              sideSections: [
+                {
+                  pathPuzzles: 0,
+                  difficulty: "starter",
+                  end: "treasure",
+                  gate: { type: "tomb-key", wardKeyId: "starter_a_2" },
+                  endReward: { type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 1 },
+                },
+              ],
+            },
+            {
+              pathPuzzles: 0,
+              difficulty: "starter",
+              end: "treasure",
+              hidden: true,
+              endReward: { type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 2 },
+            },
+            {
+              pathPuzzles: 0,
+              difficulty: "starter",
+              end: "treasure",
+              encounter: "fez-shop",
+              rewards: [{ type: "hieroglyphFragment", hieroglyphId: "h2", pieceIndex: 3 }],
+            },
+          ],
+        },
+      ],
+    ],
   },
 }))
 
@@ -85,6 +128,57 @@ describe("useHieroglyphCompassScanner", () => {
     const { result } = renderHook(() => useHieroglyphCompassScanner())
     const results = result.current("h1")
     expect(results.every(r => r.cell === undefined)).toBe(true)
+  })
+
+  // The readout has to distinguish "go get it" from "you can't yet", so the scanner reports what
+  // stands in the way. It reports raw facts only — it can't see what the player holds, so it never
+  // decides reachability itself (that's useDetector's job).
+  describe("access facts", () => {
+    const scanH2 = () => {
+      hasFragmentImpl = () => false
+      compassLevelImpl = 1
+      const { result } = renderHook(() => useHieroglyphCompassScanner())
+      const byPiece = new Map(result.current("h2").map(r => [r.pieceIndex, r]))
+      return byPiece
+    }
+
+    it("reports the ward key gating a piece", () => {
+      expect(scanH2().get(0)?.wardKeys).toEqual(["starter_a_1"])
+    })
+
+    it("accumulates a parent gate and a nested gate — both are needed", () => {
+      expect(scanH2().get(1)?.wardKeys).toEqual(["starter_a_1", "starter_a_2"])
+    })
+
+    it("marks a piece in a hidden corridor", () => {
+      const hit = scanH2().get(2)
+      expect(hit?.hidden).toBe(true)
+      expect(hit?.wardKeys).toBeUndefined()
+    })
+
+    it("marks shop stock as buyable, not gated", () => {
+      const hit = scanH2().get(3)
+      expect(hit?.inShop).toBe(true)
+      expect(hit?.wardKeys).toBeUndefined()
+    })
+
+    it("reports nothing in the way for an ungated main-path piece", () => {
+      hasFragmentImpl = () => false
+      compassLevelImpl = 1
+      const { result } = renderHook(() => useHieroglyphCompassScanner())
+      const mainPath = result.current("h1").find(r => r.pieceIndex === 0)
+      expect(mainPath?.wardKeys).toBeUndefined()
+      expect(mainPath?.hidden).toBeUndefined()
+      expect(mainPath?.inShop).toBeUndefined()
+    })
+
+    // A plain section's rewards[] is puzzle-chain loot, not merchandise — only a shop section's is.
+    it("does not treat a non-shop section's rewards[] as shop stock", () => {
+      hasFragmentImpl = () => false
+      compassLevelImpl = 1
+      const { result } = renderHook(() => useHieroglyphCompassScanner())
+      expect(result.current("h1").find(r => r.pieceIndex === 2)?.inShop).toBeUndefined()
+    })
   })
 
   it("resolves the exact cell at level 3 by assembling the floor", () => {

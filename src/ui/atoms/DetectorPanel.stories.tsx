@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
+import type { CompassHit } from "@/game/siteTypes"
 import { DetectorPanel } from "./DetectorPanel"
 
 const meta = {
@@ -13,28 +14,55 @@ const meta = {
     compassTarget: null,
     compassResults: [],
     consumableResults: [],
-    onSetDetector: () => {},
+    journeyName: (id: string) => ({ starter_1: "Sphinx Dawn", starter_2: "Papyrus Route" })[id] ?? id,
+    compassTargetLabel: () => "𓎗",
   },
 } satisfies Meta<typeof DetectorPanel>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const NoPerks: Story = {}
-
-export const CompassOnly: Story = {
-  args: { compassLevel: 1 },
-}
+// Readout only — the mode buttons live in DetectorToggles, so with no mode active this renders
+// nothing at all rather than an empty card.
+export const NoModeActive: Story = {}
 
 // Compass active but no target picked yet — the HUD points the player at the Collection picker (§3C).
 export const CompassNoTarget: Story = {
   args: { compassLevel: 1, activeDetector: "compass", compassTarget: null },
 }
 
-const COMPASS_HITS = [
-  { journeyId: "starter_1", levelIdx: 0, floorIdx: 0, hieroglyphId: "p10", pieceIndex: 0, cell: { row: 3, col: 4 } },
-  { journeyId: "starter_1", levelIdx: 0, floorIdx: 0, hieroglyphId: "p10", pieceIndex: 1, cell: { row: 5, col: 2 } },
-  { journeyId: "starter_2", levelIdx: 1, floorIdx: 2, hieroglyphId: "p10", pieceIndex: 2, cell: { row: 1, col: 6 } },
+// One hit of each access verdict, so the stories show the full marker vocabulary (§7.2): reachable
+// (no badge), key-locked, and not-determinable.
+const COMPASS_HITS: CompassHit[] = [
+  {
+    journeyId: "starter_1",
+    levelIdx: 0,
+    floorIdx: 0,
+    hieroglyphId: "p10",
+    pieceIndex: 0,
+    cell: { row: 3, col: 4 },
+    access: "open",
+  },
+  {
+    journeyId: "starter_1",
+    levelIdx: 0,
+    floorIdx: 0,
+    hieroglyphId: "p10",
+    pieceIndex: 1,
+    cell: { row: 5, col: 2 },
+    access: "locked",
+    missingKeys: ["junior_a_1"],
+  },
+  {
+    journeyId: "starter_2",
+    levelIdx: 1,
+    floorIdx: 2,
+    hieroglyphId: "p10",
+    pieceIndex: 2,
+    cell: { row: 1, col: 6 },
+    access: "unknown",
+    inShop: true,
+  },
 ]
 
 const CONSUMABLE_HITS = [

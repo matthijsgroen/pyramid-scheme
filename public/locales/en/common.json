@@ -186,6 +186,13 @@
     "hunting": "Hunting {{symbol}}",
     "huntStop": "Stop",
     "huntHint": "Select an uncollected hieroglyph, then hunt it with the compass",
-    "huntAction": "Hunt {{symbol}}"
+    "huntAction": "Hunt {{symbol}}",
+    "lookingFor": "Looking for {{symbol}}",
+    "access": {
+      "open": "Nothing known blocking this one",
+      "locked": "Locked — you don't hold the key for this one yet",
+      "hidden": "In a hidden corridor — needs the passageway detector",
+      "unknown": "Might not be reachable yet — it's inside a tomb or for sale"
+    }
   }
 }
