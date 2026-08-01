@@ -89,6 +89,11 @@ const countRewards = (configs: Record<string, SiteConfig[]>) => {
   return { mapPieces, mosaicPieces }
 }
 
+// A full world build assembles every reachable floor, so these budgets are seconds, not
+// milliseconds — and they have to hold on a CI runner well slower than a dev machine. They were
+// already within 40% of the old 20s ceiling before the assembler's recovery phase (which resolves
+// floors reachability used to silently skip) made a build ~30% dearer, so this leaves real headroom
+// rather than something to shave again the next time the world grows.
 describe("buildConfigs golden guard", () => {
   it("hits reward targets exactly (map + mosaic from their mods)", () => {
     const configs = buildRealConfigs()
@@ -96,13 +101,13 @@ describe("buildConfigs golden guard", () => {
       mapPieces: WORLD_TARGETS.mapPieceRewards,
       mosaicPieces: MOSAIC_TOTAL,
     })
-  }, 20000)
+  }, 90_000)
 
   it("is deterministic across runs", () => {
     const first = buildRealConfigs()
     const second = buildRealConfigs()
     expect(second).toEqual(first)
-  }, 20000)
+  }, 90_000)
 })
 
 describe("tomb floor linking — ward-path shortcuts", () => {
@@ -111,7 +116,7 @@ describe("tomb floor linking — ward-path shortcuts", () => {
   let floors: FloorConfig[]
   beforeAll(() => {
     floors = buildRealConfigs().junior_treasure_tomb[0]
-  })
+  }, 90_000)
 
   it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
     for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")
