@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - A map piece now tells you something about the map it belongs to. Instead of the same "a shame it's nowhere near complete" line every time, the popup hints at where that particular map leads — a trader's cellar, a temple precinct, somewhere no mortal put there — and shows how much of it you've gathered ("2 of 3 map pieces gathered"). The tomb keeps its name to itself until the map is whole; the last piece names it outright, which is also the moment you can go there.
 - The progress line on a hieroglyph fragment ("2 of 3 fragments found") now sits on its own line instead of being squashed onto the end of the description.
-- Partly-collected things now fill in like a clock rather than left to right: a hieroglyph tile at 2 of 3 has two thirds of it swept clear from the top, and a map piece shows the same sweep over its scroll, so you can read how far along you are off the icon alone.
+- Partly-collected things now show only the part you actually have, filling in clockwise as you find more, instead of being covered up: a hieroglyph tile at 2 of 3 is two thirds of a stone with a faint ghost of the rest, and a map piece is a fragment of scroll inside the dashed outline of the finished map. You can read how far along you are off the icon alone. Previously a hieroglyph tile filled in left to right, and a map piece showed no progress at all.
 
 ### Fixed
 - Finding a single coin says "1 coin" rather than "1 coins".

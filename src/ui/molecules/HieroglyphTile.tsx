@@ -2,7 +2,8 @@ import type { FC } from "react"
 import clsx from "clsx"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { difficultyMaterial } from "@/ui/tokens/difficultyColors"
-import { RevealMask } from "@/ui/atoms/RevealMask"
+import { RevealPlaceholder } from "@/ui/atoms/RevealPlaceholder"
+import { revealMaskStyle } from "@/ui/atoms/revealMask"
 
 type HieroglyphTileProps = {
   symbol?: string
@@ -11,7 +12,7 @@ type HieroglyphTileProps = {
   selected?: boolean
   disabled?: boolean
   empty?: boolean
-  /** Shows the tile in a partial-reveal state (1/3, 2/3 found) — see RevealMask. Complete: no mask. */
+  /** Partly collected (1/3, 2/3 found): only that fraction of the stone exists — see revealMaskStyle. */
   fragmentProgress?: { found: number; required: number }
   onClick?: () => void
   className?: string
@@ -131,13 +132,15 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
   }
 
   const edgeVariation = getEdgeVariation(symbol, difficulty)
+  const clipPath = edgeVariation.replace("clip-path: ", "").replace(";", "")
 
   return (
     // Wrapper carries the selection outline. A filter on the clipped tile itself gets cut off by
     // its own clip-path, so the un-clipped wrapper renders stacked directional drop-shadows (a
-    // crisp ~2px edge tracing the chipped silhouette) plus a soft outer glow.
+    // crisp ~2px edge tracing the chipped silhouette) plus a soft outer glow. It also hosts the
+    // partial-collection ghost, which must not be clipped away by the tile's own silhouette.
     <div
-      className="inline-flex"
+      className="relative inline-flex"
       style={{
         filter:
           selected && !disabled
@@ -145,6 +148,9 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
             : undefined,
       }}
     >
+      {/* The whole tile this one will become, faint behind the part that has been collected */}
+      {fragmentProgress && <RevealPlaceholder progress={fragmentProgress} clipPath={clipPath} />}
+
       <div
         onClick={disabled ? undefined : onClick}
         className={clsx(
@@ -167,7 +173,11 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
         )}
         style={{
           // Stone-like chipped edges
-          clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
+          clipPath,
+
+          // Partly collected: only the collected fraction of the stone exists yet (the offset-shadow
+          // child below is a descendant, so it is masked away with it)
+          ...(fragmentProgress && revealMaskStyle(fragmentProgress)),
 
           // Realistic 3D stone tile appearance with subtle texture overlay (darker for carved effect)
           backgroundImage: disabled
@@ -186,7 +196,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
           className="absolute inset-0"
           style={{
             // Same clip-path as the main element
-            clipPath: edgeVariation.replace("clip-path: ", "").replace(";", ""),
+            clipPath,
             // Light background for raised shadow effect
             background: disabled
               ? "rgba(255, 255, 255, 0.8)"
@@ -213,16 +223,6 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
         >
           {symbol}
         </span>
-
-        {/* Partial-reveal overlay: the found fraction sweeps clockwise from 12 o'clock, the rest
-            stays masked. Takes this tile's clip-path so the wedge stops at the chipped stone edge
-            instead of spilling past it. */}
-        {fragmentProgress && (
-          <RevealMask
-            progress={fragmentProgress}
-            clipPath={edgeVariation.replace("clip-path: ", "").replace(";", "")}
-          />
-        )}
       </div>
     </div>
   )
