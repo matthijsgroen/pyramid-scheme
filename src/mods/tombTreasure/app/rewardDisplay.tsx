@@ -1,6 +1,7 @@
 import { registerRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
 import { registerRewardDisplays, type RewardDisplayFn } from "@/app/SiteMap/rewardDisplayRegistry"
 import { journeys } from "@/data/journeys"
+import { MapPieceIcon } from "@/ui/molecules/MapPieceIcon"
 import { treasureDisplayByKeyId } from "../game/treasures"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
@@ -65,7 +66,7 @@ const useTombTreasureRewardDisplays = (): Partial<Record<string, RewardDisplayFn
           found: Math.min(progress.found, progress.required),
           required: progress.required,
         }),
-        ItemVisual: <span className="text-6xl">📜</span>,
+        ItemVisual: <MapPieceIcon progress={progress} />,
       }
     },
   }

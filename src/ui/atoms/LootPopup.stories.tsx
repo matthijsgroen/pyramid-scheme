@@ -1,18 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { LootPopup } from "./LootPopup"
-import { HieroglyphTile } from "./HieroglyphTile"
+import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
+import { MapPieceIcon } from "@/ui/molecules/MapPieceIcon"
 import { useState, type ComponentProps } from "react"
 
 // Mock treasure/item components
 const TreasureItem = ({ symbol, rarity }: { symbol: string; rarity: string }) => (
   <div className="flex flex-col items-center">
     <div className={`mb-2 text-6xl ${rarity === "legendary" ? "animate-pulse" : ""}`}>{symbol}</div>
-  </div>
-)
-
-const MapPieceItem = () => (
-  <div className="flex flex-col items-center">
-    <div className="mb-2 text-6xl">📜</div>
   </div>
 )
 
@@ -136,7 +131,7 @@ export const MapPieceIncomplete: Story = {
     itemDescription: "The lines trace a temple precinct, and a stair running down beneath its offering floor.",
     itemEffectDescription: "1 of 4 map pieces gathered",
     rarity: "common",
-    itemComponent: <MapPieceItem />,
+    itemComponent: <MapPieceIcon progress={{ found: 1, required: 4 }} />,
     onDismiss: () => console.log("Dismissed"),
   },
 }
@@ -149,7 +144,7 @@ export const MapPieceComplete: Story = {
     itemDescription: "The map is whole — it leads to High Priest's Treasury.",
     itemEffectDescription: "4 of 4 map pieces gathered",
     rarity: "legendary",
-    itemComponent: <MapPieceItem />,
+    itemComponent: <MapPieceIcon progress={{ found: 4, required: 4 }} />,
     onDismiss: () => console.log("Dismissed"),
   },
 }

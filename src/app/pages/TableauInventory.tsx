@@ -10,7 +10,7 @@ import {
 import { useHieroglyphProgress } from "@/mods/hieroglyph/app/useHieroglyphProgress"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { difficultyCompare } from "@/data/difficultyLevels"
 
 export const TableauInventory: FC<{ journeyInfo: CombinedJourneyState }> = ({ journeyInfo }) => {

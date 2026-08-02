@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import clsx from "clsx"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { HieroglyphTile } from "./HieroglyphTile"
 import type { Difficulty } from "@/data/difficultyLevels"
 
 export type InventoryStripItem = {

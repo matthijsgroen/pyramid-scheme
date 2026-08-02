@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { HieroglyphTile } from "./HieroglyphTile"
 import { Badge } from "@/ui/atoms/Badge"
 
 // One cell in a Collection category grid, in one of three states:
