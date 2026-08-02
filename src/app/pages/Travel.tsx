@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { JourneyPathView } from "@/ui/atoms/JourneyPathView"
 import { JourneyCard } from "@/ui/organisms/JourneyCard"
-import { MapPiecePlaceholder } from "@/ui/atoms/MapPiecePlaceholder"
+import { MapPiecePlaceholder } from "@/ui/organisms/MapPiecePlaceholder"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
@@ -280,13 +280,12 @@ export const TravelPage: FC<{
                       <MapPiecePlaceholder
                         key={journey.id}
                         piecesFound={piecesFound}
-                        name={journey.name}
                         piecesNeeded={piecesNeeded}
+                        mapHint={journey.mapHint}
                         labels={{
                           treasureTomb: t("ui.treasureTomb"),
                           requiresMapPieces: t("ui.requiresMapPieces"),
                           mapPieces: t("ui.mapPieces"),
-                          collected: t("ui.collected"),
                           completeExpeditionsToUnlock: t("ui.completeExpeditionsToUnlock"),
                         }}
                       />
