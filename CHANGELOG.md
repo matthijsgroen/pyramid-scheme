@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.5 - 2026-08-02
 ### Changed
 - A treasure location you haven't unlocked yet now says the same thing its map pieces do: a hint at where the map leads ("The scrap sketches a market road and a cellar door — a trader's hiding place, nothing grander") and the same part-gathered scroll you see when you find a piece. It also keeps the tomb's name back until the map is whole, which is the moment you can actually go there — previously the name appeared as soon as you held a single piece, spoiling what the map pieces themselves were being coy about. The separate progress bar and "25% collected" line are gone; the scroll and the "1/4" say it.
 
