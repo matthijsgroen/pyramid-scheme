@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.3 - 2026-08-02
 ### Changed
 - Trapped corridors are twice as long — every one of them, in every difficulty. Where a trapped passage used to ask one or two questions before its payoff, it now asks two to four.
 - Trap timers are shorter, and every difficulty is timed now. Expert drops from 12 seconds to 8, master from 9 to 6, wizard from 6 to 4. Starter and junior traps were previously untimed and now use expert's 8 seconds — their sums are the smallest in the game, and all their trapped passages are hidden ones you have to go looking for. Trap insight still adds a second per stack, and now does so at every difficulty.
