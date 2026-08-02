@@ -4,7 +4,6 @@ import type { TranslatedJourney } from "@/app/translations/useJourneyTranslation
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 
 type JourneyCardLabels = {
-  chambers: string
   progressLevel: string
 }
 
@@ -112,11 +111,6 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
             "text-amber-700": !disabled && !isTreasureTomb,
           })}
         >
-          {journey.type === "treasure_tomb" && (
-            <span className="flex-shrink-0">
-              {labels.chambers}: {journey.levelCount}
-            </span>
-          )}
           {progressLevelNr > 0 && (
             <span className="flex-shrink-0 font-bold">
               {labels.progressLevel}:{" "}

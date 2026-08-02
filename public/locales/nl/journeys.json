@@ -17,7 +17,8 @@
   },
   "starter_treasure_tomb": {
     "name": "Vergeten Handelaars Voorraad",
-    "description": "Ontdek een kleine ondergrondse kamer waar een oude handelaar zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten."
+    "description": "Ontdek een kleine ondergrondse kamer waar een oude handelaar zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten.",
+    "mapHint": "Het stukje schetst een marktweg en een kelderdeur — een schuilplek van een handelaar, niets groters."
   },
   "junior_1": {
     "name": "Heilige Ibis Migratie",
@@ -37,7 +38,8 @@
   },
   "junior_treasure_tomb": {
     "name": "Edelman's Verborgen Kluis",
-    "description": "Verken de geheime kluis van een rijke Egyptische edelman, gevuld met gouden artefacten en kostbare edelstenen verstopt voor grafrovers."
+    "description": "Verken de geheime kluis van een rijke Egyptische edelman, gevuld met gouden artefacten en kostbare edelstenen verstopt voor grafrovers.",
+    "mapHint": "Fijne inkt, een gezegeld wapen in de hoek — iemand van stand wilde deze kamer vergeten laten."
   },
   "expert_1": {
     "name": "Vallei der Koningen",
@@ -57,7 +59,13 @@
   },
   "expert_treasure_tomb": {
     "name": "Hogepriester's Schatkamer",
-    "description": "Infiltreer de uitgebreide ondergrondse schatkamer van een machtige hogepriester, waar heilige relieken en goddelijke artefacten wachten op de waardigen."
+    "description": "Infiltreer de uitgebreide ondergrondse schatkamer van een machtige hogepriester, waar heilige relieken en goddelijke artefacten wachten op de waardigen.",
+    "mapHint": "De lijnen tekenen een tempelterrein, en een trap die afdaalt onder de offervloer."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Binnenste Heiligdom",
+    "description": "Dring door in het verzegelde binnenste heiligdom waar enkel de hoogste priesters durfden te komen, hoeder van de heiligste voorwerpen van de tempel.",
+    "mapHint": "Gangen lopen voorbij de tempelkluizen naar een verzegelde deur — enkel de hoogste priesters kwamen erdoor."
   },
   "master_1": {
     "name": "Grote Piramide van Gizeh",
@@ -77,7 +85,13 @@
   },
   "master_treasure_tomb": {
     "name": "Farao's Geheime Schat",
-    "description": "Onthul de legendarische geheime schatkamer van een grote farao, verborgen onder het woestijnzand en beschermd door oude vloeken."
+    "description": "Onthul de legendarische geheime schatkamer van een grote farao, verborgen onder het woestijnzand en beschermd door oude vloeken.",
+    "mapHint": "Een koninklijke cartouche staat in de rand, en de route eindigt ver weg onder open zand."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Hal van Osiris",
+    "description": "Daal af in de diepere hal waar Osiris heerst, heer van de onderwereld. Doorsta de mysteries van dood en wedergeboorte om zijn oude relieken op te eisen.",
+    "mapHint": "Onder de koninklijke kamers blijft de kaart dalen, naar een hal getekend met de riten van de doden."
   },
   "wizard_1": {
     "name": "Ra's Zonnereis",
@@ -97,6 +111,17 @@
   },
   "wizard_treasure_tomb": {
     "name": "Kluis van de Goden",
-    "description": "Betreed de mythische schatkamer waar de goden zelf hun kostbaarste artefacten bewaarden. Alleen de meest vaardige avonturiers durven deze ultieme schattenjacht te proberen."
+    "description": "Betreed de mythische schatkamer waar de goden zelf hun kostbaarste artefacten bewaarden. Alleen de meest vaardige avonturiers durven deze ultieme schattenjacht te proberen.",
+    "mapHint": "Geen enkel baken op dit stukje hoort bij de wereld van mensen — wat het ook toont, goden legden het daar."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Rijk der Kosmische Krachten",
+    "description": "Waag je dieper in het goddelijke rijk waar kosmische krachten van leven, dood, chaos en wind zich manifesteren als oude relieken van onmetelijke macht.",
+    "mapHint": "Voorbij de goddelijke kluis breken de lijnen uit in sterrenpaden, waar de krachten van leven en chaos als relieken bewaard worden."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Troon der Eeuwigheid",
+    "description": "Bereik het binnenste heiligdom van het goddelijke rijk — de Troon der Eeuwigheid waar de goden zelf rusten. Enkel de grootste wiskundigen aller tijden hebben hier gestaan.",
+    "mapHint": "Alle sterrenpaden op dit fragment komen samen op één zetel, in het hart van het goddelijke rijk."
   }
 }

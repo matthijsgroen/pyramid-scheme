@@ -11,6 +11,10 @@ export type RewardDisplay = {
   rarity?: "common" | "rare" | "epic" | "legendary"
   itemName: string
   itemDescription?: string
+  // A short line set apart from the description (LootPopup renders it italic, in the rarity accent
+  // colour) — collection progress, an effect gained. The description itself is a single paragraph:
+  // newlines in it collapse, so anything that needs its own line belongs here.
+  itemEffectDescription?: string
   ItemVisual: ReactNode
 }
 

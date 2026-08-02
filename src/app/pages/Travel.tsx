@@ -310,7 +310,6 @@ export const TravelPage: FC<{
                     hasReachableUnexplored={completionCount > 0 && getUnexploredLevels(journey.id, heldKeys).size > 0}
                     lang={i18n.language}
                     labels={{
-                      chambers: t("ui.chambers"),
                       progressLevel: t("ui.progressLevel"),
                     }}
                     onClick={handleJourneySelect}

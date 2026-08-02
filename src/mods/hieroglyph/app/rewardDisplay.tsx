@@ -46,14 +46,15 @@ const useHieroglyphRewardDisplays = (): Partial<Record<string, RewardDisplayFn>>
         ns: "inventory",
         defaultValue: item?.description ?? "",
       })
-      const progressLine = t("chest.fragmentProgress", {
-        found: Math.min(progress.found, progress.required),
-        required: progress.required,
-      })
       return {
         rarity,
         itemName: `${name} — ${t("chest.hieroglyphFragment")}`,
-        itemDescription: `${description}\n\n${progressLine}`,
+        itemDescription: description,
+        // Its own line in the popup — a newline inside itemDescription would collapse to a space
+        itemEffectDescription: t("chest.fragmentProgress", {
+          found: Math.min(progress.found, progress.required),
+          required: progress.required,
+        }),
         ItemVisual:
           item && difficulty ? (
             <HieroglyphTile

@@ -22,7 +22,8 @@ export const registerShopRewardDisplay = () => {
     type: "money",
     emoji: "🪙",
     text: (reward, t) => ({
-      itemName: t("chest.money", { amount: moneyRewardSchema.parse(reward).amount }),
+      // `count` (not `amount`) — i18next only picks chest.money_one/_other from an option by that name
+      itemName: t("chest.money", { count: moneyRewardSchema.parse(reward).amount }),
       icon: "🪙",
     }),
   })

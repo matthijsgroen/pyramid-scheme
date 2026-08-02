@@ -34,7 +34,31 @@ describe("RewardFlow — money and sellable rewards", () => {
     )
     advanceThroughReveal()
     expect(onCollect).toHaveBeenCalledTimes(1)
-    expect(container.textContent).toContain('chest.money:{"amount":7}')
+    // `count`, not `amount`: it is what drives i18next's plural selection (chest.money_one/_other)
+    expect(container.textContent).toContain('chest.money:{"count":7}')
+  })
+
+  it("passes a single coin through as count 1 so the singular form can be picked", () => {
+    const { container } = render(
+      <RewardFlow pendingReward={{ reward: { type: "money", amount: 1 }, onCollect: vi.fn() }} onDismiss={() => {}} />
+    )
+    advanceThroughReveal()
+    expect(container.textContent).toContain('chest.money:{"count":1}')
+  })
+
+  // Through the real popup shell: the tomb-treasure mod's rich display supplies the hint and the
+  // progress line, and the progress line arrives as its own element (itemEffectDescription) rather
+  // than being appended to the description.
+  it("renders a map piece with its tomb hint and progress line", () => {
+    const { container } = render(
+      <RewardFlow
+        pendingReward={{ reward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" }, onCollect: vi.fn() }}
+        onDismiss={() => {}}
+      />
+    )
+    advanceThroughReveal()
+    expect(container.textContent).toContain("expert_treasure_tomb_b.mapHint")
+    expect(container.querySelector("p.italic")?.textContent).toContain("chest.mapPieceProgress")
   })
 
   it("renders a sellable reward with its name and tier-based rarity", () => {
