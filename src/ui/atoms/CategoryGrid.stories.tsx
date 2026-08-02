@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { CategoryGrid } from "./CategoryGrid"
-import { HieroglyphTile } from "./HieroglyphTile"
+import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 
 // Auto-fits tiles to the available width; `density` sets the gap. Widen/narrow the canvas to see
 // the column count adapt.

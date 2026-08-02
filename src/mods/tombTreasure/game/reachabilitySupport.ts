@@ -1,6 +1,6 @@
 import type { ReachabilitySupport } from "@/worldGen/reachability"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
-import { journeys as REAL_JOURNEYS } from "@/data/journeys"
+import { TOMB_PIECES_REQUIRED } from "./piecesRequired"
 
 // The tomb-treasure mod's contribution to the world-gen reachability model — the currency-specific
 // facts core reachability.ts must NOT name (docs/game-design/keys-and-locks-solver.md, §E). Injected via the
@@ -15,11 +15,9 @@ import { journeys as REAL_JOURNEYS } from "@/data/journeys"
 //     several tier-unlock treasures is held (the first tier has none). Core owns the tier concept;
 //     the mod owns which keys unlock each.
 
-// Per-tomb map-piece entry threshold, from the world data (journeys.ts). A tomb needs this many
-// map pieces to enter; a non-treasure-tomb journey (a pyramid) has no entry lock.
-const PIECES_REQUIRED: Record<string, number> = Object.fromEntries(
-  REAL_JOURNEYS.filter(j => j.type === "treasure_tomb").map(j => [j.id, j.piecesRequired])
-)
+// Per-tomb map-piece entry threshold (./piecesRequired). A tomb needs this many map pieces to
+// enter; a non-treasure-tomb journey (a pyramid) has no entry lock.
+const PIECES_REQUIRED = TOMB_PIECES_REQUIRED
 
 export const TOMB_TREASURE_REACHABILITY: ReachabilitySupport = {
   bucketForReward: reward =>

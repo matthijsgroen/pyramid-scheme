@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { HieroglyphTile } from "./HieroglyphTile"
 import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 import type { Formula, Operation } from "@/game/formulas/formulas"
 import { revealText } from "@/support/revealText"

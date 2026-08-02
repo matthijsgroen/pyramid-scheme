@@ -1,18 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { LootPopup } from "./LootPopup"
-import { HieroglyphTile } from "./HieroglyphTile"
+import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
+import { MapPieceIcon } from "@/ui/molecules/MapPieceIcon"
 import { useState, type ComponentProps } from "react"
 
 // Mock treasure/item components
 const TreasureItem = ({ symbol, rarity }: { symbol: string; rarity: string }) => (
   <div className="flex flex-col items-center">
     <div className={`mb-2 text-6xl ${rarity === "legendary" ? "animate-pulse" : ""}`}>{symbol}</div>
-  </div>
-)
-
-const MapPieceItem = () => (
-  <div className="flex flex-col items-center">
-    <div className="mb-2 text-6xl">📜</div>
   </div>
 )
 
@@ -126,15 +121,30 @@ export const LegendaryTreasure: Story = {
   },
 }
 
-export const MapPiece: Story = {
+// The two map-piece beats the game actually shows (see mods/tombTreasure/app/rewardDisplay.tsx): a
+// vague hint at where the map leads while it's in pieces, the tomb named once the set is complete.
+export const MapPieceIncomplete: Story = {
   render: args => <InteractiveLootPopup {...args} />,
   args: {
     isOpen: false,
-    itemName: "Pyramid Map Piece",
-    itemDescription:
-      "A crucial fragment of an ancient map revealing hidden passages within the great pyramid. Collect all pieces to unlock the deepest secrets.",
-    rarity: "rare",
-    itemComponent: <MapPieceItem />,
+    itemName: "Map Piece",
+    itemDescription: "The lines trace a temple precinct, and a stair running down beneath its offering floor.",
+    itemEffectDescription: "1 of 4 map pieces gathered",
+    rarity: "common",
+    itemComponent: <MapPieceIcon progress={{ found: 1, required: 4 }} />,
+    onDismiss: () => console.log("Dismissed"),
+  },
+}
+
+export const MapPieceComplete: Story = {
+  render: args => <InteractiveLootPopup {...args} />,
+  args: {
+    isOpen: false,
+    itemName: "Map Piece",
+    itemDescription: "The map is whole — it leads to High Priest's Treasury.",
+    itemEffectDescription: "4 of 4 map pieces gathered",
+    rarity: "legendary",
+    itemComponent: <MapPieceIcon progress={{ found: 4, required: 4 }} />,
     onDismiss: () => console.log("Dismissed"),
   },
 }
@@ -176,7 +186,8 @@ export const FragmentFirstFind: Story = {
   args: {
     isOpen: false,
     itemName: `${FRAGMENT_ITEM.name} — Hieroglyph Fragment`,
-    itemDescription: `${FRAGMENT_ITEM.description}\n\n1 of 3 fragments found`,
+    itemDescription: FRAGMENT_ITEM.description,
+    itemEffectDescription: "1 of 3 fragments found",
     rarity: "common",
     itemComponent: (
       <HieroglyphTile
@@ -195,7 +206,8 @@ export const FragmentSecondFind: Story = {
   args: {
     isOpen: false,
     itemName: `${FRAGMENT_ITEM.name} — Hieroglyph Fragment`,
-    itemDescription: `${FRAGMENT_ITEM.description}\n\n2 of 3 fragments found`,
+    itemDescription: FRAGMENT_ITEM.description,
+    itemEffectDescription: "2 of 3 fragments found",
     rarity: "rare",
     itemComponent: (
       <HieroglyphTile
@@ -214,7 +226,8 @@ export const FragmentComplete: Story = {
   args: {
     isOpen: false,
     itemName: `${FRAGMENT_ITEM.name} — Hieroglyph Fragment`,
-    itemDescription: `${FRAGMENT_ITEM.description}\n\n3 of 3 fragments found`,
+    itemDescription: FRAGMENT_ITEM.description,
+    itemEffectDescription: "3 of 3 fragments found",
     rarity: "legendary",
     itemComponent: <HieroglyphTile symbol={FRAGMENT_ITEM.symbol} difficulty={FRAGMENT_ITEM.difficulty} size="lg" />,
     onDismiss: () => console.log("Dismissed"),

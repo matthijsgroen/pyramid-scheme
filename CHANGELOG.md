@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- A map piece now tells you something about the map it belongs to. Instead of the same "a shame it's nowhere near complete" line every time, the popup hints at where that particular map leads — a trader's cellar, a temple precinct, somewhere no mortal put there — and shows how much of it you've gathered ("2 of 3 map pieces gathered"). The tomb keeps its name to itself until the map is whole; the last piece names it outright, which is also the moment you can go there.
+- The progress line on a hieroglyph fragment ("2 of 3 fragments found") now sits on its own line instead of being squashed onto the end of the description.
+- Partly-collected things now show only the part you actually have, filling in clockwise as you find more, instead of being covered up: a hieroglyph tile at 2 of 3 is two thirds of a stone with a faint ghost of the rest, and a map piece is a fragment of scroll inside the dashed outline of the finished map. You can read how far along you are off the icon alone. Previously a hieroglyph tile filled in left to right, and a map piece showed no progress at all.
+
+### Fixed
+- Finding a single coin says "1 coin" rather than "1 coins".
+- Tomb tiles on the journey list no longer show a chamber count. It was left over from an earlier design where a tomb was several separate sites, and had stopped matching what a tomb actually is.
+- Four tombs showed an internal name to the player — the second expert tomb read as "expert_treasure_tomb_b.name" on the journey list. The Inner Sanctum, the Hall of Osiris, the Realm of Cosmic Forces and the Throne of Eternity are now named and described in both English and Dutch.
 
 ## 0.31.3 - 2026-08-02
 ### Changed

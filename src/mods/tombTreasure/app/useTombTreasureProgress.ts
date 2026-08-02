@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { useModState } from "@/app/state/useModState"
+import { piecesRequiredFor } from "../game/piecesRequired"
 
 // Tomb-treasure-owned progression state — the map-piece / tomb-key loop, moved out of core
 // useProgression so toggling the mod off drops all of it and core names none of it. Persisted in
@@ -43,6 +44,8 @@ export type TombTreasureProgressAPI = {
   discoverTomb: (tombJourneyId: string) => void
   collectMapPiece: (tombId: string) => void
   mapPieceCount: (tombId: string) => number
+  // Pieces found vs. the tomb's own entry threshold — the map-piece reward popup's progress line.
+  mapPieceProgress: (tombId: string) => { found: number; required: number }
   hasMapPiece: (journeyId: string) => boolean
   markMapPieceFound: (journeyId: string) => void
 }
@@ -77,6 +80,10 @@ export const useTombTreasureProgress = (): TombTreasureProgressAPI => {
           }
         }),
       mapPieceCount: tombId => state.collectedMapPieces[tombId] ?? 0,
+      mapPieceProgress: tombId => ({
+        found: state.collectedMapPieces[tombId] ?? 0,
+        required: piecesRequiredFor(tombId),
+      }),
       hasMapPiece: journeyId => (state.mapPieceJourneys ?? []).includes(journeyId),
       markMapPieceFound: journeyId =>
         setState(prev =>

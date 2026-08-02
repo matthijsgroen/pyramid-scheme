@@ -3,7 +3,7 @@ import { registerRewardDisplays, type RewardDisplayFn } from "@/app/SiteMap/rewa
 import { hieroglyphCategory } from "@/app/SiteMap/hieroglyphCategory"
 import { getInventoryItemById } from "@/data/inventory"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
 import { hieroglyphFragmentSchema } from "./rewardSchema"
 
@@ -46,22 +46,19 @@ const useHieroglyphRewardDisplays = (): Partial<Record<string, RewardDisplayFn>>
         ns: "inventory",
         defaultValue: item?.description ?? "",
       })
-      const progressLine = t("chest.fragmentProgress", {
-        found: Math.min(progress.found, progress.required),
-        required: progress.required,
-      })
       return {
         rarity,
         itemName: `${name} — ${t("chest.hieroglyphFragment")}`,
-        itemDescription: `${description}\n\n${progressLine}`,
+        itemDescription: description,
+        // Its own line in the popup — a newline inside itemDescription would collapse to a space
+        itemEffectDescription: t("chest.fragmentProgress", {
+          found: Math.min(progress.found, progress.required),
+          required: progress.required,
+        }),
+        // The tile's RevealMask drops itself once the set is complete, so no complete-check here
         ItemVisual:
           item && difficulty ? (
-            <HieroglyphTile
-              symbol={item.symbol}
-              difficulty={difficulty}
-              size="lg"
-              fragmentProgress={progress.found < progress.required ? progress : undefined}
-            />
+            <HieroglyphTile symbol={item.symbol} difficulty={difficulty} size="lg" fragmentProgress={progress} />
           ) : (
             <span className="text-6xl">𓂀</span>
           ),

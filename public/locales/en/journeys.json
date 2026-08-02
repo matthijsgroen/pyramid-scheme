@@ -17,7 +17,8 @@
   },
   "starter_treasure_tomb": {
     "name": "Forgotten Merchant's Cache",
-    "description": "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting."
+    "description": "Discover a small underground chamber where an ancient merchant hid his precious goods. A perfect introduction to treasure hunting.",
+    "mapHint": "The scrap sketches a market road and a cellar door — a trader's hiding place, nothing grander."
   },
   "junior_1": {
     "name": "Sacred Ibis Migration",
@@ -37,7 +38,8 @@
   },
   "junior_treasure_tomb": {
     "name": "Noble's Hidden Vault",
-    "description": "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers."
+    "description": "Explore the secret vault of a wealthy Egyptian noble, filled with golden artifacts and precious gemstones hidden from grave robbers.",
+    "mapHint": "Fine ink, a crested seal in the corner — someone of standing wanted this room forgotten."
   },
   "expert_1": {
     "name": "Valley of the Kings",
@@ -57,7 +59,13 @@
   },
   "expert_treasure_tomb": {
     "name": "High Priest's Treasury",
-    "description": "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy."
+    "description": "Infiltrate the elaborate underground treasury of a powerful high priest, where sacred relics and divine artifacts await the worthy.",
+    "mapHint": "The lines trace a temple precinct, and a stair running down beneath its offering floor."
+  },
+  "expert_treasure_tomb_b": {
+    "name": "Inner Sanctum",
+    "description": "Breach the sealed inner sanctum where only the highest priests dared tread, guarding the most sacred artifacts of the temple.",
+    "mapHint": "Corridors run past the temple vaults to a sealed door — only the highest priests ever passed it."
   },
   "master_1": {
     "name": "Great Pyramid of Giza",
@@ -77,7 +85,13 @@
   },
   "master_treasure_tomb": {
     "name": "Pharaoh's Secret Hoard",
-    "description": "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses."
+    "description": "Uncover the legendary secret treasure chamber of a great pharaoh, hidden beneath the desert sands and protected by ancient curses.",
+    "mapHint": "A royal cartouche marks one edge, and the route ends far out under open sand."
+  },
+  "master_treasure_tomb_b": {
+    "name": "Hall of Osiris",
+    "description": "Descend into the deeper hall ruled by Osiris, lord of the underworld. Face the mysteries of death and rebirth to claim his ancient relics.",
+    "mapHint": "Below the royal chambers the map keeps descending, into a hall marked with the rites of the dead."
   },
   "wizard_1": {
     "name": "Ra's Solar Journey",
@@ -97,6 +111,17 @@
   },
   "wizard_treasure_tomb": {
     "name": "Vault of the Gods",
-    "description": "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt."
+    "description": "Enter the mythical treasure vault where the gods themselves stored their most precious artifacts. Only the most skilled adventurers dare attempt this ultimate treasure hunt.",
+    "mapHint": "No landmark on this scrap belongs to the mortal world — whatever it charts, gods put it there."
+  },
+  "wizard_treasure_tomb_b": {
+    "name": "Realm of Cosmic Forces",
+    "description": "Venture deeper into the divine realm where cosmic forces of life, death, chaos, and wind manifest as ancient relics of immeasurable power.",
+    "mapHint": "Past the divine vault the lines break into star-paths, where the forces of life and chaos are kept as relics."
+  },
+  "wizard_treasure_tomb_c": {
+    "name": "Throne of Eternity",
+    "description": "Reach the innermost sanctum of the divine realm — the Throne of Eternity where the gods themselves rest. Only the greatest mathematicians of all time have stood here.",
+    "mapHint": "Every star-path on this fragment converges on a single seat at the very heart of the divine realm."
   }
 }

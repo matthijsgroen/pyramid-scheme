@@ -1,13 +1,10 @@
 import { useJourneys, type CombinedJourneyState } from "@/app/state/useJourneys"
-import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 import { useMemo } from "react"
-import { useTranslation } from "react-i18next"
-import { determineMapPieceLoot } from "./mapPieceLogic"
 import { determineInventoryLootForCurrentRuns } from "./inventoryLootLogic"
 import { determineExpeditionBonus } from "./expeditionBonusLogic"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { useInventoryItem } from "@/app/translations/useInventoryTranslations"
-import { HieroglyphTile } from "@/ui/atoms/HieroglyphTile"
+import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { getItemFirstLevel } from "@/data/itemLevelLookup"
 
 export type Loot = {
@@ -52,11 +49,8 @@ export const useLootDetermination = (
   activeJourney: CombinedJourneyState
 ): { loot: Loot | null; collectLoot: () => void } => {
   const { getJourney, nextJourneySeed, maxDifficulty } = useJourneys()
-  const { hasMapPiece, markMapPieceFound } = useTombTreasureProgress()
   const { inventory, addItems } = useInventory()
-  const { t } = useTranslation("treasures")
 
-  const mapPieceResult = determineMapPieceLoot(activeJourney, getJourney, hasMapPiece(activeJourney.journeyId), 0)
   const inventoryResult = determineInventoryLootForCurrentRuns(
     activeJourney,
     maxDifficulty,
@@ -72,19 +66,6 @@ export const useLootDetermination = (
   const inventoryItemHook = useInventoryItem()
 
   return useMemo((): { loot: Loot | null; collectLoot: () => void } => {
-    if (mapPieceResult.shouldAwardMapPiece) {
-      return {
-        loot: {
-          itemId: "mapPiece",
-          itemName: t("mapPieces.name"),
-          itemDescription: t(`mapPieces.descriptions.${activeJourney.journey.difficulty}`),
-          itemComponent: "📜",
-          rarity: "rare",
-        },
-        collectLoot: () => markMapPieceFound(activeJourney.journeyId),
-      }
-    }
-
     if (inventoryResult.shouldAwardInventoryItem && inventoryResult.itemIds.length > 0) {
       const result = makeInventoryLoot(inventoryResult.itemIds, "common", inventoryItemHook, addItems)
       if (result) return result
@@ -96,15 +77,5 @@ export const useLootDetermination = (
     }
 
     return { loot: null, collectLoot: () => {} }
-  }, [
-    mapPieceResult,
-    inventoryResult,
-    expeditionItemIds,
-    inventoryItemHook,
-    activeJourney.journey,
-    activeJourney.journeyId,
-    t,
-    markMapPieceFound,
-    addItems,
-  ])
+  }, [inventoryResult, expeditionItemIds, inventoryItemHook, addItems])
 }
