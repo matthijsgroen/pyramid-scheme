@@ -69,8 +69,9 @@ unlocks that the current tag mechanism can't do cleanly:
 - **The `eligible` join** — a slot's metadata (`slot.encounter`, `slot.capacity`,
   `slot.pathDifficulty`, `slot.tier`) is what later loot passes filter on:
   - shop stock: `eligible = s => s.encounter === "shop"`, footprint = `s.capacity`
-  - consumables: `eligible = s => s.pathDifficulty >= "expert"` (settled: no
-    consumables in open early areas until traps arrive at expert)
+  - consumables: `eligible = s => s.pathDifficulty >= "expert"` (settled: no consumables
+    in open early areas. Starter/junior do have traps, but only in hidden optional
+    corridors, and they're survived on the health you brought rather than on supply)
   - every loot dist: trap rooms `eligible = false`
 
 Because a shop slot's `capacity` can exceed 1, **slot capacity** (a slot holding

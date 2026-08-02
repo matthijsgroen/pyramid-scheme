@@ -360,7 +360,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       lastMain.sideSections = [
         ...lastMain.sideSections,
         ...pathIndices.map(idx => ({
-          pathPuzzles: 1,
+          // Trapped ones run 2 rooms; an untrapped ward path stays a single loot-bearing room (a
+          // trapped chain bears no loot, so only the trapped case is free to lengthen).
+          pathPuzzles: trapWardPath ? 2 : 1,
           difficulty,
           end: "treasure" as const,
           endReward: { type: "fragmentSlot" as const },

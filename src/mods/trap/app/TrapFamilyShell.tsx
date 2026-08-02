@@ -42,8 +42,10 @@ export const TrapFamilyShell = <T,>({ question, ctx, journeys, onSolved, onCance
     )
   }
 
-  // trap-insight adds time only to already-timed traps — an untimed tier (base 0) stays untimed
-  // (0 = no countdown; see arithmeticReflex plugin). Decided P1: don't turn a free trap into a timed one.
+  // trap-insight adds time only to an already-timed trap — a tier at base 0 stays untimed (0 = no
+  // countdown; see arithmeticReflex plugin), so the perk can never turn a free trap into a timed one.
+  // Every tier is timed today, so this guard is dormant; it's kept because 0 remains the supported way
+  // to make a tier untimed (see trapConfig.ts).
   const baseTime = TRAP_TIME_LIMITS_SECONDS[ctx.difficulty ?? "starter"]
   const timeLimit = baseTime > 0 ? baseTime + trap.trapInsightStacks * TRAP_TIME_EXTENSION_PER_INSIGHT_STACK : 0
 
