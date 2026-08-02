@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.4 - 2026-08-02
 ### Changed
 - A map piece now tells you something about the map it belongs to. Instead of the same "a shame it's nowhere near complete" line every time, the popup hints at where that particular map leads — a trader's cellar, a temple precinct, somewhere no mortal put there — and shows how much of it you've gathered ("2 of 3 map pieces gathered"). The tomb keeps its name to itself until the map is whole; the last piece names it outright, which is also the moment you can go there.
 - The progress line on a hieroglyph fragment ("2 of 3 fragments found") now sits on its own line instead of being squashed onto the end of the description.
