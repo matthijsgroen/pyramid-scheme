@@ -7,6 +7,9 @@ export type TranslatedJourney = Journey & {
   difficultyLabel: string
   lengthLabel: string
   timeLabel?: string
+  // Tombs only: where their map leads, phrased so it doesn't name the tomb. Shown while the map is
+  // still in pieces (the locked tile on Travel, the map-piece reward popup).
+  mapHint?: string
 }
 
 export const useJourneyTranslations = () => {
@@ -22,6 +25,7 @@ export const useJourneyTranslations = () => {
     ...(journey.type === "pyramid" && {
       timeLabel: tCommon(`time.${(journey as PyramidJourney).background.time}`),
     }),
+    ...(journey.type === "treasure_tomb" && { mapHint: t(`${journey.id}.mapHint`) }),
   }))
 }
 
@@ -44,5 +48,6 @@ export const useJourneyTranslation = (id: string) => {
     ...(journey.type === "pyramid" && {
       timeLabel: tCommon(`time.${(journey as PyramidJourney).background.time}`),
     }),
+    ...(journey.type === "treasure_tomb" && { mapHint: t(`${journey.id}.mapHint`) }),
   }
 }
