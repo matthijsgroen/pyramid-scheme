@@ -209,6 +209,132 @@ job. Put narrative mid-puzzle and it becomes the thing players tap through.
 
 ---
 
+# Part 3 — the five-panel mosaic, worked out
+
+Developed further than the rest of this doc, because the pieces already exist in code.
+
+## 3.1 What the pipeline already does (and throws away)
+
+`scripts/traceMask.ts` traces `src/assets/stained-glass-mask.png` (grayscale: **bright = cell interior,
+dark = lead line**, `THRESHOLD 128`, `MIN_PIXELS 40`) into polygons, and **already assigns every piece a
+tier**: five equal-count pie slices radiating from Anubis's head (`TIER_JOURNEYS`), five journeys per
+slice ordered outer→inner, `levelIndex` derived from `JOURNEY_LEVELS`. `src/assets/stained-glass.png`
+(1372×2352, ≈7:12 portrait) is the artwork; polygons render as a dark overlay, and revealing a piece
+makes its polygon transparent.
+
+The tier tie is then discarded twice: `mosaicCurrency` places an untyped `{ type: "mosaicPiece" }` into
+any free slot anywhere, and the runtime reveal is count-based (`useMosaicProgress` holds one integer).
+So per-tier panels are mostly **honouring what the tracer already computed**, not new design.
+
+Three couplings to know:
+- `MOSAIC_TOTAL = 298` is hardcoded and must equal `LEVEL_STEPS.length` by hand — derive it instead.
+- The phase-3 capped pass **hard-fails** if it can't place every piece, so each panel's count must fit its
+  tier's free-slot supply. Piece count is an *output* of tracing granularity, so tune `MIN_PIXELS` to fit
+  the budget rather than authoring art to hit a number.
+- `JOURNEY_LEVELS` in the tracer is a hand-copied mirror of `journeys.ts` (`levelCount × 2`).
+
+## 3.2 The constraint that picks the story shape
+
+**Panels can complete out of order and late** — the game's own pitch is that old sites reopen with later
+keys, so starter's panel may well finish last. That rules out a plot spread across registers (beat 4
+before beat 2 reads as broken) and favours **self-contained scenes whose arrangement carries the arc**.
+
+## 3.3 The five panels
+
+Each panel depicts an **action**, never a portrait, and each caption names the action rather than the
+god — so nothing requires prior knowledge of Egyptian myth. Fez supplies the name *after* the player has
+recognised the scene: see it → understand it → learn what it's called. The deities are all sourced from
+journey blurbs that already exist.
+
+| Panel | Caption | Figure | Sourced from |
+|---|---|---|---|
+| Starter | The Guardian at the Door | Bastet | "Temple of Bastet… protection from evil spirits" |
+| Junior | The First Lesson | Thoth | "Temple of Thoth, god of wisdom and writing" + Sacred Ibis Migration |
+| Expert | Letting the Sun In | Amun-Ra | "Karnak… dedicated to Amun-Ra" |
+| Master | The Green King | Osiris | "Book of the Dead… guide souls through the underworld", Hall of Osiris |
+| Wizard | The Feather and the Heart | Ma'at + Anubis | "Chamber of Ma'at… weighs the hearts of the dead" |
+
+Assembled, the registers stack into the existing Anubis window: he presides, and the five scenes are his
+record. **The current artwork already implies this story** — Anubis is the psychopomp who steadies the
+scale — so the finale needs no new subject, only the registers.
+
+### Scene briefs
+
+1. **The Guardian at the Door** — night, a mud-brick doorway. A cat on the threshold, back arched, facing
+   a snake retreating into the dark. Behind her, a family asleep. A bowl of milk left by the step.
+2. **The First Lesson** — a scribe cross-legged, palette on knee, reed pen in hand. Behind him an
+   ibis-headed figure leans in, one hand steadying the scribe's wrist — teaching, not commanding.
+3. **Letting the Sun In** — dawn at Karnak between two enormous columns; a shaft of light runs the hall
+   and lands on a small gold shrine. Priests stand aside, one with a censer. Sun disc between the pylons.
+4. **The Green King** — a seated king, green-skinned, wrapped, crook and flail crossed. Barley sprouting
+   out of the wrappings. Behind him the flood line of the Nile across a dark field.
+5. **The Feather and the Heart** — a great balance: a heart in one pan, a single ostrich feather in the
+   other, beam level. A jackal-headed figure steadies it; the ibis-scribe waits to write the result. A
+   doorway of light behind.
+
+### Fez's completion beats
+
+Three lines each, matching his existing voice (first-person plural, short, practical). Every third line
+turns back to what the *player* has been doing — that's what stops it reading as a museum placard.
+
+**Starter:** "A cat in the doorway, and a snake leaving in a hurry. That was worth a bowl of milk." /
+"Egyptians loved cats for exactly this — they killed the snakes and the rats that got into the grain." /
+"They loved them so much they made one a goddess. Bastet. Protector of the house, the door, everyone
+asleep behind it."
+
+**Junior:** "Look at his hand — someone's showing him how to hold the pen." / "The bird-headed one is
+Thoth. Writing, counting, keeping the records — all his." / "The ibis we followed up the river? That's his
+bird. Every number we've filled into a wall belongs to him too."
+
+**Expert:** "That light isn't luck. They built the whole hall so it would land right there, on the right
+morning." / "The sun is Amun-Ra — the hidden one, and the light everyone can see. Both at once." / "Anyone
+who can measure the sky that precisely can measure anything. We've been solving their arithmetic all this
+way."
+
+**Master:** "Green skin, and wheat growing straight out of him. That's on purpose." / "Osiris. He was
+killed, and put back together, and now he's what comes back every year when the river floods the fields."
+/ "Down here that's the whole idea: dead isn't finished. Cheerful thought for a tomb, isn't it?"
+
+**Wizard:** "A heart on one side. One feather on the other. And it's balancing." / "The feather is Ma'at —
+truth, balance, the way things are supposed to be. Heavier heart than that feather and you don't go
+through the door." / "The jackal steadying the scale is Anubis. He's the one who walks you here."
+
+**Finale (all five):** "Stand back a moment. Look at what we've been carrying up out of those pyramids." /
+"Every piece is part of him — the one who steadies the scale. He's been watching the whole way." / "That's
+his record of us. And I'd say it balances."
+
+≈18 short strings total.
+
+## 3.4 Where Fez belongs
+
+**Not painted into the mural — the voice that reads it.** Put him in a 3000-year-old stela and he's either
+a god (wrecking his chatty, mercantile, present-tense register) or a gag (undercutting the one moment the
+game plays straight). A completed panel is instead the natural *trigger* for a Fez beat, which gives the
+chapter narration from §2.3 a real cue and something on screen to point at.
+
+Two ways to give him presence without making him mythic:
+- **The gecko wink** — a small lizard tucked in the corner of every panel, as though it wandered into the
+  artwork. Five geckos; the one in the final panel wears a fez.
+- **The stall seam** — the shop family is `fez-shop`, titled "Fez's Stall", yet his own arrival line is
+  "Ah, a shop! I always keep a bit of coin handy for occasions like this." The game hasn't decided whether
+  he owns them. Resolving that supplies the *why now* the mythic arc can't, essentially for free (§2.4's
+  premise E). Either that ambiguity is a bug or it's the hook.
+
+Avoid making Fez the *subject* of the arc: he's the reason to come back tomorrow, Anubis is the reason it
+matters. The mural can only do one of those jobs.
+
+Open: do captions stay on screen once a register completes (suggest yes — a finished register wants a
+name), and does revisiting re-tell a beat (suggest a shorter version, so the screen isn't silent but
+doesn't nag).
+
+## 3.5 Art-generation prompt (Gemini)
+
+The generated artwork has to survive `traceMask.ts`, which is what most of these constraints are for.
+Full prompt text kept in `docs/game-design/mosaic-art-prompt.md` so it can be copy-pasted without
+carrying this doc's prose along.
+
+---
+
 ## Cheapest probes, if this ever moves
 
 - **For Part 2, vertical:** build table (a) for five journeys only and play them back to back. If they
