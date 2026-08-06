@@ -315,17 +315,35 @@ chapter narration from §2.3 a real cue and something on screen to point at.
 Two ways to give him presence without making him mythic:
 - **The gecko wink** — a small lizard tucked in the corner of every panel, as though it wandered into the
   artwork. Five geckos; the one in the final panel wears a fez.
-- **The stall seam** — the shop family is `fez-shop`, titled "Fez's Stall", yet his own arrival line is
-  "Ah, a shop! I always keep a bit of coin handy for occasions like this." The game hasn't decided whether
-  he owns them. Resolving that supplies the *why now* the mythic arc can't, essentially for free (§2.4's
-  premise E). Either that ambiguity is a bug or it's the hook.
+- **The stall is his.** *Decided.* The shop family is `fez-shop`, titled "Fez's Stall", and he owns it. His
+  arrival line today ("Ah, a shop! I always keep a bit of coin handy for occasions like this.",
+  `fez.json` `shopArrival`) reads as a customer and has to change.
+
+### Fez the trader — the *why now* (decided)
+
+He travels with you because he's **looking for nice items to sell**. Stated once at the start of the game,
+then paid off the first time a stall opens: he looks over what's on the counter and pitches it. That is
+§2.4's premise E, sourced from a seam the code already has rather than new fiction, and it costs copy only.
+
+Three beats, in his existing register:
+- **Game start** — one line: he's along because pyramids have things worth selling.
+- **First shop visit ever** — he owns up to the stall being his, and pitches the stock ("found this two
+  tombs back…"). Per-item pitch lines make the shop feel authored instead of a price list.
+- **Later visits** — the current short arrival line, shorn of the customer framing.
+
+Implementation shape: a first-visit-ever flag (one boolean in shop progress, not per-shop), plus item pitch
+keys alongside the existing stock names. Nothing in world-gen changes — this is `fez.json` and one flag.
 
 Avoid making Fez the *subject* of the arc: he's the reason to come back tomorrow, Anubis is the reason it
 matters. The mural can only do one of those jobs.
 
-Open: do captions stay on screen once a register completes (suggest yes — a finished register wants a
-name), and does revisiting re-tell a beat (suggest a shorter version, so the screen isn't silent but
-doesn't nag).
+**Retelling is on demand.** *Decided.* A completed panel gets an **info button**; pressing it has Fez tell
+that panel's beats again, in full. So the three lines fire once automatically on completion, and after that
+the player asks for them — no auto-repeat to tap through on every mosaic visit, and the beats stay
+reachable instead of being a one-time miss. Reuses the same keyed lines, no second shorter variant to write.
+
+Open: do captions stay on screen once a register completes (suggest yes — a finished register wants a name,
+and it labels the info button).
 
 ## 3.5 Art-generation prompt (Gemini)
 
