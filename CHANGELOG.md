@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Fez greets a shop as his own stall ("Ah, my stall! Let me lay out what I've picked up along the way.") instead of as a customer who happens to be carrying coin. The second line already had him selling you supplies and buying your junk, so the two lines now agree on whose stall it is.
 
 ## 0.31.5 - 2026-08-02
 ### Changed
