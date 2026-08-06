@@ -148,7 +148,7 @@
     "dismiss": "Vertrekken",
     "rareItems": "Zeldzame Vondsten",
     "supplies": "Benodigdheden",
-    "sellSection": "Rommel verkopen"
+    "sellSection": "Snuisterijen verkopen"
   },
   "level": {
     "completed": "Niveau Voltooid!"
@@ -162,7 +162,7 @@
       "animals": "🐾 Dieren",
       "artifacts": "💎 Artefacten",
       "treasures": "💰 Schatten",
-      "junk": "🔷 Rommel"
+      "junk": "🔷 Snuisterijen"
     },
     "treasureCategories": {
       "merchantCache": "💰 Handelaars Voorraad",

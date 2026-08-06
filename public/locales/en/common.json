@@ -148,7 +148,7 @@
     "dismiss": "Leave",
     "rareItems": "Rare Finds",
     "supplies": "Supplies",
-    "sellSection": "Junk to sell"
+    "sellSection": "Trinkets to sell"
   },
   "level": {
     "completed": "Level Completed!"
@@ -162,7 +162,7 @@
       "animals": "🐾 Animals",
       "artifacts": "💎 Artifacts",
       "treasures": "💰 Treasures",
-      "junk": "🔷 Junk"
+      "junk": "🔷 Trinkets"
     },
     "treasureCategories": {
       "merchantCache": "💰 Merchant Cache",

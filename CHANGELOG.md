@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Fez greets a shop as his own stall ("Ah, my stall! Let me lay out what I've picked up along the way.") instead of as a customer who happens to be carrying coin. The second line already had him selling you supplies and buying your junk, so the two lines now agree on whose stall it is.
+- Fez greets a shop as his own stall ("Ah, my stall! Let me lay out what I've picked up along the way.") instead of as a customer who happens to be carrying coin. The second line already had him selling you supplies and buying what you carry, so the two lines now agree on whose stall it is.
+- The small finds you sell at the stall are "trinkets" now, not "junk" — in Fez's offer, in the stall's sell section, and in the Collection category. Fez is paying you for these things; he shouldn't be calling them rubbish in the same breath.
 
 ## 0.31.5 - 2026-08-02
 ### Changed

@@ -16,7 +16,7 @@ const meta = {
     sellLabel: "Sell",
     rareItemsLabel: "Rare Finds",
     suppliesLabel: "Supplies",
-    sellSectionLabel: "Junk to sell",
+    sellSectionLabel: "Trinkets to sell",
     rareItems: [
       {
         id: "fragment",
