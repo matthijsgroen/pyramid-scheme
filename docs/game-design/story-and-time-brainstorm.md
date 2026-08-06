@@ -241,6 +241,29 @@ before beat 2 reads as broken) and favours **self-contained scenes whose arrange
 
 ## 3.3 The five panels
 
+### Why these five
+
+Not "gods the blurbs happen to mention". The five are **the things the builders believed you need in order
+to get through the door** — and each one is what the player actually spends that tier doing. The mural
+explains the game's own systems as belief:
+
+| Panel | Belief | The tier mechanic it explains |
+|---|---|---|
+| The Guardian at the Door | the door is protected | ward gates, location keys, locked tombs |
+| The First Lesson | you must be able to write and count | the arithmetic families |
+| Letting the Sun In | you must measure the sky exactly | sundial, water clock, mirror/lightbeam |
+| The Green King | dead isn't finished — things come back | old sites reopening with later-tier keys |
+| The Feather and the Heart | it is weighed, and it must balance | the balance-scale family, and the finale |
+
+Osiris ↔ *going back into a finished site with a new key* is the strongest of the five, and it's the one
+the pitch already leans on.
+
+This also settles the player's connection: **the record is of you.** A panel completes because you cleared
+that tier, so out-of-order completion (§3.2) reads as "you went back and finished it" rather than as a
+broken plot.
+
+### The panels themselves
+
 Each panel depicts an **action**, never a portrait, and each caption names the action rather than the
 god — so nothing requires prior knowledge of Egyptian myth. Fez supplies the name *after* the player has
 recognised the scene: see it → understand it → learn what it's called. The deities are all sourced from
@@ -333,6 +356,24 @@ Three beats, in his existing register:
 
 Implementation shape: a first-visit-ever flag (one boolean in shop progress, not per-shop), plus item pitch
 keys alongside the existing stock names. Nothing in world-gen changes — this is `fez.json` and one flag.
+
+### His arc: he prices the pieces, then stops pricing them
+
+The stall already sells mosaic pieces, so **Fez has been feeding the window all game without knowing what
+he was trading.** That is his connection to the mural, and it needs no new mechanic:
+
+- **Early** — pieces are pretty junk with a price on them. He's pleased you keep buying.
+- **Middle** — a panel completes. He notices the things he's been selling fit together, and gets uneasy
+  about how cheaply he let them go.
+- **Finale** — the beats already written ("That's his record of us. And I'd say it balances.") land as him
+  declining to name a price. The one thing he won't sell.
+
+That gives him the one thing he currently lacks — a change across the game — and it lands on the mechanic
+he owns rather than on new fiction. It also keeps him the *reader* of the mural, never a figure in it.
+
+Considered and parked: Fez has a **debt**, and the scale is money-versus-merit. Thematically tighter — it
+would bind the shop economy to Ma'at directly — but it moralises about money at children and needs real
+fiction. Add only if the arc reads thin once the beats exist.
 
 Avoid making Fez the *subject* of the arc: he's the reason to come back tomorrow, Anubis is the reason it
 matters. The mural can only do one of those jobs.
