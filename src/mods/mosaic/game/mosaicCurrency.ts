@@ -1,5 +1,6 @@
 import type { CappedCurrency } from "@/worldGen/placeFragments"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
+import { LEVEL_STEPS } from "./mosaicRevealOrder"
 
 // The mosaic-piece currency — mod-owned capped filler. Mosaic never gates progress, so it's
 // not on the reachability worklist (unlike map pieces / hieroglyph fragments); it's placed by
@@ -10,10 +11,10 @@ import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 export const MOSAIC_BUCKET = "mosaicPiece"
 
 // How many mosaic pieces exist in the world. Mod-owned — core holds no per-mod target
-// (docs/mods/TARGET.md rule 2). Must equal LEVEL_STEPS.length (./mosaicRevealOrder.ts):
-// the reveal is count-based (MosaicPage clamps to min(collected, LEVEL_STEPS.length)), so any
-// piece beyond this reveals nothing.
-export const MOSAIC_TOTAL = 298
+// (docs/mods/TARGET.md rule 2). Derived from the reveal sequence: the reveal is count-based
+// (MosaicPage clamps to min(collected, LEVEL_STEPS.length)), so a piece past the last step would
+// reveal nothing. Retracing the mask changes both together.
+export const MOSAIC_TOTAL = LEVEL_STEPS.length
 
 // The currency's app-facing registry metadata (Collection/HUD display). Mod-owned — registered
 // by whoever aggregates the mod list, not hardcoded in core's registerCurrencies.

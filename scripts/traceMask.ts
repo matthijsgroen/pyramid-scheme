@@ -13,6 +13,7 @@ import sharp from "sharp"
 import { writeFileSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
+import { journeys } from "../src/data/journeys"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const MASK_PATH = "src/assets/stained-glass-mask.png"
@@ -222,34 +223,8 @@ function regionToPoints(region: Region): string | null {
 // Journey assignment: 5 equal-count pie slices from Anubis's head center.
 // Within each slice, 4 journeys by distance: outer → inner (toward the head).
 // ---------------------------------------------------------------------------
-// levelCount * 2 from journeys.ts — each game level reveals 2 mosaic pieces
-const JOURNEY_LEVELS: Record<string, number> = {
-  starter_1: 6,
-  starter_2: 8,
-  starter_3: 10,
-  starter_4: 10,
-  starter_treasure_tomb: 4,
-  junior_1: 6,
-  junior_2: 12,
-  junior_3: 16,
-  junior_4: 10,
-  junior_treasure_tomb: 6,
-  expert_1: 8,
-  expert_2: 12,
-  expert_3: 18,
-  expert_4: 14,
-  expert_treasure_tomb: 8,
-  master_1: 8,
-  master_2: 18,
-  master_3: 16,
-  master_4: 10,
-  master_treasure_tomb: 10,
-  wizard_1: 18,
-  wizard_2: 22,
-  wizard_3: 20,
-  wizard_4: 16,
-  wizard_treasure_tomb: 12,
-}
+// Each game level reveals 2 mosaic pieces, so a journey's step count is levelCount * 2.
+const JOURNEY_LEVELS: Record<string, number> = Object.fromEntries(journeys.map(j => [j.id, j.levelCount * 2]))
 
 const TIER_JOURNEYS = [
   ["starter_1", "starter_2", "starter_3", "starter_4", "starter_treasure_tomb"],
