@@ -4,6 +4,7 @@ import type { Slot } from "./slots"
 import type { TreasureReward, SiteConfig } from "./types"
 import { shopMoneyEconomy } from "@/mods/shop/game/loot"
 import { trapConsumables } from "@/mods/trap/game/consumables"
+import { SELL_VALUE_BY_TIER } from "@/data/sellables"
 
 // A fake loot slot — only the fields the allocator + mod fills read, plus a spy on assign.
 const slot = (opts: { weight: number; tier?: Slot["tier"]; kind?: Slot["kind"]; seq?: number }): Slot => {
@@ -108,7 +109,7 @@ describe("shopMoneyEconomy fill", () => {
     const distinct = new Set(sellables.map(r => r.itemId))
     expect(distinct.size).toBe(5)
     const value =
-      sellables.length * 50 +
+      sellables.length * SELL_VALUE_BY_TIER.divine +
       (rewards.filter(r => r.type === "money") as unknown as { amount: number }[]).reduce((a, r) => a + r.amount, 0)
     expect(value).toBeGreaterThanOrEqual(2000) // totalBuyable floor (4 mosaic × 500)
   })

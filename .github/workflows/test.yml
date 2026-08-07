@@ -32,6 +32,8 @@ jobs:
 
       - name: Check changelog for unreleased entries
         id: check_changelog
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           OUTPUT=$(yarn release --dry-run 2>&1)
           echo "$OUTPUT"
@@ -45,7 +47,21 @@ jobs:
             # Extract the Unreleased section (lines between the Unreleased heading and the next
             # release heading). The keep-a-changelog tool writes headings without brackets
             # (e.g. "## Unreleased", "## 0.24.0 - ..."), so match either style defensively.
-            UNRELEASED=$(awk '/^## \[?Unreleased\]?/{started=1; next} started && /^## /{exit} started' CHANGELOG.md | sed '/^[[:space:]]*$/{ N; /^\n$/d }')
+            EXTRACT='/^## \[?Unreleased\]?/{started=1; next} started && /^## /{exit} started'
+            UNRELEASED=$(awk "$EXTRACT" CHANGELOG.md)
+            # [Unreleased] accumulates every merged PR since the last release, so on a busy release
+            # cycle this PR's own lines are a few among many. Bold the entries the base branch
+            # doesn't have yet — that's what this PR is adding. Compared against the base TIP, not
+            # the merge base: an entry another PR merged while this one was open belongs to that
+            # PR, not this one, and stays unbolded.
+            if [ -n "$BASE_REF" ] && git fetch --no-tags --depth=1 origin "$BASE_REF"; then
+              git show FETCH_HEAD:CHANGELOG.md | awk "$EXTRACT" > /tmp/base-unreleased.txt
+              UNRELEASED=$(printf '%s\n' "$UNRELEASED" | awk '
+                NR==FNR { base[$0]=1; next }
+                /^- / && !($0 in base) { sub(/^- /, ""); print "- **" $0 "**"; next }
+                { print }' /tmp/base-unreleased.txt -)
+            fi
+            UNRELEASED=$(printf '%s\n' "$UNRELEASED" | sed '/^[[:space:]]*$/{ N; /^\n$/d }')
             echo "will_release=true" >> "$GITHUB_OUTPUT"
             echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
             echo "bump_type=$BUMP_TYPE" >> "$GITHUB_OUTPUT"

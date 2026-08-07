@@ -17,11 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Black-painted shapes — the balance scale, Anubis's head, the snake — are glass you collect, not leadwork stuck black.
 - Every piece flares as it lands, not just the first batch you place.
 - Mosaic pieces you already collected reset once — the world's loot was reshuffled to place them.
+- A mosaic piece you find shows its scene's own colour of glass, so you can tell which of the five it belongs to — on Fez's counter too.
 - Fez says at the start of the game that he's along for the trade — the tombs are full of things worth selling.
 - The first stall you ever reach, he owns up to it being his and pitches what's on the counter. Later stalls get the short greeting.
 - Fez greets a shop as his own stall instead of as a customer.
 - What you sell at the stall is "trinkets", not "junk" — his offer, the sell section, the Collection category.
-- A mosaic piece you find shows its scene's own colour of glass, so you can tell which of the five it belongs to — on Fez's counter too.
+- Trinkets are worth far more — 25 for a stone one up to 125 for a divine one — so you find fewer of them and each one matters.
+- Loose coins are rarer and small change — the trinkets you sell are what pays for a stall's rarities.
+- Found riches barely cover what Fez's stalls charge: buying everything he sells means gathering nearly everything the world holds.
+- Loot fills treasure chests first, so a chest at the end of a side path is worth the walk — solved puzzles still hand you loose change.
+- Every junior journey has an old working off its second pyramid: an easy corridor an earlier expedition left behind, holding the plainest trinkets.
 
 ## 0.31.5 - 2026-08-02
 ### Changed

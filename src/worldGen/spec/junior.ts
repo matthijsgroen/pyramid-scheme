@@ -28,6 +28,18 @@ const holdChest = (index: number) => wardChest({ tomb: "junior_treasure_tomb", i
 // doesn't starve anything.
 const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, puzzles: 1, endReward: "hieroglyph" })
 
+// Old workings — an ungated starter-difficulty corridor an earlier expedition left behind, one per
+// junior journey. A slot's loot tiers by its OWN difficulty (slots.ts), so these bear starter loot
+// inside a junior pyramid: an easy breather, and the starter tier's only spare loot CAPACITY.
+//
+// Why it exists: the starter journeys' own chests are fully subscribed by hieroglyph, mosaic, map
+// piece and tomb-key placement, leaving the shop's fill six chests on two floors for the whole
+// tier. All five stone trinkets then shipped as one copy each on a single floor — one behind a ward
+// gate, one on a hidden path — so missing that floor left the Collection's stone row unfinishable.
+// Ungated on purpose: a gate would put the spread back behind a single key.
+// (lootEconomyInvariants.spec.ts guards both the ≥1-of-each and the spread.)
+const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
+
 export const juniorRules: Rule[] = [
   tier("junior", { difficulty: "junior" }),
 
@@ -60,14 +72,14 @@ export const juniorRules: Rule[] = [
   // Own-tomb holdback chests, spread across the front-half pyramids (the back half already
   // carries a ward wing above).
   journey("junior_1").pyramid(1, { sideSections: [holdChest(0), starterEcho()] }),
-  journey("junior_1").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("junior_1").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
   journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
-  journey("junior_2").pyramid(2, { sideSections: [holdChest(1)] }),
+  journey("junior_2").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
   journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
-  journey("junior_3").pyramid(2, { sideSections: [holdChest(2)] }),
+  journey("junior_3").pyramid(2, { sideSections: [holdChest(2), oldWorkings()] }),
   journey("junior_4").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_4").pyramid(2, { sideSections: [holdChest(1)] }),
-  journey("junior_4").pyramid(3, { sideSections: [holdChest(2)] }),
+  journey("junior_4").pyramid(3, { sideSections: [holdChest(2), oldWorkings()] }),
 
   tomb("junior_treasure_tomb", {
     encounter: "tomb-puzzle",
