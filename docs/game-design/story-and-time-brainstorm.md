@@ -1,14 +1,17 @@
 # story-and-time-brainstorm.md
 
-Status: **brainstorm — exploration only, nothing decided, nothing scheduled.**
+Status: **Parts 1 and 2 are exploration — nothing decided, nothing scheduled. Part 3 is built** and
+describes what the game does today.
 Companion to `PUZZLE_FAMILIES.md` (family catalogue), `TRAP_FAMILIES.md` (time limits),
 `game-loop.md` (the three nested loops + the mosaic).
 
 Two threads explored in one session, kept together because they meet: **puzzles that fuse logic, time
 and mathematics**, and **a story that motivates across the whole game while the existing per-area
-stories start showing up in the content**.
+stories start showing up in the content**. The second thread produced the five-panel mosaic, which is
+now the shipped mechanic.
 
-Nothing here is a commitment. The value is the inventory, the framings, and the named tensions.
+Nothing in Parts 1 and 2 is a commitment. Their value is the inventory, the framings, and the named
+tensions.
 
 ---
 
@@ -216,25 +219,27 @@ Developed further than the rest of this doc, because the pieces already exist in
 ## 3.1 What the pipeline already does (and throws away)
 
 `scripts/traceMask.ts` traces `src/assets/stained-glass.png` into polygons and hands each one to a
-(journey, level) reveal step. Lead is **neutral dark ink** (`THRESHOLD 128` *and* saturation under 40) —
-a deep lapis or oxblood fill is a cell, not a line — and anything under `MIN_PIXELS 40` is dropped. The
-artwork is its own mask, so there is no second file to keep in sync. Polygons render as a dark overlay;
-revealing a piece makes its polygon transparent.
+(journey, level) reveal step. A pixel is **leading** only when it is both dark (`THRESHOLD 45`) and
+unsaturated (`LEAD_SATURATION 40`), and anything under `MIN_PIXELS 40` is dropped. Two consequences worth
+holding on to: a deep lapis or oxblood fill is a cell, and so is a shape *painted* black, because the
+artwork's leading sits near 0 while painted black sits around 60. The artwork is its own mask, so there is
+no second file to keep in sync. Polygons render as a dark overlay; revealing a piece makes it transparent.
 
 Region assignment is by **horizontal register**: the image is cut into five equal bands, band *n* belongs
 to tier *n*, and within a band the regions are handed out left to right across that tier's journeys and
-levels. `mosaicRevealOrder.ts` therefore reduces to canonical journey order, and a register finishes when
-its tier is played out — which is what lets a completed panel fire its own beat.
+levels. `mosaicRevealOrder.ts` therefore reduces to canonical journey order.
 
-The tier tie is still discarded once: `mosaicCurrency` places an untyped `{ type: "mosaicPiece" }` into
-any free slot anywhere, and the runtime reveal is count-based (`useMosaicProgress` holds one integer). So
-panels complete in a fixed order as pieces accumulate, rather than when *that* tier is cleared.
+Each register is fed by its own pool of loot (`MOSAIC_CURRENCIES`, one capped currency per tier, each
+taking only nodes of its own difficulty), and the player sets found pieces in by hand on the mosaic
+screen. So a register finishes when its tier is picked clean, in whatever order that happens — which is
+what lets a completed panel fire its own beat with the player watching.
 
 **What sets the collectible count is `journeys.ts`, not the art.** Pieces collected =
-`LEVEL_STEPS.length` = every journey's `levelCount × 2`, currently 252. Traced regions (~1870) are the
+`LEVEL_STEPS.length` = every journey's `levelCount × 2`, currently 252. Traced regions (1927) are the
 polygons that uncover *per step*, so tracing granularity is a **visual** dial and the art can neither
 overshoot nor undershoot a loot target. The one thing that does bind: a register needs at least as many
-regions as its tier has steps, or some steps uncover nothing — see `mosaic-art-prompt.md` for the floors.
+regions as its tier has steps, or some steps uncover nothing (32/44/52/58/66; the shipped window carries
+305/330/488/429/375).
 `MOSAIC_TOTAL` and the tracer's `JOURNEY_LEVELS` are both derived from these sources rather than
 hand-synced; when they were copies they had already drifted (298 vs 252).
 
@@ -417,11 +422,26 @@ completion, and after that the player asks. No auto-repeat to tap through on eve
 stay reachable rather than being a one-time miss, and the same keyed lines do both jobs — no shorter
 variant to write. The replay also ignores the tutorials-off setting, as an explicitly asked-for line should.
 
-## 3.5 Art-generation prompt (Gemini)
+## 3.5 If the artwork is regenerated
 
-The generated artwork has to survive `traceMask.ts`, which is what most of these constraints are for.
-Full prompt text kept in `docs/game-design/mosaic-art-prompt.md` so it can be copy-pasted without
-carrying this doc's prose along.
+The window ships, so the generation prompt is gone — a prompt file that outlives its image goes stale
+against the tracer and misleads the next person. Everything needed to write a fresh one:
+
+- **The scenes** are §3.3 above: the caption table and the five briefs.
+- **The composition**: one portrait image, five equal horizontal bands, a scene per band, Anubis
+  presiding. Register assignment is positional, so the scenes must sit in their bands in a single image.
+- **What the tracer needs** (`scripts/traceMask.ts`, and §3.1):
+  - flat colour cells, no gradients or soft shading, hard edges;
+  - continuous black leading closing every cell, thin — 3-4px at ~1150px wide;
+  - **pure black only for the leading.** Anything meant to look black — a jackal's head, a metal scale —
+    must be charcoal, clearly lighter than the leading, or it is traced as leadwork and can never be
+    collected;
+  - deep saturated colour is fine, however dark;
+  - dense leadwork: break large fields into many cells, and the lower registers finer than the upper
+    ones, since later tiers hold more reveal steps (32/44/52/58/66);
+  - no hieroglyphs — the model invents convincing nonsense, and this game's glyph set is meaningful.
+- **Then**: replace `src/assets/stained-glass.png`, run `yarn generate-mosaic`, and check each register's
+  region count against its step count above.
 
 ---
 

@@ -18,7 +18,7 @@ import { journeys } from "../src/data/journeys"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // The artwork is its own mask: leadwork is black ink, every cell carries either colour or charcoal.
-const MASK_PATH = "src/assets/stained-glass.png"
+const ARTWORK_PATH = "src/assets/stained-glass.png"
 // Ink versus paint. The artwork uses two different blacks: leading, dividers and the border sit at
 // brightness 0-12, while shapes PAINTED black — Anubis's head, the balance scale, the snake — sit
 // around 60. The histogram between them is empty at 40-49, so 45 splits ink from paint. Set this at
@@ -38,11 +38,11 @@ const VB_W = 200
 let VB_H = 358 // updated after image is loaded
 
 // Keep alpha channel — transparent pixels (stone surround) are treated as lead
-const { data, info } = await sharp(MASK_PATH).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+const { data, info } = await sharp(ARTWORK_PATH).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
 const { width, height } = info
 const STRIDE = 4 // RGBA
 VB_H = Math.round((VB_W * height) / width)
-console.error(`Mask: ${width}×${height}  ViewBox: ${VB_W}×${VB_H}`)
+console.error(`Artwork: ${width}×${height}  ViewBox: ${VB_W}×${VB_H}`)
 
 function toVB(px: number, py: number): [number, number] {
   return [Math.round((px / width) * VB_W * 10) / 10, Math.round((py / height) * VB_H * 10) / 10]
