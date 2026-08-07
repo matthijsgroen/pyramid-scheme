@@ -86,6 +86,9 @@ export type CappedCurrency = {
   // World-wide count to place, net of any pre-authored literals (compute from allConfigs if a
   // currency has some; mosaic has none — every instance flows through the slot pool).
   totalRequired: (allConfigs: Record<string, SiteConfig[]>) => number
+  // Which slots this currency may take at all (default: any loot node the phase-3 pass offers).
+  // A hard filter, unlike `rank` — e.g. mosaic's per-register pools only take their own tier.
+  eligible?: (slot: Slot) => boolean
   // Order the still-available slots best-first for this currency (e.g. prefer `prefers`-tagged).
   rank: (candidates: readonly Slot[]) => Slot[]
 }
@@ -288,8 +291,11 @@ export const placeFragments = (
   // loop above only exits once its queue drains), so any leftover gating-owned preference here is
   // unclaimed for good.
   for (const slot of available) {
-    if (slot.preference && capped[0] && currencies.some(c => c.ownsBucket(slot.preference!))) {
-      slot.preference = capped[0].bucket
+    if (slot.preference && currencies.some(c => c.ownsBucket(slot.preference!))) {
+      // The first capped currency that would actually take this slot — handing a wizard node to a
+      // starter-only pool would strand it, since a capped `eligible` is a hard filter.
+      const taker = capped.find(c => c.eligible?.(slot) ?? true)
+      if (taker) slot.preference = taker.bucket
     }
   }
 

@@ -4,6 +4,7 @@ import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useProgression } from "@/app/state/useProgression"
+import { MOSAIC_TIERS, mosaicBucket } from "../game/mosaicCurrency"
 import { MosaicPage } from "./MosaicPage"
 import { registerMosaicRewardDisplay } from "./rewardDisplay"
 
@@ -15,13 +16,18 @@ import { registerMosaicRewardDisplay } from "./rewardDisplay"
 if (isModEnabled("mosaic")) {
   registerModScreen({ id: "mosaic", Component: MosaicPage })
   registerMosaicRewardDisplay()
-  // mosaicPiece carries no payload — just the type tag.
-  registerRewardSchema("mosaicPiece", z.object({ type: z.literal("mosaicPiece") }))
+  // A mosaic piece carries the register it belongs to, so a find fills the panel for the
+  // difficulty it was found on.
+  const mosaicPieceSchema = z.object({ type: z.literal("mosaicPiece"), tier: z.enum(MOSAIC_TIERS) })
+  registerRewardSchema("mosaicPiece", mosaicPieceSchema)
   registerRewardContribution(() => {
     const progression = useProgression()
     return {
       effects: {
-        mosaicPiece: () => progression.ledger.grant("mosaicPiece", 1),
+        mosaicPiece: reward => {
+          const { tier } = mosaicPieceSchema.parse(reward)
+          progression.ledger.grant(mosaicBucket(tier), 1)
+        },
       },
     }
   })

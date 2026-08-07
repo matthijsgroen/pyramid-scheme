@@ -88,7 +88,9 @@ export const cappedToDistribution = (c: CappedCurrency): Distribution => ({
   // A shop stock slot's preference is a hard claim (see placeFragments): fill a fez-shop slot only
   // if it's tagged for this capped bucket, so a mosaic can't land in a hieroglyph/mapPiece shop slot.
   eligible: s =>
-    s.kind === "end" && (s.encounter !== "fez-shop" || s.preference === undefined || s.preference === c.bucket),
+    s.kind === "end" &&
+    (s.encounter !== "fez-shop" || s.preference === undefined || s.preference === c.bucket) &&
+    (c.eligible?.(s) ?? true),
   rank: c.rank,
   fill: (slots: Slot[]) => {
     for (const slot of slots) slot.assign(c.toReward())

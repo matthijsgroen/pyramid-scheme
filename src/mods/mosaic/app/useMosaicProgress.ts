@@ -1,16 +1,24 @@
 import { useModState } from "@/app/state/useModState"
+import type { MosaicTier } from "../game/mosaicCurrency"
 
-// Reveal-animation progress for the mosaic screen: how many mosaic reveal STEPS the player has
-// already watched animate in. Distinct from how many pieces they own (the ledger's mosaicPiece
-// count). Mod-owned persisted slice (useModState) so core's ProgressionState never carries it.
-//
-// Migration note: this moved off ProgressionState onto its own storage key, so an existing
-// player's seenCount resets to 0 once — no data loss (the ledger piece count is untouched), just
-// a one-time replay of reveal animations they've already seen.
+type SeenByTier = Partial<Record<MosaicTier, number>>
+
+// Reveal-animation progress for the mosaic screen: how many reveal STEPS of each register the
+// player has already watched animate in. Distinct from how many pieces they own (the ledger's
+// per-register counts). Mod-owned persisted slice (useModState) so core's ProgressionState never
+// carries it. Per register, because the registers fill independently — each is fed only by loot
+// found at its own difficulty.
 export const useMosaicProgress = () => {
-  const [seenCount, setSeenCount] = useModState("mosaic", 0)
+  const [seen, setSeen] = useModState<SeenByTier>("mosaic", {})
   return {
-    seenCount,
-    markViewed: (count: number) => setSeenCount(prev => Math.max(prev, count)),
+    seenCount: (tier: MosaicTier) => seen[tier] ?? 0,
+    markViewed: (counts: Record<MosaicTier, number>) =>
+      setSeen(prev => {
+        const next = { ...prev }
+        for (const [tier, count] of Object.entries(counts) as [MosaicTier, number][]) {
+          next[tier] = Math.max(next[tier] ?? 0, count)
+        }
+        return next
+      }),
   }
 }

@@ -3,32 +3,42 @@ import { Page } from "@/ui/atoms/Page"
 import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "@/mods/mosaic/game/mosaicRevealOrder"
+import { MOSAIC_TIERS, mosaicBucket, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
 import { useProgression } from "@/app/state/useProgression"
 import { useMosaicProgress } from "./useMosaicProgress"
 
 export const MosaicPage: FC = () => {
-  // Piece count is the ledger's (core owns the bucket, mosaic owns the id); seen-count is the
-  // mosaic mod's own persisted slice.
-  const mosaicPieceCount = useProgression().ledger.get("mosaicPiece")
-  const { seenCount: mosaicSeenCount, markViewed: markMosaicViewed } = useMosaicProgress()
+  // Piece counts are the ledger's, one bucket per register (core owns the buckets, mosaic owns
+  // the ids); seen-counts are the mosaic mod's own persisted slice. Each register fills from its
+  // own difficulty, so they advance independently and a panel finishes when its tier is picked clean.
+  const ledger = useProgression().ledger
+  const { seenCount, markViewed } = useMosaicProgress()
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
+
+  const countByTier = useMemo(
+    () => Object.fromEntries(MOSAIC_TIERS.map(t => [t, ledger.get(mosaicBucket(t))])) as Record<MosaicTier, number>,
+    [ledger]
+  )
 
   const { revealedPieceIds, newPieceIds } = useMemo(() => {
     const revealed = new Set<string>()
     const newSet = new Set<string>()
 
-    for (let i = 0; i < Math.min(mosaicPieceCount, LEVEL_STEPS.length); i++) {
-      const step = LEVEL_STEPS[i]
-      const pieceIds = PIECES_BY_STEP.get(`${step.journeyId}:${step.levelIndex}`) ?? []
-      for (const id of pieceIds) {
-        revealed.add(id)
-        if (i >= mosaicSeenCount) newSet.add(id)
+    for (const tier of MOSAIC_TIERS) {
+      const steps = LEVEL_STEPS.filter(s => s.journeyId.startsWith(`${tier}_`))
+      const seen = seenCount(tier)
+      for (let i = 0; i < Math.min(countByTier[tier], steps.length); i++) {
+        const step = steps[i]
+        for (const id of PIECES_BY_STEP.get(`${step.journeyId}:${step.levelIndex}`) ?? []) {
+          revealed.add(id)
+          if (i >= seen) newSet.add(id)
+        }
       }
     }
 
     return { revealedPieceIds: revealed, newPieceIds: newSet }
-  }, [mosaicPieceCount, mosaicSeenCount])
+  }, [countByTier, seenCount])
 
   useEffect(() => {
     const el = containerRef.current
@@ -39,7 +49,7 @@ export const MosaicPage: FC = () => {
         setIsVisible(entry.isIntersecting)
         if (entry.isIntersecting) {
           // ponytail: only start timer when page is actually visible (not off-screen in swipeable panel)
-          timer = setTimeout(() => markMosaicViewed(mosaicPieceCount), 3000)
+          timer = setTimeout(() => markViewed(countByTier), 3000)
         } else {
           if (timer) clearTimeout(timer)
         }
@@ -51,7 +61,7 @@ export const MosaicPage: FC = () => {
       observer.disconnect()
       if (timer) clearTimeout(timer)
     }
-  }, [markMosaicViewed, mosaicPieceCount])
+  }, [markViewed, countByTier])
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">

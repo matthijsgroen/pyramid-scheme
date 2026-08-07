@@ -1,5 +1,5 @@
 import type { ModDescriptor } from "../modDescriptor"
-import { MOSAIC_CURRENCY, MOSAIC_CURRENCY_META, MOSAIC_BUCKET } from "./game/mosaicCurrency"
+import { MOSAIC_CURRENCIES, MOSAIC_CURRENCY_METAS, mosaicBucket } from "./game/mosaicCurrency"
 
 // The mosaic mod descriptor. Minimal by design (docs/mods/TARGET.md): only the fields this mod
 // actually uses. The shared ModDescriptor type lives in ../modDescriptor. Toggle the mod off by
@@ -9,17 +9,17 @@ import { MOSAIC_CURRENCY, MOSAIC_CURRENCY_META, MOSAIC_BUCKET } from "./game/mos
 // wired app-side (Base.tsx), gated on this mod being enabled.
 export const mosaicMod: ModDescriptor = {
   id: "mosaic",
-  cappedCurrencies: [MOSAIC_CURRENCY],
-  currencyMeta: MOSAIC_CURRENCY_META,
-  // Sell one mosaic piece at each of these tombs' Fez shops (a `prefers:mosaicPiece` sentinel the
-  // capped pass fills — moved out of the free-world spread, total unchanged). Mirrors the pre-slice
-  // shop stock. Fungible, so any mosaic; drops with the mod.
+  cappedCurrencies: MOSAIC_CURRENCIES,
+  currencyMeta: MOSAIC_CURRENCY_METAS,
+  // Sell one mosaic piece at each of these tombs' Fez shops (a `prefers` sentinel the capped pass
+  // fills — moved out of the free-world spread, total unchanged). The piece is the tomb's own
+  // difficulty, since that is the only pool allowed to take a node of that tier. Drops with the mod.
   shopStock: [
-    { journeyId: "junior_treasure_tomb", prefers: MOSAIC_BUCKET },
-    { journeyId: "wizard_treasure_tomb", prefers: MOSAIC_BUCKET },
-    { journeyId: "wizard_treasure_tomb_b", prefers: MOSAIC_BUCKET },
-    { journeyId: "wizard_treasure_tomb_c", prefers: MOSAIC_BUCKET },
-    { journeyId: "expert_treasure_tomb", prefers: MOSAIC_BUCKET },
-    { journeyId: "master_treasure_tomb", prefers: MOSAIC_BUCKET },
+    { journeyId: "junior_treasure_tomb", prefers: mosaicBucket("junior") },
+    { journeyId: "wizard_treasure_tomb", prefers: mosaicBucket("wizard") },
+    { journeyId: "wizard_treasure_tomb_b", prefers: mosaicBucket("wizard") },
+    { journeyId: "wizard_treasure_tomb_c", prefers: mosaicBucket("wizard") },
+    { journeyId: "expert_treasure_tomb", prefers: mosaicBucket("expert") },
+    { journeyId: "master_treasure_tomb", prefers: mosaicBucket("master") },
   ],
 }
