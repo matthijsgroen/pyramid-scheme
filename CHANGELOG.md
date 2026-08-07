@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## 0.31.6 - 2026-08-07
 ### Changed
 - The mosaic is five scenes instead of one abstract window: a cat guarding a doorway, a scribe taught to write, dawn light landing in a temple hall, the green king, a heart weighed against a feather — Anubis standing over all five.
 - Each scene belongs to one difficulty and fills left to right as you play that difficulty.
