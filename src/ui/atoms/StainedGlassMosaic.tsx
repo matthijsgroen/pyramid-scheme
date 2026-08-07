@@ -86,7 +86,9 @@ export const StainedGlassMosaic: FC<{
         points={piece.points}
         fill="transparent"
         stroke={LEAD}
-        strokeWidth="0.4"
+        // The artwork paints its own leading; this only closes the seams between polygons, so it
+        // stays thin — heavier and it doubles every line and swallows the small figures.
+        strokeWidth="0.15"
         strokeLinejoin="round"
         style={{ cursor: onPieceClick ? "pointer" : undefined }}
         onClick={onPieceClick ? () => onPieceClick(piece) : undefined}

@@ -24,7 +24,15 @@ const THRESHOLD = 128
 // A dark pixel that still carries colour is a deep fill (lapis, deep red), not a lead line.
 // Without this, saturated darks are read as leading and stay permanently visible — never collectible.
 const LEAD_SATURATION = 40
+// Black paint vs black ink: how deep inside a neutral-dark area a pixel must sit before that area
+// counts as a painted shape rather than leading. Above the thickest structural line in the artwork
+// (the register dividers and the outer border are ~20px wide, so ~10 deep); below the shapes worth
+// rescuing (Anubis's head runs 43 deep).
+const BLOB_CORE_DEPTH = 20
 const MIN_PIXELS = 40
+// Largest a single piece may be. Roughly 3× the average cell, so ordinary glass is untouched and
+// only painted shapes and the biggest background fields get cut down.
+const MAX_PIXELS = 4000
 
 // ViewBox: width 200, height derived from actual image dimensions after load
 const VB_W = 200
@@ -56,6 +64,73 @@ for (let i = 0; i < width * height; i++) {
 }
 
 // ---------------------------------------------------------------------------
+// Rescue black FILLS from the leading. A lead line is thin; a black-painted shape (Anubis's head,
+// his ears) is not. Colour cannot tell them apart, so without this a black shape sits on screen
+// from the first piece and can never be collected.
+//
+// Chebyshev distance to the nearest non-lead pixel finds the cores of thick areas; a bounded
+// dilation grows each core back to roughly its true edge. Bounded, not flood-filled: the leading
+// is one connected network, so an unbounded flood from a single core swallows the whole image.
+// ---------------------------------------------------------------------------
+const dist = new Int32Array(width * height)
+const BIG = width + height
+for (let i = 0; i < width * height; i++) dist[i] = visited[i] ? BIG : 0
+for (let y = 0; y < height; y++) {
+  for (let x = 0; x < width; x++) {
+    const i = y * width + x
+    if (!dist[i]) continue
+    let best = dist[i]
+    if (x > 0) best = Math.min(best, dist[i - 1] + 1)
+    if (y > 0) best = Math.min(best, dist[i - width] + 1)
+    if (x > 0 && y > 0) best = Math.min(best, dist[i - width - 1] + 1)
+    if (x < width - 1 && y > 0) best = Math.min(best, dist[i - width + 1] + 1)
+    dist[i] = best
+  }
+}
+for (let y = height - 1; y >= 0; y--) {
+  for (let x = width - 1; x >= 0; x--) {
+    const i = y * width + x
+    if (!dist[i]) continue
+    let best = dist[i]
+    if (x < width - 1) best = Math.min(best, dist[i + 1] + 1)
+    if (y < height - 1) best = Math.min(best, dist[i + width] + 1)
+    if (x < width - 1 && y < height - 1) best = Math.min(best, dist[i + width + 1] + 1)
+    if (x > 0 && y < height - 1) best = Math.min(best, dist[i + width - 1] + 1)
+    dist[i] = best
+  }
+}
+
+let queue: number[] = []
+for (let i = 0; i < width * height; i++) {
+  if (visited[i] && dist[i] > BLOB_CORE_DEPTH) {
+    visited[i] = 0
+    queue.push(i)
+  }
+}
+let rescued = queue.length
+for (let step = 0; step < BLOB_CORE_DEPTH && queue.length; step++) {
+  const next: number[] = []
+  for (const idx of queue) {
+    const x = idx % width,
+      y = (idx / width) | 0
+    for (const n of [
+      x > 0 ? idx - 1 : -1,
+      x < width - 1 ? idx + 1 : -1,
+      y > 0 ? idx - width : -1,
+      y < height - 1 ? idx + width : -1,
+    ]) {
+      if (n >= 0 && visited[n]) {
+        visited[n] = 0
+        rescued++
+        next.push(n)
+      }
+    }
+  }
+  queue = next
+}
+console.error(`Black fills rescued from the leading: ${((100 * rescued) / (width * height)).toFixed(1)}% of the image`)
+
+// ---------------------------------------------------------------------------
 // Flood fill
 // ---------------------------------------------------------------------------
 function flood(sx: number, sy: number): number[] {
@@ -79,20 +154,47 @@ function flood(sx: number, sy: number): number[] {
 type Region = { n: number; cx: number; cy: number; pixels: number[] }
 const regions: Region[] = []
 
+const toRegion = (px: number[]): Region => {
+  let cxs = 0,
+    cys = 0
+  for (const i of px) {
+    cxs += i % width
+    cys += (i / width) | 0
+  }
+  return { n: px.length, cx: (cxs / px.length) | 0, cy: (cys / px.length) | 0, pixels: px }
+}
+
+// A painted shape has no leadwork inside it, so it floods as one enormous cell — Anubis's head
+// came out as a single piece. Cut anything oversized in half across its long axis until the parts
+// are cell-sized; the component strokes every polygon, so each cut reads as another lead line.
+const addRegion = (px: number[]) => {
+  if (px.length <= MAX_PIXELS) {
+    regions.push(toRegion(px))
+    return
+  }
+  const xs = px.map(i => i % width)
+  const ys = px.map(i => (i / width) | 0)
+  const alongX = Math.max(...xs) - Math.min(...xs) >= Math.max(...ys) - Math.min(...ys)
+  const keys = alongX ? xs : ys
+  const mid = [...keys].sort((a, b) => a - b)[keys.length >> 1]
+  const lower = px.filter((_, k) => keys[k] < mid)
+  const upper = px.filter((_, k) => keys[k] >= mid)
+  // A degenerate split (every pixel on one side) would recurse forever — keep the cell whole.
+  if (!lower.length || !upper.length) {
+    regions.push(toRegion(px))
+    return
+  }
+  addRegion(lower)
+  addRegion(upper)
+}
+
 for (let y = 0; y < height; y++) {
   for (let x = 0; x < width; x++) {
     const idx = y * width + x
     if (!visited[idx]) {
       const px = flood(x, y)
       if (px.length < MIN_PIXELS) continue
-      let cxs = 0,
-        cys = 0
-      for (const i of px) {
-        cxs += i % width
-        cys += (i / width) | 0
-      }
-      const n = px.length
-      regions.push({ n, cx: (cxs / n) | 0, cy: (cys / n) | 0, pixels: px })
+      addRegion(px)
     }
   }
 }
@@ -211,11 +313,13 @@ function regionToPoints(region: Region): string | null {
   hullArea = Math.abs(hullArea) / 2
 
   let pts: number[][]
-  // Use convex hull when: region is thin, or fill ratio ≥ 80% (shape is roughly convex)
+  // Use convex hull when: region is thin, or fill ratio ≥ 80% (shape is roughly convex).
+  // Simplification tolerance is in source pixels: the looser it is, the further a polygon cuts
+  // the corners of its cell, and the fatter the leading looks where two polygons fail to meet.
   if (spanX < 6 || spanY < 6 || region.n / hullArea >= 0.8) {
-    pts = douglasPeucker(hull, 2)
+    pts = douglasPeucker(hull, 1)
   } else {
-    pts = douglasPeucker(angularBoundary(region.pixels, region.cx, region.cy), 4)
+    pts = douglasPeucker(angularBoundary(region.pixels, region.cx, region.cy), 1.5)
   }
 
   const vbPts = pts.map(([px, py]) => toVB(px, py))
