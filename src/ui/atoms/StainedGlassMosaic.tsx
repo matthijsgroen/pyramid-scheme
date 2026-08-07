@@ -102,9 +102,15 @@ export const StainedGlassMosaic: FC<{
         />
       ))}
 
-      {/* Amber pulse for newly revealed pieces */}
+      {/* Amber pulse for newly revealed pieces. Keyed on the pieces themselves: a CSS animation only
+          runs when its element mounts, so without a changing key React reuses this group for the next
+          batch and only the first pieces ever flare. */}
       {newPieces && newPieces.size > 0 && (
-        <g style={{ animation: "new-piece-reveal 5s ease-in-out forwards" }} filter="url(#new-glow)">
+        <g
+          key={[...newPieces].join("|")}
+          style={{ animation: "new-piece-reveal 5s ease-in-out forwards" }}
+          filter="url(#new-glow)"
+        >
           {sortedPieces
             .filter(p => newPieces.has(p.id))
             .map(piece => (

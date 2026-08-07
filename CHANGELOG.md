@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A finished scene lights up — daylight through the glass, lead lines still dark.
 - Fez says three lines about each scene you finish, and steps back with you once all five are done.
 - Deep lapis and oxblood cells are collectible; they used to read as leadwork and show from the start.
+- Black-painted shapes — the balance scale, Anubis's head, the snake — are glass you collect, not leadwork stuck black.
+- Every piece flares as it lands, not just the first batch you place.
 - Mosaic pieces you already collected reset once — the world's loot was reshuffled to place them.
 - Fez greets a shop as his own stall instead of as a customer.
 - What you sell at the stall is "trinkets", not "junk" — his offer, the sell section, the Collection category.

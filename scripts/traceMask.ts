@@ -17,18 +17,17 @@ import { fileURLToPath } from "url"
 import { journeys } from "../src/data/journeys"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// The artwork is its own mask: leadwork is neutral black ink, every cell carries colour.
+// The artwork is its own mask: leadwork is black ink, every cell carries either colour or charcoal.
 const MASK_PATH = "src/assets/stained-glass.png"
-// 128 = pure midpoint: snaps anti-aliased edge pixels to lead rather than including gray fringes
-const THRESHOLD = 128
+// Ink versus paint. The artwork uses two different blacks: leading, dividers and the border sit at
+// brightness 0-12, while shapes PAINTED black — Anubis's head, the balance scale, the snake — sit
+// around 60. The histogram between them is empty at 40-49, so 45 splits ink from paint. Set this at
+// the old midpoint of 128 and every painted black shape is read as leading: permanently on screen,
+// never collectible, and still black when its panel lights up.
+const THRESHOLD = 45
 // A dark pixel that still carries colour is a deep fill (lapis, deep red), not a lead line.
 // Without this, saturated darks are read as leading and stay permanently visible — never collectible.
 const LEAD_SATURATION = 40
-// Black paint vs black ink: how deep inside a neutral-dark area a pixel must sit before that area
-// counts as a painted shape rather than leading. Above the thickest structural line in the artwork
-// (the register dividers and the outer border are ~20px wide, so ~10 deep); below the shapes worth
-// rescuing (Anubis's head runs 43 deep).
-const BLOB_CORE_DEPTH = 20
 const MIN_PIXELS = 40
 // Largest a single piece may be. Roughly 3× the average cell, so ordinary glass is untouched and
 // only painted shapes and the biggest background fields get cut down.
@@ -62,73 +61,6 @@ for (let i = 0; i < width * height; i++) {
   const saturation = Math.max(r, g, b) - Math.min(r, g, b)
   if (a < 128 || (brightness < THRESHOLD && saturation < LEAD_SATURATION)) visited[i] = 1
 }
-
-// ---------------------------------------------------------------------------
-// Rescue black FILLS from the leading. A lead line is thin; a black-painted shape (Anubis's head,
-// his ears) is not. Colour cannot tell them apart, so without this a black shape sits on screen
-// from the first piece and can never be collected.
-//
-// Chebyshev distance to the nearest non-lead pixel finds the cores of thick areas; a bounded
-// dilation grows each core back to roughly its true edge. Bounded, not flood-filled: the leading
-// is one connected network, so an unbounded flood from a single core swallows the whole image.
-// ---------------------------------------------------------------------------
-const dist = new Int32Array(width * height)
-const BIG = width + height
-for (let i = 0; i < width * height; i++) dist[i] = visited[i] ? BIG : 0
-for (let y = 0; y < height; y++) {
-  for (let x = 0; x < width; x++) {
-    const i = y * width + x
-    if (!dist[i]) continue
-    let best = dist[i]
-    if (x > 0) best = Math.min(best, dist[i - 1] + 1)
-    if (y > 0) best = Math.min(best, dist[i - width] + 1)
-    if (x > 0 && y > 0) best = Math.min(best, dist[i - width - 1] + 1)
-    if (x < width - 1 && y > 0) best = Math.min(best, dist[i - width + 1] + 1)
-    dist[i] = best
-  }
-}
-for (let y = height - 1; y >= 0; y--) {
-  for (let x = width - 1; x >= 0; x--) {
-    const i = y * width + x
-    if (!dist[i]) continue
-    let best = dist[i]
-    if (x < width - 1) best = Math.min(best, dist[i + 1] + 1)
-    if (y < height - 1) best = Math.min(best, dist[i + width] + 1)
-    if (x < width - 1 && y < height - 1) best = Math.min(best, dist[i + width + 1] + 1)
-    if (x > 0 && y < height - 1) best = Math.min(best, dist[i + width - 1] + 1)
-    dist[i] = best
-  }
-}
-
-let queue: number[] = []
-for (let i = 0; i < width * height; i++) {
-  if (visited[i] && dist[i] > BLOB_CORE_DEPTH) {
-    visited[i] = 0
-    queue.push(i)
-  }
-}
-let rescued = queue.length
-for (let step = 0; step < BLOB_CORE_DEPTH && queue.length; step++) {
-  const next: number[] = []
-  for (const idx of queue) {
-    const x = idx % width,
-      y = (idx / width) | 0
-    for (const n of [
-      x > 0 ? idx - 1 : -1,
-      x < width - 1 ? idx + 1 : -1,
-      y > 0 ? idx - width : -1,
-      y < height - 1 ? idx + width : -1,
-    ]) {
-      if (n >= 0 && visited[n]) {
-        visited[n] = 0
-        rescued++
-        next.push(n)
-      }
-    }
-  }
-  queue = next
-}
-console.error(`Black fills rescued from the leading: ${((100 * rescued) / (width * height)).toFixed(1)}% of the image`)
 
 // ---------------------------------------------------------------------------
 // Flood fill
