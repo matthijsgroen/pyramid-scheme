@@ -5,22 +5,43 @@ Written for Gemini's image generation, but nothing here is model-specific except
 
 **Why the constraints are so fussy:** the output has to survive `scripts/traceMask.ts`, which converts a
 grayscale mask into piece polygons — **bright pixels = cell interior, dark pixels = lead line**,
-`THRESHOLD = 128`, and any region under `MIN_PIXELS = 40` is discarded. The number of traced regions *is*
-the number of collectible pieces. So: heavy black leading, no dark cell fills, no soft edges.
+`THRESHOLD = 128`, and any region under `MIN_PIXELS = 40` is discarded. So: heavy black leading, no dark
+cell fills, no soft edges.
+
+**Region count is not the collectible count.** How many pieces the player collects is
+`LEVEL_STEPS.length` — the sum of every journey's `levelCount × 2`, currently **252**, set by
+`journeys.ts` and nothing else. Traced regions are the *polygons that uncover per step*: today 1178
+regions over 252 steps, ≈4.7 polygons revealed at a time. So granularity is a visual dial, not a loot
+budget, and the art cannot overshoot or undershoot a piece target.
+
+The one real floor: **a register needs at least as many regions as its tier has steps**, or some steps
+uncover nothing. Comfortable is 4-5× that.
+
+| Register | Tier steps | Regions: floor | Regions: comfortable |
+| --- | --- | --- | --- |
+| 1 Starter | 32 | 32 | ~150 |
+| 2 Junior | 44 | 44 | ~200 |
+| 3 Expert | 52 | 52 | ~245 |
+| 4 Master | 58 | 58 | ~270 |
+| 5 Wizard | 66 | 66 | ~310 |
+
+Later tiers hold more steps, so the lower registers want *more and finer* cells than the top ones — an
+even visual density across the window would starve the wizard register.
 
 ---
 
 ## Workflow
 
-1. **Generate the whole window first** (§"Full window" below) for composition, palette and coherence.
-2. **Then regenerate each register separately** at frieze aspect for detail, matching the palette from
-   step 1 — five wide images beat one tall image for per-scene quality.
+1. **Generate the whole window** (§"Full window" below) and iterate on it as one image. The mask has to
+   register pixel-perfect with the colour art, so a single image is the cheapest path to that.
+2. **Only if a scene comes out mush**, regenerate that register alone at frieze aspect (§per-register
+   prompts) and composite it back — that buys detail at the cost of matching palette and seams by hand.
 3. **Derive the mask, don't generate it.** Desaturate the final artwork and threshold it: the black leading
    becomes the dark lines, the cells become bright. Generating a separate "line only" image will not
    register pixel-perfect with the colour art.
-4. **Count regions, then tune.** Trace, count pieces per band, compare against that tier's free-slot
-   supply. If a band yields too many pieces, raise `MIN_PIXELS` or re-prompt with "fewer, larger cells".
-   Piece count is a tracing dial, not an art constraint.
+4. **Count regions per register, then tune.** Trace and check each register against the floor in the table
+   above. Too few, re-prompt that register with "more, smaller cells"; too many is harmless but slow, and
+   `MIN_PIXELS` raises the floor. Never re-author a scene to hit a number.
 5. **Do not let the model draw hieroglyphs.** It produces convincing-looking nonsense, and this game's
    glyph set is meaningful — anyone who reads it will see gibberish. Ask for plain carved marks and, if the
    scribe's papyrus should show real glyphs (panel 2), overlay them from the game's own set afterwards.
@@ -169,7 +190,7 @@ Mood: solemn, balanced, a verdict about to be given and it is a good one.
 
 ## After generation
 
-- Trace, then check each band's region count against that tier's free-slot supply.
-- Re-prompt with "fewer, larger cells" (or raise `MIN_PIXELS`) rather than re-authoring a scene.
+- Trace, then check each register's region count against the floor table above.
+- Re-prompt a register's cell density (or move `MIN_PIXELS`) rather than re-authoring a scene.
 - Watch specifically for: dark cell fills (they vanish into the leading), lead lines that don't close a
   cell (two cells merge into one giant piece), and cells under the minimum size (silently dropped).
