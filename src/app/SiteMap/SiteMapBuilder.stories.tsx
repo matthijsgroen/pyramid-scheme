@@ -90,7 +90,6 @@ const SiteMapBuilder = ({
 }
 
 const meta = {
-  title: "App/SiteMap/SiteMapBuilder",
   component: SiteMapBuilder,
   parameters: { layout: "centered" },
   argTypes: {

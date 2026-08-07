@@ -1,5 +1,4 @@
 import type { FC } from "react"
-import { useTranslation } from "react-i18next"
 import type { DetectorMode } from "@/game/siteTypes"
 
 // Just the detector mode buttons, split out of DetectorPanel so they can sit INLINE in the HUD row
@@ -14,6 +13,8 @@ type Props = {
   compassLevel: number // 0 = not unlocked
   consumableDetectorLevel: number // 0 = not unlocked
   detectionLevel: number // 0 = not unlocked
+  // Button tooltips, one per mode.
+  titles: Record<Exclude<DetectorMode, null>, string>
   onSetDetector: (mode: DetectorMode) => void
 }
 
@@ -28,22 +29,22 @@ export const DetectorToggles: FC<Props> = ({
   compassLevel,
   consumableDetectorLevel,
   detectionLevel,
+  titles,
   onSetDetector,
 }) => {
-  const { t } = useTranslation("common")
   // Nothing unlocked yet → no buttons at all (and no empty gap in the HUD row).
   if (compassLevel === 0 && consumableDetectorLevel === 0 && detectionLevel === 0) return null
 
   // Tapping the active mode switches it back off.
   const toggle = (mode: DetectorMode) => onSetDetector(activeDetector === mode ? null : mode)
 
-  const modeButton = (mode: Exclude<DetectorMode, null>, title: string) => (
+  const modeButton = (mode: Exclude<DetectorMode, null>) => (
     <button
       onClick={() => toggle(mode)}
       className={`rounded px-2 py-1 text-xs ${
         activeDetector === mode ? "bg-amber-700 text-amber-100" : "bg-stone-800/90 text-stone-300 hover:bg-stone-700"
       }`}
-      title={title}
+      title={titles[mode]}
     >
       {MODE_ICON[mode]}
     </button>
@@ -51,9 +52,9 @@ export const DetectorToggles: FC<Props> = ({
 
   return (
     <div className="flex gap-2">
-      {compassLevel > 0 && modeButton("compass", t("detector.compassTitle"))}
-      {consumableDetectorLevel > 0 && modeButton("consumable", t("detector.consumableTitle"))}
-      {detectionLevel > 0 && modeButton("hiddenPassageway", t("detector.corridorTitle"))}
+      {compassLevel > 0 && modeButton("compass")}
+      {consumableDetectorLevel > 0 && modeButton("consumable")}
+      {detectionLevel > 0 && modeButton("hiddenPassageway")}
     </div>
   )
 }

@@ -14,7 +14,6 @@ type PyramidLevelArgs = {
 
 const pyramidJourneys = journeys.filter(j => j.type === "pyramid")
 const meta = {
-  title: "Levels/GameLevel",
   parameters: {
     layout: "fullscreen",
     backgrounds: {
@@ -52,7 +51,6 @@ const meta = {
       options: pyramidJourneys.map(j => j.id),
     },
   },
-  tags: ["autodocs"],
   render: ({ levelNr, journey }) => {
     const seed = generateNewSeed(hashString(journey.id), levelNr)
     const random = mulberry32(seed)

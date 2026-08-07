@@ -28,68 +28,80 @@ export default defineConfig({
     }),
     htmlPlugin(),
     tailwindcss(),
-    VitePWA({
-      registerType: "prompt",
-      injectRegister: false,
+    // Storybook reuses this config, and the app's service worker has no business in the component
+    // explorer — it also chokes on Storybook's own 3.2 MB manager bundle. Storybook sets STORYBOOK=true.
+    !process.env.STORYBOOK &&
+      VitePWA({
+        registerType: "prompt",
+        injectRegister: false,
 
-      pwaAssets: {
-        disabled: false,
-        config: true,
-      },
+        pwaAssets: {
+          disabled: false,
+          config: true,
+        },
 
-      manifest: {
-        name: "Pyramid Scheme",
-        short_name: "Pyramid Scheme",
-        id: "com.matthijsgroen.pyramidscheme",
-        description:
-          "An ancient Egyptian-themed math puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.",
-        theme_color: "#bedff",
-        background_color: "#bedff",
-        orientation: "portrait",
-        display: "fullscreen",
-        categories: ["puzzle", "game", "offline", "single-player", "user-friendly", "educational", "math", "egyptian"],
-        dir: "ltr",
-        icons: [
-          {
-            src: "pwa-64x64.png",
-            sizes: "64x64",
-            type: "image/png",
-          },
-          {
-            src: "pwa-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "pwa-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any",
-          },
-          {
-            src: "maskable-icon-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable",
-          },
-        ],
-      },
+        manifest: {
+          name: "Pyramid Scheme",
+          short_name: "Pyramid Scheme",
+          id: "com.matthijsgroen.pyramidscheme",
+          description:
+            "An ancient Egyptian-themed math puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.",
+          theme_color: "#bedff",
+          background_color: "#bedff",
+          orientation: "portrait",
+          display: "fullscreen",
+          categories: [
+            "puzzle",
+            "game",
+            "offline",
+            "single-player",
+            "user-friendly",
+            "educational",
+            "math",
+            "egyptian",
+          ],
+          dir: "ltr",
+          icons: [
+            {
+              src: "pwa-64x64.png",
+              sizes: "64x64",
+              type: "image/png",
+            },
+            {
+              src: "pwa-192x192.png",
+              sizes: "192x192",
+              type: "image/png",
+            },
+            {
+              src: "pwa-512x512.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any",
+            },
+            {
+              src: "maskable-icon-512x512.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable",
+            },
+          ],
+        },
 
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
-        globIgnores: ["**/stained-glass*.png"],
-        cleanupOutdatedCaches: true,
-        clientsClaim: true,
-      },
-      includeAssets: ["/og-image.png"],
+        workbox: {
+          globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
+          globIgnores: ["**/stained-glass*.png"],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+        },
+        includeAssets: ["/og-image.png"],
 
-      devOptions: {
-        enabled: false,
-        navigateFallback: "index.html",
-        suppressWarnings: true,
-        type: "module",
-      },
-    }),
+        devOptions: {
+          enabled: false,
+          navigateFallback: "index.html",
+          suppressWarnings: true,
+          type: "module",
+        },
+      }),
     ViteImageOptimizer({
       png: { quality: 80 },
       webp: { lossless: false, quality: 80 },

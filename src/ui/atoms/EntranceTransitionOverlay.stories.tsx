@@ -3,12 +3,10 @@ import { useState } from "react"
 import { EntranceTransitionOverlay } from "./EntranceTransitionOverlay"
 
 const meta = {
-  title: "UI/EntranceTransitionOverlay",
   component: EntranceTransitionOverlay,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof EntranceTransitionOverlay>
 
 export default meta

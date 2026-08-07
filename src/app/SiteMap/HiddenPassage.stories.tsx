@@ -165,7 +165,6 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
 }
 
 export default {
-  title: "App/SiteMap/HiddenPassage",
   parameters: { layout: "fullscreen" },
 }
 

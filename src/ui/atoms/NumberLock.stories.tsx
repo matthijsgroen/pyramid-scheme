@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { NumberLock } from "./NumberLock"
 
 const meta = {
-  title: "UI/NumberLock",
   component: NumberLock,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
   argTypes: {
     state: { control: "select", options: ["empty", "error", "open"] },
     variant: { control: "select", options: ["vibrant", "muted"] },

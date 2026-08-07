@@ -2,9 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ConsumableBar } from "./ConsumableBar"
 
 const meta = {
-  title: "UI/ConsumableBar",
+  title: "Trap/ConsumableBar",
   component: ConsumableBar,
-  tags: ["autodocs"],
 } satisfies Meta<typeof ConsumableBar>
 
 export default meta

@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { JourneyCard } from "./JourneyCard"
-import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
+import { JourneyCard, type JourneyCardJourney } from "./JourneyCard"
 
-// Mock journey data
-const mockPyramidJourney: TranslatedJourney = {
+const mockPyramidJourney: JourneyCardJourney = {
   id: "starter_1",
   name: "Dawn at the Sphinx",
   type: "pyramid",
@@ -29,11 +27,9 @@ const mockPyramidJourney: TranslatedJourney = {
     },
   },
   difficultyLabel: "Starter",
-  lengthLabel: "Short",
-  timeLabel: "Morning",
 }
 
-const mockTreasureTombJourney: TranslatedJourney = {
+const mockTreasureTombJourney: JourneyCardJourney = {
   id: "starter_treasure_tomb",
   name: "Forgotten Merchant's Cache",
   type: "treasure_tomb",
@@ -44,7 +40,6 @@ const mockTreasureTombJourney: TranslatedJourney = {
   levelCount: 4,
   piecesRequired: 4,
   difficultyLabel: "Starter",
-  lengthLabel: "Short",
   levelSettings: {
     symbolCount: 2,
     numberRange: [1, 10],
@@ -54,109 +49,28 @@ const mockTreasureTombJourney: TranslatedJourney = {
 }
 
 const meta = {
-  title: "UI/JourneyCard",
   component: JourneyCard,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
-  argTypes: {
-    showAnimation: {
-      control: "boolean",
-    },
-    showDetails: {
-      control: "boolean",
-    },
-    disabled: {
-      control: "boolean",
-    },
-    completionCount: {
-      control: "number",
-    },
-    progressLevelNr: {
-      control: "number",
-    },
-    hasMapPiece: {
-      control: "boolean",
-    },
-    index: {
-      control: "number",
-    },
-  },
   args: {
+    journey: mockPyramidJourney,
+    index: 0,
+    showAnimation: false,
     labels: {
       progressLevel: "Progress: Level",
     },
+    onClick: () => {},
   },
 } satisfies Meta<typeof JourneyCard>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const PyramidJourney: Story = {
-  args: {
-    journey: mockPyramidJourney,
-    index: 0,
-    showAnimation: false,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
-
-export const TreasureTombJourney: Story = {
-  args: {
-    journey: mockTreasureTombJourney,
-    index: 0,
-    showAnimation: false,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
-
-export const WithProgress: Story = {
-  args: {
-    journey: mockPyramidJourney,
-    index: 0,
-    showAnimation: false,
-    progressLevelNr: 2,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
-
-export const Completed: Story = {
-  args: {
-    journey: mockPyramidJourney,
-    index: 0,
-    showAnimation: false,
-    completionCount: 3,
-    hasMapPiece: true,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
-
-export const WithDetails: Story = {
-  args: {
-    journey: mockPyramidJourney,
-    index: 0,
-    showAnimation: false,
-    showDetails: true,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    journey: mockPyramidJourney,
-    index: 0,
-    showAnimation: false,
-    disabled: true,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
-
-export const WithAnimation: Story = {
-  args: {
-    journey: mockPyramidJourney,
-    index: 2,
-    showAnimation: true,
-    onClick: journey => console.log("Journey clicked:", journey.name),
-  },
-}
+export const PyramidJourney: Story = {}
+export const TreasureTombJourney: Story = { args: { journey: mockTreasureTombJourney } }
+export const WithProgress: Story = { args: { progressLevelNr: 2 } }
+export const Completed: Story = { args: { completionCount: 3, hasMapPiece: true } }
+export const WithDetails: Story = { args: { showDetails: true } }
+export const Disabled: Story = { args: { disabled: true } }
+export const WithAnimation: Story = { args: { index: 2, showAnimation: true } }

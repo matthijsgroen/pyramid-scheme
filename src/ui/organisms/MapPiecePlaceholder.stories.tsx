@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { MapPiecePlaceholder } from "./MapPiecePlaceholder"
 
 const meta = {
-  title: "UI/MapPiecePlaceholder",
   component: MapPiecePlaceholder,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     piecesFound: {
       control: { type: "range", min: 0, max: 5, step: 1 },

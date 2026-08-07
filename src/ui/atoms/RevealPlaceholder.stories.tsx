@@ -31,10 +31,8 @@ const Host = ({
 )
 
 const meta = {
-  title: "UI/RevealPlaceholder",
   component: RevealPlaceholder,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof RevealPlaceholder>
 
 export default meta

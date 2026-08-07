@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Formula } from "./Formula"
 
 const meta = {
-  title: "UI/Formula",
   component: Formula,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof Formula>
 
 export default meta

@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ActionButton } from "./ActionButton"
 
 const meta = {
-  title: "UI/ActionButton",
   component: ActionButton,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof ActionButton>
 
 export default meta

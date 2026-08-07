@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { DeveloperButton } from "./DeveloperButton"
 
 const meta = {
-  title: "UI/DeveloperButton",
   component: DeveloperButton,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
   argTypes: {
     onClick: { action: "clicked" },
   },

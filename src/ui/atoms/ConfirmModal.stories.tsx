@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ConfirmModal } from "./ConfirmModal"
 
 const meta = {
-  title: "UI/ConfirmModal",
   component: ConfirmModal,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
   argTypes: {
     isOpen: {
       control: "boolean",

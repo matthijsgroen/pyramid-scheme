@@ -12,7 +12,7 @@ src/ui/       design system (rendering only) — split into principles/, atoms/,
 src/app/      state, flow, and composition
 ```
 
-`src/support/` and `src/components/` are transitional; absorb their contents into the three layers when touching those files. Pure utilities go to `src/game/` or `src/data/`, React hooks go to `src/app/`, shared stateless components go to `src/ui/`.
+`src/support/` is transitional; absorb its contents into the three layers when touching those files. Pure utilities go to `src/game/` or `src/data/`, React hooks go to `src/app/`, shared stateless components go to `src/ui/`.
 
 ---
 

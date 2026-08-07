@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/react-vite"
 import { I18nextProvider } from "react-i18next"
 import i18n from "./i18n"
-import "../src/index.css" // Import your main CSS file
+import "../src/index.css"
 import { Suspense, useEffect } from "react"
 
 const withI18next = (Story, context) => {
@@ -24,6 +24,7 @@ const withI18next = (Story, context) => {
 }
 
 const preview: Preview = {
+  tags: ["autodocs"],
   parameters: {
     controls: {
       matchers: {

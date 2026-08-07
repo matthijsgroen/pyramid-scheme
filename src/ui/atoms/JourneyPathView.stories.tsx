@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { JourneyPathView } from "./JourneyPathView"
 
 const meta = {
-  title: "UI/JourneyPathView",
   component: JourneyPathView,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
   argTypes: {
     journeyLength: {
       control: "select",

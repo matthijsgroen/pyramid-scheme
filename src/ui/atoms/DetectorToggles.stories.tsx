@@ -2,14 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { DetectorToggles } from "./DetectorToggles"
 
 const meta = {
-  title: "UI/DetectorToggles",
   component: DetectorToggles,
-  tags: ["autodocs"],
   args: {
     activeDetector: null,
     compassLevel: 0,
     consumableDetectorLevel: 0,
     detectionLevel: 0,
+    titles: { compass: "Compass", consumable: "Consumable detector", hiddenPassageway: "Hidden passageways" },
     onSetDetector: () => {},
   },
 } satisfies Meta<typeof DetectorToggles>

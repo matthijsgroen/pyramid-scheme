@@ -8,9 +8,7 @@ import { resolveHieroglyphSymbol } from "@/data/resolveHieroglyphSymbol"
 import { TombPuzzleView } from "./TombPuzzleView"
 
 const meta = {
-  title: "UI/TombPuzzleView",
   parameters: { layout: "fullscreen" },
-  tags: ["autodocs"],
 } satisfies Meta<Record<string, never>>
 
 export default meta

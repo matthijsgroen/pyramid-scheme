@@ -1,8 +1,22 @@
 import type { FC } from "react"
-import { useTranslation } from "react-i18next"
 import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
 
+// Every string the readout can show. The counted/interpolated ones arrive as functions so the app
+// layer keeps ownership of plural rules and interpolation.
+export type DetectorPanelLabels = {
+  pickTarget: string
+  lookingFor: (symbol: string) => string
+  allCollected: string
+  access: Record<CompassAccess, string>
+  more: (count: number) => string
+  noSkippedChests: string
+  corridorNearby: (level: number) => string
+  corridorOnFloor: string
+  corridorPyramidCount: (count: number) => string
+}
+
 type Props = {
+  labels: DetectorPanelLabels
   activeDetector: DetectorMode
   compassLevel: number // 0 = not unlocked
   consumableDetectorLevel: number // 0 = not unlocked
@@ -77,6 +91,7 @@ const consumableLabel = (r: ConsumableResult, level: number, journeyName: (id: s
 }
 
 export const DetectorPanel: FC<Props> = ({
+  labels,
   activeDetector,
   compassLevel,
   consumableDetectorLevel,
@@ -89,7 +104,6 @@ export const DetectorPanel: FC<Props> = ({
   floorHasHiddenCorridor = false,
   pyramidHiddenCorridorCount = 0,
 }) => {
-  const { t } = useTranslation("common")
   // Purely a readout — with no mode switched on there's nothing to report, so the card doesn't
   // render at all rather than sitting there empty above the HUD row. The buttons that switch a mode
   // on live in DetectorToggles, inline in that row.
@@ -106,27 +120,21 @@ export const DetectorPanel: FC<Props> = ({
         <div>
           {/* Target is picked on the Collection screen (§3C), not here — the HUD only reads it out. */}
           {!compassTarget ? (
-            <p className="text-stone-500">{t("detector.pickTarget")}</p>
+            <p className="text-stone-500">{labels.pickTarget}</p>
           ) : (
             <>
-              <p className="text-stone-500">
-                {t("detector.lookingFor", { symbol: compassTargetLabel(compassTarget) })}
-              </p>
+              <p className="text-stone-500">{labels.lookingFor(compassTargetLabel(compassTarget))}</p>
               {shownCompass.length === 0 ? (
-                <p className="text-stone-500">{t("detector.allCollected")}</p>
+                <p className="text-stone-500">{labels.allCollected}</p>
               ) : (
                 <>
                   {shownCompass.slice(0, 3).map((r, i) => (
                     <div key={i} className="truncate text-amber-200">
-                      {ACCESS_ICON[r.access] && (
-                        <span title={t(`detector.access.${r.access}`)}>{ACCESS_ICON[r.access]} </span>
-                      )}
+                      {ACCESS_ICON[r.access] && <span title={labels.access[r.access]}>{ACCESS_ICON[r.access]} </span>}
                       {compassLabel(r, compassLevel, journeyName)}
                     </div>
                   ))}
-                  {shownCompass.length > 3 && (
-                    <p className="text-stone-500">{t("detector.more", { count: shownCompass.length - 3 })}</p>
-                  )}
+                  {shownCompass.length > 3 && <p className="text-stone-500">{labels.more(shownCompass.length - 3)}</p>}
                 </>
               )}
             </>
@@ -137,7 +145,7 @@ export const DetectorPanel: FC<Props> = ({
       {activeDetector === "consumable" && (
         <div>
           {shownConsumables.length === 0 ? (
-            <p className="text-stone-500">{t("detector.noSkippedChests")}</p>
+            <p className="text-stone-500">{labels.noSkippedChests}</p>
           ) : (
             shownConsumables.slice(0, 3).map((r, i) => (
               <div key={i} className="truncate text-amber-200">
@@ -145,22 +153,16 @@ export const DetectorPanel: FC<Props> = ({
               </div>
             ))
           )}
-          {shownConsumables.length > 3 && (
-            <p className="text-stone-500">{t("detector.more", { count: shownConsumables.length - 3 })}</p>
-          )}
+          {shownConsumables.length > 3 && <p className="text-stone-500">{labels.more(shownConsumables.length - 3)}</p>}
         </div>
       )}
 
       {activeDetector === "hiddenPassageway" && (
         <div className="text-stone-400">
-          <p>{t("detector.corridorNearby", { level: detectionLevel })}</p>
-          {detectionLevel >= 2 && floorHasHiddenCorridor && (
-            <p className="text-amber-200">{t("detector.corridorOnFloor")}</p>
-          )}
+          <p>{labels.corridorNearby(detectionLevel)}</p>
+          {detectionLevel >= 2 && floorHasHiddenCorridor && <p className="text-amber-200">{labels.corridorOnFloor}</p>}
           {detectionLevel >= 3 && pyramidHiddenCorridorCount > 0 && (
-            <p className="text-amber-200">
-              {t("detector.corridorPyramidCount", { count: pyramidHiddenCorridorCount })}
-            </p>
+            <p className="text-amber-200">{labels.corridorPyramidCount(pyramidHiddenCorridorCount)}</p>
           )}
         </div>
       )}

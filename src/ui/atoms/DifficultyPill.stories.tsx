@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { DifficultyPill } from "./DifficultyPill"
 
 const meta = {
-  title: "UI/DifficultyPill",
   component: DifficultyPill,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     difficulty: {
       control: "select",

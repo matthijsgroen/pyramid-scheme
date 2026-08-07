@@ -6,7 +6,6 @@ import type { FloorGrid } from "../../game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 
 const meta = {
-  title: "App/SiteMap/SiteMapView",
   component: SiteMapView,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof SiteMapView>

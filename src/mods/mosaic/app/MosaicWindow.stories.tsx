@@ -7,7 +7,7 @@ import type { TierCounts } from "@/mods/mosaic/game/placementQueue"
 // No `component` binding: every story drives the window through the harness below, which stands in
 // for the ledger and the persisted slice, so there are no args to bind.
 const meta: Meta = {
-  title: "UI/MosaicWindow",
+  title: "Mosaic/MosaicWindow",
   parameters: { layout: "fullscreen" },
 }
 

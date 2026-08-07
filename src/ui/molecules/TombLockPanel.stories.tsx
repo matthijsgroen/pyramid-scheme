@@ -2,13 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { TombLockPanel } from "./TombLockPanel"
 
 const meta = {
-  title: "UI/TombLockPanel",
   component: TombLockPanel,
   parameters: {
     layout: "centered",
     backgrounds: { default: "dark", values: [{ name: "dark", value: "#1f2937" }] },
   },
-  tags: ["autodocs"],
   argTypes: {
     difficulty: {
       control: "select",

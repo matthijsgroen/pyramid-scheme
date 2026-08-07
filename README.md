@@ -147,8 +147,8 @@ src/
 ├── app/               # Main application components
 ├── data/              # Game data and configuration
 ├── game/              # Core game logic
-├── ui/                # Reusable UI components
-├── components/        # Shared React components
+├── ui/                # Reusable UI components (atoms/, molecules/, organisms/)
+├── mods/              # Toggleable game mods (hieroglyph, mosaic, trap, shop, puzzle, …)
 ├── contexts/          # React context providers
 ├── config/            # App-level configuration
 ├── support/           # Shared utilities and helpers

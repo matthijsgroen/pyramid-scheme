@@ -16,7 +16,6 @@ type PyramidLevelArgs = {
 }
 
 const meta = {
-  title: "Levels/PyramidLevel",
   parameters: {
     layout: "fullscreen",
     backgrounds: {
@@ -42,7 +41,6 @@ const meta = {
     minNumber: { control: { type: "number", min: 0, max: 30 } },
     maxNumber: { control: { type: "number", min: 0, max: 30 } },
   },
-  tags: ["autodocs"],
   render: ({ levelNr, floorCount, openBlockPercentage, blockedBlockPercentage, minNumber, maxNumber }) => {
     const random = mulberry32(1234567)
     const maxBlocks = (floorCount * (floorCount + 1)) / 2

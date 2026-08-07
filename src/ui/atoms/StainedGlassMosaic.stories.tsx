@@ -6,10 +6,8 @@ import { MOSAIC_PIECES } from "./mosaicPieces.generated"
 import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
 
 const meta = {
-  title: "UI/StainedGlassMosaic",
   component: StainedGlassMosaic,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof StainedGlassMosaic>
 
 export default meta

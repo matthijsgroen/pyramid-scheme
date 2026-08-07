@@ -1,7 +1,6 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
 import type { TableauLevel } from "@/data/tableaus"
-import type { RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
 import clsx from "clsx"
 import type { FC } from "react"
@@ -11,10 +10,19 @@ import type { HieroglyphSymbolResolver } from "@/data/resolveHieroglyphSymbol"
 
 export type OrderedFormula = { formula: FormulaType; index: number }
 
+// What the tableau needs from whatever puzzle it displays: the formula to solve, the symbol → glyph
+// mapping to render it with, and the hints that precede it (their count sets the main formula's
+// tile index).
+export type TableauCalculation = {
+  symbolMapping: Record<number, string>
+  mainFormula: FormulaType
+  hintFormulas: FormulaType[]
+}
+
 export const TombTableau: FC<{
   difficulty: Difficulty
   tableau: TableauLevel
-  calculation: RewardCalculation
+  calculation: TableauCalculation
   filledState: FilledTileState
   resolveTile: HieroglyphSymbolResolver
   hintFormulas: OrderedFormula[]

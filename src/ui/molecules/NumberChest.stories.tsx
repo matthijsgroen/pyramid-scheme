@@ -3,7 +3,6 @@ import { NumberChest } from "./NumberChest"
 import { useState } from "react"
 
 const meta = {
-  title: "UI/NumberChest",
   component: NumberChest,
   parameters: {
     layout: "centered",
@@ -15,7 +14,6 @@ const meta = {
       ],
     },
   },
-  tags: ["autodocs"],
   argTypes: {
     state: {
       control: "select",

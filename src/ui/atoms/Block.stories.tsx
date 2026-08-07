@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Block } from "./Block"
 
 const meta = {
-  title: "UI/Block",
   component: Block,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     selected: {
       control: "boolean",

@@ -20,7 +20,6 @@ const getGrid = (): FloorGrid => {
 const grid = getGrid()
 
 const meta = {
-  title: "App/SiteMap/ExplorerDot",
   component: ExplorerDot,
   parameters: { layout: "centered" },
 } satisfies Meta<typeof ExplorerDot>

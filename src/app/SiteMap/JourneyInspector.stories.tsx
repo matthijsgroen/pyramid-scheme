@@ -335,7 +335,6 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
 // Story
 // ---------------------------------------------------------------------------
 const meta = {
-  title: "App/SiteMap/JourneyInspector",
   component: JourneyInspector,
   parameters: {
     layout: "fullscreen",

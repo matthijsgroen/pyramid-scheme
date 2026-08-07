@@ -42,12 +42,10 @@ const InteractiveLootPopup = (args: ComponentProps<typeof LootPopup>) => {
 }
 
 const meta = {
-  title: "UI/LootPopup",
   component: LootPopup,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
   argTypes: {
     isOpen: {
       control: "boolean",

@@ -1,14 +1,18 @@
 import type { FC, PropsWithChildren } from "react"
 import clsx from "clsx"
-import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
+import type { Journey } from "@/data/journeys"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
+
+// A journey whose `name`/`description` are already the translated ones, plus the one label the card
+// renders itself. The app layer does the translating.
+export type JourneyCardJourney = Journey & { difficultyLabel: string }
 
 type JourneyCardLabels = {
   progressLevel: string
 }
 
 type JourneyCardProps = {
-  journey: TranslatedJourney
+  journey: JourneyCardJourney
   index: number
   showAnimation: boolean
   completionCount?: number
@@ -23,7 +27,7 @@ type JourneyCardProps = {
   disabled?: boolean
   lang?: string
   labels: JourneyCardLabels
-  onClick: (journey: TranslatedJourney) => void
+  onClick: () => void
 }
 
 export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
@@ -53,7 +57,7 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
 
   return (
     <button
-      onClick={() => !disabled && onClick(journey)}
+      onClick={() => !disabled && onClick()}
       disabled={disabled}
       className={clsx(
         "group flex w-full flex-row rounded-lg border-l-0 text-left transition-all duration-300 contain-paint",

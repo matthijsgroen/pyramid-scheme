@@ -3,12 +3,10 @@ import { DesertBackdrop } from "./DesertBackdrop"
 import { skyTop, type DayNightCycleStep } from "./backdropSelection"
 
 const meta = {
-  title: "UI/DesertBackdrop",
   component: DesertBackdrop,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
   args: {
     levelNr: 1,
     start: "morning",

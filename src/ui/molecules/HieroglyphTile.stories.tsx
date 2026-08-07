@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { HieroglyphTile } from "./HieroglyphTile"
 
 const meta = {
-  title: "UI/HieroglyphTile",
   component: HieroglyphTile,
   parameters: {
     layout: "centered",
@@ -14,7 +13,6 @@ const meta = {
       ],
     },
   },
-  tags: ["autodocs"],
   argTypes: {
     symbol: {
       control: "text",

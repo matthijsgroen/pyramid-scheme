@@ -5,11 +5,9 @@ import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 // Auto-fits tiles to the available width; `density` sets the gap. Widen/narrow the canvas to see
 // the column count adapt.
 const meta = {
-  title: "UI/CategoryGrid",
   component: CategoryGrid,
   parameters: { layout: "fullscreen" },
   decorators: [Story => <div className="p-4">{<Story />}</div>],
-  tags: ["autodocs"],
 } satisfies Meta<typeof CategoryGrid>
 
 export default meta
