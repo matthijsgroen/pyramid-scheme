@@ -1,66 +1,36 @@
-import { type FC, useEffect, useMemo, useRef, useState } from "react"
+import { type FC, use, useMemo } from "react"
 import { Page } from "@/ui/atoms/Page"
-import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
-import { LEVEL_STEPS, PIECES_BY_STEP } from "@/mods/mosaic/game/mosaicRevealOrder"
+import { FezContext } from "@/app/fez/context"
+import { MOSAIC_TIERS, mosaicBucket } from "@/mods/mosaic/game/mosaicCurrency"
+import type { TierCounts } from "@/mods/mosaic/game/placementQueue"
 import { useProgression } from "@/app/state/useProgression"
+import { MosaicWindow } from "./MosaicWindow"
 import { useMosaicProgress } from "./useMosaicProgress"
 
 export const MosaicPage: FC = () => {
-  // Piece count is the ledger's (core owns the bucket, mosaic owns the id); seen-count is the
-  // mosaic mod's own persisted slice.
-  const mosaicPieceCount = useProgression().ledger.get("mosaicPiece")
-  const { seenCount: mosaicSeenCount, markViewed: markMosaicViewed } = useMosaicProgress()
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
+  // Owned counts are the ledger's, one bucket per register (core owns the buckets, mosaic owns the
+  // ids); placed counts are the mosaic mod's own persisted slice. A piece is found first and set
+  // into the window afterwards, by hand.
+  const ledger = useProgression().ledger
+  const { placedCount, placeOne } = useMosaicProgress()
+  const fez = use(FezContext)
 
-  const { revealedPieceIds, newPieceIds } = useMemo(() => {
-    const revealed = new Set<string>()
-    const newSet = new Set<string>()
-
-    for (let i = 0; i < Math.min(mosaicPieceCount, LEVEL_STEPS.length); i++) {
-      const step = LEVEL_STEPS[i]
-      const pieceIds = PIECES_BY_STEP.get(`${step.journeyId}:${step.levelIndex}`) ?? []
-      for (const id of pieceIds) {
-        revealed.add(id)
-        if (i >= mosaicSeenCount) newSet.add(id)
-      }
-    }
-
-    return { revealedPieceIds: revealed, newPieceIds: newSet }
-  }, [mosaicPieceCount, mosaicSeenCount])
-
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    let timer: ReturnType<typeof setTimeout> | null = null
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting)
-        if (entry.isIntersecting) {
-          // ponytail: only start timer when page is actually visible (not off-screen in swipeable panel)
-          timer = setTimeout(() => markMosaicViewed(mosaicPieceCount), 3000)
-        } else {
-          if (timer) clearTimeout(timer)
-        }
-      },
-      { threshold: 0.85 }
-    )
-    observer.observe(el)
-    return () => {
-      observer.disconnect()
-      if (timer) clearTimeout(timer)
-    }
-  }, [markMosaicViewed, mosaicPieceCount])
+  const owned = useMemo(
+    () => Object.fromEntries(MOSAIC_TIERS.map(t => [t, ledger.get(mosaicBucket(t))])) as TierCounts,
+    [ledger]
+  )
+  const placed = Object.fromEntries(MOSAIC_TIERS.map(t => [t, placedCount(t)])) as TierCounts
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">
-      <div ref={containerRef} className="h-full w-full">
-        <StainedGlassMosaic
-          className="h-full w-full"
-          revealedPieces={revealedPieceIds}
-          newPieces={isVisible ? newPieceIds : new Set()}
-        />
-      </div>
+      <MosaicWindow
+        owned={owned}
+        placed={placed}
+        onPlace={placeOne}
+        onNarrate={(conversation, done, options) =>
+          fez.showConversation(conversation, done, { forceReplay: options?.replay })
+        }
+      />
     </Page>
   )
 }

@@ -2,6 +2,7 @@
   "not-found": "Sorry het gesprek dat je zoekt bestaat niet.",
   "welcome": "Welkom bij Pyramid Scheme!",
   "welcome2": "Verken de wonderen van het oude Egypte en ontdek haar geheimen.",
+  "welcomeTrade": "En ik ga mee voor de handel — die graven zitten vol met spullen die geld waard zijn.",
   "welcome3": "Laten we beginnen met een expeditie plannen door op de kaart te klikken!",
   "chooseExpedition": "Hier kun je je expeditie kiezen. Laten we beginnen met een korte reis.",
   "pyramidIntro": "Kijk naar deze muren — zo veel getallen ontbreken!",
@@ -43,6 +44,33 @@
   "mapPiece2": "Er zit één in elke expeditie op dit niveau — laten we ze allemaal vinden!",
   "mapPiece3": "Bekijk de reislijst om te zien hoeveel we al verzameld hebben.",
 
-  "shopArrival": "Ah, een winkel! Ik heb altijd wat muntjes bij me voor gelegenheden als deze.",
-  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor rommel die je meedraagt."
+  "mosaicStarter": "Een kat in de deuropening, en een slang die er haastig vandoor gaat. Dat was een schaaltje melk waard.",
+  "mosaicStarter2": "Egyptenaren waren dol op katten, precies hierom — die doodden de slangen en de ratten die in het graan kwamen.",
+  "mosaicStarter3": "Zo dol dat ze er een godin van maakten. Bastet. Beschermer van het huis, de deur, en iedereen die erachter ligt te slapen.",
+
+  "mosaicJunior": "Kijk naar zijn hand — iemand laat hem zien hoe je de pen vasthoudt.",
+  "mosaicJunior2": "Die met de vogelkop is Thoth. Schrijven, tellen, alles bijhouden — allemaal van hem.",
+  "mosaicJunior3": "De ibis die we langs de rivier volgden? Dat is zijn vogel. Elk getal dat we in een muur hebben ingevuld is ook van hem.",
+
+  "mosaicExpert": "Dat licht is geen toeval. Ze bouwden de hele zaal zo dat het precies dáár zou vallen, op de juiste ochtend.",
+  "mosaicExpert2": "De zon is Amon-Ra — de verborgene, én het licht dat iedereen kan zien. Allebei tegelijk.",
+  "mosaicExpert3": "Wie de hemel zo precies kan meten, kan alles meten. Wij zijn al die tijd hun rekensommen aan het oplossen.",
+
+  "mosaicMaster": "Groene huid, en graan dat zo uit hem groeit. Dat is met opzet.",
+  "mosaicMaster2": "Osiris. Hij werd gedood, en weer in elkaar gezet, en nu is hij wat elk jaar terugkomt als de rivier de akkers onder water zet.",
+  "mosaicMaster3": "Hier beneden is dat het hele idee: dood is niet klaar. Vrolijke gedachte voor een graf, vind je niet?",
+
+  "mosaicWizard": "Een hart aan de ene kant. Eén veer aan de andere. En het is in evenwicht.",
+  "mosaicWizard2": "De veer is Ma'at — waarheid, evenwicht, hoe het hoort te zijn. Een hart zwaarder dan die veer en je komt niet door de deur.",
+  "mosaicWizard3": "De jakhals die de weegschaal stil houdt is Anubis. Hij is degene die je hierheen brengt.",
+
+  "mosaicFinale": "Even een stap terug. Kijk eens wat we allemaal uit die piramides omhoog hebben gedragen.",
+  "mosaicFinale2": "Elk stuk hoort bij hém — degene die de weegschaal stil houdt. Hij heeft de hele weg meegekeken.",
+  "mosaicFinale3": "Dat is zijn verslag van ons. En als je het mij vraagt: het is in evenwicht.",
+
+  "shopFirstVisit": "Ah, daar zijn we. Mijn kraam — ik zei toch dat ik voor de handel meega.",
+  "shopFirstVisit2": "Alles op deze toonbank heb ik ergens vandaan gedragen. Die daar komt van twee graven terug.",
+
+  "shopArrival": "Ah, mijn kraam! Even uitstallen wat ik onderweg heb opgepikt.",
+  "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt."
 }

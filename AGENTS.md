@@ -162,7 +162,7 @@ Before considering any task complete, run through this checklist:
 | 2   | **Types**        | `yarn check-types` exits clean.                                                                                                                |
 | 3   | **Lint**         | `yarn lint` exits clean (includes Tailwind class order).                                                                                       |
 | 4   | **Translations** | Any new user-facing string has both `en/` and `nl/` entries.                                                                                   |
-| 5   | **Changelog**    | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]`. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
+| 5   | **Changelog**    | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]` — a one-line bullet, one fact, ~20 words, no rationale. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
 
 Steps 1–3 are always required. Steps 4–5 apply only when the change touches user-facing strings or player-visible behavior.
 

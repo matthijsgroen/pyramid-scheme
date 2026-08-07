@@ -365,6 +365,44 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
   "logistics/caravan route" grouping — both are grid-block movement puzzles
   about clearing or arranging paths, just with different piece-movement rules.
 
+### 4.18 Hidato / beehive path — *(proposed, not yet designed)*
+- **Skill:** number-line fluency (counting on, predecessor/successor, "what sits
+  between 14 and 17") plus route-tracing. **The catalogue trains neither today:**
+  every other logic family is constraint-satisfaction over independent cells,
+  and no family drills the number line rather than computation.
+- **Operates:** cells hold 1…N; consecutive numbers must occupy adjacent cells,
+  and some numbers are pre-filled as givens. The player fills the rest so one
+  unbroken run threads the whole board. Adjacency is the whole rule — nothing to
+  read, and the board is self-checking once a run breaks.
+- **Knobs:** cell count · how many givens (and whether 1 and N are among them) ·
+  board shape (a shaped board can spell a glyph — see the reveal note below) ·
+  square-8-neighbour vs hex-6-neighbour adjacency.
+- **Scaling:** good and smooth — givens are a fine-grained dial, so the same
+  board size spans easy to hard without changing footprint. Lower ceiling than
+  Latin-square, but no hard floor either: a 10-cell hive is a real puzzle, unlike
+  a 3×3 nonogram (§4.9).
+- **Generation:** carve a Hamiltonian path through the board first, then hide a
+  subset of its numbers — **verifier class, not unique-by-construction.** Removing
+  givens readily admits alternate paths, so it needs §5's shared solve-counter.
+- **UI:** easy–medium, and a good mobile fit — drag along the path, or tap a cell
+  and pick a number. No clue-triangles, no palette of glyphs, no mode toggle;
+  closer to Sumplete's ergonomics (§4.11) than kakuro's (§4.10).
+- **Role:** **side** — the answer is an arrangement, not a value, so it lives in
+  optional branches like the other grid-logic families (T2+ per §7's rule 2).
+- **The layout decision, which is the real cost:** on a **square** grid this is
+  nearly free infrastructure — it drops straight onto §5's grid engine as another
+  cell-state family. As a **beehive** it needs its own coordinate system,
+  neighbour rules and hit-testing, i.e. a *second* layout engine beside the
+  square one. The hex look is more distinctive and more on-theme (a honeycomb of
+  chambers), but it should be chosen deliberately as a UI investment, not
+  inherited from the name. See §10 open question 5.
+- **Reveal potential:** a shaped board (the hive outline forming a glyph, or the
+  completed path tracing one) gives this family a nonogram-style payoff at a
+  fraction of nonogram's solve time and variance — worth exploring if the
+  reward-reveal thesis is wanted earlier than T4.
+- **Theme:** **Scribe / Inscription** (counting and record-keeping) sits most
+  naturally; a honeycomb of sealed cells also reads as **Tomb / Burial Logic**.
+
 ---
 
 ## 5. The shared grid engine
@@ -382,6 +420,11 @@ are mostly clue-rendering + a rules overlay on top.
   clue-triangles) or **Sudoku** (generation is a solved problem).
 - The verifier (solve-counter that confirms exactly one solution) is shared by
   all four **and** by sequence continuation.
+- **Hidato (§4.18) is a fifth candidate, but only on a square grid** — then it is
+  another cell-value family on this same component, with adjacency as its rules
+  overlay. Its beehive variant does *not* draw from this engine: hex neighbours,
+  coordinates and hit-testing are a separate layout, so choosing the hive means
+  choosing to build and maintain a second grid component.
 
 ---
 
@@ -402,6 +445,7 @@ Effort ratings are relative, not absolute.
 | Nonogram | Med–Hard | Good (floor+ceiling) | Med (**verifier**) | 3–15+ min / **very high** | side |
 | Kakuro | **Hard** | Good | Med–Hard (**verifier**) | 2–8 min / high | side |
 | Sumplete | **Easy** | Good | Easy + **verifier** | med–high | side |
+| Hidato / beehive | Easy–Med | Good (smooth) | Med (**verifier**) | 1–4 min / med | side |
 | Symmetry | Medium | Moderate (early-only) | Easy | 15–45s / low | side |
 | Sequence | Easy | Easy (uniqueness risk) | Easy + **verifier** | 15–45s / low | side |
 | Egyptian doubling | Easy | Modest | Trivial | 20–60s / low | spine-ish |
@@ -426,6 +470,7 @@ Legend: **◐** introduce (gentle, at the bottom of the family's *own* scale) ·
 | Water clock | duration / subtraction | — | — | ◐ | ● | ★ |
 | Eye of Horus fractions | unit fractions | — | — | ◐ | ● | ★ (general) |
 | Sumplete | add + elimination | — | — | ◐ 5×5 | ● 7×7 | ★ 9×9 |
+| Hidato / beehive | number line + path | — | ◐ ~12 cells | ● ~24 | ● ~36 | ★ ~48 |
 | Nonogram | logic + reveal | — | — | — | ◐ 10×10 | ★ 15×15 |
 | Kakuro | number + logic | — | — | — | ◐ | ★ |
 | Clock-arith | modular | — | — | — | ● decoy | ★ |
@@ -524,6 +569,10 @@ conversation.
 4. **Which families output values for carry-forward** beyond the obvious spine
    set — e.g. should a Sumplete grid expose a derived number (count of kept cells)
    so it *can* occasionally feed a corridor, or stay strictly a side family?
+5. **Hidato layout (§4.18)** — square grid (rides §5's engine for free, looks like
+   the other grid families) or beehive (distinctive and more on-theme, but a second
+   layout engine to build and maintain)? The puzzle is identical either way; this is
+   purely a UI-investment call.
 
 ---
 
@@ -545,8 +594,8 @@ redesign.md` has "merchant"/"night-market" as live `theme` string examples):
 | **Water & Nile** | flooding, irrigation, the river | Water clock — currently the *only* member, see gap note below |
 | **Merchant / Market** | trade, weighing goods, bartering | Balance scale, Sokoban (moving cargo), target-number (haggling to a price) |
 | **Logistics / Caravan** | moving things through constrained space | Sokoban, Rush Hour |
-| **Scribe / Inscription** | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions) |
-| **Tomb / Burial Logic** | funerary glyphs, wall art, sealed chambers | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro |
+| **Scribe / Inscription** | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells) |
+| **Tomb / Burial Logic** | funerary glyphs, wall art, sealed chambers | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers) |
 | **Night & Stars** | decans, star-clock, nocturnal | Clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion) |
 | **Sacred Geometry / Ritual** | temple art, sanctuary lighting | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above) |
 
@@ -582,6 +631,7 @@ so it can be used when authoring density knobs).
 | Clock-arithmetic | 30–90s | **Med** |
 | Target-number | 30–90s | **Med** |
 | Sumplete | med–high, no fixed ceiling | **Med–High** |
+| Hidato / beehive | not yet measured (unbuilt) | **TBD — estimate Med**, a broken run is visible immediately, so it should stall less than the constraint-satisfaction families |
 | Glyph Latin-square | 1–6 min, **high variance** | **High** |
 | Kakuro | 2–8 min | **High** |
 | Nonogram | 3–15+ min, **very high variance** | **Very High** |
@@ -589,8 +639,8 @@ so it can be used when authoring density knobs).
 | Sokoban | not yet measured (unbuilt) | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes |
 | Rush Hour | not yet measured (unbuilt) | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most |
 
-Once mirror/lightbeam, Sokoban, and Rush Hour are built, replace the TBD rows
-with real telemetry (§8) rather than trusting the estimate.
+Once mirror/lightbeam, Sokoban, Rush Hour, and hidato are built, replace the TBD
+rows with real telemetry (§8) rather than trusting the estimate.
 
 ---
 

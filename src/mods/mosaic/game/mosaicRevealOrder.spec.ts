@@ -4,8 +4,9 @@ import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
 
 // The reveal order is computed once at module load. Its contract: every piece-bearing step is
 // revealed exactly once (a missed step = a mosaic slice that never lights up; a duplicate = a
-// double reveal). These invariants guard that without asserting the exact sparse/dense sequence.
+// double reveal), and the five registers fill one after another rather than interleaving.
 const stepKey = (s: { journeyId: string; levelIndex: number }) => `${s.journeyId}:${s.levelIndex}`
+const TIERS = ["starter", "junior", "expert", "master", "wizard"]
 
 describe("mosaic reveal order", () => {
   it("reveals every piece-bearing step exactly once (no dupes, no misses)", () => {
@@ -15,6 +16,13 @@ describe("mosaic reveal order", () => {
     // Covers exactly the steps that actually hold pieces.
     const pieceSteps = new Set(MOSAIC_PIECES.map(p => `${p.journeyId}:${p.levelIndex}`))
     expect(new Set(keys)).toEqual(pieceSteps)
+  })
+
+  it("finishes one register before starting the next", () => {
+    // A panel can only trigger its own completion beat if its tier's steps are contiguous.
+    const tierOrder = LEVEL_STEPS.map(s => TIERS.findIndex(t => s.journeyId.startsWith(`${t}_`)))
+    expect(tierOrder).not.toContain(-1)
+    expect(tierOrder).toEqual([...tierOrder].sort((a, b) => a - b))
   })
 
   it("groups every piece under its own step in PIECES_BY_STEP", () => {

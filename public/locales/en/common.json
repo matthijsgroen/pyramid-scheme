@@ -148,10 +148,22 @@
     "dismiss": "Leave",
     "rareItems": "Rare Finds",
     "supplies": "Supplies",
-    "sellSection": "Junk to sell"
+    "sellSection": "Trinkets to sell"
   },
   "level": {
     "completed": "Level Completed!"
+  },
+  "mosaic": {
+    "place_one": "Place {{count}} piece",
+    "place_other": "Place {{count}} pieces",
+    "placing": "Placing…",
+    "panel": {
+      "starter": "The Guardian at the Door",
+      "junior": "The First Lesson",
+      "expert": "Letting the Sun In",
+      "master": "The Green King",
+      "wizard": "The Feather and the Heart"
+    }
   },
   "collection": {
     "title": "Collection",
@@ -162,7 +174,7 @@
       "animals": "🐾 Animals",
       "artifacts": "💎 Artifacts",
       "treasures": "💰 Treasures",
-      "junk": "🔷 Junk"
+      "junk": "🔷 Trinkets"
     },
     "treasureCategories": {
       "merchantCache": "💰 Merchant Cache",
