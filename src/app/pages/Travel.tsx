@@ -311,7 +311,7 @@ export const TravelPage: FC<{
                     labels={{
                       progressLevel: t("ui.progressLevel"),
                     }}
-                    onClick={handleJourneySelect}
+                    onClick={() => handleJourneySelect(journey)}
                   >
                     {journey.type === "treasure_tomb" && journeyInfo?.inProgress ? (
                       <TableauInventory journeyInfo={journeyInfo} />

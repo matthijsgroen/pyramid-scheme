@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { MapPieceIcon } from "./MapPieceIcon"
 
 const meta = {
-  title: "UI/MapPieceIcon",
   component: MapPieceIcon,
   parameters: {
     layout: "centered",
@@ -14,7 +13,6 @@ const meta = {
       ],
     },
   },
-  tags: ["autodocs"],
   argTypes: {
     size: { control: "select", options: ["md", "lg"] },
   },

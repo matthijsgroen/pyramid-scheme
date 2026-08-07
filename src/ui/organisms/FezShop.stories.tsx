@@ -2,9 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { FezShop } from "./FezShop"
 
 const meta = {
-  title: "UI/FezShop",
   component: FezShop,
-  tags: ["autodocs"],
   args: {
     isOpen: true,
     title: "Fez's Stall",

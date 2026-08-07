@@ -1,17 +1,25 @@
-import { describe, it, expect, vi, afterEach } from "vitest"
+import { describe, it, expect, afterEach } from "vitest"
 import { render, screen, cleanup } from "@testing-library/react"
 import type { CompassHit, ConsumableResult } from "@/game/siteTypes"
+import { DetectorPanel, type DetectorPanelLabels } from "./DetectorPanel"
 
-// Isolated from the app's real i18n (never initialized in tests) — identity passthrough returns the
-// key (with interpolated opts appended) so assertions target the key + data, not the prose.
-vi.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, opts?: Record<string, unknown>) =>
-      opts && typeof opts === "object" && !("ns" in opts) ? `${key}:${JSON.stringify(opts)}` : key,
-  }),
-}))
-
-const { DetectorPanel } = await import("./DetectorPanel")
+// Plain stand-in prose: the panel takes its strings as props, so the app owns the real translations.
+const labels: DetectorPanelLabels = {
+  pickTarget: "Pick a target",
+  lookingFor: symbol => `Looking for ${symbol}`,
+  allCollected: "All collected",
+  access: {
+    open: "Access: open",
+    locked: "Access: locked",
+    hidden: "Access: hidden",
+    unknown: "Access: unknown",
+  },
+  more: count => `+${count} more`,
+  noSkippedChests: "No skipped chests",
+  corridorNearby: level => `Corridor nearby (L${level})`,
+  corridorOnFloor: "Corridor on this floor",
+  corridorPyramidCount: count => `${count} corridors in this pyramid`,
+}
 
 // This project doesn't enable RTL's automatic cleanup, so without this each test's markup stays
 // mounted and later queries match earlier renders (see CollectibleSlot.spec.tsx for the same guard).
@@ -51,6 +59,7 @@ const CONSUMABLE: ConsumableResult[] = [
 const renderCompass = (compassLevel: number, compassResults: CompassHit[] = COMPASS) =>
   render(
     <DetectorPanel
+      labels={labels}
       activeDetector="compass"
       compassLevel={compassLevel}
       consumableDetectorLevel={0}
@@ -84,12 +93,13 @@ describe("DetectorPanel precision by level (§7.2)", () => {
 
   it("names what it is hunting, using the mod-supplied target label", () => {
     renderCompass(1)
-    expect(screen.getByText(/detector\.lookingFor:.*𓎗/)).toBeTruthy()
+    expect(screen.getByText(/Looking for 𓎗/)).toBeTruthy()
   })
 
   it("compass with no target points the player at the Collection picker (§3C)", () => {
     render(
       <DetectorPanel
+        labels={labels}
         activeDetector="compass"
         compassLevel={1}
         consumableDetectorLevel={0}
@@ -99,7 +109,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
         consumableResults={[]}
       />
     )
-    expect(screen.getByText("detector.pickTarget")).toBeTruthy()
+    expect(screen.getByText("Pick a target")).toBeTruthy()
   })
 
   it("compass L2 shows the floor but not the cell", () => {
@@ -117,6 +127,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
 
   it("corridor detector widens outward: L1 silent, L2 floor line, L3 pyramid count", () => {
     const base = {
+      labels,
       activeDetector: "hiddenPassageway" as const,
       compassLevel: 0,
       consumableDetectorLevel: 0,
@@ -127,21 +138,21 @@ describe("DetectorPanel precision by level (§7.2)", () => {
       pyramidHiddenCorridorCount: 3,
     }
     const { rerender } = render(<DetectorPanel {...base} detectionLevel={1} />)
-    expect(screen.queryByText("detector.corridorOnFloor")).toBeNull() // L1 = proximity only
-    expect(screen.queryByText(/detector\.corridorPyramidCount/)).toBeNull()
+    expect(screen.queryByText("Corridor on this floor")).toBeNull() // L1 = proximity only
+    expect(screen.queryByText(/corridors in this pyramid/)).toBeNull()
 
     rerender(<DetectorPanel {...base} detectionLevel={2} />)
-    expect(screen.getByText("detector.corridorOnFloor")).toBeTruthy()
-    expect(screen.queryByText(/detector\.corridorPyramidCount/)).toBeNull() // pyramid count is L3+
+    expect(screen.getByText("Corridor on this floor")).toBeTruthy()
+    expect(screen.queryByText(/corridors in this pyramid/)).toBeNull() // pyramid count is L3+
 
     rerender(<DetectorPanel {...base} detectionLevel={3} />)
-    expect(screen.getByText("detector.corridorOnFloor")).toBeTruthy()
-    // Interpolated: identity mock appends the count — proves L3 passes pyramidHiddenCorridorCount=3.
-    expect(screen.getByText(/detector\.corridorPyramidCount:.*"count":3/)).toBeTruthy()
+    expect(screen.getByText("Corridor on this floor")).toBeTruthy()
+    expect(screen.getByText("3 corridors in this pyramid")).toBeTruthy()
   })
 
   it("supplies L1 pyramid only; L3 exact cell", () => {
     const props = {
+      labels,
       activeDetector: "consumable" as const,
       compassLevel: 0,
       detectionLevel: 0,
@@ -169,21 +180,21 @@ describe("DetectorPanel access marking", () => {
   it("leaves an unblocked hit unmarked", () => {
     renderCompass(1, withAccess("open"))
     expect(screen.getByText("Sphinx Dawn L1")).toBeTruthy()
-    expect(screen.queryByTitle(/^detector\.access\./)).toBeNull()
+    expect(screen.queryByTitle(/^Access: /)).toBeNull()
   })
 
   it("flags a hit behind a key the player lacks", () => {
     renderCompass(1, withAccess("locked"))
-    expect(screen.getByTitle("detector.access.locked").textContent).toContain("🔒")
+    expect(screen.getByTitle("Access: locked").textContent).toContain("🔒")
   })
 
   it("flags a hit whose reachability it cannot determine", () => {
     renderCompass(1, withAccess("unknown"))
-    expect(screen.getByTitle("detector.access.unknown").textContent).toContain("❓")
+    expect(screen.getByTitle("Access: unknown").textContent).toContain("❓")
   })
 
   it("flags a hit that needs the corridor detector", () => {
     renderCompass(1, withAccess("hidden"))
-    expect(screen.getByTitle("detector.access.hidden").textContent).toContain("👁")
+    expect(screen.getByTitle("Access: hidden").textContent).toContain("👁")
   })
 })

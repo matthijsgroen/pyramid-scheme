@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { InputBlock } from "./InputBlock"
 
 const meta = {
-  title: "UI/InputBlock",
   component: InputBlock,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     value: {
       control: "number",

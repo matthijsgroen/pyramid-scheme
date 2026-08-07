@@ -3,10 +3,24 @@ import type { CompassHit } from "@/game/siteTypes"
 import { DetectorPanel } from "./DetectorPanel"
 
 const meta = {
-  title: "UI/DetectorPanel",
   component: DetectorPanel,
-  tags: ["autodocs"],
   args: {
+    labels: {
+      pickTarget: "Pick a hieroglyph to hunt in your Collection",
+      lookingFor: symbol => `Looking for ${symbol}`,
+      allCollected: "All pieces collected",
+      access: {
+        open: "Nothing known blocking this one",
+        locked: "Locked — you don't hold the key for this one yet",
+        hidden: "In a hidden corridor — needs the passageway detector",
+        unknown: "Might not be reachable yet — it's inside a tomb or for sale",
+      },
+      more: count => `+${count} more`,
+      noSkippedChests: "No skipped chests",
+      corridorNearby: level => `Suspicious corners revealed nearby (L${level})`,
+      corridorOnFloor: "A hidden corridor waits on this floor",
+      corridorPyramidCount: count => `This pyramid hides ${count} unexplored corridors`,
+    },
     activeDetector: null,
     compassLevel: 0,
     consumableDetectorLevel: 0,

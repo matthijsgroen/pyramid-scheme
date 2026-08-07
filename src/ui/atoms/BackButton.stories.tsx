@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { BackButton } from "./BackButton"
 
 const meta = {
-  title: "UI/BackButton",
   component: BackButton,
   parameters: { layout: "fullscreen" },
-  tags: ["autodocs"],
   argTypes: {
     onClick: { action: "clicked" },
   },

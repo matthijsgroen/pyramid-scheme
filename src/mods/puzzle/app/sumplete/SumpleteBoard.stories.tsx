@@ -10,7 +10,7 @@ import {
 import { SumpleteBoard } from "./SumpleteBoard"
 
 const meta = {
-  title: "UI/SumpleteBoard",
+  title: "Puzzle/SumpleteBoard",
   component: SumpleteBoard,
   parameters: {
     layout: "centered",

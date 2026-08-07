@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { TombMapButton } from "./TombMapButton"
 
 const meta = {
-  title: "UI/TombMapButton",
   component: TombMapButton,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {
     inJourney: {
       control: "boolean",

@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { BaseHeader } from "./BaseHeader"
 
 const meta = {
-  title: "Components/BaseHeader",
   component: BaseHeader,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof BaseHeader>
 
 export default meta

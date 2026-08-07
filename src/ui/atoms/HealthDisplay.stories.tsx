@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { HealthDisplay } from "./HealthDisplay"
 
 const meta = {
-  title: "UI/HealthDisplay",
   component: HealthDisplay,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof HealthDisplay>
 
 export default meta

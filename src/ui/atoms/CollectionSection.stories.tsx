@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { CollectionSection } from "./CollectionSection"
 
 const meta = {
-  title: "UI/CollectionSection",
   component: CollectionSection,
   parameters: { layout: "padded" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof CollectionSection>
 
 export default meta

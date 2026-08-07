@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Page } from "./Page"
 
 const meta = {
-  title: "UI/Page",
   component: Page,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
   argTypes: {
     snap: {
       control: "select",

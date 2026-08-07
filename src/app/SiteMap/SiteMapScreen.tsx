@@ -391,6 +391,22 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         {/* The readout sits on its own row (it's multi-line), but only once a mode is switched on —
             both this and the toggles below self-hide, so no empty row is reserved for them. */}
         <DetectorPanel
+          labels={{
+            pickTarget: t("common:detector.pickTarget"),
+            lookingFor: symbol => t("common:detector.lookingFor", { symbol }),
+            allCollected: t("common:detector.allCollected"),
+            access: {
+              open: t("common:detector.access.open"),
+              locked: t("common:detector.access.locked"),
+              hidden: t("common:detector.access.hidden"),
+              unknown: t("common:detector.access.unknown"),
+            },
+            more: count => t("common:detector.more", { count }),
+            noSkippedChests: t("common:detector.noSkippedChests"),
+            corridorNearby: level => t("common:detector.corridorNearby", { level }),
+            corridorOnFloor: t("common:detector.corridorOnFloor"),
+            corridorPyramidCount: count => t("common:detector.corridorPyramidCount", { count }),
+          }}
           activeDetector={detector.activeDetector}
           compassLevel={detectorLevels.compass}
           consumableDetectorLevel={detectorLevels.supplies}
@@ -412,6 +428,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             compassLevel={detectorLevels.compass}
             consumableDetectorLevel={detectorLevels.supplies}
             detectionLevel={detectorLevels.corridor}
+            titles={{
+              compass: t("common:detector.compassTitle"),
+              consumable: t("common:detector.consumableTitle"),
+              hiddenPassageway: t("common:detector.corridorTitle"),
+            }}
             onSetDetector={detector.setDetector}
           />
           {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}

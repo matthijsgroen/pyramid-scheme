@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Tile } from "./Tile"
 
 const meta = {
-  title: "UI/Tile",
   component: Tile,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
   argTypes: {
     variant: {
       control: "select",

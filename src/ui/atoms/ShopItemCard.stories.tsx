@@ -2,9 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ShopItemCard } from "./ShopItemCard"
 
 const meta = {
-  title: "UI/ShopItemCard",
   component: ShopItemCard,
-  tags: ["autodocs"],
   args: {
     itemName: "Bandage",
     itemDescription: "Restores a bit of health.",

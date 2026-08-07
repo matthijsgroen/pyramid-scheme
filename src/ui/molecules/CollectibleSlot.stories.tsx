@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { CollectibleSlot } from "./CollectibleSlot"
 
 const meta = {
-  title: "UI/CollectibleSlot",
   component: CollectibleSlot,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
 } satisfies Meta<typeof CollectibleSlot>
 
 export default meta

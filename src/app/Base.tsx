@@ -1,4 +1,4 @@
-import { BaseHeader } from "@/components/BaseHeader"
+import { BaseHeader } from "./BaseHeader"
 import { TravelPage } from "@/app/pages/Travel"
 import { CollectionPage } from "@/app/pages/Collection"
 import { modScreens } from "@/app/pages/screenRegistry"

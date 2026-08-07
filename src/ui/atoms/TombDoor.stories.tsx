@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { TombDoor } from "./TombDoor"
 
 const meta = {
-  title: "UI/TombDoor",
   component: TombDoor,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
   argTypes: {
     difficulty: { control: "select", options: ["starter", "junior", "expert", "master", "wizard"] },
     open: { control: "boolean" },

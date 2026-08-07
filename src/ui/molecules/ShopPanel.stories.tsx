@@ -3,9 +3,7 @@ import { ShopPanel } from "./ShopPanel"
 import { ShopItemCard } from "@/ui/atoms/ShopItemCard"
 
 const meta = {
-  title: "UI/ShopPanel",
   component: ShopPanel,
-  tags: ["autodocs"],
   args: {
     isOpen: true,
     title: "Fez's Stall",

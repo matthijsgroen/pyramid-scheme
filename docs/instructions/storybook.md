@@ -9,9 +9,15 @@
 - **`organisms/`** — composes molecules/atoms into a larger, self-contained UI section (e.g. a card used directly in a screen).
 - **`principles/`** — non-component design-token/foundation docs (colors, spacing, typography), not tied to a single component.
 
-Classify by what the component imports and renders from `src/ui`, not by visual complexity — a component that composes zero other `src/ui` components is an atom even if its own JSX/CSS is elaborate.
+Classify by what the component **renders** from `src/ui`, not by visual complexity — a component that renders zero other `src/ui` components is an atom even if its own JSX/CSS is elaborate, and borrowing another component's exported *type* is not composition.
 
 Every component in `src/ui/` — atom, molecule, or organism — must have a matching `*.stories.tsx` file living in the same tier folder next to it. This applies to existing components as well as new ones; there is no exemption for "it's just a wrapper."
+
+## Titles
+
+Stories carry **no `title`** — `.storybook/main.ts` derives it from the file's location (`src/ui/atoms/Chest.stories.tsx` → `UI/Atoms/Chest`), so moving a component to another tier moves its story with it. The exception is `src/mods/`, where a story sets `title: "<Mod>/<Component>"`; the config prepends `Mods/`, so don't repeat it.
+
+`autodocs` is on for every story via `.storybook/preview.tsx` — don't tag stories individually.
 
 ## The core rule
 

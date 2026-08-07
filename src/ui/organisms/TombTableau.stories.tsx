@@ -25,7 +25,6 @@ const fillPositions = (keys: string[], value: number) => {
 
 const tombJourneys = journeys.filter(j => j.type === "treasure_tomb")
 const meta = {
-  title: "Levels/TombLevel",
   parameters: {
     layout: "centered",
     backgrounds: {
@@ -67,7 +66,6 @@ const meta = {
       options: tombJourneys.map(j => j.id),
     },
   },
-  tags: ["autodocs"],
   render: ({ tableauNr, journey, filled }) => {
     const tableaus = useTableauTranslations()
     const tableau = tableaus.filter(tab => tab.tombJourneyId === journey.id)[tableauNr - 1]

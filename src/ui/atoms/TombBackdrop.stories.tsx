@@ -2,12 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { TombBackdrop } from "./TombBackdrop"
 
 const meta = {
-  title: "UI/TombBackdrop",
   component: TombBackdrop,
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs"],
   argTypes: {
     difficulty: {
       options: ["starter", "junior", "expert", "master", "wizard"],

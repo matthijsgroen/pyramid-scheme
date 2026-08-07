@@ -2,10 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Chest } from "./Chest"
 
 const meta = {
-  title: "UI/Chest",
   component: Chest,
   parameters: { layout: "centered" },
-  tags: ["autodocs"],
   argTypes: {
     state: { control: "select", options: ["empty", "open", "error"] },
     variant: { control: "select", options: ["vibrant", "muted", "wooden"] },

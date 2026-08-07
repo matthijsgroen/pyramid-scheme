@@ -2,13 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { HieroglyphInventoryStrip } from "./HieroglyphInventoryStrip"
 
 const meta = {
-  title: "UI/HieroglyphInventoryStrip",
   component: HieroglyphInventoryStrip,
   parameters: {
     layout: "centered",
     backgrounds: { default: "dark", values: [{ name: "dark", value: "#1f2937" }] },
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof HieroglyphInventoryStrip>
 
 export default meta

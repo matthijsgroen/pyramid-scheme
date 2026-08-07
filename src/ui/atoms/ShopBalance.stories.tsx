@@ -2,9 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { ShopBalance } from "./ShopBalance"
 
 const meta = {
-  title: "UI/ShopBalance",
   component: ShopBalance,
-  tags: ["autodocs"],
 } satisfies Meta<typeof ShopBalance>
 
 export default meta
