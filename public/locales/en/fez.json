@@ -46,6 +46,30 @@
   "mapPiece2": "There's one waiting in each expedition at this difficulty — let's find them all!",
   "mapPiece3": "Check the journey list to see how many we've collected so far.",
 
+  "mosaicStarter": "A cat in the doorway, and a snake leaving in a hurry. That was worth a bowl of milk.",
+  "mosaicStarter2": "Egyptians loved cats for exactly this — they killed the snakes and the rats that got into the grain.",
+  "mosaicStarter3": "They loved them so much they made one a goddess. Bastet. Protector of the house, the door, everyone asleep behind it.",
+
+  "mosaicJunior": "Look at his hand — someone's showing him how to hold the pen.",
+  "mosaicJunior2": "The bird-headed one is Thoth. Writing, counting, keeping the records — all his.",
+  "mosaicJunior3": "The ibis we followed up the river? That's his bird. Every number we've filled into a wall belongs to him too.",
+
+  "mosaicExpert": "That light isn't luck. They built the whole hall so it would land right there, on the right morning.",
+  "mosaicExpert2": "The sun is Amun-Ra — the hidden one, and the light everyone can see. Both at once.",
+  "mosaicExpert3": "Anyone who can measure the sky that precisely can measure anything. We've been solving their arithmetic all this way.",
+
+  "mosaicMaster": "Green skin, and wheat growing straight out of him. That's on purpose.",
+  "mosaicMaster2": "Osiris. He was killed, and put back together, and now he's what comes back every year when the river floods the fields.",
+  "mosaicMaster3": "Down here that's the whole idea: dead isn't finished. Cheerful thought for a tomb, isn't it?",
+
+  "mosaicWizard": "A heart on one side. One feather on the other. And it's balancing.",
+  "mosaicWizard2": "The feather is Ma'at — truth, balance, the way things are supposed to be. Heavier heart than that feather and you don't go through the door.",
+  "mosaicWizard3": "The jackal steadying the scale is Anubis. He's the one who walks you here.",
+
+  "mosaicFinale": "Stand back a moment. Look at what we've been carrying up out of those pyramids.",
+  "mosaicFinale2": "Every piece is part of him — the one who steadies the scale. He's been watching the whole way.",
+  "mosaicFinale3": "That's his record of us. And I'd say it balances.",
+
   "shopArrival": "Ah, my stall! Let me lay out what I've picked up along the way.",
   "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying."
 }

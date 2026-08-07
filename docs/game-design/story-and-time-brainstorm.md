@@ -386,6 +386,25 @@ fiction. Add only if the arc reads thin once the beats exist.
 Avoid making Fez the *subject* of the arc: he's the reason to come back tomorrow, Anubis is the reason it
 matters. The mural can only do one of those jobs.
 
+### When a beat fires (decided)
+
+Pieces are set into the window by hand, on the mosaic screen, so **a panel can never complete while
+the player is elsewhere** — Fez never interrupts a puzzle and a beat is never owed from earlier. That is
+what the place-button bought beyond the ritual itself.
+
+- **The cascade pauses at completion.** The piece that finishes a panel lands, the panel lights, placing
+  stops, Fez says his three lines, and dismissing resumes with whatever is still in hand. Two panels in
+  one tap means two pauses. Letting the cascade run past a completion wastes the moment the whole
+  register was built for.
+- **Within one tap, completions arrive in register order**, because placement fills the lowest register
+  first. Across sessions they don't: expert can finish before starter, since starter has hidden paths a
+  player may not open for a long time. That is the case §3.2 already designs for.
+- **So no beat may reference another beat.** No "remember the cat in the doorway?". Each is three lines
+  about the panel on screen and what the player has been doing — as written, they already are.
+- **The finale stacks on the wizard beat** and orders itself: it needs all five panels, so it is always
+  last. Complete wizard first and the player learns who Anubis is early, which reads fine — he is
+  introduced as the one who steadies the scale, and the rest of the game assembles his record.
+
 **Retelling is on demand.** *Decided.* A completed panel gets an **info button**; pressing it has Fez tell
 that panel's beats again, in full. So the three lines fire once automatically on completion, and after that
 the player asks for them — no auto-repeat to tap through on every mosaic visit, and the beats stay

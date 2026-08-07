@@ -21,12 +21,31 @@ const zero = (): TierCounts => Object.fromEntries(MOSAIC_TIERS.map(t => [t, 0]))
 const Harness = ({ initialOwned = zero() }: { initialOwned?: TierCounts }) => {
   const [owned, setOwned] = useState<TierCounts>(initialOwned)
   const [placed, setPlaced] = useState<TierCounts>(zero())
+  const [beat, setBeat] = useState<string | null>(null)
 
   const find = (tier: MosaicTier, n: number) => setOwned(o => ({ ...o, [tier]: o[tier] + n }))
 
   return (
     <div className="flex h-screen flex-col bg-stone-950">
-      <MosaicWindow owned={owned} placed={placed} onPlace={tier => setPlaced(p => ({ ...p, [tier]: p[tier] + 1 }))} />
+      <MosaicWindow
+        owned={owned}
+        placed={placed}
+        onPlace={tier => setPlaced(p => ({ ...p, [tier]: p[tier] + 1 }))}
+        // Stands in for Fez: the real one plays a conversation and calls back on dismiss. Placing
+        // waits either way, so the pause at a finished panel is the real thing here.
+        onNarrate={(conversation, done) => {
+          setBeat(conversation)
+          window.setTimeout(() => {
+            setBeat(null)
+            done()
+          }, 2500)
+        }}
+      />
+      {beat && (
+        <div className="absolute inset-x-0 top-4 mx-auto w-fit rounded bg-amber-500 px-4 py-2 text-sm font-bold">
+          Fez: {beat}
+        </div>
+      )}
       <div className="flex flex-wrap items-center justify-center gap-2 bg-stone-900 p-3 text-xs text-white">
         {MOSAIC_TIERS.map(tier => (
           <button key={tier} onClick={() => find(tier, 5)} className="rounded bg-white/10 px-2 py-1">

@@ -3,7 +3,13 @@ import { useTranslation } from "react-i18next"
 import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { MOSAIC_TIERS, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
-import { carriedPieces, nextPlacement, revealedPieceIds, type TierCounts } from "@/mods/mosaic/game/placementQueue"
+import {
+  beatsEarnedBy,
+  carriedPieces,
+  nextPlacement,
+  revealedPieceIds,
+  type TierCounts,
+} from "@/mods/mosaic/game/placementQueue"
 
 // One piece drops into the window this often while a handful is being set in, so a batch reads as
 // a cascade rather than a snap.
@@ -16,19 +22,24 @@ export const MosaicWindow: FC<{
   owned: TierCounts
   placed: TierCounts
   onPlace: (tier: MosaicTier) => void
-}> = ({ owned, placed, onPlace }) => {
+  /** Play a Fez conversation and call back when it's dismissed. Placing waits for it. */
+  onNarrate?: (conversation: string, done: () => void) => void
+}> = ({ owned, placed, onPlace, onNarrate }) => {
   const { t } = useTranslation()
   const [placing, setPlacing] = useState(false)
   const [justPlaced, setJustPlaced] = useState<ReadonlySet<string>>(new Set())
+  const [beats, setBeats] = useState<string[]>([])
 
   const carriedTotal = carriedPieces(owned, placed).reduce((sum, c) => sum + c.count, 0)
   const placedTotal = MOSAIC_TIERS.reduce((sum, tier) => sum + placed[tier], 0)
   const revealed = useMemo(() => revealedPieceIds(placed), [placedTotal]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Set the carried pieces one at a time until none are left in hand. Keyed on the counts rather
-  // than on `owned`/`placed`, which are rebuilt every render and would restart the timer forever.
+  // Set the carried pieces one at a time until none are left in hand, pausing while Fez has
+  // something to say — a finished panel is the moment the whole register was built for, and the
+  // cascade running on past it would bury it. Keyed on the counts rather than on `owned`/`placed`,
+  // which are rebuilt every render and would restart the timer forever.
   useEffect(() => {
-    if (!placing) return
+    if (!placing || beats.length > 0) return
     const next = nextPlacement(owned, placed)
     if (!next) {
       setPlacing(false)
@@ -37,10 +48,20 @@ export const MosaicWindow: FC<{
     const timer = setTimeout(() => {
       setJustPlaced(new Set(next.pieceIds))
       onPlace(next.tier)
+      const earned = beatsEarnedBy(next.tier, { ...placed, [next.tier]: placed[next.tier] + 1 })
+      if (earned.length > 0 && onNarrate) setBeats(earned)
     }, PLACE_INTERVAL_MS)
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [placing, carriedTotal, placedTotal])
+  }, [placing, carriedTotal, placedTotal, beats.length])
+
+  // One beat at a time; the finale follows the wizard panel's own beat.
+  useEffect(() => {
+    const [beat] = beats
+    if (!beat || !onNarrate) return
+    onNarrate(beat, () => setBeats(rest => rest.slice(1)))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [beats])
 
   return (
     <>

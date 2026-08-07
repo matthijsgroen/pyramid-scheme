@@ -1,5 +1,6 @@
-import { type FC, useMemo } from "react"
+import { type FC, use, useMemo } from "react"
 import { Page } from "@/ui/atoms/Page"
+import { FezContext } from "@/app/fez/context"
 import { MOSAIC_TIERS, mosaicBucket } from "@/mods/mosaic/game/mosaicCurrency"
 import type { TierCounts } from "@/mods/mosaic/game/placementQueue"
 import { useProgression } from "@/app/state/useProgression"
@@ -12,6 +13,7 @@ export const MosaicPage: FC = () => {
   // into the window afterwards, by hand.
   const ledger = useProgression().ledger
   const { placedCount, placeOne } = useMosaicProgress()
+  const fez = use(FezContext)
 
   const owned = useMemo(
     () => Object.fromEntries(MOSAIC_TIERS.map(t => [t, ledger.get(mosaicBucket(t))])) as TierCounts,
@@ -21,7 +23,12 @@ export const MosaicPage: FC = () => {
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">
-      <MosaicWindow owned={owned} placed={placed} onPlace={placeOne} />
+      <MosaicWindow
+        owned={owned}
+        placed={placed}
+        onPlace={placeOne}
+        onNarrate={(conversation, done) => fez.showConversation(conversation, done)}
+      />
     </Page>
   )
 }

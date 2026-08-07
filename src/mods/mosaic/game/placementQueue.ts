@@ -30,6 +30,16 @@ export const nextPlacement = (
   return { tier: next.tier, pieceIds: step ? piecesOfStep(step) : [] }
 }
 
+// The Fez beats a placement earns: the register it just finished, and the finale if that was the
+// last one outstanding. Empty while a register is still filling. Beats stand alone and registers
+// can be finished in any order, so this never looks further back than the window's current state.
+export const beatsEarnedBy = (tier: MosaicTier, placedAfter: TierCounts): string[] => {
+  if (placedAfter[tier] !== stepsOf(tier).length) return []
+  const beats = [`mosaic${tier[0].toUpperCase()}${tier.slice(1)}`]
+  if (MOSAIC_TIERS.every(t => placedAfter[t] === stepsOf(t).length)) beats.push("mosaicFinale")
+  return beats
+}
+
 // Every piece id currently set into the window.
 export const revealedPieceIds = (placed: TierCounts): Set<string> => {
   const revealed = new Set<string>()

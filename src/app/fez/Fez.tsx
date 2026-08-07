@@ -44,6 +44,15 @@ const conversations: Record<string, PoseChat[]> = {
     ["pyramidBlockedBlocks4"]
   ),
   shopArrival: pose("cocktail", ["shopArrival", "shopArrival2"]),
+  // One per finished mosaic register, plus the finale for the whole window. Each stands alone:
+  // registers can be completed in any order, so no beat may lean on another (see
+  // docs/game-design/story-and-time-brainstorm.md §3.4).
+  mosaicStarter: pose(["mosaicStarter", "mosaicStarter2"], "pointUp", ["mosaicStarter3"]),
+  mosaicJunior: pose("glassesPoint", ["mosaicJunior"], "default", ["mosaicJunior2", "mosaicJunior3"]),
+  mosaicExpert: pose("pointUp", ["mosaicExpert"], "default", ["mosaicExpert2", "mosaicExpert3"]),
+  mosaicMaster: pose("glassesPoint", ["mosaicMaster"], "default", ["mosaicMaster2", "mosaicMaster3"]),
+  mosaicWizard: pose(["mosaicWizard", "mosaicWizard2"], "pointUp", ["mosaicWizard3"]),
+  mosaicFinale: pose("glassesPoint", ["mosaicFinale"], "default", ["mosaicFinale2"], "pointUp", ["mosaicFinale3"]),
 }
 
 const NOT_FOUND = pose("default", ["not-found"])
