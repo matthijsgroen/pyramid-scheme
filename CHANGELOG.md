@@ -21,7 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The first stall you ever reach, he owns up to it being his and pitches what's on the counter. Later stalls get the short greeting.
 - Fez greets a shop as his own stall instead of as a customer.
 - What you sell at the stall is "trinkets", not "junk" — his offer, the sell section, the Collection category.
-- A mosaic piece you find shows its scene's own colour of glass, so you can tell which of the five it belongs to — on Fez's counter too.
 
 ## 0.31.5 - 2026-08-02
 ### Changed
