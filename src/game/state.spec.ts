@@ -217,7 +217,7 @@ describe(getAnswers, () => {
       "", "", 24, "",
       "", "", 9, 15, 17,
       15, 12, "", "", 10, "",
-    ]);
+    ])
 
     const result = getAnswers(pyramid)
     expect(result).toEqual({

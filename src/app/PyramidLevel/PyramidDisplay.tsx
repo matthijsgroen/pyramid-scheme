@@ -14,10 +14,7 @@ const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]
 
 const getPosition = (levelNr: number): "left" | "left-mirror" | "right" | "right-mirror" => {
   return ["left", "left-mirror", "right", "right-mirror"][Math.floor(mulberry32(levelNr)() * 4)] as
-    | "left"
-    | "left-mirror"
-    | "right"
-    | "right-mirror"
+    "left" | "left-mirror" | "right" | "right-mirror"
 }
 
 const dayTimeBlockColors: Record<DayNightCycleStep, string> = {

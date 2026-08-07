@@ -77,9 +77,10 @@ const preferredWardKeysFor = (tier: Tier, hieroglyphId: string): string[] => {
   const tierTombIds = new Set(TOMB_JOURNEYS.filter(j => j.tier === tier).map(j => j.id))
   const first = tableauLevels
     .filter(t => tierTombIds.has(t.tombJourneyId) && t.inventoryIds.includes(hieroglyphId))
-    .reduce<
-      (typeof tableauLevels)[number] | undefined
-    >((best, t) => (!best || t.runNumber < best.runNumber ? t : best), undefined)
+    .reduce<(typeof tableauLevels)[number] | undefined>(
+      (best, t) => (!best || t.runNumber < best.runNumber ? t : best),
+      undefined
+    )
   if (!first) return []
   return (TOMB_PERK_IDS[first.tombJourneyId] ?? []).slice(0, first.runNumber - 1)
 }
