@@ -13,7 +13,7 @@ import { join } from "node:path"
 
 export default tseslint.config(
   [
-    globalIgnores(["dist", ".yarn", "node_modules", ".claude"]),
+    globalIgnores(["dist", "storybook-static", ".yarn", "node_modules", ".claude"]),
     {
       files: ["**/*.{ts,tsx}"],
       extends: [
