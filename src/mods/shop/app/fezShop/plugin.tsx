@@ -28,9 +28,15 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
   const balance = progression.ledger.get("money")
   const tier = ctx.difficulty ?? "starter"
 
-  // Fez's greeting conversation plays once, before the shop UI itself ever appears.
+  // Fez's greeting plays before the shop UI itself ever appears. The very first stall the player
+  // reaches gets the longer one, where he owns up to the counter being his; every stall after that
+  // gets the short greeting. No extra flag for "first ever" — a conversation already remembers
+  // whether it has been told, and reports "seen-earlier" when it has.
   useEffect(() => {
-    fez.showConversation("shopArrival", () => setGreeted(true))
+    fez.showConversation("shopFirstVisit", result => {
+      if (result === "complete" || result === "skipped") return setGreeted(true)
+      fez.showConversation("shopArrival", () => setGreeted(true))
+    })
   }, [fez])
 
   // Always explored on arrival, regardless of whether anything gets bought — a shop room

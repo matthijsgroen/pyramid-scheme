@@ -362,8 +362,13 @@ Three beats, in his existing register:
   tombs back…"). Per-item pitch lines make the shop feel authored instead of a price list.
 - **Later visits** — the current short arrival line, shorn of the customer framing.
 
-Implementation shape: a first-visit-ever flag (one boolean in shop progress, not per-shop), plus item pitch
-keys alongside the existing stock names. Nothing in world-gen changes — this is `fez.json` and one flag.
+Implementation shape: none of it needs new state. A conversation already records whether it has been
+told and reports `seen-earlier` when it has, so the first stall shows `shopFirstVisit` and every later one
+falls through to `shopArrival`. Nothing in world-gen changes — this is `fez.json` and four lines of wiring.
+
+Still unwritten: **per-item pitch lines**, so the counter reads as things he carried out of somewhere
+rather than a price list. The first-visit conversation gestures at one item; a line per stock item would
+do it properly.
 
 ### His arc: he prices the pieces, then stops pricing them
 

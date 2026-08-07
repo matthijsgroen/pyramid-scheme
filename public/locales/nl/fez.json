@@ -2,6 +2,7 @@
   "not-found": "Sorry het gesprek dat je zoekt bestaat niet.",
   "welcome": "Welkom bij Pyramid Scheme!",
   "welcome2": "Verken de wonderen van het oude Egypte en ontdek haar geheimen.",
+  "welcomeTrade": "En ik ga mee voor de handel — die graven zitten vol met spullen die geld waard zijn.",
   "welcome3": "Laten we beginnen met een expeditie plannen door op de kaart te klikken!",
   "chooseExpedition": "Hier kun je je expeditie kiezen. Laten we beginnen met een korte reis.",
   "pyramidIntro": "Kijk naar deze muren — zo veel getallen ontbreken!",
@@ -66,6 +67,9 @@
   "mosaicFinale": "Even een stap terug. Kijk eens wat we allemaal uit die piramides omhoog hebben gedragen.",
   "mosaicFinale2": "Elk stuk hoort bij hém — degene die de weegschaal stil houdt. Hij heeft de hele weg meegekeken.",
   "mosaicFinale3": "Dat is zijn verslag van ons. En als je het mij vraagt: het is in evenwicht.",
+
+  "shopFirstVisit": "Ah, daar zijn we. Mijn kraam — ik zei toch dat ik voor de handel meega.",
+  "shopFirstVisit2": "Alles op deze toonbank heb ik ergens vandaan gedragen. Die daar komt van twee graven terug.",
 
   "shopArrival": "Ah, mijn kraam! Even uitstallen wat ik onderweg heb opgepikt.",
   "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt."

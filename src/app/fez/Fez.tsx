@@ -24,7 +24,9 @@ const pose = (...args: (Pose | string[])[]): PoseChat[] => {
 }
 
 const conversations: Record<string, PoseChat[]> = {
-  welcome: pose(["welcome", "welcome2", "welcome3"]),
+  // He states why he's along before the call to action: he's in it for the trade, which is what
+  // the stall pays off later (docs/game-design/story-and-time-brainstorm.md §3.4).
+  welcome: pose(["welcome", "welcome2", "welcomeTrade", "welcome3"]),
   chooseExpedition: pose(["chooseExpedition"]),
   pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
@@ -44,6 +46,9 @@ const conversations: Record<string, PoseChat[]> = {
     ["pyramidBlockedBlocks4"]
   ),
   shopArrival: pose("cocktail", ["shopArrival", "shopArrival2"]),
+  // The first stall the player ever reaches: he owns up to it being his and pitches the counter.
+  // Closes on the same practical line as every later visit, so the rules live in one string.
+  shopFirstVisit: pose("cocktail", ["shopFirstVisit", "shopFirstVisit2", "shopArrival2"]),
   // One per finished mosaic register, plus the finale for the whole window. Each stands alone:
   // registers can be completed in any order, so no beat may lean on another (see
   // docs/game-design/story-and-time-brainstorm.md §3.4).
