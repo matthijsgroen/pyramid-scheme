@@ -63,7 +63,9 @@ Style:
 - Colour palette: lapis blue, turquoise, ochre, deep red, warm gold, sand cream, malachite green.
 - IMPORTANT: no cell may be black, near-black, deep navy or dark brown — dark fills are read as lead
   lines by the tracer and would disappear. Keep every fill mid-tone or lighter.
-- Roughly 60-90 distinct colour cells in this panel, none smaller than about 1% of the panel height.
+- Dense leadwork, like a real cathedral window: break every large area — sky, wall, floor, water, robes —
+  into many small separate cells rather than leaving it as one flat field. No cell smaller than about 1%
+  of the panel height.
 - Figures drawn in Egyptian tomb-painting convention: profile faces, frontal shoulders, flat perspective,
   figures standing on a common ground line.
 - No text, no lettering, no hieroglyphic writing, no numerals anywhere in the image. Where inscription is
