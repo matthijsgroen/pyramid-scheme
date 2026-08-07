@@ -405,13 +405,12 @@ what the place-button bought beyond the ritual itself.
   last. Complete wizard first and the player learns who Anubis is early, which reads fine — he is
   introduced as the one who steadies the scale, and the rest of the game assembles his record.
 
-**Retelling is on demand.** *Decided.* A completed panel gets an **info button**; pressing it has Fez tell
-that panel's beats again, in full. So the three lines fire once automatically on completion, and after that
-the player asks for them — no auto-repeat to tap through on every mosaic visit, and the beats stay
-reachable instead of being a one-time miss. Reuses the same keyed lines, no second shorter variant to write.
-
-Open: do captions stay on screen once a register completes (suggest yes — a finished register wants a name,
-and it labels the info button).
+**Retelling is on demand, and the caption is the way in.** *Decided.* A finished register keeps its name
+below the window — "The Guardian at the Door", "The First Lesson" — and that name is an **info button**:
+pressing it has Fez tell the panel's beats again, in full. So the three lines fire once automatically on
+completion, and after that the player asks. No auto-repeat to tap through on every mosaic visit, the beats
+stay reachable rather than being a one-time miss, and the same keyed lines do both jobs — no shorter
+variant to write. The replay also ignores the tutorials-off setting, as an explicitly asked-for line should.
 
 ## 3.5 Art-generation prompt (Gemini)
 

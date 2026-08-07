@@ -156,7 +156,14 @@
   "mosaic": {
     "place_one": "Place {{count}} piece",
     "place_other": "Place {{count}} pieces",
-    "placing": "Placing…"
+    "placing": "Placing…",
+    "panel": {
+      "starter": "The Guardian at the Door",
+      "junior": "The First Lesson",
+      "expert": "Letting the Sun In",
+      "master": "The Green King",
+      "wizard": "The Feather and the Heart"
+    }
   },
   "collection": {
     "title": "Collection",

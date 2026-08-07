@@ -30,13 +30,20 @@ export const nextPlacement = (
   return { tier: next.tier, pieceIds: step ? piecesOfStep(step) : [] }
 }
 
+// A register's Fez conversation — fired when it completes, and again on demand from its caption.
+export const beatFor = (tier: MosaicTier) => `mosaic${tier[0].toUpperCase()}${tier.slice(1)}`
+
+export const isComplete = (tier: MosaicTier, placed: TierCounts) => placed[tier] === stepsOf(tier).length
+
+export const completedTiers = (placed: TierCounts): MosaicTier[] => MOSAIC_TIERS.filter(t => isComplete(t, placed))
+
 // The Fez beats a placement earns: the register it just finished, and the finale if that was the
 // last one outstanding. Empty while a register is still filling. Beats stand alone and registers
 // can be finished in any order, so this never looks further back than the window's current state.
 export const beatsEarnedBy = (tier: MosaicTier, placedAfter: TierCounts): string[] => {
-  if (placedAfter[tier] !== stepsOf(tier).length) return []
-  const beats = [`mosaic${tier[0].toUpperCase()}${tier.slice(1)}`]
-  if (MOSAIC_TIERS.every(t => placedAfter[t] === stepsOf(t).length)) beats.push("mosaicFinale")
+  if (!isComplete(tier, placedAfter)) return []
+  const beats = [beatFor(tier)]
+  if (MOSAIC_TIERS.every(t => isComplete(t, placedAfter))) beats.push("mosaicFinale")
   return beats
 }
 

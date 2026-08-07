@@ -156,7 +156,14 @@
   "mosaic": {
     "place_one": "Plaats {{count}} stuk",
     "place_other": "Plaats {{count}} stukken",
-    "placing": "Bezig met plaatsen…"
+    "placing": "Bezig met plaatsen…",
+    "panel": {
+      "starter": "De Wachter bij de Deur",
+      "junior": "De Eerste Les",
+      "expert": "Het Licht Binnenlaten",
+      "master": "De Groene Koning",
+      "wizard": "De Veer en het Hart"
+    }
   },
   "collection": {
     "title": "Collectie",

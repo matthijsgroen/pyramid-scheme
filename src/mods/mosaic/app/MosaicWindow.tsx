@@ -4,8 +4,10 @@ import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { MOSAIC_TIERS, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
 import {
+  beatFor,
   beatsEarnedBy,
   carriedPieces,
+  completedTiers,
   nextPlacement,
   revealedPieceIds,
   type TierCounts,
@@ -22,8 +24,9 @@ export const MosaicWindow: FC<{
   owned: TierCounts
   placed: TierCounts
   onPlace: (tier: MosaicTier) => void
-  /** Play a Fez conversation and call back when it's dismissed. Placing waits for it. */
-  onNarrate?: (conversation: string, done: () => void) => void
+  /** Play a Fez conversation and call back when it's dismissed. Placing waits for it. `replay`
+   *  re-tells one he has already given, which is what a finished panel's caption asks for. */
+  onNarrate?: (conversation: string, done: () => void, options?: { replay?: boolean }) => void
 }> = ({ owned, placed, onPlace, onNarrate }) => {
   const { t } = useTranslation()
   const [placing, setPlacing] = useState(false)
@@ -72,7 +75,7 @@ export const MosaicWindow: FC<{
           </div>
         </StoneFrame>
       </div>
-      <div className="flex h-16 shrink-0 items-center justify-center">
+      <div className="flex shrink-0 flex-col items-center gap-2 py-2">
         {carriedTotal > 0 && (
           <button
             onClick={() => setPlacing(true)}
@@ -82,6 +85,19 @@ export const MosaicWindow: FC<{
             {placing ? t("mosaic.placing") : t("mosaic.place", { count: carriedTotal })}
           </button>
         )}
+        {/* A finished scene keeps its name, and the name is the way back to what Fez said about it. */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {completedTiers(placed).map(tier => (
+            <button
+              key={tier}
+              disabled={placing || !onNarrate}
+              onClick={() => onNarrate?.(beatFor(tier), () => {}, { replay: true })}
+              className="rounded-full border border-amber-500/40 px-3 py-1 text-xs text-amber-200 disabled:opacity-50"
+            >
+              ℹ {t(`mosaic.panel.${tier}`)}
+            </button>
+          ))}
+        </div>
       </div>
     </>
   )

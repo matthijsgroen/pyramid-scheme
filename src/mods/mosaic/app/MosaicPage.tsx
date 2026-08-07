@@ -27,7 +27,9 @@ export const MosaicPage: FC = () => {
         owned={owned}
         placed={placed}
         onPlace={placeOne}
-        onNarrate={(conversation, done) => fez.showConversation(conversation, done)}
+        onNarrate={(conversation, done, options) =>
+          fez.showConversation(conversation, done, { forceReplay: options?.replay })
+        }
       />
     </Page>
   )

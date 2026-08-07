@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest"
 import {
+  beatFor,
   beatsEarnedBy,
   carriedPieces,
+  completedTiers,
   nextPlacement,
   revealedPieceIds,
   stepsOf,
@@ -41,6 +43,19 @@ describe("mosaic placement queue", () => {
   it("hands over the pieces of the step being placed", () => {
     const next = nextPlacement(counts({ starter: 1 }), counts())
     expect(next?.pieceIds.length).toBeGreaterThan(0)
+  })
+
+  it("names only the registers that are finished", () => {
+    const full = stepsOf("expert").length
+    expect(completedTiers(counts())).toEqual([])
+    expect(completedTiers(counts({ expert: full - 1 }))).toEqual([])
+    expect(completedTiers(counts({ expert: full }))).toEqual(["expert"])
+  })
+
+  it("gives a finished register the same beat on demand as on completion", () => {
+    // The caption's info button re-tells exactly what fired when the panel landed.
+    const full = stepsOf("master").length
+    expect(beatsEarnedBy("master", counts({ master: full }))).toContain(beatFor("master"))
   })
 
   it("says nothing until a register is actually finished", () => {
