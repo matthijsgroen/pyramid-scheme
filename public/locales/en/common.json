@@ -153,6 +153,11 @@
   "level": {
     "completed": "Level Completed!"
   },
+  "mosaic": {
+    "place_one": "Place {{count}} piece",
+    "place_other": "Place {{count}} pieces",
+    "placing": "Placing…"
+  },
   "collection": {
     "title": "Collection",
     "clickForDetails": "Click a tile for details",

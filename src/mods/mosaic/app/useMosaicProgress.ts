@@ -1,24 +1,19 @@
 import { useModState } from "@/app/state/useModState"
 import type { MosaicTier } from "../game/mosaicCurrency"
 
-type SeenByTier = Partial<Record<MosaicTier, number>>
+type PlacedByTier = Partial<Record<MosaicTier, number>>
 
-// Reveal-animation progress for the mosaic screen: how many reveal STEPS of each register the
-// player has already watched animate in. Distinct from how many pieces they own (the ledger's
-// per-register counts). Mod-owned persisted slice (useModState) so core's ProgressionState never
-// carries it. Per register, because the registers fill independently — each is fed only by loot
-// found at its own difficulty.
+// How many pieces of each register the player has PLACED into the window. Distinct from how many
+// they own (the ledger's per-register counts) — a found piece is carried until the player sets it
+// in, which is what makes finishing a panel something they do rather than something that happened
+// while they were elsewhere.
+//
+// Mod-owned persisted slice (useModState) so core's ProgressionState never carries it. Per
+// register, because the registers fill independently from loot of their own difficulty.
 export const useMosaicProgress = () => {
-  const [seen, setSeen] = useModState<SeenByTier>("mosaic", {})
+  const [placed, setPlaced] = useModState<PlacedByTier>("mosaic", {})
   return {
-    seenCount: (tier: MosaicTier) => seen[tier] ?? 0,
-    markViewed: (counts: Record<MosaicTier, number>) =>
-      setSeen(prev => {
-        const next = { ...prev }
-        for (const [tier, count] of Object.entries(counts) as [MosaicTier, number][]) {
-          next[tier] = Math.max(next[tier] ?? 0, count)
-        }
-        return next
-      }),
+    placedCount: (tier: MosaicTier) => placed[tier] ?? 0,
+    placeOne: (tier: MosaicTier) => setPlaced(prev => ({ ...prev, [tier]: (prev[tier] ?? 0) + 1 })),
   }
 }

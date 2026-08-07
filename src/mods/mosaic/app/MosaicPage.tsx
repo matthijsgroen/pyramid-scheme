@@ -1,80 +1,73 @@
-import { type FC, useEffect, useMemo, useRef, useState } from "react"
+import { type FC, useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
-import { LEVEL_STEPS, PIECES_BY_STEP } from "@/mods/mosaic/game/mosaicRevealOrder"
-import { MOSAIC_TIERS, mosaicBucket, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
+import { MOSAIC_TIERS, mosaicBucket } from "@/mods/mosaic/game/mosaicCurrency"
+import { carriedPieces, nextPlacement, revealedPieceIds, type TierCounts } from "@/mods/mosaic/game/placementQueue"
 import { useProgression } from "@/app/state/useProgression"
 import { useMosaicProgress } from "./useMosaicProgress"
 
-export const MosaicPage: FC = () => {
-  // Piece counts are the ledger's, one bucket per register (core owns the buckets, mosaic owns
-  // the ids); seen-counts are the mosaic mod's own persisted slice. Each register fills from its
-  // own difficulty, so they advance independently and a panel finishes when its tier is picked clean.
-  const ledger = useProgression().ledger
-  const { seenCount, markViewed } = useMosaicProgress()
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
+// One piece drops into the window this often while a handful is being set in, so a batch reads as
+// a cascade rather than a snap.
+const PLACE_INTERVAL_MS = 260
 
-  const countByTier = useMemo(
-    () => Object.fromEntries(MOSAIC_TIERS.map(t => [t, ledger.get(mosaicBucket(t))])) as Record<MosaicTier, number>,
+export const MosaicPage: FC = () => {
+  const { t } = useTranslation()
+  // Owned counts are the ledger's, one bucket per register (core owns the buckets, mosaic owns the
+  // ids); placed counts are the mosaic mod's own persisted slice. A piece is found first and set
+  // into the window afterwards, by hand.
+  const ledger = useProgression().ledger
+  const { placedCount, placeOne } = useMosaicProgress()
+  const [placing, setPlacing] = useState(false)
+  const [justPlaced, setJustPlaced] = useState<ReadonlySet<string>>(new Set())
+
+  const owned = useMemo(
+    () => Object.fromEntries(MOSAIC_TIERS.map(t => [t, ledger.get(mosaicBucket(t))])) as TierCounts,
     [ledger]
   )
+  const placed = Object.fromEntries(MOSAIC_TIERS.map(t => [t, placedCount(t)])) as TierCounts
 
-  const { revealedPieceIds, newPieceIds } = useMemo(() => {
-    const revealed = new Set<string>()
-    const newSet = new Set<string>()
+  const carriedTotal = carriedPieces(owned, placed).reduce((sum, c) => sum + c.count, 0)
+  const placedTotal = MOSAIC_TIERS.reduce((sum, t) => sum + placed[t], 0)
+  const revealed = useMemo(() => revealedPieceIds(placed), [placedTotal]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    for (const tier of MOSAIC_TIERS) {
-      const steps = LEVEL_STEPS.filter(s => s.journeyId.startsWith(`${tier}_`))
-      const seen = seenCount(tier)
-      for (let i = 0; i < Math.min(countByTier[tier], steps.length); i++) {
-        const step = steps[i]
-        for (const id of PIECES_BY_STEP.get(`${step.journeyId}:${step.levelIndex}`) ?? []) {
-          revealed.add(id)
-          if (i >= seen) newSet.add(id)
-        }
-      }
-    }
-
-    return { revealedPieceIds: revealed, newPieceIds: newSet }
-  }, [countByTier, seenCount])
-
+  // Set the carried pieces one at a time until none are left in hand. Keyed on the counts rather
+  // than on `owned`/`placed`, which are rebuilt every render and would restart the timer forever.
   useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    let timer: ReturnType<typeof setTimeout> | null = null
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting)
-        if (entry.isIntersecting) {
-          // ponytail: only start timer when page is actually visible (not off-screen in swipeable panel)
-          timer = setTimeout(() => markViewed(countByTier), 3000)
-        } else {
-          if (timer) clearTimeout(timer)
-        }
-      },
-      { threshold: 0.85 }
-    )
-    observer.observe(el)
-    return () => {
-      observer.disconnect()
-      if (timer) clearTimeout(timer)
+    if (!placing) return
+    const next = nextPlacement(owned, placed)
+    if (!next) {
+      setPlacing(false)
+      return
     }
-  }, [markViewed, countByTier])
+    const timer = setTimeout(() => {
+      setJustPlaced(new Set(next.pieceIds))
+      placeOne(next.tier)
+    }, PLACE_INTERVAL_MS)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placing, carriedTotal, placedTotal])
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">
-      <div ref={containerRef} className="flex h-full w-full items-center justify-center p-2">
+      <div className="flex min-h-0 flex-1 items-center justify-center p-2">
         <StoneFrame className="h-full">
           <div className="aspect-[200/347] h-full">
-            <StainedGlassMosaic
-              className="h-full"
-              revealedPieces={revealedPieceIds}
-              newPieces={isVisible ? newPieceIds : new Set()}
-            />
+            <StainedGlassMosaic className="h-full" revealedPieces={revealed} newPieces={justPlaced} />
           </div>
         </StoneFrame>
+      </div>
+      <div className="flex h-16 shrink-0 items-center justify-center">
+        {carriedTotal > 0 && (
+          <button
+            onClick={() => setPlacing(true)}
+            disabled={placing}
+            className="rounded-full bg-amber-600 px-6 py-2 font-bold text-white shadow-lg disabled:opacity-70"
+          >
+            {placing ? t("mosaic.placing") : t("mosaic.place", { count: carriedTotal })}
+          </button>
+        )}
       </div>
     </Page>
   )
