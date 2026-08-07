@@ -63,6 +63,14 @@ export const shopMoneyEconomy: Distribution = {
 
     // Phase 1 — completeness: ≥1 of each item in every tier that has slots. A present tier with
     // fewer slots than its item set can't show them all → hard-fail (grow loot capacity in the DSL).
+    //
+    // Spread across levels: the first N slots of a tier's list are all on the same floor (the list
+    // arrives in priority order, so one floor's chests sit together), and a tier whose budget runs
+    // to completeness ALONE — the small early tiers — would then keep its whole collectible set on
+    // that one floor, behind whatever gate or hidden path it happens to have. One missed floor, one
+    // unfinishable Collection row. So take one slot per level before returning to a level already
+    // used, falling back to any free slot when the levels run out.
+    const levelOf = (slot: Slot) => `${slot.ref.journeyId}:${slot.ref.levelIndex}`
     for (const tier of TIER_ORDER) {
       const tierSlots = byTier.get(tier)
       if (!tierSlots) continue
@@ -72,7 +80,21 @@ export const shopMoneyEconomy: Distribution = {
           `shop loot: tier "${tier}" has ${tierSlots.length} loot slot(s) < ${items.length} collectible(s) — ` +
             `≥1-of-each completeness impossible. Author more loot-bearing capacity in the DSL.`
         )
-      items.forEach((_, i) => placeJunk(tierSlots[i], tier, i))
+      const levelsUsed = new Set<string>()
+      const free = (s: Slot) => !used.has(s)
+      const chest = (s: Slot) => s.kind === "end"
+      const freshLevel = (s: Slot) => !levelsUsed.has(levelOf(s))
+      items.forEach((_, i) => {
+        // Chest-before-puzzle still wins (as everywhere else); the level spread only picks WHICH
+        // chest. Falling all the way through to a puzzle slot means the tier has fewer chests than
+        // collectibles — rare, and better than skipping a collectible.
+        const slot =
+          tierSlots.find(s => free(s) && chest(s) && freshLevel(s)) ??
+          tierSlots.find(s => free(s) && chest(s)) ??
+          tierSlots.find(free)!
+        levelsUsed.add(levelOf(slot))
+        placeJunk(slot, tier, i)
+      })
     }
 
     // Phase 2 — bulk junk up to the junk share of the budget, round-robin across tiers (fair
