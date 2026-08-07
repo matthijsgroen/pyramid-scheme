@@ -215,31 +215,31 @@ Developed further than the rest of this doc, because the pieces already exist in
 
 ## 3.1 What the pipeline already does (and throws away)
 
-`scripts/traceMask.ts` traces `src/assets/stained-glass-mask.png` (grayscale: **bright = cell interior,
-dark = lead line**, `THRESHOLD 128`, `MIN_PIXELS 40`) into polygons, and **already assigns every piece a
-tier**: five equal-count pie slices radiating from Anubis's head (`TIER_JOURNEYS`), five journeys per
-slice ordered outer→inner, `levelIndex` derived from `JOURNEY_LEVELS`. `src/assets/stained-glass.png`
-(1372×2352, ≈7:12 portrait) is the artwork; polygons render as a dark overlay, and revealing a piece
-makes its polygon transparent.
+`scripts/traceMask.ts` traces `src/assets/stained-glass.png` into polygons and hands each one to a
+(journey, level) reveal step. Lead is **neutral dark ink** (`THRESHOLD 128` *and* saturation under 40) —
+a deep lapis or oxblood fill is a cell, not a line — and anything under `MIN_PIXELS 40` is dropped. The
+artwork is its own mask, so there is no second file to keep in sync. Polygons render as a dark overlay;
+revealing a piece makes its polygon transparent.
 
-The tier tie is then discarded twice: `mosaicCurrency` places an untyped `{ type: "mosaicPiece" }` into
-any free slot anywhere, and the runtime reveal is count-based (`useMosaicProgress` holds one integer).
-So per-tier panels are mostly **honouring what the tracer already computed**, not new design.
+Region assignment is by **horizontal register**: the image is cut into five equal bands, band *n* belongs
+to tier *n*, and within a band the regions are handed out left to right across that tier's journeys and
+levels. `mosaicRevealOrder.ts` therefore reduces to canonical journey order, and a register finishes when
+its tier is played out — which is what lets a completed panel fire its own beat.
 
-Two couplings, both since derived from their sources rather than hand-synced (`mosaicCurrency.ts`,
-`traceMask.ts`): `MOSAIC_TOTAL` had to equal `LEVEL_STEPS.length` by hand and had already drifted (298 vs
-252), and `JOURNEY_LEVELS` in the tracer was a hand-copied mirror of `journeys.ts` (`levelCount × 2`).
+The tier tie is still discarded once: `mosaicCurrency` places an untyped `{ type: "mosaicPiece" }` into
+any free slot anywhere, and the runtime reveal is count-based (`useMosaicProgress` holds one integer). So
+panels complete in a fixed order as pieces accumulate, rather than when *that* tier is cleared.
 
 **What sets the collectible count is `journeys.ts`, not the art.** Pieces collected =
-`LEVEL_STEPS.length` = every journey's `levelCount × 2`. Traced regions are the polygons that uncover
-*per step* — ~1178 regions over 252 steps, ≈4.7 at a time — so tracing granularity is a **visual** dial,
-and the art can neither overshoot nor undershoot a loot target. The one thing that does bind: a register
-needs at least as many regions as its tier has steps, or some steps uncover nothing. See
-`mosaic-art-prompt.md` for the per-register floors.
+`LEVEL_STEPS.length` = every journey's `levelCount × 2`, currently 252. Traced regions (~1870) are the
+polygons that uncover *per step*, so tracing granularity is a **visual** dial and the art can neither
+overshoot nor undershoot a loot target. The one thing that does bind: a register needs at least as many
+regions as its tier has steps, or some steps uncover nothing — see `mosaic-art-prompt.md` for the floors.
+`MOSAIC_TOTAL` and the tracer's `JOURNEY_LEVELS` are both derived from these sources rather than
+hand-synced; when they were copies they had already drifted (298 vs 252).
 
-The phase-3 capped pass still hard-fails if it can't place every piece, so per-tier panels do need each
-tier's step count to fit that tier's free-slot supply — but that is a `levelCount` question, not an art
-question.
+The phase-3 capped pass still hard-fails if it can't place every piece, so the mosaic total has to fit
+the world's free-slot supply — but that is a `levelCount` question, not an art question.
 
 ## 3.2 The constraint that picks the story shape
 
