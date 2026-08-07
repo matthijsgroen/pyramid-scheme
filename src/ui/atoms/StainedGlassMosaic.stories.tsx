@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { StainedGlassMosaic } from "./StainedGlassMosaic"
+import { StoneFrame } from "./StoneFrame"
 import { MOSAIC_PIECES } from "./mosaicPieces.generated"
 import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
 
@@ -88,9 +89,11 @@ export const RegisterByDifficulty: Story = {
             </button>
           ))}
         </div>
-        <div className="w-96">
-          <StainedGlassMosaic revealedPieces={revealed} />
-        </div>
+        <StoneFrame>
+          <div className="w-96">
+            <StainedGlassMosaic revealedPieces={revealed} />
+          </div>
+        </StoneFrame>
         <input
           type="range"
           min={0}

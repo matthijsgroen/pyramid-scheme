@@ -1,6 +1,7 @@
 import { type FC, useEffect, useMemo, useRef, useState } from "react"
 import { Page } from "@/ui/atoms/Page"
 import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
+import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "@/mods/mosaic/game/mosaicRevealOrder"
 import { useProgression } from "@/app/state/useProgression"
 import { useMosaicProgress } from "./useMosaicProgress"
@@ -54,12 +55,16 @@ export const MosaicPage: FC = () => {
 
   return (
     <Page className="flex flex-col bg-stone-950" snap="end">
-      <div ref={containerRef} className="h-full w-full">
-        <StainedGlassMosaic
-          className="h-full w-full"
-          revealedPieces={revealedPieceIds}
-          newPieces={isVisible ? newPieceIds : new Set()}
-        />
+      <div ref={containerRef} className="flex h-full w-full items-center justify-center p-2">
+        <StoneFrame className="h-full">
+          <div className="aspect-[200/347] h-full">
+            <StainedGlassMosaic
+              className="h-full"
+              revealedPieces={revealedPieceIds}
+              newPieces={isVisible ? newPieceIds : new Set()}
+            />
+          </div>
+        </StoneFrame>
       </div>
     </Page>
   )
