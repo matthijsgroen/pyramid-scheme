@@ -29,7 +29,10 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // currency (resolved to a `{ type: "fragmentSlot", prefers: <id> }` slot), never a baked
 // reward. Unified bucket grammar: `<currencyId>` prefers any instance of that currency,
 // `<currencyId>:<instanceId>` prefers one specific instance (see the placement solver).
-export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph"
+// "junk" is the plain-loot bucket the density settings already author as `end: "junk"` — naming it
+// here lets an explicitly authored section ask for the same thing, so the two authoring routes
+// share one vocabulary instead of the preference being reachable only via a density preset.
+export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph" | "junk"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
 // Structured gate — tomb-key references a perk by tomb journey ID + zero-based index

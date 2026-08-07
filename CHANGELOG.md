@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Loose coins are rarer and small change — the trinkets you sell are what pays for a stall's rarities.
 - Found riches barely cover what Fez's stalls charge: buying everything he sells means gathering nearly everything the world holds.
 - Loot fills treasure chests first, so a chest at the end of a side path is worth the walk — solved puzzles still hand you loose change.
+- Every junior journey has an old working off its second pyramid: an easy corridor an earlier expedition left behind, holding the plainest trinkets.
 
 ## 0.31.5 - 2026-08-02
 ### Changed

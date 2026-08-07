@@ -170,10 +170,6 @@ export const placeFragments = (
   }
   settleHarvest()
 
-  // Buckets owned by capped filler currencies (mosaic). Used to keep the gating worklist off
-  // author-tagged capped slots unless it has no other reachable choice (see the sort below).
-  const cappedBuckets = new Set(capped.map(c => c.bucket))
-
   // The real worklist queue (keys-and-locks-solver.md, "The placement algorithm"): seeded
   // from whatever's discovered blocking right now, grown after every placement as newly
   // reachable frontier reveals further locks. `queued` prevents duplicate enqueue; `satisfied`
@@ -232,17 +228,24 @@ export const placeFragments = (
         reach.reachableFloors.has(floorKey(s.ref)) &&
         s.wardKeys.every(k => ownedFacts.has(k)) &&
         (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
-      // Soft-avoid slots an author tagged for a capped currency (e.g. `end: "mosaic"`): a gating
-      // currency uses them only after untagged slots run out, so an authored capped-currency
-      // reservation survives whenever there's slack — without it, gating front-loads its pieces into
-      // the earliest reachable slots and starves an early tier of its reachable capped loot (a
-      // starter mosaic the player can't reach until the master-tier detector). Stable sort keeps the
-      // currency's own rank order within each group; still falls back to a tagged slot if that's all
-      // that's reachable, so placement never fails where it otherwise would.
+      // Soft-avoid slots an author tagged for a FILLER bucket — one no gating currency claims, i.e.
+      // capped filler (`end: "mosaic"`) or a dynamic distribution's (`end: "junk"`). A gating
+      // currency uses them only after untagged slots run out, so an authored filler reservation
+      // survives whenever there's slack — without it, gating front-loads its pieces into the
+      // earliest reachable slots and starves an early tier of its reachable filler loot (a starter
+      // mosaic unreachable until the master-tier detector; a starter tier whose junk corridors all
+      // end up holding fragments instead, leaving its collectibles stacked on one floor).
+      //
+      // Tags belonging to ANOTHER GATING currency are deliberately NOT avoided: those compete on
+      // the worklist's own terms, and holding back from them breaks the hieroglyph holdback
+      // guarantee (fragmentHoldback.spec.ts). Filler can't compete — it runs after — so only it
+      // needs the reservation. Stable sort keeps the currency's own rank order within each group;
+      // still falls back to a tagged slot if that's all that's reachable, so placement never fails
+      // where it otherwise would.
+      const reservedForFiller = (s: Slot) =>
+        s.preference !== undefined && !currencies.some(c => c.ownsBucket(s.preference!)) ? 1 : 0
       const ranked = [...currency.rank(slots.filter(eligible), demand)].sort(
-        (a, b) =>
-          (a.preference && cappedBuckets.has(a.preference) ? 1 : 0) -
-          (b.preference && cappedBuckets.has(b.preference) ? 1 : 0)
+        (a, b) => reservedForFiller(a) - reservedForFiller(b)
       )
 
       for (const slot of ranked) {
