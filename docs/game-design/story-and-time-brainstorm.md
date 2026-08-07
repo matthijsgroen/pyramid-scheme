@@ -226,12 +226,20 @@ The tier tie is then discarded twice: `mosaicCurrency` places an untyped `{ type
 any free slot anywhere, and the runtime reveal is count-based (`useMosaicProgress` holds one integer).
 So per-tier panels are mostly **honouring what the tracer already computed**, not new design.
 
-Three couplings to know:
-- `MOSAIC_TOTAL = 298` is hardcoded and must equal `LEVEL_STEPS.length` by hand — derive it instead.
-- The phase-3 capped pass **hard-fails** if it can't place every piece, so each panel's count must fit its
-  tier's free-slot supply. Piece count is an *output* of tracing granularity, so tune `MIN_PIXELS` to fit
-  the budget rather than authoring art to hit a number.
-- `JOURNEY_LEVELS` in the tracer is a hand-copied mirror of `journeys.ts` (`levelCount × 2`).
+Two couplings, both since derived from their sources rather than hand-synced (`mosaicCurrency.ts`,
+`traceMask.ts`): `MOSAIC_TOTAL` had to equal `LEVEL_STEPS.length` by hand and had already drifted (298 vs
+252), and `JOURNEY_LEVELS` in the tracer was a hand-copied mirror of `journeys.ts` (`levelCount × 2`).
+
+**What sets the collectible count is `journeys.ts`, not the art.** Pieces collected =
+`LEVEL_STEPS.length` = every journey's `levelCount × 2`. Traced regions are the polygons that uncover
+*per step* — ~1178 regions over 252 steps, ≈4.7 at a time — so tracing granularity is a **visual** dial,
+and the art can neither overshoot nor undershoot a loot target. The one thing that does bind: a register
+needs at least as many regions as its tier has steps, or some steps uncover nothing. See
+`mosaic-art-prompt.md` for the per-register floors.
+
+The phase-3 capped pass still hard-fails if it can't place every piece, so per-tier panels do need each
+tier's step count to fit that tier's free-slot supply — but that is a `levelCount` question, not an art
+question.
 
 ## 3.2 The constraint that picks the story shape
 
