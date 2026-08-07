@@ -14,6 +14,7 @@
     "build-storybook": "storybook build",
     "generate-pwa-assets": "pwa-assets-generator",
     "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
+    "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/ui/atoms/mosaicPieces.generated.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
     "verify-floors": "vitest run src/app/SiteMap/worldFloorAssembly.spec.ts",
     "world-info": "tsx scripts/worldInfo.ts",
