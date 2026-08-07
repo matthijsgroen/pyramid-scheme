@@ -8,15 +8,12 @@ import type { Difficulty } from "./difficultyLevels"
 
 export type SellableItem = { id: string; symbol: string; tier: MaterialTier }
 
-// Sell values are the economy's main dial: the shop's loot budget is a fixed money-equivalent
-// total (totalBuyable), so raising these buys the same budget with fewer, chunkier drops.
-// A divine trinket is ~1/3 of a wizard fragment — a find worth carrying to a shop, not dust.
 export const SELL_VALUE_BY_TIER: Record<MaterialTier, number> = {
-  stone: 25,
-  bronze: 50,
-  silver: 75,
-  gold: 100,
-  divine: 125,
+  stone: 10,
+  bronze: 20,
+  silver: 30,
+  gold: 40,
+  divine: 50,
 }
 
 export const SELLABLES_BY_TIER: Record<MaterialTier, SellableItem[]> = {

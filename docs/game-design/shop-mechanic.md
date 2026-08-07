@@ -46,11 +46,9 @@ All defined in `src/mods/shop/game/pricing.ts`:
   tier. Shops are revisitable — stock refreshes, a rare item persists
   until bought. A player can earn late and backtrack to an earlier shop,
   or save early for a pricier one.
-- **Income**: junk loot sell value (sellables, below) plus loose coins,
-  both placed to a fixed budget of 1.1× what all shop stock costs — a 10%
-  margin, so buying everything means finding nearly everything. Chests
-  carry that loot first, except a `PUZZLE_COIN_SHARE` slice held back for
-  loose coins on puzzle solves.
+- **Income**: puzzle-solve money drops (a seeded subset of puzzle
+  encounters grant loose money on solve) and junk loot sell value
+  (sellables, below).
 - **Sinks**: consumables (optional — also free-findable via puzzles) and
   all 13 rare collectibles (mandatory for 100% completion).
 - **Guard, enforced at world-gen time** (`src/worldGen/validate.ts`):
@@ -65,9 +63,7 @@ A `{type: "sellable", itemId}` reward adds the item to the player's
 ordinary inventory (`src/app/Inventory/useInventory.ts`) — it is **not**
 auto-converted to money on pickup. Selling is a deliberate action at any
 shop: `removeItem` + `addMoney(item.sellValue)`. Sell value is tiered by
-`MaterialTier` (`src/data/sellables.ts`): stone 25, bronze 50, silver 75,
-gold 100, divine 125. These values are the economy's main dial: the loot
-budget is a fixed money-equivalent total, so higher values mean fewer,
-chunkier drops for the same purchasing power. Sellables are junk loot found loose in corridors —
+`MaterialTier` (`src/data/sellables.ts`): stone 10, bronze 20, silver 30,
+gold 40, divine 50. Sellables are junk loot found loose in corridors —
 distinct from the 40 tomb treasures (`src/mods/tombTreasure/game/treasures.ts`); the two
 sets are never repurposed as each other.

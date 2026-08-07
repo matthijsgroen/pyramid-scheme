@@ -21,10 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The first stall you ever reach, he owns up to it being his and pitches what's on the counter. Later stalls get the short greeting.
 - Fez greets a shop as his own stall instead of as a customer.
 - What you sell at the stall is "trinkets", not "junk" — his offer, the sell section, the Collection category.
-- Trinkets are worth far more — 25 for a stone one up to 125 for a divine one — so you find fewer of them and each one matters.
-- Loose coins are rarer and small change — the trinkets you sell are what pays for a stall's rarities.
-- Found riches barely cover what Fez's stalls charge: buying everything he sells means gathering nearly everything the world holds.
-- Loot fills treasure chests first, so a chest at the end of a side path is worth the walk — solved puzzles still hand you loose change.
 
 ## 0.31.5 - 2026-08-02
 ### Changed

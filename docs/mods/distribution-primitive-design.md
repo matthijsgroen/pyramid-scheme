@@ -86,7 +86,7 @@ being separate frozen items.
 | trap, puzzle, shop encounters | encounter | trap / puzzle / shop mods | per-instance config |
 | keys / map pieces / hieroglyph | gating | core + hieroglyph mod | reachability worklist (unchanged) |
 | mosaic | capped | mosaic mod | exact footprint |
-| money **+** junk | dynamic | **shop mod** | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` = 1.1×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) up to `JUNK_SHARE`, then loose coins for the rest — chest slots first world-wide, minus a `PUZZLE_COIN_SHARE` tail reserved for puzzle solves. Shop off → not registered → no money/junk, leftover chests empty. |
+| money **+** junk | dynamic | **shop mod** | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` ≈ 1.5×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) then loose coins. Shop off → not registered → no money/junk, leftover chests empty. |
 | consumables | dynamic | **trap mod** | one Distribution; rarity trap-owned; `eligible` = expert+ puzzle slots; count is a mod-owned target |
 | empty | — | core | `emptyFraction` — a real knob (see below), % of loot-eligible slots reserved empty |
 
@@ -125,7 +125,7 @@ mod shifting existing placements) are a **separate session** — safe pre-releas
   shop's `fill` places ≥1 of each item per present material tier (hard-fail if a present tier can't
   cover its set); junk value is tier-fixed.
 - **Economy is a value budget, not byte-identical.** The shop's `fill` places money+junk toward
-  `1.1× totalBuyable` (income barely clears the sinks); the economy guard counts money AND sellable value across both
+  `[totalBuyable, 1.5× totalBuyable]`; the economy guard counts money AND sellable value across both
   end and puzzle slots. Validated by the guard + the fill's self-check.
 
 ## Open design questions
