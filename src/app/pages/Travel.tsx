@@ -15,6 +15,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 
 import { TableauInventory } from "./TableauInventory"
+import { availablePyramidJourneyIds } from "./journeyAvailability"
 import { useTombTreasureProgress } from "@/mods/tombTreasure/app/useTombTreasureProgress"
 
 export const TravelPage: FC<{
@@ -118,14 +119,17 @@ export const TravelPage: FC<{
     setShowInterruptModal(false)
   }
 
-  const unlocked = useMemo(() => {
-    return journeys.findIndex((_j, journeyIndex) => {
-      if (journeyIndex === 0) return false // Always unlock the first journey
-      const previousJourneyId = journeys[journeyIndex - 1]?.id
-      const hasPreviousCompleted = (getJourney(previousJourneyId)?.completionCount ?? 0) > 0
-      return !hasPreviousCompleted
-    })
-  }, [journeys, getJourney])
+  // Which pyramid expeditions are pickable: a tier is entered on holding one of its unlock
+  // treasures, and inside a tier they still open one at a time (see journeyAvailability).
+  const availableJourneyIds = useMemo(
+    () => availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
+    [journeys, heldKeys, getJourney]
+  )
+  // The newest one open to the player — the card that shows its details expanded.
+  const newestAvailableId = useMemo(
+    () => journeys.filter(j => availableJourneyIds.has(j.id)).at(-1)?.id,
+    [journeys, availableJourneyIds]
+  )
 
   const hasPendingMapPieceProgress = useMemo(() => {
     return journeys
@@ -256,8 +260,8 @@ export const TravelPage: FC<{
             </div>
             <div className="grid grid-cols-1 gap-4 px-6 pb-safe-bottom xl:grid-cols-2">
               {journeys.map((journey, index) => {
-                if (journey.type === "pyramid" && index >= unlocked) {
-                  // Skip pyramid journeys that are not yet unlocked
+                if (journey.type === "pyramid" && !availableJourneyIds.has(journey.id)) {
+                  // Skip pyramid journeys the player cannot pick yet
                   return null
                 }
                 if (
@@ -295,7 +299,7 @@ export const TravelPage: FC<{
                 return (
                   <JourneyCard
                     key={journey.id}
-                    showDetails={index === unlocked - 1}
+                    showDetails={journey.id === newestAvailableId}
                     journey={journey}
                     disabled={false}
                     completionCount={completionCount}

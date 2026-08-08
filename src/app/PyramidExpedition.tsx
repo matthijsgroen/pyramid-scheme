@@ -5,6 +5,7 @@ import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandle
 import { ExpeditionCompletionOverlay } from "@/app/PyramidExpedition/ExpeditionCompletionOverlay"
 import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
 import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
+import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
 import { getLevelWidth } from "@/game/state"
@@ -73,6 +74,8 @@ export const PyramidExpedition: FC<{
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
   const { setInteriorLevel } = useJourneys()
+  // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
+  const heldKeys = useMergedHeldKeys()
   const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   // Restore interior if player backed out mid-interior on a previous visit
@@ -248,7 +251,7 @@ export const PyramidExpedition: FC<{
 
   // Check if a new pyramid journey is unlocked (first time completing this journey)
   const nextPyramidJourneyId =
-    activeJourney.completionCount === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId) : undefined
+    activeJourney.completionCount === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId, heldKeys) : undefined
   const dayTime = dayNightCycleDayTime(
     activeJourney.levelNr,
     pyramidJourney.background.time,
