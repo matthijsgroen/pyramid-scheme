@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -964,8 +964,6 @@ export const SiteMapView = ({
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a
@@ -987,17 +985,18 @@ export const SiteMapView = ({
   const svgWidth = grid.cols * CELL + PAD * 2
   const svgHeight = grid.rows * CELL + PAD * 2
 
-  const { zoom, zoomHandlers } = useMapZoom(scrollRef)
+  const { scrollRef, sizerRef, mapRef, zoomRef, scrollHandlers } = useMapZoom(svgWidth, svgHeight)
 
   useEffect(() => {
-    if (!explorerPos || !scrollRef.current || !svgRef.current) return
+    if (!explorerPos || !scrollRef.current || !sizerRef.current) return
     const el = scrollRef.current
     const elRect = el.getBoundingClientRect()
-    const svgRect = svgRef.current.getBoundingClientRect()
-    // Origin accounts for the svg's own offset within the scroll area (e.g. safe-area padding, centering margin)
-    const originX = svgRect.left - elRect.left + el.scrollLeft
-    const originY = svgRect.top - elRect.top + el.scrollTop
+    const mapRect = sizerRef.current.getBoundingClientRect()
+    // Origin accounts for the map's own offset within the scroll area (e.g. safe-area padding, centering margin)
+    const originX = mapRect.left - elRect.left + el.scrollLeft
+    const originY = mapRect.top - elRect.top + el.scrollTop
     // Cell coordinates are in unzoomed SVG units; the rendered map is `zoom` times that size.
+    const zoom = zoomRef.current
     const x = originX + (PAD + explorerPos[1] * CELL + CELL / 2) * zoom
     const y = originY + (PAD + explorerPos[0] * CELL + CELL / 2) * zoom
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
@@ -1007,180 +1006,185 @@ export const SiteMapView = ({
   return (
     <div
       ref={scrollRef}
-      {...zoomHandlers}
+      {...scrollHandlers}
       className={`flex overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left${className ? ` ${className}` : ""}`}
     >
-      <svg
-        ref={svgRef}
-        width={svgWidth * zoom}
-        height={svgHeight * zoom}
-        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-        role="img"
-        aria-label="site map"
-        className="m-auto shrink-0"
-        style={{ background: "#110d08" }}
-      >
-        <defs>
-          <pattern id="stone" width={20} height={20} patternUnits="userSpaceOnUse">
-            <rect width={20} height={20} fill="#110d08" />
-            <rect x={0} y={0} width={10} height={10} fill="#130f09" />
-            <rect x={10} y={10} width={10} height={10} fill="#130f09" />
-          </pattern>
-        </defs>
-        <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
+      {/* Sizer: carries the zoomed footprint so the scroll extents are real, while the map itself
+          scales by transform — see useMapZoom. Its size is written there, never by React. */}
+      <div ref={sizerRef} className="m-auto shrink-0">
+        <svg
+          ref={mapRef}
+          width={svgWidth}
+          height={svgHeight}
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+          role="img"
+          aria-label="site map"
+          className="block"
+          style={{ background: "#110d08" }}
+        >
+          <defs>
+            <pattern id="stone" width={20} height={20} patternUnits="userSpaceOnUse">
+              <rect width={20} height={20} fill="#110d08" />
+              <rect x={0} y={0} width={10} height={10} fill="#130f09" />
+              <rect x={10} y={10} width={10} height={10} fill="#130f09" />
+            </pattern>
+          </defs>
+          <rect width={svgWidth} height={svgHeight} fill="url(#stone)" />
 
-        {Array.from({ length: grid.rows + 2 }, (_, ri) => {
-          const r = ri - 1
-          return Array.from({ length: grid.cols + 2 }, (_, ci) => {
-            const c = ci - 1
-            const cell = cellAt(grid, r, c)
-            const cx = PAD + c * CELL + CELL / 2
-            const cy = PAD + r * CELL + CELL / 2
-            const cellKey = `${r},${c}`
-            const claimOwnerKey = claims.claimedBy.get(cellKey)
+          {Array.from({ length: grid.rows + 2 }, (_, ri) => {
+            const r = ri - 1
+            return Array.from({ length: grid.cols + 2 }, (_, ci) => {
+              const c = ci - 1
+              const cell = cellAt(grid, r, c)
+              const cx = PAD + c * CELL + CELL / 2
+              const cy = PAD + r * CELL + CELL / 2
+              const cellKey = `${r},${c}`
+              const claimOwnerKey = claims.claimedBy.get(cellKey)
 
-            // A cell claimed by a neighboring room — genuine void (including one step
-            // outside the grid), or a corridor absorbed as a gate's approach or a
-            // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
-            // room, always, using the OWNER's state for the floor tint. The claim shape
-            // is a static function of the finished grid (independent of exploration
-            // progress), so the whole blob must render as a single visual unit — hiding
-            // a claimed corridor while its own fog state lags behind the owner's is what
-            // punched the "spotty" holes in an otherwise-explored room. Click/interaction
-            // still uses the corridor's own state, since it's a real, independently
-            // progressed passage for gameplay purposes even though it looks unified.
-            if (claimOwnerKey && (cell.type === "empty" || cell.type === "corridor")) {
-              const [ownerRow, ownerCol] = claimOwnerKey.split(",").map(Number)
-              const owner = grid.cells[ownerRow]?.[ownerCol]
-              if (!owner || owner.type !== "room" || owner.state === "fogged") return null
-              const state = owner.state
+              // A cell claimed by a neighboring room — genuine void (including one step
+              // outside the grid), or a corridor absorbed as a gate's approach or a
+              // diagonal's flank anchor (see buildRoomClaims) — renders as part of that
+              // room, always, using the OWNER's state for the floor tint. The claim shape
+              // is a static function of the finished grid (independent of exploration
+              // progress), so the whole blob must render as a single visual unit — hiding
+              // a claimed corridor while its own fog state lags behind the owner's is what
+              // punched the "spotty" holes in an otherwise-explored room. Click/interaction
+              // still uses the corridor's own state, since it's a real, independently
+              // progressed passage for gameplay purposes even though it looks unified.
+              if (claimOwnerKey && (cell.type === "empty" || cell.type === "corridor")) {
+                const [ownerRow, ownerCol] = claimOwnerKey.split(",").map(Number)
+                const owner = grid.cells[ownerRow]?.[ownerCol]
+                if (!owner || owner.type !== "room" || owner.state === "fogged") return null
+                const state = owner.state
+                const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
+                  Direction,
+                  boolean
+                >
+                const decoration = claims.decorationAt.get(cellKey)
+                const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
+                const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
+                const corridorClickable =
+                  cell.type === "corridor" &&
+                  onCellClick &&
+                  ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
+                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
+                return (
+                  <g
+                    key={cellKey}
+                    transform={`translate(${cx}, ${cy})`}
+                    onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
+                    style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                  >
+                    <FloorTile state={state} open={open} kind="room" />
+                    {cell.type === "corridor" &&
+                      (runTarget ? (
+                        <RunTargetArrow dir={runTarget.dir} />
+                      ) : (
+                        cell.state === "reachable" && isCorner && <ReachableDot />
+                      ))}
+                    {decoration && <DecorationGlyph kind={decoration} />}
+                  </g>
+                )
+              }
+
+              if (cell.type === "empty") return null
+              if (cell.state === "fogged") return null
+
               const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
                 Direction,
                 boolean
               >
-              const decoration = claims.decorationAt.get(cellKey)
-              const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
-              const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
-              const corridorClickable =
-                cell.type === "corridor" &&
-                onCellClick &&
-                ((cell.state === "reachable" || cell.state === "completed") && isCorner ? true : !!runTarget)
-              const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
-              return (
-                <g
-                  key={cellKey}
-                  transform={`translate(${cx}, ${cy})`}
-                  onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
-                  style={{ cursor: corridorClickable ? "pointer" : "default" }}
-                >
-                  <FloorTile state={state} open={open} kind="room" />
-                  {cell.type === "corridor" &&
-                    (runTarget ? (
+
+              if (cell.type === "corridor") {
+                const isCorner = isCorridorCorner(cell.dirs)
+                const runTarget = corridorRunTargets.get(cellKey)
+                // A visible run's near end has no corner of its own to click — it borrows the
+                // far corner's click target (see findCorridorRunTarget) so a long corridor
+                // that scrolls off screen still has something to tap right next to the player.
+                const corridorClickable =
+                  onCellClick &&
+                  (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
+                const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
+                return (
+                  <g
+                    key={`${r},${c}`}
+                    transform={`translate(${cx}, ${cy})`}
+                    onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
+                    style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                  >
+                    <FloorTile state={cell.state} open={open} kind="corridor" />
+                    {runTarget ? (
                       <RunTargetArrow dir={runTarget.dir} />
                     ) : (
                       cell.state === "reachable" && isCorner && <ReachableDot />
-                    ))}
-                  {decoration && <DecorationGlyph kind={decoration} />}
-                </g>
-              )
-            }
+                    )}
+                  </g>
+                )
+              }
 
-            if (cell.type === "empty") return null
-            if (cell.state === "fogged") return null
+              // room cell
+              const state = cell.state
+              const isCompleted = state === "completed"
+              // Only ever a pending-loot marker for a treasure room with a consumable reward — this
+              // guards against stale coordinates in pendingCells (e.g. left over from before a site
+              // was regenerated) painting the badge onto whatever room now occupies that cell.
+              const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+              // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
+              // "completed", so they never get the completed dim or the ✓ badge even though the
+              // entrance is always marked explored (useAssembledFloor) and used staircases complete.
+              const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
+              const isPending =
+                isCompleted &&
+                shapeKind === "treasure" &&
+                cell.reward?.type === "consumable" &&
+                (pendingCells?.has(`${r},${c}`) ?? false)
+              const clickable = onCellClick && (state === "reachable" || state === "completed")
+              const roomR = nodeRadius[shapeKind]
+              // Gating is soft: a locked gate is still "reachable" (clickable), so `state`
+              // doesn't distinguish locked from unlocked. Recover that purely cosmetic
+              // distinction here, independent of `state` —
+              // `displayState` feeds the floor tint and icon only, never clickability/badges.
+              const locked =
+                shapeKind === "gate" && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
+              const displayState: CellState = locked && state === "reachable" ? "visible" : state
 
-            const open = Object.fromEntries(ALL_DIRS.map(d => [d, isOpenSide(grid, claims, r, c, d)])) as Record<
-              Direction,
-              boolean
-            >
-
-            if (cell.type === "corridor") {
-              const isCorner = isCorridorCorner(cell.dirs)
-              const runTarget = corridorRunTargets.get(cellKey)
-              // A visible run's near end has no corner of its own to click — it borrows the
-              // far corner's click target (see findCorridorRunTarget) so a long corridor
-              // that scrolls off screen still has something to tap right next to the player.
-              const corridorClickable =
-                onCellClick && (((cell.state === "reachable" || cell.state === "completed") && isCorner) || !!runTarget)
-              const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
               return (
                 <g
                   key={`${r},${c}`}
                   transform={`translate(${cx}, ${cy})`}
-                  onClick={corridorClickable ? () => onCellClick(clickTarget[0], clickTarget[1]) : undefined}
-                  style={{ cursor: corridorClickable ? "pointer" : "default" }}
+                  onClick={clickable ? () => onCellClick(r, c) : undefined}
+                  style={{ cursor: clickable ? "pointer" : "default" }}
                 >
-                  <FloorTile state={cell.state} open={open} kind="corridor" />
-                  {runTarget ? (
-                    <RunTargetArrow dir={runTarget.dir} />
-                  ) : (
-                    cell.state === "reachable" && isCorner && <ReachableDot />
-                  )}
+                  <FloorTile state={displayState} open={open} kind="room" />
+                  <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : 1}>
+                    <NodeShape
+                      type={shapeKind}
+                      state={displayState}
+                      gateVariant={cell.gateVariant}
+                      keyColor={cell.keyColor}
+                      keyColors={cell.keyColors}
+                      difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                    />
+                  </g>
+                  {isCompleted &&
+                    !isPortal &&
+                    shapeKind !== "fork" &&
+                    (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
                 </g>
               )
-            }
+            })
+          })}
 
-            // room cell
-            const state = cell.state
-            const isCompleted = state === "completed"
-            // Only ever a pending-loot marker for a treasure room with a consumable reward — this
-            // guards against stale coordinates in pendingCells (e.g. left over from before a site
-            // was regenerated) painting the badge onto whatever room now occupies that cell.
-            const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
-            // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
-            // "completed", so they never get the completed dim or the ✓ badge even though the
-            // entrance is always marked explored (useAssembledFloor) and used staircases complete.
-            const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
-            const isPending =
-              isCompleted &&
-              shapeKind === "treasure" &&
-              cell.reward?.type === "consumable" &&
-              (pendingCells?.has(`${r},${c}`) ?? false)
-            const clickable = onCellClick && (state === "reachable" || state === "completed")
-            const roomR = nodeRadius[shapeKind]
-            // Gating is soft: a locked gate is still "reachable" (clickable), so `state`
-            // doesn't distinguish locked from unlocked. Recover that purely cosmetic
-            // distinction here, independent of `state` —
-            // `displayState` feeds the floor tint and icon only, never clickability/badges.
-            const locked =
-              shapeKind === "gate" && !!cell.requiredKeyId && !(ownedKeys?.has(cell.requiredKeyId) ?? false)
-            const displayState: CellState = locked && state === "reachable" ? "visible" : state
-
-            return (
-              <g
-                key={`${r},${c}`}
-                transform={`translate(${cx}, ${cy})`}
-                onClick={clickable ? () => onCellClick(r, c) : undefined}
-                style={{ cursor: clickable ? "pointer" : "default" }}
-              >
-                <FloorTile state={displayState} open={open} kind="room" />
-                <g opacity={isCompleted && !isPending && !isPortal ? 0.45 : 1}>
-                  <NodeShape
-                    type={shapeKind}
-                    state={displayState}
-                    gateVariant={cell.gateVariant}
-                    keyColor={cell.keyColor}
-                    keyColors={cell.keyColors}
-                    difficulty={wardKeyDifficulty(cell.requiredKeyId)}
-                  />
-                </g>
-                {isCompleted &&
-                  !isPortal &&
-                  shapeKind !== "fork" &&
-                  (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
-              </g>
-            )
-          })
-        })}
-
-        {explorerPos && (
-          <ExplorerDot
-            key={currentFloor}
-            grid={grid}
-            pos={explorerPos}
-            onArrive={() => setSettledExplorerPos(explorerPos)}
-          />
-        )}
-      </svg>
+          {explorerPos && (
+            <ExplorerDot
+              key={currentFloor}
+              grid={grid}
+              pos={explorerPos}
+              onArrive={() => setSettledExplorerPos(explorerPos)}
+            />
+          )}
+        </svg>
+      </div>
     </div>
   )
 }
