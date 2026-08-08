@@ -69,7 +69,7 @@ const Harness = ({ initialOwned = zero() }: { initialOwned?: TierCounts }) => {
   )
 }
 
-// Nothing found yet: a dark window and no button.
+// Nothing found yet: a dark window, the place button holding its space but hidden.
 export const Empty: Story = { render: () => <Harness /> }
 
 // A handful in hand — tap "Place" and watch them cascade in, lowest register first.

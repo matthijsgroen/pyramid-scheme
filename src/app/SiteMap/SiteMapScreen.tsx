@@ -1,13 +1,13 @@
 import { use, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
-import { getFamilyPlugin, resolveEncounter, type FamilyContext } from "@/app/families/familyRegistry"
+import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
 import type { SiteConfig, TreasureReward } from "@/game/siteTypes"
-import { assembleFloor } from "@/game/siteAssembler"
 import { SiteMapView } from "./SiteMapView"
-import { useAssembledFloor, encodeEdge, decodeEdge } from "./useAssembledFloor"
+import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
+import { floorOfPosition, stairPeerPosition } from "./stairTravel"
 import { computeFloorExploration } from "./floorExploration"
 import { RewardFlow } from "./RewardFlow"
 import { useApplyReward } from "./applyReward"
@@ -28,6 +28,7 @@ import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorToggles } from "@/ui/atoms/DetectorToggles"
 import { BackButton } from "@/ui/atoms/BackButton"
+import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
@@ -67,13 +68,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     return (id: string) => names[id] ?? id
   }, [translatedJourneys])
 
-  const [currentFloor, setCurrentFloor] = useState(() => {
-    const pos = journeyState?.position
-    if (!pos) return 0
-    const [floor] = decodeEdge(pos)
-    return Math.min(floor, siteConfig.length - 1)
-  })
-  const floorConfig = siteConfig[Math.min(currentFloor, siteConfig.length - 1)]
+  const currentFloor = floorOfPosition(journeyState?.position, siteConfig.length)
+  const floorConfig = siteConfig[currentFloor]
 
   // Reveal set = the hidden corridors already found (§7.2). Reaching a corridor's bordering junction
   // both marks it found (the effect below) AND reveals it: fed to useAssembledFloor as revealedSections,
@@ -170,6 +166,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     onCollect: () => void
   } | null>(null)
   const [exiting, setExiting] = useState(false)
+  const [exitPrompt, setExitPrompt] = useState(false)
 
   const [scheduleArrival] = useTimeout()
 
@@ -254,6 +251,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     if (activeEncounter && encounterFamily == null) genericHandleSolved(activeEncounter.pos)
   }, [activeEncounter, encounterFamily, genericHandleSolved])
 
+  // How long the explorer dot takes to walk from where it stands to the clicked cell — anything
+  // that happens "on arrival" waits this out (ExplorerDot's own step duration is 120ms).
+  const walkDelay = useCallback(
+    (row: number, col: number) =>
+      grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
+    [grid, explorerPos]
+  )
+
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       if (!grid) return
@@ -264,24 +269,20 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
 
-      // A staircase teleports between floors regardless of the cell's state — handled BEFORE the
-      // completed-cell block below. The entrance stairhead you arrive on (and any up-staircase after
-      // its first use) is marked "completed", so without this the completed block would just
-      // reposition the player and swallow the click, blocking back-travel down a staircase.
+      // A staircase carries the player between floors regardless of the cell's state — handled
+      // BEFORE the completed-cell block below. The entrance stairhead you arrive on (and any
+      // up-staircase after its first use) is marked "completed", so without this the completed
+      // block would just reposition the player and swallow the click, blocking back-travel down a
+      // staircase. The walk to the stairhead runs first; the floor only changes once the explorer
+      // has actually reached the stairs.
       if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
         journeys.markCellExplored(sectionHash, edgeId)
+        journeys.updatePosition(journeyId, edgeId)
         const stairId = cell.stairId
-        for (let fi = 0; fi < siteConfig.length; fi++) {
-          if (fi === currentFloor) continue
-          const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter)
-          if (!result.success) continue
-          const peerPos = result.grid.staircases[stairId]
-          if (peerPos) {
-            journeys.updatePosition(journeyId, encodeEdge(fi, peerPos[0], peerPos[1]))
-            setCurrentFloor(fi)
-            break
-          }
-        }
+        scheduleArrival(walkDelay(row, col), () => {
+          const peer = stairPeerPosition(journeyId, siteConfig, seed, stairId, currentFloor)
+          if (peer) journeys.updatePosition(journeyId, encodeEdge(peer.floor, peer.pos[0], peer.pos[1]))
+        })
         return
       }
 
@@ -294,7 +295,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           cell.type === "room" &&
           !!cell.stock?.some((item, j) => item && !journeys.getPurchasedShopSlots(journeyId).has(`${edgeId}#${j}`))
         if (shopHasUnclaimedStock) {
-          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
+          scheduleArrival(walkDelay(row, col), () =>
             setActiveEncounter({ pos: [row, col], freshArrival: !alreadyStandingHere })
           )
           return
@@ -305,7 +306,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           journeys.getSkippedConsumables(journeyId).has(edgeId)
         ) {
           const reward = cell.reward
-          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () => {
+          scheduleArrival(walkDelay(row, col), () => {
             if (!rewardContributions.canAccept(reward)) {
               setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
               return
@@ -335,9 +336,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         journeys.updatePosition(journeyId, edgeId)
       } else if (cell.roomType === "encounter") {
         journeys.updatePosition(journeyId, edgeId)
-        scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-          setActiveEncounter({ pos: [row, col], freshArrival: true })
-        )
+        scheduleArrival(walkDelay(row, col), () => setActiveEncounter({ pos: [row, col], freshArrival: true }))
       } else if (cell.roomType === "portal") {
         // Staircase portals (with a stairId) are handled by the early teleport guard above; here a
         // portal is either this floor's own entrance (reposition only) or a real exit (leave the site).
@@ -345,10 +344,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           journeys.markCellExplored(sectionHash, edgeId)
           journeys.updatePosition(journeyId, edgeId)
         } else {
+          // An exit is a chamber the player steps into, not a trapdoor: arriving asks whether to
+          // leave, so walking into one that was off-screen doesn't end the expedition by itself.
           journeys.updatePosition(journeyId, edgeId)
-          scheduleArrival(Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100, () =>
-            setExiting(true)
-          )
+          scheduleArrival(walkDelay(row, col), () => setExitPrompt(true))
         }
       }
     },
@@ -360,6 +359,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       rewardContributions,
       applyReward,
       explorerPos,
+      walkDelay,
       scheduleArrival,
       seed,
       siteConfig,
@@ -456,6 +456,21 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           )}
         </div>
       </SiteHudBar>
+      {/* ponytail: plain confirm dialog for now — the exit chamber's own artwork (daylight through
+          the doorway) can take over this step later without moving the decision. */}
+      <ConfirmModal
+        isOpen={exitPrompt}
+        title={t("ui.leaveSiteTitle")}
+        message={t("ui.leaveSiteMessage")}
+        confirmText={t("ui.leaveSiteConfirm")}
+        cancelText={t("ui.leaveSiteCancel")}
+        confirmButtonClass="bg-amber-600 hover:bg-amber-700"
+        onConfirm={() => {
+          setExitPrompt(false)
+          setExiting(true)
+        }}
+        onCancel={() => setExitPrompt(false)}
+      />
       {exiting && (
         <EntranceTransitionOverlay
           origin="50% 50%"

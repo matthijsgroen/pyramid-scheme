@@ -1,5 +1,6 @@
 import { type FC, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
+import clsx from "clsx"
 import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { MOSAIC_TIERS, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
@@ -68,23 +69,27 @@ export const MosaicWindow: FC<{
 
   return (
     <>
-      <div className="flex min-h-0 flex-1 items-center justify-center p-2">
-        <StoneFrame className="h-full">
-          <div className="aspect-[200/347] h-full">
-            <StainedGlassMosaic className="h-full" revealedPieces={revealed} newPieces={justPlaced} />
-          </div>
+      {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
+          width the panel's own aspect ratio allows at the space's height. Height alone overflowed
+          a narrow phone sideways whenever the row below happened to be short. */}
+      <div className="flex min-h-0 flex-1 items-center justify-center p-2 [container-type:size]">
+        <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
+          <StainedGlassMosaic revealedPieces={revealed} newPieces={justPlaced} />
         </StoneFrame>
       </div>
       <div className="flex shrink-0 flex-col items-center gap-2 py-2">
-        {carriedTotal > 0 && (
-          <button
-            onClick={() => setPlacing(true)}
-            disabled={placing}
-            className="rounded-full bg-amber-600 px-6 py-2 font-bold text-white shadow-lg disabled:opacity-70"
-          >
-            {placing ? t("mosaic.placing") : t("mosaic.place", { count: carriedTotal })}
-          </button>
-        )}
+        {/* Kept in the layout with nothing in hand: the window resizes to whatever height is left,
+            so a button appearing and disappearing would resize the mosaic under the player. */}
+        <button
+          onClick={() => setPlacing(true)}
+          disabled={placing || carriedTotal === 0}
+          className={clsx(
+            "rounded-full bg-amber-600 px-6 py-2 font-bold text-white shadow-lg disabled:opacity-70",
+            carriedTotal === 0 && "invisible"
+          )}
+        >
+          {placing ? t("mosaic.placing") : t("mosaic.place", { count: carriedTotal })}
+        </button>
         {/* A finished scene keeps its name, and the name is the way back to what Fez said about it. */}
         <div className="flex flex-wrap items-center justify-center gap-2">
           {completedTiers(placed).map(tier => (
