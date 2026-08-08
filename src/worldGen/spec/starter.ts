@@ -77,7 +77,6 @@ export const starterRules: Rule[] = [
     .floor(1, {
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
-      difficulty: "junior",
       sideSections: [sidePath({ puzzles: 1 })],
     }),
 
@@ -105,7 +104,7 @@ export const starterRules: Rule[] = [
     .floor(1, {
       mainEndReward: "mosaicPiece",
       pathPuzzles: 2,
-      difficulty: "expert",
+      difficulty: "junior",
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 4, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 
@@ -120,7 +119,7 @@ export const starterRules: Rule[] = [
     })
     .floor(1, {
       pathPuzzles: 3,
-      difficulty: "master",
+      difficulty: "expert",
       sideSections: [sidePath({ puzzles: 1 }), hiddenPath({ puzzles: 2, encounter: "trap", endReward: "mosaicPiece" })],
     }),
 

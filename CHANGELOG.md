@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - A tableau slot shows why it is empty: a hieroglyph you are still collecting appears as a stone carved only as far as its fragments reach, with its fragment count, instead of looking like an open socket you could fill.
+### Fixed
+- A ward door opens onto a floor as hard as the key that opened it. The first treasure of the starter tomb opened a junior floor in the onboarding pyramid, paying out junior mosaic glass before you had set foot in a junior expedition; two more starter pyramids handed out expert and master loot the same way.
 
 ## 0.33.0 - 2026-08-08
 ### Added
