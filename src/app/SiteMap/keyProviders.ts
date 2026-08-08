@@ -15,6 +15,32 @@ export const registerHeldKeysProvider = (useKeys: UseHeldKeys) => registry.push(
 // Calls each provider hook in a fixed order (the registry is populated once at module load — each
 // mod's app entrypoint pushes exactly once — so the hooks run in the same order every render,
 // rules-of-hooks safe) and unions them into one set of held key ids.
+// How a mod says what one of its keys LOOKS like — the sign a locked door carries, so a ward gate
+// can show which key opens it without core knowing that a key id is a tomb treasure. Same
+// hook-shaped seam as the held-keys providers above; a provider returns undefined for any key it
+// doesn't own, and the merged lookup takes the first owner's answer.
+export type KeyDisplay = { symbol: string }
+export type UseKeyDisplay = () => (keyId: string) => KeyDisplay | undefined
+
+const displayRegistry: UseKeyDisplay[] = []
+
+export const registerKeyDisplay = (useDisplay: UseKeyDisplay) => displayRegistry.push(useDisplay)
+
+export const useMergedKeyDisplay = (): ((keyId: string) => KeyDisplay | undefined) => {
+  const lookups: ((keyId: string) => KeyDisplay | undefined)[] = []
+  for (const useDisplay of displayRegistry) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- stable registry order; see above
+    lookups.push(useDisplay())
+  }
+  return keyId => {
+    for (const lookup of lookups) {
+      const display = lookup(keyId)
+      if (display) return display
+    }
+    return undefined
+  }
+}
+
 export const useMergedHeldKeys = (): ReadonlySet<string> => {
   const sets: ReadonlySet<string>[] = []
   for (const useKeys of registry) {

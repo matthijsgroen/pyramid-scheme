@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- A ward door carries the sign of the treasure that opens it, so you can see which key it wants — the same glyph that treasure shows in the Collection.
+
 ### Changed
 - A tomb treasure opens the next difficulty: hold any one of a tomb's four unlock treasures and that tier's first expedition is yours, without finishing the tomb run first.
 
