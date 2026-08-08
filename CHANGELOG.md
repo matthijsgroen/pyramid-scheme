@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A ward door carries the sign of the treasure that opens it, so you can see which key it wants — the same glyph that treasure shows in the Collection.
 
+### Changed
+- A tomb treasure opens the next difficulty: hold any one of a tomb's four unlock treasures and that tier's first expedition is yours, without finishing the tomb run first.
+
 ## 0.32.1 - 2026-08-08
 ### Changed
 - Finding a tomb treasure says what it does for you — the same bonus line the Collection shows.
