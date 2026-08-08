@@ -1,0 +1,8 @@
+# Two branches almost always add their entries to the same spot — the top of ## Unreleased — which
+# git reads as a conflict on every second PR. `union` keeps both sides' lines instead of stopping:
+# git's own built-in driver, no local setup, and GitHub applies it to PR merges too.
+#
+# The cost is that a merged Unreleased can end up with a heading twice (two `### Fixed` blocks) or
+# entries interleaved out of order. Both are harmless to read and a one-line tidy at release time —
+# strictly better than hand-resolving conflict markers on a file where both sides are always right.
+CHANGELOG.md merge=union
