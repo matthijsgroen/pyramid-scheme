@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- A ward door opens onto a floor as hard as the key that opened it. The first treasure of the starter tomb opened a junior floor in the onboarding pyramid, paying out junior mosaic glass before you had set foot in a junior expedition; two more starter pyramids handed out expert and master loot the same way.
 
 ## 0.33.0 - 2026-08-08
 ### Added
