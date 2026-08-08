@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import { registerFamily, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
 import { KEY_GATE_META } from "@/mods/core/game/keyGate/meta"
 import { wardKeyDifficulty } from "@/data/difficultyLevels"
+import { useMergedKeyDisplay } from "@/app/SiteMap/keyProviders"
 
 type KeyGatePuzzle = { satisfied: boolean }
 
@@ -19,6 +20,8 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
   // A ward (tomb-key) gate carries the flavor of the tier that sealed it (merchant, noble, ...),
   // derived from its key's difficulty. Floor-key/color gates have no such theme.
   const wardDifficulty = ctx.gateVariant === "tomb-key" ? wardKeyDifficulty(ctx.requiredKeyId) : undefined
+  const keyDisplay = useMergedKeyDisplay()
+  const keySymbol = ctx.requiredKeyId ? keyDisplay(ctx.requiredKeyId)?.symbol : undefined
   return (
     <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-6 bg-black/85">
       <p className="font-pyramid text-2xl text-amber-300">{t("gate.title")}</p>
@@ -26,6 +29,15 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
         <p className="max-w-xs text-center text-sm text-stone-400 italic">
           {t(`gate.wardDescription.${wardDifficulty}`)}
         </p>
+      )}
+      {/* The sign cut into the door: the key's own symbol, so a locked door says WHICH key it wants
+          — the same glyph that treasure wears in the Collection. Mod-supplied (see keyProviders);
+          a key whose owner has no symbol for it simply shows no mark. */}
+      {keySymbol && (
+        <div className="flex flex-col items-center gap-1">
+          <p className="text-sm text-stone-400">{t("gate.markedWith")}</p>
+          <span className="font-mono text-5xl text-amber-200">{keySymbol}</span>
+        </div>
       )}
       <p className="text-sm text-stone-300">{satisfied ? t("gate.unlocked") : t("gate.locked")}</p>
       <div className="flex flex-col items-center gap-3">

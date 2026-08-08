@@ -1,10 +1,11 @@
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
-import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
+import { registerHeldKeysProvider, registerKeyDisplay } from "@/app/SiteMap/keyProviders"
 import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
 import { isModEnabled } from "@/mods/registeredMods"
 import { TREASURE_PERKS } from "../game/treasurePerks"
+import { treasureDisplayByKeyId } from "../game/treasures"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
 import { registerTombTreasureRewardDisplay } from "./rewardDisplay"
 import { TombTreasureCollectionSection } from "./TombTreasureCollectionSection"
@@ -42,6 +43,12 @@ if (isModEnabled("tomb-treasure")) {
     }
   })
   registerHeldKeysProvider(() => useTombTreasureProgress().tombKeyIds)
+  // A ward key IS a treasure, so a door sealed with one carries that treasure's sign — the same
+  // glyph its Collection slot shows, which is how the player recognizes what they're missing.
+  registerKeyDisplay(() => keyId => {
+    const treasure = treasureDisplayByKeyId[keyId]
+    return treasure ? { symbol: treasure.symbol } : undefined
+  })
   // The 5 per-difficulty treasure groups. Ordered first (before hieroglyph=20 / shop=30) — ward
   // treasures are the most valuable collectibles (ward keys + their perks). "Collected" = own the
   // tombKey; drops out of the Collection screen when the mod is off.

@@ -102,6 +102,7 @@
   "gate": {
     "title": "🔒 Locked Gate",
     "locked": "You don't have the right key yet.",
+    "markedWith": "A sign is cut into the door:",
     "unlocked": "You have the key.",
     "pass": "Pass through",
     "turnAround": "Turn around",

@@ -102,6 +102,7 @@
   "gate": {
     "title": "🔒 Gesloten Poort",
     "locked": "Je hebt de juiste sleutel nog niet.",
+    "markedWith": "In de deur staat een teken gekerfd:",
     "unlocked": "Je hebt de sleutel.",
     "pass": "Doorgaan",
     "turnAround": "Omdraaien",
