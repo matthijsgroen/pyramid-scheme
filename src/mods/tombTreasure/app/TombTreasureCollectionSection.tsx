@@ -1,14 +1,13 @@
 import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 import { difficulties } from "@/data/difficultyLevels"
-import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
 import { CATEGORY_BY_DIFFICULTY, difficultyTreasures, keyIdByTreasureId } from "../game/treasures"
-import { TREASURE_PERKS } from "../game/treasurePerks"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
+import { useTreasurePerkLabel } from "./useTreasurePerkLabel"
 
 // The tomb-treasure mod's Collection contribution: the 40 tomb treasures in 5 per-difficulty
 // groups. "Collected" = owning that treasure's tombKey (no inventory item). Each collected slot
@@ -19,20 +18,7 @@ import { useTombTreasureProgress } from "./useTombTreasureProgress"
 export const TombTreasureCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
   const { t } = useTranslation(["common", "treasures"])
   const { tombKeyIds } = useTombTreasureProgress()
-  const { describe } = useMergedPerkContributions()
-
-  // The treasure's perk bonus line: an owned stat/detector perk speaks for itself via the merged
-  // describe; tier-unlock/location-key are described here (no perk owner); `none`/unknown blank.
-  const bonusFor = (keyId: string): string | undefined => {
-    const perk = TREASURE_PERKS[keyId]
-    if (!perk) return undefined
-    const owned = describe(perk)
-    if (owned) return owned.label
-    if (perk.type === "tier-unlock")
-      return t("perks.tier-unlock", { ns: "treasures", tier: t(`difficulty.${perk.tier}`, { ns: "common" }) })
-    if (perk.type === "location-key") return t("perks.location-key", { ns: "treasures" })
-    return undefined
-  }
+  const bonusFor = useTreasurePerkLabel()
 
   return (
     <>

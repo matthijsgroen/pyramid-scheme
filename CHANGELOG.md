@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Finding a tomb treasure says what it does for you — the same bonus line the Collection shows.
+
 ### Fixed
 - Pinch-zooming the site map is smooth, and zooms toward your fingers instead of the middle of the screen.
+- Tapping something in the Collection shows its details again, instead of only for players holding a trinket.
 
 ## 0.32.0 - 2026-08-08
 ### Added

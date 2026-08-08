@@ -13,6 +13,11 @@ vi.mock("./useTombTreasureProgress", () => ({
   useTombTreasureProgress: () => ({ mapPieceProgress: () => progress }),
 }))
 
+// Stands in for the perk line; its own wording is covered in useTreasurePerkLabel.spec.
+vi.mock("./useTreasurePerkLabel", () => ({
+  useTreasurePerkLabel: () => (keyId: string) => (keyId === "junior_a_2" ? undefined : "perk:" + keyId),
+}))
+
 // Identity `t`, with the interpolation payload appended so the assertions can see which tomb string
 // was asked for and with what values.
 const t = (key: string, opts?: Record<string, unknown>) => {
@@ -110,5 +115,36 @@ describe("map-piece reward display", () => {
     const text = rewardText({ type: "mapPiece", tombId: "expert_treasure_tomb_b" }, t)
     expect(text.itemName).toBe("chest.mapPiece")
     expect(text.itemDescription).toBe("chest.mapPieceDescription")
+  })
+})
+
+// The perk line's own wording is covered in useTreasurePerkLabel.spec; here it stands in for
+// "whatever that treasure's perk reads as", so these cases are about what the popup does with it.
+describe("tomb-treasure reward display", () => {
+  const tombKeyDisplay = (keyId: string, translate = t): RewardDisplay => {
+    const { result } = renderHook(() => useMergedRewardDisplays())
+    const build = result.current.tombKey
+    if (!build) throw new Error("no tombKey display registered")
+    return build({ type: "tombKey", keyId }, translate)
+  }
+
+  it("says what the treasure does for you, alongside what it is", () => {
+    const display = tombKeyDisplay("starter_a_2")
+    expect(display.itemName).toBe("merchantCache.t2.name")
+    expect(display.itemDescription).toBe("merchantCache.t2.description")
+    expect(display.itemEffectDescription).toBe("perk:starter_a_2")
+  })
+
+  it("marks a treasure that opens a tier or another tomb as legendary", () => {
+    expect(tombKeyDisplay("starter_a_1").rarity).toBe("legendary") // tier-unlock
+    expect(tombKeyDisplay("expert_a_2").rarity).toBe("legendary") // location-key
+  })
+
+  it("keeps a plain perk treasure at epic", () => {
+    expect(tombKeyDisplay("starter_a_3").rarity).toBe("epic")
+  })
+
+  it("falls back to the generic key label for a keyId with no catalog treasure", () => {
+    expect(tombKeyDisplay("not_a_treasure").itemName).toBe("chest.tombKey")
   })
 })

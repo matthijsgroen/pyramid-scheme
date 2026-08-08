@@ -3,7 +3,9 @@ import { registerRewardDisplays, type RewardDisplayFn } from "@/app/SiteMap/rewa
 import { journeys } from "@/data/journeys"
 import { MapPieceIcon } from "@/ui/molecules/MapPieceIcon"
 import { treasureDisplayByKeyId } from "../game/treasures"
+import { TREASURE_PERKS } from "../game/treasurePerks"
 import { useTombTreasureProgress } from "./useTombTreasureProgress"
+import { useTreasurePerkLabel } from "./useTreasurePerkLabel"
 import { mapPieceSchema, tombKeySchema } from "./rewardSchemas"
 
 // The map-piece / tomb-key rewards' synchronous popup text/emoji (used by the generic RewardFlow
@@ -46,7 +48,32 @@ const tombName = (tombId: string) => journeys.find(j => j.id === tombId)?.name
 
 const useTombTreasureRewardDisplays = (): Partial<Record<string, RewardDisplayFn>> => {
   const { mapPieceProgress } = useTombTreasureProgress()
+  const perkLabel = useTreasurePerkLabel()
   return {
+    // A tomb treasure's whole point is what it does for you, and that used to be readable only
+    // later, in the Collection. The popup now carries the same perk line, worded identically.
+    tombKey: (reward, t) => {
+      const { keyId } = tombKeySchema.parse(reward)
+      const perk = TREASURE_PERKS[keyId]
+      const info = treasureDisplayByKeyId[keyId]
+      // Opening a tier or another tomb changes where you can go next, which outranks a stat bump.
+      const rarity = perk?.type === "tier-unlock" || perk?.type === "location-key" ? "legendary" : "epic"
+      if (!info) {
+        return {
+          rarity,
+          itemName: t("chest.tombKey"),
+          itemEffectDescription: perkLabel(keyId),
+          ItemVisual: <span className="text-6xl">🗝</span>,
+        }
+      }
+      return {
+        rarity,
+        itemName: t(`${info.category}.${info.treasureId}.name`, { ns: "treasures" }),
+        itemDescription: t(`${info.category}.${info.treasureId}.description`, { ns: "treasures" }),
+        itemEffectDescription: perkLabel(keyId),
+        ItemVisual: <span className="text-6xl">{info.symbol}</span>,
+      }
+    },
     mapPiece: (reward, t) => {
       const { tombId } = mapPieceSchema.parse(reward)
       const progress = mapPieceProgress(tombId)

@@ -27,8 +27,15 @@ const DetailPanel: FC<{
       {item ? (
         <div className="flex flex-col items-start gap-4">
           <div className="flex flex-row items-start gap-3">
+            {/* A tile needs a difficulty to pick its stone; an item whose section carries none and
+                whose id isn't a hieroglyph shows its plain symbol rather than taking the page down
+                with it — HieroglyphTile throws on a symbol with no difficulty. */}
             <div className="flex-shrink-0">
-              <HieroglyphTile symbol={item.symbol} difficulty={difficulty ?? undefined} size="lg" disabled={false} />
+              {difficulty ? (
+                <HieroglyphTile symbol={item.symbol} difficulty={difficulty} size="lg" disabled={false} />
+              ) : (
+                <span className="font-mono text-4xl">{item.symbol}</span>
+              )}
             </div>
             <div className="flex flex-col">
               <h3 className="font-pyramid text-xl font-bold text-gray-900">{item.name}</h3>
@@ -77,8 +84,6 @@ export const CollectionPage: FC = () => {
     setSelectedItem(item)
   }
 
-  const hasCollectedItems = Object.values(inventory).some(value => value !== undefined)
-
   return (
     <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="center">
       <div className="relative flex-1 overflow-y-auto p-6">
@@ -93,13 +98,14 @@ export const CollectionPage: FC = () => {
             <section.Component key={section.id} selectedItem={selectedItem} onSelect={handleItemClick} />
           ))}
         </div>
-        {hasCollectedItems && (
-          <DetailPanel
-            item={selectedItem}
-            debug={isDevelopMode}
-            onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
-          />
-        )}
+        {/* Always present: most of what the Collection shows isn't an inventory item at all — a
+            finished hieroglyph is fragments, a tomb treasure is a held key, mosaic glass is a
+            ledger count — so gating this panel on the inventory left those tapping into silence. */}
+        <DetailPanel
+          item={selectedItem}
+          debug={isDevelopMode}
+          onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
+        />
       </div>
     </Page>
   )
