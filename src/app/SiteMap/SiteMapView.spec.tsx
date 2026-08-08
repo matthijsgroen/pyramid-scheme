@@ -2,6 +2,7 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, WALL_THICKNESS } from "./mapScale"
+import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 
 // PAD === CELL in SiteMapView, so a cell at (row, col) always centers at this pixel —
@@ -361,5 +362,108 @@ describe("SiteMapView — long corridor click target", () => {
 
     rerender(<SiteMapView grid={grid} explorerPos={[0, 2]} />)
     expect(findCell(container, cellCenter(0, 1).cx, cellCenter(0, 1).cy)?.querySelector("polygon")).toBeNull()
+  })
+})
+
+describe("SiteMapView — zoom", () => {
+  Element.prototype.scrollTo = vi.fn()
+
+  const svgSize = (container: HTMLElement) => {
+    const svg = container.querySelector("svg")!
+    return { width: Number(svg.getAttribute("width")), height: Number(svg.getAttribute("height")) }
+  }
+  const scrollArea = (container: HTMLElement) => container.querySelector("div")!
+
+  const wheel = (container: HTMLElement, deltaY: number, times = 1) => {
+    for (let i = 0; i < times; i++) {
+      fireEvent.wheel(scrollArea(container), { deltaY, ctrlKey: true, clientX: 0, clientY: 0 })
+    }
+  }
+
+  const twoByTwo = () =>
+    makeGrid([
+      [room("reachable"), room("reachable")],
+      [room("reachable"), room("reachable")],
+    ])
+
+  it("scales the map up on a ctrl + wheel zoom-in, keeping its proportions", () => {
+    const { container } = render(<SiteMapView grid={twoByTwo()} />)
+    const before = svgSize(container)
+
+    wheel(container, -100)
+
+    const after = svgSize(container)
+    expect(after.width).toBeGreaterThan(before.width)
+    expect(after.width / after.height).toBeCloseTo(before.width / before.height)
+  })
+
+  it("leaves a plain wheel to scroll the map instead of zooming it", () => {
+    const { container } = render(<SiteMapView grid={twoByTwo()} />)
+    const before = svgSize(container)
+
+    fireEvent.wheel(scrollArea(container), { deltaY: -100, clientX: 0, clientY: 0 })
+
+    expect(svgSize(container)).toEqual(before)
+  })
+
+  it("stops zooming at the limits, so the map can't be lost off either end", () => {
+    const { container } = render(<SiteMapView grid={twoByTwo()} />)
+    const unzoomed = svgSize(container)
+
+    wheel(container, -400, 20)
+    expect(svgSize(container).width).toBeCloseTo(unzoomed.width * MAX_ZOOM)
+
+    wheel(container, 400, 40)
+    expect(svgSize(container).width).toBeCloseTo(unzoomed.width * MIN_ZOOM)
+  })
+})
+
+describe("SiteMapView — pinch zoom", () => {
+  Element.prototype.scrollTo = vi.fn()
+
+  const svgWidth = (container: HTMLElement) => Number(container.querySelector("svg")!.getAttribute("width"))
+  const scrollArea = (container: HTMLElement) => container.querySelector("div")!
+  const fingers = (spread: number) => [
+    { clientX: 100 - spread, clientY: 100 },
+    { clientX: 100 + spread, clientY: 100 },
+  ]
+
+  it("grows the map as two fingers spread apart", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+    const before = svgWidth(container)
+
+    fireEvent.touchStart(scrollArea(container), { touches: fingers(50) })
+    fireEvent.touchMove(scrollArea(container), { touches: fingers(100) })
+
+    expect(svgWidth(container)).toBeCloseTo(before * 2)
+  })
+
+  it("ignores a one-finger drag, which still scrolls the map", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+    const before = svgWidth(container)
+
+    fireEvent.touchStart(scrollArea(container), { touches: [{ clientX: 100, clientY: 100 }] })
+    fireEvent.touchMove(scrollArea(container), { touches: [{ clientX: 140, clientY: 100 }] })
+
+    expect(svgWidth(container)).toBe(before)
+  })
+})
+
+describe("SiteMapView — zoom reset", () => {
+  Element.prototype.scrollTo = vi.fn()
+
+  const svgWidth = (container: HTMLElement) => Number(container.querySelector("svg")!.getAttribute("width"))
+  const scrollArea = (container: HTMLElement) => container.querySelector("div")!
+
+  it("returns to the default zoom on a double-click, however far the map was zoomed", () => {
+    const { container } = render(<SiteMapView grid={makeGrid([[room("reachable"), room("reachable")]])} />)
+    const unzoomed = svgWidth(container)
+
+    fireEvent.wheel(scrollArea(container), { deltaY: -300, ctrlKey: true, clientX: 0, clientY: 0 })
+    expect(svgWidth(container)).toBeGreaterThan(unzoomed)
+
+    fireEvent.dblClick(scrollArea(container), { clientX: 0, clientY: 0 })
+
+    expect(svgWidth(container)).toBe(unzoomed)
   })
 })

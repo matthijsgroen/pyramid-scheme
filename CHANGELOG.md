@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- The site map zooms: pinch on touch, ctrl/⌘ + scroll on desktop, between half size and five times.
+- Double-tap (double-click) the site map to go back to the default zoom.
+
+### Changed
+- Reaching an exit asks whether to step outside, so walking into one no longer ends the expedition on the spot.
+- Taking a staircase walks you to the stairs first, and you arrive standing on the staircase on the other floor.
+
+### Fixed
+- The mosaic window fits the screen whether or not you carry pieces, instead of overflowing sideways.
 
 ## 0.31.6 - 2026-08-07
 ### Changed

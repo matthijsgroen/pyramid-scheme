@@ -13,6 +13,7 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll } from "../../game/gridNavigation"
 import { ExplorerDot } from "./ExplorerDot"
+import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
   WALL_THICKNESS,
@@ -986,6 +987,8 @@ export const SiteMapView = ({
   const svgWidth = grid.cols * CELL + PAD * 2
   const svgHeight = grid.rows * CELL + PAD * 2
 
+  const { zoom, zoomHandlers } = useMapZoom(scrollRef)
+
   useEffect(() => {
     if (!explorerPos || !scrollRef.current || !svgRef.current) return
     const el = scrollRef.current
@@ -994,8 +997,9 @@ export const SiteMapView = ({
     // Origin accounts for the svg's own offset within the scroll area (e.g. safe-area padding, centering margin)
     const originX = svgRect.left - elRect.left + el.scrollLeft
     const originY = svgRect.top - elRect.top + el.scrollTop
-    const x = originX + PAD + explorerPos[1] * CELL + CELL / 2
-    const y = originY + PAD + explorerPos[0] * CELL + CELL / 2
+    // Cell coordinates are in unzoomed SVG units; the rendered map is `zoom` times that size.
+    const x = originX + (PAD + explorerPos[1] * CELL + CELL / 2) * zoom
+    const y = originY + (PAD + explorerPos[0] * CELL + CELL / 2) * zoom
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorerPos?.[0], explorerPos?.[1]])
@@ -1003,12 +1007,13 @@ export const SiteMapView = ({
   return (
     <div
       ref={scrollRef}
+      {...zoomHandlers}
       className={`flex overflow-auto pt-safe-top pr-safe-right pb-safe-bottom pl-safe-left${className ? ` ${className}` : ""}`}
     >
       <svg
         ref={svgRef}
-        width={svgWidth}
-        height={svgHeight}
+        width={svgWidth * zoom}
+        height={svgHeight * zoom}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         role="img"
         aria-label="site map"
