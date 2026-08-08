@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- A tableau slot shows why it is empty: a hieroglyph you are still collecting appears as a stone carved only as far as its fragments reach, with its fragment count, instead of looking like an open socket you could fill.
 
 ## 0.33.0 - 2026-08-08
 ### Added

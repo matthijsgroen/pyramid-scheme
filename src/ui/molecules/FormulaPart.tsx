@@ -46,7 +46,22 @@ const renderTile = (
   const symbolId = symbolMapping[operand.symbol]
 
   const isFilled = filledState.filledPositions[position] > 0
-  const { symbol, difficulty } = resolveTile(symbolId)
+  const { symbol, difficulty, fragmentProgress } = resolveTile(symbolId)
+
+  // An empty slot means two very different things: a hieroglyph you own and can drop in right now,
+  // or one you are still collecting fragments for. The second gets the stone carved as far as its
+  // fragments reach, plus the count — so a blocked slot never looks like an open socket.
+  if (!isFilled && symbol && fragmentProgress && fragmentProgress.found < fragmentProgress.required) {
+    const { found, required } = fragmentProgress
+    return (
+      <span className="relative inline-block cursor-not-allowed align-middle" title={`${found}/${required}`}>
+        <HieroglyphTile symbol={symbol} difficulty={difficulty} size="sm" fragmentProgress={fragmentProgress} />
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/75 px-1 text-[10px] leading-tight font-bold text-white tabular-nums">
+          {found}/{required}
+        </span>
+      </span>
+    )
+  }
 
   return (
     <HieroglyphTile
