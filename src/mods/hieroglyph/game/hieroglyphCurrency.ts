@@ -120,6 +120,10 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
     reward.type === "hieroglyphFragment" ? `${BUCKET_PREFIX}${reward.hieroglyphId}` : undefined,
   // The world-wide count the reward-count check expects — this mod's own number.
   expectedTotal: () => EXPECTED_HIEROGLYPH_FRAGMENTS,
+  // Every hieroglyph the world must place a fragment for — the completion-pass backstop
+  // (placeFragments.ts's own comment on `allBuckets`) for a symbol no reachable tableau happens
+  // to lock on. Sums to the same ids `expectedTotal` counts, by construction.
+  allBuckets: () => Object.keys(HIEROGLYPH_REQUIRED).map(id => `${BUCKET_PREFIX}${id}`),
   demandFor: (bucket, allConfigs) => {
     const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
     const tier = TIER_BY_HIEROGLYPH[hieroglyphId]

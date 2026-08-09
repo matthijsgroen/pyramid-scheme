@@ -64,6 +64,16 @@ export type CurrencyDistribution = {
   // toggle-off never trips a false "expected N, got 0". Omit for core currencies validated
   // their own way (map pieces vs WORLD_TARGETS).
   expectedTotal?: () => number
+  // Every bucket id this currency is ultimately responsible for placing (e.g. every
+  // `hieroglyph:<id>` the world's tableaus reference), independent of whether the reachability
+  // walk ever discovers a lock on it. The worklist is discovery-driven by design (see the module
+  // doc above) — a bucket nothing ever locks on is never enqueued, so a symbol no reachable
+  // tableau happens to reference would otherwise silently never get placed. This is the
+  // completion-pass source of truth that catches that: after the discovery-driven drain settles,
+  // every one of these not yet satisfied is enqueued and drained too. Omit for currencies where
+  // "never discovered" genuinely means "never needed" (map pieces — a tomb's piece count is
+  // itself discovered via the tomb's own journey-entry lock).
+  allBuckets?: () => readonly string[]
   // Computes one bucket's demand lazily, only once the worklist has actually discovered it
   // blocking somewhere reachable — see keys-and-locks-solver.md, "Structure, then loot".
   demandFor: (bucket: string, allConfigs: Record<string, SiteConfig[]>) => CurrencyDemand
@@ -186,88 +196,114 @@ export const placeFragments = (
     }
   }
 
-  while (queue.length > 0) {
-    const bucket = queue.shift()!
-    queued.delete(bucket)
-    if (satisfied.has(bucket)) continue
+  // Drains `queue` to empty, placing each bucket's demand and growing the queue as newly
+  // reachable frontier reveals further locks (enqueueNewLocks) or harvests new facts
+  // (settleHarvest). Called twice: once for the discovery-driven walk below, once more for
+  // the completion pass after it (see `allBuckets` on CurrencyDistribution) — a second call
+  // is a no-op if the first one already discovered and placed everything, which today it does.
+  const drain = (): void => {
+    while (queue.length > 0) {
+      const bucket = queue.shift()!
+      queued.delete(bucket)
+      if (satisfied.has(bucket)) continue
 
-    // Nobody claims this bucket (e.g. a ward-key/tombKey gate resolved by siteAssembler's
-    // own construction-time key chain, not a currency this module places) — leave it; it
-    // either resolves itself via harvestedCounts once the right site becomes reachable, or
-    // it's a gate the fine-grained validator's own checks are responsible for catching.
-    const currency = currencies.find(c => c.ownsBucket(bucket))
-    if (!currency) continue
+      // Nobody claims this bucket (e.g. a ward-key/tombKey gate resolved by siteAssembler's
+      // own construction-time key chain, not a currency this module places) — leave it; it
+      // either resolves itself via harvestedCounts once the right site becomes reachable, or
+      // it's a gate the fine-grained validator's own checks are responsible for catching.
+      const currency = currencies.find(c => c.ownsBucket(bucket))
+      if (!currency) continue
 
-    const demand = currency.demandFor(bucket, allConfigs)
-    let needed = demand.required
-
-    if (needed > 0) {
-      // A shop stock slot's preference is a HARD claim (deliberate authored stock), unlike a
-      // free-world slot's soft preference: this currency may fill a fez-shop slot only if it owns
-      // that slot's tagged bucket — so the gating worklist can't spill e.g. a hieroglyph into a
-      // mosaic shop slot. Non-shop slots stay soft (any currency, any node).
-      // Hidden slots are excluded outright: a hidden corridor is a discovery-gated OPTIONAL pocket
-      // (keys-and-locks-solver.md §E / collection-and-detector-design.md §7.3), structurally
-      // reachable but never guaranteed reachable (needs the corridor detector or a lucky stumble),
-      // so a progression-gating currency the solver must guarantee may never land there. They stay
-      // available for the capped/dynamic filler passes below — optional loot is exactly their role.
-      //
-      // A slot's own tomb-key gates (`wardKeys`) must ALL be held right now, too. `reachableFloors`
-      // is floor-granular — it says the floor's entrance is reachable, not that a key-gated pocket
-      // WITHIN it is. Without this, a required fragment can land behind a tomb-key the worklist
-      // hasn't earned yet — worst case the SAME floor's own tableau reward (a tableau needing this
-      // very hieroglyph), a self-referential lock that caps the hieroglyph one fragment short
-      // forever. The doc's contract is explicit (keys-and-locks-solver.md: "a key is never placed
-      // outside the reachable area"; "place ward key → pocket reachable → THEN place the required
-      // piece") — a harvested tomb-key sits in ownedFacts, so once earned the pocket opens legitly.
-      const ownedFacts = deriveOwnedFacts(ownedCounts, support)
-      const eligible = (s: Slot) =>
-        s.kind === "end" &&
-        !s.hidden &&
-        available.has(s) &&
-        reach.reachableFloors.has(floorKey(s.ref)) &&
-        s.wardKeys.every(k => ownedFacts.has(k)) &&
-        (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
-      // Soft-avoid slots an author tagged for a FILLER bucket — one no gating currency claims, i.e.
-      // capped filler (`end: "mosaic"`) or a dynamic distribution's (`end: "junk"`). A gating
-      // currency uses them only after untagged slots run out, so an authored filler reservation
-      // survives whenever there's slack — without it, gating front-loads its pieces into the
-      // earliest reachable slots and starves an early tier of its reachable filler loot (a starter
-      // mosaic unreachable until the master-tier detector; a starter tier whose junk corridors all
-      // end up holding fragments instead, leaving its collectibles stacked on one floor).
-      //
-      // Tags belonging to ANOTHER GATING currency are deliberately NOT avoided: those compete on
-      // the worklist's own terms, and holding back from them breaks the hieroglyph holdback
-      // guarantee (fragmentHoldback.spec.ts). Filler can't compete — it runs after — so only it
-      // needs the reservation. Stable sort keeps the currency's own rank order within each group;
-      // still falls back to a tagged slot if that's all that's reachable, so placement never fails
-      // where it otherwise would.
-      const reservedForFiller = (s: Slot) =>
-        s.preference !== undefined && !currencies.some(c => c.ownsBucket(s.preference!)) ? 1 : 0
-      const ranked = [...currency.rank(slots.filter(eligible), demand)].sort(
-        (a, b) => reservedForFiller(a) - reservedForFiller(b)
-      )
-
-      for (const slot of ranked) {
-        if (needed <= 0) break
-        slot.assign(currency.toReward(demand.instanceId))
-        available.delete(slot)
-        needed--
-      }
+      const demand = currency.demandFor(bucket, allConfigs)
+      let needed = demand.required
 
       if (needed > 0) {
-        throw new Error(
-          `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed} instance(s) with no reachable slot`
+        // A shop stock slot's preference is a HARD claim (deliberate authored stock), unlike a
+        // free-world slot's soft preference: this currency may fill a fez-shop slot only if it owns
+        // that slot's tagged bucket — so the gating worklist can't spill e.g. a hieroglyph into a
+        // mosaic shop slot. Non-shop slots stay soft (any currency, any node).
+        // Hidden slots are excluded outright: a hidden corridor is a discovery-gated OPTIONAL pocket
+        // (keys-and-locks-solver.md §E / collection-and-detector-design.md §7.3), structurally
+        // reachable but never guaranteed reachable (needs the corridor detector or a lucky stumble),
+        // so a progression-gating currency the solver must guarantee may never land there. They stay
+        // available for the capped/dynamic filler passes below — optional loot is exactly their role.
+        //
+        // A slot's own tomb-key gates (`wardKeys`) must ALL be held right now, too. `reachableFloors`
+        // is floor-granular — it says the floor's entrance is reachable, not that a key-gated pocket
+        // WITHIN it is. Without this, a required fragment can land behind a tomb-key the worklist
+        // hasn't earned yet — worst case the SAME floor's own tableau reward (a tableau needing this
+        // very hieroglyph), a self-referential lock that caps the hieroglyph one fragment short
+        // forever. The doc's contract is explicit (keys-and-locks-solver.md: "a key is never placed
+        // outside the reachable area"; "place ward key → pocket reachable → THEN place the required
+        // piece") — a harvested tomb-key sits in ownedFacts, so once earned the pocket opens legitly.
+        const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+        const eligible = (s: Slot) =>
+          s.kind === "end" &&
+          !s.hidden &&
+          available.has(s) &&
+          reach.reachableFloors.has(floorKey(s.ref)) &&
+          s.wardKeys.every(k => ownedFacts.has(k)) &&
+          (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
+        // Soft-avoid slots an author tagged for a FILLER bucket — one no gating currency claims, i.e.
+        // capped filler (`end: "mosaic"`) or a dynamic distribution's (`end: "junk"`). A gating
+        // currency uses them only after untagged slots run out, so an authored filler reservation
+        // survives whenever there's slack — without it, gating front-loads its pieces into the
+        // earliest reachable slots and starves an early tier of its reachable filler loot (a starter
+        // mosaic unreachable until the master-tier detector; a starter tier whose junk corridors all
+        // end up holding fragments instead, leaving its collectibles stacked on one floor).
+        //
+        // Tags belonging to ANOTHER GATING currency are deliberately NOT avoided: those compete on
+        // the worklist's own terms, and holding back from them breaks the hieroglyph holdback
+        // guarantee (fragmentHoldback.spec.ts). Filler can't compete — it runs after — so only it
+        // needs the reservation. Stable sort keeps the currency's own rank order within each group;
+        // still falls back to a tagged slot if that's all that's reachable, so placement never fails
+        // where it otherwise would.
+        const reservedForFiller = (s: Slot) =>
+          s.preference !== undefined && !currencies.some(c => c.ownsBucket(s.preference!)) ? 1 : 0
+        const ranked = [...currency.rank(slots.filter(eligible), demand)].sort(
+          (a, b) => reservedForFiller(a) - reservedForFiller(b)
         )
-      }
-    }
 
-    satisfied.add(bucket)
-    ownedCounts.set(bucket, demand.totalRequired)
-    reach = computeReach()
-    settleHarvest()
-    enqueueNewLocks()
+        for (const slot of ranked) {
+          if (needed <= 0) break
+          slot.assign(currency.toReward(demand.instanceId))
+          available.delete(slot)
+          needed--
+        }
+
+        if (needed > 0) {
+          throw new Error(
+            `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed} instance(s) with no reachable slot`
+          )
+        }
+      }
+
+      satisfied.add(bucket)
+      ownedCounts.set(bucket, demand.totalRequired)
+      reach = computeReach()
+      settleHarvest()
+      enqueueNewLocks()
+    }
   }
+
+  drain()
+
+  // Completion pass (keys-and-locks-solver.md, "Discovery-driven, with a completion backstop"):
+  // the discovery-driven drain above never enqueues a bucket nothing ever locked on. Most of the
+  // time that's every bucket — a tableau's own requirement is itself the lock. But it's not a
+  // logical guarantee, so enqueue whatever each currency says it's ultimately responsible for
+  // (`allBuckets`) and drain again. By construction this only ever adds placements (a bucket
+  // already `satisfied` is skipped), so it can only move the world TOWARD full coverage, never
+  // away from it — and it's the reason `allBuckets` must return every id a currency's own
+  // `expectedTotal` counts, so the two agree by construction instead of by luck.
+  for (const currency of currencies) {
+    for (const bucket of currency.allBuckets?.() ?? []) {
+      if (satisfied.has(bucket) || queued.has(bucket)) continue
+      queue.push(bucket)
+      queued.add(bucket)
+    }
+  }
+  drain()
 
   // Winnability guard (keys-and-locks-solver.md, "nothing can progress = hard-fail"): once the
   // worklist drains, no lock the walk discovered may still be blocking. A remaining lock means

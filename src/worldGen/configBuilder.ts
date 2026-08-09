@@ -306,16 +306,20 @@ export const buildConfigs = (
   // gating-currency reward expectation + predicate come from the registered currencies
   // themselves (a currency contributes its own expectedTotal + bucketForReward), so an
   // unregistered mod's currency drops out of the check — no false "expected N, got 0".
+  // Mod-injected post-build validators (e.g. the shop economy guard, the hieroglyph fragment
+  // coverage guard) run BEFORE the generic reward-count total, over the whole grown world. A
+  // mod's own validator can name the specific thing that's wrong (which symbol, by how much);
+  // the generic total below can only ever say the sum is off. Running mod validators first means
+  // a real per-symbol shortfall surfaces with that detail instead of the coarser "expected N, got
+  // M" from validateRewardCounts. They drop out with their mod, so core names none.
+  for (const validate of worldValidators) validate(allConfigs)
+
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)
   validateRewardCounts(allConfigs, expectedCurrencyRewards, isCurrencyReward)
   // Secondary-tomb discovery + ward-key ordering need no separate post-build validator
   // (§E): the worklist reachability model (placeFragments above) already guarantees both — it
   // hard-fails if any lock stays blocking. See validate.ts's note + docs/game-design/keys-and-locks-solver.md.
-  // Mod-injected post-build validators (e.g. the shop economy guard) run last, over the whole
-  // grown world. They drop out with their mod, so core names none — the shop guard leaves the
-  // check when shop leaves REGISTERED_MODS.
-  for (const validate of worldValidators) validate(allConfigs)
 
   return allConfigs
 }
