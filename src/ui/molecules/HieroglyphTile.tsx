@@ -139,9 +139,11 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
     // its own clip-path, so the un-clipped wrapper renders stacked directional drop-shadows (a
     // crisp ~2px edge tracing the chipped silhouette) plus a soft outer glow. It also hosts the
     // partial-collection ghost, which must not be clipped away by the tile's own silhouette.
+    // `isolate` gives this tile its own stacking context, so the glyph's mix-blend-mode below
+    // blends only against this tile's own layers — never the page behind it.
     <div
       onClick={disabled ? undefined : onClick}
-      className="relative inline-flex"
+      className="relative isolate inline-flex"
       style={{
         filter:
           selected && !disabled
@@ -151,25 +153,6 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
     >
       {/* The whole tile this one will become, faint behind the part that has been collected */}
       {fragmentProgress && <RevealPlaceholder progress={fragmentProgress} clipPath={clipPath} />}
-
-      {/* Which glyph this is stays legible even at 0 found: the mask below can hide the whole
-          stone, but never this — it sits outside the masked subtree. A dark outline keeps it
-          readable over both the pale revealed stone and the faint ghost behind it. */}
-      {fragmentProgress && (
-        <span
-          aria-hidden
-          className={clsx(
-            "pointer-events-none absolute inset-0 flex items-center justify-center font-mono font-bold text-white select-none",
-            sizeClasses[size]
-          )}
-          style={{
-            textShadow:
-              "-1px -1px 1px rgba(0,0,0,0.9), 1px -1px 1px rgba(0,0,0,0.9), -1px 1px 1px rgba(0,0,0,0.9), 1px 1px 1px rgba(0,0,0,0.9)",
-          }}
-        >
-          {symbol}
-        </span>
-      )}
 
       <div
         className={clsx(
@@ -247,6 +230,22 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
           </span>
         )}
       </div>
+
+      {/* Which glyph this is stays legible even at 0 found, when the mask below hides the whole
+          stone: white blended with `difference` against whatever's underneath (dark ghost or pale
+          revealed stone alike) always comes out as that background's contrasting inverse. */}
+      {fragmentProgress && (
+        <span
+          aria-hidden
+          className={clsx(
+            "pointer-events-none absolute inset-0 flex items-center justify-center font-mono font-bold text-white select-none",
+            sizeClasses[size]
+          )}
+          style={{ mixBlendMode: "difference" }}
+        >
+          {symbol}
+        </span>
+      )}
     </div>
   )
 }
