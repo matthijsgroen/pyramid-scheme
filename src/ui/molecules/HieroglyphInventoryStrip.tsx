@@ -27,7 +27,10 @@ export const HieroglyphInventoryStrip: FC<{
           key={item.symbolId}
           className={clsx(
             "flex items-center gap-1 rounded p-1 transition-colors select-auto",
-            item.owned ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed opacity-50"
+            // Not owned: no opacity dimming here — it would wash out the glyph overlay inside the
+            // tile, which needs to stay fully legible. The tile's own reveal mask + ghost already
+            // read as "incomplete" on their own.
+            item.owned ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed"
           )}
           onClick={() => item.owned && onItemClick(item.symbolId)}
         >
