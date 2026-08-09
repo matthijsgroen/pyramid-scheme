@@ -153,7 +153,8 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
       {fragmentProgress && <RevealPlaceholder progress={fragmentProgress} clipPath={clipPath} />}
 
       {/* Which glyph this is stays legible even at 0 found: the mask below can hide the whole
-          stone, but never this — it sits outside the masked subtree, in plain white. */}
+          stone, but never this — it sits outside the masked subtree. A dark outline keeps it
+          readable over both the pale revealed stone and the faint ghost behind it. */}
       {fragmentProgress && (
         <span
           aria-hidden
@@ -161,6 +162,10 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
             "pointer-events-none absolute inset-0 flex items-center justify-center font-mono font-bold text-white select-none",
             sizeClasses[size]
           )}
+          style={{
+            textShadow:
+              "-1px -1px 1px rgba(0,0,0,0.9), 1px -1px 1px rgba(0,0,0,0.9), -1px 1px 1px rgba(0,0,0,0.9), 1px 1px 1px rgba(0,0,0,0.9)",
+          }}
         >
           {symbol}
         </span>
