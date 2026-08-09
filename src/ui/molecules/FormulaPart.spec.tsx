@@ -44,4 +44,11 @@ describe("FormulaPart empty slots", () => {
   it("falls back to the socket when no progress is known", () => {
     expect(slot().text).toContain("?")
   })
+
+  it("still names the glyph when zero fragments are found", () => {
+    const { text, ghost } = slot({ found: 0, required: 3 })
+    expect(text).toContain("𓇳")
+    expect(text).toContain("0/3")
+    expect(ghost).not.toBeNull()
+  })
 })

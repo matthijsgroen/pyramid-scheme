@@ -116,7 +116,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
       >
         <span
           className={clsx(
-            "flex h-full w-full items-center justify-center font-mono select-none",
+            "flex size-full items-center justify-center font-mono select-none",
             size === "sm" ? "text-xs" : size === "md" ? "text-lg" : "text-2xl"
           )}
         >
@@ -151,6 +151,20 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
       {/* The whole tile this one will become, faint behind the part that has been collected */}
       {fragmentProgress && <RevealPlaceholder progress={fragmentProgress} clipPath={clipPath} />}
 
+      {/* Which glyph this is stays legible even at 0 found: the mask below can hide the whole
+          stone, but never this — it sits outside the masked subtree, in plain white. */}
+      {fragmentProgress && (
+        <span
+          aria-hidden
+          className={clsx(
+            "pointer-events-none absolute inset-0 flex items-center justify-center font-mono font-bold text-white select-none",
+            sizeClasses[size]
+          )}
+        >
+          {symbol}
+        </span>
+      )}
+
       <div
         onClick={disabled ? undefined : onClick}
         className={clsx(
@@ -164,7 +178,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
           // Interactive states (selection cue is the wrapper's drop-shadow outline above — a ring
           // here would be clipped away by this element's clip-path silhouette)
           {
-            "cursor-pointer hover:scale-105 hover:-translate-y-1 active:scale-95 active:translate-y-0":
+            "cursor-pointer hover:-translate-y-1 hover:scale-105 active:translate-y-0 active:scale-95":
               !disabled && onClick,
             "cursor-default opacity-50 grayscale": disabled,
           },
@@ -210,19 +224,23 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
           }}
         />
 
-        {/* Stone surface with hieroglyph */}
-        <span
-          className="relative flex h-full w-full items-center justify-center font-mono select-none"
-          style={{
-            // Symbol color matches the darker tile background
-            color: disabled ? "#6b7280" : difficultyMaterial[difficulty].symbol,
-            // Subtle engraved effect for the symbol
-            textShadow: disabled ? "none" : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
-            filter: selected ? "brightness(1.1)" : "none",
-          }}
-        >
-          {symbol}
-        </span>
+        {/* Stone surface with hieroglyph — while fragments are still missing, the always-visible
+            white overlay above carries the glyph instead, so this doesn't double up with it under
+            the reveal sweep. */}
+        {!fragmentProgress && (
+          <span
+            className="relative flex size-full items-center justify-center font-mono select-none"
+            style={{
+              // Symbol color matches the darker tile background
+              color: disabled ? "#6b7280" : difficultyMaterial[difficulty].symbol,
+              // Subtle engraved effect for the symbol
+              textShadow: disabled ? "none" : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
+              filter: selected ? "brightness(1.1)" : "none",
+            }}
+          >
+            {symbol}
+          </span>
+        )}
       </div>
     </div>
   )
