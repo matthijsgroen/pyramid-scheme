@@ -27,7 +27,10 @@ export const HieroglyphInventoryStrip: FC<{
           key={item.symbolId}
           className={clsx(
             "flex items-center gap-1 rounded p-1 transition-colors select-auto",
-            item.owned ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed opacity-50"
+            // Not owned: no opacity dimming here — it would wash out the glyph overlay inside the
+            // tile, which needs to stay fully legible. The tile's own reveal mask + ghost already
+            // read as "incomplete" on their own.
+            item.owned ? "cursor-pointer bg-white/10 hover:bg-white/20" : "cursor-not-allowed"
           )}
           onClick={() => item.owned && onItemClick(item.symbolId)}
         >
@@ -35,16 +38,17 @@ export const HieroglyphInventoryStrip: FC<{
             symbol={item.symbol}
             difficulty={item.difficulty}
             size="sm"
-            disabled={!item.owned}
+            // Not owned yet: the part-carved stone + fragment count names which glyph is missing,
+            // instead of a flat grey tile that gives no hint which symbol it is.
+            fragmentProgress={item.owned ? undefined : { found: item.found, required: item.required }}
             className="pointer-events-none"
           />
           <div className="flex flex-col text-xs">
             {item.owned ? (
               <span className="text-green-400">✓</span>
             ) : (
-              // Fragment progress toward completing this hieroglyph — not a placement count.
-              <span className="text-red-400" title="fragments found">
-                🧩 {item.found}/{item.required}
+              <span className="font-bold text-red-400" title="fragments found">
+                {item.found}/{item.required} needed
               </span>
             )}
           </div>
