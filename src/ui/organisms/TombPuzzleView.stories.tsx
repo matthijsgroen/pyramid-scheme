@@ -53,6 +53,7 @@ export const InProgress: Story = {
           owned: true,
           found: 2,
           required: 2,
+          neededLabel: "2/2 needed",
         }))}
         onInventoryItemClick={() => {}}
       />

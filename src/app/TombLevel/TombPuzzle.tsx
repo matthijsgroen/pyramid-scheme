@@ -170,6 +170,7 @@ export const TombPuzzle: FC<{
         owned: found >= required,
         found,
         required,
+        neededLabel: t("ui.fragmentsNeeded", { found, required }),
       }
     })
 

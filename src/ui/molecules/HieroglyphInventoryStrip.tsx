@@ -1,6 +1,5 @@
 import type { FC } from "react"
 import clsx from "clsx"
-import { useTranslation } from "react-i18next"
 import { HieroglyphTile } from "./HieroglyphTile"
 import type { Difficulty } from "@/data/difficultyLevels"
 
@@ -13,6 +12,9 @@ export type InventoryStripItem = {
   owned: boolean
   found: number
   required: number
+  // Pre-translated "X/Y needed" — ui/ components don't call useTranslation themselves, the caller
+  // (which already knows found/required) resolves the string.
+  neededLabel: string
 }
 
 export const HieroglyphInventoryStrip: FC<{
@@ -20,8 +22,6 @@ export const HieroglyphInventoryStrip: FC<{
   items: InventoryStripItem[]
   onItemClick: (symbolId: string) => void
 }> = ({ title, items, onItemClick }) => {
-  const { t } = useTranslation("common")
-
   return (
     <div className="mt-8 mb-4 w-fit rounded bg-black/20 p-2">
       <h3 className="mb-2 text-sm font-bold">{title}</h3>
@@ -52,7 +52,7 @@ export const HieroglyphInventoryStrip: FC<{
                 <span className="text-green-400">✓</span>
               ) : (
                 <span className="font-bold text-red-400" title="fragments found">
-                  {t("ui.fragmentsNeeded", { found: item.found, required: item.required })}
+                  {item.neededLabel}
                 </span>
               )}
             </div>
