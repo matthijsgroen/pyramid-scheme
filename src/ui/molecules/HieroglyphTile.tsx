@@ -140,6 +140,7 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
     // crisp ~2px edge tracing the chipped silhouette) plus a soft outer glow. It also hosts the
     // partial-collection ghost, which must not be clipped away by the tile's own silhouette.
     <div
+      onClick={disabled ? undefined : onClick}
       className="relative inline-flex"
       style={{
         filter:
@@ -166,7 +167,6 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
       )}
 
       <div
-        onClick={disabled ? undefined : onClick}
         className={clsx(
           // Base 3D stone tile styling with relative positioning for pseudo-element shadow
           "relative flex items-center justify-center font-bold transition-all duration-200",

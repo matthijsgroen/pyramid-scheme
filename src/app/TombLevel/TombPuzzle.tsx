@@ -79,13 +79,7 @@ export const TombPuzzle: FC<{
     }
   }, [notEnough, showConversation])
 
-  const resolveTile = useMemo(
-    () => (symbolId: string) => ({
-      ...resolveHieroglyphSymbol(symbolId, difficulty),
-      fragmentProgress: hieroglyphProgress(symbolId),
-    }),
-    [difficulty, hieroglyphProgress]
-  )
+  const resolveTile = useMemo(() => (symbolId: string) => resolveHieroglyphSymbol(symbolId, difficulty), [difficulty])
 
   const hintFormulas: OrderedFormula[] = useMemo(() => {
     const ordered = calculation.hintFormulas.map((f, i) => ({ formula: f, index: i }))

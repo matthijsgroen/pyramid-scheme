@@ -35,16 +35,17 @@ export const HieroglyphInventoryStrip: FC<{
             symbol={item.symbol}
             difficulty={item.difficulty}
             size="sm"
-            disabled={!item.owned}
+            // Not owned yet: the part-carved stone + fragment count names which glyph is missing,
+            // instead of a flat grey tile that gives no hint which symbol it is.
+            fragmentProgress={item.owned ? undefined : { found: item.found, required: item.required }}
             className="pointer-events-none"
           />
           <div className="flex flex-col text-xs">
             {item.owned ? (
               <span className="text-green-400">✓</span>
             ) : (
-              // Fragment progress toward completing this hieroglyph — not a placement count.
-              <span className="text-red-400" title="fragments found">
-                🧩 {item.found}/{item.required}
+              <span className="font-bold text-red-400" title="fragments found">
+                {item.found}/{item.required} needed
               </span>
             )}
           </div>

@@ -14,12 +14,6 @@ const resolveTile = (symbolId: string) => ({
   difficulty: "starter" as const,
 })
 
-// d1 is still being collected, d2 is owned but not yet placed — the two empty-slot readings.
-const resolveTilePartlyCollected = (symbolId: string) => ({
-  ...resolveTile(symbolId),
-  fragmentProgress: symbolId === "d1" ? { found: 1, required: 3 } : { found: 2, required: 2 },
-})
-
 export const Nested: Story = {
   args: {
     formula: {
@@ -35,8 +29,4 @@ export const Nested: Story = {
     resolveTile,
     positionPrefix: "formula-0",
   },
-}
-
-export const PartlyCollected: Story = {
-  args: { ...Nested.args, resolveTile: resolveTilePartlyCollected },
 }
