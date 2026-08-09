@@ -77,6 +77,7 @@
     "mapPieces": "Kaartdelen",
     "completeExpeditionsToUnlock": "Voltooi expedities om te ontgrendelen",
     "availableSymbols": "Beschikbare Symbolen:",
+    "fragmentsNeeded": "{{found}}/{{required}} nodig",
     "howToPlay": "Hoe te spelen",
     "puzzleComplete": "Het antwoord is:",
     "puzzleCompleted": "Puzzel Voltooid",

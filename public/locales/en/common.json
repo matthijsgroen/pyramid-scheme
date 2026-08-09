@@ -77,6 +77,7 @@
     "mapPieces": "Map Pieces",
     "completeExpeditionsToUnlock": "Complete expeditions to unlock",
     "availableSymbols": "Available Symbols:",
+    "fragmentsNeeded": "{{found}}/{{required}} needed",
     "howToPlay": "How to play",
     "puzzleComplete": "The answer is:",
     "puzzleCompleted": "Puzzle Complete",
