@@ -22,6 +22,12 @@ export type PathEntry = {
   /** Chance [0-1], rolled per pyramid, that this entry emits at all. Omit = always. Use to
    * scatter (e.g. trapped) paths across only some pyramids instead of every one. */
   chance?: number
+  /** Extra copies of this entry at this TIER's own last journey, interpolated linearly down to 0
+   * at its first journey (0-indexed journey ordinal ÷ (journey count - 1) — same shape as
+   * PathPuzzlesRange's own interpolation). Omit = flat count everywhere (today's behavior). Lets
+   * later journeys of a tier carry more capacity than earlier ones, on top of (not instead of) the
+   * density preset's own seeded count — see sideSections.ts's emitCount. */
+  ramp?: number
 }
 export type GateType = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"

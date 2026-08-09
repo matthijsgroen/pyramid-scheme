@@ -7,7 +7,8 @@ import { TABLEAUS_PER_FLOOR } from "../../data/tableaus"
 const EXPERT_SIDE_PATHS: PathEntry[] = [
   // Bumped to 2 puzzles: more open puzzle rooms = more consumable drops, so the open trap path
   // below is survivable.
-  { density: "medium", pathPuzzles: 2, end: "fragment" },
+  // ramp: 2 — see starter.ts's comment on the same setting; expert+ ramp by 2 instead of 1.
+  { density: "medium", pathPuzzles: 2, end: "fragment", ramp: 2 },
   // First OPEN (visible) trapped path — a threat you can see, ending in junk (sellable income).
   { density: "low", pathPuzzles: 4, end: "junk", encounter: "trap" },
 ]

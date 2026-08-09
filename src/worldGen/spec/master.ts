@@ -54,7 +54,8 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // locks (multi-color floor keys + key chains) and HAZARDOUS returns (wardPathTrapped), plus the
 // open junk corridors the economy needs — master is the biggest tier and generated no income.
 const MASTER_SIDE_PATHS: PathEntry[] = [
-  { density: "medium", pathPuzzles: 1, end: "fragment" },
+  // ramp: 2 — see starter.ts's comment on the same setting.
+  { density: "medium", pathPuzzles: 1, end: "fragment", ramp: 2 },
   // Open junk corridor — the shop income master was missing.
   { density: "low", pathPuzzles: 2, end: "junk" },
   // Multi-color floor-key path (colors rotate through keyColorsRange below).

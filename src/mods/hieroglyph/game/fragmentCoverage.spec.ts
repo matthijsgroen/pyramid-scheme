@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { HIEROGLYPH_REQUIRED } from "./hieroglyphData"
 import { placedFragmentCounts, hieroglyphCoverageValidator } from "./fragmentFinalize"
-import type { SiteConfig } from "@/worldGen/types"
+import type { FloorConfig, SiteConfig } from "@/worldGen/types"
 
 // Per-symbol placement guarantee: only a world-wide total was ever checked before
 // (validateRewardCounts), so a symbol whose lock the reachability walk never discovered could
@@ -38,7 +38,7 @@ const configWithFragments = (counts: Record<string, number>): Record<string, Sit
             endReward: { type: "hieroglyphFragment" as const, hieroglyphId },
           }))
         ),
-      } as unknown as SiteConfig,
+      } as unknown as FloorConfig,
     ],
   ],
 })

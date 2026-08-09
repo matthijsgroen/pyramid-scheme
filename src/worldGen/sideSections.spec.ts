@@ -187,6 +187,51 @@ describe("buildSideSections", () => {
     expect(sections[1]).toMatchObject({ hidden: true, endReward: { type: "fragmentSlot" } })
   })
 
+  describe("a PathEntry's ramp", () => {
+    // "low" density is always exactly 1 (deterministic, no seed spread) — isolates the ramp's own
+    // contribution from pathCountForDensity's seeded jitter.
+    const withRamp = (ramp: number, tierOrdinal: number, tierJourneyCount: number) =>
+      buildSideSections({
+        tier: "starter",
+        difficulty: "starter",
+        resolveReward: noReward,
+        journeyId: "j",
+        pyramidIndex: 0,
+        tierOrdinal,
+        tierJourneyCount,
+        declaredSidePaths: [{ density: "low", pathPuzzles: 0, end: "treasure", ramp }],
+      })
+
+    it("adds nothing when omitted (today's behavior is unchanged)", () => {
+      const sections = buildSideSections({
+        tier: "starter",
+        difficulty: "starter",
+        resolveReward: noReward,
+        journeyId: "j",
+        pyramidIndex: 0,
+        declaredSidePaths: [{ density: "low", pathPuzzles: 0, end: "treasure" }],
+      })
+      expect(sections).toHaveLength(1)
+    })
+
+    it("adds 0 extra at the tier's first journey (ordinal 0)", () => {
+      expect(withRamp(2, 0, 4)).toHaveLength(1)
+    })
+
+    it("adds the full ramp at the tier's last journey", () => {
+      expect(withRamp(2, 3, 4)).toHaveLength(1 + 2)
+    })
+
+    it("interpolates linearly in between", () => {
+      // ordinal 1 of 0..3 → 1/3 of the way → round(2 * 1/3) = 1 extra
+      expect(withRamp(2, 1, 4)).toHaveLength(1 + 1)
+    })
+
+    it("contributes nothing when the tier has only one journey (no division by zero)", () => {
+      expect(withRamp(3, 0, 1)).toHaveLength(1)
+    })
+  })
+
   it("a resolveReward that runs out (tomb perk stream) omits endReward instead of crashing", () => {
     const sections = buildSideSections({
       tier: "starter",
