@@ -1,5 +1,4 @@
 # Changelog
-
 All notable user-facing changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -7,66 +6,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.33.2 - 2026-08-10
 ### Changed
-
 - Hieroglyph fragments spread across a tier's pyramids instead of piling into its first ones: the last pyramid of a tier used to be its emptiest (junior's last two held 3 fragments each while its first two held 32 between them).
 
 ### Fixed
-
 - The "X/Y needed" count on a still-collecting hieroglyph in the tomb's available-symbols strip was stuck in English regardless of your chosen language.
 - A hieroglyph tile's engraved shading could show as a doubled, mismatched-color outline around the symbol, most visible on devices missing the true hieroglyph glyph.
 
 ## 0.33.1 - 2026-08-09
-
 ### Changed
-
 - A hieroglyph you're still collecting is easier to spot in the tomb's available-symbols strip: the stone shows only the fragment you've carved so far, with its count, and the glyph itself always reads clearly — instead of a flat grey tile that gave no hint which symbol was missing.
 
 ### Fixed
-
 - A ward door opens onto a floor as hard as the key that opened it. The first treasure of the starter tomb opened a junior floor in the onboarding pyramid, paying out junior mosaic glass before you had set foot in a junior expedition; two more starter pyramids handed out expert and master loot the same way.
 
 ## 0.33.0 - 2026-08-08
-
 ### Added
-
 - A ward door carries the sign of the treasure that opens it, so you can see which key it wants — the same glyph that treasure shows in the Collection.
 
 ### Changed
-
 - A tomb treasure opens the next difficulty: hold any one of a tomb's four unlock treasures and that tier's first expedition is yours, without finishing the tomb run first.
 
 ## 0.32.1 - 2026-08-08
-
 ### Changed
-
 - Finding a tomb treasure says what it does for you — the same bonus line the Collection shows.
 
 ### Fixed
-
 - Pinch-zooming the site map is smooth, and zooms toward your fingers instead of the middle of the screen.
 - Tapping something in the Collection shows its details again, instead of only for players holding a trinket.
 
 ## 0.32.0 - 2026-08-08
-
 ### Added
-
 - The site map zooms: pinch on touch, ctrl/⌘ + scroll on desktop, between half size and five times.
 - Double-tap (double-click) the site map to go back to the default zoom.
 
 ### Changed
-
 - Reaching an exit asks whether to step outside, so walking into one no longer ends the expedition on the spot.
 - Taking a staircase walks you to the stairs first, and you arrive standing on the staircase on the other floor.
 
 ### Fixed
-
 - The mosaic window fits the screen whether or not you carry pieces, instead of overflowing sideways.
 
 ## 0.31.6 - 2026-08-07
-
 ### Changed
-
 - The mosaic is five scenes instead of one abstract window: a cat guarding a doorway, a scribe taught to write, dawn light landing in a temple hall, the green king, a heart weighed against a feather — Anubis standing over all five.
 - Each scene belongs to one difficulty and fills left to right as you play that difficulty.
 - Mosaic pieces drop on paths of their own difficulty — starter glass on starter paths, wizard glass on wizard paths.
@@ -90,272 +73,196 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every junior journey has an old working off its second pyramid: an easy corridor an earlier expedition left behind, holding the plainest trinkets.
 
 ## 0.31.5 - 2026-08-02
-
 ### Changed
-
 - A locked treasure location now hints at where its map leads, like the map pieces do, and shows the same part-gathered scroll.
 - A tomb's name is held back until its map is whole, instead of appearing with the first piece.
 - Dropped the progress bar and "25% collected" line from locked locations — the scroll and the "1/4" say it.
 
 ## 0.31.4 - 2026-08-02
-
 ### Changed
-
 - A map piece hints at where its map leads — a trader's cellar, a temple precinct, somewhere no mortal put there — instead of the same line every time.
 - A map piece shows how much you've gathered ("2 of 3 map pieces gathered"); the last one names the tomb.
 - A hieroglyph fragment's "2 of 3 fragments found" sits on its own line instead of trailing the description.
 - Part-collected icons fill in clockwise so you can read your progress off the icon alone.
 
 ### Fixed
-
 - Finding a single coin says "1 coin" rather than "1 coins".
 - Tomb tiles on the journey list no longer show a chamber count.
 - Four tombs showed internal names on the journey list. The Inner Sanctum, the Hall of Osiris, the Realm of Cosmic Forces and the Throne of Eternity are now named in English and Dutch.
 
 ## 0.31.3 - 2026-08-02
-
 ### Changed
-
 - Trapped corridors are twice as long, everywhere: two to four questions before the payoff instead of one or two.
 - Trap timers are shorter — expert 12s → 8s, master 9s → 6s, wizard 6s → 4s.
 - Starter and junior traps are timed now, at 8 seconds. Trap insight still adds a second per stack, at every difficulty.
 - About 40% fewer bandages, oil flasks and trap tools scattered through the world.
 
 ### Fixed
-
 - Trap supplies reach the later difficulties. The whole master tier got none at all, most of wizard went without, and expert hoarded the lot.
 
 ## 0.31.2 - 2026-08-01
-
 ### Fixed
-
 - Seventeen pyramid interiors across expert, master and wizard that showed only "Site layout unavailable." now open. They get roomier floor plans; a few side passages wander less so everything fits. Every other interior is untouched.
 
 ## 0.31.1 - 2026-08-01
-
 ### Fixed
-
 - Re-entering a pyramid no longer leaves an unplayable look-alike board in the middle of the screen while the real one slides off to the side.
 - A pyramid you'd already solved comes back empty instead of pre-filled with its old answers. Backing out part-way still keeps what you'd filled in.
 - Saving no longer re-reads your save file on every frame, which could drop the last thing you typed into a pyramid.
 
 ## 0.31.0 - 2026-08-01
-
 ### Added
-
 - The compass marks pieces you can't take yet: 🔒 behind a ward key or a locked difficulty, 👁 hidden in a corridor needing the passageway detector, ❓ when it can't tell. Nothing in the way, no mark.
 
 ### Fixed
-
 - The compass names places instead of internal ids — "Papyrus Merchant's Route L2" rather than `starter_2`. Same for the supplies detector.
 - The compass points at one pyramid instead of naming a whole journey, which can be five of them.
 - The compass panel says what it's hunting ("Looking for 𓎗").
 - Detector buttons sit alongside your health and coins instead of taking a row of their own, and the readout only appears once a detector is on.
 
 ## 0.30.10 - 2026-08-01
-
 ### Fixed
-
 - Taps near the bottom of a pyramid or tomb map are no longer swallowed by an invisible strip behind the detector panel.
 - You can pick a hieroglyph to hunt with the compass. Part-collected ones (showing 2/3) are tappable now, so the compass can finally be given a target.
 
 ## 0.30.9 - 2026-07-31
-
 ### Changed
-
 - Ward gates hold more varied bonus pockets, mixing in tiers other than their own. Master previously hosted nothing but its own content.
 - Starter "merchant" moments turn up throughout the whole game as a low-difficulty breather, sometimes holding a real starter fragment.
 - Cross-tier bonus pockets hold a real hieroglyph fragment far more often, instead of falling back to a mosaic piece or plain loot.
 
 ## 0.30.8 - 2026-07-31
-
 ### Changed
-
 - Hieroglyph fragments stay strictly within their own difficulty, never mixed into a harder or easier one.
 - Most symbols now need some tomb descent to finish: a few early ones turn up freely, the rest hold pieces behind that tomb's own gates.
 
 ## 0.30.7 - 2026-07-30
-
 ### Changed
-
 - Each tier has 4 tier-unlock treasures instead of 1, spread across its journeys, so one key no longer opens all of a tier's ward-gated content at once.
 - Some of those treasures gate a bonus pocket much later in the game, so an old key may still have something new to open.
 
 ### Fixed
-
 - Hieroglyph fragments are no longer placed behind a tomb's own gated staircase, where they couldn't be picked up — permanently locking the tableau rooms that needed them.
 
 ## 0.30.6 - 2026-07-29
-
 ### Fixed
-
 - Leaving a pyramid or tomb right as it was entered could wipe every journey's progress back to the start, keeping only your hieroglyphs.
 
 ## 0.30.5 - 2026-07-19
-
 ### Changed
-
 - The "still something here" marker on a completed expedition's tile is now a pulsing green dot instead of a key icon, matching the pulse on the map.
 
 ### Fixed
-
 - The map's "still something here" pulse now pulses in place on its pyramid, instead of drifting toward the corner.
 
 ## 0.30.4 - 2026-07-19
-
 ### Fixed
-
 - A pyramid could become impossible to finish: revealing the chamber with the exit made the screen flicker and the marker refuse to move.
 
 ## 0.30.3 - 2026-07-19
-
 ### Fixed
-
 - The "still something here" marker appears at all: a completed expedition's tile stayed blank even when it clearly still held loot. The 🔑 shows now, and the map node pulses as soon as you finish.
 
 ## 0.30.2 - 2026-07-19
-
 ### Fixed
-
 - The game no longer opens to a black screen for players who had explored before the previous update.
 
 ## 0.30.1 - 2026-07-19
-
 ### Fixed
-
 - The "still something here" marker catches what it should: unopened chests and puzzles, side branches you never entered, and ward paths the moment you hold the key they need.
 
 ## 0.30.0 - 2026-07-19
-
 ### Added
-
 - A completed expedition flags on the map (emerald pulse) and on its card (🔑) when it still holds treasure — a chest you walked past, or one a newly-earned ward key now opens.
 
 ### Changed
-
 - Hieroglyph fragments land in pyramids of their own tier far more often. Starter and junior fragments had been spilling into harder pyramids.
 
 ### Fixed
-
 - Loose coins turn up from the first tier. The whole coin budget had been landing in the late-game tiers.
 
 ## 0.29.4 - 2026-07-18
-
 ### Fixed
-
 - The entrance staircase on a tomb/pyramid floor no longer shows a "completed" checkmark and dimming — a staircase is a passage, not a puzzle to finish.
 - Switching floors now places you at the new floor's entrance instantly, instead of showing your marker gliding across the map to the staircase from your position on the previous floor.
 
 ## 0.29.3 - 2026-07-18
-
 ### Changed
-
 - The chest holding a tomb's ward key now looks the part — an ornate golden chest instead of the plain wooden one, matching how valuable the reward is.
 
 ## 0.29.2 - 2026-07-18
-
 ### Changed
-
 - Tomb tableau puzzles ramp up as you descend: each room widens the numbers and adds operators, including between two rooms on the same floor. Starter tomb sums range 1–6.
 
 ## 0.29.1 - 2026-07-18
-
 ### Changed
-
 - The Collection screen lists ward treasures first, then hieroglyph fragments, then trinkets.
 - Loot leans more toward loose coins — more often and in bigger handfuls — with fewer trap consumables scattered around.
 - Tomb tableau rooms ask for new hieroglyphs as you descend, instead of demanding almost every symbol on the first floor or two.
 - The shallowest floors of late-game tombs lean on symbols from earlier difficulties.
 
 ## 0.29.0 - 2026-07-18
-
 ### Added
-
 - Each tomb floor holds several tableau puzzle rooms in sequence instead of one — 2 in starter tombs up to 6 in the divine vaults, each with its own story.
 
 ### Fixed
-
 - A tomb tableau asks for the hieroglyphs its story is about — a "Fish for the Market" tableau asks for the Fish. Story and requirements had drifted apart in every tomb.
 
 ## 0.28.3 - 2026-07-18
-
 ### Fixed
-
 - The short story is shown again above a tomb tableau — it had gone blank.
 - You can now travel back down a staircase to a previous floor. Clicking a staircase you'd already used (including the one you arrive on) did nothing instead of taking you back.
 
 ## 0.28.2 - 2026-07-18
-
 ### Changed
-
 - Removed the length indicator from journey and tomb cards.
 
 ### Fixed
-
 - Re-entering a completed tomb from the travel screen works; its revisit card used to end the journey instead.
 - A tomb's card reads "Revisit — re-enter the tomb" instead of "pick a pyramid".
 
 ## 0.28.1 - 2026-07-18
-
 ### Fixed
-
 - The tier-unlock treasure now correctly reads "Unlocks {tier} expeditions" — it opens the next difficulty of expeditions, not tombs.
 
 ## 0.28.0 - 2026-07-18
-
 ### Added
-
 - Ward gates are tinted by the tier of the key that opens them, so you can read a locked ward's difficulty at a glance.
 - The gate screen says who sealed it — a merchant, a nobleman, a high priest, a pharaoh, or the gods.
 
 ### Changed
-
 - The short story on a tomb tableau is now fully readable from the start, instead of unscrambling letter by letter as you solve the puzzle.
 
 ### Fixed
-
 - Claiming a tomb ward key now shows the actual treasure you found — its name and icon — instead of a generic "tomb key".
 
 ## 0.27.5 - 2026-07-17
-
 ### Fixed
-
 - A tomb tableau could ask for a hieroglyph whose fragments were impossible to collect, leaving the tomb unfinishable.
 - The exit now sits at the true end of a pyramid corridor, instead of leaving a stretch beyond it you could never reach.
 
 ## 0.27.4 - 2026-07-17
-
 ### Changed
-
 - Reworded the popup shown when you find a map piece or a mosaic tile — less about game mechanics, more in-world flavor.
 
 ## 0.27.3 - 2026-07-17
-
 ### Fixed
-
 - Opening a chest that held a mosaic tile crashed the game to a black screen. The reward popup now shows correctly.
 
 ## 0.27.2 - 2026-07-17
-
 ### Changed
-
 - A collected hieroglyph solves every tableau that needs it and is never used up — no more stockpiling copies.
 - The tableau screen shows which hieroglyphs you have and your progress on the ones you're still collecting.
 
 ### Fixed
-
 - Mosaic tiles turn up on reachable paths in starter and junior journeys. Every early one used to sit behind a hidden passage you couldn't open until the corridor detector arrived.
 
 ## 0.27.1 - 2026-07-17
-
 ### Changed
-
 - Revisiting a completed journey opens its map to pick a pyramid, instead of dropping you into the first one. Each re-entry replays that pyramid's exterior puzzle.
 
 ## 0.27.0 - 2026-07-17
-
 ### Added
-
 - Solving a puzzle sometimes rewards a few coins or a healing supply, on top of its usual progress.
 - Ancient trinkets and curios can now be found scattered through pyramids.
 - Tomb treasures now grant permanent perks — more health, sturdier armor, a bigger carrying capacity, steadier hands at traps, and upgrades to the detectors below.
@@ -367,7 +274,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Collection screen shows how many of each trinket you're holding, and keeps a category hidden until you've found your first piece from it.
 
 ### Changed
-
 - The opening journey's first three pyramids branch out to ward-gated bonus floors, each with a hidden path holding a puzzle or trap.
 - Master pyramids now have two ward-gated bonus floors to explore; wizard pyramids have three, plus a two-floor main path.
 - Some pyramids use a single key for several locked doors instead of one each, more often at higher difficulties.
@@ -377,80 +283,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Leaving a pyramid or tomb through any exit now finishes that site and continues your journey; deeper floors you skipped stay open to revisit later.
 
 ### Removed
-
 - Chests scattered along pyramid paths are gone — the supplies they held are now rewarded for solving puzzles instead.
 
 ### Fixed
-
 - Turning tutorials off now survives clearing your game data — the intro no longer replays after a reset.
 - A gated area (one requiring a floor key or ward key) could occasionally generate with an unintended shortcut around its own gate, letting it be reached without the key it should have required.
 - A hidden, trapped area could occasionally generate with a way to reach its reward without passing through the trap.
 - Some treasure rooms at the end of a path could generate empty; every treasure room now holds something (a currency, a mosaic tile, or a little loot).
 
 ## 0.26.4 - 2026-07-05
-
 ### Changed
-
 - Puzzles, chests, and a floor's main treasure room are now spread out along the whole path from entrance to exit, instead of being packed near the entrance with a long empty corridor afterward.
 
 ## 0.26.3 - 2026-07-05
-
 ### Changed
-
 - The journey list only shows a checkmark for completed expeditions now, without the "completed N times" count.
 
 ### Fixed
-
 - The journey list's map-piece indicator now lights up again when you've found a pyramid's map piece.
 
 ## 0.26.2 - 2026-07-05
-
 ### Changed
-
 - The pyramid/tomb interior map is scaled back down to its previous size — the narrow-screen squish fix left it rendering at full zoomed-in size everywhere, which was too large.
 
 ## 0.26.1 - 2026-07-05
-
 ### Fixed
-
 - Fix the interior map rendering squished on narrow screens; it renders at full size and scrolls in both directions.
 
 ## 0.26.0 - 2026-07-05
-
 ### Added
-
 - A "Disable tutorials" toggle in Settings, for skipping Fez's guidance popups. Explicit replays (like the tomb's "?" button) still work even with tutorials disabled.
 
 ### Changed
-
 - The pyramid/tomb interior map is zoomed in twice as far as the previous pass.
 
 ## 0.25.3 - 2026-07-05
-
 ### Changed
-
 - The pyramid/tomb interior map is more zoomed in — corridors, rooms, and icons are all noticeably bigger.
 
 ### Fixed
-
 - Fix the explorer dot cutting through unexplored corridors when a floor has a genuine loop and you tap a destination reachable by more than one route.
 
 ## 0.25.2 - 2026-07-05
-
 ### Changed
-
 - Side paths now branch off throughout the main path instead of all bunching up after its last puzzle room.
 
 ## 0.25.1 - 2026-07-04
-
 ### Changed
-
 - Room icons on the pyramid/tomb interior map are larger and easier to make out on mobile.
 - A long corridor's click target sits next to you instead of at its far end, so you don't scroll to walk into it.
 - That target is a direction arrow rather than a plain dot, and only appears once the explorer dot settles.
 
 ### Fixed
-
 - Fix the explorer dot rendering off-center and small inside pyramid/tomb interiors.
 - Unexplored (fogged) rooms no longer render at all, instead of showing faintly.
 - Adjacent junction rooms now visually merge into one open space instead of showing a wall between them.
@@ -459,33 +343,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix the explorer dot skipping its travel animation and snapping instantly on the very first move of a session.
 
 ## 0.25.0 - 2026-07-04
-
 ### Added
-
 - A "Clear game data" option in Settings, for resetting your save without needing to clear app/browser storage manually.
 - Some interior rooms now display decorative dungeon details, such as statues or sarcophagi.
 
 ### Changed
-
 - Junctions, treasure rooms, staircases, and exits inside pyramid and tomb interiors now appear as larger, uniquely shaped rooms instead of uniform single tiles.
 - The corridor leading up to a locked gate now blends into the neighboring room instead of showing as a separate passage tile.
 - Interior corridors wind more naturally, with occasional wider junctions where several paths meet.
 
 ### Fixed
-
 - Fix the "pack is full" chest marker sometimes showing up on puzzle rooms instead of the chest it belonged to.
 
 ## 0.24.2 - 2026-07-03
-
 ### Fixed
-
 - Fix corridor corners in pyramid interiors being hard to tap on mobile.
 - Fix a completed pyramid's interior showing different corridors explored than when you left it, after revisiting it.
 
 ## 0.24.1 - 2026-07-03
-
 ### Fixed
-
 - Fix the back button, floor indicator, and health display inside pyramids and tombs being hidden behind the notch or home indicator on installed devices.
 - Fix the interior map opening in the top-left corner instead of centered on screen.
 - Fix the level-completion animation replaying over the interior map when returning to a pyramid you were already exploring.
@@ -495,9 +371,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix the fragment-count badge staying on a hieroglyph in the collection screen after it's fully completed.
 
 ## 0.24.0 - 2026-07-03
-
 ### Added
-
 - **Pyramid interiors** — after solving a pyramid level you now enter the pyramid itself: navigate room by room on a map, open chests along the way, and find your way to the exit.
 - **Explorer dot** — a glowing dot shows your movement as you travel through the pyramid interior.
 - **Hidden passages** — some corridors and side rooms are concealed behind walls; step close enough to reveal them.
@@ -520,7 +394,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Puzzle completion animation** — a brief overlay celebrates solving a puzzle before the game moves on.
 
 ### Changed
-
 - The pyramid map now scrolls to keep the explorer dot centered as you move, so you can always see what is ahead without manually scrolling.
 - Completed rooms and corridors are now tappable again, letting you move back to any room you have already visited.
 - Expeditions no longer award inventory items directly on completion; items are found inside the pyramid during exploration instead.
