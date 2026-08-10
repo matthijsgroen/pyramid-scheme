@@ -13,6 +13,8 @@ import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import { DevPanel } from "@/ui/molecules/DevPanel"
+import { useDevActions } from "@/app/dev/useDevActions"
 
 import { TableauInventory } from "./TableauInventory"
 import { availablePyramidJourneyIds } from "./journeyAvailability"
@@ -36,6 +38,8 @@ export const TravelPage: FC<{
   // Ward/tomb keys the player currently holds — a newly-earned one re-lights a completed pyramid
   // that has a matching unopened ward door (getUnexploredLevels re-checks against this).
   const heldKeys = useMergedHeldKeys()
+  // Playtesting grants + the every-journey bypass below; rendered only in develop mode.
+  const devActions = useDevActions()
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
@@ -121,9 +125,17 @@ export const TravelPage: FC<{
 
   // Which pyramid expeditions are pickable: a tier is entered on holding one of its unlock
   // treasures, and inside a tier they still open one at a time (see journeyAvailability).
+  //
+  // Develop mode opens every one of them. This IS a bypass, unlike the dev panel's grants (those go
+  // through the real mod APIs): the within-tier "previous pyramid completed" rule can't be satisfied
+  // by granting anything, and faking completionCount instead would flip journeys into revisit mode
+  // and change how they're entered — the opposite of what playtesting needs.
   const availableJourneyIds = useMemo(
-    () => availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
-    [journeys, heldKeys, getJourney]
+    () =>
+      isDevelopMode
+        ? new Set(journeys.filter(j => j.type === "pyramid").map(j => j.id))
+        : availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
+    [journeys, heldKeys, getJourney, isDevelopMode]
   )
   // The newest one open to the player — the card that shows its details expanded.
   const newestAvailableId = useMemo(
@@ -156,7 +168,7 @@ export const TravelPage: FC<{
       className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
       snap="start"
     >
-      <div className="relative flex h-full w-full overflow-x-hidden">
+      <div className="relative flex size-full overflow-x-hidden">
         <div
           className={`absolute inset-0 flex w-full flex-1 flex-col pb-6 transition-all duration-700 ease-in-out md:px-16 ${
             showJourneySelection ? "translate-x-[-100%] opacity-0" : "translate-x-0 opacity-100"
@@ -168,10 +180,15 @@ export const TravelPage: FC<{
             content, rough edges, and save resets.
           </p>
           <h1 className="mb-4 text-center font-pyramid text-xl font-bold">{t("ui.travel")}</h1>
-          {isDevelopMode && shopTombJourney && (
-            <div className="mb-4 flex justify-center">
-              <DeveloperButton onClick={() => handleJourneySelect(shopTombJourney)} label="Jump to Shop Tomb" />
-            </div>
+          {isDevelopMode && (
+            <>
+              {shopTombJourney && (
+                <div className="mb-4 flex justify-center">
+                  <DeveloperButton onClick={() => handleJourneySelect(shopTombJourney)} label="Jump to Shop Tomb" />
+                </div>
+              )}
+              <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
+            </>
           )}
 
           {/* Map Section */}
