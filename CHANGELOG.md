@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - The "X/Y needed" count on a still-collecting hieroglyph in the tomb's available-symbols strip was stuck in English regardless of your chosen language.
+- A hieroglyph tile's engraved shading could show as a doubled, mismatched-color outline around the symbol, most visible on devices missing the true hieroglyph glyph.
 
 ## 0.33.1 - 2026-08-09
 

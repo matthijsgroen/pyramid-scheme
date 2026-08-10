@@ -221,8 +221,10 @@ export const HieroglyphTile: FC<HieroglyphTileProps> = ({
             style={{
               // Symbol color matches the darker tile background
               color: disabled ? "#6b7280" : difficultyMaterial[difficulty].symbol,
-              // Subtle engraved effect for the symbol
-              textShadow: disabled ? "none" : "0 1px 0 rgba(255, 255, 255, 0.8), 0 -1px 0 rgba(0, 0, 0, 0.3)",
+              // Subtle depth for the symbol — a single soft shadow, not a two-tone offset pair:
+              // those doubled visibly (a light copy above, a dark copy below) on glyphs that
+              // render as a simple box (e.g. a hieroglyph missing from the device's font).
+              textShadow: disabled ? "none" : "0 1px 1px rgba(0, 0, 0, 0.35)",
               filter: selected ? "brightness(1.1)" : "none",
             }}
           >
