@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Hieroglyph fragments spread across a tier's pyramids instead of piling into its first ones: the last pyramid of a tier used to be its emptiest (junior's last two held 3 fragments each while its first two held 32 between them).
+- A crocodile guards every tomb treasure from the junior tomb down, not just the last one of each tomb. Starter tombs stay crocodile-free.
 
 ### Fixed
 
 - The "X/Y needed" count on a still-collecting hieroglyph in the tomb's available-symbols strip was stuck in English regardless of your chosen language.
+- A tomb floor that ended in a crocodile was one tableau room short — the crocodile took a tableau's place instead of adding a room.
 
 ## 0.33.1 - 2026-08-09
 
