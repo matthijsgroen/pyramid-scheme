@@ -18,6 +18,7 @@
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
     "verify-floors": "vitest run src/app/SiteMap/worldFloorAssembly.spec.ts",
     "world-info": "tsx scripts/worldInfo.ts",
+    "mosaic-info": "tsx scripts/mosaicInfo.ts",
     "release": "tsx scripts/release.ts",
     "prepare": "husky"
   },
