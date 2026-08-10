@@ -10,7 +10,7 @@ This is one subsystem of the world builder, not a mod. Floor-key/tomb-key/
 ward-gate placement is not one mechanism today — it's two, conflated:
 
 **The solver (generic, world builder engine):** understands "reachability
-given a set of possessed keys." It knows nothing about what a key *is*
+given a set of possessed keys." It knows nothing about what a key _is_
 semantically — a map piece, a hieroglyph fragment, a ward-key treasure
 are all the same shape to it: "possessing currency X's instance Y
 satisfies requirement Z."
@@ -30,13 +30,13 @@ one finished:
 
 1. **Structural setup (DSL).** Builds every node — portal, fork, encounter
    — for the whole world, deterministic per seed. Assigns each node's own
-   *wish* (a gate's `requiredKeyId`, a tableau's `requiredKeyIds`) and, new
-   here, each candidate slot's own *loot preference* (`prefers: <currency>`
+   _wish_ (a gate's `requiredKeyId`, a tableau's `requiredKeyIds`) and, new
+   here, each candidate slot's own _loot preference_ (`prefers: <currency>`
    — a soft tag, e.g. "this chest prefers the mosaic currency"). No reward
    is granted yet — a wish or a preference is not loot. See "Structure,
    then loot" below.
 2. **Exploration.** The reactive worklist: discover key demands (locks) as
-   reachability expands, place keys — anything that *gates* progress
+   reachability expands, place keys — anything that _gates_ progress
    (map pieces, hieroglyph fragments, future mod-owned key currencies) —
    into reachable slots. See "The placement algorithm" below.
 3. **Capped loot.** Runs once exploration settles (nothing left blocking).
@@ -69,7 +69,7 @@ Three conceptual node kinds cover every room:
   family dispatch, no requirement.
 - **Fork** — pure branching. Structural, not a dispatched node at all.
 - **Encounter** — everything else. Always family-dispatched (the existing
-  `FamilyPlugin` registry), and *optionally* carries a key-requirement
+  `FamilyPlugin` registry), and _optionally_ carries a key-requirement
   precondition on top of its own interactive content.
 
 **Gate is not architecturally distinct from encounter — it's a family.** A
@@ -127,7 +127,7 @@ player hold currency X" — but what it unlocks differs by **scope**:
 
 One key instance can satisfy multiple scoped locks at once — a tomb's
 first treasure is simultaneously the thing that opens that tomb's own
-room-scoped ward gates *and* the thing that flips the global next-
+room-scoped ward gates _and_ the thing that flips the global next-
 difficulty unlock. Not two keys, one key checked against two locks of
 different scope.
 
@@ -145,7 +145,7 @@ Difficulty is linear: each tier is 4 pyramid journeys + 1 tomb. Collecting
 ANY ONE of a tomb's 4 designated tier-unlock treasures (`TIER_UNLOCK_PERK_IDS`,
 `src/data/treasurePerks.ts`) unlocks the next tier (another 4 journeys + a
 tomb), and so on to Wizard. The solver's top-level goal graph is exactly
-this ladder — reaching Wizard. Each of those 4 treasures is *also* paired to
+this ladder — reaching Wizard. Each of those 4 treasures is _also_ paired to
 one specific journey of the next tier (journey N's own ward gates open on
 tier-unlock key N) — so tier entry itself only ever needs one key, but
 fully exploring the tier's ward-gated bonus content across all 4 journeys
@@ -156,9 +156,9 @@ reachability across the **whole world at once**, not tier by tier. `WARD_MIX`
 (`pyramid-interior-design.md` §6) already places ward keys across tiers in
 both directions — a starter treasure can gate a junior pyramid's floor, and
 a wizard treasure can gate a junior one. Concretely: the player reaches
-junior difficulty via starter's tier-unlock treasure; a *different* starter
+junior difficulty via starter's tier-unlock treasure; a _different_ starter
 treasure (key 2) gates a floor inside a junior pyramid; a fragment placed
-behind *that* gate might be exactly what starter's own tableau (key 3)
+behind _that_ gate might be exactly what starter's own tableau (key 3)
 needs. Reachability genuinely flows backward (deeper tiers feeding earlier
 ones) as well as forward — a sequential per-tier loop cannot model that,
 only one whole-world graph can.
@@ -177,8 +177,8 @@ graph spanning the whole world:
   world at once.
 
 **A coarse edge is a projection, not an independently authored fact.** A
-floor itself is never "locked" — what's locked is the *path to its own
-stairhead*, inside whichever earlier floor actually contains that
+floor itself is never "locked" — what's locked is the _path to its own
+stairhead_, inside whichever earlier floor actually contains that
 transition. "Floor 2 requires key X" is derived by asking the existing
 fine-grained model "is the specific stairhead cell leading to floor 2
 reachable, within floor 1, given currently-possessed keys?" — never stored
@@ -199,7 +199,7 @@ fine-grained BFS, not re-deriving it.
 ## Structure, then loot — two strictly separate phases
 
 `assembleFloor` (structure phase) builds every node — every portal, fork,
-and encounter — for the *entire* world, up front, deterministic per seed.
+and encounter — for the _entire_ world, up front, deterministic per seed.
 Every node's own **wish** is baked in at this point: a gate's
 `requiredKeyId`, a tableau's `requiredKeyIds` (from that family's own
 `resolveKeyRequirements`), a slot's optional `prefers` tag. None of this is
@@ -210,7 +210,7 @@ tomb's map piece) is written during this phase.
 The solver (grant phase, below) never adds or removes nodes — it only
 walks the already-finished structure and grants currency instances into
 slots to satisfy wishes and fill capacity. This is why a "lock" doesn't
-need to be invented or pre-enumerated: it's *discovered* by walking the
+need to be invented or pre-enumerated: it's _discovered_ by walking the
 fixed-point BFS (`collectReachableKeys`) and noting which reachable
 frontier cells carry a wish that current `ownedFacts` don't satisfy yet —
 the same wish that was always there in the structure, just not yet
@@ -259,6 +259,22 @@ For each entry pulled off the worklist:
    solvable — recompute the reachable play area (now bigger), enqueue any
    newly-visible locks, and continue.
 
+### The completion pass — a backstop, not a second discovery phase
+
+Discovery-driven placement has one structural gap: a bucket nothing ever
+locks on is never enqueued, so a currency instance no reachable node
+happens to wish for would otherwise silently never get placed. In
+practice this rarely bites (a tableau's own requirement usually _is_ the
+lock), but it's not a logical guarantee, so `placeFragments` drains the
+worklist once as above, then asks each currency for every bucket it's
+ultimately responsible for (`CurrencyDistribution.allBuckets`, optional —
+omit it if "never discovered" genuinely means "never needed", as for map
+pieces) and enqueues whatever isn't satisfied yet, draining again. This
+can only ever move the world _toward_ full coverage — a bucket already
+satisfied by the first drain is a no-op here — so it's purely a safety
+net against a symbol slipping through discovery, not a second placement
+policy.
+
 ### Phase 3/4 loot: the same pipeline, once the worklist is empty
 
 Once every key-like currency is fully placed (no blockers left), remaining
@@ -269,7 +285,7 @@ distribution-rule pipeline** every key currency already uses, just with
 different completion guarantees (capped = must fully place; uncapped =
 drop-rate-gated, a slot can end up genuinely empty). Neither phase needs
 incremental reachability recompute — by the time the worklist is empty the
-reachable area *is* the final, fully-unlocked world, so both are one pass
+reachable area _is_ the final, fully-unlocked world, so both are one pass
 over whatever candidate slots remain, not a re-expanding loop.
 `fragments.ts`'s old final pass ("fill every remaining slot with junk
 loot") proved this shape in miniature, unconditionally — it needs to
@@ -303,7 +319,7 @@ inventing a rule language for it.
 > the **spread** currencies (map pieces, hieroglyph fragments) are placed by a
 > distribution rule. **Ward/tomb keys are NOT a distributed currency** — they're
 > **positional tomb content** (one treasure per tomb floor, "the treasure IS the
-> key"), placed by tomb structure and *harvested* by the reachability model, never
+> key"), placed by tomb structure and _harvested_ by the reachability model, never
 > ranked into free slots (210 gates reference only ~32 distinct keys — many:1,
 > threshold-1 demand; a demand-spread currency can't express that). So the
 > ward-key line below never became real code, and `WARD_MIX` stays buried.
@@ -311,8 +327,8 @@ inventing a rule language for it.
 > **Why retiring `validateDiscovery` is safe (the invariant chain):** every tomb
 > treasure is always placed as positional content → every ward key is therefore
 > harvestable → every ward gate (optional or load-bearing) resolves in reachability
-> → no hard-fail. A ward pocket is *optional loot* by default; it becomes
-> *load-bearing* only when it holds a required currency (e.g. a secondary-tomb map
+> → no hard-fail. A ward pocket is _optional loot_ by default; it becomes
+> _load-bearing_ only when it holds a required currency (e.g. a secondary-tomb map
 > piece on a deep floor), and the worklist already sequences that (place ward key →
 > pocket reachable → place the required piece). Reachability's winnability sweep +
 > `settleHarvest` enforce this structurally, subsuming `validateDiscovery`'s old
@@ -325,10 +341,16 @@ what's left) — composed with a plain `pipe`:
 ```ts
 // map piece: prefer a different journey per instance; relax to a different
 // pyramid within an already-used journey (see "Map piece placement" below)
-pipe(uniqueBy(slot => slot.journeyId), rankBy(lootPriority))
+pipe(
+  uniqueBy(slot => slot.journeyId),
+  rankBy(lootPriority)
+)
 
 // hieroglyph fragment: tier-match filter, then generic loot priority
-pipe(filterBy(slot => slot.difficulty === ctx.targetDifficulty), rankBy(lootPriority))
+pipe(
+  filterBy(slot => slot.difficulty === ctx.targetDifficulty),
+  rankBy(lootPriority)
+)
 
 // ward-key: NOT built — ward/tomb keys are positional tomb content harvested by
 // reachability, not a distributed currency (see the §E as-built note above)
@@ -344,7 +366,7 @@ in a slot whose own authored difficulty differs from its tier, regardless of
 ranking pressure. Beyond the tier filter, the rank composes two further soft
 rungs: a ward-key/preference score, then a dedup that caps a hieroglyph to
 **at most one ward-matched slot per distinct matched key**
-(`uniqueBy(s => matchedKey ? `__ward__:${matchedKey}` : `${journeyId}#${levelIndex}`)`,
+(`uniqueBy(s => matchedKey ? `**ward**:${matchedKey}` : `${journeyId}#${levelIndex}`)`,
 falling back to per-pyramid dedup for non-ward slots) — without this cap a
 single hungry symbol would claim every gated slot behind a tomb's own key,
 leaving nothing for the other symbols that also prefer it. The cap means a
@@ -375,7 +397,10 @@ every journey in the tier already holds an instance:
 ```ts
 preferThenRelax(
   uniqueBy(slot => slot.journeyId),
-  preferThenRelax(uniqueBy(slot => `${slot.journeyId}:${slot.levelIndex}`), rankBy(lootPriority))
+  preferThenRelax(
+    uniqueBy(slot => `${slot.journeyId}:${slot.levelIndex}`),
+    rankBy(lootPriority)
+  )
 )
 ```
 
@@ -397,7 +422,10 @@ to become a **generic combinator** every currency reuses instead of
 per-currency bespoke retry code:
 
 ```ts
-preferThenRelax(uniqueBy(slot => slot.pyramidId), rankBy(lootPriority))
+preferThenRelax(
+  uniqueBy(slot => slot.pyramidId),
+  rankBy(lootPriority)
+)
 // tries the strict filter first; only falls through to the relaxed rule
 // (skipping the filter, keeping the ranker) if too few candidates survive
 ```
@@ -413,7 +441,7 @@ This makes a shop a legitimate placement target for a key-like currency,
 same as any chest — "purchasable" is just another acquisition channel a
 distribution rule can prefer. Concretely: the map piece gating wizard
 tier's second tomb can prefer placement as shop stock inside wizard tier's
-*first* tomb (its own fez-shop) — once the player has reached that far,
+_first_ tomb (its own fez-shop) — once the player has reached that far,
 the fragment is right there to buy, no separate exploration required.
 
 ### A slot's authored placement preference is a soft tag, not an exclusive claim
@@ -424,7 +452,7 @@ instance" (the placement algorithm, step 2) is realized as an optional
 structure-build time, by whoever authors that node (e.g. "this journey's
 first pyramid's main chest prefers the map piece"). It is a ranking boost,
 not an eligibility filter: a currency's distribution rule ranks
-preference-tagged slots first, but any slot remains eligible for *any*
+preference-tagged slots first, but any slot remains eligible for _any_
 currency's generic fill. Once the preferred currency's demand is fully
 satisfied, a leftover `prefers` tag is simply inert — the slot falls
 through to whatever fills next (generic loot-priority ranking, then filler
@@ -462,7 +490,7 @@ preference, so pick the highest-priority available slot (a chest) in the
 reachable area. Place map piece 2: the currency's distribution rule
 ("never the same pyramid as another instance") filters candidates to a
 different journey; again no authored preference, pick the best slot there.
-Repeat for 3 and 4. All four sit *inside* the area computed *before* any of
+Repeat for 3 and 4. All four sit _inside_ the area computed _before_ any of
 them existed — they can never gate themselves. The tomb is now enterable.
 
 **Blocker 2 — the tomb's first tableau.** Reaching the tier-unlock goal
@@ -480,10 +508,10 @@ repeats one tier up, all the way to Wizard.
 **Why this has to be whole-world, concretely.** Starter's tomb has more
 than one treasure — treasure 1 flips the global tier-unlock (junior
 becomes playable); treasure 2 (a different key, same tomb) happens to be
-the ward-key a *junior* pyramid's floor demands. The player is now in
+the ward-key a _junior_ pyramid's floor demands. The player is now in
 junior difficulty, exploring junior pyramids, and opens that gate with a
 key they got from starter. Behind it sits a hieroglyph fragment — and that
-fragment turns out to be exactly what starter's *own* tableau needs for
+fragment turns out to be exactly what starter's _own_ tableau needs for
 its treasure 3. The player leaves junior, walks back into the starter
 tomb, and only now can pass a gate they walked past on their very first
 visit. This is the pitch's "backward and forward" in miniature: a worklist

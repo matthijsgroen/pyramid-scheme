@@ -1,4 +1,5 @@
 import type { SiteConfig, TreasureReward } from "@/worldGen/types"
+import type { WorldValidator } from "@/worldGen/validate"
 
 // Hieroglyph-owned world-gen finalize (docs/mods/distribution-primitive-design.md, §D): two pieces
 // of hieroglyph-specific finalize logic kept out of the generic core serializer.
@@ -56,17 +57,6 @@ export const placedFragmentCounts = (configs: Record<string, SiteConfig[]>): Map
   return placed
 }
 
-// The required-fragment count per hieroglyph, capped at how many were actually placed — never ask
-// players to find more pieces than exist. (Was countPlacedFragments + the Math.min in the core
-// serializer.)
-export const cappedHieroglyphRequired = (
-  configs: Record<string, SiteConfig[]>,
-  required: Record<string, number>
-): Record<string, number> => {
-  const placed = placedFragmentCounts(configs)
-  return Object.fromEntries(Object.keys(required).map(id => [id, Math.min(placed.get(id) ?? 1, required[id] ?? 1)]))
-}
-
 // Human-readable coverage for the generate-world stats line (hieroglyph is the only reward with a
 // "you must find N of these" target, so this reporting is its own concern, not core's).
 export const hieroglyphCoverage = (configs: Record<string, SiteConfig[]>, required: Record<string, number>) => {
@@ -80,3 +70,20 @@ export const hieroglyphCoverage = (configs: Record<string, SiteConfig[]>, requir
     under: ids.filter(id => (placed.get(id) ?? 0) < (required[id] ?? 0)),
   }
 }
+
+// Every hieroglyph must have its full fragment count placed somewhere in the world — with the
+// placeFragments.ts completion pass (`allBuckets`) this should always hold; this is the loud,
+// per-symbol failure if it somehow doesn't, replacing a former silent cap (cappedHieroglyphRequired)
+// that quietly lowered a symbol's requirement to however many happened to land instead of failing.
+// Hieroglyph-owned: injected as the mod's worldValidator (mirrors the shop mod's economyGuard), so
+// the check drops out when hieroglyph leaves REGISTERED_MODS.
+export const hieroglyphCoverageValidator =
+  (required: Record<string, number>): WorldValidator =>
+  configs => {
+    const { under } = hieroglyphCoverage(configs, required)
+    if (under.length > 0) {
+      const placed = placedFragmentCounts(configs)
+      const detail = under.map(id => `${id}: ${placed.get(id) ?? 0}/${required[id]}`).join(", ")
+      throw new Error(`[worldSpec] Hieroglyph fragment coverage failed — under-placed: ${detail}`)
+    }
+  }

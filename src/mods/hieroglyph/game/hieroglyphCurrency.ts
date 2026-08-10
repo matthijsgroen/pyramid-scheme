@@ -7,6 +7,8 @@ import { TOMB_SYMBOLS, HIEROGLYPH_REQUIRED } from "./hieroglyphData"
 import { TOMB_PERK_IDS } from "@/data/treasurePerks"
 import { tableauLevels } from "@/data/tableaus"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
+import { mulberry32 } from "@/game/random"
+import { hashString } from "@/support/hashString"
 
 // The hieroglyph-fragment currency, owned by the tableau mod (not core world-gen) —
 // docs/mods/ARCHITECTURE.md, "Currencies are mod-owned, not a closed core vocabulary".
@@ -67,6 +69,32 @@ const JOURNEY_TIER: Record<string, Tier> = (() => {
   return result
 })()
 
+// Which THIRD of its own tier's journeys (in declaration order) a journey falls in: 0/0.5/1 for
+// first/middle/last third. Ties in `rank`'s pool score today all resolve to earliest-journey-first
+// (collectSlots walks in declaration order, and every ward-matched slot scored identically) —
+// exactly why a tier's first one or two pyramids used to hoard most of that tier's fragments.
+// This lets `rank` break ties toward LATER journeys instead — bucketed into thirds rather than a
+// continuous ordinal, so it biases volume toward the tier's later stretch without collapsing every
+// tie onto the single literal last journey (which a continuous fraction does: it's ranked highest
+// no matter what, every time). Weighted low (0.15 below) relative to the jitter tie-break, so which
+// journey wins WITHIN a third is still mostly jitter, not always the third's own last journey.
+const TIER_THIRD: Record<string, number> = (() => {
+  const byTier = new Map<Tier, string[]>()
+  for (const j of [...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS]) {
+    const ids = byTier.get(j.tier) ?? []
+    ids.push(j.id)
+    byTier.set(j.tier, ids)
+  }
+  const result: Record<string, number> = {}
+  for (const ids of byTier.values()) {
+    ids.forEach((id, i) => {
+      const third = Math.floor((i / ids.length) * 3)
+      result[id] = third / 2
+    })
+  }
+  return result
+})()
+
 // Which ward keys (earned by completing earlier tomb runs) this hieroglyph's preferred
 // placement slots sit behind — derived from tableauLevels/TOMB_PERK_IDS, not authored
 // per-hieroglyph. Searches every tomb of the tier (not just the primary `${tier}_treasure_tomb`)
@@ -120,6 +148,10 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
     reward.type === "hieroglyphFragment" ? `${BUCKET_PREFIX}${reward.hieroglyphId}` : undefined,
   // The world-wide count the reward-count check expects — this mod's own number.
   expectedTotal: () => EXPECTED_HIEROGLYPH_FRAGMENTS,
+  // Every hieroglyph the world must place a fragment for — the completion-pass backstop
+  // (placeFragments.ts's own comment on `allBuckets`) for a symbol no reachable tableau happens
+  // to lock on. Sums to the same ids `expectedTotal` counts, by construction.
+  allBuckets: () => Object.keys(HIEROGLYPH_REQUIRED).map(id => `${BUCKET_PREFIX}${id}`),
   demandFor: (bucket, allConfigs) => {
     const hieroglyphId = bucket.slice(BUCKET_PREFIX.length)
     const tier = TIER_BY_HIEROGLYPH[hieroglyphId]
@@ -171,7 +203,18 @@ export const HIEROGLYPH_CURRENCY: CurrencyDistribution = {
       // wardMatch AND prefMatch; it can never outrank a candidate with a strictly better
       // ward/pref match.
       const foreignHost = JOURNEY_TIER[s.journeyId] !== demand.tier
-      return (wardMatch ? 2 : 0) + (prefMatch ? 2 : 0) + (foreignHost ? 1 : 0)
+      // Two more tie-breaks, sub-integer so together they can never outrank foreignHost (the
+      // smallest real step, 1) let alone ward/pref (2 each) — they only ever decide between
+      // candidates the steps above already call equal:
+      // - laterThird: prefer a slot in a LATER third of its own tier's journeys, countering the
+      //   collection-order bias described on TIER_THIRD above.
+      // - jitter: a small deterministic (not Math.random) per-symbol-per-slot value so different
+      //   hieroglyphs don't all break the laterThird tie the same way and stack onto the exact same
+      //   handful of pyramids — jitter is weighted ABOVE laterThird so which journey wins within a
+      //   third is mostly jitter, and laterThird only biases which third gets more volume overall.
+      const laterThird = TIER_THIRD[s.journeyId] ?? 0
+      const jitter = mulberry32(hashString(`${demand.instanceId}:${s.journeyId}:${s.ref.levelIndex}`))()
+      return (wardMatch ? 2 : 0) + (prefMatch ? 2 : 0) + (foreignHost ? 1 : 0) + 0.15 * laterThird + 0.6 * jitter
     })
     return pipe<Slot>(
       filterBy(s => s.tier === demand.tier),
