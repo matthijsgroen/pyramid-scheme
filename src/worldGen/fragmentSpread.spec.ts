@@ -3,11 +3,12 @@ import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { SiteConfig, SideSection } from "./types"
 
-// Guards against a hieroglyph tier's fragments front-loading onto its first one or two
-// pyramid journeys again (junior_1+junior_2 used to hold 74% of junior's 39 fragments — see
-// hieroglyphCurrency.ts's rank tie-break + this tier's own PathEntry `ramp`, sideSections.ts).
-// Walks the real generated world rather than re-deriving counts, so it catches a regression in
-// either mechanism (the rank tie-break OR the authored ramp) however it happens.
+// Guards against a hieroglyph tier's fragments front-loading onto its first one or two pyramid
+// journeys again. Before hieroglyphCurrency.ts's rank tie-break, ranking ties always resolved
+// earliest-journey-first (collectSlots walks in declaration order), so junior_1+junior_2 held 74%
+// of junior's 39 fragments while junior_3+junior_4 held 3 each — a tier's LAST pyramid was its
+// emptiest. Walks the real generated world rather than re-deriving counts, so it catches a
+// regression in the tie-break however it happens.
 
 const countFragments = (siteConfigs: SiteConfig[]): number => {
   let count = 0
@@ -33,7 +34,7 @@ for (const j of PYRAMID_JOURNEYS) {
   journeysByTier.set(j.tier, ids)
 }
 
-describe("hieroglyph fragments ramp up within a tier instead of front-loading", () => {
+describe("hieroglyph fragments spread across a tier instead of front-loading", () => {
   for (const [tier, journeyIds] of journeysByTier) {
     const counts = journeyIds.map(id => countFragments(generatedWorldConfigs[id]))
     const total = counts.reduce((a, b) => a + b, 0)

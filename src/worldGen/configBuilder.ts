@@ -60,32 +60,7 @@ export type PyramidPlan = {
   levelCount: number
   constraint: PyramidConstraint
   provenance: Provenance
-  // This journey's 0-indexed position among its own tier's journeys (declaration order in
-  // PYRAMID_JOURNEYS) and how many journeys that tier has — see PathEntry's `ramp` (dsl.ts).
-  tierOrdinal: number
-  tierJourneyCount: number
 }
-
-// A journey's ordinal among its own tier's journeys, in PYRAMID_JOURNEYS declaration order —
-// the same "which of a tier's journeys is this" question HIEROGLYPH_CURRENCY.rank's own
-// TIER_THIRD asks (front-loading fix), here feeding sideSections.ts's capacity ramp instead of a
-// ranking tie-break. Kept separate (not shared) since one wants a coarse third, the other a
-// continuous fraction, and the two live in different layers (core world-gen vs. a mod's currency).
-const JOURNEY_TIER_ORDINAL: Record<string, { ordinal: number; count: number }> = (() => {
-  const byTier = new Map<string, string[]>()
-  for (const j of PYRAMID_JOURNEYS) {
-    const ids = byTier.get(j.tier) ?? []
-    ids.push(j.id)
-    byTier.set(j.tier, ids)
-  }
-  const result: Record<string, { ordinal: number; count: number }> = {}
-  for (const ids of byTier.values()) {
-    ids.forEach((id, i) => {
-      result[id] = { ordinal: i, count: ids.length }
-    })
-  }
-  return result
-})()
 
 const buildPlan = (): PyramidPlan[] =>
   PYRAMID_JOURNEYS.flatMap(j =>
@@ -105,7 +80,6 @@ const buildPlan = (): PyramidPlan[] =>
         typeof constraint.pathPuzzles === "number" || isPathPuzzlesRange(constraint.pathPuzzles)
           ? constraint.pathPuzzles
           : j.pathPuzzles
-      const { ordinal, count } = JOURNEY_TIER_ORDINAL[j.id] ?? { ordinal: 0, count: 1 }
       return {
         journeyId: j.id,
         tier: j.tier as Tier,
@@ -114,8 +88,6 @@ const buildPlan = (): PyramidPlan[] =>
         pathPuzzles: resolvePathPuzzles(pathPuzzlesValue, i, j.levelCount),
         constraint,
         provenance,
-        tierOrdinal: ordinal,
-        tierJourneyCount: count,
       }
     })
   )
@@ -144,7 +116,7 @@ const buildSiteConfigs = (
     const pyramidConfigs: SiteConfig[] = []
 
     for (const p of pyramids) {
-      const { pyramidIndex: i, pathPuzzles: pp, constraint, tierOrdinal, tierJourneyCount } = p
+      const { pyramidIndex: i, pathPuzzles: pp, constraint } = p
       const difficulty: Difficulty = constraint.difficulty ?? "expert"
 
       const { floors } = buildSite({
@@ -155,8 +127,6 @@ const buildSiteConfigs = (
         pathPuzzles: pp,
         constraint,
         difficulty,
-        tierOrdinal,
-        tierJourneyCount,
         hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
@@ -257,8 +227,6 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
       pyramidIndex: 0,
       levelCount: 1,
       pathPuzzles: 1,
-      tierOrdinal: 0,
-      tierJourneyCount: 1,
       // Cast: `floors` is authored in tomb's own TombRewardHint vocabulary, which
       // resolveTombReward (below) understands.
       constraint: { ...constraint, floors } as PyramidConstraint,

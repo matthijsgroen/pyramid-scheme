@@ -155,12 +155,6 @@ export type BuildSiteContext<TExtra extends string = never> = {
   hasMapPieceBranch: boolean
   hasWardGate: boolean
   nextTier: string | null
-  // This journey's 0-indexed position among its own tier's journeys + that tier's journey count —
-  // threaded straight through to buildSideSections (see its own doc); a PathEntry's `ramp` uses it
-  // to give later journeys of a tier more capacity than earlier ones. Tombs (always a single,
-  // ordinal-less site) pass 0/1.
-  tierOrdinal: number
-  tierJourneyCount: number
   // Floor indices of a tomb reserved for a tier-unlock/location-key treasure — injected by the
   // reward owner (tomb-treasure mod) so ward wings skip them. Undefined ⇒ none reserved (mod off).
   reservedTreasureIndices?: (tombId: string) => number[]
@@ -176,18 +170,7 @@ export type BuildSiteContext<TExtra extends string = never> = {
 // per treasure) — a tomb is structurally the same as a pyramid interior
 // (pyramid-interior-design.md §8), just always taking this one branch.
 export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
-  const {
-    journeyId,
-    tier,
-    pyramidIndex: i,
-    levelCount,
-    pathPuzzles: pp,
-    constraint,
-    difficulty,
-    resolveReward,
-    tierOrdinal,
-    tierJourneyCount,
-  } = ctx
+  const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
   const { hasMapPieceBranch, hasWardGate, nextTier, resolveMainEndReward } = ctx
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
@@ -223,8 +206,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         declaredHiddenPaths: fc.hiddenPaths,
         keyColors: resolveKeyColors(constraint, journeyId, i),
         pyramidIndex: i,
-        tierOrdinal,
-        tierJourneyCount,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -298,8 +279,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         nextTier,
         keyColors: resolveKeyColors(constraint, journeyId, i),
         pyramidIndex: i,
-        tierOrdinal,
-        tierJourneyCount,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
@@ -409,8 +388,6 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     nextTier,
     keyColors: resolveKeyColors(constraint, journeyId, i),
     pyramidIndex: i,
-    tierOrdinal,
-    tierJourneyCount,
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })

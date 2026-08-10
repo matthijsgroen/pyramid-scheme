@@ -66,8 +66,7 @@ export const wizardRules: Rule[] = [
       packingChance: 0.25,
     })
     .sidePaths("medium")
-    // ramp: 2 — see starter.ts's comment on the same setting.
-    .settings({ pathPuzzles: 1, end: "fragment", gate: "floor-key", ramp: 2 })
+    .settings({ pathPuzzles: 1, end: "fragment", gate: "floor-key" })
     // Open (visible) trapped path — the ceiling carries the open-trap mechanic expert introduced,
     // ending in junk (income).
     .sidePaths("low")

@@ -9,12 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- A tier's later pyramid journeys now hold more hieroglyph fragments than its first — junior_1 and junior_2 used to hold nearly three-quarters of junior's fragments between them.
+- Hieroglyph fragments spread across a tier's pyramids instead of piling into its first ones: the last pyramid of a tier used to be its emptiest (junior's last two held 3 fragments each while its first two held 32 between them).
 
 ### Fixed
 
 - The "X/Y needed" count on a still-collecting hieroglyph in the tomb's available-symbols strip was stuck in English regardless of your chosen language.
-- A hieroglyph whose lock the world generator never happened to discover could silently end up with fewer fragments placed than required; every hieroglyph's full count is now guaranteed placed, or the build fails loudly instead.
 
 ## 0.33.1 - 2026-08-09
 

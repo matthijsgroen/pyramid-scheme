@@ -46,8 +46,7 @@ export const juniorRules: Rule[] = [
   tier("junior")
     .set({})
     .sidePaths("medium")
-    // ramp: 1 — see starter's own comment on the same setting.
-    .settings({ pathPuzzles: 1, end: "fragment", ramp: 1 })
+    .settings({ pathPuzzles: 1, end: "fragment" })
     // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so
     // the hidden mosaic below is unreachable this early (junior_1 was all-hidden = 0 reachable). A
     // surplus visible end slot the capped pass fills. See starter tier default.

@@ -35,11 +35,7 @@ export const starterRules: Rule[] = [
   tier("starter")
     .set({})
     .sidePaths("low")
-    // ramp: 1 — starter's own last journey gets one extra fragment path beyond the base density,
-    // interpolated linearly from its first journey (0 extra) — see PathEntry's own doc. Ties into
-    // hieroglyphCurrency.ts's rank tie-break (which journey a tie prefers) with actual capacity to
-    // back it, instead of only reshuffling which of an unchanged set of slots wins.
-    .settings({ pathPuzzles: 0, end: "fragment", ramp: 1 })
+    .settings({ pathPuzzles: 0, end: "fragment" })
     // One VISIBLE mosaic per pyramid, on top of the hidden one below: the corridor detector that
     // reveals hidden paths isn't earned until the master tier, so a hidden-only mosaic would leave
     // the whole starter run with no reachable mosaic. This surplus visible end slot survives the

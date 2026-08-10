@@ -67,8 +67,6 @@ describe("buildSite", () => {
     hasMapPieceBranch: false,
     hasWardGate: false,
     nextTier: null,
-    tierOrdinal: 0,
-    tierJourneyCount: 1,
     mosaicPathCount: 0,
     resolveReward: () => undefined,
     resolveMainEndReward: () => ({ type: "mosaicPiece" as const }),

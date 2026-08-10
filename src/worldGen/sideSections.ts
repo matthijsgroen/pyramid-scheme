@@ -97,11 +97,6 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   nextTier?: string | null
   keyColors?: number
   pyramidIndex?: number
-  /** This journey's 0-indexed position among its own tier's journeys, and how many journeys that
-   * tier has — a PathEntry's own `ramp` interpolates between them. Tomb sites (and any caller with
-   * nothing to ramp) pass 0/1, which always yields a ramp contribution of 0. */
-  tierOrdinal?: number
-  tierJourneyCount?: number
   /** Pyramid-only: DSL-declared visible/hidden side paths (density-driven, auto-counted). */
   declaredSidePaths?: PathEntry[]
   declaredHiddenPaths?: PathEntry[]
@@ -121,8 +116,6 @@ export const buildSideSections = <TExtra extends string = never>(
     nextTier,
     keyColors,
     pyramidIndex = 0,
-    tierOrdinal = 0,
-    tierJourneyCount = 1,
     declaredSidePaths,
     declaredHiddenPaths,
   } = opts
@@ -154,14 +147,10 @@ export const buildSideSections = <TExtra extends string = never>(
 
   const colorCount = Math.min(keyColors ?? 1, 5)
 
-  // Per-pyramid emit count for a declared entry — its density count (+ a linear ramp toward this
-  // tier's later journeys, entry.ramp — see PathEntry's own doc), or 0 if it declares a `chance`
-  // and this pyramid's roll misses (scatters e.g. trapped paths across some pyramids).
+  // Per-pyramid emit count for a declared entry — its density count, or 0 if it declares a
+  // `chance` and this pyramid's roll misses (scatters e.g. trapped paths across some pyramids).
   const emitCount = (entry: PathEntry, tag: string): number => {
-    const base = pathCountForDensity(entry.density, journeyId, pyramidIndex)
-    const rampBonus =
-      entry.ramp && tierJourneyCount > 1 ? Math.round(entry.ramp * (tierOrdinal / (tierJourneyCount - 1))) : 0
-    const count = base + rampBonus
+    const count = pathCountForDensity(entry.density, journeyId, pyramidIndex)
     if (entry.chance === undefined) return count
     return mulberry32(hashStr(`${journeyId}:${pyramidIndex}:${tag}`))() < entry.chance ? count : 0
   }

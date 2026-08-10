@@ -143,17 +143,25 @@ The starter tomb section 1 requires 4 hieroglyphs × 2 fragments = 8 finds — a
 - No two fragments of the same hieroglyph in the same journey (exploration)
 - Fragments can appear on deep floors, not just surface level
 - Tier-appropriate distribution: starter fragments in starter/junior content, wizard fragments in master/wizard content (with overlap to reward revisits)
-- **Ramps within a tier**: a tier's LATER journeys carry more fragment-path capacity than its
-  first (`PathEntry.ramp` in `dsl.ts`, interpolated linearly across a tier's own journeys —
-  `ramp: 1` for starter/junior, `ramp: 2` for expert+, on the fragment `sidePaths` setting in each
-  tier's spec file). Paired with a rank tie-break in `hieroglyphCurrency.ts` (a small bias toward a
-  journey's later third, plus a deterministic per-symbol jitter so different symbols don't all
-  pile onto the exact same later pyramids) — together they fix an earlier regression where a
-  tier's first one or two journeys held the bulk of that tier's fragments (junior_1+junior_2 once
-  held 74% of junior's 39). Every symbol's full required count is guaranteed placed somewhere —
-  `placeFragments.ts`'s completion pass (see keys-and-locks-solver.md) plus a hard-failing
-  per-symbol coverage check (`fragmentCoverage.spec.ts`) replace an older silent cap that used to
-  quietly lower a symbol's requirement to however many happened to land.
+- **Spread across a tier, not front-loaded**: a tier's later journeys hold at least as many
+  fragments as its first ones. Enforced purely by a rank tie-break in `hieroglyphCurrency.ts` (a
+  small bias toward a journey's later third, plus a deterministic per-symbol jitter so different
+  symbols don't all pile onto the exact same later pyramids), both weighted well under the
+  smallest real scoring step so they only ever break ties the ward/preference/foreign-host
+  scoring leaves open. This fixes a real defect: ranking ties used to resolve
+  earliest-journey-first, so junior_1+junior_2 held 74% of junior's 39 fragments while
+  junior_3+junior_4 held 3 each — a tier's LAST pyramid was reliably its emptiest. Guarded by
+  `fragmentSpread.spec.ts` over the real generated world.
+  - Adding authored side-path capacity to later journeys was tried as a second lever and
+    **dropped**: measured against the tie-break alone it moved fragment counts by ~±1 per journey
+    while growing the world by 74 side-sections (+9%), and cost `starter_4` most of its mosaic
+    pieces (13 → 3) as fragments crowded out the lower-priority capped filler. The tie-break does
+    effectively all the work; capacity authoring is not the lever for spread.
+- **Every symbol's full required count is guaranteed placed** — `placeFragments.ts`'s completion
+  pass (see keys-and-locks-solver.md) plus a hard-failing per-symbol coverage check
+  (`fragmentCoverage.spec.ts`) replace an older silent cap that used to quietly lower a symbol's
+  requirement to however many happened to land. Note this is a guard, not a fix for an observed
+  bug: it is a no-op against today's world (regenerating with it produced a zero diff).
 - **Gated share is NOT tuned by ranking alone**: an attempt to also push more of a tier's
   fragments behind ward keys (beyond today's ~30-45%) by widening which keys a symbol prefers, or
   by letting a symbol repeat a preferred key across pyramids, was tried and reverted —
@@ -218,7 +226,7 @@ explore tier pyramids (surface)
 
 **One map piece per pyramid journey, on the surface floor.** Every pyramid journey contributes exactly one map piece for the first tomb of its tier. This gives 4 map pieces per first-tomb (4 journeys per tier × 1 piece each) — **20 primary pieces** across the 20 pyramid journeys.
 
-**Extra-tomb pieces are always gated.** Second and third tombs within a tier (expert_b, master_b, wizard_b, wizard_c) draw map pieces found on deep floors — floors that are only accessible after collecting the corresponding ward key from the first tomb of that tier. The player must complete expert_a's tomb to unlock the floor that contains expert_b's pieces. Each of the **4 secondary tombs** receives one piece per journey in its tier, for **16 secondary pieces** (4 × 4). **20 primary + 16 secondary = 36 map piece rewards** placed in the world. Note that `piecesRequired` (below) is the unlock _cost_ — fewer than the pieces placed for later tombs, giving the player slack.
+**Extra-tomb pieces are always gated.** Second and third tombs within a tier (expert*b, master_b, wizard_b, wizard_c) draw map pieces found on deep floors — floors that are only accessible after collecting the corresponding ward key from the first tomb of that tier. The player must complete expert_a's tomb to unlock the floor that contains expert_b's pieces. Each of the **4 secondary tombs** receives one piece per journey in its tier, for **16 secondary pieces** (4 × 4). **20 primary + 16 secondary = 36 map piece rewards** placed in the world. Note that `piecesRequired` (below) is the unlock \_cost* — fewer than the pieces placed for later tombs, giving the player slack.
 
 **Main goal is always mosaicPiece in the full design.** The critical path through every pyramid ends in a mosaic tile bundle. Map pieces ride as intermediate chest nodes on the main path (linear sites) or on branch endpoints (branched sites). In the current linear-only phase, there are no branches, so map pieces temporarily occupy the main goal slot — Phase 5 restores mosaicPiece to the main goal when branches are introduced.
 
