@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { collectPlacedRewards } from "@/worldGen/effectiveWardKeys"
 import { difficulties, difficultyCompare, wardKeyDifficulty, type Difficulty } from "@/data/difficultyLevels"
+import type { TreasureReward } from "@/worldGen/types"
 import { MOSAIC_TIERS } from "./mosaicCurrency"
 
 // Mosaic glass must never show up easier-to-reach than the difficulty it belongs to. Two separate
@@ -28,10 +29,14 @@ const rank = (d: Difficulty) => difficulties.indexOf(d)
 const journeyTierOf = (journeyId: string): Difficulty | undefined =>
   difficulties.find(t => journeyId.startsWith(`${t}_`))
 
-const glass = collectPlacedRewards(generatedWorldConfigs).filter(p => p.reward.type === "mosaicPiece")
+// `TreasureReward` is deliberately open (`{ type: string } & Record<string, unknown>`), so a mod
+// narrows to its own reward shape with a predicate — same pattern as mosaicPlacement.spec.ts.
+const isMosaic = (r: TreasureReward): r is TreasureReward & { tier: Difficulty } => r.type === "mosaicPiece"
 
-// The reward's own tier field — mosaic's own vocabulary (`{ type: "mosaicPiece", tier }`).
-const tierOf = (reward: { tier?: unknown }): Difficulty => reward.tier as Difficulty
+// Each piece with its own tier lifted out of mosaic's reward vocabulary (`{ type, tier }`).
+const glass = collectPlacedRewards(generatedWorldConfigs)
+  .filter(p => isMosaic(p.reward))
+  .map(p => ({ ...p, tier: (p.reward as TreasureReward & { tier: Difficulty }).tier }))
 
 describe("mosaic glass lands at its own difficulty", () => {
   it("places every piece (a broken traversal can't pass by finding nothing)", () => {
@@ -40,15 +45,13 @@ describe("mosaic glass lands at its own difficulty", () => {
 
   it("puts each piece on a node of its own difficulty", () => {
     const offTier = glass
-      .filter(p => tierOf(p.reward) !== p.difficulty)
-      .map(p => `${tierOf(p.reward)} glass on ${p.difficulty} node in ${p.journeyId} L${p.levelIndex}`)
+      .filter(p => p.tier !== p.difficulty)
+      .map(p => `${p.tier} glass on ${p.difficulty} node in ${p.journeyId} L${p.levelIndex}`)
     expect(offTier, `${offTier.length} off-tier piece(s): ${offTier.slice(0, 8).join("; ")}`).toEqual([])
   })
 
   it("only uses tiers the mosaic actually has registers for", () => {
-    const unknown = [...new Set(glass.map(p => tierOf(p.reward)))].filter(
-      t => !(MOSAIC_TIERS as readonly string[]).includes(t)
-    )
+    const unknown = [...new Set(glass.map(p => p.tier))].filter(t => !(MOSAIC_TIERS as readonly string[]).includes(t))
     expect(unknown).toEqual([])
   })
 })
@@ -58,7 +61,7 @@ describe("mosaic glass harder than its host journey stays behind an equally-hard
   // starter pyramid needs no key to be legitimate.
   const crossTier = glass.filter(p => {
     const journeyTier = journeyTierOf(p.journeyId)
-    return journeyTier !== undefined && difficultyCompare(tierOf(p.reward), journeyTier) > 0
+    return journeyTier !== undefined && difficultyCompare(p.tier, journeyTier) > 0
   })
 
   it("has cross-tier glass to check (else this spec proves nothing)", () => {
@@ -70,11 +73,11 @@ describe("mosaic glass harder than its host journey stays behind an equally-hard
       .filter(p => {
         const keyTiers = p.wardKeys.map(wardKeyDifficulty).filter((d): d is Difficulty => d !== undefined)
         const strongest = keyTiers.length ? Math.max(...keyTiers.map(rank)) : -1
-        return strongest < rank(tierOf(p.reward))
+        return strongest < rank(p.tier)
       })
       .map(
         p =>
-          `${tierOf(p.reward)} glass in ${p.journeyId} (${journeyTierOf(p.journeyId)}) L${p.levelIndex} ` +
+          `${p.tier} glass in ${p.journeyId} (${journeyTierOf(p.journeyId)}) L${p.levelIndex} ` +
           `floor${p.floorIndex} guarded by [${p.wardKeys.join(", ") || "nothing"}]`
       )
     expect(leaks, `${leaks.length} early-tier leak(s): ${leaks.slice(0, 8).join("; ")}`).toEqual([])
