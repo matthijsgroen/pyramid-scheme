@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Fixed
+
+- Release notes no longer get reformatted back and forth between releases, so the changelog history stays readable in diffs.
+
+## 0.33.2 - 2026-08-10
+
+### Changed
+
 - Hieroglyph fragments spread across a tier's pyramids instead of piling into its first ones: the last pyramid of a tier used to be its emptiest (junior's last two held 3 fragments each while its first two held 32 between them).
 
 ### Fixed

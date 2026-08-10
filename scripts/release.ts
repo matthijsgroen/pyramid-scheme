@@ -20,6 +20,7 @@ import { readFileSync, writeFileSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import { parser, Changelog, Release } from "keep-a-changelog"
+import { format, resolveConfig } from "prettier"
 
 const DRY_RUN = process.argv.includes("--dry-run")
 
@@ -90,7 +91,20 @@ unreleased.setDate(new Date(today))
 changelog.addRelease(new Release())
 
 pkg.version = newVersion
-writeFileSync(changelogPath, changelog.toString())
-writeFileSync(packagePath, JSON.stringify(pkg, null, 2) + "\n")
+
+// Write through prettier, using the repo's own config — the same formatting lint-staged applies to
+// CHANGELOG.md on every commit. Without this the two disagree and fight: keep-a-changelog's
+// `toString()` emits no blank line after a heading, prettier's markdown formatter inserts one, so
+// each release reflowed the whole file one way and the next PR touching it reflowed it all back.
+//
+// Done inside the script rather than as a `&& prettier --write` in the package.json `release`
+// script (the pattern generate-world/generate-mosaic use): release has a --dry-run mode that CI
+// calls from two workflows, and a shell-chained formatter would write files during it. This sits
+// after the dry-run guard above, so a dry run still writes nothing.
+const formatted = async (filepath: string, source: string) =>
+  format(source, { ...(await resolveConfig(filepath)), filepath })
+
+writeFileSync(changelogPath, await formatted(changelogPath, changelog.toString()))
+writeFileSync(packagePath, await formatted(packagePath, JSON.stringify(pkg, null, 2) + "\n"))
 
 console.log("\nDone. Commit CHANGELOG.md and package.json.")
