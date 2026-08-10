@@ -136,19 +136,30 @@ export const expertRules: Rule[] = [
     difficulty: "expert",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
       {
         mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       // A side path opting into the same hieroglyph-fragment assignment pyramids use.
-      { mainEndReward: "tombTreasure", sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }] },
-      { mainEndReward: "tombTreasure" },
-      // Crocodile capstone on the final floor — authored via a node selector (§G).
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert,
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+        sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -158,18 +169,28 @@ export const expertRules: Rule[] = [
     difficulty: "expert",
     levelCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
       {
         mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
-      // Crocodile capstone on the final floor — authored via a node selector (§G).
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.expert,
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.expert + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],

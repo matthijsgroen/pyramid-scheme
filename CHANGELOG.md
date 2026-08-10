@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Wizard pyramids are less sprawling: fewer dead-end side corridors per floor, so the tier reads as a deep descent rather than a wider version of master. Both main floors, the ward paths and the key chains are unchanged.
+- A crocodile guards every tomb treasure from the junior tomb down, not just the last one of each tomb. Starter tombs stay crocodile-free.
+
+### Fixed
+
+- A tomb floor that ended in a crocodile was one tableau room short — the crocodile took a tableau's place instead of adding a room.
+- Release notes no longer get reformatted back and forth between releases, so the changelog history stays readable in diffs.
 
 ## 0.33.2 - 2026-08-10
 
