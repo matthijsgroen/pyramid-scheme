@@ -132,19 +132,33 @@ export const masterRules: Rule[] = [
     difficulty: "master",
     levelCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
       {
         mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
-      // Crocodile capstone on the final floor — authored via a node selector (§G).
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master,
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
@@ -154,21 +168,35 @@ export const masterRules: Rule[] = [
     difficulty: "master",
     levelCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
       {
         mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
         // Fez shop — a 6-slot stock node, filled by the mods. The tomb-treasure mod places the
         // wizard_treasure_tomb_c map-piece copy here (resolveShopStock); one of the 4 wizard-journey
         // copies is freed for this via spec/wizard.ts's journey("wizard_4") override. Empty until then.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
-      // Crocodile capstone on the final floor — authored via a node selector (§G).
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TABLEAUS_PER_FLOOR.master,
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
+        nodes: [{ where: "last", encounter: "capstone" }],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        pathPuzzles: TABLEAUS_PER_FLOOR.master + 1,
         nodes: [{ where: "last", encounter: "capstone" }],
       },
     ],
