@@ -54,6 +54,12 @@ const wizardCMapPieceGate: SideSectionConstraint = {
 export const wizardRules: Rule[] = [
   tier("wizard", { difficulty: "wizard" }),
 
+  // Wizard's character is DEPTH, where master's is BREADTH — the two tiers are meant to feel
+  // structurally different, not just numerically harder. `mainFloors: 2` (master has one), two ward
+  // paths (master has one), 4 key colours and the 3-level key chain below are what make a wizard
+  // pyramid a descent rather than a bigger sprawl. Branch density stays LOW to match (see the
+  // sidePaths comment); the two knobs are a pair, so raising density here would put back the
+  // "master but more of everything" shape that made half of wizard's chests loose change.
   tier("wizard")
     .set({
       mainFloors: 2,
@@ -65,14 +71,21 @@ export const wizardRules: Rule[] = [
       windyChance: 0.25,
       packingChance: 0.25,
     })
-    .sidePaths("medium")
+    // Wizard is DEEP, not BROAD — see the tier's own comment above `mainFloors`. Branch density is
+    // deliberately `low` across the board, unlike master's `medium` fragment path: wizard earns its
+    // character from two main floors, two ward paths and 3-level key chains, not from more dead-end
+    // pockets per floor. Before this, wizard was "master but more of everything" — 954 puzzle rooms
+    // against only 160 pieces of real loot (6.0 rooms per reward, where master sits at 3.2), which
+    // left 138 of its 314 chests holding nothing but loose change.
+    .sidePaths("low")
     .settings({ pathPuzzles: 1, end: "fragment", gate: "floor-key" })
     // Open (visible) trapped path — the ceiling carries the open-trap mechanic expert introduced,
-    // ending in junk (income).
+    // ending in junk (income). Two puzzles, matching master's junk corridor: a 4-room trapped chain
+    // is a long walk for income, and wizard already carries the tier's trap weight in volume.
     .sidePaths("low")
-    .settings({ pathPuzzles: 4, end: "junk", encounter: "trap" })
-    // Wizard is trap-heavy: 2-3 trapped hidden mosaics per pyramid, plus one plain-loot hidden.
-    .hiddenPaths("medium")
+    .settings({ pathPuzzles: 2, end: "junk", encounter: "trap" })
+    // Wizard is trap-heavy: trapped hidden mosaics, plus one plain-loot hidden.
+    .hiddenPaths("low")
     .settings({ pathPuzzles: 2, end: "mosaic", encounter: "trap" })
     .hiddenPaths("low")
     .settings({ pathPuzzles: 0, end: "mosaic" }),
