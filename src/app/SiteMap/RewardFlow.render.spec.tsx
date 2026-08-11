@@ -75,6 +75,54 @@ describe("RewardFlow — money and sellable rewards", () => {
     expect(container.textContent).toContain("sell_divine_1.name")
   })
 
+  // A floor key is claimed as a `tombKey` whose id is a grid position, so the tomb-treasure display
+  // can only call it "Tomb Key". The chest's own colour is what makes the reveal useful.
+  it("names the colour of a found floor key instead of the generic tomb-key label", () => {
+    const { container } = render(
+      <RewardFlow
+        pendingReward={{
+          reward: { type: "tombKey", keyId: "starter_1-3-4" },
+          keyColors: ["green"],
+          onCollect: vi.fn(),
+        }}
+        onDismiss={() => {}}
+      />
+    )
+    advanceThroughReveal()
+    expect(container.textContent).toContain("keys.green")
+    expect(container.textContent).toContain("keys.foundDescription")
+    expect(container.textContent).not.toContain("chest.tombKey")
+  })
+
+  it("shows one key per colour when a chest holds several floor keys", () => {
+    const { container } = render(
+      <RewardFlow
+        pendingReward={{
+          reward: { type: "tombKey", keyId: "starter_1-3-4" },
+          keyColors: ["blue", "red"],
+          onCollect: vi.fn(),
+        }}
+        onDismiss={() => {}}
+      />
+    )
+    advanceThroughReveal()
+    expect(container.textContent).toContain("keys.bundle")
+    expect(container.querySelectorAll("svg[role='img']")).toHaveLength(2)
+  })
+
+  // A real tomb treasure also travels as a tombKey, but its chest wears no colour — it must keep the
+  // mod's rich display (treasure name + perk line), not become a "floor key".
+  it("leaves a colourless tomb treasure to the tomb-treasure display", () => {
+    const { container } = render(
+      <RewardFlow
+        pendingReward={{ reward: { type: "tombKey", keyId: "starter_a_1" }, onCollect: vi.fn() }}
+        onDismiss={() => {}}
+      />
+    )
+    advanceThroughReveal()
+    expect(container.textContent).not.toContain("keys.foundDescription")
+  })
+
   it("falls back to the raw itemId if the sellable id is unknown", () => {
     const onCollect = vi.fn()
     const { container } = render(

@@ -29,6 +29,10 @@ export type CorridorCell = {
 }
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
+// Canonical order for anything that LISTS colors (a key ring, a chest's badges) — world-gen assigns
+// hues in whatever order a floor's gates came out, and a status readout that reshuffles between
+// floors is unreadable.
+export const KEY_COLORS: readonly KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 export type DecorationKind = "sarcophagus" | "statue" | "fountain" | "pit" | "rubble" | "pillar" | "chestProp"
 export type RoomCell = {
   type: "room"

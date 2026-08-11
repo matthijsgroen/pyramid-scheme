@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A locked floor door now names the coloured key it wants, and draws it.
+- Finding a floor key names its colour in the loot popup instead of calling it a tomb key.
+- The interior HUD carries this floor's key ring: coloured keys in hand, plus the colours of doors seen here and still shut.
+
+### Removed
+
+- The interior HUD's developer cheat buttons (+Junk, +Hieroglyphs, +1000 Coins).
+
 ## 0.33.3 - 2026-08-10
 
 ### Changed

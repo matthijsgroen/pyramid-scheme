@@ -113,7 +113,9 @@
       "expert": "De tempelban van een hogepriester bewaakt deze deur — enkel de heilige sleutel opent hem.",
       "master": "Het koninklijke zegel van een farao bindt deze doorgang — enkel de sleutel van de vorst verbreekt het.",
       "wizard": "Een ban van de goden houdt deze poort — niets dan de goddelijke sleutel komt erlangs."
-    }
+    },
+    "needsKey": "De deur is gemarkeerd voor één sleutel:",
+    "lockedColor": "Die sleutel heb je op deze verdieping nog niet gevonden."
   },
   "chest": {
     "tapToOpen": "Tik om te openen",
@@ -206,5 +208,16 @@
     "huntStop": "Stop",
     "huntHint": "Selecteer een niet-verzamelde hiëroglief en jaag erop met het kompas",
     "huntAction": "Jaag op {{symbol}}"
+  },
+  "keys": {
+    "blue": "Blauwe sleutel",
+    "red": "Rode sleutel",
+    "green": "Groene sleutel",
+    "yellow": "Gele sleutel",
+    "purple": "Paarse sleutel",
+    "bundle": "Een bos sleutels",
+    "foundDescription": "Hij opent de deuren met deze kleur, op deze verdieping.",
+    "heldTitle": "{{key}} — in bezit",
+    "neededTitle": "{{key}} — nog nodig"
   }
 }

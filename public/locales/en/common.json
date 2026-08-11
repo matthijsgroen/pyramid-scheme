@@ -113,7 +113,9 @@
       "expert": "A high priest's temple ward guards this door — its sacred key must open it.",
       "master": "A pharaoh's royal seal binds this passage — only the sovereign's key breaks it.",
       "wizard": "A ward of the gods holds this gate — nothing but its divine key will pass."
-    }
+    },
+    "needsKey": "The door is marked for one key:",
+    "lockedColor": "You haven't found that key on this floor yet."
   },
   "chest": {
     "tapToOpen": "Tap to open",
@@ -213,5 +215,16 @@
       "hidden": "In a hidden corridor — needs the passageway detector",
       "unknown": "Might not be reachable yet — it's inside a tomb or for sale"
     }
+  },
+  "keys": {
+    "blue": "Blue key",
+    "red": "Red key",
+    "green": "Green key",
+    "yellow": "Yellow key",
+    "purple": "Purple key",
+    "bundle": "A ring of keys",
+    "foundDescription": "It opens the doors marked in this colour, on this floor.",
+    "heldTitle": "{{key}} — in hand",
+    "neededTitle": "{{key}} — still needed"
   }
 }

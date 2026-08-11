@@ -1,10 +1,11 @@
-import { use, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
+import { floorKeyRing } from "@/game/floorKeys"
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
-import type { SiteConfig, TreasureReward } from "@/game/siteTypes"
+import type { KeyColor, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
 import { floorOfPosition, stairPeerPosition } from "./stairTravel"
@@ -15,9 +16,6 @@ import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
 import { useDetector } from "@/app/state/useDetector"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { DevelopContext } from "@/contexts/DevelopMode"
-import { allItems } from "@/data/inventory"
-import { ALL_SELLABLES } from "@/data/sellables"
 import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
@@ -31,7 +29,7 @@ import { BackButton } from "@/ui/atoms/BackButton"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
-import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import { FloorKeyRing } from "@/ui/molecules/FloorKeyRing"
 // Side-effect: registers every mod's app contributions (families, HUD, reward effects, …)
 import "@/mods/registerModApps"
 
@@ -45,7 +43,6 @@ type Props = {
 
 export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel }: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
-  const { isDevelopMode } = use(DevelopContext)
   const journeys = useJourneys()
   const progression = useProgression()
   const rewardContributions = useMergedRewardContributions()
@@ -119,6 +116,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // gate coloring.
   const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
 
+  // What the HUD key ring shows: this floor's coloured keys in hand, and the colours of doors the
+  // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).
+  const keyRing = useMemo(() => (grid ? floorKeyRing(grid, ownedKeys) : { held: [], needed: [] }), [grid, ownedKeys])
+
   // Per-floor "still stuff to find here" summary for the Travel marker. The pure classification
   // (loot nodes / key-gated nodes / fogged corridors, keys-and-gates only, no mod names) lives in
   // floorExploration.ts and is unit-tested there.
@@ -163,6 +164,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   const [pendingReward, setPendingReward] = useState<{
     reward: TreasureReward
     consumableFull?: boolean
+    keyColors?: readonly KeyColor[]
     onCollect: () => void
   } | null>(null)
   const [exiting, setExiting] = useState(false)
@@ -222,6 +224,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
 
       const reward = cell?.type === "room" ? cell.reward : undefined
       if (!reward) return
+      // A key-host chest wears the colour(s) of the doors its key opens; carry that into the popup so
+      // the reveal says WHICH key this was, not just "a key". Gated on the reward actually BEING a
+      // key (as floorKeyRing does): today only key hosts carry a colour, but a coloured chest holding
+      // something else would otherwise be announced as a key it never contained.
+      const keyColors =
+        reward.type === "tombKey" && cell?.type === "room"
+          ? (cell.keyColors ?? (cell.keyColor ? [cell.keyColor] : undefined))
+          : undefined
       // A mod may silently ignore a reward (nothing to do — e.g. an already-collected hieroglyph
       // fragment): no popup, no side effect, not remembered. Distinct from a refusal below.
       if (rewardContributions.skip(reward)) return
@@ -233,7 +243,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         setPendingReward({ reward, consumableFull: true, onCollect: () => {} })
         return
       }
-      setPendingReward({ reward, onCollect: () => applyReward(reward) })
+      setPendingReward({ reward, keyColors, onCollect: () => applyReward(reward) })
     },
     [grid, journeys, currentFloor, rewardContributions, applyReward]
   )
@@ -384,7 +394,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
-          className="h-full w-full"
+          className="size-full"
         />
       </div>
       <SiteHudBar>
@@ -420,7 +430,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
         />
         {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
-            non-hit-testing band (the widgets and dev buttons below are clickable). */}
+            non-hit-testing band (the detector toggles and mod widgets below are clickable). */}
         <div className="pointer-events-auto flex items-center gap-4">
           {/* Detector buttons ride along in this row rather than claiming one of their own. */}
           <DetectorToggles
@@ -435,25 +445,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             }}
             onSetDetector={detector.setDetector}
           />
+          {/* This floor's key ring: coloured keys already in hand, plus the colours of doors seen
+              here and still shut. Floor-local, so it resets with the floor. */}
+          <FloorKeyRing
+            held={keyRing.held}
+            needed={keyRing.needed}
+            heldLabel={color => t("common:keys.heldTitle", { key: t(`common:keys.${color}`) })}
+            neededLabel={color => t("common:keys.neededTitle", { key: t(`common:keys.${color}`) })}
+          />
           {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />
           ))}
-          {isDevelopMode && (
-            <DeveloperButton
-              onClick={() => {
-                ALL_SELLABLES.slice(0, 5).forEach(item => inventory.addItem(item.id, 1))
-                inventory.addItem(ALL_SELLABLES[0].id, 1) // second copy, to see the ×N badge
-              }}
-              label="+Junk"
-            />
-          )}
-          {isDevelopMode && (
-            <DeveloperButton
-              onClick={() => allItems.forEach(item => inventory.addItem(item.id, 20))}
-              label="+Hieroglyphs"
-            />
-          )}
         </div>
       </SiteHudBar>
       {/* ponytail: plain confirm dialog for now — the exit chamber's own artwork (daylight through

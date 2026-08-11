@@ -67,4 +67,42 @@ describe("ward gate", () => {
 
     expect(queryByText("gate.markedWith")).toBeNull()
   })
+
+  it("carries no key colour — a ward is identified by its treasure, not by a hue", () => {
+    const { queryByText } = renderGate({ requiredKeyId: "starter_a_1", ownedKeys: new Set() })
+
+    expect(queryByText("gate.needsKey")).toBeNull()
+  })
+})
+
+describe("floor-key door", () => {
+  const floorGate = (overrides: Partial<FamilyContext> = {}) =>
+    renderGate({ gateVariant: "floor-key", keyColor: "red", requiredKeyId: "site-3-4", ...overrides })
+
+  it("names the colour of the key it wants, so the player knows what to hunt for", () => {
+    const { queryByText } = floorGate({ ownedKeys: new Set() })
+
+    expect(queryByText("gate.needsKey")).not.toBeNull()
+    expect(queryByText("keys.red")).not.toBeNull()
+  })
+
+  it("says the key is missing from THIS floor, not just that some key is missing", () => {
+    const { queryByText } = floorGate({ ownedKeys: new Set() })
+
+    expect(queryByText("gate.lockedColor")).not.toBeNull()
+    expect(queryByText("gate.locked")).toBeNull()
+  })
+
+  it("keeps naming the colour once the key is held, and reads as unlocked", () => {
+    const { queryByText } = floorGate({ ownedKeys: new Set(["site-3-4"]) })
+
+    expect(queryByText("keys.red")).not.toBeNull()
+    expect(queryByText("gate.unlocked")).not.toBeNull()
+  })
+
+  it("falls back to blue when world-gen left the colour unset — the same default the map draws", () => {
+    const { queryByText } = floorGate({ keyColor: undefined, ownedKeys: new Set() })
+
+    expect(queryByText("keys.blue")).not.toBeNull()
+  })
 })
