@@ -36,10 +36,8 @@ if (isModEnabled("trap")) {
     }
   })
   registerPerkContribution(() => {
-    const trap = useTrapProgress()
     const { t } = useTranslation("treasures")
     return {
-      grant: perk => trap.grantPerk(perk),
       describe: (perk: Perk) =>
         TRAP_PERKS.has(perk.type) ? { label: t(`perks.${perk.type}`, { level: perk.level ?? 1 }) } : undefined,
     }

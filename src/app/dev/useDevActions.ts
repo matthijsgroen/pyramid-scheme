@@ -13,6 +13,9 @@ import type { DevAction } from "@/ui/molecules/DevPanel"
 // Every action goes through the same public mod APIs real gameplay uses (addTombKey, collectMapPiece,
 // addFragment) rather than writing save state directly, so a granted world is indistinguishable from
 // an earned one — a cheat that reached a state normal play can't would make playtesting worthless.
+// That equivalence is only real because perks are DERIVED from the treasures held (game/perkTotals.ts):
+// while they were granted as a side effect of claiming, this menu handed out every key and no perk
+// at all, and the corridor detector could never be tested from it.
 //
 // Reachable only in develop mode (BaseHeader's title tap, itself gated on NODE_ENV === development).
 export const useDevActions = (): DevAction[] => {
