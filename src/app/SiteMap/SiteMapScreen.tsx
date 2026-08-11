@@ -225,9 +225,13 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
       const reward = cell?.type === "room" ? cell.reward : undefined
       if (!reward) return
       // A key-host chest wears the colour(s) of the doors its key opens; carry that into the popup so
-      // the reveal says WHICH key this was, not just "a key".
+      // the reveal says WHICH key this was, not just "a key". Gated on the reward actually BEING a
+      // key (as floorKeyRing does): today only key hosts carry a colour, but a coloured chest holding
+      // something else would otherwise be announced as a key it never contained.
       const keyColors =
-        cell?.type === "room" ? (cell.keyColors ?? (cell.keyColor ? [cell.keyColor] : undefined)) : undefined
+        reward.type === "tombKey" && cell?.type === "room"
+          ? (cell.keyColors ?? (cell.keyColor ? [cell.keyColor] : undefined))
+          : undefined
       // A mod may silently ignore a reward (nothing to do — e.g. an already-collected hieroglyph
       // fragment): no popup, no side effect, not remembered. Distinct from a refusal below.
       if (rewardContributions.skip(reward)) return
