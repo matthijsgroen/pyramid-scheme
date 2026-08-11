@@ -12,6 +12,7 @@ import type {
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { revealAll } from "../../game/gridNavigation"
+import { keyColorHex } from "@/ui/tokens/keyColors"
 import { ExplorerDot } from "./ExplorerDot"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -102,14 +103,6 @@ type ShapeProps = {
   keyColors?: KeyColor[]
   // A ward (tomb-key) gate's tier, derived from its key id — tints the gate by difficulty.
   difficulty?: Difficulty
-}
-
-const KEY_COLOR_HEX: Record<KeyColor, { visible: string; reachable: string }> = {
-  blue: { visible: "#2060c0", reachable: "#4090e0" },
-  red: { visible: "#c04020", reachable: "#e06040" },
-  green: { visible: "#208040", reachable: "#30b060" },
-  yellow: { visible: "#b09010", reachable: "#d0c030" },
-  purple: { visible: "#7030b0", reachable: "#9050d0" },
 }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
@@ -205,7 +198,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps)
       : isTomb
         ? (tombAccent ?? tombGateStroke[state])
         : keyColor
-          ? KEY_COLOR_HEX[keyColor][colorKey]
+          ? keyColorHex[keyColor][colorKey]
           : gateStroke[state]
   const barColor =
     state === "fogged"
@@ -213,7 +206,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps)
       : isTomb
         ? (tombAccent ?? (colorKey === "visible" ? "#8040c0" : "#9060e0"))
         : keyColor
-          ? KEY_COLOR_HEX[keyColor][colorKey]
+          ? keyColorHex[keyColor][colorKey]
           : colorKey === "visible"
             ? "#c04020"
             : "#c09020"
@@ -227,7 +220,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps)
           width={r * 2}
           height={r * 2}
           rx={1}
-          fill={KEY_COLOR_HEX[keyColor][colorKey]}
+          fill={keyColorHex[keyColor][colorKey]}
           fillOpacity={0.18}
         />
       )}
@@ -257,7 +250,7 @@ const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
   const badges = keyColors && keyColors.length > 0 ? keyColors : keyColor ? [keyColor] : []
   const primaryColor = badges[0]
   const fill = treasureFill[state]
-  const stroke = state !== "fogged" && primaryColor ? KEY_COLOR_HEX[primaryColor][colorKey] : treasureStroke[state]
+  const stroke = state !== "fogged" && primaryColor ? keyColorHex[primaryColor][colorKey] : treasureStroke[state]
   // Badge positions: single circle at top-right; multiple stacked in a column, 2-col for 4+
   const badgePositions = (n: number): [number, number][] => {
     if (n === 1) return [[9, -9]]
@@ -272,7 +265,7 @@ const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
       {state !== "fogged" && primaryColor && (
         <polygon
           points={`0,${-r} ${r},0 0,${r} ${-r},0`}
-          fill={KEY_COLOR_HEX[primaryColor][colorKey]}
+          fill={keyColorHex[primaryColor][colorKey]}
           fillOpacity={0.18}
         />
       )}
@@ -289,7 +282,7 @@ const TreasureShape = ({ state, keyColor, keyColors }: ShapeProps) => {
             cx={positions[i][0]}
             cy={positions[i][1]}
             r={badgeR}
-            fill={KEY_COLOR_HEX[color][colorKey]}
+            fill={keyColorHex[color][colorKey]}
           />
         ))}
     </>

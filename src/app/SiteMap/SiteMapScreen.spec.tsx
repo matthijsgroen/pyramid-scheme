@@ -4,9 +4,13 @@ import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { CELL } from "./mapScale"
 import { clearGameData } from "@/support/useGameStorage"
 
-// Keys are enough to tell the buttons apart; none of these assertions read copy.
+// Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
+// is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
+// says which colour it stands for.
 vi.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({
+    t: (key: string, opts?: Record<string, unknown>) => (opts ? `${key}:${JSON.stringify(opts)}` : key),
+  }),
 }))
 
 // The screen's own click handling is what's under test, so the floor comes from here rather than
@@ -15,15 +19,19 @@ const entrance: GridCell = { type: "room", roomType: "portal", dirs: new Set(["e
 const corridor: GridCell = { type: "corridor", dirs: new Set(["w", "e"]), state: "completed" }
 const exitRoom: GridCell = { type: "room", roomType: "portal", dirs: new Set(["w"]), state: "reachable" }
 
-const grid: FloorGrid = {
-  cells: [[entrance, corridor, exitRoom]],
+const gridOf = (cells: GridCell[]): FloorGrid => ({
+  cells: [cells],
   rows: 1,
-  cols: 3,
+  cols: cells.length,
   entrancePos: [0, 0],
-  exitPos: [0, 2],
+  exitPos: [0, cells.length - 1],
   siteId: "test-site",
   staircases: {},
-}
+})
+
+const walkableFloor = gridOf([entrance, corridor, exitRoom])
+// Swapped per test (the mock below reads it lazily), so a floor-key test can supply its own layout.
+let grid: FloorGrid = walkableFloor
 
 vi.mock("./useAssembledFloor", async importOriginal => {
   const actual = await importOriginal<typeof import("./useAssembledFloor")>()
@@ -61,6 +69,7 @@ const exitNode = (container: HTMLElement) =>
 
 describe(SiteMapScreen, () => {
   beforeEach(async () => {
+    grid = walkableFloor
     // jsdom doesn't implement scrollTo; SiteMapView calls it to center on explorerPos.
     Element.prototype.scrollTo = vi.fn()
     await clearGameData()
@@ -122,5 +131,39 @@ describe(SiteMapScreen, () => {
     // Confirming hands over to the exit transition, which completes the site when it finishes.
     expect(queryByText("ui.leaveSiteConfirm")).toBeNull()
     expect(container.querySelector(".animate-entrance-zoom")).not.toBeNull()
+  })
+
+  describe("the floor key ring", () => {
+    const keyChest: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set(["e"]),
+      state: "completed",
+      reward: { type: "tombKey", keyId: "test-site-0-0" },
+      keyColor: "blue",
+    }
+    const redDoor: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      dirs: new Set(["w"]),
+      state: "reachable",
+      gateVariant: "floor-key",
+      keyColor: "red",
+      requiredKeyId: "test-site-0-9",
+    }
+
+    it("shows the colour of a key picked up on this floor, and of a door still shut", async () => {
+      grid = gridOf([keyChest, redDoor])
+      const { getByTitle } = await renderScreen()
+
+      expect(getByTitle(/keys\.heldTitle.*keys\.blue/)).toBeTruthy()
+      expect(getByTitle(/keys\.neededTitle.*keys\.red/)).toBeTruthy()
+    })
+
+    it("shows nothing on a floor with no keys and no doors", async () => {
+      const { queryByTitle } = await renderScreen()
+
+      expect(queryByTitle(/keys\./)).toBeNull()
+    })
   })
 })
