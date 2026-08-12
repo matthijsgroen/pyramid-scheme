@@ -27,14 +27,14 @@ real.
       from the shared `ProgressionState`/`ProgressionAPI`. (Ledger-backed
       counts stay in the ledger — no extraction needed.)
 - [ ] **5. TOGGLE-OFF PROOF (the gate).** Remove the mod from `registeredMods`.
-      Then:
-      - [ ] `yarn generate-world` succeeds — that currency's authored slots
-            fall through to filler, other currencies' counts unchanged.
-      - [ ] The app builds and runs without the mod's screen/components.
-      - [ ] `grep -rn "<modId>\|<CurrencyId>\|<familyIds>" src/core src/worldGen`
-            (whatever is still core) returns nothing. Core does not name the mod.
-      - Re-add the mod when the proof passes. The removal is the *test*, not
-            the shipped state.
+  Then:
+  - [ ] `yarn generate-world` succeeds — that currency's authored slots
+        fall through to filler, other currencies' counts unchanged.
+  - [ ] The app builds and runs without the mod's screen/components.
+  - [ ] `grep -rn "<modId>\|<CurrencyId>\|<familyIds>" src/core src/worldGen`
+        (whatever is still core) returns nothing. Core does not name the mod.
+  - Re-add the mod when the proof passes. The removal is the *test*, not
+    the shipped state.
 
 ## Anti-patterns that fail the slice
 
