@@ -42,13 +42,11 @@ if (isModEnabled("hieroglyph")) {
     }
   })
   registerCompassScanner(useHieroglyphCompassScanner)
-  // The compass perk (fragment detector) is hieroglyph-owned: grant/describe it, and expose its
+  // The compass perk (fragment detector) is hieroglyph-owned: describe it, and expose its derived
   // level to the merged detector-level accessor (§7.4).
   registerPerkContribution(() => {
-    const hg = useHieroglyphProgress()
     const { t } = useTranslation("treasures")
     return {
-      grant: perk => hg.grantPerk(perk),
       describe: perk =>
         perk.type === "compass" ? { label: t("perks.compass", { level: perk.level ?? 1 }) } : undefined,
     }

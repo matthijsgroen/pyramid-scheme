@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A tomb treasure's bonus now follows from holding the treasure, instead of being handed over once at the moment you opened the chest. A save that ended up with the treasure but not its bonus — the corridor detector's eye never appearing is the visible case — now reads the bonus back from the treasures in your collection.
+- Retuning which treasure carries which bonus reaches saves that already hold it, rather than only players who find it afterwards.
+
 ## 0.34.0 - 2026-08-11
 
 ### Added

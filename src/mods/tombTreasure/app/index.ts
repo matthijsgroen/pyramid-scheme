@@ -1,7 +1,8 @@
+import { useMemo } from "react"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerHeldKeysProvider, registerKeyDisplay } from "@/app/SiteMap/keyProviders"
-import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
+import { registerEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
 import { isModEnabled } from "@/mods/registeredMods"
 import { TREASURE_PERKS } from "../game/treasurePerks"
@@ -23,7 +24,6 @@ if (isModEnabled("tomb-treasure")) {
   registerRewardSchema("tombKey", tombKeySchema)
   registerRewardContribution(() => {
     const tomb = useTombTreasureProgress()
-    const { grant } = useMergedPerkContributions()
     return {
       effects: {
         mapPiece: (reward, { journeyId }) => {
@@ -33,16 +33,26 @@ if (isModEnabled("tomb-treasure")) {
         },
         tombKey: reward => {
           const { keyId } = tombKeySchema.parse(reward)
+          // Holding the key IS holding its perk — the earned-perks provider below derives it. No
+          // perk is dispatched or banked here, so a key granted any other way (the dev menu's
+          // "All treasures + keys") carries its perk too. See §7.4/§8.1.
           tomb.addTombKey(keyId)
-          // The perk (if any) lands in the owning mod's state; tier-unlock/location-key/none match no
-          // handler → no-op (addTombKey already handled the key). See §7.4/§8.1.
-          const perk = TREASURE_PERKS[keyId]
-          if (perk) grant(perk)
         },
       },
     }
   })
   registerHeldKeysProvider(() => useTombTreasureProgress().tombKeyIds)
+  // Every perk the player has earned, derived from the treasures they hold. This mod owns the perk
+  // TABLE, so it owns the fold from key id → perk; the owning mods (trap, hieroglyph, puzzle, core)
+  // read the merged list and take their own. Toggling this mod off empties the list, which correctly
+  // drops every perk with it.
+  registerEarnedPerks(() => {
+    const { tombKeyIds } = useTombTreasureProgress()
+    return useMemo(
+      () => [...tombKeyIds].flatMap(keyId => (TREASURE_PERKS[keyId] ? [TREASURE_PERKS[keyId]] : [])),
+      [tombKeyIds]
+    )
+  })
   // A ward key IS a treasure, so a door sealed with one carries that treasure's sign — the same
   // glyph its Collection slot shows, which is how the player recognizes what they're missing.
   registerKeyDisplay(() => keyId => {

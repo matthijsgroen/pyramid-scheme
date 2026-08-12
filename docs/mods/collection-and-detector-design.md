@@ -2,7 +2,7 @@
 
 Three interlocking pieces: mod-owned **Collection sections** (§3), the **design-system
 layer** they build on (§3B), and the **detector + perk + tomb-treasure** system (§7,
-authoritative). Perks are the *unlock* for the detectors, tomb treasures are where
+authoritative). Perks are the _unlock_ for the detectors, tomb treasures are where
 they're granted, and the Collection is where they're shown — one system.
 
 ---
@@ -11,7 +11,7 @@ they're granted, and the Collection is where they're shown — one system.
 
 Slice 2 gated the hieroglyph Collection section with
 `getCurrencyMeta("fragment")?.showInCollection` in `Collection.tsx`. That
-*hides* the section when the mod's off — but the section's components still live
+_hides_ the section when the mod's off — but the section's components still live
 in core (`src/app/pages/Collection.tsx`), so core still owns hieroglyph UI. The
 mod-container target (TARGET.md: `mods/<name>/app/` owns the mod's UI) wants the
 section **contributed by the mod**, with core naming nothing.
@@ -72,7 +72,7 @@ inventory/progression (or a narrower slice — see open question Q3).
 renders, core references nothing. Same unfakeable gate as families.
 
 Descriptor: no new field needed now (registration is a side-effect import like
-families). If we later want the descriptor to *declare* its sections, that's the
+families). If we later want the descriptor to _declare_ its sections, that's the
 `screen?` field TARGET.md:22 anticipates — defer until a second mod needs it
 (don't invent the field early).
 
@@ -99,10 +99,12 @@ signal for "design-system component").
 
 **Difficulty color tokens** — one module `src/ui/tokens/difficultyColors.ts`
 exposing the two roles explicitly:
+
 ```ts
-export const difficultyMaterial: Record<Difficulty, MaterialSpec>  // stone→emerald gradients + symbol color
-export const difficultyRank: Record<Difficulty, string>            // green→purple pill classes
+export const difficultyMaterial: Record<Difficulty, MaterialSpec> // stone→emerald gradients + symbol color
+export const difficultyRank: Record<Difficulty, string> // green→purple pill classes
 ```
+
 `HieroglyphTile` consumes `difficultyMaterial` (collapsing its 3× inline
 ternaries into one lookup); `hieroglyphLevelColors.ts` becomes a thin re-export
 or is replaced at its two call sites; `DifficultyPill` consumes `difficultyRank`.
@@ -117,7 +119,7 @@ not just hieroglyphs.
 
 - 3A is itself a toggle-off improvement: the section becomes truly mod-owned.
 - 3B (design system) is core-side and mod-agnostic — primitives name no mod.
-- The detector is core UI, but its *target vocabulary* (hieroglyphs) comes
+- The detector is core UI, but its _target vocabulary_ (hieroglyphs) comes
   from the registered fragment currency. With the mod off there are no
   partial-fragment slots → no target affordance → compass has nothing to hunt
   (consumable/hidden-passageway modes, owned by trap/core, are unaffected). The
@@ -135,11 +137,11 @@ each mod owns its own gameplay and core names none of it.
 
 The "detectors" are NOT one mechanic. Three distinct effects, do not conflate:
 
-| detector | kind | owner | scanner/consumer | what the level does |
-|---|---|---|---|---|
-| **corridor** (`detection`) | passive reveal | **core** | `useAssembledFloor` masks/reveals `hidden` cells | reveal scope **widens outward** with level |
-| **compass** (hieroglyph fragments) | active target mode | **hieroglyph** | `detectorScanners` (hieroglyph registers the scanner) | precision **narrows inward** with level |
-| **supplies** (consumables) | active target mode | **trap** | `useDetector` reads skipped-consumable chests | precision **narrows inward** (same as compass) |
+| detector                           | kind               | owner          | scanner/consumer                                      | what the level does                            |
+| ---------------------------------- | ------------------ | -------------- | ----------------------------------------------------- | ---------------------------------------------- |
+| **corridor** (`detection`)         | passive reveal     | **core**       | `useAssembledFloor` masks/reveals `hidden` cells      | reveal scope **widens outward** with level     |
+| **compass** (hieroglyph fragments) | active target mode | **hieroglyph** | `detectorScanners` (hieroglyph registers the scanner) | precision **narrows inward** with level        |
+| **supplies** (consumables)         | active target mode | **trap**       | `useDetector` reads skipped-consumable chests         | precision **narrows inward** (same as compass) |
 
 `max-health`/`armor`/`trap-insight`/`pack-mule` (trap) and `scribes-eye` (puzzle) are
 the non-detector perks. Detection is the only detector core owns — because a hidden
@@ -152,8 +154,8 @@ consumables) so they belong to that mod.
 the authored `TREASURE_PERKS` grants L1–L4, decided 2026-07-16):
 | L | reveal |
 |---|---|
-| L1 | **proximity** — notify + reveal when the player is *near* a hidden corridor (built today) |
-| L2 | **floor** — indicator that a hidden corridor exists *somewhere on this floor* |
+| L1 | **proximity** — notify + reveal when the player is _near_ a hidden corridor (built today) |
+| L2 | **floor** — indicator that a hidden corridor exists _somewhere on this floor_ |
 | L3 | **pyramid marker** — on the pyramid's own map: this pyramid has unexplored hidden corridors |
 | L4 | **journey-list marker** — on the travel screen (broadest reach, for revisits across the world) |
 
@@ -170,40 +172,49 @@ is the mirror (outward-widening). This directional contrast is the design's core
 ### 7.3 Hidden corridor = a gated pathway (loot-placement model)
 
 A hidden corridor gates its loot behind **discovery** (revealed by the corridor detector
-*or* stumbled onto), NOT behind a key. So in the world-gen model a hidden path is a
+_or_ stumbled onto), NOT behind a key. So in the world-gen model a hidden path is a
 **gated pathway** whose contents are an **optional loot pocket** (the §E sense — see
 `keys-and-locks-solver.md`): always structurally reachable, but off the guaranteed path,
-so only *optional* loot may sit there (never a progression-gating currency the solver
+so only _optional_ loot may sit there (never a progression-gating currency the solver
 must guarantee). This makes the corridor detector a genuine loot-access perk, not just a
 cosmetic reveal — its payoff is the optional pockets it surfaces.
 
 ### 7.4 Perk system — the unlock mechanism
 
-Perks are granted by tomb treasures and consumed by the owning mod. Contribution-driven,
-mirroring `rewardContributions`:
+Perks are DERIVED from the tomb treasures held and read by the owning mod. Nothing is
+written on claim, so holding the treasure _is_ holding the perk:
 
-- **Seam:** `registerPerkContribution(() => ({ grant, describe }))` per mod. Merged
-  `useMergedPerkContributions() → { grant, describe }`.
-  - `grant(perk)` — applies to the mod's own state; no-ops for perks it doesn't own.
+- **Seam:** `registerEarnedPerks(() => Perk[])` — the tomb-treasure mod folds its held
+  ward keys through `TREASURE_PERKS`. Merged: `useMergedEarnedPerks() → Perk[]`.
+  Each owning mod folds its own values with `perkLevel` / `perkStacks`
+  (`src/game/perkTotals.ts`): max level for a tiered perk, one stack per treasure for a
+  stacking one.
+- **Why derived:** retuning which treasure carries a perk retunes every existing save at
+  once, instead of only reaching players who claim afterwards. It also makes stacking
+  perks idempotent (the old `+1` write inflated permanently on a double dispatch) and
+  means a key granted by any other path — e.g. the dev menu's "All treasures + keys" —
+  carries its perk too.
+- **Description seam:** `registerPerkContribution(() => ({ describe }))` per mod. Merged
+  `useMergedPerkContributions() → { describe }`.
   - `describe(perk) → { label } | undefined` — translatable bonus text from the owning
     mod's i18n namespace (undefined for perks it doesn't own).
 - **Payload:** open descriptor `{ type: string; level?: number }` (mods coin perk ids,
   same as the open `TreasureReward` rule). No shared union import.
 - **Delete** the dormant `perkRegistry` + `registerPerks` (+ spec) — registered at boot
   but never read; each mod's contribution now owns its cap/bump logic.
-- **Dispatch:** `tomb-treasure`'s `tombKey` reward effect resolves `TREASURE_PERKS[keyId]`
-  and calls the merged `grant`. tier-unlock/location-key/`none` match no perk handler →
-  no-op (handled by `addTombKey`/discovery); `tomb-treasure` `describe`s those lines itself.
+- **Claim:** `tomb-treasure`'s `tombKey` reward effect only calls `addTombKey` — the perk
+  follows from holding the key. tier-unlock/location-key/`none` fold to nothing (they were
+  always read straight off the held keys); `tomb-treasure` `describe`s those lines itself.
 
-**Perk state homes** (each perk lives with its owning gameplay — closes the last
+**Perk homes** (each perk is derived by its owning gameplay — closes the last
 §D-class core-state leak):
 
-| home | perks |
-|---|---|
-| trap `useTrapProgress` | max-health, armor, trap-insight, pack-mule, **supplies-detector** |
-| hieroglyph progress hook | **compass** |
-| puzzle progress hook (new) | scribes-eye |
-| core `useProgression.corePerks` (+ new perk setter) | **corridor-detector** |
+| home (derives it; stores nothing) | perks                                                             |
+| --------------------------------- | ----------------------------------------------------------------- |
+| trap `useTrapProgress`            | max-health, armor, trap-insight, pack-mule, **supplies-detector** |
+| hieroglyph progress hook          | **compass**                                                       |
+| puzzle progress hook              | scribes-eye                                                       |
+| core `mods/core/app/index.ts`     | **corridor-detector**                                             |
 
 The `DetectorPanel` (core UI) reads its three levels from a **merged detector-level
 accessor** (`useMergedHeldKeys`-style: compass←hieroglyph, supplies←trap,
@@ -212,6 +223,7 @@ corridor←core) instead of one core `perks` blob.
 ### 7.5 Tomb-treasure collection — unify with perks
 
 The 40 tomb-floor treasures already have two authored views of one object (a **1:1** map):
+
 - catalog identity `tN` (`data/treasures.ts`: name/symbol/description, 5 per-difficulty
   groups), and
 - perk `TREASURE_PERKS[keyId]`, where `keyId = <tier>_<a|b|c>_<floor>` →
@@ -219,6 +231,7 @@ The 40 tomb-floor treasures already have two authored views of one object (a **1
 
 Both halves are currently dead (perks no-op; nothing writes `tN` to inventory so the
 Collection treasure sections show all-empty). Unify:
+
 - Claiming a tomb-floor `tombKey` → `addTombKey` + grant its perk. **"Collected" = own
   the keyId** (derived from `tombKeys`, no inventory `tN`).
 - The 5 per-difficulty treasure sections **move** from core `Collection.tsx` into a
@@ -266,16 +279,16 @@ Collection treasure sections show all-empty). Unify:
 Each mod's `grant` implements its own bump. `bump`: `inc` = `min(cap, cur+1)`, `set` = fixed
 value, `toLevel` = `max(cur, grantedLevel)`.
 
-| perk | owner | field | cap | bump | effect (consumer) |
-|---|---|---|---|---|---|
-| max-health | trap | `maxHealth` | 12 | inc | health cap in **half-hearts** (base 6, +½♥ = +1); `HealthDisplay`/`TrapFamilyShell` |
-| armor | trap | `armorStacks` | 2 | inc | reduces trap damage per stack (consumer exists) |
-| trap-insight | trap | `trapInsightStacks` | 2 | inc | +1s/stack in `TRAP_TIME_LIMITS_SECONDS` |
-| pack-mule | trap | `packMuleLevel` | 1 | set 1 | consumable carry cap `lvl===1 ? 4 : 2` |
-| supplies-detector | trap | `consumableDetectorLevel` | 3 | toLevel | supplies detector |
-| compass | hieroglyph | `compassLevel` | 3 | toLevel | fragment compass |
-| corridor-detector | core | `detectionLevel` | 4 | toLevel | hidden-corridor reveal |
-| scribes-eye | puzzle | `scribesEyeLevel` | 3 | toLevel | tableau hint slots; `TombPuzzle`/`TombTableau` |
+| perk              | owner      | field                     | cap | bump    | effect (consumer)                                                                   |
+| ----------------- | ---------- | ------------------------- | --- | ------- | ----------------------------------------------------------------------------------- |
+| max-health        | trap       | `maxHealth`               | 12  | inc     | health cap in **half-hearts** (base 6, +½♥ = +1); `HealthDisplay`/`TrapFamilyShell` |
+| armor             | trap       | `armorStacks`             | 2   | inc     | reduces trap damage per stack (consumer exists)                                     |
+| trap-insight      | trap       | `trapInsightStacks`       | 2   | inc     | +1s/stack in `TRAP_TIME_LIMITS_SECONDS`                                             |
+| pack-mule         | trap       | `packMuleLevel`           | 1   | set 1   | consumable carry cap `lvl===1 ? 4 : 2`                                              |
+| supplies-detector | trap       | `consumableDetectorLevel` | 3   | toLevel | supplies detector                                                                   |
+| compass           | hieroglyph | `compassLevel`            | 3   | toLevel | fragment compass                                                                    |
+| corridor-detector | core       | `detectionLevel`          | 4   | toLevel | hidden-corridor reveal                                                              |
+| scribes-eye       | puzzle     | `scribesEyeLevel`         | 3   | toLevel | tableau hint slots; `TombPuzzle`/`TombTableau`                                      |
 
 Non-perk `TREASURE_PERKS` types (`tier-unlock`/`location-key`/`none`) are NOT granted via the
 seam — `addTombKey` + discovery handle them; tomb-treasure `describe`s their Collection line itself.
@@ -285,4 +298,3 @@ text goes in **`treasures.json` under `perks.<type>`** (replacing the stale `eff
 is old vocab). Each mod's `describe` reads its own `perks.*` keys via `t(…, {ns:"treasures"})` —
 shared namespace, mod-owned keys (same pattern as `sellables`). Off-mod keys sit unused (harmless;
 `describe` isn't called when the mod's off).
-
