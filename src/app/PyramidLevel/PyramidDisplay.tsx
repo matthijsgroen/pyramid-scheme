@@ -95,7 +95,7 @@ export const PyramidDisplay: FC<{
           .every(block => values[block.id] === correctAnswers?.[block.id])
 
         return (
-          <div key={floor} className="mb-[-1px] flex justify-center">
+          <div key={floor} className="-mb-px flex justify-center">
             {Array.from({ length: floor + 1 }, (_, index) => {
               const blockIndex = startIndex + index
               const block = blocks[blockIndex]
@@ -139,7 +139,7 @@ export const PyramidDisplay: FC<{
             })}
             <div
               className={clsx(
-                "ml-6 flex h-10 w-10 items-center justify-center text-lg font-bold transition-opacity delay-200 text-shadow-amber-200 text-shadow-md",
+                "ml-6 flex size-10 items-center justify-center text-lg font-bold transition-opacity delay-200 text-shadow-amber-200 text-shadow-md",
                 complete ? "opacity-100" : "opacity-0"
               )}
             >
@@ -149,7 +149,7 @@ export const PyramidDisplay: FC<{
         )
       })}
 
-      <div className="absolute top-full right-12 left-0 z-[-1] h-0 overflow-visible">
+      <div className="absolute top-full right-12 left-0 -z-1 h-0 overflow-visible">
         <div
           className={clsx(
             "w-full bg-black/10 [clip-path:polygon(0_0,46%_100%,100%_0)]",

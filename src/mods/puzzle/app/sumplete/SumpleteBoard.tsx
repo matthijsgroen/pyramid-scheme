@@ -21,10 +21,10 @@ const cellVariant: Record<SumpleteCellState, TileVariant> = {
 }
 
 const targetCls = (s: SumpleteLineStatus) =>
-  clsx("flex h-10 w-10 items-center justify-center rounded border text-sm font-bold", {
-    "text-green-400 bg-green-900/40 border-green-600": s === "exact",
-    "text-red-400 bg-red-900/40 border-red-700": s === "over",
-    "text-stone-400 bg-stone-800/60 border-stone-600": s === "under",
+  clsx("flex size-10 items-center justify-center rounded border text-sm font-bold", {
+    "border-green-600 bg-green-900/40 text-green-400": s === "exact",
+    "border-red-700 bg-red-900/40 text-red-400": s === "over",
+    "border-stone-600 bg-stone-800/60 text-stone-400": s === "under",
   })
 
 export const SumpleteBoard: FC<Props> = ({
@@ -51,7 +51,7 @@ export const SumpleteBoard: FC<Props> = ({
           {t}
         </div>
       ))}
-      <div className="ml-1 h-10 w-10" />
+      <div className="ml-1 size-10" />
     </div>
   </div>
 )

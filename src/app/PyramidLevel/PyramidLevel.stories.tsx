@@ -62,7 +62,7 @@ const meta = {
     )
     return (
       <DesertBackdrop levelNr={1} start="morning">
-        <div className="relative flex h-full w-full flex-col">
+        <div className="relative flex size-full flex-col">
           <div className="flex w-full flex-1 items-center justify-center">
             <PyramidDisplay levelNr={levelNr} pyramid={content.pyramid} decorationOffset={0} values={{}} />
           </div>
@@ -122,7 +122,7 @@ export const EntranceAnimation: Story = {
     const entranceBlockId = content.pyramid.blocks[starts[floorCount - 1] + Math.floor(floorCount / 2)]?.id
     return (
       <DesertBackdrop levelNr={1} start="morning">
-        <div className="relative flex h-full w-full flex-col">
+        <div className="relative flex size-full flex-col">
           <div className="flex w-full flex-1 items-center justify-center">
             <PyramidDisplay
               key={replayKey}

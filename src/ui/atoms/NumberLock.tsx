@@ -148,9 +148,9 @@ export const NumberLock: FC<NumberLockProps> = ({
             })}
           >
             {/* Eye pupil with inner glow */}
-            <div className="absolute top-1/2 left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black">
+            <div className="absolute top-1/2 left-1/2 size-3 -translate-1/2 rounded-full bg-black">
               <div
-                className={clsx("absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full", {
+                className={clsx("absolute top-1/2 left-1/2 size-1 -translate-1/2 rounded-full", {
                   // Vibrant colors
                   "bg-amber-400": state === "empty" && variant === "vibrant",
                   "bg-red-400": state === "error" && variant === "vibrant",
@@ -165,7 +165,7 @@ export const NumberLock: FC<NumberLockProps> = ({
             {/* Eye of Horus tear mark - only show in vibrant mode */}
             {variant === "vibrant" && (
               <div
-                className={clsx("absolute right-0 -bottom-1 h-2 w-2 rounded-bl-full transition-colors duration-300", {
+                className={clsx("absolute right-0 -bottom-1 size-2 rounded-bl-full transition-colors duration-300", {
                   "bg-amber-800": state === "empty",
                   "bg-red-900": state === "error",
                   "bg-emerald-900": state === "open",

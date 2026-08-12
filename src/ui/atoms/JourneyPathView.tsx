@@ -88,7 +88,7 @@ export const JourneyPathView: FC<Props> = ({
   return (
     <button
       onClick={onClick}
-      className={`group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg px-12 py-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl ${
+      className={`group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg p-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl ${
         isPyramid ? "border-2 border-amber-800" : "border-2 border-stone-700"
       }`}
       style={
@@ -126,9 +126,9 @@ export const JourneyPathView: FC<Props> = ({
 
       {/* Map-piece progress nudge */}
       {nudge && (
-        <span className="absolute top-3 left-3 flex h-4 w-4 items-center justify-center">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75" />
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500" />
+        <span className="absolute top-3 left-3 flex size-4 items-center justify-center">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-amber-500 opacity-75" />
+          <span className="relative inline-flex size-3 rounded-full bg-amber-500" />
         </span>
       )}
 
@@ -156,8 +156,8 @@ export const JourneyPathView: FC<Props> = ({
       {/* Decorative accents */}
       {isPyramid ? (
         <>
-          <div className="absolute top-1/3 left-1/4 h-2 w-2 rotate-45 bg-red-600 opacity-60" />
-          <div className="absolute top-1/2 right-1/4 h-1.5 w-1.5 rotate-45 bg-green-600 opacity-60" />
+          <div className="absolute top-1/3 left-1/4 size-2 rotate-45 bg-red-600 opacity-60" />
+          <div className="absolute top-1/2 right-1/4 size-1.5 rotate-45 bg-green-600 opacity-60" />
         </>
       ) : (
         <>
@@ -168,7 +168,7 @@ export const JourneyPathView: FC<Props> = ({
 
       {/* Path + site nodes */}
       {inJourney && (
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           {/* Node hover halo — plain CSS so it doesn't depend on Tailwind JIT picking up SVG hover
               utilities, and pointer-events:all so the transparent-when-idle circle still captures. */}
           <style>{`.jpv-node{fill:#fcd34d;opacity:0;pointer-events:all;cursor:pointer;transition:opacity .15s}.jpv-node:hover{opacity:.6}`}</style>
@@ -277,7 +277,7 @@ export const JourneyPathView: FC<Props> = ({
 
       {/* Corner icon */}
       <div
-        className={`pointer-events-none absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border text-xs ${
+        className={`pointer-events-none absolute right-2 bottom-2 flex size-6 items-center justify-center rounded-full border text-xs ${
           isPyramid ? "border-amber-700 bg-amber-100 text-amber-800" : "border-amber-600 bg-stone-700 text-amber-400"
         }`}
       >

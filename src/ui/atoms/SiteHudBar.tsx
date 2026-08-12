@@ -6,7 +6,7 @@ import type { FC, PropsWithChildren } from "react"
 // real child opts back in with `pointer-events-auto`; they're all content-sized, so nothing dead is
 // reintroduced.
 export const SiteHudBar: FC<PropsWithChildren> = ({ children }) => (
-  <div className="pointer-events-none absolute right-0 bottom-safe-bottom left-0 z-10 mb-4 flex flex-col items-center justify-center gap-2">
+  <div className="pointer-events-none absolute inset-x-0 bottom-safe-bottom z-10 mb-4 flex flex-col items-center justify-center gap-2">
     {children}
   </div>
 )

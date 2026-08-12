@@ -74,7 +74,7 @@ export const InputBlock: FC<{
             e.stopPropagation()
           }
         }}
-        className="h-full w-full bg-transparent text-center outline-none"
+        className="size-full bg-transparent text-center outline-none"
         placeholder="..."
       />
     </Block>

@@ -72,7 +72,7 @@ export const MosaicWindow: FC<{
       {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
           width the panel's own aspect ratio allows at the space's height. Height alone overflowed
           a narrow phone sideways whenever the row below happened to be short. */}
-      <div className="flex min-h-0 flex-1 items-center justify-center p-2 [container-type:size]">
+      <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-2">
         <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
           <StainedGlassMosaic revealedPieces={revealed} newPieces={justPlaced} />
         </StoneFrame>

@@ -17,10 +17,10 @@ const Host = ({
   label: string
 }) => (
   <div className="flex flex-col items-center gap-2">
-    <div className="relative inline-flex h-20 w-20">
+    <div className="relative inline-flex size-20">
       <RevealPlaceholder progress={progress} clipPath={clipPath} />
       <div
-        className="flex h-20 w-20 items-center justify-center bg-amber-300 text-3xl"
+        className="flex size-20 items-center justify-center bg-amber-300 text-3xl"
         style={{ clipPath, ...revealMaskStyle(progress) }}
       >
         𓂀
