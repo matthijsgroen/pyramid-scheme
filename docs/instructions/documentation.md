@@ -85,9 +85,11 @@ A mechanic's *design* and its *build plan* are two different documents with two 
 
 This applies to **every design doc, wherever it lives** (`docs/game-design/`, `docs/mods/`, …) — not only files named `*-implementation-plan.md`, and when **editing** a doc, not just creating one. A design doc says how a mechanic works and why. **Status lives elsewhere:**
 
-- **`TODO.md`** (repo root) — the standing tracker: done / in-progress / pending across slices.
 - **The PR description** — the net change this branch delivers.
 - **git history** — what changed when, in which commit.
+
+The repo keeps no standing status tracker: the remaining implementation plan lives outside the
+codebase, so nothing in here has to be kept true as work lands.
 
 **Smell test — a design doc must contain NONE of these** (each belongs in the tracker/PR/git):
 

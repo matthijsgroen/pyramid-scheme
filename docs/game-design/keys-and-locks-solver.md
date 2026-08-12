@@ -545,8 +545,8 @@ existing per-floor BFS), and hard-failure enforcement (exhausted
 relaxation fails the build — no separate post-hoc validator needed, since
 the solver only ever places constructively within the reachable area).
 
-Also resolved since (2026-07-11/12 gap-analysis pass — see `TODO.md` for
-live implementation status): the map-piece two-level diversity ladder
+Also resolved since (2026-07-11/12 gap-analysis pass): the map-piece
+two-level diversity ladder
 (journey then pyramid, not a single dedup level — see "Map piece
 placement" above), the soft preference-tag mechanism for authored
 placement preferences, and the structure/loot phase split ("Structure,
