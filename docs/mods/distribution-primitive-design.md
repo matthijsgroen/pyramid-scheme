@@ -1,7 +1,7 @@
 # Design — the Distribution primitive (unified encounter + loot placement)
 
 The model: **everything placed into the world is a `Distribution`** — encounters
-(traps/puzzles/shops) *and* loot (currencies/junk/consumables/money). Core
+(traps/puzzles/shops) _and_ loot (currencies/junk/consumables/money). Core
 allocates the slots (footprint + eligibility + priority); the mod fills them
 (owning its variants / rarity / completeness / per-instance config).
 
@@ -24,9 +24,10 @@ a few real dependencies:
 ```
 
 Why this order (the dependency edges — everything else is independent):
+
 - **structure first** — the skeleton every later pass reads.
-- **encounters before loot** — because loot both *avoids* rooms (trap rooms are
-  loot-ineligible) and *targets* them (shop stock is loot placed into shop
+- **encounters before loot** — because loot both _avoids_ rooms (trap rooms are
+  loot-ineligible) and _targets_ them (shop stock is loot placed into shop
   encounters). Encounters stamp each slot's metadata; loot passes filter on it.
 - **gating before filler** — keys/fragments must be placed so the world is
   solvable (reads structure); filler takes what's left.
@@ -44,13 +45,13 @@ never rolls a variant, never knows rarity or completeness.
 ```ts
 type Distribution = {
   id: string
-  pass: "encounter" | "capped" | "dynamic"   // which pipeline pass it runs in
-                                              // (gating currencies stay the reachability worklist)
-  footprint: (ctx) => { min: number; max: number }  // slots to hand it; exact for capped
-  eligible?: (slot, ctx) => boolean           // the encounter↔loot join (see below)
-  rank?: (candidates, ctx) => Slot[]           // priority among eligible when contended
-  fill: (allocatedSlots: Slot[], ctx) => void  // MOD bakes rewards / encounter config;
-                                               // owns its variants, rarity, completeness
+  pass: "encounter" | "capped" | "dynamic" // which pipeline pass it runs in
+  // (gating currencies stay the reachability worklist)
+  footprint: (ctx) => { min: number; max: number } // slots to hand it; exact for capped
+  eligible?: (slot, ctx) => boolean // the encounter↔loot join (see below)
+  rank?: (candidates, ctx) => Slot[] // priority among eligible when contended
+  fill: (allocatedSlots: Slot[], ctx) => void // MOD bakes rewards / encounter config;
+  // owns its variants, rarity, completeness
 }
 ```
 
@@ -64,8 +65,8 @@ An encounter distribution places encounters into eligible rooms and **stamps
 per-instance config** as slot metadata while it does. Two capabilities this
 unlocks that the current tag mechanism can't do cleanly:
 
-- **Per-instance config** — the shop distribution sets *this* shop's capacity to
-  6, *that* one's to 3, as it places them (likewise per-trap difficulty, etc.).
+- **Per-instance config** — the shop distribution sets _this_ shop's capacity to
+  6, _that_ one's to 3, as it places them (likewise per-trap difficulty, etc.).
 - **The `eligible` join** — a slot's metadata (`slot.encounter`, `slot.capacity`,
   `slot.pathDifficulty`, `slot.tier`) is what later loot passes filter on:
   - shop stock: `eligible = s => s.encounter === "shop"`, footprint = `s.capacity`
@@ -81,14 +82,14 @@ being separate frozen items.
 
 ## Ownership
 
-| Kind | Pass | Owner | Notes |
-|------|------|-------|-------|
-| trap, puzzle, shop encounters | encounter | trap / puzzle / shop mods | per-instance config |
-| keys / map pieces / hieroglyph | gating | core + hieroglyph mod | reachability worklist (unchanged) |
-| mosaic | capped | mosaic mod | exact footprint |
-| money **+** junk | dynamic | **shop mod** | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` = 1.1×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) up to `JUNK_SHARE`, then loose coins for the rest — chest slots first world-wide, minus a `PUZZLE_COIN_SHARE` tail reserved for puzzle solves. Shop off → not registered → no money/junk, leftover chests empty. |
-| consumables | dynamic | **trap mod** | one Distribution; rarity trap-owned; `eligible` = expert+ puzzle slots; count is a mod-owned target |
-| empty | — | core | `emptyFraction` — a real knob (see below), % of loot-eligible slots reserved empty |
+| Kind                           | Pass      | Owner                     | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------ | --------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| trap, puzzle, shop encounters  | encounter | trap / puzzle / shop mods | per-instance config                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| keys / map pieces / hieroglyph | gating    | core + hieroglyph mod     | reachability worklist (unchanged)                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| mosaic                         | capped    | mosaic mod                | exact footprint                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| money **+** junk               | dynamic   | **shop mod**              | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` = 1.1×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) up to `JUNK_SHARE`, then loose coins for the rest — chest slots first world-wide, minus a `PUZZLE_COIN_SHARE` tail reserved for puzzle solves. Shop off → not registered → no money/junk, leftover chests empty. |
+| consumables                    | dynamic   | **trap mod**              | one Distribution; rarity trap-owned; `eligible` = expert+ puzzle slots; count is a mod-owned target                                                                                                                                                                                                                                                                                                                                                 |
+| empty                          | —         | core                      | `emptyFraction` — a real knob (see below), % of loot-eligible slots reserved empty                                                                                                                                                                                                                                                                                                                                                                  |
 
 ## Toggle-off gate (settled)
 

@@ -28,4 +28,4 @@ If the same kind of architectural gap gets fixed twice — same underlying conce
 
 ## State completeness in the same breath as the fix
 
-When reporting a fix as done, state explicitly what it does *not* yet fix or wire — in the same message, not as a separate discovery later. "This makes the structure correct" and "this makes the underlying mechanism correct" are different claims; don't let the first stand in for the second.
+When reporting a fix as done, state explicitly what it does _not_ yet fix or wire — in the same message, not as a separate discovery later. "This makes the structure correct" and "this makes the underlying mechanism correct" are different claims; don't let the first stand in for the second.

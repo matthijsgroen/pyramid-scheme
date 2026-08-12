@@ -10,13 +10,13 @@ Apply this instruction whenever you add, change, or remove anything a player wou
 
 Log an entry when the change is **visible to the player**:
 
-| Category | Examples |
-|---|---|
-| **Added** | New screen, new mechanic, new item, new reward type |
-| **Changed** | Altered UI text, reworked flow, rebalanced drop rates |
-| **Removed** | Feature or content removed from the game |
-| **Fixed** | Bug that was present in a previous release (see below) |
-| **Deprecated** | Feature that will be removed in a future release |
+| Category       | Examples                                               |
+| -------------- | ------------------------------------------------------ |
+| **Added**      | New screen, new mechanic, new item, new reward type    |
+| **Changed**    | Altered UI text, reworked flow, rebalanced drop rates  |
+| **Removed**    | Feature or content removed from the game               |
+| **Fixed**      | Bug that was present in a previous release (see below) |
+| **Deprecated** | Feature that will be removed in a future release       |
 
 ## What does NOT belong
 
@@ -64,9 +64,11 @@ first."
 ## [Unreleased]
 
 ### Added
+
 - Short present-tense sentence describing what the player gains.
 
 ### Fixed
+
 - Short description of the broken behaviour and what it affected.
 ```
 

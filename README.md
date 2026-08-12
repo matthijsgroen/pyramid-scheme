@@ -23,21 +23,26 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 ## 🗺️ Journey Types
 
 ### 🔺 Pyramid Expeditions
+
 Explore ancient pyramids across different times of day:
+
 - **Morning** 🌅 - Fresh start expeditions
-- **Afternoon** ☀️ - Peak exploration hours  
+- **Afternoon** ☀️ - Peak exploration hours
 - **Evening** 🌇 - Twilight adventures
 - **Night** 🌙 - Mysterious nocturnal quests
 
 **Difficulty Progression:**
+
 - 🟢 **Starter** - Learn the basics
-- 🔵 **Junior** - Build confidence 
-- 🟡 **Expert** - Test your skills 
+- 🔵 **Junior** - Build confidence
+- 🟡 **Expert** - Test your skills
 - 🟠 **Master** - Challenge yourself
 - 🔴 **Wizard** - Ultimate mastery
 
 ### 🗝️ Treasure Tombs
+
 9 tombs across the 5 tiers, unlocked with map pieces collected from pyramid floors. Higher tiers have multiple tombs — later ones are revealed by a location-key treasure found in the tier's first tomb:
+
 - **Forgotten Merchant's Cache** (Starter)
 - **Noble's Hidden Vault** (Junior)
 - **High Priest's Treasury** → **Inner Sanctum** (Expert)
@@ -47,18 +52,22 @@ Explore ancient pyramids across different times of day:
 ## 🧩 Puzzle Mechanics
 
 ### Tableau System
+
 Each level presents a **tableau** - a themed story puzzle with:
+
 - **Symbolic Formula**: Mathematical equations using hieroglyphic symbols
 - **Progressive Revelation**: Text becomes clearer as you progress
 - **Thematic Narratives**: Rich Egyptian mythology and culture
 
 ### Symbol Categories
+
 - **👑 Professions** (p1-p15) - Merchants, priests, scribes, farmers
 - **🐾 Animals** (a1-a15) - Sacred creatures like cats, crocodiles, ibis
-- **💎 Artifacts** (art1-art15) - Tools, vessels, ceremonial objects  
+- **💎 Artifacts** (art1-art15) - Tools, vessels, ceremonial objects
 - **🏺 Deities** (d1-d15) - Egyptian gods and goddesses
 
 ### Difficulty Scaling
+
 - **Symbol Count**: Higher difficulties use more symbols per puzzle
 - **Number Ranges**: Larger numbers in advanced levels
 - **Floor Count**: More pyramid floors to explore
@@ -66,20 +75,24 @@ Each level presents a **tableau** - a themed story puzzle with:
 ## 🏛️ Features
 
 ### 🌍 Internationalization
+
 - **English** 🇺🇸 - Full game experience
 - **Dutch** 🇳🇱 - Complete Nederlandse vertaling
 
 ### 🎨 Rich Theming
+
 - **Egyptian Aesthetics**: Authentic hieroglyphic symbols and desert backdrops
 - **Dynamic Time Cycles**: Day/night progression affects gameplay atmosphere
 - **Responsive Design**: Seamless experience across desktop and mobile
 
 ### 📊 Progress Tracking
+
 - **Journey Logs**: Track completed expeditions and found treasures
 - **Collection System**: Catalog of discovered artifacts organized by category
 - **Map Piece Progress**: Visual tracking of treasure tomb unlock requirements
 
 ### 🔧 Technical Features
+
 - **Deterministic Randomization**: Consistent puzzle generation using seeded algorithms
 - **Local Storage**: Progress persistence across sessions
 - **Storybook Integration**: Component documentation and testing
@@ -88,7 +101,8 @@ Each level presents a **tableau** - a themed story puzzle with:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - Yarn package manager
 
 ### Installation
@@ -137,7 +151,7 @@ The entire level structure — puzzle counts, floor depths, reward distribution,
 
 **[`src/worldGen/worldSpec.ts`](src/worldGen/worldSpec.ts)**
 
-Edit this file to shape the world: set difficulty constraints per tier or per journey, control how many puzzle floors a pyramid has, place tomb-key gates, and tune loot cadence. After editing, run **`yarn generate-world`** to regenerate `src/data/generatedWorld.ts` (or **`yarn validate-world`** to check the spec without writing), then inspect the results in Storybook (`yarn storybook` → *SiteMap/JourneyInspector*).
+Edit this file to shape the world: set difficulty constraints per tier or per journey, control how many puzzle floors a pyramid has, place tomb-key gates, and tune loot cadence. After editing, run **`yarn generate-world`** to regenerate `src/data/generatedWorld.ts` (or **`yarn validate-world`** to check the spec without writing), then inspect the results in Storybook (`yarn storybook` → _SiteMap/JourneyInspector_).
 
 ## 🏗️ Project Structure
 
@@ -179,6 +193,7 @@ The puzzle system uses carefully balanced mathematical formulas:
 ## ⚠️ Development Status
 
 **This is an early alpha version!**
+
 - Expect bugs and missing features
 - Progress may be lost between updates
 - Core gameplay mechanics are functional
@@ -187,6 +202,7 @@ The puzzle system uses carefully balanced mathematical formulas:
 ## 🤝 Contributing
 
 This is a personal project, but feedback and suggestions are welcome! Please feel free to:
+
 - Report bugs via GitHub issues
 - Suggest gameplay improvements
 - Contribute translations for additional languages
@@ -206,4 +222,4 @@ This project is private and for personal use.
 
 ---
 
-*Embark on your journey through the mysteries of ancient Egypt! 🏺✨*
+_Embark on your journey through the mysteries of ancient Egypt! 🏺✨_

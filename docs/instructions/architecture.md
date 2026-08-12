@@ -27,6 +27,7 @@ The domain layer must be portable — it could run in a CLI, a test runner, or a
 - `src/worldGen/` — world authoring and generation: the world spec DSL, config builders, fragment/mosaic/reward placement, and validators that produce `src/data/generatedWorld.ts` at dev time
 
 **Violations to avoid:**
+
 - Importing from `react`, `react-dom`, or any framework package
 - Referencing `document`, `window`, or any DOM API
 - Calling `useTranslation` or any i18n hook
@@ -41,11 +42,13 @@ The domain layer must be portable — it could run in a CLI, a test runner, or a
 `src/ui/` components are leaf renderers. They receive everything they need as props and return JSX. They do not manage state, run effects, or know about the game.
 
 **Allowed:**
+
 - `useRef` — for DOM operations only (focus management, element measurement). Holds a DOM handle, not state.
 - Props for event callbacks — `onClick`, `onChange`, etc. passed from the caller.
 - Inline display logic — a `switch` on a prop value, a conditional class. Not game logic.
 
 **Not allowed:**
+
 - `useState` — any interactive state (open/closed, animation phase, input value) belongs in a wrapper in `src/app/`
 - `useEffect` — no side effects; any derived state is either a prop or computed inline from props
 - `useTranslation` or any i18n hook — translated strings are passed as props by the caller
@@ -67,6 +70,7 @@ The app layer wires state to UI. It calls game functions, manages React state an
 - Wrappers — thin stateful shells around stateless ui/ components when interactivity is needed
 
 **Violations to avoid:**
+
 - `className="..."` in app/ components — extract the rendering into a ui/ component
 - Game logic reimplemented in a component — use functions from `src/game/`
 - Calling `useJourneys`, `useInventory`, etc. inside `src/ui/` components
@@ -93,10 +97,10 @@ A cycle or upward import (ui/ importing from app/, game/ importing from ui/) is 
 
 When adding code, ask which layer it belongs in:
 
-| Question | Answer | Layer |
-|---|---|---|
-| Is this pure computation with no side effects? | Yes | `src/game/` or `src/data/` |
-| Does it render HTML/CSS? | Yes | `src/ui/` |
-| Does it hold game state or orchestrate flow? | Yes | `src/app/` |
-| Does it need local interactivity (open/close, animation)? | Yes | `src/app/` wrapper around a `src/ui/` component |
-| Is it a cross-cutting pure utility? | Yes | `src/game/` (if game-specific) or inline where used |
+| Question                                                  | Answer | Layer                                               |
+| --------------------------------------------------------- | ------ | --------------------------------------------------- |
+| Is this pure computation with no side effects?            | Yes    | `src/game/` or `src/data/`                          |
+| Does it render HTML/CSS?                                  | Yes    | `src/ui/`                                           |
+| Does it hold game state or orchestrate flow?              | Yes    | `src/app/`                                          |
+| Does it need local interactivity (open/close, animation)? | Yes    | `src/app/` wrapper around a `src/ui/` component     |
+| Is it a cross-cutting pure utility?                       | Yes    | `src/game/` (if game-specific) or inline where used |

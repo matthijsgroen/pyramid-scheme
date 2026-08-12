@@ -27,7 +27,7 @@ Trap families are a **first-class plugin type**, registered separately from puzz
 
 **T3 — Fail must be unambiguous.** There is exactly one correct answer, deterministically generated. No family with multiple valid solutions may be used as a trap family.
 
-**T4 — Themed to the hazard, not the site.** Trap type is an attribute of the corridor (authored in the site template), not of the pyramid tier. A memory trap in an expert pyramid and a memory trap in a wizard pyramid are the same *family* — the difficulty knobs differ.
+**T4 — Themed to the hazard, not the site.** Trap type is an attribute of the corridor (authored in the site template), not of the pyramid tier. A memory trap in an expert pyramid and a memory trap in a wizard pyramid are the same _family_ — the difficulty knobs differ.
 
 **T5 — A family debuts at the bottom of its own scale.** A family first appearing at T3 enters as its simplest instance at T3. Difficulty knobs scale it upward from there.
 
@@ -40,17 +40,17 @@ Time limits are **authored constants per tier**, not generated values. Permanent
 ```ts
 // ponytail: all trap timing lives here — tweak before playtesting
 export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
-  starter:  8,
-  junior:   8,
-  expert:   8,
-  master:   6,
-  wizard:   4,
-};
+  starter: 8,
+  junior: 8,
+  expert: 8,
+  master: 6,
+  wizard: 4,
+}
 
-export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1;  // resolved: was 3
+export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1 // resolved: was 3
 ```
 
-Every tier is timed. The family is a *reflex* check on arithmetic the player already does to progress
+Every tier is timed. The family is a _reflex_ check on arithmetic the player already does to progress
 at that tier (operand ranges scale separately), so the limit tests recall speed on familiar sums, not
 comprehension of new ones. Starter and junior share expert's limit: their sums are the smallest in the
 game and all their trap corridors are hidden (optional) content. `0` still means "untimed" if a tier
@@ -62,19 +62,19 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 ## 4. Difficulty gating
 
-| Tier | Traps | Notes |
-|---|---|---|
-| Starter (T1) | None | — |
-| Junior (T2) | None | — |
-| Expert (T3) | 1 trap per branchy pyramid | Trap families: arithmetic reflex only |
-| Master (T4) | 1–2 traps per pyramid | Adds pattern recognition |
-| Wizard (T5) | 2–3 traps per pyramid | All families available |
+| Tier         | Traps                      | Notes                                 |
+| ------------ | -------------------------- | ------------------------------------- |
+| Starter (T1) | None                       | —                                     |
+| Junior (T2)  | None                       | —                                     |
+| Expert (T3)  | 1 trap per branchy pyramid | Trap families: arithmetic reflex only |
+| Master (T4)  | 1–2 traps per pyramid      | Adds pattern recognition              |
+| Wizard (T5)  | 2–3 traps per pyramid      | All families available                |
 
 ---
 
 ## 5. The trap families
 
-### 5.1 Arithmetic reflex — *(implement first)*
+### 5.1 Arithmetic reflex — _(implement first)_
 
 - **Thematic fit:** triggered mechanism — solve the formula to disable it.
 - **Skill:** rapid mental arithmetic; multiplication table recall; basic arithmetic under pressure.
@@ -134,12 +134,12 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 Tomb treasures grant permanent effects that directly modify trap encounters. Exact values are authored constants — see `pyramid-interior-design.md §1` for categories.
 
-| Upgrade | Effect on traps |
-|---|---|
-| Max health +½ ♥ | More total health to risk on trap attempts (6 upgrades available; max 6 hearts) |
-| Armor | Reduces trap damage by 1 half-heart per stack; 2 stacks available; minimum damage is 1 half-heart (cannot negate entirely) |
-| Trap insight | Adds `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` (1s) per stack; 2 stacks available (+2s total max) |
-| Compass / Detection / Scribe's Eye | No direct effect on traps |
+| Upgrade                            | Effect on traps                                                                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Max health +½ ♥                    | More total health to risk on trap attempts (6 upgrades available; max 6 hearts)                                            |
+| Armor                              | Reduces trap damage by 1 half-heart per stack; 2 stacks available; minimum damage is 1 half-heart (cannot negate entirely) |
+| Trap insight                       | Adds `TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS` (1s) per stack; 2 stacks available (+2s total max)                          |
+| Compass / Detection / Scribe's Eye | No direct effect on traps                                                                                                  |
 
 ---
 

@@ -11,7 +11,7 @@ See also: `pyramid-interior-design.md` for loot economy, interior structure, and
 
 Exploration in this world runs **both forward and backward**. Forward: new
 keys and treasures unlock the next difficulty tier, new journeys, deeper
-tomb floors. Backward: those same keys reopen *earlier* sites that were
+tomb floors. Backward: those same keys reopen _earlier_ sites that were
 never fully spent — a starter pyramid you finished tiers ago can hold a
 gate that only your latest wizard treasure opens, and a fragment you find
 there might be exactly what an early tomb's tableau was waiting on. No
@@ -43,7 +43,7 @@ See `pyramid-interior-design.md §12` for canonical counts.
 
 The site itself is the progress indicator — fog revealing is the reward. No separate XP bar, no streak counter. Completion is legible at a glance.
 
-**Ward-gated content** (from Phase 5d of the build plan) means a first visit is not the whole story: some branches are deliberately inaccessible until a tomb key from a *later* tomb arrives. Early sites stay live throughout the game; they are *dormant*, not spent.
+**Ward-gated content** (from Phase 5d of the build plan) means a first visit is not the whole story: some branches are deliberately inaccessible until a tomb key from a _later_ tomb arrives. Early sites stay live throughout the game; they are _dormant_, not spent.
 
 **Trap corridors** (expert tier and above) are a second reason to return or backtrack. Specific authored side branches are preceded by a warning sign — the player may opt in. Moving through a trapped corridor triggers a timed math question: pass to proceed, fail to take health damage. Health is session-persistent; depleted health blocks further trap attempts until restored by consumables (found in normal chests) or permanent upgrades (from tomb treasures). See `pyramid-interior-design.md §11` for full trap system design.
 
@@ -61,7 +61,7 @@ Four pyramid journeys per tier, unlocked sequentially (completing journey N unlo
 
 **Multiple tombs per tier at higher difficulties:** the tomb count rises with tier (one tomb at starter/junior, two at expert/master, three at wizard), and later tombs in a tier are revealed by completing the earlier one. See `pyramid-interior-design.md §12` for canonical counts.
 
-**Hieroglyphs are discovered via fragments** — finding a hieroglyph fragment chest adds one fragment to the collection. A hieroglyph is completed when all its fragments are found. Fragment counts scale by tier *and* by which tomb section first requires that hieroglyph — a hieroglyph only needed in section 3 has more fragments than one needed in section 1, because the player already has a larger playing surface by then. See `pyramid-interior-design.md §3` for the full matrix (2–8 fragments per hieroglyph; 273 total). Completed hieroglyphs unlock tomb tableau rooms. Fragments of the same hieroglyph are always in different pyramid sites across different journeys.
+**Hieroglyphs are discovered via fragments** — finding a hieroglyph fragment chest adds one fragment to the collection. A hieroglyph is completed when all its fragments are found. Fragment counts scale by tier _and_ by which tomb section first requires that hieroglyph — a hieroglyph only needed in section 3 has more fragments than one needed in section 1, because the player already has a larger playing surface by then. See `pyramid-interior-design.md §3` for the full matrix (2–8 fragments per hieroglyph; 273 total). Completed hieroglyphs unlock tomb tableau rooms. Fragments of the same hieroglyph are always in different pyramid sites across different journeys.
 
 **Map pieces are flexible** — `piecesRequired` is authored per tomb and is not always 4. Later tombs within a tier need fewer pieces (they're already gated behind completing an earlier tomb). Map pieces for later tombs are found on deep floors opened by earlier tombs' ward keys — exploring new floors serves double duty.
 
@@ -75,21 +75,24 @@ The mosaic is a single image revealed in order across 298 reveal steps (`LEVEL_S
 
 ## 2. Content scope — the level count question
 
-`journeys.ts` defines `levelCount` per pyramid, which becomes `puzzleBudget` in the site map design (the number of puzzle nodes in the site). The per-site counts live in `journeys.ts`; see `pyramid-interior-design.md §12` for canonical totals. The analysis below reads the *shape* of those counts within and across tiers.
+`journeys.ts` defines `levelCount` per pyramid, which becomes `puzzleBudget` in the site map design (the number of puzzle nodes in the site). The per-site counts live in `journeys.ts`; see `pyramid-interior-design.md §12` for canonical totals. The analysis below reads the _shape_ of those counts within and across tiers.
 
 ### Intra-tier shape
 
 Junior, Expert have a clear warmup → peak → cool-down shape:
+
 - Junior: 3 → 6 → **8** → 5
 - Expert: 4 → 6 → **9** → 7
 
 Master peaks early (site 2 = "Book of the Dead" at 9), then descends:
+
 - Master: 4 → **9** → 8 → 5
 
 Wizard has no warmup — the smallest site is 8 nodes (more than any starter/junior site):
+
 - Wizard: **9** → **11** → **10** → **8**
 
-This is probably *fine* for wizard (players arriving there know what they're doing) but worth noting explicitly: wizard provides no in-tier gentle introduction. The jump from master's 4-node opener to wizard's 9-node opener is the steepest single escalation in the game.
+This is probably _fine_ for wizard (players arriving there know what they're doing) but worth noting explicitly: wizard provides no in-tier gentle introduction. The jump from master's 4-node opener to wizard's 9-node opener is the steepest single escalation in the game.
 
 ### The master → wizard jump
 
@@ -117,13 +120,13 @@ The mosaic reward total is 298 pieces — one per reveal step — assembled into
 
 The curriculum map (§7) assigns families to tiers T1–T5. Mapping to game difficulty tiers:
 
-| Game tier | PUZZLE_FAMILIES tier | Families introduced |
-|---|---|---|
-| Starter | T1 | Cross-sum, Balance scale, Symmetry |
-| Junior | T2 | Egyptian doubling, Sundial, Glyph Latin-square (4×4), Target-number, Sequence |
-| Expert | T3 | Water clock, Eye of Horus fractions, Sumplete (5×5) |
-| Master | T4 | Nonogram (10×10), Kakuro, Clock-arith (decoy) |
-| Wizard | T5 | Ceilings: 9×9 Latin-square, 15×15 nonogram, multi-unknown algebra, modular time |
+| Game tier | PUZZLE_FAMILIES tier | Families introduced                                                             |
+| --------- | -------------------- | ------------------------------------------------------------------------------- |
+| Starter   | T1                   | Cross-sum, Balance scale, Symmetry                                              |
+| Junior    | T2                   | Egyptian doubling, Sundial, Glyph Latin-square (4×4), Target-number, Sequence   |
+| Expert    | T3                   | Water clock, Eye of Horus fractions, Sumplete (5×5)                             |
+| Master    | T4                   | Nonogram (10×10), Kakuro, Clock-arith (decoy)                                   |
+| Wizard    | T5                   | Ceilings: 9×9 Latin-square, 15×15 nonogram, multi-unknown algebra, modular time |
 
 Sumplete is the initial build family (see `design-decisions.md`). This is consistent — Sumplete is a T3 family (PUZZLE_FAMILIES §7: `◐ 5×5` at T3). The initial build targets the expert tier as the live test bed for the site map system.
 
@@ -139,7 +142,7 @@ This file no longer exists. All treasure passive effects are now defined in `pyr
 
 1. **Wizard 38-node count** — intentional endgame depth, or drift? Decide and note it explicitly (see §2 recommendation).
 
-2. **Tomb "disabled" condition** — once ward-gated tomb branches are in play, the disable condition needs a precise definition. Proposal: disabled only when `solvedEdges` covers all reachable nodes *and* no unspent ward keys in inventory could open further branches. (The validator's forward pass produces this data for free.)
+2. **Tomb "disabled" condition** — once ward-gated tomb branches are in play, the disable condition needs a precise definition. Proposal: disabled only when `solvedEdges` covers all reachable nodes _and_ no unspent ward keys in inventory could open further branches. (The validator's forward pass produces this data for free.)
 
 3. **TOMB_SYMBOLS pool sizes** — currently 7–15 per tomb. Fragment model works better with 3–6. Needs authoring in `tableaus.ts` before Phase 6.
 

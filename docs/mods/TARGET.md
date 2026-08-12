@@ -49,7 +49,7 @@ mod that uses them.
 
 ## What "mod-agnostic core" means concretely
 
-Core owns *mechanisms*; mods own *meaning*.
+Core owns _mechanisms_; mods own _meaning_.
 
 - Core places "a capped currency instance" — it does not know `mosaicPiece`
   from `hieroglyphFragment`.
