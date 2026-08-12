@@ -4,6 +4,7 @@ import { SettingsModal } from "@/app/SettingsModal"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { useSecretTaps } from "@/app/dev/useSecretTaps"
 import { Header } from "@/ui/atoms/Header"
+import { GearIcon } from "@/ui/atoms/GearIcon"
 
 export const BaseHeader = () => {
   const { t } = useTranslation("common")
@@ -23,7 +24,7 @@ export const BaseHeader = () => {
           className="cursor-pointer bg-transparent font-medium hover:text-yellow-300"
           aria-label={t("ui.settings")}
         >
-          <span className="material-icons ml-[-2px] text-center align-middle text-xl!">settings</span>
+          <GearIcon className="ml-[-2px]" />
         </button>
         <h1 className="text-center font-pyramid text-2xl font-bold select-none" onClick={tap}>
           Pyramid Scheme
