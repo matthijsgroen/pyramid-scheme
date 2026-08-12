@@ -117,7 +117,7 @@ export const WithGameContent: Story = {
             {Array.from({ length: 9 }, (_, i) => (
               <div
                 key={i}
-                className="flex h-12 w-12 items-center justify-center rounded border-2 border-amber-400 bg-amber-200"
+                className="flex size-12 items-center justify-center rounded border-2 border-amber-400 bg-amber-200"
               >
                 {i + 1}
               </div>

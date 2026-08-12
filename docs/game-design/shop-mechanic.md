@@ -55,7 +55,7 @@ All defined in `src/mods/shop/game/pricing.ts`:
   all 13 rare collectibles (mandatory for 100% completion).
 - **Guard, enforced at world-gen time** (`src/worldGen/validate.ts`):
   `Σ(all shop prices, rares + one full consumable restock per shop) ≤
-  Σ(all guaranteed income)`. Global cumulative, not per-tier — backtracking
+Σ(all guaranteed income)`. Global cumulative, not per-tier — backtracking
   makes the whole game's economy one pool, not tier-isolated budgets.
   World generation fails if this doesn't hold.
 

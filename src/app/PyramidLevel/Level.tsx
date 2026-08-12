@@ -49,7 +49,7 @@ export const Level: FC<{
   }, [storageKey, loaded, completed, clearAnswers])
 
   return (
-    <div className="relative flex h-full w-full flex-col">
+    <div className="relative flex size-full flex-col">
       <div className="flex w-full flex-1 items-center justify-center">
         <PyramidDisplay
           levelNr={content.levelNr}

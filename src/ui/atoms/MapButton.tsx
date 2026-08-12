@@ -183,7 +183,7 @@ export const MapButton: FC<MapButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className="group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg border-2 border-amber-800 bg-amber-50 px-12 py-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl"
+      className="group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg border-2 border-amber-800 bg-amber-50 p-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl"
       style={{
         background: `
           linear-gradient(45deg, rgba(180,83,9,0.1) 25%, transparent 25%),
@@ -202,9 +202,9 @@ export const MapButton: FC<MapButtonProps> = ({
 
       {/* Map piece progress nudge */}
       {nudge && (
-        <span className="absolute top-3 left-3 flex h-4 w-4 items-center justify-center">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-500"></span>
+        <span className="absolute top-3 left-3 flex size-4 items-center justify-center">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+          <span className="relative inline-flex size-3 rounded-full bg-amber-500"></span>
         </span>
       )}
 
@@ -217,9 +217,9 @@ export const MapButton: FC<MapButtonProps> = ({
       </div>
 
       {/* Map landmarks */}
-      <div className="absolute top-1/3 left-1/4 h-2 w-2 rotate-45 bg-red-600"></div>
-      <div className="absolute top-1/2 right-1/4 h-1.5 w-1.5 rotate-45 bg-green-600"></div>
-      <div className="absolute bottom-1/4 left-1/2 h-1 w-1 rounded-full bg-blue-600"></div>
+      <div className="absolute top-1/3 left-1/4 size-2 rotate-45 bg-red-600"></div>
+      <div className="absolute top-1/2 right-1/4 size-1.5 rotate-45 bg-green-600"></div>
+      <div className="absolute bottom-1/4 left-1/2 size-1 rounded-full bg-blue-600"></div>
 
       {/* Journey Path */}
       {inJourney && (
@@ -247,7 +247,7 @@ export const MapButton: FC<MapButtonProps> = ({
           </div>
 
           {/* Journey Path Line */}
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Full path (gray) */}
             <path
               d={pathConfig.path}
@@ -284,7 +284,7 @@ export const MapButton: FC<MapButtonProps> = ({
       </span>
 
       {/* Compass rose in corner */}
-      <div className="absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border border-amber-700 bg-amber-100 text-xs text-amber-800">
+      <div className="absolute right-2 bottom-2 flex size-6 items-center justify-center rounded-full border border-amber-700 bg-amber-100 text-xs text-amber-800">
         ⊕
       </div>
     </button>

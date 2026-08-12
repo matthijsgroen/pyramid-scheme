@@ -56,7 +56,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">{t("ui.settings")}</h2>
           <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label={t("ui.close")}>
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -89,7 +89,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               type="checkbox"
               checked={!tutorialsEnabled}
               onChange={e => setTutorialsEnabled(!e.target.checked)}
-              className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="size-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
           </label>
 

@@ -13,11 +13,11 @@ export const Tile: FC<Props> = ({ value, variant = "default", onClick }) => (
   <button
     onClick={onClick}
     className={clsx(
-      "flex h-10 w-10 items-center justify-center rounded border text-base font-semibold transition-all duration-100",
+      "flex size-10 items-center justify-center rounded border text-base font-semibold transition-all duration-100",
       {
-        "bg-stone-700 border-stone-500 text-stone-200 hover:bg-stone-600": variant === "default",
-        "bg-stone-900 border-stone-700 text-stone-600 relative": variant === "excluded",
-        "bg-amber-800/70 border-amber-500 text-amber-100 shadow shadow-amber-900": variant === "included",
+        "border-stone-500 bg-stone-700 text-stone-200 hover:bg-stone-600": variant === "default",
+        "relative border-stone-700 bg-stone-900 text-stone-600": variant === "excluded",
+        "border-amber-500 bg-amber-800/70 text-amber-100 shadow shadow-amber-900": variant === "included",
       }
     )}
   >

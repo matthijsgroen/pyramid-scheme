@@ -269,7 +269,7 @@ export const PyramidExpedition: FC<{
       timeStepSize={pyramidJourney.background.timeStepSize}
       showNile={pyramidJourney.background.showNile}
     >
-      <div className="flex h-full w-full flex-col">
+      <div className="flex size-full flex-col">
         <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">
           <Header className={textColor}>
             <button onClick={onClose} className="mr-3 cursor-pointer text-lg font-bold focus:outline-none">

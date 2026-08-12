@@ -16,7 +16,7 @@ export const Block: FC<
     <div
       onClick={onClick}
       className={clsx(
-        "ml-[-1px] flex h-10 w-15 items-center justify-center rounded text-center",
+        "-ml-px flex h-10 w-15 items-center justify-center rounded text-center",
         {
           "border-2": selected || !!feedback || unlockable,
           border: !selected && !feedback && !unlockable,

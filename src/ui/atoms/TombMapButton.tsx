@@ -152,7 +152,7 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className="group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg border-2 border-stone-700 bg-stone-800 px-12 py-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl"
+      className="group relative mt-8 flex aspect-square w-full overflow-hidden rounded-lg border-2 border-stone-700 bg-stone-800 p-12 shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl"
       style={{
         background: `
           linear-gradient(45deg, rgba(68,64,60,0.3) 25%, transparent 25%),
@@ -219,7 +219,7 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
           </div>
 
           {/* Corridor Path Lines */}
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
             {/* Full corridors (gray) */}
             {corridorConfig.segments.map((segment, index) => (
               <line
@@ -300,7 +300,7 @@ export const TombMapButton: FC<TombMapButtonProps> = ({
       </span>
 
       {/* Ancient key symbol in corner */}
-      <div className="absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border border-amber-600 bg-stone-700 text-xs text-amber-400">
+      <div className="absolute right-2 bottom-2 flex size-6 items-center justify-center rounded-full border border-amber-600 bg-stone-700 text-xs text-amber-400">
         🗝️
       </div>
     </button>

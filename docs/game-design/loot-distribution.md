@@ -15,11 +15,11 @@ Key constraint: **no hieroglyph fragment appears more than once per journey** (r
 
 ## Reward slot types
 
-| Slot | Location | Default reward |
-|---|---|---|
-| `mainEndReward` | End of the main spine per floor | Hieroglyph fragment (fragmentSlot) or explicit (mapPiece, mosaicPiece) |
-| `endReward` on side sections | Branch endpoints with `end: "fragment"` | Hieroglyph fragment (fragmentSlot) or explicit (tombKey, mapPiece) |
-| `chestRewards[]` | Main spine chests, 1 per `chestEvery` puzzles | Consumables only |
+| Slot                         | Location                                      | Default reward                                                         |
+| ---------------------------- | --------------------------------------------- | ---------------------------------------------------------------------- |
+| `mainEndReward`              | End of the main spine per floor               | Hieroglyph fragment (fragmentSlot) or explicit (mapPiece, mosaicPiece) |
+| `endReward` on side sections | Branch endpoints with `end: "fragment"`       | Hieroglyph fragment (fragmentSlot) or explicit (tombKey, mapPiece)     |
+| `chestRewards[]`             | Main spine chests, 1 per `chestEvery` puzzles | Consumables only                                                       |
 
 Tomb reward slots (ward keys, location keys) are authored directly and never go through fragment assignment.
 
@@ -27,7 +27,7 @@ Tomb reward slots (ward keys, location keys) are authored directly and never go 
 
 ## The `fragmentSlot` sentinel
 
-During world generation the builder marks any slot that *could* hold a hieroglyph fragment with `{ type: "fragmentSlot" }`. This is a build-time sentinel — it is never serialized to `generatedWorld.ts`.
+During world generation the builder marks any slot that _could_ hold a hieroglyph fragment with `{ type: "fragmentSlot" }`. This is a build-time sentinel — it is never serialized to `generatedWorld.ts`.
 
 Lifecycle:
 
@@ -42,6 +42,7 @@ generateFile(allConfigs)   → throws if any fragmentSlot survived (invariant ch
 ```
 
 Where sentinels appear:
+
 - `mainEndReward` of any floor that has no explicit authored reward
 - `endReward` of any side section declared with `end: "fragment"` in the DSL
 
@@ -70,11 +71,11 @@ For each hieroglyph, derives:
 
 `preferredWardKeys` comes from `TOMB_PERK_IDS[tombId].slice(0, runNumber - 1)` where `runNumber` is the first tomb run in `tableauLevels` that needs this hieroglyph:
 
-| runNumber | preferredWardKeys | Meaning |
-|---|---|---|
-| 1 | `[]` | Needed on first visit → place in open slots |
-| 2 | `[tombPerkIds[0]]` | Needed after run 1 → prefer slots behind ward key #1 |
-| 3 | `[tombPerkIds[0], tombPerkIds[1]]` | Needed after run 2 → prefer slots behind ward keys #1 and #2 |
+| runNumber | preferredWardKeys                  | Meaning                                                      |
+| --------- | ---------------------------------- | ------------------------------------------------------------ |
+| 1         | `[]`                               | Needed on first visit → place in open slots                  |
+| 2         | `[tombPerkIds[0]]`                 | Needed after run 1 → prefer slots behind ward key #1         |
+| 3         | `[tombPerkIds[0], tombPerkIds[1]]` | Needed after run 2 → prefer slots behind ward keys #1 and #2 |
 
 ### Step 3 — assign
 
@@ -82,11 +83,11 @@ For each hieroglyph (in tier order, starter first):
 
 **Three priority pools, tried in order:**
 
-| Pool | Condition |
-|---|---|
-| 0 | Same tier + slot is behind at least one of the preferredWardKeys |
-| 1 | Same tier + open slot (no ward keys) |
-| 2 | Any remaining slot (cross-tier fallback) |
+| Pool | Condition                                                        |
+| ---- | ---------------------------------------------------------------- |
+| 0    | Same tier + slot is behind at least one of the preferredWardKeys |
+| 1    | Same tier + open slot (no ward keys)                             |
+| 2    | Any remaining slot (cross-tier fallback)                         |
 
 **Two passes per pool:**
 
@@ -103,7 +104,7 @@ Any `isPlaceholder` slot that was not assigned a fragment receives a consumable 
 
 ## Ward-aware placement intent
 
-Run-N fragments are designed to be placed *behind* the ward key earned after completing run N−1. This means the player will have already unlocked the deep floor before they need to hunt for that hieroglyph.
+Run-N fragments are designed to be placed _behind_ the ward key earned after completing run N−1. This means the player will have already unlocked the deep floor before they need to hunt for that hieroglyph.
 
 This section (and the pool table above) describes the `fragments.ts`/`assignFragments` design, since replaced by the generic reachability-driven worklist (`src/worldGen/placeFragments.ts`) with the hieroglyph currency's own `rank` (`src/mods/hieroglyph/game/hieroglyphCurrency.ts`) — see `keys-and-locks-solver.md`'s "Distribution rules" section for the current mechanism. The pool ladder there is two rungs, not three: tier is a hard filter (a fragment can never land off-tier, full stop — there is no cross-tier fallback), and within the tier a slot behind one of the hieroglyph's preferred ward keys is preferred over a plain open slot, capped to one ward-matched slot per distinct key so one symbol can't monopolize every gate. Ward-gated pyramid sections exist in every tier's own tomb, authored via `wardChest` in each `src/worldGen/spec/*.ts` file.
 

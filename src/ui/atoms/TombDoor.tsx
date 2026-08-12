@@ -15,7 +15,7 @@ export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean
       <div
         className={clsx(
           settings.color,
-          "relative flex h-full w-full origin-left flex-col items-center justify-start pb-4 transition-transform duration-2000 ease-in-out transform-3d",
+          "relative flex size-full origin-left flex-col items-center justify-start pb-4 transition-transform duration-2000 ease-in-out transform-3d",
           open && "rotate-y-90"
         )}
         style={{

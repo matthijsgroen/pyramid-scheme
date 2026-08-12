@@ -42,7 +42,7 @@ When a player enters a treasure room that holds a fragment:
 2. If already collected → show no overlay; the chest is silently inert.
 3. If not → show overlay; on collect, store `"id:index"` in the inventory.
 
-This means a world rebuild can freely change *which* chest holds a given fragment, move fragments between sections, or add new ones. A player who already has piece `a4:2` simply won't be shown the overlay again if that piece appears somewhere new. They cannot collect it twice.
+This means a world rebuild can freely change _which_ chest holds a given fragment, move fragments between sections, or add new ones. A player who already has piece `a4:2` simply won't be shown the overlay again if that piece appears somewhere new. They cannot collect it twice.
 
 ---
 
@@ -54,7 +54,7 @@ Consumables (health pickups, etc.) are always re-lootable. The gate is inventory
 
 ## Ward keys and gate hashes
 
-The DSL lets authors change *which* ward key is assigned to a gated section (e.g. swapping between two tier-2 keys). The section hash ignores `wardKeyId` — it only hashes `gate.type` ("tomb-key"). Swapping key assignment never resets exploration of the gated section. Gate presence/absence does change the hash (adding or removing a gate restructures the section).
+The DSL lets authors change _which_ ward key is assigned to a gated section (e.g. swapping between two tier-2 keys). The section hash ignores `wardKeyId` — it only hashes `gate.type` ("tomb-key"). Swapping key assignment never resets exploration of the gated section. Gate presence/absence does change the hash (adding or removing a gate restructures the section).
 
 ---
 
@@ -66,14 +66,14 @@ Progression and journey state are stored under versioned keys. If a breaking mig
 
 ## What resets and what doesn't
 
-| Change | Resets exploration? | Dupes/erases loot? |
-|---|---|---|
-| Puzzle count changes in a section | Yes — hash changes | No |
-| Chest cadence changes | Yes — hash changes | No |
-| Loot in a chest changes | No | No — inventory-as-truth |
-| Ward key reassigned | No | No |
-| Gate added or removed | Yes — hash changes | No |
-| Section added (new side path) | N/A — new hash, fresh | No |
-| Section removed | N/A — stale hash ignored | No |
-| Difficulty changes | Yes — hash changes | No |
-| Fragment re-ordered across chests | No | No — piece index is stable per world build |
+| Change                            | Resets exploration?      | Dupes/erases loot?                         |
+| --------------------------------- | ------------------------ | ------------------------------------------ |
+| Puzzle count changes in a section | Yes — hash changes       | No                                         |
+| Chest cadence changes             | Yes — hash changes       | No                                         |
+| Loot in a chest changes           | No                       | No — inventory-as-truth                    |
+| Ward key reassigned               | No                       | No                                         |
+| Gate added or removed             | Yes — hash changes       | No                                         |
+| Section added (new side path)     | N/A — new hash, fresh    | No                                         |
+| Section removed                   | N/A — stale hash ignored | No                                         |
+| Difficulty changes                | Yes — hash changes       | No                                         |
+| Fragment re-ordered across chests | No                       | No — piece index is stable per world build |

@@ -114,10 +114,10 @@ export const LootPopup: FC<LootPopupProps> = ({
       {animationPhase === "burst" && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="animate-ping">
-            <div className={`h-32 w-32 rounded-full bg-gradient-to-r ${colors.bg} opacity-75`} />
+            <div className={`size-32 rounded-full bg-gradient-to-r ${colors.bg} opacity-75`} />
           </div>
           <div className="absolute animate-pulse">
-            <div className={`h-48 w-48 rounded-full bg-gradient-to-r ${colors.bg} opacity-50`} />
+            <div className={`size-48 rounded-full bg-gradient-to-r ${colors.bg} opacity-50`} />
           </div>
         </div>
       )}
@@ -138,17 +138,17 @@ export const LootPopup: FC<LootPopupProps> = ({
             colors.glow,
             {
               "shadow-lg": animationPhase === "reveal",
-              "shadow-2xl animate-subtle-glow": animationPhase === "visible",
+              "animate-subtle-glow shadow-2xl": animationPhase === "visible",
             }
           )}
         >
           {/* Sparkle effects */}
           {(animationPhase === "reveal" || animationPhase === "visible") && (
             <>
-              <div className="absolute -top-2 -left-2 h-4 w-4 animate-bounce text-yellow-300">✨</div>
-              <div className="absolute -top-1 -right-3 h-3 w-3 animate-bounce text-yellow-300 delay-100">⭐</div>
-              <div className="absolute -bottom-2 -left-3 h-3 w-3 animate-bounce text-yellow-300 delay-200">💫</div>
-              <div className="absolute -right-2 -bottom-1 h-4 w-4 animate-bounce text-yellow-300 delay-300">✨</div>
+              <div className="absolute -top-2 -left-2 size-4 animate-bounce text-yellow-300">✨</div>
+              <div className="absolute -top-1 -right-3 size-3 animate-bounce text-yellow-300 delay-100">⭐</div>
+              <div className="absolute -bottom-2 -left-3 size-3 animate-bounce text-yellow-300 delay-200">💫</div>
+              <div className="absolute -right-2 -bottom-1 size-4 animate-bounce text-yellow-300 delay-300">✨</div>
             </>
           )}
 

@@ -36,7 +36,7 @@ export const Chest: FC<{
         >
           {/* Base decorations */}
           <div
-            className={clsx("absolute top-1 left-2 h-1 w-1 rounded-full", {
+            className={clsx("absolute top-1 left-2 size-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
               "bg-amber-950": variant === "wooden",
@@ -50,14 +50,14 @@ export const Chest: FC<{
             })}
           />
           <div
-            className={clsx("absolute top-1 left-7 h-1 w-1 rounded-full", {
+            className={clsx("absolute top-1 left-7 size-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
               "bg-amber-950": variant === "wooden",
             })}
           />
           <div
-            className={clsx("absolute top-1 right-7 h-1 w-1 rounded-full", {
+            className={clsx("absolute top-1 right-7 size-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
               "bg-amber-950": variant === "wooden",
@@ -71,7 +71,7 @@ export const Chest: FC<{
             })}
           />
           <div
-            className={clsx("absolute top-1 right-2 h-1 w-1 rounded-full", {
+            className={clsx("absolute top-1 right-2 size-1 rounded-full", {
               "bg-yellow-900": variant === "vibrant",
               "bg-stone-800": variant === "muted",
               "bg-amber-950": variant === "wooden",
@@ -108,14 +108,14 @@ export const Chest: FC<{
         >
           {/* Corner brackets */}
           <div
-            className={clsx("absolute top-1 left-1 h-2 w-2 border-t-2 border-l-2", {
+            className={clsx("absolute top-1 left-1 size-2 border-t-2 border-l-2", {
               "border-amber-900": variant === "vibrant",
               "border-stone-700": variant === "muted",
               "border-stone-600": variant === "wooden",
             })}
           />
           <div
-            className={clsx("absolute top-1 right-1 h-2 w-2 border-t-2 border-r-2", {
+            className={clsx("absolute top-1 right-1 size-2 border-t-2 border-r-2", {
               "border-amber-900": variant === "vibrant",
               "border-stone-700": variant === "muted",
               "border-stone-600": variant === "wooden",
@@ -135,9 +135,9 @@ export const Chest: FC<{
               })}
             >
               {/* Pupil */}
-              <div className="absolute top-1/2 left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black">
+              <div className="absolute top-1/2 left-1/2 size-3 -translate-1/2 rounded-full bg-black">
                 <div
-                  className={clsx("absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full", {
+                  className={clsx("absolute top-1/2 left-1/2 size-1 -translate-1/2 rounded-full", {
                     "bg-amber-400": state === "empty" && variant === "vibrant",
                     "bg-red-400": state === "error" && variant === "vibrant",
                     "bg-emerald-400": state === "open" && variant === "vibrant",
@@ -181,11 +181,11 @@ export const Chest: FC<{
           {/* Hieroglyphic patterns — vibrant only */}
           {variant === "vibrant" && (
             <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
-              <div className="h-1 w-1 rounded-full bg-amber-900/70" />
+              <div className="size-1 rounded-full bg-amber-900/70" />
               <div className="h-1 w-3 bg-amber-900/70" />
-              <div className="h-1 w-1 rounded-full bg-amber-900/70" />
+              <div className="size-1 rounded-full bg-amber-900/70" />
               <div className="h-1 w-2 bg-amber-900/70" />
-              <div className="h-1 w-1 rounded-full bg-amber-900/70" />
+              <div className="size-1 rounded-full bg-amber-900/70" />
             </div>
           )}
 
@@ -208,19 +208,19 @@ export const Chest: FC<{
               "border-amber-700 from-amber-50 to-amber-100 before:bg-amber-200":
                 state === "empty" && variant === "vibrant",
               "border-red-800 from-red-50 to-red-100 before:bg-red-200": state === "error" && variant === "vibrant",
-              "border-emerald-800 from-emerald-50 to-emerald-100 before:bg-emerald-200 translate-x-4 rotate-15":
+              "translate-x-4 rotate-15 border-emerald-800 from-emerald-50 to-emerald-100 before:bg-emerald-200":
                 state === "open" && variant === "vibrant",
               // Muted colors
               "border-stone-600 from-stone-50 to-stone-100 before:bg-stone-200":
                 state === "empty" && variant === "muted",
               "border-red-700 from-red-50 to-red-100 before:bg-red-200": state === "error" && variant === "muted",
-              "border-emerald-700 from-emerald-50 to-emerald-100 before:bg-emerald-200 translate-x-4 rotate-15":
+              "translate-x-4 rotate-15 border-emerald-700 from-emerald-50 to-emerald-100 before:bg-emerald-200":
                 state === "open" && variant === "muted",
               // Wooden — iron shackle
               "border-stone-700 from-stone-600 to-stone-700 before:bg-stone-500":
                 state === "empty" && variant === "wooden",
               "border-red-900 from-red-800 to-red-900 before:bg-red-700": state === "error" && variant === "wooden",
-              "border-emerald-900 from-emerald-800 to-emerald-900 before:bg-emerald-700 translate-x-4 rotate-15":
+              "translate-x-4 rotate-15 border-emerald-900 from-emerald-800 to-emerald-900 before:bg-emerald-700":
                 state === "open" && variant === "wooden",
             }
           )}

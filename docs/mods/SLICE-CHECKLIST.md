@@ -15,7 +15,7 @@ real.
       generator for this mod (`computeMosaicPaths`, `emit<X>` capability flags,
       auto-carve loops). Core must no longer hold a per-mod target number.
 - [ ] **2. Generic placement.** Core's placement pass fills the authored slots
-      by reading the *registered* currency — no hardcoded mod id in core. Hard-
+      by reading the _registered_ currency — no hardcoded mod id in core. Hard-
       fail the build if capped demand > authored slots, with a message naming
       the shortfall so the author knows to add DSL slots.
 - [ ] **3. Descriptor.** `src/mods/<name>/index.ts` exports the mod descriptor
@@ -28,13 +28,13 @@ real.
       counts stay in the ledger — no extraction needed.)
 - [ ] **5. TOGGLE-OFF PROOF (the gate).** Remove the mod from `registeredMods`.
       Then:
-      - [ ] `yarn generate-world` succeeds — that currency's authored slots
-            fall through to filler, other currencies' counts unchanged.
-      - [ ] The app builds and runs without the mod's screen/components.
-      - [ ] `grep -rn "<modId>\|<CurrencyId>\|<familyIds>" src/core src/worldGen`
-            (whatever is still core) returns nothing. Core does not name the mod.
-      - Re-add the mod when the proof passes. The removal is the *test*, not
-            the shipped state.
+  - [ ] `yarn generate-world` succeeds — that currency's authored slots
+        fall through to filler, other currencies' counts unchanged.
+  - [ ] The app builds and runs without the mod's screen/components.
+  - [ ] `grep -rn "<modId>\|<CurrencyId>\|<familyIds>" src/core src/worldGen`
+        (whatever is still core) returns nothing. Core does not name the mod.
+  - Re-add the mod when the proof passes. The removal is the _test_, not
+    the shipped state.
 
 ## Anti-patterns that fail the slice
 

@@ -1,13 +1,13 @@
 # Design — app-side mod plugins (the clean cut)
 
-Design of the app-side mod-plugin seams — the *clean cut* that makes core UI name
+Design of the app-side mod-plugin seams — the _clean cut_ that makes core UI name
 and import no mod. Companion to `ARCHITECTURE.md` (the as-built mod-system anchor).
 
 ## Problem
 
-Invariant 1 says core is mod-agnostic, and the *world-gen* half achieves it
+Invariant 1 says core is mod-agnostic, and the _world-gen_ half achieves it
 (`src/worldGen` names no mod; contributions inject via `generateWorld`). The
-*app* half does not. Core UI names and imports specific mods:
+_app_ half does not. Core UI names and imports specific mods:
 
 - `Base.tsx` — `import { MosaicPage }` + `{isModEnabled("mosaic") && <MosaicPage/>}`.
 - `SiteMapScreen.tsx` — `import { useTrapProgress }` + `{isModEnabled("trap") && …HUD…}`.
@@ -16,8 +16,8 @@ Invariant 1 says core is mod-agnostic, and the *world-gen* half achieves it
 
 So `rm -rf src/mods/trap` breaks core compilation and leaves dead
 `isModEnabled("trap")` branches. Toggle-off "still builds with the entry removed
-from `REGISTERED_MODS`" only proved a weaker property: core is *mod-aware but
-tolerant*, not mod-agnostic.
+from `REGISTERED_MODS`" only proved a weaker property: core is _mod-aware but
+tolerant_, not mod-agnostic.
 
 **Encounters already do it right** — a family is a plugin (`generate` +
 `Component`) in a registry; core renders "the family for this tag" and names no
@@ -26,7 +26,7 @@ family. This design generalizes that pattern to the other app contributions
 
 ## What "clean cut" means
 
-Core *logic, UI, and types* name no mod and import no mod. A mod is deletable:
+Core _logic, UI, and types_ name no mod and import no mod. A mod is deletable:
 remove its folder + its manifest line(s), and nothing in core changes.
 
 Enumeration is allowed — a **manifest** that lists mod ids is expected and fine
@@ -67,13 +67,13 @@ array entry), and its `registerModApps` import. Core is untouched.
 
 ## The app registries (generic, core-owned, name no mod)
 
-| Registry | A mod registers | Core renders/uses |
-|----------|-----------------|-------------------|
-| family | `{ meta, generate, Component }` | the family for an encounter tag |
-| collection section | a section `Component` | all sections on the Collection screen |
-| screen | `{ id, navLabel, icon, Component }` | the nav + routes iterate registered screens |
-| HUD widget | a HUD `Component` (+ order) | the site-map HUD row renders registered widgets in order |
-| reward effect | the effect for a reward `type` | dispatched when that reward is claimed (mod-populated) |
+| Registry           | A mod registers                     | Core renders/uses                                        |
+| ------------------ | ----------------------------------- | -------------------------------------------------------- |
+| family             | `{ meta, generate, Component }`     | the family for an encounter tag                          |
+| collection section | a section `Component`               | all sections on the Collection screen                    |
+| screen             | `{ id, navLabel, icon, Component }` | the nav + routes iterate registered screens              |
+| HUD widget         | a HUD `Component` (+ order)         | the site-map HUD row renders registered widgets in order |
+| reward effect      | the effect for a reward `type`      | dispatched when that reward is claimed (mod-populated)   |
 
 Screens and HUD widgets are plain React components: each uses its own hooks
 internally (mosaic screen calls `useMosaicProgress`; the trap HUD widget calls
@@ -88,7 +88,7 @@ leak). Two clean options:
 
 - **A (recommended): mod-contributed effect hooks.** A mod registers a hook that
   returns its reward effects, e.g. `registerRewardEffects(() => { const trap =
-  useTrapProgress(); return { consumable: r => trap.addConsumable(r.consumable) } })`.
+useTrapProgress(); return { consumable: r => trap.addConsumable(r.consumable) } })`.
   The site-map screen calls `useModRewardEffects()`, which iterates the registry
   and invokes each contributed hook in a **stable order** (the registry is
   populated at module load, so the order is fixed — rules-of-hooks safe), merging

@@ -68,7 +68,7 @@ const meta = {
         timeStepSize={journey.background.timeStepSize}
         showNile={journey.background.showNile}
       >
-        <div className="relative flex h-full w-full flex-col">
+        <div className="relative flex size-full flex-col">
           <h1 className="pointer-events-none mt-0 inline-block pt-4 text-center font-pyramid text-2xl font-bold">
             Level {levelNr}/{journey.levelCount} ({dayTime})
           </h1>

@@ -23,14 +23,14 @@ See `docs/instructions/architecture.md` for the layer structure and `README.md` 
 
 ### Key Subsystems
 
-| Subsystem            | Location                       | Responsibility                                                           |
-| -------------------- | ------------------------------ | ------------------------------------------------------------------------ |
-| Game Logic           | `src/game/`                    | Puzzle generation, seeded randomization, reward calculation              |
-| Game Data            | `src/data/`                    | Journeys, tableaus, difficulty levels, hieroglyphs, inventory, treasures |
-| App State            | `src/app/state/`               | Progress, inventory, logs — managed via custom hooks and context         |
-| UI Components        | `src/ui/`                      | All themed (Egyptian-style) reusable components                          |
+| Subsystem            | Location                       | Responsibility                                                                                                     |
+| -------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Game Logic           | `src/game/`                    | Puzzle generation, seeded randomization, reward calculation                                                        |
+| Game Data            | `src/data/`                    | Journeys, tableaus, difficulty levels, hieroglyphs, inventory, treasures                                           |
+| App State            | `src/app/state/`               | Progress, inventory, logs — managed via custom hooks and context                                                   |
+| UI Components        | `src/ui/`                      | All themed (Egyptian-style) reusable components                                                                    |
 | Expedition Flow      | `src/app/`                     | `PyramidExpedition` orchestrates full puzzle runs for both pyramids and tombs (exterior board → interior site map) |
-| Internationalization | `src/i18n/`, `public/locales/` | All user-facing strings; always use `useTranslation`                     |
+| Internationalization | `src/i18n/`, `public/locales/` | All user-facing strings; always use `useTranslation`                                                               |
 
 ---
 
@@ -68,11 +68,11 @@ The project uses strict TypeScript. Avoid `any` types; define proper interfaces 
 
 Code is split into three layers with strict one-way dependencies (domain ← app ← ui). See **[`docs/instructions/architecture.md`](docs/instructions/architecture.md)** for the full rules.
 
-| Layer             | Location                 | Rule                                                                                                                                |
-| ----------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Layer             | Location                                  | Rule                                                                                                                                |
+| ----------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **Domain**        | `src/game/`, `src/data/`, `src/worldGen/` | Pure TypeScript only — no React, no DOM, no i18n. Portable to CLI. (`src/worldGen/` = world authoring/generation.)                  |
-| **App**           | `src/app/`               | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own.                                                        |
-| **Design system** | `src/ui/`                | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
+| **App**           | `src/app/`                                | State hooks, orchestration, flow. Composes from ui/. No HTML/CSS of its own.                                                        |
+| **Design system** | `src/ui/`                                 | Stateless components — props in, JSX out. No hooks except `useRef` for DOM ops. Strings passed as props, not from `useTranslation`. |
 
 ### 9. State Models
 
@@ -156,12 +156,12 @@ Run all tests: `yarn test`
 
 Before considering any task complete, run through this checklist:
 
-| #   | Check            | Requirement                                                                                                                                    |
-| --- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Tests**        | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md).      |
-| 2   | **Types**        | `yarn check-types` exits clean.                                                                                                                |
-| 3   | **Lint**         | `yarn lint` exits clean (includes Tailwind class order).                                                                                       |
-| 4   | **Translations** | Any new user-facing string has both `en/` and `nl/` entries.                                                                                   |
+| #   | Check            | Requirement                                                                                                                                                                                           |
+| --- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Tests**        | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md).                                                             |
+| 2   | **Types**        | `yarn check-types` exits clean.                                                                                                                                                                       |
+| 3   | **Lint**         | `yarn lint` exits clean (includes Tailwind class order).                                                                                                                                              |
+| 4   | **Translations** | Any new user-facing string has both `en/` and `nl/` entries.                                                                                                                                          |
 | 5   | **Changelog**    | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]` — a one-line bullet, one fact, ~20 words, no rationale. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
 
 Steps 1–3 are always required. Steps 4–5 apply only when the change touches user-facing strings or player-visible behavior.
@@ -186,14 +186,14 @@ Version bumps are a deployment decision, not a per-feature step — see the CI/C
 
 Topic-specific guidelines for contributors and AI agents. Apply the relevant instruction file whenever working in that area.
 
-| Instruction file                                                           | Apply when                                                                            |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [`docs/instructions/storybook.md`](docs/instructions/storybook.md)         | Writing or reviewing any `.stories.tsx` file                                          |
-| [`docs/instructions/architecture.md`](docs/instructions/architecture.md)   | Adding, moving, or reviewing any source file — to determine which layer it belongs in |
-| [`docs/instructions/documentation.md`](docs/instructions/documentation.md) | Creating, moving, or editing any documentation file (esp. keeping design docs free of build status)  |
-| [`docs/instructions/testing.md`](docs/instructions/testing.md)             | Writing, reviewing, or deciding whether to add tests for any code                     |
-| [`docs/instructions/comments.md`](docs/instructions/comments.md)           | Writing or reviewing any code comment                                                 |
-| [`docs/instructions/changelog.md`](docs/instructions/changelog.md)         | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`              |
+| Instruction file                                                                       | Apply when                                                                                                                                     |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/instructions/storybook.md`](docs/instructions/storybook.md)                     | Writing or reviewing any `.stories.tsx` file                                                                                                   |
+| [`docs/instructions/architecture.md`](docs/instructions/architecture.md)               | Adding, moving, or reviewing any source file — to determine which layer it belongs in                                                          |
+| [`docs/instructions/documentation.md`](docs/instructions/documentation.md)             | Creating, moving, or editing any documentation file (esp. keeping design docs free of build status)                                            |
+| [`docs/instructions/testing.md`](docs/instructions/testing.md)                         | Writing, reviewing, or deciding whether to add tests for any code                                                                              |
+| [`docs/instructions/comments.md`](docs/instructions/comments.md)                       | Writing or reviewing any code comment                                                                                                          |
+| [`docs/instructions/changelog.md`](docs/instructions/changelog.md)                     | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`                                                                       |
 | [`docs/instructions/design-doc-fidelity.md`](docs/instructions/design-doc-fidelity.md) | Implementing or reviewing code against an existing `docs/game-design/` doc, or when the same kind of architectural gap surfaces more than once |
 
 ---
@@ -202,15 +202,15 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 
 Deeper design docs live in `docs/`:
 
-| Document                                                                                     | Topic                                                                                                                                 |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md)               | Crocodile lock mechanic for Treasure Tombs                                                                                            |
-| [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, perk table — **authoritative interior reference** |
-| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md)                             | Three nested loops, level counts, conflict checks against other docs                                                                  |
-| [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md)                 | Section-hash exploration, inventory-as-truth fragments, storage versioning                                                            |
-| [`docs/game-design/worldgen-dsl-redesign.md`](docs/game-design/worldgen-dsl-redesign.md)     | **In progress** — world-gen DSL value model (Structure/Loot/Population/Decoration layers), rank-based fragment assignment redesign    |
-| [`docs/game-design/keys-and-locks-solver.md`](docs/game-design/keys-and-locks-solver.md)     | **Design, not yet implemented** — world-gen reachability solver + per-currency key placement rules; node type collapse (gate → encounter family, entrance/stairhead/exit → portal) |
-| [`docs/game-design/shop-mechanic.md`](docs/game-design/shop-mechanic.md)                     | Fez shop: placement, stock, pricing, money economy guard, sellables                                                                    |
-| [`docs/mods/ARCHITECTURE.md`](docs/mods/ARCHITECTURE.md)                                     | **Mod architecture reference** — the two invariants, the systems mods plug into (descriptor/registry, ledger, family/reward/perk registries, placement pipeline, mod state), the build/boot/per-encounter lifecycle, and the mod inventory. The live anchor for design citations (replaces the old `docs/mods-architecture.md`, now archived as `_brainstorm.md`) |
-| [`docs/mods/app-plugins-design.md`](docs/mods/app-plugins-design.md)                         | **Design** — app-side mod-plugin seams for a *clean cut*: screen/HUD/reward-effect registries + a per-mod `app.tsx` entrypoint, so core UI names/imports no mod |
-| [`docs/mods/TARGET.md`](docs/mods/TARGET.md)                                                 | **Mod-architecture goals + the two rules** — mod-agnostic core + mod containers + toggle-off gate + DSL-authoring tenet. Per-slice steps in `docs/mods/SLICE-CHECKLIST.md` |
+| Document                                                                                     | Topic                                                                                                                                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/game-design/crocodile-puzzle.md`](docs/game-design/crocodile-puzzle.md)               | Crocodile lock mechanic for Treasure Tombs                                                                                                                                                                                                                                       |
+| [`docs/game-design/pyramid-interior-design.md`](docs/game-design/pyramid-interior-design.md) | Interior loot model, node types, floor system, ward gates, tomb interior structure, perk table — **authoritative interior reference**                                                                                                                                            |
+| [`docs/game-design/game-loop.md`](docs/game-design/game-loop.md)                             | Three nested loops, level counts, conflict checks against other docs                                                                                                                                                                                                             |
+| [`docs/game-design/world-stability.md`](docs/game-design/world-stability.md)                 | Section-hash exploration, inventory-as-truth fragments, storage versioning                                                                                                                                                                                                       |
+| [`docs/game-design/worldgen-dsl-redesign.md`](docs/game-design/worldgen-dsl-redesign.md)     | **In progress** — world-gen DSL value model (Structure/Loot/Population/Decoration layers), rank-based fragment assignment redesign                                                                                                                                               |
+| [`docs/game-design/keys-and-locks-solver.md`](docs/game-design/keys-and-locks-solver.md)     | **Design, not yet implemented** — world-gen reachability solver + per-currency key placement rules; node type collapse (gate → encounter family, entrance/stairhead/exit → portal)                                                                                               |
+| [`docs/game-design/shop-mechanic.md`](docs/game-design/shop-mechanic.md)                     | Fez shop: placement, stock, pricing, money economy guard, sellables                                                                                                                                                                                                              |
+| [`docs/mods/ARCHITECTURE.md`](docs/mods/ARCHITECTURE.md)                                     | **Mod architecture reference** — the two invariants, the systems mods plug into (descriptor/registry, ledger, family/reward/perk registries, placement pipeline, mod state), the build/boot/per-encounter lifecycle, and the mod inventory. The live anchor for design citations |
+| [`docs/mods/app-plugins-design.md`](docs/mods/app-plugins-design.md)                         | **Design** — app-side mod-plugin seams for a _clean cut_: screen/HUD/reward-effect registries + a per-mod `app.tsx` entrypoint, so core UI names/imports no mod                                                                                                                  |
+| [`docs/mods/TARGET.md`](docs/mods/TARGET.md)                                                 | **Mod-architecture goals + the two rules** — mod-agnostic core + mod containers + toggle-off gate + DSL-authoring tenet. Per-slice steps in `docs/mods/SLICE-CHECKLIST.md`                                                                                                       |

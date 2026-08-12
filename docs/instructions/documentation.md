@@ -4,10 +4,10 @@
 
 Only files that tooling, platforms, or agent conventions require at the root:
 
-| File | Purpose |
-|---|---|
-| `README.md` | Project overview for humans and GitHub |
-| `CLAUDE.md` | Single pointer: tells Claude to read `AGENTS.md`. No substantive content here. |
+| File        | Purpose                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------- |
+| `README.md` | Project overview for humans and GitHub                                                            |
+| `CLAUDE.md` | Single pointer: tells Claude to read `AGENTS.md`. No substantive content here.                    |
 | `AGENTS.md` | Authoritative agent guide — architecture, conventions, workflows, key files, instruction pointers |
 
 Everything else goes in `docs/`.
@@ -25,11 +25,13 @@ Do not hand-maintain file lists, path tables, or violation counts in Markdown �
 Stable documents describing how a mechanic works, why it was designed that way, and what decisions were made. These survive feature completion and remain useful as long as the mechanic exists.
 
 **Belongs here:**
+
 - Mechanic design: rules, data model, edge cases, design decisions
 - System overviews: how two subsystems interact, what invariants they maintain
 - Resolved Q&A or decision logs that future contributors need to understand the design
 
 **Does not belong here:**
+
 - Build instructions or agent guidelines → `docs/instructions/`
 - UX research or flow analysis → `docs/ux/`
 - Transient handover briefs → see below
@@ -38,16 +40,18 @@ Stable documents describing how a mechanic works, why it was designed that way, 
 
 ## docs/instructions/ — agent and contributor guidelines
 
-Process documents that tell contributors (human or AI) *how* to work in a specific area. Applied when working in that area, not read as reference.
+Process documents that tell contributors (human or AI) _how_ to work in a specific area. Applied when working in that area, not read as reference.
 
 Each file covers one topic. The entry point for all instruction files is the table in `AGENTS.md` under "Agent Instructions" — every instruction file must be registered there with a "when to apply" note.
 
 **Belongs here:**
+
 - Layer boundary rules (what goes in which folder)
 - Storybook guidelines (what belongs in a story vs core)
 - Coding conventions that need more space than AGENTS.md allows
 
 **Does not belong here:**
+
 - Feature design or mechanic descriptions → `docs/`
 - UX analysis → `docs/ux/`
 
@@ -55,9 +59,10 @@ Each file covers one topic. The entry point for all instruction files is the tab
 
 ## docs/ux/ — UX research and analysis
 
-Flow maps, friction reviews, onboarding findings. These describe the *current observed state* of the UX, not design decisions. They feed into design docs and the implementation plan, then go stale.
+Flow maps, friction reviews, onboarding findings. These describe the _current observed state_ of the UX, not design decisions. They feed into design docs and the implementation plan, then go stale.
 
 **Belongs here:**
+
 - Flow maps of current screens
 - Friction findings from playtesting or review
 - Onboarding analysis
@@ -74,7 +79,7 @@ Transient briefs for the next agent or session — what to build, what's already
 
 ## Implementation plan documents
 
-A mechanic's *design* and its *build plan* are two different documents with two different lifecycles — never conflate them in one file.
+A mechanic's _design_ and its _build plan_ are two different documents with two different lifecycles — never conflate them in one file.
 
 - **Design doc** (`docs/game-design/<topic>.md`) — durable, survives the mechanic's full lifetime. Holds intent, rules, data model, decisions: how it works and why.
 - **Implementation plan** (`docs/<topic>-implementation-plan.md`) — transient, scoped to getting the mechanic built. Holds phase breakdown, done-vs-pending status, rollout-specific dated decisions, PR/branch references.
@@ -105,13 +110,13 @@ Find one while editing? Move it to the tracker and delete it from the doc — ne
 
 ## Summary
 
-| What you have | Where it goes |
-|---|---|
-| Mechanic design, system decisions | `docs/game-design/<topic>.md` |
-| Phased build plan for a mechanic | `docs/<topic>-implementation-plan.md` (delete once shipped, extract durable facts first) |
-| "How to work in area X" guidelines | `docs/instructions/<topic>.md` |
-| UX flow maps, friction findings | `docs/ux/<topic>.md` |
-| Transient handover brief | `docs/handover-<topic>.md` (delete on completion) |
-| Durable design decisions & backlog | `docs/game-design/design-decisions.md` |
-| Agent entry point | `CLAUDE.md` (root, pointer only) |
-| Full agent guide | `AGENTS.md` (root) |
+| What you have                      | Where it goes                                                                            |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| Mechanic design, system decisions  | `docs/game-design/<topic>.md`                                                            |
+| Phased build plan for a mechanic   | `docs/<topic>-implementation-plan.md` (delete once shipped, extract durable facts first) |
+| "How to work in area X" guidelines | `docs/instructions/<topic>.md`                                                           |
+| UX flow maps, friction findings    | `docs/ux/<topic>.md`                                                                     |
+| Transient handover brief           | `docs/handover-<topic>.md` (delete on completion)                                        |
+| Durable design decisions & backlog | `docs/game-design/design-decisions.md`                                                   |
+| Agent entry point                  | `CLAUDE.md` (root, pointer only)                                                         |
+| Full agent guide                   | `AGENTS.md` (root)                                                                       |

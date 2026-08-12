@@ -125,11 +125,11 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
             <span className="ml-auto inline-flex items-center font-bold text-amber-800">
               {hasReachableUnexplored && (
                 <span
-                  className="relative mr-2 inline-flex h-3 w-3 items-center justify-center"
+                  className="relative mr-2 inline-flex size-3 items-center justify-center"
                   title="Still treasure to find here"
                 >
-                  <span className="absolute inline-flex h-3 w-3 animate-ping rounded-full bg-emerald-500 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  <span className="absolute inline-flex size-3 animate-ping rounded-full bg-emerald-500 opacity-75" />
+                  <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
                 </span>
               )}
               {hasUnexploredCorridors && (

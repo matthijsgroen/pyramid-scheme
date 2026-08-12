@@ -145,10 +145,10 @@ const HiddenPassageDemo = ({ detectionLevel }: { detectionLevel: number }) => {
             grid={grid}
             onCellClick={handleClick}
             explorerPos={explorerPos}
-            className="h-[58vh] w-[58vw] max-w-[520px]"
+            className="h-[58vh] w-[58vw] max-w-130"
           />
         ) : (
-          <div className="flex h-[58vh] w-[58vw] max-w-[520px] items-center justify-center text-red-400">
+          <div className="flex h-[58vh] w-[58vw] max-w-130 items-center justify-center text-red-400">
             Assembly failed
           </div>
         )}
