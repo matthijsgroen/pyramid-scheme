@@ -103,13 +103,17 @@ Design: `docs/mods/collection-and-detector-design.md`.
 
 Full design + build log: `docs/mods/collection-and-detector-design.md` §7 (design) + §9.1 (per-phase
 progress). Shipped on `mods/hieroglyph-currency`. Summary:
-- Perks are granted via a contribution seam (`registerPerkContribution(() => ({ grant, describe }))`,
-  `src/app/SiteMap/perkContributions.ts`) — the dormant `perkRegistry` / `registerPerks` are deleted.
-- Perk STATE moved to owning mods: trap owns max-health / armor / trap-insight / pack-mule /
-  consumable-detector; hieroglyph owns compass; puzzle owns scribes-eye; core owns only
-  corridor-detection. `maxHealth` duplication resolved (trap's copy is the single source). Orphan
-  effects built: pack-mule carry cap 2→4, trap-insight +1s/stack.
-- tomb-treasure's `tombKey` claim dispatches `TREASURE_PERKS[keyId]` → merged `grant`.
+- Perks are DERIVED from the tomb treasures held (revised 2026-08-11, was a grant-on-claim seam):
+  tomb-treasure registers `registerEarnedPerks(() => Perk[])` folding its held ward keys through
+  `TREASURE_PERKS`; each owning mod reads `useMergedEarnedPerks()` and folds its own values with
+  `perkLevel` / `perkStacks` (`src/game/perkTotals.ts`). `registerPerkContribution` keeps only
+  `describe` (the Collection's bonus label) — the dormant `perkRegistry` / `registerPerks` are deleted.
+- Perk MEANING lives with the owning mod, but no perk is STORED: trap owns max-health / armor /
+  trap-insight / pack-mule / consumable-detector; hieroglyph owns compass; puzzle owns scribes-eye;
+  core owns only corridor-detection. Trap stores only what the player spends (health, the pack),
+  clamped to the derived ceiling. Orphan effects built: pack-mule carry cap 2→4, trap-insight +1s/stack.
+- Why derived: a banked number only reached players who claimed AFTER a `TREASURE_PERKS` edit, and any
+  other path to a key (the dev menu's "All treasures + keys") granted the key with no perk at all.
 - Detectors are tiered (§7.2): compass (hieroglyph) + supplies (trap) narrow inward L1–L3; corridor
   (core) widens outward L1–L4. `DetectorPanel` reads a merged detector-level accessor
   (`detectorLevels.ts`) + the compass target seam (`compassTarget.ts`) — names no mod.
