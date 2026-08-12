@@ -2,9 +2,8 @@
 
 How the game is split into a mod-agnostic **core** (mechanisms) and a set of
 **mods** (meaning), and the systems a mod plugs into. This is the reference for
-_how the pieces fit_ — the slice route and per-mod progress live in `TODO.md`,
-the goals one-pager in `TARGET.md`, the placement design in
-`distribution-primitive-design.md`.
+_how the pieces fit_ — the goals one-pager is in `TARGET.md`, the placement
+design in `distribution-primitive-design.md`.
 
 ## The two invariants
 

@@ -66,5 +66,4 @@ Core owns *mechanisms*; mods own *meaning*.
 
 Vertical slices — one mod fully to target at a time, each ending in a toggle-off
 proof — not a horizontal "make all of core generic first" rewrite (that shape has
-no unfakeable checkpoint). Per-slice steps live in `docs/mods/SLICE-CHECKLIST.md`;
-current build status lives in `TODO.md`.
+no unfakeable checkpoint). Per-slice steps live in `docs/mods/SLICE-CHECKLIST.md`.
