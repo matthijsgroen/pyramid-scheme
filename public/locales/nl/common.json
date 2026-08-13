@@ -209,12 +209,8 @@
     "corridorNoneNearby": "Geen verborgen gang in de buurt",
     "corridorNoneOnFloor": "Geen verborgen gang op deze verdieping",
     "corridorOtherFloor": "Een verborgen gang wacht op een andere verdieping",
-<<<<<<< HEAD
     "corridorNoneInPyramid": "Nog geen verborgen gangen gevonden in deze piramide",
     "title": "Detector"
-=======
-    "corridorNoneInPyramid": "Nog geen verborgen gangen gevonden in deze piramide"
->>>>>>> origin/main
   },
   "keys": {
     "blue": "Blauwe sleutel",
