@@ -200,14 +200,16 @@
     "allCollected": "Alle stukken verzameld",
     "noSkippedChests": "Geen overgeslagen kisten",
     "more": "+{{count}} meer",
-    "corridorNearby": "Verdachte hoeken onthuld in de buurt (N{{level}})",
+    "corridorNearby": "Een verborgen gang is vlakbij",
     "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
-    "corridorPyramidCount_one": "Deze piramide verbergt {{count}} onontdekte gang",
-    "corridorPyramidCount_other": "Deze piramide verbergt {{count}} onontdekte gangen",
     "hunting": "Op jacht naar {{symbol}}",
     "huntStop": "Stop",
     "huntHint": "Selecteer een niet-verzamelde hiëroglief en jaag erop met het kompas",
-    "huntAction": "Jaag op {{symbol}}"
+    "huntAction": "Jaag op {{symbol}}",
+    "corridorNoneNearby": "Geen verborgen gang in de buurt",
+    "corridorNoneOnFloor": "Geen verborgen gang op deze verdieping",
+    "corridorOtherFloor": "Een verborgen gang wacht op een andere verdieping",
+    "corridorNoneInPyramid": "Nog geen verborgen gangen gevonden in deze piramide"
   },
   "keys": {
     "blue": "Blauwe sleutel",

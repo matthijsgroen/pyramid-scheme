@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
 import { floorKeyRing } from "@/game/floorKeys"
+import { isCorridorNearby } from "@/app/SiteMap/corridorProximity"
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
@@ -108,7 +109,22 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     () => [...hiddenSectionHashes].some(h => !foundCorridors.has(h)),
     [hiddenSectionHashes, foundCorridors]
   )
-  const pyramidHiddenCorridorCount = journeys.getOutstandingHiddenCorridorCount(journeyId)
+  // L1's scope: a lead within a few steps of where the player stands. Recomputed as they walk, so the
+  // readout flips from "nothing nearby" to "something nearby" on approach.
+  const corridorNearby = useMemo(
+    () => isCorridorNearby(grid, explorerPos, junctionSections),
+    [grid, explorerPos, junctionSections]
+  )
+  // L3's scope: still-unnoticed corridors on OTHER floors. The pyramid tally counts every floor the
+  // player has viewed, this floor included, so subtracting this floor's own outstanding leaves the
+  // ones worth travelling for. Only visited floors count — an unvisited floor's corridors are not
+  // "known", which is deliberate: a corridor behind a door the player cannot open yet would otherwise
+  // send them hunting for something unreachable.
+  const floorOutstanding = useMemo(
+    () => [...hiddenSectionHashes].filter(h => !foundCorridors.has(h)).length,
+    [hiddenSectionHashes, foundCorridors]
+  )
+  const hiddenCorridorOnOtherFloor = journeys.getOutstandingHiddenCorridorCount(journeyId) - floorOutstanding > 0
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
   // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
@@ -413,9 +429,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             },
             more: count => t("common:detector.more", { count }),
             noSkippedChests: t("common:detector.noSkippedChests"),
-            corridorNearby: level => t("common:detector.corridorNearby", { level }),
+            corridorNearby: t("common:detector.corridorNearby"),
+            corridorNoneNearby: t("common:detector.corridorNoneNearby"),
             corridorOnFloor: t("common:detector.corridorOnFloor"),
-            corridorPyramidCount: count => t("common:detector.corridorPyramidCount", { count }),
+            corridorNoneOnFloor: t("common:detector.corridorNoneOnFloor"),
+            corridorOtherFloor: t("common:detector.corridorOtherFloor"),
+            corridorNoneInPyramid: t("common:detector.corridorNoneInPyramid"),
           }}
           activeDetector={detector.activeDetector}
           compassLevel={detectorLevels.compass}
@@ -426,8 +445,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           journeyName={journeyName}
           compassResults={detector.compassResults}
           consumableResults={detector.consumableResults}
+          corridorNearby={corridorNearby}
           floorHasHiddenCorridor={floorHasHiddenCorridor}
-          pyramidHiddenCorridorCount={pyramidHiddenCorridorCount}
+          hiddenCorridorOnOtherFloor={hiddenCorridorOnOtherFloor}
         />
         {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
             non-hit-testing band (the detector toggles and mod widgets below are clickable). */}
