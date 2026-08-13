@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.34.2 - 2026-08-13
+
 ### Changed
 
 - The interior HUD takes less room: your detectors share one button that opens the readout, and which detector is reading is chosen inside it, next to the results. The hearts are smaller too — at full health there were six of them competing with the key ring, your supplies and your coins for one line on a phone.
