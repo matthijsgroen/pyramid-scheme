@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The interior HUD takes less room: your detectors share one button that opens the readout, and which detector is reading is chosen inside it, next to the results. The hearts are smaller too — at full health there were six of them competing with the key ring, your supplies and your coins for one line on a phone.
+- That row now wraps instead of running off the screen. With everything unlocked it used to push the coin balance out of sight entirely.
 - The passageway detector answers at every range it has reached, and says so when the answer is nothing: whether a hidden corridor is close by, waiting on this floor, or waiting on another floor of this pyramid. It used to speak up only when it had news, so a silent panel could mean either "nothing here" or "this thing is broken".
 - Walking now moves the detector's closest reading: it tells you a corridor is near as you come within a few steps of one, rather than only stating what the detector does.
 - Dropped the "(L4)" tag from the readout. It was the detector's own level shown as a code, with nothing anywhere to say what it meant.

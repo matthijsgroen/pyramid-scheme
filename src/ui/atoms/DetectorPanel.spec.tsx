@@ -191,6 +191,30 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
   })
 
+  // Folding the HUD's three detector buttons into one moved the choice of mode in here. With only one
+  // detector owned there is no choice to offer, so the row must not appear at all.
+  it("offers the mode switcher only when more than one detector is owned", () => {
+    const withSwitcher = {
+      ...corridorBase,
+      detectionLevel: 1,
+      detectorTitles: { compass: "Compass", consumable: "Supplies", hiddenPassageway: "Corridors" },
+      onSetDetector: () => {},
+    }
+
+    const { rerender } = render(<DetectorPanel {...withSwitcher} />)
+    expect(screen.queryByTitle("Compass")).toBeNull() // corridor detector alone
+    expect(screen.queryByTitle("Corridors")).toBeNull()
+
+    rerender(<DetectorPanel {...withSwitcher} compassLevel={2} />)
+    expect(screen.getByTitle("Compass")).toBeTruthy()
+    expect(screen.getByTitle("Corridors")).toBeTruthy()
+  })
+
+  it("leaves the switcher out when the screen supplies no way to switch", () => {
+    render(<DetectorPanel {...corridorBase} detectionLevel={3} compassLevel={2} />)
+    expect(screen.queryByTitle("Compass")).toBeNull()
+  })
+
   it("supplies L1 pyramid only; L3 exact cell", () => {
     const props = {
       labels,

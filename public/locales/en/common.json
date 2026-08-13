@@ -216,7 +216,8 @@
     "corridorNoneNearby": "No hidden corridor close by",
     "corridorNoneOnFloor": "No hidden corridor on this floor",
     "corridorOtherFloor": "A hidden corridor waits on another floor",
-    "corridorNoneInPyramid": "No hidden corridors found so far in this pyramid"
+    "corridorNoneInPyramid": "No hidden corridors found so far in this pyramid",
+    "title": "Detector"
   },
   "keys": {
     "blue": "Blue key",

@@ -9,7 +9,9 @@ export const TrapHud: FC = () => {
   const trap = useTrapProgress()
   return (
     <>
-      <HealthDisplay currentHealth={trap.currentHealth} maxHealth={trap.maxHealth} />
+      {/* Smaller than the trap screen's hearts: six of them share this row with the key ring, the
+          supplies and the balance, and the row has to fit a phone. */}
+      <HealthDisplay currentHealth={trap.currentHealth} maxHealth={trap.maxHealth} size={16} />
       <ConsumableBar consumables={trap.consumables} />
     </>
   )
