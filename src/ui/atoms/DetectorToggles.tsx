@@ -1,13 +1,14 @@
 import type { FC } from "react"
 import type { DetectorMode } from "@/game/siteTypes"
+import { MODE_ICON } from "./detectorModeIcons"
 
-// Just the detector mode buttons, split out of DetectorPanel so they can sit INLINE in the HUD row
-// alongside the other widgets (health, coins) instead of claiming a row of their own — a lone
-// compass button was taking a full row while that row had space to spare. The readout they toggle
-// stays in DetectorPanel, which only appears once a mode is active.
+// The detector mode buttons, as a row. These live INSIDE the open readout now, not in the HUD row:
+// three of them plus the key ring, the hearts, the supplies and the balance did not fit a phone, so
+// the HUD carries one DetectorButton and the choice of mode moved in here with the results it
+// changes. DetectorPanel hides this row entirely when only one detector is owned — a switcher
+// between one thing is just noise.
 //
-// No card of its own: it sits among the other HUD widgets, which bring their own styling. Tapping
-// through to the map is already handled by the row that hosts it (see SiteHudBar).
+// No card of its own: the panel it sits in brings the styling and the hit-testing.
 type Props = {
   activeDetector: DetectorMode
   compassLevel: number // 0 = not unlocked
@@ -16,12 +17,6 @@ type Props = {
   // Button tooltips, one per mode.
   titles: Record<Exclude<DetectorMode, null>, string>
   onSetDetector: (mode: DetectorMode) => void
-}
-
-const MODE_ICON: Record<string, string> = {
-  compass: "🧭",
-  consumable: "🎒",
-  hiddenPassageway: "👁",
 }
 
 export const DetectorToggles: FC<Props> = ({

@@ -6,7 +6,7 @@ import { isCorridorNearby } from "@/app/SiteMap/corridorProximity"
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
-import type { KeyColor, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import type { DetectorMode, KeyColor, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor, encodeEdge } from "./useAssembledFloor"
 import { floorOfPosition, stairPeerPosition } from "./stairTravel"
@@ -25,7 +25,7 @@ import { useCompassTargetLabel } from "@/app/SiteMap/compassTarget"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
-import { DetectorToggles } from "@/ui/atoms/DetectorToggles"
+import { DetectorButton } from "@/ui/atoms/DetectorButton"
 import { BackButton } from "@/ui/atoms/BackButton"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
@@ -65,6 +65,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     const names: Record<string, string> = Object.fromEntries(translatedJourneys.map(j => [j.id, j.name]))
     return (id: string) => names[id] ?? id
   }, [translatedJourneys])
+
+  const detectorTitles = useMemo(
+    () => ({
+      compass: t("common:detector.compassTitle"),
+      consumable: t("common:detector.consumableTitle"),
+      hiddenPassageway: t("common:detector.corridorTitle"),
+    }),
+    [t]
+  )
 
   const currentFloor = floorOfPosition(journeyState?.position, siteConfig.length)
   const floorConfig = siteConfig[currentFloor]
@@ -125,6 +134,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     [hiddenSectionHashes, foundCorridors]
   )
   const hiddenCorridorOnOtherFloor = journeys.getOutstandingHiddenCorridorCount(journeyId) - floorOutstanding > 0
+  // Which detectors the player owns, in the order the switcher shows them. The HUD's single button
+  // opens the readout on the first of these; with none owned there is no button at all.
+  const availableDetectors = useMemo(
+    () =>
+      [
+        ...(detectorLevels.compass > 0 ? (["compass"] as const) : []),
+        ...(detectorLevels.supplies > 0 ? (["consumable"] as const) : []),
+        ...(detectorLevels.corridor > 0 ? (["hiddenPassageway"] as const) : []),
+      ] satisfies Exclude<DetectorMode, null>[],
+    [detectorLevels.compass, detectorLevels.supplies, detectorLevels.corridor]
+  )
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
   // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
@@ -445,26 +465,27 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           journeyName={journeyName}
           compassResults={detector.compassResults}
           consumableResults={detector.consumableResults}
+          detectorTitles={detectorTitles}
+          onSetDetector={detector.setDetector}
           corridorNearby={corridorNearby}
           floorHasHiddenCorridor={floorHasHiddenCorridor}
           hiddenCorridorOnOtherFloor={hiddenCorridorOnOtherFloor}
         />
         {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
             non-hit-testing band (the detector toggles and mod widgets below are clickable). */}
-        <div className="pointer-events-auto flex items-center gap-4">
-          {/* Detector buttons ride along in this row rather than claiming one of their own. */}
-          <DetectorToggles
-            activeDetector={detector.activeDetector}
-            compassLevel={detectorLevels.compass}
-            consumableDetectorLevel={detectorLevels.supplies}
-            detectionLevel={detectorLevels.corridor}
-            titles={{
-              compass: t("common:detector.compassTitle"),
-              consumable: t("common:detector.consumableTitle"),
-              hiddenPassageway: t("common:detector.corridorTitle"),
-            }}
-            onSetDetector={detector.setDetector}
-          />
+        {/* Wraps rather than clipping: with every detector, a full key ring, six hearts, the supplies
+            and the balance, this row outgrows a phone even after folding the detectors into one
+            button — and an overflowing row pushed the coin balance off-screen entirely. */}
+        <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          {/* One button for every detector the player owns — it opens the readout, which carries the
+              mode switcher. Three buttons here left no room for the rest of the row on a phone. */}
+          {availableDetectors.length > 0 && (
+            <DetectorButton
+              activeDetector={detector.activeDetector}
+              title={t("common:detector.title")}
+              onToggle={() => detector.setDetector(detector.activeDetector ? null : availableDetectors[0])}
+            />
+          )}
           {/* This floor's key ring: coloured keys already in hand, plus the colours of doors seen
               here and still shut. Floor-local, so it resets with the floor. */}
           <FloorKeyRing

@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
+import { DetectorToggles } from "./DetectorToggles"
 
 // Every string the readout can show. The counted/interpolated ones arrive as functions so the app
 // layer keeps ownership of plural rules and interpolation.
@@ -33,6 +34,11 @@ type Props = {
   journeyName?: (journeyId: string) => string
   compassResults: CompassHit[]
   consumableResults: ConsumableResult[]
+  // Switching modes happens in here rather than in the HUD row — see DetectorButton. Passed through
+  // to DetectorToggles; the row is hidden when the player owns only one detector, since a switcher
+  // between one thing tells them nothing.
+  detectorTitles?: Record<Exclude<DetectorMode, null>, string>
+  onSetDetector?: (mode: DetectorMode) => void
   // Corridor detector widens outward (§7.2), one scope per level: L1 = within a few steps of the
   // player, L2 = anywhere on this floor, L3 = any other floor of this pyramid (L4 adds the marker on
   // the journey map, which JourneyCard draws). Each scope reports either way once unlocked.
@@ -109,14 +115,19 @@ export const DetectorPanel: FC<Props> = ({
   journeyName = id => id,
   compassResults,
   consumableResults,
+  detectorTitles,
+  onSetDetector,
   corridorNearby = false,
   floorHasHiddenCorridor = false,
   hiddenCorridorOnOtherFloor = false,
 }) => {
-  // Purely a readout — with no mode switched on there's nothing to report, so the card doesn't
-  // render at all rather than sitting there empty above the HUD row. The buttons that switch a mode
-  // on live in DetectorToggles, inline in that row.
+  // Closed means no mode: the card doesn't render at all rather than sitting empty above the HUD row.
+  // The single button that opens it is DetectorButton, in the HUD row; switching between modes once
+  // open is the DetectorToggles row below.
   if (!activeDetector) return null
+
+  // How many detectors the player owns at all — decides whether the switcher above is meaningful.
+  const ownedDetectors = [compassLevel, consumableDetectorLevel, detectionLevel].filter(l => l > 0).length
 
   const shownCompass = uniqueBy(compassResults, r => compassKey(r, compassLevel))
   const shownConsumables = uniqueBy(consumableResults, r => consumableKey(r, consumableDetectorLevel))
@@ -125,6 +136,19 @@ export const DetectorPanel: FC<Props> = ({
     // `pointer-events-auto` re-enables hit-testing inside SiteHudBar's non-hit-testing band, so taps
     // on this opaque card don't fall through to the map behind it.
     <div className="pointer-events-auto rounded-lg border border-stone-700 bg-stone-900/90 p-2 text-xs text-stone-300">
+      {/* Mode switcher, only worth showing when there is a choice to make. */}
+      {detectorTitles && onSetDetector && ownedDetectors > 1 && (
+        <div className="mb-2 border-b border-stone-700 pb-2">
+          <DetectorToggles
+            activeDetector={activeDetector}
+            compassLevel={compassLevel}
+            consumableDetectorLevel={consumableDetectorLevel}
+            detectionLevel={detectionLevel}
+            titles={detectorTitles}
+            onSetDetector={onSetDetector}
+          />
+        </div>
+      )}
       {activeDetector === "compass" && (
         <div>
           {/* Target is picked on the Collection screen (§3C), not here — the HUD only reads it out. */}
