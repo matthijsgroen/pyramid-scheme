@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The passageway detector answers at every range it has reached, and says so when the answer is nothing: whether a hidden corridor is close by, waiting on this floor, or waiting on another floor of this pyramid. It used to speak up only when it had news, so a silent panel could mean either "nothing here" or "this thing is broken".
+- Walking now moves the detector's closest reading: it tells you a corridor is near as you come within a few steps of one, rather than only stating what the detector does.
+- Dropped the "(L4)" tag from the readout. It was the detector's own level shown as a code, with nothing anywhere to say what it meant.
+- A pyramid's tally still counts only floors you have walked, so the detector never sends you after a corridor behind a door you cannot open yet — its "nothing found so far" says exactly that, rather than claiming the pyramid is empty.
+
 ## 0.34.1 - 2026-08-12
 
 ### Fixed

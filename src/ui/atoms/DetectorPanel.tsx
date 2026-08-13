@@ -10,9 +10,13 @@ export type DetectorPanelLabels = {
   access: Record<CompassAccess, string>
   more: (count: number) => string
   noSkippedChests: string
-  corridorNearby: (level: number) => string
+  // The corridor ladder: each unlocked scope answers either way, so the readout is never silent.
+  corridorNearby: string
+  corridorNoneNearby: string
   corridorOnFloor: string
-  corridorPyramidCount: (count: number) => string
+  corridorNoneOnFloor: string
+  corridorOtherFloor: string
+  corridorNoneInPyramid: string
 }
 
 type Props = {
@@ -29,10 +33,14 @@ type Props = {
   journeyName?: (journeyId: string) => string
   compassResults: CompassHit[]
   consumableResults: ConsumableResult[]
-  // Corridor detector widens outward (§7.2): L2 = an unfound corridor on this floor; L3 = the count
-  // still outstanding across the whole pyramid. Both default off so lower levels stay silent.
+  // Corridor detector widens outward (§7.2), one scope per level: L1 = within a few steps of the
+  // player, L2 = anywhere on this floor, L3 = any other floor of this pyramid (L4 adds the marker on
+  // the journey map, which JourneyCard draws). Each scope reports either way once unlocked.
+  corridorNearby?: boolean
   floorHasHiddenCorridor?: boolean
-  pyramidHiddenCorridorCount?: number
+  // Outstanding on floors OTHER than this one — and only floors already visited, so the L3 negative
+  // says "none found so far" rather than claiming a pyramid is clean before it has been walked.
+  hiddenCorridorOnOtherFloor?: boolean
 }
 
 const uniqueBy = <T,>(items: T[], key: (item: T) => string): T[] => {
@@ -101,8 +109,9 @@ export const DetectorPanel: FC<Props> = ({
   journeyName = id => id,
   compassResults,
   consumableResults,
+  corridorNearby = false,
   floorHasHiddenCorridor = false,
-  pyramidHiddenCorridorCount = 0,
+  hiddenCorridorOnOtherFloor = false,
 }) => {
   // Purely a readout — with no mode switched on there's nothing to report, so the card doesn't
   // render at all rather than sitting there empty above the HUD row. The buttons that switch a mode
@@ -158,11 +167,22 @@ export const DetectorPanel: FC<Props> = ({
       )}
 
       {activeDetector === "hiddenPassageway" && (
+        // One line per unlocked scope, each stating what it found OR that it found nothing. A scope
+        // that goes quiet reads as a broken detector, which is exactly how the old single-line
+        // version came across: it only ever spoke up when it had news.
         <div className="text-stone-400">
-          <p>{labels.corridorNearby(detectionLevel)}</p>
-          {detectionLevel >= 2 && floorHasHiddenCorridor && <p className="text-amber-200">{labels.corridorOnFloor}</p>}
-          {detectionLevel >= 3 && pyramidHiddenCorridorCount > 0 && (
-            <p className="text-amber-200">{labels.corridorPyramidCount(pyramidHiddenCorridorCount)}</p>
+          <p className={corridorNearby ? "text-amber-200" : undefined}>
+            {corridorNearby ? labels.corridorNearby : labels.corridorNoneNearby}
+          </p>
+          {detectionLevel >= 2 && (
+            <p className={floorHasHiddenCorridor ? "text-amber-200" : undefined}>
+              {floorHasHiddenCorridor ? labels.corridorOnFloor : labels.corridorNoneOnFloor}
+            </p>
+          )}
+          {detectionLevel >= 3 && (
+            <p className={hiddenCorridorOnOtherFloor ? "text-amber-200" : undefined}>
+              {hiddenCorridorOnOtherFloor ? labels.corridorOtherFloor : labels.corridorNoneInPyramid}
+            </p>
           )}
         </div>
       )}

@@ -17,9 +17,12 @@ const meta = {
       },
       more: count => `+${count} more`,
       noSkippedChests: "No skipped chests",
-      corridorNearby: level => `Suspicious corners revealed nearby (L${level})`,
+      corridorNearby: "A hidden corridor is close by",
+      corridorNoneNearby: "No hidden corridor close by",
       corridorOnFloor: "A hidden corridor waits on this floor",
-      corridorPyramidCount: count => `This pyramid hides ${count} unexplored corridors`,
+      corridorNoneOnFloor: "No hidden corridor on this floor",
+      corridorOtherFloor: "A hidden corridor waits on another floor",
+      corridorNoneInPyramid: "No hidden corridors found so far in this pyramid",
     },
     activeDetector: null,
     compassLevel: 0,
@@ -121,7 +124,20 @@ export const CorridorLevel3: Story = {
   args: {
     detectionLevel: 3,
     activeDetector: "hiddenPassageway",
+    corridorNearby: true,
     floorHasHiddenCorridor: true,
-    pyramidHiddenCorridorCount: 3,
+    hiddenCorridorOnOtherFloor: true,
+  },
+}
+
+// The point of the rework: every unlocked scope answers, so an empty floor is stated rather than
+// leaving the panel looking broken.
+export const CorridorLevel3NothingFound: Story = {
+  args: {
+    detectionLevel: 3,
+    activeDetector: "hiddenPassageway",
+    corridorNearby: false,
+    floorHasHiddenCorridor: false,
+    hiddenCorridorOnOtherFloor: false,
   },
 }

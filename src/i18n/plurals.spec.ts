@@ -32,13 +32,4 @@ describe("plural forms in the shipped locales", () => {
   ])("renders %s money reward for %i as %s", (lng, count, expected) => {
     expect(t(lng, "chest.money", { count })).toBe(expected)
   })
-
-  it.each([
-    ["en", 1, "This pyramid hides 1 unexplored corridor"],
-    ["en", 3, "This pyramid hides 3 unexplored corridors"],
-    ["nl", 1, "Deze piramide verbergt 1 onontdekte gang"],
-    ["nl", 3, "Deze piramide verbergt 3 onontdekte gangen"],
-  ])("renders %s corridor count for %i as %s", (lng, count, expected) => {
-    expect(t(lng, "detector.corridorPyramidCount", { count })).toBe(expected)
-  })
 })

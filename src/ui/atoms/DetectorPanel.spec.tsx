@@ -16,9 +16,12 @@ const labels: DetectorPanelLabels = {
   },
   more: count => `+${count} more`,
   noSkippedChests: "No skipped chests",
-  corridorNearby: level => `Corridor nearby (L${level})`,
-  corridorOnFloor: "Corridor on this floor",
-  corridorPyramidCount: count => `${count} corridors in this pyramid`,
+  corridorNearby: "A hidden corridor is close by",
+  corridorNoneNearby: "No hidden corridor close by",
+  corridorOnFloor: "A hidden corridor waits on this floor",
+  corridorNoneOnFloor: "No hidden corridor on this floor",
+  corridorOtherFloor: "A hidden corridor waits on another floor",
+  corridorNoneInPyramid: "No hidden corridors found so far in this pyramid",
 }
 
 // This project doesn't enable RTL's automatic cleanup, so without this each test's markup stays
@@ -125,29 +128,67 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     expect(screen.getByText("Sphinx Dawn L1 F2 · (5,2)")).toBeTruthy()
   })
 
-  it("corridor detector widens outward: L1 silent, L2 floor line, L3 pyramid count", () => {
-    const base = {
-      labels,
-      activeDetector: "hiddenPassageway" as const,
-      compassLevel: 0,
-      consumableDetectorLevel: 0,
-      compassTarget: null,
-      compassResults: [],
-      consumableResults: [],
+  // The corridor readout widens outward one scope per level (§7.2), and each unlocked scope answers
+  // either way. A scope that only spoke up when it had news read as a broken detector.
+  const corridorBase = {
+    labels,
+    activeDetector: "hiddenPassageway" as const,
+    compassLevel: 0,
+    consumableDetectorLevel: 0,
+    compassTarget: null,
+    compassResults: [],
+    consumableResults: [],
+  }
+
+  it("unlocks one scope per level, and says nothing about scopes still locked", () => {
+    const found = {
+      ...corridorBase,
+      corridorNearby: true,
       floorHasHiddenCorridor: true,
-      pyramidHiddenCorridorCount: 3,
+      hiddenCorridorOnOtherFloor: true,
     }
-    const { rerender } = render(<DetectorPanel {...base} detectionLevel={1} />)
-    expect(screen.queryByText("Corridor on this floor")).toBeNull() // L1 = proximity only
-    expect(screen.queryByText(/corridors in this pyramid/)).toBeNull()
 
-    rerender(<DetectorPanel {...base} detectionLevel={2} />)
-    expect(screen.getByText("Corridor on this floor")).toBeTruthy()
-    expect(screen.queryByText(/corridors in this pyramid/)).toBeNull() // pyramid count is L3+
+    const { rerender } = render(<DetectorPanel {...found} detectionLevel={1} />)
+    expect(screen.getByText("A hidden corridor is close by")).toBeTruthy()
+    expect(screen.queryByText(/on this floor/)).toBeNull() // floor scope is L2+
+    expect(screen.queryByText(/another floor|in this pyramid/)).toBeNull() // pyramid scope is L3+
 
-    rerender(<DetectorPanel {...base} detectionLevel={3} />)
-    expect(screen.getByText("Corridor on this floor")).toBeTruthy()
-    expect(screen.getByText("3 corridors in this pyramid")).toBeTruthy()
+    rerender(<DetectorPanel {...found} detectionLevel={2} />)
+    expect(screen.getByText("A hidden corridor waits on this floor")).toBeTruthy()
+    expect(screen.queryByText(/another floor|in this pyramid/)).toBeNull()
+
+    rerender(<DetectorPanel {...found} detectionLevel={3} />)
+    expect(screen.getByText("A hidden corridor waits on another floor")).toBeTruthy()
+  })
+
+  it("states the absence at every unlocked scope rather than going quiet", () => {
+    render(
+      <DetectorPanel
+        {...corridorBase}
+        detectionLevel={3}
+        corridorNearby={false}
+        floorHasHiddenCorridor={false}
+        hiddenCorridorOnOtherFloor={false}
+      />
+    )
+    expect(screen.getByText("No hidden corridor close by")).toBeTruthy()
+    expect(screen.getByText("No hidden corridor on this floor")).toBeTruthy()
+    expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
+  })
+
+  it("answers each scope on its own, so a lead nearby does not imply one elsewhere", () => {
+    render(
+      <DetectorPanel
+        {...corridorBase}
+        detectionLevel={3}
+        corridorNearby
+        floorHasHiddenCorridor
+        hiddenCorridorOnOtherFloor={false}
+      />
+    )
+    expect(screen.getByText("A hidden corridor is close by")).toBeTruthy()
+    expect(screen.getByText("A hidden corridor waits on this floor")).toBeTruthy()
+    expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
   })
 
   it("supplies L1 pyramid only; L3 exact cell", () => {
