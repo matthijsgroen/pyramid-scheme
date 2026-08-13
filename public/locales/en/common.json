@@ -217,7 +217,13 @@
     "corridorNoneOnFloor": "No hidden corridor on this floor",
     "corridorOtherFloor": "A hidden corridor waits on another floor",
     "corridorNoneInPyramid": "No hidden corridors found so far in this pyramid",
-    "title": "Detector"
+    "title": "Detector",
+    "band": {
+      "none": "Nothing detected",
+      "pyramid": "Something in this pyramid",
+      "floor": "Something on this floor",
+      "near": "Something close by"
+    }
   },
   "keys": {
     "blue": "Blue key",

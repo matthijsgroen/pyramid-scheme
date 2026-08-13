@@ -35,8 +35,9 @@ type Props = {
   compassResults: CompassHit[]
   consumableResults: ConsumableResult[]
   // Switching modes happens in here rather than in the HUD row — see DetectorButton. Passed through
-  // to DetectorToggles; the row is hidden when the player owns only one detector, since a switcher
-  // between one thing tells them nothing.
+  // to DetectorToggles. Shown whenever the readout is open, even with one detector owned: since a
+  // detector keeps running once the readout is shut, tapping the active one here is the only way to
+  // stop it, so this row carries the off switch and not just the choice.
   detectorTitles?: Record<Exclude<DetectorMode, null>, string>
   onSetDetector?: (mode: DetectorMode) => void
   // Corridor detector widens outward (§7.2), one scope per level: L1 = within a few steps of the
@@ -136,8 +137,8 @@ export const DetectorPanel: FC<Props> = ({
     // `pointer-events-auto` re-enables hit-testing inside SiteHudBar's non-hit-testing band, so taps
     // on this opaque card don't fall through to the map behind it.
     <div className="pointer-events-auto rounded-lg border border-stone-700 bg-stone-900/90 p-2 text-xs text-stone-300">
-      {/* Mode switcher, only worth showing when there is a choice to make. */}
-      {detectorTitles && onSetDetector && ownedDetectors > 1 && (
+      {/* Mode switcher — and the off switch: tapping the running detector here stops it. */}
+      {detectorTitles && onSetDetector && ownedDetectors > 0 && (
         <div className="mb-2 border-b border-stone-700 pb-2">
           <DetectorToggles
             activeDetector={activeDetector}

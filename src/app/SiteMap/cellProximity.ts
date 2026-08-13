@@ -8,10 +8,10 @@ export const NEARBY_STEPS = 4
 
 const MOVES: Record<Direction, readonly [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
-// Is the player within `maxSteps` of a corner that borders an unnoticed hidden corridor?
+// Is the player within `maxSteps` of any of `targets` — cells keyed "row,col"?
 //
-// `junctionSections` only ever holds junctions bordering corridors that are still hidden — a noticed
-// one is revealed and drops out — so any entry here is a live lead.
+// Used for every detector's "close by" reading: the corridor detector passes the junctions bordering
+// corridors still hidden, the compass and supplies detectors pass the cells their hits sit in.
 //
 // Deliberately its own bounded search rather than findPath: findPath answers "draw me a route" and
 // falls back to a synthetic `[from, to]` when there is no route at all, which reads as exactly one
@@ -21,16 +21,16 @@ const MOVES: Record<Direction, readonly [number, number]> = { n: [-1, 0], s: [1,
 // Traversal follows the same rules as the player's own movement — through a cell's open directions,
 // never into empty or fogged ground — so "nearby" means reachable across floor they have actually
 // seen, not close as the crow flies.
-export const isCorridorNearby = (
+export const isAnyCellWithinSteps = (
   grid: FloorGrid | null,
   explorerPos: readonly [number, number],
-  junctionSections: ReadonlyMap<string, ReadonlySet<string>>,
+  targets: ReadonlySet<string>,
   maxSteps: number = NEARBY_STEPS
 ): boolean => {
-  if (!grid || junctionSections.size === 0) return false
+  if (!grid || targets.size === 0) return false
 
   const key = (row: number, col: number) => `${row},${col}`
-  if (junctionSections.has(key(explorerPos[0], explorerPos[1]))) return true
+  if (targets.has(key(explorerPos[0], explorerPos[1]))) return true
 
   const seen = new Set([key(explorerPos[0], explorerPos[1])])
   let frontier: Array<readonly [number, number]> = [explorerPos]
@@ -49,7 +49,7 @@ export const isCorridorNearby = (
         if (seen.has(nk)) continue
         const neighbor = grid.cells[nr]?.[nc]
         if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
-        if (junctionSections.has(nk)) return true
+        if (targets.has(nk)) return true
         seen.add(nk)
         next.push([nr, nc])
       }
