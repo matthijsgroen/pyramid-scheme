@@ -18,6 +18,17 @@ describe("ProximityDot", () => {
     expect(PULSE_SECONDS.floor).toBeGreaterThan(PULSE_SECONDS.near)
   })
 
+  // Size backs up the rate: a fast tiny dot and a fast big one should not read the same.
+  it("grows as the reading closes in", () => {
+    const size = (band: "pyramid" | "floor" | "near") => {
+      const { container } = render(<ProximityDot band={band} label={band} />)
+      const cls = (container.firstChild as HTMLElement).className
+      return Number(cls.match(/size-(\d+)/)?.[1])
+    }
+    expect(size("pyramid")).toBeLessThan(size("floor"))
+    expect(size("floor")).toBeLessThan(size("near"))
+  })
+
   it("sets its own pulse duration from the band", () => {
     const { container } = render(<ProximityDot band="floor" label="on this floor" />)
     const pulse = container.querySelector<HTMLElement>(".animate-pulse")

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The proximity dot beside the detector button grows as well as pulses faster the closer the reading gets, so the three bands are easier to tell apart at a glance.
+- A running detector stays on when you walk into another pyramid, instead of switching itself off at every entrance.
+
 ## 0.34.3 - 2026-08-14
 
 ### Changed

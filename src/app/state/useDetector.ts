@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useGameStorage } from "@/support/useGameStorage"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
 import type { JourneyAPI } from "./useJourneys"
@@ -53,7 +54,10 @@ export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
   // screen. The readout is a card over the map, so the player wants it shut most of the time — while
   // the detector keeps reading, reported by the pulsing dot beside its button. Results below stay
   // keyed on activeDetector alone, which is what keeps them coming while the card is closed.
-  const [activeDetector, setActiveDetector] = useState<DetectorMode>(null)
+  // Persisted, not component state: SiteMapScreen is remounted per site entry, so a plain useState
+  // would switch the detector off every time the player walks into another pyramid. useGameStorage
+  // also syncs every instance of this key, so a screen outside the site map reads the same reading.
+  const [activeDetector, setActiveDetector] = useGameStorage<DetectorMode>("activeDetector", null)
   const [readoutOpen, setReadoutOpen] = useState(false)
   // The hunt target is picked on Collection and owned by the fragment mod (§3C); core reads it via
   // the seam (null when no mod owns it) so a target survives navigation into a site.

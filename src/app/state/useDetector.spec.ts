@@ -14,6 +14,19 @@ vi.mock("@/data/generatedWorld", () => ({
   },
 }))
 
+// The real store is async and shared between instances; this spec is about detector logic, so swap
+// it for plain component state and record the keys it was asked to persist.
+const { storageKeys } = vi.hoisted(() => ({ storageKeys: [] as string[] }))
+vi.mock("@/support/useGameStorage", async () => {
+  const { useState } = await vi.importActual<typeof import("react")>("react")
+  return {
+    useGameStorage: (key: string, initial: unknown) => {
+      storageKeys.push(key)
+      return useState(initial)
+    },
+  }
+})
+
 // ── Stub factories ────────────────────────────────────────────────────────────
 
 const makeJourneys = (skipped: Record<string, string[]> = {}): JourneyAPI =>
@@ -31,6 +44,13 @@ describe("activeDetector", () => {
     const { result } = renderHook(() => useDetector(makeJourneys()))
     act(() => result.current.setDetector("compass"))
     expect(result.current.activeDetector).toBe("compass")
+  })
+
+  // SiteMapScreen is remounted on every site entry, so component state would switch the detector
+  // off each time the player walks into another pyramid — it has to be persisted.
+  it("keeps the running detector outside the screen that started it", () => {
+    renderHook(() => useDetector(makeJourneys()))
+    expect(storageKeys).toContain("activeDetector")
   })
 
   it("setDetector to null clears the mode", () => {
