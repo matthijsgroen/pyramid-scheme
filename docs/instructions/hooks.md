@@ -33,6 +33,8 @@ extract. Smells:
   itself, so a spec can drive it directly
 - Returns a **named object**: values plus verb-named actions
 - **No JSX** from a hook — something returning JSX is a component
+- An **effect-only** hook (it synchronizes or persists something and has no value to hand back)
+  returns nothing. `useFloorExplorationRecorder` is the reference.
 
 ```ts
 export const useMapZoom = (bounds: Bounds) => {
