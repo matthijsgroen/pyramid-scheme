@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.34.3 - 2026-08-14
+
 ### Changed
 
 - A detector keeps reading with its readout closed, so you can put the panel away and still see the map. The button now opens and closes the readout rather than switching the detector on and off; tapping the running detector in the readout is what stops it.
