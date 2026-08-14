@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react"
-import { useGameStorage } from "@/support/useGameStorage"
+import { useEffect } from "react"
 import type { FezContext } from "@/app/fez/context"
 
 type IntroArgs = {
@@ -9,25 +8,17 @@ type IntroArgs = {
   showConversation: React.ContextType<typeof FezContext>["showConversation"]
 }
 
-// What Fez says on arrival. A tomb gets its tutorial once ever — read from a ref taken at mount, so
-// storing "seen" mid-conversation can't re-trigger this effect and cut him off mid-sentence.
+// What Fez says on arrival. Everything here is offered on every visit: Fez remembers which
+// conversations the player has already seen and skips those himself (FezCompanion), and queues what
+// he does play in call order.
 export const useExpeditionIntro = ({ isTomb, hasBlockedBlocks, showConversation }: IntroArgs): void => {
-  const [tombTutorialSeen, setTombTutorialSeen] = useGameStorage<boolean>("tombTutorialSeen", false)
-  const tombTutorialSeenAtMount = useRef(tombTutorialSeen)
-
   useEffect(() => {
     if (isTomb) {
-      if (!tombTutorialSeenAtMount.current) {
-        showConversation("tombIntro", () => {
-          setTombTutorialSeen(true)
-          showConversation("tombTutorial")
-        })
-      } else {
-        showConversation("tombIntro")
-      }
+      showConversation("tombIntro")
+      showConversation("tombTutorial")
       return
     }
     showConversation("pyramidIntro")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
-  }, [isTomb, showConversation, setTombTutorialSeen, hasBlockedBlocks])
+  }, [isTomb, showConversation, hasBlockedBlocks])
 }
