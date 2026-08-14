@@ -29,12 +29,7 @@ const BAND_SIZE: Record<Exclude<ProximityBand, "none">, string> = {
 export const ProximityDot: FC<Props> = ({ band, label }) => {
   if (band === "none") return null
   return (
-    <span
-      className={`relative inline-flex shrink-0 ${BAND_SIZE[band]}`}
-      role="img"
-      aria-label={label}
-      title={label}
-    >
+    <span className={`relative inline-flex shrink-0 ${BAND_SIZE[band]}`} role="img" aria-label={label} title={label}>
       {/* The pulse itself: `animate-pulse` carries the easing, the inline duration sets the rate —
           an inline longhand overrides the shorthand the utility class sets. */}
       <span
