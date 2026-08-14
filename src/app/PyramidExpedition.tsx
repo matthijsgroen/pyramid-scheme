@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useState, useRef, type FC, use, useMemo } from "react"
+import { type FC, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
 import { ExpeditionCompletionOverlay } from "@/app/PyramidExpedition/ExpeditionCompletionOverlay"
 import { getNextUnlockedPyramidJourneyId } from "@/app/PyramidExpedition/utils"
+import { useExpeditionFlow } from "@/app/PyramidExpedition/useExpeditionFlow"
+import { useExpeditionIntro } from "@/app/PyramidExpedition/useExpeditionIntro"
+import { useEntranceAnimation } from "@/app/PyramidExpedition/useEntranceAnimation"
+import { useLevelParallax } from "@/app/PyramidExpedition/useLevelParallax"
 import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { clsx } from "clsx"
@@ -16,7 +20,6 @@ import { type PyramidJourney } from "@/data/journeys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { FezContext } from "./fez/context"
-import { useGameStorage } from "@/support/useGameStorage"
 import { generateNewSeed, mulberry32 } from "@/game/random"
 import type { PyramidLevel } from "@/game/types"
 import { createFloorStartIndices } from "@/app/PyramidLevel/support"
@@ -76,43 +79,22 @@ export const PyramidExpedition: FC<{
   const { setInteriorLevel } = useJourneys()
   // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
   const heldKeys = useMergedHeldKeys()
-  const [transitionToLevel, setTransitionToLevel] = useState(activeJourney.levelNr)
-  const [levelCompleted, setLevelCompleted] = useState(false)
-  // Restore interior if player backed out mid-interior on a previous visit
-  const restoringInterior =
-    !!pyramidJourney.siteConfigs?.length && activeJourney.interiorLevelNr === activeJourney.levelNr
-  const [showingInterior, setShowingInterior] = useState(restoringInterior)
-  // The pyramid board's entrance animation is only meaningful when the board is actually shown
-  const [entering, setEntering] = useState(!restoringInterior)
-  // This component is keyed on the journey, not the level, so the states above outlive a level
-  // change — and they're seeded from an `activeJourney` that can still describe the level the
-  // player just left. `useJourneys()` is not a context, so this instance only learns the level
-  // they picked once the store's subscribe callback fires, which is after mount. Re-seed during
-  // render (not in an effect) so the stale state never reaches the DOM.
-  const [seededForLevel, setSeededForLevel] = useState(activeJourney.levelNr)
-  if (seededForLevel !== activeJourney.levelNr) {
-    setSeededForLevel(activeJourney.levelNr)
-    // A forward transition is finished the moment the level it was heading for arrives, and a
-    // revisit moves levelNr *down* — where a surviving `transitionToLevel` would keep
-    // `startNextLevel` true forever: the playable board flung to translateX(-200%) and the inert
-    // decorative one centred in its place, with no way back short of leaving the journey.
-    setTransitionToLevel(activeJourney.levelNr)
-    setShowingInterior(restoringInterior)
-    setLevelCompleted(false)
-  }
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const currentLevelRef = useRef<HTMLDivElement>(null)
-  const nextLevelRef = useRef<HTMLDivElement>(null)
-  const futureLevelRef = useRef<HTMLDivElement>(null)
-  const transitionTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
-  useEffect(() => () => transitionTimersRef.current.forEach(clearTimeout), [])
-  // A queued transition step belongs to the level that scheduled it; once the level moves, firing
-  // it would re-apply the animation the re-seed above just cleared.
-  useEffect(() => {
-    transitionTimersRef.current.forEach(clearTimeout)
-    transitionTimersRef.current = []
-  }, [activeJourney.levelNr])
-  const startNextLevel = transitionToLevel > activeJourney.levelNr
+  const hasInterior = !!pyramidJourney.siteConfigs?.length
+  const flow = useExpeditionFlow({
+    journeyId: activeJourney.journeyId,
+    levelNr: activeJourney.levelNr,
+    completionCount: activeJourney.completionCount,
+    interiorLevelNr: activeJourney.interiorLevelNr,
+    hasInterior,
+    setInteriorLevel,
+    onNextLevel,
+    onClose,
+  })
+  const { startNextLevel, levelCompleted, showingInterior } = flow
+  // The board's entrance animation is only meaningful when the board is actually shown — dropping
+  // straight into a restored interior skips it.
+  const { entering } = useEntranceAnimation(!showingInterior)
+  const { scrollContainerRef, currentLevelRef, nextLevelRef, futureLevelRef } = useLevelParallax(startNextLevel)
 
   const levelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr)
   const nextLevelContent = generateExpeditionLevel(pyramidJourney, activeJourney.randomSeed, activeJourney.levelNr + 1)
@@ -131,121 +113,13 @@ export const PyramidExpedition: FC<{
     return blocks[starts[floorCount - 1] + Math.floor(floorCount / 2)]?.id
   }, [levelContent])
 
-  useEffect(() => {
-    if (!entering) return
-    const t = setTimeout(() => setEntering(false), 900)
-    return () => clearTimeout(t)
-  }, [entering])
-
   const storageKey = `level-${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.randomSeed}`
   const { showConversation } = use(FezContext)
   const hasBlockedBlocks = useMemo(() => {
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
 
-  const [tombTutorialSeen, setTombTutorialSeen] = useGameStorage<boolean>("tombTutorialSeen", false)
-  const tombTutorialSeenAtMount = useRef(tombTutorialSeen)
-
-  useEffect(() => {
-    if (isTomb) {
-      if (!tombTutorialSeenAtMount.current) {
-        showConversation("tombIntro", () => {
-          setTombTutorialSeen(true)
-          showConversation("tombTutorial")
-        })
-      } else {
-        showConversation("tombIntro")
-      }
-      return
-    }
-    showConversation("pyramidIntro")
-    if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
-  }, [isTomb, showConversation, setTombTutorialSeen, hasBlockedBlocks])
-
-  // Handle scroll for parallax effect with direct DOM manipulation
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current
-    if (!scrollContainer) return
-
-    const handleScroll = () => {
-      const scrollX = scrollContainer.scrollLeft
-      const scrollY = scrollContainer.scrollTop
-
-      // Update transforms directly via refs for better performance
-      // Only apply parallax when not transitioning levels
-      if (futureLevelRef.current) {
-        const baseTransform = startNextLevel ? "translateX(25%) scale(0.2)" : "translateX(35%) scale(0)"
-        futureLevelRef.current.style.transform = startNextLevel
-          ? baseTransform
-          : `translate(${scrollX * 0.25}px, ${scrollY * 0.25}px) ${baseTransform}`
-      }
-
-      if (nextLevelRef.current) {
-        const baseTransform = startNextLevel ? "translateX(0) scale(1)" : "translateX(25%) scale(0.2)"
-        nextLevelRef.current.style.transform = startNextLevel
-          ? baseTransform
-          : `translate(${scrollX * 0.5}px, ${scrollY * 0.5}px) ${baseTransform}`
-      }
-
-      if (currentLevelRef.current) {
-        const baseTransform = startNextLevel ? "translateX(-200%) scale(3)" : "scale(1)"
-        currentLevelRef.current.style.transform = startNextLevel
-          ? baseTransform
-          : `translate(${scrollX * -0.1}px, ${scrollY * -0.1}px) ${baseTransform}`
-      }
-    }
-
-    scrollContainer.addEventListener("scroll", handleScroll, { passive: true })
-
-    // Initial call to set transforms
-    handleScroll()
-
-    return () => scrollContainer.removeEventListener("scroll", handleScroll)
-  }, [startNextLevel])
-
-  const onComplete = useCallback(() => {
-    // The board underneath the interior is already known to be solved; don't replay the completion celebration.
-    if (startNextLevel || showingInterior) return
-    setLevelCompleted(true)
-  }, [startNextLevel, showingInterior])
-
-  const handleInteriorSiteComplete = useCallback(() => {
-    setInteriorLevel(activeJourney.journeyId, null)
-    setShowingInterior(false)
-    if (activeJourney.completionCount > 0) {
-      // Revisit/explore: each pyramid is an isolated re-exploration — return to the map instead of
-      // advancing to the next level or re-completing the journey.
-      onClose?.()
-      return
-    }
-    transitionTimersRef.current.forEach(clearTimeout)
-    transitionTimersRef.current = [
-      setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 300),
-      setTimeout(() => onNextLevel?.(), 2000),
-    ]
-  }, [
-    setInteriorLevel,
-    activeJourney.journeyId,
-    activeJourney.levelNr,
-    activeJourney.completionCount,
-    onNextLevel,
-    onClose,
-  ])
-
-  const onCompletionFinished = useCallback(() => {
-    setLevelCompleted(false)
-    if (pyramidJourney.siteConfigs?.length) {
-      // Mark interior open so re-entry skips the exterior board and drops straight into the site.
-      setInteriorLevel(activeJourney.journeyId, activeJourney.levelNr)
-      setShowingInterior(true)
-    } else {
-      transitionTimersRef.current.forEach(clearTimeout)
-      transitionTimersRef.current = [
-        setTimeout(() => setTransitionToLevel(activeJourney.levelNr + 1), 1000),
-        setTimeout(() => onNextLevel?.(), 1995),
-      ]
-    }
-  }, [onNextLevel, activeJourney.levelNr, pyramidJourney.siteConfigs, activeJourney.journeyId, setInteriorLevel])
+  useExpeditionIntro({ isTomb, hasBlockedBlocks, showConversation })
 
   const expeditionCompleted = activeJourney.levelNr > pyramidJourney.levelCount
 
@@ -280,16 +154,7 @@ export const PyramidExpedition: FC<{
                 ? t("ui.expeditionCompleted")
                 : t("ui.expedition") + ` ${t("ui.level")} ${activeJourney.levelNr}/${pyramidJourney.levelCount}`}
             </h1>
-            <span>
-              {isDevelopMode && (
-                <DeveloperButton
-                  onClick={() => {
-                    onComplete()
-                  }}
-                  label="Complete Level"
-                />
-              )}
-            </span>
+            <span>{isDevelopMode && <DeveloperButton onClick={flow.completeLevel} label="Complete Level" />}</span>
           </Header>
         </div>
 
@@ -373,7 +238,7 @@ export const PyramidExpedition: FC<{
                   storageKey={storageKey}
                   content={levelContent}
                   decorationOffset={activeJourney.randomSeed}
-                  onComplete={onComplete}
+                  onComplete={flow.completeLevel}
                   dayTime={dayTime}
                   entranceBlockId={entering || levelCompleted ? entranceBlockId : undefined}
                 />
@@ -394,7 +259,7 @@ export const PyramidExpedition: FC<{
       {/* Level Completion Handler */}
       {levelContent && levelCompleted && (
         <LevelCompletionHandler
-          onCompletionFinished={onCompletionFinished}
+          onCompletionFinished={flow.completionFinished}
           activeJourney={activeJourney}
           skipLoot={!!pyramidJourney.siteConfigs?.length}
         />
@@ -408,12 +273,8 @@ export const PyramidExpedition: FC<{
             journeyId={activeJourney.journeyId}
             siteConfig={pyramidJourney.siteConfigs[activeJourney.levelNr - 1] ?? pyramidJourney.siteConfigs[0]}
             seed={activeJourney.randomSeed + activeJourney.levelNr}
-            onSiteComplete={handleInteriorSiteComplete}
-            onCancel={() => {
-              // Back from interior → go to map (2 levels up); interiorLevelNr stays set for re-entry
-              setShowingInterior(false)
-              onClose?.()
-            }}
+            onSiteComplete={flow.interiorComplete}
+            onCancel={flow.leaveInterior}
           />
         </div>
       )}
