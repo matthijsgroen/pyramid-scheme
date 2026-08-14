@@ -210,7 +210,13 @@
     "corridorNoneOnFloor": "Geen verborgen gang op deze verdieping",
     "corridorOtherFloor": "Een verborgen gang wacht op een andere verdieping",
     "corridorNoneInPyramid": "Nog geen verborgen gangen gevonden in deze piramide",
-    "title": "Detector"
+    "title": "Detector",
+    "band": {
+      "none": "Niets gevonden",
+      "pyramid": "Iets in deze piramide",
+      "floor": "Iets op deze verdieping",
+      "near": "Iets dichtbij"
+    }
   },
   "keys": {
     "blue": "Blauwe sleutel",

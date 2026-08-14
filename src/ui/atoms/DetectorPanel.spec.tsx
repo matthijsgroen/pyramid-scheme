@@ -191,9 +191,10 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     expect(screen.getByText("No hidden corridors found so far in this pyramid")).toBeTruthy()
   })
 
-  // Folding the HUD's three detector buttons into one moved the choice of mode in here. With only one
-  // detector owned there is no choice to offer, so the row must not appear at all.
-  it("offers the mode switcher only when more than one detector is owned", () => {
+  // The switcher carries the off switch now: a detector keeps running once the readout is shut, so
+  // tapping the running one here is the only way to stop it. That has to be reachable even for a
+  // player who owns exactly one detector — where it used to be hidden as "no choice to offer".
+  it("offers the switcher whenever a detector is owned, so it can also be switched off", () => {
     const withSwitcher = {
       ...corridorBase,
       detectionLevel: 1,
@@ -202,8 +203,8 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     }
 
     const { rerender } = render(<DetectorPanel {...withSwitcher} />)
-    expect(screen.queryByTitle("Compass")).toBeNull() // corridor detector alone
-    expect(screen.queryByTitle("Corridors")).toBeNull()
+    expect(screen.getByTitle("Corridors")).toBeTruthy() // the one owned — its own off switch
+    expect(screen.queryByTitle("Compass")).toBeNull() // not owned, not offered
 
     rerender(<DetectorPanel {...withSwitcher} compassLevel={2} />)
     expect(screen.getByTitle("Compass")).toBeTruthy()

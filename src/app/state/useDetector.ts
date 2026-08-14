@@ -10,9 +10,13 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 
 export type DetectorAPI = {
+  /** Which detector is RUNNING. Independent of whether the readout is showing. */
   activeDetector: DetectorMode
+  /** Whether the readout panel is showing. Closing it leaves the detector running. */
+  readoutOpen: boolean
   compassTarget: string | null
   setDetector: (mode: DetectorMode) => void
+  setReadoutOpen: (open: boolean) => void
   compassResults: CompassHit[]
   consumableResults: ConsumableResult[]
 }
@@ -45,7 +49,12 @@ const accessOf = (
 }
 
 export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
+  // Two separate things, deliberately: which detector is running, and whether its readout is on
+  // screen. The readout is a card over the map, so the player wants it shut most of the time — while
+  // the detector keeps reading, reported by the pulsing dot beside its button. Results below stay
+  // keyed on activeDetector alone, which is what keeps them coming while the card is closed.
   const [activeDetector, setActiveDetector] = useState<DetectorMode>(null)
+  const [readoutOpen, setReadoutOpen] = useState(false)
   // The hunt target is picked on Collection and owned by the fragment mod (§3C); core reads it via
   // the seam (null when no mod owns it) so a target survives navigation into a site.
   const compassTarget = useCompassTarget()
@@ -82,8 +91,10 @@ export const useDetector = (journeys: JourneyAPI): DetectorAPI => {
 
   return {
     activeDetector,
+    readoutOpen,
     compassTarget,
     setDetector: setActiveDetector,
+    setReadoutOpen,
     compassResults,
     consumableResults,
   }

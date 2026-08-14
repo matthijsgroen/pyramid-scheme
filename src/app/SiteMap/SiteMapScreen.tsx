@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { findPath, getCell, getOwnedKeys } from "@/game/gridNavigation"
 import { floorKeyRing } from "@/game/floorKeys"
-import { isCorridorNearby } from "@/app/SiteMap/corridorProximity"
+import { isAnyCellWithinSteps } from "@/app/SiteMap/cellProximity"
+import { bandFromHits, corridorBand, type ProximityBand } from "@/app/SiteMap/detectorProximity"
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
 import { useTimeout } from "@/support/useTimeout"
@@ -121,7 +122,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
   // L1's scope: a lead within a few steps of where the player stands. Recomputed as they walk, so the
   // readout flips from "nothing nearby" to "something nearby" on approach.
   const corridorNearby = useMemo(
-    () => isCorridorNearby(grid, explorerPos, junctionSections),
+    () => isAnyCellWithinSteps(grid, explorerPos, new Set(junctionSections.keys())),
     [grid, explorerPos, junctionSections]
   )
   // L3's scope: still-unnoticed corridors on OTHER floors. The pyramid tally counts every floor the
@@ -134,6 +135,63 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     [hiddenSectionHashes, foundCorridors]
   )
   const hiddenCorridorOnOtherFloor = journeys.getOutstandingHiddenCorridorCount(journeyId) - floorOutstanding > 0
+  // The running detector's closest reading, for the pulsing dot beside the HUD button. Each detector
+  // is narrowed to what its own level may know (see detectorProximity) — the dot must not hand the
+  // player L3 precision at L1.
+  //
+  // A hit's pyramid: CompassHit carries levelIdx, so a hit elsewhere in this journey is correctly
+  // "another pyramid" rather than this floor. ConsumableResult carries no levelIdx (it is rebuilt from
+  // an edgeId), so supplies can only match journey + floor index — a skipped chest on floor 2 of a
+  // DIFFERENT pyramid of the same journey reads as "this floor". Same limitation the supplies readout
+  // already has in its labels; fixing it means recording the pyramid when the skip is stored.
+  const currentLevelIdx = (journeyState?.levelNr ?? 1) - 1
+  const detectorBand = useMemo((): ProximityBand => {
+    if (detector.activeDetector === "hiddenPassageway")
+      return corridorBand(detectorLevels.corridor, {
+        nearby: corridorNearby,
+        onThisFloor: floorHasHiddenCorridor,
+        onOtherFloor: hiddenCorridorOnOtherFloor,
+      })
+
+    // One search for the whole floor rather than one per hit: `bandFromHits` only asks whether ANY hit
+    // is close, so "is any of these cells within reach" is a single walk outward.
+    const anyNearby = (cells: readonly { row: number; col: number }[]) =>
+      isAnyCellWithinSteps(grid, explorerPos, new Set(cells.map(c => `${c.row},${c.col}`)))
+
+    if (detector.activeDetector === "compass") {
+      const here = detector.compassResults.filter(
+        r => r.journeyId === journeyId && r.levelIdx === currentLevelIdx && r.floorIdx === currentFloor
+      )
+      const close = anyNearby(here.flatMap(r => (r.cell ? [r.cell] : [])))
+      return bandFromHits(
+        detectorLevels.compass,
+        detector.compassResults.map(r => ({ onThisFloor: here.includes(r), nearby: here.includes(r) && close }))
+      )
+    }
+    if (detector.activeDetector === "consumable") {
+      const here = detector.consumableResults.filter(r => r.journeyId === journeyId && r.floorIdx === currentFloor)
+      const close = anyNearby(here.map(r => r.cell))
+      return bandFromHits(
+        detectorLevels.supplies,
+        detector.consumableResults.map(r => ({ onThisFloor: here.includes(r), nearby: here.includes(r) && close }))
+      )
+    }
+    return "none"
+  }, [
+    detector.activeDetector,
+    detector.compassResults,
+    detector.consumableResults,
+    detectorLevels,
+    corridorNearby,
+    floorHasHiddenCorridor,
+    hiddenCorridorOnOtherFloor,
+    grid,
+    explorerPos,
+    journeyId,
+    currentFloor,
+    currentLevelIdx,
+  ])
+
   // Which detectors the player owns, in the order the switcher shows them. The HUD's single button
   // opens the readout on the first of these; with none owned there is no button at all.
   const availableDetectors = useMemo(
@@ -456,7 +514,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             corridorOtherFloor: t("common:detector.corridorOtherFloor"),
             corridorNoneInPyramid: t("common:detector.corridorNoneInPyramid"),
           }}
-          activeDetector={detector.activeDetector}
+          activeDetector={detector.readoutOpen ? detector.activeDetector : null}
           compassLevel={detectorLevels.compass}
           consumableDetectorLevel={detectorLevels.supplies}
           detectionLevel={detectorLevels.corridor}
@@ -466,7 +524,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           compassResults={detector.compassResults}
           consumableResults={detector.consumableResults}
           detectorTitles={detectorTitles}
-          onSetDetector={detector.setDetector}
+          onSetDetector={mode => {
+            detector.setDetector(mode)
+            // Tapping the running detector in the switcher stops it; with nothing left to read there
+            // is nothing for the readout to show either, so it shuts with it.
+            if (!mode) detector.setReadoutOpen(false)
+          }}
           corridorNearby={corridorNearby}
           floorHasHiddenCorridor={floorHasHiddenCorridor}
           hiddenCorridorOnOtherFloor={hiddenCorridorOnOtherFloor}
@@ -482,8 +545,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           {availableDetectors.length > 0 && (
             <DetectorButton
               activeDetector={detector.activeDetector}
+              readoutOpen={detector.readoutOpen}
               title={t("common:detector.title")}
-              onToggle={() => detector.setDetector(detector.activeDetector ? null : availableDetectors[0])}
+              band={detectorBand}
+              bandLabel={t(`common:detector.band.${detectorBand}`)}
+              onToggle={() => {
+                // Opening with nothing running starts the first detector owned; closing leaves it
+                // running, which is what the dot reports.
+                if (!detector.activeDetector) detector.setDetector(availableDetectors[0])
+                detector.setReadoutOpen(!detector.readoutOpen)
+              }}
             />
           )}
           {/* This floor's key ring: coloured keys already in hand, plus the colours of doors seen
