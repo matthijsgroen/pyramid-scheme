@@ -38,12 +38,12 @@ The same puzzle dresses up per site (`ctx.theme`).
 
 ## 3. Controls — all four, all from the shell
 
-| Control | Behavior                                                                  |
-| ------- | ------------------------------------------------------------------------- |
-| Back    | Returns to the site map (`onCancel`). Always visible, always safe.        |
-| Reset   | Restores the generated start state. No confirm dialog for a puzzle board. |
-| Hint    | Shows the next step and why. Disabled 10s after use.                      |
-| Idle    | 30s with no player input highlights the hint button. Any input clears it. |
+| Control | Behavior                                                                                             |
+| ------- | ---------------------------------------------------------------------------------------------------- |
+| Back    | Returns to the site map (`onCancel`). Always visible, always safe.                                   |
+| Reset   | Restores the generated start state. No confirm dialog for a puzzle board.                            |
+| Hint    | Shows the next step and why. Disabled 10s after use.                                                 |
+| Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it. |
 
 The shell needs the family to report input, so hint/idle work without the family
 re-implementing them:
@@ -110,7 +110,7 @@ Rewards are dropped there — the lab tests the screen, not the economy.
 On top of AGENTS.md's general DoD:
 
 1. Board fits a 360×640 viewport; page scrolls to the rules; no horizontal scroll.
-2. Back, reset, hint present; hint cooldown 10s; idle highlight at 30s.
+2. Back, reset, hint present; hint cooldown 10s; idle highlight scaled by tier (30s starter → 90s wizard).
 3. Every hint carries a reason, sourced from the solver.
 4. Spec: the generator produces no puzzle needing a guess — solve N seeds with
    techniques only, assert all complete.

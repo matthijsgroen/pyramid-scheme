@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { HINT_COOLDOWN_MS, HINT_IDLE_MS, useHintAvailability } from "./useHintAvailability"
+import { difficulties } from "@/data/difficultyLevels"
+import { HINT_COOLDOWN_MS, HINT_IDLE_MS, hintIdleDelay, useHintAvailability } from "./useHintAvailability"
 
 describe("useHintAvailability", () => {
   beforeEach(() => vi.useFakeTimers())
@@ -37,6 +38,21 @@ describe("useHintAvailability", () => {
     expect(result.current.nudging).toBe(false)
     act(() => vi.advanceTimersByTime(1))
     expect(result.current.nudging).toBe(true)
+  })
+
+  it("waits the caller's own idle time before nudging", () => {
+    const { result } = renderHook(() => useHintAvailability(hintIdleDelay("wizard")))
+    act(() => vi.advanceTimersByTime(HINT_IDLE_MS))
+    expect(result.current.nudging).toBe(false)
+    act(() => vi.advanceTimersByTime(hintIdleDelay("wizard") - HINT_IDLE_MS))
+    expect(result.current.nudging).toBe(true)
+  })
+
+  it("backs the nudge off as the tier climbs — a quiet wizard board is someone thinking", () => {
+    expect(hintIdleDelay("starter")).toBe(30000)
+    expect(hintIdleDelay("wizard")).toBe(90000)
+    expect(hintIdleDelay(undefined)).toBe(hintIdleDelay("starter"))
+    expect(difficulties.map(hintIdleDelay)).toEqual([...difficulties.map(hintIdleDelay)].sort((a, b) => a - b))
   })
 
   it("counts the hints taken, so a solve can say whether it was unaided", () => {

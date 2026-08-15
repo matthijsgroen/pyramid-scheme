@@ -18,14 +18,18 @@ type Props = {
 const cellKey = (row: number, col: number) => `${row},${col}`
 
 const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
-  clsx("relative flex aspect-square items-center justify-center rounded border font-semibold transition-colors", {
-    "border-stone-500 bg-stone-700 text-stone-200": mark === "unknown",
-    "border-stone-700 bg-stone-900 text-stone-400": mark === "strike",
-    // Green, matching a satisfied line's target: both mean "settled, stop reconsidering this".
-    "border-green-600 bg-green-900/50 text-green-200": mark === "keep",
-    "ring-1 ring-sky-700": inLitLine && !lit,
-    "ring-2 ring-sky-300": lit,
-  })
+  // The digit is the thing being read, so it takes as much of the tile as the tile can spare.
+  clsx(
+    "relative flex aspect-square items-center justify-center rounded border text-[min(6.5vw,1.6rem)] font-semibold transition-colors",
+    {
+      "border-stone-500 bg-stone-700 text-stone-200": mark === "unknown",
+      "border-stone-700 bg-stone-900 text-stone-400": mark === "strike",
+      // Green, matching a satisfied line's target: both mean "settled, stop reconsidering this".
+      "border-green-600 bg-green-900/50 text-green-200": mark === "keep",
+      "ring-1 ring-sky-700": inLitLine && !lit,
+      "ring-2 ring-sky-300": lit,
+    }
+  )
 
 // The target beside a line carries its live total underneath: two techniques reason about "what this
 // line still needs", so the player has to be able to see it without adding the row up again
@@ -41,8 +45,8 @@ const lineCls = (line: SumpleteLine) =>
 // total keeps the line's status colour, so over/under/exact still reads at a distance.
 const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
   <div className={lineCls(line)}>
-    <span className="text-[max(0.6rem,55%)] leading-none font-bold text-white">{line.target}</span>
-    <span className="text-[max(0.5rem,42%)] leading-none opacity-80">{line.total}</span>
+    <span className="text-[min(5.5vw,1.35rem)] leading-none font-bold text-white">{line.target}</span>
+    <span className="text-[min(3.4vw,0.8rem)] leading-none opacity-80">{line.total}</span>
   </div>
 )
 

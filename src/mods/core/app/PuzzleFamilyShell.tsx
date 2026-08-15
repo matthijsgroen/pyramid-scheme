@@ -22,6 +22,8 @@ type Props = {
   onReset?: () => void
   /** The next step, already phrased. Recomputed by the family as the board changes. */
   hint?: string
+  /** How long a still board waits before the hint button asks to be pressed (see hintIdleDelay). */
+  idleMs?: number
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
   children: (api: PuzzleShellApi) => ReactNode
@@ -30,13 +32,19 @@ type Props = {
 // The chrome every puzzle family wears: back, reset, hint (with its cooldown and idle nudge), the
 // completed banner, and the rules below the board. Families supply the board and their own hint text;
 // none of them reimplement the controls (docs/instructions/puzzle-screens.md §3).
-export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, rules, children }: Props) => {
+export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, idleMs, rules, children }: Props) => {
   const { t } = useTranslation("common")
   const [solvedBanner, setSolvedBanner] = useState(false)
   const [scheduleSolve, cancelSolve] = useTimeout()
-  const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability()
+  const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability(idleMs)
+
+  // The board is frozen the moment it is solved, not when the banner arrives: the pause before it is
+  // long enough to tap a cell, and a tap there un-solved the puzzle while the win was already on its
+  // way — finishing a board the player had just broken.
+  const [finishing, setFinishing] = useState(false)
 
   const handleSolved = useCallback(() => {
+    setFinishing(true)
     scheduleSolve(800, () => {
       setSolvedBanner(true)
       scheduleSolve(1500, onSolved)
@@ -49,7 +57,7 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, r
 
   return (
     <>
-      {!solvedBanner && (
+      {!finishing && (
         <div className="flex w-full items-center gap-2">
           <button
             onClick={() => {
@@ -94,7 +102,9 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, r
           )}
         </div>
       )}
-      {children({ solved: handleSolved, reportInput, hintVisible: revealed && !!hint })}
+      <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
+        {children({ solved: handleSolved, reportInput, hintVisible: revealed && !!hint })}
+      </div>
       {revealed && hint && !solvedBanner && (
         <p className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200">
           {hint}

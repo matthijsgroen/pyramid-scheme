@@ -10,8 +10,8 @@ import { isModEnabled } from "@/mods/registeredMods"
 // under a distinct id but the same "puzzle" tag. Adding this file (plus its meta in the family
 // list) is the ENTIRE change needed for the world to start serving a second puzzle type — the
 // encounter allocator, specs, and siteAssembler are untouched.
-const SumpleteMirrorComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved, onCancel }) => (
-  <SumpletePuzzle puzzle={puzzle} onSolved={onSolved} onCancel={onCancel} />
+const SumpleteMirrorComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => (
+  <SumpletePuzzle puzzle={puzzle} difficulty={ctx.difficulty} onSolved={onSolved} onCancel={onCancel} />
 )
 
 if (isModEnabled("puzzle"))

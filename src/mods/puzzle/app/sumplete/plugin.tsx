@@ -7,8 +7,8 @@ import { SumpletePuzzle } from "./SumpletePuzzle"
 import { SUMPLETE_META } from "@/mods/puzzle/game/sumplete/meta"
 import { isModEnabled } from "@/mods/registeredMods"
 
-const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, onSolved, onCancel }) => (
-  <SumpletePuzzle puzzle={puzzle} onSolved={onSolved} onCancel={onCancel} />
+const SumpleteComponent: FamilyPlugin<SumpleteGrid>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => (
+  <SumpletePuzzle puzzle={puzzle} difficulty={ctx.difficulty} onSolved={onSolved} onCancel={onCancel} />
 )
 
 export const generateSumpleteFor = (difficulty: Difficulty | undefined, seed: number): SumpleteGrid => {

@@ -7,14 +7,17 @@ import { computeColLines, computeRowLines, isSumpleteSolved } from "@/mods/puzzl
 import { createSumpleteState, toggleSumpleteCell } from "@/mods/puzzle/game/sumplete/sumpleteState"
 import type { SumpleteGrid } from "@/mods/puzzle/game/sumplete/generateSumplete"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import type { Difficulty } from "@/data/difficultyLevels"
 
 type Props = {
   puzzle: SumpleteGrid
+  difficulty?: Difficulty
   onSolved: () => void
   onCancel: () => void
 }
 
-export const SumpletePuzzle: FC<Props> = ({ puzzle, onSolved, onCancel }) => {
+export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { grid, rowTargets, colTargets, solution, techniqueCap } = puzzle
   const [state, setState] = useState(() => createSumpleteState(grid.length))
@@ -36,6 +39,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, onSolved, onCancel }) => {
       solved={isSumpleteSolved(rows, cols)}
       onReset={() => setState(createSumpleteState(grid.length))}
       hint={hint && t(`sumplete.hint.${hint.key}`, hint.params)}
+      idleMs={hintIdleDelay(difficulty)}
       rules={<SumpleteRules />}
     >
       {({ reportInput, hintVisible }) => (
