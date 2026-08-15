@@ -127,7 +127,15 @@ composed sentence (`docs/instructions/puzzle-screens.md` §4).
   Every technique reasons from the marks the player made, so past a wrong one the
   deductions are advice toward a dead end; "one of these can't be right" is the
   only useful thing to say there.
-- **Which hint** — the cheapest technique that fires on the current board.
+- **Which hint** — the cheapest technique that fires on the current board, except
+  T1: "everything left here stays" only ever fires on a line whose total already
+  matches its target, so saying it out loud tells the player what the board is
+  already showing them. It is applied silently instead and the hint becomes what
+  it unlocks in a crossing line — the consequence, not the observation. It is
+  only spoken when nothing else is left, which is the endgame.
+- A hint's wording has to hold for a player who marks nothing as kept. Because T1
+  is applied silently, a reason may lean on a cell the player never confirmed, so
+  reasons are phrased against what the numbers force, not against marks made.
 - **Tie-break** — the line with the smallest deficit. Small clues are where the
   official strategy guide tells players to look, so hints arrive in the order a
   player is being taught to search.

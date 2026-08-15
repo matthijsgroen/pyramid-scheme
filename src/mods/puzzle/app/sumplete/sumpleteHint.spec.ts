@@ -58,6 +58,39 @@ describe("buildSumpleteHint", () => {
     expect(buildSumpleteHint(even, marks, struck, "parity")?.key).toBe("parityStrike")
   })
 
+  it("skips 'everything left stays' for what it unlocks — a finished line is already visible", () => {
+    // Row 0 (3+4 = 7) and column 1 (4+2 = 6) are already exact, so "those stay" tells the player
+    // nothing the board is not showing. Locking them in leaves row 1 at its target with the 1 still
+    // open — which is a move.
+    const board = {
+      grid: [
+        [3, 4],
+        [1, 2],
+      ],
+      rowTargets: [7, 2],
+      colTargets: [3, 6],
+    }
+    const answer = [
+      [true, true],
+      [false, true],
+    ]
+    const blankBoard: SumpleteMark[][] = [
+      ["unknown", "unknown"],
+      ["unknown", "unknown"],
+    ]
+    expect(buildSumpleteHint(board, blankBoard, answer, "inEveryCombination")).toMatchObject({
+      key: "allStrike",
+      cells: new Set(["1,0"]),
+    })
+  })
+
+  it("falls back to the finished line when it is the only thing left to say", () => {
+    const board = { grid: [[2, 3]], rowTargets: [5], colTargets: [2, 3] }
+    expect(buildSumpleteHint(board, [["unknown", "unknown"]], [[true, true]], "inEveryCombination")?.key).toBe(
+      "allKeep"
+    )
+  })
+
   it("says nothing when the cap leaves nothing forced", () => {
     // 10 is 6+4 or 6+3+1: only the last technique in the ladder decides anything here.
     const values = [6, 4, 3, 1]

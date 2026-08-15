@@ -241,7 +241,7 @@
       "mistake": "Een van de tekens in deze lijn klopt niet. Maak het ongedaan en kijk opnieuw.",
       "tooBig": "Deze lijn heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven.",
       "allKeep": "Wat er in deze lijn over is telt precies op tot {{deficit}} — die blijven allemaal staan.",
-      "allStrike": "Deze lijn heeft zijn doel al gehaald, dus alles wat nog open staat moet weg.",
+      "allStrike": "De getallen die in deze lijn blijven staan tellen al op tot het doel, dus al het andere moet weg.",
       "parityKeep": "Deze lijn heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven.",
       "parityStrike": "Deze lijn heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg.",
       "onlyCombination": "Maar één set van deze getallen telt op tot {{deficit}}.",

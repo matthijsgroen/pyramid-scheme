@@ -248,7 +248,7 @@
       "mistake": "One of the marks in this line cannot be right. Undo it and look again.",
       "tooBig": "This line still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay.",
       "allKeep": "What is left in this line adds up to exactly {{deficit}} — every one of them stays.",
-      "allStrike": "This line already reached its target, so everything still open has to go.",
+      "allStrike": "The numbers that stay in this line already add up to its target, so everything else has to go.",
       "parityKeep": "This line still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay.",
       "parityStrike": "This line still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go.",
       "onlyCombination": "Only one set of these numbers adds up to {{deficit}}.",
