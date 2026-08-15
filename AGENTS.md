@@ -78,6 +78,10 @@ Code is split into three layers with strict one-way dependencies (domain ← app
 
 Any feature with non-trivial in-progress state (a grid, marks, a partial solution, a block-id → value map) gets its state modeled in `src/game/` as a domain object: a state type + factory, named action functions that mutate via immer, and plain query functions for checks (win state, line status, etc.). Applies beyond puzzles/traps — level progress, journeys, inventory, anything with nested structure or more than one kind of move. See **[`docs/instructions/state-models.md`](docs/instructions/state-models.md)** — Sumplete (`src/game/puzzles/sumplete/sumpleteState.ts`) is the reference implementation.
 
+### 10. One Topic per Component
+
+A component in `src/app/` or `src/mods/*/app/` owns the state and effects of **one** topic. A second separable topic (zoom, selection, reveal animation, storage sync) moves into its own co-located `use<Topic>.ts` hook with its own spec. The trigger is topic count, not line count. Logic with no React state at all becomes a plain function, not a hook. See **[`docs/instructions/hooks.md`](docs/instructions/hooks.md)** for the hook contract, how to spot a tangle, and the behavior-neutral untangle gate.
+
 ---
 
 ## Common Workflows
@@ -179,6 +183,7 @@ Version bumps are a deployment decision, not a per-feature step — see the CI/C
 - ❌ Skipping the Dutch translation when adding English strings
 - ❌ Committing without running `yarn check-types` and `yarn lint`
 - ❌ Managing game state locally in components (use state hooks instead)
+- ❌ Holding two separable stateful topics in one component (extract a hook per topic)
 
 ---
 
@@ -193,6 +198,7 @@ Topic-specific guidelines for contributors and AI agents. Apply the relevant ins
 | [`docs/instructions/documentation.md`](docs/instructions/documentation.md)             | Creating, moving, or editing any documentation file (esp. keeping design docs free of build status)                                            |
 | [`docs/instructions/testing.md`](docs/instructions/testing.md)                         | Writing, reviewing, or deciding whether to add tests for any code                                                                              |
 | [`docs/instructions/comments.md`](docs/instructions/comments.md)                       | Writing or reviewing any code comment                                                                                                          |
+| [`docs/instructions/hooks.md`](docs/instructions/hooks.md)                             | Adding state or effects to a `src/app/` or mod component, or untangling an existing one                                                        |
 | [`docs/instructions/changelog.md`](docs/instructions/changelog.md)                     | Adding any user-facing change — to decide what belongs in `CHANGELOG.md`                                                                       |
 | [`docs/instructions/design-doc-fidelity.md`](docs/instructions/design-doc-fidelity.md) | Implementing or reviewing code against an existing `docs/game-design/` doc, or when the same kind of architectural gap surfaces more than once |
 
