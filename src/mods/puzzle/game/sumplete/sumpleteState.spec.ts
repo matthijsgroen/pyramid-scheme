@@ -11,13 +11,13 @@ describe("sumpleteState", () => {
     })
   })
 
-  it("cycles a cell unknown -> excluded -> included -> unknown", () => {
+  it("cycles a cell unknown -> strike -> keep -> unknown", () => {
     const s0 = createSumpleteState(2)
     const s1 = toggleSumpleteCell(s0, 0, 0)
     const s2 = toggleSumpleteCell(s1, 0, 0)
     const s3 = toggleSumpleteCell(s2, 0, 0)
-    expect(s1.cells[0][0]).toBe("excluded")
-    expect(s2.cells[0][0]).toBe("included")
+    expect(s1.cells[0][0]).toBe("strike")
+    expect(s2.cells[0][0]).toBe("keep")
     expect(s3.cells[0][0]).toBe("unknown")
   })
 

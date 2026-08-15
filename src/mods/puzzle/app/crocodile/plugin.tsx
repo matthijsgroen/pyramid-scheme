@@ -267,7 +267,7 @@ const CrocodileComponent = ({ puzzle, onSolved }: { puzzle: CompareLevel; onSolv
 
 const CrocodileFamilyComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, onSolved, onCancel }) => (
   <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
-    {handleSolved => <CrocodileComponent puzzle={puzzle} onSolved={handleSolved} />}
+    {({ solved }) => <CrocodileComponent puzzle={puzzle} onSolved={solved} />}
   </PuzzleFamilyShell>
 )
 

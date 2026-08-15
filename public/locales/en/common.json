@@ -51,7 +51,7 @@
     "leaveSiteCancel": "Stay inside",
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
-    "backToMap": "Back to Map",
+    "backToMap": "Back to map",
     "startAdventure": "Start your adventure by exploring pyramids.",
     "continueExploration": "Continue your exploration of the pyramids.",
     "continueExpedition": "Continue Expedition",
@@ -88,7 +88,12 @@
     "newTombUnlocked": "A new tomb is now unlocked",
     "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
-    "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Reset",
+    "hint": "Hint",
+    "solvedUnaided": "Solved without a single hint",
+    "solvedWithHints_one": "Solved with {{count}} hint",
+    "solvedWithHints_other": "Solved with {{count}} hints"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -235,5 +240,47 @@
     "foundDescription": "It opens the doors marked in this colour, on this floor.",
     "heldTitle": "{{key}} — in hand",
     "neededTitle": "{{key}} — still needed"
+  },
+  "sumplete": {
+    "rules": {
+      "goal": "Cross out numbers so every row and column adds up to the number beside it.",
+      "tap": "Tap once to cross a number out, again to mark it as one you keep, again to clear it.",
+      "totals": "The small number under each target is what that line adds up to right now."
+    },
+    "hint": {
+      "mistake": "One of the marks here cannot be right. Undo it and look again.",
+      "tooBig": {
+        "row": "This row still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay.",
+        "col": "This column still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay."
+      },
+      "allStrike": {
+        "row": "The numbers staying in this row already add up to its target, so everything else has to go.",
+        "col": "The numbers staying in this column already add up to its target, so everything else has to go."
+      },
+      "allKeep": {
+        "row": "This row already adds up to its target — mark these numbers as staying, so the columns through them can be worked out.",
+        "col": "This column already adds up to its target — mark these numbers as staying, so the rows through them can be worked out."
+      },
+      "parityKeep": {
+        "row": "This row still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay.",
+        "col": "This column still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay."
+      },
+      "parityStrike": {
+        "row": "This row still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go.",
+        "col": "This column still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go."
+      },
+      "onlyCombination": {
+        "row": "Only one set of numbers in this row adds up to {{deficit}}.",
+        "col": "Only one set of numbers in this column adds up to {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Without {{value}}, no set of the other numbers in this row makes {{deficit}} — so it has to stay.",
+        "col": "Without {{value}}, no set of the other numbers in this column makes {{deficit}} — so it has to stay."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make — so it has to go.",
+        "col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make — so it has to go."
+      }
+    }
   }
 }

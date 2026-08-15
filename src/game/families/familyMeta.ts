@@ -41,6 +41,10 @@ export type FamilyMeta = {
   // (eligible everywhere). Only meaningful for families the allocator picks by tag (puzzles,
   // traps); structural families (treasure/gate) leave it unset.
   minTier?: Difficulty
+  // Skins this family can wear (docs/instructions/puzzle-screens.md §2) — the `theme` values it
+  // recognises on FamilyContext. Unset = only its default skin. Playtesting reads this to offer
+  // the themes a family actually has; an unlisted theme still falls back to the default skin.
+  themes?: string[]
   // This family's own completion precondition (e.g. a tableau's hieroglyph requirement) —
   // most families provide none. The one place a family declares "I gate on holding
   // something," right alongside its other facts, not a separate registry to remember.

@@ -15,6 +15,7 @@ import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
+import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useProgression } from "@/app/state/useProgression"
@@ -254,20 +255,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
         />
       )}
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80">
-          <div className="relative flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">
-            <ActiveEncounterComponent
-              puzzle={encounter.puzzle}
-              ctx={encounter.ctx}
-              progression={progression}
-              journeys={journeys}
-              inventory={inventory}
-              applyReward={applyReward}
-              onSolved={encounter.solved}
-              onCancel={encounter.cancel}
-            />
-          </div>
-        </div>
+        <EncounterModal>
+          <ActiveEncounterComponent
+            puzzle={encounter.puzzle}
+            ctx={encounter.ctx}
+            progression={progression}
+            journeys={journeys}
+            inventory={inventory}
+            applyReward={applyReward}
+            onSolved={encounter.solved}
+            onCancel={encounter.cancel}
+          />
+        </EncounterModal>
       )}
       <RewardFlow pendingReward={rewardOffer.pending} onDismiss={rewardOffer.dismiss} />
     </div>

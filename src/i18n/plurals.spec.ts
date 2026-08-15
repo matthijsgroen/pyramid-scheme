@@ -24,6 +24,15 @@ describe("plural forms in the shipped locales", () => {
   const t = (lng: string, key: string, opts: Record<string, unknown>) => i18n.getFixedT(lng, "common")(key, opts)
 
   it.each([
+    ["en", 1, "Solved with 1 hint"],
+    ["en", 3, "Solved with 3 hints"],
+    ["nl", 1, "Opgelost met 1 hint"],
+    ["nl", 3, "Opgelost met 3 hints"],
+  ])("renders %s hint tally for %i as %s", (lng, count, expected) => {
+    expect(t(lng, "ui.solvedWithHints", { count })).toBe(expected)
+  })
+
+  it.each([
     ["en", 1, "1 coin"],
     ["en", 2, "2 coins"],
     ["en", 42, "42 coins"],

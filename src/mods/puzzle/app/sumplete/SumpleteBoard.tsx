@@ -1,57 +1,93 @@
 import clsx from "clsx"
 import type { FC } from "react"
-import { Tile, type TileVariant } from "@/ui/atoms/Tile"
-import type { SumpleteLineStatus } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
-import type { SumpleteCellState } from "@/mods/puzzle/game/sumplete/sumpleteState"
+import type { SumpleteLine } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
+import type { SumpleteMark } from "@/mods/puzzle/game/sumplete/techniques"
 
 type Props = {
   grid: number[][]
-  rowTargets: number[]
-  colTargets: number[]
-  cells: SumpleteCellState[][]
-  rowStatuses: SumpleteLineStatus[]
-  colStatuses: SumpleteLineStatus[]
+  cells: SumpleteMark[][]
+  rows: SumpleteLine[]
+  cols: SumpleteLine[]
+  /** Cell keys ("row,col") the current hint talks about. */
+  highlighted?: ReadonlySet<string>
+  /** The line the hint reasons about — lit so "this line still needs 6" points somewhere. */
+  litLine?: { kind: "row" | "col"; index: number }
   onToggle: (row: number, col: number) => void
 }
 
-const cellVariant: Record<SumpleteCellState, TileVariant> = {
-  unknown: "default",
-  excluded: "excluded",
-  included: "included",
-}
+const cellKey = (row: number, col: number) => `${row},${col}`
 
-const targetCls = (s: SumpleteLineStatus) =>
-  clsx("flex size-10 items-center justify-center rounded border text-sm font-bold", {
-    "border-green-600 bg-green-900/40 text-green-400": s === "exact",
-    "border-red-700 bg-red-900/40 text-red-400": s === "over",
-    "border-stone-600 bg-stone-800/60 text-stone-400": s === "under",
+const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
+  // The digit is the thing being read, so it takes as much of the tile as the tile can spare.
+  clsx(
+    "relative flex aspect-square items-center justify-center rounded border text-[min(6.5vw,1.6rem)] font-semibold transition-colors",
+    {
+      "border-stone-500 bg-stone-700 text-stone-200": mark === "unknown",
+      "border-stone-700 bg-stone-900 text-stone-400": mark === "strike",
+      // Green, matching a satisfied line's target: both mean "settled, stop reconsidering this".
+      "border-green-600 bg-green-900/50 text-green-200": mark === "keep",
+      "ring-1 ring-sky-700": inLitLine && !lit,
+      "ring-2 ring-sky-300": lit,
+    }
+  )
+
+// The target beside a line carries its live total underneath: two techniques reason about "what this
+// line still needs", so the player has to be able to see it without adding the row up again
+// (docs/game-design/puzzles/sumplete.md §7).
+const lineCls = (line: SumpleteLine) =>
+  clsx("flex aspect-square flex-col items-center justify-center rounded border", {
+    "border-green-600 bg-green-900/40 text-green-400": line.status === "exact",
+    "border-red-700 bg-red-900/40 text-red-400": line.status === "over",
+    "border-stone-600 bg-stone-800/60 text-stone-400": line.status === "under",
   })
 
-export const SumpleteBoard: FC<Props> = ({
-  grid,
-  rowTargets,
-  colTargets,
-  cells,
-  rowStatuses,
-  colStatuses,
-  onToggle,
-}) => (
-  <div className="inline-block select-none">
-    {grid.map((row, i) => (
-      <div key={i} className="mb-1 flex items-center gap-1">
-        {row.map((val, j) => (
-          <Tile key={j} value={val} variant={cellVariant[cells[i][j]]} onClick={() => onToggle(i, j)} />
-        ))}
-        <div className={clsx("ml-1", targetCls(rowStatuses[i]))}>{rowTargets[i]}</div>
-      </div>
-    ))}
-    <div className="mt-1 flex items-center gap-1">
-      {colTargets.map((t, j) => (
-        <div key={j} className={targetCls(colStatuses[j])}>
-          {t}
-        </div>
-      ))}
-      <div className="ml-1 size-10" />
-    </div>
+// The target is white for contrast — it is the number the player reads on every glance. The live
+// total keeps the line's status colour, so over/under/exact still reads at a distance.
+const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
+  <div className={lineCls(line)}>
+    <span className="text-[min(5.5vw,1.35rem)] leading-none font-bold text-white">{line.target}</span>
+    <span className="text-[min(3.4vw,0.8rem)] leading-none opacity-80">{line.total}</span>
   </div>
 )
+
+// Sized off its container and the viewport height, never off a pixel constant: the whole board — grid
+// plus its target column and row — has to fit a phone screen without pan or zoom
+// (docs/instructions/puzzle-screens.md §1). Width comes from the container rather than from `vw`, so
+// the modal's own padding can never push the board past the screen edge.
+export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, onToggle }) => {
+  const size = grid.length
+  const inLitLine = (row: number, col: number) =>
+    litLine ? (litLine.kind === "row" ? litLine.index === row : litLine.index === col) : false
+  return (
+    <div
+      className="grid w-full max-w-[min(52vh,26rem)] gap-1 text-[min(4.5vw,1.1rem)] select-none"
+      style={{ gridTemplateColumns: `repeat(${size + 1}, minmax(0, 1fr))` }}
+    >
+      {grid.map((values, row) => (
+        <div key={row} className="contents">
+          {values.map((value, col) => (
+            <button
+              key={col}
+              onClick={() => onToggle(row, col)}
+              className={cellCls(cells[row][col], highlighted?.has(cellKey(row, col)) ?? false, inLitLine(row, col))}
+            >
+              <span>{value}</span>
+              {/* One diagonal stroke corner to corner, inset from the real corners — a glyph laid
+                  over the digit hid it, and a player rechecking what they crossed out has to be
+                  able to read it back. */}
+              {cells[row][col] === "strike" && (
+                <span className="pointer-events-none absolute inset-[18%]">
+                  <span className="absolute top-0 left-0 h-0.5 w-[141%] origin-top-left rotate-45 rounded-full bg-red-500/80" />
+                </span>
+              )}
+            </button>
+          ))}
+          <LineTarget line={rows[row]} />
+        </div>
+      ))}
+      {cols.map((line, col) => (
+        <LineTarget key={col} line={line} />
+      ))}
+    </div>
+  )
+}

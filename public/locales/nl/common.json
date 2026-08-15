@@ -51,7 +51,7 @@
     "leaveSiteCancel": "Binnen blijven",
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",
-    "backToMap": "Terug naar Kaart",
+    "backToMap": "Terug naar kaart",
     "startAdventure": "Begin je avontuur door piramides te verkennen.",
     "continueExploration": "Ga door met het verkennen van de piramides.",
     "continueExpedition": "Ga door met Expeditie",
@@ -88,7 +88,12 @@
     "newTombUnlocked": "Een nieuwe tombe is nu ontgrendeld",
     "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
-    "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Opnieuw",
+    "hint": "Hint",
+    "solvedUnaided": "Opgelost zonder ook maar één hint",
+    "solvedWithHints_one": "Opgelost met {{count}} hint",
+    "solvedWithHints_other": "Opgelost met {{count}} hints"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
@@ -228,5 +233,47 @@
     "foundDescription": "Hij opent de deuren met deze kleur, op deze verdieping.",
     "heldTitle": "{{key}} — in bezit",
     "neededTitle": "{{key}} — nog nodig"
+  },
+  "sumplete": {
+    "rules": {
+      "goal": "Streep getallen weg zodat elke rij en kolom optelt tot het getal ernaast.",
+      "tap": "Tik één keer om een getal weg te strepen, nog een keer om het te bewaren, nog een keer om het leeg te maken.",
+      "totals": "Het kleine getal onder elk doel is wat die lijn nu optelt."
+    },
+    "hint": {
+      "mistake": "Een van de tekens hier klopt niet. Maak het ongedaan en kijk opnieuw.",
+      "tooBig": {
+        "row": "Deze rij heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven.",
+        "col": "Deze kolom heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven."
+      },
+      "allStrike": {
+        "row": "De getallen die in deze rij blijven staan tellen al op tot het doel, dus al het andere moet weg.",
+        "col": "De getallen die in deze kolom blijven staan tellen al op tot het doel, dus al het andere moet weg."
+      },
+      "allKeep": {
+        "row": "Deze rij telt al op tot het doel — markeer deze getallen als blijvend, dan kun je de kolommen erdoorheen uitrekenen.",
+        "col": "Deze kolom telt al op tot het doel — markeer deze getallen als blijvend, dan kun je de rijen erdoorheen uitrekenen."
+      },
+      "parityKeep": {
+        "row": "Deze rij heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven.",
+        "col": "Deze kolom heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven."
+      },
+      "parityStrike": {
+        "row": "Deze rij heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg.",
+        "col": "Deze kolom heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg."
+      },
+      "onlyCombination": {
+        "row": "Maar één set getallen in deze rij telt op tot {{deficit}}.",
+        "col": "Maar één set getallen in deze kolom telt op tot {{deficit}}."
+      },
+      "inEveryCombinationKeep": {
+        "row": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze rij {{deficit}} — dus die moet blijven.",
+        "col": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze kolom {{deficit}} — dus die moet blijven."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg.",
+        "col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg."
+      }
+    }
   }
 }

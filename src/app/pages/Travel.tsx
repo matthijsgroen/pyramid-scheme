@@ -15,6 +15,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
 import { useDevActions } from "@/app/dev/useDevActions"
+import { PuzzleLab } from "@/app/dev/PuzzleLab"
 
 import { TableauInventory } from "./TableauInventory"
 import { availablePyramidJourneyIds } from "./journeyAvailability"
@@ -188,6 +189,7 @@ export const TravelPage: FC<{
                 </div>
               )}
               <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
+              <PuzzleLab />
             </>
           )}
 
