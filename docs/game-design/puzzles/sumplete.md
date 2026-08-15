@@ -58,11 +58,16 @@ lives.
 | #        | Technique                 | Fires when                                      | Decides                                         |
 | -------- | ------------------------- | ----------------------------------------------- | ----------------------------------------------- |
 | **T0**   | Too big to fit            | An unknown cell's value > `D`                   | Strike that cell                                |
-| **T1**   | Everything stays          | `K + sum(U) == T`                               | Keep all of `U`                                 |
-| **T2**   | Target already met        | `K == T`                                        | Strike all of `U`                               |
+| **T1**   | Target already met        | `K == T`                                        | Strike all of `U`                               |
+| **T2**   | Everything stays          | `K + sum(U) == T`                               | Keep all of `U`                                 |
 | **T2.5** | Parity                    | Exactly one odd value in `U`                    | Keep it if `D` is odd, strike it if `D` is even |
 | **T3**   | Only one combination      | Exactly one subset of `U` sums to `D`           | Keep that subset, strike the rest               |
 | **T4**   | In every / no combination | A cell appears in all valid subsets, or in none | Keep / strike that cell                         |
+
+Among the cheap techniques, the ones that produce **strikes** rank above the one
+that produces **keeps**: crossing a number out moves the board on, while
+confirming what stays is bookkeeping the player only needs when there is nothing
+to cross out.
 
 ### 4.1 The ordering is about explainability, not power
 
@@ -127,22 +132,21 @@ composed sentence (`docs/instructions/puzzle-screens.md` §4).
   Every technique reasons from the marks the player made, so past a wrong one the
   deductions are advice toward a dead end; "one of these can't be right" is the
   only useful thing to say there.
-- **Which hint** — the cheapest technique that fires on the current board, except
-  T1: "everything left here stays" only ever fires on a line whose total already
-  matches its target, so saying it out loud tells the player what the board is
-  already showing them. It is applied silently instead and the hint becomes what
-  it unlocks in a crossing line — the consequence, not the observation. It is
-  only spoken when nothing else is left, which is the endgame.
-- A hint's wording has to hold for a player who marks nothing as kept. Because T1
-  is applied silently, a reason may lean on a cell the player never confirmed, so
-  reasons are phrased against what the numbers force, not against marks made.
+- **Which hint** — the cheapest technique that fires on the current board.
+- **Never reason from a cell the player has not confirmed.** Every deficit counts
+  from the cells marked as staying, so a hint that quietly assumed one produced
+  arithmetic the player could not follow: _"this line still needs 5"_ against a
+  line reading 22 of 12. T2 is therefore a hint in its own right — _this line is
+  already at its target, mark these as staying_ — and the reasoning that depends
+  on those cells only arrives once they are marked. The bookkeeping move is part
+  of the method, not a detour around it.
 - **Tie-break** — the line with the smallest deficit. Small clues are where the
   official strategy guide tells players to look, so hints arrive in the order a
   player is being taught to search.
 - The hint highlights the cells it names and does not move them.
 
 Mapping from the official strategy tips, which are heuristics rather than a
-solver: "check for zeros" is T2; "cross out numbers that exceed the target" is
+solver: "check for zeros" is T1; "cross out numbers that exceed the target" is
 T0; "remember your addition tables" is T3; "start with the smallest sum clues"
 is the tie-break above; "avoid clearing rows early" is advice against
 trial-and-error, made unnecessary by gate 3.
@@ -151,7 +155,7 @@ trial-and-error, made unnecessary by gate 3.
 
 Beyond the shared screen bar:
 
-- **Live per-line running total and deficit.** Two of the techniques (T0, T2)
+- **Live per-line running total and deficit.** Two of the techniques (T0, T1)
   are unusable without seeing `D`, and the hint's reason must be checkable at a
   glance.
 - Three cell states — untouched, kept, struck — as logical states for the skin

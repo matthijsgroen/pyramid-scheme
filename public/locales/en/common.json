@@ -245,14 +245,35 @@
       "totals": "The small number under each target is what that line adds up to right now."
     },
     "hint": {
-      "mistake": "One of the marks in this line cannot be right. Undo it and look again.",
-      "tooBig": "This line still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay.",
-      "allKeep": "What is left in this line adds up to exactly {{deficit}} — every one of them stays.",
-      "allStrike": "The numbers that stay in this line already add up to its target, so everything else has to go.",
-      "parityKeep": "This line still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay.",
-      "parityStrike": "This line still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go.",
-      "onlyCombination": "Only one set of these numbers adds up to {{deficit}}.",
-      "inEveryCombination": "Every way of making {{deficit}} here treats these numbers the same, so they are settled."
+      "mistake": "One of the marks here cannot be right. Undo it and look again.",
+      "tooBig": {
+        "row": "This row still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay.",
+        "col": "This column still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay."
+      },
+      "allStrike": {
+        "row": "The numbers staying in this row already add up to its target, so everything else has to go.",
+        "col": "The numbers staying in this column already add up to its target, so everything else has to go."
+      },
+      "allKeep": {
+        "row": "This row already adds up to its target — mark these numbers as staying, so the columns through them can be worked out.",
+        "col": "This column already adds up to its target — mark these numbers as staying, so the rows through them can be worked out."
+      },
+      "parityKeep": {
+        "row": "This row still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay.",
+        "col": "This column still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay."
+      },
+      "parityStrike": {
+        "row": "This row still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go.",
+        "col": "This column still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go."
+      },
+      "onlyCombination": {
+        "row": "Only one set of numbers in this row adds up to {{deficit}}.",
+        "col": "Only one set of numbers in this column adds up to {{deficit}}."
+      },
+      "inEveryCombination": {
+        "row": "Every way of making {{deficit}} in this row treats these numbers the same, so they are settled.",
+        "col": "Every way of making {{deficit}} in this column treats these numbers the same, so they are settled."
+      }
     }
   }
 }

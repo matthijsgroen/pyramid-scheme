@@ -18,9 +18,14 @@ export type SumpleteHint = {
 const key = (row: number, col: number) => `${row},${col}`
 
 // Parity splits by which way it decides: "the only odd number left has to stay" and "...has to go"
-// are different sentences, though the technique is one.
-const stepKey = (step: SumpleteStep): string =>
-  step.technique === "parity" ? (step.decisions[0].mark === "keep" ? "parityKeep" : "parityStrike") : step.technique
+// are different sentences, though the technique is one. Row and column get their own keys as well —
+// a hint that says "row" or "column" is easier to act on than one that says "line", and naming the
+// two in a shared slot would break the moment a locale inflects around the word.
+const stepKey = (step: SumpleteStep): string => {
+  const technique =
+    step.technique === "parity" ? (step.decisions[0].mark === "keep" ? "parityKeep" : "parityStrike") : step.technique
+  return `${technique}.${step.line}`
+}
 
 const asHint = (step: SumpleteStep): SumpleteHint => ({
   key: stepKey(step),
@@ -34,10 +39,10 @@ const asHint = (step: SumpleteStep): SumpleteHint => ({
  * fires. Which techniques are allowed comes from the board's own cap, so a starter board never
  * explains itself with reasoning it was never built to need.
  *
- * "Everything left here stays" is skipped over rather than said out loud: it only ever fires on a
- * line whose total already matches its target, so it tells the player something the board is already
- * showing them. It is still a real deduction, so it is applied to a scratch copy and the hint becomes
- * whatever it unlocks in a crossing line — the consequence, not the observation.
+ * "Everything left here stays" is asked of the player rather than assumed: every later reason counts
+ * from the cells marked as staying, so a hint that silently leaned on an unconfirmed cell produced
+ * arithmetic the player could not follow ("this line still needs 5" against a line reading 22 of 12).
+ * Confirming a finished line is the move that makes the next reason legible.
  */
 export const buildSumpleteHint = (
   puzzle: SumpletePuzzleData,
@@ -48,15 +53,6 @@ export const buildSumpleteHint = (
   const mistake = firstMistake(marks, solution)
   if (mistake) return { key: "mistake", params: {}, cells: new Set([key(mistake.row, mistake.col)]) }
 
-  const working = marks.map(row => [...row])
-  let step = nextStep(puzzle, working, cap)
-  const first = step
-  while (step?.technique === "allKeep") {
-    for (const { row, col, mark } of step.decisions) working[row][col] = mark
-    step = nextStep(puzzle, working, cap)
-  }
-  // Nothing but completed lines left: say so rather than go silent — that is the endgame, where the
-  // only move left is confirming what stays.
-  const chosen = step ?? first
-  return chosen && asHint(chosen)
+  const step = nextStep(puzzle, marks, cap)
+  return step && asHint(step)
 }

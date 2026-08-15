@@ -21,7 +21,8 @@ const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
   clsx("relative flex aspect-square items-center justify-center rounded border font-semibold transition-colors", {
     "border-stone-500 bg-stone-700 text-stone-200": mark === "unknown",
     "border-stone-700 bg-stone-900 text-stone-600": mark === "strike",
-    "border-amber-500 bg-amber-800/70 text-amber-100": mark === "keep",
+    // Green, matching a satisfied line's target: both mean "settled, stop reconsidering this".
+    "border-green-600 bg-green-900/50 text-green-200": mark === "keep",
     "ring-1 ring-sky-700": inLitLine && !lit,
     "ring-2 ring-sky-300": lit,
   })

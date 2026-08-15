@@ -1,8 +1,10 @@
 // The deduction system behind both generation and hints, per docs/game-design/puzzles/sumplete.md §4.
 // Techniques are ordered by how well their reason EXPLAINS itself, not by strength: the last one
 // subsumes every earlier one, so ranking it first would make every hint "I enumerated every subset",
-// which teaches nothing.
-export const TECHNIQUES = ["tooBig", "allKeep", "allStrike", "parity", "onlyCombination", "inEveryCombination"] as const
+// which teaches nothing. Among the cheap ones, the strike-producing techniques come before the
+// keep-producing one: crossing a number out moves the board on, confirming what stays is bookkeeping
+// the player only needs when there is nothing to cross out.
+export const TECHNIQUES = ["tooBig", "allStrike", "allKeep", "parity", "onlyCombination", "inEveryCombination"] as const
 
 export type TechniqueId = (typeof TECHNIQUES)[number]
 

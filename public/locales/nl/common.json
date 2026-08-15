@@ -238,14 +238,35 @@
       "totals": "Het kleine getal onder elk doel is wat die lijn nu optelt."
     },
     "hint": {
-      "mistake": "Een van de tekens in deze lijn klopt niet. Maak het ongedaan en kijk opnieuw.",
-      "tooBig": "Deze lijn heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven.",
-      "allKeep": "Wat er in deze lijn over is telt precies op tot {{deficit}} — die blijven allemaal staan.",
-      "allStrike": "De getallen die in deze lijn blijven staan tellen al op tot het doel, dus al het andere moet weg.",
-      "parityKeep": "Deze lijn heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven.",
-      "parityStrike": "Deze lijn heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg.",
-      "onlyCombination": "Maar één set van deze getallen telt op tot {{deficit}}.",
-      "inEveryCombination": "Elke manier om hier {{deficit}} te maken behandelt deze getallen hetzelfde, dus die staan vast."
+      "mistake": "Een van de tekens hier klopt niet. Maak het ongedaan en kijk opnieuw.",
+      "tooBig": {
+        "row": "Deze rij heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven.",
+        "col": "Deze kolom heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven."
+      },
+      "allStrike": {
+        "row": "De getallen die in deze rij blijven staan tellen al op tot het doel, dus al het andere moet weg.",
+        "col": "De getallen die in deze kolom blijven staan tellen al op tot het doel, dus al het andere moet weg."
+      },
+      "allKeep": {
+        "row": "Deze rij telt al op tot het doel — markeer deze getallen als blijvend, dan kun je de kolommen erdoorheen uitrekenen.",
+        "col": "Deze kolom telt al op tot het doel — markeer deze getallen als blijvend, dan kun je de rijen erdoorheen uitrekenen."
+      },
+      "parityKeep": {
+        "row": "Deze rij heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven.",
+        "col": "Deze kolom heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven."
+      },
+      "parityStrike": {
+        "row": "Deze rij heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg.",
+        "col": "Deze kolom heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg."
+      },
+      "onlyCombination": {
+        "row": "Maar één set getallen in deze rij telt op tot {{deficit}}.",
+        "col": "Maar één set getallen in deze kolom telt op tot {{deficit}}."
+      },
+      "inEveryCombination": {
+        "row": "Elke manier om in deze rij {{deficit}} te maken behandelt deze getallen hetzelfde, dus die staan vast.",
+        "col": "Elke manier om in deze kolom {{deficit}} te maken behandelt deze getallen hetzelfde, dus die staan vast."
+      }
     }
   }
 }

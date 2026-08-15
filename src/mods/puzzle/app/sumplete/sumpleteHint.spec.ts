@@ -22,7 +22,7 @@ const blank = (): SumpleteMark[][] => puzzle.grid.map(row => row.map(() => "unkn
 describe("buildSumpleteHint", () => {
   it("names the technique and the numbers its sentence needs", () => {
     expect(buildSumpleteHint(puzzle, blank(), solution, "inEveryCombination")).toMatchObject({
-      key: "tooBig",
+      key: "tooBig.row",
       params: { deficit: 5, value: 9 },
       line: { kind: "row", index: 0 },
     })
@@ -50,18 +50,17 @@ describe("buildSumpleteHint", () => {
       [true, true, false, false],
       [true, true, false, false],
     ]
-    expect(buildSumpleteHint(odd, marks, kept, "parity")?.key).toBe("parityKeep")
+    expect(buildSumpleteHint(odd, marks, kept, "parity")?.key).toBe("parityKeep.row")
     const struck = [
       [false, true, false, true],
       [false, true, false, true],
     ]
-    expect(buildSumpleteHint(even, marks, struck, "parity")?.key).toBe("parityStrike")
+    expect(buildSumpleteHint(even, marks, struck, "parity")?.key).toBe("parityStrike.row")
   })
 
-  it("skips 'everything left stays' for what it unlocks — a finished line is already visible", () => {
-    // Row 0 (3+4 = 7) and column 1 (4+2 = 6) are already exact, so "those stay" tells the player
-    // nothing the board is not showing. Locking them in leaves row 1 at its target with the 1 still
-    // open — which is a move.
+  it("asks for a finished line to be confirmed before reasoning that depends on it", () => {
+    // Row 0 (3+4 = 7) is already at its target. Every later reason counts from what is marked as
+    // staying, so the player is asked to mark it before a crossing line is explained in terms of it.
     const board = {
       grid: [
         [3, 4],
@@ -78,17 +77,17 @@ describe("buildSumpleteHint", () => {
       ["unknown", "unknown"],
       ["unknown", "unknown"],
     ]
-    expect(buildSumpleteHint(board, blankBoard, answer, "inEveryCombination")).toMatchObject({
-      key: "allStrike",
+    expect(buildSumpleteHint(board, blankBoard, answer, "inEveryCombination")?.key).toBe("allKeep.col")
+
+    // Once it is marked, column 0 has its target and the 1 below can go.
+    const confirmed: SumpleteMark[][] = [
+      ["keep", "keep"],
+      ["unknown", "unknown"],
+    ]
+    expect(buildSumpleteHint(board, confirmed, answer, "inEveryCombination")).toMatchObject({
+      key: "allStrike.col",
       cells: new Set(["1,0"]),
     })
-  })
-
-  it("falls back to the finished line when it is the only thing left to say", () => {
-    const board = { grid: [[2, 3]], rowTargets: [5], colTargets: [2, 3] }
-    expect(buildSumpleteHint(board, [["unknown", "unknown"]], [[true, true]], "inEveryCombination")?.key).toBe(
-      "allKeep"
-    )
   })
 
   it("says nothing when the cap leaves nothing forced", () => {
@@ -100,7 +99,7 @@ describe("buildSumpleteHint", () => {
       [true, true, false, false],
       [true, true, false, false],
     ]
-    expect(buildSumpleteHint(combinations, marks, answer, "inEveryCombination")?.key).toBe("inEveryCombination")
+    expect(buildSumpleteHint(combinations, marks, answer, "inEveryCombination")?.key).toBe("inEveryCombination.row")
     expect(buildSumpleteHint(combinations, marks, answer, "onlyCombination")).toBeUndefined()
   })
 })
