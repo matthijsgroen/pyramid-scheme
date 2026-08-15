@@ -27,19 +27,22 @@ export const KeyIcon: FC<KeyIconProps> = ({ color, size = 20, outlined = false, 
       aria-label={title}
       aria-hidden={title ? undefined : true}
       className={clsx("shrink-0", className)}
+      // Dark halo so a light key stays readable on a light background. drop-shadow follows the drawn
+      // shape (unlike box-shadow), so the bow's hole stays open.
+      style={{ filter: "drop-shadow(0 0 1px rgba(0,0,0,0.85))" }}
     >
       {title && <title>{title}</title>}
-      {/* Bow (the ring you hold) + shaft + two teeth — a stylised warded key, readable at 16px. */}
+      {/* Bow (the ring you hold) + shaft + two teeth — a stylised warded key, readable at 16px.
+          The bow is a stroked ring, so its hole shows the background through. */}
       <circle
         cx={8}
         cy={8}
-        r={4.5}
-        fill={outlined ? "none" : hex}
+        r={outlined ? 4.5 : 3.2}
+        fill="none"
         stroke={hex}
-        strokeWidth={outlined ? 1.75 : 1}
+        strokeWidth={outlined ? 1.75 : 3}
         opacity={outlined ? 0.7 : 1}
       />
-      <circle cx={8} cy={8} r={1.6} fill="#1c1917" />
       <g stroke={hex} strokeWidth={2} strokeLinecap="round" opacity={outlined ? 0.7 : 1}>
         <line x1={11} y1={11} x2={19} y2={19} />
         <line x1={17} y1={15} x2={14.5} y2={17.5} />
