@@ -21,9 +21,12 @@ const key = (row: number, col: number) => `${row},${col}`
 // are different sentences, though the technique is one. Row and column get their own keys as well —
 // a hint that says "row" or "column" is easier to act on than one that says "line", and naming the
 // two in a shared slot would break the moment a locale inflects around the word.
+const SPLIT_BY_DIRECTION = new Set(["parity", "inEveryCombination"])
+
 const stepKey = (step: SumpleteStep): string => {
-  const technique =
-    step.technique === "parity" ? (step.decisions[0].mark === "keep" ? "parityKeep" : "parityStrike") : step.technique
+  const technique = SPLIT_BY_DIRECTION.has(step.technique)
+    ? `${step.technique}${step.decisions[0].mark === "keep" ? "Keep" : "Strike"}`
+    : step.technique
   return `${technique}.${step.line}`
 }
 

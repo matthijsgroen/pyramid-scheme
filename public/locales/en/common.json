@@ -273,9 +273,13 @@
         "row": "Only one set of numbers in this row adds up to {{deficit}}.",
         "col": "Only one set of numbers in this column adds up to {{deficit}}."
       },
-      "inEveryCombination": {
-        "row": "Every way of making {{deficit}} in this row treats these numbers the same, so they are settled.",
-        "col": "Every way of making {{deficit}} in this column treats these numbers the same, so they are settled."
+      "inEveryCombinationKeep": {
+        "row": "Leave {{value}} out and the rest of this row can no longer make {{deficit}}, so it has to stay.",
+        "col": "Leave {{value}} out and the rest of this column can no longer make {{deficit}}, so it has to stay."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Keep {{value}} and the rest of this row can no longer make {{deficit}}, so it has to go.",
+        "col": "Keep {{value}} and the rest of this column can no longer make {{deficit}}, so it has to go."
       }
     }
   }

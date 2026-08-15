@@ -266,9 +266,13 @@
         "row": "Maar één set getallen in deze rij telt op tot {{deficit}}.",
         "col": "Maar één set getallen in deze kolom telt op tot {{deficit}}."
       },
-      "inEveryCombination": {
-        "row": "Elke manier om in deze rij {{deficit}} te maken behandelt deze getallen hetzelfde, dus die staan vast.",
-        "col": "Elke manier om in deze kolom {{deficit}} te maken behandelt deze getallen hetzelfde, dus die staan vast."
+      "inEveryCombinationKeep": {
+        "row": "Laat {{value}} weg en dan haal je met de rest van deze rij {{deficit}} niet meer, dus die moet blijven.",
+        "col": "Laat {{value}} weg en dan haal je met de rest van deze kolom {{deficit}} niet meer, dus die moet blijven."
+      },
+      "inEveryCombinationStrike": {
+        "row": "Houd {{value}} en dan haal je met de rest van deze rij {{deficit}} niet meer, dus die moet weg.",
+        "col": "Houd {{value}} en dan haal je met de rest van deze kolom {{deficit}} niet meer, dus die moet weg."
       }
     }
   }

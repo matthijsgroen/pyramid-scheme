@@ -99,7 +99,7 @@ describe("buildSumpleteHint", () => {
       [true, true, false, false],
       [true, true, false, false],
     ]
-    expect(buildSumpleteHint(combinations, marks, answer, "inEveryCombination")?.key).toBe("inEveryCombination.row")
+    expect(buildSumpleteHint(combinations, marks, answer, "inEveryCombination")?.key).toBe("inEveryCombinationKeep.row")
     expect(buildSumpleteHint(combinations, marks, answer, "onlyCombination")).toBeUndefined()
   })
 })

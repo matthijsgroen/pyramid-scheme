@@ -62,7 +62,7 @@ lives.
 | **T2**   | Everything stays          | `K + sum(U) == T`                               | Keep all of `U`                                 |
 | **T2.5** | Parity                    | Exactly one odd value in `U`                    | Keep it if `D` is odd, strike it if `D` is even |
 | **T3**   | Only one combination      | Exactly one subset of `U` sums to `D`           | Keep that subset, strike the rest               |
-| **T4**   | In every / no combination | A cell appears in all valid subsets, or in none | Keep / strike that cell                         |
+| **T4**   | In every / no combination | A cell appears in all valid subsets, or in none | Keep / strike **one** such cell                 |
 
 Among the cheap techniques, the ones that produce **strikes** rank above the one
 that produces **keeps**: crossing a number out moves the board on, while
@@ -77,8 +77,14 @@ which teaches the player nothing. T2.5's reason is a sentence a child repeats
 back: _"the target is odd and there's only one odd number here, so it has to
 stay."_ Hints are the product; the cheap techniques exist to produce good ones.
 
-Consequence: **a board that needs T4 anywhere is mechanically decidable but not
-humanly logical.** So the ladder is capped per tier (§5) rather than run to its
+**T4 reports one cell per step**, and that is what rescues it. Applied to a whole
+line it settles a fistful of cells at once with no sayable reason. Narrowed to a
+single cell it has one: _"drop this 9 and the rest of the column can no longer
+make 11, so it stays."_ That is checkable by hand. The technique is the same
+either way; the granularity is what decides whether it can be explained.
+
+Even so, **a board that leans on T4 is mechanically decidable before it is
+comfortably human**, so the ladder is capped per tier (§5) rather than run at
 full strength everywhere.
 
 ### 4.2 Duplicate values

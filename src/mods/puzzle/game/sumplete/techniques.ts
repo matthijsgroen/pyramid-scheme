@@ -113,23 +113,18 @@ const IMPLEMENTATIONS: Record<TechniqueId, Technique> = {
       ],
     }
   },
-  // Last resort: a cell every combination uses must stay, one no combination uses must go. Exact, and
-  // it subsumes the whole ladder — but its reason is unexplainable, hence its rank (§4.1).
+  // Last resort: a cell every combination uses must stay, one no combination uses must go. Reported
+  // ONE cell at a time, because that is the form the reason survives in — "drop this 9 and the rest
+  // of the line can no longer reach 11" is checkable, while the same claim about seven cells at once
+  // is just "I enumerated every subset" (§4.1).
   inEveryCombination: (_line, deficit, unknown) => {
     const combos = combinations(unknown, deficit)
     if (combos.length === 0) return undefined
     const counts = unknown.map((_, i) => combos.filter(combo => combo.includes(i)).length)
-    const decisions = [
-      ...decide(
-        unknown.filter((_, i) => counts[i] === combos.length),
-        "keep"
-      ),
-      ...decide(
-        unknown.filter((_, i) => counts[i] === 0),
-        "strike"
-      ),
-    ]
-    return decisions.length ? { decisions } : undefined
+    const index = counts.findIndex(count => count === combos.length || count === 0)
+    if (index === -1) return undefined
+    const cell = unknown[index]
+    return { decisions: decide([cell], counts[index] === 0 ? "strike" : "keep"), value: cell.value }
   },
 }
 
