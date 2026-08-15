@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The proximity dot beside the detector button grows as well as pulses faster the closer the reading gets, so the three bands are easier to tell apart at a glance.
+- A running detector stays on when you walk into another pyramid, instead of switching itself off at every entrance.
+
+## 0.34.3 - 2026-08-14
+
+### Changed
+
+- A detector keeps reading with its readout closed, so you can put the panel away and still see the map. The button now opens and closes the readout rather than switching the detector on and off; tapping the running detector in the readout is what stops it.
+- A pulsing dot beside the detector button carries the reading while the readout is shut: slow for something elsewhere in this pyramid, quicker for something on this floor, fast for something a few steps away. It reports whichever detector is running — corridors, hieroglyphs or supplies.
+- The dot never says more than your detector level knows. A level-1 compass reports "somewhere in this pyramid" even when the piece is around the corner, because that is all a level-1 compass can tell.
+
 ## 0.34.2 - 2026-08-13
 
 ### Changed

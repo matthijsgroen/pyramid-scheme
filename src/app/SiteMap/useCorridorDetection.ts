@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react"
 import type { FloorGrid } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
-import { isCorridorNearby } from "./corridorProximity"
+import { isAnyCellWithinSteps } from "./cellProximity"
 
 type CorridorDetectionArgs = {
   journeys: JourneyAPI
@@ -63,7 +63,7 @@ export const useCorridorDetection = ({
   // Recomputed as the player walks, so the readout flips from "nothing nearby" to "something nearby"
   // on approach.
   const nearby = useMemo(
-    () => isCorridorNearby(grid, explorerPos, junctionSections),
+    () => isAnyCellWithinSteps(grid, explorerPos, new Set(junctionSections.keys())),
     [grid, explorerPos, junctionSections]
   )
   // Still-unnoticed corridors on OTHER floors. The pyramid tally counts every floor the player has

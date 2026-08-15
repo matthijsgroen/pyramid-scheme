@@ -4,6 +4,7 @@ import { getOwnedKeys } from "@/game/gridNavigation"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
+import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
@@ -86,6 +87,18 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     foundCorridors,
   })
 
+  // The running detector's closest reading, for the pulsing dot beside the HUD button.
+  const detectorBand = useDetectorBand({
+    detector,
+    levels: detectorLevels,
+    corridors,
+    grid,
+    explorerPos,
+    journeyId,
+    currentFloor,
+    currentLevelIdx: (journeyState?.levelNr ?? 1) - 1,
+  })
+
   // Keys the player already holds for THIS floor's gates: this floor's own completed
   // tomb-key treasures, union'd with ward keys owned entering the site (progression's
   // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
@@ -163,7 +176,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
             both this and the toggles below self-hide, so no empty row is reserved for them. */}
         <DetectorPanel
           labels={readout.labels}
-          activeDetector={detector.activeDetector}
+          activeDetector={detector.readoutOpen ? detector.activeDetector : null}
           compassLevel={detectorLevels.compass}
           consumableDetectorLevel={detectorLevels.supplies}
           detectionLevel={detectorLevels.corridor}
@@ -173,7 +186,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           compassResults={detector.compassResults}
           consumableResults={detector.consumableResults}
           detectorTitles={readout.titles}
-          onSetDetector={detector.setDetector}
+          onSetDetector={mode => {
+            detector.setDetector(mode)
+            // Tapping the running detector in the switcher stops it; with nothing left to read there
+            // is nothing for the readout to show either, so it shuts with it.
+            if (!mode) detector.setReadoutOpen(false)
+          }}
           corridorNearby={corridors.nearby}
           floorHasHiddenCorridor={corridors.onThisFloor}
           hiddenCorridorOnOtherFloor={corridors.onOtherFloor}
@@ -189,8 +207,16 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
           {readout.available.length > 0 && (
             <DetectorButton
               activeDetector={detector.activeDetector}
+              readoutOpen={detector.readoutOpen}
               title={t("common:detector.title")}
-              onToggle={() => detector.setDetector(detector.activeDetector ? null : readout.available[0])}
+              band={detectorBand}
+              bandLabel={t(`common:detector.band.${detectorBand}`)}
+              onToggle={() => {
+                // Opening with nothing running starts the first detector owned; closing leaves it
+                // running, which is what the dot reports.
+                if (!detector.activeDetector) detector.setDetector(readout.available[0])
+                detector.setReadoutOpen(!detector.readoutOpen)
+              }}
             />
           )}
           {/* This floor's key ring: coloured keys already in hand, plus the colours of doors seen

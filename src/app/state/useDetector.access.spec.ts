@@ -11,6 +11,12 @@ import type { JourneyAPI } from "./useJourneys"
 
 vi.mock("@/data/generatedWorld", () => ({ generatedWorldConfigs: { starter_1: [[{}]] } }))
 
+// Persistence is useDetector.spec's business; here the running detector is just component state.
+vi.mock("@/support/useGameStorage", async () => {
+  const { useState } = await vi.importActual<typeof import("react")>("react")
+  return { useGameStorage: (_key: string, initial: unknown) => useState(initial) }
+})
+
 // starter_1 is a starter-tier pyramid (no tier-unlock requirement); junior_1 needs one of starter's
 // tomb treasures; junior_treasure_tomb is a tomb, whose entry cost this layer can't evaluate.
 let hits: CompassResult[] = []
