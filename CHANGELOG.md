@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.34.4 - 2026-08-15
+
 ### Changed
 
 - The proximity dot beside the detector button grows as well as pulses faster the closer the reading gets, so the three bands are easier to tell apart at a glance.
