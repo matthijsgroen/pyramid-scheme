@@ -1,50 +1,60 @@
 import { describe, expect, it } from "vitest"
 import { generateSumplete } from "./generateSumplete"
-import { countSolutions } from "./uniquenessVerifier"
+import { SUMPLETE_CONFIG } from "./sumpleteConfig"
+import { solveByTechniques } from "./techniques"
+import { difficulties } from "@/data/difficultyLevels"
 
 describe("generateSumplete", () => {
   it("is deterministic", () => {
-    expect(generateSumplete(3, 42)).toEqual(generateSumplete(3, 42))
+    expect(generateSumplete(4, 42)).toEqual(generateSumplete(4, 42))
   })
 
-  it("different seeds produce different outputs", () => {
-    expect(generateSumplete(3, 1)).not.toEqual(generateSumplete(3, 2))
+  it("different seeds produce different boards", () => {
+    expect(generateSumplete(4, 1)).not.toEqual(generateSumplete(4, 2))
   })
 
-  it("rowTargets match solution", () => {
-    const { grid, rowTargets, solution } = generateSumplete(3, 99)
-    for (let i = 0; i < 3; i++) {
-      const sum = grid[i].reduce((acc, val, j) => acc + (solution[i][j] ? val : 0), 0)
-      expect(sum).toBe(rowTargets[i])
+  it("targets match the answer", () => {
+    const { grid, rowTargets, colTargets, solution } = generateSumplete(5, 99)
+    for (let i = 0; i < 5; i++) {
+      expect(grid[i].reduce((sum, value, j) => sum + (solution[i][j] ? value : 0), 0)).toBe(rowTargets[i])
+      expect(grid.reduce((sum, row, j) => sum + (solution[j][i] ? row[i] : 0), 0)).toBe(colTargets[i])
     }
   })
 
-  it("colTargets match solution", () => {
-    const { grid, colTargets, solution } = generateSumplete(3, 99)
-    for (let j = 0; j < 3; j++) {
-      const sum = grid.reduce((acc, row, i) => acc + (solution[i][j] ? row[j] : 0), 0)
-      expect(sum).toBe(colTargets[j])
-    }
-  })
+  describe.each(difficulties)("at %s", difficulty => {
+    const { size, ...options } = SUMPLETE_CONFIG[difficulty]
+    const boards = Array.from({ length: 10 }, (_, seed) => generateSumplete(size, seed + 1, options))
 
-  it("property: 50 seeds × 3×3 all unique", () => {
-    for (let seed = 0; seed < 50; seed++) {
-      const { grid, rowTargets, colTargets } = generateSumplete(3, seed)
-      expect(countSolutions(grid, rowTargets, colTargets)).toBe(1)
-    }
-  })
+    it("never needs a guess — every board settles inside its own technique cap", () => {
+      for (const board of boards) expect(solveByTechniques(board, board.techniqueCap).settled).toBe(true)
+    })
 
-  it("property: 50 seeds × 4×4 all unique", () => {
-    for (let seed = 0; seed < 50; seed++) {
-      const { grid, rowTargets, colTargets } = generateSumplete(4, seed)
-      expect(countSolutions(grid, rowTargets, colTargets)).toBe(1)
-    }
-  })
+    it("never asks for a lone number: every row and column keeps at least two cells", () => {
+      for (const { solution } of boards)
+        for (let i = 0; i < size; i++) {
+          expect(solution[i].filter(Boolean).length).toBeGreaterThanOrEqual(2)
+          expect(solution.filter(row => row[i]).length).toBeGreaterThanOrEqual(2)
+        }
+    })
 
-  it("allowZeroTargets:false produces no zero row/col targets", () => {
-    for (let seed = 0; seed < 30; seed++) {
-      const { rowTargets, colTargets } = generateSumplete(3, seed, { allowZeroTargets: false })
-      expect([...rowTargets, ...colTargets].every(t => t > 0)).toBe(true)
-    }
+    it("never asks for a whole line: every row and column strikes at least one cell", () => {
+      for (const { solution } of boards)
+        for (let i = 0; i < size; i++) {
+          expect(solution[i].filter(Boolean).length).toBeLessThan(size)
+          expect(solution.filter(row => row[i]).length).toBeLessThan(size)
+        }
+    })
+
+    it("has no zero target", () => {
+      for (const { rowTargets, colTargets } of boards)
+        expect([...rowTargets, ...colTargets].every(target => target > 0)).toBe(true)
+    })
+
+    it("deduces the same answer the board was built from", () => {
+      for (const board of boards) {
+        const { marks } = solveByTechniques(board, board.techniqueCap)
+        expect(marks.map(row => row.map(mark => mark === "keep"))).toEqual(board.solution)
+      }
+    })
   })
 })

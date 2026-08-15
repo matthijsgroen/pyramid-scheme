@@ -1,12 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { generateSumplete } from "@/mods/puzzle/game/sumplete/generateSumplete"
-import { computeColStatuses, computeRowStatuses, isSumpleteSolved } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
-import {
-  createSumpleteState,
-  toggleSumpleteCell,
-  type SumpleteCellState,
-} from "@/mods/puzzle/game/sumplete/sumpleteState"
+import { SUMPLETE_CONFIG } from "@/mods/puzzle/game/sumplete/sumpleteConfig"
+import { computeColLines, computeRowLines, isSumpleteSolved } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
+import { createSumpleteState, toggleSumpleteCell } from "@/mods/puzzle/game/sumplete/sumpleteState"
+import { buildSumpleteHint } from "./sumpleteHint"
 import { SumpleteBoard } from "./SumpleteBoard"
 
 const meta = {
@@ -21,56 +19,51 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const emptyCells = (n: number): SumpleteCellState[][] =>
-  Array.from({ length: n }, () => new Array<SumpleteCellState>(n).fill("unknown"))
-
-const p3 = generateSumplete(3, 1)
-const p4 = generateSumplete(4, 7)
-
-export const Unsolved3x3: Story = {
-  args: {
-    ...p3,
-    cells: emptyCells(3),
-    rowStatuses: computeRowStatuses(p3.grid, emptyCells(3), p3.rowTargets),
-    colStatuses: computeColStatuses(p3.grid, emptyCells(3), p3.colTargets),
-    onToggle: () => {},
-  },
+const board = (difficulty: keyof typeof SUMPLETE_CONFIG, seed: number) => {
+  const { size, ...options } = SUMPLETE_CONFIG[difficulty]
+  return generateSumplete(size, seed, options)
 }
 
-export const Unsolved4x4: Story = {
-  args: {
-    ...p4,
-    cells: emptyCells(4),
-    rowStatuses: computeRowStatuses(p4.grid, emptyCells(4), p4.rowTargets),
-    colStatuses: computeColStatuses(p4.grid, emptyCells(4), p4.colTargets),
+const starter = board("starter", 1)
+const wizard = board("wizard", 7)
+
+const staticArgs = (puzzle: ReturnType<typeof board>) => {
+  const cells = createSumpleteState(puzzle.grid.length).cells
+  return {
+    grid: puzzle.grid,
+    cells,
+    rows: computeRowLines(puzzle.grid, cells, puzzle.rowTargets),
+    cols: computeColLines(puzzle.grid, cells, puzzle.colTargets),
     onToggle: () => {},
-  },
+  }
 }
 
-export const Interactive3x3: Story = {
-  args: {
-    ...p3,
-    cells: emptyCells(3),
-    rowStatuses: computeRowStatuses(p3.grid, emptyCells(3), p3.rowTargets),
-    colStatuses: computeColStatuses(p3.grid, emptyCells(3), p3.colTargets),
-    onToggle: () => {},
-  },
+export const Starter: Story = { args: staticArgs(starter) }
+
+export const Wizard: Story = { args: staticArgs(wizard) }
+
+/** The board as played, with the hint's cells and line lit — the state after pressing Hint. */
+export const WithHint: Story = {
+  args: staticArgs(starter),
   render: () => {
-    const [state, setState] = useState(createSumpleteState(3))
-    const rowStatuses = computeRowStatuses(p3.grid, state.cells, p3.rowTargets)
-    const colStatuses = computeColStatuses(p3.grid, state.cells, p3.colTargets)
-    const solved = isSumpleteSolved(rowStatuses, colStatuses)
+    const [state, setState] = useState(createSumpleteState(starter.grid.length))
+    const rows = computeRowLines(starter.grid, state.cells, starter.rowTargets)
+    const cols = computeColLines(starter.grid, state.cells, starter.colTargets)
+    const hint = buildSumpleteHint(starter, state.cells, starter.solution, starter.techniqueCap)
 
     return (
       <div className="flex flex-col items-center gap-3">
         <SumpleteBoard
-          {...p3}
+          grid={starter.grid}
           cells={state.cells}
-          rowStatuses={rowStatuses}
-          colStatuses={colStatuses}
-          onToggle={(r, c) => setState(prev => toggleSumpleteCell(prev, r, c))}
+          rows={rows}
+          cols={cols}
+          highlighted={hint?.cells}
+          litLine={hint?.line}
+          onToggle={(row, col) => setState(prev => toggleSumpleteCell(prev, row, col))}
         />
-        {solved && <p className="text-sm text-green-400">Solved!</p>}
+        <p className="text-sm text-amber-300">{hint ? hint.key : "nothing forced"}</p>
+        {isSumpleteSolved(rows, cols) && <p className="text-sm text-green-400">Solved!</p>}
       </div>
     )
   },

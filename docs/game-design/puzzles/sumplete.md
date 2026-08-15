@@ -95,14 +95,27 @@ Grid size is the weakest of the three — a large board that falls to T1/T2 is a
 easy board. The honest dials:
 
 - **Technique cap** — the highest technique the solver may use while accepting a
-  board. Starter/junior settle by **T2.5**; expert and master may need **T3**;
-  **T4** is wizard-only or excluded entirely (§10).
-- **Propagation depth** — how many row↔column rounds are needed. One round is a
-  set of independent lines; five rounds is a board that reasons across itself.
+  board. This is what a board may _demand_ of the player.
 - **Grid size and value range** — footprint and arithmetic load.
 
 Difficulty is authored per site from these; the seed only picks a board inside
 them (`PUZZLE_FAMILIES.md` §3.4).
+
+| Tier    | Grid | Cap                       |
+| ------- | ---- | ------------------------- |
+| starter | 4×4  | T2.5 parity               |
+| junior  | 5×5  | T2.5 parity               |
+| expert  | 6×6  | T3 only-combination       |
+| master  | 7×7  | T3 only-combination       |
+| wizard  | 7×7  | T4 candidate-intersection |
+
+Two things fix that table. **Below, the cap runs out of boards**: parity-capped
+boards get rare fast as the grid grows (roughly two in five 4×4 draws, one in
+eight at 5×5, one in sixty at 6×6), so a parity tier above 5×5 would be
+draw-and-reject forever. **Above, the phone runs out of width**: eight columns
+plus the target column at a thumb-sized tap target is already the whole width of
+a 360px screen, so 7×7 is the ceiling and the top tier takes its difficulty from
+the ladder instead of from more cells.
 
 ## 6. Hints
 
@@ -110,6 +123,10 @@ Every technique is a hint, phrased in player language and rendered from
 `{ techniqueId, cells, params }` through a numeric-slot template — never a
 composed sentence (`docs/instructions/puzzle-screens.md` §4).
 
+- **First duty** — a mark that contradicts the answer outranks the whole ladder.
+  Every technique reasons from the marks the player made, so past a wrong one the
+  deductions are advice toward a dead end; "one of these can't be right" is the
+  only useful thing to say there.
 - **Which hint** — the cheapest technique that fires on the current board.
 - **Tie-break** — the line with the smallest deficit. Small clues are where the
   official strategy guide tells players to look, so hints arrive in the order a
@@ -149,11 +166,12 @@ here.
 
 ## 10. Open questions
 
-1. **Is T4 ever acceptable?** Cap it at wizard, or drop it from generation
-   entirely and keep it solver-only (as the proof that a board is settled)?
-2. **Negative values.** The catalogue wants Sumplete to carry subtraction at
+1. **Negative values.** The catalogue wants Sumplete to carry subtraction at
    higher tiers, but negatives break gate 1's side effect (a zero target becomes
    reachable with cells kept) and weaken T0. Needs its own gate set before it
    ships.
-3. **Board sizes per tier** — the catalogue says 5×5 → 7×7 → 9×9, but with the
-   technique cap as the real dial, the sizes may want to move.
+2. **Is the hint's first duty right?** A mark that contradicts the answer
+   interrupts the ladder with "undo this one". That is the most useful thing to
+   say, but it is the one hint sourced from the answer rather than from a
+   technique — worth watching in playtesting for whether it reads as helpful or
+   as scolding.

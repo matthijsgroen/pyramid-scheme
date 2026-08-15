@@ -1,57 +1,81 @@
 import clsx from "clsx"
 import type { FC } from "react"
-import { Tile, type TileVariant } from "@/ui/atoms/Tile"
-import type { SumpleteLineStatus } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
-import type { SumpleteCellState } from "@/mods/puzzle/game/sumplete/sumpleteState"
+import type { SumpleteLine } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
+import type { SumpleteMark } from "@/mods/puzzle/game/sumplete/techniques"
 
 type Props = {
   grid: number[][]
-  rowTargets: number[]
-  colTargets: number[]
-  cells: SumpleteCellState[][]
-  rowStatuses: SumpleteLineStatus[]
-  colStatuses: SumpleteLineStatus[]
+  cells: SumpleteMark[][]
+  rows: SumpleteLine[]
+  cols: SumpleteLine[]
+  /** Cell keys ("row,col") the current hint talks about. */
+  highlighted?: ReadonlySet<string>
+  /** The line the hint reasons about — lit so "this line still needs 6" points somewhere. */
+  litLine?: { kind: "row" | "col"; index: number }
   onToggle: (row: number, col: number) => void
 }
 
-const cellVariant: Record<SumpleteCellState, TileVariant> = {
-  unknown: "default",
-  excluded: "excluded",
-  included: "included",
-}
+const cellKey = (row: number, col: number) => `${row},${col}`
 
-const targetCls = (s: SumpleteLineStatus) =>
-  clsx("flex size-10 items-center justify-center rounded border text-sm font-bold", {
-    "border-green-600 bg-green-900/40 text-green-400": s === "exact",
-    "border-red-700 bg-red-900/40 text-red-400": s === "over",
-    "border-stone-600 bg-stone-800/60 text-stone-400": s === "under",
+const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
+  clsx("relative flex aspect-square items-center justify-center rounded border font-semibold transition-colors", {
+    "border-stone-500 bg-stone-700 text-stone-200": mark === "unknown",
+    "border-stone-700 bg-stone-900 text-stone-600": mark === "strike",
+    "border-amber-500 bg-amber-800/70 text-amber-100": mark === "keep",
+    "ring-1 ring-sky-700": inLitLine && !lit,
+    "ring-2 ring-sky-300": lit,
   })
 
-export const SumpleteBoard: FC<Props> = ({
-  grid,
-  rowTargets,
-  colTargets,
-  cells,
-  rowStatuses,
-  colStatuses,
-  onToggle,
-}) => (
-  <div className="inline-block select-none">
-    {grid.map((row, i) => (
-      <div key={i} className="mb-1 flex items-center gap-1">
-        {row.map((val, j) => (
-          <Tile key={j} value={val} variant={cellVariant[cells[i][j]]} onClick={() => onToggle(i, j)} />
-        ))}
-        <div className={clsx("ml-1", targetCls(rowStatuses[i]))}>{rowTargets[i]}</div>
-      </div>
-    ))}
-    <div className="mt-1 flex items-center gap-1">
-      {colTargets.map((t, j) => (
-        <div key={j} className={targetCls(colStatuses[j])}>
-          {t}
-        </div>
-      ))}
-      <div className="ml-1 size-10" />
-    </div>
+// The target beside a line carries its live total underneath: two techniques reason about "what this
+// line still needs", so the player has to be able to see it without adding the row up again
+// (docs/game-design/puzzles/sumplete.md §7).
+const lineCls = (line: SumpleteLine) =>
+  clsx("flex aspect-square flex-col items-center justify-center rounded border", {
+    "border-green-600 bg-green-900/40 text-green-400": line.status === "exact",
+    "border-red-700 bg-red-900/40 text-red-400": line.status === "over",
+    "border-stone-600 bg-stone-800/60 text-stone-400": line.status === "under",
+  })
+
+const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
+  <div className={lineCls(line)}>
+    <span className="text-[max(0.6rem,55%)] leading-none font-bold">{line.target}</span>
+    <span className="text-[max(0.5rem,42%)] leading-none opacity-70">{line.total}</span>
   </div>
 )
+
+// Sized off the viewport, never off a pixel constant: the whole board — grid plus its target column
+// and row — has to fit a phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
+export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, onToggle }) => {
+  const size = grid.length
+  const inLitLine = (row: number, col: number) =>
+    litLine ? (litLine.kind === "row" ? litLine.index === row : litLine.index === col) : false
+  return (
+    <div
+      className="grid w-[min(88vw,min(52vh,26rem))] gap-1 text-[min(4.5vw,1.1rem)] select-none"
+      style={{ gridTemplateColumns: `repeat(${size + 1}, minmax(0, 1fr))` }}
+    >
+      {grid.map((values, row) => (
+        <div key={row} className="contents">
+          {values.map((value, col) => (
+            <button
+              key={col}
+              onClick={() => onToggle(row, col)}
+              className={cellCls(cells[row][col], highlighted?.has(cellKey(row, col)) ?? false, inLitLine(row, col))}
+            >
+              <span className={clsx(cells[row][col] === "strike" && "opacity-30")}>{value}</span>
+              {cells[row][col] === "strike" && (
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-stone-500">
+                  ✕
+                </span>
+              )}
+            </button>
+          ))}
+          <LineTarget line={rows[row]} />
+        </div>
+      ))}
+      {cols.map((line, col) => (
+        <LineTarget key={col} line={line} />
+      ))}
+    </div>
+  )
+}

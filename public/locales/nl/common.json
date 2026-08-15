@@ -51,7 +51,7 @@
     "leaveSiteCancel": "Binnen blijven",
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",
-    "backToMap": "Terug naar Kaart",
+    "backToMap": "Terug naar kaart",
     "startAdventure": "Begin je avontuur door piramides te verkennen.",
     "continueExploration": "Ga door met het verkennen van de piramides.",
     "continueExpedition": "Ga door met Expeditie",
@@ -88,7 +88,9 @@
     "newTombUnlocked": "Een nieuwe tombe is nu ontgrendeld",
     "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
-    "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Opnieuw",
+    "hint": "Hint"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
@@ -228,5 +230,22 @@
     "foundDescription": "Hij opent de deuren met deze kleur, op deze verdieping.",
     "heldTitle": "{{key}} — in bezit",
     "neededTitle": "{{key}} — nog nodig"
+  },
+  "sumplete": {
+    "rules": {
+      "goal": "Streep getallen weg zodat elke rij en kolom optelt tot het getal ernaast.",
+      "tap": "Tik één keer om een getal weg te strepen, nog een keer om het te bewaren, nog een keer om het leeg te maken.",
+      "totals": "Het kleine getal onder elk doel is wat die lijn nu optelt."
+    },
+    "hint": {
+      "mistake": "Een van de tekens in deze lijn klopt niet. Maak het ongedaan en kijk opnieuw.",
+      "tooBig": "Deze lijn heeft nog {{deficit}} nodig. {{value}} is groter dan dat, dus die kan niet blijven.",
+      "allKeep": "Wat er in deze lijn over is telt precies op tot {{deficit}} — die blijven allemaal staan.",
+      "allStrike": "Deze lijn heeft zijn doel al gehaald, dus alles wat nog open staat moet weg.",
+      "parityKeep": "Deze lijn heeft nog {{deficit}} nodig, een oneven getal. {{value}} is het enige oneven getal dat over is, dus die moet blijven.",
+      "parityStrike": "Deze lijn heeft nog {{deficit}} nodig, een even getal. {{value}} is het enige oneven getal dat over is, dus die moet weg.",
+      "onlyCombination": "Maar één set van deze getallen telt op tot {{deficit}}.",
+      "inEveryCombination": "Elke manier om hier {{deficit}} te maken behandelt deze getallen hetzelfde, dus die staan vast."
+    }
   }
 }

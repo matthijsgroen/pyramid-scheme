@@ -52,16 +52,17 @@ re-implementing them:
 <PuzzleFamilyShell
   onSolved={onSolved}
   onCancel={onCancel}
+  solved={isSolved} // or call api.solved() for event-shaped families
   onReset={() => setState(initialState)}
-  nextHint={() => nextHint(state, puzzle)} // undefined = solved / nothing to say
+  hint={hint && t(`sumplete.hint.${hint.key}`, hint.params)}
   rules={<SumpleteRules />}
 >
-  {handleSolved => <SumpleteBoard … />}
+  {({ reportInput, hintVisible }) => <SumpleteBoard … />}
 </PuzzleFamilyShell>
 ```
 
-Every state-changing player action goes through the shell's input signal so the
-idle timer resets. A family that tracks its own 30s timer is a bug.
+Every state-changing player action calls `reportInput` so the idle timer resets
+and the stale hint clears. A family that tracks its own 30s timer is a bug.
 
 ## 4. Hints teach, they do not spoil
 

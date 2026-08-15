@@ -51,7 +51,7 @@
     "leaveSiteCancel": "Stay inside",
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
-    "backToMap": "Back to Map",
+    "backToMap": "Back to map",
     "startAdventure": "Start your adventure by exploring pyramids.",
     "continueExploration": "Continue your exploration of the pyramids.",
     "continueExpedition": "Continue Expedition",
@@ -88,7 +88,9 @@
     "newTombUnlocked": "A new tomb is now unlocked",
     "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
-    "footer": "©️ {{year}} Matthijs Groen, v{{version}}"
+    "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
+    "resetPuzzle": "Reset",
+    "hint": "Hint"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -235,5 +237,22 @@
     "foundDescription": "It opens the doors marked in this colour, on this floor.",
     "heldTitle": "{{key}} — in hand",
     "neededTitle": "{{key}} — still needed"
+  },
+  "sumplete": {
+    "rules": {
+      "goal": "Cross out numbers so every row and column adds up to the number beside it.",
+      "tap": "Tap once to cross a number out, again to mark it as one you keep, again to clear it.",
+      "totals": "The small number under each target is what that line adds up to right now."
+    },
+    "hint": {
+      "mistake": "One of the marks in this line cannot be right. Undo it and look again.",
+      "tooBig": "This line still needs {{deficit}}. {{value}} is bigger than that, so it cannot stay.",
+      "allKeep": "What is left in this line adds up to exactly {{deficit}} — every one of them stays.",
+      "allStrike": "This line already reached its target, so everything still open has to go.",
+      "parityKeep": "This line still needs {{deficit}}, an odd number. {{value}} is the only odd number left, so it has to stay.",
+      "parityStrike": "This line still needs {{deficit}}, an even number. {{value}} is the only odd number left, so it has to go.",
+      "onlyCombination": "Only one set of these numbers adds up to {{deficit}}.",
+      "inEveryCombination": "Every way of making {{deficit}} here treats these numbers the same, so they are settled."
+    }
   }
 }

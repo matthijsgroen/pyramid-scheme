@@ -65,8 +65,8 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
   }
   return (
     <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
-      {handleSolved => (
-        <TombPuzzle tableau={tableau} calculation={puzzle} difficulty={difficulty} onComplete={handleSolved} />
+      {({ solved }) => (
+        <TombPuzzle tableau={tableau} calculation={puzzle} difficulty={difficulty} onComplete={solved} />
       )}
     </PuzzleFamilyShell>
   )

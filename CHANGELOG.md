@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Sumplete puzzles are always solvable by reasoning; boards that would need a guess are never handed out.
+- No Sumplete row or column asks you to keep a single number or to cross out everything.
+- Sumplete boards grow with the tier, from 4×4 up to 7×7, and fit a phone screen without pinching.
+- Every puzzle has a hint button that explains the next step and why it follows, a reset, and a back button.
+- A hint takes five seconds to recharge, and the button lights up after half a minute without a move.
+- The rules of a puzzle sit under the board — scroll down to read them.
+- Each Sumplete row and column shows what it currently adds up to under its target.
+
 ## 0.34.4 - 2026-08-15
 
 ### Changed

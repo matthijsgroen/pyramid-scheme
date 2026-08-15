@@ -1,29 +1,32 @@
-import type { SumpleteCellState } from "./sumpleteState"
+import type { SumpleteMark } from "./techniques"
 
 export type SumpleteLineStatus = "under" | "exact" | "over"
 
-const statusFor = (sum: number, target: number): SumpleteLineStatus =>
-  sum === target ? "exact" : sum > target ? "over" : "under"
+export type SumpleteLine = {
+  /** What the line adds up to right now: every number not crossed out. */
+  total: number
+  target: number
+  status: SumpleteLineStatus
+}
 
-export const computeRowStatuses = (
-  grid: number[][],
-  cells: SumpleteCellState[][],
-  rowTargets: number[]
-): SumpleteLineStatus[] =>
-  cells.map((row, i) => {
-    const sum = row.reduce((s, st, j) => s + (st !== "excluded" ? grid[i][j] : 0), 0)
-    return statusFor(sum, rowTargets[i])
-  })
+// A line is judged on what is NOT crossed out, so an untouched board reads as "too high" and the
+// player works downward — the same feedback the puzzle gives on paper.
+const lineOf = (values: number[], marks: SumpleteMark[], target: number): SumpleteLine => {
+  const total = values.reduce((sum, value, i) => sum + (marks[i] === "strike" ? 0 : value), 0)
+  return { total, target, status: total === target ? "exact" : total > target ? "over" : "under" }
+}
 
-export const computeColStatuses = (
-  grid: number[][],
-  cells: SumpleteCellState[][],
-  colTargets: number[]
-): SumpleteLineStatus[] =>
-  colTargets.map((target, j) => {
-    const sum = cells.reduce((s, row, i) => s + (row[j] !== "excluded" ? grid[i][j] : 0), 0)
-    return statusFor(sum, target)
-  })
+export const computeRowLines = (grid: number[][], cells: SumpleteMark[][], rowTargets: number[]): SumpleteLine[] =>
+  grid.map((values, row) => lineOf(values, cells[row], rowTargets[row]))
 
-export const isSumpleteSolved = (rowStatuses: SumpleteLineStatus[], colStatuses: SumpleteLineStatus[]): boolean =>
-  rowStatuses.every(s => s === "exact") && colStatuses.every(s => s === "exact")
+export const computeColLines = (grid: number[][], cells: SumpleteMark[][], colTargets: number[]): SumpleteLine[] =>
+  colTargets.map((target, col) =>
+    lineOf(
+      grid.map(values => values[col]),
+      cells.map(row => row[col]),
+      target
+    )
+  )
+
+export const isSumpleteSolved = (rows: SumpleteLine[], cols: SumpleteLine[]): boolean =>
+  [...rows, ...cols].every(line => line.status === "exact")
