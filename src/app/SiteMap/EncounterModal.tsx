@@ -5,8 +5,8 @@ import type { FC, ReactNode } from "react"
 // the viewport (docs/instructions/puzzle-screens.md §1). Shared with the dev puzzle lab, so what
 // is playtested is the real presentation.
 export const EncounterModal: FC<{ children: ReactNode }> = ({ children }) => (
-  <div className="fixed inset-0 z-20 flex justify-center overflow-y-auto bg-black/80 p-4">
-    <div className="relative m-auto flex flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-4">
+  <div className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-2">
+    <div className="relative m-auto flex w-full max-w-md flex-col items-center gap-4 rounded-lg border border-amber-900 bg-stone-900 p-3">
       {children}
     </div>
   </div>

@@ -43,15 +43,17 @@ const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
   </div>
 )
 
-// Sized off the viewport, never off a pixel constant: the whole board — grid plus its target column
-// and row — has to fit a phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
+// Sized off its container and the viewport height, never off a pixel constant: the whole board — grid
+// plus its target column and row — has to fit a phone screen without pan or zoom
+// (docs/instructions/puzzle-screens.md §1). Width comes from the container rather than from `vw`, so
+// the modal's own padding can never push the board past the screen edge.
 export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, onToggle }) => {
   const size = grid.length
   const inLitLine = (row: number, col: number) =>
     litLine ? (litLine.kind === "row" ? litLine.index === row : litLine.index === col) : false
   return (
     <div
-      className="grid w-[min(88vw,min(52vh,26rem))] gap-1 text-[min(4.5vw,1.1rem)] select-none"
+      className="grid w-full max-w-[min(52vh,26rem)] gap-1 text-[min(4.5vw,1.1rem)] select-none"
       style={{ gridTemplateColumns: `repeat(${size + 1}, minmax(0, 1fr))` }}
     >
       {grid.map((values, row) => (

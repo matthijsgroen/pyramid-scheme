@@ -89,12 +89,12 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, r
       )}
       {children({ solved: handleSolved, reportInput, hintVisible: revealed && !!hint })}
       {revealed && hint && !solvedBanner && (
-        <p className="max-w-xs rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200">
+        <p className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200">
           {hint}
         </p>
       )}
       {rules && !solvedBanner && (
-        <div className="max-w-xs border-t border-stone-700 pt-3 text-sm text-stone-400">
+        <div className="w-full border-t border-stone-700 pt-3 text-sm text-stone-400">
           <h3 className="mb-1 font-pyramid text-stone-300">{t("ui.howToPlay")}</h3>
           {rules}
         </div>
