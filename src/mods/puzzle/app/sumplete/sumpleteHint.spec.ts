@@ -99,7 +99,11 @@ describe("buildSumpleteHint", () => {
       [true, true, false, false],
       [true, true, false, false],
     ]
-    expect(buildSumpleteHint(combinations, marks, answer, "inEveryCombination")?.key).toBe("inEveryCombinationKeep.row")
+    expect(buildSumpleteHint(combinations, marks, answer, "inEveryCombination")).toMatchObject({
+      key: "inEveryCombinationKeep.row",
+      // 10 needs the 6; the sentence talks about what is left over without it, not about the target.
+      params: { deficit: 10, value: 6, remaining: 4 },
+    })
     expect(buildSumpleteHint(combinations, marks, answer, "onlyCombination")).toBeUndefined()
   })
 })

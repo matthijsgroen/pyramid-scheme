@@ -10,7 +10,7 @@ import {
 export type SumpleteHint = {
   /** Translation key under `sumplete.hint`, plus the numbers that fill its slots. */
   key: string
-  params: { deficit?: number; value?: number }
+  params: { deficit?: number; value?: number; remaining?: number }
   cells: Set<string>
   line?: { kind: "row" | "col"; index: number }
 }
@@ -32,7 +32,15 @@ const stepKey = (step: SumpleteStep): string => {
 
 const asHint = (step: SumpleteStep): SumpleteHint => ({
   key: stepKey(step),
-  params: { deficit: step.deficit, value: step.value },
+  params: {
+    deficit: step.deficit,
+    value: step.value,
+    // What the line would still be short of if this number stayed. The reason for striking a cell
+    // that no combination uses is about THAT number, not about the target: keeping the 9 of a line
+    // needing 11 leaves 2 to find, and nothing left makes 2. Saying "the rest cannot make 11" instead
+    // states something false — 6+4+1 makes 11 perfectly well.
+    remaining: step.value === undefined ? undefined : step.deficit - step.value,
+  },
   cells: new Set(step.decisions.map(decision => key(decision.row, decision.col))),
   line: { kind: step.line, index: step.index },
 })

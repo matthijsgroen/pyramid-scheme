@@ -274,12 +274,12 @@
         "col": "Only one set of numbers in this column adds up to {{deficit}}."
       },
       "inEveryCombinationKeep": {
-        "row": "Leave {{value}} out and the rest of this row can no longer make {{deficit}}, so it has to stay.",
-        "col": "Leave {{value}} out and the rest of this column can no longer make {{deficit}}, so it has to stay."
+        "row": "Without {{value}}, no set of the other numbers in this row makes {{deficit}} — so it has to stay.",
+        "col": "Without {{value}}, no set of the other numbers in this column makes {{deficit}} — so it has to stay."
       },
       "inEveryCombinationStrike": {
-        "row": "Keep {{value}} and the rest of this row can no longer make {{deficit}}, so it has to go.",
-        "col": "Keep {{value}} and the rest of this column can no longer make {{deficit}}, so it has to go."
+        "row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make — so it has to go.",
+        "col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make — so it has to go."
       }
     }
   }

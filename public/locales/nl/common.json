@@ -267,12 +267,12 @@
         "col": "Maar één set getallen in deze kolom telt op tot {{deficit}}."
       },
       "inEveryCombinationKeep": {
-        "row": "Laat {{value}} weg en dan haal je met de rest van deze rij {{deficit}} niet meer, dus die moet blijven.",
-        "col": "Laat {{value}} weg en dan haal je met de rest van deze kolom {{deficit}} niet meer, dus die moet blijven."
+        "row": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze rij {{deficit}} — dus die moet blijven.",
+        "col": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze kolom {{deficit}} — dus die moet blijven."
       },
       "inEveryCombinationStrike": {
-        "row": "Houd {{value}} en dan haal je met de rest van deze rij {{deficit}} niet meer, dus die moet weg.",
-        "col": "Houd {{value}} en dan haal je met de rest van deze kolom {{deficit}} niet meer, dus die moet weg."
+        "row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg.",
+        "col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg."
       }
     }
   }
