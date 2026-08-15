@@ -90,7 +90,10 @@
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "resetPuzzle": "Opnieuw",
-    "hint": "Hint"
+    "hint": "Hint",
+    "solvedUnaided": "Opgelost zonder ook maar één hint",
+    "solvedWithHints_one": "Opgelost met {{count}} hint",
+    "solvedWithHints_other": "Opgelost met {{count}} hints"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",

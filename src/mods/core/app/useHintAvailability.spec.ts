@@ -39,6 +39,15 @@ describe("useHintAvailability", () => {
     expect(result.current.nudging).toBe(true)
   })
 
+  it("counts the hints taken, so a solve can say whether it was unaided", () => {
+    const { result } = renderHook(() => useHintAvailability())
+    expect(result.current.hintsUsed).toBe(0)
+    act(() => result.current.reveal())
+    act(() => vi.advanceTimersByTime(HINT_COOLDOWN_MS))
+    act(() => result.current.reveal())
+    expect(result.current.hintsUsed).toBe(2)
+  })
+
   it("drops a revealed hint once the player moves, since the board it described has changed", () => {
     const { result } = renderHook(() => useHintAvailability())
     act(() => result.current.reveal())

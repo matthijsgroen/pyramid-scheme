@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
-import { useHintAvailability } from "./useHintAvailability"
+import { HINT_COOLDOWN_MS, useHintAvailability } from "./useHintAvailability"
 
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
@@ -34,7 +34,7 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, r
   const { t } = useTranslation("common")
   const [solvedBanner, setSolvedBanner] = useState(false)
   const [scheduleSolve, cancelSolve] = useTimeout()
-  const { revealed, cooling, nudging, reveal, reportInput } = useHintAvailability()
+  const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability()
 
   const handleSolved = useCallback(() => {
     scheduleSolve(800, () => {
@@ -76,13 +76,20 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, r
             <button
               onClick={reveal}
               disabled={cooling}
-              className={clsx("rounded px-2 py-1 text-sm", {
+              className={clsx("relative overflow-hidden rounded px-2 py-1 text-sm", {
                 "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,
                 "bg-amber-700 text-amber-100 ring-2 ring-amber-300 motion-safe:animate-pulse": nudging && !cooling,
                 "bg-stone-800 text-stone-500": cooling,
               })}
             >
-              💡 {t("ui.hint")}
+              {/* The wait made visible: the bar reaches the far edge as the button unlocks. */}
+              {cooling && (
+                <span
+                  className="absolute inset-0 origin-left animate-hint-recharge bg-amber-900"
+                  style={{ animationDuration: `${HINT_COOLDOWN_MS}ms` }}
+                />
+              )}
+              <span className="relative">💡 {t("ui.hint")}</span>
             </button>
           )}
         </div>
@@ -100,8 +107,13 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, r
         </div>
       )}
       {solvedBanner && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/90">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-stone-900/90">
           <p className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</p>
+          {/* Solving it unaided is worth saying out loud — otherwise there is nothing to lose by
+              leaning on the hint button, and nothing to notice the day you stop needing it. */}
+          <p className="text-sm text-stone-400">
+            {hintsUsed === 0 ? t("ui.solvedUnaided") : t("ui.solvedWithHints", { count: hintsUsed })}
+          </p>
         </div>
       )}
     </>

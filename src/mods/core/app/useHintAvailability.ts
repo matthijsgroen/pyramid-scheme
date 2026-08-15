@@ -16,6 +16,7 @@ export const useHintAvailability = () => {
   const [revealed, setRevealed] = useState(false)
   const [cooling, setCooling] = useState(false)
   const [nudging, setNudging] = useState(false)
+  const [hintsUsed, setHintsUsed] = useState(0)
   const [scheduleIdle] = useTimeout()
   const [scheduleCooldown] = useTimeout()
 
@@ -33,9 +34,10 @@ export const useHintAvailability = () => {
     setRevealed(true)
     setNudging(false)
     setCooling(true)
+    setHintsUsed(used => used + 1)
     scheduleCooldown(HINT_COOLDOWN_MS, () => setCooling(false))
     restartIdle()
   }, [restartIdle, scheduleCooldown])
 
-  return { revealed, cooling, nudging, reveal, reportInput }
+  return { revealed, cooling, nudging, hintsUsed, reveal, reportInput }
 }
