@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Finishing a puzzle says whether you solved it unaided or how many hints it took.
 - The rules of a puzzle sit under the board — scroll down to read them.
 - Each Sumplete row and column shows what it currently adds up to under its target.
+- A crossed-out number stays readable, so you can check what you struck out.
 
 ## 0.34.4 - 2026-08-15
 

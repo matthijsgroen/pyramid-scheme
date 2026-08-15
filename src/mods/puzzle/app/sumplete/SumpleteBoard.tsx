@@ -20,7 +20,7 @@ const cellKey = (row: number, col: number) => `${row},${col}`
 const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
   clsx("relative flex aspect-square items-center justify-center rounded border font-semibold transition-colors", {
     "border-stone-500 bg-stone-700 text-stone-200": mark === "unknown",
-    "border-stone-700 bg-stone-900 text-stone-600": mark === "strike",
+    "border-stone-700 bg-stone-900 text-stone-400": mark === "strike",
     // Green, matching a satisfied line's target: both mean "settled, stop reconsidering this".
     "border-green-600 bg-green-900/50 text-green-200": mark === "keep",
     "ring-1 ring-sky-700": inLitLine && !lit,
@@ -67,10 +67,13 @@ export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted,
               onClick={() => onToggle(row, col)}
               className={cellCls(cells[row][col], highlighted?.has(cellKey(row, col)) ?? false, inLitLine(row, col))}
             >
-              <span className={clsx(cells[row][col] === "strike" && "opacity-30")}>{value}</span>
+              <span>{value}</span>
+              {/* One diagonal stroke corner to corner, inset from the real corners — a glyph laid
+                  over the digit hid it, and a player rechecking what they crossed out has to be
+                  able to read it back. */}
               {cells[row][col] === "strike" && (
-                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-stone-500">
-                  ✕
+                <span className="pointer-events-none absolute inset-[18%]">
+                  <span className="absolute top-0 left-0 h-0.5 w-[141%] origin-top-left rotate-45 rounded-full bg-red-500/80" />
                 </span>
               )}
             </button>
