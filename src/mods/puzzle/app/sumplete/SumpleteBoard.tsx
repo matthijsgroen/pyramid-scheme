@@ -37,10 +37,12 @@ const lineCls = (line: SumpleteLine) =>
     "border-stone-600 bg-stone-800/60 text-stone-400": line.status === "under",
   })
 
+// The target is white for contrast — it is the number the player reads on every glance. The live
+// total keeps the line's status colour, so over/under/exact still reads at a distance.
 const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
   <div className={lineCls(line)}>
-    <span className="text-[max(0.6rem,55%)] leading-none font-bold">{line.target}</span>
-    <span className="text-[max(0.5rem,42%)] leading-none opacity-70">{line.total}</span>
+    <span className="text-[max(0.6rem,55%)] leading-none font-bold text-white">{line.target}</span>
+    <span className="text-[max(0.5rem,42%)] leading-none opacity-80">{line.total}</span>
   </div>
 )
 
