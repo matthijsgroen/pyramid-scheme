@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react"
 import { useTimeout } from "@/support/useTimeout"
 
-export const HINT_COOLDOWN_MS = 5000
+// Long enough that hint-by-hint is a slower way to play than thinking: leaning on the button should
+// feel like waiting, not like a second solve button.
+export const HINT_COOLDOWN_MS = 10000
 export const HINT_IDLE_MS = 30000
 
 /**
