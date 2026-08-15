@@ -19,24 +19,19 @@ export const LevelCompletionHandler: FC<LevelCompletionHandlerProps> = ({
   skipLoot = false,
 }) => {
   const { t } = useTranslation("common")
-  const [showOverlay, setShowOverlay] = useState(false)
-  const [showFez, setShowFez] = useState(false)
+  // This component is only mounted once the level is already complete (PyramidExpedition renders it
+  // behind `levelCompleted`), so the sequence starts in the overlay phase rather than starting hidden
+  // and having an effect immediately advance it. That effect cost a render pass and showed one blank
+  // frame before the overlay appeared; there was never a path back to "hidden".
+  const [showOverlay, setShowOverlay] = useState(true)
+  const [showFez, setShowFez] = useState(true)
   const [showLoot, setShowLoot] = useState(false)
-  const [completionPhase, setCompletionPhase] = useState<"hidden" | "overlay" | "loot" | "finished">("hidden")
+  const [completionPhase, setCompletionPhase] = useState<"overlay" | "loot" | "finished">("overlay")
   const [scheduleTimer, cancelTimer] = useTimeout()
 
   // Use the loot determination hook
   const { loot: rawLoot, collectLoot } = useLootDetermination(activeJourney)
   const loot = skipLoot ? null : rawLoot
-
-  useEffect(() => {
-    if (completionPhase === "hidden") {
-      // Start the completion sequence only when level is completed
-      setCompletionPhase("overlay")
-      setShowOverlay(true)
-      setShowFez(true)
-    }
-  }, [completionPhase])
 
   const { showConversation } = use(FezContext)
 

@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect } from "react"
+import { type FC, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
@@ -11,7 +11,6 @@ type SettingsModalProps = {
 
 export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation("common")
-  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
 
@@ -22,13 +21,12 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     window.location.reload()
   }
 
-  // Update local state when i18n language changes
-  useEffect(() => {
-    setSelectedLanguage(i18n.language)
-  }, [i18n.language])
+  // The chosen language IS i18n's language — read it, don't mirror it. This used to be local state
+  // kept in step by an effect, which meant every language change rendered twice (once for the state,
+  // once for useTranslation's own re-render) and the two could disagree in between.
+  const selectedLanguage = i18n.language
 
   const handleLanguageChange = (language: string) => {
-    setSelectedLanguage(language)
     i18n.changeLanguage(language)
   }
 
