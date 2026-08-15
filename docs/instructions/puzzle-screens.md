@@ -1,9 +1,11 @@
 # Puzzle Screens
 
 Applies to every puzzle family registered via `src/app/families/familyRegistry.ts`
-(`src/mods/*/app/<family>/plugin.tsx`). Catalogue and per-family design live in
-`docs/game-design/PUZZLE_FAMILIES.md`; this doc is the quality bar every one of
-them must clear before it ships.
+(`src/mods/*/app/<family>/plugin.tsx`). The catalogue (tier debut, weight, theme fit) lives in
+`docs/game-design/PUZZLE_FAMILIES.md`, and every family owns a design doc at
+`docs/game-design/puzzles/<family>.md` — its rules, technique ladder, generation
+gates, knobs and theming. This doc is the quality bar all of them must clear
+before shipping. `sumplete.md` is the reference for what a family doc covers.
 
 The shared shell (`src/mods/core/app/PuzzleFamilyShell.tsx`) owns the chrome:
 back, reset, hint, cooldown, idle nudge, scroll container. A family supplies the
@@ -36,12 +38,12 @@ The same puzzle dresses up per site (`ctx.theme`).
 
 ## 3. Controls — all four, all from the shell
 
-| Control  | Behavior                                                                       |
-| -------- | ------------------------------------------------------------------------------ |
-| Back     | Returns to the site map (`onCancel`). Always visible, always safe.             |
-| Reset    | Restores the generated start state. No confirm dialog for a puzzle board.      |
-| Hint     | Shows the next step and why. Disabled 5s after use.                            |
-| Idle     | 30s with no player input highlights the hint button. Any input clears it.      |
+| Control | Behavior                                                                  |
+| ------- | ------------------------------------------------------------------------- |
+| Back    | Returns to the site map (`onCancel`). Always visible, always safe.        |
+| Reset   | Restores the generated start state. No confirm dialog for a puzzle board. |
+| Hint    | Shows the next step and why. Disabled 5s after use.                       |
+| Idle    | 30s with no player input highlights the hint button. Any input clears it. |
 
 The shell needs the family to report input, so hint/idle work without the family
 re-implementing them:
@@ -114,3 +116,5 @@ On top of AGENTS.md's general DoD:
 5. Spec: every technique the solver claims can be triggered by a real board.
 6. Rendering is skin-driven; one default skin, no colors in the family component.
 7. Board and hint text contain no words the player must read to solve.
+8. `docs/game-design/puzzles/<family>.md` exists and its technique ladder is the
+   one the code implements.
