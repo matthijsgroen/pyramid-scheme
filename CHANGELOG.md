@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.35.0 - 2026-08-16
+
 ### Added
 
 - A comparison puzzle: fill the grid so every row and column shows each number once, obeying the signs between squares.
