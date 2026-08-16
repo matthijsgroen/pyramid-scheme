@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
@@ -55,6 +55,14 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, i
     if (solved) handleSolved()
   }, [solved, handleSolved])
 
+  // A board that fills the screen pushes the hint under the fold, where pressing the button looks
+  // like it did nothing. Scrolled to on reveal only — not on every recomputed hint — so the view
+  // never yanks while the player is working.
+  const hintRef = useRef<HTMLParagraphElement>(null)
+  useEffect(() => {
+    if (revealed) hintRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" })
+  }, [revealed])
+
   return (
     <>
       {!finishing && (
@@ -106,7 +114,10 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, i
         {children({ solved: handleSolved, reportInput, hintVisible: revealed && !!hint })}
       </div>
       {revealed && hint && !solvedBanner && (
-        <p className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200">
+        <p
+          ref={hintRef}
+          className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200"
+        >
           {hint}
         </p>
       )}
