@@ -133,11 +133,11 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
 - **UI:** easy — already built; glyph-pad into the grid. Mobile-fine.
 - **Role:** **spine** (the canonical value source/consumer).
 
-### 4.2 Balance scale (weighing of the heart) — _(built, playtesting)_
+### 4.2 Balance scale (weighing of the heart) — _(have)_
 
-Family doc: `docs/game-design/puzzles/balance-scale.md`. Built and playable in the
-puzzle lab; not yet in the world — it enters the encounter pool the day its meta
-joins the puzzle mod's family list.
+Family doc: `docs/game-design/puzzles/balance-scale.md`. In the world: its meta
+sits in the puzzle mod's family list, so the gen-time allocator draws it for
+puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 
 - **Skill:** equality and equation-balancing → genuine algebra.
 - **Operates:** two pans; place glyph-weights; the beam **tilts in real time**;

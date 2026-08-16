@@ -10,9 +10,6 @@ import { BALANCE_META } from "@/mods/puzzle/game/balanceScale/meta"
 import { isModEnabled } from "@/mods/registeredMods"
 import { BalancePuzzle } from "./BalancePuzzle"
 
-// Registered, so the puzzle lab can play it, but its meta is deliberately absent from the puzzle
-// mod's family list — world-gen cannot allocate a family it never sees, which is what keeps an
-// unapproved family out of the authored world (src/mods/puzzle/game/balanceScale/meta.ts).
 const BalanceComponent: FamilyPlugin<BalancePuzzleData>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => (
   <BalancePuzzle puzzle={puzzle} difficulty={ctx.difficulty} onSolved={onSolved} onCancel={onCancel} />
 )

@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A piece that can come off both pans is marked, and a tap that can do nothing says why.
 - The balance-scale rules list only the moves that board has, so a starter puzzle is two lines and a wizard one is five.
 - Starter and junior balance puzzles have no pieces to tap on the scales: working the numbers out is the puzzle.
-- Balance scales are playable in the puzzle lab only; they do not appear inside pyramids yet.
+- Balance scales appear in pyramids and tombs from the first tier, alongside the number puzzles.
 
 ### Changed
 

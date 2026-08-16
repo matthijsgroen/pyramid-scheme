@@ -4,10 +4,7 @@ import { isModEnabled } from "@/mods/registeredMods"
 
 // puzzle's app entrypoint (side-effect): the non-gating puzzle families.
 import "./sumplete/plugin"
-import "./sumpleteMirror/plugin"
 import "./crocodile/plugin"
-// Last on purpose: a bare "puzzle" tag resolves to the first family registered under it, so a family
-// still in playtesting must never be the one that answers it.
 import "./balanceScale/plugin"
 
 // The scribes-eye perk (extra tableau hint slots) is puzzle-owned: described via the seam, its level
