@@ -234,6 +234,28 @@
     "heldTitle": "{{key}} — in bezit",
     "neededTitle": "{{key}} — nog nodig"
   },
+  "balance": {
+    "rules": {
+      "goal": "Elke weegschaal is in evenwicht. Geef elk teken een gewicht dat dat zo houdt.",
+      "tap": "Tik hieronder op een teken en dan op een getal. Tik nog een keer op dat getal om het weg te halen.",
+      "same": "Een teken weegt op elke weegschaal evenveel.",
+      "cancel": "Haal aan beide kanten hetzelfde weg en een weegschaal blijft kloppen. Tik op een gemarkeerd stuk: wat overblijft komt als nieuwe rij eronder.",
+      "swap": "Tik op een teken waar niets gelijks tegenover ligt, en dan op een rij waar dat teken alleen staat, om het te ruilen voor wat die rij waard is."
+    },
+    "hint": {
+      "mistake": "Een van de gewichten die je gaf laat een weegschaal doorslaan. Haal het weg en kijk opnieuw.",
+      "alone": "In de opgelichte rij is {{glyph}} het enige stuk zonder getal erop. Reken uit wat het weegt.",
+      "equalShares": "In de opgelichte rij staan alleen maar {{glyph}} tegenover een getal. Verdeel dat getal eerlijk.",
+      "difference": "De twee opgelichte rijen zijn hetzelfde, behalve {{glyph}}. Vergelijk ze.",
+      "cancelGlyph": "Aan beide kanten van de opgelichte rij ligt {{glyph}}. Tik er één aan om hem aan beide kanten weg te halen — de rij blijft kloppen.",
+      "cancelStones": "Aan beide kanten van de opgelichte rij liggen gewone getallen. Tik er één aan om aan beide kanten evenveel weg te halen.",
+      "swap": "Eén opgelichte rij zegt wat één {{glyph}} in zijn eentje waard is. Tik op de {{glyph}} in de andere opgelichte rij en dan op die rij."
+    },
+    "swap": {
+      "pick": "Tik op een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
+      "none": "Niets hier zegt wat één {{glyph}} in zijn eentje waard is, en er ligt niets gelijks tegenover."
+    }
+  },
   "sumplete": {
     "rules": {
       "goal": "Streep getallen weg zodat elke rij en kolom optelt tot het getal ernaast.",

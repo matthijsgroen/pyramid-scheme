@@ -6,6 +6,9 @@ import { isModEnabled } from "@/mods/registeredMods"
 import "./sumplete/plugin"
 import "./sumpleteMirror/plugin"
 import "./crocodile/plugin"
+// Last on purpose: a bare "puzzle" tag resolves to the first family registered under it, so a family
+// still in playtesting must never be the one that answers it.
+import "./balanceScale/plugin"
 
 // The scribes-eye perk (extra tableau hint slots) is puzzle-owned: described via the seam, its level
 // derived from the treasures held (usePuzzleProgress). Self-gated on the mod (§7.4).
