@@ -304,5 +304,47 @@
         "col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make — so it has to go."
       }
     }
+  },
+  "futoshiki": {
+    "rules": {
+      "goal": "Fill every square so each row and each column shows every number exactly once.",
+      "signs": "A sign between two squares points at the smaller number of the two.",
+      "enter": "Tap a square, then tap a number. The same number again takes it back out.",
+      "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
+    },
+    "notes": "Notes",
+    "erase": "Erase",
+    "undo": "Undo",
+    "hint": {
+      "mistake": {
+        "value": "One of the numbers here cannot be right. Take it back out and look again.",
+        "note": "This square's notes have ruled out the number that belongs here. Clear them and start it over."
+      },
+      "nakedSingle": "Every other number is already taken in this row, this column, or by the signs — only {{value}} is left for this square.",
+      "hiddenSingle": {
+        "row": "{{value}} fits in no other square of this row, so this is where it goes.",
+        "col": "{{value}} fits in no other square of this column, so this is where it goes."
+      },
+      "signBound": {
+        "high": "A sign here points away to a bigger number, so this square cannot hold {{value}}.",
+        "low": "A sign here points at this square, so something must be smaller than it — it cannot hold {{value}}."
+      },
+      "signVsValue": {
+        "less": "The sign says this square is smaller than its neighbour, and that neighbour holds {{value}}.",
+        "greater": "The sign says this square is bigger than its neighbour, and that neighbour holds {{value}}."
+      },
+      "signChain": {
+        "high": "Follow the signs from this square: {{chain}} squares in a row must each be bigger than the last, so this one cannot be above {{bound}}.",
+        "low": "Follow the signs into this square: {{chain}} squares in a row must each be smaller than the last, so this one cannot be below {{bound}}."
+      },
+      "signPair": {
+        "less": "The biggest number its neighbour across the sign can still hold is {{value}}, and this square must stay under it.",
+        "greater": "The smallest number its neighbour across the sign can still hold is {{value}}, and this square must stay above it."
+      },
+      "nakedPair": {
+        "row": "These two squares can only hold {{first}} and {{second}}, in one order or the other, so no other square in this row can have either.",
+        "col": "These two squares can only hold {{first}} and {{second}}, in one order or the other, so no other square in this column can have either."
+      }
+    }
   }
 }

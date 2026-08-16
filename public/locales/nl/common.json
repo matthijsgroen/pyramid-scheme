@@ -297,5 +297,47 @@
         "col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg."
       }
     }
+  },
+  "futoshiki": {
+    "rules": {
+      "goal": "Vul elk vakje zo dat elke rij en elke kolom elk getal precies één keer laat zien.",
+      "signs": "Een teken tussen twee vakjes wijst naar het kleinste getal van de twee.",
+      "enter": "Tik op een vakje en dan op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
+      "notes": "Zet het potlood aan om op te schrijven welke getallen nog in een vakje kunnen. Met ongedaan maken neem je je laatste zet terug."
+    },
+    "notes": "Notities",
+    "erase": "Wissen",
+    "undo": "Ongedaan",
+    "hint": {
+      "mistake": {
+        "value": "Een van de getallen hier klopt niet. Haal het eruit en kijk opnieuw.",
+        "note": "De notities in dit vakje sluiten juist het getal uit dat hier hoort. Maak ze leeg en begin er opnieuw aan."
+      },
+      "nakedSingle": "Elk ander getal is al bezet in deze rij, deze kolom of door de tekens — alleen {{value}} blijft over voor dit vakje.",
+      "hiddenSingle": {
+        "row": "{{value}} past in geen enkel ander vakje van deze rij, dus hier hoort hij.",
+        "col": "{{value}} past in geen enkel ander vakje van deze kolom, dus hier hoort hij."
+      },
+      "signBound": {
+        "high": "Een teken hier wijst weg naar een groter getal, dus dit vakje kan geen {{value}} zijn.",
+        "low": "Een teken hier wijst naar dit vakje, dus iets moet kleiner zijn — het kan geen {{value}} zijn."
+      },
+      "signVsValue": {
+        "less": "Het teken zegt dat dit vakje kleiner is dan zijn buur, en die buur heeft {{value}}.",
+        "greater": "Het teken zegt dat dit vakje groter is dan zijn buur, en die buur heeft {{value}}."
+      },
+      "signChain": {
+        "high": "Volg de tekens vanaf dit vakje: {{chain}} vakjes achter elkaar moeten steeds groter zijn, dus dit vakje kan niet boven {{bound}} uitkomen.",
+        "low": "Volg de tekens naar dit vakje toe: {{chain}} vakjes achter elkaar moeten steeds kleiner zijn, dus dit vakje kan niet onder {{bound}} komen."
+      },
+      "signPair": {
+        "less": "Het grootste getal dat de buur aan de andere kant van het teken nog kan zijn is {{value}}, en dit vakje moet daaronder blijven.",
+        "greater": "Het kleinste getal dat de buur aan de andere kant van het teken nog kan zijn is {{value}}, en dit vakje moet daarboven blijven."
+      },
+      "nakedPair": {
+        "row": "Deze twee vakjes kunnen alleen {{first}} en {{second}} zijn, in de ene of de andere volgorde, dus geen ander vakje in deze rij kan er een van hebben.",
+        "col": "Deze twee vakjes kunnen alleen {{first}} en {{second}} zijn, in de ene of de andere volgorde, dus geen ander vakje in deze kolom kan er een van hebben."
+      }
+    }
   }
 }

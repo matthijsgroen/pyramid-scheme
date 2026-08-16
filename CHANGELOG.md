@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A comparison puzzle: fill the grid so every row and column shows each number once, obeying the signs between squares.
+- Tap a square and a number to fill it in; the pencil button writes the same numbers in as notes instead.
+- Writing a number in clears it from the notes of every square in its row and column.
+- An undo button takes back your last move on that puzzle, notes and all.
+- A repeated number and a sign pointing the wrong way turn red the moment you write them.
+- Comparison grids turn up in pyramids and tombs from the first tier, growing from 4×4 up to 7×7.
 - A balance-scale puzzle: give each glyph a weight that keeps every scale level.
 - Balance scales turn up in pyramids and tombs from the first tier, alongside the number puzzles.
 

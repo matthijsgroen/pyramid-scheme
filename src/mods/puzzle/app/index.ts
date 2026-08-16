@@ -4,6 +4,7 @@ import { isModEnabled } from "@/mods/registeredMods"
 
 // puzzle's app entrypoint (side-effect): the non-gating puzzle families.
 import "./sumplete/plugin"
+import "./futoshiki/plugin"
 import "./crocodile/plugin"
 import "./balanceScale/plugin"
 
