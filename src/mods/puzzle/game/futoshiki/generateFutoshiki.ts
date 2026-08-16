@@ -17,8 +17,6 @@ export type FutoshikiPuzzle = FutoshikiPuzzleData & {
 export type FutoshikiOptions = {
   /** The strongest deduction a board may demand (design doc §5). */
   techniqueCap?: TechniqueId
-  /** Share of the signs generation tries to take away. Fewer signs left, harder board. */
-  pruneFraction?: number
 }
 
 // Generation is build-then-thin, per docs/game-design/puzzles/futoshiki.md §3: draw a Latin square,
@@ -27,6 +25,9 @@ export type FutoshikiOptions = {
 // the one that ships is too — and that also settles uniqueness, since each step along the way was
 // forced. No separate solution counter has to run.
 const MAX_ATTEMPTS = 40
+
+// Pruning reaches a fixpoint in two sweeps on every tier measured; the third is the guard, not the plan.
+const MAX_PRUNE_SWEEPS = 6
 
 const solutionSquare = (size: number, random: () => number): number[][] => {
   const grid = Array.from({ length: size }, () => new Array<number>(size).fill(0))
@@ -80,7 +81,7 @@ const cellsWhere = (
   givens.flatMap((cells, row) => cells.flatMap((value, col) => (wanted(value) ? [{ row, col }] : [])))
 
 export const generateFutoshiki = (size: number, seed: number, options: FutoshikiOptions = {}): FutoshikiPuzzle => {
-  const { techniqueCap = "nakedPair", pruneFraction = 1 } = options
+  const { techniqueCap = "nakedPair" } = options
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
     const solution = solutionSquare(size, random)
@@ -102,19 +103,10 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
     }
     if (!settled.settled) continue
 
-    const order = shuffle(
-      signs.map((_, index) => index),
-      random
-    ).slice(0, Math.round(signs.length * pruneFraction))
-    let constraints = signs
-    for (const index of order) {
-      const trial = constraints.filter(sign => sign !== signs[index])
-      if (trial.length === constraints.length) continue
-      if (solveFutoshikiByTechniques({ size, givens, constraints: trial }, techniqueCap).settled) constraints = trial
-    }
-
-    // Thinning the signs often makes an earlier concession redundant, so the pre-filled numbers get
-    // the same treatment — a board should show only what it still needs to be solvable.
+    // Pre-filled numbers go first, and that ordering is the whole point: signs and givens can each
+    // stand in for the other, so whichever is thinned first survives. The signs ARE this family — a
+    // 4x4 carrying one sign and three given numbers is a Latin square with a decoration, and teaches
+    // nothing about what a sign means.
     let kept = givens
     for (const cell of shuffle(
       cellsWhere(givens, value => value !== undefined),
@@ -122,7 +114,22 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
     )) {
       const trial = kept.map(cells => [...cells])
       trial[cell.row][cell.col] = undefined
-      if (solveFutoshikiByTechniques({ size, givens: trial, constraints }, techniqueCap).settled) kept = trial
+      if (solveFutoshikiByTechniques({ size, givens: trial, constraints: signs }, techniqueCap).settled) kept = trial
+    }
+
+    // Then every sign the board turns out not to need, to a fixpoint: taking one away can make
+    // another removable, so a single pass leaves redundant signs standing. A sign the player cannot
+    // spend is worse than no sign — it hides which ones the deduction actually turns on.
+    let constraints = signs
+    for (let sweep = 0; sweep < MAX_PRUNE_SWEEPS; sweep++) {
+      const before = constraints.length
+      for (const sign of shuffle(constraints, random)) {
+        const trial = constraints.filter(other => other !== sign)
+        if (trial.length === constraints.length) continue
+        if (solveFutoshikiByTechniques({ size, givens: kept, constraints: trial }, techniqueCap).settled)
+          constraints = trial
+      }
+      if (constraints.length === before) break
     }
 
     return { size, givens: kept, constraints, solution, techniqueCap }

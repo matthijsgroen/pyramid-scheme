@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Comparison grids show only the signs the puzzle actually turns on: a starter board carries four or five instead of sixteen.
+- A comparison grid leans on its signs rather than on pre-filled numbers, so every board still teaches what a sign means.
+
 ## 0.35.0 - 2026-08-16
 
 ### Added

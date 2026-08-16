@@ -39,6 +39,23 @@ describe("generateFutoshiki", () => {
         }
     })
 
+    it("shows no sign the player cannot spend — every one is load-bearing", () => {
+      for (const board of boards)
+        for (let index = 0; index < board.constraints.length; index++) {
+          const without = board.constraints.filter((_, other) => other !== index)
+          expect(
+            solveFutoshikiByTechniques({ size, givens: board.givens, constraints: without }, board.techniqueCap).settled
+          ).toBe(false)
+        }
+    })
+
+    it("keeps the signs rather than the pre-filled numbers — the signs are the puzzle", () => {
+      for (const board of boards)
+        expect(board.constraints.length).toBeGreaterThan(
+          board.givens.flat().filter(value => value !== undefined).length
+        )
+    })
+
     it("keeps something to work out: no board is more answer than puzzle", () => {
       for (const board of boards) {
         const filled = board.givens.flat().filter(value => value !== undefined).length
