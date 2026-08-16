@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A new puzzle: fill the grid so every row and column shows each number once, obeying the signs between squares.
+- Tap a square and a number to fill it in; the pencil button writes the same numbers in as notes instead.
+- Writing a number in clears it from the notes of every square in its row and column.
+- An undo button takes back your last move on that puzzle, notes and all.
+- A repeated number and a sign pointing the wrong way turn red the moment you write them.
+
 ### Changed
 
 - Sumplete puzzles are always solvable by reasoning; boards that would need a guess are never handed out.

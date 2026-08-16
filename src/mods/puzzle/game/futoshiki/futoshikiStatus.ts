@@ -1,0 +1,42 @@
+import { constraintEnds, futoshikiCellKey, type FutoshikiPuzzleData, type FutoshikiValues } from "./techniques"
+
+export type FutoshikiConflicts = {
+  /** Cell keys showing a number that repeats in its row or column. */
+  cells: ReadonlySet<string>
+  /** Indices of signs the two numbers beside them read the wrong way round. */
+  constraints: ReadonlySet<number>
+}
+
+// Live feedback with nothing to read: a repeat and a sign pointing the wrong way both show themselves
+// the moment they are written, the way a satisfied line does in the other grid families.
+export const futoshikiConflicts = (puzzle: FutoshikiPuzzleData, values: FutoshikiValues): FutoshikiConflicts => {
+  const cells = new Set<string>()
+  for (let i = 0; i < puzzle.size; i++)
+    for (let j = 0; j < puzzle.size; j++)
+      for (let k = j + 1; k < puzzle.size; k++) {
+        if (values[i][j] !== undefined && values[i][j] === values[i][k]) {
+          cells.add(futoshikiCellKey(i, j))
+          cells.add(futoshikiCellKey(i, k))
+        }
+        if (values[j][i] !== undefined && values[j][i] === values[k][i]) {
+          cells.add(futoshikiCellKey(j, i))
+          cells.add(futoshikiCellKey(k, i))
+        }
+      }
+
+  const constraints = new Set<number>()
+  puzzle.constraints.forEach((constraint, index) => {
+    const { lesser, greater } = constraintEnds(constraint)
+    const low = values[lesser.row][lesser.col]
+    const high = values[greater.row][greater.col]
+    if (low !== undefined && high !== undefined && low > high) constraints.add(index)
+  })
+
+  return { cells, constraints }
+}
+
+export const isFutoshikiSolved = (puzzle: FutoshikiPuzzleData, values: FutoshikiValues): boolean => {
+  if (!values.every(row => row.every(value => value !== undefined))) return false
+  const conflicts = futoshikiConflicts(puzzle, values)
+  return conflicts.cells.size === 0 && conflicts.constraints.size === 0
+}

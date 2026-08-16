@@ -428,6 +428,33 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
 - **Theme:** **Scribe / Inscription** (counting and record-keeping) sits most
   naturally; a honeycomb of sealed cells also reads as **Tomb / Burial Logic**.
 
+### 4.19 Futoshiki (inequality Latin square) — _(have)_
+
+Family doc: `docs/game-design/puzzles/futoshiki.md`.
+
+- **Skill:** pure deduction plus **ordering** — comparing two numbers, which is
+  the skill the crocodile capstone (`docs/game-design/puzzles/crocodile.md`)
+  tests as a gate and which no grid family drilled before.
+- **Operates:** each number once per row and column, with signs between some
+  neighbouring cells that always open toward the bigger of the two. Tap a cell,
+  tap a number from the pad; a pencil toggle writes the same numbers in as notes
+  instead, and undo takes back one move whole.
+- **Knobs:** grid size (4×4 → 5×5) · technique cap · how hard generation tries to
+  take signs away.
+- **Scaling:** good. This is the Latin-square slot (§4.8) entered from its cheap
+  side — the signs do the work regions do in Sudoku, so a 4×4 is already a real
+  puzzle at T1 and no region shapes have to be authored.
+- **Generation:** build the Latin square, derive every sign, then thin signs and
+  pre-filled cells for as long as the technique solver still reaches the end. The
+  solver gate settles uniqueness, so no separate solution counter runs.
+- **UI:** easy–medium. One more control cluster than Sumplete (number pad, pencil,
+  eraser, undo) and thin sign gaps between cells, which is what caps the grid at
+  5×5 on a 360px screen.
+- **Role:** **side** (the answer is an arrangement, not a value).
+- **First in the catalogue to need notetaking**, and the reason it is worth
+  having: the player's notes are literally the solver's candidates, so hints read
+  them and a wrong note is a mistake the hint engine can name.
+
 ---
 
 ## 5. The shared grid engine
