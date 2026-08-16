@@ -9,16 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A balance-scale puzzle: give each glyph a weight so that every scale stays level.
-- Balance scales tip as you set weights, and level when the weights are right.
-- Tap a piece that also stands on the other pan to take both off — the row that is left is kept as a note.
-- Tap a glyph with nothing like it opposite, then a row holding that glyph alone, to trade it for what that row says.
-- Notes read like scales, can be worked on in turn, and can be thrown away.
-- Balance-scale hints point at the next move and the rows to make it on — never at the weight itself.
-- A piece that can come off both pans is marked, and a tap that can do nothing says why.
-- The balance-scale rules list only the moves that board has, so a starter puzzle is two lines and a wizard one is five.
-- Starter and junior balance puzzles have no pieces to tap on the scales: working the numbers out is the puzzle.
-- Balance scales appear in pyramids and tombs from the first tier, alongside the number puzzles.
+- A balance-scale puzzle: give each glyph a weight that keeps every scale level.
+- Balance scales turn up in pyramids and tombs from the first tier, alongside the number puzzles.
 
 ### Changed
 
@@ -36,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Floor keys stay readable on any background: the key icon now carries a dark halo, and the hole in its ring is see-through instead of a black dot.
-- Pressing Hint scrolls the hint into view, so it is never left below the fold on a tall board.
 
 ## 0.34.4 - 2026-08-15
 
