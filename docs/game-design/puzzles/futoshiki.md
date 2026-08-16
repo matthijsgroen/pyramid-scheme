@@ -101,15 +101,16 @@ board demands one, not before.
 | Tier    | Grid | Cap                | Prune |
 | ------- | ---- | ------------------ | ----- |
 | starter | 4×4  | T3 sign vs. number | 0.35  |
-| junior  | 4×4  | T4 sign chain      | 0.7   |
-| expert  | 5×5  | T4 sign chain      | 0.8   |
-| master  | 5×5  | T5 sign pair       | 1     |
-| wizard  | 5×5  | T6 naked pair      | 1     |
+| junior  | 5×5  | T4 sign chain      | 0.7   |
+| expert  | 6×6  | T4 sign chain      | 0.8   |
+| master  | 6×6  | T5 sign pair       | 1     |
+| wizard  | 7×7  | T6 naked pair      | 1     |
 
-5×5 is the ceiling: inside the encounter modal a 360px screen leaves the board
-about 320px, and six squares plus the sign gaps between them puts a square under
-the 44px tap target. So the top two tiers take their difficulty from the ladder
-rather than from more squares.
+7×7 is the ceiling, the same as Puzzle Express. Inside the encounter modal a
+360px screen leaves the board about 320px, so seven squares measure ~44px across
+— exactly the tap-target floor — and an eighth would not fit. That ceiling is
+bought by the sign layout (§8): giving the signs grid tracks of their own would
+spend a quarter of the width on them and cap the board at 5×5 instead.
 
 ## 6. Notes and undo
 
@@ -160,6 +161,10 @@ Beyond the shared screen bar:
   feedback a satisfied line gives in Sumplete.
 - **Notes visible at a glance**, each number keeping a fixed spot inside its
   square so a note does not move when its neighbour is rubbed out.
+- **The signs are laid over the gutters, not given tracks of their own.** Each
+  one spans the two squares it separates and centres itself, which lands it on
+  the boundary whatever the grid measures. Tracks would spend a quarter of the
+  board's width on signs and cost two tiers of grid size (§5).
 - Pre-filled numbers read as part of the puzzle, not of the answer.
 - A number pad, a pencil toggle, an eraser and undo — all at least a thumb wide,
   wrapping rather than shrinking.

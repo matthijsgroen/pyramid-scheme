@@ -17,9 +17,13 @@ type Props = {
   onUndo: () => void
 }
 
-// Every control is at least a thumb wide (docs/instructions/puzzle-screens.md §1), and the row wraps
-// rather than shrinking, so a 6-number pad still fits a 360px screen.
+// Every control is at least a thumb wide (docs/instructions/puzzle-screens.md §1), and the pad wraps
+// rather than shrinking, so a 7-number pad still fits a 360px screen.
 const buttonCls = "flex h-11 min-w-11 items-center justify-center rounded border px-2 text-lg transition-colors"
+
+// Six numbers is what a 360px screen fits in one row, so a seventh wraps — split evenly rather than
+// stranding it alone, which reads as a layout fault instead of a row that ran out of room.
+const padColumns = (size: number) => Math.ceil(size / Math.ceil(size / 6))
 
 export const FutoshikiPad: FC<Props> = ({
   size,
@@ -35,7 +39,10 @@ export const FutoshikiPad: FC<Props> = ({
   const { t } = useTranslation("common")
   return (
     <div className="flex w-full max-w-[min(56vh,26rem)] flex-col items-center gap-2">
-      <div className="flex flex-wrap items-center justify-center gap-1.5">
+      <div
+        className="grid justify-center gap-1.5"
+        style={{ gridTemplateColumns: `repeat(${padColumns(size)}, minmax(2.75rem, 3.25rem))` }}
+      >
         {Array.from({ length: size }, (_, index) => index + 1).map(value => (
           <button
             key={value}

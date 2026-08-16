@@ -439,7 +439,7 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
   neighbouring cells that always open toward the bigger of the two. Tap a cell,
   tap a number from the pad; a pencil toggle writes the same numbers in as notes
   instead, and undo takes back one move whole.
-- **Knobs:** grid size (4×4 → 5×5) · technique cap · how hard generation tries to
+- **Knobs:** grid size (4×4 → 7×7) · technique cap · how hard generation tries to
   take signs away.
 - **Scaling:** good. This is the Latin-square slot (§4.8) entered from its cheap
   side — the signs do the work regions do in Sudoku, so a 4×4 is already a real
@@ -448,8 +448,9 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
   pre-filled cells for as long as the technique solver still reaches the end. The
   solver gate settles uniqueness, so no separate solution counter runs.
 - **UI:** easy–medium. One more control cluster than Sumplete (number pad, pencil,
-  eraser, undo) and thin sign gaps between cells, which is what caps the grid at
-  5×5 on a 360px screen.
+  eraser, undo). The signs are laid over the gutters rather than given tracks of
+  their own, which is what lets the grid reach 7×7 — Puzzle Express's own ceiling
+  — on a 360px screen.
 - **Role:** **side** (the answer is an arrangement, not a value).
 - **First in the catalogue to need notetaking**, and the reason it is worth
   having: the player's notes are literally the solver's candidates, so hints read

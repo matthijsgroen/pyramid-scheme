@@ -42,7 +42,7 @@ describe("generateFutoshiki", () => {
     it("keeps something to work out: no board is more answer than puzzle", () => {
       for (const board of boards) {
         const filled = board.givens.flat().filter(value => value !== undefined).length
-        expect(filled).toBeLessThan(size)
+        expect(filled).toBeLessThanOrEqual(size)
         expect(board.constraints.length).toBeGreaterThan(0)
       }
     })

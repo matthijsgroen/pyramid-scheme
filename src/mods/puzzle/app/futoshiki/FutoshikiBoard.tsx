@@ -5,7 +5,6 @@ import type { FutoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiS
 import {
   futoshikiCellKey,
   type FutoshikiCellRef,
-  type FutoshikiConstraint,
   type FutoshikiPuzzleData,
 } from "@/mods/puzzle/game/futoshiki/techniques"
 
@@ -28,16 +27,10 @@ const SIGN_GLYPH: Record<"right" | "down", Record<"<" | ">", string>> = {
   down: { "<": "∧", ">": "∨" },
 }
 
-const signKey = (constraint: Pick<FutoshikiConstraint, "row" | "col" | "direction">) =>
-  `${constraint.row},${constraint.col},${constraint.direction}`
-
-// Cell tracks take the space; the gaps between them are only wide enough to carry a sign, so a 5-wide
-// board still leaves every cell a thumb-sized tap target inside a 360px modal.
-const trackTemplate = (size: number) =>
-  Array.from({ length: 2 * size - 1 }, (_, index) => (index % 2 === 0 ? "minmax(0,1fr)" : "0.38fr")).join(" ")
-
+// The square is its own sizing context, so the digit and the pencilled notes inside it scale with the
+// square rather than with the screen — a 4-wide board and a 7-wide one then read the same.
 const cellCls = (cell: FutoshikiCell, state: { lit: boolean; selected: boolean; conflicted: boolean }) =>
-  clsx("flex aspect-square items-center justify-center rounded border transition-colors", {
+  clsx("@container flex aspect-square items-center justify-center rounded border transition-colors", {
     "border-stone-600 bg-stone-800 text-stone-500": !cell.given && !state.conflicted,
     // A pre-filled number is part of the puzzle, not of the answer — it reads as stone, not as ink.
     "border-stone-500 bg-stone-700 text-amber-200": cell.given && !state.conflicted,
@@ -48,7 +41,7 @@ const cellCls = (cell: FutoshikiCell, state: { lit: boolean; selected: boolean; 
 
 const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
   <span
-    className="grid size-full place-items-center p-[6%] text-[min(2.6vw,0.65rem)] leading-none"
+    className="grid size-full place-items-center p-[6%] text-[20cqw] leading-none"
     style={{ gridTemplateColumns: `repeat(${Math.ceil(Math.sqrt(size))}, minmax(0, 1fr))` }}
   >
     {/* Every number keeps its own spot whether or not it is pencilled in, so a note does not move
@@ -68,65 +61,93 @@ const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
   </span>
 )
 
+/**
+ * The signs, laid over the board rather than beside it. Each one spans the two squares it separates
+ * and centres itself, which lands it exactly on the gutter between them whatever the grid measures.
+ *
+ * Giving the signs grid tracks of their own instead would spend a quarter of the width on them, and
+ * that is what a 7-wide board cannot afford: on a 360px screen the squares have to keep every pixel
+ * to stay a thumb wide (docs/instructions/puzzle-screens.md §1).
+ */
+const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts; lit?: ReadonlySet<number> }> = ({
+  puzzle,
+  conflicts,
+  lit,
+}) => (
+  <div
+    className="pointer-events-none absolute inset-0 grid gap-px"
+    style={{
+      gridTemplateColumns: `repeat(${puzzle.size}, minmax(0, 1fr))`,
+      gridTemplateRows: `repeat(${puzzle.size}, minmax(0, 1fr))`,
+    }}
+  >
+    {puzzle.constraints.map((constraint, index) => {
+      const broken = conflicts.constraints.has(index)
+      const down = constraint.direction === "down"
+      return (
+        <span
+          key={`${constraint.row},${constraint.col},${constraint.direction}`}
+          style={{
+            gridColumn: `${constraint.col + 1} / span ${down ? 1 : 2}`,
+            gridRow: `${constraint.row + 1} / span ${down ? 2 : 1}`,
+          }}
+          // The chip carries the board's own backdrop, so a sign sitting on the corner of two squares
+          // reads as a notch between them rather than as ink spilled over a digit.
+          className={clsx(
+            "place-self-center rounded-full bg-stone-900 px-[0.15em] text-[min(3.6vw,0.95rem)] leading-none font-bold",
+            {
+              "text-stone-400": !broken && !lit?.has(index),
+              "text-amber-300": !broken && lit?.has(index),
+              "text-red-400": broken,
+            }
+          )}
+        >
+          {SIGN_GLYPH[constraint.direction][constraint.relation]}
+        </span>
+      )
+    })}
+  </div>
+)
+
 // Sized off its container and the viewport height, never off a pixel constant: the board has to fit a
 // phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
 export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, highlighted, litSigns, onSelect }) => {
   const { size } = puzzle
-  const template = trackTemplate(size)
-  const signs = new Map(puzzle.constraints.map((constraint, index) => [signKey(constraint), { constraint, index }]))
-
   return (
-    <div
-      className="grid aspect-square w-full max-w-[min(56vh,26rem)] gap-0.5 select-none"
-      style={{ gridTemplateColumns: template, gridTemplateRows: template }}
-    >
-      {cells.flatMap((row, rowIndex) =>
-        row.flatMap((cell, colIndex) => {
-          const key = futoshikiCellKey(rowIndex, colIndex)
-          const rendered = [
-            <button
-              key={key}
-              onClick={() => onSelect(rowIndex, colIndex)}
-              style={{ gridColumn: 2 * colIndex + 1, gridRow: 2 * rowIndex + 1 }}
-              className={cellCls(cell, {
-                lit: highlighted?.has(key) ?? false,
-                selected: selected?.row === rowIndex && selected?.col === colIndex,
-                conflicted: conflicts.cells.has(key),
-              })}
-            >
-              {cell.value === undefined ? (
-                <NoteGrid notes={cell.notes} size={size} />
-              ) : (
-                <span className={clsx("text-[min(8vw,2rem)] font-semibold", !cell.given && "text-stone-100")}>
-                  {cell.value}
-                </span>
-              )}
-            </button>,
-          ]
-          for (const direction of ["right", "down"] as const) {
-            const found = signs.get(signKey({ row: rowIndex, col: colIndex, direction }))
-            if (!found) continue
-            const broken = conflicts.constraints.has(found.index)
-            rendered.push(
-              <span
-                key={`${key},${direction}`}
-                style={{
-                  gridColumn: 2 * colIndex + 1 + (direction === "right" ? 1 : 0),
-                  gridRow: 2 * rowIndex + 1 + (direction === "down" ? 1 : 0),
-                }}
-                className={clsx("flex items-center justify-center text-[min(4.5vw,1.1rem)] leading-none font-bold", {
-                  "text-stone-400": !broken && !litSigns?.has(found.index),
-                  "text-amber-300": !broken && litSigns?.has(found.index),
-                  "text-red-400": broken,
+    <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
+      <div
+        className="grid size-full gap-px"
+        style={{
+          gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
+        }}
+      >
+        {cells.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            const key = futoshikiCellKey(rowIndex, colIndex)
+            return (
+              <button
+                key={key}
+                onClick={() => onSelect(rowIndex, colIndex)}
+                className={cellCls(cell, {
+                  lit: highlighted?.has(key) ?? false,
+                  selected: selected?.row === rowIndex && selected?.col === colIndex,
+                  conflicted: conflicts.cells.has(key),
                 })}
               >
-                {SIGN_GLYPH[direction][found.constraint.relation]}
-              </span>
+                {cell.value === undefined ? (
+                  <NoteGrid notes={cell.notes} size={size} />
+                ) : (
+                  <span className={clsx("text-[58cqw] font-semibold", !cell.given && "text-stone-100")}>
+                    {cell.value}
+                  </span>
+                )}
+              </button>
             )
-          }
-          return rendered
-        })
-      )}
+          })
+        )}
+      </div>
+      <SignLayer puzzle={puzzle} conflicts={conflicts} lit={litSigns} />
     </div>
   )
 }
