@@ -39,12 +39,24 @@ need:
 3. If the technique solver stalls, fill in one of the squares it could not reach
    and try again. More than `N` pre-filled squares means the board is more answer
    than puzzle: abandon the attempt and draw a fresh square.
-4. Take signs away one at a time, in seeded random order, keeping each removal
-   only while the solver still reaches the end. The `pruneFraction` knob decides
-   how many removals are even attempted.
-5. Do the same to the pre-filled squares — thinning the signs usually makes an
-   earlier concession redundant, and a board should show only what it still
-   needs.
+4. Take the **pre-filled squares** away one at a time, in seeded random order,
+   keeping each removal while the solver still reaches the end.
+5. Then take the **signs** away the same way, repeating full sweeps until one
+   removes nothing.
+
+### 3.1 Why that order, and why to a fixpoint
+
+Signs and pre-filled numbers substitute for each other, so **whichever is thinned
+first is the one that survives**. Thinning signs first produced 4×4 boards
+carrying a single sign and three given numbers — a Latin square with a
+decoration, teaching nothing about what a sign means. The signs are the family;
+the givens are scaffolding, so the scaffolding goes first.
+
+Sweeping the signs to a **fixpoint** matters because removing one sign can make
+another removable. A single pass left most signs standing: measured on starter
+boards, 13–16 of the 16 signs shown could each still have been taken away. A sign
+the player cannot spend is worse than no sign — it hides which ones the deduction
+actually turns on. Every shipped board now has **zero** removable signs.
 
 **Gate: the technique solver settles every square** (§4), within the tier's
 technique cap, at every step above. A board that stalls needs a guess and is
@@ -93,18 +105,22 @@ board demands one, not before.
 
 - **Technique cap** — the highest technique the solver may use while accepting a
   board. This is what a board may _demand_ of the player.
-- **Prune fraction** — how hard generation tries to take signs away. Fewer signs
-  left is a thinner board with more to work out, and it is the same dial seen
-  from the board's side rather than the solver's.
 - **Grid size** — footprint, and how much bookkeeping a solve carries.
 
-| Tier    | Grid | Cap                | Prune |
-| ------- | ---- | ------------------ | ----- |
-| starter | 4×4  | T3 sign vs. number | 0.35  |
-| junior  | 5×5  | T4 sign chain      | 0.7   |
-| expert  | 6×6  | T4 sign chain      | 0.8   |
-| master  | 6×6  | T5 sign pair       | 1     |
-| wizard  | 7×7  | T6 naked pair      | 1     |
+Sign count is **not** a dial. It falls out of the cap: a weak ladder cannot spare
+many signs, a strong one strips the board bare. Setting it by hand only put back
+the redundancy §3.1 exists to remove.
+
+| Tier    | Grid | Cap                | Signs shown |
+| ------- | ---- | ------------------ | ----------- |
+| starter | 4×4  | T3 sign vs. number | 3–6 of 24   |
+| junior  | 5×5  | T4 sign chain      | 8–12 of 40  |
+| expert  | 6×6  | T4 sign chain      | 11–20 of 60 |
+| master  | 6×6  | T5 sign pair       | 13–19 of 60 |
+| wizard  | 7×7  | T6 naked pair      | 18–30 of 84 |
+
+The cap is inclusive: a tier permits every technique up to it, so wizard boards
+may use the whole ladder.
 
 7×7 is the ceiling, the same as Puzzle Express. Inside the encounter modal a
 360px screen leaves the board about 320px, so seven squares measure ~44px across
