@@ -133,7 +133,11 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
 - **UI:** easy — already built; glyph-pad into the grid. Mobile-fine.
 - **Role:** **spine** (the canonical value source/consumer).
 
-### 4.2 Balance scale (weighing of the heart)
+### 4.2 Balance scale (weighing of the heart) — _(have)_
+
+Family doc: `docs/game-design/puzzles/balance-scale.md`. In the world: its meta
+sits in the puzzle mod's family list, so the gen-time allocator draws it for
+puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 
 - **Skill:** equality and equation-balancing → genuine algebra.
 - **Operates:** two pans; place glyph-weights; the beam **tilts in real time**;
@@ -541,6 +545,18 @@ Three placement rules make the table behave:
    enter in Phase 5a when forks are introduced.
 3. **Low-ceiling families are deliberately early-only and graduate out.** Symmetry
    does its job T1–T3, then its `—` at T4/T5 frees the slot for richer families.
+
+**How a family actually reaches a room, for now: the tag allocator, and nothing
+else.** A family whose meta carries the `puzzle` tag is drawn for any puzzle node
+at or above its `minTier`, seeded per slot, and the world file is baked with the
+ids it picked. No family is hand-placed on a node.
+
+That is deliberate while the catalogue is this short. Authoring _which_ family
+sits _where_ — the freshness cadence this table describes, theme clusters (§11.1),
+keeping long-pole families off the critical path (§8) — is worth doing once there
+are enough families for the choice to mean something. With two, per-node
+authoring would only be picking between two. Revisit when the catalogue has
+enough breadth that the allocator's spread stops being the point.
 
 The felt arc this produces:
 

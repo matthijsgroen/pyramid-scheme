@@ -241,6 +241,28 @@
     "heldTitle": "{{key}} — in hand",
     "neededTitle": "{{key}} — still needed"
   },
+  "balance": {
+    "rules": {
+      "goal": "Every scale is balanced. Give each glyph a weight that keeps it that way.",
+      "tap": "Tap a glyph below, then a number. Tap that number again to take it off.",
+      "same": "A glyph weighs the same on every scale.",
+      "cancel": "Take the same thing off both pans and a scale stays balanced. Tap a marked piece to do it — what is left is kept as a new row.",
+      "swap": "Tap a glyph with nothing like it opposite, then a row where that glyph stands alone, to trade it for what that row is worth."
+    },
+    "hint": {
+      "mistake": "One of the weights you gave makes a scale tip. Take it off and look again.",
+      "alone": "On the lit row, {{glyph}} is the only piece left without a number on it. Work out what it weighs.",
+      "equalShares": "The lit row holds nothing but {{glyph}} against a number. Share that number out between them.",
+      "difference": "The two lit rows are the same apart from {{glyph}}. Compare them.",
+      "cancelGlyph": "Both pans of the lit row hold {{glyph}}. Tap one to take it off both sides — the row stays balanced.",
+      "cancelStones": "Both pans of the lit row hold plain numbers. Tap one to take the same amount off both sides.",
+      "swap": "One lit row says what a single {{glyph}} is worth on its own. Tap the {{glyph}} in the other lit row, then tap that row."
+    },
+    "swap": {
+      "pick": "Tap a lit row to trade this {{glyph}} for what that row says it is worth.",
+      "none": "Nothing here says what one {{glyph}} on its own is worth, and nothing opposite it matches."
+    }
+  },
   "sumplete": {
     "rules": {
       "goal": "Cross out numbers so every row and column adds up to the number beside it.",
