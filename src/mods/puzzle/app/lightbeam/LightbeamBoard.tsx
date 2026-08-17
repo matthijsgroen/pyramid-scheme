@@ -6,6 +6,7 @@ import {
   pieceCells,
   pieceOccupant,
   traceBeam,
+  wiringsDriving,
   type BeamSegment,
   type BeamWalk,
   type Blocker,
@@ -31,31 +32,36 @@ type CellView =
   | { kind: "empty" }
   | { kind: "sun"; facing: Direction }
   | { kind: "shrine" }
-  | { kind: "mirror"; face: MirrorFace; piece?: number }
-  | { kind: "wall"; piece?: number }
+  | { kind: "mirror"; face: MirrorFace }
+  | { kind: "wall" }
   /**
-   * A stop a sliding piece is not currently standing on. It carries a ghost of the piece rather than
-   * being merely outlined: an empty dashed square says something can come here, which leaves the player
-   * to find out what by tapping. Whether the thing that arrives will bend the light or swallow it is the
-   * whole difference between the two sliding pieces, so the track says which.
+   * A cell a piece can stand in. The piece itself is not drawn here — it rides in the layer above so it
+   * can slide between its stops — but the cell owns the track marking and the tap target.
+   *
+   * A vacant stop carries a ghost of the piece rather than being merely outlined: an empty dashed square
+   * says something can come here, which leaves the player to find out what by tapping, and whether the
+   * thing that arrives bends the light or swallows it is the whole difference between the two sliding
+   * pieces. `track` is false for a turn mirror, which has one cell and goes nowhere.
    */
-  | { kind: "stop"; piece: number; ghost: Blocker }
+  | { kind: "stop"; piece: number; ghost?: Blocker; track: boolean }
 
 const viewGrid = (puzzle: LightbeamPuzzleData, states: readonly number[]): CellView[][] => {
   const grid: CellView[][] = Array.from({ length: puzzle.size }, () =>
     Array.from({ length: puzzle.size }, (): CellView => ({ kind: "empty" }))
   )
   puzzle.movable.forEach((piece, index) => {
-    for (const at of pieceCells(piece))
-      grid[at.row][at.col] = { kind: "stop", piece: index, ghost: pieceOccupant(piece, 0).blocks }
+    const cells = pieceCells(piece)
+    const standing = cellKey(pieceOccupant(piece, states[index]).at)
+    for (const at of cells)
+      grid[at.row][at.col] = {
+        kind: "stop",
+        piece: index,
+        track: cells.length > 1,
+        ghost: cellKey(at) === standing ? undefined : pieceOccupant(piece, 0).blocks,
+      }
   })
   for (const piece of puzzle.fixed)
     grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? { kind: "mirror", face: piece.face } : { kind: "wall" }
-  puzzle.movable.forEach((piece, index) => {
-    const { at, blocks } = pieceOccupant(piece, states[index])
-    grid[at.row][at.col] =
-      blocks.kind === "mirror" ? { kind: "mirror", face: blocks.face, piece: index } : { kind: "wall", piece: index }
-  })
   grid[puzzle.shrine.row][puzzle.shrine.col] = { kind: "shrine" }
   grid[puzzle.sun.at.row][puzzle.sun.at.col] = { kind: "sun", facing: puzzle.sun.facing }
   return grid
@@ -73,17 +79,28 @@ const Glyph: FC<{ children: ReactNode }> = ({ children }) => (
   </svg>
 )
 
-/** A quarter-turn mirror: the diagonal it sits on, drawn as the polished edge it is. */
+/**
+ * A quarter-turn mirror: the diagonal it sits on, drawn as the polished edge it is.
+ *
+ * One canonical diagonal, turned into place, rather than two different lines — so changing face is a
+ * quarter turn the eye can follow instead of a glyph that swaps between frames. Which of the two states
+ * a piece is in is the single thing the player is deciding, and watching it turn is what says the tap
+ * landed on the piece they meant.
+ */
 const Mirror: FC<{ face: MirrorFace; movable: boolean }> = ({ face, movable }) => (
   <Glyph>
     <line
-      x1={face === "/" ? 18 : 18}
-      y1={face === "/" ? 82 : 18}
-      x2={face === "/" ? 82 : 82}
-      y2={face === "/" ? 18 : 82}
+      x1={18}
+      y1={82}
+      x2={82}
+      y2={18}
       strokeWidth={14}
       strokeLinecap="round"
-      className={movable ? "stroke-sky-200" : "stroke-stone-400"}
+      className={clsx(
+        "origin-center transition-transform duration-200 ease-out",
+        movable ? "stroke-sky-200" : "stroke-stone-400"
+      )}
+      style={{ transform: `rotate(${face === "/" ? 0 : 90}deg)` }}
     />
   </Glyph>
 )
@@ -139,8 +156,9 @@ const Shrine: FC<{ lit: boolean }> = ({ lit }) => (
 // 1. **The beam owns cell centres and edge midpoints; the wire owns the grid lines.** Every beam segment
 //    runs midpoint → centre → midpoint, so a wire routed corner-to-corner along cell boundaries can only
 //    ever cross it transversally. They never share a lane, at any board size.
-// 2. **The wire is verdigris, never amber.** Light is amber and movable pieces are sky; oxidised copper
-//    is a third thing, so a lit wire never reads as a stray beam.
+// 2. **A wire is never amber.** Light is amber and mirror glass is sky; a wire is oxidised copper in one
+//    of a handful of hues, so a lit wire never reads as a stray beam. Which hue is not decoration — see
+//    `NODE_COLOURS`, where it turns out to do the work a generation gate was going to have to do.
 // 3. **The wire is dashed, and the beam is continuous.** Colour alone was not enough, and the prototype
 //    is what showed it: rule 1 keeps the wire out of the beam's lane but cannot stop it running one half
 //    cell from a parallel stretch of beam — the beam moves with every tap, and the wire cannot chase it.
@@ -164,13 +182,35 @@ const wirePoints = (from: CellRef, to: CellRef): string => {
   return `${x1},${y1} ${x2},${y1} ${x2},${y2}`
 }
 
-/** The socket sunk in the floor. Fixed, transparent, nothing to tap — so no amber ring, ever. */
-const NodeGlyph: FC<{ at: CellRef; lit: boolean }> = ({ at, lit }) => {
+/**
+ * Who owns a piece, said in colour.
+ *
+ * **White is the player's.** One colour, always the same, for everything a tap can move — so "can I touch
+ * this?" is answered before any wire is traced. Every other colour belongs to a socket, and a piece
+ * wearing it moves when that socket is crossed, not when it is tapped.
+ *
+ * That is what makes fan-out readable at a glance: one socket drives three pieces, and the three pieces
+ * are the three wearing its colour. Following the wire confirms it; the colour is what makes you look.
+ */
+const NODE_COLOURS = [
+  { stroke: "stroke-emerald-300", dim: "stroke-emerald-500/50", fill: "fill-emerald-300", ring: "#6ee7b7" },
+  { stroke: "stroke-fuchsia-300", dim: "stroke-fuchsia-500/50", fill: "fill-fuchsia-300", ring: "#f0abfc" },
+  { stroke: "stroke-cyan-300", dim: "stroke-cyan-500/50", fill: "fill-cyan-300", ring: "#67e8f9" },
+  { stroke: "stroke-orange-300", dim: "stroke-orange-500/50", fill: "fill-orange-300", ring: "#fdba74" },
+] as const
+
+const nodeColour = (node: number) => NODE_COLOURS[node % NODE_COLOURS.length]
+
+const PLAYER_RING = "#ffffff"
+
+/** The socket sunk in the floor. Fixed, transparent, nothing to tap — so never a piece's outline. */
+const NodeGlyph: FC<{ at: CellRef; node: number; lit: boolean }> = ({ at, node, lit }) => {
   const cx = at.col + 0.5
   const cy = at.row + 0.5
+  const colour = nodeColour(node)
   return (
-    <g className={lit ? "stroke-emerald-300" : "stroke-emerald-500/60"} fill="none">
-      {lit && <circle cx={cx} cy={cy} r={0.4} className="fill-emerald-300/20 stroke-none" />}
+    <g className={lit ? colour.stroke : colour.dim} fill="none">
+      {lit && <circle cx={cx} cy={cy} r={0.4} className={clsx(colour.fill, "stroke-none opacity-20")} />}
       <circle cx={cx} cy={cy} r={0.26} strokeWidth={0.06} />
       {/* Four spokes to the rim, so the socket reads as wired to something rather than as a coin. */}
       <path
@@ -185,40 +225,51 @@ const NodeGlyph: FC<{ at: CellRef; lit: boolean }> = ({ at, lit }) => {
 const NodeLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk }> = ({ puzzle, walk }) => {
   const nodes = puzzle.nodes ?? []
   if (!nodes.length) return null
-  // A node fires when the light crosses it, so the drawn wire is read off the drawn beam. Nothing is
+  // A socket fires when the light crosses it, so the drawn wire is read off the drawn beam. Nothing is
   // inferred here that the player cannot see for themselves.
   const crossed = new Set(walk.path.map(segment => cellKey(segment.at)))
+  const isLitNode = (node: number) => crossed.has(cellKey(nodes[node].at))
   return (
     <svg
       viewBox={`0 0 ${puzzle.size} ${puzzle.size}`}
       className="pointer-events-none absolute inset-0 size-full"
       aria-hidden
     >
-      {nodes.map(node => {
-        const lit = crossed.has(cellKey(node.at))
-        const door = pieceOccupant(puzzle.movable[node.drives], node.to).at
-        const [dx, dy] = facingCorner(door, node.at)
-        const [nx, ny] = facingCorner(node.at, door)
-        return (
-          <g key={`${cellKey(node.at)}>${node.drives}`}>
-            <polyline
-              points={wirePoints(node.at, door)}
-              fill="none"
-              strokeWidth={lit ? 0.07 : 0.05}
-              strokeDasharray="0.16 0.13"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={lit ? "stroke-emerald-300" : "stroke-emerald-500/50"}
-            />
-            {/* Rivets at both ends. The wire stops on the boundary rather than reaching into either
-                cell, so it never crosses a mirror's diagonal — and the rivet is what ties it to the
-                square it belongs to. */}
-            <circle cx={nx} cy={ny} r={0.09} className={lit ? "fill-emerald-300" : "fill-emerald-500/60"} />
-            <circle cx={dx} cy={dy} r={0.09} className={lit ? "fill-emerald-300" : "fill-emerald-500/60"} />
-            <NodeGlyph at={node.at} lit={lit} />
-          </g>
-        )
+      {(puzzle.wirings ?? []).flatMap((wiring, index) => {
+        // An and-wiring fires on its last socket, so a half-crossed one stays dim: the piece has not moved,
+        // and a wire drawn as carrying when nothing moved is the one lie this layer must not tell.
+        const firing = wiring.from.every(isLitNode)
+        const door = pieceOccupant(puzzle.movable[wiring.piece], wiring.to).at
+        return wiring.from.map(node => {
+          const colour = nodeColour(node)
+          // Each strand of an and-wiring shows its own socket's state, so the player can see which one is
+          // still missing — that is the whole of the puzzle an and-wiring sets.
+          const carrying = firing || isLitNode(node)
+          const [dx, dy] = facingCorner(door, nodes[node].at)
+          const [nx, ny] = facingCorner(nodes[node].at, door)
+          return (
+            <g key={`${index}:${node}`}>
+              <polyline
+                points={wirePoints(nodes[node].at, door)}
+                fill="none"
+                strokeWidth={firing ? 0.07 : 0.05}
+                strokeDasharray="0.16 0.13"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={carrying ? colour.stroke : colour.dim}
+              />
+              {/* Rivets at both ends. The wire stops on the boundary rather than reaching into either
+                  cell, so it never crosses a mirror's diagonal — and the rivet is what ties it to the
+                  square it belongs to. */}
+              <circle cx={nx} cy={ny} r={0.09} className={clsx(colour.fill, carrying ? "" : "opacity-60")} />
+              <circle cx={dx} cy={dy} r={0.09} className={clsx(colour.fill, carrying ? "" : "opacity-60")} />
+            </g>
+          )
+        })
       })}
+      {nodes.map((node, index) => (
+        <NodeGlyph key={cellKey(node.at)} at={node.at} node={index} lit={isLitNode(index)} />
+      ))}
     </svg>
   )
 }
@@ -308,13 +359,87 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSeg
 }
 
 // ---------------------------------------------------------------------------------------------------
+// The pieces themselves, in a layer of their own above the cells.
+//
+// They have to leave the grid to be animated at all: a piece drawn inside its cell can only be redrawn in
+// a different cell, which is a jump, and a jump is exactly what a sliding piece must not look like. Up
+// here each piece is one element that keeps its identity across taps, so its stop is a position it moves
+// to and its face is an angle it turns to.
+//
+// This matters more than polish now that a track can hold three stops (`slidingStops`). With two, a jump
+// is at least unambiguous — the piece was there, now it is here. With three, a jump leaves the player to
+// work out which way it went and how far, and the answer to "what did my tap just do" should not need
+// working out.
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * Who owns this piece, drawn as its outline: white for the player's, a socket's colour for a socket's.
+ *
+ * A piece driven by more than one socket wears all their colours, split evenly round the edge — which is
+ * what an and-wiring looks like from the piece's end, and the only place it is visible at all without
+ * following a wire. `pathLength` does the splitting: normalise the perimeter to the number of colours and
+ * each one takes a single unit of dash.
+ */
+const OwnerRing: FC<{ colours: string[] }> = ({ colours }) => (
+  <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 size-full">
+    {colours.map((colour, index) => (
+      <rect
+        key={colour}
+        x={5}
+        y={5}
+        width={90}
+        height={90}
+        rx={12}
+        fill="none"
+        stroke={colour}
+        strokeWidth={5}
+        strokeLinecap="butt"
+        pathLength={colours.length}
+        strokeDasharray={`1 ${colours.length - 1}`}
+        strokeDashoffset={-index}
+        opacity={0.85}
+      />
+    ))}
+  </svg>
+)
+
+const PieceLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[] }> = ({ puzzle, states }) => {
+  const share = 100 / puzzle.size
+  return (
+    <div className="pointer-events-none absolute inset-0" aria-hidden>
+      {puzzle.movable.map((piece, index) => {
+        const { at, blocks } = pieceOccupant(piece, states[index])
+        const driving = wiringsDriving(puzzle, index)
+        const colours = driving.length
+          ? [...new Set(driving.flatMap(wiring => wiring.from))].map(node => nodeColour(node).ring)
+          : [PLAYER_RING]
+        return (
+          <div
+            key={index}
+            className="absolute transition-[left,top] duration-200 ease-out"
+            style={{ left: `${at.col * share}%`, top: `${at.row * share}%`, width: `${share}%`, height: `${share}%` }}
+          >
+            <OwnerRing colours={colours} />
+            {/* The inset lives on a child, not here: a percentage padding resolves against the containing
+                block's width, and this element's containing block is the whole board rather than one cell —
+                which collapsed the glyph to nothing. */}
+            <div className="size-full p-[8%]">
+              {blocks.kind === "mirror" ? <Mirror face={blocks.face} movable /> : <Wall movable />}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------------------------------
 
 const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
   clsx("relative flex aspect-square items-center justify-center rounded bg-stone-800 p-[8%] transition-colors", {
-    // Movable pieces have to read as movable at a glance, and a vacant stop has to read as somewhere a
-    // piece can go rather than as an empty square (design doc §9).
-    "ring-1 ring-amber-400/50": state.movable && view.kind !== "stop" && !state.lit,
-    "outline-2 -outline-offset-2 outline-stone-500/70 outline-dashed": view.kind === "stop" && !state.lit,
+    // A vacant stop has to read as somewhere a piece can go rather than as an empty square (design doc §9).
+    // The piece's own outline says whose it is, and it says so up in the layer above.
+    "outline-2 -outline-offset-2 outline-stone-500/70 outline-dashed": view.kind === "stop" && view.track && !state.lit,
     "ring-2 ring-sky-300": state.lit,
     // The tap target is bigger than the square it sits in. That is what lets this family's grid go past the
     // 7-wide ceiling the other grid families stop at: there, every cell is tappable, so cell size IS target
@@ -348,14 +473,14 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
             })
             const body =
               view.kind === "mirror" ? (
-                <Mirror face={view.face} movable={view.piece !== undefined} />
+                <Mirror face={view.face} movable={false} />
               ) : view.kind === "wall" ? (
-                <Wall movable={view.piece !== undefined} />
+                <Wall movable={false} />
               ) : view.kind === "sun" ? (
                 <SunDisc facing={view.facing} />
               ) : view.kind === "shrine" ? (
                 <Shrine lit={solved} />
-              ) : view.kind === "stop" ? (
+              ) : view.kind === "stop" && view.ghost ? (
                 <span className="size-full opacity-25">
                   {view.ghost.kind === "mirror" ? <Mirror face={view.ghost.face} movable /> : <Wall movable />}
                 </span>
@@ -374,7 +499,10 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
           })
         )}
       </div>
-      {/* Wires under the beam: light crosses a socket, it does not run along the wire. */}
+      {/* Pieces above the cells so they can slide between them, wires above the pieces so a wire is never
+          buried under the thing it drives, and the beam above everything: light does touch the mirror it
+          bounces off, and a beam that stopped under a glyph would read as a beam that stopped short. */}
+      <PieceLayer puzzle={puzzle} states={states} />
       <NodeLayer puzzle={puzzle} walk={walk} />
       <BeamLayer puzzle={puzzle} walk={walk} lit={litBeam} />
     </div>

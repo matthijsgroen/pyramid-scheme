@@ -170,13 +170,17 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Cell | Baseline route             | Movable pieces | Configurations | Cap | Goals drawn                 |
-| ------- | ---- | ---- | -------------------------- | -------------- | -------------- | --- | --------------------------- |
-| starter | 7×7  | 46px | 2 bends                    | 3.0            | 8              | T2  | 1 of: long chain, clear way |
-| junior  | 7×7  | 46px | 3 bends                    | 3.9            | 15             | T3  | 1 of those + blind alleys   |
-| expert  | 8×8  | 40px | 3 bends                    | 5.3            | 42             | T4  | 2 of all four               |
-| master  | 8×8  | 40px | 3 bends, 1 shadow          | 5.9            | 70             | T5  | 2 of all four               |
-| wizard  | 9×9  | 36px | 5 bends, 1 decoy, 1 shadow | 7.9            | 288            | T5  | 2 of all four               |
+| Tier    | Grid | Cell | Baseline route             | Stops | Movable | On the route | Configurations | Cap | Goals drawn                 |
+| ------- | ---- | ---- | -------------------------- | ----- | ------- | ------------ | -------------- | --- | --------------------------- |
+| starter | 7×7  | 46px | 2 bends                    | 2     | 3.0     | 3.0          | 8              | T2  | 1 of: long chain, clear way |
+| junior  | 7×7  | 46px | 3 bends                    | 2     | 3.9     | 3.7          | 15             | T3  | 1 of those + blind alleys   |
+| expert  | 8×8  | 40px | 3 bends                    | 3     | 5.1     | 3.7          | 68             | T4  | 2 of all four               |
+| master  | 8×8  | 40px | 4 bends, 1 shadow          | 3     | 6.4     | 4.5          | 170            | T5  | 2 of all four               |
+| wizard  | 9×9  | 36px | 6 bends, 1 decoy, 1 shadow | 3     | 8.5     | 5.7          | 778            | T5  | 2 of all four               |
+
+"On the route" is the count that matters and the one that was missing: pieces that can stand in the
+winning beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the
+player a `neverReached` rather than a decision.
 
 Piece and configuration counts are measured means over 40 seeds a tier, not
 intentions, and they are the totals _after_ a board's goals are applied (§7). The
@@ -218,6 +222,54 @@ Knobs, in order of how much they actually move difficulty:
 - **Turn count on the route** — how many mirrors the beam must bounce off.
 - **Decoy count** — pieces the player must reason are irrelevant.
 - **Set-vs-movable mirror ratio** — set mirrors are scaffolding, like givens.
+
+### 6.15 The boards were solvable without being read
+
+Playtested, and the verdict was fun but far too easy — at every tier, wizard included. The cause was
+not the tier table, and finding it needed measurement rather than opinion.
+
+**Every board opened on `solution + 1` for every piece**, and every piece had exactly two settings. So
+"wrong" meant "flipped", and _tapping every piece once solved every board in the game_: five tiers,
+forty seeds each, two hundred out of two hundred. Nothing in §5's gates noticed, because every one of
+those boards genuinely was reachable by the ladder as well. It was reachable by this too, and this is
+quicker.
+
+Three things follow, and only the first is the bug:
+
+- **Openings are drawn, not derived.** Each piece opens on its own state, weighted heavily towards
+  wrong so the board still has work in it, and a board does not ship unless it is dark, not one tap
+  from done, and **not solvable by the same number of taps on everything**. A bigger offset would only
+  have moved the exploit to "tap everything twice"; what has to hold is that the pieces are not all the
+  same distance from their answers.
+- **Greedy play is a gate now, from junior up.** With the parity gone, the obvious substitute took its
+  place: a player who taps whichever piece leaves the light nearest the shrine solved 15–38% of the top
+  tiers. §4 opens by saying a beam puzzle's natural solving mode is trial and that trial is not
+  deduction — `resistsGreedyPlay` is what makes that a property of the boards rather than a sentence in
+  this document. Starter stays fiddleable on purpose: a three-piece board should give way, and that is
+  what makes it a gentle first board rather than an empty one.
+- **A sliding piece can carry three stops.** Two stops ask "in the way or out of it"; three ask
+  _which_, which is a different question and a harder one, and a board carrying one cannot sit on a
+  single parity at all. §2's table always said 2–3; generation only ever built 2.
+
+Then the ramp, which had **expert and master measuring identical** — both drew a three-bend route, so
+both had 4.0 pieces on the route and the same length of deduction. Master goes to four bends and
+wizard to six.
+
+Measured over 40 seeds a tier, before → after:
+
+| Measure                          | Before                | After                 |
+| -------------------------------- | --------------------- | --------------------- |
+| Configurations                   | 8/15/42/70/288        | 8/15/68/170/778       |
+| Pieces on the route              | 3.0/3.7/4.0/4.0/5.0   | 3.0/3.7/3.7/4.5/5.7   |
+| Falls to getting-warmer taps      | 73/8/10/3/3%          | 85/0/0/0/0%           |
+| Solved by tapping everything once | 100% everywhere       | never                 |
+
+Wizard's worst generation went from 50ms to 278ms, which is what the longer route and the extra gates
+cost, and the attempt budget had to rise with it.
+
+**The floor this exposes is worth knowing: three movable pieces.** Two binary pieces have no honest
+opening at all — every start is lit, one tap from lit, or the same one tap on both — so generation
+refuses that board rather than shipping one.
 
 ### 6.2 Grid size is capacity, not difficulty
 
@@ -323,6 +375,13 @@ come here", which leaves the player to find out what by tapping — and whether 
 thing that arrives bends the light or swallows it is the entire difference between the
 two sliding pieces.
 
+**A tap is animated: a sliding piece slides, and a turn mirror turns.** This is not polish. A piece
+redrawn in a different square is a jump, and a jump leaves the player to work out what moved and how
+far — which was survivable when every track had two stops and became a real cost once one can have
+three (§6.15). The pieces therefore live in a layer above the cells, so each one keeps its identity
+across a tap and its stop is a position it moves to rather than a square it reappears in. The answer
+to "what did my tap just do" should not need working out.
+
 **No undo.** A cycle is its own inverse — tap round again and the piece is back —
 so the Futoshiki argument for undo (a placement destroying work elsewhere) does
 not apply. Nothing a tap does here is unrecoverable.
@@ -368,6 +427,9 @@ Beyond the shared screen bar:
 - **Nothing but light is drawn amber, and nothing but light is drawn as a continuous line.** The
   switch-node prototype (§12.1) is where this stopped being a preference: a wire in any other
   colour still read as a second beam until it was dashed as well.
+- **A piece's outline says whose it is.** White for everything a tap can move, and a socket's own
+  colour for everything a socket moves (§12.1). One question — "can I touch this?" — answered before
+  anything else on the board has to be read.
 
 ## 10. Theming
 
@@ -496,20 +558,20 @@ Three rules make the wire legible, and only the first was designed in advance:
    two solid lines that close together read as one double-tracked thing however they are coloured.
    A dashed line cannot be read as light at any size.
 
-**The condition is a new generation gate.** Two wires on one wizard board can meet at a shared
-corner, and there the eye cannot tell which socket drives which piece — the third board in
-`NodeDensity` is the same board with one node rewired, and it reads cleanly the whole way. No
-amount of drawing fixes the first case: the two wires simply want the same square. So wire
-separation joins `piecesAreSpaced` as a gate on generation, for exactly the same reason — a
-board the player cannot read is a board that was not built, not a board that was drawn badly.
+**Ownership is a colour, and it does more work than the wires do.** Every piece carries an
+outline saying whose it is: **white for the player's**, and a socket's own colour for a socket's.
+That answers "can I touch this?" before a single wire is traced, and it is what makes a socket
+driving three pieces legible at a glance — the three wearing its colour are the three it drives.
 
-That is the honest cost of this mechanic: **a fourth spacing constraint on a generator that
-already has three**, competing for room on a grid whose size §6.2 argues is capacity rather than
-difficulty. Measure the yield before writing the ladder — if wizard cannot fit a route, spaced
-pieces, shadows _and_ two separated wires on 9×9, the answer is one node per board, not a
-tenth column.
+That colour then settled a question this doc had already got wrong once. The first cut of the
+prototype concluded that two wires meeting at a shared corner were unreadable, and that **wire
+separation therefore had to be a fourth generation gate** beside `piecesAreSpaced`. Giving each
+socket its own hue made that wrong: the ambiguity at a crossing was never geometric, it was that
+both wires were the same green and there was nothing at the crossing to tell them apart. Two
+colours and it reads fine. Separation stays a nicety, the generator keeps its three constraints,
+and `NodeDensity`'s three boards are kept as the evidence for the correction.
 
-Two things the prototype settled that were open questions in the sections above:
+Three things the prototype settled that were open questions in the sections above:
 
 - **A node needs no lit/unlit state of its own to draw.** The wire lights when the beam crosses
   the socket, which the board reads off the beam it is already drawing. Nothing is inferred that
@@ -517,6 +579,27 @@ Two things the prototype settled that were open questions in the sections above:
 - **The wire attaches to the stop the node drives the piece _to_**, not to where the piece is
   standing. That is what makes a shut door legible: the socket, the wire, and the empty square
   the stone will land in are all on screen before anything has happened.
+- **The socket and its effect want to be separate things** (`BeamNode` and `NodeWiring`), which is
+  what makes the two shapes below one mechanic rather than two.
+
+#### Fan-out and fan-in
+
+A wiring names a set of sockets and one piece. Both useful shapes fall straight out of that, and
+neither needs a rule explaining it:
+
+- **Fan-out** — one socket named by several wirings. Crossing it sets several pieces at once. The
+  colour does the explaining; the wires only confirm it.
+- **Fan-in** — one wiring naming several sockets, and the piece does not budge until the light has
+  been through **all** of them. That is a genuinely different problem from a door: not "reach that
+  square" but _"reach these two squares, and there is one beam to do it with"_ — which is a
+  routing constraint rather than a setting to rule out, and the first thing in the family that
+  asks the player to plan a beam rather than settle a piece. The piece wears both sockets' colours
+  split round its edge, so the demand is visible on the thing being demanded of.
+
+Each strand of an and-wiring shows its own socket's state, so a half-satisfied one is visibly
+half-satisfied — the player can see which socket is still missing, which is the whole of the
+puzzle it sets. The wire only thickens when the wiring actually fires, because a wire drawn as
+carrying while nothing moved is the one lie this layer must not tell.
 
 A node is fixed scenery with no state and nothing to tap, so the control scheme stays at
 exactly one gesture.

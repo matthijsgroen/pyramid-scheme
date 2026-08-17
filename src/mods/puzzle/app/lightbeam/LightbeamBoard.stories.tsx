@@ -84,7 +84,8 @@ const doorBoard: LightbeamPuzzleData = {
       ],
     },
   ],
-  nodes: [{ at: { row: 5, col: 3 }, drives: 1, to: 1 }],
+  nodes: [{ at: { row: 5, col: 3 } }],
+  wirings: [{ from: [0], piece: 1, to: 1 }],
 }
 
 /** The trap. The same shape inverted: crossing this socket drops stone in front of the shrine. */
@@ -103,7 +104,8 @@ const trapBoard: LightbeamPuzzleData = {
       ],
     },
   ],
-  nodes: [{ at: { row: 4, col: 4 }, drives: 1, to: 1 }],
+  nodes: [{ at: { row: 4, col: 4 } }],
+  wirings: [{ from: [0], piece: 1, to: 1 }],
 }
 
 /**
@@ -117,9 +119,10 @@ const trapBoard: LightbeamPuzzleData = {
  */
 const wizardWired: LightbeamPuzzleData = {
   ...wizard,
-  nodes: [
-    { at: { row: 4, col: 4 }, drives: 4, to: 1 },
-    { at: { row: 6, col: 6 }, drives: 1, to: 1 },
+  nodes: [{ at: { row: 4, col: 5 } }, { at: { row: 6, col: 5 } }],
+  wirings: [
+    { from: [0], piece: 5, to: 0 },
+    { from: [1], piece: 4, to: 2 },
   ],
 }
 
@@ -131,13 +134,41 @@ const wizardWired: LightbeamPuzzleData = {
  */
 const wizardWiredApart: LightbeamPuzzleData = {
   ...wizard,
-  nodes: [
-    { at: { row: 4, col: 4 }, drives: 4, to: 1 },
-    { at: { row: 6, col: 6 }, drives: 6, to: 1 },
+  nodes: [{ at: { row: 2, col: 4 } }, { at: { row: 6, col: 5 } }],
+  wirings: [
+    { from: [0], piece: 5, to: 0 },
+    { from: [1], piece: 4, to: 2 },
   ],
 }
 
-/** Every pair is shown side by side: the wire dark, then the wire carrying. */
+/**
+ * Fan-out: one socket, three pieces. Crossing it sets all of them at once, and the board says so without
+ * a word — the three pieces wearing the socket's colour are the three it drives, and every other piece
+ * keeps its white outline meaning "yours".
+ */
+const wizardFanOut: LightbeamPuzzleData = {
+  ...wizard,
+  nodes: [{ at: { row: 2, col: 4 } }],
+  wirings: [
+    { from: [0], piece: 5, to: 0 },
+    { from: [0], piece: 8, to: 0 },
+    { from: [0], piece: 9, to: 1 },
+  ],
+}
+
+/**
+ * Fan-in: two sockets, one piece, and it does not move until the light has been through both. A different
+ * problem from a door — not "reach that square" but "reach these two squares, with one beam" — and the
+ * piece wears both their colours, split round its edge, so the demand is visible on the thing being
+ * demanded of rather than only along the wires.
+ */
+const wizardFanIn: LightbeamPuzzleData = {
+  ...wizard,
+  nodes: [{ at: { row: 2, col: 4 } }, { at: { row: 6, col: 5 } }],
+  wirings: [{ from: [0, 1], piece: 5, to: 0 }],
+}
+
+/** Every pair is shown side by side: the wires dark, then the wires carrying. */
 const Pair = ({ puzzle, before, after }: { puzzle: LightbeamPuzzleData; before: number[]; after: number[] }) => (
   <div className="flex flex-wrap items-start justify-center gap-6">
     <LightbeamBoard puzzle={puzzle} states={before} onCycle={() => {}} />
@@ -169,16 +200,17 @@ export const NodeTrap: Story = {
  * Wizard density with two wires over it, at the 318px the encounter modal actually gives the board — the
  * frame that decides whether the mechanic can be drawn at all. Three boards, and each answers one thing:
  *
- * 1. **Dark.** Two wires as scenery over nine pieces and their ghost tracks. Both are followable, and
+ * 1. **Dark.** Two wires as scenery over ten pieces and their ghost tracks. Both are followable, and
  *    neither competes with the beam.
- * 2. **Carrying, wires crossing.** Both sockets lit. The wires are still not light — but they meet at a
- *    shared corner near the middle mirror, and there the eye cannot tell which socket drives which piece.
- *    Nothing the renderer can do fixes this; the two wires simply want the same square.
- * 3. **Carrying, wires apart.** The same board with the second socket wired across the board instead.
- *    Both wires cross the beam, transversally, and stay readable the whole way.
+ * 2. **Carrying, wires crossing.** Both sockets lit, and the two wires meet at a shared corner near the
+ *    middle of the board.
+ * 3. **Carrying, wires apart.** The same board with one socket moved so they never touch.
  *
- * So the drawing survives, on one condition: wire separation has to be a generation gate, in the same way
- * and for the same reason that `piecesAreSpaced` is one.
+ * The first cut of this story concluded that 2 was unreadable and that wire separation therefore had to be
+ * a generation gate beside `piecesAreSpaced`. **Giving each socket its own colour made that wrong.** The
+ * ambiguity at a crossing was never geometric — it was that both wires were the same green, so where they
+ * met there was nothing to tell them apart. Two colours and the crossing reads fine, which leaves
+ * separation a nicety rather than a constraint, and leaves the generator one fewer thing to fit.
  */
 export const NodeDensity: Story = {
   args: { puzzle: wizardWired, states: [...wizard.solution], onCycle: () => {} },
@@ -192,6 +224,28 @@ export const NodeDensity: Story = {
       </div>
       <div className="w-[318px]">
         <LightbeamBoard puzzle={wizardWiredApart} states={[...wizard.solution]} onCycle={() => {}} />
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * The two shapes a socket can take beyond a plain door, both on the same wizard board.
+ *
+ * Left, **fan-out**: one socket, three pieces, all of them wearing its colour. Right, **fan-in**: two
+ * sockets and one piece that does not move until the light has been through both, so the piece wears both
+ * colours split round its edge. Neither needs a rule explained: the outline says who owns a piece before
+ * any wire is traced, and white always means yours.
+ */
+export const NodeFanning: Story = {
+  args: { puzzle: wizardFanOut, states: [...wizard.solution], onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-wrap items-start justify-center gap-6">
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardFanOut} states={[...wizard.solution]} onCycle={() => {}} />
+      </div>
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardFanIn} states={[...wizard.solution]} onCycle={() => {}} />
       </div>
     </div>
   ),
