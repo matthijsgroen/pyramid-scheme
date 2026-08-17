@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { futoshikiConflicts, isFutoshikiSolved } from "./futoshikiStatus"
+import { futoshikiConflicts, isFutoshikiSolved, strandedNotes } from "./futoshikiStatus"
 import type { FutoshikiPuzzleData, FutoshikiValues } from "./techniques"
 
 const puzzle: FutoshikiPuzzleData = {
@@ -76,5 +76,53 @@ describe("isFutoshikiSolved", () => {
     ]
     expect(futoshikiConflicts(puzzle, flipped).cells.size).toBe(0)
     expect(isFutoshikiSolved(puzzle, flipped)).toBe(false)
+  })
+})
+
+describe("strandedNotes", () => {
+  const notesOf = (entries: Record<string, number[]>) =>
+    Array.from({ length: 3 }, (_, row) => Array.from({ length: 3 }, (_, col) => entries[`${row},${col}`] ?? []))
+
+  it("marks a note the same number placed in its row has ruled out", () => {
+    const values: FutoshikiValues = [
+      [1, undefined, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+    ]
+    expect([...strandedNotes(puzzle, values, notesOf({ "0,2": [1, 2] }))]).toEqual(["0,2,1"])
+  })
+
+  it("marks a note the same number placed in its column has ruled out", () => {
+    const values: FutoshikiValues = [
+      [1, undefined, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+    ]
+    expect([...strandedNotes(puzzle, values, notesOf({ "2,0": [1] }))]).toEqual(["2,0,1"])
+  })
+
+  it("leaves a note alone when the number that ruled it out is taken back off the board", () => {
+    const notes = notesOf({ "0,2": [1] })
+    const placed: FutoshikiValues = [
+      [1, undefined, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+    ]
+    expect(strandedNotes(puzzle, placed, notes).size).toBe(1)
+    const corrected: FutoshikiValues = [
+      [2, undefined, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+    ]
+    expect(strandedNotes(puzzle, corrected, notes).size).toBe(0)
+  })
+
+  it("says nothing about notes under a square that already holds a number", () => {
+    const values: FutoshikiValues = [
+      [1, 2, undefined],
+      [undefined, undefined, undefined],
+      [undefined, undefined, undefined],
+    ]
+    expect(strandedNotes(puzzle, values, notesOf({ "0,1": [1] })).size).toBe(0)
   })
 })

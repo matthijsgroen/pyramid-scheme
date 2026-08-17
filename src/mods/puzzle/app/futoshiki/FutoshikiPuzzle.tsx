@@ -16,7 +16,7 @@ import {
   toggleFutoshikiNote,
   undoFutoshikiMove,
 } from "@/mods/puzzle/game/futoshiki/futoshikiState"
-import { futoshikiConflicts, isFutoshikiSolved } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
+import { futoshikiConflicts, isFutoshikiSolved, strandedNotes } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -44,6 +44,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
 
   const values = useMemo(() => futoshikiValues(state), [state])
   const conflicts = useMemo(() => futoshikiConflicts(puzzle, values), [puzzle, values])
+  const stranded = useMemo(() => strandedNotes(puzzle, values, futoshikiNotes(state)), [puzzle, values, state])
   const hint = useMemo(
     () => buildFutoshikiHint(puzzle, futoshikiValues(state), futoshikiNotes(state), solution, techniqueCap),
     [puzzle, state, solution, techniqueCap]
@@ -84,6 +85,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             puzzle={puzzle}
             cells={state.cells}
             conflicts={conflicts}
+            stranded={stranded}
             selected={selected}
             highlighted={hintVisible ? hint?.cells : undefined}
             litSigns={hintVisible ? hint?.constraints : undefined}

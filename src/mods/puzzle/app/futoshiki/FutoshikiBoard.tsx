@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import type { FC } from "react"
 import type { FutoshikiCell } from "@/mods/puzzle/game/futoshiki/futoshikiState"
-import type { FutoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
+import { futoshikiNoteKey, type FutoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import {
   futoshikiCellKey,
   type FutoshikiCellRef,
@@ -12,6 +12,8 @@ type Props = {
   puzzle: FutoshikiPuzzleData
   cells: FutoshikiCell[][]
   conflicts: FutoshikiConflicts
+  /** Note keys ("row,col,value") a number placed elsewhere in the line has ruled out. */
+  stranded?: ReadonlySet<string>
   selected?: FutoshikiCellRef
   /** Cell keys ("row,col") the current hint talks about. */
   highlighted?: ReadonlySet<string>
@@ -42,7 +44,13 @@ const cellCls = (cell: FutoshikiCell, state: { lit: boolean; selected: boolean; 
     "ring-2 ring-red-500": state.conflicted && !state.selected && !state.lit,
   })
 
-const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
+const NoteGrid: FC<{
+  notes: number[]
+  size: number
+  row: number
+  col: number
+  stranded?: ReadonlySet<string>
+}> = ({ notes, size, row, col, stranded }) => (
   <span
     className="grid size-full place-items-center p-[6%] text-[20cqw] leading-none"
     style={{ gridTemplateColumns: `repeat(${Math.ceil(Math.sqrt(size))}, minmax(0, 1fr))` }}
@@ -52,7 +60,12 @@ const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
         that would otherwise announce an empty square as "1 2 3 4". */}
     {Array.from({ length: size }, (_, index) => index + 1).map(value =>
       notes.includes(value) ? (
-        <span key={value} className="text-sky-300">
+        <span
+          key={value}
+          // Struck rather than deleted: the note is still the player's, and the number that ruled it
+          // out may itself be wrong and get corrected.
+          className={stranded?.has(futoshikiNoteKey(row, col, value)) ? "text-red-400/80 line-through" : "text-sky-300"}
+        >
           {value}
         </span>
       ) : (
@@ -114,7 +127,16 @@ const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts
 
 // Sized off its container and the viewport height, never off a pixel constant: the board has to fit a
 // phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
-export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, highlighted, litSigns, onSelect }) => {
+export const FutoshikiBoard: FC<Props> = ({
+  puzzle,
+  cells,
+  conflicts,
+  stranded,
+  selected,
+  highlighted,
+  litSigns,
+  onSelect,
+}) => {
   const { size } = puzzle
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
@@ -140,7 +162,7 @@ export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, 
                 })}
               >
                 {cell.value === undefined ? (
-                  <NoteGrid notes={cell.notes} size={size} />
+                  <NoteGrid notes={cell.notes} size={size} row={rowIndex} col={colIndex} stranded={stranded} />
                 ) : (
                   <span
                     className={clsx("text-[58cqw] font-semibold", {

@@ -9,7 +9,7 @@ import {
   setFutoshikiValue,
   toggleFutoshikiNote,
 } from "@/mods/puzzle/game/futoshiki/futoshikiState"
-import { futoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
+import { futoshikiConflicts, strandedNotes } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import { buildFutoshikiHint } from "./futoshikiHint"
 import { FutoshikiBoard } from "./FutoshikiBoard"
 
@@ -47,7 +47,11 @@ export const Starter: Story = { args: staticArgs(starter) }
 
 export const Wizard: Story = { args: staticArgs(wizard) }
 
-/** Pencilled options in some squares, a number written into another, and one square picked. */
+/**
+ * Pencilled options in some squares, a number written into another, and one square picked. The 2
+ * written into the middle column strikes the pencilled 2 above it through in red rather than rubbing
+ * it out — correcting that 2 would bring the note back.
+ */
 export const WithNotes: Story = {
   args: staticArgs(starter),
   render: () => {
@@ -56,12 +60,14 @@ export const WithNotes: Story = {
     state = toggleFutoshikiNote(state, 0, 0, 3)
     state = toggleFutoshikiNote(state, 1, 1, 2)
     state = toggleFutoshikiNote(state, 1, 1, 4)
-    state = setFutoshikiValue(state, 2, 2, 2)
+    state = setFutoshikiValue(state, 2, 1, 2)
+    const values = futoshikiValues(state)
     return (
       <FutoshikiBoard
         puzzle={starter}
         cells={state.cells}
-        conflicts={futoshikiConflicts(starter, futoshikiValues(state))}
+        conflicts={futoshikiConflicts(starter, values)}
+        stranded={strandedNotes(starter, values, futoshikiNotes(state))}
         selected={{ row: 1, col: 1 }}
         onSelect={() => {}}
       />

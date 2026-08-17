@@ -1,4 +1,10 @@
-import { constraintEnds, futoshikiCellKey, type FutoshikiPuzzleData, type FutoshikiValues } from "./techniques"
+import {
+  constraintEnds,
+  futoshikiCellKey,
+  type FutoshikiNotes,
+  type FutoshikiPuzzleData,
+  type FutoshikiValues,
+} from "./techniques"
 
 export type FutoshikiConflicts = {
   /** Cell keys showing a number that repeats in its row or column. */
@@ -39,4 +45,34 @@ export const isFutoshikiSolved = (puzzle: FutoshikiPuzzleData, values: Futoshiki
   if (!values.every(row => row.every(value => value !== undefined))) return false
   const conflicts = futoshikiConflicts(puzzle, values)
   return conflicts.cells.size === 0 && conflicts.constraints.size === 0
+}
+
+/** A pencilled number and the square holding it, as `"row,col,value"`. */
+export const futoshikiNoteKey = (row: number, col: number, value: number): string => `${row},${col},${value}`
+
+/**
+ * Pencilled numbers that a number written somewhere else in their row or column has since ruled out.
+ * The board dims and reddens these rather than deleting them: a note is the player's own record of
+ * their reasoning, and a placement — which may itself be wrong and get corrected — has no business
+ * erasing it.
+ */
+export const strandedNotes = (
+  puzzle: FutoshikiPuzzleData,
+  values: FutoshikiValues,
+  notes: FutoshikiNotes
+): ReadonlySet<string> => {
+  const stranded = new Set<string>()
+  for (let row = 0; row < puzzle.size; row++)
+    for (let col = 0; col < puzzle.size; col++) {
+      if (values[row][col] !== undefined) continue
+      const taken = new Set<number>()
+      for (let i = 0; i < puzzle.size; i++) {
+        const inRow = values[row][i]
+        const inCol = values[i][col]
+        if (inRow !== undefined) taken.add(inRow)
+        if (inCol !== undefined) taken.add(inCol)
+      }
+      for (const value of notes[row][col]) if (taken.has(value)) stranded.add(futoshikiNoteKey(row, col, value))
+    }
+  return stranded
 }

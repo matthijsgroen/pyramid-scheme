@@ -170,14 +170,22 @@ That is not decoration; three consequences follow:
   the player wrote down, so notes that rule out the number that belongs in a
   square send the deductions toward a dead end. That outranks the whole ladder,
   the same way a wrong number does (§7).
-- **Writing a number prunes the notes it invalidates**, across its row and
-  column. That is the bookkeeping a player does by hand on paper.
+- **A placement never destroys a note.** Writing a number used to sweep it out of
+  the pencilled options across its row and column — the bookkeeping a player does
+  on paper. But paper is not the right model here: the number written may itself
+  be wrong, and correcting it the ordinary way (writing a different one over the
+  top) left the swept notes gone for good, with undo the only route back and only
+  if you noticed in time. Notes a placement rules out are **struck through in
+  red** instead, and a correction simply re-marks them.
 
-**Undo takes back one move, whole.** Because a single placement can sweep notes
-out of a dozen squares, an undo that only restored the square that was tapped
-would be a trap. Each action snapshots the board it replaced, so one press puts
-everything back. Actions that change nothing — tapping a pre-filled square,
-erasing an empty one — record nothing, so undo never appears to do nothing.
+**Undo takes back one move, whole.** Each action snapshots the board it replaced,
+so one press puts everything back rather than the one square that was tapped.
+Actions that change nothing — tapping a pre-filled square, erasing an empty one —
+record nothing, so undo never appears to do nothing.
+
+Undo is no longer the only way back from a placement, which is the point of the
+rule above: it is there for taking a move back, not for repairing damage the move
+should never have done.
 
 ## 7. Hints
 
