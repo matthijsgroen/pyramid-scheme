@@ -9,6 +9,23 @@ import { allowedDifficulties, themesFor } from "./puzzleLabOptions"
 
 const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 text-sm text-white"
 
+/**
+ * The generator's own decisions about the board on screen, for whichever families record any.
+ *
+ * Read off the generated puzzle rather than declared per family, because these are debug facts and the bench
+ * is the only place they are wanted — a family that starts recording one gets it here for free, and one that
+ * records none says nothing.
+ */
+const benchNotes = (puzzle: unknown): string[] => {
+  if (typeof puzzle !== "object" || puzzle === null) return []
+  const { goals, techniqueCap, size } = puzzle as { goals?: unknown; techniqueCap?: unknown; size?: unknown }
+  return [
+    typeof size === "number" ? `${size}×${size}` : undefined,
+    typeof techniqueCap === "string" ? `cap ${techniqueCap}` : undefined,
+    Array.isArray(goals) ? (goals.length ? `goals ${goals.join(" + ")}` : "goals — (baseline)") : undefined,
+  ].filter((note): note is string => note !== undefined)
+}
+
 // Playtesting bench for puzzle families: pick family + theme + tier, play the real screen without
 // walking a pyramid to a room that happens to serve it. Renders through the same EncounterModal and
 // plugin Component real gameplay uses, so what is judged here is what ships.
@@ -91,6 +108,12 @@ export const PuzzleLab: FC = () => {
           }}
         />
       </div>
+      {/* What the generator decided, for the families that decide anything. Without this the bench can
+          only say a board felt different, not which of its knobs was turned — and for a family that draws
+          per-board goals (lightbeam), telling the spread apart from noise is the whole point of playing it. */}
+      {playing && puzzle !== undefined && benchNotes(puzzle).length > 0 && (
+        <p className="mt-2 text-center text-xs text-red-300">{benchNotes(puzzle).join(" · ")}</p>
+      )}
       {playing && puzzle !== undefined && (
         <EncounterModal>
           <Component
