@@ -11,6 +11,8 @@ export const TECHNIQUES = [
   "signChain",
   "signPair",
   "nakedPair",
+  "hiddenPair",
+  "xWing",
 ] as const
 
 export type TechniqueId = (typeof TECHNIQUES)[number]
@@ -404,6 +406,82 @@ const IMPLEMENTATIONS: Record<TechniqueId, Technique> = {
       return steps
     }),
 
+  // Two numbers with nowhere else in the line to go own the pair of squares that can host them —
+  // the mirror of a naked pair, read from the numbers' side instead of the squares'.
+  hiddenPair: (_puzzle, board) =>
+    linesOf(board.size).flatMap(line => {
+      const placed = new Set(line.cells.map(cell => board.values[cell.row][cell.col]))
+      const open = range(board.size).filter(value => !placed.has(value))
+      const hostsOf = (value: number) => line.cells.filter(cell => board.candidates[cell.row][cell.col].has(value))
+      return open.flatMap((first, i) =>
+        open.slice(i + 1).flatMap(second => {
+          const hosts = hostsOf(first)
+          const others = hostsOf(second)
+          if (hosts.length !== 2 || others.length !== 2) return []
+          if (!hosts.every(cell => others.some(other => sameCell(cell, other)))) return []
+          const decisions = hosts.flatMap(cell =>
+            eliminate(
+              board,
+              cell,
+              range(board.size).filter(value => value !== first && value !== second)
+            )
+          )
+          if (!decisions.length) return []
+          return [
+            {
+              technique: "hiddenPair" as const,
+              variant: line.kind,
+              cells: hosts,
+              params: { first, second },
+              decisions,
+            },
+          ]
+        })
+      )
+    }),
+
+  // A number pinned to the same two lanes in two separate lines: whichever way round it falls, both
+  // lanes are spent, so it leaves the rest of them. The one reason here that spans four squares.
+  xWing: (_puzzle, board) => {
+    const { size } = board
+    const steps: FutoshikiStep[] = []
+    for (const orientation of ["row", "col"] as const) {
+      const at = (line: number, lane: number): FutoshikiCellRef =>
+        orientation === "row" ? { row: line, col: lane } : { row: lane, col: line }
+      const laneOf = (cell: FutoshikiCellRef) => (orientation === "row" ? cell.col : cell.row)
+      for (const value of range(size)) {
+        const hosts = Array.from({ length: size }, (_, line) =>
+          Array.from({ length: size }, (_, lane) => at(line, lane)).filter(cell =>
+            board.candidates[cell.row][cell.col].has(value)
+          )
+        )
+        for (let first = 0; first < size; first++) {
+          if (hosts[first].length !== 2) continue
+          for (let second = first + 1; second < size; second++) {
+            if (hosts[second].length !== 2) continue
+            const lanes = hosts[first].map(laneOf)
+            const others = hosts[second].map(laneOf)
+            if (lanes[0] !== others[0] || lanes[1] !== others[1]) continue
+            const decisions = lanes.flatMap(lane =>
+              Array.from({ length: size }, (_, line) => line)
+                .filter(line => line !== first && line !== second)
+                .flatMap(line => eliminate(board, at(line, lane), [value]))
+            )
+            if (!decisions.length) continue
+            steps.push({
+              technique: "xWing",
+              variant: orientation,
+              cells: [...hosts[first], ...hosts[second]],
+              params: { value },
+              decisions,
+            })
+          }
+        }
+      }
+    }
+    return steps
+  },
+
   // Two cells in a line down to the same two numbers own that pair between them, whichever way round.
   nakedPair: (_puzzle, board) =>
     linesOf(board.size).flatMap(line => {
@@ -478,9 +556,17 @@ export const applyFutoshikiTechniques = (
   const allowed = TECHNIQUES.slice(0, techniqueRank(cap) + 1)
   const steps: FutoshikiStep[] = []
   for (let pass = 0; pass < MAX_PASSES; pass++) {
-    const harvest = allowed
-      .map(technique => IMPLEMENTATIONS[technique](puzzle, board, chains))
-      .find(found => found.length)
+    // Short-circuit deliberately: only the cheapest technique that fires is spent, and the dear ones
+    // at the end of the ladder are the whole reason. Mapping the ladder and then taking the first
+    // non-empty result ran every technique on every pass, x-wing included.
+    let harvest: FutoshikiStep[] | undefined
+    for (const technique of allowed) {
+      const found = IMPLEMENTATIONS[technique](puzzle, board, chains)
+      if (found.length) {
+        harvest = found
+        break
+      }
+    }
     if (!harvest) break
     for (const step of harvest) {
       const live = step.decisions.filter(decision => stillChanges(board, decision))
