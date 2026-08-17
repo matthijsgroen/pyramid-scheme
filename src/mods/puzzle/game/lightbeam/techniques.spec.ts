@@ -55,6 +55,7 @@ describe("the ladder", () => {
       "wiringFires",
       "deadEnd",
       "feedsExit",
+      "wiringDead",
       "neverReached",
       "onlySurvivor",
     ])

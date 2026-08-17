@@ -28,7 +28,7 @@ export const GOAL_DIALS: Record<LightbeamGoal, (dials: LightbeamDials) => Lightb
    */
   longChain: dials => ({ ...dials, turns: dials.turns + 2, setMirrors: dials.setMirrors + 1 }),
 
-  /** A route buried in pieces that do not matter. The skill is telling which is which (technique T5). */
+  /** A route buried in pieces that do not matter. The skill is telling which is which (technique T6). */
   sortTheWheat: dials => ({ ...dials, decoys: dials.decoys + 2 }),
 
   /**

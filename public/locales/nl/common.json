@@ -381,6 +381,7 @@
         "edge": "Werk terug vanaf het schrijn. Zo gezet zou het licht van buiten het bord moeten komen om er te kunnen zijn.",
         "loop": "Werk terug vanaf het schrijn. Zo gezet gaat het licht dat er zou moeten komen alleen eeuwig rond."
       },
+      "wiringDead": "Wat je ook doet, het licht kan die aansluiting nooit bereiken — dus de steen waaraan hij vastzit blijft precies waar hij is, en je kunt het pad er zo langs lezen.",
       "neverReached": "Laat deze staan. Het licht kan er niet bij komen, hoe de rest ook staat, dus wat je ermee doet maakt niets uit.",
       "onlySurvivor": "Probeer elke stand van deze om de beurt: op één na laten ze het schrijn allemaal donker. Die ene is het antwoord."
     }

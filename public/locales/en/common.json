@@ -388,6 +388,7 @@
         "edge": "Work back from the shrine. Set this way, the light would have to come from outside the board to reach it.",
         "loop": "Work back from the shrine. Set this way, the light that would have to reach it only circles for ever instead."
       },
+      "wiringDead": "Whatever you do, the light can never get to that socket — so the stone it is wired to stays exactly where it is, and you can read the path straight past it.",
       "neverReached": "Leave this one alone. The light cannot reach it however the rest is set, so nothing you do to it matters.",
       "onlySurvivor": "Try every setting of this one in turn and all but one leave the shrine dark. That one is the answer."
     }

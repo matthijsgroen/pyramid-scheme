@@ -14,6 +14,7 @@ import {
   DIRECTIONS,
   cellKey,
   eachConfig,
+  firedWirings,
   gridResolver,
   pieceOptions,
   insideGrid,
@@ -38,6 +39,7 @@ export const TECHNIQUES = [
   "wiringFires",
   "deadEnd",
   "feedsExit",
+  "wiringDead",
   "neverReached",
   "onlySurvivor",
 ] as const
@@ -51,6 +53,8 @@ export type LightbeamDecision =
   | { kind: "free"; piece: number }
   /** A wiring proven to fire, because the beam provably crosses every socket it names. */
   | { kind: "fires"; wiring: number }
+  /** A wiring proven never to fire, because no answer takes the light across its sockets. */
+  | { kind: "dead"; wiring: number }
 
 export type LightbeamStep = {
   technique: TechniqueId
@@ -78,6 +82,8 @@ export type LightbeamBoard = {
   free: Set<number>
   /** Wirings proven to fire. Monotone, like `forced`, so it folds into the same fixpoint loop. */
   fired: Set<number>
+  /** Wirings proven never to fire, so what they would have moved is known to be resting. Also monotone. */
+  dead: Set<number>
 }
 
 const forcedKey = (segment: BeamSegment): string => `${segmentKey(segment.at, segment.enter)}>${segment.exit ?? "-"}`
@@ -90,6 +96,7 @@ export const createLightbeamBoard = (puzzle: LightbeamPuzzleData): LightbeamBoar
   forced: new Map(),
   free: new Set(),
   fired: new Set(),
+  dead: new Set(),
 })
 
 const sameBlocker = (a: Blocker, b: Blocker): boolean =>
@@ -120,7 +127,9 @@ const knownGrid = (board: LightbeamBoard, pin?: { piece: number; state: number }
   const mightMove = new Map<number, number[]>()
   ;(puzzle.wirings ?? []).forEach((wiring, index) => {
     if (board.fired.has(index)) pinned.set(wiring.piece, wiring.to)
-    else mightMove.set(wiring.piece, [...(mightMove.get(wiring.piece) ?? []), wiring.to])
+    // A wiring proven dead is one the piece can stop bracing for: it stays where it rests, which is the
+    // single candidate it already has, so its cell goes from `unknown` to plain stone the run walks past.
+    else if (!board.dead.has(index)) mightMove.set(wiring.piece, [...(mightMove.get(wiring.piece) ?? []), wiring.to])
   })
 
   const certain = new Map<string, Blocker>()
@@ -153,8 +162,43 @@ const knownGrid = (board: LightbeamBoard, pin?: { piece: number; state: number }
   return grid
 }
 
-const knownForward = (board: LightbeamBoard, pin?: { piece: number; state: number }): BeamWalk =>
-  walkForward(board.puzzle.size, board.puzzle.sun.at, board.puzzle.sun.facing, gridResolver(knownGrid(board, pin)))
+/**
+ * The forward walk as the deduction knows it — and it fires sockets as it goes, the way a real beam does.
+ *
+ * Without this the walk reads one static grid, so a piece a socket *might* move stays `unknown` at both its
+ * cells and the walk simply stalls on it. That is sound but blind, and it is blind to the only thing that
+ * makes a socket a decision rather than a chore: a socket the light should be kept AWAY from. Its stone
+ * lands on the route, so the walk has to be able to arrive there and die, and it can only do that if
+ * crossing the socket moves the stone mid-walk.
+ *
+ * Sound under a hypothetical pin, too. `deadEnd` asks "suppose this piece is set that way" — and under that
+ * supposition the beam does cross the socket, so the wiring does fire, so the death it walks into is real.
+ */
+const knownForward = (board: LightbeamBoard, pin?: { piece: number; state: number }): BeamWalk => {
+  const { puzzle } = board
+  const nodes = puzzle.nodes ?? []
+  const wirings = puzzle.wirings ?? []
+  if (!nodes.length || !wirings.length)
+    return walkForward(puzzle.size, puzzle.sun.at, puzzle.sun.facing, gridResolver(knownGrid(board, pin)))
+
+  const crossed = new Set<number>()
+  const fired = new Set(board.fired)
+  let grid = knownGrid(board, pin)
+  const cross = (at: CellRef): boolean => {
+    const here = nodes.findIndex((node, index) => !crossed.has(index) && cellKey(node.at) === cellKey(at))
+    if (here === -1) return false
+    crossed.add(here)
+    let moved = false
+    wirings.forEach((wiring, index) => {
+      if (fired.has(index) || !wiring.from.every(node => crossed.has(node))) return
+      fired.add(index)
+      moved = true
+    })
+    if (moved) grid = knownGrid({ ...board, fired: new Set(fired) }, pin)
+    return moved
+  }
+  return walkForward(puzzle.size, puzzle.sun.at, puzzle.sun.facing, at => grid[at.row][at.col], cross)
+}
 
 const knownBackward = (board: LightbeamBoard, enter: Direction, pin?: { piece: number; state: number }): BeamWalk =>
   walkBackward(board.puzzle.size, board.puzzle.shrine, enter, gridResolver(knownGrid(board, pin)))
@@ -294,6 +338,8 @@ const feedsExit = (board: LightbeamBoard): LightbeamStep[] => {
 const MAX_ENUMERATION = 200_000
 
 type Survey = {
+  /** Wiring indices that fire in at least one winning configuration. */
+  firing: Set<number>
   /** Per piece, the states that appear in some winning configuration. */
   states: Set<number>[]
   /** Per piece, whether any state of it could stand in a winning beam's way. */
@@ -306,6 +352,7 @@ const surveyWinners = (board: LightbeamBoard): Survey | undefined => {
   const options = board.candidates.map(set => [...set])
   const states = puzzle.movable.map(() => new Set<number>())
   const blocking = puzzle.movable.map(() => false)
+  const firing = new Set<number>()
   let winners = 0
   const ran = eachConfig(
     options,
@@ -313,6 +360,7 @@ const surveyWinners = (board: LightbeamBoard): Survey | undefined => {
       const walk = traceBeam(puzzle, config)
       if (walk.end !== "lit") return
       winners++
+      for (const wiring of firedWirings(puzzle, config)) firing.add(wiring)
       const onPath = new Set(walk.path.map(segment => cellKey(segment.at)))
       puzzle.movable.forEach((piece, index) => {
         states[index].add(config[index])
@@ -324,7 +372,33 @@ const surveyWinners = (board: LightbeamBoard): Survey | undefined => {
     },
     MAX_ENUMERATION
   )
-  return ran && winners > 0 ? { states, blocking, winners } : undefined
+  return ran && winners > 0 ? { states, blocking, firing, winners } : undefined
+}
+
+/**
+ * The socket to steer clear of.
+ *
+ * A wiring that fires in no answer at all is a wiring the light must be kept away from — its stone belongs
+ * where it rests, and the run can be walked straight past it. Without this rung a board carrying such a
+ * socket can never settle: the stone it might drop sits `unknown` across the route for ever, and the entry
+ * run stalls on a square nothing will ever occupy.
+ *
+ * The reason is the same shape as `neverReached`, which is why it sits beside it: _"whatever you do, the
+ * light never gets to that socket — so what it would have moved stays put."_ The difference is what it is
+ * about. `neverReached` frees a piece the player may stop worrying about; this one settles a piece the
+ * player never had, and tells them the socket is a place to avoid rather than a place to reach.
+ */
+const wiringDead = (board: LightbeamBoard): LightbeamStep[] => {
+  const wirings = board.puzzle.wirings ?? []
+  if (!wirings.length) return []
+  const survey = surveyWinners(board)
+  if (!survey) return []
+  const steps: LightbeamStep[] = []
+  wirings.forEach((wiring, index) => {
+    if (board.fired.has(index) || board.dead.has(index) || survey.firing.has(index)) return
+    steps.push({ technique: "wiringDead", piece: wiring.piece, beam: [], decisions: [{ kind: "dead", wiring: index }] })
+  })
+  return steps
 }
 
 /**
@@ -358,6 +432,7 @@ const IMPLEMENTATIONS: Record<TechniqueId, (board: LightbeamBoard) => LightbeamS
   entryRun,
   exitRun,
   wiringFires,
+  wiringDead,
   deadEnd,
   feedsExit,
   neverReached,
@@ -381,6 +456,10 @@ const applyDecision = (board: LightbeamBoard, decision: LightbeamDecision) => {
   }
   if (decision.kind === "fires") {
     board.fired.add(decision.wiring)
+    return
+  }
+  if (decision.kind === "dead") {
+    board.dead.add(decision.wiring)
     return
   }
   // Never down to nothing: a piece with no state left is a broken board, and the honest outcome is a
@@ -421,6 +500,7 @@ const signature = (board: LightbeamBoard): string =>
     board.shrineEntry ?? "-",
     board.free.size,
     board.fired.size,
+    board.dead.size,
   ].join("/")
 
 export type LightbeamSolve = {

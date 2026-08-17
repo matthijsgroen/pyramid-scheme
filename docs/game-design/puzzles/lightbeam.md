@@ -88,10 +88,11 @@ There is a real ladder here, and generation is gated on it:
 | **T2** | Wiring fires      | The forced runs cross every socket a wiring names                                             | That door is open           |
 | **T3** | Dead end          | One state of a piece sends the beam to a wall or edge with no unsettled piece left on the way | That state is impossible    |
 | **T4** | Only one feeds it | Exactly one piece-state can send the beam along the forced exit run                           | That state is forced        |
-| **T5** | Never reached     | No configuration puts the beam on this piece at all                                           | Its state is free — a decoy |
-| **T6** | Only one survives | Every arrangement of the remaining pieces fails, save with this one in this state             | That state is forced        |
+| **T5** | Wiring dead       | No answer at all takes the light across a wiring's sockets                                    | Its stone stays resting     |
+| **T6** | Never reached     | No configuration puts the beam on this piece at all                                           | Its state is free — a decoy |
+| **T7** | Only one survives | Every arrangement of the remaining pieces fails, save with this one in this state             | That state is forced        |
 
-T0/T1/T2 are facts; T3–T6 are eliminations; propagation between them is the fixpoint
+T0/T1/T2 are facts; T3–T7 are eliminations; propagation between them is the fixpoint
 loop, as in the other families.
 
 **T2 is the only ordering fact in the catalogue.** Every other rung in every family concludes either
@@ -101,17 +102,17 @@ elimination, which is why it sits with T0 and T1 rather than at the top. It read
 set, needs no enumeration, and its reason is local: put a finger on the socket the run crosses and follow
 the wire. See §12.1.
 
-### 4.1 Why T6 is ranked last
+### 4.1 Why T7 is ranked last
 
-T6 subsumes T3 and T4 — a solver could be T0/T1/T6 alone. It is ranked last for
+T7 subsumes T3 and T4 — a solver could be T0/T1/T7 alone. It is ranked last for
 the same reason Sumplete ranks its candidate-intersection last: its reason is "I
 tried the alternatives and they all fail", which teaches nothing. T3's reason is a
 sentence a child repeats back and can check by eye: _"face it that way and the
 light dies in the wall, with no mirror left to save it."_
 
-### 4.2 T5 is the point, not a footnote
+### 4.2 T6 is the point, not a footnote
 
-The catalogue names "elimination of irrelevant pieces" as this family's skill. T5
+The catalogue names "elimination of irrelevant pieces" as this family's skill. T6
 _is_ that skill, and it is the only technique in any family whose conclusion is
 "this piece does not matter". It makes decoys a first-class part of the puzzle
 rather than clutter, and it gives the hint engine something genuinely useful to
@@ -156,7 +157,7 @@ decoys has many winning configurations and only one winning _route_.
 This doc used to forbid the route from crossing itself, on the grounds that a crossing "puts two
 reasons on one square, and every technique points at a square". **That was wrong, and nothing had
 to change to make it wrong.** Nothing in the family has ever been keyed by square: `forced` is keyed
-by cell *and* direction, the walk remembers `(cell, direction)` pairs, the uniqueness gate signs
+by cell _and_ direction, the walk remembers `(cell, direction)` pairs, the uniqueness gate signs
 paths by segment, and the board draws one polyline per segment. A crossed square was already two
 things everywhere it mattered. Only the route builder disagreed, and the drawing needed no change
 at all — it draws a cross without being asked.
@@ -293,12 +294,12 @@ wizard to six.
 
 Measured over 40 seeds a tier, before → after:
 
-| Measure                          | Before                | After                 |
-| -------------------------------- | --------------------- | --------------------- |
-| Configurations                   | 8/15/42/70/288        | 8/15/68/170/778       |
-| Pieces on the route              | 3.0/3.7/4.0/4.0/5.0   | 3.0/3.7/3.7/4.5/5.7   |
-| Falls to getting-warmer taps      | 73/8/10/3/3%          | 85/0/0/0/0%           |
-| Solved by tapping everything once | 100% everywhere       | never                 |
+| Measure                           | Before              | After               |
+| --------------------------------- | ------------------- | ------------------- |
+| Configurations                    | 8/15/42/70/288      | 8/15/68/170/778     |
+| Pieces on the route               | 3.0/3.7/4.0/4.0/5.0 | 3.0/3.7/3.7/4.5/5.7 |
+| Falls to getting-warmer taps      | 73/8/10/3/3%        | 85/0/0/0/0%         |
+| Solved by tapping everything once | 100% everywhere     | never               |
 
 Wizard's worst generation went from 50ms to 278ms, which is what the longer route and the extra gates
 cost, and the attempt budget had to rise with it.
@@ -495,7 +496,52 @@ carry-forward (`PUZZLE_FAMILIES.md` P3).
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
 
-### 12.1 Switch nodes — built
+### 12.1 Traps — the missing half, and why the obvious build does not work
+
+**As generated today, sockets are a checklist rather than a choice.** Every socket is drawn from route
+cells strictly before the door it opens, so the winning beam crosses all of them on its way past. The
+player never decides anything about a socket: the door opens as a side effect of solving the route. That
+is a reason without a decision, and a reason without a decision is bookkeeping.
+
+The other half is a **trap** — a socket the light must be kept _away_ from, whose stone lands in front of
+the beam rather than out of its way. Put one on a board that also has a door and sockets stop being a
+list to tick off: some have to be reached, some have to be dodged, and only the reasoning tells them
+apart. Difficulty in this family is not how many taps a board takes, it is how much thinking each tap
+needs, and the classification is the thinking.
+
+Two things are built for it and verified:
+
+- **The known walk fires sockets mid-flight.** It used to read one static grid, so a piece a socket
+  _might_ move stayed `unknown` at both its cells and the walk simply stalled. Sound but blind — and blind
+  to a trap, whose stone has to be able to land in front of the beam and kill it. Sound under a
+  hypothetical pin too: `deadEnd` asks "suppose it is set that way", and under that supposition the beam
+  really does cross the socket.
+- **`wiringDead`**, the rung that proves a wiring can never fire, so its stone is known to be resting and
+  the run walks straight past. Without it a board carrying a trap can never settle, because the stone it
+  might drop sits `unknown` across the route for ever.
+
+**What does not work is the obvious placement, and it was worth measuring rather than assuming.** Putting
+the socket on a wrong setting's own ray — the way shadows are placed — produced **23 traps across 120
+boards, every single one of them decoration**: remove it and the board is still a unique, deducible
+puzzle. The reason is plain in hindsight. The wrong setting was _already_ wrong, killed by the frame or
+by `blockWrongSettings`, so the trap adds nothing to why. It is the unspendable-wall problem (§5.1)
+wearing a new hat, and it was reverted rather than shipped.
+
+**The placement that would work** follows from what "load-bearing" has to mean here: the trap must be the
+_only_ reason a wrong setting fails, so that setting has to otherwise **reach the shrine**. That is a
+would-be second route, which generation currently rejects outright. So the step is not "decorate a wrong
+ray" but:
+
+1. Build the route, and deliberately leave one piece's wrong setting un-walled.
+2. Trace it. Keep going only if that wrong setting reaches the shrine — a genuine second route.
+3. Put the socket on that second route and the stone further along it.
+
+Uniqueness is then restored _by the trap_, which makes it load-bearing by construction, and the board is
+one where the wrong answer looks right until you notice what it runs over. Assert the load-bearing
+property directly, the way §5.1's walls are asserted: take the trap out and the board must stop being a
+puzzle.
+
+### 12.2 Switch nodes — built
 
 A **node** is a fixed, transparent cell wired to one movable piece. Light crossing it
 lights the wire, and the piece it drives moves. The wire is drawn.
@@ -664,18 +710,18 @@ The three worries above, answered:
 - **The drawing was the risk, and the prototype above is what retired it.**
 
 Ordering falls out of generation rather than being checked for: sockets are drawn from route cells
-strictly *before* the earliest door, so an effect always lands ahead of the light and the drawn beam is
+strictly _before_ the earliest door, so an effect always lands ahead of the light and the drawn beam is
 never a picture of something that has stopped being true.
 
 Where it appears is `orderOfOperations`, a goal from expert up (§7), plus a door on every wizard board
 whose wiring names two sockets. Measured over 40 seeds a tier, against the same boards without any of it:
 
-| Measure                    | Without doors       | With           |
-| -------------------------- | ------------------- | -------------- |
-| Configurations at wizard   | 778                 | **1618**       |
-| Pieces on the route        | 3.0/3.7/3.7/4.5/5.7 | 3.0/3.7/3.9/4.8/**6.9** |
-| Boards using the exhaustive rung at wizard | 20/40 | **29/40** |
-| Boards where T2 fires      | —                   | 15/40 expert, 15/40 master, **40/40 wizard** |
+| Measure                                    | Without doors       | With                                         |
+| ------------------------------------------ | ------------------- | -------------------------------------------- |
+| Configurations at wizard                   | 778                 | **1618**                                     |
+| Pieces on the route                        | 3.0/3.7/3.7/4.5/5.7 | 3.0/3.7/3.9/4.8/**6.9**                      |
+| Boards using the exhaustive rung at wizard | 20/40               | **29/40**                                    |
+| Boards where T2 fires                      | —                   | 15/40 expert, 15/40 master, **40/40 wizard** |
 
 Wizard's configuration space is 5.6× what it was before this iteration began, and none of that came from
 a wider grid.
@@ -684,7 +730,7 @@ a wider grid.
 
 The harmful node below is designed and not built. Nothing about it is hard — the semantics are unchanged,
 since effects land ahead of the light either way — but it wants its own hint voice and its own fairness
-question (a trap the player can walk into needs the ladder to be able to *warn*, not only to explain
+question (a trap the player can walk into needs the ladder to be able to _warn_, not only to explain
 afterwards), and neither is answered by anything above.
 
 #### A node can also be the thing to avoid
