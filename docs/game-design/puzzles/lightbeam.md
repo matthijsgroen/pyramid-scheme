@@ -380,4 +380,66 @@ Then "this does not matter" gets three depths, the third new to the catalogue:
   the reverse of the order the rest of this family was built in.
 
 A node is fixed scenery with no state and nothing to tap, so the control scheme stays at
-exactly one gesture. Build it only after the base family has actually been played.
+exactly one gesture.
+
+#### A node can also be the thing to avoid
+
+The effect does not have to help. A node wired to **close** a way — dropping stone in front
+of the shrine — turns the mechanic inside out at no cost: the semantics are unchanged
+(effects land ahead of the light either way, so the drawn beam stays honest, and the light
+simply stops at the new stone), but the reasoning is new. The ladder has no form of
+_avoidance_ today, and this one is local with one hop of indirection: _"that setting sends
+the light through the node, which drops stone in front of the shrine, so it cannot be that
+setting."_
+
+It composes nastily with the shadow pieces (§6.1): a wrong branch that trips a harmful node
+is a trap twice over.
+
+That is the real argument for the node — not one extra trick but a **machine you have to
+understand before you can drive it**. Which nodes to light, and which to steer clear of.
+
+### 11.2 Puzzle goals — pick two dials and turn them hard
+
+Every tier currently turns every dial a little. Read the wizard row of `LIGHTBEAM_CONFIG`:
+five turns, one set mirror, two sliding mirrors, one sliding wall, one decoy, three shadows.
+Every wizard board is the **average** wizard board.
+
+A **goal pool** fixes that: generation draws one or two goals per board and turns those
+dials hard, leaving the rest slack. Boards then have character instead of mean settings —
+and with 158 lightbeam nodes in the world, that is likely a bigger variety win than any new
+piece type. It also adds the axis the family is missing: difficulty (cap, size) is one
+thing, **what kind of problem this board is** is another, and they are currently welded
+together.
+
+The pool, and what each is built from:
+
+| Goal                    | Built from                    | Tests                      | Needs   |
+| ----------------------- | ----------------------------- | -------------------------- | ------- |
+| **Long chain**          | turns high, decoys 0          | route-tracing              | nothing |
+| **Sort the wheat**      | decoys high, turns low        | which pieces matter (T4)   | nothing |
+| **Clear the way**       | sliding walls on the route    | does the light get through | nothing |
+| **Blind alleys**        | shadows high                  | the exhaustive rung (T5)   | nothing |
+| **Order of operations** | a node whose door blocks late | ordering                   | §11.1   |
+| **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §11.1   |
+
+**Four of the six need no new mechanic** — they are a re-scheduling of knobs that already
+exist. That version is cheap, and it is worth building **before** the family is playtested
+rather than after: judging the current build means judging one recipe five times, whereas
+with goals you would be judging the spread, which is the thing actually worth knowing.
+
+Two things it has to get right:
+
+- **A fallback ladder.** If the chosen pair will not generate inside the attempt budget,
+  drop to one goal, then to none — and `log` which, because a silent fallback that always
+  fires makes the whole pool decorative. This is the same discipline as "no silent caps".
+- **The gates stay untouched.** A goal shapes what gets _placed_; it never shapes what gets
+  _accepted_. Path uniqueness and the ladder still decide, so no goal can smuggle through a
+  board that needs a guess.
+
+It softens the tier table in §6: piece and configuration counts become per-goal ranges
+rather than the flat means measured there, and `generateLightbeam.spec.ts`'s monotonicity
+assertion would have to hold in aggregate over a tier rather than board by board.
+
+Worth noting for later: nothing about this is specific to lightbeam — Futoshiki could draw
+technique-flavour goals the same way. Build it here first and only generalise if a second
+family actually wants it; a shared abstraction on one caller would be the premature kind.
