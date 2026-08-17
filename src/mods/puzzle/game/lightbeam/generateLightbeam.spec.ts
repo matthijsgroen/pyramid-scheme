@@ -1,17 +1,26 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
 import { cellKey, eachConfig, isLit, pieceCells, pieceStateCount, stepCell, traceBeam } from "./beam"
-import { generateLightbeam } from "./generateLightbeam"
+import { generateLightbeam, resistsGreedyPlay } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
 
 describe("generateLightbeam", () => {
   it("is deterministic", () => {
-    expect(generateLightbeam(5, 42, { turns: 2 })).toEqual(generateLightbeam(5, 42, { turns: 2 }))
+    expect(generateLightbeam(7, 42, { turns: 3 })).toEqual(generateLightbeam(7, 42, { turns: 3 }))
   })
 
   it("different seeds produce different boards", () => {
-    expect(generateLightbeam(5, 1, { turns: 2 })).not.toEqual(generateLightbeam(5, 2, { turns: 2 }))
+    expect(generateLightbeam(7, 1, { turns: 3 })).not.toEqual(generateLightbeam(7, 2, { turns: 3 }))
+  })
+
+  // Three movable pieces is the family's floor, and it falls out of the opening rules rather than being
+  // chosen. On a two-piece board with two settings each, every opening is either already lit, one tap from
+  // lit, or the same one tap on both — and that last is the exploit `openingIsHonest` exists to refuse. A
+  // board too small to avoid it is a board that should not be built, so generation says so instead of
+  // shipping one.
+  it("refuses a two-piece board, which cannot open honestly", () => {
+    expect(() => generateLightbeam(7, 1, { turns: 2 })).toThrow(/no logically solvable board/)
   })
 })
 
@@ -42,6 +51,55 @@ describe.each(difficulties)("at %s", difficulty => {
           const oneTap = board.initial.map((held, index) => (index === piece ? state : held))
           expect(isLit(board, oneTap)).toBe(false)
         }
+  })
+
+  // The one that got away, and the reason the rest of this block exists.
+  //
+  // Boards used to open on `solution + 1` for every piece. Every piece had two settings, so "wrong" meant
+  // "flipped" — and tapping every piece once solved every board in the game, all five tiers, every seed.
+  // Nothing above noticed: the answer did light the shrine, the board did open dark, no single tap did
+  // finish it, and the ladder did settle it. All true, and all beside the point.
+  it("is not solved by tapping every piece once", () => {
+    for (const board of boards) {
+      const tapped = board.initial.map((state, index) => (state + 1) % pieceStateCount(board.movable[index]))
+      expect(isLit(board, tapped)).toBe(false)
+    }
+  })
+
+  // The general form of it. A bigger offset is not a fix — it only moves the exploit to "tap twice" — so
+  // what has to hold is that the pieces are not all the same distance from their answers.
+  it("is not solved by any uniform number of taps", () => {
+    for (const board of boards) {
+      const longest = Math.max(...board.movable.map(pieceStateCount))
+      for (let taps = 1; taps < longest; taps++) {
+        const tapped = board.initial.map((state, index) => (state + taps) % pieceStateCount(board.movable[index]))
+        expect(isLit(board, tapped)).toBe(false)
+      }
+    }
+  })
+
+  // A stop the piece cannot slide to is a stop that has to be drawn as something else. Ghost pieces on a
+  // broken line read as teleporting, not sliding, so a track is contiguous and collinear or it is not a
+  // track — this is the drawing's half of the multi-stop bargain.
+  it("gives every sliding piece a straight, unbroken track", () => {
+    for (const board of boards)
+      for (const piece of board.movable) {
+        if (piece.kind === "turnMirror") continue
+        const rows = new Set(piece.stops.map(stop => stop.row))
+        const cols = new Set(piece.stops.map(stop => stop.col))
+        expect(Math.min(rows.size, cols.size)).toBe(1)
+        const along = rows.size === 1 ? piece.stops.map(s => s.col) : piece.stops.map(s => s.row)
+        expect(Math.max(...along) - Math.min(...along)).toBe(piece.stops.length - 1)
+      }
+  })
+
+  // What the ladder is *for*. A beam board's natural solving mode is trial — tap whichever piece leaves the
+  // light nearer the shrine, repeat — and a board that yields to it has a decorative deduction however deep
+  // the rungs it was accepted under. Starter is exempt on purpose: a three-piece board is meant to give way
+  // to fiddling, and that is what makes a gentle first board rather than an empty one.
+  it("does not give way to getting-warmer taps, from junior up", () => {
+    if (!LIGHTBEAM_CONFIG[difficulty].fiddleProof) return
+    for (const board of boards) expect(resistsGreedyPlay(board, board.initial)).toBe(true)
   })
 
   it("never needs a guess — every board settles inside its own technique cap", () => {
