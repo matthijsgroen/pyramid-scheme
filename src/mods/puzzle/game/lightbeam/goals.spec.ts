@@ -101,14 +101,19 @@ describe("goals on generated boards", () => {
 })
 
 describe("a goal changes the board it names", () => {
-  const build = (goals: LightbeamGoal[]) =>
-    generateLightbeam(6, 5, {
+  const build = (goals: LightbeamGoal[]) => {
+    const puzzle = generateLightbeam(8, 5, {
       turns: 3,
       slidingMirrors: 1,
       techniqueCap: "onlySurvivor",
       goals,
       goalCount: goals.length,
     })
+    // Guards the tests below against a silent fallback: comparing a board that dropped its goal with one
+    // that never had it would pass for the wrong reason.
+    expect(puzzle.goals).toEqual(goals)
+    return puzzle
+  }
 
   it("sortTheWheat leaves pieces the light can never reach", () => {
     const bare = solveLightbeamByTechniques(build([]), "onlySurvivor").board.free.size
@@ -123,6 +128,10 @@ describe("a goal changes the board it names", () => {
   })
 
   it("longChain lengthens the beam", () => {
-    expect(build(["longChain"]).fixed.filter(piece => piece.kind === "mirror").length).toBeGreaterThan(0)
+    const bends = (goals: LightbeamGoal[]) => {
+      const board = build(goals)
+      return board.fixed.filter(piece => piece.kind === "mirror").length + board.movable.length
+    }
+    expect(bends(["longChain"])).toBeGreaterThan(bends([]))
   })
 })

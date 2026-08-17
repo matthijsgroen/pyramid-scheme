@@ -30,19 +30,28 @@ import type { LightbeamOptions } from "./generateLightbeam"
 // - `blindAlleys` piles on shadows, which need at least the shrine-side elimination to unpick — so junior
 //   and up.
 //
-// 7 wide is the ceiling, matching the other grid families: inside a 360px encounter modal there are no
-// gutters to reclaim here, so a cell is simply the board over N — 45px at seven columns, and an eighth
-// would drop under a thumb's width (docs/instructions/puzzle-screens.md §1).
+// **Grid size is capacity, not difficulty.** It is set by what has to fit — the route's length, the pieces,
+// and the empty shoulders that keep two tappable pieces apart — and it barely moves how hard a board is,
+// because the configuration space is driven by piece count and the reasoning by the cap. Difficulty is the
+// cap and the goals; size is the canvas they need. An earlier version of this table listed grid size as a
+// difficulty knob, which was wrong.
+//
+// That is also why this family goes past the 7-wide ceiling the other grid families stop at. Theirs is a
+// real ceiling because every cell is tappable, so cell size IS tap-target size. Here only the movable
+// pieces are tappable, they are never allowed to touch (generateLightbeam's `piecesAreSpaced`), and a piece
+// therefore owns the empty shoulders around it — so its hit area can be a thumb wide while the cell it
+// stands in is smaller. `LightbeamBoard` spends that, and the sizes below run 45 / 45 / 40 / 40 / 35px a
+// cell inside a 360px modal (docs/instructions/puzzle-screens.md §1, and §9 of the family doc).
 export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOptions> = {
   starter: {
-    size: 5,
+    size: 7,
     turns: 2,
     techniqueCap: "deadEnd",
     goals: ["longChain", "clearTheWay"],
     goalCount: 1,
   },
   junior: {
-    size: 5,
+    size: 7,
     turns: 3,
     slidingMirrors: 1,
     techniqueCap: "feedsExit",
@@ -50,7 +59,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     goalCount: 1,
   },
   expert: {
-    size: 6,
+    size: 8,
     turns: 3,
     slidingMirrors: 1,
     techniqueCap: "neverReached",
@@ -58,7 +67,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     goalCount: 2,
   },
   master: {
-    size: 6,
+    size: 8,
     turns: 3,
     slidingMirrors: 1,
     shadows: 1,
@@ -67,7 +76,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     goalCount: 2,
   },
   wizard: {
-    size: 7,
+    size: 9,
     turns: 5,
     setMirrors: 1,
     slidingMirrors: 1,

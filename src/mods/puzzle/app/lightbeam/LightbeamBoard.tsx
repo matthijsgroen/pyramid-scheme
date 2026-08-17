@@ -221,10 +221,16 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[]; li
 const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
   clsx("relative flex aspect-square items-center justify-center rounded bg-stone-800 p-[8%] transition-colors", {
     // Movable pieces have to read as movable at a glance, and a vacant stop has to read as somewhere a
-    // piece can go rather than as an empty square (design doc §8).
+    // piece can go rather than as an empty square (design doc §9).
     "ring-1 ring-amber-400/50": state.movable && view.kind !== "stop" && !state.lit,
     "outline-2 -outline-offset-2 outline-stone-500/70 outline-dashed": view.kind === "stop" && !state.lit,
     "ring-2 ring-sky-300": state.lit,
+    // The tap target is bigger than the square it sits in. That is what lets this family's grid go past the
+    // 7-wide ceiling the other grid families stop at: there, every cell is tappable, so cell size IS target
+    // size. Here only the pieces are, and generation never lets two of them touch, so a piece owns the empty
+    // shoulders around it and can reach out into them. 5px each way puts a 35px cell — the 9-wide wizard
+    // board on a 360px screen — over the 44px bar without any two targets meeting.
+    "after:absolute after:inset-[-5px] after:content-['']": state.movable,
   })
 
 export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, onCycle }) => {

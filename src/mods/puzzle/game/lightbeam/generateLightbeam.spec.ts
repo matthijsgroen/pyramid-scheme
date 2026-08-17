@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import { cellKey, eachConfig, isLit, pieceCells, pieceStateCount, traceBeam } from "./beam"
+import { cellKey, eachConfig, isLit, pieceCells, pieceStateCount, stepCell, traceBeam } from "./beam"
 import { generateLightbeam } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
@@ -19,8 +19,12 @@ describe.each(difficulties)("at %s", difficulty => {
   const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
   const boards = Array.from({ length: 10 }, (_, seed) => generateLightbeam(size, seed + 1, options))
 
-  it("fits the screen — 7 wide is the ceiling for every family on this grid", () => {
-    expect(size).toBeLessThanOrEqual(7)
+  // The other grid families stop at 7 wide because every cell there is tappable, so cell size IS tap-target
+  // size. This family's ceiling is set by legibility instead: only the pieces are tappable and they never
+  // touch, so a piece reaches into its empty shoulders for a 44px target (asserted at the foot of this file)
+  // and the cell only has to stay big enough to read a mirror's diagonal in.
+  it("stays inside the width a phone can draw legibly", () => {
+    expect(size).toBeLessThanOrEqual(9)
   })
 
   it("its answer lights the shrine", () => {
@@ -173,5 +177,49 @@ describe("the tiers demand different reasoning", () => {
       "neverReached",
       "onlySurvivor",
     ])
+  })
+})
+
+// The tap-accuracy rule, and what buys this family a grid wider than the other grid families allow. There,
+// every cell is tappable, so cell size is tap-target size and 7 wide is a real ceiling. Here only the
+// movable pieces are tappable and they are never allowed to touch, so a piece owns the empty shoulders
+// around it and its hit area can be a thumb wide while its cell is smaller (LightbeamBoard spends that).
+//
+// Before this rule existed essentially every board broke it — up to ten touching pairs on one wizard grid.
+describe("no two pieces the player can tap ever touch", () => {
+  // The board is 318px inside a 360px encounter modal, measured; 5px of overflow each way is what the
+  // movable cells carry.
+  const BOARD_PX = 318
+  const OVERFLOW_PX = 5
+  const TAP_TARGET_PX = 44
+
+  describe.each(difficulties)("at %s", difficulty => {
+    const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+    const boards = Array.from({ length: 16 }, (_, seed) => generateLightbeam(size, seed + 1, options))
+
+    it("keeps every pair of movable pieces at least a square apart", () => {
+      for (const board of boards) {
+        const owner = new Map<string, number>()
+        board.movable.forEach((piece, index) => {
+          for (const at of pieceCells(piece)) owner.set(cellKey(at), index)
+        })
+        for (const [key, index] of owner) {
+          const [row, col] = key.split(",").map(Number)
+          for (const direction of ["up", "right", "down", "left"] as const) {
+            const beside = stepCell({ row, col }, direction)
+            expect(owner.get(cellKey(beside)) ?? index).toBe(index)
+          }
+        }
+      }
+    })
+
+    it("still clears the 44px tap target once a piece reaches into its shoulders", () => {
+      expect(BOARD_PX / size + 2 * OVERFLOW_PX).toBeGreaterThanOrEqual(TAP_TARGET_PX)
+    })
+
+    // The overflow may reach into empty squares, never into another target's.
+    it("leaves no two tap targets overlapping", () => {
+      expect(BOARD_PX / size + 2 * OVERFLOW_PX).toBeLessThanOrEqual(2 * (BOARD_PX / size))
+    })
   })
 })

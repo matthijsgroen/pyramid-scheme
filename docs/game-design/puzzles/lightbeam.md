@@ -170,13 +170,13 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Baseline route             | Movable pieces | Configurations | Cap | Goals drawn                 |
-| ------- | ---- | -------------------------- | -------------- | -------------- | --- | --------------------------- |
-| starter | 5×5  | 2 bends                    | 3.0            | 8              | T2  | 1 of: long chain, clear way |
-| junior  | 5×5  | 3 bends                    | 3.9            | 15             | T3  | 1 of those + blind alleys   |
-| expert  | 6×6  | 3 bends                    | 5.4            | 45             | T4  | 2 of all four               |
-| master  | 6×6  | 3 bends, 1 shadow          | 6.3            | 82             | T5  | 2 of all four               |
-| wizard  | 7×7  | 5 bends, 1 decoy, 1 shadow | 8.0            | 315            | T5  | 2 of all four               |
+| Tier    | Grid | Cell | Baseline route             | Movable pieces | Configurations | Cap | Goals drawn                 |
+| ------- | ---- | ---- | -------------------------- | -------------- | -------------- | --- | --------------------------- |
+| starter | 7×7  | 46px | 2 bends                    | 3.0            | 8              | T2  | 1 of: long chain, clear way |
+| junior  | 7×7  | 46px | 3 bends                    | 3.9            | 15             | T3  | 1 of those + blind alleys   |
+| expert  | 8×8  | 40px | 3 bends                    | 5.3            | 42             | T4  | 2 of all four               |
+| master  | 8×8  | 40px | 3 bends, 1 shadow          | 5.9            | 70             | T5  | 2 of all four               |
+| wizard  | 9×9  | 36px | 5 bends, 1 decoy, 1 shadow | 7.9            | 288            | T5  | 2 of all four               |
 
 Piece and configuration counts are measured means over 40 seeds a tier, not
 intentions, and they are the totals _after_ a board's goals are applied (§7). The
@@ -218,14 +218,24 @@ Knobs, in order of how much they actually move difficulty:
 - **Turn count on the route** — how many mirrors the beam must bounce off.
 - **Decoy count** — pieces the player must reason are irrelevant.
 - **Set-vs-movable mirror ratio** — set mirrors are scaffolding, like givens.
-- **Grid size** — footprint, and how long each run is.
 
-7×7 is the ceiling for the same reason the other grid families cap there: inside
-the encounter modal a 360px screen leaves the board about 320px, and 44px tap
-targets do not survive an eighth column. There are no gutters to reclaim here, so
-a cell is simply `board / N`. Measured in the encounter modal at 360×640: the board
-comes out 318px, so a wizard cell is **45px** — over the bar, and an eighth column
-would be 40px.
+### 6.2 Grid size is capacity, not difficulty
+
+**Grid size is not on that list, and an earlier version of this doc was wrong to put it
+there.** It barely moves how hard a board is: the configuration space is driven by piece
+count, and the reasoning by the cap. What size actually decides is whether the board has
+_room_ — for the route's length, for the pieces, and for the empty shoulders that keep two
+tappable pieces off each other (§9). It is a canvas, and it is sized by what has to fit.
+
+That is measurable rather than arguable. Adding the spacing rule at the old 5×5 and 6×6
+sizes made **every starter board fall back to no goal at all**, because there was nowhere
+to put anything; the same rule at 7×7 and up costs nothing. Size did not change the
+difficulty — it changed whether a board could be built.
+
+It also means this family goes past the 7-wide ceiling the other grid families stop at.
+Theirs is a real ceiling: every cell there is tappable, so cell size _is_ tap-target size.
+Here only the pieces are tappable, so the ceiling is legibility instead, and 36px still
+reads a mirror's diagonal clearly.
 
 ## 7. Puzzle goals — pick two dials and turn them hard
 
@@ -347,6 +357,12 @@ Beyond the shared screen bar:
   stops short does not read as a rendering fault.
 - Movable pieces read as movable at a glance, and a sliding piece's track is
   visible.
+- **No two tappable pieces ever touch**, and a piece's hit area reaches into the empty
+  squares around it. Measured in the encounter modal at 360×640: the board is 318px, so a
+  9-wide cell is 36px and its tap target 46px — over the 44px bar with no two targets
+  meeting, because the nearest other piece is two squares away. This is what buys the wider
+  grid, and it is a generation gate (`piecesAreSpaced`) rather than a rendering trick: before
+  it existed essentially every board had touching pieces, up to ten pairs on one wizard grid.
 - Both mirror orientations read as visibly different objects, not a subtle
   rotation, at 44px.
 

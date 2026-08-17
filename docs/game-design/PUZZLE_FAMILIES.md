@@ -334,7 +334,8 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
 - **Knobs:** technique cap · **shadow count** (decoys placed in the path a wrong
   setting would take — this is what makes the cap bite; without it every tier solves
   by "the light visibly dies there") · route turn count · decoy count ·
-  set-vs-movable mirror ratio · grid size (5×5 → 7×7).
+  set-vs-movable mirror ratio. **Not** grid size, which is capacity rather than difficulty —
+  it decides whether the route and the pieces fit, not how hard they are.
 - **Scaling:** good, and cheap. 3 → 8.4 movable pieces and 8 → 371 configurations
   across the tiers. Two thirds of master and wizard boards demand the exhaustive
   rung; starter demands nothing beyond a visible dead end.
@@ -346,6 +347,11 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
   The whole configuration space is enumerated on every gate: at nine pieces that is
   a few hundred walks over at most 49 cells, so this is the one family in the
   catalogue that can afford exact enumeration rather than a sampling verifier.
+- **Grid:** 7×7 → 9×9, past the ceiling §5's shared grid engine implies. That ceiling exists
+  because every cell of a Sudoku or Sumplete grid is tappable, so cell size is tap-target
+  size. Here only the movable pieces are tappable and generation never lets two of them
+  touch, so a piece owns the empty squares around it: at 9 wide a cell is 36px and its tap
+  target 46px, with no two targets meeting.
 - **UI:** medium. One gesture, tap-to-cycle, and **no pad, no eraser and no undo** —
   a cycle is its own inverse, so there is nothing to take back. The board draws the
   beam wherever it currently goes and marks where it ends, which is the family's

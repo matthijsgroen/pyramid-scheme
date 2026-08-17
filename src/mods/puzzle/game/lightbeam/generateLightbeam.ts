@@ -4,6 +4,7 @@ import {
   eachConfig,
   insideGrid,
   isLit,
+  pieceCells,
   pieceStateCount,
   reflect,
   segmentKey,
@@ -76,6 +77,9 @@ const MAX_ATTEMPTS = 600
 // Thinning reaches a fixpoint in two sweeps on every tier measured; the rest is the guard, not the plan.
 const MAX_PRUNE_SWEEPS = 4
 
+// The shortest a route leg may be, which is what stops two consecutive bend mirrors touching.
+const MIN_LEG = 2
+
 const FACES: MirrorFace[] = ["/", "\\"]
 
 const faceFor = (enter: Direction, exit: Direction): MirrorFace | undefined =>
@@ -142,10 +146,16 @@ const buildRoute = (size: number, turns: number, random: () => number): Route | 
   // Legs share the grid, so their length has to know how many of them there are. Drawing 1..size-2 every
   // time ate the board in three strides and a long route then almost never fitted — which read as the goal
   // pool falling back, not as the route builder being greedy.
-  const maxLeg = Math.max(1, Math.min(size - 2, Math.floor((size - 1) / Math.max(1, turns)) + 1))
+  //
+  // The floor of MIN_LEG is what keeps two consecutive bends off each other's shoulder: a leg of one cell
+  // puts the two mirrors in touching squares, and two tappable pieces in touching squares is a mis-tap
+  // waiting to happen (§9). It is a floor, not a guarantee — a route that folds back can still bring two
+  // non-consecutive bends together, which `piecesAreSpaced` catches at the end.
+  const budget = Math.max(MIN_LEG, Math.floor((size - 1) / Math.max(1, turns + 1)))
+  const span = Math.max(1, budget - MIN_LEG + 1)
   for (let leg = 0; leg <= turns; leg++) {
     const last = leg === turns
-    const length = last ? stepsToEdge(size, at, direction) : 1 + Math.floor(random() * maxLeg)
+    const length = last ? stepsToEdge(size, at, direction) : MIN_LEG + Math.floor(random() * span)
     if (length < 1) return undefined
     for (let step = 0; step < length; step++) {
       at = stepCell(at, direction)
@@ -192,6 +202,19 @@ const trackStops = (at: CellRef, across: Direction): CellRef[] =>
 
 type Ray = { from: CellRef; direction: Direction }
 
+const ADJACENT: Direction[] = ["up", "right", "down", "left"]
+
+/**
+ * Is this cell clear of every piece already placed, and of their shoulders?
+ *
+ * Checked at placement rather than only by the gate at the end, because a decoy or a shadow that lands on
+ * a neighbour's shoulder would throw away the whole draft — and shadows land beside a mirror by their very
+ * nature, so the gate alone rejected almost every board that wanted one.
+ */
+const spacedFrom = (draft: Draft, at: CellRef): boolean =>
+  !draft.movableCells.has(cellKey(at)) &&
+  ADJACENT.every(direction => !draft.movableCells.has(cellKey(stepCell(at, direction))))
+
 /**
  * Shadow pieces: decoys dropped into the very stretch a wrong setting would light.
  *
@@ -206,9 +229,12 @@ type Ray = { from: CellRef; direction: Direction }
  */
 const placeShadows = (size: number, draft: Draft, rays: Ray[], count: number, random: () => number) => {
   for (const ray of shuffle(rays, random).slice(0, count)) {
-    let at = stepCell(ray.from, ray.direction)
+    // Two cells out, not one. A shadow one cell along the ray sits on the shoulder of the very mirror it
+    // shadows, which no spacing rule can allow — and the empty cell between them costs nothing, since the
+    // wrong setting's beam still meets the shadow before it meets anything else the player controls.
+    let at = stepCell(stepCell(ray.from, ray.direction), ray.direction)
     for (let step = 0; step < 2 && insideGrid(size, at); step++) {
-      if (!draft.taken.has(cellKey(at))) {
+      if (!draft.taken.has(cellKey(at)) && spacedFrom(draft, at)) {
         draft.taken.add(cellKey(at))
         draft.movableCells.add(cellKey(at))
         draft.movable.push({ kind: "turnMirror", at, faces: FACES })
@@ -297,7 +323,7 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
       // The track runs across the beam, so the far stop takes the mirror clean out of its way and the
       // light sails past — a different sentence from a mirror turned the wrong way, and a clearer one.
       const stop = shuffle(trackStops(bend.at, bend.enter), random).find(
-        candidate => insideGrid(size, candidate) && !draft.taken.has(cellKey(candidate))
+        candidate => insideGrid(size, candidate) && !draft.taken.has(cellKey(candidate)) && spacedFrom(draft, candidate)
       )
       if (!stop) return
       draft.taken.add(cellKey(stop))
@@ -325,7 +351,7 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   )
   for (const cell of straights.slice(0, options.slidingWalls)) {
     const stop = shuffle(trackStops(cell.at, cell.enter), random).find(
-      candidate => insideGrid(size, candidate) && !draft.taken.has(cellKey(candidate))
+      candidate => insideGrid(size, candidate) && !draft.taken.has(cellKey(candidate)) && spacedFrom(draft, candidate)
     )
     if (!stop) continue
     draft.taken.add(cellKey(stop))
@@ -346,6 +372,7 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     for (let col = 0; col < size; col++) {
       const at = { row, col }
       if (draft.taken.has(cellKey(at)) || draft.rays.has(cellKey(at))) continue
+      if (!spacedFrom(draft, at)) continue
       open.push(at)
     }
   for (const at of shuffle(open, random).slice(0, options.decoys)) {
@@ -355,6 +382,36 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     draft.solution.push(Math.floor(random() * FACES.length))
   }
   return draft
+}
+
+const NEIGHBOURS: Direction[] = ["up", "right", "down", "left"]
+
+/**
+ * No two pieces the player can tap may touch.
+ *
+ * This is a tap-accuracy rule, not an aesthetic one, and it is what lets the grid be denser than the tap
+ * target: only movable pieces are tappable, so a cell may be smaller than a thumb as long as the piece
+ * standing in it can own a hit area reaching into the empty cells around it (§9). Two adjacent movable
+ * pieces would have to share that space, and then neither can be reliably hit.
+ *
+ * Measured before this existed, essentially every board broke it — up to ten touching pairs on one wizard
+ * grid — so it is a real gate rather than a formality.
+ */
+const piecesAreSpaced = (size: number, movable: MovablePiece[]): boolean => {
+  const owner = new Map<string, number>()
+  movable.forEach((piece, index) => {
+    for (const at of pieceCells(piece)) owner.set(cellKey(at), index)
+  })
+  for (const [key, index] of owner) {
+    const [row, col] = key.split(",").map(Number)
+    for (const direction of NEIGHBOURS) {
+      const beside = stepCell({ row, col }, direction)
+      if (!insideGrid(size, beside)) continue
+      const other = owner.get(cellKey(beside))
+      if (other !== undefined && other !== index) return false
+    }
+  }
+  return true
 }
 
 const pathSignature = (puzzle: LightbeamPuzzleData, config: readonly number[]): string =>
@@ -441,6 +498,7 @@ const attemptGeneration = (
     if (!route) continue
     const draft = buildPieces(size, route, dials, random)
     if (!draft) continue
+    if (!piecesAreSpaced(size, draft.movable)) continue
 
     const puzzle: LightbeamPuzzleData = {
       size,
