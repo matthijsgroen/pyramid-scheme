@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
+import type { LightbeamPuzzleData } from "@/mods/puzzle/game/lightbeam/beam"
 import { generateLightbeam } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
 import { createLightbeamState, cycleLightbeamPiece } from "@/mods/puzzle/game/lightbeam/lightbeamState"
@@ -52,6 +53,148 @@ export const Playable: Story = {
       />
     )
   },
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Switch nodes (design doc §12.1) — the drawing, prototyped ahead of the logic.
+//
+// The doc's own warning is that the wire layer, not the reasoning, is what kills this mechanic: the board
+// already carries cells, a beam, glyphs, movable rings, dashed ghost tracks and end markers at 35px a
+// cell. So these boards are hand-authored to ask one question — can you follow a wire with a finger
+// across a board that is already this busy — and nothing about firing is implemented yet.
+//
+// That is what keeps them honest. A node fires when the light crosses it, and in every pair below the
+// piece the wire drives is ALREADY in the state the node would drive it to, so each frame is a real trace
+// of a real configuration. What is missing is only the transition between them.
+// ---------------------------------------------------------------------------------------------------
+
+/** The door. A wall stands on the route, and the socket that clears it is upstream of the wall. */
+const doorBoard: LightbeamPuzzleData = {
+  size: 8,
+  sun: { at: { row: 3, col: 0 }, facing: "right" },
+  shrine: { row: 6, col: 0 },
+  fixed: [{ kind: "mirror", at: { row: 6, col: 3 }, face: "/" }],
+  movable: [
+    { kind: "turnMirror", at: { row: 3, col: 3 }, faces: ["/", "\\"] },
+    {
+      kind: "slidingWall",
+      stops: [
+        { row: 6, col: 1 },
+        { row: 4, col: 1 },
+      ],
+    },
+  ],
+  nodes: [{ at: { row: 5, col: 3 }, drives: 1, to: 1 }],
+}
+
+/** The trap. The same shape inverted: crossing this socket drops stone in front of the shrine. */
+const trapBoard: LightbeamPuzzleData = {
+  size: 8,
+  sun: { at: { row: 2, col: 0 }, facing: "right" },
+  shrine: { row: 0, col: 4 },
+  fixed: [],
+  movable: [
+    { kind: "turnMirror", at: { row: 2, col: 4 }, faces: ["/", "\\"] },
+    {
+      kind: "slidingWall",
+      stops: [
+        { row: 4, col: 1 },
+        { row: 1, col: 4 },
+      ],
+    },
+  ],
+  nodes: [{ at: { row: 4, col: 4 }, drives: 1, to: 1 }],
+}
+
+/**
+ * The worst case, and the one that decides it: a real generated wizard board — nine movable pieces,
+ * their ghost tracks, a five-bend route — with two long wires laid across the busiest part of it.
+ *
+ * Both sockets sit on this board's winning route, and each drives its piece to the state that route
+ * needs — so in the solved frame both wires carry and both pieces stand where a fired node would have
+ * put them. Wiring a node to any other state would draw a lit wire beside a piece that had not moved,
+ * which is exactly the lie these stories exist to avoid.
+ */
+const wizardWired: LightbeamPuzzleData = {
+  ...wizard,
+  nodes: [
+    { at: { row: 4, col: 4 }, drives: 4, to: 1 },
+    { at: { row: 6, col: 6 }, drives: 1, to: 1 },
+  ],
+}
+
+/**
+ * The same two sockets, the second rewired to a piece on the far side of the board. Nothing about the
+ * drawing differs — only which cells the wires have to reach, and therefore whether they run into each
+ * other. That is the whole argument for making wire separation a generation gate rather than a rendering
+ * problem: the renderer cannot fix the pair above, and does not have to.
+ */
+const wizardWiredApart: LightbeamPuzzleData = {
+  ...wizard,
+  nodes: [
+    { at: { row: 4, col: 4 }, drives: 4, to: 1 },
+    { at: { row: 6, col: 6 }, drives: 6, to: 1 },
+  ],
+}
+
+/** Every pair is shown side by side: the wire dark, then the wire carrying. */
+const Pair = ({ puzzle, before, after }: { puzzle: LightbeamPuzzleData; before: number[]; after: number[] }) => (
+  <div className="flex flex-wrap items-start justify-center gap-6">
+    <LightbeamBoard puzzle={puzzle} states={before} onCycle={() => {}} />
+    <LightbeamBoard puzzle={puzzle} states={after} onCycle={() => {}} />
+  </div>
+)
+
+/**
+ * A door, shut and open. Left: the mirror is turned the wrong way, the light never reaches the socket,
+ * and the wire is dark stone. Right: the mirror is turned, the light crosses the socket, the wire carries
+ * and the wall it drives has stood aside.
+ */
+export const NodeDoor: Story = {
+  args: { puzzle: doorBoard, states: [0, 0], onCycle: () => {} },
+  render: () => <Pair puzzle={doorBoard} before={[0, 0]} after={[1, 1]} />,
+}
+
+/**
+ * A node worth steering clear of. Left: the light crosses the socket and the stone it drives has landed
+ * in front of the shrine. Right: the other setting keeps the light off the socket entirely, and the
+ * shrine takes it.
+ */
+export const NodeTrap: Story = {
+  args: { puzzle: trapBoard, states: [1, 1], onCycle: () => {} },
+  render: () => <Pair puzzle={trapBoard} before={[1, 1]} after={[0, 0]} />,
+}
+
+/**
+ * Wizard density with two wires over it, at the 318px the encounter modal actually gives the board — the
+ * frame that decides whether the mechanic can be drawn at all. Three boards, and each answers one thing:
+ *
+ * 1. **Dark.** Two wires as scenery over nine pieces and their ghost tracks. Both are followable, and
+ *    neither competes with the beam.
+ * 2. **Carrying, wires crossing.** Both sockets lit. The wires are still not light — but they meet at a
+ *    shared corner near the middle mirror, and there the eye cannot tell which socket drives which piece.
+ *    Nothing the renderer can do fixes this; the two wires simply want the same square.
+ * 3. **Carrying, wires apart.** The same board with the second socket wired across the board instead.
+ *    Both wires cross the beam, transversally, and stay readable the whole way.
+ *
+ * So the drawing survives, on one condition: wire separation has to be a generation gate, in the same way
+ * and for the same reason that `piecesAreSpaced` is one.
+ */
+export const NodeDensity: Story = {
+  args: { puzzle: wizardWired, states: [...wizard.solution], onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-wrap items-start justify-center gap-6">
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardWired} states={[...wizard.initial]} onCycle={() => {}} />
+      </div>
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardWired} states={[...wizard.solution]} onCycle={() => {}} />
+      </div>
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardWiredApart} states={[...wizard.solution]} onCycle={() => {}} />
+      </div>
+    </div>
+  ),
 }
 
 /** The board with the hint's piece and beam lit — the state after pressing Hint. */

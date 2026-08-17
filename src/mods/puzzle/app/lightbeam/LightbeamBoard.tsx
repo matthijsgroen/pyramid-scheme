@@ -7,6 +7,7 @@ import {
   pieceOccupant,
   traceBeam,
   type BeamSegment,
+  type BeamWalk,
   type Blocker,
   type CellRef,
   type Direction,
@@ -128,6 +129,101 @@ const Shrine: FC<{ lit: boolean }> = ({ lit }) => (
 )
 
 // ---------------------------------------------------------------------------------------------------
+// Nodes and their wiring (design doc §12.1). Prototyped before any of the logic, because the drawing is
+// the likeliest thing to kill the mechanic: the board already carries cells, a two-pass beam, glyphs,
+// movable rings, dashed tracks with ghost pieces and end markers, at 35px a cell on a 9-wide board.
+//
+// Three rules keep the wire out of the beam's way, and they are the whole design. The first was designed;
+// the third the prototype had to find out:
+//
+// 1. **The beam owns cell centres and edge midpoints; the wire owns the grid lines.** Every beam segment
+//    runs midpoint → centre → midpoint, so a wire routed corner-to-corner along cell boundaries can only
+//    ever cross it transversally. They never share a lane, at any board size.
+// 2. **The wire is verdigris, never amber.** Light is amber and movable pieces are sky; oxidised copper
+//    is a third thing, so a lit wire never reads as a stray beam.
+// 3. **The wire is dashed, and the beam is continuous.** Colour alone was not enough, and the prototype
+//    is what showed it: rule 1 keeps the wire out of the beam's lane but cannot stop it running one half
+//    cell from a parallel stretch of beam — the beam moves with every tap, and the wire cannot chase it.
+//    At 35px a cell, two solid lines that close together read as one double-tracked thing however they
+//    are coloured. A dashed line cannot be mistaken for light at any size, which is what makes this hold
+//    on the boards nobody has drawn yet rather than only on the three that were.
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * The corner of `from`'s cell that faces `towards`. Both ends of a wire pick their facing corner, and
+ * the bend between them is then on grid lines too — so the whole run sits on cell boundaries.
+ */
+const facingCorner = (from: CellRef, towards: CellRef): [number, number] => [
+  from.col + (towards.col > from.col ? 1 : 0),
+  from.row + (towards.row > from.row ? 1 : 0),
+]
+
+const wirePoints = (from: CellRef, to: CellRef): string => {
+  const [x1, y1] = facingCorner(from, to)
+  const [x2, y2] = facingCorner(to, from)
+  return `${x1},${y1} ${x2},${y1} ${x2},${y2}`
+}
+
+/** The socket sunk in the floor. Fixed, transparent, nothing to tap — so no amber ring, ever. */
+const NodeGlyph: FC<{ at: CellRef; lit: boolean }> = ({ at, lit }) => {
+  const cx = at.col + 0.5
+  const cy = at.row + 0.5
+  return (
+    <g className={lit ? "stroke-emerald-300" : "stroke-emerald-500/60"} fill="none">
+      {lit && <circle cx={cx} cy={cy} r={0.4} className="fill-emerald-300/20 stroke-none" />}
+      <circle cx={cx} cy={cy} r={0.26} strokeWidth={0.06} />
+      {/* Four spokes to the rim, so the socket reads as wired to something rather than as a coin. */}
+      <path
+        d={`M${cx - 0.42},${cy}h0.16M${cx + 0.26},${cy}h0.16M${cx},${cy - 0.42}v0.16M${cx},${cy + 0.26}v0.16`}
+        strokeWidth={0.06}
+        strokeLinecap="round"
+      />
+    </g>
+  )
+}
+
+const NodeLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk }> = ({ puzzle, walk }) => {
+  const nodes = puzzle.nodes ?? []
+  if (!nodes.length) return null
+  // A node fires when the light crosses it, so the drawn wire is read off the drawn beam. Nothing is
+  // inferred here that the player cannot see for themselves.
+  const crossed = new Set(walk.path.map(segment => cellKey(segment.at)))
+  return (
+    <svg
+      viewBox={`0 0 ${puzzle.size} ${puzzle.size}`}
+      className="pointer-events-none absolute inset-0 size-full"
+      aria-hidden
+    >
+      {nodes.map(node => {
+        const lit = crossed.has(cellKey(node.at))
+        const door = pieceOccupant(puzzle.movable[node.drives], node.to).at
+        const [dx, dy] = facingCorner(door, node.at)
+        const [nx, ny] = facingCorner(node.at, door)
+        return (
+          <g key={`${cellKey(node.at)}>${node.drives}`}>
+            <polyline
+              points={wirePoints(node.at, door)}
+              fill="none"
+              strokeWidth={lit ? 0.07 : 0.05}
+              strokeDasharray="0.16 0.13"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={lit ? "stroke-emerald-300" : "stroke-emerald-500/50"}
+            />
+            {/* Rivets at both ends. The wire stops on the boundary rather than reaching into either
+                cell, so it never crosses a mirror's diagonal — and the rivet is what ties it to the
+                square it belongs to. */}
+            <circle cx={nx} cy={ny} r={0.09} className={lit ? "fill-emerald-300" : "fill-emerald-500/60"} />
+            <circle cx={dx} cy={dy} r={0.09} className={lit ? "fill-emerald-300" : "fill-emerald-500/60"} />
+            <NodeGlyph at={node.at} lit={lit} />
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+// ---------------------------------------------------------------------------------------------------
 // The beam. Drawn over the pieces rather than under them: light does touch the mirror it bounces off,
 // and a beam that stopped under a glyph would read as a beam that stopped short.
 // ---------------------------------------------------------------------------------------------------
@@ -147,12 +243,7 @@ const segmentPoints = (segment: BeamSegment): string => {
   return points.map(([x, y]) => `${x},${y}`).join(" ")
 }
 
-const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[]; lit?: BeamSegment[] }> = ({
-  puzzle,
-  states,
-  lit,
-}) => {
-  const walk = traceBeam(puzzle, states)
+const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSegment[] }> = ({ puzzle, walk, lit }) => {
   const highlighted = new Set((lit ?? []).map(segment => `${cellKey(segment.at)},${segment.enter}`))
   const last = walk.path[walk.path.length - 1]
   return (
@@ -236,7 +327,8 @@ const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
 export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, onCycle }) => {
   const { size } = puzzle
   const grid = viewGrid(puzzle, states)
-  const solved = traceBeam(puzzle, states).end === "lit"
+  const walk = traceBeam(puzzle, states)
+  const solved = walk.end === "lit"
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
       <div
@@ -282,7 +374,9 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
           })
         )}
       </div>
-      <BeamLayer puzzle={puzzle} states={states} lit={litBeam} />
+      {/* Wires under the beam: light crosses a socket, it does not run along the wire. */}
+      <NodeLayer puzzle={puzzle} walk={walk} />
+      <BeamLayer puzzle={puzzle} walk={walk} lit={litBeam} />
     </div>
   )
 }

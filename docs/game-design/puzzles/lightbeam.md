@@ -365,6 +365,9 @@ Beyond the shared screen bar:
   it existed essentially every board had touching pieces, up to ten pairs on one wizard grid.
 - Both mirror orientations read as visibly different objects, not a subtle
   rotation, at 44px.
+- **Nothing but light is drawn amber, and nothing but light is drawn as a continuous line.** The
+  switch-node prototype (§12.1) is where this stopped being a preference: a wire in any other
+  colour still read as a second beam until it was dashed as well.
 
 ## 10. Theming
 
@@ -471,6 +474,49 @@ Then "this does not matter" gets three depths, the third new to the catalogue:
   pieces, and end markers — at 45px a cell on a 7×7. A wire layer crossing all of that is
   where it turns to soup. Prototype the board visually _before_ writing any logic, which is
   the reverse of the order the rest of this family was built in.
+
+#### What the visual prototype found
+
+Done, ahead of the logic, as `LightbeamBoard.stories.tsx` — `NodeDoor`, `NodeTrap` and
+`NodeDensity`, the last of them a real generated wizard board with two wires laid over it at the
+318px the encounter modal actually gives. **The drawing survives, and on one condition.**
+
+Three rules make the wire legible, and only the first was designed in advance:
+
+1. **The beam owns cell centres and edge midpoints; the wire owns the grid lines.** Every beam
+   segment runs midpoint → centre → midpoint, so a wire routed corner-to-corner along cell
+   boundaries can only ever cross it transversally. They never share a lane, at any size. This is
+   also what keeps the wire off a mirror's diagonal, which is the one glyph that reaches the
+   corners.
+2. **The wire is verdigris, never amber.** Light is amber and movable pieces are sky; oxidised
+   copper is a third thing.
+3. **The wire is dashed, and the beam is continuous.** Colour alone was not enough. Rule 1 keeps
+   the wire out of the beam's lane but cannot keep it from running one half-cell from a _parallel_
+   stretch of beam — the beam moves with every tap, and the wire cannot chase it. At 35px a cell,
+   two solid lines that close together read as one double-tracked thing however they are coloured.
+   A dashed line cannot be read as light at any size.
+
+**The condition is a new generation gate.** Two wires on one wizard board can meet at a shared
+corner, and there the eye cannot tell which socket drives which piece — the third board in
+`NodeDensity` is the same board with one node rewired, and it reads cleanly the whole way. No
+amount of drawing fixes the first case: the two wires simply want the same square. So wire
+separation joins `piecesAreSpaced` as a gate on generation, for exactly the same reason — a
+board the player cannot read is a board that was not built, not a board that was drawn badly.
+
+That is the honest cost of this mechanic: **a fourth spacing constraint on a generator that
+already has three**, competing for room on a grid whose size §6.2 argues is capacity rather than
+difficulty. Measure the yield before writing the ladder — if wizard cannot fit a route, spaced
+pieces, shadows _and_ two separated wires on 9×9, the answer is one node per board, not a
+tenth column.
+
+Two things the prototype settled that were open questions in the sections above:
+
+- **A node needs no lit/unlit state of its own to draw.** The wire lights when the beam crosses
+  the socket, which the board reads off the beam it is already drawing. Nothing is inferred that
+  the player cannot see.
+- **The wire attaches to the stop the node drives the piece _to_**, not to where the piece is
+  standing. That is what makes a shut door legible: the socket, the wire, and the empty square
+  the stone will land in are all on screen before anything has happened.
 
 A node is fixed scenery with no state and nothing to tap, so the control scheme stays at
 exactly one gesture.

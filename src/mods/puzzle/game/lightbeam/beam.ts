@@ -29,6 +29,24 @@ export type MovablePiece =
   | { kind: "slidingMirror"; face: MirrorFace; stops: CellRef[] }
   | { kind: "slidingWall"; stops: CellRef[] }
 
+/**
+ * A fixed, transparent cell wired to one movable piece (design doc §12.1). Light crossing it fires the
+ * wire, and the piece it drives goes to `to` — a door that opens ahead of the light, or stone that drops
+ * in front of the shrine. There is nothing to tap: the control scheme stays at exactly one gesture.
+ *
+ * **Nothing traces these yet.** This is the shape the board is being drawn against, and only that. An
+ * unfired node is transparent, which is what an empty cell already is, so `configGrid` and the whole
+ * solver stay correct for every board that ships today — and a board where a node would fire is not
+ * generated at all. Firing lands with §12.1's logic, once the drawing has been shown to survive.
+ */
+export type BeamNode = {
+  at: CellRef
+  /** Index into `movable` — the piece this node drives. */
+  drives: number
+  /** The state that piece is forced into once the light has crossed the node. */
+  to: number
+}
+
 export type LightbeamPuzzleData = {
   size: number
   /** Where the light comes from, and which way it leaves. The disc itself absorbs anything hitting it. */
@@ -36,6 +54,7 @@ export type LightbeamPuzzleData = {
   shrine: CellRef
   fixed: FixedPiece[]
   movable: MovablePiece[]
+  nodes?: BeamNode[]
 }
 
 export type LightbeamConfig = readonly number[]
