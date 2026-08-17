@@ -337,6 +337,14 @@
       "nakedPair": {
         "row": "Deze twee vakjes kunnen alleen {{first}} en {{second}} zijn, in de ene of de andere volgorde, dus geen ander vakje in deze rij kan er een van hebben.",
         "col": "Deze twee vakjes kunnen alleen {{first}} en {{second}} zijn, in de ene of de andere volgorde, dus geen ander vakje in deze kolom kan er een van hebben."
+      },
+      "hiddenPair": {
+        "row": "In deze rij passen {{first}} en {{second}} nergens anders dan in deze twee vakjes, dus er kan niets anders in.",
+        "col": "In deze kolom passen {{first}} en {{second}} nergens anders dan in deze twee vakjes, dus er kan niets anders in."
+      },
+      "xWing": {
+        "row": "{{value}} past in elk van deze twee rijen maar in twee vakjes, en die staan in dezelfde kolommen. Hoe het ook uitpakt, beide kolommen zijn bezet — dus {{value}} kan nergens anders in die kolommen.",
+        "col": "{{value}} past in elk van deze twee kolommen maar in twee vakjes, en die staan in dezelfde rijen. Hoe het ook uitpakt, beide rijen zijn bezet — dus {{value}} kan nergens anders in die rijen."
       }
     }
   }

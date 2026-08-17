@@ -73,15 +73,17 @@ show". The solver then applies techniques to the whole board, cheapest first, an
 repeats until nothing changes. Rows feed columns feed signs and back — that
 cross-constraint propagation is where the puzzle lives.
 
-| #      | Technique       | Fires when                                         | Decides                                            |
-| ------ | --------------- | -------------------------------------------------- | -------------------------------------------------- |
-| **T0** | Naked single    | A square has one candidate left                    | Write it in                                        |
-| **T1** | Hidden single   | A number fits only one square of a row or column   | Write it in there                                  |
-| **T2** | Sign bound      | One sign points away from a square                 | Rule out `N` (or `1` the other way)                |
-| **T3** | Sign vs. number | The square across a sign already holds a number    | Rule out everything on the wrong side of it        |
-| **T4** | Sign chain      | `k ≥ 2` squares rise (or fall) away in a run       | Cap the square at `N - k` (or floor it at `1 + k`) |
-| **T5** | Sign pair       | Neither side of a sign is settled                  | Cap each side by what the other can still hold     |
-| **T6** | Naked pair      | Two squares in a line hold the same two candidates | Rule that pair out of the rest of the line         |
+| #      | Technique       | Fires when                                          | Decides                                            |
+| ------ | --------------- | --------------------------------------------------- | -------------------------------------------------- |
+| **T0** | Naked single    | A square has one candidate left                     | Write it in                                        |
+| **T1** | Hidden single   | A number fits only one square of a row or column    | Write it in there                                  |
+| **T2** | Sign bound      | One sign points away from a square                  | Rule out `N` (or `1` the other way)                |
+| **T3** | Sign vs. number | The square across a sign already holds a number     | Rule out everything on the wrong side of it        |
+| **T4** | Sign chain      | `k ≥ 2` squares rise (or fall) away in a run        | Cap the square at `N - k` (or floor it at `1 + k`) |
+| **T5** | Sign pair       | Neither side of a sign is settled                   | Cap each side by what the other can still hold     |
+| **T6** | Naked pair      | Two squares in a line hold the same two candidates  | Rule that pair out of the rest of the line         |
+| **T7** | Hidden pair     | Two numbers fit only the same two squares of a line | Rule everything else out of those two squares      |
+| **T8** | X-wing          | A number fits only the same two lanes in two lines  | Rule it out of the rest of both lanes              |
 
 ### 4.1 The ordering is about explainability, not power
 
@@ -95,9 +97,21 @@ Placements rank above eliminations for the same reason they do in Sumplete:
 writing a number in moves the board on, while ruling one out is the bookkeeping
 that gets you there.
 
-### 4.2 Deliberately absent
+### 4.2 The top of the ladder is where wizard lives
 
-Hidden pairs, X-wings, and the rest of the Sudoku ladder. They are real
+T7 and T8 are the two rungs a 7×7 actually reaches for; below that size neither
+fires, because the board settles before it needs them. Measured over eight 7×7
+boards accepted at the T8 cap, five demanded an x-wing and two a hidden pair — so
+the top tier reaches its ceiling on its own, without generation being made to
+reject boards until it does.
+
+That is what separates wizard from master. At the T5 cap both tiers produced
+boards whose hardest step was the same, and wizard's higher ceiling was
+decorative.
+
+### 4.3 Deliberately absent
+
+Swordfish, XY-wing, colouring, and the rest of the Sudoku ladder. They are real
 techniques, but nothing in the tier table needs them yet — they get added when a
 board demands one, not before.
 
@@ -117,7 +131,7 @@ the redundancy §3.1 exists to remove.
 | junior  | 5×5  | T4 sign chain      | 8–12 of 40  |
 | expert  | 6×6  | T4 sign chain      | 11–20 of 60 |
 | master  | 6×6  | T5 sign pair       | 13–19 of 60 |
-| wizard  | 7×7  | T6 naked pair      | 18–30 of 84 |
+| wizard  | 7×7  | T8 x-wing          | ~23 of 84   |
 
 The cap is inclusive: a tier permits every technique up to it, so wizard boards
 may use the whole ladder.

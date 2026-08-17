@@ -39,6 +39,16 @@ const spentBelow = (puzzle: FutoshikiPuzzleData, technique: TechniqueId): Futosh
 const stepFor = (puzzle: FutoshikiPuzzleData, technique: TechniqueId) =>
   nextFutoshikiStep(puzzle, spentBelow(puzzle, technique), technique)
 
+// The last two rungs only matter on a board too sparse for the cheaper ones to finish, which no small
+// grid of pre-filled numbers reproduces — every such grid falls to a single or a sign first. So these
+// two are handed the candidate state directly, and their place in the ladder is covered instead by
+// "respects the technique cap" and by the reachability sweep over real boards.
+const boardOfCandidates = (candidates: number[][][]): FutoshikiBoard => ({
+  size: candidates.length,
+  values: blankGrid(candidates.length),
+  candidates: candidates.map(row => row.map(values => new Set(values))),
+})
+
 describe("nextFutoshikiStep", () => {
   it("writes in the only number a square has left", () => {
     // Three of the four numbers already sit in this square's row and column.
@@ -134,6 +144,68 @@ describe("nextFutoshikiStep", () => {
     expect(step?.decisions).toEqual([
       { kind: "eliminate", row: 0, col: 2, values: [1, 2] },
       { kind: "eliminate", row: 0, col: 3, values: [1, 2] },
+    ])
+  })
+
+  it("hands a pair of squares to the two numbers that fit nowhere else in the line", () => {
+    // In row 0 only the first two squares can still take a 1 or a 2, so between them they own both —
+    // and nothing else may stay in either. Neither square is down to two candidates, so no naked pair
+    // reaches this first.
+    const all = [1, 2, 3, 4, 5]
+    const board = boardOfCandidates([
+      [
+        [1, 2, 3],
+        [1, 2, 4],
+        [3, 4, 5],
+        [3, 4, 5],
+        [3, 4, 5],
+      ],
+      [all, all, all, all, all],
+      [all, all, all, all, all],
+      [all, all, all, all, all],
+      [all, all, all, all, all],
+    ])
+    const step = nextFutoshikiStep(puzzleOf(5, []), board, "hiddenPair")
+    expect(step).toMatchObject({ technique: "hiddenPair", variant: "row", params: { first: 1, second: 2 } })
+    expect(step?.decisions).toEqual([
+      { kind: "eliminate", row: 0, col: 0, values: [3] },
+      { kind: "eliminate", row: 0, col: 1, values: [4] },
+    ])
+  })
+
+  it("spends a number pinned to the same two columns in two separate rows", () => {
+    // 1 fits only columns 0 and 1 in row 0, and only columns 0 and 1 in row 1. Whichever way round it
+    // falls, both columns are spoken for — so 1 leaves those columns in every other row.
+    const all = [1, 2, 3, 4]
+    const board = boardOfCandidates([
+      [
+        [1, 2, 3],
+        [1, 2, 3],
+        [2, 3, 4],
+        [2, 3, 4],
+      ],
+      [
+        [1, 3, 4],
+        [1, 3, 4],
+        [2, 3, 4],
+        [2, 3, 4],
+      ],
+      [all, all, all, all],
+      [all, all, all, all],
+    ])
+    const step = nextFutoshikiStep(puzzleOf(4, []), board, "xWing")
+    expect(step).toMatchObject({ technique: "xWing", variant: "row", params: { value: 1 } })
+    expect(step?.cells).toEqual([
+      { row: 0, col: 0 },
+      { row: 0, col: 1 },
+      { row: 1, col: 0 },
+      { row: 1, col: 1 },
+    ])
+    expect(step?.decisions).toEqual([
+      { kind: "eliminate", row: 2, col: 0, values: [1] },
+      { kind: "eliminate", row: 3, col: 0, values: [1] },
+      { kind: "eliminate", row: 2, col: 1, values: [1] },
+      { kind: "eliminate", row: 3, col: 1, values: [1] },
     ])
   })
 

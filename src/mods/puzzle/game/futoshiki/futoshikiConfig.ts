@@ -12,5 +12,5 @@ export const FUTOSHIKI_CONFIG: Record<Difficulty, { size: number } & FutoshikiOp
   junior: { size: 5, techniqueCap: "signChain" },
   expert: { size: 6, techniqueCap: "signChain" },
   master: { size: 6, techniqueCap: "signPair" },
-  wizard: { size: 7, techniqueCap: "nakedPair" },
+  wizard: { size: 7, techniqueCap: "xWing" },
 }

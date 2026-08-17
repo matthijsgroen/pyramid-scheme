@@ -344,6 +344,14 @@
       "nakedPair": {
         "row": "These two squares can only hold {{first}} and {{second}}, in one order or the other, so no other square in this row can have either.",
         "col": "These two squares can only hold {{first}} and {{second}}, in one order or the other, so no other square in this column can have either."
+      },
+      "hiddenPair": {
+        "row": "In this row, {{first}} and {{second}} fit nowhere but these two squares, so nothing else can go in either of them.",
+        "col": "In this column, {{first}} and {{second}} fit nowhere but these two squares, so nothing else can go in either of them."
+      },
+      "xWing": {
+        "row": "{{value}} fits in only two squares of each of these two rows, and they stand in the same columns. Whichever way round it falls, both columns are spoken for — so {{value}} can go nowhere else in them.",
+        "col": "{{value}} fits in only two squares of each of these two columns, and they stand in the same rows. Whichever way round it falls, both rows are spoken for — so {{value}} can go nowhere else in them."
       }
     }
   }
