@@ -67,9 +67,16 @@ starts inside it. So the board never has to draw a looping beam, and the player 
 to be told what one means.
 
 Loop detection stays in the trace anyway, as the thing that keeps the walk total — and it
-becomes load-bearing the moment a piece bends light by anything other than a quarter turn,
-which is exactly what the deferred prism (§11) does. `beam.spec.ts` proves both halves: the
-ring loops when the light starts inside it, and the disc's beam never loops.
+becomes load-bearing the moment a piece stops mapping directions **one-to-one**, which is
+exactly what the deferred prism (§11) does: it turns one incoming direction into two
+outgoing ones, so a beam state can have two predecessors and the argument above collapses.
+`beam.spec.ts` proves both halves: the ring loops when the light starts inside it, and the
+disc's beam never loops.
+
+_This used to say "anything other than a quarter turn", which is the wrong condition and was
+measured wrong (§11.3)._ A mirror set square to the beam reverses it — a half turn, not a
+quarter — and reversal is still a bijection on directions, so it is still loop-free. The
+angle is not what matters; injectivity is.
 
 ## 4. The deduction ladder
 
@@ -491,7 +498,7 @@ skin.
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
 
-### 12.1 Traps — the missing half, and why the obvious build does not work
+### 11.1 Traps — the missing half, and why the obvious build does not work
 
 **As generated today, sockets are a checklist rather than a choice.** Every socket is drawn from route
 cells strictly before the door it opens, so the winning beam crosses all of them on its way past. The
@@ -536,7 +543,13 @@ one where the wrong answer looks right until you notice what it runs over. Asser
 property directly, the way §5.1's walls are asserted: take the trap out and the board must stop being a
 puzzle.
 
-### 12.2 Switch nodes — built
+**Step 2 is the hard one, and §11.3 is where the supply comes from.** Generation today builds boards with
+exactly one route on purpose, so deliberately leaving a wrong setting un-walled and hoping it reaches the
+shrine is fishing in a pond stocked against you. Giving mirrors a retracted state produces a second route
+on half of wizard's boards as a side effect, which turns step 2 from a search into a filter. The two
+sections are one piece of work.
+
+### 11.2 Switch nodes — built
 
 A **node** is a fixed, transparent cell wired to one movable piece. Light crossing it
 lights the wire, and the piece it drives moves. The wire is drawn.
@@ -743,3 +756,65 @@ is a trap twice over.
 
 That is the real argument for the node — not one extra trick but a **machine you have to
 understand before you can drive it**. Which nodes to light, and which to steer clear of.
+
+### 11.3 A third mirror state — measured, and it is not a fourth angle
+
+**More rotation is not more clicks, it is more reachable positions**: more ways through the same room
+without adding a piece to it. That is the knob worth having, because board area is this family's scarcest
+resource — every extra piece has to clear `piecesAreSpaced` (§9), and grid size does not buy difficulty
+anyway (§6). A knob that raises what one piece can do, rather than how many pieces there are, is the only
+kind that does not spend room.
+
+Measured over 30 seeds a tier on the real generator (`base` is today's two faces):
+
+| Tier    | Cells the beam can be made to reach | Boards still single-route |
+| ------- | ----------------------------------- | ------------------------- |
+| starter | 15.2 → **20.2**                     | 30/30 → 28/30             |
+| junior  | 19.2 → **24.1**                     | 30/30 → 26/30             |
+| expert  | 21.7 → **28.3**                     | 30/30 → 26/30             |
+| master  | 28.3 → **36.5**                     | 30/30 → 18/30             |
+| wizard  | 36.2 → **48.5**                     | 30/30 → 15/30             |
+
+**A third of the room again, at no piece cost and no extra square.** The clearest way to read it: a master
+board whose mirrors have the third state reaches 36.5 cells, and a wizard board today reaches 36.2 — so
+the knob buys wizard's coverage on master's 8×8 with 1.8 fewer mirrors. That is the claim, quantified.
+
+**But the useful third state is a retraction, not another angle, and that took measuring to see.** Two
+candidates were surveyed on identical boards:
+
+- **retract** — `/`, `\`, and _out of the beam's way_. Three states.
+- **rotate4** — 45° steps: `/`, `\`, `|`, `—`. Axis-aligned, a mirror reflects a beam meeting its face
+  straight back and passes one grazing it, so every incoming direction gets four behaviours: turn one way,
+  turn the other, reverse, pass. This is the one that is literally "more angles".
+
+They come out **the same on every measure that matters** — reach 48.5 vs 49.2 at wizard, and identical
+route counts and identical single-route counts at every tier — while rotate4 costs **232× the enumeration**
+against base, where retract costs 23×. §5's exact enumeration has a 20 000-trace budget; retract lands at
+15 200 and rotate4 at 152 800, so one fits and the other ends the enumeration the whole family is built on.
+
+The reason the two extra angles earn nothing is worth keeping: **a reversed beam is sent back the way it
+came, into the half of the board it has already crossed and toward the disc, which absorbs.** It explores
+territory the beam has covered and rarely finds a shrine placed away from the disc. Reversal is not a
+wrong idea, it is a nearly empty one.
+
+Retraction also wins on the ladder's own ordering principle — explainability, not power (§4). An
+axis-aligned mirror **blocks or passes depending on which way the light is coming**, so "can the light get
+through here" stops being answerable by looking at the cell. A retracted mirror is out of the way for
+every direction, which keeps every reason local.
+
+**Two things follow, and the second is the interesting one.**
+
+1. **This is a generation problem, not a tracing one.** Nothing in the walk needs changing: a retracted
+   piece leaves its cell empty, which is what an empty cell already is. `MirrorFace` needs a
+   non-reflecting member and `faces: MirrorFace[]` is already a list — it has always been able to hold a
+   third thing, and there has never been a third thing to put in it.
+2. **The uniqueness cost is the whole of the work.** Half of wizard boards (15/30) gain a second route to
+   the shrine once mirrors can retract, and a second route is exactly what gate 5 rejects. Paying for it
+   with more stone costs board area, which is the thing the knob was worth having for.
+
+**Which is where this meets the trap (§11.1).** That section is blocked on needing a wrong setting that
+_genuinely reaches the shrine_ — "a would-be second route, which generation currently rejects outright".
+The retracted state manufactures those, on half of wizard's boards. So the two open items are one item:
+**retraction is the supply of second routes, and the trap is what makes one of them fail for a reason.**
+Uniqueness comes back not by walling the second route off but by putting a socket on it, which is the
+placement §11.1 already argues for and could not previously source. Neither is worth building alone.
