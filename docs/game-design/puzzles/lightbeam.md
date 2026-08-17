@@ -299,3 +299,82 @@ carry-forward (`PUZZLE_FAMILIES.md` P3).
 - **Offline seed tables.** The direction recorded in `futoshiki.md` §11 applies
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
+
+### 11.1 Waypoints — the next thing to build
+
+A cell the beam **must** pass through. Transparent: it neither blocks nor turns.
+
+Its value is not the extra win condition, it is what it does to the solver. The
+forced-run deductions currently grow from exactly two places — forward from the disc
+(T0) and backward from the shrine (T1) — and they are weakest where they meet, in the
+middle of a long route, which is precisely where wizard is thinnest. **A waypoint is a
+second shrine for the purposes of those deductions:** run the same four-approach
+feasibility test on it, and when the frame and the walls kill three of them, a run
+through the middle of the board is forced. That reuses `walkBackward` untouched, and
+its reason is a sentence you can check by eye — _"the light has to get through here,
+and this is the only line it can come along."_
+
+Uniqueness gets easier, not harder: requiring waypoint coverage shrinks the winning
+set, so gate 5 has less to rule out.
+
+Two constraints it imposes:
+
+- **The shrine must not light until every waypoint is covered.** Otherwise the board
+  lies, and "the beam is at the shrine but you are not done" is a new failure mode this
+  family has so far avoided entirely.
+- **Waypoints need the same thinning pass as walls** (§5 step 7). One sitting on a
+  stretch T0 already forces teaches nothing — that is the unspendable-wall problem
+  again.
+
+It composes well with the shadow pieces: a shadow branch that _picks up_ a waypoint is
+a much nastier decoy, because the wrong setting now looks productive.
+
+### 11.2 Switch nodes and wiring — a variant, not a knob
+
+A waypoint with a consequence: light crossing the node lights a **drawn wire** to a
+piece, which then turns or moves.
+
+**The wiring is what makes this admissible at all.** Every reason in the ladder today
+is local — "face it that way and the light dies in that stone" is checkable because the
+stone is _there_. A switch that can move the stone breaks that, and the reason collapses
+into "I tried the alternatives and they failed", the rung ranked last for teaching
+nothing. A visible wire puts locality back: you can see what each node drives and trace
+it with a finger, so the reason survives with one hop of indirection.
+
+**Decoys then exist at three levels**, and the third is new to the catalogue:
+
+1. A node the light can never cross, so its wire never fires — today's T4, one level up.
+2. A node that fires into a piece the light never touches anyway: real wire, irrelevant
+   consequence.
+3. A node that fires, moves a piece that **is** on the route, and still changes nothing.
+
+**The paradox does not go away.** A switch that moves a wall _behind_ the beam means the
+beam that reached the switch no longer reaches it. Wiring makes that legible but not
+consistent. The options are a fixpoint (zero or several solutions, both fatal for a
+puzzle with one answer), iterate-until-stable (oscillation renders as a blinking board),
+or latching by history (order-dependent, no longer a pure function of the
+configuration). The one that keeps everything is to **restrict the effect to opening a
+way ahead of the light, never behind it**: the door opens in front of the beam and you
+watch it happen, wrong configurations die at the still-closed wall, and the new reason
+is an **ordering** one — _"the light gets here before it has opened this"_ — which
+nothing else in the catalogue trains. Generation builds it by construction: route the
+beam, put the wall late on the route, put the switch early.
+
+Implementation notes, for whoever picks this up:
+
+- Latching with in-flight mutation terminates: switches only ever flip on, so the trace
+  is at most (switches + 1) bounded walks.
+- **The loop-detection seen-set must be keyed by switch-state, or cleared on each flip.**
+  Otherwise a legitimate re-traverse of a cell reads as a loop.
+- Yield is the open question, not the logic. Opening a wall creates routes that were not
+  there before, so path-uniqueness has more to reject. Measure before believing it.
+
+**The thing most likely to kill this is the drawing, not the reasoning.** The board
+already carries cells, a two-pass beam, piece glyphs, movable rings, dashed tracks with
+ghost pieces, and end markers — at 45px a cell on a 7×7. A wire layer crossing all of
+that is where it turns to soup. Prototype the board visually _before_ writing any of the
+logic, which is the reverse of the order the rest of this family was built in.
+
+Filed as a **variant rather than a knob**: same pieces, same gesture, same trace, but
+multi-level indirection is a different shape of puzzle — nearer the timed variant above
+than a dial. Build 11.1 first, and only after the base family has actually been played.
