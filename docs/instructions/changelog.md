@@ -38,13 +38,51 @@ Write for the player, not the developer. Entries must be readable by someone who
 - **Bad**: "Add `useDetector` hook with compass and consumable modes to `DetectorPanel`."
 - **Good**: "A compass tool shows which pyramid levels still contain pieces of a hieroglyph you are looking for."
 
+## Size: a whole feature is ONE entry
+
+The commonest mistake, and the one to check for first. **A new mechanic, screen or puzzle family gets a
+single bullet naming it — not an inventory of everything inside it.** The reader wants to know the feature
+exists; they will find out how it works by using it.
+
+**Too much** — one puzzle family logged as eight facts:
+
+```markdown
+- A light puzzle: bend the sunlight from the disc to the shrine, past stone that swallows it.
+- Tap a mirror to turn it, or a sliding piece to move it.
+- The beam is drawn wherever it currently goes and marked where it ends.
+- A sliding piece shows a faint ghost of itself on the spots it can move to.
+- Hints explain the next step in words.
+- Light puzzles turn up in pyramids and tombs from the first tier, growing from 7×7 up to 9×9.
+- Pieces you can tap are never placed side by side.
+- Every light puzzle is built around one or two goals drawn for it.
+```
+
+**Right**:
+
+```markdown
+- A light puzzle: bend the sunlight from the disc to the shrine.
+```
+
+Everything cut there is real and worth writing down — it belongs in the commit message, the PR and the
+family's design doc, which is where someone looking for it will go. The changelog is not the place it
+lives.
+
+The test: **would the player have called these separate changes?** They met one new puzzle, not eight
+features. Controls, feedback, hints, difficulty range and generation are how a feature is built, not
+things the player gained one by one.
+
+This cuts the other way from "split compound changes" below, and the two are settled by the same question.
+Three unrelated changes that arrived together are three entries. One feature described from three angles
+is one entry.
+
 ## Length: quick bullets, not prose
 
 A changelog is scanned, not read. **One fact per bullet, one line, roughly 20 words.** If a bullet needs
 a second sentence, it is usually two bullets.
 
 - **Split compound changes.** "The mosaic is five scenes… and each scene belongs to a difficulty… and you
-  place them yourself" is three entries.
+  place them yourself" is three entries — three separate things the player gained. Not to be confused with
+  one feature restated from several angles, which is one entry (see above).
 - **State the change, not the reasoning.** Why it was done, how it works, and what it is like under the
   hood belong in the commit message and the PR — never here.
 - **Only contrast with the old behaviour when the change is otherwise unreadable**, and then in a clause,
