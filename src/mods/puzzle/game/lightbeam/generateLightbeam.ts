@@ -16,7 +16,32 @@ import {
   type MirrorFace,
   type MovablePiece,
 } from "./beam"
+import { applyGoals, drawGoals } from "./goals"
 import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
+
+export const LIGHTBEAM_GOALS = ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys"] as const
+
+/** What kind of problem a board is, as against how hard it is (design doc §7). */
+export type LightbeamGoal = (typeof LIGHTBEAM_GOALS)[number]
+
+/** The knobs that shape a board. A goal turns some of these hard; the tier sets the lean baseline. */
+export type LightbeamDials = {
+  /** How many times the route bends between sun-disc and shrine. */
+  turns: number
+  /** How many of the route's mirrors are givens rather than movable. */
+  setMirrors: number
+  /** How many movable route mirrors slide to a stop instead of turning in place. */
+  slidingMirrors: number
+  /** Sliding walls parked across the route, there to be moved out of the way. */
+  slidingWalls: number
+  /** Pieces the light can never reach, there to be reasoned irrelevant (technique T4). */
+  decoys: number
+  /**
+   * Decoys placed in the stretch a wrong setting would light, so that setting cannot be ruled out by
+   * watching the light die. This is what pushes a board past `deadEnd` into the exhaustive rungs.
+   */
+  shadows: number
+}
 
 export type LightbeamPuzzle = LightbeamPuzzleData & {
   /** The state each piece opens in — every movable one deliberately wrong, so the board opens dark. */
@@ -25,26 +50,21 @@ export type LightbeamPuzzle = LightbeamPuzzleData & {
   solution: number[]
   /** Carried so hints stay inside the same ladder the board was accepted under. */
   techniqueCap: TechniqueId
+  /**
+   * The goals this board was actually built to, after any fallback. Carried as data rather than logged:
+   * a fallback that fires silently makes the whole pool decorative, and this way the playtest bench can
+   * show what a board was meant to be and a spec can assert the fallback stays rare.
+   */
+  goals: LightbeamGoal[]
 }
 
-export type LightbeamOptions = {
+export type LightbeamOptions = Partial<LightbeamDials> & {
   /** The strongest deduction a board may demand (design doc §6). */
   techniqueCap?: TechniqueId
-  /** How many times the route bends between sun-disc and shrine. */
-  turns?: number
-  /** How many of the route's mirrors are givens rather than movable. */
-  setMirrors?: number
-  /** How many movable route mirrors slide to a stop instead of turning in place. */
-  slidingMirrors?: number
-  /** Sliding walls parked across the route, there to be moved out of the way. */
-  slidingWalls?: number
-  /** Pieces the light can never reach, there to be reasoned irrelevant (technique T4). */
-  decoys?: number
-  /**
-   * Decoys placed in the stretch a wrong setting would light, so that setting cannot be ruled out by
-   * watching the light die. This is what pushes a board past `deadEnd` into the exhaustive rungs.
-   */
-  shadows?: number
+  /** Which goals this tier may draw. Empty leaves the board on its baseline dials. */
+  goals?: readonly LightbeamGoal[]
+  /** How many of them to draw. */
+  goalCount?: number
 }
 
 // Generation is route-then-obstruct, per docs/game-design/puzzles/lightbeam.md §5: lay a beam from disc
@@ -119,9 +139,13 @@ const buildRoute = (size: number, turns: number, random: () => number): Route | 
   let at = sun.at
   let direction = sun.facing
 
+  // Legs share the grid, so their length has to know how many of them there are. Drawing 1..size-2 every
+  // time ate the board in three strides and a long route then almost never fitted — which read as the goal
+  // pool falling back, not as the route builder being greedy.
+  const maxLeg = Math.max(1, Math.min(size - 2, Math.floor((size - 1) / Math.max(1, turns)) + 1))
   for (let leg = 0; leg <= turns; leg++) {
     const last = leg === turns
-    const length = last ? stepsToEdge(size, at, direction) : 1 + Math.floor(random() * Math.max(1, size - 2))
+    const length = last ? stepsToEdge(size, at, direction) : 1 + Math.floor(random() * maxLeg)
     if (length < 1) return undefined
     for (let step = 0; step < length; step++) {
       at = stepCell(at, direction)
@@ -235,12 +259,7 @@ const blockWrongSettings = (size: number, draft: Draft, rays: Ray[]): boolean =>
   return true
 }
 
-const buildPieces = (
-  size: number,
-  route: Route,
-  options: Required<LightbeamOptions>,
-  random: () => number
-): Draft | undefined => {
+const buildPieces = (size: number, route: Route, options: LightbeamDials, random: () => number): Draft | undefined => {
   const draft: Draft = {
     fixed: [],
     movable: [],
@@ -400,8 +419,7 @@ const thinWalls = (
   return fixed
 }
 
-const DEFAULTS: Required<LightbeamOptions> = {
-  techniqueCap: "deadEnd",
+const BASELINE: LightbeamDials = {
   turns: 2,
   setMirrors: 0,
   slidingMirrors: 0,
@@ -410,13 +428,18 @@ const DEFAULTS: Required<LightbeamOptions> = {
   shadows: 0,
 }
 
-export const generateLightbeam = (size: number, seed: number, options: LightbeamOptions = {}): LightbeamPuzzle => {
-  const settings = { ...DEFAULTS, ...options }
+/** One run of the build-and-gate loop, at a fixed set of dials. Undefined when the budget runs out. */
+const attemptGeneration = (
+  size: number,
+  seed: number,
+  dials: LightbeamDials,
+  cap: TechniqueId
+): Omit<LightbeamPuzzle, "goals"> | undefined => {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
-    const route = buildRoute(size, settings.turns, random)
+    const route = buildRoute(size, dials.turns, random)
     if (!route) continue
-    const draft = buildPieces(size, route, settings, random)
+    const draft = buildPieces(size, route, dials, random)
     if (!draft) continue
 
     const puzzle: LightbeamPuzzleData = {
@@ -430,16 +453,38 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
 
     const states = draft.movable.map(piece => Array.from({ length: pieceStateCount(piece) }, (_, i) => i))
     if (!routeIsUnique(puzzle, states)) continue
-    if (!solveLightbeamByTechniques(puzzle, settings.techniqueCap).settled) continue
+    if (!solveLightbeamByTechniques(puzzle, cap).settled) continue
 
-    const thinned = { ...puzzle, fixed: thinWalls(puzzle, states, settings.techniqueCap, random) }
+    const thinned = { ...puzzle, fixed: thinWalls(puzzle, states, cap, random) }
 
     // The board opens dark, and never one tap from done: every movable piece starts on a setting the
     // deduction will have to rule out.
     const initial = draft.movable.map((piece, index) => (draft.solution[index] + 1) % pieceStateCount(piece))
     if (isLit(thinned, initial)) continue
 
-    return { ...thinned, initial, solution: draft.solution, techniqueCap: settings.techniqueCap }
+    return { ...thinned, initial, solution: draft.solution, techniqueCap: cap }
+  }
+  return undefined
+}
+
+/**
+ * Builds a board at the tier's dials, with one or two goals turned hard on top (design doc §7).
+ *
+ * The fallback ladder is the part that needs care. A goal is a constraint, and two of them at once can be
+ * a pair no board satisfies — so when the budget runs out, a goal is dropped and it tries again, down to
+ * the bare baseline. What matters is that the board says which goals it ended up with (`goals` on the
+ * result) rather than the fallback happening quietly: a silent fallback that fires often would make the
+ * whole pool decorative while every measurement still looked fine.
+ */
+export const generateLightbeam = (size: number, seed: number, options: LightbeamOptions = {}): LightbeamPuzzle => {
+  const { techniqueCap = "deadEnd", goals: pool = [], goalCount = 0, ...overrides } = options
+  const baseline: LightbeamDials = { ...BASELINE, ...overrides }
+  const drawn = drawGoals(seed, pool, goalCount)
+
+  for (let dropped = 0; dropped <= drawn.length; dropped++) {
+    const goals = drawn.slice(0, drawn.length - dropped)
+    const puzzle = attemptGeneration(size, seed, applyGoals(baseline, goals), techniqueCap)
+    if (puzzle) return { ...puzzle, goals }
   }
   throw new Error(`generateLightbeam: no logically solvable board (size=${size}, seed=${seed})`)
 }

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A sliding piece shows a faint ghost of itself on the spots it can move to, so you can see whether a mirror or a block of stone would arrive.
 - Hints explain the next step in words — the light dies in that stone, the shrine can only be lit from one side, or this piece can be left alone entirely.
 - Light puzzles turn up in pyramids and tombs from the first tier, growing from 5×5 up to 7×7.
+- Every light puzzle is built around one or two goals drawn for it — a long winding beam, a board full of pieces that turn out not to matter, stone to shift out of the way, or wrong turns that vanish into the dark instead of visibly dying. Two boards on the same tier now feel like different puzzles rather than the same one reshuffled.
 
 ## 0.35.1 - 2026-08-17
 

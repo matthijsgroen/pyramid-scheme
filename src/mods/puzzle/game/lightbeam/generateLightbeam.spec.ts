@@ -137,7 +137,11 @@ describe("the tiers demand different reasoning", () => {
 
   // Footprint is only half of difficulty, but it may never go backwards: a junior board that is smaller
   // than a starter one is a tier table that reads right and plays wrong, which is exactly what the first
-  // pass at this table did.
+  // pass at this table did — and then what the first pass at the goal pool did again, by letting two goals
+  // add four pieces on top of baselines that already carried some.
+  //
+  // Asserted in AGGREGATE over a tier rather than board by board: with goals drawn per board, one starter
+  // grid can legitimately out-measure one junior grid. It is the tier that has to grow, not every board.
   it("never shrinks as the tiers go up", () => {
     const space = difficulties.map(difficulty =>
       sweep(difficulty).reduce(

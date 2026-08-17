@@ -66,7 +66,7 @@ to be told what one means.
 
 Loop detection stays in the trace anyway, as the thing that keeps the walk total — and it
 becomes load-bearing the moment a piece bends light by anything other than a quarter turn,
-which is exactly what the deferred prism (§11) does. `beam.spec.ts` proves both halves: the
+which is exactly what the deferred prism (§12) does. `beam.spec.ts` proves both halves: the
 ring loops when the light starts inside it, and the disc's beam never loops.
 
 ## 4. The deduction ladder
@@ -170,18 +170,25 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Movable pieces | Configurations | Cap | Vocabulary                    |
-| ------- | ---- | -------------- | -------------- | --- | ----------------------------- |
-| starter | 5×5  | 3.0            | 8              | T2  | Turn mirrors                  |
-| junior  | 5×5  | 3.7            | 14             | T3  | + sliding mirrors, 1 shadow   |
-| expert  | 6×6  | 5.8            | 57             | T4  | + sliding walls, first decoys |
-| master  | 6×6  | 6.6            | 105            | T5  | 2 shadows                     |
-| wizard  | 7×7  | 8.4            | 371            | T5  | Longer chains, 3 shadows      |
+| Tier    | Grid | Baseline route             | Movable pieces | Configurations | Cap | Goals drawn                 |
+| ------- | ---- | -------------------------- | -------------- | -------------- | --- | --------------------------- |
+| starter | 5×5  | 2 bends                    | 3.0            | 8              | T2  | 1 of: long chain, clear way |
+| junior  | 5×5  | 3 bends                    | 3.9            | 15             | T3  | 1 of those + blind alleys   |
+| expert  | 6×6  | 3 bends                    | 5.4            | 45             | T4  | 2 of all four               |
+| master  | 6×6  | 3 bends, 1 shadow          | 6.3            | 82             | T5  | 2 of all four               |
+| wizard  | 7×7  | 5 bends, 1 decoy, 1 shadow | 8.0            | 315            | T5  | 2 of all four               |
 
 Piece and configuration counts are measured means over 40 seeds a tier, not
-intentions. The ramp is asserted in `generateLightbeam.spec.ts` — the first pass at
-this table read right and played wrong, with junior boards _smaller_ than starter
-ones.
+intentions, and they are the totals _after_ a board's goals are applied (§7). The
+ramp is asserted in `generateLightbeam.spec.ts`, in aggregate over a tier rather
+than board by board — with goals drawn per board, one starter grid can legitimately
+out-measure one junior grid, and it is the tier that has to grow.
+
+It has been got wrong twice, both times in a way that read right in the table and
+played wrong: first with junior boards _smaller_ than starter ones, then again when
+the goal pool let two goals add four pieces on top of baselines that already
+carried some, putting five pieces on a starter board and collapsing expert, master
+and wizard into one ten-piece blur.
 
 ### 6.1 The cap does not bite on its own
 
@@ -220,7 +227,77 @@ a cell is simply `board / N`. Measured in the encounter modal at 360×640: the b
 comes out 318px, so a wizard cell is **45px** — over the bar, and an eighth column
 would be 40px.
 
-## 7. Controls
+## 7. Puzzle goals — pick two dials and turn them hard
+
+Before this existed, every tier turned every dial a little. The wizard row read: five turns
+AND a set mirror AND two sliding mirrors AND a sliding wall AND a decoy AND three shadows —
+so every wizard board was the **average** wizard board.
+
+A **goal pool** fixes that. `LIGHTBEAM_CONFIG` now holds a lean baseline, and generation
+draws one or two goals per board and turns those dials hard. Boards get character instead
+of mean settings, and it adds the axis the family was missing: difficulty (cap, size) is one
+thing, **what kind of problem this board is** is another, and they were welded together.
+
+With 158 lightbeam nodes in the world, that is a bigger variety win than any new piece type
+would be — and it needed no new piece at all. The four shipped goals are a re-scheduling of
+dials the generator already had.
+
+| Goal                    | Turns up                      | Tests                      | Built |
+| ----------------------- | ----------------------------- | -------------------------- | ----- |
+| **Long chain**          | `turns +2`, `setMirrors +1`   | route-tracing              | yes   |
+| **Sort the wheat**      | `decoys +2`                   | which pieces matter (T4)   | yes   |
+| **Clear the way**       | `slidingWalls +1`             | does the light get through | yes   |
+| **Blind alleys**        | `shadows +1`                  | the exhaustive rung (T5)   | yes   |
+| **Order of operations** | a node whose door blocks late | ordering                   | §12.1 |
+| **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §12.1 |
+
+### 7.1 Three rules that keep it honest
+
+**A goal only ever turns a dial up.** That is what lets two of them apply in either order
+and both still mean what they say. The first draft had each goal flatten the dials it did
+not care about, so drawing two silently cancelled the first.
+
+**The tier sets the route; a goal sets what is in the way.** So a goal adds one or two
+pieces, never four, and the tier still decides how big a board is. `longChain` gives two
+more bends but one more _given_ mirror, because the length is the character, not the piece
+count. Getting this wrong put five pieces on a starter board that wanted three (§6).
+
+**The gates stay untouched.** A goal shapes what gets _placed_, never what gets _accepted_:
+path uniqueness and the ladder still decide, so no goal can smuggle through a board that
+needs a guess.
+
+### 7.2 The fallback ladder, and why the board carries its goals
+
+Two goals at once can be a pair no board satisfies, so when the attempt budget runs out a
+goal is dropped and it tries again, down to the bare baseline.
+
+The board then **records the goals it was actually built to**, as data on the puzzle rather
+than a log line. A fallback that fires quietly would make the whole pool decorative while
+every other measurement still looked fine, so `goals.spec.ts` asserts the ladder never
+fires at the shipped config, and the playtest bench can show what a board was meant to be.
+
+That assertion earned its keep immediately. The first measured run fell back on **30% of
+wizard boards**, and the cause was not the goals at all: `buildRoute` drew each leg's length
+from 1..size-2 regardless of how many legs it had to fit, so it ate the grid in three
+strides and a long route almost never fitted. The leg budget now scales with the turn
+count — and wizard's worst-case generation went from 332ms to 50ms as a side effect.
+
+### 7.3 Which goals a tier may draw
+
+A fairness question, not a taste one. `sortTheWheat` piles on decoys, and a decoy is only
+fair once `neverReached` can prove it irrelevant — so expert and up. `blindAlleys` piles on
+shadows, which need at least the shrine-side elimination to unpick — so junior and up.
+
+One consequence worth knowing at playtest: a junior board demands the shrine-side
+elimination **when it is a blind-alleys board**, which is about a third of them. That is the
+goal system working as designed rather than a gap — the goal decides the reasoning, and the
+cap only says how far a board is allowed to go.
+
+Nothing about the mechanism is lightbeam-specific: Futoshiki could draw technique-flavour
+goals the same way. Left here until a second family actually wants it — a shared abstraction
+on one caller would be the premature kind.
+
+## 8. Controls
 
 One gesture: **tap a piece to cycle it**. Turn mirrors cycle orientation, sliding
 pieces cycle to their next stop. Fixed pieces ignore taps. No drag, matching the
@@ -247,7 +324,7 @@ deduction — leaving them to flip pieces at random, which is the failure mode t
 family has to avoid. A hint lights the piece it names **and the beam segment its
 reason is about**; "the light dies here" means nothing without showing where.
 
-### 7.1 A hint here is not a correction
+### 8.1 A hint here is not a correction
 
 Every other family's hint can start with "that number is wrong". Here **every setting
 is a legal setting**, so there is nothing to be wrong about in that sense. A hint is
@@ -260,7 +337,7 @@ game would be telling the player to ignore a piece while the route is still brok
 That makes it the one hint in the whole catalogue whose advice is to leave something
 alone.
 
-## 8. Board requirements
+## 9. Board requirements
 
 Beyond the shared screen bar:
 
@@ -273,7 +350,7 @@ Beyond the shared screen bar:
 - Both mirror orientations read as visibly different objects, not a subtle
   rotation, at 44px.
 
-## 9. Theming
+## 10. Theming
 
 Already written into the lore: `story-and-time-brainstorm.md` puts mirrors at the
 **Lighthouse of Alexandria** journey and names a **"Letting the Sun In"** theme,
@@ -284,12 +361,12 @@ The component emits logical state only — `sunDisc | shrine | mirror(a|b) | wal
 plus the traced path and its end reason. Colour, texture and glyph live in the
 skin.
 
-## 10. Value output
+## 11. Value output
 
 Side family — the answer is a route, not a number, so it does not feed
 carry-forward (`PUZZLE_FAMILIES.md` P3).
 
-## 11. Deferred
+## 12. Deferred
 
 - **Prisms and colour splitting.** The catalogue already rules this a different
   puzzle shape rather than a knob, and points at The Talos Principle as prior art.
@@ -300,7 +377,7 @@ carry-forward (`PUZZLE_FAMILIES.md` P3).
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
 
-### 11.1 Switch nodes — the next thing to build
+### 12.1 Switch nodes — the next thing to build
 
 A **node** is a fixed, transparent cell wired to one movable piece. Light crossing it
 lights the wire, and the piece it drives moves. The wire is drawn.
@@ -397,49 +474,3 @@ is a trap twice over.
 
 That is the real argument for the node — not one extra trick but a **machine you have to
 understand before you can drive it**. Which nodes to light, and which to steer clear of.
-
-### 11.2 Puzzle goals — pick two dials and turn them hard
-
-Every tier currently turns every dial a little. Read the wizard row of `LIGHTBEAM_CONFIG`:
-five turns, one set mirror, two sliding mirrors, one sliding wall, one decoy, three shadows.
-Every wizard board is the **average** wizard board.
-
-A **goal pool** fixes that: generation draws one or two goals per board and turns those
-dials hard, leaving the rest slack. Boards then have character instead of mean settings —
-and with 158 lightbeam nodes in the world, that is likely a bigger variety win than any new
-piece type. It also adds the axis the family is missing: difficulty (cap, size) is one
-thing, **what kind of problem this board is** is another, and they are currently welded
-together.
-
-The pool, and what each is built from:
-
-| Goal                    | Built from                    | Tests                      | Needs   |
-| ----------------------- | ----------------------------- | -------------------------- | ------- |
-| **Long chain**          | turns high, decoys 0          | route-tracing              | nothing |
-| **Sort the wheat**      | decoys high, turns low        | which pieces matter (T4)   | nothing |
-| **Clear the way**       | sliding walls on the route    | does the light get through | nothing |
-| **Blind alleys**        | shadows high                  | the exhaustive rung (T5)   | nothing |
-| **Order of operations** | a node whose door blocks late | ordering                   | §11.1   |
-| **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §11.1   |
-
-**Four of the six need no new mechanic** — they are a re-scheduling of knobs that already
-exist. That version is cheap, and it is worth building **before** the family is playtested
-rather than after: judging the current build means judging one recipe five times, whereas
-with goals you would be judging the spread, which is the thing actually worth knowing.
-
-Two things it has to get right:
-
-- **A fallback ladder.** If the chosen pair will not generate inside the attempt budget,
-  drop to one goal, then to none — and `log` which, because a silent fallback that always
-  fires makes the whole pool decorative. This is the same discipline as "no silent caps".
-- **The gates stay untouched.** A goal shapes what gets _placed_; it never shapes what gets
-  _accepted_. Path uniqueness and the ladder still decide, so no goal can smuggle through a
-  board that needs a guess.
-
-It softens the tier table in §6: piece and configuration counts become per-goal ranges
-rather than the flat means measured there, and `generateLightbeam.spec.ts`'s monotonicity
-assertion would have to hold in aggregate over a tier rather than board by board.
-
-Worth noting for later: nothing about this is specific to lightbeam — Futoshiki could draw
-technique-flavour goals the same way. Build it here first and only generalise if a second
-family actually wants it; a shared abstraction on one caller would be the premature kind.
