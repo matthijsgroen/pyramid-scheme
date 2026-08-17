@@ -818,3 +818,91 @@ The retracted state manufactures those, on half of wizard's boards. So the two o
 **retraction is the supply of second routes, and the trap is what makes one of them fail for a reason.**
 Uniqueness comes back not by walling the second route off but by putting a socket on it, which is the
 placement §11.1 already argues for and could not previously source. Neither is worth building alone.
+
+### 11.4 The diagonal beam — and it beats §11.3 with one piece
+
+A finer mirror cut, at 22.5° steps, turns an orthogonal beam by 45°. **Light then travels the diagonals
+too, and a mirror already standing on that diagonal is edge-on to it, so the beam runs straight past.**
+Pass-through stops being a state anyone had to invent (§11.3's retraction) and becomes a consequence of
+the angle.
+
+**Light on the diagonal slips through corners, and a rounded corner is what says so.** A diagonal step
+only resolves the cell it lands in; the two cells it squeezes past are never consulted. Walls are drawn
+with rounded corners, so the gap the beam uses is visible in the glyph — no rules text, which is the P2
+discipline rather than a concession to it. It is also the naive implementation: step, resolve where you
+landed, never look sideways.
+
+That makes stone conditional for the first time in this family. **A wall no longer guarantees a block** —
+it stops orthogonal light and lets diagonal light by at its corner — so a wall can be a decoy, and
+blocking a diagonal beam means putting stone where its centre-line actually crosses. `blockWrongSettings`
+(§5) has to learn the difference.
+
+#### The geometry, which is provable rather than a hope
+
+Reflection on the direction circle is `out = 2θ − in`. With mirrors at `θ = 22.5·m` and beams at
+`in = 45·k`, the outgoing index is `(m − k) mod 8`: another 45° direction, so **the direction set is
+closed**, and injective in `k`, so **every face is still a bijection**. By §3's argument loops therefore
+stay unreachable — the same conclusion as today, for the same reason, at four times the vocabulary. The
+measurement below traced about half a million configurations and found **zero loops**, as it should.
+
+The same algebra says which mirrors a beam can pass, since passing is `out = in`, i.e. `m = 2k`:
+
+- **Aligned orientations** (0°, 45°, 90°, 135° — including today's `/` and `\`) each pass one pair of
+  opposite directions. `/` is transparent to a beam running up-right along it.
+- **Half-step orientations** (22.5°, 67.5°, 112.5°, 157.5°) pass nothing. They always deflect.
+
+So the two halves are one mechanism: the half-step mirrors make a beam diagonal, and the aligned mirrors
+are what a diagonal beam can then run past.
+
+#### Measured, 30 seeds a tier, retrofitted onto today's boards
+
+`cut` is how many of a board's turn mirrors get the finer 8-orientation cut; the rest stay at `/` and `\`.
+
+| Tier    | Reach: none → 1 → 2 cuts | Boards still single-route | Configurations with 2 cuts |
+| ------- | ------------------------ | ------------------------- | -------------------------- |
+| starter | 15.2 → 27.0 → **31.9**   | 30/30 → 23/30 → 20/30     | 128                        |
+| junior  | 19.2 → 29.2 → **33.6**   | 30/30 → 27/30 → 15/30     | 248                        |
+| expert  | 21.7 → 32.8 → **39.8**   | 30/30 → 28/30 → 14/30     | 781                        |
+| master  | 28.3 → 40.0 → **46.4**   | 30/30 → 25/30 → 12/30     | 1 997                      |
+| wizard  | 36.2 → 49.5 → **56.7**   | 30/30 → 21/30 → 12/30     | 10 547                     |
+
+**One cut mirror beats §11.3's retraction applied to every mirror on the board** — 49.5 cells against
+48.5 at wizard, 27.0 against 20.2 at starter. That is the whole argument for preferring this: the reach
+comes from one piece being able to do more, which is the only kind of knob that does not spend board area.
+
+**It has to be one or two pieces, not a rule about mirrors.** Eight orientations everywhere is ~9.4M traces
+at wizard against §5's 20 000 budget. Per-piece it fits with room to spare: one cut is 4× base, two is
+16× — 10 547 at wizard, measured, against the same ceiling retraction sat under at 15 200. Three would
+break it. This is how the family already works: sliding pieces carry 2–3 stops, not every piece
+everything.
+
+#### What the measurement says to be careful about
+
+- **The diagonal routes are the rare part.** Mean diagonal routes to the shrine run 0.07–0.97 a board:
+  most of the new routes the cut creates are still orthogonal. That is the signature of a retrofit — these
+  boards put their shrine where an _orthogonal_ route reaches it, so a diagonal leg mostly wanders off.
+  **Every number above is a floor**, and the mechanic wants a generator that routes diagonally on purpose
+  rather than one that tolerates it.
+- **The relative gain is largest at starter (+110%), which is backwards.** The beam can be made to cross
+  two thirds of a starter board. The cut is a top-tier piece — a drawn goal or a wizard baseline — not a
+  change to what a mirror is.
+- **Uniqueness is the bill, again.** Two cuts leave 12/30 wizard boards single-route. Identical in kind to
+  §11.3's cost and answered the same way: those second routes are what §11.1's trap needs, so the socket
+  restores uniqueness rather than a wall. All three sections are one piece of work.
+- **Reach counts cells the beam can be _made_ to cross, not cells on winning routes.** Some of the growth
+  is a wider space to wander in. That is the same measure §11.3 used, so the comparison holds, but it is
+  not a count of good moves.
+
+#### Prototype the drawing first, again
+
+§11.2 learned this the hard way and the order should be the same here. Three things to draw before any
+logic: the **rounded wall corner** (which must not ship before the mechanic, or it promises a gap that is
+not there), a **diagonal beam through a corner**, and a **wire crossing one**.
+
+_An earlier draft of this section called diagonal beams a direct collision with the wire's lane. That was
+wrong._ Wires run corner-to-corner **along cell boundaries**; a diagonal beam runs corner-to-corner
+**through cell interiors**. Between the same two corners those are different paths, sharing only the
+corner points — so a diagonal beam crosses a wire transversally at 45°, which is exactly the property
+§11.2's rule 1 exists to guarantee. The open question is narrower than a broken rule: whether coincident
+_points_ at corners read cleanly at 35px, and whether eight mirror orientations are tellable apart at all
+at that size. The second is the likelier killer.
