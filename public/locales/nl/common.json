@@ -355,5 +355,29 @@
         "col": "In deze kolom passen {{first}}, {{second}} en {{third}} nergens anders dan in deze drie vakjes, dus er kan niets anders in."
       }
     }
+  },
+  "lightbeam": {
+    "rules": {
+      "goal": "Breng het zonlicht van de schijf naar het schrijn.",
+      "mirrors": "Een spiegel buigt het licht een kwartslag, langs elk van zijn kanten.",
+      "walls": "Een blok steen slokt het licht op. De rand van het bord ook.",
+      "tap": "Tik op een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar zijn volgende plek. Stukken met een effen rand horen bij de puzzel en kun je niet verzetten."
+    },
+    "hint": {
+      "entryRun": "Begin waar het licht al komt: het loopt recht vanaf de schijf tot het eerste stuk dat je kunt veranderen. Die vakjes dragen het licht, wat je ook doet.",
+      "exitRun": "Kijk naar het schrijn. Maar één kant ervan kan verlicht worden — elke andere weg erheen is dicht of kijkt het bord uit — dus het licht moet langs die lijn aankomen.",
+      "deadEnd": {
+        "wall": "Zo gezet loopt het licht recht in de steen, en er is niets meer dat het kan redden. Dus zo kan het niet staan.",
+        "edge": "Zo gezet loopt het licht het bord uit, en er is niets meer dat het kan opvangen. Dus zo kan het niet staan.",
+        "loop": "Zo gezet komt het licht nergens — het blijft eeuwig rondgaan. Dus zo kan het niet staan."
+      },
+      "feedsExit": {
+        "wall": "Werk terug vanaf het schrijn. Zo gezet kan niets het licht over de enige lijn erheen brengen — het sterft onderweg in de steen.",
+        "edge": "Werk terug vanaf het schrijn. Zo gezet zou het licht van buiten het bord moeten komen om er te kunnen zijn.",
+        "loop": "Werk terug vanaf het schrijn. Zo gezet gaat het licht dat er zou moeten komen alleen eeuwig rond."
+      },
+      "neverReached": "Laat deze staan. Het licht kan er niet bij komen, hoe de rest ook staat, dus wat je ermee doet maakt niets uit.",
+      "onlySurvivor": "Probeer elke stand van deze om de beurt: op één na laten ze het schrijn allemaal donker. Die ene is het antwoord."
+    }
   }
 }

@@ -317,34 +317,51 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **UI:** easy.
 - **Role:** spine-ish (outputs a value) but low ceiling — a flavour family.
 
-### 4.15 Mirror / lightbeam — _(new, spec locked, not yet built)_
+### 4.15 Mirror / lightbeam — _(have)_
 
-- **Skill:** spatial reasoning, route-tracing, elimination of irrelevant pieces.
-- **Operates:** a beam enters from a fixed edge cell in a fixed direction and must
-  reach a target edge cell. Two movable tile types sit on the grid:
-  - **Rotate tile** — fixed position, tap-cycles between two diagonal
-    orientations (`/` ↔ `\`), deflecting the beam 90° off either approach face
-    (geometric default — no single-sided-vs-double-sided variant).
-  - **Slide tile** — fixed mirror angle, tap-cycles between 2–3 discrete stops
-    along an authored track (one fixed row or column per tile).
-    A third tile type, **wall**, is a pure blocker — the beam is absorbed/dead on
-    contact, no decoration-only variant for this family.
-- **Knobs:** grid size · wall count · free-vs-fixed mirror ratio (fixed mirrors
-  are pre-set "givens," like Sudoku clues) · count of off-path decoy tiles the
-  player must reason are irrelevant.
-- **Scaling:** should be good — position × orientation combinatorics grow fast
-  with tile count, similar shape to the grid-logic families.
-- **Generation:** build the solved beam path backward first (route source →
-  target, drop a rotate/slide tile at each turn with the orientation/position
-  the turn requires), scatter decoys and walls off that path, then **run a
-  uniqueness verifier** — brute-force every position×orientation combination
-  across movable tiles and confirm exactly one reaches the target before
-  accepting the puzzle. Required, not optional: with only 2–3 states per tile
-  a misplaced decoy can accidentally open a second valid route.
-- **UI:** medium — same tap-to-cycle gesture language as Sumplete/rotate, just
-  applied to orientation or track position instead of a 3-state keep/delete
-  toggle. No drag needed (slide is discrete stops, not free-drag).
-- **Role:** side (no value output in v1).
+Family doc: `docs/game-design/puzzles/lightbeam.md`.
+
+- **Skill:** spatial reasoning, route-tracing, and **elimination of irrelevant
+  pieces** — the last of which no other family trains, and which is the one
+  conclusion in the catalogue that reads "this piece does not matter".
+- **Operates:** light leaves a sun-disc on one edge in a fixed direction and must
+  reach a shrine set in the frame. A mirror bends it a quarter turn, stone swallows
+  it, the board edge loses it. Seven piece types, all shipped in v1: sun-disc,
+  shrine, set mirror and wall (fixed) · turn mirror, sliding mirror and sliding wall
+  (the player's). The sliding wall is the only piece whose move is _clearing_ a path
+  rather than bending one — every other piece answers "which way does the light
+  turn", and it answers "does the light get through at all".
+- **Knobs:** technique cap · **shadow count** (decoys placed in the path a wrong
+  setting would take — this is what makes the cap bite; without it every tier solves
+  by "the light visibly dies there") · route turn count · decoy count ·
+  set-vs-movable mirror ratio. **Not** grid size, which is capacity rather than difficulty —
+  it decides whether the route and the pieces fit, not how hard they are.
+- **Scaling:** good, and cheap. 3 → 8.4 movable pieces and 8 → 371 configurations
+  across the tiers. Two thirds of master and wizard boards demand the exhaustive
+  rung; starter demands nothing beyond a visible dead end.
+- **Generation:** route the beam first, then wall off the ways each movable piece
+  could be set wrong, then gate on **path uniqueness** — every configuration that
+  lights the shrine must trace the _same route_. "Exactly one winning configuration"
+  would be the wrong test, because a decoy has a free setting by definition. Then
+  gate on the ladder reaching it, and thin the walls to a fixpoint under the cap.
+  The whole configuration space is enumerated on every gate: at nine pieces that is
+  a few hundred walks over at most 49 cells, so this is the one family in the
+  catalogue that can afford exact enumeration rather than a sampling verifier.
+- **Grid:** 7×7 → 9×9, past the ceiling §5's shared grid engine implies. That ceiling exists
+  because every cell of a Sudoku or Sumplete grid is tappable, so cell size is tap-target
+  size. Here only the movable pieces are tappable and generation never lets two of them
+  touch, so a piece owns the empty squares around it: at 9 wide a cell is 36px and its tap
+  target 46px, with no two targets meeting.
+- **UI:** medium. One gesture, tap-to-cycle, and **no pad, no eraser and no undo** —
+  a cycle is its own inverse, so there is nothing to take back. The board draws the
+  beam wherever it currently goes and marks where it ends, which is the family's
+  live feedback and the reason it needs no words.
+- **Role:** **side** (the answer is a route, not a value).
+- **Found while building it:** a beam from the disc can never enter a loop. A 90°
+  mirror maps `(cell, direction)` one-to-one, so every beam state has exactly one
+  predecessor and the disc's first has none — a ring of mirrors loops only if the
+  light starts inside it. Loop detection stays in the trace as the guard that keeps
+  the walk total, and becomes load-bearing the day a prism lands.
 - **Deferred:** prism/color-split tiles (splitting one beam into multiple
   colored beams, each needing its own target) — a genuinely different puzzle
   shape (multi-beam, color-matching), not a v1 knob. **The Talos Principle**
@@ -705,12 +722,13 @@ so it can be used when authoring density knobs).
 | Glyph Latin-square     | 1–6 min, **high variance**        | **High**                                                                                                                       |
 | Kakuro                 | 2–8 min                           | **High**                                                                                                                       |
 | Nonogram               | 3–15+ min, **very high variance** | **Very High**                                                                                                                  |
-| Mirror/lightbeam       | not yet measured (unbuilt)        | **TBD — estimate Low–Med**, pending real solve-time data once built                                                            |
+| Mirror/lightbeam       | built, not yet measured           | **TBD — estimate Low–Med**, the beam redraws on every tap so a wrong route is visible at once, which should stall less         |
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
 | Rush Hour              | not yet measured (unbuilt)        | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most                                            |
 
-Once mirror/lightbeam, Sokoban, Rush Hour, and hidato are built, replace the TBD
-rows with real telemetry (§8) rather than trusting the estimate.
+Once Sokoban, Rush Hour and hidato are built, and lightbeam has been played enough
+to measure, replace the TBD rows with real telemetry (§8) rather than trusting the
+estimate.
 
 ---
 

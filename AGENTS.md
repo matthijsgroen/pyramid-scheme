@@ -160,13 +160,13 @@ Run all tests: `yarn test`
 
 Before considering any task complete, run through this checklist:
 
-| #   | Check            | Requirement                                                                                                                                                                                           |
-| --- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Tests**        | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md).                                                             |
-| 2   | **Types**        | `yarn check-types` exits clean.                                                                                                                                                                       |
-| 3   | **Lint**         | `yarn lint` exits clean (includes Tailwind class order).                                                                                                                                              |
-| 4   | **Translations** | Any new user-facing string has both `en/` and `nl/` entries.                                                                                                                                          |
-| 5   | **Changelog**    | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]` — a one-line bullet, one fact, ~20 words, no rationale. See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
+| #   | Check            | Requirement                                                                                                                                                                                                                                                     |
+| --- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Tests**        | Every new behavior has a co-located spec. Run `yarn test` — all pass. See [`docs/instructions/testing.md`](docs/instructions/testing.md).                                                                                                                       |
+| 2   | **Types**        | `yarn check-types` exits clean.                                                                                                                                                                                                                                 |
+| 3   | **Lint**         | `yarn lint` exits clean (includes Tailwind class order).                                                                                                                                                                                                        |
+| 4   | **Translations** | Any new user-facing string has both `en/` and `nl/` entries.                                                                                                                                                                                                    |
+| 5   | **Changelog**    | Any player-visible change has an entry in `CHANGELOG.md [Unreleased]` — a one-line bullet, one fact, ~20 words, no rationale. **A whole feature is one entry, not an inventory of it.** See [`docs/instructions/changelog.md`](docs/instructions/changelog.md). |
 
 Steps 1–3 are always required. Steps 4–5 apply only when the change touches user-facing strings or player-visible behavior.
 

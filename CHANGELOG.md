@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A light puzzle: bend the sunlight from the disc to the shrine.
+
 ## 0.35.1 - 2026-08-17
 
 ### Changed
