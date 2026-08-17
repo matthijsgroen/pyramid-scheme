@@ -209,6 +209,58 @@ describe("nextFutoshikiStep", () => {
     ])
   })
 
+  it("hands three squares to the three numbers they hold between them", () => {
+    // No two of the first three squares share a candidate pair, so no naked pair reaches this first,
+    // and the rest of the row is wide open so no hidden pair does either.
+    const all = [1, 2, 3, 4, 5, 6]
+    const board = boardOfCandidates([
+      [[1, 2], [2, 3], [1, 3], all, all, all],
+      [all, all, all, all, all, all],
+      [all, all, all, all, all, all],
+      [all, all, all, all, all, all],
+      [all, all, all, all, all, all],
+      [all, all, all, all, all, all],
+    ])
+    const step = nextFutoshikiStep(puzzleOf(6, []), board, "nakedTriple")
+    expect(step).toMatchObject({
+      technique: "nakedTriple",
+      variant: "row",
+      params: { first: 1, second: 2, third: 3 },
+    })
+    expect(step?.decisions).toEqual([
+      { kind: "eliminate", row: 0, col: 3, values: [1, 2, 3] },
+      { kind: "eliminate", row: 0, col: 4, values: [1, 2, 3] },
+      { kind: "eliminate", row: 0, col: 5, values: [1, 2, 3] },
+    ])
+  })
+
+  it("hands three squares to the three numbers that fit nowhere else in the line", () => {
+    // 1, 2 and 3 fit only the first three squares, so those squares are theirs — but every square
+    // still holds four candidates, so no triple or pair read from the squares' side fires first.
+    const rest = [4, 5, 6, 7]
+    const all = [1, 2, 3, 4, 5, 6, 7]
+    const board = boardOfCandidates([
+      [[1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 3, 6], rest, rest, rest, rest],
+      [all, all, all, all, all, all, all],
+      [all, all, all, all, all, all, all],
+      [all, all, all, all, all, all, all],
+      [all, all, all, all, all, all, all],
+      [all, all, all, all, all, all, all],
+      [all, all, all, all, all, all, all],
+    ])
+    const step = nextFutoshikiStep(puzzleOf(7, []), board, "hiddenTriple")
+    expect(step).toMatchObject({
+      technique: "hiddenTriple",
+      variant: "row",
+      params: { first: 1, second: 2, third: 3 },
+    })
+    expect(step?.decisions).toEqual([
+      { kind: "eliminate", row: 0, col: 0, values: [4] },
+      { kind: "eliminate", row: 0, col: 1, values: [5] },
+      { kind: "eliminate", row: 0, col: 2, values: [6] },
+    ])
+  })
+
   it("respects the technique cap — a board says nothing a lower ladder cannot reach", () => {
     const puzzle = puzzleOf(4, [
       { row: 0, col: 0, direction: "right", relation: "<" },
@@ -288,18 +340,21 @@ describe("firstFutoshikiMistake", () => {
 })
 
 describe("every technique", () => {
-  // Generating forty real boards is seconds of honest work, so this one carries its own timeout
-  // rather than being thinned to fit the default: the strongest technique only surfaces on a wizard
-  // board, and six seeds a tier is the point where it reliably does.
+  // The top tier is swept deeper than the rest: the five hardest rungs only ever appear on a 7x7, and
+  // the rarest of them first turns up at seed 14, so a shallow sweep would report it dead. Generating
+  // this many real boards is seconds of honest work, so the test carries its own timeout rather than
+  // being thinned to fit the default — thinning it is exactly what would hide a dead technique.
+  const seedsFor = (difficulty: (typeof difficulties)[number]) => (difficulty === "wizard" ? 16 : 8)
+
   it("is reachable — each one fires on a real board", () => {
     const fired = new Set<string>()
     for (const difficulty of difficulties) {
       const { size, ...options } = FUTOSHIKI_CONFIG[difficulty]
-      for (let seed = 1; seed <= 8; seed++) {
+      for (let seed = 1; seed <= seedsFor(difficulty); seed++) {
         const board = generateFutoshiki(size, seed, options)
         for (const step of solveFutoshikiByTechniques(board, board.techniqueCap).steps) fired.add(step.technique)
       }
     }
     expect([...TECHNIQUES].filter(technique => !fired.has(technique))).toEqual([])
-  }, 30_000)
+  }, 60_000)
 })

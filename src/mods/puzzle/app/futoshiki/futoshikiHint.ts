@@ -5,6 +5,7 @@ import {
   nextFutoshikiStep,
   type FutoshikiNotes,
   type FutoshikiPuzzleData,
+  type FutoshikiCellRef,
   type FutoshikiStep,
   type FutoshikiValues,
   type TechniqueId,
@@ -17,6 +18,8 @@ export type FutoshikiHint = {
   cells: ReadonlySet<string>
   /** Signs the reason points at, so "the sign says this one is smaller" has something to point to. */
   constraints: ReadonlySet<number>
+  /** The square the reason is about — where the cursor goes, so the pad is already aimed at it. */
+  focus: FutoshikiCellRef
 }
 
 // Several techniques read as a different sentence each way round ("nothing bigger fits" vs "nothing
@@ -30,6 +33,7 @@ const asHint = (step: FutoshikiStep): FutoshikiHint => ({
   params: step.params,
   cells: new Set(step.cells.map(cell => futoshikiCellKey(cell.row, cell.col))),
   constraints: new Set(step.constraint === undefined ? [] : [step.constraint]),
+  focus: step.cells[0],
 })
 
 /**
@@ -54,6 +58,7 @@ export const buildFutoshikiHint = (
       params: {},
       cells: new Set([futoshikiCellKey(mistake.row, mistake.col)]),
       constraints: new Set<number>(),
+      focus: { row: mistake.row, col: mistake.col },
     }
 
   const step = nextFutoshikiStep(puzzle, createFutoshikiBoard(puzzle, values, notes), cap)

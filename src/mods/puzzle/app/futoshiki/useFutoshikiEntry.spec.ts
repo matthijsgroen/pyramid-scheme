@@ -28,6 +28,15 @@ describe("useFutoshikiEntry", () => {
     expect(result.current.selected).toEqual({ row: 0, col: 2 })
   })
 
+  it("aims at a square without toggling it off, so a hint can land on the picked one", () => {
+    const { result } = renderHook(() => useFutoshikiEntry())
+    act(() => result.current.selectCell(1, 2))
+    act(() => result.current.focusCell(1, 2))
+    expect(result.current.selected).toEqual({ row: 1, col: 2 })
+    act(() => result.current.focusCell(3, 0))
+    expect(result.current.selected).toEqual({ row: 3, col: 0 })
+  })
+
   it("switches between writing answers and pencilling notes", () => {
     const { result } = renderHook(() => useFutoshikiEntry())
     expect(result.current.pencil).toBe(false)

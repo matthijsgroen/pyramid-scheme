@@ -73,17 +73,19 @@ show". The solver then applies techniques to the whole board, cheapest first, an
 repeats until nothing changes. Rows feed columns feed signs and back — that
 cross-constraint propagation is where the puzzle lives.
 
-| #      | Technique       | Fires when                                          | Decides                                            |
-| ------ | --------------- | --------------------------------------------------- | -------------------------------------------------- |
-| **T0** | Naked single    | A square has one candidate left                     | Write it in                                        |
-| **T1** | Hidden single   | A number fits only one square of a row or column    | Write it in there                                  |
-| **T2** | Sign bound      | One sign points away from a square                  | Rule out `N` (or `1` the other way)                |
-| **T3** | Sign vs. number | The square across a sign already holds a number     | Rule out everything on the wrong side of it        |
-| **T4** | Sign chain      | `k ≥ 2` squares rise (or fall) away in a run        | Cap the square at `N - k` (or floor it at `1 + k`) |
-| **T5** | Sign pair       | Neither side of a sign is settled                   | Cap each side by what the other can still hold     |
-| **T6** | Naked pair      | Two squares in a line hold the same two candidates  | Rule that pair out of the rest of the line         |
-| **T7** | Hidden pair     | Two numbers fit only the same two squares of a line | Rule everything else out of those two squares      |
-| **T8** | X-wing          | A number fits only the same two lanes in two lines  | Rule it out of the rest of both lanes              |
+| #       | Technique       | Fires when                                              | Decides                                            |
+| ------- | --------------- | ------------------------------------------------------- | -------------------------------------------------- |
+| **T0**  | Naked single    | A square has one candidate left                         | Write it in                                        |
+| **T1**  | Hidden single   | A number fits only one square of a row or column        | Write it in there                                  |
+| **T2**  | Sign bound      | One sign points away from a square                      | Rule out `N` (or `1` the other way)                |
+| **T3**  | Sign vs. number | The square across a sign already holds a number         | Rule out everything on the wrong side of it        |
+| **T4**  | Sign chain      | `k ≥ 2` squares rise (or fall) away in a run            | Cap the square at `N - k` (or floor it at `1 + k`) |
+| **T5**  | Sign pair       | Neither side of a sign is settled                       | Cap each side by what the other can still hold     |
+| **T6**  | Naked pair      | Two squares in a line hold the same two candidates      | Rule that pair out of the rest of the line         |
+| **T7**  | Hidden pair     | Two numbers fit only the same two squares of a line     | Rule everything else out of those two squares      |
+| **T8**  | Naked triple    | Three squares in a line hold three numbers between them | Rule those three out of the rest of the line       |
+| **T9**  | Hidden triple   | Three numbers fit only the same three squares of a line | Rule everything else out of those squares          |
+| **T10** | X-wing          | A number fits only the same two lanes in two lines      | Rule it out of the rest of both lanes              |
 
 ### 4.1 The ordering is about explainability, not power
 
@@ -97,23 +99,34 @@ Placements rank above eliminations for the same reason they do in Sumplete:
 writing a number in moves the board on, while ruling one out is the bookkeeping
 that gets you there.
 
-### 4.2 The top of the ladder is where wizard lives
+### 4.2 A technique we can explain is a technique we use
 
-T7 and T8 are the two rungs a 7×7 actually reaches for; below that size neither
-fires, because the board settles before it needs them. Measured over eight 7×7
-boards accepted at the T8 cap, five demanded an x-wing and two a hidden pair — so
-the top tier reaches its ceiling on its own, without generation being made to
-reject boards until it does.
+The bar for admitting a rung is that its reason can be said in one checkable
+sentence, not that a board is currently stuck without it. Holding an explainable
+technique back only means the hint engine has to reach for a worse reason when
+that position comes up.
 
-That is what separates wizard from master. At the T5 cap both tiers produced
-boards whose hardest step was the same, and wizard's higher ceiling was
-decorative.
+The bar for _keeping_ one is that it fires. A rung no board ever reaches is not a
+technique, it is dead code claiming to be one, so the reachability sweep asserts
+every rung fires on a real board and would fail the moment one stopped.
 
-### 4.3 Deliberately absent
+### 4.3 The top of the ladder is where wizard lives
 
-Swordfish, XY-wing, colouring, and the rest of the Sudoku ladder. They are real
-techniques, but nothing in the tier table needs them yet — they get added when a
-board demands one, not before.
+T6–T10 are the rungs a 7×7 actually reaches for; below that size none of them
+fire, because the board settles before it needs them. That is what separates
+wizard from master: at the T5 cap both tiers produced boards whose hardest step
+was the same, and wizard's higher ceiling was decorative.
+
+How often each is the hardest step of a wizard solve, and how rare they get:
+counted over thirty 7×7 boards, x-wing fired 14 times, naked pair 24, hidden pair
+22, naked triple 4, and hidden triple twice — the last first appearing at seed 14.
+Rarity is why the reachability sweep runs deeper on the top tier than on the rest.
+
+### 4.4 Still absent
+
+Swordfish, XY-wing and colouring. Not on the "not needed yet" grounds §4.2
+rejects — they are candidates under exactly the same bar, and go in when someone
+can write the one-sentence reason and show it firing.
 
 ## 5. Difficulty knobs
 
@@ -131,7 +144,7 @@ the redundancy §3.1 exists to remove.
 | junior  | 5×5  | T4 sign chain      | 8–12 of 40  |
 | expert  | 6×6  | T4 sign chain      | 11–20 of 60 |
 | master  | 6×6  | T5 sign pair       | 13–19 of 60 |
-| wizard  | 7×7  | T8 x-wing          | ~23 of 84   |
+| wizard  | 7×7  | T10 x-wing         | ~23 of 84   |
 
 The cap is inclusive: a tier permits every technique up to it, so wizard boards
 may use the whole ladder.
@@ -211,7 +224,28 @@ directions; nothing about a theme reaches the puzzle logic.
 Side family — the answer is an arrangement, not a number, so it does not feed
 carry-forward (`PUZZLE_FAMILIES.md` P3).
 
-## 11. Open questions
+## 11. Generation cost, and where it should go
+
+A wizard board is the dear one: seven squares wide, eleven techniques, and a
+prune loop that re-solves the board once per sign it tries to remove. That lands
+at roughly 225ms today, paid on the main thread the moment a puzzle room opens.
+
+Two things keep it there. The ladder **short-circuits** — only the cheapest
+technique that fires is spent on a pass, so the dear rungs at the end are rarely
+reached (mapping the whole ladder and taking the first non-empty result cost 6×
+that, since `map` is eager). And difficulty is never bought by rejecting boards
+until one demands the top rung, which measured at ~1050ms per accepted board.
+
+**The direction out is to stop generating at play time at all**: run generation
+offline, verify the boards, and ship a table of known-good seeds per family and
+tier with the build. Play time then costs one lookup plus one deterministic
+replay of the seed — and the offline pass is free to be as thorough as we like,
+including gates that are too slow to run in front of a player (every board
+demanding its cap, duration sampling, difficulty grading). Generation is already
+seeded and deterministic, which is the whole precondition. Prior art: the same
+mechanic in Block Sort.
+
+## 12. Open questions
 
 1. **Auto-pencilling.** Filling every square's notes with its row/column
    candidates at a tap is standard in Sudoku apps and would suit the higher

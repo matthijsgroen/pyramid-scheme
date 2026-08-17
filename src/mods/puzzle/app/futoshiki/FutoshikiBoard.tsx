@@ -34,9 +34,12 @@ const cellCls = (cell: FutoshikiCell, state: { lit: boolean; selected: boolean; 
     "border-stone-600 bg-stone-800 text-stone-500": !cell.given && !state.conflicted,
     // A pre-filled number is part of the puzzle, not of the answer — it reads as stone, not as ink.
     "border-stone-500 bg-stone-700 text-amber-200": cell.given && !state.conflicted,
-    "border-red-600 bg-red-950/70 text-red-300": state.conflicted,
+    // A repeat has to be loud. A dark wash behind a white digit was the whole tell before, and on a
+    // dark board at arm's length it read as no tell at all.
+    "border-red-500 bg-red-900 text-red-200": state.conflicted,
     "ring-2 ring-sky-300": state.selected,
     "ring-2 ring-amber-300": state.lit && !state.selected,
+    "ring-2 ring-red-500": state.conflicted && !state.selected && !state.lit,
   })
 
 const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
@@ -125,6 +128,7 @@ export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, 
         {cells.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const key = futoshikiCellKey(rowIndex, colIndex)
+            const conflicted = conflicts.cells.has(key)
             return (
               <button
                 key={key}
@@ -132,13 +136,20 @@ export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, 
                 className={cellCls(cell, {
                   lit: highlighted?.has(key) ?? false,
                   selected: selected?.row === rowIndex && selected?.col === colIndex,
-                  conflicted: conflicts.cells.has(key),
+                  conflicted,
                 })}
               >
                 {cell.value === undefined ? (
                   <NoteGrid notes={cell.notes} size={size} />
                 ) : (
-                  <span className={clsx("text-[58cqw] font-semibold", !cell.given && "text-stone-100")}>
+                  <span
+                    className={clsx("text-[58cqw] font-semibold", {
+                      // The digit takes the conflict colour too: forcing ink-white here was what
+                      // swallowed the warning, since the square's own red never reached the number.
+                      "text-stone-100": !cell.given && !conflicted,
+                      "text-red-100": conflicted,
+                    })}
+                  >
                     {cell.value}
                   </span>
                 )}

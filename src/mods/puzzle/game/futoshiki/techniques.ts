@@ -12,6 +12,8 @@ export const TECHNIQUES = [
   "signPair",
   "nakedPair",
   "hiddenPair",
+  "nakedTriple",
+  "hiddenTriple",
   "xWing",
 ] as const
 
@@ -51,7 +53,7 @@ export type FutoshikiStep = {
   cells: FutoshikiCellRef[]
   /** Index into the puzzle's constraints, for the reasons that point at a sign. */
   constraint?: number
-  params: { value?: number; chain?: number; bound?: number; first?: number; second?: number }
+  params: { value?: number; chain?: number; bound?: number; first?: number; second?: number; third?: number }
   decisions: FutoshikiDecision[]
 }
 
@@ -437,6 +439,75 @@ const IMPLEMENTATIONS: Record<TechniqueId, Technique> = {
             },
           ]
         })
+      )
+    }),
+
+  // Three squares holding only three numbers between them, however those three fall inside the trio.
+  nakedTriple: (_puzzle, board) =>
+    linesOf(board.size).flatMap(line => {
+      const open = line.cells.filter(cell => {
+        const held = board.candidates[cell.row][cell.col].size
+        return held >= 2 && held <= 3
+      })
+      return open.flatMap((first, i) =>
+        open.slice(i + 1).flatMap((second, j) =>
+          open.slice(i + j + 2).flatMap(third => {
+            const trio = [first, second, third]
+            const union = new Set(trio.flatMap(cell => [...board.candidates[cell.row][cell.col]]))
+            if (union.size !== 3) return []
+            const values = [...union].sort((a, b) => a - b)
+            const decisions = line.cells
+              .filter(cell => !trio.some(held => sameCell(cell, held)))
+              .flatMap(cell => eliminate(board, cell, values))
+            if (!decisions.length) return []
+            return [
+              {
+                technique: "nakedTriple" as const,
+                variant: line.kind,
+                cells: trio,
+                params: { first: values[0], second: values[1], third: values[2] },
+                decisions,
+              },
+            ]
+          })
+        )
+      )
+    }),
+
+  // Three numbers with nowhere else in the line to go, so between them they own three squares.
+  hiddenTriple: (_puzzle, board) =>
+    linesOf(board.size).flatMap(line => {
+      const placed = new Set(line.cells.map(cell => board.values[cell.row][cell.col]))
+      const open = range(board.size).filter(value => !placed.has(value))
+      const hostsOf = (value: number) => line.cells.filter(cell => board.candidates[cell.row][cell.col].has(value))
+      return open.flatMap((first, i) =>
+        open.slice(i + 1).flatMap((second, j) =>
+          open.slice(i + j + 2).flatMap(third => {
+            const values = [first, second, third]
+            const hosts = values.map(hostsOf)
+            if (hosts.some(found => found.length < 2 || found.length > 3)) return []
+            const union = new Map(hosts.flat().map(cell => [futoshikiCellKey(cell.row, cell.col), cell] as const))
+            if (union.size !== 3) return []
+            const cells = [...union.values()]
+            const decisions = cells.flatMap(cell =>
+              eliminate(
+                board,
+                cell,
+                range(board.size).filter(value => !values.includes(value))
+              )
+            )
+            if (!decisions.length) return []
+            return [
+              {
+                technique: "hiddenTriple" as const,
+                variant: line.kind,
+                cells,
+                params: { first, second, third },
+                decisions,
+              },
+            ]
+          })
+        )
       )
     }),
 

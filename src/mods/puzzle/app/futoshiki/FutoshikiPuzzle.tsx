@@ -40,7 +40,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const { t } = useTranslation("common")
   const { size, solution, techniqueCap } = puzzle
   const [state, setState] = useState(() => createFutoshikiState(puzzle))
-  const { selected, pencil, selectCell, togglePencil, clearSelection } = useFutoshikiEntry()
+  const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useFutoshikiEntry()
 
   const values = useMemo(() => futoshikiValues(state), [state])
   const conflicts = useMemo(() => futoshikiConflicts(puzzle, values), [puzzle, values])
@@ -73,6 +73,9 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       }}
       hint={hint && t(`futoshiki.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
+      // Reading a hint and then hunting for the square it means is the whole gap between advice and
+      // acting on it, so asking for one aims the board and the pad at that square.
+      onHintRevealed={() => hint && focusCell(hint.focus.row, hint.focus.col)}
       rules={<FutoshikiRules />}
     >
       {({ reportInput, hintVisible }) => (

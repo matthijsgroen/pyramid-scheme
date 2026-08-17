@@ -352,6 +352,14 @@
       "xWing": {
         "row": "{{value}} fits in only two squares of each of these two rows, and they stand in the same columns. Whichever way round it falls, both columns are spoken for — so {{value}} can go nowhere else in them.",
         "col": "{{value}} fits in only two squares of each of these two columns, and they stand in the same rows. Whichever way round it falls, both rows are spoken for — so {{value}} can go nowhere else in them."
+      },
+      "nakedTriple": {
+        "row": "These three squares hold only {{first}}, {{second}} and {{third}} between them, so no other square in this row can take any of the three.",
+        "col": "These three squares hold only {{first}}, {{second}} and {{third}} between them, so no other square in this column can take any of the three."
+      },
+      "hiddenTriple": {
+        "row": "In this row, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them.",
+        "col": "In this column, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them."
       }
     }
   }
