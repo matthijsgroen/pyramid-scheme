@@ -27,7 +27,7 @@ const board = (difficulty: keyof typeof LIGHTBEAM_CONFIG, seed: number) => {
 const starter = board("starter", 1)
 const expert = board("expert", 2)
 const wizard = board("wizard", 4)
-/** A generated wizard board, which since §12.1 landed means one carrying a door and its two sockets. */
+/** A generated wizard board, which since §11.1 landed means one carrying a door and its two sockets. */
 const wizardDoors = board("wizard", 11)
 /** A generated wizard board that drew `crossedBeams` — its winning route folds back through its own line. */
 const wizardCrossing = board("wizard", 2)
@@ -60,7 +60,7 @@ export const Playable: Story = {
 }
 
 // ---------------------------------------------------------------------------------------------------
-// Switch nodes (design doc §12.1) — the drawing, prototyped ahead of the logic.
+// Switch nodes (design doc §11.1) — the drawing, prototyped ahead of the logic.
 //
 // The doc's own warning is that the wire layer, not the reasoning, is what kills this mechanic: the board
 // already carries cells, a beam, glyphs, movable rings, dashed ghost tracks and end markers at 35px a

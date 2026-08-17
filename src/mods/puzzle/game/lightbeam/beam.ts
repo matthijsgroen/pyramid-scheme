@@ -30,7 +30,7 @@ export type MovablePiece =
   | { kind: "slidingWall"; stops: CellRef[] }
 
 /**
- * A socket sunk in the floor (design doc §12.1): a fixed, transparent cell that the light can cross.
+ * A socket sunk in the floor (design doc §11.1): a fixed, transparent cell that the light can cross.
  * Crossing it lights every wire leading out of it. There is nothing to tap, so the control scheme stays
  * at exactly one gesture.
  */
@@ -69,7 +69,7 @@ export type LightbeamPuzzleData = {
    * **Nothing traces these yet.** They are the shape the board is being drawn against, and only that. An
    * unfired socket is transparent, which is what an empty cell already is, so `configGrid` and the whole
    * solver stay correct for every board that ships today — and no board generates one. Firing lands with
-   * §12.1's logic, once the drawing has been shown to survive.
+   * §11.1's logic, once the drawing has been shown to survive.
    */
   nodes?: BeamNode[]
   wirings?: NodeWiring[]
@@ -201,7 +201,7 @@ export const walkForward = (
   resolve: Resolver,
   /**
    * Called as the beam enters each cell, before anything is read from it. Returns true when crossing this
-   * cell changed the board — a socket fired and something moved — which is how switch nodes (§12.1) hook
+   * cell changed the board — a socket fired and something moved — which is how switch nodes (§11.1) hook
    * into the one walk without a second pass.
    */
   cross?: (at: CellRef) => boolean
@@ -311,7 +311,7 @@ export const firedConfig = (
  * configuration — which is what keeps §5's exact enumeration, and therefore every gate and both
  * exhaustive rungs, working untouched. Crossing a socket fires the wirings whose sockets have *all* been
  * crossed, the affected pieces move, and the walk carries on from where it is. Effects land ahead of the
- * light by construction (§12.1), so the drawn beam is never a picture of something that has stopped being
+ * light by construction (§11.1), so the drawn beam is never a picture of something that has stopped being
  * true.
  */
 export const traceBeam = (puzzle: LightbeamPuzzleData, config: LightbeamConfig): BeamWalk => {

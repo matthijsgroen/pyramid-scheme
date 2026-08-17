@@ -50,13 +50,25 @@ game feeling unified rather than a minigame collection.
   load-bearing. (Bonus: this makes puzzles playable by pre-literate kids — a real
   accessibility win, not just localization.)
 
-**P3 — Produce or consume a value (spine vs side).** Families that output a
-single number can participate in **carry-forward** along a corridor (a value
-decoded upstream feeds a puzzle downstream). These are **spine** families and
-may sit on the critical path. Families whose answer is a _mask or arrangement_
-(the grid-logic families) do **not** naturally produce a value — they are
-**side** families and live in optional branches. (Carry-forward never crosses a
-stairhead; see `docs/game-design/pyramid-interior-design.md` §6.)
+**P3 — Every family must be safe to gate on.** A puzzle hands back nothing but
+"solved" (`onSolved: () => void`); no number comes out of one, and nothing carries
+a value from one room to the next. So there is **no main-path family and no
+side-path family** — any family can sit anywhere, including in front of a door
+the player cannot get past.
+
+That is a constraint rather than a simplification. Every family has to be
+acceptable as a blocker: bounded solve time, always solvable by reasoning, never
+a wall. Optional branches do exist on the map, but no _family_ belongs to them —
+placement is the tag allocator's business (§7), and it has nothing to sort
+families by. So no family is excused as "it only ever turns up somewhere the
+player can walk away from". The one thing that still argues for keeping a family
+off a gate is how long it takes, which is a pacing question and lives in §8.
+
+_This principle used to read the opposite way_ — a spine/side split, with
+"carry-forward" passing a decoded value down a corridor and the grid-logic
+families confined to optional rooms. None of it was ever built, and the catalogue
+described it long enough to mislead a reader into designing against it. The rule
+above is what replaced it.
 
 **P4 — A family debuts at the bottom of its OWN scale.** A family entering at a
 high tier still enters as its _simplest_ instance, so "fresh" never means "wall."
@@ -86,8 +98,10 @@ Two separate axes, and they come apart exactly at the logic families:
 - **Duration** — how long it takes _this_ player, which is **high-variance** for
   the grid-logic families (the same 9×9 is 90s for one kid, 6 min for another).
 
-Author difficulty; **measure** duration (see §7). Never place a long-duration
-family where it gates the critical path or an exit.
+Author difficulty; **measure** duration (see §7). And since any family can gate a
+door (P3), a long-duration family is a problem **everywhere** rather than
+something to keep off the critical path — the fix is to bound the duration, not
+to put it where it matters less.
 
 ### 3.3 Generation & the uniqueness verifier
 
@@ -116,9 +130,6 @@ knob bounds; it never changes difficulty.
 
 ## 4. The puzzle families
 
-Legend for **role**: **spine** = produces a value, may sit on critical path ·
-**side** = no value output, lives in optional branches.
-
 ### 4.1 Cross-sum / number pyramid — _(have)_
 
 - **Skill:** addition, then multiplication; substitution; deduction.
@@ -131,7 +142,6 @@ Legend for **role**: **spine** = produces a value, may sit on critical path ·
 - **Generation:** trivial, unique-by-construction (pick base values, compute up,
   hide a solvable subset).
 - **UI:** easy — already built; glyph-pad into the grid. Mobile-fine.
-- **Role:** **spine** (the canonical value source/consumer).
 
 ### 4.2 Balance scale (weighing of the heart) — _(have)_
 
@@ -152,7 +162,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   positive-integer solution, render as pans.
 - **UI:** medium — bespoke tilt animation is the whole point; otherwise
   tap-to-place. The least language-dependent family in the catalogue.
-- **Role:** **spine** (the unknown's value carries forward).
 
 ### 4.3 Sundial / shadow clock (telling time) — _(have, time theme)_
 
@@ -164,9 +173,8 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **Scaling:** good, but a lower ceiling than arithmetic families.
 - **Generation:** trivial, unique-by-construction.
 - **UI:** medium (dial face; draggable hand).
-- **Role:** **spine** — a pure **value source** (hands "the 4th hour = 4" to a
-  downstream arithmetic chamber). Day expeditions; night expeditions use the
-  decan star-clock variant.
+- **Theme:** day expeditions; night expeditions use the decan star-clock
+  variant.
 
 ### 4.4 Water clock / clepsydra (duration) — _(have, time theme)_
 
@@ -178,7 +186,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **Scaling:** good; the boundary-crossing knob is where real difficulty lives.
 - **Generation:** trivial, unique-by-construction.
 - **UI:** medium (level slider against marks).
-- **Role:** **spine** (outputs a duration value). Makes a clean door-gate.
 
 ### 4.5 Clock arithmetic (modular)
 
@@ -188,7 +195,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **Scaling:** good; inherently a higher-tier idea.
 - **Generation:** trivial, unique-by-construction.
 - **UI:** medium (reuses the clock face from §4.3).
-- **Role:** **spine**, but best parked in **optional/decoy rooms** at high tiers.
 
 ### 4.6 Eye of Horus fractions
 
@@ -201,8 +207,7 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **Scaling:** limited while restricted to the six eye-parts; good if generalised.
 - **Generation:** trivial (subset-sum over a small fixed set).
 - **UI:** easy–medium (six fixed toggles).
-- **Role:** **spine** (outputs a fraction value). Doubles as a sacred-symbol
-  collectible — pedagogy and lore fused.
+- **Bonus:** doubles as a sacred-symbol collectible — pedagogy and lore fused.
 
 ### 4.7 Target number (the "24 game")
 
@@ -215,7 +220,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **Generation:** easy — generate operands, brute-force-verify at least one
   solution exists (and optionally that it's appropriately hard).
 - **UI:** medium (expression builder).
-- **Role:** **spine** (the target is the value).
 
 ### 4.8 Glyph Latin-square (Sudoku)
 
@@ -228,7 +232,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   grading and difficulty rating.
 - **UI:** easy–medium — the most familiar mobile puzzle pattern; palette in
   thumb reach.
-- **Role:** **side** (no value output — pure logic side-room).
 
 ### 4.9 Nonogram (hieroglyph reveal)
 
@@ -248,8 +251,8 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   of hieroglyphs hand-checked solvable at each size; pre-fill border cells to
   anchor orientation.
 - **UI:** medium–hard (mode toggle; shrinking targets at scale).
-- **Role:** **side** — but its reveal _is_ the "uncover a hidden picture" thesis
-  at the puzzle scale; it doubles as a reward object.
+- **Bonus:** its reveal _is_ the "uncover a hidden picture" thesis at the puzzle
+  scale; it doubles as a reward object.
 
 ### 4.10 Kakuro (the literal "cross sum")
 
@@ -262,7 +265,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   in general); needs the verifier.
 - **UI:** **hard on mobile** — dense split clue-triangles are cramped on a phone.
   The worst UI fit in the catalogue; needs generous cell sizing and a capped grid.
-- **Role:** **side**.
 
 ### 4.11 Sumplete / Number Sum
 
@@ -280,7 +282,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   uniqueness verifier** so the game never rejects a valid alternative answer.
 - **UI:** **easy — arguably the most mobile-friendly grid family.** One
   interaction (tap-cycle unknown → ✗ → ○); no palette, no clue-triangles.
-- **Role:** **side** (answer is a mask, not a value).
 
 ### 4.12 Symmetry completion — _(early-only)_
 
@@ -292,7 +293,7 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   out** (frees its slot for richer families later).
 - **Generation:** easy, unique-by-construction.
 - **UI:** medium (place/tap mirrored cells).
-- **Role:** **side**; a strong **first** family because it needs almost no text.
+- **Note:** a strong **first** family because it needs almost no text.
 
 ### 4.13 Sequence continuation — _(use with caution)_
 
@@ -305,7 +306,6 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   and keep them number/shape-based.
 - **Generation:** easy but **must verify a unique continuation.**
 - **UI:** easy.
-- **Role:** **side**.
 
 ### 4.14 Egyptian doubling — _(optional, modest)_
 
@@ -315,7 +315,7 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **Scaling:** modest ceiling.
 - **Generation:** trivial, unique-by-construction.
 - **UI:** easy.
-- **Role:** spine-ish (outputs a value) but low ceiling — a flavour family.
+- **Note:** low ceiling — a flavour family.
 
 ### 4.15 Mirror / lightbeam — _(have)_
 
@@ -356,7 +356,6 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
   a cycle is its own inverse, so there is nothing to take back. The board draws the
   beam wherever it currently goes and marks where it ends, which is the family's
   live feedback and the reason it needs no words.
-- **Role:** **side** (the answer is a route, not a value).
 - **Found while building it:** a beam from the disc can never enter a loop. A 90°
   mirror maps `(cell, direction)` one-to-one, so every beam state has exactly one
   predecessor and the disc's first has none — a ring of mirrors loops only if the
@@ -382,8 +381,8 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
   if the tile behind it (in the push direction) is empty — the classic
   push-don't-pull constraint. Not yet designed beyond this — no knobs, scaling,
   or generation approach locked yet.
-- **Role:** side, likely no value output — flagged here mainly to record the
-  **theme pairing** below before it's forgotten.
+- **Note:** flagged here mainly to record the **theme pairing** below before it's
+  forgotten.
 - **Theme pairing — "Merchant":** groups with **balance scale** (§4.2) under a
   shared visual/narrative wrapper — weighing goods and moving cargo are both
   merchant-flavored actions, even though the two mechanics are unrelated
@@ -405,7 +404,6 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
   between discrete authored stops rather than freely until blocked — this
   family is the free-slide-until-blocked version that was considered and set
   aside for that tile, now standing on its own as a full family instead.
-- **Role:** side, likely no value output.
 - **Theme pairing:** pairs naturally with **Sokoban** under a broader
   "logistics/caravan route" grouping — both are grid-block movement puzzles
   about clearing or arranging paths, just with different piece-movement rules.
@@ -433,8 +431,6 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
 - **UI:** easy–medium, and a good mobile fit — drag along the path, or tap a cell
   and pick a number. No clue-triangles, no palette of glyphs, no mode toggle;
   closer to Sumplete's ergonomics (§4.11) than kakuro's (§4.10).
-- **Role:** **side** — the answer is an arrangement, not a value, so it lives in
-  optional branches like the other grid-logic families (T2+ per §7's rule 2).
 - **The layout decision, which is the real cost:** on a **square** grid this is
   nearly free infrastructure — it drops straight onto §5's grid engine as another
   cell-state family. As a **beehive** it needs its own coordinate system,
@@ -472,7 +468,6 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
   eraser, undo). The signs are laid over the gutters rather than given tracks of
   their own, which is what lets the grid reach 7×7 — Puzzle Express's own ceiling
   — on a 360px screen.
-- **Role:** **side** (the answer is an arrangement, not a value).
 - **First in the catalogue to need notetaking**, and the reason it is worth
   having: the player's notes are literally the solver's candidates, so hints read
   them and a wrong note is a mistake the hint engine can name.
@@ -506,23 +501,23 @@ are mostly clue-rendering + a rules overlay on top.
 
 Effort ratings are relative, not absolute.
 
-| Family                 | UI (web/mobile) | Scaling                  | Generation                  | Solve time / variance     | Role             |
-| ---------------------- | --------------- | ------------------------ | --------------------------- | ------------------------- | ---------------- |
-| Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.) | 15–60s / low              | spine            |
-| Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)   | 20–90s / low–med          | spine            |
-| Sundial                | Medium          | Good (low ceiling)       | Trivial                     | 15–60s / low              | spine (source)   |
-| Water clock            | Medium          | Good                     | Trivial                     | 30–90s / med              | spine            |
-| Clock-arith            | Medium          | Good                     | Trivial                     | 30–90s / med              | spine (optional) |
-| Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                     | 15–60s / low              | spine            |
-| Target-number          | Medium          | Good                     | Easy (verify exists)        | 30–90s / med              | spine            |
-| Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        | side             |
-| Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** | side             |
-| Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            | side             |
-| Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  | side             |
-| Hidato / beehive       | Easy–Med        | Good (smooth)            | Med (**verifier**)          | 1–4 min / med             | side             |
-| Symmetry               | Medium          | Moderate (early-only)    | Easy                        | 15–45s / low              | side             |
-| Sequence               | Easy            | Easy (uniqueness risk)   | Easy + **verifier**         | 15–45s / low              | side             |
-| Egyptian doubling      | Easy            | Modest                   | Trivial                     | 20–60s / low              | spine-ish        |
+| Family                 | UI (web/mobile) | Scaling                  | Generation                  | Solve time / variance     |
+| ---------------------- | --------------- | ------------------------ | --------------------------- | ------------------------- |
+| Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.) | 15–60s / low              |
+| Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)   | 20–90s / low–med          |
+| Sundial                | Medium          | Good (low ceiling)       | Trivial                     | 15–60s / low              |
+| Water clock            | Medium          | Good                     | Trivial                     | 30–90s / med              |
+| Clock-arith            | Medium          | Good                     | Trivial                     | 30–90s / med              |
+| Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                     | 15–60s / low              |
+| Target-number          | Medium          | Good                     | Easy (verify exists)        | 30–90s / med              |
+| Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        |
+| Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
+| Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
+| Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
+| Hidato / beehive       | Easy–Med        | Good (smooth)            | Med (**verifier**)          | 1–4 min / med             |
+| Symmetry               | Medium          | Moderate (early-only)    | Easy                        | 15–45s / low              |
+| Sequence               | Easy            | Easy (uniqueness risk)   | Easy + **verifier**         | 15–45s / low              |
+| Egyptian doubling      | Easy            | Modest                   | Trivial                     | 20–60s / low              |
 
 ---
 
@@ -553,13 +548,12 @@ Three placement rules make the table behave:
 
 1. **A family debuts at the bottom of its own scale** (P4). Nonogram enters T4 as
    a 10×10, never a 15×15; balance scale enters T1 at one-unknown-one-weight.
-2. **Pure-logic side-families gate on side-rooms existing.** Latin-square,
-   nonogram, kakuro, Sumplete, sequence don't produce a value, so they live in
-   optional branches — which means they cannot appear before **forks debut (T2+)**.
-   The map growing branches is _what unlocks_ the logic families. (See
-   `docs/game-design/game-loop.md` on spine-dense critical paths.)
-   **Build note:** the initial Phase 4 build is linear (no forks); side-families
-   enter in Phase 5a when forks are introduced.
+2. **The long families enter late because they are long, not because of where
+   they sit.** Latin-square, nonogram, kakuro, Sumplete and sequence all carry
+   high solve time or high variance (§6), and a T1 room is the worst place to
+   spend fifteen minutes — a player still learning what a puzzle _is_ reads a long
+   one as a wall. So they debut at T2+, and §8's pacing rule governs whether a
+   given long-pole instance is allowed to gate anything.
 3. **Low-ceiling families are deliberately early-only and graduate out.** Symmetry
    does its job T1–T3, then its `—` at T4/T5 frees the slot for richer families.
 
@@ -633,12 +627,11 @@ conversation.
    (equality→algebra), near-zero language, and it stress-tests the "scales in
    difficulty" claim hardest. It's also the one bespoke (non-grid) UI, so it
    exercises the engine's range early.
-3. **Glyph Latin-square** — cheap bottomless logic side-family off the grid
-   engine.
+3. **Glyph Latin-square** — cheap bottomless logic off the grid engine.
 4. **Sumplete** (if not already used to bootstrap the engine) and **nonogram** —
    nonogram as the mid-game reward-and-puzzle fusion once the grid muscle exists.
 5. **Eye of Horus fractions** and the **time families** (sundial → water clock →
-   clock-arith) — round out the spine curriculum.
+   clock-arith) — round out the arithmetic curriculum.
 6. **Target-number**, **symmetry**, **sequence**, **kakuro**, **doubling** — as
    appetite allows; kakuro last given its mobile-UI cost.
 
@@ -653,10 +646,7 @@ conversation.
    reveals at T5?
 3. **Telemetry vs adaptation** (§8) — local designer telemetry only, or eventual
    in-game adaptation with guardrails?
-4. **Which families output values for carry-forward** beyond the obvious spine
-   set — e.g. should a Sumplete grid expose a derived number (count of kept cells)
-   so it _can_ occasionally feed a corridor, or stay strictly a side family?
-5. **Hidato layout (§4.18)** — square grid (rides §5's engine for free, looks like
+4. **Hidato layout (§4.18)** — square grid (rides §5's engine for free, looks like
    the other grid families) or beehive (distinctive and more on-theme, but a second
    layout engine to build and maintain)? The puzzle is identical either way; this is
    purely a UI-investment call.
@@ -687,8 +677,8 @@ redesign.md` has "merchant"/"night-market" as live `theme` string examples):
 | **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                          |
 
 **Gap:** Water & Nile has exactly one family. Two directions to fill it: a
-water-pouring/vessel-transfer puzzle (classic "water jug problem," spine —
-outputs a volume) or a Nile-flood timing puzzle riffing on water clock's
+water-pouring/vessel-transfer puzzle (the classic "water jug problem" — measure
+out a target volume) or a Nile-flood timing puzzle riffing on water clock's
 duration mechanic but with a different UI. Not designed — flagging the gap,
 not proposing a fix yet.
 

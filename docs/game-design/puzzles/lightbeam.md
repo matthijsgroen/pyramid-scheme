@@ -37,7 +37,7 @@ its vocabulary would tell us about a different puzzle.
 | **Sliding mirror** | movable          | 2–3    | Fixed angle, tap cycles between authored stops              |
 | **Sliding wall**   | movable          | 2–3    | Tap cycles between stops — moved out of the way, or into it |
 | **Socket**         | fixed            | —      | Transparent. Light crossing it fires the wires leading out  |
-| **Door**           | driven           | 2      | Stone on the route. No tap moves it; a socket does (§12.1)  |
+| **Door**           | driven           | 2      | Stone on the route. No tap moves it; a socket does (§11.1)  |
 
 The sliding wall is the one piece whose move is **clearing a path** rather than
 bending one. That is worth having precisely because it is a different verb: every
@@ -68,7 +68,7 @@ to be told what one means.
 
 Loop detection stays in the trace anyway, as the thing that keeps the walk total — and it
 becomes load-bearing the moment a piece bends light by anything other than a quarter turn,
-which is exactly what the deferred prism (§12) does. `beam.spec.ts` proves both halves: the
+which is exactly what the deferred prism (§11) does. `beam.spec.ts` proves both halves: the
 ring loops when the light starts inside it, and the disc's beam never loops.
 
 ## 4. The deduction ladder
@@ -100,7 +100,7 @@ loop, as in the other families.
 through there, that door is shut, so it must reach this socket first"_ — and it is a fact rather than an
 elimination, which is why it sits with T0 and T1 rather than at the top. It reads straight off the forced
 set, needs no enumeration, and its reason is local: put a finger on the socket the run crosses and follow
-the wire. See §12.1.
+the wire. See §11.1.
 
 ### 4.1 Why T7 is ranked last
 
@@ -349,7 +349,7 @@ dials the generator already had.
 | **Blind alleys**        | `shadows +1`                  | the exhaustive rung (T6)   | yes   |
 | **Order of operations** | `doors +1`                    | ordering (T2)              | yes   |
 | **Crossed beams**       | `crossings +1`, `turns +1`    | reading a square twice     | yes   |
-| **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §12.1 |
+| **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §11.1 |
 
 ### 7.1 Three rules that keep it honest
 
@@ -463,10 +463,10 @@ Beyond the shared screen bar:
 - Both mirror orientations read as visibly different objects, not a subtle
   rotation, at 44px.
 - **Nothing but light is drawn amber, and nothing but light is drawn as a continuous line.** The
-  switch-node prototype (§12.1) is where this stopped being a preference: a wire in any other
+  switch-node prototype (§11.1) is where this stopped being a preference: a wire in any other
   colour still read as a second beam until it was dashed as well.
 - **A piece's outline says whose it is.** White for everything a tap can move, and a socket's own
-  colour for everything a socket moves (§12.1). One question — "can I touch this?" — answered before
+  colour for everything a socket moves (§11.1). One question — "can I touch this?" — answered before
   anything else on the board has to be read.
 
 ## 10. Theming
@@ -480,19 +480,14 @@ The component emits logical state only — `sunDisc | shrine | mirror(a|b) | wal
 plus the traced path and its end reason. Colour, texture and glyph live in the
 skin.
 
-## 11. Value output
-
-Side family — the answer is a route, not a number, so it does not feed
-carry-forward (`PUZZLE_FAMILIES.md` P3).
-
-## 12. Deferred
+## 11. Deferred
 
 - **Prisms and colour splitting.** The catalogue already rules this a different
   puzzle shape rather than a knob, and points at The Talos Principle as prior art.
 - **"Light the shrine at the fifth hour."** `story-and-time-brainstorm.md` proposes
   a timed variant reusing these exact pieces once a tick/scrub control exists —
   the obelisk shadow sweeping one column per hour. Same pieces, new problem.
-- **Offline seed tables.** The direction recorded in `futoshiki.md` §11 applies
+- **Offline seed tables.** The direction recorded in `futoshiki.md` §10 applies
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
 

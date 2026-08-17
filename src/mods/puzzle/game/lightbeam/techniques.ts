@@ -248,7 +248,7 @@ const exitRun = (board: LightbeamBoard): LightbeamStep[] => {
 }
 
 /**
- * The ordering fact, and the only one in the catalogue (design doc §12.1).
+ * The ordering fact, and the only one in the catalogue (design doc §11.1).
  *
  * Every other rung concludes either "these cells carry the beam" or "that setting is impossible". This one
  * concludes **"the light has to get through there, that door is shut, so it must reach this socket first"**

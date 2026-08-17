@@ -208,7 +208,7 @@ describe("eachConfig", () => {
 })
 
 // ---------------------------------------------------------------------------------------------------
-// Switch nodes (design doc §12.1). A socket is a transparent cell; crossing it fires every wiring whose
+// Switch nodes (design doc §11.1). A socket is a transparent cell; crossing it fires every wiring whose
 // sockets have all been crossed, and the pieces those wirings name move.
 // ---------------------------------------------------------------------------------------------------
 

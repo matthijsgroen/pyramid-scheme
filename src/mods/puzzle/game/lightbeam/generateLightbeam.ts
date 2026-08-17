@@ -74,7 +74,7 @@ export type LightbeamDials = {
   crossings: number
   /**
    * Doors: stone across the route that no tap can shift, opened only by the light reaching a socket
-   * upstream of it (design doc §12.1). Two doors share one socket, which is fan-out.
+   * upstream of it (design doc §11.1). Two doors share one socket, which is fan-out.
    */
   doors: number
   /**
@@ -418,7 +418,7 @@ const blockWrongSettings = (size: number, draft: Draft, rays: Ray[]): boolean =>
 }
 
 /**
- * Doors, and the sockets that open them (design doc §12.1).
+ * Doors, and the sockets that open them (design doc §11.1).
  *
  * A door is stone standing on the route that **no tap can shift** — that is the whole point, because a
  * door the player could open would make the socket decoration. The light is the only thing that opens it,

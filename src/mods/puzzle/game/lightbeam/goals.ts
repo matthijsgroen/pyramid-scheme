@@ -44,7 +44,7 @@ export const GOAL_DIALS: Record<LightbeamGoal, (dials: LightbeamDials) => Lightb
   blindAlleys: dials => ({ ...dials, shadows: dials.shadows + 1 }),
 
   /**
-   * A door across the route that no tap will open, and a socket further back that opens it (§12.1).
+   * A door across the route that no tap will open, and a socket further back that opens it (§11.1).
    *
    * The board this makes is about **order** — the light has to get somewhere before it can get anywhere
    * else — which is the one thing no other family in the catalogue trains. It costs one piece, and unlike

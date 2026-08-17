@@ -147,7 +147,7 @@ const Shrine: FC<{ lit: boolean }> = ({ lit }) => (
 )
 
 // ---------------------------------------------------------------------------------------------------
-// Nodes and their wiring (design doc §12.1). Prototyped before any of the logic, because the drawing is
+// Nodes and their wiring (design doc §11.1). Prototyped before any of the logic, because the drawing is
 // the likeliest thing to kill the mechanic: the board already carries cells, a two-pass beam, glyphs,
 // movable rings, dashed tracks with ghost pieces and end markers, at 35px a cell on a 9-wide board.
 //
