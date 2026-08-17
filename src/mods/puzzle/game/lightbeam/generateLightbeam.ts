@@ -3,25 +3,29 @@ import {
   cellKey,
   eachConfig,
   insideGrid,
+  allPieceOptions,
   isLit,
   opposite,
   pieceCells,
   pieceStateCount,
   reflect,
+  restingState,
   segmentKey,
   stepCell,
   traceBeam,
+  type BeamNode,
   type CellRef,
   type Direction,
   type FixedPiece,
   type LightbeamPuzzleData,
   type MirrorFace,
   type MovablePiece,
+  type NodeWiring,
 } from "./beam"
 import { applyGoals, drawGoals } from "./goals"
 import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
 
-export const LIGHTBEAM_GOALS = ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys"] as const
+export const LIGHTBEAM_GOALS = ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys", "orderOfOperations"] as const
 
 /** What kind of problem a board is, as against how hard it is (design doc §7). */
 export type LightbeamGoal = (typeof LIGHTBEAM_GOALS)[number]
@@ -52,7 +56,18 @@ export type LightbeamDials = {
    * never needed is a board without a ladder.
    */
   fiddleProof: boolean
-  /** Pieces the light can never reach, there to be reasoned irrelevant (technique T4). */
+  /**
+   * Doors: stone across the route that no tap can shift, opened only by the light reaching a socket
+   * upstream of it (design doc §12.1). Two doors share one socket, which is fan-out.
+   */
+  doors: number
+  /**
+   * How many sockets a door's wiring names. One is a plain door; two is an and-wiring, and the piece does
+   * not budge until the light has been through both — a routing demand rather than a setting to rule out,
+   * and the first thing in the family that asks the player to plan a beam instead of settling a piece.
+   */
+  doorNodes: number
+  /** Pieces the light can never reach, there to be reasoned irrelevant (technique T5). */
   decoys: number
   /**
    * Decoys placed in the stretch a wrong setting would light, so that setting cannot be ruled out by
@@ -208,6 +223,8 @@ type Draft = {
   movableCells: Set<string>
   /** Cells a wrong setting sends light across — kept clear of decoys, which must never be reachable. */
   rays: Set<string>
+  nodes: BeamNode[]
+  wirings: NodeWiring[]
 }
 
 /**
@@ -342,6 +359,92 @@ const blockWrongSettings = (size: number, draft: Draft, rays: Ray[]): boolean =>
   return true
 }
 
+/**
+ * Doors, and the sockets that open them (design doc §12.1).
+ *
+ * A door is stone standing on the route that **no tap can shift** — that is the whole point, because a
+ * door the player could open would make the socket decoration. The light is the only thing that opens it,
+ * and it does so by crossing a socket further back along its own route.
+ *
+ * The order is the constraint, and it is structural rather than checked: sockets are drawn from route
+ * cells strictly *before* the earliest door, so the effect always lands ahead of the light and the drawn
+ * beam is never a picture of something that has stopped being true. It is also what makes the new rung
+ * available — the entry run reaches a socket, the socket opens the door, and the run starts growing again
+ * from a stretch it had stalled on.
+ *
+ * Two doors drawn against one socket is fan-out; one door naming two sockets is an and-wiring.
+ */
+const placeWiredDoors = (
+  size: number,
+  draft: Draft,
+  route: Route,
+  options: LightbeamDials,
+  random: () => number
+): boolean => {
+  if (options.doors < 1) return true
+
+  // Doors go on straight stretches in the back half of the route, which leaves room in front of them for
+  // the sockets. A bend cell already carries a mirror and a reason of its own.
+  const half = Math.floor(route.cells.length / 2)
+  const candidates = shuffle(
+    route.cells
+      .map((cell, index) => ({ cell, index }))
+      .filter(
+        ({ cell, index }) =>
+          index >= half &&
+          cell.exit === cell.enter &&
+          !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at)) &&
+          !draft.movableCells.has(cellKey(cell.at))
+      ),
+    random
+  )
+
+  const doors: { at: CellRef; open: CellRef; index: number }[] = []
+  for (const { cell, index } of candidates) {
+    if (doors.length >= options.doors) break
+    if (doors.some(door => Math.abs(door.index - index) < MIN_LEG)) continue
+    const open = perpendicular(cell.enter)
+      .map(direction => stepCell(cell.at, direction))
+      .find(at => insideGrid(size, at) && !draft.taken.has(cellKey(at)) && spacedFrom(draft, at))
+    if (!open) continue
+    draft.taken.add(cellKey(open))
+    draft.movableCells.add(cellKey(open))
+    doors.push({ at: cell.at, open, index })
+  }
+  if (!doors.length) return false
+
+  // Sockets sit ON the route — that is the whole mechanism — so `taken`, which holds every route cell, is
+  // the wrong test. A socket is transparent scenery rather than a piece; what it must not share a square
+  // with is something that occupies one.
+  const earliest = Math.min(...doors.map(door => door.index))
+  const occupied = new Set([
+    cellKey(route.sun.at),
+    cellKey(route.shrine),
+    ...draft.fixed.map(piece => cellKey(piece.at)),
+    ...draft.movableCells,
+  ])
+  const sockets = shuffle(
+    route.cells
+      .map((cell, index) => ({ cell, index }))
+      .filter(({ cell, index }) => index < earliest && !occupied.has(cellKey(cell.at)))
+      .map(({ cell }) => cell.at),
+    random
+  ).slice(0, options.doorNodes)
+  if (sockets.length < options.doorNodes) return false
+  for (const at of sockets) draft.taken.add(cellKey(at))
+
+  draft.nodes = sockets.map(at => ({ at }))
+  const from = sockets.map((_, index) => index)
+  for (const door of doors) {
+    // Stops in this order every time: resting on the route, open beside it. The resting state is the one
+    // no wiring names, so `restingState` reads 0 and the wiring drives to 1.
+    draft.movable.push({ kind: "slidingWall", stops: [door.at, door.open] })
+    draft.solution.push(0)
+    draft.wirings.push({ from, piece: draft.movable.length - 1, to: 1 })
+  }
+  return true
+}
+
 const buildPieces = (size: number, route: Route, options: LightbeamDials, random: () => number): Draft | undefined => {
   const draft: Draft = {
     fixed: [],
@@ -350,6 +453,8 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     taken: new Set(),
     movableCells: new Set(),
     rays: new Set(),
+    nodes: [],
+    wirings: [],
   }
   draft.taken.add(cellKey(route.sun.at))
   for (const cell of route.cells) draft.taken.add(cellKey(cell.at))
@@ -417,6 +522,7 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   }
 
   if (!draft.movable.length) return undefined
+  if (!placeWiredDoors(size, draft, route, options, random)) return undefined
   placeShadows(size, draft, wrongRays, options.shadows, random)
   if (!blockWrongSettings(size, draft, wrongRays)) return undefined
 
@@ -452,9 +558,12 @@ const NEIGHBOURS: Direction[] = ["up", "right", "down", "left"]
  * Measured before this existed, essentially every board broke it — up to ten touching pairs on one wizard
  * grid — so it is a real gate rather than a formality.
  */
-const piecesAreSpaced = (size: number, movable: MovablePiece[]): boolean => {
+const piecesAreSpaced = (size: number, movable: MovablePiece[], driven: ReadonlySet<number>): boolean => {
   const owner = new Map<string, number>()
   movable.forEach((piece, index) => {
+    // A door has no tap target to protect, so it needs no shoulders — this rule is about a thumb landing
+    // on the piece the player meant, and nothing here can be meant.
+    if (driven.has(index)) return
     for (const at of pieceCells(piece)) owner.set(cellKey(at), index)
   })
   for (const [key, index] of owner) {
@@ -538,6 +647,8 @@ const BASELINE: LightbeamDials = {
   slidingWalls: 0,
   slidingStops: 2,
   fiddleProof: false,
+  doors: 0,
+  doorNodes: 1,
   decoys: 0,
   shadows: 0,
 }
@@ -562,8 +673,10 @@ const OPENING_DRAWS = 24
  * towards wrong so the board still has work in it, and `openingIsHonest` refuses any board that a uniform
  * number of taps would open.
  */
-const drawOpening = (draft: Draft, random: () => number): number[] =>
+const drawOpening = (puzzle: LightbeamPuzzleData, draft: Draft, random: () => number): number[] =>
   draft.movable.map((piece, index) => {
+    // A door opens where it rests, always. It is not the player's to be wrong about.
+    if (restingState(puzzle, index) !== undefined) return draft.solution[index]
     const total = pieceStateCount(piece)
     if (total < 2 || random() > OPENS_WRONG) return draft.solution[index]
     return (draft.solution[index] + 1 + Math.floor(random() * (total - 1))) % total
@@ -572,6 +685,12 @@ const drawOpening = (draft: Draft, random: () => number): number[] =>
 // How many configurations the greedy walk below may visit before the board is given the benefit of the
 // doubt. Improving walks are short — every step strictly improves a bounded score — so this is a guard.
 const MAX_GREEDY_STATES = 400
+
+/** Where `taps` taps land a piece, over the states the player can actually reach. A door never moves. */
+const nextOption = (states: readonly number[], from: number, taps: number): number => {
+  const at = states.indexOf(from)
+  return at < 0 ? from : states[(at + taps) % states.length]
+}
 
 /** What a player reads off the board without reasoning: how near the light lands, then how far it gets. */
 const nearness = (puzzle: LightbeamPuzzleData, config: readonly number[]): [number, number] => {
@@ -596,6 +715,7 @@ const nearer = (a: [number, number], b: [number, number]): boolean => a[0] > b[0
  * arbitrarily, so a board is only fiddle-proof when *no* run of getting-warmer taps arrives.
  */
 export const resistsGreedyPlay = (puzzle: LightbeamPuzzleData, initial: readonly number[]): boolean => {
+  const options = allPieceOptions(puzzle)
   let frontier: (readonly number[])[] = [initial]
   const seen = new Set<string>([initial.join(",")])
   while (frontier.length && seen.size < MAX_GREEDY_STATES) {
@@ -604,7 +724,7 @@ export const resistsGreedyPlay = (puzzle: LightbeamPuzzleData, initial: readonly
       const here = nearness(puzzle, config)
       for (let piece = 0; piece < puzzle.movable.length; piece++) {
         const step = [...config]
-        step[piece] = (step[piece] + 1) % pieceStateCount(puzzle.movable[piece])
+        step[piece] = nextOption(options[piece], step[piece], 1)
         const key = step.join(",")
         if (seen.has(key) || !nearer(nearness(puzzle, step), here)) continue
         if (isLit(puzzle, step)) return false
@@ -656,7 +776,8 @@ const attemptGeneration = (
     if (!route) continue
     const draft = buildPieces(size, route, dials, random)
     if (!draft) continue
-    if (!piecesAreSpaced(size, draft.movable)) continue
+    const driven = new Set(draft.wirings.map(wiring => wiring.piece))
+    if (!piecesAreSpaced(size, draft.movable, driven)) continue
 
     const puzzle: LightbeamPuzzleData = {
       size,
@@ -664,10 +785,13 @@ const attemptGeneration = (
       shrine: route.shrine,
       fixed: draft.fixed,
       movable: draft.movable,
+      ...(draft.nodes.length ? { nodes: draft.nodes, wirings: draft.wirings } : {}),
     }
     if (!isLit(puzzle, draft.solution)) continue
 
-    const states = draft.movable.map(piece => Array.from({ length: pieceStateCount(piece) }, (_, i) => i))
+    // The player's options, not every state a piece has: a door is not theirs to set, so it contributes
+    // nothing to the space the gates below enumerate.
+    const states = allPieceOptions(puzzle)
     if (!routeIsUnique(puzzle, states)) continue
     if (!solveLightbeamByTechniques(puzzle, cap).settled) continue
 
@@ -677,7 +801,7 @@ const attemptGeneration = (
     // expensive to build and an opening is cheap to try again.
     let initial: number[] | undefined
     for (let draw = 0; draw < OPENING_DRAWS && !initial; draw++) {
-      const candidate = drawOpening(draft, random)
+      const candidate = drawOpening(thinned, draft, random)
       if (openingIsHonest(thinned, candidate) && (!dials.fiddleProof || resistsGreedyPlay(thinned, candidate)))
         initial = candidate
     }

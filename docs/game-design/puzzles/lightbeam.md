@@ -36,6 +36,8 @@ its vocabulary would tell us about a different puzzle.
 | **Turn mirror**    | movable          | 2      | Tap cycles `/` ↔ `\`, position fixed                        |
 | **Sliding mirror** | movable          | 2–3    | Fixed angle, tap cycles between authored stops              |
 | **Sliding wall**   | movable          | 2–3    | Tap cycles between stops — moved out of the way, or into it |
+| **Socket**         | fixed            | —      | Transparent. Light crossing it fires the wires leading out  |
+| **Door**           | driven           | 2      | Stone on the route. No tap moves it; a socket does (§12.1)  |
 
 The sliding wall is the one piece whose move is **clearing a path** rather than
 bending one. That is worth having precisely because it is a different verb: every
@@ -83,25 +85,33 @@ There is a real ladder here, and generation is gated on it:
 | ------ | ----------------- | --------------------------------------------------------------------------------------------- | --------------------------- |
 | **T0** | Forced entry run  | The run from the sun-disc crosses only cells nothing movable can change                       | Those cells carry the beam  |
 | **T1** | Forced exit run   | Same, traced backwards from the shrine                                                        | Those cells carry the beam  |
-| **T2** | Dead end          | One state of a piece sends the beam to a wall or edge with no unsettled piece left on the way | That state is impossible    |
-| **T3** | Only one feeds it | Exactly one piece-state can send the beam along the forced exit run                           | That state is forced        |
-| **T4** | Never reached     | No configuration puts the beam on this piece at all                                           | Its state is free — a decoy |
-| **T5** | Only one survives | Every arrangement of the remaining pieces fails, save with this one in this state             | That state is forced        |
+| **T2** | Wiring fires      | The forced runs cross every socket a wiring names                                             | That door is open           |
+| **T3** | Dead end          | One state of a piece sends the beam to a wall or edge with no unsettled piece left on the way | That state is impossible    |
+| **T4** | Only one feeds it | Exactly one piece-state can send the beam along the forced exit run                           | That state is forced        |
+| **T5** | Never reached     | No configuration puts the beam on this piece at all                                           | Its state is free — a decoy |
+| **T6** | Only one survives | Every arrangement of the remaining pieces fails, save with this one in this state             | That state is forced        |
 
-T0/T1 are facts; T2–T5 are eliminations; propagation between them is the fixpoint
+T0/T1/T2 are facts; T3–T6 are eliminations; propagation between them is the fixpoint
 loop, as in the other families.
 
-### 4.1 Why T5 is ranked last
+**T2 is the only ordering fact in the catalogue.** Every other rung in every family concludes either
+"these cells carry the beam" or "that setting is impossible". This one concludes _"the light has to get
+through there, that door is shut, so it must reach this socket first"_ — and it is a fact rather than an
+elimination, which is why it sits with T0 and T1 rather than at the top. It reads straight off the forced
+set, needs no enumeration, and its reason is local: put a finger on the socket the run crosses and follow
+the wire. See §12.1.
 
-T5 subsumes T2 and T3 — a solver could be T0/T1/T5 alone. It is ranked last for
+### 4.1 Why T6 is ranked last
+
+T6 subsumes T3 and T4 — a solver could be T0/T1/T6 alone. It is ranked last for
 the same reason Sumplete ranks its candidate-intersection last: its reason is "I
-tried the alternatives and they all fail", which teaches nothing. T2's reason is a
+tried the alternatives and they all fail", which teaches nothing. T3's reason is a
 sentence a child repeats back and can check by eye: _"face it that way and the
 light dies in the wall, with no mirror left to save it."_
 
-### 4.2 T4 is the point, not a footnote
+### 4.2 T5 is the point, not a footnote
 
-The catalogue names "elimination of irrelevant pieces" as this family's skill. T4
+The catalogue names "elimination of irrelevant pieces" as this family's skill. T5
 _is_ that skill, and it is the only technique in any family whose conclusion is
 "this piece does not matter". It makes decoys a first-class part of the puzzle
 rather than clutter, and it gives the hint engine something genuinely useful to
@@ -124,7 +134,7 @@ and Futoshiki cannot, and the gates below spend that freely.
    ones to a **wrong** starting state so the board opens unsolved.
 3. **Wall off the wrong settings.** For each movable piece, the light under its wrong
    setting has to run out — off the frame, or into a wall — before it meets anything
-   else the player controls. That is what makes T2's reason available, and the piece
+   else the player controls. That is what makes T3's reason available, and the piece
    it settles is what lets the entry run reach the next one. This chain is the whole
    starter board.
 4. **Drop shadow pieces** (§6) into the very stretch a wrong setting would light, and
@@ -172,11 +182,11 @@ route to find, just a short one with few pieces and a low technique cap.
 
 | Tier    | Grid | Cell | Baseline route             | Stops | Movable | On the route | Configurations | Cap | Goals drawn                 |
 | ------- | ---- | ---- | -------------------------- | ----- | ------- | ------------ | -------------- | --- | --------------------------- |
-| starter | 7×7  | 46px | 2 bends                    | 2     | 3.0     | 3.0          | 8              | T2  | 1 of: long chain, clear way |
-| junior  | 7×7  | 46px | 3 bends                    | 2     | 3.9     | 3.7          | 15             | T3  | 1 of those + blind alleys   |
-| expert  | 8×8  | 40px | 3 bends                    | 3     | 5.1     | 3.7          | 68             | T4  | 2 of all four               |
-| master  | 8×8  | 40px | 4 bends, 1 shadow          | 3     | 6.4     | 4.5          | 170            | T5  | 2 of all four               |
-| wizard  | 9×9  | 36px | 6 bends, 1 decoy, 1 shadow | 3     | 8.5     | 5.7          | 778            | T5  | 2 of all four               |
+| starter | 7×7  | 46px | 2 bends                    | 2     | 3.0     | 3.0          | 8              | T3  | 1 of: long chain, clear way |
+| junior  | 7×7  | 46px | 3 bends                    | 2     | 3.9     | 3.7          | 15             | T4  | 1 of those + blind alleys   |
+| expert  | 8×8  | 40px | 3 bends                    | 3     | 5.1     | 3.7          | 68             | T5  | 2 of all four               |
+| master  | 8×8  | 40px | 4 bends, 1 shadow          | 3     | 6.4     | 4.5          | 170            | T6  | 2 of all four               |
+| wizard  | 9×9  | 36px | 6 bends, 1 decoy, 1 shadow | 3     | 8.5     | 5.7          | 778            | T6  | 2 of all four               |
 
 "On the route" is the count that matters and the one that was missing: pieces that can stand in the
 winning beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the
@@ -197,7 +207,7 @@ and wizard into one ten-piece blur.
 ### 6.1 The cap does not bite on its own
 
 This is the one thing about the family that had to be discovered rather than
-designed. Built as §5 steps 1–3 describe, **every board is a chain of T2 and nothing
+designed. Built as §5 steps 1–3 describe, **every board is a chain of T3 and nothing
 more**: every wrong setting has a wall or a frame edge waiting for it, so the light
 visibly dies and the stronger rungs never have to fire. A wizard board would then
 solve exactly like a starter one, only longer — the cap would be a label.
@@ -205,13 +215,13 @@ solve exactly like a starter one, only longer — the cap would be a label.
 **Shadow pieces** are the fix, and they work from the other end. A shadow is a decoy
 placed deliberately in the stretch a wrong setting would light. With something
 unsettled standing in the way, the light does not visibly die — it disappears into a
-piece nobody has pinned down yet. T2 has nothing to say, and ruling that setting out
-takes T3 or T5. The shadow is still a genuine decoy (no winning beam touches it), so
-T4 still frees it, and it is still the player's job to work out that it never
+piece nobody has pinned down yet. T3 has nothing to say, and ruling that setting out
+takes T4 or T6. The shadow is still a genuine decoy (no winning beam touches it), so
+T5 still frees it, and it is still the player's job to work out that it never
 mattered.
 
-Measured effect at wizard, over 40 seeds: with no shadows, T5 fires on 3 boards; with
-three, on 28, and T2 alone carries only 14. That is the difference between a tier
+Measured effect at wizard, over 40 seeds: with no shadows, T6 fires on 3 boards; with
+three, on 28, and T3 alone carries only 14. That is the difference between a tier
 table and a tier.
 
 Knobs, in order of how much they actually move difficulty:
@@ -307,10 +317,10 @@ dials the generator already had.
 | Goal                    | Turns up                      | Tests                      | Built |
 | ----------------------- | ----------------------------- | -------------------------- | ----- |
 | **Long chain**          | `turns +2`, `setMirrors +1`   | route-tracing              | yes   |
-| **Sort the wheat**      | `decoys +2`                   | which pieces matter (T4)   | yes   |
+| **Sort the wheat**      | `decoys +2`                   | which pieces matter (T5)   | yes   |
 | **Clear the way**       | `slidingWalls +1`             | does the light get through | yes   |
-| **Blind alleys**        | `shadows +1`                  | the exhaustive rung (T5)   | yes   |
-| **Order of operations** | a node whose door blocks late | ordering                   | §12.1 |
+| **Blind alleys**        | `shadows +1`                  | the exhaustive rung (T6)   | yes   |
+| **Order of operations** | `doors +1`                    | ordering (T2)              | yes   |
 | **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §12.1 |
 
 ### 7.1 Three rules that keep it honest
@@ -401,7 +411,7 @@ instead _the first reason the player has not yet acted on_: the deduction is rep
 from a blank board, and the hint is the earliest step whose conclusion the board in
 front of them contradicts. Follow it and the hint moves on by itself.
 
-T4 gets the second pass, and only when nothing is actually set wrong — otherwise the
+T5 gets the second pass, and only when nothing is actually set wrong — otherwise the
 game would be telling the player to ignore a piece while the route is still broken.
 That makes it the one hint in the whole catalogue whose advice is to leave something
 alone.
@@ -458,7 +468,7 @@ carry-forward (`PUZZLE_FAMILIES.md` P3).
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
 
-### 12.1 Switch nodes — the next thing to build
+### 12.1 Switch nodes — built
 
 A **node** is a fixed, transparent cell wired to one movable piece. Light crossing it
 lights the wire, and the piece it drives moves. The wire is drawn.
@@ -519,7 +529,7 @@ reason survives with one hop of indirection.
 
 Then "this does not matter" gets three depths, the third new to the catalogue:
 
-1. A node the light can never cross, so its wire never fires — today's T4, one level up.
+1. A node the light can never cross, so its wire never fires — today's T5, one level up.
 2. A node that fires into a piece the light never touches anyway: real wire, irrelevant
    consequence.
 3. A node that fires, moves a piece that **is** on the route, and still changes nothing.
@@ -537,7 +547,7 @@ Then "this does not matter" gets three depths, the third new to the catalogue:
   where it turns to soup. Prototype the board visually _before_ writing any logic, which is
   the reverse of the order the rest of this family was built in.
 
-#### What the visual prototype found
+#### What the visual prototype found, before any of it ran
 
 Done, ahead of the logic, as `LightbeamBoard.stories.tsx` — `NodeDoor`, `NodeTrap` and
 `NodeDensity`, the last of them a real generated wizard board with two wires laid over it at the
@@ -603,6 +613,52 @@ carrying while nothing moved is the one lie this layer must not tell.
 
 A node is fixed scenery with no state and nothing to tap, so the control scheme stays at
 exactly one gesture.
+
+#### What shipped, and what the measurements say
+
+All of the above, minus the harmful node (below). A socket is a transparent cell; a **door** is stone on
+the route that no tap will shift. The two are separate types on purpose — `BeamNode` is the socket,
+`NodeWiring` names a set of sockets and the piece they drive — which is what makes fan-out and fan-in one
+mechanic rather than two.
+
+**A door is not tappable, and that is the whole reason a socket is worth reaching.** A door the player
+could simply open would make the socket decoration, so a driven piece contributes nothing to the
+configuration space: `pieceOptions` gives it exactly one state, and every enumeration, gate and play model
+in the family goes through that. It also drops out of `piecesAreSpaced` — that rule is about a thumb
+landing on the piece the player meant, and a door is not something anyone can mean.
+
+The three worries above, answered:
+
+- **Yield was not the problem.** Doors generate on the first or second attempt; wizard sits at 30ms a
+  board with one, against a 278ms worst case for the tier as a whole.
+- **The loop-detection set is cleared whenever a wiring fires**, which keeps a legitimate re-crossing from
+  reading as a loop. Termination is unaffected: a wiring fires once, so the clear happens at most as many
+  times as there are wirings. `beam.spec.ts` holds a board that re-crosses its own run.
+- **The drawing was the risk, and the prototype above is what retired it.**
+
+Ordering falls out of generation rather than being checked for: sockets are drawn from route cells
+strictly *before* the earliest door, so an effect always lands ahead of the light and the drawn beam is
+never a picture of something that has stopped being true.
+
+Where it appears is `orderOfOperations`, a goal from expert up (§7), plus a door on every wizard board
+whose wiring names two sockets. Measured over 40 seeds a tier, against the same boards without any of it:
+
+| Measure                    | Without doors       | With           |
+| -------------------------- | ------------------- | -------------- |
+| Configurations at wizard   | 778                 | **1618**       |
+| Pieces on the route        | 3.0/3.7/3.7/4.5/5.7 | 3.0/3.7/3.9/4.8/**6.9** |
+| Boards using the exhaustive rung at wizard | 20/40 | **29/40** |
+| Boards where T2 fires      | —                   | 15/40 expert, 15/40 master, **40/40 wizard** |
+
+Wizard's configuration space is 5.6× what it was before this iteration began, and none of that came from
+a wider grid.
+
+#### Still deferred: the node that closes a way
+
+The harmful node below is designed and not built. Nothing about it is hard — the semantics are unchanged,
+since effects land ahead of the light either way — but it wants its own hint voice and its own fairness
+question (a trap the player can walk into needs the ladder to be able to *warn*, not only to explain
+afterwards), and neither is answered by anything above.
 
 #### A node can also be the thing to avoid
 

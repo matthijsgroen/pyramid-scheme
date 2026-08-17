@@ -12,6 +12,8 @@ const LEAN: LightbeamDials = {
   slidingWalls: 0,
   slidingStops: 2,
   fiddleProof: false,
+  doors: 0,
+  doorNodes: 1,
   decoys: 0,
   shadows: 0,
 }

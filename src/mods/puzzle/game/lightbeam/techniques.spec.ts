@@ -45,12 +45,23 @@ const firstStep = (puzzle: LightbeamPuzzleData, cap: TechniqueId, only?: Techniq
 }
 
 describe("the ladder", () => {
+  // The three facts first, then the eliminations, then the exhaustive pair — ordered by how well a reason
+  // explains itself rather than by strength. `wiringFires` sits with the facts because it is one: it rules
+  // nothing out, it says a door has opened, and every rung below it then has more of the board to work on.
   it("is ordered by how well a reason explains itself, cheapest first", () => {
-    expect([...TECHNIQUES]).toEqual(["entryRun", "exitRun", "deadEnd", "feedsExit", "neverReached", "onlySurvivor"])
+    expect([...TECHNIQUES]).toEqual([
+      "entryRun",
+      "exitRun",
+      "wiringFires",
+      "deadEnd",
+      "feedsExit",
+      "neverReached",
+      "onlySurvivor",
+    ])
   })
 
   it("a cap admits itself and everything below it", () => {
-    expect(techniquesUpTo("deadEnd")).toEqual(["entryRun", "exitRun", "deadEnd"])
+    expect(techniquesUpTo("deadEnd")).toEqual(["entryRun", "exitRun", "wiringFires", "deadEnd"])
   })
 })
 

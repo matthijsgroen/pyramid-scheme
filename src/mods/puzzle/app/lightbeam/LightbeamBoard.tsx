@@ -5,6 +5,7 @@ import {
   opposite,
   pieceCells,
   pieceOccupant,
+  restingState,
   traceBeam,
   wiringsDriving,
   type BeamSegment,
@@ -469,7 +470,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
             const piece = "piece" in view ? view.piece : undefined
             const className = cellCls(view, {
               lit: highlighted?.has(key) ?? false,
-              movable: piece !== undefined,
+              movable: piece !== undefined && restingState(puzzle, piece) === undefined,
             })
             const body =
               view.kind === "mirror" ? (
@@ -486,8 +487,9 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
                 </span>
               ) : null
             // Every cell a piece can stand in is tappable, vacant stops included: tapping where you want
-            // it to go is the same gesture as tapping the piece, and it doubles the target.
-            return piece === undefined ? (
+            // it to go is the same gesture as tapping the piece, and it doubles the target. A door is the
+            // exception, and the only one — it answers to the light, not to a thumb.
+            return piece === undefined || restingState(puzzle, piece) !== undefined ? (
               <div key={key} className={className}>
                 {body}
               </div>

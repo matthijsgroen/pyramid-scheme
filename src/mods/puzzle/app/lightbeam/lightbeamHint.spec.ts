@@ -96,6 +96,9 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   const keys = [
     "entryRun",
     "exitRun",
+    // One socket to reach, or several — different sentences, because the second is a route to plan and the
+    // first is a square to hit.
+    ...["one", "all"].map(shape => `wiringFires.${shape}`),
     ...["deadEnd", "feedsExit"].flatMap(technique => ["wall", "edge", "loop"].map(end => `${technique}.${end}`)),
     "neverReached",
     "onlySurvivor",
@@ -112,7 +115,7 @@ describe("every reason the ladder can give is phrased in both locales", () => {
 
   it("has the rules in both", () => {
     for (const locale of [en, nl])
-      for (const rule of ["goal", "mirrors", "walls", "tap"])
+      for (const rule of ["goal", "mirrors", "walls", "tap", "nodes"])
         expect(typeof phrase(locale.lightbeam.rules, rule)).toBe("string")
   })
 })

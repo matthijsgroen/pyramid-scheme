@@ -1,4 +1,4 @@
-import { cellKey, isLit, pieceCells, type BeamSegment } from "@/mods/puzzle/game/lightbeam/beam"
+import { cellKey, firedWirings, isLit, pieceCells, type BeamSegment } from "@/mods/puzzle/game/lightbeam/beam"
 import type { LightbeamPuzzle } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { solveLightbeamByTechniques, type LightbeamStep } from "@/mods/puzzle/game/lightbeam/techniques"
 
@@ -45,6 +45,14 @@ export const buildLightbeamHint = (puzzle: LightbeamPuzzle, states: readonly num
   for (const step of steps)
     for (const decision of step.decisions)
       if (decision.kind === "eliminate" && decision.states.includes(states[decision.piece])) return asHint(puzzle, step)
+
+  // Then the ordering fact, when the light is not yet going through the socket it has to go through. This
+  // one is not "you have set something wrong" — every setting is legal — it is "there is a door in your way
+  // and this is what opens it", which is the whole of what a socket asks and is invisible until said.
+  const crossing = firedWirings(puzzle, states)
+  for (const step of steps)
+    for (const decision of step.decisions)
+      if (decision.kind === "fires" && !crossing.has(decision.wiring)) return asHint(puzzle, step)
 
   for (const step of steps)
     for (const decision of step.decisions)

@@ -66,7 +66,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     slidingStops: 3,
     fiddleProof: true,
     techniqueCap: "neverReached",
-    goals: ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys"],
+    goals: ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys", "orderOfOperations"],
     goalCount: 2,
   },
   master: {
@@ -77,7 +77,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     fiddleProof: true,
     shadows: 1,
     techniqueCap: "onlySurvivor",
-    goals: ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys"],
+    goals: ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys", "orderOfOperations"],
     goalCount: 2,
   },
   wizard: {
@@ -87,10 +87,12 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     slidingMirrors: 1,
     slidingStops: 3,
     fiddleProof: true,
+    doors: 1,
+    doorNodes: 2,
     decoys: 1,
     shadows: 1,
     techniqueCap: "onlySurvivor",
-    goals: ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys"],
+    goals: ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys", "orderOfOperations"],
     goalCount: 2,
   },
 }

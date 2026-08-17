@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import { cellKey, eachConfig, isLit, pieceCells, pieceStateCount, stepCell, traceBeam } from "./beam"
+import {
+  allPieceOptions,
+  cellKey,
+  eachConfig,
+  isLit,
+  pieceCells,
+  pieceStateCount,
+  restingState,
+  stepCell,
+  traceBeam,
+} from "./beam"
 import { generateLightbeam, resistsGreedyPlay } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
@@ -207,7 +217,7 @@ describe("the tiers demand different reasoning", () => {
   it("never shrinks as the tiers go up", () => {
     const space = difficulties.map(difficulty =>
       sweep(difficulty).reduce(
-        (total, board) => total + board.movable.reduce((product, piece) => product * pieceStateCount(piece), 1),
+        (total, board) => total + allPieceOptions(board).reduce((product, states) => product * states.length, 1),
         0
       )
     )
@@ -226,6 +236,8 @@ describe("the tiers demand different reasoning", () => {
     expect(demanded("expert")).toContain("neverReached")
   })
 
+  // Every rung, the ordering fact included — wizard boards carry a door, so the light having to reach a
+  // socket before it can reach anything past that door is part of every one of them.
   it("spends the whole ladder at wizard", () => {
     expect([...demanded("wizard")].sort()).toEqual([
       "deadEnd",
@@ -234,7 +246,12 @@ describe("the tiers demand different reasoning", () => {
       "feedsExit",
       "neverReached",
       "onlySurvivor",
+      "wiringFires",
     ])
+  })
+
+  it("asks for the ordering fact from expert on, where doors start", () => {
+    expect(demanded("expert")).toContain("wiringFires")
   })
 })
 
@@ -255,10 +272,13 @@ describe("no two pieces the player can tap ever touch", () => {
     const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
     const boards = Array.from({ length: 16 }, (_, seed) => generateLightbeam(size, seed + 1, options))
 
-    it("keeps every pair of movable pieces at least a square apart", () => {
+    // Doors are exempt, and that is the rule reading correctly rather than an exception to it: this is
+    // about a thumb landing on the piece the player meant, and a door is not something anyone can mean.
+    it("keeps every pair of tappable pieces at least a square apart", () => {
       for (const board of boards) {
         const owner = new Map<string, number>()
         board.movable.forEach((piece, index) => {
+          if (restingState(board, index) !== undefined) return
           for (const at of pieceCells(piece)) owner.set(cellKey(at), index)
         })
         for (const [key, index] of owner) {

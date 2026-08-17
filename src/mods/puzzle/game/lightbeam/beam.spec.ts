@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest"
 import {
+  cellKey,
   configGrid,
   eachConfig,
+  firedWirings,
   gridResolver,
   opposite,
+  pieceOptions,
+  restingState,
   pieceOccupant,
   pieceStateCount,
   reflect,
@@ -200,5 +204,117 @@ describe("eachConfig", () => {
       )
     ).toBe(false)
     expect(visits).toBe(0)
+  })
+})
+
+// ---------------------------------------------------------------------------------------------------
+// Switch nodes (design doc §12.1). A socket is a transparent cell; crossing it fires every wiring whose
+// sockets have all been crossed, and the pieces those wirings name move.
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * Sun at (3,0) facing right. A turn mirror at (3,3) sends the light down through a socket at (5,3), a
+ * fixed mirror at (6,3) turns it left, and a sliding wall sits across that run at (6,1) until the socket
+ * moves it aside. The shrine is behind the wall.
+ */
+const doorBoard: LightbeamPuzzleData = {
+  size: 8,
+  sun: { at: { row: 3, col: 0 }, facing: "right" },
+  shrine: { row: 6, col: 0 },
+  fixed: [{ kind: "mirror", at: { row: 6, col: 3 }, face: "/" }],
+  movable: [
+    { kind: "turnMirror", at: { row: 3, col: 3 }, faces: ["/", "\\"] },
+    {
+      kind: "slidingWall",
+      stops: [
+        { row: 6, col: 1 },
+        { row: 4, col: 1 },
+      ],
+    },
+  ],
+  nodes: [{ at: { row: 5, col: 3 } }],
+  wirings: [{ from: [0], piece: 1, to: 1 }],
+}
+
+describe("a socket and its wiring", () => {
+  it("opens the door the light reaches it through, in the same walk", () => {
+    // The wall is at (6,1) in this configuration and the light still gets past it, because crossing the
+    // socket at (5,3) moved it before the beam arrived.
+    expect(traceBeam(doorBoard, [1, 0]).end).toBe("lit")
+  })
+
+  it("leaves the door shut when the light never reaches the socket", () => {
+    // The other face sends the light up and off the frame, so the socket is never crossed.
+    const walk = traceBeam(doorBoard, [0, 0])
+    expect(walk.end).toBe("escapes")
+    expect(walk.path.map(segment => cellKey(segment.at))).not.toContain("5,3")
+  })
+
+  it("is a pure function of the configuration, which is what keeps enumeration honest", () => {
+    expect(traceBeam(doorBoard, [1, 0])).toEqual(traceBeam(doorBoard, [1, 0]))
+  })
+
+  // The player cannot open this door, and that is the point: a door a tap could open makes the socket
+  // decoration. So the driven piece contributes one state to the space, not two.
+  it("takes the driven piece out of the player's hands", () => {
+    expect(pieceOptions(doorBoard, 1)).toEqual([0])
+    expect(pieceOptions(doorBoard, 0)).toEqual([0, 1])
+    expect(restingState(doorBoard, 1)).toBe(0)
+    expect(restingState(doorBoard, 0)).toBeUndefined()
+  })
+
+  it("reports which wirings the light fired", () => {
+    expect([...firedWirings(doorBoard, [1, 0])]).toEqual([0])
+    expect([...firedWirings(doorBoard, [0, 0])]).toEqual([])
+  })
+})
+
+describe("an and-wiring", () => {
+  // The same board with a second socket at (4,3), one square earlier on the same run, and the wall now
+  // needing both. Both sit on the run, so the light crosses them in order and the door still opens —
+  // what changes is that it takes two crossings, which is a routing demand rather than a setting.
+  const andBoard: LightbeamPuzzleData = {
+    ...doorBoard,
+    nodes: [{ at: { row: 5, col: 3 } }, { at: { row: 4, col: 3 } }],
+    wirings: [{ from: [0, 1], piece: 1, to: 1 }],
+  }
+
+  it("opens once every one of its sockets has been crossed", () => {
+    expect(traceBeam(andBoard, [1, 0]).end).toBe("lit")
+  })
+
+  it("stays shut when only one of them is", () => {
+    // Only the first socket is required now, but the wiring names a second that nothing ever crosses.
+    const halfBoard: LightbeamPuzzleData = {
+      ...andBoard,
+      nodes: [{ at: { row: 5, col: 3 } }, { at: { row: 0, col: 7 } }],
+    }
+    expect(traceBeam(halfBoard, [1, 0]).end).toBe("absorbed")
+  })
+})
+
+describe("the walk stays total once sockets can move things", () => {
+  // Loop detection has to forget what it saw whenever a wiring fires, or a legitimate second crossing of a
+  // cell reads as a loop. This board sends the light through the socket and then back over the same run.
+  it("does not call a re-crossing a loop", () => {
+    const board: LightbeamPuzzleData = {
+      size: 7,
+      sun: { at: { row: 3, col: 0 }, facing: "right" },
+      shrine: { row: 0, col: 4 },
+      fixed: [{ kind: "mirror", at: { row: 3, col: 4 }, face: "/" }],
+      movable: [
+        {
+          kind: "slidingWall",
+          stops: [
+            { row: 1, col: 4 },
+            { row: 1, col: 6 },
+          ],
+        },
+      ],
+      nodes: [{ at: { row: 3, col: 2 } }],
+      wirings: [{ from: [0], piece: 0, to: 1 }],
+    }
+    const walk = traceBeam(board, [0])
+    expect(walk.end).toBe("lit")
   })
 })

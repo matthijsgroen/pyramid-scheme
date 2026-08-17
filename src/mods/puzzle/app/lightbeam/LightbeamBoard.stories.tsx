@@ -27,6 +27,8 @@ const board = (difficulty: keyof typeof LIGHTBEAM_CONFIG, seed: number) => {
 const starter = board("starter", 1)
 const expert = board("expert", 2)
 const wizard = board("wizard", 4)
+/** A generated wizard board, which since §12.1 landed means one carrying a door and its two sockets. */
+const wizardDoors = board("wizard", 11)
 
 /** How the board opens: dark, with the beam running out somewhere it should not. */
 export const Starter: Story = { args: { puzzle: starter, states: starter.initial, onCycle: () => {} } }
@@ -249,6 +251,42 @@ export const NodeFanning: Story = {
       </div>
     </div>
   ),
+}
+
+/**
+ * A **generated** wizard board with a door on it — no longer hand-authored, and no longer a picture of a
+ * mechanic that does not run. The sockets fire, the doors open, and the beam drawn here is the real trace.
+ *
+ * Left: as it opens. Right: answered. Every wizard board carries a door now, and its wiring names two
+ * sockets, so the light has to be routed through both before the stone will shift.
+ */
+export const NodeGenerated: Story = {
+  args: { puzzle: wizardDoors, states: wizardDoors.initial, onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-wrap items-start justify-center gap-6">
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardDoors} states={wizardDoors.initial} onCycle={() => {}} />
+      </div>
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardDoors} states={wizardDoors.solution} onCycle={() => {}} />
+      </div>
+    </div>
+  ),
+}
+
+/** Playable, with a door: the stone only shifts once the beam is routed through both sockets. */
+export const NodePlayable: Story = {
+  args: { puzzle: wizardDoors, states: wizardDoors.initial, onCycle: () => {} },
+  render: () => {
+    const [state, setState] = useState(() => createLightbeamState(wizardDoors))
+    return (
+      <LightbeamBoard
+        puzzle={wizardDoors}
+        states={state.states}
+        onCycle={piece => setState(prev => cycleLightbeamPiece(prev, wizardDoors, piece))}
+      />
+    )
+  },
 }
 
 /** The board with the hint's piece and beam lit — the state after pressing Hint. */

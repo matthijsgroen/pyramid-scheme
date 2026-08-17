@@ -28,7 +28,7 @@ export const GOAL_DIALS: Record<LightbeamGoal, (dials: LightbeamDials) => Lightb
    */
   longChain: dials => ({ ...dials, turns: dials.turns + 2, setMirrors: dials.setMirrors + 1 }),
 
-  /** A route buried in pieces that do not matter. The skill is telling which is which (technique T4). */
+  /** A route buried in pieces that do not matter. The skill is telling which is which (technique T5). */
   sortTheWheat: dials => ({ ...dials, decoys: dials.decoys + 2 }),
 
   /**
@@ -42,6 +42,15 @@ export const GOAL_DIALS: Record<LightbeamGoal, (dials: LightbeamDials) => Lightb
 
   /** Every wrong turn vanishes into something unsettled, so nothing is ruled out by watching it die. */
   blindAlleys: dials => ({ ...dials, shadows: dials.shadows + 1 }),
+
+  /**
+   * A door across the route that no tap will open, and a socket further back that opens it (§12.1).
+   *
+   * The board this makes is about **order** — the light has to get somewhere before it can get anywhere
+   * else — which is the one thing no other family in the catalogue trains. It costs one piece, and unlike
+   * every other goal that piece is not the player's to set: what it adds is a reason, not a decision.
+   */
+  orderOfOperations: dials => ({ ...dials, doors: dials.doors + 1 }),
 }
 
 export const applyGoals = (dials: LightbeamDials, goals: readonly LightbeamGoal[]): LightbeamDials =>
