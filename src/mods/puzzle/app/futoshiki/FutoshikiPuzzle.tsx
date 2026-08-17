@@ -16,7 +16,7 @@ import {
   toggleFutoshikiNote,
   undoFutoshikiMove,
 } from "@/mods/puzzle/game/futoshiki/futoshikiState"
-import { futoshikiConflicts, isFutoshikiSolved } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
+import { futoshikiConflicts, isFutoshikiSolved, strandedNotes } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -40,10 +40,11 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const { t } = useTranslation("common")
   const { size, solution, techniqueCap } = puzzle
   const [state, setState] = useState(() => createFutoshikiState(puzzle))
-  const { selected, pencil, selectCell, togglePencil, clearSelection } = useFutoshikiEntry()
+  const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useFutoshikiEntry()
 
   const values = useMemo(() => futoshikiValues(state), [state])
   const conflicts = useMemo(() => futoshikiConflicts(puzzle, values), [puzzle, values])
+  const stranded = useMemo(() => strandedNotes(puzzle, values, futoshikiNotes(state)), [puzzle, values, state])
   const hint = useMemo(
     () => buildFutoshikiHint(puzzle, futoshikiValues(state), futoshikiNotes(state), solution, techniqueCap),
     [puzzle, state, solution, techniqueCap]
@@ -73,6 +74,9 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       }}
       hint={hint && t(`futoshiki.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
+      // Reading a hint and then hunting for the square it means is the whole gap between advice and
+      // acting on it, so asking for one aims the board and the pad at that square.
+      onHintRevealed={() => hint && focusCell(hint.focus.row, hint.focus.col)}
       rules={<FutoshikiRules />}
     >
       {({ reportInput, hintVisible }) => (
@@ -81,6 +85,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             puzzle={puzzle}
             cells={state.cells}
             conflicts={conflicts}
+            stranded={stranded}
             selected={selected}
             highlighted={hintVisible ? hint?.cells : undefined}
             litSigns={hintVisible ? hint?.constraints : undefined}

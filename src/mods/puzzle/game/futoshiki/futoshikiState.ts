@@ -30,26 +30,20 @@ const recordMove = (state: FutoshikiState) => {
   if (state.past.length > UNDO_LIMIT) state.past.shift()
 }
 
-// Writing a number in takes it off the pencilled options everywhere it can no longer go. That is the
-// bookkeeping a player does by hand on paper, and undo puts all of it back in one press.
-const clearPeerNotes = (cells: FutoshikiCell[][], row: number, col: number, value: number) => {
-  for (let i = 0; i < cells.length; i++) {
-    for (const cell of [cells[row][i], cells[i][col]]) {
-      const at = cell.notes.indexOf(value)
-      if (at !== -1) cell.notes.splice(at, 1)
-    }
-  }
-}
-
-/** Writes a number into a cell; the same number again takes it back out. */
+/**
+ * Writes a number into a cell; the same number again takes it back out.
+ *
+ * Notes are left exactly as they were, here and everywhere else. Sweeping the pencilled options a
+ * placement rules out looked like the bookkeeping a player does on paper, but it threw away work that
+ * only undo could return: correcting a number the ordinary way — writing a different one over it —
+ * left the swept notes gone for good. The board marks stranded notes instead (futoshikiStatus), so a
+ * correction simply re-marks them.
+ */
 export const setFutoshikiValue = produce((state: FutoshikiState, row: number, col: number, value: number) => {
   const cell = state.cells[row][col]
   if (cell.given) return
   recordMove(state)
-  const next = cell.value === value ? undefined : value
-  cell.value = next
-  cell.notes = []
-  if (next !== undefined) clearPeerNotes(state.cells, row, col, next)
+  cell.value = cell.value === value ? undefined : value
 })
 
 /** Pencils a number in or rubs it out. A cell holding a number has nothing to weigh up. */

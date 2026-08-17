@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import type { FC } from "react"
 import type { FutoshikiCell } from "@/mods/puzzle/game/futoshiki/futoshikiState"
-import type { FutoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
+import { futoshikiNoteKey, type FutoshikiConflicts } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
 import {
   futoshikiCellKey,
   type FutoshikiCellRef,
@@ -12,6 +12,8 @@ type Props = {
   puzzle: FutoshikiPuzzleData
   cells: FutoshikiCell[][]
   conflicts: FutoshikiConflicts
+  /** Note keys ("row,col,value") a number placed elsewhere in the line has ruled out. */
+  stranded?: ReadonlySet<string>
   selected?: FutoshikiCellRef
   /** Cell keys ("row,col") the current hint talks about. */
   highlighted?: ReadonlySet<string>
@@ -34,12 +36,21 @@ const cellCls = (cell: FutoshikiCell, state: { lit: boolean; selected: boolean; 
     "border-stone-600 bg-stone-800 text-stone-500": !cell.given && !state.conflicted,
     // A pre-filled number is part of the puzzle, not of the answer — it reads as stone, not as ink.
     "border-stone-500 bg-stone-700 text-amber-200": cell.given && !state.conflicted,
-    "border-red-600 bg-red-950/70 text-red-300": state.conflicted,
+    // A repeat has to be loud. A dark wash behind a white digit was the whole tell before, and on a
+    // dark board at arm's length it read as no tell at all.
+    "border-red-500 bg-red-900 text-red-200": state.conflicted,
     "ring-2 ring-sky-300": state.selected,
     "ring-2 ring-amber-300": state.lit && !state.selected,
+    "ring-2 ring-red-500": state.conflicted && !state.selected && !state.lit,
   })
 
-const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
+const NoteGrid: FC<{
+  notes: number[]
+  size: number
+  row: number
+  col: number
+  stranded?: ReadonlySet<string>
+}> = ({ notes, size, row, col, stranded }) => (
   <span
     className="grid size-full place-items-center p-[6%] text-[20cqw] leading-none"
     style={{ gridTemplateColumns: `repeat(${Math.ceil(Math.sqrt(size))}, minmax(0, 1fr))` }}
@@ -49,7 +60,12 @@ const NoteGrid: FC<{ notes: number[]; size: number }> = ({ notes, size }) => (
         that would otherwise announce an empty square as "1 2 3 4". */}
     {Array.from({ length: size }, (_, index) => index + 1).map(value =>
       notes.includes(value) ? (
-        <span key={value} className="text-sky-300">
+        <span
+          key={value}
+          // Struck rather than deleted: the note is still the player's, and the number that ruled it
+          // out may itself be wrong and get corrected.
+          className={stranded?.has(futoshikiNoteKey(row, col, value)) ? "text-red-400/80 line-through" : "text-sky-300"}
+        >
           {value}
         </span>
       ) : (
@@ -111,7 +127,16 @@ const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts
 
 // Sized off its container and the viewport height, never off a pixel constant: the board has to fit a
 // phone screen without pan or zoom (docs/instructions/puzzle-screens.md §1).
-export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, highlighted, litSigns, onSelect }) => {
+export const FutoshikiBoard: FC<Props> = ({
+  puzzle,
+  cells,
+  conflicts,
+  stranded,
+  selected,
+  highlighted,
+  litSigns,
+  onSelect,
+}) => {
   const { size } = puzzle
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
@@ -125,6 +150,7 @@ export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, 
         {cells.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             const key = futoshikiCellKey(rowIndex, colIndex)
+            const conflicted = conflicts.cells.has(key)
             return (
               <button
                 key={key}
@@ -132,13 +158,20 @@ export const FutoshikiBoard: FC<Props> = ({ puzzle, cells, conflicts, selected, 
                 className={cellCls(cell, {
                   lit: highlighted?.has(key) ?? false,
                   selected: selected?.row === rowIndex && selected?.col === colIndex,
-                  conflicted: conflicts.cells.has(key),
+                  conflicted,
                 })}
               >
                 {cell.value === undefined ? (
-                  <NoteGrid notes={cell.notes} size={size} />
+                  <NoteGrid notes={cell.notes} size={size} row={rowIndex} col={colIndex} stranded={stranded} />
                 ) : (
-                  <span className={clsx("text-[58cqw] font-semibold", !cell.given && "text-stone-100")}>
+                  <span
+                    className={clsx("text-[58cqw] font-semibold", {
+                      // The digit takes the conflict colour too: forcing ink-white here was what
+                      // swallowed the warning, since the square's own red never reached the number.
+                      "text-stone-100": !cell.given && !conflicted,
+                      "text-red-100": conflicted,
+                    })}
+                  >
                     {cell.value}
                   </span>
                 )}

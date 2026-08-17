@@ -3,7 +3,6 @@ import {
   canUndoFutoshiki,
   clearFutoshikiCell,
   createFutoshikiState,
-  futoshikiNotes,
   futoshikiValues,
   setFutoshikiValue,
   toggleFutoshikiNote,
@@ -46,22 +45,27 @@ describe("setFutoshikiValue", () => {
     expect(canUndoFutoshiki(state)).toBe(false)
   })
 
-  it("takes the number off the notes of every square it can no longer go in", () => {
+  it("leaves every note where it is — a placement is not allowed to spend the player's work", () => {
     let state = createFutoshikiState(puzzle)
     state = toggleFutoshikiNote(state, 1, 2, 3)
     state = toggleFutoshikiNote(state, 2, 1, 3)
-    state = toggleFutoshikiNote(state, 2, 2, 3)
     state = setFutoshikiValue(state, 1, 1, 3)
-    expect(state.cells[1][2].notes).toEqual([])
-    expect(state.cells[2][1].notes).toEqual([])
-    // Not in the same row or column, so that note still stands.
-    expect(state.cells[2][2].notes).toEqual([3])
+    expect(state.cells[1][2].notes).toEqual([3])
+    expect(state.cells[2][1].notes).toEqual([3])
   })
 
-  it("clears the square's own notes, since it is no longer undecided", () => {
+  it("keeps the square's own notes, so taking the number back out uncovers them again", () => {
     let state = toggleFutoshikiNote(createFutoshikiState(puzzle), 1, 1, 1)
     state = setFutoshikiValue(state, 1, 1, 3)
-    expect(state.cells[1][1].notes).toEqual([])
+    expect(state.cells[1][1].notes).toEqual([1])
+    expect(setFutoshikiValue(state, 1, 1, 3).cells[1][1]).toEqual({ value: undefined, notes: [1], given: false })
+  })
+
+  it("survives a correction: writing a different number over a wrong one keeps the notes intact", () => {
+    let state = toggleFutoshikiNote(createFutoshikiState(puzzle), 1, 2, 3)
+    state = setFutoshikiValue(state, 1, 1, 3)
+    state = setFutoshikiValue(state, 1, 1, 2)
+    expect(state.cells[1][2].notes).toEqual([3])
   })
 })
 
@@ -102,14 +106,6 @@ describe("undoFutoshikiMove", () => {
     state = undoFutoshikiMove(state)
     expect(state.cells[1][1].value).toBeUndefined()
     expect(canUndoFutoshiki(state)).toBe(false)
-  })
-
-  it("puts back every note a written number swept away — one press, the whole move", () => {
-    let state = toggleFutoshikiNote(createFutoshikiState(puzzle), 1, 2, 3)
-    state = toggleFutoshikiNote(state, 2, 1, 3)
-    state = undoFutoshikiMove(setFutoshikiValue(state, 1, 1, 3))
-    expect(futoshikiNotes(state)[1][2]).toEqual([3])
-    expect(futoshikiNotes(state)[2][1]).toEqual([3])
   })
 
   it("walks back move by move, in the order they were made", () => {

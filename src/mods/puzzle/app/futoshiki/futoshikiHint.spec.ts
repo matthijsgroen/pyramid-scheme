@@ -52,6 +52,18 @@ describe("buildFutoshikiHint", () => {
     expect(["signBound", "signVsValue", "nakedSingle", "hiddenSingle"]).toContain(hint!.key.split(".")[0])
   })
 
+  it("names the square its reason decides, so the board can put the cursor there", () => {
+    const hint = buildFutoshikiHint(puzzle, blankGrid(3), noNotes(3), solution, "xWing")
+    expect(hint?.focus).toEqual({ row: 0, col: 0 })
+    expect(hint!.cells.has("0,0")).toBe(true)
+  })
+
+  it("points a mistake at the square holding it", () => {
+    const values = blankGrid(3)
+    values[1][1] = 1
+    expect(buildFutoshikiHint(puzzle, values, noNotes(3), solution, "xWing")?.focus).toEqual({ row: 1, col: 1 })
+  })
+
   it("says nothing once the board is finished", () => {
     expect(buildFutoshikiHint(puzzle, solution, noNotes(3), solution, "nakedPair")).toBeUndefined()
   })

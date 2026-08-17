@@ -16,9 +16,13 @@ export const useFutoshikiEntry = () => {
     []
   )
 
+  // Not selectCell: that toggles a second tap off, and a hint landing on the square already picked
+  // would then unpick it.
+  const focusCell = useCallback((row: number, col: number) => setSelected({ row, col }), [])
+
   const togglePencil = useCallback(() => setPencil(current => !current), [])
 
   const clearSelection = useCallback(() => setSelected(undefined), [])
 
-  return { selected, pencil, selectCell, togglePencil, clearSelection }
+  return { selected, pencil, selectCell, focusCell, togglePencil, clearSelection }
 }

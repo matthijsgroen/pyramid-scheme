@@ -24,6 +24,8 @@ type Props = {
   hint?: string
   /** How long a still board waits before the hint button asks to be pressed (see hintIdleDelay). */
   idleMs?: number
+  /** Fired when the player asks for the hint — families use it to aim the board at what it names. */
+  onHintRevealed?: () => void
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
   children: (api: PuzzleShellApi) => ReactNode
@@ -32,7 +34,17 @@ type Props = {
 // The chrome every puzzle family wears: back, reset, hint (with its cooldown and idle nudge), the
 // completed banner, and the rules below the board. Families supply the board and their own hint text;
 // none of them reimplement the controls (docs/instructions/puzzle-screens.md §3).
-export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, idleMs, rules, children }: Props) => {
+export const PuzzleFamilyShell = ({
+  onSolved,
+  onCancel,
+  solved,
+  onReset,
+  hint,
+  idleMs,
+  onHintRevealed,
+  rules,
+  children,
+}: Props) => {
   const { t } = useTranslation("common")
   const [solvedBanner, setSolvedBanner] = useState(false)
   const [scheduleSolve, cancelSolve] = useTimeout()
@@ -90,7 +102,10 @@ export const PuzzleFamilyShell = ({ onSolved, onCancel, solved, onReset, hint, i
           )}
           {hint && (
             <button
-              onClick={reveal}
+              onClick={() => {
+                reveal()
+                onHintRevealed?.()
+              }}
               disabled={cooling}
               className={clsx("relative overflow-hidden rounded px-2 py-1 text-sm", {
                 "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,

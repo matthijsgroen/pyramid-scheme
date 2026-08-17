@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Comparison grids show only the signs the puzzle actually turns on: a starter board carries four or five instead of sixteen.
+- A comparison grid leans on its signs rather than on pre-filled numbers, so every board still teaches what a sign means.
+- Wizard comparison grids ask for four harder kinds of reasoning, with hints that explain each, so they no longer solve like master ones.
+- Asking for a hint now moves the cursor to the square it is about, so the number pad is already aimed there.
+- The same number twice in a row or column now turns the squares red outright, instead of a dark tint that was easy to miss.
+- Writing a number no longer rubs out your notes elsewhere. Notes it rules out are struck through in red, and come back if you correct the number.
+
 ## 0.35.0 - 2026-08-16
 
 ### Added
