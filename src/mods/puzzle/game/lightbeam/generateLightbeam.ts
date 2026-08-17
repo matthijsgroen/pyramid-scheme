@@ -344,7 +344,7 @@ const pathSignature = (puzzle: LightbeamPuzzleData, config: readonly number[]): 
     .join(" ")
 
 /**
- * Gate 4 — the route is the only route.
+ * The uniqueness gate — the route is the only route (design doc §5, gate 5).
  *
  * "Exactly one winning configuration" would be the wrong test for this family: a decoy has a free
  * setting by definition, so a board with decoys has many winning configurations and only one winning
@@ -361,15 +361,18 @@ const routeIsUnique = (puzzle: LightbeamPuzzleData, states: number[][]): boolean
 /**
  * Takes away every wall the board turns out not to need, to a fixpoint.
  *
- * This is where the technique cap stops being a label and starts being difficulty. Built as it is, a
- * board is a chain of `deadEnd` eliminations and nothing more — every wrong setting has a wall waiting
- * for it, so the strongest rungs of the ladder never have to fire and every tier solves the same way.
- * Thinning under the cap fixes that from the other end: at a low cap the walls are exactly what the
- * deduction spends, so they stay; at a high cap the board can be reasoned without them, so they go, and
- * what is left demands the reasoning the tier was set to demand.
- *
  * A wall the player cannot spend is worse than no wall, for the same reason a redundant sign is worse
  * than none in Futoshiki: it hides which obstacles the deduction actually turns on.
+ *
+ * In practice this removes nearly all of them — a shipped board carries 0.0 to 0.1 fixed walls, measured
+ * over 40 seeds a tier — because `blockWrongSettings` only ever adds one where the wrong ray would
+ * otherwise rejoin the route, and a board that size mostly lets a wrong turn run off the frame instead.
+ * The stone the player hears about in a hint is therefore almost always a sliding wall they are holding
+ * in the way, which is a better board than one dressed with scenery nobody can spend (design doc §5.1).
+ *
+ * Note what this is NOT: it is not what makes the technique cap bite. Removing a wall usually leaves the
+ * wrong setting running off the frame, which `deadEnd` explains just as happily — so thinning alone left
+ * every tier solving by "the light visibly dies there". The shadow pieces are what fixed that (§6.1).
  */
 const thinWalls = (
   puzzle: LightbeamPuzzleData,

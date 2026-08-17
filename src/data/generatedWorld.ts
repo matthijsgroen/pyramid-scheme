@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 334382860
+export const worldContentHash = 1825317443
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -43,7 +43,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 0,
@@ -66,11 +66,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
         ],
         entrance: { stairId: "starter_1:0:floor0:side0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "money", amount: 2 },
@@ -104,7 +104,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
         ],
         encounter: "sumplete",
@@ -145,7 +145,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "consumable", consumable: "trapTool" },
               { type: "consumable", consumable: "bandage" },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -179,7 +179,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 4,
@@ -191,7 +191,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "starter_2:0:floor0:side0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
           { type: "money", amount: 1 },
@@ -230,7 +230,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "futoshiki",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [{ type: "money", amount: 2 }],
       },
@@ -258,7 +258,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "starter_2:1:floor0:side0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -313,10 +313,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 2 }],
             hidden: true,
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "money", amount: 1 },
@@ -347,7 +347,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_3" },
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 0,
@@ -371,7 +371,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "sumplete",
           },
         ],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
         rewards: [
           { type: "money", amount: 1 },
@@ -427,7 +427,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 1 }],
             hidden: true,
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
         ],
         encounter: "balance-scale",
@@ -465,7 +465,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art5", pieceIndex: 2 },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 0,
@@ -515,7 +515,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p8", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -545,10 +545,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 1 }],
             hidden: true,
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
           { type: "money", amount: 3 },
@@ -600,7 +600,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "mosaicPiece", tier: "starter" },
             rewards: [{ type: "money", amount: 1 }],
             hidden: true,
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
         ],
         encounter: "sumplete",
@@ -662,7 +662,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "sumplete",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
@@ -721,7 +721,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -730,7 +730,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [{ type: "money", amount: 2 }],
             hidden: true,
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
         ],
         encounter: "futoshiki",
@@ -831,7 +831,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 2 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -855,7 +855,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece", tier: "junior" } },
           {
@@ -895,7 +895,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -911,7 +911,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece", tier: "junior" } },
           {
@@ -927,10 +927,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "junior_1:p2:wing0" },
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
         ],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 2 },
@@ -967,7 +967,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -975,7 +975,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -983,7 +983,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1025,7 +1025,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a13", pieceIndex: 1 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1049,7 +1049,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1105,7 +1105,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1113,7 +1113,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "junior" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1159,7 +1159,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "junior_2:p2:wing0" },
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 3 },
@@ -1217,7 +1217,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "balance-scale",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
           { type: "money", amount: 2 },
@@ -1309,7 +1309,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_3" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 2 },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -1317,7 +1317,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_stone_3" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1333,7 +1333,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_1" },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1365,7 +1365,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "arithmetic-reflex",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 2 },
@@ -1459,7 +1459,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "sumplete",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -1495,7 +1495,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_5" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -1503,7 +1503,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_1" },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1597,7 +1597,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "money", amount: 2 } },
           {
@@ -1662,7 +1662,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "arithmetic-reflex",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -1687,7 +1687,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_3" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 2 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -1719,7 +1719,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           { pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "money", amount: 2 } },
           {
@@ -1730,7 +1730,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             hidden: true,
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -1763,7 +1763,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1832,7 +1832,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -1840,7 +1840,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -1867,7 +1867,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "sumplete",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -1953,7 +1953,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 3 },
               { type: "money", amount: 3 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 4,
@@ -1971,7 +1971,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "arithmetic-reflex",
           },
         ],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -1997,7 +1997,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 2 },
               { type: "money", amount: 2 },
             ],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -2028,7 +2028,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 3 },
               { type: "money", amount: 3 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2095,7 +2095,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a5", pieceIndex: 3 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -2128,7 +2128,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 3 },
               { type: "money", amount: 2 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 4,
@@ -2165,10 +2165,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 3 },
               { type: "money", amount: 1 },
             ],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
         ],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         packing: 1.6,
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [
@@ -2199,7 +2199,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "expert_1:p2:wing1" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a6", pieceIndex: 2 },
         rewards: [
           { type: "money", amount: 2 },
@@ -2270,7 +2270,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 2 },
               { type: "money", amount: 2 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2281,7 +2281,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 2 },
               { type: "money", amount: 3 },
             ],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2365,7 +2365,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 1 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2547,7 +2547,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "expert" },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2589,7 +2589,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "futoshiki",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -2606,7 +2606,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "expert_2:p2:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [undefined, undefined],
       },
@@ -2689,10 +2689,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 2 },
               { type: "money", amount: 3 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         packing: 1.6,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 1 },
         rewards: [
@@ -2769,7 +2769,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 2 },
             rewards: [undefined, undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 4,
@@ -2816,7 +2816,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 2 },
               { type: "money", amount: 3 },
             ],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -2841,7 +2841,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_silver_3" },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 4,
@@ -2909,7 +2909,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 3 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2985,7 +2985,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a7", pieceIndex: 2 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -2993,7 +2993,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             rewards: [undefined, undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -3035,7 +3035,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 2 },
               { type: "money", amount: 2 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
         ],
         encounter: "sumplete",
@@ -3092,7 +3092,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_silver_4" },
             rewards: [undefined, undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3100,7 +3100,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_silver_1" },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3124,7 +3124,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_silver_4" },
             rewards: [undefined, undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3192,7 +3192,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 3 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -3209,7 +3209,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 2 },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3217,7 +3217,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 1 },
             rewards: [undefined, undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 4,
@@ -3235,7 +3235,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "arithmetic-reflex",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3262,7 +3262,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 1 },
               { type: "money", amount: 1 },
             ],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -3271,7 +3271,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_2" },
             endReward: { type: "money", amount: 1 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3303,7 +3303,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "money", amount: 1 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3355,7 +3355,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_3" },
             endReward: { type: "money", amount: 1 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3422,7 +3422,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d3", pieceIndex: 3 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3430,7 +3430,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a7", pieceIndex: 4 },
             rewards: [undefined, undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -3484,7 +3484,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "sumplete",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         corridorStraightness: 0.35,
         packing: 2,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 2 },
@@ -3504,7 +3504,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "expert_4:p3:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 4 },
         rewards: [
           { type: "money", amount: 2 },
@@ -3555,7 +3555,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_silver_5" },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3582,7 +3582,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "futoshiki",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 4 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -3630,7 +3630,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_3" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -3656,7 +3656,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3675,7 +3675,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 1 },
               { type: "money", amount: 2 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3684,7 +3684,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3743,7 +3743,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3760,7 +3760,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3776,7 +3776,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 1 },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -3787,7 +3787,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 3 },
               { type: "money", amount: 1 },
             ],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -3832,7 +3832,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_1:p1:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "master" },
         rewards: [
           { type: "money", amount: 2 },
@@ -3870,7 +3870,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "red" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
             sideSections: [
               {
                 pathPuzzles: 1,
@@ -3890,7 +3890,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a15", pieceIndex: 3 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3898,7 +3898,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3906,7 +3906,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3922,7 +3922,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [{ type: "money", amount: 3 }, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -3931,7 +3931,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -3950,7 +3950,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "balance-scale",
           },
         ],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a15", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -4083,7 +4083,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_4" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4108,7 +4108,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a1", pieceIndex: 1 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -4116,7 +4116,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined, undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -4162,7 +4162,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_2:p0:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "master" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -4181,7 +4181,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 2 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4205,7 +4205,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d10", pieceIndex: 0 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -4213,7 +4213,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined, undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4222,7 +4222,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -4238,10 +4238,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "master_2:p1:wing0" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -4294,7 +4294,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 gate: { type: "floor-key", color: "green" },
                 endReward: { type: "mosaicPiece", tier: "master" },
                 rewards: [undefined],
-                encounter: "sumplete",
+                encounter: "lightbeam",
               },
             ],
           },
@@ -4321,7 +4321,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4346,7 +4346,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -4365,7 +4365,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "balance-scale",
           },
         ],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 3 },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -4410,7 +4410,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a1", pieceIndex: 3 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4451,7 +4451,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -4472,7 +4472,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "money", amount: 3 },
               { type: "money", amount: 3 },
             ],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
         ],
         encounter: "balance-scale",
@@ -4495,7 +4495,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_2:p3:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 3 },
@@ -4557,7 +4557,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -4597,7 +4597,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_2:p4:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "master" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -4734,7 +4734,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 4 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4750,7 +4750,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 3 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4775,7 +4775,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "sellable", itemId: "sell_gold_2" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -4813,7 +4813,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_3:p1:wing0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "sellable", itemId: "sell_gold_4" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -4847,7 +4847,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 gate: { type: "floor-key", color: "green" },
                 endReward: { type: "sellable", itemId: "sell_gold_1" },
                 rewards: [undefined],
-                encounter: "futoshiki",
+                encounter: "lightbeam",
               },
             ],
           },
@@ -4866,7 +4866,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_gold_2" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4890,7 +4890,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_gold_2" },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4963,7 +4963,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 4 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -4980,7 +4980,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a1", pieceIndex: 4 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -4988,7 +4988,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 4 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -5109,7 +5109,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "money", amount: 3 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -5149,7 +5149,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_3:p4:wing0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -5170,7 +5170,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art11", pieceIndex: 2 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -5276,7 +5276,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 2 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -5301,7 +5301,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "money", amount: 1 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -5320,7 +5320,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             encounter: "balance-scale",
           },
         ],
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -5338,7 +5338,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_4:p1:wing0" },
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -5390,7 +5390,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 1 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -5398,7 +5398,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_gold_2" },
             rewards: [undefined, undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -5444,7 +5444,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_4:p2:wing0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "money", amount: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -5470,7 +5470,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_b_4" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art11", pieceIndex: 5 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -5494,7 +5494,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_gold_3" },
             rewards: [undefined, undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -5503,7 +5503,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "money", amount: 1 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -5654,7 +5654,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "master_4:p4:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -5693,7 +5693,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 0 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -5702,7 +5702,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_2" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d14", pieceIndex: 1 },
             rewards: [{ type: "money", amount: 3 }],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -5797,7 +5797,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: { stairId: "wizard_1:p1:main0" },
         sideSections: [],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5823,7 +5823,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "red" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [{ type: "money", amount: 1 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
             sideSections: [
               {
                 pathPuzzles: 1,
@@ -5843,7 +5843,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -5873,7 +5873,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "wizard_1:p1:wing0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [{ type: "money", amount: 2 }],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -5914,7 +5914,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_1:p1:wing0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "money", amount: 3 },
@@ -6031,7 +6031,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
         ],
         entrance: { stairId: "wizard_1:p2:main0" },
@@ -6055,7 +6055,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_1:p2:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -6101,7 +6101,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -6131,7 +6131,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "wizard_1:p3:wing0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -6140,7 +6140,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -6149,7 +6149,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
         ],
         entrance: { stairId: "wizard_1:p3:main0" },
@@ -6203,7 +6203,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 0 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -6282,7 +6282,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_2:p0:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -6320,7 +6320,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "red" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
             sideSections: [
               {
                 pathPuzzles: 1,
@@ -6340,7 +6340,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -6464,7 +6464,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 0 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -6473,7 +6473,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "money", amount: 3 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -6512,7 +6512,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "wizard_2:p2:wing0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -6543,7 +6543,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_2:p2:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -6619,7 +6619,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "wizard_2:p3:wing0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -6738,7 +6738,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -6810,7 +6810,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             endReward: { type: "sellable", itemId: "sell_divine_5" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -6828,7 +6828,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "sellable", itemId: "sell_divine_2" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -6858,7 +6858,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "wizard_3:p0:wing0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 2,
@@ -6878,7 +6878,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_3:p0:main0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         packing: 1.6,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -6890,7 +6890,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_3:p0:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -6902,7 +6902,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: { stairId: "wizard_3:p1:main0" },
         sideSections: [],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6927,7 +6927,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "red" },
             endReward: { type: "money", amount: 3 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
             sideSections: [
               {
                 pathPuzzles: 1,
@@ -7020,7 +7020,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: { stairId: "wizard_3:p2:main0" },
         sideSections: [],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -7046,7 +7046,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 0 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -7227,7 +7227,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
             endReward: { type: "money", amount: 3 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -7236,11 +7236,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
             endReward: { type: "money", amount: 3 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
         ],
         entrance: { stairId: "wizard_3:p3:main0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         packing: 1.6,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -7346,7 +7346,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
             endReward: { type: "money", amount: 3 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
         ],
         entrance: { stairId: "wizard_3:p4:main0" },
@@ -7361,7 +7361,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_3:p4:wing0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "money", amount: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -7407,7 +7407,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d8", pieceIndex: 6 },
             rewards: [undefined],
-            encounter: "sumplete",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -7599,7 +7599,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_4:p0:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -7611,7 +7611,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: { stairId: "wizard_4:p1:main0" },
         sideSections: [],
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 3 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -7656,7 +7656,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -7686,7 +7686,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "wizard_4:p1:wing0" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -7706,7 +7706,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p1:main0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         corridorStraightness: 0.35,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -7756,7 +7756,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_2" },
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,
@@ -7815,7 +7815,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p2:main0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         corridorStraightness: 0.35,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
@@ -7827,7 +7827,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_4:p2:wing0" },
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -7880,7 +7880,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_c_1" },
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "balance-scale",
+            encounter: "futoshiki",
           },
           {
             pathPuzzles: 1,
@@ -7961,7 +7961,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_4:p3:wing0" },
-        encounter: "sumplete",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -7973,7 +7973,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         end: "treasure",
         exitOrStaircase: { stairId: "wizard_4:p4:main0" },
         sideSections: [],
-        encounter: "balance-scale",
+        encounter: "futoshiki",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 5 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -8000,7 +8000,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d11", pieceIndex: 5 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 2,
@@ -8052,7 +8052,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           },
         ],
         entrance: { stairId: "wizard_4:p4:main0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 4 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -8063,7 +8063,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         entrance: { stairId: "wizard_4:p4:wing0" },
-        encounter: "futoshiki",
+        encounter: "lightbeam",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
       },
@@ -8148,7 +8148,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
-            encounter: "futoshiki",
+            encounter: "lightbeam",
           },
           {
             pathPuzzles: 1,

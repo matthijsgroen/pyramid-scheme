@@ -123,15 +123,30 @@ describe.each(difficulties)("at %s", difficulty => {
 // is a chain of `deadEnd` eliminations, so the tiers would differ only in size — the shadow pieces
 // (generateLightbeam's `shadows`) are what make the higher rungs necessary rather than merely permitted.
 describe("the tiers demand different reasoning", () => {
-  const demanded = (difficulty: (typeof difficulties)[number]) => {
+  const sweep = (difficulty: (typeof difficulties)[number]) => {
     const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+    return Array.from({ length: 16 }, (_, seed) => generateLightbeam(size, seed + 1, options))
+  }
+
+  const demanded = (difficulty: (typeof difficulties)[number]) => {
     const used = new Set<string>()
-    for (let seed = 1; seed <= 16; seed++) {
-      const board = generateLightbeam(size, seed, options)
+    for (const board of sweep(difficulty))
       for (const technique of solveLightbeamByTechniques(board, board.techniqueCap).used) used.add(technique)
-    }
     return used
   }
+
+  // Footprint is only half of difficulty, but it may never go backwards: a junior board that is smaller
+  // than a starter one is a tier table that reads right and plays wrong, which is exactly what the first
+  // pass at this table did.
+  it("never shrinks as the tiers go up", () => {
+    const space = difficulties.map(difficulty =>
+      sweep(difficulty).reduce(
+        (total, board) => total + board.movable.reduce((product, piece) => product * pieceStateCount(piece), 1),
+        0
+      )
+    )
+    for (let tier = 1; tier < space.length; tier++) expect(space[tier]).toBeGreaterThan(space[tier - 1])
+  })
 
   it("asks a starter board for nothing but a visible dead end", () => {
     expect([...demanded("starter")].sort()).toEqual(["deadEnd", "entryRun", "exitRun"])

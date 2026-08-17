@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A light puzzle: bend the sunlight from the disc to the shrine, past stone that swallows it and edges that lose it.
+- Tap a mirror to turn it, or a sliding piece to move it — every square a piece can reach taps the same piece, and tapping round again puts it back.
+- The beam is drawn wherever it currently goes and marked where it ends, so every change shows its own consequence.
+- A sliding piece shows a faint ghost of itself on the spots it can move to, so you can see whether a mirror or a block of stone would arrive.
+- Hints explain the next step in words — the light dies in that stone, the shrine can only be lit from one side, or this piece can be left alone entirely.
+- Light puzzles turn up in pyramids and tombs from the first tier, growing from 5×5 up to 7×7.
+
 ## 0.35.1 - 2026-08-17
 
 ### Changed

@@ -2,10 +2,11 @@ import type { ModDescriptor } from "../modDescriptor"
 import { SUMPLETE_META } from "./game/sumplete/meta"
 import { BALANCE_META } from "./game/balanceScale/meta"
 import { FUTOSHIKI_META } from "./game/futoshiki/meta"
+import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { CROCODILE_META } from "./game/crocodile/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale,
-// futoshiki) and the crocodile capstone. A root mod: it stays on in production (turning it off leaves
+// futoshiki, lightbeam) and the crocodile capstone. A root mod: it stays on in production (turning it off leaves
 // puzzle/capstone rooms with no family, so they only auto-resolve via the family-absence pass-through
 // — a degenerate world, not a playable one). It is a real REGISTERED_MODS entry anyway so its family
 // metadata flows through MOD_FAMILY_META like every other mod's — adding a new puzzle family is then a
@@ -20,5 +21,5 @@ import { CROCODILE_META } from "./game/crocodile/meta"
 // (src/mods/puzzle/app, pulled in by registerModApps), each gated on this mod being enabled.
 export const puzzleMod: ModDescriptor = {
   id: "puzzle",
-  families: [SUMPLETE_META, BALANCE_META, FUTOSHIKI_META, CROCODILE_META],
+  families: [SUMPLETE_META, BALANCE_META, FUTOSHIKI_META, LIGHTBEAM_META, CROCODILE_META],
 }

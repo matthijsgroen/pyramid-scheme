@@ -362,5 +362,29 @@
         "col": "In this column, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them."
       }
     }
+  },
+  "lightbeam": {
+    "rules": {
+      "goal": "Get the sunlight from the disc to the shrine.",
+      "mirrors": "A mirror bends the light a quarter turn, off either of its faces.",
+      "walls": "A block of stone swallows the light. So does the edge of the board.",
+      "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. Pieces with a plain edge are part of the puzzle and cannot be moved."
+    },
+    "hint": {
+      "entryRun": "Start where the light already goes: it runs straight from the disc until it meets the first piece you can change. Those squares carry the light whatever you do.",
+      "exitRun": "Look at the shrine. Only one side of it can be lit at all — every other way in is blocked or faces off the board — so the light has to arrive along that line.",
+      "deadEnd": {
+        "wall": "Set this way, the light runs straight into stone with nothing left to save it. So it cannot be set this way.",
+        "edge": "Set this way, the light runs off the edge of the board with nothing left to catch it. So it cannot be set this way.",
+        "loop": "Set this way, the light never gets anywhere — it circles for ever. So it cannot be set this way."
+      },
+      "feedsExit": {
+        "wall": "Work back from the shrine. Set this way, nothing can deliver the light along the only line that reaches it — it dies in stone on the way.",
+        "edge": "Work back from the shrine. Set this way, the light would have to come from outside the board to reach it.",
+        "loop": "Work back from the shrine. Set this way, the light that would have to reach it only circles for ever instead."
+      },
+      "neverReached": "Leave this one alone. The light cannot reach it however the rest is set, so nothing you do to it matters.",
+      "onlySurvivor": "Try every setting of this one in turn and all but one leave the shrine dark. That one is the answer."
+    }
   }
 }
