@@ -124,12 +124,10 @@ The configuration space is the product of the movable pieces' state counts —
 over at most 49 cells. **This family can afford exact enumeration**, which Sumplete
 and Futoshiki cannot, and the gates below spend that freely.
 
-1. Route a beam from sun-disc to shrine, dropping a mirror at each turn. Legs never
-   revisit a cell, so the route never crosses itself — a crossing traces fine but
-   puts two reasons on one square, and every technique points at a square. The final
-   leg runs to the frame, which sets the shrine in the wall: an edge shrine has at
-   most three approaches and the frame kills most of those, which is what lets T1
-   fire at all.
+1. Route a beam from sun-disc to shrine, dropping a mirror at each turn. **The route may
+   cross itself, perpendicularly** (§5.2). The final leg runs to the frame, which sets the
+   shrine in the wall: an edge shrine has at most three approaches and the frame kills most
+   of those, which is what lets T1 fire at all.
 2. Fix some of those mirrors as givens, make the rest movable, and set the movable
    ones to a **wrong** starting state so the board opens unsolved.
 3. **Wall off the wrong settings.** For each movable piece, the light under its wrong
@@ -152,6 +150,34 @@ and Futoshiki cannot, and the gates below spend that freely.
 Gate 5 is the honest form of uniqueness for this family. "Exactly one winning
 configuration" would be the wrong test: a decoy has a free state, so a board with
 decoys has many winning configurations and only one winning _route_.
+
+### 5.2 Crossings, and an objection that did not hold
+
+This doc used to forbid the route from crossing itself, on the grounds that a crossing "puts two
+reasons on one square, and every technique points at a square". **That was wrong, and nothing had
+to change to make it wrong.** Nothing in the family has ever been keyed by square: `forced` is keyed
+by cell *and* direction, the walk remembers `(cell, direction)` pairs, the uniqueness gate signs
+paths by segment, and the board draws one polyline per segment. A crossed square was already two
+things everywhere it mattered. Only the route builder disagreed, and the drawing needed no change
+at all — it draws a cross without being asked.
+
+What a crossing must be is **perpendicular**. A square entered twice on the same axis is the beam
+retracing its own line, which is a different and much worse thing. A square entered once
+horizontally and once vertically is a clean cross, and it forces the one fact worth having:
+**nothing can stand there**, or the first pass would have turned. So a crossing may never be a
+bend, a stop, a door or a socket, and generation keeps all of them off it.
+
+The part that needed finding was not permission but **leg length**. Legs are drawn from a budget
+that divides the grid by the turn count, which gives every leg the same length — and a fold of
+equal legs can never cross itself, because it comes back exactly alongside its own line and stops
+one square short, for ever. Measured with the even budget: **not one crossing in twenty boards.** A
+folded route reuses ground it has already covered, so it gets its own, wider budget (`spread`), and
+then crossings appear on every board that asks for one.
+
+One thing it does not do is add a technique. It buys route length and deduction steps without
+buying pieces — measured at wizard, `steps` 14.6 → 15.6 and pieces-on-the-route 6.9 → 7.2, with the
+configuration space flat. That is a character dial and a good one, not a difficulty lever, and §7 is
+where character dials live.
 
 ### 5.1 Fixed walls barely survive
 
@@ -321,6 +347,7 @@ dials the generator already had.
 | **Clear the way**       | `slidingWalls +1`             | does the light get through | yes   |
 | **Blind alleys**        | `shadows +1`                  | the exhaustive rung (T6)   | yes   |
 | **Order of operations** | `doors +1`                    | ordering (T2)              | yes   |
+| **Crossed beams**       | `crossings +1`, `turns +1`    | reading a square twice     | yes   |
 | **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §12.1 |
 
 ### 7.1 Three rules that keep it honest

@@ -118,10 +118,13 @@ describe.each(difficulties)("at %s", difficulty => {
 
   // Gate 4, and the honest form of uniqueness for this family: a decoy has a free setting by definition,
   // so a board with decoys has many winning configurations. What may not be ambiguous is the route.
+  // Over the states the PLAYER can reach, which is what uniqueness has to mean. Enumerating a door into a
+  // position no tap can put it in finds routes nobody can take, and asserts a property the board was never
+  // built to have.
   it("has exactly one winning route", () => {
     for (const board of boards) {
       const paths = new Set<string>()
-      const states = board.movable.map(piece => Array.from({ length: pieceStateCount(piece) }, (_, i) => i))
+      const states = allPieceOptions(board)
       eachConfig(states, config => {
         if (!isLit(board, config)) return
         paths.add(

@@ -51,6 +51,16 @@ export const GOAL_DIALS: Record<LightbeamGoal, (dials: LightbeamDials) => Lightb
    * every other goal that piece is not the player's to set: what it adds is a reason, not a decision.
    */
   orderOfOperations: dials => ({ ...dials, doors: dials.doors + 1 }),
+
+  /**
+   * A route that folds back through its own line.
+   *
+   * The crossed square is the one square on a lightbeam board that is provably empty — anything standing
+   * there would have turned the first pass — and it is the only place the beam is drawn arriving from two
+   * directions at once. It costs no piece at all: what it adds is a longer, more folded route on the same
+   * grid, which is the one way this family has of asking for more without asking for more room.
+   */
+  crossedBeams: dials => ({ ...dials, crossings: dials.crossings + 1, turns: dials.turns + 1 }),
 }
 
 export const applyGoals = (dials: LightbeamDials, goals: readonly LightbeamGoal[]): LightbeamDials =>

@@ -25,7 +25,14 @@ import {
 import { applyGoals, drawGoals } from "./goals"
 import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
 
-export const LIGHTBEAM_GOALS = ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys", "orderOfOperations"] as const
+export const LIGHTBEAM_GOALS = [
+  "longChain",
+  "sortTheWheat",
+  "clearTheWay",
+  "blindAlleys",
+  "orderOfOperations",
+  "crossedBeams",
+] as const
 
 /** What kind of problem a board is, as against how hard it is (design doc §7). */
 export type LightbeamGoal = (typeof LIGHTBEAM_GOALS)[number]
@@ -56,6 +63,15 @@ export type LightbeamDials = {
    * never needed is a board without a ladder.
    */
   fiddleProof: boolean
+  /**
+   * How many times the winning beam must fold back through its own line.
+   *
+   * A crossed square is the one square on the board that is provably empty — anything standing there would
+   * have turned the first pass — and it is the only place the beam is drawn arriving from two directions.
+   * It costs no piece at all: what it buys is a longer, more folded route on the same grid, which is this
+   * family's only way of asking for more without asking for more room.
+   */
+  crossings: number
   /**
    * Doors: stone across the route that no tap can shift, opened only by the light reaching a socket
    * upstream of it (design doc §12.1). Two doors share one socket, which is fan-out.
@@ -146,6 +162,8 @@ type Route = {
   cells: RouteCell[]
   /** The bends, in beam order — one mirror each. */
   bends: { at: CellRef; enter: Direction; exit: Direction; face: MirrorFace }[]
+  /** Squares the beam passes through twice, once on each axis. Nothing may ever stand on one. */
+  crossings: Set<string>
 }
 
 /**
@@ -162,17 +180,36 @@ const pickSun = (size: number, random: () => number): { at: CellRef; facing: Dir
 }
 
 /**
- * Lays the winning beam. Legs never revisit a cell, so the route never crosses itself — a crossing would
- * be legal to trace but would put two reasons on one square, and every technique in the ladder points at
- * a square.
+ * Lays the winning beam.
+ *
+ * **The route may cross itself, and that used to be forbidden on a reason that turned out not to hold.**
+ * This doc said a crossing "puts two reasons on one square, and every technique points at a square" — but
+ * nothing in the family has ever been keyed by square. `forced` is keyed by cell *and direction*, the walk
+ * remembers `(cell, direction)` pairs, the uniqueness gate signs paths by segment, and the board draws one
+ * polyline per segment. A crossed square was already two things everywhere it mattered; only the route
+ * builder disagreed.
+ *
+ * What a crossing has to be is **perpendicular**. A cell entered twice on the same axis is the beam
+ * retracing its own line, which is a different and much worse thing; a cell entered once horizontally and
+ * once vertically is a clean cross, and the one fact it forces is worth having: **nothing can stand
+ * there**, or the first pass would have turned. So a crossing may never be a bend, a stop, or a door.
  *
  * The final leg runs all the way to the frame, which sets the shrine in the wall. That is worth the
  * constraint: a shrine on an edge can only be lit from three sides at most, and the frame kills most of
  * those outright, which is what lets the `exitRun` deduction fire at all.
  */
-const buildRoute = (size: number, turns: number, random: () => number): Route | undefined => {
+const axisOf = (direction: Direction): "h" | "v" => (direction === "left" || direction === "right" ? "h" : "v")
+
+const buildRoute = (
+  size: number,
+  turns: number,
+  random: () => number,
+  /** Whether the route is allowed to fold back through itself at all. */
+  mayCross: boolean
+): Route | undefined => {
   const sun = pickSun(size, random)
-  const used = new Set([cellKey(sun.at)])
+  const used = new Map<string, Set<"h" | "v">>([[cellKey(sun.at), new Set(["h", "v"])]])
+  const crossings = new Set<string>()
   const cells: RouteCell[] = []
   const bends: Route["bends"] = []
   let at = sun.at
@@ -186,7 +223,14 @@ const buildRoute = (size: number, turns: number, random: () => number): Route | 
   // puts the two mirrors in touching squares, and two tappable pieces in touching squares is a mis-tap
   // waiting to happen (§9). It is a floor, not a guarantee — a route that folds back can still bring two
   // non-consecutive bends together, which `piecesAreSpaced` catches at the end.
-  const budget = Math.max(MIN_LEG, Math.floor((size - 1) / Math.max(1, turns + 1)))
+  //
+  // A crossing route needs legs of DIFFERENT lengths, and that is why it needs its own budget rather than
+  // just permission. Dividing the grid by the turn count evenly gives every leg the same length, and a
+  // fold of equal legs can never cross itself — it comes back exactly alongside its own line and stops one
+  // square short, for ever. Measured with the even budget: not one crossing in twenty boards. A folded
+  // route also reuses the space it has already been through, so it can afford the longer legs.
+  const spread = mayCross ? Math.ceil((turns + 1) / 2) : turns + 1
+  const budget = Math.max(mayCross ? MIN_LEG + 1 : MIN_LEG, Math.floor((size - 1) / Math.max(1, spread)))
   const span = Math.max(1, budget - MIN_LEG + 1)
   for (let leg = 0; leg <= turns; leg++) {
     const last = leg === turns
@@ -194,14 +238,28 @@ const buildRoute = (size: number, turns: number, random: () => number): Route | 
     if (length < 1) return undefined
     for (let step = 0; step < length; step++) {
       at = stepCell(at, direction)
-      if (!insideGrid(size, at) || used.has(cellKey(at))) return undefined
-      used.add(cellKey(at))
+      if (!insideGrid(size, at)) return undefined
+      const key = cellKey(at)
+      const axes = used.get(key)
+      if (axes) {
+        // Same axis twice is the beam retracing its own line, never a crossing. And a square already
+        // carrying a mirror cannot also be crossed — the first pass would have turned there.
+        if (!mayCross || axes.has(axisOf(direction))) return undefined
+        if (bends.some(bend => cellKey(bend.at) === key)) return undefined
+        axes.add(axisOf(direction))
+        crossings.add(key)
+      } else used.set(key, new Set([axisOf(direction)]))
       cells.push({ at, enter: direction, exit: direction })
     }
     if (last) {
+      // The shrine takes the light the first time it arrives, so a beam that reached it earlier would
+      // already have ended there.
+      if (crossings.has(cellKey(at))) return undefined
       cells[cells.length - 1].exit = undefined
-      return { sun, shrine: at, cells, bends }
+      return { sun, shrine: at, cells, bends, crossings }
     }
+    // A bend needs a mirror, and a crossed square has to stay empty.
+    if (crossings.has(cellKey(at))) return undefined
     const exit = shuffle(perpendicular(direction), random)[0]
     const face = faceFor(direction, exit)
     if (!face) return undefined
@@ -393,6 +451,7 @@ const placeWiredDoors = (
         ({ cell, index }) =>
           index >= half &&
           cell.exit === cell.enter &&
+          !route.crossings.has(cellKey(cell.at)) &&
           !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at)) &&
           !draft.movableCells.has(cellKey(cell.at))
       ),
@@ -506,7 +565,10 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   // rather than bend it — the one piece in the family whose question is "does the light get through".
   const straights = shuffle(
     route.cells.filter(
-      cell => cell.exit === cell.enter && !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at))
+      cell =>
+        cell.exit === cell.enter &&
+        !route.crossings.has(cellKey(cell.at)) &&
+        !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at))
     ),
     random
   )
@@ -647,6 +709,7 @@ const BASELINE: LightbeamDials = {
   slidingWalls: 0,
   slidingStops: 2,
   fiddleProof: false,
+  crossings: 0,
   doors: 0,
   doorNodes: 1,
   decoys: 0,
@@ -772,8 +835,9 @@ const attemptGeneration = (
 ): Omit<LightbeamPuzzle, "goals"> | undefined => {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
-    const route = buildRoute(size, dials.turns, random)
+    const route = buildRoute(size, dials.turns, random, dials.crossings > 0)
     if (!route) continue
+    if (route.crossings.size < dials.crossings) continue
     const draft = buildPieces(size, route, dials, random)
     if (!draft) continue
     const driven = new Set(draft.wirings.map(wiring => wiring.piece))

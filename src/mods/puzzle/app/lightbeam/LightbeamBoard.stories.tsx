@@ -29,6 +29,8 @@ const expert = board("expert", 2)
 const wizard = board("wizard", 4)
 /** A generated wizard board, which since §12.1 landed means one carrying a door and its two sockets. */
 const wizardDoors = board("wizard", 11)
+/** A generated wizard board that drew `crossedBeams` — its winning route folds back through its own line. */
+const wizardCrossing = board("wizard", 2)
 
 /** How the board opens: dark, with the beam running out somewhere it should not. */
 export const Starter: Story = { args: { puzzle: starter, states: starter.initial, onCycle: () => {} } }
@@ -287,6 +289,30 @@ export const NodePlayable: Story = {
       />
     )
   },
+}
+
+/**
+ * A route that crosses itself, which the family forbade until it turned out the objection did not hold.
+ *
+ * The crossed square is the one square on the board provably empty — anything standing there would have
+ * turned the first pass — and it is the only place the beam arrives from two directions at once. Nothing in
+ * the renderer needed changing for it: the beam was always drawn one polyline per `(cell, direction)`
+ * segment, so a crossed square draws as a cross without being asked.
+ *
+ * Left as it opens, right answered.
+ */
+export const CrossedBeams: Story = {
+  args: { puzzle: wizardCrossing, states: wizardCrossing.initial, onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-wrap items-start justify-center gap-6">
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardCrossing} states={wizardCrossing.initial} onCycle={() => {}} />
+      </div>
+      <div className="w-[318px]">
+        <LightbeamBoard puzzle={wizardCrossing} states={wizardCrossing.solution} onCycle={() => {}} />
+      </div>
+    </div>
+  ),
 }
 
 /** The board with the hint's piece and beam lit — the state after pressing Hint. */

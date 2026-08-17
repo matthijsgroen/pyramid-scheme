@@ -12,13 +12,23 @@ const LEAN: LightbeamDials = {
   slidingWalls: 0,
   slidingStops: 2,
   fiddleProof: false,
+  crossings: 0,
   doors: 0,
   doorNodes: 1,
   decoys: 0,
   shadows: 0,
 }
 
-const DIALS = ["turns", "setMirrors", "slidingMirrors", "slidingWalls", "slidingStops", "decoys", "shadows"] as const
+const DIALS = [
+  "turns",
+  "setMirrors",
+  "slidingMirrors",
+  "slidingWalls",
+  "slidingStops",
+  "crossings",
+  "decoys",
+  "shadows",
+] as const
 
 describe("the goal pool", () => {
   it("has a dial change for every goal in the list", () => {
