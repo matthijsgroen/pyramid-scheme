@@ -5,7 +5,6 @@ import {
   BACKSLASH,
   cellKey,
   eachConfig,
-  isCut,
   isHalfStep,
   isLit,
   reflect,
@@ -16,6 +15,7 @@ import {
   SQUARE_DIRECTIONS,
   stepCell,
   traceBeam,
+  type MirrorAngle,
 } from "./beam"
 import { generateLightbeam, resistsGreedyPlay } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
@@ -358,15 +358,41 @@ describe("no two pieces the player can tap ever touch", () => {
 // carried an ordinary mirror anyway, and what changes is that its answer is a half-step.
 // ---------------------------------------------------------------------------------------------------
 
-/** The cut pieces on a board, with the bend they stand on: their answer, and the way the beam arrived. */
-const cutBends = (board: ReturnType<typeof generateLightbeam>) => {
+/**
+ * The bends the route turns **diagonally** at, with their answer and the way the beam arrived.
+ *
+ * Selected on the **answer** being a half-step rather than on `isCut(angles)`, and that distinction is the
+ * whole of what §11.13 changed: once a list is authored per piece, an ordinary quarter-turn bend can carry a
+ * half-step among its *other* stops, so `isCut` is true of pieces the route does not bend diagonally at all.
+ * What `cutMirrors` counts is diagonal legs, which is a fact about the answer.
+ */
+const diagonalBends = (board: ReturnType<typeof generateLightbeam>) => {
   const entered = new Map(traceBeam(board, board.solution).path.map(segment => [cellKey(segment.at), segment.enter]))
   return board.movable.flatMap((piece, index) => {
-    if (piece.kind !== "turnMirror" || !isCut(piece.angles)) return []
+    if (piece.kind !== "turnMirror") return []
+    const answer = piece.angles[board.solution[index]]
     const enter = entered.get(cellKey(piece.at))
-    if (enter === undefined) return []
-    return [{ piece, index, enter, answer: piece.angles[board.solution[index]] }]
+    if (enter === undefined || !isHalfStep(answer)) return []
+    return [{ piece, index, enter, answer }]
   })
+}
+
+/** Every authored stop list on a board, in piece order. */
+const stopLists = (board: ReturnType<typeof generateLightbeam>): readonly MirrorAngle[][] =>
+  board.movable.flatMap(piece => (piece.kind === "turnMirror" ? [[...piece.angles]] : []))
+
+/**
+ * The turn mirrors the winning beam actually crosses — the ones whose setting is load-bearing.
+ *
+ * A decoy and a shadow are turn mirrors too, and their settings are **free by construction**: the light
+ * never reaches them, which is what `neverReached` proves and why `routeIsUnique` checks the winning *path*
+ * rather than the winning configuration. So any claim about "a wrong setting fails" is a claim about these.
+ */
+const routeMirrors = (board: ReturnType<typeof generateLightbeam>): number[] => {
+  const crossed = new Set(traceBeam(board, board.solution).path.map(segment => cellKey(segment.at)))
+  return board.movable.flatMap((piece, index) =>
+    piece.kind === "turnMirror" && crossed.has(cellKey(piece.at)) ? [index] : []
+  )
 }
 
 describe("the diagonal cut", () => {
@@ -383,8 +409,8 @@ describe("the diagonal cut", () => {
     const wanted = options.cutMirrors ?? 0
     const boards = Array.from({ length: 8 }, (_, seed) => generateLightbeam(size, seed + 1, options))
 
-    it("puts one on every board from master up, and none below", () => {
-      for (const board of boards) expect(cutBends(board)).toHaveLength(wanted)
+    it("turns the route diagonally at exactly as many bends as the dial asks for", () => {
+      for (const board of boards) expect(diagonalBends(board)).toHaveLength(wanted)
     })
 
     // What step 4 is *for*. Every earlier step could only put diagonal light in a wrong setting; here the
@@ -393,28 +419,48 @@ describe("the diagonal cut", () => {
       for (const board of boards) expect(routeRunsDiagonally(board)).toBe(wanted > 0)
     })
 
-    // §11.8 rule 2, the constraint that killed three earlier drafts: the stop set has to keep a quarter
-    // turn, since every other piece and the route itself depend on a mirror cell being able to turn light
-    // 90°, and the other stop sits 67.5° off it — as lines, three eighth-turns either way round.
-    it("keeps a quarter turn beside the answer, 67.5° away", () => {
+    // §11.8 rule 2, the constraint that killed three earlier drafts: a stop set has to keep a quarter turn,
+    // since every other piece and the route itself depend on a mirror cell being able to turn light 90°.
+    // Asserted over EVERY list rather than only the diagonal bends, because once lists are authored per
+    // piece (§11.13) this is the one thing none of them may lose.
+    it("keeps a quarter turn in every authored list, however long", () => {
       for (const board of boards)
-        for (const { piece, answer } of cutBends(board)) {
-          expect(piece.angles).toContain(answer)
-          expect(isHalfStep(answer)).toBe(true)
-          expect(piece.angles.filter(angle => angle === SLASH || angle === BACKSLASH)).toHaveLength(1)
-          const [low, high] = [...piece.angles].sort((a, b) => a - b)
-          expect(Math.min(high - low, 8 - (high - low))).toBe(3)
+        for (const angles of stopLists(board)) {
+          expect(angles.filter(angle => angle === SLASH || angle === BACKSLASH).length).toBeGreaterThanOrEqual(1)
+          expect(new Set(angles).size).toBe(angles.length)
         }
     })
 
-    // The answer bends the beam diagonally and the other stop is the quarter turn the board would have had
-    // — so the wrong setting is the *ordinary* ray, and `blockWrongSettings` closes it the way it always has.
-    it("spends the wrong setting on the quarter turn, and it never arrives", () => {
+    it("puts the answer in the list, and the diagonal bend's answer is the half-step", () => {
+      for (const board of boards) {
+        board.movable.forEach((piece, index) => {
+          if (piece.kind !== "turnMirror") return
+          expect(piece.angles[board.solution[index]]).toBeDefined()
+        })
+        for (const { piece, answer } of diagonalBends(board)) {
+          expect(piece.angles).toContain(answer)
+          expect(isHalfStep(answer)).toBe(true)
+        }
+      }
+    })
+
+    // The answer bends the beam diagonally, so the route leaves the rows and columns there.
+    it("sends the beam off the rows and columns at the bend it answers diagonally", () => {
       for (const board of boards)
-        for (const { piece, index, enter, answer } of cutBends(board)) {
-          expect(isHalfStep(reflect(answer, enter))).toBe(true)
-          piece.angles.forEach((angle, state) => {
-            if (angle === answer) return
+        for (const { enter, answer } of diagonalBends(board)) expect(isHalfStep(reflect(answer, enter))).toBe(true)
+    })
+
+    // The property the whole of `blockWrongSettings` exists for, and the one a longer list has to keep: every
+    // stop that is not the answer has to leave the shrine dark, however many of them there are.
+    it("closes every wrong setting of every route mirror, whatever the fork's size", () => {
+      for (const board of boards)
+        for (const index of routeMirrors(board)) {
+          const piece = board.movable[index]
+          if (piece.kind !== "turnMirror") continue
+          const answer = board.solution[index]
+          expect(piece.angles.length).toBeGreaterThan(1)
+          piece.angles.forEach((_, state) => {
+            if (state === answer) return
             const wrong = [...board.solution]
             wrong[index] = state
             expect(isLit(board, wrong)).toBe(false)
@@ -426,6 +472,44 @@ describe("the diagonal cut", () => {
       for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
     })
   })
+
+  // -------------------------------------------------------------------------------------------------
+  // The fork, authored per piece (§11.8 rule 1, measured in §11.13). Rule 1 has asked for this since it was
+  // written and the generator declined for the family's whole life: `[45°, 135°]` on 921 of 961 mirrors.
+  // -------------------------------------------------------------------------------------------------
+
+  it("gives the fork to wizard and to no tier below it", () => {
+    for (const difficulty of ["starter", "junior", "expert", "master"] as const)
+      expect(LIGHTBEAM_CONFIG[difficulty].mirrorStops ?? 2).toBe(2)
+    expect(LIGHTBEAM_CONFIG.wizard.mirrorStops).toBe(3)
+  })
+
+  it("authors no more stops than the dial allows, on any tier", () => {
+    for (const difficulty of difficulties) {
+      const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+      const most = options.mirrorStops ?? 2
+      for (let seed = 1; seed <= 6; seed++)
+        for (const angles of stopLists(generateLightbeam(size, seed, options))) {
+          expect(angles.length).toBeGreaterThanOrEqual(2)
+          expect(angles.length).toBeLessThanOrEqual(most)
+        }
+    }
+  })
+
+  // The point of the dial, and the thing a count alone would not show: rule 1 asks for lists that DIFFER,
+  // not merely for longer ones. Below wizard there is exactly one shape of ordinary fork; at wizard the
+  // same nine mirrors offer many.
+  it("draws forks that differ from each other, which is what rule 1 actually asks for", () => {
+    const shapes = (difficulty: (typeof difficulties)[number]) => {
+      const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+      const seen = new Set<string>()
+      for (let seed = 1; seed <= 12; seed++)
+        for (const angles of stopLists(generateLightbeam(size, seed, options))) seen.add(angles.join(","))
+      return seen
+    }
+    expect(shapes("junior").size).toBe(1)
+    expect(shapes("wizard").size).toBeGreaterThan(shapes("master").size)
+  }, 30_000)
 
   // Two cuts is the excursion rather than the exit: out of the square on one bend and back on the next, so
   // the shrine is entered square again. No tier draws it — §11.5 forbids letting the *count* of cut mirrors
@@ -439,7 +523,7 @@ describe("the diagonal cut", () => {
 
     it("builds, and runs diagonally in the middle rather than at the end", () => {
       for (const board of boards) {
-        expect(cutBends(board)).toHaveLength(2)
+        expect(diagonalBends(board)).toHaveLength(2)
         const path = traceBeam(board, board.solution).path
         expect(path.some(segment => segment.enter % 2 === 1)).toBe(true)
         // Back on the square by the time it arrives: an even number of half-step crossings (§11.5).

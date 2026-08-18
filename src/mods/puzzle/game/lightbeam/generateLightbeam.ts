@@ -109,6 +109,20 @@ export type LightbeamDials = {
    * geometry allows, and §11.12 for what turning it on cost.
    */
   cutMirrors: number
+  /**
+   * The most stops a route mirror's authored list may hold — its fork in the maze (§11.8 rule 1).
+   *
+   * The sibling of `slidingStops`, and the same question one axis over: two stops asks "which of these two",
+   * three asks "which of these three", and the piece costs 1.5× rather than 2× because it is the same piece
+   * doing more (rule 8). Every list still keeps a quarter turn, which is rule 2 and is what every other piece
+   * on the board depends on.
+   *
+   * Two is what the family shipped for its whole life, and it is not a floor the code needs — it is a
+   * baseline, so a tier that leaves this alone generates exactly the boards it did before. The list's
+   * **contents** vary with it as well as its length: what is authored is drawn per piece from the angles
+   * whose wrong ray the board can actually close, so no two mirrors need offer the same fork (§11.13).
+   */
+  mirrorStops: number
 }
 
 export type LightbeamPuzzle = LightbeamPuzzleData & {
@@ -195,6 +209,53 @@ const cutStops = (angle: MirrorAngle): readonly MirrorAngle[] | undefined => {
   const aligned = [mod8(angle + 3), mod8(angle - 3)].find(stop => stop === SLASH || stop === BACKSLASH)
   if (aligned === undefined) return undefined
   return aligned < angle ? [aligned, angle] : [angle, aligned]
+}
+
+/**
+ * The authored stop list for a turn mirror at a bend — the fork the player meets there (§11.8 rule 1).
+ *
+ * Three constraints, and the order they are applied in is the whole of the function:
+ *
+ * 1. **The answer is in it**, or the route does not work.
+ * 2. **Rule 2: it keeps a quarter turn.** A flat or upright mirror offers square light none — it passes a
+ *    beam along its own line and sends one meeting it head-on straight back — so every list has to hold a
+ *    diagonal. A half-step answer therefore brings its aligned partner in with it (`cutStops`), and a
+ *    diagonal answer already satisfies it alone.
+ * 3. **Every extra stop's wrong ray has to be closable**, which is the real budget and the reason this is
+ *    not simply "draw `n` angles". A `k`-stop piece has `k − 1` wrong rays, and `blockWrongSettings` can
+ *    only close one that leaves the route: off the frame, into stone it is allowed to place, into something
+ *    movable, or back down its own line into the disc. A ray whose first cell is the route's own kills the
+ *    draft. Checking that here rather than letting the gate reject it is what keeps the yield affordable —
+ *    measured in §11.13, it is the difference between a tier that builds and one that does not.
+ *
+ * Note what is *not* excluded: a stop lying along the beam (rule 3's edge-on stop, which passes the light
+ * straight through) and a stop square across it (which retroreflects it home) are both legal extras. Neither
+ * can be the answer — `angleFor` refuses them, because neither bends anything — but as wrong settings they
+ * are two more sentences the board can say, and the second needs no stone at all.
+ */
+const mirrorStopSet = (
+  bend: Route["bends"][number],
+  most: number,
+  size: number,
+  draft: Draft,
+  random: () => number
+): readonly MirrorAngle[] | undefined => {
+  const base = isHalfStep(bend.angle) ? cutStops(bend.angle) : TURN_ANGLES
+  if (!base || most <= base.length) return base
+  const held = new Set(base)
+  // A wrong ray the board cannot close is a draft thrown away, so the extras are drawn from the angles whose
+  // first cell is somewhere stone may stand — or nowhere at all, which the frame closes for free.
+  const closable = DIRECTIONS.filter(angle => {
+    if (held.has(angle)) return false
+    const direction = reflect(angle, bend.enter)
+    if (direction === opposite(bend.enter)) return true // retraces to the disc, and needs nothing
+    const first = stepCell(bend.at, direction)
+    return !insideGrid(size, first) || !draft.taken.has(cellKey(first))
+  })
+  // Drawn per piece, length and contents together, so two mirrors on one board need not offer the same fork.
+  const wanted = base.length + Math.floor(random() * (most - base.length + 1))
+  const extra = shuffle(closable, random).slice(0, wanted - base.length)
+  return [...base, ...extra].sort((a, b) => a - b)
 }
 
 /**
@@ -733,7 +794,7 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
       wrongRays.push({ from: bend.at, direction: bend.enter })
       return
     }
-    const angles = isHalfStep(bend.angle) ? cutStops(bend.angle) : TURN_ANGLES
+    const angles = mirrorStopSet(bend, options.mirrorStops, size, draft, random)
     if (!angles) return
     draft.movableCells.add(cellKey(bend.at))
     draft.movable.push({ kind: "turnMirror", at: bend.at, angles })
@@ -899,6 +960,7 @@ const BASELINE: LightbeamDials = {
   decoys: 0,
   shadows: 0,
   cutMirrors: 0,
+  mirrorStops: 2,
 }
 
 /** How likely a piece is to open on a setting the deduction will have to rule out. */

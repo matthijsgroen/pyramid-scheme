@@ -2046,17 +2046,78 @@ now have specs asserting the zero case rather than a comment hoping for it.
 
 What this section still owes, unchanged: the generator authoring varied lists, and the measurement.
 
+#### The generator authoring the lists, and what a bigger fork buys
+
+Step 5 point 2. `mirrorStops` is the sibling of `slidingStops` — the most stops a route mirror's list may
+hold — and `mirrorStopSet` draws each list per piece: the answer, the diagonal rule 2 demands, then extras
+drawn from the angles whose wrong ray the board can actually close.
+
+**The closability filter is the whole of why this is affordable.** A `k`-stop piece has `k − 1` wrong rays
+and every one has to leave the route, so the obvious build — draw `n` angles and let `blockWrongSettings`
+reject the draft — throws away most of its work. Choosing extras from the angles whose first ray cell is off
+the route, off the grid, or a retrace to the disc costs one array filter and keeps the yield at **40/40 on
+every tier at every size tried**.
+
+Measured over 40 seeds, at the top three tiers:
+
+| stops | tier   | built | avg fork | distinct forks | configurations | pieces a board | worst gen  |
+| ----- | ------ | ----- | -------- | -------------- | -------------- | -------------- | ---------- |
+| 2     | expert | 40/40 | 2.00     | 1              | 4 368          | 5.9            | 44ms       |
+| 2     | master | 40/40 | 2.00     | 5              | 9 216          | 7.0            | 61ms       |
+| 2     | wizard | 40/40 | 2.00     | 5              | 21 216         | 8.2            | 252ms      |
+| 3     | expert | 40/40 | 2.41     | 7              | 11 151         | 5.9            | 83ms       |
+| 3     | master | 40/40 | 2.35     | 23             | 23 400         | 7.0            | 210ms      |
+| 3     | wizard | 40/40 | 2.33     | 23             | 73 836         | 8.1            | **1511ms** |
+| 4     | expert | 40/40 | 2.80     | 20             | 24 000         | 5.9            | 246ms      |
+| 4     | master | 40/40 | 2.72     | 42             | 52 455         | 6.9            | 544ms      |
+| 4     | wizard | 40/40 | 2.61     | 40             | 126 924        | 8.1            | **4772ms** |
+
+**The variety is the headline.** §11.13 opened on 921 of 961 mirrors carrying the identical list; three stops
+takes a tier from **5 distinct forks to 23**, and four takes it to over 40. The piece count does not move —
+7.0 to 7.0, 8.2 to 8.1 — so this is rule 8's "one piece doing more" rather than another piece, which is the
+same trade the diagonal cut made.
+
+**What it costs is generation, and it is the enumeration that pays.** Both exhaustive gates — `routeIsUnique`
+and `surveyWinners` — walk the whole configuration space with a full `traceBeam` per configuration, so a
+space three times larger is a build three times slower. Wizard at three stops is 1511ms, past the 1400ms
+`lightbeamConfig.ts` already calls a trade not worth making, and four stops is 4772ms.
+
+**So rule 8's cost model gets applied rather than quoted: the decoy pays for the fork.** Three stops is 1.5×,
+something has to go, and dropping wizard's baseline decoy lands it at **655ms** with 23 distinct forks and a
+configuration space still 1.8× what two stops gave. Decoys still reach wizard boards through `sortTheWheat`,
+and `neverReached` still fires without one, because a shadow is a decoy too.
+
+**Wizard only, and that is §6.4 rather than caution.** Master's addition this cycle is already the diagonal
+cut; giving it the fork as well would be two new words at one tier. Master at three stops is measured and
+cheap (210ms, 23 forks) if the ladder is ever re-cut — the numbers are in the table above rather than needing
+a rerun.
+
+**And the fork is what showed "seen from the door" is not the ramp.** Wizard's fork went 5 shapes to 23 and
+its configuration space 21 216 to 37 350 — the maze got substantially bigger — while §6.3's headline
+percentage moved from 10% to 11%, reading it as very slightly _easier_. A metric built on the cost of
+following a wrong turn cannot see this, because following a wrong turn costs one tap. The tier table in
+`lightbeamConfig.ts` now says so, and steers by what `docs/instructions/puzzle-screens.md` §5 names instead:
+which techniques a board demands.
+
+**One correction to the spec that step 4 wrote.** `cutBends` selected pieces by `isCut(angles)` — anything
+off the two diagonals — which was the same thing as "the route bends diagonally here" only while every list
+was a pair. Once lists are authored, an ordinary quarter-turn bend can carry a half-step among its _other_
+stops, so the predicate caught pieces the route does not bend diagonally at. What `cutMirrors` counts is
+diagonal legs, which is a fact about the **answer**, and the spec now says that. Two more assertions moved
+the same way: rule 2 is now checked over every list rather than over the cut pieces' pairs, and "every wrong
+setting fails" is scoped to the mirrors the winning beam actually crosses — a decoy's setting is free by
+construction, which is what `neverReached` proves, and asserting otherwise was a claim about the wrong pieces.
+
 #### What is still unbuilt, and in what order
 
 1. ~~**The `Blocker` change and the tick glyph** — the drawing, which this section has now gated.~~ **Built**,
    and what it found is above.
-2. **The generator authoring varied lists.** A stop-count dial, and any legal list containing the bend's
-   angle, subject to rule 2 (keep a quarter turn) and to `blockWrongSettings` being able to close **every**
-   non-answer ray — which is the real budget, since a three-stop piece has two rays and a four-stop one has
-   three.
-3. **The measurement.** More stops per piece is a bigger configuration space and more rays to wall, so
-   yield, the technique cap and `MAX_ATTEMPTS` all move. §11.12's method applies unchanged: attempts a
-   board, walls a board, which rungs fire, worst generation.
+2. ~~**The generator authoring varied lists.**~~ **Built** — `mirrorStops`, wizard only, and what it measured
+   is above. What is left of it: **master at three stops**, which is measured and affordable but would be a
+   second new word at a tier that has just had one (§6.4).
+3. ~~**The measurement.**~~ **Done, above.** Yield did not move (40/40 everywhere), the technique cap did
+   not move, `MAX_ATTEMPTS` did not need to move — what moved was generation time, and it was paid for with
+   a piece.
 
 And one thing to settle before step 2 rather than after: **rule 5.** If a fork is drawn rather than
 discovered, the piece stops paying for itself in taps and starts paying in ink, and §6.3's "seen from the

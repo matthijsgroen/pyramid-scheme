@@ -11,31 +11,36 @@ import type { LightbeamOptions } from "./generateLightbeam"
 // | junior  | a longer route, and the walls that come with it  |
 // | expert  | sliding mirrors and sliding walls               |
 // | master  | the diagonal cut — a route that leaves the rows  |
-// | wizard  | doors, sockets, givens, decoys, shadows          |
+// | wizard  | doors, sockets, givens, shadows, three-stop forks |
 //
-// Measured over 40 seeds a tier, re-run in one pass when the diagonal cut arrived (§11.12) — the share of
-// wrong turns a player can dismiss without following them, which is the ramp that matters (§6.3):
+// Measured over 40 seeds a tier, re-run in one pass when the fork arrived (§11.13):
 //
-// | tier    | player pieces | legs a wrong turn runs | forks on it | seen from the door | worst gen |
-// | starter | 3.0           | 2.96                   | 1.00        | 33%                |    11ms   |
-// | junior  | 4.0           | 3.48                   | 1.50        | 25%                |    23ms   |
-// | expert  | 5.9           | 4.09                   | 2.46        | 14%                |    34ms   |
-// | master  | 6.9           | 4.38                   | 2.81        | 13%                |    61ms   |
-// | wizard  | 8.2           | 5.86                   | 3.97        | 10%                |   312ms   |
+// | tier    | player pieces | distinct forks | configurations | legs a wrong turn runs | forks on it | seen from the door | worst gen |
+// | starter | 3.0           | 1              |            320 | 2.96                   | 1.00        | 33%                |    10ms   |
+// | junior  | 4.0           | 1              |            640 | 3.48                   | 1.50        | 25%                |    19ms   |
+// | expert  | 5.9           | 1              |          4 368 | 4.09                   | 2.46        | 14%                |    31ms   |
+// | master  | 7.0           | 5              |          9 216 | 4.42                   | 2.86        | 13%                |    55ms   |
+// | wizard  | 7.1           | 23             |         37 350 | 5.56                   | 3.47        | 11%                |   655ms   |
 //
-// Monotone on every column, and junior against expert — 25% and 14% — is the collapse §6.3 found, closed.
-// **Master and wizard part on the headline percentage for the first time**, 13% against 10%, which is what
-// the diagonal cut bought at wizard: they used to tie at 13% and the note here used to say a second shadow
-// was the only way to separate them and cost twice the generation time. It is the other way round — the cut
-// separates them and master's worst board got nearly four times faster to build, because a diagonal draft
-// that fails fails early.
+// **"Seen from the door" is no longer the number to steer by, and this table is where that gets recorded.**
+// §6.3 built the ramp on it — the share of wrong turns a player can dismiss without following them — on the
+// premise that following one costs something. It does not: a wrong mirror turn is one tap, the beam redraws,
+// and you turn again. So the column measures a cost the player never pays, and it shows: wizard's fork went
+// from 5 shapes to 23 and its configuration space from 21 216 to 37 350 while that percentage moved from 10%
+// to 11%, i.e. the maze got substantially bigger and the metric read it as very slightly easier.
 //
-// **Expert and master are the close pair now**, 14% against 13%, and this measure cannot see what parts
-// them: §6.3 counts the geometry of a wrong branch, and what master spends is a *rung* — `exitRun` fires on
-// 39 expert boards in 40 and 19 master ones (§11.12). That is worth knowing before the difficulty-metric
-// swap §6.3 asks for lands, because the replacement measure will read these two as one tier again.
+// `docs/instructions/puzzle-screens.md` §5 already names the honest signal and it is a different one:
+// **which techniques a puzzle needs**. That is `techniqueCap` below, which every board is gated against.
+// The two columns worth reading beside it are the ones the player actually meets — how many pieces they
+// hold, and how many ways each of them can be set. The other three stay for continuity with §6.3 and
+// because monotone-on-every-column is still a cheap thing to notice going backwards.
 //
-// The ladder is built on the two things §6.3 measured separately, because they are not the same currency:
+// The old note here claimed master and wizard could only be parted by a second shadow costing twice the
+// generation time. Both halves were wrong: the diagonal cut parted them, and it made master's worst board
+// four times faster to build, because a diagonal draft that will not fit fails in the route builder.
+//
+// Two currencies §6.3 measured separately, kept here because route length and piece placement really are
+// different levers even if the percentage they were justified by is not the one to steer by:
 //
 // - **Legs** — how far a wrong turn must be followed before it closes. Bought with route length, which is
 //   why junior's one addition is a longer route. Walls are not a separate dial; a longer route is what
@@ -140,7 +145,17 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     goals: ["crossedBeams", "clearTheWay", "sortTheWheat", "blindAlleys"],
     goalCount: 2,
   },
-  // Everything.
+  // Everything, and one addition of its own: **a mirror's fork is three stops rather than two** (§11.8
+  // rule 1, measured in §11.13). Every other tier authors `[45°, 135°]` and nothing else; a wizard board
+  // draws its lists per piece, so the same nine mirrors offer 23 different forks across 40 boards instead
+  // of 5. The piece count does not move — this is rule 8's "one piece doing more", the same trade the
+  // diagonal cut made at master.
+  //
+  // **The decoy pays for it**, which is rule 8's cost model applied rather than quoted: three stops is 1.5×,
+  // so something goes. Measured over 40 seeds — keeping the decoy took wizard's worst board to 1511ms, which
+  // is past the 1400ms this file already calls a trade not worth making; dropping it lands at 605ms with the
+  // configuration space still 1.8× what two stops gave. Decoys still reach wizard boards through
+  // `sortTheWheat` in the pool, and `neverReached` still fires without one, because a shadow is a decoy too.
   wizard: {
     size: 9,
     turns: 6,
@@ -150,9 +165,9 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     fiddleProof: true,
     doors: 1,
     doorNodes: 2,
-    decoys: 1,
     shadows: 1,
     cutMirrors: 1,
+    mirrorStops: 3,
     techniqueCap: "onlySurvivor",
     goals: ["crossedBeams", "longChain", "clearTheWay", "sortTheWheat", "blindAlleys", "orderOfOperations"],
     goalCount: 2,

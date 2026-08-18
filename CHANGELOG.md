@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tapping a piece is animated: sliding pieces slide, and mirrors turn.
 - Some light puzzles now send the beam back through its own path, crossing itself on the way to the shrine.
 - Every mirror now shows small marks for the other ways it can lie, so you can see what a piece will do before you tap it.
+- The hardest light puzzles give their mirrors three positions instead of two, and no two mirrors need offer the same three — so there is more to try before the beam lands.
 
 ### Fixed
 
