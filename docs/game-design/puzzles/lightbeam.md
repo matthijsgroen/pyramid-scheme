@@ -333,6 +333,50 @@ Theirs is a real ceiling: every cell there is tappable, so cell size _is_ tap-ta
 Here only the pieces are tappable, so the ceiling is legibility instead, and 36px still
 reads a mirror's diagonal clearly.
 
+### 6.3 The maze reading, and the measure that follows from it
+
+**A lightbeam board is a maze whose corridors are not drawn.** That is the most useful sentence anyone has
+put on this family, and it settles what difficulty means here. In a maze you never enter a side passage
+you can see is a dead end; it costs nothing to reject. The passage that costs something is the one you
+have to walk three turns into, past two more forks, before it closes.
+
+So difficulty is **how far a wrong turn has to be followed before it can be called wrong**, and how many
+decisions sit on the way. Every other reading — how many pieces, how many settings, how wide the grid —
+is a proxy for that at best.
+
+**The ladder already encodes this exactly, which is the good news.** T3 `deadEnd` fires when a wrong
+setting reaches a wall or the frame _"with no unsettled piece left on the way"_. That clause **is** "a
+corridor you can see into from the entrance". A branch with a piece standing on it cannot be dismissed by
+T3 at all, and the board has to spend a deeper rung on it. The model is right; it is the **spec** that
+asserts the wrong thing.
+
+Measured over 40 seeds a tier, every wrong setting of every player-owned piece traced with the rest of the
+board solved:
+
+| Tier    | Legs a wrong branch runs | Forks met on it | Seen from the door | Needs 2+ forks |
+| ------- | ------------------------ | --------------- | ------------------ | -------------- |
+| starter | 2.98                     | 1.00            | 33%                | 33%            |
+| junior  | 3.24                     | 1.44            | 26%                | 48%            |
+| expert  | 3.13                     | 1.46            | 25%                | 44%            |
+| master  | 3.84                     | 2.04            | 14%                | 61%            |
+| wizard  | 5.07                     | 2.67            | 13%                | 72%            |
+
+**"Seen from the door" is the number to steer by** — the share of wrong turns a player can dismiss without
+following them. It falls 33 → 26 → 25 → 14 → 13%, which is the right shape and is a genuine ramp rather
+than the configuration count the spec currently checks.
+
+**And it exposes a defect: junior and expert are the same board.** 26% against 25% seen from the door, 48%
+against 44% needing two forks, 1.44 against 1.46 forks, and expert's branches are _shorter_ than junior's
+(3.13 legs against 3.24). This is the same failure the PR already found and fixed once between expert and
+master — two tiers measuring identical — reappearing one rung down on the measure that actually matters.
+Route length was retuned; branch depth never was.
+
+**What the spec should assert.** `generateLightbeam.spec.ts` currently checks that the configuration space
+never shrinks as tiers rise, which counts moves rather than thinking (§6, and the correction that grid
+size is capacity rather than difficulty). Replacing it with a fall in "seen from the door", asserted in
+aggregate over a tier, would make the ramp a property of the boards. The junior/expert collapse has to be
+fixed for that assertion to pass, which is the point of writing it.
+
 ## 7. Puzzle goals — pick two dials and turn them hard
 
 Before this existed, every tier turned every dial a little. The wizard row read: five turns
