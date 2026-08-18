@@ -406,10 +406,19 @@ const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
 const endPoint = (at: CellRef, direction: Direction): [number, number] =>
   direction % 2 === 1 ? [at.col + 0.5, at.row + 0.5] : sidePoint(at, direction)
 
+/**
+ * One cell of beam: in through the face it entered, through the centre, out through the face it left.
+ *
+ * **`exit !== undefined`, never `exit`.** A `Direction` is an index and `DIR.right` is **0**, so a
+ * truthiness test reads "the beam left rightward" as "the beam stopped here" and draws half a line — from
+ * the entry face to the cell centre, and no further. Every rightward-travelling cell on every board was
+ * drawn that way, which is around a third of the segments on a typical board, and it looked exactly like
+ * what it was: a beam with holes in it.
+ */
 const segmentPoints = (segment: BeamSegment): string => {
   const from = sidePoint(segment.at, opposite(segment.enter))
   const centre: [number, number] = [segment.at.col + 0.5, segment.at.row + 0.5]
-  const points = segment.exit ? [from, centre, sidePoint(segment.at, segment.exit)] : [from, centre]
+  const points = segment.exit === undefined ? [from, centre] : [from, centre, sidePoint(segment.at, segment.exit)]
   return points.map(([x, y]) => `${x},${y}`).join(" ")
 }
 
@@ -465,7 +474,9 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSeg
           className="fill-orange-400/70"
         />
       )}
-      {walk.end === "escapes" && last?.exit && (
+      {/* `!== undefined` for the same reason `segmentPoints` needs it: a beam escaping rightward has
+          `exit === 0`, and a truthiness test drew no marker at all on the side it happens most. */}
+      {walk.end === "escapes" && last?.exit !== undefined && (
         <circle
           cx={endPoint(last.at, last.exit)[0]}
           cy={endPoint(last.at, last.exit)[1]}

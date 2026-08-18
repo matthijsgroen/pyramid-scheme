@@ -1,6 +1,12 @@
 import { render } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
-import { DIR, TURN_ANGLES, type LightbeamPuzzleData, type MirrorAngle } from "@/mods/puzzle/game/lightbeam/beam"
+import {
+  DIR,
+  traceBeam,
+  TURN_ANGLES,
+  type LightbeamPuzzleData,
+  type MirrorAngle,
+} from "@/mods/puzzle/game/lightbeam/beam"
 import { LightbeamBoard } from "./LightbeamBoard"
 
 /**
@@ -71,6 +77,51 @@ describe("LightbeamBoard", () => {
       return Number(drawn.match(/rotate\((-?[\d.]+)deg\)/)![1])
     }
     expect(turn(1) - turn(0)).toBe(expected)
+  })
+
+  // -------------------------------------------------------------------------------------------------
+  // The beam, drawn whole. `Direction` is an index and `DIR.right` is 0, so anything testing a direction
+  // for truthiness reads "rightward" as "absent" — which drew a third of every board's beam as half
+  // segments, running from the entry face to the cell centre and stopping there.
+  // -------------------------------------------------------------------------------------------------
+
+  /**
+   * The disc shines rightward across two empty cells into the shrine in the right-hand wall, so every
+   * carried cell has `exit === DIR.right` — the value a truthiness test loses.
+   */
+  const straightRight: LightbeamPuzzleData = {
+    size: 5,
+    sun: { at: { row: 2, col: 0 }, facing: DIR.right },
+    shrine: { row: 2, col: 4 },
+    fixed: [],
+    movable: [{ kind: "turnMirror", at: { row: 0, col: 0 }, angles: TURN_ANGLES }],
+  }
+
+  const beamPoints = (container: HTMLElement): string[] =>
+    [...container.querySelectorAll("svg.mix-blend-screen polyline")].map(line => line.getAttribute("points") ?? "")
+
+  it("draws a rightward cell right across it, not half way and stop", () => {
+    const { container } = render(<LightbeamBoard puzzle={straightRight} states={[0]} onCycle={() => {}} />)
+    // Cell (2,1): in at the left face, through the centre, out at the right face.
+    expect(beamPoints(container)).toContain("1,2.5 1.5,2.5 2,2.5")
+  })
+
+  /**
+   * The general form, and the one that would have caught it: a segment is drawn short **only** where the
+   * beam actually stopped. Counted against the trace rather than hard-coded, so it holds on any board.
+   */
+  it("draws a segment short only where the beam ends, never merely because it went right", () => {
+    const { container } = render(<LightbeamBoard puzzle={straightRight} states={[0]} onCycle={() => {}} />)
+    const ends = traceBeam(straightRight, [0]).path.filter(segment => segment.exit === undefined).length
+    const short = new Set(beamPoints(container).filter(points => points.split(" ").length === 2))
+    expect(short.size).toBe(ends)
+  })
+
+  it("marks a beam that leaves the board rightward, which is the side that had no marker", () => {
+    // The shrine moved out of the way, so the light runs off the right-hand edge instead of arriving.
+    const escapes: LightbeamPuzzleData = { ...straightRight, shrine: { row: 4, col: 4 } }
+    const { container } = render(<LightbeamBoard puzzle={escapes} states={[0]} onCycle={() => {}} />)
+    expect(container.querySelectorAll("svg.mix-blend-screen circle")).toHaveLength(1)
   })
 
   // -------------------------------------------------------------------------------------------------

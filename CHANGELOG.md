@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - A light-puzzle hint said the light "runs straight into stone" when a mirror had in fact sent it back the way it came, into the sun disc. It now says so.
+- The light beam was drawn with gaps in it: any square the light crossed travelling rightward was only drawn half way. The beam is continuous now.
 
 ## 0.36.0 - 2026-08-17
 

@@ -2030,6 +2030,20 @@ the whole stop list rather than the bit, which is strictly more discriminating �
 because two candidate occupants of one piece differ in `angle` before they could differ in `stops`. All 200
 boards across the five tiers are byte-identical.
 
+**And the gate that was missing, found by someone looking at the screenshot rather than at the glyph.** The
+beam had been drawn with **gaps** in it since the layer was written: `segmentPoints` tested `segment.exit`
+for truthiness, and `DIR.right` is `0`, so every cell the light crossed rightward was drawn from its entry
+face to its centre and stopped. Around a third of the segments on a typical board. The escape marker had the
+identical bug — a beam leaving the grid rightward drew no marker at all.
+
+Worth recording as a lesson about where the gates were pointed rather than as a typo. Three drawing gates ran
+in this family — §11.9, §11.10, and the one above — and every one of them asked whether a _piece_ could be
+read. None asked whether the **beam** could, and the beam is the only thing on the board that answers a tap.
+That matters most for the play style the family's premise treats as the failure mode: trial is only cheap if
+you can see what your tap did, so a beam with holes in it breaks the trial loop rather than the deduction
+one. `Direction` being an index is what made it typable; `MirrorAngle` has the same hazard at `0`, and both
+now have specs asserting the zero case rather than a comment hoping for it.
+
 What this section still owes, unchanged: the generator authoring varied lists, and the measurement.
 
 #### What is still unbuilt, and in what order
