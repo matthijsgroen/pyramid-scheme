@@ -870,11 +870,40 @@ are what a diagonal beam can then run past.
 48.5 at wizard, 27.0 against 20.2 at starter. That is the whole argument for preferring this: the reach
 comes from one piece being able to do more, which is the only kind of knob that does not spend board area.
 
-**It has to be one or two pieces, not a rule about mirrors.** Eight orientations everywhere is ~9.4M traces
-at wizard against §5's 20 000 budget. Per-piece it fits with room to spare: one cut is 4× base, two is
-16× — 10 547 at wizard, measured, against the same ceiling retraction sat under at 15 200. Three would
-break it. This is how the family already works: sliding pieces carry 2–3 stops, not every piece
-everything.
+**It has to be a per-piece property, not a rule about mirrors.** Eight orientations everywhere is ~9.4M
+traces at wizard; one cut multiplies the configuration space by 4, two by 16. This is how the family
+already works: sliding pieces carry 2–3 stops, not every piece everything.
+
+_An earlier draft of this section said "one or two a board", which is the wizard number stated as if it
+were a general rule._ Headroom is a function of how many pieces a board already carries, so it varies by
+tier — measured over 30 seeds, taking §5's 20 000 traces as the affordability figure:
+
+| Tier    | Player pieces | Configurations | Cut mirrors that fit |
+| ------- | ------------- | -------------- | -------------------- |
+| starter | 3.0           | 8              | 5                    |
+| junior  | 3.9           | 15             | 5                    |
+| expert  | 4.6           | 49             | 4                    |
+| master  | 6.1           | 125            | 3                    |
+| wizard  | 8.2           | 659            | 2                    |
+
+**The constraint is piece count, not the mechanic** — and it bites backwards. The tiers with room for four
+or five cut mirrors are the ones §11.4's cautions say should not have them, and wizard, where the reach is
+most wanted, has the least room. Note also that the 20 000 is a figure this doc quotes rather than a
+ceiling anything enforces: `eachConfig`'s limit defaults to infinity and no caller passes one, so it is a
+wall-clock concern, not a gate.
+
+**Which points at the actual move: a cut mirror should replace a piece, not be added to one.** That is
+§11.4's own finding applied to its own cost — the reach comes from one piece doing more, so it should be
+spent on doing more with fewer. Drop two ordinary mirrors from a wizard board and cut two of what remains:
+659 → 165 → 2 637, a quarter of today's cost carrying the mechanic, with room for a third cut.
+
+**A cleverer uniqueness check is not the unlock, which was worth measuring rather than assuming.** Since
+generation knows the route by construction, only pieces the beam can actually stand on can change a path,
+so a check that branched only there would face a smaller space. Measured, it recovers 3.1× at wizard (659
+→ 213) and moves the affordable count from 2 to 3 — real, but not a dissolution. The reason it is not
+bigger: nearly every piece is touched by the beam under _some_ configuration (8.2 of 8.2 at wizard). A
+free piece here is usually one the route survives either way, not one the light can never reach, so there
+is far less dead weight in the enumeration than the decoy count suggests.
 
 #### What the measurement says to be careful about
 
