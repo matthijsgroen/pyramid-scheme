@@ -952,9 +952,11 @@ every direction, which keeps every reason local.
 **Two things follow, and the second is the interesting one.**
 
 1. **This is a generation problem, not a tracing one.** Nothing in the walk needs changing: a retracted
-   piece leaves its cell empty, which is what an empty cell already is. `MirrorFace` needs a
-   non-reflecting member and `faces: MirrorFace[]` is already a list — it has always been able to hold a
-   third thing, and there has never been a third thing to put in it.
+   piece leaves its cell empty, which is what an empty cell already is. The list of states a turn mirror
+   cycles through has always been able to hold a third thing, and there has never been a third thing to put
+   in it. _(This said `MirrorFace` and `faces: MirrorFace[]`; §11.10 replaced both with `angles:
+MirrorAngle[]`, so the non-reflecting member would now be a sentinel angle or a widened element type.
+   The point stands, the names do not.)_
 2. **The uniqueness cost is the whole of the work.** Half of wizard boards (15/30) gain a second route to
    the shrine once mirrors can retract, and a second route is exactly what gate 5 rejects. Paying for it
    with more stone costs board area, which is the thing the knob was worth having for.
@@ -1456,8 +1458,8 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
 
 1. **The drawing, at 36px, before any logic.** Two stops of one piece must read as a pair, and a shallow
    `/` must read as a different object from a steep one. §9 forbids "a subtle rotation", and §11.2's
-   precedent is that the drawing is what kills this kind of thing, not the reasoning.
-2. **The walk** — 8 directions, diagonal steps resolving one cell.
+   precedent is that the drawing is what kills this kind of thing, not the reasoning. — **done, §11.9.**
+2. **The walk** — 8 directions, diagonal steps resolving one cell. — **done, §11.10.**
 3. **`blockWrongSettings`** — it has to learn that a wall no longer stops diagonal light at its corner, so
    stone is conditional for the first time.
 4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
@@ -1512,3 +1514,71 @@ the ordinary mirror's quarter turn — identical in every still frame, backwards
 drawn angle into (−90°, 90°] fixes both that and the new case: `/`→`\` is the clockwise quarter turn it
 always was, and a cut mirror swings 67.5° rather than 112.5° the other way. The window is not minimal for
 angles in general — it is for every stop set §11.8 allows, which is what it has to be.
+
+### 11.10 What the walk found
+
+Step 2: eight directions, and a mirror that actually reflects off the stop it is drawn at. It went in
+smaller than the estimate — four source files, and no new case anywhere in the walk — and it overturned
+two things written above.
+
+**The mirror stopped being two facts and became one number.** `Direction` is now an index into the eight
+multiples of 45°, as the handoff into this step recommended, and rule 6's law is written the way rule 6
+writes it: `reflect(angle, travel) = (angle - travel) mod 8`. Taking the index is what made the rest
+collapse — but the bigger simplification was not planned. A mirror used to carry a `MirrorFace` (`"/"` or
+`"\\"`) and, since §11.9, an optional stop beside it; once the walk reflects off the stop, the face is read
+by nothing. Two arrays that must be authored in step, where only one is ever consulted, is a bug waiting
+to be typed, so the face is gone. **One number says what a mirror does, and the walk, the drawing and the
+deduction all read that one number.**
+
+Three things then fall out of the arithmetic instead of having to be built:
+
+| §11.8 rule                                      | What the subtraction gives                                                        |
+| ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| 6 — half-steps flip square↔diagonal             | An even angle preserves `travel`'s parity, an odd one flips it. Nothing to write. |
+| 3 — a stop edge-on to the beam passes it        | A mirror lies along the beam when `angle` is `2·travel`, and `2t − t = t`.        |
+| the backward walk reuses the forward reflection | `angle - (angle - travel)` is `travel` at every angle, not just the diagonals.    |
+
+**Rule 4 cost nothing, in the walk or in the drawing.** A diagonal step resolving only the cell it lands
+in is what `stepCell` already does, so the implementation is the absence of one. And the wall glyph did
+not need redrawing: its rounded corners plus the cell's 8% inset already leave a gap that a diagonal beam
+visibly passes between at 35.3px a cell (`DiagonalBeam`, left frame — stone hugs the run in three places,
+two cells at a time).
+
+**Rule 6's loop claim is right, and §3 had already worked out why — but the code had not caught up.** §3
+corrects itself on exactly this point: the condition is injectivity, not turn size. `walkForward` and
+`beam.spec.ts` were still saying the guard would earn its keep "the moment a piece bends light by anything
+other than a quarter turn", with the deferred prism as the example. The cut mirror is a piece that bends
+light by 67.5°, and it changed nothing — `reflect` is a **bijection in the direction** at every angle, so
+`(cell, direction)` has one predecessor, the disc's first state has none, and a beam from the disc walks a
+path. Step 2 is what forced those two comments into line with the doc. What eight directions do add is
+**retroreflection** — `angle - travel === travel + 4`, a beam meeting a mirror square on its back — and the
+beam simply retraces its own line to the disc and is absorbed, because the return trip carries a different
+direction and so a different key. The guard stays a guard; it still catches a beam bouncing between two
+retroreflectors, started between them.
+
+**The one place eight directions would have quietly weakened every board in the family.** `exitRun` tries
+each direction the shrine could be lit from and fires when exactly one survives; over eight candidates
+instead of four it would fire far less often, because a diagonal backward walk that runs into an unsettled
+piece comes back `unknown` rather than dead. The fix is exact rather than a fudge: a beam's parity can only
+change at a half-step, so **a board with nothing off the diagonals is still a four-direction board**, and
+`travelledDirections` reads that off the pieces rather than off a flag. Measured: all 200 boards the
+generator makes across the five tiers are byte-identical before and after this step, so the eight-direction
+walk is behaviour-neutral on everything that ships today.
+
+**The wire question the handoff flagged, answered — and it is structural, not luck.** §11.2 rule 1 keeps
+wires out of the beam's lane by giving the beam cell centres and edge midpoints and the wire the grid
+lines; a diagonal beam turns at cell **corners**, which are on the wire's side of that line, and rivets are
+drawn at corners too. So the endpoints coincide, and often: over 40 generated wizard boards with every
+mirror cut, **104 lit configurations put a beam corner exactly on a rivet**, on 2 of the 40 boards. It does
+not read as the beam joining the wire, and the reason is worth keeping: **a beam polyline bends only at
+cell centres**, so a corner point is always mid-line — the beam crosses the rivet and cannot appear to
+terminate on it. The one case that could is the escape marker, which for a diagonal exit is drawn at a
+corner; no board generates one yet.
+
+**And the two prototype frames stopped demonstrating the mechanic, exactly as expected.** `CutMirrorStops`
+and `CutMirrorDensity` retrofit cut mirrors onto generated boards, and step 1 relied on those boards still
+tracing honestly because an aligned stop reflects as the face beside it did. They still trace — but every
+cut mirror on their winning routes happens to sit at an aligned stop, so the frames now show **no diagonal
+light at all**. They are kept for the drawing question they answer, which still has to hold; the diagonal
+is shown by `DiagonalBeam`, whose two hand-authored frames are the mechanic at shipping size and whose
+third was found by the search above.

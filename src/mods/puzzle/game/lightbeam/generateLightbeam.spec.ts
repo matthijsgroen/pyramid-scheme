@@ -8,6 +8,7 @@ import {
   pieceCells,
   pieceStateCount,
   restingState,
+  SQUARE_DIRECTIONS,
   stepCell,
   traceBeam,
 } from "./beam"
@@ -316,7 +317,7 @@ describe("no two pieces the player can tap ever touch", () => {
         })
         for (const [key, index] of owner) {
           const [row, col] = key.split(",").map(Number)
-          for (const direction of ["up", "right", "down", "left"] as const) {
+          for (const direction of SQUARE_DIRECTIONS) {
             const beside = stepCell({ row, col }, direction)
             expect(owner.get(cellKey(beside)) ?? index).toBe(index)
           }

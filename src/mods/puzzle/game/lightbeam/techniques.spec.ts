@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { LightbeamPuzzleData } from "./beam"
+import { DIR, TURN_ANGLES, type LightbeamPuzzleData } from "./beam"
 import {
   applyLightbeamDecisions,
   applyLightbeamTechniques,
@@ -24,10 +24,10 @@ import {
  */
 const oneMirror: LightbeamPuzzleData = {
   size: 5,
-  sun: { at: { row: 0, col: 1 }, facing: "down" },
+  sun: { at: { row: 0, col: 1 }, facing: DIR.down },
   shrine: { row: 2, col: 4 },
   fixed: [{ kind: "wall", at: { row: 2, col: 0 } }],
-  movable: [{ kind: "turnMirror", at: { row: 2, col: 1 }, faces: ["/", "\\"] }],
+  movable: [{ kind: "turnMirror", at: { row: 2, col: 1 }, angles: TURN_ANGLES }],
 }
 
 /** Runs the ladder up to `cap` and hands back only what the last technique to fire concluded. */
@@ -83,7 +83,7 @@ describe("exitRun", () => {
     const step = firstStep(oneMirror, "exitRun", "exitRun")
     expect(step?.technique).toBe("exitRun")
     // The shrine sits on the right edge, so light can only reach it travelling rightwards.
-    expect(step?.decisions).toContainEqual({ kind: "shrineEntry", direction: "right" })
+    expect(step?.decisions).toContainEqual({ kind: "shrineEntry", direction: DIR.right })
   })
 
   it("says nothing while two sides are still open", () => {
@@ -94,7 +94,7 @@ describe("exitRun", () => {
       ...oneMirror,
       shrine: { row: 2, col: 2 },
       fixed: [],
-      movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 1, col: 2 }, faces: ["/", "\\"] }],
+      movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 1, col: 2 }, angles: TURN_ANGLES }],
     }
     expect(applyLightbeamTechniques(createLightbeamBoard(open), ["exitRun"])).toBeUndefined()
   })
@@ -151,7 +151,7 @@ describe("solveLightbeamByTechniques", () => {
  */
 const withDecoy: LightbeamPuzzleData = {
   ...oneMirror,
-  movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 0, col: 4 }, faces: ["/", "\\"] }],
+  movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 0, col: 4 }, angles: TURN_ANGLES }],
 }
 
 describe("neverReached", () => {

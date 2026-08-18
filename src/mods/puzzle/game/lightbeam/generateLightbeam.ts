@@ -1,6 +1,9 @@
 import { mulberry32, shuffle } from "@/game/random"
 import {
+  BACKSLASH,
   cellKey,
+  DIR,
+  directionStep,
   eachConfig,
   insideGrid,
   allPieceOptions,
@@ -11,14 +14,17 @@ import {
   reflect,
   restingState,
   segmentKey,
+  SLASH,
+  SQUARE_DIRECTIONS,
   stepCell,
   traceBeam,
+  TURN_ANGLES,
   type BeamNode,
   type CellRef,
   type Direction,
   type FixedPiece,
   type LightbeamPuzzleData,
-  type MirrorFace,
+  type MirrorAngle,
   type MovablePiece,
   type NodeWiring,
 } from "./beam"
@@ -131,26 +137,32 @@ const MAX_PRUNE_SWEEPS = 4
 // The shortest a route leg may be, which is what stops two consecutive bend mirrors touching.
 const MIN_LEG = 2
 
-const FACES: MirrorFace[] = ["/", "\\"]
+/**
+ * The mirror that turns a beam from `enter` to `exit`, if an ordinary one can: `reflect` is
+ * `angle - travel`, so the angle wanted is simply `enter + exit` — and it is a mirror this generator can
+ * place only when that lands on one of the two diagonals.
+ *
+ * The generator still routes squarely, so it only ever asks for a quarter turn. Routing diagonally on
+ * purpose is step 4 of §11.8's build order, and this is the one place that will have to learn it.
+ */
+const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
+  const angle = (enter + exit) % 8
+  return angle === SLASH || angle === BACKSLASH ? angle : undefined
+}
 
-const faceFor = (enter: Direction, exit: Direction): MirrorFace | undefined =>
-  FACES.find(face => reflect(face, enter) === exit)
-
+/**
+ * The two ways a track may run across a beam. Written out rather than derived, because the order is what
+ * picks the first candidate track and the boards are seeded off it.
+ */
 const perpendicular = (direction: Direction): Direction[] =>
-  direction === "up" || direction === "down" ? ["left", "right"] : ["up", "down"]
+  direction === DIR.up || direction === DIR.down ? [DIR.left, DIR.right] : [DIR.up, DIR.down]
 
 /** Steps from a cell to the last one still on the grid, travelling in a direction. */
 const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
-  switch (direction) {
-    case "up":
-      return at.row
-    case "down":
-      return size - 1 - at.row
-    case "left":
-      return at.col
-    case "right":
-      return size - 1 - at.col
-  }
+  const step = directionStep(direction)
+  const rows = step.row < 0 ? at.row : step.row > 0 ? size - 1 - at.row : Number.POSITIVE_INFINITY
+  const cols = step.col < 0 ? at.col : step.col > 0 ? size - 1 - at.col : Number.POSITIVE_INFINITY
+  return Math.min(rows, cols)
 }
 
 type RouteCell = { at: CellRef; enter: Direction; exit?: Direction }
@@ -161,7 +173,7 @@ type Route = {
   /** Every cell the beam crosses, first after the disc through to the shrine. */
   cells: RouteCell[]
   /** The bends, in beam order — one mirror each. */
-  bends: { at: CellRef; enter: Direction; exit: Direction; face: MirrorFace }[]
+  bends: { at: CellRef; enter: Direction; exit: Direction; angle: MirrorAngle }[]
   /** Squares the beam passes through twice, once on each axis. Nothing may ever stand on one. */
   crossings: Set<string>
 }
@@ -173,10 +185,10 @@ type Route = {
 const pickSun = (size: number, random: () => number): { at: CellRef; facing: Direction } => {
   const along = 1 + Math.floor(random() * (size - 2))
   const side = Math.floor(random() * 4)
-  if (side === 0) return { at: { row: 0, col: along }, facing: "down" }
-  if (side === 1) return { at: { row: size - 1, col: along }, facing: "up" }
-  if (side === 2) return { at: { row: along, col: 0 }, facing: "right" }
-  return { at: { row: along, col: size - 1 }, facing: "left" }
+  if (side === 0) return { at: { row: 0, col: along }, facing: DIR.down }
+  if (side === 1) return { at: { row: size - 1, col: along }, facing: DIR.up }
+  if (side === 2) return { at: { row: along, col: 0 }, facing: DIR.right }
+  return { at: { row: along, col: size - 1 }, facing: DIR.left }
 }
 
 /**
@@ -198,7 +210,7 @@ const pickSun = (size: number, random: () => number): { at: CellRef; facing: Dir
  * constraint: a shrine on an edge can only be lit from three sides at most, and the frame kills most of
  * those outright, which is what lets the `exitRun` deduction fire at all.
  */
-const axisOf = (direction: Direction): "h" | "v" => (direction === "left" || direction === "right" ? "h" : "v")
+const axisOf = (direction: Direction): "h" | "v" => (direction === DIR.left || direction === DIR.right ? "h" : "v")
 
 const buildRoute = (
   size: number,
@@ -261,10 +273,10 @@ const buildRoute = (
     // A bend needs a mirror, and a crossed square has to stay empty.
     if (crossings.has(cellKey(at))) return undefined
     const exit = shuffle(perpendicular(direction), random)[0]
-    const face = faceFor(direction, exit)
-    if (!face) return undefined
+    const angle = angleFor(direction, exit)
+    if (angle === undefined) return undefined
     cells[cells.length - 1].exit = exit
-    bends.push({ at, enter: direction, exit, face })
+    bends.push({ at, enter: direction, exit, angle })
     direction = exit
   }
   return undefined
@@ -313,7 +325,7 @@ const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] 
 
 type Ray = { from: CellRef; direction: Direction }
 
-const ADJACENT: Direction[] = ["up", "right", "down", "left"]
+const ADJACENT: readonly Direction[] = SQUARE_DIRECTIONS
 
 /**
  * Is this cell clear of every piece already placed, and of their shoulders?
@@ -369,8 +381,8 @@ const placeShadows = (size: number, draft: Draft, rays: Ray[], count: number, ra
       if (!draft.taken.has(cellKey(at)) && spacedFrom(draft, at)) {
         draft.taken.add(cellKey(at))
         draft.movableCells.add(cellKey(at))
-        draft.movable.push({ kind: "turnMirror", at, faces: FACES })
-        draft.solution.push(Math.floor(random() * FACES.length))
+        draft.movable.push({ kind: "turnMirror", at, angles: TURN_ANGLES })
+        draft.solution.push(Math.floor(random() * TURN_ANGLES.length))
         break
       }
       at = stepCell(at, ray.direction)
@@ -537,7 +549,7 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
 
   route.bends.forEach((bend, index) => {
     if (given.has(index)) {
-      draft.fixed.push({ kind: "mirror", at: bend.at, face: bend.face })
+      draft.fixed.push({ kind: "mirror", at: bend.at, angle: bend.angle })
       return
     }
     if (sliding.has(cellKey(bend.at))) {
@@ -549,15 +561,15 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
         draft.taken.add(cellKey(cell))
         draft.movableCells.add(cellKey(cell))
       }
-      draft.movable.push({ kind: "slidingMirror", face: bend.face, stops })
+      draft.movable.push({ kind: "slidingMirror", angle: bend.angle, stops })
       draft.solution.push(stops.findIndex(candidate => cellKey(candidate) === cellKey(bend.at)))
       wrongRays.push({ from: bend.at, direction: bend.enter })
       return
     }
     draft.movableCells.add(cellKey(bend.at))
-    draft.movable.push({ kind: "turnMirror", at: bend.at, faces: FACES })
-    draft.solution.push(FACES.indexOf(bend.face))
-    wrongRays.push({ from: bend.at, direction: reflect(bend.face === "/" ? "\\" : "/", bend.enter) })
+    draft.movable.push({ kind: "turnMirror", at: bend.at, angles: TURN_ANGLES })
+    draft.solution.push(TURN_ANGLES.indexOf(bend.angle))
+    wrongRays.push({ from: bend.at, direction: reflect(bend.angle === SLASH ? BACKSLASH : SLASH, bend.enter) })
   })
   if (draft.movable.length + given.size !== route.bends.length) return undefined
 
@@ -601,13 +613,13 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   for (const at of shuffle(open, random).slice(0, options.decoys)) {
     draft.taken.add(cellKey(at))
     draft.movableCells.add(cellKey(at))
-    draft.movable.push({ kind: "turnMirror", at, faces: FACES })
-    draft.solution.push(Math.floor(random() * FACES.length))
+    draft.movable.push({ kind: "turnMirror", at, angles: TURN_ANGLES })
+    draft.solution.push(Math.floor(random() * TURN_ANGLES.length))
   }
   return draft
 }
 
-const NEIGHBOURS: Direction[] = ["up", "right", "down", "left"]
+const NEIGHBOURS: readonly Direction[] = SQUARE_DIRECTIONS
 
 /**
  * No two pieces the player can tap may touch.

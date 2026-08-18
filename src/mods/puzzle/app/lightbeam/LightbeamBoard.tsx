@@ -2,6 +2,9 @@ import clsx from "clsx"
 import type { FC, ReactNode } from "react"
 import {
   cellKey,
+  DIRECTIONS,
+  directionStep,
+  mirrorBlocker,
   opposite,
   pieceCells,
   pieceOccupant,
@@ -15,7 +18,6 @@ import {
   type Direction,
   type LightbeamPuzzleData,
   type MirrorAngle,
-  type MirrorFace,
 } from "@/mods/puzzle/game/lightbeam/beam"
 
 type Props = {
@@ -34,8 +36,8 @@ type CellView =
   | { kind: "empty" }
   | { kind: "sun"; facing: Direction }
   | { kind: "shrine" }
-  | { kind: "mirror"; face: MirrorFace; angle?: MirrorAngle }
-  | { kind: "wall" }
+  /** Whatever the light would meet here, which is exactly what has to be drawn: `Blocker` is both. */
+  | Blocker
   /**
    * A cell a piece can stand in. The piece itself is not drawn here — it rides in the layer above so it
    * can slide between its stops — but the cell owns the track marking and the tap target.
@@ -63,8 +65,7 @@ const viewGrid = (puzzle: LightbeamPuzzleData, states: readonly number[]): CellV
       }
   })
   for (const piece of puzzle.fixed)
-    grid[piece.at.row][piece.at.col] =
-      piece.kind === "mirror" ? { kind: "mirror", face: piece.face, angle: piece.angle } : { kind: "wall" }
+    grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? mirrorBlocker(piece.angle) : { kind: "wall" }
   grid[puzzle.shrine.row][puzzle.shrine.col] = { kind: "shrine" }
   grid[puzzle.sun.at.row][puzzle.sun.at.col] = { kind: "sun", facing: puzzle.sun.facing }
   return grid
@@ -82,24 +83,18 @@ const Glyph: FC<{ children: ReactNode }> = ({ children }) => (
   </svg>
 )
 
-/** Where a mirror's line lies, in degrees anticlockwise from east — 45° is `/`, 135° is `\\`. */
-const FACE_ANGLE: Record<MirrorFace, number> = { "/": 45, "\\": 135 }
-
-/** An authored stop is eighth-turns; without one a mirror sits on the diagonal its face names. */
-const mirrorAngle = (face: MirrorFace, angle?: MirrorAngle): number =>
-  angle === undefined ? FACE_ANGLE[face] : angle * 22.5
-
 /**
- * How far to turn the glyph, in SVG degrees — clockwise, because the y axis points down.
+ * How far to turn the glyph, in SVG degrees — clockwise, because the y axis points down, from a stop
+ * counted in eighth-turns anticlockwise.
  *
- * A mirror line is the same line half a turn later, so every angle has two representatives and **which
+ * A mirror line is the same line half a turn later, so every stop has two representatives and **which
  * one is drawn decides which way the piece appears to turn**. Folding into (−90°, 90°] is what makes each
  * tap the short way round: `/`→`\\` stays the clockwise quarter turn it has always been, and a cut mirror
  * swings 67.5° rather than 112.5° back the other way. Get this wrong and nothing looks wrong in a still
  * frame — it only shows in motion, which is where a tap is read.
  */
-const glyphTurn = (degrees: number): number => {
-  const turn = -degrees % 180
+const glyphTurn = (angle: MirrorAngle): number => {
+  const turn = (-angle * 22.5) % 180
   return turn <= -90 ? turn + 180 : turn > 90 ? turn - 180 : turn
 }
 
@@ -117,15 +112,15 @@ const glyphTurn = (degrees: number): number => {
  * an outline with two silvered faces and cut ends. Solid against hollow is a judgement the eye makes on
  * one cell, without another cell to compare it against, which is what a board has to be read by.
  */
-const Mirror: FC<{ face: MirrorFace; movable: boolean; angle?: MirrorAngle }> = ({ face, movable, angle }) => {
+const Mirror: FC<{ angle: MirrorAngle; cut: boolean; movable: boolean }> = ({ angle, cut, movable }) => {
   const stroke = movable ? "stroke-sky-200" : "stroke-stone-400"
   return (
     <Glyph>
       <g
         className="origin-center transition-transform duration-200 ease-out"
-        style={{ transform: `rotate(${glyphTurn(mirrorAngle(face, angle))}deg)` }}
+        style={{ transform: `rotate(${glyphTurn(angle)}deg)` }}
       >
-        {angle === undefined ? (
+        {!cut ? (
           <line x1={4.75} y1={50} x2={95.25} y2={50} strokeWidth={14} strokeLinecap="round" className={stroke} />
         ) : (
           <polygon
@@ -153,12 +148,26 @@ const Wall: FC<{ movable: boolean }> = ({ movable }) => (
   </Glyph>
 )
 
-const NOSE: Record<Direction, string> = {
-  up: "50,4 66,26 34,26",
-  down: "50,96 66,74 34,74",
-  left: "4,50 26,66 26,34",
-  right: "96,50 74,66 74,34",
+const round = (n: number): number => Math.round(n * 100) / 100
+
+/**
+ * The nose that says which way the light leaves — half of what the player has to know about the disc.
+ *
+ * Built from the direction rather than authored per direction, because there are eight of them now. The
+ * four that were drawn by hand come out of this as the same four triangles — checked against them — two
+ * of them with their base points in the other order, which a filled polygon does not care about. So this
+ * is the same shape rotated, not a redraw.
+ */
+const nosePoints = (direction: Direction): string => {
+  const { row, col } = directionStep(direction)
+  const scale = Math.hypot(row, col)
+  const [dx, dy] = [col / scale, row / scale]
+  const point = (along: number, across: number): string =>
+    `${round(50 + dx * along - dy * across)},${round(50 + dy * along + dx * across)}`
+  return `${point(46, 0)} ${point(24, 16)} ${point(24, -16)}`
 }
+
+const NOSE: readonly string[] = DIRECTIONS.map(nosePoints)
 
 const SunDisc: FC<{ facing: Direction }> = ({ facing }) => (
   <Glyph>
@@ -315,12 +324,21 @@ const NodeLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk }> = ({ puzzle
 // and a beam that stopped under a glyph would read as a beam that stopped short.
 // ---------------------------------------------------------------------------------------------------
 
-/** The midpoint of the cell edge a beam travelling `direction` crosses on its way out. */
+/**
+ * Where a beam travelling `direction` leaves a cell: the midpoint of the edge it crosses — or, for a
+ * diagonal, the **corner** it slips through, which is a whole lattice point rather than a half one.
+ *
+ * §11.2 rule 1 keeps the wire out of the beam's way by giving the beam cell centres and edge midpoints
+ * and the wire the grid lines, and a diagonal beam takes its endpoints off the wire's side of that line.
+ * The rule still holds where it matters: a wire runs *along* a grid line and a diagonal beam crosses the
+ * cell interior, so they can still only ever meet transversally, at a point. What is new is that the
+ * point can be a rivet, and often is — see `DiagonalBeam`, whose third frame is the one that had to be
+ * looked at. It reads as a crossing rather than a join, because a beam polyline bends only at cell
+ * centres: a corner point is always mid-line, so the beam can never appear to terminate on a rivet.
+ */
 const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
-  if (direction === "up") return [at.col + 0.5, at.row]
-  if (direction === "down") return [at.col + 0.5, at.row + 1]
-  if (direction === "left") return [at.col, at.row + 0.5]
-  return [at.col + 1, at.row + 0.5]
+  const { row, col } = directionStep(direction)
+  return [at.col + (col === 0 ? 0.5 : col > 0 ? 1 : 0), at.row + (row === 0 ? 0.5 : row > 0 ? 1 : 0)]
 }
 
 const segmentPoints = (segment: BeamSegment): string => {
@@ -445,7 +463,6 @@ const PieceLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[] }>
     <div className="pointer-events-none absolute inset-0" aria-hidden>
       {puzzle.movable.map((piece, index) => {
         const { at, blocks } = pieceOccupant(piece, states[index])
-        const angle = piece.kind === "turnMirror" ? piece.angles?.[states[index]] : undefined
         const driving = wiringsDriving(puzzle, index)
         const colours = driving.length
           ? [...new Set(driving.flatMap(wiring => wiring.from))].map(node => nodeColour(node).ring)
@@ -461,7 +478,7 @@ const PieceLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[] }>
                 block's width, and this element's containing block is the whole board rather than one cell —
                 which collapsed the glyph to nothing. */}
             <div className="size-full p-[8%]">
-              {blocks.kind === "mirror" ? <Mirror face={blocks.face} movable angle={angle} /> : <Wall movable />}
+              {blocks.kind === "mirror" ? <Mirror angle={blocks.angle} cut={blocks.cut} movable /> : <Wall movable />}
             </div>
           </div>
         )
@@ -510,7 +527,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
             })
             const body =
               view.kind === "mirror" ? (
-                <Mirror face={view.face} movable={false} angle={view.angle} />
+                <Mirror angle={view.angle} cut={view.cut} movable={false} />
               ) : view.kind === "wall" ? (
                 <Wall movable={false} />
               ) : view.kind === "sun" ? (
@@ -519,7 +536,11 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
                 <Shrine lit={solved} />
               ) : view.kind === "stop" && view.ghost ? (
                 <span className="size-full opacity-25">
-                  {view.ghost.kind === "mirror" ? <Mirror face={view.ghost.face} movable /> : <Wall movable />}
+                  {view.ghost.kind === "mirror" ? (
+                    <Mirror angle={view.ghost.angle} cut={view.ghost.cut} movable />
+                  ) : (
+                    <Wall movable />
+                  )}
                 </span>
               ) : null
             // Every cell a piece can stand in is tappable, vacant stops included: tapping where you want

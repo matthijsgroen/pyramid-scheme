@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
 import { useState } from "react"
-import type { LightbeamPuzzleData, MirrorAngle } from "@/mods/puzzle/game/lightbeam/beam"
+import {
+  BACKSLASH,
+  DIR,
+  SLASH,
+  TURN_ANGLES,
+  type LightbeamPuzzleData,
+  type MirrorAngle,
+} from "@/mods/puzzle/game/lightbeam/beam"
 import { generateLightbeam } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
 import { createLightbeamState, cycleLightbeamPiece } from "@/mods/puzzle/game/lightbeam/lightbeamState"
@@ -76,11 +83,11 @@ export const Playable: Story = {
 /** The door. A wall stands on the route, and the socket that clears it is upstream of the wall. */
 const doorBoard: LightbeamPuzzleData = {
   size: 8,
-  sun: { at: { row: 3, col: 0 }, facing: "right" },
+  sun: { at: { row: 3, col: 0 }, facing: DIR.right },
   shrine: { row: 6, col: 0 },
-  fixed: [{ kind: "mirror", at: { row: 6, col: 3 }, face: "/" }],
+  fixed: [{ kind: "mirror", at: { row: 6, col: 3 }, angle: SLASH }],
   movable: [
-    { kind: "turnMirror", at: { row: 3, col: 3 }, faces: ["/", "\\"] },
+    { kind: "turnMirror", at: { row: 3, col: 3 }, angles: TURN_ANGLES },
     {
       kind: "slidingWall",
       stops: [
@@ -96,11 +103,11 @@ const doorBoard: LightbeamPuzzleData = {
 /** The trap. The same shape inverted: crossing this socket drops stone in front of the shrine. */
 const trapBoard: LightbeamPuzzleData = {
   size: 8,
-  sun: { at: { row: 2, col: 0 }, facing: "right" },
+  sun: { at: { row: 2, col: 0 }, facing: DIR.right },
   shrine: { row: 0, col: 4 },
   fixed: [],
   movable: [
-    { kind: "turnMirror", at: { row: 2, col: 4 }, faces: ["/", "\\"] },
+    { kind: "turnMirror", at: { row: 2, col: 4 }, angles: TURN_ANGLES },
     {
       kind: "slidingWall",
       stops: [
@@ -338,15 +345,13 @@ export const WithHint: Story = {
 }
 
 // ---------------------------------------------------------------------------------------------------
-// The diagonal-cut mirror (design doc §11.8) — the drawing, prototyped ahead of the walk, on §11.2's
-// precedent that the drawing is what kills a mechanic of this kind and the reasoning is not.
+// The diagonal-cut mirror (design doc §11.8). Step 1 was the drawing, ahead of any logic; step 2 is the
+// eight-direction walk, and it has landed — so every frame below is a real trace of a real configuration
+// with nothing held back, which is what the two frames drawn first could only be by coincidence.
 //
-// §11.8 orders one thing before any logic: draw it at the size the encounter modal actually gives a
-// board, and answer two questions. Nothing about the walk is implemented — a cut mirror still reflects
-// by its `face`, and every frame below is a real trace because of it: an **aligned** stop (45° or 135°)
-// turns light exactly as the face beside it does, and the half-step stops are only ever shown on pieces
-// the beam does not reach in that configuration. No frame draws a mirror doing something the beam then
-// contradicts, which is the same rule the switch-node prototype was held to.
+// Two of these stories answered §11.8's drawing questions and are kept because those answers still have
+// to hold once light actually goes diagonally. The third is step 2's own question, and it is the one the
+// handoff into step 2 flagged as cheap to look at and expensive to guess.
 // ---------------------------------------------------------------------------------------------------
 
 /** Puts authored stops on named turn mirrors, leaving everything else exactly as the generator built it. */
@@ -365,13 +370,13 @@ const withCuts = <T extends LightbeamPuzzleData>(puzzle: T, cuts: Record<number,
  */
 const stopSets: LightbeamPuzzleData = {
   size: 9,
-  sun: { at: { row: 8, col: 8 }, facing: "up" },
+  sun: { at: { row: 8, col: 8 }, facing: DIR.up },
   shrine: { row: 0, col: 0 },
   fixed: [],
   movable: [
-    { kind: "turnMirror", at: { row: 4, col: 1 }, faces: ["/", "\\"] },
-    { kind: "turnMirror", at: { row: 4, col: 3 }, faces: ["/", "\\"], angles: [1, 6] },
-    { kind: "turnMirror", at: { row: 4, col: 5 }, faces: ["/", "\\"], angles: [2, 7] },
+    { kind: "turnMirror", at: { row: 4, col: 1 }, angles: TURN_ANGLES },
+    { kind: "turnMirror", at: { row: 4, col: 3 }, angles: [1, 6] },
+    { kind: "turnMirror", at: { row: 4, col: 5 }, angles: [2, 7] },
   ],
 }
 
@@ -379,6 +384,50 @@ const stopSets: LightbeamPuzzleData = {
 const cutWizard = withCuts(wizard, { 0: [1, 6], 3: [2, 7], 8: [2, 7], 9: [1, 6] })
 /** The same swap on the board that also carries a door and its sockets — the busiest frame the family has. */
 const cutDoors = withCuts(wizardDoors, { 0: [1, 6], 2: [1, 6], 7: [2, 7], 8: [2, 7] })
+
+/**
+ * The mechanic at the size it ships at: a 9-wide board, 35.3px a cell, with a six-step diagonal run.
+ *
+ * The disc shines along the bottom row into a cut mirror. Its shallow stop sends the light up-right the
+ * whole width of the board to a shrine in the right-hand wall — a shrine no square beam on this board
+ * could have reached — and its steep stop is the ordinary quarter turn, straight down off the frame.
+ *
+ * Stone hugs the run in three places, two cells at a time, so §11.8 rule 4 is visible rather than
+ * described: **a diagonal step resolves only the cell it lands in.** The light goes between the corners.
+ */
+const diagonalRun: LightbeamPuzzleData = {
+  size: 9,
+  sun: { at: { row: 8, col: 0 }, facing: DIR.right },
+  shrine: { row: 2, col: 8 },
+  fixed: [
+    { kind: "wall", at: { row: 7, col: 2 } },
+    { kind: "wall", at: { row: 8, col: 3 } },
+    { kind: "wall", at: { row: 5, col: 4 } },
+    { kind: "wall", at: { row: 6, col: 5 } },
+    { kind: "wall", at: { row: 3, col: 6 } },
+    { kind: "wall", at: { row: 4, col: 7 } },
+  ],
+  movable: [{ kind: "turnMirror", at: { row: 8, col: 2 }, angles: [1, BACKSLASH] }],
+}
+
+/**
+ * A generated wizard board with a door on it, every turn mirror swapped for a cut one, in a configuration
+ * that lights the shrine with a beam that goes diagonally **across a wire's rivet**.
+ *
+ * Found by search rather than authored: over 40 generated wizard boards there are 104 lit configurations
+ * where a diagonal beam's corner lands exactly on a rivet, on 2 of the 40 boards — common enough that it
+ * had to be looked at, which is why this frame exists. Uniqueness is gone once every mirror is cut, so
+ * this is a picture of the geometry rather than a puzzle.
+ */
+const cutRivet = withCuts(board("wizard", 12), {
+  0: [2, 7],
+  1: [1, 6],
+  2: [2, 7],
+  3: [1, 6],
+  7: [2, 7],
+  8: [1, 6],
+  9: [2, 7],
+})
 
 /** One board at the 318px the encounter modal gives it, which on a 9-wide grid is 35.3px a cell. */
 const Frame: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[]; caption: string }> = ({
@@ -438,6 +487,12 @@ export const CutMirrorStops: Story = {
  * The one thing this had to survive and was not designed to: the beam crosses a mirror's cell through its
  * centre, which is exactly the hollow. It survives because the beam is amber and the plate is sky — §9's
  * "nothing but light is drawn amber" paying for something it was not written for.
+ *
+ * **These are real traces now, and they show no diagonal light at all** — which is worth saying rather than
+ * leaving to be noticed. Step 1 could only draw a cut mirror by keeping it off the beam or on an aligned
+ * stop; with the walk reading stops, that constraint is gone, and it turns out every cut mirror these
+ * retrofits put on a winning route happens to sit at an aligned stop anyway. So the frames still answer the
+ * density question they were built for, and `DiagonalBeam` is where the diagonal is.
  */
 export const CutMirrorDensity: Story = {
   args: { puzzle: cutWizard, states: cutWizard.initial, onCycle: () => {} },
@@ -447,6 +502,38 @@ export const CutMirrorDensity: Story = {
       <Frame puzzle={cutWizard} states={cutWizard.solution} caption="wizard — answered" />
       <Frame puzzle={cutDoors} states={cutDoors.initial} caption="wizard + door — opens" />
       <Frame puzzle={cutDoors} states={cutDoors.solution} caption="wizard + door — answered" />
+    </div>
+  ),
+}
+
+/**
+ * **Step 2's question: does a diagonal beam read as light, and does the corner it turns read as a gap?**
+ *
+ * Left, the mechanic at the size it ships at. The disc shines along the bottom row into a cut mirror; its
+ * shallow stop carries the light up-right the whole width of a 9-wide board — 35.3px a cell — to a shrine
+ * no square beam here could reach, and its steep stop is the ordinary quarter turn, straight down off the
+ * frame. Stone hugs the run in three places, two cells at a time, which is §11.8 rule 4 made visible
+ * instead of written down: **a diagonal step resolves only the cell it lands in**, and the light goes
+ * between the corners. Nothing in the walk implements that — it is what not implementing it looks like.
+ *
+ * Right, the one thing the handoff into step 2 said was cheap to look at and expensive to guess. §11.2
+ * rule 1 keeps wires out of the beam's lane by giving the beam cell centres and edge midpoints and the
+ * wire the grid lines; a diagonal beam turns at cell **corners**, which are on the wire's side of that
+ * line, and the rivets are drawn at corners too. So the endpoints can coincide — and they do, often
+ * enough that guessing was not an option: over 40 generated wizard boards with every mirror cut, 104 lit
+ * configurations put a beam corner exactly on a rivet, spread over 2 boards. This is one of them, found by
+ * search: the beam's corner in the cell above the right-hand door lands on that door's rivet.
+ *
+ * Uniqueness is gone on the right-hand board once every mirror is cut, so it is a picture of the geometry
+ * rather than a puzzle. That is the whole point of the frame.
+ */
+export const DiagonalBeam: Story = {
+  args: { puzzle: diagonalRun, states: [0], onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-wrap items-start justify-center gap-6">
+      <Frame puzzle={diagonalRun} states={[0]} caption="22.5° — six diagonal steps past six walls" />
+      <Frame puzzle={diagonalRun} states={[1]} caption="135° — the quarter turn it keeps" />
+      <Frame puzzle={cutRivet} states={[1, 0, 0, 0, 0, 0, 0, 0, 1, 0]} caption="a beam corner on a rivet" />
     </div>
   ),
 }

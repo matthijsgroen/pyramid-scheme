@@ -11,17 +11,18 @@
 // `deadEnd`'s reason is a sentence a child repeats back and checks by eye: face it that way and the
 // light dies in the wall.
 import {
-  DIRECTIONS,
   cellKey,
   eachConfig,
   firedWirings,
   gridResolver,
   pieceOptions,
   insideGrid,
+  mirrorBlocker,
   pieceOccupant,
   sameCell,
   segmentKey,
   traceBeam,
+  travelledDirections,
   walkBackward,
   walkForward,
   type BeamSegment,
@@ -100,7 +101,7 @@ export const createLightbeamBoard = (puzzle: LightbeamPuzzleData): LightbeamBoar
 })
 
 const sameBlocker = (a: Blocker, b: Blocker): boolean =>
-  a.kind === b.kind && (a.kind !== "mirror" || b.kind !== "mirror" || a.face === b.face)
+  a.kind === b.kind && (a.kind !== "mirror" || b.kind !== "mirror" || (a.angle === b.angle && a.cut === b.cut))
 
 /**
  * The board as the deduction currently knows it. A cell is `unknown` whenever a movable piece could be
@@ -117,7 +118,7 @@ const knownGrid = (board: LightbeamBoard, pin?: { piece: number; state: number }
     Array.from({ length: puzzle.size }, (): CellContent => ({ kind: "empty" }))
   )
   for (const piece of puzzle.fixed)
-    grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? { kind: "mirror", face: piece.face } : { kind: "wall" }
+    grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? mirrorBlocker(piece.angle) : { kind: "wall" }
 
   // What a socket has already done to the board, and what it might still do. A wiring proven to fire pins
   // its piece outright; one that might yet fire leaves the piece genuinely unknown — it could be resting
@@ -232,11 +233,17 @@ const entryRun = (board: LightbeamBoard): LightbeamStep[] => {
  * Which side the shrine can be lit from, traced backwards. A direction whose backward run leaves the
  * grid or dies in a wall is a direction nothing could have delivered the light from; when only one is
  * left, the stretch behind the shrine is settled too.
+ *
+ * Searched over `travelledDirections` rather than all eight, and that is the difference between this rung
+ * firing and this rung dying. A backward run that meets an unsettled piece comes back `unknown`, which is
+ * not a death, so every extra candidate direction is another way for "exactly one survives" to fail. Only a
+ * half-step stop can turn square light diagonal, so on a board with none there are still four candidates —
+ * which is why every board the generator makes today deduces exactly as it did before §11.8.
  */
 const exitRun = (board: LightbeamBoard): LightbeamStep[] => {
-  const feasible = DIRECTIONS.map(direction => ({ direction, walk: knownBackward(board, direction) })).filter(
-    ({ walk }) => !DEATHS.has(walk.end)
-  )
+  const feasible = travelledDirections(board.puzzle)
+    .map(direction => ({ direction, walk: knownBackward(board, direction) }))
+    .filter(({ walk }) => !DEATHS.has(walk.end))
   if (feasible.length !== 1) return []
   const [{ direction, walk }] = feasible
   const decisions: LightbeamDecision[] = []

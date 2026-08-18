@@ -5,47 +5,112 @@
 // is the whole of the player's answer, which is what makes the configuration space enumerable and reset
 // a one-liner.
 
-export const DIRECTIONS = ["up", "right", "down", "left"] as const
+/**
+ * A direction of travel: one of the eight multiples of 45°, indexed anticlockwise from rightward.
+ *
+ * ```
+ *   3 2 1     0 right      4 left
+ *   4 · 0     1 up-right   5 down-left
+ *   5 6 7     2 up         6 down
+ *             3 up-left    7 down-right
+ * ```
+ *
+ * **An index rather than eight names, because the mirror law is arithmetic**: a mirror standing at
+ * `angle` sends a beam travelling `travel` out along `angle - travel` (design doc §11.8 rule 6). Eight
+ * names buy nothing and leave that unwritable. `DIR` is here for the handful of places — authoring a
+ * board, reading a test back — where a name says more than a number.
+ *
+ * Even directions are square and odd ones diagonal, which is the parity a mirror either keeps or flips.
+ */
+export type Direction = number
 
-export type Direction = (typeof DIRECTIONS)[number]
+/** The eight, by name. */
+export const DIR = {
+  right: 0,
+  upRight: 1,
+  up: 2,
+  upLeft: 3,
+  left: 4,
+  downLeft: 5,
+  down: 6,
+  downRight: 7,
+} as const
+
+export const DIRECTIONS: readonly Direction[] = [0, 1, 2, 3, 4, 5, 6, 7]
+
+/** The four the family had before §11.8 — and still the only ones a board without a cut mirror sees. */
+export const SQUARE_DIRECTIONS: readonly Direction[] = [DIR.right, DIR.up, DIR.left, DIR.down]
+
+/** Directions and stops both live modulo eight, and both are counted from the same axis. */
+const mod8 = (n: number): number => ((n % 8) + 8) % 8
 
 export type CellRef = { row: number; col: number }
 
-/** The two diagonals a mirror can sit on, written as they are drawn. */
-export type MirrorFace = "/" | "\\"
-
-/** What a piece does to the beam when it stands in its way. */
-export type Blocker = { kind: "mirror"; face: MirrorFace } | { kind: "wall" }
-
 /**
- * A mirror's rotation stop, in eighth-turns of a circle: 1 is 22.5°, 2 is 45° (`/`), 6 is 135° (`\`).
+ * Where a mirror's line lies, in eighth-turns anticlockwise from the row: 0 lies flat along it, 2 is 45°
+ * (`/`), 4 stands up the column, 6 is 135° (`\`).
  *
- * A **cut mirror** (design doc §11.8) is a mirror the generator gives authored stops to, at least one of
- * them a half-step — an odd number — which is what lets it send the beam diagonally. The two sets that
- * keep a quarter turn are `[1, 6]` and `[2, 7]`.
+ * **This is the whole of what a mirror is.** One number says what it does to light, and the walk, the
+ * drawing and the deduction all read that one number — there is no second representation to keep in
+ * step. It replaces the `"/" | "\\"` face the family had until §11.8: two stops of a cut mirror are 67.5°
+ * apart, which no pair of diagonals can name.
  *
  * Named for the angle rather than the stop, because a sliding piece's `stops` are cells and these are
  * not — one union member holding two different meanings of the same word is a bug waiting to be typed.
- *
- * **Nothing traces these yet.** The walk still has four directions and reads `face`; a stop is the shape
- * the board is being drawn against, and only that. §11.8 orders the drawing at 36px before any of the
- * logic, on §11.2's precedent that the drawing is what kills a mechanic of this kind, not the reasoning.
- * An *aligned* stop — 2 or 6 — turns light exactly as the `face` beside it does, which is what lets a
- * board carry a cut mirror and still trace honestly while the walk is still square.
  */
 export type MirrorAngle = number
 
+/** The two diagonals, as the angles they are. Every board before §11.8 is written out of these two. */
+export const SLASH: MirrorAngle = 2
+export const BACKSLASH: MirrorAngle = 6
+
+/** An ordinary turn mirror's stops: the two diagonals, a quarter turn apart. */
+export const TURN_ANGLES: readonly MirrorAngle[] = [SLASH, BACKSLASH]
+
+/**
+ * A half-step stop — an odd angle — is the only thing that turns square light diagonal, or diagonal
+ * light square (§11.8 rule 6). A mirror lying flat is even, and keeps the beam's parity like any other.
+ */
+export const isHalfStep = (angle: MirrorAngle): boolean => angle % 2 === 1
+
+/**
+ * Whether a set of stops makes a **cut mirror** (§11.8): anything off the two diagonals.
+ *
+ * A cut mirror is a different *object*, not a different angle — §11.9 measured that the 22.5° between
+ * its stops and an ordinary mirror's can never carry the distinction, and the glyph has to. So this is a
+ * fact about the piece's whole stop set rather than about the stop it currently stands on: a cut mirror
+ * sitting at 45° is still a cut mirror, and drawing it as an ordinary one would make it change species
+ * mid-rotation.
+ */
+export const isCut = (angles: readonly MirrorAngle[]): boolean =>
+  angles.some(angle => angle !== SLASH && angle !== BACKSLASH)
+
+/**
+ * What a piece does to the beam when it stands in its way.
+ *
+ * `cut` is not something the light can tell — a cut mirror on an aligned stop turns it exactly as an
+ * ordinary mirror would — but it is something the player can, so the drawing gets it here rather than
+ * having to go back to the piece for it.
+ */
+export type Blocker = { kind: "mirror"; angle: MirrorAngle; cut: boolean } | { kind: "wall" }
+
+/** A mirror standing in a cell, as the walk and the drawing both need it: its angle, and its species. */
+export const mirrorBlocker = (angle: MirrorAngle, stops: readonly MirrorAngle[] = [angle]): Blocker => ({
+  kind: "mirror",
+  angle,
+  cut: isCut(stops),
+})
+
 /** Part of the puzzle, like a Sudoku given: the player cannot change it. */
-export type FixedPiece =
-  { kind: "mirror"; at: CellRef; face: MirrorFace; angle?: MirrorAngle } | { kind: "wall"; at: CellRef }
+export type FixedPiece = { kind: "mirror"; at: CellRef; angle: MirrorAngle } | { kind: "wall"; at: CellRef }
 
 /**
  * A piece the player cycles with a tap. Its states are listed out, and a configuration names one of
- * them by index — a turn mirror by which face, a sliding piece by which stop.
+ * them by index — a turn mirror by which stop it stands at, a sliding piece by which cell.
  */
 export type MovablePiece =
-  | { kind: "turnMirror"; at: CellRef; faces: MirrorFace[]; angles?: readonly MirrorAngle[] }
-  | { kind: "slidingMirror"; face: MirrorFace; stops: CellRef[] }
+  | { kind: "turnMirror"; at: CellRef; angles: readonly MirrorAngle[] }
+  | { kind: "slidingMirror"; angle: MirrorAngle; stops: CellRef[] }
   | { kind: "slidingWall"; stops: CellRef[] }
 
 /**
@@ -126,6 +191,30 @@ export const pieceOptions = (puzzle: LightbeamPuzzleData, piece: number): number
 export const allPieceOptions = (puzzle: LightbeamPuzzleData): number[][] =>
   puzzle.movable.map((_, piece) => pieceOptions(puzzle, piece))
 
+/** Every angle a mirror on this board could stand at, movable stop sets and fixed givens alike. */
+const mirrorAngles = (puzzle: LightbeamPuzzleData): MirrorAngle[] => [
+  ...puzzle.fixed.flatMap(piece => (piece.kind === "mirror" ? [piece.angle] : [])),
+  ...puzzle.movable.flatMap(piece =>
+    piece.kind === "turnMirror" ? [...piece.angles] : piece.kind === "slidingMirror" ? [piece.angle] : []
+  ),
+]
+
+/**
+ * Which directions light can be travelling in on this board — and it is not always all eight.
+ *
+ * Reflection preserves a beam's parity unless the mirror stands at a half-step, so a board with nothing
+ * off the diagonals can only ever carry light the four square ways, whatever the walk knows how to do.
+ * That is what keeps the backward search over shrine entries (`exitRun`) as tight as it was before §11.8
+ * instead of quietly weakening every board in the family: eight candidates on a board that can use them,
+ * the four the disc shines along on a board that cannot.
+ *
+ * Read off the pieces rather than off a flag, because it has to stay true of boards nobody has authored.
+ */
+export const travelledDirections = (puzzle: LightbeamPuzzleData): Direction[] =>
+  mirrorAngles(puzzle).some(isHalfStep)
+    ? [...DIRECTIONS]
+    : DIRECTIONS.filter(direction => direction % 2 === puzzle.sun.facing % 2)
+
 export type LightbeamConfig = readonly number[]
 
 export const cellKey = (at: CellRef): string => `${at.row},${at.col}`
@@ -134,42 +223,54 @@ export const segmentKey = (at: CellRef, direction: Direction): string => `${at.r
 
 export const sameCell = (a: CellRef, b: CellRef): boolean => a.row === b.row && a.col === b.col
 
-const STEPS: Record<Direction, CellRef> = {
-  up: { row: -1, col: 0 },
-  down: { row: 1, col: 0 },
-  left: { row: 0, col: -1 },
-  right: { row: 0, col: 1 },
-}
+/** One cell along, per direction. A diagonal step moves on both axes at once — see `walkForward`. */
+const STEPS: readonly CellRef[] = [
+  { row: 0, col: 1 }, // right
+  { row: -1, col: 1 }, // up-right
+  { row: -1, col: 0 }, // up
+  { row: -1, col: -1 }, // up-left
+  { row: 0, col: -1 }, // left
+  { row: 1, col: -1 }, // down-left
+  { row: 1, col: 0 }, // down
+  { row: 1, col: 1 }, // down-right
+]
 
-const OPPOSITES: Record<Direction, Direction> = { up: "down", down: "up", left: "right", right: "left" }
-
-// Reflection off either diagonal. Both are involutions — bouncing the same face twice gives the
-// direction back — which is why the backward walk below can reuse this untouched.
-const FACES: Record<MirrorFace, Record<Direction, Direction>> = {
-  "/": { right: "up", up: "right", left: "down", down: "left" },
-  "\\": { right: "down", down: "right", left: "up", up: "left" },
-}
+export const directionStep = (direction: Direction): CellRef => STEPS[direction]
 
 export const stepCell = (at: CellRef, direction: Direction): CellRef => ({
   row: at.row + STEPS[direction].row,
   col: at.col + STEPS[direction].col,
 })
 
-export const opposite = (direction: Direction): Direction => OPPOSITES[direction]
+export const opposite = (direction: Direction): Direction => mod8(direction + 4)
 
-export const reflect = (face: MirrorFace, travel: Direction): Direction => FACES[face][travel]
+/**
+ * Where a mirror sends a beam: reflection across its line, which in eighth-turns is one subtraction
+ * (§11.8 rule 6). A beam travelling at 45·`travel`° leaves a mirror lying at 22.5·`angle`° along
+ * 2·22.5·`angle` − 45·`travel` degrees, and every one of those is a multiple of 45° again.
+ *
+ * Three things fall out of the arithmetic rather than having to be written:
+ *
+ * - **An even angle keeps the beam square and an odd one flips it diagonal**, which is the whole of what
+ *   a cut mirror buys and the whole of what `isHalfStep` names.
+ * - **A mirror lying along the beam passes it** — its line is the beam's own line when `angle` is twice
+ *   `travel`, and `2·travel - travel` is `travel` again. That is §11.8 rule 3's "get out of the way" verb,
+ *   direction-dependent exactly as the rule says, and it costs no code at all.
+ * - **It is still its own inverse in `travel`**, which is what lets the backward walk reuse it untouched.
+ */
+export const reflect = (angle: MirrorAngle, travel: Direction): Direction => mod8(angle - travel)
 
 export const insideGrid = (size: number, at: CellRef): boolean =>
   at.row >= 0 && at.col >= 0 && at.row < size && at.col < size
 
 /** How many states a piece cycles through. */
 export const pieceStateCount = (piece: MovablePiece): number =>
-  piece.kind === "turnMirror" ? piece.faces.length : piece.stops.length
+  piece.kind === "turnMirror" ? piece.angles.length : piece.stops.length
 
 /** Where a piece stands in a given state, and what it does to the beam there. */
 export const pieceOccupant = (piece: MovablePiece, state: number): { at: CellRef; blocks: Blocker } => {
-  if (piece.kind === "turnMirror") return { at: piece.at, blocks: { kind: "mirror", face: piece.faces[state] } }
-  if (piece.kind === "slidingMirror") return { at: piece.stops[state], blocks: { kind: "mirror", face: piece.face } }
+  if (piece.kind === "turnMirror") return { at: piece.at, blocks: mirrorBlocker(piece.angles[state], piece.angles) }
+  if (piece.kind === "slidingMirror") return { at: piece.stops[state], blocks: mirrorBlocker(piece.angle) }
   return { at: piece.stops[state], blocks: { kind: "wall" } }
 }
 
@@ -206,12 +307,22 @@ type Resolver = (at: CellRef) => CellContent
 /**
  * Walks the beam forward from a cell, in a direction, over whatever the resolver says is there.
  *
+ * **A diagonal step resolves only the cell it lands in**, never the two it squeezes past (§11.8 rule 4).
+ * That is the naive reading of `stepCell`, and it is also the decided design: light slips through the gap
+ * between two corners, and the wall glyph is drawn with rounded corners so the gap is visible rather than
+ * being a rule to learn. There is nothing here to implement — the point is that nothing was added.
+ *
  * Loop detection is what keeps this walk total, but on this family's pieces it is a guard rather than a
- * game state: a 90° mirror maps (cell, direction) one-to-one, so every state has exactly one
- * predecessor, and the disc's first state has none. A beam from the disc therefore walks a path and can
- * never join a ring — a ring of mirrors is only reachable by starting inside it (beam.spec.ts proves
- * both halves). The guard earns its keep the moment a piece bends light by anything but a quarter turn,
- * which is exactly what the deferred prism does.
+ * game state: whatever angle a mirror stands at, `reflect` is a bijection in the beam's direction, so
+ * `(cell, direction)` has exactly one predecessor and the disc's first state has none. A beam from the
+ * disc therefore walks a path and can never join a ring — a ring of mirrors is only reachable by starting
+ * inside it (beam.spec.ts proves both halves).
+ *
+ * Eight directions do not weaken that, and they were the case it was written for. What they add is
+ * **retroreflection**: a beam meeting a mirror square on its back — `angle - travel === travel + 4` —
+ * comes straight back down its own line. Injectivity survives (the keys are `(cell, direction)`, and the
+ * return trip travels the other way), so the beam retraces to the disc and is absorbed there, which is
+ * both what the guard allows and what light does.
  */
 export const walkForward = (
   size: number,
@@ -243,7 +354,7 @@ export const walkForward = (
     if (content.kind === "shrine") return { path: [...path, { at, enter: travel }], end: "lit", stopAt: at }
     if (content.kind === "wall" || content.kind === "sun")
       return { path: [...path, { at, enter: travel }], end: "absorbed", stopAt: at }
-    const exit = content.kind === "mirror" ? reflect(content.face, travel) : travel
+    const exit = content.kind === "mirror" ? reflect(content.angle, travel) : travel
     path.push({ at, enter: travel, exit })
     at = stepCell(at, exit)
     travel = exit
@@ -277,7 +388,7 @@ export const walkBackward = (size: number, shrine: CellRef, enter: Direction, re
     if (content.kind === "unknown")
       return { path: [...path, { at, exit: opposite(back), enter: opposite(back) }], end: "unknown", stopAt: at }
     if (content.kind === "wall" || content.kind === "shrine") return { path, end: "absorbed", stopAt: at }
-    const nextBack = content.kind === "mirror" ? reflect(content.face, back) : back
+    const nextBack = content.kind === "mirror" ? reflect(content.angle, back) : back
     path.push({ at, enter: opposite(nextBack), exit: opposite(back) })
     at = stepCell(at, nextBack)
     back = nextBack
@@ -290,7 +401,7 @@ export const configGrid = (puzzle: LightbeamPuzzleData, config: LightbeamConfig)
     Array.from({ length: puzzle.size }, (): CellContent => ({ kind: "empty" }))
   )
   for (const piece of puzzle.fixed)
-    grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? { kind: "mirror", face: piece.face } : { kind: "wall" }
+    grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? mirrorBlocker(piece.angle) : { kind: "wall" }
   puzzle.movable.forEach((piece, index) => {
     const { at, blocks } = pieceOccupant(piece, config[index])
     grid[at.row][at.col] = blocks
