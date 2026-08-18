@@ -626,6 +626,13 @@ skin.
 
 ## 11. Deferred
 
+> **Building the mirror work? Read §11.8 first, then stop.** §11.3 to §11.7 are the record of how the
+> design was reached and contain **four recommendations that were later disproven** — an eight-state
+> mirror, a four-state one, a retracted state, and a two-stop half-step-only set that measurement showed
+> collapses a board's reach to a third. Each is marked where it was overturned, but the corrections arrive
+> after the claims, so reading forwards will hand you a design that does not work. §11.8 is the decision;
+> everything before it is the evidence.
+
 - **Prisms and colour splitting.** The catalogue already rules this a different
   puzzle shape rather than a knob, and points at The Talos Principle as prior art.
 - **"Light the shrine at the fifth hour."** `story-and-time-brainstorm.md` proposes
@@ -1395,3 +1402,64 @@ goes, are the same generation pass.
 _Caveat on the table: it is an upper bound._ Each alternative was checked only for still failing to light
 the shrine. Swapping a mirror's wrong stop changes the puzzle, and the board would have to be re-proved
 unique and deducible afterwards — so these are what selection could reach for, not what it would keep.
+
+### 11.8 The decided design, in one place
+
+Everything above this line is how it was reached. This is what to build.
+
+**1. A mirror is a node with authored rotation stops.** Two or three stops per piece, authored by the
+generator, drawn as a rotation. Not a free rotation, and not the same set on every piece — the variety is
+the point (§11.7).
+
+**2. A stop set must keep a quarter turn.** This is the hard constraint, and the one that killed three
+earlier drafts: every other piece and the route itself depend on that cell being able to turn light 90°.
+Half-step-only sets strip it and collapse reach to under a third of today's, lighting almost no board. The
+two sets that keep a quarter turn, reach the diagonal, and stay legible at 67.5° apart:
+
+| Stops           | Turns offered to a beam arriving rightward |
+| --------------- | ------------------------------------------ |
+| `{22.5°, 135°}` | up-right, or down                          |
+| `{45°, 157.5°}` | up, or down-right                          |
+
+**3. A stop edge-on to the beam passes it**, which is the sliding wall's "get out of the way" verb in one
+cell instead of three — and cells are this family's scarce resource. `{0°, 45°}`, `{0°, 135°}`, or
+`{0°, 45°, 135°}`. Direction-dependent, so top tiers only.
+
+**4. Diagonal light slips through corners.** A diagonal step resolves only the cell it lands in, never the
+two it squeezes past; walls are drawn with rounded corners so the gap is visible. No rules text — and it
+is also the naive implementation.
+
+**5. Stops are discovered by tapping, not drawn.** Only _position_ has to be drawn, because a sliding
+piece's stops are facts about which cells might be blocked. A rotation happens in a cell occupied either
+way. The stop **count** is probably worth showing (a ring in as many segments) since T4 and T7 reason over
+the full set — playtest it rather than ruling it.
+
+**6. Geometry, settled and provable.** Directions are the 8 multiples of 45°; a mirror at orientation
+`m` (22.5°·m) sends a beam travelling `k` out along `(m − k) mod 8`. Every face is a bijection, so **loops
+stay unreachable** by §3's argument — half a million traced configurations, zero loops. Half-step
+orientations flip square↔diagonal; aligned ones do not.
+
+**7. Parity is a constraint to manage, not a feature.** Because the beam leaves the disc square, the number
+of half-step crossings is fixed by how the shrine can be entered — so a uniform class of half-step piece
+can be _counted_, which answers the board instead of asking it. Per-piece stop variety dissolves this: with
+some pieces flipping and some not, there is no class to count. Never let a tally give the answer away.
+
+**8. Cost is per-piece and small.** Two stops is 1×, three is 1.5×. Spend it by **swapping a cut mirror in
+for an ordinary one**, not by adding a piece — the reach comes from one piece doing more.
+
+**9. Where it goes.** Master, per §6.4's vocabulary ladder, where shadows currently hold the slot.
+
+**10. Build in this order, and not another.**
+
+1. **The drawing, at 36px, before any logic.** Two stops of one piece must read as a pair, and a shallow
+   `/` must read as a different object from a steep one. §9 forbids "a subtle rotation", and §11.2's
+   precedent is that the drawing is what kills this kind of thing, not the reasoning.
+2. **The walk** — 8 directions, diagonal steps resolving one cell.
+3. **`blockWrongSettings`** — it has to learn that a wall no longer stops diagonal light at its corner, so
+   stone is conditional for the first time.
+4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
+5. **Traps** (§11.1), which need the second routes this supplies.
+
+**Three things paper cannot settle, and they are the whole remaining risk:** whether the stops read at
+36px, what the generator's yield is once uniqueness has more to reject, and whether the ladder still
+_deduces_ — §11's boards are verified unique and load-bearing, but their reasons were written by hand.
