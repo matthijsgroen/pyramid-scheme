@@ -1260,3 +1260,45 @@ the light arrives. That is a real dent in the locality §4.1 prizes: "can the li
 being answerable from the cell alone. It is also precisely the _understand-the-machine_ character that
 made switch nodes worth building, and the beam being drawn at all times is what keeps it learnable. It
 belongs at the top tiers, as suggested — not in the bottom two.
+
+#### What authoring the wrong turn actually buys
+
+With two fixed faces a mirror's wrong setting is whatever geometry hands you. With authored stops the
+generator **picks** it, so it can choose one that dies late and past other pieces rather than one that
+flies straight off the board. Measured over 40 seeds a tier — for every player-owned mirror, today's wrong
+face against the best alternative any legible stop could offer (at least 45° off the solution's own
+angle):
+
+| Tier    | Legs today → best | Forks today → best | Mirrors with a deeper option |
+| ------- | ----------------- | ------------------ | ---------------------------- |
+| starter | 2.98 → **4.21**   | 0.75 → 0.79        | 4%                           |
+| junior  | 3.61 → **5.40**   | 1.47 → 1.53        | 6%                           |
+| expert  | 3.78 → **5.58**   | 1.62 → 1.76        | 13%                          |
+| master  | 4.34 → **6.26**   | 2.13 → 2.34        | 17%                          |
+| wizard  | 5.42 → **7.67**   | 2.66 → **3.05**    | 30%                          |
+
+**It buys length reliably and branching barely.** A wrong turn runs 40–50% further before it dies, at
+every tier. Forks move 4–15%, and on most mirrors the geometry already offers the best fork count
+available — only 4% of starter mirrors and 30% of wizard ones have a strictly deeper alternative.
+
+**That distinction matters, because the two are not the same currency.** §6.3's maze reading named both:
+_"only after 3 turns you can decide it's a dead end"_ is legs, and _"maybe you even then found forks you
+need to try"_ is forks. But only forks block T3 — its clause is "with **no unsettled piece** left on the
+way", so a branch running seven legs into a wall with nothing standing on it is still dismissed in one
+step. Legs are the work of tracing; forks are the work of thinking.
+
+So the honest reading: **authored angles are a strong lever on how far you must follow a wrong turn, and a
+weak one on how much you must weigh while following it.** Both are worth having — a board whose wrong
+branches take four legs to close is meaningfully less transparent than one where they take two — but
+authoring angles alone will **not** fix the junior/expert collapse §6.3 found. Their fork counts barely
+separate even at their best (1.53 against 1.76). Closing that gap needs **placement** to cooperate:
+pieces standing where wrong rays actually go. That is `buildPieces`, not the angle set.
+
+Two things in favour anyway. The lever **grows with tier** — 4% to 30% of mirrors having a deeper option —
+which is the right direction, since it is most available exactly where it is most wanted. And the two
+levers compound: an authored angle that sends a wrong ray somewhere, and a piece placed where that ray now
+goes, are the same generation pass.
+
+_Caveat on the table: it is an upper bound._ Each alternative was checked only for still failing to light
+the shrine. Swapping a mirror's wrong stop changes the puzzle, and the board would have to be re-proved
+unique and deducible afterwards — so these are what selection could reach for, not what it would keep.
