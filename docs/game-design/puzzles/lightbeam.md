@@ -995,3 +995,40 @@ which is the line between a deduction and a worklist. With three cut mirrors and
 reads: _"an even number of these are making a diagonal, so at least one of the three is not"_ — which
 narrows the board and still leaves the player to find out which. With two it reads: _"both of them"_, and
 there is nothing left to find out.
+
+### 11.6 The rule this breaks, and the choice that follows
+
+**§9 already says: "Both mirror orientations read as visibly different objects, not a subtle rotation, at
+44px."** Eight orientations at 22.5° steps are, by construction, subtle rotations of one another. So
+§11.4 as written does not merely carry a drawing _risk_ — it contradicts a board requirement this family
+already holds itself to and already ships against. That has to be resolved before any of it is built.
+
+There is a resolution, and it costs something. **Give a cut mirror four states — `m ∈ {1,3,5,7}` — rather
+than eight.** Then:
+
+- **Its own states are 45° apart**, the same visual separation as `/` versus `\`, which is the
+  discrimination the board already passes at 36px.
+- **It never shares an angle with an ordinary mirror** (which is 45° or 135°), so the two are always
+  22.5° apart — near enough that _type_ must be carried by the glyph rather than the angle. A cut mirror
+  wants to be drawn as a different object, not a rotated one.
+- **It is cheaper.** Four states against two is a 2× multiplier per piece, not 4×, so under the same
+  20 000 traces wizard affords **four** cut mirrors rather than two, and master seven.
+
+**The cost is that it always flips parity**, because every one of `{1,3,5,7}` is a half-step. A four-state
+cut mirror can no longer be quietly used as an ordinary mirror, which was the first and cheapest of
+§11.5's three ways of stopping the count from giving the answer away. The other two still stand — a double
+crossing, or a shrine that can be entered either way — and they are now doing all the work.
+
+So the two horns, and they are a genuine choice rather than a technicality:
+
+|                   | Eight states                               | Four states                |
+| ----------------- | ------------------------------------------ | -------------------------- |
+| Reads at 36px     | **No** — breaks §9                         | Yes, at today's separation |
+| Countable (§11.5) | Harder — four aligned states hide the role | **Yes** — always flips     |
+| Cost per piece    | 4×                                         | 2×                         |
+| Wizard affords    | 2                                          | 4                          |
+
+**Four states is the better trade, and it should be decided before anything is drawn**, because it is the
+difference between prototyping a piece with eight rotations and one with four. It also means the drawing
+prototype's job is much narrower: show that a four-state cut mirror is a visibly different _object_ from
+a two-state one, and that its four angles separate at 36px.
