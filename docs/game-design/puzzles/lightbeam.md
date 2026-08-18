@@ -1468,7 +1468,14 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
    costs is `exitRun` rather than stone.
 4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
    — **done, §11.12**, and it is where the mechanic reaches a player: master and wizard route diagonally.
-5. **Traps** (§11.1), which need the second routes this supplies.
+5. **One mirror type, and the list authored per piece** — rule 1's own promise, which steps 1–4 have not
+   kept: the generator ships `[45°, 135°]` on 921 of 961 mirrors and every list is two stops long. The
+   drawing goes first again, because the fill that tells a cut mirror from an ordinary one only works while
+   lists come in two flavours, and rule 1 asks for many. — **its drawing is gated, §11.13**, and the answer
+   is a tick at each stop the piece is not in, which is also the first thing in the family that would let a
+   player read a fork without tapping it (so it owes rule 5 an argument). The generator and the measurement
+   are still to build. **Inserted here after step 4, so what used to be step 5 is now step 6.**
+6. **Traps** (§11.1), which need the second routes this supplies.
 
 **Three things paper cannot settle, and they were the whole remaining risk — all three are now closed:**
 ~~whether the stops read at 36px~~ (settled — §11.9), ~~what the generator's yield is once uniqueness has
@@ -1877,6 +1884,119 @@ door slides aside as the light reaches its socket.
 
 #### Left alone on purpose
 
-- **Step 5, traps** (§11.1), which is what the second routes were for.
+- **Traps** (§11.1), which is what the second routes were for — and they are no longer next. Rule 10 gained
+  a step: **one mirror type with the list authored per piece** (§11.13) comes first, because step 4 is what
+  made the gap between rule 1 and the generator measurable.
 - **The difficulty-metric swap** (§6.3), still separate, and now with the expert/master caveat above.
 - **`placeShadows`, `thinWalls` and the spacing rules**, unchanged — §11.11's list still reads correctly.
+
+### 11.13 What the stop drawing found, before any of its logic
+
+Rule 10 step 5, run the way step 1 was: the drawing first, at 35.3px, before a line of the generator
+changes. The question is not the mechanic's — it is **rule 1's**, which steps 1 to 4 have not kept.
+
+**Measured first, because the gap is the reason for the step.** Over 200 generated boards on the five
+tiers, the authored stop lists are:
+
+| tier    | distinct lists authored                         | stop counts |
+| ------- | ----------------------------------------------- | ----------- |
+| starter | `[45°, 135°]` ×120                              | 2 only      |
+| junior  | `[45°, 135°]` ×160                              | 2 only      |
+| expert  | `[45°, 135°]` ×194                              | 2 only      |
+| master  | `[45°, 135°]` ×200, then four derived pairs ×40 | 2 only      |
+| wizard  | `[45°, 135°]` ×247, then four derived pairs ×40 | 2 only      |
+
+**921 of 961 mirrors carry the identical list, and no list anywhere is longer than two.** Rule 1 says "two
+or three stops per piece… not the same set on every piece — the variety is the point", and the generator
+ships one set with a garnish. The type was never the obstacle: `MovablePiece`'s `turnMirror` has been
+`{ at, angles }` since §11.10, one mirror with an authored list, exactly as rule 1 describes.
+
+**So what is actually blocking rule 1 is the drawing, and it always was.** A cut mirror is told from an
+ordinary one by a _fill_ — solid bar against hollow plate (§11.9) — which is **one bit**, and it only says
+anything because there are only two flavours to distinguish. Author genuinely varied lists and that bit
+goes silent. §11.9's finding is what forces this: the 22.5° between two stop sets can never be read off a
+drawn angle, because you are judging one cell with nothing to compare against.
+
+#### Three candidates, and the one rule 5 suggests is the one that fails
+
+Prototyped in `StopRingPrototype`, which imports nothing from `LightbeamBoard` — the bar geometry,
+`glyphTurn` and `OwnerRing` are copied on purpose, so looking at a candidate cannot change the shipped
+board. Cells are 35.3px, shot at 1× to judge and 6× to inspect.
+
+| candidate                             | verdict                                                        |
+| ------------------------------------- | -------------------------------------------------------------- |
+| **A — a ring in as many segments**    | **Rejected**, and it is rule 5's own wording                   |
+| **B — pips, counted like dice**       | **Rejected** above three, and it carries less for the same ink |
+| **C — a tick at each stop not taken** | **Passes**, and it answers a question that was not asked       |
+
+**A fails for a reason worth keeping: the bar runs through the annulus the ring wants.** A mirror is a line
+across the whole cell, so any ring drawn around it is crossed and occluded by the very thing it annotates.
+At two stops it reads as two arcs; by four it is a dashed circle of indeterminate count, and at 35.3px it
+is a mush at every count. Rule 5's parenthesis — "a ring in as many segments" — cannot be built.
+
+**B is countable to about three and then stops.** Past that the pips collide with the bar's ends and read
+as "some dots". It is also the weaker candidate at equal cost: pips sit at fixed bearings, so they say how
+many stops there are and nothing about **which**.
+
+#### C, and the thing it settles that §11.9 said could not be settled
+
+The bar says where the piece stands; a short tick at each stop it is **not** in says where else it goes.
+Three findings, in order of how much they change:
+
+1. **It draws the angles, not the count.** §11.9 concluded the drawn angle can never distinguish
+   `[22.5°, 135°]` from `[45°, 135°]` — true, and irrelevant here, because a tick puts the comparison
+   **inside the one cell**. There is now a candidate on which a player can read a piece's whole fork
+   without touching it. **That contradicts §11.8 rule 5** ("stops are discovered by tapping, not drawn"),
+   and it is a design change to be argued rather than slipped in: what rule 5 buys is board area, and what
+   it costs is that a fork is probed rather than seen — which §4 says is the difference between trial and
+   deduction.
+2. **The count falls out and never has to be counted.** What a player needs is "what are my options here",
+   and one tick against three is a _texture_ — a fan — that reads before it is counted. So the countability
+   ceiling A and B were being judged against is not a real bar.
+3. **The marginal discrimination is bare-against-one-tick, not two-against-three** — and that is what
+   decides how to spend it. At 35.3px a single tick is present but quiet, while the step from one to three
+   is loud. Since every mirror has at least two stops, **every mirror carries at least one tick**, so the
+   quiet comparison never arises on a board: one tick is the baseline the eye calibrates on, and more than
+   one is the thing worth seeing. Drawing the tick on ordinary mirrors too is what makes that true — which
+   is the opposite of the instinct to draw it only where a piece is unusual, and that instinct is `cut`'s
+   one bit wearing a different coat.
+
+**The `OwnerRing` question is closed: no collision.** All three candidates sit inside the cell's outline,
+and the socket-driven two-colour split stays legible against them — the ring is pink and green at the edge,
+the marks are sky inside. Concentric was the worry and it is not one.
+
+#### What the gate therefore says to build, which is not what was proposed to it
+
+The proposal into this step was to replace `Blocker.cut: boolean` with a stop **count**. The drawing says
+that is the wrong field: the renderer needs the **angles**.
+
+```ts
+{ kind: "mirror"; angle: MirrorAngle; stops: readonly MirrorAngle[] }
+```
+
+One field replaces one field, and a derived boolean disappears rather than being swapped for a derived
+number. `angle` stays what it has always been — which stop the piece is in, and the only thing the light
+reads. `stops` is the authored list, which the flattening into `CellContent[][]` currently throws away and
+is exactly what the renderer has to have. `sameBlocker` compares the list instead of the bit, which is
+strictly more information, so the resolved-or-`unknown` engine gets no weaker.
+
+`cut`, and `isCut` with it, then has nothing left to do. It is worth recording what it was: **a rendering
+hint smuggled through a physics value**, and it meant two different things depending on which branch built
+it — a fact about the piece's list when `pieceOccupant` passed `angles`, and a fact about the current angle
+when `configGrid` fell back to `[angle]` for a fixed or sliding mirror. A fixed mirror authored off the
+diagonals drew as a plate for no reason anyone chose.
+
+#### What is still unbuilt, and in what order
+
+1. **The `Blocker` change and the tick glyph** — the drawing, which this section has now gated.
+2. **The generator authoring varied lists.** A stop-count dial, and any legal list containing the bend's
+   angle, subject to rule 2 (keep a quarter turn) and to `blockWrongSettings` being able to close **every**
+   non-answer ray — which is the real budget, since a three-stop piece has two rays and a four-stop one has
+   three.
+3. **The measurement.** More stops per piece is a bigger configuration space and more rays to wall, so
+   yield, the technique cap and `MAX_ATTEMPTS` all move. §11.12's method applies unchanged: attempts a
+   board, walls a board, which rungs fire, worst generation.
+
+And one thing to settle before step 2 rather than after: **rule 5.** If a fork is drawn rather than
+discovered, the piece stops paying for itself in taps and starts paying in ink, and §6.3's "seen from the
+door" is measured over wrong _settings_ — a fork the player can see changes what that number means.

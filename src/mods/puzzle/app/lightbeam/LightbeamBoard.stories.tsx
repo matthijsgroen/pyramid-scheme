@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import type { FC } from "react"
+import type { FC, ReactNode } from "react"
 import { useState } from "react"
 import {
   BACKSLASH,
@@ -645,6 +645,281 @@ export const DiagonalRoute: Story = {
         states={diagonalCrossing.solution}
         caption="crossedBeams at 45° — a diagonal over a column, and over a row"
       />
+    </div>
+  ),
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Rule 10 step 5's drawing gate (§11.13), run before a line of its logic — §11.9's method, and its
+// precedent that the drawing is what kills this kind of thing.
+//
+// The question: **rule 1 asks for a list of stops authored per piece, and the board cannot draw one.**
+// Today a mirror is a solid bar or a hollow plate, which says "this piece's list is the default pair" or
+// "it is not" — one bit, and it only carries information because the generator ships `[45°, 135°]` on 921
+// of 961 mirrors. Author genuinely varied lists and that bit says nothing.
+//
+// Everything below is a PROTOTYPE and imports nothing from `LightbeamBoard` — the glyph geometry and
+// `glyphTurn` are copied deliberately, so looking at a candidate cannot change the shipped board. Cells
+// are 35.3px, the real wizard cell inside a 318px board on a 360px screen (§9's "real geometry").
+// ---------------------------------------------------------------------------------------------------
+
+const CELL_PX = 35.3
+
+/** The two ring colours the board already uses, copied so the collision question is asked honestly. */
+const PLAYER_RING_PROTO = "rgb(255 255 255)"
+const SOCKET_RING_PROTO = ["rgb(110 231 183)", "rgb(249 168 212)"]
+
+/** Copied from `LightbeamBoard` on purpose — see the block comment. */
+const protoTurn = (angle: MirrorAngle): number => {
+  const turn = (-angle * 22.5) % 180
+  return turn <= -90 ? turn + 180 : turn > 90 ? turn - 180 : turn
+}
+
+/** The mirror line itself, unchanged from the shipped solid bar. Every candidate draws this and adds to it. */
+const ProtoBar: FC<{ angle: MirrorAngle }> = ({ angle }) => (
+  <g className="origin-center" style={{ transform: `rotate(${protoTurn(angle)}deg)` }}>
+    <line x1={4.75} y1={50} x2={95.25} y2={50} strokeWidth={14} strokeLinecap="round" className="stroke-sky-200" />
+  </g>
+)
+
+/**
+ * **Candidate A — rule 5's own words: "a ring in as many segments".** A circle broken into `stops` equal
+ * dashes. `pathLength` normalises the circumference to the count, exactly as `OwnerRing` splits itself
+ * between socket colours, so the arithmetic is one the board already does.
+ */
+const RingSegments: FC<{ stops: number }> = ({ stops }) => (
+  <circle
+    cx={50}
+    cy={50}
+    r={43}
+    fill="none"
+    strokeWidth={7}
+    pathLength={stops * 2}
+    strokeDasharray="1 1"
+    className="stroke-sky-400/70"
+  />
+)
+
+/** **Candidate B — pips.** `stops` dots evenly round the cell, counted the way dice are counted. */
+const RingPips: FC<{ stops: number }> = ({ stops }) => (
+  <g className="fill-sky-400/80">
+    {Array.from({ length: stops }, (_, index) => {
+      const bearing = (index / stops) * 2 * Math.PI - Math.PI / 2
+      return <circle key={index} cx={50 + 41 * Math.cos(bearing)} cy={50 + 41 * Math.sin(bearing)} r={6} />
+    })}
+  </g>
+)
+
+/**
+ * **Candidate C — a tick at each stop the piece is _not_ in.** The ambitious one: it shows the fork's
+ * *contents* rather than only its size, which is the thing §11.9 concluded the drawn angle could never
+ * carry — because a tick puts the comparison inside the one cell you are looking at.
+ *
+ * The bar already says where the piece is, so drawing a tick there too is ink for a fact already told —
+ * and worse, it is collinear with the bar and vanishes underneath it. So the ticks are the **alternatives**:
+ * the bar is where it stands, the ticks are where else it goes, and the count of options is ticks plus one.
+ * That is also the smaller mark, which is what decides it at 35.3px.
+ *
+ * A mirror line is the same line half a turn later, so each stop folds to one bearing in [0°, 180°) and
+ * gets a single tick — otherwise one stop would draw two ticks and the fork would read twice its size.
+ */
+const RingTicks: FC<{ angles: readonly MirrorAngle[]; at: MirrorAngle }> = ({ angles, at }) => (
+  <g>
+    {angles
+      .filter(angle => angle !== at)
+      .map(angle => {
+        const bearing = ((protoTurn(angle) + 180) % 180) * (Math.PI / 180)
+        const [dx, dy] = [Math.cos(bearing), Math.sin(bearing)]
+        return (
+          <line
+            key={angle}
+            x1={50 + 33 * dx}
+            y1={50 + 33 * dy}
+            x2={50 + 48 * dx}
+            y2={50 + 48 * dy}
+            strokeWidth={9}
+            strokeLinecap="round"
+            className="stroke-sky-400/70"
+          />
+        )
+      })}
+  </g>
+)
+
+/** One cell at the real wizard size, on the real board background, with the real 8% inset. */
+const ProtoCell: FC<{ children: ReactNode; ring?: string[] }> = ({ children, ring }) => (
+  <div className="relative shrink-0 rounded bg-stone-800" style={{ width: `${CELL_PX}px`, height: `${CELL_PX}px` }}>
+    {ring && <OwnerRingProto colours={ring} />}
+    <div className="size-full p-[8%]">
+      <svg viewBox="0 0 100 100" className="size-full overflow-visible">
+        {children}
+      </svg>
+    </div>
+  </div>
+)
+
+/** Copied from `LightbeamBoard`'s `OwnerRing`, so the collision question is asked against the real thing. */
+const OwnerRingProto: FC<{ colours: string[] }> = ({ colours }) => (
+  <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 size-full">
+    {colours.map((colour, index) => (
+      <rect
+        key={colour}
+        x={5}
+        y={5}
+        width={90}
+        height={90}
+        rx={12}
+        fill="none"
+        stroke={colour}
+        strokeWidth={5}
+        strokeLinecap="butt"
+        pathLength={colours.length}
+        strokeDasharray={`1 ${colours.length - 1}`}
+        strokeDashoffset={-index}
+        opacity={0.85}
+      />
+    ))}
+  </svg>
+)
+
+const ProtoRow: FC<{ label: string; children: ReactNode }> = ({ label, children }) => (
+  <div className="flex items-center gap-3">
+    <span className="w-44 shrink-0 text-right font-mono text-[10px] text-amber-300">{label}</span>
+    <div className="flex items-center gap-2">{children}</div>
+  </div>
+)
+
+const COUNTS = [2, 3, 4, 5, 6]
+const LISTS: readonly MirrorAngle[][] = [
+  [SLASH, BACKSLASH],
+  [1, BACKSLASH],
+  [SLASH, 5],
+  [0, SLASH, BACKSLASH],
+  [1, 3, BACKSLASH],
+  [0, 1, SLASH, 5, BACKSLASH],
+]
+
+/**
+ * **Step 5's drawing gate, at 35.3px.** Two questions, and neither is answerable on paper.
+ *
+ * 1. **Can a player count the stops?** Rows A and B, at 2 through 6. A dashed ring is rule 5's literal
+ *    suggestion; pips are the same count read the way dice are read.
+ * 2. **Does it survive the outline the cell already wears?** The last rows put each candidate inside
+ *    `OwnerRing` — white for the player's piece, and the two-colour split an and-wired piece wears — which
+ *    is already a ring at the cell's edge. A second concentric ring may be one too many.
+ *
+ * Candidate C asks a third, more ambitious question: **can the ring show *which* angles rather than only
+ * how many?** §11.9 concluded the drawn angle can never distinguish `[22.5°, 135°]` from `[45°, 135°]`,
+ * because you are judging one cell with nothing to compare against — but a tick at each stop puts the
+ * comparison *inside* the cell. If that reads, the fork stops being something you discover by tapping,
+ * which is the whole difference between a deduction and a probe (§4).
+ *
+ * Bottom row is the control: today's solid bar and hollow plate, the one bit the board currently has.
+ */
+export const StopRingPrototype: Story = {
+  args: { puzzle: diagonalMaster, states: diagonalMaster.solution, onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-col gap-2 p-2">
+      <ProtoRow label="A · ring segments">
+        {COUNTS.map(stops => (
+          <ProtoCell key={stops}>
+            <ProtoBar angle={SLASH} />
+            <RingSegments stops={stops} />
+          </ProtoCell>
+        ))}
+      </ProtoRow>
+      <ProtoRow label="B · pips">
+        {COUNTS.map(stops => (
+          <ProtoCell key={stops}>
+            <ProtoBar angle={SLASH} />
+            <RingPips stops={stops} />
+          </ProtoCell>
+        ))}
+      </ProtoRow>
+      <ProtoRow label="C · tick per stop">
+        {LISTS.map(angles => (
+          <ProtoCell key={angles.join(",")}>
+            <ProtoBar angle={angles[0]} />
+            <RingTicks angles={angles} at={angles[0]} />
+          </ProtoCell>
+        ))}
+      </ProtoRow>
+      <ProtoRow label="C · same piece, turned">
+        {LISTS.map(angles => (
+          <ProtoCell key={angles.join(",")}>
+            <ProtoBar angle={angles[angles.length - 1]} />
+            <RingTicks angles={angles} at={angles[angles.length - 1]} />
+          </ProtoCell>
+        ))}
+      </ProtoRow>
+      <ProtoRow label="A/B/C in OwnerRing">
+        <ProtoCell ring={[PLAYER_RING_PROTO]}>
+          <ProtoBar angle={SLASH} />
+          <RingSegments stops={3} />
+        </ProtoCell>
+        <ProtoCell ring={[PLAYER_RING_PROTO]}>
+          <ProtoBar angle={SLASH} />
+          <RingPips stops={3} />
+        </ProtoCell>
+        <ProtoCell ring={[PLAYER_RING_PROTO]}>
+          <ProtoBar angle={1} />
+          <RingTicks angles={[1, 3, BACKSLASH]} at={1} />
+        </ProtoCell>
+      </ProtoRow>
+      <ProtoRow label="…and socket-driven">
+        <ProtoCell ring={SOCKET_RING_PROTO}>
+          <ProtoBar angle={SLASH} />
+          <RingSegments stops={3} />
+        </ProtoCell>
+        <ProtoCell ring={SOCKET_RING_PROTO}>
+          <ProtoBar angle={SLASH} />
+          <RingPips stops={3} />
+        </ProtoCell>
+        <ProtoCell ring={SOCKET_RING_PROTO}>
+          <ProtoBar angle={1} />
+          <RingTicks angles={[1, 3, BACKSLASH]} at={1} />
+        </ProtoCell>
+      </ProtoRow>
+      <ProtoRow label="C · is 1 tick worth ink?">
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+        </ProtoCell>
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+          <RingTicks angles={[SLASH, BACKSLASH]} at={SLASH} />
+        </ProtoCell>
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+        </ProtoCell>
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+          <RingTicks angles={[SLASH, 1]} at={SLASH} />
+        </ProtoCell>
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+          <RingTicks angles={[SLASH, BACKSLASH, 1]} at={SLASH} />
+        </ProtoCell>
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+          <RingTicks angles={[SLASH, BACKSLASH, 1, 5]} at={SLASH} />
+        </ProtoCell>
+      </ProtoRow>
+      <ProtoRow label="control · today">
+        <ProtoCell>
+          <ProtoBar angle={SLASH} />
+        </ProtoCell>
+        <ProtoCell>
+          <g className="origin-center" style={{ transform: `rotate(${protoTurn(1)}deg)` }}>
+            <polygon
+              points="4,50 18,37 82,37 96,50 82,63 18,63"
+              fill="none"
+              strokeWidth={11}
+              strokeLinejoin="round"
+              className="stroke-sky-200"
+            />
+          </g>
+        </ProtoCell>
+      </ProtoRow>
     </div>
   ),
 }
