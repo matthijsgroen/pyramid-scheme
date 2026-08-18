@@ -4,6 +4,8 @@ import {
   cellKey,
   DIRECTIONS,
   directionStep,
+  firedConfig,
+  firedWirings,
   mirrorBlocker,
   opposite,
   pieceCells,
@@ -341,6 +343,21 @@ const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
   return [at.col + (col === 0 ? 0.5 : col > 0 ? 1 : 0), at.row + (row === 0 ? 0.5 : row > 0 ? 1 : 0)]
 }
 
+/**
+ * Where to mark the end of the beam: the face it meets, or the cell **centre** when it ends on a diagonal.
+ *
+ * `sidePoint` is a cell corner for a diagonal direction, and a corner is the one point §11.8 rule 4 gives
+ * the opposite meaning to everywhere else on the board — diagonal light slips *between* two corners rather
+ * than stopping at one, so a dot on a corner says "it got through" on a board whose whole point is that it
+ * did not. On a 9-wide grid it also lands in a four-cell junction and stops belonging to any of them.
+ *
+ * The centre is unambiguous and it is where a diagonal beam visibly ends anyway: the polyline already runs
+ * into the middle of the cell and stops there. Both markers take it, which closes the question §11.10 left
+ * open for the escape marker and §11.11 left open for the absorbed one — one answer, four lines apart.
+ */
+const endPoint = (at: CellRef, direction: Direction): [number, number] =>
+  direction % 2 === 1 ? [at.col + 0.5, at.row + 0.5] : sidePoint(at, direction)
+
 const segmentPoints = (segment: BeamSegment): string => {
   const from = sidePoint(segment.at, opposite(segment.enter))
   const centre: [number, number] = [segment.at.col + 0.5, segment.at.row + 0.5]
@@ -394,16 +411,16 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSeg
       {/* Where the light ends, marked — otherwise a beam that stops short reads as a drawing fault. */}
       {walk.end === "absorbed" && last && (
         <circle
-          cx={sidePoint(last.at, opposite(last.enter))[0]}
-          cy={sidePoint(last.at, opposite(last.enter))[1]}
+          cx={endPoint(last.at, opposite(last.enter))[0]}
+          cy={endPoint(last.at, opposite(last.enter))[1]}
           r={0.16}
           className="fill-orange-400/70"
         />
       )}
       {walk.end === "escapes" && last?.exit && (
         <circle
-          cx={sidePoint(last.at, last.exit)[0]}
-          cy={sidePoint(last.at, last.exit)[1]}
+          cx={endPoint(last.at, last.exit)[0]}
+          cy={endPoint(last.at, last.exit)[1]}
           r={0.12}
           className="fill-amber-200/60"
         />
@@ -505,7 +522,14 @@ const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
 
 export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, onCycle }) => {
   const { size } = puzzle
-  const grid = viewGrid(puzzle, states)
+  // **The board as the light leaves it, not as the player set it.** A door the beam has already opened has
+  // moved, and drawing it where it rests draws stone across a lit stretch — the exact picture §11.1 promises
+  // the drawn beam is never one of ("effects land ahead of the light by construction"). `traceBeam` has
+  // always fired the wirings as it walks; only the pieces were still being drawn from the raw states, and it
+  // showed as a beam running straight through a brick on most wizard boards. Found while looking at a
+  // diagonal end marker (§11.12), which is why a mirror story is where it turned up.
+  const drawn = firedConfig(puzzle, states, firedWirings(puzzle, states))
+  const grid = viewGrid(puzzle, drawn)
   const walk = traceBeam(puzzle, states)
   const solved = walk.end === "lit"
   return (
@@ -561,7 +585,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
       {/* Pieces above the cells so they can slide between them, wires above the pieces so a wire is never
           buried under the thing it drives, and the beam above everything: light does touch the mirror it
           bounces off, and a beam that stopped under a glyph would read as a beam that stopped short. */}
-      <PieceLayer puzzle={puzzle} states={states} />
+      <PieceLayer puzzle={puzzle} states={drawn} />
       <NodeLayer puzzle={puzzle} walk={walk} />
       <BeamLayer puzzle={puzzle} walk={walk} lit={litBeam} />
     </div>

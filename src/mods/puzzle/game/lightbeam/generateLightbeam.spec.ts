@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
 import {
   allPieceOptions,
+  BACKSLASH,
   cellKey,
   eachConfig,
   isCut,
@@ -11,6 +12,7 @@ import {
   pieceCells,
   pieceStateCount,
   restingState,
+  SLASH,
   SQUARE_DIRECTIONS,
   stepCell,
   traceBeam,
@@ -18,6 +20,10 @@ import {
 import { generateLightbeam, resistsGreedyPlay } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
+
+/** Whether the winning beam ever leaves the rows and columns. */
+const routeRunsDiagonally = (board: ReturnType<typeof generateLightbeam>) =>
+  traceBeam(board, board.solution).path.some(segment => segment.enter % 2 === 1)
 
 describe("generateLightbeam", () => {
   it("is deterministic", () => {
@@ -288,6 +294,13 @@ describe("the tiers demand different reasoning", () => {
     // Wizard is where the ordering fact lives, so it is the only tier carrying a door and its sockets.
     expect(kinds("wizard")).toContain("door")
     expect(kinds("wizard")).toContain("socket")
+    // And the diagonal cut is master's, so no board below it ever leaves the rows and columns. This is the
+    // half of the vocabulary rule `kinds` cannot see — a cut mirror is a `turnMirror` like any other, and
+    // what makes it a new word is the stop set rather than the piece.
+    for (const tier of ["starter", "junior", "expert"] as const)
+      for (const board of sweep(tier)) expect(routeRunsDiagonally(board)).toBe(false)
+    for (const tier of ["master", "wizard"] as const)
+      for (const board of sweep(tier)) expect(routeRunsDiagonally(board)).toBe(true)
     // Sweeps every tier rather than one, so it needs more than the default budget.
   }, 30_000)
 })
@@ -340,10 +353,9 @@ describe("no two pieces the player can tap ever touch", () => {
 })
 
 // ---------------------------------------------------------------------------------------------------
-// The cut mirror (design doc §11.8), swapped in for an ordinary turn mirror at a bend — rule 8's way of
-// spending its cost: one piece doing more, not another piece. The route stays square, so what the piece
-// adds is a WRONG setting that throws the light off at 67.5°, which is the first diagonal ray
-// `blockWrongSettings` has ever had to close.
+// The cut mirror (design doc §11.8), and the route that bends diagonally at it — §11.8 rule 10 step 4,
+// measured in §11.12. Rule 8's cost is spent as a swap rather than an extra piece: the bend would have
+// carried an ordinary mirror anyway, and what changes is that its answer is a half-step.
 // ---------------------------------------------------------------------------------------------------
 
 /** The cut pieces on a board, with the bend they stand on: their answer, and the way the beam arrived. */
@@ -357,48 +369,85 @@ const cutBends = (board: ReturnType<typeof generateLightbeam>) => {
   })
 }
 
-describe("a cut mirror standing in for an ordinary one", () => {
-  // The gate on the whole mechanic: no board a player is handed carries one until the generator can route
-  // diagonally on purpose (§11.8 rule 10, step 4). Everything below runs with the dial turned on by hand.
-  it("reaches no player yet, on any tier", () => {
-    for (const difficulty of difficulties) expect(LIGHTBEAM_CONFIG[difficulty].cutMirrors ?? 0).toBe(0)
+describe("the diagonal cut", () => {
+  // §6.4's vocabulary ladder, and the gate the first three steps of §11.8 rule 10 lived behind: the piece
+  // arrives at master, where the doc has always assigned it, and nowhere earlier.
+  it("arrives at master and reaches no tier below it", () => {
+    for (const difficulty of ["starter", "junior", "expert"] as const)
+      expect(LIGHTBEAM_CONFIG[difficulty].cutMirrors ?? 0).toBe(0)
+    for (const difficulty of ["master", "wizard"] as const) expect(LIGHTBEAM_CONFIG[difficulty].cutMirrors).toBe(1)
   })
 
   describe.each(difficulties)("at %s", difficulty => {
     const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
-    const boards = Array.from({ length: 5 }, (_, seed) =>
-      generateLightbeam(size, seed + 1, { ...options, cutMirrors: 1 })
-    )
+    const wanted = options.cutMirrors ?? 0
+    const boards = Array.from({ length: 8 }, (_, seed) => generateLightbeam(size, seed + 1, options))
 
-    it("puts one on every board, on a bend the beam actually turns at", () => {
-      for (const board of boards) expect(cutBends(board)).toHaveLength(1)
+    it("puts one on every board from master up, and none below", () => {
+      for (const board of boards) expect(cutBends(board)).toHaveLength(wanted)
     })
 
-    // §11.8 rule 2, which is the constraint that killed three earlier drafts: the stop set has to keep the
-    // quarter turn the route depends on, and the second stop sits 67.5° off it — as lines, three
-    // eighth-turns either way round.
-    it("keeps the bend's quarter turn, with its other stop 67.5° away", () => {
+    // What step 4 is *for*. Every earlier step could only put diagonal light in a wrong setting; here the
+    // winning beam itself leaves the rows and columns, which is the thing a player has to read.
+    it("sends the winning beam off the rows and columns, or leaves it square", () => {
+      for (const board of boards) expect(routeRunsDiagonally(board)).toBe(wanted > 0)
+    })
+
+    // §11.8 rule 2, the constraint that killed three earlier drafts: the stop set has to keep a quarter
+    // turn, since every other piece and the route itself depend on a mirror cell being able to turn light
+    // 90°, and the other stop sits 67.5° off it — as lines, three eighth-turns either way round.
+    it("keeps a quarter turn beside the answer, 67.5° away", () => {
       for (const board of boards)
         for (const { piece, answer } of cutBends(board)) {
           expect(piece.angles).toContain(answer)
+          expect(isHalfStep(answer)).toBe(true)
+          expect(piece.angles.filter(angle => angle === SLASH || angle === BACKSLASH)).toHaveLength(1)
           const [low, high] = [...piece.angles].sort((a, b) => a - b)
           expect(Math.min(high - low, 8 - (high - low))).toBe(3)
         }
     })
 
-    it("throws the wrong setting off diagonally, and it never arrives", () => {
+    // The answer bends the beam diagonally and the other stop is the quarter turn the board would have had
+    // — so the wrong setting is the *ordinary* ray, and `blockWrongSettings` closes it the way it always has.
+    it("spends the wrong setting on the quarter turn, and it never arrives", () => {
       for (const board of boards)
-        for (const { piece, index, enter, answer } of cutBends(board))
+        for (const { piece, index, enter, answer } of cutBends(board)) {
+          expect(isHalfStep(reflect(answer, enter))).toBe(true)
           piece.angles.forEach((angle, state) => {
             if (angle === answer) return
-            expect(isHalfStep(reflect(angle, enter))).toBe(true)
             const wrong = [...board.solution]
             wrong[index] = state
             expect(isLit(board, wrong)).toBe(false)
           })
+        }
     })
 
     it("still settles inside its tier's own cap", () => {
+      for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
+    })
+  })
+
+  // Two cuts is the excursion rather than the exit: out of the square on one bend and back on the next, so
+  // the shrine is entered square again. No tier draws it — §11.5 forbids letting the *count* of cut mirrors
+  // decide how many of them are flipping — but the geometry has to hold, because it is the shape §11.5's own
+  // route-folding argument is written about.
+  describe("a pair of cuts, out of the square and back", () => {
+    const { size, ...options } = LIGHTBEAM_CONFIG.master
+    const boards = Array.from({ length: 6 }, (_, seed) =>
+      generateLightbeam(size, seed + 1, { ...options, cutMirrors: 2 })
+    )
+
+    it("builds, and runs diagonally in the middle rather than at the end", () => {
+      for (const board of boards) {
+        expect(cutBends(board)).toHaveLength(2)
+        const path = traceBeam(board, board.solution).path
+        expect(path.some(segment => segment.enter % 2 === 1)).toBe(true)
+        // Back on the square by the time it arrives: an even number of half-step crossings (§11.5).
+        expect(path[path.length - 1].enter % 2).toBe(0)
+      }
+    })
+
+    it("settles without a guess", () => {
       for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
     })
   })

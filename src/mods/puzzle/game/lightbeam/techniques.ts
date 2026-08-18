@@ -209,8 +209,22 @@ export const lightbeamSettled = (board: LightbeamBoard): boolean => knownForward
 
 const DEATHS: ReadonlySet<BeamWalk["end"]> = new Set(["absorbed", "escapes", "loops"] as const)
 
-/** How a state died, which is the difference between three quite different sentences to the player. */
-const DEATH_VARIANT: Record<string, string> = { absorbed: "wall", escapes: "edge", loops: "loop" }
+/**
+ * How a state died, which is the difference between four quite different sentences to the player.
+ *
+ * **The disc is not stone.** A mirror can send the beam straight back down its own line — `reflect` is its
+ * own inverse in the direction, so it retraces every leg it has flown and is swallowed by the disc it came
+ * out of — and telling the player it "runs into stone with nothing left to save it" sends them looking for
+ * a wall that is not there. Measured on the shipped tiers: the commonest death on a starter board after the
+ * frame, 13 boards in 40, so it is the gentlest tier that was being told the wrong thing. Found while
+ * routing diagonally (§11.12), where a cut mirror's other stop makes it a *designed* wrong answer.
+ */
+const deathVariant = (puzzle: LightbeamPuzzleData, walk: BeamWalk): string | undefined => {
+  if (walk.end === "escapes") return "edge"
+  if (walk.end === "loops") return "loop"
+  if (walk.end !== "absorbed") return undefined
+  return walk.stopAt && sameCell(walk.stopAt, puzzle.sun.at) ? "disc" : "wall"
+}
 
 const freshSegments = (board: LightbeamBoard, walk: BeamWalk): BeamSegment[] =>
   walk.path.filter(segment => !board.forced.has(forcedKey(segment)))
@@ -312,7 +326,7 @@ const pinnedEliminations = (
       const walk = walks[states.indexOf(state)]
       steps.push({
         technique,
-        variant: DEATH_VARIANT[walk.end],
+        variant: deathVariant(board.puzzle, walk),
         piece,
         beam: walk.path,
         decisions: [{ kind: "eliminate", piece, states: [state] }],

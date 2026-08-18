@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Light puzzles can carry stone that no tap will move, and a socket in the floor that opens it: send the beam across the socket and the way clears. Some need the light through two sockets before anything shifts.
+- Harder light puzzles carry a cut mirror — a hollow plate rather than a solid bar — that sends the beam off at a slant instead of a right angle, so the light can now run corner to corner across the board.
 
 ### Changed
 
@@ -19,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pieces you can move now carry a white edge, and anything a socket controls carries that socket's colour.
 - Tapping a piece is animated: sliding pieces slide, and mirrors turn.
 - Some light puzzles now send the beam back through its own path, crossing itself on the way to the shrine.
+
+### Fixed
+
+- A light-puzzle hint said the light "runs straight into stone" when a mirror had in fact sent it back the way it came, into the sun disc. It now says so.
 
 ## 0.36.0 - 2026-08-17
 

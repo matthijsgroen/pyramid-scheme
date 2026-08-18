@@ -10,22 +10,30 @@ import type { LightbeamOptions } from "./generateLightbeam"
 // | starter | right angles only, dead ends kept short          |
 // | junior  | a longer route, and the walls that come with it  |
 // | expert  | sliding mirrors and sliding walls               |
-// | master  | shadows                                          |
-// | wizard  | doors, sockets, givens, decoys                   |
+// | master  | the diagonal cut — a route that leaves the rows  |
+// | wizard  | doors, sockets, givens, decoys, shadows          |
 //
-// Measured over 40 seeds a tier after this table was set — the share of wrong turns a player can dismiss
-// without following them, which is the ramp that matters (§6.3):
+// Measured over 40 seeds a tier, re-run in one pass when the diagonal cut arrived (§11.12) — the share of
+// wrong turns a player can dismiss without following them, which is the ramp that matters (§6.3):
 //
 // | tier    | player pieces | legs a wrong turn runs | forks on it | seen from the door | worst gen |
-// | starter | 3.0           | 2.96                   | 1.00        | 33%                |     5ms   |
-// | junior  | 4.0           | 3.48                   | 1.50        | 25%                |    25ms   |
-// | expert  | 5.9           | 3.90                   | 2.22        | 15%                |    38ms   |
-// | master  | 7.5           | 4.21                   | 2.50        | 13%                |   216ms   |
-// | wizard  | 8.3           | 5.09                   | 2.65        | 13%                |   731ms   |
+// | starter | 3.0           | 2.96                   | 1.00        | 33%                |    11ms   |
+// | junior  | 4.0           | 3.48                   | 1.50        | 25%                |    23ms   |
+// | expert  | 5.9           | 4.09                   | 2.46        | 14%                |    34ms   |
+// | master  | 6.9           | 4.38                   | 2.81        | 13%                |    61ms   |
+// | wizard  | 8.2           | 5.86                   | 3.97        | 10%                |   312ms   |
 //
-// Monotone on every column, and junior against expert — 25% and 15% — is the collapse §6.3 found, closed.
-// Master and wizard tie on the headline percentage and separate on the rest; a second shadow at wizard
-// would part them by one point and cost twice the generation time, which is not a trade worth making.
+// Monotone on every column, and junior against expert — 25% and 14% — is the collapse §6.3 found, closed.
+// **Master and wizard part on the headline percentage for the first time**, 13% against 10%, which is what
+// the diagonal cut bought at wizard: they used to tie at 13% and the note here used to say a second shadow
+// was the only way to separate them and cost twice the generation time. It is the other way round — the cut
+// separates them and master's worst board got nearly four times faster to build, because a diagonal draft
+// that fails fails early.
+//
+// **Expert and master are the close pair now**, 14% against 13%, and this measure cannot see what parts
+// them: §6.3 counts the geometry of a wrong branch, and what master spends is a *rung* — `exitRun` fires on
+// 39 expert boards in 40 and 19 master ones (§11.12). That is worth knowing before the difficulty-metric
+// swap §6.3 asks for lands, because the replacement measure will read these two as one tier again.
 //
 // The ladder is built on the two things §6.3 measured separately, because they are not the same currency:
 //
@@ -34,10 +42,11 @@ import type { LightbeamOptions } from "./generateLightbeam"
 //   makes `blockWrongSettings` need them, since a wrong ray on a short route mostly runs off the frame.
 // - **Forks** — how many unsettled pieces stand in that wrong ray, which is the only thing that stops T3
 //   `deadEnd` from settling it in one step. Bought with pieces placed where wrong rays go: expert's
-//   sliding pieces, then master's shadows.
+//   sliding pieces, and wizard's shadows.
 //
-// **Master's real addition is the diagonal cut** (§11.4/§11.7), which is not built. Shadows hold the slot
-// until it is, and they are the right stand-in — they are what makes the cap bite at all (§6.1).
+// **Master's addition is the diagonal cut** (§11.8), built in §11.12's step. Shadows held the slot until it
+// was, and they were the right stand-in — they are what makes the cap bite at all (§6.1) — so they moved to
+// wizard's baseline and master's goal pool rather than being dropped.
 //
 // A tier's goal pool is **derived from its vocabulary, not authored beside it** (§6.4). Three goals change
 // the piece list rather than the amount of it — `longChain` adds a given, `clearTheWay` adds a sliding
@@ -111,13 +120,21 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     goals: ["crossedBeams", "clearTheWay", "sortTheWheat"],
     goalCount: 1,
   },
-  // One addition: shadows — holding the slot the diagonal cut will take (§11.7).
+  // One addition: **the diagonal cut** (§11.8) — the slot §6.4 has always assigned here, and shadows were
+  // only ever holding it. So the shadow comes off the baseline as the cut mirror goes on: it is a swap
+  // rather than a second addition, which is what the vocabulary ladder means by one new thing a tier.
+  // Master boards still meet a shadow through `blindAlleys` in the pool, on the boards that draw it.
+  //
+  // Measured over 40 seeds (§11.12): the trade is a rung rather than a piece. `exitRun` — the family's
+  // clearest sentence, "the shrine can only be lit from there" — falls from 34 boards in 40 to 15, and
+  // `onlySurvivor` does that work instead. That is what a board pays for reasoning it cannot read off the
+  // rows and columns, and it is why the cut belongs at a tier whose cap already allows the exhaustive pair.
   master: {
     size: 8,
     turns: 5,
     slidingMirrors: 1,
     slidingStops: 3,
-    shadows: 1,
+    cutMirrors: 1,
     fiddleProof: true,
     techniqueCap: "onlySurvivor",
     goals: ["crossedBeams", "clearTheWay", "sortTheWheat", "blindAlleys"],
@@ -135,6 +152,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     doorNodes: 2,
     decoys: 1,
     shadows: 1,
+    cutMirrors: 1,
     techniqueCap: "onlySurvivor",
     goals: ["crossedBeams", "longChain", "clearTheWay", "sortTheWheat", "blindAlleys", "orderOfOperations"],
     goalCount: 2,

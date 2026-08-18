@@ -3,10 +3,12 @@ import {
   BACKSLASH,
   cellKey,
   DIR,
+  DIRECTIONS,
   directionStep,
   eachConfig,
   insideGrid,
   allPieceOptions,
+  isHalfStep,
   isLit,
   mod8,
   opposite,
@@ -98,13 +100,13 @@ export type LightbeamDials = {
    */
   shadows: number
   /**
-   * Route mirrors given a cut mirror's stop set instead of the two diagonals (design doc §11.8).
+   * How many of the route's bends turn the beam **diagonally** — the cut mirrors (design doc §11.8).
    *
-   * The route stays square: the stop set keeps the quarter turn the bend needs and spends its *wrong*
-   * setting on a diagonal, which is §11.8 rule 8's "swap a cut mirror in for an ordinary one" — one piece
-   * doing more rather than another piece. Zero on every tier until the generator can route diagonally on
-   * purpose (§11.8 rule 10, step 4); it is here because a wrong ray that leaves at 67.5° is the only way
-   * to exercise what `blockWrongSettings` had to learn.
+   * One piece doing more rather than another piece, which is rule 8's way of spending the cost: the bend
+   * would have carried an ordinary mirror anyway, and what changes is that its answer is a half-step and
+   * its stop set reaches 67.5° the other way. The route is what authors the stop set, so this dial is a
+   * fact about the *route* rather than about a piece list — see `cutBendSlots` for the one pattern the
+   * geometry allows, and §11.12 for what turning it on cost.
    */
   cutMirrors: number
 }
@@ -140,49 +142,124 @@ export type LightbeamOptions = Partial<LightbeamDials> & {
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could
 // be set wrong. The gates at the end are what make it a puzzle rather than a maze — the route must be
 // the only route, and the ladder must be able to find it.
-const MAX_ATTEMPTS = 1600
+const MAX_ATTEMPTS = 2400
 
 // Thinning reaches a fixpoint in two sweeps on every tier measured; the rest is the guard, not the plan.
 const MAX_PRUNE_SWEEPS = 4
 
-// The shortest a route leg may be, which is what stops two consecutive bend mirrors touching.
+// The shortest a route leg may be, which is what stops two consecutive bend mirrors touching. A diagonal
+// leg of two puts them two diagonal steps apart, so they do not touch at a corner either — the reason the
+// number was chosen for still holds where the geometry has changed, and `piecesAreSpaced` is still what
+// catches two non-consecutive bends folding together.
 const MIN_LEG = 2
 
 /**
- * The mirror that turns a beam from `enter` to `exit`, if an ordinary one can: `reflect` is
- * `angle - travel`, so the angle wanted is simply `enter + exit` — and it is a mirror this generator can
- * place only when that lands on one of the two diagonals.
+ * The mirror that turns a beam from `enter` to `exit`: `reflect` is `angle - travel`, so the angle wanted
+ * is simply `enter + exit`. Two of the eight are not turns at all, and two more are forbidden by rule 2.
  *
- * The generator still routes squarely, so it only ever asks for a quarter turn. Routing diagonally on
- * purpose is step 4 of §11.8's build order, and this is the one place that will have to learn it.
+ * - **`exit === enter`** wants the mirror lying along the beam, which passes it (§11.8 rule 3) rather than
+ *   bending it, so it is not a bend.
+ * - **`exit === opposite(enter)`** wants the mirror square across the beam, which sends it straight back
+ *   the way it came. A route cannot be laid along a retroreflection.
+ * - **A flat (0) or upright (4) angle offers square light no quarter turn at all** — it passes a beam
+ *   running along it and retroreflects one meeting it head-on — so §11.8 rule 2 forbids any stop set
+ *   containing one, and a bend that wants one is a bend this generator may not place.
+ *
+ * What is left is the quarter turn off a diagonal, which is every square route the family has ever built,
+ * and the 45° and 135° turns off a **half-step** angle, which are the diagonal legs step 4 exists for. So a
+ * diagonal leg is not a special case here: it is the same subtraction asking for an odd angle, and an odd
+ * angle is what makes the piece a cut mirror.
  */
 const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
-  const angle = (enter + exit) % 8
-  return angle === SLASH || angle === BACKSLASH ? angle : undefined
+  if (exit === enter || exit === opposite(enter)) return undefined
+  const angle = mod8(enter + exit)
+  return angle === 0 || angle === 4 ? undefined : angle
 }
 
 /**
- * The stop set for a cut mirror standing in for an ordinary one at a bend (§11.8 rule 2).
+ * The stop set for a cut mirror, read off the half-step angle the route bends at (§11.8 rule 2).
  *
- * The bend's own quarter turn is kept — that is the constraint that killed three earlier drafts, since the
- * route itself depends on this cell turning light 90° — and the second stop is the half-step 67.5° off it,
- * which leans the beam 45° the *other* way. So one piece asks "hard across, or gently back", and the wrong
- * answer is the first diagonal light the family has ever had to reason about.
+ * **Rule 2's four pairs are one fact, and it is this one.** A stop set has to keep a quarter turn — the
+ * constraint that killed three earlier drafts, since every other piece and the route itself depend on a
+ * mirror cell being able to turn light 90° — and it has to reach the diagonal. That leaves exactly one
+ * partner for a half-step angle: the diagonal three eighth-turns away, which is 67.5° as lines and the
+ * only one of `angle ± 3` that is a diagonal at all. Over the four half-steps it gives `{22.5°, 135°}`,
+ * `{67.5°, 135°}`, `{45°, 112.5°}` and `{45°, 157.5°}` — §11.11's four pairs, derived rather than
+ * tabulated.
  *
- * Derived from the turn rather than tabulated: §11.8's table is written for a beam arriving rightward, and
- * a bend arrives from any of the four. For a rightward beam it gives exactly that table's two rows.
+ * So the piece asks "gently across, or hard round", and which of the two the route takes is the whole of
+ * the difference between the diagonal leg and the quarter turn the board would have had. Undefined for an
+ * even angle, which is a bend an ordinary mirror already serves.
  */
-const cutStops = (bend: Route["bends"][number]): readonly MirrorAngle[] => {
-  const half = mod8(bend.angle - (mod8(bend.exit - bend.enter) === 2 ? 3 : -3))
-  return half < bend.angle ? [half, bend.angle] : [bend.angle, half]
+const cutStops = (angle: MirrorAngle): readonly MirrorAngle[] | undefined => {
+  const aligned = [mod8(angle + 3), mod8(angle - 3)].find(stop => stop === SLASH || stop === BACKSLASH)
+  if (aligned === undefined) return undefined
+  return aligned < angle ? [aligned, angle] : [angle, aligned]
 }
 
 /**
- * The two ways a track may run across a beam. Written out rather than derived, because the order is what
- * picks the first candidate track and the boards are seeded off it.
+ * Which of the route's bends turn the beam diagonally, and the one pattern the geometry allows.
+ *
+ * **An ordinary mirror is no use to diagonal light.** A beam arriving at 45° either runs along the
+ * mirror's line and is passed straight through, or meets it square on its back and comes home the way it
+ * came — `reflect(2, 1)` is `1` and `reflect(6, 1)` is `5`, and the other two diagonals say the same. So
+ * only a half-step bend can *close* a diagonal leg, and cut bends come in **consecutive pairs** — one out
+ * of the square, one back into it — except for a single one at the very last bend, whose diagonal leg is
+ * the run into the frame and needs no closing.
+ *
+ * That is §11.5's parity invariant arriving as a construction rather than a warning: the number of
+ * half-step crossings is even for a shrine entered square and odd for one entered diagonally, so an odd
+ * dial spends its odd cut on the final bend and there is nowhere else for it to go.
  */
-const perpendicular = (direction: Direction): Direction[] =>
-  direction === DIR.up || direction === DIR.down ? [DIR.left, DIR.right] : [DIR.up, DIR.down]
+const cutBendSlots = (turns: number, cuts: number, random: () => number): Set<number> | undefined => {
+  if (cuts < 1) return new Set()
+  if (cuts > turns) return undefined
+  const chosen = new Set<number>()
+  let left = cuts
+  if (left % 2 === 1) {
+    chosen.add(turns - 1)
+    left -= 1
+  }
+  if (left >= 2)
+    for (const start of shuffle(
+      Array.from({ length: Math.max(0, turns - 1) }, (_, index) => index),
+      random
+    )) {
+      if (left < 2) break
+      if (chosen.has(start) || chosen.has(start + 1)) continue
+      chosen.add(start)
+      chosen.add(start + 1)
+      left -= 2
+    }
+  return left === 0 ? chosen : undefined
+}
+
+/**
+ * The four ways a half-step mirror can bend this beam: every direction of the other parity.
+ *
+ * All four are genuine bends, and that falls out of `angleFor` rather than needing a check — the two cases
+ * it refuses (the beam passed along the mirror's line, and the beam sent back down it) both keep the
+ * beam's parity, so neither can be one of these. A 45° turn and a 135° turn are equally allowed.
+ */
+const halfStepTurns = (direction: Direction): Direction[] =>
+  DIRECTIONS.filter(candidate => candidate % 2 !== direction % 2)
+
+/** Whether a beam is running on a diagonal, where the drawing questions of §9 have not been answered. */
+const runsDiagonally = (direction: Direction): boolean => direction % 2 === 1
+
+/**
+ * The two ways a track may run across a beam — the quarter turns either side of it.
+ *
+ * Named from the **axis** rather than from which way the beam runs along it, which is what the square
+ * version did by hand: a leg and its reverse are the same line, so they must offer the same pair in the
+ * same order, or a route that folds back gets a different track from the one that came the other way. Taking
+ * `direction % 4` is that fact written down, and it reproduces the old three-way conditional exactly on the
+ * four square directions while giving a diagonal leg its own two crossings instead of silently `[up, down]`.
+ */
+const perpendicular = (direction: Direction): Direction[] => {
+  const axis = direction % 4
+  return [mod8(axis + 2), mod8(axis + 6)]
+}
 
 /** Steps from a cell to the last one still on the grid, travelling in a direction. */
 const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
@@ -219,6 +296,13 @@ const pickSun = (size: number, random: () => number): { at: CellRef; facing: Dir
 }
 
 /**
+ * Which of the four lines a beam is running along, so a cell entered twice can be told apart from a cell
+ * the beam is retracing. Eight directions make four axes, not two: the row, the column, and the two
+ * diagonals. `direction % 4` is the whole of it, because a direction and its opposite are the same line.
+ */
+const axisOf = (direction: Direction): number => direction % 4
+
+/**
  * Lays the winning beam.
  *
  * **The route may cross itself, and that used to be forbidden on a reason that turned out not to hold.**
@@ -228,26 +312,35 @@ const pickSun = (size: number, random: () => number): { at: CellRef; facing: Dir
  * polyline per segment. A crossed square was already two things everywhere it mattered; only the route
  * builder disagreed.
  *
- * What a crossing has to be is **perpendicular**. A cell entered twice on the same axis is the beam
- * retracing its own line, which is a different and much worse thing; a cell entered once horizontally and
- * once vertically is a clean cross, and the one fact it forces is worth having: **nothing can stand
- * there**, or the first pass would have turned. So a crossing may never be a bend, a stop, or a door.
+ * What a crossing has to be is **two different axes**. A cell entered twice on the same axis is the beam
+ * retracing its own line, which is a different and much worse thing; a cell entered on two different ones
+ * is a clean cross, and the one fact it forces is worth having: **nothing can stand there**, or the first
+ * pass would have turned. So a crossing may never be a bend, a stop, or a door.
+ *
+ * This used to read "perpendicular", and once legs can run diagonally that is narrower than the fact
+ * needs. There are four axes now (`axisOf`), and a row crossed by a diagonal forces exactly what a row
+ * crossed by a column does — the beam turned or it did not, and it did not. Every crossing a square board
+ * builds is still a right angle, because both its legs are square.
  *
  * The final leg runs all the way to the frame, which sets the shrine in the wall. That is worth the
  * constraint: a shrine on an edge can only be lit from three sides at most, and the frame kills most of
  * those outright, which is what lets the `exitRun` deduction fire at all.
  */
-const axisOf = (direction: Direction): "h" | "v" => (direction === DIR.left || direction === DIR.right ? "h" : "v")
-
 const buildRoute = (
   size: number,
   turns: number,
   random: () => number,
   /** Whether the route is allowed to fold back through itself at all. */
-  mayCross: boolean
+  mayCross: boolean,
+  /** How many bends turn the beam diagonally (§11.8 rule 2) — the cut mirrors. */
+  cutMirrors: number
 ): Route | undefined => {
+  // The shape of the route before a square of it is laid: which bends are half-steps is forced into one
+  // pattern by the geometry (`cutBendSlots`), so it is decided once here rather than bend by bend.
+  const cuts = cutBendSlots(turns, cutMirrors, random)
+  if (!cuts) return undefined
   const sun = pickSun(size, random)
-  const used = new Map<string, Set<"h" | "v">>([[cellKey(sun.at), new Set(["h", "v"])]])
+  const used = new Map<string, Set<number>>([[cellKey(sun.at), new Set([0, 1, 2, 3])]])
   const crossings = new Set<string>()
   const cells: RouteCell[] = []
   const bends: Route["bends"] = []
@@ -299,7 +392,11 @@ const buildRoute = (
     }
     // A bend needs a mirror, and a crossed square has to stay empty.
     if (crossings.has(cellKey(at))) return undefined
-    const exit = shuffle(perpendicular(direction), random)[0]
+    const half = cuts.has(leg)
+    // A diagonal leg has no other way out — see `cutBendSlots` — so a pattern that left one open would lay
+    // a route no mirror can bend. It cannot happen, and saying so here is cheaper than trusting it.
+    if (runsDiagonally(direction) && !half) return undefined
+    const exit = shuffle(half ? halfStepTurns(direction) : perpendicular(direction), random)[0]
     const angle = angleFor(direction, exit)
     if (angle === undefined) return undefined
     cells[cells.length - 1].exit = exit
@@ -336,6 +433,9 @@ type Draft = {
  * merely whether it is in the way.
  */
 const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] => {
+  // `across` is always a square direction: everything that asks for a track — a sliding mirror at a bend, a
+  // sliding wall on a straight, a door's open stop — is drawn from a square leg on purpose, so the run this
+  // builds is a row or a column and the spec that asserts as much stays true (§9, and §11.12).
   const [forward] = perpendicular(across)
   const back = opposite(forward)
   return Array.from({ length }, (_, ahead) => {
@@ -365,7 +465,17 @@ const wrongSettingRays = (
   angles: readonly MirrorAngle[],
   answer: MirrorAngle
 ): Ray[] =>
-  angles.filter(angle => angle !== answer).map(angle => ({ from: bend.at, direction: reflect(angle, bend.enter) }))
+  angles
+    .filter(angle => angle !== answer)
+    .map(angle => ({ from: bend.at, direction: reflect(angle, bend.enter) }))
+    // A wrong setting that sends the beam back the way it came needs nothing: `reflect` is its own inverse
+    // in the direction, so the light retraces every leg it has already flown, off every mirror that carried
+    // it, and is swallowed by the disc it came out of. No stone may go there — the cells are the route's own
+    // — and none is wanted, which is why this ray is dropped here rather than refused in
+    // `blockWrongSettings`. It is a death the player can see and one no other piece in the family has:
+    // §11.5's retracing excursion, arriving as the wrong answer instead of a failed idea. Only a 45° bend
+    // has one, since the partner stop lies 135° off the answer and that is where the way back is.
+    .filter(ray => ray.direction !== opposite(bend.enter))
 
 const ADJACENT: readonly Direction[] = SQUARE_DIRECTIONS
 
@@ -513,6 +623,9 @@ const placeWiredDoors = (
         ({ cell, index }) =>
           index >= half &&
           cell.exit === cell.enter &&
+          // A door's open stop is one cell to the side, so the same track question applies: on a diagonal
+          // leg the stone would slide diagonally out of the way, which is a drawing rather than a rule.
+          !runsDiagonally(cell.enter) &&
           !route.crossings.has(cellKey(cell.at)) &&
           !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at)) &&
           !draft.movableCells.has(cellKey(cell.at))
@@ -580,30 +693,23 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   draft.taken.add(cellKey(route.sun.at))
   for (const cell of route.cells) draft.taken.add(cellKey(cell.at))
 
-  const bends = shuffle(
-    route.bends.map((bend, index) => ({ bend, index })),
-    random
-  )
+  // A bend the route turns diagonally at is a cut mirror, and it is the player's to turn in place. Neither
+  // of the other two things a bend can become will take one: a given has no wrong setting to spend, so the
+  // stop set the route just authored would be invisible; and a sliding mirror's question is which cell
+  // rather than which angle, so its track would have to run across a diagonal beam — a drawing §9 has not
+  // made. So the givens and the sliding pieces are drawn from the **square** bends alone, which is the same
+  // draw as before on a board whose route has no diagonal in it.
+  const squareBends = route.bends.map((bend, index) => ({ bend, index })).filter(({ bend }) => !isHalfStep(bend.angle))
+  const bends = shuffle(squareBends, random)
   const setCount = Math.min(options.setMirrors, Math.max(0, route.bends.length - 1))
   const given = new Set(bends.slice(0, setCount).map(entry => entry.index))
-  const movableBends = route.bends.filter((_, index) => !given.has(index))
-  const slidingCount = Math.min(options.slidingMirrors, movableBends.length - 1 < 0 ? 0 : movableBends.length)
+  const movableSquare = squareBends.filter(({ index }) => !given.has(index)).map(({ bend }) => bend)
+  const slidingCount = Math.min(options.slidingMirrors, movableSquare.length)
   const sliding = new Set(
     shuffle(
-      movableBends.map(bend => cellKey(bend.at)),
+      movableSquare.map(bend => cellKey(bend.at)),
       random
     ).slice(0, slidingCount)
-  )
-
-  // Only a bend the player turns in place can be swapped for a cut mirror: a given has no wrong setting to
-  // spend, and a sliding mirror's question is which cell rather than which angle.
-  const cut = new Set(
-    options.cutMirrors
-      ? shuffle(
-          movableBends.filter(bend => !sliding.has(cellKey(bend.at))).map(bend => cellKey(bend.at)),
-          random
-        ).slice(0, options.cutMirrors)
-      : []
   )
 
   const wrongRays: Ray[] = []
@@ -627,7 +733,8 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
       wrongRays.push({ from: bend.at, direction: bend.enter })
       return
     }
-    const angles = cut.has(cellKey(bend.at)) ? cutStops(bend) : TURN_ANGLES
+    const angles = isHalfStep(bend.angle) ? cutStops(bend.angle) : TURN_ANGLES
+    if (!angles) return
     draft.movableCells.add(cellKey(bend.at))
     draft.movable.push({ kind: "turnMirror", at: bend.at, angles })
     draft.solution.push(angles.indexOf(bend.angle))
@@ -641,6 +748,9 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     route.cells.filter(
       cell =>
         cell.exit === cell.enter &&
+        // Square stretches only, for the track's sake rather than the beam's: a piece sliding across a
+        // diagonal leg would draw its ghosts on a diagonal, and §9 has not settled what that reads as.
+        !runsDiagonally(cell.enter) &&
         !route.crossings.has(cellKey(cell.at)) &&
         !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at))
     ),
@@ -910,7 +1020,7 @@ const attemptGeneration = (
 ): Omit<LightbeamPuzzle, "goals"> | undefined => {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
-    const route = buildRoute(size, dials.turns, random, dials.crossings > 0)
+    const route = buildRoute(size, dials.turns, random, dials.crossings > 0, dials.cutMirrors)
     if (!route) continue
     if (route.crossings.size < dials.crossings) continue
     const draft = buildPieces(size, route, dials, random)

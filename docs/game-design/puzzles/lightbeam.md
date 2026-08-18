@@ -633,8 +633,10 @@ skin.
 > mirror, a four-state one, a retracted state, and a two-stop half-step-only set that measurement showed
 > collapses a board's reach to a third. Each is marked where it was overturned, but the corrections arrive
 > after the claims, so reading forwards will hand you a design that does not work. §11.8 is the decision;
-> everything before it is the evidence. **§11.9 is what building step 1 of it found**, and it moves one
-> bar in §9.
+> everything before it is the evidence. **§11.9 to §11.12 are what building it found**, in step order, and
+> they are the current record: §11.9 moves one bar in §9, §11.10 replaced the mirror's two facts with one
+> number, §11.11 replaced the wrong ray, and **§11.12 is where the mechanic reaches a player** — master and
+> wizard route diagonally, so anything in §11.11 written about "no board ships one" has been overtaken.
 
 - **Prisms and colour splitting.** The catalogue already rules this a different
   puzzle shape rather than a knob, and points at The Talos Principle as prior art.
@@ -1465,12 +1467,20 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
    what has to change is the _ray_ — a wrong setting is read off the piece's stop set — and what the piece
    costs is `exitRun` rather than stone.
 4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
+   — **done, §11.12**, and it is where the mechanic reaches a player: master and wizard route diagonally.
 5. **Traps** (§11.1), which need the second routes this supplies.
 
-**Three things paper cannot settle, and they are the whole remaining risk:** ~~whether the stops read at
-36px~~ (settled — §11.9), ~~what the generator's yield is once uniqueness has more to reject~~ (settled for
-the swap-in — §11.11: 40/40 boards on every tier), and ~~whether the ladder still _deduces_~~ (settled for
-the swap-in — §11.11; a board routed diagonally is still step 4's to prove).
+**Three things paper cannot settle, and they were the whole remaining risk — all three are now closed:**
+~~whether the stops read at 36px~~ (settled — §11.9), ~~what the generator's yield is once uniqueness has
+more to reject~~ (settled — §11.11 for the swap-in, §11.12 for a route that actually bends diagonally:
+40/40 boards on every tier either way, and master's worst board got nearly four times _faster_ to build),
+and ~~whether the ladder still _deduces_~~ (settled — §11.12: every master and wizard board settles inside
+its own cap, and what it costs is a rung rather than a guess).
+
+**One rule reads more narrowly than it should, and §11.12 is the correction.** Rule 2 lists two stop sets;
+they are the rightward slice of **one** fact, which is that a half-step angle has exactly one partner
+keeping a quarter turn — the diagonal three eighth-turns away. Over the four half-steps that is four pairs
+(§11.11), and `cutStops` derives them rather than tabulating them.
 
 ### 11.9 What the drawing found, at 36px
 
@@ -1681,13 +1691,14 @@ A wall for a diagonal wrong ray sits one diagonal step from the mirror, touching
 rule 4 teaches the opposite lesson about corners everywhere else on the board. It reads, and what carries it
 is the end of the line rather than the marker: the beam runs visibly _into_ the brick and stops in the
 middle of it, which is not the picture a beam that clears a corner makes (`CutMirrorWrongRay`, 8 boards in
-200 have one).
+200 have one — the story is now `DiagonalRoute`, since step 4 inverted what it shows).
 
 **The marker is the part to look at again.** An absorbed beam is dotted where it meets the obstacle's face,
 which for a diagonal entry is the cell corner — so the dot lands on the one point rule 4 gives the opposite
 meaning to, and on a 9-wide board it sits in a four-cell junction. The escape marker has the same open
 question (§11.10), no board ships either, and marking the cell centre for a diagonal end would settle both.
-Left for whoever routes diagonally on purpose rather than decided here.
+Left for whoever routes diagonally on purpose rather than decided here. — **decided that way in §11.12**,
+and both markers took it.
 
 One thing confirmed rather than found: the junior frame puts a cut mirror at **135°** two cells from an
 ordinary mirror at **135°**, both doing the identical quarter turn, on a board the generator built. Solid
@@ -1707,3 +1718,165 @@ where it counts.
   "a quarter turn, off either of its faces", which is true of every mirror a player can meet. Turning it on
   owes that sentence a rewrite — and rule 5 says a cut mirror's stops are discovered by tapping, not drawn,
   so what it owes is a sentence rather than a legend.
+
+### 11.12 What routing diagonally found
+
+Step 4, and the step where the mechanic reaches a player: **master and wizard now route diagonally**, so a
+board's winning beam leaves the rows and columns. It is smaller than steps 1–3 put together — one new
+helper in the route builder and three square assumptions generalised — and it overturns two things above.
+
+**The dial changed meaning, and the swap-in is retired.** `cutMirrors` used to swap a cut mirror in at a
+square bend and spend its _wrong_ setting on a diagonal (§11.11). It now says how many of the route's bends
+turn the beam diagonally, and the stop set is read off the bend rather than authored beside it. The two are
+the same piece with the answer and the wrong setting exchanged, which is why nothing was lost by dropping
+the older reading: a cut mirror's stop set is one diagonal and one half-step, and all step 4 does is take
+the other stop.
+
+**Rule 2's two sets are one fact.** A half-step angle has exactly **one** partner that keeps a quarter turn
+— the diagonal three eighth-turns away, since the other candidate is always the flat or upright angle, and
+neither of those can turn square light 90° at all. So `cutStops` is a lookup with no table: `{22.5°, 135°}`,
+`{67.5°, 135°}`, `{45°, 112.5°}`, `{45°, 157.5°}` and nothing else exists. §11.11 had already derived those
+four pairs from the arrival direction; they are the same four from the other end.
+
+#### The route's shape is forced, and it is §11.5's invariant arriving as a construction
+
+**An ordinary mirror is no use to diagonal light.** A beam arriving at 45° either runs along the mirror's
+line and is passed straight through (`reflect(2, 1) = 1`) or meets it square on its back and comes home
+(`reflect(6, 1) = 5`); the other two diagonals say the same. So **only a half-step bend can close a diagonal
+leg**, and there are exactly two legal shapes:
+
+- **consecutive pairs** — out of the square on one bend, back into it on the next;
+- **one at the very last bend** — the diagonal leg is then the run into the frame, and the shrine is entered
+  diagonally.
+
+Which means an odd dial has nowhere to put its odd cut but the final bend. That is §11.5's parity law used
+rather than feared: the number of half-step crossings is even for a shrine entered square and odd for one
+entered diagonally, so **the dial and the route's shape determine each other**. Both tiers ship
+`cutMirrors: 1`, which is also what keeps §11.5's own prohibition satisfied — its rule only bites on a board
+carrying more than one, and with one there is no count to read.
+
+#### What had to learn eight directions, and what deliberately did not
+
+| Place                      | What it assumed                               | What it says now                                                                                         |
+| -------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `angleFor(enter, exit)`    | a mirror only if `enter + exit` is a diagonal | any genuine turn; refuses the two non-turns and, per rule 2, the flat and upright angles                 |
+| `perpendicular(direction)` | a three-way conditional on up/down            | `direction % 4` — the pair named from the **axis**, so a leg and its reverse offer the same two in order |
+| `axisOf(direction)`        | `"h" \| "v"`                                  | `direction % 4` — four axes, since a diagonal is a line too                                              |
+
+The middle one is the correction worth keeping: the old function looked like it was answering "which way
+across this beam" and was in fact answering "which way across this axis", and only the second question has a
+stable answer. Taking the axis reproduces it exactly on all four square directions — verified board by board
+below — and gives a diagonal leg its own two crossings instead of silently handing it `[up, down]`.
+
+**A crossing may now be 45°, and that is `axisOf` reading correctly rather than a widening.** The rule was
+written as "perpendicular" because there were two axes; the fact it forces is that **nothing can stand there,
+or the first pass would have turned**, and a row crossed by a diagonal forces exactly that. Measured over 200
+generated boards: **9 crossings at master and 13 at wizard** now meet at 45°. Looked at (`DiagonalRoute`,
+last frame): it draws as an X leaning over and still reads as one square the beam goes through twice, because
+a beam polyline bends only at cell centres and both passes bend at the same point — the same structural
+reason §11.10 gave for a beam corner not appearing to terminate on a rivet.
+
+**Sliding pieces stay on square legs, and that is a decision rather than an oversight.** A track across a
+diagonal beam would draw its ghosts on a diagonal, and §9 has not settled what a diagonal run of ghosts
+reads as — so the givens and the sliding pieces are drawn from the square bends alone, sliding walls from
+square straights, and a door's open stop from a square leg's two crossings. `trackRuns` therefore still
+builds a row or a column, and the spec that asserts as much is still true. Three call sites, one rule.
+
+**A wrong setting that sends the beam home needs no stone.** At a 45° bend the partner stop lies 135° off
+the answer, which is exactly the way back: `reflect` is its own inverse in the direction, so the light
+retraces every leg it has flown, off every mirror that carried it, and the disc swallows it. No wall may go
+there — the cells are the route's own — and none is wanted, so `wrongSettingRays` drops that ray instead of
+`blockWrongSettings` refusing the draft. It is a death the player can see and the first one in the family
+that is neither stone nor the frame.
+
+**And it turned up a sentence that was already wrong.** `deadEnd`'s absorbed variant said _the light runs
+straight into stone_ for every absorption, and the disc absorbs too. Measured on the shipped tiers before
+anything changed: **13 of 40 starter boards had a `deadEnd` reason about a beam that had gone home**, and 13
+of 40 junior ones — the commonest wrong sentence in the family, on its gentlest tier, and invisible until a
+board was built where going home is the _designed_ wrong answer. There is a `disc` variant now.
+
+#### Measured, 40 seeds a tier
+
+The gate steps 1–3 were verified against — _any change that alters a generated board is a bug_ — held to the
+last byte through the eight-direction generalisations, and then was spent on purpose:
+
+| tier    | boards | attempts a board | fixed walls a board | `exitRun` used | diagonal route | worst gen               |
+| ------- | ------ | ---------------- | ------------------- | -------------- | -------------- | ----------------------- |
+| starter | 40/40  | 2.3 → 2.3        | 0.00 → 0.00         | 40 → 40        | 0/40           | byte for byte unchanged |
+| junior  | 40/40  | 4.0 → 4.0        | 0.00 → 0.00         | 40 → 40        | 0/40           | byte for byte unchanged |
+| expert  | 40/40  | 71 → 71          | 0.05 → 0.05         | 39 → 39        | 0/40           | byte for byte unchanged |
+| master  | 40/40  | 144 → 372        | 0.23 → 0.30         | **34 → 19**    | **40/40**      | 168ms → **58ms**        |
+| wizard  | 40/40  | 112 → 243        | 0.10 → 0.38         | **26 → 11**    | **40/40**      | 589ms → **319ms**       |
+
+**Yield holds and the clock improves.** Every seed on every tier still builds, and master's worst board got
+nearly three times _faster_ despite two and a half times the attempts — a diagonal draft that will not fit
+fails in the route builder, which is the cheapest place to fail. §11.4's fear that the geometry would cost
+generation time is the opposite of what happens.
+
+**The attempts are up for one structural reason**, worth knowing before tuning anything: with one cut the
+diagonal leg is the final run to the frame, and a diagonal leg roams both axes across a board whose square
+legs have already crossed it — so `mayCross` rejects far more drafts on a tier that has not drawn
+`crossedBeams`. `MAX_ATTEMPTS` went 1600 → 2400 to cover it, and the fallback ladder got _rarer_ rather than
+commoner: over 120 seeds × five tiers, **2 boards fell back on a goal before and 1 after**.
+
+**The bill is the rung §11.11 predicted, and it is smaller than §11.11 measured.** `exitRun` — _the shrine
+can only be lit from there_, the family's clearest sentence — falls from 34 boards in 40 to 19 at master and
+26 to 11 at wizard, with `onlySurvivor` doing that work instead. §11.11 measured 15 for master; the extra
+four come from master's baseline shadow coming _off_ as the cut goes on, which is §6.4's one-new-thing rule
+applied rather than a separate saving. Starter and junior would pay nothing at all if they drew the dial —
+40/40 either way — because the cost is density, not the piece: a diagonally-entered shrine set in the frame
+walls most of the eight candidates by itself, and it is the unsettled pieces on the other approaches that
+turn a candidate `unknown`.
+
+**§6.3's ramp, re-measured in one pass** (the table in `lightbeamConfig.ts`): monotone on every column, and
+master and wizard part on the headline percentage for the first time — 13% against 10%, where they used to
+tie at 13%. The note that stood there said a second shadow at wizard was the only way to separate them and
+would cost twice the generation time; it is the other way round. **Expert and master are the close pair now**
+(14% against 13%), and §6.3's measure cannot see what parts them, because what master spends is a rung and
+the measure counts the geometry of a wrong branch. Anyone landing the difficulty-metric swap §6.3 asks for
+should expect those two to read as one tier and to need reseparating.
+
+#### The four decisions §11.11 left, answered
+
+1. **`exitRun` going quiet board-wide: paid, and the lever stays deferred with a reason.**
+   `travelledDirections` is already as tight as any sound board-wide rule can be — a diagonal beam requires
+   at least one half-step crossing, and with one half-step stop anywhere both parities are reachable. Going
+   tighter needs a **bound on how many times the beam crosses a half-step mirror**, and no local rule
+   supplies one: §11.5's own double-crossing board shows a single cut mirror flipping parity twice. The
+   generator knows the count (`cutBendSlots` fixes it), but reading it off the route would be the solver
+   knowing something the player cannot see, which is the line §4 does not cross. So the rung is spent, and
+   the exhaustive pair earns its place in master's cap.
+2. **Both end markers now sit at the cell centre for a diagonal end.** `sidePoint` is a cell **corner** for a
+   diagonal direction, and a corner is the one point rule 4 gives the opposite meaning to — diagonal light
+   slips _between_ two corners everywhere else — while on a 9-wide grid it lands in a four-cell junction
+   belonging to none of them, and corners are also where rivets are drawn (§11.10). Looked at rather than
+   reasoned (`DiagonalRoute`, frames 4 and 5, at 4×): the absorbed beam now runs visibly into the middle of
+   the brick and stops there, which is the whole of what the picture has to say. The cost is small and real
+   — for an **escape** the corner was the true exit point, so the centred dot reads as mid-line rather than
+   as an endpoint — and it is paid to keep the marker off the corner, where both the rivet reading and the
+   slipped-through reading live. One rule for both markers beats two rules.
+3. **Rule 3's three-stop, edge-on set is not built.** It needs the stop set built from the bend's arrival
+   direction (a flat stop in front of a beam coming down a column retroreflects up the route and the draft
+   dies), it costs 1.5× rather than 1× per §11.8 rule 8, and it is a second new word for a tier that has
+   just been given one. The hand-authored `{0°, 45°, 135°}` board in `techniques.spec.ts` still holds the
+   walk and the two-ray derivation honest; nothing generates one.
+4. **Two diagonally adjacent movable pieces reached by one beam: measured, and it does not happen.** Over
+   200 generated boards on every tier, with one cut mirror and with two, **no winning beam links two movable
+   pieces a diagonal step apart** — zero, every tier. So `spacedFrom` and `piecesAreSpaced` stay on the four
+   square neighbours (a tap-accuracy rule, as §11.11 said) and no new gate was added. The uniqueness and
+   settling gates would catch a board where it mattered.
+
+#### One thing found that belongs to §11.2 rather than here
+
+`LightbeamBoard` drew the pieces from the player's states and traced the beam from the _fired_ configuration
+— so a door the light had already opened was drawn shut, with the beam running straight through the brick.
+Visible on most wizard boards, and squarely against §11.1's promise that effects land ahead of the light by
+construction, so the drawn beam is never a picture of something that has stopped being true. Fixed in the
+same commit, because it was making step 4's own frames unreadable: the board now draws `firedConfig`, and a
+door slides aside as the light reaches its socket.
+
+#### Left alone on purpose
+
+- **Step 5, traps** (§11.1), which is what the second routes were for.
+- **The difficulty-metric swap** (§6.3), still separate, and now with the expert/master caveat above.
+- **`placeShadows`, `thinWalls` and the spacing rules**, unchanged — §11.11's list still reads correctly.

@@ -5,8 +5,10 @@ import {
   BACKSLASH,
   DIR,
   isCut,
+  pieceOptions,
   pieceStateCount,
   SLASH,
+  traceBeam,
   TURN_ANGLES,
   type LightbeamPuzzleData,
   type MirrorAngle,
@@ -545,14 +547,23 @@ export const DiagonalBeam: Story = {
 }
 
 /**
- * The first boards the generator has made with a cut mirror on the winning route (§11.8 rule 8): one piece
- * swapped for a cut one, the route left square, so what the piece adds is a wrong setting that throws the
- * light off at 67.5°.
+ * The first boards a player will actually be handed with a cut mirror on them (§11.8 rule 10 step 4, and
+ * §11.12): master and wizard now route **diagonally on purpose**, so the winning beam leaves the rows and
+ * columns and the piece's other stop is the quarter turn the board would have had.
  */
-const cutJunior = board("junior", 3, { cutMirrors: 1 })
-const cutWizard2 = board("wizard", 14, { cutMirrors: 1 })
+const diagonalMaster = board("master", 10)
+const diagonalWizard = board("wizard", 12)
 
-/** The same board with its cut mirror on the stop that is not the answer — the ray step 3 had to close. */
+/** A master board that drew `crossedBeams`, so its own diagonal leg crosses a square one at 45°. */
+const diagonalCrossing = board("master", 34)
+
+/** A master board whose wrong setting leaves the grid on a diagonal — the escape marker's own case. */
+const diagonalEscape = board("master", 11)
+
+/** A wizard board whose wrong setting is swallowed by stone on a diagonal — the absorbed marker's case. */
+const diagonalAbsorbed = board("wizard", 8)
+
+/** The same board with its cut mirror on the stop that is not the answer — the ordinary quarter turn. */
 const onTheWrongStop = (puzzle: LightbeamPuzzle): number[] => {
   const index = puzzle.movable.findIndex(piece => piece.kind === "turnMirror" && isCut(piece.angles))
   const states = [...puzzle.solution]
@@ -561,40 +572,79 @@ const onTheWrongStop = (puzzle: LightbeamPuzzle): number[] => {
 }
 
 /**
- * **Step 3's question: does stone on a cut mirror's _corner_ read as somewhere the light dies?**
+ * Whichever setting of whichever piece makes the beam die while it is travelling on a diagonal.
  *
- * The doubt is specific rather than general. Rule 4 teaches the opposite lesson everywhere else on the
- * board — a diagonal step resolves only the cell it lands in, so light slips between two walls' corners —
- * and the wall `blockWrongSettings` puts in front of a diagonal wrong ray sits one diagonal step from the
- * mirror, touching it at a corner. Same visual relation, opposite meaning: the light dies when the stone is
- * what it lands *on* and passes when the stone is what it squeezes *by*.
- *
- * **It reads, and what carries it is the end of the line rather than the marker**: the beam runs visibly
- * *into* the brick and stops in the middle of it, which is a different picture from a beam that clears a
- * corner and carries on. **The marker is the part to look at again.** An absorbed beam is dotted where it
- * meets the obstacle's face, which for a diagonal entry is the cell corner — so the dot lands on the very
- * point rule 4 gives the opposite meaning to, and on the 9-wide board it sits in a four-cell junction. The
- * escape marker has the same open question (see `DiagonalBeam`), no board ships either yet, and marking the
- * cell centre instead would settle both — a decision for whoever routes diagonally on purpose.
- *
- * Both boards are generated, and their stone is load-bearing: `thinWalls` strips every wall a board can
- * deduce without, and these survived it. The junior board's is doing something the family has never needed
- * stone for — the wrong stop's diagonal ray points **at the shrine**, two steps away, so without that one
- * wall there would be a second and much shorter route to it.
- *
- * The junior answer frame is also §11.9's question 2 at its sharpest, and this time on a board the
- * generator built: the cut mirror stands at **135°**, the same angle as the ordinary mirror two cells to
- * its left, doing the identical quarter turn. Solid bar against hollow plate is the whole of the
- * difference, and the beam crosses the plate's hollow — amber through sky — exactly as step 1 measured.
+ * Over the pieces the **player** owns, which is what `restingState` names: a door is not anyone's to set,
+ * and putting one in a state no tap reaches draws a board nobody can be handed.
  */
-export const CutMirrorWrongRay: Story = {
-  args: { puzzle: cutJunior, states: cutJunior.solution, onCycle: () => {} },
+const diagonalDeath = (puzzle: LightbeamPuzzle): number[] => {
+  for (let piece = 0; piece < puzzle.movable.length; piece++)
+    for (const state of pieceOptions(puzzle, piece)) {
+      const states = [...puzzle.solution]
+      states[piece] = state
+      const walk = traceBeam(puzzle, states)
+      const last = walk.path[walk.path.length - 1]
+      if (walk.end !== "lit" && last && last.enter % 2 === 1) return states
+    }
+  return [...puzzle.solution]
+}
+
+/**
+ * **The mechanic as a player meets it, and the two drawing questions step 4 had to close.**
+ *
+ * The route itself is the diagonal now. A cut mirror's answer is its half-step stop, so the last leg runs
+ * corner to corner into a shrine set in the frame, and the piece's *other* stop is the plain quarter turn —
+ * the exact inverse of the swap-in these frames used to show, where the answer was square and the wrong
+ * setting was the diagonal. What a player has to read is therefore a beam that leaves the rows and columns,
+ * which is the whole of what §6.4 assigns to master.
+ *
+ * **The marker now sits at the cell centre for a diagonal end, and both markers take it.** An absorbed beam
+ * used to be dotted where it met the obstacle's face, which for a diagonal entry is the cell **corner** —
+ * the one point §11.8 rule 4 gives the opposite meaning to, since diagonal light slips *between* two corners
+ * everywhere else on the board, and on a 9-wide grid it lands in a four-cell junction belonging to none of
+ * them. The centre says the one thing the picture has to say: the light got in and stopped there. The escape
+ * marker had the same question open since §11.10 and takes the same answer, four lines apart in `BeamLayer`.
+ *
+ * The next two frames are the cases that were only hypothetical while no board routed diagonally: a wrong
+ * setting that leaves the grid on a diagonal, and one that is swallowed by stone on a diagonal.
+ *
+ * **And the last is the crossing this widened.** `axisOf` used to answer `"h" | "v"`, so a crossing was a
+ * right angle by construction; there are four axes now, and a row crossed by a diagonal forces exactly what
+ * a row crossed by a column does — nothing can stand there, or the first pass would have turned. Measured
+ * over 200 generated boards: 9 crossings at master and 13 at wizard now meet at 45° rather than 90°. It
+ * draws as an X leaning over, and it still reads as one square the beam goes through twice, because a beam
+ * polyline bends only at cell centres and both passes bend at the same point.
+ */
+export const DiagonalRoute: Story = {
+  args: { puzzle: diagonalMaster, states: diagonalMaster.solution, onCycle: () => {} },
   render: () => (
     <div className="flex flex-wrap items-start justify-center gap-6">
-      <Frame puzzle={cutJunior} states={cutJunior.solution} caption="junior — the answer, and it is square" />
-      <Frame puzzle={cutJunior} states={onTheWrongStop(cutJunior)} caption="the wrong stop — 45° into the corner" />
-      <Frame puzzle={cutWizard2} states={cutWizard2.solution} caption="wizard — the answer" />
-      <Frame puzzle={cutWizard2} states={onTheWrongStop(cutWizard2)} caption="wizard — the wrong stop" />
+      <Frame
+        puzzle={diagonalMaster}
+        states={diagonalMaster.solution}
+        caption="master — the answer, five diagonal steps"
+      />
+      <Frame
+        puzzle={diagonalMaster}
+        states={onTheWrongStop(diagonalMaster)}
+        caption="the wrong stop — the quarter turn it kept"
+      />
+      <Frame puzzle={diagonalWizard} states={diagonalWizard.solution} caption="wizard — six diagonal steps" />
+      <Frame
+        puzzle={diagonalEscape}
+        states={diagonalDeath(diagonalEscape)}
+        caption="off the frame on a diagonal — the escape marker"
+      />
+      <Frame
+        puzzle={diagonalAbsorbed}
+        states={diagonalDeath(diagonalAbsorbed)}
+        caption="into stone on a diagonal — the absorbed marker"
+      />
+      <Frame
+        puzzle={diagonalCrossing}
+        states={diagonalCrossing.solution}
+        caption="crossedBeams at 45° — a diagonal over a column, and over a row"
+      />
     </div>
   ),
 }
