@@ -424,6 +424,44 @@ hands a board a piece its tier has not met. Under a strict reading of the ladder
 `crossedBeams` alone — and that turns up `turns`, which fights "dead ends 1 turn". **Starter may want no
 goal at all**, which is consistent with it being the tier that teaches rather than tests.
 
+#### Applied, and re-measured
+
+The ladder is in `lightbeamConfig.ts`. Measured over 40 seeds a tier afterwards:
+
+| Tier    | Player pieces | Legs a wrong turn runs | Forks on it | Seen from the door | Worst gen |
+| ------- | ------------- | ---------------------- | ----------- | ------------------ | --------- |
+| starter | 3.0           | 2.96                   | 1.00        | **33%**            | 5ms       |
+| junior  | 4.0           | 3.48                   | 1.50        | **25%**            | 25ms      |
+| expert  | 5.9           | 3.90                   | 2.22        | **15%**            | 38ms      |
+| master  | 7.5           | 4.21                   | 2.50        | **13%**            | 216ms     |
+| wizard  | 8.3           | 5.09                   | 2.65        | **13%**            | 731ms     |
+
+**Monotone on every column, and junior against expert is 25% to 15% — the collapse §6.3 found, closed.**
+Master and wizard tie on the headline percentage and separate on everything else; a second shadow at
+wizard parts them by one point for twice the generation time, which is not a trade worth making.
+
+Four things the application taught, none of them predicted:
+
+- **Three player pieces is the floor for an honest board, not a preference.** Starter at two bends
+  generated **nothing**: two binary pieces make four configurations, and every dark one is either a tap from
+  done or solved by tapping both, so `openingIsHonest` rejects all of them. Starter is three bends.
+- **The ladder has to be cumulative.** First pass gave junior and expert the same route length, and junior's
+  only legal goals both lengthen the route while expert's did not — so junior came out **harder than
+  expert** on every measure. Expert keeps junior's length and adds sliding pieces on top.
+- **A tier's addition belongs in the baseline only if every board should have it.** Pinning a sliding wall
+  into expert, master and wizard took wizard's worst generation from 520ms to 1407ms, because a three-stop
+  track has to fit a straight stretch spaced from everything already placed. The sliding **mirror** is
+  expert's baseline; the sliding **wall** comes from `clearTheWay` in the pool, which is §7's lean-baseline
+  rule doing its job.
+- **Junior cannot demand more reasoning than starter, and its cap now says so.** Its addition buys legs, and
+  the shrine-side elimination needs a piece standing in the wrong ray — which is expert's addition. The cap
+  was `feedsExit`, a ceiling no junior board reached; it is `deadEnd` now.
+
+**The vocabulary rule is a spec, not a note.** `generateLightbeam.spec.ts` asserts that no tier puts a piece
+on a board before its tier: starter and junior carry turn mirrors and nothing else, expert and master never
+carry a door or socket, and wizard carries both. That is the gate that was missing when a starter board
+could draw a sliding wall.
+
 #### One honest caveat on walls
 
 Walls are character rather than depth. §5.1 already found that removing one "usually leaves the wrong

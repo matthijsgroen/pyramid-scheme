@@ -231,8 +231,15 @@ describe("the tiers demand different reasoning", () => {
     expect([...demanded("starter")].sort()).toEqual(["deadEnd", "entryRun", "exitRun"])
   })
 
-  it("reaches the shrine-side elimination by junior", () => {
-    expect(demanded("junior")).toContain("feedsExit")
+  // Junior's one addition is a longer route, which buys legs and not forks (§6.3) — so it asks the same
+  // reasoning as starter over further ground. The shrine-side elimination needs something unsettled
+  // standing in a wrong ray, and that is expert's sliding piece.
+  it("asks junior for the same rungs as starter, over a longer route", () => {
+    expect([...demanded("junior")].sort()).toEqual(["deadEnd", "entryRun", "exitRun"])
+  })
+
+  it("reaches the shrine-side elimination by expert, where pieces start standing in wrong rays", () => {
+    expect(demanded("expert")).toContain("feedsExit")
   })
 
   it("names an irrelevant piece from expert on, where the decoys start", () => {
@@ -253,9 +260,32 @@ describe("the tiers demand different reasoning", () => {
     ])
   })
 
-  it("asks for the ordering fact from expert on, where doors start", () => {
-    expect(demanded("expert")).toContain("wiringFires")
-  })
+  // The vocabulary ladder (§6.4): each tier may only use what it has met. This is the gate that was
+  // missing — a goal turns a dial, and three of the six dials add a PIECE rather than more of one, so
+  // before this a starter board could draw a sliding wall and an expert board a door.
+  it("never puts a piece on a board before its tier", () => {
+    const kinds = (difficulty: (typeof difficulties)[number]) => {
+      const seen = new Set<string>()
+      for (const board of sweep(difficulty)) {
+        for (const piece of board.movable) seen.add(piece.kind)
+        if (board.nodes?.length) seen.add("socket")
+        if (board.wirings?.length) seen.add("door")
+        if (board.fixed.some(piece => piece.kind === "mirror")) seen.add("setMirror")
+      }
+      return seen
+    }
+    // Right angles only, and nothing that moves off its square.
+    for (const tier of ["starter", "junior"] as const) expect([...kinds(tier)].sort()).toEqual(["turnMirror"])
+    // Sliding pieces arrive, sockets and doors do not.
+    for (const tier of ["expert", "master"] as const) {
+      expect([...kinds(tier)].sort()).not.toContain("door")
+      expect([...kinds(tier)].sort()).not.toContain("socket")
+    }
+    // Wizard is where the ordering fact lives, so it is the only tier carrying a door and its sockets.
+    expect(kinds("wizard")).toContain("door")
+    expect(kinds("wizard")).toContain("socket")
+    // Sweeps every tier rather than one, so it needs more than the default budget.
+  }, 30_000)
 })
 
 // The tap-accuracy rule, and what buys this family a grid wider than the other grid families allow. There,

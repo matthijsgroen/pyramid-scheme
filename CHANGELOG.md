@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pieces you can move now carry a white edge, and anything a socket controls carries that socket's colour.
 - Tapping a piece is animated: sliding pieces slide, and mirrors turn.
 - Some light puzzles now send the beam back through its own path, crossing itself on the way to the shrine.
+- Each light-puzzle difficulty now introduces one new thing instead of turning every dial a little further, so the easier and harder ones no longer play alike.
 
 ## 0.36.0 - 2026-08-17
 
