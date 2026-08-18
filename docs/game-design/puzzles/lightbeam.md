@@ -1206,13 +1206,57 @@ That is worth more than the diagonal it was reached for:
   carrying the light onward. A third stop is therefore always a _visibly_ bad turn, which is a corridor
   seen from the door: cheap, and legitimately what a starter board wants (§6.3 puts starter at 33%).
 
-#### The one rule that keeps this deduction rather than trial
+#### Rotation is discovered; only position has to be drawn
 
-**A piece's stops must be drawn, never discovered.** §9 already requires a sliding piece's track to be
-visible, and the board draws a vacant stop as somewhere a piece can go rather than as an empty square. The
-same has to hold here: **a mirror's available angles are drawn as ghost lines through its cell.**
+_This section first said the opposite — that a piece's stops must be drawn, never discovered, with a
+mirror's angles shown as ghost lines. That is wrong, and it contradicts what already ships._
+`LightbeamBoard.tsx` puts it plainly: **`track` is false for a turn mirror, which has one cell and goes
+nowhere.** Tracks and ghost stops are drawn for sliding pieces only. Today's turn mirror is already
+learned by tapping it.
 
-This is the whole difference between the two readings of "requiring some exploration". Exploring the
-_board_ — which route survives — is the puzzle. Exploring _what a piece can do_ is tapping to find out,
-which is the trial-and-error §4 exists to rule out. Ghost stops keep it on the right side of that line,
-and they cost nothing: the renderer already draws vacant sliding stops exactly this way.
+The distinction the code makes is the right one, and it is about **occupied space**:
+
+- **A sliding piece's stops are facts about the board.** Each is a cell that might be blocked, and every
+  other route calculation depends on knowing which. Hide them and the board stops being readable at all.
+- **A rotation happens in a cell that is occupied either way.** Nothing outside that square changes.
+  Only the deflection does, and the beam redraws the instant it is tapped.
+
+**So discovery here is not the trial §4 rules out.** That prohibition is against _solving_ by flipping
+things until the shrine lights. Handling a piece to learn what it offers is a different act, and a cheap
+one: taps cost nothing (difficulty in this family is not move count, §6), cycling is reversible, the
+whole repertoire is seen in as many taps as it has stops, and the beam shows every consequence in full
+because it is always drawn. Reading a piece by turning it **is** reading the board.
+
+One thing is probably still worth showing without showing the angles: **how many stops a piece has**,
+since T4 and T7 both reason over its full set and a third stop nobody found is a rung that silently
+cannot fire. The movable ring drawn in as many segments as the piece has stops says "there are three of
+these" without saying what they are. Cheap, and worth a playtest rather than a rule.
+
+#### Rotating out of the way — the sliding wall's verb, in one cell
+
+A stop that is edge-on to the beam lets it pass (`m = 2k`, §11.4). So a rotation can do what only a slide
+could do before: **clear the path without going anywhere.** For a beam arriving rightward, and keeping
+every stop at least 45° from its neighbours:
+
+| Stops             | Angles      | What the taps do                              |
+| ----------------- | ----------- | --------------------------------------------- |
+| `{0°, 45°}`       | `—` `/`     | passes through, or turns it up                |
+| `{0°, 135°}`      | `—` `\`     | passes through, or turns it down              |
+| `{0°, 45°, 135°}` | `—` `/` `\` | passes through, turns it up, or turns it down |
+
+_This also corrects the claim above that three stops never fit._ They do not fit when all three must
+**turn** the light; they fit easily once "let it through" counts as one of the three, which is exactly
+what this piece adds.
+
+**Why it is worth more than it looks: cells are this family's scarce resource.** §9's spacing rule is a
+generation gate, and it is what buys the wider grid. A sliding wall spends two or three cells to ask "in
+the way, or out of it". A rotating mirror asks the same question in **one**, and answers a second one —
+"and if it is in the way, which way does it send the light?" — with the same tap. That is the
+more-without-more-room lever §11.4 went looking for, found in a piece that needs no new geometry at all.
+
+**The honest cost is that such a stop is direction-dependent.** A horizontal mirror passes a beam
+travelling right and turns one travelling up back down — the same stop, two behaviours, depending on how
+the light arrives. That is a real dent in the locality §4.1 prizes: "can the light get through here" stops
+being answerable from the cell alone. It is also precisely the _understand-the-machine_ character that
+made switch nodes worth building, and the beam being drawn at all times is what keeps it learnable. It
+belongs at the top tiers, as suggested — not in the bottom two.
