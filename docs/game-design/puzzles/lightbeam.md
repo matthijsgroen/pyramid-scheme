@@ -1076,3 +1076,47 @@ light backwards, which on most boards is dead.
 
 So the prototype's job is now one question rather than several: **at 36px, does a shallow `/` read as a
 different object from a steep `/`, and do the two states of a cut mirror read as a pair?**
+
+#### What the state set has to contain — and why two states is worse than useless
+
+The two-state recommendation above is wrong, and measuring it is what showed why. Reach and routes for a
+board with one mirror converted, 30 seeds a tier, wizard shown:
+
+| State set                        | Keeps `/` and `\` | Reach (today 36.2) | Routes to the shrine |
+| -------------------------------- | ----------------- | ------------------ | -------------------- |
+| `{22.5°, 157.5°}`                | **no**            | **10.4**           | **0.07**             |
+| `{22.5°, 67.5°, 112.5°, 157.5°}` | **no**            | 15.7               | 0.20                 |
+| all eight                        | yes               | **49.5**           | 1.37                 |
+
+**A half-step-only mirror does not add the diagonal, it removes the quarter turn.** Every other piece on
+the board, and the route the generator built, depend on that cell being able to turn light 90°. Take it
+away and the beam deflects 45° and wanders off the board: reach collapses to under a third of today's, and
+almost no board lights at all. Four half-steps are barely better than two. Only the eight-state set works,
+and it works for one reason — **it contains `/` and `\`**. The axis was never how many states; it is
+whether the aligned pair survives.
+
+That makes the legibility problem structural rather than a matter of degree. Half-step orientations
+interleave the aligned ones, so **every** half-step sits exactly 22.5° from an aligned one. Any state set
+that keeps the quarter turn _and_ reaches the diagonal therefore contains a 22.5° pair, which is precisely
+what §9 calls a subtle rotation. No choice of count escapes it.
+
+#### Which points at two pieces rather than one
+
+The way out is not a mirror with more states but **a second piece type**, told apart by its glyph the way
+a sliding mirror is already told apart from a turning one:
+
+- **Turn mirror** — `{45°, 135°}`, as today. Does the quarter turns the board is built on.
+- **Cut mirror** — `{22.5°, 157.5°}`, a different object. Its whole job is to put light on the diagonal
+  and take it off again.
+
+Each is internally legible — 90° and 45° separation respectively, both clear of a subtle rotation — and
+the two are distinguished by being different things, not by angle. Cost stays at 1× per piece, and the
+parity reading of §11.5 gets sharper: a cut mirror is now visibly the piece that flips, so _"an even
+number of cut mirrors are on the route"_ is something the player can see rather than infer.
+
+**This is not what the table above measured, and that limit matters.** Those numbers come from
+_converting_ an existing mirror, which is why they look so bad — the route lost its quarter turn and got
+nothing usable back. A cut mirror **added** as its own piece, placed where a 45° deflection is actually
+wanted, is a different proposition and is untested. Testing it needs a generator that routes diagonally on
+purpose (§11.4), so this is the point at which the measuring stops paying and the generator has to be
+built.
