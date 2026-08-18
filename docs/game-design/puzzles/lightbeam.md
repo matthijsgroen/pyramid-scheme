@@ -1032,3 +1032,47 @@ So the two horns, and they are a genuine choice rather than a technicality:
 difference between prototyping a piece with eight rotations and one with four. It also means the drawing
 prototype's job is much narrower: show that a four-state cut mirror is a visibly different _object_ from
 a two-state one, and that its four angles separate at 36px.
+
+#### Straight and diagonal angles alone cannot make a diagonal beam
+
+Worth stating plainly, because it is the obvious thing to reach for and it is foreclosed. Mirrors at
+`0°`, `45°`, `90°` and `135°` are exactly the **even** orientations, and even orientations preserve
+parity (§11.5). Closing the direction set under all four of them and starting from `right` yields
+`right, up, left, down` and nothing else — checked, not argued. **A mirror at an odd multiple of 22.5° is
+the only thing that puts light on the diagonal**, so the clean angles and the diagonal beam cannot both be
+had. (The one alternative is a disc that _emits_ diagonally: the beam then runs entirely on the diagonal
+with clean 45° mirrors throughout, and every wall is corner-slippable. That is a different board rather
+than a mixed one, and it is worth a look on its own.)
+
+#### Better: separate the angle step from the rotation range
+
+This supersedes the four-state recommendation above. **The step and the range are independent knobs**, and
+once they are pulled apart, the cut mirror stops being expensive or awkward:
+
+**A cut mirror takes the 22.5° step but only two states, like every other mirror on the board.** The pair
+to use is `{22.5°, 157.5°}`. For a beam arriving travelling right it offers **up-right or down-right** —
+precisely the shape of today's `/` `\` fork, which offers up or down. Both turns carry the light onward;
+no state is wasted on sending it back where it came from.
+
+Three things fall out, and the first is the big one:
+
+- **It costs nothing.** Two states is a 1× multiplier — a cut mirror is exactly as expensive as an
+  ordinary one. The affordability table above and the 5/5/4/3/2 headroom in §11.4 **stop applying**: a
+  board can carry as many cut mirrors as `piecesAreSpaced` allows. The question "how many can we afford"
+  simply goes away.
+- **It is the same control.** Two taps to cycle, like every other mirror. Nothing new to learn.
+- **Parity feeds the family's own skill instead of being a worklist.** Both states are half-steps, so a
+  cut mirror flips whenever the beam crosses it. §11.5's count then reads _"an even number of cut mirrors
+  are on the route"_ — and working out **which pieces the light actually reaches** is T6 `neverReached`,
+  the one technique this family calls its own (§4.2). The global constraint now hands work to the best
+  rung on the ladder rather than answering the board.
+
+**What it costs is legibility margin, and that is what the prototype must now test.** The two states are
+45° apart as lines, against 90° for `/` versus `\` — a shallow-rising line against a shallow-falling one.
+They are mirror images across the horizontal, so they are a genuine pair rather than a subtle rotation,
+but the margin is half of what §9 currently passes at. The 90°-separated alternatives (`{22.5°, 112.5°}`
+and `{67.5°, 157.5°}`) buy that margin back and spend a state doing it: one of their two turns sends the
+light backwards, which on most boards is dead.
+
+So the prototype's job is now one question rather than several: **at 36px, does a shallow `/` read as a
+different object from a steep `/`, and do the two states of a cut mirror read as a pair?**
