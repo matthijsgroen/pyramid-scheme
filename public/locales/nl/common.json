@@ -359,7 +359,7 @@
   "lightbeam": {
     "rules": {
       "goal": "Breng het zonlicht van de schijf naar het schrijn.",
-      "mirrors": "Een spiegel buigt het licht langs elk van zijn kanten. De meeste geven een kwartslag, maar een gebroken spiegel — een holle plaat in plaats van een massieve balk — blijft daar net onder en stuurt het licht schuin weg.",
+      "mirrors": "Een spiegel buigt het licht langs elk van zijn kanten. De streepjes eromheen laten zien hoe hij nog kan liggen: de meeste geven een kwartslag, sommige blijven daar net onder en sturen het licht schuin weg.",
       "walls": "Een blok steen slokt het licht op. De rand van het bord ook.",
       "tap": "Tik op een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar de volgende plek. Een witte rand betekent dat jij het mag verzetten; al het andere hoort bij de puzzel.",
       "nodes": "Sommige stenen zitten vast aan een contactpunt in de vloer; daar helpt geen enkele tik tegen. Stuur het licht over het contactpunt en de steen schuift opzij."

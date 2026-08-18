@@ -74,31 +74,41 @@ export const TURN_ANGLES: readonly MirrorAngle[] = [SLASH, BACKSLASH]
 export const isHalfStep = (angle: MirrorAngle): boolean => angle % 2 === 1
 
 /**
- * Whether a set of stops makes a **cut mirror** (§11.8): anything off the two diagonals.
+ * Whether a set of stops leaves the two diagonals — a **cut mirror** in the design doc's vocabulary
+ * (§11.8), which is a description of the list rather than a kind of piece.
  *
- * A cut mirror is a different *object*, not a different angle — §11.9 measured that the 22.5° between
- * its stops and an ordinary mirror's can never carry the distinction, and the glyph has to. So this is a
- * fact about the piece's whole stop set rather than about the stop it currently stands on: a cut mirror
- * sitting at 45° is still a cut mirror, and drawing it as an ordinary one would make it change species
- * mid-rotation.
+ * **Nothing in the drawing reads this any more** (§11.13). It used to pick the glyph: an ordinary mirror
+ * was a solid bar and anything else a hollow plate, one bit saying "this list is the default pair or it is
+ * not". That bit only carried information while there were two flavours to tell apart, and rule 1 asks for
+ * many — so the board draws the stops themselves now, and this is left as what it always really was: a
+ * predicate the tier gates and the specs use to say which boards have left the diagonals behind.
  */
 export const isCut = (angles: readonly MirrorAngle[]): boolean =>
   angles.some(angle => angle !== SLASH && angle !== BACKSLASH)
 
 /**
- * What a piece does to the beam when it stands in its way.
+ * What a piece does to the beam when it stands in its way — and, for the drawing, what else it could do.
  *
- * `cut` is not something the light can tell — a cut mirror on an aligned stop turns it exactly as an
- * ordinary mirror would — but it is something the player can, so the drawing gets it here rather than
- * having to go back to the piece for it.
+ * `angle` is the whole of the physics: `reflect` reads it and nothing else. `stops` is the piece's authored
+ * list, which the light cannot tell and the player must be able to (§11.13). It rides here because a
+ * `Blocker` comes out of a flattened `CellContent[][]` — by the time anything draws a cell, the
+ * `MovablePiece` that put it there is gone, so a fact about the piece has to travel with the occupant or be
+ * lost.
+ *
+ * It replaced a `cut: boolean`, and that field is worth remembering as a shape not to repeat: a rendering
+ * hint smuggled through a physics value, and one that meant two different things depending on which branch
+ * built it — the piece's list where `pieceOccupant` passed `angles`, the current angle alone where
+ * `configGrid` fell back to the default below. A fixed mirror authored off the diagonals therefore drew as
+ * a different species for no reason anyone had chosen. A single-element list says the honest thing instead:
+ * this mirror has one position and no fork.
  */
-export type Blocker = { kind: "mirror"; angle: MirrorAngle; cut: boolean } | { kind: "wall" }
+export type Blocker = { kind: "mirror"; angle: MirrorAngle; stops: readonly MirrorAngle[] } | { kind: "wall" }
 
-/** A mirror standing in a cell, as the walk and the drawing both need it: its angle, and its species. */
+/** A mirror standing in a cell, as the walk and the drawing both need it: where it is, and where else it goes. */
 export const mirrorBlocker = (angle: MirrorAngle, stops: readonly MirrorAngle[] = [angle]): Blocker => ({
   kind: "mirror",
   angle,
-  cut: isCut(stops),
+  stops,
 })
 
 /** Part of the puzzle, like a Sudoku given: the player cannot change it. */

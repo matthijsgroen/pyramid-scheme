@@ -1436,10 +1436,18 @@ cell instead of three — and cells are this family's scarce resource. `{0°, 45
 two it squeezes past; walls are drawn with rounded corners so the gap is visible. No rules text — and it
 is also the naive implementation.
 
-**5. Stops are discovered by tapping, not drawn.** Only _position_ has to be drawn, because a sliding
+**5. ~~Stops are discovered by tapping, not drawn.~~** ~~Only _position_ has to be drawn, because a sliding
 piece's stops are facts about which cells might be blocked. A rotation happens in a cell occupied either
 way. The stop **count** is probably worth showing (a ring in as many segments) since T4 and T7 reason over
-the full set — playtest it rather than ruling it.
+the full set — playtest it rather than ruling it.~~
+
+**Overturned, and playtesting it is what overturned it** (§11.13). Both halves were wrong. The ring in as
+many segments is _unbuildable_ — a mirror is a line across the whole cell, so it runs through the annulus
+and occludes the marks that annotate it. And the count was the wrong thing to want: a short tick at each
+stop the piece is **not** in draws the stops **themselves**, inside one cell, which is the comparison §11.9
+concluded there was nowhere to make. So a rotation mirror's stops **are** drawn, and a fork is read rather
+than probed — which is the difference §4 draws between deduction and trial, now on the deduction side. What
+stays true is the half about _sliding_ pieces: their stops are cells, and the cells are already drawn.
 
 **6. Geometry, settled and provable.** Directions are the 8 multiples of 45°; a mirror at orientation
 `m` (22.5°·m) sends a beam travelling `k` out along `(m − k) mod 8`. Every face is a bijection, so **loops
@@ -1474,7 +1482,9 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
    lists come in two flavours, and rule 1 asks for many. — **its drawing is gated, §11.13**, and the answer
    is a tick at each stop the piece is not in, which is also the first thing in the family that would let a
    player read a fork without tapping it (so it owes rule 5 an argument). The generator and the measurement
-   are still to build. **Inserted here after step 4, so what used to be step 5 is now step 6.**
+   are still to build. **Inserted here after step 4, so what used to be step 5 is now step 6.** — the
+   drawing is **built**: one mirror glyph, and a tangential tick at each stop the piece is not in.
+   **Rule 5 is overturned by it**, and rule 5's own text now says so.
 6. **Traps** (§11.1), which need the second routes this supplies.
 
 **Three things paper cannot settle, and they were the whole remaining risk — all three are now closed:**
@@ -1508,7 +1518,11 @@ the turn — an ordinary mirror snaps between two diagonals, a cut mirror lands 
 tell that it is a different kind of piece before its glyph is read at all.
 
 **So the glyph carries the whole of the second question, and the split that works is not a shape but a
-_fill_.** An ordinary mirror is the polished **edge** — one solid stroke. A cut mirror is the **plate** —
+_fill_.** — **and the second question turned out not to be a question** (§11.13): a fill answers "is this
+piece unusual", which is only worth asking while the answer is otherwise hidden. Drawing the stops
+themselves answers "where can it point", which is what a player actually needs, and the fill is gone. What
+survives from this section is question 1 and everything below it about motion; the paragraphs on solid
+against hollow are the record of a step, not the current drawing. An ordinary mirror is the polished **edge** — one solid stroke. A cut mirror is the **plate** —
 an outline, two silvered faces, cut ends. Solid against hollow is a judgement the eye makes on **one
 cell**, with no second cell to compare against, and that is what reading a board consists of. Every
 candidate that differed by degree instead — a thicker bar, a longer one, a tapered one — reads fine in a
@@ -1986,9 +2000,42 @@ it — a fact about the piece's list when `pieceOccupant` passed `angles`, and a
 when `configGrid` fell back to `[angle]` for a fixed or sliding mirror. A fixed mirror authored off the
 diagonals drew as a plate for no reason anyone chose.
 
+#### What building it found, and the one thing the prototype missed
+
+The gate above was run on cells with no beam through them, and that is what hid it: **a radial tick is
+collinear with the beam whenever a stop's line is the line the beam leaves on.** The beam is drawn over the
+pieces with `mix-blend-screen`, so the tick came out **cream** — which costs the mark its meaning and breaks
+§9's "nothing but light is drawn amber" in the same stroke. Not rare, either: a beam travels one of eight
+bearings and a stop is one of eight mirror lines, and the very first shipped board (`DiagonalRoute`, master
+seed 10) does it.
+
+**The fix is to lay the tick _across_ its bearing rather than along it.** A tangential dash cannot be
+collinear with anything radial: the beam crosses it square, brightens the middle, and the ends stay sky.
+Checked on the cell that failed, at 8×.
+
+And it cannot be hidden by the bar either, which is worth writing down because it is _why_ candidate A's
+failure does not carry over. A ring failed because the bar is a diameter and crosses the annulus. It crosses
+it at **its own bearing** — and that is the one stop no tick is ever drawn for, since the ticks are the
+alternatives. Arcs placed only at the stops the piece is not in are the one set of arcs the bar cannot
+touch. Candidate A was the right _mark_ at the wrong _bearings_.
+
+**The board is denser and it holds.** Every mirror now carries at least one tick, so a wizard grid gained
+nine or more strokes. Looked at on a nine-mirror board with two three-stop pieces retrofitted in
+(`CutMirrorDensity`, which is what that frame asks now): the ticks stay subordinate to the bars, one tick
+against two is visible at a glance, and nothing competes with the amber beam, the socket rings or the
+dashed wire.
+
+**And the model change is behaviour-neutral, verified the same way step 4 was.** `sameBlocker` now compares
+the whole stop list rather than the bit, which is strictly more discriminating — and it changes no outcome,
+because two candidate occupants of one piece differ in `angle` before they could differ in `stops`. All 200
+boards across the five tiers are byte-identical.
+
+What this section still owes, unchanged: the generator authoring varied lists, and the measurement.
+
 #### What is still unbuilt, and in what order
 
-1. **The `Blocker` change and the tick glyph** — the drawing, which this section has now gated.
+1. ~~**The `Blocker` change and the tick glyph** — the drawing, which this section has now gated.~~ **Built**,
+   and what it found is above.
 2. **The generator authoring varied lists.** A stop-count dial, and any legal list containing the bend's
    angle, subject to rule 2 (keep a quarter turn) and to `blockWrongSettings` being able to close **every**
    non-answer ray — which is the real budget, since a three-stop piece has two rays and a four-stop one has

@@ -366,7 +366,7 @@
   "lightbeam": {
     "rules": {
       "goal": "Get the sunlight from the disc to the shrine.",
-      "mirrors": "A mirror bends the light off either of its faces. Most turn it a quarter, but a cut mirror — a hollow plate rather than a solid bar — stops short of that and sends the light off at a slant.",
+      "mirrors": "A mirror bends the light off either of its faces. The small marks around it show the other ways it can lie: most turn the light a quarter, and some stop short of that and send it off at a slant.",
       "walls": "A block of stone swallows the light. So does the edge of the board.",
       "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
       "nodes": "Some stone is wired to a socket in the floor and no tap will move it. Send the light across the socket and the stone slides aside."

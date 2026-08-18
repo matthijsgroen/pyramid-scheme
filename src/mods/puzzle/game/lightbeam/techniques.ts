@@ -100,8 +100,19 @@ export const createLightbeamBoard = (puzzle: LightbeamPuzzleData): LightbeamBoar
   dead: new Set(),
 })
 
+/**
+ * Whether two occupants are the same thing, which is what decides a cell is resolved rather than `unknown`.
+ *
+ * Compares the whole authored stop list, not a bit about it: two mirrors are the same occupant only if they
+ * stand at the same angle *and* offer the same fork. Strictly more discriminating than the `cut` boolean it
+ * replaced (§11.13), so nothing the engine concluded before can stop holding.
+ */
+const sameStops = (a: readonly number[], b: readonly number[]): boolean =>
+  a.length === b.length && a.every((angle, index) => angle === b[index])
+
 const sameBlocker = (a: Blocker, b: Blocker): boolean =>
-  a.kind === b.kind && (a.kind !== "mirror" || b.kind !== "mirror" || (a.angle === b.angle && a.cut === b.cut))
+  a.kind === b.kind &&
+  (a.kind !== "mirror" || b.kind !== "mirror" || (a.angle === b.angle && sameStops(a.stops, b.stops)))
 
 /**
  * The board as the deduction currently knows it. A cell is `unknown` whenever a movable piece could be
