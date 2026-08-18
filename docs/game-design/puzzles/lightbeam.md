@@ -1164,3 +1164,55 @@ nothing usable back. A cut mirror **added** as its own piece, placed where a 45�
 wanted, is a different proposition and is untested. Testing it needs a generator that routes diagonally on
 purpose (§11.4), so this is the point at which the measuring stops paying and the generator has to be
 built.
+
+### 11.7 The mirror as a node with authored stops
+
+**§11.6's conclusion was wrong, and this is the correction.** It claimed that any state set keeping the
+quarter turn _and_ reaching the diagonal must contain a 22.5° pair, so the legibility problem was
+structural and no choice of count escaped it. The reasoning was that every half-step sits 22.5° from an
+aligned orientation — which is true, and does not follow, because **the adjacent aligned orientation need
+not be in the set**. Checked over all 28 pairs, two sets clear every test at once:
+
+| Stops                   | Angles          | Separation | Turns offered to a beam arriving rightward |
+| ----------------------- | --------------- | ---------- | ------------------------------------------ |
+| `{22.5°, 135°}`         | half-step + `\` | **67.5°**  | up-right **or** down                       |
+| `{45°, 157.5°}`         | `/` + half-step | **67.5°**  | up **or** down-right                       |
+| _today's_ `{45°, 135°}` | `/` + `\`       | 90°        | up or down                                 |
+
+Each keeps a quarter turn, so it does not strip the board of the capability its route was built on — the
+failure that made every half-step-only set collapse — and each reaches the diagonal. 67.5° apart is well
+clear of a subtle rotation. **Two stops, so the cost stays 1×.**
+
+#### The idiom already exists, one axis over
+
+This is not a new concept for the family, it is an existing one applied to the other degree of freedom.
+§2's table already reads:
+
+> **Sliding mirror** — _fixed angle, tap cycles between **authored stops**_
+
+So the symmetric piece is a **turn mirror with authored _angle_ stops** rather than a fixed pair. Same
+authoring, same two-or-three stops, same cost, and the same drawing convention. A mirror stops being a
+physical object with a free rotation and becomes **a node offering the light a small authored set of
+directions**, drawn as a rotation.
+
+That is worth more than the diagonal it was reached for:
+
+- **Branching becomes a per-piece dial**, which is exactly §6.3's "forks met on a wrong branch" — the
+  measure difficulty actually runs on. It can now be authored rather than hoped for.
+- **Per-piece variety dissolves the counting problem.** §11.5's worklist existed because a uniform class
+  of cut mirror could be counted. With each mirror carrying its own stop set, some flipping parity and
+  some not, there is no class to count and nothing to infer from the tally.
+- **Three stops do not fit forward-only** — no three orientations are both pairwise 45° apart and all
+  carrying the light onward. A third stop is therefore always a _visibly_ bad turn, which is a corridor
+  seen from the door: cheap, and legitimately what a starter board wants (§6.3 puts starter at 33%).
+
+#### The one rule that keeps this deduction rather than trial
+
+**A piece's stops must be drawn, never discovered.** §9 already requires a sliding piece's track to be
+visible, and the board draws a vacant stop as somewhere a piece can go rather than as an empty square. The
+same has to hold here: **a mirror's available angles are drawn as ghost lines through its cell.**
+
+This is the whole difference between the two readings of "requiring some exploration". Exploring the
+_board_ — which route survives — is the puzzle. Exploring _what a piece can do_ is tapping to find out,
+which is the trial-and-error §4 exists to rule out. Ghost stops keep it on the right side of that line,
+and they cost nothing: the renderer already draws vacant sliding stops exactly this way.
