@@ -377,6 +377,61 @@ size is capacity rather than difficulty). Replacing it with a fall in "seen from
 aggregate over a tier, would make the ramp a property of the boards. The junior/expert collapse has to be
 fixed for that assertion to pass, which is the point of writing it.
 
+### 6.4 The vocabulary ladder — one new thing a tier
+
+Difficulty is set by **what a tier is allowed to use**, one addition at a time, rather than by turning
+every dial a little further:
+
+| Tier    | What it adds                        | Which currency it buys (§6.3)                               |
+| ------- | ----------------------------------- | ----------------------------------------------------------- |
+| starter | right angles only, dead ends 1 turn | neither — wrong turns are meant to be seen from the door    |
+| junior  | longer dead ends, walls             | **legs** — a wrong turn has to be followed further          |
+| expert  | sliding mirrors, sliding walls      | **forks** — an unsettled piece stands in the wrong ray      |
+| master  | diagonal angles                     | geometry — the ray leaves the rows and columns you can read |
+| wizard  | all of it                           | composition                                                 |
+
+The two currencies §6.3 separated fall out cleanly: junior buys length, expert buys width. **A sliding
+piece is exactly "a piece standing where a wrong ray goes"** — which is the lever authored angles could
+not supply (§11.7), and it arrives at the tier where the fork count needs to start moving.
+
+#### Three places the shipped config does not match this
+
+1. **Sliding mirrors already debut at junior** (`slidingMirrors: 1`), a tier before the ladder puts them.
+   That is most of why junior and expert measure alike: junior already owns expert's new thing.
+2. **A starter board can draw a sliding wall.** Starter's pool is `[longChain, clearTheWay]`, and
+   `clearTheWay` turns `slidingWalls` up. `longChain` turns `setMirrors` up. So **both** of starter's goals
+   introduce vocabulary the ladder reserves for later tiers.
+3. **An expert board can draw doors and sockets**, because `orderOfOperations` sits in expert's pool. The
+   ladder keeps those for wizard.
+
+#### The structural cause: goals introduce vocabulary, not just quantity
+
+§7's pool was written as "the tier sets the route, a goal sets what is in the way", and the fairness note
+in `lightbeamConfig.ts` gates two goals on the technique cap. But three of the six change the **piece
+list** rather than the amount of it:
+
+| Goal                | Turns up       | Introduces         |
+| ------------------- | -------------- | ------------------ |
+| `longChain`         | `setMirrors`   | set mirrors        |
+| `clearTheWay`       | `slidingWalls` | sliding walls      |
+| `orderOfOperations` | `doors`        | doors and sockets  |
+| `sortTheWheat`      | `decoys`       | — more of the same |
+| `blindAlleys`       | `shadows`      | — more of the same |
+| `crossedBeams`      | `crossings`    | — route shape only |
+
+So **a tier's goal pool has to be derived from its vocabulary rather than authored beside it**, or a goal
+hands a board a piece its tier has not met. Under a strict reading of the ladder, starter is left with
+`crossedBeams` alone — and that turns up `turns`, which fights "dead ends 1 turn". **Starter may want no
+goal at all**, which is consistent with it being the tier that teaches rather than tests.
+
+#### One honest caveat on walls
+
+Walls are character rather than depth. §5.1 already found that removing one "usually leaves the wrong
+setting running off the frame, which `deadEnd` explains just as happily", and `thinWalls` strips nearly
+all of them — a shipped board carries 0.0 to 0.1 fixed walls. So junior's walls make a wrong turn **die
+somewhere you can point at** instead of sailing off the edge, which is worth having for how the board
+reads, but the depth at junior has to come from the longer dead end beside it, not from the wall.
+
 ## 7. Puzzle goals — pick two dials and turn them hard
 
 Before this existed, every tier turned every dial a little. The wizard row read: five turns
