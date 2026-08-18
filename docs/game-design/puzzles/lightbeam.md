@@ -1460,15 +1460,17 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
    `/` must read as a different object from a steep one. §9 forbids "a subtle rotation", and §11.2's
    precedent is that the drawing is what kills this kind of thing, not the reasoning. — **done, §11.9.**
 2. **The walk** — 8 directions, diagonal steps resolving one cell. — **done, §11.10.**
-3. **`blockWrongSettings`** — it has to learn that a wall no longer stops diagonal light at its corner, so
-   stone is conditional for the first time.
+3. **`blockWrongSettings`** — ~~it has to learn that a wall no longer stops diagonal light at its corner, so
+   stone is conditional for the first time.~~ **That reason is wrong** (§11.11): stone stays unconditional,
+   what has to change is the _ray_ — a wrong setting is read off the piece's stop set — and what the piece
+   costs is `exitRun` rather than stone.
 4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
 5. **Traps** (§11.1), which need the second routes this supplies.
 
 **Three things paper cannot settle, and they are the whole remaining risk:** ~~whether the stops read at
-36px~~ (settled — §11.9), what the generator's yield is once uniqueness has more to reject, and whether
-the ladder still _deduces_ — §11's boards are verified unique and load-bearing, but their reasons were
-written by hand.
+36px~~ (settled — §11.9), ~~what the generator's yield is once uniqueness has more to reject~~ (settled for
+the swap-in — §11.11: 40/40 boards on every tier), and ~~whether the ladder still _deduces_~~ (settled for
+the swap-in — §11.11; a board routed diagonally is still step 4's to prove).
 
 ### 11.9 What the drawing found, at 36px
 
@@ -1582,3 +1584,126 @@ cut mirror on their winning routes happens to sit at an aligned stop, so the fra
 light at all**. They are kept for the drawing question they answer, which still has to hold; the diagonal
 is shown by `DiagonalBeam`, whose two hand-authored frames are the mechanic at shipping size and whose
 third was found by the search above.
+
+### 11.11 What the wrong ray found
+
+Step 3: `blockWrongSettings`, and the rays it is given to close. Rule 10's one-line reason for this step
+does not survive, and the thing that replaces it is not a wall at all.
+
+**Stone never became conditional.** A wall absorbs anything that _lands_ in it, diagonal included, and
+`blockWrongSettings` walls exactly the cell the wrong ray lands in first — so the part of stone that is
+unconditional was never touched. §11.4's claim is true of a _barrier built of separate walls_: stone no
+longer seals a corner, so two walls no longer close a diagonal between them. Nothing in the generator
+builds a barrier that way, so nothing had to learn it.
+
+**What was concretely broken was the ray.** The wrong setting's direction was built as _the other
+diagonal_ — `reflect(angle === SLASH ? BACKSLASH : SLASH, enter)` — and that fails twice over on a cut
+mirror, silently both times: the ray points along a turn the piece cannot make, so stone lands in a cell
+the light never visits; and a three-stop piece (rule 3) is wrong in two ways while the count stays at one.
+Both go away by reading the piece's own stop set: **one ray per stop that is not the answer.**
+
+#### Measured, 40 seeds a tier, one cut mirror swapped in for an ordinary one
+
+Rule 8's swap, with the route left square: the stop set keeps the bend's quarter turn, so what the piece
+adds is a _wrong_ setting that throws the light off at 67.5°. That is the only way to put a diagonal ray in
+front of `blockWrongSettings` before the generator routes diagonally, and it is a dial of its own: no tier
+draws it, so the piece stays out of §6.4's vocabulary ladder until rule 9's slot is actually spent.
+
+| tier    | boards built | attempts a board, 0 → 1 → 2 cut | fixed walls a board, 0 → 1 cut | `exitRun` used, 0 → 1 cut |
+| ------- | ------------ | ------------------------------- | ------------------------------ | ------------------------- |
+| starter | 40/40        | 2.25 → 2.25 → 2.25              | 0.00 → 0.03                    | 40 → 40                   |
+| junior  | 40/40        | 4.03 → 3.95 → 3.75              | 0.00 → 0.10                    | 40 → 40                   |
+| expert  | 40/40        | 71 → 87 → 92                    | 0.05 → 0.17                    | 39 → 32                   |
+| master  | 40/40        | 144 → 138 → 152                 | 0.23 → 0.13                    | 34 → 19                   |
+| wizard  | 40/40        | 112 → 130 → 173                 | 0.10 → 0.23                    | 26 → 12                   |
+
+**A diagonal wrong ray needs less stone, not more, and the reason is the frame.** `stepsToEdge` takes the
+minimum over both axes, so a ray leaving at 45° meets the frame in far fewer steps than one running along a
+row — of 200 wrong rays with a cut mirror on the bend, the first cell is off the board outright 37 times,
+and the walls the rest need are the same fraction of a wall a board carried before. The cost §11.4 expected
+here is not there.
+
+**Yield does not collapse either.** Every seed on every tier still builds, with one cut mirror or two, and
+the rejection this step can force — a wrong ray whose first cell is on the route, where no wall may go —
+rises from 19 drafts in 86 to 26 in 101 at expert, and 13 in 69 to 18 in 72 at wizard. So rule 8's swap is
+affordable at **every** tier rather than only the one rule 9 assigns it to.
+
+#### The cost is a rung, it is board-wide, and one piece is enough to trigger it
+
+`exitRun` is what pays. `travelledDirections` opens all eight directions as soon as a single half-step stop
+exists **anywhere on the board**, and a diagonal backward walk that meets an unsettled piece comes back
+`unknown` rather than dead — so "exactly one survives" fails far more often. Measured on fresh boards, over
+the four square directions against all eight:
+
+| tier    | fires over four | fires over eight |
+| ------- | --------------- | ---------------- |
+| starter | 40/40           | 28/40            |
+| junior  | 40/40           | 35/40            |
+| expert  | 30/40           | 13/40            |
+| master  | 33/40           | 13/40            |
+| wizard  | 23/40           | 5/40             |
+
+That is §11.10's warning arriving as a bill rather than a hypothetical, and it inverts how this piece should
+be described. **A cut mirror does not add a piece's worth of work; it takes away the board's best-explained
+rung and hands the work to the exhaustive pair** — `onlySurvivor` goes from 10 of 40 master boards to 25,
+and 27 of 40 wizard boards to 32. For rule 9's slot that is roughly the trade master wants, but it is a
+change of character rather than an addition, and what it spends is the family's clearest sentence: _the
+shrine can only be lit from there._
+
+The lever, if step 4 wants it narrowed, is **§11.5's parity counting**, and it is the one place that
+argument becomes useful rather than dangerous: the shrine can only be entered on a parity the route's
+half-step crossings allow, and `travelledDirections` currently reads nothing finer than "is there a
+half-step anywhere on this board".
+
+#### The ladder does deduce on a board with a cut mirror on its route
+
+§11.8's second named risk, closed for the swap-in. The smallest case settles on `deadEnd` with the frame
+doing the walling; a three-stop `{0°, 45°, 135°}` piece has both its wrong settings ruled out for
+_different_ reasons, one in stone and one at the frame, which is the two-ray case as a sentence a player
+can hear; and every generated board in the tables above settles inside its own tier's cap, since generation
+gates on exactly that.
+
+#### Two things the rules above say less precisely than they should
+
+- **Rule 3's "edge-on" stop is direction-dependent in a stronger sense than the rule states.** The angle
+  that lies along the beam is `2·travel`, so `{0°, 45°}` is written for a beam arriving along the row. Put a
+  flat stop in front of a beam arriving down the column and it does not pass — it **retroreflects**, sending
+  the wrong ray back up the route it came from, where every cell is the route's own and no wall may go, so
+  the draft is thrown away. A rule 3 set has to be built from the bend's arrival direction.
+- **Rule 2's table is the rightward slice of one rule.** Keep the bend's quarter turn, add the half-step
+  67.5° off it leaning the other way, and a rightward beam gives exactly that table's two rows; over the
+  four arrival directions it gives four pairs — `{22.5°, 135°}`, `{45°, 157.5°}`, `{67.5°, 135°}` and
+  `{45°, 112.5°}`. Derived rather than tabulated, because a bend arrives from any of the four.
+
+#### The drawing, because stone landed somewhere it never had
+
+A wall for a diagonal wrong ray sits one diagonal step from the mirror, touching it at a **corner** — and
+rule 4 teaches the opposite lesson about corners everywhere else on the board. It reads, and what carries it
+is the end of the line rather than the marker: the beam runs visibly _into_ the brick and stops in the
+middle of it, which is not the picture a beam that clears a corner makes (`CutMirrorWrongRay`, 8 boards in
+200 have one).
+
+**The marker is the part to look at again.** An absorbed beam is dotted where it meets the obstacle's face,
+which for a diagonal entry is the cell corner — so the dot lands on the one point rule 4 gives the opposite
+meaning to, and on a 9-wide board it sits in a four-cell junction. The escape marker has the same open
+question (§11.10), no board ships either, and marking the cell centre for a diagonal end would settle both.
+Left for whoever routes diagonally on purpose rather than decided here.
+
+One thing confirmed rather than found: the junior frame puts a cut mirror at **135°** two cells from an
+ordinary mirror at **135°**, both doing the identical quarter turn, on a board the generator built. Solid
+bar against hollow plate is the whole of the difference, which is §11.9's answer to question 2 holding up
+where it counts.
+
+#### Left alone on purpose
+
+- **`spacedFrom` and `piecesAreSpaced` stay on the four square neighbours.** That is a tap-accuracy rule,
+  not a beam rule, and diagonally adjacent tap targets already touch at their corners today.
+- **`placeShadows` still steps two cells along the ray.** On a diagonal ray the first cell is a corner
+  neighbour, which the spacing rules do allow — but it is also where that ray's own stone goes, so two cells
+  out is right there too. Worth knowing while reading it: the wall for a ray lands _in front of_ a shadow
+  placed on that same ray, and `thinWalls` is what takes it away again on the boards where the shadow is
+  what the deduction needs (master keeps it on 8 boards in 40).
+- **The rules text and the tier table.** Neither moves while no tier draws the dial: `mirrors` still says
+  "a quarter turn, off either of its faces", which is true of every mirror a player can meet. Turning it on
+  owes that sentence a rewrite — and rule 5 says a cut mirror's stops are discovered by tapping, not drawn,
+  so what it owes is a sentence rather than a legend.

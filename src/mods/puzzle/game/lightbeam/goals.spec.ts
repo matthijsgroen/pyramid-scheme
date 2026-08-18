@@ -17,6 +17,7 @@ const LEAN: LightbeamDials = {
   doorNodes: 1,
   decoys: 0,
   shadows: 0,
+  cutMirrors: 0,
 }
 
 const DIALS = [

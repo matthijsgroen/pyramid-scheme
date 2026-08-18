@@ -8,6 +8,7 @@ import {
   insideGrid,
   allPieceOptions,
   isLit,
+  mod8,
   opposite,
   pieceCells,
   pieceStateCount,
@@ -96,6 +97,16 @@ export type LightbeamDials = {
    * watching the light die. This is what pushes a board past `deadEnd` into the exhaustive rungs.
    */
   shadows: number
+  /**
+   * Route mirrors given a cut mirror's stop set instead of the two diagonals (design doc §11.8).
+   *
+   * The route stays square: the stop set keeps the quarter turn the bend needs and spends its *wrong*
+   * setting on a diagonal, which is §11.8 rule 8's "swap a cut mirror in for an ordinary one" — one piece
+   * doing more rather than another piece. Zero on every tier until the generator can route diagonally on
+   * purpose (§11.8 rule 10, step 4); it is here because a wrong ray that leaves at 67.5° is the only way
+   * to exercise what `blockWrongSettings` had to learn.
+   */
+  cutMirrors: number
 }
 
 export type LightbeamPuzzle = LightbeamPuzzleData & {
@@ -148,6 +159,22 @@ const MIN_LEG = 2
 const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
   const angle = (enter + exit) % 8
   return angle === SLASH || angle === BACKSLASH ? angle : undefined
+}
+
+/**
+ * The stop set for a cut mirror standing in for an ordinary one at a bend (§11.8 rule 2).
+ *
+ * The bend's own quarter turn is kept — that is the constraint that killed three earlier drafts, since the
+ * route itself depends on this cell turning light 90° — and the second stop is the half-step 67.5° off it,
+ * which leans the beam 45° the *other* way. So one piece asks "hard across, or gently back", and the wrong
+ * answer is the first diagonal light the family has ever had to reason about.
+ *
+ * Derived from the turn rather than tabulated: §11.8's table is written for a beam arriving rightward, and
+ * a bend arrives from any of the four. For a rightward beam it gives exactly that table's two rows.
+ */
+const cutStops = (bend: Route["bends"][number]): readonly MirrorAngle[] => {
+  const half = mod8(bend.angle - (mod8(bend.exit - bend.enter) === 2 ? 3 : -3))
+  return half < bend.angle ? [half, bend.angle] : [bend.angle, half]
 }
 
 /**
@@ -325,6 +352,21 @@ const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] 
 
 type Ray = { from: CellRef; direction: Direction }
 
+/**
+ * Where the light goes when a mirror is set wrong: one ray per stop that is not the answer.
+ *
+ * Read off the piece's own stop set, because that is the only place the answer lives. Deriving it from the
+ * two diagonals — the other one of `SLASH`/`BACKSLASH` — fails twice over on a cut mirror, and silently
+ * both times: the ray points along a turn the piece cannot make, and a three-stop piece (§11.8 rule 3) is
+ * wrong in two ways while the count stays at one.
+ */
+const wrongSettingRays = (
+  bend: { at: CellRef; enter: Direction },
+  angles: readonly MirrorAngle[],
+  answer: MirrorAngle
+): Ray[] =>
+  angles.filter(angle => angle !== answer).map(angle => ({ from: bend.at, direction: reflect(angle, bend.enter) }))
+
 const ADJACENT: readonly Direction[] = SQUARE_DIRECTIONS
 
 /**
@@ -375,7 +417,9 @@ const placeShadows = (size: number, draft: Draft, rays: Ray[], count: number, ra
   for (const ray of shuffle(rays, random).slice(0, count)) {
     // Two cells out, not one. A shadow one cell along the ray sits on the shoulder of the very mirror it
     // shadows, which no spacing rule can allow — and the empty cell between them costs nothing, since the
-    // wrong setting's beam still meets the shadow before it meets anything else the player controls.
+    // wrong setting's beam still meets the shadow before it meets anything else the player controls. On a
+    // diagonal ray that first cell is a corner neighbour, which the spacing rules do allow, but it is also
+    // where this very ray's own stone goes, so two cells out is right there too.
     let at = stepCell(stepCell(ray.from, ray.direction), ray.direction)
     for (let step = 0; step < 2 && insideGrid(size, at); step++) {
       if (!draft.taken.has(cellKey(at)) && spacedFrom(draft, at)) {
@@ -400,6 +444,12 @@ const placeShadows = (size: number, draft: Draft, rays: Ray[], count: number, ra
  *
  * A ray that runs into something movable is left alone: that is a shadow doing its job, and walling it
  * off would undo it.
+ *
+ * **A diagonal wrong ray costs no more stone than a square one, and usually less** (§11.11): `stepsToEdge`
+ * takes the minimum over both axes, so a ray leaving at 45° meets the frame in fewer steps than one running
+ * along a row, and the frame walls it for free. What is new is only where the stone lands when it is needed
+ * — the first cell of a diagonal ray is the mirror's corner neighbour, so stone can stand on a shoulder no
+ * square ray has ever put it on.
  */
 const hasWall = (draft: Draft, at: CellRef): boolean =>
   draft.fixed.some(piece => piece.kind === "wall" && cellKey(piece.at) === cellKey(at))
@@ -545,6 +595,17 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     ).slice(0, slidingCount)
   )
 
+  // Only a bend the player turns in place can be swapped for a cut mirror: a given has no wrong setting to
+  // spend, and a sliding mirror's question is which cell rather than which angle.
+  const cut = new Set(
+    options.cutMirrors
+      ? shuffle(
+          movableBends.filter(bend => !sliding.has(cellKey(bend.at))).map(bend => cellKey(bend.at)),
+          random
+        ).slice(0, options.cutMirrors)
+      : []
+  )
+
   const wrongRays: Ray[] = []
 
   route.bends.forEach((bend, index) => {
@@ -566,10 +627,11 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
       wrongRays.push({ from: bend.at, direction: bend.enter })
       return
     }
+    const angles = cut.has(cellKey(bend.at)) ? cutStops(bend) : TURN_ANGLES
     draft.movableCells.add(cellKey(bend.at))
-    draft.movable.push({ kind: "turnMirror", at: bend.at, angles: TURN_ANGLES })
-    draft.solution.push(TURN_ANGLES.indexOf(bend.angle))
-    wrongRays.push({ from: bend.at, direction: reflect(bend.angle === SLASH ? BACKSLASH : SLASH, bend.enter) })
+    draft.movable.push({ kind: "turnMirror", at: bend.at, angles })
+    draft.solution.push(angles.indexOf(bend.angle))
+    wrongRays.push(...wrongSettingRays(bend, angles, bend.angle))
   })
   if (draft.movable.length + given.size !== route.bends.length) return undefined
 
@@ -726,6 +788,7 @@ const BASELINE: LightbeamDials = {
   doorNodes: 1,
   decoys: 0,
   shadows: 0,
+  cutMirrors: 0,
 }
 
 /** How likely a piece is to open on a setting the deduction will have to rule out. */

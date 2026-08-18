@@ -4,7 +4,10 @@ import {
   allPieceOptions,
   cellKey,
   eachConfig,
+  isCut,
+  isHalfStep,
   isLit,
+  reflect,
   pieceCells,
   pieceStateCount,
   restingState,
@@ -332,6 +335,71 @@ describe("no two pieces the player can tap ever touch", () => {
     // The overflow may reach into empty squares, never into another target's.
     it("leaves no two tap targets overlapping", () => {
       expect(BOARD_PX / size + 2 * OVERFLOW_PX).toBeLessThanOrEqual(2 * (BOARD_PX / size))
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------------------------------
+// The cut mirror (design doc §11.8), swapped in for an ordinary turn mirror at a bend — rule 8's way of
+// spending its cost: one piece doing more, not another piece. The route stays square, so what the piece
+// adds is a WRONG setting that throws the light off at 67.5°, which is the first diagonal ray
+// `blockWrongSettings` has ever had to close.
+// ---------------------------------------------------------------------------------------------------
+
+/** The cut pieces on a board, with the bend they stand on: their answer, and the way the beam arrived. */
+const cutBends = (board: ReturnType<typeof generateLightbeam>) => {
+  const entered = new Map(traceBeam(board, board.solution).path.map(segment => [cellKey(segment.at), segment.enter]))
+  return board.movable.flatMap((piece, index) => {
+    if (piece.kind !== "turnMirror" || !isCut(piece.angles)) return []
+    const enter = entered.get(cellKey(piece.at))
+    if (enter === undefined) return []
+    return [{ piece, index, enter, answer: piece.angles[board.solution[index]] }]
+  })
+}
+
+describe("a cut mirror standing in for an ordinary one", () => {
+  // The gate on the whole mechanic: no board a player is handed carries one until the generator can route
+  // diagonally on purpose (§11.8 rule 10, step 4). Everything below runs with the dial turned on by hand.
+  it("reaches no player yet, on any tier", () => {
+    for (const difficulty of difficulties) expect(LIGHTBEAM_CONFIG[difficulty].cutMirrors ?? 0).toBe(0)
+  })
+
+  describe.each(difficulties)("at %s", difficulty => {
+    const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+    const boards = Array.from({ length: 5 }, (_, seed) =>
+      generateLightbeam(size, seed + 1, { ...options, cutMirrors: 1 })
+    )
+
+    it("puts one on every board, on a bend the beam actually turns at", () => {
+      for (const board of boards) expect(cutBends(board)).toHaveLength(1)
+    })
+
+    // §11.8 rule 2, which is the constraint that killed three earlier drafts: the stop set has to keep the
+    // quarter turn the route depends on, and the second stop sits 67.5° off it — as lines, three
+    // eighth-turns either way round.
+    it("keeps the bend's quarter turn, with its other stop 67.5° away", () => {
+      for (const board of boards)
+        for (const { piece, answer } of cutBends(board)) {
+          expect(piece.angles).toContain(answer)
+          const [low, high] = [...piece.angles].sort((a, b) => a - b)
+          expect(Math.min(high - low, 8 - (high - low))).toBe(3)
+        }
+    })
+
+    it("throws the wrong setting off diagonally, and it never arrives", () => {
+      for (const board of boards)
+        for (const { piece, index, enter, answer } of cutBends(board))
+          piece.angles.forEach((angle, state) => {
+            if (angle === answer) return
+            expect(isHalfStep(reflect(angle, enter))).toBe(true)
+            const wrong = [...board.solution]
+            wrong[index] = state
+            expect(isLit(board, wrong)).toBe(false)
+          })
+    })
+
+    it("still settles inside its tier's own cap", () => {
+      for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
     })
   })
 })

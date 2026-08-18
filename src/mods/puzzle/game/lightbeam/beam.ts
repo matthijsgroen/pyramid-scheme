@@ -42,7 +42,7 @@ export const DIRECTIONS: readonly Direction[] = [0, 1, 2, 3, 4, 5, 6, 7]
 export const SQUARE_DIRECTIONS: readonly Direction[] = [DIR.right, DIR.up, DIR.left, DIR.down]
 
 /** Directions and stops both live modulo eight, and both are counted from the same axis. */
-const mod8 = (n: number): number => ((n % 8) + 8) % 8
+export const mod8 = (n: number): number => ((n % 8) + 8) % 8
 
 export type CellRef = { row: number; col: number }
 

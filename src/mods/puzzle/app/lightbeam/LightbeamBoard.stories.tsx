@@ -4,12 +4,18 @@ import { useState } from "react"
 import {
   BACKSLASH,
   DIR,
+  isCut,
+  pieceStateCount,
   SLASH,
   TURN_ANGLES,
   type LightbeamPuzzleData,
   type MirrorAngle,
 } from "@/mods/puzzle/game/lightbeam/beam"
-import { generateLightbeam } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
+import {
+  generateLightbeam,
+  type LightbeamOptions,
+  type LightbeamPuzzle,
+} from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
 import { createLightbeamState, cycleLightbeamPiece } from "@/mods/puzzle/game/lightbeam/lightbeamState"
 import { buildLightbeamHint } from "./lightbeamHint"
@@ -27,9 +33,9 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const board = (difficulty: keyof typeof LIGHTBEAM_CONFIG, seed: number) => {
+const board = (difficulty: keyof typeof LIGHTBEAM_CONFIG, seed: number, extra: LightbeamOptions = {}) => {
   const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
-  return generateLightbeam(size, seed, options)
+  return generateLightbeam(size, seed, { ...options, ...extra })
 }
 
 const starter = board("starter", 1)
@@ -534,6 +540,61 @@ export const DiagonalBeam: Story = {
       <Frame puzzle={diagonalRun} states={[0]} caption="22.5° — six diagonal steps past six walls" />
       <Frame puzzle={diagonalRun} states={[1]} caption="135° — the quarter turn it keeps" />
       <Frame puzzle={cutRivet} states={[1, 0, 0, 0, 0, 0, 0, 0, 1, 0]} caption="a beam corner on a rivet" />
+    </div>
+  ),
+}
+
+/**
+ * The first boards the generator has made with a cut mirror on the winning route (§11.8 rule 8): one piece
+ * swapped for a cut one, the route left square, so what the piece adds is a wrong setting that throws the
+ * light off at 67.5°.
+ */
+const cutJunior = board("junior", 3, { cutMirrors: 1 })
+const cutWizard2 = board("wizard", 14, { cutMirrors: 1 })
+
+/** The same board with its cut mirror on the stop that is not the answer — the ray step 3 had to close. */
+const onTheWrongStop = (puzzle: LightbeamPuzzle): number[] => {
+  const index = puzzle.movable.findIndex(piece => piece.kind === "turnMirror" && isCut(piece.angles))
+  const states = [...puzzle.solution]
+  states[index] = (states[index] + 1) % pieceStateCount(puzzle.movable[index])
+  return states
+}
+
+/**
+ * **Step 3's question: does stone on a cut mirror's _corner_ read as somewhere the light dies?**
+ *
+ * The doubt is specific rather than general. Rule 4 teaches the opposite lesson everywhere else on the
+ * board — a diagonal step resolves only the cell it lands in, so light slips between two walls' corners —
+ * and the wall `blockWrongSettings` puts in front of a diagonal wrong ray sits one diagonal step from the
+ * mirror, touching it at a corner. Same visual relation, opposite meaning: the light dies when the stone is
+ * what it lands *on* and passes when the stone is what it squeezes *by*.
+ *
+ * **It reads, and what carries it is the end of the line rather than the marker**: the beam runs visibly
+ * *into* the brick and stops in the middle of it, which is a different picture from a beam that clears a
+ * corner and carries on. **The marker is the part to look at again.** An absorbed beam is dotted where it
+ * meets the obstacle's face, which for a diagonal entry is the cell corner — so the dot lands on the very
+ * point rule 4 gives the opposite meaning to, and on the 9-wide board it sits in a four-cell junction. The
+ * escape marker has the same open question (see `DiagonalBeam`), no board ships either yet, and marking the
+ * cell centre instead would settle both — a decision for whoever routes diagonally on purpose.
+ *
+ * Both boards are generated, and their stone is load-bearing: `thinWalls` strips every wall a board can
+ * deduce without, and these survived it. The junior board's is doing something the family has never needed
+ * stone for — the wrong stop's diagonal ray points **at the shrine**, two steps away, so without that one
+ * wall there would be a second and much shorter route to it.
+ *
+ * The junior answer frame is also §11.9's question 2 at its sharpest, and this time on a board the
+ * generator built: the cut mirror stands at **135°**, the same angle as the ordinary mirror two cells to
+ * its left, doing the identical quarter turn. Solid bar against hollow plate is the whole of the
+ * difference, and the beam crosses the plate's hollow — amber through sky — exactly as step 1 measured.
+ */
+export const CutMirrorWrongRay: Story = {
+  args: { puzzle: cutJunior, states: cutJunior.solution, onCycle: () => {} },
+  render: () => (
+    <div className="flex flex-wrap items-start justify-center gap-6">
+      <Frame puzzle={cutJunior} states={cutJunior.solution} caption="junior — the answer, and it is square" />
+      <Frame puzzle={cutJunior} states={onTheWrongStop(cutJunior)} caption="the wrong stop — 45° into the corner" />
+      <Frame puzzle={cutWizard2} states={cutWizard2.solution} caption="wizard — the answer" />
+      <Frame puzzle={cutWizard2} states={onTheWrongStop(cutWizard2)} caption="wizard — the wrong stop" />
     </div>
   ),
 }
