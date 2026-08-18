@@ -935,3 +935,63 @@ corner points — so a diagonal beam crosses a wire transversally at 45°, which
 §11.2's rule 1 exists to guarantee. The open question is narrower than a broken rule: whether coincident
 _points_ at corners read cleanly at 35px, and whether eight mirror orientations are tellable apart at all
 at that size. The second is the likelier killer.
+
+### 11.5 Parity, and how two cut mirrors turn back into a worklist
+
+**A cut mirror is countable, and that is a failure mode.** Half-step orientations flip the beam between
+square and diagonal; aligned ones preserve it. Checked over all 64 (orientation, direction) pairs:
+`parity(out) = parity(m) XOR parity(in)`, so the four half-step orientations `{1,3,5,7}` flip and the four
+aligned `{0,2,4,6}` do not. The beam leaves the disc square, so **the number of half-step crossings is
+fixed by how the shrine can be entered** — even for a square-only shrine, odd for a diagonal-only one.
+
+Put two cut mirrors on a board whose shrine can only be entered square and the player never has to look at
+the board: two mirrors, an even count needed, so both are half-step — one to leave the square, one to come
+back. Their roles are settled by counting. That is §11.1's checklist socket in a new costume, and it is
+the same objection: **a reason without a decision is bookkeeping.**
+
+#### It is crossings, not mirrors — so one can do both
+
+The invariant counts times the beam crosses a half-step mirror, not how many exist. One cut mirror crossed
+twice flips parity twice, and the count then tells the player nothing. Verified, on a 7×7:
+
+```
+ . . . . . . .     S  disc at (3,0), facing right
+ . . . . - . .     C  the one cut mirror, m=1 (22.5°)
+ . . . x . x .     -  aligned mirror, m=0     |  aligned, m=4
+ S + C . . . |     x  the beam travelling diagonally
+ . . + x . x .     +  the beam travelling square
+ . . + . - . .     X  shrine at (6,2)
+ . . X . . . .
+```
+
+The trace: right into `C`, which sends it **up-right**; a diamond of three aligned mirrors at (1,4), (3,6)
+and (5,4) carries the diagonal round; it comes back into `C` travelling **up-left**, and leaves
+**downward** to the shrine. One cut mirror, both flips, and the excursion is exactly the route-folding
+`crossedBeams` already asks for.
+
+**The obvious version of this does not work, and the algebra says why.** If the beam simply retraces —
+goes out along a diagonal and is reversed straight back down it — then re-entering on the opposite
+direction gives `exit = m - (d + 4)`, which reduces to the opposite of the original entry. The light goes
+back the way it came, into the disc, every time. A search over three million boards found double-crossings
+easily and **every retracing one was absorbed by the disc**. The excursion has to return on a _different_
+diagonal, which costs two or three aligned mirrors — so one cut mirror instead of two is real, but it is
+not free.
+
+#### The rule that follows
+
+**Never let the count of cut mirrors determine the number of half-step crossings.** At least one of these
+has to hold on any board carrying more than one:
+
+- a cut mirror set to one of its four **aligned** orientations in the solution, so it is serving as an
+  ordinary mirror and `n` cuts no longer means `n` flips;
+- a **double crossing**, as above;
+- a shrine that can be entered **either way**, so arrival parity pins nothing.
+
+#### The same invariant, used well, is a rung the ladder has never had
+
+Every technique in §4 is local — this cell, that setting. Parity is **global**: it counts over the whole
+route without looking at any square. That is worth having precisely when it _constrains without deciding_,
+which is the line between a deduction and a worklist. With three cut mirrors and a square-only shrine it
+reads: _"an even number of these are making a diagonal, so at least one of the three is not"_ — which
+narrows the board and still leaves the player to find out which. With two it reads: _"both of them"_, and
+there is nothing left to find out.
