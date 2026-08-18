@@ -15,11 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Light puzzles ask for real reasoning now. Every board used to be solved by tapping every piece once, whatever its difficulty; that no longer works, and neither does simply chasing the beam towards the shrine.
 - Sliding pieces can have three places to stand instead of two, so the question is which spot rather than in or out.
-- Harder light puzzles have longer routes and more to think about, and the expert and master grids no longer play the same.
+- The light-puzzle difficulties now play differently from one another: each one adds a new kind of piece or a longer route, rather than turning every dial a little further.
 - Pieces you can move now carry a white edge, and anything a socket controls carries that socket's colour.
 - Tapping a piece is animated: sliding pieces slide, and mirrors turn.
 - Some light puzzles now send the beam back through its own path, crossing itself on the way to the shrine.
-- Each light-puzzle difficulty now introduces one new thing instead of turning every dial a little further, so the easier and harder ones no longer play alike.
 
 ## 0.36.0 - 2026-08-17
 
