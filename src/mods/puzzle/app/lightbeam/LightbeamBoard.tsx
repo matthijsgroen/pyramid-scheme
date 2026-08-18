@@ -14,6 +14,7 @@ import {
   type CellRef,
   type Direction,
   type LightbeamPuzzleData,
+  type MirrorAngle,
   type MirrorFace,
 } from "@/mods/puzzle/game/lightbeam/beam"
 
@@ -33,7 +34,7 @@ type CellView =
   | { kind: "empty" }
   | { kind: "sun"; facing: Direction }
   | { kind: "shrine" }
-  | { kind: "mirror"; face: MirrorFace }
+  | { kind: "mirror"; face: MirrorFace; angle?: MirrorAngle }
   | { kind: "wall" }
   /**
    * A cell a piece can stand in. The piece itself is not drawn here — it rides in the layer above so it
@@ -62,7 +63,8 @@ const viewGrid = (puzzle: LightbeamPuzzleData, states: readonly number[]): CellV
       }
   })
   for (const piece of puzzle.fixed)
-    grid[piece.at.row][piece.at.col] = piece.kind === "mirror" ? { kind: "mirror", face: piece.face } : { kind: "wall" }
+    grid[piece.at.row][piece.at.col] =
+      piece.kind === "mirror" ? { kind: "mirror", face: piece.face, angle: piece.angle } : { kind: "wall" }
   grid[puzzle.shrine.row][puzzle.shrine.col] = { kind: "shrine" }
   grid[puzzle.sun.at.row][puzzle.sun.at.col] = { kind: "sun", facing: puzzle.sun.facing }
   return grid
@@ -80,31 +82,64 @@ const Glyph: FC<{ children: ReactNode }> = ({ children }) => (
   </svg>
 )
 
+/** Where a mirror's line lies, in degrees anticlockwise from east — 45° is `/`, 135° is `\\`. */
+const FACE_ANGLE: Record<MirrorFace, number> = { "/": 45, "\\": 135 }
+
+/** An authored stop is eighth-turns; without one a mirror sits on the diagonal its face names. */
+const mirrorAngle = (face: MirrorFace, angle?: MirrorAngle): number =>
+  angle === undefined ? FACE_ANGLE[face] : angle * 22.5
+
 /**
- * A quarter-turn mirror: the diagonal it sits on, drawn as the polished edge it is.
+ * How far to turn the glyph, in SVG degrees — clockwise, because the y axis points down.
  *
- * One canonical diagonal, turned into place, rather than two different lines — so changing face is a
- * quarter turn the eye can follow instead of a glyph that swaps between frames. Which of the two states
- * a piece is in is the single thing the player is deciding, and watching it turn is what says the tap
- * landed on the piece they meant.
+ * A mirror line is the same line half a turn later, so every angle has two representatives and **which
+ * one is drawn decides which way the piece appears to turn**. Folding into (−90°, 90°] is what makes each
+ * tap the short way round: `/`→`\\` stays the clockwise quarter turn it has always been, and a cut mirror
+ * swings 67.5° rather than 112.5° back the other way. Get this wrong and nothing looks wrong in a still
+ * frame — it only shows in motion, which is where a tap is read.
  */
-const Mirror: FC<{ face: MirrorFace; movable: boolean }> = ({ face, movable }) => (
-  <Glyph>
-    <line
-      x1={18}
-      y1={82}
-      x2={82}
-      y2={18}
-      strokeWidth={14}
-      strokeLinecap="round"
-      className={clsx(
-        "origin-center transition-transform duration-200 ease-out",
-        movable ? "stroke-sky-200" : "stroke-stone-400"
-      )}
-      style={{ transform: `rotate(${face === "/" ? 0 : 90}deg)` }}
-    />
-  </Glyph>
-)
+const glyphTurn = (degrees: number): number => {
+  const turn = -degrees % 180
+  return turn <= -90 ? turn + 180 : turn > 90 ? turn - 180 : turn
+}
+
+/**
+ * A mirror: the line it sits on, drawn as the polished edge it is.
+ *
+ * One canonical line, turned into place, rather than a glyph per angle — so changing setting is a turn
+ * the eye can follow instead of a glyph that swaps between frames. Which setting a piece is in is the
+ * single thing the player is deciding, and watching it turn is what says the tap landed on the piece
+ * they meant.
+ *
+ * A **cut mirror** (design doc §11.8) is drawn as a different object rather than a different angle, and
+ * that is forced: its stops sit 22.5° from an ordinary mirror's, and §9 forbids "a subtle rotation".
+ * So the ordinary mirror is a polished *edge* — one solid line — and a cut mirror is the *plate* itself,
+ * an outline with two silvered faces and cut ends. Solid against hollow is a judgement the eye makes on
+ * one cell, without another cell to compare it against, which is what a board has to be read by.
+ */
+const Mirror: FC<{ face: MirrorFace; movable: boolean; angle?: MirrorAngle }> = ({ face, movable, angle }) => {
+  const stroke = movable ? "stroke-sky-200" : "stroke-stone-400"
+  return (
+    <Glyph>
+      <g
+        className="origin-center transition-transform duration-200 ease-out"
+        style={{ transform: `rotate(${glyphTurn(mirrorAngle(face, angle))}deg)` }}
+      >
+        {angle === undefined ? (
+          <line x1={4.75} y1={50} x2={95.25} y2={50} strokeWidth={14} strokeLinecap="round" className={stroke} />
+        ) : (
+          <polygon
+            points="4,50 18,37 82,37 96,50 82,63 18,63"
+            fill="none"
+            strokeWidth={11}
+            strokeLinejoin="round"
+            className={stroke}
+          />
+        )}
+      </g>
+    </Glyph>
+  )
+}
 
 const Wall: FC<{ movable: boolean }> = ({ movable }) => (
   <Glyph>
@@ -410,6 +445,7 @@ const PieceLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[] }>
     <div className="pointer-events-none absolute inset-0" aria-hidden>
       {puzzle.movable.map((piece, index) => {
         const { at, blocks } = pieceOccupant(piece, states[index])
+        const angle = piece.kind === "turnMirror" ? piece.angles?.[states[index]] : undefined
         const driving = wiringsDriving(puzzle, index)
         const colours = driving.length
           ? [...new Set(driving.flatMap(wiring => wiring.from))].map(node => nodeColour(node).ring)
@@ -425,7 +461,7 @@ const PieceLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[] }>
                 block's width, and this element's containing block is the whole board rather than one cell —
                 which collapsed the glyph to nothing. */}
             <div className="size-full p-[8%]">
-              {blocks.kind === "mirror" ? <Mirror face={blocks.face} movable /> : <Wall movable />}
+              {blocks.kind === "mirror" ? <Mirror face={blocks.face} movable angle={angle} /> : <Wall movable />}
             </div>
           </div>
         )
@@ -474,7 +510,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
             })
             const body =
               view.kind === "mirror" ? (
-                <Mirror face={view.face} movable={false} />
+                <Mirror face={view.face} movable={false} angle={view.angle} />
               ) : view.kind === "wall" ? (
                 <Wall movable={false} />
               ) : view.kind === "sun" ? (

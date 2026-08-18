@@ -17,15 +17,34 @@ export type MirrorFace = "/" | "\\"
 /** What a piece does to the beam when it stands in its way. */
 export type Blocker = { kind: "mirror"; face: MirrorFace } | { kind: "wall" }
 
+/**
+ * A mirror's rotation stop, in eighth-turns of a circle: 1 is 22.5°, 2 is 45° (`/`), 6 is 135° (`\`).
+ *
+ * A **cut mirror** (design doc §11.8) is a mirror the generator gives authored stops to, at least one of
+ * them a half-step — an odd number — which is what lets it send the beam diagonally. The two sets that
+ * keep a quarter turn are `[1, 6]` and `[2, 7]`.
+ *
+ * Named for the angle rather than the stop, because a sliding piece's `stops` are cells and these are
+ * not — one union member holding two different meanings of the same word is a bug waiting to be typed.
+ *
+ * **Nothing traces these yet.** The walk still has four directions and reads `face`; a stop is the shape
+ * the board is being drawn against, and only that. §11.8 orders the drawing at 36px before any of the
+ * logic, on §11.2's precedent that the drawing is what kills a mechanic of this kind, not the reasoning.
+ * An *aligned* stop — 2 or 6 — turns light exactly as the `face` beside it does, which is what lets a
+ * board carry a cut mirror and still trace honestly while the walk is still square.
+ */
+export type MirrorAngle = number
+
 /** Part of the puzzle, like a Sudoku given: the player cannot change it. */
-export type FixedPiece = { kind: "mirror"; at: CellRef; face: MirrorFace } | { kind: "wall"; at: CellRef }
+export type FixedPiece =
+  { kind: "mirror"; at: CellRef; face: MirrorFace; angle?: MirrorAngle } | { kind: "wall"; at: CellRef }
 
 /**
  * A piece the player cycles with a tap. Its states are listed out, and a configuration names one of
  * them by index — a turn mirror by which face, a sliding piece by which stop.
  */
 export type MovablePiece =
-  | { kind: "turnMirror"; at: CellRef; faces: MirrorFace[] }
+  | { kind: "turnMirror"; at: CellRef; faces: MirrorFace[]; angles?: readonly MirrorAngle[] }
   | { kind: "slidingMirror"; face: MirrorFace; stops: CellRef[] }
   | { kind: "slidingWall"; stops: CellRef[] }
 

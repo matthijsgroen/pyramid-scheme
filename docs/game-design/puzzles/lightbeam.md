@@ -605,7 +605,9 @@ Beyond the shared screen bar:
   grid, and it is a generation gate (`piecesAreSpaced`) rather than a rendering trick: before
   it existed essentially every board had touching pieces, up to ten pairs on one wizard grid.
 - Both mirror orientations read as visibly different objects, not a subtle
-  rotation, at 44px.
+  rotation, at **36px**. Written as 44px until §11.9 measured it, which was the wrong
+  number off the line above: 44px is the _tap target_, and a glyph is drawn inside the
+  **cell**, which is 36px. The bar is a fifth stricter than it read.
 - **Nothing but light is drawn amber, and nothing but light is drawn as a continuous line.** The
   switch-node prototype (§11.1) is where this stopped being a preference: a wire in any other
   colour still read as a second beam until it was dashed as well.
@@ -631,7 +633,8 @@ skin.
 > mirror, a four-state one, a retracted state, and a two-stop half-step-only set that measurement showed
 > collapses a board's reach to a third. Each is marked where it was overturned, but the corrections arrive
 > after the claims, so reading forwards will hand you a design that does not work. §11.8 is the decision;
-> everything before it is the evidence.
+> everything before it is the evidence. **§11.9 is what building step 1 of it found**, and it moves one
+> bar in §9.
 
 - **Prisms and colour splitting.** The catalogue already rules this a different
   puzzle shape rather than a knob, and points at The Talos Principle as prior art.
@@ -1460,6 +1463,52 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
 4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
 5. **Traps** (§11.1), which need the second routes this supplies.
 
-**Three things paper cannot settle, and they are the whole remaining risk:** whether the stops read at
-36px, what the generator's yield is once uniqueness has more to reject, and whether the ladder still
-_deduces_ — §11's boards are verified unique and load-bearing, but their reasons were written by hand.
+**Three things paper cannot settle, and they are the whole remaining risk:** ~~whether the stops read at
+36px~~ (settled — §11.9), what the generator's yield is once uniqueness has more to reject, and whether
+the ladder still _deduces_ — §11's boards are verified unique and load-bearing, but their reasons were
+written by hand.
+
+### 11.9 What the drawing found, at 36px
+
+Step 1, run before a line of the walk was written. Both questions pass, so the mechanic survives its
+gate — but not on the terms the reasoning above assumed.
+
+**The angle was never going to carry it, and 67.5° was never the problem.** The two questions look alike
+and are not:
+
+| Question                                           | Separation | Verdict                                           |
+| -------------------------------------------------- | ---------- | ------------------------------------------------- |
+| Do the two stops of one cut mirror read as a pair? | 67.5°      | **Yes**, comfortably — 90° was never load-bearing |
+| Does a cut mirror read as a different _object_?    | 22.5°      | **Not from the angle. Never could.**              |
+
+Two thirds of a right angle is plenty: the shallow stop lies along the row and the steep one across it,
+and neither can be squinted into the other. What 67.5° actually costs is not legibility but the _feel_ of
+the turn — an ordinary mirror snaps between two diagonals, a cut mirror lands between them, and that is a
+tell that it is a different kind of piece before its glyph is read at all.
+
+**So the glyph carries the whole of the second question, and the split that works is not a shape but a
+_fill_.** An ordinary mirror is the polished **edge** — one solid stroke. A cut mirror is the **plate** —
+an outline, two silvered faces, cut ends. Solid against hollow is a judgement the eye makes on **one
+cell**, with no second cell to compare against, and that is what reading a board consists of. Every
+candidate that differed by degree instead — a thicker bar, a longer one, a tapered one — reads fine in a
+row of eight and stops reading the moment there is only one of them on the board.
+
+Two candidates were rejected for reasons worth keeping:
+
+- **A bar with a notch cut out of the middle** — the literal reading of "cut" — draws as a dashed line at
+  36px, and dashed is already the wire's word (§9). It would have read as a second wire.
+- **Two parallel strokes** passes both questions and was the runner-up, but it can read as two thin
+  mirrors in one cell, which is a thing this family will eventually want to mean something else.
+
+**One thing survived that was not designed for.** The beam crosses a mirror through the cell centre —
+which is exactly the plate's hollow — so the fill that answers question 2 is drawn straight through by
+the thing the board is about. It survives because the beam is amber and the plate is sky: §9's "nothing
+but light is drawn amber" paying out for a case it was not written for.
+
+**And one thing the drawing nearly got wrong, which only motion would have caught.** A mirror line is the
+same line half a turn later, so every stop has two representative angles, and which one is drawn decides
+which way the piece appears to turn. Generalising the glyph from two faces to any angle silently reversed
+the ordinary mirror's quarter turn — identical in every still frame, backwards in the hand. Folding the
+drawn angle into (−90°, 90°] fixes both that and the new case: `/`→`\` is the clockwise quarter turn it
+always was, and a cut mirror swings 67.5° rather than 112.5° the other way. The window is not minimal for
+angles in general — it is for every stop set §11.8 allows, which is what it has to be.
