@@ -2254,3 +2254,89 @@ why a starter board carries three bends rather than two.
 The drawing already carries the distinction, which is what makes a low share survivable rather than confusing:
 a white outline says a piece is the player's and anything else says it is part of the puzzle (§9). What a low
 share costs is play, not legibility — fewer things to try, on a board with more to look at.
+
+### 11.16 What authoring the maze found
+
+§11.14 measured that 92–97% of generation is a route builder guessing blind, and §11.15 asked whether a
+generator that **authors** each wrong branch can carry uniqueness on its own. Both questions are answered by
+one construction, built beside route-then-obstruct rather than replacing it
+(`generateAuthoredLightbeam.ts`): lay a golden path from disc to shrine, then for every stop a golden mirror
+is _not_ set to, author the corridor that stop's light runs down and make it die — at the frame, in stone, or
+in the disc.
+
+**Uniqueness stops being a verdict and becomes an argument.** Take any configuration and let `k` be the first
+bend, in beam order, not standing at its golden angle. Every bend before `k` is golden and every golden cell
+between them is empty, so the beam reaches `k` travelling exactly the direction the corridors at `k` were
+authored against — and leaves down one of them, and dies. So no configuration with a wrong bend lights the
+shrine. Two conditions carry that: a branch may share no `(cell, direction)` pair with the golden path
+(§11.15's sharpening — sharing a _cell_ while travelling differently is not a join, and rejoining upstream is),
+and no branch may enter a cell a tappable piece occupies, because that is one corridor **per stop of that
+piece** and authoring covers only the one it was traced against.
+
+Measured over 2 000 boards, 400 seeds a tier, with every gate the other generator uses left untouched:
+
+| tier    | attempts a board | one winning route | ladder settles | worst gen | pieces | cells | configurations |
+| ------- | ---------------- | ----------------- | -------------- | --------- | ------ | ----- | -------------- |
+| starter | 1.00             | 100%              | 100%           | 7.3ms     | 3.0    | 3.0   | 8              |
+| junior  | 1.30             | 100%              | 100%           | 7.7ms     | 4.0    | 4.5   | 16             |
+| expert  | 1.03             | 100%              | 100%           | 5.9ms     | 5.0    | 5.9   | 32             |
+| master  | 1.05             | 100%              | 100%           | 5.8ms     | 5.0    | 5.9   | 32             |
+| wizard  | 1.00             | 100%              | 100%           | 8.2ms     | 6.0    | 7.2   | 64             |
+
+**`noRoute` never fires — not once in 2 000 boards**, against 92–97% of all rejections on the other
+generator. A leg is tested before it is taken and a bend cell is checked for room, so a dead end costs one
+search node instead of one discarded draft; the route builder backtracks instead of guessing. §11.14's
+"honest optimisation target is `buildRoute`" is confirmed by removing it: master goes from 356 rejections a
+board to 1.05 attempts. The only rejection left anywhere is `noHonestOpening` — 155 across the 2 000, all of
+it junior and expert — which is the opening being re-drawn, not the board being rebuilt.
+
+Checked independently of the gates, on the same 2 000 boards: **exactly one configuration lights the shrine**
+on every board, which is stronger than `routeIsUnique`'s one winning _path_ and coincides with it only
+because no piece here is free. No branch shares a golden `(cell, direction)` pair and none enters a tappable
+cell. Branches end at the frame about three times in four and in stone the rest.
+
+#### The stone is load-bearing, but not for the reason the plan assumed
+
+Measured over 1 000 boards: **722 walls, every one of which stops a branch** — there is no scenery, because
+stone is only placed where a corridor had nowhere else to end. Authored boards therefore carry far more of it
+than shipped ones, 0.00–1.24 a board against §5.1's 0.0–0.1.
+
+But taking a wall away breaks uniqueness on only **30 of the 722** (21 at master, 9 at wizard), and stalls the
+ladder on none. The other 692 are holding a branch out of a cell a tappable piece occupies — the beam dies
+anyway once it gets there. So `thinWalls` must not run on an authored board, and the reason is not that a
+pruner can only remove load-bearing stone: it is that the pruner tests the wrong property. It re-checks
+uniqueness and the ladder, passes, and strips exactly the stone that keeps branches away from tappable
+cells — handing §11.15's hazard to any construction that later reuses them.
+
+#### What it costs, and it is the whole of what is left to buy
+
+The configuration space collapses: 64 at wizard against 37 350, and 8 at starter against 320. That is the
+price of every mirror being the player's, two stops a piece, and no branch touching another piece — there are
+no sliding pieces, no decoys and no shadows, so nothing stands in a wrong ray.
+
+And it shows in the only currency `docs/instructions/puzzle-screens.md` §5 names. **Every authored board at
+every tier settles at cap `deadEnd`** — 1 000 of 1 000 — while the shipped generator's boards need more than
+that on 18% of expert, 48% of master and 75% of wizard grids. `entryRun`, `exitRun` and `deadEnd` fire on
+every board and nothing above them ever does. `exitRun` in particular fires 100% of the time, against the 15
+boards in 40 §11.12 measured once the diagonal arrived, because a sparse board leaves the backward walk from
+the shrine nothing to be uncertain about.
+
+So this construction has bought the guarantees and not yet bought the difficulty: it is §6.1's finding
+arriving from the other direction, where a board built plainly is a chain of `deadEnd` eliminations and a
+wizard grid solves like a starter one only longer. What closes that gap is pieces standing where wrong rays
+go, which is exactly what a share of mirrors below 1.0, branches that turn, and branches that reuse the
+pieces already on the board are for.
+
+#### Two smaller findings
+
+**A retroreflecting stop needs no stone, and only a cut pair produces one.** A stop that sends the beam back
+down its own line retraces off every mirror that carried it — each still at its golden angle, or the light
+would not have reached the bend — and the disc swallows it. A _single_ cut mirror always arrives on a square
+leg, so its wrong stop never retroreflects: measured, zero across all five tiers. The second of a consecutive
+cut pair arrives diagonally and does, about 110 branches per 200 boards, and uniqueness holds on those boards
+too.
+
+**A folded route is where corridors run out of room.** Asking for one crossing on a 9×9 with six turns takes
+`noCorridor` from never firing to 50 rejections in 200 boards, and drops the stone to 0.06 a board: a route
+that reuses its own ground leaves branches less of the grid to die in. Attempts a board stays between 1.00
+and 1.25 across every dial tried, up to eight turns, three cut mirrors and two crossings.

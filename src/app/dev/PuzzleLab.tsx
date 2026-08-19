@@ -37,6 +37,7 @@ export const PuzzleLab: FC = () => {
   const [familyId, setFamilyId] = useState(families[0]?.meta.id ?? "")
   const [pickedTheme, setPickedTheme] = useState("")
   const [pickedDifficulty, setPickedDifficulty] = useState("")
+  const [pickedVariant, setPickedVariant] = useState("")
   const [seed, setSeed] = useState(1)
   const [playing, setPlaying] = useState(false)
 
@@ -52,6 +53,8 @@ export const PuzzleLab: FC = () => {
   const theme = themes.includes(pickedTheme) ? pickedTheme : themes[0]
   const tiers = family ? allowedDifficulties(family.meta) : []
   const difficulty = tiers.find(d => d === pickedDifficulty) ?? tiers[0]
+  const variants = family?.meta.variants ?? []
+  const variant = variants.includes(pickedVariant) ? pickedVariant : variants[0]
 
   const ctx = useMemo(
     () => ({
@@ -61,9 +64,10 @@ export const PuzzleLab: FC = () => {
       freshArrival: true,
       difficulty,
       theme,
+      variant,
       tags: family?.meta.tags,
     }),
-    [seed, difficulty, theme, family]
+    [seed, difficulty, theme, variant, family]
   )
 
   const puzzle = useMemo(
@@ -99,6 +103,16 @@ export const PuzzleLab: FC = () => {
             </option>
           ))}
         </select>
+        {/* Only for a family that has a second generator to compare — see FamilyMeta.variants. */}
+        {variants.length > 1 && (
+          <select className={selectClass} value={variant} onChange={e => setPickedVariant(e.target.value)}>
+            {variants.map(name => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        )}
         <DeveloperButton label="Play" onClick={() => setPlaying(true)} />
         <DeveloperButton
           label={`New puzzle (seed ${seed})`}

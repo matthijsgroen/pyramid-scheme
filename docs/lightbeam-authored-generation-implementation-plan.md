@@ -114,6 +114,20 @@ This phase alone answers the deferred question — _can authoring carry the guar
 rate **is** the answer. 100% over a few thousand boards is evidence; anything less hands you the
 counterexamples.
 
+**Done, and the answer is yes** — `generateAuthoredLightbeam.ts`, measured in §11.16. Over 2 000 boards:
+1.00–1.30 attempts a board, `routeIsUnique` and `solveLightbeamByTechniques` at 100%, and `noRoute` never
+fired once (against 92–97% of all rejections on the other generator). An independent check found exactly one
+configuration lighting the shrine on every board, no branch sharing a golden `(cell, direction)` pair, and no
+branch entering a tappable cell. The current generator's 200 boards are byte-identical, verified on every
+commit; no tier draws the authored generator, and the lab reaches it through `FamilyMeta.variants`.
+
+**What phase 1 did NOT buy, and it is now the main thing outstanding.** Every authored board at every tier
+settles at cap `deadEnd` — 1 000 of 1 000 — while the shipped generator needs more than `deadEnd` on 18% of
+expert, 48% of master and 75% of wizard boards. The configuration space is 64 at wizard against 37 350. With
+every mirror tappable, two stops a piece and no reuse, **nothing stands in a wrong ray**, so the technique cap
+is decorative and every tier solves the same way. That is §6.1's finding from the other direction, and it is
+what phases 2 and 3 have to close — the guarantees came free, the difficulty did not.
+
 ### Phase 2 — branch depth, reuse, and the recursion
 
 Branches may turn, and may pass through cells tappable pieces occupy. Implement the recursion. `interactive`
@@ -126,6 +140,12 @@ interesting territory on purpose (§11.15 explains why the 1-in-949 figure is a 
 **Acceptance:** uniqueness still 100%, and the recursion's cost measured against `routeIsUnique`'s. The claim
 to test is that the reachable deviation tree is cheaper than the full product — wizard's product is 37 350
 configurations today.
+
+Phase 1 leaves the hook for it in one place: `NO_REUSE` in `generateAuthoredLightbeam.ts` is the constant that
+makes a branch refuse a tappable cell, and `closeBranch` is where the recursion replaces that refusal. The
+determinism key is still `(cell, direction)` and nothing has been keyed on anything narrower, so phase 3's
+`(cell, direction, firedSet)` remains a widening rather than a rewrite. The 692 walls above are the measure of
+how much board density the refusal is currently costing.
 
 ### Phase 3 — the three modes
 
@@ -226,9 +246,16 @@ Confirmed with the repo owner, so do not re-derive or diverge from these:
 
 ### Decisions this doc makes, absent an objection
 
-**`thinWalls` does not run** on authored boards, because every wall it places has a reason by construction and
-a pruner can only remove load-bearing stone. **`piecesAreSpaced` becomes a placement constraint** the branch
-walker respects as it goes, rather than a gate at the end — otherwise rejection has just moved one level down.
+**`thinWalls` does not run** on authored boards — **and the reason this doc gave for it was wrong.** It said
+every wall has a reason by construction and a pruner can only remove load-bearing stone. Measured over 1 000
+boards (§11.16): all 722 walls do stop a branch, but removing one breaks uniqueness on only **30** of them and
+stalls the ladder on none. The other 692 are holding a branch out of a cell a tappable piece occupies. So
+`thinWalls` would happily strip them — it re-checks uniqueness and the ladder, both of which still pass — and
+hand §11.15's hazard to phase 2. The pruner is not too weak to be trusted; it tests the wrong property.
+
+**`piecesAreSpaced` becomes a placement constraint** the branch walker respects as it goes, rather than a gate
+at the end — otherwise rejection has just moved one level down. Done (`mirrorMayStand`), and it is part of why
+a draft costs one attempt; the shipped gate is still run behind it and has not rejected a board.
 
 ## A separate question this planning turned up
 

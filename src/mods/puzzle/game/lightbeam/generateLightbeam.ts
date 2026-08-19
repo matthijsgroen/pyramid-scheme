@@ -175,6 +175,9 @@ export type LightbeamGate =
   | "notUnique"
   | "notSettled"
   | "noHonestOpening"
+  /** Authored generation only: a branch reached the route, the shrine or a tappable cell with nowhere to
+      stand stone before it. */
+  | "noCorridor"
 
 // Generation is route-then-obstruct, per docs/game-design/puzzles/lightbeam.md §5: lay a beam from disc
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could
@@ -189,7 +192,7 @@ const MAX_PRUNE_SWEEPS = 4
 // leg of two puts them two diagonal steps apart, so they do not touch at a corner either — the reason the
 // number was chosen for still holds where the geometry has changed, and `piecesAreSpaced` is still what
 // catches two non-consecutive bends folding together.
-const MIN_LEG = 2
+export const MIN_LEG = 2
 
 /**
  * The mirror that turns a beam from `enter` to `exit`: `reflect` is `angle - travel`, so the angle wanted
@@ -208,7 +211,7 @@ const MIN_LEG = 2
  * diagonal leg is not a special case here: it is the same subtraction asking for an odd angle, and an odd
  * angle is what makes the piece a cut mirror.
  */
-const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
+export const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
   if (exit === enter || exit === opposite(enter)) return undefined
   const angle = mod8(enter + exit)
   return angle === 0 || angle === 4 ? undefined : angle
@@ -229,7 +232,7 @@ const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined =>
  * the difference between the diagonal leg and the quarter turn the board would have had. Undefined for an
  * even angle, which is a bend an ordinary mirror already serves.
  */
-const cutStops = (angle: MirrorAngle): readonly MirrorAngle[] | undefined => {
+export const cutStops = (angle: MirrorAngle): readonly MirrorAngle[] | undefined => {
   const aligned = [mod8(angle + 3), mod8(angle - 3)].find(stop => stop === SLASH || stop === BACKSLASH)
   if (aligned === undefined) return undefined
   return aligned < angle ? [aligned, angle] : [angle, aligned]
@@ -296,7 +299,7 @@ const mirrorStopSet = (
  * half-step crossings is even for a shrine entered square and odd for one entered diagonally, so an odd
  * dial spends its odd cut on the final bend and there is nowhere else for it to go.
  */
-const cutBendSlots = (turns: number, cuts: number, random: () => number): Set<number> | undefined => {
+export const cutBendSlots = (turns: number, cuts: number, random: () => number): Set<number> | undefined => {
   if (cuts < 1) return new Set()
   if (cuts > turns) return undefined
   const chosen = new Set<number>()
@@ -326,11 +329,11 @@ const cutBendSlots = (turns: number, cuts: number, random: () => number): Set<nu
  * it refuses (the beam passed along the mirror's line, and the beam sent back down it) both keep the
  * beam's parity, so neither can be one of these. A 45° turn and a 135° turn are equally allowed.
  */
-const halfStepTurns = (direction: Direction): Direction[] =>
+export const halfStepTurns = (direction: Direction): Direction[] =>
   DIRECTIONS.filter(candidate => candidate % 2 !== direction % 2)
 
 /** Whether a beam is running on a diagonal, where the drawing questions of §9 have not been answered. */
-const runsDiagonally = (direction: Direction): boolean => direction % 2 === 1
+export const runsDiagonally = (direction: Direction): boolean => direction % 2 === 1
 
 /**
  * The two ways a track may run across a beam — the quarter turns either side of it.
@@ -341,22 +344,22 @@ const runsDiagonally = (direction: Direction): boolean => direction % 2 === 1
  * `direction % 4` is that fact written down, and it reproduces the old three-way conditional exactly on the
  * four square directions while giving a diagonal leg its own two crossings instead of silently `[up, down]`.
  */
-const perpendicular = (direction: Direction): Direction[] => {
+export const perpendicular = (direction: Direction): Direction[] => {
   const axis = direction % 4
   return [mod8(axis + 2), mod8(axis + 6)]
 }
 
 /** Steps from a cell to the last one still on the grid, travelling in a direction. */
-const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
+export const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
   const step = directionStep(direction)
   const rows = step.row < 0 ? at.row : step.row > 0 ? size - 1 - at.row : Number.POSITIVE_INFINITY
   const cols = step.col < 0 ? at.col : step.col > 0 ? size - 1 - at.col : Number.POSITIVE_INFINITY
   return Math.min(rows, cols)
 }
 
-type RouteCell = { at: CellRef; enter: Direction; exit?: Direction }
+export type RouteCell = { at: CellRef; enter: Direction; exit?: Direction }
 
-type Route = {
+export type Route = {
   sun: { at: CellRef; facing: Direction }
   shrine: CellRef
   /** Every cell the beam crosses, first after the disc through to the shrine. */
@@ -371,7 +374,7 @@ type Route = {
  * The disc sits on an edge facing inward, never in a corner: a corner disc gives the first leg only one
  * way to go, which is a turn the player can read off the frame instead of the board.
  */
-const pickSun = (size: number, random: () => number): { at: CellRef; facing: Direction } => {
+export const pickSun = (size: number, random: () => number): { at: CellRef; facing: Direction } => {
   const along = 1 + Math.floor(random() * (size - 2))
   const side = Math.floor(random() * 4)
   if (side === 0) return { at: { row: 0, col: along }, facing: DIR.down }
@@ -385,7 +388,7 @@ const pickSun = (size: number, random: () => number): { at: CellRef; facing: Dir
  * the beam is retracing. Eight directions make four axes, not two: the row, the column, and the two
  * diagonals. `direction % 4` is the whole of it, because a direction and its opposite are the same line.
  */
-const axisOf = (direction: Direction): number => direction % 4
+export const axisOf = (direction: Direction): number => direction % 4
 
 /**
  * Lays the winning beam.
@@ -889,7 +892,7 @@ const NEIGHBOURS: readonly Direction[] = SQUARE_DIRECTIONS
  * Measured before this existed, essentially every board broke it — up to ten touching pairs on one wizard
  * grid — so it is a real gate rather than a formality.
  */
-const piecesAreSpaced = (size: number, movable: MovablePiece[], driven: ReadonlySet<number>): boolean => {
+export const piecesAreSpaced = (size: number, movable: MovablePiece[], driven: ReadonlySet<number>): boolean => {
   const owner = new Map<string, number>()
   movable.forEach((piece, index) => {
     // A door has no tap target to protect, so it needs no shoulders — this rule is about a thumb landing
@@ -921,7 +924,7 @@ const pathSignature = (puzzle: LightbeamPuzzleData, config: readonly number[]): 
  * setting by definition, so a board with decoys has many winning configurations and only one winning
  * *path*. That is the property the player actually solves for, so that is the one checked.
  */
-const routeIsUnique = (puzzle: LightbeamPuzzleData, states: number[][]): boolean => {
+export const routeIsUnique = (puzzle: LightbeamPuzzleData, states: number[][]): boolean => {
   const paths = new Set<string>()
   const ran = eachConfig(states, config => {
     if (isLit(puzzle, config)) paths.add(pathSignature(puzzle, config))
@@ -1007,13 +1010,13 @@ const OPENING_DRAWS = 24
  * towards wrong so the board still has work in it, and `openingIsHonest` refuses any board that a uniform
  * number of taps would open.
  */
-const drawOpening = (puzzle: LightbeamPuzzleData, draft: Draft, random: () => number): number[] =>
-  draft.movable.map((piece, index) => {
+export const drawOpening = (puzzle: LightbeamPuzzleData, solution: readonly number[], random: () => number): number[] =>
+  puzzle.movable.map((piece, index) => {
     // A door opens where it rests, always. It is not the player's to be wrong about.
-    if (restingState(puzzle, index) !== undefined) return draft.solution[index]
+    if (restingState(puzzle, index) !== undefined) return solution[index]
     const total = pieceStateCount(piece)
-    if (total < 2 || random() > OPENS_WRONG) return draft.solution[index]
-    return (draft.solution[index] + 1 + Math.floor(random() * (total - 1))) % total
+    if (total < 2 || random() > OPENS_WRONG) return solution[index]
+    return (solution[index] + 1 + Math.floor(random() * (total - 1))) % total
   })
 
 // How many configurations the greedy walk below may visit before the board is given the benefit of the
@@ -1079,7 +1082,7 @@ export const resistsGreedyPlay = (puzzle: LightbeamPuzzleData, initial: readonly
  * where every piece sits the same distance from its answer can be solved by a player who has noticed that
  * and nothing else. Checking it exhaustively is cheap: the longest cycle on the board bounds the search.
  */
-const openingIsHonest = (puzzle: LightbeamPuzzleData, initial: readonly number[]): boolean => {
+export const openingIsHonest = (puzzle: LightbeamPuzzleData, initial: readonly number[]): boolean => {
   if (isLit(puzzle, initial)) return false
   const longest = Math.max(...puzzle.movable.map(pieceStateCount))
   for (let taps = 1; taps < longest; taps++)
@@ -1158,7 +1161,7 @@ const attemptGeneration = (
     // expensive to build and an opening is cheap to try again.
     let initial: number[] | undefined
     for (let draw = 0; draw < OPENING_DRAWS && !initial; draw++) {
-      const candidate = drawOpening(thinned, draft, random)
+      const candidate = drawOpening(thinned, draft.solution, random)
       if (openingIsHonest(thinned, candidate) && (!dials.fiddleProof || resistsGreedyPlay(thinned, candidate)))
         initial = candidate
     }
