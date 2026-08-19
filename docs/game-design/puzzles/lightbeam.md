@@ -856,6 +856,13 @@ Ordering falls out of generation rather than being checked for: sockets are draw
 strictly _before_ the earliest door, so an effect always lands ahead of the light and the drawn beam is
 never a picture of something that has stopped being true.
 
+**And strictly _after_ the first piece a tap can move.** A socket on the route's first leg is crossed by
+every configuration, so its door stands open from the first frame, the T2 rung has nothing to fire on,
+and the player is looking at a switch with no off — it reads as scenery that has already happened. One
+movable piece upstream is enough: set that piece wrong and the light never arrives. A generation rule
+rather than a gate, like the rest of §5's construction, and it is what
+`generateLightbeam.spec.ts`'s _"leaves the socket dark under some setting the player can choose"_ holds.
+
 Where it appears is **switch-heavy** (§7), which wizard draws two boards in three
 whose wiring names two sockets. Measured over 40 seeds a tier, against the same boards without any of it:
 

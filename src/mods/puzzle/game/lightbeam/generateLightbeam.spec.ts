@@ -830,6 +830,24 @@ describe("switch-heavy", () => {
     }
   })
 
+  /**
+   * A switch needs an off. A socket on the route's first leg is crossed under every configuration, so its door
+   * stands open from the first frame and there is no order to read — the socket has to sit behind a piece the
+   * player can move.
+   */
+  it("leaves the socket dark under some setting the player can choose", () => {
+    for (const board of boards) {
+      const dark = allPieceOptions(board).some((states, piece) =>
+        states.some(state => {
+          const config = [...board.solution]
+          config[piece] = state
+          return !firedWirings(board, config).has(0)
+        })
+      )
+      expect(dark).toBe(true)
+    }
+  })
+
   /** A driven piece contributes nothing to the configuration space, which is what `pieceOptions` says. */
   it("costs the configuration space nothing", () => {
     const plain = generateLightbeam(size, 1, options)

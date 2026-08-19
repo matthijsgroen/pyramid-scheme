@@ -1364,10 +1364,17 @@ const placeDoors = (
   // Sockets sit ON the route — that is the mechanism — so being a route cell is not a disqualification. What a
   // socket may not share a square with is something that *occupies* one, because it is transparent scenery.
   const earliest = Math.min(...placed.map(door => door.index))
+  // And **behind a piece the player can move**: a socket on the route's first leg is crossed under every
+  // configuration, so its door stands open from the first frame and the order rung is never there to be read.
+  // One movable piece upstream is enough — set that piece wrong and the light never arrives, so the switch has
+  // an off.
+  const upstream = new Set(movable.flatMap(piece => pieceCells(piece).map(cellKey)))
+  const firstMovable = route.cells.findIndex(cell => upstream.has(cellKey(cell.at)))
+  if (firstMovable < 0) return false
   const socketCells = shuffle(
     route.cells
       .map((cell, index) => ({ cell, index }))
-      .filter(({ cell, index }) => index < earliest && !claimed.has(cellKey(cell.at)))
+      .filter(({ cell, index }) => index > firstMovable && index < earliest && !claimed.has(cellKey(cell.at)))
       .map(({ cell }) => cell.at),
     random
   ).slice(0, doorNodes)
