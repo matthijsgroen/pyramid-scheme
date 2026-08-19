@@ -45,7 +45,7 @@ const expert = board("expert", 2)
 const wizard = board("wizard", 4)
 /** A generated wizard board, which since §11.1 landed means one carrying a door and its two sockets. */
 const wizardDoors = board("wizard", 11)
-/** A generated wizard board that drew `crossedBeams` — its winning route folds back through its own line. */
+/** A generated wizard board whose winning route folds back through its own line (`crossings`). */
 const wizardCrossing = board("wizard", 2)
 
 /** How the board opens: dark, with the beam running out somewhere it should not. */
@@ -560,7 +560,7 @@ export const DiagonalBeam: Story = {
 const diagonalMaster = board("master", 10)
 const diagonalWizard = board("wizard", 12)
 
-/** A master board that drew `crossedBeams`, so its own diagonal leg crosses a square one at 45°. */
+/** A master board whose own diagonal leg crosses a square one at 45°. */
 const diagonalCrossing = board("master", 34)
 
 /** A master board whose wrong setting leaves the grid on a diagonal — the escape marker's own case. */
@@ -649,7 +649,7 @@ export const DiagonalRoute: Story = {
       <Frame
         puzzle={diagonalCrossing}
         states={diagonalCrossing.solution}
-        caption="crossedBeams at 45° — a diagonal over a column, and over a row"
+        caption="a crossing at 45° — a diagonal over a column, and over a row"
       />
     </div>
   ),

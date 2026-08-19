@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Light puzzles can carry stone that no tap will move, and a socket in the floor that opens it: send the beam across the socket and the way clears. Some need the light through two sockets before anything shifts.
 - Harder light puzzles carry a mirror that sends the beam off at a slant instead of a right angle, so the light can now run corner to corner across the board.
+- The hardest light puzzles hide a trap: a socket you must keep the light away from, because crossing it drops stone in front of the beam. A board can hold one socket to reach and one to dodge, and only working it out tells you which is which.
 
 ### Changed
 
@@ -22,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some light puzzles now send the beam back through its own path, crossing itself on the way to the shrine.
 - Every mirror now shows small marks for the other ways it can lie, so you can see what a piece will do before you tap it.
 - The hardest light puzzles give their mirrors three positions instead of two, and no two mirrors need offer the same three — so there is more to try before the beam lands.
+- Light puzzles are built a different way, and every board is new. Wrong turns now lead somewhere authored rather than simply running off the edge: down a corridor, into stone, or past a piece you have not settled yet. Boards also differ in character — one leans on stone you can point at, another on pieces that slide, another on sockets and doors — and the harder ones mix two.
+- Light puzzles that need a mirror out of the way now really do get one, and a puzzle promising a sliding piece or a trap will not be built without it.
 
 ### Fixed
 

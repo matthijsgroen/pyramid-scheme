@@ -3,10 +3,9 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import type { Difficulty } from "@/data/difficultyLevels"
 import {
   generateLightbeam,
+  type LightbeamMode,
   type LightbeamPuzzle as LightbeamGrid,
 } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
-import { generateAuthoredLightbeam, type LightbeamMode } from "@/mods/puzzle/game/lightbeam/generateAuthoredLightbeam"
-import { AUTHORED_LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/authoredConfig"
 import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
 import { LIGHTBEAM_META } from "@/mods/puzzle/game/lightbeam/meta"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
@@ -17,21 +16,13 @@ const LightbeamComponent: FamilyPlugin<LightbeamGrid>["Component"] = ({ puzzle, 
 )
 
 /**
- * Which generator builds the board. `LIGHTBEAM_AUTHORED` is offered in the puzzle lab only: it is the
- * authored construction (design doc §11.16), measured but not shipped, and no tier draws it.
+ * Modes a lab variant forces on top of the tier's own dials, for playtesting one shape at a time
+ * (`puzzle-screens.md` §6). A tier draws its own modes; this is how a developer looks at just one of them.
  */
-export const LIGHTBEAM_AUTHORED = "authored"
-
-/** The authored tier table (§11.19) — the dials phase 4 tuned, rather than a mode picked by hand. */
-export const LIGHTBEAM_AUTHORED_TIERS = "authored tiers"
-
-/** Which modes a lab variant asks for, beyond the plain authored board. */
 const VARIANT_MODES: Record<string, LightbeamMode[]> = {
-  "authored wall-heavy": ["wallHeavy"],
-  "authored slider-heavy": ["sliderHeavy"],
-  "authored switch-heavy": ["switchHeavy"],
-  "authored trap": ["switchHeavy"],
-  "authored all modes": ["wallHeavy", "sliderHeavy", "switchHeavy"],
+  "wall-heavy": ["wallHeavy"],
+  "slider-heavy": ["sliderHeavy"],
+  "switch-heavy": ["switchHeavy"],
 }
 
 export const generateLightbeamFor = (
@@ -40,23 +31,9 @@ export const generateLightbeamFor = (
   variant?: string
 ): LightbeamGrid => {
   const { size, ...options } = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
-  // The tier table itself, which is what phase 4 tuned — as against the hand-set mode variants below.
-  if (variant === LIGHTBEAM_AUTHORED_TIERS) {
-    const { size: tierSize, ...tierOptions } = AUTHORED_LIGHTBEAM_CONFIG[difficulty ?? "starter"]
-    return generateAuthoredLightbeam(tierSize, seed, tierOptions)
-  }
-  const modes = variant ? VARIANT_MODES[variant] : undefined
-  if (variant === LIGHTBEAM_AUTHORED || modes)
-    return generateAuthoredLightbeam(size, seed, {
-      ...options,
-      modes,
-      branchDepth: 1,
-      interactive: 1,
-      sliders: 1,
-      doors: 1,
-      doorNodes: 1,
-      traps: variant === "authored trap" ? 1 : 0,
-    })
+  const forced = variant ? VARIANT_MODES[variant] : undefined
+  // A forced mode replaces the pool rather than adding to it, or the board would still draw its own two.
+  if (forced) return generateLightbeam(size, seed, { ...options, modePool: undefined, modes: forced })
   return generateLightbeam(size, seed, options)
 }
 

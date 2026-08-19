@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import { AUTHORED_LIGHTBEAM_CONFIG } from "./authoredConfig"
-import { generateAuthoredLightbeam, reachableDeviations, LIGHTBEAM_MODES } from "./generateAuthoredLightbeam"
-import { routeIsUnique, type LightbeamGate } from "./generateLightbeam"
+import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
+import { generateLightbeam, reachableDeviations, LIGHTBEAM_MODES, type LightbeamGate } from "./generateLightbeam"
+import { routeIsUnique } from "./lightbeamGeometry"
 import { allPieceOptions, cellKey, isLit, pieceCells, restingState, traceBeam } from "./beam"
 import { solveLightbeamByTechniques } from "./techniques"
 
@@ -10,23 +10,23 @@ const SEEDS = 6
 
 // Memoised: a wizard board costs the better part of a second to build, and every describe below wants the same
 // ones. Without this the file spends minutes regenerating identical boards.
-const cache = new Map<string, ReturnType<typeof generateAuthoredLightbeam>[]>()
+const cache = new Map<string, ReturnType<typeof generateLightbeam>[]>()
 const boardsFor = (tier: (typeof difficulties)[number]) => {
   const hit = cache.get(tier)
   if (hit) return hit
-  const { size, ...options } = AUTHORED_LIGHTBEAM_CONFIG[tier]
-  const built = Array.from({ length: SEEDS }, (_, seed) => generateAuthoredLightbeam(size, seed + 1, options))
+  const { size, ...options } = LIGHTBEAM_CONFIG[tier]
+  const built = Array.from({ length: SEEDS }, (_, seed) => generateLightbeam(size, seed + 1, options))
   cache.set(tier, built)
   return built
 }
-const space = (board: ReturnType<typeof generateAuthoredLightbeam>) =>
+const space = (board: ReturnType<typeof generateLightbeam>) =>
   allPieceOptions(board).reduce((product, states) => product * states.length, 1)
-const tappable = (board: ReturnType<typeof generateAuthoredLightbeam>) =>
+const tappable = (board: ReturnType<typeof generateLightbeam>) =>
   board.movable.filter((_, index) => restingState(board, index) === undefined).length
 
-describe.each(difficulties)("authored %s", tier => {
+describe.each(difficulties)("at %s", tier => {
   const boards = boardsFor(tier)
-  const { techniqueCap } = AUTHORED_LIGHTBEAM_CONFIG[tier]
+  const { techniqueCap } = LIGHTBEAM_CONFIG[tier]
 
   it("builds every seed", () => {
     expect(boards).toHaveLength(SEEDS)
@@ -46,7 +46,7 @@ describe.each(difficulties)("authored %s", tier => {
   /**
    * And the walk over the whole product agrees. Only the first board a tier, because that walk is what the
    * deviation tree exists to replace — 1 741 configurations on a wizard grid — and the two agreeing in general
-   * is asserted over many more boards in `generateAuthoredLightbeam.spec.ts`.
+   * is asserted over many more boards in `generateLightbeam.spec.ts`.
    */
   it("agrees with the walk over the whole product", () => {
     expect(routeIsUnique(boards[0], allPieceOptions(boards[0]))).toBe(true)
@@ -72,11 +72,11 @@ describe.each(difficulties)("authored %s", tier => {
    * discarded drafts a board at the top three tiers (§11.14); this construction pays a handful.
    */
   it("costs a handful of attempts a board, not hundreds", () => {
-    const { size, ...options } = AUTHORED_LIGHTBEAM_CONFIG[tier]
+    const { size, ...options } = LIGHTBEAM_CONFIG[tier]
     let rejects = 0
     const gates = new Map<LightbeamGate, number>()
     for (let seed = 1; seed <= 3; seed++)
-      generateAuthoredLightbeam(size, seed, {
+      generateLightbeam(size, seed, {
         ...options,
         reject: gate => {
           rejects++
@@ -94,11 +94,11 @@ describe.each(difficulties)("authored %s", tier => {
 })
 
 /**
- * §6.4's vocabulary ladder, asserted the way the shipped generator's is: **in aggregate over a tier** rather
+ * §6.4's vocabulary ladder, asserted **in aggregate over a tier** rather
  * than board by board. With modes drawn per board one wizard grid can legitimately out-measure another, and it
  * is the tier that has to grow.
  */
-describe("the authored ramp", () => {
+describe("the tier ramp", () => {
   const measured = difficulties.map(tier => {
     const boards = boardsFor(tier)
     return {
@@ -141,8 +141,8 @@ describe("the constraints the table has to respect", () => {
    */
   it("keeps branches straight wherever the cap is deadEnd", () => {
     for (const tier of ["starter", "junior"] as const) {
-      expect(AUTHORED_LIGHTBEAM_CONFIG[tier].techniqueCap).toBe("deadEnd")
-      expect(AUTHORED_LIGHTBEAM_CONFIG[tier].branchDepth).toBe(0)
+      expect(LIGHTBEAM_CONFIG[tier].techniqueCap).toBe("deadEnd")
+      expect(LIGHTBEAM_CONFIG[tier].branchDepth).toBe(0)
       for (const board of boardsFor(tier)) expect(solveLightbeamByTechniques(board, "deadEnd").settled).toBe(true)
     }
   })
@@ -180,7 +180,7 @@ describe("the constraints the table has to respect", () => {
   })
 
   /** Wall-heavy is where the stone is, and it is the only tier below expert that has any. */
-  it("gives junior the stone §6.4 asks for and the shipped generator cannot deliver", () => {
+  it("gives junior the stone §6.4 asks for", () => {
     const stone = boardsFor("junior").map(board => board.fixed.filter(piece => piece.kind === "wall").length)
     expect(stone.reduce((total, count) => total + count, 0) / stone.length).toBeGreaterThan(1)
   })

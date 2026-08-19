@@ -53,14 +53,13 @@ describe("buildLightbeamHint", () => {
   // whatever the decoy is doing — and once something else IS wrong, that is what the player needs to hear
   // about, not the piece they can safely ignore.
   it("never spends a hint on a decoy while something real is set wrong", () => {
-    // Asks for the decoy goal by name rather than trusting a tier seed to draw it — which is also a check
-    // that `sortTheWheat` puts a genuinely free piece on the board.
-    const expert = generateLightbeam(6, 2, {
-      turns: 3,
-      slidingMirrors: 1,
+    // Asks for a branch that turns rather than trusting a tier seed to produce one. That mirror is off the
+    // winning beam's line by construction, so it is a decoy — which is also a check that `branchDepth` puts a
+    // genuinely free piece on the board.
+    const expert = generateLightbeam(7, 2, {
+      turns: 4,
+      branchDepth: 1,
       techniqueCap: "neverReached",
-      goals: ["sortTheWheat"],
-      goalCount: 1,
     })
     // A piece whose every setting still lights the shrine is exactly a decoy.
     const decoy = expert.movable.findIndex((piece, index) =>
