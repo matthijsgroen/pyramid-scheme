@@ -145,7 +145,12 @@ export const PuzzleLab: FC = () => {
       )}
       {playing && puzzle !== undefined && (
         <EncounterModal>
+          {/* Keyed so switching family, tier, theme or seed REMOUNTS the screen rather than handing the mounted
+              one a different puzzle. A family holds the player's progress in its own state, sized to the board it
+              was given — so a board arriving under it reads that state out of range and crashes. Real play cannot
+              do this (a room's puzzle never changes under the player), which is exactly why the bench has to. */}
           <Component
+            key={`${family.meta.id}:${difficulty}:${theme}:${variant ?? ""}:${seed}`}
             puzzle={puzzle}
             ctx={ctx}
             progression={progression}
