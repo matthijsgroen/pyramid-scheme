@@ -26,6 +26,7 @@ const VARIANT_MODES: Record<string, LightbeamMode[]> = {
   "authored wall-heavy": ["wallHeavy"],
   "authored slider-heavy": ["sliderHeavy"],
   "authored switch-heavy": ["switchHeavy"],
+  "authored trap": ["switchHeavy"],
   "authored all modes": ["wallHeavy", "sliderHeavy", "switchHeavy"],
 }
 
@@ -45,6 +46,7 @@ export const generateLightbeamFor = (
       sliders: 1,
       doors: 1,
       doorNodes: 1,
+      traps: variant === "authored trap" ? 1 : 0,
     })
   return generateLightbeam(size, seed, options)
 }

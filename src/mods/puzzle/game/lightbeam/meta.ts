@@ -15,6 +15,7 @@ export const LIGHTBEAM_META: FamilyMeta = {
     "authored wall-heavy",
     "authored slider-heavy",
     "authored switch-heavy",
+    "authored trap",
     "authored all modes",
   ],
   icon: "🔆",

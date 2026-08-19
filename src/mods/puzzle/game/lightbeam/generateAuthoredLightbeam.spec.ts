@@ -864,3 +864,94 @@ describe("switch-heavy", () => {
     }
   })
 })
+
+/**
+ * **Traps** — §11.1's missing half, and the thing this whole architecture was for.
+ *
+ * §11.1 worked out what a trap needs and then explained why it could not be built. The trap has to be the
+ * *only* reason a wrong setting fails, so that setting must otherwise **reach the shrine** — a would-be second
+ * route — and route-then-obstruct is built to reject exactly those. It called looking for one "fishing in a pond
+ * stocked against you", and measured what happens if you place the socket the way shadows are placed instead:
+ * **23 traps across 120 boards, every single one of them decoration.**
+ *
+ * An authoring generator does not fish. It routes a wrong setting to the shrine on purpose (`routeToShrine`),
+ * then puts the socket on that corridor and the stone further along it. The wrong setting's own light drops the
+ * stone in front of itself and dies of its own doing, so uniqueness is restored *by the trap*.
+ *
+ * The acceptance test is §11.1's own, and it is a generation gate rather than only an assertion here: take the
+ * trap out and the board must stop being a puzzle.
+ */
+describe("traps", () => {
+  const DIALS: AuthoredOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    cutMirrors: 1,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+    modes: ["switchHeavy"],
+    doors: 1,
+    doorNodes: 1,
+    traps: 1,
+  }
+  const { size, ...options } = DIALS
+  const boards = Array.from({ length: 4 }, (_, seed) => generateAuthoredLightbeam(size, seed + 1, options))
+
+  it("puts two sockets on the board — one to reach, one to dodge", () => {
+    for (const board of boards) {
+      expect(board.nodes).toHaveLength(2)
+      expect(board.wirings).toHaveLength(2)
+    }
+  })
+
+  /**
+   * The classification is the thinking (§11.1): the winning beam fires the door's wiring and **not** the trap's.
+   * A board where the light crosses every socket on its way past is a checklist, not a choice.
+   */
+  it("leaves one wiring unfired by the winning beam", () => {
+    for (const board of boards) {
+      const fired = firedWirings(board, board.solution)
+      expect(fired.size).toBe(1)
+      expect(board.wirings!.length).toBe(2)
+    }
+  })
+
+  /**
+   * §11.1's acceptance test. Remove the trap's wiring and its stone never drops, so the wrong setting it was
+   * killing survives — and the board has two routes. That is what load-bearing means here, and it is asserted
+   * directly the way §5.1's walls are.
+   */
+  it("is load-bearing: take it out and the board stops being a puzzle", () => {
+    for (const board of boards) {
+      const wirings = board.wirings!
+      const trap = wirings.findIndex((_, index) => !firedWirings(board, board.solution).has(index))
+      expect(trap).toBeGreaterThanOrEqual(0)
+      const without = { ...board, wirings: wirings.filter((_, index) => index !== trap) }
+      // The answer still works — the trap was never in the winning beam's way.
+      expect(isLit(without, board.solution)).toBe(true)
+      // But it is no longer the only route.
+      expect(routeIsUnique(without, allPieceOptions(without))).toBe(false)
+    }
+  })
+
+  /** With the trap in, the board is a puzzle again — uniqueness restored *by* the trap. */
+  it("restores uniqueness by itself", () => {
+    for (const board of boards) {
+      expect(routeIsUnique(board, allPieceOptions(board))).toBe(true)
+      expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
+    }
+  })
+
+  /**
+   * `wiringDead` is what §11.1 says a trap board cannot settle without: the stone the trap might drop sits
+   * `unknown` across the board until a rung can prove the wiring never fires.
+   */
+  it("needs the rung that proves a wiring can never fire", () => {
+    for (const board of boards) {
+      const solve = solveLightbeamByTechniques(board, board.techniqueCap)
+      expect(solve.settled).toBe(true)
+      expect(solve.used.has("wiringDead")).toBe(true)
+    }
+  })
+})

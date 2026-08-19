@@ -182,6 +182,10 @@ export type LightbeamGate =
   | "noTrack"
   /** Authored generation only: switch-heavy could not fit a door and its sockets on the route. */
   | "noDoor"
+  /** Authored generation only: no wrong setting could be routed to the shrine, so there was nothing to trap. */
+  | "noTrap"
+  /** Authored generation only: the trap was decoration — the board stayed a puzzle without it (§11.1). */
+  | "trapIdle"
 
 // Generation is route-then-obstruct, per docs/game-design/puzzles/lightbeam.md §5: lay a beam from disc
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could

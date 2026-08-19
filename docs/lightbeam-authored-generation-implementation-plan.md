@@ -56,10 +56,10 @@ The §11.15 board is the regression test. A generator that can produce its shape
 | `crossings`        | golden path folds through its own line this many times                                                                                                                          |
 | `interactive`      | **0..1, the share of mirrors that are the player's to tap.** Built. A density dial, not a difficulty one (§11.17)                                                               |
 | `forkSize`         | stops per tappable mirror                                                                                                                                                       |
-| `sliders`          | golden bends that slide rather than turn                                                                                                                                        |
+| `sliders`          | golden bends that slide rather than turn. Built — the cheapest fork, and what needed the occupancy model                                                                        |
 | `branchDepth`      | turns per authored branch; 0 is a straight run to stone or the frame. Built, and it is what makes the cap bite                                                                  |
 | `terminator`       | weights over frame / wall / shadow as a branch's ending                                                                                                                         |
-| `modes`            | weights over wall-heavy, slider-heavy, switch-heavy — **these replace the goal pool**                                                                                           |
+| `modes`            | weights over wall-heavy, slider-heavy, switch-heavy — **these replace the goal pool**. All three built                                                                          |
 | `shrineApproaches` | how many ways into the shrine stay alive. 1 lets `exitRun` fire; 2–3 silences it and moves the work to the exhaustive rungs                                                     |
 
 ### `interactive` is the knob that chooses the architecture, per tier
@@ -190,18 +190,51 @@ Weights, combinable, per the owner's sketch:
 **Proves variance.** Measure that the three produce measurably different boards (piece mix, branch shape,
 rungs demanded) rather than three names for the same board.
 
+**Done, and they are different boards** — measured in §11.18. Over 200 seeds a case against identical dials:
+wall-heavy takes stone from 1.80 to 10.76 a board and branches-into-stone from 447 to 959 of 1 200;
+slider-heavy puts 2.00 sliding pieces on and drops the configuration space from 959 to 724; switch-heavy leaves
+the space untouched (a driven piece is not the player's) and takes `onlySurvivor` from 138 boards in 200 to 175.
+They combine. Note the direction: **wall-heavy makes a board easier** (`onlySurvivor` 138 → 77) because stone
+that closes a branch also settles it, while switch-heavy makes it harder.
+
+**The trap is built, and it is load-bearing.** §11.1's recipe followed exactly — route a wrong setting to the
+shrine on purpose, then put the socket on that corridor and the stone further along — with §11.1's acceptance
+test applied as a generation gate rather than a hope. **60 of 60 traps load-bearing**, against the 0 of 23 §11.1
+measured for the decorate-a-wrong-ray approach; `trapIdle` rejects the decorative ones (6 in 60) so none ships.
+The winning beam never fires every wiring, so one socket is always one to dodge, which is the classification
+§11.1 wanted. `wiringDead` is demanded on every board, confirming §11.1's other prediction.
+
+**The key is generalised**, as this phase said it would be: both walks are keyed on
+`(cell, direction, firedSet)`, well founded because firing is monotone. Switch-heavy is also the first thing in
+this construction to make `notUnique` fire at all — 1 to 3 boards in 200 — so the uniqueness gate is a filter
+again rather than an assertion.
+
+**Two findings for phase 4.**
+
+1. **Wall-heavy undermines traps.** With both on, `trapIdle` goes from 6 in 60 boards to 58 and attempts a board
+   from 2.13 to 3.97, because wall-heavy's extra stone kills the trap corridor before the trap does. Combinable,
+   but not free together.
+2. **Slider-heavy needed the resolver generalised** from a mirrors-only map to an occupancy model, because a
+   sliding piece's absence from a cell is itself information. Both walks share it now.
+
 ### Phase 4 — the tier table
 
 Tune to reproduce the measured envelopes below, then move deliberately rather than by accident. §6.4's
 one-new-thing rule still applies: each tier adds one word to the vocabulary.
 
-Two constraints §11.17 measured, which the table has to respect rather than discover:
+Constraints §11.17 and §11.18 measured, which the table has to respect rather than discover:
 
 - **`branchDepth` >= 1 requires a cap above `deadEnd`.** A branch mirror is a shadow and a shadow defeats
   `deadEnd` by design, so starter and junior cannot carry one at their current caps — generation refuses, it
   does not silently produce an easier board.
 - **`interactive` and the cap are not independent.** Dropping the share from 1.0 to 0.7 takes boards needing
   more than `deadEnd` from 400 of 400 down to 358 of 400, so the two have to be set together.
+
+- **wall-heavy pulls the opposite way to the other two.** It buys legibility and spends uncertainty
+  (`onlySurvivor` 138 of 200 → 77), so it is not a difficulty dial and should not be used as one.
+- **wall-heavy and traps fight.** Both on takes `trapIdle` from 6 in 60 boards to 58. Give a trap board little
+  or no wall-heavy weight.
+- **A trap needs `branchDepth` >= 1** and a cap that reaches `wiringDead`, which every trap board demanded.
 
 And one optimisation worth taking first: `onlySurvivor` is now the whole of generation cost, and it enumerates
 the product the deviation tree already knows how to avoid.

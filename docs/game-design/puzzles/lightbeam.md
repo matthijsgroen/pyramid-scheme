@@ -2434,3 +2434,103 @@ re-drawn. It stops holding when the board is small or sparse for what branch dep
 board at a 0.7 share on 8×8, and 5.08 on a 7×7 with four turns — `notSettled` in both cases, the solver
 refusing a board whose shadows outrun its cap. `noCorridor` remains almost silent (1 in 200 boards at two
 turns and a 0.4 share), so the recursion nearly always finds somewhere to stand its stone.
+
+### 11.18 The three modes, and the trap that was not buildable before
+
+§7's goals answered "what kind of board is this" and did it by turning two dials hard. The three modes replace
+them, because an authoring generator can turn the _construction_ rather than the quantities. Combinable, and a
+board records which it was built to — for §7.2's reason, that a fallback firing silently would make the whole
+pool decorative while every measurement still looked fine.
+
+Measured over 200 seeds a case, against identical dials with no mode:
+
+| case         | tappable | sliders | stone | branches into stone | configurations | `onlySurvivor` |
+| ------------ | -------- | ------- | ----- | ------------------- | -------------- | -------------- |
+| no mode      | 9.7      | 0.00    | 1.80  | 447 of 1 200        | 959            | 138 of 200     |
+| wall-heavy   | 9.7      | 0.00    | 10.76 | 959 of 1 200        | 959            | 77             |
+| slider-heavy | 8.2      | 2.00    | 1.35  | 336 of 1 600        | 724            | 169            |
+| switch-heavy | 9.7      | 0.00    | 1.80  | 447 of 1 200        | 959            | 175            |
+
+So they are different boards rather than three names for one, and they pull in different directions:
+**wall-heavy makes a board easier** and switch-heavy makes it harder.
+
+#### Wall-heavy — stone is more legible than the frame
+
+Two applications of one idea. A branch closes in stone even where the frame would have done it for nothing,
+because "it hit that" is a stronger sentence than "it went away" — and the frame being free is why §5.1 measures
+a shipped board at 0.0–0.1 fixed walls. And on a diagonal golden leg a **pair** of walls goes either side of the
+step, so the winning beam is seen to slip between two corners: §11.8 rule 4 taught by the board rather than by
+rules text, on 1.9 steps a board.
+
+The corner pair is the one exception to §5.1's rule against stone the player cannot spend, and the spend is the
+beam going through it. It is kept as a pair or not at all, so a lone wall never reads as an ordinary dead end.
+
+What it costs is uncertainty: `onlySurvivor` falls from 138 boards in 200 to 77, because stone that closes a
+branch also settles it. `exitRun` moves the other way, 80 to 154, for the same reason.
+
+#### Slider-heavy — the cheapest fork, and the one that needed a new model
+
+A turn mirror's wrong setting sends the light somewhere that has to be closed with authored stone. A slider's
+wrong setting is _"as if the piece were not there"_, so the branch is the beam's own line carrying straight on
+through the cell it vacated, and there is no corridor to author. It also asks a different question — not "which
+way round" but "is it in the way", and on a three-cell track, "which cell".
+
+**It is the mode that broke `(cell, direction)` as a resolver.** A sliding piece's _absence_ from a cell is a
+fact about its setting, so a beam crossing an empty track cell has learned something. Both walks — the authoring
+recursion and the deviation tree — now resolve cells through one occupancy model that says which pieces _could_
+be in a cell and in which of their states, rather than a mirrors-only map. The tree agreed with `routeIsUnique`
+on all 1 200 boards measured with sliders on, which is what says the generalisation is right.
+
+Two things measurement caught that a spec would not have: the track search counted the sliding piece's **own**
+bend as a neighbour to keep clear of, so it rejected every track and the mode was inert while every other number
+looked healthy; and branch mirrors were spaced against the golden bends rather than against the pieces, so they
+landed on slider tracks and `piecesAreSpaced` threw the board away after it had been paid for.
+
+#### Switch-heavy — and the key the proof now rests on
+
+Doors across the route, and the sockets that open them. What it adds is **order** — "the light has to get through
+here, this door is shut, so it must reach that socket first" — seeded from the middle of the board, where a long
+route is thinnest. A driven piece is never the player's, so it costs the configuration space nothing: measured
+identical with and without the door, which is what says the model is right.
+
+What it costs the proof is the determinism key. A socket changes the board mid-walk, so both walks are keyed on
+`(cell, direction, firedSet)` rather than `(cell, direction)`. That stays well founded because **firing is
+monotone** — a wiring fires once and never un-fires — so a walk cannot cycle through door states, and clearing
+the loop guard when a wiring fires is both sound and total. It is also the first time in this construction that
+`notUnique` fires at all: 1 to 3 boards in 200, so with doors on the board the uniqueness gate is a filter again
+rather than an assertion.
+
+An and-wiring — one door, two sockets — is the harder shape §11.2 predicted: `wiringFires` settles it on only 7
+boards in 200 while `onlySurvivor` is needed on 196.
+
+#### The trap, which §11.1 said was the hard part
+
+§11.1 established what a trap needs and why it could not be had. The trap must be the _only_ reason a wrong
+setting fails, so that setting has to otherwise **reach the shrine** — a would-be second route — and
+route-then-obstruct is built to reject those. §11.1 called looking for one "fishing in a pond stocked against
+you", and measured the alternative: a socket placed on a wrong ray the way shadows are placed gave **23 traps
+across 120 boards, every one of them decoration**, because the setting it was meant to kill was already dead.
+
+**An authoring generator does not fish.** It routes a wrong setting to the shrine on purpose, then puts the
+socket on that corridor and the stone further along. The wrong setting's own light crosses the socket, the stone
+drops in front of it, and it dies of its own doing.
+
+Measured, 60 seeds a case, with §11.1's acceptance test applied as a **generation gate** rather than a hope —
+take the trap out and the board must stop being a puzzle:
+
+|                                 |                                             |
+| ------------------------------- | ------------------------------------------- |
+| traps load-bearing              | **60 of 60** (§11.1's own attempt: 0 of 23) |
+| decorative traps shipped        | 0 — `trapIdle` rejects them, 6 in 60 boards |
+| winning beam fires every wiring | never: one socket is always one to dodge    |
+| `wiringDead` demanded           | 60 of 60                                    |
+| `onlySurvivor` demanded         | 60 of 60                                    |
+| attempts a board                | 2.13                                        |
+
+`wiringDead` firing on every board confirms §11.1's other prediction: without the rung that proves a wiring can
+never fire, the stone a trap might drop sits `unknown` across the board for ever and nothing settles.
+
+**And one mode interaction worth knowing before the tier table is written: wall-heavy undermines traps.** With
+both on, `trapIdle` rejections go from 6 in 60 boards to 58, and attempts a board from 2.13 to 3.97 — wall-heavy's
+extra stone kills the trap corridor before the trap gets to, which makes the trap decoration. They are
+combinable, but they are not free together.

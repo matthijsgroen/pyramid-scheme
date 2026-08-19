@@ -114,6 +114,15 @@ export type AuthoredOptions = LightbeamOptions & {
    */
   interactive?: number
   /**
+   * **How many traps to author** — a socket the light must be kept away from, whose stone lands *in front of*
+   * the beam rather than out of its way (§11.1). Switch-heavy only, and it needs `branchDepth` at least 1,
+   * because a trap corridor has to be able to turn to reach the shrine.
+   *
+   * With a trap on a board that also has a door, sockets stop being a list to tick off: some have to be
+   * reached, some have to be dodged, and only the reasoning tells them apart.
+   */
+  traps?: number
+  /**
    * **Which modes this board is built to** (design doc §11.18). Combinable, and they replace the goal pool:
    * a mode is what gives a board its flavour, which is the job §7's goals were doing.
    *
@@ -1015,6 +1024,91 @@ const cornerSlipWalls = (board: Authoring, route: Route): CellRef[] => {
   return found
 }
 
+/** A corridor authored to reach the shrine: the mirrors it turns at, and the cells it runs through. */
+type TrapRoute = { mirrors: BranchMirror[]; cells: { at: CellRef; travel: Direction }[] }
+
+/**
+ * Authors a corridor from a wrong setting **to the shrine**, which is the step §11.1 could not take.
+ *
+ * §11.1 worked out what a trap needs and then said the supply was the problem: the trap has to be the *only*
+ * reason a wrong setting fails, so that setting must otherwise reach the shrine — a would-be second route —
+ * and route-then-obstruct is built to reject exactly those. "Fishing in a pond stocked against you."
+ *
+ * **An authoring generator does not fish.** It builds the branch to reach the shrine and then puts the door on
+ * it. This is that search: from the wrong stop's own ray, try to land on the shrine within `depth` turns,
+ * placing a mirror at each. Depth-first over shuffled candidates, so it either finds one quickly or gives up.
+ *
+ * The mirrors it places are the same kind `planBranchMirrors` places — off the golden path, so the winning beam
+ * never touches them.
+ */
+const routeToShrine = (
+  board: Authoring,
+  mirrors: Set<string>,
+  tappable: Set<string>,
+  from: CellRef,
+  direction: Direction,
+  depth: number,
+  interactive: number,
+  random: () => number
+): TrapRoute | undefined => {
+  const shrineKey = cellKey(board.shrine)
+
+  const walk = (at: CellRef, travel: Direction, turnsLeft: number): TrapRoute | undefined => {
+    // Every cell this leg would run through, and whether the leg reaches the shrine along the way.
+    const run: { at: CellRef; travel: Direction }[] = []
+    let probe = at
+    for (let step = 0; step < board.size * 2; step++) {
+      probe = stepCell(probe, travel)
+      if (!insideGrid(board.size, probe)) break
+      const key = cellKey(probe)
+      run.push({ at: probe, travel })
+      if (key === shrineKey) return { mirrors: [], cells: run }
+      // A branch may pass a golden cell travelling differently, but it may not join the golden path — that
+      // would be a second route by the front door rather than a trap.
+      if (board.goldenSegments.has(segmentKey(probe, travel))) break
+      if (board.walls.has(key)) break
+      if (board.givens.has(key)) break
+      // Another piece's cell ends this leg: the trap corridor has to be the beam's own, or the trap is not
+      // the only reason the setting fails.
+      if (mirrors.has(key)) break
+    }
+    if (turnsLeft < 1) return undefined
+
+    // Try turning at each cell this leg reached, far enough out to hold a mirror.
+    const live = random() < interactive
+    const spots = shuffle(
+      run.filter(
+        (cell, index) =>
+          index + 1 >= MIN_LEG && mirrorFits(board.size, board.goldenCells, mirrors, tappable, cell.at, live)
+      ),
+      random
+    )
+    for (const spot of spots) {
+      for (const exit of shuffle([...perpendicular(spot.travel), ...halfStepTurns(spot.travel)], random)) {
+        const angle = angleFor(spot.travel, exit)
+        if (angle === undefined) continue
+        const angles = stopsFor(angle)
+        if (!angles) continue
+        mirrors.add(cellKey(spot.at))
+        if (live) tappable.add(cellKey(spot.at))
+        const rest = walk(spot.at, exit, turnsLeft - 1)
+        if (rest) {
+          const upTo = run.slice(0, run.findIndex(cell => cellKey(cell.at) === cellKey(spot.at)) + 1)
+          return {
+            mirrors: [{ at: spot.at, angle, angles, live }, ...rest.mirrors],
+            cells: [...upTo, ...rest.cells],
+          }
+        }
+        mirrors.delete(cellKey(spot.at))
+        if (live) tappable.delete(cellKey(spot.at))
+      }
+    }
+    return undefined
+  }
+
+  return walk(from, direction, depth)
+}
+
 /**
  * Doors, and the sockets that open them (§11.1, §11.2).
  *
@@ -1110,12 +1204,87 @@ const placeDoors = (
   return true
 }
 
+/**
+ * Places a trap on a corridor that would otherwise reach the shrine (§11.1's recipe, steps 2 and 3).
+ *
+ * > 1. Build the route, and deliberately leave one piece's wrong setting un-walled.
+ * > 2. Trace it. Keep going only if that wrong setting reaches the shrine — a genuine second route.
+ * > 3. Put the socket on that second route and the stone further along it.
+ *
+ * `routeToShrine` has done step 1 and 2 by *construction* rather than by search. This does step 3: a socket on
+ * the corridor, and a driven wall that lands further along it. The wrong setting's own light crosses the socket,
+ * which drops the stone in front of it, and the setting dies of its own doing.
+ *
+ * **Uniqueness is then restored by the trap**, which is what makes it load-bearing by construction rather than
+ * decoration — the failure §11.1 measured, where a socket placed on an already-dead ray produced 23 traps
+ * across 120 boards and every one of them could be removed with the board still a puzzle.
+ *
+ * Two placement rules carry it:
+ *
+ * - **The socket must be off the golden path.** If the winning beam crossed it, the stone would drop on the
+ *   trap corridor while the winning beam was still flying — harmless to the answer, but it would also mean the
+ *   player opens the trap by solving, which is the checklist problem §11.1 opens with.
+ * - **The wall's resting cell must be somewhere it does nothing**, off the golden path and off the corridor, or
+ *   it would be blocking something before it was ever fired.
+ */
+const placeTrap = (
+  board: Authoring,
+  route: TrapRoute,
+  movable: MovablePiece[],
+  solution: number[],
+  claimed: Set<string>,
+  random: () => number
+): boolean => {
+  // The socket goes early on the corridor and the stone later, so the effect lands ahead of the light.
+  const usable = route.cells.filter(cell => {
+    const key = cellKey(cell.at)
+    return !board.goldenCells.has(key) && !claimed.has(key) && key !== cellKey(board.shrine)
+  })
+  if (usable.length < 2) return false
+
+  for (const socket of shuffle(usable.slice(0, Math.max(1, usable.length - 1)), random)) {
+    const socketIndex = route.cells.findIndex(cell => cellKey(cell.at) === cellKey(socket.at))
+    // Stone strictly after the socket along the corridor, and never the shrine itself.
+    const later = usable.filter(cell => route.cells.findIndex(c => cellKey(c.at) === cellKey(cell.at)) > socketIndex)
+    for (const block of shuffle(later, random)) {
+      // Where the wall rests when nothing has fired: idle, off the route and off this corridor.
+      const rest = shuffle([...SQUARE_DIRECTIONS], random)
+        .map(direction => stepCell(block.at, direction))
+        .find(at => {
+          const key = cellKey(at)
+          return (
+            insideGrid(board.size, at) &&
+            !board.goldenCells.has(key) &&
+            !claimed.has(key) &&
+            !board.walls.has(key) &&
+            !board.givens.has(key) &&
+            !route.cells.some(cell => cellKey(cell.at) === key)
+          )
+        })
+      if (!rest) continue
+
+      claimed.add(cellKey(socket.at))
+      claimed.add(cellKey(block.at))
+      claimed.add(cellKey(rest))
+      board.nodes = [...board.nodes, { at: socket.at }]
+      // Resting first, driven second, so `restingState` reads 0 and the wiring drives to 1.
+      movable.push({ kind: "slidingWall", stops: [rest, block.at] })
+      solution.push(0)
+      board.wirings = [...board.wirings, { from: [board.nodes.length - 1], piece: movable.length - 1, to: 1 }]
+      return true
+    }
+  }
+  return false
+}
+
 type Draft = {
   fixed: FixedPiece[]
   movable: MovablePiece[]
   solution: number[]
   nodes: BeamNode[]
   wirings: NodeWiring[]
+  /** Which wiring is the trap, if any — the one §11.1 says must be the only reason a wrong setting fails. */
+  trapWiring?: number
 }
 
 /**
@@ -1150,6 +1319,7 @@ const authorBranches = (
   slidingStops: number,
   doors: number,
   doorNodes: number,
+  traps: number,
   modes: readonly LightbeamMode[],
   random: () => number
 ): Draft | LightbeamGate | undefined => {
@@ -1271,6 +1441,38 @@ const authorBranches = (
   if (movable.length < MIN_TAPPABLE) return undefined
   if (solution.some(state => state < 0)) return undefined
 
+  // Switch-heavy's other half: a **trap** (§11.1). One live bend's wrong setting is routed all the way to the
+  // shrine rather than closed, and then a socket on that corridor drops stone in front of it. The wrong setting
+  // dies of its own light, and the trap is the only reason it fails — load-bearing by construction.
+  let trapped: { corridor: { at: CellRef; enter: Direction; stop: MirrorAngle }; route: TrapRoute } | undefined
+  let trapWiring: number | undefined
+  if (modes.includes("switchHeavy") && traps > 0 && branchDepth > 0) {
+    for (const corridor of shuffle([...corridors], random)) {
+      const direction = reflect(corridor.stop, corridor.enter)
+      if (direction === opposite(corridor.enter)) continue
+      const found = routeToShrine(
+        board,
+        mirrorCells,
+        tappableCells,
+        corridor.at,
+        direction,
+        branchDepth + 1,
+        interactive,
+        random
+      )
+      if (!found) continue
+      for (const mirror of found.mirrors) {
+        if (mirror.live) {
+          movable.push({ kind: "turnMirror", at: mirror.at, angles: mirror.angles })
+          solution.push(mirror.angles.indexOf(mirror.angle))
+        } else board.givens.set(cellKey(mirror.at), mirror.angle)
+      }
+      trapped = { corridor, route: found }
+      break
+    }
+    if (!trapped) return "noTrap"
+  }
+
   // Switch-heavy: doors across the route, and the sockets that open them.
   if (modes.includes("switchHeavy")) {
     const claimed = new Set([
@@ -1281,6 +1483,8 @@ const authorBranches = (
       ...board.walls,
     ])
     if (!placeDoors(board, route, movable, solution, doors, doorNodes, claimed, random)) return "noDoor"
+    if (trapped && !placeTrap(board, trapped.route, movable, solution, claimed, random)) return "noTrap"
+    if (trapped) trapWiring = board.wirings.length - 1
   }
 
   // The piece list is final here, so this is where the occupancy is built. Every corridor below is judged
@@ -1307,6 +1511,11 @@ const authorBranches = (
 
   // Pass two: close every corridor against the finished board. A given has no wrong stop to spend, so it
   // authors no corridor at all — which is what makes a low share cheap and a high one expensive.
+  //
+  // The trap's own corridor goes through the same walker as the rest. It has to: the trap is only load-bearing
+  // if this is what closes it, and if the walker reaches for stone instead then the trap was decoration and the
+  // board should say so. `corridorDies` fires the socket as it crosses it, so the stone the trap drops is what
+  // it finds — which is exactly what the `(cell, direction, firedSet)` key was generalised for.
   for (const corridor of corridors)
     if (!closeBranch(board, corridor.at, corridor.enter, corridor.stop)) return undefined
 
@@ -1341,7 +1550,7 @@ const authorBranches = (
       return { kind: "mirror", at: { row, col }, angle }
     }),
   ]
-  return { fixed, movable, solution, nodes: board.nodes, wirings: board.wirings }
+  return { fixed, movable, solution, nodes: board.nodes, wirings: board.wirings, trapWiring }
 }
 
 /**
@@ -1358,6 +1567,7 @@ const attemptAuthored = (
   interactive: number,
   branchDepth: number,
   sliders: number,
+  traps: number,
   modes: readonly LightbeamMode[],
   cap: TechniqueId,
   reject?: (gate: LightbeamGate) => void
@@ -1378,6 +1588,7 @@ const attemptAuthored = (
     dials.slidingStops,
     dials.doors,
     dials.doorNodes,
+    traps,
     modes,
     random
   )
@@ -1428,6 +1639,25 @@ const attemptAuthored = (
     return undefined
   }
 
+  // §11.1's acceptance test, as a gate rather than a hope: **take the trap out and the board must stop being a
+  // puzzle.** Its own measurement is why this is checked rather than assumed — a socket placed on a wrong ray
+  // the way shadows are placed produced 23 traps across 120 boards and every one of them was decoration,
+  // because the setting it was meant to kill was already dead. Removing a wiring leaves its piece resting for
+  // ever, so the stone never drops; if the board is still unique without it, the trap was not what closed the
+  // second route and this board is a lie about its own mode.
+  if (draft.trapWiring !== undefined) {
+    const without = {
+      ...puzzle,
+      wirings: draft.wirings.filter((_, index) => index !== draft.trapWiring),
+    }
+    const spared = reachableDeviations(without, draft.solution)
+    const stillAPuzzle = spared?.complete ? spared.winning.size === 1 : routeIsUnique(without, allPieceOptions(without))
+    if (stillAPuzzle) {
+      reject?.("trapIdle")
+      return undefined
+    }
+  }
+
   // The opening machinery is reused exactly as it stands: how a board was built is orthogonal to where it
   // starts, and this is the logic that stops "tap every piece once" solving the game.
   for (let draw = 0; draw < OPENING_DRAWS; draw++) {
@@ -1471,6 +1701,7 @@ export const generateAuthoredLightbeam = (
     slidingStops = 3,
     doors = 1,
     doorNodes = 1,
+    traps = 0,
     modes = [],
   } = options
   const dials = { turns, cutMirrors, crossings, fiddleProof, slidingStops, doors, doorNodes } as LightbeamDials
@@ -1484,6 +1715,7 @@ export const generateAuthoredLightbeam = (
       interactive,
       branchDepth,
       sliders,
+      traps,
       modes,
       techniqueCap,
       options.reject
