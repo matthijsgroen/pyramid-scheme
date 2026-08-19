@@ -194,6 +194,14 @@ export type AuthoringDials = {
    */
   sliders: number
   /**
+   * **Whether a board may carry a piece the light can never reach** — a decoy in §6's sense.
+   *
+   * A piece to rule out is real vocabulary and `neverReached` is the rung that frees it, so a tier may want one.
+   * Off by default, because a decoy arriving by accident on a tier that asked for a *shadow* is a dial quietly
+   * not doing its job — see `dropUnreachable`.
+   */
+  decoys: boolean
+  /**
    * **The most stops a mirror on the route may offer** — its fork in the maze (§11.8 rule 1).
    *
    * The sibling of `slidingStops`, one axis over: two asks "which of these two", three asks "which of these
@@ -831,6 +839,13 @@ export type Reach = {
   winning: Set<string>
   /** Wall cells some reachable beam ends on — the stone that is doing something. */
   stoneHit: Set<string>
+  /**
+   * Every cell some reachable beam enters, under any setting the player can reach.
+   *
+   * A piece outside this set is one **no play can ever involve**: not a shadow standing in a wrong ray, but a
+   * mirror the light cannot arrive at however the board is set. See `dropUnreachable`.
+   */
+  reached: Set<string>
   /** Walk steps taken, for the comparison against `routeIsUnique`'s walk over the whole product. */
   nodes: number
   /** Times the tree branched — the beam met a piece it had not been through and fanned out over its stops. */
@@ -884,7 +899,15 @@ export const reachableDeviations = (
   const sunKey = cellKey(puzzle.sun.at)
   const shrineKey = cellKey(puzzle.shrine)
 
-  const found: Reach = { winning: new Set(), stoneHit: new Set(), nodes: 0, forks: 0, reuseForks: 0, complete: true }
+  const found: Reach = {
+    winning: new Set(),
+    stoneHit: new Set(),
+    reached: new Set(),
+    nodes: 0,
+    forks: 0,
+    reuseForks: 0,
+    complete: true,
+  }
 
   const explore = (
     from: CellRef,
@@ -939,6 +962,7 @@ export const reachableDeviations = (
       const segment = segmentKey(at, travel)
       if (seen.has(segment)) return
       seen.add(segment)
+      found.reached.add(key)
       trail.push(segment)
       if (key === shrineKey) {
         found.winning.add(trail.join(" "))
@@ -1712,6 +1736,46 @@ const authorBranches = (
 }
 
 /**
+ * Drops the pieces no play can ever involve.
+ *
+ * A branch mirror is meant to be a **shadow** — something standing in a wrong ray, so the light disappears into
+ * a piece nobody has settled rather than visibly dying (§6.1). Sometimes it lands where no beam can arrive under
+ * any setting, and then it is a **decoy** instead: still fair, because `neverReached` is exactly the rung that
+ * frees it, but not what the dial asked for. Measured before this existed: 15% of starter's off-route mirrors.
+ *
+ * Safe to remove, and that is the whole argument: a piece no beam reaches cannot be on any beam's path, so no
+ * path changes and uniqueness is untouched. Done before the opening is drawn, because how many pieces a board
+ * carries is what `openingIsHonest` and `resistsGreedyPlay` reason about.
+ *
+ * A tier that *wants* decoys keeps them (`decoys`), because a piece to rule out is real vocabulary — it is what
+ * `sortTheWheat` used to add on purpose. What is not wanted is one arriving by accident on a tier that asked for
+ * a shadow.
+ */
+const dropUnreachable = (
+  puzzle: LightbeamPuzzleData,
+  solution: number[],
+  reached: ReadonlySet<string>
+): { puzzle: LightbeamPuzzleData; solution: number[] } | undefined => {
+  const driven = new Set((puzzle.wirings ?? []).map(wiring => wiring.piece))
+  const keep = puzzle.movable
+    .map((_, piece) => piece)
+    .filter(piece => driven.has(piece) || pieceCells(puzzle.movable[piece]).some(at => reached.has(cellKey(at))))
+  if (keep.length === puzzle.movable.length) return undefined
+
+  const moved = new Map(keep.map((piece, index) => [piece, index]))
+  return {
+    puzzle: {
+      ...puzzle,
+      movable: keep.map(piece => puzzle.movable[piece]),
+      ...(puzzle.wirings
+        ? { wirings: puzzle.wirings.map(wiring => ({ ...wiring, piece: moved.get(wiring.piece) as number })) }
+        : {}),
+    },
+    solution: keep.map(piece => solution[piece]),
+  }
+}
+
+/**
  * One build-and-gate attempt on the authored construction.
  *
  * The gates are the shipped ones, unchanged and in the same order, because the point of phase 1 is what
@@ -1771,7 +1835,7 @@ const attemptAuthored = (
     return undefined
   }
 
-  const puzzle: LightbeamPuzzleData = {
+  let puzzle: LightbeamPuzzleData = {
     size,
     sun: route.sun,
     shrine: route.shrine,
@@ -1784,11 +1848,24 @@ const attemptAuthored = (
     return undefined
   }
 
-  // The uniqueness gate is now the reachable deviation tree rather than the walk over the whole product
-  // (§11.15, measured in §11.17). It answers the same question — how many winning *routes* are there — and
-  // stops exploring a beam the moment it dies, so the settings downstream of a dead beam are never visited.
+  // The uniqueness gate is the reachable deviation tree rather than the walk over the whole product (§11.15,
+  // measured in §11.17). It answers the same question — how many winning *routes* are there — and stops
+  // exploring a beam the moment it dies, so the settings downstream of a dead beam are never visited.
   // `routeIsUnique` stays the fallback for a board the tree declines to reason about.
-  const reach = reachableDeviations(puzzle)
+  let reach = reachableDeviations(puzzle)
+
+  // Pieces the light can never arrive at, unless this tier wants them (see `dropUnreachable`). Before the
+  // gates, so everything below reasons about the board that ships.
+  if (!dials.decoys && reach?.complete) {
+    const trimmed = dropUnreachable(puzzle, draft.solution, reach.reached)
+    if (trimmed) {
+      puzzle = trimmed.puzzle
+      draft.solution = trimmed.solution
+      reach = reachableDeviations(puzzle)
+      if (draft.movable.length !== puzzle.movable.length) draft.movable = [...puzzle.movable]
+    }
+  }
+
   const unique = reach?.complete ? reach.winning.size === 1 : routeIsUnique(puzzle, allPieceOptions(puzzle))
   if (!unique) {
     reject?.("notUnique")
@@ -1806,9 +1883,10 @@ const attemptAuthored = (
   // ever, so the stone never drops; if the board is still unique without it, the trap was not what closed the
   // second route and this board is a lie about its own mode.
   if (draft.trapWiring !== undefined) {
+    // `puzzle.wirings` rather than the draft's, because the prune above renumbers the pieces a wiring names.
     const without = {
       ...puzzle,
-      wirings: draft.wirings.filter((_, index) => index !== draft.trapWiring),
+      wirings: (puzzle.wirings ?? []).filter((_, index) => index !== draft.trapWiring),
     }
     const spared = reachableDeviations(without, draft.solution)
     const stillAPuzzle = spared?.complete ? spared.winning.size === 1 : routeIsUnique(without, allPieceOptions(without))
@@ -1851,6 +1929,7 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
     interactive = 1,
     branchDepth = 0,
     forkSize = 2,
+    decoys = false,
     sliders = 1,
     slidingStops = 3,
     doors = 1,
@@ -1869,7 +1948,16 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
   // Recorded in the canonical order rather than the order they were drawn in: a board's modes are a set, and
   // two identical boards reading as different shapes would make every mode-mix measurement noise.
   const drawn = LIGHTBEAM_MODES.filter(mode => picked.includes(mode))
-  const dials = { turns, cutMirrors, crossings, fiddleProof, slidingStops, doors, doorNodes } as LightbeamDials
+  const dials = {
+    turns,
+    cutMirrors,
+    crossings,
+    fiddleProof,
+    slidingStops,
+    doors,
+    doorNodes,
+    decoys,
+  } as LightbeamDials
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const puzzle = attemptAuthored(

@@ -140,6 +140,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
   // purpose and then puts the socket on it.
   master: {
     size: 9,
+    decoys: true,
     turns: 6,
     cutMirrors: 1,
     crossings: 1,
@@ -168,6 +169,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
   // the exhaustive rungs.
   wizard: {
     size: 9,
+    decoys: true,
     turns: 6,
     cutMirrors: 1,
     crossings: 1,

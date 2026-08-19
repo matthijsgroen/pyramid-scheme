@@ -222,9 +222,9 @@ route to find, just a short one with few pieces and a low technique cap.
 
 | Tier    | Grid | Route            | Branch turns | Fork | Pieces | Off route | Configurations | Cap | Modes            |
 | ------- | ---- | ---------------- | ------------ | ---- | ------ | --------- | -------------- | --- | ---------------- |
-| starter | 7×7  | 3 bends          | 1            | 2    | 5.1    | 2.1       | 36             | T7  | wall-heavy       |
-| junior  | 8×8  | 5 bends          | 1            | 2    | 7.3    | 2.4       | 274            | T7  | slider-heavy     |
-| expert  | 9×9  | 5 bends, 1 cross | 1            | 2    | 7.6    | 2.6       | 331            | T8  | slider-heavy     |
+| starter | 7×7  | 3 bends          | 1            | 2    | 4.9    | 1.9       | 32             | T7  | wall-heavy       |
+| junior  | 8×8  | 5 bends          | 1            | 2    | 7.0    | 2.0       | 235            | T7  | slider-heavy     |
+| expert  | 9×9  | 5 bends, 1 cross | 1            | 2    | 7.5    | 2.5       | 317            | T8  | slider-heavy     |
 | master  | 9×9  | 6 bends, 1 cross | 1            | 2    | 10.4   | 4.8       | 2 502          | T8  | 2 of three, trap |
 | wizard  | 9×9  | 6 bends, 1 cross | 2            | 3    | 12.9   | 7.3       | 70 055         | T8  | 2 of three, trap |
 
@@ -2764,3 +2764,48 @@ The piece column is asserted non-decreasing rather than strictly growing, becaus
 length by design and the difference between them is a word rather than a piece. The configuration space is the
 column that must grow every tier, and it does — and the trail column is the one that matters, because it is what
 says every tier is a puzzle.
+
+#### A shadow that lands where no beam goes is a decoy, and that was silent
+
+Playing starter raised it: are there mirrors on the board the light can never reach? Measured over 40 boards a
+tier, by enumerating every setting the player can reach and asking which cells any beam enters:
+
+| tier    | off the winning route | reachable by some setting | reachable by none |
+| ------- | --------------------- | ------------------------- | ----------------- |
+| starter | 2.13 a board          | 72 of 85                  | **13 of 85**      |
+| junior  | 2.35                  | 89 of 94                  | 5 of 94           |
+| expert  | 2.60                  | 101 of 104                | 3 of 104          |
+| master  | 4.38                  | 133 of 175                | 42 of 175         |
+
+So yes, and about one starter board in three carried one. It is not _unfair_ — a piece the light never reaches is
+a **decoy**, and `neverReached` is precisely the rung that frees it — but it is not what `branchDepth` asked for.
+That dial exists to stand a piece **in a wrong ray**, so the light disappears into something unsettled instead of
+visibly dying (§6.1). When the mirror lands where no beam arrives, the tier asked for a shadow and got scenery,
+and every column in the tier table looked healthy either way. The same silent-degradation shape as the slider
+mode that produced no sliders, and as `clearTheWay` before it.
+
+Two things worth recording about how this was diagnosed, because one of them was wrong:
+
+- **It is not wall-heavy.** The first guess was that stone lands at the first free cell out from a mirror and so
+  could wall a corridor before its own branch mirror. Measured: starter without wall-heavy has the same 13, and
+  junior _with_ it has 4 in 131. Not the cause.
+- **The follow-up classification was a broken measurement**, and its output should not be believed: it set a
+  "reachable?" verdict it then never tested for, so every case fell into the "on no corridor at all" bucket. The
+  mechanism is still unestablished.
+
+**The fix does not depend on the mechanism.** `dropUnreachable` removes tappable pieces no reachable beam can
+arrive at, which is safe for the same reason `pruneStone` is: a piece no beam reaches cannot be on any beam's
+path, so no path changes and uniqueness is untouched. Run before the opening is drawn, because how many pieces a
+board carries is what §5's opening rules reason about.
+
+Master and wizard keep theirs (`decoys`), because a piece to rule out is real vocabulary at a tier whose ladder
+can prove it irrelevant — it is what `sortTheWheat` used to add on purpose. What is not wanted is one arriving by
+accident on a tier that asked for a shadow.
+
+| tier    | pieces (was → is) | configurations  | unreachable pieces |
+| ------- | ----------------- | --------------- | ------------------ |
+| starter | 5.1 → 4.9         | 36 → 32         | 13 → **0**         |
+| junior  | 7.3 → 7.0         | 274 → 235       | 5 → **0**          |
+| expert  | 7.6 → 7.5         | 331 → 317       | 3 → **0**          |
+| master  | 10.4 → 10.4       | 2 502 → 2 502   | kept, by dial      |
+| wizard  | 12.9 → 12.9       | 70 055 → 70 055 | kept, by dial      |

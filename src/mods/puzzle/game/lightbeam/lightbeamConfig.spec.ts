@@ -161,6 +161,32 @@ describe("the constraints the table has to respect", () => {
     expect(trail.length).toBeLessThanOrEqual(Math.floor(SEEDS / 4))
   })
 
+  /**
+   * **A tier that asked for a shadow does not get a decoy instead.**
+   *
+   * A branch mirror is meant to stand in a wrong ray, so the light disappears into a piece nobody has settled
+   * rather than visibly dying. Sometimes it lands where no beam can arrive under any setting, and then it is a
+   * decoy — still fair, because `neverReached` frees it, but not what the dial asked for, and silently so.
+   * Measured before the prune: 15% of starter's off-route mirrors.
+   *
+   * Master and wizard keep theirs (`decoys`), because a piece to rule out is real vocabulary at a tier whose
+   * ladder can prove it irrelevant.
+   */
+  it.each(difficulties)("gives %s only the pieces its dials asked for", tier => {
+    const wantsDecoys = LIGHTBEAM_CONFIG[tier].decoys === true
+    let unreachable = 0
+    for (const board of boardsFor(tier)) {
+      const reach = reachableDeviations(board, board.solution)
+      expect(reach?.complete).toBe(true)
+      board.movable.forEach((piece, index) => {
+        if (restingState(board, index) !== undefined) return
+        if (!pieceCells(piece).some(at => reach!.reached.has(cellKey(at)))) unreachable++
+      })
+    }
+    if (wantsDecoys) return
+    expect(unreachable).toBe(0)
+  })
+
   /** And every tier carries the piece that makes that true: one the winning beam never touches. */
   it.each(difficulties)("stands a piece off the winning beam's line at %s", tier => {
     for (const board of boardsFor(tier)) {
