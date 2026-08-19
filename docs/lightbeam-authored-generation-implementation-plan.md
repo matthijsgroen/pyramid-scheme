@@ -103,6 +103,10 @@ No reuse, no modes, no branch depth. Branches run straight from the wrong stop t
 - `routeIsUnique` pass rate and `solveLightbeamByTechniques` pass rate
 - worst generation, cells occupied, pieces a board
 
+Also **expose the dial in `PuzzleLab`** (`src/app/dev/PuzzleLab.tsx`, per `puzzle-screens.md` §6). Every
+number in the bar below is quantitative and none of it says whether the boards are _good_, which is the whole
+reason for the rework — so phase 1 ends with the authored boards playable, not only measured.
+
 **Acceptance:** ~1 attempt a board, and the two gates passing at 100%. If uniqueness fails here, the
 construction is wrong and no later phase matters.
 
@@ -200,6 +204,25 @@ The knob is the real prize: with authoring you can wall the approaches deliberat
 fall out of geometry becomes a dial with a known effect on **which rung fires** — one approach and `exitRun`
 speaks, two or three and the work moves to the exhaustive pair. That is difficulty in the currency
 `docs/instructions/puzzle-screens.md` §5 names.
+
+### Settled working assumptions
+
+Confirmed with the repo owner, so do not re-derive or diverge from these:
+
+- **"Turns/nodes" on the golden path means mirrors**, not sockets. Sockets arrive with switch-heavy in phase 3.
+- **Phase 1 ships nothing.** No tier uses the authored generator, and all 200 boards the current generator
+  makes stay byte-identical. It is measured behind a dial only.
+- **A new file** — `generateAuthoredLightbeam.ts` beside the existing generator, not a mode inside it.
+- **The disc keeps today's placement convention**: on an edge, never a corner, because a corner disc gives the
+  first leg only one way to go and that is a turn the player reads off the frame instead of the board.
+- **`MIN_LEG` carries over** — two cells between consecutive bends, which is what keeps two tappable pieces off
+  each other's shoulder.
+- **The opening machinery is reused unchanged** — `drawOpening`, `openingIsHonest`, `resistsGreedyPlay`. How a
+  board was _built_ is orthogonal to _where it starts_, and that logic is load-bearing: it is what stops
+  "tap every piece once" solving the game (§5, and the exploit that made it necessary).
+- **Puzzle progress is ephemeral.** Boards are generated from `(difficulty, seed)` at play time and the
+  player's state lives in React state, not a store — so swapping generators can never corrupt a saved board.
+  There is no migration to design, and the eventual cutover in phase 4 can be clean.
 
 ### Decisions this doc makes, absent an objection
 
