@@ -5,7 +5,7 @@ import {
   generateLightbeam,
   type LightbeamPuzzle as LightbeamGrid,
 } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
-import { generateAuthoredLightbeam } from "@/mods/puzzle/game/lightbeam/generateAuthoredLightbeam"
+import { generateAuthoredLightbeam, type LightbeamMode } from "@/mods/puzzle/game/lightbeam/generateAuthoredLightbeam"
 import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
 import { LIGHTBEAM_META } from "@/mods/puzzle/game/lightbeam/meta"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
@@ -21,13 +21,18 @@ const LightbeamComponent: FamilyPlugin<LightbeamGrid>["Component"] = ({ puzzle, 
  */
 export const LIGHTBEAM_AUTHORED = "authored"
 
+/** Which modes a lab variant asks for, beyond the plain authored board. */
+const VARIANT_MODES: Record<string, LightbeamMode[]> = { "authored wall-heavy": ["wallHeavy"] }
+
 export const generateLightbeamFor = (
   difficulty: Difficulty | undefined,
   seed: number,
   variant?: string
 ): LightbeamGrid => {
   const { size, ...options } = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
-  if (variant === LIGHTBEAM_AUTHORED) return generateAuthoredLightbeam(size, seed, options)
+  const modes = variant ? VARIANT_MODES[variant] : undefined
+  if (variant === LIGHTBEAM_AUTHORED || modes)
+    return generateAuthoredLightbeam(size, seed, { ...options, modes, branchDepth: 1, interactive: 1 })
   return generateLightbeam(size, seed, options)
 }
 

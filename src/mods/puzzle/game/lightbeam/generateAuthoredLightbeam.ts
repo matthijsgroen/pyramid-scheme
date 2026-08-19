@@ -2,6 +2,7 @@ import { mulberry32, shuffle } from "@/game/random"
 import {
   allPieceOptions,
   cellKey,
+  directionStep,
   insideGrid,
   isHalfStep,
   isLit,
@@ -68,6 +69,19 @@ import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
 const FORK_SIZE = 2
 
 /**
+ * What kind of board this is, as against how hard it is — the modes that replace §7's goal pool.
+ *
+ * - **wall-heavy** — stone rather than the frame closes a branch, and a diagonal golden leg gets a *pair* of
+ *   walls the beam visibly passes between: §11.8 rule 4's corner slip used as a feature rather than a rule to
+ *   learn.
+ * - **slider-heavy** — golden bends that slide rather than turn.
+ * - **switch-heavy** — doors, sockets, and §11.1's traps.
+ */
+export const LIGHTBEAM_MODES = ["wallHeavy", "sliderHeavy", "switchHeavy"] as const
+
+export type LightbeamMode = (typeof LIGHTBEAM_MODES)[number]
+
+/**
  * The floor on tappable pieces, whatever `interactive` says.
  *
  * Three, which is where §5's opening rules already put the family: two binary pieces make four
@@ -91,6 +105,14 @@ export type AuthoredOptions = LightbeamOptions & {
    * floor of `MIN_TAPPABLE` holds whatever the weight says.
    */
   interactive?: number
+  /**
+   * **Which modes this board is built to** (design doc §11.18). Combinable, and they replace the goal pool:
+   * a mode is what gives a board its flavour, which is the job §7's goals were doing.
+   *
+   * Recorded on the result rather than logged, for the reason §7.2 gives about goals — a fallback that fires
+   * silently would make the whole pool decorative while every measurement still looked fine.
+   */
+  modes?: readonly LightbeamMode[]
   /**
    * **Turns per authored branch.** 0 is a straight run to stone or the frame.
    *
@@ -324,6 +346,14 @@ type Authoring = {
   /** Mirrors the player cannot touch. A branch passes through one deterministically, and may. */
   givens: Map<string, MirrorAngle>
   walls: Set<string>
+  /**
+   * Wall-heavy: close a branch in stone even where the frame would have done it for nothing.
+   *
+   * The frame is the cheapest terminator there is, which is why §5.1 measures a shipped board at 0.0–0.1 fixed
+   * walls — and it is also the least legible, because "it left the board" is a weaker sentence than "it hit
+   * that". This turns the preference round.
+   */
+  preferStone: boolean
 }
 
 /**
@@ -387,7 +417,12 @@ const corridorDies = (
   }
 
   for (;;) {
-    if (!insideGrid(board.size, at)) return true // the frame closes it, and costs nothing
+    if (!insideGrid(board.size, at)) {
+      // The frame closes it for nothing. Wall-heavy would rather it died somewhere the player can point at,
+      // so it spends stone here if the corridor offered anywhere to stand it.
+      if (board.preferStone && stone.length) return closeHere()
+      return true
+    }
     const key = cellKey(at)
     if (board.walls.has(key)) return true // dies in stone this or another branch needed
     if (key === cellKey(board.sun)) return true // swallowed by the disc
@@ -690,6 +725,42 @@ const planBranchMirrors = (
   return planned
 }
 
+/**
+ * Wall-heavy's own sentence: the two cells a diagonal step squeezes past.
+ *
+ * §11.8 rule 4 says a diagonal step resolves only the cell it lands in, never the two it slips between — and
+ * the design doc's answer to "how does the player learn that" was to draw walls with rounded corners and add
+ * no rules text. This makes the fact **visible on the board it matters on**: stone in both corners, with the
+ * winning beam going straight through the gap. Nothing is asked of the player; the beam simply does it in
+ * front of them.
+ *
+ * It cannot bend the golden beam — that is exactly what rule 4 guarantees — so the only thing to check is that
+ * the stone is not standing where something else already is.
+ */
+const cornerSlipWalls = (board: Authoring, route: Route): CellRef[] => {
+  const found: CellRef[] = []
+  let previous: CellRef | undefined
+  for (const cell of route.cells) {
+    if (previous && cell.enter % 2 === 1) {
+      // The two orthogonal neighbours shared by the step's start and end.
+      const step = directionStep(cell.enter)
+      for (const corner of [
+        { row: previous.row + step.row, col: previous.col },
+        { row: previous.row, col: previous.col + step.col },
+      ]) {
+        const key = cellKey(corner)
+        if (!insideGrid(board.size, corner)) continue
+        if (board.goldenCells.has(key) || board.walls.has(key)) continue
+        if (board.tappable.has(key) || board.givens.has(key)) continue
+        if (found.some(already => cellKey(already) === key)) continue
+        found.push(corner)
+      }
+    }
+    previous = cell.at
+  }
+  return found
+}
+
 type Draft = { fixed: FixedPiece[]; movable: MovablePiece[]; solution: number[] }
 
 /**
@@ -720,6 +791,7 @@ const authorBranches = (
   route: Route,
   interactive: number,
   branchDepth: number,
+  modes: readonly LightbeamMode[],
   random: () => number
 ): Draft | undefined => {
   const stops = route.bends.map(bend => stopsFor(bend.angle))
@@ -747,6 +819,7 @@ const authorBranches = (
       route.bends.flatMap((bend, index) => (live.has(index) ? [] : [[cellKey(bend.at), bend.angle] as const]))
     ),
     walls: new Set(),
+    preferStone: modes.includes("wallHeavy"),
   }
 
   // The piece list is settled before a single corridor is authored, because which cells are tappable is a
@@ -802,12 +875,24 @@ const authorBranches = (
   if (movable.length < MIN_TAPPABLE) return undefined
   if (solution.some(state => state < 0)) return undefined
 
+  // Wall-heavy's corner pairs go down before any corridor is closed, so a branch may legitimately die in one
+  // and `pruneStone` can tell which of them earned their place.
+  const decorative = new Set<string>()
+  if (modes.includes("wallHeavy"))
+    for (const corner of cornerSlipWalls(board, route)) {
+      board.walls.add(cellKey(corner))
+      decorative.add(cellKey(corner))
+    }
+
   // Pass two: close every corridor against the finished board. A given has no wrong stop to spend, so it
   // authors no corridor at all — which is what makes a low share cheap and a high one expensive.
   for (const corridor of corridors)
     if (!closeBranch(board, corridor.at, corridor.enter, corridor.stop)) return undefined
 
-  const kept = pruneStone(board, route, movable)
+  // A corner pair is kept whether or not a beam ends on it: it is there to be *read*, which is the one
+  // exception to §5.1's rule against stone the player cannot spend — the beam spends it, by going through.
+  // Kept as a pair or not at all, so a lone wall never reads as an ordinary dead end.
+  const kept = new Set([...pruneStone(board, route, movable), ...(decorative.size > 1 ? decorative : [])])
   const fixed: FixedPiece[] = [
     ...shuffle([...kept], random).map((key): FixedPiece => {
       const [row, col] = key.split(",").map(Number)
@@ -834,6 +919,7 @@ const attemptAuthored = (
   dials: LightbeamDials,
   interactive: number,
   branchDepth: number,
+  modes: readonly LightbeamMode[],
   cap: TechniqueId,
   reject?: (gate: LightbeamGate) => void
 ): Omit<LightbeamPuzzle, "goals"> | undefined => {
@@ -844,7 +930,7 @@ const attemptAuthored = (
     reject?.("noRoute")
     return undefined
   }
-  const draft = authorBranches(size, route, interactive, branchDepth, random)
+  const draft = authorBranches(size, route, interactive, branchDepth, modes, random)
   if (!draft) {
     reject?.("noCorridor")
     return undefined
@@ -906,11 +992,14 @@ const attemptAuthored = (
  * Goals are absent by design — the plan settles that the three modes replace the goal pool, and they are
  * phase 3.
  */
+/** An authored board, which records the modes it was built to the way a shipped board records its goals. */
+export type AuthoredLightbeamPuzzle = LightbeamPuzzle & { modes: LightbeamMode[] }
+
 export const generateAuthoredLightbeam = (
   size: number,
   seed: number,
   options: AuthoredOptions = {}
-): LightbeamPuzzle => {
+): AuthoredLightbeamPuzzle => {
   const {
     techniqueCap = "deadEnd",
     turns = 2,
@@ -919,12 +1008,23 @@ export const generateAuthoredLightbeam = (
     fiddleProof = false,
     interactive = 1,
     branchDepth = 0,
+    modes = [],
   } = options
   const dials = { turns, cutMirrors, crossings, fiddleProof } as LightbeamDials
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const puzzle = attemptAuthored(size, seed, attempt, dials, interactive, branchDepth, techniqueCap, options.reject)
-    if (puzzle) return { ...puzzle, goals: [] }
+    const puzzle = attemptAuthored(
+      size,
+      seed,
+      attempt,
+      dials,
+      interactive,
+      branchDepth,
+      modes,
+      techniqueCap,
+      options.reject
+    )
+    if (puzzle) return { ...puzzle, goals: [], modes: [...modes] }
   }
   throw new Error(`generateAuthoredLightbeam: no logically solvable board (size=${size}, seed=${seed})`)
 }

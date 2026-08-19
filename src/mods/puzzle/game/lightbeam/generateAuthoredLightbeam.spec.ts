@@ -498,3 +498,94 @@ describe("branch depth against the technique cap", () => {
     expect(solveLightbeamByTechniques(board, "neverReached").settled).toBe(true)
   })
 })
+
+/**
+ * Wall-heavy, the first of the three modes that replace the goal pool (§11.18).
+ *
+ * Two things it does, and they are the same idea twice: stone is more legible than the frame. A branch closed
+ * in stone says "it hit that"; one that leaves the board says only "it went away". And on a diagonal golden
+ * leg a **pair** of walls goes down either side of the step, so the winning beam is seen to slip between two
+ * corners — §11.8 rule 4 taught by the board instead of by rules text.
+ */
+describe("wall-heavy", () => {
+  const DIALS: AuthoredOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    cutMirrors: 1,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = DIALS
+  const plain = Array.from({ length: 8 }, (_, seed) => generateAuthoredLightbeam(size, seed + 1, options))
+  const heavy = Array.from({ length: 8 }, (_, seed) =>
+    generateAuthoredLightbeam(size, seed + 1, { ...options, modes: ["wallHeavy"] })
+  )
+
+  const stoneCount = (board: (typeof plain)[number]) => board.fixed.filter(piece => piece.kind === "wall").length
+
+  it("records the mode it was built to", () => {
+    expect(heavy[0].modes).toEqual(["wallHeavy"])
+    expect(plain[0].modes).toEqual([])
+  })
+
+  it("carries substantially more stone", () => {
+    const plainStone = plain.reduce((total, board) => total + stoneCount(board), 0)
+    const heavyStone = heavy.reduce((total, board) => total + stoneCount(board), 0)
+    expect(heavyStone).toBeGreaterThan(plainStone * 2)
+  })
+
+  /** The point of the mode: a branch dies somewhere the player can point at. */
+  it("closes branches in stone rather than at the frame", () => {
+    const absorbed = (boards: typeof plain) => {
+      let count = 0
+      for (const board of boards)
+        board.movable.forEach((piece, index) => {
+          if (piece.kind !== "turnMirror") return
+          const answer = piece.angles[board.solution[index]]
+          for (const stop of piece.angles) {
+            if (stop === answer) continue
+            const config = [...board.solution]
+            config[index] = piece.angles.indexOf(stop)
+            if (traceBeam(board, config).end === "absorbed") count++
+          }
+        })
+      return count
+    }
+    expect(absorbed(heavy)).toBeGreaterThan(absorbed(plain))
+  })
+
+  /**
+   * The corner slip, made visible: two walls with the winning beam going diagonally between them. This is the
+   * one place stone is kept without stopping anything, because what it is there for is to be read.
+   */
+  it("puts a pair of walls either side of a diagonal step, and the beam still gets through", () => {
+    let pairs = 0
+    for (const board of heavy) {
+      const stone = new Set(board.fixed.filter(piece => piece.kind === "wall").map(piece => cellKey(piece.at)))
+      const path = traceBeam(board, board.solution).path
+      for (let step = 1; step < path.length; step++) {
+        if (path[step].enter % 2 !== 1) continue
+        const before = path[step - 1].at
+        const after = path[step].at
+        if (
+          stone.has(cellKey({ row: after.row, col: before.col })) &&
+          stone.has(cellKey({ row: before.row, col: after.col }))
+        )
+          pairs++
+      }
+      // Whatever stone went down, the answer still lights the shrine — which is rule 4 holding.
+      expect(isLit(board, board.solution)).toBe(true)
+    }
+    expect(pairs).toBeGreaterThan(0)
+  })
+
+  it("is still unique and still deducible", () => {
+    for (const board of heavy) {
+      expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
+      expect(routeIsUnique(board, allPieceOptions(board))).toBe(true)
+      expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
+    }
+  })
+})

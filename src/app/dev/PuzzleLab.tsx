@@ -18,11 +18,26 @@ const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 tex
  */
 const benchNotes = (puzzle: unknown): string[] => {
   if (typeof puzzle !== "object" || puzzle === null) return []
-  const { goals, techniqueCap, size } = puzzle as { goals?: unknown; techniqueCap?: unknown; size?: unknown }
+  const { goals, modes, techniqueCap, size, movable, fixed } = puzzle as {
+    goals?: unknown
+    modes?: unknown
+    techniqueCap?: unknown
+    size?: unknown
+    movable?: unknown
+    fixed?: unknown
+  }
   return [
     typeof size === "number" ? `${size}×${size}` : undefined,
     typeof techniqueCap === "string" ? `cap ${techniqueCap}` : undefined,
-    Array.isArray(goals) ? (goals.length ? `goals ${goals.join(" + ")}` : "goals — (baseline)") : undefined,
+    Array.isArray(movable) ? `${movable.length} pieces` : undefined,
+    Array.isArray(fixed) ? `${fixed.length} fixed` : undefined,
+    // A generator that records modes rather than goals says so — they are what replaces them.
+    Array.isArray(modes) ? (modes.length ? `modes ${modes.join(" + ")}` : "modes — (baseline)") : undefined,
+    Array.isArray(goals) && !Array.isArray(modes)
+      ? goals.length
+        ? `goals ${goals.join(" + ")}`
+        : "goals — (baseline)"
+      : undefined,
   ].filter((note): note is string => note !== undefined)
 }
 
