@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
+import { useVisibleElapsed } from "@/support/useVisibleElapsed"
 import { HINT_COOLDOWN_MS, useHintAvailability } from "./useHintAvailability"
 
 export type PuzzleShellApi = {
@@ -42,6 +43,12 @@ type Props = {
   children: (api: PuzzleShellApi) => ReactNode
 }
 
+// `1:07`, or `43s` under a minute — short enough to read at a glance, and no words, so it needs no locale.
+const formatDuration = (ms: number): string => {
+  const seconds = Math.round(ms / 1000)
+  return seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}:${`${seconds % 60}`.padStart(2, "0")}`
+}
+
 // The chrome every puzzle family wears: back, reset, hint (with its cooldown and idle nudge), the
 // completed banner, and the rules below the board. Families supply the board and their own hint text;
 // none of them reimplement the controls (docs/instructions/puzzle-screens.md §3).
@@ -69,13 +76,21 @@ export const PuzzleFamilyShell = ({
   // way — finishing a board the player had just broken.
   const [finishing, setFinishing] = useState(false)
 
+  // How long the board took, stopped at the solve rather than at the banner, and counting only the time it
+  // was actually on screen. This is the instrument for PUZZLE_FAMILIES.md §3.2's solve-time budget — a tier
+  // nobody has timed is a tier whose duration is unknown — and the lab plays the real screen, so timing a
+  // tier there needs nothing of its own.
+  const elapsedMs = useVisibleElapsed()
+  const [tookMs, setTookMs] = useState<number>()
+
   // The banner waits for a tap rather than a timer: the solved board is the reward, and a puzzle that closes
   // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
   // the player says when they are done with it.
   const handleSolved = useCallback(() => {
     setFinishing(true)
+    setTookMs(elapsedMs())
     scheduleSolve(800, () => setSolvedBanner(true))
-  }, [scheduleSolve])
+  }, [scheduleSolve, elapsedMs])
 
   useEffect(() => {
     if (solved) handleSolved()
@@ -168,6 +183,8 @@ export const PuzzleFamilyShell = ({
             <span className="text-sm text-stone-400">
               {hintsUsed === 0 ? t("ui.solvedUnaided") : t("ui.solvedWithHints", { count: hintsUsed })}
             </span>
+            {/* Wordless on purpose (P2): a clock face and a duration read the same in every locale. */}
+            {tookMs !== undefined && <span className="text-xs text-stone-500">⏱ {formatDuration(tookMs)}</span>}
             <span className="mt-1 text-xs text-stone-500">{t("ui.tapToContinue")}</span>
           </span>
         </button>

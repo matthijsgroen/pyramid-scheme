@@ -49,6 +49,13 @@ The same puzzle dresses up per site (`ctx.theme`).
 | Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it. |
 | Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                |
 
+**The banner reports the solve time**, wordless (`⏱ 1:07`) so it needs no locale, and
+it is **on-screen time only** — the clock stops while the document is hidden, because a
+board left open in a background tab is not time anyone spent on it
+(`src/support/useVisibleElapsed.ts`). That is the instrument for §3.2's budget: the lab
+(`src/app/dev/PuzzleLab.tsx`) plays the real screen, so timing a tier needs nothing of
+its own — pick family and tier, solve, read the banner.
+
 **The solved board is the reward, so it is the player who leaves it.** The banner
 sits over a light dim rather than an opaque one — the finished board has to be
 readable through it, because seeing what you built is the payoff for building it —

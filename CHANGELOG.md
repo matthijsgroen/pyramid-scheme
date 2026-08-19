@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A solved puzzle stays on screen until you tap it away, behind a much lighter dim, so there is time to look at what you finished. It used to fade out on a timer.
+- Finishing a puzzle now shows how long it took. The clock only runs while the puzzle is on screen, so leaving the tab does not count against you.
 - Balance-scale puzzles start harder: the easiest board now has two glyphs to weigh and a number to share out between them, instead of one glyph and one subtraction. Every difficulty above it moved up to match, and trading a glyph for what a row says it is worth now arrives one difficulty sooner.
 - Light puzzles ask for real reasoning now. Every board used to be solved by tapping every piece once, whatever its difficulty; that no longer works, and neither does simply chasing the beam towards the shrine.
 - Sliding pieces can have three places to stand instead of two, so the question is which spot rather than in or out.

@@ -38,6 +38,8 @@ describe("PuzzleFamilyShell", () => {
       act(() => vi.advanceTimersByTime(5000))
       expect(screen.getByText("ui.puzzleCompleted")).toBeTruthy()
       expect(onSolved).not.toHaveBeenCalled()
+      // The clock stops at the solve, not at the banner, so the 800ms wait is not part of it.
+      expect(screen.getByText("⏱ 0s")).toBeTruthy()
 
       fireEvent.click(screen.getByText("ui.tapToContinue"))
       expect(onSolved).toHaveBeenCalledOnce()
