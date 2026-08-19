@@ -25,6 +25,8 @@ export const LIGHTBEAM_AUTHORED = "authored"
 const VARIANT_MODES: Record<string, LightbeamMode[]> = {
   "authored wall-heavy": ["wallHeavy"],
   "authored slider-heavy": ["sliderHeavy"],
+  "authored switch-heavy": ["switchHeavy"],
+  "authored all modes": ["wallHeavy", "sliderHeavy", "switchHeavy"],
 }
 
 export const generateLightbeamFor = (
@@ -40,7 +42,9 @@ export const generateLightbeamFor = (
       modes,
       branchDepth: 1,
       interactive: 1,
-      sliders: 2,
+      sliders: 1,
+      doors: 1,
+      doorNodes: 1,
     })
   return generateLightbeam(size, seed, options)
 }

@@ -180,6 +180,8 @@ export type LightbeamGate =
   | "noCorridor"
   /** Authored generation only: a mode asked for a sliding piece and no track fitted. */
   | "noTrack"
+  /** Authored generation only: switch-heavy could not fit a door and its sockets on the route. */
+  | "noDoor"
 
 // Generation is route-then-obstruct, per docs/game-design/puzzles/lightbeam.md §5: lay a beam from disc
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could

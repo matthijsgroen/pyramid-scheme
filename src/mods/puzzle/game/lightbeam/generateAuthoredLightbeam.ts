@@ -11,10 +11,12 @@ import {
   isLit,
   opposite,
   reflect,
+  restingState,
   segmentKey,
   SQUARE_DIRECTIONS,
   stepCell,
   TURN_ANGLES,
+  type BeamNode,
   type Blocker,
   type CellRef,
   type Direction,
@@ -22,6 +24,7 @@ import {
   type LightbeamPuzzleData,
   type MirrorAngle,
   type MovablePiece,
+  type NodeWiring,
 } from "./beam"
 import {
   angleFor,
@@ -362,6 +365,11 @@ type Authoring = {
   /** Mirrors the player cannot touch. A branch passes through one deterministically, and may. */
   givens: Map<string, MirrorAngle>
   walls: Set<string>
+  /** Sockets on the board, and the wirings they drive. Empty until switch-heavy places any. */
+  nodes: BeamNode[]
+  wirings: NodeWiring[]
+  /** Pieces those wirings own, rebuilt whenever one is added. */
+  wired: Map<number, Wired>
   /**
    * Wall-heavy: close a branch in stone even where the frame would have done it for nothing.
    *
@@ -401,6 +409,40 @@ const occupancyOf = (movable: readonly MovablePiece[]): Occupancy => {
   return map
 }
 
+/**
+ * A piece a socket drives, and the states it can be in.
+ *
+ * **A driven piece is not the player's**, which is the whole reason a socket is worth reaching (§11.2). So it
+ * is never "undecided": it sits at `resting` until one of its wirings fires, and then it is pinned. That makes
+ * it invisible to the configuration space and invisible to the tree's fan-out.
+ */
+type Wired = { resting: number; drivenTo: Map<number, number> }
+
+const wiredPieces = (puzzle: LightbeamPuzzleData): Map<number, Wired> => {
+  const map = new Map<number, Wired>()
+  ;(puzzle.wirings ?? []).forEach((wiring, index) => {
+    const existing = map.get(wiring.piece)
+    if (existing) existing.drivenTo.set(index, wiring.to)
+    else
+      map.set(wiring.piece, {
+        resting: restingState(puzzle, wiring.piece) ?? 0,
+        drivenTo: new Map([[index, wiring.to]]),
+      })
+  })
+  return map
+}
+
+/**
+ * Where a driven piece stands, given which wirings have fired.
+ *
+ * Applied in wiring order so two wirings driving one piece resolve the same way every time — the same rule
+ * `firedConfig` follows, and for the same reason: the trace has to be a function rather than a coin toss.
+ */
+const wiredState = (wired: Wired, fired: ReadonlySet<number>): number => {
+  for (const [wiring, to] of wired.drivenTo) if (fired.has(wiring)) return to
+  return wired.resting
+}
+
 /** What a cell holds, given what the walk has already committed the pieces to. */
 type Resolved =
   | { kind: "empty" }
@@ -412,16 +454,23 @@ const resolveCell = (
   occupancy: Occupancy,
   movable: readonly MovablePiece[],
   decided: ReadonlyMap<number, number>,
-  key: string
+  key: string,
+  /** Pieces a socket owns, and which wirings have fired — a driven piece has no choice to fan out over. */
+  wired?: { pieces: Map<number, Wired>; fired: ReadonlySet<number> }
 ): Resolved => {
   const candidates = occupancy.get(key) ?? []
+  const stateFor = (piece: number): number | undefined => {
+    const driven = wired?.pieces.get(piece)
+    if (driven && wired) return wiredState(driven, wired.fired)
+    return decided.get(piece)
+  }
   // A piece already committed to standing here settles the cell, whatever else might have.
   for (const candidate of candidates) {
-    const state = decided.get(candidate.piece)
+    const state = stateFor(candidate.piece)
     if (state !== undefined && candidate.here.has(state))
       return { kind: "occupied", blocks: pieceOccupant(movable[candidate.piece], state).blocks }
   }
-  const open = candidates.find(candidate => !decided.has(candidate.piece))
+  const open = candidates.find(candidate => stateFor(candidate.piece) === undefined)
   if (open)
     return {
       kind: "undecided",
@@ -496,13 +545,18 @@ const corridorDies = (
   direction: Direction,
   decided: ReadonlyMap<number, number>,
   travelled: ReadonlySet<string>,
-  depth: number
+  depth: number,
+  /** Sockets this corridor has already crossed, and the wirings that has fired. */
+  crossed: ReadonlySet<number> = new Set(),
+  fired: ReadonlySet<number> = new Set()
 ): boolean => {
   if (depth > MAX_CORRIDOR_DEPTH) return false
   const stone: CellRef[] = []
-  const seen = new Set(travelled)
+  let seen = new Set(travelled)
   let at = stepCell(from, direction)
   let travel = direction
+  let met = new Set(crossed)
+  let lit = new Set(fired)
 
   // Cut the corridor short. Nearest stone first; false when there is nowhere to stand any.
   const closeHere = (): boolean => {
@@ -522,6 +576,25 @@ const corridorDies = (
     const key = cellKey(at)
     if (board.walls.has(key)) return true // dies in stone this or another branch needed
     if (key === cellKey(board.sun)) return true // swallowed by the disc
+
+    // A corridor crossing a socket changes the board under itself, so the loop guard starts again. Firing is
+    // monotone, so this terminates — and it is what lets a **trap** work: the wrong setting's own light drops
+    // the stone that kills it (§11.1).
+    let changed = false
+    board.nodes.forEach((socket, index) => {
+      if (!met.has(index) && cellKey(socket.at) === key) {
+        met = new Set(met).add(index)
+        changed = true
+      }
+    })
+    if (changed)
+      board.wirings.forEach((wiring, index) => {
+        if (!lit.has(index) && wiring.from.every(socket => met.has(socket))) {
+          lit = new Set(lit).add(index)
+          seen = new Set()
+        }
+      })
+
     const segment = segmentKey(at, travel)
     // Retracing a line already travelled reaches nothing this corridor has not already been offered.
     if (seen.has(segment)) return true
@@ -529,7 +602,7 @@ const corridorDies = (
     if (key === cellKey(board.shrine)) return closeHere()
     if (board.goldenSegments.has(segment)) return closeHere()
 
-    const here = resolveCell(board.occupancy, board.movable, decided, key)
+    const here = resolveCell(board.occupancy, board.movable, decided, key, { pieces: board.wired, fired: lit })
     if (here.kind === "undecided") {
       // §11.15's sufficient rule. Every state of the piece, including the ones that take a sliding piece
       // somewhere else entirely and leave this cell empty — that is a future too.
@@ -537,7 +610,7 @@ const corridorDies = (
         const after = afterState(board.movable, here.piece, state, at, travel)
         // A state that stands a wall here has already killed this continuation.
         if (after.dies) return true
-        return corridorDies(board, at, after.travel, new Map(decided).set(here.piece, state), seen, depth + 1)
+        return corridorDies(board, at, after.travel, new Map(decided).set(here.piece, state), seen, depth + 1, met, lit)
       })
       return everyStateDies ? true : closeHere()
     }
@@ -631,12 +704,10 @@ export const reachableDeviations = (
   /** The answer, only needed to tell a fan-out on the golden path from one a deviated beam met. */
   solution?: readonly number[]
 ): Reach | undefined => {
-  // A socket changes the board mid-walk, so the determinism this rests on would have to be keyed on
-  // `(cell, direction, firedSet)` rather than `(cell, direction)`. That is switch-heavy's work; declining is
-  // better than pretending, and the caller falls back to `routeIsUnique`.
-  if (puzzle.nodes?.length || puzzle.wirings?.length) return undefined
-
   const occupancy = occupancyOf(puzzle.movable)
+  const wired = wiredPieces(puzzle)
+  const sockets = puzzle.nodes ?? []
+  const wirings = puzzle.wirings ?? []
   const givens = new Map<string, MirrorAngle>()
   const walls = new Set<string>()
   for (const piece of puzzle.fixed) {
@@ -654,12 +725,17 @@ export const reachableDeviations = (
     decided: ReadonlyMap<number, number>,
     prefix: readonly string[],
     travelled: ReadonlySet<string>,
-    deviated: boolean
+    deviated: boolean,
+    /** Sockets this beam has crossed, and the wirings that has fired. Monotone, so the walk cannot cycle. */
+    crossed: ReadonlySet<number>,
+    fired: ReadonlySet<number>
   ): void => {
-    const seen = new Set(travelled)
+    let seen = new Set(travelled)
     const trail = [...prefix]
     let at = stepCell(from, direction)
     let travel = direction
+    let sockets_crossed = new Set(crossed)
+    let now_fired = new Set(fired)
     for (;;) {
       if (found.nodes++ > REACH_CAP) {
         found.complete = false
@@ -672,6 +748,27 @@ export const reachableDeviations = (
         return
       }
       if (key === sunKey) return
+
+      // Crossing a socket can move a piece, which makes this a board the walk has not been over — so what it
+      // saw before proves nothing about looping. Clearing rather than keying on the fired set costs nothing
+      // and stays total, because a wiring fires once and never un-fires (the same argument `walkForward`
+      // makes). That monotonicity is what generalises the determinism key from `(cell, direction)` to
+      // `(cell, direction, firedSet)` without the walk being able to cycle through door states.
+      let changed = false
+      sockets.forEach((socket, index) => {
+        if (!sockets_crossed.has(index) && cellKey(socket.at) === key) {
+          sockets_crossed = new Set(sockets_crossed).add(index)
+          changed = true
+        }
+      })
+      if (changed)
+        wirings.forEach((wiring, index) => {
+          if (!now_fired.has(index) && wiring.from.every(socket => sockets_crossed.has(socket))) {
+            now_fired = new Set(now_fired).add(index)
+            seen = new Set()
+          }
+        })
+
       const segment = segmentKey(at, travel)
       if (seen.has(segment)) return
       seen.add(segment)
@@ -680,7 +777,10 @@ export const reachableDeviations = (
         found.winning.add(trail.join(" "))
         return
       }
-      const here = resolveCell(occupancy, puzzle.movable, decided, key)
+      const here = resolveCell(occupancy, puzzle.movable, decided, key, {
+        pieces: wired,
+        fired: now_fired,
+      })
       if (here.kind === "undecided") {
         // The one place the tree branches: a piece the beam has not been through yet has as many futures as
         // it has states, and every one of them is walked — including the states that stand it somewhere else
@@ -695,7 +795,16 @@ export const reachableDeviations = (
             // The player is holding a wall here. Nothing further to walk, but the stone is spent.
             continue
           }
-          explore(at, after.travel, new Map(decided).set(here.piece, state), trail, seen, deviated || wrong)
+          explore(
+            at,
+            after.travel,
+            new Map(decided).set(here.piece, state),
+            trail,
+            seen,
+            deviated || wrong,
+            sockets_crossed,
+            now_fired
+          )
         }
         return
       }
@@ -715,7 +824,7 @@ export const reachableDeviations = (
     }
   }
 
-  explore(puzzle.sun.at, puzzle.sun.facing, new Map(), [], new Set(), false)
+  explore(puzzle.sun.at, puzzle.sun.facing, new Map(), [], new Set(), false, new Set(), new Set())
   return found
 }
 
@@ -741,7 +850,14 @@ const pruneStone = (board: Authoring, route: Route, movable: MovablePiece[]): Se
       return { kind: "mirror", at: { row, col }, angle }
     }),
   ]
-  const reach = reachableDeviations({ size: board.size, sun: route.sun, shrine: route.shrine, fixed, movable })
+  const reach = reachableDeviations({
+    size: board.size,
+    sun: route.sun,
+    shrine: route.shrine,
+    fixed,
+    movable,
+    ...(board.nodes.length ? { nodes: board.nodes, wirings: board.wirings } : {}),
+  })
   if (!reach || !reach.complete) return board.walls
   return new Set([...board.walls].filter(key => reach.stoneHit.has(key)))
 }
@@ -899,7 +1015,108 @@ const cornerSlipWalls = (board: Authoring, route: Route): CellRef[] => {
   return found
 }
 
-type Draft = { fixed: FixedPiece[]; movable: MovablePiece[]; solution: number[] }
+/**
+ * Doors, and the sockets that open them (§11.1, §11.2).
+ *
+ * A door is stone across the route that **no tap can shift** — that is the whole point, because a door the
+ * player could open would make the socket decoration. The light is the only thing that opens it, and it does so
+ * by crossing a socket further back along its own route.
+ *
+ * The order is structural rather than checked: sockets come from route cells strictly *before* the earliest
+ * door, so the effect always lands ahead of the light and the drawn beam is never a picture of something that
+ * has stopped being true. Two doors against one socket is fan-out; one door naming two sockets is an
+ * and-wiring, and the piece does not budge until the light has been through both.
+ *
+ * What this adds to the authored construction is a rung nothing else buys: **order** — "the light has to get
+ * through here, this door is shut, so it must reach that socket first" — seeded from the middle of the board,
+ * which is where a long route is thinnest.
+ */
+const placeDoors = (
+  board: Authoring,
+  route: Route,
+  movable: MovablePiece[],
+  solution: number[],
+  doors: number,
+  doorNodes: number,
+  claimed: Set<string>,
+  random: () => number
+): boolean => {
+  if (doors < 1) return true
+
+  // Doors sit on straight square stretches in the back half, which leaves room in front for the sockets. A
+  // bend already carries a mirror and a reason of its own, and a crossed square has to stay empty.
+  const half = Math.floor(route.cells.length / 2)
+  const candidates = shuffle(
+    route.cells
+      .map((cell, index) => ({ cell, index }))
+      .filter(
+        ({ cell, index }) =>
+          index >= half &&
+          cell.exit === cell.enter &&
+          !runsDiagonally(cell.enter) &&
+          !route.crossings.has(cellKey(cell.at)) &&
+          !claimed.has(cellKey(cell.at))
+      ),
+    random
+  )
+
+  const placed: { at: CellRef; open: CellRef; index: number }[] = []
+  for (const { cell, index } of candidates) {
+    if (placed.length >= doors) break
+    if (placed.some(door => Math.abs(door.index - index) < MIN_LEG)) continue
+    // The open stop is one cell to the side, so it has to be somewhere nothing else is — and off the route,
+    // or the door would still be in the way when it opened.
+    const open = shuffle(perpendicular(cell.enter), random)
+      .map(direction => stepCell(cell.at, direction))
+      .find(at => {
+        const key = cellKey(at)
+        return (
+          insideGrid(board.size, at) &&
+          !board.goldenCells.has(key) &&
+          !claimed.has(key) &&
+          !board.walls.has(key) &&
+          !board.givens.has(key)
+        )
+      })
+    if (!open) continue
+    claimed.add(cellKey(cell.at))
+    claimed.add(cellKey(open))
+    placed.push({ at: cell.at, open, index })
+  }
+  if (placed.length < doors) return false
+
+  // Sockets sit ON the route — that is the mechanism — so being a route cell is not a disqualification. What a
+  // socket may not share a square with is something that *occupies* one, because it is transparent scenery.
+  const earliest = Math.min(...placed.map(door => door.index))
+  const socketCells = shuffle(
+    route.cells
+      .map((cell, index) => ({ cell, index }))
+      .filter(({ cell, index }) => index < earliest && !claimed.has(cellKey(cell.at)))
+      .map(({ cell }) => cell.at),
+    random
+  ).slice(0, doorNodes)
+  if (socketCells.length < doorNodes) return false
+  for (const at of socketCells) claimed.add(cellKey(at))
+
+  board.nodes = socketCells.map(at => ({ at }))
+  const from = socketCells.map((_, index) => index)
+  for (const door of placed) {
+    // Stops in this order every time: resting on the route, open beside it. The resting state is the one no
+    // wiring names, so `restingState` reads 0 and the wiring drives to 1.
+    movable.push({ kind: "slidingWall", stops: [door.at, door.open] })
+    solution.push(0)
+    board.wirings.push({ from, piece: movable.length - 1, to: 1 })
+  }
+  return true
+}
+
+type Draft = {
+  fixed: FixedPiece[]
+  movable: MovablePiece[]
+  solution: number[]
+  nodes: BeamNode[]
+  wirings: NodeWiring[]
+}
 
 /**
  * Turns a golden path into a board: a tappable mirror at every bend, and a closed corridor for every stop
@@ -931,6 +1148,8 @@ const authorBranches = (
   branchDepth: number,
   sliders: number,
   slidingStops: number,
+  doors: number,
+  doorNodes: number,
   modes: readonly LightbeamMode[],
   random: () => number
 ): Draft | LightbeamGate | undefined => {
@@ -960,6 +1179,9 @@ const authorBranches = (
       route.bends.flatMap((bend, index) => (live.has(index) ? [] : [[cellKey(bend.at), bend.angle] as const]))
     ),
     walls: new Set(),
+    nodes: [],
+    wirings: [],
+    wired: new Map(),
     preferStone: modes.includes("wallHeavy"),
   }
 
@@ -1049,9 +1271,30 @@ const authorBranches = (
   if (movable.length < MIN_TAPPABLE) return undefined
   if (solution.some(state => state < 0)) return undefined
 
+  // Switch-heavy: doors across the route, and the sockets that open them.
+  if (modes.includes("switchHeavy")) {
+    const claimed = new Set([
+      ...movable.flatMap(piece => pieceCells(piece).map(cellKey)),
+      cellKey(route.sun.at),
+      cellKey(route.shrine),
+      ...board.givens.keys(),
+      ...board.walls,
+    ])
+    if (!placeDoors(board, route, movable, solution, doors, doorNodes, claimed, random)) return "noDoor"
+  }
+
   // The piece list is final here, so this is where the occupancy is built. Every corridor below is judged
   // against the whole board, which is the invariant the recursion's soundness rests on.
   board.occupancy = occupancyOf(movable)
+  board.wired = wiredPieces({
+    size,
+    sun: route.sun,
+    shrine: route.shrine,
+    fixed: [],
+    movable,
+    nodes: board.nodes,
+    wirings: board.wirings,
+  })
 
   // Wall-heavy's corner pairs go down before any corridor is closed, so a branch may legitimately die in one
   // and `pruneStone` can tell which of them earned their place.
@@ -1098,7 +1341,7 @@ const authorBranches = (
       return { kind: "mirror", at: { row, col }, angle }
     }),
   ]
-  return { fixed, movable, solution }
+  return { fixed, movable, solution, nodes: board.nodes, wirings: board.wirings }
 }
 
 /**
@@ -1133,6 +1376,8 @@ const attemptAuthored = (
     branchDepth,
     modes.includes("sliderHeavy") ? sliders : 0,
     dials.slidingStops,
+    dials.doors,
+    dials.doorNodes,
     modes,
     random
   )
@@ -1145,7 +1390,10 @@ const attemptAuthored = (
     return undefined
   }
   const draft = authored
-  if (!piecesAreSpaced(size, draft.movable, new Set())) {
+  // A door has no tap target to protect, so it claims no shoulders — the rule is about a thumb landing on the
+  // piece the player meant, and nothing driven can be meant.
+  const driven = new Set(draft.wirings.map(wiring => wiring.piece))
+  if (!piecesAreSpaced(size, draft.movable, driven)) {
     // `mirrorMayStand` is supposed to have made this unreachable — it is kept as the shipped gate's own
     // verdict on an authored board, which is what phase 1 is measuring.
     reject?.("piecesTouch")
@@ -1158,6 +1406,7 @@ const attemptAuthored = (
     shrine: route.shrine,
     fixed: draft.fixed,
     movable: draft.movable,
+    ...(draft.nodes.length ? { nodes: draft.nodes, wirings: draft.wirings } : {}),
   }
   if (!isLit(puzzle, draft.solution)) {
     reject?.("answerDark")
@@ -1220,9 +1469,11 @@ export const generateAuthoredLightbeam = (
     branchDepth = 0,
     sliders = 1,
     slidingStops = 3,
+    doors = 1,
+    doorNodes = 1,
     modes = [],
   } = options
-  const dials = { turns, cutMirrors, crossings, fiddleProof, slidingStops } as LightbeamDials
+  const dials = { turns, cutMirrors, crossings, fiddleProof, slidingStops, doors, doorNodes } as LightbeamDials
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const puzzle = attemptAuthored(

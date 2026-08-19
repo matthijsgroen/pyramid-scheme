@@ -4,11 +4,14 @@ import {
   allPieceOptions,
   cellKey,
   eachConfig,
+  firedWirings,
   isHalfStep,
   isLit,
   opposite,
   pieceCells,
+  pieceOptions,
   reflect,
+  restingState,
   sameCell,
   segmentKey,
   traceBeam,
@@ -734,5 +737,130 @@ describe("mode variance", () => {
     expect(slide.slid).toBeGreaterThan(0)
     expect(plain.slid).toBe(0)
     expect(wall.slid).toBe(0)
+  })
+})
+
+/**
+ * Switch-heavy: doors across the route, and the sockets that open them.
+ *
+ * A door is stone the player cannot shift, so the light is the only thing that opens it — which is what stops
+ * the socket being decoration (§11.2). It buys a rung nothing else in the family does: **order**, "the light
+ * has to get through here, this door is shut, so it must reach that socket first", seeded from the middle of
+ * the board where a long route is thinnest.
+ *
+ * It is also the mode that generalises the proof. A socket changes the board mid-walk, so the determinism both
+ * walks rest on is keyed on `(cell, direction, firedSet)` rather than `(cell, direction)`. That stays
+ * well-founded because firing is **monotone** — a wiring fires once and never un-fires — so a walk cannot
+ * cycle through door states.
+ */
+describe("switch-heavy", () => {
+  const BASE: AuthoredOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    cutMirrors: 1,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = BASE
+  const boards = Array.from({ length: 8 }, (_, seed) =>
+    generateAuthoredLightbeam(size, seed + 1, { ...options, modes: ["switchHeavy"], doors: 1, doorNodes: 1 })
+  )
+
+  it("puts a socket and a door on the board", () => {
+    for (const board of boards) {
+      expect(board.nodes?.length).toBe(1)
+      expect(board.wirings?.length).toBe(1)
+    }
+  })
+
+  /** A door the player could open makes the socket decoration, so it must not be theirs to tap. */
+  it("gives the door no state the player can choose", () => {
+    for (const board of boards) {
+      const door = board.wirings![0].piece
+      expect(restingState(board, door)).toBeDefined()
+      expect(pieceOptions(board, door)).toHaveLength(1)
+    }
+  })
+
+  /** The winning beam really does open it — otherwise the door is just a wall in the way. */
+  it("is opened by the winning beam", () => {
+    for (const board of boards) {
+      expect(firedWirings(board, board.solution).size).toBe(1)
+      expect(isLit(board, board.solution)).toBe(true)
+    }
+  })
+
+  /**
+   * The order is structural, not checked: the socket comes strictly before the door along the route, so the
+   * effect lands ahead of the light and the drawn beam is never a picture of something that has stopped being
+   * true.
+   */
+  it("crosses the socket before it reaches the door", () => {
+    for (const board of boards) {
+      const path = traceBeam(board, board.solution).path.map(segment => cellKey(segment.at))
+      const socket = path.indexOf(cellKey(board.nodes![0].at))
+      const door = board.movable[board.wirings![0].piece]
+      const doorCell = cellKey(pieceCells(door)[0])
+      expect(socket).toBeGreaterThanOrEqual(0)
+      expect(socket).toBeLessThan(path.indexOf(doorCell) === -1 ? Infinity : path.indexOf(doorCell))
+    }
+  })
+
+  /** A driven piece contributes nothing to the configuration space, which is what `pieceOptions` says. */
+  it("costs the configuration space nothing", () => {
+    const plain = generateAuthoredLightbeam(size, 1, options)
+    const switched = generateAuthoredLightbeam(size, 1, {
+      ...options,
+      modes: ["switchHeavy"],
+      doors: 1,
+      doorNodes: 1,
+    })
+    const space = (board: typeof plain) =>
+      allPieceOptions(board).reduce((product, states) => product * states.length, 1)
+    expect(space(switched)).toBe(space(plain))
+  })
+
+  it("is still unique and still deducible, with the firedSet key", () => {
+    for (const board of boards) {
+      const reach = reachableDeviations(board, board.solution)
+      expect(reach?.complete).toBe(true)
+      expect(reach?.winning.size).toBe(1)
+      expect(routeIsUnique(board, allPieceOptions(board))).toBe(true)
+      expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
+    }
+  })
+
+  /** An and-wiring is a routing demand rather than a setting to rule out — two sockets, one door. */
+  it("supports an and-wiring across two sockets", () => {
+    const board = generateAuthoredLightbeam(size, 2, {
+      ...options,
+      modes: ["switchHeavy"],
+      doors: 1,
+      doorNodes: 2,
+    })
+    expect(board.nodes).toHaveLength(2)
+    expect(board.wirings![0].from).toHaveLength(2)
+    expect(firedWirings(board, board.solution).size).toBe(1)
+    expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
+  })
+
+  it("combines with the other two modes", () => {
+    for (const modes of [
+      ["wallHeavy", "switchHeavy"],
+      ["sliderHeavy", "switchHeavy"],
+    ] as const) {
+      const board = generateAuthoredLightbeam(size, 5, {
+        ...options,
+        modes: [...modes],
+        sliders: 1,
+        doors: 1,
+        doorNodes: 1,
+      })
+      expect(board.modes).toEqual([...modes])
+      expect(board.nodes).toHaveLength(1)
+      expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
+    }
   })
 })
