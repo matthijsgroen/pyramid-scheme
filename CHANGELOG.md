@@ -25,11 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The hardest light puzzles give their mirrors three positions instead of two, and no two mirrors need offer the same three — so there is more to try before the beam lands.
 - Light puzzles are built a different way, and every board is new. Wrong turns now lead somewhere authored rather than simply running off the edge: down a corridor, into stone, or past a piece you have not settled yet. Boards also differ in character — one leans on stone you can point at, another on pieces that slide, another on sockets and doors — and the harder ones mix two.
 - Light puzzles that need a mirror out of the way now really do get one, and a puzzle promising a sliding piece or a trap will not be built without it.
+- Light puzzles get harder sooner. The first two difficulties used to be solved by following the light and nothing else; every difficulty now asks for real reasoning, and the ones above it have moved up to make room.
+- The hardest light puzzles now give some mirrors a third position, and their door needs the light through two sockets rather than one.
 
 ### Fixed
 
 - A light-puzzle hint said the light "runs straight into stone" when a mirror had in fact sent it back the way it came, into the sun disc. It now says so.
 - The light beam was drawn with gaps in it: any square the light crossed travelling rightward was only drawn half way. The beam is continuous now.
+- The hardest light puzzles took a noticeable moment to appear. They are about three times quicker now.
 
 ## 0.36.0 - 2026-08-17
 

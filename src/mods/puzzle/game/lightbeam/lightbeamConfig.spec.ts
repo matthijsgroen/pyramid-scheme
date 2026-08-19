@@ -140,16 +140,19 @@ describe("the constraints the table has to respect", () => {
    * no branch that turns — and the board is honest about it: every one settles on "the light visibly dies".
    */
   it("keeps branches straight wherever the cap is deadEnd", () => {
-    for (const tier of ["starter", "junior"] as const) {
+    for (const tier of ["starter"] as const) {
       expect(LIGHTBEAM_CONFIG[tier].techniqueCap).toBe("deadEnd")
       expect(LIGHTBEAM_CONFIG[tier].branchDepth).toBe(0)
       for (const board of boardsFor(tier)) expect(solveLightbeamByTechniques(board, "deadEnd").settled).toBe(true)
     }
   })
 
-  /** And from expert up, `deadEnd` alone is not enough — which is what phase 1 could not manage at any tier. */
-  it("demands more than deadEnd from expert up", () => {
-    for (const tier of ["expert", "master", "wizard"] as const) {
+  /**
+   * And from junior up, `deadEnd` alone is not enough. That is the whole of what playtesting asked for: the
+   * ladder used to reach this point at expert, so the bottom two tiers were not puzzles yet.
+   */
+  it("demands more than deadEnd from junior up", () => {
+    for (const tier of ["junior", "expert", "master", "wizard"] as const) {
       const harder = boardsFor(tier).filter(board => !solveLightbeamByTechniques(board, "deadEnd").settled)
       expect(harder.length).toBeGreaterThan(SEEDS / 2)
     }
@@ -160,18 +163,18 @@ describe("the constraints the table has to respect", () => {
    * that drew both gets no trap. Asserted rather than left to chance, because a trap that silently vanished
    * would leave the tier recording a mode it is not the shape of.
    */
-  it("only traps on a wizard board that did not draw wall-heavy", () => {
-    const boards = boardsFor("wizard")
+  it.each(["master", "wizard"] as const)("only traps on a %s board that did not draw wall-heavy", tier => {
+    const doorSockets = LIGHTBEAM_CONFIG[tier].doorNodes ?? 1
     let trapped = 0
-    for (const board of boards) {
+    for (const board of boardsFor(tier)) {
       const sockets = board.nodes?.length ?? 0
       if (board.modes.includes("switchHeavy") && !board.modes.includes("wallHeavy")) {
-        // A door and a trap: two sockets, and the winning beam fires only the door's wiring.
-        expect(sockets).toBe(2)
+        // The door's sockets, plus the trap's own one — and the winning beam fires only the door's wiring.
+        expect(sockets).toBe(doorSockets + 1)
         expect(solveLightbeamByTechniques(board, board.techniqueCap).used.has("wiringDead")).toBe(true)
         trapped++
       } else if (board.modes.includes("switchHeavy")) {
-        expect(sockets).toBe(1)
+        expect(sockets).toBe(doorSockets)
       } else {
         expect(sockets).toBe(0)
       }
@@ -179,9 +182,23 @@ describe("the constraints the table has to respect", () => {
     expect(trapped).toBeGreaterThan(0)
   })
 
-  /** Wall-heavy is where the stone is, and it is the only tier below expert that has any. */
-  it("gives junior the stone §6.4 asks for", () => {
-    const stone = boardsFor("junior").map(board => board.fixed.filter(piece => piece.kind === "wall").length)
+  /** Wall-heavy is where the stone is, and starter is authored to it: the first thing to learn is where the
+   * light died, and the frame is the one terminator that gives the player nothing to look at. */
+  it("gives starter the stone §6.4 asks for", () => {
+    const stone = boardsFor("starter").map(board => board.fixed.filter(piece => piece.kind === "wall").length)
     expect(stone.reduce((total, count) => total + count, 0) / stone.length).toBeGreaterThan(1)
+  })
+
+  /** Wizard's own addition: a mirror may offer three stops, drawn per piece so the forks are not uniform. */
+  it("gives wizard forks the tiers below do not have", () => {
+    const shapes = (tier: "expert" | "wizard") => {
+      const seen = new Set<string>()
+      for (const board of boardsFor(tier))
+        for (const piece of board.movable) if (piece.kind === "turnMirror") seen.add(piece.angles.join("/"))
+      return seen
+    }
+    const wizard = shapes("wizard")
+    expect(Math.max(...[...wizard].map(shape => shape.split("/").length))).toBe(3)
+    expect(wizard.size).toBeGreaterThan(shapes("expert").size)
   })
 })

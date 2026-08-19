@@ -220,13 +220,13 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Route   | Tappable share | Branch turns | Pieces | On the route | Configurations | Cap | Modes            |
-| ------- | ---- | ------- | -------------- | ------------ | ------ | ------------ | -------------- | --- | ---------------- |
-| starter | 7×7  | 3 bends | 1.0            | 0            | 3.0    | 3.0          | 8              | T3  | —                |
-| junior  | 8×8  | 4 bends | 1.0            | 0            | 4.0    | 4.0          | 16             | T3  | wall-heavy       |
-| expert  | 8×8  | 5 bends | 0.85           | 1            | 5.5    | 4.0          | 80             | T7  | slider-heavy     |
-| master  | 8×8  | 5 bends | 0.9            | 1            | 7.0    | 5.0          | 228            | T8  | slider-heavy     |
-| wizard  | 9×9  | 6 bends | 1.0            | 1            | 9.8    | 6.8          | 1 741          | T8  | 2 of three, trap |
+| Tier    | Grid | Route   | Tappable share | Branch turns | Fork | Pieces | On the route | Configurations | Cap | Modes            |
+| ------- | ---- | ------- | -------------- | ------------ | ---- | ------ | ------------ | -------------- | --- | ---------------- |
+| starter | 7×7  | 3 bends | 1.0            | 0            | 2    | 3.0    | 3.0          | 8              | T3  | wall-heavy       |
+| junior  | 8×8  | 5 bends | 0.85           | 1            | 2    | 5.5    | 4.0          | 80             | T7  | slider-heavy     |
+| expert  | 8×8  | 5 bends | 0.9            | 1            | 2    | 7.0    | 5.0          | 228            | T8  | slider-heavy     |
+| master  | 9×9  | 6 bends | 1.0            | 1            | 2    | 9.8    | 6.8          | 1 741          | T8  | 2 of three, trap |
+| wizard  | 9×9  | 6 bends | 1.0            | 1            | 3    | 11.3   | 6.8          | 20 435         | T8  | 2 of three, trap |
 
 "On the route" is the count that matters and the one that was missing: pieces that can stand in the winning
 beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the player a
@@ -236,9 +236,15 @@ Piece and configuration counts are measured means over 40 seeds a tier, **per bo
 is asserted in `lightbeamConfig.spec.ts`, in aggregate over a tier rather than board by board — with modes drawn
 per board, one wizard grid can legitimately out-measure another, and it is the tier that has to grow.
 
-**The tappable share is the ramp, and it is the only dial that moves for it** (§11.19). A given costs a cell,
-contributes nothing to the configuration space and authors no corridor, so lowering the share thins a board on
-all three counts at once. Four separate dials used to do that job.
+**The tappable share is the ramp through the middle of the table** (§11.19). A given costs a cell, contributes
+nothing to the configuration space and authors no corridor, so lowering the share thins a board on all three
+counts at once. Four separate dials used to do that job.
+
+**The bottom of the ladder was moved down a rung after playtesting**, which is the one thing in this table that
+came from playing rather than measuring: the family did not start feeling like a puzzle until the third tier, so
+each tier took the dials of the one above it. What that costs is starter's old gentleness — it is `fiddleProof`
+now, and it carries stone — and §6's demand that starter be _gentle rather than empty_ is met by keeping it to
+three bends and the `deadEnd` cap rather than by letting a run of getting-warmer taps finish it.
 
 It has been got wrong three times, each time in a way that read right in the table and played wrong: first with
 junior boards _smaller_ than starter ones; then when two goals added four pieces on top of baselines that
@@ -2574,3 +2580,52 @@ one tier where generation is slower — 616ms against 550ms — because `onlySur
 and the board is now bigger. That is the same bottleneck §11.17 identified, it is the last one measured in the
 family, and the same fix applies: the exhaustive rungs could walk the reachable deviation tree instead of the
 product.
+
+### 11.20 What playtesting moved, and the rung it needed
+
+The tier table §11.19 measured was tuned against the generator it replaced, tier for tier. Played rather than
+measured, it said something the numbers did not: **the family did not start feeling like a puzzle until the
+third tier.** The bottom two settled on `deadEnd` alone with three and four pieces, which is what a board with
+nothing standing in a wrong ray settles on, and the ramp only bit where branches started to turn.
+
+So every tier took the dials of the one above it, and the top needed inventing. Two things it took, and both
+were already the family's:
+
+- **A mirror's fork may be three stops rather than two** (§11.8 rule 1, measured in §11.13) — restored, because
+  the migration had lost it: `mirrorStops` was a dial on the previous generator and the authored one hardcoded
+  the pair. Three is the **most** a list may hold, drawn per piece, so a board carries a mix rather than a
+  uniform fork — 20 distinct fork shapes across 40 boards against 5 at every tier below.
+- **The door needs two sockets** rather than one. §11.2 predicted the and-wiring would be the genuinely
+  different shape and §11.18 measured it; here it is the top tier's second word.
+
+| tier    | pieces | configurations | fork shapes | attempts a board | worst gen |
+| ------- | ------ | -------------- | ----------- | ---------------- | --------- |
+| starter | 3.0    | 8              | 1           | 2.9              | 26ms      |
+| junior  | 5.5    | 80             | 5           | 3.3              | 12ms      |
+| expert  | 7.0    | 228            | 5           | 2.1              | 6ms       |
+| master  | 9.8    | 1 741          | 5           | 2.7              | 173ms     |
+| wizard  | 11.3   | 20 435         | 20          | 3.2              | 1 531ms   |
+
+`deadEnd` alone now settles only starter, which is the whole of what the playtest asked for.
+
+#### The rung the top tier needed, and it was a three-times win
+
+A three-stop fork multiplies the configuration space — 1 741 to 20 435 — and §11.17 had already found that
+generation costs almost exactly what `onlySurvivor` costs, because that rung enumerates the product. The first
+attempt at this tier took **11 seconds a board**.
+
+Two fixes, in order of how much they were worth:
+
+1. **`forkSize` is a maximum, not a length.** Giving every mirror three stops rather than drawing the length per
+   piece was both wrong against rule 1 and twice the space: 71 005 configurations against 20 435.
+2. **The three exhaustive rungs shared one enumeration.** `wiringDead`, `neverReached` and `onlySurvivor` each
+   surveyed the winning configurations independently, and the ladder loops to a fixpoint — so a wizard board
+   enumerated its whole space a dozen times over to produce one set of answers. Cached on what the survey
+   actually depends on (the candidate sets and the wirings known to fire or be dead), it is computed once a
+   pass and thrown away the moment a deduction narrows a piece. Measured: **one solve 1 468ms → 474ms, worst
+   board 4 569ms → 1 526ms**, identical configuration counts and identical boards.
+
+That is a 3× win on the whole family's most expensive operation, and it came from noticing three callers asking
+one question rather than from anything clever. What is still open is the deeper fix §11.17 names: the rungs
+enumerate a product the reachable deviation tree already knows how to avoid. Wizard's 1.5s worst board is what
+remains of it.

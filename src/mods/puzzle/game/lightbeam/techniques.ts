@@ -85,6 +85,15 @@ export type LightbeamBoard = {
   fired: Set<number>
   /** Wirings proven never to fire, so what they would have moved is known to be resting. Also monotone. */
   dead: Set<number>
+  /**
+   * The last enumeration of the winning configurations, and the candidate set it was taken over.
+   *
+   * The three exhaustive rungs all ask the same question of the same board, and the ladder loops to a
+   * fixpoint, so a wizard board was enumerating its whole configuration space a dozen times over to get one
+   * set of answers. Keyed on what the survey actually depends on, so it is reused within a pass and thrown
+   * away the moment a deduction narrows a piece.
+   */
+  survey?: { key: string; value: Survey | undefined }
 }
 
 const forcedKey = (segment: BeamSegment): string => `${segmentKey(segment.at, segment.enter)}>${segment.exit ?? "-"}`
@@ -379,7 +388,19 @@ type Survey = {
   winners: number
 }
 
+/** What a survey depends on. Anything else about the board may move without invalidating it. */
+const surveyKey = (board: LightbeamBoard): string =>
+  `${board.candidates.map(set => [...set].sort((a, b) => a - b).join(",")).join("|")}/${[...board.fired].sort().join(",")}/${[...board.dead].sort().join(",")}`
+
 const surveyWinners = (board: LightbeamBoard): Survey | undefined => {
+  const key = surveyKey(board)
+  if (board.survey?.key === key) return board.survey.value
+  const computed = enumerateWinners(board)
+  board.survey = { key, value: computed }
+  return computed
+}
+
+const enumerateWinners = (board: LightbeamBoard): Survey | undefined => {
   const { puzzle } = board
   const options = board.candidates.map(set => [...set])
   const states = puzzle.movable.map(() => new Set<number>())

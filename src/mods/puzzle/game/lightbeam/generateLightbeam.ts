@@ -3,6 +3,7 @@ import {
   allPieceOptions,
   cellKey,
   directionStep,
+  DIRECTIONS,
   pieceCells,
   pieceOccupant,
   pieceStateCount,
@@ -79,8 +80,6 @@ type GeneratedBoard = Omit<LightbeamPuzzle, "modes">
 // A tier's character comes from its **modes** (§11.18) rather than from turning two dials hard, and the
 // load-bearing knob is `interactive`: a given costs a cell, contributes nothing to the configuration space
 // and authors no corridor, so one share thins a board on all three counts at once.
-
-const FORK_SIZE = 2
 
 /**
  * What kind of board this is, as against how hard it is — the modes that replace §7's goal pool.
@@ -194,6 +193,17 @@ export type AuthoringDials = {
    * "which way round" but "is it in the way", and with a three-cell track, "which cell".
    */
   sliders: number
+  /**
+   * **The most stops a mirror on the route may offer** — its fork in the maze (§11.8 rule 1).
+   *
+   * The sibling of `slidingStops`, one axis over: two asks "which of these two", three asks "which of these
+   * three", and it costs 1.5x rather than 2x because it is the same piece doing more. Two is what the family
+   * shipped for its whole life and is a baseline rather than a floor the code needs.
+   *
+   * Only the route's mirrors take it. A decoy off the beam's line keeps the pair, because a bigger fork on a
+   * piece the light never reaches buys configuration space and no reasoning.
+   */
+  forkSize: number
   /**
    * **Turns per authored branch.** 0 is a straight run to stone or the frame.
    *
@@ -467,13 +477,44 @@ const buildGoldenPath = (
 }
 
 /**
- * The stop list a golden bend offers: the answer, and the one partner that keeps a quarter turn.
+ * The pair a bend must offer at minimum: the answer, and the one partner that keeps a quarter turn.
  *
- * §11.8 rule 2, and `cutStops` is where the four pairs are derived. A diagonal answer satisfies the rule
- * on its own, so it takes the other diagonal. At `FORK_SIZE` 2 this is the whole list.
+ * §11.8 rule 2, and `cutStops` is where the four pairs are derived. **A stop set has to keep a quarter turn**
+ * — the constraint that killed three earlier drafts, since every other piece and the route itself depend on a
+ * mirror cell being able to turn light 90° — and a half-step answer therefore brings its aligned partner in
+ * with it. A diagonal answer satisfies the rule on its own, so it takes the other diagonal.
  */
 const stopsFor = (angle: MirrorAngle): readonly MirrorAngle[] | undefined =>
   isHalfStep(angle) ? cutStops(angle) : TURN_ANGLES
+
+/**
+ * The authored stop list for a mirror on the route — the fork the player meets there (§11.8 rule 1).
+ *
+ * `stopsFor` gives the two the geometry demands; anything beyond that is drawn **per piece**, so no two
+ * mirrors on a board need offer the same fork. That variety is the point of rule 1 and it is what §11.13
+ * measured: at three stops a wizard board's nine mirrors offered 23 different forks across 40 boards rather
+ * than 5, on the same piece count. One piece doing more, which is rule 8's way of spending the cost.
+ *
+ * Note what is *not* excluded from the extras. A stop lying along the beam passes the light straight through
+ * (rule 3's edge-on stop) and a stop square across it sends the beam back down its own line; neither can be
+ * the answer, because neither bends anything, but as **wrong** settings they are two more sentences the board
+ * can say — and the second needs no stone at all. Every extra stop is one more corridor to author, which is
+ * where the cost lands.
+ */
+const forkFor = (angle: MirrorAngle, forkSize: number, random: () => number): readonly MirrorAngle[] | undefined => {
+  const base = stopsFor(angle)
+  if (!base || forkSize <= base.length) return base
+  // `forkSize` is the **most** a list may hold, not the length every list gets. Drawn per piece, length and
+  // contents together, so a board carries a mix of two- and three-stop mirrors rather than one uniform fork —
+  // which is what rule 1 asks for, and it is also what keeps the cost affordable: every extra stop is another
+  // corridor to author and another factor in the space the exhaustive rungs enumerate.
+  const wanted = base.length + Math.floor(random() * (forkSize - base.length + 1))
+  const extra = shuffle(
+    DIRECTIONS.filter(candidate => !base.includes(candidate)),
+    random
+  ).slice(0, wanted - base.length)
+  return [...base, ...extra].sort((a, b) => a - b)
+}
 
 /** The board a branch is authored against: what it may cross, what kills it, and where stone stands. */
 type Authoring = {
@@ -1432,6 +1473,7 @@ const authorBranches = (
   route: Route,
   interactive: number,
   branchDepth: number,
+  forkSize: number,
   sliders: number,
   slidingStops: number,
   doors: number,
@@ -1440,8 +1482,8 @@ const authorBranches = (
   modes: readonly LightbeamMode[],
   random: () => number
 ): Draft | LightbeamGate | undefined => {
-  const stops = route.bends.map(bend => stopsFor(bend.angle))
-  if (stops.some(list => list === undefined || list.length < FORK_SIZE)) return undefined
+  const stops = route.bends.map(bend => forkFor(bend.angle, forkSize, random))
+  if (stops.some(list => list === undefined || list.length < 2)) return undefined
 
   // Which bends are the player's. A share rather than a count, with a floor — and drawn at random rather
   // than taken off the front, so a low share does not always leave the same bends live.
@@ -1682,6 +1724,7 @@ const attemptAuthored = (
   dials: LightbeamDials,
   interactive: number,
   branchDepth: number,
+  forkSize: number,
   sliders: number,
   traps: number,
   modes: readonly LightbeamMode[],
@@ -1700,6 +1743,7 @@ const attemptAuthored = (
     route,
     interactive,
     branchDepth,
+    forkSize,
     modes.includes("sliderHeavy") ? sliders : 0,
     dials.slidingStops,
     dials.doors,
@@ -1806,6 +1850,7 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
     fiddleProof = false,
     interactive = 1,
     branchDepth = 0,
+    forkSize = 2,
     sliders = 1,
     slidingStops = 3,
     doors = 1,
@@ -1834,6 +1879,7 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
       dials,
       interactive,
       branchDepth,
+      forkSize,
       sliders,
       traps,
       drawn,

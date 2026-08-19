@@ -80,7 +80,9 @@ describe("buildLightbeamHint", () => {
     expect(buildLightbeamHint(expert, alsoWrong)?.key).not.toBe("neverReached")
   })
 
-  it("always has something to say while the board is dark", () => {
+  // A wizard board costs the better part of a second to build and solve — its configuration space is what
+  // `onlySurvivor` enumerates — so six of them a tier needs a real timeout rather than vitest's 5s default.
+  it("always has something to say while the board is dark", { timeout: 120_000 }, () => {
     for (const difficulty of difficulties)
       for (let seed = 1; seed <= 6; seed++) {
         const puzzle = board(difficulty, seed)

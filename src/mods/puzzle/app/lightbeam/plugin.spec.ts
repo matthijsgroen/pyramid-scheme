@@ -5,7 +5,7 @@ import { isLit } from "@/mods/puzzle/game/lightbeam/beam"
 import { solveLightbeamByTechniques } from "@/mods/puzzle/game/lightbeam/techniques"
 
 describe("the board real play gets", () => {
-  it.each(difficulties)("builds a playable %s board through the plugin", tier => {
+  it.each(difficulties)("builds a playable %s board through the plugin", { timeout: 120_000 }, tier => {
     for (let seed = 1; seed <= 5; seed++) {
       const board = generateLightbeamFor(tier, seed)
       expect(isLit(board, board.solution)).toBe(true)
