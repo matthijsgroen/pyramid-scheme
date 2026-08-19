@@ -150,7 +150,31 @@ export type LightbeamOptions = Partial<LightbeamDials> & {
   goals?: readonly LightbeamGoal[]
   /** How many of them to draw. */
   goalCount?: number
+  /**
+   * Diagnostics: called with the name of the gate that threw a draft away, once per rejected attempt.
+   *
+   * **Generation is reject-heavy and was reject-blind**, which is a bad pair. A master board costs 372
+   * attempts and a wizard board 243, so better than 99% of the work is discarded — and nothing recorded
+   * *which* gate discarded it, so every tuning decision was made without knowing whether the route builder,
+   * the piece placement or one of the two exhaustive gates was doing the rejecting. Any comparison between
+   * this generator and another one needs this number first, or it is a comparison of impressions.
+   *
+   * Off unless asked for, and it costs an optional call per rejection. It reports the gate rather than a
+   * diagnosis: `notUnique` means a second route existed, not why the draft allowed one.
+   */
+  reject?: (gate: LightbeamGate) => void
 }
+
+/** The gates a draft can die at, in the order `attemptGeneration` applies them. */
+export type LightbeamGate =
+  | "noRoute"
+  | "tooFewCrossings"
+  | "noPieces"
+  | "piecesTouch"
+  | "answerDark"
+  | "notUnique"
+  | "notSettled"
+  | "noHonestOpening"
 
 // Generation is route-then-obstruct, per docs/game-design/puzzles/lightbeam.md §5: lay a beam from disc
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could
@@ -1078,17 +1102,30 @@ const attemptGeneration = (
   size: number,
   seed: number,
   dials: LightbeamDials,
-  cap: TechniqueId
+  cap: TechniqueId,
+  reject?: (gate: LightbeamGate) => void
 ): Omit<LightbeamPuzzle, "goals"> | undefined => {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
     const route = buildRoute(size, dials.turns, random, dials.crossings > 0, dials.cutMirrors)
-    if (!route) continue
-    if (route.crossings.size < dials.crossings) continue
+    if (!route) {
+      reject?.("noRoute")
+      continue
+    }
+    if (route.crossings.size < dials.crossings) {
+      reject?.("tooFewCrossings")
+      continue
+    }
     const draft = buildPieces(size, route, dials, random)
-    if (!draft) continue
+    if (!draft) {
+      reject?.("noPieces")
+      continue
+    }
     const driven = new Set(draft.wirings.map(wiring => wiring.piece))
-    if (!piecesAreSpaced(size, draft.movable, driven)) continue
+    if (!piecesAreSpaced(size, draft.movable, driven)) {
+      reject?.("piecesTouch")
+      continue
+    }
 
     const puzzle: LightbeamPuzzleData = {
       size,
@@ -1098,13 +1135,22 @@ const attemptGeneration = (
       movable: draft.movable,
       ...(draft.nodes.length ? { nodes: draft.nodes, wirings: draft.wirings } : {}),
     }
-    if (!isLit(puzzle, draft.solution)) continue
+    if (!isLit(puzzle, draft.solution)) {
+      reject?.("answerDark")
+      continue
+    }
 
     // The player's options, not every state a piece has: a door is not theirs to set, so it contributes
     // nothing to the space the gates below enumerate.
     const states = allPieceOptions(puzzle)
-    if (!routeIsUnique(puzzle, states)) continue
-    if (!solveLightbeamByTechniques(puzzle, cap).settled) continue
+    if (!routeIsUnique(puzzle, states)) {
+      reject?.("notUnique")
+      continue
+    }
+    if (!solveLightbeamByTechniques(puzzle, cap).settled) {
+      reject?.("notSettled")
+      continue
+    }
 
     const thinned = { ...puzzle, fixed: thinWalls(puzzle, states, cap, random) }
 
@@ -1116,7 +1162,10 @@ const attemptGeneration = (
       if (openingIsHonest(thinned, candidate) && (!dials.fiddleProof || resistsGreedyPlay(thinned, candidate)))
         initial = candidate
     }
-    if (!initial) continue
+    if (!initial) {
+      reject?.("noHonestOpening")
+      continue
+    }
 
     return { ...thinned, initial, solution: draft.solution, techniqueCap: cap }
   }
@@ -1139,7 +1188,7 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
 
   for (let dropped = 0; dropped <= drawn.length; dropped++) {
     const goals = drawn.slice(0, drawn.length - dropped)
-    const puzzle = attemptGeneration(size, seed, applyGoals(baseline, goals), techniqueCap)
+    const puzzle = attemptGeneration(size, seed, applyGoals(baseline, goals), techniqueCap, options.reject)
     if (puzzle) return { ...puzzle, goals }
   }
   throw new Error(`generateLightbeam: no logically solvable board (size=${size}, seed=${seed})`)

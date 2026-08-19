@@ -2122,3 +2122,43 @@ construction, which is what `neverReached` proves, and asserting otherwise was a
 And one thing to settle before step 2 rather than after: **rule 5.** If a fork is drawn rather than
 discovered, the piece stops paying for itself in taps and starts paying in ink, and §6.3's "seen from the
 door" is measured over wrong _settings_ — a fork the player can see changes what that number means.
+
+### 11.14 Where drafts actually die
+
+Generation is reject-heavy and was reject-blind, which is a bad pair: a master board costs 356 discarded
+attempts and nothing recorded which gate discarded them, so every tuning decision in §11.12 and §11.13 was
+made without knowing whether the route builder, the piece placement or one of the two exhaustive gates was
+doing the rejecting. `LightbeamOptions.reject` names the gate, off unless asked for. Measured over 40 seeds
+a tier:
+
+| tier    | rejects a board | where they die                                                       |
+| ------- | --------------- | -------------------------------------------------------------------- |
+| starter | 1               | `noRoute` 100%                                                       |
+| junior  | 3               | `noRoute` 95%, `noHonestOpening` 5%                                  |
+| expert  | 70              | `noRoute` 92%, `noPieces` 4%, `tooFewCrossings` 3%, `piecesTouch` 1% |
+| master  | 356             | `noRoute` 95%, `tooFewCrossings` 3%, `noPieces` 2%, `piecesTouch` 0% |
+| wizard  | 226             | `noRoute` 97%, `noPieces` 2%, `tooFewCrossings` 1%, `piecesTouch` 0% |
+
+**`routeIsUnique` and `solveLightbeamByTechniques` reject nothing. Not one draft, on any tier, across 200
+boards.** Every draft that reaches them passes them. So the two gates the family is built on — §5 gate 5 and
+the house rule's "reachable by deduction alone" — are already **assertions rather than filters**: at the
+shipped dials, route-then-obstruct produces uniqueness and deducibility as a by-product of construction, and
+the enumeration only confirms it.
+
+That is worth stating carefully, because it is easy to over-read. It does **not** mean the gates are
+unnecessary; it means they are not currently doing selection, and what keeps them passing is unmeasured. They
+are what would catch a dial moved into unsafe territory, and they are the reason nobody has had to think
+about uniqueness while turning knobs. Removing them would trade a known cost for an unknown risk.
+
+**What it does overturn is a cost story.** The natural assumption — the one this doc's own §11.13 leans on
+when it explains wizard at three stops costing 1511ms — is that a bigger configuration space is expensive
+because the gates run more often. They do not run more often; they run **once per accepted board** and always
+pass. The 1511ms is one enumeration over a space three times larger, not many enumerations. And conversely
+the 356 attempts a master board costs are **cheap** rejections: worst-case generation there is 55ms, so a
+discarded draft costs about 0.15ms, because it dies in the route builder before any piece is placed.
+
+**So the honest target for anyone optimising this is `buildRoute`, not the gates.** 92–97% of all work is a
+route builder being asked for a path it cannot lay — legs that run off the grid, a crossing budget that
+cannot be met, a diagonal leg with nowhere to go — and it is asked blind, with no knowledge of the grid it
+has left. A builder that knew its own constraints would cut nearly all of that, and it is a much smaller
+change than replacing the architecture.
