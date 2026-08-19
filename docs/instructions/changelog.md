@@ -38,6 +38,63 @@ Write for the player, not the developer. Entries must be readable by someone who
 - **Bad**: "Add `useDetector` hook with compass and consumable modes to `DetectorPanel`."
 - **Good**: "A compass tool shows which pyramid levels still contain pieces of a hieroglyph you are looking for."
 
+## `[Unreleased]` is a draft you EDIT, not a log you append to
+
+The rule that was missing, and the one that let a release grow to twenty-nine bullets about
+one puzzle family. Every rule below is about a single entry; this one is about the section.
+
+**Before adding a bullet, read the section.** If a bullet already covers the thing you are
+changing, **rewrite that bullet** so it is true of the new state. Do not add a second one.
+
+Nine pull requests tuning one feature leave **one** entry, not nine — and if the seventh
+undoes what the third did, the section must not still be carrying both:
+
+**What went wrong** — the same change, logged four times as it was worked out:
+
+```markdown
+- Light puzzles get harder sooner. The first two difficulties used to be solved by following the light…
+- The first two light puzzles are real puzzles now. Every difficulty puts a piece where the beam never goes…
+- Light puzzles ask for real reasoning now. Every board used to be solved by tapping every piece once…
+- The second light difficulty has a longer route, and the third a wider board…
+```
+
+**What ships**:
+
+```markdown
+- Every light puzzle is new, and every difficulty asks for real reasoning: tapping each piece in turn no longer solves one.
+```
+
+The reason is the reader: **a player upgrading from the last release never saw the states in
+between.** They do not experience "harder, then harder again, then rebalanced" — they open the
+new version and find one game. Intermediate states are the feature being written, and the
+record of how it was written is the git history, which is already keeping it.
+
+Two consequences:
+
+- **Tuning unreleased work does not earn an entry.** A difficulty retuned twice before it
+  ships is one entry describing where it landed. Same rule as the bug-fix one above, for the
+  same reason: it was never experienced.
+- **A superseded entry is deleted, not left standing.** If a later change makes an entry
+  false or half-true, fix the entry. A changelog with a stale line in it is worse than a
+  short one.
+
+### Size budget: a release is a screen, not a scroll
+
+A player reads a release note to answer "what is new?" in about thirty seconds.
+
+- **Aim for ten bullets or fewer.** Fifteen is the smell of a log rather than a summary.
+- **No feature owns more than about three.** Past that it is an inventory (see below).
+- The version that prompted this rule condensed **29 bullets to 11** with nothing the player
+  cares about lost — a fair guide to how much of a bloated section is restatement.
+
+### The readthrough before release
+
+`yarn release` is not the moment to discover the section is a log. **Before cutting a release,
+read `[Unreleased]` start to finish and ask: if I were writing this from scratch today,
+knowing only where the game landed, would I write these bullets?** Rewrite what fails, and
+delete the entries that describe the road rather than the destination. It is a five-minute
+pass and it is the difference between a release note and a diff.
+
 ## Size: a whole feature is ONE entry
 
 The commonest mistake, and the one to check for first. **A new mechanic, screen or puzzle family gets a
