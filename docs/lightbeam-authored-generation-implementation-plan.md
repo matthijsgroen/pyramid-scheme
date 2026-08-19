@@ -54,10 +54,10 @@ The §11.15 board is the regression test. A generator that can produce its shape
 | `legBudget`        | leg length range, as today                                                                                                                                                      |
 | `angles`           | **the angle alphabet this tier may use.** Subsumes `cutMirrors` and `mirrorStops`: a tier that only has the two diagonals cannot bend diagonally and cannot fork past two stops |
 | `crossings`        | golden path folds through its own line this many times                                                                                                                          |
-| `interactive`      | **0..1, the share of mirrors that are the player's to tap.** See below — it is the load-bearing one                                                                             |
+| `interactive`      | **0..1, the share of mirrors that are the player's to tap.** Built. A density dial, not a difficulty one (§11.17)                                                               |
 | `forkSize`         | stops per tappable mirror                                                                                                                                                       |
 | `sliders`          | golden bends that slide rather than turn                                                                                                                                        |
-| `branchDepth`      | turns per authored branch; 0 is a straight run to stone or the frame                                                                                                            |
+| `branchDepth`      | turns per authored branch; 0 is a straight run to stone or the frame. Built, and it is what makes the cap bite                                                                  |
 | `terminator`       | weights over frame / wall / shadow as a branch's ending                                                                                                                         |
 | `modes`            | weights over wall-heavy, slider-heavy, switch-heavy — **these replace the goal pool**                                                                                           |
 | `shrineApproaches` | how many ways into the shrine stay alive. 1 lets `exitRun` fire; 2–3 silences it and moves the work to the exhaustive rungs                                                     |
@@ -147,6 +147,32 @@ determinism key is still `(cell, direction)` and nothing has been keyed on anyth
 `(cell, direction, firedSet)` remains a widening rather than a rewrite. The 692 walls above are the measure of
 how much board density the refusal is currently costing.
 
+**Done, and the correctness rule holds** — measured in §11.17. Over 2 800 boards uniqueness stayed at 100%, and
+the reachable deviation tree agreed with `routeIsUnique` on every board. §11.15's counterexample is in the spec
+and the gate reports its two routes at exactly one reuse fan-out. The tree costs **0.04ms against the gate's
+38.38ms** on the most expensive dials tried, a factor of about 960, and the ratio in walk steps grows with the
+configuration space — 13x with straight branches, 143x at one turn, 836x at two — because a dead beam's
+downstream settings are never enumerated.
+
+**Two things it found that the plan did not predict.**
+
+1. **Reuse is manufactured by branch depth, not found by aiming.** With straight branches, not one branch in
+   1 000 boards entered a tappable cell — the refusal phase 1 relied on was costing nothing, and §11.15's
+   1-in-949 floor was effectively zero on that construction. One turn a branch takes it to 4.7 fan-outs a
+   board, and the mechanism is that **a branch that turns needs a mirror, and that mirror is another piece for
+   some other branch to walk into.**
+2. **The cap now bites, and that closes phase 1's open item.** A branch mirror is off the golden path by
+   construction, so it is a decoy, and a shadow where it stands in a wrong ray — which §6.1 measured as the
+   only thing that stops every board being a chain of `deadEnd` eliminations. Boards needing more than
+   `deadEnd` went from **0 of 400 to 400 of 400**, with `onlySurvivor` firing on 267. The reverse is a hard
+   constraint for phase 4: **a tier capped at `deadEnd` cannot carry a branch mirror at all** — starter's dials
+   with one turn fail `notSettled` on every attempt of every seed.
+
+**And it moves the bottleneck rather than removing it.** Generation on the two-turn board is 98.97ms and
+`solveLightbeamByTechniques` is 97.65ms of it: the uniqueness gate is free and the exhaustive rung is now the
+whole cost, because `onlySurvivor` enumerates exactly the product the tree learned to avoid. §11.14's honest
+target was `buildRoute`, then the uniqueness gate, and now it is `onlySurvivor` — and the same trick applies.
+
 ### Phase 3 — the three modes
 
 Weights, combinable, per the owner's sketch:
@@ -168,6 +194,17 @@ rungs demanded) rather than three names for the same board.
 
 Tune to reproduce the measured envelopes below, then move deliberately rather than by accident. §6.4's
 one-new-thing rule still applies: each tier adds one word to the vocabulary.
+
+Two constraints §11.17 measured, which the table has to respect rather than discover:
+
+- **`branchDepth` >= 1 requires a cap above `deadEnd`.** A branch mirror is a shadow and a shadow defeats
+  `deadEnd` by design, so starter and junior cannot carry one at their current caps — generation refuses, it
+  does not silently produce an easier board.
+- **`interactive` and the cap are not independent.** Dropping the share from 1.0 to 0.7 takes boards needing
+  more than `deadEnd` from 400 of 400 down to 358 of 400, so the two have to be set together.
+
+And one optimisation worth taking first: `onlySurvivor` is now the whole of generation cost, and it enumerates
+the product the deviation tree already knows how to avoid.
 
 ---
 

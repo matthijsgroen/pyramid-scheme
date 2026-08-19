@@ -13,9 +13,10 @@ import {
   segmentKey,
   traceBeam,
   type Direction,
+  type LightbeamPuzzleData,
 } from "./beam"
-import { generateAuthoredLightbeam } from "./generateAuthoredLightbeam"
-import { type LightbeamGate } from "./generateLightbeam"
+import { generateAuthoredLightbeam, reachableDeviations, type AuthoredOptions } from "./generateAuthoredLightbeam"
+import { routeIsUnique, type LightbeamGate } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
 
@@ -268,5 +269,232 @@ describe("dials past the shipped tiers", () => {
     expect(gates.get("notUnique") ?? 0).toBe(0)
     expect(gates.get("notSettled") ?? 0).toBe(0)
     expect(attempts / 40).toBeLessThan(1.5)
+  })
+})
+
+/**
+ * §11.15's counterexample board, transcribed from the design doc.
+ *
+ * **This is the regression test the whole recursion exists for.** It is a board where every single-piece
+ * deviation from the answer dies *and* satisfies the pair invariant — no branch shares a `(cell, direction)`
+ * pair with the golden path, none reaches the shrine — and which is nevertheless not unique, because the
+ * configuration that moves all three pieces lights the shrine by a second, shorter path. Two branches that
+ * each die on their own, combining into a route.
+ *
+ * A generator that can produce this shape is wrong, so the gate has to see it. Angles are eighth-turns:
+ * 22.5°=1, 45°=2, 67.5°=3, 112.5°=5, 135°=6.
+ */
+const COUNTEREXAMPLE: LightbeamPuzzleData = {
+  size: 5,
+  sun: { at: { row: 3, col: 4 }, facing: 4 },
+  shrine: { row: 0, col: 3 },
+  fixed: [
+    { kind: "wall", at: { row: 1, col: 1 } },
+    { kind: "wall", at: { row: 1, col: 3 } },
+  ],
+  movable: [
+    { kind: "turnMirror", at: { row: 3, col: 0 }, angles: [5, 6] }, // A
+    { kind: "turnMirror", at: { row: 2, col: 1 }, angles: [0, 2] }, // B
+    { kind: "turnMirror", at: { row: 1, col: 0 }, angles: [1, 3, 6] }, // C
+  ],
+}
+const COUNTEREXAMPLE_ANSWER = [1, 0, 0]
+
+describe("§11.15's counterexample", () => {
+  it("is a board whose answer works", () => {
+    expect(isLit(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER)).toBe(true)
+  })
+
+  /** The half of §11.15 that is right: the pair is a genuine condition, and this board meets it. */
+  it("satisfies the pair invariant — every single-piece deviation dies and none rejoins", () => {
+    const goldenSegments = new Set(
+      traceBeam(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER).path.map(segment => segmentKey(segment.at, segment.enter))
+    )
+    let deviations = 0
+    COUNTEREXAMPLE.movable.forEach((piece, index) => {
+      if (piece.kind !== "turnMirror") return
+      for (let state = 0; state < piece.angles.length; state++) {
+        if (state === COUNTEREXAMPLE_ANSWER[index]) continue
+        deviations++
+        const config = [...COUNTEREXAMPLE_ANSWER]
+        config[index] = state
+        const walk = traceBeam(COUNTEREXAMPLE, config)
+        expect(walk.end).not.toBe("lit")
+        const from = walk.path.findIndex(segment => cellKey(segment.at) === cellKey(piece.at))
+        for (const segment of walk.path.slice(from + 1))
+          expect(goldenSegments.has(segmentKey(segment.at, segment.enter))).toBe(false)
+      }
+    })
+    expect(deviations).toBe(4)
+  })
+
+  /** And the half that makes the recursion necessary: the pair is not sufficient. */
+  it("is nevertheless not unique", () => {
+    const paths = new Set<string>()
+    eachConfig(allPieceOptions(COUNTEREXAMPLE), config => {
+      if (isLit(COUNTEREXAMPLE, config))
+        paths.add(
+          traceBeam(COUNTEREXAMPLE, config)
+            .path.map(segment => segmentKey(segment.at, segment.enter))
+            .join(" ")
+        )
+    })
+    expect(paths.size).toBe(2)
+  })
+
+  /**
+   * The gate sees it, and sees it for the right reason: one **reuse** fan-out, which is A's wrong stop
+   * walking into B's cell and finding that one of B's stops carries the light on to the shrine.
+   */
+  it("is caught by the reachable deviation tree, at one reuse fan-out", () => {
+    const reach = reachableDeviations(COUNTEREXAMPLE, COUNTEREXAMPLE_ANSWER)
+    expect(reach?.complete).toBe(true)
+    expect(reach?.winning.size).toBe(2)
+    expect(reach?.reuseForks).toBe(1)
+  })
+})
+
+/**
+ * Phase 2's construction: branches that turn, and the mirrors they turn at.
+ *
+ * A branch mirror is off the golden path by construction, so the winning beam never meets it — which makes it
+ * a decoy, and a **shadow** where it stands in a wrong ray. That is the piece §6.1 measured as the only thing
+ * that makes the technique cap bite, and here it falls out of authoring rather than being scattered on top.
+ */
+describe("branches that turn", () => {
+  const DIALS: AuthoredOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    cutMirrors: 1,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = DIALS
+  const boards = Array.from({ length: 10 }, (_, seed) => generateAuthoredLightbeam(size, seed + 1, options))
+
+  it("still has exactly one winning route", () => {
+    for (const board of boards) {
+      const reach = reachableDeviations(board, board.solution)
+      expect(reach?.complete).toBe(true)
+      expect(reach?.winning.size).toBe(1)
+    }
+  })
+
+  /** The tree and the product must never disagree — one of them is the gate and the other is the check. */
+  it("agrees with the walk over the whole product", () => {
+    for (const board of boards) {
+      const reach = reachableDeviations(board, board.solution)
+      expect(reach?.winning.size === 1).toBe(routeIsUnique(board, allPieceOptions(board)))
+    }
+  })
+
+  /** And it is cheaper, which is the claim §11.15 makes for it. */
+  it("costs less than the product it replaces", () => {
+    for (const board of boards) {
+      const reach = reachableDeviations(board, board.solution)
+      let productSteps = 0
+      eachConfig(allPieceOptions(board), config => {
+        productSteps += traceBeam(board, config).path.length
+      })
+      expect(reach!.nodes).toBeLessThan(productSteps)
+    }
+  })
+
+  /** The recursion has work to do here, unlike at `branchDepth` 0 where no branch meets a tappable cell. */
+  it("puts branches through tappable cells, which is what the recursion is for", () => {
+    const reuse = boards.map(board => reachableDeviations(board, board.solution)!.reuseForks)
+    expect(reuse.every(count => count > 0)).toBe(true)
+  })
+
+  /** A branch mirror is never on the winning beam's line, or it would have bent it. */
+  it("keeps every branch mirror off the golden path", () => {
+    for (const board of boards) {
+      const golden = new Set(traceBeam(board, board.solution).path.map(segment => cellKey(segment.at)))
+      const bends = new Set(
+        traceBeam(board, board.solution)
+          .path.filter(segment => segment.exit !== undefined && segment.exit !== segment.enter)
+          .map(segment => cellKey(segment.at))
+      )
+      for (const piece of board.movable) {
+        if (piece.kind !== "turnMirror") continue
+        const key = cellKey(piece.at)
+        // Either it is a golden bend, or the golden beam never touches its cell at all.
+        expect(bends.has(key) || !golden.has(key)).toBe(true)
+      }
+    }
+  })
+
+  /**
+   * **The cap starts biting**, which phase 1 could not manage at any tier: `deadEnd` alone no longer settles
+   * these boards, because the light disappears into a piece nobody has settled instead of visibly dying.
+   */
+  it("needs more than deadEnd", () => {
+    for (const board of boards) expect(solveLightbeamByTechniques(board, "deadEnd").settled).toBe(false)
+  })
+
+  it("is still reachable by deduction inside its own cap", () => {
+    for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
+  })
+})
+
+/**
+ * `interactive` is a share with a floor, and the floor is what stops it producing an unopenable board.
+ *
+ * Three tappable pieces is where §5's opening rules already put the family, so a share asking for fewer is
+ * raised to it rather than honoured — which is why 0.4 and 0.2 produce the same board on a six-bend route.
+ */
+describe("the interactive share", () => {
+  it("turns bends into givens as it falls", () => {
+    const counts = [1, 0.7, 0.4].map(interactive => {
+      const board = generateAuthoredLightbeam(9, 7, {
+        turns: 6,
+        cutMirrors: 1,
+        interactive,
+        techniqueCap: "onlySurvivor",
+      })
+      return { tappable: board.movable.length, givens: board.fixed.filter(piece => piece.kind === "mirror").length }
+    })
+    expect(counts[0].tappable).toBeGreaterThan(counts[2].tappable)
+    expect(counts[2].givens).toBeGreaterThan(counts[0].givens)
+  })
+
+  it("never drops below three tappable pieces", () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const board = generateAuthoredLightbeam(9, seed, { turns: 6, interactive: 0, techniqueCap: "onlySurvivor" })
+      expect(board.movable.length).toBeGreaterThanOrEqual(3)
+    }
+  })
+
+  /** A given contributes nothing to the configuration space, which is the whole of what makes it scenery. */
+  it("shrinks the configuration space as the share falls", () => {
+    const spaces = [1, 0.7, 0.4].map(interactive =>
+      allPieceOptions(
+        generateAuthoredLightbeam(9, 7, { turns: 6, cutMirrors: 1, interactive, techniqueCap: "onlySurvivor" })
+      ).reduce((product, options) => product * options.length, 1)
+    )
+    expect(spaces[0]).toBeGreaterThan(spaces[1])
+    expect(spaces[1]).toBeGreaterThan(spaces[2])
+  })
+})
+
+/**
+ * A shadow defeats `deadEnd` by design, so a tier capped there cannot carry one.
+ *
+ * Measured rather than assumed: starter's dials with `branchDepth` 1 fail `notSettled` on every attempt of
+ * every seed. That is the vocabulary ladder (§6.4) showing up as a hard constraint on the tier table rather
+ * than a preference — decoys and shadows are only fair once a rung can prove a piece irrelevant.
+ */
+describe("branch depth against the technique cap", () => {
+  it("cannot build a deadEnd-capped board with a branch mirror on it", () => {
+    expect(() => generateAuthoredLightbeam(7, 1, { turns: 3, branchDepth: 1, techniqueCap: "deadEnd" })).toThrow(
+      /no logically solvable board/
+    )
+  })
+
+  it("builds the same dials once the cap allows a piece to be ruled irrelevant", () => {
+    const board = generateAuthoredLightbeam(7, 1, { turns: 3, branchDepth: 1, techniqueCap: "neverReached" })
+    expect(solveLightbeamByTechniques(board, "neverReached").settled).toBe(true)
   })
 })

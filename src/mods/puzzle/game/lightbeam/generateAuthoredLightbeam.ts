@@ -62,10 +62,47 @@ import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
 // `FORK_SIZE`, and branches that never turn.
 
 /**
- * Stops per tappable mirror. Two is the family's lifelong baseline and phase 1's fixed value; the knob it
- * becomes (`forkSize`) is what a later phase turns.
+ * Stops per tappable mirror. Two is the family's lifelong baseline; the knob it becomes (`forkSize`) is what
+ * a later phase turns.
  */
 const FORK_SIZE = 2
+
+/**
+ * The floor on tappable pieces, whatever `interactive` says.
+ *
+ * Three, which is where §5's opening rules already put the family: two binary pieces make four
+ * configurations and every dark one is a tap from done or solved by tapping both, so `openingIsHonest`
+ * refuses the lot. It is also why a starter board carries three bends rather than two.
+ */
+const MIN_TAPPABLE = 3
+
+/** The knobs phase 2 adds. They ride here rather than growing the shipped `LightbeamDials`. */
+export type AuthoredOptions = LightbeamOptions & {
+  /**
+   * **0..1, the share of a board's mirrors that are the player's to tap** (§11.15's closing note).
+   *
+   * The load-bearing one, because it chooses the architecture rather than a quantity. A **given** costs a
+   * cell and reads as scenery: it contributes nothing to the configuration space, and a branch may pass
+   * through it freely, because a fixed face keeps `(cell, direction)` determining the future. A **tappable**
+   * mirror is the opposite on all three counts, and every branch touching one owes the recursion.
+   *
+   * So it is a continuous dial between the two designs §11.15 weighs — low and the board fills with scenery
+   * while uniqueness is nearly free, high and the board stays dense and the recursion does real work. The
+   * floor of `MIN_TAPPABLE` holds whatever the weight says.
+   */
+  interactive?: number
+  /**
+   * **Turns per authored branch.** 0 is a straight run to stone or the frame.
+   *
+   * A branch that turns needs a mirror at the bend, and that mirror is off the golden path by construction —
+   * so the winning beam never touches it, and it is a **decoy** in §6's vocabulary. Where the branch it turns
+   * is one the light takes under a wrong setting, it is a **shadow**: something movable standing in the wrong
+   * ray, so the light does not visibly die there, it disappears into a piece nobody has settled. That is what
+   * §6.1 measured as the only thing that makes the technique cap bite, and here it falls out of the
+   * construction rather than being scattered on top of it.
+   */
+  branchDepth?: number
+}
 
 /**
  * How many partial routes the golden-path search may open before giving up on this seed.
@@ -282,68 +319,375 @@ type Authoring = {
   goldenCells: Set<string>
   /** `(cell, direction)` pairs the golden beam owns. Sharing one is a join, whatever cell it happens in. */
   goldenSegments: Set<string>
-  /** Cells a tappable piece occupies. In phase 1 a branch may not enter one at all — see `NO_REUSE`. */
-  tappable: Set<string>
+  /** Which tappable piece stands in a cell, and what it can be set to — the fan-out the recursion walks. */
+  tappable: Map<string, { piece: number; angles: readonly MirrorAngle[] }>
+  /** Mirrors the player cannot touch. A branch passes through one deterministically, and may. */
+  givens: Map<string, MirrorAngle>
   walls: Set<string>
 }
 
 /**
- * Phase 1 forbids **reuse**: a branch may not enter a cell a tappable piece occupies.
- *
- * That is not fastidiousness, it is what makes uniqueness provable here. §11.15's counterexample board is
- * two branches that each die separately and combine into a second route, and the mechanism is exactly this:
- * a branch entering a tappable cell is not one corridor but **one corridor per stop of that piece**, so
- * authoring covers only the stop it was traced against. The sufficient rule is to recurse — author every
- * stop of that piece and require every continuation to die too — and that is phase 2's job.
- *
- * Until then the corridor simply refuses to go there, which costs board density and buys a construction
- * whose uniqueness argument fits in a paragraph (see `authorBranches`).
+ * How deep the corridor recursion may go. Each level decides one more piece, so the tree is bounded by the
+ * piece count; this is the guard, and exceeding it rejects rather than gives the board the benefit of the
+ * doubt.
  */
-const NO_REUSE = true
+const MAX_CORRIDOR_DEPTH = 12
 
 /**
- * Authors one branch: the corridor a wrong stop's light runs down, and the thing that kills it.
+ * Walks a corridor and answers the only question that matters: **does every continuation of it die?**
  *
- * Walks the ray and takes the first ending it is offered. Three are free — the frame, stone already
- * standing, and the disc — and one is not: reaching the route, the shrine or a tappable cell means the
- * branch has to be cut short, so stone goes at the **first** cell of the corridor that can hold it. First
- * rather than last on purpose: a wall right beside the mirror is the most legible dead end there is, and
- * anything further along is a longer story for the same conclusion.
+ * This is §11.15's sufficient rule, and it replaces phase 1's blanket refusal to enter a tappable cell.
+ * The rule and the reason:
  *
- * **A golden cell may be crossed but never walled.** Passing through one is genuinely not a join — the
- * walk is keyed on `(cell, direction)`, so two beams sharing a cell while travelling differently have
- * different futures (§11.15) — but stone there would block the winning beam.
+ * > While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every
+ * > stop of that piece and require every continuation to die as well.
  *
- * Returns false when there is nowhere to stand the stone, which is the `noCorridor` rejection.
+ * Because a branch entering a tappable cell is **one corridor per stop of that piece** — `(cell, direction)`
+ * determines the future only where the cell's content is fixed. §11.15's counterexample board is two
+ * branches that each die on their own and combine into a second, shorter route, and it is exactly this that
+ * catches it: authoring A's wrong stop walks into B's cell, fans out over B's two stops, and finds that one
+ * of them reaches the shrine.
+ *
+ * Four endings are free — off the frame, into stone, into the disc, and retracing a line this corridor has
+ * already travelled, which can reach nothing new. Two are fatal: the shrine, and any `(cell, direction)`
+ * pair the golden path owns (a join, including one *upstream* of where the branch left). A fatal ending is
+ * cut short with stone at the first cell of the current run that can hold it — nearest the mirror, because a
+ * wall right there is the most legible dead end and anything further along is a longer story for the same
+ * conclusion.
+ *
+ * **The recursion is deliberately conservative.** It carries no knowledge that the bends upstream of the
+ * branch must be at their golden angles for the light to have arrived at all, so a corridor that re-enters an
+ * upstream mirror is checked against *every* stop of it rather than the one that is actually possible. That
+ * over-checks and never under-checks, which is the right direction for a proof.
+ *
+ * Stone is placed as it goes rather than after a dry run. A wall only ever kills a beam *earlier*, so adding
+ * one can never revive a continuation that had already died — and `pruneStone` afterwards removes any that
+ * a sibling's stone later made unreachable.
  */
-const closeBranch = (board: Authoring, from: CellRef, enter: Direction, stop: MirrorAngle): boolean => {
-  const direction = reflect(stop, enter)
-  // A stop that sends the beam back down its own line needs nothing at all. `reflect` is its own inverse in
-  // the direction, so the light retraces every leg it has flown, off every mirror that carried it — each
-  // still at its golden angle, or the beam would not have got here — and the disc it came out of swallows
-  // it. §11.5's retracing excursion, arriving as a wrong answer instead of a failed idea.
-  if (direction === opposite(enter)) return true
-
+const corridorDies = (
+  board: Authoring,
+  from: CellRef,
+  direction: Direction,
+  decided: ReadonlyMap<number, MirrorAngle>,
+  travelled: ReadonlySet<string>,
+  depth: number
+): boolean => {
+  if (depth > MAX_CORRIDOR_DEPTH) return false
   const stone: CellRef[] = []
+  const seen = new Set(travelled)
   let at = stepCell(from, direction)
+  let travel = direction
+
+  // Cut the corridor short. Nearest stone first; false when there is nowhere to stand any.
+  const closeHere = (): boolean => {
+    const wall = stone[0]
+    if (!wall) return false
+    board.walls.add(cellKey(wall))
+    return true
+  }
+
   for (;;) {
     if (!insideGrid(board.size, at)) return true // the frame closes it, and costs nothing
     const key = cellKey(at)
-    if (board.walls.has(key)) return true // dies in stone another branch already needed
+    if (board.walls.has(key)) return true // dies in stone this or another branch needed
     if (key === cellKey(board.sun)) return true // swallowed by the disc
-    const fatal =
-      key === cellKey(board.shrine) ||
-      (NO_REUSE && board.tappable.has(key)) ||
-      board.goldenSegments.has(segmentKey(at, direction))
-    if (fatal) {
-      const wall = stone[0]
-      if (!wall) return false
-      board.walls.add(cellKey(wall))
-      return true
+    const segment = segmentKey(at, travel)
+    // Retracing a line already travelled reaches nothing this corridor has not already been offered.
+    if (seen.has(segment)) return true
+    seen.add(segment)
+    if (key === cellKey(board.shrine)) return closeHere()
+    if (board.goldenSegments.has(segment)) return closeHere()
+
+    const met = board.tappable.get(key)
+    if (met) {
+      const already = decided.get(met.piece)
+      if (already !== undefined) {
+        // The corridor has been through this piece before, so its state is pinned and the future is again
+        // determined — the branch simply bends.
+        travel = reflect(already, travel)
+        at = stepCell(at, travel)
+        continue
+      }
+      const everyStopDies = met.angles.every(angle =>
+        corridorDies(board, at, reflect(angle, travel), new Map(decided).set(met.piece, angle), seen, depth + 1)
+      )
+      return everyStopDies ? true : closeHere()
     }
+
+    const given = board.givens.get(key)
+    if (given !== undefined) {
+      // A given costs a cell and contributes nothing to the configuration space, so a branch may pass
+      // through it freely: its face is fixed, so `(cell, direction)` still determines the future.
+      travel = reflect(given, travel)
+      at = stepCell(at, travel)
+      continue
+    }
+
     if (!board.goldenCells.has(key)) stone.push(at)
-    at = stepCell(at, direction)
+    at = stepCell(at, travel)
   }
+}
+
+/**
+ * Authors one branch off a golden bend.
+ *
+ * The one thing this knows that `corridorDies` deliberately does not: for the light to have reached this
+ * bend at all, every bend upstream is at its golden angle. So a stop that sends the beam **back down its own
+ * line** needs nothing — `reflect` is its own inverse in the direction, so the light retraces every leg it
+ * has flown, off mirrors that must each still be golden, and the disc swallows it. §11.5's retracing
+ * excursion, arriving as a wrong answer instead of a failed idea. The recursion cannot use that argument
+ * (it has no notion of "upstream"), which is why it lives here and not there.
+ */
+const closeBranch = (board: Authoring, from: CellRef, enter: Direction, stop: MirrorAngle): boolean => {
+  const direction = reflect(stop, enter)
+  if (direction === opposite(enter)) return true
+  return corridorDies(board, from, direction, new Map(), new Set([segmentKey(from, enter)]), 0)
+}
+
+/**
+ * How many walk steps the deviation tree may take before it gives up. A guard: the tree is bounded by the
+ * pieces a beam can actually reach, which is a few hundred steps on these grids.
+ */
+const REACH_CAP = 200_000
+
+/** What walking the reachable deviation tree found. */
+export type Reach = {
+  /** Distinct paths that reach the shrine. Uniqueness is exactly one. */
+  winning: Set<string>
+  /** Wall cells some reachable beam ends on — the stone that is doing something. */
+  stoneHit: Set<string>
+  /** Walk steps taken, for the comparison against `routeIsUnique`'s walk over the whole product. */
+  nodes: number
+  /** Times the tree branched — the beam met a piece it had not been through and fanned out over its stops. */
+  forks: number
+  /**
+   * Fan-outs met by a beam that has **already deviated** — a branch walking into a piece it has not been
+   * through. This is reuse in §11.15's sense, and the number the recursion exists for: zero means the pair
+   * invariant would have been sufficient and the recursion had no work to do.
+   *
+   * Counted only when a solution is supplied, because "has deviated" means "has taken a stop that is not the
+   * answer", and nothing else on the board knows which stop that is. A fan-out on the golden path itself is
+   * not reuse, however many pieces the route carries — an easy thing to measure by accident.
+   */
+  reuseForks: number
+  /** False when the guard cut the exploration short, in which case nothing may be concluded. */
+  complete: boolean
+}
+
+/**
+ * Walks the **reachable deviation tree** — every future the light can have, fanning out only where it meets
+ * a piece whose state it has not already been through.
+ *
+ * This is §11.15's proposed replacement for `routeIsUnique`, and the claim phase 2 exists to test: that the
+ * tree is cheaper than the product. `routeIsUnique` enumerates every configuration and traces each one,
+ * which is 37 350 walks on a wizard board; here, **once a beam dies the settings downstream of it cannot
+ * matter**, so they are never enumerated. What is walked is the set of *distinguishable* futures.
+ *
+ * It is a different question from "how many configurations light the shrine" and the same question as "how
+ * many winning routes are there", which is the property §5 gate 5 actually wants: a decoy's free setting
+ * multiplies configurations without adding a route, and this never asks about it.
+ *
+ * Returns undefined for a board this cannot reason about — a sliding piece, whose absence from a cell is
+ * itself information, or a socket, which changes the board mid-walk. Both arrive in later phases, and
+ * pretending to handle them would be worse than declining: the caller falls back to `routeIsUnique`.
+ */
+export const reachableDeviations = (
+  puzzle: LightbeamPuzzleData,
+  /** The answer, only needed to tell a fan-out on the golden path from one a deviated beam met. */
+  solution?: readonly number[]
+): Reach | undefined => {
+  if (puzzle.movable.some(piece => piece.kind !== "turnMirror")) return undefined
+  if (puzzle.nodes?.length || puzzle.wirings?.length) return undefined
+
+  const byCell = new Map<string, { piece: number; angles: readonly MirrorAngle[] }>()
+  puzzle.movable.forEach((piece, index) => {
+    if (piece.kind === "turnMirror") byCell.set(cellKey(piece.at), { piece: index, angles: piece.angles })
+  })
+  const givens = new Map<string, MirrorAngle>()
+  const walls = new Set<string>()
+  for (const piece of puzzle.fixed) {
+    if (piece.kind === "mirror") givens.set(cellKey(piece.at), piece.angle)
+    else walls.add(cellKey(piece.at))
+  }
+  const sunKey = cellKey(puzzle.sun.at)
+  const shrineKey = cellKey(puzzle.shrine)
+
+  const found: Reach = { winning: new Set(), stoneHit: new Set(), nodes: 0, forks: 0, reuseForks: 0, complete: true }
+
+  const explore = (
+    from: CellRef,
+    direction: Direction,
+    decided: ReadonlyMap<number, MirrorAngle>,
+    prefix: readonly string[],
+    travelled: ReadonlySet<string>,
+    deviated: boolean
+  ): void => {
+    const seen = new Set(travelled)
+    const trail = [...prefix]
+    let at = stepCell(from, direction)
+    let travel = direction
+    for (;;) {
+      if (found.nodes++ > REACH_CAP) {
+        found.complete = false
+        return
+      }
+      if (!insideGrid(puzzle.size, at)) return
+      const key = cellKey(at)
+      if (walls.has(key)) {
+        found.stoneHit.add(key)
+        return
+      }
+      if (key === sunKey) return
+      const segment = segmentKey(at, travel)
+      if (seen.has(segment)) return
+      seen.add(segment)
+      trail.push(segment)
+      if (key === shrineKey) {
+        found.winning.add(trail.join(" "))
+        return
+      }
+      const met = byCell.get(key)
+      if (met) {
+        const already = decided.get(met.piece)
+        if (already === undefined) {
+          // The one place the tree branches: a piece the beam has not been through yet has as many futures
+          // as it has stops, and every one of them is walked.
+          found.forks++
+          if (deviated) found.reuseForks++
+          const answer = solution ? met.angles[solution[met.piece]] : undefined
+          for (const angle of met.angles)
+            explore(
+              at,
+              reflect(angle, travel),
+              new Map(decided).set(met.piece, angle),
+              trail,
+              seen,
+              deviated || (answer !== undefined && angle !== answer)
+            )
+          return
+        }
+        travel = reflect(already, travel)
+        at = stepCell(at, travel)
+        continue
+      }
+      const given = givens.get(key)
+      if (given !== undefined) {
+        travel = reflect(given, travel)
+        at = stepCell(at, travel)
+        continue
+      }
+      at = stepCell(at, travel)
+    }
+  }
+
+  explore(puzzle.sun.at, puzzle.sun.facing, new Map(), [], new Set(), false)
+  return found
+}
+
+/**
+ * Drops stone that nothing reaches.
+ *
+ * `corridorDies` places stone as it walks, and a sibling continuation forced to close earlier can leave a
+ * wall further along that no beam will ever arrive at. That is scenery, and §5.1 rules it out: a wall the
+ * player cannot spend hides which obstacles the deduction turns on.
+ *
+ * Safe as a single pass, because a wall no beam reaches cannot be on any beam's path — so removing it changes
+ * no path, and the set of reachable beams is the same before and after. Declines to prune at all if the
+ * exploration was cut short, rather than guessing.
+ */
+const pruneStone = (board: Authoring, route: Route, movable: MovablePiece[]): Set<string> => {
+  const fixed: FixedPiece[] = [
+    ...[...board.walls].map((key): FixedPiece => {
+      const [row, col] = key.split(",").map(Number)
+      return { kind: "wall", at: { row, col } }
+    }),
+    ...[...board.givens].map(([key, angle]): FixedPiece => {
+      const [row, col] = key.split(",").map(Number)
+      return { kind: "mirror", at: { row, col }, angle }
+    }),
+  ]
+  const reach = reachableDeviations({ size: board.size, sun: route.sun, shrine: route.shrine, fixed, movable })
+  if (!reach || !reach.complete) return board.walls
+  return new Set([...board.walls].filter(key => reach.stoneHit.has(key)))
+}
+
+/** A mirror a branch turns at. Off the golden path by construction, so the winning beam never meets it. */
+type BranchMirror = { at: CellRef; angle: MirrorAngle; angles: readonly MirrorAngle[]; live: boolean }
+
+/** Where a mirror may be dropped: on the grid, off the golden beam's line, and not on top of another piece. */
+const mirrorFits = (
+  size: number,
+  goldenCells: ReadonlySet<string>,
+  mirrors: ReadonlySet<string>,
+  tappable: ReadonlySet<string>,
+  at: CellRef,
+  live: boolean
+): boolean => {
+  if (!insideGrid(size, at)) return false
+  const key = cellKey(at)
+  // A mirror on the winning beam's line would bend it, and the golden path is already laid.
+  if (goldenCells.has(key) || mirrors.has(key)) return false
+  // Shoulders are a tap-accuracy rule, so only tappable pieces claim them (`piecesAreSpaced`).
+  if (!live) return true
+  if (tappable.has(key)) return false
+  return NEIGHBOURS.every(direction => !tappable.has(cellKey(stepCell(at, direction))))
+}
+
+/**
+ * Plans the mirrors a branch turns at, before any branch is closed.
+ *
+ * **Geometry only — it does not ask whether anything dies.** That question cannot be answered until the whole
+ * piece list exists, because a corridor closed against a half-built board was checked against the wrong set of
+ * tappable cells, and a branch mirror placed for one branch is a cell every other branch may now meet. So this
+ * lays the shape and `corridorDies` passes judgement afterwards.
+ *
+ * A turn is only offered `MIN_LEG` cells out or further, which keeps the branch mirror off the shoulder of the
+ * very piece whose wrong setting aimed the light at it.
+ */
+const planBranchMirrors = (
+  size: number,
+  goldenCells: ReadonlySet<string>,
+  mirrors: Set<string>,
+  tappable: Set<string>,
+  from: CellRef,
+  direction: Direction,
+  depth: number,
+  interactive: number,
+  random: () => number
+): BranchMirror[] => {
+  const planned: BranchMirror[] = []
+  let at = from
+  let travel = direction
+  for (let turn = 0; turn < depth; turn++) {
+    const live = random() < interactive
+    // Every cell the branch would run through, far enough out to hold a mirror.
+    const candidates: CellRef[] = []
+    let probe = at
+    for (let step = 0; step < size * 2; step++) {
+      probe = stepCell(probe, travel)
+      if (!insideGrid(size, probe)) break
+      if (step + 1 >= MIN_LEG && mirrorFits(size, goldenCells, mirrors, tappable, probe, live)) candidates.push(probe)
+    }
+    if (!candidates.length) break
+
+    const spot = shuffle(candidates, random)[0]
+    // Any genuine turn will do; a diagonal exit needs a half-step angle and `angleFor` refuses the rest.
+    const exits = shuffle([...perpendicular(travel), ...halfStepTurns(travel)], random)
+    const exit = exits.find(candidate => {
+      const angle = angleFor(travel, candidate)
+      return angle !== undefined && stopsFor(angle) !== undefined
+    })
+    if (exit === undefined) break
+    const angle = angleFor(travel, exit) as MirrorAngle
+    const angles = stopsFor(angle) as readonly MirrorAngle[]
+
+    mirrors.add(cellKey(spot))
+    if (live) tappable.add(cellKey(spot))
+    planned.push({ at: spot, angle, angles, live })
+    at = spot
+    travel = exit
+  }
+  return planned
 }
 
 type Draft = { fixed: FixedPiece[]; movable: MovablePiece[]; solution: number[] }
@@ -362,15 +706,35 @@ type Draft = { fixed: FixedPiece[]; movable: MovablePiece[]; solution: number[] 
  * The argument needs both halves of the corridor rule to hold. A branch sharing a `(cell, direction)` pair
  * with the golden path would have the golden path's own future and deliver the light — including from
  * *upstream* of where it left, which is why the test is the pair rather than "does it reach the shrine".
- * And a branch entering a tappable cell would have as many futures as that piece has stops, which is
- * §11.15's counterexample and why `NO_REUSE` holds here.
+ * And a branch entering a tappable cell has as many futures as that piece has stops, so `corridorDies`
+ * recurses over every one of them and requires each to die — §11.15's sufficient rule, and what makes
+ * "the future is determined" true again everywhere.
  *
- * Stone is authored, so `thinWalls` deliberately does not run: every wall placed here is the only thing
- * closing some branch, and a pruner can only remove load-bearing stone.
+ * Stone is authored rather than pruned to a fixpoint, so `thinWalls` does not run. Note the reason, because
+ * measuring it corrected the plan: `thinWalls` re-checks uniqueness and the ladder, and most authored stone
+ * is load-bearing for neither — it is holding a branch out of territory the recursion would otherwise have to
+ * clear. `pruneStone` is the only trimming that happens, and it removes what nothing reaches.
  */
-const authorBranches = (size: number, route: Route, random: () => number): Draft | undefined => {
+const authorBranches = (
+  size: number,
+  route: Route,
+  interactive: number,
+  branchDepth: number,
+  random: () => number
+): Draft | undefined => {
   const stops = route.bends.map(bend => stopsFor(bend.angle))
   if (stops.some(list => list === undefined || list.length < FORK_SIZE)) return undefined
+
+  // Which bends are the player's. A share rather than a count, with a floor — and drawn at random rather
+  // than taken off the front, so a low share does not always leave the same bends live.
+  const wanted = Math.max(MIN_TAPPABLE, Math.round(interactive * route.bends.length))
+  if (wanted > route.bends.length) return undefined
+  const live = new Set(
+    shuffle(
+      route.bends.map((_, index) => index),
+      random
+    ).slice(0, wanted)
+  )
 
   const board: Authoring = {
     size,
@@ -378,34 +742,82 @@ const authorBranches = (size: number, route: Route, random: () => number): Draft
     shrine: route.shrine,
     goldenCells: new Set([cellKey(route.sun.at), ...route.cells.map(cell => cellKey(cell.at))]),
     goldenSegments: new Set(route.cells.map(cell => segmentKey(cell.at, cell.enter))),
-    tappable: new Set(route.bends.map(bend => cellKey(bend.at))),
+    tappable: new Map(),
+    givens: new Map(
+      route.bends.flatMap((bend, index) => (live.has(index) ? [] : [[cellKey(bend.at), bend.angle] as const]))
+    ),
     walls: new Set(),
   }
 
-  // Every corridor is closed against the finished piece list, not against a board still being built: which
-  // cells are tappable is a fact about the whole board, and a branch authored before the last mirror was
-  // placed would have been checked against the wrong one.
-  for (const [index, bend] of route.bends.entries()) {
-    const list = stops[index]
-    if (!list) return undefined
-    for (const stop of list) {
-      if (stop === bend.angle) continue
-      if (!closeBranch(board, bend.at, bend.enter, stop)) return undefined
-    }
-  }
-
-  const movable: MovablePiece[] = route.bends.map((bend, index) => ({
-    kind: "turnMirror",
-    at: bend.at,
-    angles: stops[index] as readonly MirrorAngle[],
-  }))
-  const solution = route.bends.map((bend, index) => (stops[index] as readonly MirrorAngle[]).indexOf(bend.angle))
+  // The piece list is settled before a single corridor is authored, because which cells are tappable is a
+  // fact about the whole board — a branch closed against a half-built board was checked against the wrong one.
+  const movable: MovablePiece[] = []
+  const solution: number[] = []
+  const liveBends: { at: CellRef; enter: Direction; angle: MirrorAngle; angles: readonly MirrorAngle[] }[] = []
+  route.bends.forEach((bend, index) => {
+    if (!live.has(index)) return
+    const angles = stops[index] as readonly MirrorAngle[]
+    const piece = movable.length
+    board.tappable.set(cellKey(bend.at), { piece, angles })
+    movable.push({ kind: "turnMirror", at: bend.at, angles })
+    solution.push(angles.indexOf(bend.angle))
+    liveBends.push({ at: bend.at, enter: bend.enter, angle: bend.angle, angles })
+  })
   if (solution.some(state => state < 0)) return undefined
 
-  const fixed: FixedPiece[] = shuffle([...board.walls], random).map(key => {
-    const [row, col] = key.split(",").map(Number)
-    return { kind: "wall", at: { row, col } }
-  })
+  // Pass one: lay the shape of every branch, including the mirrors it turns at. Geometry only — nothing is
+  // judged yet, because a corridor can only be closed against the finished piece list.
+  const mirrorCells = new Set(route.bends.map(bend => cellKey(bend.at)))
+  const tappableCells = new Set(liveBends.map(bend => cellKey(bend.at)))
+  const corridors: { at: CellRef; enter: Direction; stop: MirrorAngle }[] = []
+  for (const bend of liveBends)
+    for (const stop of bend.angles) {
+      if (stop === bend.angle) continue
+      corridors.push({ at: bend.at, enter: bend.enter, stop })
+      if (branchDepth < 1) continue
+      const direction = reflect(stop, bend.enter)
+      // A stop that retraces its own line is already closed and has nowhere to turn.
+      if (direction === opposite(bend.enter)) continue
+      for (const mirror of planBranchMirrors(
+        size,
+        board.goldenCells,
+        mirrorCells,
+        tappableCells,
+        bend.at,
+        direction,
+        branchDepth,
+        interactive,
+        random
+      )) {
+        const piece = movable.length
+        if (mirror.live) {
+          board.tappable.set(cellKey(mirror.at), { piece, angles: mirror.angles })
+          movable.push({ kind: "turnMirror", at: mirror.at, angles: mirror.angles })
+          // A decoy's setting is free by construction — the winning beam never reaches it — so the answer
+          // records the angle it was authored at and `neverReached` is what frees the player from it.
+          solution.push(mirror.angles.indexOf(mirror.angle))
+        } else board.givens.set(cellKey(mirror.at), mirror.angle)
+      }
+    }
+  if (movable.length < MIN_TAPPABLE) return undefined
+  if (solution.some(state => state < 0)) return undefined
+
+  // Pass two: close every corridor against the finished board. A given has no wrong stop to spend, so it
+  // authors no corridor at all — which is what makes a low share cheap and a high one expensive.
+  for (const corridor of corridors)
+    if (!closeBranch(board, corridor.at, corridor.enter, corridor.stop)) return undefined
+
+  const kept = pruneStone(board, route, movable)
+  const fixed: FixedPiece[] = [
+    ...shuffle([...kept], random).map((key): FixedPiece => {
+      const [row, col] = key.split(",").map(Number)
+      return { kind: "wall", at: { row, col } }
+    }),
+    ...[...board.givens].map(([key, angle]): FixedPiece => {
+      const [row, col] = key.split(",").map(Number)
+      return { kind: "mirror", at: { row, col }, angle }
+    }),
+  ]
   return { fixed, movable, solution }
 }
 
@@ -420,6 +832,8 @@ const attemptAuthored = (
   seed: number,
   attempt: number,
   dials: LightbeamDials,
+  interactive: number,
+  branchDepth: number,
   cap: TechniqueId,
   reject?: (gate: LightbeamGate) => void
 ): Omit<LightbeamPuzzle, "goals"> | undefined => {
@@ -430,7 +844,7 @@ const attemptAuthored = (
     reject?.("noRoute")
     return undefined
   }
-  const draft = authorBranches(size, route, random)
+  const draft = authorBranches(size, route, interactive, branchDepth, random)
   if (!draft) {
     reject?.("noCorridor")
     return undefined
@@ -454,8 +868,13 @@ const attemptAuthored = (
     return undefined
   }
 
-  const states = allPieceOptions(puzzle)
-  if (!routeIsUnique(puzzle, states)) {
+  // The uniqueness gate is now the reachable deviation tree rather than the walk over the whole product
+  // (§11.15, measured in §11.17). It answers the same question — how many winning *routes* are there — and
+  // stops exploring a beam the moment it dies, so the settings downstream of a dead beam are never visited.
+  // `routeIsUnique` stays the fallback for a board the tree declines to reason about.
+  const reach = reachableDeviations(puzzle)
+  const unique = reach?.complete ? reach.winning.size === 1 : routeIsUnique(puzzle, allPieceOptions(puzzle))
+  if (!unique) {
     reject?.("notUnique")
     return undefined
   }
@@ -490,13 +909,21 @@ const attemptAuthored = (
 export const generateAuthoredLightbeam = (
   size: number,
   seed: number,
-  options: LightbeamOptions = {}
+  options: AuthoredOptions = {}
 ): LightbeamPuzzle => {
-  const { techniqueCap = "deadEnd", turns = 2, cutMirrors = 0, crossings = 0, fiddleProof = false } = options
+  const {
+    techniqueCap = "deadEnd",
+    turns = 2,
+    cutMirrors = 0,
+    crossings = 0,
+    fiddleProof = false,
+    interactive = 1,
+    branchDepth = 0,
+  } = options
   const dials = { turns, cutMirrors, crossings, fiddleProof } as LightbeamDials
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const puzzle = attemptAuthored(size, seed, attempt, dials, techniqueCap, options.reject)
+    const puzzle = attemptAuthored(size, seed, attempt, dials, interactive, branchDepth, techniqueCap, options.reject)
     if (puzzle) return { ...puzzle, goals: [] }
   }
   throw new Error(`generateAuthoredLightbeam: no logically solvable board (size=${size}, seed=${seed})`)

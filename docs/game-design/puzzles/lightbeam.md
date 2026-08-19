@@ -2340,3 +2340,97 @@ too.
 `noCorridor` from never firing to 50 rejections in 200 boards, and drops the stone to 0.06 a board: a route
 that reuses its own ground leaves branches less of the grid to die in. Attempts a board stays between 1.00
 and 1.25 across every dial tried, up to eight turns, three cut mirrors and two crossings.
+
+### 11.17 What the recursion found, and what it made free
+
+§11.15 asked whether authored branches can carry uniqueness alone, answered no, and gave the sufficient rule:
+
+> While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every stop
+> of that piece and require every continuation to die as well.
+
+Built, and it is worth stating what the rule replaces. §11.16's construction bought uniqueness by **refusing**
+reuse — a branch simply never entered a tappable cell — which held the proof together and left the board
+sparse. The recursion lets branches go there and closes them properly instead, which turns out to be the
+difference between a construction that guarantees and a construction that also makes a puzzle.
+
+**§11.15's counterexample board is the regression test, and the gate sees it.** Transcribed into the spec, it
+reports two winning routes at **one reuse fan-out** — precisely A's wrong stop walking into B's cell and
+finding that one of B's stops carries the light on. The board satisfies the pair invariant, every single-piece
+deviation dies, and it is still not unique; the recursion is what tells them apart.
+
+#### Reuse is common once branches may turn, and absent until then
+
+A branch that runs straight almost never meets another piece: measured over 1 000 boards at the shipped tiers'
+dials, **not one branch entered a tappable cell**. The refusal §11.16 relied on was costing nothing, because
+the geometry was not offering the opportunity — a straight ray from a mirror on a sparse board mostly leaves
+the frame. So the recursion had no work to do, and the 1-in-949 rate §11.15 measured on random boards was, on
+that construction, effectively zero.
+
+Give branches **one turn** and it inverts: 4.7 reuse fan-outs a board, on every board. §11.15's caveat that
+its rate was a floor is confirmed, but the mechanism is not the one expected — it is not that an authoring
+generator aims branches at interesting territory, it is that **a branch that turns needs a mirror, and that
+mirror is another piece for some other branch to walk into.** Reuse is manufactured by branch depth rather
+than found.
+
+#### The deviation tree is free, measured against the gate it replaces
+
+Over 2 800 boards, uniqueness held at **100%** and the tree and the walk-over-the-whole-product agreed on
+every single board. What they cost is not comparable:
+
+| dials (9×9, 6 turns) | tappable | configurations | tree, walk steps | product, walk steps | ratio |
+| -------------------- | -------- | -------------- | ---------------- | ------------------- | ----- |
+| no branch turns      | 6.0      | 64             | 34               | 430                 | 13×   |
+| one turn a branch    | 9.8      | 1 021          | 62               | 8 911               | 143×  |
+| two turns a branch   | 11.8     | 6 769          | 77               | 64 375              | 836×  |
+
+The ratio grows with the configuration space because the tree does not see it: once a beam dies the settings
+downstream of it cannot matter, so what gets walked is the set of _distinguishable futures_ rather than the
+product. In wall-clock, on the two-turn board: **0.04ms against 38.38ms**, a factor of about 960.
+
+**Which moves the bottleneck rather than removing it.** On the same board, generation costs 98.97ms and
+`solveLightbeamByTechniques` is 97.65ms of it. The uniqueness gate is now free and the _technique solver_ is
+the whole cost, because `onlySurvivor` enumerates exactly the product the tree just learned to avoid. That is
+§11.14's finding one step along: the honest target was `buildRoute`, then it was the uniqueness gate, and now
+it is the exhaustive rung — and the same trick applies to it.
+
+#### The cap bites, which is the thing §11.16 could not manage
+
+A branch mirror sits off the golden path by construction, so the winning beam never touches it: it is a
+**decoy**, and where it stands in a wrong ray, a **shadow**. §6.1 measured shadows as the only thing that
+stops every board being a chain of `deadEnd` eliminations, and here they are not scattered on top of the board
+— they are what a branch turning is made of.
+
+| construction            | boards needing more than `deadEnd` | `neverReached` | `onlySurvivor` |
+| ----------------------- | ---------------------------------- | -------------- | -------------- |
+| §11.16, no branch turns | 0 of 400                           | never          | never          |
+| one turn a branch       | **400 of 400**                     | 400 of 400     | 267 of 400     |
+| two turns a branch      | 400 of 400                         | 400 of 400     | 331 of 400     |
+
+And the reverse of it is a hard constraint on the tier table rather than a preference: **a tier capped at
+`deadEnd` cannot carry a branch mirror at all.** Starter's dials with one turn a branch fail `notSettled` on
+every attempt of every seed, because a shadow defeats `deadEnd` by design. §6.4's ladder — decoys and shadows
+are only fair once a rung can prove a piece irrelevant — arrives here as something generation refuses to build
+rather than something the config declines to ask for.
+
+#### What the share buys, and what the floor is for
+
+`interactive` behaves as §11.15's closing note predicts, and it is a density dial rather than a difficulty
+one. Falling from 1.0 to 0.7 on a six-bend route: tappable pieces 9.8 → 5.9, givens 0.0 → 2.8, stone 1.75 →
+0.71 a board, configuration space 1 021 → 73, and reuse 4.7 → 1.8 fan-outs a board. A given authors no
+corridor at all, because it has no wrong stop to spend, which is exactly why a low share is cheap.
+
+It does dilute the cap — boards needing more than `deadEnd` fall from 400 of 400 to 358 of 400 — so the two
+knobs are not independent, and the tier table has to set them together.
+
+The floor of **three tappable pieces** holds whatever the share says, which is why 0.4 and 0.2 produce the
+same board on a six-bend route. That is not a safety margin: it is §5's opening rules, where two binary pieces
+make four configurations and every dark one is a tap from done or solved by tapping both, so `openingIsHonest`
+refuses the lot.
+
+#### Where a draft still dies
+
+At a full share on an 8×8 or 9×9 the cost is one attempt a board, and the only rejection is the opening being
+re-drawn. It stops holding when the board is small or sparse for what branch depth asks of it: 1.54 attempts a
+board at a 0.7 share on 8×8, and 5.08 on a 7×7 with four turns — `notSettled` in both cases, the solver
+refusing a board whose shadows outrun its cap. `noCorridor` remains almost silent (1 in 200 boards at two
+turns and a 0.4 share), so the recursion nearly always finds somewhere to stand its stone.
