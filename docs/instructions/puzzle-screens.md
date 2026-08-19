@@ -14,7 +14,10 @@ board, the rules block, and its solver — never its own copy of the chrome.
 ## 1. Layout — the board fits the phone, the page scrolls
 
 Reference feel: LinkedIn's daily puzzles and Puzzle Express — chrome on top,
-board centered, rules below the fold.
+board centered, rules below the fold. **The reference is the timing too**: a board
+is 10 seconds to a few minutes, never an evening's sitting — the budget, and why
+it binds every tier of every family, is `PUZZLE_FAMILIES.md` §3.2. A tier nobody
+has timed against a human clock has not cleared this bar.
 
 - The **board fits inside the viewport** on a 360×640 phone, with the header
   visible, without pan or zoom. Board sizes off available space

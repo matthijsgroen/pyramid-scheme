@@ -128,6 +128,15 @@ plus the target column at a thumb-sized tap target is already the whole width of
 a 360px screen, so 7×7 is the ceiling and the top tier takes its difficulty from
 the ladder instead of from more cells.
 
+**What this table has never been checked against is a clock.** `PUZZLE_FAMILIES.md`
+§3.2 budgets every board at 10s to 6 minutes with a 3-minute target at wizard, and
+this family is the one built family whose standing against that is _unknown_ — a
+7×7 of 49 cells each carrying a keep/strike decision is a lot of bookkeeping, which
+is what duration is made of. Time a wizard board by hand before the tier is
+authored into more of the world. If it runs long the dial is the grid (master's
+7×7 back to 6×6, and wizard keeping T4 on the smaller board), because the cap is
+the difficulty and the cell count is the duration.
+
 ## 6. Hints
 
 Every technique is a hint, phrased in player language and rendered from

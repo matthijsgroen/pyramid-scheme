@@ -146,6 +146,21 @@ the redundancy §3.1 exists to remove.
 | master  | 6×6  | T5 sign pair       | 13–19 of 60 |
 | wizard  | 7×7  | T10 x-wing         | ~23 of 84   |
 
+> **This table is over the solve-time budget at the top, and known to be.** A 7×7
+> board with the whole ladder available takes about **45 minutes** by hand, against
+> `PUZZLE_FAMILIES.md` §3.2's 3-minute target and 6-minute ceiling — and a floor is
+> many rooms, so one such board costs more than the corridor it sits in. This is the
+> family the budget was written against.
+>
+> **The dial to turn is the grid, not the cap.** Duration here is bookkeeping — 49
+> squares of candidates held at once — while difficulty is the hardest step the board
+> demands, and §4.3 measured that the ladder's top rungs only _fire_ at 7×7. So the
+> retune is a real design question rather than a number to lower: find the smallest
+> board on which x-wing and the hidden pair still fire, and if none does, the honest
+> answer is that this family's ceiling is master's 6×6 with T5 and its wizard tier is
+> a different kind of addition (more signs stripped, not more squares). Measure a
+> candidate against a human clock before it ships.
+
 The cap is inclusive: a tier permits every technique up to it, so wizard boards
 may use the whole ladder.
 

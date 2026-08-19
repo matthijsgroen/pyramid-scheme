@@ -49,6 +49,21 @@ carve-out — not debt.
 
 ---
 
+## Design debt: two tiers owe a clock
+
+`PUZZLE_FAMILIES.md` §3.2 caps a board at 6 minutes with a 3-minute target, and the
+ladder tables predate the cap:
+
+- **Futoshiki wizard is over it, measured** — a 7×7 with the full technique ladder is
+  ~45 minutes by hand. Retune, and the dial is the grid rather than the cap (family doc
+  §5 says why, and what the honest answer might be).
+- **Sumplete has never been timed** — 7×7 at master and wizard is the most bookkeeping
+  of any built family. Time it before authoring more of it into the world.
+
+Balance scale and lightbeam are in budget and are the calibration to retune against.
+
+---
+
 ## Highest-stakes test gaps
 
 Prioritize by blast radius, not by count:
