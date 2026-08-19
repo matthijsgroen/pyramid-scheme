@@ -24,16 +24,35 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const { t } = useTranslation("common")
   const [state, setState] = useState(() => createLightbeamState(puzzle))
 
-  const hint = useMemo(() => buildLightbeamHint(puzzle, state.states), [puzzle, state])
+  const solved = isLit(puzzle, state.states)
+
+  /**
+   * Whether the player has asked for a hint, which is what gates deriving one.
+   *
+   * A hint is a full solve, and the top tier's solve enumerates tens of thousands of configurations. Derived as
+   * the board changed, that cost landed on **every tap** — the board took the tap and then sat there, for a
+   * string nobody had asked to read. Measured at the time: 185ms a tap against 19ms.
+   *
+   * Cleared on the next input, both because the shell hides a stale hint anyway and because leaving it set would
+   * put the solve back on every tap.
+   */
+  const [asked, setAsked] = useState(false)
+  const hint = useMemo(() => (asked ? buildLightbeamHint(puzzle, state.states) : undefined), [asked, puzzle, state])
+
+  // A function rather than a string, so the shell only reaches for the text once the hint is on screen — and so
+  // the button is offered before there is anything to say (see `PuzzleFamilyShell`'s `hint`).
+  const hintText = useCallback(() => hint && t(`lightbeam.hint.${hint.key}`), [hint, t])
+
   const cycle = useCallback((piece: number) => setState(prev => cycleLightbeamPiece(prev, puzzle, piece)), [puzzle])
 
   return (
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel}
-      solved={isLit(puzzle, state.states)}
+      solved={solved}
       onReset={() => setState(createLightbeamState(puzzle))}
-      hint={hint && t(`lightbeam.hint.${hint.key}`)}
+      hint={solved ? undefined : hintText}
+      onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
       rules={<LightbeamRules puzzle={puzzle} />}
     >
@@ -45,6 +64,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           litBeam={hintVisible ? hint?.beam : undefined}
           onCycle={piece => {
             reportInput()
+            setAsked(false)
             cycle(piece)
           }}
         />

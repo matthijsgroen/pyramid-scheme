@@ -138,25 +138,28 @@ describe("the tier ramp", () => {
  */
 describe("the constraints the table has to respect", () => {
   /**
-   * A branch mirror is a shadow, and a shadow defeats `deadEnd` by design. So the two tiers capped there carry
-   * no branch that turns — and the board is honest about it: every one settles on "the light visibly dies".
+   * **No tier is solved by following the light and turning whatever it hits.**
+   *
+   * That is the property playtesting asked for, and the one this table exists to hold. `deadEnd` says "the light
+   * visibly dies there" — a board settled by it alone has no decision in it, only a trail to follow. Every tier
+   * now stands a piece off the winning beam's line, so ruling that piece out is unavoidable.
+   *
+   * Asserted per tier rather than in aggregate, because a tier quietly slipping back to a trail is exactly the
+   * regression this guards. Not every board on the harder tiers needs the whole ladder — a wall-heavy draw
+   * settles more cheaply, since stone that closes a branch also settles it — so the bar is a clear majority
+   * rather than all.
    */
-  it("keeps branches straight wherever the cap is deadEnd", () => {
-    for (const tier of ["starter"] as const) {
-      expect(LIGHTBEAM_CONFIG[tier].techniqueCap).toBe("deadEnd")
-      expect(LIGHTBEAM_CONFIG[tier].branchDepth).toBe(0)
-      for (const board of boardsFor(tier)) expect(solveLightbeamByTechniques(board, "deadEnd").settled).toBe(true)
-    }
+  it.each(difficulties)("does not let %s be solved by following the light", tier => {
+    const trail = boardsFor(tier).filter(board => solveLightbeamByTechniques(board, "deadEnd").settled)
+    expect(trail.length).toBeLessThanOrEqual(Math.floor(SEEDS / 4))
   })
 
-  /**
-   * And from junior up, `deadEnd` alone is not enough. That is the whole of what playtesting asked for: the
-   * ladder used to reach this point at expert, so the bottom two tiers were not puzzles yet.
-   */
-  it("demands more than deadEnd from junior up", () => {
-    for (const tier of ["junior", "expert", "master", "wizard"] as const) {
-      const harder = boardsFor(tier).filter(board => !solveLightbeamByTechniques(board, "deadEnd").settled)
-      expect(harder.length).toBeGreaterThan(SEEDS / 2)
+  /** And every tier carries the piece that makes that true: one the winning beam never touches. */
+  it.each(difficulties)("stands a piece off the winning beam's line at %s", tier => {
+    for (const board of boardsFor(tier)) {
+      const onRoute = new Set(traceBeam(board, board.solution).path.map(segment => cellKey(segment.at)))
+      const offRoute = board.movable.filter(piece => !pieceCells(piece).some(at => onRoute.has(cellKey(at))))
+      expect(offRoute.length).toBeGreaterThan(0)
     }
   })
 

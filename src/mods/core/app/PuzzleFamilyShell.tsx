@@ -20,8 +20,19 @@ type Props = {
   solved?: boolean
   /** Restores the board's start state. Omit for families with nothing to reset. */
   onReset?: () => void
-  /** The next step, already phrased. Recomputed by the family as the board changes. */
-  hint?: string
+  /**
+   * The next step, already phrased — or a function that phrases it.
+   *
+   * **Pass a function when deriving the hint is expensive**, and it will only be called once the player asks.
+   * A hint comes out of the family's technique solver, and for some families that is a full solve of the board:
+   * lightbeam's top tier enumerates tens of thousands of configurations for one, which is half a second on a
+   * development machine and much worse on a phone. Computed eagerly on every board change, that lands on every
+   * single tap as input lag, for a string nobody has asked to read.
+   *
+   * Presence still decides whether the button appears, so a family with no hint to give passes `undefined` —
+   * a function is always present.
+   */
+  hint?: string | (() => string | undefined)
   /** How long a still board waits before the hint button asks to be pressed (see hintIdleDelay). */
   idleMs?: number
   /** Fired when the player asks for the hint — families use it to aim the board at what it names. */
@@ -49,6 +60,9 @@ export const PuzzleFamilyShell = ({
   const [solvedBanner, setSolvedBanner] = useState(false)
   const [scheduleSolve, cancelSolve] = useTimeout()
   const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability(idleMs)
+
+  // Resolved only once revealed, which is the whole point of allowing a function: an unread hint costs nothing.
+  const hintText = revealed ? (typeof hint === "function" ? hint() : hint) : undefined
 
   // The board is frozen the moment it is solved, not when the banner arrives: the pause before it is
   // long enough to tap a cell, and a tap there un-solved the puzzle while the win was already on its
@@ -126,14 +140,14 @@ export const PuzzleFamilyShell = ({
         </div>
       )}
       <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
-        {children({ solved: handleSolved, reportInput, hintVisible: revealed && !!hint })}
+        {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
       </div>
-      {revealed && hint && !solvedBanner && (
+      {hintText && !solvedBanner && (
         <p
           ref={hintRef}
           className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200"
         >
-          {hint}
+          {hintText}
         </p>
       )}
       {rules && !solvedBanner && (

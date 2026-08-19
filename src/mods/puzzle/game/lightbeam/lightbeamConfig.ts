@@ -59,34 +59,38 @@ import type { LightbeamOptions } from "./generateLightbeam"
 // build, and that is the honest trade — a tier that is expensive to generate rather than a tier that is smaller
 // than the design wants. If a dial needs turning down, turn it down for a reason a player would recognise.
 export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOptions> = {
-  // Right angles, a short route, and stone to die in. Wall-heavy from the bottom of the ladder because being
-  // able to *point at* where the light died is the first thing to learn, and the frame is the one terminator
-  // that gives the player nothing to look at.
+  // The smallest board that is still a puzzle.
+  //
+  // A short route and a small grid, but **a piece off the winning beam's line** — so the board cannot be solved
+  // by following the light and turning whatever it hits. Measured: not one board in 40 settles on `deadEnd`
+  // alone, where the trail-following version settled on all 40.
+  //
+  // That means starter's first skill is the family's own: *"this piece does not matter"* (§4.2), which is the
+  // only conclusion in any family that reads that way. It arrives here rather than being saved, because without
+  // it there is no decision on the board at all.
+  //
+  // §6 asks starter to be **gentle rather than empty**, and gentleness is now the three-bend route and the 7×7
+  // grid rather than the absence of anything to work out. Wall-heavy for the same reason: a branch that dies in
+  // stone is one the player can point at.
   //
   // Three bends is a floor rather than a preference: two binary pieces make four configurations and every dark
   // one is a tap from done or solved by tapping both, so `openingIsHonest` refuses the lot.
-  //
-  // `fiddleProof` is on here, which it was not when this tier was gentler. A board whose ladder is never
-  // needed is a board without a ladder, and playtesting said the bottom two tiers were not puzzles yet.
   starter: {
     size: 7,
     turns: 3,
     interactive: 1,
-    branchDepth: 0,
+    branchDepth: 1,
     fiddleProof: true,
     modes: ["wallHeavy"],
-    techniqueCap: "deadEnd",
+    techniqueCap: "neverReached",
   },
-  // One addition: **something standing in the wrong ray.** Branches may turn, which puts a mirror off the
-  // winning beam's line, and a bend may slide instead of turning. Both are the same purchase in §6.3's
-  // currency — forks — and both need a cap that can prove a piece irrelevant, which is what `neverReached` is.
-  //
-  // This is where the family stops being a chain of "the light visibly dies there" (§6.1), so it is where the
-  // route also gets longer: the two arrive together because a shadow needs a leg to sit on.
+  // One addition: **a piece that slides**, and a bend more of route to hide it on. "Is it in the way, and which
+  // cell" is a different question from "which way round", and a slider is the cheapest fork in the family — its
+  // wrong setting is *"as if the piece were not there"*, so the branch is the beam's own line carrying on.
   junior: {
     size: 8,
-    turns: 5,
-    interactive: 0.85,
+    turns: 4,
+    interactive: 1,
     branchDepth: 1,
     sliders: 1,
     slidingStops: 3,
@@ -97,6 +101,10 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
   // One addition: **the diagonal cut** (§11.8). The bend would have carried a mirror anyway; what changes is
   // that its answer is a half-step and its stop set reaches 67.5° the other way, so the ray leaves the rows and
   // columns the player can read. A swap rather than an extra piece, which is rule 8's cost model.
+  //
+  // This is also where the cap reaches the exhaustive pair, because a diagonal ray is the first thing the
+  // shrine-side elimination cannot follow (§11.12 measured what that costs: `exitRun` falls and `onlySurvivor`
+  // does the work instead).
   //
   // The route also folds through its own line from here up (§5.2). A crossed square is the one square on the
   // board that is provably empty — anything standing there would have turned the first pass — and it costs no

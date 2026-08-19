@@ -29,12 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The hardest light puzzles now give some mirrors a third position, and their door needs the light through two sockets rather than one.
 - Light puzzles fold back through their own path again from the third difficulty up, so the beam crosses itself on the way to the shrine — a longer route on the same board.
 - Wrong turns on the hardest light puzzles can bend twice before they die, so following one takes you further from where you started.
+- The first two light puzzles are real puzzles now. Every difficulty puts a piece where the beam never goes, so following the light and turning whatever it hits no longer finishes a board — you have to work out which pieces matter.
 
 ### Fixed
 
 - A light-puzzle hint said the light "runs straight into stone" when a mirror had in fact sent it back the way it came, into the sun disc. It now says so.
 - The light beam was drawn with gaps in it: any square the light crossed travelling rightward was only drawn half way. The beam is continuous now.
 - The hardest light puzzles took a noticeable moment to appear. They are about three times quicker now.
+- Turning a mirror on a big light puzzle was slow and stuttery. Every tap was working out a hint nobody had asked for; it now waits to be asked, and a tap is about ten times quicker.
 
 ## 0.36.0 - 2026-08-17
 

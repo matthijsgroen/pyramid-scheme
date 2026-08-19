@@ -220,13 +220,17 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Route            | Tappable share | Branch turns | Fork | Pieces | Configurations | Cap | Modes            |
-| ------- | ---- | ---------------- | -------------- | ------------ | ---- | ------ | -------------- | --- | ---------------- |
-| starter | 7×7  | 3 bends          | 1.0            | 0            | 2    | 3.0    | 8              | T3  | wall-heavy       |
-| junior  | 8×8  | 5 bends          | 0.85           | 1            | 2    | 5.4    | 73             | T7  | slider-heavy     |
-| expert  | 8×8  | 5 bends, 1 cross | 0.9            | 1            | 2    | 7.2    | 269            | T8  | slider-heavy     |
-| master  | 9×9  | 6 bends, 1 cross | 1.0            | 1            | 2    | 10.7   | 2 829          | T8  | 2 of three, trap |
-| wizard  | 9×9  | 6 bends, 1 cross | 1.0            | 2            | 3    | 13.1   | 72 612         | T8  | 2 of three, trap |
+| Tier    | Grid | Route            | Tappable share | Branch turns | Fork | Pieces | Off route | Configurations | Cap | Modes            |
+| ------- | ---- | ---------------- | -------------- | ------------ | ---- | ------ | --------- | -------------- | --- | ---------------- |
+| starter | 7×7  | 3 bends          | 1.0            | 1            | 2    | 5.1    | 2.1       | 36             | T7  | wall-heavy       |
+| junior  | 8×8  | 4 bends          | 1.0            | 1            | 2    | 5.6    | 1.6       | 82             | T7  | slider-heavy     |
+| expert  | 8×8  | 5 bends, 1 cross | 0.9            | 1            | 2    | 7.1    | 2.1       | 247            | T8  | slider-heavy     |
+| master  | 9×9  | 6 bends, 1 cross | 1.0            | 1            | 2    | 10.4   | 4.8       | 2 502          | T8  | 2 of three, trap |
+| wizard  | 9×9  | 6 bends, 1 cross | 1.0            | 2            | 3    | 12.9   | 7.3       | 70 055         | T8  | 2 of three, trap |
+
+**"Off route" is the column that decides whether a tier is a puzzle at all**, and every tier now has one: a piece
+the winning beam never touches cannot be settled by watching where the light dies, so `deadEnd` alone does not
+finish the board and there is no trail to follow (§11.22).
 
 "On the route" is the count that matters and the one that was missing: pieces that can stand in the winning
 beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the player a
@@ -244,11 +248,13 @@ counts at once. Four separate dials used to do that job.
 top tier is expensive to build — 636ms a board, 2.4s at worst — and the answer to that is
 `docs/offline-puzzle-seeds.md`, not a smaller tier.
 
-**The bottom of the ladder was moved down a rung after playtesting**, which is the one thing in this table that
-came from playing rather than measuring: the family did not start feeling like a puzzle until the third tier, so
-each tier took the dials of the one above it. What that costs is starter's old gentleness — it is `fiddleProof`
-now, and it carries stone — and §6's demand that starter be _gentle rather than empty_ is met by keeping it to
-three bends and the `deadEnd` cap rather than by letting a run of getting-warmer taps finish it.
+**The bottom of the ladder came from playing rather than measuring** (§11.22): the family did not start feeling
+like a puzzle until the third tier, and shifting each tier's dials down one rung did not fix it, because the tier
+below was not a puzzle either. What fixed it was giving starter a piece off the route — so `deadEnd` is no longer
+any tier's cap, and the tutorial tier is gone.
+
+§6's demand that starter be _gentle rather than empty_ is now met by the three-bend route and the 7×7 grid rather
+than by there being nothing to work out.
 
 It has been got wrong three times, each time in a way that read right in the table and played wrong: first with
 junior boards _smaller_ than starter ones; then when two goals added four pieces on top of baselines that
@@ -2679,3 +2685,53 @@ A board's configuration space is what the exhaustive rungs enumerate, and a hint
 tier's hint latency rises with everything above — measured at 500ms before the lift on a 20 000-configuration
 board, and the space is now three times that. A seed list does not help a hint; shipping the solve alongside the
 seed does, which is why `docs/offline-puzzle-seeds.md` argues for the artifact carrying both.
+
+### 11.22 What playing it found that measuring did not
+
+Two things, and neither was visible in any number the tier table carried.
+
+#### "It is just: follow the mirror trail"
+
+The first two tiers were not puzzles. Both settled on `deadEnd` alone — "the light visibly dies there" — which
+means the whole board yields to one loop: look at where the beam stops, turn the mirror it hits, look again.
+There is no decision anywhere in that, and nothing in the measurements said so, because every column the table
+carried (pieces, configurations, route length) was perfectly healthy.
+
+**Shifting each tier's dials down a rung did not fix it**, which is worth recording because it was the obvious
+move and it was wrong: the tier below was not a puzzle either, so starter inherited a trail from junior. The
+measurement that settles it is a single column — how many boards `deadEnd` alone can finish:
+
+| candidate starter                       | pieces | configurations | settles on `deadEnd` alone |
+| --------------------------------------- | ------ | -------------- | -------------------------- |
+| as it was                               | 3.0    | 8              | **40 of 40**               |
+| the shift: junior's dials               | 4.0    | 16             | **40 of 40**               |
+| three-stop forks instead                | 3.0    | 17             | **40 of 40**               |
+| a branch that turns, `neverReached` cap | 5.1    | 36             | **0 of 40**                |
+
+The third row is the useful negative result. A three-stop fork doubles the configuration space and changes
+nothing: more to choose among, identical solving mode, because every wrong stop still visibly dies. **Choice in
+the configuration space is not the same as a decision**, and only the last row buys one.
+
+So starter carries a piece off the winning beam's line, which means its cap has to clear `deadEnd` — and
+therefore **`deadEnd` is no longer any tier's ceiling and the tutorial tier is gone.** Starter's first skill is
+now the family's own, _"this piece does not matter"_ (§4.2), which is the only conclusion in any family that
+reads that way. Gentleness is the small grid and the short route instead.
+
+One dial mattered more than expected: at a tappable share of 0.5, seven starter boards in 40 fall back to a
+trail, because a branch mirror drawn as a given redirects a wrong ray rather than standing in it. Starter holds
+the share at 1.0 for that reason.
+
+#### A tap was paying for a hint nobody had asked for
+
+Rotating a mirror on a top-tier board was slow and stuttery, which no test would have caught and no generation
+measurement could have.
+
+The hint was derived eagerly as the board changed, and **a hint is a full solve** — tens of thousands of
+configurations at the top tier. So every tap paid for a string the player had not asked to read, and the idle
+nudge firing paid for it again, which is where the stutter came from. Measured: **185ms a tap against 19ms**
+once the derivation waits to be asked.
+
+`PuzzleFamilyShell` now accepts a function for its `hint`, resolved only once revealed, so this is fixed for
+every family rather than for this one. Every family derived its hint eagerly; lightbeam is only where the solver
+got expensive enough to notice. And the guard is a spec that taps a wizard board and asserts the board answers,
+because the honest test of an interaction cost is the interaction.
