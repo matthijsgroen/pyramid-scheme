@@ -2162,3 +2162,76 @@ route builder being asked for a path it cannot lay — legs that run off the gri
 cannot be met, a diagonal leg with nowhere to go — and it is asked blind, with no knowledge of the grid it
 has left. A builder that knew its own constraints would cut nearly all of that, and it is a much smaller
 change than replacing the architecture.
+
+### 11.15 Can authored branches carry uniqueness on their own?
+
+A question for the generator §11.14 points at — one that **authors** each wrong branch as a corridor rather than
+deriving a ray and walling it. If every branch is built to die, is the enumeration still needed?
+
+The proposed invariant was: _no branch may join the golden path or reach the shrine, and sharing a cell with
+the golden path is not a join if the beam passes through it in a different direction._
+
+**The second half is right, and for a good reason.** The walk is keyed on `(cell, direction)` — that is what
+`segmentKey` and the loop guard use — so two beams sharing a `(cell, direction)` pair have identical futures.
+Sharing a cell while travelling differently is genuinely not a join. It also sharpens the first half: the
+condition is "shares no `(cell, direction)` with the golden path", not "does not reach the shrine", because a
+branch that rejoins **upstream** of where it left also delivers the light.
+
+**But the pair is not sufficient, and here is the board that proves it.** Found by sampling 400 000 random
+boards, keeping the ones where every single-piece deviation from the winning configuration satisfies the
+invariant, and asking whether the winning path is then unique.
+
+```
+ · · · X ·     S  disc (3,4), facing left      A  (3,0) stops {112.5°, 135°}
+ C # · # ·     X  shrine (0,3)                 B  (2,1) stops {0°, 45°}
+ · B · · ·     #  wall                         C  (1,0) stops {22.5°, 67.5°, 135°}
+ A · · · S
+ · · · · ·
+```
+
+Golden: left along row 3, **A** turns it up, up to **C**, C bends it down-right into **B**, B bends it
+up-right to the shrine. Every one of the four single-piece deviations is safe — three escape the frame and
+one is absorbed by the disc it came from, and none of them rejoins:
+
+| deviation      | end      | rejoins |
+| -------------- | -------- | ------- |
+| A → other stop | escapes  | no      |
+| B → other stop | absorbed | no      |
+| C → 67.5°      | escapes  | no      |
+| C → 135°       | escapes  | no      |
+
+And yet the configuration that moves **all three** lights the shrine by a second, shorter path: A's wrong
+stop sends the beam up-right straight into **B's cell**, and B at _its_ wrong stop bends it to the shrine,
+skipping C entirely. Two branches that each die, combining into a route.
+
+**The mechanism is the whole finding.** A branch that enters a cell holding a **tappable** piece is not one
+corridor — it is one corridor per stop of that piece, because `(cell, direction)` determines the future only
+where the cell's content is fixed. Authoring covers the stop the branch was traced against. The others exist,
+and the invariant says nothing about them.
+
+Rate: **1 in 949** boards that satisfied the invariant, over 400 000 sampled. Two caveats pointing opposite
+ways: random boards mostly throw their branches off the frame, which is why only 949 of 6 823 satisfied the
+invariant at all — and an authoring generator aims branches at interesting territory on purpose, so the real
+rate should be **higher** than this floor rather than lower. At shipping scale 0.1% is dozens of boards with
+two answers.
+
+#### The sufficient rule, and why it is also the cheap one
+
+> While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every stop
+> of that piece and require every continuation to die as well.
+
+That restores "the future is determined" everywhere, so uniqueness becomes a property of the construction. It
+is more work than the invariant above and **less** than the gate it would replace: the recursion walks the
+**reachable deviation tree**, and today's `routeIsUnique` walks the whole product. Once a beam dies, the
+settings downstream of it cannot matter, which is exactly what makes enumerating 37 350 wizard configurations
+wasteful — the tree is roughly the golden mirrors times their fork size, plus a recursion wherever a branch
+meets a tappable cell, which is low hundreds of walks rather than tens of thousands.
+
+So the authored generator can plausibly hold uniqueness **by construction and more cheaply than the current
+gate**, while keeping the reuse — a branch running through a golden mirror's cell, or past a slider — that
+makes the board dense and keeps nearly every mirror the player's to touch. The alternative, branches built
+only from givens and never touching a tappable cell, makes the proof trivial and fills the board with scenery
+instead: the fixed count grows as mirrors × fork × branch depth while the tappable count stays at the golden
+path's, so three-stop forks with one turn a branch put two fixed mirrors on the board for every live one.
+
+**The board above is the test any such generator has to pass.**
