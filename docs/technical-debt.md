@@ -49,18 +49,18 @@ carve-out — not debt.
 
 ---
 
-## Design debt: two tiers owe a clock
+## Design debt: futoshiki wizard owes a retune
 
-`PUZZLE_FAMILIES.md` §3.2 caps a board at 6 minutes with a 3-minute target, and the
-ladder tables predate the cap:
+`PUZZLE_FAMILIES.md` §3.2 caps a board at 6 minutes with a 3-minute target, and one ladder
+table predates the cap: **futoshiki wizard**, a 7×7 with the full technique ladder, is ~45
+minutes by hand. The dial is the grid rather than the cap, and the family doc §5 carries
+the design question that makes it non-trivial — the top rungs only _fire_ at 7×7, so the
+honest answer may be that this family's ceiling is master's 6×6 and wizard's addition
+becomes something other than squares.
 
-- **Futoshiki wizard is over it, measured** — a 7×7 with the full technique ladder is
-  ~45 minutes by hand. Retune, and the dial is the grid rather than the cap (family doc
-  §5 says why, and what the honest answer might be).
-- **Sumplete has never been timed** — 7×7 at master and wizard is the most bookkeeping
-  of any built family. Time it before authoring more of it into the world.
-
-Balance scale and lightbeam are in budget and are the calibration to retune against.
+Every other built family is in budget on play, Sumplete's 7×7 included. Balance scale and
+lightbeam are the calibration to retune against; the shell's solved banner now reports the
+duration, so measuring a candidate is a lab session rather than a project.
 
 ---
 

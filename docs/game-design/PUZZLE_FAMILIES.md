@@ -545,10 +545,16 @@ Where the built families stand against the budget, on the owner's own play:
 | Balance scale | **in budget**       | Reference for the shape a ladder should have                                   |
 | Lightbeam     | **in budget**       | Reference for the shape a ladder should have                                   |
 | Cross-sum     | in budget (short)   | Its whole range is under a minute                                              |
-| Sumplete      | **unknown**         | Untimed and suspected long at the top — measure before authoring more of it    |
+| Sumplete      | **in budget**       | Cleared on play, 7×7 top tier included                                         |
 | Futoshiki     | **over, at wizard** | ~45 min on a 7×7 with the full ladder; the tier needs retuning (family doc §5) |
 
-Two families are therefore the calibration and one is the outstanding job.
+**Futoshiki is the only family over the line**, which is worth saying plainly: the budget
+did not turn out to be a sweep across the catalogue, and the two families with a 7×7 top
+tier land on opposite sides of it. Sumplete's 49 cells are 49 independent keep/strike
+decisions, each readable from its own row and column; futoshiki's 49 squares are one
+constraint web where a candidate held in the corner matters in the middle. **Bookkeeping
+that stays local is cheap; bookkeeping that couples is what runs the clock out.** That is
+the thing to look at first when judging an unbuilt family's duration.
 
 | Family                 | UI (web/mobile) | Scaling                  | Generation                  | Solve time / variance     |
 | ---------------------- | --------------- | ------------------------ | --------------------------- | ------------------------- |
