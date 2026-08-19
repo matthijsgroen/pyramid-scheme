@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The hardest light puzzles now give some mirrors a third position, and their door needs the light through two sockets rather than one.
 - Light puzzles fold back through their own path again from the third difficulty up, so the beam crosses itself on the way to the shrine — a longer route on the same board.
 - Wrong turns on the hardest light puzzles can bend twice before they die, so following one takes you further from where you started.
+- The second light difficulty has a longer route, and the third a wider board, so each one feels like a step up from the last rather than the same puzzle again.
 - The first two light puzzles are real puzzles now. Every difficulty puts a piece where the beam never goes, so following the light and turning whatever it hits no longer finishes a board — you have to work out which pieces matter.
 
 ### Fixed

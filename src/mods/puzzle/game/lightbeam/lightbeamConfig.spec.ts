@@ -6,7 +6,7 @@ import { routeIsUnique } from "./lightbeamGeometry"
 import { allPieceOptions, cellKey, isLit, pieceCells, restingState, traceBeam } from "./beam"
 import { solveLightbeamByTechniques } from "./techniques"
 
-const SEEDS = 6
+const SEEDS = 12
 
 // Memoised: a wizard board costs the better part of a second to build, and every describe below wants the same
 // ones. Without this the file spends minutes regenerating identical boards.
@@ -115,11 +115,18 @@ describe("the tier ramp", () => {
     }
   })
 
-  it("grows the piece count every tier", () => {
+  /**
+   * Non-decreasing rather than strictly growing, and expert is why: its addition is the **diagonal cut**, which
+   * is vocabulary rather than quantity — it swaps a mirror's answer for a half-step rather than adding a piece
+   * (§11.8 rule 8). It shares junior's route length, so the two sit close on this column by design. What must
+   * never happen is a tier getting *smaller*, which is the mistake this has caught twice.
+   */
+  it("never shrinks the piece count", () => {
     for (let step = 1; step < measured.length; step++)
-      expect(measured[step].pieces).toBeGreaterThan(measured[step - 1].pieces)
+      expect(measured[step].pieces).toBeGreaterThanOrEqual(measured[step - 1].pieces)
   })
 
+  /** The space, though, does have to grow every tier — it is the honest measure of how much board there is. */
   it("grows the configuration space every tier", () => {
     for (let step = 1; step < measured.length; step++)
       expect(measured[step].space).toBeGreaterThan(measured[step - 1].space)

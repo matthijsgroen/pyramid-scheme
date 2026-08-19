@@ -84,12 +84,16 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     modes: ["wallHeavy"],
     techniqueCap: "neverReached",
   },
-  // One addition: **a piece that slides**, and a bend more of route to hide it on. "Is it in the way, and which
-  // cell" is a different question from "which way round", and a slider is the cheapest fork in the family — its
-  // wrong setting is *"as if the piece were not there"*, so the branch is the beam's own line carrying on.
+  // One addition: **a piece that slides**, and the route length to hide it on. "Is it in the way, and which cell"
+  // is a different question from "which way round", and a slider is the cheapest fork in the family — its wrong
+  // setting is *"as if the piece were not there"*, so the branch is the beam's own line carrying on.
+  //
+  // Five bends rather than four because four played as barely more than starter: the extra bend is what makes the
+  // two tiers feel different, and it roughly triples the configuration space (82 to 274) because each bend brings
+  // its own branch and its own decoy.
   junior: {
     size: 8,
-    turns: 4,
+    turns: 5,
     interactive: 1,
     branchDepth: 1,
     sliders: 1,
@@ -106,16 +110,20 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
   // shrine-side elimination cannot follow (§11.12 measured what that costs: `exitRun` falls and `onlySurvivor`
   // does the work instead).
   //
+  // A grid wider than junior's, for capacity rather than difficulty (§6.2): the diagonal needs somewhere to run,
+  // and a branch that turns needs somewhere to put its mirror. Note it is **not** another bend — measured, six
+  // bends on an 8×8 gives *fewer* pieces than five, because the route eats the room the branches needed.
+  //
   // The route also folds through its own line from here up (§5.2). A crossed square is the one square on the
   // board that is provably empty — anything standing there would have turned the first pass — and it costs no
   // piece at all: it buys route length on the same grid. A character dial rather than a difficulty one, which is
   // why it arrives beside the cut rather than instead of it.
   expert: {
-    size: 8,
+    size: 9,
     turns: 5,
     cutMirrors: 1,
     crossings: 1,
-    interactive: 0.9,
+    interactive: 1,
     branchDepth: 1,
     sliders: 1,
     slidingStops: 3,

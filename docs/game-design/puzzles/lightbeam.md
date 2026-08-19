@@ -220,13 +220,13 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Route            | Tappable share | Branch turns | Fork | Pieces | Off route | Configurations | Cap | Modes            |
-| ------- | ---- | ---------------- | -------------- | ------------ | ---- | ------ | --------- | -------------- | --- | ---------------- |
-| starter | 7×7  | 3 bends          | 1.0            | 1            | 2    | 5.1    | 2.1       | 36             | T7  | wall-heavy       |
-| junior  | 8×8  | 4 bends          | 1.0            | 1            | 2    | 5.6    | 1.6       | 82             | T7  | slider-heavy     |
-| expert  | 8×8  | 5 bends, 1 cross | 0.9            | 1            | 2    | 7.1    | 2.1       | 247            | T8  | slider-heavy     |
-| master  | 9×9  | 6 bends, 1 cross | 1.0            | 1            | 2    | 10.4   | 4.8       | 2 502          | T8  | 2 of three, trap |
-| wizard  | 9×9  | 6 bends, 1 cross | 1.0            | 2            | 3    | 12.9   | 7.3       | 70 055         | T8  | 2 of three, trap |
+| Tier    | Grid | Route            | Branch turns | Fork | Pieces | Off route | Configurations | Cap | Modes            |
+| ------- | ---- | ---------------- | ------------ | ---- | ------ | --------- | -------------- | --- | ---------------- |
+| starter | 7×7  | 3 bends          | 1            | 2    | 5.1    | 2.1       | 36             | T7  | wall-heavy       |
+| junior  | 8×8  | 5 bends          | 1            | 2    | 7.3    | 2.4       | 274            | T7  | slider-heavy     |
+| expert  | 9×9  | 5 bends, 1 cross | 1            | 2    | 7.6    | 2.6       | 331            | T8  | slider-heavy     |
+| master  | 9×9  | 6 bends, 1 cross | 1            | 2    | 10.4   | 4.8       | 2 502          | T8  | 2 of three, trap |
+| wizard  | 9×9  | 6 bends, 1 cross | 2            | 3    | 12.9   | 7.3       | 70 055         | T8  | 2 of three, trap |
 
 **"Off route" is the column that decides whether a tier is a puzzle at all**, and every tier now has one: a piece
 the winning beam never touches cannot be settled by watching where the light dies, so `deadEnd` alone does not
@@ -240,13 +240,14 @@ Piece and configuration counts are measured means over 40 seeds a tier, **per bo
 is asserted in `lightbeamConfig.spec.ts`, in aggregate over a tier rather than board by board — with modes drawn
 per board, one wizard grid can legitimately out-measure another, and it is the tier that has to grow.
 
-**The tappable share is the ramp through the middle of the table** (§11.19). A given costs a cell, contributes
-nothing to the configuration space and authors no corridor, so lowering the share thins a board on all three
-counts at once. Four separate dials used to do that job.
-
 **Generation time is not a constraint on this table.** It used to be, and §11.21 records what that cost. The
-top tier is expensive to build — 636ms a board, 2.4s at worst — and the answer to that is
+top tier is expensive to build — 599ms a board, 4.5s at worst — and the answer to that is
 `docs/offline-puzzle-seeds.md`, not a smaller tier.
+
+**Every tier holds the tappable share at 1.0**, so `interactive` is a knob the table does not currently turn.
+It is kept because it is the cheapest lever there is when one is needed — a given costs a cell, contributes
+nothing to the configuration space and authors no corridor, so lowering it thins a board on all three counts at
+once. What the ramp actually runs on is **route length and grid**, plus the top tier's fork.
 
 **The bottom of the ladder came from playing rather than measuring** (§11.22): the family did not start feeling
 like a puzzle until the third tier, and shifting each tier's dials down one rung did not fix it, because the tier
@@ -2735,3 +2736,31 @@ once the derivation waits to be asked.
 every family rather than for this one. Every family derived its hint eagerly; lightbeam is only where the solver
 got expensive enough to notice. And the guard is a spec that taps a wizard board and asserts the board answers,
 because the honest test of an interaction cost is the interaction.
+
+#### And junior needed the bend, which moved expert's grid
+
+Played after the starter fix: junior read as barely more than starter. Four bends against three is not a tier's
+worth of difference when both are otherwise the same board. Five bends is — it roughly triples the configuration
+space, from 82 to 274, because each bend brings its own branch and its own decoy with it.
+
+That put junior **past** expert, which is the interesting part. Expert's addition is the diagonal cut, which is
+vocabulary rather than quantity: rule 8's cost model spends it by swapping a mirror's answer for a half-step
+rather than by adding a piece. So expert took a wider grid instead — capacity, not difficulty (§6.2) — because a
+diagonal ray needs somewhere to run and a branch that turns needs somewhere to put its mirror.
+
+Measured, and worth knowing before anyone reaches for `turns` again: **six bends on an 8×8 gives _fewer_ pieces
+than five** (7.0 against 7.1), because the route eats the room the branches needed. Route length and grid size
+are not interchangeable, and past a point they compete.
+
+| tier    | pieces | off route | configurations | crossed squares | trail-solvable | attempts a board |
+| ------- | ------ | --------- | -------------- | --------------- | -------------- | ---------------- |
+| starter | 5.1    | 2.1       | 36             | 0.00            | 0 of 40        | 1.9              |
+| junior  | 7.3    | 2.4       | 274            | 0.00            | 0 of 40        | 5.2              |
+| expert  | 7.6    | 2.6       | 331            | 1.18            | 0 of 40        | 2.6              |
+| master  | 10.4   | 4.8       | 2 502          | 1.63            | 0 of 40        | 3.8              |
+| wizard  | 12.9   | 7.3       | 70 055         | 1.43            | 1 of 40        | 7.5              |
+
+The piece column is asserted non-decreasing rather than strictly growing, because junior and expert share a route
+length by design and the difference between them is a word rather than a piece. The configuration space is the
+column that must grow every tier, and it does — and the trail column is the one that matters, because it is what
+says every tier is a puzzle.
