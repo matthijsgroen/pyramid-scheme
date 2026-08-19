@@ -1482,9 +1482,8 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
    lists come in two flavours, and rule 1 asks for many. — **its drawing is gated, §11.13**, and the answer
    is a tick at each stop the piece is not in, which is also the first thing in the family that would let a
    player read a fork without tapping it (so it owes rule 5 an argument). The generator and the measurement
-   are still to build. **Inserted here after step 4, so what used to be step 5 is now step 6.** — the
-   drawing is **built**: one mirror glyph, and a tangential tick at each stop the piece is not in.
-   **Rule 5 is overturned by it**, and rule 5's own text now says so.
+   come before traps. Its drawing is one mirror glyph with a tangential tick at each stop the piece is not
+   in, and **rule 5 is overturned by it** — rule 5's own text says so.
 6. **Traps** (§11.1), which need the second routes this supplies.
 
 **Three things paper cannot settle, and they were the whole remaining risk — all three are now closed:**
@@ -2108,16 +2107,11 @@ the same way: rule 2 is now checked over every list rather than over the cut pie
 setting fails" is scoped to the mirrors the winning beam actually crosses — a decoy's setting is free by
 construction, which is what `neverReached` proves, and asserting otherwise was a claim about the wrong pieces.
 
-#### What is still unbuilt, and in what order
+#### One thing this section decided and did not spend
 
-1. ~~**The `Blocker` change and the tick glyph** — the drawing, which this section has now gated.~~ **Built**,
-   and what it found is above.
-2. ~~**The generator authoring varied lists.**~~ **Built** — `mirrorStops`, wizard only, and what it measured
-   is above. What is left of it: **master at three stops**, which is measured and affordable but would be a
-   second new word at a tier that has just had one (§6.4).
-3. ~~**The measurement.**~~ **Done, above.** Yield did not move (40/40 everywhere), the technique cap did
-   not move, `MAX_ATTEMPTS` did not need to move — what moved was generation time, and it was paid for with
-   a piece.
+**Master at three stops is measured and affordable** — 210ms worst, 23 distinct forks — and it is not taken,
+because master's addition is already the diagonal cut and §6.4 allows one new word a tier. The numbers are in
+the table above rather than needing a rerun, for whenever the ladder is next re-cut.
 
 And one thing to settle before step 2 rather than after: **rule 5.** If a fork is drawn rather than
 discovered, the piece stops paying for itself in taps and starts paying in ink, and §6.3's "seen from the
@@ -2235,3 +2229,28 @@ instead: the fixed count grows as mirrors × fork × branch depth while the tapp
 path's, so three-stop forks with one turn a branch put two fixed mirrors on the board for every live one.
 
 **The board above is the test any such generator has to pass.**
+
+#### Interactive against static is a weight, not a count
+
+Which mirrors are the player's has been a **count** for the family's whole life — `setMirrors`, how many bends
+are givens — and it wants to be a **share**, because what it controls is not a quantity of pieces but which of
+the two designs above a board is built to. A given costs a cell and reads as scenery, contributes nothing to
+the configuration space, and may be passed through by a branch freely, because a fixed face keeps
+`(cell, direction)` determining the future. A tappable mirror is the opposite on all three counts, and every
+branch that touches one owes the recursion.
+
+So the share is a **continuous dial between the two designs, choosable per tier** rather than once for the
+codebase. Low, and branches are built of givens, uniqueness is nearly free, and the board fills with scenery —
+the static count grows as mirrors × fork × branch depth while the live count stays at the golden path's, so
+three-stop forks with one turn a branch leave two static mirrors for every live one. High, and branches reuse
+the pieces already on the board — a golden mirror's back face, a slider's vacated cell — so the board stays
+dense and every glyph is worth touching.
+
+It is therefore also the family's **main lever on generation cost**, since it drives the configuration space
+and the recursion depth at once, and it is the knob to set before any other. One floor holds whatever the
+weight says: **three tappable pieces**, which is where §5's opening rules already put the family's floor and
+why a starter board carries three bends rather than two.
+
+The drawing already carries the distinction, which is what makes a low share survivable rather than confusing:
+a white outline says a piece is the player's and anything else says it is part of the puzzle (§9). What a low
+share costs is play, not legibility — fewer things to try, on a board with more to look at.
