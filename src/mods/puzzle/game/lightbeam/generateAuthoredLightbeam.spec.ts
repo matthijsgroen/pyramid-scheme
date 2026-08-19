@@ -589,3 +589,150 @@ describe("wall-heavy", () => {
     }
   })
 })
+
+/**
+ * Slider-heavy: golden bends that slide rather than turn.
+ *
+ * The cheapest fork in the family, and for a structural reason. A turn mirror's wrong setting sends the light
+ * somewhere that has to be closed with authored stone; a slider's wrong setting is *"as if the piece were not
+ * there"*, so the branch is the beam's own line carrying straight on through the cell it vacated. It also asks
+ * a different question — not "which way round" but "is it in the way", and on a three-cell track, "which cell".
+ *
+ * It is the mode that needed the occupancy model: a sliding piece's **absence** from a cell is a fact about its
+ * setting, so a beam crossing an empty track cell has learned something, and `(cell, direction)` alone no
+ * longer determines the future.
+ */
+describe("slider-heavy", () => {
+  const BASE: AuthoredOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    cutMirrors: 1,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = BASE
+  const boards = Array.from({ length: 8 }, (_, seed) =>
+    generateAuthoredLightbeam(size, seed + 1, { ...options, modes: ["sliderHeavy"], sliders: 2 })
+  )
+
+  const sliding = (board: (typeof boards)[number]) => board.movable.filter(piece => piece.kind !== "turnMirror")
+
+  it("delivers exactly the sliders it was asked for, or does not build", () => {
+    for (const board of boards) expect(sliding(board)).toHaveLength(2)
+  })
+
+  it("puts them on the winning beam's line", () => {
+    for (const board of boards) {
+      const onRoute = new Set(traceBeam(board, board.solution).path.map(segment => cellKey(segment.at)))
+      for (const piece of sliding(board)) {
+        expect(piece.kind).toBe("slidingMirror")
+        const cells = pieceCells(piece)
+        expect(cells.some(at => onRoute.has(cellKey(at)))).toBe(true)
+      }
+    }
+  })
+
+  /** The track is contiguous and collinear, or it reads as teleporting rather than sliding. */
+  it("gives them a contiguous straight track", () => {
+    for (const board of boards)
+      for (const piece of sliding(board)) {
+        const cells = pieceCells(piece)
+        const rows = new Set(cells.map(at => at.row))
+        const cols = new Set(cells.map(at => at.col))
+        expect(rows.size === 1 || cols.size === 1).toBe(true)
+        const along = rows.size === 1 ? cells.map(at => at.col) : cells.map(at => at.row)
+        const sorted = [...along].sort((a, b) => a - b)
+        for (let step = 1; step < sorted.length; step++) expect(sorted[step] - sorted[step - 1]).toBe(1)
+      }
+  })
+
+  /** Sliding it out of the way must still run the light out — the branch is just the beam's own line. */
+  it("closes the branch a vacated cell opens", () => {
+    for (const board of boards)
+      board.movable.forEach((piece, index) => {
+        if (piece.kind === "turnMirror") return
+        for (let state = 0; state < piece.stops.length; state++) {
+          if (state === board.solution[index]) continue
+          const config = [...board.solution]
+          config[index] = state
+          expect(traceBeam(board, config).end).not.toBe("lit")
+        }
+      })
+  })
+
+  it("is still unique, and the tree still agrees with the product", () => {
+    for (const board of boards) {
+      const reach = reachableDeviations(board, board.solution)
+      expect(reach?.complete).toBe(true)
+      expect(reach?.winning.size).toBe(1)
+      expect(routeIsUnique(board, allPieceOptions(board))).toBe(true)
+      expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
+    }
+  })
+
+  it("combines with wall-heavy", () => {
+    const board = generateAuthoredLightbeam(9, 3, {
+      ...options,
+      modes: ["wallHeavy", "sliderHeavy"],
+      sliders: 2,
+    })
+    expect(board.modes).toEqual(["wallHeavy", "sliderHeavy"])
+    expect(board.movable.filter(piece => piece.kind !== "turnMirror")).toHaveLength(2)
+    expect(board.fixed.filter(piece => piece.kind === "wall").length).toBeGreaterThan(4)
+    expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
+  })
+})
+
+/**
+ * The three modes have to produce measurably different boards rather than three names for the same board,
+ * which is what phase 3 exists to prove.
+ */
+describe("mode variance", () => {
+  const BASE: AuthoredOptions & { size: number } = {
+    size: 9,
+    turns: 6,
+    cutMirrors: 1,
+    branchDepth: 1,
+    interactive: 1,
+    fiddleProof: true,
+    techniqueCap: "onlySurvivor",
+  }
+  const { size, ...options } = BASE
+  const shape = (modes: AuthoredOptions["modes"], sliders = 2) => {
+    let stone = 0
+    let slid = 0
+    let absorbed = 0
+    for (let seed = 1; seed <= 6; seed++) {
+      const board = generateAuthoredLightbeam(size, seed, { ...options, modes, sliders })
+      stone += board.fixed.filter(piece => piece.kind === "wall").length
+      slid += board.movable.filter(piece => piece.kind !== "turnMirror").length
+      board.movable.forEach((piece, index) => {
+        if (piece.kind !== "turnMirror") return
+        const answer = piece.angles[board.solution[index]]
+        for (const stop of piece.angles) {
+          if (stop === answer) continue
+          const config = [...board.solution]
+          config[index] = piece.angles.indexOf(stop)
+          if (traceBeam(board, config).end === "absorbed") absorbed++
+        }
+      })
+    }
+    return { stone, slid, absorbed }
+  }
+
+  it("tells the modes apart on piece mix and branch shape", () => {
+    const plain = shape([])
+    const wall = shape(["wallHeavy"])
+    const slide = shape(["sliderHeavy"])
+
+    // Wall-heavy is the stone one, and its branches die in stone rather than off the frame.
+    expect(wall.stone).toBeGreaterThan(plain.stone * 2)
+    expect(wall.absorbed).toBeGreaterThan(plain.absorbed)
+    // Slider-heavy is the only one that puts a sliding piece on the board.
+    expect(slide.slid).toBeGreaterThan(0)
+    expect(plain.slid).toBe(0)
+    expect(wall.slid).toBe(0)
+  })
+})

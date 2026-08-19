@@ -22,7 +22,10 @@ const LightbeamComponent: FamilyPlugin<LightbeamGrid>["Component"] = ({ puzzle, 
 export const LIGHTBEAM_AUTHORED = "authored"
 
 /** Which modes a lab variant asks for, beyond the plain authored board. */
-const VARIANT_MODES: Record<string, LightbeamMode[]> = { "authored wall-heavy": ["wallHeavy"] }
+const VARIANT_MODES: Record<string, LightbeamMode[]> = {
+  "authored wall-heavy": ["wallHeavy"],
+  "authored slider-heavy": ["sliderHeavy"],
+}
 
 export const generateLightbeamFor = (
   difficulty: Difficulty | undefined,
@@ -32,7 +35,13 @@ export const generateLightbeamFor = (
   const { size, ...options } = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
   const modes = variant ? VARIANT_MODES[variant] : undefined
   if (variant === LIGHTBEAM_AUTHORED || modes)
-    return generateAuthoredLightbeam(size, seed, { ...options, modes, branchDepth: 1, interactive: 1 })
+    return generateAuthoredLightbeam(size, seed, {
+      ...options,
+      modes,
+      branchDepth: 1,
+      interactive: 1,
+      sliders: 2,
+    })
   return generateLightbeam(size, seed, options)
 }
 

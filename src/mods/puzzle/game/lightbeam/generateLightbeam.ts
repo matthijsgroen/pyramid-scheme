@@ -178,6 +178,8 @@ export type LightbeamGate =
   /** Authored generation only: a branch reached the route, the shrine or a tappable cell with nowhere to
       stand stone before it. */
   | "noCorridor"
+  /** Authored generation only: a mode asked for a sliding piece and no track fitted. */
+  | "noTrack"
 
 // Generation is route-then-obstruct, per docs/game-design/puzzles/lightbeam.md §5: lay a beam from disc
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could
@@ -520,7 +522,7 @@ type Draft = {
  * stops is on or off, and three is *which* — the player has to work out where the piece belongs, not
  * merely whether it is in the way.
  */
-const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] => {
+export const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] => {
   // `across` is always a square direction: everything that asks for a track — a sliding mirror at a bend, a
   // sliding wall on a straight, a door's open stop — is drawn from a square leg on purpose, so the run this
   // builds is a row or a column and the spec that asserts as much stays true (§9, and §11.12).

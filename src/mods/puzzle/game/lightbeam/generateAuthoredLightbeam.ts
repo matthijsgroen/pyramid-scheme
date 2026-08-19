@@ -3,6 +3,9 @@ import {
   allPieceOptions,
   cellKey,
   directionStep,
+  pieceCells,
+  pieceOccupant,
+  pieceStateCount,
   insideGrid,
   isHalfStep,
   isLit,
@@ -12,6 +15,7 @@ import {
   SQUARE_DIRECTIONS,
   stepCell,
   TURN_ANGLES,
+  type Blocker,
   type CellRef,
   type Direction,
   type FixedPiece,
@@ -35,6 +39,7 @@ import {
   routeIsUnique,
   runsDiagonally,
   stepsToEdge,
+  trackRuns,
   type LightbeamDials,
   type LightbeamGate,
   type LightbeamOptions,
@@ -113,6 +118,15 @@ export type AuthoredOptions = LightbeamOptions & {
    * silently would make the whole pool decorative while every measurement still looked fine.
    */
   modes?: readonly LightbeamMode[]
+  /**
+   * **How many golden bends slide rather than turn**, when slider-heavy is on.
+   *
+   * The cheapest fork in the family. A turn mirror's wrong setting sends the light somewhere that has to be
+   * closed; a slider's wrong setting is *"as if the piece were not there"*, so the branch is the beam's own
+   * line carrying straight on and there is no corridor to author. It also asks a different question — not
+   * "which way round" but "is it in the way", and with a three-cell track, "which cell".
+   */
+  sliders?: number
   /**
    * **Turns per authored branch.** 0 is a straight run to stone or the frame.
    *
@@ -341,8 +355,10 @@ type Authoring = {
   goldenCells: Set<string>
   /** `(cell, direction)` pairs the golden beam owns. Sharing one is a join, whatever cell it happens in. */
   goldenSegments: Set<string>
-  /** Which tappable piece stands in a cell, and what it can be set to — the fan-out the recursion walks. */
-  tappable: Map<string, { piece: number; angles: readonly MirrorAngle[] }>
+  /** The tappable pieces, in board order. `occupancy` says which of them could be in which cell. */
+  movable: MovablePiece[]
+  /** Rebuilt whenever a piece is added, because a corridor must be closed against the finished list. */
+  occupancy: Occupancy
   /** Mirrors the player cannot touch. A branch passes through one deterministically, and may. */
   givens: Map<string, MirrorAngle>
   walls: Set<string>
@@ -354,6 +370,86 @@ type Authoring = {
    * that". This turns the preference round.
    */
   preferStone: boolean
+}
+
+/**
+ * Which pieces could stand in a cell, and in which of their states.
+ *
+ * **A sliding piece's absence from a cell is itself information**, and that is the whole reason this exists.
+ * A turn mirror is in its one cell whatever state it is in, so the cell is always occupied and only the angle
+ * varies. A sliding piece is in a given cell in exactly one state and *out of it* in all the others — so
+ * "there is nothing here" is a fact about that piece's setting, and a beam crossing the cell has learned it.
+ *
+ * Both walks in this file resolve cells through this, so there is one model of what a board contains rather
+ * than two that can drift.
+ */
+type Occupancy = Map<string, { piece: number; here: ReadonlySet<number> }[]>
+
+const occupancyOf = (movable: readonly MovablePiece[]): Occupancy => {
+  const map: Occupancy = new Map()
+  const add = (key: string, piece: number, here: ReadonlySet<number>) => {
+    map.set(key, [...(map.get(key) ?? []), { piece, here }])
+  }
+  movable.forEach((piece, index) => {
+    if (piece.kind === "turnMirror") {
+      // Every state puts it in the same cell.
+      add(cellKey(piece.at), index, new Set(piece.angles.map((_, state) => state)))
+      return
+    }
+    piece.stops.forEach((at, state) => add(cellKey(at), index, new Set([state])))
+  })
+  return map
+}
+
+/** What a cell holds, given what the walk has already committed the pieces to. */
+type Resolved =
+  | { kind: "empty" }
+  /** Some piece might be here and the walk has not decided it yet: this is where the tree has to fan out. */
+  | { kind: "undecided"; piece: number; states: number[] }
+  | { kind: "occupied"; blocks: Blocker }
+
+const resolveCell = (
+  occupancy: Occupancy,
+  movable: readonly MovablePiece[],
+  decided: ReadonlyMap<number, number>,
+  key: string
+): Resolved => {
+  const candidates = occupancy.get(key) ?? []
+  // A piece already committed to standing here settles the cell, whatever else might have.
+  for (const candidate of candidates) {
+    const state = decided.get(candidate.piece)
+    if (state !== undefined && candidate.here.has(state))
+      return { kind: "occupied", blocks: pieceOccupant(movable[candidate.piece], state).blocks }
+  }
+  const open = candidates.find(candidate => !decided.has(candidate.piece))
+  if (open)
+    return {
+      kind: "undecided",
+      piece: open.piece,
+      states: Array.from({ length: pieceStateCount(movable[open.piece]) }, (_, state) => state),
+    }
+  return { kind: "empty" }
+}
+
+/**
+ * What one state of one piece does to a beam entering `at` travelling `travel`.
+ *
+ * Three outcomes, and the first is the one a mirrors-only board never had: the state may put the piece
+ * **somewhere else**, which leaves this cell empty and the beam carrying straight on. That is what makes a
+ * slider the cheapest fork in the family — its wrong setting is usually "as if the piece were not there", so
+ * the branch is the beam's own line continuing and there is no corridor to author at all.
+ */
+const afterState = (
+  movable: readonly MovablePiece[],
+  piece: number,
+  state: number,
+  at: CellRef,
+  travel: Direction
+): { dies: true } | { dies: false; travel: Direction } => {
+  const occupant = pieceOccupant(movable[piece], state)
+  if (cellKey(occupant.at) !== cellKey(at)) return { dies: false, travel }
+  if (occupant.blocks.kind === "wall") return { dies: true }
+  return { dies: false, travel: reflect(occupant.blocks.angle, travel) }
 }
 
 /**
@@ -398,7 +494,7 @@ const corridorDies = (
   board: Authoring,
   from: CellRef,
   direction: Direction,
-  decided: ReadonlyMap<number, MirrorAngle>,
+  decided: ReadonlyMap<number, number>,
   travelled: ReadonlySet<string>,
   depth: number
 ): boolean => {
@@ -433,20 +529,24 @@ const corridorDies = (
     if (key === cellKey(board.shrine)) return closeHere()
     if (board.goldenSegments.has(segment)) return closeHere()
 
-    const met = board.tappable.get(key)
-    if (met) {
-      const already = decided.get(met.piece)
-      if (already !== undefined) {
-        // The corridor has been through this piece before, so its state is pinned and the future is again
-        // determined — the branch simply bends.
-        travel = reflect(already, travel)
-        at = stepCell(at, travel)
-        continue
-      }
-      const everyStopDies = met.angles.every(angle =>
-        corridorDies(board, at, reflect(angle, travel), new Map(decided).set(met.piece, angle), seen, depth + 1)
-      )
-      return everyStopDies ? true : closeHere()
+    const here = resolveCell(board.occupancy, board.movable, decided, key)
+    if (here.kind === "undecided") {
+      // §11.15's sufficient rule. Every state of the piece, including the ones that take a sliding piece
+      // somewhere else entirely and leave this cell empty — that is a future too.
+      const everyStateDies = here.states.every(state => {
+        const after = afterState(board.movable, here.piece, state, at, travel)
+        // A state that stands a wall here has already killed this continuation.
+        if (after.dies) return true
+        return corridorDies(board, at, after.travel, new Map(decided).set(here.piece, state), seen, depth + 1)
+      })
+      return everyStateDies ? true : closeHere()
+    }
+    if (here.kind === "occupied") {
+      // A wall the player is holding in the way is as good a death as authored stone.
+      if (here.blocks.kind === "wall") return true
+      travel = reflect(here.blocks.angle, travel)
+      at = stepCell(at, travel)
+      continue
     }
 
     const given = board.givens.get(key)
@@ -531,13 +631,12 @@ export const reachableDeviations = (
   /** The answer, only needed to tell a fan-out on the golden path from one a deviated beam met. */
   solution?: readonly number[]
 ): Reach | undefined => {
-  if (puzzle.movable.some(piece => piece.kind !== "turnMirror")) return undefined
+  // A socket changes the board mid-walk, so the determinism this rests on would have to be keyed on
+  // `(cell, direction, firedSet)` rather than `(cell, direction)`. That is switch-heavy's work; declining is
+  // better than pretending, and the caller falls back to `routeIsUnique`.
   if (puzzle.nodes?.length || puzzle.wirings?.length) return undefined
 
-  const byCell = new Map<string, { piece: number; angles: readonly MirrorAngle[] }>()
-  puzzle.movable.forEach((piece, index) => {
-    if (piece.kind === "turnMirror") byCell.set(cellKey(piece.at), { piece: index, angles: piece.angles })
-  })
+  const occupancy = occupancyOf(puzzle.movable)
   const givens = new Map<string, MirrorAngle>()
   const walls = new Set<string>()
   for (const piece of puzzle.fixed) {
@@ -552,7 +651,7 @@ export const reachableDeviations = (
   const explore = (
     from: CellRef,
     direction: Direction,
-    decided: ReadonlyMap<number, MirrorAngle>,
+    decided: ReadonlyMap<number, number>,
     prefix: readonly string[],
     travelled: ReadonlySet<string>,
     deviated: boolean
@@ -581,27 +680,28 @@ export const reachableDeviations = (
         found.winning.add(trail.join(" "))
         return
       }
-      const met = byCell.get(key)
-      if (met) {
-        const already = decided.get(met.piece)
-        if (already === undefined) {
-          // The one place the tree branches: a piece the beam has not been through yet has as many futures
-          // as it has stops, and every one of them is walked.
-          found.forks++
-          if (deviated) found.reuseForks++
-          const answer = solution ? met.angles[solution[met.piece]] : undefined
-          for (const angle of met.angles)
-            explore(
-              at,
-              reflect(angle, travel),
-              new Map(decided).set(met.piece, angle),
-              trail,
-              seen,
-              deviated || (answer !== undefined && angle !== answer)
-            )
-          return
+      const here = resolveCell(occupancy, puzzle.movable, decided, key)
+      if (here.kind === "undecided") {
+        // The one place the tree branches: a piece the beam has not been through yet has as many futures as
+        // it has states, and every one of them is walked — including the states that stand it somewhere else
+        // and leave this cell empty.
+        found.forks++
+        if (deviated) found.reuseForks++
+        const answer = solution ? solution[here.piece] : undefined
+        for (const state of here.states) {
+          const after = afterState(puzzle.movable, here.piece, state, at, travel)
+          const wrong = answer !== undefined && state !== answer
+          if (after.dies) {
+            // The player is holding a wall here. Nothing further to walk, but the stone is spent.
+            continue
+          }
+          explore(at, after.travel, new Map(decided).set(here.piece, state), trail, seen, deviated || wrong)
         }
-        travel = reflect(already, travel)
+        return
+      }
+      if (here.kind === "occupied") {
+        if (here.blocks.kind === "wall") return
+        travel = reflect(here.blocks.angle, travel)
         at = stepCell(at, travel)
         continue
       }
@@ -644,6 +744,44 @@ const pruneStone = (board: Authoring, route: Route, movable: MovablePiece[]): Se
   const reach = reachableDeviations({ size: board.size, sun: route.sun, shrine: route.shrine, fixed, movable })
   if (!reach || !reach.complete) return board.walls
   return new Set([...board.walls].filter(key => reach.stoneHit.has(key)))
+}
+
+/**
+ * A track for a piece sliding across the beam at a golden bend, or undefined if none fits.
+ *
+ * Contiguous and collinear, because that is what reads as a track — a gap between stops says the thing
+ * teleports rather than slides. Every cell but the bend itself has to be free: off the golden path, since a
+ * mirror parked there in a wrong state would bend the winning beam, and clear of other tappable pieces'
+ * shoulders.
+ *
+ * Square legs only. A piece sliding across a diagonal beam would draw its ghosts on a diagonal, and §9 has
+ * not settled what that reads as — the same restriction the shipped generator works under.
+ */
+const fittingTrack = (
+  board: Authoring,
+  at: CellRef,
+  across: Direction,
+  length: number,
+  taken: ReadonlySet<string>,
+  tappable: ReadonlySet<string>,
+  random: () => number
+): CellRef[] | undefined => {
+  if (runsDiagonally(across)) return undefined
+  // The piece that is about to slide is standing at `at`, so it is not a neighbour to keep clear of — it is
+  // the very piece being placed. Leaving it in would reject every cell of every track touching the bend,
+  // which is a mode that silently does nothing.
+  const others = new Set(tappable)
+  others.delete(cellKey(at))
+  return shuffle(trackRuns(at, across, length), random).find(run =>
+    run.every(cell => {
+      const key = cellKey(cell)
+      if (!insideGrid(board.size, cell)) return false
+      if (key === cellKey(at)) return true
+      if (board.goldenCells.has(key) || taken.has(key) || board.walls.has(key) || board.givens.has(key)) return false
+      if (others.has(key)) return false
+      return NEIGHBOURS.every(direction => !others.has(cellKey(stepCell(cell, direction))))
+    })
+  )
 }
 
 /** A mirror a branch turns at. Off the golden path by construction, so the winning beam never meets it. */
@@ -751,7 +889,7 @@ const cornerSlipWalls = (board: Authoring, route: Route): CellRef[] => {
         const key = cellKey(corner)
         if (!insideGrid(board.size, corner)) continue
         if (board.goldenCells.has(key) || board.walls.has(key)) continue
-        if (board.tappable.has(key) || board.givens.has(key)) continue
+        if (board.occupancy.has(key) || board.givens.has(key)) continue
         if (found.some(already => cellKey(already) === key)) continue
         found.push(corner)
       }
@@ -791,9 +929,11 @@ const authorBranches = (
   route: Route,
   interactive: number,
   branchDepth: number,
+  sliders: number,
+  slidingStops: number,
   modes: readonly LightbeamMode[],
   random: () => number
-): Draft | undefined => {
+): Draft | LightbeamGate | undefined => {
   const stops = route.bends.map(bend => stopsFor(bend.angle))
   if (stops.some(list => list === undefined || list.length < FORK_SIZE)) return undefined
 
@@ -814,7 +954,8 @@ const authorBranches = (
     shrine: route.shrine,
     goldenCells: new Set([cellKey(route.sun.at), ...route.cells.map(cell => cellKey(cell.at))]),
     goldenSegments: new Set(route.cells.map(cell => segmentKey(cell.at, cell.enter))),
-    tappable: new Map(),
+    movable: [],
+    occupancy: new Map(),
     givens: new Map(
       route.bends.flatMap((bend, index) => (live.has(index) ? [] : [[cellKey(bend.at), bend.angle] as const]))
     ),
@@ -824,24 +965,59 @@ const authorBranches = (
 
   // The piece list is settled before a single corridor is authored, because which cells are tappable is a
   // fact about the whole board — a branch closed against a half-built board was checked against the wrong one.
-  const movable: MovablePiece[] = []
+  const movable = board.movable
   const solution: number[] = []
   const liveBends: { at: CellRef; enter: Direction; angle: MirrorAngle; angles: readonly MirrorAngle[] }[] = []
-  route.bends.forEach((bend, index) => {
-    if (!live.has(index)) return
+  /** A golden bend whose piece slides: its branch is the beam carrying straight on past the vacated cell. */
+  const slidBends: { piece: number; at: CellRef; enter: Direction; states: number[] }[] = []
+
+  // Which live bends slide rather than turn. Square bends only, for the track's sake rather than the beam's.
+  const claimed = new Set(route.bends.map(bend => cellKey(bend.at)))
+  const liveIndices = route.bends.map((_, index) => index).filter(index => live.has(index))
+  const slideable = liveIndices.filter(index => !runsDiagonally(route.bends[index].enter))
+  const sliding = new Set(shuffle(slideable, random).slice(0, Math.max(0, sliders)))
+
+  for (const index of liveIndices) {
+    const bend = route.bends[index]
     const angles = stops[index] as readonly MirrorAngle[]
     const piece = movable.length
-    board.tappable.set(cellKey(bend.at), { piece, angles })
+    if (sliding.has(index)) {
+      const track = fittingTrack(board, bend.at, bend.enter, slidingStops, claimed, claimed, random)
+      if (track) {
+        for (const cell of track) claimed.add(cellKey(cell))
+        movable.push({ kind: "slidingMirror", angle: bend.angle, stops: track })
+        const answer = track.findIndex(cell => cellKey(cell) === cellKey(bend.at))
+        solution.push(answer)
+        slidBends.push({
+          piece,
+          at: bend.at,
+          enter: bend.enter,
+          states: track.map((_, state) => state).filter(state => state !== answer),
+        })
+        continue
+      }
+      // No track fitted. **Reject the draft rather than quietly shipping a turn mirror**, because a board
+      // that records `sliderHeavy` and carries no slider is the defect this plan already documents in the
+      // shipped generator: `clearTheWay` asks for a sliding wall, mostly does not get one, and records the
+      // goal anyway. A silent fallback that fires often makes the whole pool decorative while every
+      // measurement still looks fine. Drafts are cheap here; a dishonest board is not.
+      return "noTrack"
+    }
     movable.push({ kind: "turnMirror", at: bend.at, angles })
     solution.push(angles.indexOf(bend.angle))
     liveBends.push({ at: bend.at, enter: bend.enter, angle: bend.angle, angles })
-  })
+  }
   if (solution.some(state => state < 0)) return undefined
 
   // Pass one: lay the shape of every branch, including the mirrors it turns at. Geometry only — nothing is
   // judged yet, because a corridor can only be closed against the finished piece list.
-  const mirrorCells = new Set(route.bends.map(bend => cellKey(bend.at)))
-  const tappableCells = new Set(liveBends.map(bend => cellKey(bend.at)))
+  // Built from the pieces themselves, not from the bends: a slider claims a whole track, and a branch mirror
+  // dropped on its shoulder is a board `piecesAreSpaced` throws away after it has been paid for.
+  const mirrorCells = new Set([
+    ...route.bends.map(bend => cellKey(bend.at)),
+    ...movable.flatMap(piece => pieceCells(piece).map(cellKey)),
+  ])
+  const tappableCells = new Set(movable.flatMap(piece => pieceCells(piece).map(cellKey)))
   const corridors: { at: CellRef; enter: Direction; stop: MirrorAngle }[] = []
   for (const bend of liveBends)
     for (const stop of bend.angles) {
@@ -862,9 +1038,7 @@ const authorBranches = (
         interactive,
         random
       )) {
-        const piece = movable.length
         if (mirror.live) {
-          board.tappable.set(cellKey(mirror.at), { piece, angles: mirror.angles })
           movable.push({ kind: "turnMirror", at: mirror.at, angles: mirror.angles })
           // A decoy's setting is free by construction — the winning beam never reaches it — so the answer
           // records the angle it was authored at and `neverReached` is what frees the player from it.
@@ -874,6 +1048,10 @@ const authorBranches = (
     }
   if (movable.length < MIN_TAPPABLE) return undefined
   if (solution.some(state => state < 0)) return undefined
+
+  // The piece list is final here, so this is where the occupancy is built. Every corridor below is judged
+  // against the whole board, which is the invariant the recursion's soundness rests on.
+  board.occupancy = occupancyOf(movable)
 
   // Wall-heavy's corner pairs go down before any corridor is closed, so a branch may legitimately die in one
   // and `pruneStone` can tell which of them earned their place.
@@ -888,6 +1066,23 @@ const authorBranches = (
   // authors no corridor at all — which is what makes a low share cheap and a high one expensive.
   for (const corridor of corridors)
     if (!closeBranch(board, corridor.at, corridor.enter, corridor.stop)) return undefined
+
+  // A slider's wrong setting takes the mirror out of the beam's way, so the branch is simply the beam's own
+  // line continuing through the cell it vacated. Pinning the piece to that state is what tells the walk the
+  // cell is empty — which is the whole of why a sliding piece needed the occupancy model.
+  for (const slid of slidBends)
+    for (const state of slid.states)
+      if (
+        !corridorDies(
+          board,
+          slid.at,
+          slid.enter,
+          new Map([[slid.piece, state]]),
+          new Set([segmentKey(slid.at, slid.enter)]),
+          0
+        )
+      )
+        return undefined
 
   // A corner pair is kept whether or not a beam ends on it: it is there to be *read*, which is the one
   // exception to §5.1's rule against stone the player cannot spend — the beam spends it, by going through.
@@ -919,6 +1114,7 @@ const attemptAuthored = (
   dials: LightbeamDials,
   interactive: number,
   branchDepth: number,
+  sliders: number,
   modes: readonly LightbeamMode[],
   cap: TechniqueId,
   reject?: (gate: LightbeamGate) => void
@@ -930,11 +1126,25 @@ const attemptAuthored = (
     reject?.("noRoute")
     return undefined
   }
-  const draft = authorBranches(size, route, interactive, branchDepth, modes, random)
-  if (!draft) {
+  const authored = authorBranches(
+    size,
+    route,
+    interactive,
+    branchDepth,
+    modes.includes("sliderHeavy") ? sliders : 0,
+    dials.slidingStops,
+    modes,
+    random
+  )
+  if (!authored) {
     reject?.("noCorridor")
     return undefined
   }
+  if (typeof authored === "string") {
+    reject?.(authored)
+    return undefined
+  }
+  const draft = authored
   if (!piecesAreSpaced(size, draft.movable, new Set())) {
     // `mirrorMayStand` is supposed to have made this unreachable — it is kept as the shipped gate's own
     // verdict on an authored board, which is what phase 1 is measuring.
@@ -1008,9 +1218,11 @@ export const generateAuthoredLightbeam = (
     fiddleProof = false,
     interactive = 1,
     branchDepth = 0,
+    sliders = 1,
+    slidingStops = 3,
     modes = [],
   } = options
-  const dials = { turns, cutMirrors, crossings, fiddleProof } as LightbeamDials
+  const dials = { turns, cutMirrors, crossings, fiddleProof, slidingStops } as LightbeamDials
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const puzzle = attemptAuthored(
@@ -1020,6 +1232,7 @@ export const generateAuthoredLightbeam = (
       dials,
       interactive,
       branchDepth,
+      sliders,
       modes,
       techniqueCap,
       options.reject
