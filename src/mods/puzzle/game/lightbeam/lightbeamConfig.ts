@@ -49,6 +49,15 @@ import type { LightbeamOptions } from "./generateLightbeam"
 //
 // Grid size is capacity, not difficulty (§6.2): it is set by what has to fit — the route, the pieces, and the
 // empty shoulders that keep two tappable pieces apart.
+// **Generation time is not a design constraint here.** It used to be, and twice it decided a design question:
+// §11.13 dropped a decoy from wizard to get a board under 1400ms, and branch depth was held at one because two
+// measured at 8.5 seconds. Neither was recorded as a design decision, which is the whole problem — the cost of
+// an opportunity not taken leaves no measurement behind.
+//
+// The direction out is `docs/offline-puzzle-seeds.md`: verify seeds offline and ship the ones that work, so the
+// compute happens on a build machine rather than on a phone. Until that lands the top tier is genuinely slow to
+// build, and that is the honest trade — a tier that is expensive to generate rather than a tier that is smaller
+// than the design wants. If a dial needs turning down, turn it down for a reason a player would recognise.
 export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOptions> = {
   // Right angles, a short route, and stone to die in. Wall-heavy from the bottom of the ladder because being
   // able to *point at* where the light died is the first thing to learn, and the frame is the one terminator
@@ -88,10 +97,16 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
   // One addition: **the diagonal cut** (§11.8). The bend would have carried a mirror anyway; what changes is
   // that its answer is a half-step and its stop set reaches 67.5° the other way, so the ray leaves the rows and
   // columns the player can read. A swap rather than an extra piece, which is rule 8's cost model.
+  //
+  // The route also folds through its own line from here up (§5.2). A crossed square is the one square on the
+  // board that is provably empty — anything standing there would have turned the first pass — and it costs no
+  // piece at all: it buys route length on the same grid. A character dial rather than a difficulty one, which is
+  // why it arrives beside the cut rather than instead of it.
   expert: {
     size: 8,
     turns: 5,
     cutMirrors: 1,
+    crossings: 1,
     interactive: 0.9,
     branchDepth: 1,
     sliders: 1,
@@ -111,6 +126,7 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     size: 9,
     turns: 6,
     cutMirrors: 1,
+    crossings: 1,
     interactive: 1,
     branchDepth: 1,
     sliders: 1,
@@ -128,6 +144,8 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
   // per piece, so the same mirrors offer many more distinct forks on the same piece count. Rule 8's "one piece
   // doing more", the same trade the diagonal cut makes at expert.
   //
+  // Branches turn **twice** here, which nothing but a generation-time budget was stopping.
+  //
   // And the door needs **two** sockets rather than one — an and-wiring, where the piece does not budge until
   // the light has been through both. §11.2 predicted that would be the genuinely different shape and §11.18
   // measured it: `wiringFires` settles it on 7 boards in 200 where one socket settles 56, so the work moves to
@@ -136,8 +154,9 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     size: 9,
     turns: 6,
     cutMirrors: 1,
+    crossings: 1,
     interactive: 1,
-    branchDepth: 1,
+    branchDepth: 2,
     forkSize: 3,
     sliders: 1,
     slidingStops: 3,

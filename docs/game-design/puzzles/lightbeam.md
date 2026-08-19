@@ -220,13 +220,13 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Route   | Tappable share | Branch turns | Fork | Pieces | On the route | Configurations | Cap | Modes            |
-| ------- | ---- | ------- | -------------- | ------------ | ---- | ------ | ------------ | -------------- | --- | ---------------- |
-| starter | 7×7  | 3 bends | 1.0            | 0            | 2    | 3.0    | 3.0          | 8              | T3  | wall-heavy       |
-| junior  | 8×8  | 5 bends | 0.85           | 1            | 2    | 5.5    | 4.0          | 80             | T7  | slider-heavy     |
-| expert  | 8×8  | 5 bends | 0.9            | 1            | 2    | 7.0    | 5.0          | 228            | T8  | slider-heavy     |
-| master  | 9×9  | 6 bends | 1.0            | 1            | 2    | 9.8    | 6.8          | 1 741          | T8  | 2 of three, trap |
-| wizard  | 9×9  | 6 bends | 1.0            | 1            | 3    | 11.3   | 6.8          | 20 435         | T8  | 2 of three, trap |
+| Tier    | Grid | Route            | Tappable share | Branch turns | Fork | Pieces | Configurations | Cap | Modes            |
+| ------- | ---- | ---------------- | -------------- | ------------ | ---- | ------ | -------------- | --- | ---------------- |
+| starter | 7×7  | 3 bends          | 1.0            | 0            | 2    | 3.0    | 8              | T3  | wall-heavy       |
+| junior  | 8×8  | 5 bends          | 0.85           | 1            | 2    | 5.4    | 73             | T7  | slider-heavy     |
+| expert  | 8×8  | 5 bends, 1 cross | 0.9            | 1            | 2    | 7.2    | 269            | T8  | slider-heavy     |
+| master  | 9×9  | 6 bends, 1 cross | 1.0            | 1            | 2    | 10.7   | 2 829          | T8  | 2 of three, trap |
+| wizard  | 9×9  | 6 bends, 1 cross | 1.0            | 2            | 3    | 13.1   | 72 612         | T8  | 2 of three, trap |
 
 "On the route" is the count that matters and the one that was missing: pieces that can stand in the winning
 beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the player a
@@ -239,6 +239,10 @@ per board, one wizard grid can legitimately out-measure another, and it is the t
 **The tappable share is the ramp through the middle of the table** (§11.19). A given costs a cell, contributes
 nothing to the configuration space and authors no corridor, so lowering the share thins a board on all three
 counts at once. Four separate dials used to do that job.
+
+**Generation time is not a constraint on this table.** It used to be, and §11.21 records what that cost. The
+top tier is expensive to build — 636ms a board, 2.4s at worst — and the answer to that is
+`docs/offline-puzzle-seeds.md`, not a smaller tier.
 
 **The bottom of the ladder was moved down a rung after playtesting**, which is the one thing in this table that
 came from playing rather than measuring: the family did not start feeling like a puzzle until the third tier, so
@@ -2629,3 +2633,49 @@ That is a 3× win on the whole family's most expensive operation, and it came fr
 one question rather than from anything clever. What is still open is the deeper fix §11.17 names: the rungs
 enumerate a product the reachable deviation tree already knows how to avoid. Wizard's 1.5s worst board is what
 remains of it.
+
+### 11.21 What a generation-time budget was costing
+
+Twice a generation-time budget decided a design question here, and neither time was it recorded as a design
+decision:
+
+- **§11.13 dropped a decoy from wizard** to get a three-stop fork under the 1400ms `lightbeamConfig.ts` called
+  a trade not worth making: _"something has to go, and dropping wizard's baseline decoy lands it at 655ms."_
+- **Branch depth was held at one** because two turns a branch measured at 8.5 seconds. Nothing in the design
+  wanted one.
+
+Both read, in the tier table, as the shape the family wanted. That is the failure mode worth naming: **the cost
+of an opportunity not taken leaves no measurement behind**, so a budget that vetoes a design choice does it
+silently and the table looks healthy afterwards. It is the same shape as the world-authorship doom loop — a
+masked signal driving a confident wrong decision.
+
+A budget is the right instrument for a cost the player pays. It is the wrong one for a cost a build machine
+could pay instead, and `docs/offline-puzzle-seeds.md` is where that goes.
+
+#### What lifting it restored
+
+The route folds through its own line again from expert up, which is not a budget story but a migration one: the
+previous generator had `crossedBeams` in three tiers' goal pools and the authored tier table dropped crossings
+entirely — **no tier asked for one**, and §5.2's whole finding is that a folded route buys route length and
+deduction steps without buying pieces. It is back at 1.2 to 1.5 crossed squares a board.
+
+And wizard's branches turn twice.
+
+| tier    | pieces (was → is) | configurations  | crossed squares | attempts a board | mean gen | worst gen |
+| ------- | ----------------- | --------------- | --------------- | ---------------- | -------- | --------- |
+| starter | 3.0 → 3.0         | 8 → 8           | 0.00            | 1.6              | 5ms      | 25ms      |
+| junior  | 5.5 → 5.4         | 80 → 73         | 0.00            | 1.4              | 3ms      | 11ms      |
+| expert  | 7.0 → 7.2         | 228 → 269       | 1.20            | 2.8              | 3ms      | 6ms       |
+| master  | 9.8 → 10.7        | 1 741 → 2 829   | 1.50            | 2.5              | 41ms     | 165ms     |
+| wizard  | 11.3 → 13.1       | 20 435 → 72 612 | 1.45            | 6.3              | 636ms    | 2 372ms   |
+
+Uniqueness and deducibility hold at every tier, unchanged. What it costs is the top tier's build: 636ms a board
+against 526ms, and 2.4s at worst against 1.5s. **That is a cost to move rather than a cost to design around**,
+and until it moves it is the one thing about this family that is worse than it was.
+
+#### One thing it took with it, worth knowing before the next playtest
+
+A board's configuration space is what the exhaustive rungs enumerate, and a hint is a full solve. So the top
+tier's hint latency rises with everything above — measured at 500ms before the lift on a 20 000-configuration
+board, and the space is now three times that. A seed list does not help a hint; shipping the solve alongside the
+seed does, which is why `docs/offline-puzzle-seeds.md` argues for the artifact carrying both.

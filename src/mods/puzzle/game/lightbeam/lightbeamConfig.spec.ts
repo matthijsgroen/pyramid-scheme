@@ -52,7 +52,9 @@ describe.each(difficulties)("at %s", tier => {
     expect(routeIsUnique(boards[0], allPieceOptions(boards[0]))).toBe(true)
   })
 
-  it("is reachable by deduction alone inside its own cap", () => {
+  // A top-tier solve enumerates tens of thousands of configurations, so this needs a real timeout rather than
+  // vitest's 5s default — the family's own Method notes warn about exactly this.
+  it("is reachable by deduction alone inside its own cap", { timeout: 300_000 }, () => {
     for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
   })
 
@@ -163,24 +165,28 @@ describe("the constraints the table has to respect", () => {
    * that drew both gets no trap. Asserted rather than left to chance, because a trap that silently vanished
    * would leave the tier recording a mode it is not the shape of.
    */
-  it.each(["master", "wizard"] as const)("only traps on a %s board that did not draw wall-heavy", tier => {
-    const doorSockets = LIGHTBEAM_CONFIG[tier].doorNodes ?? 1
-    let trapped = 0
-    for (const board of boardsFor(tier)) {
-      const sockets = board.nodes?.length ?? 0
-      if (board.modes.includes("switchHeavy") && !board.modes.includes("wallHeavy")) {
-        // The door's sockets, plus the trap's own one — and the winning beam fires only the door's wiring.
-        expect(sockets).toBe(doorSockets + 1)
-        expect(solveLightbeamByTechniques(board, board.techniqueCap).used.has("wiringDead")).toBe(true)
-        trapped++
-      } else if (board.modes.includes("switchHeavy")) {
-        expect(sockets).toBe(doorSockets)
-      } else {
-        expect(sockets).toBe(0)
+  it.each(["master", "wizard"] as const)(
+    "only traps on a %s board that did not draw wall-heavy",
+    { timeout: 300_000 },
+    tier => {
+      const doorSockets = LIGHTBEAM_CONFIG[tier].doorNodes ?? 1
+      let trapped = 0
+      for (const board of boardsFor(tier)) {
+        const sockets = board.nodes?.length ?? 0
+        if (board.modes.includes("switchHeavy") && !board.modes.includes("wallHeavy")) {
+          // The door's sockets, plus the trap's own one — and the winning beam fires only the door's wiring.
+          expect(sockets).toBe(doorSockets + 1)
+          expect(solveLightbeamByTechniques(board, board.techniqueCap).used.has("wiringDead")).toBe(true)
+          trapped++
+        } else if (board.modes.includes("switchHeavy")) {
+          expect(sockets).toBe(doorSockets)
+        } else {
+          expect(sockets).toBe(0)
+        }
       }
+      expect(trapped).toBeGreaterThan(0)
     }
-    expect(trapped).toBeGreaterThan(0)
-  })
+  )
 
   /** Wall-heavy is where the stone is, and starter is authored to it: the first thing to learn is where the
    * light died, and the frame is the one terminator that gives the player nothing to look at. */

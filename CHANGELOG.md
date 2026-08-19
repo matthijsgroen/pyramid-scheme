@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Light puzzles that need a mirror out of the way now really do get one, and a puzzle promising a sliding piece or a trap will not be built without it.
 - Light puzzles get harder sooner. The first two difficulties used to be solved by following the light and nothing else; every difficulty now asks for real reasoning, and the ones above it have moved up to make room.
 - The hardest light puzzles now give some mirrors a third position, and their door needs the light through two sockets rather than one.
+- Light puzzles fold back through their own path again from the third difficulty up, so the beam crosses itself on the way to the shrine — a longer route on the same board.
+- Wrong turns on the hardest light puzzles can bend twice before they die, so following one takes you further from where you started.
 
 ### Fixed
 

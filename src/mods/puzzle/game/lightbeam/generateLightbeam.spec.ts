@@ -65,10 +65,7 @@ describe.each(difficulties)("at %s", difficulty => {
    * actually solves for.
    */
   it("has exactly one winning route", () => {
-    for (const board of boards) {
-      expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
-      expect(routeIsUnique(board, allPieceOptions(board))).toBe(true)
-    }
+    for (const board of boards) expect(reachableDeviations(board, board.solution)?.winning.size).toBe(1)
   })
 
   it("is reachable by deduction alone, inside its own cap", { timeout: 120_000 }, () => {
@@ -159,15 +156,22 @@ describe.each(difficulties)("at %s", difficulty => {
    * branches away from tappable cells and hand phase 2's recursion §11.15's hazard.
    */
   it("carries no wall that stops nothing", () => {
+    // Every wall is placed because a corridor had nowhere else to end, so some reachable beam must arrive at it.
+    //
+    // Asked of the reachable-deviation walk rather than by sampling, and the first attempt at this test is why:
+    // over the single- and double-piece deviations it fails at four tiers, because **walls really are
+    // load-bearing three and more settings deep** once branches may reuse the pieces already on the board. That
+    // is a fact about the construction rather than a gap in it — but it does mean nothing short of the full
+    // reachable tree can answer the question.
+    //
+    // Note what this therefore does and does not catch. It shares its walk with `pruneStone`, so it cannot catch
+    // a bug in the walk — the tree-against-product agreement asserted elsewhere is what covers that. What it does
+    // catch is scenery shipped because pruning was skipped, which happens by design whenever the exploration is
+    // cut short, and that is the case worth a guard.
     for (const board of boards) {
-      // Asked over every configuration, not only the single-piece deviations. Once branches may reuse the
-      // pieces already on the board, a wall can be the thing that closes a corridor only two wrong settings
-      // deep — and that wall is load-bearing, however narrow the path to it.
-      const spent = new Set<string>()
-      eachConfig(allPieceOptions(board), config => {
-        const walk = traceBeam(board, config)
-        if (walk.end === "absorbed" && walk.stopAt) spent.add(cellKey(walk.stopAt))
-      })
+      const reach = reachableDeviations(board, board.solution)
+      expect(reach?.complete).toBe(true)
+
       // Wall-heavy's corner pairs are the one stone that is there to be *read* rather than to stop something:
       // two walls either side of a diagonal step, with the winning beam going through the gap (§11.8 rule 4).
       const path = traceBeam(board, board.solution).path
@@ -182,7 +186,7 @@ describe.each(difficulties)("at %s", difficulty => {
       for (const wall of board.fixed) {
         if (wall.kind !== "wall") continue
         const key = cellKey(wall.at)
-        expect(spent.has(key) || cornerSlip.has(key)).toBe(true)
+        expect(reach!.stoneHit.has(key) || cornerSlip.has(key)).toBe(true)
       }
     }
   })
