@@ -70,10 +70,10 @@ Two consequences:
 - **A verified seed removes essentially all of generation** — 636ms to ~16ms — because a board already proven
   does not need re-proving. Play time keeps the construction and drops the gates. That is a ~40x saving at the
   top tier and it grows with every dial the design turns up.
-- **It does not touch the hint**, which re-solves the board from scratch on every request. Measured at 500ms on
-  a 20 000-configuration board; the top tier now carries 72 000, and a mid-range phone is several times slower
-  single-threaded. So it is plausibly multiple seconds of blocked main thread, per hint, at the top tier — which
-  is the strongest argument for the artifact carrying the solve as well as the seed.
+- **It does not touch the hint**, which re-solves the board from scratch on every request — 617.6ms at the top
+  tier on a development machine, and a mid-range phone is several times slower single-threaded. That is the
+  strongest argument for the artifact carrying the solve as well as the seed, and the section below shows it
+  costs about 400 bytes to do so.
 
 ## The shape
 
@@ -99,13 +99,31 @@ baking it into shipped data welds the list to the current control flow.
 
 ### Ship the solve with the seed
 
-The offline pass has to solve the board to verify it. Throwing that away and re-deriving it on the player's
-phone for the first hint is the waste that is easy to miss. The solve is deterministic from the board, so the
-artifact should carry the hint sequence too — which removes the _other_ play-time cost for approximately
-nothing.
+The offline pass has to solve the board to verify it. Throwing that away and re-deriving it on the player's phone
+for the first hint is the waste that is easy to miss.
 
-That makes the artifact per entry: **the seed, and the ordered reasons the ladder found.** Both small; both
-already computed.
+**And it is a pure function of the puzzle**, which is the fact that makes this work. A hint is
+`solveLightbeamByTechniques(puzzle, cap)` — it starts from a fresh board and never reads the player's state; the
+state only picks _which_ of the reasons it found to show. Measured on a lightbeam board: a hint costs 617.6ms and
+the solve alone costs 617.8ms, so the matching against the player is free, and asking at the opening costs the
+same as asking half-way through (618ms against 620ms). There is nothing about a hint that has to happen at play
+time.
+
+Measured cost of a hint, and the size of what would replace it:
+
+| tier    | configurations | one hint    | reasons found | serialised |
+| ------- | -------------- | ----------- | ------------- | ---------- |
+| starter | 32             | 1.4ms       | 8.9           | 203B       |
+| junior  | 272            | 2.0ms       | 14.4          | 332B       |
+| expert  | 416            | 2.9ms       | 11.4          | 268B       |
+| master  | 3 883          | 59.7ms      | 15.5          | 366B       |
+| wizard  | 51 264         | **617.6ms** | 16.6          | **398B**   |
+
+So the artifact per entry is **the seed and the ordered reasons the ladder found** — around 400 bytes at the
+worst tier, against 618ms of phone time per hint press. Both are already computed during verification.
+
+Note where the cost is and is not: the bottom three tiers are 1–3ms and would not justify any of this. It is
+the top two that need it, which is the same shape as the generation cost.
 
 ### Where it lives, for twenty families
 
