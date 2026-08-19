@@ -69,13 +69,13 @@ export const PuzzleFamilyShell = ({
   // way — finishing a board the player had just broken.
   const [finishing, setFinishing] = useState(false)
 
+  // The banner waits for a tap rather than a timer: the solved board is the reward, and a puzzle that closes
+  // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
+  // the player says when they are done with it.
   const handleSolved = useCallback(() => {
     setFinishing(true)
-    scheduleSolve(800, () => {
-      setSolvedBanner(true)
-      scheduleSolve(1500, onSolved)
-    })
-  }, [scheduleSolve, onSolved])
+    scheduleSolve(800, () => setSolvedBanner(true))
+  }, [scheduleSolve])
 
   useEffect(() => {
     if (solved) handleSolved()
@@ -157,14 +157,20 @@ export const PuzzleFamilyShell = ({
         </div>
       )}
       {solvedBanner && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-stone-900/90">
-          <p className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</p>
-          {/* Solving it unaided is worth saying out loud — otherwise there is nothing to lose by
-              leaning on the hint button, and nothing to notice the day you stop needing it. */}
-          <p className="text-sm text-stone-400">
-            {hintsUsed === 0 ? t("ui.solvedUnaided") : t("ui.solvedWithHints", { count: hintsUsed })}
-          </p>
-        </div>
+        <button
+          onClick={onSolved}
+          className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/40"
+        >
+          <span className="flex flex-col items-center gap-1 rounded-lg bg-stone-900/90 px-6 py-4">
+            <span className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</span>
+            {/* Solving it unaided is worth saying out loud — otherwise there is nothing to lose by
+                leaning on the hint button, and nothing to notice the day you stop needing it. */}
+            <span className="text-sm text-stone-400">
+              {hintsUsed === 0 ? t("ui.solvedUnaided") : t("ui.solvedWithHints", { count: hintsUsed })}
+            </span>
+            <span className="mt-1 text-xs text-stone-500">{t("ui.tapToContinue")}</span>
+          </span>
+        </button>
       )}
     </>
   )

@@ -44,6 +44,13 @@ The same puzzle dresses up per site (`ctx.theme`).
 | Reset   | Restores the generated start state. No confirm dialog for a puzzle board.                            |
 | Hint    | Shows the next step and why. Disabled 10s after use.                                                 |
 | Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it. |
+| Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                |
+
+**The solved board is the reward, so it is the player who leaves it.** The banner
+sits over a light dim rather than an opaque one — the finished board has to be
+readable through it, because seeing what you built is the payoff for building it —
+and it closes on a tap instead of a timer, which is a puzzle taking the reward
+away before it has been looked at.
 
 The shell needs the family to report input, so hint/idle work without the family
 re-implementing them:

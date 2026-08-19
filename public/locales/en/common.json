@@ -93,7 +93,8 @@
     "hint": "Hint",
     "solvedUnaided": "Solved without a single hint",
     "solvedWithHints_one": "Solved with {{count}} hint",
-    "solvedWithHints_other": "Solved with {{count}} hints"
+    "solvedWithHints_other": "Solved with {{count}} hints",
+    "tapToContinue": "Tap to continue"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",

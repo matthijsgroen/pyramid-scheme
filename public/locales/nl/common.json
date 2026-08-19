@@ -93,7 +93,8 @@
     "hint": "Hint",
     "solvedUnaided": "Opgelost zonder ook maar één hint",
     "solvedWithHints_one": "Opgelost met {{count}} hint",
-    "solvedWithHints_other": "Opgelost met {{count}} hints"
+    "solvedWithHints_other": "Opgelost met {{count}} hints",
+    "tapToContinue": "Tik om verder te gaan"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
