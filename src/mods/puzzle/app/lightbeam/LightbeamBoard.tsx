@@ -4,6 +4,8 @@ import {
   cellKey,
   DIRECTIONS,
   directionStep,
+  firedConfig,
+  firedWirings,
   mirrorBlocker,
   opposite,
   pieceCells,
@@ -99,42 +101,90 @@ const glyphTurn = (angle: MirrorAngle): number => {
 }
 
 /**
- * A mirror: the line it sits on, drawn as the polished edge it is.
+ * A mirror: the line it sits on, drawn as the polished edge it is — **and a tick at each stop it is not in**.
  *
- * One canonical line, turned into place, rather than a glyph per angle — so changing setting is a turn
- * the eye can follow instead of a glyph that swaps between frames. Which setting a piece is in is the
- * single thing the player is deciding, and watching it turn is what says the tap landed on the piece
- * they meant.
+ * One canonical line, turned into place, rather than a glyph per angle — so changing setting is a turn the
+ * eye can follow instead of a glyph that swaps between frames. Which setting a piece is in is the single
+ * thing the player is deciding, and watching it turn is what says the tap landed on the piece they meant.
  *
- * A **cut mirror** (design doc §11.8) is drawn as a different object rather than a different angle, and
- * that is forced: its stops sit 22.5° from an ordinary mirror's, and §9 forbids "a subtle rotation".
- * So the ordinary mirror is a polished *edge* — one solid line — and a cut mirror is the *plate* itself,
- * an outline with two silvered faces and cut ends. Solid against hollow is a judgement the eye makes on
- * one cell, without another cell to compare it against, which is what a board has to be read by.
+ * **The ticks are the fork, and they are why there is one mirror glyph rather than two** (§11.13). A cut
+ * mirror used to be drawn as a different object — a hollow plate against the ordinary mirror's solid bar —
+ * because §11.9 measured that the 22.5° between two stop sets can never be read off a drawn angle. True,
+ * and it was answered with one bit: *this list is the default pair, or it is not*. That bit says nothing
+ * once the lists vary, which is what §11.8 rule 1 has always asked for. A tick at each unoccupied stop says
+ * the whole thing instead — **the bar is where it stands, the ticks are where else it goes** — and it says
+ * it inside one cell, which is the comparison §11.9 found there was nowhere to make.
+ *
+ * Three things the prototype settled rather than argued (§11.13):
+ *
+ * - **The ticks are the alternatives, never the current stop.** A tick at the angle the bar is already on
+ *   is ink for a fact told twice, and it lies exactly under the bar where it cannot be seen anyway.
+ * - **A ring is what does not work.** A mirror is a line across the whole cell, so it runs through the
+ *   annulus any ring would occupy and occludes the very marks that annotate it. Rule 5's own suggestion —
+ *   "a ring in as many segments" — is unbuildable, and pips stop being countable past three.
+ * - **Every mirror gets its ticks, ordinary ones included.** The hard reading is bare-against-one-tick and
+ *   the easy one is one-against-three; drawing the tick only where a piece is unusual would keep the hard
+ *   reading and reintroduce the default the whole change removes. With one tick as the baseline the eye
+ *   calibrates on, a bigger fork is the loud comparison rather than the quiet one.
+ *
+ * A stop's angle folds to one bearing in [0°, 180°) because a mirror line is the same line half a turn
+ * later — otherwise one stop would draw two ticks and the fork would read at twice its size.
+ *
+ * **The tick lies across its bearing rather than along it, and that is the fix for the one thing the
+ * prototype missed.** Drawn as a radial spoke it was collinear with the beam whenever a stop's line
+ * happened to be the line the beam leaves on — which is not rare, since a beam travels one of eight
+ * bearings and a stop is one of eight mirror lines — and the beam is drawn over the pieces with
+ * `mix-blend-screen`, so the tick came out cream. That breaks §9's "nothing but light is drawn amber" and
+ * costs the mark its meaning at the same time. A tangential dash cannot be collinear with anything radial:
+ * the beam crosses it square, brightens the middle, and the ends stay sky.
+ *
+ * It also cannot be hidden by the bar. The bar is a diameter, so it meets the rim at its own bearing and
+ * that bearing is the one stop no tick is ever drawn for — which is why candidate A's occlusion (a full
+ * ring crossed by the bar) does not apply to arcs placed only at the stops the piece is not in.
  */
-const Mirror: FC<{ angle: MirrorAngle; cut: boolean; movable: boolean }> = ({ angle, cut, movable }) => {
-  const stroke = movable ? "stroke-sky-200" : "stroke-stone-400"
-  return (
-    <Glyph>
-      <g
-        className="origin-center transition-transform duration-200 ease-out"
-        style={{ transform: `rotate(${glyphTurn(angle)}deg)` }}
-      >
-        {!cut ? (
-          <line x1={4.75} y1={50} x2={95.25} y2={50} strokeWidth={14} strokeLinecap="round" className={stroke} />
-        ) : (
-          <polygon
-            points="4,50 18,37 82,37 96,50 82,63 18,63"
-            fill="none"
-            strokeWidth={11}
-            strokeLinejoin="round"
-            className={stroke}
-          />
-        )}
-      </g>
-    </Glyph>
-  )
-}
+const Mirror: FC<{ angle: MirrorAngle; stops: readonly MirrorAngle[]; movable: boolean }> = ({
+  angle,
+  stops,
+  movable,
+}) => (
+  <Glyph>
+    <g
+      className="origin-center transition-transform duration-200 ease-out"
+      style={{ transform: `rotate(${glyphTurn(angle)}deg)` }}
+    >
+      <line
+        x1={4.75}
+        y1={50}
+        x2={95.25}
+        y2={50}
+        strokeWidth={14}
+        strokeLinecap="round"
+        className={movable ? "stroke-sky-200" : "stroke-stone-400"}
+      />
+    </g>
+    <g>
+      {stops
+        .filter(stop => stop !== angle)
+        .map(stop => {
+          const bearing = ((glyphTurn(stop) + 180) % 180) * (Math.PI / 180)
+          const [dx, dy] = [Math.cos(bearing), Math.sin(bearing)]
+          const [ax, ay] = [50 + 42 * dx, 50 + 42 * dy]
+          return (
+            <line
+              key={stop}
+              x1={ax + 9 * dy}
+              y1={ay - 9 * dx}
+              x2={ax - 9 * dy}
+              y2={ay + 9 * dx}
+              strokeWidth={9}
+              strokeLinecap="round"
+              className={movable ? "stroke-sky-400/70" : "stroke-stone-500/70"}
+            />
+          )
+        })}
+    </g>
+  </Glyph>
+)
 
 const Wall: FC<{ movable: boolean }> = ({ movable }) => (
   <Glyph>
@@ -341,10 +391,34 @@ const sidePoint = (at: CellRef, direction: Direction): [number, number] => {
   return [at.col + (col === 0 ? 0.5 : col > 0 ? 1 : 0), at.row + (row === 0 ? 0.5 : row > 0 ? 1 : 0)]
 }
 
+/**
+ * Where to mark the end of the beam: the face it meets, or the cell **centre** when it ends on a diagonal.
+ *
+ * `sidePoint` is a cell corner for a diagonal direction, and a corner is the one point §11.8 rule 4 gives
+ * the opposite meaning to everywhere else on the board — diagonal light slips *between* two corners rather
+ * than stopping at one, so a dot on a corner says "it got through" on a board whose whole point is that it
+ * did not. On a 9-wide grid it also lands in a four-cell junction and stops belonging to any of them.
+ *
+ * The centre is unambiguous and it is where a diagonal beam visibly ends anyway: the polyline already runs
+ * into the middle of the cell and stops there. Both markers take it, which closes the question §11.10 left
+ * open for the escape marker and §11.11 left open for the absorbed one — one answer, four lines apart.
+ */
+const endPoint = (at: CellRef, direction: Direction): [number, number] =>
+  direction % 2 === 1 ? [at.col + 0.5, at.row + 0.5] : sidePoint(at, direction)
+
+/**
+ * One cell of beam: in through the face it entered, through the centre, out through the face it left.
+ *
+ * **`exit !== undefined`, never `exit`.** A `Direction` is an index and `DIR.right` is **0**, so a
+ * truthiness test reads "the beam left rightward" as "the beam stopped here" and draws half a line — from
+ * the entry face to the cell centre, and no further. Every rightward-travelling cell on every board was
+ * drawn that way, which is around a third of the segments on a typical board, and it looked exactly like
+ * what it was: a beam with holes in it.
+ */
 const segmentPoints = (segment: BeamSegment): string => {
   const from = sidePoint(segment.at, opposite(segment.enter))
   const centre: [number, number] = [segment.at.col + 0.5, segment.at.row + 0.5]
-  const points = segment.exit ? [from, centre, sidePoint(segment.at, segment.exit)] : [from, centre]
+  const points = segment.exit === undefined ? [from, centre] : [from, centre, sidePoint(segment.at, segment.exit)]
   return points.map(([x, y]) => `${x},${y}`).join(" ")
 }
 
@@ -394,16 +468,18 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSeg
       {/* Where the light ends, marked — otherwise a beam that stops short reads as a drawing fault. */}
       {walk.end === "absorbed" && last && (
         <circle
-          cx={sidePoint(last.at, opposite(last.enter))[0]}
-          cy={sidePoint(last.at, opposite(last.enter))[1]}
+          cx={endPoint(last.at, opposite(last.enter))[0]}
+          cy={endPoint(last.at, opposite(last.enter))[1]}
           r={0.16}
           className="fill-orange-400/70"
         />
       )}
-      {walk.end === "escapes" && last?.exit && (
+      {/* `!== undefined` for the same reason `segmentPoints` needs it: a beam escaping rightward has
+          `exit === 0`, and a truthiness test drew no marker at all on the side it happens most. */}
+      {walk.end === "escapes" && last?.exit !== undefined && (
         <circle
-          cx={sidePoint(last.at, last.exit)[0]}
-          cy={sidePoint(last.at, last.exit)[1]}
+          cx={endPoint(last.at, last.exit)[0]}
+          cy={endPoint(last.at, last.exit)[1]}
           r={0.12}
           className="fill-amber-200/60"
         />
@@ -478,7 +554,11 @@ const PieceLayer: FC<{ puzzle: LightbeamPuzzleData; states: readonly number[] }>
                 block's width, and this element's containing block is the whole board rather than one cell —
                 which collapsed the glyph to nothing. */}
             <div className="size-full p-[8%]">
-              {blocks.kind === "mirror" ? <Mirror angle={blocks.angle} cut={blocks.cut} movable /> : <Wall movable />}
+              {blocks.kind === "mirror" ? (
+                <Mirror angle={blocks.angle} stops={blocks.stops} movable />
+              ) : (
+                <Wall movable />
+              )}
             </div>
           </div>
         )
@@ -505,7 +585,14 @@ const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
 
 export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, onCycle }) => {
   const { size } = puzzle
-  const grid = viewGrid(puzzle, states)
+  // **The board as the light leaves it, not as the player set it.** A door the beam has already opened has
+  // moved, and drawing it where it rests draws stone across a lit stretch — the exact picture §11.1 promises
+  // the drawn beam is never one of ("effects land ahead of the light by construction"). `traceBeam` has
+  // always fired the wirings as it walks; only the pieces were still being drawn from the raw states, and it
+  // showed as a beam running straight through a brick on most wizard boards. Found while looking at a
+  // diagonal end marker (§11.12), which is why a mirror story is where it turned up.
+  const drawn = firedConfig(puzzle, states, firedWirings(puzzle, states))
+  const grid = viewGrid(puzzle, drawn)
   const walk = traceBeam(puzzle, states)
   const solved = walk.end === "lit"
   return (
@@ -527,7 +614,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
             })
             const body =
               view.kind === "mirror" ? (
-                <Mirror angle={view.angle} cut={view.cut} movable={false} />
+                <Mirror angle={view.angle} stops={view.stops} movable={false} />
               ) : view.kind === "wall" ? (
                 <Wall movable={false} />
               ) : view.kind === "sun" ? (
@@ -537,7 +624,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
               ) : view.kind === "stop" && view.ghost ? (
                 <span className="size-full opacity-25">
                   {view.ghost.kind === "mirror" ? (
-                    <Mirror angle={view.ghost.angle} cut={view.ghost.cut} movable />
+                    <Mirror angle={view.ghost.angle} stops={view.ghost.stops} movable />
                   ) : (
                     <Wall movable />
                   )}
@@ -561,7 +648,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
       {/* Pieces above the cells so they can slide between them, wires above the pieces so a wire is never
           buried under the thing it drives, and the beam above everything: light does touch the mirror it
           bounces off, and a beam that stopped under a glyph would read as a beam that stopped short. */}
-      <PieceLayer puzzle={puzzle} states={states} />
+      <PieceLayer puzzle={puzzle} states={drawn} />
       <NodeLayer puzzle={puzzle} walk={walk} />
       <BeamLayer puzzle={puzzle} walk={walk} lit={litBeam} />
     </div>

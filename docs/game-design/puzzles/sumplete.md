@@ -128,6 +128,14 @@ plus the target column at a thumb-sized tap target is already the whole width of
 a 360px screen, so 7×7 is the ceiling and the top tier takes its difficulty from
 the ladder instead of from more cells.
 
+**This table is inside the solve-time budget**, wizard's 7×7 included — checked on play
+against `PUZZLE_FAMILIES.md` §3.2 (10s to 6 minutes, 3-minute target at the top). Worth
+knowing _why_, because futoshiki fails the same budget on a board of the same size: 49
+cells here are 49 keep/strike decisions each readable from its own row and column, so the
+bookkeeping stays local. A grid whose candidates couple across the board is the expensive
+kind. If a future dial ever pushes this family over, the one to turn is the grid rather
+than the cap — the cap is the difficulty, the cell count is the duration.
+
 ## 6. Hints
 
 Every technique is a hint, phrased in player language and rendered from

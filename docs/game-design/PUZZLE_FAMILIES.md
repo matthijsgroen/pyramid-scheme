@@ -57,8 +57,8 @@ side-path family** — any family can sit anywhere, including in front of a door
 the player cannot get past.
 
 That is a constraint rather than a simplification. Every family has to be
-acceptable as a blocker: bounded solve time, always solvable by reasoning, never
-a wall. Optional branches do exist on the map, but no _family_ belongs to them —
+acceptable as a blocker: solve time inside §3.2's budget, always solvable by
+reasoning, never a wall. Optional branches do exist on the map, but no _family_ belongs to them —
 placement is the tag allocator's business (§7), and it has nothing to sort
 families by. So no family is excused as "it only ever turns up somewhere the
 player can walk away from". The one thing that still argues for keeping a family
@@ -102,6 +102,40 @@ Author difficulty; **measure** duration (see §7). And since any family can gate
 door (P3), a long-duration family is a problem **everywhere** rather than
 something to keep off the critical path — the fix is to bound the duration, not
 to put it where it matters less.
+
+#### The solve-time budget
+
+**A puzzle is a coffee break, not an evening.** Every board of every family, at
+every tier, is authored to:
+
+| Bound        | Time       | What it is for                                                       |
+| ------------ | ---------- | -------------------------------------------------------------------- |
+| Floor        | **~10s**   | Below this a board is a tap, not a puzzle — starter sits here        |
+| Target       | **≤3 min** | Where a wizard board should land for a player who knows the family   |
+| Hard ceiling | **6 min**  | A tier measuring past this is **retuned**, not placed more carefully |
+
+This is the LinkedIn-games shape (Queens, Tango, Zip): ten seconds to a few
+minutes, one sitting, no bookmark. It is a deliberate change of mind, and the
+number that forced it is the corridor rather than the board — **a floor is many
+puzzles**. A wizard corridor of eight rooms at 45 minutes a room is half a day to
+walk one corridor, and the room after the one you gave up on is unreachable
+(P3: any family can gate). At 3 minutes it is half an hour, which is a session.
+
+Two consequences worth stating, because both are easy to get wrong:
+
+- **The ceiling binds the tier, not the mechanic.** A family whose classic form
+  runs long does not get excused; it gets a smaller top tier. A 7×7 futoshiki with
+  the whole technique ladder is a 45-minute board — that is the mechanic being
+  honest and the tier being wrong.
+- **Cutting duration is not cutting difficulty.** Duration is mostly _bookkeeping_
+  — squares to track, candidates to hold — and difficulty is the hardest step.
+  Take the size down and keep the cap, and a board still demands the technique it
+  demanded; it just stops asking the player to do it forty times. §11.2's weights
+  are the same lever seen from the authoring side.
+
+Measure it before believing it (§8): the budget is a design constraint, so a tier
+that has never been timed by a human is a tier whose duration is unknown, not a
+tier that passes.
 
 ### 3.3 Generation & the uniqueness verifier
 
@@ -155,8 +189,8 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   instruction text.
 - **Knobs:** number of unknowns · weights per pan · nesting (weights made of
   other weights) · whether coefficients appear (2× a weight).
-- **Scaling:** excellent — one-unknown-one-weight at T1 up through nested
-  multi-unknown equations at T5. Carries a kid from arithmetic into real algebra
+- **Scaling:** excellent — a number shared out between two unknowns at T1 up
+  through nested multi-unknown equations at T5. Carries a kid from arithmetic into real algebra
   inside one metaphor.
 - **Generation:** easy–medium — generate an integer linear equation with a unique
   positive-integer solution, render as pans.
@@ -499,7 +533,28 @@ are mostly clue-rendering + a rules overlay on top.
 
 ## 6. Scorecard
 
-Effort ratings are relative, not absolute.
+Effort ratings are relative, not absolute. **The solve-time column is what the
+mechanic costs in its classic form, not permission to ship a tier that long** —
+§3.2's budget binds every row, and a mechanic quoted at "3–15+ min" is a mechanic
+whose top tier has to be authored small.
+
+Where the built families stand against the budget, on the owner's own play:
+
+| Family        | Verdict             | What that means                                                                |
+| ------------- | ------------------- | ------------------------------------------------------------------------------ |
+| Balance scale | **in budget**       | Reference for the shape a ladder should have                                   |
+| Lightbeam     | **in budget**       | Reference for the shape a ladder should have                                   |
+| Cross-sum     | in budget (short)   | Its whole range is under a minute                                              |
+| Sumplete      | **in budget**       | Cleared on play, 7×7 top tier included                                         |
+| Futoshiki     | **over, at wizard** | ~45 min on a 7×7 with the full ladder; the tier needs retuning (family doc §5) |
+
+**Futoshiki is the only family over the line**, which is worth saying plainly: the budget
+did not turn out to be a sweep across the catalogue, and the two families with a 7×7 top
+tier land on opposite sides of it. Sumplete's 49 cells are 49 independent keep/strike
+decisions, each readable from its own row and column; futoshiki's 49 squares are one
+constraint web where a candidate held in the corner matters in the middle. **Bookkeeping
+that stays local is cheap; bookkeeping that couples is what runs the clock out.** That is
+the thing to look at first when judging an unbuilt family's duration.
 
 | Family                 | UI (web/mobile) | Scaling                  | Generation                  | Solve time / variance     |
 | ---------------------- | --------------- | ------------------------ | --------------------------- | ------------------------- |
@@ -547,7 +602,8 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 Three placement rules make the table behave:
 
 1. **A family debuts at the bottom of its own scale** (P4). Nonogram enters T4 as
-   a 10×10, never a 15×15; balance scale enters T1 at one-unknown-one-weight.
+   a 10×10, never a 15×15; balance scale enters T1 at two unknowns and a number
+   to share out.
 2. **The long families enter late because they are long, not because of where
    they sit.** Latin-square, nonogram, kakuro, Sumplete and sequence all carry
    high solve time or high variance (§6), and a T1 room is the worst place to
@@ -662,8 +718,7 @@ budget, since solve time varies wildly across families (§3.2, §8).
 
 ### 11.1 Theme taxonomy
 
-Named so far (some already in use elsewhere in the docs — `worldgen-dsl-
-redesign.md` has "merchant"/"night-market" as live `theme` string examples):
+Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redesign.md` has "merchant"/"night-market" as live `theme` string examples):
 
 | Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
 | ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -719,6 +774,12 @@ so it can be used when authoring density knobs).
 Once Sokoban, Rush Hour and hidato are built, and lightbeam has been played enough
 to measure, replace the TBD rows with real telemetry (§8) rather than trusting the
 estimate.
+
+**A weight is not a licence.** "Very High" says an instance is expensive to spend
+on a floor; it does not say the instance may run past §3.2's six minutes. A family
+sitting above the ceiling is retuned until it fits and _then_ weighted — so the
+rows quoting 8 and 15+ minutes are descriptions of the mechanic, and any tier of
+ours drawn from them is authored down.
 
 ---
 

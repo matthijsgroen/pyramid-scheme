@@ -93,7 +93,8 @@
     "hint": "Hint",
     "solvedUnaided": "Solved without a single hint",
     "solvedWithHints_one": "Solved with {{count}} hint",
-    "solvedWithHints_other": "Solved with {{count}} hints"
+    "solvedWithHints_other": "Solved with {{count}} hints",
+    "tapToContinue": "Tap to continue"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -366,7 +367,7 @@
   "lightbeam": {
     "rules": {
       "goal": "Get the sunlight from the disc to the shrine.",
-      "mirrors": "A mirror bends the light a quarter turn, off either of its faces.",
+      "mirrors": "A mirror bends the light off either of its faces. The small marks around it show the other ways it can lie: most turn the light a quarter, and some stop short of that and send it off at a slant.",
       "walls": "A block of stone swallows the light. So does the edge of the board.",
       "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
       "nodes": "Some stone is wired to a socket in the floor and no tap will move it. Send the light across the socket and the stone slides aside."
@@ -380,11 +381,13 @@
       },
       "deadEnd": {
         "wall": "Set this way, the light runs straight into stone with nothing left to save it. So it cannot be set this way.",
+        "disc": "Set this way, the mirror sends the light back the way it came, all the way into the disc it came out of. So it cannot be set this way.",
         "edge": "Set this way, the light runs off the edge of the board with nothing left to catch it. So it cannot be set this way.",
         "loop": "Set this way, the light never gets anywhere — it circles for ever. So it cannot be set this way."
       },
       "feedsExit": {
         "wall": "Work back from the shrine. Set this way, nothing can deliver the light along the only line that reaches it — it dies in stone on the way.",
+        "disc": "Work back from the shrine. Set this way, the light would have to come out of the shadowed back of the disc, and no light comes from there.",
         "edge": "Work back from the shrine. Set this way, the light would have to come from outside the board to reach it.",
         "loop": "Work back from the shrine. Set this way, the light that would have to reach it only circles for ever instead."
       },

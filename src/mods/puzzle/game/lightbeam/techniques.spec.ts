@@ -221,6 +221,57 @@ const cutThreeStop: LightbeamPuzzleData = {
   movable: [{ kind: "turnMirror", at: { row: 4, col: 2 }, angles: [0, 2, 6] }],
 }
 
+/**
+ * Two cut mirrors, out of the square and back — the shape a route with a diagonal leg has (§11.12), and
+ * the one place a wrong setting sends the light **home**. The second piece's other stop lies 135° off its
+ * answer, which for a 45° bend is exactly the way back: the beam retraces the diagonal, retraces the row
+ * off the first mirror, and the disc swallows it.
+ *
+ *     · · · · · · ·      S = disc facing right    X = shrine
+ *     · · · · · · ·      c = a cut mirror, stops {22.5°, 135°}
+ *     · · · · c · X
+ *     · · · x · · ·      x = the beam travelling diagonally
+ *     S + c · · · ·      + = the beam travelling square
+ *     · · · · · · ·
+ *     · · · · · · ·
+ */
+const cutExcursion: LightbeamPuzzleData = {
+  size: 7,
+  sun: { at: { row: 4, col: 0 }, facing: DIR.right },
+  shrine: { row: 2, col: 6 },
+  fixed: [],
+  movable: [
+    { kind: "turnMirror", at: { row: 4, col: 2 }, angles: [1, 6] },
+    { kind: "turnMirror", at: { row: 2, col: 4 }, angles: [1, 6] },
+  ],
+}
+
+describe("a route that leaves the rows and columns", () => {
+  it("settles, and the second piece's wrong stop dies in the disc rather than in stone", () => {
+    const solve = solveLightbeamByTechniques(cutExcursion, "deadEnd")
+    expect(solve.settled).toBe(true)
+    expect(settledStates(solve.board)).toEqual([0, 0])
+    // The first piece's quarter turn runs off the bottom edge; the second's sends the beam back down its
+    // own line, through the first mirror, into the disc. Two deaths, two different sentences.
+    expect(solve.steps.filter(step => step.technique === "deadEnd").map(step => step.variant)).toEqual(["edge", "disc"])
+  })
+
+  // The disc is not stone, and it was being called stone. Measured on the shipped tiers before this
+  // existed: 13 of 40 starter boards had a `deadEnd` reason that said "runs straight into stone" about a
+  // beam that had gone home — the commonest wrong sentence in the family, on its gentlest tier.
+  it("tells the disc apart from a wall on a board with no diagonal in it at all", () => {
+    const backOnItself: LightbeamPuzzleData = {
+      ...oneMirror,
+      fixed: [],
+      // A flat mirror lying square across a beam coming down the column sends it straight back up into the
+      // disc. No stop set the generator may author holds a flat stop — it offers square light no quarter
+      // turn, which §11.8 rule 2 forbids — so this one is hand-built.
+      movable: [{ kind: "turnMirror", at: { row: 2, col: 1 }, angles: [0, 6] }],
+    }
+    expect(firstStep(backOnItself, "deadEnd", "deadEnd")?.variant).toBe("disc")
+  })
+})
+
 describe("a board with a cut mirror on its route", () => {
   it("settles on the visible dead end, exactly as a square board does", () => {
     const solve = solveLightbeamByTechniques(cutDiagonal, "deadEnd")

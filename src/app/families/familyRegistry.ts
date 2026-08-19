@@ -22,6 +22,9 @@ export type FamilyContext = {
   freshArrival: boolean
   difficulty?: Difficulty
   theme?: string
+  // Which of the family's `meta.variants` generators to build with. Only ever set by the puzzle lab;
+  // unset everywhere real gameplay runs, so a family's default generator is what ships.
+  variant?: string
   tags?: string[]
   reward?: TreasureReward
   // This room's structural position among its section's puzzle rooms + its family's authored args

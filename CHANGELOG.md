@@ -10,15 +10,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Light puzzles can carry stone that no tap will move, and a socket in the floor that opens it: send the beam across the socket and the way clears. Some need the light through two sockets before anything shifts.
+- Harder light puzzles carry a mirror that sends the beam off at a slant instead of a right angle, so the light can now run corner to corner across the board.
+- The hardest light puzzles hide a trap: a socket you must keep the light away from, because crossing it drops stone in front of the beam. A board can hold one socket to reach and one to dodge, and only working it out tells you which is which.
 
 ### Changed
 
+- A solved puzzle stays on screen until you tap it away, behind a much lighter dim, so there is time to look at what you finished. It used to fade out on a timer.
+- Finishing a puzzle now shows how long it took. The clock only runs while the puzzle is on screen, so leaving the tab does not count against you.
+- Balance-scale puzzles start harder: the easiest board now has two glyphs to weigh and a number to share out between them, instead of one glyph and one subtraction. Every difficulty above it moved up to match, and trading a glyph for what a row says it is worth now arrives one difficulty sooner.
 - Light puzzles ask for real reasoning now. Every board used to be solved by tapping every piece once, whatever its difficulty; that no longer works, and neither does simply chasing the beam towards the shrine.
 - Sliding pieces can have three places to stand instead of two, so the question is which spot rather than in or out.
 - The light-puzzle difficulties now play differently from one another: each one adds a new kind of piece or a longer route, rather than turning every dial a little further.
 - Pieces you can move now carry a white edge, and anything a socket controls carries that socket's colour.
 - Tapping a piece is animated: sliding pieces slide, and mirrors turn.
 - Some light puzzles now send the beam back through its own path, crossing itself on the way to the shrine.
+- Every mirror now shows small marks for the other ways it can lie, so you can see what a piece will do before you tap it.
+- The hardest light puzzles give their mirrors three positions instead of two, and no two mirrors need offer the same three — so there is more to try before the beam lands.
+- Light puzzles are built a different way, and every board is new. Wrong turns now lead somewhere authored rather than simply running off the edge: down a corridor, into stone, or past a piece you have not settled yet. Boards also differ in character — one leans on stone you can point at, another on pieces that slide, another on sockets and doors — and the harder ones mix two.
+- Light puzzles that need a mirror out of the way now really do get one, and a puzzle promising a sliding piece or a trap will not be built without it.
+- Light puzzles get harder sooner. The first two difficulties used to be solved by following the light and nothing else; every difficulty now asks for real reasoning, and the ones above it have moved up to make room.
+- The hardest light puzzles now give some mirrors a third position, and their door needs the light through two sockets rather than one.
+- Light puzzles fold back through their own path again from the third difficulty up, so the beam crosses itself on the way to the shrine — a longer route on the same board.
+- Wrong turns on the hardest light puzzles can bend twice before they die, so following one takes you further from where you started.
+- The second light difficulty has a longer route, and the third a wider board, so each one feels like a step up from the last rather than the same puzzle again.
+- Light puzzles below the top two no longer carry a mirror the light can never reach. Every piece on those boards is one that can matter; the hardest two still hide pieces that turn out not to.
+- The first two light puzzles are real puzzles now. Every difficulty puts a piece where the beam never goes, so following the light and turning whatever it hits no longer finishes a board — you have to work out which pieces matter.
+
+### Fixed
+
+- A light-puzzle hint said the light "runs straight into stone" when a mirror had in fact sent it back the way it came, into the sun disc. It now says so.
+- The light beam was drawn with gaps in it: any square the light crossed travelling rightward was only drawn half way. The beam is continuous now.
+- The hardest light puzzles took a noticeable moment to appear. They are about three times quicker now.
+- Asking for a second hint on a big light puzzle worked the whole board out again from scratch. It now remembers what it found, so only the first hint costs anything.
+- Turning a mirror on a big light puzzle was slow and stuttery. Every tap was working out a hint nobody had asked for; it now waits to be asked, and a tap is about ten times quicker.
+- A light puzzle could put its socket right in front of the sun disc, where the beam crosses it whatever you do — a switch with no off, and a door that was already open. A socket now always sits behind a piece you can move.
 
 ## 0.36.0 - 2026-08-17
 

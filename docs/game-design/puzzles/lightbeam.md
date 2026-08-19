@@ -125,39 +125,49 @@ _is_ that skill, and it is the only technique in any family whose conclusion is
 rather than clutter, and it gives the hint engine something genuinely useful to
 say: _"the light never reaches this one, whatever you do."_
 
-## 5. Generation
+## 5. Generation — the maze is authored
 
-The configuration space is the product of the movable pieces' state counts —
-`2^rotate · stops^sliding`. At nine pieces that is under 20 000 traces, each a walk
-over at most 49 cells. **This family can afford exact enumeration**, which Sumplete
-and Futoshiki cannot, and the gates below spend that freely.
+The configuration space is the product of the movable pieces' state counts. At nine pieces that is under 20 000
+traces, each a walk over at most 49 cells, so **this family can afford exact enumeration** where Sumplete and
+Futoshiki cannot. It turns out not to need it: the gates below are cheap because the construction hands them
+their answer.
 
-1. Route a beam from sun-disc to shrine, dropping a mirror at each turn. **The route may
-   cross itself, perpendicularly** (§5.2). The final leg runs to the frame, which sets the
-   shrine in the wall: an edge shrine has at most three approaches and the frame kills most
-   of those, which is what lets T1 fire at all.
-2. Fix some of those mirrors as givens, make the rest movable, and set the movable
-   ones to a **wrong** starting state so the board opens unsolved.
-3. **Wall off the wrong settings.** For each movable piece, the light under its wrong
-   setting has to run out — off the frame, or into a wall — before it meets anything
-   else the player controls. That is what makes T3's reason available, and the piece
-   it settles is what lets the entry run reach the next one. This chain is the whole
-   starter board.
-4. **Drop shadow pieces** (§6) into the very stretch a wrong setting would light, and
-   scatter decoys where no setting can light at all.
-5. **Gate — the path is unique.** Enumerate every configuration; every one that
-   lights the shrine must trace the _same path_. Decoys may be free (that is what
-   makes them decoys), but the route may not be ambiguous.
-6. **Gate — deduction reaches it.** The ladder, capped per tier, must settle every
-   piece on the path. A board that stalls needs a guess and is discarded.
-7. **Thin the walls to a fixpoint** under the cap, re-running gates 5 and 6 on every
-   removal. A wall the player cannot spend hides which obstacles the deduction turns
-   on — the same argument that prunes Futoshiki's signs.
-8. **Gate — the board opens unsolved**, and no single tap solves it.
+1. **Lay the golden path** from sun-disc to shrine, dropping a mirror at each turn. The route may cross itself
+   on a different axis (§5.2). The final leg runs to the frame, which sets the shrine in the wall: an edge
+   shrine has at most three approaches and the frame kills most of those, which is what lets T1 fire at all.
+   The builder **backtracks** — it tests a leg before taking it and checks a bend cell has room — so it never
+   asks for a path it cannot lay.
+2. **Decide which mirrors are the player's.** A share, not a count (`interactive`). A **given** costs a cell,
+   contributes nothing to the configuration space, and a branch may pass through it freely because its face is
+   fixed. A **tappable** mirror is the opposite on all three counts.
+3. **Author a corridor for every stop a tappable mirror is _not_ set to.** Choose where it goes, place the
+   mirrors it turns at, and terminate it: off the frame, in stone, in the disc, or on a trap's own stone. A
+   corridor mirror is off the winning beam's line by construction, so it is a **decoy** — and a **shadow**
+   where it stands in a wrong ray, which is what stops every board being a chain of T3 eliminations (§6.1).
+4. **Where a corridor enters a cell a tappable piece can occupy, recurse**: author every state of that piece
+   and require every continuation to die too. This is the rule that makes the construction sound rather than
+   merely plausible, and §11.15 has the 5×5 board that proves the simpler invariant is not enough.
+5. **Uniqueness is a property of the construction, not a verdict.** Take any configuration and let `k` be the
+   first bend not at its golden angle: the beam reaches `k` along the golden path and leaves down a corridor
+   built to kill it. Two conditions carry that, and both are §11.15's — a branch may share no
+   `(cell, direction)` pair with the golden path, and no cell's contents may be undetermined when the beam
+   arrives.
+6. **Gate — the route is the only route.** `reachableDeviations` walks every future the light can have, fanning
+   out only where it meets a piece it has not been through. It answers the same question as enumerating the
+   whole product and costs 13× to 836× less, because once a beam dies the settings downstream of it cannot
+   matter. `routeIsUnique` remains as the independent second opinion.
+7. **Gate — deduction reaches it.** The ladder, capped per tier, must settle every piece on the path. A board
+   that stalls needs a guess and is discarded.
+8. **Gate — the board opens unsolved**, and no single tap solves it, and no uniform number of taps does either.
 
-Gate 5 is the honest form of uniqueness for this family. "Exactly one winning
-configuration" would be the wrong test: a decoy has a free state, so a board with
-decoys has many winning configurations and only one winning _route_.
+There is no wall-thinning pass. Every wall is placed because a corridor had nowhere else to end, so there is
+nothing for a pruner to find — and a pruner would be actively wrong here, because it tests uniqueness and the
+ladder while most authored stone is holding a branch out of territory the recursion would otherwise have to
+clear (§11.16).
+
+Gate 6 is the honest form of uniqueness for this family. "Exactly one winning configuration" would be the wrong
+test: a decoy has a free state, so a board with decoys has many winning configurations and only one winning
+_route_.
 
 ### 5.2 Crossings, and an objection that did not hold
 
@@ -187,21 +197,17 @@ buying pieces — measured at wizard, `steps` 14.6 → 15.6 and pieces-on-the-ro
 configuration space flat. That is a character dial and a good one, not a difficulty lever, and §7 is
 where character dials live.
 
-### 5.1 Fixed walls barely survive
+### 5.1 Stone is authored, and a wall the player cannot spend is still ruled out
 
-Step 7 turns out to remove almost all of them: measured over 40 seeds a tier, a
-shipped board carries **0.0–0.1 fixed walls**. Two reasons, and both are fine:
+Every wall on a board is there because a corridor had nowhere else to end. Measured over 40 seeds a tier:
+0.00 a board at starter, then 2.98 / 0.50 / 1.00 / 6.75 — the two peaks being the tiers whose modes ask for
+stone. So _"the light dies in stone"_ is a reason the player hears often, and the stone is a real obstacle
+rather than scenery.
 
-- Step 3 only adds a wall when the wrong ray would otherwise rejoin the route. On
-  boards this size a wrong turn usually just runs off the frame, which is already a
-  dead end, so no wall was needed in the first place.
-- Where one was needed, step 7 keeps it, because removing it opens a second route.
-
-So _"the light dies in stone"_ is a real reason the player hears — 17–34 times per 40
-boards at expert and above — but the stone is almost always a **sliding wall the
-player is holding in the way**, not scenery. That is a better board than one dressed
-with walls nobody can spend, and it means the tier table's vocabulary column below
-lists what a tier can _contain_, not what it will be decorated with.
+There is exactly one exception, and it is deliberate: wall-heavy places a **pair** of walls either side of a
+diagonal golden step, which stop nothing at all. The winning beam is seen to slip between the two corners,
+which is §11.8 rule 4 taught by the board rather than by rules text. The pair is what makes it read as a
+statement rather than as an ordinary dead end, so it is kept as a pair or not at all.
 
 ## 6. Difficulty
 
@@ -214,29 +220,48 @@ deep inside a wizard pyramid**, so a starter board is not only ever seen by a
 beginner. Starter must therefore be _gentle_, not _empty_ — a board with a real
 route to find, just a short one with few pieces and a low technique cap.
 
-| Tier    | Grid | Cell | Baseline route             | Stops | Movable | On the route | Configurations | Cap | Goals drawn                 |
-| ------- | ---- | ---- | -------------------------- | ----- | ------- | ------------ | -------------- | --- | --------------------------- |
-| starter | 7×7  | 46px | 2 bends                    | 2     | 3.0     | 3.0          | 8              | T3  | 1 of: long chain, clear way |
-| junior  | 7×7  | 46px | 3 bends                    | 2     | 3.9     | 3.7          | 15             | T4  | 1 of those + blind alleys   |
-| expert  | 8×8  | 40px | 3 bends                    | 3     | 5.1     | 3.7          | 68             | T5  | 2 of all four               |
-| master  | 8×8  | 40px | 4 bends, 1 shadow          | 3     | 6.4     | 4.5          | 170            | T6  | 2 of all four               |
-| wizard  | 9×9  | 36px | 6 bends, 1 decoy, 1 shadow | 3     | 8.5     | 5.7          | 778            | T6  | 2 of all four               |
+| Tier    | Grid | Route            | Branch turns | Fork | Pieces | Off route | Configurations | Cap | Modes            |
+| ------- | ---- | ---------------- | ------------ | ---- | ------ | --------- | -------------- | --- | ---------------- |
+| starter | 7×7  | 3 bends          | 1            | 2    | 4.9    | 1.9       | 32             | T7  | wall-heavy       |
+| junior  | 8×8  | 5 bends          | 1            | 2    | 7.0    | 2.0       | 235            | T7  | slider-heavy     |
+| expert  | 9×9  | 5 bends, 1 cross | 1            | 2    | 7.5    | 2.5       | 317            | T8  | slider-heavy     |
+| master  | 9×9  | 6 bends, 1 cross | 1            | 2    | 10.4   | 4.8       | 2 502          | T8  | 2 of three, trap |
+| wizard  | 9×9  | 6 bends, 1 cross | 2            | 3    | 12.9   | 7.3       | 70 055         | T8  | 2 of three, trap |
 
-"On the route" is the count that matters and the one that was missing: pieces that can stand in the
-winning beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the
-player a `neverReached` rather than a decision.
+**"Off route" is the column that decides whether a tier is a puzzle at all**, and every tier now has one: a piece
+the winning beam never touches cannot be settled by watching where the light dies, so `deadEnd` alone does not
+finish the board and there is no trail to follow (§11.22).
 
-Piece and configuration counts are measured means over 40 seeds a tier, not
-intentions, and they are the totals _after_ a board's goals are applied (§7). The
-ramp is asserted in `generateLightbeam.spec.ts`, in aggregate over a tier rather
-than board by board — with goals drawn per board, one starter grid can legitimately
-out-measure one junior grid, and it is the tier that has to grow.
+"On the route" is the count that matters and the one that was missing: pieces that can stand in the winning
+beam's way, as against pieces on the board. Everything else is a decoy, and a decoy costs the player a
+`neverReached` rather than a decision.
 
-It has been got wrong twice, both times in a way that read right in the table and
-played wrong: first with junior boards _smaller_ than starter ones, then again when
-the goal pool let two goals add four pieces on top of baselines that already
-carried some, putting five pieces on a starter board and collapsing expert, master
-and wizard into one ten-piece blur.
+Piece and configuration counts are measured means over 40 seeds a tier, **per board**, not intentions. The ramp
+is asserted in `lightbeamConfig.spec.ts`, in aggregate over a tier rather than board by board — with modes drawn
+per board, one wizard grid can legitimately out-measure another, and it is the tier that has to grow.
+
+**Generation time is not a constraint on this table.** It used to be, and §11.21 records what that cost. The
+top tier is expensive to build — 599ms a board, 4.5s at worst — and the answer to that is
+`docs/offline-puzzle-seeds.md`, not a smaller tier.
+
+**Every tier holds the tappable share at 1.0**, so `interactive` is a knob the table does not currently turn.
+It is kept because it is the cheapest lever there is when one is needed — a given costs a cell, contributes
+nothing to the configuration space and authors no corridor, so lowering it thins a board on all three counts at
+once. What the ramp actually runs on is **route length and grid**, plus the top tier's fork.
+
+**The bottom of the ladder came from playing rather than measuring** (§11.22): the family did not start feeling
+like a puzzle until the third tier, and shifting each tier's dials down one rung did not fix it, because the tier
+below was not a puzzle either. What fixed it was giving starter a piece off the route — so `deadEnd` is no longer
+any tier's cap, and the tutorial tier is gone.
+
+§6's demand that starter be _gentle rather than empty_ is now met by the three-bend route and the 7×7 grid rather
+than by there being nothing to work out.
+
+It has been got wrong three times, each time in a way that read right in the table and played wrong: first with
+junior boards _smaller_ than starter ones; then when two goals added four pieces on top of baselines that
+already carried some, putting five pieces on a starter board and collapsing expert, master and wizard into one
+ten-piece blur; and then when the configurations column was read as per-board when it was a total across 40,
+which aimed a tuning pass at putting 37 350 configurations on one wizard grid.
 
 ### 6.1 The cap does not bite on its own
 
@@ -394,152 +419,88 @@ The two currencies §6.3 separated fall out cleanly: junior buys length, expert 
 piece is exactly "a piece standing where a wrong ray goes"** — which is the lever authored angles could
 not supply (§11.7), and it arrives at the tier where the fork count needs to start moving.
 
-#### Three places the shipped config does not match this
+#### Where the ladder is now enforced rather than described
 
-1. **Sliding mirrors already debut at junior** (`slidingMirrors: 1`), a tier before the ladder puts them.
-   That is most of why junior and expert measure alike: junior already owns expert's new thing.
-2. **A starter board can draw a sliding wall.** Starter's pool is `[longChain, clearTheWay]`, and
-   `clearTheWay` turns `slidingWalls` up. `longChain` turns `setMirrors` up. So **both** of starter's goals
-   introduce vocabulary the ladder reserves for later tiers.
-3. **An expert board can draw doors and sockets**, because `orderOfOperations` sits in expert's pool. The
-   ladder keeps those for wizard.
+The mismatch this section used to catalogue was a goal pool that introduced _vocabulary_ rather than quantity:
+a starter board could draw a sliding wall, an expert board could draw doors, and sliding mirrors debuted a tier
+early — so junior and expert measured alike because junior already owned expert's new thing.
 
-#### The structural cause: goals introduce vocabulary, not just quantity
+Modes are one word each and a tier is authored to its own, so the ladder is now the table rather than a rule the
+table has to be checked against. Two rungs of it are enforced by generation refusing to build: a branch that
+turns needs a cap above `deadEnd`, and a trap needs `wiringDead` (§7.3). The rest is asserted in
+`lightbeamConfig.spec.ts` — piece count, configuration space and pieces-on-the-route all monotone across the
+five tiers.
 
-§7's pool was written as "the tier sets the route, a goal sets what is in the way", and the fairness note
-in `lightbeamConfig.ts` gates two goals on the technique cap. But three of the six change the **piece
-list** rather than the amount of it:
+The caveat that survives is about stone. Walls are authored now, so junior really does get the stone §6.4 asks
+of it — 2.98 a board, against the 0.00 the previous generator managed however it was configured, because it
+only ever added a wall where a wrong ray would otherwise rejoin the route and on a short route it mostly ran
+off the frame instead.
 
-| Goal                | Turns up       | Introduces         |
-| ------------------- | -------------- | ------------------ |
-| `longChain`         | `setMirrors`   | set mirrors        |
-| `clearTheWay`       | `slidingWalls` | sliding walls      |
-| `orderOfOperations` | `doors`        | doors and sockets  |
-| `sortTheWheat`      | `decoys`       | — more of the same |
-| `blindAlleys`       | `shadows`      | — more of the same |
-| `crossedBeams`      | `crossings`    | — route shape only |
+## 7. Modes — what kind of board this is
 
-So **a tier's goal pool has to be derived from its vocabulary rather than authored beside it**, or a goal
-hands a board a piece its tier has not met. Under a strict reading of the ladder, starter is left with
-`crossedBeams` alone — and that turns up `turns`, which fights "dead ends 1 turn". **Starter may want no
-goal at all**, which is consistent with it being the tier that teaches rather than tests.
+Before anything like this existed, every tier turned every dial a little. The wizard row read: five turns AND a
+set mirror AND two sliding mirrors AND a sliding wall AND a decoy AND three shadows — so every wizard board was
+the **average** wizard board.
 
-#### Applied, and re-measured
+A **mode** fixes that, and it does it one level deeper than a pool of dial-tweaks could. A mode changes how the
+maze around the route is _constructed_, so it adds the axis the family was missing: difficulty (the cap, the
+share of tappable mirrors) is one thing, **what kind of problem this board is** is another, and they were welded
+together.
 
-The ladder is in `lightbeamConfig.ts`. Measured over 40 seeds a tier afterwards:
+| Mode             | What it constructs                                                           | Tests                            |
+| ---------------- | ---------------------------------------------------------------------------- | -------------------------------- |
+| **wall-heavy**   | stone closes a branch even where the frame would; corner pairs on a diagonal | reading where light died         |
+| **slider-heavy** | golden bends that slide rather than turn                                     | is it in the way, and which cell |
+| **switch-heavy** | doors, the sockets that open them, and a trap                                | ordering (T2), and avoidance     |
 
-| Tier    | Player pieces | Legs a wrong turn runs | Forks on it | Seen from the door | Worst gen |
-| ------- | ------------- | ---------------------- | ----------- | ------------------ | --------- |
-| starter | 3.0           | 2.96                   | 1.00        | **33%**            | 5ms       |
-| junior  | 4.0           | 3.48                   | 1.50        | **25%**            | 25ms      |
-| expert  | 5.9           | 3.90                   | 2.22        | **15%**            | 38ms      |
-| master  | 7.5           | 4.21                   | 2.50        | **13%**            | 216ms     |
-| wizard  | 8.3           | 5.09                   | 2.65        | **13%**            | 731ms     |
-
-**Monotone on every column, and junior against expert is 25% to 15% — the collapse §6.3 found, closed.**
-Master and wizard tie on the headline percentage and separate on everything else; a second shadow at
-wizard parts them by one point for twice the generation time, which is not a trade worth making.
-
-Four things the application taught, none of them predicted:
-
-- **Three player pieces is the floor for an honest board, not a preference.** Starter at two bends
-  generated **nothing**: two binary pieces make four configurations, and every dark one is either a tap from
-  done or solved by tapping both, so `openingIsHonest` rejects all of them. Starter is three bends.
-- **The ladder has to be cumulative.** First pass gave junior and expert the same route length, and junior's
-  only legal goals both lengthen the route while expert's did not — so junior came out **harder than
-  expert** on every measure. Expert keeps junior's length and adds sliding pieces on top.
-- **A tier's addition belongs in the baseline only if every board should have it.** Pinning a sliding wall
-  into expert, master and wizard took wizard's worst generation from 520ms to 1407ms, because a three-stop
-  track has to fit a straight stretch spaced from everything already placed. The sliding **mirror** is
-  expert's baseline; the sliding **wall** comes from `clearTheWay` in the pool, which is §7's lean-baseline
-  rule doing its job.
-- **Junior cannot demand more reasoning than starter, and its cap now says so.** Its addition buys legs, and
-  the shrine-side elimination needs a piece standing in the wrong ray — which is expert's addition. The cap
-  was `feedsExit`, a ceiling no junior board reached; it is `deadEnd` now.
-
-**The vocabulary rule is a spec, not a note.** `generateLightbeam.spec.ts` asserts that no tier puts a piece
-on a board before its tier: starter and junior carry turn mirrors and nothing else, expert and master never
-carry a door or socket, and wizard carries both. That is the gate that was missing when a starter board
-could draw a sliding wall.
-
-#### One honest caveat on walls
-
-Walls are character rather than depth. §5.1 already found that removing one "usually leaves the wrong
-setting running off the frame, which `deadEnd` explains just as happily", and `thinWalls` strips nearly
-all of them — a shipped board carries 0.0 to 0.1 fixed walls. So junior's walls make a wrong turn **die
-somewhere you can point at** instead of sailing off the edge, which is worth having for how the board
-reads, but the depth at junior has to come from the longer dead end beside it, not from the wall.
-
-## 7. Puzzle goals — pick two dials and turn them hard
-
-Before this existed, every tier turned every dial a little. The wizard row read: five turns
-AND a set mirror AND two sliding mirrors AND a sliding wall AND a decoy AND three shadows —
-so every wizard board was the **average** wizard board.
-
-A **goal pool** fixes that. `LIGHTBEAM_CONFIG` now holds a lean baseline, and generation
-draws one or two goals per board and turns those dials hard. Boards get character instead
-of mean settings, and it adds the axis the family was missing: difficulty (cap, size) is one
-thing, **what kind of problem this board is** is another, and they were welded together.
-
-With 158 lightbeam nodes in the world, that is a bigger variety win than any new piece type
-would be — and it needed no new piece at all. The four shipped goals are a re-scheduling of
-dials the generator already had.
-
-| Goal                    | Turns up                      | Tests                      | Built |
-| ----------------------- | ----------------------------- | -------------------------- | ----- |
-| **Long chain**          | `turns +2`, `setMirrors +1`   | route-tracing              | yes   |
-| **Sort the wheat**      | `decoys +2`                   | which pieces matter (T5)   | yes   |
-| **Clear the way**       | `slidingWalls +1`             | does the light get through | yes   |
-| **Blind alleys**        | `shadows +1`                  | the exhaustive rung (T6)   | yes   |
-| **Order of operations** | `doors +1`                    | ordering (T2)              | yes   |
-| **Crossed beams**       | `crossings +1`, `turns +1`    | reading a square twice     | yes   |
-| **Steer clear**         | a harmful node on a wrong ray | avoidance                  | §11.1 |
+A tier holds a pool and draws from it (`modePool`, `modeCount`), so boards get character instead of mean
+settings. Wizard draws two of three; the tiers below are authored to one mode or none, because §6.4's ladder
+gives each of them exactly one new word.
 
 ### 7.1 Three rules that keep it honest
 
-**A goal only ever turns a dial up.** That is what lets two of them apply in either order
-and both still mean what they say. The first draft had each goal flatten the dials it did
-not care about, so drawing two silently cancelled the first.
+**A mode only ever adds.** That is what lets two apply in either order and both still mean what they say.
 
-**The tier sets the route; a goal sets what is in the way.** So a goal adds one or two
-pieces, never four, and the tier still decides how big a board is. `longChain` gives two
-more bends but one more _given_ mirror, because the length is the character, not the piece
-count. Getting this wrong put five pieces on a starter board that wanted three (§6).
+**The tier sets the route; a mode sets what is in the way.** So the tier still decides how big a board is, and
+`interactive` — the share of mirrors that are the player's — is what carries the ramp (§11.19).
 
-**The gates stay untouched.** A goal shapes what gets _placed_, never what gets _accepted_:
-path uniqueness and the ladder still decide, so no goal can smuggle through a board that
-needs a guess.
+**The gates stay untouched.** A mode shapes what gets _placed_, never what gets _accepted_: route uniqueness and
+the ladder still decide, so no mode can smuggle through a board that needs a guess. Where a mode cannot be
+delivered honestly the draft is **rejected** rather than quietly downgraded — `noTrack` when a slider's track
+does not fit, `noDoor` when a door and its sockets do not, `noTrap` when no wrong setting can be routed to the
+shrine, and `trapIdle` when the trap turns out to be decoration.
 
-### 7.2 The fallback ladder, and why the board carries its goals
+### 7.2 Why the board carries its modes
 
-Two goals at once can be a pair no board satisfies, so when the attempt budget runs out a
-goal is dropped and it tries again, down to the bare baseline.
+The board **records the modes it was actually built to**, as data on the puzzle rather than a log line. A
+fallback that fires quietly would make the whole pool decorative while every other measurement still looked
+fine, so a spec asserts what each tier delivered and the playtest bench can show what a board was meant to be.
 
-The board then **records the goals it was actually built to**, as data on the puzzle rather
-than a log line. A fallback that fires quietly would make the whole pool decorative while
-every other measurement still looked fine, so `goals.spec.ts` asserts the ladder never
-fires at the shipped config, and the playtest bench can show what a board was meant to be.
+That principle earned its keep twice over, and both times the failure was silent. The slider track search once
+counted the sliding piece's own bend as a neighbour to keep clear of, so it rejected every track and
+slider-heavy produced **zero sliding pieces** while every other number looked healthy. And the generator this
+one replaced asked `clearTheWay` for a sliding wall and mostly did not get one — 17 asked, 0 placed at master —
+while still recording the goal as drawn.
 
-That assertion earned its keep immediately. The first measured run fell back on **30% of
-wizard boards**, and the cause was not the goals at all: `buildRoute` drew each leg's length
-from 1..size-2 regardless of how many legs it had to fit, so it ate the grid in three
-strides and a long route almost never fitted. The leg budget now scales with the turn
-count — and wizard's worst-case generation went from 332ms to 50ms as a side effect.
+### 7.3 Which modes a tier may draw
 
-### 7.3 Which goals a tier may draw
+A fairness question, not a taste one, and two of the answers are hard constraints rather than preferences
+(§11.17, §11.18):
 
-A fairness question, not a taste one. `sortTheWheat` piles on decoys, and a decoy is only
-fair once `neverReached` can prove it irrelevant — so expert and up. `blindAlleys` piles on
-shadows, which need at least the shrine-side elimination to unpick — so junior and up.
+- **A branch that turns needs a cap above `deadEnd`.** Its mirror is a shadow, and a shadow defeats `deadEnd`
+  by design: the light disappears into a piece nobody has settled instead of visibly dying. So starter and
+  junior keep their branches straight, and generation refuses rather than quietly building an easier board.
+- **A trap needs the rung that proves a wiring can never fire.** Without `wiringDead` the stone a trap might
+  drop sits `unknown` across the board for ever and nothing settles.
+- **wall-heavy and traps fight**, because wall-heavy's stone kills the trap corridor before the trap gets to.
+  A wizard board that draws both gets no trap, which is why it records what it drew.
 
-One consequence worth knowing at playtest: a junior board demands the shrine-side
-elimination **when it is a blind-alleys board**, which is about a third of them. That is the
-goal system working as designed rather than a gap — the goal decides the reasoning, and the
-cap only says how far a board is allowed to go.
+And one thing worth knowing at playtest: wall-heavy makes a board **easier** in ladder terms, because stone that
+closes a branch also settles it. It buys legibility and spends uncertainty, so it is not a difficulty dial.
 
-Nothing about the mechanism is lightbeam-specific: Futoshiki could draw technique-flavour
-goals the same way. Left here until a second family actually wants it — a shared abstraction
-on one caller would be the premature kind.
+Nothing about the mechanism is lightbeam-specific: Futoshiki could draw technique-flavour modes the same way.
+Left here until a second family actually wants it — a shared abstraction on one caller would be the premature
+kind.
 
 ## 8. Controls
 
@@ -633,8 +594,10 @@ skin.
 > mirror, a four-state one, a retracted state, and a two-stop half-step-only set that measurement showed
 > collapses a board's reach to a third. Each is marked where it was overturned, but the corrections arrive
 > after the claims, so reading forwards will hand you a design that does not work. §11.8 is the decision;
-> everything before it is the evidence. **§11.9 is what building step 1 of it found**, and it moves one
-> bar in §9.
+> everything before it is the evidence. **§11.9 to §11.12 are what building it found**, in step order, and
+> they are the current record: §11.9 moves one bar in §9, §11.10 replaced the mirror's two facts with one
+> number, §11.11 replaced the wrong ray, and **§11.12 is where the mechanic reaches a player** — master and
+> wizard route diagonally, so anything in §11.11 written about "no board ships one" has been overtaken.
 
 - **Prisms and colour splitting.** The catalogue already rules this a different
   puzzle shape rather than a knob, and points at The Talos Principle as prior art.
@@ -644,6 +607,31 @@ skin.
 - **Offline seed tables.** The direction recorded in `futoshiki.md` §10 applies
   here too, and this family wants it less: enumeration is cheap, so generation is
   fast without it.
+- **Rule 3's three-stop edge-on set** (§11.8) — a stop lying along the beam passes it, which is the sliding
+  wall's "get out of the way" verb in one cell. It needs the stop set built from the bend's _arrival_ direction
+  rather than from the answer angle, which nothing does yet.
+- **Making the exhaustive rungs walk the reachable deviation tree.** `onlySurvivor` enumerates the whole
+  configuration product, and generation now costs almost exactly what that rung costs: 97.65ms of a 98.97ms
+  wizard board (§11.17). `reachableDeviations` already answers the neighbouring question 13x to 836x cheaper by
+  never visiting the settings downstream of a dead beam, and the same trick applies. It is the last measured
+  bottleneck in the family.
+- **A better difficulty metric than the cap** (§6.3). "Seen from the door" is retired as the ramp and
+  `lightbeamConfig.ts` says why; replacing it with something better is separate work.
+
+### 11.0 Three ways to measure this family wrongly
+
+Each of these has been walked into at least once, and each looks like a generator bug while it is happening.
+
+**A decoy's setting is free by construction.** The light never reaches it, which is what `neverReached` proves —
+so "every wrong setting fails" is false over all mirrors and true only over the pieces the winning beam crosses.
+Asserted the wrong way round, it says a decoy is not a decoy.
+
+**Uniqueness is one winning route, not one winning configuration.** The two coincide only on a board with no
+free piece. Any tier that puts a mirror off the winning beam's line has many winning configurations.
+
+**`Direction` is an index and `DIR.right` is `0`.** Never test a direction for truthiness. This shipped twice in
+one file: the beam was drawn with holes in it for every rightward cell, and a beam escaping rightward drew no
+marker. `MirrorAngle` has the same hazard at `0` (flat).
 
 ### 11.1 Traps — the missing half, and why the obvious build does not work
 
@@ -868,7 +856,14 @@ Ordering falls out of generation rather than being checked for: sockets are draw
 strictly _before_ the earliest door, so an effect always lands ahead of the light and the drawn beam is
 never a picture of something that has stopped being true.
 
-Where it appears is `orderOfOperations`, a goal from expert up (§7), plus a door on every wizard board
+**And strictly _after_ the first piece a tap can move.** A socket on the route's first leg is crossed by
+every configuration, so its door stands open from the first frame, the T2 rung has nothing to fire on,
+and the player is looking at a switch with no off — it reads as scenery that has already happened. One
+movable piece upstream is enough: set that piece wrong and the light never arrives. A generation rule
+rather than a gate, like the rest of §5's construction, and it is what
+`generateLightbeam.spec.ts`'s _"leaves the socket dark under some setting the player can choose"_ holds.
+
+Where it appears is **switch-heavy** (§7), which wizard draws two boards in three
 whose wiring names two sockets. Measured over 40 seeds a tier, against the same boards without any of it:
 
 | Measure                                    | Without doors       | With                                         |
@@ -1434,10 +1429,18 @@ cell instead of three — and cells are this family's scarce resource. `{0°, 45
 two it squeezes past; walls are drawn with rounded corners so the gap is visible. No rules text — and it
 is also the naive implementation.
 
-**5. Stops are discovered by tapping, not drawn.** Only _position_ has to be drawn, because a sliding
+**5. ~~Stops are discovered by tapping, not drawn.~~** ~~Only _position_ has to be drawn, because a sliding
 piece's stops are facts about which cells might be blocked. A rotation happens in a cell occupied either
 way. The stop **count** is probably worth showing (a ring in as many segments) since T4 and T7 reason over
-the full set — playtest it rather than ruling it.
+the full set — playtest it rather than ruling it.~~
+
+**Overturned, and playtesting it is what overturned it** (§11.13). Both halves were wrong. The ring in as
+many segments is _unbuildable_ — a mirror is a line across the whole cell, so it runs through the annulus
+and occludes the marks that annotate it. And the count was the wrong thing to want: a short tick at each
+stop the piece is **not** in draws the stops **themselves**, inside one cell, which is the comparison §11.9
+concluded there was nowhere to make. So a rotation mirror's stops **are** drawn, and a fork is read rather
+than probed — which is the difference §4 draws between deduction and trial, now on the deduction side. What
+stays true is the half about _sliding_ pieces: their stops are cells, and the cells are already drawn.
 
 **6. Geometry, settled and provable.** Directions are the 8 multiples of 45°; a mirror at orientation
 `m` (22.5°·m) sends a beam travelling `k` out along `(m − k) mod 8`. Every face is a bijection, so **loops
@@ -1465,12 +1468,28 @@ for an ordinary one**, not by adding a piece — the reach comes from one piece 
    what has to change is the _ray_ — a wrong setting is read off the piece's stop set — and what the piece
    costs is `exitRun` rather than stone.
 4. **The generator**, routing diagonally on purpose. Every reach number in §11.4 is a retrofit floor.
-5. **Traps** (§11.1), which need the second routes this supplies.
+   — **done, §11.12**, and it is where the mechanic reaches a player: master and wizard route diagonally.
+5. **One mirror type, and the list authored per piece** — rule 1's own promise, which steps 1–4 have not
+   kept: the generator ships `[45°, 135°]` on 921 of 961 mirrors and every list is two stops long. The
+   drawing goes first again, because the fill that tells a cut mirror from an ordinary one only works while
+   lists come in two flavours, and rule 1 asks for many. — **its drawing is gated, §11.13**, and the answer
+   is a tick at each stop the piece is not in, which is also the first thing in the family that would let a
+   player read a fork without tapping it (so it owes rule 5 an argument). The generator and the measurement
+   come before traps. Its drawing is one mirror glyph with a tangential tick at each stop the piece is not
+   in, and **rule 5 is overturned by it** — rule 5's own text says so.
+6. **Traps** (§11.1), which need the second routes this supplies.
 
-**Three things paper cannot settle, and they are the whole remaining risk:** ~~whether the stops read at
-36px~~ (settled — §11.9), ~~what the generator's yield is once uniqueness has more to reject~~ (settled for
-the swap-in — §11.11: 40/40 boards on every tier), and ~~whether the ladder still _deduces_~~ (settled for
-the swap-in — §11.11; a board routed diagonally is still step 4's to prove).
+**Three things paper cannot settle, and they were the whole remaining risk — all three are now closed:**
+~~whether the stops read at 36px~~ (settled — §11.9), ~~what the generator's yield is once uniqueness has
+more to reject~~ (settled — §11.11 for the swap-in, §11.12 for a route that actually bends diagonally:
+40/40 boards on every tier either way, and master's worst board got nearly four times _faster_ to build),
+and ~~whether the ladder still _deduces_~~ (settled — §11.12: every master and wizard board settles inside
+its own cap, and what it costs is a rung rather than a guess).
+
+**One rule reads more narrowly than it should, and §11.12 is the correction.** Rule 2 lists two stop sets;
+they are the rightward slice of **one** fact, which is that a half-step angle has exactly one partner
+keeping a quarter turn — the diagonal three eighth-turns away. Over the four half-steps that is four pairs
+(§11.11), and `cutStops` derives them rather than tabulating them.
 
 ### 11.9 What the drawing found, at 36px
 
@@ -1491,7 +1510,11 @@ the turn — an ordinary mirror snaps between two diagonals, a cut mirror lands 
 tell that it is a different kind of piece before its glyph is read at all.
 
 **So the glyph carries the whole of the second question, and the split that works is not a shape but a
-_fill_.** An ordinary mirror is the polished **edge** — one solid stroke. A cut mirror is the **plate** —
+_fill_.** — **and the second question turned out not to be a question** (§11.13): a fill answers "is this
+piece unusual", which is only worth asking while the answer is otherwise hidden. Drawing the stops
+themselves answers "where can it point", which is what a player actually needs, and the fill is gone. What
+survives from this section is question 1 and everything below it about motion; the paragraphs on solid
+against hollow are the record of a step, not the current drawing. An ordinary mirror is the polished **edge** — one solid stroke. A cut mirror is the **plate** —
 an outline, two silvered faces, cut ends. Solid against hollow is a judgement the eye makes on **one
 cell**, with no second cell to compare against, and that is what reading a board consists of. Every
 candidate that differed by degree instead — a thicker bar, a longer one, a tapered one — reads fine in a
@@ -1681,13 +1704,14 @@ A wall for a diagonal wrong ray sits one diagonal step from the mirror, touching
 rule 4 teaches the opposite lesson about corners everywhere else on the board. It reads, and what carries it
 is the end of the line rather than the marker: the beam runs visibly _into_ the brick and stops in the
 middle of it, which is not the picture a beam that clears a corner makes (`CutMirrorWrongRay`, 8 boards in
-200 have one).
+200 have one — the story is now `DiagonalRoute`, since step 4 inverted what it shows).
 
 **The marker is the part to look at again.** An absorbed beam is dotted where it meets the obstacle's face,
 which for a diagonal entry is the cell corner — so the dot lands on the one point rule 4 gives the opposite
 meaning to, and on a 9-wide board it sits in a four-cell junction. The escape marker has the same open
 question (§11.10), no board ships either, and marking the cell centre for a diagonal end would settle both.
-Left for whoever routes diagonally on purpose rather than decided here.
+Left for whoever routes diagonally on purpose rather than decided here. — **decided that way in §11.12**,
+and both markers took it.
 
 One thing confirmed rather than found: the junior frame puts a cut mirror at **135°** two cells from an
 ordinary mirror at **135°**, both doing the identical quarter turn, on a board the generator built. Solid
@@ -1707,3 +1731,1095 @@ where it counts.
   "a quarter turn, off either of its faces", which is true of every mirror a player can meet. Turning it on
   owes that sentence a rewrite — and rule 5 says a cut mirror's stops are discovered by tapping, not drawn,
   so what it owes is a sentence rather than a legend.
+
+### 11.12 What routing diagonally found
+
+Step 4, and the step where the mechanic reaches a player: **master and wizard now route diagonally**, so a
+board's winning beam leaves the rows and columns. It is smaller than steps 1–3 put together — one new
+helper in the route builder and three square assumptions generalised — and it overturns two things above.
+
+**The dial changed meaning, and the swap-in is retired.** `cutMirrors` used to swap a cut mirror in at a
+square bend and spend its _wrong_ setting on a diagonal (§11.11). It now says how many of the route's bends
+turn the beam diagonally, and the stop set is read off the bend rather than authored beside it. The two are
+the same piece with the answer and the wrong setting exchanged, which is why nothing was lost by dropping
+the older reading: a cut mirror's stop set is one diagonal and one half-step, and all step 4 does is take
+the other stop.
+
+**Rule 2's two sets are one fact.** A half-step angle has exactly **one** partner that keeps a quarter turn
+— the diagonal three eighth-turns away, since the other candidate is always the flat or upright angle, and
+neither of those can turn square light 90° at all. So `cutStops` is a lookup with no table: `{22.5°, 135°}`,
+`{67.5°, 135°}`, `{45°, 112.5°}`, `{45°, 157.5°}` and nothing else exists. §11.11 had already derived those
+four pairs from the arrival direction; they are the same four from the other end.
+
+#### The route's shape is forced, and it is §11.5's invariant arriving as a construction
+
+**An ordinary mirror is no use to diagonal light.** A beam arriving at 45° either runs along the mirror's
+line and is passed straight through (`reflect(2, 1) = 1`) or meets it square on its back and comes home
+(`reflect(6, 1) = 5`); the other two diagonals say the same. So **only a half-step bend can close a diagonal
+leg**, and there are exactly two legal shapes:
+
+- **consecutive pairs** — out of the square on one bend, back into it on the next;
+- **one at the very last bend** — the diagonal leg is then the run into the frame, and the shrine is entered
+  diagonally.
+
+Which means an odd dial has nowhere to put its odd cut but the final bend. That is §11.5's parity law used
+rather than feared: the number of half-step crossings is even for a shrine entered square and odd for one
+entered diagonally, so **the dial and the route's shape determine each other**. Both tiers ship
+`cutMirrors: 1`, which is also what keeps §11.5's own prohibition satisfied — its rule only bites on a board
+carrying more than one, and with one there is no count to read.
+
+#### What had to learn eight directions, and what deliberately did not
+
+| Place                      | What it assumed                               | What it says now                                                                                         |
+| -------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `angleFor(enter, exit)`    | a mirror only if `enter + exit` is a diagonal | any genuine turn; refuses the two non-turns and, per rule 2, the flat and upright angles                 |
+| `perpendicular(direction)` | a three-way conditional on up/down            | `direction % 4` — the pair named from the **axis**, so a leg and its reverse offer the same two in order |
+| `axisOf(direction)`        | `"h" \| "v"`                                  | `direction % 4` — four axes, since a diagonal is a line too                                              |
+
+The middle one is the correction worth keeping: the old function looked like it was answering "which way
+across this beam" and was in fact answering "which way across this axis", and only the second question has a
+stable answer. Taking the axis reproduces it exactly on all four square directions — verified board by board
+below — and gives a diagonal leg its own two crossings instead of silently handing it `[up, down]`.
+
+**A crossing may now be 45°, and that is `axisOf` reading correctly rather than a widening.** The rule was
+written as "perpendicular" because there were two axes; the fact it forces is that **nothing can stand there,
+or the first pass would have turned**, and a row crossed by a diagonal forces exactly that. Measured over 200
+generated boards: **9 crossings at master and 13 at wizard** now meet at 45°. Looked at (`DiagonalRoute`,
+last frame): it draws as an X leaning over and still reads as one square the beam goes through twice, because
+a beam polyline bends only at cell centres and both passes bend at the same point — the same structural
+reason §11.10 gave for a beam corner not appearing to terminate on a rivet.
+
+**Sliding pieces stay on square legs, and that is a decision rather than an oversight.** A track across a
+diagonal beam would draw its ghosts on a diagonal, and §9 has not settled what a diagonal run of ghosts
+reads as — so the givens and the sliding pieces are drawn from the square bends alone, sliding walls from
+square straights, and a door's open stop from a square leg's two crossings. `trackRuns` therefore still
+builds a row or a column, and the spec that asserts as much is still true. Three call sites, one rule.
+
+**A wrong setting that sends the beam home needs no stone.** At a 45° bend the partner stop lies 135° off
+the answer, which is exactly the way back: `reflect` is its own inverse in the direction, so the light
+retraces every leg it has flown, off every mirror that carried it, and the disc swallows it. No wall may go
+there — the cells are the route's own — and none is wanted, so `wrongSettingRays` drops that ray instead of
+`blockWrongSettings` refusing the draft. It is a death the player can see and the first one in the family
+that is neither stone nor the frame.
+
+**And it turned up a sentence that was already wrong.** `deadEnd`'s absorbed variant said _the light runs
+straight into stone_ for every absorption, and the disc absorbs too. Measured on the shipped tiers before
+anything changed: **13 of 40 starter boards had a `deadEnd` reason about a beam that had gone home**, and 13
+of 40 junior ones — the commonest wrong sentence in the family, on its gentlest tier, and invisible until a
+board was built where going home is the _designed_ wrong answer. There is a `disc` variant now.
+
+#### Measured, 40 seeds a tier
+
+The gate steps 1–3 were verified against — _any change that alters a generated board is a bug_ — held to the
+last byte through the eight-direction generalisations, and then was spent on purpose:
+
+| tier    | boards | attempts a board | fixed walls a board | `exitRun` used | diagonal route | worst gen               |
+| ------- | ------ | ---------------- | ------------------- | -------------- | -------------- | ----------------------- |
+| starter | 40/40  | 2.3 → 2.3        | 0.00 → 0.00         | 40 → 40        | 0/40           | byte for byte unchanged |
+| junior  | 40/40  | 4.0 → 4.0        | 0.00 → 0.00         | 40 → 40        | 0/40           | byte for byte unchanged |
+| expert  | 40/40  | 71 → 71          | 0.05 → 0.05         | 39 → 39        | 0/40           | byte for byte unchanged |
+| master  | 40/40  | 144 → 372        | 0.23 → 0.30         | **34 → 19**    | **40/40**      | 168ms → **58ms**        |
+| wizard  | 40/40  | 112 → 243        | 0.10 → 0.38         | **26 → 11**    | **40/40**      | 589ms → **319ms**       |
+
+**Yield holds and the clock improves.** Every seed on every tier still builds, and master's worst board got
+nearly three times _faster_ despite two and a half times the attempts — a diagonal draft that will not fit
+fails in the route builder, which is the cheapest place to fail. §11.4's fear that the geometry would cost
+generation time is the opposite of what happens.
+
+**The attempts are up for one structural reason**, worth knowing before tuning anything: with one cut the
+diagonal leg is the final run to the frame, and a diagonal leg roams both axes across a board whose square
+legs have already crossed it — so `mayCross` rejects far more drafts on a tier that has not drawn
+`crossedBeams`. `MAX_ATTEMPTS` went 1600 → 2400 to cover it, and the fallback ladder got _rarer_ rather than
+commoner: over 120 seeds × five tiers, **2 boards fell back on a goal before and 1 after**.
+
+**The bill is the rung §11.11 predicted, and it is smaller than §11.11 measured.** `exitRun` — _the shrine
+can only be lit from there_, the family's clearest sentence — falls from 34 boards in 40 to 19 at master and
+26 to 11 at wizard, with `onlySurvivor` doing that work instead. §11.11 measured 15 for master; the extra
+four come from master's baseline shadow coming _off_ as the cut goes on, which is §6.4's one-new-thing rule
+applied rather than a separate saving. Starter and junior would pay nothing at all if they drew the dial —
+40/40 either way — because the cost is density, not the piece: a diagonally-entered shrine set in the frame
+walls most of the eight candidates by itself, and it is the unsettled pieces on the other approaches that
+turn a candidate `unknown`.
+
+**§6.3's ramp, re-measured in one pass** (the table in `lightbeamConfig.ts`): monotone on every column, and
+master and wizard part on the headline percentage for the first time — 13% against 10%, where they used to
+tie at 13%. The note that stood there said a second shadow at wizard was the only way to separate them and
+would cost twice the generation time; it is the other way round. **Expert and master are the close pair now**
+(14% against 13%), and §6.3's measure cannot see what parts them, because what master spends is a rung and
+the measure counts the geometry of a wrong branch. Anyone landing the difficulty-metric swap §6.3 asks for
+should expect those two to read as one tier and to need reseparating.
+
+#### The four decisions §11.11 left, answered
+
+1. **`exitRun` going quiet board-wide: paid, and the lever stays deferred with a reason.**
+   `travelledDirections` is already as tight as any sound board-wide rule can be — a diagonal beam requires
+   at least one half-step crossing, and with one half-step stop anywhere both parities are reachable. Going
+   tighter needs a **bound on how many times the beam crosses a half-step mirror**, and no local rule
+   supplies one: §11.5's own double-crossing board shows a single cut mirror flipping parity twice. The
+   generator knows the count (`cutBendSlots` fixes it), but reading it off the route would be the solver
+   knowing something the player cannot see, which is the line §4 does not cross. So the rung is spent, and
+   the exhaustive pair earns its place in master's cap.
+2. **Both end markers now sit at the cell centre for a diagonal end.** `sidePoint` is a cell **corner** for a
+   diagonal direction, and a corner is the one point rule 4 gives the opposite meaning to — diagonal light
+   slips _between_ two corners everywhere else — while on a 9-wide grid it lands in a four-cell junction
+   belonging to none of them, and corners are also where rivets are drawn (§11.10). Looked at rather than
+   reasoned (`DiagonalRoute`, frames 4 and 5, at 4×): the absorbed beam now runs visibly into the middle of
+   the brick and stops there, which is the whole of what the picture has to say. The cost is small and real
+   — for an **escape** the corner was the true exit point, so the centred dot reads as mid-line rather than
+   as an endpoint — and it is paid to keep the marker off the corner, where both the rivet reading and the
+   slipped-through reading live. One rule for both markers beats two rules.
+3. **Rule 3's three-stop, edge-on set is not built.** It needs the stop set built from the bend's arrival
+   direction (a flat stop in front of a beam coming down a column retroreflects up the route and the draft
+   dies), it costs 1.5× rather than 1× per §11.8 rule 8, and it is a second new word for a tier that has
+   just been given one. The hand-authored `{0°, 45°, 135°}` board in `techniques.spec.ts` still holds the
+   walk and the two-ray derivation honest; nothing generates one.
+4. **Two diagonally adjacent movable pieces reached by one beam: measured, and it does not happen.** Over
+   200 generated boards on every tier, with one cut mirror and with two, **no winning beam links two movable
+   pieces a diagonal step apart** — zero, every tier. So `spacedFrom` and `piecesAreSpaced` stay on the four
+   square neighbours (a tap-accuracy rule, as §11.11 said) and no new gate was added. The uniqueness and
+   settling gates would catch a board where it mattered.
+
+#### One thing found that belongs to §11.2 rather than here
+
+`LightbeamBoard` drew the pieces from the player's states and traced the beam from the _fired_ configuration
+— so a door the light had already opened was drawn shut, with the beam running straight through the brick.
+Visible on most wizard boards, and squarely against §11.1's promise that effects land ahead of the light by
+construction, so the drawn beam is never a picture of something that has stopped being true. Fixed in the
+same commit, because it was making step 4's own frames unreadable: the board now draws `firedConfig`, and a
+door slides aside as the light reaches its socket.
+
+#### Left alone on purpose
+
+- **Traps** (§11.1), which is what the second routes were for — and they are no longer next. Rule 10 gained
+  a step: **one mirror type with the list authored per piece** (§11.13) comes first, because step 4 is what
+  made the gap between rule 1 and the generator measurable.
+- **The difficulty-metric swap** (§6.3), still separate, and now with the expert/master caveat above.
+- **`placeShadows`, `thinWalls` and the spacing rules**, unchanged — §11.11's list still reads correctly.
+
+### 11.13 What the stop drawing found, before any of its logic
+
+Rule 10 step 5, run the way step 1 was: the drawing first, at 35.3px, before a line of the generator
+changes. The question is not the mechanic's — it is **rule 1's**, which steps 1 to 4 have not kept.
+
+**Measured first, because the gap is the reason for the step.** Over 200 generated boards on the five
+tiers, the authored stop lists are:
+
+| tier    | distinct lists authored                         | stop counts |
+| ------- | ----------------------------------------------- | ----------- |
+| starter | `[45°, 135°]` ×120                              | 2 only      |
+| junior  | `[45°, 135°]` ×160                              | 2 only      |
+| expert  | `[45°, 135°]` ×194                              | 2 only      |
+| master  | `[45°, 135°]` ×200, then four derived pairs ×40 | 2 only      |
+| wizard  | `[45°, 135°]` ×247, then four derived pairs ×40 | 2 only      |
+
+**921 of 961 mirrors carry the identical list, and no list anywhere is longer than two.** Rule 1 says "two
+or three stops per piece… not the same set on every piece — the variety is the point", and the generator
+ships one set with a garnish. The type was never the obstacle: `MovablePiece`'s `turnMirror` has been
+`{ at, angles }` since §11.10, one mirror with an authored list, exactly as rule 1 describes.
+
+**So what is actually blocking rule 1 is the drawing, and it always was.** A cut mirror is told from an
+ordinary one by a _fill_ — solid bar against hollow plate (§11.9) — which is **one bit**, and it only says
+anything because there are only two flavours to distinguish. Author genuinely varied lists and that bit
+goes silent. §11.9's finding is what forces this: the 22.5° between two stop sets can never be read off a
+drawn angle, because you are judging one cell with nothing to compare against.
+
+#### Three candidates, and the one rule 5 suggests is the one that fails
+
+Prototyped in `StopRingPrototype`, which imports nothing from `LightbeamBoard` — the bar geometry,
+`glyphTurn` and `OwnerRing` are copied on purpose, so looking at a candidate cannot change the shipped
+board. Cells are 35.3px, shot at 1× to judge and 6× to inspect.
+
+| candidate                             | verdict                                                        |
+| ------------------------------------- | -------------------------------------------------------------- |
+| **A — a ring in as many segments**    | **Rejected**, and it is rule 5's own wording                   |
+| **B — pips, counted like dice**       | **Rejected** above three, and it carries less for the same ink |
+| **C — a tick at each stop not taken** | **Passes**, and it answers a question that was not asked       |
+
+**A fails for a reason worth keeping: the bar runs through the annulus the ring wants.** A mirror is a line
+across the whole cell, so any ring drawn around it is crossed and occluded by the very thing it annotates.
+At two stops it reads as two arcs; by four it is a dashed circle of indeterminate count, and at 35.3px it
+is a mush at every count. Rule 5's parenthesis — "a ring in as many segments" — cannot be built.
+
+**B is countable to about three and then stops.** Past that the pips collide with the bar's ends and read
+as "some dots". It is also the weaker candidate at equal cost: pips sit at fixed bearings, so they say how
+many stops there are and nothing about **which**.
+
+#### C, and the thing it settles that §11.9 said could not be settled
+
+The bar says where the piece stands; a short tick at each stop it is **not** in says where else it goes.
+Three findings, in order of how much they change:
+
+1. **It draws the angles, not the count.** §11.9 concluded the drawn angle can never distinguish
+   `[22.5°, 135°]` from `[45°, 135°]` — true, and irrelevant here, because a tick puts the comparison
+   **inside the one cell**. There is now a candidate on which a player can read a piece's whole fork
+   without touching it. **That contradicts §11.8 rule 5** ("stops are discovered by tapping, not drawn"),
+   and it is a design change to be argued rather than slipped in: what rule 5 buys is board area, and what
+   it costs is that a fork is probed rather than seen — which §4 says is the difference between trial and
+   deduction.
+2. **The count falls out and never has to be counted.** What a player needs is "what are my options here",
+   and one tick against three is a _texture_ — a fan — that reads before it is counted. So the countability
+   ceiling A and B were being judged against is not a real bar.
+3. **The marginal discrimination is bare-against-one-tick, not two-against-three** — and that is what
+   decides how to spend it. At 35.3px a single tick is present but quiet, while the step from one to three
+   is loud. Since every mirror has at least two stops, **every mirror carries at least one tick**, so the
+   quiet comparison never arises on a board: one tick is the baseline the eye calibrates on, and more than
+   one is the thing worth seeing. Drawing the tick on ordinary mirrors too is what makes that true — which
+   is the opposite of the instinct to draw it only where a piece is unusual, and that instinct is `cut`'s
+   one bit wearing a different coat.
+
+**The `OwnerRing` question is closed: no collision.** All three candidates sit inside the cell's outline,
+and the socket-driven two-colour split stays legible against them — the ring is pink and green at the edge,
+the marks are sky inside. Concentric was the worry and it is not one.
+
+#### What the gate therefore says to build, which is not what was proposed to it
+
+The proposal into this step was to replace `Blocker.cut: boolean` with a stop **count**. The drawing says
+that is the wrong field: the renderer needs the **angles**.
+
+```ts
+{ kind: "mirror"; angle: MirrorAngle; stops: readonly MirrorAngle[] }
+```
+
+One field replaces one field, and a derived boolean disappears rather than being swapped for a derived
+number. `angle` stays what it has always been — which stop the piece is in, and the only thing the light
+reads. `stops` is the authored list, which the flattening into `CellContent[][]` currently throws away and
+is exactly what the renderer has to have. `sameBlocker` compares the list instead of the bit, which is
+strictly more information, so the resolved-or-`unknown` engine gets no weaker.
+
+`cut`, and `isCut` with it, then has nothing left to do. It is worth recording what it was: **a rendering
+hint smuggled through a physics value**, and it meant two different things depending on which branch built
+it — a fact about the piece's list when `pieceOccupant` passed `angles`, and a fact about the current angle
+when `configGrid` fell back to `[angle]` for a fixed or sliding mirror. A fixed mirror authored off the
+diagonals drew as a plate for no reason anyone chose.
+
+#### What building it found, and the one thing the prototype missed
+
+The gate above was run on cells with no beam through them, and that is what hid it: **a radial tick is
+collinear with the beam whenever a stop's line is the line the beam leaves on.** The beam is drawn over the
+pieces with `mix-blend-screen`, so the tick came out **cream** — which costs the mark its meaning and breaks
+§9's "nothing but light is drawn amber" in the same stroke. Not rare, either: a beam travels one of eight
+bearings and a stop is one of eight mirror lines, and the very first shipped board (`DiagonalRoute`, master
+seed 10) does it.
+
+**The fix is to lay the tick _across_ its bearing rather than along it.** A tangential dash cannot be
+collinear with anything radial: the beam crosses it square, brightens the middle, and the ends stay sky.
+Checked on the cell that failed, at 8×.
+
+And it cannot be hidden by the bar either, which is worth writing down because it is _why_ candidate A's
+failure does not carry over. A ring failed because the bar is a diameter and crosses the annulus. It crosses
+it at **its own bearing** — and that is the one stop no tick is ever drawn for, since the ticks are the
+alternatives. Arcs placed only at the stops the piece is not in are the one set of arcs the bar cannot
+touch. Candidate A was the right _mark_ at the wrong _bearings_.
+
+**The board is denser and it holds.** Every mirror now carries at least one tick, so a wizard grid gained
+nine or more strokes. Looked at on a nine-mirror board with two three-stop pieces retrofitted in
+(`CutMirrorDensity`, which is what that frame asks now): the ticks stay subordinate to the bars, one tick
+against two is visible at a glance, and nothing competes with the amber beam, the socket rings or the
+dashed wire.
+
+**And the model change is behaviour-neutral, verified the same way step 4 was.** `sameBlocker` now compares
+the whole stop list rather than the bit, which is strictly more discriminating — and it changes no outcome,
+because two candidate occupants of one piece differ in `angle` before they could differ in `stops`. All 200
+boards across the five tiers are byte-identical.
+
+**And the gate that was missing, found by someone looking at the screenshot rather than at the glyph.** The
+beam had been drawn with **gaps** in it since the layer was written: `segmentPoints` tested `segment.exit`
+for truthiness, and `DIR.right` is `0`, so every cell the light crossed rightward was drawn from its entry
+face to its centre and stopped. Around a third of the segments on a typical board. The escape marker had the
+identical bug — a beam leaving the grid rightward drew no marker at all.
+
+Worth recording as a lesson about where the gates were pointed rather than as a typo. Three drawing gates ran
+in this family — §11.9, §11.10, and the one above — and every one of them asked whether a _piece_ could be
+read. None asked whether the **beam** could, and the beam is the only thing on the board that answers a tap.
+That matters most for the play style the family's premise treats as the failure mode: trial is only cheap if
+you can see what your tap did, so a beam with holes in it breaks the trial loop rather than the deduction
+one. `Direction` being an index is what made it typable; `MirrorAngle` has the same hazard at `0`, and both
+now have specs asserting the zero case rather than a comment hoping for it.
+
+What this section still owes, unchanged: the generator authoring varied lists, and the measurement.
+
+#### The generator authoring the lists, and what a bigger fork buys
+
+Step 5 point 2. `mirrorStops` is the sibling of `slidingStops` — the most stops a route mirror's list may
+hold — and `mirrorStopSet` draws each list per piece: the answer, the diagonal rule 2 demands, then extras
+drawn from the angles whose wrong ray the board can actually close.
+
+**The closability filter is the whole of why this is affordable.** A `k`-stop piece has `k − 1` wrong rays
+and every one has to leave the route, so the obvious build — draw `n` angles and let `blockWrongSettings`
+reject the draft — throws away most of its work. Choosing extras from the angles whose first ray cell is off
+the route, off the grid, or a retrace to the disc costs one array filter and keeps the yield at **40/40 on
+every tier at every size tried**.
+
+Measured over 40 seeds, at the top three tiers:
+
+| stops | tier   | built | avg fork | distinct forks | configurations | pieces a board | worst gen  |
+| ----- | ------ | ----- | -------- | -------------- | -------------- | -------------- | ---------- |
+| 2     | expert | 40/40 | 2.00     | 1              | 4 368          | 5.9            | 44ms       |
+| 2     | master | 40/40 | 2.00     | 5              | 9 216          | 7.0            | 61ms       |
+| 2     | wizard | 40/40 | 2.00     | 5              | 21 216         | 8.2            | 252ms      |
+| 3     | expert | 40/40 | 2.41     | 7              | 11 151         | 5.9            | 83ms       |
+| 3     | master | 40/40 | 2.35     | 23             | 23 400         | 7.0            | 210ms      |
+| 3     | wizard | 40/40 | 2.33     | 23             | 73 836         | 8.1            | **1511ms** |
+| 4     | expert | 40/40 | 2.80     | 20             | 24 000         | 5.9            | 246ms      |
+| 4     | master | 40/40 | 2.72     | 42             | 52 455         | 6.9            | 544ms      |
+| 4     | wizard | 40/40 | 2.61     | 40             | 126 924        | 8.1            | **4772ms** |
+
+**The variety is the headline.** §11.13 opened on 921 of 961 mirrors carrying the identical list; three stops
+takes a tier from **5 distinct forks to 23**, and four takes it to over 40. The piece count does not move —
+7.0 to 7.0, 8.2 to 8.1 — so this is rule 8's "one piece doing more" rather than another piece, which is the
+same trade the diagonal cut made.
+
+**What it costs is generation, and it is the enumeration that pays.** Both exhaustive gates — `routeIsUnique`
+and `surveyWinners` — walk the whole configuration space with a full `traceBeam` per configuration, so a
+space three times larger is a build three times slower. Wizard at three stops is 1511ms, past the 1400ms
+`lightbeamConfig.ts` already calls a trade not worth making, and four stops is 4772ms.
+
+**So rule 8's cost model gets applied rather than quoted: the decoy pays for the fork.** Three stops is 1.5×,
+something has to go, and dropping wizard's baseline decoy lands it at **655ms** with 23 distinct forks and a
+configuration space still 1.8× what two stops gave. Decoys still reach wizard boards through `sortTheWheat`,
+and `neverReached` still fires without one, because a shadow is a decoy too.
+
+**Wizard only, and that is §6.4 rather than caution.** Master's addition this cycle is already the diagonal
+cut; giving it the fork as well would be two new words at one tier. Master at three stops is measured and
+cheap (210ms, 23 forks) if the ladder is ever re-cut — the numbers are in the table above rather than needing
+a rerun.
+
+**And the fork is what showed "seen from the door" is not the ramp.** Wizard's fork went 5 shapes to 23 and
+its configuration space 21 216 to 37 350 — the maze got substantially bigger — while §6.3's headline
+percentage moved from 10% to 11%, reading it as very slightly _easier_. A metric built on the cost of
+following a wrong turn cannot see this, because following a wrong turn costs one tap. The tier table in
+`lightbeamConfig.ts` now says so, and steers by what `docs/instructions/puzzle-screens.md` §5 names instead:
+which techniques a board demands.
+
+**One correction to the spec that step 4 wrote.** `cutBends` selected pieces by `isCut(angles)` — anything
+off the two diagonals — which was the same thing as "the route bends diagonally here" only while every list
+was a pair. Once lists are authored, an ordinary quarter-turn bend can carry a half-step among its _other_
+stops, so the predicate caught pieces the route does not bend diagonally at. What `cutMirrors` counts is
+diagonal legs, which is a fact about the **answer**, and the spec now says that. Two more assertions moved
+the same way: rule 2 is now checked over every list rather than over the cut pieces' pairs, and "every wrong
+setting fails" is scoped to the mirrors the winning beam actually crosses — a decoy's setting is free by
+construction, which is what `neverReached` proves, and asserting otherwise was a claim about the wrong pieces.
+
+#### One thing this section decided and did not spend
+
+**Master at three stops is measured and affordable** — 210ms worst, 23 distinct forks — and it is not taken,
+because master's addition is already the diagonal cut and §6.4 allows one new word a tier. The numbers are in
+the table above rather than needing a rerun, for whenever the ladder is next re-cut.
+
+And one thing to settle before step 2 rather than after: **rule 5.** If a fork is drawn rather than
+discovered, the piece stops paying for itself in taps and starts paying in ink, and §6.3's "seen from the
+door" is measured over wrong _settings_ — a fork the player can see changes what that number means.
+
+### 11.14 Where drafts actually die
+
+Generation is reject-heavy and was reject-blind, which is a bad pair: a master board costs 356 discarded
+attempts and nothing recorded which gate discarded them, so every tuning decision in §11.12 and §11.13 was
+made without knowing whether the route builder, the piece placement or one of the two exhaustive gates was
+doing the rejecting. `LightbeamOptions.reject` names the gate, off unless asked for. Measured over 40 seeds
+a tier:
+
+| tier    | rejects a board | where they die                                                       |
+| ------- | --------------- | -------------------------------------------------------------------- |
+| starter | 1               | `noRoute` 100%                                                       |
+| junior  | 3               | `noRoute` 95%, `noHonestOpening` 5%                                  |
+| expert  | 70              | `noRoute` 92%, `noPieces` 4%, `tooFewCrossings` 3%, `piecesTouch` 1% |
+| master  | 356             | `noRoute` 95%, `tooFewCrossings` 3%, `noPieces` 2%, `piecesTouch` 0% |
+| wizard  | 226             | `noRoute` 97%, `noPieces` 2%, `tooFewCrossings` 1%, `piecesTouch` 0% |
+
+**`routeIsUnique` and `solveLightbeamByTechniques` reject nothing. Not one draft, on any tier, across 200
+boards.** Every draft that reaches them passes them. So the two gates the family is built on — §5 gate 5 and
+the house rule's "reachable by deduction alone" — are already **assertions rather than filters**: at the
+shipped dials, route-then-obstruct produces uniqueness and deducibility as a by-product of construction, and
+the enumeration only confirms it.
+
+That is worth stating carefully, because it is easy to over-read. It does **not** mean the gates are
+unnecessary; it means they are not currently doing selection, and what keeps them passing is unmeasured. They
+are what would catch a dial moved into unsafe territory, and they are the reason nobody has had to think
+about uniqueness while turning knobs. Removing them would trade a known cost for an unknown risk.
+
+**What it does overturn is a cost story.** The natural assumption — the one this doc's own §11.13 leans on
+when it explains wizard at three stops costing 1511ms — is that a bigger configuration space is expensive
+because the gates run more often. They do not run more often; they run **once per accepted board** and always
+pass. The 1511ms is one enumeration over a space three times larger, not many enumerations. And conversely
+the 356 attempts a master board costs are **cheap** rejections: worst-case generation there is 55ms, so a
+discarded draft costs about 0.15ms, because it dies in the route builder before any piece is placed.
+
+**So the honest target for anyone optimising this is `buildRoute`, not the gates.** 92–97% of all work is a
+route builder being asked for a path it cannot lay — legs that run off the grid, a crossing budget that
+cannot be met, a diagonal leg with nowhere to go — and it is asked blind, with no knowledge of the grid it
+has left. A builder that knew its own constraints would cut nearly all of that, and it is a much smaller
+change than replacing the architecture.
+
+### 11.15 Can authored branches carry uniqueness on their own?
+
+A question for the generator §11.14 points at — one that **authors** each wrong branch as a corridor rather than
+deriving a ray and walling it. If every branch is built to die, is the enumeration still needed?
+
+The proposed invariant was: _no branch may join the golden path or reach the shrine, and sharing a cell with
+the golden path is not a join if the beam passes through it in a different direction._
+
+**The second half is right, and for a good reason.** The walk is keyed on `(cell, direction)` — that is what
+`segmentKey` and the loop guard use — so two beams sharing a `(cell, direction)` pair have identical futures.
+Sharing a cell while travelling differently is genuinely not a join. It also sharpens the first half: the
+condition is "shares no `(cell, direction)` with the golden path", not "does not reach the shrine", because a
+branch that rejoins **upstream** of where it left also delivers the light.
+
+**But the pair is not sufficient, and here is the board that proves it.** Found by sampling 400 000 random
+boards, keeping the ones where every single-piece deviation from the winning configuration satisfies the
+invariant, and asking whether the winning path is then unique.
+
+```
+ · · · X ·     S  disc (3,4), facing left      A  (3,0) stops {112.5°, 135°}
+ C # · # ·     X  shrine (0,3)                 B  (2,1) stops {0°, 45°}
+ · B · · ·     #  wall                         C  (1,0) stops {22.5°, 67.5°, 135°}
+ A · · · S
+ · · · · ·
+```
+
+Golden: left along row 3, **A** turns it up, up to **C**, C bends it down-right into **B**, B bends it
+up-right to the shrine. Every one of the four single-piece deviations is safe — three escape the frame and
+one is absorbed by the disc it came from, and none of them rejoins:
+
+| deviation      | end      | rejoins |
+| -------------- | -------- | ------- |
+| A → other stop | escapes  | no      |
+| B → other stop | absorbed | no      |
+| C → 67.5°      | escapes  | no      |
+| C → 135°       | escapes  | no      |
+
+And yet the configuration that moves **all three** lights the shrine by a second, shorter path: A's wrong
+stop sends the beam up-right straight into **B's cell**, and B at _its_ wrong stop bends it to the shrine,
+skipping C entirely. Two branches that each die, combining into a route.
+
+**The mechanism is the whole finding.** A branch that enters a cell holding a **tappable** piece is not one
+corridor — it is one corridor per stop of that piece, because `(cell, direction)` determines the future only
+where the cell's content is fixed. Authoring covers the stop the branch was traced against. The others exist,
+and the invariant says nothing about them.
+
+Rate: **1 in 949** boards that satisfied the invariant, over 400 000 sampled. Two caveats pointing opposite
+ways: random boards mostly throw their branches off the frame, which is why only 949 of 6 823 satisfied the
+invariant at all — and an authoring generator aims branches at interesting territory on purpose, so the real
+rate should be **higher** than this floor rather than lower. At shipping scale 0.1% is dozens of boards with
+two answers.
+
+#### The sufficient rule, and why it is also the cheap one
+
+> While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every stop
+> of that piece and require every continuation to die as well.
+
+That restores "the future is determined" everywhere, so uniqueness becomes a property of the construction. It
+is more work than the invariant above and **less** than the gate it would replace: the recursion walks the
+**reachable deviation tree**, and today's `routeIsUnique` walks the whole product. Once a beam dies, the
+settings downstream of it cannot matter, which is exactly what makes enumerating 37 350 wizard configurations
+wasteful — the tree is roughly the golden mirrors times their fork size, plus a recursion wherever a branch
+meets a tappable cell, which is low hundreds of walks rather than tens of thousands.
+
+So the authored generator can plausibly hold uniqueness **by construction and more cheaply than the current
+gate**, while keeping the reuse — a branch running through a golden mirror's cell, or past a slider — that
+makes the board dense and keeps nearly every mirror the player's to touch. The alternative, branches built
+only from givens and never touching a tappable cell, makes the proof trivial and fills the board with scenery
+instead: the fixed count grows as mirrors × fork × branch depth while the tappable count stays at the golden
+path's, so three-stop forks with one turn a branch put two fixed mirrors on the board for every live one.
+
+**The board above is the test any such generator has to pass.**
+
+#### Interactive against static is a weight, not a count
+
+Which mirrors are the player's has been a **count** for the family's whole life — `setMirrors`, how many bends
+are givens — and it wants to be a **share**, because what it controls is not a quantity of pieces but which of
+the two designs above a board is built to. A given costs a cell and reads as scenery, contributes nothing to
+the configuration space, and may be passed through by a branch freely, because a fixed face keeps
+`(cell, direction)` determining the future. A tappable mirror is the opposite on all three counts, and every
+branch that touches one owes the recursion.
+
+So the share is a **continuous dial between the two designs, choosable per tier** rather than once for the
+codebase. Low, and branches are built of givens, uniqueness is nearly free, and the board fills with scenery —
+the static count grows as mirrors × fork × branch depth while the live count stays at the golden path's, so
+three-stop forks with one turn a branch leave two static mirrors for every live one. High, and branches reuse
+the pieces already on the board — a golden mirror's back face, a slider's vacated cell — so the board stays
+dense and every glyph is worth touching.
+
+It is therefore also the family's **main lever on generation cost**, since it drives the configuration space
+and the recursion depth at once, and it is the knob to set before any other. One floor holds whatever the
+weight says: **three tappable pieces**, which is where §5's opening rules already put the family's floor and
+why a starter board carries three bends rather than two.
+
+The drawing already carries the distinction, which is what makes a low share survivable rather than confusing:
+a white outline says a piece is the player's and anything else says it is part of the puzzle (§9). What a low
+share costs is play, not legibility — fewer things to try, on a board with more to look at.
+
+### 11.16 What authoring the maze found
+
+§11.14 measured that 92–97% of generation is a route builder guessing blind, and §11.15 asked whether a
+generator that **authors** each wrong branch can carry uniqueness on its own. Both questions are answered by
+one construction, built beside route-then-obstruct rather than replacing it
+(`generateAuthoredLightbeam.ts`): lay a golden path from disc to shrine, then for every stop a golden mirror
+is _not_ set to, author the corridor that stop's light runs down and make it die — at the frame, in stone, or
+in the disc.
+
+**Uniqueness stops being a verdict and becomes an argument.** Take any configuration and let `k` be the first
+bend, in beam order, not standing at its golden angle. Every bend before `k` is golden and every golden cell
+between them is empty, so the beam reaches `k` travelling exactly the direction the corridors at `k` were
+authored against — and leaves down one of them, and dies. So no configuration with a wrong bend lights the
+shrine. Two conditions carry that: a branch may share no `(cell, direction)` pair with the golden path
+(§11.15's sharpening — sharing a _cell_ while travelling differently is not a join, and rejoining upstream is),
+and no branch may enter a cell a tappable piece occupies, because that is one corridor **per stop of that
+piece** and authoring covers only the one it was traced against.
+
+Measured over 2 000 boards, 400 seeds a tier, with every gate the other generator uses left untouched:
+
+| tier    | attempts a board | one winning route | ladder settles | worst gen | pieces | cells | configurations |
+| ------- | ---------------- | ----------------- | -------------- | --------- | ------ | ----- | -------------- |
+| starter | 1.00             | 100%              | 100%           | 7.3ms     | 3.0    | 3.0   | 8              |
+| junior  | 1.30             | 100%              | 100%           | 7.7ms     | 4.0    | 4.5   | 16             |
+| expert  | 1.03             | 100%              | 100%           | 5.9ms     | 5.0    | 5.9   | 32             |
+| master  | 1.05             | 100%              | 100%           | 5.8ms     | 5.0    | 5.9   | 32             |
+| wizard  | 1.00             | 100%              | 100%           | 8.2ms     | 6.0    | 7.2   | 64             |
+
+**`noRoute` never fires — not once in 2 000 boards**, against 92–97% of all rejections on the other
+generator. A leg is tested before it is taken and a bend cell is checked for room, so a dead end costs one
+search node instead of one discarded draft; the route builder backtracks instead of guessing. §11.14's
+"honest optimisation target is `buildRoute`" is confirmed by removing it: master goes from 356 rejections a
+board to 1.05 attempts. The only rejection left anywhere is `noHonestOpening` — 155 across the 2 000, all of
+it junior and expert — which is the opening being re-drawn, not the board being rebuilt.
+
+Checked independently of the gates, on the same 2 000 boards: **exactly one configuration lights the shrine**
+on every board, which is stronger than `routeIsUnique`'s one winning _path_ and coincides with it only
+because no piece here is free. No branch shares a golden `(cell, direction)` pair and none enters a tappable
+cell. Branches end at the frame about three times in four and in stone the rest.
+
+#### The stone is load-bearing, but not for the reason the plan assumed
+
+Measured over 1 000 boards: **722 walls, every one of which stops a branch** — there is no scenery, because
+stone is only placed where a corridor had nowhere else to end. Authored boards therefore carry far more of it
+than shipped ones, 0.00–1.24 a board against §5.1's 0.0–0.1.
+
+But taking a wall away breaks uniqueness on only **30 of the 722** (21 at master, 9 at wizard), and stalls the
+ladder on none. The other 692 are holding a branch out of a cell a tappable piece occupies — the beam dies
+anyway once it gets there. So `thinWalls` must not run on an authored board, and the reason is not that a
+pruner can only remove load-bearing stone: it is that the pruner tests the wrong property. It re-checks
+uniqueness and the ladder, passes, and strips exactly the stone that keeps branches away from tappable
+cells — handing §11.15's hazard to any construction that later reuses them.
+
+#### What it costs, and it is the whole of what is left to buy
+
+The configuration space collapses: 64 at wizard against 37 350, and 8 at starter against 320. That is the
+price of every mirror being the player's, two stops a piece, and no branch touching another piece — there are
+no sliding pieces, no decoys and no shadows, so nothing stands in a wrong ray.
+
+And it shows in the only currency `docs/instructions/puzzle-screens.md` §5 names. **Every authored board at
+every tier settles at cap `deadEnd`** — 1 000 of 1 000 — while the shipped generator's boards need more than
+that on 18% of expert, 48% of master and 75% of wizard grids. `entryRun`, `exitRun` and `deadEnd` fire on
+every board and nothing above them ever does. `exitRun` in particular fires 100% of the time, against the 15
+boards in 40 §11.12 measured once the diagonal arrived, because a sparse board leaves the backward walk from
+the shrine nothing to be uncertain about.
+
+So this construction has bought the guarantees and not yet bought the difficulty: it is §6.1's finding
+arriving from the other direction, where a board built plainly is a chain of `deadEnd` eliminations and a
+wizard grid solves like a starter one only longer. What closes that gap is pieces standing where wrong rays
+go, which is exactly what a share of mirrors below 1.0, branches that turn, and branches that reuse the
+pieces already on the board are for.
+
+#### Two smaller findings
+
+**A retroreflecting stop needs no stone, and only a cut pair produces one.** A stop that sends the beam back
+down its own line retraces off every mirror that carried it — each still at its golden angle, or the light
+would not have reached the bend — and the disc swallows it. A _single_ cut mirror always arrives on a square
+leg, so its wrong stop never retroreflects: measured, zero across all five tiers. The second of a consecutive
+cut pair arrives diagonally and does, about 110 branches per 200 boards, and uniqueness holds on those boards
+too.
+
+**A folded route is where corridors run out of room.** Asking for one crossing on a 9×9 with six turns takes
+`noCorridor` from never firing to 50 rejections in 200 boards, and drops the stone to 0.06 a board: a route
+that reuses its own ground leaves branches less of the grid to die in. Attempts a board stays between 1.00
+and 1.25 across every dial tried, up to eight turns, three cut mirrors and two crossings.
+
+### 11.17 What the recursion found, and what it made free
+
+§11.15 asked whether authored branches can carry uniqueness alone, answered no, and gave the sufficient rule:
+
+> While authoring a branch, if it enters a cell any tappable piece can occupy, **recurse**: author every stop
+> of that piece and require every continuation to die as well.
+
+Built, and it is worth stating what the rule replaces. §11.16's construction bought uniqueness by **refusing**
+reuse — a branch simply never entered a tappable cell — which held the proof together and left the board
+sparse. The recursion lets branches go there and closes them properly instead, which turns out to be the
+difference between a construction that guarantees and a construction that also makes a puzzle.
+
+**§11.15's counterexample board is the regression test, and the gate sees it.** Transcribed into the spec, it
+reports two winning routes at **one reuse fan-out** — precisely A's wrong stop walking into B's cell and
+finding that one of B's stops carries the light on. The board satisfies the pair invariant, every single-piece
+deviation dies, and it is still not unique; the recursion is what tells them apart.
+
+#### Reuse is common once branches may turn, and absent until then
+
+A branch that runs straight almost never meets another piece: measured over 1 000 boards at the shipped tiers'
+dials, **not one branch entered a tappable cell**. The refusal §11.16 relied on was costing nothing, because
+the geometry was not offering the opportunity — a straight ray from a mirror on a sparse board mostly leaves
+the frame. So the recursion had no work to do, and the 1-in-949 rate §11.15 measured on random boards was, on
+that construction, effectively zero.
+
+Give branches **one turn** and it inverts: 4.7 reuse fan-outs a board, on every board. §11.15's caveat that
+its rate was a floor is confirmed, but the mechanism is not the one expected — it is not that an authoring
+generator aims branches at interesting territory, it is that **a branch that turns needs a mirror, and that
+mirror is another piece for some other branch to walk into.** Reuse is manufactured by branch depth rather
+than found.
+
+#### The deviation tree is free, measured against the gate it replaces
+
+Over 2 800 boards, uniqueness held at **100%** and the tree and the walk-over-the-whole-product agreed on
+every single board. What they cost is not comparable:
+
+| dials (9×9, 6 turns) | tappable | configurations | tree, walk steps | product, walk steps | ratio |
+| -------------------- | -------- | -------------- | ---------------- | ------------------- | ----- |
+| no branch turns      | 6.0      | 64             | 34               | 430                 | 13×   |
+| one turn a branch    | 9.8      | 1 021          | 62               | 8 911               | 143×  |
+| two turns a branch   | 11.8     | 6 769          | 77               | 64 375              | 836×  |
+
+The ratio grows with the configuration space because the tree does not see it: once a beam dies the settings
+downstream of it cannot matter, so what gets walked is the set of _distinguishable futures_ rather than the
+product. In wall-clock, on the two-turn board: **0.04ms against 38.38ms**, a factor of about 960.
+
+**Which moves the bottleneck rather than removing it.** On the same board, generation costs 98.97ms and
+`solveLightbeamByTechniques` is 97.65ms of it. The uniqueness gate is now free and the _technique solver_ is
+the whole cost, because `onlySurvivor` enumerates exactly the product the tree just learned to avoid. That is
+§11.14's finding one step along: the honest target was `buildRoute`, then it was the uniqueness gate, and now
+it is the exhaustive rung — and the same trick applies to it.
+
+#### The cap bites, which is the thing §11.16 could not manage
+
+A branch mirror sits off the golden path by construction, so the winning beam never touches it: it is a
+**decoy**, and where it stands in a wrong ray, a **shadow**. §6.1 measured shadows as the only thing that
+stops every board being a chain of `deadEnd` eliminations, and here they are not scattered on top of the board
+— they are what a branch turning is made of.
+
+| construction            | boards needing more than `deadEnd` | `neverReached` | `onlySurvivor` |
+| ----------------------- | ---------------------------------- | -------------- | -------------- |
+| §11.16, no branch turns | 0 of 400                           | never          | never          |
+| one turn a branch       | **400 of 400**                     | 400 of 400     | 267 of 400     |
+| two turns a branch      | 400 of 400                         | 400 of 400     | 331 of 400     |
+
+And the reverse of it is a hard constraint on the tier table rather than a preference: **a tier capped at
+`deadEnd` cannot carry a branch mirror at all.** Starter's dials with one turn a branch fail `notSettled` on
+every attempt of every seed, because a shadow defeats `deadEnd` by design. §6.4's ladder — decoys and shadows
+are only fair once a rung can prove a piece irrelevant — arrives here as something generation refuses to build
+rather than something the config declines to ask for.
+
+#### What the share buys, and what the floor is for
+
+`interactive` behaves as §11.15's closing note predicts, and it is a density dial rather than a difficulty
+one. Falling from 1.0 to 0.7 on a six-bend route: tappable pieces 9.8 → 5.9, givens 0.0 → 2.8, stone 1.75 →
+0.71 a board, configuration space 1 021 → 73, and reuse 4.7 → 1.8 fan-outs a board. A given authors no
+corridor at all, because it has no wrong stop to spend, which is exactly why a low share is cheap.
+
+It does dilute the cap — boards needing more than `deadEnd` fall from 400 of 400 to 358 of 400 — so the two
+knobs are not independent, and the tier table has to set them together.
+
+The floor of **three tappable pieces** holds whatever the share says, which is why 0.4 and 0.2 produce the
+same board on a six-bend route. That is not a safety margin: it is §5's opening rules, where two binary pieces
+make four configurations and every dark one is a tap from done or solved by tapping both, so `openingIsHonest`
+refuses the lot.
+
+#### Where a draft still dies
+
+At a full share on an 8×8 or 9×9 the cost is one attempt a board, and the only rejection is the opening being
+re-drawn. It stops holding when the board is small or sparse for what branch depth asks of it: 1.54 attempts a
+board at a 0.7 share on 8×8, and 5.08 on a 7×7 with four turns — `notSettled` in both cases, the solver
+refusing a board whose shadows outrun its cap. `noCorridor` remains almost silent (1 in 200 boards at two
+turns and a 0.4 share), so the recursion nearly always finds somewhere to stand its stone.
+
+### 11.18 The three modes, and the trap that was not buildable before
+
+§7's goals answered "what kind of board is this" and did it by turning two dials hard. The three modes replace
+them, because an authoring generator can turn the _construction_ rather than the quantities. Combinable, and a
+board records which it was built to — for §7.2's reason, that a fallback firing silently would make the whole
+pool decorative while every measurement still looked fine.
+
+Measured over 200 seeds a case, against identical dials with no mode:
+
+| case         | tappable | sliders | stone | branches into stone | configurations | `onlySurvivor` |
+| ------------ | -------- | ------- | ----- | ------------------- | -------------- | -------------- |
+| no mode      | 9.7      | 0.00    | 1.80  | 447 of 1 200        | 959            | 138 of 200     |
+| wall-heavy   | 9.7      | 0.00    | 10.76 | 959 of 1 200        | 959            | 77             |
+| slider-heavy | 8.2      | 2.00    | 1.35  | 336 of 1 600        | 724            | 169            |
+| switch-heavy | 9.7      | 0.00    | 1.80  | 447 of 1 200        | 959            | 175            |
+
+So they are different boards rather than three names for one, and they pull in different directions:
+**wall-heavy makes a board easier** and switch-heavy makes it harder.
+
+#### Wall-heavy — stone is more legible than the frame
+
+Two applications of one idea. A branch closes in stone even where the frame would have done it for nothing,
+because "it hit that" is a stronger sentence than "it went away" — and the frame being free is why §5.1 measures
+a shipped board at 0.0–0.1 fixed walls. And on a diagonal golden leg a **pair** of walls goes either side of the
+step, so the winning beam is seen to slip between two corners: §11.8 rule 4 taught by the board rather than by
+rules text, on 1.9 steps a board.
+
+The corner pair is the one exception to §5.1's rule against stone the player cannot spend, and the spend is the
+beam going through it. It is kept as a pair or not at all, so a lone wall never reads as an ordinary dead end.
+
+What it costs is uncertainty: `onlySurvivor` falls from 138 boards in 200 to 77, because stone that closes a
+branch also settles it. `exitRun` moves the other way, 80 to 154, for the same reason.
+
+#### Slider-heavy — the cheapest fork, and the one that needed a new model
+
+A turn mirror's wrong setting sends the light somewhere that has to be closed with authored stone. A slider's
+wrong setting is _"as if the piece were not there"_, so the branch is the beam's own line carrying straight on
+through the cell it vacated, and there is no corridor to author. It also asks a different question — not "which
+way round" but "is it in the way", and on a three-cell track, "which cell".
+
+**It is the mode that broke `(cell, direction)` as a resolver.** A sliding piece's _absence_ from a cell is a
+fact about its setting, so a beam crossing an empty track cell has learned something. Both walks — the authoring
+recursion and the deviation tree — now resolve cells through one occupancy model that says which pieces _could_
+be in a cell and in which of their states, rather than a mirrors-only map. The tree agreed with `routeIsUnique`
+on all 1 200 boards measured with sliders on, which is what says the generalisation is right.
+
+Two things measurement caught that a spec would not have: the track search counted the sliding piece's **own**
+bend as a neighbour to keep clear of, so it rejected every track and the mode was inert while every other number
+looked healthy; and branch mirrors were spaced against the golden bends rather than against the pieces, so they
+landed on slider tracks and `piecesAreSpaced` threw the board away after it had been paid for.
+
+#### Switch-heavy — and the key the proof now rests on
+
+Doors across the route, and the sockets that open them. What it adds is **order** — "the light has to get through
+here, this door is shut, so it must reach that socket first" — seeded from the middle of the board, where a long
+route is thinnest. A driven piece is never the player's, so it costs the configuration space nothing: measured
+identical with and without the door, which is what says the model is right.
+
+What it costs the proof is the determinism key. A socket changes the board mid-walk, so both walks are keyed on
+`(cell, direction, firedSet)` rather than `(cell, direction)`. That stays well founded because **firing is
+monotone** — a wiring fires once and never un-fires — so a walk cannot cycle through door states, and clearing
+the loop guard when a wiring fires is both sound and total. It is also the first time in this construction that
+`notUnique` fires at all: 1 to 3 boards in 200, so with doors on the board the uniqueness gate is a filter again
+rather than an assertion.
+
+An and-wiring — one door, two sockets — is the harder shape §11.2 predicted: `wiringFires` settles it on only 7
+boards in 200 while `onlySurvivor` is needed on 196.
+
+#### The trap, which §11.1 said was the hard part
+
+§11.1 established what a trap needs and why it could not be had. The trap must be the _only_ reason a wrong
+setting fails, so that setting has to otherwise **reach the shrine** — a would-be second route — and
+route-then-obstruct is built to reject those. §11.1 called looking for one "fishing in a pond stocked against
+you", and measured the alternative: a socket placed on a wrong ray the way shadows are placed gave **23 traps
+across 120 boards, every one of them decoration**, because the setting it was meant to kill was already dead.
+
+**An authoring generator does not fish.** It routes a wrong setting to the shrine on purpose, then puts the
+socket on that corridor and the stone further along. The wrong setting's own light crosses the socket, the stone
+drops in front of it, and it dies of its own doing.
+
+Measured, 60 seeds a case, with §11.1's acceptance test applied as a **generation gate** rather than a hope —
+take the trap out and the board must stop being a puzzle:
+
+|                                 |                                             |
+| ------------------------------- | ------------------------------------------- |
+| traps load-bearing              | **60 of 60** (§11.1's own attempt: 0 of 23) |
+| decorative traps shipped        | 0 — `trapIdle` rejects them, 6 in 60 boards |
+| winning beam fires every wiring | never: one socket is always one to dodge    |
+| `wiringDead` demanded           | 60 of 60                                    |
+| `onlySurvivor` demanded         | 60 of 60                                    |
+| attempts a board                | 2.13                                        |
+
+`wiringDead` firing on every board confirms §11.1's other prediction: without the rung that proves a wiring can
+never fire, the stone a trap might drop sits `unknown` across the board for ever and nothing settles.
+
+**And one mode interaction worth knowing before the tier table is written: wall-heavy undermines traps.** With
+both on, `trapIdle` rejections go from 6 in 60 boards to 58, and attempts a board from 2.13 to 3.97 — wall-heavy's
+extra stone kills the trap corridor before the trap gets to, which makes the trap decoration. They are
+combinable, but they are not free together.
+
+### 11.19 The authored tier table, and how it compares
+
+§6.4's ladder still sets the shape — each tier adds one word to the vocabulary — but two of the words have
+changed hands, because the construction has. The goal pool is now a **mode** pool (§11.18), and "shadows and
+decoys scattered on the board" is now **`branchDepth`**: a branch that turns needs a mirror, that mirror is off
+the winning beam's line by construction, and a piece standing in a wrong ray is what §6.1 measured as the only
+thing that makes the technique cap bite.
+
+| tier    | what it adds                                 | cap            |
+| ------- | -------------------------------------------- | -------------- |
+| starter | right angles, branches that run straight out | `deadEnd`      |
+| junior  | a longer route, and stone to die in          | `deadEnd`      |
+| expert  | branches that turn, and pieces that slide    | `neverReached` |
+| master  | the diagonal cut                             | `onlySurvivor` |
+| wizard  | a socket and a trap — and two modes of three | `onlySurvivor` |
+
+**The share of mirrors that are the player's turned out to be the ramp**, exactly as §11.15 said it would be:
+0.85 at expert, 0.9 at master, 1.0 at wizard. Nothing else needed to move. A given costs a cell, contributes
+nothing to the configuration space and authors no corridor, so lowering the share thins a board on all three
+counts at once — which is why it does the work that four separate dials used to.
+
+#### Measured against the generator it would replace, 40 seeds a tier
+
+| tier    | pieces (shipped → authored) | configurations | rejects a board | worst gen     |
+| ------- | --------------------------- | -------------- | --------------- | ------------- |
+| starter | 3.0 → 3.0                   | 8 → 8          | 1.3 → **0.0**   | 14ms → 10ms   |
+| junior  | 4.0 → 4.0                   | 16 → 16        | 3.0 → **0.1**   | 16ms → 7ms    |
+| expert  | 5.9 → 5.5                   | 109 → 80       | 70.5 → **2.3**  | 26ms → 20ms   |
+| master  | 7.0 → 7.0                   | 230 → 228      | 355.7 → **1.1** | 45ms → 19ms   |
+| wizard  | 8.3 → 9.8                   | 934 → 1 741    | 226.0 → **1.7** | 550ms → 616ms |
+
+**The rejection column is the headline and it is not close**: 355.7 discarded drafts a master board becomes 1.1.
+`noRoute` never fires at any tier, because the route builder backtracks rather than guessing — §11.14 named it
+as 92–97% of all generation work and this removes it. Generation is faster at four tiers of five and level at
+wizard, while the board is bigger.
+
+**And the boards demand more reasoning, not less**, which is the comparison that actually matters
+(`puzzle-screens.md` §5):
+
+| rung           | shipped   | authored |
+| -------------- | --------- | -------- |
+| `feedsExit`    | 4–8 of 40 | 13–36    |
+| `neverReached` | 14–32     | 36–40    |
+| `onlySurvivor` | 13 / 27   | 28 / 32  |
+| `wiringDead`   | never     | 17 of 40 |
+
+`wiringDead` firing on exactly 17 wizard boards is worth reading twice: 17 is precisely the number that drew
+switch-heavy without wall-heavy, which is the combination a trap is built on. The rung appears where and only
+where the trap does.
+
+#### One correction, and it is a documentation one
+
+The configurations column in §6.4's table and in the build plan's baseline is the **total across all 40 boards,
+not one board's**. Per board the shipped generator makes 8 / 16 / 109 / 230 / 934 — divide by 40. It reads as
+per-board, §6's own table gives starter's per-board figure of 8, and the two therefore look like they contradict
+each other when they do not. It cost a tuning pass aimed at putting 37 350 configurations on a single wizard
+grid before being caught.
+
+#### What it cost to adopt
+
+The table above is what ships. Route-then-obstruct, the goal pool and the wall-thinning pass went with it —
+§5 and §7 describe what replaced them, and everything from §11.16 down is the record of how it was reached
+rather than a description of two generators coexisting.
+
+Two gaps were adopted knowingly. Expert is a little thinner than the tier it replaced (5.5 pieces against 5.9,
+80 configurations against 109) while demanding deeper rungs, which is the trade worth having. And wizard is the
+one tier where generation is slower — 616ms against 550ms — because `onlySurvivor` enumerates the whole product
+and the board is now bigger. That is the same bottleneck §11.17 identified, it is the last one measured in the
+family, and the same fix applies: the exhaustive rungs could walk the reachable deviation tree instead of the
+product.
+
+### 11.20 What playtesting moved, and the rung it needed
+
+The tier table §11.19 measured was tuned against the generator it replaced, tier for tier. Played rather than
+measured, it said something the numbers did not: **the family did not start feeling like a puzzle until the
+third tier.** The bottom two settled on `deadEnd` alone with three and four pieces, which is what a board with
+nothing standing in a wrong ray settles on, and the ramp only bit where branches started to turn.
+
+So every tier took the dials of the one above it, and the top needed inventing. Two things it took, and both
+were already the family's:
+
+- **A mirror's fork may be three stops rather than two** (§11.8 rule 1, measured in §11.13) — restored, because
+  the migration had lost it: `mirrorStops` was a dial on the previous generator and the authored one hardcoded
+  the pair. Three is the **most** a list may hold, drawn per piece, so a board carries a mix rather than a
+  uniform fork — 20 distinct fork shapes across 40 boards against 5 at every tier below.
+- **The door needs two sockets** rather than one. §11.2 predicted the and-wiring would be the genuinely
+  different shape and §11.18 measured it; here it is the top tier's second word.
+
+| tier    | pieces | configurations | fork shapes | attempts a board | worst gen |
+| ------- | ------ | -------------- | ----------- | ---------------- | --------- |
+| starter | 3.0    | 8              | 1           | 2.9              | 26ms      |
+| junior  | 5.5    | 80             | 5           | 3.3              | 12ms      |
+| expert  | 7.0    | 228            | 5           | 2.1              | 6ms       |
+| master  | 9.8    | 1 741          | 5           | 2.7              | 173ms     |
+| wizard  | 11.3   | 20 435         | 20          | 3.2              | 1 531ms   |
+
+`deadEnd` alone now settles only starter, which is the whole of what the playtest asked for.
+
+#### The rung the top tier needed, and it was a three-times win
+
+A three-stop fork multiplies the configuration space — 1 741 to 20 435 — and §11.17 had already found that
+generation costs almost exactly what `onlySurvivor` costs, because that rung enumerates the product. The first
+attempt at this tier took **11 seconds a board**.
+
+Two fixes, in order of how much they were worth:
+
+1. **`forkSize` is a maximum, not a length.** Giving every mirror three stops rather than drawing the length per
+   piece was both wrong against rule 1 and twice the space: 71 005 configurations against 20 435.
+2. **The three exhaustive rungs shared one enumeration.** `wiringDead`, `neverReached` and `onlySurvivor` each
+   surveyed the winning configurations independently, and the ladder loops to a fixpoint — so a wizard board
+   enumerated its whole space a dozen times over to produce one set of answers. Cached on what the survey
+   actually depends on (the candidate sets and the wirings known to fire or be dead), it is computed once a
+   pass and thrown away the moment a deduction narrows a piece. Measured: **one solve 1 468ms → 474ms, worst
+   board 4 569ms → 1 526ms**, identical configuration counts and identical boards.
+
+That is a 3× win on the whole family's most expensive operation, and it came from noticing three callers asking
+one question rather than from anything clever. What is still open is the deeper fix §11.17 names: the rungs
+enumerate a product the reachable deviation tree already knows how to avoid. Wizard's 1.5s worst board is what
+remains of it.
+
+### 11.21 What a generation-time budget was costing
+
+Twice a generation-time budget decided a design question here, and neither time was it recorded as a design
+decision:
+
+- **§11.13 dropped a decoy from wizard** to get a three-stop fork under the 1400ms `lightbeamConfig.ts` called
+  a trade not worth making: _"something has to go, and dropping wizard's baseline decoy lands it at 655ms."_
+- **Branch depth was held at one** because two turns a branch measured at 8.5 seconds. Nothing in the design
+  wanted one.
+
+Both read, in the tier table, as the shape the family wanted. That is the failure mode worth naming: **the cost
+of an opportunity not taken leaves no measurement behind**, so a budget that vetoes a design choice does it
+silently and the table looks healthy afterwards. It is the same shape as the world-authorship doom loop — a
+masked signal driving a confident wrong decision.
+
+A budget is the right instrument for a cost the player pays. It is the wrong one for a cost a build machine
+could pay instead, and `docs/offline-puzzle-seeds.md` is where that goes.
+
+#### What lifting it restored
+
+The route folds through its own line again from expert up, which is not a budget story but a migration one: the
+previous generator had `crossedBeams` in three tiers' goal pools and the authored tier table dropped crossings
+entirely — **no tier asked for one**, and §5.2's whole finding is that a folded route buys route length and
+deduction steps without buying pieces. It is back at 1.2 to 1.5 crossed squares a board.
+
+And wizard's branches turn twice.
+
+| tier    | pieces (was → is) | configurations  | crossed squares | attempts a board | mean gen | worst gen |
+| ------- | ----------------- | --------------- | --------------- | ---------------- | -------- | --------- |
+| starter | 3.0 → 3.0         | 8 → 8           | 0.00            | 1.6              | 5ms      | 25ms      |
+| junior  | 5.5 → 5.4         | 80 → 73         | 0.00            | 1.4              | 3ms      | 11ms      |
+| expert  | 7.0 → 7.2         | 228 → 269       | 1.20            | 2.8              | 3ms      | 6ms       |
+| master  | 9.8 → 10.7        | 1 741 → 2 829   | 1.50            | 2.5              | 41ms     | 165ms     |
+| wizard  | 11.3 → 13.1       | 20 435 → 72 612 | 1.45            | 6.3              | 636ms    | 2 372ms   |
+
+Uniqueness and deducibility hold at every tier, unchanged. What it costs is the top tier's build: 636ms a board
+against 526ms, and 2.4s at worst against 1.5s. **That is a cost to move rather than a cost to design around**,
+and until it moves it is the one thing about this family that is worse than it was.
+
+#### One thing it took with it, worth knowing before the next playtest
+
+A board's configuration space is what the exhaustive rungs enumerate, and a hint is a full solve. So the top
+tier's hint latency rises with everything above — measured at 500ms before the lift on a 20 000-configuration
+board, and the space is now three times that. A seed list does not help a hint; shipping the solve alongside the
+seed does, which is why `docs/offline-puzzle-seeds.md` argues for the artifact carrying both.
+
+### 11.22 What playing it found that measuring did not
+
+Two things, and neither was visible in any number the tier table carried.
+
+#### "It is just: follow the mirror trail"
+
+The first two tiers were not puzzles. Both settled on `deadEnd` alone — "the light visibly dies there" — which
+means the whole board yields to one loop: look at where the beam stops, turn the mirror it hits, look again.
+There is no decision anywhere in that, and nothing in the measurements said so, because every column the table
+carried (pieces, configurations, route length) was perfectly healthy.
+
+**Shifting each tier's dials down a rung did not fix it**, which is worth recording because it was the obvious
+move and it was wrong: the tier below was not a puzzle either, so starter inherited a trail from junior. The
+measurement that settles it is a single column — how many boards `deadEnd` alone can finish:
+
+| candidate starter                       | pieces | configurations | settles on `deadEnd` alone |
+| --------------------------------------- | ------ | -------------- | -------------------------- |
+| as it was                               | 3.0    | 8              | **40 of 40**               |
+| the shift: junior's dials               | 4.0    | 16             | **40 of 40**               |
+| three-stop forks instead                | 3.0    | 17             | **40 of 40**               |
+| a branch that turns, `neverReached` cap | 5.1    | 36             | **0 of 40**                |
+
+The third row is the useful negative result. A three-stop fork doubles the configuration space and changes
+nothing: more to choose among, identical solving mode, because every wrong stop still visibly dies. **Choice in
+the configuration space is not the same as a decision**, and only the last row buys one.
+
+So starter carries a piece off the winning beam's line, which means its cap has to clear `deadEnd` — and
+therefore **`deadEnd` is no longer any tier's ceiling and the tutorial tier is gone.** Starter's first skill is
+now the family's own, _"this piece does not matter"_ (§4.2), which is the only conclusion in any family that
+reads that way. Gentleness is the small grid and the short route instead.
+
+One dial mattered more than expected: at a tappable share of 0.5, seven starter boards in 40 fall back to a
+trail, because a branch mirror drawn as a given redirects a wrong ray rather than standing in it. Starter holds
+the share at 1.0 for that reason.
+
+#### A tap was paying for a hint nobody had asked for
+
+Rotating a mirror on a top-tier board was slow and stuttery, which no test would have caught and no generation
+measurement could have.
+
+The hint was derived eagerly as the board changed, and **a hint is a full solve** — tens of thousands of
+configurations at the top tier. So every tap paid for a string the player had not asked to read, and the idle
+nudge firing paid for it again, which is where the stutter came from. Measured: **185ms a tap against 19ms**
+once the derivation waits to be asked.
+
+`PuzzleFamilyShell` now accepts a function for its `hint`, resolved only once revealed, so this is fixed for
+every family rather than for this one.
+
+**And the solve is kept for the life of the board**, which is the other half and was missed at first. A hint is
+`solveLightbeamByTechniques(puzzle, cap)`: it reads nothing about how the player has the board set, and the state
+only picks which of the reasons it found is worth saying. So the first hint can pay for every hint after it.
+Measured over four presses with a move between each: **3 212.7ms against 803.6ms** at the top tier, with each
+hint after the first costing 0.02ms. The same fact is why the whole thing is precomputable offline
+(`docs/offline-puzzle-seeds.md`), at about 400 bytes a board. Every family derived its hint eagerly; lightbeam is only where the solver
+got expensive enough to notice. And the guard is a spec that taps a wizard board and asserts the board answers,
+because the honest test of an interaction cost is the interaction.
+
+#### And junior needed the bend, which moved expert's grid
+
+Played after the starter fix: junior read as barely more than starter. Four bends against three is not a tier's
+worth of difference when both are otherwise the same board. Five bends is — it roughly triples the configuration
+space, from 82 to 274, because each bend brings its own branch and its own decoy with it.
+
+That put junior **past** expert, which is the interesting part. Expert's addition is the diagonal cut, which is
+vocabulary rather than quantity: rule 8's cost model spends it by swapping a mirror's answer for a half-step
+rather than by adding a piece. So expert took a wider grid instead — capacity, not difficulty (§6.2) — because a
+diagonal ray needs somewhere to run and a branch that turns needs somewhere to put its mirror.
+
+Measured, and worth knowing before anyone reaches for `turns` again: **six bends on an 8×8 gives _fewer_ pieces
+than five** (7.0 against 7.1), because the route eats the room the branches needed. Route length and grid size
+are not interchangeable, and past a point they compete.
+
+| tier    | pieces | off route | configurations | crossed squares | trail-solvable | attempts a board |
+| ------- | ------ | --------- | -------------- | --------------- | -------------- | ---------------- |
+| starter | 5.1    | 2.1       | 36             | 0.00            | 0 of 40        | 1.9              |
+| junior  | 7.3    | 2.4       | 274            | 0.00            | 0 of 40        | 5.2              |
+| expert  | 7.6    | 2.6       | 331            | 1.18            | 0 of 40        | 2.6              |
+| master  | 10.4   | 4.8       | 2 502          | 1.63            | 0 of 40        | 3.8              |
+| wizard  | 12.9   | 7.3       | 70 055         | 1.43            | 1 of 40        | 7.5              |
+
+The piece column is asserted non-decreasing rather than strictly growing, because junior and expert share a route
+length by design and the difference between them is a word rather than a piece. The configuration space is the
+column that must grow every tier, and it does — and the trail column is the one that matters, because it is what
+says every tier is a puzzle.
+
+#### A shadow that lands where no beam goes is a decoy, and that was silent
+
+Playing starter raised it: are there mirrors on the board the light can never reach? Measured over 40 boards a
+tier, by enumerating every setting the player can reach and asking which cells any beam enters:
+
+| tier    | off the winning route | reachable by some setting | reachable by none |
+| ------- | --------------------- | ------------------------- | ----------------- |
+| starter | 2.13 a board          | 72 of 85                  | **13 of 85**      |
+| junior  | 2.35                  | 89 of 94                  | 5 of 94           |
+| expert  | 2.60                  | 101 of 104                | 3 of 104          |
+| master  | 4.38                  | 133 of 175                | 42 of 175         |
+
+So yes, and about one starter board in three carried one. It is not _unfair_ — a piece the light never reaches is
+a **decoy**, and `neverReached` is precisely the rung that frees it — but it is not what `branchDepth` asked for.
+That dial exists to stand a piece **in a wrong ray**, so the light disappears into something unsettled instead of
+visibly dying (§6.1). When the mirror lands where no beam arrives, the tier asked for a shadow and got scenery,
+and every column in the tier table looked healthy either way. The same silent-degradation shape as the slider
+mode that produced no sliders, and as `clearTheWay` before it.
+
+Two things worth recording about how this was diagnosed, because one of them was wrong:
+
+- **It is not wall-heavy.** The first guess was that stone lands at the first free cell out from a mirror and so
+  could wall a corridor before its own branch mirror. Measured: starter without wall-heavy has the same 13, and
+  junior _with_ it has 4 in 131. Not the cause.
+- **The follow-up classification was a broken measurement**, and its output should not be believed: it set a
+  "reachable?" verdict it then never tested for, so every case fell into the "on no corridor at all" bucket. The
+  mechanism is still unestablished.
+
+**The fix does not depend on the mechanism.** `dropUnreachable` removes tappable pieces no reachable beam can
+arrive at, which is safe for the same reason `pruneStone` is: a piece no beam reaches cannot be on any beam's
+path, so no path changes and uniqueness is untouched. Run before the opening is drawn, because how many pieces a
+board carries is what §5's opening rules reason about.
+
+Master and wizard keep theirs (`decoys`), because a piece to rule out is real vocabulary at a tier whose ladder
+can prove it irrelevant — it is what `sortTheWheat` used to add on purpose. What is not wanted is one arriving by
+accident on a tier that asked for a shadow.
+
+| tier    | pieces (was → is) | configurations  | unreachable pieces |
+| ------- | ----------------- | --------------- | ------------------ |
+| starter | 5.1 → 4.9         | 36 → 32         | 13 → **0**         |
+| junior  | 7.3 → 7.0         | 274 → 235       | 5 → **0**          |
+| expert  | 7.6 → 7.5         | 331 → 317       | 3 → **0**          |
+| master  | 10.4 → 10.4       | 2 502 → 2 502   | kept, by dial      |
+| wizard  | 12.9 → 12.9       | 70 055 → 70 055 | kept, by dial      |

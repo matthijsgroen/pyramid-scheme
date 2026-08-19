@@ -93,7 +93,8 @@
     "hint": "Hint",
     "solvedUnaided": "Opgelost zonder ook maar één hint",
     "solvedWithHints_one": "Opgelost met {{count}} hint",
-    "solvedWithHints_other": "Opgelost met {{count}} hints"
+    "solvedWithHints_other": "Opgelost met {{count}} hints",
+    "tapToContinue": "Tik om verder te gaan"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
@@ -359,7 +360,7 @@
   "lightbeam": {
     "rules": {
       "goal": "Breng het zonlicht van de schijf naar het schrijn.",
-      "mirrors": "Een spiegel buigt het licht een kwartslag, langs elk van zijn kanten.",
+      "mirrors": "Een spiegel buigt het licht langs elk van zijn kanten. De streepjes eromheen laten zien hoe hij nog kan liggen: de meeste geven een kwartslag, sommige blijven daar net onder en sturen het licht schuin weg.",
       "walls": "Een blok steen slokt het licht op. De rand van het bord ook.",
       "tap": "Tik op een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar de volgende plek. Een witte rand betekent dat jij het mag verzetten; al het andere hoort bij de puzzel.",
       "nodes": "Sommige stenen zitten vast aan een contactpunt in de vloer; daar helpt geen enkele tik tegen. Stuur het licht over het contactpunt en de steen schuift opzij."
@@ -373,11 +374,13 @@
       },
       "deadEnd": {
         "wall": "Zo gezet loopt het licht recht in de steen, en er is niets meer dat het kan redden. Dus zo kan het niet staan.",
+        "disc": "Zo gezet stuurt de spiegel het licht terug waar het vandaan kwam, tot in de schijf zelf. Dus zo kan het niet staan.",
         "edge": "Zo gezet loopt het licht het bord uit, en er is niets meer dat het kan opvangen. Dus zo kan het niet staan.",
         "loop": "Zo gezet komt het licht nergens — het blijft eeuwig rondgaan. Dus zo kan het niet staan."
       },
       "feedsExit": {
         "wall": "Werk terug vanaf het schrijn. Zo gezet kan niets het licht over de enige lijn erheen brengen — het sterft onderweg in de steen.",
+        "disc": "Werk terug vanaf het schrijn. Zo gezet zou het licht uit de donkere achterkant van de schijf moeten komen, en daar komt geen licht uit.",
         "edge": "Werk terug vanaf het schrijn. Zo gezet zou het licht van buiten het bord moeten komen om er te kunnen zijn.",
         "loop": "Werk terug vanaf het schrijn. Zo gezet gaat het licht dat er zou moeten komen alleen eeuwig rond."
       },

@@ -85,6 +85,15 @@ export type LightbeamBoard = {
   fired: Set<number>
   /** Wirings proven never to fire, so what they would have moved is known to be resting. Also monotone. */
   dead: Set<number>
+  /**
+   * The last enumeration of the winning configurations, and the candidate set it was taken over.
+   *
+   * The three exhaustive rungs all ask the same question of the same board, and the ladder loops to a
+   * fixpoint, so a wizard board was enumerating its whole configuration space a dozen times over to get one
+   * set of answers. Keyed on what the survey actually depends on, so it is reused within a pass and thrown
+   * away the moment a deduction narrows a piece.
+   */
+  survey?: { key: string; value: Survey | undefined }
 }
 
 const forcedKey = (segment: BeamSegment): string => `${segmentKey(segment.at, segment.enter)}>${segment.exit ?? "-"}`
@@ -100,8 +109,19 @@ export const createLightbeamBoard = (puzzle: LightbeamPuzzleData): LightbeamBoar
   dead: new Set(),
 })
 
+/**
+ * Whether two occupants are the same thing, which is what decides a cell is resolved rather than `unknown`.
+ *
+ * Compares the whole authored stop list, not a bit about it: two mirrors are the same occupant only if they
+ * stand at the same angle *and* offer the same fork. Strictly more discriminating than the `cut` boolean it
+ * replaced (§11.13), so nothing the engine concluded before can stop holding.
+ */
+const sameStops = (a: readonly number[], b: readonly number[]): boolean =>
+  a.length === b.length && a.every((angle, index) => angle === b[index])
+
 const sameBlocker = (a: Blocker, b: Blocker): boolean =>
-  a.kind === b.kind && (a.kind !== "mirror" || b.kind !== "mirror" || (a.angle === b.angle && a.cut === b.cut))
+  a.kind === b.kind &&
+  (a.kind !== "mirror" || b.kind !== "mirror" || (a.angle === b.angle && sameStops(a.stops, b.stops)))
 
 /**
  * The board as the deduction currently knows it. A cell is `unknown` whenever a movable piece could be
@@ -209,8 +229,22 @@ export const lightbeamSettled = (board: LightbeamBoard): boolean => knownForward
 
 const DEATHS: ReadonlySet<BeamWalk["end"]> = new Set(["absorbed", "escapes", "loops"] as const)
 
-/** How a state died, which is the difference between three quite different sentences to the player. */
-const DEATH_VARIANT: Record<string, string> = { absorbed: "wall", escapes: "edge", loops: "loop" }
+/**
+ * How a state died, which is the difference between four quite different sentences to the player.
+ *
+ * **The disc is not stone.** A mirror can send the beam straight back down its own line — `reflect` is its
+ * own inverse in the direction, so it retraces every leg it has flown and is swallowed by the disc it came
+ * out of — and telling the player it "runs into stone with nothing left to save it" sends them looking for
+ * a wall that is not there. Measured on the shipped tiers: the commonest death on a starter board after the
+ * frame, 13 boards in 40, so it is the gentlest tier that was being told the wrong thing. Found while
+ * routing diagonally (§11.12), where a cut mirror's other stop makes it a *designed* wrong answer.
+ */
+const deathVariant = (puzzle: LightbeamPuzzleData, walk: BeamWalk): string | undefined => {
+  if (walk.end === "escapes") return "edge"
+  if (walk.end === "loops") return "loop"
+  if (walk.end !== "absorbed") return undefined
+  return walk.stopAt && sameCell(walk.stopAt, puzzle.sun.at) ? "disc" : "wall"
+}
 
 const freshSegments = (board: LightbeamBoard, walk: BeamWalk): BeamSegment[] =>
   walk.path.filter(segment => !board.forced.has(forcedKey(segment)))
@@ -312,7 +346,7 @@ const pinnedEliminations = (
       const walk = walks[states.indexOf(state)]
       steps.push({
         technique,
-        variant: DEATH_VARIANT[walk.end],
+        variant: deathVariant(board.puzzle, walk),
         piece,
         beam: walk.path,
         decisions: [{ kind: "eliminate", piece, states: [state] }],
@@ -354,7 +388,19 @@ type Survey = {
   winners: number
 }
 
+/** What a survey depends on. Anything else about the board may move without invalidating it. */
+const surveyKey = (board: LightbeamBoard): string =>
+  `${board.candidates.map(set => [...set].sort((a, b) => a - b).join(",")).join("|")}/${[...board.fired].sort().join(",")}/${[...board.dead].sort().join(",")}`
+
 const surveyWinners = (board: LightbeamBoard): Survey | undefined => {
+  const key = surveyKey(board)
+  if (board.survey?.key === key) return board.survey.value
+  const computed = enumerateWinners(board)
+  board.survey = { key, value: computed }
+  return computed
+}
+
+const enumerateWinners = (board: LightbeamBoard): Survey | undefined => {
   const { puzzle } = board
   const options = board.candidates.map(set => [...set])
   const states = puzzle.movable.map(() => new Set<number>())

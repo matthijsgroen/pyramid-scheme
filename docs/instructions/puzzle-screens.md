@@ -14,7 +14,10 @@ board, the rules block, and its solver — never its own copy of the chrome.
 ## 1. Layout — the board fits the phone, the page scrolls
 
 Reference feel: LinkedIn's daily puzzles and Puzzle Express — chrome on top,
-board centered, rules below the fold.
+board centered, rules below the fold. **The reference is the timing too**: a board
+is 10 seconds to a few minutes, never an evening's sitting — the budget, and why
+it binds every tier of every family, is `PUZZLE_FAMILIES.md` §3.2. A tier nobody
+has timed against a human clock has not cleared this bar.
 
 - The **board fits inside the viewport** on a 360×640 phone, with the header
   visible, without pan or zoom. Board sizes off available space
@@ -44,6 +47,20 @@ The same puzzle dresses up per site (`ctx.theme`).
 | Reset   | Restores the generated start state. No confirm dialog for a puzzle board.                            |
 | Hint    | Shows the next step and why. Disabled 10s after use.                                                 |
 | Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it. |
+| Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                |
+
+**The banner reports the solve time**, wordless (`⏱ 1:07`) so it needs no locale, and
+it is **on-screen time only** — the clock stops while the document is hidden, because a
+board left open in a background tab is not time anyone spent on it
+(`src/support/useVisibleElapsed.ts`). That is the instrument for §3.2's budget: the lab
+(`src/app/dev/PuzzleLab.tsx`) plays the real screen, so timing a tier needs nothing of
+its own — pick family and tier, solve, read the banner.
+
+**The solved board is the reward, so it is the player who leaves it.** The banner
+sits over a light dim rather than an opaque one — the finished board has to be
+readable through it, because seeing what you built is the payoff for building it —
+and it closes on a tap instead of a timer, which is a puzzle taking the reward
+away before it has been looked at.
 
 The shell needs the family to report input, so hint/idle work without the family
 re-implementing them:

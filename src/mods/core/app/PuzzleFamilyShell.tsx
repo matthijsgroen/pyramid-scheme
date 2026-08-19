@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
+import { useVisibleElapsed } from "@/support/useVisibleElapsed"
 import { HINT_COOLDOWN_MS, useHintAvailability } from "./useHintAvailability"
 
 export type PuzzleShellApi = {
@@ -20,8 +21,19 @@ type Props = {
   solved?: boolean
   /** Restores the board's start state. Omit for families with nothing to reset. */
   onReset?: () => void
-  /** The next step, already phrased. Recomputed by the family as the board changes. */
-  hint?: string
+  /**
+   * The next step, already phrased — or a function that phrases it.
+   *
+   * **Pass a function when deriving the hint is expensive**, and it will only be called once the player asks.
+   * A hint comes out of the family's technique solver, and for some families that is a full solve of the board:
+   * lightbeam's top tier enumerates tens of thousands of configurations for one, which is half a second on a
+   * development machine and much worse on a phone. Computed eagerly on every board change, that lands on every
+   * single tap as input lag, for a string nobody has asked to read.
+   *
+   * Presence still decides whether the button appears, so a family with no hint to give passes `undefined` —
+   * a function is always present.
+   */
+  hint?: string | (() => string | undefined)
   /** How long a still board waits before the hint button asks to be pressed (see hintIdleDelay). */
   idleMs?: number
   /** Fired when the player asks for the hint — families use it to aim the board at what it names. */
@@ -29,6 +41,12 @@ type Props = {
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
   children: (api: PuzzleShellApi) => ReactNode
+}
+
+// `1:07`, or `43s` under a minute — short enough to read at a glance, and no words, so it needs no locale.
+const formatDuration = (ms: number): string => {
+  const seconds = Math.round(ms / 1000)
+  return seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}:${`${seconds % 60}`.padStart(2, "0")}`
 }
 
 // The chrome every puzzle family wears: back, reset, hint (with its cooldown and idle nudge), the
@@ -50,18 +68,29 @@ export const PuzzleFamilyShell = ({
   const [scheduleSolve, cancelSolve] = useTimeout()
   const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability(idleMs)
 
+  // Resolved only once revealed, which is the whole point of allowing a function: an unread hint costs nothing.
+  const hintText = revealed ? (typeof hint === "function" ? hint() : hint) : undefined
+
   // The board is frozen the moment it is solved, not when the banner arrives: the pause before it is
   // long enough to tap a cell, and a tap there un-solved the puzzle while the win was already on its
   // way — finishing a board the player had just broken.
   const [finishing, setFinishing] = useState(false)
 
+  // How long the board took, stopped at the solve rather than at the banner, and counting only the time it
+  // was actually on screen. This is the instrument for PUZZLE_FAMILIES.md §3.2's solve-time budget — a tier
+  // nobody has timed is a tier whose duration is unknown — and the lab plays the real screen, so timing a
+  // tier there needs nothing of its own.
+  const elapsedMs = useVisibleElapsed()
+  const [tookMs, setTookMs] = useState<number>()
+
+  // The banner waits for a tap rather than a timer: the solved board is the reward, and a puzzle that closes
+  // itself takes it away before it has been looked at. So the dim is light enough to read the board through and
+  // the player says when they are done with it.
   const handleSolved = useCallback(() => {
     setFinishing(true)
-    scheduleSolve(800, () => {
-      setSolvedBanner(true)
-      scheduleSolve(1500, onSolved)
-    })
-  }, [scheduleSolve, onSolved])
+    setTookMs(elapsedMs())
+    scheduleSolve(800, () => setSolvedBanner(true))
+  }, [scheduleSolve, elapsedMs])
 
   useEffect(() => {
     if (solved) handleSolved()
@@ -126,14 +155,14 @@ export const PuzzleFamilyShell = ({
         </div>
       )}
       <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
-        {children({ solved: handleSolved, reportInput, hintVisible: revealed && !!hint })}
+        {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
       </div>
-      {revealed && hint && !solvedBanner && (
+      {hintText && !solvedBanner && (
         <p
           ref={hintRef}
           className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200"
         >
-          {hint}
+          {hintText}
         </p>
       )}
       {rules && !solvedBanner && (
@@ -143,14 +172,22 @@ export const PuzzleFamilyShell = ({
         </div>
       )}
       {solvedBanner && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-stone-900/90">
-          <p className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</p>
-          {/* Solving it unaided is worth saying out loud — otherwise there is nothing to lose by
-              leaning on the hint button, and nothing to notice the day you stop needing it. */}
-          <p className="text-sm text-stone-400">
-            {hintsUsed === 0 ? t("ui.solvedUnaided") : t("ui.solvedWithHints", { count: hintsUsed })}
-          </p>
-        </div>
+        <button
+          onClick={onSolved}
+          className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-stone-900/40"
+        >
+          <span className="flex flex-col items-center gap-1 rounded-lg bg-stone-900/90 px-6 py-4">
+            <span className="font-pyramid text-xl text-amber-300">{t("ui.puzzleCompleted")}</span>
+            {/* Solving it unaided is worth saying out loud — otherwise there is nothing to lose by
+                leaning on the hint button, and nothing to notice the day you stop needing it. */}
+            <span className="text-sm text-stone-400">
+              {hintsUsed === 0 ? t("ui.solvedUnaided") : t("ui.solvedWithHints", { count: hintsUsed })}
+            </span>
+            {/* Wordless on purpose (P2): a clock face and a duration read the same in every locale. */}
+            {tookMs !== undefined && <span className="text-xs text-stone-500">⏱ {formatDuration(tookMs)}</span>}
+            <span className="mt-1 text-xs text-stone-500">{t("ui.tapToContinue")}</span>
+          </span>
+        </button>
       )}
     </>
   )

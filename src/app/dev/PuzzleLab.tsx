@@ -18,11 +18,26 @@ const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 tex
  */
 const benchNotes = (puzzle: unknown): string[] => {
   if (typeof puzzle !== "object" || puzzle === null) return []
-  const { goals, techniqueCap, size } = puzzle as { goals?: unknown; techniqueCap?: unknown; size?: unknown }
+  const { goals, modes, techniqueCap, size, movable, fixed } = puzzle as {
+    goals?: unknown
+    modes?: unknown
+    techniqueCap?: unknown
+    size?: unknown
+    movable?: unknown
+    fixed?: unknown
+  }
   return [
     typeof size === "number" ? `${size}×${size}` : undefined,
     typeof techniqueCap === "string" ? `cap ${techniqueCap}` : undefined,
-    Array.isArray(goals) ? (goals.length ? `goals ${goals.join(" + ")}` : "goals — (baseline)") : undefined,
+    Array.isArray(movable) ? `${movable.length} pieces` : undefined,
+    Array.isArray(fixed) ? `${fixed.length} fixed` : undefined,
+    // A generator that records modes rather than goals says so — they are what replaces them.
+    Array.isArray(modes) ? (modes.length ? `modes ${modes.join(" + ")}` : "modes — (baseline)") : undefined,
+    Array.isArray(goals) && !Array.isArray(modes)
+      ? goals.length
+        ? `goals ${goals.join(" + ")}`
+        : "goals — (baseline)"
+      : undefined,
   ].filter((note): note is string => note !== undefined)
 }
 
@@ -37,6 +52,7 @@ export const PuzzleLab: FC = () => {
   const [familyId, setFamilyId] = useState(families[0]?.meta.id ?? "")
   const [pickedTheme, setPickedTheme] = useState("")
   const [pickedDifficulty, setPickedDifficulty] = useState("")
+  const [pickedVariant, setPickedVariant] = useState("")
   const [seed, setSeed] = useState(1)
   const [playing, setPlaying] = useState(false)
 
@@ -52,6 +68,8 @@ export const PuzzleLab: FC = () => {
   const theme = themes.includes(pickedTheme) ? pickedTheme : themes[0]
   const tiers = family ? allowedDifficulties(family.meta) : []
   const difficulty = tiers.find(d => d === pickedDifficulty) ?? tiers[0]
+  const variants = family?.meta.variants ?? []
+  const variant = variants.includes(pickedVariant) ? pickedVariant : variants[0]
 
   const ctx = useMemo(
     () => ({
@@ -61,9 +79,10 @@ export const PuzzleLab: FC = () => {
       freshArrival: true,
       difficulty,
       theme,
+      variant,
       tags: family?.meta.tags,
     }),
-    [seed, difficulty, theme, family]
+    [seed, difficulty, theme, variant, family]
   )
 
   const puzzle = useMemo(
@@ -99,6 +118,16 @@ export const PuzzleLab: FC = () => {
             </option>
           ))}
         </select>
+        {/* Only for a family that has a second generator to compare — see FamilyMeta.variants. */}
+        {variants.length > 1 && (
+          <select className={selectClass} value={variant} onChange={e => setPickedVariant(e.target.value)}>
+            {variants.map(name => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        )}
         <DeveloperButton label="Play" onClick={() => setPlaying(true)} />
         <DeveloperButton
           label={`New puzzle (seed ${seed})`}
@@ -116,7 +145,12 @@ export const PuzzleLab: FC = () => {
       )}
       {playing && puzzle !== undefined && (
         <EncounterModal>
+          {/* Keyed so switching family, tier, theme or seed REMOUNTS the screen rather than handing the mounted
+              one a different puzzle. A family holds the player's progress in its own state, sized to the board it
+              was given — so a board arriving under it reads that state out of range and crashes. Real play cannot
+              do this (a room's puzzle never changes under the player), which is exactly why the bench has to. */}
           <Component
+            key={`${family.meta.id}:${difficulty}:${theme}:${variant ?? ""}:${seed}`}
             puzzle={puzzle}
             ctx={ctx}
             progression={progression}

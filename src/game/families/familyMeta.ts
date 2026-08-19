@@ -41,6 +41,13 @@ export type FamilyMeta = {
   // (eligible everywhere). Only meaningful for families the allocator picks by tag (puzzles,
   // traps); structural families (treasure/gate) leave it unset.
   minTier?: Difficulty
+  // Alternative generators this family can be built by, offered in the playtesting bench and nowhere else
+  // (docs/instructions/puzzle-screens.md §6). Unset = one generator, and no picker. A family lists a name
+  // here while a second construction is being measured against the shipped one — lightbeam's authored
+  // generator is the case it exists for — and the name reaches `generate` as FamilyContext.variant. It is
+  // deliberately not part of world-gen: a variant is something a developer plays, not something a room is
+  // authored to.
+  variants?: string[]
   // Skins this family can wear (docs/instructions/puzzle-screens.md §2) — the `theme` values it
   // recognises on FamilyContext. Unset = only its default skin. Playtesting reads this to offer
   // the themes a family actually has; an unlisted theme still falls back to the default skin.

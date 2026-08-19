@@ -1,142 +1,189 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { LightbeamOptions } from "./generateLightbeam"
 
-// Tier settings, from docs/game-design/puzzles/lightbeam.md §6.4. Every tier gets a full configuration:
-// this family is not gated to a debut tier, because a starter corridor can sit behind a ward gate deep
-// inside a wizard pyramid, so a starter board is not only ever seen by a beginner.
+// Tier settings (design doc §6.4, measured in §11.19).
 //
-// **Each tier adds ONE thing to the vocabulary** (§6.4), rather than turning every dial a little further:
+// **Each tier adds ONE thing to the vocabulary** (§6.4), rather than turning every dial a little further. A
+// tier's character comes from its `modePool` (§11.18) and its difficulty from what stands in a wrong ray,
+// which is `branchDepth`: a branch that turns needs a mirror, that mirror is off the winning beam's line by
+// construction, and a piece standing in a wrong ray is what §6.1 measured as the only thing that makes the
+// technique cap bite.
 //
-// | starter | right angles only, dead ends kept short          |
-// | junior  | a longer route, and the walls that come with it  |
-// | expert  | sliding mirrors and sliding walls               |
-// | master  | shadows                                          |
-// | wizard  | doors, sockets, givens, decoys                   |
+// Every tier gets a full configuration — this family is not gated to a debut tier, because a starter corridor
+// can sit behind a ward gate deep inside a wizard pyramid. So starter must be *gentle*, not empty.
 //
-// Measured over 40 seeds a tier after this table was set — the share of wrong turns a player can dismiss
-// without following them, which is the ramp that matters (§6.3):
+// Measured over 40 seeds a tier (§11.19):
 //
-// | tier    | player pieces | legs a wrong turn runs | forks on it | seen from the door | worst gen |
-// | starter | 3.0           | 2.96                   | 1.00        | 33%                |     5ms   |
-// | junior  | 4.0           | 3.48                   | 1.50        | 25%                |    25ms   |
-// | expert  | 5.9           | 3.90                   | 2.22        | 15%                |    38ms   |
-// | master  | 7.5           | 4.21                   | 2.50        | 13%                |   216ms   |
-// | wizard  | 8.3           | 5.09                   | 2.65        | 13%                |   731ms   |
+// | tier    | pieces | on the route | configurations | attempts a board | worst gen |
+// | starter | 3.0    | 3.0          | 8              | 1.00             | 10ms      |
+// | junior  | 4.0    | 4.0          | 16             | 1.10             |  7ms      |
+// | expert  | 5.5    | 4.0          | 80             | 3.30             | 20ms      |
+// | master  | 7.0    | 5.0          | 228            | 2.10             | 19ms      |
+// | wizard  | 9.8    | 6.8          | 1 741          | 2.70             | 616ms     |
 //
-// Monotone on every column, and junior against expert — 25% and 15% — is the collapse §6.3 found, closed.
-// Master and wizard tie on the headline percentage and separate on the rest; a second shadow at wizard
-// would part them by one point and cost twice the generation time, which is not a trade worth making.
+// Configurations are **per board**. Stating that because the column this replaced was a total across all 40
+// boards while reading as per-board, and it cost a tuning pass aimed at putting 37 350 configurations on one
+// wizard grid before anyone noticed.
 //
-// The ladder is built on the two things §6.3 measured separately, because they are not the same currency:
+// | starter | right angles, branches that run straight out          |
+// | junior  | a longer route, and stone to die in (wall-heavy)      |
+// | expert  | branches that turn, and pieces that slide            |
+// | master  | the diagonal cut                                     |
+// | wizard  | doors, sockets and a trap — and two modes a board     |
 //
-// - **Legs** — how far a wrong turn must be followed before it closes. Bought with route length, which is
-//   why junior's one addition is a longer route. Walls are not a separate dial; a longer route is what
-//   makes `blockWrongSettings` need them, since a wrong ray on a short route mostly runs off the frame.
-// - **Forks** — how many unsettled pieces stand in that wrong ray, which is the only thing that stops T3
-//   `deadEnd` from settling it in one step. Bought with pieces placed where wrong rays go: expert's
-//   sliding pieces, then master's shadows.
+// **Three constraints the measurements imposed on this table rather than the other way round** (§11.17,
+// §11.18):
 //
-// **Master's real addition is the diagonal cut** (§11.4/§11.7), which is not built. Shadows hold the slot
-// until it is, and they are the right stand-in — they are what makes the cap bite at all (§6.1).
+//  1. **`branchDepth` >= 1 needs a cap above `deadEnd`.** A branch mirror is a shadow, and a shadow defeats
+//     `deadEnd` by design — the light disappears into a piece nobody has settled instead of visibly dying. So
+//     starter and junior cannot carry one, and generation refuses rather than quietly building an easier
+//     board. That is why their branches run straight, and it is also why their addition has to be something
+//     else: length, and stone.
+//  2. **Wall-heavy is not a difficulty dial.** It buys legibility and spends uncertainty — `onlySurvivor`
+//     falls from 138 boards in 200 to 77 when it is on — so it belongs at junior, where being able to point
+//     at where the light died is the whole lesson, and not at the top.
+//  3. **Wall-heavy and traps fight.** With both on, decorative-trap rejections go from 6 in 60 boards to 58,
+//     because wall-heavy's stone kills the trap corridor before the trap gets to. So wizard draws two modes
+//     of three and the generator skips the trap on the boards that drew wall-heavy — recorded per board, so
+//     a spec can assert the trap is not quietly disappearing.
 //
-// A tier's goal pool is **derived from its vocabulary, not authored beside it** (§6.4). Three goals change
-// the piece list rather than the amount of it — `longChain` adds a given, `clearTheWay` adds a sliding
-// wall, `orderOfOperations` adds a door and its sockets — so each may only be drawn once its tier has met
-// that piece. Before this rule a starter board could draw a sliding wall and an expert board a door.
-// `sortTheWheat` also waits for `neverReached`, since a decoy is only fair once a rung can prove it
-// irrelevant.
+// Grid size is capacity, not difficulty (§6.2): it is set by what has to fit — the route, the pieces, and the
+// empty shoulders that keep two tappable pieces apart.
+// **Generation time is not a design constraint here.** It used to be, and twice it decided a design question:
+// §11.13 dropped a decoy from wizard to get a board under 1400ms, and branch depth was held at one because two
+// measured at 8.5 seconds. Neither was recorded as a design decision, which is the whole problem — the cost of
+// an opportunity not taken leaves no measurement behind.
 //
-// **Starter draws no goal at all.** Every goal either introduces a piece it has not met or lengthens the
-// route it is meant to keep short, and a tier that teaches rather than tests does not need one.
-//
-// **Grid size is capacity, not difficulty.** It is set by what has to fit — the route's length, the pieces,
-// and the empty shoulders that keep two tappable pieces apart — and it barely moves how hard a board is,
-// because the configuration space is driven by piece count and the reasoning by the cap. Difficulty is the
-// cap and the goals; size is the canvas they need. An earlier version of this table listed grid size as a
-// difficulty knob, which was wrong.
-//
-// That is also why this family goes past the 7-wide ceiling the other grid families stop at. Theirs is a
-// real ceiling because every cell is tappable, so cell size IS tap-target size. Here only the movable
-// pieces are tappable, they are never allowed to touch (generateLightbeam's `piecesAreSpaced`), and a piece
-// therefore owns the empty shoulders around it — so its hit area can be a thumb wide while the cell it
-// stands in is smaller. `LightbeamBoard` spends that, and the sizes below run 45 / 45 / 40 / 40 / 35px a
-// cell inside a 360px modal (docs/instructions/puzzle-screens.md §1, and §9 of the family doc).
+// The direction out is `docs/offline-puzzle-seeds.md`: verify seeds offline and ship the ones that work, so the
+// compute happens on a build machine rather than on a phone. Until that lands the top tier is genuinely slow to
+// build, and that is the honest trade — a tier that is expensive to generate rather than a tier that is smaller
+// than the design wants. If a dial needs turning down, turn it down for a reason a player would recognise.
 export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOptions> = {
-  // Right angles, the shortest route the board allows, and nothing else. Fiddling works here on purpose.
+  // The smallest board that is still a puzzle.
   //
-  // Three bends rather than two, and that is a floor rather than a preference: two binary pieces make four
-  // configurations, and every dark one of them is either a tap from done or solved by tapping both — so
-  // `openingIsHonest` rejects the lot and nothing generates. Three player pieces is the least an honest
-  // board can carry.
+  // A short route and a small grid, but **a piece off the winning beam's line** — so the board cannot be solved
+  // by following the light and turning whatever it hits. Measured: not one board in 40 settles on `deadEnd`
+  // alone, where the trail-following version settled on all 40.
+  //
+  // That means starter's first skill is the family's own: *"this piece does not matter"* (§4.2), which is the
+  // only conclusion in any family that reads that way. It arrives here rather than being saved, because without
+  // it there is no decision on the board at all.
+  //
+  // §6 asks starter to be **gentle rather than empty**, and gentleness is now the three-bend route and the 7×7
+  // grid rather than the absence of anything to work out. Wall-heavy for the same reason: a branch that dies in
+  // stone is one the player can point at.
+  //
+  // Three bends is a floor rather than a preference: two binary pieces make four configurations and every dark
+  // one is a tap from done or solved by tapping both, so `openingIsHonest` refuses the lot.
   starter: {
     size: 7,
     turns: 3,
-    techniqueCap: "deadEnd",
-    goals: [],
-    goalCount: 0,
+    interactive: 1,
+    branchDepth: 1,
+    fiddleProof: true,
+    modes: ["wallHeavy"],
+    techniqueCap: "neverReached",
   },
-  // One addition: a longer route.
+  // One addition: **a piece that slides**, and the route length to hide it on. "Is it in the way, and which cell"
+  // is a different question from "which way round", and a slider is the cheapest fork in the family — its wrong
+  // setting is *"as if the piece were not there"*, so the branch is the beam's own line carrying on.
   //
-  // The ladder in §6.4 asks for walls here too, and they do not come: measured over 40 seeds, junior ships
-  // 0.00 fixed walls. `blockWrongSettings` only ever adds one where a wrong ray would otherwise rejoin the
-  // route, `thinWalls` strips every one that is not load-bearing (§5.1), and on a route this length a wrong
-  // turn nearly always runs off the frame instead. Walls only start appearing once the board is dense
-  // enough to need them — 0.05 at expert, 0.23 at master. There is no dial for them, and adding one would
-  // ship stone the player cannot spend, which §5.1 rules out. So junior's addition is route length alone.
+  // Five bends rather than four because four played as barely more than starter: the extra bend is what makes the
+  // two tiers feel different, and it roughly triples the configuration space (82 to 274) because each bend brings
+  // its own branch and its own decoy.
   junior: {
     size: 8,
-    turns: 4,
-    fiddleProof: true,
-    // The same reasoning as starter, over a longer route. Junior's addition buys legs, not forks (§6.3), and
-    // the shrine-side elimination needs a piece standing in the wrong ray — which is expert's addition, not
-    // this one. Leaving the cap at `feedsExit` would be a ceiling no junior board ever reaches.
-    techniqueCap: "deadEnd",
-    goals: [],
-    goalCount: 0,
-  },
-  // One addition: pieces that slide. A sliding piece is a piece standing where a wrong ray goes, which is
-  // what starts the fork count moving.
-  //
-  // The sliding MIRROR is the baseline, so every expert board has one. The sliding WALL comes from
-  // `clearTheWay` in the pool rather than from the baseline — §7's lean-baseline rule, and it is also what
-  // keeps this affordable: pinned into every board it took wizard's worst generation from 520ms to 1407ms,
-  // because a three-stop track has to fit a straight stretch that is spaced from everything already there.
-  expert: {
-    size: 8,
     turns: 5,
-    slidingMirrors: 1,
+    interactive: 1,
+    branchDepth: 1,
+    sliders: 1,
     slidingStops: 3,
     fiddleProof: true,
+    modes: ["sliderHeavy"],
     techniqueCap: "neverReached",
-    goals: ["crossedBeams", "clearTheWay", "sortTheWheat"],
-    goalCount: 1,
   },
-  // One addition: shadows — holding the slot the diagonal cut will take (§11.7).
-  master: {
-    size: 8,
+  // One addition: **the diagonal cut** (§11.8). The bend would have carried a mirror anyway; what changes is
+  // that its answer is a half-step and its stop set reaches 67.5° the other way, so the ray leaves the rows and
+  // columns the player can read. A swap rather than an extra piece, which is rule 8's cost model.
+  //
+  // This is also where the cap reaches the exhaustive pair, because a diagonal ray is the first thing the
+  // shrine-side elimination cannot follow (§11.12 measured what that costs: `exitRun` falls and `onlySurvivor`
+  // does the work instead).
+  //
+  // A grid wider than junior's, for capacity rather than difficulty (§6.2): the diagonal needs somewhere to run,
+  // and a branch that turns needs somewhere to put its mirror. Note it is **not** another bend — measured, six
+  // bends on an 8×8 gives *fewer* pieces than five, because the route eats the room the branches needed.
+  //
+  // The route also folds through its own line from here up (§5.2). A crossed square is the one square on the
+  // board that is provably empty — anything standing there would have turned the first pass — and it costs no
+  // piece at all: it buys route length on the same grid. A character dial rather than a difficulty one, which is
+  // why it arrives beside the cut rather than instead of it.
+  expert: {
+    size: 9,
     turns: 5,
-    slidingMirrors: 1,
+    cutMirrors: 1,
+    crossings: 1,
+    interactive: 1,
+    branchDepth: 1,
+    sliders: 1,
     slidingStops: 3,
-    shadows: 1,
     fiddleProof: true,
+    modes: ["sliderHeavy"],
     techniqueCap: "onlySurvivor",
-    goals: ["crossedBeams", "clearTheWay", "sortTheWheat", "blindAlleys"],
-    goalCount: 2,
   },
-  // Everything.
+  // One addition: **a socket, and a trap** (§11.1). Two modes of three a board, so a grid has character rather
+  // than every dial turned at once.
+  //
+  // The trap is what this tier is for, and it is what the authoring construction is for. The trap has to be the
+  // only reason a wrong setting fails, so that setting must otherwise reach the shrine — and a generator that
+  // derives wrong rays and walls them rejects exactly those. Authoring routes a wrong setting to the shrine on
+  // purpose and then puts the socket on it.
+  master: {
+    size: 9,
+    decoys: true,
+    turns: 6,
+    cutMirrors: 1,
+    crossings: 1,
+    interactive: 1,
+    branchDepth: 1,
+    sliders: 1,
+    slidingStops: 3,
+    doors: 1,
+    doorNodes: 1,
+    traps: 1,
+    fiddleProof: true,
+    modePool: ["wallHeavy", "sliderHeavy", "switchHeavy"],
+    modeCount: 2,
+    techniqueCap: "onlySurvivor",
+  },
+  // Everything, and one addition of its own: **a mirror's fork is three stops rather than two** (§11.8 rule 1,
+  // measured in §11.13). Every tier below authors the pair the geometry demands; here the extra stop is drawn
+  // per piece, so the same mirrors offer many more distinct forks on the same piece count. Rule 8's "one piece
+  // doing more", the same trade the diagonal cut makes at expert.
+  //
+  // Branches turn **twice** here, which nothing but a generation-time budget was stopping.
+  //
+  // And the door needs **two** sockets rather than one — an and-wiring, where the piece does not budge until
+  // the light has been through both. §11.2 predicted that would be the genuinely different shape and §11.18
+  // measured it: `wiringFires` settles it on 7 boards in 200 where one socket settles 56, so the work moves to
+  // the exhaustive rungs.
   wizard: {
     size: 9,
+    decoys: true,
     turns: 6,
-    setMirrors: 1,
-    slidingMirrors: 1,
+    cutMirrors: 1,
+    crossings: 1,
+    interactive: 1,
+    branchDepth: 2,
+    forkSize: 3,
+    sliders: 1,
     slidingStops: 3,
-    fiddleProof: true,
     doors: 1,
     doorNodes: 2,
-    decoys: 1,
-    shadows: 1,
+    traps: 1,
+    fiddleProof: true,
+    modePool: ["wallHeavy", "sliderHeavy", "switchHeavy"],
+    modeCount: 2,
     techniqueCap: "onlySurvivor",
-    goals: ["crossedBeams", "longChain", "clearTheWay", "sortTheWheat", "blindAlleys", "orderOfOperations"],
-    goalCount: 2,
   },
 }
