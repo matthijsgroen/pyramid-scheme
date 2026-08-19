@@ -47,19 +47,20 @@ The §11.15 board is the regression test. A generator that can produce its shape
 
 ## The knobs
 
-| Knob          | Meaning                                                                                                                                                                         |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `size`        | grid width                                                                                                                                                                      |
-| `turns`       | bends on the golden path                                                                                                                                                        |
-| `legBudget`   | leg length range, as today                                                                                                                                                      |
-| `angles`      | **the angle alphabet this tier may use.** Subsumes `cutMirrors` and `mirrorStops`: a tier that only has the two diagonals cannot bend diagonally and cannot fork past two stops |
-| `crossings`   | golden path folds through its own line this many times                                                                                                                          |
-| `interactive` | **0..1, the share of mirrors that are the player's to tap.** See below — it is the load-bearing one                                                                             |
-| `forkSize`    | stops per tappable mirror                                                                                                                                                       |
-| `sliders`     | golden bends that slide rather than turn                                                                                                                                        |
-| `branchDepth` | turns per authored branch; 0 is a straight run to stone or the frame                                                                                                            |
-| `terminator`  | weights over frame / wall / shadow as a branch's ending                                                                                                                         |
-| `modes`       | weights over wall-heavy, slider-heavy, switch-heavy                                                                                                                             |
+| Knob               | Meaning                                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `size`             | grid width                                                                                                                                                                      |
+| `turns`            | bends on the golden path                                                                                                                                                        |
+| `legBudget`        | leg length range, as today                                                                                                                                                      |
+| `angles`           | **the angle alphabet this tier may use.** Subsumes `cutMirrors` and `mirrorStops`: a tier that only has the two diagonals cannot bend diagonally and cannot fork past two stops |
+| `crossings`        | golden path folds through its own line this many times                                                                                                                          |
+| `interactive`      | **0..1, the share of mirrors that are the player's to tap.** See below — it is the load-bearing one                                                                             |
+| `forkSize`         | stops per tappable mirror                                                                                                                                                       |
+| `sliders`          | golden bends that slide rather than turn                                                                                                                                        |
+| `branchDepth`      | turns per authored branch; 0 is a straight run to stone or the frame                                                                                                            |
+| `terminator`       | weights over frame / wall / shadow as a branch's ending                                                                                                                         |
+| `modes`            | weights over wall-heavy, slider-heavy, switch-heavy — **these replace the goal pool**                                                                                           |
+| `shrineApproaches` | how many ways into the shrine stay alive. 1 lets `exitRun` fire; 2–3 silences it and moves the work to the exhaustive rungs                                                     |
 
 ### `interactive` is the knob that chooses the architecture, per tier
 
@@ -131,7 +132,10 @@ Weights, combinable, per the owner's sketch:
 - **slider-heavy** — prefer sliders on the golden path. Cheapest fork in the family: a slider's wrong setting
   is usually _"as if the piece were not there"_, so the branch is the beam's own line continuing and needs no
   authored corridor at all.
-- **switch-heavy** — doors and sockets. **See the open decisions: this one touches the proof.**
+- **switch-heavy** — doors and sockets, and §11.1's traps, which this architecture is what makes buildable.
+  Follow §11.1's recipe rather than decorating a wrong ray: author a branch that **reaches the shrine**, then
+  put the socket on it and the stone further along. Assert the load-bearing property directly — remove the
+  trap and the board must stop being a puzzle. Generalise the key to `(cell, direction, firedSet)` here.
 
 **Proves variance.** Measure that the three produce measurably different boards (piece mix, branch shape,
 rungs demanded) rather than three names for the same board.
@@ -157,23 +161,61 @@ Distinct authored stop lists today: 1 at starter/junior/expert, 5 at master, 23 
 
 ---
 
-## Open decisions — the owner's call, not this doc's
+## Decisions, settled
 
-1. **Are the three modes a replacement for the goal pool, or a layer above it?** `clearTheWay` ≈ wall-heavy
-   and `orderOfOperations` ≈ switch-heavy already. Collapsing the six goals into three modes retires
-   `GOAL_DIALS` and the fallback ladder; keeping both doubles the combinatorics. **Recommendation: collapse.**
-2. **Switch-heavy in v1 or v2?** A door changes the board mid-walk, so the determinism the proof rests on has
-   to be keyed on `(cell, direction, fired-sockets)` rather than `(cell, direction)`. And the trap shape the
-   owner sketched — _a branch that would reach the shrine but the switch is late on the golden path_ — is
-   §11.1's deferred trap, where the design doc says the obvious build does not work. **Recommendation: v2.**
-3. **Must the shrine stay on the frame?** Today the final leg runs to the edge, and that is load-bearing: a
-   shrine set in the wall can only be lit from a few sides, which is the whole reason `exitRun` fires at all.
-   If the end node may land in open ground, that rung weakens sharply. **Recommendation: keep it on the frame.**
+**1. The modes replace the goal pool.** They are what gives a puzzle its flavour and its uniqueness, which is
+the job §7's goals were doing. So `GOAL_DIALS`, `drawGoals` and the goal fallback ladder retire with them, and
+a board records the mode it was built to the way it records its goals today — `clearTheWay` becomes wall-heavy
+and `orderOfOperations` becomes switch-heavy rather than sitting beside them.
 
-Decisions this doc does make, absent an objection: **`thinWalls` does not run** on authored boards, because
-every wall it places has a reason by construction and a pruner can only remove load-bearing stone; and
-**`piecesAreSpaced` becomes a placement constraint** the branch walker respects as it goes, rather than a gate
-at the end — otherwise rejection has just moved one level down.
+**2. Switch-heavy lands in phase 3, and it is the thing the architecture unlocks rather than a bolt-on.**
+§11.1 already worked out what a trap needs: the trap must be the _only_ reason a wrong setting fails, so that
+setting has to otherwise **reach the shrine** — a would-be second route. §11.1 calls finding one "fishing in a
+pond stocked against you", because route-then-obstruct is built to reject exactly that. **An authoring
+generator does not fish: it builds the branch to reach the shrine and then puts the door on it.** That is a
+better supply than the retracted mirror state §11.3 proposes, which would only produce second routes as a side
+effect on half of wizard's boards.
+
+Two things §11.1 hands this phase for free:
+
+- **The acceptance test.** Take the trap out and the board must stop being a puzzle — the same shape as §5.1's
+  assertion about walls. Load-bearing by construction, asserted directly.
+- **The failure mode, already measured.** A socket placed on a wrong ray the way shadows are placed produced
+  **23 traps across 120 boards, every one of them decoration**, because that setting was already dead. Do not
+  repeat it.
+
+What it costs the proof: phase 1 proves _no branch reaches the shrine_; a trap branch deliberately does and
+dies on a shut door, so the invariant generalises to _no branch reaches the shrine with the doors in the state
+that branch itself produces_ — key on `(cell, direction, firedSet)` rather than `(cell, direction)`. Well
+founded, because firing is monotone: a wiring fires once and never un-fires, so a walk cannot cycle through
+door states. **Phase 1's only obligation is not to make that key impossible to add.**
+
+**3. The shrine stays on the frame by default, and how many approaches are alive becomes a knob.** Measured
+over 40 seeds a tier: the shrine is on an edge on 40/40 boards at every tier, in a corner on a third of
+starter and junior boards, the frame alone kills 3.1–3.7 of the eight approaches, and the board's own pieces
+finish the job — **exactly 1.00 live approach, every board, every tier**. That is why `exitRun` fires at all,
+and it is free, so an interior shrine should be what a high `shrineApproaches` buys rather than the default.
+
+The knob is the real prize: with authoring you can wall the approaches deliberately, so a count that used to
+fall out of geometry becomes a dial with a known effect on **which rung fires** — one approach and `exitRun`
+speaks, two or three and the work moves to the exhaustive pair. That is difficulty in the currency
+`docs/instructions/puzzle-screens.md` §5 names.
+
+### Decisions this doc makes, absent an objection
+
+**`thinWalls` does not run** on authored boards, because every wall it places has a reason by construction and
+a pruner can only remove load-bearing stone. **`piecesAreSpaced` becomes a placement constraint** the branch
+walker respects as it goes, rather than a gate at the end — otherwise rejection has just moved one level down.
+
+## A separate question this planning turned up
+
+**Doors may be a second, independent reason `exitRun` is quiet at wizard**, alongside the eight-direction
+opening §11.12 blames. `exitRun` walks back over `knownGrid`, where an unfired door is conservatively
+`unknown` — which is not a death, so every candidate direction survives and "exactly one survives" cannot
+hold. The ladder loops, so `exitRun` gets another chance once `wiringFires` has pinned the door open, but how
+often that completes is **unmeasured**. Worth its own probe before anyone attributes wizard's 11-in-40 to the
+diagonal alone. (Noticed because a probe tracing backward over a static `configGrid` reported zero live
+approaches at wizard, which is impossible on a solved board — the static grid parks the door on the route.)
 
 ---
 
@@ -259,7 +301,7 @@ measurement still looked fine."_
 
 ## Do not start without being asked
 
-- **Traps** (§11.1) — the switch-heavy mode is the door into them, and decision 2 above gates it.
+- **Traps** (§11.1) outside phase 3 — switch-heavy is the door into them and phase 3 is where they belong.
 - **Retiring the current generator.** It coexists behind a dial until the authored one has beaten it on the
   table above, tier by tier.
 - **Rule 3's three-stop edge-on set** (§11.8) — needs the stop set built from the bend's arrival direction.
