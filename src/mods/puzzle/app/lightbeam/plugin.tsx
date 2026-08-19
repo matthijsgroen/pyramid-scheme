@@ -6,6 +6,7 @@ import {
   type LightbeamPuzzle as LightbeamGrid,
 } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { generateAuthoredLightbeam, type LightbeamMode } from "@/mods/puzzle/game/lightbeam/generateAuthoredLightbeam"
+import { AUTHORED_LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/authoredConfig"
 import { LIGHTBEAM_CONFIG } from "@/mods/puzzle/game/lightbeam/lightbeamConfig"
 import { LIGHTBEAM_META } from "@/mods/puzzle/game/lightbeam/meta"
 import { LightbeamPuzzle } from "./LightbeamPuzzle"
@@ -20,6 +21,9 @@ const LightbeamComponent: FamilyPlugin<LightbeamGrid>["Component"] = ({ puzzle, 
  * authored construction (design doc §11.16), measured but not shipped, and no tier draws it.
  */
 export const LIGHTBEAM_AUTHORED = "authored"
+
+/** The authored tier table (§11.19) — the dials phase 4 tuned, rather than a mode picked by hand. */
+export const LIGHTBEAM_AUTHORED_TIERS = "authored tiers"
 
 /** Which modes a lab variant asks for, beyond the plain authored board. */
 const VARIANT_MODES: Record<string, LightbeamMode[]> = {
@@ -36,6 +40,11 @@ export const generateLightbeamFor = (
   variant?: string
 ): LightbeamGrid => {
   const { size, ...options } = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
+  // The tier table itself, which is what phase 4 tuned — as against the hand-set mode variants below.
+  if (variant === LIGHTBEAM_AUTHORED_TIERS) {
+    const { size: tierSize, ...tierOptions } = AUTHORED_LIGHTBEAM_CONFIG[difficulty ?? "starter"]
+    return generateAuthoredLightbeam(tierSize, seed, tierOptions)
+  }
   const modes = variant ? VARIANT_MODES[variant] : undefined
   if (variant === LIGHTBEAM_AUTHORED || modes)
     return generateAuthoredLightbeam(size, seed, {

@@ -131,6 +131,16 @@ export type AuthoredOptions = LightbeamOptions & {
    */
   modes?: readonly LightbeamMode[]
   /**
+   * The modes this tier may draw, and how many to draw a board.
+   *
+   * The shape §7's goal pool had, and for the reason §7 gives: without it every board is the AVERAGE board
+   * for its tier, and a wizard grid is every dial turned a little, every single time. A pool gives boards
+   * character rather than mean settings. `modes` is what a board ends up with — drawn from here when a pool
+   * is given, taken verbatim when it is not.
+   */
+  modePool?: readonly LightbeamMode[]
+  modeCount?: number
+  /**
    * **How many golden bends slide rather than turn**, when slider-heavy is on.
    *
    * The cheapest fork in the family. A turn mirror's wrong setting sends the light somewhere that has to be
@@ -1446,7 +1456,7 @@ const authorBranches = (
   // dies of its own light, and the trap is the only reason it fails — load-bearing by construction.
   let trapped: { corridor: { at: CellRef; enter: Direction; stop: MirrorAngle }; route: TrapRoute } | undefined
   let trapWiring: number | undefined
-  if (modes.includes("switchHeavy") && traps > 0 && branchDepth > 0) {
+  if (modes.includes("switchHeavy") && !modes.includes("wallHeavy") && traps > 0 && branchDepth > 0) {
     for (const corridor of shuffle([...corridors], random)) {
       const direction = reflect(corridor.stop, corridor.enter)
       if (direction === opposite(corridor.enter)) continue
@@ -1703,7 +1713,18 @@ export const generateAuthoredLightbeam = (
     doorNodes = 1,
     traps = 0,
     modes = [],
+    modePool = [],
+    modeCount = 0,
   } = options
+  // Drawn off the seed rather than the attempt counter, so every attempt at a board is built to the same
+  // modes — a board that fell back to a different mode on attempt three would record a mode it was not
+  // really the shape of.
+  const picked: readonly LightbeamMode[] = modePool.length
+    ? shuffle([...modePool], mulberry32(seed * 104729)).slice(0, Math.min(modeCount, modePool.length))
+    : modes
+  // Recorded in the canonical order rather than the order they were drawn in: a board's modes are a set, and
+  // two identical boards reading as different shapes would make every mode-mix measurement noise.
+  const drawn = LIGHTBEAM_MODES.filter(mode => picked.includes(mode))
   const dials = { turns, cutMirrors, crossings, fiddleProof, slidingStops, doors, doorNodes } as LightbeamDials
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
@@ -1716,11 +1737,11 @@ export const generateAuthoredLightbeam = (
       branchDepth,
       sliders,
       traps,
-      modes,
+      drawn,
       techniqueCap,
       options.reject
     )
-    if (puzzle) return { ...puzzle, goals: [], modes: [...modes] }
+    if (puzzle) return { ...puzzle, goals: [], modes: [...drawn] }
   }
   throw new Error(`generateAuthoredLightbeam: no logically solvable board (size=${size}, seed=${seed})`)
 }

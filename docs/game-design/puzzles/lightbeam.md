@@ -2534,3 +2534,71 @@ never fire, the stone a trap might drop sits `unknown` across the board for ever
 both on, `trapIdle` rejections go from 6 in 60 boards to 58, and attempts a board from 2.13 to 3.97 — wall-heavy's
 extra stone kills the trap corridor before the trap gets to, which makes the trap decoration. They are
 combinable, but they are not free together.
+
+### 11.19 The authored tier table, and how it compares
+
+§6.4's ladder still sets the shape — each tier adds one word to the vocabulary — but two of the words have
+changed hands, because the construction has. The goal pool is now a **mode** pool (§11.18), and "shadows and
+decoys scattered on the board" is now **`branchDepth`**: a branch that turns needs a mirror, that mirror is off
+the winning beam's line by construction, and a piece standing in a wrong ray is what §6.1 measured as the only
+thing that makes the technique cap bite.
+
+| tier    | what it adds                                 | cap            |
+| ------- | -------------------------------------------- | -------------- |
+| starter | right angles, branches that run straight out | `deadEnd`      |
+| junior  | a longer route, and stone to die in          | `deadEnd`      |
+| expert  | branches that turn, and pieces that slide    | `neverReached` |
+| master  | the diagonal cut                             | `onlySurvivor` |
+| wizard  | a socket and a trap — and two modes of three | `onlySurvivor` |
+
+**The share of mirrors that are the player's turned out to be the ramp**, exactly as §11.15 said it would be:
+0.85 at expert, 0.9 at master, 1.0 at wizard. Nothing else needed to move. A given costs a cell, contributes
+nothing to the configuration space and authors no corridor, so lowering the share thins a board on all three
+counts at once — which is why it does the work that four separate dials used to.
+
+#### Measured against the generator it would replace, 40 seeds a tier
+
+| tier    | pieces (shipped → authored) | configurations | rejects a board | worst gen     |
+| ------- | --------------------------- | -------------- | --------------- | ------------- |
+| starter | 3.0 → 3.0                   | 8 → 8          | 1.3 → **0.0**   | 14ms → 10ms   |
+| junior  | 4.0 → 4.0                   | 16 → 16        | 3.0 → **0.1**   | 16ms → 7ms    |
+| expert  | 5.9 → 5.5                   | 109 → 80       | 70.5 → **2.3**  | 26ms → 20ms   |
+| master  | 7.0 → 7.0                   | 230 → 228      | 355.7 → **1.1** | 45ms → 19ms   |
+| wizard  | 8.3 → 9.8                   | 934 → 1 741    | 226.0 → **1.7** | 550ms → 616ms |
+
+**The rejection column is the headline and it is not close**: 355.7 discarded drafts a master board becomes 1.1.
+`noRoute` never fires at any tier, because the route builder backtracks rather than guessing — §11.14 named it
+as 92–97% of all generation work and this removes it. Generation is faster at four tiers of five and level at
+wizard, while the board is bigger.
+
+**And the boards demand more reasoning, not less**, which is the comparison that actually matters
+(`puzzle-screens.md` §5):
+
+| rung           | shipped   | authored |
+| -------------- | --------- | -------- |
+| `feedsExit`    | 4–8 of 40 | 13–36    |
+| `neverReached` | 14–32     | 36–40    |
+| `onlySurvivor` | 13 / 27   | 28 / 32  |
+| `wiringDead`   | never     | 17 of 40 |
+
+`wiringDead` firing on exactly 17 wizard boards is worth reading twice: 17 is precisely the number that drew
+switch-heavy without wall-heavy, which is the combination a trap is built on. The rung appears where and only
+where the trap does.
+
+#### One correction, and it is a documentation one
+
+The configurations column in §6.4's table and in the build plan's baseline is the **total across all 40 boards,
+not one board's**. Per board the shipped generator makes 8 / 16 / 109 / 230 / 934 — divide by 40. It reads as
+per-board, §6's own table gives starter's per-board figure of 8, and the two therefore look like they contradict
+each other when they do not. It cost a tuning pass aimed at putting 37 350 configurations on a single wizard
+grid before being caught.
+
+#### What the table is not yet
+
+**This is a comparison, not a cutover.** No tier draws it; `LIGHTBEAM_CONFIG` still builds every board that
+ships. The remaining gaps are small and honest: expert is a little thinner than the shipped tier it replaces
+(5.5 pieces against 5.9, 80 configurations against 109), and wizard is the one tier where generation is slower,
+616ms against 550ms — because `onlySurvivor` enumerates the whole product and the board is now bigger. That is
+the same bottleneck §11.17 identified and the same fix applies: the exhaustive rungs could walk the reachable
+deviation tree instead of the product, which would make wizard cheaper than the tier it replaces rather than
+level with it.

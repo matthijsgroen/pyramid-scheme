@@ -13,9 +13,14 @@ import type { LightbeamOptions } from "./generateLightbeam"
 // | master  | the diagonal cut — a route that leaves the rows  |
 // | wizard  | doors, sockets, givens, shadows, three-stop forks |
 //
-// Measured over 40 seeds a tier, re-run in one pass when the fork arrived (§11.13):
+// Measured over 40 seeds a tier, re-run in one pass when the fork arrived (§11.13).
 //
-// | tier    | player pieces | distinct forks | configurations | legs a wrong turn runs | forks on it | seen from the door | worst gen |
+// **The configurations column is the TOTAL across all 40 boards, not one board's**, which is worth saying
+// because it reads as the latter and misled a later reader into tuning against it. Per board it is 8 / 16 / 109
+// / 230 / 934 — divide by 40. §6's own table lists the per-board figure for starter (8) and the two therefore
+// look like they disagree when they do not.
+//
+// | tier    | player pieces | distinct forks | configs (all 40) | legs a wrong turn runs | forks on it | seen from the door | worst gen |
 // | starter | 3.0           | 1              |            320 | 2.96                   | 1.00        | 33%                |    10ms   |
 // | junior  | 4.0           | 1              |            640 | 3.48                   | 1.50        | 25%                |    19ms   |
 // | expert  | 5.9           | 1              |          4 368 | 4.09                   | 2.46        | 14%                |    31ms   |

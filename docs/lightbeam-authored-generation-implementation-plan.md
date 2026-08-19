@@ -239,9 +239,48 @@ Constraints §11.17 and §11.18 measured, which the table has to respect rather 
 And one optimisation worth taking first: `onlySurvivor` is now the whole of generation cost, and it enumerates
 the product the deviation tree already knows how to avoid.
 
+**Done as a comparison, not a cutover** — `authoredConfig.ts`, measured in §11.19. The share of mirrors that are
+the player's turned out to be the whole ramp (0.85 / 0.9 / 1.0 at expert / master / wizard); nothing else needed
+to move, because a given costs a cell, contributes nothing to the configuration space and authors no corridor, so
+one dial thins a board on all three counts.
+
+| tier    | pieces (shipped → authored) | configurations | rejects a board | worst gen     |
+| ------- | --------------------------- | -------------- | --------------- | ------------- |
+| starter | 3.0 → 3.0                   | 8 → 8          | 1.3 → **0.0**   | 14ms → 10ms   |
+| junior  | 4.0 → 4.0                   | 16 → 16        | 3.0 → **0.1**   | 16ms → 7ms    |
+| expert  | 5.9 → 5.5                   | 109 → 80       | 70.5 → **2.3**  | 26ms → 20ms   |
+| master  | 7.0 → 7.0                   | 230 → 228      | 355.7 → **1.1** | 45ms → 19ms   |
+| wizard  | 8.3 → 9.8                   | 934 → 1 741    | 226.0 → **1.7** | 550ms → 616ms |
+
+Faster at four tiers of five, level at wizard, and the boards demand deeper rungs at every tier — `neverReached`
+36–40 of 40 against 14–32, `onlySurvivor` 28/32 against 13/27, and `wiringDead` on exactly the 17 wizard boards
+that carry a trap. **So the condition this doc sets for retiring the current generator is met on the table above
+at four tiers, and level at the fifth** — but retiring it is still the owner's call and is listed below as
+something not to start without being asked.
+
+Two gaps left, both small and both the same fix: expert is thinner than the tier it replaces (5.5 pieces against
+5.9), and wizard is the one tier that is slower, because `onlySurvivor` enumerates the whole product on a board
+that is now bigger. The optimisation named above would close it.
+
 ---
 
 ## Baseline to beat, measured over 40 seeds a tier
+
+**Re-measured in phase 4, and the configurations column needed correcting: it is the total across all 40 boards
+rather than one board's.** Per board the shipped generator makes 8 / 16 / 109 / 230 / 934, which is what an
+authored tier has to be compared against — tuning against 37 350 configurations on a single wizard grid would be
+absurd, and it is what the column invites. The piece and reject columns were always per board. The corrected
+per-board table, measured rather than copied:
+
+| tier    | pieces a board | on the route | configurations | rejects a board | worst gen |
+| ------- | -------------- | ------------ | -------------- | --------------- | --------- |
+| starter | 3.0            | 3.0          | 8              | 1.3             | 14ms      |
+| junior  | 4.0            | 4.0          | 16             | 3.0             | 16ms      |
+| expert  | 5.9            | 5.4          | 109            | 70.5            | 26ms      |
+| master  | 7.0            | 5.5          | 230            | 355.7           | 45ms      |
+| wizard  | 8.3            | 6.8          | 934            | 226.0           | 550ms     |
+
+The original table, as written, with its sums:
 
 | tier    | pieces a board | configurations | branch legs | rejects a board | worst gen |
 | ------- | -------------- | -------------- | ----------- | --------------- | --------- |

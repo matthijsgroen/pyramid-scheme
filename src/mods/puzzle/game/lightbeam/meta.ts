@@ -12,6 +12,7 @@ export const LIGHTBEAM_META: FamilyMeta = {
   variants: [
     "shipped",
     "authored",
+    "authored tiers",
     "authored wall-heavy",
     "authored slider-heavy",
     "authored switch-heavy",
