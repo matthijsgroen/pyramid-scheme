@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.37.0 - 2026-08-19
+
 ### Added
 
 - Light puzzles carry doors that no tap will move: send the beam across a socket in the floor and the way clears.
