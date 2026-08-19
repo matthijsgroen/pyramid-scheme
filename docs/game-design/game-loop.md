@@ -33,11 +33,12 @@ This is the atomic unit. Duration is deliberately short — fast to start, clear
 Player enters a pyramid or tomb → navigates the node graph → fog burns back → reaches the exit.
 
 Rewards collected during a site visit:
-| Reward | Frequency | Scope |
-|---|---|---|
-| Hieroglyph fragment | 0–1 per site | Completes a hieroglyph when enough are found (2–8 per hieroglyph, scaled by tier and which tomb section first requires it) |
-| Mosaic tiles | Guaranteed on critical path; also fill optional branch endpoints | Game scope |
-| Map piece | 0–1 per site per tomb; surface floors feed first tomb, deep floors feed later tombs | Tomb-gate scope |
+
+| Reward              | Frequency                                                                           | Scope                                                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Hieroglyph fragment | 0–1 per site                                                                        | Completes a hieroglyph when enough are found (2–8 per hieroglyph, scaled by tier and which tomb section first requires it) |
+| Mosaic tiles        | Guaranteed on critical path; also fill optional branch endpoints                    | Game scope                                                                                                                 |
+| Map piece           | 0–1 per site per tomb; surface floors feed first tomb, deep floors feed later tombs | Tomb-gate scope                                                                                                            |
 
 See `pyramid-interior-design.md §12` for canonical counts.
 
@@ -130,7 +131,7 @@ The curriculum map (§7) assigns families to tiers T1–T5. Mapping to game diff
 
 Sumplete is the initial build family (see `design-decisions.md`). This is consistent — Sumplete is a T3 family (PUZZLE_FAMILIES §7: `◐ 5×5` at T3). The initial build targets the expert tier as the live test bed for the site map system.
 
-**One tension:** PUZZLE_FAMILIES §7 says side-families (Latin-square, nonogram, Sumplete) cannot appear before forks debut (T2+), since side-families live in optional branches. The build plan stages forks in Phase 5a, after the linear-spine Phase 1–4 ships. This is structurally correct — but it means the site configs authored in Phase 4 for all 20 pyramids will need **two passes**: one for the linear-spine launch (forks absent) and a second revision once forks ship. This should be explicit in the authoring plan.
+**A tension that has since dissolved:** this section used to record that the grid-logic families (Latin-square, nonogram, Sumplete) could not appear before forks debut, because they were classified as "side" families that lived only in optional branches — which would have meant authoring every pyramid's site config twice, once for the fork-less launch and again once forks shipped. That classification is gone (PUZZLE_FAMILIES P3): no family is confined to optional branches, so no family waits on forks and there is no second authoring pass. Those families still debut at T2+, but for solve-time reasons alone.
 
 ### `docs/treasure-effects.md` (removed)
 

@@ -3,7 +3,9 @@ import { isLit } from "./beam"
 import { generateLightbeam } from "./generateLightbeam"
 import { createLightbeamState, cycleLightbeamPiece, pieceMoved } from "./lightbeamState"
 
-const puzzle = generateLightbeam(5, 3, { turns: 2 })
+// Three bends, which is the family's floor: two binary pieces have no honest opening to draw, since every
+// start is then either lit, one tap from lit, or the same one tap on both.
+const puzzle = generateLightbeam(7, 3, { turns: 3 })
 
 describe("lightbeamState", () => {
   it("opens on the board's own starting settings", () => {

@@ -1,26 +1,45 @@
 import { mulberry32, shuffle } from "@/game/random"
 import {
+  BACKSLASH,
   cellKey,
+  DIR,
+  directionStep,
   eachConfig,
   insideGrid,
+  allPieceOptions,
   isLit,
+  mod8,
+  opposite,
   pieceCells,
   pieceStateCount,
   reflect,
+  restingState,
   segmentKey,
+  SLASH,
+  SQUARE_DIRECTIONS,
   stepCell,
   traceBeam,
+  TURN_ANGLES,
+  type BeamNode,
   type CellRef,
   type Direction,
   type FixedPiece,
   type LightbeamPuzzleData,
-  type MirrorFace,
+  type MirrorAngle,
   type MovablePiece,
+  type NodeWiring,
 } from "./beam"
 import { applyGoals, drawGoals } from "./goals"
 import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
 
-export const LIGHTBEAM_GOALS = ["longChain", "sortTheWheat", "clearTheWay", "blindAlleys"] as const
+export const LIGHTBEAM_GOALS = [
+  "longChain",
+  "sortTheWheat",
+  "clearTheWay",
+  "blindAlleys",
+  "orderOfOperations",
+  "crossedBeams",
+] as const
 
 /** What kind of problem a board is, as against how hard it is (design doc §7). */
 export type LightbeamGoal = (typeof LIGHTBEAM_GOALS)[number]
@@ -35,17 +54,66 @@ export type LightbeamDials = {
   slidingMirrors: number
   /** Sliding walls parked across the route, there to be moved out of the way. */
   slidingWalls: number
-  /** Pieces the light can never reach, there to be reasoned irrelevant (technique T4). */
+  /**
+   * How long a sliding piece's track is — how many stops it cycles through.
+   *
+   * Two stops asks "in the way or out of it"; three asks *which* stop, which is a different question and a
+   * harder one. It is also what keeps a board off a single parity: on an all-two-state board every piece is
+   * one tap from its answer or none, and a player who spots that never has to look at the board again.
+   */
+  slidingStops: number
+  /**
+   * Refuse boards that a run of getting-warmer taps solves (`resistsGreedyPlay`).
+   *
+   * Off at starter on purpose: a three-piece board is meant to yield to fiddling, and that is what makes it
+   * a gentle first board rather than an empty one. From junior up it is on, because a board whose ladder is
+   * never needed is a board without a ladder.
+   */
+  fiddleProof: boolean
+  /**
+   * How many times the winning beam must fold back through its own line.
+   *
+   * A crossed square is the one square on the board that is provably empty — anything standing there would
+   * have turned the first pass — and it is the only place the beam is drawn arriving from two directions.
+   * It costs no piece at all: what it buys is a longer, more folded route on the same grid, which is this
+   * family's only way of asking for more without asking for more room.
+   */
+  crossings: number
+  /**
+   * Doors: stone across the route that no tap can shift, opened only by the light reaching a socket
+   * upstream of it (design doc §11.1). Two doors share one socket, which is fan-out.
+   */
+  doors: number
+  /**
+   * How many sockets a door's wiring names. One is a plain door; two is an and-wiring, and the piece does
+   * not budge until the light has been through both — a routing demand rather than a setting to rule out,
+   * and the first thing in the family that asks the player to plan a beam instead of settling a piece.
+   */
+  doorNodes: number
+  /** Pieces the light can never reach, there to be reasoned irrelevant (technique T5). */
   decoys: number
   /**
    * Decoys placed in the stretch a wrong setting would light, so that setting cannot be ruled out by
    * watching the light die. This is what pushes a board past `deadEnd` into the exhaustive rungs.
    */
   shadows: number
+  /**
+   * Route mirrors given a cut mirror's stop set instead of the two diagonals (design doc §11.8).
+   *
+   * The route stays square: the stop set keeps the quarter turn the bend needs and spends its *wrong*
+   * setting on a diagonal, which is §11.8 rule 8's "swap a cut mirror in for an ordinary one" — one piece
+   * doing more rather than another piece. Zero on every tier until the generator can route diagonally on
+   * purpose (§11.8 rule 10, step 4); it is here because a wrong ray that leaves at 67.5° is the only way
+   * to exercise what `blockWrongSettings` had to learn.
+   */
+  cutMirrors: number
 }
 
 export type LightbeamPuzzle = LightbeamPuzzleData & {
-  /** The state each piece opens in — every movable one deliberately wrong, so the board opens dark. */
+  /**
+   * The state each piece opens in. Drawn per piece rather than derived from the solution, and gated so no
+   * uniform number of taps opens the board — see `drawOpening`, and the exploit that made it necessary.
+   */
   initial: number[]
   /** A configuration that lights the shrine. Carried for tests and for the mistake check, not for hints. */
   solution: number[]
@@ -72,7 +140,7 @@ export type LightbeamOptions = Partial<LightbeamDials> & {
 // to shrine, turn some of its mirrors into pieces the player must set, then wall off the ways they could
 // be set wrong. The gates at the end are what make it a puzzle rather than a maze — the route must be
 // the only route, and the ladder must be able to find it.
-const MAX_ATTEMPTS = 600
+const MAX_ATTEMPTS = 1600
 
 // Thinning reaches a fixpoint in two sweeps on every tier measured; the rest is the guard, not the plan.
 const MAX_PRUNE_SWEEPS = 4
@@ -80,26 +148,48 @@ const MAX_PRUNE_SWEEPS = 4
 // The shortest a route leg may be, which is what stops two consecutive bend mirrors touching.
 const MIN_LEG = 2
 
-const FACES: MirrorFace[] = ["/", "\\"]
+/**
+ * The mirror that turns a beam from `enter` to `exit`, if an ordinary one can: `reflect` is
+ * `angle - travel`, so the angle wanted is simply `enter + exit` — and it is a mirror this generator can
+ * place only when that lands on one of the two diagonals.
+ *
+ * The generator still routes squarely, so it only ever asks for a quarter turn. Routing diagonally on
+ * purpose is step 4 of §11.8's build order, and this is the one place that will have to learn it.
+ */
+const angleFor = (enter: Direction, exit: Direction): MirrorAngle | undefined => {
+  const angle = (enter + exit) % 8
+  return angle === SLASH || angle === BACKSLASH ? angle : undefined
+}
 
-const faceFor = (enter: Direction, exit: Direction): MirrorFace | undefined =>
-  FACES.find(face => reflect(face, enter) === exit)
+/**
+ * The stop set for a cut mirror standing in for an ordinary one at a bend (§11.8 rule 2).
+ *
+ * The bend's own quarter turn is kept — that is the constraint that killed three earlier drafts, since the
+ * route itself depends on this cell turning light 90° — and the second stop is the half-step 67.5° off it,
+ * which leans the beam 45° the *other* way. So one piece asks "hard across, or gently back", and the wrong
+ * answer is the first diagonal light the family has ever had to reason about.
+ *
+ * Derived from the turn rather than tabulated: §11.8's table is written for a beam arriving rightward, and
+ * a bend arrives from any of the four. For a rightward beam it gives exactly that table's two rows.
+ */
+const cutStops = (bend: Route["bends"][number]): readonly MirrorAngle[] => {
+  const half = mod8(bend.angle - (mod8(bend.exit - bend.enter) === 2 ? 3 : -3))
+  return half < bend.angle ? [half, bend.angle] : [bend.angle, half]
+}
 
+/**
+ * The two ways a track may run across a beam. Written out rather than derived, because the order is what
+ * picks the first candidate track and the boards are seeded off it.
+ */
 const perpendicular = (direction: Direction): Direction[] =>
-  direction === "up" || direction === "down" ? ["left", "right"] : ["up", "down"]
+  direction === DIR.up || direction === DIR.down ? [DIR.left, DIR.right] : [DIR.up, DIR.down]
 
 /** Steps from a cell to the last one still on the grid, travelling in a direction. */
 const stepsToEdge = (size: number, at: CellRef, direction: Direction): number => {
-  switch (direction) {
-    case "up":
-      return at.row
-    case "down":
-      return size - 1 - at.row
-    case "left":
-      return at.col
-    case "right":
-      return size - 1 - at.col
-  }
+  const step = directionStep(direction)
+  const rows = step.row < 0 ? at.row : step.row > 0 ? size - 1 - at.row : Number.POSITIVE_INFINITY
+  const cols = step.col < 0 ? at.col : step.col > 0 ? size - 1 - at.col : Number.POSITIVE_INFINITY
+  return Math.min(rows, cols)
 }
 
 type RouteCell = { at: CellRef; enter: Direction; exit?: Direction }
@@ -110,7 +200,9 @@ type Route = {
   /** Every cell the beam crosses, first after the disc through to the shrine. */
   cells: RouteCell[]
   /** The bends, in beam order — one mirror each. */
-  bends: { at: CellRef; enter: Direction; exit: Direction; face: MirrorFace }[]
+  bends: { at: CellRef; enter: Direction; exit: Direction; angle: MirrorAngle }[]
+  /** Squares the beam passes through twice, once on each axis. Nothing may ever stand on one. */
+  crossings: Set<string>
 }
 
 /**
@@ -120,24 +212,43 @@ type Route = {
 const pickSun = (size: number, random: () => number): { at: CellRef; facing: Direction } => {
   const along = 1 + Math.floor(random() * (size - 2))
   const side = Math.floor(random() * 4)
-  if (side === 0) return { at: { row: 0, col: along }, facing: "down" }
-  if (side === 1) return { at: { row: size - 1, col: along }, facing: "up" }
-  if (side === 2) return { at: { row: along, col: 0 }, facing: "right" }
-  return { at: { row: along, col: size - 1 }, facing: "left" }
+  if (side === 0) return { at: { row: 0, col: along }, facing: DIR.down }
+  if (side === 1) return { at: { row: size - 1, col: along }, facing: DIR.up }
+  if (side === 2) return { at: { row: along, col: 0 }, facing: DIR.right }
+  return { at: { row: along, col: size - 1 }, facing: DIR.left }
 }
 
 /**
- * Lays the winning beam. Legs never revisit a cell, so the route never crosses itself — a crossing would
- * be legal to trace but would put two reasons on one square, and every technique in the ladder points at
- * a square.
+ * Lays the winning beam.
+ *
+ * **The route may cross itself, and that used to be forbidden on a reason that turned out not to hold.**
+ * This doc said a crossing "puts two reasons on one square, and every technique points at a square" — but
+ * nothing in the family has ever been keyed by square. `forced` is keyed by cell *and direction*, the walk
+ * remembers `(cell, direction)` pairs, the uniqueness gate signs paths by segment, and the board draws one
+ * polyline per segment. A crossed square was already two things everywhere it mattered; only the route
+ * builder disagreed.
+ *
+ * What a crossing has to be is **perpendicular**. A cell entered twice on the same axis is the beam
+ * retracing its own line, which is a different and much worse thing; a cell entered once horizontally and
+ * once vertically is a clean cross, and the one fact it forces is worth having: **nothing can stand
+ * there**, or the first pass would have turned. So a crossing may never be a bend, a stop, or a door.
  *
  * The final leg runs all the way to the frame, which sets the shrine in the wall. That is worth the
  * constraint: a shrine on an edge can only be lit from three sides at most, and the frame kills most of
  * those outright, which is what lets the `exitRun` deduction fire at all.
  */
-const buildRoute = (size: number, turns: number, random: () => number): Route | undefined => {
+const axisOf = (direction: Direction): "h" | "v" => (direction === DIR.left || direction === DIR.right ? "h" : "v")
+
+const buildRoute = (
+  size: number,
+  turns: number,
+  random: () => number,
+  /** Whether the route is allowed to fold back through itself at all. */
+  mayCross: boolean
+): Route | undefined => {
   const sun = pickSun(size, random)
-  const used = new Set([cellKey(sun.at)])
+  const used = new Map<string, Set<"h" | "v">>([[cellKey(sun.at), new Set(["h", "v"])]])
+  const crossings = new Set<string>()
   const cells: RouteCell[] = []
   const bends: Route["bends"] = []
   let at = sun.at
@@ -151,7 +262,14 @@ const buildRoute = (size: number, turns: number, random: () => number): Route | 
   // puts the two mirrors in touching squares, and two tappable pieces in touching squares is a mis-tap
   // waiting to happen (§9). It is a floor, not a guarantee — a route that folds back can still bring two
   // non-consecutive bends together, which `piecesAreSpaced` catches at the end.
-  const budget = Math.max(MIN_LEG, Math.floor((size - 1) / Math.max(1, turns + 1)))
+  //
+  // A crossing route needs legs of DIFFERENT lengths, and that is why it needs its own budget rather than
+  // just permission. Dividing the grid by the turn count evenly gives every leg the same length, and a
+  // fold of equal legs can never cross itself — it comes back exactly alongside its own line and stops one
+  // square short, for ever. Measured with the even budget: not one crossing in twenty boards. A folded
+  // route also reuses the space it has already been through, so it can afford the longer legs.
+  const spread = mayCross ? Math.ceil((turns + 1) / 2) : turns + 1
+  const budget = Math.max(mayCross ? MIN_LEG + 1 : MIN_LEG, Math.floor((size - 1) / Math.max(1, spread)))
   const span = Math.max(1, budget - MIN_LEG + 1)
   for (let leg = 0; leg <= turns; leg++) {
     const last = leg === turns
@@ -159,19 +277,33 @@ const buildRoute = (size: number, turns: number, random: () => number): Route | 
     if (length < 1) return undefined
     for (let step = 0; step < length; step++) {
       at = stepCell(at, direction)
-      if (!insideGrid(size, at) || used.has(cellKey(at))) return undefined
-      used.add(cellKey(at))
+      if (!insideGrid(size, at)) return undefined
+      const key = cellKey(at)
+      const axes = used.get(key)
+      if (axes) {
+        // Same axis twice is the beam retracing its own line, never a crossing. And a square already
+        // carrying a mirror cannot also be crossed — the first pass would have turned there.
+        if (!mayCross || axes.has(axisOf(direction))) return undefined
+        if (bends.some(bend => cellKey(bend.at) === key)) return undefined
+        axes.add(axisOf(direction))
+        crossings.add(key)
+      } else used.set(key, new Set([axisOf(direction)]))
       cells.push({ at, enter: direction, exit: direction })
     }
     if (last) {
+      // The shrine takes the light the first time it arrives, so a beam that reached it earlier would
+      // already have ended there.
+      if (crossings.has(cellKey(at))) return undefined
       cells[cells.length - 1].exit = undefined
-      return { sun, shrine: at, cells, bends }
+      return { sun, shrine: at, cells, bends, crossings }
     }
+    // A bend needs a mirror, and a crossed square has to stay empty.
+    if (crossings.has(cellKey(at))) return undefined
     const exit = shuffle(perpendicular(direction), random)[0]
-    const face = faceFor(direction, exit)
-    if (!face) return undefined
+    const angle = angleFor(direction, exit)
+    if (angle === undefined) return undefined
     cells[cells.length - 1].exit = exit
-    bends.push({ at, enter: direction, exit, face })
+    bends.push({ at, enter: direction, exit, angle })
     direction = exit
   }
   return undefined
@@ -188,21 +320,54 @@ type Draft = {
   movableCells: Set<string>
   /** Cells a wrong setting sends light across — kept clear of decoys, which must never be reachable. */
   rays: Set<string>
+  nodes: BeamNode[]
+  wirings: NodeWiring[]
 }
 
-/** Cells in the same row or column as `at`, one or two steps away, across the beam's line of travel. */
-const trackStops = (at: CellRef, across: Direction): CellRef[] =>
-  perpendicular(across).flatMap(direction =>
-    [1, 2].map(distance => {
-      let stop = at
-      for (let step = 0; step < distance; step++) stop = stepCell(stop, direction)
-      return stop
-    })
-  )
+/**
+ * Every contiguous run of `length` cells that crosses the beam's line of travel and contains `at` — the
+ * tracks a sliding piece could be given, with the cell the route needs it in somewhere along them.
+ *
+ * Contiguous and collinear, because that is what reads as a track. The stops are drawn as ghosts of the
+ * piece, and a gap between them says the thing teleports rather than slides.
+ *
+ * A track of three is a different question from a track of two, which is the point of allowing it: two
+ * stops is on or off, and three is *which* — the player has to work out where the piece belongs, not
+ * merely whether it is in the way.
+ */
+const trackRuns = (at: CellRef, across: Direction, length: number): CellRef[][] => {
+  const [forward] = perpendicular(across)
+  const back = opposite(forward)
+  return Array.from({ length }, (_, ahead) => {
+    let head = at
+    for (let step = 0; step < ahead; step++) head = stepCell(head, forward)
+    const run: CellRef[] = []
+    for (let step = 0; step < length; step++) {
+      run.push(head)
+      head = stepCell(head, back)
+    }
+    return run
+  })
+}
 
 type Ray = { from: CellRef; direction: Direction }
 
-const ADJACENT: Direction[] = ["up", "right", "down", "left"]
+/**
+ * Where the light goes when a mirror is set wrong: one ray per stop that is not the answer.
+ *
+ * Read off the piece's own stop set, because that is the only place the answer lives. Deriving it from the
+ * two diagonals — the other one of `SLASH`/`BACKSLASH` — fails twice over on a cut mirror, and silently
+ * both times: the ray points along a turn the piece cannot make, and a three-stop piece (§11.8 rule 3) is
+ * wrong in two ways while the count stays at one.
+ */
+const wrongSettingRays = (
+  bend: { at: CellRef; enter: Direction },
+  angles: readonly MirrorAngle[],
+  answer: MirrorAngle
+): Ray[] =>
+  angles.filter(angle => angle !== answer).map(angle => ({ from: bend.at, direction: reflect(angle, bend.enter) }))
+
+const ADJACENT: readonly Direction[] = SQUARE_DIRECTIONS
 
 /**
  * Is this cell clear of every piece already placed, and of their shoulders?
@@ -214,6 +379,27 @@ const ADJACENT: Direction[] = ["up", "right", "down", "left"]
 const spacedFrom = (draft: Draft, at: CellRef): boolean =>
   !draft.movableCells.has(cellKey(at)) &&
   ADJACENT.every(direction => !draft.movableCells.has(cellKey(stepCell(at, direction))))
+
+/**
+ * The first track that fits: every cell on the grid, unclaimed by anything else, and clear of every other
+ * piece's shoulders. `at` itself is exempt from the claim check — the route already owns it, and it is
+ * exactly the cell the piece has to be able to stand in.
+ */
+const fittingTrack = (
+  size: number,
+  draft: Draft,
+  at: CellRef,
+  across: Direction,
+  length: number,
+  random: () => number
+): CellRef[] | undefined =>
+  shuffle(trackRuns(at, across, length), random).find(run =>
+    run.every(
+      cell =>
+        insideGrid(size, cell) &&
+        (cellKey(cell) === cellKey(at) || (!draft.taken.has(cellKey(cell)) && spacedFrom(draft, cell)))
+    )
+  )
 
 /**
  * Shadow pieces: decoys dropped into the very stretch a wrong setting would light.
@@ -231,14 +417,16 @@ const placeShadows = (size: number, draft: Draft, rays: Ray[], count: number, ra
   for (const ray of shuffle(rays, random).slice(0, count)) {
     // Two cells out, not one. A shadow one cell along the ray sits on the shoulder of the very mirror it
     // shadows, which no spacing rule can allow — and the empty cell between them costs nothing, since the
-    // wrong setting's beam still meets the shadow before it meets anything else the player controls.
+    // wrong setting's beam still meets the shadow before it meets anything else the player controls. On a
+    // diagonal ray that first cell is a corner neighbour, which the spacing rules do allow, but it is also
+    // where this very ray's own stone goes, so two cells out is right there too.
     let at = stepCell(stepCell(ray.from, ray.direction), ray.direction)
     for (let step = 0; step < 2 && insideGrid(size, at); step++) {
       if (!draft.taken.has(cellKey(at)) && spacedFrom(draft, at)) {
         draft.taken.add(cellKey(at))
         draft.movableCells.add(cellKey(at))
-        draft.movable.push({ kind: "turnMirror", at, faces: FACES })
-        draft.solution.push(Math.floor(random() * FACES.length))
+        draft.movable.push({ kind: "turnMirror", at, angles: TURN_ANGLES })
+        draft.solution.push(Math.floor(random() * TURN_ANGLES.length))
         break
       }
       at = stepCell(at, ray.direction)
@@ -256,6 +444,12 @@ const placeShadows = (size: number, draft: Draft, rays: Ray[], count: number, ra
  *
  * A ray that runs into something movable is left alone: that is a shadow doing its job, and walling it
  * off would undo it.
+ *
+ * **A diagonal wrong ray costs no more stone than a square one, and usually less** (§11.11): `stepsToEdge`
+ * takes the minimum over both axes, so a ray leaving at 45° meets the frame in fewer steps than one running
+ * along a row, and the frame walls it for free. What is new is only where the stone lands when it is needed
+ * — the first cell of a diagonal ray is the mirror's corner neighbour, so stone can stand on a shoulder no
+ * square ray has ever put it on.
  */
 const hasWall = (draft: Draft, at: CellRef): boolean =>
   draft.fixed.some(piece => piece.kind === "wall" && cellKey(piece.at) === cellKey(at))
@@ -285,6 +479,93 @@ const blockWrongSettings = (size: number, draft: Draft, rays: Ray[]): boolean =>
   return true
 }
 
+/**
+ * Doors, and the sockets that open them (design doc §11.1).
+ *
+ * A door is stone standing on the route that **no tap can shift** — that is the whole point, because a
+ * door the player could open would make the socket decoration. The light is the only thing that opens it,
+ * and it does so by crossing a socket further back along its own route.
+ *
+ * The order is the constraint, and it is structural rather than checked: sockets are drawn from route
+ * cells strictly *before* the earliest door, so the effect always lands ahead of the light and the drawn
+ * beam is never a picture of something that has stopped being true. It is also what makes the new rung
+ * available — the entry run reaches a socket, the socket opens the door, and the run starts growing again
+ * from a stretch it had stalled on.
+ *
+ * Two doors drawn against one socket is fan-out; one door naming two sockets is an and-wiring.
+ */
+const placeWiredDoors = (
+  size: number,
+  draft: Draft,
+  route: Route,
+  options: LightbeamDials,
+  random: () => number
+): boolean => {
+  if (options.doors < 1) return true
+
+  // Doors go on straight stretches in the back half of the route, which leaves room in front of them for
+  // the sockets. A bend cell already carries a mirror and a reason of its own.
+  const half = Math.floor(route.cells.length / 2)
+  const candidates = shuffle(
+    route.cells
+      .map((cell, index) => ({ cell, index }))
+      .filter(
+        ({ cell, index }) =>
+          index >= half &&
+          cell.exit === cell.enter &&
+          !route.crossings.has(cellKey(cell.at)) &&
+          !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at)) &&
+          !draft.movableCells.has(cellKey(cell.at))
+      ),
+    random
+  )
+
+  const doors: { at: CellRef; open: CellRef; index: number }[] = []
+  for (const { cell, index } of candidates) {
+    if (doors.length >= options.doors) break
+    if (doors.some(door => Math.abs(door.index - index) < MIN_LEG)) continue
+    const open = perpendicular(cell.enter)
+      .map(direction => stepCell(cell.at, direction))
+      .find(at => insideGrid(size, at) && !draft.taken.has(cellKey(at)) && spacedFrom(draft, at))
+    if (!open) continue
+    draft.taken.add(cellKey(open))
+    draft.movableCells.add(cellKey(open))
+    doors.push({ at: cell.at, open, index })
+  }
+  if (!doors.length) return false
+
+  // Sockets sit ON the route — that is the whole mechanism — so `taken`, which holds every route cell, is
+  // the wrong test. A socket is transparent scenery rather than a piece; what it must not share a square
+  // with is something that occupies one.
+  const earliest = Math.min(...doors.map(door => door.index))
+  const occupied = new Set([
+    cellKey(route.sun.at),
+    cellKey(route.shrine),
+    ...draft.fixed.map(piece => cellKey(piece.at)),
+    ...draft.movableCells,
+  ])
+  const sockets = shuffle(
+    route.cells
+      .map((cell, index) => ({ cell, index }))
+      .filter(({ cell, index }) => index < earliest && !occupied.has(cellKey(cell.at)))
+      .map(({ cell }) => cell.at),
+    random
+  ).slice(0, options.doorNodes)
+  if (sockets.length < options.doorNodes) return false
+  for (const at of sockets) draft.taken.add(cellKey(at))
+
+  draft.nodes = sockets.map(at => ({ at }))
+  const from = sockets.map((_, index) => index)
+  for (const door of doors) {
+    // Stops in this order every time: resting on the route, open beside it. The resting state is the one
+    // no wiring names, so `restingState` reads 0 and the wiring drives to 1.
+    draft.movable.push({ kind: "slidingWall", stops: [door.at, door.open] })
+    draft.solution.push(0)
+    draft.wirings.push({ from, piece: draft.movable.length - 1, to: 1 })
+  }
+  return true
+}
+
 const buildPieces = (size: number, route: Route, options: LightbeamDials, random: () => number): Draft | undefined => {
   const draft: Draft = {
     fixed: [],
@@ -293,6 +574,8 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     taken: new Set(),
     movableCells: new Set(),
     rays: new Set(),
+    nodes: [],
+    wirings: [],
   }
   draft.taken.add(cellKey(route.sun.at))
   for (const cell of route.cells) draft.taken.add(cellKey(cell.at))
@@ -312,32 +595,43 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
     ).slice(0, slidingCount)
   )
 
+  // Only a bend the player turns in place can be swapped for a cut mirror: a given has no wrong setting to
+  // spend, and a sliding mirror's question is which cell rather than which angle.
+  const cut = new Set(
+    options.cutMirrors
+      ? shuffle(
+          movableBends.filter(bend => !sliding.has(cellKey(bend.at))).map(bend => cellKey(bend.at)),
+          random
+        ).slice(0, options.cutMirrors)
+      : []
+  )
+
   const wrongRays: Ray[] = []
 
   route.bends.forEach((bend, index) => {
     if (given.has(index)) {
-      draft.fixed.push({ kind: "mirror", at: bend.at, face: bend.face })
+      draft.fixed.push({ kind: "mirror", at: bend.at, angle: bend.angle })
       return
     }
     if (sliding.has(cellKey(bend.at))) {
-      // The track runs across the beam, so the far stop takes the mirror clean out of its way and the
-      // light sails past — a different sentence from a mirror turned the wrong way, and a clearer one.
-      const stop = shuffle(trackStops(bend.at, bend.enter), random).find(
-        candidate => insideGrid(size, candidate) && !draft.taken.has(cellKey(candidate)) && spacedFrom(draft, candidate)
-      )
-      if (!stop) return
-      draft.taken.add(cellKey(stop))
-      for (const cell of [bend.at, stop]) draft.movableCells.add(cellKey(cell))
-      const stops = shuffle([bend.at, stop], random)
-      draft.movable.push({ kind: "slidingMirror", face: bend.face, stops })
+      // The track runs across the beam, so a stop off the route takes the mirror clean out of its way and
+      // the light sails past — a different sentence from a mirror turned the wrong way, and a clearer one.
+      const stops = fittingTrack(size, draft, bend.at, bend.enter, options.slidingStops, random)
+      if (!stops) return
+      for (const cell of stops) {
+        draft.taken.add(cellKey(cell))
+        draft.movableCells.add(cellKey(cell))
+      }
+      draft.movable.push({ kind: "slidingMirror", angle: bend.angle, stops })
       draft.solution.push(stops.findIndex(candidate => cellKey(candidate) === cellKey(bend.at)))
       wrongRays.push({ from: bend.at, direction: bend.enter })
       return
     }
+    const angles = cut.has(cellKey(bend.at)) ? cutStops(bend) : TURN_ANGLES
     draft.movableCells.add(cellKey(bend.at))
-    draft.movable.push({ kind: "turnMirror", at: bend.at, faces: FACES })
-    draft.solution.push(FACES.indexOf(bend.face))
-    wrongRays.push({ from: bend.at, direction: reflect(bend.face === "/" ? "\\" : "/", bend.enter) })
+    draft.movable.push({ kind: "turnMirror", at: bend.at, angles })
+    draft.solution.push(angles.indexOf(bend.angle))
+    wrongRays.push(...wrongSettingRays(bend, angles, bend.angle))
   })
   if (draft.movable.length + given.size !== route.bends.length) return undefined
 
@@ -345,23 +639,26 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   // rather than bend it — the one piece in the family whose question is "does the light get through".
   const straights = shuffle(
     route.cells.filter(
-      cell => cell.exit === cell.enter && !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at))
+      cell =>
+        cell.exit === cell.enter &&
+        !route.crossings.has(cellKey(cell.at)) &&
+        !route.bends.some(bend => cellKey(bend.at) === cellKey(cell.at))
     ),
     random
   )
   for (const cell of straights.slice(0, options.slidingWalls)) {
-    const stop = shuffle(trackStops(cell.at, cell.enter), random).find(
-      candidate => insideGrid(size, candidate) && !draft.taken.has(cellKey(candidate)) && spacedFrom(draft, candidate)
-    )
-    if (!stop) continue
-    draft.taken.add(cellKey(stop))
-    for (const at of [cell.at, stop]) draft.movableCells.add(cellKey(at))
-    const stops = shuffle([cell.at, stop], random)
+    const stops = fittingTrack(size, draft, cell.at, cell.enter, options.slidingStops, random)
+    if (!stops) continue
+    for (const at of stops) {
+      draft.taken.add(cellKey(at))
+      draft.movableCells.add(cellKey(at))
+    }
     draft.movable.push({ kind: "slidingWall", stops })
     draft.solution.push(stops.findIndex(candidate => cellKey(candidate) !== cellKey(cell.at)))
   }
 
   if (!draft.movable.length) return undefined
+  if (!placeWiredDoors(size, draft, route, options, random)) return undefined
   placeShadows(size, draft, wrongRays, options.shadows, random)
   if (!blockWrongSettings(size, draft, wrongRays)) return undefined
 
@@ -378,13 +675,13 @@ const buildPieces = (size: number, route: Route, options: LightbeamDials, random
   for (const at of shuffle(open, random).slice(0, options.decoys)) {
     draft.taken.add(cellKey(at))
     draft.movableCells.add(cellKey(at))
-    draft.movable.push({ kind: "turnMirror", at, faces: FACES })
-    draft.solution.push(Math.floor(random() * FACES.length))
+    draft.movable.push({ kind: "turnMirror", at, angles: TURN_ANGLES })
+    draft.solution.push(Math.floor(random() * TURN_ANGLES.length))
   }
   return draft
 }
 
-const NEIGHBOURS: Direction[] = ["up", "right", "down", "left"]
+const NEIGHBOURS: readonly Direction[] = SQUARE_DIRECTIONS
 
 /**
  * No two pieces the player can tap may touch.
@@ -397,9 +694,12 @@ const NEIGHBOURS: Direction[] = ["up", "right", "down", "left"]
  * Measured before this existed, essentially every board broke it — up to ten touching pairs on one wizard
  * grid — so it is a real gate rather than a formality.
  */
-const piecesAreSpaced = (size: number, movable: MovablePiece[]): boolean => {
+const piecesAreSpaced = (size: number, movable: MovablePiece[], driven: ReadonlySet<number>): boolean => {
   const owner = new Map<string, number>()
   movable.forEach((piece, index) => {
+    // A door has no tap target to protect, so it needs no shoulders — this rule is about a thumb landing
+    // on the piece the player meant, and nothing here can be meant.
+    if (driven.has(index)) return
     for (const at of pieceCells(piece)) owner.set(cellKey(at), index)
   })
   for (const [key, index] of owner) {
@@ -481,8 +781,124 @@ const BASELINE: LightbeamDials = {
   setMirrors: 0,
   slidingMirrors: 0,
   slidingWalls: 0,
+  slidingStops: 2,
+  fiddleProof: false,
+  crossings: 0,
+  doors: 0,
+  doorNodes: 1,
   decoys: 0,
   shadows: 0,
+  cutMirrors: 0,
+}
+
+/** How likely a piece is to open on a setting the deduction will have to rule out. */
+const OPENS_WRONG = 0.8
+
+/** How many openings to draw before giving up on a board and building another. */
+const OPENING_DRAWS = 24
+
+/**
+ * Where the board opens.
+ *
+ * This used to be `solution + 1` for every piece, and it was a hole big enough to drive the family
+ * through. Every piece had exactly two states, so "wrong" meant "flipped", and **tapping every piece once
+ * solved every board in the game** — five tiers, forty seeds each, two hundred out of two hundred. No
+ * deduction, no reading of a single square. Nothing in the gates noticed, because each of those boards
+ * genuinely was reachable by the ladder too; it was reachable by this as well, and this is quicker.
+ *
+ * The fix is not a bigger offset — that just moves the exploit to "tap everything twice". It is that the
+ * offset must not be the same for every piece. Each one opens on its own drawn state, weighted heavily
+ * towards wrong so the board still has work in it, and `openingIsHonest` refuses any board that a uniform
+ * number of taps would open.
+ */
+const drawOpening = (puzzle: LightbeamPuzzleData, draft: Draft, random: () => number): number[] =>
+  draft.movable.map((piece, index) => {
+    // A door opens where it rests, always. It is not the player's to be wrong about.
+    if (restingState(puzzle, index) !== undefined) return draft.solution[index]
+    const total = pieceStateCount(piece)
+    if (total < 2 || random() > OPENS_WRONG) return draft.solution[index]
+    return (draft.solution[index] + 1 + Math.floor(random() * (total - 1))) % total
+  })
+
+// How many configurations the greedy walk below may visit before the board is given the benefit of the
+// doubt. Improving walks are short — every step strictly improves a bounded score — so this is a guard.
+const MAX_GREEDY_STATES = 400
+
+/** Where `taps` taps land a piece, over the states the player can actually reach. A door never moves. */
+const nextOption = (states: readonly number[], from: number, taps: number): number => {
+  const at = states.indexOf(from)
+  return at < 0 ? from : states[(at + taps) % states.length]
+}
+
+/** What a player reads off the board without reasoning: how near the light lands, then how far it gets. */
+const nearness = (puzzle: LightbeamPuzzleData, config: readonly number[]): [number, number] => {
+  const walk = traceBeam(puzzle, config)
+  const last = walk.path[walk.path.length - 1]
+  const at = last?.at ?? puzzle.sun.at
+  return [-(Math.abs(at.row - puzzle.shrine.row) + Math.abs(at.col - puzzle.shrine.col)), walk.path.length]
+}
+
+const nearer = (a: [number, number], b: [number, number]): boolean => a[0] > b[0] || (a[0] === b[0] && a[1] > b[1])
+
+/**
+ * Would a player who never reasons get there anyway?
+ *
+ * Modelled as the simplest thing a person actually does in front of this board: tap whichever piece leaves
+ * the light nearer the shrine, and keep doing it. The family's premise (§4) is that a beam puzzle's
+ * natural solving mode is trial and that trial is not deduction — this is what makes that a property of
+ * the boards rather than an aspiration in a document. **A board a strictly-improving walk finishes is a
+ * board whose deduction is decorative**, however deep the ladder that accepted it.
+ *
+ * Every improving walk is searched, not one of them: ties are exactly where a real player picks
+ * arbitrarily, so a board is only fiddle-proof when *no* run of getting-warmer taps arrives.
+ */
+export const resistsGreedyPlay = (puzzle: LightbeamPuzzleData, initial: readonly number[]): boolean => {
+  const options = allPieceOptions(puzzle)
+  let frontier: (readonly number[])[] = [initial]
+  const seen = new Set<string>([initial.join(",")])
+  while (frontier.length && seen.size < MAX_GREEDY_STATES) {
+    const next: number[][] = []
+    for (const config of frontier) {
+      const here = nearness(puzzle, config)
+      for (let piece = 0; piece < puzzle.movable.length; piece++) {
+        const step = [...config]
+        step[piece] = nextOption(options[piece], step[piece], 1)
+        const key = step.join(",")
+        if (seen.has(key) || !nearer(nearness(puzzle, step), here)) continue
+        if (isLit(puzzle, step)) return false
+        seen.add(key)
+        next.push(step)
+      }
+    }
+    frontier = next
+  }
+  return true
+}
+
+/**
+ * The board opens dark, no single tap finishes it, and no uniform number of taps does either.
+ *
+ * The last of those is the gate the family was missing. The first two were claimed by §5 gate 8 and only
+ * the first was ever checked — and the one that went unchecked is the one that mattered, because a board
+ * where every piece sits the same distance from its answer can be solved by a player who has noticed that
+ * and nothing else. Checking it exhaustively is cheap: the longest cycle on the board bounds the search.
+ */
+const openingIsHonest = (puzzle: LightbeamPuzzleData, initial: readonly number[]): boolean => {
+  if (isLit(puzzle, initial)) return false
+  const longest = Math.max(...puzzle.movable.map(pieceStateCount))
+  for (let taps = 1; taps < longest; taps++)
+    if (
+      isLit(
+        puzzle,
+        initial.map((state, index) => (state + taps) % pieceStateCount(puzzle.movable[index]))
+      )
+    )
+      return false
+  return !puzzle.movable.some((piece, index) => {
+    const config = [...initial]
+    config[index] = (config[index] + 1) % pieceStateCount(piece)
+    return isLit(puzzle, config)
+  })
 }
 
 /** One run of the build-and-gate loop, at a fixed set of dials. Undefined when the budget runs out. */
@@ -494,11 +910,13 @@ const attemptGeneration = (
 ): Omit<LightbeamPuzzle, "goals"> | undefined => {
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
-    const route = buildRoute(size, dials.turns, random)
+    const route = buildRoute(size, dials.turns, random, dials.crossings > 0)
     if (!route) continue
+    if (route.crossings.size < dials.crossings) continue
     const draft = buildPieces(size, route, dials, random)
     if (!draft) continue
-    if (!piecesAreSpaced(size, draft.movable)) continue
+    const driven = new Set(draft.wirings.map(wiring => wiring.piece))
+    if (!piecesAreSpaced(size, draft.movable, driven)) continue
 
     const puzzle: LightbeamPuzzleData = {
       size,
@@ -506,19 +924,27 @@ const attemptGeneration = (
       shrine: route.shrine,
       fixed: draft.fixed,
       movable: draft.movable,
+      ...(draft.nodes.length ? { nodes: draft.nodes, wirings: draft.wirings } : {}),
     }
     if (!isLit(puzzle, draft.solution)) continue
 
-    const states = draft.movable.map(piece => Array.from({ length: pieceStateCount(piece) }, (_, i) => i))
+    // The player's options, not every state a piece has: a door is not theirs to set, so it contributes
+    // nothing to the space the gates below enumerate.
+    const states = allPieceOptions(puzzle)
     if (!routeIsUnique(puzzle, states)) continue
     if (!solveLightbeamByTechniques(puzzle, cap).settled) continue
 
     const thinned = { ...puzzle, fixed: thinWalls(puzzle, states, cap, random) }
 
-    // The board opens dark, and never one tap from done: every movable piece starts on a setting the
-    // deduction will have to rule out.
-    const initial = draft.movable.map((piece, index) => (draft.solution[index] + 1) % pieceStateCount(piece))
-    if (isLit(thinned, initial)) continue
+    // Where the board opens is drawn rather than derived, and re-drawn until it is honest — a board is
+    // expensive to build and an opening is cheap to try again.
+    let initial: number[] | undefined
+    for (let draw = 0; draw < OPENING_DRAWS && !initial; draw++) {
+      const candidate = drawOpening(thinned, draft, random)
+      if (openingIsHonest(thinned, candidate) && (!dials.fiddleProof || resistsGreedyPlay(thinned, candidate)))
+        initial = candidate
+    }
+    if (!initial) continue
 
     return { ...thinned, initial, solution: draft.solution, techniqueCap: cap }
   }

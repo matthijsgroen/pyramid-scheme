@@ -175,14 +175,7 @@ what a strike looks like (sand poured over it, a scribe's erasure), what the
 target beside a line is drawn on. The family emits `untouched | kept | struck`
 plus the numbers; nothing about a theme reaches the puzzle logic.
 
-## 9. Value output
-
-Side family — the answer is a mask, not a number, so it does not feed
-carry-forward (`PUZZLE_FAMILIES.md` P3). Whether a derived value (count of kept
-cells) should make it spine-capable is an open catalogue question, not settled
-here.
-
-## 10. Open questions
+## 9. Open questions
 
 1. **Negative values.** The catalogue wants Sumplete to carry subtraction at
    higher tiers, but negatives break gate 1's side effect (a zero target becomes

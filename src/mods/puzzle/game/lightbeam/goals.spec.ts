@@ -5,9 +5,31 @@ import { generateLightbeam, LIGHTBEAM_GOALS, type LightbeamDials, type Lightbeam
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
 
-const LEAN: LightbeamDials = { turns: 2, setMirrors: 0, slidingMirrors: 0, slidingWalls: 0, decoys: 0, shadows: 0 }
+const LEAN: LightbeamDials = {
+  turns: 2,
+  setMirrors: 0,
+  slidingMirrors: 0,
+  slidingWalls: 0,
+  slidingStops: 2,
+  fiddleProof: false,
+  crossings: 0,
+  doors: 0,
+  doorNodes: 1,
+  decoys: 0,
+  shadows: 0,
+  cutMirrors: 0,
+}
 
-const DIALS = ["turns", "setMirrors", "slidingMirrors", "slidingWalls", "decoys", "shadows"] as const
+const DIALS = [
+  "turns",
+  "setMirrors",
+  "slidingMirrors",
+  "slidingWalls",
+  "slidingStops",
+  "crossings",
+  "decoys",
+  "shadows",
+] as const
 
 describe("the goal pool", () => {
   it("has a dial change for every goal in the list", () => {

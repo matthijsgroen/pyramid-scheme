@@ -1,17 +1,40 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import { cellKey, eachConfig, isLit, pieceCells, pieceStateCount, stepCell, traceBeam } from "./beam"
-import { generateLightbeam } from "./generateLightbeam"
+import {
+  allPieceOptions,
+  cellKey,
+  eachConfig,
+  isCut,
+  isHalfStep,
+  isLit,
+  reflect,
+  pieceCells,
+  pieceStateCount,
+  restingState,
+  SQUARE_DIRECTIONS,
+  stepCell,
+  traceBeam,
+} from "./beam"
+import { generateLightbeam, resistsGreedyPlay } from "./generateLightbeam"
 import { LIGHTBEAM_CONFIG } from "./lightbeamConfig"
 import { solveLightbeamByTechniques } from "./techniques"
 
 describe("generateLightbeam", () => {
   it("is deterministic", () => {
-    expect(generateLightbeam(5, 42, { turns: 2 })).toEqual(generateLightbeam(5, 42, { turns: 2 }))
+    expect(generateLightbeam(7, 42, { turns: 3 })).toEqual(generateLightbeam(7, 42, { turns: 3 }))
   })
 
   it("different seeds produce different boards", () => {
-    expect(generateLightbeam(5, 1, { turns: 2 })).not.toEqual(generateLightbeam(5, 2, { turns: 2 }))
+    expect(generateLightbeam(7, 1, { turns: 3 })).not.toEqual(generateLightbeam(7, 2, { turns: 3 }))
+  })
+
+  // Three movable pieces is the family's floor, and it falls out of the opening rules rather than being
+  // chosen. On a two-piece board with two settings each, every opening is either already lit, one tap from
+  // lit, or the same one tap on both — and that last is the exploit `openingIsHonest` exists to refuse. A
+  // board too small to avoid it is a board that should not be built, so generation says so instead of
+  // shipping one.
+  it("refuses a two-piece board, which cannot open honestly", () => {
+    expect(() => generateLightbeam(7, 1, { turns: 2 })).toThrow(/no logically solvable board/)
   })
 })
 
@@ -44,16 +67,68 @@ describe.each(difficulties)("at %s", difficulty => {
         }
   })
 
+  // The one that got away, and the reason the rest of this block exists.
+  //
+  // Boards used to open on `solution + 1` for every piece. Every piece had two settings, so "wrong" meant
+  // "flipped" — and tapping every piece once solved every board in the game, all five tiers, every seed.
+  // Nothing above noticed: the answer did light the shrine, the board did open dark, no single tap did
+  // finish it, and the ladder did settle it. All true, and all beside the point.
+  it("is not solved by tapping every piece once", () => {
+    for (const board of boards) {
+      const tapped = board.initial.map((state, index) => (state + 1) % pieceStateCount(board.movable[index]))
+      expect(isLit(board, tapped)).toBe(false)
+    }
+  })
+
+  // The general form of it. A bigger offset is not a fix — it only moves the exploit to "tap twice" — so
+  // what has to hold is that the pieces are not all the same distance from their answers.
+  it("is not solved by any uniform number of taps", () => {
+    for (const board of boards) {
+      const longest = Math.max(...board.movable.map(pieceStateCount))
+      for (let taps = 1; taps < longest; taps++) {
+        const tapped = board.initial.map((state, index) => (state + taps) % pieceStateCount(board.movable[index]))
+        expect(isLit(board, tapped)).toBe(false)
+      }
+    }
+  })
+
+  // A stop the piece cannot slide to is a stop that has to be drawn as something else. Ghost pieces on a
+  // broken line read as teleporting, not sliding, so a track is contiguous and collinear or it is not a
+  // track — this is the drawing's half of the multi-stop bargain.
+  it("gives every sliding piece a straight, unbroken track", () => {
+    for (const board of boards)
+      for (const piece of board.movable) {
+        if (piece.kind === "turnMirror") continue
+        const rows = new Set(piece.stops.map(stop => stop.row))
+        const cols = new Set(piece.stops.map(stop => stop.col))
+        expect(Math.min(rows.size, cols.size)).toBe(1)
+        const along = rows.size === 1 ? piece.stops.map(s => s.col) : piece.stops.map(s => s.row)
+        expect(Math.max(...along) - Math.min(...along)).toBe(piece.stops.length - 1)
+      }
+  })
+
+  // What the ladder is *for*. A beam board's natural solving mode is trial — tap whichever piece leaves the
+  // light nearer the shrine, repeat — and a board that yields to it has a decorative deduction however deep
+  // the rungs it was accepted under. Starter is exempt on purpose: a three-piece board is meant to give way
+  // to fiddling, and that is what makes a gentle first board rather than an empty one.
+  it("does not give way to getting-warmer taps, from junior up", () => {
+    if (!LIGHTBEAM_CONFIG[difficulty].fiddleProof) return
+    for (const board of boards) expect(resistsGreedyPlay(board, board.initial)).toBe(true)
+  })
+
   it("never needs a guess — every board settles inside its own technique cap", () => {
     for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
   })
 
   // Gate 4, and the honest form of uniqueness for this family: a decoy has a free setting by definition,
   // so a board with decoys has many winning configurations. What may not be ambiguous is the route.
+  // Over the states the PLAYER can reach, which is what uniqueness has to mean. Enumerating a door into a
+  // position no tap can put it in finds routes nobody can take, and asserts a property the board was never
+  // built to have.
   it("has exactly one winning route", () => {
     for (const board of boards) {
       const paths = new Set<string>()
-      const states = board.movable.map(piece => Array.from({ length: pieceStateCount(piece) }, (_, i) => i))
+      const states = allPieceOptions(board)
       eachConfig(states, config => {
         if (!isLit(board, config)) return
         paths.add(
@@ -149,7 +224,7 @@ describe("the tiers demand different reasoning", () => {
   it("never shrinks as the tiers go up", () => {
     const space = difficulties.map(difficulty =>
       sweep(difficulty).reduce(
-        (total, board) => total + board.movable.reduce((product, piece) => product * pieceStateCount(piece), 1),
+        (total, board) => total + allPieceOptions(board).reduce((product, states) => product * states.length, 1),
         0
       )
     )
@@ -160,14 +235,23 @@ describe("the tiers demand different reasoning", () => {
     expect([...demanded("starter")].sort()).toEqual(["deadEnd", "entryRun", "exitRun"])
   })
 
-  it("reaches the shrine-side elimination by junior", () => {
-    expect(demanded("junior")).toContain("feedsExit")
+  // Junior's one addition is a longer route, which buys legs and not forks (§6.3) — so it asks the same
+  // reasoning as starter over further ground. The shrine-side elimination needs something unsettled
+  // standing in a wrong ray, and that is expert's sliding piece.
+  it("asks junior for the same rungs as starter, over a longer route", () => {
+    expect([...demanded("junior")].sort()).toEqual(["deadEnd", "entryRun", "exitRun"])
+  })
+
+  it("reaches the shrine-side elimination by expert, where pieces start standing in wrong rays", () => {
+    expect(demanded("expert")).toContain("feedsExit")
   })
 
   it("names an irrelevant piece from expert on, where the decoys start", () => {
     expect(demanded("expert")).toContain("neverReached")
   })
 
+  // Every rung, the ordering fact included — wizard boards carry a door, so the light having to reach a
+  // socket before it can reach anything past that door is part of every one of them.
   it("spends the whole ladder at wizard", () => {
     expect([...demanded("wizard")].sort()).toEqual([
       "deadEnd",
@@ -176,8 +260,36 @@ describe("the tiers demand different reasoning", () => {
       "feedsExit",
       "neverReached",
       "onlySurvivor",
+      "wiringFires",
     ])
   })
+
+  // The vocabulary ladder (§6.4): each tier may only use what it has met. This is the gate that was
+  // missing — a goal turns a dial, and three of the six dials add a PIECE rather than more of one, so
+  // before this a starter board could draw a sliding wall and an expert board a door.
+  it("never puts a piece on a board before its tier", () => {
+    const kinds = (difficulty: (typeof difficulties)[number]) => {
+      const seen = new Set<string>()
+      for (const board of sweep(difficulty)) {
+        for (const piece of board.movable) seen.add(piece.kind)
+        if (board.nodes?.length) seen.add("socket")
+        if (board.wirings?.length) seen.add("door")
+        if (board.fixed.some(piece => piece.kind === "mirror")) seen.add("setMirror")
+      }
+      return seen
+    }
+    // Right angles only, and nothing that moves off its square.
+    for (const tier of ["starter", "junior"] as const) expect([...kinds(tier)].sort()).toEqual(["turnMirror"])
+    // Sliding pieces arrive, sockets and doors do not.
+    for (const tier of ["expert", "master"] as const) {
+      expect([...kinds(tier)].sort()).not.toContain("door")
+      expect([...kinds(tier)].sort()).not.toContain("socket")
+    }
+    // Wizard is where the ordering fact lives, so it is the only tier carrying a door and its sockets.
+    expect(kinds("wizard")).toContain("door")
+    expect(kinds("wizard")).toContain("socket")
+    // Sweeps every tier rather than one, so it needs more than the default budget.
+  }, 30_000)
 })
 
 // The tap-accuracy rule, and what buys this family a grid wider than the other grid families allow. There,
@@ -197,15 +309,18 @@ describe("no two pieces the player can tap ever touch", () => {
     const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
     const boards = Array.from({ length: 16 }, (_, seed) => generateLightbeam(size, seed + 1, options))
 
-    it("keeps every pair of movable pieces at least a square apart", () => {
+    // Doors are exempt, and that is the rule reading correctly rather than an exception to it: this is
+    // about a thumb landing on the piece the player meant, and a door is not something anyone can mean.
+    it("keeps every pair of tappable pieces at least a square apart", () => {
       for (const board of boards) {
         const owner = new Map<string, number>()
         board.movable.forEach((piece, index) => {
+          if (restingState(board, index) !== undefined) return
           for (const at of pieceCells(piece)) owner.set(cellKey(at), index)
         })
         for (const [key, index] of owner) {
           const [row, col] = key.split(",").map(Number)
-          for (const direction of ["up", "right", "down", "left"] as const) {
+          for (const direction of SQUARE_DIRECTIONS) {
             const beside = stepCell({ row, col }, direction)
             expect(owner.get(cellKey(beside)) ?? index).toBe(index)
           }
@@ -220,6 +335,71 @@ describe("no two pieces the player can tap ever touch", () => {
     // The overflow may reach into empty squares, never into another target's.
     it("leaves no two tap targets overlapping", () => {
       expect(BOARD_PX / size + 2 * OVERFLOW_PX).toBeLessThanOrEqual(2 * (BOARD_PX / size))
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------------------------------
+// The cut mirror (design doc §11.8), swapped in for an ordinary turn mirror at a bend — rule 8's way of
+// spending its cost: one piece doing more, not another piece. The route stays square, so what the piece
+// adds is a WRONG setting that throws the light off at 67.5°, which is the first diagonal ray
+// `blockWrongSettings` has ever had to close.
+// ---------------------------------------------------------------------------------------------------
+
+/** The cut pieces on a board, with the bend they stand on: their answer, and the way the beam arrived. */
+const cutBends = (board: ReturnType<typeof generateLightbeam>) => {
+  const entered = new Map(traceBeam(board, board.solution).path.map(segment => [cellKey(segment.at), segment.enter]))
+  return board.movable.flatMap((piece, index) => {
+    if (piece.kind !== "turnMirror" || !isCut(piece.angles)) return []
+    const enter = entered.get(cellKey(piece.at))
+    if (enter === undefined) return []
+    return [{ piece, index, enter, answer: piece.angles[board.solution[index]] }]
+  })
+}
+
+describe("a cut mirror standing in for an ordinary one", () => {
+  // The gate on the whole mechanic: no board a player is handed carries one until the generator can route
+  // diagonally on purpose (§11.8 rule 10, step 4). Everything below runs with the dial turned on by hand.
+  it("reaches no player yet, on any tier", () => {
+    for (const difficulty of difficulties) expect(LIGHTBEAM_CONFIG[difficulty].cutMirrors ?? 0).toBe(0)
+  })
+
+  describe.each(difficulties)("at %s", difficulty => {
+    const { size, ...options } = LIGHTBEAM_CONFIG[difficulty]
+    const boards = Array.from({ length: 5 }, (_, seed) =>
+      generateLightbeam(size, seed + 1, { ...options, cutMirrors: 1 })
+    )
+
+    it("puts one on every board, on a bend the beam actually turns at", () => {
+      for (const board of boards) expect(cutBends(board)).toHaveLength(1)
+    })
+
+    // §11.8 rule 2, which is the constraint that killed three earlier drafts: the stop set has to keep the
+    // quarter turn the route depends on, and the second stop sits 67.5° off it — as lines, three
+    // eighth-turns either way round.
+    it("keeps the bend's quarter turn, with its other stop 67.5° away", () => {
+      for (const board of boards)
+        for (const { piece, answer } of cutBends(board)) {
+          expect(piece.angles).toContain(answer)
+          const [low, high] = [...piece.angles].sort((a, b) => a - b)
+          expect(Math.min(high - low, 8 - (high - low))).toBe(3)
+        }
+    })
+
+    it("throws the wrong setting off diagonally, and it never arrives", () => {
+      for (const board of boards)
+        for (const { piece, index, enter, answer } of cutBends(board))
+          piece.angles.forEach((angle, state) => {
+            if (angle === answer) return
+            expect(isHalfStep(reflect(angle, enter))).toBe(true)
+            const wrong = [...board.solution]
+            wrong[index] = state
+            expect(isLit(board, wrong)).toBe(false)
+          })
+    })
+
+    it("still settles inside its tier's own cap", () => {
+      for (const board of boards) expect(solveLightbeamByTechniques(board, board.techniqueCap).settled).toBe(true)
     })
   })
 })

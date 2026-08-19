@@ -1,5 +1,5 @@
 import { produce } from "immer"
-import { pieceStateCount, type LightbeamPuzzleData } from "./beam"
+import { pieceOptions, type LightbeamPuzzleData } from "./beam"
 import type { LightbeamPuzzle } from "./generateLightbeam"
 
 /**
@@ -16,9 +16,15 @@ export type LightbeamState = {
 
 export const createLightbeamState = (puzzle: LightbeamPuzzle): LightbeamState => ({ states: [...puzzle.initial] })
 
+/**
+ * Cycles through the states the player can actually reach, which for a door is exactly one — a door only
+ * moves when the light reaches its socket, and a tap that shifted it would make the socket decoration.
+ */
 export const cycleLightbeamPiece = produce((state: LightbeamState, puzzle: LightbeamPuzzleData, piece: number) => {
-  const total = pieceStateCount(puzzle.movable[piece])
-  state.states[piece] = (state.states[piece] + 1) % total
+  const options = pieceOptions(puzzle, piece)
+  const at = options.indexOf(state.states[piece])
+  if (at < 0) return
+  state.states[piece] = options[(at + 1) % options.length]
 })
 
 /** How many taps this piece is away from where it started — what a "you have been fiddling" hint reads. */

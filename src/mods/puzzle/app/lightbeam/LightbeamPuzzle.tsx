@@ -35,7 +35,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       onReset={() => setState(createLightbeamState(puzzle))}
       hint={hint && t(`lightbeam.hint.${hint.key}`)}
       idleMs={hintIdleDelay(difficulty)}
-      rules={<LightbeamRules />}
+      rules={<LightbeamRules puzzle={puzzle} />}
     >
       {({ reportInput, hintVisible }) => (
         <LightbeamBoard

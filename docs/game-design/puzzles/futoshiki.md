@@ -227,12 +227,7 @@ material, what a pre-filled number is carved into, what a sign is drawn as. The
 family emits `given | filled | empty | conflicted` plus the numbers and the sign
 directions; nothing about a theme reaches the puzzle logic.
 
-## 10. Value output
-
-Side family — the answer is an arrangement, not a number, so it does not feed
-carry-forward (`PUZZLE_FAMILIES.md` P3).
-
-## 11. Generation cost, and where it should go
+## 10. Generation cost, and where it should go
 
 A wizard board is the dear one: seven squares wide, eleven techniques, and a
 prune loop that re-solves the board once per sign it tries to remove. That lands
@@ -253,7 +248,7 @@ demanding its cap, duration sampling, difficulty grading). Generation is already
 seeded and deterministic, which is the whole precondition. Prior art: the same
 mechanic in Block Sort.
 
-## 12. Open questions
+## 11. Open questions
 
 1. **Auto-pencilling.** Filling every square's notes with its row/column
    candidates at a tap is standard in Sudoku apps and would suit the higher

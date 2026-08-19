@@ -109,10 +109,10 @@ interactive at all: the only move is choosing a weight, and 15 − 7 is the
 player's to do. From expert on, where the board is more than one subtraction,
 the move is worth more than the sum it shortcuts.
 
-| Move             | Fires when                                       | Costs the player |
-| ---------------- | ------------------------------------------------ | ---------------- |
-| Cancel a glyph   | The same glyph stands on both pans of one row     | One tap          |
-| Cancel stones    | Both pans of one row hold plain numbers           | One tap          |
+| Move           | Fires when                                    | Costs the player |
+| -------------- | --------------------------------------------- | ---------------- |
+| Cancel a glyph | The same glyph stands on both pans of one row | One tap          |
+| Cancel stones  | Both pans of one row hold plain numbers       | One tap          |
 
 ### 4.2 A move has to get somewhere
 
@@ -284,15 +284,7 @@ what the pans and beam are made of, which glyph set the unknowns are drawn from.
 The family emits the glyphs, the numbers, and each scale's `left | level | right |
 unknown` state; nothing about a theme reaches the puzzle logic.
 
-## 9. Value output
-
-**Spine** family (`PUZZLE_FAMILIES.md` P3): a solved board hands out a number —
-the weight of a glyph — which is exactly what carry-forward wants. The
-carry-forward plumbing does not exist yet, so v1 emits nothing; when it does,
-this family is the natural first producer, and the glyph to publish is a board
-authoring choice, not a generation one.
-
-## 10. Open questions
+## 9. Open questions
 
 1. **Coefficient notation.** Three scarabs in a pan are drawn as three scarabs.
    That stops scaling somewhere (a pan of eight is a mess), and `3×𓆣` is the

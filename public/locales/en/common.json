@@ -368,11 +368,16 @@
       "goal": "Get the sunlight from the disc to the shrine.",
       "mirrors": "A mirror bends the light a quarter turn, off either of its faces.",
       "walls": "A block of stone swallows the light. So does the edge of the board.",
-      "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. Pieces with a plain edge are part of the puzzle and cannot be moved."
+      "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
+      "nodes": "Some stone is wired to a socket in the floor and no tap will move it. Send the light across the socket and the stone slides aside."
     },
     "hint": {
       "entryRun": "Start where the light already goes: it runs straight from the disc until it meets the first piece you can change. Those squares carry the light whatever you do.",
       "exitRun": "Look at the shrine. Only one side of it can be lit at all — every other way in is blocked or faces off the board — so the light has to arrive along that line.",
+      "wiringFires": {
+        "one": "The light has to cross that socket on its way — you have already worked out that much. Crossing it pulls the stone it is wired to out of the way, so the path beyond opens up.",
+        "all": "That stone is wired to more than one socket, and it only shifts once the light has crossed every one of them. Find a way to take the beam through them all."
+      },
       "deadEnd": {
         "wall": "Set this way, the light runs straight into stone with nothing left to save it. So it cannot be set this way.",
         "edge": "Set this way, the light runs off the edge of the board with nothing left to catch it. So it cannot be set this way.",
@@ -383,6 +388,7 @@
         "edge": "Work back from the shrine. Set this way, the light would have to come from outside the board to reach it.",
         "loop": "Work back from the shrine. Set this way, the light that would have to reach it only circles for ever instead."
       },
+      "wiringDead": "Whatever you do, the light can never get to that socket — so the stone it is wired to stays exactly where it is, and you can read the path straight past it.",
       "neverReached": "Leave this one alone. The light cannot reach it however the rest is set, so nothing you do to it matters.",
       "onlySurvivor": "Try every setting of this one in turn and all but one leave the shrine dark. That one is the answer."
     }

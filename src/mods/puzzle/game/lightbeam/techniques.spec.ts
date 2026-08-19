@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { LightbeamPuzzleData } from "./beam"
+import { DIR, isCut, SQUARE_DIRECTIONS, travelledDirections, TURN_ANGLES, type LightbeamPuzzleData } from "./beam"
 import {
   applyLightbeamDecisions,
   applyLightbeamTechniques,
@@ -24,10 +24,10 @@ import {
  */
 const oneMirror: LightbeamPuzzleData = {
   size: 5,
-  sun: { at: { row: 0, col: 1 }, facing: "down" },
+  sun: { at: { row: 0, col: 1 }, facing: DIR.down },
   shrine: { row: 2, col: 4 },
   fixed: [{ kind: "wall", at: { row: 2, col: 0 } }],
-  movable: [{ kind: "turnMirror", at: { row: 2, col: 1 }, faces: ["/", "\\"] }],
+  movable: [{ kind: "turnMirror", at: { row: 2, col: 1 }, angles: TURN_ANGLES }],
 }
 
 /** Runs the ladder up to `cap` and hands back only what the last technique to fire concluded. */
@@ -45,12 +45,24 @@ const firstStep = (puzzle: LightbeamPuzzleData, cap: TechniqueId, only?: Techniq
 }
 
 describe("the ladder", () => {
+  // The three facts first, then the eliminations, then the exhaustive pair — ordered by how well a reason
+  // explains itself rather than by strength. `wiringFires` sits with the facts because it is one: it rules
+  // nothing out, it says a door has opened, and every rung below it then has more of the board to work on.
   it("is ordered by how well a reason explains itself, cheapest first", () => {
-    expect([...TECHNIQUES]).toEqual(["entryRun", "exitRun", "deadEnd", "feedsExit", "neverReached", "onlySurvivor"])
+    expect([...TECHNIQUES]).toEqual([
+      "entryRun",
+      "exitRun",
+      "wiringFires",
+      "deadEnd",
+      "feedsExit",
+      "wiringDead",
+      "neverReached",
+      "onlySurvivor",
+    ])
   })
 
   it("a cap admits itself and everything below it", () => {
-    expect(techniquesUpTo("deadEnd")).toEqual(["entryRun", "exitRun", "deadEnd"])
+    expect(techniquesUpTo("deadEnd")).toEqual(["entryRun", "exitRun", "wiringFires", "deadEnd"])
   })
 })
 
@@ -71,7 +83,7 @@ describe("exitRun", () => {
     const step = firstStep(oneMirror, "exitRun", "exitRun")
     expect(step?.technique).toBe("exitRun")
     // The shrine sits on the right edge, so light can only reach it travelling rightwards.
-    expect(step?.decisions).toContainEqual({ kind: "shrineEntry", direction: "right" })
+    expect(step?.decisions).toContainEqual({ kind: "shrineEntry", direction: DIR.right })
   })
 
   it("says nothing while two sides are still open", () => {
@@ -82,7 +94,7 @@ describe("exitRun", () => {
       ...oneMirror,
       shrine: { row: 2, col: 2 },
       fixed: [],
-      movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 1, col: 2 }, faces: ["/", "\\"] }],
+      movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 1, col: 2 }, angles: TURN_ANGLES }],
     }
     expect(applyLightbeamTechniques(createLightbeamBoard(open), ["exitRun"])).toBeUndefined()
   })
@@ -139,7 +151,7 @@ describe("solveLightbeamByTechniques", () => {
  */
 const withDecoy: LightbeamPuzzleData = {
   ...oneMirror,
-  movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 0, col: 4 }, faces: ["/", "\\"] }],
+  movable: [...oneMirror.movable, { kind: "turnMirror", at: { row: 0, col: 4 }, angles: TURN_ANGLES }],
 }
 
 describe("neverReached", () => {
@@ -162,5 +174,87 @@ describe("neverReached", () => {
 
   it("never frees a piece that could stand in the beam's way", () => {
     expect(solveLightbeamByTechniques(oneMirror, "neverReached").board.free.size).toBe(0)
+  })
+})
+
+// ---------------------------------------------------------------------------------------------------
+// The cut mirror (design doc §11.8). The walk landed in step 2 and the boards below are the first proof
+// that a board carrying one can be *reasoned* rather than merely traced — §11.8's own closing paragraph
+// names that as one of the two remaining risks, and nothing had asked it before.
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * The mechanic at its smallest, from beam.spec.ts: the disc shines rightward into a cut mirror stopping at
+ * `{22.5°, 135°}`, whose shallow stop carries the light two diagonal steps to a shrine in the right-hand
+ * wall and whose steep stop is the ordinary quarter turn, straight down off the frame.
+ *
+ *     · · · · ·      S = disc facing right    X = shrine
+ *     · · · · ·      c = the cut mirror
+ *     · · · · X
+ *     · · · · ·
+ *     S · c · ·
+ */
+const cutDiagonal: LightbeamPuzzleData = {
+  size: 5,
+  sun: { at: { row: 4, col: 0 }, facing: DIR.right },
+  shrine: { row: 2, col: 4 },
+  fixed: [],
+  movable: [{ kind: "turnMirror", at: { row: 4, col: 2 }, angles: [1, 6] }],
+}
+
+/**
+ * §11.8 rule 3's stop set, `{0°, 45°, 135°}`: a three-stop piece, whose flat stop lies along the beam and
+ * passes it straight through. Two of the three are wrong, and they are wrong in different ways — one runs
+ * into stone and one off the frame — which is the case the wrong-ray derivation exists for.
+ *
+ *     · · X · ·      S = disc facing right    X = shrine
+ *     · · · · ·      c = the cut mirror       # = wall
+ *     · · · · ·
+ *     · · · · ·
+ *     S · c # ·
+ */
+const cutThreeStop: LightbeamPuzzleData = {
+  size: 5,
+  sun: { at: { row: 4, col: 0 }, facing: DIR.right },
+  shrine: { row: 0, col: 2 },
+  fixed: [{ kind: "wall", at: { row: 4, col: 3 } }],
+  movable: [{ kind: "turnMirror", at: { row: 4, col: 2 }, angles: [0, 2, 6] }],
+}
+
+describe("a board with a cut mirror on its route", () => {
+  it("settles on the visible dead end, exactly as a square board does", () => {
+    const solve = solveLightbeamByTechniques(cutDiagonal, "deadEnd")
+    expect(solve.settled).toBe(true)
+    expect(settledStates(solve.board)).toEqual([0])
+    // The frame does the walling: the wrong stop's quarter turn leaves the grid one step down.
+    expect(solve.steps.map(step => `${step.technique}/${step.variant ?? ""}`)).toEqual([
+      "entryRun/",
+      "exitRun/",
+      "deadEnd/edge",
+    ])
+  })
+
+  // The rung eight directions could have cost, and the reason it does not here: the shrine is set in the
+  // frame, so seven of the eight ways into it are walked back off the grid in a step or two.
+  it("still finds the one way into the shrine, over eight candidates rather than four", () => {
+    expect(travelledDirections(cutDiagonal)).toHaveLength(8)
+    const step = firstStep(cutDiagonal, "exitRun", "exitRun")
+    expect(step?.technique).toBe("exitRun")
+    expect(step?.decisions).toContainEqual({ kind: "shrineEntry", direction: DIR.upRight })
+  })
+
+  it("rules out both wrong stops of a three-stop piece, and for different reasons", () => {
+    const solve = solveLightbeamByTechniques(cutThreeStop, "deadEnd")
+    expect(solve.settled).toBe(true)
+    expect(settledStates(solve.board)).toEqual([1])
+    // Flat, the mirror passes the beam along the row into stone; steep, it turns it off the bottom edge.
+    expect(solve.steps.filter(step => step.technique === "deadEnd").map(step => step.variant)).toEqual(["wall", "edge"])
+  })
+
+  // A cut mirror is a species rather than an angle (§11.8 rule 3 against rule 2): a stop set off the two
+  // diagonals is cut whether or not it can turn light diagonally, and only a half-step can do that.
+  it("is a four-direction board when its stops are all aligned", () => {
+    expect(isCut(cutThreeStop.movable[0].kind === "turnMirror" ? cutThreeStop.movable[0].angles : [])).toBe(true)
+    expect(travelledDirections(cutThreeStop)).toEqual([...SQUARE_DIRECTIONS])
   })
 })
