@@ -103,11 +103,11 @@ is the move, not tidying it.
 
 **And it is withheld below the tier that teaches it, because the move does the
 arithmetic.** Take the 7 off both pans of `🐈 7 = 15` and the board reads `🐈 = 8`
-— which is the entire starter puzzle, done by the game. A board must not hand out
-its own answer, so at starter and junior the pieces on the scales are not
-interactive at all: the only move is choosing a weight, and 15 − 7 is the
-player's to do. From expert on, where the board is more than one subtraction,
-the move is worth more than the sum it shortcuts.
+— a read handed out for a tap. A board must not hand out its own answer, so at
+starter the pieces on the scales are not interactive at all: the only move is
+choosing a weight, and 15 − 7 is the player's to do. From junior on, where the
+board is more than one subtraction, the move is worth more than the sum it
+shortcuts.
 
 | Move           | Fires when                                    | Costs the player |
 | -------------- | --------------------------------------------- | ---------------- |
@@ -185,36 +185,43 @@ introduces actually comes up, rather than turning up in a third of the draws.
 
 | Tier    | Adds                    | Glyphs | Rows | Range | Cap             | Also demands       |
 | ------- | ----------------------- | ------ | ---- | ----- | --------------- | ------------------ |
-| starter | reading a row           | 1      | 1    | 1–10  | T0 alone        | cancelling **off** |
-| junior  | sharing a number out    | 2      | 2    | 1–10  | T1 equal shares | cancelling **off** |
-| expert  | cancelling + comparing  | 2      | 2    | 1–12  | T2 difference   | ≥1 cancel          |
-| master  | more board, bigger sums | 3      | 3    | 1–15  | T2 difference   | ≥1 cancel          |
-| wizard  | trading, in a chain     | 4      | 4    | 1–15  | T3 swap         | ≥2 swaps           |
+| starter | sharing a number out    | 2      | 2    | 1–10  | T1 equal shares | cancelling **off** |
+| junior  | cancelling + comparing  | 2      | 2    | 1–12  | T2 difference   | ≥1 cancel          |
+| expert  | more board, bigger sums | 3      | 3    | 1–15  | T2 difference   | ≥1 cancel          |
+| master  | trading                 | 3      | 4    | 1–15  | T3 swap         | ≥1 swap            |
+| wizard  | the trade as a chain    | 4      | 4    | 1–15  | T3 swap         | ≥2 swaps           |
 
-"Cancelling off" is not only a generation setting: the pieces on those boards are
-not interactive, because offering the move there would do the puzzle's arithmetic
-(§4.1). Two bullets of rules at starter, five at wizard.
+"Cancelling off" is not only a generation setting: the pieces on a starter board
+are not interactive, because offering the move there would do the puzzle's
+arithmetic (§4.1). Two bullets of rules at starter, five at wizard.
 
 Measured over 200 boards a tier — pieces on the board at the start, and moves to
 finish it:
 
-| Tier    | Pieces | Cancels | Swaps | Weights read | Total moves |
-| ------- | ------ | ------- | ----- | ------------ | ----------- |
-| starter | 3.0    | 0       | 0     | 1            | 1.0         |
-| junior  | 7.3    | 0       | 0     | 2            | 2.0         |
-| expert  | 9.3    | 1.0     | 0     | 2            | 3.0         |
-| master  | 13.5   | 1.3     | 0     | 3            | 4.3         |
-| wizard  | 17.2   | 2.4     | 2.1   | 4            | 8.5         |
+| Tier    | Pieces | Cancels | Swaps | Weights read | Total moves | Generation |
+| ------- | ------ | ------- | ----- | ------------ | ----------- | ---------- |
+| starter | 7.3    | 0       | 0     | 2.0          | 2.0         | 0.3ms      |
+| junior  | 9.3    | 1.0     | 0     | 2.0          | 3.0         | 2.5ms      |
+| expert  | 13.5   | 1.3     | 0     | 3.0          | 4.3         | 1.5ms      |
+| master  | 13.8   | 2.3     | 1.1   | 3.0          | 6.4         | 3.5ms      |
+| wizard  | 17.2   | 2.4     | 2.1   | 4.0          | 8.5         | 24.5ms     |
 
-Three things fix the shape. **Below**, one glyph and one scale is genuinely the
-bottom of the family's own scale (P4) — `🪲 7 = 15` is the whole board, and
-cancelling is kept out of the first two tiers so that learning to read a scale is
-not taxed by a second move. **Above**, the top tier is a chain: the row that comes
-out of the first trade is what makes the second possible. **Sideways**, the number
-palette caps the range — the player picks a weight from 1..range by tapping, and
-past ~15 that row stops fitting a phone.
+**The floor is a tier up from where this doc first put it.** `🪲 7 = 15` — one
+glyph, one scale, cap T0 — is the bottom of the family's own scale on paper, and
+in the hand it is one subtraction and then the board is over: a tier that teaches
+the rule rather than one that asks anything of it, and it played as a tutorial
+card that had been left in the deck. So **reading a row is what a starter board is
+made of rather than what it demands** — the cap is T1, so a read settles the first
+glyph and sharing out settles the second — and every tier above moved up with it.
+Cancelling still waits one tier past the floor, for the reason §4.1 gives.
 
-Wizard costs about 15ms to generate against under 2ms for the rest: `minSwaps: 2`
+Two things fix the rest of the shape. **Above**, the top tier is a chain: the row
+that comes out of the first trade is what makes the second possible, which is why
+master gets the trade on its own first (`minSwaps: 1`) rather than sharing
+expert's cap. **Sideways**, the number palette caps the range — the player picks a
+weight from 1..range by tapping, and past ~15 that row stops fitting a phone.
+
+Wizard costs about 25ms to generate against under 4ms for the rest: `minSwaps: 2`
 is a rare draw, so it takes more attempts to find one. That is a generation-time
 cost on opening the puzzle, not a per-frame one.
 

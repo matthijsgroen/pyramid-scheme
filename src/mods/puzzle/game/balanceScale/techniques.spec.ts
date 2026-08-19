@@ -174,12 +174,11 @@ describe("pieces that can come off both pans", () => {
   })
 
   it("keeps a board that needs cancelling from being generated below the tier that teaches it", () => {
-    for (const difficulty of ["starter", "junior"] as const)
-      for (let seed = 1; seed <= 20; seed++) {
-        const puzzle = generateBalance(seed, BALANCE_CONFIG[difficulty])
-        expect(puzzle.cancelling).toBe(false)
-        expect(solveByTechniques(puzzle, puzzle.techniqueCap).settled).toBe(true)
-      }
+    for (let seed = 1; seed <= 20; seed++) {
+      const puzzle = generateBalance(seed, BALANCE_CONFIG.starter)
+      expect(puzzle.cancelling).toBe(false)
+      expect(solveByTechniques(puzzle, puzzle.techniqueCap).settled).toBe(true)
+    }
   })
 })
 

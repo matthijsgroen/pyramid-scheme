@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A solved puzzle stays on screen until you tap it away, behind a much lighter dim, so there is time to look at what you finished. It used to fade out on a timer.
+- Balance-scale puzzles start harder: the easiest board now has two glyphs to weigh and a number to share out between them, instead of one glyph and one subtraction. Every difficulty above it moved up to match, and trading a glyph for what a row says it is worth now arrives one difficulty sooner.
 - Light puzzles ask for real reasoning now. Every board used to be solved by tapping every piece once, whatever its difficulty; that no longer works, and neither does simply chasing the beam towards the shrine.
 - Sliding pieces can have three places to stand instead of two, so the question is which spot rather than in or out.
 - The light-puzzle difficulties now play differently from one another: each one adds a new kind of piece or a longer route, rather than turning every dial a little further.
@@ -40,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The hardest light puzzles took a noticeable moment to appear. They are about three times quicker now.
 - Asking for a second hint on a big light puzzle worked the whole board out again from scratch. It now remembers what it found, so only the first hint costs anything.
 - Turning a mirror on a big light puzzle was slow and stuttery. Every tap was working out a hint nobody had asked for; it now waits to be asked, and a tap is about ten times quicker.
+- A light puzzle could put its socket right in front of the sun disc, where the beam crosses it whatever you do — a switch with no off, and a door that was already open. A socket now always sits behind a piece you can move.
 
 ## 0.36.0 - 2026-08-17
 

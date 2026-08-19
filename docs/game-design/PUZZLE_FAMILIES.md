@@ -155,8 +155,8 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
   instruction text.
 - **Knobs:** number of unknowns · weights per pan · nesting (weights made of
   other weights) · whether coefficients appear (2× a weight).
-- **Scaling:** excellent — one-unknown-one-weight at T1 up through nested
-  multi-unknown equations at T5. Carries a kid from arithmetic into real algebra
+- **Scaling:** excellent — a number shared out between two unknowns at T1 up
+  through nested multi-unknown equations at T5. Carries a kid from arithmetic into real algebra
   inside one metaphor.
 - **Generation:** easy–medium — generate an integer linear equation with a unique
   positive-integer solution, render as pans.
@@ -547,7 +547,8 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 Three placement rules make the table behave:
 
 1. **A family debuts at the bottom of its own scale** (P4). Nonogram enters T4 as
-   a 10×10, never a 15×15; balance scale enters T1 at one-unknown-one-weight.
+   a 10×10, never a 15×15; balance scale enters T1 at two unknowns and a number
+   to share out.
 2. **The long families enter late because they are long, not because of where
    they sit.** Latin-square, nonogram, kakuro, Sumplete and sequence all carry
    high solve time or high variance (§6), and a T1 room is the worst place to
