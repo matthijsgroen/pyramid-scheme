@@ -39,11 +39,11 @@ extract. Smells:
 ```ts
 export const useMapZoom = (bounds: Bounds) => {
   // ...
-  return { scale, offset, zoomIn, zoomOut, reset };
-};
+  return { scale, offset, zoomIn, zoomOut, reset }
+}
 
 // spec drives it directly
-renderHook(() => useMapZoom(testBounds));
+renderHook(() => useMapZoom(testBounds))
 ```
 
 Promote a hook to `src/app/state/` only when a second feature consumes it or it
@@ -51,11 +51,11 @@ owns persisted game state. Otherwise it stays beside its component.
 
 ## Where the state itself lives
 
-| Kind of state                                    | Home                                                  |
-| ------------------------------------------------ | ----------------------------------------------------- |
-| Nested shape, more than one kind of move          | Domain state model in `src/game/` (AGENTS.md §9)      |
-| Persisted / cross-feature game state              | `src/app/state/` hook (AGENTS.md §3)                  |
-| Ephemeral view state for one feature              | Co-located `use<Topic>.ts`                            |
+| Kind of state                            | Home                                             |
+| ---------------------------------------- | ------------------------------------------------ |
+| Nested shape, more than one kind of move | Domain state model in `src/game/` (AGENTS.md §9) |
+| Persisted / cross-feature game state     | `src/app/state/` hook (AGENTS.md §3)             |
+| Ephemeral view state for one feature     | Co-located `use<Topic>.ts`                       |
 
 A feature hook is React wiring: it holds the state and calls the domain's named
 actions. It does not model the shape itself.

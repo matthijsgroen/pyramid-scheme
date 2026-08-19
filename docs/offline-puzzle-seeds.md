@@ -120,7 +120,12 @@ Measured cost of a hint, and the size of what would replace it:
 | wizard  | 51 264         | **617.6ms** | 16.6          | **398B**   |
 
 So the artifact per entry is **the seed and the ordered reasons the ladder found** — around 400 bytes at the
-worst tier, against 618ms of phone time per hint press. Both are already computed during verification.
+worst tier, against 618ms of phone time. Both are already computed during verification.
+
+Because the reasons do not depend on the board, they are also worth deriving **once per board** at play time,
+which is now what happens: the first hint pays and every hint after it is free. Four hints on a top-tier board,
+re-solving each time against solving once — 3 212.7ms against 803.6ms, with each hint after the first costing
+0.02ms. Shipping them removes the remaining 803ms.
 
 Note where the cost is and is not: the bottom three tiers are 1–3ms and would not justify any of this. It is
 the top two that need it, which is the same shape as the generation cost.

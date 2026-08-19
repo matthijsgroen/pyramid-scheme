@@ -152,19 +152,21 @@ consumables) so they belong to that mod.
 
 **Corridor detector — widens outward** (each level stacks on the lower; **4 levels** — matches
 the authored `TREASURE_PERKS` grants L1–L4, decided 2026-07-16):
-| L | reveal |
-|---|---|
-| L1 | **proximity** — notify + reveal when the player is _near_ a hidden corridor (built today) |
-| L2 | **floor** — indicator that a hidden corridor exists _somewhere on this floor_ |
-| L3 | **pyramid marker** — on the pyramid's own map: this pyramid has unexplored hidden corridors |
-| L4 | **journey-list marker** — on the travel screen (broadest reach, for revisits across the world) |
+
+| L   | reveal                                                                                         |
+| --- | ---------------------------------------------------------------------------------------------- |
+| L1  | **proximity** — notify + reveal when the player is _near_ a hidden corridor (built today)      |
+| L2  | **floor** — indicator that a hidden corridor exists _somewhere on this floor_                  |
+| L3  | **pyramid marker** — on the pyramid's own map: this pyramid has unexplored hidden corridors    |
+| L4  | **journey-list marker** — on the travel screen (broadest reach, for revisits across the world) |
 
 **Compass (fragments) & supplies (consumables) — narrow inward** (higher = more precise):
-| L | precision |
-|---|---|
-| L1 | which **pyramid** holds it |
-| L2 | which **floor** |
-| L3 | **exact** location |
+
+| L   | precision                  |
+| --- | -------------------------- |
+| L1  | which **pyramid** holds it |
+| L2  | which **floor**            |
+| L3  | **exact** location         |
 
 The two active detectors share the inward-narrowing shape; the passive corridor detector
 is the mirror (outward-widening). This directional contrast is the design's core idea.

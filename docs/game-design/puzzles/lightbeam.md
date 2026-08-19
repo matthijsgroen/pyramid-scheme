@@ -2733,7 +2733,14 @@ nudge firing paid for it again, which is where the stutter came from. Measured: 
 once the derivation waits to be asked.
 
 `PuzzleFamilyShell` now accepts a function for its `hint`, resolved only once revealed, so this is fixed for
-every family rather than for this one. Every family derived its hint eagerly; lightbeam is only where the solver
+every family rather than for this one.
+
+**And the solve is kept for the life of the board**, which is the other half and was missed at first. A hint is
+`solveLightbeamByTechniques(puzzle, cap)`: it reads nothing about how the player has the board set, and the state
+only picks which of the reasons it found is worth saying. So the first hint can pay for every hint after it.
+Measured over four presses with a move between each: **3 212.7ms against 803.6ms** at the top tier, with each
+hint after the first costing 0.02ms. The same fact is why the whole thing is precomputable offline
+(`docs/offline-puzzle-seeds.md`), at about 400 bytes a board. Every family derived its hint eagerly; lightbeam is only where the solver
 got expensive enough to notice. And the guard is a spec that taps a wizard board and asserts the board answers,
 because the honest test of an interaction cost is the interaction.
 
