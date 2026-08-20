@@ -158,13 +158,28 @@ Sign count is **not** a dial. It falls out of the cap: a weak ladder cannot spar
 many signs, a strong one strips the board bare. Setting it by hand only put back
 the redundancy §3.1 exists to remove.
 
-| Tier    | Grid | Cap              | Prefill | Requires              | Signs shown |
-| ------- | ---- | ---------------- | ------- | --------------------- | ----------- |
-| starter | 4×4  | T2 sign bound    | 4       | sign bound            | ~3 of 24    |
-| junior  | 5×5  | T4 sign chain    | 3       | —                     | ~10 of 40   |
-| expert  | 6×6  | T4 sign chain    | 2       | —                     | ~15 of 60   |
-| master  | 6×6  | naked subset     | 1       | —                     | ~16 of 60   |
-| wizard  | 6×6  | the whole ladder | 0       | hidden subset, x-wing | ~15 of 60   |
+| Tier    | Grid | Cap                | Prefill | Requires              | Signs shown | Steps |
+| ------- | ---- | ------------------ | ------- | --------------------- | ----------- | ----- |
+| starter | 4×4  | T2 sign bound      | 4       | sign bound            | ~3 of 24    | 15    |
+| junior  | 4×4  | T3 sign vs. number | 3       | sign vs. number       | ~4 of 24    | 18    |
+| expert  | 5×5  | T4 sign chain      | 2       | sign chain            | ~10 of 40   | 39    |
+| master  | 6×6  | naked subset       | 1       | naked subset          | ~15 of 60   | 75    |
+| wizard  | 6×6  | the whole ladder   | 0       | hidden subset, x-wing | ~15 of 60   | 75    |
+
+**Every tier now names what it must turn on**, not just what it may. Measured over 40
+boards a tier, the hardest step is the tier's own demand on 40 of 40 — a tier's label and
+what its boards actually ask are the same statement. It costs almost nothing at the sign
+rungs and 80–139ms a board at the top two (§5.3).
+
+**One addition a tier, and the grid is one of the additions.** The ladder used to hand
+starter's 4×4 straight to a 5×5 with sign chains and one fewer given — three dials at once,
+and it played as a different family rather than the next rung of one. The rung being skipped
+was the cheapest sentence in the whole ladder: _"that square is already a 4, and this one
+has to be smaller."_ So junior is that rung on the grid the player already knows, and the
+grid grows at expert instead, where the chain it carries needs somewhere to run.
+
+The steps column is what the reshape bought: 15 → 18 → 39 → 75, where it was 15 → 39 → 75
+with nothing between the first two.
 
 **6×6 is the ceiling**, down from 7×7. Seven was bought on §4.3's claim that the
 top rungs fire nowhere smaller, which measurement disproved, and it cost a
@@ -190,6 +205,12 @@ board rather than a steadily harder one:
 > keeps the signs from being thinned away, but it cannot manufacture signs a weak
 > ladder never needed. A T3 cap yields ~4 signs against ~1.7 numbers instead; the
 > choice of T2 buys the gentlest possible reason at the cost of a sign-poor board.
+>
+> **That is now a one-tier cost rather than the family's front door.** Junior is the
+> same 4×4 at a T3 cap, so the board the squeeze produces is followed immediately by
+> the same size board with more signs on it and one fewer number — which is where a
+> player stops reading the grid as a Latin square with hints. Starter keeps the
+> gentlest reason in the family; it just no longer has to be the only 4×4 anyone sees.
 
 ### 5.2 The demands: what a tier is allowed to say
 

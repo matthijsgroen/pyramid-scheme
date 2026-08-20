@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".
 - Every comparison-grid difficulty now starts with a different number of squares filled in — four at the easiest, none at the hardest.
 - The signs between squares are drawn rather than typed: part of the board rather than punctuation on it, and sized so they never crowd the numbers on a 6×6.
-- The hardest comparison grids are 6×6 rather than 7×7, and are now guaranteed to need their hardest kind of reasoning rather than merely allowing it.
+- The hardest comparison grids are 6×6 rather than 7×7, and every difficulty is now guaranteed to need its own hardest kind of reasoning rather than merely allowing it.
+- Comparison grids step up more gently: the second difficulty stays on the 4×4 grid and adds one new way of reading a sign, and the grid grows a difficulty later than it used to.
 
 ### Fixed
 

@@ -18,8 +18,20 @@ export const FUTOSHIKI_CONFIG: Record<Difficulty, { size: number } & FutoshikiOp
   // wearing the family's name. Insisting the board turn a sign bound on costs nothing and makes that
   // board impossible.
   starter: { size: 4, techniqueCap: "signBound", prefill: 4, requires: ["signBound"] },
-  junior: { size: 5, techniqueCap: "signChain", prefill: 3 },
-  expert: { size: 6, techniqueCap: "signChain", prefill: 2 },
-  master: { size: 6, techniqueCap: "nakedSubset", prefill: 1 },
+  // **One addition, on the grid the player already knows**: reading a sign against a number that is
+  // already there. Starter used to hand straight over to a 5x5 with sign chains and one fewer given,
+  // which is three dials at once and played as a different family. The rung between them was the one
+  // being skipped — T3 was reachable at no tier's cap — and it is the cheapest sentence in the ladder:
+  // "that square is already a 4, and this one has to be smaller."
+  //
+  // It also fixes what §5.1 calls the squeezed gentle end: a T2 cap cannot manufacture signs, so
+  // starter carries ~3 of them against 4 given numbers, and a T3 cap yields roughly four signs against
+  // 1.7 numbers. So junior is where the board stops looking like a Latin square with hints, without
+  // growing a single square.
+  junior: { size: 4, techniqueCap: "signVsValue", prefill: 3, requires: ["signVsValue"] },
+  // The grid grows, and with it the chain: a run of signs pointing the same way is a reason that needs
+  // somewhere to run.
+  expert: { size: 5, techniqueCap: "signChain", prefill: 2, requires: ["signChain"] },
+  master: { size: 6, techniqueCap: "nakedSubset", prefill: 1, requires: ["nakedSubset"] },
   wizard: { size: 6, techniqueCap: "xWing", prefill: 0, requires: ["hiddenSubset", "xWing"] },
 }
