@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The signs between squares are drawn rather than typed: part of the board rather than punctuation on it, and sized so they never crowd the numbers on a 6×6.
 - The hardest comparison grids are 6×6 rather than 7×7, and are now guaranteed to need their hardest kind of reasoning rather than merely allowing it.
 
+### Fixed
+
+- Finishing a puzzle made the page jump: the controls and the rules dropped out from under the completed banner.
+
 ## 0.37.0 - 2026-08-19
 
 ### Added

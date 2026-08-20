@@ -106,67 +106,73 @@ export const PuzzleFamilyShell = ({
 
   return (
     <>
-      {!finishing && (
-        <div className="flex w-full items-center gap-2">
+      {/* Kept in the layout once the board is finishing, not unmounted: dropping the chrome and the rules
+          out of the flow collapsed the page under the banner, so the whole screen jumped as it landed.
+          `invisible` holds the space and still takes the controls out of reach. */}
+      <div className={clsx("flex w-full items-center gap-2", finishing && "invisible")}>
+        <button
+          onClick={() => {
+            cancelSolve()
+            onCancel()
+          }}
+          className="rounded px-2 py-1 text-sm text-stone-300 hover:bg-stone-800"
+        >
+          ← {t("ui.backToMap")}
+        </button>
+        <div className="flex-1" />
+        {onReset && (
           <button
             onClick={() => {
-              cancelSolve()
-              onCancel()
+              reportInput()
+              onReset()
             }}
             className="rounded px-2 py-1 text-sm text-stone-300 hover:bg-stone-800"
           >
-            ← {t("ui.backToMap")}
+            {t("ui.resetPuzzle")}
           </button>
-          <div className="flex-1" />
-          {onReset && (
-            <button
-              onClick={() => {
-                reportInput()
-                onReset()
-              }}
-              className="rounded px-2 py-1 text-sm text-stone-300 hover:bg-stone-800"
-            >
-              {t("ui.resetPuzzle")}
-            </button>
-          )}
-          {hint && (
-            <button
-              onClick={() => {
-                reveal()
-                onHintRevealed?.()
-              }}
-              disabled={cooling}
-              className={clsx("relative overflow-hidden rounded px-2 py-1 text-sm", {
-                "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,
-                "bg-amber-700 text-amber-100 ring-2 ring-amber-300 motion-safe:animate-pulse": nudging && !cooling,
-                "bg-stone-800 text-stone-500": cooling,
-              })}
-            >
-              {/* The wait made visible: the bar reaches the far edge as the button unlocks. */}
-              {cooling && (
-                <span
-                  className="absolute inset-0 origin-left animate-hint-recharge bg-amber-900"
-                  style={{ animationDuration: `${HINT_COOLDOWN_MS}ms` }}
-                />
-              )}
-              <span className="relative">💡 {t("ui.hint")}</span>
-            </button>
-          )}
-        </div>
-      )}
+        )}
+        {hint && (
+          <button
+            onClick={() => {
+              reveal()
+              onHintRevealed?.()
+            }}
+            disabled={cooling}
+            className={clsx("relative overflow-hidden rounded px-2 py-1 text-sm", {
+              "bg-amber-700 text-amber-100 hover:bg-amber-600": !cooling && !nudging,
+              "bg-amber-700 text-amber-100 ring-2 ring-amber-300 motion-safe:animate-pulse": nudging && !cooling,
+              "bg-stone-800 text-stone-500": cooling,
+            })}
+          >
+            {/* The wait made visible: the bar reaches the far edge as the button unlocks. */}
+            {cooling && (
+              <span
+                className="absolute inset-0 origin-left animate-hint-recharge bg-amber-900"
+                style={{ animationDuration: `${HINT_COOLDOWN_MS}ms` }}
+              />
+            )}
+            <span className="relative">💡 {t("ui.hint")}</span>
+          </button>
+        )}
+      </div>
       <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
         {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
       </div>
-      {hintText && !solvedBanner && (
+      {hintText && (
         <p
           ref={hintRef}
-          className="w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200"
+          className={clsx(
+            "w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200",
+            solvedBanner && "invisible"
+          )}
         >
           {hintText}
         </p>
       )}
-      {rules && !solvedBanner && (
-        <div className="w-full border-t border-stone-700 pt-3 text-sm text-stone-400">
+      {rules && (
+        <div
+          className={clsx("w-full border-t border-stone-700 pt-3 text-sm text-stone-400", solvedBanner && "invisible")}
+        >
           <h3 className="mb-1 font-pyramid text-stone-300">{t("ui.howToPlay")}</h3>
           {rules}
         </div>
