@@ -32,9 +32,16 @@ const SIGN_TURN: Record<"right" | "down", Record<"<" | ">", number>> = {
   down: { "<": -90, ">": 90 },
 }
 
-// Sized off the BOARD, not the viewport: the layer is its own container, so a mark is always the same
-// fraction of a square whether the grid is 4 wide or 6. A viewport-relative size drifts the other way
-// — the squares shrink as the grid grows while the sign does not, and a 6x6 ends up smothered.
+// Sized off the BOARD, not the viewport: the layer is its own container, so the mark scales with the
+// squares. A viewport-relative size drifts the other way — the squares shrink as the grid grows while
+// the sign does not, and a 6x6 ends up smothered.
+//
+// It takes a **smaller share** of the square as the grid grows (44% at 4 wide, 36% at 6), because an
+// equal share is not an equal reading: at 4 wide the square has room for a bold chevron beside its
+// digit, and at 6 the same share crowds the digit it is meant to sit between. The mark still grows in
+// absolute terms wherever the board is bigger than a phone.
+const signShare = (size: number) => 44 - (size - 4) * 4
+
 const SignMark: FC<{ direction: "right" | "down"; relation: "<" | ">"; size: number }> = ({
   direction,
   relation,
@@ -42,7 +49,7 @@ const SignMark: FC<{ direction: "right" | "down"; relation: "<" | ">"; size: num
 }) => (
   <svg
     viewBox="0 0 24 24"
-    style={{ width: `${44 / size}cqw`, height: `${44 / size}cqw` }}
+    style={{ width: `${signShare(size) / size}cqw`, height: `${signShare(size) / size}cqw` }}
     aria-hidden
     focusable="false"
   >
@@ -50,7 +57,7 @@ const SignMark: FC<{ direction: "right" | "down"; relation: "<" | ">"; size: num
       points="9,4 17,12 9,20"
       fill="none"
       stroke="currentColor"
-      strokeWidth={5}
+      strokeWidth={4}
       strokeLinecap="round"
       strokeLinejoin="round"
       transform={`rotate(${SIGN_TURN[direction][relation]} 12 12)`}
@@ -136,9 +143,10 @@ const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts
             gridColumn: `${constraint.col + 1} / span ${down ? 1 : 2}`,
             gridRow: `${constraint.row + 1} / span ${down ? 2 : 1}`,
           }}
-          // The chip carries the board's own backdrop, so a sign sitting on the corner of two squares
-          // reads as a notch between them rather than as ink spilled over a digit.
-          className={clsx("place-self-center rounded-full bg-stone-900 p-[3%] leading-none", {
+          // The mark sits straight on the gutter with no disc behind it: the gap between two squares is
+          // already a dark line, so the chevron reads as a notch in the stone without one, and the disc
+          // was ink the board did not need.
+          className={clsx("place-self-center leading-none", {
             "text-stone-300": !broken && !lit?.has(index),
             "text-amber-300": !broken && lit?.has(index),
             "text-red-400": broken,

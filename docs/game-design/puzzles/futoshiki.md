@@ -301,7 +301,12 @@ Beyond the shared screen bar:
   length. The mark is one stroked chevron turned four ways, heavy enough to read
   as part of the board rather than as punctuation on it, and sized as a fraction
   of a **square** rather than of the screen so it holds its weight at every grid
-  size.
+  size. That fraction **shrinks as the grid grows** (44% of a square at 4 wide,
+  36% at 6): an equal share is not an equal reading, because at 4 wide there is
+  room for a bold chevron beside the digit and at 6 the same share crowds the
+  digit it is meant to sit between. It sits straight on the gutter, with no disc
+  behind it — the gap between two squares is already a dark line, so the mark
+  reads as a notch in the stone without one.
 - Pre-filled numbers read as part of the puzzle, not of the answer.
 - A number pad, a pencil toggle, an eraser and undo — all at least a thumb wide,
   wrapping rather than shrinking.
