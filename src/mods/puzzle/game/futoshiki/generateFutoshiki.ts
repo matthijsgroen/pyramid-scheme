@@ -1,22 +1,36 @@
 import { mulberry32, shuffle } from "@/game/random"
+import { demandOf, techniquesFor, type DemandId } from "./demands"
 import {
   constraintNeighbour,
   solveFutoshikiByTechniques,
   type FutoshikiCellRef,
   type FutoshikiConstraint,
   type FutoshikiPuzzleData,
-  type TechniqueId,
 } from "./techniques"
 
 export type FutoshikiPuzzle = FutoshikiPuzzleData & {
   solution: number[][]
   /** Carried so hints stay inside the same ladder the board was accepted under. */
-  techniqueCap: TechniqueId
+  techniqueCap: DemandId
 }
 
 export type FutoshikiOptions = {
   /** The strongest deduction a board may demand (design doc §5). */
-  techniqueCap?: TechniqueId
+  techniqueCap?: DemandId
+  /**
+   * The fewest squares that ship pre-filled (design doc §5.1). A floor, not a quota: a board whose
+   * own deduction needed more keeps them, and one that needed fewer is topped up from the answer
+   * after the signs are thinned — so the extra numbers are a gift to the player rather than
+   * something the signs were thinned against.
+   */
+  prefill?: number
+  /**
+   * Rungs the board must actually TURN ON to be solvable (design doc §5.3). Because the solver only
+   * ever reaches for the cheapest technique that fires, a solve whose hardest step is one of these
+   * is a board that stalls without it — so this is a guarantee the player needs the reasoning, not
+   * a hope that it turns up. Any one of them satisfies the gate.
+   */
+  requires?: DemandId[]
 }
 
 // Generation is build-then-thin, per docs/game-design/puzzles/futoshiki.md §3: draw a Latin square,
@@ -24,7 +38,10 @@ export type FutoshikiOptions = {
 // technique solver still reaches the end unaided. Every intermediate board is settled by deduction, so
 // the one that ships is too — and that also settles uniqueness, since each step along the way was
 // forced. No separate solution counter has to run.
-const MAX_ATTEMPTS = 40
+//
+// A tier that insists on a rung (§5.3) throws most attempts away, so the ceiling is far above the
+// handful a plain draw needs — wizard spends about seven.
+const MAX_ATTEMPTS = 400
 
 // Pruning reaches a fixpoint in two sweeps on every tier measured; the third is the guard, not the plan.
 const MAX_PRUNE_SWEEPS = 6
@@ -80,8 +97,12 @@ const cellsWhere = (
 ): FutoshikiCellRef[] =>
   givens.flatMap((cells, row) => cells.flatMap((value, col) => (wanted(value) ? [{ row, col }] : [])))
 
+const filledCount = (givens: (number | undefined)[][]): number =>
+  givens.flat().filter(value => value !== undefined).length
+
 export const generateFutoshiki = (size: number, seed: number, options: FutoshikiOptions = {}): FutoshikiPuzzle => {
-  const { techniqueCap = "nakedPair" } = options
+  const { techniqueCap: demand = "nakedSubset", prefill, requires } = options
+  const allowed = techniquesFor(demand)
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
     const solution = solutionSquare(size, random)
@@ -91,7 +112,7 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
     // Even with every sign shown, a gentle ladder can stall; each pre-filled number is the smallest
     // concession that unsticks it. Past `size` of them the board is more answer than puzzle, so the
     // attempt is abandoned for a fresh square rather than propped up.
-    let settled = solveFutoshikiByTechniques({ size, givens, constraints: signs }, techniqueCap)
+    let settled = solveFutoshikiByTechniques({ size, givens, constraints: signs }, allowed)
     while (!settled.settled && cellsWhere(givens, value => value !== undefined).length < size) {
       const open = cellsWhere(givens, value => value === undefined).filter(
         cell => settled.values[cell.row][cell.col] === undefined
@@ -99,7 +120,7 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
       if (!open.length) break
       const pick = open[Math.floor(random() * open.length)]
       givens[pick.row][pick.col] = solution[pick.row][pick.col]
-      settled = solveFutoshikiByTechniques({ size, givens, constraints: signs }, techniqueCap)
+      settled = solveFutoshikiByTechniques({ size, givens, constraints: signs }, allowed)
     }
     if (!settled.settled) continue
 
@@ -114,7 +135,7 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
     )) {
       const trial = kept.map(cells => [...cells])
       trial[cell.row][cell.col] = undefined
-      if (solveFutoshikiByTechniques({ size, givens: trial, constraints: signs }, techniqueCap).settled) kept = trial
+      if (solveFutoshikiByTechniques({ size, givens: trial, constraints: signs }, allowed).settled) kept = trial
     }
 
     // Then every sign the board turns out not to need, to a fixpoint: taking one away can make
@@ -126,13 +147,30 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
       for (const sign of shuffle(constraints, random)) {
         const trial = constraints.filter(other => other !== sign)
         if (trial.length === constraints.length) continue
-        if (solveFutoshikiByTechniques({ size, givens: kept, constraints: trial }, techniqueCap).settled)
-          constraints = trial
+        if (solveFutoshikiByTechniques({ size, givens: kept, constraints: trial }, allowed).settled) constraints = trial
       }
       if (constraints.length === before) break
     }
 
-    return { size, givens: kept, constraints, solution, techniqueCap }
+    // Then the gift: numbers handed back to the player on top of a board already thinned without
+    // them. Granted after the signs are settled rather than before, so the tier's generosity never
+    // costs the board a sign (design doc §5.1).
+    if (prefill !== undefined)
+      for (const cell of shuffle(
+        cellsWhere(kept, value => value === undefined),
+        random
+      )) {
+        if (filledCount(kept) >= prefill) break
+        kept[cell.row][cell.col] = solution[cell.row][cell.col]
+      }
+
+    // Read back what the FINISHED board turns on — after the thinning that decides it, and after the
+    // pre-filled numbers that soften it. Checking before either would guarantee a rung of a board
+    // nobody plays: every number handed back can retire the very step the tier asked for.
+    const deepest = solveFutoshikiByTechniques({ size, givens: kept, constraints }, allowed).deepest
+    if (requires?.length && !(deepest && requires.includes(demandOf(deepest)))) continue
+
+    return { size, givens: kept, constraints, solution, techniqueCap: demand }
   }
-  throw new Error(`generateFutoshiki: no logically solvable board (size=${size}, seed=${seed})`)
+  throw new Error(`generateFutoshiki: no board meeting the tier's gates (size=${size}, seed=${seed})`)
 }

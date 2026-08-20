@@ -14,6 +14,7 @@ import {
 } from "./techniques"
 import { generateFutoshiki } from "./generateFutoshiki"
 import { FUTOSHIKI_CONFIG } from "./futoshikiConfig"
+import { DEMANDS, demandOf, techniquesFor } from "./demands"
 import { difficulties } from "@/data/difficultyLevels"
 
 const blankGrid = (size: number): FutoshikiValues =>
@@ -31,13 +32,15 @@ const noNotes = (size: number) => Array.from({ length: size }, () => Array.from(
 // the solver actually reaches it from. Reading one in isolation would prove nothing about the ladder.
 const spentBelow = (puzzle: FutoshikiPuzzleData, technique: TechniqueId): FutoshikiBoard => {
   const board = createFutoshikiBoard(puzzle, puzzle.givens)
-  const below = TECHNIQUES[TECHNIQUES.indexOf(technique) - 1]
-  if (below) applyFutoshikiTechniques(puzzle, board, below)
+  const below = TECHNIQUES.slice(0, TECHNIQUES.indexOf(technique))
+  if (below.length) applyFutoshikiTechniques(puzzle, board, below)
   return board
 }
 
+const upTo = (technique: TechniqueId) => TECHNIQUES.slice(0, TECHNIQUES.indexOf(technique) + 1)
+
 const stepFor = (puzzle: FutoshikiPuzzleData, technique: TechniqueId) =>
-  nextFutoshikiStep(puzzle, spentBelow(puzzle, technique), technique)
+  nextFutoshikiStep(puzzle, spentBelow(puzzle, technique), upTo(technique))
 
 // The last two rungs only matter on a board too sparse for the cheaper ones to finish, which no small
 // grid of pre-filled numbers reproduces — every such grid falls to a single or a sign first. So these
@@ -165,7 +168,7 @@ describe("nextFutoshikiStep", () => {
       [all, all, all, all, all],
       [all, all, all, all, all],
     ])
-    const step = nextFutoshikiStep(puzzleOf(5, []), board, "hiddenPair")
+    const step = nextFutoshikiStep(puzzleOf(5, []), board, upTo("hiddenPair"))
     expect(step).toMatchObject({ technique: "hiddenPair", variant: "row", params: { first: 1, second: 2 } })
     expect(step?.decisions).toEqual([
       { kind: "eliminate", row: 0, col: 0, values: [3] },
@@ -193,7 +196,7 @@ describe("nextFutoshikiStep", () => {
       [all, all, all, all],
       [all, all, all, all],
     ])
-    const step = nextFutoshikiStep(puzzleOf(4, []), board, "xWing")
+    const step = nextFutoshikiStep(puzzleOf(4, []), board, upTo("xWing"))
     expect(step).toMatchObject({ technique: "xWing", variant: "row", params: { value: 1 } })
     expect(step?.cells).toEqual([
       { row: 0, col: 0 },
@@ -221,7 +224,7 @@ describe("nextFutoshikiStep", () => {
       [all, all, all, all, all, all],
       [all, all, all, all, all, all],
     ])
-    const step = nextFutoshikiStep(puzzleOf(6, []), board, "nakedTriple")
+    const step = nextFutoshikiStep(puzzleOf(6, []), board, upTo("nakedTriple"))
     expect(step).toMatchObject({
       technique: "nakedTriple",
       variant: "row",
@@ -248,7 +251,7 @@ describe("nextFutoshikiStep", () => {
       [all, all, all, all, all, all, all],
       [all, all, all, all, all, all, all],
     ])
-    const step = nextFutoshikiStep(puzzleOf(7, []), board, "hiddenTriple")
+    const step = nextFutoshikiStep(puzzleOf(7, []), board, upTo("hiddenTriple"))
     expect(step).toMatchObject({
       technique: "hiddenTriple",
       variant: "row",
@@ -267,8 +270,8 @@ describe("nextFutoshikiStep", () => {
       { row: 0, col: 1, direction: "right", relation: "<" },
     ])
     const board = spentBelow(puzzle, "signChain")
-    expect(nextFutoshikiStep(puzzle, board, "signChain")?.technique).toBe("signChain")
-    expect(nextFutoshikiStep(puzzle, board, "signVsValue")).toBeUndefined()
+    expect(nextFutoshikiStep(puzzle, board, upTo("signChain"))?.technique).toBe("signChain")
+    expect(nextFutoshikiStep(puzzle, board, upTo("signVsValue"))).toBeUndefined()
   })
 
   it("reasons from the player's own notes, so an elimination is never offered twice", () => {
@@ -301,8 +304,8 @@ describe("solveFutoshikiByTechniques", () => {
 
   it("reports the strongest technique a board demanded", () => {
     const board = generateFutoshiki(FUTOSHIKI_CONFIG.starter.size, 7, FUTOSHIKI_CONFIG.starter)
-    const { deepest } = solveFutoshikiByTechniques(board, board.techniqueCap)
-    expect(TECHNIQUES.indexOf(deepest!)).toBeLessThanOrEqual(TECHNIQUES.indexOf("signVsValue"))
+    const { deepest } = solveFutoshikiByTechniques(board, techniquesFor(board.techniqueCap))
+    expect(demandOf(deepest!)).toBe("signBound")
   })
 })
 
@@ -339,11 +342,11 @@ describe("firstFutoshikiMistake", () => {
   })
 })
 
-describe("every technique", () => {
-  // The top tier is swept deeper than the rest: the five hardest rungs only ever appear on a 7x7, and
-  // the rarest of them first turns up at seed 14, so a shallow sweep would report it dead. Generating
-  // this many real boards is seconds of honest work, so the test carries its own timeout rather than
-  // being thinned to fit the default — thinning it is exactly what would hide a dead technique.
+describe("every rung a tier can ask for", () => {
+  // The sweep is over the DEMANDS, not the eleven techniques, because the demands are what generation
+  // promises (design doc §5.2). A width the ladder distinguishes but no tier asks for — a hidden
+  // triple, say — is a finer reason the hint layer may still reach, not a promise being broken. The
+  // top tier is swept deeper than the rest because its rungs are the rare ones.
   const seedsFor = (difficulty: (typeof difficulties)[number]) => (difficulty === "wizard" ? 16 : 8)
 
   it("is reachable — each one fires on a real board", () => {
@@ -352,9 +355,10 @@ describe("every technique", () => {
       const { size, ...options } = FUTOSHIKI_CONFIG[difficulty]
       for (let seed = 1; seed <= seedsFor(difficulty); seed++) {
         const board = generateFutoshiki(size, seed, options)
-        for (const step of solveFutoshikiByTechniques(board, board.techniqueCap).steps) fired.add(step.technique)
+        for (const step of solveFutoshikiByTechniques(board, techniquesFor(board.techniqueCap)).steps)
+          fired.add(demandOf(step.technique))
       }
     }
-    expect([...TECHNIQUES].filter(technique => !fired.has(technique))).toEqual([])
+    expect([...DEMANDS].filter(demand => !fired.has(demand))).toEqual([])
   }, 60_000)
 })

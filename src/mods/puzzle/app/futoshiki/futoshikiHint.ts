@@ -8,8 +8,8 @@ import {
   type FutoshikiCellRef,
   type FutoshikiStep,
   type FutoshikiValues,
-  type TechniqueId,
 } from "@/mods/puzzle/game/futoshiki/techniques"
+import { techniquesFor, type DemandId } from "@/mods/puzzle/game/futoshiki/demands"
 
 export type FutoshikiHint = {
   /** Translation key under `futoshiki.hint`, plus the numbers that fill its slots. */
@@ -38,8 +38,9 @@ const asHint = (step: FutoshikiStep): FutoshikiHint => ({
 
 /**
  * The next thing to say to the player: a wrong number or a wrong note first, otherwise the cheapest
- * technique that fires. Which techniques are allowed comes from the board's own cap, so a starter
- * board never explains itself with reasoning it was never built to need.
+ * technique that fires. Which techniques are allowed comes from the board's own tier, and the tier is
+ * asked in the coarse vocabulary generation speaks — but the hint that comes back names the exact
+ * technique, so a subset hint still says whether it is talking about two squares or three.
  *
  * The player's notes are read as the narrowing they are, so a hint that tells them to rule a number
  * out only fires while they still hold it — following the advice is what moves the hint on.
@@ -49,7 +50,7 @@ export const buildFutoshikiHint = (
   values: FutoshikiValues,
   notes: FutoshikiNotes,
   solution: number[][],
-  cap: TechniqueId
+  cap: DemandId
 ): FutoshikiHint | undefined => {
   const mistake = firstFutoshikiMistake(values, notes, solution)
   if (mistake)
@@ -61,6 +62,6 @@ export const buildFutoshikiHint = (
       focus: { row: mistake.row, col: mistake.col },
     }
 
-  const step = nextFutoshikiStep(puzzle, createFutoshikiBoard(puzzle, values, notes), cap)
+  const step = nextFutoshikiStep(puzzle, createFutoshikiBoard(puzzle, values, notes), techniquesFor(cap))
   return step && asHint(step)
 }

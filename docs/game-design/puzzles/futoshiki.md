@@ -43,6 +43,9 @@ need:
    keeping each removal while the solver still reaches the end.
 5. Then take the **signs** away the same way, repeating full sweeps until one
    removes nothing.
+6. Finally hand back pre-filled squares until the tier's **prefill floor** (§5.1)
+   is met — after the thinning, never before, so a tier's generosity never costs
+   the board a sign.
 
 ### 3.1 Why that order, and why to a fixpoint
 
@@ -56,7 +59,10 @@ Sweeping the signs to a **fixpoint** matters because removing one sign can make
 another removable. A single pass left most signs standing: measured on starter
 boards, 13–16 of the 16 signs shown could each still have been taken away. A sign
 the player cannot spend is worse than no sign — it hides which ones the deduction
-actually turns on. Every shipped board now has **zero** removable signs.
+actually turns on. Every shipped board has **zero** removable signs _at the moment
+the thinning stops_. A number handed back afterwards (§5.1) may retire one, and
+that is the gift doing its work rather than a sign wasted — what matters is that
+no sign was spare when the board was being decided.
 
 **Gate: the technique solver settles every square** (§4), within the tier's
 technique cap, at every step above. A board that stalls needs a guess and is
@@ -108,19 +114,31 @@ that position comes up.
 
 The bar for _keeping_ one is that it fires. A rung no board ever reaches is not a
 technique, it is dead code claiming to be one, so the reachability sweep asserts
-every rung fires on a real board and would fail the moment one stopped.
+every rung fires on a real board and would fail the moment one stopped. The sweep
+is over the **demands** (§5.2), not the eleven techniques: what generation promises
+is that a tier's ask can be met, and a width the ladder distinguishes but no tier
+asks for — hidden triple, since the ceiling moved (§4.3) — is a finer reason the
+hint layer may still reach rather than a promise being broken.
 
-### 4.3 The top of the ladder is where wizard lives
+### 4.3 Where the top of the ladder actually lives
 
-T6–T10 are the rungs a 7×7 actually reaches for; below that size none of them
-fire, because the board settles before it needs them. That is what separates
-wizard from master: at the T5 cap both tiers produced boards whose hardest step
-was the same, and wizard's higher ceiling was decorative.
+This section used to say T6–T10 fire only at 7×7. **That was wrong**, and the
+7×7 ceiling was bought on it. Measured on 6×6 boards with the whole ladder
+available and nothing pre-filled, over eighty boards: x-wing was the hardest step
+15 times, hidden pair 13, naked pair 13, naked triple once. They are rarer at 6×6
+than at 7×7, but they fire.
 
-How often each is the hardest step of a wizard solve, and how rare they get:
-counted over thirty 7×7 boards, x-wing fired 14 times, naked pair 24, hidden pair
-22, naked triple 4, and hidden triple twice — the last first appearing at seed 14.
-Rarity is why the reachability sweep runs deeper on the top tier than on the rest.
+**Hidden triple is the exception, and it is now unreachable.** Zero firings in
+sixty 5×5 boards, sixty 6×6 boards, and the eighty-board sweep above — two hundred
+boards, never once. It only ever appeared at 7×7, first at seed 14. It stays in
+the ladder as a solve technique, and the hint layer will use it if a board ever
+reaches it, but nothing ships that needs it. This is why the reachability sweep
+is over the **demands** (§5.2) rather than the eleven techniques: a width no tier
+asks for is a finer reason, not a broken promise.
+
+So what separates wizard from master is no longer the grid. Both are 6×6; master
+may reach for a naked subset but never a hidden one, and wizard is the only tier
+that must genuinely turn one of the top rungs on (§5.3).
 
 ### 4.4 Still absent
 
@@ -130,45 +148,92 @@ can write the one-sentence reason and show it firing.
 
 ## 5. Difficulty knobs
 
-- **Technique cap** — the highest technique the solver may use while accepting a
-  board. This is what a board may _demand_ of the player.
+- **Technique cap** — the highest rung the solver may use while accepting a board.
+  This is what a board may _demand_ of the player.
 - **Grid size** — footprint, and how much bookkeeping a solve carries.
+- **Prefill floor** — the fewest squares that ship already filled in (§5.1).
+- **Requires** — rungs the board is _guaranteed_ to need (§5.3).
 
 Sign count is **not** a dial. It falls out of the cap: a weak ladder cannot spare
 many signs, a strong one strips the board bare. Setting it by hand only put back
 the redundancy §3.1 exists to remove.
 
-| Tier    | Grid | Cap                | Signs shown |
-| ------- | ---- | ------------------ | ----------- |
-| starter | 4×4  | T3 sign vs. number | 3–6 of 24   |
-| junior  | 5×5  | T4 sign chain      | 8–12 of 40  |
-| expert  | 6×6  | T4 sign chain      | 11–20 of 60 |
-| master  | 6×6  | T5 sign pair       | 13–19 of 60 |
-| wizard  | 7×7  | T10 x-wing         | ~23 of 84   |
+| Tier    | Grid | Cap              | Prefill | Requires              | Signs shown |
+| ------- | ---- | ---------------- | ------- | --------------------- | ----------- |
+| starter | 4×4  | T2 sign bound    | 4       | sign bound            | ~3 of 24    |
+| junior  | 5×5  | T4 sign chain    | 3       | —                     | ~10 of 40   |
+| expert  | 6×6  | T4 sign chain    | 2       | —                     | ~15 of 60   |
+| master  | 6×6  | naked subset     | 1       | —                     | ~16 of 60   |
+| wizard  | 6×6  | the whole ladder | 0       | hidden subset, x-wing | ~15 of 60   |
 
-> **This table is over the solve-time budget at the top, and known to be.** A 7×7
-> board with the whole ladder available takes about **45 minutes** by hand, against
-> `PUZZLE_FAMILIES.md` §3.2's 3-minute target and 6-minute ceiling — and a floor is
-> many rooms, so one such board costs more than the corridor it sits in. This is the
-> family the budget was written against.
->
-> **The dial to turn is the grid, not the cap.** Duration here is bookkeeping — 49
-> squares of candidates held at once — while difficulty is the hardest step the board
-> demands, and §4.3 measured that the ladder's top rungs only _fire_ at 7×7. So the
-> retune is a real design question rather than a number to lower: find the smallest
-> board on which x-wing and the hidden pair still fire, and if none does, the honest
-> answer is that this family's ceiling is master's 6×6 with T5 and its wizard tier is
-> a different kind of addition (more signs stripped, not more squares). Measure a
-> candidate against a human clock before it ships.
+**6×6 is the ceiling**, down from 7×7. Seven was bought on §4.3's claim that the
+top rungs fire nowhere smaller, which measurement disproved, and it cost a
+45-minute solve against `PUZZLE_FAMILIES.md` §3.2's 3-minute target. The tap-target
+argument that made 7 the maximum is now moot; at 6 the squares have room to spare,
+which is what lets the signs be drawn as heavily as §8 asks.
 
-The cap is inclusive: a tier permits every technique up to it, so wizard boards
-may use the whole ladder.
+### 5.1 Prefill
 
-7×7 is the ceiling, the same as Puzzle Express. Inside the encounter modal a
-360px screen leaves the board about 320px, so seven squares measure ~44px across
-— exactly the tap-target floor — and an eighth would not fit. That ceiling is
-bought by the sign layout (§8): giving the signs grid tracks of their own would
-spend a quarter of the width on them and cap the board at 5×5 instead.
+How many squares the player is given for free. It is a **floor, not a quota**: a
+board whose own deduction needed more keeps them, and one that needed fewer is
+topped up from the answer. The top-up happens **after** the signs are thinned, so
+the numbers a tier hands back are never something the signs were thinned against
+— which is what stops generosity from eating the family's own clue type.
+
+Starter gets the most and wizard none, so the ladder reads as a steadily emptier
+board rather than a steadily harder one:
+
+> **The gentle end is squeezed, and knowingly.** At 4×4 the T2 cap is weak enough
+> that the generator leans on pre-filled numbers to settle a board at all: the
+> natural minimum is ~2.9 numbers against ~3 signs, before any gift. With the floor
+> at 4, most starter boards carry at least as many numbers as signs. §3.1's ordering
+> keeps the signs from being thinned away, but it cannot manufacture signs a weak
+> ladder never needed. A T3 cap yields ~4 signs against ~1.7 numbers instead; the
+> choice of T2 buys the gentlest possible reason at the cost of a sign-poor board.
+
+### 5.2 The demands: what a tier is allowed to say
+
+Tiers speak a **coarser vocabulary than the eleven techniques**: nine _demands_,
+where `nakedSubset` covers naked pair and naked triple, and `hiddenSubset` covers
+the hidden two. A pair and a triple are the same idea at a different width, so a
+tier asking for "a hidden subset" should not care which width turns up. The hint
+layer still names the width, because _"these three squares hold only 2, 5 and 7
+between them"_ is a better sentence than any generic one.
+
+A tier's allowance is a **set, not a depth**. The ladder interleaves the pairs and
+the triples (naked pair, hidden pair, naked triple, hidden triple), so "naked
+subsets but no hidden ones" — which is exactly master — is not a prefix of it.
+
+### 5.3 Requires: guaranteeing the reasoning
+
+A tier may name rungs the board must actually turn on. Because the solver only
+ever reaches for the cheapest technique that fires, a solve whose hardest step is
+rung R is a board that **stalls without R** — so this is a guarantee rather than a
+hope. Any one of the named rungs satisfies it.
+
+It costs rejected draws, and how many depends entirely on the rung. Measured per
+accepted board:
+
+| Rung          | 4×4          | 5×5         | 6×6         |
+| ------------- | ------------ | ----------- | ----------- |
+| sign bound    | 1.0 · 12ms   | 1.8 · 53ms  | undrawable  |
+| sign vs. num. | 1.5 · 11ms   | 1.0 · 16ms  | 1.0 · 46ms  |
+| sign chain    | 1.7 · 12ms   | 1.0 · 14ms  | 1.0 · 48ms  |
+| sign pair     | 2.0 · 14ms   | 1.0 · 21ms  | 1.0 · 64ms  |
+| naked pair    | 25 · 163ms   | 7.2 · 144ms | 4.5 · 279ms |
+| hidden pair   | unreachable  | 26 · 581ms  | 6.0 · 414ms |
+| x-wing        | 246 · 2384ms | 23 · 735ms  | 7.0 · 631ms |
+
+The sign rungs are effectively free. Two cells are structural rather than rare:
+**hidden pair cannot be the hardest step of a 4×4** — in a line of four, two
+numbers confined to two squares always leaves the complementary pair confined to
+the other two, and naked pair ranks lower so it fires first — and **a 6×6 cannot
+settle on T0–T2 at all**, so caps have a size floor.
+
+Starter's `requires` earns its keep differently. A T2 ladder can settle a 4×4 on
+pre-filled numbers alone, and one board in six came out carrying **no signs at
+all** — a Latin square wearing the family's name. Insisting the board turn a sign
+bound on makes that board impossible, and costs nothing.
 
 ## 6. Notes and undo
 
@@ -231,6 +296,12 @@ Beyond the shared screen bar:
   one spans the two squares it separates and centres itself, which lands it on
   the boundary whatever the grid measures. Tracks would spend a quarter of the
   board's width on signs and cost two tiers of grid size (§5).
+- **A sign is drawn, not typed.** A typeface's `<` is a mathematical glyph sized
+  to sit in a line of prose — thin, and lost against a stone square at arm's
+  length. The mark is one stroked chevron turned four ways, heavy enough to read
+  as part of the board rather than as punctuation on it, and sized as a fraction
+  of a **square** rather than of the screen so it holds its weight at every grid
+  size.
 - Pre-filled numbers read as part of the puzzle, not of the answer.
 - A number pad, a pencil toggle, an eraser and undo — all at least a thumb wide,
   wrapping rather than shrinking.
@@ -244,15 +315,18 @@ directions; nothing about a theme reaches the puzzle logic.
 
 ## 10. Generation cost, and where it should go
 
-A wizard board is the dear one: seven squares wide, eleven techniques, and a
-prune loop that re-solves the board once per sign it tries to remove. That lands
-at roughly 225ms today, paid on the main thread the moment a puzzle room opens.
+A wizard board is the dear one: eleven techniques, a prune loop that re-solves the
+board once per sign it tries to remove, and a `requires` gate (§5.3) that throws
+away roughly six draws in seven. That lands at about **300ms**, paid on the main
+thread the moment a puzzle room opens — against 225ms for the old 7×7, which
+carried no guarantee at all. The narrower grid pays for the gate almost exactly.
 
 Two things keep it there. The ladder **short-circuits** — only the cheapest
 technique that fires is spent on a pass, so the dear rungs at the end are rarely
 reached (mapping the whole ladder and taking the first non-empty result cost 6×
-that, since `map` is eager). And difficulty is never bought by rejecting boards
-until one demands the top rung, which measured at ~1050ms per accepted board.
+that, since `map` is eager). And rejecting boards until one demands the top rung is
+spent on **one tier only** — where it buys a guarantee rather than a vague
+hardness, and at 6×6 costs a third of the ~1050ms the same gate cost at 7×7.
 
 **The direction out is to stop generating at play time at all**: run generation
 offline, verify the boards, and ship a table of known-good seeds per family and

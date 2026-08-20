@@ -25,7 +25,7 @@ describe("buildFutoshikiHint", () => {
   it("names a wrong number before anything else, however much else is deducible", () => {
     const values = blankGrid(3)
     values[0][0] = 3
-    const hint = buildFutoshikiHint(puzzle, values, noNotes(3), solution, "nakedPair")
+    const hint = buildFutoshikiHint(puzzle, values, noNotes(3), solution, "nakedSubset")
     expect(hint).toMatchObject({ key: "mistake.value" })
     expect([...hint!.cells]).toEqual(["0,0"])
   })
@@ -33,16 +33,16 @@ describe("buildFutoshikiHint", () => {
   it("names notes that have ruled the right number out", () => {
     const notes = noNotes(3)
     notes[1][1] = [1, 2]
-    expect(buildFutoshikiHint(puzzle, blankGrid(3), notes, solution, "nakedPair")?.key).toBe("mistake.note")
+    expect(buildFutoshikiHint(puzzle, blankGrid(3), notes, solution, "nakedSubset")?.key).toBe("mistake.note")
   })
 
   it("carries the technique's own numbers into the sentence's slots", () => {
-    const hint = buildFutoshikiHint(puzzle, blankGrid(3), noNotes(3), solution, "nakedPair")
+    const hint = buildFutoshikiHint(puzzle, blankGrid(3), noNotes(3), solution, "nakedSubset")
     expect(hint).toMatchObject({ key: "signBound.high", params: { value: 3 } })
   })
 
   it("points at the sign its reason is about, so the board can light it up", () => {
-    const hint = buildFutoshikiHint(puzzle, blankGrid(3), noNotes(3), solution, "nakedPair")
+    const hint = buildFutoshikiHint(puzzle, blankGrid(3), noNotes(3), solution, "nakedSubset")
     expect([...hint!.constraints]).toEqual([0])
   })
 
@@ -65,6 +65,6 @@ describe("buildFutoshikiHint", () => {
   })
 
   it("says nothing once the board is finished", () => {
-    expect(buildFutoshikiHint(puzzle, solution, noNotes(3), solution, "nakedPair")).toBeUndefined()
+    expect(buildFutoshikiHint(puzzle, solution, noNotes(3), solution, "nakedSubset")).toBeUndefined()
   })
 })

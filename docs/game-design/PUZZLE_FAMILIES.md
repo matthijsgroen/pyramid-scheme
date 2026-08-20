@@ -490,11 +490,12 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
   neighbouring cells that always open toward the bigger of the two. Tap a cell,
   tap a number from the pad; a pencil toggle writes the same numbers in as notes
   instead, and undo takes back one move whole.
-- **Knobs:** grid size (4×4 → 7×7) · technique cap · how hard generation tries to
-  take signs away.
+- **Knobs:** grid size (4×4 → 6×6) · technique cap · how many squares ship
+  pre-filled · which rungs a board is guaranteed to need.
 - **Scaling:** good. This is the Latin-square slot (§4.8) entered from its cheap
   side — the signs do the work regions do in Sudoku, so a 4×4 is already a real
-  puzzle at T1 and no region shapes have to be authored.
+  puzzle at T1 and no region shapes have to be authored. The top of the range is
+  6×6: seven squares cost a 45-minute solve and bought nothing the ladder needed.
 - **Generation:** build the Latin square, derive every sign, then thin signs and
   pre-filled cells for as long as the technique solver still reaches the end. The
   solver gate settles uniqueness, so no separate solution counter runs.
