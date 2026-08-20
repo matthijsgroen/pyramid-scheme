@@ -586,9 +586,9 @@ const firstStep = (
   puzzle: FutoshikiPuzzleData,
   board: FutoshikiBoard,
   chains: Chains,
-  cap: TechniqueId
+  allowed: readonly TechniqueId[]
 ): FutoshikiStep | undefined => {
-  for (const technique of TECHNIQUES.slice(0, techniqueRank(cap) + 1)) {
+  for (const technique of allowed) {
     const steps = IMPLEMENTATIONS[technique](puzzle, board, chains)
     if (steps.length) return steps[0]
   }
@@ -597,14 +597,18 @@ const firstStep = (
 
 /**
  * The cheapest technique that decides something on this board, or undefined when nothing is forced.
- * Which techniques are allowed comes from the board's own cap, so a starter board never explains
+ * Which techniques are allowed comes from the board's own tier, so a starter board never explains
  * itself with reasoning it was never built to need.
+ *
+ * `allowed` is a SET rather than a depth, and has to be: the ladder interleaves the pairs and the
+ * triples, so a tier that wants naked subsets without hidden ones is not a prefix of it. It must stay
+ * in ladder order, because taking the first technique that fires is what keeps hints cheap.
  */
 export const nextFutoshikiStep = (
   puzzle: FutoshikiPuzzleData,
   board: FutoshikiBoard,
-  cap: TechniqueId = "nakedPair"
-): FutoshikiStep | undefined => firstStep(puzzle, board, buildChains(puzzle), cap)
+  allowed: readonly TechniqueId[] = TECHNIQUES
+): FutoshikiStep | undefined => firstStep(puzzle, board, buildChains(puzzle), allowed)
 
 export type FutoshikiSolveResult = {
   values: FutoshikiValues
@@ -617,14 +621,13 @@ export type FutoshikiSolveResult = {
 
 const MAX_PASSES = 2000
 
-/** Carries a board as far as the techniques up to `cap` can take it, in place. */
+/** Carries a board as far as the `allowed` techniques can take it, in place. */
 export const applyFutoshikiTechniques = (
   puzzle: FutoshikiPuzzleData,
   board: FutoshikiBoard,
-  cap: TechniqueId = "nakedPair"
+  allowed: readonly TechniqueId[] = TECHNIQUES
 ): FutoshikiStep[] => {
   const chains = buildChains(puzzle)
-  const allowed = TECHNIQUES.slice(0, techniqueRank(cap) + 1)
   const steps: FutoshikiStep[] = []
   for (let pass = 0; pass < MAX_PASSES; pass++) {
     // Short-circuit deliberately: only the cheapest technique that fires is spent, and the dear ones
@@ -649,13 +652,13 @@ export const applyFutoshikiTechniques = (
   return steps
 }
 
-/** Applies techniques up to `cap` until nothing more is forced. */
+/** Applies the `allowed` techniques until nothing more is forced. */
 export const solveFutoshikiByTechniques = (
   puzzle: FutoshikiPuzzleData,
-  cap: TechniqueId = "nakedPair"
+  allowed: readonly TechniqueId[] = TECHNIQUES
 ): FutoshikiSolveResult => {
   const board = createFutoshikiBoard(puzzle, puzzle.givens)
-  const steps = applyFutoshikiTechniques(puzzle, board, cap)
+  const steps = applyFutoshikiTechniques(puzzle, board, allowed)
   return {
     values: board.values,
     settled: board.values.every(cells => cells.every(value => value !== undefined)),

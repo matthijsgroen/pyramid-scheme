@@ -22,12 +22,48 @@ type Props = {
   onSelect: (row: number, col: number) => void
 }
 
-// Sign glyphs, not words: the point of the mark always opens toward the bigger number, in either
-// direction (PUZZLE_FAMILIES.md P2 — the board carries no language).
-const SIGN_GLYPH: Record<"right" | "down", Record<"<" | ">", string>> = {
-  right: { "<": "<", ">": ">" },
-  down: { "<": "∧", ">": "∨" },
+// One chevron, turned four ways: the point of the mark always opens toward the bigger number, in
+// either direction (PUZZLE_FAMILIES.md P2 — the board carries no language). Drawn rather than typed,
+// because a typeface's "<" is a mathematical glyph sized to sit in a line of prose — thin, and lost
+// against a stone square at arm's length. A stroked path takes the weight the board needs and keeps
+// it at every grid size.
+const SIGN_TURN: Record<"right" | "down", Record<"<" | ">", number>> = {
+  right: { "<": 180, ">": 0 },
+  down: { "<": -90, ">": 90 },
 }
+
+// Sized off the BOARD, not the viewport: the layer is its own container, so the mark scales with the
+// squares. A viewport-relative size drifts the other way — the squares shrink as the grid grows while
+// the sign does not, and a 6x6 ends up smothered.
+//
+// It takes a **smaller share** of the square as the grid grows (44% at 4 wide, 36% at 6), because an
+// equal share is not an equal reading: at 4 wide the square has room for a bold chevron beside its
+// digit, and at 6 the same share crowds the digit it is meant to sit between. The mark still grows in
+// absolute terms wherever the board is bigger than a phone.
+const signShare = (size: number) => 44 - (size - 4) * 4
+
+const SignMark: FC<{ direction: "right" | "down"; relation: "<" | ">"; size: number }> = ({
+  direction,
+  relation,
+  size,
+}) => (
+  <svg
+    viewBox="0 0 24 24"
+    style={{ width: `${signShare(size) / size}cqw`, height: `${signShare(size) / size}cqw` }}
+    aria-hidden
+    focusable="false"
+  >
+    <polyline
+      points="9,4 17,12 9,20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      transform={`rotate(${SIGN_TURN[direction][relation]} 12 12)`}
+    />
+  </svg>
+)
 
 // The square is its own sizing context, so the digit and the pencilled notes inside it scale with the
 // square rather than with the screen — a 4-wide board and a 7-wide one then read the same.
@@ -91,7 +127,7 @@ const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts
   lit,
 }) => (
   <div
-    className="pointer-events-none absolute inset-0 grid gap-px"
+    className="@container pointer-events-none absolute inset-0 grid gap-px"
     style={{
       gridTemplateColumns: `repeat(${puzzle.size}, minmax(0, 1fr))`,
       gridTemplateRows: `repeat(${puzzle.size}, minmax(0, 1fr))`,
@@ -107,18 +143,16 @@ const SignLayer: FC<{ puzzle: FutoshikiPuzzleData; conflicts: FutoshikiConflicts
             gridColumn: `${constraint.col + 1} / span ${down ? 1 : 2}`,
             gridRow: `${constraint.row + 1} / span ${down ? 2 : 1}`,
           }}
-          // The chip carries the board's own backdrop, so a sign sitting on the corner of two squares
-          // reads as a notch between them rather than as ink spilled over a digit.
-          className={clsx(
-            "place-self-center rounded-full bg-stone-900 px-[0.15em] text-[min(3.6vw,0.95rem)] leading-none font-bold",
-            {
-              "text-stone-400": !broken && !lit?.has(index),
-              "text-amber-300": !broken && lit?.has(index),
-              "text-red-400": broken,
-            }
-          )}
+          // The mark sits straight on the gutter with no disc behind it: the gap between two squares is
+          // already a dark line, so the chevron reads as a notch in the stone without one, and the disc
+          // was ink the board did not need.
+          className={clsx("place-self-center leading-none", {
+            "text-stone-300": !broken && !lit?.has(index),
+            "text-amber-300": !broken && lit?.has(index),
+            "text-red-400": broken,
+          })}
         >
-          {SIGN_GLYPH[constraint.direction][constraint.relation]}
+          <SignMark direction={constraint.direction} relation={constraint.relation} size={puzzle.size} />
         </span>
       )
     })}

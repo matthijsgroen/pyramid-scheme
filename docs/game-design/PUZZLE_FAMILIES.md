@@ -197,20 +197,35 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **UI:** medium — bespoke tilt animation is the whole point; otherwise
   tap-to-place. The least language-dependent family in the catalogue.
 
-### 4.3 Sundial / shadow clock (telling time) — _(have, time theme)_
+### 4.3 Sundial / shadow clock (telling time) — _(designed, not built)_
+
+Family doc: `docs/game-design/puzzles/sundial.md`.
+
+**This entry used to read _(have)_. It was wrong** — there is no sundial mod in
+`src/mods/`, and the same goes for §4.4's water clock. Both are survivors of the
+pre-redesign game that nobody cleared out of the catalogue. Do not plan around
+either existing.
 
 - **Skill:** reading an analog representation; the 12/24 division.
-- **Operates:** read where the obelisk's shadow / hand falls → that reading _is_
-  the value. Prefer the **draggable-hand / set-the-position** interaction over
-  multiple-choice — more tactile, still wordless.
-- **Knobs:** precision (hour → half → quarter → 5-min) · 12h vs 24h.
-- **Scaling:** good, but a lower ceiling than arithmetic families.
-- **Generation:** trivial, unique-by-construction.
-- **UI:** medium (dial face; draggable hand).
-- **Theme:** day expeditions; night expeditions use the decan star-clock
-  variant.
+- **Operates:** an obelisk casts a shadow across a graduated floor; the player
+  drags a marker to the hour it tells. Two facts carry the puzzle — **where the
+  shadow points** gives the hour within the half-day, **how long it is** picks
+  between morning and afternoon.
+- **Knobs:** precision (hour → half → quarter) · 12 vs 24 marks · gnomon count ·
+  whether the answer crosses the day/night boundary.
+- **Scaling:** good to a point, and a lower ceiling than the arithmetic families.
+  The second gnomon is the knob that keeps working.
+- **Generation:** trivial — enumerate the candidate hours and keep the boards with
+  exactly one survivor. Uniqueness is **checked, not assumed**: showing direction
+  without length leaves two answers.
+- **UI:** medium (dial face; marker dragged around the rim, snapping to marks).
+- **Theme:** day expeditions; night expeditions use the decan star-clock variant,
+  which the Lighthouse journey needs — it is authored as a night background.
+- **Earns its P1 seat by not being a reading exercise.** "Read where the shadow
+  falls, that reading is the value" is not deduction; the family is "which hour is
+  consistent with all the evidence", and its doc §3 is the argument.
 
-### 4.4 Water clock / clepsydra (duration) — _(have, time theme)_
+### 4.4 Water clock / clepsydra (duration) — _(not built; see §4.3's note)_
 
 - **Skill:** elapsed-time / duration; subtraction across hours; **boundary-
   crossing** (the hard, valuable part — e.g. from night hours into day hours).
@@ -490,11 +505,12 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
   neighbouring cells that always open toward the bigger of the two. Tap a cell,
   tap a number from the pad; a pencil toggle writes the same numbers in as notes
   instead, and undo takes back one move whole.
-- **Knobs:** grid size (4×4 → 7×7) · technique cap · how hard generation tries to
-  take signs away.
+- **Knobs:** grid size (4×4 → 6×6) · technique cap · how many squares ship
+  pre-filled · which rungs a board is guaranteed to need.
 - **Scaling:** good. This is the Latin-square slot (§4.8) entered from its cheap
   side — the signs do the work regions do in Sudoku, so a 4×4 is already a real
-  puzzle at T1 and no region shapes have to be authored.
+  puzzle at T1 and no region shapes have to be authored. The top of the range is
+  6×6: seven squares cost a 45-minute solve and bought nothing the ladder needed.
 - **Generation:** build the Latin square, derive every sign, then thin signs and
   pre-filled cells for as long as the technique solver still reaches the end. The
   solver gate settles uniqueness, so no separate solution counter runs.
