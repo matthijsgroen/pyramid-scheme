@@ -25,10 +25,10 @@ describe("PuzzleFamilyShell", () => {
     // puzzle while the win was already scheduled.
     renderShell(true)
     expect(screen.getByText("cell").closest("[inert]")).not.toBeNull()
-    // Out of reach but still holding its space: `visibility: hidden` takes the controls away from taps
-    // and the keyboard without collapsing the layout under the banner.
-    expect(screen.getByText("ui.resetPuzzle").closest(".invisible")).not.toBeNull()
-    expect(screen.getByText(/ui.hint/).closest(".invisible")).not.toBeNull()
+    // The controls stay where they were — dropping them out of the flow jumped the page — but `inert`
+    // takes them out of reach of a tap and the keyboard.
+    expect(screen.getByText("ui.resetPuzzle").closest("[inert]")).not.toBeNull()
+    expect(screen.getByText(/ui.hint/).closest("[inert]")).not.toBeNull()
   })
 
   /** The solved board is the reward: it stays on screen, behind a light dim, until the player is done with it. */

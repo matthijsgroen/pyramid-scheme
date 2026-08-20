@@ -106,10 +106,10 @@ export const PuzzleFamilyShell = ({
 
   return (
     <>
-      {/* Kept in the layout once the board is finishing, not unmounted: dropping the chrome and the rules
-          out of the flow collapsed the page under the banner, so the whole screen jumped as it landed.
-          `invisible` holds the space and still takes the controls out of reach. */}
-      <div className={clsx("flex w-full items-center gap-2", finishing && "invisible")}>
+      {/* Kept in the layout once the board is finishing, not unmounted: dropping the chrome out of the flow
+          collapsed the page under the banner, so the whole screen jumped as it landed. Dimmed and inert
+          rather than hidden — the controls read as out of use, which is what they are. */}
+      <div inert={finishing} className={clsx("flex w-full items-center gap-2", finishing && "opacity-40")}>
         <button
           onClick={() => {
             cancelSolve()
