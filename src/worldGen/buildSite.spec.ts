@@ -130,3 +130,52 @@ describe("buildSite", () => {
     expect(floors[0].rewards?.every(r => r === undefined)).toBe(true)
   })
 })
+
+describe("a site theme handed down", () => {
+  const ctx = {
+    journeyId: "j1",
+    tier: "starter" as const,
+    pyramidIndex: 0,
+    levelCount: 3,
+    pathPuzzles: 3,
+    difficulty: "starter" as const,
+    hasMapPieceBranch: false,
+    hasWardGate: false,
+    nextTier: null,
+    resolveReward: () => undefined,
+    resolveMainEndReward: () => ({ type: "mosaicPiece" as const }),
+  }
+  const theme = { encounter: "sky", encounterArgs: { skin: "night" } }
+
+  it("gives its role and its args to a floor that authors neither", () => {
+    const { floors } = buildSite({ ...ctx, constraint: theme })
+    expect(floors[0].encounter).toBe("sky")
+    expect(floors[0].encounterArgs).toEqual({ skin: "night" })
+  })
+
+  it("lets a floor override both", () => {
+    const { floors } = buildSite({
+      ...ctx,
+      constraint: { ...theme, floors: [{ encounter: "puzzle", encounterArgs: { skin: "day" } }] },
+    })
+    expect(floors[0].encounter).toBe("puzzle")
+    expect(floors[0].encounterArgs).toEqual({ skin: "day" })
+  })
+
+  it("reaches side paths only when the caller opts in", () => {
+    const section = { pathPuzzles: 1, difficulty: "starter" as const, end: "treasure" as const }
+    const opted = buildSite({
+      ...ctx,
+      constraint: { ...theme, sideSections: [section] },
+      sideEncounter: theme.encounter,
+      sideEncounterArgs: theme.encounterArgs,
+    })
+    expect(opted.floors[0].sideSections[0].encounter).toBe("sky")
+    expect(opted.floors[0].sideSections[0].encounterArgs).toEqual({ skin: "night" })
+
+    // A tomb never opts in: its role wants encounterArgs a side path has no reason to carry, and handing it
+    // down crashed world generation on the first tableau.
+    const plain = buildSite({ ...ctx, constraint: { ...theme, sideSections: [section] } })
+    expect(plain.floors[0].sideSections[0].encounter).toBeUndefined()
+  })
+})

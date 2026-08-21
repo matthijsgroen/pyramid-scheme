@@ -9,7 +9,8 @@ import { TrapHud } from "./TrapHud"
 import { useTrapProgress } from "./useTrapProgress"
 import { registerTrapRewardDisplay } from "./rewardDisplay"
 import { consumableRewardSchema } from "./rewardSchema"
-import "./arithmeticReflex/plugin" // the trap encounter family (self-gated)
+import "./arithmeticReflex/plugin" // trap encounter families (self-gated)
+import "./clockReflex/plugin"
 
 // Trap-owned perk ids (granted by tomb treasures via the perk seam). describe reads treasures.json
 // `perks.<type>` — a shared namespace, mod-owned keys (see §8.0.1 i18n decision).

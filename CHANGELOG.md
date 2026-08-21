@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- The Lighthouse of Alexandria now serves light and sky puzzles on its main path: the beam puzzle and the new sun-and-moon grid.
+- A second kind of trap: a clock face, and four times to pick from before the countdown runs out.
+- A new puzzle: fill a grid with suns and moons so no three sit in a row, every line holds as many of each, no two rows or columns read alike, and the signs between squares are obeyed. Hints name the reason, and an undo button takes back your last tap.
+
 ### Changed
 
 - The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".

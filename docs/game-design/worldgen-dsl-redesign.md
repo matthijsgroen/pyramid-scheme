@@ -360,3 +360,30 @@ All four layers and the builder syntax are now designed. Implement in small pass
 | Difficulty-shaping-across-a-path (point budget)                 | Parked, not designed                                         |
 | `dressing` / `DressingRule[]` (replaces `DecorationKind`)       | Designed, not implemented (blocked on sprite-sheet pipeline) |
 | DSL/builder syntax (`dress.*` helpers, `settings()` widening)   | Designed, not implemented                                    |
+
+## Theming a whole site with one line
+
+`PyramidConstraint.encounter` sets the default family/tag for a site's **main-path** encounter rooms, so a
+journey is themed by authoring a tag rather than by naming families:
+
+```ts
+journey("junior_4").pyramid("1-5", { encounter: "sky" })
+```
+
+Every floor of those pyramids draws from the `sky` pool (`FamilyMeta.tags`), a floor may still override it
+with its own `encounter`, and `nodes` selectors still override single rooms. Side paths — including the
+stairs up to a ward wing — wear the same role unless they author one themselves.
+
+`encounterArgs` travels the same way and is opaque to world-gen:
+
+```ts
+journey("junior_4").pyramid("1-5", { encounter: "sky", encounterArgs: { skin: "night" } })
+```
+
+The family on the other end declares what it wants and parses it with its own zod schema — the tableau's
+`runNr` is the reference, and `runNr` is load-bearing: forcing it to 1 moves 644 lines of the generated
+world, because each tomb run demands different hieroglyphs.
+
+**Only pyramids hand these down.** A tomb's role is `tomb-puzzle`, whose family reads `encounterArgs.runNr`;
+handing that to a side path crashed generation on the first tableau, so the hand-down is an explicit opt-in
+from the pyramid builder rather than something read off the constraint.

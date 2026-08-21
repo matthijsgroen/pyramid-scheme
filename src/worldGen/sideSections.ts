@@ -90,6 +90,16 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   resolveReward: ResolveReward<TExtra>
   journeyId: string
   constraintSections?: SideSectionConstraint<TExtra>[]
+  /**
+   * A role for sections that do not author one — the site's theme, handed down.
+   *
+   * Passed in by the caller rather than read off the constraint, and that is the whole safety of it: a
+   * tomb's role is `tomb-puzzle`, whose family reads `encounterArgs.runNr`, and a side section has no
+   * reason to carry one. Only the pyramid branch hands anything down.
+   */
+  sideEncounter?: string | string[]
+  /** Args for sections that carry none, handed down by the same caller under the same rule. */
+  sideEncounterArgs?: unknown
   /** Pyramid-only: prepends a hardcoded mapPiece branch pointing at this tier's tomb. */
   hasMapPieceBranch?: boolean
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
@@ -101,6 +111,26 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   declaredSidePaths?: PathEntry[]
   declaredHiddenPaths?: PathEntry[]
 }
+
+// A themed pyramid themes its side paths too, but only where the section is silent: a trapped path authors
+// `encounter: "trap"` and keeps it, and so does any section naming its own family.
+//
+// **Handed down by the caller, never read off the constraint here.** A tomb's role is `tomb-puzzle`, whose
+// family reads `encounterArgs.runNr`; reading the constraint directly gave that to tomb side paths and world
+// generation crashed on the first tableau. A role can require args, so only a caller that knows its rooms are
+// plain puzzle rooms may hand one down.
+const wearSiteRole = (
+  sections: SideSection[],
+  sideEncounter: string | string[] | undefined,
+  sideEncounterArgs: unknown
+): SideSection[] =>
+  sections.map(section => ({
+    ...section,
+    ...(sideEncounter !== undefined && section.encounter === undefined ? { encounter: sideEncounter } : {}),
+    ...(sideEncounterArgs !== undefined && section.encounterArgs === undefined
+      ? { encounterArgs: sideEncounterArgs }
+      : {}),
+  }))
 
 export const buildSideSections = <TExtra extends string = never>(
   opts: BuildSideSectionsOptions<TExtra>
@@ -118,6 +148,8 @@ export const buildSideSections = <TExtra extends string = never>(
     pyramidIndex = 0,
     declaredSidePaths,
     declaredHiddenPaths,
+    sideEncounter,
+    sideEncounterArgs,
   } = opts
 
   const sections: SideSection[] = []
@@ -191,5 +223,5 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   })
 
-  return sections
+  return wearSiteRole(sections, sideEncounter, sideEncounterArgs)
 }

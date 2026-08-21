@@ -198,8 +198,18 @@ export type PyramidConstraint = {
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
   /** Default family/tag for this pyramid/tomb's main-path encounter rooms — e.g. a tomb sets
-   * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. */
+   * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
+   * "any of these". */
   encounter?: string | string[]
+  /**
+   * Arguments handed to every encounter of this site that does not carry its own.
+   *
+   * Opaque here on purpose: world-gen never reads it. A family declares what it wants and parses it with
+   * its own zod schema (`tableauEncounterArgsSchema` is the reference), so a knob can be added to one
+   * family without any other layer learning about it. Floors and side paths inherit it; either may
+   * override with its own `encounterArgs`.
+   */
+  encounterArgs?: unknown
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Chance [0-1], rolled per pyramid, of an extra-winding floor. Ignored if corridorStraightness is set. */

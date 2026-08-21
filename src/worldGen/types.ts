@@ -23,7 +23,7 @@ export type SubSection = {
   sealed?: boolean
   /** Family/tag(s) for this section's own intermediate rooms — defaults to the "puzzle" tag
    * (sumplete) when unset. Never "crocodile" — that's a main-path-finale-only family. An
-   * array means AND: every listed tag must be present on the resolved family. */
+   * array means "any of these": the union of those tags' pools. Narrowing is a narrower tag's job. */
   encounter?: string | string[]
   /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
    * selectors. A room uses `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */

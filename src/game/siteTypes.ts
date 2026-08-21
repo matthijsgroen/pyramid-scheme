@@ -103,7 +103,7 @@ export type SubSection = {
   /** Family/tag(s) for this section's own intermediate rooms — defaults to the "puzzle" tag
    * (sumplete) when unset (a floor's tableau family never leaks onto a side path unless a
    * section explicitly opts in). Never "crocodile" — that's a main-path-finale-only family.
-   * An array means AND: every listed tag must be present on the resolved family. */
+   * An array means "any of these": the union of those tags' pools. Narrowing is a narrower tag's job. */
   encounter?: string | string[]
   /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
    * selectors (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). Room k uses `encountersByIndex[k] ?? encounter`;
@@ -131,7 +131,7 @@ export type FloorConfig = {
   decorations?: DecorationKind[]
   mainEndReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
-  /** Default family/tag(s) for this floor's main-path encounter rooms. An array means AND. */
+  /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */
   encounter?: string | string[]
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses

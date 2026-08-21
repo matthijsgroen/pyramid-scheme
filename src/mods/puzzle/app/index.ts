@@ -8,6 +8,7 @@ import "./futoshiki/plugin"
 import "./lightbeam/plugin"
 import "./crocodile/plugin"
 import "./balanceScale/plugin"
+import "./eclipse/plugin"
 
 // The scribes-eye perk (extra tableau hint slots) is puzzle-owned: described via the seam, its level
 // derived from the treasures held (usePuzzleProgress). Self-gated on the mod (§7.4).

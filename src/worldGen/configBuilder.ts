@@ -133,6 +133,10 @@ const buildSiteConfigs = (
         reservedTreasureIndices,
         resolveReward: spec => specToReward(spec, tier),
         resolveMainEndReward: spec => specToReward(spec, tier),
+        // A pyramid's authored role themes its side paths as well as its spine — half a themed pyramid
+        // reads as an accident. Tombs never opt in: their role wants encounterArgs a side path lacks.
+        sideEncounter: constraint.encounter,
+        sideEncounterArgs: constraint.encounterArgs,
       })
       pyramidConfigs.push(floors)
     }

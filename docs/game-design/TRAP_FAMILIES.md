@@ -50,7 +50,7 @@ export const TRAP_TIME_LIMITS_SECONDS: Record<Tier, number> = {
 export const TRAP_TIME_EXTENSION_PER_UPGRADE_SECONDS = 1 // resolved: was 3
 ```
 
-Every tier is timed. The family is a _reflex_ check on arithmetic the player already does to progress
+Every tier is timed. The arithmetic family is a _reflex_ check on sums the player already does to progress
 at that tier (operand ranges scale separately), so the limit tests recall speed on familiar sums, not
 comprehension of new ones. Starter and junior share expert's limit: their sums are the smallest in the
 game and all their trap corridors are hidden (optional) content. `0` still means "untimed" if a tier
@@ -62,19 +62,19 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 ## 4. Difficulty gating
 
-| Tier         | Traps                      | Notes                                 |
-| ------------ | -------------------------- | ------------------------------------- |
-| Starter (T1) | None                       | —                                     |
-| Junior (T2)  | None                       | —                                     |
-| Expert (T3)  | 1 trap per branchy pyramid | Trap families: arithmetic reflex only |
-| Master (T4)  | 1–2 traps per pyramid      | Adds pattern recognition              |
-| Wizard (T5)  | 2–3 traps per pyramid      | All families available                |
+| Tier         | Traps                      | Notes                                           |
+| ------------ | -------------------------- | ----------------------------------------------- |
+| Starter (T1) | None                       | —                                               |
+| Junior (T2)  | None                       | —                                               |
+| Expert (T3)  | 1 trap per branchy pyramid | Trap families: arithmetic reflex, clock reading |
+| Master (T4)  | 1–2 traps per pyramid      | Adds pattern recognition                        |
+| Wizard (T5)  | 2–3 traps per pyramid      | All families available                          |
 
 ---
 
 ## 5. The trap families
 
-### 5.1 Arithmetic reflex — _(implement first)_
+### 5.1 Arithmetic reflex
 
 - **Thematic fit:** triggered mechanism — solve the formula to disable it.
 - **Skill:** rapid mental arithmetic; multiplication table recall; basic arithmetic under pressure.
@@ -88,7 +88,35 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 ---
 
-### 5.2 Pattern recognition
+### 5.2 Clock reading
+
+- **Thematic fit:** the mechanism is on a timer — read the dial before it fires.
+- **Skill:** reading an analog twelve-hour face, and matching it to a digital time. The one family whose
+  skill is a thing a child is learning at school rather than a thing the game invented, which is the
+  reason it exists.
+- **Operates:** one clock face is shown; the player picks its time from four digital readings.
+- **Knobs:** `minuteStep` (how fine the minute hand is read: half hours, quarters, five minutes, single
+  minutes) · which misreadings are offered as distractors.
+- **Distractors are the family.** A wrong reading is only worth offering if someone would actually make
+  it, so the pool is the four mistakes a learner makes, in this order of preference:
+  1. **Hands swapped** — 3:45 read as 9:15. The commonest error on a face, and the reason the two hands
+     are drawn in different weights and colours.
+  2. **Hour hand read forward** — 9:50 read as 10:50, because the hour hand is nearly at the 10.
+  3. **Minute hand one graduation out** — 8:16 offered against 8:17.
+  4. **Minutes counted backwards** — :20 read as :40.
+     Every distractor stays on the tier's own grid: on a board of half hours, 6:40 rules itself out and so
+     teaches nothing.
+- **Scaling:** good — the grid alone carries it from half hours to single minutes, and the time limit
+  does the rest. A single-minute face in four seconds is a real demand without any new rule.
+- **Generation:** trivial, unique-by-construction. Pick a time on the grid, take the misreadings that
+  are distinct and on-grid, shuffle.
+- **UI:** low cost — the analog face is a shared atom (`src/ui/atoms/ClockFace.tsx`), used by any family
+  that shows a clock. Four tap targets and the countdown bar come from the shell.
+- **Tiers:** T1–T5. It debuts at the bottom on half hours, where the reading itself is the challenge.
+
+---
+
+### 5.3 Pattern recognition
 
 - **Thematic fit:** deciphering an encoded sequence — the trap's mechanism follows a rule.
 - **Skill:** numeric pattern completion; identifying arithmetic or geometric progressions.
@@ -102,7 +130,7 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 ---
 
-### 5.3 Memory
+### 5.4 Memory
 
 - **Thematic fit:** the trap tests whether the explorer paid attention — hieroglyphs shown, then hidden.
 - **Skill:** short-term visual memory; symbol recall.
@@ -116,7 +144,7 @@ Trap insight upgrades from tomb treasures add `TRAP_TIME_EXTENSION_PER_UPGRADE_S
 
 ---
 
-### 5.4 Spatial / visual (Egyptian instruments)
+### 5.5 Spatial / visual (Egyptian instruments)
 
 - **Thematic fit:** reading an Egyptian measuring instrument — scale, eye of Horus, water level.
 - **Skill:** reading a visual quantity from an analog display; fraction sense; comparison.

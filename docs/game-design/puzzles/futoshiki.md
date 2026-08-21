@@ -183,7 +183,7 @@ with nothing between the first two.
 
 **6×6 is the ceiling**, down from 7×7. Seven was bought on §4.3's claim that the
 top rungs fire nowhere smaller, which measurement disproved, and it cost a
-45-minute solve against `PUZZLE_FAMILIES.md` §3.2's 3-minute target. The tap-target
+45-minute solve against `PUZZLE_FAMILIES.md` §3.2's under-six-minutes target. The tap-target
 argument that made 7 the maximum is now moot; at 6 the squares have room to spare,
 which is what lets the signs be drawn as heavily as §8 asks.
 

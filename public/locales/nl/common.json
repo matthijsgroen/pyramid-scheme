@@ -388,5 +388,31 @@
       "neverReached": "Laat deze staan. Het licht kan er niet bij komen, hoe de rest ook staat, dus wat je ermee doet maakt niets uit.",
       "onlySurvivor": "Probeer elke stand van deze om de beurt: op één na laten ze het schrijn allemaal donker. Die ene is het antwoord."
     }
+  },
+  "eclipse": {
+    "rules": {
+      "goal": "Geef elk vakje een zon of een maan, zodat elke rij en elke kolom er even veel van beide heeft.",
+      "triple": "Drie dezelfde op een rij mag nooit, niet horizontaal en niet verticaal.",
+      "copies": "Geen twee rijen mogen hetzelfde zijn, en geen twee kolommen.",
+      "signs": "Een teken tussen twee vakjes zegt hoe ze zich verhouden: = voor gelijk, × voor verschillend.",
+      "enter": "Tik op een vakje voor een zon, tik nog eens voor een maan, en nog eens om het leeg te maken."
+    },
+    "undo": "Ongedaan",
+    "hint": {
+      "mistake": "Een van deze tekens kan niet goed zijn.",
+      "sign.same": "= betekent gelijk, dus {{mark}}.",
+      "sign.different": "× betekent verschillend, dus {{other}}.",
+      "noTriple.pair": "Al twee {{mark}}, dus {{other}}.",
+      "noTriple.sandwich": "{{mark}} aan beide kanten, dus {{other}}.",
+      "signPair": "Door de {{mark}} hier moeten deze twee {{other}} zijn.",
+      "lineCount": "Deze lijn heeft zijn {{count}} {{mark}}, dus de rest is {{other}}.",
+      "noCopy": "Andersom wordt dit een kopie van de opgelichte lijn.",
+      "linePairing.sameNoRoom": "Nog maar {{count}} {{mark}} over, en deze twee zijn gelijk, dus beide {{other}}.",
+      "linePairing.differentTakesOne": "De ×-paren gebruiken de {{mark}} op, dus de rest is {{other}}.",
+      "loneMark": "Nog één {{mark}} te plaatsen, en maar één vakje houdt drie {{other}} uit elkaar.",
+      "squeeze.triple": "{{mark}} hier maakt de rest {{other}} — drie op een rij. Dus {{other}}.",
+      "squeeze.sign": "{{mark}} hier maakt de rest {{other}} — een teken klopt niet meer. Dus {{other}}.",
+      "squeeze.copy": "{{mark}} hier maakt de rest {{other}} — de lijn wordt een kopie. Dus {{other}}."
+    }
   }
 }

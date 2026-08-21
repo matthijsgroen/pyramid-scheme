@@ -108,25 +108,30 @@ to put it where it matters less.
 **A puzzle is a coffee break, not an evening.** Every board of every family, at
 every tier, is authored to:
 
-| Bound        | Time       | What it is for                                                       |
-| ------------ | ---------- | -------------------------------------------------------------------- |
-| Floor        | **~10s**   | Below this a board is a tap, not a puzzle — starter sits here        |
-| Target       | **≤3 min** | Where a wizard board should land for a player who knows the family   |
-| Hard ceiling | **6 min**  | A tier measuring past this is **retuned**, not placed more carefully |
+| Bound  | Time            | What it is for                                                              |
+| ------ | --------------- | --------------------------------------------------------------------------- |
+| Floor  | **~10s**        | Below this a board is a tap, not a puzzle — starter sits here               |
+| Target | **under 6 min** | Where a wizard board should land for a player who knows the family          |
+| Retune | **~10× over**   | A tier landing in tens of minutes is **retuned**, not placed more carefully |
 
 This is the LinkedIn-games shape (Queens, Tango, Zip): ten seconds to a few
-minutes, one sitting, no bookmark. It is a deliberate change of mind, and the
-number that forced it is the corridor rather than the board — **a floor is many
-puzzles**. A wizard corridor of eight rooms at 45 minutes a room is half a day to
-walk one corridor, and the room after the one you gave up on is unreachable
-(P3: any family can gate). At 3 minutes it is half an hour, which is a session.
+minutes, one sitting, no bookmark. The number that forced it is the corridor rather
+than the board — **a floor is many puzzles** — and the room after the one you gave
+up on is unreachable (P3: any family can gate).
+
+**The target is soft and the failure is an order of magnitude, not a minute.** A
+board that runs eight minutes for a player who stopped to think is fine; the odd
+long one is part of a wizard tier being a wizard tier. What is not fine is a tier
+that lands in the tens of minutes: a wizard corridor of eight rooms at 45 minutes a
+room is half a day to walk one corridor. So the number to act on is a tier measuring
+several times over, not a tier measuring over.
 
 Two consequences worth stating, because both are easy to get wrong:
 
-- **The ceiling binds the tier, not the mechanic.** A family whose classic form
-  runs long does not get excused; it gets a smaller top tier. A 7×7 futoshiki with
-  the whole technique ladder is a 45-minute board — that is the mechanic being
-  honest and the tier being wrong.
+- **The budget binds the tier, not the mechanic.** A family whose classic form runs
+  long does not get excused; it gets a smaller top tier. A 7×7 futoshiki with the
+  whole technique ladder is a 45-minute board — that is the mechanic being honest and
+  the tier being wrong, and it is the shape of overrun worth acting on.
 - **Cutting duration is not cutting difficulty.** Duration is mostly _bookkeeping_
   — squares to track, candidates to hold — and difficulty is the hardest step.
   Take the size down and keep the cap, and a board still demands the technique it
@@ -197,35 +202,24 @@ puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
 - **UI:** medium — bespoke tilt animation is the whole point; otherwise
   tap-to-place. The least language-dependent family in the catalogue.
 
-### 4.3 Sundial / shadow clock (telling time) — _(designed, not built)_
+### 4.3 Sundial / shadow clock (telling time) — _(dropped as a puzzle family)_
 
-Family doc: `docs/game-design/puzzles/sundial.md`.
+**Telling the time is a trap, not a puzzle room** — see `TRAP_FAMILIES.md` §5.2.
+Reading a clock is a single-answer skill under time pressure, which is what a trap
+is for, and the trap's distractors (hands swapped, hour hand read forward) are
+where the teaching lives. There is no sundial mod in `src/mods/`, and the same goes
+for §4.4's water clock: both are survivors of the pre-redesign game. Do not plan
+around either existing.
 
-**This entry used to read _(have)_. It was wrong** — there is no sundial mod in
-`src/mods/`, and the same goes for §4.4's water clock. Both are survivors of the
-pre-redesign game that nobody cleared out of the catalogue. Do not plan around
-either existing.
+Two things killed the puzzle-room version, and either is fatal on its own:
 
-- **Skill:** reading an analog representation; the 12/24 division.
-- **Operates:** an obelisk casts a shadow across a graduated floor; the player
-  drags a marker to the hour it tells. Two facts carry the puzzle — **where the
-  shadow points** gives the hour within the half-day, **how long it is** picks
-  between morning and afternoon.
-- **Knobs:** precision (hour → half → quarter) · 12 vs 24 marks · gnomon count ·
-  whether the answer crosses the day/night boundary.
-- **Scaling:** good to a point, and a lower ceiling than the arithmetic families.
-  The second gnomon is the knob that keeps working.
-- **Generation:** trivial — enumerate the candidate hours and keep the boards with
-  exactly one survivor. Uniqueness is **checked, not assumed**: showing direction
-  without length leaves two answers.
-- **UI:** medium (dial face; marker dragged around the rim, snapping to marks).
-- **Theme:** day expeditions; night expeditions use the decan star-clock variant,
-  which the Lighthouse journey needs — it is authored as a night background.
-- **Earns its P1 seat by not being a reading exercise.** "Read where the shadow
-  falls, that reading is the value" is not deduction; the family is "which hour is
-  consistent with all the evidence", and its doc §3 is the argument.
+- **A drawn shadow is a reading, not a deduction (P1).** Direction and length both
+  drawn means the hour is looked up rather than reasoned to.
+- **The rim cannot express the answer.** A 12-mark dial puts a morning hour and its
+  afternoon twin on the same mark, so the marker says the same thing for both and
+  there is nothing for the second piece of evidence to settle.
 
-### 4.4 Water clock / clepsydra (duration) — _(not built; see §4.3's note)_
+### 4.4 Water clock / clepsydra (duration) — _(not built; see §4.3)_
 
 - **Skill:** elapsed-time / duration; subtraction across hours; **boundary-
   crossing** (the hard, valuable part — e.g. from night hours into day hours).
@@ -432,13 +426,35 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
   or generation approach locked yet.
 - **Note:** flagged here mainly to record the **theme pairing** below before it's
   forgotten.
+  **A narrative cluster is a tag on `FamilyMeta`, and a journey asks for it by name.** `tags` already
+  carried `puzzle`/`trap`; a cluster is just another entry, and the gen-time allocator draws from
+  whatever carries it. The Lighthouse of Alexandria (`junior_4`) authors `{ encounter: "sky" }` on its
+  pyramids, so its main paths serve eclipse and lightbeam, and a star-map family would join that pool by
+  carrying the tag rather than by an edit to the journey.
+
+Two things this shape decides, both worth knowing before adding a cluster:
+
+- **A list of tags means "any of these".** `["light", "sky"]` draws from both pools. Narrowing is a
+  narrower tag's job — `sky` is the wide cluster and `light` the narrow one inside it — because a list that
+  meant "all of these" made every list a smaller pool than either of its entries, which is the opposite of
+  what authoring one is for.
+- **A pyramid's theme reaches its side paths too**, including the stairs up to a ward wing — half a themed
+  pyramid reads as an accident. Only where the path is silent: a trapped path authors `encounter: "trap"` and
+  keeps it. **Tombs never hand their role down**, and that is deliberate: a tomb's role is `tomb-puzzle`,
+  whose family reads `encounterArgs.runNr`, and handing that to a side path crashed world generation on the
+  first tableau. A role can require args, so only a caller that knows its rooms are plain puzzle rooms opts in.
+- **A site can hand down arguments as well as a role.** `encounterArgs` is opaque to world-gen: a family
+  declares what it wants and parses it with its own zod schema (`tableauEncounterArgsSchema` is the
+  reference), so a knob can be added to one family without any other layer learning about it. Floors and side
+  paths inherit it and either may override.
+
 - **Theme pairing — "Merchant":** groups with **balance scale** (§4.2) under a
   shared visual/narrative wrapper — weighing goods and moving cargo are both
   merchant-flavored actions, even though the two mechanics are unrelated
   (algebra vs spatial push-block). This is the first example of a **theme as a
   cross-family grouping** rather than a per-family visual skin — worth
   revisiting once more families exist, to see if other natural theme clusters
-  emerge (e.g. a "sun god" cluster for mirror/lightbeam + sundial).
+  emerge (e.g. a "sun god" cluster around mirror/lightbeam).
 
 ### 4.17 Rush Hour (sliding vehicle blockade) — _(proposed, not yet designed)_
 
@@ -524,6 +540,37 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
 
 ---
 
+### 4.20 Eclipse (sun-and-moon logic grid) — _(have)_
+
+Family doc: `docs/game-design/puzzles/eclipse.md`.
+
+- **Skill:** pure deduction on a two-state cell — balance, no-three-in-a-row, and
+  pairwise same/different constraints. The first family here with no arithmetic in
+  it at all, which is the point: a floor of arithmetic rooms gets a logic room.
+- **Operates:** Binairo's rule set, which is what Puzzle Express serves — every
+  square holds a sun or a moon; each row and column holds as many of one as the
+  other; three of a mark in a row is never allowed; no two rows read alike and no
+  two columns either; and signs between some neighbours say the pair matches (=) or
+  differs (×). One tap cycles a square empty → sun → moon → empty, so there is no
+  pad and no palette.
+- **Knobs:** technique cap · which rung a board must actually spend, and how many
+  times it has to fire · grid size (4×4 → 6×6).
+- **Scaling:** good, and bounded by a rule about hints rather than about boards:
+  every rung has to be a sentence the player can check on the line in front of them,
+  so the ladder tops out at "try it and follow what this line forces". Guess-and-check
+  across the board, and enumerate-and-report-agreement, were both built and both
+  removed. The top tier is 8×8 — more board rather than a stronger rung.
+- **Generation:** draw a full board, write down every sign it implies, then empty
+  cells and afterwards remove signs for as long as the technique solver still
+  reaches the answer. Cells before signs, or the loop strips every sign and ships a
+  grid of givens. The solver gate settles uniqueness.
+- **UI:** easy. One tap target per cell, two glyphs, and signs drawn on the shared
+  edges. No number pad, no notes.
+- **Cheapest family to skin:** the whole board is one pair of marks, so a night
+  site swaps sun and moon for star and dark and changes nothing else.
+
+---
+
 ## 5. The shared grid engine
 
 Four families are all **"grid + tap-to-set-cell-state"**: Sudoku, nonogram,
@@ -576,12 +623,12 @@ the thing to look at first when judging an unbuilt family's duration.
 | ---------------------- | --------------- | ------------------------ | --------------------------- | ------------------------- |
 | Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.) | 15–60s / low              |
 | Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)   | 20–90s / low–med          |
-| Sundial                | Medium          | Good (low ceiling)       | Trivial                     | 15–60s / low              |
 | Water clock            | Medium          | Good                     | Trivial                     | 30–90s / med              |
 | Clock-arith            | Medium          | Good                     | Trivial                     | 30–90s / med              |
 | Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                     | 15–60s / low              |
 | Target-number          | Medium          | Good                     | Easy (verify exists)        | 30–90s / med              |
 | Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        |
+| Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique) | 30–90s / med              |
 | Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
 | Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
 | Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
@@ -603,8 +650,8 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 | Balance scale          | equality → algebra     |     ◐      |      ●      |   ●   |    ●    |      ★      |
 | Symmetry               | spatial                |     ◐      |      ●      |   ●   |    —    |      —      |
 | Egyptian doubling      | binary decomp          |     —      |      ◐      |   ●   |    ●    |      —      |
-| Sundial                | read analog time       |     —      |      ◐      |   ●   |    ●    |      ●      |
 | Glyph Latin-square     | deduction              |     —      |    ◐ 4×4    | ● 6×6 |  ● 8×8  |    ★ 9×9    |
+| Eclipse                | binary deduction       |   ◐ 4×4    |    ● 4×4    | ● 6×6 |  ● 6×6  |    ★ 8×8    |
 | Target-number          | flexible ops           |     —      |      ◐      |   ●   |    ●    |      ★      |
 | Sequence               | pattern                |     —      |      ◐      |   ●   |    ●    |      —      |
 | Water clock            | duration / subtraction |     —      |      —      |   ◐   |    ●    |      ★      |
@@ -702,7 +749,7 @@ conversation.
 3. **Glyph Latin-square** — cheap bottomless logic off the grid engine.
 4. **Sumplete** (if not already used to bootstrap the engine) and **nonogram** —
    nonogram as the mid-game reward-and-puzzle fusion once the grid muscle exists.
-5. **Eye of Horus fractions** and the **time families** (sundial → water clock →
+5. **Eye of Horus fractions** and the **time families** (water clock →
    clock-arith) — round out the arithmetic curriculum.
 6. **Target-number**, **symmetry**, **sequence**, **kakuro**, **doubling** — as
    appetite allows; kakuro last given its mobile-UI cost.
@@ -738,7 +785,7 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 
 | Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
 | ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                | sun-god, celestial, daylight                | Sundial, clock-arithmetic, mirror/lightbeam, Eye of Horus (Horus = sky/sun god)                                                                                                                |
+| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam (both tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                    |
 | **Water & Nile**             | flooding, irrigation, the river             | Water clock — currently the _only_ member, see gap note below                                                                                                                                  |
 | **Merchant / Market**        | trade, weighing goods, bartering            | Balance scale, Sokoban (moving cargo), target-number (haggling to a price)                                                                                                                     |
 | **Logistics / Caravan**      | moving things through constrained space     | Sokoban, Rush Hour                                                                                                                                                                             |
@@ -769,7 +816,6 @@ so it can be used when authoring density knobs).
 | Family                 | Solve time (§6)                   | Weight                                                                                                                         |
 | ---------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Cross-sum              | 15–60s                            | **Low**                                                                                                                        |
-| Sundial                | 15–60s                            | **Low**                                                                                                                        |
 | Eye of Horus fractions | 15–60s                            | **Low**                                                                                                                        |
 | Symmetry               | 15–45s                            | **Low**                                                                                                                        |
 | Sequence               | 15–45s                            | **Low**                                                                                                                        |
@@ -792,10 +838,10 @@ to measure, replace the TBD rows with real telemetry (§8) rather than trusting 
 estimate.
 
 **A weight is not a licence.** "Very High" says an instance is expensive to spend
-on a floor; it does not say the instance may run past §3.2's six minutes. A family
-sitting above the ceiling is retuned until it fits and _then_ weighted — so the
-rows quoting 8 and 15+ minutes are descriptions of the mechanic, and any tier of
-ours drawn from them is authored down.
+on a floor; it does not say the mechanic's own classic running time is ours to serve.
+A family whose form runs in tens of minutes is authored down to §3.2's target first
+and _then_ weighted — so the rows quoting 8 and 15+ minutes describe the mechanic
+rather than any tier of ours.
 
 ---
 
