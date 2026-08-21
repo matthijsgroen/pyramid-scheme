@@ -2823,3 +2823,30 @@ accident on a tier that asked for a shadow.
 | expert  | 7.6 → 7.5         | 331 → 317       | 3 → **0**          |
 | master  | 10.4 → 10.4       | 2 502 → 2 502   | kept, by dial      |
 | wizard  | 12.9 → 12.9       | 70 055 → 70 055 | kept, by dial      |
+
+### 11.23 The finishing run — the light takes the route it just proved
+
+**A solved board plays its own answer back before the shell is told.** A thicker beam runs from the sun-disc
+along the route the player found, and the shrine flares once it arrives. The board is already made of a beam
+and a niche, so the celebration is made of the same two things — nothing is added to the drawing that the
+puzzle did not already have.
+
+**It comes off one number.** `useCelebration` (in core, `src/mods/core/app/`) reports how far the run has got,
+0 → 1, and this family splits it: the beam owns the first 70% and the shrine the rest. The split is the whole
+design — a shrine flaring while the route behind it is still filling in reads as two animations rather than as
+one arrival — and it is why the hook reports **progress** rather than a step index. Constellation, its other
+caller, lights one node per tick off the same number.
+
+Three rules come with the run, all three from `puzzle-screens.md` §3:
+
+- **A tap is refused while it plays.** Cycling a mirror mid-run would unlight the board its own win is
+  travelling along, which is the same class of bug the shell's freeze exists to prevent — the shell just
+  cannot help here, because it has not been told about the solve yet.
+- **The whole run is capped at about a second**, because the shell stops its solve-time clock when it hears
+  "solved" and that number is §3.2's instrument. A flourish is not allowed to inflate a tier's measured time.
+- **`prefers-reduced-motion` skips it entirely**, wait included: `progress` stays at 0, so the surge is never
+  drawn and the shrine never flares, and the solve is reported at once.
+
+**What is verified, and what is not.** The surge and the flare are checked at three points of the run in
+`celebration.spec.tsx` — partway, complete, and not-finishing — along with the refused tap. Nobody has yet
+watched it play on a board they solved by hand; that is a playtest note, not a test gap.

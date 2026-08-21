@@ -14,7 +14,16 @@ const ConstellationComponent: FamilyPlugin<ConstellationPuzzleWithAnswer>["Compo
   ctx,
   onSolved,
   onCancel,
-}) => <ConstellationPuzzle puzzle={puzzle} difficulty={ctx.difficulty} onSolved={onSolved} onCancel={onCancel} />
+}) => (
+  <ConstellationPuzzle
+    puzzle={puzzle}
+    difficulty={ctx.difficulty}
+    theme={ctx.theme}
+    role={ctx.role}
+    onSolved={onSolved}
+    onCancel={onCancel}
+  />
+)
 
 if (isModEnabled("puzzle"))
   registerFamily({

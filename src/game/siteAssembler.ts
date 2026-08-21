@@ -1053,6 +1053,7 @@ export const assembleFloor = (
           pathIndex: k,
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
+          ...(config.role !== undefined ? { role: config.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1136,6 +1137,7 @@ export const assembleFloor = (
           pathIndex: pi,
           ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
           ...(section.theme !== undefined ? { theme: section.theme } : {}),
+          ...(section.role !== undefined ? { role: section.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1231,6 +1233,7 @@ export const assembleFloor = (
           pathIndex: pi,
           ...(subSection.encounterArgs !== undefined ? { encounterArgs: subSection.encounterArgs } : {}),
           ...(subSection.theme !== undefined ? { theme: subSection.theme } : {}),
+          ...(subSection.role !== undefined ? { role: subSection.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })

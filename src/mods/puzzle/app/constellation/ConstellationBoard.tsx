@@ -11,6 +11,7 @@ import {
   type ConstellationLines,
   type ConstellationPuzzle,
 } from "@/mods/puzzle/game/constellation/constellation"
+import { skinFor, type Skin } from "./skins"
 
 type Props = {
   puzzle: ConstellationPuzzle
@@ -21,6 +22,12 @@ type Props = {
   focus?: number
   /** Stars the current hint points at — a sealing reason points at the group it would close. */
   litStars?: ReadonlySet<number>
+  /** The ambience the site authored (`night`), or a skin named outright. */
+  theme?: string
+  /** The role this room was allocated for, which is what decides WHICH of this family's places it is. */
+  role?: string | string[]
+  /** Nodes that have had their turn in the completion run (see useCelebration). */
+  celebrated?: ReadonlySet<number>
   onDrawLine: (pair: number) => void
 }
 
@@ -88,7 +95,8 @@ const Lines: FC<{
   highlighted?: ReadonlySet<number>
   focus?: number
   backdrop: ReturnType<typeof backdropStars>
-}> = ({ puzzle, state, candidate, highlighted, focus, backdrop }) => (
+  skin: Skin
+}> = ({ puzzle, state, candidate, highlighted, focus, backdrop, skin }) => (
   <svg
     viewBox={`0 0 ${puzzle.size} ${puzzle.size}`}
     className="pointer-events-none absolute inset-0 size-full"
@@ -96,7 +104,7 @@ const Lines: FC<{
     focusable="false"
   >
     {backdrop.map((far, index) => (
-      <circle key={index} cx={far.x} cy={far.y} r={far.r} className="fill-slate-200" opacity={far.dim} />
+      <circle key={index} cx={far.x} cy={far.y} r={far.r} className={skin.backdrop} opacity={far.dim} />
     ))}
     {puzzle.pairs.map((pair, index) => {
       const count = state.lines[index]
@@ -121,8 +129,9 @@ const Lines: FC<{
         rowOf(puzzle.size, from) + 0.5 + inset[1] * down,
       ]
       const [x2, y2] = [colOf(puzzle.size, to) + 0.5 - inset[0] * along, rowOf(puzzle.size, to) + 0.5 - inset[1] * down]
-      const tone =
-        index === focus ? "stroke-amber-300" : highlighted?.has(index) ? "stroke-sky-300/70" : "stroke-amber-100"
+      // A hint speaks in its own colours in every skin — the point of a highlight is that it is not the
+      // board's own palette.
+      const tone = index === focus ? "stroke-amber-300" : highlighted?.has(index) ? "stroke-sky-300/70" : skin.line
       return (
         <g key={index}>
           {strokesFor(shown).map((offset, stroke) => (
@@ -136,10 +145,7 @@ const Lines: FC<{
               strokeLinecap="round"
               // A line of light rather than a drawn stroke: the glow is what makes it read as light between
               // two stars instead of pen on paper.
-              className={clsx(
-                "drop-shadow-[0_0_2px_rgb(254_243_199_/_0.7)]",
-                stroke < settled ? tone : "stroke-amber-100/40"
-              )}
+              className={clsx(skin.lineGlow, stroke < settled ? tone : skin.pending)}
             />
           ))}
         </g>
@@ -148,8 +154,19 @@ const Lines: FC<{
   </svg>
 )
 
-export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focus, litStars, onDrawLine }) => {
+export const ConstellationBoard: FC<Props> = ({
+  puzzle,
+  state,
+  highlighted,
+  focus,
+  litStars,
+  theme,
+  role,
+  celebrated,
+  onDrawLine,
+}) => {
   const byStar = pairsByStar(puzzle)
+  const skin = skinFor(role, theme)
   const backdrop = useMemo(() => backdropStars(puzzle), [puzzle])
   // The gesture lives in a ref and the state only mirrors it for drawing. A release has to act on the
   // direction the finger was last pointing, and reading that from state would make the line depend on
@@ -184,51 +201,74 @@ export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focu
   return (
     // The board claims its own gestures: a vertical drag here means "draw a line down", and the page is
     // scrolled to the rules from the chrome around it (docs/game-design/puzzles/constellation.md §6).
-    <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] touch-none overflow-hidden rounded-lg bg-[radial-gradient(ellipse_at_50%_15%,#16204a_0%,#0a0f24_45%,#04060f_100%)] ring-1 ring-indigo-300/15 select-none">
-      <Lines
-        puzzle={puzzle}
-        state={state}
-        candidate={candidate}
-        highlighted={highlighted}
-        focus={focus}
-        backdrop={backdrop}
-      />
-      {puzzle.stars.map((star, index) => {
-        const held = degreeOf(byStar, state.lines, index)
-        const { left, top } = positionOf(puzzle, index)
-        return (
-          <button
-            key={index}
-            onPointerDown={beginDrag(index)}
-            onPointerMove={moveDrag}
-            onPointerUp={endDrag}
-            onPointerCancel={endDrag}
-            className="absolute flex aspect-square -translate-1/2 items-center justify-center"
-            style={{ left: `${left}%`, top: `${top}%`, width: `${(100 / puzzle.size) * HIT_SCALE}%` }}
-          >
-            <span
-              className={clsx(
-                "flex aspect-square w-[77%] items-center justify-center rounded-full border text-[min(4vw,1.1rem)] font-bold transition-all duration-300",
-                // **A star that has its lines lights up.** Bridges greys a finished island out, and that is
-                // the reading this board deliberately inverts: giving a star its light is the thing the
-                // player just achieved, so it is the thing that should look like an achievement. It scans
-                // the same either way — what is left to do is now "the stars still showing a plain number"
-                // rather than "the stars still lit".
-                held > star.count
-                  ? "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]"
-                  : held === star.count
-                    ? "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]"
-                    : // Unlit: readable and unremarkable. The number has to stay crisp — it is the clue —
-                      // but nothing here draws the eye until the star earns it.
-                      "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
-                litStars?.has(index) && "ring-2 ring-sky-300/80"
-              )}
+    <div
+      className={clsx(
+        "relative aspect-square w-full max-w-[min(56vh,26rem)] touch-none overflow-hidden rounded-lg select-none",
+        skin.board
+      )}
+    >
+      {/* One inset layer for the whole board, so the lines and the nodes keep the same coordinate space and a
+          plant growing out of a top-row basin has somewhere to grow. Without it the frame clipped every
+          glyph on row 0. */}
+      <div className="absolute inset-[7%]">
+        <Lines
+          puzzle={puzzle}
+          state={state}
+          candidate={candidate}
+          highlighted={highlighted}
+          focus={focus}
+          backdrop={backdrop}
+          skin={skin}
+        />
+        {puzzle.stars.map((star, index) => {
+          const held = degreeOf(byStar, state.lines, index)
+          const { left, top } = positionOf(puzzle, index)
+          return (
+            <button
+              key={index}
+              onPointerDown={beginDrag(index)}
+              onPointerMove={moveDrag}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              className="absolute flex aspect-square -translate-1/2 items-center justify-center"
+              style={{ left: `${left}%`, top: `${top}%`, width: `${(100 / puzzle.size) * HIT_SCALE}%` }}
             >
-              {star.count}
-            </span>
-          </button>
-        )
-      })}
+              <span
+                className={clsx(
+                  "relative flex aspect-square w-[77%] items-center justify-center rounded-full border text-[min(4vw,1.1rem)] font-bold transition-all duration-300",
+                  // **A star that has its lines lights up.** Bridges greys a finished island out, and that is
+                  // the reading this board deliberately inverts: giving a star its light is the thing the
+                  // player just achieved, so it is the thing that should look like an achievement. It scans
+                  // the same either way — what is left to do is now "the stars still showing a plain number"
+                  // rather than "the stars still lit".
+                  // Unlit is readable and unremarkable — the number has to stay crisp, it is the clue — and
+                  // nothing draws the eye until the node earns it.
+                  held > star.count ? skin.over : held === star.count ? skin.lit : skin.unlit,
+                  litStars?.has(index) && "ring-2 ring-sky-300/80",
+                  celebrated?.has(index) && skin.celebrate
+                )}
+              >
+                {skin.Glyph && (
+                  // Above the disc, and taller once it is grown: the basin keeps its number, the plant takes
+                  // the empty cell over it.
+                  <span
+                    className={clsx(
+                      "pointer-events-none absolute bottom-[64%] left-1/2 aspect-square -translate-x-1/2",
+                      held === star.count ? "w-[80%] opacity-100" : "w-[52%] opacity-80",
+                      // The skin's own green. Left to inherit, a plant came out the colour of the node's
+                      // number — which on a fed basin is near-black, so the plants read as dead twigs.
+                      held === star.count ? skin.glyphLit : skin.glyphUnlit
+                    )}
+                  >
+                    <skin.Glyph grown={held === star.count} flowering={celebrated?.has(index)} />
+                  </span>
+                )}
+                <span className="relative">{star.count}</span>
+              </span>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

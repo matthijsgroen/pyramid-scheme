@@ -5,7 +5,7 @@ import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { allowedDifficulties, themesFor } from "./puzzleLabOptions"
+import { allowedDifficulties, DEFAULT_THEME, NO_ROLE, rolesFor, themesFor } from "./puzzleLabOptions"
 
 const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 text-sm text-white"
 
@@ -51,6 +51,7 @@ export const PuzzleLab: FC = () => {
   const families = useMemo(() => allFamilies().filter(p => p.meta.tags.includes("puzzle")), [])
   const [familyId, setFamilyId] = useState(families[0]?.meta.id ?? "")
   const [pickedTheme, setPickedTheme] = useState("")
+  const [pickedRole, setPickedRole] = useState(NO_ROLE)
   const [pickedDifficulty, setPickedDifficulty] = useState("")
   const [pickedVariant, setPickedVariant] = useState("")
   const [seed, setSeed] = useState(1)
@@ -66,6 +67,8 @@ export const PuzzleLab: FC = () => {
   // doesn't offer the current theme/tier silently falls back to its first valid one.
   const themes = family ? themesFor(family.meta) : []
   const theme = themes.includes(pickedTheme) ? pickedTheme : themes[0]
+  const roles = family ? rolesFor(family.meta) : []
+  const role = roles.includes(pickedRole) ? pickedRole : roles[0]
   const tiers = family ? allowedDifficulties(family.meta) : []
   const difficulty = tiers.find(d => d === pickedDifficulty) ?? tiers[0]
   const variants = family?.meta.variants ?? []
@@ -78,11 +81,16 @@ export const PuzzleLab: FC = () => {
       sectionHash: "lab",
       freshArrival: true,
       difficulty,
-      theme,
+      // "default" is the picker saying nothing, not a skin being demanded — otherwise it would override the
+      // role, and picking a role in this very panel would do nothing.
+      theme: theme === DEFAULT_THEME ? undefined : theme,
+      // The lab's own role, so a family with several identities can be looked at in each of them — and in
+      // each of them at night.
+      role: role === NO_ROLE ? undefined : role,
       variant,
       tags: family?.meta.tags,
     }),
-    [seed, difficulty, theme, variant, family]
+    [seed, difficulty, theme, role, variant, family]
   )
 
   const puzzle = useMemo(
@@ -101,6 +109,13 @@ export const PuzzleLab: FC = () => {
           {families.map(f => (
             <option key={f.meta.id} value={f.meta.id}>
               {f.meta.icon} {f.meta.id}
+            </option>
+          ))}
+        </select>
+        <select className={selectClass} value={role} onChange={e => setPickedRole(e.target.value)}>
+          {roles.map(name => (
+            <option key={name} value={name}>
+              {name}
             </option>
           ))}
         </select>
@@ -150,7 +165,7 @@ export const PuzzleLab: FC = () => {
               was given — so a board arriving under it reads that state out of range and crashes. Real play cannot
               do this (a room's puzzle never changes under the player), which is exactly why the bench has to. */}
           <Component
-            key={`${family.meta.id}:${difficulty}:${theme}:${variant ?? ""}:${seed}`}
+            key={`${family.meta.id}:${difficulty}:${theme}:${role}:${variant ?? ""}:${seed}`}
             puzzle={puzzle}
             ctx={ctx}
             progression={progression}

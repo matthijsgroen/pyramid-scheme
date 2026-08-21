@@ -107,6 +107,15 @@ export const masterRules: Rule[] = [
   // already owns that pyramid's sideSections (the secondary-tomb map-piece unlock gate). An
   // earlier revision put chests there directly and silently deleted that gate for all 4 master
   // journeys; every entry here now targets a pyramid the tier rule doesn't touch.
+  // **The Great Pyramid of Giza asks for trade puzzles.** A ROLE, not a skin: `trade` draws the balance
+  // scale (weighing goods) and the bridges board, which wears its haul-road dress because that is the pool it
+  // was drawn for. Which is the whole point of carrying the role into the room — the same board is a star map
+  // on the lighthouse and a causeway network here, and neither site had to name a skin to get it.
+  //
+  // Two families is the same breadth the lighthouse ships with `sky`. A third joins the pool by carrying the
+  // tag, never by an edit here.
+  journey("master_1").pyramid("1-5", { encounter: "trade" }),
+
   journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0), starterEcho()] }),
   journey("master_1").pyramid(2, { sideSections: [holdChest(1), expertEcho()] }),
   journey("master_2").pyramid(1, { sideSections: [holdChest(3), holdChest(0)] }),

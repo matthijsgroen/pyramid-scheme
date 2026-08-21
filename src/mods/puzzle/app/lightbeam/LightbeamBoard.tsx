@@ -28,6 +28,8 @@ type Props = {
   states: readonly number[]
   /** Cell keys ("row,col") the current hint talks about. */
   highlighted?: ReadonlySet<string>
+  /** How far the finishing run has got, 0 → 1 (see useCelebration). 0 = not finishing. */
+  surge?: number
   /** The stretch of beam the current hint is about, drawn over the rest. */
   litBeam?: BeamSegment[]
   onCycle: (piece: number) => void
@@ -79,8 +81,8 @@ const viewGrid = (puzzle: LightbeamPuzzleData, states: readonly number[]): CellV
 // P2: the board carries no language).
 // ---------------------------------------------------------------------------------------------------
 
-const Glyph: FC<{ children: ReactNode }> = ({ children }) => (
-  <svg viewBox="0 0 100 100" className="size-full overflow-visible">
+const Glyph: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
+  <svg viewBox="0 0 100 100" className={clsx("size-full overflow-visible", className)}>
     {children}
   </svg>
 )
@@ -229,8 +231,8 @@ const SunDisc: FC<{ facing: Direction }> = ({ facing }) => (
 )
 
 /** A niche cut in the wall. Dark until the light arrives, then it is the whole point of the board. */
-const Shrine: FC<{ lit: boolean }> = ({ lit }) => (
-  <Glyph>
+const Shrine: FC<{ lit: boolean; flaring?: boolean }> = ({ lit, flaring }) => (
+  <Glyph className={clsx(flaring && "animate-flare")}>
     <path
       d="M22 92 L22 46 A28 28 0 0 1 78 46 L78 92 Z"
       strokeWidth={8}
@@ -422,8 +424,26 @@ const segmentPoints = (segment: BeamSegment): string => {
   return points.map(([x, y]) => `${x},${y}`).join(" ")
 }
 
-const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSegment[] }> = ({ puzzle, walk, lit }) => {
+/**
+ * How far along the finishing run the light has travelled, and whether the shrine is flaring yet.
+ *
+ * The run is one sweep, split: the beam takes the first stretch of it and the shrine has the rest, so the
+ * flare lands on a route that is already fully lit rather than racing it. Both come off one number, which is
+ * all `useCelebration` reports.
+ */
+const TRAVEL_SHARE = 0.7
+const surgeHead = (progress: number, segments: number) => Math.round(Math.min(progress / TRAVEL_SHARE, 1) * segments)
+
+const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSegment[]; surge?: number }> = ({
+  puzzle,
+  walk,
+  lit,
+  surge = 0,
+}) => {
   const highlighted = new Set((lit ?? []).map(segment => `${cellKey(segment.at)},${segment.enter}`))
+  // Segments the finishing surge has reached — a thicker, whiter beam laid over the ordinary one, in path
+  // order, so it reads as light running from the disc to the shrine rather than as the board changing colour.
+  const surged = surge > 0 ? surgeHead(surge, walk.path.length) : 0
   const last = walk.path[walk.path.length - 1]
   return (
     <svg
@@ -465,6 +485,18 @@ const BeamLayer: FC<{ puzzle: LightbeamPuzzleData; walk: BeamWalk; lit?: BeamSeg
           />
         )
       })}
+      {/* The finishing surge: the same path, thicker and brighter, as far as it has got. */}
+      {walk.path.slice(0, surged).map(segment => (
+        <polyline
+          key={`surge:${cellKey(segment.at)},${segment.enter}`}
+          points={segmentPoints(segment)}
+          fill="none"
+          strokeWidth={0.2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="stroke-white"
+        />
+      ))}
       {/* Where the light ends, marked — otherwise a beam that stops short reads as a drawing fault. */}
       {walk.end === "absorbed" && last && (
         <circle
@@ -583,7 +615,7 @@ const cellCls = (view: CellView, state: { lit: boolean; movable: boolean }) =>
     "after:absolute after:inset-[-5px] after:content-['']": state.movable,
   })
 
-export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, onCycle }) => {
+export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam, surge = 0, onCycle }) => {
   const { size } = puzzle
   // **The board as the light leaves it, not as the player set it.** A door the beam has already opened has
   // moved, and drawing it where it rests draws stone across a lit stretch — the exact picture §11.1 promises
@@ -595,6 +627,8 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
   const grid = viewGrid(puzzle, drawn)
   const walk = traceBeam(puzzle, states)
   const solved = walk.end === "lit"
+  // The shrine takes the tail of the finishing run, once the light has actually arrived at it.
+  const flaring = surge >= TRAVEL_SHARE
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
       <div
@@ -620,7 +654,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
               ) : view.kind === "sun" ? (
                 <SunDisc facing={view.facing} />
               ) : view.kind === "shrine" ? (
-                <Shrine lit={solved} />
+                <Shrine lit={solved} flaring={flaring} />
               ) : view.kind === "stop" && view.ghost ? (
                 <span className="size-full opacity-25">
                   {view.ghost.kind === "mirror" ? (
@@ -650,7 +684,7 @@ export const LightbeamBoard: FC<Props> = ({ puzzle, states, highlighted, litBeam
           bounces off, and a beam that stopped under a glyph would read as a beam that stopped short. */}
       <PieceLayer puzzle={puzzle} states={drawn} />
       <NodeLayer puzzle={puzzle} walk={walk} />
-      <BeamLayer puzzle={puzzle} walk={walk} lit={litBeam} />
+      <BeamLayer puzzle={puzzle} walk={walk} lit={litBeam} surge={surge} />
     </div>
   )
 }

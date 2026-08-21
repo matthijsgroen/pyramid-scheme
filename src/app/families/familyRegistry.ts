@@ -22,6 +22,10 @@ export type FamilyContext = {
   freshArrival: boolean
   difficulty?: Difficulty
   theme?: string
+  /** The role this room was allocated FOR — what the site asked for, where the family id is what it
+   *  resolved to. A family that serves several pools reads this to know which of its identities to wear;
+   *  `theme` is the place's own dressing (night, sandstorm), and how the two combine is the family's call. */
+  role?: string | string[]
   // Which of the family's `meta.variants` generators to build with. Only ever set by the puzzle lab;
   // unset everywhere real gameplay runs, so a family's default generator is what ships.
   variant?: string

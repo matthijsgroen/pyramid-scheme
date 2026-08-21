@@ -53,6 +53,53 @@ body {
     }
   }
 
+  /* A puzzle node finishing: it catches the light, and nothing moves. A swell was tried first and read as
+     the board twitching — a node changing SIZE says "something is wrong with the layout" rather than
+     "this one is done". Brightness only, so the colour a skin already gave the node is what flashes. */
+  --animate-flare: flare 420ms ease-out;
+  @keyframes flare {
+    0% {
+      filter: brightness(1);
+    }
+    45% {
+      filter: brightness(1.75);
+    }
+    100% {
+      filter: brightness(1);
+    }
+  }
+
+  /* A node that finishes by SWELLING as well as brightening — a star catching the light, where the size is
+     part of the reading. Not for every skin: on a node that stands for a thing rooted in the ground (a
+     basin and its plant) the same motion reads as the board twitching, and those skins use `flare` alone. */
+  --animate-bloom: bloom 420ms ease-out;
+  @keyframes bloom {
+    0% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    45% {
+      transform: scale(1.3);
+      filter: brightness(1.6);
+    }
+    100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+  }
+
+  /* A blossom arriving on a plant that has its water. Opacity alone: the flower appears, it does not
+     inflate. */
+  --animate-flower-in: flower-in 320ms ease-out;
+  @keyframes flower-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   /* Fills a cooling hint button left to right; the element sets its own duration from the
      cooldown constant, so the bar always reaches full exactly when the button unlocks. */
   --animate-hint-recharge: hint-recharge 10s linear forwards;

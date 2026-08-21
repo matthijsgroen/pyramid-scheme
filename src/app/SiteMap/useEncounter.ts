@@ -72,6 +72,7 @@ export const useEncounter = ({
       // The skin this room was authored to wear (docs/instructions/puzzle-screens.md §2). Core carries the
       // name and reads nothing into it; unset means every family draws its default.
       theme: cell?.type === "room" ? cell.theme : undefined,
+      role: cell?.type === "room" ? cell.role : undefined,
       requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,
       gateVariant: cell?.type === "room" ? cell.gateVariant : undefined,
       keyColor: cell?.type === "room" ? cell.keyColor : undefined,

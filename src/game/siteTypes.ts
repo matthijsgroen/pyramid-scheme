@@ -66,6 +66,10 @@ export type RoomCell = {
   // resolved (which authored TableauLevel this is). Opaque to core; each family reads it via its
   // own zod schema. Mirrors FloorConfig/SideSection.encounterArgs.
   encounterArgs?: unknown
+  // The role this room was allocated for — "trade", "sky", "puzzle". What the AUTHOR asked for, where
+  // `family` is what that request resolved to, and a family reads it to know which of its identities this
+  // room is (the same board is a star map for `sky` and a haul-road network for `trade`).
+  role?: string | string[]
   // Which skin this room's family should wear (docs/instructions/puzzle-screens.md §2), carried from the
   // FloorConfig/SideSection that authored it. A NAME, not a look: core knows nothing about what it means,
   // and a family with no skin registered under it draws its default one.
@@ -121,6 +125,9 @@ export type SubSection = {
   encounterArgs?: unknown
   /** Skin name for this section's puzzle rooms — inherited from the site where the section authors none. */
   theme?: string
+  /** The role these rooms were allocated for ("trade", "sky", "puzzle"…), kept alongside the family it
+   * resolved to so a family can dress for the pool it was drawn from. */
+  role?: string | string[]
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -156,6 +163,8 @@ export type FloorConfig = {
   encounterArgs?: unknown
   /** Skin name for this floor's puzzle rooms. Unset inherits the site's; a floor may override it. */
   theme?: string
+  /** The role this floor's main-path rooms were allocated for, kept alongside the resolved family. */
+  role?: string | string[]
 }
 
 // A site is one or more floors. Index 0 = surface.

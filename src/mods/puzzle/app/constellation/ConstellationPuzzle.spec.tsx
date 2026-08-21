@@ -101,6 +101,39 @@ describe("ConstellationPuzzle", () => {
   })
 
   /**
+   * A skin is pixels and nothing else, which is what makes a third one cheap.
+   *
+   * Every skin has to keep the three node states apart by fill and outline rather than by hue alone (§9), so
+   * what a skin test can check is that the same board draws differently and that an unknown name still draws
+   * something. The mechanic is asserted everywhere else in this file; none of it is repeated per skin.
+   */
+  describe("skins", () => {
+    const puzzle = generateConstellation(3, CONSTELLATION_CONFIG.starter)
+    const boardOf = (theme?: string) => {
+      const { container } = render(
+        <ConstellationPuzzle
+          puzzle={puzzle}
+          difficulty="starter"
+          theme={theme}
+          onSolved={() => {}}
+          onCancel={() => {}}
+        />
+      )
+      return container.querySelector("div.relative.aspect-square")!.className
+    }
+
+    it("draws a different board for each skin it has", () => {
+      const looks = ["default", "irrigation", "causeway"].map(boardOf)
+      expect(new Set(looks).size).toBe(3)
+    })
+
+    it("draws its own night sky for a skin name it has none for", () => {
+      // The Lighthouse authors "night", which this family has no entry for — its default IS a night sky.
+      expect(boardOf("night")).toBe(boardOf())
+    })
+  })
+
+  /**
    * The preview has to be about what the drag will DO, not about what is already there.
    *
    * Drawn as the pair's current state, the drag that doubles a line and the drag that clears one both showed

@@ -49,7 +49,12 @@ export const assignEncounters = (
 
         // Main path rooms (only when the floor actually has them) — the chain default family.
         if (floor.pathPuzzles > 0) {
-          floor.encounter = allocate(roleOf(floor.encounter, "puzzle"), floor.difficulty, seedFor("main"))
+          // **The role is kept, not just the family it resolved to.** Baking used to write the answer over
+          // the question, and a room that has forgotten which pool it was drawn for cannot dress for it —
+          // the same board is a star map drawn for `sky` and a haul-road network drawn for `trade`.
+          const role = roleOf(floor.encounter, "puzzle")
+          floor.role = role
+          floor.encounter = allocate(role, floor.difficulty, seedFor("main"))
         }
         // Per-node overrides (authored `nodes` selectors — e.g. the last room's capstone).
         assignByIndex(floor.encountersByIndex, floor.difficulty, seedFor, "main", allocate)
@@ -72,7 +77,9 @@ const assignSection = (
   // chain, `encounter` describes the section's single end node). A chainless section with no authored
   // encounter stays a plain treasure end.
   if (section.pathPuzzles > 0 || section.encounter !== undefined) {
-    section.encounter = allocate(roleOf(section.encounter, "puzzle"), section.difficulty, seedFor(node))
+    const role = roleOf(section.encounter, "puzzle")
+    section.role = role
+    section.encounter = allocate(role, section.difficulty, seedFor(node))
   }
   // A stock-bearing family (a shop, capacity 6) exposes that many reward slots on this node: seed its
   // `rewards[]` stock array (the mods fill it later). Capacity 1 (ordinary node) leaves rewards as

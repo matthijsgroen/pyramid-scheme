@@ -324,9 +324,114 @@ always carries `sky`. A check that is always true is not a switch. What the skin
   quiet blue-grey and readable and nothing more. The disc exists to keep the number legible with lines of
   light running into it; the glow is the star itself.
 
-Per-**site** variation — this family starrier on a lighthouse journey than elsewhere — is a different
-job, and not a small one: `ctx.theme` is unset everywhere real gameplay runs (only the puzzle lab sets
-it), so it needs the site's theme carried into the encounter before any family can dress for a place.
+### 9.1 The three skins, and why this mechanic has more than one place
+
+**The rules never move; only the words for them do.** That is the whole reason this family carries
+skins rather than one look: a degree count, a no-crossing rule and a single connected group describe
+more than one kind of network, and each of those networks is a real place in this world.
+
+| Skin         | The place                                                | A node is                                             | A line is                            |
+| ------------ | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
+| `default`    | the night sky                                            | a star; its number is how much light meets it         | a line of light                      |
+| `irrigation` | the Nile delta by day (§11.1 Water & Nile)               | a basin, with a shoot that flowers once it is fed     | a channel, doubled into a wide canal |
+| `causeway`   | a building site by day (§11.1 Logistics / Caravan)       | a site, with a pyramid that rises once its roads do   | a haul road of packed rubble         |
+
+Two things every skin is held to, and neither is a style note:
+
+- **The three node states differ in fill and outline, not only in hue** — short of its count, holding
+  it, holding too many. A dry stone basin against a full one; a bare junction against paved stone.
+- **A node that has its count is the one that lights up** (§8), in every skin. The reward reading does
+  not change because the dress did.
+
+**A hint keeps its own colours in every skin**, deliberately: the point of a highlight is that it is
+_not_ the board's palette, so a hint pointing at a channel looks like a hint rather than like a
+slightly different channel.
+
+**Two of the three skins are drawn in daylight, on sand** — a waterworks and a building site are both
+outdoors, which is the deliberate opposite of the default night sky. Everything else in it
+follows from the board being LIGHT — the water is dark enough to read against it, the numbers are dark instead
+of pale, and the lines cast a shadow instead of glowing, because light does not bloom on a sunlit board.
+
+**Two sand boards need telling apart, and the sand is not what does it.** The delta is warmer and its lines
+are water; the building site is drier and greyer and its lines are packed rubble, darker than the ground they
+cross. What really separates them is what stands on them — basins with plants against staked-out pyramids.
+
+**A skin may give its nodes something that grows, and both daylight skins do.** A basin carries a shoot while
+it is short of its channels and a full plant once it has them; a building site carries a staked-out footprint
+and then a pyramid. Either way it is the same lit/unlit reading the disc already gives, said a second way,
+which is what makes a finished node obvious at a glance rather than on inspection.
+
+**A glyph carries its own colour rather than the node's.** Inheriting the node's text colour made the plant
+the colour of stone, which is the one thing a plant must not be — so a skin names both greens: the shoot's,
+and the lighter one it flowers in.
+
+It grows **above** the disc, and that was not the first attempt: drawn behind the number, a digit sitting on
+a stem is a digit you have to work to read, and the number is the clue (§8). The plant took the empty cell
+over the basin instead — which then needed the whole board inset by a few percent, because the frame was
+clipping every glyph on the top row.
+
+### 9.2 The completion run — the board finishes before it says so
+
+**A solved board lights up one node at a time, and only then reports the solve.** The shell freezes the
+board and starts its banner the moment it is told (`puzzle-screens.md` §3), so the celebration has to happen
+before that word is said — which needs nothing from core: the family reports the solve a beat later.
+
+Three constraints, and each of them is the interesting part rather than the animation:
+
+- **The whole run is about a second.** The shell stops its solve-time clock when it hears "solved", and that
+  number is what §3.2's budget is measured with — so a three-second flourish would quietly add three seconds
+  to every board this family ships. The stagger tightens as nodes are added instead of letting the total grow
+  with them.
+- **Input is refused while it runs.** A player pulling a line back out mid-run would land a solve on a board
+  that is no longer solved — the same class of bug the shell's own freeze exists to prevent.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together. Holding a banner back for motion
+  the player asked not to see is worse than not celebrating at all.
+
+**Nothing changes size, and that was a correction.** The run started as one swell per node, and a node
+growing and shrinking read as the board twitching — a change of _size_ says something is wrong with the
+layout, where a change of _light_ says this one is done. So the motion is brightness only: each node catches
+the light in whatever colour its skin already gave it.
+
+**Both growing skins hand the run a stage of its own**, so each has three rather than two: a shoot, a plant,
+and a plant in **flower**; a footprint, a pyramid, and a pyramid with its **capstone** on. The last stage
+belongs to the completion run and arrives one node at a time — which is why a finished node stops short of it
+while the board is still unsolved. If the flower came with the water, or the capstone with the last road, the
+finish would have nothing left to say.
+
+### 9.3 Which place a room is, and who decides
+
+**The skin follows the ROLE the room was allocated for, not the site it sits in.** A site asks for _trade
+puzzles in this pyramid_ (`encounter: "trade"`), the allocator draws the families that serve trade — the
+balance scale, and this one — and this one wears its haul-road face, because that is the pool it came from.
+No site named a skin. The same board on the lighthouse was drawn for `sky`, so there it is a star map.
+
+| Role                   | This family is |
+| ---------------------- | -------------- |
+| `sky`, `light`         | the star map   |
+| `trade`, `logistics`   | the haul roads |
+| `water`, `agriculture` | the waterworks |
+
+**Ambience layers on that, and does not replace it.** `theme` is the hour and the weather of a place —
+`night` today, a sandstorm later — so a trade pyramid after dark is a causeway at night: ground gone cold,
+finished stone catching moonlight instead of sun. What the place IS never changes; only what time it is. A
+theme naming one of these skins outright wins, which is what keeps every skin playable in the lab, where a
+theme is the only thing that can be picked.
+
+**Why the family decides and not core.** Any precedence core imposed would be wrong for somebody: eclipse
+has no roles and one ambience skin, this family has three identities and an overlay. So core carries both
+names and reads neither.
+
+**`water` is carried, and only the authoring waits.** A tag is eligibility rather than placement: this
+family serves the water pool the moment anything asks for it, and nothing does yet. What would cost something
+is authoring `encounter: "water"` on the Nile Delta today — this is the only family serving that role, so five
+pyramids would be the same board in the same dress. `expert.ts` names the one-line change for the day a
+second water family lands.
+
+**Only the role is authored, never the family.** `theme` decides what a family looks like and never
+which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and
+leave their puzzle pool alone — every other family in those pyramids draws its own default, which is
+exactly what a name a family does not know is for. Authoring the _family_ as well waits until the
+catalogue is broad enough that a themed pool still has variety inside it.
 
 ## 10. Open questions
 

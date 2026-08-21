@@ -34,6 +34,9 @@ export type SubSection = {
   /** Skin name for this section's puzzle rooms, inherited from the site where the section is silent.
    * Mirrors game/siteTypes.ts's SubSection.theme. */
   theme?: string
+  /** The role this section's rooms were allocated FOR, kept after `encounter` is baked to a family id.
+   * Mirrors game/siteTypes.ts's SubSection.role. */
+  role?: string | string[]
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -62,6 +65,8 @@ export type FloorConfig = {
   encounterArgs?: unknown
   /** Skin name for this floor's puzzle rooms — mirrors game/siteTypes.ts's FloorConfig.theme. */
   theme?: string
+  /** The role this floor's main-path rooms were allocated FOR — mirrors game/siteTypes.ts's FloorConfig.role. */
+  role?: string | string[]
 }
 
 export type SiteConfig = FloorConfig[]
