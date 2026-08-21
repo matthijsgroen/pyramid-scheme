@@ -23,6 +23,8 @@ type Props = {
   litStars?: ReadonlySet<number>
   /** The skin this room was authored to wear; a name this family has none for draws the default. */
   theme?: string
+  /** Nodes that have had their turn in the completion run (see useCelebration). */
+  celebrated?: ReadonlySet<number>
   onDrawLine: (pair: number) => void
 }
 
@@ -43,6 +45,27 @@ const positionOf = (puzzle: ConstellationPuzzle, star: number) => {
     top: (rowOf(puzzle.size, puzzle.stars[star].cell) + 0.5) * share,
   }
 }
+
+/**
+ * What grows out of a basin: a shoot while it is short of its channels, a plant in flower once it has them.
+ *
+ * It grows **above** the disc rather than inside it. Drawn behind the number the two fought — a digit on top
+ * of a stem is a digit you have to work to read, and the number is the clue (§8) — so the basin keeps its
+ * number and the plant rises out of the top of it, where there is nothing but empty sky.
+ */
+const Plant: FC<{ grown: boolean }> = ({ grown }) => (
+  <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
+    <g fill="none" stroke="currentColor" strokeWidth={grown ? 2 : 2.4} strokeLinecap="round">
+      <line x1={12} y1={24} x2={12} y2={grown ? 7 : 15} />
+      <path d={grown ? "M12 16 C 7 15, 5 12, 5 8" : "M12 19 C 9 18, 8 16, 8 13"} />
+      <path d={grown ? "M12 16 C 17 15, 19 12, 19 8" : "M12 19 C 15 18, 16 16, 16 13"} />
+      {grown && <path d="M12 11 C 8 10, 7 7, 7 4" />}
+      {grown && <path d="M12 11 C 16 10, 17 7, 17 4" />}
+    </g>
+    {/* The flower a fed basin carries — the thing the completion run swells. */}
+    {grown && <circle cx={12} cy={5} r={3.2} fill="currentColor" />}
+  </svg>
+)
 
 /**
  * A skin: what the board, its lines and its nodes look like. The family emits logical state only — a node
@@ -67,6 +90,10 @@ type Skin = {
   unlit: string
   lit: string
   over: string
+  /** Drawn inside a node, behind its number — a place whose nodes are things that grow says so. */
+  Glyph?: FC<{ grown: boolean }>
+  /** What a node wears for its turn in the completion run: one swell, in the node's own colour. */
+  celebrate: string
 }
 
 const SKINS: Record<string, Skin> = {
@@ -80,6 +107,8 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
     lit: "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]",
     over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+    // Stars twinkle: the swell reads as a star catching the light.
+    celebrate: "animate-bloom",
   },
   // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
   // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
@@ -93,6 +122,9 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-stone-400/50 bg-radial from-stone-700/60 to-stone-950/80 text-stone-100",
     lit: "border-sky-200 bg-radial from-sky-300/70 to-sky-500/30 text-sky-950 shadow-[0_0_16px_4px_rgb(125_211_252_/_0.4)]",
     over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+    // The plant blooms as its basin fills.
+    celebrate: "animate-bloom",
+    Glyph: Plant,
   },
   // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
   // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
@@ -106,6 +138,8 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-amber-900/70 bg-radial from-stone-800/70 to-stone-950/80 text-amber-100",
     lit: "border-stone-100 bg-radial from-stone-100/80 to-stone-300/30 text-stone-900 shadow-[0_0_14px_3px_rgb(245_245_244_/_0.35)]",
     over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+    // A junction finishing reads as the last stone going in.
+    celebrate: "animate-bloom",
   },
 }
 
@@ -216,7 +250,16 @@ const Lines: FC<{
   </svg>
 )
 
-export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focus, litStars, theme, onDrawLine }) => {
+export const ConstellationBoard: FC<Props> = ({
+  puzzle,
+  state,
+  highlighted,
+  focus,
+  litStars,
+  theme,
+  celebrated,
+  onDrawLine,
+}) => {
   const byStar = pairsByStar(puzzle)
   const skin = skinFor(theme)
   const backdrop = useMemo(() => backdropStars(puzzle), [puzzle])
@@ -259,47 +302,65 @@ export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focu
         skin.board
       )}
     >
-      <Lines
-        puzzle={puzzle}
-        state={state}
-        candidate={candidate}
-        highlighted={highlighted}
-        focus={focus}
-        backdrop={backdrop}
-        skin={skin}
-      />
-      {puzzle.stars.map((star, index) => {
-        const held = degreeOf(byStar, state.lines, index)
-        const { left, top } = positionOf(puzzle, index)
-        return (
-          <button
-            key={index}
-            onPointerDown={beginDrag(index)}
-            onPointerMove={moveDrag}
-            onPointerUp={endDrag}
-            onPointerCancel={endDrag}
-            className="absolute flex aspect-square -translate-1/2 items-center justify-center"
-            style={{ left: `${left}%`, top: `${top}%`, width: `${(100 / puzzle.size) * HIT_SCALE}%` }}
-          >
-            <span
-              className={clsx(
-                "flex aspect-square w-[77%] items-center justify-center rounded-full border text-[min(4vw,1.1rem)] font-bold transition-all duration-300",
-                // **A star that has its lines lights up.** Bridges greys a finished island out, and that is
-                // the reading this board deliberately inverts: giving a star its light is the thing the
-                // player just achieved, so it is the thing that should look like an achievement. It scans
-                // the same either way — what is left to do is now "the stars still showing a plain number"
-                // rather than "the stars still lit".
-                // Unlit is readable and unremarkable — the number has to stay crisp, it is the clue — and
-                // nothing draws the eye until the node earns it.
-                held > star.count ? skin.over : held === star.count ? skin.lit : skin.unlit,
-                litStars?.has(index) && "ring-2 ring-sky-300/80"
-              )}
+      {/* One inset layer for the whole board, so the lines and the nodes keep the same coordinate space and a
+          plant growing out of a top-row basin has somewhere to grow. Without it the frame clipped every
+          glyph on row 0. */}
+      <div className="absolute inset-[7%]">
+        <Lines
+          puzzle={puzzle}
+          state={state}
+          candidate={candidate}
+          highlighted={highlighted}
+          focus={focus}
+          backdrop={backdrop}
+          skin={skin}
+        />
+        {puzzle.stars.map((star, index) => {
+          const held = degreeOf(byStar, state.lines, index)
+          const { left, top } = positionOf(puzzle, index)
+          return (
+            <button
+              key={index}
+              onPointerDown={beginDrag(index)}
+              onPointerMove={moveDrag}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              className="absolute flex aspect-square -translate-1/2 items-center justify-center"
+              style={{ left: `${left}%`, top: `${top}%`, width: `${(100 / puzzle.size) * HIT_SCALE}%` }}
             >
-              {star.count}
-            </span>
-          </button>
-        )
-      })}
+              <span
+                className={clsx(
+                  "relative flex aspect-square w-[77%] items-center justify-center rounded-full border text-[min(4vw,1.1rem)] font-bold transition-all duration-300",
+                  // **A star that has its lines lights up.** Bridges greys a finished island out, and that is
+                  // the reading this board deliberately inverts: giving a star its light is the thing the
+                  // player just achieved, so it is the thing that should look like an achievement. It scans
+                  // the same either way — what is left to do is now "the stars still showing a plain number"
+                  // rather than "the stars still lit".
+                  // Unlit is readable and unremarkable — the number has to stay crisp, it is the clue — and
+                  // nothing draws the eye until the node earns it.
+                  held > star.count ? skin.over : held === star.count ? skin.lit : skin.unlit,
+                  litStars?.has(index) && "ring-2 ring-sky-300/80",
+                  celebrated?.has(index) && skin.celebrate
+                )}
+              >
+                {skin.Glyph && (
+                  // Above the disc, and taller once it is grown: the basin keeps its number, the plant takes
+                  // the empty cell over it.
+                  <span
+                    className={clsx(
+                      "pointer-events-none absolute bottom-[64%] left-1/2 aspect-square -translate-x-1/2",
+                      held === star.count ? "w-[80%] opacity-90" : "w-[52%] opacity-55"
+                    )}
+                  >
+                    <skin.Glyph grown={held === star.count} />
+                  </span>
+                )}
+                <span className="relative">{star.count}</span>
+              </span>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

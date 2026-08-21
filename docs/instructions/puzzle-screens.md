@@ -61,6 +61,24 @@ demand `encounterArgs`; a skin demands nothing).
 | Idle    | A still board highlights the hint button — 30s at starter, up to 90s at wizard. Any input clears it. |
 | Done    | The board freezes on solve; the banner lands 0.8s later and waits for a tap to leave.                |
 
+**A family may finish its board before it says "solved".** The shell freezes the board and
+starts the banner the moment `solved` goes true, so a completion animation belongs _before_
+that word: the family runs its own celebration and reports the solve a beat later
+(constellation is the reference — `useCelebration.ts`, and its family doc §9.2). Three rules
+come with it, and they are why this is not simply "add an animation":
+
+- **Refuse input while it runs.** A board that is finishing must not take a move — a player
+  pulling a piece back out mid-celebration would land a solve on a board that is no longer
+  solved.
+- **Keep the whole run to about a second.** The shell stops its solve-time clock when it
+  hears "solved", and that number is §3.2's instrument, so a three-second celebration adds
+  three seconds to every board it measures.
+- **`prefers-reduced-motion` skips it entirely** — animation and delay both. Holding a banner
+  back for motion the player asked not to see is worse than not celebrating at all.
+
+The hook stays family-local until a second family wants one, at which point it moves here
+unchanged.
+
 **The banner reports the solve time**, wordless (`⏱ 1:07`) so it needs no locale, and
 it is **on-screen time only** — the clock stops while the document is hidden, because a
 board left open in a background tab is not time anyone spent on it

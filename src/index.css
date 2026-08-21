@@ -53,6 +53,25 @@ body {
     }
   }
 
+  /* A puzzle node finishing: one swell and a flash of its own colour, fired per node with a stagger so a
+     solved board finishes one piece at a time rather than all at once. Motion only — the colour comes from
+     whichever skin the node is already wearing. */
+  --animate-bloom: bloom 420ms ease-out;
+  @keyframes bloom {
+    0% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    45% {
+      transform: scale(1.35);
+      filter: brightness(1.6);
+    }
+    100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+  }
+
   /* Fills a cooling hint button left to right; the element sets its own duration from the
      cooldown constant, so the bar always reaches full exactly when the button unlocks. */
   --animate-hint-recharge: hint-recharge 10s linear forwards;

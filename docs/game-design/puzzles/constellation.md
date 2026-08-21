@@ -333,7 +333,7 @@ more than one kind of network, and each of those networks is a real place in thi
 | Skin         | The place                                                | A node is                                             | A line is                            |
 | ------------ | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
 | `default`    | the night sky                                            | a star; its number is how much light meets it         | a line of light                      |
-| `irrigation` | the Nile delta (§11.1 Water & Nile)                      | a basin; its number is how many channels it feeds     | a channel, doubled into a wide canal |
+| `irrigation` | the Nile delta (§11.1 Water & Nile)                      | a basin, with a shoot that flowers once it is fed     | a channel, doubled into a wide canal |
 | `causeway`   | a pyramid under construction (§11.1 Logistics / Caravan) | a site; its number is how many roads meet it          | a haul road                          |
 
 Two things every skin is held to, and neither is a style note:
@@ -346,6 +346,35 @@ Two things every skin is held to, and neither is a style note:
 **A hint keeps its own colours in every skin**, deliberately: the point of a highlight is that it is
 _not_ the board's palette, so a hint pointing at a channel looks like a hint rather than like a
 slightly different channel.
+
+**A skin may give its nodes something that grows.** The irrigation basin carries a shoot while it is short
+of its channels and a plant in flower once it has them — the same lit/unlit reading the disc already gives,
+said a second way, which is what makes a fed basin obvious at a glance rather than on inspection.
+
+It grows **above** the disc, and that was not the first attempt: drawn behind the number, a digit sitting on
+a stem is a digit you have to work to read, and the number is the clue (§8). The plant took the empty cell
+over the basin instead — which then needed the whole board inset by a few percent, because the frame was
+clipping every glyph on the top row.
+
+### 9.2 The completion run — the board finishes before it says so
+
+**A solved board lights up one node at a time, and only then reports the solve.** The shell freezes the
+board and starts its banner the moment it is told (`puzzle-screens.md` §3), so the celebration has to happen
+before that word is said — which needs nothing from core: the family reports the solve a beat later.
+
+Three constraints, and each of them is the interesting part rather than the animation:
+
+- **The whole run is about a second.** The shell stops its solve-time clock when it hears "solved", and that
+  number is what §3.2's budget is measured with — so a three-second flourish would quietly add three seconds
+  to every board this family ships. The stagger tightens as nodes are added instead of letting the total grow
+  with them.
+- **Input is refused while it runs.** A player pulling a line back out mid-run would land a solve on a board
+  that is no longer solved — the same class of bug the shell's own freeze exists to prevent.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together. Holding a banner back for motion
+  the player asked not to see is worse than not celebrating at all.
+
+The motion is one swell per node, and each skin supplies the colour it swells in: a star catching the light,
+a plant coming into flower, the last stone going into a junction.
 
 **Only the skin is authored, never the family.** `theme` decides what a family looks like and never
 which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and
