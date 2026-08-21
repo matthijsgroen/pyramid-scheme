@@ -602,6 +602,60 @@ Family doc: `docs/game-design/puzzles/constellation.md`.
   of coupled bookkeeping (§6's local-vs-coupled line) — so wizard is the tier to
   time first.
 
+### 4.22 Canal (a counted channel) — _(designed, not yet built)_
+
+Family doc: `docs/game-design/puzzles/canal.md`.
+
+- **Skill:** counting along a line, plus connectivity — nonogram arithmetic whose answer happens to be a
+  path.
+- **Operates:** water enters at one edge and leaves at another, and the player digs the single channel
+  between them. Every row and column number is how many of that line's cells the channel runs through;
+  a few stretches open already dug. Roderick Kimball's **Path Puzzles**.
+- **Knobs:** grid size (real here — a wider grid is more lines, not more bookkeeping per line) · turn
+  density · how much of the channel survives thinning · whether the inlet and outlet share an edge ·
+  technique cap, required rung and its quota.
+- **Scaling:** good, and on two axes rather than one.
+- **Generation:** draw, derive, thin — a self-avoiding walk, its line counts read off it, then pre-dug
+  stretches removed while the technique solver still finishes unaided. The counts themselves cannot be
+  thinned: a missing number is a hole in the arithmetic rather than a harder board.
+- **UI:** medium. Drag along the cells to dig, reusing the pointer machinery constellation built.
+- **Why it is not the two families it sits near:** lightbeam sets pieces and lets physics route the beam,
+  where this draws the route and counts lines; constellation counts a NODE's lines between given points,
+  where this counts a LINE's cells with no nodes at all. The version that WOULD have been a reskin — rotate
+  pipe tiles until the water flows — is recorded and rejected in the family doc §2.
+- **It is the second water family**, which is what `encounter: "water"` has been waiting for: with it, the
+  Nile Delta Expedition can ask for water puzzles instead of borrowing a skin (§11.1's gap note, and the
+  comment `expert.ts` leaves at the spot).
+- **Wears more than one identity**, like constellation: a canal for `water`, a haul road for `trade`, a
+  corridor for `tomb`.
+
+### 4.23 Circuit (rotate the network) — _(proposed; duration is the open question)_
+
+- **Skill:** local edge-matching and no-loop reasoning over a whole grid — the classic **Net / Pipes**.
+- **Operates:** every cell holds a piece with stubs, and a tap rotates it. The answer connects every piece
+  into one network fed from a source, with no loose ends and no loops. Blocked cells (a hatched square) shape
+  what the network can be. What is connected lights up as you go, so progress is always visible.
+- **Knobs:** grid size · blocked-cell count · how many pieces open already correct · piece mix (a straight
+  and a cross are rotationally ambiguous, an elbow and a T are not).
+- **Generation:** draw a spanning tree over the free cells, read each cell's stubs off it, then scramble
+  rotations. **Uniqueness needs care rather than a gate**: a straight piece reads the same in two rotations
+  and a cross in all four, so a board can have many rotation-answers that draw the same network. Either
+  accept network-equality as the win condition, or keep ambiguous pieces out of the mix.
+- **UI:** easy — one tap, one cell, no palette. The lit-up network is wordless feedback of the kind §5's
+  "the board teaches itself" asks for.
+- **The honest problem is §3.2, not overlap.** Net puzzles are **long rather than hard**: every cell needs a
+  decision, so an 8×8 is 64 rotations before the player has thought about anything, and the difficulty of the
+  hardest step barely moves as the grid grows. That is exactly the bookkeeping-versus-difficulty trap §3.2
+  names, and it is why this is proposed rather than designed. Mitigations to test before believing it: a
+  small grid (6×6), plenty of blocked cells, and opening a share of pieces already correct so the board is a
+  handful of decisions rather than a sweep.
+- **On sharing a verb with lightbeam:** both rotate pieces on a grid, and that is where it ends — lightbeam
+  reasons about where one beam goes, this reasons about stubs matching and loops closing. A shared verb is
+  already tolerated here (sumplete, eclipse and futoshiki all tap cells); a shared *deduction* would not be,
+  which is what ruled out Akari (§4.15's deferred note) and the rotate-pipes reading of §4.22.
+- **Themes:** water (pipes), Trade (a road network), and a lit circuit reads as a temple's lamps — it wears
+  a role the same way §4.21 and §4.22 do.
+
 ---
 
 ## 5. The shared grid engine
@@ -663,6 +717,7 @@ the thing to look at first when judging an unbuilt family's duration.
 | Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        |
 | Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique) | 30–90s / med              |
 | Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate) | 1–4 min / med — _target_  |
+| Canal                  | Medium          | Good (size and shape)    | Draw-derive-thin (gate)     | 1–5 min / med — _target_  |
 | Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
 | Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
 | Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
@@ -687,6 +742,7 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 | Glyph Latin-square     | deduction              |     —      |    ◐ 4×4    | ● 6×6 |  ● 8×8  |    ★ 9×9    |
 | Eclipse                | binary deduction       |   ◐ 4×4    |    ● 4×4    | ● 6×6 |  ● 6×6  |    ★ 8×8    |
 | Constellation          | degree + connectivity  |   ◐ 5×5    |    ● 6×6    | ● 7×7 |  ● 8×8  |    ★ 8×8    |
+| Canal                  | line counts + path     |   ◐ 5×5    |    ● 6×6    | ● 7×7 |  ● 8×8  |    ★ 8×8    |
 | Target-number          | flexible ops           |     —      |      ◐      |   ●   |    ●    |      ★      |
 | Sequence               | pattern                |     —      |      ◐      |   ●   |    ●    |      —      |
 | Water clock            | duration / subtraction |     —      |      —      |   ◐   |    ●    |      ★      |
@@ -829,6 +885,10 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                             |
 | **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                          |
 
+**Gap, closed on paper by §4.22.** The canal is a water family by mechanic rather than by dress — digging a
+channel from the river to a field is what it does — so once it is built the role has two members and the Nile
+Delta can ask for water puzzles outright. Until then the note below still describes the position.
+
 **Gap, half filled — and filled by a skin rather than by a mechanic.** Water & Nile
 held exactly one family, and that one unbuilt. Constellation now wears the theme too:
 basins joined by channels is what §4.21's rules say when the same board is read as a
@@ -873,6 +933,7 @@ so it can be used when authoring density knobs).
 | Nonogram               | 3–15+ min, **very high variance** | **Very High**                                                                                                                  |
 | Mirror/lightbeam       | built, not yet measured           | **TBD — estimate Low–Med**, the beam redraws on every tap so a wrong route is visible at once, which should stall less         |
 | Constellation          | not yet measured (unbuilt)        | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
+| Canal                  | not yet measured (unbuilt)        | **TBD — estimate Med**, each line is its own sum, and a wrong stretch is visible as soon as a count goes red                   |
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
 | Rush Hour              | not yet measured (unbuilt)        | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most                                            |
 
