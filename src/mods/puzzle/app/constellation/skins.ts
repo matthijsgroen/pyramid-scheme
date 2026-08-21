@@ -159,10 +159,19 @@ const ROLE_SKINS: Record<string, string> = {
 
 const AMBIENCE = ["night"]
 
+/**
+ * Names that mean "nothing was said" rather than naming a skin.
+ *
+ * `default` is in the skin table AND is what a picker shows when no theme is chosen, so it has to be read as
+ * silence — otherwise it wins the override below and quietly cancels the role, which is exactly what it did:
+ * picking a trade role next to a default theme still drew a star map.
+ */
+const UNSPOKEN = ["default"]
+
 export const skinFor = (role: string | string[] | undefined, theme: string | undefined): Skin => {
   // A theme that names one of this family's own skins is an explicit override (the lab, and any site that
   // wants a specific dress). Ambience names are not skins and never resolve here.
-  const named = theme && !AMBIENCE.includes(theme) ? SKINS[theme] : undefined
+  const named = theme && !AMBIENCE.includes(theme) && !UNSPOKEN.includes(theme) ? SKINS[theme] : undefined
   const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
   // A list of roles is a union the allocator drew from, so the first one this family has an identity for is
   // the one this room is.

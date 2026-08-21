@@ -421,9 +421,11 @@ theme is the only thing that can be picked.
 has no roles and one ambience skin, this family has three identities and an overlay. So core carries both
 names and reads neither.
 
-**`water` is deliberately not in this family's tags yet.** It would be a pool of one — every main-path room
-in the Nile Delta the same board in the same dress — so the role waits for a second water family, and the
-skin is built and waiting with it. `expert.ts` says so where the next author will look.
+**`water` is carried, and only the authoring waits.** A tag is eligibility rather than placement: this
+family serves the water pool the moment anything asks for it, and nothing does yet. What would cost something
+is authoring `encounter: "water"` on the Nile Delta today — this is the only family serving that role, so five
+pyramids would be the same board in the same dress. `expert.ts` names the one-line change for the day a
+second water family lands.
 
 **Only the role is authored, never the family.** `theme` decides what a family looks like and never
 which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and

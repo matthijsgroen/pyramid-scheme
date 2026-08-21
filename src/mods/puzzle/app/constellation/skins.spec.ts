@@ -28,6 +28,15 @@ describe("which place a room is", () => {
     expect(boardOf(undefined)).toBe(boardOf("sky"))
   })
 
+  /**
+   * "default" is a skin name AND what a picker shows when nothing is chosen, so it has to read as silence.
+   * Read as a demand it cancelled the role — picking trade next to it still drew a star map.
+   */
+  it("treats a default theme as nothing said, so the role still decides", () => {
+    expect(boardOf("trade", "default")).toBe(boardOf("trade"))
+    expect(boardOf("water", "default")).toBe(boardOf("water"))
+  })
+
   /** The lab picks a theme rather than a role, so a theme naming a skin outright has to win. */
   it("lets a theme name a skin outright, over the role", () => {
     expect(boardOf("trade", "irrigation")).toBe(boardOf("water"))

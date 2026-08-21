@@ -5,7 +5,7 @@ import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { allowedDifficulties, NO_ROLE, rolesFor, themesFor } from "./puzzleLabOptions"
+import { allowedDifficulties, DEFAULT_THEME, NO_ROLE, rolesFor, themesFor } from "./puzzleLabOptions"
 
 const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 text-sm text-white"
 
@@ -81,7 +81,9 @@ export const PuzzleLab: FC = () => {
       sectionHash: "lab",
       freshArrival: true,
       difficulty,
-      theme,
+      // "default" is the picker saying nothing, not a skin being demanded — otherwise it would override the
+      // role, and picking a role in this very panel would do nothing.
+      theme: theme === DEFAULT_THEME ? undefined : theme,
       // The lab's own role, so a family with several identities can be looked at in each of them — and in
       // each of them at night.
       role: role === NO_ROLE ? undefined : role,
