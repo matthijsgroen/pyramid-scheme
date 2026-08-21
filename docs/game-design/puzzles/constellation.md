@@ -221,6 +221,12 @@ that moves its undo teaches its controls twice. The drag cycle already gives a p
 so undo is for stepping back off a run of lines drawn on a wrong reading. Reset stays for
 starting over.
 
+**Found while building it: the gesture cannot live in component state.** A release has to act on the
+direction the finger was last pointing, and a release that reads that from state acts on whatever the last
+render happened to hold — so the line depends on whether React re-rendered between two pointer events, which
+in a browser it does and under one batched sequence of events it does not. The drag lives in a ref and the
+state only mirrors it for drawing the candidate.
+
 **The hazard is the page, and it is the reason to build the gesture carefully.** The
 screen bar (`puzzle-screens.md` §1) has the rules below the board and the modal scrolling
 to reach them, so a vertical drag is ambiguous between "draw a line down" and "scroll".
@@ -267,7 +273,9 @@ Beyond the shared screen bar:
   cells take no input, so a star's hit area spills into the cells around it and can hold
   44px while the grid pitch is smaller. That is the whole reason an 8×8 sky fits a 360px
   phone; it is also why the drawer refuses two adjacent stars, since two hit areas that
-  overlap are two stars that cannot be pressed apart.
+  overlap are two stars that cannot be pressed apart. Measured on a 390px viewport: a 7×7
+  sky puts a 50px disc inside a 65px hit area on a 50px pitch, and no two hit areas touch,
+  because the nearest another star can sit is two cells away.
 - **A number stays readable with lines touching it.** The digit sits inside the star,
   and the lines stop at its edge rather than under it.
 - **A star that has its lines says so** — its number dims once satisfied, and goes red
