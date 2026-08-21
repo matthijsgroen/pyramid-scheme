@@ -24,7 +24,9 @@ const starsIn = (root: HTMLElement) =>
     .getAllByRole("button")
     .filter(button => button.className.includes("-translate-1/2"))
 
-const blooming = (root: HTMLElement) => root.querySelectorAll(".animate-flare").length
+// Either motion counts as "this node had its turn": the sky blooms (a swell, since a star is a point of
+// light) and the places on the earth flare (light only, since a basin swelling reads as the board twitching).
+const celebrating = (root: HTMLElement) => root.querySelectorAll(".animate-flare, .animate-bloom").length
 
 /** Draws every line the answer holds, which leaves the board solved. */
 const solve = (root: HTMLElement, puzzle: ConstellationPuzzleWithAnswer) => {
@@ -77,11 +79,35 @@ describe("the completion run", () => {
     solve(container, puzzle)
 
     // Mid-run: nodes are finishing one at a time, and the banner has not landed.
-    await waitFor(() => expect(blooming(container)).toBeGreaterThan(0))
+    await waitFor(() => expect(celebrating(container)).toBeGreaterThan(0))
     expect(within(container).queryByText(/⏱/)).toBeNull()
 
     // And it does finish — the solve is reported, so the banner follows.
     await waitFor(() => expect(within(container).getByText(/⏱/)).toBeDefined(), { timeout: 5000 })
+  })
+
+  it("swells a star and only brightens a basin", () => {
+    reducedMotion(false)
+    const puzzle = generateConstellation(2, CONSTELLATION_CONFIG.starter)
+    const sky = render(
+      <ConstellationPuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
+    )
+    const delta = render(
+      <ConstellationPuzzle
+        puzzle={puzzle}
+        difficulty="starter"
+        theme="irrigation"
+        onSolved={() => {}}
+        onCancel={() => {}}
+      />
+    )
+    solve(sky.container, puzzle)
+    solve(delta.container, puzzle)
+    return waitFor(() => {
+      expect(sky.container.querySelectorAll(".animate-bloom").length).toBeGreaterThan(0)
+      expect(delta.container.querySelectorAll(".animate-bloom")).toHaveLength(0)
+      expect(delta.container.querySelectorAll(".animate-flare").length).toBeGreaterThan(0)
+    })
   })
 
   it("refuses input while the board is finishing", () => {
@@ -109,7 +135,7 @@ describe("the completion run", () => {
       />
     )
     solve(container, puzzle)
-    expect(blooming(container)).toBe(0)
+    expect(celebrating(container)).toBe(0)
     await waitFor(() => expect(within(container).getByText(/⏱/)).toBeDefined(), { timeout: 5000 })
   })
 })

@@ -88,6 +88,42 @@ const Plant: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }
 )
 
 /**
+ * What stands at a junction: a staked-out foundation while the site is short of its roads, a built pyramid
+ * once the roads reach it, and a **capstone** on it when the network is finished.
+ *
+ * The same three stages the plant has, and for the same reason — the last one belongs to the completion run,
+ * so a served site deliberately stops short of it. A pyramid is drawn rather than filled flat because a
+ * flat triangle on sand is a triangle; the courses are what make it masonry.
+ */
+const Pyramid: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }) => (
+  <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
+    {grown ? (
+      <>
+        <path d="M12 3 L22 22 L2 22 Z" className="fill-stone-200 stroke-stone-700" strokeWidth={1.4} />
+        {/* Two courses, which is all it takes to stop reading as a road sign. */}
+        <path d="M6.5 16 L17.5 16 M9 10 L15 10" className="stroke-stone-500" strokeWidth={1} fill="none" />
+      </>
+    ) : (
+      // Staked out, not yet built: the footprint and one course of stone.
+      <path
+        d="M4.5 22 L19.5 22 M7 17 L17 17 M12 8 L17 17 M12 8 L7 17"
+        className="stroke-stone-600"
+        strokeWidth={1.4}
+        strokeDasharray="2.6 2"
+        strokeLinecap="round"
+        fill="none"
+      />
+    )}
+    {flowering && (
+      <g className="animate-flower-in">
+        {/* The capstone going on, gilded — the one thing on this board that is not stone-coloured. */}
+        <path d="M12 1.5 L16 9 L8 9 Z" className="fill-amber-300 stroke-amber-600" strokeWidth={0.8} />
+      </g>
+    )}
+  </svg>
+)
+
+/**
  * A skin: what the board, its lines and its nodes look like. The family emits logical state only — a node
  * that is short of its number, has it, or holds too many; a line drawn, doubled or previewed — and a skin
  * decides the pixels (docs/instructions/puzzle-screens.md §2).
@@ -116,7 +152,10 @@ type Skin = {
    *  colour came out the colour of stone, which is the one thing a plant must not be. */
   glyphUnlit?: string
   glyphLit?: string
-  /** What a node wears for its turn in the completion run — light, never size (see index.css). */
+  /** What a node wears for its turn in the completion run, and it is a per-skin choice rather than one
+   *  house style: a STAR swelling as it brightens reads as catching the light, and the same swell on a basin
+   *  — a thing rooted in the ground, with a plant growing out of it — reads as the board twitching. So the
+   *  sky blooms and the places on the earth only flare (see index.css). */
   celebrate: string
 }
 
@@ -131,8 +170,8 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
     lit: "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]",
     over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
-    // Stars twinkle: the flash reads as a star catching the light.
-    celebrate: "animate-flare",
+    // Stars twinkle, size and all: a star is a point of light, so a swell IS the reading.
+    celebrate: "animate-bloom",
   },
   // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
   // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
@@ -152,7 +191,8 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-stone-600/70 bg-radial from-stone-200/90 to-stone-400/70 text-stone-800",
     lit: "border-sky-800 bg-radial from-sky-400/95 to-sky-600/80 text-sky-950 shadow-[0_0_14px_3px_rgb(3_105_161_/_0.35)]",
     over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
-    // The plant comes into flower (the glyph does the rest of it).
+    // Light only. A basin cannot swell, and the plant growing out of it is what the run really says — the
+    // flower is the animation here, and the glyph does that part.
     celebrate: "animate-flare",
     Glyph: Plant,
     glyphUnlit: "text-lime-600",
@@ -162,16 +202,26 @@ const SKINS: Record<string, Skin> = {
   // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
   // is finished stone. Daylight rather than night, so the lines read as limestone rather than light.
   causeway: {
-    board: "bg-[radial-gradient(ellipse_at_50%_20%,#4a3a24_0%,#2c2216_45%,#171008_100%)] ring-1 ring-amber-200/15",
-    backdrop: "fill-amber-100/40",
-    line: "stroke-stone-100",
-    pending: "stroke-stone-100/40",
-    lineGlow: "drop-shadow-[0_0_1px_rgb(28_25_23_/_0.9)]",
-    unlit: "border-amber-900/70 bg-radial from-stone-800/70 to-stone-950/80 text-amber-100",
-    lit: "border-stone-100 bg-radial from-stone-100/80 to-stone-300/30 text-stone-900 shadow-[0_0_14px_3px_rgb(245_245_244_/_0.35)]",
-    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
-    // A junction finishing reads as the last stone catching the sun.
+    // Sand, like the delta — a building site is outdoors too — but drier and greyer, so the two daylight
+    // skins do not read as the same place. What tells them apart is what stands on them: basins and plants
+    // there, staked-out pyramids here, water against packed road.
+    board: "bg-[radial-gradient(ellipse_at_50%_20%,#ded3b6_0%,#c8bb98_45%,#ada078_100%)] ring-1 ring-stone-800/25",
+    // Dust and chippings.
+    backdrop: "fill-stone-800/20",
+    // A haul road is packed rubble: darker than the sand it crosses, which is the only way it reads on it.
+    line: "stroke-stone-700",
+    pending: "stroke-stone-700/40",
+    lineGlow: "drop-shadow-[0_1px_1px_rgb(41_37_36_/_0.35)]",
+    // An unserved site is bare ground; a served one is finished stone.
+    unlit: "border-stone-700/60 bg-radial from-amber-100/80 to-amber-200/50 text-stone-800",
+    lit: "border-stone-800 bg-radial from-stone-100/95 to-stone-300/80 text-stone-900 shadow-[0_0_12px_3px_rgb(68_64_60_/_0.25)]",
+    over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
+    // Light only, for the same reason as the basin: a junction is a place, and places do not pulse. The
+    // last stone going in catches the sun instead.
     celebrate: "animate-flare",
+    Glyph: Pyramid,
+    glyphUnlit: "text-stone-700",
+    glyphLit: "text-stone-800",
   },
 }
 

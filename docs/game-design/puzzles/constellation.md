@@ -334,7 +334,7 @@ more than one kind of network, and each of those networks is a real place in thi
 | ------------ | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
 | `default`    | the night sky                                            | a star; its number is how much light meets it         | a line of light                      |
 | `irrigation` | the Nile delta by day (§11.1 Water & Nile)               | a basin, with a shoot that flowers once it is fed     | a channel, doubled into a wide canal |
-| `causeway`   | a pyramid under construction (§11.1 Logistics / Caravan) | a site; its number is how many roads meet it          | a haul road                          |
+| `causeway`   | a building site by day (§11.1 Logistics / Caravan)       | a site, with a pyramid that rises once its roads do   | a haul road of packed rubble         |
 
 Two things every skin is held to, and neither is a style note:
 
@@ -347,14 +347,19 @@ Two things every skin is held to, and neither is a style note:
 _not_ the board's palette, so a hint pointing at a channel looks like a hint rather than like a
 slightly different channel.
 
-**Irrigation is the one skin drawn in daylight**, on sand rather than against a night sky, and that is the
-deliberate opposite of the default: a waterworks is something you dig under the sun. Everything else in it
+**Two of the three skins are drawn in daylight, on sand** — a waterworks and a building site are both
+outdoors, which is the deliberate opposite of the default night sky. Everything else in it
 follows from the board being LIGHT — the water is dark enough to read against it, the numbers are dark instead
 of pale, and the lines cast a shadow instead of glowing, because light does not bloom on a sunlit board.
 
-**A skin may give its nodes something that grows.** The irrigation basin carries a shoot while it is short
-of its channels and a plant in flower once it has them — the same lit/unlit reading the disc already gives,
-said a second way, which is what makes a fed basin obvious at a glance rather than on inspection.
+**Two sand boards need telling apart, and the sand is not what does it.** The delta is warmer and its lines
+are water; the building site is drier and greyer and its lines are packed rubble, darker than the ground they
+cross. What really separates them is what stands on them — basins with plants against staked-out pyramids.
+
+**A skin may give its nodes something that grows, and both daylight skins do.** A basin carries a shoot while
+it is short of its channels and a full plant once it has them; a building site carries a staked-out footprint
+and then a pyramid. Either way it is the same lit/unlit reading the disc already gives, said a second way,
+which is what makes a finished node obvious at a glance rather than on inspection.
 
 **A glyph carries its own colour rather than the node's.** Inheriting the node's text colour made the plant
 the colour of stone, which is the one thing a plant must not be — so a skin names both greens: the shoot's,
@@ -387,10 +392,11 @@ growing and shrinking read as the board twitching — a change of _size_ says so
 layout, where a change of _light_ says this one is done. So the motion is brightness only: each node catches
 the light in whatever colour its skin already gave it.
 
-**Irrigation goes further and hands the run a state of its own.** A basin that has its channels grows a full
-plant, and the plant comes into **flower** during the run, one basin at a time — so the skin has three
-stages, not two: a shoot, a plant, a plant in flower. Which is also why a fed basin stops short of flowering
-on its own: if the flower arrived the moment the water did, the finish would have nothing left to say.
+**Both growing skins hand the run a stage of its own**, so each has three rather than two: a shoot, a plant,
+and a plant in **flower**; a footprint, a pyramid, and a pyramid with its **capstone** on. The last stage
+belongs to the completion run and arrives one node at a time — which is why a finished node stops short of it
+while the board is still unsolved. If the flower came with the water, or the capstone with the last road, the
+finish would have nothing left to say.
 
 **Only the skin is authored, never the family.** `theme` decides what a family looks like and never
 which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and
