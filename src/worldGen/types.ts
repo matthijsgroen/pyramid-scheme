@@ -31,6 +31,9 @@ export type SubSection = {
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
+  /** Skin name for this section's puzzle rooms, inherited from the site where the section is silent.
+   * Mirrors game/siteTypes.ts's SubSection.theme. */
+  theme?: string
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -57,6 +60,8 @@ export type FloorConfig = {
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's FloorConfig.encounterArgs. */
   encounterArgs?: unknown
+  /** Skin name for this floor's puzzle rooms — mirrors game/siteTypes.ts's FloorConfig.theme. */
+  theme?: string
 }
 
 export type SiteConfig = FloorConfig[]

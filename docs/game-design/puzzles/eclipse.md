@@ -292,7 +292,14 @@ Beyond the shared screen bar:
 
 The family emits logical state only — `mark(sun|moon) | sign(same|different) |
 given` — and the skin decides what any of it looks like. Sun and moon are the
-default pair; a night site swaps in star and dark sky and changes nothing else.
+default pair; a site authored `theme: "night"` swaps in star and dark sky and changes
+nothing else, which is the first thing built on the theme chain
+(`worldgen-dsl-redesign.md` §"Puzzle skin") and what the Lighthouse of Alexandria serves.
+
+**The second pair is drawn to the same rule as the first** (§8): the two marks differ in
+OUTLINE — a filled star against a ring of empty sky — so the board stays readable without
+colour. That rule is what makes another skin cheap; a pair that differed only in hue would
+not be a skin, it would be a bug in two colours.
 
 ## 10. Open questions
 

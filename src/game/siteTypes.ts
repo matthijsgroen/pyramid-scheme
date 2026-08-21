@@ -66,6 +66,10 @@ export type RoomCell = {
   // resolved (which authored TableauLevel this is). Opaque to core; each family reads it via its
   // own zod schema. Mirrors FloorConfig/SideSection.encounterArgs.
   encounterArgs?: unknown
+  // Which skin this room's family should wear (docs/instructions/puzzle-screens.md §2), carried from the
+  // FloorConfig/SideSection that authored it. A NAME, not a look: core knows nothing about what it means,
+  // and a family with no skin registered under it draws its default one.
+  theme?: string
   // Registered family id (src/app/families/familyRegistry.ts) — open string, not a closed
   // union, since mods register their own families. Always set for roomType "encounter".
   family?: string
@@ -115,6 +119,8 @@ export type SubSection = {
    * `{runNr}`) — validated by that family's own ResolveKeyRequirements resolver, never
    * interpreted here. See ResolveKeyRequirements in siteAssembler.ts. */
   encounterArgs?: unknown
+  /** Skin name for this section's puzzle rooms — inherited from the site where the section authors none. */
+  theme?: string
 }
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
@@ -148,6 +154,8 @@ export type FloorConfig = {
    * `{runNr}`) — validated by that family's own ResolveKeyRequirements resolver, never
    * interpreted here. See ResolveKeyRequirements in siteAssembler.ts. */
   encounterArgs?: unknown
+  /** Skin name for this floor's puzzle rooms. Unset inherits the site's; a floor may override it. */
+  theme?: string
 }
 
 // A site is one or more floors. Index 0 = surface.

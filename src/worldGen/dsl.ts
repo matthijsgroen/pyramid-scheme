@@ -104,6 +104,10 @@ export type SideSectionConstraint<TExtra extends string = never> = {
    * (siteAssembler.ts's ResolveKeyRequirements). Lets a tableau corridor be authored
    * anywhere (main path or a ward-gated side path) instead of being tied to floor position. */
   encounterArgs?: unknown
+  /** Which skin this section's puzzle rooms wear — a name a family may recognise (`FamilyMeta.themes`),
+   * not a look this layer knows anything about. Unset inherits the site's, and a family with no skin
+   * for the resolved name silently draws its default. */
+  theme?: Theme
   endReward?: RewardSpec | TExtra
   sideSections?: SideSectionConstraint<TExtra>[]
   /** Pool of decoration kinds this section's fork/endpoint rooms may draw from. */
@@ -138,6 +142,9 @@ export type FloorConstraint<TExtra extends string = never> = {
   /** Opaque payload for whichever family renders the main path's rooms — see
    * SideSectionConstraint.encounterArgs above for the full rationale. */
   encounterArgs?: unknown
+  /** Which skin this floor's puzzle rooms wear. Unset inherits the site's — so one floor can be a night
+   * floor inside a plain pyramid, most-specific winning the same way `difficulty` and `encounter` do. */
+  theme?: Theme
   /** Pool of decoration kinds the main path's fork/endpoint rooms may draw from. */
   decorations?: DecorationKind[]
   /**

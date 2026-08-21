@@ -178,4 +178,43 @@ describe("a site theme handed down", () => {
     const plain = buildSite({ ...ctx, constraint: { ...theme, sideSections: [section] } })
     expect(plain.floors[0].sideSections[0].encounter).toBeUndefined()
   })
+
+  /**
+   * A skin travels further than a role, and on purpose.
+   *
+   * A role can demand args (a tomb's `tomb-puzzle` reads `encounterArgs.runNr`), which is why only a caller
+   * that knows its rooms are plain puzzle rooms hands one down. A skin demands nothing — it is a name a
+   * family may recognise — so any site may hand it to any section, including a trapped one.
+   */
+  describe("a site's skin", () => {
+    const night = { theme: "night" }
+
+    it("reaches a floor that authors none, and yields to one that does", () => {
+      expect(buildSite({ ...ctx, constraint: night }).floors[0].theme).toBe("night")
+      const overridden = buildSite({ ...ctx, constraint: { ...night, floors: [{ theme: "day" }] } })
+      expect(overridden.floors[0].theme).toBe("day")
+    })
+
+    it("reaches a side path that authors none, even one that authors its own role", () => {
+      const trapped = { pathPuzzles: 1, difficulty: "starter" as const, end: "treasure" as const, encounter: "trap" }
+      const { floors } = buildSite({
+        ...ctx,
+        constraint: { ...night, sideSections: [trapped] },
+        sideTheme: "night",
+      })
+      expect(floors[0].sideSections[0].encounter).toBe("trap")
+      expect(floors[0].sideSections[0].theme).toBe("night")
+    })
+
+    it("leaves a section that authors its own skin alone", () => {
+      const section = {
+        pathPuzzles: 1,
+        difficulty: "starter" as const,
+        end: "treasure" as const,
+        theme: "day",
+      }
+      const { floors } = buildSite({ ...ctx, constraint: { ...night, sideSections: [section] }, sideTheme: "night" })
+      expect(floors[0].sideSections[0].theme).toBe("day")
+    })
+  })
 })

@@ -7,7 +7,13 @@ import { ECLIPSE_META } from "@/mods/puzzle/game/eclipse/meta"
 import { EclipsePuzzle } from "./EclipsePuzzle"
 
 const EclipseComponent: FamilyPlugin<EclipsePuzzleWithAnswer>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => (
-  <EclipsePuzzle puzzle={puzzle} difficulty={ctx.difficulty} onSolved={onSolved} onCancel={onCancel} />
+  <EclipsePuzzle
+    puzzle={puzzle}
+    difficulty={ctx.difficulty}
+    theme={ctx.theme}
+    onSolved={onSolved}
+    onCancel={onCancel}
+  />
 )
 
 if (isModEnabled("puzzle"))

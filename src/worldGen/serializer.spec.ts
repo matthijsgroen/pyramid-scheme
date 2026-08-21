@@ -15,11 +15,13 @@ describe("generateFile — serializeSideSection field coverage", () => {
       end: "treasure",
       exitOrStaircase: "exit",
       sealed: true,
+      theme: "night",
       sideSections: [
         {
           pathPuzzles: 1,
           difficulty: "junior",
           end: "treasure",
+          theme: "day",
           endReward: { type: "mosaicPiece" },
           rewards: [{ type: "mosaicPiece" }, { type: "consumable", consumable: "oil" }],
           sealed: true,
@@ -51,5 +53,12 @@ describe("generateFile — serializeSideSection field coverage", () => {
 
   it("keeps encounter on a serialized side section", () => {
     expect(output).toContain('encounter: "tableau"')
+  })
+
+  // The same hand-enumeration hazard, and a skin is the field most likely to fall down it: a dropped skin
+  // does not fail — every family just quietly draws its default, everywhere, forever.
+  it("keeps the skin on both a serialized floor and a serialized side section", () => {
+    expect(output).toContain('theme: "night"')
+    expect(output).toContain('theme: "day"')
   })
 })

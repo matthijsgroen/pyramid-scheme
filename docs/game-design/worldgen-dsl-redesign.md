@@ -167,11 +167,15 @@ puzzleFamily?: PuzzleFamily | Partial<Record<PuzzleFamily, number>> | { tag: Fam
 
 `{ tag: "time" }` expands to a uniform weight map over every family carrying that tag, _at build time, before sampling runs_ — it's sugar for the weight map, not a second sampling mechanism. If you need to weight within a tag (e.g. favor sundial over water-clock among "time" families), just write the weight map by hand; the tag form is for the common case of "any of these, no preference."
 
-### Puzzle skin — widen `theme`'s reach, not a new field
+### Puzzle skin — `theme`'s reach, widened — **BUILT**
 
 **Use case:** "a subset of this pyramid's puzzles render in a night theme."
 
-**Decision:** `theme` (`Theme = string`, currently `PyramidConstraint`-only) is promoted into the same chain-resolution pattern `difficulty`/`puzzleFamily` already use — authorable at pyramid, floor, or side-section scope, most-specific wins. A family's `Component` renderer looks up a skin registered for the resolved theme; if none is registered for that theme, it falls back to the family's default skin. No new field, no new authoring concept — `theme` was just missing the override depth every other Population field already has.
+**Decision:** `theme` (`Theme = string`) is authorable at pyramid, floor, or side-section scope, most-specific wins — the same chain resolution `difficulty` and `encounter` use. A family looks up a skin registered for the resolved name; a name it has no skin for silently draws its default. No new authoring concept — `theme` was just missing the override depth every other Population field already had.
+
+**How it reaches a room:** authored on a constraint → `FloorConfig.theme`/`SubSection.theme` (`buildSite`, `sideSections`) → serialized into `generatedWorld.ts` → stamped on each puzzle room by `siteAssembler` → `FamilyContext.theme` (`useEncounter`) → the family's own skin map. The live example is the Lighthouse of Alexandria (`journey("junior_4")`, `theme: "night"`), and eclipse's star-and-dark-sky pair is the first skin drawn from it. A family declares the names it knows in `FamilyMeta.themes`, which is also what the puzzle lab's theme picker offers.
+
+**Two rules worth keeping straight, because a role and a skin travel differently.** A **role** (`encounter`) is handed to side paths only by a caller that knows their rooms are plain puzzle rooms — a role can demand args (a tomb's `tomb-puzzle` reads `encounterArgs.runNr`), and handing one down blindly crashed world generation on the first tableau. A **skin** demands nothing, so every site hands it to every section, trapped ones included: a skin names a look, and a family with no such look draws its own.
 
 ### Per-family difficulty knobs (`puzzleTuning`)
 
