@@ -6,9 +6,8 @@ import { TrapWarningScreen } from "@/mods/trap/app/TrapWarningScreen"
 import { useTrapProgress } from "./useTrapProgress"
 
 // Generic across any trap family — the warning/attempt/disable/turn-around lifecycle has
-// nothing challenge-specific about it. Only one trap family exists today (arithmetic-reflex)
-// but a second one reuses this instead of re-deriving the same lifecycle. Health + consumables +
-// perks come from the trap mod's own state (useTrapProgress): trap-insight extends the time limit,
+// nothing challenge-specific about it, so every family reuses it rather than re-deriving it.
+// Health + consumables + perks come from the trap mod's own state (useTrapProgress): trap-insight extends the time limit,
 // armor reduces damage (inside takeTrapDamage).
 type Props<T> = {
   question: T

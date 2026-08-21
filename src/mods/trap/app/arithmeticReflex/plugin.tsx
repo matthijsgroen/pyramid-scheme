@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components -- side-effect registration file */
-import { useEffect, useRef, useState, type FC } from "react"
+import { useState, type FC } from "react"
 import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry"
+import { TrapCountdown } from "@/mods/trap/app/TrapCountdown"
 import { TrapFamilyShell } from "@/mods/trap/app/TrapFamilyShell"
 import { generate, type ArithmeticQuestion } from "@/mods/trap/game/arithmeticReflex/generate"
 import { ARITHMETIC_REFLEX_META } from "@/mods/trap/game/arithmeticReflex/meta"
@@ -18,19 +19,6 @@ export type { ArithmeticQuestion }
 const ArithmeticReflexComponent: FC<ChallengeProps> = ({ question, timeLimit, onPass, onFail }) => {
   const { a, b, op, answer, choices } = question
   const [done, setDone] = useState(false)
-  const [barWidth, setBarWidth] = useState(100)
-  const onFailRef = useRef(onFail)
-  onFailRef.current = onFail
-
-  useEffect(() => {
-    if (timeLimit <= 0) return // unlimited — no countdown, no auto-fail
-    const frame = requestAnimationFrame(() => setBarWidth(0))
-    const timer = setTimeout(() => onFailRef.current(), timeLimit * 1000)
-    return () => {
-      cancelAnimationFrame(frame)
-      clearTimeout(timer)
-    }
-  }, [timeLimit]) // done intentionally omitted — onFailRef handles stale closure
 
   const handleChoice = (value: number) => {
     if (done) return
@@ -41,13 +29,7 @@ const ArithmeticReflexComponent: FC<ChallengeProps> = ({ question, timeLimit, on
 
   return (
     <div className="flex w-72 flex-col gap-4">
-      {/* Countdown bar */}
-      <div className="h-2 w-full overflow-hidden rounded-full bg-stone-700">
-        <div
-          className="h-full rounded-full bg-amber-400 transition-all ease-linear"
-          style={{ width: `${barWidth}%`, transitionDuration: `${timeLimit}s` }}
-        />
-      </div>
+      <TrapCountdown timeLimit={timeLimit} onExpire={onFail} />
 
       <p className="text-center font-pyramid text-4xl text-amber-200">
         {a} {op} {b} = ?
