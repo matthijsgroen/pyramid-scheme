@@ -107,6 +107,11 @@ export const masterRules: Rule[] = [
   // already owns that pyramid's sideSections (the secondary-tomb map-piece unlock gate). An
   // earlier revision put chests there directly and silently deleted that gate for all 4 master
   // journeys; every entry here now targets a pyramid the tier rule doesn't touch.
+  // **The Great Pyramid of Giza is a building site**, so its puzzles wear the haul roads: junctions joined
+  // by causeways, which is the star map's own mechanic read as getting stone from a quarry to a pyramid. A
+  // skin only, for the reason spelled out on the Nile Delta in expert.ts — the family pool here is untouched.
+  journey("master_1").pyramid("1-5", { theme: "causeway" }),
+
   journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0), starterEcho()] }),
   journey("master_1").pyramid(2, { sideSections: [holdChest(1), expertEcho()] }),
   journey("master_2").pyramid(1, { sideSections: [holdChest(3), holdChest(0)] }),

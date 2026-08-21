@@ -821,24 +821,31 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
 | ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)               |
-| **Water & Nile**             | flooding, irrigation, the river             | Water clock — currently the _only_ member, see gap note below                                                                                                                                  |
+| **Water & Nile**             | flooding, irrigation, the river             | Constellation (its `irrigation` skin: basins joined by channels, one network watering every field), water clock                                                                                 |
 | **Merchant / Market**        | trade, weighing goods, bartering            | Balance scale, Sokoban (moving cargo), target-number (haggling to a price)                                                                                                                     |
-| **Logistics / Caravan**      | moving things through constrained space     | Sokoban, Rush Hour                                                                                                                                                                             |
+| **Logistics / Caravan**      | moving things through constrained space     | Constellation (its `causeway` skin — the network being _built_ rather than moved through, a looser fit than its other two), Sokoban, Rush Hour                                                  |
 | **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells) |
 | **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                              |
 | **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                             |
 | **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                          |
 
-**Gap:** Water & Nile has exactly one family. Two directions to fill it: a
-water-pouring/vessel-transfer puzzle (the classic "water jug problem" — measure
-out a target volume) or a Nile-flood timing puzzle riffing on water clock's
-duration mechanic but with a different UI. Not designed — flagging the gap,
-not proposing a fix yet.
+**Gap, half filled — and filled by a skin rather than by a mechanic.** Water & Nile
+held exactly one family, and that one unbuilt. Constellation now wears the theme too:
+basins joined by channels is what §4.21's rules say when the same board is read as a
+waterworks, and the Nile Delta Expedition authors that skin.
 
-**Weakest theme by family count, not counting the flagged gap:** Water & Nile
-(1). Everything else has 3+, so it's the one worth deliberately filling if a
-gap ever needs plugging (e.g. wanting a puzzle to round out a "river journey"
-stretch of a pyramid).
+**Worth being precise about, because it is a cheaper move than it looks.** A skin gives a
+theme a _built, playable_ member without designing anything — but it adds no new **skill**
+to the curriculum, since the reasoning in an irrigation room is the reasoning in a star
+room. So the gap is closed as a "what can this journey serve today" question and still open
+as a curriculum one, and the two directions once flagged for it are still the answers to
+that: a water-pouring/vessel-transfer puzzle (the classic "water jug problem" — measure out
+a target volume), or a Nile-flood timing puzzle riffing on water clock's duration mechanic
+with a different UI. Neither is designed.
+
+**The general lesson, which applies to every thin theme here:** a theme short of members can
+be dressed from families that already fit it long before a new family is designed for it,
+and the two are not substitutes for each other.
 
 ### 11.2 Weight (authoring budget, derived from §6/§8 solve-time data)
 

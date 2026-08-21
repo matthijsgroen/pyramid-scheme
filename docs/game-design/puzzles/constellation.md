@@ -324,9 +324,34 @@ always carries `sky`. A check that is always true is not a switch. What the skin
   quiet blue-grey and readable and nothing more. The disc exists to keep the number legible with lines of
   light running into it; the glow is the star itself.
 
-Per-**site** variation — this family starrier on a lighthouse journey than elsewhere — is a different
-job, and not a small one: `ctx.theme` is unset everywhere real gameplay runs (only the puzzle lab sets
-it), so it needs the site's theme carried into the encounter before any family can dress for a place.
+### 9.1 The three skins, and why this mechanic has more than one place
+
+**The rules never move; only the words for them do.** That is the whole reason this family carries
+skins rather than one look: a degree count, a no-crossing rule and a single connected group describe
+more than one kind of network, and each of those networks is a real place in this world.
+
+| Skin         | The place                                                | A node is                                             | A line is                            |
+| ------------ | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
+| `default`    | the night sky                                            | a star; its number is how much light meets it         | a line of light                      |
+| `irrigation` | the Nile delta (§11.1 Water & Nile)                      | a basin; its number is how many channels it feeds     | a channel, doubled into a wide canal |
+| `causeway`   | a pyramid under construction (§11.1 Logistics / Caravan) | a site; its number is how many roads meet it          | a haul road                          |
+
+Two things every skin is held to, and neither is a style note:
+
+- **The three node states differ in fill and outline, not only in hue** — short of its count, holding
+  it, holding too many. A dry stone basin against a full one; a bare junction against paved stone.
+- **A node that has its count is the one that lights up** (§8), in every skin. The reward reading does
+  not change because the dress did.
+
+**A hint keeps its own colours in every skin**, deliberately: the point of a highlight is that it is
+_not_ the board's palette, so a hint pointing at a channel looks like a hint rather than like a
+slightly different channel.
+
+**Only the skin is authored, never the family.** `theme` decides what a family looks like and never
+which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and
+leave their puzzle pool alone — every other family in those pyramids draws its own default, which is
+exactly what a name a family does not know is for. Authoring the _family_ as well waits until the
+catalogue is broad enough that a themed pool still has variety inside it.
 
 ## 10. Open questions
 

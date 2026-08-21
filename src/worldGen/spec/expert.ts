@@ -115,6 +115,14 @@ export const expertRules: Rule[] = [
 
   ...wardRules,
 
+  // **The Nile Delta Expedition is irrigation country.** A skin and nothing else: `theme` decides what a
+  // family looks like, never which family renders a room, so every puzzle here still comes from the general
+  // pool. Only the star map has an irrigation skin today — its basins joined by channels are this mechanic
+  // read as a waterworks — and every other family draws its default, which is exactly what a name a family
+  // does not know is supposed to do. Authoring the FAMILY here as well is a decision for when the catalogue
+  // is broad enough for a themed pool to still have variety in it.
+  journey("expert_3").pyramid("1-5", { theme: "irrigation" }),
+
   // expert_4 (the last journey) — some open main-path floors gain a floor-key lock (find a
   // colored key on the floor to open a gated side room) plus an explicitly broad `packing`
   // layout (more sprawl to hide the key in). First tier to bring floor keys onto the open main

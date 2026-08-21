@@ -21,6 +21,8 @@ type Props = {
   focus?: number
   /** Stars the current hint points at — a sealing reason points at the group it would close. */
   litStars?: ReadonlySet<number>
+  /** The skin this room was authored to wear; a name this family has none for draws the default. */
+  theme?: string
   onDrawLine: (pair: number) => void
 }
 
@@ -41,6 +43,73 @@ const positionOf = (puzzle: ConstellationPuzzle, star: number) => {
     top: (rowOf(puzzle.size, puzzle.stars[star].cell) + 0.5) * share,
   }
 }
+
+/**
+ * A skin: what the board, its lines and its nodes look like. The family emits logical state only — a node
+ * that is short of its number, has it, or holds too many; a line drawn, doubled or previewed — and a skin
+ * decides the pixels (docs/instructions/puzzle-screens.md §2).
+ *
+ * The same rule holds in every one of them, and it is the accessibility floor rather than a style note: the
+ * three node states differ in **fill and outline**, not only in hue, and a node that has its count always
+ * reads as the one that lit up. A skin the family does not have falls back to `default` silently.
+ */
+type Skin = {
+  /** The board itself — background and frame. */
+  board: string
+  /** Far-off specks behind the board: stars, silt, whatever the place is made of. Empty = none. */
+  backdrop: string
+  /** A line already drawn, and a line the drag is about to add. */
+  line: string
+  pending: string
+  /** The glow a line carries, as a Tailwind drop-shadow. */
+  lineGlow: string
+  /** A node short of its count, one that has it, and one holding too many. */
+  unlit: string
+  lit: string
+  over: string
+}
+
+const SKINS: Record<string, Skin> = {
+  // The night sky. Stars burn once they have their light; the unlit ones are quiet and readable.
+  default: {
+    board: "bg-[radial-gradient(ellipse_at_50%_15%,#16204a_0%,#0a0f24_45%,#04060f_100%)] ring-1 ring-indigo-300/15",
+    backdrop: "fill-slate-200",
+    line: "stroke-amber-100",
+    pending: "stroke-amber-100/40",
+    lineGlow: "drop-shadow-[0_0_2px_rgb(254_243_199_/_0.7)]",
+    unlit: "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
+    lit: "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]",
+    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+  },
+  // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
+  // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
+  // one network watering every field. A dry basin is a stone ring; a fed one holds water.
+  irrigation: {
+    board: "bg-[radial-gradient(ellipse_at_50%_20%,#1d3b32_0%,#122620_45%,#0a1512_100%)] ring-1 ring-emerald-300/15",
+    backdrop: "fill-emerald-200/70",
+    line: "stroke-sky-300",
+    pending: "stroke-sky-300/40",
+    lineGlow: "drop-shadow-[0_0_2px_rgb(125_211_252_/_0.6)]",
+    unlit: "border-stone-400/50 bg-radial from-stone-700/60 to-stone-950/80 text-stone-100",
+    lit: "border-sky-200 bg-radial from-sky-300/70 to-sky-500/30 text-sky-950 shadow-[0_0_16px_4px_rgb(125_211_252_/_0.4)]",
+    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+  },
+  // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
+  // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
+  // is finished stone. Daylight rather than night, so the lines read as limestone rather than light.
+  causeway: {
+    board: "bg-[radial-gradient(ellipse_at_50%_20%,#4a3a24_0%,#2c2216_45%,#171008_100%)] ring-1 ring-amber-200/15",
+    backdrop: "fill-amber-100/40",
+    line: "stroke-stone-100",
+    pending: "stroke-stone-100/40",
+    lineGlow: "drop-shadow-[0_0_1px_rgb(28_25_23_/_0.9)]",
+    unlit: "border-amber-900/70 bg-radial from-stone-800/70 to-stone-950/80 text-amber-100",
+    lit: "border-stone-100 bg-radial from-stone-100/80 to-stone-300/30 text-stone-900 shadow-[0_0_14px_3px_rgb(245_245_244_/_0.35)]",
+    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+  },
+}
+
+const skinFor = (theme: string | undefined): Skin => (theme && SKINS[theme]) || SKINS.default
 
 // A star disc, as a share of a cell — half of HIT_SCALE-independent 77% of the pitch, which is where a
 // line has to stop so the number underneath it stays readable.
@@ -88,7 +157,8 @@ const Lines: FC<{
   highlighted?: ReadonlySet<number>
   focus?: number
   backdrop: ReturnType<typeof backdropStars>
-}> = ({ puzzle, state, candidate, highlighted, focus, backdrop }) => (
+  skin: Skin
+}> = ({ puzzle, state, candidate, highlighted, focus, backdrop, skin }) => (
   <svg
     viewBox={`0 0 ${puzzle.size} ${puzzle.size}`}
     className="pointer-events-none absolute inset-0 size-full"
@@ -96,7 +166,7 @@ const Lines: FC<{
     focusable="false"
   >
     {backdrop.map((far, index) => (
-      <circle key={index} cx={far.x} cy={far.y} r={far.r} className="fill-slate-200" opacity={far.dim} />
+      <circle key={index} cx={far.x} cy={far.y} r={far.r} className={skin.backdrop} opacity={far.dim} />
     ))}
     {puzzle.pairs.map((pair, index) => {
       const count = state.lines[index]
@@ -121,8 +191,9 @@ const Lines: FC<{
         rowOf(puzzle.size, from) + 0.5 + inset[1] * down,
       ]
       const [x2, y2] = [colOf(puzzle.size, to) + 0.5 - inset[0] * along, rowOf(puzzle.size, to) + 0.5 - inset[1] * down]
-      const tone =
-        index === focus ? "stroke-amber-300" : highlighted?.has(index) ? "stroke-sky-300/70" : "stroke-amber-100"
+      // A hint speaks in its own colours in every skin — the point of a highlight is that it is not the
+      // board's own palette.
+      const tone = index === focus ? "stroke-amber-300" : highlighted?.has(index) ? "stroke-sky-300/70" : skin.line
       return (
         <g key={index}>
           {strokesFor(shown).map((offset, stroke) => (
@@ -136,10 +207,7 @@ const Lines: FC<{
               strokeLinecap="round"
               // A line of light rather than a drawn stroke: the glow is what makes it read as light between
               // two stars instead of pen on paper.
-              className={clsx(
-                "drop-shadow-[0_0_2px_rgb(254_243_199_/_0.7)]",
-                stroke < settled ? tone : "stroke-amber-100/40"
-              )}
+              className={clsx(skin.lineGlow, stroke < settled ? tone : skin.pending)}
             />
           ))}
         </g>
@@ -148,8 +216,9 @@ const Lines: FC<{
   </svg>
 )
 
-export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focus, litStars, onDrawLine }) => {
+export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focus, litStars, theme, onDrawLine }) => {
   const byStar = pairsByStar(puzzle)
+  const skin = skinFor(theme)
   const backdrop = useMemo(() => backdropStars(puzzle), [puzzle])
   // The gesture lives in a ref and the state only mirrors it for drawing. A release has to act on the
   // direction the finger was last pointing, and reading that from state would make the line depend on
@@ -184,7 +253,12 @@ export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focu
   return (
     // The board claims its own gestures: a vertical drag here means "draw a line down", and the page is
     // scrolled to the rules from the chrome around it (docs/game-design/puzzles/constellation.md §6).
-    <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] touch-none overflow-hidden rounded-lg bg-[radial-gradient(ellipse_at_50%_15%,#16204a_0%,#0a0f24_45%,#04060f_100%)] ring-1 ring-indigo-300/15 select-none">
+    <div
+      className={clsx(
+        "relative aspect-square w-full max-w-[min(56vh,26rem)] touch-none overflow-hidden rounded-lg select-none",
+        skin.board
+      )}
+    >
       <Lines
         puzzle={puzzle}
         state={state}
@@ -192,6 +266,7 @@ export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focu
         highlighted={highlighted}
         focus={focus}
         backdrop={backdrop}
+        skin={skin}
       />
       {puzzle.stars.map((star, index) => {
         const held = degreeOf(byStar, state.lines, index)
@@ -214,13 +289,9 @@ export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focu
                 // player just achieved, so it is the thing that should look like an achievement. It scans
                 // the same either way — what is left to do is now "the stars still showing a plain number"
                 // rather than "the stars still lit".
-                held > star.count
-                  ? "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]"
-                  : held === star.count
-                    ? "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]"
-                    : // Unlit: readable and unremarkable. The number has to stay crisp — it is the clue —
-                      // but nothing here draws the eye until the star earns it.
-                      "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
+                // Unlit is readable and unremarkable — the number has to stay crisp, it is the clue — and
+                // nothing draws the eye until the node earns it.
+                held > star.count ? skin.over : held === star.count ? skin.lit : skin.unlit,
                 litStars?.has(index) && "ring-2 ring-sky-300/80"
               )}
             >

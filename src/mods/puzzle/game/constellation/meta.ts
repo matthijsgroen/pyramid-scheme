@@ -10,6 +10,10 @@ export const CONSTELLATION_META: FamilyMeta = {
   // Configured for every tier (docs/game-design/puzzles/constellation.md §5), so the allocator may draw it
   // anywhere and a node may author it anywhere.
   minTier: "starter",
+  // The skins this family has (docs/instructions/puzzle-screens.md §2): its own night sky, plus the two
+  // places whose infrastructure this mechanic already describes — basins joined by channels, and sites
+  // joined by haul roads. Listed so the puzzle lab offers all three; any other name draws the default.
+  themes: ["default", "irrigation", "causeway"],
   icon: "✨",
   color: "indigo",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for

@@ -19,11 +19,13 @@ import { ConstellationRules } from "./ConstellationRules"
 type Props = {
   puzzle: ConstellationPuzzleWithAnswer
   difficulty?: Difficulty
+  /** The skin the site authored for this room (docs/game-design/puzzles/constellation.md §9). */
+  theme?: string
   onSolved: () => void
   onCancel: () => void
 }
 
-export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
+export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = useState(() => createConstellationState(puzzle))
 
@@ -59,6 +61,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, o
             highlighted={hintVisible ? hint?.pairs : undefined}
             focus={hintVisible ? hint?.focus : undefined}
             litStars={hintVisible ? hint?.stars : undefined}
+            theme={theme}
             onDrawLine={pair => {
               reportInput()
               // From the board it replaces rather than from the render's own copy: two fingers releasing
