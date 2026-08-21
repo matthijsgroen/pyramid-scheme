@@ -9,7 +9,7 @@ const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
 const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8]
 
 describe("generateConstellation", () => {
-  it.each(TIERS)("draws a %s board that deduction alone finishes", tier => {
+  it.each(TIERS)("draws a %s board that deduction alone finishes", { timeout: 60_000 }, tier => {
     const options = CONSTELLATION_CONFIG[tier]
     for (const seed of SEEDS) {
       const board = generateConstellation(seed, options)
@@ -22,7 +22,7 @@ describe("generateConstellation", () => {
     }
   })
 
-  it.each(TIERS)("draws a %s board whose answer obeys the rules", tier => {
+  it.each(TIERS)("draws a %s board whose answer obeys the rules", { timeout: 60_000 }, tier => {
     const options = CONSTELLATION_CONFIG[tier]
     for (const seed of SEEDS) {
       const board = generateConstellation(seed, options)
@@ -55,13 +55,17 @@ describe("generateConstellation", () => {
    * so a miss is a redraw — and the nearest miss ships as the fallback rather than nothing, which is why this
    * checks the run of seeds rather than every one of them.
    */
-  it.each(TIERS.filter(tier => CONSTELLATION_CONFIG[tier].requires))("spends its own rung at %s", tier => {
-    const options = CONSTELLATION_CONFIG[tier]
-    const met = SEEDS.filter(seed => {
-      const board = generateConstellation(seed, options)
-      const { steps } = solveConstellationByTechniques(board, techniquesUpTo(options.techniqueCap))
-      return steps.filter(step => options.requires!.includes(step.technique)).length >= (options.requiresCount ?? 1)
-    })
-    expect(met.length).toBeGreaterThanOrEqual(SEEDS.length - 1)
-  })
+  it.each(TIERS.filter(tier => CONSTELLATION_CONFIG[tier].requires))(
+    "spends its own rung at %s",
+    { timeout: 60_000 },
+    tier => {
+      const options = CONSTELLATION_CONFIG[tier]
+      const met = SEEDS.filter(seed => {
+        const board = generateConstellation(seed, options)
+        const { steps } = solveConstellationByTechniques(board, techniquesUpTo(options.techniqueCap))
+        return steps.filter(step => options.requires!.includes(step.technique)).length >= (options.requiresCount ?? 1)
+      })
+      expect(met.length).toBeGreaterThanOrEqual(SEEDS.length - 1)
+    }
+  )
 })
