@@ -656,6 +656,31 @@ Family doc: `docs/game-design/puzzles/canal.md`.
 - **Themes:** water (pipes), Trade (a road network), and a lit circuit reads as a temple's lamps — it wears
   a role the same way §4.21 and §4.22 do.
 
+### 4.24 Star Battle (two not touch) — _(next up for the `sky` pool; not designed)_
+
+**Why it is next:** the `sky` role is what the Lighthouse of Alexandria draws every main-path room from
+(`junior.ts`), and it holds two families — the beam and the sun-and-moon grid — plus the star map, which
+wears `sky` as its default identity (§4.21). Three is thin for five pyramids, and this is the candidate that
+was ranked second when the pool was investigated, behind the star map that got built.
+
+- **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction, like
+  eclipse, but constrained by regions rather than by lines alone.
+- **Operates:** place a fixed number of stars in every row, every column and every region, and no two stars
+  may touch, diagonals included. The name is the theme, which is the cheapest possible fit for `sky`.
+- **The distinctness question, which is the first thing to settle.** Row-and-column counts on a binary grid
+  IS eclipse's mechanic (§4.20). What this adds is REGIONS and the "no two touching" rule, so the real
+  question for whoever designs it is whether those two carry a ladder of their own or whether it plays as
+  eclipse with a jigsaw drawn on it. Compare against the two rejections already on record: Akari was ruled
+  out for duplicating lightbeam's mechanism (§4.15's deferred note), and the rotate-pipes reading of the
+  canal for the same reason (§4.22) — while a shared VERB alone was judged acceptable (§4.23).
+- **What it would inherit for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed
+  conflict display, and — if it wants one — the completion run every family can now have
+  (`puzzle-screens.md` §3: report the solve a beat late, refuse input, honour reduced motion).
+- **Generation:** draw regions, place a legal star set, then check a technique solver reaches it unaided —
+  the draw-then-test shape (§4.21), since a region map is not a clue that can be thinned.
+- **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic
+  that reads as several places.
+
 ---
 
 ## 5. The shared grid engine
