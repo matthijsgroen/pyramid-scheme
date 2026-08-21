@@ -6,10 +6,11 @@ lives in `docs/instructions/puzzle-screens.md`. This doc holds what is specific 
 the eclipse: what the player is deducing, its technique ladder, and how generation
 proves a board needs the reasoning its tier claims.
 
-> **Solve times are not measured yet.** Every duration below is a target. The lab
-> (`src/app/dev/PuzzleLab.tsx`) plays the real screen and its banner reports the
-> solve time, so timing a tier needs nothing of its own — until that is done, no
-> reader should treat a figure here as a finding.
+> **The top tier has been played; the rest are targets.** An 8×8 wizard board was
+> timed in the lab and sits inside §3.2's budget, hints included. Every other
+> duration below is a target: the lab (`src/app/dev/PuzzleLab.tsx`) plays the real
+> screen and its banner reports the solve time, so timing a tier needs nothing of
+> its own.
 
 ## 1. Rules
 
@@ -302,8 +303,7 @@ default pair; a night site swaps in star and dark sky and changes nothing else.
 2. **Is 6×6 the ceiling?** 8×8 is a real Tango size, and the knob that grows with
    it is bookkeeping rather than reasoning — the catalogue says that is the wrong
    axis, so the burden of proof is on growing it.
-3. **How long does a wizard board actually take?** Untimed. An 8×8 board is 45–53
-   forced steps, and the budget wants under six minutes with an occasional longer
-   board being fine (§3.2). The number that would force a retune is a tier landing in
-   the tens of minutes, the way a 7×7 futoshiki did; if it does, the fallback is 6×6
-   at quota ×6, measured as reachable.
+3. ~~**How long does a wizard board actually take?**~~ — **Answered by play.** The
+   8×8 board is 45–53 forced steps and comes in inside the budget, and it reads as a
+   puzzle worth doing rather than a slog, hints included. The 6×6 fallback at quota
+   ×6 stays measured-and-available, but nothing asks for it.
