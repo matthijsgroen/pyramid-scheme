@@ -18,19 +18,22 @@ const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 tex
  */
 const benchNotes = (puzzle: unknown): string[] => {
   if (typeof puzzle !== "object" || puzzle === null) return []
-  const { goals, modes, techniqueCap, size, movable, fixed } = puzzle as {
+  const { goals, modes, techniqueCap, size, movable, fixed, blocked } = puzzle as {
     goals?: unknown
     modes?: unknown
     techniqueCap?: unknown
     size?: unknown
     movable?: unknown
     fixed?: unknown
+    blocked?: unknown
   }
   return [
     typeof size === "number" ? `${size}×${size}` : undefined,
     typeof techniqueCap === "string" ? `cap ${techniqueCap}` : undefined,
     Array.isArray(movable) ? `${movable.length} pieces` : undefined,
     Array.isArray(fixed) ? `${fixed.length} fixed` : undefined,
+    // How much of the grid ships hatched, which is the number star battle is thinned against.
+    Array.isArray(blocked) ? `${blocked.filter(Boolean).length} blocked` : undefined,
     // A generator that records modes rather than goals says so — they are what replaces them.
     Array.isArray(modes) ? (modes.length ? `modes ${modes.join(" + ")}` : "modes — (baseline)") : undefined,
     Array.isArray(goals) && !Array.isArray(modes)

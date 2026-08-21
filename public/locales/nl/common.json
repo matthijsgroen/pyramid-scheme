@@ -436,5 +436,32 @@
       "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
       "isolation": "Die lijn sluit deze {{count}} sterren af van de rest."
     }
+  },
+  "starBattle": {
+    "rules": {
+      "goal": "Zet een ster in elke rij, elke kolom en elk gebied.",
+      "touch": "Twee sterren mogen elkaar nooit raken — ook niet met een punt.",
+      "blocked": "Een gearceerd vakje blijft leeg.",
+      "enter": "Tik een vakje voor een ster, tik weer om het leeg te melden, en nog eens om het te wissen."
+    },
+    "undo": "Ongedaan maken",
+    "hint": {
+      "mistake": "Een van deze tekens kan niet kloppen.",
+      "touch": "Hier een {{star}}, dus niets wat eraan raakt.",
+      "groupFull.row": "Deze rij heeft zijn {{star}}, dus de rest blijft leeg.",
+      "groupFull.col": "Deze kolom heeft zijn {{star}}, dus de rest blijft leeg.",
+      "groupFull.region": "Dit gebied heeft zijn {{star}}, dus de rest blijft leeg.",
+      "groupTight.row": "Nog één vakje over in deze rij, daar komt de {{star}}.",
+      "groupTight.col": "Nog één vakje over in deze kolom, daar komt de {{star}}.",
+      "groupTight.region": "Nog één vakje over in dit gebied, daar komt de {{star}}.",
+      "regionLine.row": "De {{star}} van dit gebied moet uit die rij komen, dus de rest van de rij blijft leeg.",
+      "regionLine.col": "De {{star}} van dit gebied moet uit die kolom komen, dus de rest van de kolom blijft leeg.",
+      "lineRegion.row": "De {{star}} van die rij is die van dit gebied, dus de rest van het gebied blijft leeg.",
+      "lineRegion.col": "De {{star}} van die kolom is die van dit gebied, dus de rest van het gebied blijft leeg.",
+      "spanning.toRows": "Deze gebieden vullen samen die {{count}} rijen, dus verder houdt daar niets een {{star}}.",
+      "spanning.toCols": "Deze gebieden vullen samen die {{count}} kolommen, dus verder houdt daar niets een {{star}}.",
+      "spanning.fromRows": "Die rijen kunnen hun {{count}} {{star}} alleen uit deze gebieden halen, dus de rest blijft leeg.",
+      "spanning.fromCols": "Die kolommen kunnen hun {{count}} {{star}} alleen uit deze gebieden halen, dus de rest blijft leeg."
+    }
   }
 }

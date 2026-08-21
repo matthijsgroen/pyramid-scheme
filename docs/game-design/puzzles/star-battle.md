@@ -6,12 +6,13 @@ lives in `docs/instructions/puzzle-screens.md`. This doc holds what is specific 
 Star Battle: what the player is deducing, its technique ladder, and how generation
 proves a board needs the reasoning its tier claims.
 
-> **Nothing here has been played.** Every number below was measured with a throwaway
-> generator and technique solver written to settle the two questions the catalogue left
-> open — whether a region map alone can carry a board (§4.1) and whether the region
-> rungs carry a ladder (§3.4). Both answers changed the design, so they are recorded
-> here rather than discovered during the build. Solve times are still targets, and the
-> lab (`src/app/dev/PuzzleLab.tsx`) is what settles them.
+> **Built and measured, not yet played.** Every number below comes from the shipped
+> generator and technique solver. Two of them were settled BEFORE the build, by a
+> throwaway probe written to answer the questions the catalogue left open — whether a
+> region map alone can carry a board (§4.1) and whether the region rungs carry a ladder
+> (§3.4) — and both answers changed the design. Solve times are still targets: the lab
+> (`src/app/dev/PuzzleLab.tsx`) plays the real screen and its banner reports the solve
+> time, so timing a tier needs nothing of its own.
 
 ## 1. Rules
 
@@ -106,36 +107,59 @@ it.
 
 ### 3.3 Soundness needs a guard from the first commit
 
-Eclipse learned this the expensive way (its §7.1): generation solves each board once
-along one path, so a rung that is wrong from states that path never visits ships a board
-that cannot be finished. Star Battle's exposure is worse than eclipse's, because two of
-its rungs reason about _sets of groups_ rather than one line, and the blind spot is a
-cover that mixes rows with columns — the throwaway probe had exactly that bug, and it
-silently settled boards to answers that broke the no-touching rule. **`spanning` sweeps
-rows and columns separately, never together**, and a soundness spec of the shape eclipse
-ships (fill a random subset of the true answer, walk the ladder, check every decision
-against it) is part of the first commit rather than a follow-up.
+Eclipse learned this the expensive way (its §7.1): generation solves each board once along one path, so a
+rung that is wrong from states that path never visits ships a board that cannot be finished and a hint that
+lies. `soundness.spec.ts` is the guard here, and it has two halves:
+
+- **Every rung agrees with the answer** from a few thousand states a player could actually be in — a random
+  subset of the answer's stars, and a random scatter of correct dark marks.
+- **Every rung was FORCED**, on the two sizes small enough to enumerate: its decision has to hold in _every_
+  legal completion of the state it fired from, not merely in the answer the board shipped with. Agreeing with
+  one answer is what a lucky guess also does.
+
+**The guard was checked for teeth, which is the part worth copying.** A test that has never failed is a
+claim, not a guard, so three plausible bugs were introduced on purpose. An off-by-one in `groupFull` —
+emptying a group that still owes a star — fails all seven cases, so the oracle works. The other two did
+**not** fail, and that is informative rather than reassuring: at one star to a line, dropping `regionLine`'s
+quota check still reaches sound conclusions, and `groupTight`'s adjacency guard cannot fire at all, because
+a group owing one star is never down to two squares. Both guards stay — they are what the rungs need at a
+wider quota (§10.3) — but neither is load-bearing today, and a future change to either is unprotected.
+
+**Rows and columns are swept separately in `spanning`, never together.** A cover built from both counts
+every star twice, so its quota arithmetic agrees on boards it has no business deciding. Under the current
+cover condition a mixed sweep turns out to be unreachable rather than wrong, which the teeth check
+demonstrated — but the separation is what keeps it that way, and the condition is the kind of thing a later
+rung loosens.
+
+The probe's own unsoundness, for the record, was neither of those: it placed stars in touching squares because
+its counting rung had no adjacency guard at all, and it settled boards to answers that broke the rules.
 
 ### 3.4 What the ladder is actually worth
 
-Measured over eight boards a size, `k = 1`, thinning included:
+Measured over eight boards a size with the shipped generator, one star to a line, thinning included:
 
-| Size | Blocked squares at cap `groupTight` | at cap `spanning` |
-| ---- | ----------------------------------- | ----------------- |
-| 6×6  | 8.9                                 | 7.9               |
-| 7×7  | 11.8                                | 9.6               |
-| 8×8  | 16.5                                | 14.6              |
+| Size | Blocked squares at cap `groupTight` | at cap `spanning` | Steps |
+| ---- | ----------------------------------- | ----------------- | ----- |
+| 6×6  | 8.9                                 | 7.6               | 16    |
+| 7×7  | 12.0                                | 11.1              | 19    |
+| 8×8  | 17.4                                | 14.9              | 24    |
 
-Four rungs of ladder buy **two blocked squares out of sixty-four**. And the step mix at
-8×8 with the whole ladder available is 156 `groupFull`, 64 `groupTight`, 47 `regionLine`,
-27 `lineRegion` and 22 `spanning` — seventy per cent of a solve is the two rungs a player
-learns in the first minute.
+**Four rungs of ladder buy two and a half blocked squares out of sixty-four**, and the step count barely
+moves with the cap at all. The mix at 8×8 with the whole ladder available, over eight boards: 64
+`groupTight`, 65 `groupFull`, 34 `touch`, 14 `regionLine`, 9 `lineRegion`, 5 `spanning` — **eighty-five
+per cent of a solve is the three rungs a player learns in the first minute**, and the region readings are
+the remaining fifteen.
 
-This is §3.2 of the catalogue — bookkeeping rather than difficulty — and it is the same
-objection standing against Circuit (§4.23). It does not sink the family, because Star
-Battle's steps are **cheap**: darkening the squares around a star is a reflex, where
-eclipse's counting step is a thought. But it does decide the sizing (§5) and it is the
-reason the top tier is a measurement rather than a plan.
+**Only `groupTight` ever places a star.** Every other rung takes squares away; the star lands when a group
+is down to its last one. That is the family in a sentence, and it is why the ladder is worth so little in
+blocked squares: the region rungs do not decide the answer, they narrow the board until the counting rung
+can.
+
+**The worry this raises is the opposite of the one the catalogue predicted.** §4.24 expected an 8×8 to be
+long — a sweep of bookkeeping — on the strength of a throwaway probe that counted rung firings rather than
+solver steps. The shipped solver settles an 8×8 in **twenty-four steps**, against eclipse's wizard 55–62.
+So a top-tier board here is SHORT and mostly counting, and the risk is that it comes in under the tier it
+is sold as rather than over it. That is a lab question (§10.2), and it is the one to answer first.
 
 ## 4. Generation
 
@@ -216,17 +240,19 @@ throw away most draws and still be free.
 | master  | 8×8  | 1     | `spanning`   | `lineRegion` ×4 |
 | wizard  | 8×8  | 1     | `spanning`   | `spanning` ×3   |
 
-**7×7 is the size this family is really about.** It thins to 6–13 blocked squares and
-about twenty non-trivial steps, which is a board with something to think about that is not
-a sweep. 6×6 comes out at roughly thirteen — thin enough that it reads as a junior board,
-which is where it sits. 8×8 is a hundred and sixty non-trivial steps, three times
-eclipse's wizard, and the two top tiers share it because the alternative was 9×9 and the
-step count is already the risk.
+**Grid size is what moves this family, and it moves the clue rather than the bookkeeping.** A 6×6 thins to
+5–10 blocked squares and about sixteen steps, a 7×7 to 9–14 and nineteen, an 8×8 to 12–17 and
+twenty-four. Every one of those is a shorter board than eclipse's equivalent tier, which is the thing the
+lab has to weigh: these steps are reflexes (darkening the ring around a star) where eclipse's are thoughts,
+so a shorter board is not automatically an easier one — but it might be.
 
-**The top two tiers share a size and differ only in the rung they must spend**, which is
-the weakest tier separation in the catalogue. It is written down as the starting point for
-the lab, not as a claim: if `spanning`'s hint does not survive §3.1, wizard becomes 8×8
-with a `lineRegion` quota of six and master drops to 7×7.
+**The top two tiers share a size and differ only in the rung they must spend**, which is the weakest tier
+separation in the catalogue. It is written down as the lab's starting point rather than a claim: if the top
+tier plays short, the answer is 9×9 at wizard rather than a deeper rung, since the ladder has nothing deeper
+to give (§3.1) and size is the knob that buys regions.
+
+Generation cost, measured: a few milliseconds up to expert, 0.1–1.5s at master and wizard where the rung
+quota throws most draws away. Comfortably inside what eclipse's top tier already spends.
 
 ## 6. Controls
 
@@ -300,10 +326,10 @@ one reading that might earn a second skin if a site ever asks.
 
 1. **Does `spanning`'s hint survive a real board?** §3.1. This is the first thing to look
    at in the lab, because the tier table's top two rows depend on the answer.
-2. **Is 8×8 inside the solve-time budget?** A hundred and sixty steps is three times
-   eclipse's wizard, and the defence is that Star Battle steps are reflexes rather than
-   thoughts (§3.4). That is a claim about the fingertips, and only play settles it. If it
-   loses, the ladder is 5×5–7×7 and wizard is 7×7 with a quota.
+2. **Does the top tier play as a top tier?** An 8×8 settles in twenty-four steps against eclipse's wizard
+   55–62, and eighty-five per cent of them are counting (§3.4). The board may well come in UNDER its tier
+   rather than over it, which is the opposite of the risk the catalogue recorded. First thing to time in the
+   lab; if it loses, wizard grows to 9×9 rather than reaching for a deeper rung.
 3. **Two stars to a line.** Untested, and the classic form of the hard puzzle. It changes
    `groupTight` from "one square left" to a capacity argument, which may be what revives
    the rung §3.2 cut. Worth probing before it is worth building.

@@ -3,6 +3,7 @@ import type { FC } from "react"
 import {
   brokenLinks,
   colOf,
+  eclipseConflicts,
   isGiven,
   rowOf,
   type EclipsePuzzle,
@@ -10,7 +11,7 @@ import {
   type Link,
   type Mark,
 } from "@/mods/puzzle/game/eclipse/eclipse"
-import { useDelayedConflicts } from "./useDelayedConflicts"
+import { useDelayedConflicts } from "../useDelayedConflicts"
 
 type Props = {
   puzzle: EclipsePuzzle
@@ -150,7 +151,7 @@ const markGlyph = (value: Mark | undefined, theme: string | undefined) => {
 export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, focus, theme, onTapCell }) => {
   const { size } = puzzle
   // Held back a beat: a tap on the way to the other mark is not a mistake (see the hook).
-  const conflicts = useDelayedConflicts(puzzle, state)
+  const conflicts = useDelayedConflicts(state.marks, marks => eclipseConflicts(puzzle, { marks }))
   const broken = new Set(brokenLinks(puzzle, state).map(linkKey))
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">

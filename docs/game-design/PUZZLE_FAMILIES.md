@@ -656,7 +656,7 @@ Family doc: `docs/game-design/puzzles/canal.md`.
 - **Themes:** water (pipes), Trade (a road network), and a lit circuit reads as a temple's lamps — it wears
   a role the same way §4.21 and §4.22 do.
 
-### 4.24 Star Battle (two not touch) — _(designed, not yet built)_
+### 4.24 Star Battle (two not touch) — _(built; not yet playtested)_
 
 Family doc: `docs/game-design/puzzles/star-battle.md`.
 
@@ -671,10 +671,11 @@ Family doc: `docs/game-design/puzzles/star-battle.md`.
 - **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
   **mechanism** — a region is a group that is not a line, and the play is sparse elimination rather than
   eclipse's filled grid — but they do **not** carry much of a ladder: capping the solver below every region
-  rung still yields boards, two blocked squares heavier out of sixty-four, and seventy per cent of any solve
-  is the two rungs a player learns in the first minute. The family's claim to a slot is how the board plays,
-  not a deduction eclipse cannot reach. That is a weaker claim than §4.21's, and it is the first thing to
-  re-examine if the built family disappoints.
+  rung still yields boards, two and a half blocked squares heavier out of sixty-four, and eighty-five per
+  cent of any solve is the three rungs a player learns in the first minute. Only the counting rung ever
+  places a star; the region rungs narrow the board until it can. The family's claim to a slot is how the
+  board plays, not a deduction eclipse cannot reach. That is a weaker claim than §4.21's, and it is the
+  first thing to re-examine if the built family disappoints.
 - **Generation is not draw-then-test, because that does not work.** A region map alone admits several
   answers — measured at **0 unique out of 200** at 6×6, 7×7 and 8×8, and skewing region sizes rescues only
   5×5. Published grids are hand-carved to be unique, which is a search over shapes rather than a rejection
@@ -682,10 +683,11 @@ Family doc: `docs/game-design/puzzles/star-battle.md`.
   the build-then-thin loop every other family here runs: place the stars, grow the regions around them,
   block everything else, then unblock while the technique solver still finishes unaided. Boards ship with a
   fifth of the grid hatched, drawn in 1–6ms.
-- **The duration risk is the step count**, not the reasoning: an 8×8 is ~160 non-trivial steps against
-  eclipse's wizard 55–57. The defence is that these steps are reflexes (darkening the ring around a star)
-  rather than thoughts, which is a claim about the fingertips that only the lab settles — so 7×7 is the size
-  the family is really about, and 8×8 at the top is a measurement waiting to happen.
+- **The duration risk runs the other way from the one predicted here.** An 8×8 settles in ~24 solver steps
+  against eclipse's wizard 55–62, so a top-tier board is SHORT rather than long — the earlier ~160 figure
+  came from a probe counting rung firings rather than steps, and is retracted. Whether twenty-four reflex
+  steps is a wizard board is the first thing to time in the lab; if it plays under its tier the answer is
+  9×9, since the ladder has nothing deeper to give.
 - **What it inherits for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed conflict
   display, and the completion run every family can now have (`puzzle-screens.md` §3).
 - **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic

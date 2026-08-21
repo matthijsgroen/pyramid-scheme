@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { renderHook, waitFor } from "@testing-library/react"
-import { cellAt, type EclipsePuzzle, type Mark } from "@/mods/puzzle/game/eclipse/eclipse"
+import { cellAt, eclipseConflicts, type EclipsePuzzle, type Mark } from "@/mods/puzzle/game/eclipse/eclipse"
 import { useDelayedConflicts } from "./useDelayedConflicts"
 
 const SIZE = 4
@@ -16,10 +16,14 @@ const row = (...marks: (Mark | undefined)[]) => {
 }
 
 const tap = (marks: (Mark | undefined)[], quietMs: number) =>
-  renderHook(({ marks }: { marks: (Mark | undefined)[] }) => useDelayedConflicts(puzzle, { marks }, quietMs), {
-    // A board opens on its givens, which never break a rule; what has to wait is what the player then taps.
-    initialProps: { marks },
-  })
+  renderHook(
+    ({ marks }: { marks: (Mark | undefined)[] }) =>
+      useDelayedConflicts(marks, marks => eclipseConflicts(puzzle, { marks }), quietMs),
+    {
+      // A board opens on its givens, which never break a rule; what has to wait is what the player then taps.
+      initialProps: { marks },
+    }
+  )
 
 describe("useDelayedConflicts", () => {
   it("says nothing about a square the player is still tapping through", () => {
