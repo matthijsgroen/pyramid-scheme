@@ -569,6 +569,39 @@ Family doc: `docs/game-design/puzzles/eclipse.md`.
 - **Cheapest family to skin:** the whole board is one pair of marks, so a night
   site swaps sun and moon for star and dark and changes nothing else.
 
+### 4.21 Constellation (stars joined by light) — _(designed, not yet built)_
+
+Family doc: `docs/game-design/puzzles/constellation.md`.
+
+- **Skill:** degree counting, pigeonhole reasoning, and connectivity — the first
+  family whose answer is a graph rather than the contents of its cells.
+- **Operates:** stars carry a number saying how many lines of light meet them.
+  Lines run straight along a row or column between two stars, at most two to a
+  pair, never crossing and never passing through a star, and every star has to
+  end up in one constellation. Hashiwokakero's rule set, dressed as a star map.
+- **Knobs:** number mix (the share of 1s and 2s against 3s and 4s — the real
+  dial, since a high number forces its own lines and a low one forces nothing) ·
+  crossing pressure · double share · technique cap · required rung and its quota.
+  **Star count** is capacity rather than reasoning, so it is the knob of last
+  resort, and the phone caps it.
+- **Scaling:** good, on the numbers rather than the sky. The top two tiers share
+  an 8×8 and differ by mix and by requiring the connectivity rung.
+- **Generation:** **draw then test, not draw then thin** — every star always shows
+  its number, so there is nothing to thin and no way to loosen a sky that fails.
+  Grow a sky from one star, read the numbers off it, and keep it only if the
+  capped technique solver finishes unaided and spends the tier's rung. The
+  rejection bill is paid down by biasing the drawer toward the shape the tier
+  wants. The solver gate settles uniqueness.
+- **UI:** medium. Drag from a star the way you mean and release; the hazard is
+  that the modal scrolls, so a vertical drag is ambiguous with a scroll until the
+  board claims its own gestures.
+- **Fills the star-map slot** this catalogue names in §4.16 and `junior.ts` names
+  on the lighthouse journey: it carries `sky`, which takes that pool from two
+  families to three.
+- **The duration risk is the connectivity rule**, which is the family's one piece
+  of coupled bookkeeping (§6's local-vs-coupled line) — so wizard is the tier to
+  time first.
+
 ---
 
 ## 5. The shared grid engine
@@ -629,6 +662,7 @@ the thing to look at first when judging an unbuilt family's duration.
 | Target-number          | Medium          | Good                     | Easy (verify exists)        | 30–90s / med              |
 | Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        |
 | Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique) | 30–90s / med              |
+| Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate) | 1–4 min / med — _target_  |
 | Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
 | Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
 | Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
@@ -652,6 +686,7 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 | Egyptian doubling      | binary decomp          |     —      |      ◐      |   ●   |    ●    |      —      |
 | Glyph Latin-square     | deduction              |     —      |    ◐ 4×4    | ● 6×6 |  ● 8×8  |    ★ 9×9    |
 | Eclipse                | binary deduction       |   ◐ 4×4    |    ● 4×4    | ● 6×6 |  ● 6×6  |    ★ 8×8    |
+| Constellation          | degree + connectivity  |   ◐ 5×5    |    ● 6×6    | ● 7×7 |  ● 8×8  |    ★ 8×8    |
 | Target-number          | flexible ops           |     —      |      ◐      |   ●   |    ●    |      ★      |
 | Sequence               | pattern                |     —      |      ◐      |   ●   |    ●    |      —      |
 | Water clock            | duration / subtraction |     —      |      —      |   ◐   |    ●    |      ★      |
@@ -785,13 +820,13 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 
 | Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
 | ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam (both tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                    |
+| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)               |
 | **Water & Nile**             | flooding, irrigation, the river             | Water clock — currently the _only_ member, see gap note below                                                                                                                                  |
 | **Merchant / Market**        | trade, weighing goods, bartering            | Balance scale, Sokoban (moving cargo), target-number (haggling to a price)                                                                                                                     |
 | **Logistics / Caravan**      | moving things through constrained space     | Sokoban, Rush Hour                                                                                                                                                                             |
 | **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells) |
 | **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                              |
-| **Night & Stars**            | decans, star-clock, nocturnal               | Clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                  |
+| **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                             |
 | **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                          |
 
 **Gap:** Water & Nile has exactly one family. Two directions to fill it: a
@@ -830,6 +865,7 @@ so it can be used when authoring density knobs).
 | Kakuro                 | 2–8 min                           | **High**                                                                                                                       |
 | Nonogram               | 3–15+ min, **very high variance** | **Very High**                                                                                                                  |
 | Mirror/lightbeam       | built, not yet measured           | **TBD — estimate Low–Med**, the beam redraws on every tap so a wrong route is visible at once, which should stall less         |
+| Constellation          | not yet measured (unbuilt)        | **TBD — estimate Med**, the numbers are local bookkeeping but the connectivity rule couples the whole board                    |
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
 | Rush Hour              | not yet measured (unbuilt)        | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most                                            |
 

@@ -64,9 +64,9 @@ export const juniorRules: Rule[] = [
   // `sky` pool rather than the general `puzzle` one — today the beam family and the sun-and-moon grid, and
   // a star-map family would join it by carrying the tag rather than by an edit here.
   //
-  // `sky` rather than `light` on purpose, and the difference matters: the allocator ANDs a list of tags, so
-  // `["light", "sky"]` would mean "carries both" rather than "either". A union is one shared tag, which makes
-  // `sky` the wide cluster and `light` the narrow one inside it.
+  // `sky` rather than `["light", "sky"]` on purpose. A list is a union — the allocator draws from any tag in
+  // it — so the list would only widen the pool back to what `sky` already covers. Narrowing is a narrower
+  // tag's job: `sky` is the wide cluster and `light` the narrow one inside it.
   journey("junior_4").pyramid("1-5", { encounter: "sky" }),
 
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.

@@ -1,8 +1,8 @@
 import type { SiteConfig, SubSection, Difficulty } from "./types"
 import { hashString } from "@/support/hashString"
 
-// A role (a family tag, or an AND-array of tags) resolved to a concrete family id for a slot at
-// `tier`, deterministically in `seed`. Injected from src/mods (allFamilyMeta's allocateEncounter-
+// A role (a family tag, or a list of tags meaning "any of these") resolved to a concrete family id for a
+// slot at `tier`, deterministically in `seed`. Injected from src/mods (allFamilyMeta's allocateEncounter-
 // Family) — src/worldGen can't read the family registry directly. Returns the role unchanged when
 // no enabled family matches (runtime family-absence pass-through then owns the room).
 export type EncounterAllocator = (role: string | string[], tier: Difficulty, seed: number) => string | string[]
