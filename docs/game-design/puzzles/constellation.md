@@ -211,10 +211,18 @@ way you mean, release anywhere along that line. A drag that ends on the pressed 
 in no clear direction, does nothing — dragging is the only input, so a stationary press
 has to be a cancel.
 
-**The candidate draws under the finger.** Mid-drag the line is shown as it will land and
-the star it will reach lights up, so a wrong axis is visible before release rather than
-after. A drag toward a direction with no reachable star draws nothing, which is how the
-board says "not that way" without a word.
+**The candidate draws under the finger, as what the pair is about to become.** Mid-drag the
+pair is shown at the count a release would leave it, so a wrong axis is visible before
+release rather than after: an empty pair previews its first stroke faintly, a pair holding
+one previews the second one beside it, and a pair holding two fades both, because the next
+release takes them away. A drag toward a direction with no reachable star draws nothing,
+which is how the board says "not that way" without a word.
+
+**Found by playing it: previewing the pair's CURRENT state is the same as no preview at all.**
+Drawn that way, the drag that doubles a line and the drag that clears one both showed
+nothing new — the "preview" was the line already sitting there, and the second stroke read
+as hidden underneath it. What the player needs shown is the result of the gesture, which is
+the only thing they cannot already see.
 
 **One button: undo.** Same place and same shape as futoshiki's and eclipse's — a family
 that moves its undo teaches its controls twice. The drag cycle already gives a pair back,
@@ -292,9 +300,27 @@ Beyond the shared screen bar:
 ## 9. Theming
 
 The family emits logical state only — `star(count, met|over) | line(single|double,
-axis) | candidate` — and the skin decides what any of it looks like. Night sky with
-stars and light-lines is the default; a sun site swaps stars for lamps and lines for
-sunbeams and changes nothing else.
+axis) | candidate` — and the skin decides what any of it looks like. A sun site could swap
+stars for lamps and lines for sunbeams and change nothing else.
+
+**The default skin is the night sky, and it is the default rather than a `sky`-only dress.**
+Asking "was this room placed from the `sky` pool?" collapses: the pool is a gen-time role, resolved
+to a family id and baked away, so what reaches the room is the family's own tags — and this family
+always carries `sky`. A check that is always true is not a switch. What the skin does carry:
+
+- **A gradient night sky** rather than a flat panel, and a scatter of far-off stars behind the board.
+  They are a tenth the size of a puzzle star and carry no number, which is the whole of telling them
+  apart, and they are **seeded off the board** rather than drawn at random — a backdrop that reshuffles
+  on every render is a backdrop the player keeps looking at.
+- **Lines of light rather than drawn strokes**: each carries a glow, and stops at the edge of the star
+  it meets rather than running under its number (§8).
+- **A star burns rather than sitting in a socket** — a soft outer glow, and the disc only exists to keep
+  the number readable. A satisfied star loses the glow and goes quiet, which is the state a Bridges
+  player tracks the board by.
+
+Per-**site** variation — this family starrier on a lighthouse journey than elsewhere — is a different
+job, and not a small one: `ctx.theme` is unset everywhere real gameplay runs (only the puzzle lab sets
+it), so it needs the site's theme carried into the encounter before any family can dress for a place.
 
 ## 10. Open questions
 

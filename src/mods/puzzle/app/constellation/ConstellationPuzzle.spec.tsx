@@ -101,6 +101,35 @@ describe("ConstellationPuzzle", () => {
   })
 
   /**
+   * The preview has to be about what the drag will DO, not about what is already there.
+   *
+   * Drawn as the pair's current state, the drag that doubles a line and the drag that clears one both showed
+   * nothing at all — the "preview" was the line the player had already drawn, sitting exactly where it was.
+   */
+  it("previews the stroke a drag would add to a pair that already holds a line", () => {
+    const puzzle = generateConstellation(3, CONSTELLATION_CONFIG.starter)
+    const { container } = render(
+      <ConstellationPuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
+    )
+    const pending = () => container.querySelectorAll('line[class*="/40"]').length
+    const pair = puzzle.solution.findIndex(count => count > 0)
+    const { deltaRow, deltaCol } = directionOf(puzzle, pair)
+    const star = () => starsIn(container)[puzzle.pairs[pair].a]
+
+    drag(star(), deltaRow, deltaCol)
+    expect(pending()).toBe(0) // released: the line is on the board, nothing is pending
+
+    // Mid-drag on the same pair, before release: the second stroke is what is about to happen.
+    act(() => {
+      fireEvent.pointerDown(star(), { clientX: 100, clientY: 100, pointerId: 1 })
+      fireEvent.pointerMove(star(), { clientX: 100 + deltaCol * 60, clientY: 100 + deltaRow * 60, pointerId: 1 })
+    })
+    expect(pending()).toBe(1)
+    expect(container.querySelectorAll("line").length).toBe(2)
+    act(() => fireEvent.pointerUp(star(), { pointerId: 1 }))
+  })
+
+  /**
    * **A gesture must not cost a hint.** Counted rather than timed: the question is whether the work happened
    * at all, which is what a wall-clock bound cannot answer on a shared runner.
    */
