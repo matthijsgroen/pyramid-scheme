@@ -232,7 +232,7 @@ const SunDisc: FC<{ facing: Direction }> = ({ facing }) => (
 
 /** A niche cut in the wall. Dark until the light arrives, then it is the whole point of the board. */
 const Shrine: FC<{ lit: boolean; flaring?: boolean }> = ({ lit, flaring }) => (
-  <Glyph className={clsx(flaring && "animate-bloom")}>
+  <Glyph className={clsx(flaring && "animate-flare")}>
     <path
       d="M22 92 L22 46 A28 28 0 0 1 78 46 L78 92 Z"
       strokeWidth={8}

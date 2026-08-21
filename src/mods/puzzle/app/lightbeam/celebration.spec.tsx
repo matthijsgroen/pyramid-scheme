@@ -50,8 +50,8 @@ describe("the finishing run", () => {
   it("flares the shrine only once the light has arrived", () => {
     const arriving = render(<LightbeamBoard puzzle={straightRight} states={[0]} surge={0.3} onCycle={() => {}} />)
     const arrived = render(<LightbeamBoard puzzle={straightRight} states={[0]} surge={1} onCycle={() => {}} />)
-    expect(arriving.container.querySelectorAll(".animate-bloom")).toHaveLength(0)
-    expect(arrived.container.querySelectorAll(".animate-bloom").length).toBeGreaterThan(0)
+    expect(arriving.container.querySelectorAll(".animate-flare")).toHaveLength(0)
+    expect(arrived.container.querySelectorAll(".animate-flare").length).toBeGreaterThan(0)
   })
 
   /** The same rule every family's run is held to: nothing may move under a win that is already travelling. */

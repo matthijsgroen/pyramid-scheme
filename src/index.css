@@ -53,22 +53,31 @@ body {
     }
   }
 
-  /* A puzzle node finishing: one swell and a flash of its own colour, fired per node with a stagger so a
-     solved board finishes one piece at a time rather than all at once. Motion only — the colour comes from
-     whichever skin the node is already wearing. */
-  --animate-bloom: bloom 420ms ease-out;
-  @keyframes bloom {
+  /* A puzzle node finishing: it catches the light, and nothing moves. A swell was tried first and read as
+     the board twitching — a node changing SIZE says "something is wrong with the layout" rather than
+     "this one is done". Brightness only, so the colour a skin already gave the node is what flashes. */
+  --animate-flare: flare 420ms ease-out;
+  @keyframes flare {
     0% {
-      transform: scale(1);
       filter: brightness(1);
     }
     45% {
-      transform: scale(1.35);
-      filter: brightness(1.6);
+      filter: brightness(1.75);
     }
     100% {
-      transform: scale(1);
       filter: brightness(1);
+    }
+  }
+
+  /* A blossom arriving on a plant that has its water. Opacity alone: the flower appears, it does not
+     inflate. */
+  --animate-flower-in: flower-in 320ms ease-out;
+  @keyframes flower-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
 

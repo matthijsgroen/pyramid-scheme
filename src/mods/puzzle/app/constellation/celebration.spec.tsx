@@ -24,7 +24,7 @@ const starsIn = (root: HTMLElement) =>
     .getAllByRole("button")
     .filter(button => button.className.includes("-translate-1/2"))
 
-const blooming = (root: HTMLElement) => root.querySelectorAll(".animate-bloom").length
+const blooming = (root: HTMLElement) => root.querySelectorAll(".animate-flare").length
 
 /** Draws every line the answer holds, which leaves the board solved. */
 const solve = (root: HTMLElement, puzzle: ConstellationPuzzleWithAnswer) => {

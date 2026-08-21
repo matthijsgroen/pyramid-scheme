@@ -47,13 +47,17 @@ const positionOf = (puzzle: ConstellationPuzzle, star: number) => {
 }
 
 /**
- * What grows out of a basin: a shoot while it is short of its channels, a plant in flower once it has them.
+ * What grows out of a basin, in three stages: a shoot while it is short of its channels, a full plant once it
+ * has them, and a plant **in flower** when the board is finished.
  *
- * It grows **above** the disc rather than inside it. Drawn behind the number the two fought — a digit on top
- * of a stem is a digit you have to work to read, and the number is the clue (§8) — so the basin keeps its
- * number and the plant rises out of the top of it, where there is nothing but empty sky.
+ * The flower is the completion animation for this skin — the run puts one on every plant, one basin at a
+ * time. Which is why a fed basin stops short of it: if a plant flowered the moment it had its water, the
+ * finish would have nothing left to say.
+ *
+ * It grows above the disc rather than behind the number: drawn behind it, a digit on top of a stem is a digit
+ * you have to work to read, and the number is the clue (§8).
  */
-const Plant: FC<{ grown: boolean }> = ({ grown }) => (
+const Plant: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }) => (
   <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
     <g fill="none" stroke="currentColor" strokeWidth={grown ? 2 : 2.4} strokeLinecap="round">
       <line x1={12} y1={24} x2={12} y2={grown ? 7 : 15} />
@@ -62,8 +66,24 @@ const Plant: FC<{ grown: boolean }> = ({ grown }) => (
       {grown && <path d="M12 11 C 8 10, 7 7, 7 4" />}
       {grown && <path d="M12 11 C 16 10, 17 7, 17 4" />}
     </g>
-    {/* The flower a fed basin carries — the thing the completion run swells. */}
-    {grown && <circle cx={12} cy={5} r={3.2} fill="currentColor" />}
+    {flowering && (
+      <g className="animate-flower-in">
+        {/* Five petals round a heart — a blossom has to read as a flower at 30px, and a single dot does not. */}
+        {[0, 1, 2, 3, 4].map(petal => {
+          const angle = (petal * 2 * Math.PI) / 5 - Math.PI / 2
+          return (
+            <circle
+              key={petal}
+              cx={12 + Math.cos(angle) * 3.4}
+              cy={5 + Math.sin(angle) * 3.4}
+              r={2.1}
+              fill="currentColor"
+            />
+          )
+        })}
+        <circle cx={12} cy={5} r={1.7} className="fill-amber-200" />
+      </g>
+    )}
   </svg>
 )
 
@@ -90,9 +110,13 @@ type Skin = {
   unlit: string
   lit: string
   over: string
-  /** Drawn inside a node, behind its number — a place whose nodes are things that grow says so. */
-  Glyph?: FC<{ grown: boolean }>
-  /** What a node wears for its turn in the completion run: one swell, in the node's own colour. */
+  /** Drawn out of a node — a place whose nodes are things that grow says so. */
+  Glyph?: FC<{ grown: boolean; flowering?: boolean }>
+  /** The glyph's own colour, short of its count and once it has it. A glyph inheriting the node's text
+   *  colour came out the colour of stone, which is the one thing a plant must not be. */
+  glyphUnlit?: string
+  glyphLit?: string
+  /** What a node wears for its turn in the completion run — light, never size (see index.css). */
   celebrate: string
 }
 
@@ -107,24 +131,32 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
     lit: "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]",
     over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
-    // Stars twinkle: the swell reads as a star catching the light.
-    celebrate: "animate-bloom",
+    // Stars twinkle: the flash reads as a star catching the light.
+    celebrate: "animate-flare",
   },
   // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
   // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
   // one network watering every field. A dry basin is a stone ring; a fed one holds water.
   irrigation: {
-    board: "bg-[radial-gradient(ellipse_at_50%_20%,#1d3b32_0%,#122620_45%,#0a1512_100%)] ring-1 ring-emerald-300/15",
-    backdrop: "fill-emerald-200/70",
-    line: "stroke-sky-300",
-    pending: "stroke-sky-300/40",
-    lineGlow: "drop-shadow-[0_0_2px_rgb(125_211_252_/_0.6)]",
-    unlit: "border-stone-400/50 bg-radial from-stone-700/60 to-stone-950/80 text-stone-100",
-    lit: "border-sky-200 bg-radial from-sky-300/70 to-sky-500/30 text-sky-950 shadow-[0_0_16px_4px_rgb(125_211_252_/_0.4)]",
-    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
-    // The plant blooms as its basin fills.
-    celebrate: "animate-bloom",
+    // **Daylight on sand**, which is the deliberate opposite of the night sky the same board wears by
+    // default: a waterworks is a thing you dig under the sun. Everything else follows from the board being
+    // LIGHT — the water is deep enough to read against it, and the numbers are dark rather than pale.
+    board: "bg-[radial-gradient(ellipse_at_50%_20%,#ecd9ad_0%,#dcc088_45%,#c5a86c_100%)] ring-1 ring-amber-900/25",
+    // Silt and grit rather than far-off stars.
+    backdrop: "fill-amber-900/25",
+    line: "stroke-sky-700",
+    pending: "stroke-sky-700/40",
+    // A shadow rather than a glow: light does not bloom on a sunlit board, it casts.
+    lineGlow: "drop-shadow-[0_1px_1px_rgb(120_53_15_/_0.35)]",
+    // A dry basin is cut stone; a fed one is water you can see the depth of.
+    unlit: "border-stone-600/70 bg-radial from-stone-200/90 to-stone-400/70 text-stone-800",
+    lit: "border-sky-800 bg-radial from-sky-400/95 to-sky-600/80 text-sky-950 shadow-[0_0_14px_3px_rgb(3_105_161_/_0.35)]",
+    over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
+    // The plant comes into flower (the glyph does the rest of it).
+    celebrate: "animate-flare",
     Glyph: Plant,
+    glyphUnlit: "text-lime-600",
+    glyphLit: "text-lime-500",
   },
   // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
   // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
@@ -138,8 +170,8 @@ const SKINS: Record<string, Skin> = {
     unlit: "border-amber-900/70 bg-radial from-stone-800/70 to-stone-950/80 text-amber-100",
     lit: "border-stone-100 bg-radial from-stone-100/80 to-stone-300/30 text-stone-900 shadow-[0_0_14px_3px_rgb(245_245_244_/_0.35)]",
     over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-200 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
-    // A junction finishing reads as the last stone going in.
-    celebrate: "animate-bloom",
+    // A junction finishing reads as the last stone catching the sun.
+    celebrate: "animate-flare",
   },
 }
 
@@ -349,10 +381,13 @@ export const ConstellationBoard: FC<Props> = ({
                   <span
                     className={clsx(
                       "pointer-events-none absolute bottom-[64%] left-1/2 aspect-square -translate-x-1/2",
-                      held === star.count ? "w-[80%] opacity-90" : "w-[52%] opacity-55"
+                      held === star.count ? "w-[80%] opacity-100" : "w-[52%] opacity-80",
+                      // The skin's own green. Left to inherit, a plant came out the colour of the node's
+                      // number — which on a fed basin is near-black, so the plants read as dead twigs.
+                      held === star.count ? skin.glyphLit : skin.glyphUnlit
                     )}
                   >
-                    <skin.Glyph grown={held === star.count} />
+                    <skin.Glyph grown={held === star.count} flowering={celebrated?.has(index)} />
                   </span>
                 )}
                 <span className="relative">{star.count}</span>

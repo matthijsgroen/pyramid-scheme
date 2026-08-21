@@ -333,7 +333,7 @@ more than one kind of network, and each of those networks is a real place in thi
 | Skin         | The place                                                | A node is                                             | A line is                            |
 | ------------ | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
 | `default`    | the night sky                                            | a star; its number is how much light meets it         | a line of light                      |
-| `irrigation` | the Nile delta (§11.1 Water & Nile)                      | a basin, with a shoot that flowers once it is fed     | a channel, doubled into a wide canal |
+| `irrigation` | the Nile delta by day (§11.1 Water & Nile)               | a basin, with a shoot that flowers once it is fed     | a channel, doubled into a wide canal |
 | `causeway`   | a pyramid under construction (§11.1 Logistics / Caravan) | a site; its number is how many roads meet it          | a haul road                          |
 
 Two things every skin is held to, and neither is a style note:
@@ -347,9 +347,18 @@ Two things every skin is held to, and neither is a style note:
 _not_ the board's palette, so a hint pointing at a channel looks like a hint rather than like a
 slightly different channel.
 
+**Irrigation is the one skin drawn in daylight**, on sand rather than against a night sky, and that is the
+deliberate opposite of the default: a waterworks is something you dig under the sun. Everything else in it
+follows from the board being LIGHT — the water is dark enough to read against it, the numbers are dark instead
+of pale, and the lines cast a shadow instead of glowing, because light does not bloom on a sunlit board.
+
 **A skin may give its nodes something that grows.** The irrigation basin carries a shoot while it is short
 of its channels and a plant in flower once it has them — the same lit/unlit reading the disc already gives,
 said a second way, which is what makes a fed basin obvious at a glance rather than on inspection.
+
+**A glyph carries its own colour rather than the node's.** Inheriting the node's text colour made the plant
+the colour of stone, which is the one thing a plant must not be — so a skin names both greens: the shoot's,
+and the lighter one it flowers in.
 
 It grows **above** the disc, and that was not the first attempt: drawn behind the number, a digit sitting on
 a stem is a digit you have to work to read, and the number is the clue (§8). The plant took the empty cell
@@ -373,8 +382,15 @@ Three constraints, and each of them is the interesting part rather than the anim
 - **`prefers-reduced-motion` skips it whole**, animation and wait together. Holding a banner back for motion
   the player asked not to see is worse than not celebrating at all.
 
-The motion is one swell per node, and each skin supplies the colour it swells in: a star catching the light,
-a plant coming into flower, the last stone going into a junction.
+**Nothing changes size, and that was a correction.** The run started as one swell per node, and a node
+growing and shrinking read as the board twitching — a change of _size_ says something is wrong with the
+layout, where a change of _light_ says this one is done. So the motion is brightness only: each node catches
+the light in whatever colour its skin already gave it.
+
+**Irrigation goes further and hands the run a state of its own.** A basin that has its channels grows a full
+plant, and the plant comes into **flower** during the run, one basin at a time — so the skin has three
+stages, not two: a shoot, a plant, a plant in flower. Which is also why a fed basin stops short of flowering
+on its own: if the flower arrived the moment the water did, the finish would have nothing left to say.
 
 **Only the skin is authored, never the family.** `theme` decides what a family looks like and never
 which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and
