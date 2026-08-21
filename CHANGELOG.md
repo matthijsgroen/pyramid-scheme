@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A second kind of trap: a clock face, and four times to pick from before the countdown runs out.
+- A new puzzle: fill a grid with suns and moons so no three sit in a row, every line holds as many of each, no two rows or columns read alike, and the signs between squares are obeyed. Hints name the reason, and an undo button takes back your last tap.
 
 ### Changed
 

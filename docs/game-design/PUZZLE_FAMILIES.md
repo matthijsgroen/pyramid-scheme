@@ -518,6 +518,37 @@ Family doc: `docs/game-design/puzzles/futoshiki.md`.
 
 ---
 
+### 4.20 Eclipse (sun-and-moon logic grid) — _(have)_
+
+Family doc: `docs/game-design/puzzles/eclipse.md`.
+
+- **Skill:** pure deduction on a two-state cell — balance, no-three-in-a-row, and
+  pairwise same/different constraints. The first family here with no arithmetic in
+  it at all, which is the point: a floor of arithmetic rooms gets a logic room.
+- **Operates:** Binairo's rule set, which is what Puzzle Express serves — every
+  square holds a sun or a moon; each row and column holds as many of one as the
+  other; three of a mark in a row is never allowed; no two rows read alike and no
+  two columns either; and signs between some neighbours say the pair matches (=) or
+  differs (×). One tap cycles a square empty → sun → moon → empty, so there is no
+  pad and no palette.
+- **Knobs:** technique cap · which rung a board must actually spend, and how many
+  times it has to fire · grid size (4×4 → 6×6).
+- **Scaling:** good, and bounded by a rule about hints rather than about boards:
+  every rung has to be a sentence the player can check on the line in front of them,
+  so the ladder tops out at "try it and follow what this line forces". Guess-and-check
+  across the board, and enumerate-and-report-agreement, were both built and both
+  removed. The top tier is 8×8 — more board rather than a stronger rung.
+- **Generation:** draw a full board, write down every sign it implies, then empty
+  cells and afterwards remove signs for as long as the technique solver still
+  reaches the answer. Cells before signs, or the loop strips every sign and ships a
+  grid of givens. The solver gate settles uniqueness.
+- **UI:** easy. One tap target per cell, two glyphs, and signs drawn on the shared
+  edges. No number pad, no notes.
+- **Cheapest family to skin:** the whole board is one pair of marks, so a night
+  site swaps sun and moon for star and dark and changes nothing else.
+
+---
+
 ## 5. The shared grid engine
 
 Four families are all **"grid + tap-to-set-cell-state"**: Sudoku, nonogram,
@@ -575,6 +606,7 @@ the thing to look at first when judging an unbuilt family's duration.
 | Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                     | 15–60s / low              |
 | Target-number          | Medium          | Good                     | Easy (verify exists)        | 30–90s / med              |
 | Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        |
+| Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique) | 30–90s / med              |
 | Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
 | Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
 | Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
@@ -597,6 +629,7 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 | Symmetry               | spatial                |     ◐      |      ●      |   ●   |    —    |      —      |
 | Egyptian doubling      | binary decomp          |     —      |      ◐      |   ●   |    ●    |      —      |
 | Glyph Latin-square     | deduction              |     —      |    ◐ 4×4    | ● 6×6 |  ● 8×8  |    ★ 9×9    |
+| Eclipse                | binary deduction       |   ◐ 4×4    |    ● 4×4    | ● 6×6 |  ● 6×6  |    ★ 8×8    |
 | Target-number          | flexible ops           |     —      |      ◐      |   ●   |    ●    |      ★      |
 | Sequence               | pattern                |     —      |      ◐      |   ●   |    ●    |      —      |
 | Water clock            | duration / subtraction |     —      |      —      |   ◐   |    ●    |      ★      |
