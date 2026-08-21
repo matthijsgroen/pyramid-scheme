@@ -76,8 +76,10 @@ come with it, and they are why this is not simply "add an animation":
 - **`prefers-reduced-motion` skips it entirely** — animation and delay both. Holding a banner
   back for motion the player asked not to see is worse than not celebrating at all.
 
-The hook stays family-local until a second family wants one, at which point it moves here
-unchanged.
+The clock itself is shared — `src/mods/core/app/useCelebration.ts` — and it owns only the clock: it
+reports how far the run has got (0 → 1) and when it is over, and what that looks like is the family's
+entirely. Constellation lights one node per tick; lightbeam runs a thicker beam along its route and
+then flares the shrine off the same number.
 
 **The banner reports the solve time**, wordless (`⏱ 1:07`) so it needs no locale, and
 it is **on-screen time only** — the clock stops while the document is hidden, because a

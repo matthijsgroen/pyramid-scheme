@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The Lighthouse of Alexandria now serves light and sky puzzles on its main path — the beam puzzle, the new sun-and-moon grid and the new star map — and it runs at night: its grids are drawn as stars against a dark sky.
 - The Nile Delta runs on water and Giza on stone: the star map is drawn as basins joined by channels in one, and as sites joined by haul roads in the other. A watered basin grows a plant, and a finished board lights up one piece at a time before it hands you the win.
+- Solving a beam puzzle sends the light down the route you found, and the shrine flares when it arrives.
 - A second kind of trap: a clock face, and four times to pick from before the countdown runs out.
 - A new puzzle: join the stars with lines of light, as many at each star as its number says, never crossing another line, until every star hangs in one constellation. Drag from a star to draw a line, on a night sky of its own.
 - A new puzzle: fill a grid with suns and moons so no three sit in a row, every line holds as many of each, no two rows or columns read alike, and the signs between squares are obeyed. Hints name the reason, and an undo button takes back your last tap.

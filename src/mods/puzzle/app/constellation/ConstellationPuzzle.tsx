@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
   canUndoConstellation,
@@ -13,7 +14,7 @@ import {
 } from "@/mods/puzzle/game/constellation/constellation"
 import type { ConstellationPuzzleWithAnswer } from "@/mods/puzzle/game/constellation/generateConstellation"
 import { ConstellationBoard } from "./ConstellationBoard"
-import { useCelebration } from "./useCelebration"
+
 import { buildConstellationHint } from "./constellationHint"
 import { ConstellationRules } from "./ConstellationRules"
 
@@ -49,7 +50,11 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSo
    * would land on a board that is no longer solved.
    */
   const finished = constellationSolved(puzzle, state)
+  // One tick per star, so the run lights them in board order.
   const celebration = useCelebration(finished, puzzle.stars.length)
+  const celebrated = new Set(
+    Array.from({ length: Math.round(celebration.progress * puzzle.stars.length) }, (_unused, index) => index)
+  )
 
   // A function rather than a string, so the shell only reaches for the text once the hint is on screen.
   const hintText = useCallback(() => (hint && t(`constellation.hint.${hint.key}`, hint.params)) || undefined, [hint, t])
@@ -74,7 +79,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSo
             focus={hintVisible ? hint?.focus : undefined}
             litStars={hintVisible ? hint?.stars : undefined}
             theme={theme}
-            celebrated={celebration.celebrated}
+            celebrated={celebrated}
             onDrawLine={pair => {
               if (finished) return // the board is finishing; nothing may change under the celebration
               reportInput()

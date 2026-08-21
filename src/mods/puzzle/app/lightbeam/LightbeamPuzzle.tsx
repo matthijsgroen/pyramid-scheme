@@ -7,6 +7,7 @@ import { isLit } from "@/mods/puzzle/game/lightbeam/beam"
 import type { LightbeamPuzzle as LightbeamPuzzleData } from "@/mods/puzzle/game/lightbeam/generateLightbeam"
 import { createLightbeamState, cycleLightbeamPiece } from "@/mods/puzzle/game/lightbeam/lightbeamState"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 
@@ -25,6 +26,17 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   const [state, setState] = useState(() => createLightbeamState(puzzle))
 
   const solved = isLit(puzzle, state.states)
+
+  /**
+   * The light runs to the shrine before the shell is told the board is lit.
+   *
+   * A thicker beam travels the route it just proved, and the shrine flares once it arrives — the board saying
+   * what the player did, in the terms the board is already made of. The shell freezes on "solved", so this
+   * has to finish first (docs/instructions/puzzle-screens.md §3): sixteen ticks is a smooth enough sweep for
+   * a route, and a tap is refused while it runs, or a piece cycled mid-run would unlight the board its own
+   * win is travelling along.
+   */
+  const celebration = useCelebration(solved, 16)
 
   /**
    * Whether the player has asked for a hint, which is what gates deriving one.
@@ -52,13 +64,19 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
   // the button is offered before there is anything to say (see `PuzzleFamilyShell`'s `hint`).
   const hintText = useCallback(() => hint && t(`lightbeam.hint.${hint.key}`), [hint, t])
 
-  const cycle = useCallback((piece: number) => setState(prev => cycleLightbeamPiece(prev, puzzle, piece)), [puzzle])
+  const cycle = useCallback(
+    (piece: number) => {
+      if (solved) return // the light is on its way to the shrine; nothing may move under it
+      setState(prev => cycleLightbeamPiece(prev, puzzle, piece))
+    },
+    [puzzle, solved]
+  )
 
   return (
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel}
-      solved={solved}
+      solved={celebration.done}
       onReset={() => setState(createLightbeamState(puzzle))}
       hint={solved ? undefined : hintText}
       onHintRevealed={() => setAsked(true)}
@@ -71,6 +89,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           states={state.states}
           highlighted={hintVisible ? hint?.cells : undefined}
           litBeam={hintVisible ? hint?.beam : undefined}
+          surge={celebration.progress}
           onCycle={piece => {
             reportInput()
             cycle(piece)
