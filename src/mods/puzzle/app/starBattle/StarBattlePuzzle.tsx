@@ -9,6 +9,7 @@ import {
   createStarBattleState,
   cycleStarBattleCell,
   starBattleSolved,
+  sweepStarBattleCells,
   undoStarBattle,
 } from "@/mods/puzzle/game/starBattle/starBattle"
 import type { StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
@@ -62,6 +63,10 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
             onTapCell={cell => {
               reportInput()
               setState(cycleStarBattleCell(state, cell))
+            }}
+            onSweepCells={cells => {
+              reportInput()
+              setState(sweepStarBattleCells(state, cells))
             }}
           />
           {/* The same control eclipse and futoshiki put under their boards, in the same place and the same

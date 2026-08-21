@@ -71,10 +71,10 @@ always says "I counted the whole board" teaches nothing.
 | **T4** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
 | **T5** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
 
-**T0 is propagation, not a step.** Placing a star darkens its eight neighbours, and no
-board asks the player to work that out — it is the rule made visible. It is a rung only
-so a hint has something to say on the first move of a board, and so the screen can dim
-the neighbourhood as the star lands.
+**T0 is propagation, not a step.** Placing a star rules out its eight neighbours, and no board asks the
+player to work that out — it is the rule made visible. It is a rung so that a hint has something to say on
+the first move of a board, and because the SCREEN spends it rather than the player: a star's neighbourhood
+recedes as it lands (§6), which is this rung rendered instead of tapped.
 
 **T1 and T2 are the same count read two ways** — what a group has, and what it has room
 for. They are the bulk of every board (§3.4), and they are what makes the family teach
@@ -280,21 +280,54 @@ and the ladder has nothing deeper to give.
 
 ## 6. Controls
 
-**One tap per square, cycling empty → star → dark → empty.** Three states, and unlike
-eclipse the middle one is the only part of the answer — `dark` is the player's own
-bookkeeping, and the win condition ignores it entirely. That matters here in a way it
-does not in eclipse: this family's reasoning IS elimination, so the mark that says "not
-here" is the one the player uses most, and a board that could not record it would make
-them hold the cross-hatch in their head.
+**One tap per square, cycling empty → dark → star → empty. The elimination comes first.**
+
+That order is the whole control design, and it is not the obvious one — the star is the answer, so the star
+looks like it belongs on the opening tap. Count the moves instead: an 8×8 board is **eight stars and
+fifty-six squares ruled out**. Star-first charges two taps for the move a player makes fifty-six times and
+one for the move they make eight times, which is about forty per cent more tapping over a board. Only one
+rung on the whole ladder ever places a star (§3.4); the controls should read the same way round as the
+reasoning does.
+
+Three states, and unlike eclipse only ONE of them is part of the answer — `dark` is the player's own
+bookkeeping and the win condition ignores it entirely, so a board solved without a single dark mark is
+solved. A board that could not record "not here" would make them hold the whole cross-hatch in their head.
 
 **Every square takes a tap.** There are no givens and nothing hatched, so the board never
 refuses the player anywhere — which is worth stating because the first draft of this family
 had a fourth, untappable state, and §4.1 is why it is gone.
 
-**One button: undo**, in the place and the shape futoshiki and eclipse put it. A tap
-already takes one square back, so undo is for stepping off a run of squares darkened on a
-wrong reading — which, given §3.4's step mix, is the mistake this family will actually
-produce.
+**A drag rules out a run of squares.** Elimination does not arrive one square at a time — it arrives as the
+rest of a row, or the far end of a region — so the gesture matches the thought: press, sweep across, release.
+The marks appear under the finger as it goes and the whole run lands as **one move**, so undo takes it back
+in one press, which is exactly the button's stated job (below).
+
+Three properties make the gesture safe to aim broadly rather than carefully:
+
+- **It only ever rules out.** A drag never places a star and never clears a mark, so nothing can be lost to a
+  clumsy sweep.
+- **It steps around what is already marked.** Squares that carry a mark are left exactly as they are.
+- **A tap is still a tap.** Reaching a different square is what turns one into the other, which puts the
+  threshold a whole square wide — a wobbly tap stays a tap. The tap stays a real `click` underneath, so a
+  keyboard and a screen reader keep working without this board reimplementing either; a sweep just swallows
+  the click that follows it.
+
+The board claims its own gestures for this, so it cannot also scroll the page — the same trade constellation
+made, and the page is scrolled from the chrome around the board.
+
+**A star shows what it rules out, and the player never taps it.** Eight neighbours a star is sixty-four
+squares of pure bookkeeping over an 8×8 board, and not one of them is reasoning — the rule says it and the
+star on the board says it. So those squares recede, and the tapping left over is the part that took thought.
+
+It is drawn as absence rather than as a mark, which is the line this stays on the right side of: nothing is
+written, so the marks on the board are still only the player's, and taking the star away hands its
+neighbourhood straight back. A receded square still takes a tap, because a player who wants their own mark
+there is entitled to it. That is the difference between rendering a rule and doing someone's puzzle for them
+— the same line balance scale drew when it switched off cancelling below the tier that teaches it.
+
+**One button: undo**, in the place and the shape futoshiki and eclipse put it. A tap already takes one
+square back, so undo is for the thing a tap cannot give back: a whole run swept out on a wrong reading,
+which is now a single gesture and so a single press.
 
 ## 7. Hints
 
@@ -337,12 +370,15 @@ Beyond the shared screen bar:
   nobody can tell apart at arm's length, and a colour-blind player reads none of it. Thick
   strokes on the shared edges carry the shape; a low-alpha tint may sit under them, and it
   is decoration.
-- **A star is a shape, and the dark mark is visibly the player's.** Smaller, lighter, and
-  never the same weight as a star — the board must never look as though it answered itself.
+- **A star is a shape, and the dark mark is visibly the player's.** Smaller, lighter, and never the same
+  weight as a star — the board must never look as though it answered itself.
+- **A square a star rules out recedes; it never gains a mark.** Darker than its neighbours and nothing else,
+  because anything added there would read as somebody's answer (§6).
 - **Conflicts show as they happen, but not before the player has finished the square.**
-  A tap cycles through `star` on the way to `dark`, so calling that star a mistake is
-  feedback about a state nobody chose. `useDelayedConflicts` already does this for eclipse
-  and is what this reuses.
+  `useDelayedConflicts`, shared with eclipse. It matters less here than it does there, and for a reason worth
+  keeping: a broken rule needs a star, and with the elimination on the opening tap (§6) a star is somewhere
+  the player LANDS rather than somewhere they pass through. What is left is the rarer case of clearing a star
+  straight after making it, and the delay covers that without anyone having to think about it.
 - **A touching pair reds the pair, not the neighbourhood.** The broken rule is about two
   squares; lighting nine says something else.
 

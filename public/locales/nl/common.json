@@ -441,7 +441,7 @@
     "rules": {
       "goal": "Zet een ster in elke rij, elke kolom en elk gebied.",
       "touch": "Twee sterren mogen elkaar nooit raken — ook niet met een punt.",
-      "enter": "Tik een vakje voor een ster, tik weer om het leeg te melden, en nog eens om het te wissen."
+      "enter": "Tik een vakje om het af te strepen, tik weer voor een ster, en nog eens om het te wissen."
     },
     "undo": "Ongedaan maken",
     "hint": {

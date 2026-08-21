@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from "vitest"
-import { render, waitFor, within } from "@testing-library/react"
+import { fireEvent, render, waitFor, within } from "@testing-library/react"
 import { act } from "react"
 import { STAR_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/starBattleConfig"
 import { generateStarBattle } from "@/mods/puzzle/game/starBattle/generateStarBattle"
@@ -20,9 +20,11 @@ const cellsIn = (root: HTMLElement) =>
     .getAllByRole("button")
     .filter(button => button.className.includes("aspect-square"))
 
-// The shell scrolls a revealed hint into view, which jsdom does not implement.
+// The shell scrolls a revealed hint into view, and a drag captures the pointer so the squares it crosses
+// still report to the square it started on. jsdom implements neither.
 beforeAll(() => {
   Element.prototype.scrollIntoView = () => {}
+  Element.prototype.setPointerCapture = () => {}
 })
 
 describe("StarBattlePuzzle", () => {
@@ -62,14 +64,55 @@ describe("StarBattlePuzzle", () => {
     const { container } = render(
       <StarBattlePuzzle puzzle={puzzle} difficulty="starter" onSolved={() => (solved = true)} onCancel={() => {}} />
     )
-    // One tap is a star, and the dark marks are the player's own bookkeeping — so a board is finished by
-    // placing the stars and nothing else.
+    // A star is the second tap (the first rules the square out), and the dark marks are the player's own
+    // bookkeeping — so a board is finished by placing the stars and nothing else.
     puzzle.solution.forEach((star, cell) => {
-      if (star) act(() => cellsIn(container)[cell].click())
+      if (!star) return
+      act(() => cellsIn(container)[cell].click())
+      act(() => cellsIn(container)[cell].click())
     })
     // The banner lands a beat after the last star (puzzle-screens.md §3), reporting the solve time wordlessly.
     await waitFor(() => expect(within(container).getByText(/⏱/)).toBeDefined(), { timeout: 5000 })
     expect(solved).toBe(false) // the banner waits for a tap; solving does not leave the room by itself
+  })
+
+  /**
+   * The gesture the family is really controlled by: elimination comes in runs (the rest of a row, the far
+   * end of a region), and tapping each square is the same move over and over.
+   *
+   * jsdom gives every element a zero-sized box, so the board's own geometry cannot be used to say which
+   * square a point is over — the layout is stubbed to a known 8-per-side grid instead, and the drag is aimed
+   * at squares by arithmetic on it.
+   */
+  it("rules out a run of squares in one drag, and one press takes the run back", () => {
+    const puzzle = generateStarBattle(3, STAR_BATTLE_CONFIG.starter)
+    const { container } = render(
+      <StarBattlePuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
+    )
+    const grid = container.querySelector("div.grid")!
+    const side = 400
+    grid.getBoundingClientRect = () => ({ left: 0, top: 0, width: side, height: side }) as DOMRect
+    const centre = (cell: number) => {
+      const step = side / puzzle.size
+      return {
+        clientX: (cell % puzzle.size) * step + step / 2,
+        clientY: Math.floor(cell / puzzle.size) * step + step / 2,
+      }
+    }
+    const cells = cellsIn(container)
+    const marks = () => container.querySelectorAll("circle").length
+
+    // Down on the first square of row 0, across the next two, up.
+    act(() => fireEvent.pointerDown(cells[0], { ...centre(0), pointerId: 1 }))
+    act(() => fireEvent.pointerMove(cells[0], { ...centre(1), pointerId: 1 }))
+    act(() => fireEvent.pointerMove(cells[0], { ...centre(2), pointerId: 1 }))
+    act(() => fireEvent.pointerUp(cells[0], { pointerId: 1 }))
+    // The click a release fires is swallowed, or the square it started on would cycle on as well.
+    act(() => cells[0].click())
+    expect(marks()).toBe(3)
+
+    act(() => within(container).getByRole("button", { name: /↩/ }).click())
+    expect(marks()).toBe(0)
   })
 
   it("steps a run of dark marks back off the board", () => {
@@ -77,11 +120,8 @@ describe("StarBattlePuzzle", () => {
     const { container } = render(
       <StarBattlePuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
     )
-    // Two taps on each of two squares: star, then dark — the run a wrong reading produces.
-    for (const cell of [0, 1]) {
-      act(() => cellsIn(container)[cell].click())
-      act(() => cellsIn(container)[cell].click())
-    }
+    // One tap a square, which is the run a wrong reading produces: a sweep of squares ruled out.
+    for (const cell of [0, 1]) act(() => cellsIn(container)[cell].click())
     const undo = within(container).getByRole("button", { name: /↩/ })
     const marks = () => container.querySelectorAll("circle").length
     expect(marks()).toBe(2)

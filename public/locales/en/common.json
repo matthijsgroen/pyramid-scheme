@@ -448,7 +448,7 @@
     "rules": {
       "goal": "Put a star in every row, every column and every region.",
       "touch": "No two stars may touch — corners count.",
-      "enter": "Tap a square for a star, tap again to mark it empty, once more to clear it."
+      "enter": "Tap a square to rule it out, tap again to put a star there, once more to clear it."
     },
     "undo": "Undo",
     "hint": {

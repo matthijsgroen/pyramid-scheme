@@ -1,8 +1,9 @@
 import clsx from "clsx"
-import type { FC } from "react"
+import { useRef, useState, type FC, type PointerEvent } from "react"
 import {
   colOf,
   rowOf,
+  ruledOutByStars,
   starBattleConflicts,
   type StarBattleMarks,
   type StarBattlePuzzle,
@@ -24,6 +25,8 @@ type Props = {
   /** The one square the current hint is ABOUT, drawn strongest of all. */
   focus?: number
   onTapCell: (cell: number) => void
+  /** A run of squares ruled out in one gesture — see the drag handlers below. */
+  onSweepCells: (cells: number[]) => void
 }
 
 /** The answer: a shape, so it reads without colour. */
@@ -61,13 +64,81 @@ const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: nu
   return puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
 }
 
-export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, onTapCell }) => {
+export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, onTapCell, onSweepCells }) => {
   const { size } = puzzle
-  // Held back a beat: a tap on the way to the dark mark is not a mistake (see the hook).
+  const grid = useRef<HTMLDivElement | null>(null)
+  /**
+   * The gesture in flight, and the squares it has ruled out so far.
+   *
+   * The run is held here and committed once on release, which buys two things at once: the marks appear
+   * under the finger as it moves, and the whole run lands as a SINGLE move, so undo takes it back in one
+   * press. The gesture itself lives in a ref, the way constellation's does — a release has to act on what
+   * the finger actually did, and reading that from state would make it depend on whether React re-rendered
+   * between two pointer events.
+   */
+  const drag = useRef<{ from: number; swept: number[] } | undefined>(undefined)
+  const swallowClick = useRef(false)
+  const [sweeping, setSweeping] = useState<number[]>([])
+
+  /**
+   * Which square a point is over, worked out from the grid's own box rather than from the DOM.
+   *
+   * A drag captures the pointer on the square it started from, so `pointerenter` never fires on the squares
+   * it crosses — which is the whole difficulty with a touch drag. The grid is uniform, so arithmetic answers
+   * the question exactly and needs no hit-testing.
+   */
+  const cellUnder = (x: number, y: number): number | undefined => {
+    const box = grid.current?.getBoundingClientRect()
+    if (!box) return undefined
+    const col = Math.floor(((x - box.left) / box.width) * size)
+    const row = Math.floor(((y - box.top) / box.height) * size)
+    if (col < 0 || col >= size || row < 0 || row >= size) return undefined
+    return row * size + col
+  }
+
+  const beginDrag = (cell: number) => (event: PointerEvent<HTMLButtonElement>) => {
+    drag.current = { from: cell, swept: [] }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const moveDrag = (event: PointerEvent<HTMLButtonElement>) => {
+    const gesture = drag.current
+    if (!gesture) return
+    const over = cellUnder(event.clientX, event.clientY)
+    // Reaching a DIFFERENT square is what turns a tap into a sweep, so the threshold is one square wide —
+    // generous enough that a wobbly tap stays a tap.
+    if (over === undefined || over === gesture.from) return
+    if (!gesture.swept.length) gesture.swept.push(gesture.from)
+    if (!gesture.swept.includes(over)) gesture.swept.push(over)
+    setSweeping([...gesture.swept])
+  }
+
+  /**
+   * A release ends the gesture, and a sweep swallows the click that follows it.
+   *
+   * The tap stays a real `click`, which is what keeps a keyboard and a screen reader working without this
+   * component reimplementing either. A drag ends with a click too, though, so a sweep has to say so.
+   */
+  const endDrag = () => {
+    const gesture = drag.current
+    drag.current = undefined
+    setSweeping([])
+    if (!gesture?.swept.length) return
+    swallowClick.current = true
+    onSweepCells(gesture.swept)
+  }
+
+  // Held back a beat: a star cleared straight after being made is not a mistake (see the hook).
   const conflicts = useDelayedConflicts(state.marks, marks => starBattleConflicts(puzzle, { marks }))
+  // The adjacency rule drawn rather than tapped out — see `ruledOutByStars`.
+  const spent = ruledOutByStars(puzzle, state.marks)
   return (
-    <div className="aspect-square w-full max-w-[min(56vh,26rem)] select-none">
+    // The board claims its own gestures: a drag across it rules squares out, so it cannot also scroll the
+    // page. The page is scrolled to the rules from the chrome around the board — the trade constellation
+    // made first, for the same reason.
+    <div className="aspect-square w-full max-w-[min(56vh,26rem)] touch-none select-none">
       <div
+        ref={grid}
         className="grid size-full"
         style={{
           gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
@@ -77,13 +148,26 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
         {state.marks.map((value, cell) => (
           <button
             key={cell}
-            onClick={() => onTapCell(cell)}
+            onPointerDown={beginDrag(cell)}
+            onPointerMove={moveDrag}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onClick={() => {
+              if (swallowClick.current) {
+                swallowClick.current = false
+                return
+              }
+              onTapCell(cell)
+            }}
             className={clsx(
               "flex aspect-square items-center justify-center p-[14%] transition-colors",
               // The squares a hint settles are LIT rather than ringed. A ring here would be a second amber
               // line beside the region walls, which are amber and are the board's only clue — the two read as
               // each other at arm's length. A lighter square cannot be mistaken for a boundary.
-              decided?.has(cell) ? "bg-stone-700" : "bg-stone-800",
+              //
+              // A square a star already rules out sits DARKER instead: it is not a mark and must not read as
+              // one, so it recedes rather than gaining anything of its own.
+              decided?.has(cell) ? "bg-stone-700" : spent.has(cell) ? "bg-stone-900" : "bg-stone-800",
               // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
               // whatever the grid size turns out to be.
               boundary(puzzle, cell, -1, 0) ? "border-t-3 border-t-amber-200/80" : "border-t border-t-stone-600/50",
@@ -101,7 +185,7 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
                   : highlighted?.has(cell) && "ring-2 ring-sky-300/60 ring-inset"
             )}
           >
-            {value === "star" ? <StarGlyph /> : value === "dark" ? <DarkGlyph /> : null}
+            {value === "star" ? <StarGlyph /> : value === "dark" || sweeping.includes(cell) ? <DarkGlyph /> : null}
           </button>
         ))}
       </div>
