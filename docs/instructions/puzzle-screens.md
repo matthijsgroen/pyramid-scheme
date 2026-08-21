@@ -31,25 +31,44 @@ has timed against a human clock has not cleared this bar.
 
 ## 2. Theming — the family renders states, the skin renders pixels
 
-The same puzzle dresses up per site (`ctx.theme`).
+A room dresses out of **two** things it is told, and they answer different questions.
+
+| What arrives | Authored as          | The question it answers                                            |
+| ------------ | -------------------- | ------------------------------------------------------------------ |
+| `ctx.role`   | `encounter: "trade"` | **Which place is this?** The pool the room was drawn from.         |
+| `ctx.theme`  | `theme: "night"`     | **What is it like right now?** The hour and the weather, per site. |
 
 - The family component emits **logical state** (`"empty" | "kept" | "struck"`,
   glyph index, clue). It hardcodes no color, texture, or glyph.
 - A skin maps logical state to classes/sprites. Every family ships **one default
   skin**; more skins are added when a site asks for one, not up front.
-- Unknown `ctx.theme` falls back to the default skin silently.
+- An unknown role or theme falls back to the default skin silently.
 
-**`ctx.theme` is the name a site authored, and it arrives from world-gen.** A pyramid, a floor or a
-side section authors `theme` (most-specific wins, `worldgen-dsl-redesign.md` §"Puzzle skin"), the
-world file carries it, and every puzzle room is stamped with the name its own path authored. The
-Lighthouse of Alexandria is the live example — `theme: "night"`, which eclipse draws as star and dark
-sky. A family lists the names it has skins for in `FamilyMeta.themes`; that list is also what the
-puzzle lab's theme picker offers, so a new skin is playable the moment it is declared.
+**The role is the identity, and it is what lets one mechanic be several things.** Constellation is the
+reference: the same rules are a star map drawn for `sky`, a haul-road network drawn for `trade`, and a
+waterworks drawn for `water`. An author asks for _trade puzzles in this pyramid_ and gets the families
+that serve trade, each wearing its trade face — no site names a skin. Which is why the role is carried
+into the room instead of being thrown away once it has picked a family: `placeEncounters` keeps the
+question next to the answer.
 
-**Naming a skin can never break a room.** The name is opaque to core and to every other family, so a
-site may hand one to a room rendering a family that has never heard of it — that family draws its
-default and nothing is lost. Which is why a skin travels to places a *role* must not (a role can
-demand `encounterArgs`; a skin demands nothing).
+**The ambience is the place, not the puzzle.** `theme` dresses a site — corridors at night, sand blowing
+through them — and reaches boards too, so a room can be a causeway _after dark_. It **layers** on the
+identity rather than replacing it. Asking for trade puzzles and getting a waterworks would be wrong,
+and "the skin follows the site theme" is exactly what would have produced it.
+
+**How the two combine is the family's call, deliberately.** Core hands over both and decides nothing,
+because any precedence rule core picked would be wrong for some family. Constellation resolves role →
+identity, layers a `night` overlay when the site is dark, and lets a theme naming one of its own skins
+win outright — which is what makes every skin playable in the lab, where only a theme can be picked.
+Eclipse has no roles and one ambience skin, so for it `theme: "night"` is the whole story.
+
+A pyramid, a floor or a side section authors either (most-specific wins,
+`worldgen-dsl-redesign.md` §"Puzzle skin"), the world file carries both, and every puzzle room is
+stamped with what its own path asked for. `FamilyMeta.themes` lists the names a family has skins for,
+and the lab's picker reads that list.
+
+**Naming either can never break a room.** Both are opaque to core and to every other family, so a site
+may ask for anything and a family that has never heard of it draws its default.
 
 ## 3. Controls — all four, all from the shell
 

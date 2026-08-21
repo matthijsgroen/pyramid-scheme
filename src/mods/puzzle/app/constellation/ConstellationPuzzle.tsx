@@ -21,13 +21,15 @@ import { ConstellationRules } from "./ConstellationRules"
 type Props = {
   puzzle: ConstellationPuzzleWithAnswer
   difficulty?: Difficulty
-  /** The skin the site authored for this room (docs/game-design/puzzles/constellation.md §9). */
+  /** The ambience the site authored, or a skin named outright (docs/game-design/puzzles/constellation.md §9). */
   theme?: string
+  /** The role this room was allocated for — what decides which of this family’s places it is. */
+  role?: string | string[]
   onSolved: () => void
   onCancel: () => void
 }
 
-export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
+export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = useState(() => createConstellationState(puzzle))
 
@@ -79,6 +81,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSo
             focus={hintVisible ? hint?.focus : undefined}
             litStars={hintVisible ? hint?.stars : undefined}
             theme={theme}
+            role={role}
             celebrated={celebrated}
             onDrawLine={pair => {
               if (finished) return // the board is finishing; nothing may change under the celebration

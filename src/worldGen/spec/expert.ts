@@ -115,13 +115,15 @@ export const expertRules: Rule[] = [
 
   ...wardRules,
 
-  // **The Nile Delta Expedition is irrigation country.** A skin and nothing else: `theme` decides what a
-  // family looks like, never which family renders a room, so every puzzle here still comes from the general
-  // pool. Only the star map has an irrigation skin today — its basins joined by channels are this mechanic
-  // read as a waterworks — and every other family draws its default, which is exactly what a name a family
-  // does not know is supposed to do. Authoring the FAMILY here as well is a decision for when the catalogue
-  // is broad enough for a themed pool to still have variety in it.
-  journey("expert_3").pyramid("1-5", { theme: "irrigation" }),
+  // **The Nile Delta Expedition wants water puzzles, and cannot have them yet.** The role would be
+  // `water`, and today only the bridges board carries it — a pool of one, so every main-path room in five
+  // pyramids would be the same puzzle wearing the same dress. It joins the moment a second water family
+  // exists (the water clock, or the water-jug puzzle §11.1 flags), and the irrigation skin is built and
+  // waiting for it: `journey("expert_3").pyramid("1-5", { encounter: "water" })` is the whole change.
+  //
+  // Deliberately NOT authored as a skin instead. `theme` is the place — night, sandstorm — and asking for a
+  // dress without asking for the puzzles that wear it is how a trade pyramid ends up looking like a
+  // waterworks.
 
   // expert_4 (the last journey) — some open main-path floors gain a floor-key lock (find a
   // colored key on the floor to open a gated side room) plus an explicitly broad `packing`

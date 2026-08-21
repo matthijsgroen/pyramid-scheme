@@ -11,6 +11,7 @@ import {
   type ConstellationLines,
   type ConstellationPuzzle,
 } from "@/mods/puzzle/game/constellation/constellation"
+import { skinFor, type Skin } from "./skins"
 
 type Props = {
   puzzle: ConstellationPuzzle
@@ -21,8 +22,10 @@ type Props = {
   focus?: number
   /** Stars the current hint points at — a sealing reason points at the group it would close. */
   litStars?: ReadonlySet<number>
-  /** The skin this room was authored to wear; a name this family has none for draws the default. */
+  /** The ambience the site authored (`night`), or a skin named outright. */
   theme?: string
+  /** The role this room was allocated for, which is what decides WHICH of this family's places it is. */
+  role?: string | string[]
   /** Nodes that have had their turn in the completion run (see useCelebration). */
   celebrated?: ReadonlySet<number>
   onDrawLine: (pair: number) => void
@@ -45,187 +48,6 @@ const positionOf = (puzzle: ConstellationPuzzle, star: number) => {
     top: (rowOf(puzzle.size, puzzle.stars[star].cell) + 0.5) * share,
   }
 }
-
-/**
- * What grows out of a basin, in three stages: a shoot while it is short of its channels, a full plant once it
- * has them, and a plant **in flower** when the board is finished.
- *
- * The flower is the completion animation for this skin — the run puts one on every plant, one basin at a
- * time. Which is why a fed basin stops short of it: if a plant flowered the moment it had its water, the
- * finish would have nothing left to say.
- *
- * It grows above the disc rather than behind the number: drawn behind it, a digit on top of a stem is a digit
- * you have to work to read, and the number is the clue (§8).
- */
-const Plant: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }) => (
-  <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
-    <g fill="none" stroke="currentColor" strokeWidth={grown ? 2 : 2.4} strokeLinecap="round">
-      <line x1={12} y1={24} x2={12} y2={grown ? 7 : 15} />
-      <path d={grown ? "M12 16 C 7 15, 5 12, 5 8" : "M12 19 C 9 18, 8 16, 8 13"} />
-      <path d={grown ? "M12 16 C 17 15, 19 12, 19 8" : "M12 19 C 15 18, 16 16, 16 13"} />
-      {grown && <path d="M12 11 C 8 10, 7 7, 7 4" />}
-      {grown && <path d="M12 11 C 16 10, 17 7, 17 4" />}
-    </g>
-    {flowering && (
-      <g className="animate-flower-in">
-        {/* Five petals round a heart — a blossom has to read as a flower at 30px, and a single dot does not. */}
-        {[0, 1, 2, 3, 4].map(petal => {
-          const angle = (petal * 2 * Math.PI) / 5 - Math.PI / 2
-          return (
-            <circle
-              key={petal}
-              cx={12 + Math.cos(angle) * 3.4}
-              cy={5 + Math.sin(angle) * 3.4}
-              r={2.1}
-              fill="currentColor"
-            />
-          )
-        })}
-        <circle cx={12} cy={5} r={1.7} className="fill-amber-200" />
-      </g>
-    )}
-  </svg>
-)
-
-/**
- * What stands at a junction: a staked-out foundation while the site is short of its roads, a built pyramid
- * once the roads reach it, and a **capstone** on it when the network is finished.
- *
- * The same three stages the plant has, and for the same reason — the last one belongs to the completion run,
- * so a served site deliberately stops short of it. A pyramid is drawn rather than filled flat because a
- * flat triangle on sand is a triangle; the courses are what make it masonry.
- */
-const Pyramid: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }) => (
-  <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
-    {grown ? (
-      <>
-        <path d="M12 3 L22 22 L2 22 Z" className="fill-stone-200 stroke-stone-700" strokeWidth={1.4} />
-        {/* Two courses, which is all it takes to stop reading as a road sign. */}
-        <path d="M6.5 16 L17.5 16 M9 10 L15 10" className="stroke-stone-500" strokeWidth={1} fill="none" />
-      </>
-    ) : (
-      // Staked out, not yet built: the footprint and one course of stone.
-      <path
-        d="M4.5 22 L19.5 22 M7 17 L17 17 M12 8 L17 17 M12 8 L7 17"
-        className="stroke-stone-600"
-        strokeWidth={1.4}
-        strokeDasharray="2.6 2"
-        strokeLinecap="round"
-        fill="none"
-      />
-    )}
-    {flowering && (
-      <g className="animate-flower-in">
-        {/* The capstone going on, gilded — the one thing on this board that is not stone-coloured. */}
-        <path d="M12 1.5 L16 9 L8 9 Z" className="fill-amber-300 stroke-amber-600" strokeWidth={0.8} />
-      </g>
-    )}
-  </svg>
-)
-
-/**
- * A skin: what the board, its lines and its nodes look like. The family emits logical state only — a node
- * that is short of its number, has it, or holds too many; a line drawn, doubled or previewed — and a skin
- * decides the pixels (docs/instructions/puzzle-screens.md §2).
- *
- * The same rule holds in every one of them, and it is the accessibility floor rather than a style note: the
- * three node states differ in **fill and outline**, not only in hue, and a node that has its count always
- * reads as the one that lit up. A skin the family does not have falls back to `default` silently.
- */
-type Skin = {
-  /** The board itself — background and frame. */
-  board: string
-  /** Far-off specks behind the board: stars, silt, whatever the place is made of. Empty = none. */
-  backdrop: string
-  /** A line already drawn, and a line the drag is about to add. */
-  line: string
-  pending: string
-  /** The glow a line carries, as a Tailwind drop-shadow. */
-  lineGlow: string
-  /** A node short of its count, one that has it, and one holding too many. */
-  unlit: string
-  lit: string
-  over: string
-  /** Drawn out of a node — a place whose nodes are things that grow says so. */
-  Glyph?: FC<{ grown: boolean; flowering?: boolean }>
-  /** The glyph's own colour, short of its count and once it has it. A glyph inheriting the node's text
-   *  colour came out the colour of stone, which is the one thing a plant must not be. */
-  glyphUnlit?: string
-  glyphLit?: string
-  /** What a node wears for its turn in the completion run, and it is a per-skin choice rather than one
-   *  house style: a STAR swelling as it brightens reads as catching the light, and the same swell on a basin
-   *  — a thing rooted in the ground, with a plant growing out of it — reads as the board twitching. So the
-   *  sky blooms and the places on the earth only flare (see index.css). */
-  celebrate: string
-}
-
-const SKINS: Record<string, Skin> = {
-  // The night sky. Stars burn once they have their light; the unlit ones are quiet and readable.
-  default: {
-    board: "bg-[radial-gradient(ellipse_at_50%_15%,#16204a_0%,#0a0f24_45%,#04060f_100%)] ring-1 ring-indigo-300/15",
-    backdrop: "fill-slate-200",
-    line: "stroke-amber-100",
-    pending: "stroke-amber-100/40",
-    lineGlow: "drop-shadow-[0_0_2px_rgb(254_243_199_/_0.7)]",
-    unlit: "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
-    lit: "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]",
-    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
-    // Stars twinkle, size and all: a star is a point of light, so a swell IS the reading.
-    celebrate: "animate-bloom",
-  },
-  // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
-  // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
-  // one network watering every field. A dry basin is a stone ring; a fed one holds water.
-  irrigation: {
-    // **Daylight on sand**, which is the deliberate opposite of the night sky the same board wears by
-    // default: a waterworks is a thing you dig under the sun. Everything else follows from the board being
-    // LIGHT — the water is deep enough to read against it, and the numbers are dark rather than pale.
-    board: "bg-[radial-gradient(ellipse_at_50%_20%,#ecd9ad_0%,#dcc088_45%,#c5a86c_100%)] ring-1 ring-amber-900/25",
-    // Silt and grit rather than far-off stars.
-    backdrop: "fill-amber-900/25",
-    line: "stroke-sky-700",
-    pending: "stroke-sky-700/40",
-    // A shadow rather than a glow: light does not bloom on a sunlit board, it casts.
-    lineGlow: "drop-shadow-[0_1px_1px_rgb(120_53_15_/_0.35)]",
-    // A dry basin is cut stone; a fed one is water you can see the depth of.
-    unlit: "border-stone-600/70 bg-radial from-stone-200/90 to-stone-400/70 text-stone-800",
-    lit: "border-sky-800 bg-radial from-sky-400/95 to-sky-600/80 text-sky-950 shadow-[0_0_14px_3px_rgb(3_105_161_/_0.35)]",
-    over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
-    // Light only. A basin cannot swell, and the plant growing out of it is what the run really says — the
-    // flower is the animation here, and the glyph does that part.
-    celebrate: "animate-flare",
-    Glyph: Plant,
-    glyphUnlit: "text-lime-600",
-    glyphLit: "text-lime-500",
-  },
-  // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
-  // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
-  // is finished stone. Daylight rather than night, so the lines read as limestone rather than light.
-  causeway: {
-    // Sand, like the delta — a building site is outdoors too — but drier and greyer, so the two daylight
-    // skins do not read as the same place. What tells them apart is what stands on them: basins and plants
-    // there, staked-out pyramids here, water against packed road.
-    board: "bg-[radial-gradient(ellipse_at_50%_20%,#ded3b6_0%,#c8bb98_45%,#ada078_100%)] ring-1 ring-stone-800/25",
-    // Dust and chippings.
-    backdrop: "fill-stone-800/20",
-    // A haul road is packed rubble: darker than the sand it crosses, which is the only way it reads on it.
-    line: "stroke-stone-700",
-    pending: "stroke-stone-700/40",
-    lineGlow: "drop-shadow-[0_1px_1px_rgb(41_37_36_/_0.35)]",
-    // An unserved site is bare ground; a served one is finished stone.
-    unlit: "border-stone-700/60 bg-radial from-amber-100/80 to-amber-200/50 text-stone-800",
-    lit: "border-stone-800 bg-radial from-stone-100/95 to-stone-300/80 text-stone-900 shadow-[0_0_12px_3px_rgb(68_64_60_/_0.25)]",
-    over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
-    // Light only, for the same reason as the basin: a junction is a place, and places do not pulse. The
-    // last stone going in catches the sun instead.
-    celebrate: "animate-flare",
-    Glyph: Pyramid,
-    glyphUnlit: "text-stone-700",
-    glyphLit: "text-stone-800",
-  },
-}
-
-const skinFor = (theme: string | undefined): Skin => (theme && SKINS[theme]) || SKINS.default
 
 // A star disc, as a share of a cell — half of HIT_SCALE-independent 77% of the pitch, which is where a
 // line has to stop so the number underneath it stays readable.
@@ -339,11 +161,12 @@ export const ConstellationBoard: FC<Props> = ({
   focus,
   litStars,
   theme,
+  role,
   celebrated,
   onDrawLine,
 }) => {
   const byStar = pairsByStar(puzzle)
-  const skin = skinFor(theme)
+  const skin = skinFor(role, theme)
   const backdrop = useMemo(() => backdropStars(puzzle), [puzzle])
   // The gesture lives in a ref and the state only mirrors it for drawing. A release has to act on the
   // direction the finger was last pointing, and reading that from state would make the line depend on

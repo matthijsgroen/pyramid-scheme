@@ -1,0 +1,172 @@
+import type { FC } from "react"
+import { Plant, Pyramid } from "./glyphs"
+
+/**
+ * What each of this family’s places looks like, and how a room works out which place it is.
+ *
+ * Separate from the board because the board is a component file, and separate from the glyphs because a file
+ * exporting components may export nothing else.
+ */
+
+/**
+ * A skin: what the board, its lines and its nodes look like. The family emits logical state only — a node
+ * that is short of its number, has it, or holds too many; a line drawn, doubled or previewed — and a skin
+ * decides the pixels (docs/instructions/puzzle-screens.md §2).
+ *
+ * The same rule holds in every one of them, and it is the accessibility floor rather than a style note: the
+ * three node states differ in **fill and outline**, not only in hue, and a node that has its count always
+ * reads as the one that lit up. A skin the family does not have falls back to `default` silently.
+ */
+export type Skin = {
+  /** The board itself — background and frame. */
+  board: string
+  /** Far-off specks behind the board: stars, silt, whatever the place is made of. Empty = none. */
+  backdrop: string
+  /** A line already drawn, and a line the drag is about to add. */
+  line: string
+  pending: string
+  /** The glow a line carries, as a Tailwind drop-shadow. */
+  lineGlow: string
+  /** A node short of its count, one that has it, and one holding too many. */
+  unlit: string
+  lit: string
+  over: string
+  /** Drawn out of a node — a place whose nodes are things that grow says so. */
+  Glyph?: FC<{ grown: boolean; flowering?: boolean }>
+  /** The glyph's own colour, short of its count and once it has it. A glyph inheriting the node's text
+   *  colour came out the colour of stone, which is the one thing a plant must not be. */
+  glyphUnlit?: string
+  glyphLit?: string
+  /** What this place looks like after dark, as an overlay on itself. Only what changes: the ground and its
+   *  frame, mostly. A causeway at night is still a causeway. */
+  night?: Partial<Skin>
+  /** What a node wears for its turn in the completion run, and it is a per-skin choice rather than one
+   *  house style: a STAR swelling as it brightens reads as catching the light, and the same swell on a basin
+   *  — a thing rooted in the ground, with a plant growing out of it — reads as the board twitching. So the
+   *  sky blooms and the places on the earth only flare (see index.css). */
+  celebrate: string
+}
+
+const SKINS: Record<string, Skin> = {
+  // The night sky. Stars burn once they have their light; the unlit ones are quiet and readable.
+  default: {
+    board: "bg-[radial-gradient(ellipse_at_50%_15%,#16204a_0%,#0a0f24_45%,#04060f_100%)] ring-1 ring-indigo-300/15",
+    backdrop: "fill-slate-200",
+    line: "stroke-amber-100",
+    pending: "stroke-amber-100/40",
+    lineGlow: "drop-shadow-[0_0_2px_rgb(254_243_199_/_0.7)]",
+    unlit: "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
+    lit: "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]",
+    over: "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]",
+    // Stars twinkle, size and all: a star is a point of light, so a swell IS the reading.
+    celebrate: "animate-bloom",
+    // The default sky IS night, so there is nothing for the ambience to change.
+  },
+  // **Basins and channels** (PUZZLE_FAMILIES.md §11.1, Water & Nile). The rules read straight across: a
+  // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
+  // one network watering every field. A dry basin is a stone ring; a fed one holds water.
+  irrigation: {
+    // **Daylight on sand**, which is the deliberate opposite of the night sky the same board wears by
+    // default: a waterworks is a thing you dig under the sun. Everything else follows from the board being
+    // LIGHT — the water is deep enough to read against it, and the numbers are dark rather than pale.
+    board: "bg-[radial-gradient(ellipse_at_50%_20%,#ecd9ad_0%,#dcc088_45%,#c5a86c_100%)] ring-1 ring-amber-900/25",
+    // Silt and grit rather than far-off stars.
+    backdrop: "fill-amber-900/25",
+    line: "stroke-sky-700",
+    pending: "stroke-sky-700/40",
+    // A shadow rather than a glow: light does not bloom on a sunlit board, it casts.
+    lineGlow: "drop-shadow-[0_1px_1px_rgb(120_53_15_/_0.35)]",
+    // A dry basin is cut stone; a fed one is water you can see the depth of.
+    unlit: "border-stone-600/70 bg-radial from-stone-200/90 to-stone-400/70 text-stone-800",
+    lit: "border-sky-800 bg-radial from-sky-400/95 to-sky-600/80 text-sky-950 shadow-[0_0_14px_3px_rgb(3_105_161_/_0.35)]",
+    over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
+    // Light only. A basin cannot swell, and the plant growing out of it is what the run really says — the
+    // flower is the animation here, and the glyph does that part.
+    celebrate: "animate-flare",
+    Glyph: Plant,
+    glyphUnlit: "text-lime-600",
+    glyphLit: "text-lime-500",
+    // The delta after dark: the sand goes cold and the water goes deep, and the plants keep their green
+    // because a field at night is still a field.
+    night: {
+      board: "bg-[radial-gradient(ellipse_at_50%_20%,#4a4433_0%,#2b291f_45%,#171613_100%)] ring-1 ring-emerald-200/15",
+      backdrop: "fill-emerald-100/30",
+      unlit: "border-stone-400/50 bg-radial from-stone-700/70 to-stone-950/80 text-stone-100",
+      lit: "border-sky-300 bg-radial from-sky-500/60 to-sky-800/70 text-sky-50 shadow-[0_0_14px_3px_rgb(56_189_248_/_0.3)]",
+    },
+  },
+  // **Junctions and haul roads** (§11.1, Logistics / Caravan). A number is how many roads meet a site, and
+  // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
+  // is finished stone. Daylight rather than night, so the lines read as limestone rather than light.
+  causeway: {
+    // Sand, like the delta — a building site is outdoors too — but drier and greyer, so the two daylight
+    // skins do not read as the same place. What tells them apart is what stands on them: basins and plants
+    // there, staked-out pyramids here, water against packed road.
+    board: "bg-[radial-gradient(ellipse_at_50%_20%,#ded3b6_0%,#c8bb98_45%,#ada078_100%)] ring-1 ring-stone-800/25",
+    // Dust and chippings.
+    backdrop: "fill-stone-800/20",
+    // A haul road is packed rubble: darker than the sand it crosses, which is the only way it reads on it.
+    line: "stroke-stone-700",
+    pending: "stroke-stone-700/40",
+    lineGlow: "drop-shadow-[0_1px_1px_rgb(41_37_36_/_0.35)]",
+    // An unserved site is bare ground; a served one is finished stone.
+    unlit: "border-stone-700/60 bg-radial from-amber-100/80 to-amber-200/50 text-stone-800",
+    lit: "border-stone-800 bg-radial from-stone-100/95 to-stone-300/80 text-stone-900 shadow-[0_0_12px_3px_rgb(68_64_60_/_0.25)]",
+    over: "border-red-800 bg-radial from-red-300/90 to-red-500/70 text-red-950 shadow-[0_0_10px_2px_rgb(153_27_27_/_0.3)]",
+    // Light only, for the same reason as the basin: a junction is a place, and places do not pulse. The
+    // last stone going in catches the sun instead.
+    celebrate: "animate-flare",
+    Glyph: Pyramid,
+    glyphUnlit: "text-stone-700",
+    glyphLit: "text-stone-800",
+    // A causeway at night: the ground goes blue-grey and the finished stone catches moonlight instead of sun.
+    night: {
+      // Warm, not neutral: the sand is still under there. Drawn cold, the same board stopped reading as the
+      // same place after dark, which is the one thing an ambience overlay must not do.
+      board: "bg-[radial-gradient(ellipse_at_50%_20%,#3a3226_0%,#241f17_45%,#14110c_100%)] ring-1 ring-amber-100/15",
+      backdrop: "fill-stone-200/25",
+      line: "stroke-stone-400",
+      pending: "stroke-stone-400/40",
+      unlit: "border-stone-400/50 bg-radial from-stone-700/70 to-stone-950/80 text-stone-100",
+      lit: "border-stone-200 bg-radial from-stone-300/80 to-stone-500/50 text-stone-950 shadow-[0_0_12px_3px_rgb(214_211_209_/_0.3)]",
+      glyphUnlit: "text-stone-200",
+      glyphLit: "text-stone-100",
+    },
+  },
+}
+
+/**
+ * Which skin this room wears, out of the two things it is told: the **role** it was allocated for, and the
+ * **ambience** its site authored.
+ *
+ * They answer different questions, and the family is what puts them together (a core that decided this for
+ * every family would have to pick one, and either choice is wrong somewhere):
+ *
+ * - **The role is the identity.** Bridges drawn for `trade` is a haul-road network; drawn for `sky` it is a
+ *   star map; drawn for `water` it is a waterworks. Same rules, same board, three different places.
+ * - **The ambience is the weather and the hour.** `night` over a causeway is a causeway after dark, not a
+ *   star map — so it layers ON the identity rather than replacing it.
+ * - **A theme naming a skin outright wins**, which is what makes the puzzle lab able to show any of them.
+ */
+const ROLE_SKINS: Record<string, string> = {
+  sky: "default",
+  light: "default",
+  trade: "causeway",
+  logistics: "causeway",
+  water: "irrigation",
+  agriculture: "irrigation",
+}
+
+const AMBIENCE = ["night"]
+
+export const skinFor = (role: string | string[] | undefined, theme: string | undefined): Skin => {
+  // A theme that names one of this family's own skins is an explicit override (the lab, and any site that
+  // wants a specific dress). Ambience names are not skins and never resolve here.
+  const named = theme && !AMBIENCE.includes(theme) ? SKINS[theme] : undefined
+  const roles = role === undefined ? [] : Array.isArray(role) ? role : [role]
+  // A list of roles is a union the allocator drew from, so the first one this family has an identity for is
+  // the one this room is.
+  const byRole = roles.map(each => ROLE_SKINS[each]).find(skin => skin && SKINS[skin])
+  const base = named ?? (byRole ? SKINS[byRole] : SKINS.default)
+  return theme && AMBIENCE.includes(theme) && base.night ? { ...base, ...base.night } : base
+}

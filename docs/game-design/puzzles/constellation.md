@@ -398,7 +398,34 @@ belongs to the completion run and arrives one node at a time — which is why a 
 while the board is still unsolved. If the flower came with the water, or the capstone with the last road, the
 finish would have nothing left to say.
 
-**Only the skin is authored, never the family.** `theme` decides what a family looks like and never
+### 9.3 Which place a room is, and who decides
+
+**The skin follows the ROLE the room was allocated for, not the site it sits in.** A site asks for _trade
+puzzles in this pyramid_ (`encounter: "trade"`), the allocator draws the families that serve trade — the
+balance scale, and this one — and this one wears its haul-road face, because that is the pool it came from.
+No site named a skin. The same board on the lighthouse was drawn for `sky`, so there it is a star map.
+
+| Role                   | This family is |
+| ---------------------- | -------------- |
+| `sky`, `light`         | the star map   |
+| `trade`, `logistics`   | the haul roads |
+| `water`, `agriculture` | the waterworks |
+
+**Ambience layers on that, and does not replace it.** `theme` is the hour and the weather of a place —
+`night` today, a sandstorm later — so a trade pyramid after dark is a causeway at night: ground gone cold,
+finished stone catching moonlight instead of sun. What the place IS never changes; only what time it is. A
+theme naming one of these skins outright wins, which is what keeps every skin playable in the lab, where a
+theme is the only thing that can be picked.
+
+**Why the family decides and not core.** Any precedence core imposed would be wrong for somebody: eclipse
+has no roles and one ambience skin, this family has three identities and an overlay. So core carries both
+names and reads neither.
+
+**`water` is deliberately not in this family's tags yet.** It would be a pool of one — every main-path room
+in the Nile Delta the same board in the same dress — so the role waits for a second water family, and the
+skin is built and waiting with it. `expert.ts` says so where the next author will look.
+
+**Only the role is authored, never the family.** `theme` decides what a family looks like and never
 which family renders a room, so the Nile Delta Expedition and the Great Pyramid of Giza name a skin and
 leave their puzzle pool alone — every other family in those pyramids draws its own default, which is
 exactly what a name a family does not know is for. Authoring the _family_ as well waits until the
