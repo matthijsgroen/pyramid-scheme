@@ -651,35 +651,46 @@ Family doc: `docs/game-design/puzzles/canal.md`.
   handful of decisions rather than a sweep.
 - **On sharing a verb with lightbeam:** both rotate pieces on a grid, and that is where it ends — lightbeam
   reasons about where one beam goes, this reasons about stubs matching and loops closing. A shared verb is
-  already tolerated here (sumplete, eclipse and futoshiki all tap cells); a shared *deduction* would not be,
+  already tolerated here (sumplete, eclipse and futoshiki all tap cells); a shared _deduction_ would not be,
   which is what ruled out Akari (§4.15's deferred note) and the rotate-pipes reading of §4.22.
 - **Themes:** water (pipes), Trade (a road network), and a lit circuit reads as a temple's lamps — it wears
   a role the same way §4.21 and §4.22 do.
 
-### 4.24 Star Battle (two not touch) — _(next up for the `sky` pool; not designed)_
+### 4.24 Star Battle (two not touch) — _(designed, not yet built)_
 
-**Why it is next:** the `sky` role is what the Lighthouse of Alexandria draws every main-path room from
-(`junior.ts`), and it holds two families — the beam and the sun-and-moon grid — plus the star map, which
-wears `sky` as its default identity (§4.21). Three is thin for five pyramids, and this is the candidate that
-was ranked second when the pool was investigated, behind the star map that got built.
+Family doc: `docs/game-design/puzzles/star-battle.md`.
 
-- **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction, like
-  eclipse, but constrained by regions rather than by lines alone.
+- **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction like
+  eclipse, but constrained by a group that is not a line.
 - **Operates:** place a fixed number of stars in every row, every column and every region, and no two stars
-  may touch, diagonals included. The name is the theme, which is the cheapest possible fit for `sky`.
-- **The distinctness question, which is the first thing to settle.** Row-and-column counts on a binary grid
-  IS eclipse's mechanic (§4.20). What this adds is REGIONS and the "no two touching" rule, so the real
-  question for whoever designs it is whether those two carry a ladder of their own or whether it plays as
-  eclipse with a jigsaw drawn on it. Compare against the two rejections already on record: Akari was ruled
-  out for duplicating lightbeam's mechanism (§4.15's deferred note), and the rotate-pipes reading of the
-  canal for the same reason (§4.22) — while a shared VERB alone was judged acceptable (§4.23).
-- **What it would inherit for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed
-  conflict display, and — if it wants one — the completion run every family can now have
-  (`puzzle-screens.md` §3: report the solve a beat late, refuse input, honour reduced motion).
-- **Generation:** draw regions, place a legal star set, then check a technique solver reaches it unaided —
-  the draw-then-test shape (§4.21), since a region map is not a clue that can be thinned.
+  may touch, diagonals included. Some squares are hatched and hold nothing — they are why the family is
+  generable at all. The name is the theme, which is the cheapest possible fit for `sky`.
+- **Knobs:** grid size (real here — a wider grid is more regions, and a region is a clue rather than
+  bookkeeping) · how many blocked squares survive thinning · stars per line · technique cap, required rung
+  and its quota.
+- **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
+  **mechanism** — a region is a group that is not a line, and the play is sparse elimination rather than
+  eclipse's filled grid — but they do **not** carry much of a ladder: capping the solver below every region
+  rung still yields boards, two blocked squares heavier out of sixty-four, and seventy per cent of any solve
+  is the two rungs a player learns in the first minute. The family's claim to a slot is how the board plays,
+  not a deduction eclipse cannot reach. That is a weaker claim than §4.21's, and it is the first thing to
+  re-examine if the built family disappoints.
+- **Generation is not draw-then-test, because that does not work.** A region map alone admits several
+  answers — measured at **0 unique out of 200** at 6×6, 7×7 and 8×8, and skewing region sizes rescues only
+  5×5. Published grids are hand-carved to be unique, which is a search over shapes rather than a rejection
+  loop. So the family adds a thinnable second clue layer — **blocked squares** — and generation returns to
+  the build-then-thin loop every other family here runs: place the stars, grow the regions around them,
+  block everything else, then unblock while the technique solver still finishes unaided. Boards ship with a
+  fifth of the grid hatched, drawn in 1–6ms.
+- **The duration risk is the step count**, not the reasoning: an 8×8 is ~160 non-trivial steps against
+  eclipse's wizard 55–57. The defence is that these steps are reflexes (darkening the ring around a star)
+  rather than thoughts, which is a claim about the fingertips that only the lab settles — so 7×7 is the size
+  the family is really about, and 8×8 at the top is a measurement waiting to happen.
+- **What it inherits for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed conflict
+  display, and the completion run every family can now have (`puzzle-screens.md` §3).
 - **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic
-  that reads as several places.
+  that reads as several places. The family doc §10 records the one reading (post a watchman to every
+  district, none within sight of another) that could earn a second skin if a site ever asks.
 
 ---
 
@@ -899,16 +910,16 @@ budget, since solve time varies wildly across families (§3.2, §8).
 
 Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redesign.md` has "merchant"/"night-market" as live `theme` string examples):
 
-| Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
-| ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)               |
-| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field — the ROLE waits for a second family, see the gap note), water clock                          |
-| **Trade** — a live role       | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). Authored as `encounter: "trade"` on the Great Pyramid of Giza; Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag |
-| **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms |
-| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells) |
-| **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                              |
-| **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                             |
-| **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                          |
+| Theme                        | Flavor                                      | Families that fit                                                                                                                                                                                                                                              |
+| ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                               |
+| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field — the ROLE waits for a second family, see the gap note), water clock                                                                                       |
+| **Trade** — a live role      | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). Authored as `encounter: "trade"` on the Great Pyramid of Giza; Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag |
+| **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                             |
+| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells)                                                                 |
+| **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                              |
+| **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                             |
+| **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                          |
 
 **Gap, closed on paper by §4.22.** The canal is a water family by mechanic rather than by dress — digging a
 channel from the river to a field is what it does — so once it is built the role has two members and the Nile
