@@ -3,7 +3,9 @@ import type { FamilyMeta } from "@/game/families/familyMeta"
 export const LIGHTBEAM_META: FamilyMeta = {
   id: "lightbeam",
   ownerMod: "puzzle",
-  tags: ["puzzle"],
+  // `sky` is the wider narrative cluster (sun, stars, anything a lighthouse journey wants); `light` is
+  // the narrower one this family shares with eclipse. A journey asks for whichever pool it means.
+  tags: ["puzzle", "light", "sky"],
   // Configured for every tier (docs/game-design/puzzles/lightbeam.md §6), so the allocator may draw it
   // anywhere and a node may author it anywhere.
   minTier: "starter",

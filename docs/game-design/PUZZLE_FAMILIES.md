@@ -426,13 +426,35 @@ Family doc: `docs/game-design/puzzles/lightbeam.md`.
   or generation approach locked yet.
 - **Note:** flagged here mainly to record the **theme pairing** below before it's
   forgotten.
-  - **Theme pairing — "Merchant":** groups with **balance scale** (§4.2) under a
-    shared visual/narrative wrapper — weighing goods and moving cargo are both
-    merchant-flavored actions, even though the two mechanics are unrelated
-    (algebra vs spatial push-block). This is the first example of a **theme as a
-    cross-family grouping** rather than a per-family visual skin — worth
-    revisiting once more families exist, to see if other natural theme clusters
-    emerge (e.g. a "sun god" cluster around mirror/lightbeam).
+  **A narrative cluster is a tag on `FamilyMeta`, and a journey asks for it by name.** `tags` already
+  carried `puzzle`/`trap`; a cluster is just another entry, and the gen-time allocator draws from
+  whatever carries it. The Lighthouse of Alexandria (`junior_4`) authors `{ encounter: "sky" }` on its
+  pyramids, so its main paths serve eclipse and lightbeam, and a star-map family would join that pool by
+  carrying the tag rather than by an edit to the journey.
+
+Two things this shape decides, both worth knowing before adding a cluster:
+
+- **A list of tags means "any of these".** `["light", "sky"]` draws from both pools. Narrowing is a
+  narrower tag's job — `sky` is the wide cluster and `light` the narrow one inside it — because a list that
+  meant "all of these" made every list a smaller pool than either of its entries, which is the opposite of
+  what authoring one is for.
+- **A pyramid's theme reaches its side paths too**, including the stairs up to a ward wing — half a themed
+  pyramid reads as an accident. Only where the path is silent: a trapped path authors `encounter: "trap"` and
+  keeps it. **Tombs never hand their role down**, and that is deliberate: a tomb's role is `tomb-puzzle`,
+  whose family reads `encounterArgs.runNr`, and handing that to a side path crashed world generation on the
+  first tableau. A role can require args, so only a caller that knows its rooms are plain puzzle rooms opts in.
+- **A site can hand down arguments as well as a role.** `encounterArgs` is opaque to world-gen: a family
+  declares what it wants and parses it with its own zod schema (`tableauEncounterArgsSchema` is the
+  reference), so a knob can be added to one family without any other layer learning about it. Floors and side
+  paths inherit it and either may override.
+
+- **Theme pairing — "Merchant":** groups with **balance scale** (§4.2) under a
+  shared visual/narrative wrapper — weighing goods and moving cargo are both
+  merchant-flavored actions, even though the two mechanics are unrelated
+  (algebra vs spatial push-block). This is the first example of a **theme as a
+  cross-family grouping** rather than a per-family visual skin — worth
+  revisiting once more families exist, to see if other natural theme clusters
+  emerge (e.g. a "sun god" cluster around mirror/lightbeam).
 
 ### 4.17 Rush Hour (sliding vehicle blockade) — _(proposed, not yet designed)_
 
@@ -763,7 +785,7 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 
 | Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
 | ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                | sun-god, celestial, daylight                | Clock-arithmetic, mirror/lightbeam, Eye of Horus (Horus = sky/sun god)                                                                                                                         |
+| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam (both tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                    |
 | **Water & Nile**             | flooding, irrigation, the river             | Water clock — currently the _only_ member, see gap note below                                                                                                                                  |
 | **Merchant / Market**        | trade, weighing goods, bartering            | Balance scale, Sokoban (moving cargo), target-number (haggling to a price)                                                                                                                     |
 | **Logistics / Caravan**      | moving things through constrained space     | Sokoban, Rush Hour                                                                                                                                                                             |

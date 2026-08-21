@@ -60,6 +60,15 @@ export const juniorRules: Rule[] = [
     .hiddenPaths("low")
     .settings({ pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }),
 
+  // **The Lighthouse of Alexandria runs on sky.** Every main-path room in its five pyramids draws from the
+  // `sky` pool rather than the general `puzzle` one — today the beam family and the sun-and-moon grid, and
+  // a star-map family would join it by carrying the tag rather than by an edit here.
+  //
+  // `sky` rather than `light` on purpose, and the difference matters: the allocator ANDs a list of tags, so
+  // `["light", "sky"]` would mean "carries both" rather than "either". A union is one shared tag, which makes
+  // `sky` the wide cluster and `light` the narrow one inside it.
+  journey("junior_4").pyramid("1-5", { encounter: "sky" }),
+
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
   journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),
   journey("junior_2").pyramid(3, { wardWings: [WING.master()], sideSections: [holdChest(0)] }),

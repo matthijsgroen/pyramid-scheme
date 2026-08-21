@@ -71,9 +71,9 @@ export const getFamilyPlugin = (id: string): FamilyPlugin | undefined => registr
 
 export const allFamilies = (): FamilyPlugin[] => [...registry.values()]
 
-// A single string is an exact id or a single tag. An array requires every listed tag
-// present at once (authoring "AND": the time puzzles AND the sun puzzles AND the water
-// traps). First-registered-family-wins among matches — not weighted selection (that's
+// A single string is an exact id or a single tag. An array is "any of these" — the union of those tags'
+// pools, matching the gen-time allocator (allFamilyMeta.ts). Narrowing is a narrower tag's job, not a
+// list's. First-registered-family-wins among matches — not weighted selection (that's
 // docs/mods/ARCHITECTURE.md's Distribution primitive).
 export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin | undefined => {
   if (typeof idOrTag === "string") {
@@ -81,7 +81,7 @@ export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin
     if (exact) return exact
     return [...registry.values()].find(p => p.meta.tags.includes(idOrTag))
   }
-  return [...registry.values()].find(p => idOrTag.every(tag => p.meta.tags.includes(tag)))
+  return [...registry.values()].find(p => idOrTag.some(tag => p.meta.tags.includes(tag)))
 }
 
 // Bridges siteAssembler.ts's domain-layer resolution to the real registry — the one place

@@ -56,7 +56,11 @@ export const familyCapacityFor = (encounter: string | string[] | undefined, defa
 export const allocateEncounterFamily = (role: string | string[], tier: Difficulty, seed: number): string | string[] => {
   const roles = Array.isArray(role) ? role : [role]
   const pool = ALL_FAMILY_META.filter(
-    m => roles.every(r => m.tags.includes(r)) && difficultyCompare(tier, m.minTier ?? "starter") >= 0
+    // **A list of roles is "any of these".** Narrowing is what a narrower tag is for: `sky` is the wide
+    // cluster, `light` the narrow one inside it, and a journey asks for whichever pool it means. Reading a
+    // list as "all of these" made every list a smaller pool than either of its entries, which is the
+    // opposite of what authoring one is for.
+    m => roles.some(r => m.tags.includes(r)) && difficultyCompare(tier, m.minTier ?? "starter") >= 0
   )
     .map(m => m.id)
     .sort()
