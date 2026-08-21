@@ -39,6 +39,18 @@ The same puzzle dresses up per site (`ctx.theme`).
   skin**; more skins are added when a site asks for one, not up front.
 - Unknown `ctx.theme` falls back to the default skin silently.
 
+**`ctx.theme` is the name a site authored, and it arrives from world-gen.** A pyramid, a floor or a
+side section authors `theme` (most-specific wins, `worldgen-dsl-redesign.md` §"Puzzle skin"), the
+world file carries it, and every puzzle room is stamped with the name its own path authored. The
+Lighthouse of Alexandria is the live example — `theme: "night"`, which eclipse draws as star and dark
+sky. A family lists the names it has skins for in `FamilyMeta.themes`; that list is also what the
+puzzle lab's theme picker offers, so a new skin is playable the moment it is declared.
+
+**Naming a skin can never break a room.** The name is opaque to core and to every other family, so a
+site may hand one to a room rendering a family that has never heard of it — that family draws its
+default and nothing is lost. Which is why a skin travels to places a *role* must not (a role can
+demand `encounterArgs`; a skin demands nothing).
+
 ## 3. Controls — all four, all from the shell
 
 | Control | Behavior                                                                                             |

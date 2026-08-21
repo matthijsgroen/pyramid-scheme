@@ -19,11 +19,13 @@ import { EclipseRules } from "./EclipseRules"
 type Props = {
   puzzle: EclipsePuzzleWithAnswer
   difficulty?: Difficulty
+  /** The skin the site authored for this room; unknown or unset draws the default pair. */
+  theme?: string
   onSolved: () => void
   onCancel: () => void
 }
 
-export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
+export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = useState(() => createEclipseState(puzzle))
 
@@ -60,6 +62,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCance
           <EclipseBoard
             puzzle={puzzle}
             state={state}
+            theme={theme}
             highlighted={hintVisible ? hint?.cells : undefined}
             focus={hintVisible ? hint?.focus : undefined}
             onTapCell={cell => {

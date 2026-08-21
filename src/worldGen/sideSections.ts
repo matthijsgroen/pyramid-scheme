@@ -72,6 +72,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
+    ...(cs.theme !== undefined ? { theme: cs.theme } : {}),
   }
 }
 
@@ -100,6 +101,14 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   sideEncounter?: string | string[]
   /** Args for sections that carry none, handed down by the same caller under the same rule. */
   sideEncounterArgs?: unknown
+  /**
+   * The skin for sections that author none — the site’s, handed down.
+   *
+   * Safe for every caller, unlike the role above: a skin is a name a family may recognise and nothing
+   * more, so handing one to a section that renders a different family costs nothing. A family with no
+   * skin under that name draws its default.
+   */
+  sideTheme?: string
   /** Pyramid-only: prepends a hardcoded mapPiece branch pointing at this tier's tomb. */
   hasMapPieceBranch?: boolean
   /** Pyramid-only: prepends a hardcoded tier-unlock ward-key gate. */
@@ -122,7 +131,8 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
 const wearSiteRole = (
   sections: SideSection[],
   sideEncounter: string | string[] | undefined,
-  sideEncounterArgs: unknown
+  sideEncounterArgs: unknown,
+  sideTheme: string | undefined
 ): SideSection[] =>
   sections.map(section => ({
     ...section,
@@ -130,6 +140,7 @@ const wearSiteRole = (
     ...(sideEncounterArgs !== undefined && section.encounterArgs === undefined
       ? { encounterArgs: sideEncounterArgs }
       : {}),
+    ...(sideTheme !== undefined && section.theme === undefined ? { theme: sideTheme } : {}),
   }))
 
 export const buildSideSections = <TExtra extends string = never>(
@@ -150,6 +161,7 @@ export const buildSideSections = <TExtra extends string = never>(
     declaredHiddenPaths,
     sideEncounter,
     sideEncounterArgs,
+    sideTheme,
   } = opts
 
   const sections: SideSection[] = []
@@ -223,5 +235,5 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   })
 
-  return wearSiteRole(sections, sideEncounter, sideEncounterArgs)
+  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme)
 }

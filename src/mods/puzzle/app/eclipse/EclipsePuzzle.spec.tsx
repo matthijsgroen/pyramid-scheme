@@ -50,6 +50,40 @@ describe("EclipsePuzzle", () => {
     expect(derive).toHaveBeenCalled()
   })
 
+  /**
+   * A skin decides pixels and nothing else, which is the property that makes a second one safe to add.
+   *
+   * The night pair draws the same board from the same state — so the test is that the GLYPHS changed and the
+   * squares did not, and that a skin name no family has silently falls back to the default rather than
+   * rendering an empty board.
+   */
+  describe("skins", () => {
+    const puzzle = generateEclipse(4, ECLIPSE_CONFIG.starter)
+    // The star's own outline. A skin is only ever pixels, so what a skin test can check is which glyph the
+    // board drew for the same logical mark.
+    const stars = (root: HTMLElement) => root.querySelectorAll('path[d^="M 0 -42"]').length
+    const board = (theme?: string) => {
+      const { container } = render(
+        <EclipsePuzzle puzzle={puzzle} difficulty="starter" theme={theme} onSolved={() => {}} onCancel={() => {}} />
+      )
+      act(() => cellsIn(container)[0].click()) // one tap = one mark = one glyph to look at
+      return container
+    }
+
+    it("draws the night pair for a night room, on the same board", () => {
+      const plain = board()
+      const night = board("night")
+      // Same board either way: a skin never changes what the puzzle is, only what it looks like.
+      expect(cellsIn(night).length).toBe(cellsIn(plain).length)
+      expect(stars(night)).toBe(1)
+      expect(stars(plain)).toBe(0)
+    })
+
+    it("falls back to the default pair for a skin it does not have", () => {
+      expect(stars(board("lava"))).toBe(0)
+    })
+  })
+
   it("reports the board solved once every square matches the answer", { timeout: 120_000 }, async () => {
     const puzzle = generateEclipse(4, ECLIPSE_CONFIG.starter)
     let solved = false

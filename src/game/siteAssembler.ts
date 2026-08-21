@@ -1052,6 +1052,7 @@ export const assembleFloor = (
           tags: family.tags,
           pathIndex: k,
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+          ...(config.theme !== undefined ? { theme: config.theme } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1134,6 +1135,7 @@ export const assembleFloor = (
           tags: family.tags,
           pathIndex: pi,
           ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
+          ...(section.theme !== undefined ? { theme: section.theme } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })
@@ -1228,6 +1230,7 @@ export const assembleFloor = (
           tags: family.tags,
           pathIndex: pi,
           ...(subSection.encounterArgs !== undefined ? { encounterArgs: subSection.encounterArgs } : {}),
+          ...(subSection.theme !== undefined ? { theme: subSection.theme } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
         })

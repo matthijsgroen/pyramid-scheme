@@ -61,13 +61,18 @@ export const juniorRules: Rule[] = [
     .settings({ pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }),
 
   // **The Lighthouse of Alexandria runs on sky.** Every main-path room in its five pyramids draws from the
-  // `sky` pool rather than the general `puzzle` one — today the beam family and the sun-and-moon grid, and
-  // a star-map family would join it by carrying the tag rather than by an edit here.
+  // `sky` pool rather than the general `puzzle` one — the beam family, the sun-and-moon grid and the star
+  // map, each of which joined that pool by carrying the tag rather than by an edit here.
   //
   // `sky` rather than `["light", "sky"]` on purpose. A list is a union — the allocator draws from any tag in
   // it — so the list would only widen the pool back to what `sky` already covers. Narrowing is a narrower
-  // tag's job: `sky` is the wide cluster and `light` the narrow one inside it.
-  journey("junior_4").pyramid("1-5", { encounter: "sky" }),
+  // tag’s job: `sky` is the wide cluster and `light` the narrow one inside it.
+  //
+  // **And it runs at night**, which is a separate axis: `encounter` decides which family renders a room,
+  // `theme` decides which skin that family wears. A family with no skin registered under "night" draws its
+  // default one, so naming a skin here can never leave a room unrenderable. It reaches this pyramid’s floors
+  // and its side paths, including the trapped ones — half a themed pyramid reads as an accident.
+  journey("junior_4").pyramid("1-5", { encounter: "sky", theme: "night" }),
 
   // Ward wings on back-half pyramids, difficulty cycling expert→master→wizard.
   journey("junior_1").pyramid(3, { wardWings: [WING.expert()] }),

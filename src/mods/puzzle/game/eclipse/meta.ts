@@ -8,6 +8,9 @@ export const ECLIPSE_META: FamilyMeta = {
   // it — no journey ever names a family.
   tags: ["puzzle", "light", "sky"],
   minTier: "starter",
+  // The skins this family has (docs/instructions/puzzle-screens.md §2): the default sun-and-moon pair, and
+  // star-and-dark-sky for a site authored `theme: "night"`. Listed so the puzzle lab can offer both.
+  themes: ["default", "night"],
   icon: "🌘",
   color: "sky",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for

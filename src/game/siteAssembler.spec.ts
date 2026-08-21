@@ -78,6 +78,34 @@ describe(assembleFloor, () => {
     expect(validateSite(result.grid)).toEqual({ valid: true })
   })
 
+  /**
+   * The skin follows the room, not the floor it happens to sit on.
+   *
+   * A skin is stamped on every puzzle room it was authored for, main path and side path alike, so the family
+   * rendering that room can read it without knowing anything about world-gen. Rooms of a site that authored
+   * no skin carry none, and every family then draws its default.
+   */
+  it("stamps each puzzle room with the skin its own path authored", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 2,
+      theme: "night",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", theme: "day" }],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(rooms.filter(r => r.theme === "night")).toHaveLength(2)
+    expect(rooms.filter(r => r.theme === "day")).toHaveLength(1)
+  })
+
+  it("leaves rooms of an unthemed site carrying no skin at all", () => {
+    const result = assembleFloor("site-1", { ...basicConfig(), pathPuzzles: 2 }, 42)
+    if (!result.success) throw new Error("assembly failed")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(rooms.every(r => r.theme === undefined)).toBe(true)
+  })
+
   it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index and the floor's encounterArgs", () => {
     const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau", encounterArgs: { runNr: 7 } }
     const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {

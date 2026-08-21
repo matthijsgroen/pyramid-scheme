@@ -19,6 +19,8 @@ type Props = {
   highlighted?: ReadonlySet<number>
   /** The one square the current hint is ABOUT, drawn stronger than its evidence. */
   focus?: number
+  /** The skin this room was authored to wear; an unknown name draws the default pair. */
+  theme?: string
   onTapCell: (cell: number) => void
 }
 
@@ -56,6 +58,38 @@ const Moon: FC = () => (
     <path d="M 14 -34 A 36 36 0 1 0 14 34 A 30 30 0 1 1 14 -34 Z" className="fill-sky-200" />
   </svg>
 )
+
+/**
+ * The night pair, for a site authored `theme: "night"` (docs/game-design/puzzles/eclipse.md §9).
+ *
+ * The rule the default pair is drawn to holds here too, and it is the whole reason a second skin is cheap:
+ * two marks that differ in OUTLINE, so the board is readable without colour. A star against an empty sky
+ * reads the same way a sun against a crescent does.
+ */
+const Star: FC = () => (
+  <svg viewBox="-50 -50 100 100" className="size-full">
+    <path
+      d="M 0 -42 L 11 -13 L 42 -13 L 17 6 L 26 36 L 0 18 L -26 36 L -17 6 L -42 -13 L -11 -13 Z"
+      className="fill-amber-100"
+    />
+  </svg>
+)
+
+const DarkSky: FC = () => (
+  <svg viewBox="-50 -50 100 100" className="size-full">
+    {/* Sky with no star in it: a ring rather than a shape, so it reads as the absence the rules give it. */}
+    <circle r={30} strokeWidth={8} className="fill-indigo-950 stroke-indigo-300/70" />
+  </svg>
+)
+
+/**
+ * Which pair of glyphs a skin draws. The family emits `Mark`; a skin decides what a mark looks like
+ * (docs/instructions/puzzle-screens.md §2), and an unknown skin name silently falls back to the default.
+ */
+const SKINS: Record<string, Record<Mark, FC>> = {
+  default: { sun: Sun, moon: Moon },
+  night: { sun: Star, moon: DarkSky },
+}
 
 // A sign takes a smaller share of a square as the grid grows (34% at 4 wide, 26% at 6): an equal share is
 // not an equal reading, since the gap it sits in shrinks with the squares while a mark that keeps its share
@@ -107,9 +141,13 @@ const Sign: FC<{ puzzle: EclipsePuzzle; link: Link; broken: boolean }> = ({ puzz
 
 const linkKey = (link: Link) => `${link.a}-${link.b}`
 
-const mark = (value: Mark | undefined) => (value === "sun" ? <Sun /> : value === "moon" ? <Moon /> : null)
+const markGlyph = (value: Mark | undefined, theme: string | undefined) => {
+  if (!value) return null
+  const Glyph = (theme && SKINS[theme] ? SKINS[theme] : SKINS.default)[value]
+  return <Glyph />
+}
 
-export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, focus, onTapCell }) => {
+export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, focus, theme, onTapCell }) => {
   const { size } = puzzle
   // Held back a beat: a tap on the way to the other mark is not a mistake (see the hook).
   const conflicts = useDelayedConflicts(puzzle, state)
@@ -141,7 +179,7 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, focus, onT
                 cell === focus && "ring-4 ring-amber-300"
               )}
             >
-              {mark(value)}
+              {markGlyph(value, theme)}
             </button>
           )
         })}

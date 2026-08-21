@@ -95,6 +95,7 @@ export type BuildFloorOptions = {
   packing?: number
   sealed?: boolean
   encounterArgs?: unknown
+  theme?: string
 }
 
 // The common FloorConfig skeleton shared by every pyramid and tomb floor — defaults to a
@@ -115,6 +116,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
+  ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
@@ -164,6 +166,8 @@ export type BuildSiteContext<TExtra extends string = never> = {
   sideEncounter?: string | string[]
   /** Encounter args for side sections that carry none — set by the pyramid builder only. */
   sideEncounterArgs?: unknown
+  /** Skin for side sections that author none. Safe for any site to hand down (see sideSections.ts). */
+  sideTheme?: string
 }
 
 // Builds one site's floors (the 3 floor-shape branches: authored floors[], auto multi-floor
@@ -175,7 +179,15 @@ export type BuildSiteContext<TExtra extends string = never> = {
 // (pyramid-interior-design.md §8), just always taking this one branch.
 export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<TExtra>): { floors: FloorConfig[] } => {
   const { journeyId, tier, pyramidIndex: i, levelCount, pathPuzzles: pp, constraint, difficulty, resolveReward } = ctx
-  const { hasMapPieceBranch, hasWardGate, nextTier, resolveMainEndReward, sideEncounter, sideEncounterArgs } = ctx
+  const {
+    hasMapPieceBranch,
+    hasWardGate,
+    nextTier,
+    resolveMainEndReward,
+    sideEncounter,
+    sideEncounterArgs,
+    sideTheme,
+  } = ctx
 
   const mainEndReward: TreasureReward = constraint.mainEndReward
     ? resolveMainEndReward(constraint.mainEndReward)
@@ -212,6 +224,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         pyramidIndex: i,
         sideEncounter,
         sideEncounterArgs,
+        sideTheme,
       })
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
@@ -243,6 +256,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           packing: floorPacking,
           sealed: floorSealed,
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
+          // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
+          theme: fc.theme ?? constraint.theme,
         })
       )
     }
@@ -279,6 +294,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             mainEndReward: { type: "fragmentSlot" },
             encounter: constraint.encounter,
             encounterArgs: constraint.encounterArgs,
+            theme: constraint.theme,
           })
         )
         continue
@@ -297,6 +313,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         pyramidIndex: i,
         sideEncounter,
         sideEncounterArgs,
+        sideTheme,
         declaredSidePaths: constraint.sidePaths,
         declaredHiddenPaths: constraint.hiddenPaths,
       })
@@ -308,6 +325,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           mainEndReward,
           encounter: constraint.encounter,
           encounterArgs: constraint.encounterArgs,
+          theme: constraint.theme,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
           sealed: resolveSealed(constraint),
@@ -363,6 +381,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The stairs up to a wing are rooms of this pyramid, so they wear its theme too. Built here
             // rather than by buildSideSections, which is why the role is applied by hand.
             ...(sideEncounter !== undefined ? { encounter: sideEncounter } : {}),
+            ...(sideTheme !== undefined ? { theme: sideTheme } : {}),
           },
         ]
         floorConfigs.push(
@@ -375,6 +394,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // A wing is a floor of this pyramid, so it wears the pyramid's theme too.
             encounter: constraint.encounter,
             encounterArgs: constraint.encounterArgs,
+            theme: constraint.theme,
           })
         )
       })
@@ -395,6 +415,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           gate: { type: "tomb-key" as const, wardKeyId: TOMB_PERK_IDS[tombId][idx] },
           // A trapped ward path stays a trap; an untrapped one wears the pyramid's theme.
           ...(trapWardPath ? { encounter: "trap" } : sideEncounter !== undefined ? { encounter: sideEncounter } : {}),
+          // A trapped path keeps its own role but still wears the site’s skin: a skin decides nothing
+          // about which family renders the room.
+          ...(sideTheme !== undefined ? { theme: sideTheme } : {}),
         })),
       ]
     }
@@ -417,6 +440,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     pyramidIndex: i,
     sideEncounter,
     sideEncounterArgs,
+    sideTheme,
     declaredSidePaths: constraint.sidePaths,
     declaredHiddenPaths: constraint.hiddenPaths,
   })
@@ -427,6 +451,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     mainEndReward,
     encounter: constraint.encounter,
     encounterArgs: constraint.encounterArgs,
+    theme: constraint.theme,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
     sealed: resolveSealed(constraint),

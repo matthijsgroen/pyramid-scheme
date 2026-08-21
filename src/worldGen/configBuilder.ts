@@ -137,6 +137,9 @@ const buildSiteConfigs = (
         // reads as an accident. Tombs never opt in: their role wants encounterArgs a side path lacks.
         sideEncounter: constraint.encounter,
         sideEncounterArgs: constraint.encounterArgs,
+        // The skin reaches side paths under a weaker rule than the role does: a skin is a name a family
+        // may recognise, so handing one to a section rendering a different family costs nothing.
+        sideTheme: constraint.theme,
       })
       pyramidConfigs.push(floors)
     }
@@ -222,6 +225,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
         packing: authored?.packing ?? constraint.packing,
         sealed: authored?.sealed ?? constraint.sealed,
         encounterArgs: authored?.encounterArgs ?? { runNr: i + 1 },
+        theme: authored?.theme ?? constraint.theme,
       }
     })
 
@@ -240,6 +244,9 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
       nextTier: null,
       resolveReward: resolveTombReward,
       resolveMainEndReward: () => ({ type: "fragmentSlot" }),
+      // A tomb hands its skin down where its role must not be (a role can demand args a side path has no
+      // reason to carry; a skin demands nothing).
+      sideTheme: constraint.theme,
     })
     configs[tomb.id] = [floorConfigs]
   }

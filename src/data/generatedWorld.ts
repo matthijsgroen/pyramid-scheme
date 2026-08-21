@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1346896288
+export const worldContentHash = 872776555
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -1574,6 +1574,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 2 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1582,6 +1583,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "sellable", itemId: "sell_bronze_5" },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1590,6 +1592,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1598,6 +1601,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1605,6 +1609,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1613,9 +1618,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             hidden: true,
             encounter: "eclipse",
+            theme: "night",
           },
         ],
         encounter: "constellation",
+        theme: "night",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },
@@ -1635,6 +1642,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 1 },
             rewards: [undefined],
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1643,6 +1651,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 2 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1651,6 +1660,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 3 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1658,6 +1668,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1666,6 +1677,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             hidden: true,
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 2,
@@ -1674,9 +1686,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "sellable", itemId: "sell_bronze_3" },
             hidden: true,
             encounter: "arithmetic-reflex",
+            theme: "night",
           },
         ],
         encounter: "lightbeam",
+        theme: "night",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -1694,6 +1708,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "mapPiece", tombId: "junior_treasure_tomb" },
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1703,6 +1718,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 2 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1711,6 +1727,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "sellable", itemId: "sell_stone_4" },
             rewards: [{ type: "money", amount: 2 }],
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1719,6 +1736,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 3 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1727,6 +1745,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1735,6 +1754,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1742,6 +1762,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1750,9 +1771,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             hidden: true,
             encounter: "lightbeam",
+            theme: "night",
           },
         ],
         encounter: "eclipse",
+        theme: "night",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -1771,6 +1794,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 3 },
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1779,6 +1803,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1787,6 +1812,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1795,6 +1821,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1802,6 +1829,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1810,6 +1838,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             hidden: true,
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 2,
@@ -1821,9 +1850,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               { type: "consumable", consumable: "bandage" },
             ],
             encounter: "eclipse",
+            theme: "night",
           },
         ],
         encounter: "constellation",
+        theme: "night",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -1835,6 +1866,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "junior_4:p3:wing0" },
         encounter: "constellation",
+        theme: "night",
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 1 },
@@ -1856,6 +1888,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "starter_a_4" },
             endReward: { type: "money", amount: 2 },
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1864,6 +1897,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1872,6 +1906,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1880,6 +1915,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             rewards: [undefined],
             encounter: "constellation",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1887,6 +1923,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             endReward: { type: "money", amount: 2 },
             encounter: "lightbeam",
+            theme: "night",
           },
           {
             pathPuzzles: 0,
@@ -1895,6 +1932,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             hidden: true,
             encounter: "eclipse",
+            theme: "night",
           },
           {
             pathPuzzles: 1,
@@ -1903,9 +1941,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             rewards: [undefined],
             encounter: "lightbeam",
+            theme: "night",
           },
         ],
         encounter: "eclipse",
+        theme: "night",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -1917,6 +1957,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         sideSections: [],
         entrance: { stairId: "junior_4:p4:wing0" },
         encounter: "lightbeam",
+        theme: "night",
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined],
       },
