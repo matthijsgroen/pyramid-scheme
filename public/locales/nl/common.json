@@ -414,5 +414,27 @@
       "squeeze.sign": "{{mark}} hier maakt de rest {{other}} — een teken klopt niet meer. Dus {{other}}.",
       "squeeze.copy": "{{mark}} hier maakt de rest {{other}} — de lijn wordt een kopie. Dus {{other}}."
     }
+  },
+  "constellation": {
+    "rules": {
+      "goal": "Geef elke ster zo veel lichtlijnen als zijn getal zegt.",
+      "straight": "Lijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
+      "pair": "Tussen twee sterren passen maximaal twee lijnen.",
+      "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
+      "whole": "Alle sterren horen aan het eind bij één sterrenbeeld.",
+      "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
+    },
+    "undo": "Ongedaan",
+    "hint": {
+      "mistake": "Een van deze lijnen kan niet goed zijn.",
+      "capacity": "{{count}} lijnen, en net genoeg uitwegen — ze worden allemaal getekend.",
+      "settled": "Deze {{count}} heeft zijn lijnen. Er komt niets meer bij.",
+      "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te tekenen.",
+      "crossed": "Een lijn daar zou deze lijn kruisen.",
+      "atLeastOne": "{{count}} lijnen, en de andere uitwegen kunnen ze niet samen dragen — er gaat er minstens één deze kant op.",
+      "twinBlock.single": "Die twee verbinden maakt een sterrenbeeld van twee.",
+      "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
+      "isolation": "Die lijn sluit deze {{count}} sterren af van de rest."
+    }
   }
 }

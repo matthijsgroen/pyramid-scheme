@@ -421,5 +421,27 @@
       "squeeze.sign": "{{mark}} here makes the rest {{other}} — a sign stops fitting. So {{other}}.",
       "squeeze.copy": "{{mark}} here makes the rest {{other}} — the line becomes a copy. So {{other}}."
     }
+  },
+  "constellation": {
+    "rules": {
+      "goal": "Give every star as many lines of light as its number says.",
+      "straight": "Lines run straight across or down, from one star to the next.",
+      "pair": "Two stars can share at most two lines.",
+      "cross": "Lines never cross, and never pass through a star.",
+      "whole": "Every star ends up joined into one constellation.",
+      "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
+    },
+    "undo": "Undo",
+    "hint": {
+      "mistake": "One of these lines cannot be right.",
+      "capacity": "{{count}} lines, and only just enough ways out — every one of them is drawn.",
+      "settled": "This {{count}} has its lines. Nothing else joins it.",
+      "soleWayOut": "Only one way out left, and {{count}} still to draw.",
+      "crossed": "A line there would cross this one.",
+      "atLeastOne": "{{count}} lines, and the other ways out cannot carry them all — at least one goes this way.",
+      "twinBlock.single": "Joining those two would make a constellation of two.",
+      "twinBlock.double": "A second line there would make a constellation of two.",
+      "isolation": "That line would seal these {{count}} stars off from the rest."
+    }
   }
 }
