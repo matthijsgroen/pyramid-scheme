@@ -59,6 +59,37 @@ A component that just renders its props needs no render test. A component that h
 
 ---
 
+## Never assert a wall-clock duration
+
+**Count whether the expensive work ran; do not time it.** A machine cannot answer "was this cheap" — a
+shared CI runner in jsdom least of all — so a millisecond bound is a lottery whose stakes are a red build,
+and it passes for the wrong reason on a fast machine.
+
+The invariant is almost always "did this work happen at all", which is exact:
+
+```ts
+// ✗ — a lottery. This exact bound failed CI at 83ms.
+const started = performance.now()
+act(() => cell.click())
+expect(performance.now() - started).toBeLessThan(80)
+
+// ✓ — mock the expensive function around the real one and count the calls
+vi.mock("./eclipseHint", async importOriginal => {
+  const actual = await importOriginal<typeof import("./eclipseHint")>()
+  return { ...actual, buildEclipseHint: vi.fn(actual.buildEclipseHint) }
+})
+// ...
+act(() => cell.click())
+expect(vi.mocked(buildEclipseHint)).not.toHaveBeenCalled()
+act(() => hintButton.click())
+expect(vi.mocked(buildEclipseHint)).toHaveBeenCalled()
+```
+
+Keep the measurement that made the code lazy — lightbeam's "185ms a tap eagerly against 19ms lazily" — as a
+**comment**. It is why the code has its shape; it is not an assertion.
+
+---
+
 ## File placement
 
 Spec files live **next to the source file**, in the same directory. No `__tests__/` directories.
