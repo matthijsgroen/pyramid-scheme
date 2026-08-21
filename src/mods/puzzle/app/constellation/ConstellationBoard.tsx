@@ -208,16 +208,19 @@ export const ConstellationBoard: FC<Props> = ({ puzzle, state, highlighted, focu
           >
             <span
               className={clsx(
-                "flex aspect-square w-[77%] items-center justify-center rounded-full border text-[min(4vw,1.1rem)] font-bold transition-colors",
-                // A star burns rather than sits in a socket: the glow is the star, the disc is only what
-                // makes its number readable with lines of light running into it (§8).
+                "flex aspect-square w-[77%] items-center justify-center rounded-full border text-[min(4vw,1.1rem)] font-bold transition-all duration-300",
+                // **A star that has its lines lights up.** Bridges greys a finished island out, and that is
+                // the reading this board deliberately inverts: giving a star its light is the thing the
+                // player just achieved, so it is the thing that should look like an achievement. It scans
+                // the same either way — what is left to do is now "the stars still showing a plain number"
+                // rather than "the stars still lit".
                 held > star.count
                   ? "border-red-400/80 bg-radial from-red-500/35 to-red-950/70 text-red-300 shadow-[0_0_10px_2px_rgb(248_113_113_/_0.35)]"
                   : held === star.count
-                    ? // Satisfied: the star goes quiet and stops drawing the eye, which is how a Bridges
-                      // player tracks a board.
-                      "border-slate-400/50 bg-radial from-slate-700/40 to-slate-950/70 text-slate-300"
-                    : "border-amber-100/70 bg-radial from-amber-100/25 to-indigo-950/70 text-amber-50 shadow-[0_0_12px_2px_rgb(254_243_199_/_0.28)]",
+                    ? "border-amber-100 bg-radial from-amber-100/70 to-amber-200/20 text-amber-950 shadow-[0_0_18px_5px_rgb(254_243_199_/_0.45)]"
+                    : // Unlit: readable and unremarkable. The number has to stay crisp — it is the clue —
+                      // but nothing here draws the eye until the star earns it.
+                      "border-slate-300/40 bg-radial from-slate-800/60 to-indigo-950/80 text-amber-50",
                 litStars?.has(index) && "ring-2 ring-sky-300/80"
               )}
             >

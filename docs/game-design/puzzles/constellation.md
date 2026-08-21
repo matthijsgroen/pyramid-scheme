@@ -286,8 +286,14 @@ Beyond the shared screen bar:
   because the nearest another star can sit is two cells away.
 - **A number stays readable with lines touching it.** The digit sits inside the star,
   and the lines stop at its edge rather than under it.
-- **A star that has its lines says so** — its number dims once satisfied, and goes red
-  once exceeded. That is how a Bridges player tracks a board, and it is wordless.
+- **A star that has its lines lights up**, and goes red once it holds too many. That is the
+  whole of this family's feedback and none of it is a word.
+
+  **It lights up rather than greying out, which is the opposite of what Bridges does**, and the
+  inversion is deliberate: giving a star its light is what the player just achieved, so it is what
+  should look like an achievement. The board scans the same either way — the work left is "the stars
+  still showing a plain number" instead of "the stars still lit" — and the finished sky is a
+  constellation that blazes, which is a reward the mechanic hands over for free.
 - **One line and two differ in shape, not only in weight** — two parallel strokes with
   sky visible between them, so a phone in daylight reads the difference.
 - **An illegal line is refused, not drawn red.** A crossing and an over-long reach are
@@ -314,9 +320,9 @@ always carries `sky`. A check that is always true is not a switch. What the skin
   on every render is a backdrop the player keeps looking at.
 - **Lines of light rather than drawn strokes**: each carries a glow, and stops at the edge of the star
   it meets rather than running under its number (§8).
-- **A star burns rather than sitting in a socket** — a soft outer glow, and the disc only exists to keep
-  the number readable. A satisfied star loses the glow and goes quiet, which is the state a Bridges
-  player tracks the board by.
+- **A star burns once it has its lines** — a bright disc with a soft outer glow, where an unlit one is
+  quiet blue-grey and readable and nothing more. The disc exists to keep the number legible with lines of
+  light running into it; the glow is the star itself.
 
 Per-**site** variation — this family starrier on a lighthouse journey than elsewhere — is a different
 job, and not a small one: `ctx.theme` is unset everywhere real gameplay runs (only the puzzle lab sets
