@@ -124,7 +124,7 @@ The curriculum map (§7) assigns families to tiers T1–T5. Mapping to game diff
 | Game tier | PUZZLE_FAMILIES tier | Families introduced                                                             |
 | --------- | -------------------- | ------------------------------------------------------------------------------- |
 | Starter   | T1                   | Cross-sum, Balance scale, Symmetry                                              |
-| Junior    | T2                   | Egyptian doubling, Sundial, Glyph Latin-square (4×4), Target-number, Sequence   |
+| Junior    | T2                   | Egyptian doubling, Glyph Latin-square (4×4), Target-number, Sequence            |
 | Expert    | T3                   | Water clock, Eye of Horus fractions, Sumplete (5×5)                             |
 | Master    | T4                   | Nonogram (10×10), Kakuro, Clock-arith (decoy)                                   |
 | Wizard    | T5                   | Ceilings: 9×9 Latin-square, 15×15 nonogram, multi-unknown algebra, modular time |
