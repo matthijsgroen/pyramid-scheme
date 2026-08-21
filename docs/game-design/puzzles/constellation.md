@@ -181,6 +181,18 @@ same sky with the number mix leaned out and the global rung required — which i
 "scales without growing" claim this family makes in §2, and the one to check first
 against a real clock.
 
+**And growing the sky was measured, because it was the obvious thing to try.** Asked for
+its sealing rung twice, a wizard sky at 20 stars and a lean mix delivers on all ten of ten
+seeds; leaving the mix alone and growing to 22 stars instead delivers on **one** in ten.
+A denser sky hands the counting rungs more to do, and they finish the board before
+anything has to be sealed off — so the extra stars bought bookkeeping and gave difficulty
+back. It is the catalogue's "size is the wrong axis" rule turning up as a number rather
+than as a principle.
+
+Boards draw in **under 0.6s at wizard** and run 28–42 forced steps, against master's 20–29
+— which is what a rejection-only generator costs here, and it is affordable. What is not
+yet known is how long those steps take a person (§10).
+
 The starter tier caps below the pigeonhole deliberately: a five-star sky where every
 star's number is the most its ways out can carry teaches itself by being tapped, which
 is P5's wordless first encounter.
