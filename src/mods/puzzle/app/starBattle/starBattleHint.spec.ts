@@ -16,17 +16,22 @@ describe("star battle hints", () => {
     const hint = buildStarBattleHint(board, createStarBattleState(board))
     expect(hint).toBeDefined()
     expect(hint!.cells.size).toBeGreaterThan(0)
-    // The square it is about is drawn apart from the squares it argues from.
+    // The square it is about is drawn apart from the squares it argues from, and every square the step
+    // settles is drawn too — its sentence talks about all of them.
     expect(hint!.focus).toBeDefined()
+    expect(hint!.decided.has(hint!.focus!)).toBe(true)
   })
 
   it("calls out a wrong mark before advising anything else", () => {
     const marks = createStarBattleState(board).marks.slice()
-    const wrong = board.solution.findIndex((star, cell) => !star && !board.blocked[cell])
+    const wrong = board.solution.findIndex(star => !star)
     marks[wrong] = "star"
     const hint = buildStarBattleHint(board, { marks })
     expect(hint?.key).toBe("mistake")
-    expect([...hint!.cells]).toEqual([wrong])
+    // A wrong mark has no evidence to argue from — it IS the thing being pointed at.
+    expect([...hint!.decided]).toEqual([wrong])
+    expect(hint!.focus).toBe(wrong)
+    expect([...hint!.cells]).toEqual([])
   })
 
   it("calls out a wrong dark mark too, which is the mistake this family invites", () => {
@@ -45,7 +50,7 @@ describe("star battle hints", () => {
     // step by step, so there is no rung that says "try a star and see the board break".
     for (const difficulty of difficulties) {
       const board = generateStarBattle(2, STAR_BATTLE_CONFIG[difficulty])
-      const marks: (CellMark | undefined)[] = board.blocked.map(blocked => (blocked ? "dark" : undefined))
+      const marks: (CellMark | undefined)[] = new Array(board.size ** 2).fill(undefined)
       for (let guard = 0; guard < 400; guard++) {
         const hint = buildStarBattleHint(board, { marks })
         if (!hint) break
@@ -82,7 +87,6 @@ describe("every reason the ladder can give is phrased in both locales", () => {
 
   it("has the rules in both", () => {
     for (const locale of [en, nl])
-      for (const rule of ["goal", "touch", "blocked", "enter"])
-        expect(typeof phrase(locale.starBattle.rules, rule)).toBe("string")
+      for (const rule of ["goal", "touch", "enter"]) expect(typeof phrase(locale.starBattle.rules, rule)).toBe("string")
   })
 })

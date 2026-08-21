@@ -13,16 +13,13 @@ export type StarBattlePuzzle = {
   size: number
   /** Stars owed by every row, every column and every region. */
   quota: number
-  /** Which region each square belongs to. Region ids are `0..size - 1`, so there are as many as rows. */
-  regions: readonly number[]
   /**
-   * Squares that hold nothing.
+   * Which region each square belongs to. Region ids are `0..size - 1`, so there are as many as rows.
    *
-   * They are the family's second clue layer, and §4.1 of the design doc is why it needs one: a region map
-   * alone admits several answers at every size worth playing, so there would be nothing to thin and nothing
-   * to deduce from. A blocked square belongs to the board rather than to the answer, and refuses a tap.
+   * **This is the board's only clue**, which is what makes the family what it is: where the boundaries run
+   * is the whole of what the player is given, and every square is theirs to fill.
    */
-  blocked: readonly boolean[]
+  regions: readonly number[]
 }
 
 /** What is written on the board, and nothing else — a solver never needs the undo stack. */
@@ -81,12 +78,9 @@ export const groupsOf = (puzzle: StarBattlePuzzle): number[][] => [
 const UNDO_LIMIT = 200
 
 export const createStarBattleState = (puzzle: StarBattlePuzzle): StarBattleState => ({
-  marks: puzzle.blocked.map(() => undefined),
+  marks: new Array(puzzle.size * puzzle.size).fill(undefined),
   past: [],
 })
-
-/** A blocked square is part of the board rather than part of the answer, so it never takes a tap. */
-export const isBlocked = (puzzle: StarBattlePuzzle, cell: number) => puzzle.blocked[cell]
 
 /**
  * What a tap does: empty → star → dark → empty.
@@ -95,12 +89,7 @@ export const isBlocked = (puzzle: StarBattlePuzzle, cell: number) => puzzle.bloc
  * uses most, because this family's reasoning IS elimination — a board that could not record "not here" would
  * make them hold the whole cross-hatch in their head.
  */
-export const cycleStarBattleCell = (
-  puzzle: StarBattlePuzzle,
-  state: StarBattleState,
-  cell: number
-): StarBattleState => {
-  if (isBlocked(puzzle, cell)) return state
+export const cycleStarBattleCell = (state: StarBattleState, cell: number): StarBattleState => {
   const next = state.marks[cell] === undefined ? "star" : state.marks[cell] === "star" ? "dark" : undefined
   return {
     marks: state.marks.map((mark, index) => (index === cell ? next : mark)),

@@ -25,8 +25,7 @@ const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
 const playerState = (board: StarBattlePuzzleWithAnswer, random: () => number): Marks => {
   const stars = random()
   const darks = random()
-  return board.solution.map((star, cell) => {
-    if (board.blocked[cell]) return "dark"
+  return board.solution.map(star => {
     if (star) return random() < stars ? "star" : undefined
     return random() < darks ? "dark" : undefined
   })
@@ -51,7 +50,7 @@ const completions = (puzzle: StarBattlePuzzle, marks: Marks, limit: number): num
     }
     for (let col = 0; col < size; col++) {
       const cell = cellAt(size, row, col)
-      if (puzzle.blocked[cell] || marks[cell] === "dark") continue
+      if (marks[cell] === "dark") continue
       if (taken.some(at => colOf(size, at) === col)) continue
       if (taken.some(at => puzzle.regions[at] === puzzle.regions[cell])) continue
       if (taken.some(at => neighboursOf(size, cell).includes(at))) continue

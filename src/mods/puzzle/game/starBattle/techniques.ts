@@ -40,7 +40,13 @@ export type StarBattleStep = {
   variant?: string
   /** How many stars the reason counts, for the sentences that say a number. */
   count?: number
-  /** The squares the reason argues FROM — its evidence, never the squares it decides. */
+  /**
+   * The squares the reason argues FROM — its evidence.
+   *
+   * **A sentence that says "this row" has to have a row to point at.** So the evidence is the whole group
+   * being counted, or the whole region being squeezed, and not merely the squares inside it that happen to
+   * be interesting: a hint that names a region in words has already failed (design doc §7).
+   */
   cells: number[]
   decisions: StarBattleDecision[]
 }
@@ -49,11 +55,7 @@ export type Marks = (CellMark | undefined)[]
 
 export const techniqueRank = (id: StarBattleTechniqueId): number => STAR_BATTLE_TECHNIQUES.indexOf(id)
 
-/** A square that could still take a star: not blocked, and nothing written in it yet. */
-const isOpen = (puzzle: StarBattlePuzzle, marks: Marks, cell: number) => !puzzle.blocked[cell] && !marks[cell]
-
-const freeIn = (puzzle: StarBattlePuzzle, marks: Marks, group: readonly number[]) =>
-  group.filter(cell => isOpen(puzzle, marks, cell))
+const freeIn = (_puzzle: StarBattlePuzzle, marks: Marks, group: readonly number[]) => group.filter(cell => !marks[cell])
 
 const owedBy = (puzzle: StarBattlePuzzle, marks: Marks, group: readonly number[]) =>
   puzzle.quota - starsIn(marks, group).length
@@ -85,7 +87,7 @@ const countingGroups = (puzzle: StarBattlePuzzle): { kind: string; cells: number
 const touchSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] =>
   marks.flatMap((mark, cell) => {
     if (mark !== "star") return []
-    const ruled = neighboursOf(puzzle.size, cell).filter(at => isOpen(puzzle, marks, at))
+    const ruled = neighboursOf(puzzle.size, cell).filter(at => !marks[at])
     return ruled.length ? [{ technique: "touch" as const, cells: [cell], decisions: darken(ruled) }] : []
   })
 
@@ -100,7 +102,7 @@ const groupFullSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[
             technique: "groupFull" as const,
             variant: kind,
             count: puzzle.quota,
-            cells: starsIn(marks, cells),
+            cells,
             decisions: darken(spare),
           },
         ]
@@ -121,7 +123,7 @@ const groupTightSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep
         technique: "groupTight" as const,
         variant: kind,
         count: owed,
-        cells: free,
+        cells,
         decisions: free.map(cell => ({ cell, mark: "star" as const })),
       },
     ]
@@ -156,7 +158,7 @@ const regionLineSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep
                 technique: "regionLine" as const,
                 variant: kind,
                 count: owed,
-                cells: inside,
+                cells: region,
                 decisions: darken(elsewhere),
               },
             ]
@@ -187,7 +189,7 @@ const lineRegionSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep
                 technique: "lineRegion" as const,
                 variant: kind,
                 count: owed,
-                cells: inside,
+                cells: line,
                 decisions: darken(elsewhere),
               },
             ]
@@ -223,7 +225,7 @@ const spanningSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[]
       if (cover.reduce((total, group) => total + owed(group), 0) !== owes) return []
       const elsewhere = cover.flatMap(free).filter(cell => !inside.includes(cell))
       return elsewhere.length
-        ? [{ technique: "spanning" as const, variant, count: owes, cells: inside, decisions: darken(elsewhere) }]
+        ? [{ technique: "spanning" as const, variant, count: owes, cells: pair.flat(), decisions: darken(elsewhere) }]
         : []
     })
   const regions = regionCells(puzzle)
@@ -298,7 +300,7 @@ export const solveStarBattleByTechniques = (
   puzzle: StarBattlePuzzle,
   allowed: readonly StarBattleTechniqueId[] = STAR_BATTLE_TECHNIQUES
 ): StarBattleSolveResult => {
-  const marks: Marks = puzzle.blocked.map(blocked => (blocked ? "dark" : undefined))
+  const marks: Marks = new Array(puzzle.size * puzzle.size).fill(undefined)
   const steps = applyStarBattleTechniques(puzzle, marks, allowed)
   const groups = groupsOf(puzzle)
   return {

@@ -13,14 +13,13 @@ import {
 } from "./techniques"
 
 /** A board with the regions as horizontal bands, so a test can say where a region is without drawing one. */
-const bands = (size: number, blocked: number[] = []): StarBattlePuzzle => ({
+const bands = (size: number): StarBattlePuzzle => ({
   size,
   quota: 1,
   regions: Array.from({ length: size * size }, (_unused, cell) => Math.floor(cell / size)),
-  blocked: Array.from({ length: size * size }, (_unused, cell) => blocked.includes(cell)),
 })
 
-const empty = (puzzle: StarBattlePuzzle): Marks => puzzle.blocked.map(() => undefined)
+const empty = (puzzle: StarBattlePuzzle): Marks => new Array(puzzle.size * puzzle.size).fill(undefined)
 
 describe("star battle techniques", () => {
   it("rules out the ring around a star", () => {
@@ -44,9 +43,11 @@ describe("star battle techniques", () => {
   })
 
   it("places the star when a group is down to one square", () => {
-    // Row 0 blocked but for its last square: the star has nowhere else to go.
-    const puzzle = bands(5, [0, 1, 2, 3])
-    const step = nextStarBattleStep(puzzle, empty(puzzle), ["groupTight"])
+    const puzzle = bands(5)
+    const marks = empty(puzzle)
+    // Row 0 emptied but for its last square: the star has nowhere else to go.
+    for (const cell of [0, 1, 2, 3]) marks[cell] = "dark"
+    const step = nextStarBattleStep(puzzle, marks, ["groupTight"])
     expect(step?.technique).toBe("groupTight")
     expect(step?.decisions).toEqual([{ cell: 4, mark: "star" }])
   })

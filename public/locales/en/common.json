@@ -448,12 +448,11 @@
     "rules": {
       "goal": "Put a star in every row, every column and every region.",
       "touch": "No two stars may touch — corners count.",
-      "blocked": "A hatched square holds nothing.",
       "enter": "Tap a square for a star, tap again to mark it empty, once more to clear it."
     },
     "undo": "Undo",
     "hint": {
-      "mistake": "One of these marks cannot be right.",
+      "mistake": "This mark cannot be right.",
       "touch": "A {{star}} here, so nothing touching it.",
       "groupFull.row": "This row has its {{star}}, so the rest is empty.",
       "groupFull.col": "This column has its {{star}}, so the rest is empty.",
@@ -465,10 +464,10 @@
       "regionLine.col": "This region's {{star}} has to come from that column, so the rest of the column is empty.",
       "lineRegion.row": "That row's {{star}} is this region's own, so the rest of the region is empty.",
       "lineRegion.col": "That column's {{star}} is this region's own, so the rest of the region is empty.",
-      "spanning.toRows": "These regions fill those {{count}} rows between them, so nothing else there holds a {{star}}.",
-      "spanning.toCols": "These regions fill those {{count}} columns between them, so nothing else there holds a {{star}}.",
-      "spanning.fromRows": "Those rows can only take their {{count}} {{star}} from these regions, so the rest of them is empty.",
-      "spanning.fromCols": "Those columns can only take their {{count}} {{star}} from these regions, so the rest of them is empty."
+      "spanning.toRows": "These regions fill those {{count}} rows between them, so the rest of the rows is empty.",
+      "spanning.toCols": "These regions fill those {{count}} columns between them, so the rest of the columns is empty.",
+      "spanning.fromRows": "Those rows can only take their {{count}} {{star}} from these regions, so the rest of the regions is empty.",
+      "spanning.fromCols": "Those columns can only take their {{count}} {{star}} from these regions, so the rest of the regions is empty."
     }
   }
 }

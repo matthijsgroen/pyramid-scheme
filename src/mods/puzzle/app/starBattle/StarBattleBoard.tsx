@@ -14,7 +14,14 @@ type Props = {
   state: StarBattleMarks
   /** Squares the current hint reasons FROM — its evidence. */
   highlighted?: ReadonlySet<number>
-  /** The one square the current hint is ABOUT, drawn stronger than its evidence. */
+  /**
+   * Every square the current hint SETTLES, the focus among them.
+   *
+   * A rung here often decides a whole row at once, and its sentence says so ("the rest is empty"). Ringing
+   * one square while saying that leaves the player to work out which squares "the rest" was.
+   */
+  decided?: ReadonlySet<number>
+  /** The one square the current hint is ABOUT, drawn strongest of all. */
   focus?: number
   onTapCell: (cell: number) => void
 }
@@ -54,14 +61,7 @@ const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: nu
   return puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
 }
 
-// A blocked square holds nothing and never will. Hatched rather than tinted: it has to read as part of the
-// grid rather than as a mark someone made, and a tint is what a mark looks like.
-const HATCH = {
-  backgroundImage:
-    "repeating-linear-gradient(45deg, transparent 0 4px, rgba(120,113,108,0.55) 4px 6px)" /* stone-500 */,
-}
-
-export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, focus, onTapCell }) => {
+export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, onTapCell }) => {
   const { size } = puzzle
   // Held back a beat: a tap on the way to the dark mark is not a mistake (see the hook).
   const conflicts = useDelayedConflicts(state.marks, marks => starBattleConflicts(puzzle, { marks }))
@@ -74,36 +74,36 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, focus, 
           gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
         }}
       >
-        {state.marks.map((value, cell) => {
-          const blocked = puzzle.blocked[cell]
-          return (
-            <button
-              key={cell}
-              onClick={() => onTapCell(cell)}
-              disabled={blocked}
-              style={blocked ? HATCH : undefined}
-              className={clsx(
-                "flex aspect-square items-center justify-center bg-stone-800 p-[14%] transition-colors",
-                // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
-                // whatever the grid size turns out to be.
-                boundary(puzzle, cell, -1, 0) ? "border-t-3 border-t-amber-200/80" : "border-t border-t-stone-600/50",
-                boundary(puzzle, cell, 1, 0) ? "border-b-3 border-b-amber-200/80" : "border-b border-b-stone-600/50",
-                boundary(puzzle, cell, 0, -1) ? "border-l-3 border-l-amber-200/80" : "border-l border-l-stone-600/50",
-                boundary(puzzle, cell, 0, 1) ? "border-r-3 border-r-amber-200/80" : "border-r border-r-stone-600/50",
-                // Inset, because the squares touch: a ring drawn outside one would sit on top of its
-                // neighbour. Conflict first, then the square a hint is about, then its evidence — evidence
-                // and conclusion cannot look the same, or "this square" is a guess between six of them.
-                conflicts.has(cell)
-                  ? "ring-2 ring-red-500/80 ring-inset"
-                  : cell === focus
-                    ? "ring-3 ring-amber-300 ring-inset"
-                    : highlighted?.has(cell) && "ring-2 ring-sky-300/60 ring-inset"
-              )}
-            >
-              {value === "star" ? <StarGlyph /> : value === "dark" ? <DarkGlyph /> : null}
-            </button>
-          )
-        })}
+        {state.marks.map((value, cell) => (
+          <button
+            key={cell}
+            onClick={() => onTapCell(cell)}
+            className={clsx(
+              "flex aspect-square items-center justify-center p-[14%] transition-colors",
+              // The squares a hint settles are LIT rather than ringed. A ring here would be a second amber
+              // line beside the region walls, which are amber and are the board's only clue — the two read as
+              // each other at arm's length. A lighter square cannot be mistaken for a boundary.
+              decided?.has(cell) ? "bg-stone-700" : "bg-stone-800",
+              // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
+              // whatever the grid size turns out to be.
+              boundary(puzzle, cell, -1, 0) ? "border-t-3 border-t-amber-200/80" : "border-t border-t-stone-600/50",
+              boundary(puzzle, cell, 1, 0) ? "border-b-3 border-b-amber-200/80" : "border-b border-b-stone-600/50",
+              boundary(puzzle, cell, 0, -1) ? "border-l-3 border-l-amber-200/80" : "border-l border-l-stone-600/50",
+              boundary(puzzle, cell, 0, 1) ? "border-r-3 border-r-amber-200/80" : "border-r border-r-stone-600/50",
+              // Inset, because the squares touch: a ring drawn outside one would sit on top of its
+              // neighbour. A broken rule first, then the one square a hint is ABOUT, then the squares it
+              // argues FROM — evidence and conclusion cannot look the same, or "this square" is a guess
+              // between six of them.
+              conflicts.has(cell)
+                ? "ring-2 ring-red-500/80 ring-inset"
+                : cell === focus
+                  ? "ring-3 ring-amber-300 ring-inset"
+                  : highlighted?.has(cell) && "ring-2 ring-sky-300/60 ring-inset"
+            )}
+          >
+            {value === "star" ? <StarGlyph /> : value === "dark" ? <DarkGlyph /> : null}
+          </button>
+        ))}
       </div>
     </div>
   )

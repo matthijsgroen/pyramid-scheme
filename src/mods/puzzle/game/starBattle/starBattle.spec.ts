@@ -21,7 +21,6 @@ const board: StarBattlePuzzle = {
   size: 4,
   quota: 1,
   regions: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3],
-  blocked: new Array(16).fill(false),
 }
 const answer = [1, 7, 8, 14]
 
@@ -37,25 +36,18 @@ describe("starBattle", () => {
 
   it("cycles a square empty → star → dark → empty", () => {
     let state = createStarBattleState(board)
-    state = cycleStarBattleCell(board, state, 0)
+    state = cycleStarBattleCell(state, 0)
     expect(state.marks[0]).toBe("star")
-    state = cycleStarBattleCell(board, state, 0)
+    state = cycleStarBattleCell(state, 0)
     expect(state.marks[0]).toBe("dark")
-    state = cycleStarBattleCell(board, state, 0)
+    state = cycleStarBattleCell(state, 0)
     expect(state.marks[0]).toBeUndefined()
-  })
-
-  it("refuses a tap on a blocked square", () => {
-    const hatched = { ...board, blocked: board.blocked.map((_unused, cell) => cell === 3) }
-    const state = cycleStarBattleCell(hatched, createStarBattleState(hatched), 3)
-    expect(state.marks[3]).toBeUndefined()
-    expect(canUndoStarBattle(state)).toBe(false)
   })
 
   it("steps back one tap at a time, and stops at the opening board", () => {
     let state = createStarBattleState(board)
-    state = cycleStarBattleCell(board, state, 0)
-    state = cycleStarBattleCell(board, state, 5)
+    state = cycleStarBattleCell(state, 0)
+    state = cycleStarBattleCell(state, 5)
     state = undoStarBattle(state)
     expect(state.marks[5]).toBeUndefined()
     expect(state.marks[0]).toBe("star")

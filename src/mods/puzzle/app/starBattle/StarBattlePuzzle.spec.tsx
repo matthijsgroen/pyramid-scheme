@@ -46,13 +46,14 @@ describe("StarBattlePuzzle", () => {
     expect(derive).toHaveBeenCalled()
   })
 
-  it("refuses a tap on a hatched square", () => {
+  it("opens every square to the player, because the region map is the whole clue", () => {
     const puzzle = generateStarBattle(3, STAR_BATTLE_CONFIG.starter)
     const { container } = render(
       <StarBattlePuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
     )
-    const blocked = puzzle.blocked.findIndex(Boolean)
-    expect(cellsIn(container)[blocked].hasAttribute("disabled")).toBe(true)
+    const cells = cellsIn(container)
+    expect(cells.length).toBe(puzzle.size ** 2)
+    expect(cells.some(cell => cell.hasAttribute("disabled"))).toBe(false)
   })
 
   it("reports the board solved once every star is placed, with nothing else needed", { timeout: 120_000 }, async () => {
@@ -76,9 +77,8 @@ describe("StarBattlePuzzle", () => {
     const { container } = render(
       <StarBattlePuzzle puzzle={puzzle} difficulty="starter" onSolved={() => {}} onCancel={() => {}} />
     )
-    const open = puzzle.blocked.flatMap((blocked, cell) => (blocked ? [] : [cell]))
     // Two taps on each of two squares: star, then dark — the run a wrong reading produces.
-    for (const cell of open.slice(0, 2)) {
+    for (const cell of [0, 1]) {
       act(() => cellsIn(container)[cell].click())
       act(() => cellsIn(container)[cell].click())
     }

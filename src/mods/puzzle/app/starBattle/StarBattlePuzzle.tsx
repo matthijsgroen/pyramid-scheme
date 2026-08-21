@@ -57,10 +57,11 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
             puzzle={puzzle}
             state={state}
             highlighted={hintVisible ? hint?.cells : undefined}
+            decided={hintVisible ? hint?.decided : undefined}
             focus={hintVisible ? hint?.focus : undefined}
             onTapCell={cell => {
               reportInput()
-              setState(cycleStarBattleCell(puzzle, state, cell))
+              setState(cycleStarBattleCell(state, cell))
             }}
           />
           {/* The same control eclipse and futoshiki put under their boards, in the same place and the same

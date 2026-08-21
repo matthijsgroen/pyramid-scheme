@@ -7,12 +7,15 @@ Star Battle: what the player is deducing, its technique ladder, and how generati
 proves a board needs the reasoning its tier claims.
 
 > **Built and measured, not yet played.** Every number below comes from the shipped
-> generator and technique solver. Two of them were settled BEFORE the build, by a
-> throwaway probe written to answer the questions the catalogue left open — whether a
-> region map alone can carry a board (§4.1) and whether the region rungs carry a ladder
-> (§3.4) — and both answers changed the design. Solve times are still targets: the lab
+> generator and technique solver. Solve times are still targets: the lab
 > (`src/app/dev/PuzzleLab.tsx`) plays the real screen and its banner reports the solve
 > time, so timing a tier needs nothing of its own.
+>
+> **One earlier claim in this doc was wrong, and §4.1 is the record of it.** A first draft
+> concluded that a region map alone cannot carry a board and gave the family a second clue
+> layer — hatched squares — to lean on. It cannot, the way that draft drew its regions. It
+> can easily once they are drawn to the right shape, so the clue layer is gone and every
+> square on every board is the player's to fill.
 
 ## 1. Rules
 
@@ -22,10 +25,10 @@ Stars go in a square grid carved into as many regions as the grid has rows:
   region holds the same fixed number of stars, and at the tiers below wizard that
   number is one.
 - **No two stars touch**, diagonals included.
-- **Blocked squares** — some squares are hatched and hold nothing. They are part of the
-  board, not part of the answer, and they refuse a tap.
 
-This is Star Battle's rule set with one addition, and §4 is why the addition exists.
+That is Star Battle's rule set, whole and unmodified. **The board opens completely empty**:
+where the region boundaries run is the entire clue, and nothing is hatched, given or
+withheld.
 
 Nothing else. The board carries no language: a region is a drawn boundary, a star is a
 shape, and the answer is entered by tapping.
@@ -44,15 +47,14 @@ of empty squares, so the player's move is mostly _ruling out_ — the cross-hatc
 a placed star, and the squares a region can no longer use. That is a different feeling
 at the fingertips even where the arithmetic rhymes.
 
-**The distinctness question the catalogue asked, answered honestly.** §4.24 asked
-whether regions and the no-touching rule carry a ladder of their own or whether this
-plays as eclipse with a jigsaw drawn on it. Measured: the regions carry **mechanism**
-but not much **ladder**. Capping the solver below every region rung still produces
-boards, and they carry only about two more blocked squares than boards built to the full
-ladder (§3.4). So this family's claim to a slot rests on the board _playing_ differently
-— sparse placement, cross-hatching, a boundary as the clue — and not on reaching a
-deduction eclipse cannot. That is a weaker claim than constellation's, and it is the
-thing to re-examine first if the built family disappoints.
+**The distinctness question the catalogue asked, answered by measurement.** §4.24 asked
+whether regions and the no-touching rule carry a ladder of their own or whether this plays
+as eclipse with a jigsaw drawn on it. They carry one, and the evidence is generation rather
+than play: on an 8×8, allowing the region readings makes **nine times as many region maps
+solvable** as counting alone does (§3.4). A rung that decides whether a board can exist at
+all is not decoration. What the family does NOT have is depth — the counting rungs are
+still most of any solve — so the honest claim is a distinct mechanism with a shallow
+ladder, and §10 is where the doubts about that live.
 
 ## 3. The deduction ladder
 
@@ -136,123 +138,145 @@ its counting rung had no adjacency guard at all, and it settled boards to answer
 
 ### 3.4 What the ladder is actually worth
 
-Measured over eight boards a size with the shipped generator, one star to a line, thinning included:
+A board is only as good as the region map behind it, so the ladder's worth is measured in
+**how many maps it can solve**. Eight thousand draws a row, fully open, region sizes spread
+as squares:
 
-| Size | Blocked squares at cap `groupTight` | at cap `spanning` | Steps |
-| ---- | ----------------------------------- | ----------------- | ----- |
-| 6×6  | 8.9                                 | 7.6               | 16    |
-| 7×7  | 12.0                                | 11.1              | 19    |
-| 8×8  | 17.4                                | 14.9              | 24    |
+| Size | Solvable with counting alone (`groupTight`) | with the region readings | with the whole ladder |
+| ---- | ------------------------------------------- | ------------------------ | --------------------- |
+| 5×5  | 32.3%                                       | 49.7%                    | 51.2%                 |
+| 6×6  | 4.9%                                        | 12.2%                    | 14.1%                 |
+| 7×7  | 0.8%                                        | 3.2%                     | 3.6%                  |
+| 8×8  | 0.08%                                       | 0.83%                    | 0.87%                 |
 
-**Four rungs of ladder buy two and a half blocked squares out of sixty-four**, and the step count barely
-moves with the cap at all. The mix at 8×8 with the whole ladder available, over eight boards: 64
-`groupTight`, 65 `groupFull`, 34 `touch`, 14 `regionLine`, 9 `lineRegion`, 5 `spanning` — **eighty-five
-per cent of a solve is the three rungs a player learns in the first minute**, and the region readings are
-the remaining fifteen.
+**At 8×8 the region readings make ten times as many maps solvable, and `spanning` adds
+about five per cent on top of that.** So the ladder is load-bearing in a way the first
+draft of this doc could not see: with hatched squares available, a weak rung could always
+be papered over by leaving a square hatched, and the whole ladder looked worth two and a
+half hatched squares. With nothing to paper over, a board either yields to the reasoning
+allowed or it does not exist.
 
-**Only `groupTight` ever places a star.** Every other rung takes squares away; the star lands when a group
-is down to its last one. That is the family in a sentence, and it is why the ladder is worth so little in
-blocked squares: the region rungs do not decide the answer, they narrow the board until the counting rung
-can.
+**Depth is still the thing this family lacks.** Counted over solvable 8×8 boards, a solve
+spends about 2.4 `regionLine` and 0.4 `spanning` steps against roughly twenty counting
+ones — so the region readings decide whether the board can be built, and the counting does
+most of the walking once it is. Eighteen to twenty-six steps settles a board at every size.
 
-**The worry this raises is the opposite of the one the catalogue predicted.** §4.24 expected an 8×8 to be
-long — a sweep of bookkeeping — on the strength of a throwaway probe that counted rung firings rather than
-solver steps. The shipped solver settles an 8×8 in **twenty-four steps**, against eclipse's wizard 55–62.
-So a top-tier board here is SHORT and mostly counting, and the risk is that it comes in under the tier it
-is sold as rather than over it. That is a lab question (§10.2), and it is the one to answer first.
+**Only `groupTight` ever places a star.** Every other rung takes squares away; the star
+lands when a group is down to its last one. That is the family in a sentence.
+
+**A board is SHORT rather than long**, which is the opposite of what the catalogue
+predicted for it: an 8×8 settles in about twenty-five steps against eclipse's wizard 55–62.
+The earlier ~160 figure came from a probe counting rung firings rather than solver steps and
+is retracted. Whether twenty-five reflex steps is a wizard board is §10's first question.
 
 ## 4. Generation
 
-Build then thin, the same shape as eclipse and futoshiki — but the thing being thinned is
-not what the catalogue expected.
+Draw a board, test it, keep it if the ladder settles it unaided:
 
-1. **Place the stars first.** For `k = 1` that is a permutation of columns with no two
-   adjacent rows within one column of each other — backtracking, no rejection loop.
-2. **Draw the regions around them.** Seed one region per star and grow them
-   orthogonally, feeding the smallest region each step, until every square is claimed.
-   Contiguity is free this way, and every region holds exactly its quota by construction.
-3. **Block every square that is not a star**, which is the answer stated in full.
-4. **Unblock squares one at a time**, keeping each removal only while the technique
-   solver still reaches the answer unaided.
-5. Keep the board only if its solve actually **used** the rung its tier introduces.
+1. **Place the stars first.** For one star to a line that is a permutation of columns with
+   no two adjacent rows within one column of each other — backtracking, no rejection loop.
+2. **Draw the regions around them.** Seed one region per star and grow them orthogonally,
+   feeding whichever region is furthest behind its target size, until every square is
+   claimed. Contiguity is free this way, and every region holds its star by construction.
+3. **Solve it with the tier's own ladder.** A map the reasoning cannot finish is thrown
+   away, and so is one that never spends the tier's required rung.
 
-**Step 1 before step 2, and that ordering is the whole family.** Draw the regions first
-and the star set has to be found inside them, which is a rejection loop that mostly fails;
-draw them around a set already placed and every region holds its quota by construction.
+**Step 1 before step 2, and that ordering is the whole family.** Draw the regions first and
+the star set has to be found inside them, which is a rejection loop on top of a rejection
+loop; draw them around a set already placed and every region holds its quota for free.
 
-### 4.1 Why blocked squares exist at all
+**Nothing is thinned, because there is nothing to thin.** The only clue is where the
+boundaries run, and a boundary cannot be taken away without redrawing the region — so a
+miss is a redraw, which is the shape constellation's generation has (§4.21 of the
+catalogue). Uniqueness comes out of the same gate as everywhere else: every step of the
+solve was forced, so the board that ships has exactly one answer and no solution counter
+runs.
 
-The catalogue's plan was "draw regions, place a legal star set, then check a technique
-solver reaches it unaided" — a region map as the only clue, with nothing to thin. **That
-does not work**, and the margin is not close. Region maps grown around a star set admit
-several answers each:
+### 4.1 The region-size distribution is the whole trick, and the first draft missed it
 
-| Size | Unique answers, balanced region sizes | with sizes deliberately skewed |
-| ---- | ------------------------------------- | ------------------------------ |
-| 5×5  | 0 / 200                               | 36 / 200                       |
-| 6×6  | 0 / 200                               | 4 / 200                        |
-| 7×7  | 0 / 200                               | 0 / 200                        |
-| 8×8  | 0 / 200                               | 0 / 200                        |
+**A region map alone is a perfectly good clue. Grown to equal sizes it is a useless one**,
+and the difference is dramatic enough that it sent an earlier draft of this family down a
+blind alley.
 
-Skewing region sizes — a two-square region beside a twelve-square one, which is what
-hand-made Star Battle grids look like — rescues 5×5 and does nothing above it. Published
-Star Battle grids are _hand-carved_ to be unique; that is a search over region shapes, and
-it is not a rejection loop that terminates.
+Grow every region to the same size and each one sprawls across most of the grid, so no
+region is ever confined to a line, no line is ever confined to a region, and the reasoning
+has nowhere to start. Measured: **zero solvable maps out of six thousand, at every size**,
+and zero unique answers out of two hundred. That is what the first draft measured, and from
+it concluded that the family needed a second clue layer — hatched squares — to be generable
+at all. It shipped that layer, with about a fifth of every grid drawn as holes.
 
-So the family gets a **second clue layer that can be thinned**, and blocked squares are
-the cheapest one that adds no vocabulary: a hatched square is wordless, it is the same
-device Circuit would use (§4.23), and it turns generation back into the build-then-thin
-loop every other family here already runs. Uniqueness comes out of the same gate as
-everywhere else — every intermediate board was solved by forced steps, so the board that
-ships has one answer and no solution counter runs.
+Spread the sizes instead and the same search succeeds immediately:
 
-**The trade is real and worth naming**: a board with a fifth of its squares hatched is
-not the puzzle a Star Battle player would recognise, and the hatching does some of the
-work the region map was supposed to do. The alternative was a generator that carves
-regions to fit a deduction, which is a different and much larger machine.
+| Region sizes go as    | 7×7 maps solvable | 8×8 maps solvable | Region readings a board spends   |
+| --------------------- | ----------------- | ----------------- | -------------------------------- |
+| flat                  | 0%                | 0%                | —                                |
+| `n`                   | 0.02%             | 0%                | —                                |
+| `n²`                  | 3.6%              | 1.0%              | 2.4 `regionLine`, 0.4 `spanning` |
+| `n³`                  | 14.7%             | 6.3%              | 1.4 `regionLine`, 0              |
+| mostly single squares | 60.5%             | 53.7%             | none at all                      |
+
+It is also what hand-made grids look like: a one-square region beside a fifteen-square one,
+and the little ones are where a solve begins.
+
+**And the dial runs the other way from intuition, which is what makes it the difficulty
+knob** (§5): a steeper spread makes boards EASIER and cheaper to find, because a one-square
+region hands the player a star outright. Push it far enough and the region boundaries stop
+being reasoned about at all — 54% of maps solvable at 8×8, and not one region reading spent
+on any of them.
 
 ### 4.2 Cost
 
-Drawing and thinning a board is **1–6ms** from 5×5 to 8×8 — three orders of magnitude
-under eclipse's wizard draw, because thinning is one pass over the squares and the
-technique solver is linear in the board. Whatever this family's problems are, generation
-cost is not among them, and there is room to spend it: the tier's required-rung quota can
-throw away most draws and still be free.
+Measured over six boards a tier, drawing until a board meets the tier's rung quota:
+
+| Tier    | Grid | Draw cost |
+| ------- | ---- | --------- |
+| starter | 5×5  | 2–7ms     |
+| junior  | 6×6  | 2–15ms    |
+| expert  | 7×7  | 3–135ms   |
+| master  | 8×8  | 5–489ms   |
+| wizard  | 8×8  | 44ms–1.5s |
+
+Wizard is the outlier because it is the one tier whose required rung is scarce: `spanning`
+fires on about two boards in five, so most draws are discarded for that reason alone. It
+sits beside what eclipse's top tier already spends (0.34–0.84s), and the ceiling on draws is
+what keeps a bad seed from spinning — a tier that cannot meet its quota ships its nearest
+miss rather than nothing.
 
 ## 5. Difficulty knobs
 
-- **Technique cap** — how far up the ladder a board's solve may reach. Weak here, by
-  measurement (§3.4), and the honest reason to keep it is the ramp: a starter board that
-  cannot need T3 is a board that teaches T1 and T2 alone.
+- **Region-size spread** — the exponent the region target sizes follow, and **the knob this
+  family actually turns on**. It runs the opposite way to intuition: a STEEPER spread makes
+  an EASIER board, because a one-square region hands over a star outright (§4.1). It is also
+  what decides whether a board can be found at all, so it doubles as the generation budget.
+- **Grid size** — more regions, and a region is a clue rather than bookkeeping, so this is
+  the one family where the catalogue's usual warning about grid size does not apply.
+- **Technique cap** — how far up the ladder a board's solve may reach. Not decoration here:
+  at 8×8 it decides whether one map in a thousand is usable or one in a hundred (§3.4).
 - **Required rung and its quota** — which technique the solve must spend, and how often.
-  **One is not a tier**, the same rule eclipse's config states.
-- **Grid size** — the knob that actually moves this family, and the one the catalogue
-  warns about. Here it moves the right thing for once: a wider grid is more regions, and
-  a region is a clue rather than bookkeeping.
-- **Stars per line** — one everywhere below wizard. Two is the classic hard Star Battle
-  and it is **untested** (§10).
+  **One is not a tier**, the same rule eclipse's config states — except at the very top,
+  where `spanning` is scarce enough that one firing is what a tier can ask for.
+- **Stars per line** — one at every tier. Two is the classic hard Star Battle and it is
+  **untested** (§10).
 
-| Tier    | Size | Stars | Cap          | Requires        |
-| ------- | ---- | ----- | ------------ | --------------- |
-| starter | 5×5  | 1     | `groupTight` | —               |
-| junior  | 6×6  | 1     | `regionLine` | `regionLine` ×1 |
-| expert  | 7×7  | 1     | `lineRegion` | `lineRegion` ×2 |
-| master  | 8×8  | 1     | `spanning`   | `lineRegion` ×4 |
-| wizard  | 8×8  | 1     | `spanning`   | `spanning` ×3   |
+| Tier    | Grid | Spread | Cap          | Requires        |
+| ------- | ---- | ------ | ------------ | --------------- |
+| starter | 5×5  | n³     | `groupTight` | —               |
+| junior  | 6×6  | n³     | `regionLine` | `regionLine` ×1 |
+| expert  | 7×7  | n²     | `lineRegion` | `regionLine` ×2 |
+| master  | 8×8  | n²     | `lineRegion` | `regionLine` ×3 |
+| wizard  | 8×8  | n²     | `spanning`   | `spanning` ×1   |
 
-**Grid size is what moves this family, and it moves the clue rather than the bookkeeping.** A 6×6 thins to
-5–10 blocked squares and about sixteen steps, a 7×7 to 9–14 and nineteen, an 8×8 to 12–17 and
-twenty-four. Every one of those is a shorter board than eclipse's equivalent tier, which is the thing the
-lab has to weigh: these steps are reflexes (darkening the ring around a star) where eclipse's are thoughts,
-so a shorter board is not automatically an easier one — but it might be.
+**The ramp is spread first, then size, then the rung.** The two bottom tiers are drawn with
+a steep spread, so their boards open on a tiny region and settle by counting — the
+self-teaching first encounter, and the region boundary is a group rather than an argument.
+From expert up the spread tightens, which is what makes the region readings the board rather
+than a moment in it: those boards spend two to five of them.
 
-**The top two tiers share a size and differ only in the rung they must spend**, which is the weakest tier
-separation in the catalogue. It is written down as the lab's starting point rather than a claim: if the top
-tier plays short, the answer is 9×9 at wizard rather than a deeper rung, since the ladder has nothing deeper
-to give (§3.1) and size is the knob that buys regions.
-
-Generation cost, measured: a few milliseconds up to expert, 0.1–1.5s at master and wizard where the rung
-quota throws most draws away. Comfortably inside what eclipse's top tier already spends.
+**The top two tiers share a grid and differ in the rung they must spend**, which is the
+weakest tier separation in the catalogue and is written down as the lab's starting point
+rather than a claim. If `spanning`'s sentence does not survive being read on a real board
+(§3.1), wizard becomes 9×9 with a `regionLine` quota — size is the knob that buys regions,
+and the ladder has nothing deeper to give.
 
 ## 6. Controls
 
@@ -263,8 +287,9 @@ does not in eclipse: this family's reasoning IS elimination, so the mark that sa
 here" is the one the player uses most, and a board that could not record it would make
 them hold the cross-hatch in their head.
 
-**Blocked squares are not a fourth state.** They belong to the board, they refuse a tap,
-and they are drawn to look like part of the grid rather than part of anyone's answer.
+**Every square takes a tap.** There are no givens and nothing hatched, so the board never
+refuses the player anywhere — which is worth stating because the first draft of this family
+had a fourth, untappable state, and §4.1 is why it is gone.
 
 **One button: undo**, in the place and the shape futoshiki and eclipse put it. A tap
 already takes one square back, so undo is for stepping off a run of squares darkened on a
@@ -282,9 +307,20 @@ a tier may be built to need. A hint is ordered by **what a player spots first**:
 whose neighbours are still open, then a group with its stars already in, then a group down
 to its last square, then the region-against-line readings, and `spanning` last.
 
-**A region hint has to point at the region, not describe it.** "This region's star has to
-come from that row" is checkable only if the boundary lights up while the row does — a
-hint that names a region in words has already failed, because the board carries no names.
+**A sentence that says "this row" has to have a row to point at.** So the evidence a hint
+carries is the whole group being counted or the whole region being squeezed — not merely the
+interesting squares inside it. This was got wrong once and is worth stating as a rule: the
+first build lit only a region's free squares while saying "this region", and lit nothing at
+all behind "one square left in this row", which is a hint asking the player to take its word
+for the reason.
+
+**A hint shows every square it settles, not just one.** These rungs decide a whole row at a
+time and their sentences say so ("the rest is empty"); one mark under that sentence leaves the
+player working out what "the rest" was. Those squares are **lit rather than ringed**, and that
+is not a stylistic choice: the region walls are amber and are the board's only clue, so a
+second amber line beside them reads as another wall. A lighter square cannot. Rings are kept
+for the three things that are not the board — a broken rule in red, the one square the hint is
+about in amber, the squares it argues from in blue.
 
 **A hint is only derived once asked for**, the same rule eclipse states: the top rung
 sweeps pairs of groups, and putting that on every tap buys a string nobody asked to read.
@@ -303,7 +339,6 @@ Beyond the shared screen bar:
   is decoration.
 - **A star is a shape, and the dark mark is visibly the player's.** Smaller, lighter, and
   never the same weight as a star — the board must never look as though it answered itself.
-- **A blocked square is hatched**, reads as grid rather than as answer, and refuses a tap.
 - **Conflicts show as they happen, but not before the player has finished the square.**
   A tap cycles through `star` on the way to `dark`, so calling that star a mistake is
   feedback about a state nobody chose. `useDelayedConflicts` already does this for eclipse
@@ -313,8 +348,8 @@ Beyond the shared screen bar:
 
 ## 9. Theming
 
-The family emits logical state only — `cell(star | dark | empty | blocked) | region(id) |
-quota(n)` — and the skin decides what any of it looks like.
+The family emits logical state only — `cell(star | dark | empty) | region(id) | quota(n)` —
+and the skin decides what any of it looks like.
 
 **One skin: stars in a night sky.** It is the `sky` pool's plainest possible face, and the
 name is the theme. Eclipse is the precedent for a family with no roles and one ambience
@@ -324,19 +359,20 @@ one reading that might earn a second skin if a site ever asks.
 
 ## 10. Open questions
 
-1. **Does `spanning`'s hint survive a real board?** §3.1. This is the first thing to look
-   at in the lab, because the tier table's top two rows depend on the answer.
-2. **Does the top tier play as a top tier?** An 8×8 settles in twenty-four steps against eclipse's wizard
-   55–62, and eighty-five per cent of them are counting (§3.4). The board may well come in UNDER its tier
-   rather than over it, which is the opposite of the risk the catalogue recorded. First thing to time in the
-   lab; if it loses, wizard grows to 9×9 rather than reaching for a deeper rung.
+1. **Does `spanning`'s hint survive a real board?** §3.1. First thing to look at in the lab,
+   because the tier table's top row depends on the answer.
+2. **Does the top tier play as a top tier?** An 8×8 settles in about twenty-five steps
+   against eclipse's wizard 55–62, and the counting rungs are most of them (§3.4). The board
+   may well come in UNDER its tier rather than over it, which is the opposite of the risk the
+   catalogue recorded. If it loses, wizard grows to 9×9.
 3. **Two stars to a line.** Untested, and the classic form of the hard puzzle. It changes
-   `groupTight` from "one square left" to a capacity argument, which may be what revives
-   the rung §3.2 cut. Worth probing before it is worth building.
-4. **How few blocked squares can a board ship with?** Thinning is greedy over a random
-   order, which finds a local floor rather than the real one. A second pass in a different
-   order was what eclipse measured and dropped; here the numbers are small enough that
-   fewer blocked squares would visibly change the board, so it is worth measuring properly.
+   `groupTight` from "one square left" to a capacity argument, which may be what revives the
+   rung §3.2 cut — and it would make `allApart` and `regionLine`'s quota check load-bearing,
+   which §3.3 records they currently are not. Worth probing before it is worth building.
+4. **Is the spread the right shape, or only a working one?** Sizes follow `(n + 1) ** spread`
+   because two exponents were measured and one worked; nothing says a hand-picked set of
+   target sizes would not do better, and "better" here means harder boards found at the same
+   cost. The measurement is cheap and nobody has done it.
 5. **Would a guard reading earn a second skin?** Post one watchman to a district, none
    within sight of another — the same rules, worn as a tomb or a city rather than a sky.
    The catalogue says this mechanic is `sky` and nothing else; this is the counter-example

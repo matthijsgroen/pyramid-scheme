@@ -16,7 +16,14 @@ export type StarBattleHint = {
   params: { star?: string; count?: number }
   /** The squares the reason argues from, so the board can point at what it is reasoning from. */
   cells: ReadonlySet<number>
-  /** The square the reason is ABOUT, drawn apart from its evidence — "this square" has to be one square. */
+  /**
+   * Every square the step settles.
+   *
+   * A rung here often decides a whole row at once and its sentence says so, so the board rings all of them —
+   * with the focus strongest. One ring under "the rest of the row is empty" says less than the sentence does.
+   */
+  decided: ReadonlySet<number>
+  /** The square the reason is ABOUT, drawn strongest — "this square" has to be one square. */
   focus?: number
 }
 
@@ -36,7 +43,8 @@ export const buildStarBattleHint = (
   state: StarBattleMarks
 ): StarBattleHint | undefined => {
   const mistake = firstStarBattleMistake(state.marks, puzzle.solution)
-  if (mistake !== undefined) return { key: "mistake", params: {}, cells: new Set([mistake]), focus: mistake }
+  if (mistake !== undefined)
+    return { key: "mistake", params: {}, cells: new Set(), decided: new Set([mistake]), focus: mistake }
 
   const step = nextStarBattleStep(puzzle, [...state.marks], techniquesUpTo(puzzle.techniqueCap))
   if (!step) return undefined
@@ -44,6 +52,7 @@ export const buildStarBattleHint = (
     key: stepKey(step),
     params: { star: STAR, count: step.count },
     cells: new Set(step.cells),
+    decided: new Set(step.decisions.map(decision => decision.cell)),
     focus: stepFocus(step),
   }
 }

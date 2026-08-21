@@ -662,32 +662,29 @@ Family doc: `docs/game-design/puzzles/star-battle.md`.
 
 - **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction like
   eclipse, but constrained by a group that is not a line.
-- **Operates:** place a fixed number of stars in every row, every column and every region, and no two stars
-  may touch, diagonals included. Some squares are hatched and hold nothing — they are why the family is
-  generable at all. The name is the theme, which is the cheapest possible fit for `sky`.
-- **Knobs:** grid size (real here — a wider grid is more regions, and a region is a clue rather than
-  bookkeeping) · how many blocked squares survive thinning · stars per line · technique cap, required rung
-  and its quota.
+- **Operates:** place one star in every row, every column and every region, and no two stars may touch,
+  diagonals included. **The board opens completely empty** — where the region boundaries run is the entire
+  clue. The name is the theme, which is the cheapest possible fit for `sky`.
+- **Knobs:** the region-size SPREAD (the real one — see below) · grid size, which here buys regions rather
+  than bookkeeping · technique cap, required rung and its quota · stars per line, one at every tier.
 - **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
-  **mechanism** — a region is a group that is not a line, and the play is sparse elimination rather than
-  eclipse's filled grid — but they do **not** carry much of a ladder: capping the solver below every region
-  rung still yields boards, two and a half blocked squares heavier out of sixty-four, and eighty-five per
-  cent of any solve is the three rungs a player learns in the first minute. Only the counting rung ever
-  places a star; the region rungs narrow the board until it can. The family's claim to a slot is how the
-  board plays, not a deduction eclipse cannot reach. That is a weaker claim than §4.21's, and it is the
-  first thing to re-examine if the built family disappoints.
-- **Generation is not draw-then-test, because that does not work.** A region map alone admits several
-  answers — measured at **0 unique out of 200** at 6×6, 7×7 and 8×8, and skewing region sizes rescues only
-  5×5. Published grids are hand-carved to be unique, which is a search over shapes rather than a rejection
-  loop. So the family adds a thinnable second clue layer — **blocked squares** — and generation returns to
-  the build-then-thin loop every other family here runs: place the stars, grow the regions around them,
-  block everything else, then unblock while the technique solver still finishes unaided. Boards ship with a
-  fifth of the grid hatched, drawn in 1–6ms.
-- **The duration risk runs the other way from the one predicted here.** An 8×8 settles in ~24 solver steps
-  against eclipse's wizard 55–62, so a top-tier board is SHORT rather than long — the earlier ~160 figure
-  came from a probe counting rung firings rather than steps, and is retracted. Whether twenty-four reflex
-  steps is a wizard board is the first thing to time in the lab; if it plays under its tier the answer is
-  9×9, since the ladder has nothing deeper to give.
+  mechanism — a region is a group that is not a line, and the play is sparse elimination rather than
+  eclipse's filled grid — and they carry a real ladder too, though the evidence is generation rather than
+  play: at 8×8, allowing the region readings makes **ten times as many region maps solvable** than counting
+  alone does. A rung that decides whether a board can exist is not decoration. What the family lacks is
+  depth: the counting rungs are still most of any solve, and only one of them ever places a star.
+- **The generation finding worth carrying to other families: the DISTRIBUTION of a clue matters as much as
+  its existence.** Grown to equal sizes, a region map is useless — zero solvable maps out of six thousand at
+  every size, because every region sprawls across the grid and nothing is ever confined to a line. Spread
+  the sizes as squares and 1–4% of maps are solvable; as cubes, 6–15%; mostly-single-squares, over half. An
+  earlier draft measured only the flat case, concluded a region map could not carry a board, and gave the
+  family a second clue layer (hatched squares) it did not need. **The dial also runs backwards**: a steeper
+  spread means easier boards, because a one-square region hands over a star — which is what makes it the
+  difficulty knob rather than a generation detail.
+- **Duration runs the other way from the one predicted here.** An 8×8 settles in ~25 solver steps against
+  eclipse's wizard 55–62, so a top-tier board is SHORT rather than long — the earlier ~160 figure came from a
+  probe counting rung firings rather than steps, and is retracted. Whether twenty-five reflex steps is a
+  wizard board is the first thing to time in the lab; if it plays under its tier the answer is 9×9.
 - **What it inherits for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed conflict
   display, and the completion run every family can now have (`puzzle-screens.md` §3).
 - **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic

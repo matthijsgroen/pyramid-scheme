@@ -16,6 +16,18 @@ export type StarBattlePuzzleWithAnswer = StarBattlePuzzle & {
 
 export type StarBattleOptions = {
   size: number
+  /**
+   * How unevenly the regions are sized, as the exponent their target sizes follow — and **this is the
+   * family's real difficulty knob**, not the technique cap (design doc §5).
+   *
+   * Sizes go as `(n + 1) ** spread`, so 1 is a gentle ramp, 2 a square spread, 3 a steep one. Pushing it up
+   * makes boards EASIER and cheaper to find, because a one-square region is a star handed over: at 3 on an
+   * 8×8, six draws in a hundred are solvable and the region rungs never fire. Pulling it down to 2 leaves one
+   * draw in a hundred, and those boards spend two or three region readings each. Below about 2 the boards stop
+   * existing — at an even spread every region sprawls across the whole grid, nothing is ever confined to a
+   * line, and the reasoning has nowhere to start.
+   */
+  regionSpread: number
   /** The strongest deduction a board may demand. */
   techniqueCap: StarBattleTechniqueId
   /**
@@ -28,10 +40,15 @@ export type StarBattleOptions = {
   requiresCount?: number
 }
 
-// A tier that insists on a rung throws boards away. Generation is cheap here (a board is milliseconds, not
-// the near-second eclipse's top tier costs), so the ceiling can sit well above what an unconstrained tier
-// needs and the quota can afford to be strict.
-const MAX_ATTEMPTS = 200
+/**
+ * How many region maps to draw before giving up.
+ *
+ * Generation is a rejection loop — **a board carries no clue but its region map, so the map is what has to
+ * be right** (design doc §4). Most maps are not: about half work at 5×5 and under one in a hundred at 8×8,
+ * and a tier's required rung throws away more of what is left. A draw is a fraction of a millisecond, so the
+ * ceiling is set by what the top tier needs rather than by what a cheap tier would like.
+ */
+const MAX_ATTEMPTS = 20_000
 
 export const techniquesUpTo = (cap: StarBattleTechniqueId): StarBattleTechniqueId[] =>
   STAR_BATTLE_TECHNIQUES.filter(id => techniqueRank(id) <= techniqueRank(cap))
@@ -39,13 +56,13 @@ export const techniquesUpTo = (cap: StarBattleTechniqueId): StarBattleTechniqueI
 /**
  * A legal star set: one to a row, one to a column, no two touching. Drawn by backtracking down the rows.
  *
- * **The stars come first and the regions are drawn around them** (design doc §4), which is the whole
- * ordering of this generator: draw the regions first and the star set has to be found inside them, which is
- * a rejection loop that mostly fails. This way every region holds its star by construction.
+ * **The stars come first and the regions are drawn around them** (design doc §4), which is the whole ordering
+ * of this generator: draw the regions first and the star set has to be found inside them, which is a rejection
+ * loop on top of a rejection loop. This way every region holds its star by construction.
  *
  * One star to a line is every tier this family ships (design doc §5). The RULES and the technique solver are
- * written for any quota — a group owes `puzzle.quota` and counts what it holds — and only this drawer is
- * not, because a two-star board is the open question §10.3 records rather than something a tier asks for.
+ * written for any quota — a group owes `puzzle.quota` and counts what it holds — and only this drawer is not,
+ * because a two-star board is the open question §10 records rather than something a tier asks for.
  */
 const starSet = (size: number, random: () => number): number[] | undefined => {
   const placed: number[] = []
@@ -68,20 +85,44 @@ const starSet = (size: number, random: () => number): number[] | undefined => {
 }
 
 /**
+ * How big each region is grown to be — and **this distribution is the difference between a family that works
+ * and one that does not.**
+ *
+ * Grown to equal sizes a region map says almost nothing: every region sprawls across most of the board, so no
+ * region is ever confined to a line and the reasoning has nowhere to start. Measured, not guessed — with even
+ * targets, **not one map in six thousand** could be solved at any size, which is what sent an earlier draft of
+ * this family looking for a second clue layer to lean on. Spread the sizes instead and the same search finds
+ * solvable maps easily. It is also what hand-made grids look like: a one-square region beside a
+ * fourteen-square one, and the little ones are where a solve begins.
+ */
+const regionTargets = (size: number, spread: number): number[] => {
+  const shape = Array.from({ length: size }, (_unused, index) => (index + 1) ** spread)
+  const scale = (size * size) / shape.reduce((total, part) => total + part, 0)
+  return shape.map(part => Math.max(1, part * scale))
+}
+
+/**
  * Regions grown outwards from the stars until every square is claimed.
  *
- * Feeding the smallest region each step keeps them within a square or two of each other, which matters for
- * a reason that is not tidiness: a region that has swallowed half the grid is a clue that says nothing, and
- * the little ones left beside it say everything. Growing orthogonally makes contiguity free.
+ * Each step feeds whichever region is furthest behind its target, so the sizes come out in the intended
+ * spread. Growing orthogonally makes contiguity free.
  */
-const growRegions = (size: number, stars: readonly number[], random: () => number): number[] | undefined => {
+const growRegions = (
+  size: number,
+  stars: readonly number[],
+  random: () => number,
+  spread: number
+): number[] | undefined => {
+  const targets = regionTargets(size, spread)
   const regions: number[] = new Array(size * size).fill(-1)
   // As many regions as rows, each seeded with the one star it owes.
   stars.forEach((cell, index) => (regions[cell] = index))
   const sizes = new Array(size).fill(1)
   let left = size * size - stars.length
   while (left > 0) {
-    const order = [...Array(size).keys()].sort((a, b) => sizes[a] - sizes[b] || random() - 0.5)
+    const order = [...Array(size).keys()].sort(
+      (a, b) => sizes[a] / targets[a] - sizes[b] / targets[b] || random() - 0.5
+    )
     const grown = order.some(region => {
       const frontier = regions.flatMap((at, cell) => {
         if (at !== region) return []
@@ -115,48 +156,26 @@ const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId[], sol
 }
 
 /**
- * Build then thin: block every square that is not a star — the answer stated in full — then unblock squares
- * for as long as the technique solver still reaches the end unaided.
+ * Draw a map, test it, keep it if the ladder settles it unaided.
  *
- * Every intermediate board is settled by deduction, so the one that ships is too, and that settles
- * uniqueness at the same time: each step along the way was forced. No solution counter is needed, which is
- * the same gate every other family here passes through.
- *
- * Thinning is greedy over one random order, so it finds a local floor rather than the fewest blocked squares
- * that could possibly work (design doc §10.4). Eclipse measured a second sweep and it removed nothing.
+ * **Nothing is thinned, because there is nothing to thin**: the board's only clue is where the region
+ * boundaries run, and a boundary cannot be taken away without redrawing the region. So a miss is a redraw,
+ * the shape constellation's generation has (§4.21) — and the technique solver reaching the answer forwards is
+ * what settles uniqueness at the same time, since every step along the way was forced. No solution counter
+ * runs anywhere in this family.
  */
-const thin = (
-  puzzle: StarBattlePuzzle,
-  solution: readonly boolean[],
-  allowed: StarBattleTechniqueId[],
-  random: () => number
-): StarBattlePuzzle => {
-  let blocked = [...puzzle.blocked]
-  for (const cell of shuffle(
-    blocked.flatMap((isBlocked, index) => (isBlocked ? [index] : [])),
-    random
-  )) {
-    const candidate = blocked.map((was, index) => (index === cell ? false : was))
-    if (!settles({ ...puzzle, blocked: candidate }, allowed, solution)) continue
-    blocked = candidate
-  }
-  return { ...puzzle, blocked }
-}
-
 export const generateStarBattle = (seed: number, options: StarBattleOptions): StarBattlePuzzleWithAnswer => {
-  const { size, techniqueCap, requires = [], requiresCount = 1 } = options
+  const { size, regionSpread, techniqueCap, requires = [], requiresCount = 1 } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
   let fallback: { board: StarBattlePuzzleWithAnswer; demanded: number } | undefined
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const stars = starSet(size, random)
     if (!stars) continue
-    const regions = growRegions(size, stars, random)
+    const regions = growRegions(size, stars, random, regionSpread)
     if (!regions) continue
     const solution = Array.from({ length: size * size }, (_unused, cell) => stars.includes(cell))
-    const full = { size, quota: 1, regions, blocked: solution.map(star => !star) }
-    if (!settles(full, allowed, solution)) continue
-    const puzzle = thin(full, solution, allowed, random)
+    const puzzle = { size, quota: 1, regions }
     const result = settles(puzzle, allowed, solution)
     if (!result) continue
     const board = { ...puzzle, solution, techniqueCap }
@@ -170,6 +189,3 @@ export const generateStarBattle = (seed: number, options: StarBattleOptions): St
   if (!fallback) throw new Error(`star battle: no board for size ${size} at ${techniqueCap}`)
   return fallback.board
 }
-
-/** How much of the grid ships hatched — read off the generated board, for the playtesting bench. */
-export const starBattleBlockedCount = (puzzle: StarBattlePuzzle) => puzzle.blocked.filter(Boolean).length

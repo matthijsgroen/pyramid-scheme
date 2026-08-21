@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { groupsOf, neighboursOf, starsIn, type StarBattlePuzzle } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
-import { generateStarBattle, starBattleBlockedCount, techniquesUpTo } from "./generateStarBattle"
+import { generateStarBattle, techniquesUpTo } from "./generateStarBattle"
 import { solveStarBattleByTechniques, techniqueRank } from "./techniques"
 
 const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
@@ -52,8 +52,6 @@ describe("generateStarBattle", () => {
       })
       board.solution.forEach((star, cell) => {
         if (star) expect(neighboursOf(board.size, cell).filter(at => board.solution[at])).toEqual([])
-        // A blocked square is never part of the answer, and every star is a square the player can tap.
-        expect(board.blocked[cell] && star).toBe(false)
       })
       expect(board.regions.length).toBe(options.size ** 2)
       for (let region = 0; region < options.size; region++) expect(contiguous(board, region)).toBe(true)
@@ -87,17 +85,28 @@ describe("generateStarBattle", () => {
   )
 
   /**
-   * Thinning has to take most of the answer back off the board.
+   * The region map is the whole clue, at every tier.
    *
-   * The loop starts from every non-star square blocked, so a board that shipped without thinning would be
-   * the answer drawn in hatching. A fifth of the grid is the measured shape (design doc §4); this guards the
-   * order of magnitude, not the number.
+   * A board carries no givens and no hatching — nothing but where the boundaries run — which is what the
+   * family's first draft got wrong (design doc §4). A board that shipped anything else would be a board
+   * doing some of the player's reasoning for them, so this guards the claim directly: the puzzle is a size,
+   * a quota and a region map, and every square is the player's to fill.
    */
-  it.each(TIERS)("ships a %s board with the answer taken back off it", { timeout: 60_000 }, tier => {
+  it.each(TIERS)("gives a %s board nothing but its region map", { timeout: 60_000 }, tier => {
     const options = STAR_BATTLE_CONFIG[tier]
     for (const seed of SEEDS) {
       const board = generateStarBattle(seed, options)
-      expect(starBattleBlockedCount(board), `${tier} seed ${seed}`).toBeLessThan(options.size ** 2 / 2)
+      expect(Object.keys(board).sort(), `${tier} seed ${seed}`).toEqual([
+        "quota",
+        "regions",
+        "size",
+        "solution",
+        "techniqueCap",
+      ])
+      // Region sizes are spread rather than even, and that spread is what makes the map a clue at all.
+      const sizes = [...Array(options.size).keys()].map(region => board.regions.filter(at => at === region).length)
+      expect(Math.min(...sizes), `${tier} seed ${seed} smallest region`).toBeLessThan(options.size)
+      expect(Math.max(...sizes), `${tier} seed ${seed} largest region`).toBeGreaterThan(options.size)
     }
   })
 })

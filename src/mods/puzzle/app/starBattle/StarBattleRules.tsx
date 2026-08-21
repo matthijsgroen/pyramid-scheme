@@ -9,7 +9,6 @@ export const StarBattleRules: FC = () => {
     <ul className="list-disc space-y-1 pl-4">
       <li>{t("starBattle.rules.goal")}</li>
       <li>{t("starBattle.rules.touch")}</li>
-      <li>{t("starBattle.rules.blocked")}</li>
       <li>{t("starBattle.rules.enter")}</li>
     </ul>
   )
