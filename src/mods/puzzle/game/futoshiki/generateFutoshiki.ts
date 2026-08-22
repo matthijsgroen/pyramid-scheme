@@ -1,3 +1,4 @@
+import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32, shuffle } from "@/game/random"
 import { demandOf, techniquesFor, type DemandId } from "./demands"
 import {
@@ -100,10 +101,32 @@ const cellsWhere = (
 const filledCount = (givens: (number | undefined)[][]): number =>
   givens.flat().filter(value => value !== undefined).length
 
-export const generateFutoshiki = (size: number, seed: number, options: FutoshikiOptions = {}): FutoshikiPuzzle => {
-  const { techniqueCap: demand = "nakedSubset", prefill, requires } = options
+/**
+ * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
+ * (`docs/instructions/puzzle-screens.md` §6.1).
+ *
+ * The loop calls it on the finished board — after the thinning that decides it and the pre-filled
+ * numbers that soften it — so it is the gate rather than a second opinion about it.
+ */
+export const gradeFutoshiki = (board: FutoshikiPuzzle, options: FutoshikiOptions = {}): Grade | null => {
+  const { techniqueCap: demand = "nakedSubset", requires } = options
+  const result = solveFutoshikiByTechniques(board, techniquesFor(demand))
+  if (!result.settled) return null
+  if (requires?.length && !(result.deepest && requires.includes(demandOf(result.deepest)))) return null
+  return { steps: result.steps.length, deepest: result.deepest }
+}
+
+export const generateFutoshiki = (
+  size: number,
+  seed: number,
+  options: FutoshikiOptions = {},
+  // Kept out of `options` deliberately: the options are what a seed list keys on, so asking for a
+  // single attempt instead of the full search must not file the board under a different bucket.
+  attempts: number = MAX_ATTEMPTS
+): FutoshikiPuzzle => {
+  const { techniqueCap: demand = "nakedSubset", prefill } = options
   const allowed = techniquesFor(demand)
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
     const solution = solutionSquare(size, random)
     const signs = everySign(solution)
@@ -167,10 +190,10 @@ export const generateFutoshiki = (size: number, seed: number, options: Futoshiki
     // Read back what the FINISHED board turns on — after the thinning that decides it, and after the
     // pre-filled numbers that soften it. Checking before either would guarantee a rung of a board
     // nobody plays: every number handed back can retire the very step the tier asked for.
-    const deepest = solveFutoshikiByTechniques({ size, givens: kept, constraints }, allowed).deepest
-    if (requires?.length && !(deepest && requires.includes(demandOf(deepest)))) continue
+    const board = { size, givens: kept, constraints, solution, techniqueCap: demand }
+    if (!gradeFutoshiki(board, options)) continue
 
-    return { size, givens: kept, constraints, solution, techniqueCap: demand }
+    return board
   }
   throw new Error(`generateFutoshiki: no board meeting the tier's gates (size=${size}, seed=${seed})`)
 }

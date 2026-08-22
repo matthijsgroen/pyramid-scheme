@@ -270,6 +270,102 @@ the seed. A family shows up there by being registered and tagged `puzzle`; its
 theme list comes from `FamilyMeta.themes`, its tiers from `minTier` upward.
 Rewards are dropped there — the lab tests the screen, not the economy.
 
+It is quick manual quality control, so **it plays the boards that ship**: for a family with a seed list
+(§6.1) the reroll walks that list rather than searching for arbitrary boards, and wraps at its end. A
+board only the bench can reach is a board nobody is checking. While a dial is being tuned this makes no
+difference — changed options miss their bucket and the board is searched for live, which is what tuning
+wants — so the two only diverge once a tier has settled and been filled.
+
+## 6.1 Seed lists — the search happens on a build machine, not a phone
+
+A family that has to search for a board declares three things and stops thinking about it. Core
+enumerates the configurations, finds seeds, and emits `src/data/puzzleSeeds.ts`; the family never
+learns that lists exist.
+
+```ts
+seedable: seedable({
+  resolveOptions: ctx => TIER_CONFIG[ctx.difficulty ?? "starter"],
+  generate: (seed, options, attempts) => generateThing(seed, options, attempts),
+  grade: gradeThing,
+})
+```
+
+**A bucket is keyed by a hash of the options object the generator is handed**, not by family and tier.
+That is what makes a list self-invalidating: turn a dial and the options change, so the key changes, so
+the lookup misses and the board is built live. There is no version to bump. Two tiers whose tables
+coincide share one list, which is correct rather than wasteful.
+
+The three preconditions, and why each is load-bearing:
+
+- **`resolveOptions` is separate from `generate`.** A build script with no React has to derive the same
+  options the app will. It reads only `difficulty` and `variant` — `theme` picks a skin and never
+  reaches a generator, which is why `FamilyGenerationCtx` does not carry it.
+- **`generate` takes an attempt cap**, so one attempt can be asked for. It is a parameter and not a
+  field on the options, because the options are what the key hashes: asking for one attempt must not
+  file the board under a different bucket.
+- **`grade` must be at least as strict as the gate the generator accepts a board on.** It may reject a
+  board the loop would have kept; it must never admit one the loop would have rejected. Where the loop
+  can call it, it should — that is the cheapest way to be sure. Where post-processing sits in between
+  (balance scale trims redundant scales after gating), grade runs on the board that ships and is
+  conservative, which is the safe direction.
+
+**Only seeds clean on the first attempt get listed**, so play time runs exactly one attempt with no
+gates. This matters most for the families that keep a **nearest miss** when no attempt hits the tier's
+required rungs — star battle, twin stars, eclipse, constellation. There, a board coming back does not
+mean it was accepted, so `grade` is the only thing that can tell the difference. Families that throw
+instead (sumplete, futoshiki, lightbeam) are already telling you by returning at all, and grade
+re-checks the ladder and records what it demanded.
+
+**A room's seed indexes the list rather than seeding the generator.** `hashString(journeyId + edgeId)`
+is unchanged; `seeds[seed % seeds.length]` picks the entry. So the offline pass only ever enumerates
+_configurations_, never the rooms a player can reach — reassembling a floor or regenerating the world
+cannot invalidate a list.
+
+A miss always falls through to live generation. That is not a failure path: it is how a tier being
+tuned still yields boards with no build step in the way, and how a lab `variant` (which changes the
+options, and which no room is ever authored with) is guaranteed a freshly searched board.
+
+`yarn generate-seeds` fills every bucket the baked world asks for, targeting the number of rooms that
+draw from it. `yarn seeds-info` reports coverage and what each tier's boards demand — the honest
+difficulty signal §5 names, which nothing else measures per board. `src/mods/puzzleSeeds.spec.ts`
+fails the build when a bucket is missing, orphaned, or no longer grades.
+
+### Building a new generator: keep the gate separable from the construction
+
+The list removes a family's **retries**. It does not remove its **gates** — and how much a family gains
+depends on which of those its time goes into, so it is worth knowing before the generator is written
+rather than after.
+
+Measured across the catalogue, live search against building from a listed seed at wizard:
+
+| generator shape                      | family                  | saving                   |
+| ------------------------------------ | ----------------------- | ------------------------ |
+| draw a whole candidate, then test it | twin stars, star battle | 1240ms → 3.1ms, **400x** |
+| gates fused into the construction    | lightbeam               | 132ms → 74ms, **2x**     |
+
+A family that builds a complete candidate and then asks "would I keep this" spends nearly all its time
+in draws it threw away, and jumping straight to the draw that worked is nearly the whole cost. Lightbeam
+instead gates as it builds — `attemptAuthored` checks uniqueness, the ladder and the honest opening
+partway through and bails — so a single attempt still pays for all of it, and a verified seed only saves
+the second and third attempts.
+
+**So: build the candidate, then judge it.** A generator shaped that way gets a `grade` that is
+literally its own gate, the strongest form of the rule above, and it gets essentially free play-time
+generation. One that interleaves the two gets a weaker `grade`, and keeps paying at play time for
+checks a build machine already did.
+
+This is not a reason to contort a generator that genuinely has to prune as it goes. It is a reason not
+to interleave by accident, which is the easier mistake — and a reason to notice, if a family comes out
+slow, that the shape may be the cause rather than the dials.
+
+**What it is emphatically not** is a reason to keep a dial low. Generation cost has twice decided a
+design question in this repo (lightbeam lost a decoy to a 1400ms budget, and branch depth was pinned at
+one because two measured at 8.5s), and neither was recorded as a design decision. That is what this
+whole mechanism exists to stop. Set the dials to what the design wants; the build machine pays.
+
+Not every family needs this. A generator that builds straight from the RNG with no search and no gate
+(crocodile, the reflex traps) has nothing to skip and leaves `seedable` unset.
+
 ## 7. Definition of done for a puzzle family
 
 On top of AGENTS.md's general DoD:
@@ -285,3 +381,5 @@ On top of AGENTS.md's general DoD:
 7. Board and hint text contain no words the player must read to solve.
 8. `docs/game-design/puzzles/<family>.md` exists and its technique ladder is the
    one the code implements.
+9. If the generator searches for a board, it declares `seedable` (§6.1) and `yarn generate-seeds`
+   fills its buckets.

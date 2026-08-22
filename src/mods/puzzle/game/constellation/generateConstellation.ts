@@ -1,3 +1,4 @@
+import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32, shuffle } from "@/game/random"
 import {
   colOf,
@@ -191,12 +192,51 @@ const isWellFormed = (puzzle: ConstellationPuzzle, solution: readonly number[]):
  * Uniqueness comes from the same gate that accepts the board: every step of the solve was forced, so the
  * sky that ships has exactly one answer and no solution counter has to run.
  */
-export const generateConstellation = (seed: number, options: ConstellationOptions): ConstellationPuzzleWithAnswer => {
+// How many times the tier's own rungs fired. A board is kept on this, and a near miss ranked by it.
+const demandedRungs = (
+  steps: readonly { technique: ConstellationTechniqueId }[],
+  requires: readonly ConstellationTechniqueId[]
+) => steps.filter(step => requires.includes(step.technique)).length
+
+// The gate itself, named once so the loop below and `grade` cannot come to disagree about it.
+const meetsDemand = (
+  steps: readonly { technique: ConstellationTechniqueId }[],
+  requires: readonly ConstellationTechniqueId[],
+  requiresCount: number
+) => !requires.length || demandedRungs(steps, requires) >= requiresCount
+
+/**
+ * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
+ * (`docs/instructions/puzzle-screens.md` §6.1).
+ *
+ * Both go through `meetsDemand`, so an offline pass filtering seeds by this admits exactly the boards
+ * this generator accepts. That matters more here than elsewhere: when no attempt hits the tier's quota the
+ * loop ships its nearest miss rather than throwing, so whether a board was accepted or settled for
+ * cannot be read off the fact that one came back.
+ */
+export const gradeConstellation = (
+  board: ConstellationPuzzleWithAnswer,
+  options: ConstellationOptions
+): Grade | null => {
+  const { techniqueCap, requires = [], requiresCount = 1 } = options
+  const result = solveConstellationByTechniques(board, techniquesUpTo(techniqueCap))
+  if (!result.settled || result.lines.some((count, pair) => count !== board.solution[pair])) return null
+  if (!meetsDemand(result.steps, requires, requiresCount)) return null
+  return { steps: result.steps.length, deepest: result.deepest }
+}
+
+export const generateConstellation = (
+  seed: number,
+  options: ConstellationOptions,
+  // Kept out of `options` deliberately: the options are what a seed list keys on, so asking for a
+  // single attempt instead of the full search must not file the board under a different bucket.
+  attempts: number = MAX_ATTEMPTS
+): ConstellationPuzzleWithAnswer => {
   const { size, stars, doubleChance, spareChance, techniqueCap, requires = [], requiresCount = 1 } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
   let fallback: { board: ConstellationPuzzleWithAnswer; demanded: number } | undefined
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const drawing = growSky(size, stars, random, doubleChance)
     // A sky that ran out of room before its star count is thrown away rather than shipped: the count is what
     // the tier authored, and a draw that grew itself into a dead end is the cheapest thing here to redo.
@@ -209,8 +249,8 @@ export const generateConstellation = (seed: number, options: ConstellationOption
     const board = { ...puzzle, solution, techniqueCap }
     // A sky that never needed the tier's own rung teaches the tier below it, so it is only kept if nothing
     // better turns up.
-    const demanded = result.steps.filter(step => requires.includes(step.technique)).length
-    if (!requires.length || demanded >= requiresCount) return board
+    if (meetsDemand(result.steps, requires, requiresCount)) return board
+    const demanded = demandedRungs(result.steps, requires)
     if (!fallback || demanded > fallback.demanded) fallback = { board, demanded }
   }
   if (!fallback) throw new Error(`constellation: no board for ${stars} stars on ${size} at ${techniqueCap}`)

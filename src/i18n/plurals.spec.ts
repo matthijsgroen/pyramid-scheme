@@ -121,8 +121,8 @@ describe("plural forms in the shipped locales", () => {
   })
 
   it.each([
-    ["en", 2, "Every row, every column and every holding works exactly 2 farmsteads."],
-    ["nl", 2, "Elke rij, elke kolom en elk stuk land bewerkt precies 2 boerderijen."],
+    ["en", 2, "Every row, every column and every holding has exactly 2 farmsteads."],
+    ["nl", 2, "Elke rij, elke kolom en elk stuk land heeft precies 2 boerderijen."],
   ])("renders the %s farm goal for a quota of %i as %s", (lng, count, expected) => {
     expect(t(lng, "starBattle.goal.fields", { count })).toBe(expected)
   })
