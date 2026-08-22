@@ -624,8 +624,8 @@
     "goal": {
       "default_one": "Elke rij, elke kolom en elk gebied heeft precies één ster.",
       "default_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren.",
-      "fields_one": "Elke rij, elke kolom en elk stuk land bewerkt precies één boerderij.",
-      "fields_other": "Elke rij, elke kolom en elk stuk land bewerkt precies {{count}} boerderijen."
+      "fields_one": "Elke rij, elke kolom en elk stuk land heeft precies één boerderij.",
+      "fields_other": "Elke rij, elke kolom en elk stuk land heeft precies {{count}} boerderijen."
     }
   }
 }
