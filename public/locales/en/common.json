@@ -631,8 +631,8 @@
     "goal": {
       "default_one": "Every row, every column and every region holds exactly one star.",
       "default_other": "Every row, every column and every region holds exactly {{count}} stars.",
-      "fields_one": "Every row, every column and every holding works exactly one farmstead.",
-      "fields_other": "Every row, every column and every holding works exactly {{count}} farmsteads."
+      "fields_one": "Every row, every column and every holding has exactly one farmstead.",
+      "fields_other": "Every row, every column and every holding has exactly {{count}} farmsteads."
     }
   }
 }

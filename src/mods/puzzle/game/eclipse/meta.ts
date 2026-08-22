@@ -1,4 +1,6 @@
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import { ECLIPSE_CONFIG } from "./eclipseConfig"
+import { generateEclipse, gradeEclipse } from "./generateEclipse"
 
 export const ECLIPSE_META: FamilyMeta = {
   id: "eclipse",
@@ -13,5 +15,10 @@ export const ECLIPSE_META: FamilyMeta = {
   themes: ["default", "night"],
   icon: "🌘",
   color: "sky",
+  seedable: seedable({
+    resolveOptions: ({ difficulty }) => ECLIPSE_CONFIG[difficulty ?? "starter"],
+    generate: generateEclipse,
+    grade: gradeEclipse,
+  }),
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
 }

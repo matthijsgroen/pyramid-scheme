@@ -1,4 +1,6 @@
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import { CONSTELLATION_CONFIG } from "./constellationConfig"
+import { generateConstellation, gradeConstellation } from "./generateConstellation"
 
 export const CONSTELLATION_META: FamilyMeta = {
   id: "constellation",
@@ -24,5 +26,10 @@ export const CONSTELLATION_META: FamilyMeta = {
   themes: ["default", "irrigation", "causeway", "night"],
   icon: "✨",
   color: "indigo",
+  seedable: seedable({
+    resolveOptions: ({ difficulty }) => CONSTELLATION_CONFIG[difficulty ?? "starter"],
+    generate: generateConstellation,
+    grade: gradeConstellation,
+  }),
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
 }

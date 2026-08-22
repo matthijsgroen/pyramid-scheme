@@ -56,4 +56,70 @@ export type FamilyMeta = {
   // most families provide none. The one place a family declares "I gate on holding
   // something," right alongside its other facts, not a separate registry to remember.
   resolveKeyRequirements?: FamilyKeyRequirementResolver
+  // How this family builds a board, and how it judges one (`docs/instructions/puzzle-screens.md` §6.1). Unset means
+  // the family generates live on every open, which is what every family did before there were lists.
+  seedable?: SeedableFamily
 }
+
+// --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------
+
+// The slice of an encounter's context that reaches a generator. Deliberately narrower than the app's
+// FamilyContext, and the narrowness is the point: `theme` picks a skin and never reaches generation, so
+// leaving it out makes "the bucket key ignores whatever generation ignores" a fact of the type rather
+// than a convention someone has to remember. Kept local and self-contained for the same reason
+// FamilyKeyRequirementResolverCtx is.
+export type FamilyGenerationCtx = {
+  difficulty?: Difficulty
+  variant?: string
+}
+
+// What solving an admitted board taught the offline pass. Reported by the CLI so a designer tuning a
+// tier can see what its boards actually demand; deliberately not shipped in the artifact, since nothing
+// at play time reads it.
+export type Grade = {
+  /** How many forced steps the ladder needed to settle the board. */
+  steps: number
+  /** The strongest technique the board actually demanded. */
+  deepest?: string
+}
+
+declare const OPTIONS: unique symbol
+/**
+ * A family's own options type, seen from outside. FamilyMeta is not generic and lives in a
+ * heterogeneous list, so the concrete type cannot survive to here — but keeping it opaque still stops
+ * one family's options reaching another family's generator, which is the mistake a loop over all
+ * families is positioned to make.
+ */
+export type FamilyOptions = { readonly [OPTIONS]: true }
+
+/**
+ * How a family opts into pre-generated seeds. Core enumerates, verifies and emits; a family only
+ * declares these three, and learns nothing about lists, build steps or artifacts.
+ */
+export type SeedableFamily = {
+  /** ctx -> the options object generate() is handed. Pure, no RNG: its hash is the bucket key. */
+  resolveOptions: (ctx: FamilyGenerationCtx) => FamilyOptions
+  /** `attempts` is a property of the call, not of the board — see the note in `seedable` below. */
+  generate: (seed: number, options: FamilyOptions, attempts?: number) => unknown
+  /** The generator's own acceptance gate. null means this board would have been rejected. */
+  grade: (puzzle: unknown, options: FamilyOptions) => Grade | null
+}
+
+/**
+ * Declares a family seedable, checked against its real options and puzzle types. The one cast that
+ * erases them lives here rather than at each declaration site.
+ *
+ * `grade` must be the predicate the generator itself accepts a board on, not a second implementation
+ * of it. Several families keep a nearest-miss board when no attempt hits the tier's required rungs, so
+ * "did it throw" does not test acceptance — and a grade that drifted from the real gate would admit
+ * seeds the generator would have rejected.
+ *
+ * `attempts` is a separate parameter rather than a field on the options, because the options are what
+ * the bucket key hashes: the offline pass and play time ask for one attempt, the puzzle lab asks for
+ * the full loop, and none of that may change which bucket a board belongs to.
+ */
+export const seedable = <O extends object, P>(family: {
+  resolveOptions: (ctx: FamilyGenerationCtx) => O
+  generate: (seed: number, options: O, attempts?: number) => P
+  grade: (puzzle: P, options: O) => Grade | null
+}): SeedableFamily => family as unknown as SeedableFamily

@@ -1,5 +1,6 @@
+import type { FamilyGenerationCtx } from "@/game/families/familyMeta"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { LightbeamOptions } from "./generateLightbeam"
+import type { LightbeamMode, LightbeamOptions } from "./generateLightbeam"
 
 // Tier settings (design doc §6.4, measured in §11.19).
 //
@@ -54,10 +55,11 @@ import type { LightbeamOptions } from "./generateLightbeam"
 // measured at 8.5 seconds. Neither was recorded as a design decision, which is the whole problem — the cost of
 // an opportunity not taken leaves no measurement behind.
 //
-// The direction out is `docs/offline-puzzle-seeds.md`: verify seeds offline and ship the ones that work, so the
-// compute happens on a build machine rather than on a phone. Until that lands the top tier is genuinely slow to
-// build, and that is the honest trade — a tier that is expensive to generate rather than a tier that is smaller
-// than the design wants. If a dial needs turning down, turn it down for a reason a player would recognise.
+// The search now happens on a build machine (`docs/instructions/puzzle-screens.md` §6.1): a room builds from a
+// seed already proven to work, so a dial is only ever turned down for a reason a player would recognise. Note
+// what that does and does not buy here — the gates run inside `attemptAuthored`, so one attempt still pays
+// them, and a wizard board costs about half of what searching for one did rather than a fortieth. The families
+// that reject almost every draw are the ones the lists rescued.
 export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOptions> = {
   // The smallest board that is still a puzzle.
   //
@@ -186,4 +188,29 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     modeCount: 2,
     techniqueCap: "onlySurvivor",
   },
+}
+
+/**
+ * Modes a lab variant forces on top of the tier's own dials, for playtesting one shape at a time
+ * (docs/instructions/puzzle-screens.md §6). A tier draws its own modes; this is how a developer looks
+ * at just one of them.
+ */
+const VARIANT_MODES: Record<string, LightbeamMode[]> = {
+  "wall-heavy": ["wallHeavy"],
+  "slider-heavy": ["sliderHeavy"],
+  "switch-heavy": ["switchHeavy"],
+}
+
+/**
+ * The options one encounter builds its board from (`docs/instructions/puzzle-screens.md` §6.1).
+ *
+ * A forced variant changes the options, so it hashes to its own bucket — and since no room is ever
+ * authored with a variant, that bucket is never listed and a lab board is always built live. Which is
+ * what a developer comparing two generators wants: no cached answer standing in the way.
+ */
+export const resolveLightbeamOptions = ({ difficulty, variant }: FamilyGenerationCtx) => {
+  const config = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
+  const forced = variant ? VARIANT_MODES[variant] : undefined
+  // A forced mode replaces the pool rather than adding to it, or the board would still draw its own two.
+  return forced ? { ...config, modePool: undefined, modes: forced } : config
 }

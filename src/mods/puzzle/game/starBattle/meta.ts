@@ -1,4 +1,6 @@
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import { generateStarBattle, gradeStarBattle } from "./generateStarBattle"
+import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 
 export const STAR_BATTLE_META: FamilyMeta = {
   id: "star-battle",
@@ -15,5 +17,10 @@ export const STAR_BATTLE_META: FamilyMeta = {
   // constellation's.
   icon: "⭐",
   color: "indigo",
+  seedable: seedable({
+    resolveOptions: ({ difficulty }) => STAR_BATTLE_CONFIG[difficulty ?? "starter"],
+    generate: generateStarBattle,
+    grade: gradeStarBattle,
+  }),
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
 }

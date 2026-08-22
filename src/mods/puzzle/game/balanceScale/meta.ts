@@ -1,4 +1,6 @@
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import { BALANCE_CONFIG } from "./balanceConfig"
+import { generateBalance, gradeBalance } from "./generateBalance"
 
 export const BALANCE_META: FamilyMeta = {
   id: "balance-scale",
@@ -14,4 +16,9 @@ export const BALANCE_META: FamilyMeta = {
   icon: "⚖️",
   color: "purple",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
+  seedable: seedable({
+    resolveOptions: ({ difficulty }) => BALANCE_CONFIG[difficulty ?? "starter"],
+    generate: generateBalance,
+    grade: gradeBalance,
+  }),
 }
