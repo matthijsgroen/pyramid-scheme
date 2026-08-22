@@ -330,6 +330,39 @@ draw from it. `yarn seeds-info` reports coverage and what each tier's boards dem
 difficulty signal §5 names, which nothing else measures per board. `src/mods/puzzleSeeds.spec.ts`
 fails the build when a bucket is missing, orphaned, or no longer grades.
 
+### Building a new generator: keep the gate separable from the construction
+
+The list removes a family's **retries**. It does not remove its **gates** — and how much a family gains
+depends on which of those its time goes into, so it is worth knowing before the generator is written
+rather than after.
+
+Measured across the catalogue, live search against building from a listed seed at wizard:
+
+| generator shape                      | family                  | saving                   |
+| ------------------------------------ | ----------------------- | ------------------------ |
+| draw a whole candidate, then test it | twin stars, star battle | 1240ms → 3.1ms, **400x** |
+| gates fused into the construction    | lightbeam               | 132ms → 74ms, **2x**     |
+
+A family that builds a complete candidate and then asks "would I keep this" spends nearly all its time
+in draws it threw away, and jumping straight to the draw that worked is nearly the whole cost. Lightbeam
+instead gates as it builds — `attemptAuthored` checks uniqueness, the ladder and the honest opening
+partway through and bails — so a single attempt still pays for all of it, and a verified seed only saves
+the second and third attempts.
+
+**So: build the candidate, then judge it.** A generator shaped that way gets a `grade` that is
+literally its own gate, the strongest form of the rule above, and it gets essentially free play-time
+generation. One that interleaves the two gets a weaker `grade`, and keeps paying at play time for
+checks a build machine already did.
+
+This is not a reason to contort a generator that genuinely has to prune as it goes. It is a reason not
+to interleave by accident, which is the easier mistake — and a reason to notice, if a family comes out
+slow, that the shape may be the cause rather than the dials.
+
+**What it is emphatically not** is a reason to keep a dial low. Generation cost has twice decided a
+design question in this repo (lightbeam lost a decoy to a 1400ms budget, and branch depth was pinned at
+one because two measured at 8.5s), and neither was recorded as a design decision. That is what this
+whole mechanism exists to stop. Set the dials to what the design wants; the build machine pays.
+
 Not every family needs this. A generator that builds straight from the RNG with no search and no gate
 (crocodile, the reflex traps) has nothing to skip and leaves `seedable` unset.
 
