@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { generateSumplete } from "./generateSumplete"
+import { generateSumplete, gradeSumplete } from "./generateSumplete"
 import { SUMPLETE_CONFIG } from "./sumpleteConfig"
-import { solveByTechniques } from "./techniques"
+import { solveByTechniques, TECHNIQUES } from "./techniques"
 import { difficulties } from "@/data/difficultyLevels"
 
 describe("generateSumplete", () => {
@@ -56,5 +56,63 @@ describe("generateSumplete", () => {
         expect(marks.map(row => row.map(mark => mark === "keep"))).toEqual(board.solution)
       }
     })
+  })
+})
+
+describe("gradeSumplete", () => {
+  it("grades a board the generator kept, naming what the ladder needed", () => {
+    const board = generateSumplete(5, 99, { techniqueCap: "onlyCombination" })
+    const grade = gradeSumplete(board, { techniqueCap: "onlyCombination" })
+    expect(grade).not.toBeNull()
+    expect(grade!.steps).toBeGreaterThan(0)
+    expect(TECHNIQUES).toContain(grade!.deepest)
+  })
+
+  it("rejects a board whose line gates do not hold", () => {
+    const board = generateSumplete(4, 7)
+    // One kept cell in a row is the lone-number answer the gates exist to keep off the board.
+    const solution = board.solution.map((row, i) => (i === 0 ? row.map((_, j) => j === 0) : row))
+    expect(gradeSumplete({ ...board, solution })).toBeNull()
+  })
+
+  it("rejects a board the cap it is graded under cannot settle", () => {
+    const board = generateSumplete(6, 12, { techniqueCap: "inEveryCombination" })
+    // Graded under a cap far below the one it was built for, the ladder stalls before the last cell.
+    const gentle = gradeSumplete(board, { techniqueCap: "tooBig" })
+    const asBuilt = gradeSumplete(board, { techniqueCap: "inEveryCombination" })
+    expect(asBuilt).not.toBeNull()
+    expect(gentle).toBeNull()
+  })
+})
+
+describe("generateSumplete attempt cap", () => {
+  // The contract an offline seed list rests on: a seed admitted because it settles on its first
+  // attempt must build that same board when play time runs exactly one attempt and skips every gate.
+  it("gives a one-attempt build the same board as the full search, for every seed clean on the first", () => {
+    const options = SUMPLETE_CONFIG.expert
+    let clean = 0
+    for (let seed = 1; seed <= 60; seed++) {
+      let firstAttempt
+      try {
+        firstAttempt = generateSumplete(options.size, seed, options, 1)
+      } catch {
+        continue // not clean on its first attempt, so no list would ever carry it
+      }
+      clean++
+      expect(firstAttempt).toEqual(generateSumplete(options.size, seed, options))
+    }
+    expect(clean).toBeGreaterThan(0)
+  })
+
+  it("refuses rather than searching on when the one attempt it was given misses", () => {
+    const misses = Array.from({ length: 60 }, (_unused, seed) => seed + 1).filter(seed => {
+      try {
+        generateSumplete(4, seed, SUMPLETE_CONFIG.starter, 1)
+        return false
+      } catch {
+        return true
+      }
+    })
+    expect(misses.length).toBeGreaterThan(0)
   })
 })
