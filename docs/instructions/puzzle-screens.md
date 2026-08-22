@@ -229,8 +229,19 @@ Credit where it is due: LinkedIn's Queens does both of these, and its hint is th
 ### 4.3 Worded per identity, like everything else under the board
 
 A family whose mechanic wears more than one face words its hints per face, the same way §1.1 words its goal
-and its rules. Constellation's hint about sealing off "these 4 stars" is describing something absent from a
-haul-road board. The skin knows which place the room is; the wording asks it.
+and its rules — **the reason and the move both**. Constellation is the worked example: the same rung reads
+"3 lines, and the other ways out cannot carry them all / draw the marked line" over a sky, and "3 roads … /
+lay the marked road" over a causeway. The skin knows which place the room is; the wording asks it.
+
+**Each place gets whole sentences, not a noun in a slot.** A shared template with `{{thing}}` in it breaks on
+the first locale that inflects around the noun — Dutch does immediately ("van de ene ster naar de volgende"
+against "van het ene bekken naar het volgende"), and the verb goes with the place too: a line is drawn, a road
+is laid, a channel is dug.
+
+**A spec is the only thing that keeps this true.** The wording drifted once already — the goal and the rules
+were reworded a commit before the hints, which went on describing a sky over both other places. So the guard
+is a rule about words rather than a check for presence: nothing said over a road or a waterworks board may
+contain the word "star" (`goalWording.spec.ts`).
 
 ## 5. Solvable by logic — the solver is the family's core
 

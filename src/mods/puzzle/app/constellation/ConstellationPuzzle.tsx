@@ -61,8 +61,20 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
     Array.from({ length: Math.round(celebration.progress * puzzle.stars.length) }, (_unused, index) => index)
   )
 
-  // A function rather than a string, so the shell only reaches for the text once the hint is on screen.
-  const hintText = useCallback(() => (hint && t(`constellation.hint.${hint.key}`, hint.params)) || undefined, [hint, t])
+  /**
+   * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
+   *
+   * Two lines, both spoken in the place this room is: the reason, then the move it asks for
+   * (`puzzle-screens.md` §4.1, §4.3). A waterworks board saying "that line would seal these 4 stars off from
+   * the rest" is describing something that is not on the screen.
+   */
+  const hintText = useCallback(() => {
+    if (!hint) return undefined
+    const reason = t(`constellation.hint.${skin}.${hint.key}`, hint.params)
+    if (!hint.action) return reason
+    const move = t(`constellation.hint.${skin}.action.${hint.action.key}`, { count: hint.action.count })
+    return `${reason}\n${move}`
+  }, [hint, skin, t])
 
   return (
     <PuzzleFamilyShell

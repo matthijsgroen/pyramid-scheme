@@ -466,15 +466,60 @@
     },
     "undo": "Ongedaan",
     "hint": {
-      "mistake": "Een van deze lijnen kan niet goed zijn.",
-      "capacity": "{{count}} lijnen, en net genoeg uitwegen — ze worden allemaal getekend.",
-      "settled": "Deze {{count}} heeft zijn lijnen. Er komt niets meer bij.",
-      "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te tekenen.",
-      "crossed": "Een lijn daar zou deze lijn kruisen.",
-      "atLeastOne": "{{count}} lijnen, en de andere uitwegen kunnen ze niet samen dragen — er gaat er minstens één deze kant op.",
-      "twinBlock.single": "Die twee verbinden maakt een sterrenbeeld van twee.",
-      "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
-      "isolation": "Die lijn sluit deze {{count}} sterren af van de rest."
+      "default": {
+        "mistake": "Een van deze lijnen kan niet goed zijn.",
+        "capacity": "{{count}} lijnen, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn lijnen.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te tekenen.",
+        "crossed": "Een lijn daar zou deze lijn kruisen.",
+        "atLeastOne": "{{count}} lijnen, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een sterrenbeeld van twee.",
+        "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
+        "isolation": "Die lijn sluit deze {{count}} sterren af van de rest.",
+        "action": {
+          "draw_one": "Teken de gemarkeerde lijn.",
+          "draw_other": "Teken de gemarkeerde lijnen.",
+          "refuse_one": "De gemarkeerde lijn blijft ongetekend.",
+          "refuse_other": "De gemarkeerde lijnen blijven ongetekend.",
+          "refuseDouble": "Eén lijn daar, en geen tweede."
+        }
+      },
+      "causeway": {
+        "mistake": "Een van deze wegen kan niet goed zijn.",
+        "capacity": "{{count}} wegen, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn wegen.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} aan te leggen.",
+        "crossed": "Een weg daar zou deze weg kruisen.",
+        "atLeastOne": "{{count}} wegen, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een wegennet van twee.",
+        "twinBlock.double": "Een tweede weg daar maakt een wegennet van twee.",
+        "isolation": "Die weg sluit deze {{count}} plaatsen af van de rest.",
+        "action": {
+          "draw_one": "Leg de gemarkeerde weg aan.",
+          "draw_other": "Leg de gemarkeerde wegen aan.",
+          "refuse_one": "De gemarkeerde weg blijft onaangelegd.",
+          "refuse_other": "De gemarkeerde wegen blijven onaangelegd.",
+          "refuseDouble": "Eén weg daar, en geen tweede."
+        }
+      },
+      "irrigation": {
+        "mistake": "Een van deze kanalen kan niet goed zijn.",
+        "capacity": "{{count}} kanalen, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn kanalen.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te graven.",
+        "crossed": "Een kanaal daar zou dit kanaal kruisen.",
+        "atLeastOne": "{{count}} kanalen, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een waterwerk van twee.",
+        "twinBlock.double": "Een tweede kanaal daar maakt een waterwerk van twee.",
+        "isolation": "Dat kanaal sluit deze {{count}} bekkens af van de rest.",
+        "action": {
+          "draw_one": "Graaf het gemarkeerde kanaal.",
+          "draw_other": "Graaf de gemarkeerde kanalen.",
+          "refuse_one": "Het gemarkeerde kanaal blijft ongegraven.",
+          "refuse_other": "De gemarkeerde kanalen blijven ongegraven.",
+          "refuseDouble": "Eén kanaal daar, en geen tweede."
+        }
+      }
     },
     "goal": {
       "default": "Elke ster hangt in één sterrenbeeld, verbonden met zoveel lichtlijnen als zijn getal zegt.",

@@ -66,15 +66,15 @@ always says "consider the whole sky" teaches nothing.
 Throughout, a star's **ways out** are the directions holding a star that a line could
 still reach — no crossing, and neither end already full.
 
-| #      | Technique       | Fires when                                                              | The sentence                                        |
-| ------ | --------------- | ----------------------------------------------------------------------- | --------------------------------------------------- |
-| **T0** | `capacity`      | A star's number equals the most its ways out could carry                | "4, and two ways out — both are double"             |
-| **T1** | `settled`       | A star already has its lines                                            | "This 3 has its 3 — nothing else joins it"          |
-| **T2** | `soleWayOut`    | One way out is left and the star still owes lines                       | "Only one way left, so both go there"               |
-| **T3** | `crossed`       | A line would have to cross one already drawn                            | "A line there crosses this one"                     |
-| **T4** | `atLeastOne`    | All ways out but one cannot carry the rest between them                 | "3 lines, 3 ways out — at least one down each"      |
-| **T5** | `twinBlock`     | Joining two stars would finish both, alone, with sky left over          | "Those two would be a constellation of two"         |
-| **T6** | `isolation`     | A line would close a finished group that is not the whole sky           | "That line seals these {{count}} off from the rest" |
+| #      | Technique    | Fires when                                                     | The sentence                                        |
+| ------ | ------------ | -------------------------------------------------------------- | --------------------------------------------------- |
+| **T0** | `capacity`   | A star's number equals the most its ways out could carry       | "4, and two ways out — both are double"             |
+| **T1** | `settled`    | A star already has its lines                                   | "This 3 has its 3 — nothing else joins it"          |
+| **T2** | `soleWayOut` | One way out is left and the star still owes lines              | "Only one way left, so both go there"               |
+| **T3** | `crossed`    | A line would have to cross one already drawn                   | "A line there crosses this one"                     |
+| **T4** | `atLeastOne` | All ways out but one cannot carry the rest between them        | "3 lines, 3 ways out — at least one down each"      |
+| **T5** | `twinBlock`  | Joining two stars would finish both, alone, with sky left over | "Those two would be a constellation of two"         |
+| **T6** | `isolation`  | A line would close a finished group that is not the whole sky  | "That line seals these {{count}} off from the rest" |
 
 **Every rung is one step, and its sentence is one line.** That is stricter than
 "solvable by deduction", and it is the constraint the ladder is built to: a reason the
@@ -168,13 +168,13 @@ and this family has no third option.
 - **Star count** — capacity rather than reasoning, so it is the knob of last resort,
   and it is capped hard by the phone: see §8.
 
-| Tier    | Grid | Stars | Cap          | Requires                     |
-| ------- | ---- | ----- | ------------ | ---------------------------- |
-| starter | 5×5  | 5–6   | `soleWayOut` | —                            |
-| junior  | 6×6  | 8–10  | `crossed`    | `crossed` ×1                 |
-| expert  | 7×7  | 12–14 | `atLeastOne` | `atLeastOne` ×2              |
-| master  | 8×8  | 15–18 | `twinBlock`  | `twinBlock` ×2               |
-| wizard  | 8×8  | 18–22 | `isolation`  | `isolation` ×2, lean mix     |
+| Tier    | Grid | Stars | Cap          | Requires                 |
+| ------- | ---- | ----- | ------------ | ------------------------ |
+| starter | 5×5  | 5–6   | `soleWayOut` | —                        |
+| junior  | 6×6  | 8–10  | `crossed`    | `crossed` ×1             |
+| expert  | 7×7  | 12–14 | `atLeastOne` | `atLeastOne` ×2          |
+| master  | 8×8  | 15–18 | `twinBlock`  | `twinBlock` ×2           |
+| wizard  | 8×8  | 18–22 | `isolation`  | `isolation` ×2, lean mix |
 
 **The top two tiers share a grid on purpose.** Wizard is not a bigger sky; it is the
 same sky with the number mix leaned out and the global rung required — which is the
@@ -250,6 +250,18 @@ One per rung, keyed by technique and reading, rendered from a template
 at the star and the direction it reasons from — so "only one way left" has something to
 point to.
 
+**Two lines: the reason, then the move** (`puzzle-screens.md` §4.1). The move is read off
+the bounds the rung decides rather than written per technique — a rung that pushes a
+pair's floor up is asking for a line, one that pulls its ceiling to nought is asking for
+none, and a ceiling landing on one is asking for no second. Only the wrong-line hint ends
+without a move: the way out of it is the player's to find.
+
+**Every line of it is spoken in the place the room is** (§9.1, and `puzzle-screens.md`
+§4.3). The same rung reads "3 lines … draw the marked line" over a sky, "3 roads … lay
+the marked road" over a causeway, and "3 channels … dig the marked channel" over a
+waterworks. Whole sentences per place rather than a noun in a slot: the verb belongs to
+the place as much as the noun does, and Dutch inflects around both.
+
 **Every hint is a move the player can make now**, or a way out the player can stop
 considering. There is no rung that says "try it and see", so there is no hint that asks
 them to.
@@ -294,6 +306,7 @@ Beyond the shared screen bar:
   should look like an achievement. The board scans the same either way — the work left is "the stars
   still showing a plain number" instead of "the stars still lit" — and the finished sky is a
   constellation that blazes, which is a reward the mechanic hands over for free.
+
 - **One line and two differ in shape, not only in weight** — two parallel strokes with
   sky visible between them, so a phone in daylight reads the difference.
 - **An illegal line is refused, not drawn red.** A crossing and an over-long reach are
@@ -330,11 +343,11 @@ always carries `sky`. A check that is always true is not a switch. What the skin
 skins rather than one look: a degree count, a no-crossing rule and a single connected group describe
 more than one kind of network, and each of those networks is a real place in this world.
 
-| Skin         | The place                                                | A node is                                             | A line is                            |
-| ------------ | -------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------ |
-| `default`    | the night sky                                            | a star; its number is how much light meets it         | a line of light                      |
-| `irrigation` | the Nile delta by day (§11.1 Water & Nile)               | a basin, with a shoot that flowers once it is fed     | a channel, doubled into a wide canal |
-| `causeway`   | a building site by day (§11.1 Logistics / Caravan)       | a site, with a pyramid that rises once its roads do   | a haul road of packed rubble         |
+| Skin         | The place                                          | A node is                                           | A line is                            |
+| ------------ | -------------------------------------------------- | --------------------------------------------------- | ------------------------------------ |
+| `default`    | the night sky                                      | a star; its number is how much light meets it       | a line of light                      |
+| `irrigation` | the Nile delta by day (§11.1 Water & Nile)         | a basin, with a shoot that flowers once it is fed   | a channel, doubled into a wide canal |
+| `causeway`   | a building site by day (§11.1 Logistics / Caravan) | a site, with a pyramid that rises once its roads do | a haul road of packed rubble         |
 
 Two things every skin is held to, and neither is a style note:
 

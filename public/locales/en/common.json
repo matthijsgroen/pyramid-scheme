@@ -473,15 +473,60 @@
     },
     "undo": "Undo",
     "hint": {
-      "mistake": "One of these lines cannot be right.",
-      "capacity": "{{count}} lines, and only just enough ways out — every one of them is drawn.",
-      "settled": "This {{count}} has its lines. Nothing else joins it.",
-      "soleWayOut": "Only one way out left, and {{count}} still to draw.",
-      "crossed": "A line there would cross this one.",
-      "atLeastOne": "{{count}} lines, and the other ways out cannot carry them all — at least one goes this way.",
-      "twinBlock.single": "Joining those two would make a constellation of two.",
-      "twinBlock.double": "A second line there would make a constellation of two.",
-      "isolation": "That line would seal these {{count}} stars off from the rest."
+      "default": {
+        "mistake": "One of these lines cannot be right.",
+        "capacity": "{{count}} lines, and only just enough ways out.",
+        "settled": "This {{count}} has its lines.",
+        "soleWayOut": "Only one way out left, and {{count}} still to draw.",
+        "crossed": "A line there would cross this one.",
+        "atLeastOne": "{{count}} lines, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a constellation of two.",
+        "twinBlock.double": "A second line there would make a constellation of two.",
+        "isolation": "That line would seal these {{count}} stars off from the rest.",
+        "action": {
+          "draw_one": "Draw the marked line.",
+          "draw_other": "Draw the marked lines.",
+          "refuse_one": "The marked line stays undrawn.",
+          "refuse_other": "The marked lines stay undrawn.",
+          "refuseDouble": "One line there, and no second."
+        }
+      },
+      "causeway": {
+        "mistake": "One of these roads cannot be right.",
+        "capacity": "{{count}} roads, and only just enough ways out.",
+        "settled": "This {{count}} has its roads.",
+        "soleWayOut": "Only one way out left, and {{count}} still to lay.",
+        "crossed": "A road there would cross this one.",
+        "atLeastOne": "{{count}} roads, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a network of two.",
+        "twinBlock.double": "A second road there would make a network of two.",
+        "isolation": "That road would cut these {{count}} sites off from the rest.",
+        "action": {
+          "draw_one": "Lay the marked road.",
+          "draw_other": "Lay the marked roads.",
+          "refuse_one": "The marked road stays unbuilt.",
+          "refuse_other": "The marked roads stay unbuilt.",
+          "refuseDouble": "One road there, and no second."
+        }
+      },
+      "irrigation": {
+        "mistake": "One of these channels cannot be right.",
+        "capacity": "{{count}} channels, and only just enough ways out.",
+        "settled": "This {{count}} has its channels.",
+        "soleWayOut": "Only one way out left, and {{count}} still to dig.",
+        "crossed": "A channel there would cross this one.",
+        "atLeastOne": "{{count}} channels, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a waterworks of two.",
+        "twinBlock.double": "A second channel there would make a waterworks of two.",
+        "isolation": "That channel would cut these {{count}} basins off from the rest.",
+        "action": {
+          "draw_one": "Dig the marked channel.",
+          "draw_other": "Dig the marked channels.",
+          "refuse_one": "The marked channel stays undug.",
+          "refuse_other": "The marked channels stay undug.",
+          "refuseDouble": "One channel there, and no second."
+        }
+      }
     },
     "goal": {
       "default": "Every star hangs in one constellation, joined by as many lines of light as its number says.",

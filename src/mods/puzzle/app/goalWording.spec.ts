@@ -64,16 +64,61 @@ describe("the goal above the rules", () => {
       }
   })
 
+  /**
+   * The HINTS are worded per place as well (`puzzle-screens.md` §4.3) — every rung of the ladder, and the
+   * move each one asks for. A rung with no phrasing for the place a room is reaches the player as a raw
+   * translation key, which is worse than no hint at all.
+   */
+  const RUNGS = [
+    "mistake",
+    "capacity",
+    "settled",
+    "soleWayOut",
+    "crossed",
+    "atLeastOne",
+    "twinBlock.single",
+    "twinBlock.double",
+    "isolation",
+  ]
+  const MOVES = ["draw_one", "draw_other", "refuse_one", "refuse_other", "refuseDouble"]
+
+  it.each(PLACES)("constellation drawn for $role phrases every rung as its own place", ({ skin }) => {
+    for (const locale of [en, nl]) {
+      const place = (locale.constellation.hint as unknown as Record<string, Record<string, unknown>>)[skin]
+      for (const rung of RUNGS) expect(typeof place[rung], `${skin}.${rung}`).toBe("string")
+      const moves = place.action as Record<string, string>
+      for (const move of MOVES) expect(typeof moves[move], `${skin}.action.${move}`).toBe("string")
+    }
+  })
+
+  /**
+   * Nothing on a road or a waterworks board is a star, so nothing said over one may call it that. This is the
+   * check that would have caught the bug: the goal and the rules were fixed a commit before the hints, which
+   * went on describing a sky over both other places.
+   */
   it("never says star on a board that has no stars on it", () => {
     for (const [locale, forbidden] of [
       [en, /\bstars?\b/i],
       [nl, /\bsterren?\b/i],
     ] as const)
       for (const skin of ["causeway", "irrigation"]) {
-        const place = (locale.constellation.rules as Record<string, Record<string, string>>)[skin]
-        for (const [rule, wording] of Object.entries(place))
-          expect(forbidden.test(wording), `${skin}.${rule}: ${wording}`).toBe(false)
-        expect(forbidden.test((locale.constellation.goal as Record<string, string>)[skin])).toBe(false)
+        const said: [string, string][] = [
+          ["goal", (locale.constellation.goal as Record<string, string>)[skin]],
+          ...Object.entries((locale.constellation.rules as Record<string, Record<string, string>>)[skin]).map(
+            ([key, text]): [string, string] => [`rules.${key}`, text]
+          ),
+          ...Object.entries(
+            (locale.constellation.hint as unknown as Record<string, Record<string, unknown>>)[skin]
+          ).flatMap(([key, text]): [string, string][] =>
+            typeof text === "string"
+              ? [[`hint.${key}`, text]]
+              : Object.entries(text as Record<string, string>).map(([inner, deep]): [string, string] => [
+                  `hint.${key}.${inner}`,
+                  deep,
+                ])
+          ),
+        ]
+        for (const [where, wording] of said) expect(forbidden.test(wording), `${skin}.${where}: ${wording}`).toBe(false)
       }
   })
 })
