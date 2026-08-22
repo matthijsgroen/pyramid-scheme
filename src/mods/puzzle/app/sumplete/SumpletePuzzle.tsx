@@ -38,8 +38,18 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       onCancel={onCancel}
       solved={isSumpleteSolved(rows, cols)}
       onReset={() => setState(createSumpleteState(grid.length))}
-      hint={hint && t(`sumplete.hint.${hint.key}`, hint.params)}
+      // Two lines: the reason, then the move it asks for (`puzzle-screens.md` §4).
+      hint={
+        hint &&
+        [
+          t(`sumplete.hint.${hint.key}`, hint.params),
+          hint.action && t(`sumplete.hint.action.${hint.action.key}`, { count: hint.action.count }),
+        ]
+          .filter(Boolean)
+          .join("\n")
+      }
       idleMs={hintIdleDelay(difficulty)}
+      goal={t("sumplete.goal")}
       rules={<SumpleteRules />}
     >
       {({ reportInput, hintVisible }) => (

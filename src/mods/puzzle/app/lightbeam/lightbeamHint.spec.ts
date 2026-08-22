@@ -115,9 +115,12 @@ describe("every reason the ladder can give is phrased in both locales", () => {
     expect(typeof phrase(nl.lightbeam.hint, key)).toBe("string")
   })
 
-  it("has the rules in both", () => {
-    for (const locale of [en, nl])
-      for (const rule of ["goal", "mirrors", "walls", "tap", "nodes"])
+  it("has the goal and the rules in both", () => {
+    for (const locale of [en, nl]) {
+      // The goal is its own section above the rules (`puzzle-screens.md` §1), not a bullet in them.
+      expect(typeof locale.lightbeam.goal).toBe("string")
+      for (const rule of ["mirrors", "walls", "tap", "nodes"])
         expect(typeof phrase(locale.lightbeam.rules, rule)).toBe("string")
+    }
   })
 })

@@ -94,7 +94,8 @@
     "solvedUnaided": "Opgelost zonder ook maar één hint",
     "solvedWithHints_one": "Opgelost met {{count}} hint",
     "solvedWithHints_other": "Opgelost met {{count}} hints",
-    "tapToContinue": "Tik om verder te gaan"
+    "tapToContinue": "Tik om verder te gaan",
+    "goal": "Doel"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
@@ -237,7 +238,6 @@
   },
   "balance": {
     "rules": {
-      "goal": "Elke weegschaal is in evenwicht. Geef elk teken een gewicht dat dat zo houdt.",
       "tap": "Tik hieronder op een teken en dan op een getal. Tik nog een keer op dat getal om het weg te halen.",
       "same": "Een teken weegt op elke weegschaal evenveel.",
       "cancel": "Haal aan beide kanten hetzelfde weg en een weegschaal blijft kloppen. Tik op een gemarkeerd stuk: wat overblijft komt als nieuwe rij eronder.",
@@ -255,11 +255,11 @@
     "swap": {
       "pick": "Tik op een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
       "none": "Niets hier zegt wat één {{glyph}} in zijn eentje waard is, en er ligt niets gelijks tegenover."
-    }
+    },
+    "goal": "Elk teken heeft een gewicht, en elke weegschaal is in balans."
   },
   "sumplete": {
     "rules": {
-      "goal": "Streep getallen weg zodat elke rij en kolom optelt tot het getal ernaast.",
       "tap": "Tik één keer om een getal weg te strepen, nog een keer om het te bewaren, nog een keer om het leeg te maken.",
       "totals": "Het kleine getal onder elk doel is wat die lijn nu optelt."
     },
@@ -296,12 +296,34 @@
       "inEveryCombinationStrike": {
         "row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg.",
         "col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg."
+      },
+      "tooBig.row": "Deze rij heeft nog {{deficit}} nodig, en {{value}} is groter dan dat.",
+      "tooBig.col": "Deze kolom heeft nog {{deficit}} nodig, en {{value}} is groter dan dat.",
+      "allStrike.row": "De getallen die in deze rij blijven staan tellen al op tot het doel.",
+      "allStrike.col": "De getallen die in deze kolom blijven staan tellen al op tot het doel.",
+      "allKeep.row": "Deze rij telt al op tot het doel, dus daarna kun je de kolommen erdoorheen uitrekenen.",
+      "allKeep.col": "Deze kolom telt al op tot het doel, dus daarna kun je de rijen erdoorheen uitrekenen.",
+      "parityKeep.row": "Deze rij heeft nog {{deficit}} nodig, een oneven getal, en {{value}} is het enige oneven getal dat over is.",
+      "parityKeep.col": "Deze kolom heeft nog {{deficit}} nodig, een oneven getal, en {{value}} is het enige oneven getal dat over is.",
+      "parityStrike.row": "Deze rij heeft nog {{deficit}} nodig, een even getal, en {{value}} is het enige oneven getal dat over is.",
+      "parityStrike.col": "Deze kolom heeft nog {{deficit}} nodig, een even getal, en {{value}} is het enige oneven getal dat over is.",
+      "onlyCombination.row": "Maar één set getallen in deze rij telt op tot {{deficit}}.",
+      "onlyCombination.col": "Maar één set getallen in deze kolom telt op tot {{deficit}}.",
+      "inEveryCombinationKeep.row": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze rij {{deficit}}.",
+      "inEveryCombinationKeep.col": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze kolom {{deficit}}.",
+      "inEveryCombinationStrike.row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet.",
+      "inEveryCombinationStrike.col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet.",
+      "action": {
+        "strike_one": "Streep het gearceerde getal door.",
+        "strike_other": "Streep de gearceerde getallen door.",
+        "keep_one": "Markeer het gearceerde getal als blijvend.",
+        "keep_other": "Markeer de gearceerde getallen als blijvend."
       }
-    }
+    },
+    "goal": "Elke rij en elke kolom telt op tot het getal ernaast."
   },
   "futoshiki": {
     "rules": {
-      "goal": "Vul elk vakje zo dat elke rij en elke kolom elk getal precies één keer laat zien.",
       "signs": "Een teken tussen twee vakjes wijst naar het kleinste getal van de twee.",
       "enter": "Tik op een vakje en dan op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
       "notes": "Zet het potlood aan om op te schrijven welke getallen nog in een vakje kunnen. Met ongedaan maken neem je je laatste zet terug."
@@ -355,11 +377,11 @@
         "row": "In deze rij passen {{first}}, {{second}} en {{third}} nergens anders dan in deze drie vakjes, dus er kan niets anders in.",
         "col": "In deze kolom passen {{first}}, {{second}} en {{third}} nergens anders dan in deze drie vakjes, dus er kan niets anders in."
       }
-    }
+    },
+    "goal": "Elke rij en elke kolom laat elk getal precies één keer zien."
   },
   "lightbeam": {
     "rules": {
-      "goal": "Breng het zonlicht van de schijf naar het schrijn.",
       "mirrors": "Een spiegel buigt het licht langs elk van zijn kanten. De streepjes eromheen laten zien hoe hij nog kan liggen: de meeste geven een kwartslag, sommige blijven daar net onder en sturen het licht schuin weg.",
       "walls": "Een blok steen slokt het licht op. De rand van het bord ook.",
       "tap": "Tik op een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar de volgende plek. Een witte rand betekent dat jij het mag verzetten; al het andere hoort bij de puzzel.",
@@ -387,11 +409,11 @@
       "wiringDead": "Wat je ook doet, het licht kan die aansluiting nooit bereiken — dus de steen waaraan hij vastzit blijft precies waar hij is, en je kunt het pad er zo langs lezen.",
       "neverReached": "Laat deze staan. Het licht kan er niet bij komen, hoe de rest ook staat, dus wat je ermee doet maakt niets uit.",
       "onlySurvivor": "Probeer elke stand van deze om de beurt: op één na laten ze het schrijn allemaal donker. Die ene is het antwoord."
-    }
+    },
+    "goal": "Het zonlicht loopt van de schijf naar het altaar."
   },
   "eclipse": {
     "rules": {
-      "goal": "Geef elk vakje een zon of een maan, zodat elke rij en elke kolom er even veel van beide heeft.",
       "triple": "Drie dezelfde op een rij mag nooit, niet horizontaal en niet verticaal.",
       "copies": "Geen twee rijen mogen hetzelfde zijn, en geen twee kolommen.",
       "signs": "Een teken tussen twee vakjes zegt hoe ze zich verhouden: = voor gelijk, × voor verschillend.",
@@ -400,41 +422,210 @@
     "undo": "Ongedaan",
     "hint": {
       "mistake": "Een van deze tekens kan niet goed zijn.",
-      "sign.same": "= betekent gelijk, dus {{mark}}.",
-      "sign.different": "× betekent verschillend, dus {{other}}.",
-      "noTriple.pair": "Al twee {{mark}}, dus {{other}}.",
-      "noTriple.sandwich": "{{mark}} aan beide kanten, dus {{other}}.",
-      "signPair": "Door de {{mark}} hier moeten deze twee {{other}} zijn.",
-      "lineCount": "Deze lijn heeft zijn {{count}} {{mark}}, dus de rest is {{other}}.",
+      "sign.same": "= betekent gelijk.",
+      "sign.different": "× betekent verschillend.",
+      "noTriple.pair": "Al twee {{mark}}, en drie op een rij mag nooit.",
+      "noTriple.sandwich": "{{mark}} aan beide kanten, en drie op een rij mag nooit.",
+      "signPair": "Deze twee zijn gelijk, en die {{mark}} staat ernaast.",
+      "lineCount": "Deze lijn heeft zijn {{count}} {{mark}} al.",
       "noCopy": "Andersom wordt dit een kopie van de opgelichte lijn.",
-      "linePairing.sameNoRoom": "Nog maar {{count}} {{mark}} over, en deze twee zijn gelijk, dus beide {{other}}.",
-      "linePairing.differentTakesOne": "De ×-paren gebruiken de {{mark}} op, dus de rest is {{other}}.",
+      "linePairing.sameNoRoom": "Nog maar {{count}} {{mark}} over, en deze twee zijn gelijk.",
+      "linePairing.differentTakesOne": "De ×-paren gebruiken de {{mark}} op waar deze lijn ruimte voor heeft.",
       "loneMark": "Nog één {{mark}} te plaatsen, en maar één vakje houdt drie {{other}} uit elkaar.",
-      "squeeze.triple": "{{mark}} hier maakt de rest {{other}} — drie op een rij. Dus {{other}}.",
-      "squeeze.sign": "{{mark}} hier maakt de rest {{other}} — een teken klopt niet meer. Dus {{other}}.",
-      "squeeze.copy": "{{mark}} hier maakt de rest {{other}} — de lijn wordt een kopie. Dus {{other}}."
-    }
+      "squeeze.triple": "{{mark}} hier zou de rest {{other}} maken — drie op een rij.",
+      "squeeze.sign": "{{mark}} hier zou de rest {{other}} maken — een teken klopt niet meer.",
+      "squeeze.copy": "{{mark}} hier zou de rest {{other}} maken — de lijn wordt een kopie.",
+      "action": {
+        "fill_one": "Zet {{mark}} in het gearceerde vakje.",
+        "fill_other": "Zet {{mark}} in de gearceerde vakjes.",
+        "fillMixed": "Vul de gearceerde vakjes in — de enige manier die klopt."
+      }
+    },
+    "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander."
   },
   "constellation": {
     "rules": {
-      "goal": "Geef elke ster zo veel lichtlijnen als zijn getal zegt.",
-      "straight": "Lijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
-      "pair": "Tussen twee sterren passen maximaal twee lijnen.",
-      "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
-      "whole": "Alle sterren horen aan het eind bij één sterrenbeeld.",
-      "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
+      "default": {
+        "straight": "Lichtlijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
+        "pair": "Tussen twee sterren passen maximaal twee lijnen.",
+        "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
+        "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
+      },
+      "causeway": {
+        "straight": "Sleepwegen lopen recht, horizontaal of verticaal, van de ene plaats naar de volgende.",
+        "pair": "Tussen twee plaatsen passen maximaal twee wegen.",
+        "cross": "Wegen kruisen elkaar nooit, en lopen nooit door een plaats heen.",
+        "enter": "Sleep van een plaats naar zijn buur om een weg aan te leggen, nog eens om hem te verdubbelen, en nog eens om hem op te breken."
+      },
+      "irrigation": {
+        "straight": "Kanalen lopen recht, horizontaal of verticaal, van het ene bekken naar het volgende.",
+        "pair": "Tussen twee bekkens passen maximaal twee kanalen.",
+        "cross": "Kanalen kruisen elkaar nooit, en lopen nooit door een bekken heen.",
+        "enter": "Sleep van een bekken naar zijn buur om een kanaal te graven, nog eens om het te verbreden, en nog eens om het te dempen."
+      }
     },
     "undo": "Ongedaan",
     "hint": {
-      "mistake": "Een van deze lijnen kan niet goed zijn.",
-      "capacity": "{{count}} lijnen, en net genoeg uitwegen — ze worden allemaal getekend.",
-      "settled": "Deze {{count}} heeft zijn lijnen. Er komt niets meer bij.",
-      "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te tekenen.",
-      "crossed": "Een lijn daar zou deze lijn kruisen.",
-      "atLeastOne": "{{count}} lijnen, en de andere uitwegen kunnen ze niet samen dragen — er gaat er minstens één deze kant op.",
-      "twinBlock.single": "Die twee verbinden maakt een sterrenbeeld van twee.",
-      "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
-      "isolation": "Die lijn sluit deze {{count}} sterren af van de rest."
+      "default": {
+        "mistake": "Een van deze lijnen kan niet goed zijn.",
+        "capacity": "{{count}} lijnen, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn lijnen.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te tekenen.",
+        "crossed": "Een lijn daar zou deze lijn kruisen.",
+        "atLeastOne": "{{count}} lijnen, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een sterrenbeeld van twee.",
+        "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
+        "isolation": "Die lijn sluit deze {{count}} sterren af van de rest.",
+        "action": {
+          "draw_one": "Teken de gemarkeerde lijn.",
+          "draw_other": "Teken de gemarkeerde lijnen.",
+          "refuse_one": "De gemarkeerde lijn blijft ongetekend.",
+          "refuse_other": "De gemarkeerde lijnen blijven ongetekend.",
+          "refuseDouble": "Eén lijn daar, en geen tweede."
+        }
+      },
+      "causeway": {
+        "mistake": "Een van deze wegen kan niet goed zijn.",
+        "capacity": "{{count}} wegen, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn wegen.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} aan te leggen.",
+        "crossed": "Een weg daar zou deze weg kruisen.",
+        "atLeastOne": "{{count}} wegen, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een wegennet van twee.",
+        "twinBlock.double": "Een tweede weg daar maakt een wegennet van twee.",
+        "isolation": "Die weg sluit deze {{count}} plaatsen af van de rest.",
+        "action": {
+          "draw_one": "Leg de gemarkeerde weg aan.",
+          "draw_other": "Leg de gemarkeerde wegen aan.",
+          "refuse_one": "De gemarkeerde weg blijft onaangelegd.",
+          "refuse_other": "De gemarkeerde wegen blijven onaangelegd.",
+          "refuseDouble": "Eén weg daar, en geen tweede."
+        }
+      },
+      "irrigation": {
+        "mistake": "Een van deze kanalen kan niet goed zijn.",
+        "capacity": "{{count}} kanalen, en net genoeg uitwegen.",
+        "settled": "Deze {{count}} heeft zijn kanalen.",
+        "soleWayOut": "Nog maar één uitweg over, en nog {{count}} te graven.",
+        "crossed": "Een kanaal daar zou dit kanaal kruisen.",
+        "atLeastOne": "{{count}} kanalen, en de andere uitwegen kunnen ze niet samen dragen.",
+        "twinBlock.single": "Die twee verbinden maakt een waterwerk van twee.",
+        "twinBlock.double": "Een tweede kanaal daar maakt een waterwerk van twee.",
+        "isolation": "Dat kanaal sluit deze {{count}} bekkens af van de rest.",
+        "action": {
+          "draw_one": "Graaf het gemarkeerde kanaal.",
+          "draw_other": "Graaf de gemarkeerde kanalen.",
+          "refuse_one": "Het gemarkeerde kanaal blijft ongegraven.",
+          "refuse_other": "De gemarkeerde kanalen blijven ongegraven.",
+          "refuseDouble": "Eén kanaal daar, en geen tweede."
+        }
+      }
+    },
+    "goal": {
+      "default": "Elke ster hangt in één sterrenbeeld, verbonden met zoveel lichtlijnen als zijn getal zegt.",
+      "causeway": "Elke plaats ligt in één wegennet, ontsloten door zoveel sleepwegen als zijn getal zegt.",
+      "irrigation": "Elk bekken hoort bij één waterwerk, gevoed door zoveel kanalen als zijn getal zegt."
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "Twee sterren mogen elkaar nooit raken — ook niet met een punt.",
+        "enter": "Tik een vakje om het af te strepen, tik weer voor een ster, en nog eens om het te wissen."
+      },
+      "fields": {
+        "touch": "Twee boerderijen mogen elkaar nooit raken — ook niet met een punt. Zo dicht bij elkaar delen ze één put.",
+        "enter": "Tik een akker om die af te strepen, tik weer voor een boerderij, en nog eens om het te wissen."
+      }
+    },
+    "undo": "Ongedaan maken",
+    "hint": {
+      "default": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en niets mag aan een {{token}} raken.",
+        "groupFull.row_one": "Deze rij heeft zijn {{token}} al.",
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} {{token}} al.",
+        "groupFull.col_one": "Deze kolom heeft zijn {{token}} al.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} {{token}} al.",
+        "groupFull.region_one": "Dit gebied heeft zijn {{token}} al.",
+        "groupFull.region_other": "Dit gebied heeft zijn {{count}} {{token}} al.",
+        "groupTight.row_one": "Deze rij heeft nog één vakje over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} vakjes over.",
+        "groupTight.col_one": "Deze kolom heeft nog één vakje over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} vakjes over.",
+        "groupTight.region_one": "Dit gebied heeft nog één vakje over.",
+        "groupTight.region_other": "Dit gebied heeft nog {{count}} vakjes over.",
+        "onlyWay.row_one": "Er is maar één manier om een {{token}} in deze rij te zetten.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} {{token}} in deze rij te zetten.",
+        "onlyWay.col_one": "Er is maar één manier om een {{token}} in deze kolom te zetten.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} {{token}} in deze kolom te zetten.",
+        "onlyWay.region_one": "Er is maar één manier om een {{token}} in dit gebied te zetten.",
+        "onlyWay.region_other": "Er is maar één manier om {{count}} {{token}} in dit gebied te zetten.",
+        "regionLine.row_one": "De {{token}} van het gemarkeerde gebied moet uit die rij komen.",
+        "regionLine.row_other": "De {{count}} {{token}} van het gemarkeerde gebied moeten uit die rij komen.",
+        "regionLine.col_one": "De {{token}} van het gemarkeerde gebied moet uit die kolom komen.",
+        "regionLine.col_other": "De {{count}} {{token}} van het gemarkeerde gebied moeten uit die kolom komen.",
+        "lineRegion.row_one": "De {{token}} van die rij hoort bij het gemarkeerde gebied.",
+        "lineRegion.row_other": "De {{count}} {{token}} van die rij horen bij het gemarkeerde gebied.",
+        "lineRegion.col_one": "De {{token}} van die kolom hoort bij het gemarkeerde gebied.",
+        "lineRegion.col_other": "De {{count}} {{token}} van die kolom horen bij het gemarkeerde gebied.",
+        "spanning.toRows": "De gemarkeerde gebieden vullen samen die {{count}} rijen.",
+        "spanning.toCols": "De gemarkeerde gebieden vullen samen die {{count}} kolommen.",
+        "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{token}} alleen uit die gebieden halen.",
+        "spanning.fromCols": "De gemarkeerde kolommen kunnen hun {{count}} {{token}} alleen uit die gebieden halen.",
+        "action": {
+          "ruleOut_one": "Streep het gearceerde vakje af.",
+          "ruleOut_other": "Streep de gearceerde vakjes af.",
+          "place_one": "Zet een {{token}} in het gearceerde vakje.",
+          "place_other": "Zet een {{token}} in elk gearceerd vakje."
+        }
+      },
+      "fields": {
+        "mistake": "Dit teken kan niet kloppen.",
+        "touch": "Hier een {{token}}, en geen akker ernaast kan er nog een dragen.",
+        "groupFull.row_one": "Deze rij is al bewerkt.",
+        "groupFull.row_other": "Deze rij heeft zijn {{count}} {{token}} al.",
+        "groupFull.col_one": "Deze kolom is al bewerkt.",
+        "groupFull.col_other": "Deze kolom heeft zijn {{count}} {{token}} al.",
+        "groupFull.region_one": "Dit stuk land is al bewerkt.",
+        "groupFull.region_other": "Dit stuk land heeft zijn {{count}} {{token}} al.",
+        "groupTight.row_one": "Deze rij heeft nog één akker over.",
+        "groupTight.row_other": "Deze rij heeft nog {{count}} akkers over.",
+        "groupTight.col_one": "Deze kolom heeft nog één akker over.",
+        "groupTight.col_other": "Deze kolom heeft nog {{count}} akkers over.",
+        "groupTight.region_one": "Dit stuk land heeft nog één akker over.",
+        "groupTight.region_other": "Dit stuk land heeft nog {{count}} akkers over.",
+        "onlyWay.row_one": "Er is nog maar één akker in deze rij om op te bouwen.",
+        "onlyWay.row_other": "Er is maar één manier om {{count}} {{token}} in deze rij te zetten.",
+        "onlyWay.col_one": "Er is nog maar één akker in deze kolom om op te bouwen.",
+        "onlyWay.col_other": "Er is maar één manier om {{count}} {{token}} in deze kolom te zetten.",
+        "onlyWay.region_one": "Er is nog maar één akker op dit stuk land om op te bouwen.",
+        "onlyWay.region_other": "Er is maar één manier om {{count}} {{token}} op dit stuk land te zetten.",
+        "regionLine.row_one": "De {{token}} van het gemarkeerde stuk land moet uit die rij komen.",
+        "regionLine.row_other": "De {{count}} {{token}} van het gemarkeerde stuk land moeten uit die rij komen.",
+        "regionLine.col_one": "De {{token}} van het gemarkeerde stuk land moet uit die kolom komen.",
+        "regionLine.col_other": "De {{count}} {{token}} van het gemarkeerde stuk land moeten uit die kolom komen.",
+        "lineRegion.row_one": "De {{token}} van die rij hoort bij het gemarkeerde stuk land.",
+        "lineRegion.row_other": "De {{count}} {{token}} van die rij horen bij het gemarkeerde stuk land.",
+        "lineRegion.col_one": "De {{token}} van die kolom hoort bij het gemarkeerde stuk land.",
+        "lineRegion.col_other": "De {{count}} {{token}} van die kolom horen bij het gemarkeerde stuk land.",
+        "spanning.toRows": "De gemarkeerde stukken land vullen samen die {{count}} rijen.",
+        "spanning.toCols": "De gemarkeerde stukken land vullen samen die {{count}} kolommen.",
+        "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{token}} alleen van die stukken land halen.",
+        "spanning.fromCols": "De gemarkeerde kolommen kunnen hun {{count}} {{token}} alleen van die stukken land halen.",
+        "action": {
+          "ruleOut_one": "Streep de gearceerde akker af.",
+          "ruleOut_other": "Streep de gearceerde akkers af.",
+          "place_one": "Zet een {{token}} op de gearceerde akker.",
+          "place_other": "Zet een {{token}} op elke gearceerde akker."
+        }
+      }
+    },
+    "goal": {
+      "default_one": "Elke rij, elke kolom en elk gebied heeft precies één ster.",
+      "default_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren.",
+      "fields_one": "Elke rij, elke kolom en elk stuk land bewerkt precies één boerderij.",
+      "fields_other": "Elke rij, elke kolom en elk stuk land bewerkt precies {{count}} boerderijen."
     }
   }
 }

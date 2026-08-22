@@ -94,7 +94,8 @@
     "solvedUnaided": "Solved without a single hint",
     "solvedWithHints_one": "Solved with {{count}} hint",
     "solvedWithHints_other": "Solved with {{count}} hints",
-    "tapToContinue": "Tap to continue"
+    "tapToContinue": "Tap to continue",
+    "goal": "Goal"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -244,7 +245,6 @@
   },
   "balance": {
     "rules": {
-      "goal": "Every scale is balanced. Give each glyph a weight that keeps it that way.",
       "tap": "Tap a glyph below, then a number. Tap that number again to take it off.",
       "same": "A glyph weighs the same on every scale.",
       "cancel": "Take the same thing off both pans and a scale stays balanced. Tap a marked piece to do it — what is left is kept as a new row.",
@@ -262,11 +262,11 @@
     "swap": {
       "pick": "Tap a lit row to trade this {{glyph}} for what that row says it is worth.",
       "none": "Nothing here says what one {{glyph}} on its own is worth, and nothing opposite it matches."
-    }
+    },
+    "goal": "Every glyph has a weight, and every scale balances."
   },
   "sumplete": {
     "rules": {
-      "goal": "Cross out numbers so every row and column adds up to the number beside it.",
       "tap": "Tap once to cross a number out, again to mark it as one you keep, again to clear it.",
       "totals": "The small number under each target is what that line adds up to right now."
     },
@@ -303,12 +303,34 @@
       "inEveryCombinationStrike": {
         "row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make — so it has to go.",
         "col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make — so it has to go."
+      },
+      "tooBig.row": "This row still needs {{deficit}}, and {{value}} is bigger than that.",
+      "tooBig.col": "This column still needs {{deficit}}, and {{value}} is bigger than that.",
+      "allStrike.row": "The numbers staying in this row already add up to its target.",
+      "allStrike.col": "The numbers staying in this column already add up to its target.",
+      "allKeep.row": "This row already adds up to its target, so the columns through it can be worked out next.",
+      "allKeep.col": "This column already adds up to its target, so the rows through it can be worked out next.",
+      "parityKeep.row": "This row still needs {{deficit}}, an odd number, and {{value}} is the only odd number left.",
+      "parityKeep.col": "This column still needs {{deficit}}, an odd number, and {{value}} is the only odd number left.",
+      "parityStrike.row": "This row still needs {{deficit}}, an even number, and {{value}} is the only odd number left.",
+      "parityStrike.col": "This column still needs {{deficit}}, an even number, and {{value}} is the only odd number left.",
+      "onlyCombination.row": "Only one set of numbers in this row adds up to {{deficit}}.",
+      "onlyCombination.col": "Only one set of numbers in this column adds up to {{deficit}}.",
+      "inEveryCombinationKeep.row": "Without {{value}}, no set of the other numbers in this row makes {{deficit}}.",
+      "inEveryCombinationKeep.col": "Without {{value}}, no set of the other numbers in this column makes {{deficit}}.",
+      "inEveryCombinationStrike.row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make.",
+      "inEveryCombinationStrike.col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make.",
+      "action": {
+        "strike_one": "Cross out the hatched number.",
+        "strike_other": "Cross out the hatched numbers.",
+        "keep_one": "Mark the hatched number as staying.",
+        "keep_other": "Mark the hatched numbers as staying."
       }
-    }
+    },
+    "goal": "Every row and every column adds up to the number beside it."
   },
   "futoshiki": {
     "rules": {
-      "goal": "Fill every square so each row and each column shows every number exactly once.",
       "signs": "A sign between two squares points at the smaller number of the two.",
       "enter": "Tap a square, then tap a number. The same number again takes it back out.",
       "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
@@ -362,11 +384,11 @@
         "row": "In this row, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them.",
         "col": "In this column, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them."
       }
-    }
+    },
+    "goal": "Every row and every column shows each number exactly once."
   },
   "lightbeam": {
     "rules": {
-      "goal": "Get the sunlight from the disc to the shrine.",
       "mirrors": "A mirror bends the light off either of its faces. The small marks around it show the other ways it can lie: most turn the light a quarter, and some stop short of that and send it off at a slant.",
       "walls": "A block of stone swallows the light. So does the edge of the board.",
       "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
@@ -394,11 +416,11 @@
       "wiringDead": "Whatever you do, the light can never get to that socket — so the stone it is wired to stays exactly where it is, and you can read the path straight past it.",
       "neverReached": "Leave this one alone. The light cannot reach it however the rest is set, so nothing you do to it matters.",
       "onlySurvivor": "Try every setting of this one in turn and all but one leave the shrine dark. That one is the answer."
-    }
+    },
+    "goal": "The sunlight runs from the disc to the shrine."
   },
   "eclipse": {
     "rules": {
-      "goal": "Give every square a sun or a moon, so each row and each column holds as many of one as of the other.",
       "triple": "Three of the same in a row is never allowed, across or down.",
       "copies": "No two rows may read alike, and no two columns either.",
       "signs": "A sign between two squares says how they compare: = for the same, × for different.",
@@ -407,41 +429,210 @@
     "undo": "Undo",
     "hint": {
       "mistake": "One of these marks cannot be right.",
-      "sign.same": "= means the same, so {{mark}}.",
-      "sign.different": "× means different, so {{other}}.",
-      "noTriple.pair": "Two {{mark}} already, so {{other}}.",
-      "noTriple.sandwich": "{{mark}} on both sides, so {{other}}.",
-      "signPair": "Because of that {{mark}}, these two are {{other}}.",
-      "lineCount": "This line has its {{count}} {{mark}}, so the rest are {{other}}.",
-      "noCopy": "The other way round copies the line lit up.",
-      "linePairing.sameNoRoom": "Only {{count}} {{mark}} left here, and these two match, so both are {{other}}.",
-      "linePairing.differentTakesOne": "The × pairs use up the {{mark}}, so the rest are {{other}}.",
+      "sign.same": "= means the same.",
+      "sign.different": "× means different.",
+      "noTriple.pair": "Two {{mark}} already, and three in a row is never allowed.",
+      "noTriple.sandwich": "{{mark}} on both sides, and three in a row is never allowed.",
+      "signPair": "These two match, and that {{mark}} stands beside them.",
+      "lineCount": "This line has its {{count}} {{mark}} already.",
+      "noCopy": "The other way round would copy the line lit up.",
+      "linePairing.sameNoRoom": "Only {{count}} {{mark}} left here, and these two match.",
+      "linePairing.differentTakesOne": "The × pairs use up the {{mark}} this line has room for.",
       "loneMark": "One {{mark}} left, and only one square keeps three {{other}} apart.",
-      "squeeze.triple": "{{mark}} here makes the rest {{other}} — three in a row. So {{other}}.",
-      "squeeze.sign": "{{mark}} here makes the rest {{other}} — a sign stops fitting. So {{other}}.",
-      "squeeze.copy": "{{mark}} here makes the rest {{other}} — the line becomes a copy. So {{other}}."
-    }
+      "squeeze.triple": "{{mark}} here would make the rest {{other}} — three in a row.",
+      "squeeze.sign": "{{mark}} here would make the rest {{other}} — a sign stops fitting.",
+      "squeeze.copy": "{{mark}} here would make the rest {{other}} — the line becomes a copy.",
+      "action": {
+        "fill_one": "Put {{mark}} in the hatched square.",
+        "fill_other": "Put {{mark}} in the hatched squares.",
+        "fillMixed": "Fill in the hatched squares — the only way round that works."
+      }
+    },
+    "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other."
   },
   "constellation": {
     "rules": {
-      "goal": "Give every star as many lines of light as its number says.",
-      "straight": "Lines run straight across or down, from one star to the next.",
-      "pair": "Two stars can share at most two lines.",
-      "cross": "Lines never cross, and never pass through a star.",
-      "whole": "Every star ends up joined into one constellation.",
-      "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
+      "default": {
+        "straight": "Lines of light run straight across or down, from one star to the next.",
+        "pair": "Two stars can share at most two lines.",
+        "cross": "Lines never cross, and never pass through a star.",
+        "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
+      },
+      "causeway": {
+        "straight": "Haul roads run straight across or down, from one site to the next.",
+        "pair": "Two sites can share at most two roads.",
+        "cross": "Roads never cross, and never run through a site.",
+        "enter": "Drag from a site toward its neighbour to lay a road, again to double it, once more to tear it up."
+      },
+      "irrigation": {
+        "straight": "Channels run straight across or down, from one basin to the next.",
+        "pair": "Two basins can share at most two channels.",
+        "cross": "Channels never cross, and never run through a basin.",
+        "enter": "Drag from a basin toward its neighbour to dig a channel, again to widen it, once more to fill it in."
+      }
     },
     "undo": "Undo",
     "hint": {
-      "mistake": "One of these lines cannot be right.",
-      "capacity": "{{count}} lines, and only just enough ways out — every one of them is drawn.",
-      "settled": "This {{count}} has its lines. Nothing else joins it.",
-      "soleWayOut": "Only one way out left, and {{count}} still to draw.",
-      "crossed": "A line there would cross this one.",
-      "atLeastOne": "{{count}} lines, and the other ways out cannot carry them all — at least one goes this way.",
-      "twinBlock.single": "Joining those two would make a constellation of two.",
-      "twinBlock.double": "A second line there would make a constellation of two.",
-      "isolation": "That line would seal these {{count}} stars off from the rest."
+      "default": {
+        "mistake": "One of these lines cannot be right.",
+        "capacity": "{{count}} lines, and only just enough ways out.",
+        "settled": "This {{count}} has its lines.",
+        "soleWayOut": "Only one way out left, and {{count}} still to draw.",
+        "crossed": "A line there would cross this one.",
+        "atLeastOne": "{{count}} lines, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a constellation of two.",
+        "twinBlock.double": "A second line there would make a constellation of two.",
+        "isolation": "That line would seal these {{count}} stars off from the rest.",
+        "action": {
+          "draw_one": "Draw the marked line.",
+          "draw_other": "Draw the marked lines.",
+          "refuse_one": "The marked line stays undrawn.",
+          "refuse_other": "The marked lines stay undrawn.",
+          "refuseDouble": "One line there, and no second."
+        }
+      },
+      "causeway": {
+        "mistake": "One of these roads cannot be right.",
+        "capacity": "{{count}} roads, and only just enough ways out.",
+        "settled": "This {{count}} has its roads.",
+        "soleWayOut": "Only one way out left, and {{count}} still to lay.",
+        "crossed": "A road there would cross this one.",
+        "atLeastOne": "{{count}} roads, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a network of two.",
+        "twinBlock.double": "A second road there would make a network of two.",
+        "isolation": "That road would cut these {{count}} sites off from the rest.",
+        "action": {
+          "draw_one": "Lay the marked road.",
+          "draw_other": "Lay the marked roads.",
+          "refuse_one": "The marked road stays unbuilt.",
+          "refuse_other": "The marked roads stay unbuilt.",
+          "refuseDouble": "One road there, and no second."
+        }
+      },
+      "irrigation": {
+        "mistake": "One of these channels cannot be right.",
+        "capacity": "{{count}} channels, and only just enough ways out.",
+        "settled": "This {{count}} has its channels.",
+        "soleWayOut": "Only one way out left, and {{count}} still to dig.",
+        "crossed": "A channel there would cross this one.",
+        "atLeastOne": "{{count}} channels, and the other ways out cannot carry them all.",
+        "twinBlock.single": "Joining those two would make a waterworks of two.",
+        "twinBlock.double": "A second channel there would make a waterworks of two.",
+        "isolation": "That channel would cut these {{count}} basins off from the rest.",
+        "action": {
+          "draw_one": "Dig the marked channel.",
+          "draw_other": "Dig the marked channels.",
+          "refuse_one": "The marked channel stays undug.",
+          "refuse_other": "The marked channels stay undug.",
+          "refuseDouble": "One channel there, and no second."
+        }
+      }
+    },
+    "goal": {
+      "default": "Every star hangs in one constellation, joined by as many lines of light as its number says.",
+      "causeway": "Every site stands in one road network, served by as many haul roads as its number says.",
+      "irrigation": "Every basin feeds one waterworks, fed by as many channels as its number says."
+    }
+  },
+  "starBattle": {
+    "rules": {
+      "default": {
+        "touch": "No two stars may touch — corners count.",
+        "enter": "Tap a square to rule it out, tap again to put a star there, once more to clear it."
+      },
+      "fields": {
+        "touch": "No two farmsteads may touch — corners count. That close, they would share one well.",
+        "enter": "Tap a plot to rule it out, tap again to raise a farmstead, once more to clear it."
+      }
+    },
+    "undo": "Undo",
+    "hint": {
+      "default": {
+        "mistake": "This mark cannot be right.",
+        "touch": "A {{token}} here, and nothing may touch a {{token}}.",
+        "groupFull.row_one": "This row already has its {{token}}.",
+        "groupFull.row_other": "This row already has its {{count}} {{token}}.",
+        "groupFull.col_one": "This column already has its {{token}}.",
+        "groupFull.col_other": "This column already has its {{count}} {{token}}.",
+        "groupFull.region_one": "This region already has its {{token}}.",
+        "groupFull.region_other": "This region already has its {{count}} {{token}}.",
+        "groupTight.row_one": "This row is down to one square.",
+        "groupTight.row_other": "This row is down to {{count}} squares.",
+        "groupTight.col_one": "This column is down to one square.",
+        "groupTight.col_other": "This column is down to {{count}} squares.",
+        "groupTight.region_one": "This region is down to one square.",
+        "groupTight.region_other": "This region is down to {{count}} squares.",
+        "onlyWay.row_one": "There is only one way to fit a {{token}} in this row.",
+        "onlyWay.row_other": "There is only one way to fit {{count}} {{token}} in this row.",
+        "onlyWay.col_one": "There is only one way to fit a {{token}} in this column.",
+        "onlyWay.col_other": "There is only one way to fit {{count}} {{token}} in this column.",
+        "onlyWay.region_one": "There is only one way to fit a {{token}} in this region.",
+        "onlyWay.region_other": "There is only one way to fit {{count}} {{token}} in this region.",
+        "regionLine.row_one": "The marked region’s {{token}} has to come from that row.",
+        "regionLine.row_other": "The marked region’s {{count}} {{token}} have to come from that row.",
+        "regionLine.col_one": "The marked region’s {{token}} has to come from that column.",
+        "regionLine.col_other": "The marked region’s {{count}} {{token}} have to come from that column.",
+        "lineRegion.row_one": "That row’s {{token}} belongs to the marked region.",
+        "lineRegion.row_other": "That row’s {{count}} {{token}} belong to the marked region.",
+        "lineRegion.col_one": "That column’s {{token}} belongs to the marked region.",
+        "lineRegion.col_other": "That column’s {{count}} {{token}} belong to the marked region.",
+        "spanning.toRows": "The marked regions fill those {{count}} rows between them.",
+        "spanning.toCols": "The marked regions fill those {{count}} columns between them.",
+        "spanning.fromRows": "The marked rows can only take their {{count}} {{token}} from those regions.",
+        "spanning.fromCols": "The marked columns can only take their {{count}} {{token}} from those regions.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched square.",
+          "ruleOut_other": "Rule out the hatched squares.",
+          "place_one": "Put a {{token}} in the hatched square.",
+          "place_other": "Put a {{token}} in each hatched square."
+        }
+      },
+      "fields": {
+        "mistake": "This mark cannot be right.",
+        "touch": "A {{token}} here, and no plot it touches can hold another.",
+        "groupFull.row_one": "This row is already worked.",
+        "groupFull.row_other": "This row already has its {{count}} {{token}}.",
+        "groupFull.col_one": "This column is already worked.",
+        "groupFull.col_other": "This column already has its {{count}} {{token}}.",
+        "groupFull.region_one": "This holding is already worked.",
+        "groupFull.region_other": "This holding already has its {{count}} {{token}}.",
+        "groupTight.row_one": "This row is down to one plot.",
+        "groupTight.row_other": "This row is down to {{count}} plots.",
+        "groupTight.col_one": "This column is down to one plot.",
+        "groupTight.col_other": "This column is down to {{count}} plots.",
+        "groupTight.region_one": "This holding is down to one plot.",
+        "groupTight.region_other": "This holding is down to {{count}} plots.",
+        "onlyWay.row_one": "There is only one plot in this row left to build on.",
+        "onlyWay.row_other": "There is only one way to fit {{count}} {{token}} along this row.",
+        "onlyWay.col_one": "There is only one plot in this column left to build on.",
+        "onlyWay.col_other": "There is only one way to fit {{count}} {{token}} along this column.",
+        "onlyWay.region_one": "There is only one plot in this holding left to build on.",
+        "onlyWay.region_other": "There is only one way to fit {{count}} {{token}} on this holding.",
+        "regionLine.row_one": "The marked holding's {{token}} has to come from that row.",
+        "regionLine.row_other": "The marked holding's {{count}} {{token}} have to come from that row.",
+        "regionLine.col_one": "The marked holding's {{token}} has to come from that column.",
+        "regionLine.col_other": "The marked holding's {{count}} {{token}} have to come from that column.",
+        "lineRegion.row_one": "That row's {{token}} belongs to the marked holding.",
+        "lineRegion.row_other": "That row's {{count}} {{token}} belong to the marked holding.",
+        "lineRegion.col_one": "That column's {{token}} belongs to the marked holding.",
+        "lineRegion.col_other": "That column's {{count}} {{token}} belong to the marked holding.",
+        "spanning.toRows": "The marked holdings fill those {{count}} rows between them.",
+        "spanning.toCols": "The marked holdings fill those {{count}} columns between them.",
+        "spanning.fromRows": "The marked rows can only take their {{count}} {{token}} from those holdings.",
+        "spanning.fromCols": "The marked columns can only take their {{count}} {{token}} from those holdings.",
+        "action": {
+          "ruleOut_one": "Rule out the hatched plot.",
+          "ruleOut_other": "Rule out the hatched plots.",
+          "place_one": "Raise a {{token}} on the hatched plot.",
+          "place_other": "Raise a {{token}} on each hatched plot."
+        }
+      }
+    },
+    "goal": {
+      "default_one": "Every row, every column and every region holds exactly one star.",
+      "default_other": "Every row, every column and every region holds exactly {{count}} stars.",
+      "fields_one": "Every row, every column and every holding works exactly one farmstead.",
+      "fields_other": "Every row, every column and every holding works exactly {{count}} farmsteads."
     }
   }
 }

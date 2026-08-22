@@ -7,7 +7,6 @@ export const EclipseRules: FC = () => {
   const { t } = useTranslation("common")
   return (
     <ul className="list-disc space-y-1 pl-4">
-      <li>{t("eclipse.rules.goal")}</li>
       <li>{t("eclipse.rules.triple")}</li>
       <li>{t("eclipse.rules.copies")}</li>
       <li>{t("eclipse.rules.signs")}</li>

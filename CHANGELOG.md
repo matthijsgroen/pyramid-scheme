@@ -14,9 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Solving a beam puzzle sends the light down the route you found, and the shrine flares when it arrives.
 - A second kind of trap: a clock face, and four times to pick from before the countdown runs out.
 - A new puzzle: join the stars with lines of light, as many at each star as its number says, never crossing another line, until every star hangs in one constellation. Drag from a star to draw a line, on a night sky of its own.
+- A new puzzle: the same star grid, but every row, column and region holds TWO stars. Twice as much to place, a row is never finished until both of its stars are down, and a hint can now tell you when there is only one way a pair still fits. On farming journeys the same board is a flood plain — two farmsteads to every holding, the channels between them drawn as water, and no two close enough to share a well.
+- A new puzzle: place one star in every row, column and walled-off region of the grid, with no two stars ever touching. The walls are the only clue, every square is yours to fill, and a drag rules out a whole run of them at once.
 - A new puzzle: fill a grid with suns and moons so no three sit in a row, every line holds as many of each, no two rows or columns read alike, and the signs between squares are obeyed. Hints name the reason, and an undo button takes back your last tap.
 
 ### Changed
+
+- Hints now say what to do as well as why: the squares a hint is about are hatched, and its last line asks for the move. On the sun-and-moon grid, the number grid and the star grid.
+- The star map speaks its own place throughout — goal, rules and hints. A haul-road board talks about sites and roads to lay, a waterworks about basins and channels to dig.
+
+- Every puzzle now states its goal in one line above the how-to-play, worded for the place it is: the star map asks for constellations, the same board drawn as haul roads asks for a road network.
 
 - The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".
 - Every comparison-grid difficulty now starts with a different number of squares filled in — four at the easiest, none at the hardest.

@@ -6,11 +6,13 @@ import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { CROCODILE_META } from "./game/crocodile/meta"
 import { ECLIPSE_META } from "./game/eclipse/meta"
 import { CONSTELLATION_META } from "./game/constellation/meta"
+import { STAR_BATTLE_META } from "./game/starBattle/meta"
+import { TWIN_STARS_META } from "./game/starBattle/twinStars"
 
-// The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale,
-// futoshiki, lightbeam, eclipse, constellation) and the crocodile capstone. A root mod: it stays on in production (turning it off leaves
-// puzzle/capstone rooms with no family, so they only auto-resolve via the family-absence pass-through
-// — a degenerate world, not a playable one). It is a real REGISTERED_MODS entry anyway so its family
+// The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
+// lightbeam, eclipse, constellation, star battle, twin stars) and the crocodile capstone. A root mod: it stays on in
+// production (turning it off leaves puzzle/capstone rooms with no family, so they only auto-resolve via
+// the family-absence pass-through — a degenerate world, not a playable one). It is a real REGISTERED_MODS entry anyway so its family
 // metadata flows through MOD_FAMILY_META like every other mod's — adding a new puzzle family is then a
 // pure plugin, with no edit to core's family list. Toggle-off is the isolation TEST (no core residue),
 // not a shipping mode.
@@ -30,6 +32,8 @@ export const puzzleMod: ModDescriptor = {
     LIGHTBEAM_META,
     ECLIPSE_META,
     CONSTELLATION_META,
+    STAR_BATTLE_META,
+    TWIN_STARS_META,
     CROCODILE_META,
   ],
 }

@@ -7,7 +7,6 @@ export const SumpleteRules: FC = () => {
   const { t } = useTranslation("common")
   return (
     <ul className="list-disc space-y-1 pl-4">
-      <li>{t("sumplete.rules.goal")}</li>
       <li>{t("sumplete.rules.tap")}</li>
       <li>{t("sumplete.rules.totals")}</li>
     </ul>

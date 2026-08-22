@@ -13,6 +13,14 @@ export type SumpleteHint = {
   params: { deficit?: number; value?: number; remaining?: number }
   cells: Set<string>
   line?: { kind: "row" | "col"; index: number }
+  /**
+   * The move the reason asks for, and how many numbers it is about.
+   *
+   * A second line, and an imperative one, naming the numbers by how the board draws them
+   * (`puzzle-screens.md` §4): several of these rungs decide a whole line's worth at once, and "so everything
+   * else has to go" left the player working out which numbers that was.
+   */
+  action?: { key: "strike" | "keep"; count: number }
 }
 
 const key = (row: number, col: number) => `${row},${col}`
@@ -43,6 +51,8 @@ const asHint = (step: SumpleteStep): SumpleteHint => ({
   },
   cells: new Set(step.decisions.map(decision => key(decision.row, decision.col))),
   line: { kind: step.line, index: step.index },
+  // Every step here decides one way or the other for all of its cells, so the move is the first one's.
+  action: { key: step.decisions[0].mark === "keep" ? "keep" : "strike", count: step.decisions.length },
 })
 
 /**
@@ -62,6 +72,8 @@ export const buildSumpleteHint = (
   cap: TechniqueId
 ): SumpleteHint | undefined => {
   const mistake = firstMistake(marks, solution)
+  // A wrong mark has no move to offer: the way out is the player's to find, and naming it would be naming
+  // the answer.
   if (mistake) return { key: "mistake", params: {}, cells: new Set([key(mistake.row, mistake.col)]) }
 
   const step = nextStep(puzzle, marks, cap)

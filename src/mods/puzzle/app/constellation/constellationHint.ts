@@ -11,7 +11,7 @@ import {
 } from "@/mods/puzzle/game/constellation/techniques"
 
 export type ConstellationHint = {
-  /** Translation key under `constellation.hint`. */
+  /** Translation key under `constellation.hint.<place>` — the reason, on its own line. */
   key: string
   /** Slots for the key's template — numbers only, so a hint carries no language (PUZZLE_FAMILIES.md P2). */
   params: { count?: number }
@@ -21,6 +21,23 @@ export type ConstellationHint = {
   focus?: number
   /** The stars the reason points at: for a sealing reason, the group it would close. */
   stars: ReadonlySet<number>
+  /**
+   * The move the reason asks for, and how many lines it is about (`puzzle-screens.md` §4.1).
+   *
+   * Read off the bounds the step decides rather than declared per technique: a rung that pushes a pair's
+   * floor up is asking for a line, and one that pulls its ceiling to nought is asking for none. `refuseDouble`
+   * is the ceiling landing on one — a line may stand there, but never a second.
+   */
+  action: { key: "draw" | "refuse" | "refuseDouble"; count: number } | undefined
+}
+
+/** What the step's bounds are asking the player to do about them. */
+const moveFor = (step: ConstellationStep): ConstellationHint["action"] => {
+  const drawing = step.decisions.filter(decision => (decision.min ?? 0) >= 1)
+  if (drawing.length) return { key: "draw", count: drawing.length }
+  const barred = step.decisions.filter(decision => decision.max === 0)
+  if (barred.length) return { key: "refuse", count: barred.length }
+  return step.decisions.some(decision => decision.max === 1) ? { key: "refuseDouble", count: 1 } : undefined
 }
 
 // A technique that reads as a different sentence each way round gets a key per reading.
@@ -38,8 +55,17 @@ export const buildConstellationHint = (
   state: ConstellationLines
 ): ConstellationHint | undefined => {
   const mistake = firstConstellationMistake(state.lines, puzzle.solution)
+  // A wrong line has no move to offer: the way out is the player's to find, and naming it would be naming
+  // the answer.
   if (mistake !== undefined)
-    return { key: "mistake", params: {}, pairs: new Set([mistake]), focus: mistake, stars: new Set() }
+    return {
+      key: "mistake",
+      params: {},
+      pairs: new Set([mistake]),
+      focus: mistake,
+      stars: new Set(),
+      action: undefined,
+    }
 
   const allowed = techniquesUpTo(puzzle.techniqueCap)
   const step = nextConstellationStep(
@@ -54,5 +80,6 @@ export const buildConstellationHint = (
     pairs: new Set(step.pairs),
     focus: step.decisions[0]?.pair ?? step.pairs[0],
     stars: new Set(step.stars),
+    action: moveFor(step),
   }
 }

@@ -14,6 +14,7 @@ import {
 } from "@/mods/puzzle/game/constellation/constellation"
 import type { ConstellationPuzzleWithAnswer } from "@/mods/puzzle/game/constellation/generateConstellation"
 import { ConstellationBoard } from "./ConstellationBoard"
+import { skinFor } from "./skins"
 
 import { buildConstellationHint } from "./constellationHint"
 import { ConstellationRules } from "./ConstellationRules"
@@ -31,6 +32,8 @@ type Props = {
 
 export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  // Which place this room is. The goal and the rules are both worded from it, so they are resolved once.
+  const { name: skin } = skinFor(role, theme)
   const [state, setState] = useState(() => createConstellationState(puzzle))
 
   /**
@@ -58,8 +61,20 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
     Array.from({ length: Math.round(celebration.progress * puzzle.stars.length) }, (_unused, index) => index)
   )
 
-  // A function rather than a string, so the shell only reaches for the text once the hint is on screen.
-  const hintText = useCallback(() => (hint && t(`constellation.hint.${hint.key}`, hint.params)) || undefined, [hint, t])
+  /**
+   * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
+   *
+   * Two lines, both spoken in the place this room is: the reason, then the move it asks for
+   * (`puzzle-screens.md` §4.1, §4.3). A waterworks board saying "that line would seal these 4 stars off from
+   * the rest" is describing something that is not on the screen.
+   */
+  const hintText = useCallback(() => {
+    if (!hint) return undefined
+    const reason = t(`constellation.hint.${skin}.${hint.key}`, hint.params)
+    if (!hint.action) return reason
+    const move = t(`constellation.hint.${skin}.action.${hint.action.key}`, { count: hint.action.count })
+    return `${reason}\n${move}`
+  }, [hint, skin, t])
 
   return (
     <PuzzleFamilyShell
@@ -70,7 +85,8 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
-      rules={<ConstellationRules />}
+      goal={t(`constellation.goal.${skin}`)}
+      rules={<ConstellationRules skin={skin} />}
     >
       {({ reportInput, hintVisible }) => (
         <>

@@ -18,6 +18,14 @@ import { Plant, Pyramid } from "./glyphs"
  * reads as the one that lit up. A skin the family does not have falls back to `default` silently.
  */
 export type Skin = {
+  /**
+   * Which place this is, as its own name.
+   *
+   * Carried so anything that has to SAY what the room is can ask the skin — the goal sentence above the
+   * rules, for one (`puzzle-screens.md` §2). Deliberately absent from the `night` overlays: a causeway
+   * after dark is still a causeway, so the ambience never renames the place.
+   */
+  name: string
   /** The board itself — background and frame. */
   board: string
   /** Far-off specks behind the board: stars, silt, whatever the place is made of. Empty = none. */
@@ -50,6 +58,7 @@ export type Skin = {
 const SKINS: Record<string, Skin> = {
   // The night sky. Stars burn once they have their light; the unlit ones are quiet and readable.
   default: {
+    name: "default",
     board: "bg-[radial-gradient(ellipse_at_50%_15%,#16204a_0%,#0a0f24_45%,#04060f_100%)] ring-1 ring-indigo-300/15",
     backdrop: "fill-slate-200",
     line: "stroke-amber-100",
@@ -66,6 +75,7 @@ const SKINS: Record<string, Skin> = {
   // number is how many channels a basin feeds, no crossing is channels that cannot cross, and one group is
   // one network watering every field. A dry basin is a stone ring; a fed one holds water.
   irrigation: {
+    name: "irrigation",
     // **Daylight on sand**, which is the deliberate opposite of the night sky the same board wears by
     // default: a waterworks is a thing you dig under the sun. Everything else follows from the board being
     // LIGHT — the water is deep enough to read against it, and the numbers are dark rather than pale.
@@ -99,6 +109,7 @@ const SKINS: Record<string, Skin> = {
   // the network has to reach every one of them. A bare stake is a junction nobody has paved yet; a served one
   // is finished stone. Daylight rather than night, so the lines read as limestone rather than light.
   causeway: {
+    name: "causeway",
     // Sand, like the delta — a building site is outdoors too — but drier and greyer, so the two daylight
     // skins do not read as the same place. What tells them apart is what stands on them: basins and plants
     // there, staked-out pyramids here, water against packed road.

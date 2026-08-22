@@ -29,6 +29,38 @@ has timed against a human clock has not cleared this bar.
 - Tap targets ≥ 44px. A cell smaller than that needs a bigger cell, not a more
   precise finger.
 
+### 1.1 Under the board: the goal, then how to play
+
+Two sections, because they answer different questions.
+
+**The goal is one sentence, and it describes a FINISHED board** — what the player is trying to end up with,
+not what they may do on the way. It is the first thing read and it is read once, so it goes above the rules
+rather than being the first bullet in them: working out the point of the board from five bullets is reading
+four bullets too many.
+
+**It is worded per IDENTITY, not per mechanic.** A family whose rules wear more than one face needs a
+sentence per face — constellation's board is a star map, a haul-road network and a waterworks, and "give
+every star as many lines of light as its number says" is wrong in two of those rooms. The skin already knows
+which place the room is (§2), so the wording asks it. The AMBIENCE never changes it: a causeway at night is
+still a causeway.
+
+**A rule that describes the END STATE belongs in the goal; a rule that FORBIDS something stays a bullet.**
+That is the line between the two sections, and it is worth stating because the first draft of these sentences
+crossed it in both directions — star battle's goal repeated the no-touching rule listed three lines below it,
+and constellation's "every star ends up in one constellation" was a bullet when it is the whole point of the
+board. Whichever side a fact lands on, it is said once.
+
+**How to play holds the rest, and it holds both kinds of thing** — what the board will not allow, and what a
+tap or a drag does. Not split further, deliberately: most families have one control bullet, and a heading
+over a single line is furniture. The order carries the distinction instead — **what the board IS first, what
+the player DOES last**. Where a rule and a gesture are genuinely the same fact they stay together (balance
+scale's cancelling is a truth about scales _and_ the tap that applies it), which is the case that would break
+a hard split.
+
+**A board only lists what it affords.** A rule about a mechanic absent from the grid in front of the player
+is worse than no rule: it sends them looking for something that is not there. Balance scale grows its list
+with the tier and lightbeam hides its socket line on boards without a socket.
+
 ## 2. Theming — the family renders states, the skin renders pixels
 
 A room dresses out of **two** things it is told, and they answer different questions.
@@ -134,17 +166,82 @@ and the stale hint clears. A family that tracks its own 30s timer is a bug.
 
 ## 4. Hints teach, they do not spoil
 
-A hint names **one next step and the reason it follows** — "this row already has
-its target, so the rest of the row is struck out." After it, the player knows a
-technique they can reuse.
+A hint names **one next step and the reason it follows**. After it, the player knows a technique they can
+reuse.
 
-- Hints come from the **technique solver** (§5), never from the answer key.
-  Reading the solution and pointing at a cell is not a hint.
-- A hint is data, not a sentence: `{ techniqueId, cells, params }`. The shell
-  renders it through an i18n template with **numeric/glyph slots only** —
-  same language rule as the boards (`PUZZLE_FAMILIES.md` P2).
-- The hint highlights the cells it talks about.
+- Hints come from the **technique solver** (§5), never from the answer key. Reading the solution and pointing
+  at a cell is not a hint.
+- A hint is data, not a sentence: `{ techniqueId, cells, params }`. The shell renders it through an i18n
+  template with **numeric/glyph slots only** — the same language rule as the boards
+  (`PUZZLE_FAMILIES.md` P2).
 - Hints never mutate the board. The player still makes the move.
+
+### 4.1 Two lines: the reason, then the move
+
+**A reason on its own is half a hint.** It leaves the player working out what it wants of them, which is a
+step nobody should have to take from something they went and pressed a button for. So a hint is:
+
+1. **The reason** — what the board makes true. One sentence, no consequence clause.
+2. **The move** — an imperative. "Rule out the hatched squares." "Put 🌙 in the hatched squares." "Cross out
+   the hatched numbers."
+
+The consequence lives in the move, never in both: "this line has its 4 ☀️, **so the rest are 🌙**" followed by
+"put 🌙 in the hatched squares" says the same thing twice, which is the fault §1.1 describes between the goal
+and the rules, one level down.
+
+The shell keeps hint text pre-line, so a family returns the two lines separated by a newline. One line stays
+right for a family whose reason IS the move — lightbeam's "leave this one alone" has nothing to add, and
+balance scale's reasons have ended in an imperative from the start ("tap one to take it off both sides"),
+which is where this pattern was already working before it was written down.
+
+**The move is plural-aware.** A rung that settles one square and one that settles six get the same sentence
+otherwise, and "the hatched squares" over a single square is a sentence the player has to re-read. Use
+i18next `_one`/`_other` with a `count`, and add both forms to `plurals.spec.ts` — a missing form reaches the
+player as the raw key.
+
+**A mistake hint asks for nothing.** Every other rung ends in a move, but the way out of a wrong mark is the
+player's to find; naming it would be naming the answer.
+
+### 4.2 The words name the marking, and the marking means one thing
+
+**A hint that says "the rest of the row" makes the player decide which squares that was.** A hint that says
+"the hatched squares" does not. So the board marks what the hint is about, and the sentence names the marking
+rather than describing the squares. The vocabulary is shared, so a player who learns it on one family keeps
+it on the next:
+
+| Drawn as                     | Means                             | Called            |
+| ---------------------------- | --------------------------------- | ----------------- |
+| Diagonal hatching            | The squares this hint **settles** | "hatched"         |
+| A bright ring, or a lit tile | What this hint **argues from**    | "marked", "lit"   |
+| One stronger ring            | The single square it is **about** | named as "this …" |
+
+Two rules hold this together:
+
+- **Evidence and conclusion never look the same.** One ring over six squares makes "this square" a guess
+  between them.
+- **A treatment means one thing.** Hatching belongs to hints, so no board may also hatch its blocked squares
+  or its givens — the moment it does, both uses become ambiguous. Star battle's hint hatching is only free
+  because the blocked squares that once used it were removed.
+
+Credit where it is due: LinkedIn's Queens does both of these, and its hint is the clearest one going —
+"het gemarkeerde gebied moet een ♛ bevatten … elimineer de gearceerde vakjes".
+
+### 4.3 Worded per identity, like everything else under the board
+
+A family whose mechanic wears more than one face words its hints per face, the same way §1.1 words its goal
+and its rules — **the reason and the move both**. Constellation is the worked example: the same rung reads
+"3 lines, and the other ways out cannot carry them all / draw the marked line" over a sky, and "3 roads … /
+lay the marked road" over a causeway. The skin knows which place the room is; the wording asks it.
+
+**Each place gets whole sentences, not a noun in a slot.** A shared template with `{{thing}}` in it breaks on
+the first locale that inflects around the noun — Dutch does immediately ("van de ene ster naar de volgende"
+against "van het ene bekken naar het volgende"), and the verb goes with the place too: a line is drawn, a road
+is laid, a channel is dug.
+
+**A spec is the only thing that keeps this true.** The wording drifted once already — the goal and the rules
+were reworded a commit before the hints, which went on describing a sky over both other places. So the guard
+is a rule about words rather than a check for presence: nothing said over a road or a waterworks board may
+contain the word "star" (`goalWording.spec.ts`).
 
 ## 5. Solvable by logic — the solver is the family's core
 
@@ -179,7 +276,8 @@ On top of AGENTS.md's general DoD:
 
 1. Board fits a 360×640 viewport; page scrolls to the rules; no horizontal scroll.
 2. Back, reset, hint present; hint cooldown 10s; idle highlight scaled by tier (30s starter → 90s wizard).
-3. Every hint carries a reason, sourced from the solver.
+3. Every hint carries a reason, sourced from the solver, and a move that names the squares it marked (§4.1,
+   §4.2) — or is a mistake hint, which asks for nothing.
 4. Spec: the generator produces no puzzle needing a guess — solve N seeds with
    techniques only, assert all complete.
 5. Spec: every technique the solver claims can be triggered by a real board.

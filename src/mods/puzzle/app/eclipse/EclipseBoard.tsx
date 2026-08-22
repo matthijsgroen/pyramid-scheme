@@ -3,6 +3,7 @@ import type { FC } from "react"
 import {
   brokenLinks,
   colOf,
+  eclipseConflicts,
   isGiven,
   rowOf,
   type EclipsePuzzle,
@@ -10,13 +11,15 @@ import {
   type Link,
   type Mark,
 } from "@/mods/puzzle/game/eclipse/eclipse"
-import { useDelayedConflicts } from "./useDelayedConflicts"
+import { useDelayedConflicts } from "../useDelayedConflicts"
 
 type Props = {
   puzzle: EclipsePuzzle
   state: EclipseMarks
   /** Cells the current hint reasons FROM — its evidence. */
   highlighted?: ReadonlySet<number>
+  /** Every square the current hint settles — hatched, because its move says "the hatched squares". */
+  decided?: ReadonlySet<number>
   /** The one square the current hint is ABOUT, drawn stronger than its evidence. */
   focus?: number
   /** The skin this room was authored to wear; an unknown name draws the default pair. */
@@ -139,6 +142,17 @@ const Sign: FC<{ puzzle: EclipsePuzzle; link: Link; broken: boolean }> = ({ puzz
   )
 }
 
+/**
+ * The squares a hint is about, hatched.
+ *
+ * **The words name this**, which is the whole reason it is a hatch rather than another ring or another shade:
+ * a hint that says "put 🌙 in the hatched squares" leaves nothing to match up, where "so the rest are 🌙"
+ * leaves the player deciding which squares that was (`puzzle-screens.md` §4).
+ */
+const HATCH = {
+  backgroundImage: "repeating-linear-gradient(45deg, transparent 0 5px, rgba(252,211,77,0.45) 5px 7px)",
+}
+
 const linkKey = (link: Link) => `${link.a}-${link.b}`
 
 const markGlyph = (value: Mark | undefined, theme: string | undefined) => {
@@ -147,10 +161,10 @@ const markGlyph = (value: Mark | undefined, theme: string | undefined) => {
   return <Glyph />
 }
 
-export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, focus, theme, onTapCell }) => {
+export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, theme, onTapCell }) => {
   const { size } = puzzle
   // Held back a beat: a tap on the way to the other mark is not a mistake (see the hook).
-  const conflicts = useDelayedConflicts(puzzle, state)
+  const conflicts = useDelayedConflicts(state.marks, marks => eclipseConflicts(puzzle, { marks }))
   const broken = new Set(brokenLinks(puzzle, state).map(linkKey))
   return (
     <div className="relative aspect-square w-full max-w-[min(56vh,26rem)] select-none">
@@ -168,6 +182,7 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, focus, the
               key={cell}
               onClick={() => onTapCell(cell)}
               disabled={given}
+              style={decided?.has(cell) ? HATCH : undefined}
               className={clsx(
                 "flex aspect-square items-center justify-center rounded p-[12%] transition-colors",
                 // A given is part of the board rather than part of the answer, so it sits on stone rather than in a socket.

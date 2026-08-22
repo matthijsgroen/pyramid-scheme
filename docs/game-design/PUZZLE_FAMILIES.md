@@ -651,35 +651,91 @@ Family doc: `docs/game-design/puzzles/canal.md`.
   handful of decisions rather than a sweep.
 - **On sharing a verb with lightbeam:** both rotate pieces on a grid, and that is where it ends — lightbeam
   reasons about where one beam goes, this reasons about stubs matching and loops closing. A shared verb is
-  already tolerated here (sumplete, eclipse and futoshiki all tap cells); a shared *deduction* would not be,
+  already tolerated here (sumplete, eclipse and futoshiki all tap cells); a shared _deduction_ would not be,
   which is what ruled out Akari (§4.15's deferred note) and the rotate-pipes reading of §4.22.
 - **Themes:** water (pipes), Trade (a road network), and a lit circuit reads as a temple's lamps — it wears
   a role the same way §4.21 and §4.22 do.
 
-### 4.24 Star Battle (two not touch) — _(next up for the `sky` pool; not designed)_
+### 4.24 Star Battle (two not touch) — _(built; not yet playtested)_
 
-**Why it is next:** the `sky` role is what the Lighthouse of Alexandria draws every main-path room from
-(`junior.ts`), and it holds two families — the beam and the sun-and-moon grid — plus the star map, which
-wears `sky` as its default identity (§4.21). Three is thin for five pyramids, and this is the candidate that
-was ranked second when the pool was investigated, behind the star map that got built.
+Family doc: `docs/game-design/puzzles/star-battle.md`.
 
-- **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction, like
-  eclipse, but constrained by regions rather than by lines alone.
-- **Operates:** place a fixed number of stars in every row, every column and every region, and no two stars
-  may touch, diagonals included. The name is the theme, which is the cheapest possible fit for `sky`.
-- **The distinctness question, which is the first thing to settle.** Row-and-column counts on a binary grid
-  IS eclipse's mechanic (§4.20). What this adds is REGIONS and the "no two touching" rule, so the real
-  question for whoever designs it is whether those two carry a ladder of their own or whether it plays as
-  eclipse with a jigsaw drawn on it. Compare against the two rejections already on record: Akari was ruled
-  out for duplicating lightbeam's mechanism (§4.15's deferred note), and the rotate-pipes reading of the
-  canal for the same reason (§4.22) — while a shared VERB alone was judged acceptable (§4.23).
-- **What it would inherit for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed
-  conflict display, and — if it wants one — the completion run every family can now have
-  (`puzzle-screens.md` §3: report the solve a beat late, refuse input, honour reduced motion).
-- **Generation:** draw regions, place a legal star set, then check a technique solver reaches it unaided —
-  the draw-then-test shape (§4.21), since a region map is not a clue that can be thinned.
+- **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction like
+  eclipse, but constrained by a group that is not a line.
+- **Operates:** place one star in every row, every column and every region, and no two stars may touch,
+  diagonals included. **The board opens completely empty** — where the region boundaries run is the entire
+  clue. The name is the theme, which is the cheapest possible fit for `sky`.
+- **What ships is LinkedIn's Queens**, which is this puzzle at one star to a line rather than the published
+  two. Same rules, same board; the quota is the only difference, and every tier draws quota 1. The two-star
+  form ships as its own family (§4.25) rather than as this one's top tier: a tier may demand harder
+  reasoning, it may not change what the player is being asked to do.
+- **Knobs:** the region-size SPREAD (the real one — see below) · grid size, which here buys regions rather
+  than bookkeeping · technique cap, required rung and its quota · stars per line, one at every tier.
+- **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
+  mechanism — a region is a group that is not a line, and the play is sparse elimination rather than
+  eclipse's filled grid — and they carry a real ladder too, though the evidence is generation rather than
+  play: at 8×8, allowing the region readings makes **ten times as many region maps solvable** than counting
+  alone does. A rung that decides whether a board can exist is not decoration. What the family lacks is
+  depth: the counting rungs are still most of any solve, and only one of them ever places a star.
+- **The generation finding worth carrying to other families: the DISTRIBUTION of a clue matters as much as
+  its existence.** Grown to equal sizes, a region map is useless — zero solvable maps out of six thousand at
+  every size, because every region sprawls across the grid and nothing is ever confined to a line. Spread
+  the sizes as squares and 1–4% of maps are solvable; as cubes, 6–15%; mostly-single-squares, over half. An
+  earlier draft measured only the flat case, concluded a region map could not carry a board, and gave the
+  family a second clue layer (hatched squares) it did not need. **The dial also runs backwards**: a steeper
+  spread means easier boards, because a one-square region hands over a star — which is what makes it the
+  difficulty knob rather than a generation detail.
+- **Duration runs the other way from the one predicted here.** An 8×8 settles in ~25 solver steps against
+  eclipse's wizard 55–62, so a top-tier board is SHORT rather than long — the earlier ~160 figure came from a
+  probe counting rung firings rather than steps, and is retracted. Whether twenty-five reflex steps is a
+  wizard board is the first thing to time in the lab; if it plays under its tier the answer is 9×9.
+- **What it inherits for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed conflict
+  display, and the completion run every family can now have (`puzzle-screens.md` §3).
 - **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic
-  that reads as several places.
+  that reads as several places. **A lone star only ever reads as the one and only**, which is the actual
+  reason and not a shortage of imagination: the watchman reading that could earn a second skin needs a PAIR
+  to name, so it belongs to §4.25 rather than here.
+
+---
+
+### 4.25 Twin Stars (two to a group) — _(built; not yet playtested)_
+
+Family doc: `docs/game-design/puzzles/star-battle.md` §11.
+
+- **Skill:** the same placement deduction as §4.24, with every group owing two — so every count is a
+  capacity argument about a SET of squares rather than bookkeeping around one.
+- **Operates:** two stars in every row, every column and every region, no two touching, diagonals included.
+  Board opens empty; the region map is the entire clue. 8×8 at every tier — below it no legal star set
+  exists, so a junior board is an 8×8 that ASKS less rather than a smaller one.
+- **A second family, not a tier of §4.24**, and the rule is why. A tier is allowed to demand harder
+  reasoning; it is not allowed to change what the player is being asked to do. Everything below the rule is
+  shared outright — the same board, marks, drag, six rungs, hint sentences and screen — so the family is a
+  quota, a tier table and a name.
+- **Knobs:** the SMALLEST region · region-size spread · technique cap · required rung and its quota. **Grid
+  size is not one**, and that is measured rather than chosen: below 8×8 no legal star set exists at all, and
+  a 10×10 lands on 34.8px squares at 390px wide against 43.5px for the 8×8 — under both platforms' touch
+  minimum, on a board whose main gesture is a drag along a row.
+- **The smallest region is the knob playtesting found, and it is the strongest.** A three-square region can
+  only be a straight line (an L cannot hold two stars that do not touch) and a straight three owing two
+  stars has ONE filling — a square handed over on sight. At the arithmetic floor an 8×8 opens with about
+  half its regions already answered, which plays as a first encounter however hard the solver worked for the
+  rest. Junior keeps them on purpose; every tier above draws none.
+- **It has more of the depth §4.24 lacks.** Over twenty wizard boards each: `spanning` fires 2.1 times a
+  board against 1.1, `groupTight` 10.6 against 8.0, and `groupFull` — the rung that merely notices a
+  finished group — HALVES, 3.0 against 6.2. A board is four steps longer for eight more stars, so the
+  second star buys argument rather than bookkeeping. `allApart` is still not load-bearing: at two stars the
+  check becomes reachable in principle, and measured over ten boards a tier it refuses nothing.
+- **The finding worth carrying: a quota sets the region SIZE, and region size is the clue.** The reading
+  most people reach for — one star to a line, two to a region — halves the region count and so doubles every
+  region, and the ladder then decides **0% of squares** on boards that provably have unique answers. The
+  classic form doubles the stars and keeps the regions, so a region stays the size it was and says twice as
+  much. Family doc §11.4 has the table.
+- **Themes:** `sky` and **Water & Agriculture**, the latter built as the `fields` skin — farmsteads on a
+  flood plain, the channels between holdings drawn as water, two households that may not sit close enough to
+  share a well. **This is the family that can wear more**, and the reason is the pair: a place can hold two
+  watchmen or two torches where it can only ever hold one lone star. A skin fits when it can name three
+  things — something straight crossing the world, something bounded and ragged, and a reason two of them
+  repel (family doc §11.3). Watch and torches are designed and unbuilt.
 
 ---
 
@@ -899,25 +955,28 @@ budget, since solve time varies wildly across families (§3.2, §8).
 
 Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redesign.md` has "merchant"/"night-market" as live `theme` string examples):
 
-| Theme                        | Flavor                                      | Families that fit                                                                                                                                                                              |
-| ---------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)               |
-| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field — the ROLE waits for a second family, see the gap note), water clock                          |
-| **Trade** — a live role       | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). Authored as `encounter: "trade"` on the Great Pyramid of Giza; Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag |
-| **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms |
-| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells) |
-| **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                              |
-| **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                             |
-| **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                          |
+| Theme                        | Flavor                                      | Families that fit                                                                                                                                                                                                                                              |
+| ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                               |
+| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field — the ROLE waits for a second family, see the gap note), water clock                                                                                       |
+| **Trade** — a live role      | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). Authored as `encounter: "trade"` on the Great Pyramid of Giza; Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag |
+| **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                             |
+| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells)                                                                 |
+| **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                              |
+| **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                             |
+| **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                          |
 
 **Gap, closed on paper by §4.22.** The canal is a water family by mechanic rather than by dress — digging a
 channel from the river to a field is what it does — so once it is built the role has two members and the Nile
 Delta can ask for water puzzles outright. Until then the note below still describes the position.
 
-**Gap, half filled — and filled by a skin rather than by a mechanic.** Water & Nile
-held exactly one family, and that one unbuilt. Constellation now wears the theme too:
-basins joined by channels is what §4.21's rules say when the same board is read as a
-waterworks, and the Nile Delta Expedition authors that skin.
+**Gap, filled properly.** Water & Nile held exactly one family, and that one unbuilt.
+Constellation wears the theme as its `irrigation` skin — basins joined by channels is what
+§4.21's rules say when the same board is read as a waterworks — and **twin stars (§4.25) now
+carries the `water` and `agriculture` roles outright**, drawn as farmsteads on a flood plain.
+So the pool has two members and, unlike a second skin on one family, the second one brings
+different REASONING rather than a different dress. The curriculum question below is answered
+with it: a journey authoring water no longer serves the same puzzle five times.
 
 **Worth being precise about, because it is a cheaper move than it looks.** A skin gives a
 theme a _built, playable_ member without designing anything — but it adds no new **skill**

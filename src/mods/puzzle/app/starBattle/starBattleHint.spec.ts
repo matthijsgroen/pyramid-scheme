@@ -1,0 +1,148 @@
+import { describe, expect, it } from "vitest"
+import en from "../../../../../public/locales/en/common.json"
+import nl from "../../../../../public/locales/nl/common.json"
+import { difficulties } from "@/data/difficultyLevels"
+import { createStarBattleState, type CellMark } from "@/mods/puzzle/game/starBattle/starBattle"
+import { STAR_BATTLE_CONFIG } from "@/mods/puzzle/game/starBattle/starBattleConfig"
+import { generateStarBattle } from "@/mods/puzzle/game/starBattle/generateStarBattle"
+import { STAR_BATTLE_TECHNIQUES } from "@/mods/puzzle/game/starBattle/techniques"
+import { buildStarBattleHint } from "./starBattleHint"
+
+const board = generateStarBattle(5, STAR_BATTLE_CONFIG.expert)
+const answer = (): (CellMark | undefined)[] => board.solution.map(star => (star ? "star" : "dark"))
+
+describe("star battle hints", () => {
+  it("names a move on a fresh board, and points at what it reasons from", () => {
+    const hint = buildStarBattleHint(board, createStarBattleState(board))
+    expect(hint).toBeDefined()
+    expect(hint!.cells.size).toBeGreaterThan(0)
+    // The square it is about is drawn apart from the squares it argues from, and every square the step
+    // settles is drawn too — its sentence talks about all of them.
+    expect(hint!.focus).toBeDefined()
+    expect(hint!.decided.has(hint!.focus!)).toBe(true)
+  })
+
+  it("calls out a wrong mark before advising anything else", () => {
+    const marks = createStarBattleState(board).marks.slice()
+    const wrong = board.solution.findIndex(star => !star)
+    marks[wrong] = "star"
+    const hint = buildStarBattleHint(board, { marks })
+    expect(hint?.key).toBe("mistake")
+    // A wrong mark has no evidence to argue from — it IS the thing being pointed at.
+    expect([...hint!.decided]).toEqual([wrong])
+    expect(hint!.focus).toBe(wrong)
+    expect([...hint!.cells]).toEqual([])
+  })
+
+  it("calls out a wrong dark mark too, which is the mistake this family invites", () => {
+    const marks = createStarBattleState(board).marks.slice()
+    const star = board.solution.findIndex(Boolean)
+    marks[star] = "dark"
+    expect(buildStarBattleHint(board, { marks })?.key).toBe("mistake")
+  })
+
+  it("runs out of advice only once the board is done", () => {
+    expect(buildStarBattleHint(board, { marks: answer() })).toBeUndefined()
+  })
+
+  it("never advises a guess, on any tier", { timeout: 120_000 }, () => {
+    // Every reason the family can give is a forward deduction: a board only ships if the ladder settles it
+    // step by step, so there is no rung that says "try a star and see the board break".
+    for (const difficulty of difficulties) {
+      const board = generateStarBattle(2, STAR_BATTLE_CONFIG[difficulty])
+      const marks: (CellMark | undefined)[] = new Array(board.size ** 2).fill(undefined)
+      for (let guard = 0; guard < 400; guard++) {
+        const hint = buildStarBattleHint(board, { marks })
+        if (!hint) break
+        expect(hint.key, `${difficulty} advised a mistake`).not.toBe("mistake")
+        expect(hint.focus).toBeDefined()
+        marks[hint.focus!] = board.solution[hint.focus!] ? "star" : "dark"
+      }
+      expect(marks.every((mark, cell) => (mark === "star") === board.solution[cell])).toBe(true)
+    }
+  })
+})
+
+describe("every reason the ladder can give is phrased in both locales", () => {
+  // A hint that reaches the player as a raw translation key is worse than no hint, so the keys are checked
+  // against the ladder itself rather than against whatever the specs above happened to trip over.
+  // The reasons that state a number — a group's quota, or how many squares it is down to — read one way
+  // for a one-star board and another for a two-star one (game/starBattle/twinStars.ts), so both forms ship.
+  const counted = [
+    ...["row", "col", "region"].flatMap(group => [`groupFull.${group}`, `groupTight.${group}`, `onlyWay.${group}`]),
+    ...["row", "col"].flatMap(line => [`regionLine.${line}`, `lineRegion.${line}`]),
+  ]
+
+  const keys = [
+    "mistake",
+    "touch",
+    ...counted.flatMap(key => [`${key}_one`, `${key}_other`]),
+    ...["toRows", "toCols", "fromRows", "fromCols"].map(way => `spanning.${way}`),
+  ]
+
+  // Every hint but the mistake one ends with an imperative naming the squares it marked, so both of those
+  // have to be phrased too — a reason with no move is the hint doing half its job.
+  // Each move is plural-aware, so both forms have to be there — i18next silently falls back to the key
+  // itself when one is missing, which reaches the player as raw text.
+  const actions = ["ruleOut_one", "ruleOut_other", "place_one", "place_other"]
+
+  /** The places this mechanic wears. Every sentence below has to exist in each of them (§4.3). */
+  const PLACES = ["default", "fields"]
+
+  const placeIn = (locale: typeof en | typeof nl, place: string) =>
+    (locale.starBattle.hint as unknown as Record<string, Record<string, unknown>>)[place]
+
+  const phrase = (block: Record<string, unknown>, key: string) => block[key]
+
+  it("covers every rung of the ladder", () => {
+    for (const technique of STAR_BATTLE_TECHNIQUES) expect(keys.some(key => key.startsWith(technique))).toBe(true)
+  })
+
+  it.each(keys)("%s reads as a sentence in English and Dutch, in every place", key => {
+    for (const place of PLACES)
+      for (const locale of [en, nl]) expect(typeof phrase(placeIn(locale, place), key), place).toBe("string")
+  })
+
+  it.each(actions)("the %s move is spelled out in both, in every place", action => {
+    for (const place of PLACES)
+      for (const locale of [en, nl])
+        expect(typeof (placeIn(locale, place).action as Record<string, string>)[action], place).toBe("string")
+  })
+
+  it("asks for a move on every rung, and for none on a mistake", { timeout: 120_000 }, () => {
+    // The action is derived from what the step decides, so a rung that places a star must ask for a star and
+    // every other rung must ask for the ruling-out — a hint that named the wrong move would be worse than
+    // silence.
+    const board = generateStarBattle(9, STAR_BATTLE_CONFIG.master)
+    const marks: (CellMark | undefined)[] = new Array(board.size ** 2).fill(undefined)
+    const seen = new Set<string>()
+    for (let guard = 0; guard < 400; guard++) {
+      const hint = buildStarBattleHint(board, { marks })
+      if (!hint) break
+      expect(hint.action, hint.key).toBeDefined()
+      seen.add(hint.action!)
+      marks[hint.focus!] = board.solution[hint.focus!] ? "star" : "dark"
+    }
+    expect([...seen].sort()).toEqual(["place", "ruleOut"])
+
+    const wrong = board.solution.findIndex(star => !star)
+    const broken: (CellMark | undefined)[] = new Array(board.size ** 2).fill(undefined)
+    broken[wrong] = "star"
+    expect(buildStarBattleHint(board, { marks: broken })?.action).toBeUndefined()
+  })
+
+  it("has the goal and the rules in both", () => {
+    for (const locale of [en, nl]) {
+      // The goal is its own section above the rules (`puzzle-screens.md` §1), not a bullet in them.
+      // Stated per place AND per quota: both families share this screen, so the goal is the one line that
+      // says which of the two rules the board in front of the player is under, in the words of where it is.
+      const goals = locale.starBattle.goal as unknown as Record<string, string>
+      for (const place of PLACES)
+        for (const count of ["one", "other"])
+          expect(typeof goals[`${place}_${count}`], `${place}_${count}`).toBe("string")
+      const rules = locale.starBattle.rules as unknown as Record<string, Record<string, string>>
+      for (const place of PLACES)
+        for (const rule of ["touch", "enter"]) expect(typeof rules[place][rule], `${place}.${rule}`).toBe("string")
+    }
+  })
+})

@@ -57,6 +57,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCance
       onReset={() => setState(createBalanceState(glyphs))}
       hint={hint && t(`balance.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
+      goal={t("balance.goal")}
       rules={
         <BalanceRules
           manyRows={scales.length > 1}
