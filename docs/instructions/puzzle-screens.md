@@ -270,6 +270,12 @@ the seed. A family shows up there by being registered and tagged `puzzle`; its
 theme list comes from `FamilyMeta.themes`, its tiers from `minTier` upward.
 Rewards are dropped there — the lab tests the screen, not the economy.
 
+It is quick manual quality control, so **it plays the boards that ship**: for a family with a seed list
+(§6.1) the reroll walks that list rather than searching for arbitrary boards, and wraps at its end. A
+board only the bench can reach is a board nobody is checking. While a dial is being tuned this makes no
+difference — changed options miss their bucket and the board is searched for live, which is what tuning
+wants — so the two only diverge once a tier has settled and been filled.
+
 ## 6.1 Seed lists — the search happens on a build machine, not a phone
 
 A family that has to search for a board declares three things and stops thinking about it. Core
@@ -315,9 +321,9 @@ is unchanged; `seeds[seed % seeds.length]` picks the entry. So the offline pass 
 _configurations_, never the rooms a player can reach — reassembling a floor or regenerating the world
 cannot invalidate a list.
 
-A miss always falls through to live generation. That is not a failure path: it is how the puzzle lab
-works while a tier is being tuned, and how a lab `variant` (which changes the options, and which no
-room is ever authored with) is guaranteed a freshly searched board.
+A miss always falls through to live generation. That is not a failure path: it is how a tier being
+tuned still yields boards with no build step in the way, and how a lab `variant` (which changes the
+options, and which no room is ever authored with) is guaranteed a freshly searched board.
 
 `yarn generate-seeds` fills every bucket the baked world asks for, targeting the number of rooms that
 draw from it. `yarn seeds-info` reports coverage and what each tier's boards demand — the honest
