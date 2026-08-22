@@ -143,30 +143,44 @@ const seedRegions = (size: number, stars: readonly number[], quota: number, rand
 }
 
 /**
- * The stars paired off nearest-first, so a region has a short way to join its two.
+ * The stars paired off, one pair to a region — **and a pair on one row or one column is avoided rather than
+ * reached for.**
  *
- * **This puts every region's pair at the closest two stars may legally sit — a chessboard distance of two,
- * in 100% of regions — and that is kept deliberately rather than by oversight** (design doc §11.6). It looks
- * like a tell and measures like almost nothing: two stars may not touch, so on a board holding sixteen of
- * them every star has SOME star at distance two anyway (also 100%, with no pairing involved), and once one
- * star of a region is placed only about three squares of that region can legally take the other. Knowing the
- * partner is at distance two cuts three candidates to two.
+ * The obvious pairing is nearest-first by walking distance, and it has a shape nobody chose. Two stars may
+ * not touch, so the only partners at walking distance two are two along a row or two down a column: the
+ * diagonal neighbour at distance two is `(1,1)`, which touches. Nearest-by-walking-distance therefore picks
+ * an ALIGNED partner whenever one exists, and on a board this dense one always does. Every region's pair
+ * came out on a shared line, which is a pattern a player reads off the board long before they read the
+ * rules (design doc §11.6).
  *
- * Breaking it costs what a player waits for. Boards are drawn when a room is opened, not at build time, and
- * every looser pairing measured pays for the long corridors it creates in failed draws: three nearest at
- * random takes master from 339ms to 3.5s a board and still leaves 89%, and a free pairing takes it to 11.5s
- * and still leaves 74% — because the acceptance loop selects compact regions straight back in.
+ * So an aligned partner is charged two squares of extra distance. That is enough to lose to the knight-shaped
+ * neighbour at `(1,2)` — the nearest partner that shares neither row nor column — and not enough to reach
+ * across the board, which keeps the corridor short and the draw cheap.
+ *
+ * **It cannot be driven to zero, and should not be.** A region whose squares all sit in one line is what
+ * `regionLine` reads, and such a region's two stars are necessarily in that line — so a board with no
+ * aligned pair at all has taken its own top rungs away. The tiers that demand those rungs settle around two
+ * in five; the ones that do not, around one in four.
  */
+const ALIGNED_PENALTY = 2
+
 const pairStars = (size: number, stars: readonly number[], random: () => number): number[][] => {
   const loose = shuffle([...stars], random)
   const pairs: number[][] = []
   while (loose.length) {
     const from = loose.shift()!
+    const away = (to: number) => {
+      const [rows, cols] = [
+        Math.abs(rowOf(size, from) - rowOf(size, to)),
+        Math.abs(colOf(size, from) - colOf(size, to)),
+      ]
+      return rows + cols + (rows === 0 || cols === 0 ? ALIGNED_PENALTY : 0)
+    }
     let nearest = 0
     let shortest = Infinity
+    // The loose order is shuffled, so the first of several equally good partners is a random one of them.
     loose.forEach((to, index) => {
-      const away = Math.abs(rowOf(size, from) - rowOf(size, to)) + Math.abs(colOf(size, from) - colOf(size, to))
-      if (away < shortest) [shortest, nearest] = [away, index]
+      if (away(to) < shortest) [shortest, nearest] = [away(to), index]
     })
     pairs.push([from, loose.splice(nearest, 1)[0]])
   }

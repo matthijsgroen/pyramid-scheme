@@ -634,40 +634,46 @@ The eliminating half is not built, and what it would buy is 10×10: the shipped 
 the rung is a consequence of a board size this family has no use for. At 8×8 it is not needed
 — one map in five settles already, which is a generous pool to filter a required rung out of.
 
-### 11.6 Every region's pair sits at the closest two stars may legally get
+### 11.6 The pairing had a shape nobody chose
 
-Noticed in play — the answers look like couples — and it is exactly true: **100% of regions hold their two
-stars at a chessboard distance of two**, the minimum the no-touching rule allows, at every tier. The
-generator pairs the stars nearest-first so each region has a short way to join its two, and on a board this
-dense a nearest pass finds a distance-two partner every time.
+Noticed in play: every region's two answers sat on one row or one column, and close together. Both were
+true, and the second was a consequence of the first.
 
-It is kept, and the measurements are why.
+**The mechanism is one line of arithmetic.** The generator pairs the stars nearest-first by walking
+distance. Two stars may not touch, so the only partners at walking distance two are two along a row or two
+down a column — the diagonal at distance two is `(1,1)`, which touches. **Nearest-by-walking-distance can
+therefore only ever pick an aligned partner**, and on a board holding sixteen stars one is always available.
+The pattern was not a bias to be tuned out; it was the metric picking one shape and no other.
 
-**Most of what that pattern looks like is the board, not the pairing.** Sixteen stars on sixty-four squares
-with nothing touching is a packed board: **every star has some star at distance two anyway** — also 100%,
-with no pairing involved. What the pairing adds is that the close one is the PARTNER.
+The fix is to charge an aligned partner two squares of extra distance. That loses to the knight-shaped
+neighbour at `(1,2)` — the nearest partner sharing neither row nor column — and does not reach across the
+board, so the corridor joining a pair stays short and the draw stays cheap.
 
-**What that is worth to a player is about one square.** Once one star of a region is placed, only ~3.0
-squares of that region can legally take the other, and ~2.1 of them are at distance two. The invariant turns
-three candidates into two, on a region that was already nearly decided.
+| Pairing                     | junior | expert | master | wizard | pairs on one line |
+| --------------------------- | ------ | ------ | ------ | ------ | ----------------- |
+| nearest by walking distance | 14ms   | 39ms   | 339ms  | 115ms  | ~100%             |
+| nearest by chessboard       | 14ms   | 85ms   | 2.1s   | 754ms  | 57–74%            |
+| **aligned partner charged** | 20ms   | 152ms  | 609ms  | 898ms  | **26–43%**        |
 
-**What breaking it costs is what a player waits for.** Boards are drawn when a room is opened rather than at
-build time, so generation cost is load time on a phone. Every looser pairing pays for its long corridors in
-failed draws:
+**It cannot go to zero and should not.** A region whose squares all sit in one line is exactly what
+`regionLine` reads, and such a region's two stars are necessarily in that line — a board with no aligned
+pair has taken its own top rungs away. The tiers demanding those rungs settle around two in five; wizard,
+which demands `spanning` instead, around one in four.
 
-| Pairing                 | expert | master | wizard | regions at distance 2 |
-| ----------------------- | ------ | ------ | ------ | --------------------- |
-| nearest (ships)         | 39ms   | 339ms  | 115ms  | 100%                  |
-| random of the 2 nearest | 55ms   | 918ms  | 312ms  | 86–98%                |
-| random of the 3 nearest | 130ms  | 3.5s   | 1.6s   | 75–89%                |
-| free                    | 5.6s   | 11.5s  | 9.2s   | 64–81%                |
+**Two other constructions were built and measured, and both lost.** Neither is worth revisiting.
 
-**The bias does not go away even when the pairing is free**, which is the finding worth carrying: the
-acceptance loop selects it back in. A far pair needs a long corridor, a long corridor makes a straggling
-region, and a straggling region map is one the ladder cannot settle — so the boards that survive are the ones
-with compact regions however the pairs were drawn. Routing the long pairs first, on the theory that they
-should cross an empty board, makes it worse on both counts.
+- **Merging adjacent regions instead of joining a pair** — cut the board into one region per star, then
+  marry the little regions off in adjacent pairs, so connectivity is free and no corridor exists. It should
+  have decoupled the pair from distance entirely. It landed at 42–58% aligned for 3–10s a board, and wizard
+  could no longer meet its rung quota.
+- **A free pairing**, ignoring distance altogether: 11.5s a board and still 64–81% at minimum distance.
 
-Removing it properly means a different generation order — regions drawn first and a star set searched for
-inside them — which is the ordering §4 rejects for being a rejection loop on top of a rejection loop. Worth
-revisiting only if the tell turns out to matter in play, which three-candidates-to-two suggests it does not.
+Which is the finding worth carrying: **the acceptance loop reintroduces whatever the pairing gives up.** A
+far pair needs a long corridor, a long corridor makes a straggling region, and a straggling region map is one
+the ladder cannot settle — so the boards that survive have compact regions however the pairs were drawn. Only
+a metric that never proposes the shape in the first place moved the number.
+
+Distance itself stayed put, and that is fine: ~90% of pairs are still two apart, but so is everything else on
+a board this dense. **Every star has some star at distance two whether or not it is its partner** — also
+100%, with no pairing involved — and once one star of a region is placed only ~3.0 squares of that region can
+legally take the other. Distance was never the readable part; the shared line was.

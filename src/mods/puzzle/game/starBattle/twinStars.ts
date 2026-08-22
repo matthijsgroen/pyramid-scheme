@@ -91,19 +91,20 @@ export const TWIN_STARS_CONFIG: Record<Difficulty, StarBattleOptions> = {
     requires: ["regionLine"],
     requiresCount: 2,
   },
-  // The spread tightens too, so no region is small enough to be read on sight, and the converse reading —
-  // which needs the rest of a line already emptied — has to be spent twice. 355ms.
+  // The converse reading, which needs the rest of a line already emptied, spent twice. Shares expert's
+  // spread: at n² this tier costs three times as much to draw and comes out no harder, so the separation
+  // from expert is the rung rather than the shape of the map. 609ms.
   master: {
     size: 8,
     quota: 2,
-    regionSpread: 2,
+    regionSpread: 3,
     minRegion: 5,
     techniqueCap: "lineRegion",
     requires: ["lineRegion"],
     requiresCount: 2,
   },
-  // The top rung, twice. 111ms — cheaper than master, because `lineRegion` is the scarcer reading of the
-  // two and a tier that demands three of them is the one the search struggles to fill.
+  // The top rung, twice, and the only tier drawn at the tighter spread — so no region is small enough to
+  // read on sight and the reasoning has to span two groups. 898ms.
   wizard: {
     size: 8,
     quota: 2,
