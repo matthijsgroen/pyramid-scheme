@@ -14,7 +14,7 @@
     "build-storybook": "storybook build",
     "generate-pwa-assets": "pwa-assets-generator",
     "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
-    "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/ui/atoms/mosaicPieces.generated.ts",
+    "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/ui/atoms/mosaic{Pieces,Geometry}.generated.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
     "generate-seeds": "tsx scripts/puzzleSeeds.ts generate && yarn prettier --write src/data/puzzleSeeds.ts",
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",

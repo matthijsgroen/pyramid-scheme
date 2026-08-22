@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa"
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
 import path from "node:path"
 
-import info from "./package.json"
+import info from "./package.json" with { type: "json" }
 
 const htmlPlugin = () => {
   return {
@@ -89,7 +89,14 @@ export default defineConfig({
 
         workbox: {
           globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
-          globIgnores: ["**/stained-glass*.png"],
+          // iOS draws its own launch screens and does not go through the service worker for them,
+          // so 27 splash PNGs in the precache were 0.6 MB nobody read.
+          globIgnores: ["**/apple-splash-*.png"],
+          // The whole game has to be playable offline, mosaic window included, so the stained-glass
+          // artwork is precached — and the ceiling covers it UNOPTIMIZED. sharp is an optional peer
+          // dep: when it fails to install (Linux CI) the image optimizer skips silently and the raw
+          // 3.9 MB PNG ships, which the 2 MB default would reject and fail the build.
+          maximumFileSizeToCacheInBytes: 4_500_000,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
         },
@@ -105,17 +112,15 @@ export default defineConfig({
     ViteImageOptimizer({
       png: { quality: 80 },
       webp: { lossless: false, quality: 80 },
+      // pwa-assets-generator already emits these at their target size; re-encoding them came out
+      // bigger every time, so each one was skipped anyway.
+      exclude: /apple-(splash|touch-icon)|maskable-icon|pwa-\d+x\d+/,
     }),
   ],
   base: "/pyramid-scheme/",
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      target: "esnext",
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   build: {
