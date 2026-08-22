@@ -1,5 +1,6 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import { generateStarBattle, gradeStarBattle } from "./generateStarBattle"
 import type { StarBattleOptions } from "./generateStarBattle"
 
 /**
@@ -37,6 +38,13 @@ export const TWIN_STARS_META: FamilyMeta = {
   icon: "✨",
   color: "violet",
   rewardPriority: 60, // a puzzle room like any other — fills once treasure's guaranteed slots are spoken for
+  // Reads the table below, which is declared after this — only ever called once a room opens, never at
+  // module load.
+  seedable: seedable({
+    resolveOptions: ({ difficulty }) => TWIN_STARS_CONFIG[difficulty ?? "expert"],
+    generate: generateStarBattle,
+    grade: gradeStarBattle,
+  }),
 }
 
 /**

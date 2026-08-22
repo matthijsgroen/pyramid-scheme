@@ -1,3 +1,4 @@
+import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32, shuffle } from "@/game/random"
 import { cellAt, colOf, neighboursOf, rowOf, type StarBattlePuzzle } from "./starBattle"
 import {
@@ -302,7 +303,42 @@ const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId[], sol
  * what settles uniqueness at the same time, since every step along the way was forced. No solution counter
  * runs anywhere in this family.
  */
-export const generateStarBattle = (seed: number, options: StarBattleOptions): StarBattlePuzzleWithAnswer => {
+// How many times the tier's own rungs fired. A board is kept on this, and a near miss ranked by it.
+const demandedRungs = (
+  steps: readonly { technique: StarBattleTechniqueId }[],
+  requires: readonly StarBattleTechniqueId[]
+) => steps.filter(step => requires.includes(step.technique)).length
+
+// The gate itself, named once so the loop below and `grade` cannot come to disagree about it.
+const meetsDemand = (
+  steps: readonly { technique: StarBattleTechniqueId }[],
+  requires: readonly StarBattleTechniqueId[],
+  requiresCount: number
+) => !requires.length || demandedRungs(steps, requires) >= requiresCount
+
+/**
+ * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
+ * (docs/offline-puzzle-seeds.md).
+ *
+ * Both go through `meetsDemand`, so an offline pass filtering seeds by this admits exactly the boards
+ * this generator accepts. That matters more here than elsewhere: when no attempt hits the tier's quota the
+ * loop ships its nearest miss rather than throwing, so whether a board was accepted or settled for
+ * cannot be read off the fact that one came back.
+ */
+export const gradeStarBattle = (board: StarBattlePuzzleWithAnswer, options: StarBattleOptions): Grade | null => {
+  const { techniqueCap, requires = [], requiresCount = 1 } = options
+  const result = settles(board, techniquesUpTo(techniqueCap), board.solution)
+  if (!result || !meetsDemand(result.steps, requires, requiresCount)) return null
+  return { steps: result.steps.length, deepest: result.deepest }
+}
+
+export const generateStarBattle = (
+  seed: number,
+  options: StarBattleOptions,
+  // Kept out of `options` deliberately: the options are what a seed list keys on, so asking for a
+  // single attempt instead of the full search must not file the board under a different bucket.
+  attempts: number = MAX_ATTEMPTS
+): StarBattlePuzzleWithAnswer => {
   const { size, quota, regionSpread, techniqueCap, requires = [], requiresCount = 1 } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
@@ -310,7 +346,7 @@ export const generateStarBattle = (seed: number, options: StarBattleOptions): St
   // for more, and at two stars it usually should — see `minRegion`.
   const smallest = Math.max(options.minRegion ?? 0, quota * 2 - 1)
   let fallback: { board: StarBattlePuzzleWithAnswer; demanded: number } | undefined
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const stars = starSet(size, quota, random)
     if (!stars) continue
     const seeds = seedRegions(size, stars, quota, random)
@@ -324,8 +360,8 @@ export const generateStarBattle = (seed: number, options: StarBattleOptions): St
     const board = { ...puzzle, solution, techniqueCap }
     // A board that never needed the tier's own rung teaches the tier below it, so it is only kept if
     // nothing better turns up.
-    const demanded = result.steps.filter(step => requires.includes(step.technique)).length
-    if (!requires.length || demanded >= requiresCount) return board
+    if (meetsDemand(result.steps, requires, requiresCount)) return board
+    const demanded = demandedRungs(result.steps, requires)
     // The nearest miss is the fallback, so a tier that cannot hit its quota still ships its hardest draw.
     if (!fallback || demanded > fallback.demanded) fallback = { board, demanded }
   }

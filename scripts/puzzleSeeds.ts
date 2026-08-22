@@ -3,23 +3,29 @@
  * Finds and verifies the seeds src/data/puzzleSeeds.ts ships — boards proven offline to build on
  * their first attempt, so play time skips the search. See docs/offline-puzzle-seeds.md.
  *
- * Run: yarn generate-seeds [--family=<id>] [--cap=<n>] [--tries=<n>]
+ * Run: yarn generate-seeds [--family=<id>] [--cap=<n>] [--tries=<n>] [--parallel=<n>]
  *      yarn seeds-info
  *
- *   --family  only this family (repeatable as a comma-separated list)
- *   --cap     most seeds to keep per bucket, so one hot configuration cannot dominate the artifact
- *   --tries   most seeds to test per bucket before reporting the bucket short
+ *   --family    only these families (comma-separated); other buckets keep the seeds they have
+ *   --cap       most seeds to keep per bucket, so one hot configuration cannot dominate the artifact
+ *   --tries     most seeds to test per bucket before reporting the bucket short
+ *   --parallel  worker threads; defaults to two fewer than the machine has cores
  */
-import { writeFileSync } from "fs"
-import { dirname, join } from "path"
-import { fileURLToPath } from "url"
+import { cpus } from "node:os"
+import { writeFileSync } from "node:fs"
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
+import { Worker } from "node:worker_threads"
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import type { Grade } from "../src/game/families/familyMeta"
+import type { FoundSeed } from "../src/game/seeds/findSeeds"
 import { enumerateConfigs, type ConfigDemand } from "../src/game/seeds/enumerateConfigs"
 import { ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
+import type { SeedTask, SeedWorkerMessage } from "./seedProtocol"
 
-const OUT = join(dirname(fileURLToPath(import.meta.url)), "../src/data/puzzleSeeds.ts")
+const here = dirname(fileURLToPath(import.meta.url))
+const OUT = join(here, "../src/data/puzzleSeeds.ts")
 
 const argv = process.argv.slice(2)
 const command = argv.find(arg => !arg.startsWith("--")) ?? "info"
@@ -28,43 +34,18 @@ const number = (name: string, fallback: number) => Number(flag(name) ?? fallback
 
 const CAP = number("cap", 200)
 const TRIES = number("tries", 50_000)
+// Two cores left alone, so the machine running this stays usable.
+const THREADS = Math.max(1, Math.min(number("parallel", cpus().length - 2), cpus().length - 1))
+// Windows of roughly a second at the slowest bucket's yield. Small enough that no thread is left
+// holding the last long task while the others idle, large enough that the messaging is noise.
+const CHUNK = 500
 const only = flag("family")?.split(",")
 
-const byId = new Map(ALL_FAMILY_META.map(family => [family.id, family]))
 const demands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META).filter(
   demand => !only || only.includes(demand.familyId)
 )
-
-/**
- * Walks seeds until the bucket is full. A seed is admitted only if it builds a board the generator
- * would have kept on its **first** attempt — which is what lets play time run one attempt with no
- * gates at all, and is why `grade` has to be the generator's own predicate rather than a second
- * opinion about it.
- */
-const fill = (demand: ConfigDemand, target: number) => {
-  const seedable = byId.get(demand.familyId)?.seedable
-  if (!seedable) throw new Error(`family ${demand.familyId} is not seedable`)
-  const options = seedable.resolveOptions({ difficulty: demand.difficulty })
-  const seeds: number[] = []
-  const grades: Grade[] = []
-  let tried = 0
-  for (let seed = 1; seeds.length < target && tried < TRIES; seed++, tried++) {
-    let board
-    try {
-      board = seedable.generate(seed, options, 1)
-    } catch {
-      continue // the one attempt it was given missed, so no list may carry this seed
-    }
-    const grade = seedable.grade(board, options)
-    if (!grade) continue // built, but not a board this generator would have kept
-    seeds.push(seed)
-    grades.push(grade)
-  }
-  return { seeds, grades, tried }
-}
-
-const describe = (demand: ConfigDemand, target: number) =>
-  `${demand.familyId}/${demand.difficulty} (${demand.rooms} rooms, want ${target})`
+const targetFor = (demand: ConfigDemand) => Math.min(demand.rooms, CAP)
+const describe = (demand: ConfigDemand) => `${demand.familyId}/${demand.difficulty} (${demand.rooms} rooms)`
 
 const summarise = (grades: Grade[]) => {
   if (!grades.length) return ""
@@ -73,21 +54,109 @@ const summarise = (grades: Grade[]) => {
   return `steps ${steps[0]}-${steps[steps.length - 1]} (median ${steps[steps.length >> 1]}), demands ${deepest.join("/") || "nothing"}`
 }
 
+/** What one bucket has collected so far, kept per window so the order threads finish in cannot matter. */
+type Bucket = { demand: ConfigDemand; target: number; byChunk: Map<number, FoundSeed[]>; done: boolean }
+
+/**
+ * The windows a bucket has retired, concatenated in order — everything up to the first window still
+ * outstanding. A bucket is satisfied once that prefix holds its target, which makes the result a
+ * function of the seed space alone rather than of which thread got there first.
+ */
+const retired = (bucket: Bucket): FoundSeed[] => {
+  const found: FoundSeed[] = []
+  for (let chunk = 0; bucket.byChunk.has(chunk); chunk++) found.push(...bucket.byChunk.get(chunk)!)
+  return found
+}
+
+const runPool = async (buckets: Bucket[]) => {
+  const tasks: SeedTask[] = []
+  for (const bucket of buckets)
+    for (let chunk = 0; chunk * CHUNK < TRIES; chunk++)
+      tasks.push({
+        taskId: tasks.length,
+        hash: bucket.demand.hash,
+        familyId: bucket.demand.familyId,
+        difficulty: bucket.demand.difficulty,
+        chunk,
+        from: 1 + chunk * CHUNK,
+        count: CHUNK,
+      })
+
+  const byHash = new Map(buckets.map(bucket => [bucket.demand.hash, bucket]))
+  const pending = new Map<number, SeedTask>()
+  let next = 0
+  let completed = 0
+  const errors: string[] = []
+
+  // The worker is TypeScript, which a worker thread will not load on its own. Booting it through a
+  // shim that registers the tsx loader first is what replaces a bundling step and a build artifact.
+  const entry = JSON.stringify(new URL("./seedWorker.ts", import.meta.url).href)
+  const boot = `import("tsx/esm/api").then(tsx => { tsx.register(); return import(${entry}) })`
+
+  await new Promise<void>((resolve, reject) => {
+    const workers = Array.from({ length: Math.min(THREADS, tasks.length) }, () => new Worker(boot, { eval: true }))
+    let alive = workers.length
+
+    const handOut = (worker: Worker) => {
+      // Skip past anything whose bucket already has what it needs — most of the queue, since every
+      // bucket is queued for the full try budget and most fill long before spending it.
+      while (next < tasks.length && byHash.get(tasks[next].hash)!.done) next++
+      if (next >= tasks.length) {
+        worker.postMessage({ type: "shutdown" })
+        return
+      }
+      const task = tasks[next++]
+      pending.set(task.taskId, task)
+      worker.postMessage({ type: "task", task })
+    }
+
+    for (const worker of workers) {
+      worker.on("message", (message: SeedWorkerMessage) => {
+        if (message.type === "idle") return handOut(worker)
+        const task = pending.get(message.taskId)!
+        pending.delete(message.taskId)
+        if (message.error) errors.push(`${task.familyId}/${task.difficulty}: ${message.error}`)
+        const bucket = byHash.get(task.hash)!
+        bucket.byChunk.set(task.chunk, message.found)
+        if (retired(bucket).length >= bucket.target) bucket.done = true
+        completed++
+        if (completed % 40 === 0)
+          process.stderr.write(
+            `\r${buckets.filter(b => b.done).length}/${buckets.length} buckets, ${completed} windows scanned`
+          )
+      })
+      worker.on("error", reject)
+      worker.on("exit", () => {
+        if (--alive === 0) resolve()
+      })
+    }
+  })
+
+  process.stderr.write("\r".padEnd(70) + "\r")
+  for (const error of errors) console.error(error)
+  return errors.length
+}
+
 if (command === "generate") {
+  const buckets: Bucket[] = demands.map(demand => ({
+    demand,
+    target: targetFor(demand),
+    byChunk: new Map(),
+    done: false,
+  }))
+  const started = performance.now()
+  const failures = await runPool(buckets)
+
   const lists: Record<string, number[]> = { ...puzzleSeeds }
   let short = 0
-  for (const demand of demands) {
-    const target = Math.min(demand.rooms, CAP)
-    const started = performance.now()
-    const { seeds, grades, tried } = fill(demand, target)
-    lists[demand.hash] = seeds
-    const took = ((performance.now() - started) / 1000).toFixed(1)
+  for (const bucket of buckets) {
+    const found = retired(bucket).slice(0, bucket.target)
+    lists[bucket.demand.hash] = found.map(entry => entry.seed)
     // Never let a bucket come up short quietly: a half-filled list reads as covered until a player
     // meets the room that repeats.
-    if (seeds.length < target) short++
-    const verdict =
-      seeds.length < target ? `SHORT ${seeds.length}/${target} after ${tried} tries` : `${seeds.length} seeds`
-    console.log(`${describe(demand, target).padEnd(46)} ${verdict.padEnd(28)} ${took}s  ${summarise(grades)}`)
+    if (found.length < bucket.target) short++
+    const verdict = found.length < bucket.target ? `SHORT ${found.length}/${bucket.target}` : `${found.length} seeds`
+    console.log(`${describe(bucket.demand).padEnd(42)} ${verdict.padEnd(18)} ${summarise(found.map(f => f.grade))}`)
   }
 
   const sorted = Object.keys(lists)
@@ -102,22 +171,23 @@ if (command === "generate") {
 // were proven under (docs/offline-puzzle-seeds.md). Parsed from one string rather than written as an
 // object literal, which is cheaper for the engine to read.
 export const puzzleSeeds: Record<string, number[]> = JSON.parse(
-  ${JSON.stringify(JSON.stringify(sorted))}
+  '${JSON.stringify(sorted)}'
 )
 `
   )
-  console.log(`\n${Object.keys(sorted).length} buckets written to src/data/puzzleSeeds.ts`)
-  if (short) {
+  console.log(
+    `\n${Object.keys(sorted).length} buckets written in ${((performance.now() - started) / 1000).toFixed(1)}s on ${THREADS} threads`
+  )
+  if (short)
     console.error(`${short} bucket(s) came up short — raise --tries, or the tier's dials are too tight to fill.`)
-    process.exit(1)
-  }
+  if (short || failures) process.exit(1)
 } else {
   const listed = demands.filter(demand => puzzleSeeds[demand.hash]?.length)
   for (const demand of demands)
     console.log(
-      `${describe(demand, Math.min(demand.rooms, CAP)).padEnd(46)} ${String(puzzleSeeds[demand.hash]?.length ?? 0).padStart(4)} listed`
+      `${describe(demand).padEnd(42)} ${String(puzzleSeeds[demand.hash]?.length ?? 0).padStart(4)}/${targetFor(demand)} listed`
     )
   console.log(
-    `\n${listed.length}/${demands.length} buckets listed, over ${demands.reduce((sum, d) => sum + d.rooms, 0)} rooms`
+    `\n${listed.length}/${demands.length} buckets listed, over ${demands.reduce((sum, demand) => sum + demand.rooms, 0)} rooms`
   )
 }

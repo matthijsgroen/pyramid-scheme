@@ -1,3 +1,4 @@
+import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32, shuffle } from "@/game/random"
 import { cellAt, type EclipsePuzzle, type Link, type Mark } from "./eclipse"
 import { ECLIPSE_TECHNIQUES, solveEclipseByTechniques, techniqueRank, type EclipseTechniqueId } from "./techniques"
@@ -143,12 +144,45 @@ const thin = (
   return { size, given, links }
 }
 
-export const generateEclipse = (seed: number, options: EclipseOptions): EclipsePuzzleWithAnswer => {
+// How many times the tier's own rungs fired. A board is kept on this, and a near miss ranked by it.
+const demandedRungs = (steps: readonly { technique: EclipseTechniqueId }[], requires: readonly EclipseTechniqueId[]) =>
+  steps.filter(step => requires.includes(step.technique)).length
+
+// The gate itself, named once so the loop below and `grade` cannot come to disagree about it.
+const meetsDemand = (
+  steps: readonly { technique: EclipseTechniqueId }[],
+  requires: readonly EclipseTechniqueId[],
+  requiresCount: number
+) => !requires.length || demandedRungs(steps, requires) >= requiresCount
+
+/**
+ * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
+ * (docs/offline-puzzle-seeds.md).
+ *
+ * Both go through `meetsDemand`, so an offline pass filtering seeds by this admits exactly the boards
+ * this generator accepts. That matters more here than elsewhere: when no attempt hits the tier's quota the
+ * loop ships its nearest miss rather than throwing, so whether a board was accepted or settled for
+ * cannot be read off the fact that one came back.
+ */
+export const gradeEclipse = (board: EclipsePuzzleWithAnswer, options: EclipseOptions): Grade | null => {
+  const { techniqueCap, requires = [], requiresCount = 1 } = options
+  const result = settles(board, techniquesUpTo(techniqueCap), board.solution)
+  if (!result || !meetsDemand(result.steps, requires, requiresCount)) return null
+  return { steps: result.steps.length, deepest: result.deepest }
+}
+
+export const generateEclipse = (
+  seed: number,
+  options: EclipseOptions,
+  // Kept out of `options` deliberately: the options are what a seed list keys on, so asking for a
+  // single attempt instead of the full search must not file the board under a different bucket.
+  attempts: number = MAX_ATTEMPTS
+): EclipsePuzzleWithAnswer => {
   const { size, techniqueCap, requires = [], requiresCount = 1 } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
   let fallback: { board: EclipsePuzzleWithAnswer; demanded: number } | undefined
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const solution = solutionGrid(size, random)
     if (!solution) continue
     const puzzle = thin(size, solution, allowed, random)
@@ -157,8 +191,8 @@ export const generateEclipse = (seed: number, options: EclipseOptions): EclipseP
     const board = { ...puzzle, solution, techniqueCap }
     // A board that never needed the tier's own rung teaches the tier below it, so it is only kept if
     // nothing better turns up.
-    const demanded = result.steps.filter(step => requires.includes(step.technique)).length
-    if (!requires.length || demanded >= requiresCount) return board
+    if (meetsDemand(result.steps, requires, requiresCount)) return board
+    const demanded = demandedRungs(result.steps, requires)
     // The nearest miss is the fallback, so a tier that cannot hit its quota still ships its hardest draw.
     if (!fallback || demanded > fallback.demanded) fallback = { board, demanded }
   }
