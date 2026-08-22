@@ -77,73 +77,198 @@ Two consequences:
 
 ## The shape
 
-### The list must pin the attempt, or only admit clean seeds
+### The list is keyed by a hash of the generator's own inputs
 
-The subtlety that decides whether the guarantee holds. Generation loops attempts, and **rejection is what
-selects which attempt wins** — a seed's board is the first draft that passed the gates, not the first draft.
-If play time skips the gates it takes attempt 0, which need not be the attempt that was verified.
+The one decision everything else falls out of. A bucket key is **not** `family + tier` — it is a hash of the
+resolved options object the generator actually receives:
 
-Two ways out:
+```ts
+const configHash = (options: unknown) => hashString(stableStringify(options))
+```
 
-- **Store `(seed, attempt)`** and have play time jump straight to that attempt.
-- **Only admit seeds whose attempt 0 passes everything**, and let play time run exactly one attempt with no
-  gates at all.
+This is Block Sort's `settingsHash`, and it is worth stating why it beats the obvious key:
 
-Measured share of seeds clean on attempt 0: **starter 43%, junior 38%, expert 45%, master 58%, wizard 55%.**
-So the second option costs about half the candidate seeds, which is free when the compute is offline — and it
-is much the simpler contract, because play-time generation becomes a straight line with no loop and no reject
-path.
+- **It is the drift guard, for free.** Turn a dial in `lightbeamConfig.ts` and the options object changes, so
+  the hash changes, so the lookup misses and play time falls back to live generation. There is no version
+  number to remember to bump and no checksum to maintain — the key _is_ the checksum. A stale bucket cannot
+  silently serve a board that was verified against different dials, because a stale bucket is unreachable.
+- **It is exactly as fine-grained as generation is.** Two tiers whose tables coincide share a bucket, which is
+  correct rather than wasteful. Star Battle and Twin Stars ship different tables and get different buckets
+  from one generator; if a future family's `expert` and `master` collapse to the same options, they get one
+  list, and nobody has to notice.
+- **It ignores what generation ignores.** `theme` picks a skin and never reaches the generator, so it must not
+  reach the key. `variant` does reach it, through the options. Normalising by "what the generator is handed"
+  gets both right without a hand-maintained include/exclude list.
 
-**Recommendation: only admit clean seeds.** The attempt counter is a generation implementation detail and
-baking it into shipped data welds the list to the current control flow.
+### What a family declares, and the three things that have to be true first
 
-### Ship the solve with the seed
+Core enumerates, verifies and emits; a mod only declares. The declaration is one optional field on
+`FamilyMeta` — functions on `FamilyMeta` are already the established pattern, since `resolveKeyRequirements`
+is one:
 
-The offline pass has to solve the board to verify it. Throwing that away and re-deriving it on the player's phone
-for the first hint is the waste that is easy to miss.
+```ts
+export type SeedableFamily<Options, Puzzle> = {
+  /** ctx -> the options object generate() is handed. Pure, no RNG. Its hash is the bucket key. */
+  resolveOptions: (ctx: FamilyContext) => Options
+  generate: (seed: number, options: Options, attempts?: number) => Puzzle
+  /** The generator's own acceptance gate, exported. null means this board would have been rejected. */
+  grade: (puzzle: Puzzle, options: Options) => Grade | null
+}
+```
 
-**And it is a pure function of the puzzle**, which is the fact that makes this work. A hint is
-`solveLightbeamByTechniques(puzzle, cap)` — it starts from a fresh board and never reads the player's state; the
-state only picks _which_ of the reasons it found to show. Measured on a lightbeam board: a hint costs 617.6ms and
-the solve alone costs 617.8ms, so the matching against the player is free, and asking at the opening costs the
-same as asking half-way through (618ms against 620ms). There is nothing about a hint that has to happen at play
-time.
+Three preconditions, each a small mechanical change, and each load-bearing:
 
-Measured cost of a hint, and the size of what would replace it:
+1. **`resolveOptions` has to exist separately from `generate`.** Today the two are fused in the plugin —
+   `generate: (seed, ctx) => generateStarBattle(seed, STAR_BATTLE_CONFIG[ctx.difficulty ?? "starter"])`. Split
+   the table lookup out into `<family>Config.ts` beside the table it reads. It is a two-line move per family
+   and it is what lets a React-free build script compute the same key the app will.
+2. **`generate` takes an attempt cap.** Today the cap is a module constant (`MAX_ATTEMPTS`, 400 to 20 000
+   depending on family). It becomes a parameter defaulting to that constant, so the offline pass and play time
+   can both ask for exactly one attempt.
+3. **`grade` has to be the generator's own gate, extracted — not a second implementation of it.** This is the
+   subtle one. Star Battle, Constellation and Eclipse return a **nearest-miss board** when no attempt hits the
+   tier's required rungs, so "did it throw" is not a usable test of acceptance. If the offline pass graded with
+   a reimplementation that drifted from the generator's internal `settles()`, it could admit a seed the
+   generator itself would have rejected, and play time would hand the player the fallback board. Export the
+   predicate the generator already calls, and both sides are the same code by construction.
 
-| tier    | configurations | one hint    | reasons found | serialised |
-| ------- | -------------- | ----------- | ------------- | ---------- |
-| starter | 32             | 1.4ms       | 8.9           | 203B       |
-| junior  | 272            | 2.0ms       | 14.4          | 332B       |
-| expert  | 416            | 2.9ms       | 11.4          | 268B       |
-| master  | 3 883          | 59.7ms      | 15.5          | 366B       |
-| wizard  | 51 264         | **617.6ms** | 16.6          | **398B**   |
+### Only seeds clean on the first attempt get on the list
 
-So the artifact per entry is **the seed and the ordered reasons the ladder found** — around 400 bytes at the
-worst tier, against 618ms of phone time. Both are already computed during verification.
+Keeping the existing recommendation, but it needs re-checking against families that did not exist when it was
+written, because they use a different RNG shape.
 
-Because the reasons do not depend on the board, they are also worth deriving **once per board** at play time,
-which is now what happens: the first hint pays and every hint after it is free. Four hints on a top-tier board,
-re-solving each time against solving once — 3 212.7ms against 803.6ms, with each hint after the first costing
-0.02ms. Shipping them removes the remaining 803ms.
+Sumplete, Balance Scale, Futoshiki and Lightbeam reseed per attempt (`mulberry32(seed * 7919 + attempt)`), so
+attempts are independent streams. Star Battle, Constellation and Eclipse build **one** stream outside the loop,
+so attempt _N_ depends on every draw made before it. That kills the `(seed, attempt)` option outright — you
+cannot jump to an attempt on those families without replaying the ones before it — and it leaves
+**clean-on-first-attempt** as the only contract that works for both shapes. Which is fine, because
+"run the loop body once" is well-defined and identical under either shape.
 
-Note where the cost is and is not: the bottom three tiers are 1–3ms and would not justify any of this. It is
-the top two that need it, which is the same shape as the generation cost.
+What changes is the yield, not the contract. Star Battle at wizard reports roughly one draw in a hundred
+solvable and `spanning` firing on two boards in five, so the clean-on-first rate there is well under 1% —
+against the 43–58% the doc measured on Lightbeam. That is affordable, and the reason is worth being precise
+about: **the work is the same work.** A full `generateStarBattle` call at wizard already grinds through those
+same hundreds of rejected attempts to return one board; the offline pass does the identical grinding, just
+spread across hundreds of one-attempt calls instead of inside one. It costs nothing extra to insist the
+survivor be attempt zero.
 
-### Where it lives, for twenty families
+### An entry is a seed, and nothing else
 
-Harness level, beside the family registry — not inside each mod. The precondition is already universal and
-already asserted: every family declares `generate(seed, ctx)` and a technique solver, and every family's spec
-already asserts generation is deterministic in its inputs.
+This is where I would depart from the plan above, and it is a bundle-size argument rather than a
+disagreement about the measurements.
 
-So the split is the one `docs/mods/TARGET.md` argues for generally: **core enumerates, verifies and emits;
-a mod only declares.** A family that wants in provides its generator, its solver and its configuration set. It
-does not learn anything about lists, build steps or artifacts.
+An entry that is a bare integer costs about ten bytes. With 58 reachable configurations today and a cap in the
+low hundreds per bucket, the whole artifact lands in the tens of kilobytes. Shipping the ordered reasons
+alongside it, at the measured ~400 bytes a board, puts the same artifact near a megabyte — three times
+`generatedWorld.ts`, which is 328KB and is the largest thing in the bundle today. That is a real cost paid by
+every player on every load.
 
-The seed space is **bounded**, which is what makes this tractable rather than an unbounded cache: the world is
-fixed-seed, so the set of `(family, difficulty, seed)` a player can ever meet is enumerable in advance.
+Against it: the solve is already amortised to once per board at play time, so the actual saving is ~800ms,
+once, on a top-tier board, behind a deliberate hint tap where a spinner is an honest thing to show — and it is
+~2ms at the three tiers that hold most of the world. The seed alone already removes 97% of the problem this
+document was written about, because 97% of generation _is_ the solver run as a gate.
 
-### What the offline pass can afford that play time cannot
+So: **ship seeds, measure, and revisit hints as their own question with their own numbers.** The format should
+leave the door open rather than walk through it now — `type SeedEntry = number | [seed: number, ...extra]`
+costs nothing today and does not have to be redesigned later.
+
+The grade is still computed — every admitted seed is solved and graded during verification. It goes in the
+CLI's report, where a designer tuning a tier reads it, rather than in the shipped artifact, where nothing at
+play time would read it.
+
+### Play time indexes the bucket with the seed it already has
+
+```ts
+seeds[hashString(journeyId + edgeId) % seeds.length]
+```
+
+A room's seed today is `hashString(journeyId + edgeId)`, computed in `useEncounter`. It keeps being computed
+exactly as it is; it just stops being fed to the generator and starts being an index into the bucket. No new
+state, no new persistence, and every property the current scheme has — deterministic per room, stable across
+sessions, stable across saves — survives untouched.
+
+**This is what makes the whole thing tractable, and it is a simplification over the framing above.** The doc
+argues the seed space is bounded because the world is fixed-seed, so the set of `(family, difficulty, seed)`
+a player can meet is enumerable. It does not need to be. Once the room hash is an _index_, the offline pass
+never has to know which rooms exist or where they sit — only which **configurations** exist. Floor assembly,
+maze layout, and regenerating the world all stop being able to invalidate the list. The thing most likely to
+have gone wrong later is designed out.
+
+A miss — no bucket, or an empty one — falls through to live generation with the full attempt loop, i.e.
+precisely today's behaviour. That is the dev loop answered: the puzzle lab rerolls arbitrary seeds and a
+designer turning a dial gets a bucket miss and a live board, with no build step in the way. Both paths run the
+same generator on the same options, so "both paths produce the same board" is true by construction rather than
+by assertion.
+
+All of this is one core helper. The family plugins get smaller, not bigger.
+
+### Enumeration walks the baked world
+
+Block Sort cross-products 21 producers × 11 difficulties and then dedupes. Here the world is already baked and
+finite, so the reachable set can be read rather than guessed: walk `generatedWorldConfigs`, and for every floor
+build the same context the app would and resolve the same options. Today that yields **58 distinct
+(family, floor difficulty) pairs** across ~2023 encounter rooms — the honest target, with nothing spent on the
+tier tables families fill in for tiers no room ever reaches.
+
+It also sizes the buckets for free: **the target seed count for a bucket is the number of rooms that land in
+it**, capped so a hot bucket cannot dominate the artifact. No hand-maintained per-tier count table, and it
+re-tunes itself when the world changes.
+
+One prerequisite: the ctx-from-cell derivation currently lives inside `useEncounter`'s `useMemo`. It is already
+a pure object build, so it extracts to a plain function that both the hook and the script call. Worth doing on
+its own merits.
+
+Note while enumerating that `RoomCell` carries no difficulty of its own — every room generates at its
+_floor's_ tier, including rooms in side sections authored at a different tier. That is existing behaviour and
+not this document's to change, but the enumeration has to mirror it exactly or it will fill buckets nobody
+visits and miss buckets everybody does.
+
+### Threading, and the build step that is not needed
+
+Embarrassingly parallel across seeds. Each `generate` call builds its own `mulberry32` internally, so there is
+no shared stream and no order dependence between seeds — the within-call ordering that the single-stream
+families rely on stays inside one call, on one thread.
+
+One **pull-based** pool over `os.cpus().length - 2`, with the `task` / `result` / `idle` / `shutdown` protocol —
+a worker announces itself idle on boot and after every result, and the main thread either hands it the next
+task or tells it to shut down. Block Sort ended up with two pools, a `workerData`-driven fire-and-forget one
+for generation and a proper queue for verification; only the second shape is worth copying. It load-balances
+naturally, which matters more here than there because clean-seed yield varies by two orders of magnitude
+between buckets.
+
+Block Sort needs a Rollup config to bundle its workers because TypeScript will not load in a worker thread.
+That step is avoidable — a worker booted from a three-line `eval` shim registers the `tsx` loader and then
+imports the real `.ts` entry, `@/` path aliases and all:
+
+```ts
+const boot = `import("tsx/esm/api").then(t => { t.register(); return import(${JSON.stringify(target)}) })`
+new Worker(boot, { eval: true, workerData })
+```
+
+Verified against this repo's domain layer. No bundler, no build artifact, nothing to gitignore.
+
+### Where it lands, and what fails the build
+
+`src/data/puzzleSeeds.ts`, following the `generatedWorld.ts` precedent exactly: generated by a script, one
+`JSON.parse` of a single string (cheaper to parse than an object literal), keys sorted, Prettier'd on the way
+out. At tens of kilobytes it is a plain static import — Block Sort code-splits its 210KB seed file, and at this
+size that machinery would not earn itself.
+
+```ts
+export type SeedEntry = number | [seed: number, ...extra: unknown[]]
+export const puzzleSeeds: Record<string, SeedEntry[]> = JSON.parse('{"21655753":[212043153,884201], ...}')
+```
+
+**The runtime never fails on a missing bucket — CI does.** A `yarn verify-seeds` step enumerates the reachable
+configurations, asserts each has a non-empty bucket, and samples entries to confirm they still generate a
+graded board on attempt one. It fails with the bucket, the family and the tier, and the command to run. Play
+time meanwhile always falls back silently, so a work-in-progress branch is never bricked by a list that has not
+caught up with a dial.
+
+The CLI is `scripts/puzzleSeeds.ts` with `generate`, `verify`, `info` and `trim`, following the existing
+`scripts/generateWorld.ts` conventions. `info` is where the offline pass's grades surface.
+
+## What the offline pass can afford that play time cannot
 
 The reason this is worth more than its speed, and `futoshiki.md` §10 already makes the argument: an offline
 pass is free to be as thorough as we like. Gates that are currently unthinkable become ordinary:
@@ -151,28 +276,29 @@ pass is free to be as thorough as we like. Gates that are currently unthinkable 
 - **Every board demands its cap** — rather than being merely solvable within it, which is all the current gate
   checks.
 - **Difficulty grading** by which rungs a board actually needed, which `puzzle-screens.md` §5 names as the
-  honest difficulty signal and which nothing currently measures per board.
-- **Duration sampling** — how long a board takes a model player, which no family has ever measured.
+  honest difficulty signal and which nothing currently measures per board. Both solvers already return
+  `{ steps, deepest }` and both callers already throw it away.
+- **Duration sampling** — how long a board takes a model player, which no family has ever measured, and which
+  §3.2 of `PUZZLE_FAMILIES.md` needs in order to say anything about the solve-time budget.
 - **Variety** across a tier's list, so two adjacent rooms are not the same puzzle wearing different pieces.
 
-## Open questions for the session that finalises this
+None of these are needed for the first cut. All of them become one-line additions to a pass that is already
+solving and grading every candidate — which is the argument for building the pass before anyone needs them.
 
-1. **Where do the lists live, and in what form?** Generated TypeScript, JSON in `public/`, or something the
-   build inlines. This decides diff noise and bundle size, and it is the question with the most opinions in it.
-2. **How many seeds per family per configuration?** Bounded by the world, but the world is regenerated when
-   world-gen changes. Does the list cover the current world exactly, or a comfortable surplus?
-3. **What happens when the list and the code disagree?** A dial changes, and every seed on the list is now a
-   seed for a different board. Fail the build? Fall back to live generation? A checksum over the
-   configuration is the obvious guard, and it needs deciding rather than discovering.
-4. **Does the dev loop keep live generation?** It has to — the puzzle lab rerolls arbitrary seeds, and a
-   designer turning a dial cannot wait for an offline pass. So live generation stays and the list is a
-   play-time optimisation, which means **both paths must produce the same board** and something has to assert
-   it.
-5. **Threading.** Embarrassingly parallel across seeds, so a worker pool over `os.cpus()`. Worth checking
-   whether anything in generation is accidentally order-dependent first; it should not be, since every
-   generator is seeded and pure.
-6. **Is the artifact per configuration or per tier?** A tier draws modes per board, so "the wizard list" and
-   "the wizard-with-a-trap list" are different questions.
+## Build order
+
+Smallest thing that proves the shape, then breadth:
+
+1. The three preconditions on **one** family — Sumplete, because it is the cheapest to iterate against and its
+   1ms generation means a bug shows up as a wrong board rather than a slow one.
+2. `configHash`, the bucket lookup, and the live-generation fallback, wired through the core helper. At this
+   point the artifact can be an empty object and nothing has changed for the player.
+3. The CLI with `generate` single-threaded, over Sumplete only. Prove a seed round-trips: offline-graded board
+   equals play-time board, byte for byte.
+4. The worker pool.
+5. The remaining families, one preconditions-commit each. Lightbeam and Star Battle last — they are the ones
+   that pay for the work, and the ones most likely to surface a wrinkle in `grade`.
+6. `verify` in CI.
 
 ## What this does not change
 
