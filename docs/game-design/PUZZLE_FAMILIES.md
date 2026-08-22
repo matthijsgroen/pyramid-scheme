@@ -174,18 +174,13 @@ knobs and findings live there and are not restated here. Entries without a doc a
 considered and not built, and for those this section is the only description there is. The cross-family
 tables are §6 (scorecard), §7 (curriculum map) and §11 (theme fit and weight).
 
-### 4.1 Cross-sum / number pyramid — _(have)_
+### 4.1 Tableau (the tomb's reward calculation)
 
-- **Skill:** addition, then multiplication; substitution; deduction.
-- **Operates:** triangular grid; each brick = sum (or product) of the two below;
-  some bricks hidden behind glyphs; recover the unknowns.
-- **Knobs:** pyramid height · number range · operations (+ → × → mixed) ·
-  negatives · how many bricks pre-revealed.
-- **Scaling:** excellent — the workhorse, from T1 single-digit addition to T5
-  mixed-operation with negatives.
-- **Generation:** trivial, unique-by-construction (pick base values, compute up,
-  hide a solvable subset).
-- **UI:** easy — already built; glyph-pad into the grid. Mobile-fine.
+Substitution and evaluation: a wall of arithmetic with hieroglyphs where the numbers should be, and a
+chain of worked equations above it that pins one symbol at a time. The one family that gates on what
+the player owns rather than on what they can work out.
+
+Design doc: [puzzles/tableau.md](puzzles/tableau.md)
 
 ### 4.2 Balance scale (weighing of the heart)
 
