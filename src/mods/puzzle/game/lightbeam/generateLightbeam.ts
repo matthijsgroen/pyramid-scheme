@@ -1929,7 +1929,7 @@ const attemptAuthored = (
  */
 /**
  * Re-checks the ladder on a finished board, and reports what it demanded
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * Unlike the families that keep a nearest miss, this one **throws** rather than shipping a board it
  * would not stand behind — so a board coming back at all is already the acceptance, and the offline

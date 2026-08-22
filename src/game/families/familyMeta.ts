@@ -56,12 +56,12 @@ export type FamilyMeta = {
   // most families provide none. The one place a family declares "I gate on holding
   // something," right alongside its other facts, not a separate registry to remember.
   resolveKeyRequirements?: FamilyKeyRequirementResolver
-  // How this family builds a board, and how it judges one (docs/offline-puzzle-seeds.md). Unset means
+  // How this family builds a board, and how it judges one (`docs/instructions/puzzle-screens.md` §6.1). Unset means
   // the family generates live on every open, which is what every family did before there were lists.
   seedable?: SeedableFamily
 }
 
-// --- Offline seed lists (docs/offline-puzzle-seeds.md) -----------------------------------------
+// --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------
 
 // The slice of an encounter's context that reaches a generator. Deliberately narrower than the app's
 // FamilyContext, and the narrowness is the point: `theme` picks a skin and never reaches generation, so

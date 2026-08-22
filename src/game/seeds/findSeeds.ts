@@ -4,7 +4,7 @@ import type { FamilyOptions, Grade, SeedableFamily } from "@/game/families/famil
 export type FoundSeed = { seed: number; grade: Grade }
 
 /**
- * Tests a window of seeds and keeps the ones a family would ship (docs/offline-puzzle-seeds.md).
+ * Tests a window of seeds and keeps the ones a family would ship (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * A seed is admitted only when its **first** attempt builds a board the family's own `grade` accepts.
  * Insisting on the first attempt is what lets play time run one attempt with no gates at all: the board

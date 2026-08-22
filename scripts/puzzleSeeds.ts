@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Finds and verifies the seeds src/data/puzzleSeeds.ts ships — boards proven offline to build on
- * their first attempt, so play time skips the search. See docs/offline-puzzle-seeds.md.
+ * their first attempt, so play time skips the search. See docs/instructions/puzzle-screens.md §6.1.
  *
  * Run: yarn generate-seeds [--family=<id>] [--cap=<n>] [--tries=<n>] [--parallel=<n>]
  *      yarn seeds-info
@@ -168,7 +168,7 @@ if (command === "generate") {
 // Run: yarn generate-seeds
 //
 // Seeds proven to build a graded board on their first attempt, filed by the hash of the options they
-// were proven under (docs/offline-puzzle-seeds.md). Parsed from one string rather than written as an
+// were proven under (docs/instructions/puzzle-screens.md §6.1). Parsed from one string rather than written as an
 // object literal, which is cheaper for the engine to read.
 export const puzzleSeeds: Record<string, number[]> = JSON.parse(
   '${JSON.stringify(sorted)}'

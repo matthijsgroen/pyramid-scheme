@@ -241,8 +241,10 @@ is asserted in `lightbeamConfig.spec.ts`, in aggregate over a tier rather than b
 per board, one wizard grid can legitimately out-measure another, and it is the tier that has to grow.
 
 **Generation time is not a constraint on this table.** It used to be, and §11.21 records what that cost. The
-top tier is expensive to build — 599ms a board, 4.5s at worst — and the answer to that is
-`docs/offline-puzzle-seeds.md`, not a smaller tier.
+top tier is expensive to build — 599ms a board, 4.5s at worst — and the answer to that is a seed list
+(`docs/instructions/puzzle-screens.md` §6.1), not a smaller tier. It buys less here than elsewhere, because
+this family's gates run inside the attempt rather than around it: a listed seed halves a wizard board rather
+than removing it. Half of an expensive board is still cheaper than a tier the design did not want.
 
 **Every tier holds the tappable share at 1.0**, so `interactive` is a knob the table does not currently turn.
 It is kept because it is the cheapest lever there is when one is needed — a given costs a cell, contributes
@@ -2664,7 +2666,7 @@ silently and the table looks healthy afterwards. It is the same shape as the wor
 masked signal driving a confident wrong decision.
 
 A budget is the right instrument for a cost the player pays. It is the wrong one for a cost a build machine
-could pay instead, and `docs/offline-puzzle-seeds.md` is where that goes.
+could pay instead, which is where it now goes (`docs/instructions/puzzle-screens.md` §6.1).
 
 #### What lifting it restored
 
@@ -2691,8 +2693,10 @@ and until it moves it is the one thing about this family that is worse than it w
 
 A board's configuration space is what the exhaustive rungs enumerate, and a hint is a full solve. So the top
 tier's hint latency rises with everything above — measured at 500ms before the lift on a 20 000-configuration
-board, and the space is now three times that. A seed list does not help a hint; shipping the solve alongside the
-seed does, which is why `docs/offline-puzzle-seeds.md` argues for the artifact carrying both.
+board, and the space is now three times that. **A seed list does not help a hint** — it removes the search for a
+board, not the solve that explains one. Shipping the solve alongside the seed would, at about 400 bytes a board
+against ten for the seed alone; that is a bundle-size question for the day a hint's latency is the thing players
+notice, and the per-board cache below is what makes it wait.
 
 ### 11.22 What playing it found that measuring did not
 
@@ -2746,8 +2750,8 @@ every family rather than for this one.
 `solveLightbeamByTechniques(puzzle, cap)`: it reads nothing about how the player has the board set, and the state
 only picks which of the reasons it found is worth saying. So the first hint can pay for every hint after it.
 Measured over four presses with a move between each: **3 212.7ms against 803.6ms** at the top tier, with each
-hint after the first costing 0.02ms. The same fact is why the whole thing is precomputable offline
-(`docs/offline-puzzle-seeds.md`), at about 400 bytes a board. Every family derived its hint eagerly; lightbeam is only where the solver
+hint after the first costing 0.02ms. The same fact is why the whole thing is precomputable offline, at about 400 bytes a board — deliberately not
+shipped, since the per-board cache already gets the cost down to one press. Every family derived its hint eagerly; lightbeam is only where the solver
 got expensive enough to notice. And the guard is a spec that taps a wizard board and asserts the board answers,
 because the honest test of an interaction cost is the interaction.
 

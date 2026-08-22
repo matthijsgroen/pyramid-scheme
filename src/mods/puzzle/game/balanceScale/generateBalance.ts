@@ -165,7 +165,7 @@ const withoutRedundantScales = (puzzle: BalancePuzzleData, cap: TechniqueId): Ba
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * The loop calls it on each candidate, so it is the gate rather than a second opinion about it. The
  * board that ships has had its redundant scales trimmed afterwards, and trimming only ever removes a

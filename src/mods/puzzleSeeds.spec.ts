@@ -5,7 +5,7 @@ import { enumerateConfigs } from "@/game/seeds/enumerateConfigs"
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 
-// The guard on the shipped artifact (docs/offline-puzzle-seeds.md). A miss is never *wrong* — play
+// The guard on the shipped artifact (`docs/instructions/puzzle-screens.md` §6.1). A miss is never *wrong* — play
 // time falls back to generating live — so this does not protect correctness. It protects the reason
 // the lists exist: a dial moved, the key moved with it, and the top tier is quietly back to searching
 // on the player's phone.

@@ -16,7 +16,7 @@ const stable = (value: unknown): string => {
 
 /**
  * The key a family's seed list is filed under: a hash of the options object its generator is handed
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * Keying on the generator's own inputs rather than on family-and-tier is what makes the list
  * self-invalidating. Turn a dial and the options change, so the key changes, so the lookup misses and

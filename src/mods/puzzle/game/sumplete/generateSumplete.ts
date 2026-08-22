@@ -51,7 +51,7 @@ const drawMask = (random: () => number, gridSize: number): boolean[][] | undefin
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * The loop calls it too, so an offline pass filtering seeds by it admits exactly the boards this
  * generator accepts rather than holding a second opinion about them.

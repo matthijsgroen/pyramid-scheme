@@ -22,7 +22,7 @@ export const SUMPLETE_CONFIG: Record<Difficulty, SumpleteConfig> = {
 /**
  * The options one encounter builds its board from. Split out from the plugin so a build script with no
  * React can derive the same ones, and so their hash can key this tier's seed list
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  */
 export const resolveSumpleteOptions = ({ difficulty }: FamilyGenerationCtx): SumpleteConfig =>
   SUMPLETE_CONFIG[difficulty ?? "starter"]

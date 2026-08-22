@@ -7,7 +7,7 @@ const VERIFIED_ATTEMPTS = 1
 
 /**
  * Builds a family's board for one encounter, from its list where there is one
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * `seed` stays what it has always been — a hash of the room's identity — but it indexes the list
  * rather than seeding the generator. That is what keeps the offline pass tractable: it has to

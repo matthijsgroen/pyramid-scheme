@@ -103,7 +103,7 @@ const filledCount = (givens: (number | undefined)[][]): number =>
 
 /**
  * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
- * (docs/offline-puzzle-seeds.md).
+ * (`docs/instructions/puzzle-screens.md` §6.1).
  *
  * The loop calls it on the finished board — after the thinning that decides it and the pre-filled
  * numbers that soften it — so it is the gate rather than a second opinion about it.
