@@ -166,23 +166,71 @@ and the stale hint clears. A family that tracks its own 30s timer is a bug.
 
 ## 4. Hints teach, they do not spoil
 
-**A hint may take two lines, and the second one is the move.** The reason says what the board makes true; the
-move is an imperative that names the squares by how the board draws them ("rule out the hatched squares"),
-so there is nothing for the player to match up. A reason alone asks them to work out what it wants, which is
-a step nobody should have to take from a hint they went and pressed a button for. The shell keeps hint text
-pre-line so a family can give both; one line stays perfectly good for a family whose reason IS the move.
+A hint names **one next step and the reason it follows**. After it, the player knows a technique they can
+reuse.
 
-A hint names **one next step and the reason it follows** — "this row already has
-its target, so the rest of the row is struck out." After it, the player knows a
-technique they can reuse.
-
-- Hints come from the **technique solver** (§5), never from the answer key.
-  Reading the solution and pointing at a cell is not a hint.
-- A hint is data, not a sentence: `{ techniqueId, cells, params }`. The shell
-  renders it through an i18n template with **numeric/glyph slots only** —
-  same language rule as the boards (`PUZZLE_FAMILIES.md` P2).
-- The hint highlights the cells it talks about.
+- Hints come from the **technique solver** (§5), never from the answer key. Reading the solution and pointing
+  at a cell is not a hint.
+- A hint is data, not a sentence: `{ techniqueId, cells, params }`. The shell renders it through an i18n
+  template with **numeric/glyph slots only** — the same language rule as the boards
+  (`PUZZLE_FAMILIES.md` P2).
 - Hints never mutate the board. The player still makes the move.
+
+### 4.1 Two lines: the reason, then the move
+
+**A reason on its own is half a hint.** It leaves the player working out what it wants of them, which is a
+step nobody should have to take from something they went and pressed a button for. So a hint is:
+
+1. **The reason** — what the board makes true. One sentence, no consequence clause.
+2. **The move** — an imperative. "Rule out the hatched squares." "Put 🌙 in the hatched squares." "Cross out
+   the hatched numbers."
+
+The consequence lives in the move, never in both: "this line has its 4 ☀️, **so the rest are 🌙**" followed by
+"put 🌙 in the hatched squares" says the same thing twice, which is the fault §1.1 describes between the goal
+and the rules, one level down.
+
+The shell keeps hint text pre-line, so a family returns the two lines separated by a newline. One line stays
+right for a family whose reason IS the move — lightbeam's "leave this one alone" has nothing to add, and
+balance scale's reasons have ended in an imperative from the start ("tap one to take it off both sides"),
+which is where this pattern was already working before it was written down.
+
+**The move is plural-aware.** A rung that settles one square and one that settles six get the same sentence
+otherwise, and "the hatched squares" over a single square is a sentence the player has to re-read. Use
+i18next `_one`/`_other` with a `count`, and add both forms to `plurals.spec.ts` — a missing form reaches the
+player as the raw key.
+
+**A mistake hint asks for nothing.** Every other rung ends in a move, but the way out of a wrong mark is the
+player's to find; naming it would be naming the answer.
+
+### 4.2 The words name the marking, and the marking means one thing
+
+**A hint that says "the rest of the row" makes the player decide which squares that was.** A hint that says
+"the hatched squares" does not. So the board marks what the hint is about, and the sentence names the marking
+rather than describing the squares. The vocabulary is shared, so a player who learns it on one family keeps
+it on the next:
+
+| Drawn as                     | Means                             | Called            |
+| ---------------------------- | --------------------------------- | ----------------- |
+| Diagonal hatching            | The squares this hint **settles** | "hatched"         |
+| A bright ring, or a lit tile | What this hint **argues from**    | "marked", "lit"   |
+| One stronger ring            | The single square it is **about** | named as "this …" |
+
+Two rules hold this together:
+
+- **Evidence and conclusion never look the same.** One ring over six squares makes "this square" a guess
+  between them.
+- **A treatment means one thing.** Hatching belongs to hints, so no board may also hatch its blocked squares
+  or its givens — the moment it does, both uses become ambiguous. Star battle's hint hatching is only free
+  because the blocked squares that once used it were removed.
+
+Credit where it is due: LinkedIn's Queens does both of these, and its hint is the clearest one going —
+"het gemarkeerde gebied moet een ♛ bevatten … elimineer de gearceerde vakjes".
+
+### 4.3 Worded per identity, like everything else under the board
+
+A family whose mechanic wears more than one face words its hints per face, the same way §1.1 words its goal
+and its rules. Constellation's hint about sealing off "these 4 stars" is describing something absent from a
+haul-road board. The skin knows which place the room is; the wording asks it.
 
 ## 5. Solvable by logic — the solver is the family's core
 
@@ -217,7 +265,8 @@ On top of AGENTS.md's general DoD:
 
 1. Board fits a 360×640 viewport; page scrolls to the rules; no horizontal scroll.
 2. Back, reset, hint present; hint cooldown 10s; idle highlight scaled by tier (30s starter → 90s wizard).
-3. Every hint carries a reason, sourced from the solver.
+3. Every hint carries a reason, sourced from the solver, and a move that names the squares it marked (§4.1,
+   §4.2) — or is a mistake hint, which asks for nothing.
 4. Spec: the generator produces no puzzle needing a guess — solve N seeds with
    techniques only, assert all complete.
 5. Spec: every technique the solver claims can be triggered by a real board.

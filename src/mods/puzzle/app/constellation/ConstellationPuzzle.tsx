@@ -32,6 +32,8 @@ type Props = {
 
 export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
+  // Which place this room is. The goal and the rules are both worded from it, so they are resolved once.
+  const { name: skin } = skinFor(role, theme)
   const [state, setState] = useState(() => createConstellationState(puzzle))
 
   /**
@@ -71,8 +73,8 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
-      goal={t(`constellation.goal.${skinFor(role, theme).name}`)}
-      rules={<ConstellationRules />}
+      goal={t(`constellation.goal.${skin}`)}
+      rules={<ConstellationRules skin={skin} />}
     >
       {({ reportInput, hintVisible }) => (
         <>

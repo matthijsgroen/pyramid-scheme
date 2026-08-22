@@ -41,4 +41,41 @@ describe("plural forms in the shipped locales", () => {
   ])("renders %s money reward for %i as %s", (lng, count, expected) => {
     expect(t(lng, "chest.money", { count })).toBe(expected)
   })
+
+  /**
+   * The move a hint asks for (`puzzle-screens.md` §4) names the squares it marked, so it has to agree with
+   * how many there are — a hint reading "rule out the hatched squares" over one square is a hint the player
+   * has to re-read. i18next answers a missing plural form with the key itself, which reaches them as raw
+   * text, so both forms of every move are checked here rather than only their presence.
+   */
+  it.each([
+    ["starBattle.hint.action.ruleOut", "en", 1, "Rule out the hatched square."],
+    ["starBattle.hint.action.ruleOut", "en", 4, "Rule out the hatched squares."],
+    ["starBattle.hint.action.ruleOut", "nl", 1, "Streep het gearceerde vakje af."],
+    ["starBattle.hint.action.ruleOut", "nl", 4, "Streep de gearceerde vakjes af."],
+    ["sumplete.hint.action.strike", "en", 1, "Cross out the hatched number."],
+    ["sumplete.hint.action.strike", "en", 3, "Cross out the hatched numbers."],
+    ["sumplete.hint.action.keep", "nl", 1, "Markeer het gearceerde getal als blijvend."],
+    ["sumplete.hint.action.keep", "nl", 3, "Markeer de gearceerde getallen als blijvend."],
+  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
+    expect(t(lng, key, { count })).toBe(expected)
+  })
+
+  it.each([
+    ["en", 1, "Put ☀️ in the hatched square."],
+    ["en", 5, "Put ☀️ in the hatched squares."],
+    ["nl", 1, "Zet ☀️ in het gearceerde vakje."],
+    ["nl", 5, "Zet ☀️ in de gearceerde vakjes."],
+  ])("renders the %s eclipse move for %i as %s", (lng, count, expected) => {
+    expect(t(lng, "eclipse.hint.action.fill", { count, mark: "☀️" })).toBe(expected)
+  })
+
+  it.each([
+    ["en", 1, "Put a ⭐ in the hatched square."],
+    ["en", 2, "Put a ⭐ in each hatched square."],
+    ["nl", 1, "Zet een ⭐ in het gearceerde vakje."],
+    ["nl", 2, "Zet een ⭐ in elk gearceerd vakje."],
+  ])("renders the %s star battle placement for %i as %s", (lng, count, expected) => {
+    expect(t(lng, "starBattle.hint.action.place", { count, star: "⭐" })).toBe(expected)
+  })
 })

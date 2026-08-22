@@ -296,6 +296,28 @@
       "inEveryCombinationStrike": {
         "row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg.",
         "col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg."
+      },
+      "tooBig.row": "Deze rij heeft nog {{deficit}} nodig, en {{value}} is groter dan dat.",
+      "tooBig.col": "Deze kolom heeft nog {{deficit}} nodig, en {{value}} is groter dan dat.",
+      "allStrike.row": "De getallen die in deze rij blijven staan tellen al op tot het doel.",
+      "allStrike.col": "De getallen die in deze kolom blijven staan tellen al op tot het doel.",
+      "allKeep.row": "Deze rij telt al op tot het doel, dus daarna kun je de kolommen erdoorheen uitrekenen.",
+      "allKeep.col": "Deze kolom telt al op tot het doel, dus daarna kun je de rijen erdoorheen uitrekenen.",
+      "parityKeep.row": "Deze rij heeft nog {{deficit}} nodig, een oneven getal, en {{value}} is het enige oneven getal dat over is.",
+      "parityKeep.col": "Deze kolom heeft nog {{deficit}} nodig, een oneven getal, en {{value}} is het enige oneven getal dat over is.",
+      "parityStrike.row": "Deze rij heeft nog {{deficit}} nodig, een even getal, en {{value}} is het enige oneven getal dat over is.",
+      "parityStrike.col": "Deze kolom heeft nog {{deficit}} nodig, een even getal, en {{value}} is het enige oneven getal dat over is.",
+      "onlyCombination.row": "Maar één set getallen in deze rij telt op tot {{deficit}}.",
+      "onlyCombination.col": "Maar één set getallen in deze kolom telt op tot {{deficit}}.",
+      "inEveryCombinationKeep.row": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze rij {{deficit}}.",
+      "inEveryCombinationKeep.col": "Zonder {{value}} maakt geen enkele combinatie van de andere getallen in deze kolom {{deficit}}.",
+      "inEveryCombinationStrike.row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet.",
+      "inEveryCombinationStrike.col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet.",
+      "action": {
+        "strike_one": "Streep het gearceerde getal door.",
+        "strike_other": "Streep de gearceerde getallen door.",
+        "keep_one": "Markeer het gearceerde getal als blijvend.",
+        "keep_other": "Markeer de gearceerde getallen als blijvend."
       }
     },
     "goal": "Elke rij en elke kolom telt op tot het getal ernaast."
@@ -400,28 +422,47 @@
     "undo": "Ongedaan",
     "hint": {
       "mistake": "Een van deze tekens kan niet goed zijn.",
-      "sign.same": "= betekent gelijk, dus {{mark}}.",
-      "sign.different": "× betekent verschillend, dus {{other}}.",
-      "noTriple.pair": "Al twee {{mark}}, dus {{other}}.",
-      "noTriple.sandwich": "{{mark}} aan beide kanten, dus {{other}}.",
-      "signPair": "Door de {{mark}} hier moeten deze twee {{other}} zijn.",
-      "lineCount": "Deze lijn heeft zijn {{count}} {{mark}}, dus de rest is {{other}}.",
+      "sign.same": "= betekent gelijk.",
+      "sign.different": "× betekent verschillend.",
+      "noTriple.pair": "Al twee {{mark}}, en drie op een rij mag nooit.",
+      "noTriple.sandwich": "{{mark}} aan beide kanten, en drie op een rij mag nooit.",
+      "signPair": "Deze twee zijn gelijk, en die {{mark}} staat ernaast.",
+      "lineCount": "Deze lijn heeft zijn {{count}} {{mark}} al.",
       "noCopy": "Andersom wordt dit een kopie van de opgelichte lijn.",
-      "linePairing.sameNoRoom": "Nog maar {{count}} {{mark}} over, en deze twee zijn gelijk, dus beide {{other}}.",
-      "linePairing.differentTakesOne": "De ×-paren gebruiken de {{mark}} op, dus de rest is {{other}}.",
+      "linePairing.sameNoRoom": "Nog maar {{count}} {{mark}} over, en deze twee zijn gelijk.",
+      "linePairing.differentTakesOne": "De ×-paren gebruiken de {{mark}} op waar deze lijn ruimte voor heeft.",
       "loneMark": "Nog één {{mark}} te plaatsen, en maar één vakje houdt drie {{other}} uit elkaar.",
-      "squeeze.triple": "{{mark}} hier maakt de rest {{other}} — drie op een rij. Dus {{other}}.",
-      "squeeze.sign": "{{mark}} hier maakt de rest {{other}} — een teken klopt niet meer. Dus {{other}}.",
-      "squeeze.copy": "{{mark}} hier maakt de rest {{other}} — de lijn wordt een kopie. Dus {{other}}."
+      "squeeze.triple": "{{mark}} hier zou de rest {{other}} maken — drie op een rij.",
+      "squeeze.sign": "{{mark}} hier zou de rest {{other}} maken — een teken klopt niet meer.",
+      "squeeze.copy": "{{mark}} hier zou de rest {{other}} maken — de lijn wordt een kopie.",
+      "action": {
+        "fill_one": "Zet {{mark}} in het gearceerde vakje.",
+        "fill_other": "Zet {{mark}} in de gearceerde vakjes.",
+        "fillMixed": "Vul de gearceerde vakjes in — de enige manier die klopt."
+      }
     },
     "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander."
   },
   "constellation": {
     "rules": {
-      "straight": "Lijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
-      "pair": "Tussen twee sterren passen maximaal twee lijnen.",
-      "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
-      "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
+      "default": {
+        "straight": "Lichtlijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
+        "pair": "Tussen twee sterren passen maximaal twee lijnen.",
+        "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
+        "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
+      },
+      "causeway": {
+        "straight": "Sleepwegen lopen recht, horizontaal of verticaal, van de ene plaats naar de volgende.",
+        "pair": "Tussen twee plaatsen passen maximaal twee wegen.",
+        "cross": "Wegen kruisen elkaar nooit, en lopen nooit door een plaats heen.",
+        "enter": "Sleep van een plaats naar zijn buur om een weg aan te leggen, nog eens om hem te verdubbelen, en nog eens om hem op te breken."
+      },
+      "irrigation": {
+        "straight": "Kanalen lopen recht, horizontaal of verticaal, van het ene bekken naar het volgende.",
+        "pair": "Tussen twee bekkens passen maximaal twee kanalen.",
+        "cross": "Kanalen kruisen elkaar nooit, en lopen nooit door een bekken heen.",
+        "enter": "Sleep van een bekken naar zijn buur om een kanaal te graven, nog eens om het te verbreden, en nog eens om het te dempen."
+      }
     },
     "undo": "Ongedaan",
     "hint": {
@@ -465,8 +506,10 @@
       "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{star}} alleen uit die gebieden halen.",
       "spanning.fromCols": "De gemarkeerde kolommen kunnen hun {{count}} {{star}} alleen uit die gebieden halen.",
       "action": {
-        "ruleOut": "Streep de gearceerde vakjes af.",
-        "place": "Zet een {{star}} in het gearceerde vakje."
+        "ruleOut_one": "Streep het gearceerde vakje af.",
+        "ruleOut_other": "Streep de gearceerde vakjes af.",
+        "place_one": "Zet een {{star}} in het gearceerde vakje.",
+        "place_other": "Zet een {{star}} in elk gearceerd vakje."
       }
     },
     "goal": "Elke rij, elke kolom en elk gebied heeft precies één ster."

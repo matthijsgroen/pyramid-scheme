@@ -22,6 +22,8 @@ export type StarBattleHint = {
    * squares by how the board draws them, so there is nothing to match up.
    */
   action: "ruleOut" | "place" | undefined
+  /** How many squares the move settles — the `count` the action line pluralises on. */
+  settles: number
   /** The squares the reason argues from, so the board can point at what it is reasoning from. */
   cells: ReadonlySet<number>
   /**
@@ -58,6 +60,7 @@ export const buildStarBattleHint = (
       key: "mistake",
       params: {},
       action: undefined,
+      settles: 1,
       cells: new Set(),
       decided: new Set([mistake]),
       focus: mistake,
@@ -69,6 +72,8 @@ export const buildStarBattleHint = (
     key: stepKey(step),
     params: { star: STAR, count: step.count },
     action: step.decisions[0]?.mark === "star" ? "place" : "ruleOut",
+    // How many squares the move is about, so "the hatched square" and "the hatched squares" both read.
+    settles: step.decisions.length,
     cells: new Set(step.cells),
     decided: new Set(step.decisions.map(decision => decision.cell)),
     focus: stepFocus(step),

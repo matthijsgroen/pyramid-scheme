@@ -17,6 +17,17 @@ type Props = {
 
 const cellKey = (row: number, col: number) => `${row},${col}`
 
+/**
+ * The numbers a hint is about, hatched.
+ *
+ * **The words name this** — "cross out the hatched numbers" leaves nothing to match up, where "everything
+ * else has to go" leaves the player deciding which numbers that was (`puzzle-screens.md` §4). The same
+ * treatment means the same thing on eclipse's and star battle's boards.
+ */
+const HATCH = {
+  backgroundImage: "repeating-linear-gradient(45deg, transparent 0 5px, rgba(252,211,77,0.45) 5px 7px)",
+}
+
 const cellCls = (mark: SumpleteMark, lit: boolean, inLitLine: boolean) =>
   // The digit is the thing being read, so it takes as much of the tile as the tile can spare.
   clsx(
@@ -70,6 +81,7 @@ export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted,
               key={col}
               onClick={() => onToggle(row, col)}
               className={cellCls(cells[row][col], highlighted?.has(cellKey(row, col)) ?? false, inLitLine(row, col))}
+              style={highlighted?.has(cellKey(row, col)) ? HATCH : undefined}
             >
               <span>{value}</span>
               {/* One diagonal stroke corner to corner, inset from the real corners — a glyph laid

@@ -303,6 +303,28 @@
       "inEveryCombinationStrike": {
         "row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make — so it has to go.",
         "col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make — so it has to go."
+      },
+      "tooBig.row": "This row still needs {{deficit}}, and {{value}} is bigger than that.",
+      "tooBig.col": "This column still needs {{deficit}}, and {{value}} is bigger than that.",
+      "allStrike.row": "The numbers staying in this row already add up to its target.",
+      "allStrike.col": "The numbers staying in this column already add up to its target.",
+      "allKeep.row": "This row already adds up to its target, so the columns through it can be worked out next.",
+      "allKeep.col": "This column already adds up to its target, so the rows through it can be worked out next.",
+      "parityKeep.row": "This row still needs {{deficit}}, an odd number, and {{value}} is the only odd number left.",
+      "parityKeep.col": "This column still needs {{deficit}}, an odd number, and {{value}} is the only odd number left.",
+      "parityStrike.row": "This row still needs {{deficit}}, an even number, and {{value}} is the only odd number left.",
+      "parityStrike.col": "This column still needs {{deficit}}, an even number, and {{value}} is the only odd number left.",
+      "onlyCombination.row": "Only one set of numbers in this row adds up to {{deficit}}.",
+      "onlyCombination.col": "Only one set of numbers in this column adds up to {{deficit}}.",
+      "inEveryCombinationKeep.row": "Without {{value}}, no set of the other numbers in this row makes {{deficit}}.",
+      "inEveryCombinationKeep.col": "Without {{value}}, no set of the other numbers in this column makes {{deficit}}.",
+      "inEveryCombinationStrike.row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make.",
+      "inEveryCombinationStrike.col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make.",
+      "action": {
+        "strike_one": "Cross out the hatched number.",
+        "strike_other": "Cross out the hatched numbers.",
+        "keep_one": "Mark the hatched number as staying.",
+        "keep_other": "Mark the hatched numbers as staying."
       }
     },
     "goal": "Every row and every column adds up to the number beside it."
@@ -407,28 +429,47 @@
     "undo": "Undo",
     "hint": {
       "mistake": "One of these marks cannot be right.",
-      "sign.same": "= means the same, so {{mark}}.",
-      "sign.different": "× means different, so {{other}}.",
-      "noTriple.pair": "Two {{mark}} already, so {{other}}.",
-      "noTriple.sandwich": "{{mark}} on both sides, so {{other}}.",
-      "signPair": "Because of that {{mark}}, these two are {{other}}.",
-      "lineCount": "This line has its {{count}} {{mark}}, so the rest are {{other}}.",
-      "noCopy": "The other way round copies the line lit up.",
-      "linePairing.sameNoRoom": "Only {{count}} {{mark}} left here, and these two match, so both are {{other}}.",
-      "linePairing.differentTakesOne": "The × pairs use up the {{mark}}, so the rest are {{other}}.",
+      "sign.same": "= means the same.",
+      "sign.different": "× means different.",
+      "noTriple.pair": "Two {{mark}} already, and three in a row is never allowed.",
+      "noTriple.sandwich": "{{mark}} on both sides, and three in a row is never allowed.",
+      "signPair": "These two match, and that {{mark}} stands beside them.",
+      "lineCount": "This line has its {{count}} {{mark}} already.",
+      "noCopy": "The other way round would copy the line lit up.",
+      "linePairing.sameNoRoom": "Only {{count}} {{mark}} left here, and these two match.",
+      "linePairing.differentTakesOne": "The × pairs use up the {{mark}} this line has room for.",
       "loneMark": "One {{mark}} left, and only one square keeps three {{other}} apart.",
-      "squeeze.triple": "{{mark}} here makes the rest {{other}} — three in a row. So {{other}}.",
-      "squeeze.sign": "{{mark}} here makes the rest {{other}} — a sign stops fitting. So {{other}}.",
-      "squeeze.copy": "{{mark}} here makes the rest {{other}} — the line becomes a copy. So {{other}}."
+      "squeeze.triple": "{{mark}} here would make the rest {{other}} — three in a row.",
+      "squeeze.sign": "{{mark}} here would make the rest {{other}} — a sign stops fitting.",
+      "squeeze.copy": "{{mark}} here would make the rest {{other}} — the line becomes a copy.",
+      "action": {
+        "fill_one": "Put {{mark}} in the hatched square.",
+        "fill_other": "Put {{mark}} in the hatched squares.",
+        "fillMixed": "Fill in the hatched squares — the only way round that works."
+      }
     },
     "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other."
   },
   "constellation": {
     "rules": {
-      "straight": "Lines run straight across or down, from one star to the next.",
-      "pair": "Two stars can share at most two lines.",
-      "cross": "Lines never cross, and never pass through a star.",
-      "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
+      "default": {
+        "straight": "Lines of light run straight across or down, from one star to the next.",
+        "pair": "Two stars can share at most two lines.",
+        "cross": "Lines never cross, and never pass through a star.",
+        "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
+      },
+      "causeway": {
+        "straight": "Haul roads run straight across or down, from one site to the next.",
+        "pair": "Two sites can share at most two roads.",
+        "cross": "Roads never cross, and never run through a site.",
+        "enter": "Drag from a site toward its neighbour to lay a road, again to double it, once more to tear it up."
+      },
+      "irrigation": {
+        "straight": "Channels run straight across or down, from one basin to the next.",
+        "pair": "Two basins can share at most two channels.",
+        "cross": "Channels never cross, and never run through a basin.",
+        "enter": "Drag from a basin toward its neighbour to dig a channel, again to widen it, once more to fill it in."
+      }
     },
     "undo": "Undo",
     "hint": {
@@ -472,8 +513,10 @@
       "spanning.fromRows": "The marked rows can only take their {{count}} {{star}} from those regions.",
       "spanning.fromCols": "The marked columns can only take their {{count}} {{star}} from those regions.",
       "action": {
-        "ruleOut": "Rule out the hatched squares.",
-        "place": "Put a {{star}} in the hatched square."
+        "ruleOut_one": "Rule out the hatched square.",
+        "ruleOut_other": "Rule out the hatched squares.",
+        "place_one": "Put a {{star}} in the hatched square.",
+        "place_other": "Put a {{star}} in each hatched square."
       }
     },
     "goal": "Every row, every column and every region holds exactly one star."

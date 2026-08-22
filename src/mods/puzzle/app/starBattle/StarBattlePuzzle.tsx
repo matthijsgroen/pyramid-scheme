@@ -47,7 +47,8 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
   const hintText = useCallback(() => {
     if (!hint) return undefined
     const reason = t(`starBattle.hint.${hint.key}`, hint.params)
-    return hint.action ? `${reason}\n${t(`starBattle.hint.action.${hint.action}`, hint.params)}` : reason
+    if (!hint.action) return reason
+    return `${reason}\n${t(`starBattle.hint.action.${hint.action}`, { ...hint.params, count: hint.settles })}`
   }, [hint, t])
 
   return (

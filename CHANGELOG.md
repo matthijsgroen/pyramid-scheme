@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Star-map and star-grid hints now say what to do as well as why: the squares the hint is about are hatched, and the last line asks for the move.
+- Hints now say what to do as well as why: the squares a hint is about are hatched, and its last line asks for the move. On the sun-and-moon grid, the number grid and the star grid.
+- The star map words its rules for the place it is: a haul-road board talks about sites and roads, a waterworks about basins and channels.
 
 - Every puzzle now states its goal in one line above the how-to-play, worded for the place it is: the star map asks for constellations, the same board drawn as haul roads asks for a road network.
 

@@ -76,7 +76,9 @@ describe("every reason the ladder can give is phrased in both locales", () => {
 
   // Every hint but the mistake one ends with an imperative naming the squares it marked, so both of those
   // have to be phrased too — a reason with no move is the hint doing half its job.
-  const actions = ["ruleOut", "place"]
+  // Each move is plural-aware, so both forms have to be there — i18next silently falls back to the key
+  // itself when one is missing, which reaches the player as raw text.
+  const actions = ["ruleOut_one", "ruleOut_other", "place_one", "place_other"]
 
   const phrase = (block: Record<string, unknown>, key: string) => block[key]
 

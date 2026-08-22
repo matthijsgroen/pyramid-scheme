@@ -43,8 +43,18 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
     [asked, puzzle, state]
   )
 
-  // A function rather than a string, so the shell only reaches for the text once the hint is on screen.
-  const hintText = useCallback(() => (hint && t(`eclipse.hint.${hint.key}`, hint.params)) || undefined, [hint, t])
+  /**
+   * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
+   *
+   * Two lines: the reason, then the move it asks for (`puzzle-screens.md` §4).
+   */
+  const hintText = useCallback(() => {
+    if (!hint) return undefined
+    const reason = t(`eclipse.hint.${hint.key}`, hint.params)
+    if (!hint.action) return reason
+    const { key, ...params } = hint.action
+    return `${reason}\n${t(`eclipse.hint.action.${key}`, params)}`
+  }, [hint, t])
 
   return (
     <PuzzleFamilyShell
@@ -65,6 +75,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
             state={state}
             theme={theme}
             highlighted={hintVisible ? hint?.cells : undefined}
+            decided={hintVisible ? hint?.decided : undefined}
             focus={hintVisible ? hint?.focus : undefined}
             onTapCell={cell => {
               reportInput()

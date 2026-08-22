@@ -50,4 +50,30 @@ describe("the goal above the rules", () => {
     const wordings = PLACES.map(place => (en.constellation.goal as Record<string, string>)[place.skin])
     expect(new Set(wordings).size).toBe(PLACES.length)
   })
+
+  /**
+   * The RULES are worded per place too, and for the same reason (`puzzle-screens.md` §1.1): a causeway board
+   * telling the player that lines run from one star to the next is describing something absent from the
+   * screen.
+   */
+  it.each(PLACES)("constellation drawn for $role words its rules as its own place", ({ skin }) => {
+    for (const locale of [en, nl])
+      for (const rule of ["straight", "pair", "cross", "enter"]) {
+        const wording = (locale.constellation.rules as Record<string, Record<string, string>>)[skin][rule]
+        expect(typeof wording).toBe("string")
+      }
+  })
+
+  it("never says star on a board that has no stars on it", () => {
+    for (const [locale, forbidden] of [
+      [en, /\bstars?\b/i],
+      [nl, /\bsterren?\b/i],
+    ] as const)
+      for (const skin of ["causeway", "irrigation"]) {
+        const place = (locale.constellation.rules as Record<string, Record<string, string>>)[skin]
+        for (const [rule, wording] of Object.entries(place))
+          expect(forbidden.test(wording), `${skin}.${rule}: ${wording}`).toBe(false)
+        expect(forbidden.test((locale.constellation.goal as Record<string, string>)[skin])).toBe(false)
+      }
+  })
 })
