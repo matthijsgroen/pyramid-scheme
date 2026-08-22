@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The game starts from a smaller download: the 1927 pieces of glass in the mosaic window now arrive with the window that draws them rather than with the game, and the launch download is a fifth lighter.
 - Puzzle boards come from a list checked ahead of time, so a room stops searching for one when you open it. The star grids took over a second to draw and now take three milliseconds.
 - Hints now say what to do as well as why: the squares a hint is about are hatched, and its last line asks for the move. On the sun-and-moon grid, the number grid and the star grid.
 - The star map speaks its own place throughout — goal, rules and hints. A haul-road board talks about sites and roads to lay, a waterworks about basins and channels to dig.
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The stained-glass window came up black with no connection: its artwork was left out of the offline install. The whole game, that window included, is now playable offline.
 - Finishing a puzzle made the page jump: the controls and the rules dropped out from under the completed banner.
 
 ## 0.37.0 - 2026-08-19

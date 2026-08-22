@@ -1,7 +1,6 @@
-import { type FC, useEffect, useMemo, useState } from "react"
+import { type FC, lazy, Suspense, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import clsx from "clsx"
-import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
 import { MOSAIC_TIERS, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
 import {
@@ -13,6 +12,13 @@ import {
   revealedPieceIds,
   type TierCounts,
 } from "@/mods/mosaic/game/placementQueue"
+
+// The 1927 polygons are the largest data file in the app and this window is the only thing that
+// draws them, so they load with the window rather than with the game. The reveal order, the
+// currencies and the placement queue all work off piece ids alone, and stay eager.
+const StainedGlassMosaic = lazy(() =>
+  import("@/ui/atoms/StainedGlassMosaic").then(m => ({ default: m.StainedGlassMosaic }))
+)
 
 // One piece drops into the window this often while a handful is being set in, so a batch reads as
 // a cascade rather than a snap.
@@ -74,7 +80,11 @@ export const MosaicWindow: FC<{
           a narrow phone sideways whenever the row below happened to be short. */}
       <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-2">
         <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
-          <StainedGlassMosaic revealedPieces={revealed} newPieces={justPlaced} />
+          {/* Holds the panel's aspect ratio while the glass is on its way, so the frame does not
+              snap to a new size the moment it arrives. */}
+          <Suspense fallback={<div className="aspect-[200/347] w-full bg-stone-950" />}>
+            <StainedGlassMosaic revealedPieces={revealed} newPieces={justPlaced} />
+          </Suspense>
         </StoneFrame>
       </div>
       <div className="flex shrink-0 flex-col items-center gap-2 py-2">

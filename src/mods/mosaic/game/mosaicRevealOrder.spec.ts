@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "./mosaicRevealOrder"
 import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
+import { MOSAIC_POINTS } from "@/ui/atoms/mosaicGeometry.generated"
 
 // The reveal order is computed once at module load. Its contract: every piece-bearing step is
 // revealed exactly once (a missed step = a mosaic slice that never lights up; a duplicate = a
@@ -9,6 +10,12 @@ const stepKey = (s: { journeyId: string; levelIndex: number }) => `${s.journeyId
 const TIERS = ["starter", "junior", "expert", "master", "wizard"]
 
 describe("mosaic reveal order", () => {
+  // The index and the polygons are two generated files written by one run of scripts/traceMask.ts.
+  // Regenerate only one of them and the window draws a piece with no shape.
+  it("has a polygon for every piece, and no orphan polygons", () => {
+    expect(Object.keys(MOSAIC_POINTS).sort()).toEqual(MOSAIC_PIECES.map(p => p.id).sort())
+  })
+
   it("reveals every piece-bearing step exactly once (no dupes, no misses)", () => {
     const keys = LEVEL_STEPS.map(stepKey)
     // No duplicates.

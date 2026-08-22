@@ -1,6 +1,7 @@
 import type { FC } from "react"
 import clsx from "clsx"
 import { MOSAIC_PIECES, type MosaicPieceDef } from "./mosaicPieces.generated"
+import { MOSAIC_POINTS } from "./mosaicGeometry.generated"
 import stainedGlassUrl from "../../assets/stained-glass.png"
 
 // ViewBox matches stained-glass.png aspect ratio (1153×2000 → 200×347)
@@ -16,7 +17,7 @@ const sortedPieces = [...MOSAIC_PIECES].sort((a, b) => a.zoneId.localeCompare(b.
 // The five registers, with the band each one occupies — a finished register gets lit from behind.
 const REGISTERS = [...new Set(MOSAIC_PIECES.map(p => p.zoneId))].sort().map(zoneId => {
   const pieces = MOSAIC_PIECES.filter(p => p.zoneId === zoneId)
-  const ys = pieces.flatMap(p => p.points.split(" ").map(pt => Number(pt.split(",")[1])))
+  const ys = pieces.flatMap(p => MOSAIC_POINTS[p.id].split(" ").map(pt => Number(pt.split(",")[1])))
   return { zoneId, ids: pieces.map(p => p.id), y: Math.min(...ys), height: Math.max(...ys) - Math.min(...ys) }
 })
 
@@ -76,7 +77,7 @@ export const StainedGlassMosaic: FC<{
           {sortedPieces
             .filter(p => revealedPieces.has(p.id))
             .map(piece => (
-              <polygon key={piece.id} points={piece.points} fill="black" stroke="black" strokeWidth="1" />
+              <polygon key={piece.id} points={MOSAIC_POINTS[piece.id]} fill="black" stroke="black" strokeWidth="1" />
             ))}
         </mask>
       </defs>
@@ -116,7 +117,7 @@ export const StainedGlassMosaic: FC<{
             .map(piece => (
               <polygon
                 key={`new-${piece.id}`}
-                points={piece.points}
+                points={MOSAIC_POINTS[piece.id]}
                 fill="rgba(251,191,36,0.35)"
                 stroke="rgba(251,191,36,0.9)"
                 strokeWidth="1"
@@ -130,7 +131,7 @@ export const StainedGlassMosaic: FC<{
       {sortedPieces.map(piece => (
         <polygon
           key={piece.id}
-          points={piece.points}
+          points={MOSAIC_POINTS[piece.id]}
           fill="transparent"
           stroke={LEAD}
           // The artwork paints its own leading; this only closes the seams between polygons, so it
