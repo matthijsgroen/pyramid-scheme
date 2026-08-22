@@ -667,7 +667,8 @@ Family doc: `docs/game-design/puzzles/star-battle.md`.
   clue. The name is the theme, which is the cheapest possible fit for `sky`.
 - **What ships is LinkedIn's Queens**, which is this puzzle at one star to a line rather than the published
   two. Same rules, same board; the quota is the only difference, and every tier draws quota 1. The two-star
-  form is the family doc's §10 rather than a variant to bolt on — see its §2 for what changes.
+  form ships as its own family (§4.25) rather than as this one's top tier: a tier may demand harder
+  reasoning, it may not change what the player is being asked to do.
 - **Knobs:** the region-size SPREAD (the real one — see below) · grid size, which here buys regions rather
   than bookkeeping · technique cap, required rung and its quota · stars per line, one at every tier.
 - **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
@@ -691,8 +692,42 @@ Family doc: `docs/game-design/puzzles/star-battle.md`.
 - **What it inherits for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed conflict
   display, and the completion run every family can now have (`puzzle-screens.md` §3).
 - **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic
-  that reads as several places. The family doc §10 records the one reading (post a watchman to every
-  district, none within sight of another) that could earn a second skin if a site ever asks.
+  that reads as several places. **A lone star only ever reads as the one and only**, which is the actual
+  reason and not a shortage of imagination: the watchman reading that could earn a second skin needs a PAIR
+  to name, so it belongs to §4.25 rather than here.
+
+---
+
+### 4.25 Twin Stars (two to a group) — _(built; not yet playtested)_
+
+Family doc: `docs/game-design/puzzles/star-battle.md` §11.
+
+- **Skill:** the same placement deduction as §4.24, with every group owing two — so every count is a
+  capacity argument about a SET of squares rather than bookkeeping around one.
+- **Operates:** two stars in every row, every column and every region, no two touching, diagonals included.
+  Board opens empty; the region map is the entire clue. 8×8 at every tier.
+- **A second family, not a tier of §4.24**, and the rule is why. A tier is allowed to demand harder
+  reasoning; it is not allowed to change what the player is being asked to do. Everything below the rule is
+  shared outright — the same board, marks, drag, six rungs, hint sentences and screen — so the family is a
+  quota, a tier table and a name.
+- **Knobs:** region-size spread · technique cap · required rung and its quota. **Grid size is not one**, and
+  that is measured rather than chosen: below 8×8 no legal star set exists at all, and a 10×10 lands on
+  34.8px squares at 390px wide against 43.5px for the 8×8 — under both platforms' touch minimum, on a board
+  whose main gesture is a drag along a row.
+- **It has more of the depth §4.24 lacks.** Over twenty wizard boards each: `spanning` fires 2.1 times a
+  board against 1.1, `groupTight` 10.6 against 8.0, and `groupFull` — the rung that merely notices a
+  finished group — HALVES, 3.0 against 6.2. A board is four steps longer for eight more stars, so the
+  second star buys argument rather than bookkeeping. `allApart` is still not load-bearing: at two stars the
+  check becomes reachable in principle, and measured over ten boards a tier it refuses nothing.
+- **The finding worth carrying: a quota sets the region SIZE, and region size is the clue.** The reading
+  most people reach for — one star to a line, two to a region — halves the region count and so doubles every
+  region, and the ladder then decides **0% of squares** on boards that provably have unique answers. The
+  classic form doubles the stars and keeps the regions, so a region stays the size it was and says twice as
+  much. Family doc §11.4 has the table.
+- **Themes:** `sky` today, but this is the mechanic that can wear more. A pair reads as things a place holds
+  two of — two watchmen to a district, two torches to a chamber — where a lone star cannot. A skin fits when
+  it can name three things: something straight crossing the world, something bounded and ragged, and a
+  reason two of them repel (family doc §11.3).
 
 ---
 

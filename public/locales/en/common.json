@@ -543,16 +543,26 @@
     "hint": {
       "mistake": "This mark cannot be right.",
       "touch": "A {{star}} here, and nothing may touch a {{star}}.",
-      "groupFull.row": "This row already has its {{star}}.",
-      "groupFull.col": "This column already has its {{star}}.",
-      "groupFull.region": "This region already has its {{star}}.",
-      "groupTight.row": "This row is down to one square.",
-      "groupTight.col": "This column is down to one square.",
-      "groupTight.region": "This region is down to one square.",
-      "regionLine.row": "The marked region’s {{star}} has to come from that row.",
-      "regionLine.col": "The marked region’s {{star}} has to come from that column.",
-      "lineRegion.row": "That row’s {{star}} belongs to the marked region.",
-      "lineRegion.col": "That column’s {{star}} belongs to the marked region.",
+      "groupFull.row_one": "This row already has its {{star}}.",
+      "groupFull.row_other": "This row already has its {{count}} {{star}}.",
+      "groupFull.col_one": "This column already has its {{star}}.",
+      "groupFull.col_other": "This column already has its {{count}} {{star}}.",
+      "groupFull.region_one": "This region already has its {{star}}.",
+      "groupFull.region_other": "This region already has its {{count}} {{star}}.",
+      "groupTight.row_one": "This row is down to one square.",
+      "groupTight.row_other": "This row is down to {{count}} squares.",
+      "groupTight.col_one": "This column is down to one square.",
+      "groupTight.col_other": "This column is down to {{count}} squares.",
+      "groupTight.region_one": "This region is down to one square.",
+      "groupTight.region_other": "This region is down to {{count}} squares.",
+      "regionLine.row_one": "The marked region’s {{star}} has to come from that row.",
+      "regionLine.row_other": "The marked region’s {{count}} {{star}} have to come from that row.",
+      "regionLine.col_one": "The marked region’s {{star}} has to come from that column.",
+      "regionLine.col_other": "The marked region’s {{count}} {{star}} have to come from that column.",
+      "lineRegion.row_one": "That row’s {{star}} belongs to the marked region.",
+      "lineRegion.row_other": "That row’s {{count}} {{star}} belong to the marked region.",
+      "lineRegion.col_one": "That column’s {{star}} belongs to the marked region.",
+      "lineRegion.col_other": "That column’s {{count}} {{star}} belong to the marked region.",
       "spanning.toRows": "The marked regions fill those {{count}} rows between them.",
       "spanning.toCols": "The marked regions fill those {{count}} columns between them.",
       "spanning.fromRows": "The marked rows can only take their {{count}} {{star}} from those regions.",
@@ -564,6 +574,7 @@
         "place_other": "Put a {{star}} in each hatched square."
       }
     },
-    "goal": "Every row, every column and every region holds exactly one star."
+    "goal_one": "Every row, every column and every region holds exactly one star.",
+    "goal_other": "Every row, every column and every region holds exactly {{count}} stars."
   }
 }

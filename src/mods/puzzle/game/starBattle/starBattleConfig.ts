@@ -11,16 +11,30 @@ import type { StarBattleOptions } from "./generateStarBattle"
 export const STAR_BATTLE_CONFIG: Record<Difficulty, StarBattleOptions> = {
   // Counting alone, on the smallest grid, with regions uneven enough that a one-square one opens the board.
   // Nothing here needs the boundary to mean more than "this is a group".
-  starter: { size: 5, regionSpread: 3, techniqueCap: "groupTight" },
+  starter: { size: 5, quota: 1, regionSpread: 3, techniqueCap: "groupTight" },
   // The region becomes a clue: one squeezed into a single line spends that line's star.
-  junior: { size: 6, regionSpread: 3, techniqueCap: "regionLine", requires: ["regionLine"] },
+  junior: { size: 6, quota: 1, regionSpread: 3, techniqueCap: "regionLine", requires: ["regionLine"] },
   // The spread tightens, which is what makes the region readings the board rather than a moment in it.
-  expert: { size: 7, regionSpread: 2, techniqueCap: "lineRegion", requires: ["regionLine"], requiresCount: 2 },
+  expert: {
+    size: 7,
+    quota: 1,
+    regionSpread: 2,
+    techniqueCap: "lineRegion",
+    requires: ["regionLine"],
+    requiresCount: 2,
+  },
   // The converse reading arrives, and it needs the rest of a line already emptied — so it comes later in a
   // solve than the region-into-line one, and a bigger grid is what makes room for it.
-  master: { size: 8, regionSpread: 2, techniqueCap: "lineRegion", requires: ["regionLine"], requiresCount: 3 },
+  master: {
+    size: 8,
+    quota: 1,
+    regionSpread: 2,
+    techniqueCap: "lineRegion",
+    requires: ["regionLine"],
+    requiresCount: 3,
+  },
   // The top rung, spent at least once. **The top two tiers share a size and differ in the rung they must
   // spend**, which is the weakest tier separation in the catalogue and is written down as the lab's starting
   // point rather than a claim (design doc §5).
-  wizard: { size: 8, regionSpread: 2, techniqueCap: "spanning", requires: ["spanning"] },
+  wizard: { size: 8, quota: 1, regionSpread: 2, techniqueCap: "spanning", requires: ["spanning"] },
 }

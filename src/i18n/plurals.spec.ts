@@ -78,4 +78,38 @@ describe("plural forms in the shipped locales", () => {
   ])("renders the %s star battle placement for %i as %s", (lng, count, expected) => {
     expect(t(lng, "starBattle.hint.action.place", { count, star: "⭐" })).toBe(expected)
   })
+
+  /**
+   * The star battle reasons that state a number, at both quotas the mechanic ships.
+   *
+   * These keys carry a dot of their own inside the `hint` block ("groupFull.row"), so the plural suffix
+   * lands on a key i18next has to find by its literal name rather than by walking one more level. That is a
+   * resolution path the identity-`t` suite cannot see through at all: a miss here reads as the raw key on a
+   * two-star board and as perfectly fine text on a one-star one.
+   */
+  it.each([
+    ["starBattle.hint.groupFull.region", "en", 1, "This region already has its ⭐."],
+    ["starBattle.hint.groupFull.region", "en", 2, "This region already has its 2 ⭐."],
+    ["starBattle.hint.groupTight.row", "en", 1, "This row is down to one square."],
+    ["starBattle.hint.groupTight.row", "en", 2, "This row is down to 2 squares."],
+    ["starBattle.hint.regionLine.row", "en", 2, "The marked region’s 2 ⭐ have to come from that row."],
+    ["starBattle.hint.lineRegion.col", "en", 2, "That column’s 2 ⭐ belong to the marked region."],
+    ["starBattle.hint.groupFull.region", "nl", 1, "Dit gebied heeft zijn ⭐ al."],
+    ["starBattle.hint.groupFull.region", "nl", 2, "Dit gebied heeft zijn 2 ⭐ al."],
+    ["starBattle.hint.groupTight.row", "nl", 2, "Deze rij heeft nog 2 vakjes over."],
+    ["starBattle.hint.lineRegion.col", "nl", 2, "De 2 ⭐ van die kolom horen bij het gemarkeerde gebied."],
+  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
+    expect(t(lng, key, { count, star: "⭐" })).toBe(expected)
+  })
+
+  // The goal states which of the two rules the board is under, so it is the one line that must not fall
+  // back to a shared wording.
+  it.each([
+    ["en", 1, "Every row, every column and every region holds exactly one star."],
+    ["en", 2, "Every row, every column and every region holds exactly 2 stars."],
+    ["nl", 1, "Elke rij, elke kolom en elk gebied heeft precies één ster."],
+    ["nl", 2, "Elke rij, elke kolom en elk gebied heeft precies 2 sterren."],
+  ])("renders the %s goal for a quota of %i as %s", (lng, count, expected) => {
+    expect(t(lng, "starBattle.goal", { count })).toBe(expected)
+  })
 })

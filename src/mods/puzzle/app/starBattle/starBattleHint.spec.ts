@@ -66,11 +66,17 @@ describe("star battle hints", () => {
 describe("every reason the ladder can give is phrased in both locales", () => {
   // A hint that reaches the player as a raw translation key is worse than no hint, so the keys are checked
   // against the ladder itself rather than against whatever the specs above happened to trip over.
+  // The reasons that state a number — a group's quota, or how many squares it is down to — read one way
+  // for a one-star board and another for a two-star one (game/starBattle/twinStars.ts), so both forms ship.
+  const counted = [
+    ...["row", "col", "region"].flatMap(group => [`groupFull.${group}`, `groupTight.${group}`]),
+    ...["row", "col"].flatMap(line => [`regionLine.${line}`, `lineRegion.${line}`]),
+  ]
+
   const keys = [
     "mistake",
     "touch",
-    ...["row", "col", "region"].flatMap(group => [`groupFull.${group}`, `groupTight.${group}`]),
-    ...["row", "col"].flatMap(line => [`regionLine.${line}`, `lineRegion.${line}`]),
+    ...counted.flatMap(key => [`${key}_one`, `${key}_other`]),
     ...["toRows", "toCols", "fromRows", "fromCols"].map(way => `spanning.${way}`),
   ]
 
@@ -121,7 +127,10 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   it("has the goal and the rules in both", () => {
     for (const locale of [en, nl]) {
       // The goal is its own section above the rules (`puzzle-screens.md` §1), not a bullet in them.
-      expect(typeof locale.starBattle.goal).toBe("string")
+      // Stated per quota: both families share this screen, and the goal is the one line that says which
+      // of the two rules the board in front of the player is under.
+      for (const goal of ["goal_one", "goal_other"])
+        expect(typeof (locale.starBattle as Record<string, unknown>)[goal], goal).toBe("string")
       for (const rule of ["touch", "enter"]) expect(typeof phrase(locale.starBattle.rules, rule)).toBe("string")
     }
   })

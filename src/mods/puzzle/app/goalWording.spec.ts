@@ -23,10 +23,14 @@ const PLACES = [
 describe("the goal above the rules", () => {
   it.each(FAMILIES)("%s says what a finished board looks like, in both languages", family => {
     for (const locale of [en, nl]) {
-      const { goal } = (locale as Record<string, { goal?: unknown }>)[family]
+      const block = (locale as unknown as Record<string, Record<string, unknown>>)[family]
+      const { goal } = block
       // A family with one identity words it once; one that wears several words it per place, and that block
-      // is checked below.
-      expect(typeof goal === "string" || typeof goal === "object").toBe(true)
+      // is checked below. A family whose RULE comes at more than one strength — star battle's one star a
+      // group and twin stars' two, off the same screen — words it per count instead, and i18next picks the
+      // form from the board's own quota.
+      const perCount = typeof block.goal_one === "string" && typeof block.goal_other === "string"
+      expect(typeof goal === "string" || typeof goal === "object" || perCount, family).toBe(true)
     }
   })
 

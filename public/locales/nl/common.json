@@ -536,16 +536,26 @@
     "hint": {
       "mistake": "Dit teken kan niet kloppen.",
       "touch": "Hier een {{star}}, en niets mag aan een {{star}} raken.",
-      "groupFull.row": "Deze rij heeft zijn {{star}} al.",
-      "groupFull.col": "Deze kolom heeft zijn {{star}} al.",
-      "groupFull.region": "Dit gebied heeft zijn {{star}} al.",
-      "groupTight.row": "Deze rij heeft nog één vakje over.",
-      "groupTight.col": "Deze kolom heeft nog één vakje over.",
-      "groupTight.region": "Dit gebied heeft nog één vakje over.",
-      "regionLine.row": "De {{star}} van het gemarkeerde gebied moet uit die rij komen.",
-      "regionLine.col": "De {{star}} van het gemarkeerde gebied moet uit die kolom komen.",
-      "lineRegion.row": "De {{star}} van die rij hoort bij het gemarkeerde gebied.",
-      "lineRegion.col": "De {{star}} van die kolom hoort bij het gemarkeerde gebied.",
+      "groupFull.row_one": "Deze rij heeft zijn {{star}} al.",
+      "groupFull.row_other": "Deze rij heeft zijn {{count}} {{star}} al.",
+      "groupFull.col_one": "Deze kolom heeft zijn {{star}} al.",
+      "groupFull.col_other": "Deze kolom heeft zijn {{count}} {{star}} al.",
+      "groupFull.region_one": "Dit gebied heeft zijn {{star}} al.",
+      "groupFull.region_other": "Dit gebied heeft zijn {{count}} {{star}} al.",
+      "groupTight.row_one": "Deze rij heeft nog één vakje over.",
+      "groupTight.row_other": "Deze rij heeft nog {{count}} vakjes over.",
+      "groupTight.col_one": "Deze kolom heeft nog één vakje over.",
+      "groupTight.col_other": "Deze kolom heeft nog {{count}} vakjes over.",
+      "groupTight.region_one": "Dit gebied heeft nog één vakje over.",
+      "groupTight.region_other": "Dit gebied heeft nog {{count}} vakjes over.",
+      "regionLine.row_one": "De {{star}} van het gemarkeerde gebied moet uit die rij komen.",
+      "regionLine.row_other": "De {{count}} {{star}} van het gemarkeerde gebied moeten uit die rij komen.",
+      "regionLine.col_one": "De {{star}} van het gemarkeerde gebied moet uit die kolom komen.",
+      "regionLine.col_other": "De {{count}} {{star}} van het gemarkeerde gebied moeten uit die kolom komen.",
+      "lineRegion.row_one": "De {{star}} van die rij hoort bij het gemarkeerde gebied.",
+      "lineRegion.row_other": "De {{count}} {{star}} van die rij horen bij het gemarkeerde gebied.",
+      "lineRegion.col_one": "De {{star}} van die kolom hoort bij het gemarkeerde gebied.",
+      "lineRegion.col_other": "De {{count}} {{star}} van die kolom horen bij het gemarkeerde gebied.",
       "spanning.toRows": "De gemarkeerde gebieden vullen samen die {{count}} rijen.",
       "spanning.toCols": "De gemarkeerde gebieden vullen samen die {{count}} kolommen.",
       "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{star}} alleen uit die gebieden halen.",
@@ -557,6 +567,7 @@
         "place_other": "Zet een {{star}} in elk gearceerd vakje."
       }
     },
-    "goal": "Elke rij, elke kolom en elk gebied heeft precies één ster."
+    "goal_one": "Elke rij, elke kolom en elk gebied heeft precies één ster.",
+    "goal_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren."
   }
 }

@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { mulberry32 } from "@/game/random"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { cellAt, colOf, neighboursOf, type StarBattlePuzzle } from "./starBattle"
+import { cellAt, neighboursOf, type StarBattlePuzzle } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
-import { generateStarBattle, type StarBattlePuzzleWithAnswer } from "./generateStarBattle"
+import { TWIN_STARS_CONFIG } from "./twinStars"
+import { generateStarBattle, type StarBattleOptions, type StarBattlePuzzleWithAnswer } from "./generateStarBattle"
 import { applyStarBattleTechniques, nextStarBattleStep, STAR_BATTLE_TECHNIQUES, type Marks } from "./techniques"
 
 /**
@@ -21,6 +22,22 @@ import { applyStarBattleTechniques, nextStarBattleStep, STAR_BATTLE_TECHNIQUES, 
  */
 const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
 
+/**
+ * The boards to hold to it, one per rule the mechanic ships.
+ *
+ * **The second quota is where this suite earns its keep.** Every rung is the same code at one star and at
+ * two, so the two-star board is not new code being tested — it is the same code asked a question it was
+ * never run against, and a counting rung that quietly assumed "one" would pass every other spec in this
+ * folder.
+ */
+const AGREEMENT: { name: string; options: StarBattleOptions }[] = [
+  ...TIERS.map(tier => ({ name: `star battle ${tier}`, options: STAR_BATTLE_CONFIG[tier] })),
+  ...(["expert", "master", "wizard"] as Difficulty[]).map(tier => ({
+    name: `twin stars ${tier}`,
+    options: TWIN_STARS_CONFIG[tier],
+  })),
+]
+
 /** A state a player could actually be in: some of the answer's stars, and some correct dark marks. */
 const playerState = (board: StarBattlePuzzleWithAnswer, random: () => number): Marks => {
   const stars = random()
@@ -36,44 +53,59 @@ const playerState = (board: StarBattlePuzzleWithAnswer, random: () => number): M
  *
  * Checking a decision against the ANSWER only proves the rung is not lying about this board. Checking it
  * against every completion proves the step was FORCED, which is the claim a hint makes and the claim
- * uniqueness rests on. Only the shipped one-star-a-line form is enumerated; a wider quota is §10.3.
+ * uniqueness rests on.
+ *
+ * Walks the rows and takes each row's stars as a COMBINATION, so it enumerates at either quota — the quota
+ * is what makes a row's choice one square or several, and every other rule reads the same way round.
  */
 const completions = (puzzle: StarBattlePuzzle, marks: Marks, limit: number): number[][] => {
-  const { size } = puzzle
+  const { size, quota } = puzzle
   const found: number[][] = []
   const taken: number[] = []
+  const inColumn = new Array(size).fill(0)
+  const inRegion = new Array(size).fill(0)
   const walk = (row: number) => {
     if (found.length >= limit) return
     if (row === size) {
       found.push([...taken])
       return
     }
-    for (let col = 0; col < size; col++) {
-      const cell = cellAt(size, row, col)
-      if (marks[cell] === "dark") continue
-      if (taken.some(at => colOf(size, at) === col)) continue
-      if (taken.some(at => puzzle.regions[at] === puzzle.regions[cell])) continue
-      if (taken.some(at => neighboursOf(size, cell).includes(at))) continue
-      // A star the player already wrote down fixes its row: no other square in it may be chosen.
-      const fixed = Array.from({ length: size }, (_unused, at) => cellAt(size, row, at)).find(
-        at => marks[at] === "star"
-      )
-      if (fixed !== undefined && fixed !== cell) continue
-      taken.push(cell)
-      walk(row + 1)
-      taken.pop()
+    const cells = Array.from({ length: size }, (_unused, col) => cellAt(size, row, col))
+    // Stars the player already wrote down are part of the state, so a completion that leaves one out is a
+    // completion of a different board.
+    const written = cells.filter(cell => marks[cell] === "star")
+    const from = taken.length
+    const choose = (col: number, owed: number) => {
+      if (found.length >= limit) return
+      if (owed === 0) {
+        if (written.every(cell => taken.slice(from).includes(cell))) walk(row + 1)
+        return
+      }
+      for (let at = col; at < size; at++) {
+        const cell = cells[at]
+        if (marks[cell] === "dark") continue
+        if (inColumn[at] === quota || inRegion[puzzle.regions[cell]] === quota) continue
+        if (taken.some(other => neighboursOf(size, cell).includes(other))) continue
+        taken.push(cell)
+        inColumn[at]++
+        inRegion[puzzle.regions[cell]]++
+        choose(at + 1, owed - 1)
+        taken.pop()
+        inColumn[at]--
+        inRegion[puzzle.regions[cell]]--
+      }
     }
+    choose(0, quota)
   }
   walk(0)
   return found
 }
 
 describe("star battle soundness", () => {
-  it.each(TIERS)(
-    "every rung agrees with the answer from any state a player reaches at %s",
+  it.each(AGREEMENT)(
+    "every rung agrees with the answer from any state a player reaches at $name",
     { timeout: 60_000 },
-    tier => {
-      const options = STAR_BATTLE_CONFIG[tier]
+    ({ options }) => {
       const random = mulberry32(7717)
       for (const seed of [1, 2, 3]) {
         const board = generateStarBattle(seed, options)
@@ -84,7 +116,7 @@ describe("star battle soundness", () => {
             for (const decision of step.decisions)
               expect(
                 decision.mark === "star" ? board.solution[decision.cell] : !board.solution[decision.cell],
-                `${tier} seed ${seed} ${step.technique}${step.variant ? `.${step.variant}` : ""} on cell ${decision.cell}`
+                `seed ${seed} ${step.technique}${step.variant ? `.${step.variant}` : ""} on cell ${decision.cell}`
               ).toBe(true)
         }
       }
@@ -92,41 +124,41 @@ describe("star battle soundness", () => {
   )
 
   /**
-   * The stronger reading of the same rule, on the two sizes small enough to enumerate: a rung's decision has
-   * to hold in EVERY legal completion of the state it fired from, not merely in the answer the board shipped
+   * The stronger reading of the same rule, on the boards small enough to enumerate: a rung's decision has to
+   * hold in EVERY legal completion of the state it fired from, not merely in the answer the board shipped
    * with. That is what makes a step forced rather than lucky.
+   *
+   * Twin stars is enumerated at its own grid rather than a smaller one, because it has no smaller one — 8×8
+   * is where its rule starts having boards. Its state space is what caps the rounds here, not its risk.
    */
-  it.each(["starter", "junior"] as Difficulty[])(
-    "every rung is forced by the board it fired from at %s",
-    { timeout: 60_000 },
-    tier => {
-      const options = STAR_BATTLE_CONFIG[tier]
-      const random = mulberry32(4241)
-      let checked = 0
-      for (const seed of [1, 2, 3, 4]) {
-        const board = generateStarBattle(seed, options)
-        for (let round = 0; round < 25; round++) {
-          const marks = playerState(board, random)
-          const ways = completions(board, marks, 60)
-          // A state the player has already broken has nothing to be forced about.
-          if (!ways.length) continue
-          for (const technique of STAR_BATTLE_TECHNIQUES) {
-            const step = nextStarBattleStep(board, [...marks], [technique])
-            if (!step) continue
-            for (const decision of step.decisions) {
-              const holds = ways.every(way =>
-                decision.mark === "star" ? way.includes(decision.cell) : !way.includes(decision.cell)
-              )
-              expect(holds, `${tier} seed ${seed} ${technique} on cell ${decision.cell}, ${ways.length} ways`).toBe(
-                true
-              )
-              checked++
-            }
+  it.each([
+    { name: "star battle starter", options: STAR_BATTLE_CONFIG.starter, seeds: [1, 2, 3, 4], rounds: 25 },
+    { name: "star battle junior", options: STAR_BATTLE_CONFIG.junior, seeds: [1, 2, 3, 4], rounds: 25 },
+    { name: "twin stars expert", options: TWIN_STARS_CONFIG.expert, seeds: [1, 2], rounds: 12 },
+  ])("every rung is forced by the board it fired from at $name", { timeout: 120_000 }, ({ options, seeds, rounds }) => {
+    const random = mulberry32(4241)
+    let checked = 0
+    for (const seed of seeds) {
+      const board = generateStarBattle(seed, options)
+      for (let round = 0; round < rounds; round++) {
+        const marks = playerState(board, random)
+        const ways = completions(board, marks, 60)
+        // A state the player has already broken has nothing to be forced about.
+        if (!ways.length) continue
+        for (const technique of STAR_BATTLE_TECHNIQUES) {
+          const step = nextStarBattleStep(board, [...marks], [technique])
+          if (!step) continue
+          for (const decision of step.decisions) {
+            const holds = ways.every(way =>
+              decision.mark === "star" ? way.includes(decision.cell) : !way.includes(decision.cell)
+            )
+            expect(holds, `seed ${seed} ${technique} on cell ${decision.cell}, ${ways.length} ways`).toBe(true)
+            checked++
           }
         }
       }
-      // A test that silently exercised nothing is not a guard.
-      expect(checked).toBeGreaterThan(100)
     }
-  )
+    // A test that silently exercised nothing is not a guard.
+    expect(checked).toBeGreaterThan(100)
+  })
 })

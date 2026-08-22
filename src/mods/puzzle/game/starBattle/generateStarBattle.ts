@@ -17,6 +17,18 @@ export type StarBattlePuzzleWithAnswer = StarBattlePuzzle & {
 export type StarBattleOptions = {
   size: number
   /**
+   * Stars owed by every row, every column and every region.
+   *
+   * **Two is a different puzzle wearing the same rules, not a harder setting of this one.** At one star a
+   * group is answered the moment it is found; at two, every group is a capacity argument until its last
+   * star lands, which is what makes `groupTight` and the region readings count rather than merely fire.
+   * The region count does NOT follow the quota — there are `size` regions either way, so a two-star region
+   * is the same size as a one-star region and says twice as much. Halving the region count instead (one
+   * star to a line, two to a region) doubles every region and the map stops being a clue at all; measured
+   * at 0 of 4000 boards settling, and recorded in design doc §10.
+   */
+  quota: number
+  /**
    * How unevenly the regions are sized, as the exponent their target sizes follow — and **this is the
    * family's real difficulty knob**, not the technique cap (design doc §5).
    *
@@ -54,34 +66,111 @@ export const techniquesUpTo = (cap: StarBattleTechniqueId): StarBattleTechniqueI
   STAR_BATTLE_TECHNIQUES.filter(id => techniqueRank(id) <= techniqueRank(cap))
 
 /**
- * A legal star set: one to a row, one to a column, no two touching. Drawn by backtracking down the rows.
+ * A legal star set: `quota` to a row, `quota` to a column, no two touching. Drawn by backtracking down the
+ * rows, choosing the row's stars together so a pair that touches is rejected where it is made.
  *
  * **The stars come first and the regions are drawn around them** (design doc §4), which is the whole ordering
  * of this generator: draw the regions first and the star set has to be found inside them, which is a rejection
- * loop on top of a rejection loop. This way every region holds its star by construction.
+ * loop on top of a rejection loop. This way every region holds its stars by construction.
  *
- * One star to a line is every tier this family ships (design doc §5). The RULES and the technique solver are
- * written for any quota — a group owes `puzzle.quota` and counts what it holds — and only this drawer is not,
- * because a two-star board is the open question §10 records rather than something a tier asks for.
+ * Columns are walked in a shuffled order and picked in increasing position within it, so a row's stars are
+ * drawn as a random COMBINATION rather than a random sequence — the same pair reached two ways is one draw,
+ * not two.
  */
-const starSet = (size: number, random: () => number): number[] | undefined => {
+const starSet = (size: number, quota: number, random: () => number): number[] | undefined => {
   const placed: number[] = []
+  const inColumn = new Array(size).fill(0)
   const fill = (row: number): boolean => {
     if (row === size) return true
-    for (const col of shuffle(
+    const order = shuffle(
       Array.from({ length: size }, (_unused, index) => index),
       random
-    )) {
-      const cell = cellAt(size, row, col)
-      if (placed.some(at => colOf(size, at) === col)) continue
-      if (neighboursOf(size, cell).some(at => placed.includes(at))) continue
-      placed.push(cell)
-      if (fill(row + 1)) return true
-      placed.pop()
+    )
+    const choose = (from: number, owed: number): boolean => {
+      if (owed === 0) return fill(row + 1)
+      for (let at = from; at < order.length; at++) {
+        const col = order[at]
+        const cell = cellAt(size, row, col)
+        if (inColumn[col] === quota) continue
+        if (neighboursOf(size, cell).some(other => placed.includes(other))) continue
+        placed.push(cell)
+        inColumn[col]++
+        if (choose(at + 1, owed - 1)) return true
+        placed.pop()
+        inColumn[col]--
+      }
+      return false
     }
-    return false
+    return choose(0, quota)
   }
   return fill(0) ? placed : undefined
+}
+
+/**
+ * The stars grouped into the regions that will hold them — each group is one region's seed.
+ *
+ * At one star a region seeds on its own star and there is nothing to pair. At two, the stars are paired
+ * nearest-first and **the shortest free path between a pair is claimed with them**, which is what makes the
+ * region connected by construction: growth only ever adds squares touching what the region already holds, so
+ * a region seeded in one piece stays in one piece. Left to meet by growing, two seeds are walled apart by
+ * their neighbours often enough to throw most draws away.
+ */
+const seedRegions = (size: number, stars: readonly number[], quota: number, random: () => number) => {
+  if (quota === 1) return stars.map(cell => [cell])
+  const claimed = new Set(stars)
+  const seeds: number[][] = []
+  for (const [from, to] of pairStars(size, stars, random)) {
+    const path = pathBetween(size, from, to, claimed)
+    if (!path) return undefined
+    path.forEach(cell => claimed.add(cell))
+    seeds.push([from, to, ...path])
+  }
+  return seeds
+}
+
+/** The stars paired off nearest-first, so a region has a short way to join its two. */
+const pairStars = (size: number, stars: readonly number[], random: () => number): number[][] => {
+  const loose = shuffle([...stars], random)
+  const pairs: number[][] = []
+  while (loose.length) {
+    const from = loose.shift()!
+    let nearest = 0
+    let shortest = Infinity
+    loose.forEach((to, index) => {
+      const away = Math.abs(rowOf(size, from) - rowOf(size, to)) + Math.abs(colOf(size, from) - colOf(size, to))
+      if (away < shortest) [shortest, nearest] = [away, index]
+    })
+    pairs.push([from, loose.splice(nearest, 1)[0]])
+  }
+  return pairs
+}
+
+/** The shortest way from one star to the other through squares no region has claimed, ends excluded. */
+const pathBetween = (size: number, from: number, to: number, claimed: ReadonlySet<number>): number[] | undefined => {
+  const cameFrom = new Map<number, number>([[from, -1]])
+  const queue = [from]
+  while (queue.length) {
+    const cell = queue.shift()!
+    if (cell === to) {
+      const path: number[] = []
+      for (let at = cameFrom.get(to)!; at !== from; at = cameFrom.get(at)!) path.push(at)
+      return path
+    }
+    const [row, col] = [rowOf(size, cell), colOf(size, cell)]
+    for (const [atRow, atCol] of [
+      [row + 1, col],
+      [row - 1, col],
+      [row, col + 1],
+      [row, col - 1],
+    ]) {
+      if (atRow < 0 || atRow >= size || atCol < 0 || atCol >= size) continue
+      const at = cellAt(size, atRow, atCol)
+      if (cameFrom.has(at) || (claimed.has(at) && at !== to)) continue
+      cameFrom.set(at, cell)
+      queue.push(at)
+    }
+  }
+  return undefined
 }
 
 /**
@@ -94,33 +183,40 @@ const starSet = (size: number, random: () => number): number[] | undefined => {
  * this family looking for a second clue layer to lean on. Spread the sizes instead and the same search finds
  * solvable maps easily. It is also what hand-made grids look like: a one-square region beside a
  * fourteen-square one, and the little ones are where a solve begins.
+ *
+ * `smallest` is the floor the spread may not push a region under, and it is the quota's own arithmetic: two
+ * stars that may not touch need three squares to stand in, so a two-star board cannot have the one-square
+ * region that opens a one-star board. Its opening gift is a three-in-a-line region instead.
  */
-const regionTargets = (size: number, spread: number): number[] => {
+const regionTargets = (size: number, spread: number, smallest: number): number[] => {
   const shape = Array.from({ length: size }, (_unused, index) => (index + 1) ** spread)
   const scale = (size * size) / shape.reduce((total, part) => total + part, 0)
-  return shape.map(part => Math.max(1, part * scale))
+  return shape.map(part => Math.max(smallest, part * scale))
 }
 
 /**
- * Regions grown outwards from the stars until every square is claimed.
+ * Regions grown outwards from their seeds until every square is claimed.
  *
  * Each step feeds whichever region is furthest behind its target, so the sizes come out in the intended
  * spread. Growing orthogonally makes contiguity free.
  */
 const growRegions = (
   size: number,
-  stars: readonly number[],
+  seeds: readonly number[][],
   random: () => number,
-  spread: number
+  spread: number,
+  smallest: number
 ): number[] | undefined => {
-  const targets = regionTargets(size, spread)
+  const targets = regionTargets(size, spread, smallest)
   const regions: number[] = new Array(size * size).fill(-1)
-  // As many regions as rows, each seeded with the one star it owes.
-  stars.forEach((cell, index) => (regions[cell] = index))
-  const sizes = new Array(size).fill(1)
-  let left = size * size - stars.length
+  // As many regions as rows, each seeded with the stars it owes and whatever joins them.
+  const sizes = seeds.map((cells, region) => {
+    cells.forEach(cell => (regions[cell] = region))
+    return cells.length
+  })
+  let left = regions.filter(at => at === -1).length
   while (left > 0) {
-    const order = [...Array(size).keys()].sort(
+    const order = [...Array(seeds.length).keys()].sort(
       (a, b) => sizes[a] / targets[a] - sizes[b] / targets[b] || random() - 0.5
     )
     const grown = order.some(region => {
@@ -165,17 +261,21 @@ const settles = (puzzle: StarBattlePuzzle, allowed: StarBattleTechniqueId[], sol
  * runs anywhere in this family.
  */
 export const generateStarBattle = (seed: number, options: StarBattleOptions): StarBattlePuzzleWithAnswer => {
-  const { size, regionSpread, techniqueCap, requires = [], requiresCount = 1 } = options
+  const { size, quota, regionSpread, techniqueCap, requires = [], requiresCount = 1 } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
+  // Two stars that may not touch need three squares; one star needs the one it stands on.
+  const smallest = quota * 2 - 1
   let fallback: { board: StarBattlePuzzleWithAnswer; demanded: number } | undefined
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const stars = starSet(size, random)
+    const stars = starSet(size, quota, random)
     if (!stars) continue
-    const regions = growRegions(size, stars, random, regionSpread)
+    const seeds = seedRegions(size, stars, quota, random)
+    if (!seeds) continue
+    const regions = growRegions(size, seeds, random, regionSpread, smallest)
     if (!regions) continue
     const solution = Array.from({ length: size * size }, (_unused, cell) => stars.includes(cell))
-    const puzzle = { size, quota: 1, regions }
+    const puzzle = { size, quota, regions }
     const result = settles(puzzle, allowed, solution)
     if (!result) continue
     const board = { ...puzzle, solution, techniqueCap }

@@ -60,7 +60,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
-      goal={t("starBattle.goal")}
+      goal={t("starBattle.goal", { count: puzzle.quota })}
       rules={<StarBattleRules />}
     >
       {({ reportInput, hintVisible }) => (

@@ -274,8 +274,9 @@ miss rather than nothing.
 - **Required rung and its quota** — which technique the solve must spend, and how often.
   **One is not a tier**, the same rule eclipse's config states — except at the very top,
   where `spanning` is scarce enough that one firing is what a tier can ask for.
-- **Stars per line** — one at every tier. Two is the classic hard Star Battle and it is
-  **untested** (§10).
+- **Stars per line** — one at every tier of THIS family. Two is the classic hard Star
+  Battle, and it ships as a family of its own rather than as a tier here (§11): a tier may
+  ask for harder reasoning, but it may not change what the player is being asked to do.
 
 | Tier    | Grid | Spread | Cap          | Requires        |
 | ------- | ---- | ------ | ------------ | --------------- |
@@ -437,15 +438,159 @@ one reading that might earn a second skin if a site ever asks.
    against eclipse's wizard 55–62, and the counting rungs are most of them (§3.4). The board
    may well come in UNDER its tier rather than over it, which is the opposite of the risk the
    catalogue recorded. If it loses, wizard grows to 9×9.
-3. **Two stars to a line.** Untested, and the classic form of the hard puzzle. It changes
-   `groupTight` from "one square left" to a capacity argument, which may be what revives the
-   rung §3.2 cut — and it would make `allApart` and `regionLine`'s quota check load-bearing,
-   which §3.3 records they currently are not. Worth probing before it is worth building.
-4. **Is the spread the right shape, or only a working one?** Sizes follow `(n + 1) ** spread`
+3. **Is the spread the right shape, or only a working one?** Sizes follow `(n + 1) ** spread`
    because two exponents were measured and one worked; nothing says a hand-picked set of
    target sizes would not do better, and "better" here means harder boards found at the same
    cost. The measurement is cheap and nobody has done it.
-5. **Would a guard reading earn a second skin?** Post one watchman to a district, none
-   within sight of another — the same rules, worn as a tomb or a city rather than a sky.
-   The catalogue says this mechanic is `sky` and nothing else; this is the counter-example
-   to test that with, if a site ever asks.
+
+**Two stars to a line is answered and built** — it is §11, a second family off this engine.
+The reading it displaced (one star to a line, two to a region) is answered too, in §11.4,
+and the answer is no.
+
+## 11. Twin stars — two to a group
+
+The classic form of the mechanic: **two stars to every row, every column and every region**,
+same board, same adjacency rule. It ships as its own family (`twin-stars`), reusing this
+one's board, marks, drag, ladder and hints outright — the code that differs is a quota, a
+tier table and a name.
+
+**It is a second family because the rule is different, not because the board is bigger.** A
+tier is allowed to demand harder reasoning; it is not allowed to change what the player is
+being asked to do, and "two" changes the goal line, every counting sentence and the shape of
+every deduction. A player who met one star at master and two at wizard would reasonably read
+the second board as the first and get nowhere.
+
+### 11.1 What the second star buys
+
+At one star, a group is answered the moment its star is found: `groupFull` and `groupTight`
+are bookkeeping around a single square. At two, **a group stays a capacity argument until its
+last star lands** — "this row is down to two squares" is a sentence about a set, and the rung
+places both.
+
+Over twenty wizard boards of each, on the shipped ladder:
+
+| Rung          | one star (8×8 wizard) | two stars (8×8 wizard) |
+| ------------- | --------------------- | ---------------------- |
+| steps a board | 24.8                  | 28.6                   |
+| `touch`       | 5.0                   | 9.7                    |
+| `groupFull`   | 6.2                   | 3.0                    |
+| `groupTight`  | 8.0                   | 10.6                   |
+| `regionLine`  | 3.8                   | 2.8                    |
+| `lineRegion`  | 0.7                   | 0.5                    |
+| `spanning`    | 1.1                   | 2.1                    |
+
+**`spanning` doubles and `groupFull` halves**, which is the shape of the difference: the rung
+that merely notices a finished group has half as much to notice, and the one that reasons
+across two groups at once carries twice as much. A board is four steps longer for eight more
+stars, so the extra star is not extra bookkeeping — it is the same work done with more of it
+forced by argument.
+
+**`allApart` is still not load-bearing**, and it is worth being exact about that rather than
+claiming the second star fixes it. At one star a tight group is a single square and cannot
+propose two that touch, so the check is unreachable; at two it becomes reachable in
+principle. Measured over ten boards at each tier, at either quota, it refuses **nothing**. It
+stays what §3.3 says it is: a guard, not a rung.
+
+### 11.2 Tiers
+
+**8×8 at every tier**, and the size cannot be the knob:
+
+- **Below 8×8 there are no boards at all.** Two to a row and two to a column with nothing
+  touching does not fit in 7×7 or 6×6 — the generator finds no legal star set, let alone a
+  solvable map. There is no junior form of this rule.
+- **Above 8×8 the board stops fitting a phone.** A 10×10 lands on 34.8px squares at 390px
+  wide (31.8px at 360px) against 43.5px for an 8×8, under both platforms' touch minimum, on
+  a board whose main gesture is a drag along a row. Measured on the real screen, not
+  computed. 10×10 is a tablet question if it is ever a question.
+
+| Tier   | Grid | Spread | Cap          | Requires        | Cost  |
+| ------ | ---- | ------ | ------------ | --------------- | ----- |
+| expert | 8×8  | n³     | `regionLine` | `regionLine` ×2 | 15ms  |
+| master | 8×8  | n²     | `lineRegion` | `lineRegion` ×3 | 307ms |
+| wizard | 8×8  | n²     | `spanning`   | `spanning` ×2   | 219ms |
+
+The ramp is the spread first and then the rung, the same way this family's own is (§5) — and
+unlike star battle's top two tiers, these differ in the spread AS WELL as in the rung they
+must spend, so the separation is not resting on the requirement alone.
+
+**Every board opens on `regionLine`** — measured, all twelve seeds at all three tiers — and
+the shape of the opening is worth stating because it is not the one the one-star family has.
+A region that fits inside a single row owes two stars, that row owes two stars, so the rest
+of the row is empty before a single star is placed. The steep spread at expert is what makes
+such a region likely. There is no two-star equivalent of the one-square region that hands a
+starter board its first star outright: **three squares in a line owing two stars have exactly
+one legal filling, and this ladder cannot see it.** Reading that needs a rung that enumerates
+a group's legal placements, which the family does not have (§11.5).
+
+### 11.3 The pair is what a skin can name
+
+This is the family that answers §9's open reading. **A lone star only ever reads as the one
+and only** — which is why star battle wears `sky` and nothing else, and why the watchman
+reading never had anywhere to go. A PAIR reads as a great many things a place can hold two
+of: two watchmen to a district, two torches to a chamber, two royals to a country, two
+households to a field.
+
+A theme fits this mechanic when it can name three things: something straight that crosses the
+whole world (the rows and columns), something bounded and ragged (the regions), and a reason
+two of them repel (the adjacency rule). Sky names the first two and is weakest on the third.
+Candidates, none built:
+
+| Skin    | Lines               | Regions   | Why two repel                      |
+| ------- | ------------------- | --------- | ---------------------------------- |
+| Watch   | streets             | districts | never within sight of each other   |
+| Torches | corridors           | chambers  | two flames too close gutter        |
+| Fields  | irrigation channels | holdings  | two households cannot share a well |
+
+It ships on `sky` with the shared skin, because a second skin is worth building when a site
+asks for one and not before.
+
+### 11.4 The reading that failed: one to a line, two to a region
+
+Worth recording, because it is the reading most people reach for first — **one royal per row
+and column, two per country** — and it is the one that does not work.
+
+Halving the region count is what kills it. The quota fixes the arithmetic: one star to a row
+means `size` stars in total, so two to a region means `size / 2` regions, so a region
+averages **twice the squares**. "Two stars somewhere in these eighteen squares" is about a
+hundred and fifty legal arrangements — near-zero information — where a region of `size` cells
+decides something the moment it is looked at. **Region size is the clue, and the quota is
+what sets it.**
+
+Measured over 4000 draws a size, with the region drawing solved (stars paired nearest-first,
+the shortest free path between a pair claimed with them):
+
+|                                    | 6×6 | 8×8  | 10×10 |
+| ---------------------------------- | --- | ---- | ----- |
+| legal maps drawn                   | 97% | 99%  | 99%   |
+| maps with a unique answer          | 31% | 3.7% | 1.3%  |
+| **squares this ladder decides**    | 0%  | 0%   | 0%    |
+| with a packing rung added          | 33% | 27%  | 19%   |
+| boards settled, of the unique ones | 11% | 0%   | 0%    |
+
+The boards exist — uniqueness holds at rates comparable to what this family ships. **The
+ladder cannot reach them.** Not one rung fires on an empty board: `groupTight` wants
+`free === owed`, and a three-square country owing two stars is 3 ≠ 2. Adding the capacity
+rung that answers it (enumerate a group's legal placements; a square in all of them is a
+star, a square in none is dark) gets a third of the board and then stalls.
+
+The classic form keeps `size` regions and doubles the STARS instead, so a region stays the
+size it was and says twice as much. That is why the classic form is the classic form.
+
+### 11.5 The rung this family does not have
+
+The capacity reading — **enumerate a group's legal placements; a square in every one of them
+is a star, a square in none of them is dark** — is the natural top of a two-star ladder, and
+it is deliberately not built. It subsumes `groupFull` and `groupTight` outright, it is what
+reads a three-in-a-line region, and on 8×8 it lifts the share of region maps that settle from
+21% to 99.7%.
+
+It is left out because **8×8 does not need it**: one map in five already settles on the six
+rungs the family has, which is a generous pool to filter a required rung out of. What it
+would buy is 10×10, where the shipped ladder settles 0.3% of maps and the packing rung takes
+that to 8.5% — and 10×10 is the size §11.2 rules out on touch targets. So the rung is a
+consequence of a board size this family has no use for.
+
+The other thing it costs is a sentence. Every rung here is held to explaining itself in one
+line a player can check (§3, §7), and "these are the only two ways two stars fit in this
+region" is a claim about an enumeration rather than a fact about the board. That is the same
+test the adjacency-capacity rung failed in §3.2, and it would have to pass it before shipping.
