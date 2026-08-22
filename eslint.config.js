@@ -52,6 +52,13 @@ export default tseslint.config(
           cssConfigPath: join(process.cwd(), "src", "index.css"),
         },
       },
+      rules: {
+        // The rule cannot see through a variable: interpolate one into a class string and it reports
+        // the VARIABLE NAME as an unknown class. Every hit it produced here was that — a className
+        // passthrough, or a local holding class strings (transitionDuration, buttonCls, tone) — so
+        // its real catch, a typo in a literal class, was buried under 23 false positives.
+        "tailwindcss/no-custom-classname": "off",
+      },
     },
     eslintPluginPrettierRecommended,
   ],
