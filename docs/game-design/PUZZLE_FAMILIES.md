@@ -169,6 +169,11 @@ knob bounds; it never changes difficulty.
 
 ## 4. The puzzle families
 
+Where a family has a design doc, **this is a pointer and the doc is the record** — its rules, ladder,
+knobs and findings live there and are not restated here. Entries without a doc are families that were
+considered and not built, and for those this section is the only description there is. The cross-family
+tables are §6 (scorecard), §7 (curriculum map) and §11 (theme fit and weight).
+
 ### 4.1 Cross-sum / number pyramid — _(have)_
 
 - **Skill:** addition, then multiplication; substitution; deduction.
@@ -182,25 +187,11 @@ knob bounds; it never changes difficulty.
   hide a solvable subset).
 - **UI:** easy — already built; glyph-pad into the grid. Mobile-fine.
 
-### 4.2 Balance scale (weighing of the heart) — _(have)_
+### 4.2 Balance scale (weighing of the heart)
 
-Family doc: `docs/game-design/puzzles/balance-scale.md`. In the world: its meta
-sits in the puzzle mod's family list, so the gen-time allocator draws it for
-puzzle nodes at every tier alongside cross-sum's tableau and Sumplete.
+Equality and equation-balancing: load two pans and find the unknown weight that levels the beam.
 
-- **Skill:** equality and equation-balancing → genuine algebra.
-- **Operates:** two pans; place glyph-weights; the beam **tilts in real time**;
-  find the unknown weight that levels it. The tilt _is_ the feedback — near-zero
-  instruction text.
-- **Knobs:** number of unknowns · weights per pan · nesting (weights made of
-  other weights) · whether coefficients appear (2× a weight).
-- **Scaling:** excellent — a number shared out between two unknowns at T1 up
-  through nested multi-unknown equations at T5. Carries a kid from arithmetic into real algebra
-  inside one metaphor.
-- **Generation:** easy–medium — generate an integer linear equation with a unique
-  positive-integer solution, render as pans.
-- **UI:** medium — bespoke tilt animation is the whole point; otherwise
-  tap-to-place. The least language-dependent family in the catalogue.
+Design doc: [puzzles/balance-scale.md](puzzles/balance-scale.md)
 
 ### 4.3 Sundial / shadow clock (telling time) — _(dropped as a puzzle family)_
 
@@ -311,20 +302,9 @@ Two things killed the puzzle-room version, and either is fatal on its own:
 
 ### 4.11 Sumplete / Number Sum
 
-- **Skill:** addition + **elimination logic** (a step up from pure arithmetic
-  toward reasoning).
-- **Operates:** grid of given numbers; tag each cell _keep_ / _delete_ (3-state
-  tap-cycle) so the kept numbers in every row and column hit the clue. Clues
-  **light up when a line is satisfied** — built-in wordless feedback. (Modern,
-  documented puzzle; popularised in 2023; working references exist.)
-- **Knobs:** grid size (3×3 → 9×9+) · number range. Both scale independently and
-  interact.
-- **Scaling:** good, two-dimensional.
-- **Generation:** easy to make _a_ puzzle (random grid + random keep/delete mask
-  → derive clues), **but the mask is rarely the only solution** — **needs the
-  uniqueness verifier** so the game never rejects a valid alternative answer.
-- **UI:** **easy — arguably the most mobile-friendly grid family.** One
-  interaction (tap-cycle unknown → ✗ → ○); no palette, no clue-triangles.
+Addition and elimination: keep or strike each number so every row and column hits its clue.
+
+Design doc: [puzzles/sumplete.md](puzzles/sumplete.md)
 
 ### 4.12 Symmetry completion — _(early-only)_
 
@@ -360,62 +340,11 @@ Two things killed the puzzle-room version, and either is fatal on its own:
 - **UI:** easy.
 - **Note:** low ceiling — a flavour family.
 
-### 4.15 Mirror / lightbeam — _(have)_
+### 4.15 Mirror / lightbeam
 
-Family doc: `docs/game-design/puzzles/lightbeam.md`.
+Route-tracing, and the one conclusion no other family reaches — this piece does not matter. Bend light from a sun-disc to a shrine.
 
-- **Skill:** spatial reasoning, route-tracing, and **elimination of irrelevant
-  pieces** — the last of which no other family trains, and which is the one
-  conclusion in the catalogue that reads "this piece does not matter".
-- **Operates:** light leaves a sun-disc on one edge in a fixed direction and must
-  reach a shrine set in the frame. A mirror bends it a quarter turn, stone swallows
-  it, the board edge loses it. Seven piece types, all shipped in v1: sun-disc,
-  shrine, set mirror and wall (fixed) · turn mirror, sliding mirror and sliding wall
-  (the player's). The sliding wall is the only piece whose move is _clearing_ a path
-  rather than bending one — every other piece answers "which way does the light
-  turn", and it answers "does the light get through at all".
-- **Knobs:** technique cap · **shadow count** (decoys placed in the path a wrong
-  setting would take — this is what makes the cap bite; without it every tier solves
-  by "the light visibly dies there") · route turn count · decoy count ·
-  set-vs-movable mirror ratio. **Not** grid size, which is capacity rather than difficulty —
-  it decides whether the route and the pieces fit, not how hard they are.
-- **Scaling:** good, and cheap. 3 → 8.4 movable pieces and 8 → 371 configurations
-  across the tiers. Two thirds of master and wizard boards demand the exhaustive
-  rung; starter demands nothing beyond a visible dead end.
-- **Generation:** route the beam first, then wall off the ways each movable piece
-  could be set wrong, then gate on **path uniqueness** — every configuration that
-  lights the shrine must trace the _same route_. "Exactly one winning configuration"
-  would be the wrong test, because a decoy has a free setting by definition. Then
-  gate on the ladder reaching it, and thin the walls to a fixpoint under the cap.
-  The whole configuration space is enumerated on every gate: at nine pieces that is
-  a few hundred walks over at most 49 cells, so this is the one family in the
-  catalogue that can afford exact enumeration rather than a sampling verifier.
-- **Grid:** 7×7 → 9×9, past the ceiling §5's shared grid engine implies. That ceiling exists
-  because every cell of a Sudoku or Sumplete grid is tappable, so cell size is tap-target
-  size. Here only the movable pieces are tappable and generation never lets two of them
-  touch, so a piece owns the empty squares around it: at 9 wide a cell is 36px and its tap
-  target 46px, with no two targets meeting.
-- **UI:** medium. One gesture, tap-to-cycle, and **no pad, no eraser and no undo** —
-  a cycle is its own inverse, so there is nothing to take back. The board draws the
-  beam wherever it currently goes and marks where it ends, which is the family's
-  live feedback and the reason it needs no words.
-- **Found while building it:** a beam from the disc can never enter a loop. A 90°
-  mirror maps `(cell, direction)` one-to-one, so every beam state has exactly one
-  predecessor and the disc's first has none — a ring of mirrors loops only if the
-  light starts inside it. Loop detection stays in the trace as the guard that keeps
-  the walk total, and becomes load-bearing the day a prism lands.
-- **Deferred:** prism/color-split tiles (splitting one beam into multiple
-  colored beams, each needing its own target) — a genuinely different puzzle
-  shape (multi-beam, color-matching), not a v1 knob. **The Talos Principle**
-  has already solved this exact problem (rotatable mirrors + color-splitting
-  prisms + multi-receiver puzzles) — reference it directly when this phase
-  starts rather than re-deriving from scratch.
-- **Prior art to draw UI/pacing lessons from:** Prince of Persia: Sands of Time
-  (chained sun-mirror puzzles), Zelda Wind Waker/Twilight Princess (mirror
-  shield reflecting sunlight at switches — close thematic fit for an Egyptian
-  sun-god setting), Chip's Challenge, and mobile games _Reflect_/_Laser
-  Overload_ (already-solved tap-to-cycle mobile ergonomics for this exact
-  gesture).
+Design doc: [puzzles/lightbeam.md](puzzles/lightbeam.md)
 
 ### 4.16 Sokoban (crate pushing) — _(proposed, not yet designed)_
 
@@ -510,97 +439,23 @@ Two things this shape decides, both worth knowing before adding a cluster:
 - **Theme:** **Scribe / Inscription** (counting and record-keeping) sits most
   naturally; a honeycomb of sealed cells also reads as **Tomb / Burial Logic**.
 
-### 4.19 Futoshiki (inequality Latin square) — _(have)_
+### 4.19 Futoshiki (inequality Latin square)
 
-Family doc: `docs/game-design/puzzles/futoshiki.md`.
+Deduction plus ordering: a Latin square whose signs always open toward the bigger of two neighbours.
 
-- **Skill:** pure deduction plus **ordering** — comparing two numbers, which is
-  the skill the crocodile capstone (`docs/game-design/puzzles/crocodile.md`)
-  tests as a gate and which no grid family drilled before.
-- **Operates:** each number once per row and column, with signs between some
-  neighbouring cells that always open toward the bigger of the two. Tap a cell,
-  tap a number from the pad; a pencil toggle writes the same numbers in as notes
-  instead, and undo takes back one move whole.
-- **Knobs:** grid size (4×4 → 6×6) · technique cap · how many squares ship
-  pre-filled · which rungs a board is guaranteed to need.
-- **Scaling:** good. This is the Latin-square slot (§4.8) entered from its cheap
-  side — the signs do the work regions do in Sudoku, so a 4×4 is already a real
-  puzzle at T1 and no region shapes have to be authored. The top of the range is
-  6×6: seven squares cost a 45-minute solve and bought nothing the ladder needed.
-- **Generation:** build the Latin square, derive every sign, then thin signs and
-  pre-filled cells for as long as the technique solver still reaches the end. The
-  solver gate settles uniqueness, so no separate solution counter runs.
-- **UI:** easy–medium. One more control cluster than Sumplete (number pad, pencil,
-  eraser, undo). The signs are laid over the gutters rather than given tracks of
-  their own, which is what lets the grid reach 7×7 — Puzzle Express's own ceiling
-  — on a 360px screen.
-- **First in the catalogue to need notetaking**, and the reason it is worth
-  having: the player's notes are literally the solver's candidates, so hints read
-  them and a wrong note is a mistake the hint engine can name.
+Design doc: [puzzles/futoshiki.md](puzzles/futoshiki.md)
 
----
+### 4.20 Eclipse (sun-and-moon logic grid)
 
-### 4.20 Eclipse (sun-and-moon logic grid) — _(have)_
+Binairo's rules, and the first family here with no arithmetic in it: balance a line, never three alike, no two lines the same.
 
-Family doc: `docs/game-design/puzzles/eclipse.md`.
+Design doc: [puzzles/eclipse.md](puzzles/eclipse.md)
 
-- **Skill:** pure deduction on a two-state cell — balance, no-three-in-a-row, and
-  pairwise same/different constraints. The first family here with no arithmetic in
-  it at all, which is the point: a floor of arithmetic rooms gets a logic room.
-- **Operates:** Binairo's rule set, which is what Puzzle Express serves — every
-  square holds a sun or a moon; each row and column holds as many of one as the
-  other; three of a mark in a row is never allowed; no two rows read alike and no
-  two columns either; and signs between some neighbours say the pair matches (=) or
-  differs (×). One tap cycles a square empty → sun → moon → empty, so there is no
-  pad and no palette.
-- **Knobs:** technique cap · which rung a board must actually spend, and how many
-  times it has to fire · grid size (4×4 → 6×6).
-- **Scaling:** good, and bounded by a rule about hints rather than about boards:
-  every rung has to be a sentence the player can check on the line in front of them,
-  so the ladder tops out at "try it and follow what this line forces". Guess-and-check
-  across the board, and enumerate-and-report-agreement, were both built and both
-  removed. The top tier is 8×8 — more board rather than a stronger rung.
-- **Generation:** draw a full board, write down every sign it implies, then empty
-  cells and afterwards remove signs for as long as the technique solver still
-  reaches the answer. Cells before signs, or the loop strips every sign and ships a
-  grid of givens. The solver gate settles uniqueness.
-- **UI:** easy. One tap target per cell, two glyphs, and signs drawn on the shared
-  edges. No number pad, no notes.
-- **Cheapest family to skin:** the whole board is one pair of marks, so a night
-  site swaps sun and moon for star and dark and changes nothing else.
+### 4.21 Constellation (stars joined by light)
 
-### 4.21 Constellation (stars joined by light) — _(designed, not yet built)_
+Degree counting and connectivity, and the first family whose answer is a graph rather than the contents of its cells.
 
-Family doc: `docs/game-design/puzzles/constellation.md`.
-
-- **Skill:** degree counting, pigeonhole reasoning, and connectivity — the first
-  family whose answer is a graph rather than the contents of its cells.
-- **Operates:** stars carry a number saying how many lines of light meet them.
-  Lines run straight along a row or column between two stars, at most two to a
-  pair, never crossing and never passing through a star, and every star has to
-  end up in one constellation. Hashiwokakero's rule set, dressed as a star map.
-- **Knobs:** number mix (the share of 1s and 2s against 3s and 4s — the real
-  dial, since a high number forces its own lines and a low one forces nothing) ·
-  crossing pressure · double share · technique cap · required rung and its quota.
-  **Star count** is capacity rather than reasoning, so it is the knob of last
-  resort, and the phone caps it.
-- **Scaling:** good, on the numbers rather than the sky. The top two tiers share
-  an 8×8 and differ by mix and by requiring the connectivity rung.
-- **Generation:** **draw then test, not draw then thin** — every star always shows
-  its number, so there is nothing to thin and no way to loosen a sky that fails.
-  Grow a sky from one star, read the numbers off it, and keep it only if the
-  capped technique solver finishes unaided and spends the tier's rung. The
-  rejection bill is paid down by biasing the drawer toward the shape the tier
-  wants. The solver gate settles uniqueness.
-- **UI:** medium. Drag from a star the way you mean and release; the hazard is
-  that the modal scrolls, so a vertical drag is ambiguous with a scroll until the
-  board claims its own gestures.
-- **Fills the star-map slot** this catalogue names in §4.16 and `junior.ts` names
-  on the lighthouse journey: it carries `sky`, which takes that pool from two
-  families to three.
-- **The duration risk is the connectivity rule**, which is the family's one piece
-  of coupled bookkeeping (§6's local-vs-coupled line) — so wizard is the tier to
-  time first.
+Design doc: [puzzles/constellation.md](puzzles/constellation.md)
 
 ### 4.22 Canal (a counted channel) — _(designed, not yet built)_
 
@@ -656,86 +511,17 @@ Family doc: `docs/game-design/puzzles/canal.md`.
 - **Themes:** water (pipes), Trade (a road network), and a lit circuit reads as a temple's lamps — it wears
   a role the same way §4.21 and §4.22 do.
 
-### 4.24 Star Battle (two not touch) — _(built; not yet playtested)_
+### 4.24 Star Battle (two not touch)
 
-Family doc: `docs/game-design/puzzles/star-battle.md`.
+One star to every row, column and region, no two touching. The board opens empty: where the boundaries run is the whole clue.
 
-- **Skill:** placement under row, column and region counts, with an adjacency rule — binary deduction like
-  eclipse, but constrained by a group that is not a line.
-- **Operates:** place one star in every row, every column and every region, and no two stars may touch,
-  diagonals included. **The board opens completely empty** — where the region boundaries run is the entire
-  clue. The name is the theme, which is the cheapest possible fit for `sky`.
-- **What ships is LinkedIn's Queens**, which is this puzzle at one star to a line rather than the published
-  two. Same rules, same board; the quota is the only difference, and every tier draws quota 1. The two-star
-  form ships as its own family (§4.25) rather than as this one's top tier: a tier may demand harder
-  reasoning, it may not change what the player is being asked to do.
-- **Knobs:** the region-size SPREAD (the real one — see below) · grid size, which here buys regions rather
-  than bookkeeping · technique cap, required rung and its quota · stars per line, one at every tier.
-- **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
-  mechanism — a region is a group that is not a line, and the play is sparse elimination rather than
-  eclipse's filled grid — and they carry a real ladder too, though the evidence is generation rather than
-  play: at 8×8, allowing the region readings makes **ten times as many region maps solvable** than counting
-  alone does. A rung that decides whether a board can exist is not decoration. What the family lacks is
-  depth: the counting rungs are still most of any solve, and only one of them ever places a star.
-- **The generation finding worth carrying to other families: the DISTRIBUTION of a clue matters as much as
-  its existence.** Grown to equal sizes, a region map is useless — zero solvable maps out of six thousand at
-  every size, because every region sprawls across the grid and nothing is ever confined to a line. Spread
-  the sizes as squares and 1–4% of maps are solvable; as cubes, 6–15%; mostly-single-squares, over half. An
-  earlier draft measured only the flat case, concluded a region map could not carry a board, and gave the
-  family a second clue layer (hatched squares) it did not need. **The dial also runs backwards**: a steeper
-  spread means easier boards, because a one-square region hands over a star — which is what makes it the
-  difficulty knob rather than a generation detail.
-- **Duration runs the other way from the one predicted here.** An 8×8 settles in ~25 solver steps against
-  eclipse's wizard 55–62, so a top-tier board is SHORT rather than long — the earlier ~160 figure came from a
-  probe counting rung firings rather than steps, and is retracted. Whether twenty-five reflex steps is a
-  wizard board is the first thing to time in the lab; if it plays under its tier the answer is 9×9.
-- **What it inherits for free:** the shared grid engine (§5), eclipse's tap-cycle and its delayed conflict
-  display, and the completion run every family can now have (`puzzle-screens.md` §3).
-- **Themes:** `sky` and Night & Stars, and nothing else — unlike §4.21 and §4.22 this one is not a mechanic
-  that reads as several places. **A lone star only ever reads as the one and only**, which is the actual
-  reason and not a shortage of imagination: the watchman reading that could earn a second skin needs a PAIR
-  to name, so it belongs to §4.25 rather than here.
+Design doc: [puzzles/star-battle.md](puzzles/star-battle.md)
 
----
+### 4.25 Twin Stars (two to a group)
 
-### 4.25 Twin Stars (two to a group) — _(built; not yet playtested)_
+The same board with two stars to a group, so every count becomes a capacity argument about a set of squares rather than bookkeeping around one. A second family because the rule differs, not the difficulty.
 
-Family doc: `docs/game-design/puzzles/star-battle.md` §11.
-
-- **Skill:** the same placement deduction as §4.24, with every group owing two — so every count is a
-  capacity argument about a SET of squares rather than bookkeeping around one.
-- **Operates:** two stars in every row, every column and every region, no two touching, diagonals included.
-  Board opens empty; the region map is the entire clue. 8×8 at every tier — below it no legal star set
-  exists, so a junior board is an 8×8 that ASKS less rather than a smaller one.
-- **A second family, not a tier of §4.24**, and the rule is why. A tier is allowed to demand harder
-  reasoning; it is not allowed to change what the player is being asked to do. Everything below the rule is
-  shared outright — the same board, marks, drag, six rungs, hint sentences and screen — so the family is a
-  quota, a tier table and a name.
-- **Knobs:** the SMALLEST region · region-size spread · technique cap · required rung and its quota. **Grid
-  size is not one**, and that is measured rather than chosen: below 8×8 no legal star set exists at all, and
-  a 10×10 lands on 34.8px squares at 390px wide against 43.5px for the 8×8 — under both platforms' touch
-  minimum, on a board whose main gesture is a drag along a row.
-- **The smallest region is the knob playtesting found, and it is the strongest.** A three-square region can
-  only be a straight line (an L cannot hold two stars that do not touch) and a straight three owing two
-  stars has ONE filling — a square handed over on sight. At the arithmetic floor an 8×8 opens with about
-  half its regions already answered, which plays as a first encounter however hard the solver worked for the
-  rest. Junior keeps them on purpose; every tier above draws none.
-- **It has more of the depth §4.24 lacks.** Over twenty wizard boards each: `spanning` fires 2.1 times a
-  board against 1.1, `groupTight` 10.6 against 8.0, and `groupFull` — the rung that merely notices a
-  finished group — HALVES, 3.0 against 6.2. A board is four steps longer for eight more stars, so the
-  second star buys argument rather than bookkeeping. `allApart` is still not load-bearing: at two stars the
-  check becomes reachable in principle, and measured over ten boards a tier it refuses nothing.
-- **The finding worth carrying: a quota sets the region SIZE, and region size is the clue.** The reading
-  most people reach for — one star to a line, two to a region — halves the region count and so doubles every
-  region, and the ladder then decides **0% of squares** on boards that provably have unique answers. The
-  classic form doubles the stars and keeps the regions, so a region stays the size it was and says twice as
-  much. Family doc §11.4 has the table.
-- **Themes:** `sky` and **Water & Agriculture**, the latter built as the `fields` skin — farmsteads on a
-  flood plain, the channels between holdings drawn as water, two households that may not sit close enough to
-  share a well. **This is the family that can wear more**, and the reason is the pair: a place can hold two
-  watchmen or two torches where it can only ever hold one lone star. A skin fits when it can name three
-  things — something straight crossing the world, something bounded and ragged, and a reason two of them
-  repel (family doc §11.3). Watch and torches are designed and unbuilt.
+Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
 ---
 
