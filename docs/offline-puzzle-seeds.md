@@ -67,9 +67,28 @@ On a lightbeam wizard board:
 
 Two consequences:
 
-- **A verified seed removes essentially all of generation** — 636ms to ~16ms — because a board already proven
-  does not need re-proving. Play time keeps the construction and drops the gates. That is a ~40x saving at the
-  top tier and it grows with every dial the design turns up.
+- **A verified seed removes the retries.** It does not, on its own, remove the gates — and the difference
+  between those two decides which families this pays for. A family that rejects almost every draw spends
+  almost all its time retrying, so skipping to the draw that worked is nearly the whole cost. A family whose
+  gates run _inside_ the attempt, and which is rejected only once or twice, keeps paying them.
+
+  Measured on the shipped lists, live search against building from a listed seed:
+
+  | family      | master         | wizard         |
+  | ----------- | -------------- | -------------- |
+  | twin stars  | 1111ms → 2.6ms | 1240ms → 3.1ms |
+  | star battle | 293ms → 1.8ms  | 434ms → 2.5ms  |
+  | eclipse     | 239ms → 36ms   | 414ms → 146ms  |
+  | futoshiki   | 73ms → 30ms    | 191ms → 42ms   |
+  | lightbeam   | 31ms → 8.5ms   | 132ms → 74ms   |
+
+  So the families that were genuinely unaffordable are now free, and **lightbeam — the family this document
+  was written for — gains the least**, because `attemptAuthored` builds and gates as one unit: a single
+  attempt still pays the uniqueness walk and the technique solve. Getting its remaining 74ms would mean a
+  generator that trusts a verified seed enough to skip its own gates, which is a different change with a real
+  safety cost, and not one 74ms justifies. Recorded because the prediction here was ~40x and the measurement
+  is 2x — the reasoning was right about where the cost sits and wrong about whether one attempt escapes it.
+
 - **It does not touch the hint**, which re-solves the board from scratch on every request — 617.6ms at the top
   tier on a development machine, and a mid-range phone is several times slower single-threaded. That is the
   strongest argument for the artifact carrying the solve as well as the seed, and the section below shows it
@@ -169,8 +188,8 @@ once, on a top-tier board, behind a deliberate hint tap where a spinner is an ho
 document was written about, because 97% of generation _is_ the solver run as a gate.
 
 So: **ship seeds, measure, and revisit hints as their own question with their own numbers.** The format should
-leave the door open rather than walk through it now — `type SeedEntry = number | [seed: number, ...extra]`
-costs nothing today and does not have to be redesigned later.
+leave the door open rather than walk through it now. A generated file's type is one line, so widening
+`number[]` to carry more per entry is a change to make when something needs it, not a union to ship empty.
 
 The grade is still computed — every admitted seed is solved and graded during verification. It goes in the
 CLI's report, where a designer tuning a tier reads it, rather than in the shipped artifact, where nothing at
@@ -255,8 +274,7 @@ out. At tens of kilobytes it is a plain static import — Block Sort code-splits
 size that machinery would not earn itself.
 
 ```ts
-export type SeedEntry = number | [seed: number, ...extra: unknown[]]
-export const puzzleSeeds: Record<string, SeedEntry[]> = JSON.parse('{"21655753":[212043153,884201], ...}')
+export const puzzleSeeds: Record<string, number[]> = JSON.parse('{"21655753":[9,22,37,43,46], ...}')
 ```
 
 **The runtime never fails on a missing bucket — CI does.** A `yarn verify-seeds` step enumerates the reachable

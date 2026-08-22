@@ -52,7 +52,8 @@ import {
 // the independent second opinion on the gate below, and `resistsGreedyPlay` is what a spec asserts a board
 // against. Where they live is an implementation detail of this file.
 export { resistsGreedyPlay, routeIsUnique } from "./lightbeamGeometry"
-import { solveLightbeamByTechniques, type TechniqueId } from "./techniques"
+import { solveLightbeamByTechniques, TECHNIQUES, type TechniqueId } from "./techniques"
+import type { Grade } from "@/game/families/familyMeta"
 
 /** A board an attempt produced, before the modes it was drawn to are recorded on it. */
 type GeneratedBoard = Omit<LightbeamPuzzle, "modes">
@@ -1926,7 +1927,31 @@ const attemptAuthored = (
  * on a `deadEnd` cap, a route with more bends than the frame allows — and generation refusing is the honest
  * answer to that, because the alternative is silently shipping an easier board than the tier claims.
  */
-export const generateLightbeam = (size: number, seed: number, options: LightbeamOptions = {}): LightbeamPuzzle => {
+/**
+ * Re-checks the ladder on a finished board, and reports what it demanded
+ * (docs/offline-puzzle-seeds.md).
+ *
+ * Unlike the families that keep a nearest miss, this one **throws** rather than shipping a board it
+ * would not stand behind — so a board coming back at all is already the acceptance, and the offline
+ * pass grades to confirm the ladder still settles it and to record what it turned on. The gates it
+ * cannot re-derive from the shipped board (whether the trap was the thing that closed the second
+ * route) are ones the board has passed by construction, since it was returned rather than rejected.
+ */
+export const gradeLightbeam = (board: LightbeamPuzzle, options: LightbeamOptions = {}): Grade | null => {
+  const { techniqueCap = "deadEnd" } = options
+  const { settled, used, steps } = solveLightbeamByTechniques(board, techniqueCap)
+  if (!settled) return null
+  return { steps: steps.length, deepest: TECHNIQUES.filter(technique => used.has(technique)).pop() }
+}
+
+export const generateLightbeam = (
+  size: number,
+  seed: number,
+  options: LightbeamOptions = {},
+  // Kept out of `options` deliberately: the options are what a seed list keys on, so asking for a
+  // single attempt instead of the full search must not file the board under a different bucket.
+  attempts: number = MAX_ATTEMPTS
+): LightbeamPuzzle => {
   const {
     techniqueCap = "deadEnd",
     turns = 2,
@@ -1966,7 +1991,7 @@ export const generateLightbeam = (size: number, seed: number, options: Lightbeam
     decoys,
   } as LightbeamDials
 
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const puzzle = attemptAuthored(
       size,
       seed,

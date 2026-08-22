@@ -1,5 +1,6 @@
+import type { FamilyGenerationCtx } from "@/game/families/familyMeta"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { LightbeamOptions } from "./generateLightbeam"
+import type { LightbeamMode, LightbeamOptions } from "./generateLightbeam"
 
 // Tier settings (design doc §6.4, measured in §11.19).
 //
@@ -186,4 +187,29 @@ export const LIGHTBEAM_CONFIG: Record<Difficulty, { size: number } & LightbeamOp
     modeCount: 2,
     techniqueCap: "onlySurvivor",
   },
+}
+
+/**
+ * Modes a lab variant forces on top of the tier's own dials, for playtesting one shape at a time
+ * (docs/instructions/puzzle-screens.md §6). A tier draws its own modes; this is how a developer looks
+ * at just one of them.
+ */
+const VARIANT_MODES: Record<string, LightbeamMode[]> = {
+  "wall-heavy": ["wallHeavy"],
+  "slider-heavy": ["sliderHeavy"],
+  "switch-heavy": ["switchHeavy"],
+}
+
+/**
+ * The options one encounter builds its board from (docs/offline-puzzle-seeds.md).
+ *
+ * A forced variant changes the options, so it hashes to its own bucket — and since no room is ever
+ * authored with a variant, that bucket is never listed and a lab board is always built live. Which is
+ * what a developer comparing two generators wants: no cached answer standing in the way.
+ */
+export const resolveLightbeamOptions = ({ difficulty, variant }: FamilyGenerationCtx) => {
+  const config = LIGHTBEAM_CONFIG[difficulty ?? "starter"]
+  const forced = variant ? VARIANT_MODES[variant] : undefined
+  // A forced mode replaces the pool rather than adding to it, or the board would still draw its own two.
+  return forced ? { ...config, modePool: undefined, modes: forced } : config
 }

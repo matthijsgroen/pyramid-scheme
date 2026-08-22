@@ -1,4 +1,6 @@
-import type { FamilyMeta } from "@/game/families/familyMeta"
+import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
+import { generateLightbeam, gradeLightbeam } from "./generateLightbeam"
+import { resolveLightbeamOptions } from "./lightbeamConfig"
 
 export const LIGHTBEAM_META: FamilyMeta = {
   id: "lightbeam",
@@ -15,4 +17,9 @@ export const LIGHTBEAM_META: FamilyMeta = {
   icon: "🔆",
   color: "amber",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for
+  seedable: seedable({
+    resolveOptions: resolveLightbeamOptions,
+    generate: (seed, { size, ...options }, attempts) => generateLightbeam(size, seed, options, attempts),
+    grade: gradeLightbeam,
+  }),
 }
