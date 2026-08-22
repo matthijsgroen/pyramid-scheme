@@ -7,7 +7,6 @@ type MapPieceIconProps = {
   /** Pieces of this tomb's map held vs. needed. Omit (or complete) to show the whole scroll. */
   progress?: { found: number; required: number }
   size?: "md" | "lg"
-  className?: string
 }
 
 // A fixed square box, so the sweep's geometry stays put instead of tracking whatever line-height the
@@ -21,8 +20,8 @@ const sizeClasses = {
 // there, inside a dashed ring standing for the finished map. Same partial-collection language as a
 // part-collected hieroglyph tile (RevealPlaceholder + revealMaskStyle), so the two collectibles read
 // alike. The reward popup pairs it with the progress line in words.
-export const MapPieceIcon: FC<MapPieceIconProps> = ({ progress, size = "lg", className }) => (
-  <span className={clsx("relative inline-flex items-center justify-center leading-none", sizeClasses[size], className)}>
+export const MapPieceIcon: FC<MapPieceIconProps> = ({ progress, size = "lg" }) => (
+  <span className={clsx("relative inline-flex items-center justify-center leading-none", sizeClasses[size])}>
     {progress && <RevealPlaceholder progress={progress} />}
     <span className="relative" style={progress && revealMaskStyle(progress)}>
       📜

@@ -1,5 +1,4 @@
 import type { FC } from "react"
-import clsx from "clsx"
 import { Chest, type ChestState, type ChestVariant } from "@/ui/atoms/Chest"
 import { NumberLock } from "@/ui/atoms/NumberLock"
 
@@ -12,7 +11,6 @@ type NumberLockProps = {
   disabled?: boolean
   placeholder?: string
   maxLength?: number
-  className?: string
 }
 
 export const NumberChest: FC<NumberLockProps> = ({
@@ -24,7 +22,6 @@ export const NumberChest: FC<NumberLockProps> = ({
   disabled = false,
   placeholder = "Enter code",
   maxLength = 4,
-  className,
 }) => {
   const isDisabled = disabled || state === "open"
 
@@ -35,7 +32,7 @@ export const NumberChest: FC<NumberLockProps> = ({
   }
 
   return (
-    <div className={clsx("flex flex-col items-center gap-6", className)}>
+    <div className="flex flex-col items-center gap-6">
       <Chest
         onClick={handleLockClick}
         state={state}
