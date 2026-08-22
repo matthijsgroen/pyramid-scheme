@@ -633,3 +633,41 @@ The eliminating half is not built, and what it would buy is 10×10: the shipped 
 0.3% of maps at that size against 8.5% with it. Since §11.2 rules 10×10 out on touch targets,
 the rung is a consequence of a board size this family has no use for. At 8×8 it is not needed
 — one map in five settles already, which is a generous pool to filter a required rung out of.
+
+### 11.6 Every region's pair sits at the closest two stars may legally get
+
+Noticed in play — the answers look like couples — and it is exactly true: **100% of regions hold their two
+stars at a chessboard distance of two**, the minimum the no-touching rule allows, at every tier. The
+generator pairs the stars nearest-first so each region has a short way to join its two, and on a board this
+dense a nearest pass finds a distance-two partner every time.
+
+It is kept, and the measurements are why.
+
+**Most of what that pattern looks like is the board, not the pairing.** Sixteen stars on sixty-four squares
+with nothing touching is a packed board: **every star has some star at distance two anyway** — also 100%,
+with no pairing involved. What the pairing adds is that the close one is the PARTNER.
+
+**What that is worth to a player is about one square.** Once one star of a region is placed, only ~3.0
+squares of that region can legally take the other, and ~2.1 of them are at distance two. The invariant turns
+three candidates into two, on a region that was already nearly decided.
+
+**What breaking it costs is what a player waits for.** Boards are drawn when a room is opened rather than at
+build time, so generation cost is load time on a phone. Every looser pairing pays for its long corridors in
+failed draws:
+
+| Pairing                 | expert | master | wizard | regions at distance 2 |
+| ----------------------- | ------ | ------ | ------ | --------------------- |
+| nearest (ships)         | 39ms   | 339ms  | 115ms  | 100%                  |
+| random of the 2 nearest | 55ms   | 918ms  | 312ms  | 86–98%                |
+| random of the 3 nearest | 130ms  | 3.5s   | 1.6s   | 75–89%                |
+| free                    | 5.6s   | 11.5s  | 9.2s   | 64–81%                |
+
+**The bias does not go away even when the pairing is free**, which is the finding worth carrying: the
+acceptance loop selects it back in. A far pair needs a long corridor, a long corridor makes a straggling
+region, and a straggling region map is one the ladder cannot settle — so the boards that survive are the ones
+with compact regions however the pairs were drawn. Routing the long pairs first, on the theory that they
+should cross an empty board, makes it worse on both counts.
+
+Removing it properly means a different generation order — regions drawn first and a star set searched for
+inside them — which is the ordering §4 rejects for being a rejection loop on top of a rejection loop. Worth
+revisiting only if the tell turns out to matter in play, which three-candidates-to-two suggests it does not.

@@ -142,7 +142,21 @@ const seedRegions = (size: number, stars: readonly number[], quota: number, rand
   return seeds
 }
 
-/** The stars paired off nearest-first, so a region has a short way to join its two. */
+/**
+ * The stars paired off nearest-first, so a region has a short way to join its two.
+ *
+ * **This puts every region's pair at the closest two stars may legally sit — a chessboard distance of two,
+ * in 100% of regions — and that is kept deliberately rather than by oversight** (design doc §11.6). It looks
+ * like a tell and measures like almost nothing: two stars may not touch, so on a board holding sixteen of
+ * them every star has SOME star at distance two anyway (also 100%, with no pairing involved), and once one
+ * star of a region is placed only about three squares of that region can legally take the other. Knowing the
+ * partner is at distance two cuts three candidates to two.
+ *
+ * Breaking it costs what a player waits for. Boards are drawn when a room is opened, not at build time, and
+ * every looser pairing measured pays for the long corridors it creates in failed draws: three nearest at
+ * random takes master from 339ms to 3.5s a board and still leaves 89%, and a free pairing takes it to 11.5s
+ * and still leaves 74% — because the acceptance loop selects compact regions straight back in.
+ */
 const pairStars = (size: number, stars: readonly number[], random: () => number): number[][] => {
   const loose = shuffle([...stars], random)
   const pairs: number[][] = []
