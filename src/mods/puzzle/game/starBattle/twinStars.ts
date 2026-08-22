@@ -25,57 +25,85 @@ export const TWIN_STARS_META: FamilyMeta = {
   // light. A journey asking for `sky` may draw either, which is the point of them being two families.
   tags: ["puzzle", "sky"],
   // 8×8 is the SMALLEST grid this rule has boards on — 7×7 and 6×6 admit no legal star set at all (two to
-  // a row and two to a column that never touch does not fit), so there is no junior form to debut with and
-  // the family starts where its one grid is a fair ask.
-  minTier: "expert",
+  // a row and two to a column that never touch does not fit). The debut is a junior one anyway, because the
+  // tier is set by what a board ASKS rather than by how wide it is: the junior draw hands over a third of
+  // its regions and never needs a region reading (§11.2).
+  minTier: "junior",
   icon: "✨",
   color: "violet",
   rewardPriority: 60, // a puzzle room like any other — fills once treasure's guaranteed slots are spoken for
 }
 
 /**
- * Every tier is 8×8, and the ladder is carried by the region spread and the required rung.
+ * Every tier is 8×8, and the ladder is carried by the smallest region, the spread and the required rung.
  *
  * **The size cannot be the knob here.** Below 8×8 no board exists, and above it the board stops fitting a
  * phone: 10×10 lands on 34.8px squares at 390px wide against 43.5px for this one, under both platforms'
  * touch minimum, on a board whose main gesture is a drag across a row. So the family holds one grid and
- * separates its tiers the way the design doc says this mechanic separates them anyway — by how evenly the
- * regions are sized, and by which reading a board is made to spend (§5).
+ * separates its tiers by what a board asks instead.
  *
- * Measured over twenty boards each, none falling back to a nearest miss.
+ * **`minRegion` is the knob playtesting turned up, and it is the strongest one here.** A region of three
+ * squares can only be a straight line and a straight three owing two stars has ONE filling, so every one of
+ * them is a gift the player takes on sight. At the arithmetic floor an 8×8 opens with about four of its
+ * eight regions already answered — which reads as a junior board however hard the solver had to work for
+ * the rest. Raising the floor to five removes them: 0.0–0.1 a board.
+ *
+ * Measured over eight boards a tier, none falling back to a nearest miss.
  */
 export const TWIN_STARS_CONFIG: Record<Difficulty, StarBattleOptions> = {
   // Unreachable — the allocator never draws this family below its minTier. Present because the tier table
-  // is total, and pointed at the cheapest real tier so a lab misconfiguration plays rather than throws.
-  starter: { size: 8, quota: 2, regionSpread: 3, techniqueCap: "regionLine", requires: ["regionLine"] },
-  junior: { size: 8, quota: 2, regionSpread: 3, techniqueCap: "regionLine", requires: ["regionLine"] },
-  // A steep spread, so a three-in-a-line region hands over both its stars and opens the board — the
-  // two-star form of the one-square region that opens a star battle. Region-into-line twice, nothing above
-  // it. 15ms a board to find.
+  // is total, and pointed at the gentlest real tier so a lab misconfiguration plays rather than throws.
+  starter: {
+    size: 8,
+    quota: 2,
+    regionSpread: 3,
+    minRegion: 3,
+    techniqueCap: "onlyWay",
+    requires: ["onlyWay"],
+    requiresCount: 3,
+  },
+  // **The gifts are the tier.** Three-square regions are left in and the board opens with a third of its
+  // regions handed over, which is what makes a first encounter teach itself: the rule is demonstrated by
+  // squares the player can place before working anything out. No region reading is allowed at all, so the
+  // rest is counting. 4ms a board.
+  junior: {
+    size: 8,
+    quota: 2,
+    regionSpread: 3,
+    minRegion: 3,
+    techniqueCap: "onlyWay",
+    requires: ["onlyWay"],
+    requiresCount: 3,
+  },
+  // The gifts go away and the region boundary starts meaning something: a region squeezed into one line
+  // spends that line's pair, twice a board. 34ms.
   expert: {
     size: 8,
     quota: 2,
     regionSpread: 3,
+    minRegion: 5,
     techniqueCap: "regionLine",
     requires: ["regionLine"],
     requiresCount: 2,
   },
-  // The spread tightens, which takes the opening gift away, and the converse reading has to be spent three
-  // times. 307ms a board.
+  // The spread tightens too, so no region is small enough to be read on sight, and the converse reading —
+  // which needs the rest of a line already emptied — has to be spent twice. 355ms.
   master: {
     size: 8,
     quota: 2,
     regionSpread: 2,
+    minRegion: 5,
     techniqueCap: "lineRegion",
     requires: ["lineRegion"],
-    requiresCount: 3,
+    requiresCount: 2,
   },
-  // The top rung, twice — and unlike star battle's own top two tiers these differ in spread as well as in
-  // the rung they must spend, so the separation is not resting on the requirement alone. 219ms a board.
+  // The top rung, twice. 111ms — cheaper than master, because `lineRegion` is the scarcer reading of the
+  // two and a tier that demands three of them is the one the search struggles to fill.
   wizard: {
     size: 8,
     quota: 2,
     regionSpread: 2,
+    minRegion: 5,
     techniqueCap: "spanning",
     requires: ["spanning"],
     requiresCount: 2,

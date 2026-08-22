@@ -16,6 +16,7 @@ export const STAR_BATTLE_TECHNIQUES = [
   "touch",
   "groupFull",
   "groupTight",
+  "onlyWay",
   "regionLine",
   "lineRegion",
   "spanning",
@@ -125,6 +126,68 @@ const groupTightSteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep
         count: owed,
         cells,
         decisions: free.map(cell => ({ cell, mark: "star" as const })),
+      },
+    ]
+  })
+
+/**
+ * Every way a group's owed stars fit in its free squares, none of them touching.
+ *
+ * Filtered by NECESSARY conditions only — no two of the chosen may touch, and none may touch a star already
+ * standing — so what comes back is a superset of the legal fillings. That is what makes a conclusion drawn
+ * from it sound: a square in every arrangement here is a square in every legal one.
+ */
+const packings = (puzzle: StarBattlePuzzle, marks: Marks, free: number[], owed: number): number[][] => {
+  const ways: number[][] = []
+  const chosen: number[] = []
+  const walk = (from: number) => {
+    if (chosen.length === owed) {
+      ways.push([...chosen])
+      return
+    }
+    for (let at = from; at < free.length; at++) {
+      const cell = free[at]
+      const around = neighboursOf(puzzle.size, cell)
+      if (around.some(other => marks[other] === "star" || chosen.includes(other))) continue
+      chosen.push(cell)
+      walk(at + 1)
+      chosen.pop()
+    }
+  }
+  walk(0)
+  return ways
+}
+
+/**
+ * A group its stars fit into exactly one way.
+ *
+ * **The move a player makes on sight and the ladder could not see.** Three squares in a line owing two stars
+ * have one filling — both ends — and before this rung existed the solver had to reach that board by other
+ * means, so it rated as hard something that was being handed over. A difficulty ladder that cannot see the
+ * easiest move on the board is not measuring the board.
+ *
+ * `groupTight` keeps the case where the squares are as many as the stars, because "this row is down to two
+ * squares" is a plainer sentence than this one and the ladder is ordered by how well a reason explains
+ * itself. What is left here is the reading that needs the adjacency rule to do the counting.
+ *
+ * **Inert at one star to a group**, and provably so rather than by a check: `touch` runs first and darkens
+ * every square beside a star, so by the time this rung looks, one owed star has exactly as many arrangements
+ * as there are free squares — and the case where that is one belongs to `groupTight`.
+ */
+const onlyWaySteps = (puzzle: StarBattlePuzzle, marks: Marks): StarBattleStep[] =>
+  countingGroups(puzzle).flatMap(({ kind, cells }) => {
+    const owed = owedBy(puzzle, marks, cells)
+    const free = freeIn(puzzle, marks, cells)
+    if (owed <= 1 || free.length <= owed) return []
+    const ways = packings(puzzle, marks, free, owed)
+    if (ways.length !== 1) return []
+    return [
+      {
+        technique: "onlyWay" as const,
+        variant: kind,
+        count: owed,
+        cells,
+        decisions: ways[0].map(cell => ({ cell, mark: "star" as const })),
       },
     ]
   })
@@ -241,6 +304,7 @@ const IMPLEMENTATIONS: Record<StarBattleTechniqueId, (puzzle: StarBattlePuzzle, 
   touch: touchSteps,
   groupFull: groupFullSteps,
   groupTight: groupTightSteps,
+  onlyWay: onlyWaySteps,
   regionLine: regionLineSteps,
   lineRegion: lineRegionSteps,
   spanning: spanningSteps,

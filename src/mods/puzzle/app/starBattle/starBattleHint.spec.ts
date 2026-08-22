@@ -69,7 +69,7 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   // The reasons that state a number — a group's quota, or how many squares it is down to — read one way
   // for a one-star board and another for a two-star one (game/starBattle/twinStars.ts), so both forms ship.
   const counted = [
-    ...["row", "col", "region"].flatMap(group => [`groupFull.${group}`, `groupTight.${group}`]),
+    ...["row", "col", "region"].flatMap(group => [`groupFull.${group}`, `groupTight.${group}`, `onlyWay.${group}`]),
     ...["row", "col"].flatMap(line => [`regionLine.${line}`, `lineRegion.${line}`]),
   ]
 

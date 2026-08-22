@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { cellAt, type StarBattlePuzzle } from "./starBattle"
 import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
+import { TWIN_STARS_CONFIG } from "./twinStars"
 import { generateStarBattle, techniquesUpTo } from "./generateStarBattle"
 import {
   nextStarBattleStep,
@@ -89,16 +90,23 @@ describe("the ladder", () => {
   /**
    * Every rung the solver claims has to be reachable from a board the generator actually draws
    * (`puzzle-screens.md` §7.5). A technique no tier can trigger is a technique that has never been read.
+   *
+   * **Across the mechanic, not across one family.** `onlyWay` is inert at one star to a group by
+   * construction (see its comment), so a ladder checked against star battle alone would report a rung no
+   * board climbs and be right — while the rung carries three or four steps of every twin-stars board. The
+   * ladder belongs to the mechanic, so the claim is made over every tier the mechanic ships.
    */
-  it("is a ladder real boards climb, every rung of it", { timeout: 120_000 }, () => {
+  it("is a ladder real boards climb, every rung of it", { timeout: 180_000 }, () => {
     const tiers: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
     const seen = new Set<StarBattleTechniqueId>()
-    for (const tier of tiers) {
-      const options = STAR_BATTLE_CONFIG[tier]
-      for (const seed of [1, 2, 3, 4, 5, 6]) {
-        const board = generateStarBattle(seed, options)
-        const { steps } = solveStarBattleByTechniques(board, techniquesUpTo(options.techniqueCap))
-        for (const step of steps) seen.add(step.technique)
+    for (const config of [STAR_BATTLE_CONFIG, TWIN_STARS_CONFIG]) {
+      for (const tier of tiers) {
+        const options = config[tier]
+        for (const seed of [1, 2, 3, 4, 5, 6]) {
+          const board = generateStarBattle(seed, options)
+          const { steps } = solveStarBattleByTechniques(board, techniquesUpTo(options.techniqueCap))
+          for (const step of steps) seen.add(step.technique)
+        }
       }
     }
     expect([...seen].sort()).toEqual([...STAR_BATTLE_TECHNIQUES].sort())

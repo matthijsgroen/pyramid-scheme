@@ -22,7 +22,7 @@ const FAMILIES: { name: string; config: Record<Difficulty, StarBattleOptions>; t
     config: STAR_BATTLE_CONFIG,
     tiers: ["starter", "junior", "expert", "master", "wizard"],
   },
-  { name: "twin stars", config: TWIN_STARS_CONFIG, tiers: ["expert", "master", "wizard"] },
+  { name: "twin stars", config: TWIN_STARS_CONFIG, tiers: ["junior", "expert", "master", "wizard"] },
 ]
 
 /** Whether every region is one connected piece: a region drawn in two halves is not a clue anyone can read. */

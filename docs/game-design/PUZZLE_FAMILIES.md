@@ -705,15 +705,21 @@ Family doc: `docs/game-design/puzzles/star-battle.md` §11.
 - **Skill:** the same placement deduction as §4.24, with every group owing two — so every count is a
   capacity argument about a SET of squares rather than bookkeeping around one.
 - **Operates:** two stars in every row, every column and every region, no two touching, diagonals included.
-  Board opens empty; the region map is the entire clue. 8×8 at every tier.
+  Board opens empty; the region map is the entire clue. 8×8 at every tier — below it no legal star set
+  exists, so a junior board is an 8×8 that ASKS less rather than a smaller one.
 - **A second family, not a tier of §4.24**, and the rule is why. A tier is allowed to demand harder
   reasoning; it is not allowed to change what the player is being asked to do. Everything below the rule is
   shared outright — the same board, marks, drag, six rungs, hint sentences and screen — so the family is a
   quota, a tier table and a name.
-- **Knobs:** region-size spread · technique cap · required rung and its quota. **Grid size is not one**, and
-  that is measured rather than chosen: below 8×8 no legal star set exists at all, and a 10×10 lands on
-  34.8px squares at 390px wide against 43.5px for the 8×8 — under both platforms' touch minimum, on a board
-  whose main gesture is a drag along a row.
+- **Knobs:** the SMALLEST region · region-size spread · technique cap · required rung and its quota. **Grid
+  size is not one**, and that is measured rather than chosen: below 8×8 no legal star set exists at all, and
+  a 10×10 lands on 34.8px squares at 390px wide against 43.5px for the 8×8 — under both platforms' touch
+  minimum, on a board whose main gesture is a drag along a row.
+- **The smallest region is the knob playtesting found, and it is the strongest.** A three-square region can
+  only be a straight line (an L cannot hold two stars that do not touch) and a straight three owing two
+  stars has ONE filling — a square handed over on sight. At the arithmetic floor an 8×8 opens with about
+  half its regions already answered, which plays as a first encounter however hard the solver worked for the
+  rest. Junior keeps them on purpose; every tier above draws none.
 - **It has more of the depth §4.24 lacks.** Over twenty wizard boards each: `spanning` fires 2.1 times a
   board against 1.1, `groupTight` 10.6 against 8.0, and `groupFull` — the rung that merely notices a
   finished group — HALVES, 3.0 against 6.2. A board is four steps longer for eight more stars, so the

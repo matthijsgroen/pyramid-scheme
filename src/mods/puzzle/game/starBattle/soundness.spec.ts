@@ -32,7 +32,7 @@ const TIERS: Difficulty[] = ["starter", "junior", "expert", "master", "wizard"]
  */
 const AGREEMENT: { name: string; options: StarBattleOptions }[] = [
   ...TIERS.map(tier => ({ name: `star battle ${tier}`, options: STAR_BATTLE_CONFIG[tier] })),
-  ...(["expert", "master", "wizard"] as Difficulty[]).map(tier => ({
+  ...(["junior", "expert", "master", "wizard"] as Difficulty[]).map(tier => ({
     name: `twin stars ${tier}`,
     options: TWIN_STARS_CONFIG[tier],
   })),
@@ -134,6 +134,9 @@ describe("star battle soundness", () => {
   it.each([
     { name: "star battle starter", options: STAR_BATTLE_CONFIG.starter, seeds: [1, 2, 3, 4], rounds: 25 },
     { name: "star battle junior", options: STAR_BATTLE_CONFIG.junior, seeds: [1, 2, 3, 4], rounds: 25 },
+    // Junior first: it is the tier `onlyWay` carries, and a rung that places two stars at once on an
+    // argument about arrangements is the one this oracle is most worth pointing at.
+    { name: "twin stars junior", options: TWIN_STARS_CONFIG.junior, seeds: [1, 2], rounds: 12 },
     { name: "twin stars expert", options: TWIN_STARS_CONFIG.expert, seeds: [1, 2], rounds: 12 },
   ])("every rung is forced by the board it fired from at $name", { timeout: 120_000 }, ({ options, seeds, rounds }) => {
     const random = mulberry32(4241)

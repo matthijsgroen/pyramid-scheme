@@ -22,8 +22,8 @@ proves a board needs the reasoning its tier claims.
 Stars go in a square grid carved into as many regions as the grid has rows:
 
 - **One star to a row, a column and a region** — every row, every column and every
-  region holds the same fixed number of stars, and at the tiers below wizard that
-  number is one.
+  region holds the same fixed number of stars, and in this family that number is one at
+  every tier. Two is the same rules and a second family (§11).
 - **No two stars touch**, diagonals included.
 
 That is Star Battle's rule set, whole and unmodified. **The board opens completely empty**:
@@ -40,11 +40,10 @@ Queens is one crown to a row, a column and a colour region with none touching, w
 case. Every tier here draws quota 1 (§5), so these are Queens boards — the drawer only draws that case, though
 the rules and the technique solver are written for any quota.
 
-The catalogue named the family "two not touch" after the published form, which is usually **two** stars a line
-on a 10×10. Getting there is §10's open question rather than a variant to bolt on: two stars turns
-`groupTight` from "one square left" into a capacity argument, and would give the adjacency-capacity rung this
-doc cut (§3.2 — it fired on no board) something to do. It is the more interesting answer if the top tier plays
-short.
+The catalogue named the family "two not touch" after the published form, which is usually **two** stars a
+line. That form is built, as its own family rather than a variant of this one (§11), because a rule change is
+not a difficulty setting. It is where `groupTight` becomes a capacity argument and where the T3 rung this
+ladder gained does all of its work — this family cannot climb T3 at all.
 
 Two smaller differences from Queens, both choices rather than accidents:
 
@@ -86,9 +85,10 @@ always says "I counted the whole board" teaches nothing.
 | **T0** | `touch`      | A star is placed                                                | "A star here, so nothing touching it"                    |
 | **T1** | `groupFull`  | A row, column or region already holds its stars                 | "This region has its ⭐, so the rest is dark"            |
 | **T2** | `groupTight` | A group owes as many stars as it has squares left               | "One ⭐ owed and one square left"                        |
-| **T3** | `regionLine` | A region's free squares all sit in one row or column            | "This region's ⭐ has to come from that row"             |
-| **T4** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
-| **T5** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
+| **T3** | `onlyWay`    | A group's stars fit in its free squares exactly one way         | "Only one way to fit 2 ⭐ in this region"                |
+| **T4** | `regionLine` | A region's free squares all sit in one row or column            | "This region's ⭐ has to come from that row"             |
+| **T5** | `lineRegion` | A row or column's free squares all sit inside one region        | "That row's ⭐ is this region's, so the region is spent" |
+| **T6** | `spanning`   | Two regions whose free squares fit in two rows (or two columns) | "These two regions fill those two rows between them"     |
 
 **T0 is propagation, not a step.** Placing a star rules out its eight neighbours, and no board asks the
 player to work that out — it is the rule made visible. It is a rung so that a hint has something to say on
@@ -99,15 +99,33 @@ recedes as it lands (§6), which is this rung rendered instead of tapped.
 for. They are the bulk of every board (§3.4), and they are what makes the family teach
 itself: a starter board is nothing but these two.
 
-**T3 and T4 are the family's own reasoning**, and the only rungs that need the region
+**T3 is the adjacency rule doing the counting, and it exists only because a player can
+see it.** Three squares in a line owing two stars have one filling — both ends — and that
+is a move made on sight, not worked out. It sits above `groupTight` because "this row is
+down to two squares" is a plainer sentence than "these are the only two squares that fit",
+and the plainer reason should win when both are available.
+
+**It is inert at one star to a group**, and provably rather than by a check: `touch`
+darkens every square beside a star before this rung looks, so one owed star has exactly as
+many arrangements as it has free squares, and the case where that is one belongs to T2. So
+star battle never climbs it and twin stars spends it three or four times a board.
+
+**It was added after playtesting, and the reason generalises.** Without it the ladder could
+not see the easiest move on the board, so it rated boards as hard that were being handed
+over — half of an 8×8's regions, at the first tier table twin stars shipped with. **A
+difficulty oracle that cannot see a move the player makes on sight is not measuring the
+board**, and the gap does not show up in any test that only asks whether a board is
+solvable.
+
+**T4 and T5 are the family's own reasoning**, and the only rungs that need the region
 boundary to mean anything. Both are one reading of the board: point at a region, point at
 a line, say which owes the other. The pair is not symmetric in practice — a region
 squeezed into one line is common, a line squeezed into one region needs the rest of the
-line already dark, so T4 arrives later in a solve.
+line already dark, so T5 arrives later in a solve.
 
-### 3.1 T5 is the rung that may not survive its own sentence
+### 3.1 T6 is the rung that may not survive its own sentence
 
-`spanning` generalises T3 and T4 to two groups at once, and two is where it stops:
+`spanning` generalises T4 and T5 to two groups at once, and two is where it stops:
 three-group spans were not implemented because the sentence stops fitting a
 phone-width banner, which is the constraint §3 of every family doc holds a rung to.
 Even at two, "these two regions fill those two rows between them" asks the player to hold
@@ -497,21 +515,33 @@ stays what §3.3 says it is: a guard, not a rung.
 
 - **Below 8×8 there are no boards at all.** Two to a row and two to a column with nothing
   touching does not fit in 7×7 or 6×6 — the generator finds no legal star set, let alone a
-  solvable map. There is no junior form of this rule.
+  solvable map. A junior board is therefore an 8×8 that ASKS less, not a smaller one.
 - **Above 8×8 the board stops fitting a phone.** A 10×10 lands on 34.8px squares at 390px
   wide (31.8px at 360px) against 43.5px for an 8×8, under both platforms' touch minimum, on
   a board whose main gesture is a drag along a row. Measured on the real screen, not
   computed. 10×10 is a tablet question if it is ever a question.
 
-| Tier   | Grid | Spread | Cap          | Requires        | Cost  |
-| ------ | ---- | ------ | ------------ | --------------- | ----- |
-| expert | 8×8  | n³     | `regionLine` | `regionLine` ×2 | 15ms  |
-| master | 8×8  | n²     | `lineRegion` | `lineRegion` ×3 | 307ms |
-| wizard | 8×8  | n²     | `spanning`   | `spanning` ×2   | 219ms |
+| Tier   | Spread | Smallest region | Cap          | Requires        | Gift regions | Cost  |
+| ------ | ------ | --------------- | ------------ | --------------- | ------------ | ----- |
+| junior | n³     | 3               | `onlyWay`    | `onlyWay` ×3    | **2.4 of 8** | 14ms  |
+| expert | n³     | 5               | `regionLine` | `regionLine` ×2 | 0.1          | 39ms  |
+| master | n²     | 5               | `lineRegion` | `lineRegion` ×2 | 0.0          | 339ms |
+| wizard | n²     | 5               | `spanning`   | `spanning` ×2   | 0.0          | 115ms |
 
-The ramp is the spread first and then the rung, the same way this family's own is (§5) — and
-unlike star battle's top two tiers, these differ in the spread AS WELL as in the rung they
-must spend, so the separation is not resting on the requirement alone.
+**The smallest allowed region is the knob that matters, and playtesting is what found it.** A
+region of three squares can only be a straight line — an L cannot hold two stars that do not
+touch, so no other shape survives generation — and a straight three owing two stars has ONE
+filling. Every one of them is a square handed over before the player thinks. At the
+arithmetic floor of 3 an 8×8 opens with **about four of its eight regions already answered**,
+which plays as a first-encounter board however hard the solver worked for the rest. Raising
+the floor to five removes them.
+
+So junior keeps the gifts deliberately — they are what makes a tier teach itself, the way a
+one-square region opens a starter board in §5 — and it is capped below the region readings,
+so everything after the gifts is counting. Every tier above it draws no gift at all.
+
+The ramp is the smallest region first, then the spread, then the rung — and unlike star
+battle's own top two tiers, no two of these rest on the requirement alone.
 
 **Every board opens on `regionLine`** — measured, all twelve seeds at all three tiers — and
 the shape of the opening is worth stating because it is not the one the one-star family has.
@@ -576,21 +606,19 @@ star, a square in none is dark) gets a third of the board and then stalls.
 The classic form keeps `size` regions and doubles the STARS instead, so a region stays the
 size it was and says twice as much. That is why the classic form is the classic form.
 
-### 11.5 The rung this family does not have
+### 11.5 The capacity reading, and the half of it that ships
 
-The capacity reading — **enumerate a group's legal placements; a square in every one of them
-is a star, a square in none of them is dark** — is the natural top of a two-star ladder, and
-it is deliberately not built. It subsumes `groupFull` and `groupTight` outright, it is what
-reads a three-in-a-line region, and on 8×8 it lifts the share of region maps that settle from
-21% to 99.7%.
+The full capacity rung is: enumerate a group's legal placements; **a square in every one of
+them is a star, a square in none of them is dark.** Half of that ships as T3 `onlyWay` — the
+placing half, restricted to the case where there is exactly ONE arrangement.
 
-It is left out because **8×8 does not need it**: one map in five already settles on the six
-rungs the family has, which is a generous pool to filter a required rung out of. What it
-would buy is 10×10, where the shipped ladder settles 0.3% of maps and the packing rung takes
-that to 8.5% — and 10×10 is the size §11.2 rules out on touch targets. So the rung is a
-consequence of a board size this family has no use for.
+**The restriction is what keeps the sentence honest.** "There is only one way to fit two ⭐ in
+this region" is a fact a player can check by trying; "this square is in none of the seventeen
+ways" is a claim about an enumeration they have to take on trust. Every rung here is held to
+explaining itself in one line (§3, §7), and that is the test the adjacency-capacity rung
+failed in §3.2.
 
-The other thing it costs is a sentence. Every rung here is held to explaining itself in one
-line a player can check (§3, §7), and "these are the only two ways two stars fit in this
-region" is a claim about an enumeration rather than a fact about the board. That is the same
-test the adjacency-capacity rung failed in §3.2, and it would have to pass it before shipping.
+The eliminating half is not built, and what it would buy is 10×10: the shipped ladder settles
+0.3% of maps at that size against 8.5% with it. Since §11.2 rules 10×10 out on touch targets,
+the rung is a consequence of a board size this family has no use for. At 8×8 it is not needed
+— one map in five settles already, which is a generous pool to filter a required rung out of.

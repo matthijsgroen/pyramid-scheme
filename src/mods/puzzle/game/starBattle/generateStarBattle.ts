@@ -40,6 +40,20 @@ export type StarBattleOptions = {
    * line, and the reasoning has nowhere to start.
    */
   regionSpread: number
+  /**
+   * The fewest squares a region may be grown to, and **at two stars this is a difficulty knob rather than a
+   * bound.**
+   *
+   * The arithmetic floor is `quota * 2 - 1`: two stars that may not touch need three squares to stand in.
+   * But a region of exactly three can only be a straight line — an L cannot hold two stars that do not touch,
+   * so a three-square region never survives generation as anything else — and a straight three owing two
+   * stars has ONE filling. Every one of them is a square handed over before the player thinks.
+   *
+   * So the floor sets how much of the board is a gift: at 3 an 8×8 opens with about four of its eight regions
+   * already answered. Raise it and the gifts go away; a four-in-a-line owing two stars has three fillings and
+   * is a question. Unset takes the arithmetic floor, which is what a tier wanting an easy opening asks for.
+   */
+  minRegion?: number
   /** The strongest deduction a board may demand. */
   techniqueCap: StarBattleTechniqueId
   /**
@@ -264,8 +278,9 @@ export const generateStarBattle = (seed: number, options: StarBattleOptions): St
   const { size, quota, regionSpread, techniqueCap, requires = [], requiresCount = 1 } = options
   const allowed = techniquesUpTo(techniqueCap)
   const random = mulberry32(seed)
-  // Two stars that may not touch need three squares; one star needs the one it stands on.
-  const smallest = quota * 2 - 1
+  // Two stars that may not touch need three squares; one star needs the one it stands on. A tier may ask
+  // for more, and at two stars it usually should — see `minRegion`.
+  const smallest = Math.max(options.minRegion ?? 0, quota * 2 - 1)
   let fallback: { board: StarBattlePuzzleWithAnswer; demanded: number } | undefined
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     const stars = starSet(size, quota, random)
