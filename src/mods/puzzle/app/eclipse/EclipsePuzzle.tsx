@@ -55,6 +55,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
+      goal={t("eclipse.goal")}
       rules={<EclipseRules />}
     >
       {({ reportInput, hintVisible }) => (

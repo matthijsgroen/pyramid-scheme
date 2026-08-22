@@ -77,6 +77,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       // Reading a hint and then hunting for the square it means is the whole gap between advice and
       // acting on it, so asking for one aims the board and the pad at that square.
       onHintRevealed={() => hint && focusCell(hint.focus.row, hint.focus.col)}
+      goal={t("futoshiki.goal")}
       rules={<FutoshikiRules />}
     >
       {({ reportInput, hintVisible }) => (

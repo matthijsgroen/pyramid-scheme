@@ -94,7 +94,8 @@
     "solvedUnaided": "Solved without a single hint",
     "solvedWithHints_one": "Solved with {{count}} hint",
     "solvedWithHints_other": "Solved with {{count}} hints",
-    "tapToContinue": "Tap to continue"
+    "tapToContinue": "Tap to continue",
+    "goal": "Goal"
   },
   "trap": {
     "warning": "⚠ Trapped Corridor",
@@ -244,7 +245,6 @@
   },
   "balance": {
     "rules": {
-      "goal": "Every scale is balanced. Give each glyph a weight that keeps it that way.",
       "tap": "Tap a glyph below, then a number. Tap that number again to take it off.",
       "same": "A glyph weighs the same on every scale.",
       "cancel": "Take the same thing off both pans and a scale stays balanced. Tap a marked piece to do it — what is left is kept as a new row.",
@@ -262,11 +262,11 @@
     "swap": {
       "pick": "Tap a lit row to trade this {{glyph}} for what that row says it is worth.",
       "none": "Nothing here says what one {{glyph}} on its own is worth, and nothing opposite it matches."
-    }
+    },
+    "goal": "Every glyph has a weight, and every scale balances."
   },
   "sumplete": {
     "rules": {
-      "goal": "Cross out numbers so every row and column adds up to the number beside it.",
       "tap": "Tap once to cross a number out, again to mark it as one you keep, again to clear it.",
       "totals": "The small number under each target is what that line adds up to right now."
     },
@@ -304,11 +304,11 @@
         "row": "Keep {{value}} and this row would still need {{remaining}}, which none of the other numbers here can make — so it has to go.",
         "col": "Keep {{value}} and this column would still need {{remaining}}, which none of the other numbers here can make — so it has to go."
       }
-    }
+    },
+    "goal": "Every row and every column adds up to the number beside it."
   },
   "futoshiki": {
     "rules": {
-      "goal": "Fill every square so each row and each column shows every number exactly once.",
       "signs": "A sign between two squares points at the smaller number of the two.",
       "enter": "Tap a square, then tap a number. The same number again takes it back out.",
       "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
@@ -362,11 +362,11 @@
         "row": "In this row, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them.",
         "col": "In this column, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them."
       }
-    }
+    },
+    "goal": "Every row and every column shows each number exactly once."
   },
   "lightbeam": {
     "rules": {
-      "goal": "Get the sunlight from the disc to the shrine.",
       "mirrors": "A mirror bends the light off either of its faces. The small marks around it show the other ways it can lie: most turn the light a quarter, and some stop short of that and send it off at a slant.",
       "walls": "A block of stone swallows the light. So does the edge of the board.",
       "tap": "Tap a piece to change it: a mirror turns, a sliding piece moves to its next spot. A white edge means it is yours to move; anything else is part of the puzzle.",
@@ -394,11 +394,11 @@
       "wiringDead": "Whatever you do, the light can never get to that socket — so the stone it is wired to stays exactly where it is, and you can read the path straight past it.",
       "neverReached": "Leave this one alone. The light cannot reach it however the rest is set, so nothing you do to it matters.",
       "onlySurvivor": "Try every setting of this one in turn and all but one leave the shrine dark. That one is the answer."
-    }
+    },
+    "goal": "The sunlight runs from the disc to the shrine."
   },
   "eclipse": {
     "rules": {
-      "goal": "Give every square a sun or a moon, so each row and each column holds as many of one as of the other.",
       "triple": "Three of the same in a row is never allowed, across or down.",
       "copies": "No two rows may read alike, and no two columns either.",
       "signs": "A sign between two squares says how they compare: = for the same, × for different.",
@@ -420,15 +420,14 @@
       "squeeze.triple": "{{mark}} here makes the rest {{other}} — three in a row. So {{other}}.",
       "squeeze.sign": "{{mark}} here makes the rest {{other}} — a sign stops fitting. So {{other}}.",
       "squeeze.copy": "{{mark}} here makes the rest {{other}} — the line becomes a copy. So {{other}}."
-    }
+    },
+    "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other."
   },
   "constellation": {
     "rules": {
-      "goal": "Give every star as many lines of light as its number says.",
       "straight": "Lines run straight across or down, from one star to the next.",
       "pair": "Two stars can share at most two lines.",
       "cross": "Lines never cross, and never pass through a star.",
-      "whole": "Every star ends up joined into one constellation.",
       "enter": "Drag from a star toward its neighbour to draw a line, again for a double, once more to clear it."
     },
     "undo": "Undo",
@@ -442,11 +441,15 @@
       "twinBlock.single": "Joining those two would make a constellation of two.",
       "twinBlock.double": "A second line there would make a constellation of two.",
       "isolation": "That line would seal these {{count}} stars off from the rest."
+    },
+    "goal": {
+      "default": "Every star hangs in one constellation, joined by as many lines of light as its number says.",
+      "causeway": "Every site stands in one road network, served by as many haul roads as its number says.",
+      "irrigation": "Every basin feeds one waterworks, fed by as many channels as its number says."
     }
   },
   "starBattle": {
     "rules": {
-      "goal": "Put a star in every row, every column and every region.",
       "touch": "No two stars may touch — corners count.",
       "enter": "Tap a square to rule it out, tap again to put a star there, once more to clear it."
     },
@@ -468,6 +471,7 @@
       "spanning.toCols": "These regions fill those {{count}} columns between them, so the rest of the columns is empty.",
       "spanning.fromRows": "Those rows can only take their {{count}} {{star}} from these regions, so the rest of the regions is empty.",
       "spanning.fromCols": "Those columns can only take their {{count}} {{star}} from these regions, so the rest of the regions is empty."
-    }
+    },
+    "goal": "Every row, every column and every region holds exactly one star."
   }
 }

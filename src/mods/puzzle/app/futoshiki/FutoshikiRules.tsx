@@ -7,7 +7,6 @@ export const FutoshikiRules: FC = () => {
   const { t } = useTranslation("common")
   return (
     <ul className="list-disc space-y-1 pl-4">
-      <li>{t("futoshiki.rules.goal")}</li>
       <li>{t("futoshiki.rules.signs")}</li>
       <li>{t("futoshiki.rules.enter")}</li>
       <li>{t("futoshiki.rules.notes")}</li>

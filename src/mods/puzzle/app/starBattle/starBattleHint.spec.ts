@@ -85,8 +85,11 @@ describe("every reason the ladder can give is phrased in both locales", () => {
     expect(typeof phrase(nl.starBattle.hint, key)).toBe("string")
   })
 
-  it("has the rules in both", () => {
-    for (const locale of [en, nl])
-      for (const rule of ["goal", "touch", "enter"]) expect(typeof phrase(locale.starBattle.rules, rule)).toBe("string")
+  it("has the goal and the rules in both", () => {
+    for (const locale of [en, nl]) {
+      // The goal is its own section above the rules (`puzzle-screens.md` §1), not a bullet in them.
+      expect(typeof locale.starBattle.goal).toBe("string")
+      for (const rule of ["touch", "enter"]) expect(typeof phrase(locale.starBattle.rules, rule)).toBe("string")
+    }
   })
 })

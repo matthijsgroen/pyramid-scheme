@@ -29,6 +29,38 @@ has timed against a human clock has not cleared this bar.
 - Tap targets ≥ 44px. A cell smaller than that needs a bigger cell, not a more
   precise finger.
 
+### 1.1 Under the board: the goal, then how to play
+
+Two sections, because they answer different questions.
+
+**The goal is one sentence, and it describes a FINISHED board** — what the player is trying to end up with,
+not what they may do on the way. It is the first thing read and it is read once, so it goes above the rules
+rather than being the first bullet in them: working out the point of the board from five bullets is reading
+four bullets too many.
+
+**It is worded per IDENTITY, not per mechanic.** A family whose rules wear more than one face needs a
+sentence per face — constellation's board is a star map, a haul-road network and a waterworks, and "give
+every star as many lines of light as its number says" is wrong in two of those rooms. The skin already knows
+which place the room is (§2), so the wording asks it. The AMBIENCE never changes it: a causeway at night is
+still a causeway.
+
+**A rule that describes the END STATE belongs in the goal; a rule that FORBIDS something stays a bullet.**
+That is the line between the two sections, and it is worth stating because the first draft of these sentences
+crossed it in both directions — star battle's goal repeated the no-touching rule listed three lines below it,
+and constellation's "every star ends up in one constellation" was a bullet when it is the whole point of the
+board. Whichever side a fact lands on, it is said once.
+
+**How to play holds the rest, and it holds both kinds of thing** — what the board will not allow, and what a
+tap or a drag does. Not split further, deliberately: most families have one control bullet, and a heading
+over a single line is furniture. The order carries the distinction instead — **what the board IS first, what
+the player DOES last**. Where a rule and a gesture are genuinely the same fact they stay together (balance
+scale's cancelling is a truth about scales _and_ the tap that applies it), which is the case that would break
+a hard split.
+
+**A board only lists what it affords.** A rule about a mechanic absent from the grid in front of the player
+is worse than no rule: it sends them looking for something that is not there. Balance scale grows its list
+with the tier and lightbeam hides its socket line on boards without a socket.
+
 ## 2. Theming — the family renders states, the skin renders pixels
 
 A room dresses out of **two** things it is told, and they answer different questions.

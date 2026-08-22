@@ -38,6 +38,16 @@ type Props = {
   idleMs?: number
   /** Fired when the player asks for the hint — families use it to aim the board at what it names. */
   onHintRevealed?: () => void
+  /**
+   * One sentence: what a finished board looks like, shown above the rules.
+   *
+   * Split out of the rules list because it answers a different question. The rules say what is allowed and
+   * which tap does what; the goal says what the player is trying to end up with, and reading five bullets to
+   * work that out is reading five bullets too many. A family whose mechanic wears more than one identity
+   * words this per identity — a star map and a haul-road network are not aiming at the same thing, even
+   * though the board underneath them is.
+   */
+  goal?: ReactNode
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
   children: (api: PuzzleShellApi) => ReactNode
@@ -60,6 +70,7 @@ export const PuzzleFamilyShell = ({
   hint,
   idleMs,
   onHintRevealed,
+  goal,
   rules,
   children,
 }: Props) => {
@@ -169,12 +180,22 @@ export const PuzzleFamilyShell = ({
           {hintText}
         </p>
       )}
-      {rules && (
+      {(goal || rules) && (
         <div
           className={clsx("w-full border-t border-stone-700 pt-3 text-sm text-stone-400", solvedBanner && "invisible")}
         >
-          <h3 className="mb-1 font-pyramid text-stone-300">{t("ui.howToPlay")}</h3>
-          {rules}
+          {goal && (
+            <>
+              <h3 className="mb-1 font-pyramid text-stone-300">{t("ui.goal")}</h3>
+              <p className="mb-3">{goal}</p>
+            </>
+          )}
+          {rules && (
+            <>
+              <h3 className="mb-1 font-pyramid text-stone-300">{t("ui.howToPlay")}</h3>
+              {rules}
+            </>
+          )}
         </div>
       )}
       {solvedBanner && (

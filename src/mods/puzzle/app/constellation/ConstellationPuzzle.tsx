@@ -14,6 +14,7 @@ import {
 } from "@/mods/puzzle/game/constellation/constellation"
 import type { ConstellationPuzzleWithAnswer } from "@/mods/puzzle/game/constellation/generateConstellation"
 import { ConstellationBoard } from "./ConstellationBoard"
+import { skinFor } from "./skins"
 
 import { buildConstellationHint } from "./constellationHint"
 import { ConstellationRules } from "./ConstellationRules"
@@ -70,6 +71,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
+      goal={t(`constellation.goal.${skinFor(role, theme).name}`)}
       rules={<ConstellationRules />}
     >
       {({ reportInput, hintVisible }) => (

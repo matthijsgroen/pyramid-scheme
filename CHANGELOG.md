@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Every puzzle now states its goal in one line above the how-to-play, worded for the place it is: the star map asks for constellations, the same board drawn as haul roads asks for a road network.
+
 - The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".
 - Every comparison-grid difficulty now starts with a different number of squares filled in — four at the easiest, none at the hardest.
 - The signs between squares are drawn rather than typed: part of the board rather than punctuation on it, and sized so they never crowd the numbers on a 6×6.

@@ -40,6 +40,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
       onReset={() => setState(createSumpleteState(grid.length))}
       hint={hint && t(`sumplete.hint.${hint.key}`, hint.params)}
       idleMs={hintIdleDelay(difficulty)}
+      goal={t("sumplete.goal")}
       rules={<SumpleteRules />}
     >
       {({ reportInput, hintVisible }) => (

@@ -94,7 +94,8 @@
     "solvedUnaided": "Opgelost zonder ook maar één hint",
     "solvedWithHints_one": "Opgelost met {{count}} hint",
     "solvedWithHints_other": "Opgelost met {{count}} hints",
-    "tapToContinue": "Tik om verder te gaan"
+    "tapToContinue": "Tik om verder te gaan",
+    "goal": "Doel"
   },
   "trap": {
     "warning": "⚠ Gevaarlijke Gang",
@@ -237,7 +238,6 @@
   },
   "balance": {
     "rules": {
-      "goal": "Elke weegschaal is in evenwicht. Geef elk teken een gewicht dat dat zo houdt.",
       "tap": "Tik hieronder op een teken en dan op een getal. Tik nog een keer op dat getal om het weg te halen.",
       "same": "Een teken weegt op elke weegschaal evenveel.",
       "cancel": "Haal aan beide kanten hetzelfde weg en een weegschaal blijft kloppen. Tik op een gemarkeerd stuk: wat overblijft komt als nieuwe rij eronder.",
@@ -255,11 +255,11 @@
     "swap": {
       "pick": "Tik op een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
       "none": "Niets hier zegt wat één {{glyph}} in zijn eentje waard is, en er ligt niets gelijks tegenover."
-    }
+    },
+    "goal": "Elk teken heeft een gewicht, en elke weegschaal is in balans."
   },
   "sumplete": {
     "rules": {
-      "goal": "Streep getallen weg zodat elke rij en kolom optelt tot het getal ernaast.",
       "tap": "Tik één keer om een getal weg te strepen, nog een keer om het te bewaren, nog een keer om het leeg te maken.",
       "totals": "Het kleine getal onder elk doel is wat die lijn nu optelt."
     },
@@ -297,11 +297,11 @@
         "row": "Houd je {{value}}, dan heeft deze rij nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg.",
         "col": "Houd je {{value}}, dan heeft deze kolom nog {{remaining}} nodig, en dat maak je met de andere getallen hier niet — dus die moet weg."
       }
-    }
+    },
+    "goal": "Elke rij en elke kolom telt op tot het getal ernaast."
   },
   "futoshiki": {
     "rules": {
-      "goal": "Vul elk vakje zo dat elke rij en elke kolom elk getal precies één keer laat zien.",
       "signs": "Een teken tussen twee vakjes wijst naar het kleinste getal van de twee.",
       "enter": "Tik op een vakje en dan op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
       "notes": "Zet het potlood aan om op te schrijven welke getallen nog in een vakje kunnen. Met ongedaan maken neem je je laatste zet terug."
@@ -355,11 +355,11 @@
         "row": "In deze rij passen {{first}}, {{second}} en {{third}} nergens anders dan in deze drie vakjes, dus er kan niets anders in.",
         "col": "In deze kolom passen {{first}}, {{second}} en {{third}} nergens anders dan in deze drie vakjes, dus er kan niets anders in."
       }
-    }
+    },
+    "goal": "Elke rij en elke kolom laat elk getal precies één keer zien."
   },
   "lightbeam": {
     "rules": {
-      "goal": "Breng het zonlicht van de schijf naar het schrijn.",
       "mirrors": "Een spiegel buigt het licht langs elk van zijn kanten. De streepjes eromheen laten zien hoe hij nog kan liggen: de meeste geven een kwartslag, sommige blijven daar net onder en sturen het licht schuin weg.",
       "walls": "Een blok steen slokt het licht op. De rand van het bord ook.",
       "tap": "Tik op een stuk om het te veranderen: een spiegel draait, een schuivend stuk gaat naar de volgende plek. Een witte rand betekent dat jij het mag verzetten; al het andere hoort bij de puzzel.",
@@ -387,11 +387,11 @@
       "wiringDead": "Wat je ook doet, het licht kan die aansluiting nooit bereiken — dus de steen waaraan hij vastzit blijft precies waar hij is, en je kunt het pad er zo langs lezen.",
       "neverReached": "Laat deze staan. Het licht kan er niet bij komen, hoe de rest ook staat, dus wat je ermee doet maakt niets uit.",
       "onlySurvivor": "Probeer elke stand van deze om de beurt: op één na laten ze het schrijn allemaal donker. Die ene is het antwoord."
-    }
+    },
+    "goal": "Het zonlicht loopt van de schijf naar het altaar."
   },
   "eclipse": {
     "rules": {
-      "goal": "Geef elk vakje een zon of een maan, zodat elke rij en elke kolom er even veel van beide heeft.",
       "triple": "Drie dezelfde op een rij mag nooit, niet horizontaal en niet verticaal.",
       "copies": "Geen twee rijen mogen hetzelfde zijn, en geen twee kolommen.",
       "signs": "Een teken tussen twee vakjes zegt hoe ze zich verhouden: = voor gelijk, × voor verschillend.",
@@ -413,15 +413,14 @@
       "squeeze.triple": "{{mark}} hier maakt de rest {{other}} — drie op een rij. Dus {{other}}.",
       "squeeze.sign": "{{mark}} hier maakt de rest {{other}} — een teken klopt niet meer. Dus {{other}}.",
       "squeeze.copy": "{{mark}} hier maakt de rest {{other}} — de lijn wordt een kopie. Dus {{other}}."
-    }
+    },
+    "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander."
   },
   "constellation": {
     "rules": {
-      "goal": "Geef elke ster zo veel lichtlijnen als zijn getal zegt.",
       "straight": "Lijnen lopen recht, horizontaal of verticaal, van de ene ster naar de volgende.",
       "pair": "Tussen twee sterren passen maximaal twee lijnen.",
       "cross": "Lijnen kruisen elkaar nooit, en lopen nooit door een ster heen.",
-      "whole": "Alle sterren horen aan het eind bij één sterrenbeeld.",
       "enter": "Sleep van een ster naar zijn buur voor een lijn, nog eens voor een dubbele, en nog eens om hem weg te halen."
     },
     "undo": "Ongedaan",
@@ -435,11 +434,15 @@
       "twinBlock.single": "Die twee verbinden maakt een sterrenbeeld van twee.",
       "twinBlock.double": "Een tweede lijn daar maakt een sterrenbeeld van twee.",
       "isolation": "Die lijn sluit deze {{count}} sterren af van de rest."
+    },
+    "goal": {
+      "default": "Elke ster hangt in één sterrenbeeld, verbonden met zoveel lichtlijnen als zijn getal zegt.",
+      "causeway": "Elke plaats ligt in één wegennet, ontsloten door zoveel sleepwegen als zijn getal zegt.",
+      "irrigation": "Elk bekken hoort bij één waterwerk, gevoed door zoveel kanalen als zijn getal zegt."
     }
   },
   "starBattle": {
     "rules": {
-      "goal": "Zet een ster in elke rij, elke kolom en elk gebied.",
       "touch": "Twee sterren mogen elkaar nooit raken — ook niet met een punt.",
       "enter": "Tik een vakje om het af te strepen, tik weer voor een ster, en nog eens om het te wissen."
     },
@@ -461,6 +464,7 @@
       "spanning.toCols": "Deze gebieden vullen samen die {{count}} kolommen, dus de rest van de kolommen blijft leeg.",
       "spanning.fromRows": "Die rijen kunnen hun {{count}} {{star}} alleen uit deze gebieden halen, dus de rest van de gebieden blijft leeg.",
       "spanning.fromCols": "Die kolommen kunnen hun {{count}} {{star}} alleen uit deze gebieden halen, dus de rest van de gebieden blijft leeg."
-    }
+    },
+    "goal": "Elke rij, elke kolom en elk gebied heeft precies één ster."
   }
 }

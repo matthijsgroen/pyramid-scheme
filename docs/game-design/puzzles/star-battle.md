@@ -35,6 +35,25 @@ shape, and the answer is entered by tapping.
 
 ## 2. Why this family
 
+**What ships is LinkedIn's Queens, not Star Battle**, and the two are the same puzzle at different quotas:
+Queens is one crown to a row, a column and a colour region with none touching, which is exactly the one-star
+case. Every tier here draws quota 1 (§5), so these are Queens boards — the drawer only draws that case, though
+the rules and the technique solver are written for any quota.
+
+The catalogue named the family "two not touch" after the published form, which is usually **two** stars a line
+on a 10×10. Getting there is §10's open question rather than a variant to bolt on: two stars turns
+`groupTight` from "one square left" into a capacity argument, and would give the adjacency-capacity rung this
+doc cut (§3.2 — it fired on no board) something to do. It is the more interesting answer if the top tier plays
+short.
+
+Two smaller differences from Queens, both choices rather than accidents:
+
+- **Regions are drawn, not filled.** Queens colours its regions; this outlines them, and §8 is why — with as
+  many regions as rows, a palette that separates them all is a palette nobody can read at arm's length.
+- **The interaction matches Queens' own convention, arrived at independently.** First tap rules a square out,
+  second places the star (§6). That came from counting moves on an 8×8 — eight stars against fifty-six
+  eliminations — and landing on what Queens already does is a fair sign the count was right.
+
 **It is the first family whose clue is a shape rather than a number.** Sumplete,
 futoshiki, balance scale and constellation all count; eclipse compares marks along a
 line. Here the constraint the player reasons from is **where a boundary runs** — a

@@ -665,6 +665,9 @@ Family doc: `docs/game-design/puzzles/star-battle.md`.
 - **Operates:** place one star in every row, every column and every region, and no two stars may touch,
   diagonals included. **The board opens completely empty** — where the region boundaries run is the entire
   clue. The name is the theme, which is the cheapest possible fit for `sky`.
+- **What ships is LinkedIn's Queens**, which is this puzzle at one star to a line rather than the published
+  two. Same rules, same board; the quota is the only difference, and every tier draws quota 1. The two-star
+  form is the family doc's §10 rather than a variant to bolt on — see its §2 for what changes.
 - **Knobs:** the region-size SPREAD (the real one — see below) · grid size, which here buys regions rather
   than bookkeeping · technique cap, required rung and its quota · stars per line, one at every tier.
 - **The distinctness question, answered by measurement.** Regions and no-touching carry a distinct
