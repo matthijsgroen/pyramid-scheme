@@ -171,7 +171,14 @@ export const StarBattleBoard: FC<Props> = ({
             onPointerMove={moveDrag}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
-            style={decided?.has(cell) ? hatch : undefined}
+            style={{
+              // Per side, because one class cannot colour one edge — see `StarBattleSkin.wall`.
+              borderTopColor: boundary(puzzle, cell, -1, 0) ? skin.wall : skin.seam,
+              borderBottomColor: boundary(puzzle, cell, 1, 0) ? skin.wall : skin.seam,
+              borderLeftColor: boundary(puzzle, cell, 0, -1) ? skin.wall : skin.seam,
+              borderRightColor: boundary(puzzle, cell, 0, 1) ? skin.wall : skin.seam,
+              ...(decided?.has(cell) ? hatch : {}),
+            }}
             onClick={() => {
               if (swallowClick.current) {
                 swallowClick.current = false
@@ -186,10 +193,10 @@ export const StarBattleBoard: FC<Props> = ({
               spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
               // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
               // whatever the grid size turns out to be.
-              boundary(puzzle, cell, -1, 0) ? `border-t-3 ${skin.wall}` : `border-t ${skin.seam}`,
-              boundary(puzzle, cell, 1, 0) ? `border-b-3 ${skin.wall}` : `border-b ${skin.seam}`,
-              boundary(puzzle, cell, 0, -1) ? `border-l-3 ${skin.wall}` : `border-l ${skin.seam}`,
-              boundary(puzzle, cell, 0, 1) ? `border-r-3 ${skin.wall}` : `border-r ${skin.seam}`,
+              boundary(puzzle, cell, -1, 0) ? "border-t-3" : "border-t",
+              boundary(puzzle, cell, 1, 0) ? "border-b-3" : "border-b",
+              boundary(puzzle, cell, 0, -1) ? "border-l-3" : "border-l",
+              boundary(puzzle, cell, 0, 1) ? "border-r-3" : "border-r",
               // Inset, because the squares touch: a ring drawn outside one would sit on top of its
               // neighbour. A broken rule first, then the one square a hint is ABOUT, then the squares it
               // argues FROM — evidence and conclusion cannot look the same, or "this square" is a guess

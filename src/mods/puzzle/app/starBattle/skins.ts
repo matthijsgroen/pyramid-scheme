@@ -32,7 +32,19 @@ export type StarBattleSkin = {
   /** A square the player may still use, and one a placed answer has already ruled out. */
   cell: string
   spent: string
-  /** Where two regions meet, and where they do not. */
+  /**
+   * Where two regions meet, and where they do not — **as CSS colours rather than classes, and that is
+   * load-bearing.**
+   *
+   * A Tailwind `border-*` colour class sets all four sides at once, so a square with one wall edge and three
+   * seams paints the seams in the wall's colour as well. The widths stay classes (they are per-side already);
+   * the colours are applied per side, which is the only way a boundary can be told from a grid line.
+   *
+   * **The seam is not decoration and must not be drawn as if it were.** Half this family's reasoning is
+   * counting squares along a line — "this row is down to two squares" — and a player who cannot see where one
+   * square ends has to count the gaps instead. It stays quieter than the wall, because which of the two a
+   * boundary is has to be readable at a glance; quieter is not the same as nearly absent.
+   */
   wall: string
   seam: string
   /** What the answer looks like standing in a square, and its colour. */
@@ -59,8 +71,10 @@ const SKINS: Record<string, StarBattleSkin> = {
     token: "⭐",
     cell: "bg-stone-800",
     spent: "bg-stone-900",
-    wall: "border-amber-200/80",
-    seam: "border-stone-600/50",
+    wall: "rgb(253 230 138 / 0.85)",
+    // Bright enough to count squares by on a dark ground. Drawn at stone-600/50 it sat about one step off
+    // the squares either side of it, and an 8×8 read as blocks of dark with walls round them.
+    seam: "rgb(120 113 108 / 0.5)",
     Glyph: Star,
     answer: "text-amber-200",
     dark: "text-stone-500",
@@ -92,9 +106,9 @@ const SKINS: Record<string, StarBattleSkin> = {
     spent: "bg-[#c9ac74]",
     // The channel between two holdings is water, which is the one thing on a sunlit board that cannot be
     // mistaken for more soil.
-    wall: "border-sky-700/90",
-    // A furrow inside one holding: present, but nothing to reason from.
-    seam: "border-amber-900/25",
+    wall: "rgb(3 105 161 / 0.9)",
+    // A furrow inside one holding: countable, but nothing to reason from.
+    seam: "rgb(120 53 15 / 0.35)",
     Glyph: Sheaf,
     answer: "text-emerald-900",
     dark: "text-stone-700/70",
