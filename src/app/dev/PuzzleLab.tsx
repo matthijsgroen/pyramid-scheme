@@ -55,6 +55,7 @@ export const PuzzleLab: FC = () => {
   const [pickedDifficulty, setPickedDifficulty] = useState("")
   const [pickedVariant, setPickedVariant] = useState("")
   const [seed, setSeed] = useState(1)
+  const [fromList, setFromList] = useState(false)
   const [playing, setPlaying] = useState(false)
 
   const progression = useProgression()
@@ -93,10 +94,21 @@ export const PuzzleLab: FC = () => {
     [seed, difficulty, theme, role, variant, family]
   )
 
-  const puzzle = useMemo(
-    () => (playing && family ? family.generate(seed, ctx) : undefined),
-    [playing, family, seed, ctx]
-  )
+  // Two different questions, and the bench has to be able to ask both (docs/instructions/puzzle-screens.md §6.1).
+  //
+  // `family.generate` now reads the seed list, so the counter picks an entry rather than seeding a board —
+  // which answers "what will a player actually meet", but wraps after a short list and can never show the
+  // draws that did not make it. Searching live is what a tier is tuned against: an arbitrary board, including
+  // the rare bad one a list of forty would never contain.
+  //
+  // Live is the default because it is what the bench was for. A dial being tuned changes the options anyway,
+  // so its bucket is missed and both paths agree.
+  const seedable = family?.meta.seedable
+  const puzzle = useMemo(() => {
+    if (!playing || !family) return undefined
+    if (fromList || !seedable) return family.generate(seed, ctx)
+    return seedable.generate(seed, seedable.resolveOptions(ctx))
+  }, [playing, family, seedable, fromList, seed, ctx])
 
   if (!family) return null
   const Component = family.Component
@@ -143,6 +155,13 @@ export const PuzzleLab: FC = () => {
             ))}
           </select>
         )}
+        {/* Only for a family that has a list to draw from — otherwise there is nothing to choose between. */}
+        {seedable && (
+          <label className="flex items-center gap-1 text-xs text-red-300">
+            <input type="checkbox" checked={fromList} onChange={e => setFromList(e.target.checked)} />
+            from list
+          </label>
+        )}
         <DeveloperButton label="Play" onClick={() => setPlaying(true)} />
         <DeveloperButton
           label={`New puzzle (seed ${seed})`}
@@ -165,7 +184,7 @@ export const PuzzleLab: FC = () => {
               was given — so a board arriving under it reads that state out of range and crashes. Real play cannot
               do this (a room's puzzle never changes under the player), which is exactly why the bench has to. */}
           <Component
-            key={`${family.meta.id}:${difficulty}:${theme}:${role}:${variant ?? ""}:${seed}`}
+            key={`${family.meta.id}:${difficulty}:${theme}:${role}:${variant ?? ""}:${fromList}:${seed}`}
             puzzle={puzzle}
             ctx={ctx}
             progression={progression}
