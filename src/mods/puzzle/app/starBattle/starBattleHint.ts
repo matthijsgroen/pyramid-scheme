@@ -2,20 +2,21 @@ import { firstStarBattleMistake, type StarBattleMarks } from "@/mods/puzzle/game
 import { techniquesUpTo, type StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { nextStarBattleStep, stepFocus, type StarBattleStep } from "@/mods/puzzle/game/starBattle/techniques"
 
-/**
- * The star as a glyph rather than a word.
- *
- * A glyph slot keeps a hint language-free (PUZZLE_FAMILIES.md P2), and it is what lets a sentence state the
- * fact it found — "this row has its ⭐, so the rest is dark" — instead of the shape of the deduction.
- */
-const STAR = "⭐"
-
 export type StarBattleHint = {
-  /** Translation key under `starBattle.hint` — the REASON, on its own line. */
+  /** Translation key under `starBattle.hint.<place>` — the REASON, on its own line. */
   key: string
-  params: { star?: string; count?: number }
   /**
-   * What to do about it, as a key under `starBattle.hint.action`.
+   * What the sentence interpolates. The **glyph is not here**: which token stands in a square is a fact
+   * about the place a room is, and only the screen knows that (`skins.ts`). A hint that carried its own
+   * star would put one on a board with sheaves standing in it.
+   *
+   * A glyph slot at all is what keeps a hint language-free (PUZZLE_FAMILIES.md P2), and it is what lets a
+   * sentence state the fact it found — "this row has its ⭐, so the rest is dark" — instead of the shape of
+   * the deduction.
+   */
+  params: { count?: number }
+  /**
+   * What to do about it, as a key under `starBattle.hint.<place>.action`.
    *
    * A second line, and an imperative one. The reason alone leaves the player to work out what it wants of
    * them, which is a step they should not have to take from a hint they already asked for — and it names the
@@ -70,7 +71,7 @@ export const buildStarBattleHint = (
   if (!step) return undefined
   return {
     key: stepKey(step),
-    params: { star: STAR, count: step.count },
+    params: { count: step.count },
     action: step.decisions[0]?.mark === "star" ? "place" : "ruleOut",
     // How many squares the move is about, so "the hatched square" and "the hatched squares" both read.
     settles: step.decisions.length,

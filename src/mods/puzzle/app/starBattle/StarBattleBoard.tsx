@@ -9,10 +9,13 @@ import {
   type StarBattlePuzzle,
 } from "@/mods/puzzle/game/starBattle/starBattle"
 import { useDelayedConflicts } from "../useDelayedConflicts"
+import type { StarBattleSkin } from "./skins"
 
 type Props = {
   puzzle: StarBattlePuzzle
   state: StarBattleMarks
+  /** Which place this room is — everything on the board that is not a rule comes from here. */
+  skin: StarBattleSkin
   /** Squares the current hint reasons FROM — its evidence. */
   highlighted?: ReadonlySet<number>
   /**
@@ -29,25 +32,16 @@ type Props = {
   onSweepCells: (cells: number[]) => void
 }
 
-/** The answer: a shape, so it reads without colour. */
-const StarGlyph: FC = () => (
-  <svg viewBox="-50 -50 100 100" className="size-full">
-    <path
-      d="M 0 -42 L 11 -13 L 42 -13 L 17 6 L 26 36 L 0 18 L -26 36 L -17 6 L -42 -13 L -11 -13 Z"
-      className="fill-amber-200"
-    />
-  </svg>
-)
-
 /**
  * The player's own "not here" mark.
  *
  * Deliberately slight — a dot rather than a shape. This is the mark they will make most of, and a board
- * covered in marks as heavy as the stars would look as though it had answered itself.
+ * covered in marks as heavy as the answers would look as though it had answered itself. Its colour is the
+ * skin's; its weight is not, because "slight" is a rule about the board rather than about the place.
  */
 const DarkGlyph: FC = () => (
-  <svg viewBox="-50 -50 100 100" className="size-full">
-    <circle r={9} className="fill-stone-500" />
+  <svg viewBox="-50 -50 100 100" className="size-full" aria-hidden focusable="false">
+    <circle r={9} fill="currentColor" />
   </svg>
 )
 
@@ -60,16 +54,18 @@ const DarkGlyph: FC = () => (
  * that cannot be read as something else — the walls are amber strokes, a star is a shape, a dark mark is a
  * dot, and a receded square is a shade.
  */
-const HATCH = {
-  backgroundImage: "repeating-linear-gradient(45deg, transparent 0 5px, rgba(252,211,77,0.45) 5px 7px)",
-}
+const hatchOf = (skin: StarBattleSkin) => ({
+  backgroundImage: `repeating-linear-gradient(45deg, transparent 0 5px, ${skin.hatch} 5px 7px)`,
+})
 
 /**
  * A boundary is a drawn edge, and it has to be, not a fill.
  *
  * There are as many regions as rows, and a palette that tells eight regions apart is a palette nobody can
  * read at arm's length — a colour-blind player reads none of it. So the shape is carried by the strokes on
- * the edges where two regions meet, and the outer rim of the grid is one of those edges.
+ * the edges where two regions meet, and the outer rim of the grid is one of those edges. What COLOUR that
+ * stroke is belongs to the place — amber over a sky, water over farmland — but that it is a drawn edge does
+ * not.
  */
 const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: number) => {
   const [row, col] = [rowOf(puzzle.size, cell) + dRow, colOf(puzzle.size, cell) + dCol]
@@ -77,7 +73,16 @@ const boundary = (puzzle: StarBattlePuzzle, cell: number, dRow: number, dCol: nu
   return puzzle.regions[row * puzzle.size + col] !== puzzle.regions[cell]
 }
 
-export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, onTapCell, onSweepCells }) => {
+export const StarBattleBoard: FC<Props> = ({
+  puzzle,
+  state,
+  skin,
+  highlighted,
+  decided,
+  focus,
+  onTapCell,
+  onSweepCells,
+}) => {
   const { size } = puzzle
   const grid = useRef<HTMLDivElement | null>(null)
   /**
@@ -92,6 +97,7 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
   const drag = useRef<{ from: number; swept: number[] } | undefined>(undefined)
   const swallowClick = useRef(false)
   const [sweeping, setSweeping] = useState<number[]>([])
+  const hatch = hatchOf(skin)
 
   /**
    * Which square a point is over, worked out from the grid's own box rather than from the DOM.
@@ -165,7 +171,7 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
             onPointerMove={moveDrag}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
-            style={decided?.has(cell) ? HATCH : undefined}
+            style={decided?.has(cell) ? hatch : undefined}
             onClick={() => {
               if (swallowClick.current) {
                 swallowClick.current = false
@@ -177,25 +183,33 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
               "flex aspect-square items-center justify-center p-[14%] transition-colors",
               // A square a star already rules out RECEDES: it is not a mark and must not read as one, so it
               // loses contrast rather than gaining anything of its own.
-              spent.has(cell) && !decided?.has(cell) ? "bg-stone-900" : "bg-stone-800",
+              spent.has(cell) && !decided?.has(cell) ? skin.spent : skin.cell,
               // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
               // whatever the grid size turns out to be.
-              boundary(puzzle, cell, -1, 0) ? "border-t-3 border-t-amber-200/80" : "border-t border-t-stone-600/50",
-              boundary(puzzle, cell, 1, 0) ? "border-b-3 border-b-amber-200/80" : "border-b border-b-stone-600/50",
-              boundary(puzzle, cell, 0, -1) ? "border-l-3 border-l-amber-200/80" : "border-l border-l-stone-600/50",
-              boundary(puzzle, cell, 0, 1) ? "border-r-3 border-r-amber-200/80" : "border-r border-r-stone-600/50",
+              boundary(puzzle, cell, -1, 0) ? `border-t-3 ${skin.wall}` : `border-t ${skin.seam}`,
+              boundary(puzzle, cell, 1, 0) ? `border-b-3 ${skin.wall}` : `border-b ${skin.seam}`,
+              boundary(puzzle, cell, 0, -1) ? `border-l-3 ${skin.wall}` : `border-l ${skin.seam}`,
+              boundary(puzzle, cell, 0, 1) ? `border-r-3 ${skin.wall}` : `border-r ${skin.seam}`,
               // Inset, because the squares touch: a ring drawn outside one would sit on top of its
               // neighbour. A broken rule first, then the one square a hint is ABOUT, then the squares it
               // argues FROM — evidence and conclusion cannot look the same, or "this square" is a guess
               // between six of them.
               conflicts.has(cell)
-                ? "ring-2 ring-red-500/80 ring-inset"
+                ? `ring-2 ring-inset ${skin.conflict}`
                 : cell === focus
-                  ? "ring-3 ring-amber-300 ring-inset"
-                  : highlighted?.has(cell) && "ring-2 ring-sky-300/60 ring-inset"
+                  ? `ring-3 ring-inset ${skin.focus}`
+                  : highlighted?.has(cell) && `ring-2 ring-inset ${skin.evidence}`
             )}
           >
-            {value === "star" ? <StarGlyph /> : value === "dark" || sweeping.includes(cell) ? <DarkGlyph /> : null}
+            {value === "star" ? (
+              <span className={clsx("block size-full", skin.answer)}>
+                <skin.Glyph />
+              </span>
+            ) : value === "dark" || sweeping.includes(cell) ? (
+              <span className={clsx("block size-full", skin.dark)}>
+                <DarkGlyph />
+              </span>
+            ) : null}
           </button>
         ))}
       </div>

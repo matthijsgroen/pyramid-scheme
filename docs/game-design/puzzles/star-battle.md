@@ -442,11 +442,15 @@ Beyond the shared screen bar:
 The family emits logical state only — `cell(star | dark | empty) | region(id) | quota(n)` —
 and the skin decides what any of it looks like.
 
-**One skin: stars in a night sky.** It is the `sky` pool's plainest possible face, and the
-name is the theme. Eclipse is the precedent for a family with no roles and one ambience
-(`puzzle-screens.md` §2), and unlike constellation this mechanic does not read as several
-places — counting stars per district is not a haul road or a waterworks. §10 records the
-one reading that might earn a second skin if a site ever asks.
+**Two skins, and which family a room is decides whether the second is reachable.** Stars in
+a night sky is the `sky` pool's plainest possible face and the name is the theme; farmsteads
+on a flood plain is the same board drawn for `agriculture` or `water` (§11.3).
+
+**Star battle itself has one skin, and that is a fact about ONE star rather than about the
+mechanic.** A lone star reads as the one and only — the single thing a place is allowed —
+which is why counting stars per district is not a waterworks and why this family carries
+`sky` and nothing else. A PAIR is what a place can hold two of, so the second face belongs
+to twin stars and this family cannot wear it.
 
 ## 10. Open questions
 
@@ -571,8 +575,15 @@ Candidates, none built:
 | Torches | corridors           | chambers  | two flames too close gutter        |
 | Fields  | irrigation channels | holdings  | two households cannot share a well |
 
-It ships on `sky` with the shared skin, because a second skin is worth building when a site
-asks for one and not before.
+**Fields is built** (`app/starBattle/skins.ts`): daylight on tilled earth, the channels
+between holdings drawn as the water they are, and a bound sheaf standing where a star would.
+Every sentence under the board is its own — the goal, both rules and all thirty-odd hint
+lines — because a shared template with a noun in a slot breaks on the first locale that
+inflects around it (`puzzle-screens.md` §4.3), and `goalWording.spec.ts` holds a farm to
+never saying the word star.
+
+Watch and torches are still only a table. They are worth building when a site asks, and the
+work is now a skin entry and a block of sentences rather than anything structural.
 
 ### 11.4 The reading that failed: one to a line, two to a region
 

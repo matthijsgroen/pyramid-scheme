@@ -86,20 +86,27 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   // itself when one is missing, which reaches the player as raw text.
   const actions = ["ruleOut_one", "ruleOut_other", "place_one", "place_other"]
 
+  /** The places this mechanic wears. Every sentence below has to exist in each of them (§4.3). */
+  const PLACES = ["default", "fields"]
+
+  const placeIn = (locale: typeof en | typeof nl, place: string) =>
+    (locale.starBattle.hint as unknown as Record<string, Record<string, unknown>>)[place]
+
   const phrase = (block: Record<string, unknown>, key: string) => block[key]
 
   it("covers every rung of the ladder", () => {
     for (const technique of STAR_BATTLE_TECHNIQUES) expect(keys.some(key => key.startsWith(technique))).toBe(true)
   })
 
-  it.each(keys)("%s reads as a sentence in English and Dutch", key => {
-    expect(typeof phrase(en.starBattle.hint, key)).toBe("string")
-    expect(typeof phrase(nl.starBattle.hint, key)).toBe("string")
+  it.each(keys)("%s reads as a sentence in English and Dutch, in every place", key => {
+    for (const place of PLACES)
+      for (const locale of [en, nl]) expect(typeof phrase(placeIn(locale, place), key), place).toBe("string")
   })
 
-  it.each(actions)("the %s move is spelled out in both", action => {
-    for (const locale of [en, nl])
-      expect(typeof (locale.starBattle.hint.action as Record<string, string>)[action]).toBe("string")
+  it.each(actions)("the %s move is spelled out in both, in every place", action => {
+    for (const place of PLACES)
+      for (const locale of [en, nl])
+        expect(typeof (placeIn(locale, place).action as Record<string, string>)[action], place).toBe("string")
   })
 
   it("asks for a move on every rung, and for none on a mistake", { timeout: 120_000 }, () => {
@@ -127,11 +134,15 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   it("has the goal and the rules in both", () => {
     for (const locale of [en, nl]) {
       // The goal is its own section above the rules (`puzzle-screens.md` §1), not a bullet in them.
-      // Stated per quota: both families share this screen, and the goal is the one line that says which
-      // of the two rules the board in front of the player is under.
-      for (const goal of ["goal_one", "goal_other"])
-        expect(typeof (locale.starBattle as Record<string, unknown>)[goal], goal).toBe("string")
-      for (const rule of ["touch", "enter"]) expect(typeof phrase(locale.starBattle.rules, rule)).toBe("string")
+      // Stated per place AND per quota: both families share this screen, so the goal is the one line that
+      // says which of the two rules the board in front of the player is under, in the words of where it is.
+      const goals = locale.starBattle.goal as unknown as Record<string, string>
+      for (const place of PLACES)
+        for (const count of ["one", "other"])
+          expect(typeof goals[`${place}_${count}`], `${place}_${count}`).toBe("string")
+      const rules = locale.starBattle.rules as unknown as Record<string, Record<string, string>>
+      for (const place of PLACES)
+        for (const rule of ["touch", "enter"]) expect(typeof rules[place][rule], `${place}.${rule}`).toBe("string")
     }
   })
 })

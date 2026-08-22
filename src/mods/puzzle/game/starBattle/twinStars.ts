@@ -21,9 +21,14 @@ import type { StarBattleOptions } from "./generateStarBattle"
 export const TWIN_STARS_META: FamilyMeta = {
   id: "twin-stars",
   ownerMod: "puzzle",
-  // The same cluster star battle carries, for the same reason: this is about where things sit, not about
-  // light. A journey asking for `sky` may draw either, which is the point of them being two families.
-  tags: ["puzzle", "sky"],
+  // The same `sky` cluster star battle carries — this is about where things sit, not about light — and
+  // **the Water & Agriculture pool as well**, which star battle cannot join. Those two roles held exactly
+  // one family (constellation's irrigation skin), so a journey authoring them got the same puzzle five
+  // times; this is the second member, and unlike a second skin on an existing family it brings different
+  // reasoning rather than a different dress. The face it wears there is `fields` (app/starBattle/skins.ts).
+  tags: ["puzzle", "sky", "water", "agriculture"],
+  // A farm and a sky. Listed so the lab can show both — a site never names a skin, it names a role.
+  themes: ["default", "fields"],
   // 8×8 is the SMALLEST grid this rule has boards on — 7×7 and 6×6 admit no legal star set at all (two to
   // a row and two to a column that never touch does not fit). The debut is a junior one anyway, because the
   // tier is set by what a board ASKS rather than by how wide it is: the junior draw hands over a third of

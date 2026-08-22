@@ -14,19 +14,27 @@ import {
 } from "@/mods/puzzle/game/starBattle/starBattle"
 import type { StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { buildStarBattleHint } from "./starBattleHint"
+import { skinFor } from "./skins"
 import { StarBattleBoard } from "./StarBattleBoard"
 import { StarBattleRules } from "./StarBattleRules"
 
 type Props = {
   puzzle: StarBattlePuzzleWithAnswer
   difficulty?: Difficulty
+  /** The pool this room was drawn from — which place it is (docs/instructions/puzzle-screens.md §2). */
+  role?: string | string[]
+  /** The ambience its site authored, or a skin named outright. */
+  theme?: string
   onSolved: () => void
   onCancel: () => void
 }
 
-export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
+export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const [state, setState] = useState(() => createStarBattleState(puzzle))
+  // Which place this room is. The board, the goal, the rules and every hint sentence are all drawn from it,
+  // so it is resolved once.
+  const skin = skinFor(role, theme)
 
   /**
    * Whether the player has asked for a hint, which is what gates deriving one.
@@ -46,10 +54,14 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
    */
   const hintText = useCallback(() => {
     if (!hint) return undefined
-    const reason = t(`starBattle.hint.${hint.key}`, hint.params)
+    // The glyph in the sentence is the place's own token, so a hint says the thing standing in the square
+    // rather than naming it — and the sentences themselves are keyed per place (§4.3), because a shared
+    // template with a noun in a slot breaks on the first locale that inflects around it.
+    const params = { ...hint.params, token: skin.token }
+    const reason = t(`starBattle.hint.${skin.name}.${hint.key}`, params)
     if (!hint.action) return reason
-    return `${reason}\n${t(`starBattle.hint.action.${hint.action}`, { ...hint.params, count: hint.settles })}`
-  }, [hint, t])
+    return `${reason}\n${t(`starBattle.hint.${skin.name}.action.${hint.action}`, { ...params, count: hint.settles })}`
+  }, [hint, skin, t])
 
   return (
     <PuzzleFamilyShell
@@ -60,14 +72,15 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
-      goal={t("starBattle.goal", { count: puzzle.quota })}
-      rules={<StarBattleRules />}
+      goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
+      rules={<StarBattleRules skin={skin.name} />}
     >
       {({ reportInput, hintVisible }) => (
         <>
           <StarBattleBoard
             puzzle={puzzle}
             state={state}
+            skin={skin}
             highlighted={hintVisible ? hint?.cells : undefined}
             decided={hintVisible ? hint?.decided : undefined}
             focus={hintVisible ? hint?.focus : undefined}

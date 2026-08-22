@@ -730,10 +730,12 @@ Family doc: `docs/game-design/puzzles/star-battle.md` §11.
   region, and the ladder then decides **0% of squares** on boards that provably have unique answers. The
   classic form doubles the stars and keeps the regions, so a region stays the size it was and says twice as
   much. Family doc §11.4 has the table.
-- **Themes:** `sky` today, but this is the mechanic that can wear more. A pair reads as things a place holds
-  two of — two watchmen to a district, two torches to a chamber — where a lone star cannot. A skin fits when
-  it can name three things: something straight crossing the world, something bounded and ragged, and a
-  reason two of them repel (family doc §11.3).
+- **Themes:** `sky` and **Water & Agriculture**, the latter built as the `fields` skin — farmsteads on a
+  flood plain, the channels between holdings drawn as water, two households that may not sit close enough to
+  share a well. **This is the family that can wear more**, and the reason is the pair: a place can hold two
+  watchmen or two torches where it can only ever hold one lone star. A skin fits when it can name three
+  things — something straight crossing the world, something bounded and ragged, and a reason two of them
+  repel (family doc §11.3). Watch and torches are designed and unbuilt.
 
 ---
 
@@ -968,10 +970,13 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 channel from the river to a field is what it does — so once it is built the role has two members and the Nile
 Delta can ask for water puzzles outright. Until then the note below still describes the position.
 
-**Gap, half filled — and filled by a skin rather than by a mechanic.** Water & Nile
-held exactly one family, and that one unbuilt. Constellation now wears the theme too:
-basins joined by channels is what §4.21's rules say when the same board is read as a
-waterworks, and the Nile Delta Expedition authors that skin.
+**Gap, filled properly.** Water & Nile held exactly one family, and that one unbuilt.
+Constellation wears the theme as its `irrigation` skin — basins joined by channels is what
+§4.21's rules say when the same board is read as a waterworks — and **twin stars (§4.25) now
+carries the `water` and `agriculture` roles outright**, drawn as farmsteads on a flood plain.
+So the pool has two members and, unlike a second skin on one family, the second one brings
+different REASONING rather than a different dress. The curriculum question below is answered
+with it: a journey authoring water no longer serves the same puzzle five times.
 
 **Worth being precise about, because it is a cheaper move than it looks.** A skin gives a
 theme a _built, playable_ member without designing anything — but it adds no new **skill**

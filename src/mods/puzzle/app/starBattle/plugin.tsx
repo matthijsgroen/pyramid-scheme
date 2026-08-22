@@ -12,7 +12,16 @@ const StarBattleComponent: FamilyPlugin<StarBattlePuzzleWithAnswer>["Component"]
   ctx,
   onSolved,
   onCancel,
-}) => <StarBattlePuzzle puzzle={puzzle} difficulty={ctx.difficulty} onSolved={onSolved} onCancel={onCancel} />
+}) => (
+  <StarBattlePuzzle
+    puzzle={puzzle}
+    difficulty={ctx.difficulty}
+    role={ctx.role}
+    theme={ctx.theme}
+    onSolved={onSolved}
+    onCancel={onCancel}
+  />
+)
 
 if (isModEnabled("puzzle")) {
   registerFamily({

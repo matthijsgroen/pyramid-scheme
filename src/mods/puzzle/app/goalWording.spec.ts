@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import en from "../../../../public/locales/en/common.json"
 import nl from "../../../../public/locales/nl/common.json"
 import { skinFor } from "./constellation/skins"
+import { skinFor as starBattleSkinFor } from "./starBattle/skins"
 
 /**
  * Every family says what a finished board looks like, in both languages.
@@ -124,5 +125,48 @@ describe("the goal above the rules", () => {
         ]
         for (const [where, wording] of said) expect(forbidden.test(wording), `${skin}.${where}: ${wording}`).toBe(false)
       }
+  })
+
+  /**
+   * **The same rule over the star battle mechanic's second face.** Twin stars drawn for `agriculture` is a
+   * flood plain with farmsteads standing on it — there is no star anywhere on the screen, so nothing said
+   * over it may call one that. It is the guard that matters most here, because the sky wording is the
+   * family's own name and the easiest thing in the world to leave behind.
+   */
+  const STAR_BATTLE_PLACES = [
+    { role: "sky", skin: "default" },
+    { role: "agriculture", skin: "fields" },
+    { role: "water", skin: "fields" },
+  ]
+
+  it.each(STAR_BATTLE_PLACES)("twin stars drawn for $role wears its own face", ({ role, skin }) => {
+    expect(starBattleSkinFor(role, undefined).name).toBe(skin)
+  })
+
+  it("never says star on a farm", () => {
+    for (const [locale, forbidden] of [
+      [en, /\bstars?\b/i],
+      [nl, /\bsterren?\b/i],
+    ] as const) {
+      const block = locale.starBattle as unknown as Record<string, Record<string, unknown>>
+      const goals = block.goal as Record<string, string>
+      const said: [string, string][] = [
+        ["goal_one", goals.fields_one],
+        ["goal_other", goals.fields_other],
+        ...Object.entries((block.rules as Record<string, Record<string, string>>).fields).map(
+          ([key, text]): [string, string] => [`rules.${key}`, text]
+        ),
+        ...Object.entries((block.hint as Record<string, Record<string, unknown>>).fields).flatMap(
+          ([key, text]): [string, string][] =>
+            typeof text === "string"
+              ? [[`hint.${key}`, text]]
+              : Object.entries(text as Record<string, string>).map(([inner, deep]): [string, string] => [
+                  `hint.${key}.${inner}`,
+                  deep,
+                ])
+        ),
+      ]
+      for (const [where, wording] of said) expect(forbidden.test(wording), `fields.${where}: ${wording}`).toBe(false)
+    }
   })
 })
