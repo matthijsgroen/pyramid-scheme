@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Number-grid puzzles are built from boards checked ahead of time, so a room stops searching for one when you open it.
 - Hints now say what to do as well as why: the squares a hint is about are hatched, and its last line asks for the move. On the sun-and-moon grid, the number grid and the star grid.
 - The star map speaks its own place throughout — goal, rules and hints. A haul-road board talks about sites and roads to lay, a waterworks about basins and channels to dig.
 

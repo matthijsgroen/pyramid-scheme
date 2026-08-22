@@ -16,6 +16,8 @@
     "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
     "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/ui/atoms/mosaicPieces.generated.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
+    "generate-seeds": "tsx scripts/puzzleSeeds.ts generate && yarn prettier --write src/data/puzzleSeeds.ts",
+    "seeds-info": "tsx scripts/puzzleSeeds.ts info",
     "verify-floors": "vitest run src/app/SiteMap/worldFloorAssembly.spec.ts",
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
