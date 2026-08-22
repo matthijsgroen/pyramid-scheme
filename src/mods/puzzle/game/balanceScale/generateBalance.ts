@@ -1,3 +1,4 @@
+import type { Grade } from "@/game/families/familyMeta"
 import { mulberry32 } from "@/game/random"
 import {
   solveByTechniques,
@@ -162,16 +163,33 @@ const withoutRedundantScales = (puzzle: BalancePuzzleData, cap: TechniqueId): Ba
   return { ...puzzle, scales }
 }
 
-export const generateBalance = (seed: number, options: BalanceOptions = {}): BalancePuzzle => {
-  const {
-    techniqueCap = "difference",
-    glyphCount = 2,
-    scaleCount = 2,
-    maxValue = 10,
-    minSwaps = 0,
-    minCancels = 0,
-  } = options
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+/**
+ * Whether this board is one the loop below would have kept, and what the ladder needed to settle it
+ * (docs/offline-puzzle-seeds.md).
+ *
+ * The loop calls it on each candidate, so it is the gate rather than a second opinion about it. The
+ * board that ships has had its redundant scales trimmed afterwards, and trimming only ever removes a
+ * scale the same cap still settles without — so grading the trimmed board can reject a seed the loop
+ * would have kept, never admit one it would not.
+ */
+export const gradeBalance = (board: BalancePuzzle, options: BalanceOptions = {}): Grade | null => {
+  const { techniqueCap = "difference", minSwaps = 0, minCancels = 0 } = options
+  const result = solveByTechniques(board, techniqueCap)
+  if (!result.settled || result.deepest !== techniqueCap) return null
+  if (result.steps.filter(step => step.technique === "swap").length < minSwaps) return null
+  if (result.steps.filter(step => step.technique.startsWith("cancel")).length < minCancels) return null
+  return { steps: result.steps.length, deepest: result.deepest }
+}
+
+export const generateBalance = (
+  seed: number,
+  options: BalanceOptions = {},
+  // Kept out of `options` deliberately: the options are what a seed list keys on, so asking for a
+  // single attempt instead of the full search must not file the board under a different bucket.
+  attempts: number = MAX_ATTEMPTS
+): BalancePuzzle => {
+  const { techniqueCap = "difference", glyphCount = 2, scaleCount = 2, maxValue = 10 } = options
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const random = mulberry32(seed * 7919 + attempt)
     const glyphs = pickGlyphs(random, glyphCount)
     const solution = pickValues(random, glyphs, maxValue)
@@ -179,10 +197,7 @@ export const generateBalance = (seed: number, options: BalanceOptions = {}): Bal
     const scales = drawScales(random, glyphs, solution, scaleCount, { maxValue, ...options })
     if (!scales) continue
     const puzzle: BalancePuzzleData = { glyphs, scales, maxValue, cancelling: options.cancelling ?? true }
-    const result = solveByTechniques(puzzle, techniqueCap)
-    if (!result.settled || result.deepest !== techniqueCap) continue
-    if (result.steps.filter(step => step.technique === "swap").length < minSwaps) continue
-    if (result.steps.filter(step => step.technique.startsWith("cancel")).length < minCancels) continue
+    if (!gradeBalance({ ...puzzle, solution, techniqueCap }, options)) continue
     return { ...withoutRedundantScales(puzzle, techniqueCap), solution, techniqueCap }
   }
   throw new Error(`generateBalance: no logically solvable board (cap=${techniqueCap}, seed=${seed})`)
