@@ -456,21 +456,25 @@
     "undo": "Undo",
     "hint": {
       "mistake": "This mark cannot be right.",
-      "touch": "A {{star}} here, so nothing touching it.",
-      "groupFull.row": "This row has its {{star}}, so the rest is empty.",
-      "groupFull.col": "This column has its {{star}}, so the rest is empty.",
-      "groupFull.region": "This region has its {{star}}, so the rest is empty.",
-      "groupTight.row": "One square left in this row, so the {{star}} goes there.",
-      "groupTight.col": "One square left in this column, so the {{star}} goes there.",
-      "groupTight.region": "One square left in this region, so the {{star}} goes there.",
-      "regionLine.row": "This region's {{star}} has to come from that row, so the rest of the row is empty.",
-      "regionLine.col": "This region's {{star}} has to come from that column, so the rest of the column is empty.",
-      "lineRegion.row": "That row's {{star}} is this region's own, so the rest of the region is empty.",
-      "lineRegion.col": "That column's {{star}} is this region's own, so the rest of the region is empty.",
-      "spanning.toRows": "These regions fill those {{count}} rows between them, so the rest of the rows is empty.",
-      "spanning.toCols": "These regions fill those {{count}} columns between them, so the rest of the columns is empty.",
-      "spanning.fromRows": "Those rows can only take their {{count}} {{star}} from these regions, so the rest of the regions is empty.",
-      "spanning.fromCols": "Those columns can only take their {{count}} {{star}} from these regions, so the rest of the regions is empty."
+      "touch": "A {{star}} here, and nothing may touch a {{star}}.",
+      "groupFull.row": "This row already has its {{star}}.",
+      "groupFull.col": "This column already has its {{star}}.",
+      "groupFull.region": "This region already has its {{star}}.",
+      "groupTight.row": "This row is down to one square.",
+      "groupTight.col": "This column is down to one square.",
+      "groupTight.region": "This region is down to one square.",
+      "regionLine.row": "The marked region’s {{star}} has to come from that row.",
+      "regionLine.col": "The marked region’s {{star}} has to come from that column.",
+      "lineRegion.row": "That row’s {{star}} belongs to the marked region.",
+      "lineRegion.col": "That column’s {{star}} belongs to the marked region.",
+      "spanning.toRows": "The marked regions fill those {{count}} rows between them.",
+      "spanning.toCols": "The marked regions fill those {{count}} columns between them.",
+      "spanning.fromRows": "The marked rows can only take their {{count}} {{star}} from those regions.",
+      "spanning.fromCols": "The marked columns can only take their {{count}} {{star}} from those regions.",
+      "action": {
+        "ruleOut": "Rule out the hatched squares.",
+        "place": "Put a {{star}} in the hatched square."
+      }
     },
     "goal": "Every row, every column and every region holds exactly one star."
   }

@@ -11,9 +11,17 @@ import { nextStarBattleStep, stepFocus, type StarBattleStep } from "@/mods/puzzl
 const STAR = "⭐"
 
 export type StarBattleHint = {
-  /** Translation key under `starBattle.hint`. */
+  /** Translation key under `starBattle.hint` — the REASON, on its own line. */
   key: string
   params: { star?: string; count?: number }
+  /**
+   * What to do about it, as a key under `starBattle.hint.action`.
+   *
+   * A second line, and an imperative one. The reason alone leaves the player to work out what it wants of
+   * them, which is a step they should not have to take from a hint they already asked for — and it names the
+   * squares by how the board draws them, so there is nothing to match up.
+   */
+  action: "ruleOut" | "place" | undefined
   /** The squares the reason argues from, so the board can point at what it is reasoning from. */
   cells: ReadonlySet<number>
   /**
@@ -43,14 +51,24 @@ export const buildStarBattleHint = (
   state: StarBattleMarks
 ): StarBattleHint | undefined => {
   const mistake = firstStarBattleMistake(state.marks, puzzle.solution)
+  // A wrong mark has no action to offer: the move is the player's to take back, and saying which way would
+  // be saying the answer.
   if (mistake !== undefined)
-    return { key: "mistake", params: {}, cells: new Set(), decided: new Set([mistake]), focus: mistake }
+    return {
+      key: "mistake",
+      params: {},
+      action: undefined,
+      cells: new Set(),
+      decided: new Set([mistake]),
+      focus: mistake,
+    }
 
   const step = nextStarBattleStep(puzzle, [...state.marks], techniquesUpTo(puzzle.techniqueCap))
   if (!step) return undefined
   return {
     key: stepKey(step),
     params: { star: STAR, count: step.count },
+    action: step.decisions[0]?.mark === "star" ? "place" : "ruleOut",
     cells: new Set(step.cells),
     decided: new Set(step.decisions.map(decision => decision.cell)),
     focus: stepFocus(step),

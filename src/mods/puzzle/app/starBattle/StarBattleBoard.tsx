@@ -52,6 +52,19 @@ const DarkGlyph: FC = () => (
 )
 
 /**
+ * The squares a hint is about, hatched.
+ *
+ * **The words name this**, which is the whole reason it is a hatch and not another ring or another shade: a
+ * hint that says "rule out the hatched squares" leaves nothing to match up, where "the rest of the row"
+ * leaves the player deciding which squares that was. Diagonal lines are also the one treatment on this board
+ * that cannot be read as something else — the walls are amber strokes, a star is a shape, a dark mark is a
+ * dot, and a receded square is a shade.
+ */
+const HATCH = {
+  backgroundImage: "repeating-linear-gradient(45deg, transparent 0 5px, rgba(252,211,77,0.45) 5px 7px)",
+}
+
+/**
  * A boundary is a drawn edge, and it has to be, not a fill.
  *
  * There are as many regions as rows, and a palette that tells eight regions apart is a palette nobody can
@@ -152,6 +165,7 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
             onPointerMove={moveDrag}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            style={decided?.has(cell) ? HATCH : undefined}
             onClick={() => {
               if (swallowClick.current) {
                 swallowClick.current = false
@@ -161,13 +175,9 @@ export const StarBattleBoard: FC<Props> = ({ puzzle, state, highlighted, decided
             }}
             className={clsx(
               "flex aspect-square items-center justify-center p-[14%] transition-colors",
-              // The squares a hint settles are LIT rather than ringed. A ring here would be a second amber
-              // line beside the region walls, which are amber and are the board's only clue — the two read as
-              // each other at arm's length. A lighter square cannot be mistaken for a boundary.
-              //
-              // A square a star already rules out sits DARKER instead: it is not a mark and must not read as
-              // one, so it recedes rather than gaining anything of its own.
-              decided?.has(cell) ? "bg-stone-700" : spent.has(cell) ? "bg-stone-900" : "bg-stone-800",
+              // A square a star already rules out RECEDES: it is not a mark and must not read as one, so it
+              // loses contrast rather than gaining anything of its own.
+              spent.has(cell) && !decided?.has(cell) ? "bg-stone-900" : "bg-stone-800",
               // Thick where two regions meet, hairline inside one. Static classes, so the widths survive
               // whatever the grid size turns out to be.
               boundary(puzzle, cell, -1, 0) ? "border-t-3 border-t-amber-200/80" : "border-t border-t-stone-600/50",

@@ -173,7 +173,9 @@ export const PuzzleFamilyShell = ({
         <p
           ref={hintRef}
           className={clsx(
-            "w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm text-amber-200",
+            // Pre-line, so a family may give its reason and the move it asks for as two lines rather than
+            // one run-together sentence. A family with one line is unaffected.
+            "w-full rounded border border-amber-800 bg-amber-950/60 p-2 text-center text-sm whitespace-pre-line text-amber-200",
             solvedBanner && "invisible"
           )}
         >

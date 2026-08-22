@@ -166,6 +166,12 @@ and the stale hint clears. A family that tracks its own 30s timer is a bug.
 
 ## 4. Hints teach, they do not spoil
 
+**A hint may take two lines, and the second one is the move.** The reason says what the board makes true; the
+move is an imperative that names the squares by how the board draws them ("rule out the hatched squares"),
+so there is nothing for the player to match up. A reason alone asks them to work out what it wants, which is
+a step nobody should have to take from a hint they went and pressed a button for. The shell keeps hint text
+pre-line so a family can give both; one line stays perfectly good for a family whose reason IS the move.
+
 A hint names **one next step and the reason it follows** — "this row already has
 its target, so the rest of the row is struck out." After it, the player knows a
 technique they can reuse.

@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Star-map and star-grid hints now say what to do as well as why: the squares the hint is about are hatched, and the last line asks for the move.
+
 - Every puzzle now states its goal in one line above the how-to-play, worded for the place it is: the star map asks for constellations, the same board drawn as haul roads asks for a road network.
 
 - The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".

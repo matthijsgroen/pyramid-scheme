@@ -38,8 +38,17 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCa
 
   const hint = useMemo(() => (asked ? buildStarBattleHint(puzzle, state) : undefined), [asked, puzzle, state])
 
-  // A function rather than a string, so the shell only reaches for the text once the hint is on screen.
-  const hintText = useCallback(() => (hint && t(`starBattle.hint.${hint.key}`, hint.params)) || undefined, [hint, t])
+  /**
+   * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
+   *
+   * Two lines: the reason, then what to do about it. The blank line between them is why the shell keeps its
+   * hint text pre-line — a reason and an imperative read as one wall of text run together.
+   */
+  const hintText = useCallback(() => {
+    if (!hint) return undefined
+    const reason = t(`starBattle.hint.${hint.key}`, hint.params)
+    return hint.action ? `${reason}\n${t(`starBattle.hint.action.${hint.action}`, hint.params)}` : reason
+  }, [hint, t])
 
   return (
     <PuzzleFamilyShell

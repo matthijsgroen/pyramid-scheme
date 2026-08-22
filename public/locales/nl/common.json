@@ -449,21 +449,25 @@
     "undo": "Ongedaan maken",
     "hint": {
       "mistake": "Dit teken kan niet kloppen.",
-      "touch": "Hier een {{star}}, dus niets wat eraan raakt.",
-      "groupFull.row": "Deze rij heeft zijn {{star}}, dus de rest blijft leeg.",
-      "groupFull.col": "Deze kolom heeft zijn {{star}}, dus de rest blijft leeg.",
-      "groupFull.region": "Dit gebied heeft zijn {{star}}, dus de rest blijft leeg.",
-      "groupTight.row": "Nog één vakje over in deze rij, daar komt de {{star}}.",
-      "groupTight.col": "Nog één vakje over in deze kolom, daar komt de {{star}}.",
-      "groupTight.region": "Nog één vakje over in dit gebied, daar komt de {{star}}.",
-      "regionLine.row": "De {{star}} van dit gebied moet uit die rij komen, dus de rest van de rij blijft leeg.",
-      "regionLine.col": "De {{star}} van dit gebied moet uit die kolom komen, dus de rest van de kolom blijft leeg.",
-      "lineRegion.row": "De {{star}} van die rij is die van dit gebied, dus de rest van het gebied blijft leeg.",
-      "lineRegion.col": "De {{star}} van die kolom is die van dit gebied, dus de rest van het gebied blijft leeg.",
-      "spanning.toRows": "Deze gebieden vullen samen die {{count}} rijen, dus de rest van de rijen blijft leeg.",
-      "spanning.toCols": "Deze gebieden vullen samen die {{count}} kolommen, dus de rest van de kolommen blijft leeg.",
-      "spanning.fromRows": "Die rijen kunnen hun {{count}} {{star}} alleen uit deze gebieden halen, dus de rest van de gebieden blijft leeg.",
-      "spanning.fromCols": "Die kolommen kunnen hun {{count}} {{star}} alleen uit deze gebieden halen, dus de rest van de gebieden blijft leeg."
+      "touch": "Hier een {{star}}, en niets mag aan een {{star}} raken.",
+      "groupFull.row": "Deze rij heeft zijn {{star}} al.",
+      "groupFull.col": "Deze kolom heeft zijn {{star}} al.",
+      "groupFull.region": "Dit gebied heeft zijn {{star}} al.",
+      "groupTight.row": "Deze rij heeft nog één vakje over.",
+      "groupTight.col": "Deze kolom heeft nog één vakje over.",
+      "groupTight.region": "Dit gebied heeft nog één vakje over.",
+      "regionLine.row": "De {{star}} van het gemarkeerde gebied moet uit die rij komen.",
+      "regionLine.col": "De {{star}} van het gemarkeerde gebied moet uit die kolom komen.",
+      "lineRegion.row": "De {{star}} van die rij hoort bij het gemarkeerde gebied.",
+      "lineRegion.col": "De {{star}} van die kolom hoort bij het gemarkeerde gebied.",
+      "spanning.toRows": "De gemarkeerde gebieden vullen samen die {{count}} rijen.",
+      "spanning.toCols": "De gemarkeerde gebieden vullen samen die {{count}} kolommen.",
+      "spanning.fromRows": "De gemarkeerde rijen kunnen hun {{count}} {{star}} alleen uit die gebieden halen.",
+      "spanning.fromCols": "De gemarkeerde kolommen kunnen hun {{count}} {{star}} alleen uit die gebieden halen.",
+      "action": {
+        "ruleOut": "Streep de gearceerde vakjes af.",
+        "place": "Zet een {{star}} in het gearceerde vakje."
+      }
     },
     "goal": "Elke rij, elke kolom en elk gebied heeft precies één ster."
   }

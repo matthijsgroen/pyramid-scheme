@@ -359,6 +359,21 @@ a tier may be built to need. A hint is ordered by **what a player spots first**:
 whose neighbours are still open, then a group with its stars already in, then a group down
 to its last square, then the region-against-line readings, and `spanning` last.
 
+**A hint is two lines: the reason, then the move.** The reason says what the board makes true; the move is
+an imperative, and it names the squares by how the board draws them — "rule out the hatched squares". A
+reason on its own leaves the player working out what it wants of them, which is a step nobody should have to
+take from a hint they asked for. LinkedIn's Queens does exactly this, and it is the clearest part of that
+screen.
+
+**The squares a hint is about are hatched, and the hatching is what the words name.** Diagonal lines are the
+one treatment on this board that cannot be read as anything else: the walls are amber strokes, a star is a
+shape, a dark mark is a dot, and a square a star has spent is a shade. So there is nothing to match up — the
+sentence says hatched, and the hatched squares are the answer to it. The evidence keeps its own name too, as
+"the marked region" or "the marked rows", drawn in the blue that goes with it.
+
+**The mistake hint asks for nothing.** Every other rung ends in a move, but the way out of a wrong mark is the
+player's to find — naming it would be naming the answer.
+
 **A sentence that says "this row" has to have a row to point at.** So the evidence a hint
 carries is the whole group being counted or the whole region being squeezed — not merely the
 interesting squares inside it. This was got wrong once and is worth stating as a rule: the
@@ -393,6 +408,8 @@ Beyond the shared screen bar:
   weight as a star — the board must never look as though it answered itself.
 - **A square a star rules out recedes; it never gains a mark.** Darker than its neighbours and nothing else,
   because anything added there would read as somebody's answer (§6).
+- **Hatching belongs to the hint and to nothing else.** It is the one thing on the board whose meaning is
+  carried by words rather than by convention (§7), so a second use of it would make both uses ambiguous.
 - **Conflicts show as they happen, but not before the player has finished the square.**
   `useDelayedConflicts`, shared with eclipse. It matters less here than it does there, and for a reason worth
   keeping: a broken rule needs a star, and with the elimination on the opening tap (§6) a star is somewhere

@@ -74,6 +74,10 @@ describe("every reason the ladder can give is phrased in both locales", () => {
     ...["toRows", "toCols", "fromRows", "fromCols"].map(way => `spanning.${way}`),
   ]
 
+  // Every hint but the mistake one ends with an imperative naming the squares it marked, so both of those
+  // have to be phrased too — a reason with no move is the hint doing half its job.
+  const actions = ["ruleOut", "place"]
+
   const phrase = (block: Record<string, unknown>, key: string) => block[key]
 
   it("covers every rung of the ladder", () => {
@@ -83,6 +87,33 @@ describe("every reason the ladder can give is phrased in both locales", () => {
   it.each(keys)("%s reads as a sentence in English and Dutch", key => {
     expect(typeof phrase(en.starBattle.hint, key)).toBe("string")
     expect(typeof phrase(nl.starBattle.hint, key)).toBe("string")
+  })
+
+  it.each(actions)("the %s move is spelled out in both", action => {
+    for (const locale of [en, nl])
+      expect(typeof (locale.starBattle.hint.action as Record<string, string>)[action]).toBe("string")
+  })
+
+  it("asks for a move on every rung, and for none on a mistake", { timeout: 120_000 }, () => {
+    // The action is derived from what the step decides, so a rung that places a star must ask for a star and
+    // every other rung must ask for the ruling-out — a hint that named the wrong move would be worse than
+    // silence.
+    const board = generateStarBattle(9, STAR_BATTLE_CONFIG.master)
+    const marks: (CellMark | undefined)[] = new Array(board.size ** 2).fill(undefined)
+    const seen = new Set<string>()
+    for (let guard = 0; guard < 400; guard++) {
+      const hint = buildStarBattleHint(board, { marks })
+      if (!hint) break
+      expect(hint.action, hint.key).toBeDefined()
+      seen.add(hint.action!)
+      marks[hint.focus!] = board.solution[hint.focus!] ? "star" : "dark"
+    }
+    expect([...seen].sort()).toEqual(["place", "ruleOut"])
+
+    const wrong = board.solution.findIndex(star => !star)
+    const broken: (CellMark | undefined)[] = new Array(board.size ** 2).fill(undefined)
+    broken[wrong] = "star"
+    expect(buildStarBattleHint(board, { marks: broken })?.action).toBeUndefined()
   })
 
   it("has the goal and the rules in both", () => {
