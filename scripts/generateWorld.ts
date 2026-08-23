@@ -23,6 +23,7 @@ import {
   resolveKeyRequirements,
   familyPriorityFor,
   familyCapacityFor,
+  familyIsTrap,
   allocateEncounterFamily,
 } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
@@ -71,7 +72,8 @@ const configs = buildConfigs(
   MOD_TOMB_TREASURE_RESOLVER,
   familyCapacityFor,
   MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES
+  MOD_RESERVED_TREASURE_INDICES,
+  familyIsTrap
 )
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed

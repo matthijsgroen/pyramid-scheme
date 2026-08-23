@@ -3,10 +3,8 @@ import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { journeys } from "@/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import type { FloorConfig } from "@/game/siteTypes"
-// Populate the family registry, exactly as the app does — resolveEncounter's tags (trap in
-// particular) steer the carve, so an unregistered registry would assemble different floors
-// than players get.
+import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+// Populate the family registry, exactly as the app does — a room resolves its family through it.
 import "@/mods/registerModApps"
 
 // Mirror useAssembledFloor's own resolver, so this walks the identical code path.
@@ -65,4 +63,74 @@ describe("every authored floor assembles at its runtime seed", () => {
 
     expect(failures, `${failures.length} floor(s) cannot be assembled:\n${failures.join("\n")}`).toEqual([])
   }, 60_000)
+})
+
+// Encounters are authored per pyramid and re-authored constantly — a new puzzle family, a journey
+// that asks for a different pool, a trap dropped onto a floor. None of that may move a wall, because
+// a run's explored cells and found corridors are filed under section hashes, and a hash moves when
+// the layout does. The rule: a floor forgets what a player did on it only when its corridors really
+// changed — their number or their length.
+//
+// Nothing about an encounter reaches the layout any more. Isolating a trap's stretch from leftover
+// maze edges is the one thing that ever did, and world-gen now writes that down as `sealed`
+// (placeEncounters), a structural field, so the assembler lays out a floor without ever asking what
+// lives in it. This sweep is what keeps it that way.
+describe("no encounter can move a wall", () => {
+  const shape = (g: FloorGrid) =>
+    JSON.stringify(
+      g.cells.map(row =>
+        row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}${c.hidden ? "H" : ""}`))
+      )
+    )
+  const sectionHashes = (g: FloorGrid) =>
+    JSON.stringify(
+      [
+        ...new Set(
+          g.cells
+            .flat()
+            .filter(c => c.type !== "empty")
+            .map(c => (c as { sectionHash?: string }).sectionHash)
+        ),
+      ].sort()
+    )
+
+  // Rewrite every authored encounter on a floor to one family, touching nothing structural.
+  const rethemed = (config: FloorConfig, family: string): FloorConfig => {
+    const floor = structuredClone(config) as unknown as Record<string, unknown>
+    const walk = (node: Record<string, unknown>) => {
+      if (node.encounter !== undefined || (node.pathPuzzles as number) > 0) node.encounter = family
+      if (node.encountersByIndex) {
+        const byIndex = node.encountersByIndex as Record<string, unknown>
+        for (const k of Object.keys(byIndex)) byIndex[k] = family
+      }
+      for (const sub of (node.sideSections as Record<string, unknown>[]) ?? []) walk(sub)
+    }
+    walk(floor)
+    return floor as unknown as FloorConfig
+  }
+
+  // A plain puzzle, a tomb puzzle, and a TRAP — the last one is the case that used to carve
+  // differently, and the reason this sweep exists.
+  it.each(["sumplete", "arithmetic-reflex"])(
+    "survives every room becoming %s",
+    family => {
+      const moved: string[] = []
+      for (const floor of allFloors()) {
+        const opts = {
+          resolveKeyRequirements,
+          floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        }
+        const before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
+        const after = assembleFloor(floor.journeyId, rethemed(floor.config, family), floor.seed, resolveEncounter, opts)
+        if (!before.success || !after.success) continue
+        if (shape(before.grid) !== shape(after.grid)) moved.push(`${floor.label}: walls moved`)
+        else if (sectionHashes(before.grid) !== sectionHashes(after.grid))
+          moved.push(`${floor.label}: section hash moved`)
+      }
+      expect(moved, `${moved.length} floor(s) changed on an encounter swap:\n${moved.slice(0, 10).join("\n")}`).toEqual(
+        []
+      )
+    },
+    120_000
+  )
 })

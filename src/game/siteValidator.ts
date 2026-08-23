@@ -155,11 +155,15 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
           const bcell = grid.cells[br]?.[bc]
           if (!bcell || bcell.type === "empty") continue
           if (bcell.type === "room") {
-            // "trap" counts as neither: a fork branch leading only to a trap counts as bland.
+            // A trap is traversed like a puzzle: a branch that is ONLY a trap is still bland (it dead-ends
+            // with nothing worth reaching), but a trap on the way to a treasure no longer hides it.
+            // Stopping the search at a trap also made a floor's layout depend on which family a room was
+            // given — a rejected layout is re-carved at another seed — and no encounter may move a wall.
             const isTreasureLike =
               bcell.roomType === "encounter" && (bcell.tags?.includes("treasure") || bcell.tags?.includes("shop"))
             const isPuzzleLike =
-              bcell.roomType === "encounter" && (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle"))
+              bcell.roomType === "encounter" &&
+              (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle") || bcell.tags?.includes("trap"))
             const isGate = bcell.tags?.includes("gate")
             if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
             else if (isPuzzleLike || bcell.roomType === "fork") {

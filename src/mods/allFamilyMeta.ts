@@ -45,6 +45,17 @@ export const familyCapacityFor = (encounter: string | string[] | undefined, defa
   return meta?.rewardCapacity ?? 1
 }
 
+// Whether the family an authored `encounter` resolves to is a trap — the one thing about an
+// encounter that the LAYOUT depends on, since trapped content is cut off from leftover maze edges so
+// no stray tree edge lets a player step past it. World-gen reads this to write `sealed` on the
+// section it gives a trap to, which is what keeps the assembler from having to look at encounters at
+// all. Same id-then-tag resolution as familyCapacityFor.
+export const familyIsTrap = (encounter: string | string[] | undefined, defaultTag: string): boolean => {
+  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+  const meta = ALL_FAMILY_META.find(m => m.id === value) ?? ALL_FAMILY_META.find(m => m.tags.includes(value))
+  return meta?.tags.includes("trap") ?? false
+}
+
 // Gen-time encounter allocation: given an authored ROLE (a family tag, or an AND-array of tags)
 // and the slot's tier, pick one concrete family id from the pool of enabled families that carry
 // the tag(s) and debut at or below this tier. Deterministic in `seed` so regen is stable and the

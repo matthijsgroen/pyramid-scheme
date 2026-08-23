@@ -12,6 +12,13 @@ export type EncounterAllocator = (role: string | string[], tier: Difficulty, see
 // to this length here, before slot collection, so the mods have that many slots to fill.
 export type FamilyCapacityFor = (encounter: string | string[] | undefined, defaultTag: string) => number
 
+// Whether a resolved encounter is a trap (injected from src/mods's familyIsTrap). Trapped content has
+// to be cut off from leftover maze edges, and that is the ONLY thing about an encounter the layout
+// depends on — so gen writes it down as `sealed`, the authored structural field that asks for the
+// same isolation. The assembler then reads only structure, and re-authoring which puzzle a room
+// serves can never move a wall.
+export type IsTrapFamily = (encounter: string | string[] | undefined, defaultTag: string) => boolean
+
 const roleOf = (authored: string | string[] | undefined, fallback: string): string | string[] => authored ?? fallback
 
 // Bake each per-node encounter override (`encountersByIndex`, from authored `nodes` selectors —
@@ -40,7 +47,8 @@ const assignByIndex = (
 export const assignEncounters = (
   allConfigs: Record<string, SiteConfig[]>,
   allocate: EncounterAllocator,
-  capacityFor?: FamilyCapacityFor
+  capacityFor?: FamilyCapacityFor,
+  isTrap?: IsTrapFamily
 ): void => {
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     siteConfigs.forEach((floors, levelIndex) => {
@@ -59,7 +67,9 @@ export const assignEncounters = (
         // Per-node overrides (authored `nodes` selectors — e.g. the last room's capstone).
         assignByIndex(floor.encountersByIndex, floor.difficulty, seedFor, "main", allocate)
         // Side sections + their nested sub-sections.
-        floor.sideSections.forEach((section, si) => assignSection(section, seedFor, `s${si}`, allocate, capacityFor))
+        floor.sideSections.forEach((section, si) =>
+          assignSection(section, seedFor, `s${si}`, allocate, capacityFor, isTrap)
+        )
       })
     })
   }
@@ -70,7 +80,8 @@ const assignSection = (
   seedFor: (node: string) => number,
   node: string,
   allocate: EncounterAllocator,
-  capacityFor?: FamilyCapacityFor
+  capacityFor?: FamilyCapacityFor,
+  isTrap?: IsTrapFamily
 ): void => {
   // Resolve this section's encounter when it has puzzle rooms (the chain default family) OR when it
   // authors an encounter with no chain (e.g. a shop: `pathPuzzles: 0, encounter: "shop"` — with no
@@ -88,6 +99,11 @@ const assignSection = (
     const capacity = capacityFor(section.encounter, "treasure")
     if (capacity > 1) section.rewards = Array.from({ length: capacity }, () => undefined)
   }
+  // A trap needs its stretch cut off from leftover maze edges. Written down as `sealed` rather than
+  // left for the assembler to infer from the encounter: the isolation is a structural fact about this
+  // section, and recording it here is what lets the encounter itself stay structurally inert. A
+  // section already sealed or gated keeps the same layout, so this only ever adds.
+  if (isTrap?.(section.encounter, "puzzle")) section.sealed = true
   assignByIndex(section.encountersByIndex, section.difficulty, seedFor, node, allocate)
-  section.sideSections?.forEach((sub, i) => assignSection(sub, seedFor, `${node}.${i}`, allocate, capacityFor))
+  section.sideSections?.forEach((sub, i) => assignSection(sub, seedFor, `${node}.${i}`, allocate, capacityFor, isTrap))
 }

@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Re-authoring which puzzle a room serves no longer costs you the floor it is on. A pyramid keeps its explored corridors, its found passages and its opened chests when the encounters inside it are rewritten — only a change that really moves the walls forgets what you did there.
+- Re-authoring what a room holds no longer costs you the floor it is on. A pyramid keeps its explored corridors, its found passages and its opened chests when the puzzles inside it are rewritten — traps included. A floor forgets what you did there only when its corridors really change.
+- A fork branch that leads past a trap to something worth reaching no longer counts as a dead loss when a floor is laid out. A branch that is nothing but a trap still does.
 
 ### Fixed
 

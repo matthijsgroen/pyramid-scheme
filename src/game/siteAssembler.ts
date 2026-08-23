@@ -360,8 +360,6 @@ export const assembleFloor = (
 ): AssemblerResult => {
   const { resolveKeyRequirements = defaultResolveKeyRequirements, floorRef = { journeyId: siteId, floorIndex: 0 } } =
     keyRequirements
-  const isTrapSection = (encounter: string | string[] | undefined): boolean =>
-    resolveEncounter(encounter, "puzzle").tags.includes("trap")
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
@@ -998,17 +996,18 @@ export const assembleFloor = (
       const [nr, nc] = mainPath[mi + 1]
       intendedEdgeKeys.add(pkey(r, c, nr, nc))
     }
-    // Isolation: cut a stretch off from the leftover maze edges, so no stray tree edge lets a
-    // player step past what guards it. Gated content gets it, trapped content gets it for the same
-    // reason, and `sealed` asks for it on an ordinary visible path. A sub-section inherits its
-    // parent's isolation — reaching it means going through the parent either way.
+    // Isolation: cut a stretch off from the leftover maze edges, so no stray tree edge lets a player
+    // step past what guards it. A gate asks for it, and `sealed` asks for it on an ordinary visible
+    // path — which is how a trap gets it too: world-gen writes `sealed` on the section it gives a
+    // trap to (placeEncounters), so nothing here has to read an encounter to lay out a floor. A
+    // sub-section inherits its parent's isolation — reaching it means going through the parent
+    // either way.
     //
-    // Named once because the section hash records exactly this boolean: it is the whole of what a
-    // section's encounter can do to the layout, so hash and layout cannot drift apart.
-    const sideIsolated = (idx: number): boolean =>
-      Boolean(sideSections[idx].gate) || isTrapSection(sideSections[idx].encounter) || Boolean(sideSections[idx].sealed)
+    // Named once because the section hash records exactly this boolean, so hash and layout cannot
+    // drift apart: a floor forgets a run's progress only when its corridors really changed.
+    const sideIsolated = (idx: number): boolean => Boolean(sideSections[idx].gate) || Boolean(sideSections[idx].sealed)
     const subIsolated = (parentIdx: number, sub: SubSection): boolean =>
-      sideIsolated(parentIdx) || Boolean(sub.gate) || isTrapSection(sub.encounter) || Boolean(sub.sealed)
+      sideIsolated(parentIdx) || Boolean(sub.gate) || Boolean(sub.sealed)
     // Every consecutive main-path edge is already `intended` above, so isolating the main path only
     // blocks *extra* leftover edges that would merge a shortcut around a puzzle room.
     const mainIsolated = Boolean(config.sealed)

@@ -155,6 +155,42 @@ describe(validateSite, () => {
     }
   })
 
+  it("noAllBlandFork: fails when a fork leads only to a trap, same as only to puzzles", () => {
+    // A branch that is nothing but a punishment is the case the rule was written for.
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, room("trap", ["n"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid).toBe(false)
+    if (!result.valid) expect(result.reasons.some(r => r.type === "allBlandFork")).toBe(true)
+  })
+
+  it("noAllBlandFork: passes when a trap sits on the way to something worth reaching", () => {
+    // A trap is traversed like a puzzle rather than ending the search. Stopping at it judged
+    // fork → trap → treasure as bland, which is the opposite of what the rule means — and made a
+    // floor's whole layout depend on which family a room was given, since a rejected layout is
+    // re-carved at a different seed.
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, room("trap", ["n", "s"])],
+        [2, 1, room("treasure", ["n"], { reward: { type: "money", amount: 1 } })],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
   it("noAllBlandFork: passes when a fork has at least one treasure branch", () => {
     const grid = buildGrid(
       [
