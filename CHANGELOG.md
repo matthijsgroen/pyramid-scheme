@@ -7,15 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.38.3 - 2026-08-23
+
 ### Fixed
 
 - The farmland star grid asked for farmsteads and drew a sheaf of grain, so the board looked like it wanted plants sown. It now draws a farmstead: a domed mud-brick house with its doorway.
 
 ## 0.38.2 - 2026-08-23
-
-### Fixed
-
-- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
 
 ### Changed
 
@@ -28,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
 - The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
 
 ## 0.38.1 - 2026-08-23
