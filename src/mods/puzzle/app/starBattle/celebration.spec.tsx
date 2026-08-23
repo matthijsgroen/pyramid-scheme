@@ -20,7 +20,7 @@ const cellsIn = (root: HTMLElement) =>
     .filter(button => button.className.includes("aspect-square"))
 
 // Either motion counts as "this answer had its turn": the sky blooms (a swell, since a star is a point of
-// light) and the flood plain flares (light only, since a sheaf swelling drags its plot with it).
+// light) and the flood plain flares (light only, since a farmstead swelling drags its plot with it).
 const celebrating = (root: HTMLElement) => root.querySelectorAll(".animate-flare, .animate-bloom").length
 
 /** Places every star the answer holds — a star is the second tap — which leaves the board solved. */

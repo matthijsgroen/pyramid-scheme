@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { Sheaf, Star } from "./glyphs"
+import { Farmstead, Star } from "./glyphs"
 
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
@@ -60,7 +60,7 @@ export type StarBattleSkin = {
   conflict: string
   /** What an answer wears for its turn in the completion run (`puzzle-screens.md` §3), and it is a per-skin
    *  choice rather than one house style: a STAR swelling as it brightens reads as catching the light, and the
-   *  same swell on a sheaf standing in a plot — a thing rooted in the ground — reads as the board twitching.
+   *  same swell on a farmstead standing in a plot — a building set in the ground — reads as the board twitching.
    *  So the sky blooms and the flood plain only flares (see index.css). */
   celebrate: string
 }
@@ -98,7 +98,7 @@ const SKINS: Record<string, StarBattleSkin> = {
    *
    * **Daylight, which is the deliberate opposite of the sky the same board wears by default** — you work a
    * field under the sun. Everything follows from the ground being LIGHT: the walls are the water in the
-   * channels between holdings, the sheaf is dark against the soil rather than glowing on it, and the hint
+   * channels between holdings, the farmstead is dark against the soil rather than glowing on it, and the hint
    * rings are drawn in ink instead of light.
    *
    * Worn by both families on this board. Two households to a holding is the fiction the place was written
@@ -109,7 +109,7 @@ const SKINS: Record<string, StarBattleSkin> = {
    */
   fields: {
     name: "fields",
-    token: "🌾",
+    token: "🛖",
     // Tilled earth, and the ruled-out square is ground already in somebody's shadow.
     cell: "bg-[#e0c896]",
     spent: "bg-[#c9ac74]",
@@ -118,14 +118,14 @@ const SKINS: Record<string, StarBattleSkin> = {
     wall: "rgb(3 105 161 / 0.9)",
     // A furrow inside one holding: countable, but nothing to reason from.
     seam: "rgb(120 53 15 / 0.35)",
-    Glyph: Sheaf,
+    Glyph: Farmstead,
     answer: "text-emerald-900",
     dark: "text-stone-700/70",
     hatch: "rgba(120,53,15,0.4)",
     evidence: "ring-sky-800/70",
     focus: "ring-emerald-950",
     conflict: "ring-red-800",
-    // Light only. A sheaf standing in a plot cannot swell without the plot appearing to move with it.
+    // Light only. A farmstead standing in a plot cannot swell without the plot appearing to move with it.
     celebrate: "animate-flare",
   },
 }
