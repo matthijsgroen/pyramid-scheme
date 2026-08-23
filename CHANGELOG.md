@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A tomb kept saying it had something left when it did not. A chest behind a tableau you cannot read yet was counted as if only its own door stood in the way, so the map lit up on hieroglyphs that were never enough — and walking the whole tomb again found nothing. A place now asks for everything standing between you and it.
+
 ## 0.38.0 - 2026-08-23
 
 ### Added
