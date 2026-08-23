@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
+
 ### Changed
 
 - A solved star battle board now lights its answers one at a time before the win arrives, the way a finished star map does. Stars in the sky swell as they catch the light; farmsteads on the flood plain only brighten. Asking for less motion skips it.

@@ -129,7 +129,11 @@ const CrocodileComponent = ({ puzzle, onSolved }: { puzzle: CompareLevel; onSolv
   return (
     <div
       className={clsx(
-        "relative flex flex-1 flex-col-reverse items-center justify-center gap-4",
+        // A STAGE of its own height, because everything below is positioned against it: the prompt off its
+        // top, the chest and the crocodile stack off its bottom. `flex-1` was asking a parent for the room —
+        // and the puzzle shell shrink-wraps its board, so there was none: the stage collapsed to 0px and the
+        // whole scene piled up on one line.
+        "relative flex h-[60vh] min-h-96 w-full flex-col-reverse items-center justify-center gap-4",
         hasComparison && "bg-gradient-to-b from-transparent from-50% via-blue-200 via-51% to-blue-100"
       )}
     >
@@ -216,7 +220,9 @@ const CrocodileComponent = ({ puzzle, onSolved }: { puzzle: CompareLevel; onSolv
             <div
               key={index}
               className={clsx(
-                "absolute bottom-0 flex w-dvw max-w-md translate-y-0 scale-100 flex-col items-center transition-transform duration-400",
+                // As wide as the STAGE, not as the viewport: `w-dvw` reached past a modal narrower than the
+                // screen, and the two sums either side of the crocodile were clipped off at its edges.
+                "absolute bottom-0 flex w-full translate-y-0 scale-100 flex-col items-center transition-transform duration-400",
                 index - focus < 0 && "blur-xs"
               )}
               style={{
