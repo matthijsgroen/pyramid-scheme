@@ -65,14 +65,14 @@ These re-carve, and the affected sections reset. That is correct — the place r
 
 ### Chests are authored
 
-The generator never rearranges a floor to work around a chest that holds nothing — that is an authoring decision, not the engine's. `yarn generate-world` reports them instead:
+The generator never rearranges a floor to work around a chest that holds nothing — that is an authoring decision, not the engine's. `yarn generate-world` stops instead, and writes nothing:
 
 ```
-⚠ 3 chest(s) hold nothing — give them loot or take them out:
+✗ 3 chest(s) hold nothing — give them loot or take them out:
     junior_2 level 1 floor 0 at 4,12
 ```
 
-Add loot, or take the chest out. The check runs on the assembled floor rather than on the spec, because a spec cannot tell the two apart: a treasure end with no `endReward` is exactly how a section offers itself as a floor-key host, and the room the player opens then holds a key.
+Add loot, or take the chest out; the stats above the failure still print, so a stopped run is not a blind one. `yarn validate-world` fails on the same check without writing either. The check runs on the assembled floor rather than on the spec, because a spec cannot tell the two apart: a treasure end with no `endReward` is exactly how a section offers itself as a floor-key host, and the room the player opens then holds a key.
 
 Today the count is zero, and it stays zero even with `EMPTY_FRACTION` dialled up to 0.6 — every treasure room in the world ends up holding either a reward or a key. The warning is there for when that stops being true.
 
