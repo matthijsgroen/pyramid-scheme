@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- Your explorer could turn up outside the map, standing on nothing, after an update: the spot you saved on had stopped being a place you can stand. You now start such a visit at the entrance instead.
+
 ## 0.38.0 - 2026-08-23
 
 ### Added

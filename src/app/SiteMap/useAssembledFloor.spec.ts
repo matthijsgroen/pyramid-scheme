@@ -149,3 +149,50 @@ describe("useAssembledFloor — hidden junctions", () => {
     expect(cell?.state).toBe("visible")
   })
 })
+
+describe("useAssembledFloor — restoring a saved position", () => {
+  // A save holds a cell, and a cell can stop being standable between releases. The one that bites in
+  // practice: a section's hash covers its encounter, so re-authoring an encounter turns a hidden
+  // section the player had already found back into an unfound one — and if they saved while standing
+  // inside it, their cell is masked to void. In bounds, but not on the map, which is where the
+  // explorer dot ends up drawn.
+  const hiddenCellOf = (grid: FloorGrid): [number, number] => {
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if ((cell.type === "room" || cell.type === "corridor") && cell.hidden) return [r, c]
+      }
+    }
+    throw new Error("no hidden cell found")
+  }
+
+  it("sends the player back to the entrance when the saved cell is no longer somewhere they can stand", () => {
+    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
+    if (!assembled.success) throw new Error("assembly failed")
+    const [hr, hc] = hiddenCellOf(assembled.grid)
+
+    const { result } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, encodeEdge(0, hr, hc), 0, new Set())
+    )
+
+    // Masked to void, so it must not be honoured.
+    expect(result.current.grid!.cells[hr][hc].type).toBe("empty")
+    expect(result.current.explorerPos).toEqual(result.current.grid!.entrancePos)
+  })
+
+  it("honours a saved cell that is still standable", () => {
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, null, 0, new Set()))
+    const grid = result.current.grid!
+    const [er, ec] = grid.entrancePos
+    // Any real neighbour of the entrance: a position the player could genuinely have saved on.
+    const standable = ([...(grid.cells[er][ec] as CorridorCell | RoomCell).dirs] as string[])
+      .map(d => DIR_MOVE[d])
+      .map(([dr, dc]) => [er + dr, ec + dc] as [number, number])
+      .find(([r, c]) => grid.cells[r]?.[c]?.type !== "empty")!
+
+    const { result: restored } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, encodeEdge(0, standable[0], standable[1]), 0, new Set())
+    )
+    expect(restored.current.explorerPos).toEqual(standable)
+  })
+})

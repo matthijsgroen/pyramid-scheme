@@ -179,7 +179,14 @@ export const useAssembledFloor = (
     if (!grid) return [0, 0]
     if (!position) return grid.entrancePos
     const [posFloor, r, c] = decodeEdge(position)
-    if (posFloor !== currentFloor || r >= grid.rows || c >= grid.cols) return grid.entrancePos
+    if (posFloor !== currentFloor) return grid.entrancePos
+    // Being in bounds is not the same as being somewhere you can stand. A saved cell turns to void
+    // when the floor it belongs to is restructured, and — more often — when a found hidden section
+    // goes back to hidden because its section hash moved (the hash covers the section's encounter, so
+    // re-authoring an encounter is enough). Standing on void puts the explorer dot outside the drawn
+    // map with no way back, so an unstandable saved position sends the player to the entrance.
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") return grid.entrancePos
     return [r, c]
   }, [grid, position, currentFloor])
 
