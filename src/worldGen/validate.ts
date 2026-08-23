@@ -1,4 +1,5 @@
 import type { SiteConfig, TreasureReward, MapPieceReward } from "./types"
+import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 
@@ -100,3 +101,44 @@ export const validateRewardCounts = (
 // and ward-key ordering is enforced structurally by the fine per-floor BFS + settleHarvest + the
 // winnability sweep (placeFragments.ts, which hard-fails if any lock stays blocking). See
 // docs/game-design/keys-and-locks-solver.md.
+
+// Chests are authored, not arranged by the generator, so a chest that ends up holding nothing is an
+// authoring slip the author has to settle: either give it loot or take the chest out. Nothing here
+// touches the world — it reports, and the caller decides how loudly.
+//
+// Judged on the ASSEMBLED floor rather than on the spec, because a spec cannot tell you. A treasure
+// end with no `endReward` is exactly how an author offers a section as a floor-key host: the
+// assembler hands it a key, and the room the player opens is not empty at all. Only the assembled
+// room knows the difference.
+export type EmptyChest = { journeyId: string; levelNr: number; floorIndex: number; row: number; col: number }
+
+export const findEmptyChests = (
+  configs: Record<string, SiteConfig[]>,
+  assembleFloorAt: (
+    journeyId: string,
+    floor: SiteConfig[number],
+    levelNr: number,
+    floorIndex: number
+  ) => AssembledFloor | null
+): EmptyChest[] => {
+  const empties: EmptyChest[] = []
+  for (const [journeyId, sites] of Object.entries(configs)) {
+    sites.forEach((site, siteIdx) => {
+      site.forEach((floor, floorIndex) => {
+        const grid = assembleFloorAt(journeyId, floor, siteIdx + 1, floorIndex)
+        if (!grid) return
+        grid.cells.forEach((row, r) =>
+          row.forEach((cell, c) => {
+            if (cell.type !== "room" || cell.roomType !== "encounter") return
+            if (!cell.tags?.includes("treasure") && !cell.tags?.includes("shop")) return
+            // A key host holds a key rather than a reward, and a shop holds stock.
+            if (cell.reward || cell.keyColor || cell.keyColors?.length) return
+            if ((cell.stock ?? []).some(Boolean)) return
+            empties.push({ journeyId, levelNr: siteIdx + 1, floorIndex, row: r, col: c })
+          })
+        )
+      })
+    })
+  }
+  return empties
+}

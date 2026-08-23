@@ -25,14 +25,15 @@ Two invariants follow, and `src/app/SiteMap/worldFloorAssembly.spec.ts` sweeps e
 
 Change these as often as you like. The walls stay put, the hashes stay put, and every run keeps its explored corridors, its found passages and its opened chests.
 
-| Setting                                   | Why it is free                                                                                                          |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `encounter`, `encountersByIndex`, `role`  | Which puzzle a room serves — **including making it a trap**. Nothing about an encounter reaches the layout. See below.  |
-| `endReward`, `mainEndReward`, `rewards[]` | What a chest holds, as long as it still holds _something_. Loot identity is tracked in the inventory, not in the world. |
-| `gate.wardKeyId`, `gate.color`            | Which key opens a door, and what colour it wears. Gate _presence_ is structural; which key is not.                      |
-| `decorations`                             | The pool a fork or dead end draws its sarcophagus or rubble from. Purely drawn.                                         |
-| `theme`                                   | The skin a room's puzzle wears.                                                                                         |
-| `encounterArgs`                           | A family's own payload (a tableau's `runNr`). Read by that family alone, never by the carve.                            |
+| Setting                                  | Why it is free                                                                                                                |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `encounter`, `encountersByIndex`, `role` | Which puzzle a room serves — **including making it a trap**. Nothing about an encounter reaches the layout. See below.        |
+| `rewards[]` slot contents                | What a mid-chain chest holds, including leaving a slot empty. Loot identity is tracked in the inventory, not in the world.    |
+| `endReward` / `mainEndReward` _contents_ | Which reward a chain's end chest holds. Swapping one reward for another is free; **removing it entirely is not** — see below. |
+| `gate.wardKeyId`, `gate.color`           | Which key opens a door, and what colour it wears. Gate _presence_ is structural; which key is not.                            |
+| `decorations`                            | The pool a fork or dead end draws its sarcophagus or rubble from. Purely drawn.                                               |
+| `theme`                                  | The skin a room's puzzle wears.                                                                                               |
+| `encounterArgs`                          | A family's own payload (a tableau's `runNr`). Read by that family alone, never by the carve.                                  |
 
 ### Why encounters are free, including traps
 
@@ -49,18 +50,33 @@ If a third such path ever appears, the sweep fails: it rewrites every encounter 
 
 These re-carve, and the affected sections reset. That is correct — the place really is different — but it is a cost, so spend it deliberately.
 
-| Setting                      | What moves                                                                                                                                           |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pathPuzzles`                | The number of rooms on a chain, so the length of the walk. The most obviously structural knob there is.                                              |
-| `packing`                    | The main path's length multiplier. Re-carves the **whole floor**, side sections included.                                                            |
-| `corridorStraightness`       | How often the maze goes straight instead of turning. Also re-carves the whole floor.                                                                 |
-| `sealed`                     | Cuts a stretch off from leftover maze edges, removing the shortcut loops around it.                                                                  |
-| `gate` (present or absent)   | A gate is a room, and gated content is isolated. Adding or removing one does both.                                                                   |
-| `hidden`                     | A hidden section is masked out of the walkable grid until it is found.                                                                               |
-| `end`, `exitOrStaircase`     | What terminates a chain.                                                                                                                             |
-| `difficulty`                 | Resets the section. It does not actually move a wall today, but it is hashed — the conservative direction of the two.                                |
-| Adding or removing a section | New section: fresh hash, explored from nothing. Removed section: its saved cells go stale and are ignored.                                           |
-| Emptying a node completely   | A chest with nothing in it makes its branch bland, and a bland floor is re-carved. Changing _what_ it holds is free; leaving it with nothing is not. |
+| Setting                          | What moves                                                                                                                                                                                                                                                                               |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pathPuzzles`                    | The number of rooms on a chain, so the length of the walk. The most obviously structural knob there is.                                                                                                                                                                                  |
+| `packing`                        | The main path's length multiplier. Re-carves the **whole floor**, side sections included.                                                                                                                                                                                                |
+| `corridorStraightness`           | How often the maze goes straight instead of turning. Also re-carves the whole floor.                                                                                                                                                                                                     |
+| `sealed`                         | Cuts a stretch off from leftover maze edges, removing the shortcut loops around it.                                                                                                                                                                                                      |
+| `gate` (present or absent)       | A gate is a room, and gated content is isolated. Adding or removing one does both.                                                                                                                                                                                                       |
+| `hidden`                         | A hidden section is masked out of the walkable grid until it is found.                                                                                                                                                                                                                   |
+| `end`, `exitOrStaircase`         | What terminates a chain.                                                                                                                                                                                                                                                                 |
+| `difficulty`                     | Resets the section. It does not actually move a wall today, but it is hashed — the conservative direction of the two.                                                                                                                                                                    |
+| Adding or removing a section     | New section: fresh hash, explored from nothing. Removed section: its saved cells go stale and are ignored.                                                                                                                                                                               |
+| Removing a section's `endReward` | Not because the chest is empty, but because an end with no `endReward` is how a section offers itself as a floor-key host. The assembler builds its key chains out of those, so taking a reward away changes which sections carry keys, and the chains move. 42 of 206 floors, measured. |
+
+### Chests are authored
+
+The generator never rearranges a floor to work around a chest that holds nothing — that is an authoring decision, not the engine's. `yarn generate-world` reports them instead:
+
+```
+⚠ 3 chest(s) hold nothing — give them loot or take them out:
+    junior_2 level 1 floor 0 at 4,12
+```
+
+Add loot, or take the chest out. The check runs on the assembled floor rather than on the spec, because a spec cannot tell the two apart: a treasure end with no `endReward` is exactly how a section offers itself as a floor-key host, and the room the player opens then holds a key.
+
+Today the count is zero, and it stays zero even with `EMPTY_FRACTION` dialled up to 0.6 — every treasure room in the world ends up holding either a reward or a key. The warning is there for when that stops being true.
+
+---
 
 `packing` and `corridorStraightness` are the two worth naming twice. They re-shape a floor end to end, and until both were added to the section hashes they did it **silently** — 206 of 206 floors re-carved with not one hash moving. Both hashes now carry them.
 

@@ -19,12 +19,16 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
+import { findEmptyChests } from "../src/worldGen/validate"
+import { assembleFloor } from "../src/game/siteAssembler"
+import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
   familyCapacityFor,
   familyIsTrap,
   allocateEncounterFamily,
+  resolveEncounterMeta,
 } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
@@ -81,7 +85,25 @@ const configs = buildConfigs(
 // worldValidator both hard-fail otherwise), so HIEROGLYPH_REQUIRED is written as-is — no capping.
 assignFragmentPieceIndices(configs)
 
+// Chests are authored, so the generator does not quietly work around one that holds nothing — it says
+// so and leaves the call to the author: add loot, or take the chest out. Assembles each floor at the
+// seed a player actually gets, because a spec cannot tell an empty chest from a floor-key host.
+const emptyChests = findEmptyChests(configs, (journeyId, floor, levelNr, floorIndex) => {
+  const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
+  const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
+    resolveKeyRequirements,
+    floorRef: { journeyId, floorIndex },
+  })
+  return result.success ? result.grid : null
+})
+
 printStats(configs)
+if (emptyChests.length > 0) {
+  console.warn(`⚠ ${emptyChests.length} chest(s) hold nothing — give them loot or take them out:`)
+  for (const c of emptyChests.slice(0, 20))
+    console.warn(`    ${c.journeyId} level ${c.levelNr} floor ${c.floorIndex} at ${c.row},${c.col}`)
+  if (emptyChests.length > 20) console.warn(`    … and ${emptyChests.length - 20} more`)
+}
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)
 console.log(`  Hieroglyph fragments: ${cov.assigned}/${cov.target} placed (${cov.total} total)`)
 

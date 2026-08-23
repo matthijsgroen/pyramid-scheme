@@ -54,19 +54,20 @@ Progression and journey state are stored under versioned keys. If a breaking mig
 
 ## What resets and what doesn't
 
-| Change                              | Resets exploration?       | Dupes/erases loot?                         |
-| ----------------------------------- | ------------------------- | ------------------------------------------ |
-| Puzzle count changes in a section   | Yes — hash changes        | No                                         |
-| Path length or straightness changes | Yes — hash changes        | No                                         |
-| Which puzzle a room serves changes  | No — traps included       | No                                         |
-| Loot in a chest changes             | No                        | No — inventory-as-truth                    |
-| A node is emptied entirely          | Yes — the floor re-carves | No                                         |
-| Ward key reassigned                 | No                        | No                                         |
-| Gate added or removed               | Yes — hash changes        | No                                         |
-| A section is sealed or hidden       | Yes — hash changes        | No                                         |
-| Section added (new side path)       | N/A — new hash, fresh     | No                                         |
-| Section removed                     | N/A — stale hash ignored  | No                                         |
-| Difficulty changes                  | Yes — hash changes        | No                                         |
-| Fragment re-ordered across chests   | No                        | No — piece index is stable per world build |
+| Change                              | Resets exploration?                   | Dupes/erases loot?                         |
+| ----------------------------------- | ------------------------------------- | ------------------------------------------ |
+| Puzzle count changes in a section   | Yes — hash changes                    | No                                         |
+| Path length or straightness changes | Yes — hash changes                    | No                                         |
+| Which puzzle a room serves changes  | No — traps included                   | No                                         |
+| Loot in a chest changes             | No                                    | No — inventory-as-truth                    |
+| A chest's reward is swapped         | No                                    | No — inventory-as-truth                    |
+| A section's `endReward` is removed  | Yes — it becomes a key-host candidate | No                                         |
+| Ward key reassigned                 | No                                    | No                                         |
+| Gate added or removed               | Yes — hash changes                    | No                                         |
+| A section is sealed or hidden       | Yes — hash changes                    | No                                         |
+| Section added (new side path)       | N/A — new hash, fresh                 | No                                         |
+| Section removed                     | N/A — stale hash ignored              | No                                         |
+| Difficulty changes                  | Yes — hash changes                    | No                                         |
+| Fragment re-ordered across chests   | No                                    | No — piece index is stable per world build |
 
 Per-field detail, and what makes each one safe or not: [world-spec-stability.md](./world-spec-stability.md).
