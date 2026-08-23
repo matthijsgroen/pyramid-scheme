@@ -19,6 +19,14 @@ type Props = {
   highlighted?: ReadonlySet<string>
   /** Constraint indices the current hint points at. */
   litSigns?: ReadonlySet<number>
+  /**
+   * Which number the completion run is on (`puzzle-screens.md` §3), or unset for no run.
+   *
+   * The whole board counts together: a square holding this number or lower has settled and shows its own
+   * digit, and every square still to come shows the count instead — so the board rolls 1, 2, 3 … and each
+   * number drops out of the roll as it is reached.
+   */
+  counted?: number
   onSelect: (row: number, col: number) => void
 }
 
@@ -169,6 +177,7 @@ export const FutoshikiBoard: FC<Props> = ({
   selected,
   highlighted,
   litSigns,
+  counted,
   onSelect,
 }) => {
   const { size } = puzzle
@@ -199,14 +208,16 @@ export const FutoshikiBoard: FC<Props> = ({
                   <NoteGrid notes={cell.notes} size={size} row={rowIndex} col={colIndex} stranded={stranded} />
                 ) : (
                   <span
-                    className={clsx("text-[58cqw] font-semibold", {
+                    className={clsx("inline-block text-[58cqw] font-semibold", {
                       // The digit takes the conflict colour too: forcing ink-white here was what
                       // swallowed the warning, since the square's own red never reached the number.
                       "text-stone-100": !cell.given && !conflicted,
                       "text-red-100": conflicted,
+                      // The number the roll has just settled on — see `counted`.
+                      "animate-bloom": counted !== undefined && cell.value <= counted,
                     })}
                   >
-                    {cell.value}
+                    {counted !== undefined && cell.value > counted ? counted : cell.value}
                   </span>
                 )}
               </button>

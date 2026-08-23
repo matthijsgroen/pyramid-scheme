@@ -339,6 +339,43 @@ material, what a pre-filled number is carved into, what a sign is drawn as. The
 family emits `given | filled | empty | conflicted` plus the numbers and the sign
 directions; nothing about a theme reaches the puzzle logic.
 
+### 9.1 The completion run — the board counts up
+
+**A solved board counts itself up, and the whole grid counts together.** Every square rolls to 1; the squares
+that really are 1 keep it and swell; the rest roll on to 2, and so on to the width of the grid, until the last
+number lands and the board is the answer again. Only then is the solve reported: the shell freezes the board
+and starts its banner the moment it is told (`puzzle-screens.md` §3), so the celebration happens before that
+word is said — the family reports the solve a beat later, and core supplies only the clock
+(`useCelebration.ts`).
+
+**The roll is why this run says something the swell alone did not.** A square dropping out of the count is the
+board showing where each number belongs, one number at a time — the same reading the player just built out of
+the chevrons, played back at speed. Squares that have settled keep their own digit throughout, so the board
+fills rather than flickers.
+
+**A tick is a NUMBER rather than a square, and that is this family rather than a house style.** What the board
+is about is order: every chevron is a claim about which of two numbers is bigger, and the answer is the one
+arrangement where all of them hold. Counting from 1 to n is that answer read back — the squares light in the
+order the signs argued for, wherever on the grid they stand. A sweep across the board would say nothing about
+order, and eclipse already owns that motion (its §9.1).
+
+Three constraints, the shared ones:
+
+- **The whole run is about a second**, because the shell stops its solve-time clock when it hears "solved" and
+  that number is what `PUZZLE_FAMILIES.md` §3.2's budget is measured with. A tick per number rather than per
+  square also keeps the count legible at 7 wide, where forty-nine ticks inside one second is a flicker.
+- **Input is refused while it runs** — the pad is shut and undo with it, so no number can change under a solve
+  already on its way.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together.
+
+Givens count along with the rest: a given is part of the finished board even though it was never part of the
+answer, and a run that skipped them would read as holes in the count.
+
+**The count is read off the run's `progress`, never off its `done`**, and that is what keeps the reduced-motion
+case honest. A skipped run reports done with progress still at 0, so the count is simply never on — and a
+board that never counts is never showing anything but the numbers the player filled in. Read off `done`, the
+same skip would have frozen the grid mid-roll.
+
 ## 10. Generation cost, and where it should go
 
 A wizard board is the dear one: eleven techniques, a prune loop that re-solves the

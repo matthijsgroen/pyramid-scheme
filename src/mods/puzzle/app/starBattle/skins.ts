@@ -58,6 +58,11 @@ export type StarBattleSkin = {
   evidence: string
   focus: string
   conflict: string
+  /** What an answer wears for its turn in the completion run (`puzzle-screens.md` §3), and it is a per-skin
+   *  choice rather than one house style: a STAR swelling as it brightens reads as catching the light, and the
+   *  same swell on a sheaf standing in a plot — a thing rooted in the ground — reads as the board twitching.
+   *  So the sky blooms and the flood plain only flares (see index.css). */
+  celebrate: string
 }
 
 const SKINS: Record<string, StarBattleSkin> = {
@@ -82,6 +87,8 @@ const SKINS: Record<string, StarBattleSkin> = {
     evidence: "ring-sky-300/60",
     focus: "ring-amber-300",
     conflict: "ring-red-500/80",
+    // Stars twinkle, size and all: a star is a point of light, so a swell IS the reading.
+    celebrate: "animate-bloom",
   },
   /**
    * **Farmsteads on the flood plain** (PUZZLE_FAMILIES.md §11.1, Water & Agriculture, and the family doc
@@ -118,6 +125,8 @@ const SKINS: Record<string, StarBattleSkin> = {
     evidence: "ring-sky-800/70",
     focus: "ring-emerald-950",
     conflict: "ring-red-800",
+    // Light only. A sheaf standing in a plot cannot swell without the plot appearing to move with it.
+    celebrate: "animate-flare",
   },
 }
 

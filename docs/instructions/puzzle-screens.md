@@ -266,9 +266,17 @@ The domain solver lives beside the family's state model
 
 `src/app/dev/PuzzleLab.tsx`, on the Travel page in develop mode: pick family,
 theme and tier, play the real screen through the real `EncounterModal`, reroll
-the seed. A family shows up there by being registered and tagged `puzzle`; its
-theme list comes from `FamilyMeta.themes`, its tiers from `minTier` upward.
-Rewards are dropped there — the lab tests the screen, not the economy.
+the seed. A family shows up there by being registered and carrying one of the board tags —
+`puzzle`, `tomb-puzzle` or `capstone` (`playableInLab`); its theme list comes from
+`FamilyMeta.themes`, its tiers from `minTier` upward. Rewards are dropped there — the lab
+tests the screen, not the economy.
+
+**The tomb's own boards are on the list for the same reason the others are**: a family the bench cannot
+reach is a family nobody reviews, and the two that were reachable only by walking a real tomb are the two
+that have had the least of it. Both generate without a tomb around them — a tableau falls back to a draw
+from the tier pool when no floor is resolvable. What the bench does NOT do is grant a save anything: a
+tableau asks the save for completed hieroglyphs to fill its slots, so it plays there only as far as the
+fragments already collected allow. Enough to look at the board; not enough to solve one cold.
 
 It is quick manual quality control, so **it plays the boards that ship**: for a family with a seed list
 (§6.1) the reroll walks that list rather than searching for arbitrary boards, and wraps at its end. A

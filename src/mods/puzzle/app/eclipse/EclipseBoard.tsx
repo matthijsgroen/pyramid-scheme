@@ -25,6 +25,11 @@ type Props = {
   /** The skin this room was authored to wear; an unknown name draws the default pair. */
   theme?: string
   onTapCell: (cell: number) => void
+  /**
+   * How many diagonals of the completion run have arrived (`puzzle-screens.md` §3), counted from the top-left
+   * corner. Every square on a diagonal that has been reached is lit; unset means no run.
+   */
+  wave?: number
 }
 
 /**
@@ -155,13 +160,19 @@ const HATCH = {
 
 const linkKey = (link: Link) => `${link.a}-${link.b}`
 
-const markGlyph = (value: Mark | undefined, theme: string | undefined) => {
+const markGlyph = (value: Mark | undefined, theme: string | undefined, celebrating: boolean) => {
   if (!value) return null
   const Glyph = (theme && SKINS[theme] ? SKINS[theme] : SKINS.default)[value]
-  return <Glyph />
+  // The wrapper is what the run animates, so the swell stays inside the square rather than pushing the grid
+  // around: the glyph itself is sized off it either way.
+  return (
+    <span className={clsx("block size-full", celebrating && "animate-bloom")}>
+      <Glyph />
+    </span>
+  )
 }
 
-export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, theme, onTapCell }) => {
+export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, focus, theme, wave, onTapCell }) => {
   const { size } = puzzle
   // Held back a beat: a tap on the way to the other mark is not a mistake (see the hook).
   const conflicts = useDelayedConflicts(state.marks, marks => eclipseConflicts(puzzle, { marks }))
@@ -177,6 +188,8 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, f
       >
         {state.marks.map((value, cell) => {
           const given = isGiven(puzzle, cell)
+          // The run sweeps top-left to bottom-right, so a square's turn is which diagonal it stands on.
+          const celebrating = wave !== undefined && rowOf(size, cell) + colOf(size, cell) < wave
           return (
             <button
               key={cell}
@@ -194,7 +207,7 @@ export const EclipseBoard: FC<Props> = ({ puzzle, state, highlighted, decided, f
                 cell === focus && "ring-4 ring-amber-300"
               )}
             >
-              {markGlyph(value, theme)}
+              {markGlyph(value, theme, celebrating)}
             </button>
           )
         })}

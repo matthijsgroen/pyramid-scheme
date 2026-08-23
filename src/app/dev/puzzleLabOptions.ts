@@ -11,6 +11,23 @@ export const allowedDifficulties = (meta: FamilyMeta): Difficulty[] =>
 
 export const themesFor = (meta: FamilyMeta): string[] => meta.themes ?? [DEFAULT_THEME]
 
+/**
+ * Which families the bench can play: the plain puzzle rooms, and the two boards a tomb serves — a capstone
+ * crocodile and a tableau.
+ *
+ * The tomb pair are on the list because a family the bench cannot reach is a family nobody reviews: they were
+ * playable only by walking a real tomb to the floor that serves them, which is why they are the two that have
+ * had the least of it. Both generate without a tomb around them — a tableau falls back to a tier-pool draw
+ * when no floor is resolvable, which is the path the bench takes.
+ *
+ * **A tableau still needs its hieroglyphs**, and the bench does not grant them: filling a slot asks the save
+ * for a completed hieroglyph, so a tableau plays here only as far as the fragments already collected allow.
+ * That is enough to look at the board and not enough to solve one cold.
+ */
+const BENCH_TAGS = ["puzzle", "tomb-puzzle", "capstone"]
+
+export const playableInLab = (meta: FamilyMeta): boolean => meta.tags.some(tag => BENCH_TAGS.includes(tag))
+
 /** Stands for "whatever the site would have said" — the lab's way of picking no role at all. */
 export const NO_ROLE = "(no role)"
 

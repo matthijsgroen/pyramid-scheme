@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
@@ -47,6 +48,20 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
   const hint = useMemo(() => (asked ? buildStarBattleHint(puzzle, state) : undefined), [asked, puzzle, state])
 
   /**
+   * The board finishes itself before the shell is told, one answer at a time.
+   *
+   * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
+   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later.
+   * Input is refused for that beat, or a tap could clear a star mid-run and the solve would land on a board
+   * that is no longer solved.
+   */
+  const finished = starBattleSolved(puzzle, state)
+  // The answers in reading order, so the run lights them across the board the way it is read.
+  const stars = state.marks.flatMap((value, cell) => (value === "star" ? [cell] : []))
+  const celebration = useCelebration(finished, stars.length)
+  const celebrated = new Set(stars.slice(0, Math.round(celebration.progress * stars.length)))
+
+  /**
    * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
    *
    * Two lines: the reason, then what to do about it. The blank line between them is why the shell keeps its
@@ -67,7 +82,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel}
-      solved={starBattleSolved(puzzle, state)}
+      solved={celebration.done}
       onReset={() => setState(createStarBattleState(puzzle))}
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
@@ -84,11 +99,14 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
             highlighted={hintVisible ? hint?.cells : undefined}
             decided={hintVisible ? hint?.decided : undefined}
             focus={hintVisible ? hint?.focus : undefined}
+            celebrated={celebrated}
             onTapCell={cell => {
+              if (finished) return // the board is finishing; nothing may change under the celebration
               reportInput()
               setState(cycleStarBattleCell(state, cell))
             }}
             onSweepCells={cells => {
+              if (finished) return
               reportInput()
               setState(sweepStarBattleCells(state, cells))
             }}
@@ -101,10 +119,10 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
               reportInput()
               setState(undoStarBattle(state))
             }}
-            disabled={!canUndoStarBattle(state)}
+            disabled={!canUndoStarBattle(state) || finished}
             className={clsx(
               "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-2 text-sm transition-colors",
-              canUndoStarBattle(state)
+              canUndoStarBattle(state) && !finished
                 ? "border-amber-700 bg-amber-950/60 text-amber-200"
                 : "border-stone-700 bg-stone-900 text-stone-600"
             )}

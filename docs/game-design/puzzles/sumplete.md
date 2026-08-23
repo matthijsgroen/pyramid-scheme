@@ -183,6 +183,30 @@ what a strike looks like (sand poured over it, a scribe's erasure), what the
 target beside a line is drawn on. The family emits `untouched | kept | struck`
 plus the numbers; nothing about a theme reaches the puzzle logic.
 
+### 8.1 The completion run — the board checks its own sums
+
+**A solved board checks its lines off before it reports the solve: the row targets flare top to bottom, then
+the column targets left to right.** The shell freezes the board and starts its banner the moment it is told
+(`puzzle-screens.md` §3), so the celebration happens before that word is said — the family reports the solve a
+beat later, and core supplies only the clock (`useCelebration.ts`).
+
+**A tick is a LINE, and what flares is the TARGET.** The targets are what this board wins by — every row and
+every column landing on its number — and they are already the thing that turns green when a line lands, so a
+run down them is the board making its own claim in the two directions the claim is made in. Flaring the
+numbers instead would celebrate the arithmetic rather than the result, and it would also have to pick a side:
+the struck numbers are as much of the answer as the kept ones.
+
+Three constraints, the shared ones:
+
+- **The whole run is about a second**, because the shell stops its solve-time clock when it hears "solved" and
+  that number is what `PUZZLE_FAMILIES.md` §3.2's budget is measured with. Two ticks per line of grid keeps
+  the count small at every size — fourteen at 7 wide, against forty-nine squares.
+- **Input is refused while it runs** — toggling a number mid-run would land a solve on a board that is no
+  longer solved.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together. The run is read off the clock's
+  `progress` rather than its `done` for exactly this: a skipped run reports done with progress still at 0, so
+  nothing is ever checked off.
+
 ## 9. Open questions
 
 1. **Negative values.** The catalogue wants Sumplete to carry subtraction at

@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import type { FC } from "react"
+import type { CSSProperties, FC } from "react"
 import type { BalanceLine } from "@/mods/puzzle/game/balanceScale/balanceStatus"
 import {
   hasTwin,
@@ -30,6 +30,8 @@ type Props = {
   pending?: { ref: EquationRef; glyph: Glyph }
   /** Which rows can answer that tap. */
   swapSources?: EquationRef[]
+  /** The scales that have had their turn in the completion run (`puzzle-screens.md` §3). */
+  celebrated?: ReadonlySet<number>
   /** Whether this board offers taking things off both pans, and trading a glyph. */
   moves: { cancelling: boolean; swapping: boolean }
   /** What to do next with the tapped glyph, or why nothing can be done with it. */
@@ -106,16 +108,14 @@ const PanItems: FC<ChipProps & { items: PanItem[]; pan: Pan }> = ({
   </>
 )
 
-const PanBox: FC<ChipProps & { items: PanItem[]; pan: Pan; translate: number; total?: number }> = ({
-  items,
-  pan,
-  translate,
-  total,
-  ...chips
-}) => (
+const PanBox: FC<
+  ChipProps & { items: PanItem[]; pan: Pan; translate: number; total?: number; settling?: boolean; bob: number }
+> = ({ items, pan, translate, total, settling, bob, ...chips }) => (
   <div
-    className="flex flex-1 flex-col items-center transition-transform duration-300"
-    style={{ transform: `translateY(${translate * DROP_PX}px)` }}
+    className={clsx("flex flex-1 flex-col items-center transition-transform duration-300", settling && "animate-bob")}
+    // Which way this pan rides the rock, read by the `bob` keyframes — the opposite sign to the pan across
+    // the beam, the same way their resting tilts are opposite.
+    style={{ transform: `translateY(${translate * DROP_PX}px)`, "--bob": bob } as CSSProperties}
   >
     <div className="flex min-h-11 w-full flex-wrap items-center justify-center gap-1 rounded-b-xl border-x-2 border-b-4 border-stone-500 bg-stone-800/70 p-1">
       <PanItems items={items} pan={pan} {...chips} />
@@ -128,12 +128,22 @@ const PanBox: FC<ChipProps & { items: PanItem[]; pan: Pan; translate: number; to
 type RowProps = ChipProps & {
   scale: Scale
   lit: boolean
+  /** This row is taking its turn in the completion run: its beam rocks once and comes level. */
+  settling?: boolean
   /** This row can answer the pending tap: tapping it writes the note. */
   offering: boolean
   onTapRow: () => void
 }
 
-const ScaleRow: FC<RowProps & { line: BalanceLine }> = ({ scale, line, lit, offering, onTapRow, ...chips }) => {
+const ScaleRow: FC<RowProps & { line: BalanceLine }> = ({
+  scale,
+  line,
+  lit,
+  offering,
+  settling,
+  onTapRow,
+  ...chips
+}) => {
   const drop = dropOf(line.status)
   return (
     <div
@@ -147,12 +157,23 @@ const ScaleRow: FC<RowProps & { line: BalanceLine }> = ({ scale, line, lit, offe
     >
       {/* The beam: the tilt is the feedback this whole family teaches with. */}
       <div
-        className="pointer-events-none absolute inset-x-4 top-2 h-1 rounded-full bg-stone-500 transition-transform duration-300"
+        className={clsx(
+          "pointer-events-none absolute inset-x-4 top-2 h-1 rounded-full bg-stone-500 transition-transform duration-300",
+          settling && "animate-settle"
+        )}
         style={{ transform: `rotate(${-drop * TILT_DEG}deg)` }}
       />
-      <PanBox items={scale.left} pan="left" translate={drop} total={line.left} {...chips} />
+      <PanBox items={scale.left} pan="left" translate={drop} total={line.left} settling={settling} bob={1} {...chips} />
       <span className="pt-4 text-stone-500">▲</span>
-      <PanBox items={scale.right} pan="right" translate={-drop} total={line.right} {...chips} />
+      <PanBox
+        items={scale.right}
+        pan="right"
+        translate={-drop}
+        total={line.right}
+        settling={settling}
+        bob={-1}
+        {...chips}
+      />
     </div>
   )
 }
@@ -195,6 +216,7 @@ export const BalanceBoard: FC<Props> = ({
   litRefs,
   pending,
   swapSources,
+  celebrated,
   swapPrompt,
   moves,
   onSelectGlyph,
@@ -219,7 +241,13 @@ export const BalanceBoard: FC<Props> = ({
   return (
     <div className="flex w-full max-w-[min(52vh,26rem)] flex-col gap-2 select-none">
       {scales.map((scale, index) => (
-        <ScaleRow key={index} scale={scale} line={lines[index]} {...rowProps({ kind: "scale", index }, scale)} />
+        <ScaleRow
+          key={index}
+          scale={scale}
+          line={lines[index]}
+          settling={celebrated?.has(index)}
+          {...rowProps({ kind: "scale", index }, scale)}
+        />
       ))}
 
       {notes.map((note, index) => (

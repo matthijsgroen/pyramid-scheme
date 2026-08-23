@@ -5,7 +5,7 @@ import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { allowedDifficulties, DEFAULT_THEME, NO_ROLE, rolesFor, themesFor } from "./puzzleLabOptions"
+import { allowedDifficulties, DEFAULT_THEME, NO_ROLE, playableInLab, rolesFor, themesFor } from "./puzzleLabOptions"
 
 const selectClass = "rounded-md border border-red-400 bg-stone-900 px-2 py-1 text-sm text-white"
 
@@ -48,7 +48,7 @@ const benchNotes = (puzzle: unknown): string[] => {
 // Rewards are deliberately dropped (applyReward is a no-op): the lab exercises the puzzle screen,
 // not the economy — a bench that hands out loot would corrupt the save it is testing against.
 export const PuzzleLab: FC = () => {
-  const families = useMemo(() => allFamilies().filter(p => p.meta.tags.includes("puzzle")), [])
+  const families = useMemo(() => allFamilies().filter(p => playableInLab(p.meta)), [])
   const [familyId, setFamilyId] = useState(families[0]?.meta.id ?? "")
   const [pickedTheme, setPickedTheme] = useState("")
   const [pickedRole, setPickedRole] = useState(NO_ROLE)

@@ -88,6 +88,45 @@ body {
     }
   }
 
+  /* A beam that has come level rocking once before it settles — a scale finishing (balance-scale design doc
+     §9). Rotation only, and small: the pans hold the numbers the player just worked out, so a beam that
+     swings far enough to be dramatic swings the arithmetic off the screen with it. */
+  --animate-settle: settle 420ms ease-out;
+  @keyframes settle {
+    0% {
+      transform: rotate(0deg);
+    }
+    30% {
+      transform: rotate(-5deg);
+    }
+    65% {
+      transform: rotate(3deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  /* The pans riding a settling beam. Same timing as `settle` and the opposite phase per side, so the pan a
+     beam-end drops goes down with it — a beam that rocks over pans nailed in place reads as a broken scale
+     rather than a settling one. `--bob` is which way this pan goes (1 down first, -1 up first), and it is
+     applied as `translate` rather than `transform` so it composes with the tilt the pans already carry. */
+  --animate-bob: bob 420ms ease-out;
+  @keyframes bob {
+    0% {
+      translate: 0 0;
+    }
+    30% {
+      translate: 0 calc(var(--bob, 1) * 5px);
+    }
+    65% {
+      translate: 0 calc(var(--bob, 1) * -3px);
+    }
+    100% {
+      translate: 0 0;
+    }
+  }
+
   /* A blossom arriving on a plant that has its water. Opacity alone: the flower appears, it does not
      inflate. */
   --animate-flower-in: flower-in 320ms ease-out;

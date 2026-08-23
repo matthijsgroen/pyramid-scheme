@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useCallback, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
@@ -44,6 +45,22 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
   )
 
   /**
+   * The board finishes itself before the shell is told, as one diagonal sweep across it.
+   *
+   * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
+   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later, and
+   * input is refused for that beat, or a tap could change a mark and land the solve on a board that is no
+   * longer solved.
+   *
+   * One tick per DIAGONAL rather than per square: the sweep is what says "the whole board is right", and a
+   * board of forty-nine squares given a tick each would spend the run's whole second on a flicker.
+   */
+  const finished = eclipseSolved(puzzle, state)
+  const diagonals = puzzle.size * 2 - 1
+  const celebration = useCelebration(finished, diagonals)
+  const wave = finished ? Math.round(celebration.progress * diagonals) : undefined
+
+  /**
    * A function rather than a string, so the shell only reaches for the text once the hint is on screen.
    *
    * Two lines: the reason, then the move it asks for (`puzzle-screens.md` §4).
@@ -60,7 +77,7 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel}
-      solved={eclipseSolved(puzzle, state)}
+      solved={celebration.done}
       onReset={() => setState(createEclipseState(puzzle))}
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
@@ -77,7 +94,9 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
             highlighted={hintVisible ? hint?.cells : undefined}
             decided={hintVisible ? hint?.decided : undefined}
             focus={hintVisible ? hint?.focus : undefined}
+            wave={wave}
             onTapCell={cell => {
+              if (finished) return // the board is finishing; nothing may change under the celebration
               reportInput()
               setState(cycleEclipseCell(puzzle, state, cell))
             }}
@@ -90,10 +109,10 @@ export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, 
               reportInput()
               setState(undoEclipse(state))
             }}
-            disabled={!canUndoEclipse(state)}
+            disabled={!canUndoEclipse(state) || finished}
             className={clsx(
               "flex h-11 min-w-11 items-center justify-center gap-1 rounded border px-2 text-sm transition-colors",
-              canUndoEclipse(state)
+              canUndoEclipse(state) && !finished
                 ? "border-amber-700 bg-amber-950/60 text-amber-200"
                 : "border-stone-700 bg-stone-900 text-stone-600"
             )}

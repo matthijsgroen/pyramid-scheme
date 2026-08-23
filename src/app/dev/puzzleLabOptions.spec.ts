@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { FamilyMeta } from "@/game/families/familyMeta"
-import { allowedDifficulties, themesFor } from "./puzzleLabOptions"
+import { allowedDifficulties, playableInLab, themesFor } from "./puzzleLabOptions"
 
 const meta = (overrides: Partial<FamilyMeta> = {}): FamilyMeta => ({
   id: "test",
@@ -29,5 +29,19 @@ describe(themesFor, () => {
 
   it("lists the family's own themes", () => {
     expect(themesFor(meta({ themes: ["stone", "nile"] }))).toEqual(["stone", "nile"])
+  })
+})
+
+describe(playableInLab, () => {
+  it("plays the puzzle rooms and the two boards a tomb serves", () => {
+    expect(playableInLab(meta())).toBe(true)
+    expect(playableInLab(meta({ tags: ["tomb-puzzle"] }))).toBe(true)
+    expect(playableInLab(meta({ tags: ["capstone"] }))).toBe(true)
+  })
+
+  it("leaves out what is not a board at all", () => {
+    // A trap, a shop, a chest and a gate are rooms rather than puzzles: nothing on the bench's pickers
+    // (tier, theme, role, seed) means anything to them.
+    for (const tags of [["trap"], ["shop"], ["treasure"], ["gate"]]) expect(playableInLab(meta({ tags }))).toBe(false)
   })
 })

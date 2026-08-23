@@ -459,6 +459,31 @@ code.** No journey asks for `water` or `agriculture` (`src/worldGen/spec/*.ts` a
 of families. One line on a journey — the shape `junior_4` already uses for `sky` — is what
 turns the face on.
 
+### 9.1 The completion run — the board finishes before it says so
+
+**A solved board lights its answers one at a time, in reading order, and only then reports the solve.** The
+shell freezes the board and starts its banner the moment it is told (`puzzle-screens.md` §3), so the
+celebration happens before that word is said — the family reports the solve a beat later, and core supplies
+only the clock (`useCelebration.ts`).
+
+It is constellation's run on constellation's two places, deliberately: the same player meets the same sky and
+the same flood plain across both families, and a board that celebrates in one and goes quiet in the other
+reads as one of the two being unfinished.
+
+Three constraints, each of them the interesting part rather than the animation:
+
+- **The whole run is about a second**, because the shell stops its solve-time clock when it hears "solved"
+  and that number is what §3.2's budget is measured with. The stagger tightens with the star count instead of
+  the total growing with it.
+- **Input is refused while it runs** — a tap on a placed star would clear it, so the solve would land on a
+  board that is no longer solved. Undo is held shut for the same beat.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together.
+
+**What the motion IS belongs to the place, and the two differ.** A star is a point of light, so it swells as
+it brightens and the size is part of the reading. A sheaf standing in a plot is rooted in the ground, and the
+same swell there reads as the plot moving with it — so the flood plain brightens only. The same split
+constellation draws between its sky and its basins, for the same reason.
+
 ## 10. Open questions
 
 1. **Does `spanning`'s hint survive a real board?** §3.1. First thing to look at in the lab,

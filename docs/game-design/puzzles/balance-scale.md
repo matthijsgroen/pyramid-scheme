@@ -291,6 +291,36 @@ what the pans and beam are made of, which glyph set the unknowns are drawn from.
 The family emits the glyphs, the numbers, and each scale's `left | level | right |
 unknown` state; nothing about a theme reaches the puzzle logic.
 
+### 8.1 The completion run — the beams settle before the board says so
+
+**A solved board rocks each beam once and settles it, top to bottom, and only then reports the solve.** The
+shell freezes the board and starts its banner the moment it is told (`puzzle-screens.md` §3), so the
+celebration happens before that word is said — the family reports the solve a beat later, and core supplies
+only the clock (`useCelebration.ts`).
+
+**The beam is what this family already teaches with, so the beam is what celebrates.** A tilt reading level
+is the whole feedback loop of the board (§7), and a scale that has just come level settling into it is the
+motion that loop already implies — nothing new is drawn, and nothing lights up that was not already the
+instrument.
+
+Three constraints, the shared ones:
+
+- **The whole run is about a second**, because the shell stops its solve-time clock when it hears "solved"
+  and that number is what `PUZZLE_FAMILIES.md` §3.2's budget is measured with. The stagger tightens with the
+  scale count instead of the total growing with it.
+- **Input is refused while it runs** — re-weighting a glyph mid-run would land a solve on a board that is no
+  longer solved. That is every control here, not just the palette: a trade or a cancel would do the same.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together.
+
+**The pans ride the rock, one either side.** A beam that swings over pans nailed in place reads as a broken
+scale rather than a settling one, so each pan takes the same timing in the opposite phase — the side a
+beam-end drops goes down with it, exactly as their resting tilts already work.
+
+**The rock is small, and for the same reason the tilt is.** The pans hold the numbers the player has just
+worked out, and a beam that swings far enough to be dramatic swings the arithmetic off the screen with it.
+Notes do not take part: a note is a row the player derived rather than a scale standing in the room, so it has
+no beam to settle.
+
 ## 9. Open questions
 
 1. **Coefficient notation.** Three scarabs in a pan are drawn as three scarabs.
