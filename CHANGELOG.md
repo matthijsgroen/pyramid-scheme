@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.38.1 - 2026-08-23
+
 ### Changed
 
 - The one-star grid can wear the flood plain too, the same farmland face its two-star twin wears. Both now draw from the same places.
