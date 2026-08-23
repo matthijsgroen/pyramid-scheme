@@ -134,3 +134,167 @@ describe("no encounter can move a wall", () => {
     120_000
   )
 })
+
+// Which world-spec settings may move a floor, and which may not. Two rules, and this sweep is what
+// holds authors to them — see docs/game-design/world-spec-stability.md for the lists in prose.
+//
+//   1. A setting that is not about the shape of the place must move nothing.
+//   2. A setting that DOES re-carve must also rehash. A floor re-shaped while its hashes held still
+//      is the worst case of all: a run restores its explored cells onto a maze that is gone, and
+//      rooms it never entered read as looted.
+//
+// Sampled every third floor. Each mutation is applied to ~70 real authored floors, which is plenty
+// to catch a rule being broken, and keeps the sweep off the critical path of a test run.
+describe("what a world-spec setting may and may not move", () => {
+  const sampled = () => allFloors().filter((_, i) => i % 3 === 0)
+
+  const shape = (g: FloorGrid) =>
+    JSON.stringify(
+      g.cells.map(row => row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}`)))
+    )
+  const sectionHashes = (g: FloorGrid) =>
+    JSON.stringify(
+      [
+        ...new Set(
+          g.cells
+            .flat()
+            .filter(c => c.type !== "empty")
+            .map(c => (c as { sectionHash?: string }).sectionHash)
+        ),
+      ].sort()
+    )
+
+  type Node = Record<string, unknown>
+  const eachNode = (floor: Node, fn: (n: Node, isFloor: boolean) => void) => {
+    const walk = (n: Node, isFloor: boolean) => {
+      fn(n, isFloor)
+      for (const sub of (n.sideSections as Node[]) ?? []) walk(sub, false)
+    }
+    walk(floor, true)
+  }
+  const edited = (config: FloorConfig, fn: (n: Node, isFloor: boolean) => void): FloorConfig => {
+    const floor = structuredClone(config) as unknown as Node
+    eachNode(floor, fn)
+    return floor as unknown as FloorConfig
+  }
+
+  const compare = (mutate: (c: FloorConfig) => FloorConfig) => {
+    const wallsMoved: string[] = []
+    const reshapedWithoutRehashing: string[] = []
+    for (const floor of sampled()) {
+      const opts = { resolveKeyRequirements, floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex } }
+      // A mutation can be unauthorable on a given floor — an extra room on a tomb floor asks for a
+      // tableau nobody wrote, and that family throws rather than inventing one. Not a finding; skip.
+      let before, after
+      try {
+        before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
+        after = assembleFloor(floor.journeyId, mutate(floor.config), floor.seed, resolveEncounter, opts)
+      } catch {
+        continue
+      }
+      if (!before.success || !after.success) continue
+      if (shape(before.grid) === shape(after.grid)) continue
+      wallsMoved.push(floor.label)
+      if (sectionHashes(before.grid) === sectionHashes(after.grid)) reshapedWithoutRehashing.push(floor.label)
+    }
+    return { wallsMoved, reshapedWithoutRehashing }
+  }
+
+  // Rule 1 — content, dressing and key assignment are not the shape of the place.
+  const INERT: Array<[string, (c: FloorConfig) => FloorConfig]> = [
+    [
+      "what a chest holds",
+      c =>
+        edited(c, n => {
+          if (n.endReward) n.endReward = { type: "money", amount: 1 }
+          if (n.mainEndReward) n.mainEndReward = { type: "money", amount: 1 }
+          if (Array.isArray(n.rewards))
+            n.rewards = (n.rewards as unknown[]).map(r => (r ? { type: "money", amount: 1 } : r))
+        }),
+    ],
+    [
+      "which key opens a gate, and its colour",
+      c =>
+        edited(c, n => {
+          const gate = n.gate as Node | undefined
+          if (gate?.wardKeyId) gate.wardKeyId = "some_other_key"
+          if (gate?.color) gate.color = "purple"
+        }),
+    ],
+    [
+      "the decoration pool",
+      c =>
+        edited(c, n => {
+          if (n.decorations) n.decorations = ["rubble"]
+        }),
+    ],
+    [
+      "the skin and the role a room was drawn for",
+      c =>
+        edited(c, n => {
+          n.theme = "elsewhere"
+          n.role = "puzzle"
+        }),
+    ],
+  ]
+
+  it.each(INERT)(
+    "%s moves nothing",
+    (_label, mutate) => {
+      const { wallsMoved } = compare(mutate)
+      expect(wallsMoved, `${wallsMoved.length} floor(s) moved:\n${wallsMoved.slice(0, 5).join("\n")}`).toEqual([])
+    },
+    120_000
+  )
+
+  // Rule 2 — these are all allowed to re-carve, but never silently.
+  const STRUCTURAL: Array<[string, (c: FloorConfig) => FloorConfig]> = [
+    ["pathPuzzles", c => ({ ...structuredClone(c), pathPuzzles: c.pathPuzzles + 1 })],
+    ["packing", c => ({ ...structuredClone(c), packing: (c.packing ?? 1) + 0.5 })],
+    ["corridorStraightness", c => ({ ...structuredClone(c), corridorStraightness: 0.2 })],
+    ["difficulty", c => ({ ...structuredClone(c), difficulty: c.difficulty === "wizard" ? "starter" : "wizard" })],
+    [
+      "sealed",
+      c =>
+        edited({ ...structuredClone(c), sealed: !c.sealed }, (n, isFloor) => {
+          if (!isFloor) n.sealed = !n.sealed
+        }),
+    ],
+    [
+      "a gate",
+      c =>
+        edited(c, n => {
+          delete n.gate
+        }),
+    ],
+    [
+      "hidden",
+      c =>
+        edited(c, (n, isFloor) => {
+          if (!isFloor) n.hidden = !n.hidden
+        }),
+    ],
+    [
+      "whether a node holds anything at all",
+      c =>
+        edited(c, n => {
+          delete n.endReward
+          delete n.mainEndReward
+          if (Array.isArray(n.rewards)) n.rewards = (n.rewards as unknown[]).map(() => undefined)
+        }),
+    ],
+  ]
+
+  it.each(STRUCTURAL)(
+    "%s never re-carves without rehashing",
+    (_label, mutate) => {
+      const { reshapedWithoutRehashing } = compare(mutate)
+      expect(
+        reshapedWithoutRehashing,
+        `${reshapedWithoutRehashing.length} floor(s) were re-carved while their section hashes held still:\n` +
+          reshapedWithoutRehashing.slice(0, 5).join("\n")
+      ).toEqual([])
+    },
+    120_000
+  )
+})

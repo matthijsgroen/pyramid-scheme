@@ -12,21 +12,9 @@ The goal: **as stable as possible, not perfect.** A restructured section requiri
 
 ## Section hashes
 
-Every cell in the assembled grid carries a `sectionHash` that fingerprints the structural shape of the section it belongs to. The hash covers:
+Every cell in the assembled grid carries a `sectionHash` that fingerprints the structural shape of the section it belongs to: what it covers and what it deliberately ignores is the field list in [world-spec-stability.md](./world-spec-stability.md), which is the authoring-side view of this same mechanism. The short version is that the hash fingerprints the shape of the place — how many rooms, how long the walk, what isolates it, whether it is hidden — and ignores everything about what lives inside it.
 
-- puzzle count (`pathPuzzles`)
-- chest cadence (`chestEvery`)
-- difficulty
-- exit type (`exitOrStaircase` / `end`)
-- gate presence and type (`gate.type`)
-- section index and parent index (for stable identity across sibling sections)
-
-The hash deliberately **excludes**:
-
-- specific ward key ID (`wardKeyId`) — reassigning which key opens a gate is invisible to the hash
-- gate color — cosmetic
-- reward contents (`endReward`, `chestRewards`) — loot can change freely
-- render styles
+The rule the two pages share: **structure changes only when the corridors change**, their number or their length. A setting that re-carves a floor must move the hash; a setting that does not must move nothing. `worldFloorAssembly.spec.ts` sweeps every authored floor on every test run to hold both halves.
 
 Exploration state is stored as `exploredSections: Record<sectionHash, cellId[]>`. When the world is rebuilt, any cell whose `sectionHash` differs from the stored key is silently skipped — that section resets. Structurally unchanged sections are restored exactly.
 
@@ -66,14 +54,19 @@ Progression and journey state are stored under versioned keys. If a breaking mig
 
 ## What resets and what doesn't
 
-| Change                            | Resets exploration?      | Dupes/erases loot?                         |
-| --------------------------------- | ------------------------ | ------------------------------------------ |
-| Puzzle count changes in a section | Yes — hash changes       | No                                         |
-| Chest cadence changes             | Yes — hash changes       | No                                         |
-| Loot in a chest changes           | No                       | No — inventory-as-truth                    |
-| Ward key reassigned               | No                       | No                                         |
-| Gate added or removed             | Yes — hash changes       | No                                         |
-| Section added (new side path)     | N/A — new hash, fresh    | No                                         |
-| Section removed                   | N/A — stale hash ignored | No                                         |
-| Difficulty changes                | Yes — hash changes       | No                                         |
-| Fragment re-ordered across chests | No                       | No — piece index is stable per world build |
+| Change                              | Resets exploration?       | Dupes/erases loot?                         |
+| ----------------------------------- | ------------------------- | ------------------------------------------ |
+| Puzzle count changes in a section   | Yes — hash changes        | No                                         |
+| Path length or straightness changes | Yes — hash changes        | No                                         |
+| Which puzzle a room serves changes  | No — traps included       | No                                         |
+| Loot in a chest changes             | No                        | No — inventory-as-truth                    |
+| A node is emptied entirely          | Yes — the floor re-carves | No                                         |
+| Ward key reassigned                 | No                        | No                                         |
+| Gate added or removed               | Yes — hash changes        | No                                         |
+| A section is sealed or hidden       | Yes — hash changes        | No                                         |
+| Section added (new side path)       | N/A — new hash, fresh     | No                                         |
+| Section removed                     | N/A — stale hash ignored  | No                                         |
+| Difficulty changes                  | Yes — hash changes        | No                                         |
+| Fragment re-ordered across chests   | No                        | No — piece index is stable per world build |
+
+Per-field detail, and what makes each one safe or not: [world-spec-stability.md](./world-spec-stability.md).

@@ -60,9 +60,14 @@ const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
 // must cover everything the LAYOUT depends on, and nothing else — a hash that moves for a
 // non-structural reason throws away progress on a floor that did not change.
 //
-// Stable across: loot changes, key reassignment, corridor style tweaks, and re-authoring WHICH
-// encounter a room serves. Changes on: puzzle count, chest cadence, difficulty, exit type, gate
-// presence, hidden flag, and whether the section is isolated from leftover maze edges.
+// Stable across: loot changes, key reassignment, decorations, themes, and re-authoring WHICH
+// encounter a room serves. Changes on: puzzle count, difficulty, exit type, gate presence, hidden
+// flag, whether the section is isolated from leftover maze edges, and the floor's own carve knobs.
+//
+// Both hashes carry the floor's carve knobs (`packing`, `corridorStraightness`), because those
+// re-carve the WHOLE floor — every side section along with the main path. Without them a floor could
+// be re-shaped end to end while every hash held still, and a run would restore its explored cells
+// onto a maze that no longer exists. See docs/game-design/world-spec-stability.md.
 //
 // `isolated` is why an encounter is not in here directly. The assembler reads a section's encounter
 // for exactly one layout decision — a trap gets cut off from stray tree edges, the same treatment a
@@ -102,6 +107,12 @@ const computeLegacySideSectionHash = (section: SideSection | SubSection, idx: nu
     )
   )
 
+// The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
+const carveShape = (config: FloorConfig) => ({
+  packing: config.packing,
+  corridorStraightness: config.corridorStraightness,
+})
+
 const computeMainSectionHash = (config: FloorConfig, isolated: boolean): string =>
   String(
     hashString(
@@ -110,6 +121,7 @@ const computeMainSectionHash = (config: FloorConfig, isolated: boolean): string 
         difficulty: config.difficulty,
         exitOrStaircase: config.exitOrStaircase,
         isolated,
+        ...carveShape(config),
       })
     )
   )
@@ -118,6 +130,7 @@ const computeSideSectionHash = (
   section: SideSection | SubSection,
   idx: number,
   isolated: boolean,
+  floor: FloorConfig,
   parentIdx?: number
 ): string =>
   String(
@@ -125,6 +138,7 @@ const computeSideSectionHash = (
       JSON.stringify({
         idx,
         parentIdx,
+        ...carveShape(floor),
         pathPuzzles: section.pathPuzzles,
         difficulty: section.difficulty,
         end: section.end,
@@ -1044,7 +1058,8 @@ export const assembleFloor = (
       const sHash = computeSideSectionHash(
         sideSections[group.sectionIdx],
         group.sectionIdx,
-        sideIsolated(group.sectionIdx)
+        sideIsolated(group.sectionIdx),
+        config
       )
       const legacyHash = computeLegacySideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
       const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
@@ -1061,6 +1076,7 @@ export const assembleFloor = (
         subSection,
         subSectionIdx,
         subIsolated(parentSectionIdx, subSection),
+        config,
         parentSectionIdx
       )
       const legacyHash = computeLegacySideSectionHash(subSection, subSectionIdx, parentSectionIdx)
