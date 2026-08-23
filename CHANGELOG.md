@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.38.0 - 2026-08-23
+
 ### Added
 
 - The Lighthouse of Alexandria now serves light and sky puzzles on its main path — the beam puzzle, the new sun-and-moon grid and the new star map — and it runs at night: its grids are drawn as stars against a dark sky.
@@ -24,9 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Puzzle boards come from a list checked ahead of time, so a room stops searching for one when you open it. The star grids took over a second to draw and now take three milliseconds.
 - Hints now say what to do as well as why: the squares a hint is about are hatched, and its last line asks for the move. On the sun-and-moon grid, the number grid and the star grid.
 - The star map speaks its own place throughout — goal, rules and hints. A haul-road board talks about sites and roads to lay, a waterworks about basins and channels to dig.
-
 - Every puzzle now states its goal in one line above the how-to-play, worded for the place it is: the star map asks for constellations, the same board drawn as haul roads asks for a road network.
-
 - The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".
 - Every comparison-grid difficulty now starts with a different number of squares filled in — four at the easiest, none at the hardest.
 - The signs between squares are drawn rather than typed: part of the board rather than punctuation on it, and sized so they never crowd the numbers on a 6×6.
