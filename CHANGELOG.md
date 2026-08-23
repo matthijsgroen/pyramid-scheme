@@ -7,9 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Fixed
-
-- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
+## 0.38.2 - 2026-08-23
 
 ### Changed
 
@@ -19,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A solved futoshiki board now counts itself up before the win arrives: the whole grid rolls to 1, the squares that really are 1 keep it and swell, the rest roll on to 2, and so on to the last number. Asking for less motion skips it.
 - A solved eclipse board now sweeps once from the top-left corner to the far one, each sun and moon swelling as the wave reaches it, before the win arrives. Asking for less motion skips it.
 - A solved balance board now settles: each beam rocks once and comes level with its pans riding it, top to bottom, before the win arrives. Asking for less motion skips it.
+
+### Fixed
+
+- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
 
 ## 0.38.1 - 2026-08-23
 
