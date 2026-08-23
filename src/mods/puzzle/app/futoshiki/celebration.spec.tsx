@@ -24,7 +24,7 @@ const cellsIn = (root: HTMLElement) =>
 /** The pad's number keys, told from the board's squares by not being square. */
 const padIn = (root: HTMLElement, value: number) =>
   within(root)
-    .getAllByRole("button", { name: String(value) })
+    .getAllByRole<HTMLButtonElement>("button", { name: String(value) })
     .filter(button => !button.className.includes("aspect-square"))[0]
 
 const swelling = (root: HTMLElement) => root.querySelectorAll(".animate-bloom").length
