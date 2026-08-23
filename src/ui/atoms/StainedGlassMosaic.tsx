@@ -1,5 +1,4 @@
 import type { FC } from "react"
-import clsx from "clsx"
 import { MOSAIC_PIECES, type MosaicPieceDef } from "./mosaicPieces.generated"
 import { MOSAIC_POINTS } from "./mosaicGeometry.generated"
 import stainedGlassUrl from "../../assets/stained-glass.png"
@@ -25,12 +24,11 @@ export const StainedGlassMosaic: FC<{
   revealedPieces?: ReadonlySet<string>
   newPieces?: ReadonlySet<string>
   onPieceClick?: (piece: MosaicPieceDef) => void
-  className?: string
-}> = ({ revealedPieces = new Set(), newPieces, onPieceClick, className }) => {
+}> = ({ revealedPieces = new Set(), newPieces, onPieceClick }) => {
   const litRegisters = REGISTERS.filter(r => r.ids.every(id => revealedPieces.has(id)))
 
   return (
-    <svg viewBox={`0 0 ${VB_W} ${VB_H}`} xmlns="http://www.w3.org/2000/svg" className={clsx("w-full", className)}>
+    <svg viewBox={`0 0 ${VB_W} ${VB_H}`} xmlns="http://www.w3.org/2000/svg" className="w-full">
       <defs>
         {litRegisters.length > 0 && (
           <>

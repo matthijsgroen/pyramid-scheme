@@ -11,12 +11,6 @@ const gapClasses: Record<Density, string> = {
   compact: "gap-1",
 }
 
-export const CategoryGrid: FC<PropsWithChildren<{ density?: Density; className?: string }>> = ({
-  density = "comfortable",
-  className,
-  children,
-}) => (
-  <div className={clsx("grid grid-cols-[repeat(auto-fill,minmax(3rem,1fr))]", gapClasses[density], className)}>
-    {children}
-  </div>
+export const CategoryGrid: FC<PropsWithChildren<{ density?: Density }>> = ({ density = "comfortable", children }) => (
+  <div className={clsx("grid grid-cols-[repeat(auto-fill,minmax(3rem,1fr))]", gapClasses[density])}>{children}</div>
 )

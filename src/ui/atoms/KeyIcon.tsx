@@ -1,5 +1,4 @@
 import type { FC } from "react"
-import clsx from "clsx"
 import type { KeyColor } from "@/game/siteTypes"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 
@@ -11,12 +10,11 @@ type KeyIconProps = {
   outlined?: boolean
   /** Accessible name; the shape is decorative without one. */
   title?: string
-  className?: string
 }
 
 // A single floor key, drawn in its own hue. Deliberately a drawn key rather than the 🗝 emoji: an
 // emoji can't be recoloured, and the colour IS the information here.
-export const KeyIcon: FC<KeyIconProps> = ({ color, size = 20, outlined = false, title, className }) => {
+export const KeyIcon: FC<KeyIconProps> = ({ color, size = 20, outlined = false, title }) => {
   const hex = keyColorHex[color].reachable
   return (
     <svg
@@ -26,7 +24,7 @@ export const KeyIcon: FC<KeyIconProps> = ({ color, size = 20, outlined = false, 
       role={title ? "img" : "presentation"}
       aria-label={title}
       aria-hidden={title ? undefined : true}
-      className={clsx("shrink-0", className)}
+      className="shrink-0"
       // Dark halo so a light key stays readable on a light background. drop-shadow follows the drawn
       // shape (unlike box-shadow), so the bow's hole stays open.
       style={{ filter: "drop-shadow(0 0 1px rgba(0,0,0,0.85))" }}

@@ -202,7 +202,6 @@ export const JourneyPathView: FC<Props> = ({
                           }
                         : undefined
                     }
-                    // eslint-disable-next-line tailwindcss/no-custom-classname -- plain CSS hover class defined above
                     className={onNodeClick ? "jpv-node" : "pointer-events-none fill-transparent"}
                   />
                   <circle
