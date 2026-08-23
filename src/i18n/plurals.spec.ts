@@ -111,13 +111,13 @@ describe("plural forms in the shipped locales", () => {
    */
   it.each([
     ["starBattle.hint.fields.groupTight.region", "en", 2, "This holding is down to 2 plots."],
-    ["starBattle.hint.fields.onlyWay.region", "en", 2, "There is only one way to fit 2 🌾 on this holding."],
-    ["starBattle.hint.fields.action.place", "en", 2, "Raise a 🌾 on each hatched plot."],
+    ["starBattle.hint.fields.onlyWay.region", "en", 2, "There is only one way to fit 2 🛖 on this holding."],
+    ["starBattle.hint.fields.action.place", "en", 2, "Raise a 🛖 on each hatched plot."],
     ["starBattle.hint.fields.groupTight.region", "nl", 2, "Dit stuk land heeft nog 2 akkers over."],
-    ["starBattle.hint.fields.onlyWay.region", "nl", 2, "Er is maar één manier om 2 🌾 op dit stuk land te zetten."],
-    ["starBattle.hint.fields.action.place", "nl", 2, "Zet een 🌾 op elke gearceerde akker."],
+    ["starBattle.hint.fields.onlyWay.region", "nl", 2, "Er is maar één manier om 2 🛖 op dit stuk land te zetten."],
+    ["starBattle.hint.fields.action.place", "nl", 2, "Zet een 🛖 op elke gearceerde akker."],
   ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
-    expect(t(lng, key, { count, token: "🌾" })).toBe(expected)
+    expect(t(lng, key, { count, token: "🛖" })).toBe(expected)
   })
 
   it.each([

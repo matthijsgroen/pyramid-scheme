@@ -480,7 +480,7 @@ Three constraints, each of them the interesting part rather than the animation:
 - **`prefers-reduced-motion` skips it whole**, animation and wait together.
 
 **What the motion IS belongs to the place, and the two differ.** A star is a point of light, so it swells as
-it brightens and the size is part of the reading. A sheaf standing in a plot is rooted in the ground, and the
+it brightens and the size is part of the reading. A farmstead standing in a plot is set in the ground, and the
 same swell there reads as the plot moving with it — so the flood plain brightens only. The same split
 constellation draws between its sky and its basins, for the same reason.
 
@@ -608,7 +608,9 @@ Candidates, none built:
 | Fields  | irrigation channels | holdings  | two households cannot share a well |
 
 **Fields is built** (`app/starBattle/skins.ts`): daylight on tilled earth, the channels
-between holdings drawn as the water they are, and a bound sheaf standing where a star would.
+between holdings drawn as the water they are, and a domed farmstead standing where a star would — a dwelling,
+because the rules are about dwellings: two of them touching would share one well, which is a thing a household
+does and a crop does not.
 Every sentence under the board is its own — the goal, both rules and all thirty-odd hint
 lines — because a shared template with a noun in a slot breaks on the first locale that
 inflects around it (`puzzle-screens.md` §4.3), and `goalWording.spec.ts` holds a farm to
