@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The one-star grid can wear the flood plain too, the same farmland face its two-star twin wears. Both now draw from the same places.
+
 - Re-authoring what a room holds no longer costs you the floor it is on. A pyramid keeps its explored corridors, its found passages and its opened chests when the puzzles inside it are rewritten — traps included. A floor forgets what you did there only when its corridors really change.
 - Building the world now stops on any chest that would hold nothing, rather than working around it. Whether such a chest gets loot or gets removed is an authoring call, so nothing ships until it is made.
 - Changing how long or how winding a pyramid's corridors are now resets the floors it changed, rather than restoring your explored corridors onto a layout that had been re-drawn underneath them.

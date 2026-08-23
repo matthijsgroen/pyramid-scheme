@@ -85,18 +85,20 @@ const SKINS: Record<string, StarBattleSkin> = {
   },
   /**
    * **Farmsteads on the flood plain** (PUZZLE_FAMILIES.md §11.1, Water & Agriculture, and the family doc
-   * §11.3). The rules read straight across and the reason for each one is the place: a holding takes two
-   * households, a row of plots takes two, and two farmsteads may not sit within reach of each other because
-   * that close they would be drawing on the same well.
+   * §11.3). The rules read straight across and the reason for each one is the place: a holding takes its
+   * quota of households, a row of plots takes the same, and two farmsteads may not sit within reach of each
+   * other because that close they would be drawing on the same well.
    *
    * **Daylight, which is the deliberate opposite of the sky the same board wears by default** — you work a
    * field under the sun. Everything follows from the ground being LIGHT: the walls are the water in the
    * channels between holdings, the sheaf is dark against the soil rather than glowing on it, and the hint
    * rings are drawn in ink instead of light.
    *
-   * This is the skin that makes the mechanic's second reading real rather than theoretical: **a pair is what
-   * a place can hold two of.** A lone star only ever reads as the one and only, which is why star battle
-   * wears `sky` and nothing else and why this skin belongs to twin stars.
+   * Worn by both families on this board. Two households to a holding is the fiction the place was written
+   * for, and it is twin stars' outright; at one star the same holding takes one farmstead, which the copy
+   * already says in the singular (`starBattle.goal.fields_one`). What makes the place read is the
+   * no-touching rule — two farmsteads that close would share a well — and that rule is the same at either
+   * count.
    */
   fields: {
     name: "fields",
@@ -126,9 +128,9 @@ const SKINS: Record<string, StarBattleSkin> = {
  * The same resolution constellation uses, for the same reason: core hands over both and decides nothing,
  * because any precedence rule core picked would be wrong for some family.
  *
- * **No ambience overlay exists here yet.** The default skin already IS night, and no site authors an
- * agricultural room, so a `night` theme over farmland is a combination no world can currently produce. When
- * one does, it wants a `night` partial on `fields` rather than a fallback to the sky.
+ * **No ambience overlay exists here yet.** The default skin already IS night, so a `night` theme over
+ * farmland is the one combination that would want one — a `night` partial on `fields` rather than a fallback
+ * to the sky. Nothing authors it yet.
  */
 const ROLE_SKINS: Record<string, string> = {
   sky: "default",
