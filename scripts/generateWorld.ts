@@ -19,11 +19,16 @@ import { fileURLToPath } from "url"
 import { buildConfigs } from "../src/worldGen/configBuilder"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
+import { findEmptyChests } from "../src/worldGen/validate"
+import { assembleFloor } from "../src/game/siteAssembler"
+import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
   familyCapacityFor,
+  familyIsTrap,
   allocateEncounterFamily,
+  resolveEncounterMeta,
 } from "../src/mods/allFamilyMeta"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
@@ -71,7 +76,8 @@ const configs = buildConfigs(
   MOD_TOMB_TREASURE_RESOLVER,
   familyCapacityFor,
   MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES
+  MOD_RESERVED_TREASURE_INDICES,
+  familyIsTrap
 )
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed
@@ -79,9 +85,32 @@ const configs = buildConfigs(
 // worldValidator both hard-fail otherwise), so HIEROGLYPH_REQUIRED is written as-is — no capping.
 assignFragmentPieceIndices(configs)
 
+// Chests are authored, so the generator does not quietly work around one that holds nothing — it
+// stops, and leaves the call to the author: add loot, or take the chest out. Assembles each floor at
+// the seed a player actually gets, because a spec cannot tell an empty chest from a floor-key host.
+const emptyChests = findEmptyChests(configs, (journeyId, floor, levelNr, floorIndex) => {
+  const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
+  const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
+    resolveKeyRequirements,
+    floorRef: { journeyId, floorIndex },
+  })
+  return result.success ? result.grid : null
+})
+
 printStats(configs)
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)
 console.log(`  Hieroglyph fragments: ${cov.assigned}/${cov.target} placed (${cov.total} total)`)
+
+// Reported after the stats, so a run that stops here still shows what it built. Nothing is written:
+// an empty chest is a question for the author, and shipping a world that asks a player to open one
+// for nothing is not the answer.
+if (emptyChests.length > 0) {
+  console.error(`✗ ${emptyChests.length} chest(s) hold nothing — give them loot or take them out:`)
+  for (const c of emptyChests.slice(0, 20))
+    console.error(`    ${c.journeyId} level ${c.levelNr} floor ${c.floorIndex} at ${c.row},${c.col}`)
+  if (emptyChests.length > 20) console.error(`    … and ${emptyChests.length - 20} more`)
+  process.exit(1)
+}
 
 if (validateOnly) {
   console.log("✓ World spec valid")

@@ -34,8 +34,11 @@ const applyExplored = (grid: FloorGrid, floor: number, exploredSections: Record<
       if (r >= result.rows || c >= result.cols) continue
       const cell = result.cells[r][c]
       if (cell.type === "empty") continue
-      // Skip stale cells whose section was restructured since save
-      if (cell.sectionHash !== sectionHash) continue
+      // Skip stale cells whose section was restructured since save. A save written before the
+      // section hash stopped covering the encounter files its cells under the old hash, so that one
+      // counts as a match too — otherwise the whole world would read as unexplored, and since a
+      // looted room is remembered only by this entry, every chest would come back unlooted.
+      if (cell.sectionHash !== sectionHash && cell.legacySectionHash !== sectionHash) continue
       result = completeCell(result, r, c)
     }
   }
@@ -67,7 +70,12 @@ const maskHiddenCells = (
       const cell = grid.cells[r][c]
       if ((cell.type === "room" || cell.type === "corridor") && cell.hidden) {
         const hash = cell.sectionHash ?? ""
-        if (!revealedSections.has(hash)) {
+        // Found under either hash — an older save recorded this corridor under the pre-0.39 one, and
+        // a corridor that forgets it was found masks the player's own cell back to void.
+        const wasFound =
+          revealedSections.has(hash) ||
+          (cell.legacySectionHash !== undefined && revealedSections.has(cell.legacySectionHash))
+        if (!wasFound) {
           hiddenPos.set(`${r},${c}`, hash)
           if (hash) hiddenSectionHashes.add(hash)
         }
@@ -179,7 +187,14 @@ export const useAssembledFloor = (
     if (!grid) return [0, 0]
     if (!position) return grid.entrancePos
     const [posFloor, r, c] = decodeEdge(position)
-    if (posFloor !== currentFloor || r >= grid.rows || c >= grid.cols) return grid.entrancePos
+    if (posFloor !== currentFloor) return grid.entrancePos
+    // Being in bounds is not the same as being somewhere you can stand. A saved cell turns to void
+    // when the floor it belongs to is restructured, and — more often — when a found hidden section
+    // goes back to hidden because its section hash moved (the hash covers the section's encounter, so
+    // re-authoring an encounter is enough). Standing on void puts the explorer dot outside the drawn
+    // map with no way back, so an unstandable saved position sends the player to the entrance.
+    const cell = grid.cells[r]?.[c]
+    if (!cell || cell.type === "empty") return grid.entrancePos
     return [r, c]
   }, [grid, position, currentFloor])
 

@@ -5,16 +5,15 @@ import { STAR_BATTLE_CONFIG } from "./starBattleConfig"
 export const STAR_BATTLE_META: FamilyMeta = {
   id: "star-battle",
   ownerMod: "puzzle",
-  // `sky` and nothing else. The catalogue is explicit that this mechanic does not read as several places
-  // (PUZZLE_FAMILIES.md §4.24): counting stars per district is not a haul road or a waterworks, so unlike
-  // constellation it carries one tag and wears one face. NOT `light` either — that is the narrower pool for
-  // the families about light itself, and this one is about where things sit.
-  tags: ["puzzle", "sky"],
+  // The same pools twin stars draws from, and the same two faces, because a skin dresses a board and this
+  // is the same board (design doc §9). NOT `light` — that is the narrower pool for the families about light
+  // itself, and this one is about where things sit.
+  tags: ["puzzle", "sky", "water", "agriculture"],
   // Configured for every tier (docs/game-design/puzzles/star-battle.md §5).
   minTier: "starter",
-  // One skin, and the design doc §9 says why: the name is the theme. A site authored `theme: "night"` gets
-  // the same board, which is the eclipse arrangement — no roles, one ambience — rather than
-  // constellation's.
+  // A sky and a farm, the same two twin stars lists, so the lab can show both. A site never names a skin, it
+  // names a role; `theme: "night"` is an ambience the default skin already is.
+  themes: ["default", "fields"],
   icon: "⭐",
   color: "indigo",
   seedable: seedable({

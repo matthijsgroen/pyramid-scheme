@@ -491,10 +491,11 @@ describe(assembleFloor, () => {
     expect(sawRewardedGate).toBe(true) // otherwise this test never actually exercised the gate
   })
 
-  it("trapped sections have no back-door either — removing the first trap cuts off its whole chain", () => {
-    // Same leftover-spanning-tree-edge risk as gated sections, but for ungated trapped
-    // content: without isolation, a stray door could let a player step past a trap
-    // and still reach the section's reward.
+  it("sealed sections have no back-door either — removing the first room cuts off the whole chain", () => {
+    // Same leftover-spanning-tree-edge risk as gated sections, but for an ungated one: without
+    // isolation, a stray door could let a player step past what guards it and still reach the
+    // section's reward. This is how a trap gets protected — world-gen writes `sealed` on any section
+    // it gives a trap to (placeEncounters), because the assembler no longer reads encounters at all.
     const key = (r: number, c: number) => `${r},${c}`
     const DIR_MOVE_ALL: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
     const reachableFrom = (grid: FloorGrid, start: readonly [number, number], blocked: Set<string>) => {
@@ -523,7 +524,7 @@ describe(assembleFloor, () => {
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [
-        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, encounter: "trap" },
+        { pathPuzzles: 2, difficulty: "starter", end: "treasure", hidden: true, encounter: "trap", sealed: true },
         { pathPuzzles: 1, difficulty: "starter", end: "treasure" },
       ],
     })
@@ -1101,5 +1102,65 @@ describe(assembleFloor, () => {
         expect(wronglyTagged.length).toBe(0)
       }
     })
+  })
+})
+
+describe("section hashes across re-authored encounters", () => {
+  // A save files its explored cells and found corridors under section hashes, so a hash that moves
+  // costs the player that stretch of floor. Encounters are authored per pyramid and re-authored
+  // often, and re-authoring one changes no walls — so it must change no hashes either.
+  const SEED = 91
+  const configWith = (encounter: string | undefined): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure", encounter },
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure", hidden: true },
+    ],
+  })
+
+  const hashesOf = (config: FloorConfig): string[] => {
+    const result = assembleFloor("site-rehash", config, SEED)
+    if (!result.success) throw new Error("assembly failed")
+    return [
+      ...new Set(
+        result.grid.cells
+          .flat()
+          .filter(c => c.type === "room" || c.type === "corridor")
+          .map(c => (c as RoomCell).sectionHash ?? "")
+      ),
+    ].sort()
+  }
+
+  const shapeOf = (config: FloorConfig): string => {
+    const result = assembleFloor("site-rehash", config, SEED)
+    if (!result.success) throw new Error("assembly failed")
+    return JSON.stringify(
+      result.grid.cells.map(row =>
+        row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}`))
+      )
+    )
+  }
+
+  it("keeps a section's hash when its puzzle family is swapped for another", () => {
+    expect(hashesOf(configWith("sumplete"))).toEqual(hashesOf(configWith(undefined)))
+    // And the walls really are the same, so there was nothing for a save to lose.
+    expect(shapeOf(configWith("sumplete"))).toBe(shapeOf(configWith(undefined)))
+  })
+
+  it("keeps a section's hash even when it becomes a trap — the encounter is not the structure", () => {
+    // A trap used to carve differently, because the assembler isolated it from leftover maze edges
+    // on the strength of its tag. That isolation is now an authored structural field, so which family
+    // a room serves cannot reach the layout at all.
+    expect(hashesOf(configWith("arithmetic-reflex"))).toEqual(hashesOf(configWith("sumplete")))
+    expect(shapeOf(configWith("arithmetic-reflex"))).toBe(shapeOf(configWith("sumplete")))
+  })
+
+  it("moves a section's hash when it is sealed, because that really does move the walls", () => {
+    const sealed = configWith("sumplete")
+    sealed.sideSections![0] = { ...sealed.sideSections![0], sealed: true }
+    expect(hashesOf(sealed)).not.toEqual(hashesOf(configWith("sumplete")))
   })
 })

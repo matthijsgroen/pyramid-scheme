@@ -55,10 +55,31 @@ const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
   return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
 }
 
-// Section hash covers structural fields only — not rewards, render style, or specific key IDs.
-// Stable across: loot changes, key reassignment, corridor style tweaks.
-// Changes on: puzzle count, chest cadence, difficulty, exit type, gate presence, hidden/trapped flags.
-const computeMainSectionHash = (config: FloorConfig): string =>
+// A section hash is a run's handle on a stretch of floor: saved explored cells and found hidden
+// corridors are filed under it, and a cell whose hash no longer matches is dropped as stale. So it
+// must cover everything the LAYOUT depends on, and nothing else — a hash that moves for a
+// non-structural reason throws away progress on a floor that did not change.
+//
+// Stable across: loot changes, key reassignment, decorations, themes, and re-authoring WHICH
+// encounter a room serves. Changes on: puzzle count, difficulty, exit type, gate presence, hidden
+// flag, whether the section is isolated from leftover maze edges, and the floor's own carve knobs.
+//
+// Both hashes carry the floor's carve knobs (`packing`, `corridorStraightness`), because those
+// re-carve the WHOLE floor — every side section along with the main path. Without them a floor could
+// be re-shaped end to end while every hash held still, and a run would restore its explored cells
+// onto a maze that no longer exists. See docs/game-design/world-spec-stability.md.
+//
+// `isolated` is why an encounter is not in here directly. The assembler reads a section's encounter
+// for exactly one layout decision — a trap gets cut off from stray tree edges, the same treatment a
+// gate gets — so the hash records that decision rather than the encounter behind it. Swapping a
+// section from one puzzle family to another is then invisible to a save, which is the point: a
+// pyramid's encounters are authored per pyramid and re-authored often.
+// The hash as it was computed before `isolated` replaced `sealed`/`encounter` above. Assembled onto
+// every cell as `legacySectionHash` purely so a save written under the old scheme keeps matching its
+// own cells: without it, every section in the world would rehash at once, and since a looted room is
+// remembered only by its explored-cell entry, every chest would come back unlooted. Delete both of
+// these once no live save predates the change.
+const computeLegacyMainSectionHash = (config: FloorConfig): string =>
   String(
     hashString(
       JSON.stringify({
@@ -69,7 +90,7 @@ const computeMainSectionHash = (config: FloorConfig): string =>
     )
   )
 
-const computeSideSectionHash = (section: SideSection | SubSection, idx: number, parentIdx?: number): string =>
+const computeLegacySideSectionHash = (section: SideSection | SubSection, idx: number, parentIdx?: number): string =>
   String(
     hashString(
       JSON.stringify({
@@ -81,6 +102,48 @@ const computeSideSectionHash = (section: SideSection | SubSection, idx: number, 
         hidden: section.hidden,
         sealed: section.sealed,
         encounter: section.encounter,
+        gateType: section.gate?.type,
+      })
+    )
+  )
+
+// The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
+const carveShape = (config: FloorConfig) => ({
+  packing: config.packing,
+  corridorStraightness: config.corridorStraightness,
+})
+
+const computeMainSectionHash = (config: FloorConfig, isolated: boolean): string =>
+  String(
+    hashString(
+      JSON.stringify({
+        pathPuzzles: config.pathPuzzles,
+        difficulty: config.difficulty,
+        exitOrStaircase: config.exitOrStaircase,
+        isolated,
+        ...carveShape(config),
+      })
+    )
+  )
+
+const computeSideSectionHash = (
+  section: SideSection | SubSection,
+  idx: number,
+  isolated: boolean,
+  floor: FloorConfig,
+  parentIdx?: number
+): string =>
+  String(
+    hashString(
+      JSON.stringify({
+        idx,
+        parentIdx,
+        ...carveShape(floor),
+        pathPuzzles: section.pathPuzzles,
+        difficulty: section.difficulty,
+        end: section.end,
+        hidden: section.hidden,
+        isolated,
         gateType: section.gate?.type,
       })
     )
@@ -311,8 +374,6 @@ export const assembleFloor = (
 ): AssemblerResult => {
   const { resolveKeyRequirements = defaultResolveKeyRequirements, floorRef = { journeyId: siteId, floorIndex: 0 } } =
     keyRequirements
-  const isTrapSection = (encounter: string | string[] | undefined): boolean =>
-    resolveEncounter(encounter, "puzzle").tags.includes("trap")
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
@@ -908,9 +969,10 @@ export const assembleFloor = (
     const chainKeyHostIdxs = new Set(chainKeyColorMap.keys())
 
     // Build room cell specs: posKey -> room properties (sectionHash injected separately)
-    type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "hidden">
+    type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
     const roomSpecs = new Map<string, RoomSpec>()
     const cellSectionHash = new Map<string, string>()
+    const cellLegacySectionHash = new Map<string, string>()
     const hiddenCellPositions = new Set<string>()
     // Which section's authored decoration pool a footprint room should draw from.
     const cellDecorationPool = new Map<string, DecorationKind[] | undefined>()
@@ -948,35 +1010,34 @@ export const assembleFloor = (
       const [nr, nc] = mainPath[mi + 1]
       intendedEdgeKeys.add(pkey(r, c, nr, nc))
     }
-    // `sealed` opts a main path into the same isolation gated/trapped content already gets —
-    // every consecutive main-path edge is already `intended` above, so this only blocks
-    // *extra* leftover edges that would otherwise merge a shortcut around a puzzle room.
-    if (config.sealed) {
+    // Isolation: cut a stretch off from the leftover maze edges, so no stray tree edge lets a player
+    // step past what guards it. A gate asks for it, and `sealed` asks for it on an ordinary visible
+    // path — which is how a trap gets it too: world-gen writes `sealed` on the section it gives a
+    // trap to (placeEncounters), so nothing here has to read an encounter to lay out a floor. A
+    // sub-section inherits its parent's isolation — reaching it means going through the parent
+    // either way.
+    //
+    // Named once because the section hash records exactly this boolean, so hash and layout cannot
+    // drift apart: a floor forgets a run's progress only when its corridors really changed.
+    const sideIsolated = (idx: number): boolean => Boolean(sideSections[idx].gate) || Boolean(sideSections[idx].sealed)
+    const subIsolated = (parentIdx: number, sub: SubSection): boolean =>
+      sideIsolated(parentIdx) || Boolean(sub.gate) || Boolean(sub.sealed)
+    // Every consecutive main-path edge is already `intended` above, so isolating the main path only
+    // blocks *extra* leftover edges that would merge a shortcut around a puzzle room.
+    const mainIsolated = Boolean(config.sealed)
+
+    if (mainIsolated) {
       for (const [r, c] of mainPath) gatedCellKeys.add(posKey(r, c))
     }
     for (const group of sectionGroups) {
       markChain(group.attachedAt, group.cells)
-      // Trapped content gets the same isolation as gated content — a stray tree edge
-      // would otherwise let a player step past a trap cell for free. `sealed` opts any
-      // ordinary (visible, ungated) path into the same protection on request.
-      if (
-        sideSections[group.sectionIdx].gate ||
-        isTrapSection(sideSections[group.sectionIdx].encounter) ||
-        sideSections[group.sectionIdx].sealed
-      ) {
+      if (sideIsolated(group.sectionIdx)) {
         for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
       }
     }
     for (const sub of subSectionGroups) {
       markChain(sub.attachedAt, sub.cells)
-      if (
-        sideSections[sub.parentSectionIdx].gate ||
-        sub.subSection.gate ||
-        isTrapSection(sideSections[sub.parentSectionIdx].encounter) ||
-        isTrapSection(sub.subSection.encounter) ||
-        sideSections[sub.parentSectionIdx].sealed ||
-        sub.subSection.sealed
-      ) {
+      if (subIsolated(sub.parentSectionIdx, sub.subSection)) {
         for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
       }
     }
@@ -986,25 +1047,42 @@ export const assembleFloor = (
       return !gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))
     }
 
-    const mainSectionHash = computeMainSectionHash(config)
+    const mainSectionHash = computeMainSectionHash(config, mainIsolated)
+    const legacyMainSectionHash = computeLegacyMainSectionHash(config)
     for (const [r, c] of mainPath) {
       cellSectionHash.set(posKey(r, c), mainSectionHash)
+      cellLegacySectionHash.set(posKey(r, c), legacyMainSectionHash)
       cellDecorationPool.set(posKey(r, c), config.decorations)
     }
     for (const group of sectionGroups) {
-      const sHash = computeSideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
+      const sHash = computeSideSectionHash(
+        sideSections[group.sectionIdx],
+        group.sectionIdx,
+        sideIsolated(group.sectionIdx),
+        config
+      )
+      const legacyHash = computeLegacySideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
       const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
       const pool = sideSections[group.sectionIdx].decorations
       for (const [r, c] of group.cells) {
         cellSectionHash.set(posKey(r, c), sHash)
+        cellLegacySectionHash.set(posKey(r, c), legacyHash)
         cellDecorationPool.set(posKey(r, c), pool)
         if (isHidden) hiddenCellPositions.add(posKey(r, c))
       }
     }
     for (const { subSection, cells, parentSectionIdx, subSectionIdx } of subSectionGroups) {
-      const sHash = computeSideSectionHash(subSection, subSectionIdx, parentSectionIdx)
+      const sHash = computeSideSectionHash(
+        subSection,
+        subSectionIdx,
+        subIsolated(parentSectionIdx, subSection),
+        config,
+        parentSectionIdx
+      )
+      const legacyHash = computeLegacySideSectionHash(subSection, subSectionIdx, parentSectionIdx)
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
+        cellLegacySectionHash.set(posKey(r, c), legacyHash)
         cellDecorationPool.set(posKey(r, c), subSection.decorations)
       }
     }
@@ -1290,6 +1368,7 @@ export const assembleFloor = (
 
       const spec = roomSpecs.get(cellKey)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
+      const legacySectionHash = cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
       if (spec) {
         // Spread the whole spec (RoomSpec = RoomCell minus the structural fields set here)
@@ -1301,6 +1380,7 @@ export const assembleFloor = (
           dirs,
           state: "fogged",
           sectionHash,
+          legacySectionHash,
           ...(hidden ? { hidden } : {}),
           ...spec,
         }
@@ -1311,6 +1391,7 @@ export const assembleFloor = (
           dirs,
           state: "fogged",
           sectionHash,
+          legacySectionHash,
           ...(hidden ? { hidden } : {}),
         }
         cells2D[r][c] = corridorCell
@@ -1342,6 +1423,7 @@ export const assembleFloor = (
           dirs: new Set([d, OPPOSITE[d]]),
           state: "fogged",
           sectionHash,
+          legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
           ...(hidden ? { hidden } : {}),
         }
       }

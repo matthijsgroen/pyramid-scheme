@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- The one-star grid can wear the flood plain too, the same farmland face its two-star twin wears. Both now draw from the same places.
+- Re-authoring what a room holds no longer costs you the floor it is on. A pyramid keeps its explored corridors, its found passages and its opened chests when the puzzles inside it are rewritten — traps included. A floor forgets what you did there only when its corridors really change.
+- Building the world now stops on any chest that would hold nothing, rather than working around it. Whether such a chest gets loot or gets removed is an authoring call, so nothing ships until it is made.
+- Changing how long or how winding a pyramid's corridors are now resets the floors it changed, rather than restoring your explored corridors onto a layout that had been re-drawn underneath them.
+- A fork branch that leads past a trap to something worth reaching no longer counts as a dead loss when a floor is laid out. A branch that is nothing but a trap still does.
+
 ### Fixed
 
+- Your explorer could turn up outside the map, standing on nothing, after an update: the spot you saved on had stopped being a place you can stand. You now start such a visit at the entrance instead.
 - A tomb kept saying it had something left when it did not. A chest behind a tableau you cannot read yet was counted as if only its own door stood in the way, so the map lit up on hieroglyphs that were never enough — and walking the whole tomb again found nothing. A place now asks for everything standing between you and it.
 
 ## 0.38.0 - 2026-08-23

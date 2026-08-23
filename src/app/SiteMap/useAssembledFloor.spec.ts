@@ -149,3 +149,99 @@ describe("useAssembledFloor — hidden junctions", () => {
     expect(cell?.state).toBe("visible")
   })
 })
+
+describe("useAssembledFloor — restoring a saved position", () => {
+  // A save holds a cell, and a cell can stop being standable between releases. The one that bites in
+  // practice: a section's hash covers its encounter, so re-authoring an encounter turns a hidden
+  // section the player had already found back into an unfound one — and if they saved while standing
+  // inside it, their cell is masked to void. In bounds, but not on the map, which is where the
+  // explorer dot ends up drawn.
+  const hiddenCellOf = (grid: FloorGrid): [number, number] => {
+    for (let r = 0; r < grid.rows; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if ((cell.type === "room" || cell.type === "corridor") && cell.hidden) return [r, c]
+      }
+    }
+    throw new Error("no hidden cell found")
+  }
+
+  it("sends the player back to the entrance when the saved cell is no longer somewhere they can stand", () => {
+    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
+    if (!assembled.success) throw new Error("assembly failed")
+    const [hr, hc] = hiddenCellOf(assembled.grid)
+
+    const { result } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, encodeEdge(0, hr, hc), 0, new Set())
+    )
+
+    // Masked to void, so it must not be honoured.
+    expect(result.current.grid!.cells[hr][hc].type).toBe("empty")
+    expect(result.current.explorerPos).toEqual(result.current.grid!.entrancePos)
+  })
+
+  it("honours a saved cell that is still standable", () => {
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, null, 0, new Set()))
+    const grid = result.current.grid!
+    const [er, ec] = grid.entrancePos
+    // Any real neighbour of the entrance: a position the player could genuinely have saved on.
+    const standable = ([...(grid.cells[er][ec] as CorridorCell | RoomCell).dirs] as string[])
+      .map(d => DIR_MOVE[d])
+      .map(([dr, dc]) => [er + dr, ec + dc] as [number, number])
+      .find(([r, c]) => grid.cells[r]?.[c]?.type !== "empty")!
+
+    const { result: restored } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, encodeEdge(0, standable[0], standable[1]), 0, new Set())
+    )
+    expect(restored.current.explorerPos).toEqual(standable)
+  })
+})
+
+describe("useAssembledFloor — saves written under the old section hash", () => {
+  // The section hash stopped covering a section's encounter, so every hash in the world moved once.
+  // A looted room is remembered only by its explored-cell entry under that hash, so a save that
+  // stopped matching would hand every chest back unlooted. Cells carry their old hash for exactly
+  // this, and both readers accept it.
+  it("still counts a cell explored when the save filed it under the old hash", () => {
+    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
+    if (!assembled.success) throw new Error("assembly failed")
+    const grid = assembled.grid
+
+    // A visible cell with both hashes on it — what an old save would have recorded.
+    let target: { pos: [number, number]; legacy: string } | null = null
+    for (let r = 0; r < grid.rows && !target; r++) {
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type === "empty" || cell.hidden || !cell.legacySectionHash) continue
+        if (cell.legacySectionHash === cell.sectionHash) continue
+        target = { pos: [r, c], legacy: cell.legacySectionHash }
+        break
+      }
+    }
+    if (!target) throw new Error("no cell whose hash actually moved")
+
+    const oldSave = { [target.legacy]: [encodeEdge(0, target.pos[0], target.pos[1])] }
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, oldSave, null, 0, new Set()))
+
+    const restored = result.current.grid!.cells[target.pos[0]][target.pos[1]]
+    expect(restored.type).not.toBe("empty")
+    expect((restored as CorridorCell | RoomCell).state).toBe("completed")
+  })
+
+  it("still counts a hidden corridor found when the save filed it under the old hash", () => {
+    const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
+    if (!assembled.success) throw new Error("assembly failed")
+    const grid = assembled.grid
+
+    const hiddenCell = grid.cells.flat().find(c => c.type !== "empty" && c.hidden) as CorridorCell | RoomCell
+    const legacy = hiddenCell.legacySectionHash!
+    expect(legacy).not.toBe(hiddenCell.sectionHash)
+
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, null, 0, new Set([legacy])))
+
+    // Unmasked, so a player standing inside it is still standing somewhere real.
+    expect(result.current.hiddenSectionHashes.size).toBe(0)
+    const stillThere = result.current.grid!.cells.flat().some(c => c.type !== "empty" && c.hidden)
+    expect(stillThere).toBe(true)
+  })
+})

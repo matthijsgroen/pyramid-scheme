@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest"
-import { validateRewardCounts } from "./validate"
+import { findEmptyChests, validateRewardCounts } from "./validate"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
+import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
@@ -141,3 +142,45 @@ describe("validateRewardCounts", () => {
 
 // The shop economy guard moved to the shop mod (src/mods/shop/game/economyGuard.spec.ts) —
 // it's a shop-owned balance check, injected as the mod's worldValidator, not a core rule.
+
+describe("findEmptyChests", () => {
+  // Chests are authored. The generator will not rearrange a floor around one that holds nothing, so
+  // this is what tells the author to settle it: add loot, or take the chest out.
+  const grid = (rooms: Array<Partial<RoomCell>>): FloorGrid => ({
+    cells: [
+      rooms.map(r => ({ type: "room", roomType: "encounter", dirs: new Set(), state: "fogged", ...r }) as RoomCell),
+    ],
+    rows: 1,
+    cols: rooms.length,
+    entrancePos: [0, 0],
+    exitPos: [0, rooms.length - 1],
+    siteId: "s",
+    staircases: {},
+  })
+
+  const found = (rooms: Array<Partial<RoomCell>>) =>
+    findEmptyChests({ j: [[floor()]] }, () => grid(rooms)).map(c => `${c.row},${c.col}`)
+
+  it("names a treasure room that holds nothing", () => {
+    expect(found([{ tags: ["treasure"] }])).toEqual(["0,0"])
+  })
+
+  it("says nothing about a chest that holds something", () => {
+    expect(found([{ tags: ["treasure"], reward: { type: "money", amount: 1 } }])).toEqual([])
+  })
+
+  it("says nothing about a floor-key host, which holds a key rather than a reward", () => {
+    // A treasure end with no authored endReward is how a section OFFERS itself as a key host — the
+    // assembler puts a key in it. Reading the spec alone would report every one of those as empty.
+    expect(found([{ tags: ["treasure"], keyColor: "blue" }])).toEqual([])
+  })
+
+  it("says nothing about a stocked shop, and names an unstocked one", () => {
+    expect(found([{ tags: ["shop"], stock: [{ type: "money", amount: 1 }] }])).toEqual([])
+    expect(found([{ tags: ["shop"], stock: [undefined] }])).toEqual(["0,0"])
+  })
+
+  it("leaves puzzle rooms alone — a puzzle without loot is an ordinary room", () => {
+    expect(found([{ tags: ["puzzle"] }])).toEqual([])
+  })
+})
