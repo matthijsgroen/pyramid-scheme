@@ -34,8 +34,11 @@ const applyExplored = (grid: FloorGrid, floor: number, exploredSections: Record<
       if (r >= result.rows || c >= result.cols) continue
       const cell = result.cells[r][c]
       if (cell.type === "empty") continue
-      // Skip stale cells whose section was restructured since save
-      if (cell.sectionHash !== sectionHash) continue
+      // Skip stale cells whose section was restructured since save. A save written before the
+      // section hash stopped covering the encounter files its cells under the old hash, so that one
+      // counts as a match too — otherwise the whole world would read as unexplored, and since a
+      // looted room is remembered only by this entry, every chest would come back unlooted.
+      if (cell.sectionHash !== sectionHash && cell.legacySectionHash !== sectionHash) continue
       result = completeCell(result, r, c)
     }
   }
@@ -67,7 +70,12 @@ const maskHiddenCells = (
       const cell = grid.cells[r][c]
       if ((cell.type === "room" || cell.type === "corridor") && cell.hidden) {
         const hash = cell.sectionHash ?? ""
-        if (!revealedSections.has(hash)) {
+        // Found under either hash — an older save recorded this corridor under the pre-0.39 one, and
+        // a corridor that forgets it was found masks the player's own cell back to void.
+        const wasFound =
+          revealedSections.has(hash) ||
+          (cell.legacySectionHash !== undefined && revealedSections.has(cell.legacySectionHash))
+        if (!wasFound) {
           hiddenPos.set(`${r},${c}`, hash)
           if (hash) hiddenSectionHashes.add(hash)
         }

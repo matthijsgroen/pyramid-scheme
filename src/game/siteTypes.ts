@@ -25,6 +25,10 @@ export type CorridorCell = {
   dirs: ReadonlySet<Direction>
   state: CellState
   sectionHash?: string
+  /** The hash this cell had before the section hash stopped covering the encounter, so a save
+   *  written under the old scheme still recognises its own cells. Read-only compatibility — nothing
+   *  writes it back, and it can go once no live save predates that change. */
+  legacySectionHash?: string
   hidden?: boolean
 }
 export type GateVariant = "floor-key" | "tomb-key"
@@ -40,6 +44,8 @@ export type RoomCell = {
   dirs: ReadonlySet<Direction>
   state: CellState
   sectionHash?: string
+  /** See CorridorCell.legacySectionHash. */
+  legacySectionHash?: string
   hidden?: boolean
   reward?: TreasureReward
   /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the

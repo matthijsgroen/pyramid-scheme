@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Re-authoring which puzzle a room serves no longer costs you the floor it is on. A pyramid keeps its explored corridors, its found passages and its opened chests when the encounters inside it are rewritten — only a change that really moves the walls forgets what you did there.
+
 ### Fixed
 
 - Your explorer could turn up outside the map, standing on nothing, after an update: the spot you saved on had stopped being a place you can stand. You now start such a visit at the entrance instead.

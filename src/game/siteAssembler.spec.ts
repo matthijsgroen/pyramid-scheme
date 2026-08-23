@@ -1103,3 +1103,55 @@ describe(assembleFloor, () => {
     })
   })
 })
+
+describe("section hashes across re-authored encounters", () => {
+  // A save files its explored cells and found corridors under section hashes, so a hash that moves
+  // costs the player that stretch of floor. Encounters are authored per pyramid and re-authored
+  // often, and re-authoring one changes no walls — so it must change no hashes either.
+  const SEED = 91
+  const configWith = (encounter: string | undefined): FloorConfig => ({
+    pathPuzzles: 2,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure", encounter },
+      { pathPuzzles: 1, difficulty: "expert", end: "treasure", hidden: true },
+    ],
+  })
+
+  const hashesOf = (config: FloorConfig): string[] => {
+    const result = assembleFloor("site-rehash", config, SEED)
+    if (!result.success) throw new Error("assembly failed")
+    return [
+      ...new Set(
+        result.grid.cells
+          .flat()
+          .filter(c => c.type === "room" || c.type === "corridor")
+          .map(c => (c as RoomCell).sectionHash ?? "")
+      ),
+    ].sort()
+  }
+
+  const shapeOf = (config: FloorConfig): string => {
+    const result = assembleFloor("site-rehash", config, SEED)
+    if (!result.success) throw new Error("assembly failed")
+    return JSON.stringify(
+      result.grid.cells.map(row =>
+        row.map(c => (c.type === "empty" ? "." : `${c.type[0]}${[...c.dirs].sort().join("")}`))
+      )
+    )
+  }
+
+  it("keeps a section's hash when its puzzle family is swapped for another", () => {
+    expect(hashesOf(configWith("sumplete"))).toEqual(hashesOf(configWith(undefined)))
+    // And the walls really are the same, so there was nothing for a save to lose.
+    expect(shapeOf(configWith("sumplete"))).toBe(shapeOf(configWith(undefined)))
+  })
+
+  it("moves a section's hash when it becomes a trap, because that does move the walls", () => {
+    // arithmetic-reflex carries the "trap" tag, and trapped content is cut off from leftover maze
+    // edges — a real structural change, so the save must not keep its old cells here.
+    expect(hashesOf(configWith("arithmetic-reflex"))).not.toEqual(hashesOf(configWith("sumplete")))
+  })
+})
