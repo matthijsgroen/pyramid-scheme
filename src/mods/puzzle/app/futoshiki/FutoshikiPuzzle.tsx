@@ -17,6 +17,7 @@ import {
   undoFutoshikiMove,
 } from "@/mods/puzzle/game/futoshiki/futoshikiState"
 import { futoshikiConflicts, isFutoshikiSolved, strandedNotes } from "@/mods/puzzle/game/futoshiki/futoshikiStatus"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -50,6 +51,28 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
     [puzzle, state, solution, techniqueCap]
   )
 
+  /**
+   * The board finishes itself before the shell is told, by COUNTING UP: the whole grid rolls to 1, the squares
+   * that really are 1 swell and keep it, the rest roll on to 2, and so on to the width of the grid.
+   *
+   * The shell freezes the board and starts its banner the moment it hears "solved", so the celebration has to
+   * happen BEFORE that word is said (`puzzle-screens.md` §3) — the family reports the solve a beat later, and
+   * input is refused for that beat, or a number changed mid-run would land a solve on a board that is no
+   * longer solved.
+   *
+   * **A tick is a NUMBER, not a square**, and that is the family rather than a house style: what this board
+   * is about is order — every chevron is a claim about which of two numbers is bigger — so a count from 1 to n
+   * is the board reading its own answer back, in the order the signs argued for. A sweep across the grid would
+   * say nothing about order, and eclipse already owns that motion.
+   *
+   * **Read off `progress` rather than off `done`**, which is what keeps the reduced-motion case honest: a
+   * skipped run reports done with progress still at 0, so the count is simply never on and the board is never
+   * anything but the answer the player filled in.
+   */
+  const finished = isFutoshikiSolved(puzzle, values)
+  const celebration = useCelebration(finished, size)
+  const counted = celebration.progress > 0 ? Math.round(celebration.progress * size) : undefined
+
   const enterNumber = useCallback(
     (value: number) => {
       if (!selected) return
@@ -67,7 +90,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel}
-      solved={isFutoshikiSolved(puzzle, values)}
+      solved={celebration.done}
       onReset={() => {
         setState(createFutoshikiState(puzzle))
         clearSelection()
@@ -90,7 +113,9 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
             selected={selected}
             highlighted={hintVisible ? hint?.cells : undefined}
             litSigns={hintVisible ? hint?.constraints : undefined}
+            counted={counted}
             onSelect={(row, col) => {
+              if (finished) return // the board is finishing; nothing may change under the celebration
               reportInput()
               selectCell(row, col)
             }}
@@ -98,14 +123,15 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
           <FutoshikiPad
             size={size}
             pencil={pencil}
-            canUndo={canUndoFutoshiki(state)}
+            canUndo={canUndoFutoshiki(state) && !finished}
             exhausted={exhaustedNumbers(values, size)}
-            disabled={!selected}
+            disabled={!selected || finished}
             onNumber={value => {
               reportInput()
               enterNumber(value)
             }}
             onErase={() => {
+              if (finished) return
               reportInput()
               eraseCell()
             }}
@@ -114,6 +140,7 @@ export const FutoshikiPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
               togglePencil()
             }}
             onUndo={() => {
+              if (finished) return
               reportInput()
               setState(undoFutoshikiMove)
             }}

@@ -12,6 +12,11 @@ type Props = {
   highlighted?: ReadonlySet<string>
   /** The line the hint reasons about — lit so "this line still needs 6" points somewhere. */
   litLine?: { kind: "row" | "col"; index: number }
+  /**
+   * How many lines the completion run has checked off (`puzzle-screens.md` §3): the rows top to bottom first,
+   * then the columns left to right. Unset means no run.
+   */
+  checked?: number
   onToggle: (row: number, col: number) => void
 }
 
@@ -54,8 +59,10 @@ const lineCls = (line: SumpleteLine) =>
 
 // The target is white for contrast — it is the number the player reads on every glance. The live
 // total keeps the line's status colour, so over/under/exact still reads at a distance.
-const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
-  <div className={lineCls(line)}>
+const LineTarget: FC<{ line: SumpleteLine; checking?: boolean }> = ({ line, checking }) => (
+  // The run flares the target rather than the numbers, because the target IS the claim: a line that adds up
+  // is what this board wins by, and it is already the thing that turns green when it does.
+  <div className={clsx(lineCls(line), checking && "animate-flare")}>
     <span className="text-[min(5.5vw,1.35rem)] leading-none font-bold text-white">{line.target}</span>
     <span className="text-[min(3.4vw,0.8rem)] leading-none opacity-80">{line.total}</span>
   </div>
@@ -65,7 +72,7 @@ const LineTarget: FC<{ line: SumpleteLine }> = ({ line }) => (
 // plus its target column and row — has to fit a phone screen without pan or zoom
 // (docs/instructions/puzzle-screens.md §1). Width comes from the container rather than from `vw`, so
 // the modal's own padding can never push the board past the screen edge.
-export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, onToggle }) => {
+export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted, litLine, checked, onToggle }) => {
   const size = grid.length
   const inLitLine = (row: number, col: number) =>
     litLine ? (litLine.kind === "row" ? litLine.index === row : litLine.index === col) : false
@@ -94,11 +101,13 @@ export const SumpleteBoard: FC<Props> = ({ grid, cells, rows, cols, highlighted,
               )}
             </button>
           ))}
-          <LineTarget line={rows[row]} />
+          {/* The rows are checked off first, so a row's turn is its own index. */}
+          <LineTarget line={rows[row]} checking={checked !== undefined && row < checked} />
         </div>
       ))}
       {cols.map((line, col) => (
-        <LineTarget key={col} line={line} />
+        // The columns follow the rows, so their turns run from `size` up.
+        <LineTarget key={col} line={line} checking={checked !== undefined && size + col < checked} />
       ))}
     </div>
   )

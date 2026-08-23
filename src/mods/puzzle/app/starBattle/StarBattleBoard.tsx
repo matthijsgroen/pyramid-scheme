@@ -27,6 +27,8 @@ type Props = {
   decided?: ReadonlySet<number>
   /** The one square the current hint is ABOUT, drawn strongest of all. */
   focus?: number
+  /** The answers that have had their turn in the completion run, so far (`puzzle-screens.md` §3). */
+  celebrated?: ReadonlySet<number>
   onTapCell: (cell: number) => void
   /** A run of squares ruled out in one gesture — see the drag handlers below. */
   onSweepCells: (cells: number[]) => void
@@ -80,6 +82,7 @@ export const StarBattleBoard: FC<Props> = ({
   highlighted,
   decided,
   focus,
+  celebrated,
   onTapCell,
   onSweepCells,
 }) => {
@@ -209,7 +212,7 @@ export const StarBattleBoard: FC<Props> = ({
             )}
           >
             {value === "star" ? (
-              <span className={clsx("block size-full", skin.answer)}>
+              <span className={clsx("block size-full", skin.answer, celebrated?.has(cell) && skin.celebrate)}>
                 <skin.Glyph />
               </span>
             ) : value === "dark" || sweeping.includes(cell) ? (

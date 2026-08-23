@@ -301,6 +301,31 @@ OUTLINE — a filled star against a ring of empty sky — so the board stays rea
 colour. That rule is what makes another skin cheap; a pair that differed only in hue would
 not be a skin, it would be a bug in two colours.
 
+### 9.1 The completion run — one sweep across the board
+
+**A solved board sweeps once, top-left corner to bottom-right, and only then reports the solve.** Each mark
+swells and comes back as the wave reaches it. The shell freezes the board and starts its banner the moment it
+is told (`puzzle-screens.md` §3), so the celebration happens before that word is said — the family reports the
+solve a beat later, and core supplies only the clock (`useCelebration.ts`).
+
+**A tick is a DIAGONAL, not a square.** What this board has to say at the end is "all of it is right" — every
+line, in both directions, and every sign between them — and a diagonal sweep is the one motion that touches
+every row and every column without pointing at any of them. Per-square ticks would also spend the whole run
+on a flicker: a wizard board is forty-nine squares inside one second, where its thirteen diagonals read as a
+wave.
+
+Three constraints, the shared ones:
+
+- **The whole run is about a second**, because the shell stops its solve-time clock when it hears "solved" and
+  that number is what `PUZZLE_FAMILIES.md` §3.2's budget is measured with.
+- **Input is refused while it runs** — cycling a mark mid-run would land a solve on a board that is no longer
+  solved. Undo is held shut for the same beat.
+- **`prefers-reduced-motion` skips it whole**, animation and wait together.
+
+**The swell is on the mark rather than on the square**, so the wave stays inside the grid: a square growing
+would push its neighbours, and this board's squares are already as close as its gaps allow. Givens take their
+turn along with the rest — a given is part of the finished board even though it was never part of the answer.
+
 ## 10. Open questions
 
 1. **Does the family want givens at all?** Generation drives them to nought or one,
