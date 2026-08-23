@@ -15,20 +15,18 @@ import type { StarBattleOptions } from "./generateStarBattle"
  * What the second star buys is the reason this exists. At one star a group is answered the moment its star
  * is found; at two, a group stays a capacity argument until its last star lands — `groupTight` fires ten
  * times a board here against eight at one star, and it fires on squares rather than on a single square. It
- * also gives the mechanic a PAIR to name, which is what a skin can hang a fiction on (§11.3): two watchmen
- * to a district, two torches to a chamber. A lone star only ever reads as the one and only, which is why
- * star battle wears `sky` and nothing else.
+ * also gives the mechanic a PAIR to name, which is the strongest fiction a skin on this board can hang on
+ * (§11.3): two watchmen to a district, two torches to a chamber, two households to a field. Strongest, not
+ * only — one farmstead to a holding reads perfectly well, which is why both families wear both faces.
  */
 export const TWIN_STARS_META: FamilyMeta = {
   id: "twin-stars",
   ownerMod: "puzzle",
-  // The same `sky` cluster star battle carries — this is about where things sit, not about light — and
-  // **the Water & Agriculture pool as well**, which star battle cannot join. Those two roles held exactly
-  // one family (constellation's irrigation skin), so a journey authoring them got the same puzzle five
-  // times; this is the second member, and unlike a second skin on an existing family it brings different
-  // reasoning rather than a different dress. The face it wears there is `fields` (app/starBattle/skins.ts).
+  // The same pools star battle carries. What this family adds to Water & Agriculture is not a face — it
+  // wears the same `fields` (app/starBattle/skins.ts) — but different reasoning: a holding that takes two
+  // households stays a capacity argument until its second one lands.
   tags: ["puzzle", "sky", "water", "agriculture"],
-  // A farm and a sky. Listed so the lab can show both — a site never names a skin, it names a role.
+  // A farm and a sky, the same two star battle lists. A site never names a skin, it names a role.
   themes: ["default", "fields"],
   // 8×8 is the SMALLEST grid this rule has boards on — 7×7 and 6×6 admit no legal star set at all (two to
   // a row and two to a column that never touch does not fit). The debut is a junior one anyway, because the

@@ -442,15 +442,22 @@ Beyond the shared screen bar:
 The family emits logical state only — `cell(star | dark | empty) | region(id) | quota(n)` —
 and the skin decides what any of it looks like.
 
-**Two skins, and which family a room is decides whether the second is reachable.** Stars in
-a night sky is the `sky` pool's plainest possible face and the name is the theme; farmsteads
-on a flood plain is the same board drawn for `agriculture` or `water` (§11.3).
+**Two skins, and both families wear both.** Stars in a night sky is the `sky` pool's plainest
+possible face and the name is the theme; farmsteads on a flood plain is the same board drawn
+for `agriculture` or `water` (§11.3). Star battle and twin stars carry the same four tags and
+list the same two themes, because a skin dresses a board and this is the same board.
 
-**Star battle itself has one skin, and that is a fact about ONE star rather than about the
-mechanic.** A lone star reads as the one and only — the single thing a place is allowed —
-which is why counting stars per district is not a waterworks and why this family carries
-`sky` and nothing else. A PAIR is what a place can hold two of, so the second face belongs
-to twin stars and this family cannot wear it.
+**The pair is the strongest fiction the flood plain has, not the only one.** Two households to
+a holding is what the place was written for, and it is twin stars' outright. At one star the
+same holding takes one farmstead — `starBattle.goal.fields_one` says exactly that — and what
+carries the place either way is the no-touching rule: two farmsteads that close would draw on
+the same well. That rule does not change with the count.
+
+**Neither family reaches the flood plain in play yet, and the reason is authoring rather than
+code.** No journey asks for `water` or `agriculture` (`src/worldGen/spec/*.ts` authors
+`sky`, `trade`, `trap`, `shop` and plain `puzzle`), so the pool is empty of rooms rather than
+of families. One line on a journey — the shape `junior_4` already uses for `sky` — is what
+turns the face on.
 
 ## 10. Open questions
 
@@ -558,11 +565,11 @@ a group's legal placements, which the family does not have (§11.5).
 
 ### 11.3 The pair is what a skin can name
 
-This is the family that answers §9's open reading. **A lone star only ever reads as the one
-and only** — which is why star battle wears `sky` and nothing else, and why the watchman
-reading never had anywhere to go. A PAIR reads as a great many things a place can hold two
-of: two watchmen to a district, two torches to a chamber, two royals to a country, two
-households to a field.
+This is the family the flood plain was written for. **A pair reads as a great many things a
+place can hold two of**: two watchmen to a district, two torches to a chamber, two royals to
+a country, two households to a field. A lone star reads as the one and only, which is a
+narrower fiction but not an unusable one — one farmstead to a holding is a sentence that
+works, and it is the sentence star battle shows on the same skin (§9).
 
 A theme fits this mechanic when it can name three things: something straight that crosses the
 whole world (the rows and columns), something bounded and ragged (the regions), and a reason
