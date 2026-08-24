@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Every puzzle now shows what it is called above the board — and a puzzle that dresses itself differently per room is named for the room it is in.
+
+- A new puzzle: one unbroken run of numbers carried from cell to touching cell, by tapping or by dragging, until the whole board is filled. It wears the room it is found in — a kept hive, a channel dug across dry fields that green as the water reaches them, or a line of figures inked across a scribe's papyrus.
+
 ## 0.38.3 - 2026-08-23
 
 ### Fixed

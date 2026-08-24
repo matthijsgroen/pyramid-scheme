@@ -8,9 +8,10 @@ import { ECLIPSE_META } from "./game/eclipse/meta"
 import { CONSTELLATION_META } from "./game/constellation/meta"
 import { STAR_BATTLE_META } from "./game/starBattle/meta"
 import { TWIN_STARS_META } from "./game/starBattle/twinStars"
+import { HIDATO_META } from "./game/hidato/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
-// lightbeam, eclipse, constellation, star battle, twin stars) and the crocodile capstone. A root mod: it stays on in
+// lightbeam, eclipse, constellation, star battle, twin stars, hidato) and the crocodile capstone. A root mod: it stays on in
 // production (turning it off leaves puzzle/capstone rooms with no family, so they only auto-resolve via
 // the family-absence pass-through — a degenerate world, not a playable one). It is a real REGISTERED_MODS entry anyway so its family
 // metadata flows through MOD_FAMILY_META like every other mod's — adding a new puzzle family is then a
@@ -34,6 +35,7 @@ export const puzzleMod: ModDescriptor = {
     CONSTELLATION_META,
     STAR_BATTLE_META,
     TWIN_STARS_META,
+    HIDATO_META,
     CROCODILE_META,
   ],
 }

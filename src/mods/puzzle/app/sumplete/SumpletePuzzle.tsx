@@ -71,6 +71,7 @@ export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCanc
           .join("\n")
       }
       idleMs={hintIdleDelay(difficulty)}
+      title={t("sumplete.name")}
       goal={t("sumplete.goal")}
       rules={<SumpleteRules />}
     >

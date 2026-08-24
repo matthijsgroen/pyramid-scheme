@@ -81,6 +81,7 @@ export const LightbeamPuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCan
       hint={solved ? undefined : hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
+      title={t("lightbeam.name")}
       goal={t("lightbeam.goal")}
       rules={<LightbeamRules puzzle={puzzle} />}
     >

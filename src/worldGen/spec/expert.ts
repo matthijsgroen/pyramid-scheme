@@ -115,11 +115,11 @@ export const expertRules: Rule[] = [
 
   ...wardRules,
 
-  // **The Nile Delta Expedition wants water puzzles, and the role is the part that waits.** The bridges
-  // board already CARRIES `water` and `agriculture` — a tag is eligibility, so it costs nothing to be ready
-  // — but it is the only family serving them, so authoring the role here would make five pyramids of the same
-  // board in the same dress. The moment a second water family exists (the water clock, or the water-jug
-  // puzzle §11.1 flags), this is the whole change:
+  // **The Nile Delta Expedition wants water puzzles, and the role is the part that waits.** The pool is no
+  // longer thin: the bridges board carries `water` and `agriculture`, and so does the hive (hidato), which
+  // brings the number line rather than a second dress. What is left is playtesting them side by side in the
+  // lab — five pyramids of one role is only varied if its members read as different rooms. Then this is the
+  // whole change:
   //
   //   journey("expert_3").pyramid("1-5", { encounter: "water" })
   //

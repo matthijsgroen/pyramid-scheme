@@ -271,11 +271,14 @@ const CrocodileComponent = ({ puzzle, onSolved }: { puzzle: CompareLevel; onSolv
   )
 }
 
-const CrocodileFamilyComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, onSolved, onCancel }) => (
-  <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
-    {({ solved }) => <CrocodileComponent puzzle={puzzle} onSolved={solved} />}
-  </PuzzleFamilyShell>
-)
+const CrocodileFamilyComponent: FamilyPlugin<CompareLevel>["Component"] = ({ puzzle, onSolved, onCancel }) => {
+  const { t } = useTranslation("common")
+  return (
+    <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel} title={t("tomb.crocodileName")}>
+      {({ solved }) => <CrocodileComponent puzzle={puzzle} onSolved={solved} />}
+    </PuzzleFamilyShell>
+  )
+}
 
 if (isModEnabled("puzzle"))
   registerFamily({

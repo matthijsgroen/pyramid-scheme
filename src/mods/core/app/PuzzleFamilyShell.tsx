@@ -48,6 +48,22 @@ type Props = {
    * though the board underneath them is.
    */
   goal?: ReactNode
+  /**
+   * What this room is CALLED, shown over the board with the tier beside it.
+   *
+   * A board is recognisable by its shape once it is open, and not at all before that — a floor of rooms,
+   * or a list of them, is a set of icons that all mean "a puzzle". The name is what a player says to
+   * themselves about a room, and it is worth the line it takes.
+   *
+   * **Worded per identity, like everything else over the board** (`puzzle-screens.md` §1.1): the family
+   * hands over a name, not an id, so the same mechanic dressed as a causeway is called one. Core never
+   * learns a family's names — it only knows where to put one.
+   *
+   * **The tier is deliberately not said here.** Every path is authored to a difficulty already, and that
+   * data is for telling a player which kind of area they are walking into while they cross the floor — so
+   * a label inside the room states it somewhere it can no longer be acted on.
+   */
+  title?: string
   /** The rules of this puzzle, shown under the board — scrolled to, never popped up. */
   rules?: ReactNode
   children: (api: PuzzleShellApi) => ReactNode
@@ -71,6 +87,7 @@ export const PuzzleFamilyShell = ({
   idleMs,
   onHintRevealed,
   goal,
+  title,
   rules,
   children,
 }: Props) => {
@@ -166,6 +183,13 @@ export const PuzzleFamilyShell = ({
           </button>
         )}
       </div>
+      {/* On its own line rather than between the buttons: back, reset and hint already fill a 360px row,
+          and a name squeezed between them is the first thing to be truncated. */}
+      {title && (
+        <p className={clsx("w-full text-center text-sm font-semibold text-stone-200", finishing && "opacity-40")}>
+          {title}
+        </p>
+      )}
       <div inert={finishing} className={clsx("flex w-full flex-col items-center gap-4", finishing && "opacity-90")}>
         {children({ solved: handleSolved, reportInput, hintVisible: revealed && hint !== undefined })}
       </div>

@@ -24,7 +24,8 @@
     "crocodileDigitHint": "Tip: In the number 25, the digits are 2 and 5",
     "noCrocodilePuzzle": "Secret treasure room found!",
     "crocodilePuzzlePrompt": "Tap the sum with the largest result for the crocodile to eat",
-    "iDontKnow": "I don't know"
+    "iDontKnow": "I don't know",
+    "crocodileName": "The Crocodile"
   },
   "ui": {
     "level": "Level",
@@ -263,7 +264,8 @@
       "pick": "Tap a lit row to trade this {{glyph}} for what that row says it is worth.",
       "none": "Nothing here says what one {{glyph}} on its own is worth, and nothing opposite it matches."
     },
-    "goal": "Every glyph has a weight, and every scale balances."
+    "goal": "Every glyph has a weight, and every scale balances.",
+    "name": "Balance Scale"
   },
   "sumplete": {
     "rules": {
@@ -327,7 +329,8 @@
         "keep_other": "Mark the hatched numbers as staying."
       }
     },
-    "goal": "Every row and every column adds up to the number beside it."
+    "goal": "Every row and every column adds up to the number beside it.",
+    "name": "The Tally"
   },
   "futoshiki": {
     "rules": {
@@ -385,7 +388,8 @@
         "col": "In this column, {{first}}, {{second}} and {{third}} fit nowhere but these three squares, so nothing else can go in any of them."
       }
     },
-    "goal": "Every row and every column shows each number exactly once."
+    "goal": "Every row and every column shows each number exactly once.",
+    "name": "Greater and Lesser"
   },
   "lightbeam": {
     "rules": {
@@ -417,7 +421,8 @@
       "neverReached": "Leave this one alone. The light cannot reach it however the rest is set, so nothing you do to it matters.",
       "onlySurvivor": "Try every setting of this one in turn and all but one leave the shrine dark. That one is the answer."
     },
-    "goal": "The sunlight runs from the disc to the shrine."
+    "goal": "The sunlight runs from the disc to the shrine.",
+    "name": "Beam of Light"
   },
   "eclipse": {
     "rules": {
@@ -448,7 +453,8 @@
         "fillMixed": "Fill in the hatched squares — the only way round that works."
       }
     },
-    "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other."
+    "goal": "Every square holds a sun or a moon, and every line holds as many of one as of the other.",
+    "name": "Sun and Moon"
   },
   "constellation": {
     "rules": {
@@ -532,6 +538,11 @@
       "default": "Every star hangs in one constellation, joined by as many lines of light as its number says.",
       "causeway": "Every site stands in one road network, served by as many haul roads as its number says.",
       "irrigation": "Every basin feeds one waterworks, fed by as many channels as its number says."
+    },
+    "name": {
+      "default": "Star Map",
+      "causeway": "Causeway",
+      "irrigation": "Waterworks"
     }
   },
   "starBattle": {
@@ -633,6 +644,80 @@
       "default_other": "Every row, every column and every region holds exactly {{count}} stars.",
       "fields_one": "Every row, every column and every holding has exactly one farmstead.",
       "fields_other": "Every row, every column and every holding has exactly {{count}} farmsteads."
+    },
+    "name": {
+      "default": "Stars Apart",
+      "fields": "Farmsteads",
+      "twinDefault": "Twin Stars",
+      "twinFields": "Twin Farmsteads"
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "The numbers already in the comb are part of the puzzle — they stay put.",
+        "enter": "Tap a number to pick the run up there, then tap a touching empty cell to carry it on — or drag straight through the cells it goes.",
+        "back": "Tap a number you laid and tap it again to take it back off, along with anything left hanging on it. Carrying the run a different way out of a number does the same. Undo takes back your last move."
+      },
+      "channel": {
+        "given": "The fields already numbered are part of the puzzle — they stay put.",
+        "enter": "Tap a numbered field to pick the water up there, then tap a dry field beside it to dig on — or drag straight along the fields the channel runs.",
+        "back": "Tap a field you dug and tap it again to fill it back in, along with any channel left cut off from it. Digging a different way out of a field does the same. Undo takes back your last move."
+      },
+      "scribe": {
+        "given": "The figures inked in red are the puzzle's own — they stay put.",
+        "enter": "Tap a figure to take up the reed there, then tap an empty space beside it to write on — or drag straight along the line.",
+        "back": "Tap a figure you wrote and tap it again to scrape it off, along with any line left cut off from it. Writing a different way out of a figure does the same. Undo takes back your last move."
+      }
+    },
+    "undo": "Undo",
+    "goal": {
+      "default": "Every cell of the comb holds a number, 1 to {{last}}, each one in a cell touching the number before it.",
+      "channel": "One channel waters the whole plain: every field takes its turn, 1 to {{last}}, each one dug beside the field before it.",
+      "scribe": "One unbroken line of figures crosses the sheet: every space carries a figure, 1 to {{last}}, each one beside the figure before it."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "One of these numbers cannot be right.",
+          "sandwich": "The {{before}} and the {{after}} touch only one open cell between them.",
+          "neighbourForced": "The {{from}} has only one open cell left beside it.",
+          "onlyCell": "There is nowhere else left in the comb for the {{value}}.",
+          "onlyValue": "No other number can reach this cell."
+        },
+        "action": {
+          "place": "Put {{value}} in the hatched cell."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "One of these numbers cannot be right.",
+          "sandwich": "The {{before}} and the {{after}} touch only one dry field between them.",
+          "neighbourForced": "Only one dry field is left beside the {{from}}.",
+          "onlyCell": "Nowhere else on the plain can take the {{value}}.",
+          "onlyValue": "No other number can reach this field."
+        },
+        "action": {
+          "place": "Dig {{value}} in the hatched field."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "One of these figures cannot be right.",
+          "sandwich": "The {{before}} and the {{after}} touch only one empty space between them.",
+          "neighbourForced": "Only one empty space is left beside the {{from}}.",
+          "onlyCell": "Nowhere else on the sheet can take the {{value}}.",
+          "onlyValue": "No other figure can reach this space."
+        },
+        "action": {
+          "place": "Write {{value}} in the hatched space."
+        }
+      }
+    },
+    "name": {
+      "default": "Beehive",
+      "channel": "The Channel",
+      "scribe": "Scribe's Sheet"
     }
   }
 }
