@@ -37,15 +37,11 @@ at the break: the player can see they are three cells from the 20 with two numbe
 worth more than it sounds, because it is the one thing the harder families cannot do — a wrong
 star or a wrong number in a Latin square looks exactly like a right one until much later.
 
-**The hive is a second layout engine, and that was the decision.** `PUZZLE_FAMILIES.md` §10's
-open question 4 asked whether to take the square grid (free — the puzzle drops onto the same
-cell-state component the other grid families use) or the beehive (a coordinate system,
-neighbour rules and hit-testing of its own). The hive was chosen: six neighbours instead of
-eight is a genuinely different board to read, a honeycomb of sealed chambers is the most
-on-theme shape the catalogue has been offered, and the engine turned out to be small —
-`src/mods/puzzle/game/hidato/hex.ts` is coordinates, neighbours, distance and the shape a board
-is carved from, and nothing else. It carries no clue triangles, no palette and no regions, which
-is what a hex grid would have made expensive.
+**The hive is a second layout engine, and it earns the cost.** Six neighbours instead of eight is a
+genuinely different board to read, and a honeycomb of sealed chambers is the most on-theme shape in
+the catalogue. The engine stays small: `src/mods/puzzle/game/hidato/hex.ts` is coordinates,
+neighbours, distance and the shape a board is carved from, and nothing else. It carries no clue
+triangles, no palette and no regions — which is what would make a hex grid expensive.
 
 ## 3. Generation — carve the answer, then hide it
 
@@ -75,19 +71,19 @@ is why neither family counts solutions anywhere.
 
 ### 3.1 The shape is fixed first, and it is an arc rather than a scatter
 
-The first version had no step 1: the walk wandered a hexagon of `radius` for however many cells the
-tier asked, and the board was whatever it visited. That is one line shorter and it produced **rings**.
-Warnsdorff steps into the cell with the fewest ways out, which on an open hexagon means the boundary,
-so a walk asked for 14 of a 19-cell hexagon went round the outside and left a hole through the middle.
-Two things wrong with it, and the second is the serious one:
+**The region is fixed before the walk starts, and the walk then has to cover all of it.** Letting the
+walk take whatever cells it visited out of a hexagon of `radius` is one line shorter and produces
+**rings**: Warnsdorff steps into the cell with the fewest ways out, which on an open hexagon means the
+boundary, so a walk asked for 14 of a 19-cell hexagon goes round the outside and leaves a hole through
+the middle. Two things wrong with that, and the second is the serious one:
 
 - a comb with a hole reads as broken rather than as a hive;
 - **a ring is nearly a corridor.** A run has almost no choice of route around it, so the board is far
   easier than its cell count suggests, and the tier dial stops meaning anything.
 
-Fixing the region first and then covering all of it keeps every board a hive with its outer row
-part-built. The arc is contiguous for the same reason: outer cells scattered round the ring are bumps
-a run has to weave out to and back from, and enough of them make the shape Hamiltonian-impossible.
+Fixing the region first keeps every board a hive with its outer row part-built. The arc is contiguous
+for the same reason: outer cells scattered round the ring are bumps a run has to weave out to and back
+from, and enough of them make the shape Hamiltonian-impossible.
 
 ### 3.2 The two ends always ship written in
 
@@ -99,10 +95,10 @@ direction control (§6) and what makes the gap rung well-defined (§4.3).
 ### 3.3 The run must not just go round the outside
 
 **Warnsdorff hugs the boundary**, because a boundary cell is the one with the fewest ways out. Left to
-it the answer laps the rim: on the full 19-cell hive the longest unbroken stretch of run sitting on the
-outer ring averaged **11 cells**, and 7 on the 37-cell one. Nothing about that is unsolvable — it is
-worse than that, it is *guessable*. A player who has met two of these boards knows where the run goes
-before reading a single number.
+it the answer laps the rim — on a full 19-cell hive the longest unbroken stretch of run sitting on the
+outer ring runs to around **11 cells**. Nothing about that is unsolvable; it is worse than that, it is
+*guessable*. A player who has met two such boards knows where the run goes before reading a single
+number.
 
 Two dials, and they work as a pair:
 
@@ -111,22 +107,22 @@ Two dials, and they work as a pair:
 - **`rimStreak`** — the longest stretch of run allowed to stay on the outer ring. The gate that
   checks the wandering worked, and the only thing about a run's *shape* the generator judges.
 
-Measured over ten boards a tier, before and after:
+What the shipped dials produce, measured over ten boards a tier:
 
-| Tier | rim stretch before | after | turns before | after |
-| --- | --- | --- | --- | --- |
-| junior | 11.0 | 4.1 | 0.70 | 0.84 |
-| expert | 3.7 | 3.6 | 0.74 | 0.81 |
-| master | 5.5 | 3.7 | 0.76 | 0.85 |
-| wizard | 7.1 | 3.0 | 0.71 | 0.91 |
+| Tier | rim stretch | turns |
+| --- | --- | --- |
+| junior | 4.1 | 0.84 |
+| expert | 3.6 | 0.81 |
+| master | 3.7 | 0.85 |
+| wizard | 3.0 | 0.91 |
 
 ("turns" is the share of steps that change direction — 1.0 would be a run that never goes twice the
 same way.)
 
-**It made generation cheaper, which was not the point but is worth recording.** Five wizard boards went
-from ~1.5s to ~160ms, and first-attempt yield from 87% to 97%: pure Warnsdorff walks a full hexagon
-into dead ends far more often than a wandering one does, so the retries it was spending dwarfed the
-ones the rim gate costs.
+**Wandering also makes generation cheaper, which is worth knowing before anyone tunes it back down.**
+Pure Warnsdorff walks a full hexagon into dead ends far more often than a wandering walk does, so the
+retries it spends dwarf the ones the rim gate costs: five wizard boards build in ~160ms at 97%
+first-attempt yield, against ~1.5s and 87% with the dials off.
 
 **Starter is left ungated** deliberately. Its comb is 14 cells, a lap of the rim is most of the board,
 and there is nothing to learn to expect yet.
@@ -162,29 +158,27 @@ better one fits, and on a board about adjacency there is almost always a neighbo
 Three boards in three hundred had a number pinned with nothing written beside it, and on those the
 alternative is a hint that says nothing at all.
 
-### 4.1 The rung that was built and then removed
+### 4.1 There is no distance rung, and there cannot usefully be one
 
-A distance bound was the intended middle rung: *this cell is 4 steps from the 7, so it cannot
-hold the 9*. It was built, measured, and found to be worth nothing — iterated adjacency already
-gives exactly it. A chain of neighbour-supports from a written number to a cell IS a walk of the
-right length, and on a hex lattice a walk of any length at or above the distance exists, because
-the lattice's triangles absorb the slack and there is no parity to dodge. Not one board in the
-sample needed the distance rung to settle and stalled without it: every tier's `deepest` came
-back `adjacency`.
+A distance bound is the obvious middle rung — *this cell is 4 steps from the 7, so it cannot hold the
+9* — and **iterated adjacency already gives exactly it**. A chain of neighbour-supports from a written
+number to a cell IS a walk of the right length, and on a hex lattice a walk of any length at or above
+the distance exists, because the lattice's triangles absorb the slack and there is no parity to dodge.
+No board needs the distance rung to settle: every tier's `deepest` comes back `adjacency` or `gapPath`.
 
-It is left out rather than kept as flavour. **A rung a tier can demand but no board can turn on
-is a dial that does nothing**, and it would have made `requires: "distance"` unsatisfiable —
-which is exactly how it was found, as three tiers that could generate no board at all.
+So it is left out rather than kept as flavour. **A rung a tier can demand but no board can turn on is a
+dial that does nothing**, and it makes `requires: "distance"` unsatisfiable — a tier authored against it
+can generate no board at all.
 
-The cost of the finding is that the ladder has two rungs, so the first three tiers separate by
-size and generosity rather than by reasoning (§5).
+The consequence is that the ladder has two rungs, so the first three tiers separate by size and
+generosity rather than by reasoning (§5).
 
 ### 4.2 What the ladder does NOT include
 
 No technique reasons about the run's parity, its ends, or the shape of the remaining empty
 region (a "the comb is now two disconnected pockets" argument). Each is a real deduction and
-none is needed: the boards ship solvable without them, and a rung nothing turns on is the
-mistake §4.1 already made once.
+none is needed: the boards ship solvable without them, and a rung nothing turns on is the dial
+that does nothing §4.1 describes.
 
 ### 4.3 The gap rung, and its ceiling
 
@@ -251,8 +245,8 @@ the tier requires, the board never turns the reasoning on. So a master board is 
 provably stalls under `adjacency` alone.
 
 That reading is also why the topped-up numbers are offered one at a time rather than handed over
-in a batch. Three of them at once turned every master board back into one the gentlest rung
-settles.
+in a batch: a batch is graded once, and three extra givens at once are enough to turn a master
+board back into one the gentlest rung settles.
 
 ## 6. Interaction — carry the run, no number pad
 
@@ -266,8 +260,8 @@ carried instead.
 - **Tap a number you laid**, then tap it again to take it back off — along with everything that was
   only on the board because of it (§6.2). A given cannot be taken off.
 - **Carry the run a different way** out of any number you pick up, and it is re-laid from there: the
-  way it went before comes off (§6.2). Otherwise a fork means rubbing out every number back to it by
-  hand, which is what the board asked for before and nobody wants to do.
+  way it went before comes off (§6.2). Without that, a fork means rubbing out every number back to it
+  by hand.
 - **Where the run cannot go on at all**, dragging off the number it stopped on moves that number
   instead (§6.4).
 - **Or drag**, from the number the run is picked up at, straight through the cells it goes. Same run,
@@ -289,9 +283,8 @@ a number the finger went past on its way somewhere, which meant nothing:
 | holds the number **after** the one being carried | the run passes **through** it — which is what lets a drag cross the board's givens instead of stopping dead at the first one |
 | holds the number **before** it | that is the way the finger came, so the last number was a wrong turn and comes back off (a given cannot, so there the run picks up instead) |
 
-Passing through is the case that matters most and the one the first version got wrong: without it, a
-drag along the answer stops at the first written number it meets, which on a board that is a quarter
-givens is almost immediately.
+Passing through is the case that matters most: without it, a drag along the answer stops at the first
+written number it meets, which on a board that is a quarter givens is almost immediately.
 
 **A tap is a `pointerdown` on a cell; a drag is resolved from coordinates.** A tap knows its cell from
 the shape it landed on, while a finger halfway between two cells has to be told which one it is
@@ -328,18 +321,17 @@ It refuses only two things, and both are about what the finger did not mean: a n
 in is never overwritten or moved, and a number *behind* the one being carried is never overwritten
 either — that is the line the finger has just come along.
 
-**The rule this replaced worked out the whole stretch a redraw would sweep away, and refused anything
-outside it.** That reads the run as a shape rather than as a line being drawn, and it refused the
-ordinary case: the sweep stopped at the first number the puzzle had written in, so **one given standing
-anywhere in the tail put every cell past it out of reach** — on a board a dozen cells deep, those are all
-the cells worth dragging to. Laying one number and letting §6.2 tidy up says the same thing about the
-easy case and the right thing about that one.
+**Deciding what a redraw sweeps away is §6.2's job, not this rule's.** Working the whole doomed stretch
+out up front and refusing anything outside it reads the run as a shape rather than as a line being
+drawn, and it refuses the ordinary case: such a sweep stops at the first number the puzzle wrote in, so
+**one given standing anywhere in the tail puts every cell past it out of reach** — on a board a dozen
+cells deep, those are all the cells worth dragging to. Laying one number and letting the anchor check
+tidy up says the same thing about the easy case and the right thing about that one.
 
-**Adjacency belongs in the tidying up, and leaving it out was the same mistake one level down.** Counting
-back by value alone, a 4 stays "anchored" after the 3 it was laid beside has moved to the far side of the
-comb — the numbers still read 1, 2, 3, 4 and nothing notices the chain no longer touches. Since moving a
-number is exactly what re-drawing does, the check asks for both: the number before or after it, *next
-door*.
+**Adjacency is part of that tidying up, not just value.** Counting back by value alone, a 4 stays
+"anchored" after the 3 it was laid beside has moved to the far side of the comb — the numbers still
+read 1, 2, 3, 4 and nothing notices the chain no longer touches. Since moving a number is exactly what
+re-drawing does, the check asks for both: the number before or after it, *next door*.
 
 ### 6.4 When the run has stopped, the number itself moves
 
@@ -351,18 +343,17 @@ the wrong place.
 So dragging off it moves it: "this one goes here instead". The one condition is that the number before it
 still touches where it lands, or the line drawn so far would break behind it.
 
-**This is the reading that was missing, and it was missing in the place it is most needed.** Without it
-the gesture did nothing at all, on a board whose only way forward was to rub the last few numbers out by
-hand — and nothing happening is the worst answer a board can give, because it looks the same as a board
-that did not notice the finger.
+**Without this reading the gesture would do nothing at all**, on the one board state whose only way
+forward is to rub the last few numbers out by hand. Nothing happening is the worst answer a board can
+give, because it looks the same as a board that did not notice the finger.
 
 ### 6.5 A press is not a tap, and a tap is decided on release
 
-**The bug this rule exists for was the worst kind: the gesture that started a drag undid the thing the
-drag was about to move.** A press was read as a tap the moment the finger landed, and a tap on the cell
-the run is standing on rubs that number out — so pressing the 7 to drag it somewhere took the 7 off the
-board, put the run down, and every move after it did nothing at all. From the outside it looked like a
-board that had not noticed the finger.
+**A press must not be read as a tap the moment the finger lands, or the gesture that starts a drag undoes
+the thing the drag is about to move.** A tap on the cell the run is standing on rubs that number out, so
+resolving a press eagerly takes the 7 off the board as the finger comes down to drag it, puts the run
+down, and leaves every move after it doing nothing — indistinguishable from a board that never noticed
+the finger.
 
 So the three touches are separated:
 
@@ -400,8 +391,8 @@ Three rules, and each of them is about it being a *line* rather than a set of pa
 
 - **It starts at the 1 and stops at the first break.** Numbers further along that nothing connects to
   yet — the ones the puzzle wrote in across the comb — carry no stroke at all, because a stroke there
-  would claim a channel that has not been dug. Joining up every consecutive pair wherever it happened
-  to sit was the first version, and it drew a board as further on than it was.
+  would claim a channel that has not been dug. Joining up every consecutive pair wherever it happens
+  to sit would draw a board as further on than it is.
 - **The head is where the player reads from.** Obscuring the numbers already passed costs nothing;
   they are behind you. What matters is where the line ends and what it could reach next.
 - **It is deaf to the pointer.** The cells under it are the board's hit targets, and a stroke
@@ -449,13 +440,13 @@ the run is a line drawn across it, and the numbers the puzzle wrote in are in **
 rubric, the fixed parts of a text set down in red against the black of the body, and the only thing here
 telling the two apart. It is also the skin where the figures are drawn DARKER than the line they cross,
 the reverse of the two boards on stone: there the line is the bright thing against a dark ground, and
-here both are ink on the same pale sheet, so a stroke as dark as the digits swallowed every number it
-ran over.
+here both are ink on the same pale sheet, where a stroke as dark as the digits swallows every number it
+runs over.
 
 **The rim is what a given keeps**, and it has to keep something. The green says "the channel got here",
-which is as true of a field the player worked out as of one they were handed — so with the ground
-carrying the whole message the givens disappeared into the crop the moment the line ran through them, and
-with them the only fixed points the board has. The rim is the part of a cell the water does not touch, so
+which is as true of a field the player worked out as of one they were handed — so if the ground carried
+the whole message, the givens would vanish into the crop the moment the line ran through them, taking the
+only fixed points the board has with them. The rim is the part of a cell the water does not touch, so
 that is where the marking lives, and the number stays the colour it was written in.
 
 The hint's marks are skinned with the ground and have to be — an amber ring over sand is an affordance

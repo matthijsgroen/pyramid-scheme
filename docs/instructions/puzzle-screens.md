@@ -41,12 +41,11 @@ the board, and that is the thing a player says to themselves about it afterwards
   as a causeway is called one — a haul-road network titled "Star Map" is the drift §4.3 exists to catch,
   one line higher up the screen. `goalWording.spec.ts` guards it, and guards that a family added later
   is named at all.
-- **The tier is not part of it.** It was drafted as "name · tier" and cut. Not because difficulty does
-  not matter, but because **a label inside the room says it in the wrong place and too late**: every path
-  is already authored to a difficulty (`SubSection.difficulty`), and what that data is for is telling a
-  player which kind of area they are walking into *while they navigate the floor*, so the challenge a
-  room serves is the one they were expecting. The signal belongs on the floor; by the time the board is
-  open it has been read.
+- **The tier is not part of it.** Not because difficulty does not matter, but because **a label inside
+  the room says it in the wrong place and too late**: every path is already authored to a difficulty
+  (`SubSection.difficulty`), and what that data is for is telling a player which kind of area they are
+  walking into *while they navigate the floor*, so the challenge a room serves is the one they were
+  expecting. The signal belongs on the floor; by the time the board is open it has been read.
 
 ### 1.2 Under the board: the goal, then how to play
 
@@ -64,10 +63,10 @@ which place the room is (§2), so the wording asks it. The AMBIENCE never change
 still a causeway.
 
 **A rule that describes the END STATE belongs in the goal; a rule that FORBIDS something stays a bullet.**
-That is the line between the two sections, and it is worth stating because the first draft of these sentences
-crossed it in both directions — star battle's goal repeated the no-touching rule listed three lines below it,
-and constellation's "every star ends up in one constellation" was a bullet when it is the whole point of the
-board. Whichever side a fact lands on, it is said once.
+That is the line between the two sections, and it is easy to cross in both directions: a no-touching rule
+repeated in the goal and listed three lines below it is said twice, and "every star ends up in one
+constellation" is the whole point of the board rather than a bullet among five. Whichever side a fact lands
+on, it is said once.
 
 **How to play holds the rest, and it holds both kinds of thing** — what the board will not allow, and what a
 tap or a drag does. Not split further, deliberately: most families have one control bullet, and a heading

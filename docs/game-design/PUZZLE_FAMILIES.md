@@ -64,12 +64,6 @@ families by. So no family is excused as "it only ever turns up somewhere the
 player can walk away from". The one thing that still argues for keeping a family
 off a gate is how long it takes, which is a pacing question and lives in §8.
 
-_This principle used to read the opposite way_ — a spine/side split, with
-"carry-forward" passing a decoded value down a corridor and the grid-logic
-families confined to optional rooms. None of it was ever built, and the catalogue
-described it long enough to mislead a reader into designing against it. The rule
-above is what replaced it.
-
 **P4 — A family debuts at the bottom of its OWN scale.** A family entering at a
 high tier still enters as its _simplest_ instance, so "fresh" never means "wall."
 A nonogram debuting at T4 enters as a small 10×10, not a 15×15.
@@ -404,10 +398,9 @@ unbroken run threads the whole hive. **The only family that trains the number li
 counting back — where every other logic family is constraint satisfaction over cells that do not care
 what their neighbours hold.
 
-Built as the **beehive**, not the square grid (§10's open question 4, now closed): six neighbours is a
-genuinely different board to read, a honeycomb of sealed chambers is the most on-theme shape the
-catalogue has been offered, and the second layout engine it costs turned out to be one small module of
-coordinates, neighbours and distance.
+The board is a **beehive** rather than a square grid: six neighbours is a genuinely different board to
+read, a honeycomb of sealed chambers is the most on-theme shape in the catalogue, and the second layout
+engine it costs is one small module of coordinates, neighbours and distance.
 
 Design doc: [puzzles/hidato.md](puzzles/hidato.md)
 
@@ -695,10 +688,6 @@ conversation.
    reveals at T5?
 3. **Telemetry vs adaptation** (§8) — local designer telemetry only, or eventual
    in-game adaptation with guardrails?
-4. ~~**Hidato layout (§4.18)**~~ — **closed: the beehive.** Built on its own axial
-   coordinate system rather than dropped onto §5's grid engine. What the second layout
-   actually cost, and why it was cheap, is in [puzzles/hidato.md](puzzles/hidato.md) §2;
-   the two questions it opened in its place are that doc's own §10.
 
 ---
 
