@@ -85,6 +85,7 @@ export const ConstellationPuzzle: FC<Props> = ({ puzzle, difficulty, theme, role
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
+      title={t(`constellation.name.${skin}`)}
       goal={t(`constellation.goal.${skin}`)}
       rules={<ConstellationRules skin={skin} />}
     >

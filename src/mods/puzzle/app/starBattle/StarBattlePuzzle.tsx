@@ -16,6 +16,9 @@ import {
 import type { StarBattlePuzzleWithAnswer } from "@/mods/puzzle/game/starBattle/generateStarBattle"
 import { buildStarBattleHint } from "./starBattleHint"
 import { skinFor } from "./skins"
+
+/** Twin stars is its own family off this screen, so its two faces have names of their own. */
+const twinName = (skin: string) => (skin === "fields" ? "twinFields" : "twinDefault")
 import { StarBattleBoard } from "./StarBattleBoard"
 import { StarBattleRules } from "./StarBattleRules"
 
@@ -87,6 +90,7 @@ export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, o
       hint={hintText}
       onHintRevealed={() => setAsked(true)}
       idleMs={hintIdleDelay(difficulty)}
+      title={t(`starBattle.name.${puzzle.quota > 1 ? twinName(skin.name) : skin.name}`)}
       goal={t(`starBattle.goal.${skin.name}`, { count: puzzle.quota })}
       rules={<StarBattleRules skin={skin.name} />}
     >

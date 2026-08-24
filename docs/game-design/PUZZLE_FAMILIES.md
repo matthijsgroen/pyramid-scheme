@@ -397,42 +397,19 @@ Two things this shape decides, both worth knowing before adding a cluster:
   "logistics/caravan route" grouping — both are grid-block movement puzzles
   about clearing or arranging paths, just with different piece-movement rules.
 
-### 4.18 Hidato / beehive path — _(proposed, not yet designed)_
+### 4.18 Hidato (the beehive)
 
-- **Skill:** number-line fluency (counting on, predecessor/successor, "what sits
-  between 14 and 17") plus route-tracing. **The catalogue trains neither today:**
-  every other logic family is constraint-satisfaction over independent cells,
-  and no family drills the number line rather than computation.
-- **Operates:** cells hold 1…N; consecutive numbers must occupy adjacent cells,
-  and some numbers are pre-filled as givens. The player fills the rest so one
-  unbroken run threads the whole board. Adjacency is the whole rule — nothing to
-  read, and the board is self-checking once a run breaks.
-- **Knobs:** cell count · how many givens (and whether 1 and N are among them) ·
-  board shape (a shaped board can spell a glyph — see the reveal note below) ·
-  square-8-neighbour vs hex-6-neighbour adjacency.
-- **Scaling:** good and smooth — givens are a fine-grained dial, so the same
-  board size spans easy to hard without changing footprint. Lower ceiling than
-  Latin-square, but no hard floor either: a 10-cell hive is a real puzzle, unlike
-  a 3×3 nonogram (§4.9).
-- **Generation:** carve a Hamiltonian path through the board first, then hide a
-  subset of its numbers — **verifier class, not unique-by-construction.** Removing
-  givens readily admits alternate paths, so it needs §5's shared solve-counter.
-- **UI:** easy–medium, and a good mobile fit — drag along the path, or tap a cell
-  and pick a number. No clue-triangles, no palette of glyphs, no mode toggle;
-  closer to Sumplete's ergonomics (§4.11) than kakuro's (§4.10).
-- **The layout decision, which is the real cost:** on a **square** grid this is
-  nearly free infrastructure — it drops straight onto §5's grid engine as another
-  cell-state family. As a **beehive** it needs its own coordinate system,
-  neighbour rules and hit-testing, i.e. a _second_ layout engine beside the
-  square one. The hex look is more distinctive and more on-theme (a honeycomb of
-  chambers), but it should be chosen deliberately as a UI investment, not
-  inherited from the name. See §10 open question 5.
-- **Reveal potential:** a shaped board (the hive outline forming a glyph, or the
-  completed path tracing one) gives this family a nonogram-style payoff at a
-  fraction of nonogram's solve time and variance — worth exploring if the
-  reward-reveal thesis is wanted earlier than T4.
-- **Theme:** **Scribe / Inscription** (counting and record-keeping) sits most
-  naturally; a honeycomb of sealed cells also reads as **Tomb / Burial Logic**.
+A honeycomb of cells holding 1…N, consecutive numbers in touching cells, some of them written in. One
+unbroken run threads the whole hive. **The only family that trains the number line** — counting on and
+counting back — where every other logic family is constraint satisfaction over cells that do not care
+what their neighbours hold.
+
+Built as the **beehive**, not the square grid (§10's open question 4, now closed): six neighbours is a
+genuinely different board to read, a honeycomb of sealed chambers is the most on-theme shape the
+catalogue has been offered, and the second layout engine it costs turned out to be one small module of
+coordinates, neighbours and distance.
+
+Design doc: [puzzles/hidato.md](puzzles/hidato.md)
 
 ### 4.19 Futoshiki (inequality Latin square)
 
@@ -535,11 +512,11 @@ are mostly clue-rendering + a rules overlay on top.
   clue-triangles) or **Sudoku** (generation is a solved problem).
 - The verifier (solve-counter that confirms exactly one solution) is shared by
   all four **and** by sequence continuation.
-- **Hidato (§4.18) is a fifth candidate, but only on a square grid** — then it is
-  another cell-value family on this same component, with adjacency as its rules
-  overlay. Its beehive variant does _not_ draw from this engine: hex neighbours,
-  coordinates and hit-testing are a separate layout, so choosing the hive means
-  choosing to build and maintain a second grid component.
+- **Hidato (§4.18) was the fifth candidate, and it went the other way.** On a square grid it would
+  have been another cell-value family on this component with adjacency as its rules overlay; built as a
+  beehive it draws from none of this — hex neighbours, coordinates and hit-testing are a separate
+  layout. What the choice actually cost is on record in its design doc §2: one module, because the hive
+  carries no clue triangles, no palette and no regions.
 
 ---
 
@@ -583,7 +560,7 @@ the thing to look at first when judging an unbuilt family's duration.
 | Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
 | Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
 | Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
-| Hidato / beehive       | Easy–Med        | Good (smooth)            | Med (**verifier**)          | 1–4 min / med             |
+| Hidato / beehive       | Easy–Med        | Good (smooth)            | **Solved** (carve-then-thin) | 1–4 min / med — _target_  |
 | Symmetry               | Medium          | Moderate (early-only)    | Easy                        | 15–45s / low              |
 | Sequence               | Easy            | Easy (uniqueness risk)   | Easy + **verifier**         | 15–45s / low              |
 | Egyptian doubling      | Easy            | Modest                   | Trivial                     | 20–60s / low              |
@@ -610,7 +587,7 @@ Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 | Water clock            | duration / subtraction |     —      |      —      |   ◐   |    ●    |      ★      |
 | Eye of Horus fractions | unit fractions         |     —      |      —      |   ◐   |    ●    | ★ (general) |
 | Sumplete               | add + elimination      |     —      |      —      | ◐ 5×5 |  ● 7×7  |    ★ 9×9    |
-| Hidato / beehive       | number line + path     |     —      | ◐ ~12 cells | ● ~24 |  ● ~36  |    ★ ~48    |
+| Hidato / beehive       | number line + path     |  ◐ 14 hex  |   ● 19 hex  | ● 26  | ● 37 hex | ★ 61 hex |
 | Nonogram               | logic + reveal         |     —      |      —      |   —   | ◐ 10×10 |   ★ 15×15   |
 | Kakuro                 | number + logic         |     —      |      —      |   —   |    ◐    |      ★      |
 | Clock-arith            | modular                |     —      |      —      |   —   | ● decoy |      ★      |
@@ -718,10 +695,10 @@ conversation.
    reveals at T5?
 3. **Telemetry vs adaptation** (§8) — local designer telemetry only, or eventual
    in-game adaptation with guardrails?
-4. **Hidato layout (§4.18)** — square grid (rides §5's engine for free, looks like
-   the other grid families) or beehive (distinctive and more on-theme, but a second
-   layout engine to build and maintain)? The puzzle is identical either way; this is
-   purely a UI-investment call.
+4. ~~**Hidato layout (§4.18)**~~ — **closed: the beehive.** Built on its own axial
+   coordinate system rather than dropped onto §5's grid engine. What the second layout
+   actually cost, and why it was cheap, is in [puzzles/hidato.md](puzzles/hidato.md) §2;
+   the two questions it opened in its place are that doc's own §10.
 
 ---
 
@@ -739,10 +716,10 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | Theme                        | Flavor                                      | Families that fit                                                                                                                                                                                                                                              |
 | ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                               |
-| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field — the ROLE waits for a second family, see the gap note), water clock                                                                                       |
+| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), water clock            |
 | **Trade** — a live role      | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). Authored as `encounter: "trade"` on the Great Pyramid of Giza; Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag |
 | **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                             |
-| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells)                                                                 |
+| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                 |
 | **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                              |
 | **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                             |
 | **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                          |
@@ -758,6 +735,13 @@ carries the `water` and `agriculture` roles outright**, drawn as farmsteads on a
 So the pool has two members and, unlike a second skin on one family, the second one brings
 different REASONING rather than a different dress. The curriculum question below is answered
 with it: a journey authoring water no longer serves the same puzzle five times.
+
+**And a third, which is what actually unblocks the Nile Delta.** Hidato (§4.18) carries
+`agriculture` and `water` too — a kept hive belongs to the same husbandry the flood plain does —
+and it brings the number line, which nothing else in the pool trains. Two members made authoring
+the role defensible; three make it varied. The authoring itself is still not done: `expert.ts`
+holds the one-line change (`journey("expert_3").pyramid("1-5", { encounter: "water" })`) next to
+the note explaining why it waited.
 
 **Worth being precise about, because it is a cheaper move than it looks.** A skin gives a
 theme a _built, playable_ member without designing anything — but it adds no new **skill**
@@ -792,7 +776,7 @@ so it can be used when authoring density knobs).
 | Clock-arithmetic       | 30–90s                            | **Med**                                                                                                                        |
 | Target-number          | 30–90s                            | **Med**                                                                                                                        |
 | Sumplete               | med–high, no fixed ceiling        | **Med–High**                                                                                                                   |
-| Hidato / beehive       | not yet measured (unbuilt)        | **TBD — estimate Med**, a broken run is visible immediately, so it should stall less than the constraint-satisfaction families |
+| Hidato / beehive       | built, not yet measured           | **TBD — estimate Med**, a broken run is visible immediately, so it should stall less than the constraint-satisfaction families |
 | Glyph Latin-square     | 1–6 min, **high variance**        | **High**                                                                                                                       |
 | Kakuro                 | 2–8 min                           | **High**                                                                                                                       |
 | Nonogram               | 3–15+ min, **very high variance** | **Very High**                                                                                                                  |
@@ -802,9 +786,9 @@ so it can be used when authoring density knobs).
 | Sokoban                | not yet measured (unbuilt)        | **TBD — estimate High**, Sokoban solve time is notoriously unbounded even at small grid sizes                                  |
 | Rush Hour              | not yet measured (unbuilt)        | **TBD — estimate Med**, classic Rush Hour puzzles are usually a few minutes at most                                            |
 
-Once Sokoban, Rush Hour and hidato are built, and lightbeam has been played enough
-to measure, replace the TBD rows with real telemetry (§8) rather than trusting the
-estimate.
+Once Sokoban and Rush Hour are built, and lightbeam and hidato have been played
+enough to measure, replace the TBD rows with real telemetry (§8) rather than trusting
+the estimate.
 
 **A weight is not a licence.** "Very High" says an instance is expensive to spend
 on a floor; it does not say the mechanic's own classic running time is ours to serve.

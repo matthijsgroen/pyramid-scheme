@@ -29,7 +29,26 @@ has timed against a human clock has not cleared this bar.
 - Tap targets ≥ 44px. A cell smaller than that needs a bigger cell, not a more
   precise finger.
 
-### 1.1 Under the board: the goal, then how to play
+### 1.1 Over the board: what this room is called
+
+**A board is recognisable by its shape once it is open, and not at all before that.** A floor of rooms,
+or a list of them, is a row of icons that all mean "a puzzle" — so the shell shows the room's name over
+the board, and that is the thing a player says to themselves about it afterwards.
+
+- **The family supplies the name, core places it.** `PuzzleFamilyShell` takes a `title`; it never learns
+  what a family is called, the same way it never learns a goal or a rule.
+- **It is worded per IDENTITY, like everything under the board** (§1.2 below). The same mechanic dressed
+  as a causeway is called one — a haul-road network titled "Star Map" is the drift §4.3 exists to catch,
+  one line higher up the screen. `goalWording.spec.ts` guards it, and guards that a family added later
+  is named at all.
+- **The tier is not part of it.** It was drafted as "name · tier" and cut. Not because difficulty does
+  not matter, but because **a label inside the room says it in the wrong place and too late**: every path
+  is already authored to a difficulty (`SubSection.difficulty`), and what that data is for is telling a
+  player which kind of area they are walking into *while they navigate the floor*, so the challenge a
+  room serves is the one they were expecting. The signal belongs on the floor; by the time the board is
+  open it has been read.
+
+### 1.2 Under the board: the goal, then how to play
 
 Two sections, because they answer different questions.
 
@@ -186,7 +205,7 @@ step nobody should have to take from something they went and pressed a button fo
    the hatched numbers."
 
 The consequence lives in the move, never in both: "this line has its 4 ☀️, **so the rest are 🌙**" followed by
-"put 🌙 in the hatched squares" says the same thing twice, which is the fault §1.1 describes between the goal
+"put 🌙 in the hatched squares" says the same thing twice, which is the fault §1.2 describes between the goal
 and the rules, one level down.
 
 The shell keeps hint text pre-line, so a family returns the two lines separated by a newline. One line stays
@@ -228,7 +247,7 @@ Credit where it is due: LinkedIn's Queens does both of these, and its hint is th
 
 ### 4.3 Worded per identity, like everything else under the board
 
-A family whose mechanic wears more than one face words its hints per face, the same way §1.1 words its goal
+A family whose mechanic wears more than one face words its hints per face, the same way §1.2 words its goal
 and its rules — **the reason and the move both**. Constellation is the worked example: the same rung reads
 "3 lines, and the other ways out cannot carry them all / draw the marked line" over a sky, and "3 roads … /
 lay the marked road" over a causeway. The skin knows which place the room is; the wording asks it.

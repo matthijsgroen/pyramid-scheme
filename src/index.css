@@ -139,6 +139,26 @@ body {
     }
   }
 
+  /* A plant coming up out of watered ground. It grows from where it is ROOTED, so the scale runs off the
+     bottom edge rather than the middle — a sprout that swells from its own centre reads as a decal being
+     stamped on rather than as something growing. Opacity with it, or a plant at zero height still shows its
+     stroke caps as a dot sitting on the soil. */
+  --animate-sprout: sprout 360ms ease-out;
+  @keyframes sprout {
+    0% {
+      transform: scaleY(0.1);
+      opacity: 0;
+    }
+    60% {
+      transform: scaleY(1.12);
+      opacity: 1;
+    }
+    100% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
   /* Fills a cooling hint button left to right; the element sets its own duration from the
      cooldown constant, so the bar always reaches full exactly when the button unlocks. */
   --animate-hint-recharge: hint-recharge 10s linear forwards;
