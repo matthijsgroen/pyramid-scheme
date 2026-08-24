@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A side passage now hands you the puzzles it was built for, not the ones the floor around it was. A quiet pocket off a wizard floor really is a breather, and a ward passage on an easy floor really does bite.
 - Every kind of board now ships with more of them ready than there are rooms that ask for one, so meeting the same puzzle twice on a run is far less likely.
+- The Great Pyramid of Giza now draws on every kind of puzzle rather than the two that trade in goods. Its rooms were more than half the same board; there are nine kinds there now, and the trading floor comes back once enough puzzles can wear it.
 
 ## 0.38.3 - 2026-08-23
 

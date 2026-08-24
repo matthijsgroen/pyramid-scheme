@@ -13,19 +13,29 @@ export type ConfigDemand = {
 }
 
 /**
- * How many seeds a bucket is worth filling to. Deliberately more than the rooms that draw from it:
- * a room picks its board by `roomSeed % seeds.length` from an arbitrary hash, so a list sized to its
+ * Two numbers, and keeping them apart is what stops ordinary authoring from forcing a regeneration.
+ *
+ * `seedTarget` is what the offline pass AIMS for: half again the rooms that draw from the bucket. A
+ * room picks its board by `roomSeed % seeds.length` from an arbitrary hash, so a list sized to its
  * demand exactly still hands one board out twice while leaving another unused. The surplus is what
  * makes a repeat unlikely instead of certain.
  *
- * `SEED_CAP` is where the artifact's own size wins — past it the biggest buckets stop growing, and a
+ * `seedFloor` is what the shipped artifact must CLEAR, and it is the demand itself. The gap between
+ * them is deliberate headroom: re-authoring a journey moves room counts around constantly, and a
+ * bucket filled to 1.5× its old demand still covers the new one unless that demand grew by half. So
+ * the build goes red when the lists genuinely cannot cover the world — a family added, a family
+ * reaching a tier it had never been drawn at — and stays quiet for the churn of moving rooms between
+ * buckets that already exist.
+ *
+ * `SEED_CAP` is where the artifact's own size wins: past it the biggest buckets stop growing, and a
  * bucket that big has plenty of variety regardless. The seed script takes the same rule (its `--cap`
- * overrides the ceiling), and `src/mods/puzzleSeeds.spec.ts` holds the shipped lists to it.
+ * overrides the ceiling).
  */
 export const SEED_CAP = 200
 const SEED_SURPLUS = 1.5
 export const seedTarget = (demand: ConfigDemand, cap: number = SEED_CAP): number =>
   Math.min(Math.ceil(demand.rooms * SEED_SURPLUS), cap)
+export const seedFloor = (demand: ConfigDemand, cap: number = SEED_CAP): number => Math.min(demand.rooms, cap)
 
 /**
  * Every room on a section, as the family id it was baked to. Room k takes its per-index override

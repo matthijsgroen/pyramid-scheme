@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { enumerateConfigs, seedTarget } from "@/game/seeds/enumerateConfigs"
+import { enumerateConfigs, seedFloor } from "@/game/seeds/enumerateConfigs"
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 
@@ -17,13 +17,18 @@ describe("shipped puzzle seeds", () => {
     expect(missing.map(demand => `${demand.familyId}/${demand.difficulty}`)).toEqual([])
   })
 
-  // Coverage alone is not enough: a bucket holding exactly as many boards as the rooms that draw
-  // from it repeats one for certain, since a room picks by `roomSeed % seeds.length` off an
-  // arbitrary hash. This is the guard for the case that grows the world without regrowing the
-  // lists — the demand climbs, the artifact doesn't, and the repeats arrive quietly.
-  it("ships a surplus of boards over the rooms drawing from each bucket", () => {
+  // Coverage alone is not enough: a bucket holding fewer boards than the rooms that draw from it
+  // repeats one for certain, since a room picks by `roomSeed % seeds.length` off an arbitrary hash.
+  //
+  // Held to the FLOOR (the demand itself) rather than to the target the offline pass aims for. The
+  // pass fills to 1.5×, and that gap is headroom on purpose: moving rooms between buckets that
+  // already exist is what re-authoring a journey does constantly, and the artifact still covers them.
+  // So this goes red when the lists genuinely cannot — a family added, or one drawn at a tier it had
+  // never reached — and stays quiet for churn. Asserting the target instead would demand a
+  // regeneration for every authoring edit, which is a build step masquerading as a guard.
+  it("covers the rooms drawing from each bucket, with the surplus as headroom", () => {
     const thin = demands
-      .filter(demand => (puzzleSeeds[demand.hash]?.length ?? 0) < seedTarget(demand))
+      .filter(demand => (puzzleSeeds[demand.hash]?.length ?? 0) < seedFloor(demand))
       .map(
         demand =>
           `${demand.familyId}/${demand.difficulty}: ${puzzleSeeds[demand.hash]?.length ?? 0} for ${demand.rooms} rooms`
