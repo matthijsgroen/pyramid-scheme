@@ -3,6 +3,7 @@ import en from "../../../../public/locales/en/common.json"
 import nl from "../../../../public/locales/nl/common.json"
 import { skinFor } from "./constellation/skins"
 import { skinFor as starBattleSkinFor } from "./starBattle/skins"
+import { skinFor as hidatoSkinFor } from "./hidato/skins"
 
 /**
  * Every family says what a finished board looks like, in both languages.
@@ -12,7 +13,7 @@ import { skinFor as starBattleSkinFor } from "./starBattle/skins"
  * Listing the families here rather than testing them one by one is deliberate: a per-family spec cannot
  * notice the family somebody adds next.
  */
-const FAMILIES = ["balance", "constellation", "eclipse", "futoshiki", "lightbeam", "starBattle", "sumplete"]
+const FAMILIES = ["balance", "constellation", "eclipse", "futoshiki", "hidato", "lightbeam", "starBattle", "sumplete"]
 
 /** The places constellation's mechanic wears, and the role a room is allocated for to reach each of them. */
 const PLACES = [
@@ -33,6 +34,36 @@ describe("the goal above the rules", () => {
       const perCount = typeof block.goal_one === "string" && typeof block.goal_other === "string"
       expect(typeof goal === "string" || typeof goal === "object" || perCount, family).toBe(true)
     }
+  })
+
+  /**
+   * **Every board says what it is called**, in both languages.
+   *
+   * A room is recognisable by its board once it is open and not at all before that, so the name is what a
+   * player says to themselves about it (`puzzle-screens.md` §1.2). Listed here rather than tested per
+   * family for the same reason the goal is: a per-family spec cannot notice the family somebody adds next.
+   */
+  it.each(FAMILIES)("%s says what it is called, in both languages", family => {
+    for (const locale of [en, nl]) {
+      const { name } = (locale as unknown as Record<string, Record<string, unknown>>)[family]
+      expect(typeof name === "string" || typeof name === "object", family).toBe(true)
+    }
+  })
+
+  it("names each of a mechanic's faces, and names them differently", () => {
+    // A name is worded per identity like everything else over the board: a haul-road network called a
+    // star map is the drift this file exists to catch, one line higher up the screen.
+    const faces: Record<string, string[]> = {
+      constellation: ["default", "causeway", "irrigation"],
+      hidato: ["default", "channel", "scribe"],
+      starBattle: ["default", "fields", "twinDefault", "twinFields"],
+    }
+    for (const locale of [en, nl])
+      for (const [family, skins] of Object.entries(faces)) {
+        const names = (locale as unknown as Record<string, Record<string, Record<string, string>>>)[family].name
+        for (const skin of skins) expect(typeof names[skin], `${family}.${skin}`).toBe("string")
+        expect(new Set(skins.map(skin => names[skin])).size, family).toBe(skins.length)
+      }
   })
 
   /**
@@ -141,6 +172,76 @@ describe("the goal above the rules", () => {
 
   it.each(STAR_BATTLE_PLACES)("twin stars drawn for $role wears its own face", ({ role, skin }) => {
     expect(starBattleSkinFor(role, undefined).name).toBe(skin)
+  })
+
+  /**
+   * **And over hidato's two faces.** The same run of numbers is a kept hive and a channel dug across a flood
+   * plain, and the words are the whole difference: nothing on the plain is a cell of wax, and a comb has no
+   * water in it. Both directions are checked, because this family's default dress is the one its own name
+   * suggests and therefore the easiest to leave standing over the other place.
+   */
+  const HIDATO_PLACES = [
+    { role: "puzzle", skin: "default" },
+    { role: "water", skin: "channel" },
+    { role: "agriculture", skin: "channel" },
+    { role: "scribe", skin: "scribe" },
+  ]
+
+  it.each(HIDATO_PLACES)("hidato drawn for $role wears its own face", ({ role, skin }) => {
+    expect(hidatoSkinFor(role, undefined).name).toBe(skin)
+    for (const locale of [en, nl]) {
+      expect(typeof (locale.hidato.goal as Record<string, string>)[skin]).toBe("string")
+      for (const rule of ["given", "enter", "back"])
+        expect(typeof (locale.hidato.rules as Record<string, Record<string, string>>)[skin][rule]).toBe("string")
+      const hint = (locale.hidato.hint as unknown as Record<string, Record<string, Record<string, string>>>)[skin]
+      for (const rung of ["mistake", "sandwich", "neighbourForced", "onlyCell", "onlyValue"])
+        expect(typeof hint.reason[rung], `${skin}.${rung}`).toBe("string")
+      expect(typeof hint.action.place).toBe("string")
+    }
+  })
+
+  it("words hidato's three places differently, or one is wearing another's clothes", () => {
+    const wordings = ["default", "channel", "scribe"].map(skin => (en.hidato.goal as Record<string, string>)[skin])
+    expect(new Set(wordings).size).toBe(3)
+  })
+
+  it("keeps each of hidato's places out of the others' vocabulary", () => {
+    const said = (locale: unknown, skin: string): [string, string][] => {
+      const block = (locale as Record<string, Record<string, Record<string, unknown>>>).hidato
+      const hint = (block.hint as Record<string, Record<string, Record<string, string>>>)[skin]
+      return [
+        ["goal", (block.goal as Record<string, string>)[skin]],
+        ...Object.entries((block.rules as Record<string, Record<string, string>>)[skin]).map(
+          ([key, text]): [string, string] => [`rules.${key}`, text]
+        ),
+        ...Object.entries(hint.reason).map(([key, text]): [string, string] => [`hint.reason.${key}`, text]),
+        ["hint.action.place", hint.action.place],
+      ]
+    }
+    // The three vocabularies, each of which belongs to exactly one place. A board that borrows another's
+    // is describing something that is not on the screen — the fault this guard caught in constellation.
+    const WORDS = {
+      en: {
+        default: /\b(comb|hive|cells?)\b/i,
+        channel: /\b(fields?|plain|channel|water|dug|dig)\b/i,
+        scribe: /\b(sheet|papyrus|ink|inked|reed|figures?)\b/i,
+      },
+      nl: {
+        default: /\b(raat|vakjes?)\b/i,
+        channel: /\b(akkers?|vlakte|kanaal|water|graven|graaf)\b/i,
+        scribe: /\b(vel|papyrus|inkt|rietpen|tekens?)\b/i,
+      },
+    }
+    for (const [tongue, locale] of [
+      ["en", en],
+      ["nl", nl],
+    ] as const)
+      for (const place of ["default", "channel", "scribe"] as const)
+        for (const other of ["default", "channel", "scribe"] as const) {
+          if (other === place) continue
+          for (const [where, wording] of said(locale, place))
+            expect(WORDS[tongue][other].test(wording), `${place}.${where} says ${other}: ${wording}`).toBe(false)
+        }
   })
 
   it("never says star on a farm", () => {

@@ -24,7 +24,8 @@
     "crocodileDigitHint": "Tip: In het getal 25 zijn de cijfers 2 en 5",
     "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
     "crocodilePuzzlePrompt": "Tik op de som met het grootste resultaat voor de krokodil om te eten",
-    "iDontKnow": "Ik weet het niet"
+    "iDontKnow": "Ik weet het niet",
+    "crocodileName": "De Krokodil"
   },
   "ui": {
     "level": "Niveau",
@@ -256,7 +257,8 @@
       "pick": "Tik op een opgelichte rij om deze {{glyph}} te ruilen voor wat die rij zegt dat hij waard is.",
       "none": "Niets hier zegt wat één {{glyph}} in zijn eentje waard is, en er ligt niets gelijks tegenover."
     },
-    "goal": "Elk teken heeft een gewicht, en elke weegschaal is in balans."
+    "goal": "Elk teken heeft een gewicht, en elke weegschaal is in balans.",
+    "name": "Weegschaal"
   },
   "sumplete": {
     "rules": {
@@ -320,7 +322,8 @@
         "keep_other": "Markeer de gearceerde getallen als blijvend."
       }
     },
-    "goal": "Elke rij en elke kolom telt op tot het getal ernaast."
+    "goal": "Elke rij en elke kolom telt op tot het getal ernaast.",
+    "name": "De Telling"
   },
   "futoshiki": {
     "rules": {
@@ -378,7 +381,8 @@
         "col": "In deze kolom passen {{first}}, {{second}} en {{third}} nergens anders dan in deze drie vakjes, dus er kan niets anders in."
       }
     },
-    "goal": "Elke rij en elke kolom laat elk getal precies één keer zien."
+    "goal": "Elke rij en elke kolom laat elk getal precies één keer zien.",
+    "name": "Groter en Kleiner"
   },
   "lightbeam": {
     "rules": {
@@ -410,7 +414,8 @@
       "neverReached": "Laat deze staan. Het licht kan er niet bij komen, hoe de rest ook staat, dus wat je ermee doet maakt niets uit.",
       "onlySurvivor": "Probeer elke stand van deze om de beurt: op één na laten ze het schrijn allemaal donker. Die ene is het antwoord."
     },
-    "goal": "Het zonlicht loopt van de schijf naar het altaar."
+    "goal": "Het zonlicht loopt van de schijf naar het altaar.",
+    "name": "Lichtstraal"
   },
   "eclipse": {
     "rules": {
@@ -441,7 +446,8 @@
         "fillMixed": "Vul de gearceerde vakjes in — de enige manier die klopt."
       }
     },
-    "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander."
+    "goal": "Elk vakje heeft een zon of een maan, en elke lijn heeft er evenveel van de een als van de ander.",
+    "name": "Zon en Maan"
   },
   "constellation": {
     "rules": {
@@ -525,6 +531,11 @@
       "default": "Elke ster hangt in één sterrenbeeld, verbonden met zoveel lichtlijnen als zijn getal zegt.",
       "causeway": "Elke plaats ligt in één wegennet, ontsloten door zoveel sleepwegen als zijn getal zegt.",
       "irrigation": "Elk bekken hoort bij één waterwerk, gevoed door zoveel kanalen als zijn getal zegt."
+    },
+    "name": {
+      "default": "Sterrenkaart",
+      "causeway": "Sleepweg",
+      "irrigation": "Waterwerk"
     }
   },
   "starBattle": {
@@ -626,6 +637,80 @@
       "default_other": "Elke rij, elke kolom en elk gebied heeft precies {{count}} sterren.",
       "fields_one": "Elke rij, elke kolom en elk stuk land heeft precies één boerderij.",
       "fields_other": "Elke rij, elke kolom en elk stuk land heeft precies {{count}} boerderijen."
+    },
+    "name": {
+      "default": "Sterren Apart",
+      "fields": "Boerderijen",
+      "twinDefault": "Tweelingsterren",
+      "twinFields": "Dubbele Boerderijen"
+    }
+  },
+  "hidato": {
+    "rules": {
+      "default": {
+        "given": "De getallen die al in de raat staan horen bij de puzzel — die blijven staan.",
+        "enter": "Tik op een getal om de reeks daar op te pakken en tik dan op een leeg vakje ernaast om verder te gaan — of sleep in één keer door de vakjes waar de reeks langs gaat.",
+        "back": "Tik op een getal dat je zelf legde en tik nogmaals om het er weer af te halen, samen met alles wat er los van komt te liggen. De reeks een andere kant op leggen doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+      },
+      "channel": {
+        "given": "De akkers die al een getal hebben horen bij de puzzel — die blijven staan.",
+        "enter": "Tik op een akker met een getal om het water daar op te pakken en tik dan op een droge akker ernaast om verder te graven — of sleep in één keer langs de akkers waar het kanaal langs loopt.",
+        "back": "Tik op een akker die je groef en tik nogmaals om hem weer dicht te gooien, samen met het kanaal dat er los van komt te liggen. Een andere kant op graven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+      },
+      "scribe": {
+        "given": "De tekens die in rood staan horen bij de puzzel — die blijven staan.",
+        "enter": "Tik op een teken om daar de rietpen op te pakken en tik dan op een lege plek ernaast om verder te schrijven — of sleep in één keer langs de regel.",
+        "back": "Tik op een teken dat je zelf schreef en tik nogmaals om het weg te schrapen, samen met de regel die er los van komt te liggen. Een andere kant op schrijven doet hetzelfde. Ongedaan maken haalt je laatste zet terug."
+      }
+    },
+    "undo": "Ongedaan",
+    "goal": {
+      "default": "Elk vakje van de raat krijgt een getal, 1 tot {{last}}, en elk getal ligt tegen het vorige aan.",
+      "channel": "Eén kanaal bewatert de hele vlakte: elke akker komt aan de beurt, 1 tot {{last}}, elk gegraven naast de akker ervoor.",
+      "scribe": "Eén doorlopende regel tekens loopt over het vel: elke plek krijgt een teken, 1 tot {{last}}, telkens naast het teken ervoor."
+    },
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": "Een van deze getallen kan niet goed staan.",
+          "sandwich": "De {{before}} en de {{after}} raken samen nog maar één leeg vakje.",
+          "neighbourForced": "Naast de {{from}} is nog maar één vakje leeg.",
+          "onlyCell": "Ergens anders in de raat kan de {{value}} niet meer.",
+          "onlyValue": "Geen enkel ander getal kan bij dit vakje komen."
+        },
+        "action": {
+          "place": "Zet {{value}} in het gearceerde vakje."
+        }
+      },
+      "channel": {
+        "reason": {
+          "mistake": "Een van deze getallen kan niet goed staan.",
+          "sandwich": "De {{before}} en de {{after}} raken samen nog maar één droge akker.",
+          "neighbourForced": "Naast de {{from}} ligt nog maar één droge akker.",
+          "onlyCell": "Nergens anders op de vlakte past de {{value}} nog.",
+          "onlyValue": "Geen enkel ander getal kan bij deze akker komen."
+        },
+        "action": {
+          "place": "Graaf {{value}} in de gearceerde akker."
+        }
+      },
+      "scribe": {
+        "reason": {
+          "mistake": "Een van deze tekens kan niet goed staan.",
+          "sandwich": "De {{before}} en de {{after}} raken samen nog maar één lege plek.",
+          "neighbourForced": "Naast de {{from}} is nog maar één plek leeg.",
+          "onlyCell": "Nergens anders op het vel past de {{value}} nog.",
+          "onlyValue": "Geen enkel ander teken kan bij deze plek komen."
+        },
+        "action": {
+          "place": "Schrijf {{value}} op de gearceerde plek."
+        }
+      }
+    },
+    "name": {
+      "default": "Honingraat",
+      "channel": "Het Kanaal",
+      "scribe": "Schrijversvel"
     }
   }
 }
