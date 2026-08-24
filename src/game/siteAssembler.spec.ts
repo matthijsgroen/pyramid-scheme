@@ -106,6 +106,31 @@ describe(assembleFloor, () => {
     expect(rooms.every(r => r.theme === undefined)).toBe(true)
   })
 
+  /**
+   * The tier follows the room too. A floor is authored as a mix — a gentle pocket, a ward section
+   * pitched above the rest — and the board a player meets is the one its OWN section asked for,
+   * not the floor's average.
+   */
+  it("stamps each puzzle room with the difficulty its own path authored", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 2,
+      difficulty: "wizard",
+      sideSections: [
+        {
+          pathPuzzles: 1,
+          difficulty: "starter",
+          end: "treasure",
+          sideSections: [{ pathPuzzles: 1, difficulty: "master", end: "treasure" }],
+        },
+      ],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(rooms.map(r => r.difficulty).sort()).toEqual(["master", "starter", "wizard", "wizard"])
+  })
+
   it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index and the floor's encounterArgs", () => {
     const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau", encounterArgs: { runNr: 7 } }
     const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {

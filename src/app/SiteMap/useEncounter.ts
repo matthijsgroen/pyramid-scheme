@@ -64,7 +64,9 @@ export const useEncounter = ({
       edgeId,
       sectionHash,
       freshArrival: active.freshArrival,
-      difficulty,
+      // The tier this room's own section was authored at, falling back to the floor's for a cell that
+      // carries none (see RoomCell.difficulty) — a starter pocket on a wizard floor serves starter boards.
+      difficulty: (cell?.type === "room" ? cell.difficulty : undefined) ?? difficulty,
       reward: cell?.type === "room" ? cell.reward : undefined,
       stock: cell?.type === "room" ? cell.stock : undefined,
       pathIndex: cell?.type === "room" ? cell.pathIndex : undefined,

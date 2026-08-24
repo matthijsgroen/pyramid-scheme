@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A new puzzle: one unbroken run of numbers carried from cell to touching cell, by tapping or by dragging, until the whole board is filled. It wears the room it is found in — a kept hive, a channel dug across dry fields that green as the water reaches them, or a line of figures inked across a scribe's papyrus.
 
+### Changed
+
+- A side passage now hands you the puzzles it was built for, not the ones the floor around it was. A quiet pocket off a wizard floor really is a breather, and a ward passage on an easy floor really does bite.
+- Every kind of board now ships with more of them ready than there are rooms that ask for one, so meeting the same puzzle twice on a run is far less likely.
+
 ## 0.38.3 - 2026-08-23
 
 ### Fixed

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { enumerateConfigs } from "@/game/seeds/enumerateConfigs"
+import { enumerateConfigs, seedTarget } from "@/game/seeds/enumerateConfigs"
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 
@@ -15,6 +15,20 @@ describe("shipped puzzle seeds", () => {
   it("covers every configuration the baked world asks a seedable family for", () => {
     const missing = demands.filter(demand => !puzzleSeeds[demand.hash]?.length)
     expect(missing.map(demand => `${demand.familyId}/${demand.difficulty}`)).toEqual([])
+  })
+
+  // Coverage alone is not enough: a bucket holding exactly as many boards as the rooms that draw
+  // from it repeats one for certain, since a room picks by `roomSeed % seeds.length` off an
+  // arbitrary hash. This is the guard for the case that grows the world without regrowing the
+  // lists — the demand climbs, the artifact doesn't, and the repeats arrive quietly.
+  it("ships a surplus of boards over the rooms drawing from each bucket", () => {
+    const thin = demands
+      .filter(demand => (puzzleSeeds[demand.hash]?.length ?? 0) < seedTarget(demand))
+      .map(
+        demand =>
+          `${demand.familyId}/${demand.difficulty}: ${puzzleSeeds[demand.hash]?.length ?? 0} for ${demand.rooms} rooms`
+      )
+    expect(thin).toEqual([])
   })
 
   it("builds a room's board from the list rather than from the room's own seed", () => {

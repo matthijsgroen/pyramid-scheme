@@ -76,6 +76,11 @@ export type RoomCell = {
   // `family` is what that request resolved to, and a family reads it to know which of its identities this
   // room is (the same board is a star map for `sky` and a haul-road network for `trade`).
   role?: string | string[]
+  // The tier this room's puzzle generates at, carried from the FloorConfig/SubSection that authored
+  // it — a section may sit at a different difficulty than its floor (a ward pocket, a deliberately
+  // gentler detour), and the room is what the player meets, not the floor. Unset falls back to the
+  // floor's own difficulty.
+  difficulty?: Difficulty
   // Which skin this room's family should wear (docs/instructions/puzzle-screens.md §2), carried from the
   // FloorConfig/SideSection that authored it. A NAME, not a look: core knows nothing about what it means,
   // and a family with no skin registered under it draws its default one.

@@ -63,6 +63,24 @@ describe("every authored floor assembles at its runtime seed", () => {
 
     expect(failures, `${failures.length} floor(s) cannot be assembled:\n${failures.join("\n")}`).toEqual([])
   }, 60_000)
+
+  // `SubSection.difficulty` is authored off-tier on purpose — a gentle pocket on a hard floor, a ward
+  // section pitched above the rest — and for a long while none of that reached a board: every room
+  // generated at its floor's tier. This asks the baked world to prove the seam is live, and asks it
+  // of the one case that is entirely invisible if the floor wins: a starter section on a wizard floor.
+  it("serves a wizard floor's starter-authored section starter boards", () => {
+    const stamped = allFloors().flatMap(floor => {
+      if (floor.config.difficulty !== "wizard") return []
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+      })
+      if (!result.success) return []
+      return result.grid.cells.flat().filter(c => c.type === "room" && c.difficulty === "starter")
+    })
+
+    expect(stamped.length).toBeGreaterThan(0)
+  }, 60_000)
 })
 
 // Encounters are authored per pyramid and re-authored constantly — a new puzzle family, a journey
