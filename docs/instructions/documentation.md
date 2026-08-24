@@ -108,6 +108,36 @@ Find one while editing? Move it to the tracker and delete it from the doc — ne
 
 ---
 
+## Length: a rejected alternative gets one line
+
+A design doc grows by recording the search that produced the design. That is the single biggest
+source of length, and it is the least useful part of the file: a reader wants what the thing is and
+why it is that way, not which draft it was in last week.
+
+**A rejected alternative earns one line — the idea, and the fact that kills it.** It exists so
+nobody rebuilds it, which needs a claim and a reason, not the investigation behind them. Collect
+them under one heading rather than giving each its own section.
+
+> - **Four 45° rotation states** — identical reach to retraction at **232×** the enumeration. The
+>   two extra angles reverse the beam back through ground it has already crossed.
+
+**If it needs a section, it is not rejected — it is deferred**, and what belongs in the doc is the
+same one line plus what it is waiting on.
+
+**Headings named "What X found" are session notes.** The finding belongs in the section it changes,
+written as a property of what exists. If a finding changed nothing that ships, it is a rejected
+alternative — one line.
+
+**A superseded claim is deleted, not struck through and corrected in place.** A doc that carries
+its own corrections has to be read forwards to be understood, so the reader meets the wrong answer
+first. Fix the original sentence.
+
+Two things that look like history and are not, so keep them: a **measurement** of what the shipped
+thing does (state it in the present, and drop the before-and-after column), and a **pitfall** that
+has been walked into (state it as a hazard, not as an incident report).
+
+---
+
 ## Summary
 
 | What you have                      | Where it goes                                                                            |
