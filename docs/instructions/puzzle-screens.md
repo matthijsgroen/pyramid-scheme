@@ -333,10 +333,13 @@ A miss always falls through to live generation. That is not a failure path: it i
 tuned still yields boards with no build step in the way, and how a lab `variant` (which changes the
 options, and which no room is ever authored with) is guaranteed a freshly searched board.
 
-`yarn generate-seeds` fills every bucket the baked world asks for, targeting the number of rooms that
-draw from it. `yarn seeds-info` reports coverage and what each tier's boards demand — the honest
-difficulty signal §5 names, which nothing else measures per board. `src/mods/puzzleSeeds.spec.ts`
-fails the build when a bucket is missing, orphaned, or no longer grades.
+`yarn generate-seeds` fills every bucket the baked world asks for, targeting **half again** the rooms
+that draw from it (`seedTarget`, capped at `SEED_CAP`). The surplus is the point: a room picks by
+`seed % seeds.length` off an arbitrary hash, so a list sized to its demand exactly repeats a board for
+certain while leaving another unused. `yarn seeds-info` reports coverage and what each tier's boards
+demand — the honest difficulty signal §5 names, which nothing else measures per board.
+`src/mods/puzzleSeeds.spec.ts` fails the build when a bucket is missing, orphaned, thinner than its
+target, or no longer grades.
 
 ### Building a new generator: keep the gate separable from the construction
 

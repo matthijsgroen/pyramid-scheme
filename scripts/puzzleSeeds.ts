@@ -8,6 +8,7 @@
  *
  *   --family    only these families (comma-separated); other buckets keep the seeds they have
  *   --cap       most seeds to keep per bucket, so one hot configuration cannot dominate the artifact
+ *               (a bucket otherwise aims at SURPLUS × the rooms that draw from it, never at exactly them)
  *   --tries     most seeds to test per bucket before reporting the bucket short
  *   --parallel  worker threads; defaults to two fewer than the machine has cores
  */
@@ -20,7 +21,7 @@ import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import type { Grade } from "../src/game/families/familyMeta"
 import type { FoundSeed } from "../src/game/seeds/findSeeds"
-import { enumerateConfigs, type ConfigDemand } from "../src/game/seeds/enumerateConfigs"
+import { enumerateConfigs, seedTarget, SEED_CAP, type ConfigDemand } from "../src/game/seeds/enumerateConfigs"
 import { ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import type { SeedTask, SeedWorkerMessage } from "./seedProtocol"
 
@@ -32,8 +33,10 @@ const command = argv.find(arg => !arg.startsWith("--")) ?? "info"
 const flag = (name: string) => argv.find(arg => arg.startsWith(`--${name}=`))?.split("=")[1]
 const number = (name: string, fallback: number) => Number(flag(name) ?? fallback)
 
-const CAP = number("cap", 200)
-const TRIES = number("tries", 50_000)
+const CAP = number("cap", SEED_CAP)
+// Only ever spent by a bucket that cannot fill — every other one stops the moment it hits its
+// target, so the budget costs wall time only where the tier's dials are genuinely tight.
+const TRIES = number("tries", 200_000)
 // Two cores left alone, so the machine running this stays usable.
 const THREADS = Math.max(1, Math.min(number("parallel", cpus().length - 2), cpus().length - 1))
 // Windows of roughly a second at the slowest bucket's yield. Small enough that no thread is left
@@ -44,7 +47,7 @@ const only = flag("family")?.split(",")
 const demands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META).filter(
   demand => !only || only.includes(demand.familyId)
 )
-const targetFor = (demand: ConfigDemand) => Math.min(demand.rooms, CAP)
+const targetFor = (demand: ConfigDemand) => seedTarget(demand, CAP)
 const describe = (demand: ConfigDemand) => `${demand.familyId}/${demand.difficulty} (${demand.rooms} rooms)`
 
 const summarise = (grades: Grade[]) => {
