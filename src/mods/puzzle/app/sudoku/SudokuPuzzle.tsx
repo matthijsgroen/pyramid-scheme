@@ -52,6 +52,13 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useSudokuEntry()
 
   const values = useMemo(() => sudokuValues(state), [state])
+  /**
+   * The value under the picked square, which every square holding it then washes to show.
+   *
+   * Derived here rather than held: what the player picked is already state, and "which value is that"
+   * is a question about it. An empty square yields nothing to match, so picking one washes nothing.
+   */
+  const twinned = selected ? values[selected.row][selected.col] : undefined
   const conflicts = useMemo(() => sudokuConflicts(puzzle, values), [puzzle, values])
   const stranded = useMemo(() => strandedNotes(puzzle, values, sudokuNotes(state)), [puzzle, values, state])
   const hint = useMemo(
@@ -131,6 +138,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
             selected={selected}
             hatched={hintVisible ? hint?.cells : undefined}
             marked={hintVisible ? hint?.evidence : undefined}
+            twinned={twinned}
             counted={counted}
             onSelect={(row, col) => {
               if (finished) return // the board is reading itself back; nothing may change under it

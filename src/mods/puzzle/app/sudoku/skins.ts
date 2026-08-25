@@ -51,6 +51,17 @@ export type SudokuSkin = {
   note: string
   strandedNote: string
   /**
+   * The wash a square wears when it holds the value the player has picked, as a CSS colour.
+   *
+   * A WASH rather than a ring or a hatch, and that is the whole reason it can exist: the rings and the
+   * hatching are the hint's vocabulary and a treatment means one thing (`puzzle-screens.md` §4.2). It
+   * is laid over the ground instead of replacing it, so a pre-filled square that is also a twin still
+   * reads as the puzzle's own — which is what a colour on the background could not do.
+   */
+  twin: string
+  /** The same answer one step earlier: a pencilled copy of that value, in a square that may still take it. */
+  twinNote: string
+  /**
    * Where two chambers meet, and where two squares inside one do — **as CSS colours rather than
    * classes, and that is load-bearing.** A Tailwind `border-*` colour sets all four sides at once, so
    * a square with one chamber wall and three seams would paint the seams in the wall's colour too.
@@ -109,6 +120,13 @@ const carved: SudokuSkin = {
   conflictInk: "text-red-100",
   note: "text-sky-300",
   strandedNote: "text-red-400/80 line-through",
+  // Cool, where the hint's marks are amber and a repeat is red — the three things a square can be
+  // saying at once stay three different colours.
+  // Carried at a heavier alpha than the register's, because a dark board swallows a wash: the same
+  // lesson the conflict colour learned here, where a dark tint behind a pale figure read as no tell at
+  // all at arm's length.
+  twin: "rgb(125 211 252 / 0.22)",
+  twinNote: "text-sky-200 font-semibold",
   wall: "rgb(214 211 209 / 0.85)",
   seam: "rgb(120 113 108 / 0.55)",
   hatch: "rgba(252,211,77,0.45)",
@@ -160,6 +178,10 @@ const register: SudokuSkin = {
   conflictInk: "text-red-950",
   note: "text-sky-900/80",
   strandedNote: "text-red-700/70 line-through",
+  // Ink washed over the sheet rather than light thrown on it, and blue rather than another brown: the
+  // grain and the hint's hatching have the warm end of this board between them.
+  twin: "rgb(7 89 133 / 0.14)",
+  twinNote: "text-sky-900 font-semibold",
   // Ruled in the same reed pen the signs are written with: the chamber rules are the heavy strokes a
   // scribe lays down first, the seams the light ones inside them.
   wall: "rgb(87 47 20 / 0.9)",

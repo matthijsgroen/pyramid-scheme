@@ -25,6 +25,15 @@ type Props = {
   /** Cell keys the current hint argues FROM — ringed, so evidence never looks like conclusion. */
   marked?: ReadonlySet<string>
   /**
+   * The value the picked square holds, or unset where it holds none.
+   *
+   * Every square holding it washes, and every square that has it PENCILLED IN brightens that one
+   * option — because the question a player asks when they tap a 4 is "where else is the 4, and where
+   * could it still go", and those are one question a step apart. An empty square answers neither, so
+   * picking one says nothing.
+   */
+  twinned?: number
+  /**
    * Which value the completion run is on (`puzzle-screens.md` §3), or unset for no run.
    *
    * **A tick is a VALUE, not a square**, and that is this family's own rule read back rather than a house
@@ -45,6 +54,9 @@ type Props = {
  */
 const hatchOf = (skin: SudokuSkin) => `repeating-linear-gradient(45deg, transparent 0 5px, ${skin.hatch} 5px 7px)`
 
+/** The wash over a square holding the picked value — a flat layer, so the ground beneath still reads. */
+const twinOf = (skin: SudokuSkin) => `linear-gradient(${skin.twin}, ${skin.twin})`
+
 /** Whether the square across this edge belongs to another chamber — or there is no square there at all. */
 const chamberEdge = (puzzle: SudokuPuzzleData, row: number, col: number, dRow: number, dCol: number): boolean => {
   const [nextRow, nextCol] = [row + dRow, col + dCol]
@@ -59,7 +71,8 @@ const NoteGrid: FC<{
   row: number
   col: number
   stranded?: ReadonlySet<string>
-}> = ({ notes, skin, size, row, col, stranded }) => (
+  twinned?: number
+}> = ({ notes, skin, size, row, col, stranded, twinned }) => (
   <span
     className="grid size-full place-items-center p-[6%] text-[24cqw] leading-none"
     style={{ gridTemplateColumns: `repeat(${Math.ceil(size / 2)}, minmax(0, 1fr))` }}
@@ -72,8 +85,15 @@ const NoteGrid: FC<{
         <span
           key={value}
           // Struck rather than deleted: the note is still the player's, and the value that ruled it out
-          // may itself be wrong and get corrected.
-          className={stranded?.has(sudokuNoteKey(row, col, value)) ? skin.strandedNote : skin.note}
+          // may itself be wrong and get corrected. A struck note stays struck even when it is the
+          // picked value — that it cannot go here is the louder fact of the two.
+          className={clsx(
+            stranded?.has(sudokuNoteKey(row, col, value))
+              ? skin.strandedNote
+              : value === twinned
+                ? skin.twinNote
+                : skin.note
+          )}
         >
           <skin.Glyph value={value} />
         </span>
@@ -100,11 +120,13 @@ export const SudokuBoard: FC<Props> = ({
   selected,
   hatched,
   marked,
+  twinned,
   counted,
   onSelect,
 }) => {
   const { size } = puzzle
   const hatch = hatchOf(skin)
+  const twin = twinOf(skin)
   return (
     <div className={clsx("aspect-square w-full max-w-[min(56vh,26rem)] select-none", skin.board)}>
       <div
@@ -129,9 +151,13 @@ export const SudokuBoard: FC<Props> = ({
                   borderBottomColor: chamberEdge(puzzle, rowIndex, colIndex, 1, 0) ? skin.wall : skin.seam,
                   borderLeftColor: chamberEdge(puzzle, rowIndex, colIndex, 0, -1) ? skin.wall : skin.seam,
                   borderRightColor: chamberEdge(puzzle, rowIndex, colIndex, 0, 1) ? skin.wall : skin.seam,
-                  // The hatch goes over the grain rather than instead of it: a hatched square is
-                  // still a square of the same ground.
-                  backgroundImage: [hatched?.has(key) && hatch, skin.grain].filter(Boolean).join(", ") || undefined,
+                  // Layered rather than swapped, top down: the hint's hatching over the twin wash over
+                  // the ground's own grain. A hatched square is still a square of the same sheet, and a
+                  // twin the hint happens to be about must not stop looking like either.
+                  backgroundImage:
+                    [hatched?.has(key) && hatch, cell.value !== undefined && cell.value === twinned && twin, skin.grain]
+                      .filter(Boolean)
+                      .join(", ") || undefined,
                 }}
                 className={clsx(
                   // The square is its own sizing context, so the token and the pencilled notes inside it
@@ -161,6 +187,7 @@ export const SudokuBoard: FC<Props> = ({
                     row={rowIndex}
                     col={colIndex}
                     stranded={stranded}
+                    twinned={twinned}
                   />
                 ) : (
                   <span

@@ -109,6 +109,38 @@ export const WithHint: Story = { args: hinted(starter, carved) }
 
 export const PapyrusWithHint: Story = { args: hinted(starter, register) }
 
+/**
+ * A square picked that holds a value: every square holding the same one washes, and a pencilled copy of
+ * it brightens. The picked square keeps its ring, so which of its twins the player is standing on is
+ * still clear.
+ */
+const twinned = (puzzle: typeof starter, skin: typeof carved) => {
+  const picked = puzzle.givens.flatMap((row, rowIndex) =>
+    row.flatMap((value, colIndex) => (value !== undefined ? [{ row: rowIndex, col: colIndex, value }] : []))
+  )[0]
+  const open = puzzle.givens.flatMap((row, rowIndex) =>
+    row.flatMap((value, colIndex) => (value === undefined ? [{ row: rowIndex, col: colIndex }] : []))
+  )
+  let state = createSudokuState(puzzle)
+  for (const value of [picked.value, (picked.value % 6) + 1])
+    state = toggleSudokuNote(state, open[0].row, open[0].col, value)
+  const values = sudokuValues(state)
+  return {
+    puzzle,
+    skin,
+    cells: state.cells,
+    conflicts: sudokuConflicts(puzzle, values),
+    stranded: strandedNotes(puzzle, values, sudokuNotes(state)),
+    selected: { row: picked.row, col: picked.col },
+    twinned: picked.value,
+    onSelect: () => {},
+  }
+}
+
+export const WithTwins: Story = { args: twinned(starter, carved) }
+
+export const PapyrusWithTwins: Story = { args: twinned(starter, register) }
+
 /** One value standing twice in a row, which the board says without any words. */
 const clashing = (puzzle: typeof starter, skin: typeof carved) => {
   const open = puzzle.givens.flatMap((row, rowIndex) =>

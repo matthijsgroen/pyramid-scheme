@@ -237,6 +237,32 @@ moves the hint on.
 - A repeat shows itself the moment it is written — in the row, the column or the
   chamber alike.
 
+### 8.1 Picking a value shows where else it stands
+
+Tapping a square that holds a value washes **every** square holding that value, and
+brightens a pencilled copy of it wherever one is still a live option. That is the
+question a player is actually asking when they tap a 4: where else is the 4, and
+where could it still go — one question a step apart. Tapping an empty square answers
+neither, so it washes nothing.
+
+**A wash, and it has to be**, because the rings and the hatching are the hint's
+vocabulary and a treatment means one thing (`puzzle-screens.md` §4.2): hatching is
+what a hint settles, a bright ring is what it argues from, the strong ring is the
+square the player is standing on, and a red ground is a repeat. So this is the one
+signal left that is neither — laid OVER the ground rather than replacing it, so a
+pre-filled square that is also a twin still reads as the puzzle's own.
+
+Two precedences fall out of that, and both are deliberate:
+
+- **A struck note stays struck.** A pencilled value the board has already ruled out
+  is struck through in red; when it is also the picked value, the strike wins. That
+  it cannot go here is the louder of the two facts.
+- **The hint stays on top.** A twin the hint happens to be about keeps its hatching,
+  because the hint is the thing the player just asked for.
+
+The wash is carried heavier on the carved board than on the register — a dark board
+swallows one, which is the lesson the conflict colour learned here first.
+
 ## 9. Theming
 
 Two faces, and the second one is more than a palette: **what a value LOOKS like is
