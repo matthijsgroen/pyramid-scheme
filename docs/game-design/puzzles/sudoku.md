@@ -253,10 +253,12 @@ Strokes also mean a sign is not at the mercy of whichever face a device happens 
 have, and let it be drawn as **ink** — an even reed-pen weight that holds up at a
 sixth of a phone screen, which a text glyph sized to sit in a line of prose does not.
 
-**A subsetted hieroglyph font would be the better fix, and a wider one**: it would
-settle the tiles, the tableau and the collection too, all of which gamble on the
-device today. It is not in this family's scope, and it would not retire these six —
-a drawn sign is still the one that can be given a reed-pen weight.
+**The game now ships a subsetted hieroglyph font** (`yarn generate-font`), which
+settles the tiles, the tableau and the collection — everything that used to gamble
+on the device. It does not retire these six: a drawn sign is the one whose stroke
+weight is ours to set, and this board wants an even reed-pen line rather than
+whatever weight a text face was designed for. What the font does for this family is
+make the hint sentences safe, since those name a sign as a character.
 
 They are picked for **silhouette** rather than for meaning — water, the sun, an
 ankh, a house, a mouth, the feather of truth: a flat zigzag, a disc, an upright
