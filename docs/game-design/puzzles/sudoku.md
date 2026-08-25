@@ -281,46 +281,37 @@ more, so the squares, the pad and every hint sentence ask the skin for the token
   a ring drawn for a dark chamber is nearly invisible on papyrus, and an affordance
   that survives on one skin only is not an affordance.
 
-The six signs are **drawn, not typed**, and that is not a style choice. The game
-bundles no hieroglyph face — only Limelight, a display font — so every hieroglyph
-anywhere in it rides on the device having a font for the Egyptian Hieroglyphs block.
-The dependency is not hypothetical: `HieroglyphTile` already carries a workaround for
-how its shadow doubled "on glyphs that render as a simple box (e.g. a hieroglyph
-missing from the device's font)". Which platforms lack one, and at which OS version,
-is not surveyed here — the point is that the game does not control it.
+The six signs are the **characters themselves**, set in the face this game ships.
+That is what `yarn generate-font` bought: the repo subsets Noto Sans Egyptian
+Hieroglyphs and precaches it, so a sign on this board is not at the mercy of whichever
+fonts a device happens to carry. The dependency it removes was not hypothetical —
+`HieroglyphTile` still carries a workaround for how its shadow doubled "on glyphs that
+render as a simple box (e.g. a hieroglyph missing from the device's font)" — and on
+this board it is not a decoration that failed but an unsolvable puzzle, since telling
+one sign from another at a glance IS the mechanic.
 
-**What differs on this board is the cost of losing that bet.** Telling one sign from
-another at a glance IS the mechanic, so a tile that shows an empty box is a
-decoration that failed, while a square that shows one has taken the puzzle with it.
-Strokes also mean a sign is not at the mercy of whichever face a device happens to
-have, and let it be drawn as **ink** — an even reed-pen weight that holds up at a
-sixth of a phone screen, which a text glyph sized to sit in a line of prose does not.
-
-**The game now ships a subsetted hieroglyph font** (`yarn generate-font`), which
-settles the tiles, the tableau and the collection — everything that used to gamble
-on the device. It does not retire these six: a drawn sign is the one whose stroke
-weight is ours to set, and this board wants an even reed-pen line rather than
-whatever weight a text face was designed for. Nor does it settle anything here — this
-family draws every sign it shows, sentences included, and so depends on no font at
-all.
+**So there is one shape everywhere**: the squares, the pad's keys and every sentence
+that names a value all show the same character. This board did once draw its own six
+as SVG strokes, and the drawings were the better ink — an even reed-pen weight, each
+sign filling its box, all six the same size. But a hint naming a value is asking the
+player to go and find it, and a board that drew its signs while its sentences typed
+them showed two different hands: a wide ripple against a many-toothed one, a leaf
+against a plume. A hint pointing at something not quite there costs more than stroke
+weight is worth, and the font is in the repo precisely so the choice does not have to
+be made twice.
 
 They are picked for **silhouette** rather than for meaning — water, the sun, an
 ankh, a house, a mouth, the feather of truth: a flat zigzag, a disc, an upright
 cross, a squat box, a flat lens, a tall plume. Six seated figures would be
 authentic and unplayable.
 
-The hieroglyph **characters** for those same six are kept as the signs' NAMES rather
-than as their picture: the accessible label on a pad key, and on a sign drawn into a
-hint sentence. What a reader hears is 𓈖; what everyone else sees is the drawing.
-
-**A hint draws the sign, it does not type it**, and that is not a nicety. A hint that
-names a value is asking the player to go and find it, so the words and the squares
-have to show one shape — and they do not otherwise: the same six characters in a font
-come out as another hand entirely (a many-toothed ripple against a flat one, a plume
-against a leaf, hairline outlines against reed-pen strokes). A sentence saying one and
-a board showing the other is a hint pointing at something that is not there. So the
-shell takes a hint as a NODE, the wording is interpolated with a mark no sentence
-contains, and the face's own sign is put in the gap (`SudokuPuzzle.tsx`).
+**A face says how large it writes** (`SudokuSkin.size`), because that is a property of
+the characters and not of the places they stand in: a figure fills about half of its em
+box where a sign fills nearly all of one, so a register set at the carved board's size
+reads as a whisper beside it. The register writes larger in all three places. The
+pencilled note is the one with a ceiling — six of them share a square three across, so
+a sign much wider than a third of it climbs over its neighbours — which leaves a note
+on this face small. It is the honest cost of a text glyph at a sixth of a phone screen.
 
 The register is reached by the `scribe` role, which no site authors yet: a themed
 role needs four families in its pool before it is worth authoring

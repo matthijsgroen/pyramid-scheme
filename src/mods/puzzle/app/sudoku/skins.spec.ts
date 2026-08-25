@@ -50,16 +50,31 @@ describe("which place a sudoku room is", () => {
     for (const sign of signs) expect(sign.codePointAt(0)).toBeGreaterThanOrEqual(0x13000)
   })
 
-  it("draws its signs rather than typing them, so a device with no hieroglyph font still has a puzzle", () => {
-    // Telling one sign from another IS this board's mechanic, and the Egyptian Hieroglyphs block ships
-    // with no font at all on several platforms this game runs on. So the six squares are drawn, and the
-    // characters above are only ever put in a sentence.
+  it("writes one shape everywhere: the square shows the character its sentences name", () => {
+    // Telling one sign from another IS this board's mechanic, which is why the game subsets and ships
+    // the face that draws them (`scripts/generateFont.ts`) instead of gambling on the device having
+    // one. That guarantee is what lets a square, a pad key and a hint sentence all be the SAME
+    // character — a board drawing its own signs while its sentences typed them would be a hint pointing
+    // at something not quite there.
     const register = skinFor("scribe", undefined)
-    const drawn = [1, 2, 3, 4, 5, 6].map(value => renderToStaticMarkup(createElement(register.Glyph, { value })))
-    expect(drawn.every(markup => markup.startsWith("<svg"))).toBe(true)
-    expect(new Set(drawn).size).toBe(6)
-    // And the carved board writes the figure itself, with no drawing involved.
+    const shown = [1, 2, 3, 4, 5, 6].map(value => renderToStaticMarkup(createElement(register.Glyph, { value })))
+    expect(shown).toEqual([1, 2, 3, 4, 5, 6].map(register.token))
+    // And the carved board writes the figure itself.
     expect(renderToStaticMarkup(createElement(skinFor(undefined, undefined).Glyph, { value: 4 }))).toBe("4")
+  })
+
+  it("sets the register larger than the carved board, since a sign fills its box and a figure half of one", () => {
+    // A property of the CHARACTERS rather than of the places they stand in, so it travels with the face
+    // to all three: the square, the pencilled option and the pad's key.
+    const carved = skinFor(undefined, undefined)
+    const register = skinFor("scribe", undefined)
+    const bigger = (a: string, b: string) => parseFloat(a) > parseFloat(b)
+    expect(bigger(register.size.value, carved.size.value)).toBe(true)
+    expect(bigger(register.size.note, carved.size.note)).toBe(true)
+    expect(bigger(register.size.key, carved.size.key)).toBe(true)
+    // The note has a ceiling the others do not: six of them share a square three across, so one much
+    // wider than a third of it climbs over its neighbours.
+    expect(parseFloat(register.size.note)).toBeLessThanOrEqual(29)
   })
 
   it("inks the register's given signs in red, the way a scribe's rubric is set down", () => {

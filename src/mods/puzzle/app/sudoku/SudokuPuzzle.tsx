@@ -1,11 +1,11 @@
-import { useMemo, useState, type FC, type ReactNode } from "react"
+import { useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { SudokuBoard } from "@/mods/puzzle/app/sudoku/SudokuBoard"
 import { SudokuPad } from "@/mods/puzzle/app/sudoku/SudokuPad"
 import { SudokuRules } from "@/mods/puzzle/app/sudoku/SudokuRules"
 import { buildSudokuHint } from "@/mods/puzzle/app/sudoku/sudokuHint"
 import { useSudokuEntry } from "@/mods/puzzle/app/sudoku/useSudokuEntry"
-import { skinFor, type SudokuSkin } from "@/mods/puzzle/app/sudoku/skins"
+import { skinFor } from "@/mods/puzzle/app/sudoku/skins"
 import type { SudokuPuzzle as SudokuPuzzleData } from "@/mods/puzzle/game/sudoku/generateSudoku"
 import {
   canUndoSudoku,
@@ -34,38 +34,6 @@ type Props = {
   onSolved: () => void
   onCancel: () => void
 }
-
-/**
- * Where the value goes while the sentence is still a string.
- *
- * A hint is translated wording with a `{{token}}` in it, and on one of this family's faces a value is
- * DRAWN rather than typed. So the wording is interpolated with a mark no sentence contains, then cut at
- * the mark and the face's own sign put in the gap.
- */
-const SLOT = "\u2063"
-
-/**
- * A hint sentence with the value drawn into it, exactly as the board draws it.
- *
- * **The board and the sentence have to show one shape.** A hint that names a value is asking the player
- * to go and find it, so a sign in the words that is not the sign on the squares is a hint pointing at
- * something that is not there — and the two do differ: the register's six are drawn as reed-pen strokes
- * (`glyphs.tsx`), where the same characters in a font come out as another hand entirely.
- *
- * The sign is labelled with the skin's token, which is what a reader hears — the same character the
- * sentence used to carry, and the same one the pad's keys are named by.
- */
-const inked = (text: string, value: number | undefined, skin: SudokuSkin): ReactNode[] =>
-  text.split(SLOT).flatMap((part, index) =>
-    index === 0 || value === undefined
-      ? [part]
-      : [
-          <span key={index} role="img" aria-label={skin.token(value)}>
-            <skin.Glyph value={value} />
-          </span>,
-          part,
-        ]
-  )
 
 /** Which values already fill a square in every row, so the pad can dim what is spent. */
 const exhaustedValues = (values: (number | undefined)[][], size: number): ReadonlySet<number> => {
@@ -146,33 +114,22 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
         clearSelection()
       }}
       hint={
-        hint && (
-          <>
-            {/* The value a reason is about reaches the sentence as the skin's own sign, never as a
-                number: over a register, "4" would be the one thing on the screen that is not a sign. */}
-            {inked(
-              t(`sudoku.hint.${skin.name}.reason.${hint.key}`, {
-                token: hint.params.value === undefined ? undefined : SLOT,
-              }),
-              hint.params.value,
-              skin
-            )}
-            {hint.move && (
-              <>
-                {/* The reason, then the move, on two lines — the shell's paragraph keeps the break. */}
-                {"\n"}
-                {inked(
-                  t(`sudoku.hint.${skin.name}.action.${hint.move.kind}`, {
-                    count: hint.move.count,
-                    token: SLOT,
-                  }),
-                  hint.move.value,
-                  skin
-                )}
-              </>
-            )}
-          </>
-        )
+        hint &&
+        [
+          // The value a reason is about reaches the sentence as the skin's own token, never as a
+          // number: over a register, "4" would be the one thing on the screen that is not a sign. It is
+          // the same character the squares show, which is what the bundled face guarantees.
+          t(`sudoku.hint.${skin.name}.reason.${hint.key}`, {
+            token: hint.params.value === undefined ? undefined : skin.token(hint.params.value),
+          }),
+          hint.move &&
+            t(`sudoku.hint.${skin.name}.action.${hint.move.kind}`, {
+              count: hint.move.count,
+              token: skin.token(hint.move.value),
+            }),
+        ]
+          .filter(Boolean)
+          .join("\n")
       }
       idleMs={hintIdleDelay(difficulty)}
       // Reading a hint and then hunting for the square it means is the whole gap between advice and

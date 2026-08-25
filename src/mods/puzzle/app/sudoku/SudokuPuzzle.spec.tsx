@@ -45,12 +45,9 @@ const padIn = (root: HTMLElement, label: string) =>
 
 /** What a square has pencilled in: the note spans that are not the aria-hidden spacers. */
 const pencilled = (cell: HTMLElement) =>
-  [...cell.querySelectorAll("span[class*='24cqw'] > span:not([aria-hidden])")].map(span => span.textContent)
+  [...cell.querySelectorAll("span.grid > span:not([aria-hidden])")].map(span => span.textContent)
 
 const reveal = (root: HTMLElement) => act(() => within(root).getByRole("button", { name: /hint/i }).click())
-
-/** The values a hint sentence names, each drawn into the words the way the board draws it. */
-const namedIn = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>("p [role='img']")]
 
 const firstEmpty = (puzzle: ReturnType<typeof generateSudoku>) => {
   for (let row = 0; row < 6; row++)
@@ -91,35 +88,28 @@ describe("SudokuPuzzle", () => {
 
   /**
    * The token, end to end. A value is a position in the rules; what a SENTENCE says it is belongs to the
-   * skin, so the carved board's hint says "4" where the register's DRAWS its sign — and a digit appearing
-   * over a register would be the one thing on that screen which is not a sign.
+   * skin, so the carved board's hint says "4" where the register's says 𓋹 — and a digit appearing over a
+   * register would be the one thing on that screen which is not a sign.
+   *
+   * It is the same character the squares show, which is what the bundled face is for: a hint naming a
+   * value is asking the player to go and find it, so the words and the board must show one shape.
    */
   it("fills its sentences with the face's own token", () => {
     const puzzle = board()
     const carved = render(<SudokuPuzzle puzzle={puzzle} difficulty="expert" onSolved={() => {}} onCancel={() => {}} />)
     reveal(carved.container)
-    const figures = namedIn(carved.container)
-    expect(figures.length, "the carved board should name a value in its sentences").toBeGreaterThan(0)
-    // A figure is written as itself, so the words carry it as text and a reader hears the same thing.
-    for (const figure of figures) {
-      expect(figure.textContent).toMatch(/^[1-6]$/)
-      expect(figure.getAttribute("aria-label")).toBe(figure.textContent)
-    }
+    const digits = (carved.container.textContent ?? "").match(/"token":"(\d)"/)
+    expect(digits, "the carved board should name a value as a figure").not.toBeNull()
 
     const register = render(
       <SudokuPuzzle puzzle={puzzle} difficulty="expert" role="scribe" onSolved={() => {}} onCancel={() => {}} />
     )
     reveal(register.container)
-    const signs = namedIn(register.container)
-    expect(signs.length).toBeGreaterThan(0)
-    for (const sign of signs) {
-      // DRAWN into the sentence, in the same strokes the squares use. A hint that names a value is
-      // asking the player to go and find it, and a sign in the words that is not the sign on the board
-      // is a hint pointing at something that is not there.
-      expect(sign.querySelector("svg")).not.toBeNull()
-      // And named by the character, which is what a reader hears and what the pad's keys are called.
-      expect(sign.getAttribute("aria-label")?.codePointAt(0)).toBeGreaterThanOrEqual(0x13000)
-    }
+    const said = (register.container.textContent ?? "").match(/"token":"(.+?)"/)
+    expect(said).not.toBeNull()
+    expect(said![1].codePointAt(0)).toBeGreaterThanOrEqual(0x13000)
+    // And that is the character standing in its squares, not a second way of naming the same value.
+    expect(within(register.container).getAllByText(said![1]).length).toBeGreaterThan(0)
     expect(register.container.textContent).toContain("sudoku.hint.papyrus.")
   })
 
@@ -203,7 +193,7 @@ describe("SudokuPuzzle", () => {
       act(() => cellsIn(container)[holder.row * 6 + holder.col].click())
 
       const pencilled = (at: number, of: number) =>
-        [...cellsIn(container)[at].querySelectorAll("span[class*='24cqw'] > span")].find(
+        [...cellsIn(container)[at].querySelectorAll("span.grid > span")].find(
           span => span.textContent === String(of) && !span.hasAttribute("aria-hidden")
         )
       expect(pencilled(row * 6 + col, value)?.className).toContain("font-semibold")
@@ -231,9 +221,9 @@ describe("SudokuPuzzle", () => {
       act(() => padIn(container, String(holder.value)).click())
       act(() => cellsIn(container)[holder.row * 6 + holder.col].click())
 
-      const struck = [
-        ...cellsIn(container)[holder.row * 6 + empty].querySelectorAll("span[class*='24cqw'] > span"),
-      ].find(span => span.textContent === String(holder.value) && !span.hasAttribute("aria-hidden"))
+      const struck = [...cellsIn(container)[holder.row * 6 + empty].querySelectorAll("span.grid > span")].find(
+        span => span.textContent === String(holder.value) && !span.hasAttribute("aria-hidden")
+      )
       expect(struck?.className).toContain("line-through")
       expect(struck?.className).not.toContain("font-semibold")
     })
@@ -278,7 +268,7 @@ describe("SudokuPuzzle", () => {
     // its neighbour is rubbed out — the unwritten ones are aria-hidden spacers. What is PENCILLED is
     // therefore what is not hidden, and reading the grid's text would only ever say "123456".
     expect(pencilled(cell())).toEqual(["3"])
-    expect(cell().querySelector(".text-\\[54cqw\\]"), "a pencilled value must not stand in the square").toBeNull()
+    expect(cell().querySelector("span.inline-block"), "a pencilled value must not stand in the square").toBeNull()
 
     // The same key again rubs it out.
     act(() => padIn(container, "3").click())
@@ -288,6 +278,6 @@ describe("SudokuPuzzle", () => {
     act(() => padIn(container, "✏️ sudoku.notes").click())
     act(() => padIn(container, "3").click())
     expect(pencilled(cell())).toEqual([])
-    expect(cell().querySelector(".text-\\[54cqw\\]")?.textContent).toBe("3")
+    expect(cell().querySelector("span.inline-block")?.textContent).toBe("3")
   })
 })

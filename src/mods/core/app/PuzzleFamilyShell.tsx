@@ -24,10 +24,6 @@ type Props = {
   /**
    * The next step, already phrased — or a function that phrases it.
    *
-   * **A node rather than a string**, because a family may have to SHOW something inside its own sentence:
-   * sudoku's register calls its values by six drawn signs, and a sentence naming one with a text character
-   * names it in a shape the board does not use. Families with nothing to draw pass a string, which is a node.
-   *
    * **Pass a function when deriving the hint is expensive**, and it will only be called once the player asks.
    * A hint comes out of the family's technique solver, and for some families that is a full solve of the board:
    * lightbeam's top tier enumerates tens of thousands of configurations for one, which is half a second on a
@@ -37,7 +33,7 @@ type Props = {
    * Presence still decides whether the button appears, so a family with no hint to give passes `undefined` —
    * a function is always present.
    */
-  hint?: ReactNode | (() => ReactNode)
+  hint?: string | (() => string | undefined)
   /** How long a still board waits before the hint button asks to be pressed (see hintIdleDelay). */
   idleMs?: number
   /** Fired when the player asks for the hint — families use it to aim the board at what it names. */

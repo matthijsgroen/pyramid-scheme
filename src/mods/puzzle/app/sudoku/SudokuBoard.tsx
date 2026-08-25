@@ -83,8 +83,11 @@ const NoteGrid: FC<{
   twinned?: number
 }> = ({ notes, skin, size, row, col, stranded, twinned }) => (
   <span
-    className="grid size-full place-items-center p-[6%] text-[24cqw] leading-none"
-    style={{ gridTemplateColumns: `repeat(${Math.ceil(size / 2)}, minmax(0, 1fr))` }}
+    className="grid size-full place-items-center p-[6%] leading-none"
+    style={{
+      gridTemplateColumns: `repeat(${Math.ceil(size / 2)}, minmax(0, 1fr))`,
+      fontSize: skin.size.note,
+    }}
   >
     {/* Every value keeps its own spot whether or not it is pencilled in, so a note does not move when
         its neighbour is rubbed out. The unwritten ones are spacers, and hidden from a reader that
@@ -203,8 +206,9 @@ export const SudokuBoard: FC<Props> = ({
                   />
                 ) : (
                   <span
+                    style={{ fontSize: skin.size.value }}
                     className={clsx(
-                      "inline-block text-[54cqw] leading-none font-semibold",
+                      "inline-block leading-none font-semibold",
                       conflicted ? skin.conflictInk : cell.given ? skin.givenInk : skin.ink,
                       settled && skin.celebrate
                     )}

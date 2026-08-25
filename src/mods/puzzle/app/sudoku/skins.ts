@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import { Figure, Sign } from "./glyphs"
+import { SIGN_CHARACTERS } from "./signs"
 
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
@@ -24,13 +25,23 @@ export type SudokuSkin = {
   /** What a value looks like standing in a square — a figure cut in, or the sign that means it. */
   Glyph: FC<{ value: number }>
   /**
-   * What a value is CALLED, for the places that need a name rather than a shape: the accessible label on
-   * a pad key, and on a sign drawn into a hint sentence. The carved board says "4"; the register says
-   * 𓈖, the character the sign next door is drawn from.
+   * How large this face writes: a value in a square, a pencilled option, and a key on the pad.
    *
-   * Nothing on screen is left to this. A sentence that named a value with the character would name it in
-   * a shape the board does not use — the same six in a font come out as another hand entirely — so the
-   * sentence draws the sign too (`SudokuPuzzle.tsx`) and this is what a reader hears it called.
+   * The FACE's business and not the board's, because it is a property of the characters rather than of
+   * the places they stand in: a figure fills about half of its em box where a sign fills nearly all of
+   * one, so a register set at the carved board's size reads as a whisper beside it. On the board the
+   * sizes are square-relative (`cqw`), which is what keeps a phone-sized board legible with no pixel
+   * constant anywhere; a pad key is a fixed height, so its is not.
+   */
+  size: { value: string; note: string; key: string }
+  /**
+   * What a SENTENCE puts in its slot when it has to say a value, and what a pad key is called. The
+   * carved board says "4"; the register says 𓈖 — the same character its squares show, because the game
+   * ships the face that draws it.
+   *
+   * One shape everywhere is the point: a hint naming a value is asking the player to go and find it, so
+   * a sentence and a board that showed the sign differently would be a hint pointing at something that
+   * is not quite there.
    */
   token: (value: number) => string
   /** The ground the grid is ruled on. */
@@ -107,15 +118,6 @@ export type SudokuSkin = {
 }
 
 /**
- * The six signs as CHARACTERS, in the order the values 1…6 run and matching what `glyphs.tsx` draws.
- *
- * Only ever put in a sentence — water, the sun, an ankh, a house, a mouth, a feather. The board draws
- * its own (a device without an Egyptian Hieroglyphs font would otherwise show six identical boxes and
- * no puzzle at all), and this list is what a hint says while pointing at one.
- */
-const SIGN_CHARACTERS = ["𓈖", "𓇳", "𓋹", "𓉐", "𓂋", "𓆄"] as const
-
-/**
  * **Figures cut into stone.** The default: a dark chamber wall with the answer carved into it, the
  * same ground every other grid family in the catalogue is drawn on, so a player meeting this one
  * after a Sumplete or a Greater-and-Lesser board reads it without being taught anything.
@@ -123,6 +125,7 @@ const SIGN_CHARACTERS = ["𓈖", "𓇳", "𓋹", "𓉐", "𓂋", "𓆄"] as cons
 const carved: SudokuSkin = {
   name: "default",
   Glyph: Figure,
+  size: { value: "54cqw", note: "24cqw", key: "1.125rem" },
   token: value => `${value}`,
   board: "bg-stone-950",
   // Cut stone, drawn flat: every other grid family in the catalogue is a flat dark board, and a
@@ -177,6 +180,11 @@ const carved: SudokuSkin = {
 const register: SudokuSkin = {
   name: "papyrus",
   Glyph: Sign,
+  // Larger than the carved board's figures in all three places: a sign is drawn to fill its box, so
+  // matched size for size against a digit the register read as a whisper. The note is the one with a
+  // ceiling — six of them share a square three across, so a sign much wider than a third of it climbs
+  // over its neighbours.
+  size: { value: "76cqw", note: "28cqw", key: "1.75rem" },
   token: value => SIGN_CHARACTERS[value - 1],
   board: "bg-[#b99a63]",
   // Pressed reed: strips laid across strips, so the fibre runs both ways and neither reads as a rule
