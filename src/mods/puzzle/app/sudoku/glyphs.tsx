@@ -5,12 +5,17 @@ import type { FC } from "react"
  * may export nothing else — fast refresh needs the split, and the skin table next door is not a
  * component.
  *
- * **Drawn rather than typed, and that is not a style choice.** Telling one sign from another at a
- * glance IS this board's mechanic, and the Egyptian Hieroglyphs block ships with no font at all on
- * several of the platforms this game runs on — a board of empty boxes is not a harder puzzle, it is an
- * unplayable one. A tile that shows a box is a decoration that failed; a square that shows one has
- * taken the puzzle with it. Strokes also let the signs be drawn as INK: an even reed-pen weight that
- * holds up at a sixth of a phone screen, which a text glyph sized to sit in a line of prose does not.
+ * **Drawn rather than typed, and that is not a style choice.** The game bundles no hieroglyph face —
+ * only Limelight, a display font — so every hieroglyph anywhere in it depends on the device having a
+ * font for the Egyptian Hieroglyphs block. That dependency is not hypothetical: HieroglyphTile already
+ * works around how its shadow doubled "on glyphs that render as a simple box (e.g. a hieroglyph
+ * missing from the device's font)".
+ *
+ * **What differs here is the cost of losing that bet.** Telling one sign from another at a glance IS
+ * this board's mechanic, so a tile that shows a box is a decoration that failed, while a square that
+ * shows one has taken the puzzle with it. Strokes also mean the sign is not at the mercy of whichever
+ * face a device happens to have, and let it be drawn as INK: an even reed-pen weight that holds up at
+ * a sixth of a phone screen, which a text glyph sized to sit in a line of prose does not.
  *
  * Each is drawn in the same 100-unit box, centred, and inherits its colour from the square it stands
  * in — so a given sign in red and a written one in black are one component.

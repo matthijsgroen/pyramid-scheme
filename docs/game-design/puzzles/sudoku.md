@@ -238,13 +238,25 @@ more, so the squares, the pad and every hint sentence ask the skin for the token
   a ring drawn for a dark chamber is nearly invisible on papyrus, and an affordance
   that survives on one skin only is not an affordance.
 
-The six signs are **drawn, not typed**, and that is not a style choice: telling one
-sign from another at a glance IS this board's mechanic, and the Egyptian
-Hieroglyphs block ships with no font at all on several of the platforms this game
-runs on. A tile that shows an empty box is a decoration that failed; a square that
-shows one has taken the puzzle with it. Strokes also let a sign be drawn as **ink**
-— an even reed-pen weight that holds up at a sixth of a phone screen, which a text
-glyph sized to sit in a line of prose does not.
+The six signs are **drawn, not typed**, and that is not a style choice. The game
+bundles no hieroglyph face — only Limelight, a display font — so every hieroglyph
+anywhere in it rides on the device having a font for the Egyptian Hieroglyphs block.
+The dependency is not hypothetical: `HieroglyphTile` already carries a workaround for
+how its shadow doubled "on glyphs that render as a simple box (e.g. a hieroglyph
+missing from the device's font)". Which platforms lack one, and at which OS version,
+is not surveyed here — the point is that the game does not control it.
+
+**What differs on this board is the cost of losing that bet.** Telling one sign from
+another at a glance IS the mechanic, so a tile that shows an empty box is a
+decoration that failed, while a square that shows one has taken the puzzle with it.
+Strokes also mean a sign is not at the mercy of whichever face a device happens to
+have, and let it be drawn as **ink** — an even reed-pen weight that holds up at a
+sixth of a phone screen, which a text glyph sized to sit in a line of prose does not.
+
+**A subsetted hieroglyph font would be the better fix, and a wider one**: it would
+settle the tiles, the tableau and the collection too, all of which gamble on the
+device today. It is not in this family's scope, and it would not retire these six —
+a drawn sign is still the one that can be given a reed-pen weight.
 
 They are picked for **silhouette** rather than for meaning — water, the sun, an
 ankh, a house, a mouth, the feather of truth: a flat zigzag, a disc, an upright
