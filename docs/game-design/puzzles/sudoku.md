@@ -7,23 +7,6 @@ this family: the grid it is authored at, its generation rules, its deduction
 techniques, how notes and undo work, how hints are phrased, and the two faces the
 same board wears.
 
-**Not in the world yet.** The family is built, registered and playable in the puzzle
-lab at every tier and in both faces, but it is deliberately absent from the puzzle
-mod's family list (`src/mods/puzzle/index.ts`), which is what puts a family into real
-rooms. So a release can be play-tested on the bench before the world is re-cut around
-it — and what the bench cannot answer, whether a 6x6 still holds up on the twentieth
-room of a journey, is exactly what that play-testing is for. Switching it on is
-listing `SUDOKU_META` there and running `yarn generate-world && yarn generate-seeds`.
-
-Held back, it has no seed lists either — nothing asks for a bucket — so every board
-it builds takes the miss path and searches live (`puzzle-screens.md` §6.1). That is
-the documented fallback and it works, but it is worth knowing while bench-testing the
-top tier: measured over 12 rerolls, wizard takes a median of 1.0s and at most 1.2s a
-board, and 4 of those 12 came back a **nearest miss** — solvable by a hidden single
-rather than genuinely needing the chamber-line rung (§3.1). So the top tier's
-character is not something to read off one or two rolls. Both costs disappear the
-moment the family is authored and the lists are filled.
-
 ## 1. Rules
 
 A `6×6` grid, cut into six **chambers two squares wide and three tall** — three
@@ -76,21 +59,17 @@ ambiguous rather than merely harder.
 So while the gentler ladder can still finish the board, the dig looks for a
 removal that stops it, and takes an ordinary removal only when the look comes up
 empty. Once a board is beyond the gentler ladder it stays beyond it — squares only
-ever come out — so the search stops at the first such removal and the rest of the
-dig is plain.
+ever come out — so the search stops at the first such removal and the rest of the dig
+is plain. It looks at a handful of removable squares rather than sweeping all 36,
+because a breaker cannot exist early in a dig and the sweep is nearly the whole cost;
+the look widens by itself as the board empties.
 
-That raises the top tier's yield from about one dig in sixty to about one in
-fifty per _attempt_, and the attempt ceiling (60) turns that into roughly seven
-boards in ten. **The remaining sixth is a nearest miss, not a failure**: a board
-solvable by the tier's own ladder, unique, dug to the same floor, which simply
-fell to a gentler reason. `grade` is what tells the two apart, so the offline seed
-pass lists only the boards that hit (`puzzle-screens.md` §6.1) and a room whose
-bucket is missing gets a slightly gentler board rather than none at all.
-
-The dig inspects a handful of removable squares for a breaker rather than sweeping
-all 36, because a breaker cannot exist early in a dig and the sweep is nearly the
-whole cost. It widens by itself as the board empties: a square that cannot come out
-at all is not one of the looks.
+The top tier then lands about one attempt in fifty, and the attempt ceiling (60) turns
+that into roughly seven boards in ten. **The rest come back a nearest miss rather than
+a failure**: a board solvable by the tier's own ladder, unique, dug to the same floor,
+which simply fell to a gentler reason. `grade` tells the two apart, so the offline seed
+pass lists only the boards that hit (`puzzle-screens.md` §6.1) and a room whose bucket
+is missing gets a slightly gentler board rather than none at all.
 
 ## 4. The technique ladder
 
@@ -113,34 +92,13 @@ dearest reason first would explain every board with "I eliminated candidates".
 
 ### 4.2 Both readings of the chamber-line rung earn their place
 
-`claiming` is the mirror of `pointing`, and on the boards this family ships it is
-not redundant: given only the singles and one of the two, `claiming` fires on 3 of
-150 boards and `pointing` on 2. Which one turns up on a given board is arbitrary,
-so a family carrying only one would leave the other's boards unexplained. They fold
-into a single **demand** (§5.2) because a tier that wants a chamber-line reason
-should not care which way round it turned up; the hint layer still names the exact
-one, because a sentence about a chamber and a sentence about a row are different
-sentences.
-
-### 4.3 Deliberately absent
-
-Every subset rung a larger sudoku turns on — a naked pair, a hidden pair, either
-triple, an x-wing — was built, measured, and removed. **Not one of them ever
-fired.** A group only six squares wide leaves a pair one step behind a single that
-fires first, so every board they might have decided was already decided.
-
-Rungs nothing can reach are not a ceiling to grow into. They are dead weight in the
-ladder, and worse, a tier table that promises reasoning no board demands: a
-`wizard` authored against a hidden pair generates nothing, or generates boards that
-quietly fall to a single. A 9×9 would want them back; this grid does not.
-
-### 4.4 Where the top of this ladder actually lives
-
-The chamber-line rung is the ceiling of a 6×6, and §3.1 is why: the board that
-needs it is roughly one dig in fifty, and there is no fifth rung under it waiting
-to be forced. The tier table (§5) is honest about that — what separates wizard from
-master is not a new kind of reasoning but the same reasoning with nothing handed
-over.
+`claiming` is the mirror of `pointing`, and neither is redundant: given only the
+singles and one of the two, `claiming` fires on 3 of 150 boards and `pointing` on 2.
+Which one a board turns up is arbitrary, so a family carrying one would leave the
+other's boards unexplained. They fold into a single **demand** (§5.2), because a tier
+wanting a chamber-line reason should not care which way round it fired; the hint layer
+still names the exact one, since a sentence about a chamber and a sentence about a row
+are different sentences.
 
 ## 5. Difficulty knobs
 
@@ -157,6 +115,10 @@ The grid never moves, so two dials are left and they answer different questions.
 Measured over 30 seeds a tier: 16 / 14 / 12 / 10.2 / 10.3 given squares, 20 / 22 /
 24 / 26 / 28 forced steps, and 2ms / 64ms / 26ms / 24ms / 1448ms to generate.
 
+The chamber-line rung is the ceiling of a 6×6 and there is no fifth rung under it
+waiting to be forced, so what separates wizard from master is not a new kind of
+reasoning but the same reasoning with nothing handed over.
+
 ### 5.1 The floor is on the dig, not a gift afterwards
 
 `minGivens` stops the digging early rather than handing squares back once it is
@@ -167,9 +129,8 @@ the player no longer has to find.
 
 ### 5.2 The demands: what a tier is allowed to say
 
-Three demands — `nakedSingle`, `hiddenSingle`, `boxLine` — over four techniques.
-The fold exists so a tier can say "this board needs a chamber-line reason" without
-caring which side of it fired (§4.2).
+Three demands — `nakedSingle`, `hiddenSingle`, `boxLine` — over four techniques, so a
+tier can ask for a chamber-line reason without caring which side of it fires (§4.2).
 
 ### 5.3 Demanding a rung means the ladder below it stalls
 
@@ -185,10 +146,10 @@ dig (§3.1) is built around producing it.
 ### 5.4 A 6×6 has a low ceiling, and the table says so
 
 Four rungs and roughly six given squares separate starter from wizard. That is the
-grid: the catalogue's Latin-square slot scales 4×4 → 9×9 (`PUZZLE_FAMILIES.md`
-§4.8) and this family is authored at one size on purpose, because the upright
-chambers are the shape it exists to show. A tier ladder that pretended otherwise
-would be a table of dials with nothing behind them.
+grid, not an oversight: this family is authored at one size because the upright
+chambers are the shape it exists to show, and the catalogue records the consequence
+(`PUZZLE_FAMILIES.md` §4.8). A tier ladder that pretended otherwise would be a table
+of dials with nothing behind them.
 
 ## 6. Notes and undo
 
@@ -245,12 +206,11 @@ question a player is actually asking when they tap a 4: where else is the 4, and
 where could it still go — one question a step apart. Tapping an empty square answers
 neither, so it washes nothing.
 
-**A wash, and it has to be**, because the rings and the hatching are the hint's
-vocabulary and a treatment means one thing (`puzzle-screens.md` §4.2): hatching is
-what a hint settles, a bright ring is what it argues from, the strong ring is the
-square the player is standing on, and a red ground is a repeat. So this is the one
-signal left that is neither — laid OVER the ground rather than replacing it, so a
-pre-filled square that is also a twin still reads as the puzzle's own.
+**A wash, and it has to be.** A treatment means one thing (`puzzle-screens.md` §4.2),
+and the hint owns the marks: hatching is what it settles, a bright ring what it argues
+from, the strong ring the square the player stands on, a red ground a repeat. The wash
+is the signal left over, laid OVER the ground rather than replacing it, so a pre-filled
+square that is also a twin still reads as the puzzle's own.
 
 Two precedences fall out of that, and both are deliberate:
 
@@ -281,107 +241,105 @@ more, so the squares, the pad and every hint sentence ask the skin for the token
   a ring drawn for a dark chamber is nearly invisible on papyrus, and an affordance
   that survives on one skin only is not an affordance.
 
-The six signs are the **characters themselves**, set in the face this game ships.
-That is what `yarn generate-font` bought: the repo subsets Noto Sans Egyptian
-Hieroglyphs and precaches it, so a sign on this board is not at the mercy of whichever
-fonts a device happens to carry. The dependency it removes was not hypothetical —
-`HieroglyphTile` still carries a workaround for how its shadow doubled "on glyphs that
-render as a simple box (e.g. a hieroglyph missing from the device's font)" — and on
-this board it is not a decoration that failed but an unsolvable puzzle, since telling
-one sign from another at a glance IS the mechanic.
+**The six signs are characters, not drawings.** The repo subsets and precaches Noto
+Sans Egyptian Hieroglyphs (`yarn generate-font`), so a sign here does not ride on
+whichever fonts a device happens to carry — which on this board would not be a
+decoration that failed but an unsolvable puzzle, since telling one sign from another at
+a glance IS the mechanic. One character serves the squares, the pad's keys and every
+sentence that names a value: a hint naming a value is asking the player to go and find
+it, so the words and the board have to show one shape.
 
-**So there is one shape everywhere**: the squares, the pad's keys and every sentence
-that names a value all show the same character. This board did once draw its own six
-as SVG strokes, and the drawings were the better ink — an even reed-pen weight, each
-sign filling its box, all six the same size. But a hint naming a value is asking the
-player to go and find it, and a board that drew its signs while its sentences typed
-them showed two different hands: a wide ripple against a many-toothed one, a leaf
-against a plume. A hint pointing at something not quite there costs more than stroke
-weight is worth, and the font is in the repo precisely so the choice does not have to
-be made twice.
-
-They are picked for **silhouette** rather than for meaning — an eye, the sun, an
-ankh, a house, an owl, the feather of truth: a wide eye, a disc, an upright cross,
-a squat box, a bird, a tall plume. Six seated figures would be authentic and
-unplayable.
-
-And picked for **where the ink sits in the em box**, which is a question only a typed
-sign has to answer. Water and a mouth held the first and fifth places until the board
-was looked at: both are flat signs a font sets on the baseline, so they hung at the
-foot of their square while the other four stood in the middle of theirs — and a row
-whose signs are not level reads as a row of squares that are not the same.
+They are picked for **silhouette** rather than for meaning — an eye, the sun, an ankh,
+a house, an owl, the feather of truth: a wide eye, a disc, an upright cross, a squat
+box, a bird, a tall plume. Six seated figures would be authentic and unplayable. And
+for **where the ink sits in the em box**, which is a question only a typed sign has to
+answer: a font sets a flat sign on the baseline, so a flat sign hangs at the foot of
+its square while the rest stand in the middle of theirs, and a row whose signs are not
+level reads as a row of squares that are not the same.
 
 **A face says how large it writes** (`SudokuSkin.size`), because that is a property of
-the characters and not of the places they stand in: a figure fills about half of its em
-box where a sign fills nearly all of one, so a register set at the carved board's size
-reads as a whisper beside it. The register writes larger in all three places. The
-pencilled note is the one with a ceiling — six of them share a square three across, so
-a sign much wider than a third of it climbs over its neighbours — which leaves a note
-on this face small. It is the honest cost of a text glyph at a sixth of a phone screen.
+the characters rather than of the places they stand in: a figure fills about half of
+its em box where a sign fills nearly all of one, so the register writes larger in the
+square, the note and the pad key alike. The note is the one with a ceiling — six of
+them share a square three across, so a sign wider than a third of it climbs over its
+neighbours — which leaves a note on this face small, the honest cost of a text glyph at
+a sixth of a phone screen.
 
-The register is reached by the `scribe` role, which no site authors yet: a themed
-role needs four families in its pool before it is worth authoring
-(`src/worldGen/rolePools.spec.ts`), and `scribe` has two — this family and the
-hive. Until a third and fourth carry the tag, the register is reached in the puzzle
-lab, by a site naming the theme outright, and by any room allocated for `scribe`
-the day that pool fills.
+The register is reached by the `scribe` role. A themed role needs four families in its
+pool before it is worth authoring a site for (`src/worldGen/rolePools.spec.ts`), and
+`scribe` is short of that, so until the pool fills the register is reached in the
+puzzle lab and by a site naming the theme outright.
 
 ### 9.1 The completion run — each face finishes its own way
 
-**A tick is never a SQUARE**, and that is this family's own claim rather than a house
-style: what the board asserts is that each of the six stands exactly once in every
-row, every column and every chamber. Both faces say that back, and each says the half
-its own ground can say.
+**A tick is never a SQUARE.** What the board asserts is that each of the six stands
+exactly once in every row, every column and every chamber, and each face says back the
+half its own ground can say:
 
-- **Six Chambers reads its values back.** Every square holding the 1 settles at once,
-  then every square holding the 2, to the width of the grid — all six homes of a value
-  lighting together is the rule seen from the value's side. The mark is the skin's:
-  the carved board blooms, where a register would only flare, since ink does not swell
-  as it dries and a sign that grew would read as the sheet moving under it.
-- **The Scribe's Register files itself.** Each chamber is taken up as its own scroll,
-  one after the next in reading order — a chamber holding all six is the same rule seen
+- **Six Chambers reads its values back** — every square holding the 1 settles at once,
+  then every square holding the 2, to the width of the grid. All six homes of a value
+  lighting together is the rule seen from the value's side. The carved board blooms
+  where a register would only flare: ink does not swell as it dries, and a sign that
+  grew would read as the sheet moving under it.
+- **The Scribe's Register files itself** — each chamber is taken up as its own scroll,
+  one after the next in reading order. A chamber holding all six is the same rule seen
   from the chamber's side, and a finished sheet is not lit, it is rolled up and put
   away.
 
-Which run plays is decided by the skin carrying a `scroll` or not, so a face that
-gains a ground of its own gains a way of finishing with it rather than inheriting the
-other face's.
+Which run plays is decided by the skin carrying a `scroll` or not, so a face that gains
+a ground of its own gains a way of finishing with it. **One board finishes one way**:
+the value run rewrites what every unfilled square shows while it counts, which under a
+rolling sheet would be a board changing where nobody can see it.
 
 **Each scroll is laid back out**, and that is the constraint rather than the flourish:
 the solved board is the reward and the banner sits over it readable
 (`puzzle-screens.md` §3), so six chambers left rolled up would file the answer away
-before the player had looked at it. What the run is, then, is a wave crossing the
-register and leaving it as the player filled it in.
+before the player had looked at it. The run is a wave crossing the register and leaving
+it as the player filled it in.
 
-**One board finishes one way.** The value run rewrites what every unfilled square
-shows while it counts, so playing it under a rolling sheet would be a board changing
-where nobody can see it — a register rolls, and does not read back as well.
+The sheets are a layer laid OVER the grid rather than the squares moving: six squares
+each scaling about their own middle is six squares shrinking, not one sheet rolling.
+What a taken-up chamber uncovers is the board's own ground, the table the sheet lay on.
 
-The sheets are drawn as a layer OVER the grid rather than by moving the squares. A
-chamber is six separate grid squares, and six squares each scaling about their own
-middle is six squares shrinking, not one sheet rolling; so what rolls is a
-sheet-sized thing laid over them, and the squares beneath are left to be the writing
-that goes up with the roll. What a taken-up chamber uncovers is the board's own
-ground — the table the sheet was lying on.
-
-The shared rules apply (`puzzle-screens.md` §3): the run happens before the shell
-hears "solved", input is refused while it plays, the whole thing is under a second,
-and `prefers-reduced-motion` skips it entirely — the board then is simply the answer
-the player filled in, unrolled and unlit.
+The shared rules apply (`puzzle-screens.md` §3): the run happens before the shell hears
+"solved", input is refused while it plays, the whole thing is under a second, and
+`prefers-reduced-motion` skips it entirely — the board is then simply the answer the
+player filled in, unrolled and unlit.
 
 ## 10. Generation cost
 
-**Human solve times are not measured yet.** The budget is `PUZZLE_FAMILIES.md`
-§3.2's — ten seconds to a few minutes, never an evening — and the instrument is the
-lab: pick the family and the tier, solve the real screen, read the banner's clock.
-Until someone does that for all five tiers, the table in §5 is a table of forced
-steps, which is what a solver can count and not what a person takes.
-
-Every tier but the top is a handful of milliseconds to generate. Wizard is about a
-second and a half,
-and all of it is the rarity of its rung (§3.1) rather than the dig itself — the
+Every tier but the top is a handful of milliseconds. Wizard is about a second and a
+half, and all of it is the rarity of its rung (§3.1) rather than the dig itself — the
 generator builds a whole candidate and then judges it, which is the shape
-`puzzle-screens.md` §6.1 says gets essentially free play-time generation off a seed
-list. Play time runs a single attempt against a listed seed, and the attempt ceiling
-is set for the fallback that runs when a bucket is missing rather than for the
-offline pass, which asks for one attempt per seed either way.
+`puzzle-screens.md` §6.1 asks for. Play time runs a single attempt against a listed
+seed, and the attempt ceiling is set for the fallback that runs when a bucket is
+missing rather than for the offline pass, which asks for one attempt per seed either
+way.
+
+Where no bucket is listed, every board takes that fallback and is searched live: a
+median of 1.0s and at most 1.2s at wizard, with about a third coming back a nearest
+miss rather than a board that genuinely needs the chamber-line rung. The top tier's
+character is not something to read off one or two rolls.
+
+**Human solve times are not measured.** The budget is `PUZZLE_FAMILIES.md` §3.2's — ten
+seconds to a few minutes, never an evening — and the instrument is the lab: pick the
+family and the tier, solve the real screen, read the banner's clock. The table in §5
+counts forced steps, which is what a solver can count and not what a person takes.
+
+## 11. Measured and rejected
+
+One line each, so nothing here is rebuilt on the strength of the idea alone.
+
+- **Subset rungs** — naked and hidden pairs, both triples, x-wing: built, measured, and
+  not one of them ever fired. A group only six squares wide leaves a pair one step
+  behind a single that fires first, so every board they might have decided was already
+  decided. They are worse than dead weight in the ladder: a `wizard` authored against a
+  hidden pair generates nothing, or generates boards that quietly fall to a single. A
+  9×9 would want them back.
+- **Drawing the six signs as SVG strokes** — the better ink, an even reed-pen weight
+  with every sign filling its box, but the board then drew its signs while its sentences
+  typed them, and the two hands do not match. A hint pointing at something not quite
+  there costs more than stroke weight is worth.
+- **Water and a mouth at the first and fifth values** — flat signs, which a font sets on
+  the baseline, so they hung at the foot of their squares while the other four stood in
+  the middle of theirs.
