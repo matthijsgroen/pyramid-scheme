@@ -488,6 +488,16 @@ The same board with two stars to a group, so every count becomes a capacity argu
 
 Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
+### 4.26 Crocodile (the pit crossing)
+
+The tomb capstone, and the one family that is not a grid: rows of stones across a crocodile pit, each
+carrying a sum, with a crocodile in front of every row that wants one answer out of it — the biggest, or
+the smallest. Cross by feeding each one what it asks for. Any other stone is a bite and costs health,
+which is why the family is trap-owned. Drawn only for the `capstone` role, never in the general puzzle
+pool.
+
+Design doc: [puzzles/crocodile.md](puzzles/crocodile.md)
+
 ---
 
 ## 5. The shared grid engine

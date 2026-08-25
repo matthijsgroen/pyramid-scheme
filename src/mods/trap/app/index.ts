@@ -11,6 +11,7 @@ import { registerTrapRewardDisplay } from "./rewardDisplay"
 import { consumableRewardSchema } from "./rewardSchema"
 import "./arithmeticReflex/plugin" // trap encounter families (self-gated)
 import "./clockReflex/plugin"
+import "./crocodile/plugin" // the tomb capstone: a puzzle that bites, not a trap (crocodile.md §6)
 
 // Trap-owned perk ids (granted by tomb treasures via the perk seam). describe reads treasures.json
 // `perks.<type>` — a shared namespace, mod-owned keys (see §8.0.1 i18n decision).

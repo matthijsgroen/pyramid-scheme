@@ -13,7 +13,19 @@ import { skinFor as hidatoSkinFor } from "./hidato/skins"
  * Listing the families here rather than testing them one by one is deliberate: a per-family spec cannot
  * notice the family somebody adds next.
  */
-const FAMILIES = ["balance", "constellation", "eclipse", "futoshiki", "hidato", "lightbeam", "starBattle", "sumplete"]
+// `crocodile` is trap-owned (it spends health) but reaches the same screen through PuzzleFamilyShell,
+// so it is held to the same wording bar as the rest.
+const FAMILIES = [
+  "balance",
+  "constellation",
+  "crocodile",
+  "eclipse",
+  "futoshiki",
+  "hidato",
+  "lightbeam",
+  "starBattle",
+  "sumplete",
+]
 
 /** The places constellation's mechanic wears, and the role a room is allocated for to reach each of them. */
 const PLACES = [

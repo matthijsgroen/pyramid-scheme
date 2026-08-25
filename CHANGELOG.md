@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A side passage now serves the difficulty it was built for, not the floor's.
 - Meeting the same board twice on a run is far less likely.
 - The Great Pyramid of Giza now draws on every kind of puzzle, not only the two that trade in goods.
+- The crocodile guarding a tomb treasure is a pit to cross: every crocodile along the way wants one answer
+  out of the row of stones in front of it — the biggest, or the smallest — and stepping on any other stone
+  costs a heart. The old "which digit did the crocodile eat" chest is gone.
 
 ## 0.38.3 - 2026-08-23
 

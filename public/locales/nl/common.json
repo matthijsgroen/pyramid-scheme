@@ -18,15 +18,7 @@
     "evening": "Avond",
     "night": "Nacht"
   },
-  "tomb": {
-    "crocodilePuzzleAlways": "Welk _cijfer_ at de krokodil _altijd_?",
-    "crocodilePuzzleNever": "Welk _cijfer_ at de krokodil _nooit_?",
-    "crocodileDigitHint": "Tip: In het getal 25 zijn de cijfers 2 en 5",
-    "noCrocodilePuzzle": "Verborgen schatkamer gevonden!",
-    "crocodilePuzzlePrompt": "Tik op de som met het grootste resultaat voor de krokodil om te eten",
-    "iDontKnow": "Ik weet het niet",
-    "crocodileName": "De Krokodil"
-  },
+  "tomb": {},
   "ui": {
     "level": "Niveau",
     "symbols": "symbolen",
@@ -711,6 +703,19 @@
       "default": "Honingraat",
       "channel": "Het Kanaal",
       "scribe": "Schrijversvel"
+    }
+  },
+  "crocodile": {
+    "name": "De Krokodillenkuil",
+    "goal": "Steek de kuil over naar de andere oever.",
+    "rules": {
+      "want": "Elke krokodil wil één antwoord uit de rij stenen achter zich: het grootste, of het kleinste.",
+      "mark": "De drie streepjes ernaast zeggen welke: brandt het lange streepje, dan wil hij het grootste antwoord; brandt het korte, dan het kleinste.",
+      "bite": "Stap je op een andere steen, dan hapt hij: je verliest een hart en begint weer bij de oever."
+    },
+    "hint": {
+      "biggest": "Deze krokodil wil het grootste antwoord. Dat is {{value}}.",
+      "smallest": "Deze krokodil wil het kleinste antwoord. Dat is {{value}}."
     }
   }
 }
