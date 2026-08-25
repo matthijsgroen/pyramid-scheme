@@ -9,10 +9,9 @@ import { CONSTELLATION_META } from "./game/constellation/meta"
 import { STAR_BATTLE_META } from "./game/starBattle/meta"
 import { TWIN_STARS_META } from "./game/starBattle/twinStars"
 import { HIDATO_META } from "./game/hidato/meta"
-import { SUDOKU_META } from "./game/sudoku/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
-// lightbeam, eclipse, constellation, star battle, twin stars, hidato, sudoku) and the crocodile capstone. A root mod: it stays on in
+// lightbeam, eclipse, constellation, star battle, twin stars, hidato) and the crocodile capstone. A root mod: it stays on in
 // production (turning it off leaves puzzle/capstone rooms with no family, so they only auto-resolve via
 // the family-absence pass-through — a degenerate world, not a playable one). It is a real REGISTERED_MODS entry anyway so its family
 // metadata flows through MOD_FAMILY_META like every other mod's — adding a new puzzle family is then a
@@ -25,6 +24,15 @@ import { SUDOKU_META } from "./game/sudoku/meta"
 //
 // Game-side only (no React). The puzzle room Components register via the puzzle app entrypoint
 // (src/mods/puzzle/app, pulled in by registerModApps), each gated on this mod being enabled.
+// **Sudoku is deliberately NOT in this list yet.** It is built, registered and playable — the app
+// entrypoint imports its plugin, so the puzzle lab offers it at every tier and in both of its faces —
+// but a family reaches real rooms only by being listed here, so no player meets one until it is. That
+// is the point: a released build can be play-tested on the bench before the world is re-cut around it,
+// and what the bench cannot answer — whether a 6x6 still holds up on the twentieth room of a journey —
+// is exactly what play-testing is for. To switch it on:
+//
+//   import { SUDOKU_META } from "./game/sudoku/meta"   // and add it to the list below
+//   yarn generate-world && yarn generate-seeds
 export const puzzleMod: ModDescriptor = {
   id: "puzzle",
   families: [
@@ -37,7 +45,6 @@ export const puzzleMod: ModDescriptor = {
     STAR_BATTLE_META,
     TWIN_STARS_META,
     HIDATO_META,
-    SUDOKU_META,
     CROCODILE_META,
   ],
 }

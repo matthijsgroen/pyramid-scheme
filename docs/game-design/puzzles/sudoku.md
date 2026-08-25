@@ -7,6 +7,14 @@ this family: the grid it is authored at, its generation rules, its deduction
 techniques, how notes and undo work, how hints are phrased, and the two faces the
 same board wears.
 
+**Not in the world yet.** The family is built, registered and playable in the puzzle
+lab at every tier and in both faces, but it is deliberately absent from the puzzle
+mod's family list (`src/mods/puzzle/index.ts`), which is what puts a family into real
+rooms. So a release can be play-tested on the bench before the world is re-cut around
+it — and what the bench cannot answer, whether a 6x6 still holds up on the twentieth
+room of a journey, is exactly what that play-testing is for. Switching it on is
+listing `SUDOKU_META` there and running `yarn generate-world && yarn generate-seeds`.
+
 ## 1. Rules
 
 A `6×6` grid, cut into six **chambers two squares wide and three tall** — three
