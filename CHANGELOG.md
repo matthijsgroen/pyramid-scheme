@@ -9,83 +9,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Every puzzle now shows what it is called above the board — and a puzzle that dresses itself differently per room is named for the room it is in.
-
-- A new puzzle: one unbroken run of numbers carried from cell to touching cell, by tapping or by dragging, until the whole board is filled. It wears the room it is found in — a kept hive, a channel dug across dry fields that green as the water reaches them, or a line of figures inked across a scribe's papyrus.
+- Every puzzle now shows its name above the board, worded for the room it is in.
+- A new puzzle: thread one unbroken run of numbers from cell to touching cell until the board is filled.
 
 ### Changed
 
-- A side passage now hands you the puzzles it was built for, not the ones the floor around it was. A quiet pocket off a wizard floor really is a breather, and a ward passage on an easy floor really does bite.
-- Every kind of board now ships with more of them ready than there are rooms that ask for one, so meeting the same puzzle twice on a run is far less likely.
-- The Great Pyramid of Giza now draws on every kind of puzzle rather than the two that trade in goods. Its rooms were more than half the same board; there are nine kinds there now, and the trading floor comes back once enough puzzles can wear it.
+- A side passage now serves the difficulty it was built for, not the floor's.
+- Meeting the same board twice on a run is far less likely.
+- The Great Pyramid of Giza now draws on every kind of puzzle, not only the two that trade in goods.
 
 ## 0.38.3 - 2026-08-23
 
 ### Fixed
 
-- The farmland star grid asked for farmsteads and drew a sheaf of grain, so the board looked like it wanted plants sown. It now draws a farmstead: a domed mud-brick house with its doorway.
+- The farmland star grid now draws a farmstead rather than a sheaf of grain.
 
 ## 0.38.2 - 2026-08-23
 
 ### Changed
 
-- A solved star battle board now lights its answers one at a time before the win arrives, the way a finished star map does. Stars in the sky swell as they catch the light; farmsteads on the flood plain only brighten. Asking for less motion skips it.
-- The puzzle lab now offers the tomb's own two boards — the crocodile capstone and the tableau — so they can be played without walking a tomb to the floor that serves them. A tableau still needs the hieroglyphs your save has collected.
-- A solved sumplete board now checks its own sums off before the win arrives: the row totals flash top to bottom, then the column totals left to right. Asking for less motion skips it.
-- A solved futoshiki board now counts itself up before the win arrives: the whole grid rolls to 1, the squares that really are 1 keep it and swell, the rest roll on to 2, and so on to the last number. Asking for less motion skips it.
-- A solved eclipse board now sweeps once from the top-left corner to the far one, each sun and moon swelling as the wave reaches it, before the win arrives. Asking for less motion skips it.
-- A solved balance board now settles: each beam rocks once and comes level with its pans riding it, top to bottom, before the win arrives. Asking for less motion skips it.
+- A solved star battle board lights its answers one at a time before the win. Less motion skips it.
+- A solved sumplete board checks its own sums off before the win. Less motion skips it.
+- A solved futoshiki board counts itself up to its last number before the win. Less motion skips it.
+- A solved eclipse board sweeps corner to corner before the win. Less motion skips it.
+- A solved balance board settles beam by beam before the win. Less motion skips it.
+- The puzzle lab now offers the tomb's own two boards, the crocodile capstone and the tableau.
 
 ### Fixed
 
-- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
-- The crocodile capstone no longer draws on top of itself. Its scene had no height of its own, so the prompt, the chest and the crocodiles all landed on one line; the sums either side of the crocodile were also cut off at the edges of the room. Both are now sized to the room they are in.
+- The crocodile capstone no longer draws on top of itself, and its sums are no longer cut off at the edges.
 
 ## 0.38.1 - 2026-08-23
 
 ### Changed
 
-- The one-star grid can wear the flood plain too, the same farmland face its two-star twin wears. Both now draw from the same places.
-- Re-authoring what a room holds no longer costs you the floor it is on. A pyramid keeps its explored corridors, its found passages and its opened chests when the puzzles inside it are rewritten — traps included. A floor forgets what you did there only when its corridors really change.
-- Building the world now stops on any chest that would hold nothing, rather than working around it. Whether such a chest gets loot or gets removed is an authoring call, so nothing ships until it is made.
-- Changing how long or how winding a pyramid's corridors are now resets the floors it changed, rather than restoring your explored corridors onto a layout that had been re-drawn underneath them.
-- A fork branch that leads past a trap to something worth reaching no longer counts as a dead loss when a floor is laid out. A branch that is nothing but a trap still does.
+- The one-star grid can wear the flood plain too, the farmland face its two-star twin wears.
+- A pyramid keeps its explored corridors, found passages and opened chests when the puzzles inside it are rewritten.
+- Changing how long or how winding a pyramid's corridors are now resets the floors it changed.
+- A fork branch leading past a trap to something worth reaching no longer counts as a dead loss.
+- Building the world now stops on any chest that would hold nothing, rather than working around it.
 
 ### Fixed
 
-- Your explorer could turn up outside the map, standing on nothing, after an update: the spot you saved on had stopped being a place you can stand. You now start such a visit at the entrance instead.
-- A tomb kept saying it had something left when it did not. A chest behind a tableau you cannot read yet was counted as if only its own door stood in the way, so the map lit up on hieroglyphs that were never enough — and walking the whole tomb again found nothing. A place now asks for everything standing between you and it.
+- Your explorer could turn up outside the map after an update. Such a visit now starts at the entrance.
+- A tomb no longer says it has something left when what remains needs hieroglyphs you cannot read yet.
 
 ## 0.38.0 - 2026-08-23
 
 ### Added
 
-- The Lighthouse of Alexandria now serves light and sky puzzles on its main path — the beam puzzle, the new sun-and-moon grid and the new star map — and it runs at night: its grids are drawn as stars against a dark sky.
-- The Great Pyramid of Giza serves trade puzzles: scales to balance, and the star map drawn as sites joined by haul roads, with a pyramid rising at every site the roads reach. A finished board lights up one piece at a time before it hands you the win.
-- Solving a beam puzzle sends the light down the route you found, and the shrine flares when it arrives.
+- A new puzzle: fill a grid with suns and moons so no three ever sit in a row.
+- A new puzzle: place one star in every row, column and walled-off region, no two ever touching.
+- A new puzzle: the same star grid, with TWO stars to every row, column and region.
+- The two-star grid is drawn as a flood plain of farmsteads on farming journeys.
+- A new puzzle: join the stars with lines of light, as many at each star as its number says.
 - A second kind of trap: a clock face, and four times to pick from before the countdown runs out.
-- A new puzzle: join the stars with lines of light, as many at each star as its number says, never crossing another line, until every star hangs in one constellation. Drag from a star to draw a line, on a night sky of its own.
-- A new puzzle: the same star grid, but every row, column and region holds TWO stars. Twice as much to place, a row is never finished until both of its stars are down, and a hint can now tell you when there is only one way a pair still fits. On farming journeys the same board is a flood plain — two farmsteads to every holding, the channels between them drawn as water, and no two close enough to share a well.
-- A new puzzle: place one star in every row, column and walled-off region of the grid, with no two stars ever touching. The walls are the only clue, every square is yours to fill, and a drag rules out a whole run of them at once.
-- A new puzzle: fill a grid with suns and moons so no three sit in a row, every line holds as many of each, no two rows or columns read alike, and the signs between squares are obeyed. Hints name the reason, and an undo button takes back your last tap.
+- The Lighthouse of Alexandria serves light and sky puzzles on its main path, drawn against a night sky.
+- The Great Pyramid of Giza serves trade puzzles: scales to balance, and the star map drawn as haul roads.
+- Solving a beam puzzle sends the light down the route you found, and the shrine flares when it arrives.
 
 ### Changed
 
-- The game starts from a smaller download: the 1927 pieces of glass in the mosaic window now arrive with the window that draws them rather than with the game, and the launch download is a fifth lighter.
-- Puzzle boards come from a list checked ahead of time, so a room stops searching for one when you open it. The star grids took over a second to draw and now take three milliseconds.
-- Hints now say what to do as well as why: the squares a hint is about are hatched, and its last line asks for the move. On the sun-and-moon grid, the number grid and the star grid.
-- The star map speaks its own place throughout — goal, rules and hints. A haul-road board talks about sites and roads to lay, a waterworks about basins and channels to dig.
-- Every puzzle now states its goal in one line above the how-to-play, worded for the place it is: the star map asks for constellations, the same board drawn as haul roads asks for a road network.
-- The easiest comparison grids start with more numbers already filled in, and never ask for more than "something has to be bigger than this square, so it can't be the biggest".
-- Every comparison-grid difficulty now starts with a different number of squares filled in — four at the easiest, none at the hardest.
-- The signs between squares are drawn rather than typed: part of the board rather than punctuation on it, and sized so they never crowd the numbers on a 6×6.
-- The hardest comparison grids are 6×6 rather than 7×7, and every difficulty is now guaranteed to need its own hardest kind of reasoning rather than merely allowing it.
-- Comparison grids step up more gently: the second difficulty stays on the 4×4 grid and adds one new way of reading a sign, and the grid grows a difficulty later than it used to.
+- Puzzle boards come from a list checked ahead of time, so a room stops searching when you open it.
+- The game starts from a smaller download, a fifth lighter: the mosaic window's glass now arrives with the window.
+- Every puzzle states its goal in one line above the how-to-play, worded for the place it is.
+- The star map speaks its own place throughout — goal, rules and hints.
+- Hints now say what to do as well as why, and hatch the squares they are about.
+- The easiest comparison grids start with more numbers filled in, and ask for simpler reasoning.
+- Every comparison-grid difficulty starts with a different number of squares filled in.
+- The hardest comparison grids are 6×6 rather than 7×7, and each difficulty needs its own hardest reasoning.
+- Comparison grids step up more gently: the second difficulty stays 4×4, and the grid grows a difficulty later.
+- The signs between squares are drawn rather than typed, and never crowd the numbers.
 
 ### Fixed
 
-- The stained-glass window came up black with no connection: its artwork was left out of the offline install. The whole game, that window included, is now playable offline.
-- Finishing a puzzle made the page jump: the controls and the rules dropped out from under the completed banner.
+- The stained-glass window came up black with no connection. The whole game is now playable offline.
+- Finishing a puzzle made the page jump: the controls and rules dropped out from under the banner.
 
 ## 0.37.0 - 2026-08-19
 
