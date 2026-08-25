@@ -71,7 +71,7 @@
     "keep-a-changelog": "^3.1.0",
     "lint-staged": "^17.3.0",
     "prettier": "^3.9.6",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.0",
     "storybook": "^10.5.7",
     "subset-font": "^2.5.0",
     "svgo": "^4.0.2",
@@ -87,7 +87,7 @@
     "workbox-window": "^7.4.1"
   },
   "resolutions": {
-    "sharp": "0.34.3",
+    "sharp": "0.35.0",
     "ws": "^8.21.0"
   },
   "packageManager": "yarn@4.18.0"
