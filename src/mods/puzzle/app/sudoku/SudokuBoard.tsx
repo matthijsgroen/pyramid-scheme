@@ -58,7 +58,7 @@ type Props = {
  * The squares a hint is about, hatched.
  *
  * **The words name this** (`puzzle-screens.md` §4.2), which is the whole reason it is a hatch and not
- * another ring or another shade: "rule out 𓈖 in the hatched squares" leaves nothing to match up, where
+ * another ring or another shade: "rule out 𓁹 in the hatched squares" leaves nothing to match up, where
  * "the rest of the chamber" leaves the player deciding which squares that was.
  */
 const hatchOf = (skin: SudokuSkin) => `repeating-linear-gradient(45deg, transparent 0 5px, ${skin.hatch} 5px 7px)`

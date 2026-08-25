@@ -36,7 +36,7 @@ export type SudokuSkin = {
   size: { value: string; note: string; key: string }
   /**
    * What a SENTENCE puts in its slot when it has to say a value, and what a pad key is called. The
-   * carved board says "4"; the register says 𓈖 — the same character its squares show, because the game
+   * carved board says "4"; the register says 𓁹 — the same character its squares show, because the game
    * ships the face that draws it.
    *
    * One shape everywhere is the point: a hint naming a value is asking the player to go and find it, so

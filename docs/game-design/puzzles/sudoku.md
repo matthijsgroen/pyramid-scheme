@@ -210,7 +210,7 @@ move before it.
 
 A reason, then a move (`puzzle-screens.md` §4.1), both drawn from the technique
 solver and both worded per face (§9). The reason names what the board makes true;
-the move is an imperative naming the marking — "rule 𓈖 out of the hatched spaces".
+the move is an imperative naming the marking — "rule 𓁹 out of the hatched spaces".
 The squares a hint SETTLES are hatched and the squares it argues FROM are ringed,
 because a rung here can settle four squares at once and one ring over four of them
 makes "this square" a guess between them.
@@ -300,10 +300,16 @@ against a plume. A hint pointing at something not quite there costs more than st
 weight is worth, and the font is in the repo precisely so the choice does not have to
 be made twice.
 
-They are picked for **silhouette** rather than for meaning — water, the sun, an
-ankh, a house, a mouth, the feather of truth: a flat zigzag, a disc, an upright
-cross, a squat box, a flat lens, a tall plume. Six seated figures would be
-authentic and unplayable.
+They are picked for **silhouette** rather than for meaning — an eye, the sun, an
+ankh, a house, an owl, the feather of truth: a wide eye, a disc, an upright cross,
+a squat box, a bird, a tall plume. Six seated figures would be authentic and
+unplayable.
+
+And picked for **where the ink sits in the em box**, which is a question only a typed
+sign has to answer. Water and a mouth held the first and fifth places until the board
+was looked at: both are flat signs a font sets on the baseline, so they hung at the
+foot of their square while the other four stood in the middle of theirs — and a row
+whose signs are not level reads as a row of squares that are not the same.
 
 **A face says how large it writes** (`SudokuSkin.size`), because that is a property of
 the characters and not of the places they stand in: a figure fills about half of its em
