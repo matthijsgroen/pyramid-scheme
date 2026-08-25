@@ -24,6 +24,15 @@ import { HIDATO_META } from "./game/hidato/meta"
 //
 // Game-side only (no React). The puzzle room Components register via the puzzle app entrypoint
 // (src/mods/puzzle/app, pulled in by registerModApps), each gated on this mod being enabled.
+// **Sudoku is deliberately NOT in this list yet.** It is built, registered and playable — the app
+// entrypoint imports its plugin, so the puzzle lab offers it at every tier and in both of its faces —
+// but a family reaches real rooms only by being listed here, so no player meets one until it is. That
+// is the point: a released build can be play-tested on the bench before the world is re-cut around it,
+// and what the bench cannot answer — whether a 6x6 still holds up on the twentieth room of a journey —
+// is exactly what play-testing is for. To switch it on:
+//
+//   import { SUDOKU_META } from "./game/sudoku/meta"   // and add it to the list below
+//   yarn generate-world && yarn generate-seeds
 export const puzzleMod: ModDescriptor = {
   id: "puzzle",
   families: [

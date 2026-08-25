@@ -137,4 +137,30 @@ describe("plural forms in the shipped locales", () => {
   ])("renders the %s goal for a quota of %i as %s", (lng, count, expected) => {
     expect(t(lng, "starBattle.goal.default", { count })).toBe(expected)
   })
+
+  /**
+   * Sudoku's elimination move, over both of its faces.
+   *
+   * A chamber-line rung settles anything from one square to four, and "rule 𓈖 out of the hatched
+   * squares" over a single square is a sentence the player has to read twice. The token is skinned as
+   * well as the noun here, which is why both faces are checked: the register's forms are its own
+   * sentences rather than the carved board's with a word swapped (`puzzle-screens.md` §4.3).
+   */
+  it.each([
+    ["sudoku.hint.default.action.ruleOut", "en", 1, "Rule 4 out of the hatched square."],
+    ["sudoku.hint.default.action.ruleOut", "en", 3, "Rule 4 out of the hatched squares."],
+    ["sudoku.hint.default.action.ruleOut", "nl", 1, "Streep 4 weg in het gearceerde vakje."],
+    ["sudoku.hint.default.action.ruleOut", "nl", 3, "Streep 4 weg in de gearceerde vakjes."],
+  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
+    expect(t(lng, key, { count, token: "4" })).toBe(expected)
+  })
+
+  it.each([
+    ["sudoku.hint.papyrus.action.ruleOut", "en", 1, "Rule 𓈖 out of the hatched space."],
+    ["sudoku.hint.papyrus.action.ruleOut", "en", 3, "Rule 𓈖 out of the hatched spaces."],
+    ["sudoku.hint.papyrus.action.ruleOut", "nl", 1, "Streep 𓈖 weg op de gearceerde plek."],
+    ["sudoku.hint.papyrus.action.ruleOut", "nl", 3, "Streep 𓈖 weg op de gearceerde plekken."],
+  ])("renders %s in %s for %i as %s", (key, lng, count, expected) => {
+    expect(t(lng, key, { count, token: "𓈖" })).toBe(expected)
+  })
 })

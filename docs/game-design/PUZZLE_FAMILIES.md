@@ -247,14 +247,21 @@ Two things killed the puzzle-room version, and either is fatal on its own:
 ### 4.8 Glyph Latin-square (Sudoku)
 
 - **Skill:** pure deduction; no arithmetic.
-- **Operates:** each deity-glyph once per row/column/region; tap a cell, pick a
-  glyph from the palette.
+- **Operates:** each value once per row/column/region; tap a cell, pick from the
+  palette.
 - **Knobs:** grid size (4×4 → 9×9) · clue count · region shape.
 - **Scaling:** excellent — bottomless.
 - **Generation:** **solved problem** — mature algorithms with unique-solution
   grading and difficulty rating.
 - **UI:** easy–medium — the most familiar mobile puzzle pattern; palette in
   thumb reach.
+
+**Shipped at one size** (§4.26): 6×6 with chambers two wide and three tall. The
+size dial above is what the catalogue could spend, not what this family does —
+the upright chambers are the shape it exists to show, and its tier ladder rides
+the technique cap and the given count instead. The consequence is a lower ceiling
+than the 9×9 row below promises, and the family doc states it rather than
+implying a scale that is not there.
 
 ### 4.9 Nonogram (hieroglyph reveal)
 
@@ -488,6 +495,16 @@ The same board with two stars to a group, so every count becomes a capacity argu
 
 Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
+### 4.26 Sudoku (six chambers) — _(built; not yet authored into the world)_
+
+The catalogue's Latin-square slot (§4.8) entered from its own side: **the region IS the third group**, and every deduction that involves one is a deduction neither Futoshiki nor any other grid family here can teach. Authored at 6×6 with chambers two squares wide and three tall — three across, two down, so a chamber argues with three lines across it and two down.
+
+Two faces off one board, and the second is more than a palette: **what a value looks like is the skin's**. Figures cut into a chamber wall, or six hieroglyphs inked across a scribe's papyrus with the puzzle's own signs in red.
+
+Built, registered and playable on the bench, and deliberately not in the puzzle mod's family list yet — so no room serves one until it has been play-tested in a release. The curriculum row above is therefore the intent rather than the shipped allocation.
+
+Design doc: [puzzles/sudoku.md](puzzles/sudoku.md)
+
 ---
 
 ## 5. The shared grid engine
@@ -538,25 +555,25 @@ constraint web where a candidate held in the corner matters in the middle. **Boo
 that stays local is cheap; bookkeeping that couples is what runs the clock out.** That is
 the thing to look at first when judging an unbuilt family's duration.
 
-| Family                 | UI (web/mobile) | Scaling                  | Generation                  | Solve time / variance     |
-| ---------------------- | --------------- | ------------------------ | --------------------------- | ------------------------- |
-| Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.) | 15–60s / low              |
-| Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)   | 20–90s / low–med          |
-| Water clock            | Medium          | Good                     | Trivial                     | 30–90s / med              |
-| Clock-arith            | Medium          | Good                     | Trivial                     | 30–90s / med              |
-| Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                     | 15–60s / low              |
-| Target-number          | Medium          | Good                     | Easy (verify exists)        | 30–90s / med              |
-| Glyph Latin-square     | Easy–Med        | Excellent                | **Solved**                  | 1–6 min / **high**        |
-| Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique) | 30–90s / med              |
-| Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate) | 1–4 min / med — _target_  |
-| Canal                  | Medium          | Good (size and shape)    | Draw-derive-thin (gate)     | 1–5 min / med — _target_  |
-| Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)          | 3–15+ min / **very high** |
-| Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)     | 2–8 min / high            |
-| Sumplete               | **Easy**        | Good                     | Easy + **verifier**         | med–high                  |
+| Family                 | UI (web/mobile) | Scaling                  | Generation                   | Solve time / variance     |
+| ---------------------- | --------------- | ------------------------ | ---------------------------- | ------------------------- |
+| Cross-sum              | Easy            | Excellent                | Trivial (unique by constr.)  | 15–60s / low              |
+| Balance scale          | Medium          | Excellent                | Easy–Med (unique int eqn)    | 20–90s / low–med          |
+| Water clock            | Medium          | Good                     | Trivial                      | 30–90s / med              |
+| Clock-arith            | Medium          | Good                     | Trivial                      | 30–90s / med              |
+| Eye of Horus fractions | Easy–Med        | Limited (unless general) | Trivial                      | 15–60s / low              |
+| Target-number          | Medium          | Good                     | Easy (verify exists)         | 30–90s / med              |
+| Glyph Latin-square     | Easy–Med        | Excellent (6×6 shipped)  | **Solved**                   | 1–6 min / **high**        |
+| Eclipse                | Easy            | Good (signs, not size)   | **Solved** (thin-to-unique)  | 30–90s / med              |
+| Constellation          | Medium          | Good (numbers, not size) | Draw-and-test (solver gate)  | 1–4 min / med — _target_  |
+| Canal                  | Medium          | Good (size and shape)    | Draw-derive-thin (gate)      | 1–5 min / med — _target_  |
+| Nonogram               | Med–Hard        | Good (floor+ceiling)     | Med (**verifier**)           | 3–15+ min / **very high** |
+| Kakuro                 | **Hard**        | Good                     | Med–Hard (**verifier**)      | 2–8 min / high            |
+| Sumplete               | **Easy**        | Good                     | Easy + **verifier**          | med–high                  |
 | Hidato / beehive       | Easy–Med        | Good (smooth)            | **Solved** (carve-then-thin) | 1–4 min / med — _target_  |
-| Symmetry               | Medium          | Moderate (early-only)    | Easy                        | 15–45s / low              |
-| Sequence               | Easy            | Easy (uniqueness risk)   | Easy + **verifier**         | 15–45s / low              |
-| Egyptian doubling      | Easy            | Modest                   | Trivial                     | 20–60s / low              |
+| Symmetry               | Medium          | Moderate (early-only)    | Easy                         | 15–45s / low              |
+| Sequence               | Easy            | Easy (uniqueness risk)   | Easy + **verifier**          | 15–45s / low              |
+| Egyptian doubling      | Easy            | Modest                   | Trivial                      | 20–60s / low              |
 
 ---
 
@@ -565,25 +582,25 @@ the thing to look at first when judging an unbuilt family's duration.
 Legend: **◐** introduce (gentle, at the bottom of the family's _own_ scale) ·
 **●** develop · **★** ceiling · **—** absent.
 
-| Family                 | Skill                  | T1 (Stone) |     T2      |  T3   |   T4    |     T5      |
-| ---------------------- | ---------------------- | :--------: | :---------: | :---: | :-----: | :---------: |
-| Cross-sum              | add → × → neg          |     ◐      |      ●      |   ●   |    ●    |      ★      |
-| Balance scale          | equality → algebra     |     ◐      |      ●      |   ●   |    ●    |      ★      |
-| Symmetry               | spatial                |     ◐      |      ●      |   ●   |    —    |      —      |
-| Egyptian doubling      | binary decomp          |     —      |      ◐      |   ●   |    ●    |      —      |
-| Glyph Latin-square     | deduction              |     —      |    ◐ 4×4    | ● 6×6 |  ● 8×8  |    ★ 9×9    |
-| Eclipse                | binary deduction       |   ◐ 4×4    |    ● 4×4    | ● 6×6 |  ● 6×6  |    ★ 8×8    |
-| Constellation          | degree + connectivity  |   ◐ 5×5    |    ● 6×6    | ● 7×7 |  ● 8×8  |    ★ 8×8    |
-| Canal                  | line counts + path     |   ◐ 5×5    |    ● 6×6    | ● 7×7 |  ● 8×8  |    ★ 8×8    |
-| Target-number          | flexible ops           |     —      |      ◐      |   ●   |    ●    |      ★      |
-| Sequence               | pattern                |     —      |      ◐      |   ●   |    ●    |      —      |
-| Water clock            | duration / subtraction |     —      |      —      |   ◐   |    ●    |      ★      |
-| Eye of Horus fractions | unit fractions         |     —      |      —      |   ◐   |    ●    | ★ (general) |
-| Sumplete               | add + elimination      |     —      |      —      | ◐ 5×5 |  ● 7×7  |    ★ 9×9    |
-| Hidato / beehive       | number line + path     |  ◐ 14 hex  |   ● 19 hex  | ● 26  | ● 37 hex | ★ 61 hex |
-| Nonogram               | logic + reveal         |     —      |      —      |   —   | ◐ 10×10 |   ★ 15×15   |
-| Kakuro                 | number + logic         |     —      |      —      |   —   |    ◐    |      ★      |
-| Clock-arith            | modular                |     —      |      —      |   —   | ● decoy |      ★      |
+| Family                 | Skill                  | T1 (Stone) |    T2    |  T3   |    T4    |     T5      |
+| ---------------------- | ---------------------- | :--------: | :------: | :---: | :------: | :---------: |
+| Cross-sum              | add → × → neg          |     ◐      |    ●     |   ●   |    ●     |      ★      |
+| Balance scale          | equality → algebra     |     ◐      |    ●     |   ●   |    ●     |      ★      |
+| Symmetry               | spatial                |     ◐      |    ●     |   ●   |    —     |      —      |
+| Egyptian doubling      | binary decomp          |     —      |    ◐     |   ●   |    ●     |      —      |
+| Glyph Latin-square     | deduction              |   ◐ 6×6    |  ● 6×6   | ● 6×6 |  ● 6×6   |    ★ 6×6    |
+| Eclipse                | binary deduction       |   ◐ 4×4    |  ● 4×4   | ● 6×6 |  ● 6×6   |    ★ 8×8    |
+| Constellation          | degree + connectivity  |   ◐ 5×5    |  ● 6×6   | ● 7×7 |  ● 8×8   |    ★ 8×8    |
+| Canal                  | line counts + path     |   ◐ 5×5    |  ● 6×6   | ● 7×7 |  ● 8×8   |    ★ 8×8    |
+| Target-number          | flexible ops           |     —      |    ◐     |   ●   |    ●     |      ★      |
+| Sequence               | pattern                |     —      |    ◐     |   ●   |    ●     |      —      |
+| Water clock            | duration / subtraction |     —      |    —     |   ◐   |    ●     |      ★      |
+| Eye of Horus fractions | unit fractions         |     —      |    —     |   ◐   |    ●     | ★ (general) |
+| Sumplete               | add + elimination      |     —      |    —     | ◐ 5×5 |  ● 7×7   |    ★ 9×9    |
+| Hidato / beehive       | number line + path     |  ◐ 14 hex  | ● 19 hex | ● 26  | ● 37 hex |  ★ 61 hex   |
+| Nonogram               | logic + reveal         |     —      |    —     |   —   | ◐ 10×10  |   ★ 15×15   |
+| Kakuro                 | number + logic         |     —      |    —     |   —   |    ◐     |      ★      |
+| Clock-arith            | modular                |     —      |    —     |   —   | ● decoy  |      ★      |
 
 Three placement rules make the table behave:
 
@@ -736,16 +753,16 @@ where a new family costs a generator and a ladder.
 
 Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redesign.md` has "merchant"/"night-market" as live `theme` string examples):
 
-| Theme                        | Flavor                                      | Families that fit                                                                                                                                                                                                                                              |
-| ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                               |
-| **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), water clock            |
-| **Trade** — a pool below the floor | trade, weighing goods, hauling, bartering | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). **Two members, so nothing is authored to it** (§11.0) — the Great Pyramid of Giza wants it and `master.ts` holds the one-line change. Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag, as would any existing family taking a trade face |
-| **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                             |
-| **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                 |
-| **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                              |
-| **Night & Stars**            | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                             |
-| **Sacred Geometry / Ritual** | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                          |
+| Theme                              | Flavor                                      | Families that fit                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sun & Sky**                      | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                                                                                                                                                        |
+| **Water & Agriculture**            | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), water clock                                                            |
+| **Trade** — a pool below the floor | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). **Two members, so nothing is authored to it** (§11.0) — the Great Pyramid of Giza wants it and `master.ts` holds the one-line change. Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag, as would any existing family taking a trade face |
+| **Logistics / Caravan**            | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                                                                                                                                                      |
+| **Scribe / Inscription**           | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                                          |
+| **Tomb / Burial Logic**            | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                                                                                                                                                       |
+| **Night & Stars**                  | decans, star-clock, nocturnal               | Constellation (its default skin _is_ the night sky), clock-arithmetic (decan variant per §4.3), symmetry (star-pattern completion)                                                                                                                                                                                                                                                      |
+| **Sacred Geometry / Ritual**       | temple art, sanctuary lighting              | Symmetry completion, mirror/lightbeam (lighting a sanctuary reads as ritual too — a family can sit in 2+ themes, see Sun & Sky above)                                                                                                                                                                                                                                                   |
 
 **Gap, closed on paper by §4.22.** The canal is a water family by mechanic rather than by dress — digging a
 channel from the river to a field is what it does — so once it is built the role has two members and the Nile

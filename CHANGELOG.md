@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every puzzle now shows its name above the board, worded for the room it is in.
 - A new puzzle: thread one unbroken run of numbers from cell to touching cell until the board is filled.
 
+### Fixed
+
+- Hieroglyphs now draw everywhere, including on devices with no hieroglyph font of their own.
+
 ### Changed
 
 - A side passage now serves the difficulty it was built for, not the floor's.

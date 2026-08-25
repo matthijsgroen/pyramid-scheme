@@ -8,9 +8,15 @@
   }
 }
 
+/*
+ * "Hieroglyphs" leads the stack, and the whole document inherits it — a sign is drawn from the shipped
+ * subset wherever it turns up, including in text nothing marked as a glyph (a hint sentence naming the
+ * sign it is about). Its unicode-range keeps it off everything else, so what follows is unchanged.
+ */
 html,
 body {
   @apply bg-black overflow-hidden text-white overscroll-none;
+  font-family: "Hieroglyphs", var(--default-font-family, ui-sans-serif, system-ui, sans-serif);
 }
 
 :root,
@@ -41,8 +47,27 @@ body {
   src: url(./assets/Limelight-Regular.ttf) format("truetype");
 }
 
+/*
+ * The hieroglyphs this game writes in, so they do not depend on the device having a font for them.
+ * Built by `yarn generate-font` — see scripts/generateFont.ts for the source, the licence and why it
+ * is a subset.
+ *
+ * The `unicode-range` is what makes it safe to put this family FIRST in every stack below: the browser
+ * reaches for it only for code points in the Egyptian Hieroglyphs block and never downloads it on a
+ * screen with no sign on it. Latin, digits and punctuation fall straight through to the next family.
+ */
+@font-face {
+  font-family: "Hieroglyphs";
+  src: url(./assets/hieroglyphs.subset.woff2) format("woff2");
+  unicode-range: U+13000-1343F;
+  font-display: block;
+}
+
 @theme {
   --font-pyramid: "Limelight", "serif";
+  /* The tiles and the locks set their glyphs in mono; the hieroglyph face has to lead that stack too,
+     or `font-mono` would override the one inherited from the document and draw a box again. */
+  --font-mono: "Hieroglyphs", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --animate-fade-in: fade-in 1s forwards ease-in-out;
   @keyframes fade-in {
     0% {
