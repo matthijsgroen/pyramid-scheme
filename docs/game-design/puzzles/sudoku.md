@@ -15,6 +15,15 @@ it — and what the bench cannot answer, whether a 6x6 still holds up on the twe
 room of a journey, is exactly what that play-testing is for. Switching it on is
 listing `SUDOKU_META` there and running `yarn generate-world && yarn generate-seeds`.
 
+Held back, it has no seed lists either — nothing asks for a bucket — so every board
+it builds takes the miss path and searches live (`puzzle-screens.md` §6.1). That is
+the documented fallback and it works, but it is worth knowing while bench-testing the
+top tier: measured over 12 rerolls, wizard takes a median of 1.0s and at most 1.2s a
+board, and 4 of those 12 came back a **nearest miss** — solvable by a hidden single
+rather than genuinely needing the chamber-line rung (§3.1). So the top tier's
+character is not something to read off one or two rolls. Both costs disappear the
+moment the family is authored and the lists are filled.
+
 ## 1. Rules
 
 A `6×6` grid, cut into six **chambers two squares wide and three tall** — three
