@@ -29,18 +29,34 @@ const BITE_MS = 900
 /**
  * Where a row sits and how big it is drawn, measured in rows from the one being answered.
  *
- * The row in front of the player is always at depth 0 — full size, at the front of the stage, and the
- * only one that has to be read. Rows further into the pit converge toward a vanishing point (each step
- * back covers half the remaining distance) and shrink as they go; rows already crossed slide down past
- * the camera and out of the way. So the board does not shrink to fit five rows — it moves.
+ * **Depth 0 is the row being answered, and it is the biggest thing on the stage** — it is the only one
+ * whose sums have to be read. Rows further into the pit converge toward a vanishing point (each step
+ * back covers half the remaining distance) and shrink as they go.
+ *
+ * **Depth -1 is where the player is standing**, drawn nearer than the camera's focus and mostly below
+ * the frame — a foothold at the bottom of the screen with the character on it, not something to read.
+ * At the start of a crossing that foothold is the near bank itself, with the character on it and the
+ * first row of stones standing ahead. One more step back (-2 and beyond) is off the bottom of the frame,
+ * so the first step slides the bank out of view, brings the row just landed on down to the foothold, and
+ * pulls the next row up to the front — and every step after it does the same thing.
  */
 const SPACING_VH = 30
+const BEHIND_STEP_VH = 5
 const DEPTH_STEP = 0.22
+const BEHIND_STEP_SCALE = 0.12
 const MIN_DEPTH_SCALE = 0.3
 const MAX_DEPTH_SCALE = 1.25
 
-const stackOffset = (depth: number) => SPACING_VH * (1 - Math.pow(0.5, depth))
-const stackScale = (depth: number) => Math.min(Math.max(1 - depth * DEPTH_STEP, MIN_DEPTH_SCALE), MAX_DEPTH_SCALE)
+const stackOffset = (depth: number) => (depth >= 0 ? SPACING_VH * (1 - Math.pow(0.5, depth)) : depth * BEHIND_STEP_VH)
+
+const stackScale = (depth: number) =>
+  Math.min(Math.max(1 - depth * (depth >= 0 ? DEPTH_STEP : BEHIND_STEP_SCALE), MIN_DEPTH_SCALE), MAX_DEPTH_SCALE)
+
+/** The stage place of a row that many steps from the one being answered. */
+const rowPlacement = (depth: number) => ({
+  transform: `translateY(${-stackOffset(depth)}vh) scale(${stackScale(depth)})`,
+  transformOrigin: "bottom center" as const,
+})
 
 /**
  * What this crocodile wants, said in sizes rather than in a direction: three bars, and the one it eats
@@ -132,13 +148,10 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                     <div
                       key={column}
                       className={clsx(
-                        "absolute bottom-4 flex w-full flex-col items-center transition-all duration-400",
-                        depth < 0 && "opacity-50 blur-[2px]"
+                        "absolute bottom-10 flex w-full flex-col items-center transition-all duration-400",
+                        depth < 0 && "opacity-60 blur-[1px]"
                       )}
-                      style={{
-                        transform: `translateY(${-stackOffset(depth)}vh) scale(${stackScale(depth)})`,
-                        transformOrigin: "bottom center",
-                      }}
+                      style={rowPlacement(depth)}
                     >
                       <div
                         // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
@@ -184,17 +197,31 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                       </div>
 
                       {/* The crocodile guarding THIS row, drawn on the near side of it — the one the player
-                        is about to feed — with the mark saying which of its stones it wants. */}
-                      <div className={clsx("flex items-center justify-center gap-2 pt-1", depth !== 0 && "opacity-60")}>
-                        <img src={crocodileOpen} alt="" className="w-14 -scale-x-100" />
-                        <WantMark sign={puzzle.signs[column]} dimmed={depth !== 0} />
-                      </div>
+                        is about to feed — with the mark saying which of its stones it wants. Rows already
+                        crossed have nothing left to ask, so theirs is not drawn. */}
+                      {depth >= 0 && (
+                        <div
+                          className={clsx("flex items-center justify-center gap-2 pt-1", depth !== 0 && "opacity-60")}
+                        >
+                          <img src={crocodileOpen} alt="" className="w-14 -scale-x-100" />
+                          <WantMark sign={puzzle.signs[column]} dimmed={depth !== 0} />
+                        </div>
+                      )}
                     </div>
                   )
                 })}
 
-              {/* The near bank the player starts on, and returns to after a bite. */}
-              <div className="absolute bottom-0 left-1/6 h-3 w-2/3 rounded-full bg-amber-700/80" />
+              {/* The near bank: the foothold the crossing starts from, and the one it returns to after a
+                  bite. It is a stage element like any row — the row before the first one — so the first
+                  step slides it out of the frame the same way every later step slides a crossed row out. */}
+              <div
+                className="absolute bottom-10 flex w-full flex-col items-center transition-all duration-400"
+                style={rowPlacement(-1 - facing)}
+              >
+                <div className="relative h-4 w-2/3 rounded-full bg-amber-700">
+                  {path.length === 0 && <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xl">🧍</span>}
+                </div>
+              </div>
             </div>
           </div>
         )

@@ -101,9 +101,16 @@ The crossing runs **away from the camera**: the near bank at the bottom of the s
 top, and each row of stones drawn one step further into the pit.
 
 **The pit slides forward a row at a time, and the row being answered is always at the front.** Depth is
-measured from that row rather than from the bank: it stands full size against the bottom of the stage,
-the rows still to come converge toward a vanishing point behind it (each step back covering half the
-remaining distance), and a row already crossed slides down past the camera, blurred, and out of the way.
+measured from that row rather than from the bank: it stands full size on the stage, the rows still to
+come converge toward a vanishing point behind it (each step back covering half the remaining distance),
+and the row the player is standing on sits below it at the bottom edge, blurred — a foothold, not
+something to read. One step further back is off the frame entirely.
+
+**The near bank is a stage element like any row** — the one before the first. So a crossing opens with
+the character on the bank and the first row of stones standing ahead of it, and the first step slides the
+bank out of view, brings the row just landed on down to the foothold, and pulls the next row to the
+front. Every later step is the same move, which is why there is no opening animation to write: the bank
+is just where the camera starts.
 
 That is what makes the sums readable. A board that had to show five rows at once could only do it by
 drawing all five small; a board that moves shows one row at the size a child can read, and spends the
