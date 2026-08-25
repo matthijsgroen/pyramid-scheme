@@ -18,15 +18,17 @@ columns live, so the numbers here are a snapshot to read, not a thing to keep tr
   column: a room with an encounter in it, whether that encounter is a puzzle or a trap.
 - **Sprawl** — floors built broad rather than tight, out of the journey's total (§3).
 - **Wears** — the theme the spec assigns.
-- **Would land** — a theme that suits the journey's narrative, with the share of its rooms that would
-  actually change (§2).
+- **Themes its story offers** — what this journey could be dressed as, read off its own name and
+  description. **A theme in `code` already exists** and the percentage is the share of the journey's
+  rooms it would reach today (§2); anything in plain text is a proposal with nothing behind it yet —
+  there to be designed toward, not to be authored tomorrow.
 
-## 2. A theme only lands where a family can wear it
+## 2. Two kinds of theme
 
 A room is told two things (`puzzle-screens.md` §2): its **role**, which is what kind of place it is
 and therefore which families may fill it, and its **theme**, which is the ambience the site asks for.
 A family that has no skin registered under a theme draws its default one and the theme passes it by,
-so **the reach of a theme is the share of rooms whose family answers to it**.
+so **the reach of a theme is the share of rooms whose family answers to it**. Six themes exist:
 
 | Theme        | Families that wear it     |
 | ------------ | ------------------------- |
@@ -47,6 +49,13 @@ Two consequences worth having in front of you before authoring one:
 - **No tomb can be dressed at all.** A tomb's rooms are tableau and the fez shop, and neither
   registers a skin, so every tomb row below reads 0% for every theme in the table.
 
+**The proposals in the last column are not that list, and that is the point of them.** They are what
+each journey's story asks for whether or not anything can draw it — a brief for a skin an existing
+family could grow, or for a family that does not exist yet. A theme becomes real one of two ways: an
+existing family registers a skin under the name, or a new family ships already wearing it. Either way
+it is a mechanic that has to hold up on its own first (`PUZZLE_FAMILIES.md`) — a dress is not a reason
+to build a puzzle, but a puzzle looking for a home may find one here.
+
 ## 3. Sprawl — the broad floor
 
 `packing` is how much floor a level is given for the rooms it has to hold; above 1 the layout spreads
@@ -61,114 +70,117 @@ none, where a pyramid picks up a floor or two.
 
 ## 4. Starter
 
-| Journey                              | Pyramids | Floors | Rooms | Sprawl | Wears | Would land                          |
-| ------------------------------------ | -------- | ------ | ----- | ------ | ----- | ----------------------------------- |
-| `starter_1` Dawn at the Sphinx       | 2        | 3      | 13    | —      | —     | nothing in the vocabulary is a dawn |
-| `starter_2` Papyrus Merchant's Route | 2        | 4      | 21    | —      | —     | `channel` 19%, `irrigation` 10%     |
-| `starter_3` Temple of Bastet         | 4        | 4      | 26    | —      | —     | `night` 15%                         |
-| `starter_4` Scribe's Academy         | 4        | 4      | 29    | —      | —     | **`scribe` 24%**                    |
+| Journey                              | Pyramids | Floors | Rooms | Sprawl | Wears | Themes its story offers                       |
+| ------------------------------------ | -------- | ------ | ----- | ------ | ----- | --------------------------------------------- |
+| `starter_1` Dawn at the Sphinx       | 2        | 3      | 13    | —      | —     | dawn · weathered sandstone                    |
+| `starter_2` Papyrus Merchant's Route | 2        | 4      | 21    | —      | —     | market stall · reed bank · `papyrus` (sudoku) |
+| `starter_3` Temple of Bastet         | 4        | 4      | 26    | —      | —     | offering table · cat · lamplight              |
+| `starter_4` Scribe's Academy         | 4        | 4      | 29    | —      | —     | schoolroom ostraca · `scribe` 24%             |
 
-| Tomb                                               | Floors | Rooms | Sprawl | Wears |
-| -------------------------------------------------- | ------ | ----- | ------ | ----- |
-| `starter_treasure_tomb` Forgotten Merchant's Cache | 4      | 8     | —      | —     |
+| Tomb                                               | Floors | Rooms | Sprawl | Wears | Themes its story offers  |
+| -------------------------------------------------- | ------ | ----- | ------ | ----- | ------------------------ |
+| `starter_treasure_tomb` Forgotten Merchant's Cache | 4      | 8     | —      | —     | cellar · crates and jars |
 
-**The Scribe's Academy is the closest fit in the game** — hidato's `scribe` skin is a reed-pen
-register, and a quarter of the journey's rooms are hidato. A papyrus merchant's route is the other
-one, and it is waiting on the sudoku family: its own register is a papyrus sheet.
+The Scribe's Academy is the one journey that could be dressed this afternoon: hidato's `scribe` skin is
+a reed-pen register and a quarter of its rooms are hidato. The papyrus route is waiting on the sudoku
+family, whose own register is a papyrus sheet.
 
 ## 5. Junior
 
-| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears   | Would land  |
-| ----------------------------------- | -------- | ------ | ----- | ------ | ------- | ----------- |
-| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —       | `night` 21% |
-| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —       | `night` 26% |
-| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —       | `scribe` 2% |
-| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `night` | reaches 49% |
+| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears   | Themes its story offers                |
+| ----------------------------------- | -------- | ------ | ----- | ------ | ------- | -------------------------------------- |
+| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —       | marsh · flock in flight · flood        |
+| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —       | workshop · pigment · quarry            |
+| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —       | moonlight · archive · `scribe` 2%      |
+| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `night` | beacon · harbour — `night` reaches 49% |
 
-| Tomb                                        | Floors | Rooms | Sprawl | Wears |
-| ------------------------------------------- | ------ | ----- | ------ | ----- |
-| `junior_treasure_tomb` Noble's Hidden Vault | 6      | 25    | —      | —     |
+| Tomb                                        | Floors | Rooms | Sprawl | Wears | Themes its story offers |
+| ------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
+| `junior_treasure_tomb` Noble's Hidden Vault | 6      | 25    | —      | —     | treasury · wax seals    |
 
-**`junior_4` is the only dressed journey in the world**, and it shows what dressing one properly
-looks like: it is authored to the `sky` role as well as the `night` theme, which is why the theme
-reaches half its rooms instead of a tenth. The theme is applied to the whole pyramid, side paths and
-trapped ones included — half a themed pyramid reads as an accident.
+**`junior_4` is the only dressed journey in the world**, and it shows what dressing one properly looks
+like: it is authored to the `sky` role as well as the `night` theme, which is why the theme reaches
+half its rooms instead of a tenth. The theme covers the whole pyramid, side paths and trapped ones
+included — half a themed pyramid reads as an accident.
 
-Two rows here are narrative fits with no reach. An ibis migration up the Nile and the temple of the
-god of writing both want a dress (`channel`, `scribe`) that only hidato wears, and hidato is one room
-of each journey. Authoring the role is the change; the theme alone would do almost nothing.
+Thoth is the god of writing and the moon, and the two proposals split the same way: `scribe` exists and
+reaches almost nothing here, while a moonlit board would be a second night — colder, and lit from one
+side rather than unlit.
 
 ## 6. Expert
 
-| Journey                          | Pyramids | Floors | Rooms | Sprawl             | Wears | Would land                         |
-| -------------------------------- | -------- | ------ | ----- | ------------------ | ----- | ---------------------------------- |
-| `expert_1` Valley of the Kings   | 4        | 7      | 84    | 2/7                | —     | `night` 18%                        |
-| `expert_2` Karnak Temple Complex | 4        | 6      | 83    | 1/6                | —     | `night` 13%, `scribe` 11%          |
-| `expert_3` Nile Delta Expedition | 5        | 7      | 107   | 1/7                | —     | **`irrigation` 16%**, `channel` 7% |
-| `expert_4` Pyramid of Djoser     | 5        | 7      | 99    | 2/7 (`packing: 2`) | —     | `fields` 26%                       |
+| Journey                          | Pyramids | Floors | Rooms | Sprawl             | Wears | Themes its story offers                      |
+| -------------------------------- | -------- | ------ | ----- | ------------------ | ----- | -------------------------------------------- |
+| `expert_1` Valley of the Kings   | 4        | 7      | 84    | 2/7                | —     | necropolis · torchlight · painted wall       |
+| `expert_2` Karnak Temple Complex | 4        | 6      | 83    | 1/6                | —     | hypostyle columns · solar gold · festival    |
+| `expert_3` Nile Delta Expedition | 5        | 7      | 107   | 1/7                | —     | delta marsh · crocodile · `irrigation` 16%   |
+| `expert_4` Pyramid of Djoser     | 5        | 7      | 99    | 2/7 (`packing: 2`) | —     | stepped terraces · building site · limestone |
 
-| Tomb                                          | Floors | Rooms | Sprawl | Wears |
-| --------------------------------------------- | ------ | ----- | ------ | ----- |
-| `expert_treasure_tomb` High Priest's Treasury | 4      | 21    | —      | —     |
-| `expert_treasure_tomb_b` Inner Sanctum        | 4      | 20    | 4/4    | —     |
+| Tomb                                          | Floors | Rooms | Sprawl | Wears | Themes its story offers |
+| --------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
+| `expert_treasure_tomb` High Priest's Treasury | 4      | 21    | —      | —     | relic sanctum · incense |
+| `expert_treasure_tomb_b` Inner Sanctum        | 4      | 20    | 4/4    | —     | sealed holy of holies   |
 
-**The Nile Delta expedition is the one journey whose change is already written down.** The spec
-carries the line that would author it — `journey("expert_3").pyramid("1-5", { encounter: "water" })`
-— and the reason it has not been pulled: the `water` pool draws all four of its families across the
-journey, which clears the variety floor on paper, and what is left is playtesting whether four boards
-drawn for one role read as four different rooms.
+**The Nile Delta expedition is the one journey whose change is already written down.** The spec carries
+the line that would author it — `journey("expert_3").pyramid("1-5", { encounter: "water" })` — and the
+reason it has not been pulled: the `water` pool draws all four of its families across the journey, so
+the variety floor clears on paper, and what is left is playtesting whether four boards drawn for one
+role read as four different rooms. The crocodile is already a trap family; a crocodile _theme_ would
+be the delta's water dressed as something that bites.
 
-`expert_4` is where sprawl stops being a coin toss: two of its five pyramids are authored broad
-because that tier puts a coloured key on the open main path, and a broad floor is somewhere to hide
-one.
+`expert_4` is where sprawl stops being a coin toss: two of its five pyramids are authored broad because
+the tier puts a coloured key on the open main path, and a broad floor is somewhere to hide one.
 
 ## 7. Master
 
-| Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | Would land      |
-| -------------------------------- | -------- | ------ | ----- | ------ | ----- | --------------- |
-| `master_1` Great Pyramid of Giza | 4        | 8      | 83    | 1/8    | —     | `night` 19%     |
-| `master_2` Book of the Dead      | 5        | 10     | 121   | 1/10   | —     | `scribe` 11%    |
-| `master_3` Curse of the Pharaohs | 5        | 10     | 125   | 1/10   | —     | **`night` 29%** |
-| `master_4` Tomb of Nefertari     | 5        | 10     | 109   | —      | —     | `scribe` 8%     |
+| Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | Themes its story offers                 |
+| -------------------------------- | -------- | ------ | ----- | ------ | ----- | --------------------------------------- |
+| `master_1` Great Pyramid of Giza | 4        | 8      | 83    | 1/8    | —     | grand gallery · granite · star shaft    |
+| `master_2` Book of the Dead      | 5        | 10     | 121   | 1/10   | —     | funerary scroll · judgement · `papyrus` |
+| `master_3` Curse of the Pharaohs | 5        | 10     | 125   | 1/10   | —     | omen · dust and decay · `night` 29%     |
+| `master_4` Tomb of Nefertari     | 5        | 10     | 109   | —      | —     | fresco · queen's blue · lamplight       |
 
-| Tomb                                    | Floors | Rooms | Sprawl | Wears |
-| --------------------------------------- | ------ | ----- | ------ | ----- |
-| `master_treasure_tomb` Hall of Ma'at    | 5      | 30    | —      | —     |
-| `master_treasure_tomb_b` Hall of Osiris | 5      | 30    | 5/5    | —     |
+| Tomb                                    | Floors | Rooms | Sprawl | Wears | Themes its story offers    |
+| --------------------------------------- | ------ | ----- | ------ | ----- | -------------------------- |
+| `master_treasure_tomb` Hall of Ma'at    | 5      | 30    | —      | —     | weighing hall · feather    |
+| `master_treasure_tomb_b` Hall of Osiris | 5      | 30    | 5/5    | —     | underworld green · rebirth |
 
-**A curse is a night journey with the rooms to prove it**: 29% of its rooms are eclipse or
-constellation, the second-best reach in the game after `junior_4`, and supernatural challenges under
-a dark sky is the description it already carries. The Book of the Dead and Nefertari's tomb are both
-about writing on walls, which is `scribe` again at a tenth of their rooms.
+A curse is a night journey with the rooms to prove it — 29% of them are eclipse or constellation, the
+second-best reach in the game. Nefertari's tomb is the most decorated in Egypt and asks for the one
+thing no board here does: colour laid on plaster, blues and ochres rather than ink on a ground.
 
 ## 8. Wizard
 
-| Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | Would land      |
-| -------------------------------- | -------- | ------ | ----- | ------ | ----- | --------------- |
-| `wizard_1` Ra's Solar Journey    | 4        | 12     | 135   | 1/12   | —     | **`night` 17%** |
-| `wizard_2` Secrets of the Sphinx | 5        | 15     | 177   | 2/15   | —     | `night` 16%     |
-| `wizard_3` Chamber of Ma'at      | 6        | 18     | 207   | 2/18   | —     | `fields` 23%    |
-| `wizard_4` Eternal Pyramid       | 6        | 18     | 207   | 1/18   | —     | `fields` 21%    |
+| Journey                          | Pyramids | Floors | Rooms | Sprawl | Wears | Themes its story offers                     |
+| -------------------------------- | -------- | ------ | ----- | ------ | ----- | ------------------------------------------- |
+| `wizard_1` Ra's Solar Journey    | 4        | 12     | 135   | 1/12   | —     | duat · solar barque · serpent · `night` 17% |
+| `wizard_2` Secrets of the Sphinx | 5        | 15     | 177   | 2/15   | —     | buried sand · riddle · excavation           |
+| `wizard_3` Chamber of Ma'at      | 6        | 18     | 207   | 2/18   | —     | scales · feather of truth · cosmic          |
+| `wizard_4` Eternal Pyramid       | 6        | 18     | 207   | 1/18   | —     | void · gold · mirrored infinity             |
 
-| Tomb                                            | Floors | Rooms | Sprawl | Wears |
-| ----------------------------------------------- | ------ | ----- | ------ | ----- |
-| `wizard_treasure_tomb` Vault of the Gods        | 4      | 28    | 4/4    | —     |
-| `wizard_treasure_tomb_b` Realm of Cosmic Forces | 4      | 28    | —      | —     |
-| `wizard_treasure_tomb_c` Throne of Eternity     | 4      | 28    | —      | —     |
+| Tomb                                            | Floors | Rooms | Sprawl | Wears | Themes its story offers                              |
+| ----------------------------------------------- | ------ | ----- | ------ | ----- | ---------------------------------------------------- |
+| `wizard_treasure_tomb` Vault of the Gods        | 4      | 28    | 4/4    | —     | divine vault                                         |
+| `wizard_treasure_tomb_b` Realm of Cosmic Forces | 4      | 28    | —      | —     | life · death · chaos · wind, per its own description |
+| `wizard_treasure_tomb_c` Throne of Eternity     | 4      | 28    | —      | —     | throne · endless hall                                |
 
-**Ra's journey is a night journey by name** — the sun god's passage through the underworld, which is
-the one narrative in the catalogue that is literally about night. The two 6-pyramid journeys are the
-largest things in the game at 207 rooms each, and neither has a narrative the vocabulary can dress.
+Ra's journey is the one narrative in the catalogue that is literally about night, and it wants more
+than a dark board: a boat crossing a river of it, with a serpent in the way. The two 6-pyramid journeys
+are the largest things in the game at 207 rooms each, and both ask for somewhere that is not Egypt at
+all — the void beyond the sky, and a chamber where the mathematics is the cosmos.
 
 ## 9. What the tables say when read together
 
-- **One journey in twenty-nine wears a theme.** Every other room in the world draws its family's
-  default skin.
-- **The vocabulary is thin where the narratives are thickest.** Six themes exist and four of them
-  belong to a single family, so a journey's reach is decided by which families its rooms happened to
-  draw rather than by what it is about. The two dresses with two families behind them, `night` and
-  `fields`, are also the two that reach past a fifth of a journey.
-- **A tomb cannot be dressed**, and every tomb in the game is therefore the same room in a different
-  colour of stone.
-- **Sprawl is a tier property, not a journey one** — the only journey authored broad is `expert_4`,
-  and it is authored for a mechanic (a key on the open floor) rather than for a look.
+- **One journey in twenty-nine wears a theme.** Every other room draws its family's default skin.
+- **The existing vocabulary is thin where the narratives are thickest.** Six themes, four of them
+  belonging to a single family, against twenty-nine stories that each want something of their own. The
+  two dresses with two families behind them, `night` and `fields`, are also the only two that reach
+  past a fifth of a journey.
+- **The proposals cluster.** A light source in a dark room is asked for four times (lamplight twice,
+  torchlight, moonlight), water in three journeys, and a written or painted surface in five — ostraca,
+  archive, scroll, fresco, papyrus. A skin built for one of those clusters pays for itself across a
+  tier rather than dressing one pyramid.
+- **A tomb cannot be dressed**, so every tomb in the game is the same room in a different colour of
+  stone — and the tomb column above is the whole argument for giving tableau a second face.
+- **Sprawl is a tier property, not a journey one** — the only journey authored broad is `expert_4`, and
+  it is authored for a mechanic rather than for a look.
