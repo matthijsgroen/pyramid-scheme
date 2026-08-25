@@ -20,6 +20,9 @@ export type CrocodileOptions = {
 
 // Starter tombs author no capstone at all (see worldGen/spec/starter.ts) and the family's minTier is
 // junior, so the starter row exists only because Difficulty is a closed union — it is never built.
+// Three stones a row is the ceiling, and three numbers a sum: a row has to fit a 360px phone drawn flat
+// (the nearest row is never scaled down), and a fourth stone or a fourth number puts it over. Depth buys
+// room for more ROWS, which is where the top tiers spend it — never for a wider one.
 export const CROCODILE_CONFIG: Record<Difficulty, CrocodileOptions> = {
   starter: {
     columns: 3,
@@ -50,16 +53,16 @@ export const CROCODILE_CONFIG: Record<Difficulty, CrocodileOptions> = {
     columns: 4,
     stonesPerColumn: 3,
     signs: "mixed",
-    numberOfSymbols: 4,
+    numberOfSymbols: 3,
     numberRange: [1, 12],
     operators: ["+", "-", "*"],
     maxMultiplyOperandResult: 8,
   },
   wizard: {
     columns: 5,
-    stonesPerColumn: 4,
+    stonesPerColumn: 3,
     signs: "mixed",
-    numberOfSymbols: 4,
+    numberOfSymbols: 3,
     numberRange: [1, 15],
     operators: ["+", "-", "*"],
     maxMultiplyOperandResult: 10,

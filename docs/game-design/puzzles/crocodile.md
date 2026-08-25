@@ -77,16 +77,20 @@ costs no build step.
 
 ## 4. Tiers
 
-| Tier   | Rows × stones | Crocodiles      | Operators | Range | `maxMultiplyOperandResult` |
-| ------ | ------------- | --------------- | --------- | ----- | --------------------------- |
-| Junior | 3 × 2         | all biggest     | `+ -`     | 1–10  | —                           |
-| Expert | 4 × 3         | biggest/smallest | `+ - *`   | 1–10  | 5                           |
-| Master | 4 × 3         | biggest/smallest | `+ - *`   | 1–12  | 8                           |
-| Wizard | 5 × 4         | biggest/smallest | `+ - *`   | 1–15  | 10                          |
+| Tier   | Rows × stones | Numbers a sum | Crocodiles       | Operators | Range | `maxMultiplyOperandResult` |
+| ------ | ------------- | ------------- | ---------------- | --------- | ----- | --------------------------- |
+| Junior | 3 × 2         | 3             | all biggest      | `+ -`     | 1–10  | —                           |
+| Expert | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–10  | 5                           |
+| Master | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–12  | 8                           |
+| Wizard | 5 × 3         | 3             | biggest/smallest | `+ - *`   | 1–15  | 10                          |
 
-One row is one decision, and one decision is `stonesPerColumn` sums to work out — so a junior pit asks
-for six sums across three choices and a wizard pit for twenty across five. Division is excluded at every
-tier.
+One row is one decision, and one decision is `stonesPerColumn` sums to work out — so a junior pit asks for
+six sums across three choices and a wizard pit for fifteen across five. Division is excluded at every tier.
+
+**Three stones a row is the ceiling, and three numbers a sum with it.** The nearest row is never scaled
+down, so it has to fit a 360px phone drawn flat; a fourth stone, or a fourth number in a sum, puts it over
+(`puzzle-screens.md` §1 — a board too wide means a smaller authored board, never a scroll container). What
+depth buys is room for more ROWS, and that is where the top tiers spend it.
 
 **Starter tombs have no crocodile.** `minTier: "junior"`, and no starter tomb authors a capstone — the
 old `compareAmount: 0` board, which showed a bare chest and no puzzle at all, is gone with it.
@@ -95,8 +99,8 @@ old `compareAmount: 0` board, which showed a bare chest and no puzzle at all, is
 
 The crossing runs **away from the camera**: the near bank at the bottom of the screen, the far bank at
 the top, and each row of stones drawn one step further into the pit. Rows further away are **scaled
-down**, which is what buys the ladder its room — five rows of four stones do not fit a 360px phone drawn
-flat side-on, and they do in perspective.
+down**, which is what buys the ladder its room: a fifth row costs almost nothing on screen, which is why
+the top tiers grow downwards into the pit rather than sideways across it (§4).
 
 Each crocodile is drawn on the near side of the row it guards, with its mark beside it: **three bars, and
 the one it eats is lit** — tall bar for the biggest answer, short bar for the smallest. The crocodile

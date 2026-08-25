@@ -113,7 +113,10 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                 .map(({ stones, column }) => (
                   <div key={column} className="flex flex-col items-center">
                     <div
-                      className="flex items-center justify-center gap-2 transition-transform duration-300"
+                      // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
+                      // and if a locale or a font ever makes one wider anyway, it folds instead of
+                      // running off the screen — no horizontal scroll, ever (puzzle-screens.md §1).
+                      className="flex w-full flex-wrap items-center justify-center gap-1.5 transition-transform duration-300"
                       style={{ transform: `scale(${depthScale(column)})` }}
                     >
                       {stones.map((stone, index) => {
@@ -127,7 +130,9 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                             onClick={() => tapStone(column, index)}
                             disabled={!offered}
                             className={clsx(
-                              "relative min-h-11 rounded-full border-2 px-4 py-2 font-pyramid text-lg whitespace-nowrap",
+                              // Sized off the screen rather than off a pixel guess: three stones a row
+                              // have to sit side by side on a 360px phone and still be a 44px tap target.
+                              "relative min-h-11 rounded-full border-2 p-2 font-pyramid text-[clamp(0.8rem,3.4vw,1.125rem)] whitespace-nowrap",
                               standing && "border-amber-300 bg-amber-700 text-amber-50 ring-2 ring-amber-200",
                               crossed && !standing && "border-emerald-500 bg-emerald-900 text-emerald-100",
                               !crossed && offered && "border-amber-500 bg-stone-700 text-amber-100 active:scale-95",
