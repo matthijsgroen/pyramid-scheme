@@ -109,6 +109,63 @@ export const WithHint: Story = { args: hinted(starter, carved) }
 
 export const PapyrusWithHint: Story = { args: hinted(starter, register) }
 
+/**
+ * A square picked that holds a value: every square holding the same one washes, and a pencilled copy of
+ * it brightens. The picked square keeps its ring, so which of its twins the player is standing on is
+ * still clear.
+ */
+const twinned = (puzzle: typeof starter, skin: typeof carved) => {
+  const picked = puzzle.givens.flatMap((row, rowIndex) =>
+    row.flatMap((value, colIndex) => (value !== undefined ? [{ row: rowIndex, col: colIndex, value }] : []))
+  )[0]
+  const open = puzzle.givens.flatMap((row, rowIndex) =>
+    row.flatMap((value, colIndex) => (value === undefined ? [{ row: rowIndex, col: colIndex }] : []))
+  )
+  let state = createSudokuState(puzzle)
+  for (const value of [picked.value, (picked.value % 6) + 1])
+    state = toggleSudokuNote(state, open[0].row, open[0].col, value)
+  const values = sudokuValues(state)
+  return {
+    puzzle,
+    skin,
+    cells: state.cells,
+    conflicts: sudokuConflicts(puzzle, values),
+    stranded: strandedNotes(puzzle, values, sudokuNotes(state)),
+    selected: { row: picked.row, col: picked.col },
+    twinned: picked.value,
+    onSelect: () => {},
+  }
+}
+
+export const WithTwins: Story = { args: twinned(starter, carved) }
+
+export const PapyrusWithTwins: Story = { args: twinned(starter, register) }
+
+/**
+ * The finished register filing itself: each chamber is taken up as a scroll, one after the next, and laid
+ * back out — the solved board is the reward, so it cannot be left rolled up (`puzzle-screens.md` §3).
+ *
+ * **Frozen partway**, at three different heights, because a 420ms run is not something a screenshot can
+ * hold: the story pauses each roll at a different point of its own animation rather than playing the wave
+ * once on mount and leaving a board with nothing on it to look at.
+ */
+export const PapyrusRolling: Story = {
+  args: { ...untouched(starter, register), rolled: 3 },
+  decorators: [
+    Story => (
+      <>
+        <style>{`
+          .animate-furl { animation-play-state: paused }
+          div:nth-child(1) > .animate-furl { animation-delay: -230ms }
+          div:nth-child(2) > .animate-furl { animation-delay: -150ms }
+          div:nth-child(3) > .animate-furl { animation-delay: -70ms }
+        `}</style>
+        <Story />
+      </>
+    ),
+  ],
+}
+
 /** One value standing twice in a row, which the board says without any words. */
 const clashing = (puzzle: typeof starter, skin: typeof carved) => {
   const open = puzzle.givens.flatMap((row, rowIndex) =>

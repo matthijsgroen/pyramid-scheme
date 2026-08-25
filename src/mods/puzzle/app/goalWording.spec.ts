@@ -261,7 +261,7 @@ describe("the goal above the rules", () => {
    * scribe's register of signs inked across papyrus, and the words are the whole difference: nothing on
    * the sheet is a number, and nothing carved in stone is a sign. This is the family the guard matters
    * most for, because what a value LOOKS like is itself skinned here — a sentence that says "number"
-   * over a board showing 𓈖 is describing something that is not on the screen.
+   * over a board showing 𓁹 is describing something that is not on the screen.
    */
   const SUDOKU_PLACES = [
     { role: "puzzle", skin: "default" },

@@ -48,8 +48,11 @@ export const SudokuPad: FC<Props> = ({
             key={value}
             onClick={() => onValue(value)}
             disabled={disabled}
-            // The key's name is the sign as a character, since a drawn one has none of its own.
+            // Named by the character the key shows, so a reader hears what the eye reads.
             aria-label={skin.token(value)}
+            // Set by the face rather than by the pad: a sign is written larger than a figure wherever it
+            // stands, and a key is one of the three places it stands (`SudokuSkin.size`).
+            style={{ fontSize: skin.size.key }}
             className={clsx(
               buttonCls,
               disabled ? skin.pad.disabledKey : pencil ? skin.pad.pencilKey : skin.pad.key,

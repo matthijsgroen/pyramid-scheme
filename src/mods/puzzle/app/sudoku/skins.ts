@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import { Figure, Sign } from "./glyphs"
+import { SIGN_CHARACTERS } from "./signs"
 
 /**
  * What each of this mechanic's places looks like, and how a room works out which place it is.
@@ -24,10 +25,23 @@ export type SudokuSkin = {
   /** What a value looks like standing in a square — a figure cut in, or the sign that means it. */
   Glyph: FC<{ value: number }>
   /**
-   * What a SENTENCE puts in its slot when it has to say a value, since a hint is a string and a drawn
-   * sign is not. The carved board says "4"; the register says 𓈖, the character the sign next door is
-   * drawn from — so a device with no hieroglyph font loses a character out of an optional sentence
-   * rather than the board it is about.
+   * How large this face writes: a value in a square, a pencilled option, and a key on the pad.
+   *
+   * The FACE's business and not the board's, because it is a property of the characters rather than of
+   * the places they stand in: a figure fills about half of its em box where a sign fills nearly all of
+   * one, so a register set at the carved board's size reads as a whisper beside it. On the board the
+   * sizes are square-relative (`cqw`), which is what keeps a phone-sized board legible with no pixel
+   * constant anywhere; a pad key is a fixed height, so its is not.
+   */
+  size: { value: string; note: string; key: string }
+  /**
+   * What a SENTENCE puts in its slot when it has to say a value, and what a pad key is called. The
+   * carved board says "4"; the register says 𓁹 — the same character its squares show, because the game
+   * ships the face that draws it.
+   *
+   * One shape everywhere is the point: a hint naming a value is asking the player to go and find it, so
+   * a sentence and a board that showed the sign differently would be a hint pointing at something that
+   * is not quite there.
    */
   token: (value: number) => string
   /** The ground the grid is ruled on. */
@@ -50,6 +64,17 @@ export type SudokuSkin = {
   /** A pencilled option, and one a value written elsewhere has since ruled out. */
   note: string
   strandedNote: string
+  /**
+   * The wash a square wears when it holds the value the player has picked, as a CSS colour.
+   *
+   * A WASH rather than a ring or a hatch, and that is the whole reason it can exist: the rings and the
+   * hatching are the hint's vocabulary and a treatment means one thing (`puzzle-screens.md` §4.2). It
+   * is laid over the ground instead of replacing it, so a pre-filled square that is also a twin still
+   * reads as the puzzle's own — which is what a colour on the background could not do.
+   */
+  twin: string
+  /** The same answer one step earlier: a pencilled copy of that value, in a square that may still take it. */
+  twinNote: string
   /**
    * Where two chambers meet, and where two squares inside one do — **as CSS colours rather than
    * classes, and that is load-bearing.** A Tailwind `border-*` colour sets all four sides at once, so
@@ -75,16 +100,22 @@ export type SudokuSkin = {
   }
   /** What a value wears for its turn in the completion run (`puzzle-screens.md` §3). */
   celebrate: string
+  /**
+   * How a chamber of this board is TAKEN UP when the run reaches it, or nothing for a face whose
+   * chambers do not roll.
+   *
+   * Carrying it here is what makes the completion run the skin's and not the family's: a sheet finishes
+   * by being rolled and put away, a wall cut with figures finishes by catching the light. So the two
+   * faces count different things — a face with a scroll counts CHAMBERS, one without counts VALUES
+   * (design doc §9.1) — and both are the same rule said back, each in the half its own ground can say.
+   */
+  scroll?: {
+    /** The roll seen edge-on, as a CSS `background`: a sheet wound on itself has a thickness to draw. */
+    roll: string
+    /** What that roll casts — up onto the sheet it has not reached, and down into the space it left. */
+    shade: string
+  }
 }
-
-/**
- * The six signs as CHARACTERS, in the order the values 1…6 run and matching what `glyphs.tsx` draws.
- *
- * Only ever put in a sentence — water, the sun, an ankh, a house, a mouth, a feather. The board draws
- * its own (a device without an Egyptian Hieroglyphs font would otherwise show six identical boxes and
- * no puzzle at all), and this list is what a hint says while pointing at one.
- */
-const SIGN_CHARACTERS = ["𓈖", "𓇳", "𓋹", "𓉐", "𓂋", "𓆄"] as const
 
 /**
  * **Figures cut into stone.** The default: a dark chamber wall with the answer carved into it, the
@@ -94,6 +125,7 @@ const SIGN_CHARACTERS = ["𓈖", "𓇳", "𓋹", "𓉐", "𓂋", "𓆄"] as cons
 const carved: SudokuSkin = {
   name: "default",
   Glyph: Figure,
+  size: { value: "54cqw", note: "24cqw", key: "1.125rem" },
   token: value => `${value}`,
   board: "bg-stone-950",
   // Cut stone, drawn flat: every other grid family in the catalogue is a flat dark board, and a
@@ -109,6 +141,13 @@ const carved: SudokuSkin = {
   conflictInk: "text-red-100",
   note: "text-sky-300",
   strandedNote: "text-red-400/80 line-through",
+  // Cool, where the hint's marks are amber and a repeat is red — the three things a square can be
+  // saying at once stay three different colours.
+  // Carried at a heavier alpha than the register's, because a dark board swallows a wash: the same
+  // lesson the conflict colour learned here, where a dark tint behind a pale figure read as no tell at
+  // all at arm's length.
+  twin: "rgb(125 211 252 / 0.22)",
+  twinNote: "text-sky-200 font-semibold",
   wall: "rgb(214 211 209 / 0.85)",
   seam: "rgb(120 113 108 / 0.55)",
   hatch: "rgba(252,211,77,0.45)",
@@ -141,6 +180,12 @@ const carved: SudokuSkin = {
 const register: SudokuSkin = {
   name: "papyrus",
   Glyph: Sign,
+  // A little larger than the carved board's figures, and no more than that: a sign carries more ink
+  // across its box than a digit does, but the square has to stay a square the sign STANDS IN — set to
+  // fill it, the ripple and the house run up against the chamber rules and the board reads as crowded.
+  // The note is the one with a ceiling rather than a preference: six of them share a square three
+  // across, so one much wider than a third of it climbs over its neighbours.
+  size: { value: "60cqw", note: "28cqw", key: "1.75rem" },
   token: value => SIGN_CHARACTERS[value - 1],
   board: "bg-[#b99a63]",
   // Pressed reed: strips laid across strips, so the fibre runs both ways and neither reads as a rule
@@ -160,6 +205,10 @@ const register: SudokuSkin = {
   conflictInk: "text-red-950",
   note: "text-sky-900/80",
   strandedNote: "text-red-700/70 line-through",
+  // Ink washed over the sheet rather than light thrown on it, and blue rather than another brown: the
+  // grain and the hint's hatching have the warm end of this board between them.
+  twin: "rgb(7 89 133 / 0.14)",
+  twinNote: "text-sky-900 font-semibold",
   // Ruled in the same reed pen the signs are written with: the chamber rules are the heavy strokes a
   // scribe lays down first, the seams the light ones inside them.
   wall: "rgb(87 47 20 / 0.9)",
@@ -178,6 +227,13 @@ const register: SudokuSkin = {
   // Ink does not swell as it dries; a sign that grew would read as the sheet moving under it. So the
   // register only brightens, where the carved board blooms.
   celebrate: "animate-flare",
+  // Sheet wound on sheet: pale where the light catches the top of the roll, dark underneath, so the band
+  // reads as something with a thickness rather than a line ruled across the chamber. The shade is the
+  // reed-pen brown the walls are drawn in, at the weight a shadow on a pale sheet can carry.
+  scroll: {
+    roll: "linear-gradient(180deg, #cbab72 0 12%, #f2e3bb 38%, #d9bf8c 62%, #8a6a3f)",
+    shade: "rgb(87 47 20 / 0.35)",
+  },
 }
 
 const SKINS: Record<string, SudokuSkin> = { default: carved, papyrus: register }

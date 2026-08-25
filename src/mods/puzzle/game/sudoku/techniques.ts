@@ -3,7 +3,7 @@
 // Four rungs, and the ladder stops there because the GRID stops there. The subsets every larger
 // sudoku turns on — a naked pair, a hidden pair, a triple, an x-wing — were built and measured, and
 // not one of them ever fired: a group only six squares wide leaves a pair one step behind a single
-// that fires first, so every board they might have decided was already decided (design doc §4.4).
+// that fires first, so every board they might have decided was already decided (design doc §11).
 // Rungs nothing can reach are not a ceiling to grow into, they are dead weight in the ladder and a
 // tier table that promises reasoning no board demands.
 //
@@ -76,6 +76,19 @@ export const boxesPerRow = ({ size, boxWidth }: SudokuShape): number => size / b
 export const boxIndexOf = (shape: SudokuShape, row: number, col: number): number =>
   Math.floor(row / shape.boxHeight) * boxesPerRow(shape) + Math.floor(col / shape.boxWidth)
 
+/**
+ * How many chambers the grid is cut into — on any sudoku, the width of the grid. The six squares of a
+ * chamber and the six of a row hold the same six values, so the board divides into the same count either
+ * way. Named rather than written out at the call site, because `size` there is a claim about nothing.
+ */
+export const boxCount = ({ size, boxWidth, boxHeight }: SudokuShape): number => (size * size) / (boxWidth * boxHeight)
+
+/** The top-left square of a chamber — where anything drawn OVER a whole chamber has to start. */
+export const boxOriginOf = (shape: SudokuShape, box: number): SudokuCellRef => ({
+  row: Math.floor(box / boxesPerRow(shape)) * shape.boxHeight,
+  col: (box % boxesPerRow(shape)) * shape.boxWidth,
+})
+
 export type Unit = { kind: "row" | "col" | "box"; index: number; cells: SudokuCellRef[] }
 
 type Geometry = { units: Unit[]; peers: SudokuCellRef[][][]; unitsBy: Record<"row" | "col" | "box", Unit[]> }
@@ -98,9 +111,8 @@ const buildGeometry = (shape: SudokuShape): Geometry => {
     index: col,
     cells: Array.from({ length: size }, (_unused2, row) => ({ row, col })),
   }))
-  const boxes: Unit[] = Array.from({ length: size }, (_unused, box) => {
-    const top = Math.floor(box / boxesPerRow(shape)) * boxHeight
-    const left = (box % boxesPerRow(shape)) * boxWidth
+  const boxes: Unit[] = Array.from({ length: boxCount(shape) }, (_unused, box) => {
+    const { row: top, col: left } = boxOriginOf(shape, box)
     return {
       kind: "box" as const,
       index: box,

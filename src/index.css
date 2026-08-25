@@ -113,6 +113,32 @@ body {
     }
   }
 
+  /* A sheet taken up: the roll travels from the foot of a chamber to its head, and then back down. What it
+     uncovers is the table the sheet lies on, so the writing goes up with the part already rolled — the way
+     it would on a real sheet, where a rolled inch is an inch you cannot read.
+
+     It comes back DOWN, and that is the constraint rather than the flourish: a solved board is the reward
+     and the banner sits over it (`puzzle-screens.md` §3), so six chambers left rolled would file the answer
+     away before the player had looked at it. Each is taken up and laid back out, which makes the run a wave
+     across the register rather than a tidy-up.
+
+     `translate` rather than `transform`, so an element's resting offset is what it returns to when the
+     animation is over — here that is "rolled clear of the chamber", i.e. covering nothing at all. */
+  --animate-furl: furl 420ms ease-in-out;
+  @keyframes furl {
+    0% {
+      translate: 0 106%;
+    }
+    /* Stopping a hair short of the head of the chamber, so the roll itself is still whole at the top of
+       its travel: a roll drawn ON the edge is a roll with half of it cut off by the chamber above. */
+    55% {
+      translate: 0 4%;
+    }
+    100% {
+      translate: 0 106%;
+    }
+  }
+
   /* A beam that has come level rocking once before it settles — a scale finishing (balance-scale design doc
      §9). Rotation only, and small: the pans hold the numbers the player just worked out, so a beam that
      swings far enough to be dramatic swings the arithmetic off the screen with it. */
