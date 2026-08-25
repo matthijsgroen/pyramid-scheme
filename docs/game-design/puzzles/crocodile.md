@@ -97,10 +97,18 @@ old `compareAmount: 0` board, which showed a bare chest and no puzzle at all, is
 
 ## 5. Drawing the pit — depth, and a mark that means size
 
-The crossing runs **away from the camera**: the near bank at the bottom of the screen, the far bank at
-the top, and each row of stones drawn one step further into the pit. Rows further away are **scaled
-down**, which is what buys the ladder its room: a fifth row costs almost nothing on screen, which is why
-the top tiers grow downwards into the pit rather than sideways across it (§4).
+The crossing runs **away from the camera**: the near bank at the bottom of the screen, the far bank at the
+top, and each row of stones drawn one step further into the pit.
+
+**The pit slides forward a row at a time, and the row being answered is always at the front.** Depth is
+measured from that row rather than from the bank: it stands full size against the bottom of the stage,
+the rows still to come converge toward a vanishing point behind it (each step back covering half the
+remaining distance), and a row already crossed slides down past the camera, blurred, and out of the way.
+
+That is what makes the sums readable. A board that had to show five rows at once could only do it by
+drawing all five small; a board that moves shows one row at the size a child can read, and spends the
+depth on the rest. It is also why the tiers grow downwards into the pit rather than sideways across it
+(§4) — another row costs almost nothing on screen, another stone costs width there is none of.
 
 Each crocodile is drawn on the near side of the row it guards, with its mark beside it: **three bars, and
 the one it eats is lit** — tall bar for the biggest answer, short bar for the smallest. The crocodile

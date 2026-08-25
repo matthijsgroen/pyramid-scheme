@@ -24,12 +24,23 @@ type Props = {
   onCancel: () => void
 }
 
-/** How much smaller each column is drawn than the one in front of it, and how small it may get. */
-const DEPTH_STEP = 0.12
-const MIN_DEPTH_SCALE = 0.6
 const BITE_MS = 900
 
-const depthScale = (column: number) => Math.max(1 - column * DEPTH_STEP, MIN_DEPTH_SCALE)
+/**
+ * Where a row sits and how big it is drawn, measured in rows from the one being answered.
+ *
+ * The row in front of the player is always at depth 0 — full size, at the front of the stage, and the
+ * only one that has to be read. Rows further into the pit converge toward a vanishing point (each step
+ * back covers half the remaining distance) and shrink as they go; rows already crossed slide down past
+ * the camera and out of the way. So the board does not shrink to fit five rows — it moves.
+ */
+const SPACING_VH = 30
+const DEPTH_STEP = 0.22
+const MIN_DEPTH_SCALE = 0.3
+const MAX_DEPTH_SCALE = 1.25
+
+const stackOffset = (depth: number) => SPACING_VH * (1 - Math.pow(0.5, depth))
+const stackScale = (depth: number) => Math.min(Math.max(1 - depth * DEPTH_STEP, MIN_DEPTH_SCALE), MAX_DEPTH_SCALE)
 
 /**
  * What this crocodile wants, said in sizes rather than in a direction: three bars, and the one it eats
@@ -103,73 +114,87 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
               <span className="opacity-30">{"❤️".repeat(Math.max(trap.maxHealth - trap.currentHealth, 0))}</span>
             </p>
 
-            <div className="flex w-full flex-col items-center overflow-hidden rounded-lg bg-gradient-to-b from-blue-950 to-blue-800 py-2">
+            {/* A STAGE of its own height: every row is positioned against its bottom edge rather than
+                stacked in flow, which is what lets the whole pit slide forward a row at a time. */}
+            <div className="relative h-[48vh] min-h-80 w-full overflow-hidden rounded-lg bg-gradient-to-b from-blue-950 to-blue-800">
               {/* The far bank, at the top of the screen: the crossing runs away from the camera. */}
-              <div className="mb-1 h-3 w-2/3 rounded-full bg-amber-700/80" />
+              <div className="absolute top-2 left-1/6 h-3 w-2/3 rounded-full bg-amber-700/80" />
 
               {puzzle.columns
                 .map((stones, column) => ({ stones, column }))
                 .reverse()
-                .map(({ stones, column }) => (
-                  <div key={column} className="flex flex-col items-center">
+                .map(({ stones, column }) => {
+                  // Depth is measured from the row being answered, not from the bank: the pit slides so
+                  // that whichever row is next stands at the front, full size and readable, with the rest
+                  // of the crossing receding behind it.
+                  const depth = column - facing
+                  return (
                     <div
-                      // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
-                      // and if a locale or a font ever makes one wider anyway, it folds instead of
-                      // running off the screen — no horizontal scroll, ever (puzzle-screens.md §1).
-                      className="flex w-full flex-wrap items-center justify-center gap-1.5 transition-transform duration-300"
-                      style={{ transform: `scale(${depthScale(column)})` }}
-                    >
-                      {stones.map((stone, index) => {
-                        const crossed = column < path.length && path[column] === index
-                        const standing = crossed && column === path.length - 1
-                        const offered = column === facing
-                        const bittenHere = bittenAt?.column === column && bittenAt.stone === index
-                        return (
-                          <button
-                            key={index}
-                            onClick={() => tapStone(column, index)}
-                            disabled={!offered}
-                            className={clsx(
-                              // Sized off the screen rather than off a pixel guess: three stones a row
-                              // have to sit side by side on a 360px phone and still be a 44px tap target.
-                              "relative min-h-11 rounded-full border-2 p-2 font-pyramid text-[clamp(0.8rem,3.4vw,1.125rem)] whitespace-nowrap",
-                              standing && "border-amber-300 bg-amber-700 text-amber-50 ring-2 ring-amber-200",
-                              crossed && !standing && "border-emerald-500 bg-emerald-900 text-emerald-100",
-                              !crossed && offered && "border-amber-500 bg-stone-700 text-amber-100 active:scale-95",
-                              !crossed && !offered && "border-stone-600 bg-stone-800/70 text-amber-200/50"
-                            )}
-                          >
-                            {formulaToString(stone.formula, {}, "no")}
-                            {standing && <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xl">🧍</span>}
-                            {bittenHere && (
-                              <img
-                                src={crocodileClosed}
-                                alt=""
-                                className="absolute -top-6 left-1/2 w-20 -translate-x-1/2 animate-bounce"
-                              />
-                            )}
-                          </button>
-                        )
-                      })}
-                    </div>
-
-                    {/* The crocodile guarding THIS column, drawn on the near side of it — the one the player
-                        is about to feed — with the mark saying which of its stones it wants. */}
-                    <div
+                      key={column}
                       className={clsx(
-                        "flex items-center justify-center gap-2 py-1 transition-transform duration-300",
-                        column !== facing && "opacity-60"
+                        "absolute bottom-4 flex w-full flex-col items-center transition-all duration-400",
+                        depth < 0 && "opacity-50 blur-[2px]"
                       )}
-                      style={{ transform: `scale(${depthScale(column)})` }}
+                      style={{
+                        transform: `translateY(${-stackOffset(depth)}vh) scale(${stackScale(depth)})`,
+                        transformOrigin: "bottom center",
+                      }}
                     >
-                      <img src={crocodileOpen} alt="" className="w-14 -scale-x-100" />
-                      <WantMark sign={puzzle.signs[column]} dimmed={column !== facing} />
+                      <div
+                        // Wrapping rather than clipping: a row is authored to fit (see crocodileConfig),
+                        // and if a locale or a font ever makes one wider anyway, it folds instead of
+                        // running off the screen — no horizontal scroll, ever (puzzle-screens.md §1).
+                        className="flex w-full flex-wrap items-center justify-center gap-1.5"
+                      >
+                        {stones.map((stone, index) => {
+                          const crossed = column < path.length && path[column] === index
+                          const standing = crossed && column === path.length - 1
+                          const offered = column === facing
+                          const bittenHere = bittenAt?.column === column && bittenAt.stone === index
+                          return (
+                            <button
+                              key={index}
+                              onClick={() => tapStone(column, index)}
+                              disabled={!offered}
+                              className={clsx(
+                                // Sized off the screen rather than off a pixel guess: three stones a row
+                                // have to sit side by side on a 360px phone and still be a 44px tap target.
+                                // Only the front row is ever at full size, so this is what a sum is read at.
+                                "relative min-h-11 rounded-full border-2 px-2.5 py-2 font-pyramid text-[clamp(0.95rem,4.2vw,1.25rem)] whitespace-nowrap",
+                                standing && "border-amber-300 bg-amber-700 text-amber-50 ring-2 ring-amber-200",
+                                crossed && !standing && "border-emerald-500 bg-emerald-900 text-emerald-100",
+                                !crossed && offered && "border-amber-500 bg-stone-700 text-amber-100 active:scale-95",
+                                !crossed && !offered && "border-stone-600 bg-stone-800/70 text-amber-200/50"
+                              )}
+                            >
+                              {formulaToString(stone.formula, {}, "no")}
+                              {standing && (
+                                <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xl">🧍</span>
+                              )}
+                              {bittenHere && (
+                                <img
+                                  src={crocodileClosed}
+                                  alt=""
+                                  className="absolute -top-6 left-1/2 w-20 -translate-x-1/2 animate-bounce"
+                                />
+                              )}
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {/* The crocodile guarding THIS row, drawn on the near side of it — the one the player
+                        is about to feed — with the mark saying which of its stones it wants. */}
+                      <div className={clsx("flex items-center justify-center gap-2 pt-1", depth !== 0 && "opacity-60")}>
+                        <img src={crocodileOpen} alt="" className="w-14 -scale-x-100" />
+                        <WantMark sign={puzzle.signs[column]} dimmed={depth !== 0} />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
 
               {/* The near bank the player starts on, and returns to after a bite. */}
-              <div className="mt-1 h-3 w-2/3 rounded-full bg-amber-700/80" />
+              <div className="absolute bottom-0 left-1/6 h-3 w-2/3 rounded-full bg-amber-700/80" />
             </div>
           </div>
         )
