@@ -70,6 +70,14 @@ describe("which place a sudoku room is", () => {
     expect(register.ink).not.toContain("red")
   })
 
+  it("gives the register a scroll to roll up and the carved wall none, because stone does not roll", () => {
+    // What a FINISHED board does is the face's too (design doc §9.1): a sheet is rolled up and put away,
+    // a wall catches the light. Carrying the scroll here is what picks the run, so this is the switch —
+    // a face with one counts its chambers, a face without counts its values.
+    expect(skinFor("scribe", undefined).scroll).toBeDefined()
+    expect(skinFor(undefined, undefined).scroll).toBeUndefined()
+  })
+
   it("draws each face's marks for its own ground, or an affordance survives on one skin only", () => {
     // The register is the light board, so its rings are ink; the carved chamber is dark, so its are
     // light. A ring picked for one of them disappears on the other.

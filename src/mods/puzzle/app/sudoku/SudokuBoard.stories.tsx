@@ -141,6 +141,31 @@ export const WithTwins: Story = { args: twinned(starter, carved) }
 
 export const PapyrusWithTwins: Story = { args: twinned(starter, register) }
 
+/**
+ * The finished register filing itself: each chamber is taken up as a scroll, one after the next, and laid
+ * back out — the solved board is the reward, so it cannot be left rolled up (`puzzle-screens.md` §3).
+ *
+ * **Frozen partway**, at three different heights, because a 420ms run is not something a screenshot can
+ * hold: the story pauses each roll at a different point of its own animation rather than playing the wave
+ * once on mount and leaving a board with nothing on it to look at.
+ */
+export const PapyrusRolling: Story = {
+  args: { ...untouched(starter, register), rolled: 3 },
+  decorators: [
+    Story => (
+      <>
+        <style>{`
+          .animate-furl { animation-play-state: paused }
+          div:nth-child(1) > .animate-furl { animation-delay: -230ms }
+          div:nth-child(2) > .animate-furl { animation-delay: -150ms }
+          div:nth-child(3) > .animate-furl { animation-delay: -70ms }
+        `}</style>
+        <Story />
+      </>
+    ),
+  ],
+}
+
 /** One value standing twice in a row, which the board says without any words. */
 const clashing = (puzzle: typeof starter, skin: typeof carved) => {
   const open = puzzle.givens.flatMap((row, rowIndex) =>

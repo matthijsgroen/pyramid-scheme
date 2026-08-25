@@ -86,6 +86,21 @@ export type SudokuSkin = {
   }
   /** What a value wears for its turn in the completion run (`puzzle-screens.md` §3). */
   celebrate: string
+  /**
+   * How a chamber of this board is TAKEN UP when the run reaches it, or nothing for a face whose
+   * chambers do not roll.
+   *
+   * Carrying it here is what makes the completion run the skin's and not the family's: a sheet finishes
+   * by being rolled and put away, a wall cut with figures finishes by catching the light. So the two
+   * faces count different things — a face with a scroll counts CHAMBERS, one without counts VALUES
+   * (design doc §9.1) — and both are the same rule said back, each in the half its own ground can say.
+   */
+  scroll?: {
+    /** The roll seen edge-on, as a CSS `background`: a sheet wound on itself has a thickness to draw. */
+    roll: string
+    /** What that roll casts — up onto the sheet it has not reached, and down into the space it left. */
+    shade: string
+  }
 }
 
 /**
@@ -200,6 +215,13 @@ const register: SudokuSkin = {
   // Ink does not swell as it dries; a sign that grew would read as the sheet moving under it. So the
   // register only brightens, where the carved board blooms.
   celebrate: "animate-flare",
+  // Sheet wound on sheet: pale where the light catches the top of the roll, dark underneath, so the band
+  // reads as something with a thickness rather than a line ruled across the chamber. The shade is the
+  // reed-pen brown the walls are drawn in, at the weight a shadow on a pale sheet can carry.
+  scroll: {
+    roll: "linear-gradient(180deg, #cbab72 0 12%, #f2e3bb 38%, #d9bf8c 62%, #8a6a3f)",
+    shade: "rgb(87 47 20 / 0.35)",
+  },
 }
 
 const SKINS: Record<string, SudokuSkin> = { default: carved, papyrus: register }

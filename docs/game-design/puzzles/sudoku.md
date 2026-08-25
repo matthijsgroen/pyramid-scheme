@@ -320,22 +320,48 @@ hive. Until a third and fourth carry the tag, the register is reached in the puz
 lab, by a site naming the theme outright, and by any room allocated for `scribe`
 the day that pool fills.
 
-### 9.1 The completion run — the board reads itself back
+### 9.1 The completion run — each face finishes its own way
 
-Every square holding the 1 settles at once, then every square holding the 2, to the
-width of the grid. **A tick is a VALUE, not a square**, and that is this family's
-own claim rather than a house style: what the board asserts is that each of the six
-stands exactly once in every row, every column and every chamber, so lighting all
-six homes of a value together is the rule showing itself.
+**A tick is never a SQUARE**, and that is this family's own claim rather than a house
+style: what the board asserts is that each of the six stands exactly once in every
+row, every column and every chamber. Both faces say that back, and each says the half
+its own ground can say.
+
+- **Six Chambers reads its values back.** Every square holding the 1 settles at once,
+  then every square holding the 2, to the width of the grid — all six homes of a value
+  lighting together is the rule seen from the value's side. The mark is the skin's:
+  the carved board blooms, where a register would only flare, since ink does not swell
+  as it dries and a sign that grew would read as the sheet moving under it.
+- **The Scribe's Register files itself.** Each chamber is taken up as its own scroll,
+  one after the next in reading order — a chamber holding all six is the same rule seen
+  from the chamber's side, and a finished sheet is not lit, it is rolled up and put
+  away.
+
+Which run plays is decided by the skin carrying a `scroll` or not, so a face that
+gains a ground of its own gains a way of finishing with it rather than inheriting the
+other face's.
+
+**Each scroll is laid back out**, and that is the constraint rather than the flourish:
+the solved board is the reward and the banner sits over it readable
+(`puzzle-screens.md` §3), so six chambers left rolled up would file the answer away
+before the player had looked at it. What the run is, then, is a wave crossing the
+register and leaving it as the player filled it in.
+
+**One board finishes one way.** The value run rewrites what every unfilled square
+shows while it counts, so playing it under a rolling sheet would be a board changing
+where nobody can see it — a register rolls, and does not read back as well.
+
+The sheets are drawn as a layer OVER the grid rather than by moving the squares. A
+chamber is six separate grid squares, and six squares each scaling about their own
+middle is six squares shrinking, not one sheet rolling; so what rolls is a
+sheet-sized thing laid over them, and the squares beneath are left to be the writing
+that goes up with the roll. What a taken-up chamber uncovers is the board's own
+ground — the table the sheet was lying on.
 
 The shared rules apply (`puzzle-screens.md` §3): the run happens before the shell
 hears "solved", input is refused while it plays, the whole thing is under a second,
 and `prefers-reduced-motion` skips it entirely — the board then is simply the answer
-the player filled in.
-
-The mark is the skin's: the carved board blooms, and the register only flares. Ink
-does not swell as it dries, and a sign that grew would read as the sheet moving
-under it.
+the player filled in, unrolled and unlit.
 
 ## 10. Generation cost
 

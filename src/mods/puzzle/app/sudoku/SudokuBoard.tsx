@@ -8,6 +8,7 @@ import {
   type SudokuCellRef,
   type SudokuPuzzleData,
 } from "@/mods/puzzle/game/sudoku/techniques"
+import { SudokuScrolls } from "./SudokuScrolls"
 import type { SudokuSkin } from "./skins"
 
 type Props = {
@@ -42,6 +43,14 @@ type Props = {
    * square still to come shows the value the roll is on, so the whole board turns over together.
    */
   counted?: number
+  /**
+   * How many chambers the run has taken up, in reading order, or unset for no run.
+   *
+   * The register's own way of finishing, and it counts CHAMBERS where the value run counts values: a
+   * sheet is not lit when it is done with, it is rolled and put away. A face whose chambers are cut in
+   * stone carries no scroll and is handed none of this — see `counted` for what it gets instead.
+   */
+  rolled?: number
   onSelect: (row: number, col: number) => void
 }
 
@@ -122,13 +131,16 @@ export const SudokuBoard: FC<Props> = ({
   marked,
   twinned,
   counted,
+  rolled,
   onSelect,
 }) => {
   const { size } = puzzle
   const hatch = hatchOf(skin)
   const twin = twinOf(skin)
   return (
-    <div className={clsx("aspect-square w-full max-w-[min(56vh,26rem)] select-none", skin.board)}>
+    // `relative`, because the completion run lays whole sheets over the grid rather than moving squares
+    // about inside it — see `SudokuScrolls`.
+    <div className={clsx("relative aspect-square w-full max-w-[min(56vh,26rem)] select-none", skin.board)}>
       <div
         className="grid size-full"
         style={{
@@ -205,6 +217,9 @@ export const SudokuBoard: FC<Props> = ({
           })
         )}
       </div>
+      {skin.scroll && rolled !== undefined && (
+        <SudokuScrolls puzzle={puzzle} scroll={skin.scroll} board={skin.board} rolled={rolled} />
+      )}
     </div>
   )
 }

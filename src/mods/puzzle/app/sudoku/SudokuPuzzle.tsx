@@ -18,6 +18,7 @@ import {
   undoSudokuMove,
 } from "@/mods/puzzle/game/sudoku/sudokuState"
 import { isSudokuSolved, strandedNotes, sudokuConflicts } from "@/mods/puzzle/game/sudoku/sudokuStatus"
+import { boxCount } from "@/mods/puzzle/game/sudoku/techniques"
 import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
@@ -67,12 +68,15 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
   )
 
   /**
-   * The board reads itself back before the shell is told: every square holding the 1 settles at once,
-   * then every square holding the 2, to the width of the grid.
+   * The board finishes itself before the shell is told, in whichever way its face finishes: a chamber
+   * wall reads its values back, every square holding the 1 settling at once and then every square
+   * holding the 2; a register takes its chambers up as scrolls, one after the next.
    *
-   * **A tick is a VALUE, not a square**, and that is this family's own claim rather than a house style:
-   * what the board asserts is that each of the six stands exactly once in every row, every column and
-   * every chamber, so lighting all six homes of a value together is the rule showing itself.
+   * **A tick is never a SQUARE**, and that is this family's own claim rather than a house style: what
+   * the board asserts is that each of the six stands exactly once in every row, every column and every
+   * chamber. Lighting all six homes of a value together says that from the value's side, and rolling up
+   * a chamber that holds all six says it from the chamber's — one rule, and each face says the half its
+   * own ground can say (design doc §9.1).
    *
    * The shell freezes the board and starts its banner the moment it hears "solved"
    * (`puzzle-screens.md` §3), so the run has to happen BEFORE that word is said — the family reports the
@@ -80,12 +84,19 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
    * solve on a board that is no longer solved.
    *
    * **Read off `progress` rather than off `done`**, which is what keeps the reduced-motion case honest:
-   * a skipped run reports done with progress still at 0, so the roll is simply never on and the board is
+   * a skipped run reports done with progress still at 0, so neither run is ever on and the board is
    * never anything but the answer the player filled in.
    */
   const finished = isSudokuSolved(puzzle, values)
-  const celebration = useCelebration(finished, size)
-  const counted = celebration.progress > 0 ? Math.round(celebration.progress * size) : undefined
+  // What the run COUNTS is the face's, not the family's: a register is finished by being rolled up and
+  // put away, a chamber wall by catching the light. Both counts land on the same number here — a 6x6 has
+  // six values and six chambers — but they are asked for separately, because they are different claims
+  // and a grid cut another way would separate them.
+  const ticks = skin.scroll ? boxCount(puzzle) : size
+  const celebration = useCelebration(finished, ticks)
+  const reached = celebration.progress > 0 ? Math.round(celebration.progress * ticks) : undefined
+  const counted = skin.scroll ? undefined : reached
+  const rolled = skin.scroll ? reached : undefined
 
   const enterValue = (value: number) => {
     if (!selected) return
@@ -140,6 +151,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
             marked={hintVisible ? hint?.evidence : undefined}
             twinned={twinned}
             counted={counted}
+            rolled={rolled}
             onSelect={(row, col) => {
               if (finished) return // the board is reading itself back; nothing may change under it
               reportInput()
