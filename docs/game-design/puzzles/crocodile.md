@@ -106,11 +106,13 @@ come converge toward a vanishing point behind it (each step back covering half t
 and the row the player is standing on sits below it at the bottom edge, blurred — a foothold, not
 something to read. One step further back is off the frame entirely.
 
-**The near bank is a stage element like any row** — the one before the first. So a crossing opens with
-the character on the bank and the first row of stones standing ahead of it, and the first step slides the
-bank out of view, brings the row just landed on down to the foothold, and pulls the next row to the
-front. Every later step is the same move, which is why there is no opening animation to write: the bank
-is just where the camera starts.
+**Both banks are stage elements like any row** — the near one is the row before the first, the far one
+the row after the last, and they take their places from the same depth maths. So a crossing opens with
+the character on the near bank, only its near edge showing, the first row of stones standing ahead of it
+and the far bank a line up in the distance. The first step slides the near bank out of view, brings the
+row just landed on down to the foothold, and pulls the next row to the front — and every later step is
+the same move, which is why there is no opening animation to write. The far bank comes closer with each
+of them and arrives at the front as the last row is answered, with the character standing on it.
 
 That is what makes the sums readable. A board that had to show five rows at once could only do it by
 drawing all five small; a board that moves shows one row at the size a child can read, and spends the

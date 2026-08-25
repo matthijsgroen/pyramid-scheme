@@ -34,27 +34,38 @@ const BITE_MS = 900
  * back covers half the remaining distance) and shrink as they go.
  *
  * **Depth -1 is where the player is standing**, drawn nearer than the camera's focus and mostly below
- * the frame — a foothold at the bottom of the screen with the character on it, not something to read.
+ * the frame — a foothold peeking in at the bottom edge with the character on it, not something to read.
  * At the start of a crossing that foothold is the near bank itself, with the character on it and the
  * first row of stones standing ahead. One more step back (-2 and beyond) is off the bottom of the frame,
  * so the first step slides the bank out of view, brings the row just landed on down to the foothold, and
  * pulls the next row up to the front — and every step after it does the same thing.
  */
 const SPACING_VH = 30
-const BEHIND_STEP_VH = 5
 const DEPTH_STEP = 0.22
 const BEHIND_STEP_SCALE = 0.12
 const MIN_DEPTH_SCALE = 0.3
 const MAX_DEPTH_SCALE = 1.25
 
-const stackOffset = (depth: number) => (depth >= 0 ? SPACING_VH * (1 - Math.pow(0.5, depth)) : depth * BEHIND_STEP_VH)
+/**
+ * How far below the front row each step already taken sits, in px rather than vh.
+ *
+ * The foothold is measured against the bottom EDGE of the stage, not against its height: rows are
+ * anchored `bottom-10` (40px), so 52px leaves the top dozen pixels of it showing — the near bank
+ * peeking in under the first row of stones, with the character standing on it, rather than the whole
+ * strip drawn like a row that matters. A screen twice as tall should show the same sliver, which a vh
+ * would not do.
+ */
+const FOOTHOLD_DROP_PX = 52
 
 const stackScale = (depth: number) =>
   Math.min(Math.max(1 - depth * (depth >= 0 ? DEPTH_STEP : BEHIND_STEP_SCALE), MIN_DEPTH_SCALE), MAX_DEPTH_SCALE)
 
+const stackTranslate = (depth: number) =>
+  depth >= 0 ? `${-SPACING_VH * (1 - Math.pow(0.5, depth))}vh` : `${-depth * FOOTHOLD_DROP_PX}px`
+
 /** The stage place of a row that many steps from the one being answered. */
 const rowPlacement = (depth: number) => ({
-  transform: `translateY(${-stackOffset(depth)}vh) scale(${stackScale(depth)})`,
+  transform: `translateY(${stackTranslate(depth)}) scale(${stackScale(depth)})`,
   transformOrigin: "bottom center" as const,
 })
 
@@ -88,6 +99,7 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
   const { path, bittenAt } = state
 
   const facing = path.length // the column the player stands in front of, one past the last one crossed
+  const finished = isSolved(puzzle, path)
   const wanted = wantedStep(puzzle, path)
 
   const hint = () =>
@@ -99,7 +111,7 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
     <PuzzleFamilyShell
       onSolved={onSolved}
       onCancel={onCancel}
-      solved={isSolved(puzzle, path)}
+      solved={finished}
       onReset={() => setState(resetCrossing)}
       hint={hint}
       idleMs={hintIdleDelay(difficulty)}
@@ -133,8 +145,19 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
             {/* A STAGE of its own height: every row is positioned against its bottom edge rather than
                 stacked in flow, which is what lets the whole pit slide forward a row at a time. */}
             <div className="relative h-[48vh] min-h-80 w-full overflow-hidden rounded-lg bg-gradient-to-b from-blue-950 to-blue-800">
-              {/* The far bank, at the top of the screen: the crossing runs away from the camera. */}
-              <div className="absolute top-2 left-1/6 h-3 w-2/3 rounded-full bg-amber-700/80" />
+              {/* The far bank — the row AFTER the last one, so it takes its place from the same depth
+                  maths as everything else. It starts as a line near the top of the pit and comes closer
+                  with every step, arriving at the front when the crossing is done. */}
+              <div
+                className="absolute bottom-10 flex w-full flex-col items-center transition-all duration-400"
+                style={rowPlacement(puzzle.columns.length - facing)}
+              >
+                <div className="relative h-4 w-3/4 rounded-full bg-amber-700">
+                  {/* The crossing is over the moment the far bank is reached, so that is where the
+                      character is standing when the shell says so. */}
+                  {finished && <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xl">🧍</span>}
+                </div>
+              </div>
 
               {puzzle.columns
                 .map((stones, column) => ({ stones, column }))
@@ -181,7 +204,7 @@ export const CrocodilePit: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel
                               )}
                             >
                               {formulaToString(stone.formula, {}, "no")}
-                              {standing && (
+                              {standing && !finished && (
                                 <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-xl">🧍</span>
                               )}
                               {bittenHere && (
