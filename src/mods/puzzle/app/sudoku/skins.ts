@@ -180,11 +180,12 @@ const carved: SudokuSkin = {
 const register: SudokuSkin = {
   name: "papyrus",
   Glyph: Sign,
-  // Larger than the carved board's figures in all three places: a sign is drawn to fill its box, so
-  // matched size for size against a digit the register read as a whisper. The note is the one with a
-  // ceiling — six of them share a square three across, so a sign much wider than a third of it climbs
-  // over its neighbours.
-  size: { value: "76cqw", note: "28cqw", key: "1.75rem" },
+  // A little larger than the carved board's figures, and no more than that: a sign carries more ink
+  // across its box than a digit does, but the square has to stay a square the sign STANDS IN — set to
+  // fill it, the ripple and the house run up against the chamber rules and the board reads as crowded.
+  // The note is the one with a ceiling rather than a preference: six of them share a square three
+  // across, so one much wider than a third of it climbs over its neighbours.
+  size: { value: "60cqw", note: "28cqw", key: "1.75rem" },
   token: value => SIGN_CHARACTERS[value - 1],
   board: "bg-[#b99a63]",
   // Pressed reed: strips laid across strips, so the fibre runs both ways and neither reads as a rule
