@@ -93,7 +93,9 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSol
   // six values and six chambers — but they are asked for separately, because they are different claims
   // and a grid cut another way would separate them.
   const ticks = skin.scroll ? boxCount(puzzle) : size
-  const celebration = useCelebration(finished, ticks)
+  // A roll asks for the whole second `useCelebration` allows, where a value only needs its flare: an
+  // edge has to be slow enough to be read as one crossing (design doc §9.1).
+  const celebration = useCelebration(finished, ticks, skin.scroll ? 1000 : undefined)
   const reached = celebration.progress > 0 ? Math.round(celebration.progress * ticks) : undefined
   const counted = skin.scroll ? undefined : reached
   const rolled = skin.scroll ? reached : undefined

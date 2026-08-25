@@ -297,6 +297,12 @@ the solved board is the reward and the banner sits over it readable
 before the player had looked at it. The run is a wave crossing the register and leaving
 it as the player filled it in.
 
+**A roll goes two thirds up its chamber, and the run takes the full second the shell
+allows.** What a roll shows is an edge travelling, and it shows nothing where it has
+arrived: taken to the head of its chamber the sheet covers every square in it, and six
+flat rectangles blinking in and out is a board coming apart rather than a register being
+filed.
+
 The sheets are a layer laid OVER the grid rather than the squares moving: six squares
 each scaling about their own middle is six squares shrinking, not one sheet rolling.
 What a taken-up chamber uncovers is the board's own ground, the table the sheet lay on.
