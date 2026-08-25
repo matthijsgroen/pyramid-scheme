@@ -49,6 +49,9 @@ const pencilled = (cell: HTMLElement) =>
 
 const reveal = (root: HTMLElement) => act(() => within(root).getByRole("button", { name: /hint/i }).click())
 
+/** The values a hint sentence names, each drawn into the words the way the board draws it. */
+const namedIn = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>("p [role='img']")]
+
 const firstEmpty = (puzzle: ReturnType<typeof generateSudoku>) => {
   for (let row = 0; row < 6; row++)
     for (let col = 0; col < 6; col++) if (puzzle.givens[row][col] === undefined) return { row, col }
@@ -88,23 +91,35 @@ describe("SudokuPuzzle", () => {
 
   /**
    * The token, end to end. A value is a position in the rules; what a SENTENCE says it is belongs to the
-   * skin, so the carved board's hint says "4" where the register's says the sign 𓈖 — and a digit
-   * appearing over a register would be the one thing on that screen which is not a sign.
+   * skin, so the carved board's hint says "4" where the register's DRAWS its sign — and a digit appearing
+   * over a register would be the one thing on that screen which is not a sign.
    */
   it("fills its sentences with the face's own token", () => {
     const puzzle = board()
     const carved = render(<SudokuPuzzle puzzle={puzzle} difficulty="expert" onSolved={() => {}} onCancel={() => {}} />)
     reveal(carved.container)
-    const digits = (carved.container.textContent ?? "").match(/"token":"(\d)"/)
-    expect(digits, "the carved board should name a value as a figure").not.toBeNull()
+    const figures = namedIn(carved.container)
+    expect(figures.length, "the carved board should name a value in its sentences").toBeGreaterThan(0)
+    // A figure is written as itself, so the words carry it as text and a reader hears the same thing.
+    for (const figure of figures) {
+      expect(figure.textContent).toMatch(/^[1-6]$/)
+      expect(figure.getAttribute("aria-label")).toBe(figure.textContent)
+    }
 
     const register = render(
       <SudokuPuzzle puzzle={puzzle} difficulty="expert" role="scribe" onSolved={() => {}} onCancel={() => {}} />
     )
     reveal(register.container)
-    const said = (register.container.textContent ?? "").match(/"token":"(.+?)"/)
-    expect(said).not.toBeNull()
-    expect(said![1].codePointAt(0)).toBeGreaterThanOrEqual(0x13000)
+    const signs = namedIn(register.container)
+    expect(signs.length).toBeGreaterThan(0)
+    for (const sign of signs) {
+      // DRAWN into the sentence, in the same strokes the squares use. A hint that names a value is
+      // asking the player to go and find it, and a sign in the words that is not the sign on the board
+      // is a hint pointing at something that is not there.
+      expect(sign.querySelector("svg")).not.toBeNull()
+      // And named by the character, which is what a reader hears and what the pad's keys are called.
+      expect(sign.getAttribute("aria-label")?.codePointAt(0)).toBeGreaterThanOrEqual(0x13000)
+    }
     expect(register.container.textContent).toContain("sudoku.hint.papyrus.")
   })
 

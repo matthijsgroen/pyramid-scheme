@@ -300,18 +300,27 @@ sixth of a phone screen, which a text glyph sized to sit in a line of prose does
 settles the tiles, the tableau and the collection — everything that used to gamble
 on the device. It does not retire these six: a drawn sign is the one whose stroke
 weight is ours to set, and this board wants an even reed-pen line rather than
-whatever weight a text face was designed for. What the font does for this family is
-make the hint sentences safe, since those name a sign as a character.
+whatever weight a text face was designed for. Nor does it settle anything here — this
+family draws every sign it shows, sentences included, and so depends on no font at
+all.
 
 They are picked for **silhouette** rather than for meaning — water, the sun, an
 ankh, a house, a mouth, the feather of truth: a flat zigzag, a disc, an upright
 cross, a squat box, a flat lens, a tall plume. Six seated figures would be
 authentic and unplayable.
 
-The hieroglyph **characters** for those same six are kept for one job: a hint is a
-string, and a drawn sign cannot go in one. So a sentence says 𓈖 where the board
-draws it — and a device with no hieroglyph font loses a character out of an optional
-sentence rather than the board it is about.
+The hieroglyph **characters** for those same six are kept as the signs' NAMES rather
+than as their picture: the accessible label on a pad key, and on a sign drawn into a
+hint sentence. What a reader hears is 𓈖; what everyone else sees is the drawing.
+
+**A hint draws the sign, it does not type it**, and that is not a nicety. A hint that
+names a value is asking the player to go and find it, so the words and the squares
+have to show one shape — and they do not otherwise: the same six characters in a font
+come out as another hand entirely (a many-toothed ripple against a flat one, a plume
+against a leaf, hairline outlines against reed-pen strokes). A sentence saying one and
+a board showing the other is a hint pointing at something that is not there. So the
+shell takes a hint as a NODE, the wording is interpolated with a mark no sentence
+contains, and the face's own sign is put in the gap (`SudokuPuzzle.tsx`).
 
 The register is reached by the `scribe` role, which no site authors yet: a themed
 role needs four families in its pool before it is worth authoring

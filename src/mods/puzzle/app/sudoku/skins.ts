@@ -24,10 +24,13 @@ export type SudokuSkin = {
   /** What a value looks like standing in a square — a figure cut in, or the sign that means it. */
   Glyph: FC<{ value: number }>
   /**
-   * What a SENTENCE puts in its slot when it has to say a value, since a hint is a string and a drawn
-   * sign is not. The carved board says "4"; the register says 𓈖, the character the sign next door is
-   * drawn from — so a device with no hieroglyph font loses a character out of an optional sentence
-   * rather than the board it is about.
+   * What a value is CALLED, for the places that need a name rather than a shape: the accessible label on
+   * a pad key, and on a sign drawn into a hint sentence. The carved board says "4"; the register says
+   * 𓈖, the character the sign next door is drawn from.
+   *
+   * Nothing on screen is left to this. A sentence that named a value with the character would name it in
+   * a shape the board does not use — the same six in a font come out as another hand entirely — so the
+   * sentence draws the sign too (`SudokuPuzzle.tsx`) and this is what a reader hears it called.
    */
   token: (value: number) => string
   /** The ground the grid is ruled on. */
