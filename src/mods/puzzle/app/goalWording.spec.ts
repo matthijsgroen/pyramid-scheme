@@ -4,6 +4,7 @@ import nl from "../../../../public/locales/nl/common.json"
 import { skinFor } from "./constellation/skins"
 import { skinFor as starBattleSkinFor } from "./starBattle/skins"
 import { skinFor as hidatoSkinFor } from "./hidato/skins"
+import { skinFor as sudokuSkinFor } from "./sudoku/skins"
 
 /**
  * Every family says what a finished board looks like, in both languages.
@@ -13,7 +14,17 @@ import { skinFor as hidatoSkinFor } from "./hidato/skins"
  * Listing the families here rather than testing them one by one is deliberate: a per-family spec cannot
  * notice the family somebody adds next.
  */
-const FAMILIES = ["balance", "constellation", "eclipse", "futoshiki", "hidato", "lightbeam", "starBattle", "sumplete"]
+const FAMILIES = [
+  "balance",
+  "constellation",
+  "eclipse",
+  "futoshiki",
+  "hidato",
+  "lightbeam",
+  "starBattle",
+  "sudoku",
+  "sumplete",
+]
 
 /** The places constellation's mechanic wears, and the role a room is allocated for to reach each of them. */
 const PLACES = [
@@ -57,6 +68,7 @@ describe("the goal above the rules", () => {
       constellation: ["default", "causeway", "irrigation"],
       hidato: ["default", "channel", "scribe"],
       starBattle: ["default", "fields", "twinDefault", "twinFields"],
+      sudoku: ["default", "papyrus"],
     }
     for (const locale of [en, nl])
       for (const [family, skins] of Object.entries(faces)) {
@@ -242,6 +254,88 @@ describe("the goal above the rules", () => {
           for (const [where, wording] of said(locale, place))
             expect(WORDS[tongue][other].test(wording), `${place}.${where} says ${other}: ${wording}`).toBe(false)
         }
+  })
+
+  /**
+   * **And over sudoku's two faces.** The same grid is a wall of chambers with figures cut into it and a
+   * scribe's register of signs inked across papyrus, and the words are the whole difference: nothing on
+   * the sheet is a number, and nothing carved in stone is a sign. This is the family the guard matters
+   * most for, because what a value LOOKS like is itself skinned here — a sentence that says "number"
+   * over a board showing 𓈖 is describing something that is not on the screen.
+   */
+  const SUDOKU_PLACES = [
+    { role: "puzzle", skin: "default" },
+    { role: "scribe", skin: "papyrus" },
+  ]
+
+  it.each(SUDOKU_PLACES)("sudoku drawn for $role wears its own face", ({ role, skin }) => {
+    expect(sudokuSkinFor(role, undefined).name).toBe(skin)
+    for (const locale of [en, nl]) {
+      expect(typeof (locale.sudoku.goal as Record<string, string>)[skin]).toBe("string")
+      for (const rule of ["chambers", "given", "enter", "notes"])
+        expect(typeof (locale.sudoku.rules as Record<string, Record<string, string>>)[skin][rule]).toBe("string")
+      const hint = (locale.sudoku.hint as unknown as Record<string, Record<string, Record<string, unknown>>>)[skin]
+      for (const rung of ["nakedSingle"]) expect(typeof hint.reason[rung], `${skin}.${rung}`).toBe("string")
+      for (const [rung, variants] of [
+        ["mistake", ["value", "note"]],
+        ["hiddenSingle", ["row", "col", "box"]],
+        ["pointing", ["row", "col"]],
+        ["claiming", ["row", "col"]],
+      ] as const)
+        for (const variant of variants)
+          expect(typeof (hint.reason[rung] as Record<string, string>)[variant], `${skin}.${rung}.${variant}`).toBe(
+            "string"
+          )
+      const moves = hint.action as Record<string, string>
+      for (const move of ["place", "ruleOut_one", "ruleOut_other"])
+        expect(typeof moves[move], `${skin}.action.${move}`).toBe("string")
+    }
+  })
+
+  it("keeps sudoku's two places out of each other's vocabulary", () => {
+    const said = (locale: unknown, skin: string): [string, string][] => {
+      const block = (locale as Record<string, Record<string, Record<string, unknown>>>).sudoku
+      const hint = (block.hint as Record<string, Record<string, Record<string, unknown>>>)[skin]
+      const reasons = Object.entries(hint.reason).flatMap(([key, text]): [string, string][] =>
+        typeof text === "string"
+          ? [[`hint.reason.${key}`, text]]
+          : Object.entries(text as Record<string, string>).map(([inner, deep]): [string, string] => [
+              `hint.reason.${key}.${inner}`,
+              deep,
+            ])
+      )
+      return [
+        ["goal", (block.goal as unknown as Record<string, string>)[skin]],
+        ["name", (block.name as unknown as Record<string, string>)[skin]],
+        ...Object.entries((block.rules as Record<string, Record<string, string>>)[skin]).map(
+          ([key, text]): [string, string] => [`rules.${key}`, text]
+        ),
+        ...reasons,
+        ...Object.entries(hint.action as Record<string, string>).map(([key, text]): [string, string] => [
+          `hint.action.${key}`,
+          text,
+        ]),
+      ]
+    }
+    const WORDS = {
+      en: {
+        default: /\b(numbers?|chambers?|squares?|carved)\b/i,
+        papyrus: /\b(signs?|panels?|sheet|papyrus|inked?|reed|spaces?)\b/i,
+      },
+      nl: {
+        default: /\b(getal|getallen|kamers?|vakjes?|potlood)\b/i,
+        papyrus: /\b(tekens?|paneel|panelen|vel|inkt|rietpen|plek|plekken)\b/i,
+      },
+    }
+    for (const [tongue, locale] of [
+      ["en", en],
+      ["nl", nl],
+    ] as const)
+      for (const place of ["default", "papyrus"] as const) {
+        const other = place === "default" ? "papyrus" : "default"
+        for (const [where, wording] of said(locale, place))
+          expect(WORDS[tongue][other].test(wording), `${place}.${where} says ${other}: ${wording}`).toBe(false)
+      }
   })
 
   it("never says star on a farm", () => {

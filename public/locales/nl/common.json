@@ -712,5 +712,88 @@
       "channel": "Het Kanaal",
       "scribe": "Schrijversvel"
     }
+  },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "De dikke lijnen verdelen het raster in zes kamers, twee vakjes breed en drie hoog.",
+        "given": "De getallen die al ingehakt zijn horen bij de puzzel — die blijven staan.",
+        "enter": "Tik op een vakje en tik daarna op een getal. Hetzelfde getal nog een keer haalt het er weer uit.",
+        "notes": "Schakel over op het potlood om de getallen te noteren die een vakje nog kan bevatten. Ongedaan maken neemt je laatste zet terug."
+      },
+      "papyrus": {
+        "chambers": "De dikke pennenstreken verdelen het vel in zes panelen, twee plekken breed en drie hoog.",
+        "given": "De tekens in rode inkt horen bij de puzzel — die blijven staan.",
+        "enter": "Tik op een plek en tik daarna op een teken. Hetzelfde teken nog een keer schraapt het weer weg.",
+        "notes": "Neem de rietpen op om de tekens te noteren die een plek nog kan dragen. Ongedaan maken neemt je laatste zet terug."
+      }
+    },
+    "notes": "Notities",
+    "erase": "Wissen",
+    "undo": "Ongedaan",
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "Een van deze getallen kan niet kloppen. Haal het eruit en kijk opnieuw.",
+            "note": "De notities in dit vakje sluiten het getal uit dat hier hoort. Wis ze en begin opnieuw."
+          },
+          "nakedSingle": "De rij, de kolom en de kamer van dit vakje hebben elk ander getal al opgenomen.",
+          "hiddenSingle": {
+            "row": "{{token}} past in geen enkel ander vakje van deze rij.",
+            "col": "{{token}} past in geen enkel ander vakje van deze kolom.",
+            "box": "{{token}} past in geen enkel ander vakje van deze kamer."
+          },
+          "pointing": {
+            "row": "Binnen de gemarkeerde kamer kan {{token}} alleen op deze rij staan.",
+            "col": "Binnen de gemarkeerde kamer kan {{token}} alleen in deze kolom staan."
+          },
+          "claiming": {
+            "row": "Langs de gemarkeerde rij past {{token}} alleen binnen deze ene kamer.",
+            "col": "In de gemarkeerde kolom past {{token}} alleen binnen deze ene kamer."
+          }
+        },
+        "action": {
+          "place": "Zet {{token}} in het gearceerde vakje.",
+          "ruleOut_one": "Streep {{token}} weg in het gearceerde vakje.",
+          "ruleOut_other": "Streep {{token}} weg in de gearceerde vakjes."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "Een van deze tekens kan niet kloppen. Schraap het weg en kijk opnieuw.",
+            "note": "De notities op deze plek sluiten het teken uit dat hier hoort. Wis ze en begin opnieuw."
+          },
+          "nakedSingle": "De rij, de kolom en het paneel van deze plek hebben elk ander teken al opgenomen.",
+          "hiddenSingle": {
+            "row": "{{token}} past op geen enkele andere plek in deze rij.",
+            "col": "{{token}} past op geen enkele andere plek in deze kolom.",
+            "box": "{{token}} past op geen enkele andere plek in dit paneel."
+          },
+          "pointing": {
+            "row": "Binnen het gemarkeerde paneel kan {{token}} alleen op deze rij staan.",
+            "col": "Binnen het gemarkeerde paneel kan {{token}} alleen in deze kolom staan."
+          },
+          "claiming": {
+            "row": "Langs de gemarkeerde rij past {{token}} alleen binnen dit ene paneel.",
+            "col": "In de gemarkeerde kolom past {{token}} alleen binnen dit ene paneel."
+          }
+        },
+        "action": {
+          "place": "Schrijf {{token}} op de gearceerde plek.",
+          "ruleOut_one": "Streep {{token}} weg op de gearceerde plek.",
+          "ruleOut_other": "Streep {{token}} weg op de gearceerde plekken."
+        }
+      }
+    },
+    "goal": {
+      "default": "Elke rij, elke kolom en elke kamer toont elk van de zes getallen precies één keer.",
+      "papyrus": "Elke rij, elke kolom en elk paneel draagt elk van de zes tekens precies één keer."
+    },
+    "name": {
+      "default": "Zes Kamers",
+      "papyrus": "Het Register van de Schrijver"
+    }
   }
 }
