@@ -124,15 +124,17 @@ body {
 
      `translate` rather than `transform`, so an element's resting offset is what it returns to when the
      animation is over — here that is "rolled clear of the chamber", i.e. covering nothing at all. */
-  --animate-furl: furl 420ms ease-in-out;
+  --animate-furl: furl 520ms ease-in-out;
   @keyframes furl {
     0% {
       translate: 0 106%;
     }
-    /* Stopping a hair short of the head of the chamber, so the roll itself is still whole at the top of
-       its travel: a roll drawn ON the edge is a roll with half of it cut off by the chamber above. */
+    /* **Two thirds up, and no further.** Taken to the head of the chamber the sheet covers every square
+       in it, and a covered chamber is a flat rectangle — six of those blinking in and out is a board
+       coming apart rather than a register being rolled. Stopping short keeps a strip of writing under
+       the roll the whole way, which is the thing that says a sheet is being taken up. */
     55% {
-      translate: 0 4%;
+      translate: 0 34%;
     }
     100% {
       translate: 0 106%;

@@ -60,13 +60,18 @@ export const SudokuScrolls: FC<Props> = ({ puzzle, scroll, board, rolled }) => (
             // the roll would sit inside the foot of the chamber, a pale band across a board that is
             // supposed to be finished and whole.
             className={clsx("absolute inset-0 animate-furl", board)}
-            style={{ translate: "0 106%", boxShadow: `inset 0 6px 10px -2px ${scroll.shade}` }}
+            style={{ translate: "0 106%", boxShadow: `inset 0 10px 14px -4px ${scroll.shade}` }}
           >
             <div
               // The roll itself, straddling the edge it has reached: half over the bare table it has
               // uncovered, half over the sheet it is about to take up.
-              className="absolute inset-x-0 top-0 h-[7%] min-h-1.5 -translate-y-1/2 rounded-full"
-              style={{ background: scroll.roll, boxShadow: `0 -2px 6px ${scroll.shade}` }}
+              className="absolute inset-x-0 top-0 h-[11%] min-h-2 -translate-y-1/2 rounded-full"
+              style={{
+                background: scroll.roll,
+                // Cast both ways: onto the sheet it has not reached, and onto the bare table behind it.
+                // A roll with a shadow on one side only is a shape lying flat on the board.
+                boxShadow: `0 -3px 7px ${scroll.shade}, 0 4px 6px -2px ${scroll.shade}`,
+              }}
             />
           </div>
         </div>
