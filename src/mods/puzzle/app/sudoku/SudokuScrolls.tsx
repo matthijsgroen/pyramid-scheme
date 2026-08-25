@@ -68,8 +68,7 @@ export const SudokuScrolls: FC<Props> = ({ puzzle, scroll, board, rolled }) => (
               className="absolute inset-x-0 top-0 h-[11%] min-h-2 -translate-y-1/2 rounded-full"
               style={{
                 background: scroll.roll,
-                // Cast both ways: onto the sheet it has not reached, and onto the bare table behind it.
-                // A roll with a shadow on one side only is a shape lying flat on the board.
+                // Cast both ways, or the roll is a shape lying flat on the board.
                 boxShadow: `0 -3px 7px ${scroll.shade}, 0 4px 6px -2px ${scroll.shade}`,
               }}
             />

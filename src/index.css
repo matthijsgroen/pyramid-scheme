@@ -129,10 +129,8 @@ body {
     0% {
       translate: 0 106%;
     }
-    /* **Two thirds up, and no further.** Taken to the head of the chamber the sheet covers every square
-       in it, and a covered chamber is a flat rectangle — six of those blinking in and out is a board
-       coming apart rather than a register being rolled. Stopping short keeps a strip of writing under
-       the roll the whole way, which is the thing that says a sheet is being taken up. */
+    /* Two thirds up, and no further: a chamber taken all the way is a flat rectangle, and the strip of
+       writing left under the roll is what says a sheet is being taken up (design doc §9.1). */
     55% {
       translate: 0 34%;
     }

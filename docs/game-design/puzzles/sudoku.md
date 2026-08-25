@@ -297,15 +297,11 @@ the solved board is the reward and the banner sits over it readable
 before the player had looked at it. The run is a wave crossing the register and leaving
 it as the player filled it in.
 
-**A roll goes two thirds up its chamber and no further**, and it takes the whole second
-the shell allows rather than the eight tenths the value run needs. Both are the same
-lesson, and both are read off a phone rather than off a still: what a roll has to show
-is an EDGE travelling, and it shows nothing where it has arrived. Taken to the head of
-its chamber the sheet covers every square in it, so the chamber becomes a flat
-rectangle — six of those blinking in and out is a board coming apart rather than a
-register being filed. Run at the value run's pace, the edges cross too fast to be read
-as edges at all. Stopping short keeps a strip of writing under every roll for the whole
-of its travel.
+**A roll goes two thirds up its chamber, and the run takes the full second the shell
+allows.** What a roll shows is an edge travelling, and it shows nothing where it has
+arrived: taken to the head of its chamber the sheet covers every square in it, and six
+flat rectangles blinking in and out is a board coming apart rather than a register being
+filed.
 
 The sheets are a layer laid OVER the grid rather than the squares moving: six squares
 each scaling about their own middle is six squares shrinking, not one sheet rolling.
