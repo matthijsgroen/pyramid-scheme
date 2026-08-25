@@ -11,6 +11,7 @@ import "./eclipse/plugin"
 import "./constellation/plugin"
 import "./starBattle/plugin"
 import "./hidato/plugin"
+import "./sudoku/plugin"
 
 // The scribes-eye perk (extra tableau hint slots) is puzzle-owned: described via the seam, its level
 // derived from the treasures held (usePuzzleProgress). Self-gated on the mod (§7.4).

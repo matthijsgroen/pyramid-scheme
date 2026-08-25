@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Rooms across the world now serve sudoku boards: six chambers, in figures or in scribe's signs.
+
+### Changed
+
+- The crocodile guarding a tomb treasure is a pit to cross: every crocodile along the way wants one answer
+  out of the row of stones in front of it — the biggest, or the smallest — and stepping on any other stone
+  costs a heart. The old "which digit did the crocodile eat" chest is gone.
+
+## 0.39.0 - 2026-08-25
+
+### Added
+
 - Every puzzle now shows its name above the board, worded for the room it is in.
 - A new puzzle: thread one unbroken run of numbers from cell to touching cell until the board is filled.
 
@@ -17,9 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A side passage now serves the difficulty it was built for, not the floor's.
 - Meeting the same board twice on a run is far less likely.
 - The Great Pyramid of Giza now draws on every kind of puzzle, not only the two that trade in goods.
-- The crocodile guarding a tomb treasure is a pit to cross: every crocodile along the way wants one answer
-  out of the row of stones in front of it — the biggest, or the smallest — and stepping on any other stone
-  costs a heart. The old "which digit did the crocodile eat" chest is gone.
+
+### Fixed
+
+- Hieroglyphs now draw everywhere, including on devices with no hieroglyph font of their own.
 
 ## 0.38.3 - 2026-08-23
 

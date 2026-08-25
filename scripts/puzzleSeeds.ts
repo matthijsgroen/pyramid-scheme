@@ -50,9 +50,8 @@ const THREADS = Math.max(1, Math.min(number("parallel", cpus().length - 2), cpus
 const CHUNK = 500
 const only = flag("family")?.split(",")
 
-const demands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META).filter(
-  demand => !only || only.includes(demand.familyId)
-)
+const allDemands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META)
+const demands = allDemands.filter(demand => !only || only.includes(demand.familyId))
 const targetFor = (demand: ConfigDemand) => seedTarget(demand, CAP)
 const describe = (demand: ConfigDemand) => `${demand.familyId}/${demand.difficulty} (${demand.rooms} rooms)`
 
@@ -156,7 +155,15 @@ if (command === "generate") {
   const started = performance.now()
   const failures = await runPool(buckets)
 
-  const lists: Record<string, number[]> = { ...puzzleSeeds }
+  // Starts from what shipped, so `--family` leaves every other family's list alone — but drops the
+  // buckets nothing in the baked world asks for any more, which re-authoring a journey produces every
+  // time it moves a room between tiers. The artifact is a function of the world, and
+  // puzzleSeeds.spec.ts holds it to that. Keyed on the FULL demand set rather than the filtered one,
+  // or narrowing to one family would delete every other family's buckets.
+  const wanted = new Set(allDemands.map(demand => demand.hash))
+  const lists: Record<string, number[]> = Object.fromEntries(
+    Object.entries(puzzleSeeds).filter(([hash]) => wanted.has(hash))
+  )
   let short = 0
   for (const bucket of buckets) {
     const found = retired(bucket).slice(0, bucket.target)

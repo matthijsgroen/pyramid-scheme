@@ -712,6 +712,89 @@
       "scribe": "Scribe's Sheet"
     }
   },
+  "sudoku": {
+    "rules": {
+      "default": {
+        "chambers": "The heavy lines cut the grid into six chambers, two squares wide and three tall.",
+        "given": "The numbers already carved in are part of the puzzle — they stay put.",
+        "enter": "Tap a square, then tap a number. The same number again takes it back out.",
+        "notes": "Switch to the pencil to jot down the numbers a square could still hold. Undo takes back your last move."
+      },
+      "papyrus": {
+        "chambers": "The heavy rules divide the sheet into six panels, two spaces wide and three tall.",
+        "given": "The signs inked in red are the puzzle's own — they stay put.",
+        "enter": "Tap a space, then tap a sign. The same sign again scrapes it off.",
+        "notes": "Take up the reed pen to pencil in the signs a space could still carry. Undo takes back your last move."
+      }
+    },
+    "notes": "Notes",
+    "erase": "Erase",
+    "undo": "Undo",
+    "hint": {
+      "default": {
+        "reason": {
+          "mistake": {
+            "value": "One of the numbers here cannot be right. Take it back out and look again.",
+            "note": "This square's notes have ruled out the number that belongs here. Clear them and start it over."
+          },
+          "nakedSingle": "This square's row, column and chamber have taken every other number.",
+          "hiddenSingle": {
+            "row": "{{token}} fits in no other square of this row.",
+            "col": "{{token}} fits in no other square of this column.",
+            "box": "{{token}} fits in no other square of this chamber."
+          },
+          "pointing": {
+            "row": "Inside the marked chamber, {{token}} can only stand on this row.",
+            "col": "Inside the marked chamber, {{token}} can only stand in this column."
+          },
+          "claiming": {
+            "row": "Along the marked row, {{token}} fits only inside this one chamber.",
+            "col": "Down the marked column, {{token}} fits only inside this one chamber."
+          }
+        },
+        "action": {
+          "place": "Put {{token}} in the hatched square.",
+          "ruleOut_one": "Rule {{token}} out of the hatched square.",
+          "ruleOut_other": "Rule {{token}} out of the hatched squares."
+        }
+      },
+      "papyrus": {
+        "reason": {
+          "mistake": {
+            "value": "One of these signs cannot be right. Scrape it off and look again.",
+            "note": "This space's pencil marks have ruled out the sign that belongs here. Rub them out and start it over."
+          },
+          "nakedSingle": "This space's row, column and panel have taken every other sign.",
+          "hiddenSingle": {
+            "row": "{{token}} fits in no other space of this row.",
+            "col": "{{token}} fits in no other space of this column.",
+            "box": "{{token}} fits in no other space of this panel."
+          },
+          "pointing": {
+            "row": "Inside the marked panel, {{token}} can only stand on this row.",
+            "col": "Inside the marked panel, {{token}} can only stand in this column."
+          },
+          "claiming": {
+            "row": "Along the marked row, {{token}} fits only inside this one panel.",
+            "col": "Down the marked column, {{token}} fits only inside this one panel."
+          }
+        },
+        "action": {
+          "place": "Ink {{token}} in the hatched space.",
+          "ruleOut_one": "Rule {{token}} out of the hatched space.",
+          "ruleOut_other": "Rule {{token}} out of the hatched spaces."
+        }
+      }
+    },
+    "goal": {
+      "default": "Every row, every column and every chamber shows each of the six numbers exactly once.",
+      "papyrus": "Every row, every column and every panel carries each of the six signs exactly once."
+    },
+    "name": {
+      "default": "Six Chambers",
+      "papyrus": "The Scribe's Register"
+    }
+  },
   "crocodile": {
     "name": "The Crocodile Pit",
     "goal": "Cross the pit to the far bank.",

@@ -88,7 +88,10 @@ export default defineConfig({
         },
 
         workbox: {
-          globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,json}"],
+          // woff2 is in here for the hieroglyph subset: the game has to be playable offline, and a font
+          // left out of the precache means every sign is a box on a plane — the exact failure the font
+          // was added to fix (scripts/generateFont.ts).
+          globPatterns: ["**/*.{js,css,html,svg,png,ico,mp3,aac,ttf,otf,woff2,json}"],
           // iOS draws its own launch screens and does not go through the service worker for them,
           // so 27 splash PNGs in the precache were 0.6 MB nobody read.
           globIgnores: ["**/apple-splash-*.png"],
