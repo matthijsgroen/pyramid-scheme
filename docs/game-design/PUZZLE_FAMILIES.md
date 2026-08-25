@@ -698,6 +698,40 @@ Two things every family needs beyond its curriculum-tier slot (§7): which
 most fit several), and how much **authoring weight** it costs a floor's content
 budget, since solve time varies wildly across families (§3.2, §8).
 
+### 11.0 How thin a pool may be, and which to populate first
+
+**A role is a pool, and authoring one costs variety in proportion to how thin that pool is.** Every
+room on a journey authored to a role draws from the families carrying that tag, so the breadth of
+the pool _is_ the breadth of the journey. Nothing else notices a thin one: the world builds, every
+gate passes, and the tier table reads healthy. It shows up only by counting what shipped.
+
+**The floor is four families**, held by `rolePools.spec.ts` over the baked world. It is asserted on
+the pool rather than on what a seed happened to draw, because the draw varies and the pool does not
+— and because it is the fact an author can check _before_ authoring rather than after regenerating.
+
+Measured over the baked world, the realised spread at each size:
+
+| Pool size | Realised top-family share | Reads as        |
+| --------- | ------------------------- | --------------- |
+| 9         | 13–19%                    | varied          |
+| 5         | 33%                       | varied          |
+| 4         | 32%                       | varied          |
+| 2         | **62%**                   | the same puzzle |
+
+**Which to populate first**, and the order is not "smallest pool":
+
+1. **`trade` (2).** The only thin pool with real demand behind it. Populate before authoring.
+2. **`water` / `agriculture` (4 each).** Do **not** populate — they are ready. What they need is
+   the authoring, and `expert.ts` already holds the one-line change.
+3. **`light` (2).** Same shape as `trade` and nothing authored to it yet, so it is cheap to fix now
+   and expensive after a journey ships on it.
+4. **`scribe` (1).** Only worth populating if a scribe journey is actually planned; otherwise it is
+   a tag hidato wears rather than a pool.
+
+**A pool grows by a family carrying the tag, never by an edit to a journey.** That is what makes
+this cheap: an existing multi-identity family taking a new face costs a skin and a wording pass,
+where a new family costs a generator and a ladder.
+
 ### 11.1 Theme taxonomy
 
 Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redesign.md` has "merchant"/"night-market" as live `theme` string examples):
@@ -706,7 +740,7 @@ Named so far (some already in use elsewhere in the docs — `worldgen-dsl- redes
 | ---------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Sun & Sky**                | sun-god, celestial, daylight                | Eclipse + mirror/lightbeam + constellation (all three tagged `sky`; eclipse and lightbeam also share the narrower `light`), clock-arithmetic, Eye of Horus (Horus = sky/sun god)                                                                               |
 | **Water & Agriculture**      | flooding, irrigation, the river, growing    | Constellation in its `irrigation` skin (basins joined by channels, one network watering every field), twin stars as farmsteads on a flood plain, hidato (§4.18 — different reasoning again, and the pool's third member; drawn for water it is a channel dug across dry fields, which green as it reaches them), water clock            |
-| **Trade** — a live role      | trade, weighing goods, hauling, bartering   | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). Authored as `encounter: "trade"` on the Great Pyramid of Giza; Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag |
+| **Trade** — a pool below the floor | trade, weighing goods, hauling, bartering | Balance scale (weighing goods IS the merchant act) + constellation in its `causeway` skin (haul roads). **Two members, so nothing is authored to it** (§11.0) — the Great Pyramid of Giza wants it and `master.ts` holds the one-line change. Sokoban (moving cargo) and target-number (haggling to a price) join by carrying the tag, as would any existing family taking a trade face |
 | **Logistics / Caravan**      | moving things through constrained space     | Overlaps Trade above, and from an author's seat reads as the same pool. Kept separate only until Sokoban and Rush Hour exist to say whether _moving through_ and _hauling to_ want different rooms                                                             |
 | **Scribe / Inscription**     | counting, record-keeping, arithmetic method | Cross-sum (already scribe-flavored via tableau), Egyptian doubling (a real historical scribe technique), sequence continuation (glyph progressions), hidato (counting a run of numbered cells — drawn for `scribe` it is a line of figures inked across papyrus, its givens in a scribe's red)                                                                 |
 | **Tomb / Burial Logic**      | funerary glyphs, wall art, sealed chambers  | Glyph Latin-square, nonogram (hieroglyph reveal), kakuro, hidato (a honeycomb of sealed chambers)                                                                                                                                                              |

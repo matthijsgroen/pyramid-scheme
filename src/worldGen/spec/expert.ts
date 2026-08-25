@@ -118,8 +118,13 @@ export const expertRules: Rule[] = [
   // **The Nile Delta Expedition wants water puzzles, and the role is the part that waits.** The pool is no
   // longer thin: the bridges board carries `water` and `agriculture`, and so does the hive (hidato), which
   // brings the number line rather than a second dress. What is left is playtesting them side by side in the
-  // lab — five pyramids of one role is only varied if its members read as different rooms. Then this is the
-  // whole change:
+  // lab — five pyramids of one role is only varied if its members read as different rooms.
+  //
+  // The generated half of that question is answered: authored, `water` draws all four of its families
+  // across this journey's 37 sections — constellation 12, hidato 11, star-battle 8, twin stars 6, so a
+  // 32% top share, the same spread `sky` ships at. It clears rolePools.spec.ts and the world validates.
+  // What is untested is the only part paper cannot settle, which is whether four boards drawn for one
+  // role read as four different ROOMS. Then this is the whole change:
   //
   //   journey("expert_3").pyramid("1-5", { encounter: "water" })
   //

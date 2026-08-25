@@ -107,14 +107,24 @@ export const masterRules: Rule[] = [
   // already owns that pyramid's sideSections (the secondary-tomb map-piece unlock gate). An
   // earlier revision put chests there directly and silently deleted that gate for all 4 master
   // journeys; every entry here now targets a pyramid the tier rule doesn't touch.
-  // **The Great Pyramid of Giza asks for trade puzzles.** A ROLE, not a skin: `trade` draws the balance
-  // scale (weighing goods) and the bridges board, which wears its haul-road dress because that is the pool it
-  // was drawn for. Which is the whole point of carrying the role into the room — the same board is a star map
-  // on the lighthouse and a causeway network here, and neither site had to name a skin to get it.
+  // **The Great Pyramid of Giza wants trade puzzles, and the pool is what waits.** A ROLE, not a skin:
+  // `trade` draws the balance scale (weighing goods) and the bridges board, which wears its haul-road
+  // dress because that is the pool it was drawn for. That is the whole point of carrying the role into
+  // the room — the same board is a star map on the lighthouse and a causeway network here, and neither
+  // site had to name a skin to get it.
   //
-  // Two families is the same breadth the lighthouse ships with `sky`. A third joins the pool by carrying the
-  // tag, never by an edit here.
-  journey("master_1").pyramid("1-5", { encounter: "trade" }),
+  // Not authored, because `trade` has only those two members and this journey is 75 puzzle rooms: the
+  // balance scale alone came to 62% of them, one family every other room for a whole tier. `sky` reads
+  // as varied at five families and 33%; two is not the same breadth. rolePools.spec.ts holds the floor.
+  // A third and fourth join by carrying the tag — the catalogue names Sokoban and target-number
+  // (PUZZLE_FAMILIES.md §11.1), both unbuilt, so the cheaper route is an existing multi-identity family
+  // taking a trade face. Then this is the whole change:
+  //
+  //   journey("master_1").pyramid("1-5", { encounter: "trade" })
+  //
+  // Deliberately not authored as a skin instead, for the reason expert.ts gives about `water`: asking
+  // for a dress without asking for the puzzles that wear it is how a trade pyramid ends up looking
+  // like a waterworks.
 
   journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0), starterEcho()] }),
   journey("master_1").pyramid(2, { sideSections: [holdChest(1), expertEcho()] }),

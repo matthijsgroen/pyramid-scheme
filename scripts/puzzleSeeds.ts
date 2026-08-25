@@ -21,7 +21,13 @@ import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import type { Grade } from "../src/game/families/familyMeta"
 import type { FoundSeed } from "../src/game/seeds/findSeeds"
-import { enumerateConfigs, seedTarget, SEED_CAP, type ConfigDemand } from "../src/game/seeds/enumerateConfigs"
+import {
+  enumerateConfigs,
+  seedTarget,
+  seedFloor,
+  SEED_CAP,
+  type ConfigDemand,
+} from "../src/game/seeds/enumerateConfigs"
 import { ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import type { SeedTask, SeedWorkerMessage } from "./seedProtocol"
 
@@ -186,11 +192,19 @@ export const puzzleSeeds: Record<string, number[]> = JSON.parse(
   if (short || failures) process.exit(1)
 } else {
   const listed = demands.filter(demand => puzzleSeeds[demand.hash]?.length)
-  for (const demand of demands)
+  // Reported against the FLOOR, not the target: a bucket over its demand is fine however far short
+  // of 1.5× it sits, and a readout that cried wolf on healthy buckets would train everyone to
+  // regenerate for nothing. `want` is what a regeneration would fill it to.
+  const below = demands.filter(demand => (puzzleSeeds[demand.hash]?.length ?? 0) < seedFloor(demand))
+  for (const demand of demands) {
+    const have = puzzleSeeds[demand.hash]?.length ?? 0
+    const verdict = have < seedFloor(demand) ? "SHORT" : have < targetFor(demand) ? "ok" : "full"
     console.log(
-      `${describe(demand).padEnd(42)} ${String(puzzleSeeds[demand.hash]?.length ?? 0).padStart(4)}/${targetFor(demand)} listed`
+      `${describe(demand).padEnd(42)} ${String(have).padStart(4)} seeds  ${verdict.padEnd(5)} (floor ${String(seedFloor(demand)).padStart(3)}, want ${targetFor(demand)})`
     )
+  }
   console.log(
     `\n${listed.length}/${demands.length} buckets listed, over ${demands.reduce((sum, demand) => sum + demand.rooms, 0)} rooms`
   )
+  if (below.length) console.error(`${below.length} bucket(s) below their floor — run \`yarn generate-seeds\`.`)
 }
