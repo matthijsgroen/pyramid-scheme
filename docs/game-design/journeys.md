@@ -140,25 +140,31 @@ where the pool runs out — balance scale has no face, so half those rooms stay 
 
 ## 5. Junior
 
-| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears           | What its story asks for          |
-| ----------------------------------- | -------- | ------ | ----- | ------ | --------------- | -------------------------------- |
-| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —               | `water` · marsh · flock · flood  |
-| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —               | workshop · pigment · quarry      |
-| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —               | `scribe` · moonlight · archive   |
-| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `sky` + `night` | `light` (0 of 2) · beacon · quay |
+| Journey                             | Pyramids | Floors | Rooms | Sprawl | Wears                   | What its story asks for         |
+| ----------------------------------- | -------- | ------ | ----- | ------ | ----------------------- | ------------------------------- |
+| `junior_1` Sacred Ibis Migration    | 3        | 4      | 24    | —      | —                       | `water` · marsh · flock · flood |
+| `junior_2` Valley of the Artisans   | 4        | 6      | 38    | —      | —                       | workshop · pigment · quarry     |
+| `junior_3` Temple of Thoth          | 4        | 6      | 45    | —      | —                       | `scribe` · moonlight · archive  |
+| `junior_4` Lighthouse of Alexandria | 5        | 7      | 47    | —      | `light`+`sky` + `night` | beacon · quay                   |
 
 | Tomb                                        | Floors | Rooms | Sprawl | Wears | What its story asks for |
 | ------------------------------------------- | ------ | ----- | ------ | ----- | ----------------------- |
 | `junior_treasure_tomb` Noble's Hidden Vault | 6      | 25    | —      | —     | treasury · wax seals    |
 
-**`junior_4` is the only dressed journey in the world**, and it is authored right: the `sky` role as well
-as the `night` theme, covering the whole pyramid, side paths and trapped ones included — half a themed
-pyramid reads as an accident.
+**`junior_4` is the only dressed journey in the world**, and it is authored right: `encounter: ["light",
+"sky"]` with `theme: "night"`, covering the whole pyramid, side paths and trapped ones included — half a
+themed pyramid reads as an accident. A lighthouse is a light in the sky, so it asks for both places.
 
-It is also the clearest reading of where the two axes stand. `sky` narrows the pool to five families and
-changes nothing about the look, because the star map is already their default. The ambience is what shows,
-and it shows on eclipse's 13 rooms of 47; constellation's 10 are drawing a night sky either way (§2). The
-role a lighthouse actually wants is `light`, and neither family in that pool has a face — a beacon is the
+**The list costs no variety.** A role list is a union for eligibility and `light` (eclipse, lightbeam) sits
+inside `sky`, so the pool is the same four families either way — the second word buys the dressing, not the
+draw. Regenerating moved nothing but the `role` field on 40 sections. `light` is written FIRST because the
+resolver takes the first role a family has a face for, and every family here answers `sky` with its
+default: sky-first would win that search and cancel the narrower place (§12).
+
+It is also the clearest reading of where the two axes stand. Neither role changes the look, because the star
+map is already every one of those families' default. The ambience is what shows, and it shows on eclipse's
+13 rooms of 47; constellation's 10 are drawing a night sky either way (§2). So the authoring is intent
+today, and the day a beacon face ships this pyramid wears it without being re-authored — a beacon is the
 strongest brief in the tier for a face that does not exist.
 
 Thoth is the god of writing and the moon, and the two asks split the same way: `scribe` is ready to author
@@ -320,8 +326,8 @@ undressed. Anything at or under it is not a new problem.
 ### Both modes, and only one of them needs building
 
 ```ts
-// Restrict — the pool is the dress. Exists today.
-journey("junior_4").pyramid("1-5", { encounter: "sky", theme: "night" })
+// Restrict — the pool is the dress. Exists today, and this is the authored line.
+journey("junior_4").pyramid("1-5", { encounter: ["light", "sky"], theme: "night" })
 
 // Every family, dressed wherever one can. Also exists today, unweighted.
 journey("wizard_3").pyramid("1-6", { encounter: ["cosmos", "puzzle"] })

@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 791114175
+export const worldContentHash = 1411303807
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -1701,7 +1701,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1711,7 +1711,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1721,7 +1721,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "twin-stars",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1731,7 +1731,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1740,7 +1740,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1750,12 +1750,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             hidden: true,
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
         ],
         encounter: "constellation",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p9", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined],
       },
@@ -1776,7 +1776,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1786,7 +1786,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1796,7 +1796,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1805,7 +1805,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             encounter: "lightbeam",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1815,7 +1815,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             hidden: true,
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 2,
@@ -1831,7 +1831,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         ],
         encounter: "star-battle",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -1850,7 +1850,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "mapPiece", tombId: "junior_treasure_tomb" },
             encounter: "twin-stars",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1861,7 +1861,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1871,7 +1871,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [{ type: "money", amount: 2 }],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1881,7 +1881,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1891,7 +1891,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1901,7 +1901,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1910,7 +1910,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1920,12 +1920,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             hidden: true,
             encounter: "twin-stars",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
         ],
         encounter: "lightbeam",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 3 },
         rewards: [undefined, undefined, undefined, undefined],
       },
@@ -1945,7 +1945,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 3 },
             encounter: "twin-stars",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1955,7 +1955,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1965,7 +1965,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -1975,7 +1975,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1984,7 +1984,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -1994,7 +1994,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             hidden: true,
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 2,
@@ -2007,12 +2007,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             ],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
         ],
         encounter: "eclipse",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -2025,7 +2025,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         entrance: { stairId: "junior_4:p3:wing0" },
         encounter: "constellation",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 1 },
@@ -2048,7 +2048,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -2058,7 +2058,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "eclipse",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -2068,7 +2068,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "star-battle",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -2078,7 +2078,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "constellation",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -2087,7 +2087,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             endReward: { type: "money", amount: 2 },
             encounter: "twin-stars",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 0,
@@ -2097,7 +2097,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             hidden: true,
             encounter: "lightbeam",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
           {
             pathPuzzles: 1,
@@ -2107,12 +2107,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             rewards: [undefined],
             encounter: "twin-stars",
             theme: "night",
-            role: "sky",
+            role: ["light", "sky"],
           },
         ],
         encounter: "star-battle",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
       },
@@ -2125,7 +2125,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         entrance: { stairId: "junior_4:p4:wing0" },
         encounter: "twin-stars",
         theme: "night",
-        role: "sky",
+        role: ["light", "sky"],
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined],
       },
