@@ -115,13 +115,13 @@ pyramid picks up a floor or two.
 The Scribe's Academy is the one journey that could be dressed this afternoon:
 
 ```ts
-journey("starter_4").pyramid("1-4", { encounter: "scribe" })
+journey("starter_4").pyramid("1-4", { encounter: ["scribe", "puzzle"] })
 ```
 
-`scribe` draws hidato and sudoku and both have a face — a reed-pen register and a papyrus sheet — so every
-room of the academy comes out written on. What it buys with that is two families across four pyramids,
-thinner than the four `water` offers the delta (§6): the same playtest question, asked with less to draw
-from.
+`scribe` draws hidato and sudoku and both have a face — a reed-pen register and a papyrus sheet — so a room
+drawn for it comes out written on. Restricting to the pair would be too much of them: the academy has 19
+sections and the pool has two families, which is 9.5 turns each against the 6.3 the game's least varied
+journey already ships (§11). So `puzzle` rides along to re-admit everyone, and the two that can dress do.
 
 The papyrus route wants `scribe` for the first half of its name and `trade` for the second, and `trade` is
 where the pool runs out — balance scale has no face, so half those rooms stay on their default.
@@ -170,8 +170,9 @@ than unlit.
 **The Nile Delta expedition is the one journey whose change is already written down.** The spec carries the
 line that would author it — `journey("expert_3").pyramid("1-5", { encounter: "water" })` — and the reason
 it has not been pulled: the `water` pool draws all four of its families across the journey and every one of
-them has a face, so the paper half is settled and what is left is playtesting whether four boards drawn for
-one role read as four different rooms. The crocodile is already a trap family; a crocodile _face_ would be
+them has a face, so the paper half is settled. What the spec's own line does not settle is the mode: 42
+sections over four families is 10.5 turns each, well past the 6.3 bar (§11), so the delta wants
+`["water", "puzzle"]` and a thumb on the scale rather than the four-family restriction as written. The crocodile is already a trap family; a crocodile _face_ would be
 the delta's water dressed as something that bites.
 
 Djoser is a building site, which is exactly constellation's causeway — but balance scale is the other half
@@ -273,3 +274,57 @@ One wrinkle worth naming rather than hiding: **a tomb's place is per-site, not p
 carries `role: "tomb-puzzle"`, so a weighing hall and a merchant's cellar cannot be told apart by role.
 Tombs are the one legitimate case for a site-authored face, and worth designing as such rather than
 treated as a counter-example to the rule.
+
+## 11. Restrict or prefer — which mode a journey wants
+
+A role narrows the pool, and on a long journey that is the problem: a family is assigned **per section**,
+not per room, so what a player feels is `sections ÷ pool size`. Measured on this cut of the world:
+
+| Journey     | Sections | Rooms | Unrestricted (10) | `sky` (5) | `water` (4) | `scribe` (2) |
+| ----------- | -------- | ----- | ----------------- | --------- | ----------- | ------------ |
+| `starter_1` | 8        | 13    | 0.8×              | 1.6×      | 2.0×        | 4.0×         |
+| `starter_4` | 19       | 29    | 1.9×              | 3.8×      | 4.8×        | 9.5×         |
+| `junior_1`  | 17       | 24    | 1.7×              | 3.4×      | 4.3×        | 8.5×         |
+| `junior_4`  | 28       | 47    | 2.8×              | **5.6×**  | 7.0×        | 14.0×        |
+| `expert_3`  | 42       | 107   | 4.2×              | 8.4×      | **10.5×**   | 21.0×        |
+| `master_2`  | 50       | 121   | 5.0×              | 10.0×     | 12.5×       | **25.0×**    |
+| `wizard_3`  | 63       | 207   | **6.3×**          | 12.6×     | 15.8×       | 31.5×        |
+
+**6.3× is the bar**, because that is the worst variety the game already ships — wizard_3 and wizard_4
+undressed. Anything at or under it is not a new problem.
+
+- **Restrict when `sections ÷ pool` lands inside the bar.** `junior_4` on `sky` is 5.6×, so the lighthouse
+  can be a lighthouse all the way through: five families across five pyramids, no worse than what the
+  endgame already does. `junior_1` on `water` is 4.3×. These are the journeys where the pool _is_ the dress.
+- **Prefer once it does not.** `expert_3` on `water` is 10.5× and `master_2` on `scribe` is 25× — twice and
+  four times the bar. A two-family pool is unusable above starter, which also puts `starter_4` (9.5×) on
+  this side of the line despite §4 reading the other way.
+
+### Both modes, and only one of them needs building
+
+```ts
+// Restrict — the pool is the dress. Exists today.
+journey("junior_4").pyramid("1-5", { encounter: "sky", theme: "night" })
+
+// Every family, dressed wherever one can. Also exists today, unweighted.
+journey("wizard_3").pyramid("1-6", { encounter: ["cosmos", "puzzle"] })
+```
+
+The second line already works and nothing had to be added for it. **A role list means "any of these"**, so
+adding `puzzle` re-admits every family; the list is written to the room verbatim, and `skinFor` takes the
+first role it has a face for — so a cosmos family wears cosmos and every other family draws its default.
+The contract that makes this safe is the one in §2: an unknown role never breaks a room.
+
+What is missing is the **bias**. Unweighted, a three-family cosmos pool dresses 3 sections in 10 — 19 of
+`wizard_3`'s 63, against 44 plain, which likely reads as a handful of odd rooms rather than a cosmos
+journey. Weighting needs the allocator to know which families _dress_ a role, and it cannot: that mapping
+lives in each family's private `app/*/skins.ts` `ROLE_SKINS`, invisible to `src/worldGen`.
+
+Which is §10 point 1 with a second reason to do it. Declaring the faces a family serves in `FamilyMeta`
+pays for itself three times: the §9 gap table generates instead of being hand-kept, the generation guard
+can fail on a role no family dresses, and the allocator can weight a preferred role — a bag holding every
+eligible family plus the dressing ones a second and third time is enough of a thumb on the scale, and the
+number to check afterwards is what share of a journey's sections came out dressed.
+
+Note `sky` would declare no dresser at all, since the star map is every sky family's default face (§2). So
+preferring `sky` is a no-op and the lighthouse has to restrict — which is what it wanted anyway.
