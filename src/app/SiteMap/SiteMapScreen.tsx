@@ -40,12 +40,16 @@ import "@/mods/registerModApps"
 type Props = {
   journeyId: string
   siteConfig: SiteConfig
+  /** Which level of the journey this is (levelNr - 1) — the address its rooms draw their boards by
+   * (src/game/seeds/boardIndex.ts). A tomb re-enters one authored site per level, so the level is what
+   * separates those visits, not the site. */
+  levelIndex: number
   seed: number
   onSiteComplete: () => void
   onCancel: () => void
 }
 
-export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onCancel }: Props) => {
+export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteComplete, onCancel }: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
   const journeys = useJourneys()
   const progression = useProgression()
@@ -73,7 +77,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, seed, onSiteComplete, onC
     allEdges,
     journeyState?.position,
     detectorLevels.corridor,
-    foundCorridors
+    foundCorridors,
+    levelIndex
   )
 
   const corridors = useCorridorDetection({

@@ -15,12 +15,12 @@ export type ConfigDemand = {
 /**
  * Two numbers, and keeping them apart is what stops ordinary authoring from forcing a regeneration.
  *
- * `seedTarget` is what the offline pass AIMS for: half again the rooms that draw from the bucket. A
- * room picks its board by `roomSeed % seeds.length` from an arbitrary hash, so a list sized to its
- * demand exactly still hands one board out twice while leaving another unused. The surplus is what
- * makes a repeat unlikely instead of certain.
+ * `seedTarget` is what the offline pass AIMS for: half again the rooms that draw from the bucket. The
+ * surplus is not variety — boards are dealt, one per room (boardIndex.ts), so a list holding its floor
+ * repeats nothing. It is headroom, so that moving rooms between buckets doesn't push one past its list.
  *
- * `seedFloor` is what the shipped artifact must CLEAR, and it is the demand itself. The gap between
+ * `seedFloor` is what the shipped artifact must CLEAR, and it is the demand itself — and since a room
+ * is dealt an entry rather than drawing one, clearing it is exactly what makes a repeat impossible. The gap between
  * them is deliberate headroom: re-authoring a journey moves room counts around constantly, and a
  * bucket filled to 1.5× its old demand still covers the new one unless that demand grew by half. So
  * the build goes red when the lists genuinely cannot cover the world — a family added, a family

@@ -24,7 +24,7 @@ import { writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { Worker } from "node:worker_threads"
-import { generatedWorldConfigs } from "../src/data/generatedWorld"
+import { worldLevelSites } from "../src/data/worldLevels"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import type { Grade } from "../src/game/families/familyMeta"
 import type { FoundSeed } from "../src/game/seeds/findSeeds"
@@ -58,7 +58,7 @@ const CHUNK = 500
 const only = flag("family")?.split(",")
 const rebuild = argv.includes("--rebuild")
 
-const allDemands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META)
+const allDemands = enumerateConfigs(worldLevelSites, ALL_FAMILY_META)
 const demands = allDemands.filter(demand => !only || only.includes(demand.familyId))
 const targetFor = (demand: ConfigDemand) => seedTarget(demand, CAP)
 const describe = (demand: ConfigDemand) => `${demand.familyId}/${demand.difficulty} (${demand.rooms} rooms)`

@@ -67,6 +67,11 @@ export type RoomCell = {
   // family re-deriving which TableauLevel it presents from journeyId + the section's own
   // encounterArgs.runNr + this index, not from floor position).
   pathIndex?: number
+  // Which entry of its family's seed list this room draws (see src/game/seeds/boardIndex.ts). Every
+  // room drawing from one list gets a different entry, so no two rooms in the world serve the same
+  // board. Unset where the site isn't part of the baked world (stories, specs, the builder), and the
+  // room falls back to indexing the list by its own hash.
+  boardIndex?: number
   // The authored encounter args for this room's family (e.g. a tableau's `{ runNr }`), carried
   // from the FloorConfig/SideSection so the play-time family can re-derive exactly what world-gen
   // resolved (which authored TableauLevel this is). Opaque to core; each family reads it via its

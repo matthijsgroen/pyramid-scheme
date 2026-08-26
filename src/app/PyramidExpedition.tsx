@@ -272,6 +272,7 @@ export const PyramidExpedition: FC<{
             key={`${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.completionCount}`}
             journeyId={activeJourney.journeyId}
             siteConfig={pyramidJourney.siteConfigs[activeJourney.levelNr - 1] ?? pyramidJourney.siteConfigs[0]}
+            levelIndex={activeJourney.levelNr - 1}
             seed={activeJourney.randomSeed + activeJourney.levelNr}
             onSiteComplete={flow.interiorComplete}
             onCancel={flow.leaveInterior}

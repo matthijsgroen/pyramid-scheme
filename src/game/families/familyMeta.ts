@@ -71,6 +71,10 @@ export type FamilyMeta = {
 export type FamilyGenerationCtx = {
   difficulty?: Difficulty
   variant?: string
+  /** Which entry of the resolved bucket's seed list to build (src/game/seeds/boardIndex.ts). Reaches
+   * generatePuzzle, never `resolveOptions`'s result — the bucket key is the options, so which board a
+   * room draws cannot change which list it draws from. */
+  boardIndex?: number
 }
 
 // What solving an admitted board taught the offline pass. Reported by the CLI so a designer tuning a

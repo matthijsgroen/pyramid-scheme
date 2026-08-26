@@ -13,6 +13,7 @@ import type {
   SideSection,
   DecorationKind,
 } from "./siteTypes"
+import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
@@ -363,6 +364,10 @@ const spreadContentIndices = (count: number, startIdx: number, totalLen: number)
 export type AssembleFloorKeyRequirements = {
   resolveKeyRequirements?: ResolveKeyRequirements
   floorRef?: { journeyId: string; floorIndex: number }
+  /** Which seed-list entry each room draws, by its authored address — injected for the same reason
+   * resolveEncounter is: this module knows a floor's chains, never which world they belong to.
+   * Absent (stories, specs, the builder) leaves rooms unstamped and they index by their own hash. */
+  resolveBoardIndex?: ResolveBoardIndex
 }
 
 export const assembleFloor = (
@@ -372,8 +377,11 @@ export const assembleFloor = (
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   keyRequirements: AssembleFloorKeyRequirements = {}
 ): AssemblerResult => {
-  const { resolveKeyRequirements = defaultResolveKeyRequirements, floorRef = { journeyId: siteId, floorIndex: 0 } } =
-    keyRequirements
+  const {
+    resolveKeyRequirements = defaultResolveKeyRequirements,
+    floorRef = { journeyId: siteId, floorIndex: 0 },
+    resolveBoardIndex,
+  } = keyRequirements
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
@@ -1124,11 +1132,13 @@ export const assembleFloor = (
           pathIndex: k,
           encounterArgs: config.encounterArgs,
         })
+        const boardIndex = resolveBoardIndex?.(family.familyId, { section: "main", pathIndex: k })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           family: family.familyId,
           tags: family.tags,
           pathIndex: k,
+          ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: config.difficulty,
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
@@ -1206,6 +1216,7 @@ export const assembleFloor = (
           pathIndex: pi,
           encounterArgs: section.encounterArgs,
         })
+        const boardIndex = resolveBoardIndex?.(family.familyId, { section: `s${sectionIdx}`, pathIndex: pi })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
@@ -1214,6 +1225,7 @@ export const assembleFloor = (
           family: family.familyId,
           tags: family.tags,
           pathIndex: pi,
+          ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
           difficulty: section.difficulty,
           ...(section.theme !== undefined ? { theme: section.theme } : {}),
@@ -1256,7 +1268,16 @@ export const assembleFloor = (
     }
 
     // Sub-section nodes
-    for (const { subSection, cells, keyNodeId, isKeyHost, keyHostColor, keyHostColors } of subSectionGroups) {
+    for (const {
+      subSection,
+      cells,
+      keyNodeId,
+      isKeyHost,
+      keyHostColor,
+      keyHostColors,
+      parentSectionIdx,
+      subSectionIdx,
+    } of subSectionGroups) {
       const isFloorKeyGate = subSection.gate?.type === "floor-key"
       const isTombKeyGate = subSection.gate?.type === "tomb-key"
       let contentStart = 0
@@ -1304,6 +1325,10 @@ export const assembleFloor = (
           pathIndex: pi,
           encounterArgs: subSection.encounterArgs,
         })
+        const boardIndex = resolveBoardIndex?.(family.familyId, {
+          section: `s${parentSectionIdx}.${subSectionIdx}`,
+          pathIndex: pi,
+        })
         roomSpecs.set(posKey(r, c), {
           roomType: "encounter",
           // Same reasoning as the side-section case above: never inherits the floor's
@@ -1311,6 +1336,7 @@ export const assembleFloor = (
           family: family.familyId,
           tags: family.tags,
           pathIndex: pi,
+          ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(subSection.encounterArgs !== undefined ? { encounterArgs: subSection.encounterArgs } : {}),
           difficulty: subSection.difficulty,
           ...(subSection.theme !== undefined ? { theme: subSection.theme } : {}),

@@ -3,6 +3,12 @@ import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { journeys } from "@/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
+import { configHash } from "@/game/seeds/configHash"
+import { puzzleSeeds } from "@/data/puzzleSeeds"
+import { hashString } from "@/support/hashString"
+import { boardIndexesForFloor } from "./boardIndexes"
+import { encodeEdge } from "./useAssembledFloor"
+import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 // Populate the family registry, exactly as the app does — a room resolves its family through it.
 import "@/mods/registerModApps"
@@ -11,7 +17,14 @@ import "@/mods/registerModApps"
 const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
 
-type Floor = { label: string; config: FloorConfig; seed: number; floorIndex: number; journeyId: string }
+type Floor = {
+  label: string
+  config: FloorConfig
+  seed: number
+  floorIndex: number
+  journeyId: string
+  levelIndex: number
+}
 
 // Every floor a player can be sent into, at the exact seed the runtime will use.
 // Mirrors PyramidExpedition: one site per level number (1-based), falling back to the first
@@ -24,7 +37,8 @@ const allFloors = (): Floor[] => {
     if (!siteConfigs?.length) continue
     const siteSeed = persistentInteriorSeed(journey.id)
     for (let levelNr = 1; levelNr <= journey.levelCount; levelNr++) {
-      const site = siteConfigs[levelNr - 1] ?? siteConfigs[0]
+      const levelIndex = levelNr - 1
+      const site = siteConfigs[levelIndex] ?? siteConfigs[0]
       site.forEach((config, floorIndex) => {
         floors.push({
           label: `${journey.id} level ${levelNr} floor ${floorIndex}`,
@@ -32,6 +46,7 @@ const allFloors = (): Floor[] => {
           seed: floorAssemblySeed(siteSeed, levelNr, floorIndex),
           floorIndex,
           journeyId: journey.id,
+          levelIndex,
         })
       })
     }
@@ -315,4 +330,81 @@ describe("what a world-spec setting may and may not move", () => {
     },
     120_000
   )
+})
+
+// Boards are DEALT, not drawn: every room in the world takes a different entry of its family's seed
+// list (src/game/seeds/boardIndex.ts). The scheme it replaced indexed the list by a hash of the room's
+// identity — an independent draw per room, so a journey with fourteen balance rooms over a fourteen-board
+// list handed one board out three times and left five boards unused, and a player met the same puzzle in
+// pyramid 1, pyramid 2 and pyramid 3. This is the sweep that says it cannot happen again: it assembles
+// the world the runtime assembles and asks which board every room actually serves.
+describe("no two rooms in the world serve the same board", () => {
+  // What a room really builds: the family's own list entry, or its identity hash where a bucket has no
+  // list yet (generatePuzzle's fallback, which draws with replacement and so may legitimately repeat).
+  const boardOf = (
+    familyId: string,
+    difficulty: Difficulty | undefined,
+    boardIndex: number | undefined,
+    seed: number
+  ): { bucket: string; board: string; listed: boolean } | null => {
+    const seedable = getFamilyPlugin(familyId)?.meta.seedable
+    if (!seedable) return null
+    const bucket = configHash(seedable.resolveOptions({ difficulty }))
+    const list = puzzleSeeds[bucket]
+    if (!list?.length) return { bucket, board: `unlisted:${seed}`, listed: false }
+    return { bucket, board: String(list[(boardIndex ?? seed) % list.length]), listed: true }
+  }
+
+  const seedableRooms = () =>
+    allFloors().flatMap(floor => {
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        resolveBoardIndex: boardIndexesForFloor(floor.journeyId, floor.levelIndex, floor.floorIndex),
+      })
+      if (!result.success) return []
+      return result.grid.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => {
+          if (cell.type !== "room" || !cell.family) return []
+          const difficulty = cell.difficulty ?? floor.config.difficulty
+          const seed = hashString(floor.journeyId + encodeEdge(floor.floorIndex, r, c))
+          const board = boardOf(cell.family, difficulty, cell.boardIndex, seed)
+          return board ? [{ ...board, dealt: cell.boardIndex !== undefined, label: ` / at ,` }] : []
+        })
+      )
+    })
+
+  it("deals every listed room its own board", () => {
+    const rooms = seedableRooms()
+    expect(rooms.length).toBeGreaterThan(1000)
+
+    // A room the assignment never reached falls back to its own hash, which is the very thing this
+    // replaced — so a gap in the walk has to fail here, not quietly draw with replacement.
+    const undealt = rooms.filter(room => !room.dealt).map(room => room.label)
+    expect(undealt.slice(0, 10), ` room(s) were dealt no board`).toEqual([])
+
+    const byBoard = new Map<string, string[]>()
+    for (const room of rooms.filter(r => r.listed))
+      byBoard.set(`${room.bucket}#${room.board}`, [...(byBoard.get(`${room.bucket}#${room.board}`) ?? []), room.label])
+    const shared = [...byBoard.entries()].filter(([, where]) => where.length > 1)
+
+    expect(
+      shared.map(([board, where]) => `${board}: ${where.join(" || ")}`),
+      `${shared.length} board(s) served to more than one room`
+    ).toEqual([])
+  }, 120_000)
+
+  // The invariant the dealing rests on, stated on its own so a bucket that outgrows its list fails here
+  // with the bucket named, rather than as a pile of shared boards. `yarn generate-seeds` is the fix.
+  it("keeps every bucket's rooms within its list", () => {
+    const overSubscribed = new Map<string, number>()
+    for (const room of seedableRooms().filter(r => r.listed))
+      overSubscribed.set(room.bucket, (overSubscribed.get(room.bucket) ?? 0) + 1)
+
+    const tooSmall = [...overSubscribed.entries()]
+      .filter(([bucket, rooms]) => rooms > (puzzleSeeds[bucket]?.length ?? 0))
+      .map(([bucket, rooms]) => `${bucket}: ${rooms} rooms over a ${puzzleSeeds[bucket]?.length ?? 0}-seed list`)
+
+    expect(tooSmall, "run `yarn generate-seeds`").toEqual([])
+  }, 120_000)
 })

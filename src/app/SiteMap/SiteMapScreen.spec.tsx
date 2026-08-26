@@ -85,6 +85,7 @@ describe(SiteMapScreen, () => {
       <SiteMapScreen
         journeyId="test-journey"
         siteConfig={[floorConfig]}
+        levelIndex={0}
         seed={1}
         onSiteComplete={onSiteComplete}
         onCancel={() => {}}

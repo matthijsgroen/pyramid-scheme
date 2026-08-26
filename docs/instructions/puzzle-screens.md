@@ -342,10 +342,31 @@ mean it was accepted, so `grade` is the only thing that can tell the difference.
 instead (sumplete, futoshiki, lightbeam) are already telling you by returning at all, and grade
 re-checks the ladder and records what it demanded.
 
-**A room's seed indexes the list rather than seeding the generator.** `hashString(journeyId + edgeId)`
-is unchanged; `seeds[seed % seeds.length]` picks the entry. So the offline pass only ever enumerates
-_configurations_, never the rooms a player can reach — reassembling a floor or regenerating the world
-cannot invalidate a list.
+**A room is dealt its entry rather than drawing one.** Every room in the world takes a _different_ entry
+of its list: `src/game/seeds/boardIndex.ts` walks the world by journey → level → floor → chain → room,
+hands each room the next ordinal in whichever bucket it draws from, and the assembler stamps that onto
+the cell as `boardIndex`. `seeds[boardIndex]` is the board.
+
+Dealing rather than drawing is what makes a repeat impossible. Indexing the list by a hash of the room
+(`seeds[hashString(journeyId + edgeId) % seeds.length]`, what this replaced) is an independent draw per
+room, and independent draws collide: n rooms over a list of L repeat about n²/2L times whatever the hash
+does. Fourteen junior balance rooms over a fourteen-board list served one board three times and left five
+unused, and a player met the same scales in three pyramids of one journey. Dealing repeats nothing while
+the list covers the bucket — the invariant `seedFloor` already fails the build on.
+
+Two consequences worth knowing:
+
+- **The walk is by level, not by authored site** (`src/data/worldLevels.ts`). A tomb has one authored site
+  and re-enters it once per level, re-carved each time; counting the site once had every level of that
+  tomb serving the identical board.
+- **Ordinals are positional.** Insert a room early in a bucket and every later room in it shifts along
+  one, so the puzzle waiting in an unvisited room can change when the world is re-authored. A room the
+  player already solved is remembered as explored, not as a board, so nothing they finished moves.
+
+The offline pass still only ever enumerates _configurations_, never the rooms a player can reach —
+reassembling a floor or regenerating the world cannot invalidate a list. Where no assignment reaches a
+room — a story, a spec, the site builder, anything outside the baked world — it falls back to
+`seeds[hashString(journeyId + edgeId) % seeds.length]`, which is fine for a one-off board.
 
 A miss always falls through to live generation. That is not a failure path: it is how a tier being
 tuned still yields boards with no build step in the way, and how a lab `variant` (which changes the
@@ -358,9 +379,10 @@ else — seconds rather than the ten minutes a whole artifact takes, and a diff 
 every other family's rooms a different board. `--rebuild` re-searches everything, for when the generator
 itself changed and what shipped was proven under code that no longer exists.
 
-The surplus is the point: a room picks by `seed % seeds.length` off an arbitrary hash, so a list sized to its demand exactly repeats a board for
-certain while leaving another unused. `yarn seeds-info` reports coverage and what each tier's boards
-demand — the honest difficulty signal §5 names, which nothing else measures per board.
+The surplus is headroom for re-authoring, not variety: dealing already spends a bucket exactly once per
+room, so a list holding its floor repeats nothing. What the surplus buys is that moving rooms between
+buckets — which ordinary authoring does constantly — does not immediately push one past its list.
+`yarn seeds-info` reports coverage and what each tier's boards demand — the honest difficulty signal §5 names, which nothing else measures per board.
 `src/mods/puzzleSeeds.spec.ts` fails the build when a bucket is missing, orphaned, thinner than its
 target, or no longer grades.
 
