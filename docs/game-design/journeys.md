@@ -42,24 +42,36 @@ So the question for a journey is **which role its story wants, and whether every
 face for it.** That second half is a property of the pool rather than of the journey, and it is the whole
 map of what is missing:
 
-| Role                    | Families in the pool                                       | Have a face | Missing            |
-| ----------------------- | ---------------------------------------------------------- | ----------- | ------------------ |
-| `water` / `agriculture` | constellation, hidato, star battle, twin stars             | 4 of 4      | —                  |
-| `scribe`                | hidato, sudoku                                             | 2 of 2      | —                  |
-| `trade`                 | balance scale, constellation                               | 1 of 2      | balance scale      |
-| `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | see below   | eclipse, lightbeam |
-| `light`                 | eclipse, lightbeam                                         | 0 of 2      | both               |
-| `logistics`             | —                                                          | —           | the pool itself    |
+| Role                    | Families in the pool                                       | Read as the place | Look different from default |
+| ----------------------- | ---------------------------------------------------------- | ----------------- | --------------------------- |
+| `water` / `agriculture` | constellation, hidato, star battle, twin stars             | 4 of 4            | 4 of 4                      |
+| `scribe`                | hidato, sudoku                                             | 2 of 2            | 2 of 2                      |
+| `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | 5 of 5            | 0 of 5                      |
+| `light`                 | eclipse, lightbeam                                         | 2 of 2            | 0 of 2                      |
+| `trade`                 | balance scale, constellation                               | 2 of 2            | 1 of 2                      |
+| `logistics`             | —                                                          | —                 | —                           |
+
+**The two columns are different questions and they must not be collapsed.** _Read as the place_ is whether
+a journey can be carried at all — a star battle board is stars on a dark ground whether or not anyone
+authored `sky`, and its own skin file calls that "the plainest possible face for the `sky` pool". _Look
+different_ is whether authoring the role visibly changes anything. Collapsing them into one "has a face"
+count reports `sky` and `light` as empty, which would deny that five families can carry a night journey
+and that a family named lightbeam can serve `light`.
 
 Four readings of that table before authoring anything:
 
 - **`water` and `scribe` are ready today.** Every family in both pools has a face waiting, so one authored
   word dresses every room. They are the only two roles in that state.
-- **`sky` dresses nothing, and that is not a bug.** The star map IS constellation's default face, and star
-  battle's and twin stars' too — a `sky` room draws what an unauthored room draws. Asking for `sky` narrows
-  the pool; it does not change the look. `junior_4` is authored `sky` and gets its look from `night`.
+- **`sky` is already dressed, which is why it changes nothing.** Five families read as a night sky before
+  anyone asks — it is constellation's default face, star battle's and twin stars' too, and eclipse's pair
+  hangs in one. So a `sky` room draws what an unauthored room draws: asking for it narrows the pool without
+  changing the look. That is a full pool to carry a star journey and an empty one to make it look new, and
+  `junior_4` is the proof of both — authored `sky`, and its look comes from `night`.
+- **`light` is the same shape.** Eclipse's sun and moon and lightbeam's beams both read as light sources,
+  so a lighthouse tier is carryable today; neither has a face that would make it look like one.
 - **`logistics` is an empty pool.** Constellation maps it to its causeway, but no family carries the tag,
-  so a site authoring it would find nobody. `trade` is the word that works.
+  so a site authoring it would find nobody. `trade` is the word that works — and balance scale owes that
+  pool an answer, since a scale weighing goods either reads as a market or the tag should go (§12).
 - **A tomb has no faces at all.** A tomb's rooms are tableau and the fez shop, and neither has a skin
   system, so no role or ambience reaches one. Two tombs hold a single stray puzzle room apiece — a balance
   scale in the noble's vault, a twin stars in the high priest's — and one room is not a dress.
@@ -225,17 +237,20 @@ void beyond the sky, and a chamber where the mathematics is the cosmos.
 
 ## 9. The gaps, and what filling each one buys
 
-Ranked by the rooms it would reach, since a face built for a cluster pays for itself across a tier and one
-built for a single pyramid does not.
+Two severities, and they are not the same job. **No family serves the place** — nothing can carry the
+journey, and the fix is a role plus the families to fill it. **Every family serves it but none looks
+different** — the journey is carryable today and authoring it changes nothing visible, so the fix is a
+face. Ranked by the rooms it would reach, since one built for a cluster pays for itself across a tier and
+one built for a single pyramid does not.
 
-| Gap                                      | Reaches                                                    | Rooms | What it takes                                                                                                                     |
-| ---------------------------------------- | ---------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **A funerary role**                      | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1` | 574   | A new tag on three or four families plus a face each. The biggest story cluster in the game, and nothing serves it.               |
-| **A cosmos role**                        | `wizard_3`, `wizard_4`                                     | 414   | Same shape, on the two largest journeys. Furthest from Egypt, so the most new art.                                                |
-| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`            | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing. |
-| **A face for tableau**                   | all nine tombs                                             | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                     |
-| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                    | 120   | One face completes the only half-empty pool, and both journeys become authorable.                                                 |
-| **`light` faces for eclipse, lightbeam** | `junior_4`                                                 | 47    | The only pool with zero faces. Lightbeam has no skin system at all, so it is two jobs.                                            |
+| Gap                                      | Reaches                                                    | Rooms | What it takes                                                                                                                        |
+| ---------------------------------------- | ---------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **A funerary role**                      | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1` | 574   | A new tag on three or four families plus a face each. The biggest story cluster in the game, and nothing serves it.                  |
+| **A cosmos role**                        | `wizard_3`, `wizard_4`                                     | 414   | Same shape, on the two largest journeys. Furthest from Egypt, so the most new art.                                                   |
+| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`            | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.    |
+| **A face for tableau**                   | all nine tombs                                             | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                        |
+| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                    | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                          |
+| **`light` faces for eclipse, lightbeam** | `junior_4`                                                 | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs. |
 
 Read together:
 
@@ -243,7 +258,9 @@ Read together:
   pools, and between them they fit `starter_2`, `starter_4`, `junior_1`, `junior_3`, `expert_3` and
   `master_2`. Two of those are one authored line each and nothing is stopping them.
 - **The gaps are in the pools and in the roles, never in the names.** A second word for a place that
-  already has one buys nothing; a face for a family that has none unlocks a whole pool.
+  already has one buys nothing; a face for a family that has none is what makes authoring the role show.
+- **Only funerary and cosmos are blocked on a role that cannot be carried.** Every other story has a pool
+  that already reads as its place; what those pools lack is a face that differs from the default.
 - **Half the catalogue asks for something funerary or cosmic**, and those are the two things no role
   serves. That is where new families should be pointed — and a mechanic still has to hold up on its own
   first (`PUZZLE_FAMILIES.md`): a dress is not a reason to build a puzzle, but a puzzle looking for a home
@@ -326,48 +343,55 @@ can fail on a role no family dresses, and the allocator can weight a preferred r
 eligible family plus the dressing ones a second and third time is enough of a thumb on the scale, and the
 number to check afterwards is what share of a journey's sections came out dressed.
 
-Note `sky` would declare no dresser at all, since the star map is every sky family's default face (§2). So
-preferring `sky` is a no-op and the lighthouse has to restrict — which is what it wanted anyway.
+Note that preferring `sky` is inherently a no-op: every family in that pool serves it with its default face
+(§2), so there is nothing to weight toward. A star journey has to restrict — which is what the lighthouse
+wanted anyway, and why the pool being full matters more there than any face would.
 
 ## 12. Spec — the `faces` declaration
 
-One field on `FamilyMeta`, and it is a **move** rather than a new thing to keep: the `ROLE_SKINS` table
-each family already keeps privately in `app/<family>/skins.ts` relocates to its `game/<family>/meta.ts`,
-where `src/worldGen` can read it.
+One field on `FamilyMeta`, and it is a **move** rather than a new thing to keep: the `ROLE_SKINS` table each
+family already keeps privately in `app/<family>/skins.ts` relocates to its `game/<family>/meta.ts`, where
+`src/worldGen` can read it.
 
 ```ts
 // src/game/families/familyMeta.ts
 export type FamilyMeta = {
   // …
-  /** Which of this family's own faces serves which role — the role vocabulary on the left, this
-   *  family's private face ids on the right. A role absent here is a role this family serves with its
-   *  DEFAULT face, which is not a dress: `sky` appears nowhere, because the star map is already the
-   *  default for every family that serves it. Read by the skin resolver at play time and by the
-   *  encounter allocator at generation, which is the point of it living out here. */
+  /** Which of this family's own faces serves which role — the shared role vocabulary on the left, this
+   *  family's private face ids on the right. **Every tag except `puzzle` needs an entry**, and
+   *  `"default"` is a real answer: it says this family already reads as that place without being asked.
+   *  Star battle's default is stars on a dark ground, so it declares `sky: "default"` rather than
+   *  nothing — the claim that it can carry a night journey has to be in the data, or a report reading
+   *  the data will deny it. Read by the skin resolver at play time and by the encounter allocator at
+   *  generation, which is the point of it living out here. */
   faces?: Record<string, string>
 }
 ```
 
-What every family declares today, read off its existing `ROLE_SKINS`:
+What every family declares, read off its existing `ROLE_SKINS` and its skin table's own descriptions:
 
-| Family                  | `faces`                                                                 |
-| ----------------------- | ----------------------------------------------------------------------- |
-| constellation           | `{ trade: "causeway", water: "irrigation", agriculture: "irrigation" }` |
-| hidato                  | `{ water: "channel", agriculture: "channel", scribe: "scribe" }`        |
-| star battle, twin stars | `{ water: "fields", agriculture: "fields" }`                            |
-| sudoku                  | `{ scribe: "papyrus" }`                                                 |
-| everything else         | unset                                                                   |
+| Family                  | `faces`                                                                                 |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| constellation           | `{ sky: "default", trade: "causeway", water: "irrigation", agriculture: "irrigation" }` |
+| hidato                  | `{ water: "channel", agriculture: "channel", scribe: "scribe" }`                        |
+| star battle, twin stars | `{ sky: "default", water: "fields", agriculture: "fields" }`                            |
+| sudoku                  | `{ scribe: "papyrus" }`                                                                 |
+| eclipse                 | `{ sky: "default", light: "default" }`                                                  |
+| lightbeam               | `{ sky: "default", light: "default" }` — or drop the tags, see below                    |
+| balance scale           | `{ trade: "default" }` — or drop the tag, see below                                     |
+| everything else         | unset — their only tag is `puzzle`                                                      |
 
-Eclipse stays unset on purpose: its `night` pair is an ambience, not a role face, and the two axes do not
+Eclipse's `night` pair is deliberately absent: it is an ambience, not a role face, and the two axes do not
 share a field (§2).
 
-### Two invariants, and three things they catch today
+### Two invariants, and what they catch
 
-1. **Every key is one of the family's own `tags`.** A family cannot dress a place it is not eligible for.
-2. **Every value names a face in that family's own skin table.** Impossible to drift once the table is the
-   one the resolver reads.
+1. **Every key is one of the family's own `tags`, and every tag but `puzzle` is a key.** A family cannot
+   dress a place it is not eligible for, and cannot claim eligibility for a place it will not answer for.
+2. **Every value is `"default"` or names a face in that family's own skin table.** Impossible to drift once
+   that table is the one the resolver reads.
 
-The first one fails on three existing entries, which is the argument for having it:
+The first half of invariant 1 fails on three existing entries, which is the argument for having it:
 
 | Entry                                | Why it is dead                                                                                                                       |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -375,37 +399,57 @@ The first one fails on three existing entries, which is the argument for having 
 | constellation `light` → default      | Constellation is not in the `light` pool.                                                                                            |
 | star battle `light` → default        | Nor is star battle.                                                                                                                  |
 
-**Dropping the `→ default` entries is not cosmetic.** The resolver takes the first role it has a face for
-out of a list, and a role mapped to `default` wins that search and cancels the roles behind it. Nothing is
-harmed today because every room in the baked world carries a single-string role — but §11's prefer mode
-makes `["<role>", "puzzle"]` the normal authoring, and at that point any role mapped to `default` silently
-swallows the dress. Mapping a role to the default face is the same statement as leaving it out, so leaving
-it out is the only form that stays correct.
+The second half is the more valuable one, because it turns a silent assumption into a question someone has
+to answer. Three tags have no entry at all today and each is a real decision: does **lightbeam** read as
+`sky`, or is that tag borrowed from its `light` one? Does **balance scale** read as `trade` — a scale
+weighing goods is a market instrument, so probably yes — or should the tag go? A tag with no face declared
+is a family sitting in a pool it has never been asked to justify.
+
+### `"default"` must not win a role list
+
+The resolver takes the first role it has a face for out of a list, so an entry pointing at `"default"` wins
+that search and cancels the roles behind it: `["sky", "water"]` would draw constellation's star map rather
+than its waterworks. Nothing is harmed today, because every room in the baked world carries a
+single-string role — but §11's prefer mode makes `["<role>", "puzzle"]` the normal authoring, and lists
+stop being hypothetical.
+
+So the resolver prefers a **non-default** entry and falls back to the default one:
+
+```ts
+const byRole = roles.map(r => faces[r]).find(face => face && face !== "default" && SKINS[face])
+const base = named ?? (byRole ? SKINS[byRole] : SKINS.default)
+```
+
+A `"default"` entry then costs nothing at render time and carries its whole weight as data: it is the
+family saying _I am this place already_, which is what the report needs and what the resolver has no use
+for.
 
 ### What it generates
 
 `yarn dressing` (or a `--dressing` block on `yarn world-info`, which already walks every journey) prints
 what §2, §9 and §11 currently hand-keep:
 
-1. **Role pools** — per role: its pool from `tags`, which members have a face and which face, which
-   members would draw their default. §2's table, computed.
+1. **Role pools** — per role: its pool from `tags`, how many members read as the place, and how many have a
+   face that differs from their default. §2's table, computed, with the two columns kept apart.
 2. **Per journey** — sections, rooms, and `sections ÷ pool` for every role its pool could serve, against
    the 6.3 bar, with the restrict-or-prefer verdict. §11's table, computed.
-3. **The gaps** — roles whose pool has a member with no face, roles no family serves, and families with no
-   faces at all. §9's Rooms column and its ranking, computed; only the story briefs stay prose, because
-   what a journey's name asks for is not a thing a script can read.
+3. **The gaps, by severity** — roles no family serves at all, then roles every member serves with nothing
+   but its default. §9's ranking and Rooms column, computed; only the story briefs stay prose, because what
+   a journey's name asks for is not a thing a script can read.
 
-One spec asserts the two invariants, so a family added without a face for a role its tags claim fails the
-build rather than quietly drawing a default in a dressed pyramid.
+One spec asserts both invariants, so a family added with a tag it has not answered for fails the build
+rather than quietly widening a pool.
 
 ### Order to do it in
 
-1. Add `faces`, populate it from the four `ROLE_SKINS` tables, drop the three dead entries. Each family's
-   `skinFor` reads `meta.faces` instead of its local constant — behaviour identical except for the
-   list-role fix above, which the existing skin specs already cover per family.
-2. Add the two invariants as one spec.
-3. Add the report, and cut the hand-kept numbers out of §2, §9 and §11 in favour of running it.
-4. Only then the two things this unblocks: the generation guard (§10 point 2) and weighting a preferred
+1. Add `faces`, populate it from the four `ROLE_SKINS` tables plus the `"default"` entries the skin files
+   already describe in prose, and drop the three dead keys. Each family's `skinFor` reads `meta.faces`
+   instead of its local constant, with the non-default preference above.
+2. Answer the unclaimed tags — lightbeam's `sky` and `light`, balance scale's `trade` — by declaring a face
+   or dropping the tag.
+3. Add the two invariants as one spec.
+4. Add the report, and cut the hand-kept numbers out of §2, §9 and §11 in favour of running it.
+5. Only then the two things this unblocks: the generation guard (§10 point 2) and weighting a preferred
    role (§11).
 
 `themes` stays as it is. It is the puzzle lab's picker list and it holds ambience names as well as face
