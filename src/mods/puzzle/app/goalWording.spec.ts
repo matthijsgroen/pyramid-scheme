@@ -14,9 +14,12 @@ import { skinFor as sudokuSkinFor } from "./sudoku/skins"
  * Listing the families here rather than testing them one by one is deliberate: a per-family spec cannot
  * notice the family somebody adds next.
  */
+// `crocodile` is trap-owned (it spends health) but reaches the same screen through PuzzleFamilyShell,
+// so it is held to the same wording bar as the rest.
 const FAMILIES = [
   "balance",
   "constellation",
+  "crocodile",
   "eclipse",
   "futoshiki",
   "hidato",

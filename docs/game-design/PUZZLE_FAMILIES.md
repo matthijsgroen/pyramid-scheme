@@ -495,15 +495,23 @@ The same board with two stars to a group, so every count becomes a capacity argu
 
 Design doc: [puzzles/star-battle.md §11](puzzles/star-battle.md)
 
-### 4.26 Sudoku (six chambers) — _(built; not yet authored into the world)_
+### 4.26 Sudoku (six chambers)
 
 The catalogue's Latin-square slot (§4.8) entered from its own side: **the region IS the third group**, and every deduction that involves one is a deduction neither Futoshiki nor any other grid family here can teach. Authored at 6×6 with chambers two squares wide and three tall — three across, two down, so a chamber argues with three lines across it and two down.
 
 Two faces off one board, and the second is more than a palette: **what a value looks like is the skin's**. Figures cut into a chamber wall, or six hieroglyphs inked across a scribe's papyrus with the puzzle's own signs in red.
 
-Built, registered and playable on the bench, and deliberately not in the puzzle mod's family list yet — so no room serves one until it has been play-tested in a release. The curriculum row above is therefore the intent rather than the shipped allocation.
-
 Design doc: [puzzles/sudoku.md](puzzles/sudoku.md)
+
+### 4.27 Crocodile (the pit crossing)
+
+The tomb capstone, and the one family that is not a grid: rows of stones across a crocodile pit, each
+carrying a sum, with a crocodile in front of every row that wants one answer out of it — the biggest, or
+the smallest. Cross by feeding each one what it asks for. Any other stone is a bite and costs health,
+which is why the family is trap-owned. Drawn only for the `capstone` role, never in the general puzzle
+pool.
+
+Design doc: [puzzles/crocodile.md](puzzles/crocodile.md)
 
 ---
 

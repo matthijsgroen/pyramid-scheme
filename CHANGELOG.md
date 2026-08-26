@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Added the sudoku puzzle to the world.
+
+### Changed
+
+- Updated the crocodile puzzle to new standards.
+
 ## 0.39.0 - 2026-08-25
 
 ### Added

@@ -312,12 +312,15 @@ App: the tableau puzzle component + a Collection section. The mod folder is
 
 ### puzzle (`src/mods/puzzle`)
 
-Non-gating puzzle families: `sumplete` and `crocodile`. Domain metas + app
+Non-gating puzzle families: `sumplete`, `balance-scale`, `futoshiki`, `lightbeam`,
+`eclipse`, `constellation`, `star-battle`, `twin-stars`, `hidato`. Domain metas + app
 plugins.
 
 ### trap (`src/mods/trap`)
 
-The hazard mechanic. Descriptor: the `arithmetic-reflex` family, a `consumables`
+The hazard mechanic, and everything that spends health — including the `crocodile`
+capstone, a puzzle whose wrong step bites (crocodile.md §6). Descriptor: the
+`arithmetic-reflex` family, a `consumables`
 `ConsumableSpec` (density + rarity + expert+-only eligibility), and `currencyMeta`
 for `health`. App: the challenge component, `TrapFamilyShell` (the warning/attempt/
 disarm lifecycle), and `useTrapProgress` — the mod-owned health + consumable-pack

@@ -1,58 +1,165 @@
-# Crocodile Puzzle
+# Crocodile — the pit crossing
 
-The crocodile puzzle is the lock mechanic guarding Treasure Tombs. It is themed around **Sobek**, the Egyptian crocodile god of the Nile.
+Family doc. The screen bar every family must clear lives in
+`docs/instructions/puzzle-screens.md`; the catalogue entry lives in
+`docs/game-design/PUZZLE_FAMILIES.md`. This doc holds what is specific to the
+crocodile: its rules, why the crossing is shaped the way it is, how a board is
+generated, and what a wrong step costs.
 
-## Player Experience
+The crocodile is the **capstone** of a tomb floor — the last room on the main
+path, standing between the player and the floor's treasure
+(`pyramid-interior-design.md` §8). Its role is authored per floor with
+`nodes: [{ where: "last", encounter: "capstone" }]`.
 
-1. **Comparison phase** — The player is shown a series of pairs of math formulas and must tap the one with the **largest result** for the crocodile to eat. The crocodile faces the chosen side and snaps its mouth shut to confirm each answer.
-2. **Lock phase** — After all comparisons are resolved, the player is asked: _"What digit did the crocodile always/never eat?"_ They must identify a single digit (0–9) that consistently appeared (or never appeared) in the results the crocodile chose.
-3. **Reward** — A correct digit opens the chest and triggers the reward authored on that node: the tomb-key for that floor, which on claim unlocks its treasure (and any perk it grants) in the Collection. There is no per-run random treasure roll.
+## 1. Rules
 
-If the player doesn't remember, an "I don't know" button resets the comparison phase so they can replay it with fresh attention.
+A pit of water, spanned by **rows of stones**, each stone carrying a sum. The player starts on the near
+bank and crosses to the far one.
 
-## Puzzle Generation
+- In front of every row sits a **crocodile**, and it wants exactly one of the answers in that row:
+  the **biggest**, or the **smallest**. Which one it wants is written beside it (§5).
+- Give it what it wants and the player lands on that stone.
+- Step on any other stone and it **bites**: the player loses health (`takeTrapDamage()`) and is back on
+  the near bank. The board does not change and the room is not left.
+- Landing on the last row reaches the far bank. That is a solved board.
 
-Each run through a tomb generates a deterministic puzzle from `levelSeed = randomSeed + runNumber * 3210`.
+**Every crocodile asks about the row in front of it and nothing else.** It is a superlative, not a
+comparison with the stone underfoot: the player never has to remember what they were standing on, and
+never has to read a direction off a symbol. Working out the sums in one row answers it completely.
 
-A generated level is a set of comparisons plus a target digit (0–9) and an always/never rule. For each comparison, formula pairs are regenerated until the constraint is satisfied:
+Health is therefore the price of **bad arithmetic only**. A player who works the sums out never bleeds —
+the same contract the trap families have, which is why this family lives in the trap mod (§6).
 
-- `largest: "always"` — the digit appears in the **larger** result but not the smaller
-- `largest: "never"` — the digit appears in the **smaller** result but not the larger
+## 2. Why the crossing, and why the crocodiles disagree
 
-The number of comparisons is set by `journey.levelSettings.compareAmount`. If generation exceeds 50 iterations, `numberOfSymbols` is incrementally increased to make the constraint easier to satisfy. Failure after 200 iterations throws.
+The old crocodile showed two sums side by side and asked which was larger, then asked which digit had
+always been eaten. It failed on both halves:
 
-## Validation
+- The comparison could not be got wrong — the smaller side was simply not clickable, so tapping both
+  sides always worked and no arithmetic was needed.
+- The digit question was **recall, not reasoning**, and it was not answerable from the board, which by
+  then no longer showed the eaten sums. It could also have more than one correct answer while accepting
+  only one, so a player could be right, be told they were wrong, and lose the whole board for it.
 
-On lock submission (`handleLockSubmit` in `src/mods/puzzle/app/crocodile/plugin.tsx`), the entered digit is compared against `puzzle.requirements.digit`. A mismatch resets both the lock state and all comparison answers so the player must redo the full puzzle.
+A crossing fixes the first: every step is a commitment with a cost, so the sums have to be worked out
+before the finger moves. A row of three or four stones also asks for more arithmetic per decision than a
+pair did — the answer is the biggest of four, not the larger of two.
 
-## Reward flow
+**Not every crocodile wants the same thing.** A pit where all of them eat the biggest is answered by one
+habit picked up in the first row and never revisited; mixing in crocodiles that want the smallest means
+the mark beside each one has to be read before the sums are, which is the second thing this board
+teaches. The all-biggest pit is kept as the family's **debut** (P4, and the wordless first encounter of
+P5): junior tombs get it, and the mixing starts at expert.
 
-The crocodile is a `capstone` encounter family dispatched through the family registry like any other room (`src/mods/puzzle/app/crocodile/plugin.tsx`). On a correct digit it calls the generic `onSolved()` callback, which runs the standard reward flow (`RewardFlow` / `useApplyReward`) for whatever reward world-gen placed on that node — for a tomb floor, its authored tomb-key. The old per-run deterministic treasure selection (`tombTreasureSelection`, `randomSeed + 12345`) was retired when tomb treasures became tomb-key-owned (collection-and-detector-design.md §7.5).
+## 3. Generation — one gate, and it is not solvability
 
-## Journey Configuration
+A board is `columns × stonesPerColumn` sums plus one crocodile per row. **Every row has exactly one
+answer and every board is crossable**, so there is no route to search for, no dead end to avoid, and no
+uniqueness pass to run — the things the deduction families spend their generators on do not arise here.
 
-The following fields on a `TreasureTombJourney.levelSettings` control puzzle difficulty:
+What generation does have to work at is that the answer cannot be picked out **by eye**. A row where the
+biggest answer is 30 and the rest are single digits is read off the size of the numbers written on the
+stones, and nobody works a sum out to pick it.
 
-| Field                      | Effect                                                                                |
-| -------------------------- | ------------------------------------------------------------------------------------- |
-| `compareAmount`            | Number of comparison pairs shown                                                      |
-| `numberRange`              | Min/max values used in formula numbers                                                |
-| `operators`                | Operators used by the pyramid tableau formula generator for this tomb                 |
-| `compareOperators`         | Operators used in the crocodile comparison formulas — overrides `operators` when set  |
-| `maxMultiplyOperandResult` | Maximum value either operand of a `*` may evaluate to; prevents unmanageable products |
+1. Draw what each crocodile wants. Junior: all biggest. Expert and up: drawn per row, redrawing an
+   all-same pattern (that is the junior board wearing a harder sum).
+2. Draw each row's stones with `createVerifiedFormula`, which already owns the operator mix and the
+   `maxMultiplyOperandResult` cap, keeping every value in the row distinct — two stones worth the same
+   is one choice offered twice, and a tie for the answer.
+3. Keep the row only if its answer stands no more than `MAX_WINNING_MARGIN` clear of its nearest rival.
+   Retried per row rather than per board, so one awkward row never throws away three good ones; a row
+   that never clears it keeps its nearest miss, because a board a little too easy still plays while a
+   room with no board at all is a dead end in a tomb.
 
-`operators` and `compareOperators` are intentionally separate because the pyramid tableau generator and the compare puzzle have different complexity needs. For example, the master and wizard tombs include `/` in `operators` so their tableau formulas can be generated, but set `compareOperators: ["+", "-", "*"]` to keep the mental arithmetic in the comparison phase tractable.
+The family ships **no seed list** (`puzzle-screens.md` §6.1). Those exist for generators too expensive
+to run on a phone; this one draws a handful of formulas per row, so it builds live on every open and
+costs no build step.
 
-### Current settings per tier
+## 4. Tiers
 
-| Tomb    | `compareOperators` | `maxMultiplyOperandResult` | `compareAmount` | `numberRange` |
-| ------- | ------------------ | -------------------------- | --------------- | ------------- |
-| Starter | `["+"]`            | —                          | 0 (no puzzle)   | 1–5           |
-| Junior  | `["+", "-"]`       | —                          | 2               | 1–10          |
-| Expert  | `["+", "-", "*"]`  | 5                          | 3               | 1–10          |
-| Master  | `["+", "-", "*"]`  | 10                         | 4               | 1–10          |
-| Wizard  | `["+", "-", "*"]`  | 12                         | 5               | 1–15          |
+| Tier   | Rows × stones | Numbers a sum | Crocodiles       | Operators | Range | `maxMultiplyOperandResult` |
+| ------ | ------------- | ------------- | ---------------- | --------- | ----- | --------------------------- |
+| Junior | 3 × 2         | 3             | all biggest      | `+ -`     | 1–10  | —                           |
+| Expert | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–10  | 5                           |
+| Master | 4 × 3         | 3             | biggest/smallest | `+ - *`   | 1–12  | 8                           |
+| Wizard | 5 × 3         | 3             | biggest/smallest | `+ - *`   | 1–15  | 10                          |
 
-Division is excluded from all compare puzzles. The `maxMultiplyOperandResult` limits ensure that multiplication stays mentally manageable for the target age group (8–11): Expert keeps both sides of `*` ≤ 5 (e.g. `(2+3) * 4`), Master ≤ 10, and Wizard ≤ 12.
+One row is one decision, and one decision is `stonesPerColumn` sums to work out — so a junior pit asks for
+six sums across three choices and a wizard pit for fifteen across five. Division is excluded at every tier.
 
-A matching tableau entry (keyed by `tombJourneyId` + `runNumber` in `src/data/tableaus.ts`) can override `symbolCount` to control how many numbers appear per formula side.
+**Three stones a row is the ceiling, and three numbers a sum with it.** The nearest row is never scaled
+down, so it has to fit a 360px phone drawn flat; a fourth stone, or a fourth number in a sum, puts it over
+(`puzzle-screens.md` §1 — a board too wide means a smaller authored board, never a scroll container). What
+depth buys is room for more ROWS, and that is where the top tiers spend it.
+
+**Starter tombs have no crocodile.** `minTier: "junior"`, and no starter tomb authors a capstone — the
+old `compareAmount: 0` board, which showed a bare chest and no puzzle at all, is gone with it.
+
+## 5. Drawing the pit — depth, and a mark that means size
+
+The crossing runs **away from the camera**: the near bank at the bottom of the screen, the far bank at the
+top, and each row of stones drawn one step further into the pit.
+
+**The pit slides forward a row at a time, and the row being answered is always at the front.** Depth is
+measured from that row rather than from the bank: it stands full size on the stage, the rows still to
+come converge toward a vanishing point behind it (each step back covering half the remaining distance),
+and the row the player is standing on sits below it at the bottom edge, blurred — a foothold, not
+something to read. One step further back is off the frame entirely.
+
+**Both banks are stage elements like any row** — the near one is the row before the first, the far one
+the row after the last, and they take their places from the same depth maths. So a crossing opens with
+the character on the near bank, only its near edge showing, the first row of stones standing ahead of it
+and the far bank a line up in the distance. The first step slides the near bank out of view, brings the
+row just landed on down to the foothold, and pulls the next row to the front — and every later step is
+the same move, which is why there is no opening animation to write. The far bank comes closer with each
+of them and arrives at the front as the last row is answered, with the character standing on it.
+
+That is what makes the sums readable. A board that had to show five rows at once could only do it by
+drawing all five small; a board that moves shows one row at the size a child can read, and spends the
+depth on the rest. It is also why the tiers grow downwards into the pit rather than sideways across it
+(§4) — another row costs almost nothing on screen, another stone costs width there is none of.
+
+Each crocodile is drawn on the near side of the row it guards, with its mark beside it: **three bars, and
+the one it eats is lit** — tall bar for the biggest answer, short bar for the smallest. The crocodile
+whose turn it is sits at full strength and the rest are dimmed, so the one being answered is never in
+doubt.
+
+**An arrow was the first attempt at that mark, and it was wrong**: a triangle reads as a direction to
+walk in, which is the one thing it does not mean here. The rule is about size, so the mark shows size.
+No words, the same in every locale (P2).
+
+The board sits in `PuzzleFamilyShell` like every other family: name over the board, goal and rules under
+it, back and reset in the chrome.
+
+## 6. Why it lives in the trap mod
+
+Health is trap-owned (`healthCurrency.ts`, `useTrapProgress`), and a bite spends
+it. A puzzle-mod family reaching into trap state would couple two mods that are
+meant to toggle independently, so the crocodile moved to `src/mods/trap/` instead
+— `ownerMod: "trap"`.
+
+**It is not tagged `"trap"`, and must not be.** `placeEncounters.ts` turns any
+trap-tagged encounter into `section.sealed = true`, a structural field: tagging
+this family would reshape the corridors of every tomb floor that authors a
+capstone, which is exactly what the encounter-authoring stability tenet
+(`world-spec-stability.md`) forbids. Its tag stays `"capstone"`; the mod it
+belongs to is what gives it health, not the tag.
+
+It also does **not** use `TrapFamilyShell`. That shell owns the trap lifecycle —
+a risk warning, one attempt, and a `trapTool` that disables the encounter and
+walks past it. On a tomb capstone that consumable would buy the floor's treasure.
+The crocodile is a puzzle that bites, not a trap: no warning screen, no disable,
+and a bite returns the player to the near bank rather than ejecting them from the
+room.
+
+With the trap mod off there is no crocodile family, so a capstone node resolves
+through the ordinary family-absence pass-through and the floor stays walkable.
+
+## 7. Open questions
+
+- **Bottoming out.** Health floors at 0 and nothing happens there yet, so a player at 0 crosses by trial
+  and error for free. That is a gap in the health system rather than in this family, and it wants
+  answering wherever the answer for traps is given.
+- **The crocodile sprite is a side view**, so it sits beside its mark rather than being the mark. A
+  facing or top-down croc would let the open mouth do the job the three bars do now, which is the
+  stronger teaching image.
