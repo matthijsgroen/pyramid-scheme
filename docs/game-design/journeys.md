@@ -256,7 +256,7 @@ Read together:
 The contract in §2 is right; three things stop it holding by construction.
 
 1. **One vocabulary, and it is the role words.** A family should declare which faces serve which roles and
-   nothing else. The private names (`irrigation`, `channel`, `papyrus`) become internal ids the lab shows,
+   nothing else — specified as `FamilyMeta.faces` in §12. The private names (`irrigation`, `channel`, `papyrus`) become internal ids the lab shows,
    never words a site can author. Today a place name typed into `theme` is accepted, and each family's
    `SKINS[theme]` lookup makes it half work — dressing whoever happens to use that word and leaving its
    neighbours on their defaults. That silent half-success is the defect; aliasing names between families
@@ -328,3 +328,85 @@ number to check afterwards is what share of a journey's sections came out dresse
 
 Note `sky` would declare no dresser at all, since the star map is every sky family's default face (§2). So
 preferring `sky` is a no-op and the lighthouse has to restrict — which is what it wanted anyway.
+
+## 12. Spec — the `faces` declaration
+
+One field on `FamilyMeta`, and it is a **move** rather than a new thing to keep: the `ROLE_SKINS` table
+each family already keeps privately in `app/<family>/skins.ts` relocates to its `game/<family>/meta.ts`,
+where `src/worldGen` can read it.
+
+```ts
+// src/game/families/familyMeta.ts
+export type FamilyMeta = {
+  // …
+  /** Which of this family's own faces serves which role — the role vocabulary on the left, this
+   *  family's private face ids on the right. A role absent here is a role this family serves with its
+   *  DEFAULT face, which is not a dress: `sky` appears nowhere, because the star map is already the
+   *  default for every family that serves it. Read by the skin resolver at play time and by the
+   *  encounter allocator at generation, which is the point of it living out here. */
+  faces?: Record<string, string>
+}
+```
+
+What every family declares today, read off its existing `ROLE_SKINS`:
+
+| Family                  | `faces`                                                                 |
+| ----------------------- | ----------------------------------------------------------------------- |
+| constellation           | `{ trade: "causeway", water: "irrigation", agriculture: "irrigation" }` |
+| hidato                  | `{ water: "channel", agriculture: "channel", scribe: "scribe" }`        |
+| star battle, twin stars | `{ water: "fields", agriculture: "fields" }`                            |
+| sudoku                  | `{ scribe: "papyrus" }`                                                 |
+| everything else         | unset                                                                   |
+
+Eclipse stays unset on purpose: its `night` pair is an ambience, not a role face, and the two axes do not
+share a field (§2).
+
+### Two invariants, and three things they catch today
+
+1. **Every key is one of the family's own `tags`.** A family cannot dress a place it is not eligible for.
+2. **Every value names a face in that family's own skin table.** Impossible to drift once the table is the
+   one the resolver reads.
+
+The first one fails on three existing entries, which is the argument for having it:
+
+| Entry                                | Why it is dead                                                                                                                       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| constellation `logistics` → causeway | No family carries the `logistics` tag, so the pool is empty and this real face is unreachable — the §2 finding, caught mechanically. |
+| constellation `light` → default      | Constellation is not in the `light` pool.                                                                                            |
+| star battle `light` → default        | Nor is star battle.                                                                                                                  |
+
+**Dropping the `→ default` entries is not cosmetic.** The resolver takes the first role it has a face for
+out of a list, and a role mapped to `default` wins that search and cancels the roles behind it. Nothing is
+harmed today because every room in the baked world carries a single-string role — but §11's prefer mode
+makes `["<role>", "puzzle"]` the normal authoring, and at that point any role mapped to `default` silently
+swallows the dress. Mapping a role to the default face is the same statement as leaving it out, so leaving
+it out is the only form that stays correct.
+
+### What it generates
+
+`yarn dressing` (or a `--dressing` block on `yarn world-info`, which already walks every journey) prints
+what §2, §9 and §11 currently hand-keep:
+
+1. **Role pools** — per role: its pool from `tags`, which members have a face and which face, which
+   members would draw their default. §2's table, computed.
+2. **Per journey** — sections, rooms, and `sections ÷ pool` for every role its pool could serve, against
+   the 6.3 bar, with the restrict-or-prefer verdict. §11's table, computed.
+3. **The gaps** — roles whose pool has a member with no face, roles no family serves, and families with no
+   faces at all. §9's Rooms column and its ranking, computed; only the story briefs stay prose, because
+   what a journey's name asks for is not a thing a script can read.
+
+One spec asserts the two invariants, so a family added without a face for a role its tags claim fails the
+build rather than quietly drawing a default in a dressed pyramid.
+
+### Order to do it in
+
+1. Add `faces`, populate it from the four `ROLE_SKINS` tables, drop the three dead entries. Each family's
+   `skinFor` reads `meta.faces` instead of its local constant — behaviour identical except for the
+   list-role fix above, which the existing skin specs already cover per family.
+2. Add the two invariants as one spec.
+3. Add the report, and cut the hand-kept numbers out of §2, §9 and §11 in favour of running it.
+4. Only then the two things this unblocks: the generation guard (§10 point 2) and weighting a preferred
+   role (§11).
+
+`themes` stays as it is. It is the puzzle lab's picker list and it holds ambience names as well as face
+ids, so it is not derivable from `faces` alone — worth collapsing later, not on the way to this.
