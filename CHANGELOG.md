@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Rooms across the world now serve sudoku boards: six chambers, in figures or in scribe's signs.
+- Added the sudoku puzzle to the world.
 
 ### Changed
 
