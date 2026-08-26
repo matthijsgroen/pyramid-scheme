@@ -13,9 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The crocodile guarding a tomb treasure is a pit to cross: every crocodile along the way wants one answer
-  out of the row of stones in front of it — the biggest, or the smallest — and stepping on any other stone
-  costs a heart. The old "which digit did the crocodile eat" chest is gone.
+- Updated the crocodile puzzle to new standards.
 
 ## 0.39.0 - 2026-08-25
 
