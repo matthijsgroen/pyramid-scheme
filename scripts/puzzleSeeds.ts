@@ -3,9 +3,16 @@
  * Finds and verifies the seeds src/data/puzzleSeeds.ts ships — boards proven offline to build on
  * their first attempt, so play time skips the search. See docs/instructions/puzzle-screens.md §6.1.
  *
- * Run: yarn generate-seeds [--family=<id>] [--cap=<n>] [--tries=<n>] [--parallel=<n>]
+ * **Only what is missing is searched for.** A bucket that already holds its floor is left exactly as
+ * it shipped, so adding a puzzle family costs the search for THAT family's buckets and re-authoring a
+ * journey costs the buckets it moved rooms into — never the whole artifact, and never a diff that
+ * silently deals every other family's rooms a different board.
+ *
+ * Run: yarn generate-seeds [--rebuild] [--family=<id>] [--cap=<n>] [--tries=<n>] [--parallel=<n>]
  *      yarn seeds-info
  *
+ *   --rebuild   re-search every bucket, including the ones already covered — for when the generator
+ *               itself changed and what shipped was proven under code that no longer exists
  *   --family    only these families (comma-separated); other buckets keep the seeds they have
  *   --cap       most seeds to keep per bucket, so one hot configuration cannot dominate the artifact
  *               (a bucket otherwise aims at SURPLUS × the rooms that draw from it, never at exactly them)
@@ -49,6 +56,7 @@ const THREADS = Math.max(1, Math.min(number("parallel", cpus().length - 2), cpus
 // holding the last long task while the others idle, large enough that the messaging is noise.
 const CHUNK = 500
 const only = flag("family")?.split(",")
+const rebuild = argv.includes("--rebuild")
 
 const allDemands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META)
 const demands = allDemands.filter(demand => !only || only.includes(demand.familyId))
@@ -146,7 +154,16 @@ const runPool = async (buckets: Bucket[]) => {
 }
 
 if (command === "generate") {
-  const buckets: Bucket[] = demands.map(demand => ({
+  // A bucket at or above its floor covers the rooms that draw from it, so there is nothing to search
+  // for: it keeps the seeds it shipped with. That is what makes adding a family cheap, and it is also
+  // what keeps its diff honest — the boards every other room serves are the boards they served before.
+  const covered = (demand: ConfigDemand) => (puzzleSeeds[demand.hash]?.length ?? 0) >= seedFloor(demand)
+  const outstanding = rebuild ? demands : demands.filter(demand => !covered(demand))
+  const skipped = demands.length - outstanding.length
+  if (skipped) console.log(`${skipped} bucket(s) already covered, left as they are — --rebuild re-searches them\n`)
+  if (!outstanding.length) console.log("Nothing to search for: every bucket the world asks for is covered.")
+
+  const buckets: Bucket[] = outstanding.map(demand => ({
     demand,
     target: targetFor(demand),
     byChunk: new Map(),

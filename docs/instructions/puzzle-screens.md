@@ -351,9 +351,14 @@ A miss always falls through to live generation. That is not a failure path: it i
 tuned still yields boards with no build step in the way, and how a lab `variant` (which changes the
 options, and which no room is ever authored with) is guaranteed a freshly searched board.
 
-`yarn generate-seeds` fills every bucket the baked world asks for, targeting **half again** the rooms
-that draw from it (`seedTarget`, capped at `SEED_CAP`). The surplus is the point: a room picks by
-`seed % seeds.length` off an arbitrary hash, so a list sized to its demand exactly repeats a board for
+`yarn generate-seeds` fills **the buckets that are not covered yet**, targeting **half again** the rooms
+that draw from it (`seedTarget`, capped at `SEED_CAP`). A bucket already holding its floor keeps the
+seeds it shipped with, so adding a puzzle family costs the search for that family's tiers and nothing
+else — seconds rather than the ten minutes a whole artifact takes, and a diff that does not quietly deal
+every other family's rooms a different board. `--rebuild` re-searches everything, for when the generator
+itself changed and what shipped was proven under code that no longer exists.
+
+The surplus is the point: a room picks by `seed % seeds.length` off an arbitrary hash, so a list sized to its demand exactly repeats a board for
 certain while leaving another unused. `yarn seeds-info` reports coverage and what each tier's boards
 demand — the honest difficulty signal §5 names, which nothing else measures per board.
 `src/mods/puzzleSeeds.spec.ts` fails the build when a bucket is missing, orphaned, thinner than its
