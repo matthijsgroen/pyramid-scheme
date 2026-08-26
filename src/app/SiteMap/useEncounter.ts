@@ -70,6 +70,7 @@ export const useEncounter = ({
       reward: cell?.type === "room" ? cell.reward : undefined,
       stock: cell?.type === "room" ? cell.stock : undefined,
       pathIndex: cell?.type === "room" ? cell.pathIndex : undefined,
+      boardIndex: cell?.type === "room" ? cell.boardIndex : undefined,
       encounterArgs: cell?.type === "room" ? cell.encounterArgs : undefined,
       // The skin this room was authored to wear (docs/instructions/puzzle-screens.md §2). Core carries the
       // name and reads nothing into it; unset means every family draws its default.

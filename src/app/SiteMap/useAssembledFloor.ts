@@ -4,6 +4,7 @@ import { completeCell } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
+import { boardIndexesForFloor } from "./boardIndexes"
 
 // A node's own key requirements, resolved from whichever family declares them (a tableau's
 // hieroglyphs, etc.) — the same dispatch world-gen uses, but off the app-side family registry so
@@ -135,7 +136,10 @@ export const useAssembledFloor = (
   exploredSections: Record<string, string[]>,
   position: string | null | undefined,
   detectionLevel = 0,
-  revealedSections?: ReadonlySet<string>
+  revealedSections?: ReadonlySet<string>,
+  // Which level of the journey this floor belongs to, so its rooms can be dealt their boards
+  // (src/game/seeds/boardIndex.ts). Unset outside the baked world — stories, specs, the builder.
+  levelIndex?: number
 ): {
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
@@ -147,9 +151,12 @@ export const useAssembledFloor = (
     const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
       resolveKeyRequirements,
       floorRef: { journeyId, floorIndex: currentFloor },
+      ...(levelIndex !== undefined
+        ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }
+        : {}),
     })
     return result.success ? result.grid : null
-  }, [journeyId, floorConfig, seed, currentFloor])
+  }, [journeyId, floorConfig, seed, currentFloor, levelIndex])
 
   const effectiveExplored = useMemo(() => {
     if (!baseGrid) return exploredSections

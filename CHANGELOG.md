@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated the crocodile puzzle to new standards.
 
+### Fixed
+
+- No two rooms in the world hand out the same puzzle any more. Rooms used to pick a board at random from
+  their difficulty's supply, so the same one turned up in several rooms of a journey; each room is now
+  dealt a board of its own.
+
 ## 0.39.0 - 2026-08-25
 
 ### Added

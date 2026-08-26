@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
-import { generatedWorldConfigs } from "@/data/generatedWorld"
+import { worldLevelSites } from "@/data/worldLevels"
 import { enumerateConfigs, seedFloor } from "@/game/seeds/enumerateConfigs"
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
@@ -9,7 +9,7 @@ import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 // time falls back to generating live — so this does not protect correctness. It protects the reason
 // the lists exist: a dial moved, the key moved with it, and the top tier is quietly back to searching
 // on the player's phone.
-const demands = enumerateConfigs(generatedWorldConfigs, ALL_FAMILY_META)
+const demands = enumerateConfigs(worldLevelSites, ALL_FAMILY_META)
 
 describe("shipped puzzle seeds", () => {
   it("covers every configuration the baked world asks a seedable family for", () => {
