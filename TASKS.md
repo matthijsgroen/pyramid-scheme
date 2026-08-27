@@ -222,16 +222,21 @@ myth in the catalogue, and it is the fourth member the pool needs.
      against a 6-member pool, so give the face a distinct symbol for all six — and make the mapping
      **total**, returning the glyph itself for anything it has not heard of.
    - The generator's pool is `["🪲", "🏺", "🐍", "🦅", "🐈", "🪶"]` — emoji, already Egyptian, already holding
-     a feather. **Prefer real hieroglyphs for the judgement set.** The game ships a subset hieroglyph font
-     and the subset is built by scanning `src/` for code points in the hieroglyph block
-     (`scripts/hieroglyphUsage.ts`), so writing a sign into `skins.ts` is the whole of adding it — there is
-     no list to update, 332 code points are already in the subset, and
-     `src/ui/tokens/hieroglyphFont.spec.ts` guards the coverage.
+     a feather. **Prefer real hieroglyphs for the judgement set.** The game embeds its own subset
+     hieroglyph font, so any sign in the block renders on any device; the subset is built by scanning
+     `src/` for code points in that block (`scripts/hieroglyphUsage.ts`), which means writing a sign into
+     `skins.ts` is the whole of adding it. There is no list to keep.
+   - **Run `yarn generate-font` after adding a sign.** The embedded subset is a committed artifact, so a
+     new sign is missing from it until that runs — and `src/ui/tokens/hieroglyphFont.spec.ts` fails with
+     that exact instruction if you forget. It guards both directions, so also: **do not leave candidate
+     signs in comments you did not use.** The sweep is textual, so a sign in a comment ships too, and the
+     same spec fails on orphans because this font is precached for offline play and every sign is bytes
+     every player downloads.
    - **The feather is already paid for**: `𓆄` U+13184 is one of sudoku's six signs in
      `src/mods/puzzle/app/sudoku/signs.ts`, which is also the file to copy for how a sign set is declared
-     and commented. Only the heart is new — take Gardiner **F34** (_ib_, the heart) and **verify the code
-     point before writing it**; a wrong one renders as a box, and the font spec will not catch a sign that
-     is simply the wrong sign.
+     and commented. Only the heart is new — take Gardiner **F34** (_ib_, the heart) and verify the code
+     point before writing it. The font makes a missing glyph impossible; what it cannot catch is a sign
+     that renders perfectly and is the wrong sign.
    - **Do NOT edit `GLYPH_POOL` in `src/mods/puzzle/game/balanceScale/generateBalance.ts`.** This family is
      seedable, so changing what the generator emits changes generated boards for a purely visual reason.
      The remap belongs in the skin.
