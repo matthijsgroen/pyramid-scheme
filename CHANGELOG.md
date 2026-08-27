@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The walls between star puzzle areas sit on the grid lines again, and the board's outer edge is drawn as
+  thick as the walls inside it.
+
 ## 0.40.0 - 2026-08-26
 
 ### Added
