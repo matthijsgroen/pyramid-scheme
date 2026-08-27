@@ -851,5 +851,30 @@
       "biggest": "Deze krokodil wil het grootste antwoord. Dat is {{value}}.",
       "smallest": "Deze krokodil wil het kleinste antwoord. Dat is {{value}}."
     }
+  },
+  "canisters": {
+    "name": {
+      "default": "De Kruiken"
+    },
+    "goal": {
+      "default": "Meet precies {{target}} af en zeg welke kruik het heeft."
+    },
+    "rules": {
+      "default": {
+        "moves": "Vul een kruik uit de rivier, giet hem leeg op de grond, of tik eerst op de ene en dan op de andere om over te gieten.",
+        "hidden": "Op elke kruik staat hoeveel er vol in gaat. Er staat nooit op hoeveel erin zit — dat reken je zelf uit.",
+        "claim": "Heb je de hoeveelheid? Tik dan op “deze”. De verkeerde kruik aanwijzen kost een zet.",
+        "legs": "Daarna de volgende hoeveelheid, gemeten vanuit wat er nog in de kruiken staat."
+      }
+    },
+    "hint": {
+      "forced": "Maar één zet houdt hier vast wat je hebt afgemeten: de andere gooien het weg of brengen je terug waar je was.",
+      "choice": "Twee manieren om te beginnen, en maar één past binnen je zetten. Reken uit welke voor je giet.",
+      "overBudget": "Je zetten zijn op. Begin opnieuw en open andersom."
+    },
+    "movesLeft_one": "nog {{count}} zet",
+    "movesLeft_other": "nog {{count}} zetten",
+    "legs": "{{done}} van {{total}} afgemeten",
+    "undo": "Ongedaan"
   }
 }

@@ -12,6 +12,8 @@ type Props = {
   claimed?: { canister: 0 | 1; right: boolean }
   /** The move the hint names, lit where it stands. */
   lit?: Move
+  /** The completion run is under way, so what is in the vessels catches the light. */
+  celebrating?: boolean
   skin: CanistersSkin
   onHold: (canister: 0 | 1) => void
   onPour: (to: 0 | 1) => void
@@ -39,13 +41,14 @@ const Vessel: FC<{
   volume: number
   held: boolean
   lit: boolean
+  celebrating: boolean
   skin: CanistersSkin
   onTap: () => void
-}> = ({ capacity, volume, held, lit, skin, onTap }) => (
+}> = ({ capacity, volume, held, lit, celebrating, skin, onTap }) => (
   <button
     onClick={onTap}
     className={clsx(
-      "relative flex h-40 w-24 flex-col justify-end overflow-hidden rounded-b-xl rounded-t-md border-2 transition-colors",
+      "relative flex h-40 w-24 flex-col justify-end overflow-hidden rounded-t-md rounded-b-xl border-2 transition-colors",
       held ? skin.held : skin.vessel,
       lit && skin.lit
     )}
@@ -54,7 +57,7 @@ const Vessel: FC<{
     aria-label={`canister of ${capacity}`}
   >
     <div
-      className={clsx("w-full transition-[height] duration-300", skin.liquid)}
+      className={clsx("w-full transition-[height] duration-300", celebrating ? skin.measured : skin.liquid)}
       style={{ height: `${(volume / capacity) * 100}%` }}
     />
     <span className="absolute inset-x-0 top-1 text-center text-lg font-semibold opacity-80">{capacity}</span>
@@ -67,6 +70,7 @@ export const CanistersBoard: FC<Props> = ({
   held,
   claimed,
   lit,
+  celebrating,
   skin,
   onHold,
   onPour,
@@ -83,6 +87,7 @@ export const CanistersBoard: FC<Props> = ({
             volume={volumes[canister]}
             held={held === canister}
             lit={litFor(lit, canister)}
+            celebrating={celebrating === true}
             skin={skin}
             // A held canister poured into the other one; an unheld one is picked up. One gesture, two
             // meanings, and which it is is always visible from the ring.

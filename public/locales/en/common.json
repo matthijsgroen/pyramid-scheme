@@ -858,5 +858,30 @@
       "biggest": "This crocodile wants the biggest answer. That is {{value}}.",
       "smallest": "This crocodile wants the smallest answer. That is {{value}}."
     }
+  },
+  "canisters": {
+    "name": {
+      "default": "The Canisters"
+    },
+    "goal": {
+      "default": "Measure out exactly {{target}}, and say which canister holds it."
+    },
+    "rules": {
+      "default": {
+        "moves": "Fill a canister from the river, empty it onto the ground, or tap one and then the other to pour between them.",
+        "hidden": "Each canister says how much it holds when full. It never says how much is in it — that part is yours to work out.",
+        "claim": "When you have the amount, tap “this one”. Claiming the wrong canister costs a move.",
+        "legs": "Then the next amount, measured from whatever the canisters are left holding."
+      }
+    },
+    "hint": {
+      "forced": "Only one move here keeps what you have measured: the others either throw it away or take you back where you were.",
+      "choice": "Two openings, and only one of them fits the moves you have. Work out which before you pour.",
+      "overBudget": "There are no moves left. Reset and open the other way."
+    },
+    "movesLeft_one": "{{count}} move left",
+    "movesLeft_other": "{{count}} moves left",
+    "legs": "measured {{done}} of {{total}}",
+    "undo": "Undo"
   }
 }

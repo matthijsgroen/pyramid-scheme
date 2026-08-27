@@ -1,0 +1,132 @@
+import { useMemo, useState, type FC } from "react"
+import { useTranslation } from "react-i18next"
+import type { Difficulty } from "@/data/difficultyLevels"
+import { useCelebration } from "@/mods/core/app/useCelebration"
+import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
+import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
+import type { CanistersPuzzle as CanistersPuzzleData } from "@/mods/puzzle/game/canisters/canisters"
+import {
+  claimCanister,
+  createCanistersState,
+  holdCanister,
+  isCanistersSolved,
+  movesLeft,
+  pourInto,
+  tapCanister,
+  undoPour,
+} from "@/mods/puzzle/game/canisters/canistersState"
+import { CanistersBoard } from "./CanistersBoard"
+import { CanistersRules } from "./CanistersRules"
+import { buildCanistersHint } from "./canistersHint"
+import { skinFor } from "./skins"
+
+type Props = {
+  puzzle: CanistersPuzzleData
+  difficulty?: Difficulty
+  /** The pool this room was allocated for — which place it is (`puzzle-screens.md` §2). */
+  role?: string | string[]
+  /** The hour its site authored. */
+  theme?: string
+  onSolved: () => void
+  onCancel: () => void
+}
+
+export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, onSolved, onCancel }) => {
+  const { t } = useTranslation("common")
+  const skin = skinFor(role, theme)
+  const [state, setState] = useState(createCanistersState)
+
+  const solved = isCanistersSolved(puzzle, state)
+  const left = movesLeft(puzzle, state)
+
+  /**
+   * The states this line has already stood in, which is half of what makes a move useless (§4.3). Kept
+   * here rather than in the board state because it is a fact about the hint, not about the puzzle.
+   */
+  const seen = useMemo(() => {
+    const keys = new Set<string>()
+    const volumes: [number, number] = [0, 0]
+    keys.add("0,0")
+    for (const move of state.poured) {
+      if (move.kind === "fill") volumes[move.canister] = puzzle.capacities[move.canister]
+      else if (move.kind === "empty") volumes[move.canister] = 0
+      else {
+        const amount = Math.min(volumes[move.from], puzzle.capacities[move.to] - volumes[move.to])
+        volumes[move.from] -= amount
+        volumes[move.to] += amount
+      }
+      keys.add(`${volumes[0]},${volumes[1]}`)
+    }
+    return keys
+  }, [state.poured, puzzle.capacities])
+
+  const hint = useMemo(() => buildCanistersHint(puzzle, state.volumes, seen, left), [puzzle, state.volumes, seen, left])
+
+  // One tick a leg: the volumes the player measured light in the order they were claimed, which is the
+  // board saying back what was done rather than a generic flourish (puzzle-screens.md §3).
+  const celebration = useCelebration(solved, puzzle.targets.length)
+
+  return (
+    <PuzzleFamilyShell
+      onSolved={onSolved}
+      onCancel={onCancel}
+      solved={celebration.done}
+      onReset={() => setState(createCanistersState())}
+      hint={t(`canisters.hint.${hint.key}`)}
+      idleMs={hintIdleDelay(difficulty)}
+      title={t(`canisters.name.${skin.name}`)}
+      goal={t(`canisters.goal.${skin.name}`, {
+        target: puzzle.targets[Math.min(state.measured, puzzle.targets.length - 1)],
+      })}
+      rules={<CanistersRules skin={skin.name} legs={puzzle.targets.length} />}
+    >
+      {({ reportInput, hintVisible }) => (
+        <div className="flex flex-col items-center gap-3">
+          <CanistersBoard
+            capacities={puzzle.capacities}
+            volumes={state.volumes}
+            held={state.held}
+            claimed={state.claimed}
+            celebrating={celebration.progress > 0}
+            lit={hintVisible ? hint.move : undefined}
+            skin={skin}
+            onHold={canister => {
+              reportInput()
+              setState(holdCanister(state, canister))
+            }}
+            onPour={to => {
+              reportInput()
+              setState(pourInto(state, puzzle, to))
+            }}
+            onFill={canister => {
+              reportInput()
+              setState(tapCanister(state, puzzle, canister, "fill"))
+            }}
+            onEmpty={canister => {
+              reportInput()
+              setState(tapCanister(state, puzzle, canister, "empty"))
+            }}
+            onClaim={canister => {
+              reportInput()
+              setState(claimCanister(state, puzzle, canister))
+            }}
+          />
+          {/* The budget IS the puzzle (§2), so it is on screen rather than in a menu. */}
+          <div className="flex items-center gap-4 text-sm">
+            <span className={left <= 0 ? "text-rose-400" : undefined}>
+              {t("canisters.movesLeft", { count: Math.max(left, 0) })}
+            </span>
+            {puzzle.targets.length > 1 && (
+              <span className="opacity-70">
+                {t("canisters.legs", { done: state.measured, total: puzzle.targets.length })}
+              </span>
+            )}
+            <button onClick={() => setState(undoPour(state))} className="underline underline-offset-2">
+              {t("canisters.undo")}
+            </button>
+          </div>
+        </div>
+      )}
+    </PuzzleFamilyShell>
+  )
+}
