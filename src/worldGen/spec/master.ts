@@ -126,6 +126,24 @@ export const masterRules: Rule[] = [
   // for a dress without asking for the puzzles that wear it is how a trade pyramid ends up looking
   // like a waterworks.
 
+  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md §9).
+  // Four families have a funerary face — balance scale weighs a heart against the feather, constellation
+  // paints a ceiling, hidato opens sealed chambers, and sudoku's default already IS a wall of cut signs.
+  //
+  // **`puzzle` rides along on purpose, and it is what makes this safe.** A role list is a union, so the pool
+  // stays every family and the draw does not change at all — what changes is that the four which can dress
+  // now do. Restricting to the four instead would be 12 to 13 turns each across their 47 to 53 sections, far past the 6.3 repeats-per-family the
+  // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
+  // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
+  // weighting a preferred role is designed and unbuilt (§11).
+  //
+  // **The Book of the Dead asks for the narrow place first.** Its story names the judgement, and only the
+  // balance scale draws that scene — so `judgement` leads and the scale turns up wearing the scales, while
+  // every other family in the list wears the wider tomb. Same shape as junior_4's `["light", "sky"]`.
+  journey("master_2").pyramid("1-5", { encounter: ["judgement", "funerary", "puzzle"] }),
+  journey("master_3").pyramid("1-5", { encounter: ["funerary", "puzzle"] }),
+  journey("master_4").pyramid("1-5", { encounter: ["funerary", "puzzle"] }),
+
   journey("master_1").pyramid(1, { sideSections: [holdChest(0), holdChest(2), holdChestA(0), starterEcho()] }),
   journey("master_1").pyramid(2, { sideSections: [holdChest(1), expertEcho()] }),
   journey("master_2").pyramid(1, { sideSections: [holdChest(3), holdChest(0)] }),

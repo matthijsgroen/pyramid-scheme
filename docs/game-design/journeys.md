@@ -48,6 +48,8 @@ map of what is missing:
 | `scribe`                | hidato, sudoku                                             | 2 of 2            | 2 of 2                      |
 | `sky`                   | constellation, eclipse, lightbeam, star battle, twin stars | 5 of 5            | 0 of 5                      |
 | `light`                 | eclipse, lightbeam                                         | 2 of 2            | 0 of 2                      |
+| `funerary`              | balance scale, constellation, hidato, sudoku               | 4 of 4            | 3 of 4                      |
+| `judgement`             | balance scale                                              | 1 of 1            | 1 of 1                      |
 | `trade`                 | balance scale, constellation                               | 2 of 2            | 1 of 2                      |
 | `logistics`             | —                                                          | —                 | —                           |
 
@@ -252,14 +254,14 @@ different** — the journey is carryable today and authoring it changes nothing 
 face. Ranked by the rooms it would reach, since one built for a cluster pays for itself across a tier and
 one built for a single pyramid does not.
 
-| Gap                                      | Reaches                                                                | Rooms | What it takes                                                                                                                                       |
-| ---------------------------------------- | ---------------------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **A `funerary` role**                    | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Four built families already fit it — a tag and a face each, no new generator. The biggest cluster in the game and the cheapest to reach. See below. |
-| **A cosmos role**                        | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.                             |
-| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.                   |
-| **A face for tableau**                   | all nine tombs                                                         | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                                       |
-| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                                | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                                         |
-| **`light` faces for eclipse, lightbeam** | `junior_4`                                                             | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs.                |
+| Gap                                      | Reaches                                                                | Rooms | What it takes                                                                                                                        |
+| ---------------------------------------- | ---------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **A `funerary` role** — **BUILT**        | `expert_1`, `master_2`, `master_3`, `master_4`, `wizard_1`, `wizard_3` | 781   | Done (§13): four faces, six journeys authored, no new generator. What is left is the SHARE — see §11's prefer mode.                  |
+| **A cosmos role**                        | `wizard_4`                                                             | 207   | The one story with no Egyptian hook at all: the void beyond the sky. A new family, or the largest new face in the game.              |
+| **A warm-light ambience**                | `starter_3`, `junior_3`, `expert_1`, `master_4`                        | 264   | Overlays per face rather than a new skin per family. Four briefs — lamplight twice, torchlight, moonlight — asking for one thing.    |
+| **A face for tableau**                   | all nine tombs                                                         | 218   | No role work at all: tombs have no skin system, so this is a first face rather than a second.                                        |
+| **A `trade` face for balance scale**     | `starter_2`, `expert_4`                                                | 120   | Both journeys are already authorable — a scale reads as a market. One face is what makes authoring it show.                          |
+| **`light` faces for eclipse, lightbeam** | `junior_4`                                                             | 47    | Same shape: both families read as light sources already, neither has a face. Lightbeam has no skin system at all, so it is two jobs. |
 
 Read together:
 
@@ -515,3 +517,34 @@ rather than quietly widening a pool.
 
 `themes` stays as it is. It is the puzzle lab's picker list and it holds ambience names as well as face
 ids, so it is not derivable from `faces` alone — worth collapsing later, not on the way to this.
+
+## 13. What the funerary cluster came out as
+
+Built 2026-08-27. Four faces and six authored journeys, and no new puzzle: `PUZZLE_FAMILIES.md` §11.1 had
+read three of these families as tomb material already, and the fourth is titled "weighing of the heart".
+
+| Family        | Its funerary face                                                     |
+| ------------- | --------------------------------------------------------------------- |
+| balance scale | the weighing itself — the unknowns become the heart and the feather   |
+| constellation | a painted ceiling, stars in pigment on flat plaster rather than depth |
+| hidato        | a comb of sealed chambers, opened as the passage reaches them         |
+| sudoku        | its default, which was always signs cut into a chamber wall           |
+
+**Every one of the six is authored in prefer mode**, because every one of them is past the bar: four
+families over 37 to 63 sections is 9 to 16 turns each, against the 6.3 the least varied journey already
+ships (§11). So they author `["funerary", "puzzle"]` — a union, so the pool stays every family and **the
+draw does not change at all**. Regenerating moved `role` fields and nothing else; every journey's room
+count is what it was.
+
+`master_2` and `wizard_3` lead with the narrow word, `["judgement", "funerary", "puzzle"]`. Their stories
+name the judgement and only the balance scale draws that scene, so the scale turns up wearing the scales
+while its neighbours wear the wider tomb — `junior_4`'s `["light", "sky"]` one pool size up.
+
+**What is left is the share, not the faces.** Unweighted, four families in ten means roughly two rooms in
+five come out dressed and the rest draw their defaults. Weighting a preferred role is designed and unbuilt
+(§11), and `FamilyMeta.faces` (§12) is what it waits on — the allocator cannot prefer what it cannot see.
+
+One wrinkle, noted because it looks alarming in a diff and is not: authoring an encounter on a pyramid also
+stamps one onto its chainless sections, the `pathPuzzles: 0` treasure ends. Those fields are inert — the
+assembler builds puzzle rooms in a loop over `pathPuzzles`, so a chainless section makes none and its end
+stays a treasure chest. `junior_4` has carried 13 of them since it was authored.

@@ -134,6 +134,22 @@ export const wizardRules: Rule[] = [
     sideSections: [holdChestC(0), holdChestC(1)],
     wardWings: [starterWing()], // the full-circle starter-echo (see helper above)
   }),
+  // **The tomb journeys ask for the place their story is already set in** (docs/game-design/journeys.md §9).
+  // Four families have a funerary face — balance scale weighs a heart against the feather, constellation
+  // paints a ceiling, hidato opens sealed chambers, and sudoku's default already IS a wall of cut signs.
+  //
+  // **`puzzle` rides along on purpose, and it is what makes this safe.** A role list is a union, so the pool
+  // stays every family and the draw does not change at all — what changes is that the four which can dress
+  // now do. Restricting to the four instead would be 10 to 16 turns each across their 41 to 63 sections, far past the 6.3 repeats-per-family the
+  // least varied journey in the game already ships (§11), so a tomb would be the same four boards over and
+  // over. The share that comes out dressed is therefore the pool's natural rate rather than a chosen one;
+  // weighting a preferred role is designed and unbuilt (§11).
+  //
+  // **The Chamber of Ma'at is a judgement too**, and its brief names the scales and the feather of truth
+  // outright — the largest single journey any of this reaches, at 207 rooms.
+  journey("wizard_1").pyramid("1-4", { encounter: ["funerary", "puzzle"] }),
+  journey("wizard_3").pyramid("1-6", { encounter: ["judgement", "funerary", "puzzle"] }),
+
   journey("wizard_2").pyramid(1, { sideSections: [holdChestC(0), holdChestC(2)] }),
   journey("wizard_2").pyramid(3, { sideSections: [holdChestB(0), holdChestC(0), holdChestC(0), expertEcho()] }),
   journey("wizard_3").pyramid(1, { sideSections: [holdChestC(1), holdChestC(0), holdChestC(0)] }),
