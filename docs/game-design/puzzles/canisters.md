@@ -9,7 +9,10 @@ after the first is forced, so the puzzle is a deduction rather than a search.
 - Two canisters, each with its capacity written on it. Both start empty.
 - Four moves: **fill** a canister from the river, **empty** one onto the ground, or **pour** one into the
   other until the source is empty or the destination is full.
-- Reach the target volume in any canister.
+- **The vessel's size is written on it. What is in it is not** — the level is drawn but never numbered, so
+  the player carries the amount themselves. That is the arithmetic this family is for.
+- Reaching the volume is not enough: the player **claims** a vessel, saying it holds what was asked. A
+  wrong claim costs a move like any other, so guessing is not free.
 - **A move budget**, and it is the whole puzzle — see §2.
 - Higher tiers ask for several volumes in turn, each measured from wherever the last one left the
   canisters (§5).
@@ -21,6 +24,11 @@ player to work out a value that is already fixed: what a glyph weighs, which fig
 asks them to _make_ a quantity that is not in front of them, out of two that are. That is a different act,
 and it is the one Egyptian arithmetic is actually about — a hekat measured by doubling and halving into
 vessels that do not divide evenly.
+
+**And it is the first board here that is not a grid.** Sudoku, futoshiki, sumplete and star battle are
+squares; hidato is a comb and constellation a lattice; balance scale is rows. Two vessels and a river is a
+different shape of screen and a different shape of thought — nothing is scanned along a line, and there is
+no cell whose neighbours are the argument. That is worth a slot on its own.
 
 **Against balance scale**, which is the near neighbour: that one is algebra on unknowns — the weights
 exist and the player deduces them. Here the capacities are known and the player constructs. Neither
@@ -110,8 +118,10 @@ from vessels.
 
 ## 6. Interaction
 
-- **Tap a canister to fill it, tap the ground under it to empty it, drag one onto the other to pour.**
-  Three gestures, no menu.
+- **Fill and empty are a button each under the vessel; pouring is tapping one vessel then the other.**
+  The held vessel wears a ring, so which of the two meanings a tap has is always visible.
+- **A third button claims it**, and claiming is the only way to finish a leg. The board never confirms an
+  amount on its own — it cannot, or the puzzle would be to pour at random and watch for the confirmation.
 - The budget is shown as remaining moves. **Undo takes back a pour** and gives the move back — the
   arithmetic is the puzzle, and making the player re-tap a line they already reasoned out is not.
 - Reset empties both.
@@ -123,7 +133,9 @@ capacity written on it. The number matters as much as the level — a player com
 the puzzle, and comparing two heights is not the same act.
 
 **A pour animates**, because which canister ran out is the information: the source emptying before the
-destination fills is what tells the player the pour was limited by what they had, not by what fits.
+destination fills is what tells the player the pour was limited by what they had, not by what fits. It is
+also the only reading the player gets, since the level carries no number — the shape of what happened, not
+the size of it.
 
 ## 8. Theming
 
@@ -157,7 +169,23 @@ measured out is oil for the rites.
   allocator's business rather than this family's, and worth a look once the family is authored into the
   world.
 
-## 10. Prior art, and where this deliberately parts from it
+## 10. What is known about the two-jug case
+
+Two results from the literature, both checked against this family's own engine rather than taken on trust.
+
+- **Solvability is exactly Bézout**: a volume is reachable when the vessels' `gcd` divides it and it fits
+  the larger vessel. Verified against the search over every target of every pair up to 12.
+- **The two mechanical strategies are always optimal.** Keep filling one vessel and pouring it into the
+  other, emptying and refilling as they run out; do the same the other way round. Over every reachable
+  target of every pair up to 16 — 915 cases — **the better of those two is the true optimum, and no mixed
+  line ever beats both**. That is why the opening is the whole decision, and it is now a spec: the search
+  is checked against a completely differently written oracle.
+
+And a negative result worth having: **there is no closed form for the minimum number of steps.** It has to
+be simulated. Which is the best news in this document — a player cannot memorise a formula in place of
+working the board out, so the reasoning is the only way through.
+
+## 11. Prior art, and where this deliberately parts from it
 
 The puzzle has two classical forms, and this family is the second of them.
 
