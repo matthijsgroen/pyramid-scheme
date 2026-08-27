@@ -217,9 +217,21 @@ myth in the catalogue, and it is the fourth member the pool needs.
 
    - Give the `Skin` a `symbol: (glyph: Glyph) => string`, defaulting to a pass-through (`glyph => glyph`)
      so the current board is unchanged. This is sudoku's `token` field in another family — read it first.
-   - The generator's pool is `["🪲", "🏺", "🐍", "🦅", "🐈", "🪶"]`, already Egyptian and already holding the
-     feather. The funerary face maps those to a judgement set with the heart among them, and the mapping
-     **must be total**: a glyph it has not heard of returns the glyph itself.
+   - **A face swaps the whole set, not individual symbols.** The mapping is a bijection from the
+     generator's pool onto whatever set the face wants. `glyphCount` runs 2 at starter to 4 at wizard
+     against a 6-member pool, so give the face a distinct symbol for all six — and make the mapping
+     **total**, returning the glyph itself for anything it has not heard of.
+   - The generator's pool is `["🪲", "🏺", "🐍", "🦅", "🐈", "🪶"]` — emoji, already Egyptian, already holding
+     a feather. **Prefer real hieroglyphs for the judgement set.** The game ships a subset hieroglyph font
+     and the subset is built by scanning `src/` for code points in the hieroglyph block
+     (`scripts/hieroglyphUsage.ts`), so writing a sign into `skins.ts` is the whole of adding it — there is
+     no list to update, 332 code points are already in the subset, and
+     `src/ui/tokens/hieroglyphFont.spec.ts` guards the coverage.
+   - **The feather is already paid for**: `𓆄` U+13184 is one of sudoku's six signs in
+     `src/mods/puzzle/app/sudoku/signs.ts`, which is also the file to copy for how a sign set is declared
+     and commented. Only the heart is new — take Gardiner **F34** (_ib_, the heart) and **verify the code
+     point before writing it**; a wrong one renders as a box, and the font spec will not catch a sign that
+     is simply the wrong sign.
    - **Do NOT edit `GLYPH_POOL` in `src/mods/puzzle/game/balanceScale/generateBalance.ts`.** This family is
      seedable, so changing what the generator emits changes generated boards for a purely visual reason.
      The remap belongs in the skin.
